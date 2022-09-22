@@ -2,155 +2,144 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C209DC6FA82
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Sep 2022 14:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6736ECAAD8
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Sep 2022 22:48:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230379AbiIVOHH (ORCPT
+        id S229771AbiIVWsn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 22 Sep 2022 10:07:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42092 "EHLO
+        Thu, 22 Sep 2022 18:48:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230512AbiIVOHF (ORCPT
+        with ESMTP id S230504AbiIVWsh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 22 Sep 2022 10:07:05 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D16F08B3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Sep 2022 07:07:02 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220922140659euoutp01d24c54961321aaf7720c35c81efceb17~XM97rWnWq0205602056euoutp01M
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Sep 2022 14:06:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220922140659euoutp01d24c54961321aaf7720c35c81efceb17~XM97rWnWq0205602056euoutp01M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1663855619;
-        bh=zgOYakY9X7QXYVyAON3xC+Ir9NSPjnhB79SwCxIEpUM=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=ciUpORwA79JZaL81b/0ob+IVmFLFFOvJML2p0N9ad3T7tlRfWGr285NLOV3gUHSx+
-         g6BCjXgqAeCP/eO4mQLlxDm4rQOcMpbKcxL2O1WYW6Rkxek/KJvXpoBWOZFKAoTP3Z
-         VcsccrFO30dBdssRRDP+ZqizdyWcvfA1i0MSnq14=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220922140659eucas1p1f43dd5272003cb5a0b5ea20246f86cbf~XM97R3CqI0178501785eucas1p1e;
-        Thu, 22 Sep 2022 14:06:59 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id D4.EF.19378.30C6C236; Thu, 22
-        Sep 2022 15:06:59 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220922140658eucas1p29f9d609e795ed064e51694c0e7be80d3~XM96zM0eE2266622666eucas1p2f;
-        Thu, 22 Sep 2022 14:06:58 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220922140658eusmtrp1468cc2c290128b282655c3b6d7647c09~XM96ySpo51492014920eusmtrp1b;
-        Thu, 22 Sep 2022 14:06:58 +0000 (GMT)
-X-AuditID: cbfec7f5-a4dff70000014bb2-3f-632c6c03c4db
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id BE.65.10862.20C6C236; Thu, 22
-        Sep 2022 15:06:58 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220922140658eusmtip270d085efe84005aa8d2d3aa427990353~XM96NY6SA1866318663eusmtip2L;
-        Thu, 22 Sep 2022 14:06:58 +0000 (GMT)
-Message-ID: <083edac1-8a8f-d842-e496-b657b4e4014e@samsung.com>
-Date:   Thu, 22 Sep 2022 16:06:58 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.13.0
-Subject: Re: [PATCH] media: v4l2-async: Use endpoints in
- __v4l2_async_nf_add_fwnode_remote()
-Content-Language: en-US
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thu, 22 Sep 2022 18:48:37 -0400
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [IPv6:2a0b:5c81:1c1::37])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9D02F3728
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Sep 2022 15:48:36 -0700 (PDT)
+Received: from hillosipuli.retiisi.eu (89-27-103-169.bb.dnainternet.fi [89.27.103.169])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sailus)
+        by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 3AD6C1B00176;
+        Fri, 23 Sep 2022 01:48:30 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+        t=1663886910;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oQmyNW4QjCVMTuTLvDyXjbmweZCaSS18t8qdvPShZYc=;
+        b=dVaa1QsrKUtqKkkSCglOX0ab5ncesjMjGhaxAMWaL1WqI1lZ7INtJMddWL46eXuRkSiJoi
+        hpOusjBOSFfAbVuutkzQIYU6ncZwZeqrMkX88QFtqGP2LuXdR2E/9VAwfzfL+4FcI9bvS7
+        dUEqvtYwwxbAB1yHnAf4zvIUWfJMvxcmoaT9WzR3L9YIi/JwOmvvQIt5oiz6gFu5lOMisx
+        ChpAXtO0yqBvZAEejgYe61K7m2D5PVQ00fkIPHK/ghXKVSErEwx2X6+ACGc5cIW4++9Oh4
+        UAaPCbF0n4zQBU3obXEjhFJdbNJhSXFbIWt7yrNWVKj3g5WpS9DBv3M42vhBQg==
+Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.eu (Postfix) with ESMTPS id AF5AF634CD2;
+        Fri, 23 Sep 2022 01:48:29 +0300 (EEST)
+Date:   Fri, 23 Sep 2022 01:48:29 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-media@vger.kernel.org,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
-Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
         Jacopo Mondi <jacopo@jmondi.org>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20220321145134.29820-1-laurent.pinchart@ideasonboard.com>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNKsWRmVeSWpSXmKPExsWy7djPc7rMOTrJBtO2CFncfd7CaLHt9G9W
-        i4lNd1gsOicuYbfo2bCV1WLG+X1MFsen9bFaHH7TzmpxZv9KNgdOj9kdM1k9Dn9dyOLx/8Yj
-        Zo/nl7+zefRtWcXo8XmTXABbFJdNSmpOZllqkb5dAlfGiQ9SBWt4K25M+sbewNjL3cXIySEh
-        YCLxZtM2NhBbSGAFo8S54xxdjFxA9hdGidNrZ7NBOJ8ZJdZ/nAvkcIB1bHzMDRFfzigx6+9E
-        ZgjnI6PEtfMrwUbxCthJXP51iRnEZhFQlfg04RI7RFxQ4uTMJywgtqhAssSsY8cYQWxhgTiJ
-        x907wGqYBcQlbj2ZzwQyVERgEtCGk21QiQ1MEutux4PYbAKGEl1vu8CWcQq4S0w/d58NokZe
-        onnrbGaI335wSJzemgdhu0g0PJzLBmELS7w6voUdwpaROD25hwVkmYRAO6PEgt/3mSCcCYwS
-        Dc9vMUJUWUvcOfcL7H9mAU2J9bv0IcKOEruXnGGFBAufxI23ghA38ElM2jadGSLMK9HRJgRR
-        rSYx6/g6uLUHL1xinsCoNAspWGYheX8Wkm9mIexdwMiyilE8tbQ4Nz212DgvtVyvODG3uDQv
-        XS85P3cTIzA9nf53/OsOxhWvPuodYmTiYDzEKMHBrCTCO/uOZrIQb0piZVVqUX58UWlOavEh
-        RmkOFiVxXrYZWslCAumJJanZqakFqUUwWSYOTqkGpvjvIWv9CmJ+uSZM3yE1bdFx4fSJ/VMd
-        uZ6tWt5yf+ZCvXdSDybUR/gpvYquYH7F+a3SdnXFvuyr5ycvOfZip0Zm+qLinveSSVb1q1de
-        mP/V1vO74turfVNtPZXXuZzQE/xUVvg2eMnu5pRLfenzWk5sX8LNbbhzhqXFx2l28Qc4GWfv
-        u/ee+aFI/cNzBQf+tAXXyf5SXmpwd1H8vYnrd1xZ/H7XpffzruT6Hd0ZM3vJY3bJWrbjZ+4p
-        mOWv3/d6s5NjGOO6PX2F/0o2rDppppt/9MKNFOt1qefTSiMXJzk4lFfvkHvy5/vM6557fH++
-        T+NWVdFKEGu98P9e6XP7DftkmrvYztkZmHGwX9lxiz9DiaU4I9FQi7moOBEAAf4OW74DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHIsWRmVeSWpSXmKPExsVy+t/xe7pMOTrJBr2z9SzuPm9htNh2+jer
-        xcSmOywWnROXsFv0bNjKajHj/D4mi+PT+lgtDr9pZ7U4s38lmwOnx+yOmaweh78uZPH4f+MR
-        s8fzy9/ZPPq2rGL0+LxJLoAtSs+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ
-        384mJTUnsyy1SN8uQS/jxAepgjW8FTcmfWNvYOzl7mLk4JAQMJHY+BjI5OQQEljKKHH+bhmI
-        LSEgI3FyWgMrhC0s8edaF1sXIxdQzXtGiR/9TSwgCV4BO4nLvy4xg9gsAqoSnyZcYoeIC0qc
-        nPkErEZUIFliScN9sEHCAnESj7t3gNUwC4hL3HoynwlkqIjAJEaJb+37WUAcZoENTBJfd51n
-        hTjJTWLWmkVgk9gEDCW63oKcwcnBKeAuMf3cfTaISWYSXVu7GCFseYnmrbOZJzAKzUJyyCwk
-        C2chaZmFpGUBI8sqRpHU0uLc9NxiI73ixNzi0rx0veT83E2MwIjcduznlh2MK1991DvEyMTB
-        eIhRgoNZSYR39h3NZCHelMTKqtSi/Pii0pzU4kOMpsDQmMgsJZqcD0wJeSXxhmYGpoYmZpYG
-        ppZmxkrivJ4FHYlCAumJJanZqakFqUUwfUwcnFINTFuLfi6drRr4+9r/iV//nd/au7Pis8Cq
-        rJuMBwQXrz6k9PXAmpf3XVfa5XbVaJ7/8W7C1ujA7ONFbJ3hc69fOD5DXKzo+AaLGJPJ4s/s
-        Jhlus+Y6srnln/SBtuaMRbLfb66e/yY0xOewyfV1vMpW/56++HnofQCzwSdJ9ysbhNYXSQnu
-        eDKz/sDM1de1GbNqIqS3crnrn14V8PWKJPO0grBTub1Ho9/Jc2QeW+kyxWX2LNZdrAdsuPaE
-        WXJ4dgRv2ZPSyLcj89HjWa2F/A2s+d/kt/4oF9U8xFy67+d6meZlkY3zrT68TLpzrDvJUvb/
-        0wwZ/9CS+uULvtQtv9XUOf1QaMa2mdEd6wKnnmJ4+366EktxRqKhFnNRcSIA85EmmlEDAAA=
-X-CMS-MailID: 20220922140658eucas1p29f9d609e795ed064e51694c0e7be80d3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220922140658eucas1p29f9d609e795ed064e51694c0e7be80d3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220922140658eucas1p29f9d609e795ed064e51694c0e7be80d3
+Subject: Re: [PATCH] media: v4l2-async: Use endpoints in
+ __v4l2_async_nf_add_fwnode_remote()
+Message-ID: <YyzmPWQ7vtigUxBI@valkosipuli.retiisi.eu>
 References: <20220321145134.29820-1-laurent.pinchart@ideasonboard.com>
-        <CGME20220922140658eucas1p29f9d609e795ed064e51694c0e7be80d3@eucas1p2.samsung.com>
+ <CGME20220922140658eucas1p29f9d609e795ed064e51694c0e7be80d3@eucas1p2.samsung.com>
+ <083edac1-8a8f-d842-e496-b657b4e4014e@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <083edac1-8a8f-d842-e496-b657b4e4014e@samsung.com>
+ARC-Authentication-Results: i=1;
+        ORIGINATING;
+        auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+        s=lahtoruutu; t=1663886910;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oQmyNW4QjCVMTuTLvDyXjbmweZCaSS18t8qdvPShZYc=;
+        b=hCoFvdnPZ/bsUHF+Tz2dFl4YyW7LyMFFK2tuBRpNEKuMBZ0xv47TMyjwgs66fOrom/5RPw
+        w8uTRF6kZ+xR2G30Rg041JXtxXYGxRLovGbmoubbiQPduxpHhYtnq4GivaR6TfhvYzr7um
+        uNBVssMDOk5nMiA453O64ssXaV7mQMffsb01VbcXv0hF5B2bw+6Atc1d3kEJYqBE+jKsI6
+        0qHf7z/XkViMZEQvl57SCEvqEXxmntTWdHS6F7iasZxxk0HHYjXqGOq6fQ+v3jaH2EkjQK
+        YLwJ3zGqHn2AODSDGexNOnUj5CTiZ+Yby+KJV9R0rc97pq3l7hfdXgPqrJiBDg==
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1663886910; a=rsa-sha256;
+        cv=none;
+        b=IvBQB70Neo5ad1vG2k9bARKbeiWJNUJgjgTAbMaydKjliM8Gi/081EZmUYYAOrmLq/A3U4
+        tJlBsAceKZ5BseNvJ+dUH+eF5a3oLiDEQhJ2Be6Ci2f7Wudjw9EjLk1Amtp3P8ViHYwOQ1
+        WZEg19JckGVYQ3A9eo+BX/m/RpvaP79l4bCWxXL5/IHy2gG3TejXBBN40L3pjF/wNGV5QC
+        oisf4rIYLSgq4Fy+1UJx1ucXDt6wSHB6aZJ6bT1IWuDDJFt0OeTr4b5lbXIVpm4QeCpDfG
+        AcRGFnfhynX+NLnB1F2o2kp/0WQllbLWgwo3miU3pybRdOPz+IHIapzHRh8dEg==
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Laurent,
+Hi, Marek!
 
-On 21.03.2022 15:51, Laurent Pinchart wrote:
-> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->
-> Matching on device fwnode handles is deprecated in favour of endpoint
-> fwnode handles. Switch the __v4l2_async_nf_add_fwnode_remote() function
-> to use the latter. The match code handles backward compatibility by
-> falling by to the device fwnode handle, so this shouldn't introduce any
-> regression.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Good to hear from you! And it's so nice you're testing the Samsung Exynos
+drivers! :-)
 
-I love the last sentence of the patch description. :)
+On Thu, Sep 22, 2022 at 04:06:58PM +0200, Marek Szyprowski wrote:
+> Hi Laurent,
+> 
+> On 21.03.2022 15:51, Laurent Pinchart wrote:
+> > From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> >
+> > Matching on device fwnode handles is deprecated in favour of endpoint
+> > fwnode handles. Switch the __v4l2_async_nf_add_fwnode_remote() function
+> > to use the latter. The match code handles backward compatibility by
+> > falling by to the device fwnode handle, so this shouldn't introduce any
+> > regression.
+> >
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> I love the last sentence of the patch description. :)
+> 
+> Unfortunately, recently I found that this patch breaks Exynos4 IS (FIMC) 
+> driver operation on Trats2 board (exynos4412-trats2.dts). After merging 
+> this patch I see the following errors related to the camera sensors:
+> 
+> [   16.038705] S5C73M3: S5C73M3 SPI probed successfully
+> [   16.097399] S5C73M3: Sensor type: CML0801-M017, FW version: GDFD01
+> [   16.106842] S5C73M3 0-003c: Consider updating driver S5C73M3 to match 
+> on endpoints
+> [   16.298323] S5C73M3: probe of 0-003c failed with error -22
+> [   16.343173] S5K6A3 15-0010: Consider updating driver S5K6A3 to match 
+> on endpoints
+> [   16.434968] S5K6A3: probe of 15-0010 failed with error -22
 
-Unfortunately, recently I found that this patch breaks Exynos4 IS (FIMC) 
-driver operation on Trats2 board (exynos4412-trats2.dts). After merging 
-this patch I see the following errors related to the camera sensors:
+Have you checked what exactly caused the probe to fail? Laurent's patch
+changes how matching works but if that fails, the result should be a bunch
+of waiting async sub-devices and notifier(s), not a failure on probe.
 
-[Â Â  16.038705] S5C73M3: S5C73M3 SPI probed successfully
-[Â Â  16.097399] S5C73M3: Sensor type: CML0801-M017, FW version: GDFD01
-[Â Â  16.106842] S5C73M3 0-003c: Consider updating driver S5C73M3 to match 
-on endpoints
-[Â Â  16.298323] S5C73M3: probe of 0-003c failed with error -22
-[Â Â  16.343173] S5K6A3 15-0010: Consider updating driver S5K6A3 to match 
-on endpoints
-[Â Â  16.434968] S5K6A3: probe of 15-0010 failed with error -22
+> 
+> I'm a bit puzzled, because I don't see anything related to endpoint 
+> matching in the sensor drivers. Instead I only found that 
+> v4l2_async_nf_add_fwnode_remote() function (which is modified by this 
+> patch) is called from the 
+> drivers/media/platform/samsung/exynos4-is/media-dev.c code. Do you have 
+> any idea what is broken after this change? Could you help fixing this issue?
 
-I'm a bit puzzled, because I don't see anything related to endpoint 
-matching in the sensor drivers. Instead I only found that 
-v4l2_async_nf_add_fwnode_remote() function (which is modified by this 
-patch) is called from the 
-drivers/media/platform/samsung/exynos4-is/media-dev.c code. Do you have 
-any idea what is broken after this change? Could you help fixing this issue?
+You can assign the endpoint node to subdev->fwnode instead of the device
+fwnode. No regular sensor driver appears to be doing that though.
 
-Best regards
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Kind regards,
 
+Sakari Ailus
