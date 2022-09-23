@@ -2,156 +2,141 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA2FECAAD8
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Sep 2022 23:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A71CECAAD8
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Sep 2022 04:20:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231190AbiIVXTK (ORCPT
+        id S232268AbiIWEUp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 22 Sep 2022 19:19:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50306 "EHLO
+        Fri, 23 Sep 2022 00:20:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231191AbiIVXTJ (ORCPT
+        with ESMTP id S229810AbiIWEUo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 22 Sep 2022 19:19:09 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE3DD113B69;
-        Thu, 22 Sep 2022 16:19:07 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id r7so17868913wrm.2;
-        Thu, 22 Sep 2022 16:19:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=8uhPqOrfjysnBUjv9rcl6zI7kqDh5LY+B9Rn4U3xa1Y=;
-        b=guFLIKpbF8vNRR2J3mbkUGVdUlCOXoCrQ53OfhXaBo3bonRV1WziHOENaLxggwtgrX
-         K+BL+BgqohSPYRIu/VZ5S6Fy5UzokIqIKUBZJsuygz1v53Zkw5k64OnupiGcZKu12X44
-         vljWpPPTJGVSs9Ts1zwOnalV9pbC9SsckvQR2DJfl9cl9Xur4OHocAh+owuFMaaX+J+x
-         4tV5XyC6qm7anwlbKfDMj5Cb18UQEFbhIogiI9LVXlEq4GqmBFMx8F9Mng++Z8o/Nu5/
-         Sl2BcUP3pdKwMLyq0eTDV491frwOebEscDTkoR6fnc9D/GEmJxOa7QXNsxHb7Iajyern
-         rBOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=8uhPqOrfjysnBUjv9rcl6zI7kqDh5LY+B9Rn4U3xa1Y=;
-        b=6I0WaMuV9IlXQNB4xZnmugXm2WJ0uAJoGMal+GROmLMqfBk65+9h02jzDq0zUtzj5t
-         FMW/NdI/108qa3GPUky5KzO8TjXfMQYEYzBavfQ6zzmsA+cXJR08sZo+GtVYSw4ueO0I
-         at0eWGN/SGXaC9OeVEyVIUFLbTcVUBw1FAvl89DpBXkj3t8vA6Xr/iv/SHSvAzZnDSyq
-         QV4OYTvmNE85iFNKuDMDLecTaANeNOiUGv2neLpH5s5VoyVQZRx6RHHMKBOmNg7yQFs5
-         fEUb05mFI9Ren4geIhF6ffrqDKOrmTTHIZbcKvH9ZEIXY4KZbmSMaHR66+I+0mbRS5RN
-         82bg==
-X-Gm-Message-State: ACrzQf3NmkJv7q15PrCWjlA4HRfnsuFvPr61pTcQO0Og2S8suglDd/lG
-        R6eCTtZkwjCQCfsPwNXEt8A=
-X-Google-Smtp-Source: AMsMyM400WKsar20IojFGGqtrLbE7AKT9tpsOvVH6y6YSMD4V9IHd8mxORyRRIn+3CO09XmuHtH3Qw==
-X-Received: by 2002:a05:6000:114b:b0:228:ab76:fa00 with SMTP id d11-20020a056000114b00b00228ab76fa00mr3304082wrx.628.1663888746364;
-        Thu, 22 Sep 2022 16:19:06 -0700 (PDT)
-Received: from [192.168.0.30] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net. [86.13.91.161])
-        by smtp.gmail.com with ESMTPSA id bv4-20020a0560001f0400b00228d6bc8450sm6080018wrb.108.2022.09.22.16.19.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Sep 2022 16:19:05 -0700 (PDT)
-Message-ID: <5764c9f8-c335-9c73-07fb-f44def8a0be8@gmail.com>
-Date:   Fri, 23 Sep 2022 00:19:04 +0100
+        Fri, 23 Sep 2022 00:20:44 -0400
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 419C7F3100;
+        Thu, 22 Sep 2022 21:20:42 -0700 (PDT)
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+         client-signature RSA-PSS (4096 bits) client-digest SHA256)
+        (Client CN "*.hostsharing.net", Issuer "RapidSSL TLS DV RSA Mixed SHA256 2020 CA-1" (verified OK))
+        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 31C39280973F2;
+        Fri, 23 Sep 2022 06:20:37 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id 1690F4EA97; Fri, 23 Sep 2022 06:20:37 +0200 (CEST)
+Date:   Fri, 23 Sep 2022 06:20:37 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Steve Glendinning <steve.glendinning@shawell.net>,
+        UNGLinuxDriver@microchip.com, Oliver Neukum <oneukum@suse.com>,
+        Andre Edich <andre.edich@microchip.com>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Martyn Welch <martyn.welch@collabora.com>,
+        Gabriel Hojda <ghojda@yo2urs.ro>,
+        Christoph Fritz <chf.fritz@googlemail.com>,
+        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
+        Philipp Rosenberger <p.rosenberger@kunbus.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        Ferry Toth <fntoth@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [PATCH net-next v3 5/7] usbnet: smsc95xx: Forward PHY interrupts
+ to PHY driver to avoid polling
+Message-ID: <20220923042037.GA10101@wunner.de>
+References: <e598a232-6c78-782a-316f-77902644ad6c@samsung.com>
+ <20220826071924.GA21264@wunner.de>
+ <2b1a1588-505e-dff3-301d-bfc1fb14d685@samsung.com>
+ <20220826075331.GA32117@wunner.de>
+ <093730dd-2f2c-bd0b-bd13-b97f8a2898bd@samsung.com>
+ <81c0f21f-f8f1-f7b3-c52f-c6a564c6a445@samsung.com>
+ <20220918191333.GA2107@wunner.de>
+ <d963b1a3-e18d-25d5-f07c-42d17d382174@gmail.com>
+ <20220918205516.GA13914@wunner.de>
+ <adb2de4e-0ad0-a94a-93e6-572f58a2141b@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] media: v4l2-async: Use endpoints in
- __v4l2_async_nf_add_fwnode_remote()
-Content-Language: en-US
-To:     Sakari Ailus <sakari.ailus@iki.fi>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-References: <20220321145134.29820-1-laurent.pinchart@ideasonboard.com>
- <CGME20220922140658eucas1p29f9d609e795ed064e51694c0e7be80d3@eucas1p2.samsung.com>
- <083edac1-8a8f-d842-e496-b657b4e4014e@samsung.com>
- <YyzmPWQ7vtigUxBI@valkosipuli.retiisi.eu>
-From:   Daniel Scally <djrscally@gmail.com>
-In-Reply-To: <YyzmPWQ7vtigUxBI@valkosipuli.retiisi.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <adb2de4e-0ad0-a94a-93e6-572f58a2141b@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi all
+On Sun, Sep 18, 2022 at 03:11:47PM -0700, Florian Fainelli wrote:
+> On 9/18/2022 1:55 PM, Lukas Wunner wrote:
+> > On Sun, Sep 18, 2022 at 01:41:13PM -0700, Florian Fainelli wrote:
+> > > On 9/18/2022 12:13 PM, Lukas Wunner wrote:
+> > > > On Mon, Aug 29, 2022 at 01:40:05PM +0200, Marek Szyprowski wrote:
+> > > > > I've finally traced what has happened. I've double checked and indeed
+> > > > > the 1758bde2e4aa commit fixed the issue on next-20220516 kernel and as
+> > > > > such it has been merged to linus tree. Then the commit 744d23c71af3
+> > > > > ("net: phy: Warn about incorrect mdio_bus_phy_resume() state") has been
+> > > > > merged to linus tree, which triggers a new warning during the
+> > > > > suspend/resume cycle with smsc95xx driver. Please note, that the
+> > > > > smsc95xx still works fine regardless that warning. However it look that
+> > > > > the commit 1758bde2e4aa only hide a real problem, which the commit
+> > > > > 744d23c71af3 warns about.
+> > > > > 
+> > > > > Probably a proper fix for smsc95xx driver is to call phy_stop/start
+> > > > > during suspend/resume cycle, like in similar patches for other drivers:
+> > > > > 
+> > > > > https://lore.kernel.org/all/20220825023951.3220-1-f.fainelli@gmail.com/
+> > > > 
+> > > > No, smsc95xx.c relies on mdio_bus_phy_{suspend,resume}() and there's
+> > > > no need to call phy_{stop,start}() >
+> > > > 744d23c71af3 was flawed and 6dbe852c379f has already fixed a portion
+> > > > of the fallout.
+> > > > 
+> > > > However the WARN() condition still seems too broad and causes false
+> > > > positives such as in your case.  In particular, mdio_bus_phy_suspend()
+> > > > may leave the device in PHY_UP state, so that's a legal state that
+> > > > needs to be exempted from the WARN().
+> > > 
+> > > How is that a legal state when the PHY should be suspended? Even if we are
+> > > interrupt driven, the state machine should be stopped, does not mean that
+> > > Wake-on-LAN or other activity interrupts should be disabled.
+> > 
+> > mdio_bus_phy_suspend()
+> >    phy_stop_machine()
+> >      phydev->state = PHY_UP  #  if (phydev->state >= PHY_UP)
+> > 
+> > So apparently PHY_UP is a legal state for a suspended PHY.
+> 
+> It is not clear to me why, however. Sure it does ensure that when we resume
+> we set needs_aneg = true but this feels like a hack in the sense that we are
+> setting the PHY in a provisional state in anticipation for what might come
+> next.
 
-On 22/09/2022 23:48, Sakari Ailus wrote:
-> Hi, Marek!
->
-> Good to hear from you! And it's so nice you're testing the Samsung Exynos
-> drivers! :-)
->
-> On Thu, Sep 22, 2022 at 04:06:58PM +0200, Marek Szyprowski wrote:
->> Hi Laurent,
->>
->> On 21.03.2022 15:51, Laurent Pinchart wrote:
->>> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->>>
->>> Matching on device fwnode handles is deprecated in favour of endpoint
->>> fwnode handles. Switch the __v4l2_async_nf_add_fwnode_remote() function
->>> to use the latter. The match code handles backward compatibility by
->>> falling by to the device fwnode handle, so this shouldn't introduce any
->>> regression.
->>>
->>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->> I love the last sentence of the patch description. :)
->>
->> Unfortunately, recently I found that this patch breaks Exynos4 IS (FIMC)
->> driver operation on Trats2 board (exynos4412-trats2.dts). After merging
->> this patch I see the following errors related to the camera sensors:
->>
->> [   16.038705] S5C73M3: S5C73M3 SPI probed successfully
->> [   16.097399] S5C73M3: Sensor type: CML0801-M017, FW version: GDFD01
->> [   16.106842] S5C73M3 0-003c: Consider updating driver S5C73M3 to match
->> on endpoints
->> [   16.298323] S5C73M3: probe of 0-003c failed with error -22
->> [   16.343173] S5K6A3 15-0010: Consider updating driver S5K6A3 to match
->> on endpoints
->> [   16.434968] S5K6A3: probe of 15-0010 failed with error -22
-> Have you checked what exactly caused the probe to fail? Laurent's patch
-> changes how matching works but if that fails, the result should be a bunch
-> of waiting async sub-devices and notifier(s), not a failure on probe.
+I've just submitted a fix so that at least v6.0 doesn't get released
+with a false-positive WARN splat on resume:
 
+https://lore.kernel.org/netdev/8128fdb51eeebc9efbf3776a4097363a1317aaf1.1663905575.git.lukas@wunner.de/
 
-Might be some other effects too...I can't test it but in 
-subdev_notifier_bound() in 
-drivers/media/platform/samsung/exynos4-is/media-dev.c there's the 
-following check:
-
-
-     /* Find platform data for this sensor subdev */
-     for (i = 0; i < ARRAY_SIZE(fmd->sensor); i++)
-         if (fmd->sensor[i].asd &&
-             fmd->sensor[i].asd->match.fwnode ==
-             of_fwnode_handle(subdev->dev->of_node))
-             si = &fmd->sensor[i];
-
-     if (si == NULL)
-         return -EINVAL;
+I guess we can look into making the state setting more logical in a
+separate step.
 
 
-And I think following that patch of Laurent's asd->match.fwnode will 
-never be the dev->of_node anymore, because it's now the endpoint that's 
-assigned as asd->match.fwnode rather than that of the device. That will 
-return -EINVAL for the notifier's .bound() callback...I'm not sure if 
-that would cause the whole probe to fail, but thought it might be worth 
-mentioning :)
+> > > If you allow PHY_UP, then the warning becomes effectively useless, so I
+> > > don't believe this is quite what you want to do here.
+> > 
+> > Hm, maybe the WARN() should be dropped altogether?
+> 
+> And then be left with debugging similar problems that prompted me to submit
+> the patch in the first place, no thank you. I guess I would rather accept
+> that PHY_UP needs to be special cased then.
 
->
->> I'm a bit puzzled, because I don't see anything related to endpoint
->> matching in the sensor drivers. Instead I only found that
->> v4l2_async_nf_add_fwnode_remote() function (which is modified by this
->> patch) is called from the
->> drivers/media/platform/samsung/exynos4-is/media-dev.c code. Do you have
->> any idea what is broken after this change? Could you help fixing this issue?
-> You can assign the endpoint node to subdev->fwnode instead of the device
-> fwnode. No regular sensor driver appears to be doing that though.
->
+I've interpreted that as an Acked-by for exempting PHY_UP.
+If that was not what you wanted, please speak up.
+
+Thanks,
+
+Lukas
