@@ -2,141 +2,238 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A71CECAAD8
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Sep 2022 04:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC98C6FA86
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Sep 2022 07:34:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232268AbiIWEUp (ORCPT
+        id S229606AbiIWHeT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 23 Sep 2022 00:20:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40120 "EHLO
+        Fri, 23 Sep 2022 03:34:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229810AbiIWEUo (ORCPT
+        with ESMTP id S230007AbiIWHeS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 23 Sep 2022 00:20:44 -0400
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 419C7F3100;
-        Thu, 22 Sep 2022 21:20:42 -0700 (PDT)
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-         client-signature RSA-PSS (4096 bits) client-digest SHA256)
-        (Client CN "*.hostsharing.net", Issuer "RapidSSL TLS DV RSA Mixed SHA256 2020 CA-1" (verified OK))
-        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 31C39280973F2;
-        Fri, 23 Sep 2022 06:20:37 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 1690F4EA97; Fri, 23 Sep 2022 06:20:37 +0200 (CEST)
-Date:   Fri, 23 Sep 2022 06:20:37 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        Steve Glendinning <steve.glendinning@shawell.net>,
-        UNGLinuxDriver@microchip.com, Oliver Neukum <oneukum@suse.com>,
-        Andre Edich <andre.edich@microchip.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Gabriel Hojda <ghojda@yo2urs.ro>,
-        Christoph Fritz <chf.fritz@googlemail.com>,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-        Philipp Rosenberger <p.rosenberger@kunbus.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Russell King <linux@armlinux.org.uk>,
-        Ferry Toth <fntoth@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH net-next v3 5/7] usbnet: smsc95xx: Forward PHY interrupts
- to PHY driver to avoid polling
-Message-ID: <20220923042037.GA10101@wunner.de>
-References: <e598a232-6c78-782a-316f-77902644ad6c@samsung.com>
- <20220826071924.GA21264@wunner.de>
- <2b1a1588-505e-dff3-301d-bfc1fb14d685@samsung.com>
- <20220826075331.GA32117@wunner.de>
- <093730dd-2f2c-bd0b-bd13-b97f8a2898bd@samsung.com>
- <81c0f21f-f8f1-f7b3-c52f-c6a564c6a445@samsung.com>
- <20220918191333.GA2107@wunner.de>
- <d963b1a3-e18d-25d5-f07c-42d17d382174@gmail.com>
- <20220918205516.GA13914@wunner.de>
- <adb2de4e-0ad0-a94a-93e6-572f58a2141b@gmail.com>
+        Fri, 23 Sep 2022 03:34:18 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0681E0CA
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Sep 2022 00:34:15 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220923073413euoutp01511657e2e7da1262a0203a97dd3347a2~XbQRvvp7t1037710377euoutp01y
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Sep 2022 07:34:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220923073413euoutp01511657e2e7da1262a0203a97dd3347a2~XbQRvvp7t1037710377euoutp01y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1663918453;
+        bh=SJJBZdYqHjHv9S2nEezkhKpdVUKSTwbwE38u4F85bT4=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=A36pIYCO5E+iUCQ1K6ZvIZ8fVZMVKdcIEhNEWGBfoy5R+ry/KHvqyLrP8AN7wDB+D
+         O9+mMQVZ2elth8rSJQp4eohPrOAnKYBs/yO3tkXggtuFWxZrGg/kIGgjhu9N/zf3w8
+         mSrZuycdzrW6IZRcQTWkoYSb7Nb49Xf5kRLfGh2I=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220923073412eucas1p1c2ebe0b5314221a33ff4616f1643227f~XbQRapF4-1574015740eucas1p15;
+        Fri, 23 Sep 2022 07:34:12 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id FF.A4.07817.4716D236; Fri, 23
+        Sep 2022 08:34:12 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220923073412eucas1p29ed96daeb8846edcadaf68ffdd66ea33~XbQQ15kdV2670126701eucas1p2U;
+        Fri, 23 Sep 2022 07:34:12 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220923073412eusmtrp2aad383b23c33a9e4132cd509ddcf85bb~XbQQ0yiIk1333913339eusmtrp2M;
+        Fri, 23 Sep 2022 07:34:12 +0000 (GMT)
+X-AuditID: cbfec7f4-8abff70000011e89-8d-632d617470f8
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id F3.88.07473.3716D236; Fri, 23
+        Sep 2022 08:34:12 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220923073411eusmtip1b6b892b6da378fdd4519aab1e63de267~XbQPvcAY40765307653eusmtip1V;
+        Fri, 23 Sep 2022 07:34:10 +0000 (GMT)
+Message-ID: <9cf6b220-ac9c-3267-bdb2-29fc2f157f71@samsung.com>
+Date:   Fri, 23 Sep 2022 09:34:10 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <adb2de4e-0ad0-a94a-93e6-572f58a2141b@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.13.0
+Subject: Re: [PATCH v5 00/11] drm: bridge: Add Samsung MIPI DSIM bridge
+Content-Language: en-US
+To:     Jagan Teki <jagan@amarulasolutions.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Marek Vasut <marex@denx.de>
+Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20220916181731.89764-1-jagan@amarulasolutions.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKJsWRmVeSWpSXmKPExsWy7djPc7olibrJBkf+alvcuX2a2eL+4s8s
+        Fq9vr2CzuPL1PZtF79JzrBaT7k9gsfiyaQKbxYt7F1kszja9YbfonLiE3WL5hH1sFpseX2O1
+        6Pq1ktlixvl9TBZv2hoZLU4/Ws9scaqxlcXi0pTDbBafZj0Eyk5+yWZx8cQnZovvv88yO4h5
+        rP14n9Vj3qwTLB5TThxh9TjXc5fNY+esu+wesztmsnos3vOSyePI1cWsHneu7WHzuN99nMlj
+        85J6j43vdjB59G1ZxejxeZNcAF8Ul01Kak5mWWqRvl0CV8aS3fuYC3bLVzS+XcfYwDhHsouR
+        k0NCwERiS9Me1i5GLg4hgRWMEu2T77JAOF8YJc4tnwOV+cwosXfbe1aYltePpzNBJJYzSrw9
+        OI8NJCEk8JFR4utybhCbV8BOYt/Xh+wgNouAqsTVddPZIOKCEidnPmEBsUUFkiVmHTvGCGIL
+        C7hLzH/zDayGWUBc4taT+WALRATWskr0LethA3GYQRb0/HjIDFLFJmAo0fW2C6yDU8BBYs7s
+        yywQ3fIS29/OYYY4tYtL4uT2MgjbReLzv9VQcWGJV8e3sEPYMhL/d0JskxBoZ5RY8Ps+lDOB
+        UaLh+S1GiCpriTvnfgFt4wDaoCmxfpc+iCkh4CjRckIYwuSTuPFWEOIEPolJ26YzQ4R5JTra
+        hCBmqEnMOr4ObuvBC5eYJzAqzUIKlllI3p+F5JlZCGsXMLKsYhRPLS3OTU8tNspLLdcrTswt
+        Ls1L10vOz93ECEy5p/8d/7KDcfmrj3qHGJk4GA8xSnAwK4nwzr6jmSzEm5JYWZValB9fVJqT
+        WnyIUZqDRUmcl22GVrKQQHpiSWp2ampBahFMlomDU6qBaeX0D5HbP8yeuObvVumn2zzjfGRP
+        R50RO7lNuU9j28GlK99MiGQO+Mxi9iLqzj8Ll7o+Z6nkq6/O9Jy2PbbVZrV8dXme8snHqX4f
+        PJIqdD6ZXzV5XnnDedMr3VW8a/dyVcqISplUvc/6Us5wSCvA6caS7drl6lMsw/TtbecXtPyq
+        CtzM8mipWWLgTjaTCy1+b9TcldL/6hvtFPnTqXG4Ke3ny2eH7njdP8BdLPv8aoThVNNTO0uV
+        ZvIGOc7mmbKOv+LhKgb1R+/znZyqi023qsn+qc2cwLU0LJi5wunR8sTKzQ0bQ1c57tjIbpJ8
+        5oPC94MmiXt2nkv0vWl84scqoUs7v7/Qm//H7eO8/tZVVUosxRmJhlrMRcWJAPWrL7goBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFKsWRmVeSWpSXmKPExsVy+t/xu7olibrJBptbGC3u3D7NbHF/8WcW
+        i9e3V7BZXPn6ns2id+k5VotJ9yewWHzZNIHN4sW9iywWZ5vesFt0TlzCbrF8wj42i02Pr7Fa
+        dP1ayWwx4/w+Jos3bY2MFqcfrWe2ONXYymJxacphNotPsx4CZSe/ZLO4eOITs8X332eZHcQ8
+        1n68z+oxb9YJFo8pJ46wepzrucvmsXPWXXaP2R0zWT0W73nJ5HHk6mJWjzvX9rB53O8+zuSx
+        eUm9x8Z3O5g8+rasYvT4vEkugC9Kz6Yov7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng81srI
+        VEnfziYlNSezLLVI3y5BL2PJ7n3MBbvlKxrfrmNsYJwj2cXIySEhYCLx+vF0pi5GLg4hgaWM
+        Ehe7vrFCJGQkTk5rgLKFJf5c62KDKHrPKNF9ayIbSIJXwE5i39eH7CA2i4CqxNV106HighIn
+        Zz5hAbFFBZIlljTcBxskLOAuMf/NN7AaZgFxiVtP5oNtFhHYzCqx990EMIdZ4COjxKXJW9gh
+        1k1mlHhyeT0jSAubgKFE19susHZOAQeJObMvs0CMMpPo2trFCGHLS2x/O4d5AqPQLCSXzEKy
+        cRaSlllIWhYwsqxiFEktLc5Nzy021CtOzC0uzUvXS87P3cQITDTbjv3cvINx3quPeocYmTgY
+        DzFKcDArifDOvqOZLMSbklhZlVqUH19UmpNafIjRFBgcE5mlRJPzgakuryTe0MzA1NDEzNLA
+        1NLMWEmc17OgI1FIID2xJDU7NbUgtQimj4mDU6qBadKHr4dYFn7k8r97Z83DBU5LytifWYqs
+        92Pg1qwudv7eEH8/rFFEy9x9R1vA20Tds2bHJ6+efMVgemH3CZkd01Sfy3cJfbn5ePXMj1e+
+        1bQpv/RR25MfGFB1+lOTdKDzkifFx1QZGVqv3y7TPr/0u++sGLWyNVz8F5zFRQqvneh8Gv5d
+        tFX68UGOsiZepsc2z62OdHtqz8nKU8v4v6X+xKk1er+2R+aIvL5//4hY5rxLP3ZeOZUx02LV
+        7NjzqicK4z/7yzQlb8i8skunO8rsBENOl35n+F0vjfLfi/ft5V+mO8lKKLtdan973kueA6uW
+        b56tJvOt8eMT71vZzbcNTwmw9127fV7Dc/3PQ6/685RYijMSDbWYi4oTAY9H1KO9AwAA
+X-CMS-MailID: 20220923073412eucas1p29ed96daeb8846edcadaf68ffdd66ea33
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220916181822eucas1p2bfdd1247b0297638620846586598f2a6
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220916181822eucas1p2bfdd1247b0297638620846586598f2a6
+References: <CGME20220916181822eucas1p2bfdd1247b0297638620846586598f2a6@eucas1p2.samsung.com>
+        <20220916181731.89764-1-jagan@amarulasolutions.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Sep 18, 2022 at 03:11:47PM -0700, Florian Fainelli wrote:
-> On 9/18/2022 1:55 PM, Lukas Wunner wrote:
-> > On Sun, Sep 18, 2022 at 01:41:13PM -0700, Florian Fainelli wrote:
-> > > On 9/18/2022 12:13 PM, Lukas Wunner wrote:
-> > > > On Mon, Aug 29, 2022 at 01:40:05PM +0200, Marek Szyprowski wrote:
-> > > > > I've finally traced what has happened. I've double checked and indeed
-> > > > > the 1758bde2e4aa commit fixed the issue on next-20220516 kernel and as
-> > > > > such it has been merged to linus tree. Then the commit 744d23c71af3
-> > > > > ("net: phy: Warn about incorrect mdio_bus_phy_resume() state") has been
-> > > > > merged to linus tree, which triggers a new warning during the
-> > > > > suspend/resume cycle with smsc95xx driver. Please note, that the
-> > > > > smsc95xx still works fine regardless that warning. However it look that
-> > > > > the commit 1758bde2e4aa only hide a real problem, which the commit
-> > > > > 744d23c71af3 warns about.
-> > > > > 
-> > > > > Probably a proper fix for smsc95xx driver is to call phy_stop/start
-> > > > > during suspend/resume cycle, like in similar patches for other drivers:
-> > > > > 
-> > > > > https://lore.kernel.org/all/20220825023951.3220-1-f.fainelli@gmail.com/
-> > > > 
-> > > > No, smsc95xx.c relies on mdio_bus_phy_{suspend,resume}() and there's
-> > > > no need to call phy_{stop,start}() >
-> > > > 744d23c71af3 was flawed and 6dbe852c379f has already fixed a portion
-> > > > of the fallout.
-> > > > 
-> > > > However the WARN() condition still seems too broad and causes false
-> > > > positives such as in your case.  In particular, mdio_bus_phy_suspend()
-> > > > may leave the device in PHY_UP state, so that's a legal state that
-> > > > needs to be exempted from the WARN().
-> > > 
-> > > How is that a legal state when the PHY should be suspended? Even if we are
-> > > interrupt driven, the state machine should be stopped, does not mean that
-> > > Wake-on-LAN or other activity interrupts should be disabled.
-> > 
-> > mdio_bus_phy_suspend()
-> >    phy_stop_machine()
-> >      phydev->state = PHY_UP  #  if (phydev->state >= PHY_UP)
-> > 
-> > So apparently PHY_UP is a legal state for a suspended PHY.
-> 
-> It is not clear to me why, however. Sure it does ensure that when we resume
-> we set needs_aneg = true but this feels like a hack in the sense that we are
-> setting the PHY in a provisional state in anticipation for what might come
-> next.
+On 16.09.2022 20:17, Jagan Teki wrote:
+> This series supports common bridge support for Samsung MIPI DSIM
+> which is used in Exynos and i.MX8MM SoC's.
+>
+> Previous v4 can be available here [1], repo on linux-next [2] and
+> Engicam i.Core MX8M Mini SoM boot log [3].
+>
+> The final bridge supports both the Exynos and i.MX8MM DSI devices.
+>
+> Changes for v3:
+> * bridge changes to support multi-arch
+> * updated and clear commit messages
+> * add hw_type via plat data
+> * removed unneeded quirk
+> * rebased on linux-next
+>
+> Changes for v4:
+> * include Inki Dae in MAINTAINERS
+> * remove dsi_driver probe in exynos_drm_drv to support multi-arch build
+> * update init handling to ensure host init done on first cmd transfer
+>
+> Changes for v3:
+> * fix the mult-arch build
+> * fix dsi host init
+> * updated commit messages
+>
+> Changes for v2:
+> * fix bridge handling
+> * fix dsi host init
+> * correct the commit messages
+>
+> Patch 0001:	Restore proper bridge chain in exynos_dsi
+>
+> Patch 0002: 	Samsung DSIM bridge
+>
+> Patch 0003:	PHY optional
+>
+> Patch 0004:	OF-graph or Child node lookup
+>
+> Patch 0005: 	DSI host initialization
+>
+> Patch 0006:	atomic check
+>
+> Patch 0007:	PMS_P offset via plat data
+>
+> Patch 0008:	atomic_get_input_bus_fmts
+>
+> Patch 0009:	input_bus_flags
+>
+> Patch 0010:	document fsl,imx8mm-mipi-dsim
+>
+> Patch 0011:	add i.MX8MM DSIM support
+>
+> [3] https://protect2.fireeye.com/v1/url?k=f5b98b61-94329e52-f5b8002e-000babff9bb7-1f9a3bf1da680bc2&q=1&e=efefced1-2052-43c5-834f-b50867c29e3c&u=https%3A%2F%2Fgist.github.com%2Fopenedev%2F22b2d63b30ade0ba55ab414a2f47aaf0
+> [2] https://protect2.fireeye.com/v1/url?k=02c0a3da-634bb6e9-02c12895-000babff9bb7-8ed3eab856890e56&q=1&e=efefced1-2052-43c5-834f-b50867c29e3c&u=https%3A%2F%2Fgithub.com%2Fopenedev%2Fkernel%2Ftree%2Fimx8mm-dsi-v5
+> [1] https://patchwork.kernel.org/project/dri-devel/cover/20220829184031.1863663-1-jagan@amarulasolutions.com/
+>
+> Any inputs?
 
-I've just submitted a fix so that at least v6.0 doesn't get released
-with a false-positive WARN splat on resume:
+Just to make it clear. Like I already pointed [1], this version breaks 
+Exynos boards with DSI panels. Either the patch #1 has to be dropped to 
+keep the current hack (the current code changes the bridge order to 
+force proper pre_enable calls) or the Dave's patches have to be applied 
+first [3].
 
-https://lore.kernel.org/netdev/8128fdb51eeebc9efbf3776a4097363a1317aaf1.1663905575.git.lukas@wunner.de/
+[1] 
+https://lore.kernel.org/all/5baf2a71-3d1e-0f25-9b0e-2af98684fce5@samsung.com/
 
-I guess we can look into making the state setting more logical in a
-separate step.
+[2] 
+https://lore.kernel.org/all/cover.1646406653.git.dave.stevenson@raspberrypi.com/
+
+[3] https://github.com/mszyprow/linux/tree/v6.0-dsi-v4-reworked
 
 
-> > > If you allow PHY_UP, then the warning becomes effectively useless, so I
-> > > don't believe this is quite what you want to do here.
-> > 
-> > Hm, maybe the WARN() should be dropped altogether?
-> 
-> And then be left with debugging similar problems that prompted me to submit
-> the patch in the first place, no thank you. I guess I would rather accept
-> that PHY_UP needs to be special cased then.
+> Jagan.
+>
+> Jagan Teki (10):
+>    drm: bridge: Add Samsung DSIM bridge driver
+>    drm: bridge: samsung-dsim: Lookup OF-graph or Child node devices
+>    drm: bridge: samsung-dsim: Mark PHY as optional
+>    drm: bridge: samsung-dsim: Handle proper DSI host initialization
+>    drm: bridge: samsung-dsim: Add atomic_check
+>    drm: bridge: samsung-dsim: Add platform PLL_P (PMS_P) offset
+>    drm: bridge: samsung-dsim: Add atomic_get_input_bus_fmts
+>    drm: bridge: samsung-dsim: Add input_bus_flags
+>    dt-bindings: display: exynos: dsim: Add NXP i.MX8MM support
+>    drm: bridge: samsung-dsim: Add i.MX8MM support
+>
+> Marek Szyprowski (1):
+>    drm: exynos: dsi: Restore proper bridge chain order
+>
+>   .../bindings/display/exynos/exynos_dsim.txt   |    1 +
+>   MAINTAINERS                                   |    9 +
+>   drivers/gpu/drm/bridge/Kconfig                |   12 +
+>   drivers/gpu/drm/bridge/Makefile               |    1 +
+>   drivers/gpu/drm/bridge/samsung-dsim.c         | 1840 +++++++++++++++++
+>   drivers/gpu/drm/exynos/Kconfig                |    1 +
+>   drivers/gpu/drm/exynos/exynos_drm_dsi.c       | 1766 +---------------
+>   include/drm/bridge/samsung-dsim.h             |  115 ++
+>   8 files changed, 2092 insertions(+), 1653 deletions(-)
+>   create mode 100644 drivers/gpu/drm/bridge/samsung-dsim.c
+>   create mode 100644 include/drm/bridge/samsung-dsim.h
+>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-I've interpreted that as an Acked-by for exempting PHY_UP.
-If that was not what you wanted, please speak up.
-
-Thanks,
-
-Lukas
