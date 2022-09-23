@@ -2,84 +2,116 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13082C6FA86
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Sep 2022 18:54:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B52A8C07E9D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Sep 2022 20:40:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232542AbiIWSyd (ORCPT
+        id S233174AbiIWUkU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 23 Sep 2022 14:54:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58860 "EHLO
+        Fri, 23 Sep 2022 16:40:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232705AbiIWSyY (ORCPT
+        with ESMTP id S233185AbiIWUj6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 23 Sep 2022 14:54:24 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F550122062;
-        Fri, 23 Sep 2022 11:54:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6EA9061251;
-        Fri, 23 Sep 2022 18:54:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AA4AC433D7;
-        Fri, 23 Sep 2022 18:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663959256;
-        bh=NL83MbwMKvoDGgUjy35miEo+M2RNgSWZIE19grGSXp8=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=rfYntpmAd4nHpxCM+4hs+aoFLJhcc+1bBWXrhhWUx45PwvIPe1JCuRd0Kv8zcCRXM
-         2QAbdeO3+EtuqYK/R3idy6XC/tQ73hFs7MQV7sV6jepaFBK0qz2NKzMwVkcXgM5qG8
-         2exIKa9TdobpKCkFbUmr/GtnE4kXOBNyqP8PqEYw3ZJL8o2BvkF+M9lt2qIBotiqCQ
-         XihIB28Ush0bjnqafoXd6GsDiSNue/rSgUxA5oB56K2AkEBA9lTkkaFwkIohPhzWYA
-         L5P83MWi7+pM/gnV9hS2BoDQOv1DsQXPBAyP2Pk4L4hoY2+MkUbmRPf5YoLGswo011
-         PrekFID73G0NQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     Yang Yingliang <yangyingliang@huawei.com>,
-        linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     alim.akhtar@samsung.com, krzysztof.kozlowski@linaro.org,
-        andi@etezian.org
-In-Reply-To: <20220920142216.3002291-1-yangyingliang@huawei.com>
-References: <20220920142216.3002291-1-yangyingliang@huawei.com>
-Subject: Re: [PATCH -next v2] spi: s3c24xx: Switch to use devm_spi_alloc_master()
-Message-Id: <166395925523.804455.13427451370524340043.b4-ty@kernel.org>
-Date:   Fri, 23 Sep 2022 19:54:15 +0100
+        Fri, 23 Sep 2022 16:39:58 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0756212646A;
+        Fri, 23 Sep 2022 13:35:11 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id cc5so1650421wrb.6;
+        Fri, 23 Sep 2022 13:35:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=3GTfrM0xAmg6CQZF7/FnBuxE5N54OIBbpsiD+Ni6eOc=;
+        b=SBafpol1TJk6trNlpNf24nyutL2QzEZyo3aNuJCG40qh/ujpyVnBnmN2QCvhU9jvSS
+         HbFOfHlhUS8Bf1z1LhxRCo/bUOg0MxB9qdDbmA3mXcG3bllNTIxVTPDjOrz9JTwogjUC
+         dyM1JkK8zPdpHbrI40ixGkwfdOErgSBdZGaK5kYsmW9oDy0Cxw/SQlSs/wkzIeKK5Ttr
+         1X1sS8UUtD6MT+ofKD8pQge/N4awyWU6XUSy3WnOVLYXVbUlkeD8ZIbiIvTZ37/C5AaX
+         rmZVBh1dSDRUzB9ImpH9TQ+38t5JMNuBlpDtPkKYUfa3ZgKRMsmUDbvjTN3P1Y9iPZGK
+         cGfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=3GTfrM0xAmg6CQZF7/FnBuxE5N54OIBbpsiD+Ni6eOc=;
+        b=DflNiiDrB8jdCMqL4mhZ16wkhkqzd67rFDUitASTTk0rot0voP4uCG/FDQ26fx7kNr
+         EwFvkpDoaBw2OPdxsZzzjhoF231cZhDTo8FnYFqIxeOxtMT7okNrqVzNDEhNfnBjMHnm
+         SrJ8MwS2meKKXTcg2UfocCWJgDK8N3JsizoM4OU9brw8FEnElRnXLdpMunBI/2J87sYe
+         3fMiOv0sU8y7O4hwFlqfRh0KQMb8JYODA6GWI4rFhzHfgJdeJi8hxWz8OVQgwJDDaZ5q
+         EJP7IC6a8HnIeZjLVP3+ofUcYQKaU6F5aNxyI504Ts3L7fSWnEmtD9T3/2FuveUlrOQn
+         T8Ng==
+X-Gm-Message-State: ACrzQf2un9ygQUO3iR1UZH5pAQ6kTTskIoxFNyzPH5egHe/+a4yFGxaR
+        kTiE4esB4Pc87mRkOMHtWhRPkGOzBII=
+X-Google-Smtp-Source: AMsMyM4HK5gt2jETkQZCd3v7kXedzpcgXfMa5t7oiOXpEAbW9xJeFfCrOow2XEe86NCoQYkD1NbS0Q==
+X-Received: by 2002:a5d:6987:0:b0:228:623e:2dc5 with SMTP id g7-20020a5d6987000000b00228623e2dc5mr6492538wru.574.1663965309820;
+        Fri, 23 Sep 2022 13:35:09 -0700 (PDT)
+Received: from [192.168.0.30] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net. [86.13.91.161])
+        by smtp.gmail.com with ESMTPSA id c190-20020a1c35c7000000b003b4a33a7d08sm3452670wma.9.2022.09.23.13.35.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Sep 2022 13:35:09 -0700 (PDT)
+Message-ID: <441b7031-bc23-e0ff-6a28-51796c920790@gmail.com>
+Date:   Fri, 23 Sep 2022 21:35:08 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.10.0-dev-fc921
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH] media: exynos4-is: don't rely on the v4l2_async_subdev
+ internals
+Content-Language: en-US
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-media@vger.kernel.org,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <CGME20220923094232eucas1p1deb3985c9637a0876609c75967175e9b@eucas1p1.samsung.com>
+ <20220923094201.18047-1-m.szyprowski@samsung.com>
+From:   Daniel Scally <djrscally@gmail.com>
+In-Reply-To: <20220923094201.18047-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 20 Sep 2022 22:22:16 +0800, Yang Yingliang wrote:
-> Switch to use devm_spi_alloc_master() to simpify error path.
-> 
-> 
+Hi Marek
 
-Applied to
+On 23/09/2022 10:42, Marek Szyprowski wrote:
+> Commit 1f391df44607 ("media: v4l2-async: Use endpoints in
+> __v4l2_async_nf_add_fwnode_remote()") changed the data that is stored in
+> the v4l2_async_subdev internals from the fwnode pointer to the parent
+> device to the fwnode pointer to the matched endpoint. This broke the
+> sensor matching code, which relied on the particular fwnode data in the
+> v4l2_async_subdev internals. Fix this by simply matching the
+> v4l2_async_subdev pointer, which is already available there.
+>
+> Reported-by: Daniel Scally <djrscally@gmail.com>
+> Fixes: fa91f1056f17 ("[media] exynos4-is: Add support for asynchronous subdevices registration")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Thanks!
+Yeah that makes more sense to me:
 
-[1/1] spi: s3c24xx: Switch to use devm_spi_alloc_master()
-      commit: a6bfc42f30d11f22d2dacb2362d6069643b15393
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Reviewed-by: Daniel Scally <djrscally@gmail.com>
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+>   drivers/media/platform/samsung/exynos4-is/media-dev.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/media/platform/samsung/exynos4-is/media-dev.c b/drivers/media/platform/samsung/exynos4-is/media-dev.c
+> index 52b43ea04030..412213b0c384 100644
+> --- a/drivers/media/platform/samsung/exynos4-is/media-dev.c
+> +++ b/drivers/media/platform/samsung/exynos4-is/media-dev.c
+> @@ -1380,9 +1380,7 @@ static int subdev_notifier_bound(struct v4l2_async_notifier *notifier,
+>   
+>   	/* Find platform data for this sensor subdev */
+>   	for (i = 0; i < ARRAY_SIZE(fmd->sensor); i++)
+> -		if (fmd->sensor[i].asd &&
+> -		    fmd->sensor[i].asd->match.fwnode ==
+> -		    of_fwnode_handle(subdev->dev->of_node))
+> +		if (fmd->sensor[i].asd == asd)
+>   			si = &fmd->sensor[i];
+>   
+>   	if (si == NULL)
