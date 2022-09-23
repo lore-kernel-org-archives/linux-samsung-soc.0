@@ -2,139 +2,260 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C19ECAAD8
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Sep 2022 09:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22791ECAAD8
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Sep 2022 14:09:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231995AbiIWJn0 (ORCPT
+        id S229769AbiIWOJI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 23 Sep 2022 05:43:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59734 "EHLO
+        Fri, 23 Sep 2022 10:09:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231862AbiIWJm5 (ORCPT
+        with ESMTP id S229808AbiIWOJH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 23 Sep 2022 05:42:57 -0400
+        Fri, 23 Sep 2022 10:09:07 -0400
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B4D5F184A
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Sep 2022 02:42:35 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCB2613F282
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Sep 2022 07:09:05 -0700 (PDT)
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220923094233euoutp02395ffda64f933eb579d4f23d57bcab13~XdAVmYwp40866908669euoutp02g
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Sep 2022 09:42:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220923094233euoutp02395ffda64f933eb579d4f23d57bcab13~XdAVmYwp40866908669euoutp02g
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220923140904euoutp0242ec56000ba1b6619fbb282d8a6bc48c~XgpBy8EjG1069710697euoutp02a
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Sep 2022 14:09:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220923140904euoutp0242ec56000ba1b6619fbb282d8a6bc48c~XgpBy8EjG1069710697euoutp02a
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1663926153;
-        bh=3N/10Z3eYKa4uqUpmb2xmKRNSg6VSTYifd8bIQi9eew=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=ZBHQdoXApxt6MSU+moFpFzKOQPnhc5C5ysh67TmEB+qAEa/PVNZEO7xTv+/vBET3A
-         /jY+0O+kBB/38pgVQU/odLyXq7JZmhoSQ6EooUkScgTlcRiBfZaUIbJdRiZltsVdCs
-         PEGeLcpnjn/NK7aLxsqLMi+kz6tY5MaAVxOCvcY0=
+        s=mail20170921; t=1663942144;
+        bh=lQSn8l24IYNJD7eLxVdJcmUxxS+Un9kRAvFcHMkoUME=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=pg6Ri2+UXwO3+0wou8ftnFe0/nVMqXskBWi0wI0vVv0OLOcScPQSgnoz4st6v06ji
+         eBGoyjXAoIQVrmTfvm2eLol+b7UGzU/WLvHj2KH94mkZcyouFktWdzk9RuQY6XvwBI
+         KvC1NBYuIgUPSKOnCQfKWnL4XXEhWCfLkYKeOoEA=
 Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220923094233eucas1p12d158b8fe9f94a507479071895ed5465~XdAU_axMQ0230902309eucas1p1M;
-        Fri, 23 Sep 2022 09:42:33 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 8A.09.19378.98F7D236; Fri, 23
-        Sep 2022 10:42:33 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        20220923140903eucas1p1e34813b42ffdb039d6bf577873312b00~XgpBes59x0569105691eucas1p1e;
+        Fri, 23 Sep 2022 14:09:03 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id A8.5E.19378.FFDBD236; Fri, 23
+        Sep 2022 15:09:03 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220923094232eucas1p1deb3985c9637a0876609c75967175e9b~XdAUj3bcK3070430704eucas1p1A;
-        Fri, 23 Sep 2022 09:42:32 +0000 (GMT)
+        20220923140903eucas1p180002df0deb308d5148cc6004aef7efe~XgpA86H5Y1614516145eucas1p1p;
+        Fri, 23 Sep 2022 14:09:03 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220923094232eusmtrp2e3614e1a98beb959b984a7579ca68817~XdAUjN1rJ2354823548eusmtrp2s;
-        Fri, 23 Sep 2022 09:42:32 +0000 (GMT)
-X-AuditID: cbfec7f5-a4dff70000014bb2-58-632d7f893357
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220923140903eusmtrp16c73bcfd918e5d9631e10148c3479bfc~XgpA8EQ-P1053310533eusmtrp1Z;
+        Fri, 23 Sep 2022 14:09:03 +0000 (GMT)
+X-AuditID: cbfec7f5-a4dff70000014bb2-30-632dbdffafc7
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id AF.7F.07473.88F7D236; Fri, 23
-        Sep 2022 10:42:32 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id F5.57.07473.FFDBD236; Fri, 23
+        Sep 2022 15:09:03 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220923094232eusmtip2025fc5ded37ac99d53a56e04e2ab8dda~XdAUHF7Zn0306903069eusmtip2M;
-        Fri, 23 Sep 2022 09:42:32 +0000 (GMT)
+        20220923140902eusmtip26fc602160856b219e347381b00729c0d~XgpASuhRb0777607776eusmtip2B;
+        Fri, 23 Sep 2022 14:09:02 +0000 (GMT)
+Message-ID: <bc3a5137-b2be-0bfe-003a-db201a7a50e8@samsung.com>
+Date:   Fri, 23 Sep 2022 16:09:02 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.13.0
+Subject: Re: [PATCH v4 10/30] thermal/drivers/exynos: Replace
+ of_thermal_is_trip_valid() by thermal_zone_get_trip()
+Content-Language: en-US
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        rui.zhang@intel.com,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-arm-kernel@lists.infradead.org>
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-media@vger.kernel.org,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH] media: exynos4-is: don't rely on the v4l2_async_subdev
- internals
-Date:   Fri, 23 Sep 2022 11:42:01 +0200
-Message-Id: <20220923094201.18047-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIIsWRmVeSWpSXmKPExsWy7djPc7qd9brJBh+msFpsO/yO1aJz4hJ2
-        i54NW1ktZpzfx2Sx9shddovDb9pZLc7sX8nmwO6xc9Zddo/ZHTNZPQ5/Xcji0bdlFaPH501y
-        AaxRXDYpqTmZZalF+nYJXBknOl6yFDzmrli5u7qBsYOri5GTQ0LARGLb4afMXYxcHEICKxgl
-        lrVdYIRwvjBK3DpxjgXC+cwocaeziwWmZWLzalaIxHJGiX/f/rEgtKxqZAKpYhMwlOh628UG
-        YosIREk83HKFGcRmFrjPKPHitCqILSwQLPH92XZ2EJtFQFXifFcT0G4ODl4BW4lbGwUhlslL
-        rN5wAOw+CYG/7BKLNv1ihki4SGx6eIoNwhaWeHV8CzuELSPxf+d8JoiGdkaJBb/vQzkTGCUa
-        nt9ihKiylrhz7hcbyDZmAU2J9bv0IcKOEl1zVzGDhCUE+CRuvBWEuJlPYtK26VBhXomONiGI
-        ajWJWcfXwa09eOES1GkeEue7v4OdJiQQK3Gscx7bBEa5WQi7FjAyrmIUTy0tzk1PLTbOSy3X
-        K07MLS7NS9dLzs/dxAhMBaf/Hf+6g3HFq496hxiZOBgPMUpwMCuJ8M6+o5ksxJuSWFmVWpQf
-        X1Sak1p8iFGag0VJnJdthlaykEB6YklqdmpqQWoRTJaJg1OqgWm1pIm96b5pblPVencs23Uo
-        c0rOhUM7uBUXugeGBDUvfnsqjuvBIS6v6UxGjVLr/WekrxDed6Bp9d6arZeWz6yfXH9m9vL+
-        onNPq3bmvDwve3ZzcNTkmRXajBNfL3VIf5NatpzVS/3kB7kmr+vGE3ZeZajjY1n7PsrGLkph
-        H7/DV/XFUoV5k2NqNc+qvdtc7FblmiY7i6//7a2+CKmZ+wqmtB/NDVM18vusUPb70KFld76s
-        DNT4eDVZIavDWMSq25b/kuH3ryH80xjE2CNLVUw8F13Z9Pjrz6n73ZOvqXEwBfDyHF1wjnmm
-        6sv2fF/v9weaXB95v5E8PYft0/8ovucSe7p/XX+VN6/56yZ/ZyUlluKMREMt5qLiRADwfl7a
-        dAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKLMWRmVeSWpSXmKPExsVy+t/xe7od9brJBl9va1psO/yO1aJz4hJ2
-        i54NW1ktZpzfx2Sx9shddovDb9pZLc7sX8nmwO6xc9Zddo/ZHTNZPQ5/Xcji0bdlFaPH501y
-        AaxRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehkn
-        Ol6yFDzmrli5u7qBsYOri5GTQ0LARGJi82pWEFtIYCmjRMezGoi4jMTJaQ2sELawxJ9rXWxd
-        jFxANZ8YJZ6f38sMkmATMJToeguS4OAQEYiSWPjQCKSGWeAxo8T3WV3sIDXCAoESc1a8YgKx
-        WQRUJc53NTGC1PMK2Erc2igIMV9eYvWGA8wTGHkWMDKsYhRJLS3OTc8tNtQrTswtLs1L10vO
-        z93ECAy/bcd+bt7BOO/VR71DjEwcjIcYJTiYlUR4Z9/RTBbiTUmsrEotyo8vKs1JLT7EaAq0
-        biKzlGhyPjAC8kriDc0MTA1NzCwNTC3NjJXEeT0LOhKFBNITS1KzU1MLUotg+pg4OKUamCYc
-        iN5d/vXADb/pb4InSL88wSF38uT9Sx0JvgXP+Z7wys5y2zdZxabyfXXg22/hmZ/MpfJzTuos
-        bdv7S3zZ30bL1HIBjzitY+Jmt1vP3deKbF//IkZDfnuiS55lxpN2lZY3icofai6Fh79aeunl
-        EutGnejWe8duSvapdDZeulHv0JoiceK7boHic8M/v12FTyv37pFOO1FXwWDvry187a2NnM6x
-        pefqGou1v1dWOX/U/CPazL93M+eD3Qvm+1feVlxpff7ku+XHTmR1iB71Xv74zHKfCyc2tzu2
-        JrQ/FVEXWsIVu89PYZ3P9wkJuTH+Sj3vMuZlxRTdMg5cKnysvXm38AKP1I8bs4OZt3hIKLEU
-        ZyQaajEXFScCAHN+rTnIAgAA
-X-CMS-MailID: 20220923094232eucas1p1deb3985c9637a0876609c75967175e9b
+In-Reply-To: <20220921094244.606948-11-daniel.lezcano@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFKsWRmVeSWpSXmKPExsWy7djP87r/9+omGxzdbWzxYN42NovD8yss
+        vm+5zmQx77Osxd7XW9ktNj2+xmpxedccNovPvUcYLWac38dkMffLVGaLJw/72By4PXbOusvu
+        sXjPSyaPTas62TzuXNvD5rF5Sb1H35ZVjB6fN8kFsEdx2aSk5mSWpRbp2yVwZazd3sZasEmj
+        Yv3pVYwNjPcUuxg5OSQETCRW7frO3MXIxSEksIJRom3FZhYI5wujxIdv+6Aynxklnt3YyQrT
+        cvjnCqiq5YwSjZfeMUE4Hxklpm+fxARSxStgJ7Hr3m4WEJtFQFXiyLwb7BBxQYmTM5+AxUUF
+        kiVmHTvGCGILC5RKzL24mhnEZhYQl7j1ZD7YHBEBR4kvfxexgyxgFtjLLHGg/wJYM5uAoUTX
+        2y62LkYODk6gopdPtCB65SWat84GO1tCoJ1TYu+BecwQZ7tINK7uZoKwhSVeHd/CDmHLSJye
+        3MMC1cAoseD3fSYIZwKjRMPzW4wQVdYSd879AtvGLKApsX6XPkTYUWLynvnsIGEJAT6JG28F
+        IY7gk5i0bTozRJhXoqNNCKJaTWLW8XVwaw9euMQ8gVFpFlKwzELy/iwk78xC2LuAkWUVo3hq
+        aXFuemqxcV5quV5xYm5xaV66XnJ+7iZGYPI6/e/41x2MK1591DvEyMTBeIhRgoNZSYR39h3N
+        ZCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8bDO0koUE0hNLUrNTUwtSi2CyTBycUg1Mm0/senO2
+        peROcvjMPqmAvpoHlXe3vvAsVd/mWZg1yfZRS7b02/O1NfW/SxYHqLM9mT8/RXJHwIrzf+J3
+        Wq2eeMdtqdu9jdseSp5aGsqgXjXbWss08e1yN3VhgfJ8oeRZWfoT/utX+cROmzr77b2GMuPE
+        PZcvLKx2uvDoR6/0p3j3xYW3OqbePs2dv3CDoz+3uc32kiw+DpvP9dIhf5mat0k2NB30/S//
+        4fjk2eI/wl5mLWE5v+/27DsRfi/XXe+6zrrzxe6K4IsGM2c33VrD/3s57/dX2Qyiu9j2itba
+        fHeOePWKeZt+sejamU2906+2X9imovVU0l702m6Wyvpzx0X2O4XbcsdffKzHHXrmkBJLcUai
+        oRZzUXEiAPluUezNAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsVy+t/xe7r/9+omGzy4z23xYN42NovD8yss
+        vm+5zmQx77Osxd7XW9ktNj2+xmpxedccNovPvUcYLWac38dkMffLVGaLJw/72By4PXbOusvu
+        sXjPSyaPTas62TzuXNvD5rF5Sb1H35ZVjB6fN8kFsEfp2RTll5akKmTkF5fYKkUbWhjpGVpa
+        6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZazd3sZasEmjYv3pVYwNjPcUuxg5OSQETCQO
+        /1zB0sXIxSEksJRRouXLAyaIhIzEyWkNrBC2sMSfa11sEEXvGSXeNp9hB0nwCthJ7Lq3mwXE
+        ZhFQlTgy7wZUXFDi5MwnYHFRgWSJJQ33wQYJC5RKzL24mhnEZhYQl7j1ZD7YMhEBR4kvfxex
+        gyxgFtjLLNHzvB2oiANoW5nE9E8yIDVsAoYSXW9BjuDg4ASqf/lEC2KMmUTX1i5GCFteonnr
+        bOYJjEKzkFwxC8m2WUhaZiFpWcDIsopRJLW0ODc9t9hQrzgxt7g0L10vOT93EyMwUrcd+7l5
+        B+O8Vx/1DjEycTAeYpTgYFYS4Z19RzNZiDclsbIqtSg/vqg0J7X4EKMpMCgmMkuJJucDU0Ve
+        SbyhmYGpoYmZpYGppZmxkjivZ0FHopBAemJJanZqakFqEUwfEwenVAOTcd79b0aCFk5VU73e
+        3JGYGuy8UTPt9CkTlWslFwT/KFytvNtpeML/pstl/YNbt5YtY7dp/Xq5cO5c9R0uXJPZU+cn
+        PXu3sULfvdtTeV0dD29BVUfVGWmGeslV7qWH2PUOeuv9nTn7tlyU0Yq8yAytX79Niu69nrxR
+        N2FnC29hj8DTkvKlBgK/S8Xv/e75e/p22wO5n2uX+C4MCHKf7xxZ2szn5vm5ndcjsu6bTdBN
+        qZ/3U45wnnmiHPGpPPvs3dJGrrln/hfM3rmo7VWE5buK3J15QVEHFHbJPJ1n1VnQ+De/c0lc
+        N2/ZIh02Hd7CpNz7S8sfygi8ecm3stO69utcRTVGzqxvrt1th/fuM1RiKc5INNRiLipOBAD2
+        1GJkXQMAAA==
+X-CMS-MailID: 20220923140903eucas1p180002df0deb308d5148cc6004aef7efe
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220923094232eucas1p1deb3985c9637a0876609c75967175e9b
+X-RootMTR: 20220923140903eucas1p180002df0deb308d5148cc6004aef7efe
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20220923094232eucas1p1deb3985c9637a0876609c75967175e9b
-References: <CGME20220923094232eucas1p1deb3985c9637a0876609c75967175e9b@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20220923140903eucas1p180002df0deb308d5148cc6004aef7efe
+References: <20220921094244.606948-1-daniel.lezcano@linaro.org>
+        <20220921094244.606948-11-daniel.lezcano@linaro.org>
+        <CGME20220923140903eucas1p180002df0deb308d5148cc6004aef7efe@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Commit 1f391df44607 ("media: v4l2-async: Use endpoints in
-__v4l2_async_nf_add_fwnode_remote()") changed the data that is stored in
-the v4l2_async_subdev internals from the fwnode pointer to the parent
-device to the fwnode pointer to the matched endpoint. This broke the
-sensor matching code, which relied on the particular fwnode data in the
-v4l2_async_subdev internals. Fix this by simply matching the
-v4l2_async_subdev pointer, which is already available there.
+Hi Daniel,
 
-Reported-by: Daniel Scally <djrscally@gmail.com>
-Fixes: fa91f1056f17 ("[media] exynos4-is: Add support for asynchronous subdevices registration")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/media/platform/samsung/exynos4-is/media-dev.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+On 21.09.2022 11:42, Daniel Lezcano wrote:
+> The thermal_zone_get_trip() does the same check as
+> of_thermal_is_trip_valid(). Replace the call to
+> of_thermal_is_trip_valid() by thermal_zone_get_trip().
+>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/media-dev.c b/drivers/media/platform/samsung/exynos4-is/media-dev.c
-index 52b43ea04030..412213b0c384 100644
---- a/drivers/media/platform/samsung/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/samsung/exynos4-is/media-dev.c
-@@ -1380,9 +1380,7 @@ static int subdev_notifier_bound(struct v4l2_async_notifier *notifier,
- 
- 	/* Find platform data for this sensor subdev */
- 	for (i = 0; i < ARRAY_SIZE(fmd->sensor); i++)
--		if (fmd->sensor[i].asd &&
--		    fmd->sensor[i].asd->match.fwnode ==
--		    of_fwnode_handle(subdev->dev->of_node))
-+		if (fmd->sensor[i].asd == asd)
- 			si = &fmd->sensor[i];
- 
- 	if (si == NULL)
+This patch landed in linux next-20220923 as commit 4a71bb8005ba 
+("thermal/drivers/exynos: Replace of_thermal_is_trip_valid() by 
+thermal_zone_get_trip()"). Unfortunately it causes deadlock on all 
+Exynos based board:
+
+============================================
+WARNING: possible recursive locking detected
+6.0.0-rc1-00062-g4a71bb8005ba #12855 Not tainted
+--------------------------------------------
+swapper/0/1 is trying to acquire lock:
+c263c394 (&tz->lock){+.+.}-{3:3}, at: 
+thermal_zone_device_update.part.0+0x114/0x538
+
+but task is already holding lock:
+c263c394 (&tz->lock){+.+.}-{3:3}, at: 
+thermal_zone_device_update.part.0+0x3c/0x538
+
+other info that might help us debug this:
+  Possible unsafe locking scenario:
+
+        CPU0
+        ----
+   lock(&tz->lock);
+   lock(&tz->lock);
+
+  *** DEADLOCK ***
+
+  May be due to missing lock nesting notation
+
+2 locks held by swapper/0/1:
+  #0: c1d5248c (&dev->mutex){....}-{3:3}, at: __driver_attach+0xe4/0x1f0
+  #1: c263c394 (&tz->lock){+.+.}-{3:3}, at: 
+thermal_zone_device_update.part.0+0x3c/0x538
+
+stack backtrace:
+CPU: 1 PID: 1 Comm: swapper/0 Not tainted 6.0.0-rc1-00062-g4a71bb8005ba 
+#12855
+Hardware name: Samsung Exynos (Flattened Device Tree)
+  unwind_backtrace from show_stack+0x10/0x14
+  show_stack from dump_stack_lvl+0x58/0x70
+  dump_stack_lvl from __lock_acquire+0x146c/0x2a7c
+  __lock_acquire from lock_acquire+0x124/0x3e4
+  lock_acquire from __mutex_lock+0x90/0x948
+  __mutex_lock from mutex_lock_nested+0x1c/0x24
+  mutex_lock_nested from thermal_zone_device_update.part.0+0x114/0x538
+  thermal_zone_device_update.part.0 from 
+thermal_zone_device_set_mode+0x70/0x98
+  thermal_zone_device_set_mode from thermal_of_zone_register+0x424/0x69c
+  thermal_of_zone_register from devm_thermal_of_zone_register+0x58/0x94
+  devm_thermal_of_zone_register from exynos_tmu_probe+0x29c/0x728
+  exynos_tmu_probe from platform_probe+0x5c/0xb8
+  platform_probe from really_probe+0xe0/0x414
+  really_probe from __driver_probe_device+0xa0/0x208
+  __driver_probe_device from driver_probe_device+0x30/0xc0
+  driver_probe_device from __driver_attach+0xf0/0x1f0
+  __driver_attach from bus_for_each_dev+0x70/0xb0
+  bus_for_each_dev from bus_add_driver+0x174/0x218
+  bus_add_driver from driver_register+0x88/0x11c
+  driver_register from do_one_initcall+0x64/0x380
+  do_one_initcall from kernel_init_freeable+0x1c0/0x224
+  kernel_init_freeable from kernel_init+0x18/0x12c
+  kernel_init from ret_from_fork+0x14/0x2c
+Exception stack(0xf082dfb0 to 0xf082dff8)
+
+[deadlock]
+
+Something is wrong in locking in the functions from the above stacktrace.
+
+
+>   drivers/thermal/samsung/exynos_tmu.c | 9 ++++++---
+>   1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index 91e6860b5ec4..34b460092308 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -554,13 +554,14 @@ static void exynos4210_tmu_control(struct platform_device *pdev, bool on)
+>   {
+>   	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+>   	struct thermal_zone_device *tz = data->tzd;
+> +	struct thermal_trip trip;
+>   	unsigned int con, interrupt_en = 0, i;
+>   
+>   	con = get_con_reg(data, readl(data->base + EXYNOS_TMU_REG_CONTROL));
+>   
+>   	if (on) {
+>   		for (i = 0; i < data->ntrip; i++) {
+> -			if (!of_thermal_is_trip_valid(tz, i))
+> +			if (thermal_zone_get_trip(tz, i, &trip))
+>   				continue;
+>   
+>   			interrupt_en |=
+> @@ -584,13 +585,14 @@ static void exynos5433_tmu_control(struct platform_device *pdev, bool on)
+>   {
+>   	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+>   	struct thermal_zone_device *tz = data->tzd;
+> +	struct thermal_trip trip;
+>   	unsigned int con, interrupt_en = 0, pd_det_en, i;
+>   
+>   	con = get_con_reg(data, readl(data->base + EXYNOS_TMU_REG_CONTROL));
+>   
+>   	if (on) {
+>   		for (i = 0; i < data->ntrip; i++) {
+> -			if (!of_thermal_is_trip_valid(tz, i))
+> +			if (thermal_zone_get_trip(tz, i, &trip))
+>   				continue;
+>   
+>   			interrupt_en |=
+> @@ -615,13 +617,14 @@ static void exynos7_tmu_control(struct platform_device *pdev, bool on)
+>   {
+>   	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+>   	struct thermal_zone_device *tz = data->tzd;
+> +	struct thermal_trip trip;
+>   	unsigned int con, interrupt_en = 0, i;
+>   
+>   	con = get_con_reg(data, readl(data->base + EXYNOS_TMU_REG_CONTROL));
+>   
+>   	if (on) {
+>   		for (i = 0; i < data->ntrip; i++) {
+> -			if (!of_thermal_is_trip_valid(tz, i))
+> +			if (thermal_zone_get_trip(tz, i, &trip))
+>   				continue;
+>   
+>   			interrupt_en |=
+
+Best regards
 -- 
-2.17.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
