@@ -2,116 +2,156 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B52A8C07E9D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Sep 2022 20:40:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 112F9C07E9D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Sep 2022 22:03:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233174AbiIWUkU (ORCPT
+        id S232550AbiIWWDH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 23 Sep 2022 16:40:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40352 "EHLO
+        Fri, 23 Sep 2022 18:03:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233185AbiIWUj6 (ORCPT
+        with ESMTP id S232483AbiIWWDG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 23 Sep 2022 16:39:58 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0756212646A;
-        Fri, 23 Sep 2022 13:35:11 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id cc5so1650421wrb.6;
-        Fri, 23 Sep 2022 13:35:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=3GTfrM0xAmg6CQZF7/FnBuxE5N54OIBbpsiD+Ni6eOc=;
-        b=SBafpol1TJk6trNlpNf24nyutL2QzEZyo3aNuJCG40qh/ujpyVnBnmN2QCvhU9jvSS
-         HbFOfHlhUS8Bf1z1LhxRCo/bUOg0MxB9qdDbmA3mXcG3bllNTIxVTPDjOrz9JTwogjUC
-         dyM1JkK8zPdpHbrI40ixGkwfdOErgSBdZGaK5kYsmW9oDy0Cxw/SQlSs/wkzIeKK5Ttr
-         1X1sS8UUtD6MT+ofKD8pQge/N4awyWU6XUSy3WnOVLYXVbUlkeD8ZIbiIvTZ37/C5AaX
-         rmZVBh1dSDRUzB9ImpH9TQ+38t5JMNuBlpDtPkKYUfa3ZgKRMsmUDbvjTN3P1Y9iPZGK
-         cGfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=3GTfrM0xAmg6CQZF7/FnBuxE5N54OIBbpsiD+Ni6eOc=;
-        b=DflNiiDrB8jdCMqL4mhZ16wkhkqzd67rFDUitASTTk0rot0voP4uCG/FDQ26fx7kNr
-         EwFvkpDoaBw2OPdxsZzzjhoF231cZhDTo8FnYFqIxeOxtMT7okNrqVzNDEhNfnBjMHnm
-         SrJ8MwS2meKKXTcg2UfocCWJgDK8N3JsizoM4OU9brw8FEnElRnXLdpMunBI/2J87sYe
-         3fMiOv0sU8y7O4hwFlqfRh0KQMb8JYODA6GWI4rFhzHfgJdeJi8hxWz8OVQgwJDDaZ5q
-         EJP7IC6a8HnIeZjLVP3+ofUcYQKaU6F5aNxyI504Ts3L7fSWnEmtD9T3/2FuveUlrOQn
-         T8Ng==
-X-Gm-Message-State: ACrzQf2un9ygQUO3iR1UZH5pAQ6kTTskIoxFNyzPH5egHe/+a4yFGxaR
-        kTiE4esB4Pc87mRkOMHtWhRPkGOzBII=
-X-Google-Smtp-Source: AMsMyM4HK5gt2jETkQZCd3v7kXedzpcgXfMa5t7oiOXpEAbW9xJeFfCrOow2XEe86NCoQYkD1NbS0Q==
-X-Received: by 2002:a5d:6987:0:b0:228:623e:2dc5 with SMTP id g7-20020a5d6987000000b00228623e2dc5mr6492538wru.574.1663965309820;
-        Fri, 23 Sep 2022 13:35:09 -0700 (PDT)
-Received: from [192.168.0.30] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net. [86.13.91.161])
-        by smtp.gmail.com with ESMTPSA id c190-20020a1c35c7000000b003b4a33a7d08sm3452670wma.9.2022.09.23.13.35.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Sep 2022 13:35:09 -0700 (PDT)
-Message-ID: <441b7031-bc23-e0ff-6a28-51796c920790@gmail.com>
-Date:   Fri, 23 Sep 2022 21:35:08 +0100
+        Fri, 23 Sep 2022 18:03:06 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4128F13FB7C
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Sep 2022 15:03:03 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220923220300euoutp0168150ee7e96fac73bcbfabc9655ddcce~XnG1HqjZm1401114011euoutp01a
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Sep 2022 22:03:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220923220300euoutp0168150ee7e96fac73bcbfabc9655ddcce~XnG1HqjZm1401114011euoutp01a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1663970580;
+        bh=OJv2e7DRA5VakNvI/plhp5ZQCba8KBiFMSejHWKqgX4=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=FQxLPVE2f2nG9MkfHijzKsq4xz/KNYzSDEvAJUz09isR4FXB+OEZDFki5+fhu0jYW
+         uoPQ+W75Y4Y3f1kmYhsV0qTYcEdPewkJ6ZZNlCOjvaYBJUwJuq1UKaMzGZ9RVoyXH7
+         6Gwvg9wGUucA9xExaSoC3yJ+HUlGEIr/qNG+MpZQ=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20220923220300eucas1p2eb3bb57c4f88c99243fd5c4d9ab7c056~XnG0vhQ2C1572415724eucas1p2j;
+        Fri, 23 Sep 2022 22:03:00 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id CE.E8.29727.31D2E236; Fri, 23
+        Sep 2022 23:03:00 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220923220258eucas1p1e6f76e8d3c70573da33c03f689d178dc~XnGzCPzgu0224602246eucas1p1R;
+        Fri, 23 Sep 2022 22:02:58 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220923220258eusmtrp1b1d643f69e69a7afe34697d8642a1e18~XnGzBjZPk0984109841eusmtrp1l;
+        Fri, 23 Sep 2022 22:02:58 +0000 (GMT)
+X-AuditID: cbfec7f2-205ff7000001741f-f7-632e2d139973
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 39.61.10862.21D2E236; Fri, 23
+        Sep 2022 23:02:58 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220923220257eusmtip20810ed8b37d6767b10a55f674b707cfd~XnGyeDHDg3265632656eusmtip2B;
+        Fri, 23 Sep 2022 22:02:57 +0000 (GMT)
+Message-ID: <7af4b1f0-2757-4016-cb48-5fc5bc9f6bc2@samsung.com>
+Date:   Sat, 24 Sep 2022 00:02:57 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] media: exynos4-is: don't rely on the v4l2_async_subdev
- internals
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.13.0
+Subject: Re: [PATCH v4 10/30] thermal/drivers/exynos: Replace
+ of_thermal_is_trip_valid() by thermal_zone_get_trip()
 Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-media@vger.kernel.org,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <CGME20220923094232eucas1p1deb3985c9637a0876609c75967175e9b@eucas1p1.samsung.com>
- <20220923094201.18047-1-m.szyprowski@samsung.com>
-From:   Daniel Scally <djrscally@gmail.com>
-In-Reply-To: <20220923094201.18047-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        rui.zhang@intel.com,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-arm-kernel@lists.infradead.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <cdbe5e4b-b0b1-3539-2a9a-bbf87a4d8e92@linaro.org>
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7djPc7oiunrJBucqLB7M28ZmcXh+hcX3
+        LdeZLOZ9lrXY+3oru8Wmx9dYLS7vmsNm8bn3CKPFjPP7mCzmfpnKbPHkYR+bA7fHzll32T0W
+        73nJ5LFpVSebx51re9g8Ni+p9+jbsorR4/MmuQD2KC6blNSczLLUIn27BK6MPz/PMxXsZKvY
+        smwLWwNjC2sXIyeHhICJxJ6pHUxdjFwcQgIrGCUuTbjGCOF8AXIOv2OBcD4zSvy6/BjI4QBr
+        OT7bDCK+nFHi+/1GqI6PjBIdmz+ygxTxCthJPD7uDLKCRUBVon/3fDYQm1dAUOLkzCcsILao
+        QLLErGPHGEFsYYFSibkXVzOD2MwC4hK3nsxnArFFBBwlvvxdxA4yn1lgL7PEgf4LYM1sAoYS
+        XW+7wIZyAu26vXwdG0SzvMT2t3OYIX7r5pQ49s4YwnaRWHvgARuELSzx6vgWdghbRuL05B6w
+        LyUE2hklFvy+zwThTGCUaHh+ixGiylrizrlfbCCfMQtoSqzfpQ8RdpSYvGc+OyRU+CRuvBWE
+        uIFPYtK26cwQYV6JjjYhiGo1iVnH18GtPXjhEvMERqVZSMEyC8n7s5B8Mwth7wJGllWM4qml
+        xbnpqcWGeanlesWJucWleel6yfm5mxiBaev0v+OfdjDOffVR7xAjEwfjIUYJDmYlEd6Ui7rJ
+        QrwpiZVVqUX58UWlOanFhxilOViUxHnZZmglCwmkJ5akZqemFqQWwWSZODilGpjsCmYlOqzZ
+        /2taPM+OP8vD/3OJ67GeN/w2Qau9z6o8Kd/+N9uUZM7v9V9MFixYd7HhpFFo6tatEzUiJ9W/
+        u7tBhrPEqX7rI8eljwL9jm5cMPVw0BUZDn07s9XuLV/ShZiFFi/7+DXX/6+0S/SFzGdTY/9f
+        1luf/ytya0dI1GTtmxO/MK9KnOJYzcscGRnZN8+C87v9zPmecY4sjtX13z8ydJtbHqxb9OpJ
+        8YfbG49OsvMT/bz1QDrzBlfBMlOf5t4XSxKrGW5lKNgeXqb4+9s1tVVtUjl87i8XCH7iP1TA
+        8VKKZfJjWYm3077OzDWpSvl6uPGuJuOMi8xnMqe+/+y4fGWYs0Pc1+5PBbLfZ09WYinOSDTU
+        Yi4qTgQA7phausoDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNIsWRmVeSWpSXmKPExsVy+t/xe7pCunrJBncXc1s8mLeNzeLw/AqL
+        71uuM1nM+yxrsff1VnaLTY+vsVpc3jWHzeJz7xFGixnn9zFZzP0yldniycM+Ngduj52z7rJ7
+        LN7zkslj06pONo871/aweWxeUu/Rt2UVo8fnTXIB7FF6NkX5pSWpChn5xSW2StGGFkZ6hpYW
+        ekYmlnqGxuaxVkamSvp2NimpOZllqUX6dgl6GX9+nmcq2MlWsWXZFrYGxhbWLkYODgkBE4nj
+        s826GLk4hASWMkoc3nKDuYuREyguI3FyWgMrhC0s8edaFxtE0XtGidOHr4I18wrYSTw+7gxS
+        wyKgKtG/ez4biM0rIChxcuYTFhBbVCBZYknDfbA5wgKlEnMvrgabzywgLnHryXwmEFtEwFHi
+        y99F7CDzmQX2Mkv0PG9nhli2mUlie8czsElsAoYSXW+7wDZwAi2+vXwdG8QkM4murV2MELa8
+        xPa3c5gnMArNQnLILCQLZyFpmYWkZQEjyypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzAWN12
+        7OeWHYwrX33UO8TIxMF4iFGCg1lJhDflom6yEG9KYmVValF+fFFpTmrxIUZTYGhMZJYSTc4H
+        Jou8knhDMwNTQxMzSwNTSzNjJXFez4KORCGB9MSS1OzU1ILUIpg+Jg5OqQYmn8DHvG7Npd3G
+        5v/vKTPb8uo6XZT/y+5skS29SffSJRHf7Ga7GdEvMvcnG7HL3p8y49W5gjzPXRsels2rYZq3
+        Y8/0NXW3nsW8PuRjYazutsIq/mpt/rwe28Un+l81c05MjlxiFLBXO+RzxJWjN+LmvX9QZufi
+        XrD9RouSiOjWnrJPnxu5rIJkTW/9vcd9tHHKoa+7TH6FXtgmXiUVOPttZcnGDwYGmYn/cx49
+        TRFr3PWwKurNJZ7LDdfmtS3sbdD+XP/fKbal5H75TQ3GGJNrLu0W7ywzt7B+6mmR2HI6d9XC
+        q6Lsc37P8Wm74L/+xMyowFv5j7XvGgfJGrKrVmtdtW0RsTJboJg0a/fX9oNKLMUZiYZazEXF
+        iQD1RzivXgMAAA==
+X-CMS-MailID: 20220923220258eucas1p1e6f76e8d3c70573da33c03f689d178dc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220923140903eucas1p180002df0deb308d5148cc6004aef7efe
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220923140903eucas1p180002df0deb308d5148cc6004aef7efe
+References: <20220921094244.606948-1-daniel.lezcano@linaro.org>
+        <20220921094244.606948-11-daniel.lezcano@linaro.org>
+        <CGME20220923140903eucas1p180002df0deb308d5148cc6004aef7efe@eucas1p1.samsung.com>
+        <bc3a5137-b2be-0bfe-003a-db201a7a50e8@samsung.com>
+        <cdbe5e4b-b0b1-3539-2a9a-bbf87a4d8e92@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek
+Hi Daniel,
 
-On 23/09/2022 10:42, Marek Szyprowski wrote:
-> Commit 1f391df44607 ("media: v4l2-async: Use endpoints in
-> __v4l2_async_nf_add_fwnode_remote()") changed the data that is stored in
-> the v4l2_async_subdev internals from the fwnode pointer to the parent
-> device to the fwnode pointer to the matched endpoint. This broke the
-> sensor matching code, which relied on the particular fwnode data in the
-> v4l2_async_subdev internals. Fix this by simply matching the
-> v4l2_async_subdev pointer, which is already available there.
+On 23.09.2022 19:40, Daniel Lezcano wrote:
 >
-> Reported-by: Daniel Scally <djrscally@gmail.com>
-> Fixes: fa91f1056f17 ("[media] exynos4-is: Add support for asynchronous subdevices registration")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-
-
-Yeah that makes more sense to me:
-
-
-Reviewed-by: Daniel Scally <djrscally@gmail.com>
-
->   drivers/media/platform/samsung/exynos4-is/media-dev.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
+> Hi Marek,
 >
-> diff --git a/drivers/media/platform/samsung/exynos4-is/media-dev.c b/drivers/media/platform/samsung/exynos4-is/media-dev.c
-> index 52b43ea04030..412213b0c384 100644
-> --- a/drivers/media/platform/samsung/exynos4-is/media-dev.c
-> +++ b/drivers/media/platform/samsung/exynos4-is/media-dev.c
-> @@ -1380,9 +1380,7 @@ static int subdev_notifier_bound(struct v4l2_async_notifier *notifier,
->   
->   	/* Find platform data for this sensor subdev */
->   	for (i = 0; i < ARRAY_SIZE(fmd->sensor); i++)
-> -		if (fmd->sensor[i].asd &&
-> -		    fmd->sensor[i].asd->match.fwnode ==
-> -		    of_fwnode_handle(subdev->dev->of_node))
-> +		if (fmd->sensor[i].asd == asd)
->   			si = &fmd->sensor[i];
->   
->   	if (si == NULL)
+> thanks for reporting
+>
+> On 23/09/2022 16:09, Marek Szyprowski wrote:
+>
+> [ ... ]
+>
+>> Exception stack(0xf082dfb0 to 0xf082dff8)
+>>
+>> [deadlock]
+>>
+>> Something is wrong in locking in the functions from the above 
+>> stacktrace.
+>
+> Are you sure this deadlock is coming from this patch? Does a revert of 
+> this patch solve the issue ?
+>
+Ups, my fault. It looks that I've copied SHA from the wrong window while 
+preparing the report. The bisection pointed to the 78ffa3e58d93 
+("thermal/core: Add a generic thermal_zone_get_trip() function") commit 
+and I've already found how to fix the deadlock. I will report it again 
+under the proper patch.
+
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
