@@ -2,32 +2,32 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C06C6FA96
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3D3C6FA97
 	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Sep 2022 11:23:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232225AbiI0LXv (ORCPT
+        id S229660AbiI0LXv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
         Tue, 27 Sep 2022 07:23:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53316 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231393AbiI0LXD (ORCPT
+        with ESMTP id S231964AbiI0LXJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Sep 2022 07:23:03 -0400
-Received: from smtp1.axis.com (smtp1.axis.com [195.60.68.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2C5613A951;
-        Tue, 27 Sep 2022 04:21:41 -0700 (PDT)
+        Tue, 27 Sep 2022 07:23:09 -0400
+Received: from smtp2.axis.com (smtp2.axis.com [195.60.68.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A081913E7DC;
+        Tue, 27 Sep 2022 04:21:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=axis.com; q=dns/txt; s=axis-central1; t=1664277702;
-  x=1695813702;
+  d=axis.com; q=dns/txt; s=axis-central1; t=1664277713;
+  x=1695813713;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=TrQtsuqQ4EnLgm0F7EqTy/mbaX8OOSSxYGg4dteSuwI=;
-  b=EX9w+PF1n6PQ+dm4r/EnyxJBqxrgQ9yW6ZOWwDXUAjaJ5fkO/ipDbNNV
-   /Pj6D67jGqBgeDpjKjOeuu4OqfmvFKmjp226snUg7TjDDSC8GoVwwxOGs
-   bk8pEabpSBP5kK8DeRCjbwGsDPo7K7QWOblViIrqz3/tvTzSdHrsbxFVL
-   6b6wDMTXFNSt2iv5fvg0v6G8LPkmrVQm5eKuHEn+/N+TjDyatfhviLbQ6
-   MsrCFJvwgl66q1RpU8aoNmayrFW0ZnH9k+GDqRqpC07/MqblQY+yXg4JI
-   HAbuApAwGbeae8ToB3pn8ZtRr7GBQZBxj5lIWHYvrdLe6R4gDWdNq5MKG
+  bh=r9z94nHNbG/a3bIMb6JB09Z2qRd5LB6E0MBIYBQgOAE=;
+  b=SoT9DtW2m2H2jeVrb/N8+U+iqGJFc2f2fBMM82CxZnPClXAWHdOsz/Jk
+   knsbru/ncOM0CGg2biKkMyJS4u0mjQMYyjVGObC34ZjzjaIsi7y3bOdJK
+   588WlhWJOfTKXIuyOMnxJN4wpjFitMr1xThC4fmhZ0HTe/eUYkq6pfPhE
+   YSiDezPuaXcViOnADnOlhVbNQDR+E9tLWa4rp715u/t3tvIhK1zcI6xl4
+   FdvMXKk5mDJgi9WnDOw/4NNeeS3PsZFXL5qPkD+lZifVf/niv4lRvy7Ku
+   ZyZEQUc3z2UK1VSAqmCQkUIXgGlMKTaCTmX7PD+hHgYeUbMErR010YHR2
    A==;
 From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
 To:     <broonie@kernel.org>, <krzysztof.kozlowski@linaro.org>,
@@ -38,9 +38,9 @@ CC:     <kernel@axis.com>,
         <linux-kernel@vger.kernel.org>,
         <linux-samsung-soc@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 4/4] spi: s3c64xx: Fix large transfers with DMA
-Date:   Tue, 27 Sep 2022 13:21:17 +0200
-Message-ID: <20220927112117.77599-5-vincent.whitchurch@axis.com>
+Subject: [PATCH v2 1/4] spi: Save current RX and TX DMA devices
+Date:   Tue, 27 Sep 2022 13:21:14 +0200
+Message-ID: <20220927112117.77599-2-vincent.whitchurch@axis.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220927112117.77599-1-vincent.whitchurch@axis.com>
 References: <20220927112117.77599-1-vincent.whitchurch@axis.com>
@@ -51,51 +51,80 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The COUNT_VALUE in the PACKET_CNT register is 16-bit so the maximum
-value is 65535.  Asking the driver to transfer a larger size currently
-leads to the DMA transfer timing out.  Implement ->max_transfer_size()
-and have the core split the transfer as needed.
+Save the current RX and TX DMA devices to avoid having to duplicate the
+logic to pick them, since we'll need access to them in some more
+functions to fix a bug in the cache handling.
 
-Fixes: 230d42d422e7 ("spi: Add s3c64xx SPI Controller driver")
 Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
 ---
- drivers/spi/spi-s3c64xx.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/spi/spi.c       | 19 ++++---------------
+ include/linux/spi/spi.h |  4 ++++
+ 2 files changed, 8 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 651c35dd9124..71d324ec9a70 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -84,6 +84,7 @@
- #define S3C64XX_SPI_ST_TX_FIFORDY		(1<<0)
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index ad254b94308e..dd885df23870 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1147,6 +1147,8 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
+ 		}
+ 	}
  
- #define S3C64XX_SPI_PACKET_CNT_EN		(1<<16)
-+#define S3C64XX_SPI_PACKET_CNT_MASK		GENMASK(15, 0)
++	ctlr->cur_rx_dma_dev = rx_dev;
++	ctlr->cur_tx_dma_dev = tx_dev;
+ 	ctlr->cur_msg_mapped = true;
  
- #define S3C64XX_SPI_PND_TX_UNDERRUN_CLR		(1<<4)
- #define S3C64XX_SPI_PND_TX_OVERRUN_CLR		(1<<3)
-@@ -711,6 +712,13 @@ static int s3c64xx_spi_prepare_message(struct spi_master *master,
  	return 0;
- }
+@@ -1154,26 +1156,13 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
  
-+static size_t s3c64xx_spi_max_transfer_size(struct spi_device *spi)
-+{
-+	struct spi_controller *ctlr = spi->controller;
-+
-+	return ctlr->can_dma ? S3C64XX_SPI_PACKET_CNT_MASK : SIZE_MAX;
-+}
-+
- static int s3c64xx_spi_transfer_one(struct spi_master *master,
- 				    struct spi_device *spi,
- 				    struct spi_transfer *xfer)
-@@ -1152,6 +1160,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	master->unprepare_transfer_hardware = s3c64xx_spi_unprepare_transfer;
- 	master->prepare_message = s3c64xx_spi_prepare_message;
- 	master->transfer_one = s3c64xx_spi_transfer_one;
-+	master->max_transfer_size = s3c64xx_spi_max_transfer_size;
- 	master->num_chipselect = sci->num_cs;
- 	master->use_gpio_descriptors = true;
- 	master->dma_alignment = 8;
+ static int __spi_unmap_msg(struct spi_controller *ctlr, struct spi_message *msg)
+ {
++	struct device *rx_dev = ctlr->cur_rx_dma_dev;
++	struct device *tx_dev = ctlr->cur_tx_dma_dev;
+ 	struct spi_transfer *xfer;
+-	struct device *tx_dev, *rx_dev;
+ 
+ 	if (!ctlr->cur_msg_mapped || !ctlr->can_dma)
+ 		return 0;
+ 
+-	if (ctlr->dma_tx)
+-		tx_dev = ctlr->dma_tx->device->dev;
+-	else if (ctlr->dma_map_dev)
+-		tx_dev = ctlr->dma_map_dev;
+-	else
+-		tx_dev = ctlr->dev.parent;
+-
+-	if (ctlr->dma_rx)
+-		rx_dev = ctlr->dma_rx->device->dev;
+-	else if (ctlr->dma_map_dev)
+-		rx_dev = ctlr->dma_map_dev;
+-	else
+-		rx_dev = ctlr->dev.parent;
+-
+ 	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
+ 		if (!ctlr->can_dma(ctlr, msg->spi, xfer))
+ 			continue;
+diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+index 6ea889df0813..fbf8c0d95968 100644
+--- a/include/linux/spi/spi.h
++++ b/include/linux/spi/spi.h
+@@ -378,6 +378,8 @@ extern struct spi_device *spi_new_ancillary_device(struct spi_device *spi, u8 ch
+  * @cleanup: frees controller-specific state
+  * @can_dma: determine whether this controller supports DMA
+  * @dma_map_dev: device which can be used for DMA mapping
++ * @cur_rx_dma_dev: device which is currently used for RX DMA mapping
++ * @cur_tx_dma_dev: device which is currently used for TX DMA mapping
+  * @queued: whether this controller is providing an internal message queue
+  * @kworker: pointer to thread struct for message pump
+  * @pump_messages: work struct for scheduling work to the message pump
+@@ -610,6 +612,8 @@ struct spi_controller {
+ 					   struct spi_device *spi,
+ 					   struct spi_transfer *xfer);
+ 	struct device *dma_map_dev;
++	struct device *cur_rx_dma_dev;
++	struct device *cur_tx_dma_dev;
+ 
+ 	/*
+ 	 * These hooks are for drivers that want to use the generic
 -- 
 2.34.1
 
