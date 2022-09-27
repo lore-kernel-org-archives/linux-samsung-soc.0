@@ -2,162 +2,94 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 548DAC54EE9
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Sep 2022 14:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5DCCC07E9D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Sep 2022 22:05:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232494AbiI0OkA (ORCPT
+        id S229577AbiI0WFL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Sep 2022 10:40:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53044 "EHLO
+        Tue, 27 Sep 2022 18:05:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232521AbiI0Ojb (ORCPT
+        with ESMTP id S229512AbiI0WFK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Sep 2022 10:39:31 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B66605FDC6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Sep 2022 07:35:23 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id b24so11133335ljk.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Sep 2022 07:35:23 -0700 (PDT)
+        Tue, 27 Sep 2022 18:05:10 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7113D2D44;
+        Tue, 27 Sep 2022 15:05:09 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id q35-20020a17090a752600b002038d8a68fbso69355pjk.0;
+        Tue, 27 Sep 2022 15:05:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=/clpfezaOe8mLPrQfl3pX+kpaqNYyTiLhiE5Y1A/Axg=;
-        b=ZyxJ0VAXz3Yx6wVEKSkMktMdGFJ+xOEWNqSzclwgt627nnfNxbSWBkdUOdDVZIdPeO
-         ztKr1AfIi1u6h4wPXg0FlTTwg/AM2jMJONWfS9196v7E7IgYRPzJ/YrgMBsmiV4AGi9E
-         BZtY7qdtZg80u0PwB1t3FI+gH9HiiKMDR+3fhvMlpQyVAM74KbmRPelfIgKkO5/eRmIe
-         WQf37Y2jfiKxOBPKiXsa/rTdHymfI3YNyXBi8U3BLwu6w0/Q9bF0gsmUdr9B01p8PSGW
-         sbBayxucHNKPWzlzFqQi0sB/QK0yX49GQwHuULeeybmD+opaRa0BiJ7ZQ7WIosw7tFch
-         UDSQ==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=PnX3CTK8Zi/GFiq6cOApXc7JemEFXP3BVlCstRnzeVE=;
+        b=UZxCiPMdneRhR1zMpsq6m+Za1l+DjCwmsa12S2HstAjJJAGw0wrjYRm6sZUCylDLIH
+         UvAFcV2u+J688aF9AGJ+0kW5aIEUsSle4gI/HkDu/kMb5MzDgY5/60DaiwA85D9zdc+F
+         T7m95eI7arF9MJmNOS9Bw4bsvqe37h6uL2cdh+8pXT5B92x6OIjhMrEo+OzKhIE7sb0x
+         hKl5fGG65VTblomdsVxvixTTuOYrwewaYz7pTo/M+t8XpBxKRxKoI416/bNoiVlzvy1X
+         R40QyK4+S17bdq7ZI8A6ao2YkDEg3RHGmlWbQ/4Al+kNh2iBGd/ADI2OL5lpFMJcinEV
+         Clhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=/clpfezaOe8mLPrQfl3pX+kpaqNYyTiLhiE5Y1A/Axg=;
-        b=L7NtLewhyQSZB7/uFFlNhshQjoFAo7mrFgBWx4/JLn9qeWGTVpD4Sp0oK5M0zX98U3
-         A8YXRiqVU5JyLo+Ao5G54xEvuQohy26emhOnLbhnQHZu36bvCI3GvwzLP4/Sgug21Fr1
-         +uwxu/IF/u1CltKOB2CxSQOO6pk3F1aXNL6+r/MW9yksD8y6P9wY8cZOlsYfJ1ZCY/Jg
-         omYNpUFOHvzLr0ZXusVn88uO2Su8vb8yJHuZS3+6DruUizOhY8rTCS1Zo49NSqCqMCwC
-         fT7B9vDQpLHh5i0LhGbfgPWz1La0uKpfqbSJTC18/CXjMbFpi8lDnQ/ssEq7Pio6I8qf
-         DbjA==
-X-Gm-Message-State: ACrzQf1W5wU2beB9FqfCybusXe85JduF4DYfFfOk5vdrP5ZO2Ql0QN/a
-        ZxTI2IBcF62/BOfZuU0seB0dfQ==
-X-Google-Smtp-Source: AMsMyM6PT4U1pTFDQtF2QivAJie+RqkxW7ZZSiD2PM7A3oNR4iAzYYKKhCpfzt7mx7GPKsQjtnSovA==
-X-Received: by 2002:a05:651c:23a1:b0:26d:9eb6:7b60 with SMTP id bk33-20020a05651c23a100b0026d9eb67b60mr3329748ljb.208.1664289321468;
-        Tue, 27 Sep 2022 07:35:21 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id k4-20020a05651239c400b0048b143c09c2sm178450lfu.259.2022.09.27.07.35.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Sep 2022 07:35:20 -0700 (PDT)
-Message-ID: <5e269e1a-8819-a326-90e0-a020cb2c0d73@linaro.org>
-Date:   Tue, 27 Sep 2022 17:35:19 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v5 00/30] Rework the trip points creation
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        rui.zhang@intel.com, Raju Rangoju <rajur@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Peter Kaestle <peter@piie.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=PnX3CTK8Zi/GFiq6cOApXc7JemEFXP3BVlCstRnzeVE=;
+        b=GgLPR623TA5SurJ6t1N9GMoHrjsBUA7bdN7jrNLrcNKgSKhZG6ywvYJWGsyKCVMt8V
+         9yd9H7LObSVVJ5KJroJavciG6II7dszPuMsRL7i0g8MEEDuPXE9pkLI01FqAbnP+b+GF
+         ox3prhyyq+glgFHUK6Ms9dMbn0wfAQsJCS4iG99bnmwhbYp4f7xe6wMJxYx3ftaRI8HS
+         OfeBFSrRQ5MO39bidiroqO88i7RD+mCL+NkONpAkWYWUxsDO3RihB18j1pX+G4XlTljC
+         d8MyZXmOXZJNfRr8c7MF2eBIMbqPk/aCHZ5R0tru0vh6zfHvGnYWS5JoUZsKl/xAiq5O
+         IrRw==
+X-Gm-Message-State: ACrzQf0o7qcFFhexPC1segjIc/9Upo4rW8OUVKqg4wvKGzKgbEvV5O/N
+        Qsl7w++B+uuExA9KlHA098c=
+X-Google-Smtp-Source: AMsMyM6Qey9ZeFIp1MguvDe3X+YReqLE0XvCk637reYX3ZwJhK/u/om/ItckfnCalVVon+Z4AfAKHQ==
+X-Received: by 2002:a17:902:d512:b0:178:6946:a2aa with SMTP id b18-20020a170902d51200b001786946a2aamr29503248plg.116.1664316309002;
+        Tue, 27 Sep 2022 15:05:09 -0700 (PDT)
+Received: from dtor-ws.mtv.corp.google.com ([2620:15c:9d:2:9739:ab49:3830:2cbb])
+        by smtp.gmail.com with ESMTPSA id e9-20020a17090301c900b001782398648dsm2051220plh.8.2022.09.27.15.05.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Sep 2022 15:05:08 -0700 (PDT)
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Antoine Tenart <atenart@kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Alan Stern <stern@rowland.harvard.edu>, linux-usb@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org
-References: <20220927143239.376737-1-daniel.lezcano@linaro.org>
-Content-Language: en-GB
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20220927143239.376737-1-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ARM: dts: exynos: fix polarity of VBUS GPIO
+Date:   Tue, 27 Sep 2022 15:05:03 -0700
+Message-Id: <20220927220504.3744878-1-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.38.0.rc1.362.ged0d419d3c-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Daniel,
+EHCI Oxynos (drivers/usb/host/ehci-exynos.c) drives VBUS GPIO high when
+trying to power up the bus, therefore the GPIO in DTS must be marked as
+"active high". This will be important when EHCI driver is converted to
+gpiod API that respects declared polarities.
 
-On 27/09/2022 17:32, Daniel Lezcano wrote:
+Fixes: 4e8991def565 ("ARM: dts: exynos: Enable AX88760 USB hub on Origen board")
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ arch/arm/boot/dts/exynos4412-origen.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[skipped]
-
->   drivers/net/ethernet/chelsio/cxgb4/cxgb4.h    |   2 -
->   .../ethernet/chelsio/cxgb4/cxgb4_thermal.c    |  41 +----
->   drivers/platform/x86/acerhdf.c                |  73 +++-----
->   drivers/thermal/armada_thermal.c              |  39 ++---
->   drivers/thermal/broadcom/bcm2835_thermal.c    |   8 +-
->   drivers/thermal/da9062-thermal.c              |  52 +-----
->   drivers/thermal/gov_bang_bang.c               |  39 +++--
->   drivers/thermal/gov_fair_share.c              |  18 +-
->   drivers/thermal/gov_power_allocator.c         |  51 +++---
->   drivers/thermal/gov_step_wise.c               |  22 ++-
->   drivers/thermal/hisi_thermal.c                |  11 +-
->   drivers/thermal/imx_thermal.c                 |  72 +++-----
->   .../int340x_thermal/int340x_thermal_zone.c    |  33 ++--
->   .../int340x_thermal/int340x_thermal_zone.h    |   4 +-
->   .../processor_thermal_device.c                |  10 +-
->   drivers/thermal/intel/x86_pkg_temp_thermal.c  | 120 +++++++------
->   drivers/thermal/qcom/qcom-spmi-temp-alarm.c   |  39 ++---
->   drivers/thermal/rcar_gen3_thermal.c           |   2 +-
->   drivers/thermal/rcar_thermal.c                |  53 +-----
->   drivers/thermal/samsung/exynos_tmu.c          |  57 +++----
->   drivers/thermal/st/st_thermal.c               |  47 +----
->   drivers/thermal/tegra/soctherm.c              |  33 ++--
->   drivers/thermal/tegra/tegra30-tsensor.c       |  17 +-
->   drivers/thermal/thermal_core.c                | 161 +++++++++++++++---
->   drivers/thermal/thermal_core.h                |  24 +--
->   drivers/thermal/thermal_helpers.c             |  28 +--
->   drivers/thermal/thermal_netlink.c             |  21 +--
->   drivers/thermal/thermal_of.c                  | 116 -------------
->   drivers/thermal/thermal_sysfs.c               | 133 +++++----------
->   drivers/thermal/ti-soc-thermal/ti-thermal.h   |  15 --
->   drivers/thermal/uniphier_thermal.c            |  27 ++-
->   include/linux/thermal.h                       |  10 ++
->   32 files changed, 559 insertions(+), 819 deletions(-)
-
-
-Could you please cc mailing lists on all patches? It's really hard to 
-determine whether qcom changes are correct without seeing other patches.
-
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index 6db09dba07ff..a3905e27b9cd 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -95,7 +95,7 @@ &exynos_usbphy {
+ };
+ 
+ &ehci {
+-	samsung,vbus-gpio = <&gpx3 5 1>;
++	samsung,vbus-gpio = <&gpx3 5 GPIO_ACTIVE_HIGH>;
+ 	status = "okay";
+ 	phys = <&exynos_usbphy 2>, <&exynos_usbphy 3>;
+ 	phy-names = "hsic0", "hsic1";
 -- 
-With best wishes
-Dmitry
+2.38.0.rc1.362.ged0d419d3c-goog
 
