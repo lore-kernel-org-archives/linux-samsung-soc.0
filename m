@@ -2,119 +2,90 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7193C07E9D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Sep 2022 22:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A33D7C32771
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Sep 2022 06:56:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229885AbiI0WFR (ORCPT
+        id S232792AbiI1G4z (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Sep 2022 18:05:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46590 "EHLO
+        Wed, 28 Sep 2022 02:56:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbiI0WFO (ORCPT
+        with ESMTP id S232841AbiI1G43 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Sep 2022 18:05:14 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 056FEDCCF8;
-        Tue, 27 Sep 2022 15:05:12 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id b5so10590307pgb.6;
-        Tue, 27 Sep 2022 15:05:12 -0700 (PDT)
+        Wed, 28 Sep 2022 02:56:29 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02BE172ECE
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Sep 2022 23:55:56 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id l12so13293383ljg.9
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Sep 2022 23:55:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=sSNiRI+ap5x7MQu5aicCdFhgVcBXQnxVbZJ3Z+sJpp8=;
-        b=OOyC2BrocNE0X+rCeeu5h8pK/QD9DXH43+jMmNO5mvsOZ1mxwh/D5n0xieeWhMZMnJ
-         s4nHeJeglfR0/5RU++bvcwYzn6G4IrgSYGOpSs/8vrzWLfC3QhiAjd8d5J0IHFGG72+b
-         jh1EWUQL8qtdxipQcm7saWcg8ckvv4bqxrIgzZDkfiq8H4zxtRZrSJceGlfjpfmA45LF
-         bphWnbtWxfEZXZTatXhOlRTEL4QYDsUTf8Gwpq1uwtwfnsxGgy5PoXKCGaHpmKQiWk6F
-         nwcdWVgZ+JBOENToCG2htL6cs8qi4PaCHV83K/lr5Ni/I/jWFAjJyQKg/VYsy92EPMVP
-         12DA==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=8dV1Lr5j9/OPnh12zVCM9dCbFD5hUKaMv3VVQaPrqGc=;
+        b=NQxyvXzYmP2752zf1x8HQKEVSqQFUsOk+AsT/8LG9Nkh5cn3yn9K2xCwOPGccIZMWd
+         +asRcgUw7eYxwwDDp1h2zVy/wimHFYKLW9d989JI3MqwRfyphF3miqSk7wEyqeus//q+
+         yCengcFi5fWEvXYdwbzpcTnViuQRu4+m4MEOcBw6Al8XXyx0Gyp2xkzJp8osxPhivdpi
+         O8rELK78z/1rxty3TRSSxcF0W2e8hu6eS4S9whyHNd4XqCXzTXUaXWIPn5IUMEOafpZ1
+         lKXkEjO0rtDkOhbVzswZizsH6QVZMFpFeEclfI0193oiviA/t/iH6ZRNdZdXs14toFXU
+         h4YQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=sSNiRI+ap5x7MQu5aicCdFhgVcBXQnxVbZJ3Z+sJpp8=;
-        b=z6vpU3MJXDmkqcXoMazgM0SNlJzrVz8bSRedtA+jmdCIc3VCXVqdFQ3uA55qnVFQrX
-         quc7T+Xlz+364BbiBUaGjUQ3KEDoD/YzVeg4FSkxWfUwgsXI11RoVWFxxDqY13S05bMj
-         PgOi5FJDmEZHaxGcUI2WduTOebexg4AzRdTX7rCbkHcSYtPEXnePhoxDCctd6R/t+luX
-         d63MBA7b8A5eFYQsbGlZ0wxhRxX4KkYq3dni75VteFmNdnkvjO7+RzkqDyfE0jEKFicu
-         JXO0F8CZYHb/L3WtwebILctHwRHi2RnnQqGuEeFBWSvG7skMokymccG2UTxJ8yUbrtW/
-         1ylA==
-X-Gm-Message-State: ACrzQf0yAlrpGIun9+0RSxiV4s//Xd0OT9gDq2LXHdqivh2QZZNDnHSl
-        MH9Rmolarxhkl4S4OKK1IyE=
-X-Google-Smtp-Source: AMsMyM7B+45kOzKa6I+J8lHdpYg6f15aeiEZITup3tLWRn8nUeSzydKNeCzYrlQc6OG9pm1jFIonVw==
-X-Received: by 2002:a63:1521:0:b0:43c:9566:7a6a with SMTP id v33-20020a631521000000b0043c95667a6amr15583244pgl.339.1664316311492;
-        Tue, 27 Sep 2022 15:05:11 -0700 (PDT)
-Received: from dtor-ws.mtv.corp.google.com ([2620:15c:9d:2:9739:ab49:3830:2cbb])
-        by smtp.gmail.com with ESMTPSA id e9-20020a17090301c900b001782398648dsm2051220plh.8.2022.09.27.15.05.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Sep 2022 15:05:10 -0700 (PDT)
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=8dV1Lr5j9/OPnh12zVCM9dCbFD5hUKaMv3VVQaPrqGc=;
+        b=m6ssoSUQ0Bk+qjjg0MST0a/CwnlD4lwYK/8rZF33vVCOSGdSil26q93CstTEow/xF8
+         00912dyPyGQ2Y6fKt4p9cVwxwup275dU1+Q4YZXHFwdDGQB2aP8HH9Qw6pA8AAMaJOxB
+         vXaNUQNpBEphUQLcv8rR63YWQLeJ9okrMZsSlV+yA12KAtPhPRZouQq1kyuCXCwGQ95A
+         kQTj+s4a3KyOEWx/OaNFyyXD09GiYCcDKBuwycVuOifsDpBmgN2max7bdL3pHUYCR5sv
+         dyCeuPzCgR9uVEuUKBn5HzWM2tJY8/ZtMz0HV8cfPKMbH9RmtaXBtDdd2ChOWhT4oIuB
+         OmnQ==
+X-Gm-Message-State: ACrzQf2LHFQzuw9PjYR7ixJiFIdPf+JAh92ZuJUmMs6lYblMbuaEnW09
+        MChyeyzN/M3CFGsDDltWrgKozw==
+X-Google-Smtp-Source: AMsMyM7fqCy+IkpiTlqpYoBS9gGXydQEN9RwE7fldf5qQAlM0rbyvNmANzSC++zPrsNcB2fElq9P8A==
+X-Received: by 2002:a2e:9848:0:b0:26c:49b1:9cf0 with SMTP id e8-20020a2e9848000000b0026c49b19cf0mr10647881ljj.385.1664348154144;
+        Tue, 27 Sep 2022 23:55:54 -0700 (PDT)
+Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id n13-20020a05651203ed00b004978e51b691sm387869lfq.266.2022.09.27.23.55.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Sep 2022 23:55:53 -0700 (PDT)
+Message-ID: <0a4c346f-52fc-1cde-e6d6-84b7bd0e1090@linaro.org>
+Date:   Wed, 28 Sep 2022 08:55:53 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH 2/2] usb: host: ehci-exynos: switch to using gpiod API
+Content-Language: en-US
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Alan Stern <stern@rowland.harvard.edu>, linux-usb@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] usb: host: ehci-exynos: switch to using gpiod API
-Date:   Tue, 27 Sep 2022 15:05:04 -0700
-Message-Id: <20220927220504.3744878-2-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.38.0.rc1.362.ged0d419d3c-goog
-In-Reply-To: <20220927220504.3744878-1-dmitry.torokhov@gmail.com>
 References: <20220927220504.3744878-1-dmitry.torokhov@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <20220927220504.3744878-2-dmitry.torokhov@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220927220504.3744878-2-dmitry.torokhov@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patch switches the driver from using legacy gpio API to the newer
-gpiod API.
+On 28/09/2022 00:05, Dmitry Torokhov wrote:
+> This patch switches the driver from using legacy gpio API to the newer
+> gpiod API.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/usb/host/ehci-exynos.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+Greg,
+I'll take the DTS change via Samsung SoC tree.
 
-diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-index c8e152c2e0ce..a333231616f4 100644
---- a/drivers/usb/host/ehci-exynos.c
-+++ b/drivers/usb/host/ehci-exynos.c
-@@ -13,7 +13,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of.h>
--#include <linux/of_gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/usb.h>
-@@ -131,20 +131,13 @@ static void exynos_ehci_phy_disable(struct device *dev)
- 
- static void exynos_setup_vbus_gpio(struct device *dev)
- {
-+	struct gpio_desc *gpio;
- 	int err;
--	int gpio;
- 
--	if (!dev->of_node)
--		return;
--
--	gpio = of_get_named_gpio(dev->of_node, "samsung,vbus-gpio", 0);
--	if (!gpio_is_valid(gpio))
--		return;
--
--	err = devm_gpio_request_one(dev, gpio, GPIOF_OUT_INIT_HIGH,
--				    "ehci_vbus_gpio");
-+	gpio = devm_gpiod_get_optional(dev, "samsung,vbus", GPIOD_OUT_HIGH);
-+	err = PTR_ERR_OR_ZERO(gpio);
- 	if (err)
--		dev_err(dev, "can't request ehci vbus gpio %d", gpio);
-+		dev_err(dev, "can't request ehci vbus gpio: %d\n", err);
- }
- 
- static int exynos_ehci_probe(struct platform_device *pdev)
--- 
-2.38.0.rc1.362.ged0d419d3c-goog
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
