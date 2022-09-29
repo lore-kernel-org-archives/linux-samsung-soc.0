@@ -2,122 +2,129 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF127C32771
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Sep 2022 01:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7862FC6FA82
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Sep 2022 07:31:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233645AbiI2BQH (ORCPT
+        id S235219AbiI2HbR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Sep 2022 21:16:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50720 "EHLO
+        Thu, 29 Sep 2022 03:31:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233045AbiI2BQG (ORCPT
+        with ESMTP id S234950AbiI2HbQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Sep 2022 21:16:06 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4499B1138E5;
-        Wed, 28 Sep 2022 18:16:05 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id n7so4417180plp.1;
-        Wed, 28 Sep 2022 18:16:05 -0700 (PDT)
+        Thu, 29 Sep 2022 03:31:16 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40A0812387A
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Sep 2022 00:31:13 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id u18so954873lfo.8
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Sep 2022 00:31:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=P6xn5k2w04qcw40pGqvk2hfkeCe3OpcAGkUOVnCrECg=;
-        b=Mdix1ez2UFJ0v4X3ERTqjEVLBAX9bje7HCmdZdqxkh5iAyyTeZvi3aAqNO/fiNSp7I
-         Z/lntDcF6QR+G68aq3MgndSDp+JFIaYFgi8V8DKBTSkBIVFvIaMpX0ABhRkpnGtjawbm
-         JGF/8CEIRT28F7knuwnzS3c0SxMMU0YkJmMDKME7+yDrYO8rx2RAa3kEwMjNw4tP9Pnf
-         7Uzld5hjUSfayZEz4ZNOZowzPYJ2SqyyjJB+gxysKLzwA9b5Bypd/9wV8g20vpq9hBDW
-         eMsBEynGINXNkOt6ExbYa0Y3WjBmAs1BnpYL23BLxmc+GZ4g3IY8nleJPMRg8TGtJjLR
-         a8EA==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=d2EazhJPJSbwMcP0nRzwyGojAz7jhGIxDxpFS+S8wS4=;
+        b=du0lWC60PB/jENlb0ba14brLNTgO/3DRWot41R5k3uTVz+24nP0HL0BjGYCMm95mr5
+         BNPOsJXPrBecasKO/4qlBapwV9Vk1MORFh/AI+5khaDupzZXiCRMLYlaPQmhPIs0fHC5
+         61a0SgFNd1bo75he6Oc53j8W4ssb2A1Xoerac/pU59704OyLHhAtMVxwnAmXul6rBN7/
+         dkDvQgvbCQvydmJigpKdMTvayu4WJ4qDzSy/jkoHCdjfNX7fCJ0lpySU5GjsxY1W5WRg
+         gPyi7UY8h0W+7uV9sa6V8XnVoTYDEBTwTchp9qibd2MzuQY1/sTmJIvsj0wjrl7NExbu
+         JHAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=P6xn5k2w04qcw40pGqvk2hfkeCe3OpcAGkUOVnCrECg=;
-        b=h2huqJpZY6z6sHPgJmPWycGS3rVxSiC8Zor/+OKI0XhwIbEgZKC412ZUYRC0RCf+N5
-         ubWPbwlDp5OKA7RqLDM3ofYg6rfqtq1Qs7akHNUqttn55jMXHTzTzEtUzI+ayPxJwAx7
-         TRhzRf2D4ulopUS068S3r7uMDlkjTcEBthE8/++EtsXbfP0NK5m4tVCzhVbYPpKBpOhf
-         ECQr8HoKj7gUEbPCutwA1sNeqgfKsYdxTXCyjIvs7pfFv35W1qRLQuCGyCYl/poGmNhl
-         XpPHt5CRGt7fUIhqCOCjjboMT4ce+yf5cD/d6Q9c92l9HlkGI7zT92BytbT3E1zgBuaL
-         T7Aw==
-X-Gm-Message-State: ACrzQf1OZsgp+ediO2WbnjXkrM3IYU/1hmU7lakhlxiBvpkJ4ws5Chon
-        TNDrAtcwYIqAsc6Ab9aOrNYFfXy/IcM=
-X-Google-Smtp-Source: AMsMyM5ChV5LYfzLI0YM2SoghglQe4b1wxlFtJR8tcjNmOWHl+jSTjBmhN/5o3xp/JHVkrc6T/BaUw==
-X-Received: by 2002:a17:902:a511:b0:178:9702:7199 with SMTP id s17-20020a170902a51100b0017897027199mr779310plq.155.1664414164652;
-        Wed, 28 Sep 2022 18:16:04 -0700 (PDT)
-Received: from dtor-ws.mtv.corp.google.com ([2620:15c:9d:2:637c:7f23:f348:a9e6])
-        by smtp.gmail.com with ESMTPSA id y16-20020aa78f30000000b00540a3252191sm4737655pfr.28.2022.09.28.18.16.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Sep 2022 18:16:04 -0700 (PDT)
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc:     Krzysztof Opasiak <k.opasiak@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Andy Gross <agross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] dt-bindings: net: nfc: s3fwrn5: fix polarity of "enable" line of NFC chip
-Date:   Wed, 28 Sep 2022 18:15:57 -0700
-Message-Id: <20220929011557.4165216-3-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.38.0.rc1.362.ged0d419d3c-goog
-In-Reply-To: <20220929011557.4165216-1-dmitry.torokhov@gmail.com>
-References: <20220929011557.4165216-1-dmitry.torokhov@gmail.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=d2EazhJPJSbwMcP0nRzwyGojAz7jhGIxDxpFS+S8wS4=;
+        b=MIPhhY9WD9wOVIwygnQfBmWlDG/BlXz4DWLLThK3qiYZDxGeNqY8/xDvoZE6NCzwqr
+         5HjuCDxaM1hwiRodm4XI+SZLCFUYO5XTDHJR4tq/JC85OvfD2ct14HCj6+jcx7IFkepw
+         e5bFBZwroVobo6OP7kgKI830Jxh/0FdRNigbIT/C6qyYU8CTBOViyZFN0CES2AswT2x6
+         vNWOMAWNjR0x4Qs7b95dKSMOVbWSHu37Qbi4iVGUodONb4y7TVtaEKs+mgaAuLQm9Lte
+         Z8QmrNiK+FcHFC7A0VVMIuSTZ220a7Wwd8f7O04wG31MpFd2J5UnQqg8Ik1BVxdV6ZMS
+         ggbw==
+X-Gm-Message-State: ACrzQf02iU28u3ApwvtI015u9qpcuBbDNoMo1lP7vkn7xFn4D9yddpKD
+        g18aW5lARKuT3IZVMaKhPnJBag==
+X-Google-Smtp-Source: AMsMyM5CKgW4S6Mj6aaX7feZSKj0JYhQYbjagNlBJnXfen43EhgyNrhEeSF02sHPuLu5XZa8/PUkvQ==
+X-Received: by 2002:a19:6b01:0:b0:499:b6fb:fcf2 with SMTP id d1-20020a196b01000000b00499b6fbfcf2mr753900lfa.622.1664436671624;
+        Thu, 29 Sep 2022 00:31:11 -0700 (PDT)
+Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id d22-20020a196b16000000b00497ac35ae1esm702592lfa.85.2022.09.29.00.31.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Sep 2022 00:31:11 -0700 (PDT)
+Message-ID: <1ddfd9c5-7986-3ff7-bcf8-409bc1250076@linaro.org>
+Date:   Thu, 29 Sep 2022 09:31:09 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH v7 09/29] thermal/drivers/exynos: Replace
+ of_thermal_is_trip_valid() by thermal_zone_get_trip()
+Content-Language: en-US
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        rui.zhang@intel.com, Raju Rangoju <rajur@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Peter Kaestle <peter@piie.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Antoine Tenart <atenart@kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Dmitry Osipenko <digetx@gmail.com>, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-omap@vger.kernel.org
+References: <20220928210059.891387-1-daniel.lezcano@linaro.org>
+ <20220928210059.891387-10-daniel.lezcano@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220928210059.891387-10-daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-According to s3fwrn5 driver code the "enable" GPIO line is driven "high"
-when chip is not in use (mode is S3FWRN5_MODE_COLD), and is driven "low"
-when chip is in use.
+On 28/09/2022 23:00, Daniel Lezcano wrote:
+> The thermal_zone_get_trip() does the same check as
+> of_thermal_is_trip_valid(). Replace the call to
+> of_thermal_is_trip_valid() by thermal_zone_get_trip().
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-s3fwrn5_phy_power_ctrl():
+I think I acked it...
 
-	...
-	gpio_set_value(phy->gpio_en, 1);
-	...
-	if (mode != S3FWRN5_MODE_COLD) {
-		msleep(S3FWRN5_EN_WAIT_TIME);
-		gpio_set_value(phy->gpio_en, 0);
-		msleep(S3FWRN5_EN_WAIT_TIME);
-	}
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Therefore the line described by "en-gpios" property should be annotated
-as "active low".
-
-The wakeup gpio appears to have correct polarity (active high).
-
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- .../devicetree/bindings/net/nfc/samsung,s3fwrn5.yaml          | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/net/nfc/samsung,s3fwrn5.yaml b/Documentation/devicetree/bindings/net/nfc/samsung,s3fwrn5.yaml
-index 64995cbb0f97..78e3c13f1acb 100644
---- a/Documentation/devicetree/bindings/net/nfc/samsung,s3fwrn5.yaml
-+++ b/Documentation/devicetree/bindings/net/nfc/samsung,s3fwrn5.yaml
-@@ -81,7 +81,7 @@ examples:
-             interrupt-parent = <&gpa1>;
-             interrupts = <3 IRQ_TYPE_EDGE_RISING>;
- 
--            en-gpios = <&gpf1 4 GPIO_ACTIVE_HIGH>;
-+            en-gpios = <&gpf1 4 GPIO_ACTIVE_LOW>;
-             wake-gpios = <&gpj0 2 GPIO_ACTIVE_HIGH>;
- 
-             clocks = <&rpmcc 20>;
-@@ -93,7 +93,7 @@ examples:
-         nfc {
-             compatible = "samsung,s3fwrn82";
- 
--            en-gpios = <&gpio 20 GPIO_ACTIVE_HIGH>;
-+            en-gpios = <&gpio 20 GPIO_ACTIVE_LOW>;
-             wake-gpios = <&gpio 16 GPIO_ACTIVE_HIGH>;
- 
-         };
--- 
-2.38.0.rc1.362.ged0d419d3c-goog
+Best regards,
+Krzysztof
 
