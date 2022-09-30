@@ -2,144 +2,89 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6F5C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Sep 2022 12:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21709C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Sep 2022 12:25:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230019AbiI3ML3 (ORCPT
+        id S231670AbiI3MZU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 30 Sep 2022 08:11:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55538 "EHLO
+        Fri, 30 Sep 2022 08:25:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231669AbiI3MLO (ORCPT
+        with ESMTP id S231441AbiI3MZJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 30 Sep 2022 08:11:14 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 08CFAB5159;
-        Fri, 30 Sep 2022 05:10:51 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A8FA1474;
-        Fri, 30 Sep 2022 05:10:57 -0700 (PDT)
-Received: from [10.57.65.170] (unknown [10.57.65.170])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9328B3F73B;
-        Fri, 30 Sep 2022 05:10:48 -0700 (PDT)
-Message-ID: <461a5187-fc7a-b7f6-84da-0e947f764a0a@arm.com>
-Date:   Fri, 30 Sep 2022 13:10:28 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH v2 2/4] spi: Fix cache corruption due to DMA/PIO overlap
-Content-Language: en-GB
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        broonie@kernel.org, krzysztof.kozlowski@linaro.org,
-        andi@etezian.org, Christoph Hellwig <hch@lst.de>
-Cc:     kernel@axis.com, alim.akhtar@samsung.com,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Fri, 30 Sep 2022 08:25:09 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C86BC20BD8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Sep 2022 05:25:07 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id i26so6593353lfp.11
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Sep 2022 05:25:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=njbWtD08ViSccnQ66ue7s1hY8BgSMKUfwf3StI6pfZQ=;
+        b=qKNmQxnFH8bG4C61TzRUUFnmbtU7nuUiN8cOygFVZUui/21GTVsjyK5UTyMP9Qq9/d
+         dQgAZbueTYbN+5GV5sv2yjn0iqFKwQnZISXK/mgps27L5XuUOkrarxTvWIOtc69bXEFE
+         MLeHg56BmO4aBAbvd+2OESIwwZKE0m5ZLv9zilns25+7BRNaD53ZGa15TtfnHiEwPaJt
+         uFe2H8yLnnhnEUNKbjCJyNrJeEqG5EnR5gBK6hqyuHi9XbD6QGZdbDWdJKzfPLb5eq1z
+         co8GsuCWIagqCI7xrlRBY37GCR/RDPn4450FWgZ2OZabuwEWcwlHbMkuZZmAMyNLlRut
+         1aRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=njbWtD08ViSccnQ66ue7s1hY8BgSMKUfwf3StI6pfZQ=;
+        b=5bzJkHFjbdZ4AhlmkPiULcZcR+oSl2KW4WvpRgvuUUTdmVc7KH9DGL+HbK2lv+B8Bd
+         XEvZzZg3GDgS5Xfgd6aKoekqkHuSbU1H5mX1rURhUoK56xeJ284P5uWVUQv4m60hwB2W
+         v/DU+L4xdQj2MNRV91SOwL9JGuKdJ0kIoIP9Bk0De+FejlM4p6x/ludJvyCRsFbR2M6n
+         jP8EDZnYKJlzjJMx1ozX4Um9Qnb4r+qYMZWj8sdgeR/JdYi6z8ls/SkJQ/EI/jD91BHP
+         fX5XPyVWHvUCLCZXEh8d2JRQM+kozsvsjA+/VCbYLEXfriEsmn240ctc6elqzH6wfaf/
+         oyDw==
+X-Gm-Message-State: ACrzQf2IK6HoTtSYhPWCYhgJ0gpWjNUaNCMJxfnHpjKnsyfwsZdRt7tp
+        z7Wjfek0egngBuGyqP/8WjjyHA==
+X-Google-Smtp-Source: AMsMyM4fPRKZsl6+dn1tqcCBJgqnDC/nLU7itisMB6n6xQaJb7w+9dbGVQ/2hIynUoFV0Wurk+kw/g==
+X-Received: by 2002:ac2:5462:0:b0:49b:8aee:3535 with SMTP id e2-20020ac25462000000b0049b8aee3535mr3078001lfn.410.1664540705955;
+        Fri, 30 Sep 2022 05:25:05 -0700 (PDT)
+Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id i12-20020a056512318c00b004a031805c8bsm282968lfe.106.2022.09.30.05.25.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Sep 2022 05:25:05 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-References: <20220927112117.77599-1-vincent.whitchurch@axis.com>
- <CGME20220927112359eucas1p15bee651dfbe727701ad732f6ce9a7f13@eucas1p1.samsung.com>
- <20220927112117.77599-3-vincent.whitchurch@axis.com>
- <a4be6670-832a-ffac-4d68-e4a079eb2eed@samsung.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <a4be6670-832a-ffac-4d68-e4a079eb2eed@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: (subset) [PATCH 1/2] ARM: dts: exynos: fix polarity of VBUS GPIO
+Date:   Fri, 30 Sep 2022 14:25:02 +0200
+Message-Id: <166454069282.276470.5690165135266592824.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220927220504.3744878-1-dmitry.torokhov@gmail.com>
+References: <20220927220504.3744878-1-dmitry.torokhov@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2022-09-30 12:20, Marek Szyprowski wrote:
-> Hi,
+On Tue, 27 Sep 2022 15:05:03 -0700, Dmitry Torokhov wrote:
+> EHCI Oxynos (drivers/usb/host/ehci-exynos.c) drives VBUS GPIO high when
+> trying to power up the bus, therefore the GPIO in DTS must be marked as
+> "active high". This will be important when EHCI driver is converted to
+> gpiod API that respects declared polarities.
 > 
-> CCed: Christoph and Robin, as the issue is partially dma-mapping related.
 > 
-> On 27.09.2022 13:21, Vincent Whitchurch wrote:
->> The SPI core DMA mapping support performs cache management once for the
->> entire message and not between transfers, and this leads to cache
->> corruption if a message has two or more RX transfers with both
->> transfers targeting the same cache line, and the controller driver
->> decides to handle one using DMA and the other using PIO (for example,
->> because one is much larger than the other).
->>
->> Fix it by syncing before/after the actual transfers.  This also means
->> that we can skip the sync during the map/unmap of the message.
->>
->> Fixes: 99adef310f68 ("spi: Provide core support for DMA mapping transfers")
->> Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
->> ---
-> 
-> This patch landed in linux next-20220929 as commit 0c17ba73c08f ("spi:
-> Fix cache corruption due to DMA/PIO overlap"). Unfortunately it causes
-> kernel oops on one of my test systems:
-> 
-> 8<--- cut here ---
-> Unable to handle kernel NULL pointer dereference at virtual address 0000000c
-> [0000000c] *pgd=00000000
-> Internal error: Oops: 5 [#1] PREEMPT SMP ARM
-> Modules linked in: cmac bnep btsdio hci_uart btbcm s5p_mfc btintel
-> brcmfmac bluetooth videobuf2_dma_contig videobuf2_memops videobuf2_v4l2
-> videobuf2_common videodev cfg80211 mc ecdh_generic ecc brcmutil
-> CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted
-> 6.0.0-rc7-next-20220929-dirty #12903
-> Hardware name: Samsung Exynos (Flattened Device Tree)
-> Workqueue: events ax88796c_work
-> PC is at dma_direct_sync_sg_for_device+0x24/0xb8
-> LR is at spi_transfer_one_message+0x4c4/0xabc
-> pc : [<c01cbcf0>]    lr : [<c0739fcc>]    psr: 20000013
-> ...
-> Process kworker/0:1 (pid: 12, stack limit = 0xca429928)
-> Stack: (0xe0071d38 to 0xe0072000)
-> ...
->    dma_direct_sync_sg_for_device from spi_transfer_one_message+0x4c4/0xabc
->    spi_transfer_one_message from __spi_pump_transfer_message+0x300/0x770
->    __spi_pump_transfer_message from __spi_sync+0x304/0x3f4
->    __spi_sync from spi_sync+0x28/0x40
->    spi_sync from axspi_read_rxq+0x98/0xc8
->    axspi_read_rxq from ax88796c_work+0x7a8/0xf6c
->    ax88796c_work from process_one_work+0x288/0x774
->    process_one_work from worker_thread+0x44/0x504
->    worker_thread from kthread+0xf0/0x124
->    kthread from ret_from_fork+0x14/0x2c
-> Exception stack(0xe0071fb0 to 0xe0071ff8)
-> ...
-> ---[ end trace 0000000000000000 ]---
-> 
-> This happens because sg_free_table() doesn't clear table->orig_nents nor
-> table->nents. If the given spi xfer object is reused without dma-mapped
-> buffer, then a NULL pointer de-reference happens at table->sgl
-> spi_dma_sync_for_device()/spi_dma_sync_for_cpu(). A possible fix would
-> be to zero table->orig_nents in spi_unmap_buf_attrs(). I will send a
-> patch for this soon.
-> 
-> However, I think that clearing table->orig_nents and table->nents should
-> be added to __sg_free_table() in lib/scatterlist.c to avoid this kind of
-> issue in the future. This however will be a significant change that
-> might break code somewhere, if it relies on the nents/orig_nents value
-> after calling sg_free_table(). Christoph, Robin - what is your opinion?
 
-Yes, that makes sense to me: the table->nents etc. fields logically 
-describe the list that table->sgl points to, so when it sets that to 
-NULL it seems right to also update the corresponding fields accordingly. 
-I don't see much good reason for code to poking into an sg_table after 
-it's been freed, other that to reinitialise it with sg_alloc_table() 
-which would overwrite those fields anyway, so I can't imagine it's a 
-particularly risky change.
+Applied, thanks!
 
-That said, maybe this is something that's better to catch than to paper 
-over? Arguably the real bug here is that spi_unmap_buf() and the new 
-sync functions should use the same "{tx,rx}_buf != NULL" condition that 
-spi_map_buf() used for the DMA mapping decision in the first place.
+[1/2] ARM: dts: exynos: fix polarity of VBUS GPIO
+      https://git.kernel.org/krzk/linux/c/a08137bd1e0a7ce951dce9ce4a83e39d379b6e1b
 
-Thanks,
-Robin.
-
-> 
-> 
->>    drivers/spi/spi.c | 109 +++++++++++++++++++++++++++++++++++++---------
->>    1 file changed, 88 insertions(+), 21 deletions(-)
->>
->> ...
-> 
-> Best regards
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
