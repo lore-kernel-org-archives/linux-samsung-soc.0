@@ -2,146 +2,196 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1187C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Sep 2022 07:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2398C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Sep 2022 11:30:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230488AbiI3HIE (ORCPT
+        id S231477AbiI3LaQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 30 Sep 2022 03:08:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41596 "EHLO
+        Fri, 30 Sep 2022 07:30:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229548AbiI3HIC (ORCPT
+        with ESMTP id S230417AbiI3L3c (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 30 Sep 2022 03:08:02 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF0F11D9816
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Sep 2022 00:08:01 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id a8so5475337lff.13
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Sep 2022 00:08:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=nLJnMnuF27KpA54oCyazXvMEh65rDHKWB2qGdOWup6o=;
-        b=dfmkwZ8TCwiafjYtCW45hVGIkW2t/An31iW6b/oglbbyqZvQMwrwR/8bPQlpeym3Bv
-         91HDEHYPHjHUIosK8WztZ2XhFuf0uqhiZnh0ESybq3ZvoVtB+E7TuZU9wfLz9QlUWjTy
-         GxpPMJQLbt7UmB+hmcobwJa/b1eXEwK3PniXzWw11LZJr889iYz+AS7j1LMQew2d1FPr
-         s7C7yP/6FLG1jw24IATvrNEJQfXwZJvzOl02lqa/MGnMLbs1zsgAjI4iVqQJhiAezQ/+
-         K1mbgyQKEfLcVwXVqX1b3jLHTOTe1BVn0orLFv6SpLhJbR19ahWo4IM+tH9YU1qLSGcT
-         Q5hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=nLJnMnuF27KpA54oCyazXvMEh65rDHKWB2qGdOWup6o=;
-        b=4eV3yzDHRA1fH9JNsUnaNXby1Z+jqlH7WDcmPGJ+u2+vymFUZ9YFWvPS1qfk15goX9
-         LC/3pzOA2mZTV1ufn9BEGCWqHqodehobswzH12fgIiNo7mgdl7+p+mduCqSZttqt5oQ+
-         I1ExG2AQYYUUnWS/xHQfiAPTZ3buu9ECFuR2B7DiTSsVJQNOitgA9Pqs8wiT6P2d0gh0
-         PyEdJCs1lmH4lglfrokj1jylDmNaMyfIXORjbqIETO6c2da4wtKql9SmW3Ot2vZ7cQQc
-         nuSJ3gETOUKmKvXhiwmETX0+1agvJ4PLJ5vkKQXrzqFk9OAcO8RTqqNDvJOYtr3MXv7m
-         Qyuw==
-X-Gm-Message-State: ACrzQf3GX2h/r6RT4Ez6lXvshOyFZ8tLbMrCV0g/KhdEWIflUzsNfp3g
-        brmzYm0gPYGeg9K1Oe7Hqm9DUg==
-X-Google-Smtp-Source: AMsMyM6TmE2GOXzon3ucipybgwTivKMpek15bxf0HQkuASIYDcfMTXgavt/SZx50tvXv0SOklI0UPA==
-X-Received: by 2002:a05:6512:3e4:b0:497:a649:6627 with SMTP id n4-20020a05651203e400b00497a6496627mr3116789lfq.326.1664521679980;
-        Fri, 30 Sep 2022 00:07:59 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id k15-20020a05651239cf00b00499b19f23e8sm195644lfu.279.2022.09.30.00.07.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Sep 2022 00:07:59 -0700 (PDT)
-Message-ID: <9d65aa4f-3db9-c7e1-f41c-41db8877372e@linaro.org>
-Date:   Fri, 30 Sep 2022 09:07:58 +0200
+        Fri, 30 Sep 2022 07:29:32 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A8E2476F3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Sep 2022 04:20:10 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220930112007euoutp0124ef1c5c708bea8a68a56d4f16f81964~Zn2hWqRpL1621316213euoutp01X
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Sep 2022 11:20:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220930112007euoutp0124ef1c5c708bea8a68a56d4f16f81964~Zn2hWqRpL1621316213euoutp01X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1664536807;
+        bh=vCrzo8P9keMm3G0QBwRfrNhW7bhBa+AlT/JTjBLV8bc=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=eTZgaFLXRCj3wgmzYyy15zTWkz0rDMJ0GkKAhrT5MO+ivcICqSa22ySiwupF+fgqa
+         BelV5ggx5nof5XykairrGiuAFKYO1g2dmu/OMXkgTEIMGYCyKWFaIaJ++9jOyDoKKT
+         7KRje1GAixA9j/DWZfzIReUBLFlteWvYgtOSaBAY=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20220930112007eucas1p29eb01e06444090457ecae5c2e810ad76~Zn2hAsJlZ0927009270eucas1p2A;
+        Fri, 30 Sep 2022 11:20:07 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 6D.AD.07817.7E0D6336; Fri, 30
+        Sep 2022 12:20:07 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220930112006eucas1p1fbf679878740649d29e3ba0e86db6893~Zn2ghO9Hs0289202892eucas1p1Z;
+        Fri, 30 Sep 2022 11:20:06 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220930112006eusmtrp1518050882164f7f5d084cce49c795b15~Zn2ggYgfe2486424864eusmtrp1G;
+        Fri, 30 Sep 2022 11:20:06 +0000 (GMT)
+X-AuditID: cbfec7f4-8abff70000011e89-b1-6336d0e78ae4
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 76.05.07473.6E0D6336; Fri, 30
+        Sep 2022 12:20:06 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220930112006eusmtip25d825ce23e88937bd0d9f1a2c9821c30~Zn2f0Qdvt2749327493eusmtip2G;
+        Fri, 30 Sep 2022 11:20:06 +0000 (GMT)
+Message-ID: <a4be6670-832a-ffac-4d68-e4a079eb2eed@samsung.com>
+Date:   Fri, 30 Sep 2022 13:20:06 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH] dt-bindings: samsung: soc: match preferred naming in
- entire compatible
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.13.1
+Subject: Re: [PATCH v2 2/4] spi: Fix cache corruption due to DMA/PIO overlap
 Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        broonie@kernel.org, krzysztof.kozlowski@linaro.org,
+        andi@etezian.org, Christoph Hellwig <hch@lst.de>,
+        Robin Murphy <robin.murphy@arm.com>
+Cc:     kernel@axis.com, alim.akhtar@samsung.com,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220926124757.475471-1-krzysztof.kozlowski@linaro.org>
- <20220929212845.GA2725627-robh@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220929212845.GA2725627-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20220927112117.77599-3-vincent.whitchurch@axis.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIKsWRmVeSWpSXmKPExsWy7djP87rPL5glG/Tu5bd4MG8bm8XiH8+Z
+        LKY+fMJmsXL1USaLBfutLT61qFrsfb2V3WLT42usFpd3zWGzmHF+H5NF48eb7BYHPzxhtTi/
+        zd+B12PNvDWMHtfXBXhcX/KJ2WPTqk42jzvX9rB5bF5S7zH5xnJGj903G9g8+rasYvT4vEku
+        gCuKyyYlNSezLLVI3y6BK+Nf/162gltSFZP7JjM2MO4U62Lk4JAQMJG49Sq+i5GLQ0hgBaPE
+        6pPHWSGcL4wSl1bvgnI+M0ocvnUZyOEE6+jduYcNIrGcUWLzzXlQVR8ZJY5u7mYBqeIVsJNo
+        f/WJEcRmEVCV6Jv7mhUiLihxcuYTsBpRgWSJn10H2EBsYQEfiSuXpzOD2MwC4hK3nsxnAhkq
+        InCYUWLNvzVQid+MEksWSILYbAKGEl1vu8CaOQUcJfpXb2KCqJGXaN46mxmkWUJgOafE477z
+        LBB3u0jsOHKXGcIWlnh1fAs7hC0jcXpyDwtEQzujxILf95kgnAmMEg3PbzFCVFlL3Dn3iw0U
+        ZswCmhLrd+lDhB0lpr16wQgJSj6JG28FIY7gk5i0DeQbkDCvREebEES1msSs4+vg1h68cIl5
+        AqPSLKRwmYXk/1lI3pmFsHcBI8sqRvHU0uLc9NRio7zUcr3ixNzi0rx0veT83E2MwFR3+t/x
+        LzsYl7/6qHeIkYmD8RCjBAezkgiveIFpshBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFethlayUIC
+        6YklqdmpqQWpRTBZJg5OqQamuV/SzrQ0ZTPcc+/nYtzFfXxFKeu16/EuRXP8360/9Kwy79zy
+        gkMvzGY4PHbpfTChlEVoe9TxpYx/Nv1ZFXlJKua0QofJjImX58j/89XOy5h0wuaNypZvfdkO
+        wf5//ddqfVqaaF8cNe22ypJ/KwS2P/YVNFBxWHLo9MOdamtPdEgtcLcs3X/dL+3ZzKq94ubm
+        /lHG995tPzKx8j7rTUmv5dtWaM5le5DS+677Ru/06zmffliEVd88ucXCq/pQF9dC9qg8GdPv
+        83cGPWfQeii8q/9jmfnX9xyO2ZkFhesd1/3MuePisKzwoxSvl/gRsVNNi/IuyURlrfW+yx+T
+        seLl9dC4nwusHEqZRbbPXNmUpMRSnJFoqMVcVJwIAN6XyDzkAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCIsWRmVeSWpSXmKPExsVy+t/xe7rPLpglG/zar23xYN42NovFP54z
+        WUx9+ITNYuXqo0wWC/ZbW3xqUbXY+3oru8Wmx9dYLS7vmsNmMeP8PiaLxo832S0OfnjCanF+
+        m78Dr8eaeWsYPa6vC/C4vuQTs8emVZ1sHneu7WHz2Lyk3mPyjeWMHrtvNrB59G1ZxejxeZNc
+        AFeUnk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsa/
+        /r1sBbekKib3TWZsYNwp1sXIySEhYCLRu3MPWxcjF4eQwFJGidMdU1kgEjISJ6c1sELYwhJ/
+        rnVBFb1nlDi05B0TSIJXwE6i/dUnRhCbRUBVom/ua1aIuKDEyZlPwAaJCiRLvPwzkR3EFhbw
+        kbhyeToziM0sIC5x68l8sDkiAocZJfadLgVZwCzwm1HiwcNpUNtOM0rcOnCfDaSKTcBQoutt
+        F5jNKeAo0b96ExPEJDOJrq1djBC2vETz1tnMExiFZiE5ZBaShbOQtMxC0rKAkWUVo0hqaXFu
+        em6xoV5xYm5xaV66XnJ+7iZGYHRvO/Zz8w7Gea8+6h1iZOJgPMQowcGsJMIrXmCaLMSbklhZ
+        lVqUH19UmpNafIjRFBgaE5mlRJPzgeklryTe0MzA1NDEzNLA1NLMWEmc17OgI1FIID2xJDU7
+        NbUgtQimj4mDU6qBScrymPP2Vb7mK24tOqPl8W/NfzZt5cMnjiyO28DZfH/93vyFLT0Z9//x
+        C9XemWf8+VrqfKbE1zXBAbvc2e/pss/Z/Nl572+z2Dfrbzxrkd77rNR5+nP7vQ7v15zeZKkq
+        IHxp7Y4L75iZE48dvvOBc9ee3A/3Jhsmsm9Q0T+w/7jBI9XLPAzFYXYdYTO/6nsZs7Wv/vR5
+        x+Z58Rc/iqU91PWe4XtDbovSXotAU/7ER/e0+QJ42b/3zXdUYW76lqrcFPSk7/SUdZsfOqzg
+        PP1IodL6jLgDf/y2XqbGRUGfGCY0OlRpSHjnMFf9kG4N1pIL2qlb0Fv8xGtjjkD6x///7EKO
+        cUw+WFCuct8jLrrHVYmlOCPRUIu5qDgRAOh2uel3AwAA
+X-CMS-MailID: 20220930112006eucas1p1fbf679878740649d29e3ba0e86db6893
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220927112359eucas1p15bee651dfbe727701ad732f6ce9a7f13
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220927112359eucas1p15bee651dfbe727701ad732f6ce9a7f13
+References: <20220927112117.77599-1-vincent.whitchurch@axis.com>
+        <CGME20220927112359eucas1p15bee651dfbe727701ad732f6ce9a7f13@eucas1p1.samsung.com>
+        <20220927112117.77599-3-vincent.whitchurch@axis.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 29/09/2022 23:28, Rob Herring wrote:
-> On Mon, Sep 26, 2022 at 02:47:57PM +0200, Krzysztof Kozlowski wrote:
->> Compatible is a string-array, therefore the "select" should look for
->> anything containing Samsung SoC part.  This allows to validate cases
->> like:
->>  - "samsung,exynos5250-gsc", "samsung,exynos5-gsc"
->>  - "samsung,exynos5250-pmu", "syscon"
->>  - "tesla,fsd-mct", "samsung,exynos4210-mct"
->>
->> Since Tesla FSD builts on top of Exynos blocks, add an adidtional
->> pattern for it.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->>  .../bindings/arm/samsung/samsung-soc.yaml     | 26 +++++++++++++++----
->>  1 file changed, 21 insertions(+), 5 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-soc.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-soc.yaml
->> index 653f85997643..bb1fdc205b44 100644
->> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-soc.yaml
->> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-soc.yaml
->> @@ -18,17 +18,33 @@ description: |
->>      samsung,exynos5433-cmu-isp
->>  
->>  select:
->> -  properties:
->> -    compatible:
->> -      pattern: "^samsung,.*(s3c|s5pv|exynos)[0-9a-z]+.*$"
->> +  allOf:
->> +    - properties:
->> +        $nodename:
->> +          pattern: '^[a-z]'
-> 
-> Why do you need this?
+Hi,
 
-Because otherwise I am matching top-level board compatible, which
-obviously do not fall into my patterns.
+CCed: Christoph and Robin, as the issue is partially dma-mapping related.
 
-> 
->> +    - properties:
->> +        compatible:
->> +          contains:
->> +            pattern: "^samsung,.*(s3c|s5pv|exynos)[0-9a-z]+.*$"
->>    required:
->>      - compatible
->>  
->>  properties:
->>    compatible:
->>      oneOf:
->> -      - description: Preferred naming style for compatibles of SoC components
->> -        pattern: "^samsung,(s3c|s5pv|exynos|exynosautov)[0-9]+-.*$"
->> +      - description: Preferred naming style for compatibles of S3C/S5P/Exynos SoC components
->> +        minItems: 1
->> +        items:
->> +          - pattern: "^samsung,(s3c|s5pv|exynos|exynosautov)[0-9]+-.*$"
->> +          - {}
->> +          - {}
-> 
-> Wouldn't just contains be fine here too:
-> 
-> contains:
->   pattern: "^samsung,(s3c|s5pv|exynos|exynosautov)[0-9]+-.*$"
+On 27.09.2022 13:21, Vincent Whitchurch wrote:
+> The SPI core DMA mapping support performs cache management once for the
+> entire message and not between transfers, and this leads to cache
+> corruption if a message has two or more RX transfers with both
+> transfers targeting the same cache line, and the controller driver
+> decides to handle one using DMA and the other using PIO (for example,
+> because one is much larger than the other).
+>
+> Fix it by syncing before/after the actual transfers.  This also means
+> that we can skip the sync during the map/unmap of the message.
+>
+> Fixes: 99adef310f68 ("spi: Provide core support for DMA mapping transfers")
+> Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+> ---
 
-Somehow it does not work like it should - nodes with wrong compatibles
-pass. I tested with fake compatibles like:
-samsung,cmu-exynos5433-cmu-top
-samsung,exynos54xx-cmu-cpif
+This patch landed in linux next-20220929 as commit 0c17ba73c08f ("spi: 
+Fix cache corruption due to DMA/PIO overlap"). Unfortunately it causes 
+kernel oops on one of my test systems:
 
-Best regards,
-Krzysztof
+8<--- cut here ---
+Unable to handle kernel NULL pointer dereference at virtual address 0000000c
+[0000000c] *pgd=00000000
+Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+Modules linked in: cmac bnep btsdio hci_uart btbcm s5p_mfc btintel 
+brcmfmac bluetooth videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 
+videobuf2_common videodev cfg80211 mc ecdh_generic ecc brcmutil
+CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 
+6.0.0-rc7-next-20220929-dirty #12903
+Hardware name: Samsung Exynos (Flattened Device Tree)
+Workqueue: events ax88796c_work
+PC is at dma_direct_sync_sg_for_device+0x24/0xb8
+LR is at spi_transfer_one_message+0x4c4/0xabc
+pc : [<c01cbcf0>]    lr : [<c0739fcc>]    psr: 20000013
+...
+Process kworker/0:1 (pid: 12, stack limit = 0xca429928)
+Stack: (0xe0071d38 to 0xe0072000)
+...
+  dma_direct_sync_sg_for_device from spi_transfer_one_message+0x4c4/0xabc
+  spi_transfer_one_message from __spi_pump_transfer_message+0x300/0x770
+  __spi_pump_transfer_message from __spi_sync+0x304/0x3f4
+  __spi_sync from spi_sync+0x28/0x40
+  spi_sync from axspi_read_rxq+0x98/0xc8
+  axspi_read_rxq from ax88796c_work+0x7a8/0xf6c
+  ax88796c_work from process_one_work+0x288/0x774
+  process_one_work from worker_thread+0x44/0x504
+  worker_thread from kthread+0xf0/0x124
+  kthread from ret_from_fork+0x14/0x2c
+Exception stack(0xe0071fb0 to 0xe0071ff8)
+...
+---[ end trace 0000000000000000 ]---
+
+This happens because sg_free_table() doesn't clear table->orig_nents nor 
+table->nents. If the given spi xfer object is reused without dma-mapped 
+buffer, then a NULL pointer de-reference happens at table->sgl 
+spi_dma_sync_for_device()/spi_dma_sync_for_cpu(). A possible fix would 
+be to zero table->orig_nents in spi_unmap_buf_attrs(). I will send a 
+patch for this soon.
+
+However, I think that clearing table->orig_nents and table->nents should 
+be added to __sg_free_table() in lib/scatterlist.c to avoid this kind of 
+issue in the future. This however will be a significant change that 
+might break code somewhere, if it relies on the nents/orig_nents value 
+after calling sg_free_table(). Christoph, Robin - what is your opinion?
+
+
+>   drivers/spi/spi.c | 109 +++++++++++++++++++++++++++++++++++++---------
+>   1 file changed, 88 insertions(+), 21 deletions(-)
+>
+> ...
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
