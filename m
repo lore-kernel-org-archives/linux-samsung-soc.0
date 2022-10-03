@@ -2,106 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C26C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Oct 2022 13:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1308C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Oct 2022 13:41:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229950AbiJCNbR (ORCPT
+        id S229906AbiJCNlE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 Oct 2022 09:31:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42512 "EHLO
+        Mon, 3 Oct 2022 09:41:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229917AbiJCNbQ (ORCPT
+        with ESMTP id S229609AbiJCNlD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Oct 2022 09:31:16 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F03AB201A8
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Oct 2022 06:31:14 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id i203-20020a1c3bd4000000b003b3df9a5ecbso9059510wma.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Oct 2022 06:31:14 -0700 (PDT)
+        Mon, 3 Oct 2022 09:41:03 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 941E342AC6
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Oct 2022 06:41:02 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id k10so16633852lfm.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Oct 2022 06:41:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date;
-        bh=eWlt+DkLoPtLTcMntu/Est1VYDCDRL0KLk/6rYDuqBk=;
-        b=bIhzD5rd35NW3dhNR/3KSyDQPcg0xBDSFAEfNDCnp00rL+oyEbu+wYpdqqmjl8DGKc
-         1ISoib/HmH5JT7X5F0Xa0J2XMhXTSiboJZCyS1lp1yZlHO2FeEttsVYDirFiNWT8heLl
-         ycHF2pcADOXR35uFV1bUzVqgcSY9xbSjRmnHizoZ8S7EpOqCWRJ2l3FXvBogJBNmZRNV
-         vHA7PlUw7vLmgXgzn9eeA5VAw6eA87gHpd3ZTwtXZQZI+DQLF5G1HRcudYrwtZAVa++U
-         Lva4G5Ys6T8ek0fuYrNLMVQFTPNdu/GGeEl28dj9ESS4/OB/aL4H0rK0pjgGO43+VmKy
-         Pjxw==
+        bh=ggu8Cn7z/zwCPwUOnXaMQWi6G7iy2Vg9dkgcI3YeUzI=;
+        b=blxP0LKU/Yr0QMAPggTAcnD9Uyt1RtfvFtMBCpwQo7QwfEj2AEmc1al7DRvqU8xRxI
+         1/prE7hOQzEbcSpYG3qh/5abjmVbaMr/1Sq2yesVH+iixgVgmC2GxWIjHioHpT845KzW
+         NdXmka3mSvSO4VQGgVmTR708lfqQd8xTe6+rCMLtI6fecHGz7TIZfsWy0iT4o27xN+54
+         gGqoZuC2PIn5fwXsBbfUcNiNBucgmNiXvVbzeGOadsVrFEhW4uQY+L8icwfTeoll2xKN
+         2MUSACr9Njb5J8sg0kVHTdsu25NPOCre49cmV02Xh+Ei0b3H/dHvPPLcANyp/fOZMBfJ
+         ka2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=eWlt+DkLoPtLTcMntu/Est1VYDCDRL0KLk/6rYDuqBk=;
-        b=2UzN19p9neO8UUvBj/uXlNZbOAZM+n2iFNVtglgx1+6A0ULnM4CBc5GzF0umeHJNh8
-         oJvzvabITh3reZT/V0AT7eIrlMuEAxgGAP0ioUjSlM1jlJQZOJ5gCF34ASoLFGPY3fMt
-         yjN3pedM/6bYr0NQlwvSMenWLvCp7Sa0o/xEE49XeI8Pc1igep+z9CdxAxs/guxrcKpl
-         V46VkNDv6WjwBTNscQoBAk1YTIE1r69f9cY9x6YVdC6wTXpJ9QrZGThXbDv+lxopxYfR
-         195HnsTiQEf1v9rp5EyLCp9OE6Qm9eFPNyLAxqOpRnNWbaycRXEB5fU7xSFlyLCIkIbB
-         2MnA==
-X-Gm-Message-State: ACrzQf09btTlk6QiHG6AzHO2nANxwtEchh04OUb8ffZOt666QS+KS7Mp
-        1x74dCWtiGFMA2yoHeO0SYoUCQ==
-X-Google-Smtp-Source: AMsMyM6kLte73S/yXSXb8h8VgVNwltnrK1QawlrE9Aeu31SFFkiNN8SxTrEIso4UKJA3FNEVwvbruA==
-X-Received: by 2002:a05:600c:214e:b0:3b4:709b:b0d with SMTP id v14-20020a05600c214e00b003b4709b0b0dmr7191663wml.4.1664803873458;
-        Mon, 03 Oct 2022 06:31:13 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:f3a:9f5e:1605:a75a? ([2a05:6e02:1041:c10:f3a:9f5e:1605:a75a])
-        by smtp.googlemail.com with ESMTPSA id n2-20020a05600c3b8200b003a540fef440sm16868737wms.1.2022.10.03.06.31.12
+        bh=ggu8Cn7z/zwCPwUOnXaMQWi6G7iy2Vg9dkgcI3YeUzI=;
+        b=14+MBzoj6L4pOdpYRWZipY5xhNf+ovlN0Sga5iikJCRfJKHWKUjXjdCBxN1+UqO7El
+         m+xSiF7jdWBJ64XLIbYbatXR2Bv376dEQBLmosmUETzLcYsknj8PuVsOICiYQWh0/gtE
+         B1QloMKwX1PZVpDNXnCqakf3tQTzp21jFq1KYe5zcwRvvqRbs9iy14Le7eRrhha6sS9T
+         ulpopuM2QNwYgyIsX7MCzJvS42BZF4Mu6qmpyp11vXTWcF6givfdz6cVx1KG0j4FmCMz
+         ECkc7tSB1pPChd/IImO/40mmwacZpD+aTXQzp+WbSko9iT11HMdR5EgEmxYvaD8fDOSG
+         o0zQ==
+X-Gm-Message-State: ACrzQf0XWcK0YC6nA2vNLZ5JHrzTtdMloQ2PNGpV1ybEeYAElnllVncj
+        Dq9PNqTkEq70G/sWklXmpoyYcQ==
+X-Google-Smtp-Source: AMsMyM5BofhxvdkJVT7YGkIkZPZp7FxrpJlq8nWKL6i/DUsDYO9sQ7rPC1ZadZRtIrW/zaxCYQ/oHw==
+X-Received: by 2002:ac2:58ce:0:b0:4a2:2a6b:939b with SMTP id u14-20020ac258ce000000b004a22a6b939bmr3437214lfo.274.1664804460987;
+        Mon, 03 Oct 2022 06:41:00 -0700 (PDT)
+Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id m14-20020a056512114e00b00494706193adsm1463333lfg.208.2022.10.03.06.40.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Oct 2022 06:31:12 -0700 (PDT)
-Message-ID: <96462a60-417d-bf99-1a15-af0cce47aeb6@linaro.org>
-Date:   Mon, 3 Oct 2022 15:31:11 +0200
+        Mon, 03 Oct 2022 06:41:00 -0700 (PDT)
+Message-ID: <905a82ae-c4f6-ea6c-7396-05acfc4fc53e@linaro.org>
+Date:   Mon, 3 Oct 2022 15:40:59 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v8 19/29] thermal/of: Remove of_thermal_get_crit_temp()
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH] thermal/drivers/exynos: Fix NULL pointer dereference when
+ getting the critical temp
 Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>, rafael@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org,
+        m.szyprowski@samsung.com
+Cc:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org
-References: <20221003092602.1323944-1-daniel.lezcano@linaro.org>
- <CGME20221003093207eucas1p1d456288f35eadbc6fcda0bf24b58e678@eucas1p1.samsung.com>
- <20221003092602.1323944-20-daniel.lezcano@linaro.org>
- <4e4d873b-4a40-334a-34e7-defb0fcc4e6b@samsung.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <4e4d873b-4a40-334a-34e7-defb0fcc4e6b@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <4e4d873b-4a40-334a-34e7-defb0fcc4e6b@samsung.com>
+ <20221003132943.1383065-1-daniel.lezcano@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221003132943.1383065-1-daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
-Hi Marek,
-
-On 03/10/2022 14:50, Marek Szyprowski wrote:
-> Hi Daniel,
+On 03/10/2022 15:29, Daniel Lezcano wrote:
+> The driver is assuming the get_critical temperature exists as it is
+> inherited by the thermal of ops. But this one has been removed in
+> favor of the generic one.
 > 
-> On 03.10.2022 11:25, Daniel Lezcano wrote:
->> The generic version of of_thermal_get_crit_temp() can be used. Let's
->> remove this ops which is pointless.
->>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Use the generic thermal_zone_get_crit_temp() function instead
 > 
-> This patch breaks Exynos thermal driver as it introduces a NULL pointer
-> dereference in exynos_tmu_initialize():
-> 
+> Fixes: 13bea86623b ("thermal/of: Remove of_thermal_get_crit_temp(")
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Thanks for testing and reporting, I've just sent a fix for that 
-(unfortunately can not be tested from my side)
+Looks good.
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+Best regards,
+Krzysztof
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
