@@ -2,54 +2,54 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11522C38A05
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82DD6C433FE
 	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Oct 2022 09:30:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229709AbiJCJ3y (ORCPT
+        id S229950AbiJCJ3z (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 Oct 2022 05:29:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57480 "EHLO
+        Mon, 3 Oct 2022 05:29:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231605AbiJCJ2N (ORCPT
+        with ESMTP id S230422AbiJCJ27 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Oct 2022 05:28:13 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A89B474DD
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Oct 2022 02:27:08 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id f11so13134169wrm.6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Oct 2022 02:27:08 -0700 (PDT)
+        Mon, 3 Oct 2022 05:28:59 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0D034B480
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Oct 2022 02:27:16 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id j7so10421798wrr.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Oct 2022 02:27:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=G/YO0fJeKfkSzRqdgqFU3ij4yJaDOnZPHmbsRpXJf/A=;
-        b=m8PGB4q8KhZuJG6l/iwZ3mhCBCZ/XAWQq4HqyyeOlZmJsxaKnDIAvHfvP2B8cpfI+q
-         YM3K1cyu4sxjpaAmCPBWvKeeLa1EEb6ZJka1ItuxPrMZjKEz4ETXfhJIEemzcWj0kgOo
-         2KT0FPG0besMn6ElRxhEiGyzaGdQKW034dZ8e78COMrF9oCqOLlC/zD6Ee37125Ew5kC
-         eHySFW2YcmjFQ7yyql3CyGezaW6mb/IC6/a2GHQLVO/CebhgzwsMSL95rI42xQdFf75t
-         azAlJ7AqS+tkSm4dNRK7WkHqo2z2tdE2lgmIbaWzQFs8BSmD9yfLseDkCDgSJ6HOiUMe
-         /HRg==
+        bh=F16FcP49uIGOwU3Sf8ns9eXu8wz72Lx9ob6lOEA95bs=;
+        b=qbvAgIVN8pR9bpc8A6YQc3Kav1uPnv41gpfo885F25r3l6HQSKcWFyfvq7m1ehbolB
+         sNce3GP551ekqPlESc+yR2kIOzjjbAb6Bk4FXEkYYeJXJqHTeTazDkEHiR+2GggZdS/d
+         dOtxxDaHi/AmQ9lTQ0/zlHm0LKp8CyyD+OqB7qPrIDvA3ZQG7QKn7YxYKNvov/vy6bt5
+         cOELYeP6a42DkznHUr+6HOyBNX98GlOQukvIjLzyqf2wI4Q9/wYKbTDr+Ija++YA4YGj
+         jFu658zDiqvtLM3ZtWLnJDdn8BzawSgixAKaxtAeS07tZn7leK0nGCdn6cZfiGELl/Nt
+         Jl1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=G/YO0fJeKfkSzRqdgqFU3ij4yJaDOnZPHmbsRpXJf/A=;
-        b=X5WSxgkMMy9Hfkn1iYVFDzevQJoqDvj6FQkFlDUiuk4BIUKVGk155nDYrp0koff9S/
-         qXwBlyGspRX20ruvEhubWJ8aSwYhpcT7nRw1om/vc8EG/wCIN63VYywq7Db427MsCVq4
-         w/YQI84q5y3cnvhVJrMG+6X92e8o0vQXYzbCpTl59ZEinRb0/7GwABKga22bwl82jXdp
-         IRXFxtad9V68D00yHC7yNg972yOwImMcp9j6XfnSvx3FqObgWB45W76OhVkKbMSu+1Ui
-         pfCh8pyxamnaS0P45H+G7N80bwj0MTQc0AEWfd0fPdBRdFKAEZGULI8sxNOAfbvTR4tl
-         NpRw==
-X-Gm-Message-State: ACrzQf2CnOPouXG5A5wnzOE1k7QhoIXU1OfYBL2T098OOdlAB7sXdGNH
-        l8PhAYkYuKzXa6M7tVtMRZvdpA==
-X-Google-Smtp-Source: AMsMyM7gsn52CUx5wrjtjzaxGVsGC7FPsBHbuCD2UcRFhsLzFWaoemeyB4TfY2JmOJO152GiXW+J+w==
-X-Received: by 2002:a5d:56c8:0:b0:22e:32c5:d397 with SMTP id m8-20020a5d56c8000000b0022e32c5d397mr4824209wrw.462.1664789227584;
-        Mon, 03 Oct 2022 02:27:07 -0700 (PDT)
+        bh=F16FcP49uIGOwU3Sf8ns9eXu8wz72Lx9ob6lOEA95bs=;
+        b=Jpdf0BBABvw8O6MWSa0pLuF3YAY/q7+RhJIE//bEtiVQckzfHZDlPRv8zWGqNlspRq
+         9oyHWWL4CL9jB+GxUAz+wP7VzYOjx7mx+NefUZK4ynbxjlx+YUPonsTai3DBeIW/oLT2
+         oA/JeaN9VLEFPqFv5m5bpp4uYirelEJ9pCg6adoLKHFY4wihUbaugPUEB93qIfgc8HkE
+         FKyE2TT6jlL9dv2QRSju/n57A06IU5+q8uSb/f5eRD9/Sa82VVKiGOQ/pZyKaPyj9q2a
+         ze+i1P3/PJk7+NuOSX/Pwdd/evsudXPBTypL4xGCOuvRCg8C/e7jvN4/kYNsJkmltgO9
+         nVeg==
+X-Gm-Message-State: ACrzQf0dLkL63W06r/AgtRyWz+3M3EGd6b6TXKg73Ym04CAt2FQpa9hZ
+        XeNKM3t264MEsz1MAyehLvoJ+A==
+X-Google-Smtp-Source: AMsMyM42v1++m+sqnl9+/efHjOt3gInNFIvZdw5SPyeL9T4+zMQPozcXbLbtQNntRLKQruS9moXDqw==
+X-Received: by 2002:a05:6000:1541:b0:22a:3b77:6ef4 with SMTP id 1-20020a056000154100b0022a3b776ef4mr12311061wry.303.1664789214190;
+        Mon, 03 Oct 2022 02:26:54 -0700 (PDT)
 Received: from mai.. ([2a05:6e02:1041:c10:f3a:9f5e:1605:a75a])
-        by smtp.gmail.com with ESMTPSA id ay3-20020a5d6f03000000b0022cc157bf26sm9707520wrb.85.2022.10.03.02.27.04
+        by smtp.gmail.com with ESMTPSA id ay3-20020a5d6f03000000b0022cc157bf26sm9707520wrb.85.2022.10.03.02.26.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Oct 2022 02:27:07 -0700 (PDT)
+        Mon, 03 Oct 2022 02:26:53 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     daniel.lezcano@linaro.org, rafael@kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
@@ -97,9 +97,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-omap@vger.kernel.org
-Subject: [PATCH v8 16/29] thermal/of: Remove of_thermal_get_ntrips()
-Date:   Mon,  3 Oct 2022 11:25:49 +0200
-Message-Id: <20221003092602.1323944-17-daniel.lezcano@linaro.org>
+Subject: [PATCH v8 12/29] thermal/drivers/hisi: Use generic thermal_zone_get_trip() function
+Date:   Mon,  3 Oct 2022 11:25:45 +0200
+Message-Id: <20221003092602.1323944-13-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221003092602.1323944-1-daniel.lezcano@linaro.org>
 References: <20221003092602.1323944-1-daniel.lezcano@linaro.org>
@@ -109,61 +109,48 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The thermal OF code uses the generic trip points to initialize the
-thermal zone. Consequently thermal_zone_get_num_trips() can be used
-and the of_thermal_get_ntrips() is no longer needed. Remove it.
+The thermal framework gives the possibility to register the trip
+points with the thermal zone. When that is done, no get_trip_* ops are
+needed and they can be removed.
+
+Convert ops content logic into generic trip points and register them with the
+thermal zone.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/thermal/thermal_core.h |  5 -----
- drivers/thermal/thermal_of.c   | 16 ----------------
- 2 files changed, 21 deletions(-)
+ drivers/thermal/hisi_thermal.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
-index c5990a3fcf8a..b00fc1913734 100644
---- a/drivers/thermal/thermal_core.h
-+++ b/drivers/thermal/thermal_core.h
-@@ -139,13 +139,8 @@ thermal_cooling_device_stats_update(struct thermal_cooling_device *cdev,
- 
- /* device tree support */
- #ifdef CONFIG_THERMAL_OF
--int of_thermal_get_ntrips(struct thermal_zone_device *);
- bool of_thermal_is_trip_valid(struct thermal_zone_device *, int);
- #else
--static inline int of_thermal_get_ntrips(struct thermal_zone_device *tz)
--{
--	return 0;
--}
- static inline bool of_thermal_is_trip_valid(struct thermal_zone_device *tz,
- 					    int trip)
+diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
+index d6974db7aaf7..45226cab466e 100644
+--- a/drivers/thermal/hisi_thermal.c
++++ b/drivers/thermal/hisi_thermal.c
+@@ -482,7 +482,7 @@ static int hisi_thermal_register_sensor(struct platform_device *pdev,
+ 					struct hisi_thermal_sensor *sensor)
  {
-diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
-index 2f533fc94917..89afa59c4915 100644
---- a/drivers/thermal/thermal_of.c
-+++ b/drivers/thermal/thermal_of.c
-@@ -19,22 +19,6 @@
+ 	int ret, i;
+-	const struct thermal_trip *trip;
++	struct thermal_trip trip;
  
- #include "thermal_core.h"
+ 	sensor->tzd = devm_thermal_of_zone_register(&pdev->dev,
+ 						    sensor->id, sensor,
+@@ -495,11 +495,12 @@ static int hisi_thermal_register_sensor(struct platform_device *pdev,
+ 		return ret;
+ 	}
  
--/**
-- * of_thermal_get_ntrips - function to export number of available trip
-- *			   points.
-- * @tz: pointer to a thermal zone
-- *
-- * This function is a globally visible wrapper to get number of trip points
-- * stored in the local struct __thermal_zone
-- *
-- * Return: number of available trip points, -ENODEV when data not available
-- */
--int of_thermal_get_ntrips(struct thermal_zone_device *tz)
--{
--	return tz->num_trips;
--}
--EXPORT_SYMBOL_GPL(of_thermal_get_ntrips);
--
- /**
-  * of_thermal_is_trip_valid - function to check if trip point is valid
-  *
+-	trip = of_thermal_get_trip_points(sensor->tzd);
++	for (i = 0; i < thermal_zone_get_num_trips(sensor->tzd); i++) {
+ 
+-	for (i = 0; i < of_thermal_get_ntrips(sensor->tzd); i++) {
+-		if (trip[i].type == THERMAL_TRIP_PASSIVE) {
+-			sensor->thres_temp = trip[i].temperature;
++		thermal_zone_get_trip(sensor->tzd, i, &trip);
++
++		if (trip.type == THERMAL_TRIP_PASSIVE) {
++			sensor->thres_temp = trip.temperature;
+ 			break;
+ 		}
+ 	}
 -- 
 2.34.1
 
