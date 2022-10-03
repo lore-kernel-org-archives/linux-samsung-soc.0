@@ -2,113 +2,240 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A64AC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Oct 2022 08:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C0E3C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Oct 2022 08:38:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230378AbiJCIN4 (ORCPT
+        id S231367AbiJCIiY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 Oct 2022 04:13:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54866 "EHLO
+        Mon, 3 Oct 2022 04:38:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231322AbiJCINe (ORCPT
+        with ESMTP id S231393AbiJCIiA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Oct 2022 04:13:34 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 826925A83E
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Oct 2022 00:49:17 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id s2so2801145edd.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Oct 2022 00:49:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=fSpMO7Q7ztMkeSMVfIkdP3tgEsFHMk6ik3iJDreqgKk=;
-        b=xsJPA1MYeKwG/NkMGQFDx6CFF+4DZWrdboI6deotot+SkpJtzdCX5g+dqpXMD7lWwH
-         HQ2mpHglJ7d/doU0mitPoaRH82+8Wf3Wu4H0HQHBHlq1cIFkkQsZ7SG/tc+68IBWnMIo
-         cLOzN3m1ej/ceKYcg8ufIWb84/qDHhAUNn9uCx+mJIZkqP7k315ZVDkvrAqz5hvbE90f
-         lPbQtM76/HXzbg3X4Nz4huiHoBXUIetjdjY9ocFgsngSP074QxwU+Sa3PM8kdFy3oN28
-         40JRdYRMc9Mw6JVyAxXi1+6GkCKOHxJ8o6GX2vk/OkwNEiWqis+GEUwoqpz8tfGoUgb6
-         AJiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=fSpMO7Q7ztMkeSMVfIkdP3tgEsFHMk6ik3iJDreqgKk=;
-        b=vhAyq1ECXkCK7DzZyQom5lTkk/GM82S1lSOKjYuT3u7e+Qxt6U6OXNIm3NoKTNg97E
-         ft53t303qGGw9m4DzDPT2ZFpDcDOB+5SQKhosDTOCBfNw8+g2ftWapKAoXX0UN9p82Kv
-         tD3sG3ZKgoNC4uEdqRf8P6RGzgEjBwWJbvv5VHrWJWdsyZx+pJqMd5cDmhf1QdNgn3ae
-         4aNwV3UuJFIkCBnFC7AEAqNXpjFzxSOaU6oBcg8aIsyAkp4uSVSk6fy9v4P6hZlNP1+f
-         oswa98XKTTekfGVYV4UBVkOELNS3s+Js+2a9x2XiP512xeda2TfsIxkLGSSsjaFqgjnM
-         xhPw==
-X-Gm-Message-State: ACrzQf2EyUkiRiX6x/W6J9vIRRo7PhEgIThXYpZUbOyx3meXnHkZSz3T
-        MS5rtNlBmFfoWUFkK24ThXo1isS7QJTrZA==
-X-Google-Smtp-Source: AMsMyM7NIQMLyCL91JNcZS0wsarQdgReHoMPkFKv0DwxtJZ8MqlxMbVCPH2TtS9XOneObUd3TPmdQg==
-X-Received: by 2002:a05:6512:33c3:b0:4a2:4c1a:a07 with SMTP id d3-20020a05651233c300b004a24c1a0a07mr108251lfg.551.1664782759257;
-        Mon, 03 Oct 2022 00:39:19 -0700 (PDT)
-Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id g22-20020a056512119600b00499f9aaa9desm1347678lfr.179.2022.10.03.00.39.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Oct 2022 00:39:18 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] ARM/arm64: dts: samsung: Late round for v6.1
-Date:   Mon,  3 Oct 2022 09:39:16 +0200
-Message-Id: <20221003073916.12588-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Mon, 3 Oct 2022 04:38:00 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D0CC51415
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Oct 2022 01:11:26 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20221003075318euoutp01dafdb1f5efd0d4d2280169ecd27a14bf~af9y1b1gj0780007800euoutp01D
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Oct 2022 07:53:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20221003075318euoutp01dafdb1f5efd0d4d2280169ecd27a14bf~af9y1b1gj0780007800euoutp01D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1664783598;
+        bh=I/he9TmsAKMs+6KcXTY2tzeyBeXnKW9nIUFsNc5f4X0=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=K/pIdqEyEQQf0AhhhrNMvwita9oXJwVZltB2JvH/gafymffmBotdwBd82MVCJMWyo
+         MZeou4P6U0CTrKsEVKc+EBVIfnjJDpvGPpl90t0r2PjV7lUbpqvcUQFUg3uD2fDTZq
+         5zN+7avcSs4E1yqRKqLjEyIMZ6EqzjfdPfy1uE3E=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20221003075317eucas1p262b3f662139f35a34244e5b462bf152e~af9yI6joZ1623616236eucas1p2H;
+        Mon,  3 Oct 2022 07:53:17 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 98.9C.29727.DE49A336; Mon,  3
+        Oct 2022 08:53:17 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20221003075316eucas1p16e76fab0c0b48f4e717e10f53c996c29~af9xkq3JB2315323153eucas1p1r;
+        Mon,  3 Oct 2022 07:53:16 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20221003075316eusmtrp124fef559090e6ab334c752a69128399e~af9xjlcDW1927519275eusmtrp1Y;
+        Mon,  3 Oct 2022 07:53:16 +0000 (GMT)
+X-AuditID: cbfec7f2-205ff7000001741f-36-633a94ed49a7
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id C4.75.10862.CE49A336; Mon,  3
+        Oct 2022 08:53:16 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20221003075315eusmtip27de4f93995bf64fe67f3f8561f29ca91~af9wd7Pt21067510675eusmtip27;
+        Mon,  3 Oct 2022 07:53:15 +0000 (GMT)
+Message-ID: <8ace62ee-14fa-2536-7750-47d102269c17@samsung.com>
+Date:   Mon, 3 Oct 2022 09:53:14 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.13.1
+Subject: Re: [PATCH v5 06/11] drm: bridge: samsung-dsim: Add atomic_check
+Content-Language: en-US
+To:     Jagan Teki <jagan@amarulasolutions.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Marek Vasut <marex@denx.de>
+Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20220916181731.89764-7-jagan@amarulasolutions.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUxTVxz19n20dCt5lK+bjgE2zjmXoWzM3I3ZadDwtmToEpdt/jHWlCeg
+        fKUFhzrH16bQFSwUIz75SkCBEgQLs8wxooilWgVLFJdS6YDKRgUnH46VLjraNzf+O+f8zrnn
+        d2+uABOfIiWC1IxsRpkhT5OSQvyiyT34xmzlu4rNy9YQZB+1YMjRsICjh6PNJLrz5A8SlZ4d
+        JFCFQ4ujRYOWRL+PWXF0q3CGj0rKG/moSdtLIsPkCIHUyy0Yqhrq5aGZYwUAWSbaMXSj4Dsc
+        DVdeJdE8O74y1U2TyGqex9CS5xa2LYRum3MQdC1rxulKcz9BD2ruk/SP7H0+fab4NEE39Ezz
+        6P67DQRtH+khacf3Azy6szGPvvCom0eXdekBvWAI3+2/V/heEpOWepBRbpJ9KUwxDlv4WZPh
+        ubZ7D4h88DdUAz8BpGKgbrIDVwOhQEw1A/iYrSA4sghg23gL6XWJqQUAT8z4PU80qk/8a2oC
+        cMn2LY8jcwCap574EiJKBsfrS4EX49Q6OOkw4ZweAK+fdvpwMKWAbvVlnz+Q+gC2OO2EF2NU
+        KLQ563yHBlFtBCw7pyG9BPM2aP4ax7wukoqG6lm1L+1HbYOu9psYl46AxtlqzBuAVJkQ6koL
+        MW7xHXDIbsU5HAhdA118DodBi06Dc4HjANZ7HDyOaAHM/80GOFcstA8ur9QJVipeg+2XNnHy
+        dnjzfBfulSHlD3+ZDeCW8IcVF09hnCyCxcfEnHs9ZAfO/1d75fYwpgVSdtXDsKsegF11Hfb/
+        3nqA60Eok6NKT2ZU0RnMV1EqeboqJyM5SpGZbgArf9fydGC+G9S45qL6AE8A+gAUYNIgUeXa
+        dxRiUZL80GFGmZmozEljVH3gJQEuDRWRVRsVYipZns0cYJgsRvl8yhP4SfJ5WabW6S+a6jQ/
+        3S7Z9Wfn6/w1l48eWpJgi0FAVhgcse6R3lV9svwSm+tI2BDz0dYh3QPFnq9VEvf7HcUhrREj
+        6odVpvgjNY8bRIbANc9uJL9aEhtg3H9wZ7CqLnCXQttd7o440GtM0P9KJo6W127e0RpWdLTo
+        RUli/zf8Japn4pN924l43dXjYpP1ZCRIjHOnTTyTnhu7+3O4fio+6k3bXmeNecqMeUpq4voj
+        5T+4a9mwF/JbP9/3dmb608WP97Nxd7QXpM7DRvJDT1zep6lHUrZsyL53zRWZfV0jkhm3bskM
+        uZIEcjuzYi3NBUWmsT0xO8+81bPek8CTXavOI17ueOWzOimuSpFHb8SUKvk/xeIGhioEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFKsWRmVeSWpSXmKPExsVy+t/xe7pvplglG3zaqGNx5/ZpZov7iz+z
+        WLy+vYLN4srX92wWvUvPsVpMuj+BxeLLpglsFi/uXWSxONv0ht2ic+ISdovlE/axWWx6fI3V
+        ouvXSmaLGef3MVm8aWtktDj9aD2zxanGVhaLS1MOs1l8mvUQKDv5JZvFxROfmC2+/z7L7CDm
+        sfbjfVaPebNOsHhMOXGE1eNcz102j52z7rJ7zO6YyeqxeM9LJo8jVxezety5tofN4373cSaP
+        zUvqPTa+28Hk0bdlFaPH501yAXxRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZG
+        pkr6djYpqTmZZalF+nYJehnbL51mL3gsV3Hr+lPWBsY/El2MnBwSAiYSS7r6WbsYuTiEBJYy
+        Svyee5YdIiEjcXJaAyuELSzx51oXG0TRe0aJbRM2MIMkeAXsJB4u6GUEsVkEVCQe3z/GAhEX
+        lDg58wmYLSqQLPHyz0SwocICnhIrn9wBG8osIC5x68l8JpChIgKbWSX2vpsA5jALfGSUuDR5
+        CzvEupOMEufurAJrZxMwlOh6C3IHJwengIPEq/VnmCFGmUl0be1ihLDlJba/ncM8gVFoFpJL
+        ZiHZOAtJyywkLQsYWVYxiqSWFuem5xYb6RUn5haX5qXrJefnbmIEJpptx35u2cG48tVHvUOM
+        TByMhxglOJiVRHinKFomC/GmJFZWpRblxxeV5qQWH2I0BQbHRGYp0eR8YKrLK4k3NDMwNTQx
+        szQwtTQzVhLn9SzoSBQSSE8sSc1OTS1ILYLpY+LglGpgynTbrybboNOyS/K8pvAXFfW5f29L
+        rlUPUHt1erp/TROH1+p7WQURZjG+E1vKxZXOh09P9+Q/O7FrR4Ky9P/5hV7Fy/tYn+Wc7Jiz
+        u1D8stsXgT1Tgq6rmzBfnKMy54T1n/WH3ayrq0+FFUq/9T8tOevchhj2d8l98irFjy7eXj4x
+        f7t117ne7A8LllatEn3Ycj55+ZqYjztXH15nvGfWz4NTnsS0qHY+P/tf1feNXVDTJR72aROt
+        nqwssUpYsvD+9lpZrZhm1y36y5P+y8mtdYw8k/z5kct2uT0rPb9u9gh4fvL2i39rxHcbMmRw
+        hHQsz1npUiHR3B//e0my4+kpk4+52K3aVz3JNyhbnLXaQ4mlOCPRUIu5qDgRAEczlAq9AwAA
+X-CMS-MailID: 20221003075316eucas1p16e76fab0c0b48f4e717e10f53c996c29
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220916181908eucas1p1651aa83d7dc30d68c9e24dda0ef4157b
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220916181908eucas1p1651aa83d7dc30d68c9e24dda0ef4157b
+References: <20220916181731.89764-1-jagan@amarulasolutions.com>
+        <CGME20220916181908eucas1p1651aa83d7dc30d68c9e24dda0ef4157b@eucas1p1.samsung.com>
+        <20220916181731.89764-7-jagan@amarulasolutions.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Hi Jagan,
 
-Late pull of fixes for v6.1 for DTS: both ARM and ARM64.  The pull is based on
-master (not previous pull).  If it is too late, please consider this for fixes
-after v6.1 merge window.
+On 16.09.2022 20:17, Jagan Teki wrote:
+> Look like an explicit fixing up of mode_flags is required for DSIM IP
+> present in i.MX8M Mini/Nano SoCs.
+>
+> At least the LCDIF + DSIM needs active low sync polarities in order
+> to correlate the correct sync flags of the surrounding components in
+> the chain to make sure the whole pipeline can work properly.
+>
+> On the other hand the i.MX 8M Mini Applications Processor Reference Manual,
+> Rev. 3, 11/2020 says.
+> "13.6.3.5.2 RGB interface
+>   Vsync, Hsync, and VDEN are active high signals."
+>
+> No clear evidence about whether it can be documentation issues or
+> something, so added a comment FIXME for this and updated the active low
+> sync polarities using SAMSUNG_DSIM_TYPE_IMX8MM hw_type.
+>
+> v5:
+> * rebase based new bridge changes [mszyprow]
+> * remove DSIM_QUIRK_FIXUP_SYNC_POL
+> * add hw_type check for sync polarities change.
+>
+> v4:
+> * none
+>
+> v3:
+> * add DSIM_QUIRK_FIXUP_SYNC_POL to handle mode_flasg fixup
+>
+> v2:
+> * none
+>
+> v1:
+> * fix mode flags in atomic_check instead of mode_fixup
+>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>   drivers/gpu/drm/bridge/samsung-dsim.c | 26 ++++++++++++++++++++++++++
+>   include/drm/bridge/samsung-dsim.h     |  1 +
+>   2 files changed, 27 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+> index 6d524338d4ff..8abf89326424 100644
+> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> @@ -1315,6 +1315,31 @@ static void samsung_dsim_atomic_post_disable(struct drm_bridge *bridge,
+>   	pm_runtime_put_sync(dsi->dev);
+>   }
+>   
+> +static int samsung_dsim_atomic_check(struct drm_bridge *bridge,
+> +				     struct drm_bridge_state *bridge_state,
+> +				     struct drm_crtc_state *crtc_state,
+> +				     struct drm_connector_state *conn_state)
+> +{
+> +	struct samsung_dsim *dsi = bridge_to_dsi(bridge);
+> +	struct drm_display_mode *adjusted_mode = &crtc_state->adjusted_mode;
+> +
+> +	if (dsi->plat_data->hw_type & SAMSUNG_DSIM_TYPE_IMX8MM) {
 
-Best regards,
-Krzysztof
+Again the above should be 'if (dsi->plat_data->hw_type == 
+SAMSUNG_DSIM_TYPE_IMX8MM)', hw_type is not a bitmask.
 
 
-The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b868:
+> +		/**
+> +		 * FIXME:
+> +		 * At least LCDIF + DSIM needs active low sync,
+> +		 * but i.MX 8M Mini Applications Processor Reference Manual,
+> +		 * Rev. 3, 11/2020 says
+> +		 *
+> +		 * 13.6.3.5.2 RGB interface
+> +		 * Vsync, Hsync, and VDEN are active high signals.
+> +		 */
+> +		adjusted_mode->flags |= (DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC);
+> +		adjusted_mode->flags &= ~(DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   static void samsung_dsim_mode_set(struct drm_bridge *bridge,
+>   				  const struct drm_display_mode *mode,
+>   				  const struct drm_display_mode *adjusted_mode)
+> @@ -1337,6 +1362,7 @@ static const struct drm_bridge_funcs samsung_dsim_bridge_funcs = {
+>   	.atomic_duplicate_state		= drm_atomic_helper_bridge_duplicate_state,
+>   	.atomic_destroy_state		= drm_atomic_helper_bridge_destroy_state,
+>   	.atomic_reset			= drm_atomic_helper_bridge_reset,
+> +	.atomic_check			= samsung_dsim_atomic_check,
+>   	.atomic_pre_enable		= samsung_dsim_atomic_pre_enable,
+>   	.atomic_enable			= samsung_dsim_atomic_enable,
+>   	.atomic_disable			= samsung_dsim_atomic_disable,
+> diff --git a/include/drm/bridge/samsung-dsim.h b/include/drm/bridge/samsung-dsim.h
+> index 57b27d75369e..0c5a905f3de7 100644
+> --- a/include/drm/bridge/samsung-dsim.h
+> +++ b/include/drm/bridge/samsung-dsim.h
+> @@ -27,6 +27,7 @@ enum samsung_dsim_type {
+>   	SAMSUNG_DSIM_TYPE_EXYNOS5410,
+>   	SAMSUNG_DSIM_TYPE_EXYNOS5422,
+>   	SAMSUNG_DSIM_TYPE_EXYNOS5433,
+> +	SAMSUNG_DSIM_TYPE_IMX8MM,
+>   	SAMSUNG_DSIM_TYPE_COUNT,
+>   };
+>   
 
-  Linux 6.0-rc1 (2022-08-14 15:50:18 -0700)
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-dt64-6.1-2
-
-for you to fetch changes up to 17fffac44943a619ec76463655b1ed7fccd8bea7:
-
-  ARM: dts: s5pv210: correct double "pins" in pinmux node (2022-09-30 17:14:24 +0200)
-
-----------------------------------------------------------------
-Samsung DTS ARM and ARM64 changes for v6.1
-
-Late cleanup and fixes for Samsung DTS:
-1. Fix polarity of pins:
-   - enable GPIO of NFC chip in Exynos5433 TM2 boards,
-   - vbus GPIO of EHCI in Exynos4412 Origen board.
-2. Correct name of pin configuration nodes - redundant "pins" in the
-   name (no functional impact).
-
-----------------------------------------------------------------
-Dmitry Torokhov (2):
-      arm64: dts: exynos: fix polarity of "enable" line of NFC chip in TM2
-      ARM: dts: exynos: fix polarity of VBUS GPIO of Origen
-
-Krzysztof Kozlowski (1):
-      ARM: dts: s5pv210: correct double "pins" in pinmux node
-
- arch/arm/boot/dts/exynos4412-origen.dts               | 2 +-
- arch/arm/boot/dts/s5pv210-aries.dtsi                  | 4 ++--
- arch/arm/boot/dts/s5pv210-galaxys.dts                 | 2 +-
- arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
