@@ -2,233 +2,191 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 350ACC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Oct 2022 20:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACEFDC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Oct 2022 06:55:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230456AbiJEUvu (ORCPT
+        id S229633AbiJFGzS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Oct 2022 16:51:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40832 "EHLO
+        Thu, 6 Oct 2022 02:55:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229840AbiJEUvt (ORCPT
+        with ESMTP id S229656AbiJFGzR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Oct 2022 16:51:49 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE81743336
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Oct 2022 13:51:47 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20221005205141euoutp02da6a6fab942a1510d2060ed6df6c2268~bR3-EB-th1007910079euoutp02e
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Oct 2022 20:51:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20221005205141euoutp02da6a6fab942a1510d2060ed6df6c2268~bR3-EB-th1007910079euoutp02e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1665003101;
-        bh=cQNGMtqQFBkTNScPS65gyxAsjUi1UutqGrOCsqr+bVU=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=PpVyc+Gb3lGqLNhOFsN7Kql1dhGmN+ssxUSZ5xNnMHmmq9Qh8OezUBtLYUTrR5J2Y
-         kh7Uc6IEWJ2QWG6fCkfRIO3orPOL++aNK1kXRXnAyODWbAdFkjYtJU6kWiDyP7g3Ja
-         q2QcMzAIqYCLHbxEJC8J346H6t7S3hyWOUKKmQOU=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20221005205140eucas1p27c9a5e5caa30f7a45bb809592c33c79b~bR3_bKVFA0336003360eucas1p2s;
-        Wed,  5 Oct 2022 20:51:40 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id CE.C8.29727.C5EED336; Wed,  5
-        Oct 2022 21:51:40 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20221005205139eucas1p1a83656ce99d30d32568ba2b2f7a5ed09~bR39J4S9n2379023790eucas1p1I;
-        Wed,  5 Oct 2022 20:51:39 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20221005205139eusmtrp152e9a1d9da257f3f7a579d2681ef2c87~bR39IxhlK0757707577eusmtrp1H;
-        Wed,  5 Oct 2022 20:51:39 +0000 (GMT)
-X-AuditID: cbfec7f2-205ff7000001741f-35-633dee5c5cf2
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 1D.CC.07473.B5EED336; Wed,  5
-        Oct 2022 21:51:39 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20221005205138eusmtip149a8b933f7a26f75379a3005138e409f~bR38G8MuW0716607166eusmtip1T;
-        Wed,  5 Oct 2022 20:51:38 +0000 (GMT)
-Message-ID: <df3abb7c-66ae-4495-4a73-c59880a6fdff@samsung.com>
-Date:   Wed, 5 Oct 2022 22:51:37 +0200
+        Thu, 6 Oct 2022 02:55:17 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C62303C0
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Oct 2022 23:55:14 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id a3so1204957wrt.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Oct 2022 23:55:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mpnbl0sOHmjZXpRaPHZuxhEh+P6N/msQTLYNVhfBBe8=;
+        b=MiPZCFMrd8ZJnITo2QNV97U1PS/R+5ZaOpCPg1dg0ozuIl6v8QxOhznFxmMRbJFt61
+         +KQ26aFgOClHddDkzpBN5Ti5bjTzZazFn9IOccCqYNGZm83luL0MAi2ZIMoiLBhbdpI9
+         ErI4nhBYVAiDsh8U0oXUCxVcV8bop7IuJT7Ik70JSybZ18r2+2UEeGXI8zLnhalxuyPK
+         D72/xbL0hdoGvzz5uUDTnekoAkjXs/FrL4Ugud+EDDTaZGiQrY2Xuz1ety4QCzOavUyl
+         +n3MfQtsIn5LI92EpTTgt2DO7DNNtKRNghaJz8p+7n59IVXb/QZmDJ0puWLNYB+9gbop
+         agyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mpnbl0sOHmjZXpRaPHZuxhEh+P6N/msQTLYNVhfBBe8=;
+        b=iEycMPMxKxJXHrZGZ9/RUp3rKVser2oFnIbROwLg6dkq443tftYVFMSfExFlVRbLZf
+         Tvz9gskBtdrSAR+8z2NaCa+WByg7J6y+ZgFxWGrH7iBU4zwf+DD/YPygfB0EhxiMgNW7
+         guBSLuAgI5WZUqHV4HSr3+z+y9gIAXArrM5OdESP/WQcDQXaroA/61C5rEKTI18po2BT
+         8Vt6WDkIvKejlrhgdweKKHDw2hXu/BnWkCAcV2yb760dKBWvylMF8uzzt0uWMGznGrNr
+         yzPFKdD3tcAwLAhBeoDb1xegXUhmaSlajA2m6HWeVDLLTKC7XkImCeKJ9AGnVbCGoASe
+         aFqQ==
+X-Gm-Message-State: ACrzQf3e+vrnQaqnPhsw8TesG/pCkmY3+UV7cz+83c8U6aEnIQXnNrpu
+        BC9Ut5bGj3IZIByIUmlORYI/Bg==
+X-Google-Smtp-Source: AMsMyM4tUv+yoGLPcmLIx0TCLkILd2ZuyZqPgL+k6wTXzf/o8aVrTs7qe5sYTzmE/qACZEBJdXpwZw==
+X-Received: by 2002:a05:6000:806:b0:22a:36df:2663 with SMTP id bt6-20020a056000080600b0022a36df2663mr1873670wrb.423.1665039312765;
+        Wed, 05 Oct 2022 23:55:12 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:86cc:fff3:d44b:9793? ([2a05:6e02:1041:c10:86cc:fff3:d44b:9793])
+        by smtp.googlemail.com with ESMTPSA id a5-20020adfeec5000000b0022e2c38f8basm14459474wrp.14.2022.10.05.23.55.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Oct 2022 23:55:12 -0700 (PDT)
+Message-ID: <97201878-3bb8-eac5-7fac-a690322ac43a@linaro.org>
+Date:   Thu, 6 Oct 2022 08:55:10 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.13.1
-Subject: Re: [PATCH v7 00/10] drm: bridge: Add Samsung MIPI DSIM bridge
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v8 00/29] Rework the trip points creation
 Content-Language: en-US
-To:     Jagan Teki <jagan@amarulasolutions.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Marek Vasut <marex@denx.de>
-Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        rui.zhang@intel.com,
+        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
         NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20221005151309.7278-1-jagan@amarulasolutions.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUxbVRjO6b29LTXt7gqOMxBnGjWKWycO3PED1AS3mxgT/hgjGrGWu65K
-        C7YUhUVlyjaowFpgrLSAuIKUKZ8iICMVWLMWOwrjy43BuvEhDgdIWzM+ks22lyn/nvd5z/M+
-        z/vmcDFhORHBlSszaZVSkiYieHjHpfWhfe8tx0ufdc1EoqnrTgy5zV4c/XXdQqCxf1YIVFTn
-        YqMStw5HvjYdgf68cQVHg1/d4aACfS0H1eusBGqbnWAj7UYDhgxDVha6c/I4QM6ZZgz9dvwE
-        jkbKLhLIY7zl75beJtAVhwdDdzcHsVd3UY2rbjZVbXTgVJnDxqZchdME9YtxmkOZ8ivYlLnn
-        NouyjZvZ1NRED0G5v7GzqJ9qv6Ral7tYVHH7eUB52x5NEiTzXk6l0+RZtGp/wge8oz2jdpBx
-        afdnNvc9Ti6whWpBCBeSsbCjzMoOYCFpAdCnxxnsA3Az75AW8PzYC+Dqz0PYA8F8VT3ONOoB
-        7LP1c5hiFUBLpzM4ik8mwK7GZhDAOPk4NP3u2+J3woGKuaDFw6QUrmt7iQAOJQ9Ds3UsyGNk
-        OJyc+5YVGBpGNrJh8feFRKDAAg6Fa7eCOQgyBmqXtEF1CPkKvHx3jcOo98DOpUosIIBkMQ9a
-        HD9wmOCJsLypFTA4FC7a27f4R6CztBBnBKcArNl0s5hCB2DuwuSW4iU45drw23H9Fk/D5u79
-        DP0a9I1fAwEakgJ4dWknE0IASzrOYgzNh/knhczrJ6HR3vSfbd/wCKYDIuO2wxi3HcC4bR3j
-        /741AD8PwmmNWiGj1TFK+lOxWqJQa5QysTRd0Qb8X9d5z+7pAlWLq+J+wOKCfgC5mCiMrzXF
-        S4X8VEl2Dq1KT1Fp0mh1P4jk4qJwPmGIlgpJmSST/pimM2jVgy6LGxKRy9IkTTz05khouZ4v
-        T98bfWPvM7JQ/ER800fd3qsV00lRyXPzsrHupNbnNwWjr5/7sSCOH9Ygtla16JX3l//oPrZ7
-        8oy2NWUFRZ6dLuKX7jDJOs7UXEgZPyWyDm+UKGL7pvJNvbz3nxrec98Rd9nwd8S+FkdlXdTC
-        kXeSHTkHTYbeQcXpY4b42JA1c1aBJ0WydOHFFz5pn2x5q/qiIHpef3B0fRFZLSmPJYotwwtf
-        v10r/jX1iYHECbBDtlzZ6f3wwNjMgVJyJQ7NHyEGVPriw1kZnuovDrmuhc3KM+Vv4LPZN7uI
-        /pupu2Z1nBxFAl2U/dy7de2Teee+i9Kcrs5rCP98DBPh6qOSmGhMpZb8Cz4EwBspBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJKsWRmVeSWpSXmKPExsVy+t/xu7rR72yTDQ6u5ba4c/s0s8X9xZ9Z
-        LF7fXsFmceXrezaL3qXnWC0m3Z/AYvFl0wQ2ixf3LrJYnG16w27ROXEJu8XyCfvYLDY9vsZq
-        0fVrJbPFjPP7mCzetDUyWpx+tJ7Z4lRjK4vFpSmH2Sw+zXoIlJ38ks3i4olPzBbff59ldhDz
-        WPvxPqvHvFknWDymnDjC6nGu5y6bx85Zd9k9ZnfMZPVYvOclk8eRq4tZPe5c28Pmcb/7OJPH
-        5iX1Hhvf7WDy6NuyitHj8ya5AL4oPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsj
-        UyV9O5uU1JzMstQifbsEvYw9l48zFhyTrDhy/x97A+MR4S5GTg4JAROJp3OXs3QxcnEICSxl
-        lFh8vY0VIiEjcXJaA5QtLPHnWhcbRNF7Roll7w+wgyR4BewkdqxdzwhiswioSMy+/oUVIi4o
-        cXLmExYQW1QgWeLln4lg9cIC7hKL910BizMLiEvcejKfCWSoiMBmVom97yaAOcwCHxklLk3e
-        AtYhJDCJUeLcBTcQm03AUKLrLcgZnBycAvYSZ77/YIeYZCbRtbWLEcKWl9j+dg7zBEahWUgO
-        mYVk4SwkLbOQtCxgZFnFKJJaWpybnltsqFecmFtcmpeul5yfu4kRmGa2Hfu5eQfjvFcf9Q4x
-        MnEwHmKU4GBWEuHtmm2bLMSbklhZlVqUH19UmpNafIjRFBgaE5mlRJPzgYkuryTe0MzA1NDE
-        zNLA1NLMWEmc17OgI1FIID2xJDU7NbUgtQimj4mDU6qB6ciTU9yWCu7PufJqpZcfNVbM3tcY
-        rxCf9H55y/TPHBV7/vS3f3y9s5Xx1ZXzhnu296byyXnZHfk10bTLumrDEvGFNy0s73YalrTv
-        3Gj48Ef6mexr21MXHEma+L9ez7T51Vc20emZiSackRkP9+oyTCph6RYTfajR+r+DedYU3Uuv
-        Xs2a7fjQ5rH8sV8Kt6e5MtcsaT4XzZu9Y8PZ7k0Ga75qli/wiN3xpmbnHpOVKU+15R57yTXf
-        TD/471rp80cb2xfyTDh984DKBo3VXPJvfXN3rPztvT0g68qkqTFvT5dX5y5cWBrPmHWmRE5H
-        +ZnCU7/HSx040r+sMeNxFhIItuCeWtI5w+KdREvfFbem50osxRmJhlrMRcWJAIMkB6e8AwAA
-X-CMS-MailID: 20221005205139eucas1p1a83656ce99d30d32568ba2b2f7a5ed09
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20221005151323eucas1p2c69fc9989b84a9d74d568469ccd81f35
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20221005151323eucas1p2c69fc9989b84a9d74d568469ccd81f35
-References: <CGME20221005151323eucas1p2c69fc9989b84a9d74d568469ccd81f35@eucas1p2.samsung.com>
-        <20221005151309.7278-1-jagan@amarulasolutions.com>
+        Andy Gross <agross@kernel.org>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-omap@vger.kernel.org, rafael@kernel.org
+References: <CGME20221003092704eucas1p2875c1f996dfd60a58f06cf986e02e8eb@eucas1p2.samsung.com>
+ <20221003092602.1323944-1-daniel.lezcano@linaro.org>
+ <8cdd1927-da38-c23e-fa75-384694724b1c@samsung.com>
+ <c3258cb2-9a56-d048-5738-1132331a157d@linaro.org>
+ <851008bf-145d-224c-87a8-cb6ec1e9addb@linaro.org>
+ <207c1979-0da2-b05d-fead-6880ad956b90@samsung.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <207c1979-0da2-b05d-fead-6880ad956b90@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Jagan,
 
-On 05.10.2022 17:12, Jagan Teki wrote:
-> This series supports common bridge support for Samsung MIPI DSIM
-> which is used in Exynos and i.MX8MM SoC's.
->
-> The final bridge supports both the Exynos and i.MX8MM DSI devices.
->
-> Changes for v7:
-> * fix the drm bridge attach chain for exynos drm dsi driver
-> * fix the hw_type checking logic
->
-> Changes for v6:
-> * handle previous bridge for exynos dsi while attaching bridge
->
-> Changes for v5:
-> * bridge changes to support multi-arch
-> * updated and clear commit messages
-> * add hw_type via plat data
-> * removed unneeded quirk
-> * rebased on linux-next
->
-> Changes for v4:
-> * include Inki Dae in MAINTAINERS
-> * remove dsi_driver probe in exynos_drm_drv to support multi-arch build
-> * update init handling to ensure host init done on first cmd transfer
->
-> Changes for v3:
-> * fix the mult-arch build
-> * fix dsi host init
-> * updated commit messages
->
-> Changes for v2:
-> * fix bridge handling
-> * fix dsi host init
-> * correct the commit messages
->
-> Patch 0001: 	Samsung DSIM bridge
->
-> Patch 0002:	PHY optional
->
-> Patch 0003:	OF-graph or Child node lookup
->
-> Patch 0004: 	DSI host initialization
->
-> Patch 0005:	atomic check
->
-> Patch 0006:	PMS_P offset via plat data
->
-> Patch 0007:	atomic_get_input_bus_fmts
->
-> Patch 0008:	input_bus_flags
->
-> Patch 0009:	document fsl,imx8mm-mipi-dsim
->
-> Patch 0010:	add i.MX8MM DSIM support
->
-> Tested in Engicam i.Core MX8M Mini SoM.
+Hi Marek,
 
-This finally doesn't break Exynos DSI. :) Feel free to add:
+On 05/10/2022 15:05, Marek Szyprowski wrote:
+> 
+> On 05.10.2022 14:37, Daniel Lezcano wrote:
+>>
+>> Hi Marek,
+>>
+>> On 03/10/2022 23:18, Daniel Lezcano wrote:
+>>
+>> [ ... ]
+>>
+>>>> I've tested this v8 patchset after fixing the issue with Exynos TMU
+>>>> with
+>>>> https://lore.kernel.org/all/20221003132943.1383065-1-daniel.lezcano@linaro.org/
+>>>>
+>>>> patch and I got the following lockdep warning on all Exynos-based
+>>>> boards:
+>>>>
+>>>>
+>>>> ======================================================
+>>>> WARNING: possible circular locking dependency detected
+>>>> 6.0.0-rc1-00083-ge5c9d117223e #12945 Not tainted
+>>>> ------------------------------------------------------
+>>>> swapper/0/1 is trying to acquire lock:
+>>>> c1ce66b0 (&data->lock#2){+.+.}-{3:3}, at: exynos_get_temp+0x3c/0xc8
+>>>>
+>>>> but task is already holding lock:
+>>>> c2979b94 (&tz->lock){+.+.}-{3:3}, at:
+>>>> thermal_zone_device_update.part.0+0x3c/0x528
+>>>>
+>>>> which lock already depends on the new lock.
+>>>
+>>> I'm wondering if the problem is not already there and related to
+>>> data->lock ...
+>>>
+>>> Doesn't the thermal zone lock already prevent racy access to the data
+>>> structure?
+>>>
+>>> Another question: if the sensor clock is disabled after reading it,
+>>> how does the hardware update the temperature and detect the programed
+>>> threshold is crossed?
+>>
+>> just a gentle ping, as the fix will depend on your answer ;)
+>>
+> Sorry, I've been busy with other stuff. I thought I will fix this once I
+> find a bit of spare time.
 
-Acked-by: Marek Szyprowski
+Ok, that is great if you can find time to fix it up because I've other 
+drivers to convert to the generic thermal trips.
 
-Tested-by: Marek Szyprowski
 
-The next step would be to merge Dave's patchset and remove the hacks 
-added here and there. Otherwise we will end up adding even more hacks soon.
+> IMHO the clock management is a bit over-engineered, as there is little
+> (if any) benefit from such fine grade clock management. That clock is
+> needed only for the AHB related part of the TMU (reading/writing the
+> registers). The IRQ generation and temperature measurement is clocked
+> from so called 'sclk' (special clock).
+> 
+> I also briefly looked at the code and the internal lock doesn't look to
+> be really necessary assuming that the thermal core already serializes
+> all the calls.
 
-> Repo:
-> https://gitlab.com/openedev/kernel/-/commits/imx8mm-dsi-v7
->
-> Any inputs?
-> Jagan.
->
-> Jagan Teki (10):
->    drm: bridge: Add Samsung DSIM bridge driver
->    drm: bridge: samsung-dsim: Lookup OF-graph or Child node devices
->    drm: bridge: samsung-dsim: Mark PHY as optional
->    drm: bridge: samsung-dsim: Handle proper DSI host initialization
->    drm: bridge: samsung-dsim: Add atomic_check
->    drm: bridge: samsung-dsim: Add platform PLL_P (PMS_P) offset
->    drm: bridge: samsung-dsim: Add atomic_get_input_bus_fmts
->    drm: bridge: samsung-dsim: Add input_bus_flags
->    dt-bindings: display: exynos: dsim: Add NXP i.MX8MM support
->    drm: bridge: samsung-dsim: Add i.MX8MM support
->
->   .../bindings/display/exynos/exynos_dsim.txt   |    1 +
->   MAINTAINERS                                   |    9 +
->   drivers/gpu/drm/bridge/Kconfig                |   12 +
->   drivers/gpu/drm/bridge/Makefile               |    1 +
->   drivers/gpu/drm/bridge/samsung-dsim.c         | 1856 +++++++++++++++++
->   drivers/gpu/drm/exynos/Kconfig                |    1 +
->   drivers/gpu/drm/exynos/exynos_drm_dsi.c       | 1766 +---------------
->   include/drm/bridge/samsung-dsim.h             |  115 +
->   8 files changed, 2108 insertions(+), 1653 deletions(-)
->   create mode 100644 drivers/gpu/drm/bridge/samsung-dsim.c
->   create mode 100644 include/drm/bridge/samsung-dsim.h
->
-Best regards
+I looked at the code and I think the driver can be simplified (fixed?) 
+even more.
+
+IIUC, the sensor has multiple trip point interrupts, so if the device 
+tree is describing more trip points than the sensor supports, there is a 
+warning and the number of trip point is capped.
+
+IMO that can be simplified by using two trip point interrupt because the 
+thermal_zone_device_update() will call the set_trips callback with the 
+new boundaries. IOW, the thermal framework sets a new trip point 
+interrupt when one is crossed.
+
+That should result in the simplification of the tmu_control as well as 
+the tmu_probe function. As well as removing the limitation of the number 
+of trip points.
+
+In order to have that correctly working, the 'set_trips' ops must be 
+used to call the tmu_control callback instead of calling it in tmu_probe.
+
+The intialization workflow should be:
+
+probe->...
+  ->thermal_zone_device_register()
+   ->thermal_zone_device_update()
+    ->update_trip_points()
+     ->ops->set_trips()
+       ->tmu_control()
+
+Also, replace the workqueue by a threaded interrupt.
+
+Does it make sense?
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
