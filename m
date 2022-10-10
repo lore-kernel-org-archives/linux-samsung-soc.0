@@ -2,46 +2,46 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F25BC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Oct 2022 20:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 033A7C4167B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Oct 2022 20:15:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229728AbiJJUPa (ORCPT
+        id S229853AbiJJUPr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 10 Oct 2022 16:15:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50442 "EHLO
+        Mon, 10 Oct 2022 16:15:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229699AbiJJUPU (ORCPT
+        with ESMTP id S229696AbiJJUPY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 10 Oct 2022 16:15:20 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D346526A;
-        Mon, 10 Oct 2022 13:15:13 -0700 (PDT)
+        Mon, 10 Oct 2022 16:15:24 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4110D6EF31;
+        Mon, 10 Oct 2022 13:15:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1665432914; x=1696968914;
+  t=1665432918; x=1696968918;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=5aMlx8MjwRboHF89NLa+7LtdxT0Jr0b4GEWJm8cGkaQ=;
-  b=LsncFeUo5wotK0cPs2Rnn/hI2rvC6OYPVKsPENCbtaI74iMUPJ6sxbob
-   xx2tS4RCTTIyo5jJhAf+CzdoQQ/wveA3eVTdHCs/JYvn6wZRcPGFRnOO9
-   fHZRy5V/+aEj6FsoMQl1rXKnnsqzsQzmWixwz3z+EGx4Q1DMkMyVJJGJO
-   EHG7BJT3d5l3o4oxdn/0MdpwQpRVYisZRDK1mBlPppXHkvEKnwsHWNjkY
-   ZtRPA4/OQ8JUbod/rPcw8Wne380YpryQvtITLNlV7IMNBsyxsPjGN++aq
-   ucf/GcwcIzWWtkL+FGZnJp3tIZgvmlQprA5YYt/AEngXVTclbOZBMbvt7
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10496"; a="301936364"
+  bh=CqemTGOdGp4RFKaxsArxDkHX9Dedwc8sdTjVd9O3UKk=;
+  b=iOoYe8XwfxzsBwAifuBosbTjQn2Ivl29GTNEfHDZzXh35TnZRrCWLoCy
+   eWxVzxK0k5TYA1m2pX3qso2o3GpbtKetbP5f/nfx6lVCsL3fYqEnBBdIo
+   Biu5T3JTYFlsRk04CREJs3KS7XSGjzOspHzgJ3JeUu0Wh/c0atWZMssc/
+   FPX3G+kDftIg5ClUkmBSHKItbz0aafANrp1WtCeZTwxCNyG1OTIPvtbde
+   Z0rj/h2ZOO0rHMIqe0yxRUFuR5cOxsDtGZ8y3/q/cREakW/r3HVhwXNyb
+   PZc3hcJeTCfifTLPejnVnkfCYX/6zgGrKRq7lp4R7WuuBV1aQ6AbpkXD+
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10496"; a="291638356"
 X-IronPort-AV: E=Sophos;i="5.95,173,1661842800"; 
-   d="scan'208";a="301936364"
+   d="scan'208";a="291638356"
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2022 13:15:11 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2022 13:15:14 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10496"; a="603862772"
+X-IronPort-AV: E=McAfee;i="6500,9779,10496"; a="603862808"
 X-IronPort-AV: E=Sophos;i="5.95,173,1661842800"; 
-   d="scan'208";a="603862772"
+   d="scan'208";a="603862808"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 10 Oct 2022 13:14:59 -0700
+  by orsmga006.jf.intel.com with ESMTP; 10 Oct 2022 13:15:02 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 8B04A30B; Mon, 10 Oct 2022 23:15:11 +0300 (EEST)
+        id B3C0FD0; Mon, 10 Oct 2022 23:15:11 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Marc Zyngier <maz@kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -133,9 +133,9 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Emil Renner Berthing <kernel@esmil.dk>,
         Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
         Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v2 03/36] media: c8sectpfe: Add missed header(s)
-Date:   Mon, 10 Oct 2022 23:14:19 +0300
-Message-Id: <20221010201453.77401-4-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 05/36] pinctrl: aspeed: Add missed header(s)
+Date:   Mon, 10 Oct 2022 23:14:21 +0300
+Message-Id: <20221010201453.77401-6-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
 References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
@@ -152,35 +152,21 @@ While at it, sort headers alphabetically.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
-index cefe6b7bfdc4..4c5027a0480d 100644
---- a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
-+++ b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
-@@ -24,16 +24,18 @@
- #include <linux/module.h>
- #include <linux/of_gpio.h>
- #include <linux/of_platform.h>
-+#include <linux/pinctrl/consumer.h>
-+#include <linux/pinctrl/pinctrl.h>
- #include <linux/platform_device.h>
--#include <linux/usb.h>
- #include <linux/slab.h>
- #include <linux/time.h>
-+#include <linux/usb.h>
- #include <linux/wait.h>
--#include <linux/pinctrl/pinctrl.h>
+diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+index a30912a92f05..3945612900e6 100644
+--- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
++++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+@@ -5,6 +5,7 @@
  
--#include "c8sectpfe-core.h"
- #include "c8sectpfe-common.h"
-+#include "c8sectpfe-core.h"
- #include "c8sectpfe-debugfs.h"
-+
- #include <media/dmxdev.h>
- #include <media/dvb_demux.h>
- #include <media/dvb_frontend.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/platform_device.h>
++#include <linux/seq_file.h>
+ #include <linux/slab.h>
+ #include <linux/string.h>
+ #include "../core.h"
 -- 
 2.35.1
 
