@@ -2,58 +2,59 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 267CEC4167B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Oct 2022 00:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F36C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Oct 2022 02:56:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229886AbiJKACG (ORCPT
+        id S229847AbiJKC4n (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 10 Oct 2022 20:02:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41722 "EHLO
+        Mon, 10 Oct 2022 22:56:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229699AbiJKACC (ORCPT
+        with ESMTP id S229526AbiJKC4l (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 10 Oct 2022 20:02:02 -0400
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EE4678585;
-        Mon, 10 Oct 2022 17:02:01 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id 67so12017200pfz.12;
-        Mon, 10 Oct 2022 17:02:01 -0700 (PDT)
+        Mon, 10 Oct 2022 22:56:41 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35C76140FD
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Oct 2022 19:56:40 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id x6so11963700pll.11
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Oct 2022 19:56:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HDvDPLCLAPPvF5TVvL+FWbJtEqmbYVODvwDkJg3SqIo=;
-        b=BMj8f33/fyuY4YUgfzIsC8MB079NtlG/lc5y1lSPpCGAsz+jvSYZCTpuRzKVZGf2GY
-         nZi6ZRgOudbzROz6pHhHElsWmoKQQy847SVQHPP6Lzs+V2eA/brEnXLuDstKnq7MW7Ih
-         TzHZfV7XKs3PD0GAaAkJAXCvXBlxf5lB+KS3lhnFICm9Tq4yaQhhQQax921FRXOWW/if
-         /toe/pDvQON4HdgY5CGmbYgif/tTyjDjkjRdKQFAulnURnCwp8NMFdEBa3NYmPI0A+fB
-         fhamlfjudZxMTaB+1mSMxDuObe1ocZe7cQbErJKQBTAEur2a0QkUbRoT5VJEglEdMX1y
-         d2HQ==
+        bh=eY6/yimYvoONiMO8pWSoqGtMa9qBuMUAo/bdP9lOba0=;
+        b=St4FezU9O7eQJTgTbgQ3mlkvzUgcaFOmGoS6fdofTzsS1eKPT2mljImssPXI+Y1Rqc
+         WAtcVBQFwcJWAI1Xn0kmEDfsOWpPTM1rwy9e0/jweWYZhcW3bSRihweGkMgkFrf49L/S
+         ougV8x2YLvsuSHJVWbHPxAjymhZlrdBRSfbPMetPXI3d8528oLanaqszgIjsyWcJxCec
+         RplspHGcXRVrZHhm3YLHBP2MThUZYt1l+u3w6nNEbK/gAalPObii9Y23LTB9h+xo5MZL
+         Q2olX6pqHr7fnJjbkDUcbicgWKLEOHuxY/ZmaY8NhBASe9hAP1FfwULvv+vyB/p7aAJi
+         dcZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HDvDPLCLAPPvF5TVvL+FWbJtEqmbYVODvwDkJg3SqIo=;
-        b=NuI07QtXdjFYbAa1yhmBPqDGF+I+kOJfrpHyTxYbftMqE8a7rvr2AseEQRCVnLOZIl
-         zxNqx28qdEYcDRg9buY5tOp6KfkFH334CHpsDfGSgxswtRg9CBzk8HMGUXvE+26LLOGC
-         Fu6hABTE4MMU7l4OR5hFUE3bgV/urZTATqe4erQQWmIxhRqz3Fxz9xyZfFGXaUUjkAHx
-         s8qVza7KzYSIohxmhW0z4DVrMEr99EXT3zur0OIFMBYLft11KdLmLlbofEXNYARigMt/
-         qkuzpf/yhwC9zXQxTboKroV50fjIwKyrxTlS9VSa0kI/X+MBR4ZfxBxnYf7etvyv/pnG
-         u9DQ==
-X-Gm-Message-State: ACrzQf0IFsQ+hyNaioHQbGQA7RKVXQ/ys6ACwenVUDaI4yLv0ojP6Vc5
-        tpfqQuyOdM2neciYtshI6WQ=
-X-Google-Smtp-Source: AMsMyM7Y6pAnL5W1EJS9G7oSUu8S6FVrr9k2c5r6QKOELR9o0pNGH3yk7s3YJUqb5vMyZxDtzUjxCg==
-X-Received: by 2002:a63:4949:0:b0:442:b733:2fae with SMTP id y9-20020a634949000000b00442b7332faemr18227721pgk.424.1665446520354;
-        Mon, 10 Oct 2022 17:02:00 -0700 (PDT)
-Received: from sol (110-174-58-111.static.tpgi.com.au. [110.174.58.111])
-        by smtp.gmail.com with ESMTPSA id v29-20020aa799dd000000b0056258a3606csm7454081pfi.215.2022.10.10.17.01.29
+        bh=eY6/yimYvoONiMO8pWSoqGtMa9qBuMUAo/bdP9lOba0=;
+        b=vZDZtzXSpF3JwtWKkq/sJOm1tAe7EPjYTbRNH6hECageaQW5/gY1RocYMpodjof9gm
+         RkbSoC8mbGz0E7A8WBa/Hd+GXxmwtTABmUUTGDXTxzaTWQ6G0Fd6uxtI5eGnoSlqmAmA
+         4qFqiOTnUsX5NCgVtugDJCYPvtmLXYSd7+f+OWHX6lpudSNCa/xuCqtZkSdAp7kI4qTj
+         LGiVJbja8V80oFoFxflI+0PHH4TCVKlE1sjJ8/vp55lqd/UR9JErPYubkxrDcbN9KtsD
+         v/KeFGwG/6m4D6P++aaVF8huH1p8YsuSyt/NTOy2QHjW40oDaLuhYSkKTSTlpP2imKBH
+         NWKQ==
+X-Gm-Message-State: ACrzQf3JEJ9HNPkFWj+0CV9oIeykACoOLTflm8eOGNRtytAqlaK+CdaM
+        bD8aggJ/FgnPmd6OR/rPKpWTGg==
+X-Google-Smtp-Source: AMsMyM5hXN0QiS8uqUcGpHD6JFZFALVhwI9j6zQ14TE/WoAuVWWVc4TcEEwMdmsILP6ZiXwLtzx0bQ==
+X-Received: by 2002:a17:90a:ad82:b0:20c:feb2:bceb with SMTP id s2-20020a17090aad8200b0020cfeb2bcebmr15457131pjq.93.1665456999661;
+        Mon, 10 Oct 2022 19:56:39 -0700 (PDT)
+Received: from localhost ([122.172.86.128])
+        by smtp.gmail.com with ESMTPSA id z17-20020aa79911000000b005623df48a39sm7942588pff.13.2022.10.10.19.56.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Oct 2022 17:01:59 -0700 (PDT)
-Date:   Tue, 11 Oct 2022 08:01:27 +0800
-From:   Kent Gibson <warthog618@gmail.com>
+        Mon, 10 Oct 2022 19:56:39 -0700 (PDT)
+Date:   Tue, 11 Oct 2022 08:26:36 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     Marc Zyngier <maz@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kent Gibson <warthog618@gmail.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Billy Tsai <billy_tsai@aspeedtech.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -89,7 +90,7 @@ Cc:     Marc Zyngier <maz@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Patrice Chotard <patrice.chotard@foss.st.com>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
         Manivannan Sadhasivam <mani@kernel.org>,
         Andrew Jeffery <andrew@aj.id.au>,
         Joel Stanley <joel@jms.id.au>,
@@ -140,19 +141,19 @@ Cc:     Marc Zyngier <maz@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
         Emil Renner Berthing <kernel@esmil.dk>,
         Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
         Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v2 02/36] gpiolib: cdev: Add missed header(s)
-Message-ID: <Y0SyVwjDl7NGfTPn@sol>
+Subject: Re: [PATCH v2 22/36] pinctrl: spear: Add missed header(s)
+Message-ID: <20221011025636.glm7wxtg4oo6c2j2@vireshk-i7>
 References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
- <20221010201453.77401-3-andriy.shevchenko@linux.intel.com>
+ <20221010201453.77401-23-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221010201453.77401-3-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20221010201453.77401-23-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 10, 2022 at 11:14:18PM +0300, Andy Shevchenko wrote:
+On 10-10-22, 23:14, Andy Shevchenko wrote:
 > Do not imply that some of the generic headers may be always included.
 > Instead, include explicitly what we are direct user of.
 > 
@@ -160,52 +161,30 @@ On Mon, Oct 10, 2022 at 11:14:18PM +0300, Andy Shevchenko wrote:
 > 
 > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
->  drivers/gpio/gpiolib-cdev.c | 6 ++++--
+>  drivers/pinctrl/spear/pinctrl-spear.c | 6 ++++--
 >  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-> index f8041d4898d1..60a60e2d60c5 100644
-> --- a/drivers/gpio/gpiolib-cdev.c
-> +++ b/drivers/gpio/gpiolib-cdev.c
-> @@ -10,8 +10,9 @@
->  #include <linux/device.h>
->  #include <linux/err.h>
->  #include <linux/file.h>
-> -#include <linux/gpio.h>
->  #include <linux/gpio/driver.h>
-> +#include <linux/gpio.h>
-> +#include <linux/hte.h>
-
-Ok with the hte re-order.
-
-But moving the gpio subsystem header after the gpio/driver is not
-alphabetical ('.' precedes '/') and it read better and made more sense
-to me the way it was.
-
->  #include <linux/interrupt.h>
->  #include <linux/irqreturn.h>
->  #include <linux/kernel.h>
-> @@ -20,11 +21,12 @@
->  #include <linux/mutex.h>
->  #include <linux/pinctrl/consumer.h>
->  #include <linux/poll.h>
+> diff --git a/drivers/pinctrl/spear/pinctrl-spear.c b/drivers/pinctrl/spear/pinctrl-spear.c
+> index e0543c1ad641..18de2e70ea50 100644
+> --- a/drivers/pinctrl/spear/pinctrl-spear.c
+> +++ b/drivers/pinctrl/spear/pinctrl-spear.c
+> @@ -19,11 +19,13 @@
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_gpio.h>
+> +#include <linux/platform_device.h>
 > +#include <linux/seq_file.h>
-
-I wasn't aware that we use anything from seq_file.
-What am I missing?
-
-Cheers,
-Kent.
-
->  #include <linux/spinlock.h>
->  #include <linux/timekeeping.h>
->  #include <linux/uaccess.h>
->  #include <linux/workqueue.h>
-> -#include <linux/hte.h>
+> +#include <linux/slab.h>
 > +
->  #include <uapi/linux/gpio.h>
+>  #include <linux/pinctrl/machine.h>
+>  #include <linux/pinctrl/pinctrl.h>
+>  #include <linux/pinctrl/pinmux.h>
+> -#include <linux/platform_device.h>
+> -#include <linux/slab.h>
 >  
->  #include "gpiolib.h"
-> -- 
-> 2.35.1
-> 
+>  #include "pinctrl-spear.h"
+
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+-- 
+viresh
