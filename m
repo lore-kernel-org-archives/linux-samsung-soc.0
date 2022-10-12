@@ -2,161 +2,327 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52ABCC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Oct 2022 20:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAF7C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Oct 2022 06:42:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229454AbiJKU6e (ORCPT
+        id S229731AbiJLGmq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 Oct 2022 16:58:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57528 "EHLO
+        Wed, 12 Oct 2022 02:42:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbiJKU6d (ORCPT
+        with ESMTP id S229513AbiJLGmp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 Oct 2022 16:58:33 -0400
-Received: from mail-qv1-xf36.google.com (mail-qv1-xf36.google.com [IPv6:2607:f8b0:4864:20::f36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAA1058DEB
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Oct 2022 13:58:31 -0700 (PDT)
-Received: by mail-qv1-xf36.google.com with SMTP id g9so9730995qvo.12
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Oct 2022 13:58:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+mAHY6RXJ0nyPOXmiZe+CE8JvmNJU/Rv6H1VrtQQpaY=;
-        b=YzVPehwVEYa5twQoFeGI45fkEkYXwVmX6VSDI0sLF59itZz8N5lt3HukThIAub9Uoi
-         glaQr5ZUPcuGqfw2a/oa4HBN2ljScw/Z98y50iXxUCiEdBgP+iI9IJJTHgc86J4ZDQMQ
-         HHrJFkORoOrxtskJlxsCq4vkzSowgZdLgtzajS8JQtVwNVi47qEOlmIlkK3uzVrc0WS8
-         2yTJy6sBlmE9wkuaA1BXPCrIWbEdZVSGNQ0OAugke5lBvhZinLvcIjhPk1HfKvezcKhs
-         yk5kp14weVRyUipL/d8iCq/xURXsrJF1gKkSE/e6jsAW+tI0QeFvaz7NPkZ1E2ZRlJk2
-         wBrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+mAHY6RXJ0nyPOXmiZe+CE8JvmNJU/Rv6H1VrtQQpaY=;
-        b=m4U6g1uxZ4aL/Lfk3XGLfCHhwihEbhAVTU7tdYJU2StLAQYpBnZty0fAiqrlWXg9oE
-         BlgSGLRSzYdMQhjUAiCWiT8eTFCuaSq7ddy/5JFqdbmT4XFl7sbRrPB7m5OgPMZ/G+xC
-         LjAcV6+CPr3EMJYW1maDa+6hBi7nkXjCCAU6RRi1/uXqpGfC/JpZpntlHz9fpnixOX/+
-         IOHT7PXrXSW4b2JIIbgr/cbNwLLelOlTLBL5qgWpKoQ5EctuYvXvupoJCVYLSLdxJqb6
-         UeMUoasqaL748r8A7wQlRPVJKnRS1yrKzqcPFvvxwKHGD/Qhht9LUQZG24l0kRzY98z3
-         9GNA==
-X-Gm-Message-State: ACrzQf2+td/1o9B6KLEbaXAPm7vkDSm2nZpwxH3j1nAn3ainevRcsu01
-        z3QSm2p2fNTjgRw35Y4dySwVfQ==
-X-Google-Smtp-Source: AMsMyM5WexhRoKAuqE1aNkWUn9DwGaVN5NqqdcUsKdNKxRxdcaFeCrG0LLK5l0onZLNKntt2qlysKQ==
-X-Received: by 2002:ad4:5ba1:0:b0:4b1:9a15:4766 with SMTP id 1-20020ad45ba1000000b004b19a154766mr20628926qvq.6.1665521910121;
-        Tue, 11 Oct 2022 13:58:30 -0700 (PDT)
-Received: from [192.168.1.57] (cpe-72-225-192-120.nyc.res.rr.com. [72.225.192.120])
-        by smtp.gmail.com with ESMTPSA id r4-20020a05622a034400b00398a7c860c2sm7680696qtw.4.2022.10.11.13.58.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Oct 2022 13:58:29 -0700 (PDT)
-Message-ID: <fa7c6054-7076-299d-ed0f-9e4fc0ffc194@linaro.org>
-Date:   Tue, 11 Oct 2022 16:58:28 -0400
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH V2] arm64: dts: fix drive strength macros as per FSD HW UM
-Content-Language: en-US
-To:     Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        alim.akhtar@samsung.com, chanho61.park@samsung.com,
-        linus.walleij@linaro.org, pankaj.dubey@samsung.com
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <CGME20221011083029epcas5p3cef6047d23d0682a9cb70ba6178067a8@epcas5p3.samsung.com>
- <20221011080359.76220-1-p.rajanbabu@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        Wed, 12 Oct 2022 02:42:45 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47F9EB0B11
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Oct 2022 23:42:39 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20221012064237epoutp04ff1dd178ba4290bacbe43d3fcf664e80~dPzqQ3Hok1017310173epoutp04D
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Oct 2022 06:42:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20221012064237epoutp04ff1dd178ba4290bacbe43d3fcf664e80~dPzqQ3Hok1017310173epoutp04D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1665556958;
+        bh=8cVwXmXPUtciJSlQgw9CsI5rBeJqMyEkQbHeFkErvcs=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=g4TwDf+4T5TR7ZnedB6hxMzxedw5qGk3hGPUeNdgjQWnjm3AVOzjCm+583+ZKuZH0
+         GQCAi55UuMVjNwz3QmHzEN+F91ZK/ARXGOfcmYdFf+ajKM2APzZkbqZsh0Kb58V9nD
+         PSjvMPrIPuhNpyxzef2hVwyV8tOkOXekyb7vbnVY=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20221012064237epcas5p1dcd062d6d9afc4336f3edaebcb4eafc1~dPzpy7iBG0093300933epcas5p16;
+        Wed, 12 Oct 2022 06:42:37 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.175]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4MnNPQ3NLZz4x9Q9; Wed, 12 Oct
+        2022 06:42:34 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        52.63.56352.7D166436; Wed, 12 Oct 2022 15:42:31 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20221012064230epcas5p1467d63d8a89b648bb314197240158e97~dPzjtaGa80093300933epcas5p1v;
+        Wed, 12 Oct 2022 06:42:30 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20221012064230epsmtrp2f9cbd7810440e86fbcc6b1a1317e10e7~dPzjsfhmW0347703477epsmtrp2l;
+        Wed, 12 Oct 2022 06:42:30 +0000 (GMT)
+X-AuditID: b6c32a4b-5f7fe7000001dc20-13-634661d7d057
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D5.12.14392.6D166436; Wed, 12 Oct 2022 15:42:30 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20221012064229epsmtip279f342b32662a6208301072f5118f851~dPziSoCOW1122711227epsmtip2p;
+        Wed, 12 Oct 2022 06:42:29 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Padmanabhan Rajanbabu'" <p.rajanbabu@samsung.com>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <chanho61.park@samsung.com>, <linus.walleij@linaro.org>,
+        <pankaj.dubey@samsung.com>
+Cc:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>
 In-Reply-To: <20221011080359.76220-1-p.rajanbabu@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: RE: [PATCH V2] arm64: dts: fix drive strength macros as per FSD HW
+ UM
+Date:   Wed, 12 Oct 2022 12:12:28 +0530
+Message-ID: <013501d8de05$cd3190d0$6794b270$@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJk+NbFvx0TMYgY6fQwuHFOTIN1bQKGmwhfrN3kvFA=
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJJsWRmVeSWpSXmKPExsWy7bCmhu71RLdkg5+HBSwu79e2mH/kHKtF
+        34uHzBZT/ixnsri8aw6bxYzz+5gsjm4Mtli09Qu7ReveI+wOnB6bVnWyedy5tofNo2/LKkaP
+        z5vkAliism0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJz
+        gC5RUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgY
+        mQIVJmRnvHu/hqXgvmXFww2z2RoYrxp0MXJySAiYSBxZPI+ti5GLQ0hgN6NE04l1rBDOJ0aJ
+        RyseMoFUCQl8Y5T4v60QpuNo6zwWiKK9jBJv776F6njJKDHz3h52kCo2AV2JHYvbwOaKCJxl
+        lFh54jwLSIJZIF3i5OzZYEWcArYSW9fNBVshLBAg8XvOeiCbg4NFQFWiZ4o/iMkrYCnx9RgX
+        SAWvgKDEyZlPoKZoSyxb+JoZ4iAFiZ9Pl7GClIsIWEns77OFKBGXeHn0CDvIBRICMzkkLq5+
+        yg5R7yKxY94PqF5hiVfHt0DFpSQ+v9vLBjJHQsBDYtEfKYhwhsTb5esZIWx7iQNX5rCAlDAL
+        aEqs36UPsYpPovf3EyaITl6JjjYhiGpVieZ3V1kgbGmJid3drDDD/00MnMCoOAvJW7OQvDUL
+        yf2zEHYtYGRZxSiZWlCcm55abFpgnJdaDo/r5PzcTYzgNKrlvYPx0YMPeocYmTgYDzFKcDAr
+        ifC6hLglC/GmJFZWpRblxxeV5qQWH2I0BYb0RGYp0eR8YCLPK4k3NLE0MDEzMzOxNDYzVBLn
+        XTxDK1lIID2xJDU7NbUgtQimj4mDU6qBKSNcvnCL7GmZkFuev9fdVf4f/IOvvjo11aNKvMll
+        8yGp454S9eE6Rw8G/hXRSJ1sfy8k0pflRk5fcFKUgXPE16QXfKGzqnVmhr/3nmnxWk/Fzmde
+        BtfJ5fdusm1pmq+/6rxlac853v16j9dMyFBof/b51MJdjmn9LqZXXvrENSzb/E9+8e8VcUzt
+        nw8HF15gnmUsNseZIa62pjJl9eou/rrmZy+uaT+0f9bjbsX6UJBfITZkTX/e20NBuwSPrCkz
+        KpV5eto+eFXgzAlrqpjenwv17X8enPZ/0wZlWwv7jSKv3Czcbx97HrLwXEyUO89Uu1miUsyL
+        3gozS+w4OnfXc7Xf7nL1DyqrU39lGmoosRRnJBpqMRcVJwIAD8TwwCwEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplkeLIzCtJLcpLzFFi42LZdlhJXvdaoluywc95BhaX92tbzD9yjtWi
+        78VDZospf5YzWVzeNYfNYsb5fUwWRzcGWyza+oXdonXvEXYHTo9NqzrZPO5c28Pm0bdlFaPH
+        501yASxRXDYpqTmZZalF+nYJXBntXxeyFBwwr7iy7R1TA+MWvS5GTg4JAROJo63zWLoYuTiE
+        BHYzSlya1c8OkZCWuL5xApQtLLHy33N2iKLnjBLHHnxlBUmwCehK7FjcxgaSEBG4yChx7cdc
+        sA5mgUyJ7qNHocb2MUoc2DmBGSTBKWArsXXdXCYQW1jAT2J3UxNQEQcHi4CqRM8UfxCTV8BS
+        4usxLpAKXgFBiZMzn7BAjNSWeHrzKZy9bOFrZojjFCR+Pl3GCtIqImAlsb/PFqJEXOLl0SPs
+        ExiFZyGZNAvJpFlIJs1C0rKAkWUVo2RqQXFuem6xYYFhXmq5XnFibnFpXrpecn7uJkZwTGlp
+        7mDcvuqD3iFGJg7GQ4wSHMxKIrwuIW7JQrwpiZVVqUX58UWlOanFhxilOViUxHkvdJ2MFxJI
+        TyxJzU5NLUgtgskycXBKNTAtKGTcu6NE/UHMy+2v7A92xJftf2wlcEq3xLqN0c5R6UH64X+C
+        BceahJhjPp3bKPsicFuX2c6HPocemSjuyb/g9MbwdrFyWONjmbNzbu/YNOkoc6Z3bOzMTVWF
+        bbnZAo9kvBbJzpyufEn2zeNZa5evLf1seDB9f2PsR3dN+zOTv83bmHRYNSePw2d+m9XPoOAb
+        Pk9v9bUtOf7dzfUIc/hhu+3JU+auX3WsJeMf3/z1dxgXi+/v8VrBHBqyc1VR+pJfXxYfEVU+
+        /fvr7DimN6w9a0MKNXpLg0/xzf3z1noeg8NJ8UPf7IRaWx8cWnXQWbhwSYrizml2u7Yczr58
+        7ZH6l7b9Eg6MolUiLxZ9KWO7r8RSnJFoqMVcVJwIAJdn80oYAwAA
+X-CMS-MailID: 20221012064230epcas5p1467d63d8a89b648bb314197240158e97
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20221011083029epcas5p3cef6047d23d0682a9cb70ba6178067a8
+References: <CGME20221011083029epcas5p3cef6047d23d0682a9cb70ba6178067a8@epcas5p3.samsung.com>
+        <20221011080359.76220-1-p.rajanbabu@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/10/2022 04:03, Padmanabhan Rajanbabu wrote:
-> Drive strength macros defined for FSD platform is not reflecting actual
-> name and values as per HW UM. FSD SoC pinctrl has following four levels of
 
-s/name/names/
 
-> drive-strength and their corresponding values:
-> Level-1 <-> 0
-> Level-2 <-> 1
-> Level-4 <-> 2
-> Level-6 <-> 3
-> 
-> The commit 684dac402f21 ("arm64: dts: fsd: Add initial pinctrl support")
-> used drive strength macros defined for Exynos4 SoC family. For some IPs
-> the macros values of Exynos4 matched and worked well, but Exynos4 SoC
-> family drive-strength (names and values) is not exactly matching with
-> FSD SoC.
-> 
-> Fix the drive strength macros to reflect actual names and values given
-> in FSD HW UM. This also ensures that the existing peripherals in device
-> tree file is using correct drive strength MACROs to function as
-> expected.
-> 
-> Fixes: 684dac402f21 ("arm64: dts: fsd: Add initial pinctrl support")
-> Signed-off-by: Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
-> ---
+>-----Original Message-----
+>From: Padmanabhan Rajanbabu =5Bmailto:p.rajanbabu=40samsung.com=5D
+>Sent: Tuesday, October 11, 2022 1:34 PM
+>To: robh+dt=40kernel.org; krzysztof.kozlowski+dt=40linaro.org;
+>alim.akhtar=40samsung.com; chanho61.park=40samsung.com;
+>linus.walleij=40linaro.org; pankaj.dubey=40samsung.com
+>Cc: devicetree=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-
+>samsung-soc=40vger.kernel.org; Padmanabhan Rajanbabu
+><p.rajanbabu=40samsung.com>
+>Subject: =5BPATCH V2=5D arm64: dts: fix drive strength macros as per FSD H=
+W UM
+>
+>Drive strength macros defined for FSD platform is not reflecting actual na=
+me
+>and values as per HW UM. FSD SoC pinctrl has following four levels of driv=
+e-
+>strength and their corresponding values:
+>Level-1 <-> 0
+>Level-2 <-> 1
+>Level-4 <-> 2
+>Level-6 <-> 3
+>
+>The commit 684dac402f21 (=22arm64: dts: fsd: Add initial pinctrl support=
+=22) used
+>drive strength macros defined for Exynos4 SoC family. For some IPs the
+>macros values of Exynos4 matched and worked well, but Exynos4 SoC family
+>drive-strength (names and values) is not exactly matching with FSD SoC.
+>
+>Fix the drive strength macros to reflect actual names and values given in =
+FSD
+>HW UM. This also ensures that the existing peripherals in device tree file=
+ is
+>using correct drive strength MACROs to function as expected.
+>
+>Fixes: 684dac402f21 (=22arm64: dts: fsd: Add initial pinctrl support=22)
+>Signed-off-by: Padmanabhan Rajanbabu <p.rajanbabu=40samsung.com>
+>---
 
-Rest of commit msg looks ok.
+Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
 
->  arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi | 34 +++++++++++-----------
->  arch/arm64/boot/dts/tesla/fsd-pinctrl.h    |  6 ++--
->  2 files changed, 20 insertions(+), 20 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi b/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-> index d0abb9aa0e9e..e3852c946352 100644
-> --- a/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-> +++ b/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-> @@ -55,14 +55,14 @@
->  		samsung,pins = "gpf5-0";
->  		samsung,pin-function = <FSD_PIN_FUNC_2>;
->  		samsung,pin-pud = <FSD_PIN_PULL_NONE>;
-> -		samsung,pin-drv = <FSD_PIN_DRV_LV2>;
-> +		samsung,pin-drv = <FSD_PIN_DRV_LV4>;
->  	};
->  
->  	ufs_refclk_out: ufs-refclk-out-pins {
->  		samsung,pins = "gpf5-1";
->  		samsung,pin-function = <FSD_PIN_FUNC_2>;
->  		samsung,pin-pud = <FSD_PIN_PULL_NONE>;
-> -		samsung,pin-drv = <FSD_PIN_DRV_LV2>;
-> +		samsung,pin-drv = <FSD_PIN_DRV_LV4>;
->  	};
->  };
->  
-> @@ -239,105 +239,105 @@
->  		samsung,pins = "gpb6-1";
->  		samsung,pin-function = <FSD_PIN_FUNC_2>;
->  		samsung,pin-pud = <FSD_PIN_PULL_UP>;
-> -		samsung,pin-drv = <FSD_PIN_DRV_LV2>;
-> +		samsung,pin-drv = <FSD_PIN_DRV_LV4>;
->  	};
->  
->  	pwm1_out: pwm1-out-pins {
->  		samsung,pins = "gpb6-5";
->  		samsung,pin-function = <FSD_PIN_FUNC_2>;
->  		samsung,pin-pud = <FSD_PIN_PULL_UP>;
-> -		samsung,pin-drv = <FSD_PIN_DRV_LV2>;
-> +		samsung,pin-drv = <FSD_PIN_DRV_LV4>;
->  	};
->  
->  	hs_i2c0_bus: hs-i2c0-bus-pins {
->  		samsung,pins = "gpb0-0", "gpb0-1";
->  		samsung,pin-function = <FSD_PIN_FUNC_2>;
->  		samsung,pin-pud = <FSD_PIN_PULL_UP>;
-> -		samsung,pin-drv = <FSD_PIN_DRV_LV1>;
-> +		samsung,pin-drv = <FSD_PIN_DRV_LV4>;
+> arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi =7C 34 +++++++++++-----------
+> arch/arm64/boot/dts/tesla/fsd-pinctrl.h    =7C  6 ++--
+> 2 files changed, 20 insertions(+), 20 deletions(-)
+>
+>diff --git a/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
+>b/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
+>index d0abb9aa0e9e..e3852c946352 100644
+>--- a/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
+>+++ b/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
+>=40=40 -55,14 +55,14 =40=40
+> 		samsung,pins =3D =22gpf5-0=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_NONE>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV2>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+>
+> 	ufs_refclk_out: ufs-refclk-out-pins =7B
+> 		samsung,pins =3D =22gpf5-1=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_NONE>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV2>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+> =7D;
+>
+>=40=40 -239,105 +239,105 =40=40
+> 		samsung,pins =3D =22gpb6-1=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_UP>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV2>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+>
+> 	pwm1_out: pwm1-out-pins =7B
+> 		samsung,pins =3D =22gpb6-5=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_UP>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV2>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+>
+> 	hs_i2c0_bus: hs-i2c0-bus-pins =7B
+> 		samsung,pins =3D =22gpb0-0=22, =22gpb0-1=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_UP>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV1>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+>
+> 	hs_i2c1_bus: hs-i2c1-bus-pins =7B
+> 		samsung,pins =3D =22gpb0-2=22, =22gpb0-3=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_UP>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV1>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+>
+> 	hs_i2c2_bus: hs-i2c2-bus-pins =7B
+> 		samsung,pins =3D =22gpb0-4=22, =22gpb0-5=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_UP>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV1>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+>
+> 	hs_i2c3_bus: hs-i2c3-bus-pins =7B
+> 		samsung,pins =3D =22gpb0-6=22, =22gpb0-7=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_UP>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV1>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+>
+> 	hs_i2c4_bus: hs-i2c4-bus-pins =7B
+> 		samsung,pins =3D =22gpb1-0=22, =22gpb1-1=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_UP>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV1>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+>
+> 	hs_i2c5_bus: hs-i2c5-bus-pins =7B
+> 		samsung,pins =3D =22gpb1-2=22, =22gpb1-3=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_UP>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV1>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+>
+> 	hs_i2c6_bus: hs-i2c6-bus-pins =7B
+> 		samsung,pins =3D =22gpb1-4=22, =22gpb1-5=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_UP>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV1>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+>
+> 	hs_i2c7_bus: hs-i2c7-bus-pins =7B
+> 		samsung,pins =3D =22gpb1-6=22, =22gpb1-7=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_UP>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV1>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+>
+> 	uart0_data: uart0-data-pins =7B
+> 		samsung,pins =3D =22gpb7-0=22, =22gpb7-1=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_NONE>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV1>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+>
+> 	uart1_data: uart1-data-pins =7B
+> 		samsung,pins =3D =22gpb7-4=22, =22gpb7-5=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_NONE>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV1>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+>
+> 	spi0_bus: spi0-bus-pins =7B
+> 		samsung,pins =3D =22gpb4-0=22, =22gpb4-2=22, =22gpb4-3=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_UP>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV1>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+>
+> 	spi1_bus: spi1-bus-pins =7B
+> 		samsung,pins =3D =22gpb4-4=22, =22gpb4-6=22, =22gpb4-7=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_UP>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV1>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+>
+> 	spi2_bus: spi2-bus-pins =7B
+> 		samsung,pins =3D =22gpb5-0=22, =22gpb5-2=22, =22gpb5-3=22;
+> 		samsung,pin-function =3D <FSD_PIN_FUNC_2>;
+> 		samsung,pin-pud =3D <FSD_PIN_PULL_UP>;
+>-		samsung,pin-drv =3D <FSD_PIN_DRV_LV1>;
+>+		samsung,pin-drv =3D <FSD_PIN_DRV_LV4>;
+> 	=7D;
+> =7D;
+>
+>diff --git a/arch/arm64/boot/dts/tesla/fsd-pinctrl.h
+>b/arch/arm64/boot/dts/tesla/fsd-pinctrl.h
+>index 6ffbda362493..c397d02208a0 100644
+>--- a/arch/arm64/boot/dts/tesla/fsd-pinctrl.h
+>+++ b/arch/arm64/boot/dts/tesla/fsd-pinctrl.h
+>=40=40 -16,9 +16,9 =40=40
+> =23define FSD_PIN_PULL_UP			3
+>
+> =23define FSD_PIN_DRV_LV1			0
+>-=23define FSD_PIN_DRV_LV2			2
+>-=23define FSD_PIN_DRV_LV3			1
+>-=23define FSD_PIN_DRV_LV4			3
+>+=23define FSD_PIN_DRV_LV2			1
+>+=23define FSD_PIN_DRV_LV4			2
+>+=23define FSD_PIN_DRV_LV6			3
+>
+> =23define FSD_PIN_FUNC_INPUT		0
+> =23define FSD_PIN_FUNC_OUTPUT		1
+>--
+>2.17.1
 
-You are now changing both the value for register and the meaning (name).
-Your commit msg indicated that the names are not correct, not the
-values. Based on the commit msg, I expect the DTBs are the same. Are
-they? If not, it these are two different commits with their own
-explanations/reasoning.
-
-Best regards,
-Krzysztof
 
