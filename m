@@ -2,94 +2,156 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69636C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Oct 2022 14:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C621C43217
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Oct 2022 14:53:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229590AbiJMOgB (ORCPT
+        id S229717AbiJMOxY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 13 Oct 2022 10:36:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56300 "EHLO
+        Thu, 13 Oct 2022 10:53:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbiJMOf7 (ORCPT
+        with ESMTP id S229459AbiJMOxW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 13 Oct 2022 10:35:59 -0400
-Received: from mail-qv1-xf31.google.com (mail-qv1-xf31.google.com [IPv6:2607:f8b0:4864:20::f31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EF6DEE8A6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Oct 2022 07:35:58 -0700 (PDT)
-Received: by mail-qv1-xf31.google.com with SMTP id h10so1383807qvq.7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Oct 2022 07:35:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PpSbvfXL/4v8AdLedT3KfgIShsnNI4hVyx9+h5TvGBE=;
-        b=Ji3otMdig2rRu0rgNUdEHutyEJCuixHBCVeuk3qrRA3/MAXZSXcOMh6BE2e5qsuLXQ
-         N0MlMIM1zc8FtBB9v1jeGYs9eraT6LvnkX71upj8ZnPlGUNa0/8tmJEf/UfWKJEOlLTX
-         GFVs7uO5gtGyAe6agMqyb4TdMRabGjE3gYxUSUMIo/wurc2RwVzuZ9+zeH7yrzMYX5tA
-         iyzn0zsa5dTKW7v5wRoIM5WEFvoygJMv4xQiUQt0l4d+Hj675O6BXBTm9xGfOlUfT3+w
-         grvDGP5yva1FcWvEVW9UyeJCiqAyfxZ4bVHMbN0rvLyOQF44RnHsiJZs+kzfUuuMYbxM
-         7HcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PpSbvfXL/4v8AdLedT3KfgIShsnNI4hVyx9+h5TvGBE=;
-        b=Fz299/n0kSSCqDs4tA5NOvmtyUP/9bn1eUH6OW2W53kNNxsK1xec2CyafqA6BkxYWj
-         iK8ZumCidMUPo1R4Jt/f2JJ1dRB9UUid1EoZntf4IhfeF2sRvr8VN70PLjUuZH7qYRv6
-         7HgO8wMlYZ/TLvAh2Jb5hHhsBn8v21MTfgGkEtEey/sdIobRSdEnq/M28MTy1NCx3GsI
-         mPvXGM9oI3dxT1hZI0isiqBShqQCXg9MzI5lsehAjB6svz4Xy/ClHXL7FDrncqbtYEOe
-         6NX2U34LX4ytd4Ahn+pmU7gnOMtGAnOB9sfn3hiYYGwZaGNY+gEJWRS7wLdY7OaTbg/H
-         g/HQ==
-X-Gm-Message-State: ACrzQf2fwGFlYiSEo8638R5OXlEr6ZKmR8pjNyp9fuxiOv0tOj220F2B
-        SAmfYd9ImVwyOHV2vz/ZmHw8Fw==
-X-Google-Smtp-Source: AMsMyM7BdKabvNmp8MIilLZLrkIn41ksqqP2Kii4roZMXarGWDSD6Z4pAavS9O1eSSjT68us+nJzWQ==
-X-Received: by 2002:ad4:5ca2:0:b0:4b1:91d6:2be3 with SMTP id q2-20020ad45ca2000000b004b191d62be3mr27862117qvh.51.1665671757663;
-        Thu, 13 Oct 2022 07:35:57 -0700 (PDT)
-Received: from [192.168.1.57] (cpe-72-225-192-120.nyc.res.rr.com. [72.225.192.120])
-        by smtp.gmail.com with ESMTPSA id m3-20020ac85b03000000b00394fce5fa64sm91204qtw.9.2022.10.13.07.35.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Oct 2022 07:35:56 -0700 (PDT)
-Message-ID: <7315338a-762f-51a4-d26f-d94de71dfcf2@linaro.org>
-Date:   Thu, 13 Oct 2022 10:35:54 -0400
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [RESEND PATCH] clk: samsung: exynos7885: Correct "div4" clock
- parents
-Content-Language: en-US
-To:     David Virag <virag.david003@gmail.com>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Thu, 13 Oct 2022 10:53:22 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC417104D25;
+        Thu, 13 Oct 2022 07:53:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1665672801; x=1697208801;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=r+A85jTxRgf0CRicOayM4dLLN5VzvuhrenYOP1O6oTU=;
+  b=VBGQt3snKjaSwwIfB7YOjIhGItT1jhraaOyt/kxPQdFmLsAiKxfjMZ6/
+   wTvssSGWNAA5yxuojqVut3MlNJOmvWjDB5elRRqSDAKUIxYv1zwyZnPq8
+   VBvbvculER9n6hIqddQGd/StEG/GfU8NvlcYhvz90HmrQh3GZCbuG+4Vt
+   Fova2skDghdNYp0Abp5DZ3SZDl/Gtia9BF+/3Zd/o0j0FlfPVN/fQ8mAh
+   efiwBEJxZXxTPvIVLAjiFBPfzdS4bSlDwAKwtiQBEs43kyDXiJ6rA0MZW
+   qpEWPpxmQ0k2SIWwmV7SKES/GvsfSCndSOerYJq8Yla5DIfLiNQ0g/pLg
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10499"; a="285484078"
+X-IronPort-AV: E=Sophos;i="5.95,180,1661842800"; 
+   d="scan'208";a="285484078"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2022 07:53:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10499"; a="872359863"
+X-IronPort-AV: E=Sophos;i="5.95,180,1661842800"; 
+   d="scan'208";a="872359863"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga006.fm.intel.com with ESMTP; 13 Oct 2022 07:53:11 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id DC55F26D; Thu, 13 Oct 2022 17:53:31 +0300 (EEST)
+Date:   Thu, 13 Oct 2022 17:53:31 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Marc Zyngier <maz@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kent Gibson <warthog618@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Billy Tsai <billy_tsai@aspeedtech.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        Rafa?? Mi??ecki <rafal@milecki.pl>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org, linux-actions@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
+        patches@opensource.cirrus.com, linux-mediatek@lists.infradead.org,
+        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Andreas F??rber <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Joel Stanley <joel@jms.id.au>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Sean Wang <sean.wang@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20221013151341.151208-1-virag.david003@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221013151341.151208-1-virag.david003@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v2 35/36] pinctrl: intel: Add missed header(s)
+Message-ID: <Y0gma4fmhWISrKHe@black.fi.intel.com>
+References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
+ <20221010201453.77401-36-andriy.shevchenko@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221010201453.77401-36-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 13/10/2022 11:13, David Virag wrote:
-> "div4" DIVs which divide PLLs by 4 are actually dividing "div2" DIVs by
-> 2 to achieve a by 4 division, thus their parents are the respective
-> "div2" DIVs. These DIVs were mistakenly set to have the PLLs as parents.
-> This leads to the kernel thinking "div4"s and everything under them run
-> at 2x the clock speed. Fix this.
+On Mon, Oct 10, 2022 at 11:14:51PM +0300, Andy Shevchenko wrote:
+> Do not imply that some of the generic headers may be always included.
+> Instead, include explicitly what we are direct user of.
 > 
-> Fixes: 45bd8166a1d8 ("clk: samsung: Add initial Exynos7885 clock driver")
-> Signed-off-by: David Virag <virag.david003@gmail.com>
-> ---
+> While at it, sort headers alphabetically.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Looks good, I'll take it after merge window.
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Best regards,
-Krzysztof
-
+For all the intel pinctrl changes.
