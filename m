@@ -2,157 +2,110 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 448D9C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Oct 2022 11:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 552EBC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Oct 2022 13:14:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229780AbiJML2d (ORCPT
+        id S229852AbiJMNOh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 13 Oct 2022 07:28:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33956 "EHLO
+        Thu, 13 Oct 2022 09:14:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229815AbiJML2a (ORCPT
+        with ESMTP id S229742AbiJMNOf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 13 Oct 2022 07:28:30 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E90B8123440
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Oct 2022 04:28:24 -0700 (PDT)
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20221013112822epoutp03f49b1b1ec3298c28e33c46d62a693af1~dnWbvdgDA1632016320epoutp03X
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Oct 2022 11:28:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20221013112822epoutp03f49b1b1ec3298c28e33c46d62a693af1~dnWbvdgDA1632016320epoutp03X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1665660502;
-        bh=ouH+iL/+WExx5wqVfayC91GLl49lcZBc4TFvvZRll+k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M6eZ7MEDXTyFMcE6XEUkeENGvRuuKj8QJBRQ+y52tAg2l/03d0RPK8v3/QrRUGAic
-         XErVdtkx3MMa1SGo+BMnrdSVADDxhjtX09M2qdHOFQ58d58XOea6x9zeNOW5sFcLev
-         dYDGMmGWmPNlF7h31gg03lywTduud6cN32jqozH4=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20221013112822epcas5p24d6cf5a0478c8b74c132ed9204696684~dnWbOPVTv0826208262epcas5p2P;
-        Thu, 13 Oct 2022 11:28:22 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.181]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4Mp6hf73L0z4x9Pt; Thu, 13 Oct
-        2022 11:28:18 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        90.BE.56352.256F7436; Thu, 13 Oct 2022 20:28:18 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20221013110733epcas5p36e0104bfa4da37159da77f9231ff6e2c~dnEQNy0S61722817228epcas5p3p;
-        Thu, 13 Oct 2022 11:07:33 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20221013110733epsmtrp1716059bc5957e169f0d962f499ffb393~dnEQM8-w72875628756epsmtrp1U;
-        Thu, 13 Oct 2022 11:07:33 +0000 (GMT)
-X-AuditID: b6c32a4b-5f7fe7000001dc20-8a-6347f6523ddc
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7B.FC.18644.571F7436; Thu, 13 Oct 2022 20:07:33 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-        [107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20221013110731epsmtip15a615ba3d9a747e4b57debcd896fbc49~dnEOrLyLQ1695216952epsmtip1X;
-        Thu, 13 Oct 2022 11:07:31 +0000 (GMT)
-From:   Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
-To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        alim.akhtar@samsung.com, chanho61.park@samsung.com,
-        linus.walleij@linaro.org, pankaj.dubey@samsung.com
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
-Subject: [PATCH v3 4/4] arm64: dts: fix SPI drive strength values as per FSD
- HW UM
-Date:   Thu, 13 Oct 2022 16:10:24 +0530
-Message-Id: <20221013104024.50179-5-p.rajanbabu@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20221013104024.50179-1-p.rajanbabu@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCKsWRmVeSWpSXmKPExsWy7bCmum7QN/dkg2fXzC0ezNvGZnF5v7bF
-        /CPnWC36XjxktpjyZzmTxeVdc9gsZpzfx2RxdGOwxaKtX9gtWvceYXfg8ti0qpPN4861PWwe
-        fVtWMXp83iQXwBKVbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+Ti
-        E6DrlpkDdI6SQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1
-        xMrQwMDIFKgwITvj6VzHgkaeioUTG9kbGJu4uhg5OSQETCSWH9nICmILCexmlNh9WAnC/sQo
-        8eaIbRcjF5D9mVHiY992ZpiGb5vWMUEkdjFKTFz6lxXCaWWSWNk6iRGkik3AVGLVnEawhIjA
-        UkaJ/58WMYI4zAJTGCW2brsBViUsECLR8G0xmM0ioCqx7NpR9i5GDg5eARuJmYv5INbJS6ze
-        cIAZJMwpYCvx5II8yBgJgWvsEitnXWIBiUsIuEjsexQBUS4s8er4FnYIW0riZX8blJ0vMe1j
-        MxuEXSHR9nEDE4RtL3HgyhywMcwCmhLrd+lDhGUlpp5aB1bCLMAn0fv7CVQ5r8SOeTC2qsT6
-        5ZsYIWxpiX3X90LZHhI9fz4zQ0JxAqPEvavKExjlZiFsWMDIuIpRMrWgODc9tdi0wDgvtRwe
-        Y8n5uZsYwclNy3sH46MHH/QOMTJxMB5ilOBgVhLhdQlxSxbiTUmsrEotyo8vKs1JLT7EaAoM
-        vInMUqLJ+cD0mlcSb2hiaWBiZmZmYmlsZqgkzrt4hlaykEB6YklqdmpqQWoRTB8TB6dUA1NI
-        gfoq/W93JM7+3fHoiduO/xvPTouz3/Hg1ofilB0Xmg+wCm79xyQmdc1y5guvcK9bDxWaQ0ze
-        nH/RuN17ee9f2bNstuKLWBy+zrLNKuC0fDzlU+3+BY2zYrr6D/7W48p/uvqh1tME058Hv7+e
-        XC33tPjo/D7jUuYvB8Mf13cvuvfh5OkI7uiSnc8Wph8I7NfjV/Vd5HK3V2H3/G+1z6c1r4nm
-        /hjsp6ExT+JhZfVmpu8Hlc+7y81az//f4eDRGdMn6s/6etRJ+mvCHisT6dUdik+2tD3Qj76q
-        c9Fg6tJIY+PvEkI7LpfsKjhqYbaF6d4u3g27r209pt3Ku/3KLL0fpx1uap1QezmreIpKa77T
-        FyWW4oxEQy3mouJEAH5wt4b3AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLLMWRmVeSWpSXmKPExsWy7bCSnG7pR/dkgztzOSwezNvGZnF5v7bF
-        /CPnWC36XjxktpjyZzmTxeVdc9gsZpzfx2RxdGOwxaKtX9gtWvceYXfg8ti0qpPN4861PWwe
-        fVtWMXp83iQXwBLFZZOSmpNZllqkb5fAlfF0rmNBI0/FwomN7A2MTVxdjJwcEgImEt82rWPq
-        YuTiEBLYwSjRvus6I0RCWmJ6/x42CFtYYuW/5+wQRc1MEn8mt4MVsQmYSqya08gKkhARWM0o
-        8bm/HayDWWAao8SuqfUgtrBAkMTPV9eZQWwWAVWJZdeOAk3i4OAVsJGYuZgPYoG8xOoNB5hB
-        wpwCthJPLsiDhIWAKiZ8XcI0gZFvASPDKkbJ1ILi3PTcYsMCo7zUcr3ixNzi0rx0veT83E2M
-        4BDU0trBuGfVB71DjEwcjIcYJTiYlUR4XULckoV4UxIrq1KL8uOLSnNSiw8xSnOwKInzXug6
-        GS8kkJ5YkpqdmlqQWgSTZeLglGpgqlpZeq19RdHaNSozD6nxrwiedOHgdL7DhZmzHqXoGe2P
-        SA1NzhF6Zb9qzhSdpUppIdsPKtxcuP1f/8wn2eUXdPMPZKSzBD2fFlf4o2fT02lp7TKe4S9M
-        T05vXsH0TNk0/vBewf29SfWtkdMeLz2Yv3nj1+V+ChxGlV521cfXmfpsF2ppT7S61Va5IWTa
-        xTNBRtu/XfopV6G78MHhdy9eXmlOuCVzV/Sd6vk5fvuW2SmstGK+5zfPfc/Wukssf5d8d7uj
-        7/z8ofOPmN+X10z/xrqH6ekT0cAUd3sZcWOp2mcfO+d5pS/qWnpJY8qE18eeOq6RXFFQ5i/D
-        MqW7u3RG+qOQ+4cXxDNGlrSdnbeGy12JpTgj0VCLuag4EQDNYtL6sAIAAA==
-X-CMS-MailID: 20221013110733epcas5p36e0104bfa4da37159da77f9231ff6e2c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221013110733epcas5p36e0104bfa4da37159da77f9231ff6e2c
-References: <20221013104024.50179-1-p.rajanbabu@samsung.com>
-        <CGME20221013110733epcas5p36e0104bfa4da37159da77f9231ff6e2c@epcas5p3.samsung.com>
+        Thu, 13 Oct 2022 09:14:35 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AE6714D8D8;
+        Thu, 13 Oct 2022 06:14:34 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id sc25so3772145ejc.12;
+        Thu, 13 Oct 2022 06:14:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sGUo79V8IknEK9RaV+1rr5dfMkYi9KkvLOC/DC9705Q=;
+        b=AVen059q46QGaA+8FXo1xeVtCkArAxsMnZBK5w7Ry+FszVgIdYDCyXZkSlXU0yY5bw
+         hN8oOJWkxYwbb4NkjupmcmuddUwq683rib3T/pzH3Fl/c+KwaxKCLolw+MOaHSlr06SR
+         ZGLVYXYxr+cfvB7t2Xk22h5wHVYorLFm6n6Gkq2qlS9cno7Ufe1zXdImwp3qao74//+x
+         o21OK2caMqf6E3DGYfe2b/nR5I7WfTfxLNrNswQQB815OBuIyKoQ48rWNnbq70H4slrc
+         SRVG1YFyeuD0wt8g64Q/3j31qhk6+wnmfFL1NvYxsxHTE45hrql5/OaW68YYRqvM4gb0
+         +Onw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sGUo79V8IknEK9RaV+1rr5dfMkYi9KkvLOC/DC9705Q=;
+        b=wSS+PtL8+WaMmqoHglzILAai4HwoCDxibnDR7gstxpxSslm1Qwmla6WLDzQ2JxPIU0
+         +UPHemiiJUBhYQuuIYRmVYVoPNHm+w6WbcvsmaXjLVyCUWEAjt/jG72NoOvtb+hcRK1d
+         JP7KJTi0ucaASjIhbNsvqC08gj/mFd2p5Hv2mZMm59gsRg7zcHElelJMkInY+XDPMDWj
+         WROZy5k4CRMKw6YNGZx7gGHSJKl2c4M6pCyuXttlMXkcfaaTGXzUIqvqggRDzvkLvImx
+         T0svmjWkOhGpC/bwKAawCdNraHQYp+z3n0D+o3Yce3/1n3Iwnm8bJUcgGOvtgIFXnIFX
+         ToZQ==
+X-Gm-Message-State: ACrzQf2jF//oSmb/PZ3UMALgI6LIPcSuCU1Q/Ev9eGd/8JtT//WWaX5x
+        d+M8JT1CFxODMkyF2jvUvls=
+X-Google-Smtp-Source: AMsMyM6LOGJYoYQIpmmtN2CdUldLXR3AacaXVeUiEDZltHjmtGeGxJJ8+SKyLWJ9CpR56YDPfAgWWw==
+X-Received: by 2002:a17:907:75dc:b0:78b:339:63c7 with SMTP id jl28-20020a17090775dc00b0078b033963c7mr26357963ejc.480.1665666872691;
+        Thu, 13 Oct 2022 06:14:32 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:ab88:368f:2080:5d6e:322:57b6:5f03])
+        by smtp.googlemail.com with ESMTPSA id kv11-20020a17090778cb00b0078d4e39d87esm2926083ejc.225.2022.10.13.06.14.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Oct 2022 06:14:32 -0700 (PDT)
+From:   David Virag <virag.david003@gmail.com>
+Cc:     David Virag <virag.david003@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] clk: samsung: exynos7885: Correct "div4" clock parents
+Date:   Thu, 13 Oct 2022 17:13:40 +0200
+Message-Id: <20221013151341.151208-1-virag.david003@gmail.com>
+X-Mailer: git-send-email 2.38.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Drive strength values used for SPI is not reflecting the default values
-recommended by FSD HW UM.
+"div4" DIVs which divide PLLs by 4 are actually dividing "div2" DIVs by
+2 to achieve a by 4 division, thus their parents are the respective
+"div2" DIVs. These DIVs were mistakenly set to have the PLLs as parents.
+This leads to the kernel thinking "div4"s and everything under them run
+at 2x the clock speed. Fix this.
 
-Fix the drive strength values for SPI, thereby ensuring that the existing
-device tree file is using default drive strength values recommended by UM
-for FSD SoC.
-
-Fixes: 684dac402f21 ("arm64: dts: fsd: Add initial pinctrl support")
-Signed-off-by: Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+Fixes: 45bd8166a1d8 ("clk: samsung: Add initial Exynos7885 clock driver")
+Signed-off-by: David Virag <virag.david003@gmail.com>
 ---
- arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/samsung/clk-exynos7885.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi b/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-index a2634e70925a..e3852c946352 100644
---- a/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-+++ b/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-@@ -323,21 +323,21 @@
- 		samsung,pins = "gpb4-0", "gpb4-2", "gpb4-3";
- 		samsung,pin-function = <FSD_PIN_FUNC_2>;
- 		samsung,pin-pud = <FSD_PIN_PULL_UP>;
--		samsung,pin-drv = <FSD_PIN_DRV_LV1>;
-+		samsung,pin-drv = <FSD_PIN_DRV_LV4>;
- 	};
+diff --git a/drivers/clk/samsung/clk-exynos7885.c b/drivers/clk/samsung/clk-exynos7885.c
+index a7b106302706..368c50badd15 100644
+--- a/drivers/clk/samsung/clk-exynos7885.c
++++ b/drivers/clk/samsung/clk-exynos7885.c
+@@ -182,7 +182,7 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
+ 	    CLK_CON_DIV_PLL_SHARED0_DIV2, 0, 1),
+ 	DIV(CLK_DOUT_SHARED0_DIV3, "dout_shared0_div3", "fout_shared0_pll",
+ 	    CLK_CON_DIV_PLL_SHARED0_DIV3, 0, 2),
+-	DIV(CLK_DOUT_SHARED0_DIV4, "dout_shared0_div4", "fout_shared0_pll",
++	DIV(CLK_DOUT_SHARED0_DIV4, "dout_shared0_div4", "dout_shared0_div2",
+ 	    CLK_CON_DIV_PLL_SHARED0_DIV4, 0, 1),
+ 	DIV(CLK_DOUT_SHARED0_DIV5, "dout_shared0_div5", "fout_shared0_pll",
+ 	    CLK_CON_DIV_PLL_SHARED0_DIV5, 0, 3),
+@@ -190,7 +190,7 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
+ 	    CLK_CON_DIV_PLL_SHARED1_DIV2, 0, 1),
+ 	DIV(CLK_DOUT_SHARED1_DIV3, "dout_shared1_div3", "fout_shared1_pll",
+ 	    CLK_CON_DIV_PLL_SHARED1_DIV3, 0, 2),
+-	DIV(CLK_DOUT_SHARED1_DIV4, "dout_shared1_div4", "fout_shared1_pll",
++	DIV(CLK_DOUT_SHARED1_DIV4, "dout_shared1_div4", "dout_shared1_div2",
+ 	    CLK_CON_DIV_PLL_SHARED1_DIV4, 0, 1),
  
- 	spi1_bus: spi1-bus-pins {
- 		samsung,pins = "gpb4-4", "gpb4-6", "gpb4-7";
- 		samsung,pin-function = <FSD_PIN_FUNC_2>;
- 		samsung,pin-pud = <FSD_PIN_PULL_UP>;
--		samsung,pin-drv = <FSD_PIN_DRV_LV1>;
-+		samsung,pin-drv = <FSD_PIN_DRV_LV4>;
- 	};
- 
- 	spi2_bus: spi2-bus-pins {
- 		samsung,pins = "gpb5-0", "gpb5-2", "gpb5-3";
- 		samsung,pin-function = <FSD_PIN_FUNC_2>;
- 		samsung,pin-pud = <FSD_PIN_PULL_UP>;
--		samsung,pin-drv = <FSD_PIN_DRV_LV1>;
-+		samsung,pin-drv = <FSD_PIN_DRV_LV4>;
- 	};
- };
- 
+ 	/* CORE */
 -- 
-2.17.1
+2.35.1
 
