@@ -2,164 +2,146 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B98DEC4167E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Oct 2022 01:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB15C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Oct 2022 11:26:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229711AbiJMBXX (ORCPT
+        id S229655AbiJML0I (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 12 Oct 2022 21:23:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49252 "EHLO
+        Thu, 13 Oct 2022 07:26:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbiJMBXV (ORCPT
+        with ESMTP id S229490AbiJML0G (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 12 Oct 2022 21:23:21 -0400
-Received: from out30-42.freemail.mail.aliyun.com (out30-42.freemail.mail.aliyun.com [115.124.30.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53076D77DA;
-        Wed, 12 Oct 2022 18:23:16 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R631e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=98;SR=0;TI=SMTPD_---0VS19mRS_1665624179;
-Received: from 30.97.48.54(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0VS19mRS_1665624179)
-          by smtp.aliyun-inc.com;
-          Thu, 13 Oct 2022 09:23:04 +0800
-Message-ID: <b7c8afe1-af89-9b5a-2c2c-82a2810ca9f1@linux.alibaba.com>
-Date:   Thu, 13 Oct 2022 09:23:27 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH v2 23/36] pinctrl: sprd: Add missed header(s)
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kent Gibson <warthog618@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Billy Tsai <billy_tsai@aspeedtech.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-media@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
-        patches@opensource.cirrus.com, linux-mediatek@lists.infradead.org,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
- <20221010201453.77401-24-andriy.shevchenko@linux.intel.com>
-From:   Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20221010201453.77401-24-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Thu, 13 Oct 2022 07:26:06 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81ADC65260
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Oct 2022 04:26:00 -0700 (PDT)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20221013112557epoutp03f22a285c7fe11697cf10d91c7a830ca7~dnUVAvkVw1611516115epoutp03x
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Oct 2022 11:25:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20221013112557epoutp03f22a285c7fe11697cf10d91c7a830ca7~dnUVAvkVw1611516115epoutp03x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1665660358;
+        bh=bXc6udR61f6XxRHEaIHz9XqnZI3fIMKixi4lLxfME38=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=vUtq0g7ZT0MAYZ1nTCZOVSr+BHDYWfAftFEqhk3HX2pIHDs2ON2LHzklOjIXij7Pj
+         6llvSXGCp2oMGsE9Js/dYayb6pW1dIf4kseAHsQSOnTtRPXrH772FULip8hBJPp6D5
+         x8jATpBclTMMfyPjajiSl5onh1+W1algiQ78BWBk=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20221013112557epcas5p473ad8f80b8a683b1536524da1b01ea7e~dnUUkfAMQ0491104911epcas5p4j;
+        Thu, 13 Oct 2022 11:25:57 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.178]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4Mp6dt53NPz4x9Py; Thu, 13 Oct
+        2022 11:25:54 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        FB.8A.26992.2C5F7436; Thu, 13 Oct 2022 20:25:54 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20221013110708epcas5p3c54c22bbc77175eb2a26dc9fd43814d5~dnD5S4HMS0785407854epcas5p3B;
+        Thu, 13 Oct 2022 11:07:08 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20221013110708epsmtrp1ed140343405838adcb06395c1f80bafe~dnD5SDtqN2651626516epsmtrp1h;
+        Thu, 13 Oct 2022 11:07:08 +0000 (GMT)
+X-AuditID: b6c32a49-319fb70000016970-71-6347f5c26541
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        2E.95.14392.C51F7436; Thu, 13 Oct 2022 20:07:08 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+        [107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20221013110707epsmtip18a7b21cb1480c0fd80afb7d5332140bf~dnD30M0_n1695216952epsmtip1N;
+        Thu, 13 Oct 2022 11:07:06 +0000 (GMT)
+From:   Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        alim.akhtar@samsung.com, chanho61.park@samsung.com,
+        linus.walleij@linaro.org, pankaj.dubey@samsung.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+Subject: [PATCH v3 0/4] arm64: dts: fix drive strength macros and values for
+ FSD Platform
+Date:   Thu, 13 Oct 2022 16:10:20 +0530
+Message-Id: <20221013104024.50179-1-p.rajanbabu@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLKsWRmVeSWpSXmKPExsWy7bCmhu6hr+7JBn/naFg8mLeNzeLyfm2L
+        +UfOsVr0vXjIbDHlz3Imi8u75rBZzDi/j8ni6MZgi0Vbv7BbtO49wu7A5bFpVSebx51re9g8
+        +rasYvT4vEkugCUq2yYjNTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnF
+        J0DXLTMH6BwlhbLEnFKgUEBicbGSvp1NUX5pSapCRn5xia1SakFKToFJgV5xYm5xaV66Xl5q
+        iZWhgYGRKVBhQnbGv0dLmQu+clV8OvKTuYHxHkcXIyeHhICJxJTZLUxdjFwcQgK7GSX2NByC
+        cj4xShw4uYAVwvnGKPFn0mc2mJbZJ1ayQCT2MkpM+HaXHcJpZZJ4sXQZC0gVm4CpxKo5jWDt
+        IgJLGSX+f1rECOIwC0xhlNi67QaQw8EhLBAtMeUQM0gDi4CqxPXD/YwgNq+AjcTptceZINbJ
+        S6zecIAZpFdCYBe7xNbTbSwQCReJY7f3MEPYwhKvjm9hh7ClJF72t0HZ+RLTPjZD3V0h0fZx
+        A9RQe4kDV+awgNzALKApsX6XPkRYVmLqqXVgJcwCfBK9v59AlfNK7JgHY6tKrF++iRHClpbY
+        d30vlO0hMWv+FbC1QgKxEs9332CawCg7C2HDAkbGVYySqQXFuempxaYFhnmp5fCoSs7P3cQI
+        TmdanjsY7z74oHeIkYmD8RCjBAezkgivS4hbshBvSmJlVWpRfnxRaU5q8SFGU2CYTWSWEk3O
+        BybUvJJ4QxNLAxMzMzMTS2MzQyVx3sUztJKFBNITS1KzU1MLUotg+pg4OKUamEw3+92znCxt
+        s3mP9BmztWtCTfcbi1344LvD4uFyntfSR+K+WFw5EjJlQR9b2A/Dr5yfvwoYcd5mvVys9m5C
+        xGbeM0fuF7ZOqepfl8tcKWcn8yLNbWLdQR7F84eDxG9N7rPITM/OUbFhtM2Ny5AIc5i4+nfH
+        6bT9Bv+eTvQTrOK9t+lu+ZGqLQcy9MNCr+jZfNVxfii8M/dRuv4fjcOT79dYp5+3jNzQzeAw
+        1+Vdbt/fT1z7Z186cpFhXVBcbbedgUxbplp7Z2xvT9tUxRsa26pM5f512/fxGharhP42fcB9
+        n7fIQIVjt/sxyzsCfoExE6SuS3N/rpySP1fjCy/blqJ0Ja8bNZcnF4Zrld9TYinOSDTUYi4q
+        TgQAOg5oUvADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgluLIzCtJLcpLzFFi42LZdlhJTjfmo3uywbsWRYsH87axWVzer20x
+        /8g5Vou+Fw+ZLab8Wc5kcXnXHDaLGef3MVkc3RhssWjrF3aL1r1H2B24PDat6mTzuHNtD5tH
+        35ZVjB6fN8kFsERx2aSk5mSWpRbp2yVwZfx7tJS54CtXxacjP5kbGO9xdDFyckgImEjMPrGS
+        pYuRi0NIYDejxKHeWWwQCWmJ6f17oGxhiZX/nrNDFDUzSXRdeMUKkmATMJVYNaeRFSQhIrCa
+        UeJzfztYB7PANEaJXVPrQWxhgUiJBa+mgzWwCKhKXD/czwhi8wrYSJxee5wJYoO8xOoNB5gn
+        MPIsYGRYxSiZWlCcm55bbFhgmJdarlecmFtcmpeul5yfu4kRHFhamjsYt6/6oHeIkYmD8RCj
+        BAezkgivS4hbshBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeC10n44UE0hNLUrNTUwtSi2CyTByc
+        Ug1MLF37uOOUpm649bIkPVBopbrXjpcVujf/L2tqVRM7nZNifNexgnPCHbNGkdqyneaBqpZP
+        ZsyubsjTfHeQ78Cxo+tEz5anlVgrOKbbRRWwpGuWzZjtIHpJz/7T+sb9Zh/E3YpMHcNn6MQd
+        eL72TttG/3PcO/ObuH3PzP75+k6FUsQ2F+UFujf3xUpdffaL6cSJR5Ffp/+obQu84jnnvtMp
+        S27te7tWOn3sEzE69Kcg7PDcJ6ycosf3TpwaGbdq7uodKZZTl86+UfBL3WadhzLTHpvF+wTa
+        P0xcvM+C6frD1313LnDPXSj7peTKt7XH/7J6tr3t+vtNZCqPDOOSpwtFK85wRh1dWq2TZVv2
+        w3XteyWW4oxEQy3mouJEALvI9b2bAgAA
+X-CMS-MailID: 20221013110708epcas5p3c54c22bbc77175eb2a26dc9fd43814d5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20221013110708epcas5p3c54c22bbc77175eb2a26dc9fd43814d5
+References: <CGME20221013110708epcas5p3c54c22bbc77175eb2a26dc9fd43814d5@epcas5p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+With reference to FSD SoC HW UM, there are some deviations in the
+drive strength macros names and macro values. Also the IPs are not
+using the default drive strength values as recommended by HW UM.
 
+FSD SoC pinctrl has following four levels of drive-strength and their
+corresponding values:
+Level-1 <-> 0
+Level-2 <-> 1
+Level-4 <-> 2
+Level-6 <-> 3
 
-On 10/11/2022 4:14 AM, Andy Shevchenko wrote:
-> Do not imply that some of the generic headers may be always included.
-> Instead, include explicitly what we are direct user of.
-> 
-> While at it, sort headers alphabetically.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+The commit 684dac402f21 ("arm64: dts: fsd: Add initial pinctrl support")
+used drive strength macros defined for Exynos4 SoC family. For some IPs
+the macros values of Exynos4 matched and worked well, but Exynos4 SoC
+family drive-strength (names and values) is not exactly matching with
+FSD SoC.
 
-LGTM. Thanks.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+The intention of this patch series is to:
+1. Fix the drive strength macros to reflect actual names and values given
+in FSD HW UM.
+2. Ensure that the existing peripherals in device tree file is using
+default drive strength values recommended in FSD HW UM.
 
-> ---
->   drivers/pinctrl/sprd/pinctrl-sprd.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
-> index dca7a505d413..c1806b7dcf78 100644
-> --- a/drivers/pinctrl/sprd/pinctrl-sprd.c
-> +++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
-> @@ -13,12 +13,14 @@
->   #include <linux/of.h>
->   #include <linux/of_device.h>
->   #include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +#include <linux/pinctrl/consumer.h>
->   #include <linux/pinctrl/machine.h>
-> -#include <linux/pinctrl/pinconf.h>
->   #include <linux/pinctrl/pinconf-generic.h>
-> +#include <linux/pinctrl/pinconf.h>
->   #include <linux/pinctrl/pinctrl.h>
->   #include <linux/pinctrl/pinmux.h>
-> -#include <linux/slab.h>
->   
->   #include "../core.h"
->   #include "../pinmux.h"
+Padmanabhan Rajanbabu (4):
+  arm64: dts: fix drive strength macros as per FSD HW UM
+  arm64: dts: fix HSI2C drive strength values as per FSD HW UM
+  arm64: dts: fix UART drive strength values as per FSD HW UM
+  arm64: dts: fix SPI drive strength values as per FSD HW UM
+
+ arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi | 34 +++++++++++-----------
+ arch/arm64/boot/dts/tesla/fsd-pinctrl.h    |  6 ++--
+ 2 files changed, 20 insertions(+), 20 deletions(-)
+
+-- 
+2.17.1
+
