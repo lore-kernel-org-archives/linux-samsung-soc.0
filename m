@@ -2,197 +2,105 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CDC6C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Oct 2022 11:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9C6C43219
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Oct 2022 12:02:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229836AbiJNLLO (ORCPT
+        id S229713AbiJNMCd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 14 Oct 2022 07:11:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38896 "EHLO
+        Fri, 14 Oct 2022 08:02:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229893AbiJNLKz (ORCPT
+        with ESMTP id S229892AbiJNMCb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Oct 2022 07:10:55 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0111E1BBEF9
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Oct 2022 04:10:38 -0700 (PDT)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20221014111036epoutp022619e7952a9aaa088702919cab8e33cd~d6wNXgrIQ2100821008epoutp02f
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Oct 2022 11:10:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20221014111036epoutp022619e7952a9aaa088702919cab8e33cd~d6wNXgrIQ2100821008epoutp02f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1665745836;
-        bh=9SsgF3hWBhdrZJfljS7+eBsGPvly+gPDoy3K5tTIdBg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MziZwkX127b95mJ65tK57IEgMd6yRO/4O7vIf6qiGp0UkJQNE5yTHcM+DWe/S2gGC
-         eGyzElqVDK9bCamL7KJ+u32TJYITSx2UO70XGZRktALjUdIX61EMJwBINyUKOpEUhs
-         nF/FF3LPa7hJRRGPfkvwElApyezT9VBa7b6+38ig=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20221014111036epcas5p34c04fce5100e24c348de56cf4482979a~d6wMq8x480410004100epcas5p38;
-        Fri, 14 Oct 2022 11:10:36 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.174]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4MpkFj3t7Hz4x9Pt; Fri, 14 Oct
-        2022 11:10:33 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        80.31.26992.9A349436; Fri, 14 Oct 2022 20:10:33 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20221014104915epcas5p12414b87ea127b2d5bf521556bf841b00~d6dj9NWX52011520115epcas5p1k;
-        Fri, 14 Oct 2022 10:49:15 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20221014104915epsmtrp2f5c4039270bdfe8644ff8738d6f79eac~d6dj8SSSL0248602486epsmtrp2M;
-        Fri, 14 Oct 2022 10:49:15 +0000 (GMT)
-X-AuditID: b6c32a49-0c7ff70000016970-3a-634943a9ba47
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6D.56.14392.BAE39436; Fri, 14 Oct 2022 19:49:15 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-        [107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20221014104913epsmtip10879994e360ec84ae6bd8e31ffc0b4ea~d6dh1ysO_2736727367epsmtip1j;
-        Fri, 14 Oct 2022 10:49:12 +0000 (GMT)
-From:   Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
-To:     lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
+        Fri, 14 Oct 2022 08:02:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BBFA18F92C;
+        Fri, 14 Oct 2022 05:02:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 07F3D61AC1;
+        Fri, 14 Oct 2022 12:02:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 673B3C433D7;
+        Fri, 14 Oct 2022 12:02:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665748949;
+        bh=kVy31r3/h21vCG8QHqLh13ALXicMXU3nisOAYti+Q5k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OSs8wt76NzBNkq27S7FBfulQrBeTLcmu6r1j6QUFhDoEqWgg5gF6iOlPlRy6Ca89D
+         gk2jDUIN+ygSCA3HfY4mLsG3HKbhwSeywdB2FFsn0AAoExAkyl1adgOynbqiOk/17O
+         6sLobr1OU2h9vmaP9XWtmazxiUSX1SuVYbY6nUGBDbWeYmeXb286S8ObQMuRvpuD5s
+         jEOeTTuJJLvVsWsbLY0lrpWptf2LiK91Ts1WbEUVMeqjitKu9fxZXS73cUHhQnaYc7
+         oWB0cZYHTqnOhyIkUlszA65A1QvCeCC8LEKBt8HbzPcMPAqcpqZL2Cv2hkZpvI3qbd
+         lOPAvB/k++TYQ==
+Date:   Fri, 14 Oct 2022 13:02:23 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+Cc:     lgirdwood@gmail.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, s.nawrocki@samsung.com,
         perex@perex.cz, tiwai@suse.com, pankaj.dubey@samsung.com,
         alim.akhtar@samsung.com, rcsekar@samsung.com,
-        aswani.reddy@samsung.com
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
-Subject: [PATCH 6/6] arm64: dts: fsd: Add sound card node for Tesla FSD
-Date:   Fri, 14 Oct 2022 15:51:51 +0530
-Message-Id: <20221014102151.108539-7-p.rajanbabu@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20221014102151.108539-1-p.rajanbabu@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLJsWRmVeSWpSXmKPExsWy7bCmuu5KZ89kg4cdMhYP5m1js7hy8RCT
-        xaHNW9ktpj58wmYx/8g5Vou+Fw+ZLb5d6WCyuLxrDpvFjPP7mCyObgy2WLT1C7tF565+VotZ
-        F3awWrTuPcJucfhNO6vFhu9rGR0EPDZ8bmLz2DnrLrvHplWdbB53ru1h89j3dhmbR9+WVYwe
-        67dcZfH4vEkugCMq2yYjNTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnF
-        J0DXLTMH6AMlhbLEnFKgUEBicbGSvp1NUX5pSapCRn5xia1SakFKToFJgV5xYm5xaV66Xl5q
-        iZWhgYGRKVBhQnbG1/VHGQse8Vds/XWdsYHxMk8XIyeHhICJxLZpi9m7GLk4hAR2M0q8PLsf
-        yvnEKDFz1ismCOcbo8TXv1+BMhxgLTMPxEPE9zJKfJ73ghXCaWWSWP3zMTvIXDYBU4lVcxrB
-        EiICTUwSbW8msoA4zAIbGSVOH3vIBFIlLOAuMXN7K5jNIqAq0bbqOVg3r4CtxMprm1ghLpSX
-        WL3hADOIzSlgJ/G8pQlsqoTAUg6JZVt2sUAUuUjs63gPZQtLvDq+hR3ClpL4/G4vG4SdLzHt
-        YzOUXSHR9nEDE4RtL3HgyhwWkN+YBTQl1u/ShwjLSkw9tQ6shFmAT6L39xOocl6JHfNgbFWJ
-        9cs3MULY0hL7ru+Fsj0kPvW0s0CCZSKjxKljD1gmMMrNQlixgJFxFaNkakFxbnpqsWmBYV5q
-        OTzekvNzNzGC06mW5w7Guw8+6B1iZOJgPMQowcGsJML7WskzWYg3JbGyKrUoP76oNCe1+BCj
-        KTAAJzJLiSbnAxN6Xkm8oYmlgYmZmZmJpbGZoZI47+IZWslCAumJJanZqakFqUUwfUwcnFIN
-        TN3yMQfuzH0VIVN+/N3Z0ml7hL/NbElskLr1UGjS0z+PDU8GHK0JV1lfcmuDKMevjfm3jzBf
-        a2MS/HX3y+17Ez4XRW+/rjNRYMGUH3VKntHCDV+dgVko4ri+7OLUVy+t7r0td+W6+EPLeNKj
-        B5yTNivnHPhdvZX35+tL1udCDx4+k3L7zVwRicIXIUwWq6bGL7BRurwwfWb0t0XqNT8tniRK
-        XI/32aKfEqlX17VP2l5rnhmDNG/7jHMTM7rap7A3PjZ5XMm56ey9SUzOjz9dWihb+pZ50Z0A
-        /11cKy4z/sgJWexYxXbOe8fEJzn+TT6HStxmiuvIs6c92ucuxHT4F9fd6ktB04/feTJbeGvU
-        ckElluKMREMt5qLiRAAffWYQMAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrELMWRmVeSWpSXmKPExsWy7bCSnO5qO89kg/uHBSwezNvGZnHl4iEm
-        i0Obt7JbTH34hM1i/pFzrBZ9Lx4yW3y70sFkcXnXHDaLGef3MVkc3RhssWjrF3aLzl39rBaz
-        LuxgtWjde4Td4vCbdlaLDd/XMjoIeGz43MTmsXPWXXaPTas62TzuXNvD5rHv7TI2j74tqxg9
-        1m+5yuLxeZNcAEcUl01Kak5mWWqRvl0CV8bX9UcZCx7xV2z9dZ2xgfEyTxcjB4eEgInEzAPx
-        XYxcHEICuxklLp1pYO5i5ASKS0tM79/DBmELS6z895wdoqiZSWLCmcesIAk2AVOJVXMaWUES
-        IgITmCROvjvGApJgFtjKKDH1sxGILSzgLjFzeysTiM0ioCrRtgpkEicHr4CtxMprm1ghNshL
-        rN5wAGwzp4CdxPOWJrC4EFDN8/PvGCcw8i1gZFjFKJlaUJybnltsWGCYl1quV5yYW1yal66X
-        nJ+7iREc7FqaOxi3r/qgd4iRiYPxEKMEB7OSCO9rJc9kId6UxMqq1KL8+KLSnNTiQ4zSHCxK
-        4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGpimFXTcfB8msDMkzbuk9qHxyZZj7C0GclzvX/9Y
-        VF5yVHSa+uqSd2eMFfeWmlw1Ygt1EZSRnBTy8DTz39Y/Fj85FNUbbm756JbmFH5/NnPQ5qAj
-        GzICU06ni7ZxqW4/kJh5abfc3sBdsjsXrLdaZS9bfu7Drpg3aaluxW+5WlskZYR+heUrr09w
-        V796el3j8wmvHDI8vz3ZqR7teIVdzo2rPNP4ZZusmnohu6+W5PrM/+XKjvd8rpz4emDv59KP
-        Ny+8e3Hy5rN7LNpVKxvWnecJCxTUZdy4hZOpSazz+5VVvqeMzSpzF3mqBp+dv3fVy6CZ2/V/
-        y9m1nt4gefV8CfcNZ/lFH9rMbS74XttYp6fEUpyRaKjFXFScCADuAJ825QIAAA==
-X-CMS-MailID: 20221014104915epcas5p12414b87ea127b2d5bf521556bf841b00
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221014104915epcas5p12414b87ea127b2d5bf521556bf841b00
+        aswani.reddy@samsung.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 2/6] ASoC: samsung: i2s: configure PSR from sound card
+Message-ID: <Y0lPz91gbovAub9D@sirena.org.uk>
 References: <20221014102151.108539-1-p.rajanbabu@samsung.com>
-        <CGME20221014104915epcas5p12414b87ea127b2d5bf521556bf841b00@epcas5p1.samsung.com>
+ <CGME20221014104857epcas5p2a275a1d606ca066227228d13bcf5b120@epcas5p2.samsung.com>
+ <20221014102151.108539-3-p.rajanbabu@samsung.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/9qwgKi0P7NmZJOz"
+Content-Disposition: inline
+In-Reply-To: <20221014102151.108539-3-p.rajanbabu@samsung.com>
+X-Cookie: There's only one everything.
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add device tree node support for sound card on Tesla FSD board
 
-Signed-off-by: Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
----
- arch/arm64/boot/dts/tesla/fsd-evb.dts | 49 +++++++++++++++++++++++++++
- arch/arm64/boot/dts/tesla/fsd.dtsi    |  3 ++
- 2 files changed, 52 insertions(+)
+--/9qwgKi0P7NmZJOz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/tesla/fsd-evb.dts b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-index c0a4509499ab..ecaa3c2e3045 100644
---- a/arch/arm64/boot/dts/tesla/fsd-evb.dts
-+++ b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-@@ -49,3 +49,52 @@
- &tdm_1 {
- 	status = "okay";
- };
-+
-+&sound {
-+	compatible = "tesla,fsd-sndcard";
-+	status = "okay";
-+	model = "fsd-i2s";
-+	widgets =
-+		"Speaker", "MAIN SPK",
-+		"Microphone", "MAIN MIC";
-+
-+	primary-dai-link-0 {
-+		link-name = "fsd-primary-0";
-+		dai-format = "i2s";
-+		tesla,bitclock-master = <&tdm_0>;
-+		tesla,frame-master = <&tdm_0>;
-+		cpu {
-+			sound-dai = <&tdm_0 0>;
-+		};
-+	};
-+
-+	secondary-dai-link-0 {
-+		link-name = "fsd-secondary-0";
-+		dai-format = "i2s";
-+		tesla,bitclock-master = <&tdm_0>;
-+		tesla,frame-master = <&tdm_0>;
-+		cpu {
-+			sound-dai = <&tdm_0 1>;
-+		};
-+	};
-+
-+	primary-dai-link-1 {
-+		link-name = "fsd-primary-1";
-+		dai-format = "i2s";
-+		tesla,bitclock-master = <&tdm_1>;
-+		tesla,frame-master = <&tdm_1>;
-+		cpu {
-+			sound-dai = <&tdm_1 0>;
-+		};
-+	};
-+
-+	secondary-dai-link-1 {
-+		link-name = "fsd-secondary-1";
-+		dai-format = "i2s";
-+		tesla,bitclock-master = <&tdm_1>;
-+		tesla,frame-master = <&tdm_1>;
-+		cpu {
-+			sound-dai = <&tdm_1 1>;
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
-index 5decad45a1b6..fc8931f830a7 100644
---- a/arch/arm64/boot/dts/tesla/fsd.dtsi
-+++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
-@@ -847,6 +847,9 @@
- 			status = "disabled";
- 		};
- 
-+		sound: sound {
-+		};
-+
- 		timer@10040000 {
- 			compatible = "tesla,fsd-mct", "samsung,exynos4210-mct";
- 			reg = <0x0 0x10040000 0x0 0x800>;
--- 
-2.17.1
+On Fri, Oct 14, 2022 at 03:51:47PM +0530, Padmanabhan Rajanbabu wrote:
+> Currently the prescaler value in samsung I2S dai is calculated by
+> dividing the peripheral input clock frequency with frame clock
+> frequency and root clock frequency divider. This prescaler value is
+> used to divide the input clock to generate root clock (RCLK) from which
+> frame clock is generated for I2S communication.
+>=20
+> However for the platforms which does not have a dedicated audio PLL as
+> an input clock source, the prescaler divider will not generate accurate
+> root clock frequency, which inturn affects sampling frequency also.
+>=20
+> To overcome this scenario, support has been added to let the sound card
+> identify right prescaler divider value and configure the prescaler (PSR)
+> divider directly the from the sound card to achieve near accurate sample
+> frequencies
 
+It's not clear to me why the solution here is to move the configuration
+to the sound card rather than to improve the I2S driver to be able to
+cope with whatever the restrictions are on the PSR in these systems - it
+seems more cumbersome for system integrators, especially since you've
+not documented the issues or how to configure it.  Could you expand on
+what the constraints are here and why it's not possible for the driver
+to figure things out (given some quirk information)?
+
+--/9qwgKi0P7NmZJOz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmNJT84ACgkQJNaLcl1U
+h9DRTwf+J9Be15r7sAl4i8Dde8zTmse0pnZWcotDM9pbxNNsJ1iutdxRsMnVlQuJ
+9HavNjMp/3R7o6I3cIMB8ssa+EEaSLYDp8NzgDFhog/37cUV0whEBD6J7CRq1NRm
+pmN7pQkbvhvgK1M7y87LDhliNEYfVeRIkZR1Rk71ncNurfT5MLwYZNwuUcvmXpwG
+hkvgjy15llDZwcMT6Phj7VPmubu1MKGKhkLXQJLNKJFYD36NoSWI8qK6ID17RrQl
+JGMpowz32/S0oIjmLkWgPpf1upirFZC/nL4YO/mbYoDF5jUYsFPxAXD2MmRv8Bue
+7y5v0drOp0Cq70TJFJ3xkEb8CWA4ng==
+=sCvP
+-----END PGP SIGNATURE-----
+
+--/9qwgKi0P7NmZJOz--
