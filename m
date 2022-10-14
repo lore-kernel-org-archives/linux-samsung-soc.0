@@ -2,114 +2,279 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 751C6C4321E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Oct 2022 15:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE8AC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Oct 2022 15:13:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229949AbiJNPLq (ORCPT
+        id S230008AbiJNPN2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 14 Oct 2022 11:11:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38002 "EHLO
+        Fri, 14 Oct 2022 11:13:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229942AbiJNPLn (ORCPT
+        with ESMTP id S230003AbiJNPN1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Oct 2022 11:11:43 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54C871CF54B;
-        Fri, 14 Oct 2022 08:11:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1665760302; x=1697296302;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=N/njfTWM92urhDh1tc8kt06mInCQV3hTHb5sdf7xqk0=;
-  b=bYM9g6tVvtVxav3WaIrakhmyROkTIIboxfH+Snti7Ci8xFZNO4FolujL
-   thOBhsuC2TfFHL04DoRxG5S2eUY/pAV0ZXb0LWpYmunDj/ubmUPdfkPSY
-   lNHnGkeaZMzKLb684jH0zXNvWWJdgTnh0v0EcW4qCAjgpfJ+TBq5lwWg2
-   1euRJ0TRDrJx5ddSw44StElwH8iUvgQNGC6z3xIaZe9/ef+zoNkL0R21m
-   AGZv/jOUPRKHS0+dy0loDJ4uj3Bzkmpsh04Qo5X4rRcPoI2vhFmADfEF4
-   D/1eSZezcYNv2aMlKCnX02TtPb5jFtE3vkhoYLsQg15GaZf6PSNlwT/Er
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10500"; a="369587630"
-X-IronPort-AV: E=Sophos;i="5.95,184,1661842800"; 
-   d="scan'208";a="369587630"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2022 08:11:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10500"; a="660758830"
-X-IronPort-AV: E=Sophos;i="5.95,184,1661842800"; 
-   d="scan'208";a="660758830"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga001.jf.intel.com with ESMTP; 14 Oct 2022 08:11:36 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1ojMLW-006yCQ-0e;
-        Fri, 14 Oct 2022 18:11:34 +0300
-Date:   Fri, 14 Oct 2022 18:11:33 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org,
-        alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
-        linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Fri, 14 Oct 2022 11:13:27 -0400
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26A0C1D3EAD;
+        Fri, 14 Oct 2022 08:13:26 -0700 (PDT)
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-134072c15c1so6217331fac.2;
+        Fri, 14 Oct 2022 08:13:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jkHJ2WaopDUZ1kn2ahx5rf6aUqRXLuVh4aPcDlWTiFI=;
+        b=Ov+2SYq4WXXT3wVKhnYWJYB1IDlFujlw7N3yuqvuujLfPrvTNXeWT77k9Ti1GLDrkB
+         mmfMlBx8NnDZjNWte20RNxtCmphLSwSlBVqa/nEYTxxU+Z9qlQwZa4C1SurrAKwUBOPu
+         JMM3tt9/3BGJMhWdgUHrBqMDyGgGy3lk1dX2hZdtX8ieO3qqs9r6SuA94xUlJp3UsZ18
+         qn0Udl8tpmzNiEa3y5JGx0j+DUxAgAep51iA3kJ/SvV8zD9HRQBSK9phkCpX3lTOqEh7
+         UWybhGMuufoteKlaR4ql6GMT2GCmHn1MvRW8G8ID6GBUHIuc00pJQmx1uPXgaD+AD6e3
+         +41g==
+X-Gm-Message-State: ACrzQf1hgTtk4BqizPbfvsenW7EVeNPxIBwT+r3MsQXF2MkagIz0fCqB
+        cNfq73JjrRLevSfWFkpkgg==
+X-Google-Smtp-Source: AMsMyM51/rLYMuawRnZOlPd9BCtsnx5WBWRjk6J2A5Ed+h5n+44B2Gd7UIpz5sSnFxMIBbSZEVCa3Q==
+X-Received: by 2002:a05:6870:b68d:b0:12d:484a:2643 with SMTP id cy13-20020a056870b68d00b0012d484a2643mr8576751oab.105.1665760405161;
+        Fri, 14 Oct 2022 08:13:25 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id v5-20020a056870310500b00136c20b1c59sm1384346oaa.43.2022.10.14.08.13.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Oct 2022 08:13:24 -0700 (PDT)
+Received: (nullmailer pid 1963626 invoked by uid 1000);
+        Fri, 14 Oct 2022 15:13:25 -0000
+Date:   Fri, 14 Oct 2022 10:13:25 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+Cc:     lgirdwood@gmail.com, broonie@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, s.nawrocki@samsung.com,
+        perex@perex.cz, tiwai@suse.com, pankaj.dubey@samsung.com,
+        alim.akhtar@samsung.com, rcsekar@samsung.com,
+        aswani.reddy@samsung.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
-Subject: Re: [rft, PATCH v2 00/36] pinctrl: Clean up and add missed headers
-Message-ID: <Y0l8JTQQvLzRejk1@smile.fi.intel.com>
-References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
- <0684f480-2092-d520-2c8e-bd9a2dca47e3@gmail.com>
- <CAHp75VdDjyUAZBTaoPOe5oA3f_5xRznAooq08=Eff4F1AZyVOQ@mail.gmail.com>
+Subject: Re: [PATCH 3/6] dt-bindings: sound: Add sound card bindings for
+ Tesla FSD
+Message-ID: <20221014151325.GA1940481-robh@kernel.org>
+References: <20221014102151.108539-1-p.rajanbabu@samsung.com>
+ <CGME20221014104901epcas5p1a61ea81c3b1640bd8a064633c0b1e40d@epcas5p1.samsung.com>
+ <20221014102151.108539-4-p.rajanbabu@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHp75VdDjyUAZBTaoPOe5oA3f_5xRznAooq08=Eff4F1AZyVOQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20221014102151.108539-4-p.rajanbabu@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 12, 2022 at 01:04:10PM +0300, Andy Shevchenko wrote:
-> On Tue, Oct 11, 2022 at 11:56 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
-> > On 10/10/2022 1:14 PM, Andy Shevchenko wrote:
-> > > Currently the header inclusion inside the pinctrl headers seems more arbitrary
-> > > than logical. This series is basically out of two parts:
-> > > - add missed headers to the pin control drivers / users
-> > > - clean up the headers of pin control subsystem
-> > >
-> > > The idea is to have this series to be pulled after -rc1 by the GPIO and
-> > > pin control subsystems, so all new drivers will utilize cleaned up headers
-> > > of the pin control.
-> > >
-> > > Please, review and comment.
-> >
-> > Did you really need to split this on a per-driver basis as opposed to
-> > just a treewide drivers/pinctrl, drivers/media and drivers/gpiolib patch
-> > set?
-> >
-> > 36 patches seems needlessly high when 4 patches could have achieve the
-> > same outcome.
+On Fri, Oct 14, 2022 at 03:51:48PM +0530, Padmanabhan Rajanbabu wrote:
+> Add dt-binding reference document to configure the DAI link for Tesla
+> FSD sound card driver.
+
+The simple-card or graph-card bindings don't work for you?
+
 > 
-> I can combine them if maintainers ask for that, nevertheless for Intel
-> pin control and GPIO drivers, which I care more about, I would like to
-> leave as separate changes (easy to see in history what was done).
+> Signed-off-by: Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+> ---
+>  .../bindings/sound/tesla,fsd-card.yaml        | 158 ++++++++++++++++++
+>  1 file changed, 158 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/tesla,fsd-card.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/tesla,fsd-card.yaml b/Documentation/devicetree/bindings/sound/tesla,fsd-card.yaml
+> new file mode 100644
+> index 000000000000..4bd590f4ee27
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/tesla,fsd-card.yaml
+> @@ -0,0 +1,158 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright 2022 Samsung Electronics Co. Ltd.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/tesla,fsd-card.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tesla FSD ASoC sound card driver
+> +
+> +maintainers:
+> +  - Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+> +
+> +description: |
+> +  This binding describes the node properties and essential DT entries of FSD
+> +  SoC sound card node
+> +
+> +select: false
 
-I can now tell why I don't like to combine. While doing a revert (it's not
-related to GPIO nor to pin control), it appears that I reverted extra bits
-as merge conflict resolution. This is per se is not an issue, but when
-I tried to find and reapply that missed piece I can't, because the patch
-is combined and Git simply ignores to have
-`git cherry-pick _something in the past_` done.
+Never apply this schema. Why?
 
-But again, up to maintainers.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - tesla,fsd-sndcard
+> +
+> +  model:
+> +    description: Describes the Name of the sound card
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +
+> +  widgets:
+> +    description: A list of DAPM widgets in the sound card. Each entry is a pair
+> +      of strings, the first being the widget name and the second being the
+> +      widget alias
+> +    $ref: /schemas/types.yaml#/definitions/string-array
+> +
+> +  audio-routing:
+> +    description: A list of the connections between audio components. Each entry
+> +      is a pair of strings, the first being the connection's sink, the second
+> +      being the connection's source
+> +    $ref: /schemas/types.yaml#/definitions/string-array
+> +
+> +  dai-tdm-slot-num:
+> +    description: Enables TDM mode and specifies the number of TDM slots to be
+> +      enabled
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
--- 
-With Best Regards,
-Andy Shevchenko
+maximum: 8
 
+> +    default: 2
+> +
+> +  dai-tdm-slot-width:
+> +    description: Specifies the slot width of each TDm slot enabled
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [8, 16, 24]
+> +    default: 16
 
+All the above have types defined. You should not be redefining the 
+types.
+
+> +
+> +  dai-link:
+> +    description: Holds the DAI link data between CPU, Codec and Platform
+> +    type: object
+
+       additionalProperties: false
+
+> +    properties:
+> +      link-name:
+> +        description: Specifies the name of the DAI link
+> +        $ref: /schemas/types.yaml#/definitions/string
+> +
+> +      dai-format:
+> +        description: Specifies the serial data format of CPU DAI
+> +        $ref: /schemas/types.yaml#/definitions/string
+> +
+> +      tesla,bitclock-master:
+> +        description: Specifies the phandle of bitclock master DAI
+> +        $ref: /schemas/types.yaml#/definitions/phandle
+> +
+> +      tesla,frame-master:
+> +        description: Specifies the phandle of frameclock master DAI
+> +        $ref: /schemas/types.yaml#/definitions/phandle
+
+These are common properties. Drop 'tesla'.
+
+> +
+> +      cpu:
+> +        description: Holds the CPU DAI node and instance
+> +        type: object
+
+           additionalProperties: false
+
+> +        properties:
+> +          sound-dai:
+> +            description: Specifies the phandle of CPU DAI node
+> +            $ref: /schemas/types.yaml#/definitions/phandle-array
+> +
+> +        required:
+> +          - sound-dai
+> +
+> +      codec:
+> +        description: Holds the Codec DAI node and instance
+> +        type: object
+
+           additionalProperties: false
+
+> +        properties:
+> +          sound-dai:
+> +            description: Specifies the phandle of Codec DAI node
+> +            $ref: /schemas/types.yaml#/definitions/phandle-array
+
+Already has a type. Need to define how many entries (maxItems: 1 ?).
+
+> +
+> +        required:
+> +          - sound-dai
+> +
+> +    required:
+> +      - link-name
+> +      - dai-format
+> +      - tesla,bitclock-master
+> +      - tesla,frame-master
+> +      - cpu
+> +
+> +dependencies:
+> +  dai-tdm-slot-width: [ 'dai-tdm-slot-num' ]
+
+This should be captured with tdm-slot.txt converted to schema.
+
+> +
+> +required:
+> +  - compatible
+> +  - model
+> +  - dai-link
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    sound {
+> +        compatible = "tesla,fsd-sndcard";
+> +        status = "disabled";
+
+Why have a disabled example? Other than your example won't pass your 
+schema.
+
+> +        model = "fsd-i2s";
+> +
+> +        primary-dai-link-0 {
+> +            link-name = "fsd-primary-0";
+> +            dai-format = "i2s";
+> +            tesla,bitclock-master = <&tdm_0>;
+> +            tesla,frame-master = <&tdm_0>;
+> +            cpu {
+> +                sound-dai = <&tdm_0 0>;
+> +            };
+> +        };
+> +
+> +        secondary-dai-link-0 {
+> +            link-name = "fsd-secondary-0";
+> +            dai-format = "i2s";
+> +            tesla,bitclock-master = <&tdm_0>;
+> +            tesla,frame-master = <&tdm_0>;
+> +            cpu {
+> +                sound-dai = <&tdm_0 1>;
+> +            };
+> +        };
+> +
+> +        primary-dai-link-1 {
+> +            link-name = "fsd-primary-1";
+> +            dai-format = "i2s";
+> +            tesla,bitclock-master = <&tdm_1>;
+> +            tesla,frame-master = <&tdm_1>;
+> +            cpu {
+> +                sound-dai = <&tdm_1 0>;
+> +            };
+> +        };
+> +
+> +        secondary-dai-link-1 {
+> +            link-name = "fsd-secondary-1";
+> +            dai-format = "i2s";
+> +            tesla,bitclock-master = <&tdm_1>;
+> +            tesla,frame-master = <&tdm_1>;
+> +            cpu {
+> +                sound-dai = <&tdm_1 1>;
+> +            };
+> +        };
+> +    };
+> -- 
+> 2.17.1
+> 
+> 
