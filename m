@@ -2,42 +2,42 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F5EC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 15 Oct 2022 21:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8302C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 15 Oct 2022 21:30:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbiJOVXK (ORCPT
+        id S229618AbiJOVaU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 15 Oct 2022 17:23:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38320 "EHLO
+        Sat, 15 Oct 2022 17:30:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229556AbiJOVXJ (ORCPT
+        with ESMTP id S229737AbiJOVaT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 15 Oct 2022 17:23:09 -0400
+        Sat, 15 Oct 2022 17:30:19 -0400
 Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D4A23DBC7
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Oct 2022 14:23:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 985A736439
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Oct 2022 14:30:18 -0700 (PDT)
 Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id C3BAD81F4E;
-        Sat, 15 Oct 2022 23:23:01 +0200 (CEST)
+        by phobos.denx.de (Postfix) with ESMTPSA id E090B84C60;
+        Sat, 15 Oct 2022 23:30:14 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1665868983;
-        bh=lPgtUCPpTa/WL34EWEkiQDRyFdwHRUOwPPDz/2rd0vc=;
+        s=phobos-20191101; t=1665869416;
+        bh=gGNhdSdYSgMq83bmJndDIz7hsraC7M6ZXTqA6z7FUb0=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=trp4E3fp7WAf8pMqQg+O5akB4FIYqBU8gEEqcZ3BkFhVQUfIRXsiIQ7irodGligEI
-         1X7OFGZIeomcAID9bx2oX/haCd/dFKKdXiitx8DsKKIagafPKsEZa6MweTimr/97On
-         zotWM9/koL1ysSMTS/5iB0jI3p3u/IuREW/QJFfm+hxYFNRAAEJ+D+lqC3B5WmeGWu
-         02oq0QC2TtP/4W7orjMZ7g8IDH2pufgnWl54OdF8OG6AV5PYNYzLDCb2SilOe3gb77
-         kvBXIMWPaFvGiV5Bah1qSXZgGrAKnRlcQ6ru7GhUT4gac/qF6QKaBIA/sVEecRGFhS
-         dm2LnlAWuGazg==
-Message-ID: <acc210c6-f3ae-a836-e2fc-5b1872b5bbd7@denx.de>
-Date:   Sat, 15 Oct 2022 23:23:01 +0200
+        b=SSU71wsmJojX8P/dBJ2oSq/N0F5VZsQaYefNgCUQJ0TnrbnlMM74JFU4uQOuqtnA9
+         eDvX2uEK7+PXKWN6d/AzTj48SvD/D7m5XoXEuw6X1uKpVkU34/hA9RENji3mevCfI9
+         dYup5IGn7zf3UgEKqBmTDL0FKDeDDNEAjuE0d6V/gZMKAB3bHYidUI5XlY1b3+KG9b
+         GMw7Hj2uFKYKzKlDPRyMweTPoXVNEMzJloFynKEF4YJviWjIcUFg9oXRux7HMGDJVE
+         hWOhyN2cgsciT0CvB3PXnqcTJGRpiKjx/PeApcotEs1kO0zHBn3C5fItmh7gnlv9Ld
+         tEeM9tRuf5nMg==
+Message-ID: <f94cf5e8-740b-3db4-c934-f0a9e3d4ef2c@denx.de>
+Date:   Sat, 15 Oct 2022 23:30:14 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.2
-Subject: Re: [PATCH v7 05/10] drm: bridge: samsung-dsim: Add atomic_check
+Subject: Re: [PATCH v7 10/10] drm: bridge: samsung-dsim: Add i.MX8MM support
 Content-Language: en-US
 To:     Jagan Teki <jagan@amarulasolutions.com>,
         Andrzej Hajda <andrzej.hajda@intel.com>,
@@ -61,9 +61,9 @@ Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>
 References: <20221005151309.7278-1-jagan@amarulasolutions.com>
- <20221005151309.7278-6-jagan@amarulasolutions.com>
+ <20221005151309.7278-11-jagan@amarulasolutions.com>
 From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <20221005151309.7278-6-jagan@amarulasolutions.com>
+In-Reply-To: <20221005151309.7278-11-jagan@amarulasolutions.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
@@ -73,53 +73,28 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 10/5/22 17:13, Jagan Teki wrote:
-> Look like an explicit fixing up of mode_flags is required for DSIM IP
-> present in i.MX8M Mini/Nano SoCs.
-> 
-> At least the LCDIF + DSIM needs active low sync polarities in order
-> to correlate the correct sync flags of the surrounding components in
-> the chain to make sure the whole pipeline can work properly.
-> 
-> On the other hand the i.MX 8M Mini Applications Processor Reference Manual,
-> Rev. 3, 11/2020 says.
-> "13.6.3.5.2 RGB interface
->   Vsync, Hsync, and VDEN are active high signals."
-> 
-> No clear evidence about whether it can be documentation issues or
-> something, so added a comment FIXME for this and updated the active low
-> sync polarities using SAMSUNG_DSIM_TYPE_IMX8MM hw_type.
 
 [...]
 
-> +static int samsung_dsim_atomic_check(struct drm_bridge *bridge,
-> +				     struct drm_bridge_state *bridge_state,
-> +				     struct drm_crtc_state *crtc_state,
-> +				     struct drm_connector_state *conn_state)
-> +{
-> +	struct samsung_dsim *dsi = bridge_to_dsi(bridge);
-> +	struct drm_display_mode *adjusted_mode = &crtc_state->adjusted_mode;
-> +
-> +	if (dsi->plat_data->hw_type == SAMSUNG_DSIM_TYPE_IMX8MM) {
-> +		/**
-> +		 * FIXME:
-> +		 * At least LCDIF + DSIM needs active low sync,
-> +		 * but i.MX 8M Mini Applications Processor Reference Manual,
-> +		 * Rev. 3, 11/2020 says
-> +		 *
-> +		 * 13.6.3.5.2 RGB interface
-> +		 * Vsync, Hsync, and VDEN are active high signals.
-> +		 */
-> +		adjusted_mode->flags |= (DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC);
-> +		adjusted_mode->flags &= ~(DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC);
-> +	}
+> +static const struct samsung_dsim_driver_data imx8mm_dsi_driver_data = {
+> +	.reg_ofs = exynos5433_reg_ofs,
+> +	.plltmr_reg = 0xa0,
+> +	.has_clklane_stop = 1,
+> +	.num_clks = 2,
+> +	.max_freq = 2100,
+> +	.wait_for_reset = 0,
+> +	.num_bits_resol = 12,
+> +	/**
 
-It would be good to explain what exactly is going on here in the 
-comment, the comment says "Vsync, Hsync, and VDEN are active high 
-signals." and the code below does exact opposite and sets NxSYNC flags.
+Should this really be kerneldoc style /** comment or plain /* comment ?
+If the later, please fix globally, there are multiple such FIXME comments.
 
-Yes, the MX8MM/MN does need HS/VS/DE active LOW, it is a quirk of that 
-MXSFB-DSIM glue logic. The MX8MP needs the exact opposite on all three, 
-active HIGH.
+> +	 * FIXME:
+> +	 * Offset value used from downstream drivers/gpu/drm/bridge/sec-dsim.c
+> +	 * remove this comment if it is true else update the logic.
+> +	 */
+> +	.pll_p_offset = 14,
+> +	.reg_values = imx8mm_dsim_reg_values,
+> +};
 
-It would also be good to mention both MX8MM and MX8MN are affected, not 
-only MX8MM.
+[...]
