@@ -2,162 +2,217 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A8FC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Oct 2022 09:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91136C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Oct 2022 09:01:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230172AbiJQJB1 (ORCPT
+        id S230442AbiJQJBw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Oct 2022 05:01:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34242 "EHLO
+        Mon, 17 Oct 2022 05:01:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230462AbiJQJBR (ORCPT
+        with ESMTP id S230461AbiJQJBp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Oct 2022 05:01:17 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E7AD36419
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Oct 2022 02:00:48 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id s30so15068071eds.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Oct 2022 02:00:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=683v4hUy0SmafI83To+Isl3SKfGOBhxnh8RoSe2BfVE=;
-        b=baKbTregC3QhRdgmJUkHOf2bAAxxqlLwuEXARcNGa3/WqFVAKHDu91dlmMKFRVfyFw
-         s7c1IegnAd/ZA9suBgLZpR0L+BaX22/B3jmG+76M+E+k6juRwzMbuoY1EEK+2DFaFcQj
-         vHc0HMarKjxDZ2Rl+jhmlSY2HbAdhg3CinUqff9ZoO5rLuy9lkDCeuNKh6PLosoKElld
-         ygJbctlrPwFE96iJ1Qbz98jJJdKZ0fYFAZ3+TaiKi2i0SDYwzjKN2AYo1QYvZ+sWtX2p
-         M7eda4stYmZU1Rfm0Wf03Nj1MIR+gICsX2oOuXGWZrEvR9SsMZgZz6UrE8IWMJ3PhbRR
-         4DfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=683v4hUy0SmafI83To+Isl3SKfGOBhxnh8RoSe2BfVE=;
-        b=Ly+1W820AuvoClUV48/2qNFD+tuq9OEleFBDRt399kwNn7iQL1PJjbPfAwJqBnm7cq
-         xRhHDlCooW0RWG26fMHR816L1c0QPWtKrksQRtDiHqE8EG3b7goxSa+230zk98k4vkdI
-         8ACa5+UhRLyCKTUGot1oRTyBz7mu1K4XkS4yI90DnePPQo6WBRXTTWLbGf/2zUftLcMz
-         jnSqZTcBnGoDYo+qO00PNxFr9RF5d59fSyHCPnLMvWzBwnWCjAOjGGJg5jVvTZBixxy9
-         WdS3/MfPtL/oD9HrbnYYoFpLYncoDbExfpOJYwmnEtwElbtbODMEE92QCju91X0KwKKx
-         STBw==
-X-Gm-Message-State: ACrzQf3TEiGjBifqvWK2tK47we378u5pBYH5H0QVSBKHki0vSxRv4kds
-        bKxV7dyUOFFK3/YM3r/QpkAJZ/fKaxYj6qlK/garZA==
-X-Google-Smtp-Source: AMsMyM7KLX1HAl4ni5IX/0ZUj/Z5Ng5V/LISTngsrYYu60h+W61fPfqDHKqOkVMzkfb8AN6gXeEI3n5jApzCVtxB1uY=
-X-Received: by 2002:a05:6402:d0b:b0:458:a244:4e99 with SMTP id
- eb11-20020a0564020d0b00b00458a2444e99mr9354686edb.46.1665997245656; Mon, 17
- Oct 2022 02:00:45 -0700 (PDT)
+        Mon, 17 Oct 2022 05:01:45 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E28D20BDC
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Oct 2022 02:01:31 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20221017090113euoutp02eeb711a0f4abfce2b7456c1fdcbc10b7~ez7Ga_6IM0939609396euoutp02X
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Oct 2022 09:01:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20221017090113euoutp02eeb711a0f4abfce2b7456c1fdcbc10b7~ez7Ga_6IM0939609396euoutp02X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1665997273;
+        bh=QOswrhf3817KnZD8BbeUacMbHhhIBVF0cy/nIMf6CzY=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=KF8aXXdonaBvW76Nwz368ZclzHJh2OLYQnxXCxkOidmk/ZCi2zIpPjTi2odui1QYA
+         2sczHV1cPJHXhG5C5APMKWEeK2/HIYi2dTCAdyhB1DI65yaAebXE7zjv6A0F90OdzN
+         +seE6epJlwAOnPLGdHsttmklo8pxud0OX9MKH9uo=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20221017090112eucas1p1cf444495a39859ad6a31ee650035ba8b~ez7FfV3BM2114721147eucas1p1M;
+        Mon, 17 Oct 2022 09:01:12 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 13.6E.07817.8D91D436; Mon, 17
+        Oct 2022 10:01:12 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20221017090112eucas1p14c4188aedb9fc8127e274eb6bbc4dc72~ez7E539c00803808038eucas1p1I;
+        Mon, 17 Oct 2022 09:01:12 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20221017090112eusmtrp24702d0415d328ccc08e094f0c3cbea22~ez7E4qy9V2417324173eusmtrp2d;
+        Mon, 17 Oct 2022 09:01:12 +0000 (GMT)
+X-AuditID: cbfec7f4-893ff70000011e89-b8-634d19d8937e
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id B7.8C.07473.8D91D436; Mon, 17
+        Oct 2022 10:01:12 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20221017090111eusmtip1d6a8f4071bda8e2088448532c370109f~ez7Dx600n2965029650eusmtip1I;
+        Mon, 17 Oct 2022 09:01:10 +0000 (GMT)
+Message-ID: <2b0350ba-070a-8df0-9a2d-8c18da03b6cb@samsung.com>
+Date:   Mon, 17 Oct 2022 11:01:10 +0200
 MIME-Version: 1.0
-References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com> <20221010201453.77401-12-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20221010201453.77401-12-andriy.shevchenko@linux.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 17 Oct 2022 11:00:34 +0200
-Message-ID: <CACRpkdZLfPKwsABYnz0fAhqTGDnE7ZJzFJ4v_M2XF6_DTjW0Mw@mail.gmail.com>
-Subject: Re: [PATCH v2 11/36] pinctrl: ingenic: Add missed header(s)
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Marc Zyngier <maz@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kent Gibson <warthog618@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Billy Tsai <billy_tsai@aspeedtech.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-media@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
-        patches@opensource.cirrus.com, linux-mediatek@lists.infradead.org,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
+        Gecko/20100101 Thunderbird/102.3.3
+Subject: Re: [PATCH v7 01/10] drm: bridge: Add Samsung DSIM bridge driver
+Content-Language: en-US
+To:     Marek Vasut <marex@denx.de>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         NXP Linux Team <linux-imx@nxp.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-amarula <linux-amarula@amarulasolutions.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <76423028-e58e-7271-0d74-fb4bb2bf65c8@denx.de>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sf1CTZRzved93737k6GWSexQPut3ppRVEp/V0dErFdS8HepxX/3BnMdkb
+        UmPYBmnY1Yjkx1IboDFeQ8ZBAjNQJgGioSzOUZMhHM4Bg2H5C4SCMZJhYtteLP77fD+f7+f5
+        fL/fewS45Di5TpChymbUKrlSRoqI1iu+vpeca3ekvdy2FI1cIzYcuWvmCHR/pJ5Eg/N/kejI
+        D3YeKnXrCeQ160l0b6yfQL1fTfFRcUktH9XpO0lk/sPBQ7rFBhwZ+joxNFWQB5Dt9zM4+i3v
+        EIEGjv1CIg9706+WTZCov8eDowcPe/G4NXTjrJtHn2R7CPpYTzePth8eJenz7CifPlFUwaNr
+        Lk5gdPf1Gh7tclwkafc3Vow+V/sl3fxnO0YfbTEBes4ckRySInpDwSgzPmXU0dtSRXsHzV3E
+        PoP0QIPXw9MCn0QHhAJIbYF5CzVkAEuoegDbLhzUAZEfewFs8jUSnDAH4J37W58YFvSFGNdU
+        B6Ch3sHnilkAh8ddeKBLTG2DM1NaXgAT1AZ4wTlEcnwo/LXiVvDVZykFHLLPYAG8mkqAVSMt
+        QS9OSeHwraogH0bRcOleKxEIwCknCT3F/UGBpGKgbloXfFRIxcKOG9dIzhwJ8386gQcMkNKJ
+        4MI/7YCbOx7aTPplvBpOWlv4HF4PH5+vwjhDIYDGh+7lQg+g9u7wsiMWuuyL/giBP2ITPNMR
+        zdFvwpKbY0SAhlQIdE6HckOEwNLWcpyjxbCoYPnWGyFrbfovtuvaAK4HMnbFXdgV+7Mr1mH/
+        zzUCwgSkTI4mM53RvKJi9kdp5JmaHFV6VFpWphn4f65tyeptB3WTs1EWgAmABUABLgsTv+NN
+        SpOIFfLPchl11gfqHCWjsYBwASGTiknD5jQJlS7PZj5mmH2M+omKCYTrtNhTHz4nanDaHZvi
+        X+27EuE97Sopifw8sfLcKqF096JxBzN/YNIEehWdIc7v9qy62rZ9NEtFH9mSmSJ/r+y18lTs
+        8qDTUtn843z+nS7fxIPbG79/O6LaeL3Q+PTP4SpVpCv6rXdvvH92PD5uIvmTDMO34RWNlwp2
+        xtq2t2QdzThdpu984fDfCdrXi5oqw4tCn5/XnVL0ZXsSTiX1qgFRfrB7/ejaUIodLzM9+ii/
+        1kpL+DFkrsKEvo5bAFRz4tLArANdvntV3rw/5STCL6m7xgoO5W4VVg3kxSftiQxLf1R8+xnf
+        0MxjpWXXF9MFOcm7p9ZUp1pfZDcofdVY09mO0jornSgjNHvlMZtxtUb+L+OI/KYoBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsVy+t/xu7o3JH2TDdr3clncuX2a2eL+4s8s
+        Fq9vr2CzuPL1PZtF79JzrBaT7k9gsfiyaQKbxYt7F1kszja9YbfonLiE3WL5hH1sFpseX2O1
+        6Pq1ktlixvl9TBZv2hoZLU4/Ws9scaqxlcXi0pTDbBafZj0Eyk5+yWZx8cQnZovvv88yO4h5
+        rP14n9Vj3qwTLB5TThxh9TjXc5fNY+esu+wesztmsnos3vOSyePI1cWsHneu7WHzuN99nMlj
+        85J6j43vdjB59G1ZxejxeZNcAF+Unk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWR
+        qZK+nU1Kak5mWWqRvl2CXsaVTQdZCmaIV6z88om1gfGnUBcjJ4eEgInEjwntTCC2kMBSRont
+        5xgh4jISJ6c1sELYwhJ/rnWxdTFyAdW8Z5T49msPM0iCV8BO4sMbiCIWAVWJ3TduskHEBSVO
+        znzCAmKLCqRIrF69F8wWFvCUmH97C1gvs4C4xK0n88EWiwh4SPx7sY0FZAGzwC02iVNnVjBD
+        bHvBLLHv7X2wKjYBQ4mut11gGzgFrCV2Xb/ABjHJTKJraxcjhC0v0bx1NvMERqFZSA6ZhWTh
+        LCQts5C0LGBkWcUoklpanJueW2yoV5yYW1yal66XnJ+7iRGYZLYd+7l5B+O8Vx/1DjEycTAe
+        YpTgYFYS4XX74pMsxJuSWFmVWpQfX1Sak1p8iNEUGBoTmaVEk/OBaS6vJN7QzMDU0MTM0sDU
+        0sxYSZzXs6AjUUggPbEkNTs1tSC1CKaPiYNTqoEpVGDpvac8n37m8b3xCFAPsM7q8/rWfki3
+        VGFr62Q2r9JLZfdvnZjAzfgorOqPnPQxt3N/5mVWu+h0vBN5c2RDNMOUiaqm5d57tJKWe7vn
+        ffd4w24r+3niUs/KwLjEhwXz3pw45MzetWjplBrH3SdT3yQKcK5WLJt7guXG1B1Sf2vq/gb/
+        2Mltpint+mjemddK7IdY31ZVSl9nmrwg4wW7+wwjH/b361jzVFblrIuXbd+57//R2s6PubdO
+        fLbe8vJUMvvO1b9itwvoTbS021t566vRQc4Gmb8Ob46Lfl5s/1r6HtfUIwmKOY/EXSJnsbdO
+        yQhfnFNmzLRAKfyq52aVRUwLUy4v1py9Wkk2a9V2JZbijERDLeai4kQAycRD57sDAAA=
+X-CMS-MailID: 20221017090112eucas1p14c4188aedb9fc8127e274eb6bbc4dc72
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20221017084832eucas1p190091bef8dce651ad0bf582880a56117
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20221017084832eucas1p190091bef8dce651ad0bf582880a56117
+References: <20221005151309.7278-1-jagan@amarulasolutions.com>
+        <20221005151309.7278-2-jagan@amarulasolutions.com>
+        <d3012cac-6672-70cf-5cde-c3152cfd5a84@denx.de>
+        <CAMty3ZAw-iXKcYgWuPCT_RwksKHVSipxL6tXb6WNLEeB7YvYmA@mail.gmail.com>
+        <bad48f67-5fe6-d69c-51b0-bac3fa9d2719@denx.de>
+        <CAMty3ZBLQu8YijrSVdt84-J9hoOx8qcRSaGF-FvZVsJEWVaXjQ@mail.gmail.com>
+        <CGME20221017084832eucas1p190091bef8dce651ad0bf582880a56117@eucas1p1.samsung.com>
+        <76423028-e58e-7271-0d74-fb4bb2bf65c8@denx.de>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 10, 2022 at 10:15 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+Hi,
 
-> Do not imply that some of the generic headers may be always included.
-> Instead, include explicitly what we are direct user of.
+On 17.10.2022 10:48, Marek Vasut wrote:
+> On 10/17/22 09:43, Jagan Teki wrote:
+>> On Mon, Oct 17, 2022 at 12:49 PM Marek Vasut <marex@denx.de> wrote:
+>>> On 10/17/22 04:49, Jagan Teki wrote:
+>>>> On Sun, Oct 16, 2022 at 3:16 AM Marek Vasut <marex@denx.de> wrote:
+>>>>>
+>>>>> On 10/5/22 17:13, Jagan Teki wrote:
+>>>>>> Samsung MIPI DSIM controller is common DSI IP that can be used in 
+>>>>>> various
+>>>>>> SoCs like Exynos, i.MX8M Mini/Nano.
+>>>>>>
+>>>>>> In order to access this DSI controller between various platform 
+>>>>>> SoCs,
+>>>>>> the ideal way to incorporate this in the drm stack is via the drm 
+>>>>>> bridge
+>>>>>> driver.
+>>>>>>
+>>>>>> This patch is trying to differentiate platform-specific and 
+>>>>>> bridge driver
+>>>>>> code by maintaining exynos platform glue code in exynos_drm_dsi.c 
+>>>>>> driver
+>>>>>> and common bridge driver code in samsung-dsim.c providing that 
+>>>>>> the new
+>>>>>> platform-specific glue should be supported in the bridge driver, 
+>>>>>> unlike
+>>>>>> exynos platform drm drivers.
+>>>>>>
+>>>>>> - Add samsung_dsim_plat_data for keeping platform-specific 
+>>>>>> attributes like
+>>>>>>      host_ops, irq_ops, and hw_type.
+>>>>>>
+>>>>>> - Initialize the plat_data hooks for exynos platform in 
+>>>>>> exynos_drm_dsi.c.
+>>>>>>
+>>>>>> - samsung_dsim_probe is the common probe call across 
+>>>>>> exynos_drm_dsi.c and
+>>>>>>      samsung-dsim.c.
+>>>>>>
+>>>>>> - plat_data hooks like host_ops and irq_ops are invoked during the
+>>>>>>      respective bridge call chains.
+>>>>>
+>>>>> Maybe the Subject should say "Split ... driver" or "Move ... 
+>>>>> driver" ,
+>>>>> since it is not adding a new driver here ?
+>>>>
+>>>> Though it is not added a completely new driver, it is adding more
+>>>> infrastructure platform code to be compatible with both Exynos and
+>>>> i.MX8M. This is the prime reason for adding that commit head and
+>>>> explaining the same in the commit body.
+>>>
+>>> Diffstat looks like this:
+>>>
+>>>    drivers/gpu/drm/bridge/samsung-dsim.c   | 1703 
+>>> ++++++++++++++++++++++
+>>>    drivers/gpu/drm/exynos/Kconfig          |    1 +
+>>>    drivers/gpu/drm/exynos/exynos_drm_dsi.c | 1766 
+>>> ++---------------------
+>>>    include/drm/bridge/samsung-dsim.h       |  113 ++
+>>>    7 files changed, 1952 insertions(+), 1653 deletions(-)
+>>>
+>>> Looks to me like most of the code is just moved from existing driver in
+>>> this patch.
+>>
+>> Yeah, as I explained (from commit) it is moved, updated, and written
+>> the plat code. How about this head?
+>>
+>> "drm: bridge: Add Samsung DSIM bridge (Split from exynos_drm_dsi)"
 >
-> While at it, sort headers alphabetically.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> I disagree with the "Add" part of the Subject, but I'll wait for 
+> others' opinion here.
 
-Patch applied!
+Maybe something like a "Generalize Exynos-DSI DRM driver into a generic 
+Samsung DSIM bridge"?
 
-Yours,
-Linus Walleij
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
