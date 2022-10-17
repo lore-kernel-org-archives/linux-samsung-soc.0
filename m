@@ -2,101 +2,120 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F51C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Oct 2022 09:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFAC7C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Oct 2022 09:58:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231485AbiJQJ6T (ORCPT
+        id S231311AbiJQJ63 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Oct 2022 05:58:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35024 "EHLO
+        Mon, 17 Oct 2022 05:58:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230329AbiJQJ6S (ORCPT
+        with ESMTP id S231514AbiJQJ62 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Oct 2022 05:58:18 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 825FE5D139
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Oct 2022 02:58:16 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id q9so23783100ejd.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Oct 2022 02:58:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=B/Byge+Vue4J7Z80ANz5rsyrsoG83IPzp3UARO7F6/s=;
-        b=MUHWuYJag6UdIGNJWiJWxn8WAAZ42CXEFTnECn+6skOIqg/uauJYEVg974vMd9sMEk
-         zE6zI7z18arTxzgN6sTudVQN0HH06/PzZJ+4X18m75Vy/bF7X3X+fEqiRAyn7cwpLeMe
-         1S3Gkx8o3vO463r4qBmru/5P+HeV+QtYD7XFaMKTFQkBKEINKik6GSXOIGd4TakIzo/y
-         22NV5ZvkVpf1kqoQWmMXugwEs+G3K/F00qz0J2gsZD0tyQrxzJVUb1Rv0OE2tl8BfDdT
-         1Thx86QUb3Eo9BPHEOAqRcLadLrkm9xIrIOP9q0Nx+T+iVZxfi/eZSxmcD7GZQwM5l3C
-         f6SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B/Byge+Vue4J7Z80ANz5rsyrsoG83IPzp3UARO7F6/s=;
-        b=A8ZHIjMKGBuMOG2+jIVbWfESmstttCGSrLv9ECPsJRPuVXBICTdU5FKnsg6PUFCqCn
-         llAWiBEdtS1mEnW3OxlSK81bb4OU8/+jnzP+lwKSWlz5sFH+Ogb6pcHNrImZeQaIVj3R
-         Us3H0N9T1V8fE6bYVzgAzfXrAHD9OK1L8fCteSY5hJGRfM9O+40oYA2iI73+88QoLw5f
-         92lhIfXwIe4AT9Pboh32zTqCBnReFDQ5IL8PPnmdl8TKHU9uHR+HFEWsobcpHfu05M2F
-         8bBB3BZN2X2U8YXx2st9Gq66aYZmiHN+GbFrQitJGhfJqBDeJbJQSKOVv+sJ6iTfi42m
-         aHag==
-X-Gm-Message-State: ACrzQf1jk9ejAW/z8kbSVHkHwRCm4esvwxb9yXaEghrcUG7o3tcpQwiO
-        a84ogur/pXihwXNdZ6G6Qz34fiot0fH8qcYpUYe22A==
-X-Google-Smtp-Source: AMsMyM4L0M6bcj2Wvh4KRdD8EKd7M4z6+eLVjZHPl1MFPGYp6JqekMO0KaAEpqZ8kDbWIS4EMUIR8qxcTy8qHdB2D/8=
-X-Received: by 2002:a17:907:7606:b0:78e:61d:757e with SMTP id
- jx6-20020a170907760600b0078e061d757emr7556783ejc.690.1666000695069; Mon, 17
- Oct 2022 02:58:15 -0700 (PDT)
+        Mon, 17 Oct 2022 05:58:28 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD0E25D700;
+        Mon, 17 Oct 2022 02:58:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1666000706; x=1697536706;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=zxbYmgJ1tFJXZUq2wDDYpxgs+/4K8DC3Ye2JTdPk2dI=;
+  b=kgmcE0tZPcS2PXV7vpHunmlGC1cwB9/0X9xfZ4z9ojlX6h6xWpOuw4jx
+   DpsELBkKSt+hU7DEfPuOKWdbTzmQeLuzNHLOdqPQ2lP4ezEJGtaXXrb2Y
+   fZguvN7K8Q7/XSOebEG53I8pGBeWO7CPmta4uVs8o8hFq1xSpnypwmOJo
+   5shE6JRSH5kl8mciQBzHsi6x3adALvU4F5MBImKpiuyv5QrAC0CQNozNU
+   kqULGOuigWG4QqIyHSaHb3DMPNwHQhboK5MSpExK/WMcfz4oKcr49o8SS
+   Le3tjjQ4HehYWSxSXiSKQhwadcwUmQ/Ja21eeWmhMFNExD8uweh70tA9I
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10502"; a="285480892"
+X-IronPort-AV: E=Sophos;i="5.95,191,1661842800"; 
+   d="scan'208";a="285480892"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2022 02:58:26 -0700
+X-IronPort-AV: E=McAfee;i="6500,9779,10502"; a="630627154"
+X-IronPort-AV: E=Sophos;i="5.95,191,1661842800"; 
+   d="scan'208";a="630627154"
+Received: from cgarnier-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.44.27])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2022 02:58:23 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Inki Dae <inki.dae@samsung.com>, hongao <hongao@uniontech.com>,
+        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, airlied@linux.ie, daniel@ffwll.ch,
+        krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com
+Cc:     linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/exynos: replace drm_detect_hdmi_monitor() with
+ drm_display_info.is_hdmi
+In-Reply-To: <4e8d94c9-7dc0-039f-7d67-36f6c099ab75@samsung.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <CGME20220616072357epcas1p4921f90a2fe077e360688e0df00a5dde8@epcas1p4.samsung.com>
+ <20220616072233.8302-1-hongao@uniontech.com>
+ <4e8d94c9-7dc0-039f-7d67-36f6c099ab75@samsung.com>
+Date:   Mon, 17 Oct 2022 12:59:03 +0300
+Message-ID: <871qr6srdk.fsf@intel.com>
 MIME-Version: 1.0
-References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
- <CACRpkdZ1M3ckw+jFgvMqG4jvR-t_44GPoZ6ZDXszwZCJr-cDpg@mail.gmail.com> <Y00f5exY2fM6IwZ+@smile.fi.intel.com>
-In-Reply-To: <Y00f5exY2fM6IwZ+@smile.fi.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 17 Oct 2022 11:58:03 +0200
-Message-ID: <CACRpkdYmSOGtFz8W_RRkDqMXRRBOSB9jqSn65Sah90bf3Gm59g@mail.gmail.com>
-Subject: Re: [rft, PATCH v2 00/36] pinctrl: Clean up and add missed headers
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org,
-        alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
-        linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 17, 2022 at 11:27 AM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Mon, Oct 17, 2022 at 11:02:09AM +0200, Linus Walleij wrote:
-> > On Mon, Oct 10, 2022 at 10:15 PM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > > Currently the header inclusion inside the pinctrl headers seems more arbitrary
-> > > than logical. This series is basically out of two parts:
-> > > - add missed headers to the pin control drivers / users
-> > > - clean up the headers of pin control subsystem
-> > >
-> > > The idea is to have this series to be pulled after -rc1 by the GPIO and
-> > > pin control subsystems, so all new drivers will utilize cleaned up headers
-> > > of the pin control.
-> >
-> > Aha I see you want to send a pull request so I backed out the applied patches
-> > from the series for now.
+On Fri, 24 Jun 2022, Inki Dae <inki.dae@samsung.com> wrote:
+> 22. 6. 16. 16:22=EC=97=90 hongao =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+>> Once EDID is parsed, the monitor HDMI support information is available
+>> through drm_display_info.is_hdmi.
+>>=20
+>> This driver calls drm_detect_hdmi_monitor() to receive the same
+>> information, which is less efficient.
+>>=20
+>> Avoid calling drm_detect_hdmi_monitor() and use drm_display_info.is_hdmi
+>> instead.
+>>=20
 >
-> Can I consider all that you answered to as Rb tag?
+> Applied.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Sorry, but this is broken. The commit message contains the clue: "Once
+EDID is parsed". drm_get_edid() does not parse the EDID, you need to
+call drm_connector_update_edid_property() first.
 
-I haven't reviewed in detail but I fully trust you to do the right thing
-and fix any fallout so will happily pull this.
+This is what I posted some time ago [1] but apparently was working on a
+different baseline.
 
-Yours,
-Linus Walleij
+BR,
+Jani.
+
+
+[1] https://patchwork.freedesktop.org/patch/msgid/f21588dcb93bdb6cf76724506=
+063bdfcdb0a6bb4.1662036058.git.jani.nikula@intel.com
+
+
+>
+> Thanks,
+> Inki Dae
+>
+>> Signed-off-by: hongao <hongao@uniontech.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_hdmi.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>=20
+>> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exyn=
+os/exynos_hdmi.c
+>> index 7655142a4651..17e9f5efbcfc 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> @@ -893,7 +893,7 @@ static int hdmi_get_modes(struct drm_connector *conn=
+ector)
+>>  	if (!edid)
+>>  		return -ENODEV;
+>>=20=20
+>> -	hdata->dvi_mode =3D !drm_detect_hdmi_monitor(edid);
+>> +	hdata->dvi_mode =3D !connector->display_info.is_hdmi;
+>>  	DRM_DEV_DEBUG_KMS(hdata->dev, "%s : width[%d] x height[%d]\n",
+>>  			  (hdata->dvi_mode ? "dvi monitor" : "hdmi monitor"),
+>>  			  edid->width_cm, edid->height_cm);
+
+--=20
+Jani Nikula, Intel Open Source Graphics Center
