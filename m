@@ -2,137 +2,163 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC21C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Oct 2022 13:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88EDDC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Oct 2022 13:49:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229671AbiJQNcQ (ORCPT
+        id S230041AbiJQNtI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Oct 2022 09:32:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42550 "EHLO
+        Mon, 17 Oct 2022 09:49:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbiJQNcP (ORCPT
+        with ESMTP id S230002AbiJQNtG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Oct 2022 09:32:15 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C87B649B66;
-        Mon, 17 Oct 2022 06:32:11 -0700 (PDT)
-Received: from fraeml705-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4MrdB34gj5z686tl;
-        Mon, 17 Oct 2022 21:28:59 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (7.191.163.240) by
- fraeml705-chm.china.huawei.com (10.206.15.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2375.31; Mon, 17 Oct 2022 15:32:04 +0200
-Received: from localhost (10.202.226.42) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Mon, 17 Oct
- 2022 14:32:03 +0100
-Date:   Mon, 17 Oct 2022 14:32:02 +0100
-From:   Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To:     Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-CC:     <broonie@kernel.org>, <sanju.mehta@amd.com>,
-        <chin-ting_kuo@aspeedtech.com>, <clg@kaod.org>,
-        <kdasu.kdev@gmail.com>, <f.fainelli@gmail.com>,
-        <rjui@broadcom.com>, <sbranden@broadcom.com>,
-        <eajames@linux.ibm.com>, <olteanv@gmail.com>, <han.xu@nxp.com>,
-        <john.garry@huawei.com>, <shawnguo@kernel.org>,
-        <s.hauer@pengutronix.de>, <narmstrong@baylibre.com>,
-        <khilman@baylibre.com>, <matthias.bgg@gmail.com>,
-        <haibo.chen@nxp.com>, <linus.walleij@linaro.org>,
-        <daniel@zonque.org>, <haojian.zhuang@gmail.com>,
-        <robert.jarzmik@free.fr>, <agross@kernel.org>,
-        <bjorn.andersson@linaro.org>, <heiko@sntech.de>,
-        <krzysztof.kozlowski@linaro.org>, <andi@etezian.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <wens@csie.org>, <jernej.skrabec@gmail.com>, <samuel@sholland.org>,
-        <masahisa.kojima@linaro.org>, <jaswinder.singh@linaro.org>,
-        <rostedt@goodmis.org>, <mingo@redhat.com>,
-        <l.stelmach@samsung.com>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <alex.aring@gmail.com>, <stefan@datenfreihafen.org>,
-        <kvalo@kernel.org>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
-        <vigneshr@ti.com>, <jic23@kernel.org>,
-        <tudor.ambarus@microchip.com>, <pratyush@kernel.org>,
-        <git@amd.com>, <linux-spi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <joel@jms.id.au>,
-        <andrew@aj.id.au>, <radu_nicolae.pirea@upb.ro>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <claudiu.beznea@microchip.com>,
-        <bcm-kernel-feedback-list@broadcom.com>, <fancer.lancer@gmail.com>,
-        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>,
-        <jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
-        <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
-        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
-        <benjaminfair@google.com>, <yogeshgaur.83@gmail.com>,
-        <konrad.dybcio@somainline.org>, <alim.akhtar@samsung.com>,
-        <ldewangan@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <michal.simek@amd.com>,
-        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-wpan@vger.kernel.org>,
-        <libertas-dev@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <linux-iio@vger.kernel.org>, <michael@walle.cc>,
-        <akumarma@amd.com>, <amitrkcian2002@gmail.com>
-Subject: Re: [PATCH 05/10] iio: imu: Replace spi->chip_select references to
- spi->chip_select[0]
-Message-ID: <20221017143202.00003b1d@huawei.com>
-In-Reply-To: <20221017121249.19061-6-amit.kumar-mahapatra@amd.com>
-References: <20221017121249.19061-1-amit.kumar-mahapatra@amd.com>
-        <20221017121249.19061-6-amit.kumar-mahapatra@amd.com>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.29; i686-w64-mingw32)
+        Mon, 17 Oct 2022 09:49:06 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AE1658DED
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Oct 2022 06:49:02 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20221017134857euoutp0216bd632d4fe020e20eee964d6faa2aed~e32UU2gK00485304853euoutp028
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Oct 2022 13:48:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20221017134857euoutp0216bd632d4fe020e20eee964d6faa2aed~e32UU2gK00485304853euoutp028
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1666014537;
+        bh=1EbOIh3VRPIcp6I0IzAFx4YxCbdHwGU6CMVd3ePZ8QI=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=nsDpB1C3inbtn/+xBSMenk13Z/RRhiS6ORDqtUFNLAZS87UCnOsJCfNdhdbOkXJBN
+         C8WanEmd0l6drAJ8rr8kyr7trq9kuXV8GlyR/a4wvtQwOyh74EM3QkhTIEocNOJpw/
+         UVsunpGFEbgXIt6dt7+RK8GmoINMaPiBSQicaAUk=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20221017134857eucas1p23883fbac8658a6dd56e452003ce125ef~e32T-3qap0593905939eucas1p21;
+        Mon, 17 Oct 2022 13:48:57 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id B3.6E.19378.84D5D436; Mon, 17
+        Oct 2022 14:48:56 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20221017134856eucas1p12f978192d409c5ada476591d26e90b02~e32TblpSq2786327863eucas1p1W;
+        Mon, 17 Oct 2022 13:48:56 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20221017134856eusmtrp177310ba06f98bee9d28eb87d594d7daa~e32Ta2ESZ2870328703eusmtrp1T;
+        Mon, 17 Oct 2022 13:48:56 +0000 (GMT)
+X-AuditID: cbfec7f5-a35ff70000014bb2-b6-634d5d48a43b
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 57.D0.07473.84D5D436; Mon, 17
+        Oct 2022 14:48:56 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20221017134855eusmtip15dcae25ed74f636cc534e4cf1dcc34d9~e32S19qZk1305613056eusmtip1h;
+        Mon, 17 Oct 2022 13:48:55 +0000 (GMT)
+Message-ID: <1155a694-b821-d41a-da54-8a9656d90e50@samsung.com>
+Date:   Mon, 17 Oct 2022 15:48:55 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
+        Gecko/20100101 Thunderbird/102.3.3
+Subject: Re: [PATCH] thermal/drivers/exynos: Fix NULL pointer dereference
+ when getting the critical temp
+Content-Language: en-US
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org
+Cc:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20221003132943.1383065-1-daniel.lezcano@linaro.org>
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.42]
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
-X-CFilter-Loop: Reflected
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNKsWRmVeSWpSXmKPExsWy7djP87oesb7JBkf/mFs8mLeNzeLw/AqL
+        71uuM1nM+yxrsff1VnaLTY+vsVpc3jWHzeJz7xFGixnn9zFZzP0yldniycM+Ngduj52z7rJ7
+        LN7zkslj06pONo871/aweWxeUu/Rt2UVo8fnTXIB7FFcNimpOZllqUX6dglcGW1TGhgL9nJX
+        PH47j7mBcSNnFyMnh4SAicT6e3fZuhi5OIQEVjBKPFz7lQXC+cIo8aH9LROE85lRYv6vX8ww
+        LQ1fzkAlljNKTLs4gRHC+cgoMenjRiaQKl4BO4nr796C2SwCqhKHFuxlg4gLSpyc+YQFxBYV
+        SJG4ee4DWI2wQJbE4U1fwGxmAXGJW0/mg9kiAo4SX/4uYgdZwCzwh1li6qvZYAk2AUOJrrdd
+        YEM5gYr+fNnJAtEsL7H97RxmkAYJgXZOic1bF7BD3O0ise3CckYIW1ji1fEtUHEZidOTe1ig
+        GhglFvy+zwThTGCUaHh+C6rDWuLOuV9A6ziAVmhKrN+lDxF2lLj84ioTSFhCgE/ixltBiCP4
+        JCZtm84MEeaV6GgTgqhWk5h1fB3c2oMXLjFPYFSahRQus5D8PwvJO7MQ9i5gZFnFKJ5aWpyb
+        nlpsnJdarlecmFtcmpeul5yfu4kRmL5O/zv+dQfjilcf9Q4xMnEwHmKU4GBWEuF1++KTLMSb
+        klhZlVqUH19UmpNafIhRmoNFSZyXbYZWspBAemJJanZqakFqEUyWiYNTqoEpvXxy6d9gW83j
+        ynYXV5S8VGTnVmFYFWwtpiSusfJt9hTetTecSp/z/XiXd80g+9jnLXXOV2e+UVnOOe3dmVl+
+        Ue2F3u5v9u9Sb/qwIf7r1vMawr02MzucZBrLit7+VH+cJXolVE5WUPvMTtfUx/e2+6q6+gjP
+        tirW8VtzmTe3Y8a9ojA54ScRRo8Ke3ca/5t/celP3ZPR85OOLwj6tUBr9TztPyklqX7TFTXt
+        lrmfy9PLmqdtV/eLZ9154X2nIiemtR94d8XlnZShTNtmbfOAxrQCvX+LTqiLbNCyNf574eCt
+        t7/m87r4pBSoaUtOzvN/8so4x2pnZ/HyObPW71rJojB76cJ/G//abctiyVyvxFKckWioxVxU
+        nAgAE8vblM4DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLIsWRmVeSWpSXmKPExsVy+t/xu7oesb7JBnOXiVs8mLeNzeLw/AqL
+        71uuM1nM+yxrsff1VnaLTY+vsVpc3jWHzeJz7xFGixnn9zFZzP0yldniycM+Ngduj52z7rJ7
+        LN7zkslj06pONo871/aweWxeUu/Rt2UVo8fnTXIB7FF6NkX5pSWpChn5xSW2StGGFkZ6hpYW
+        ekYmlnqGxuaxVkamSvp2NimpOZllqUX6dgl6GW1TGhgL9nJXPH47j7mBcSNnFyMnh4SAiUTD
+        lzNMXYxcHEICSxklNj9azAaRkJE4Oa2BFcIWlvhzrYsNoug9o8TK0xvAErwCdhLX371lArFZ
+        BFQlDi3YywYRF5Q4OfMJC4gtKpAisXr1XjBbWCBL4sfEy2C9zALiEreezAfrFRFwlPjydxE7
+        yAJmgX/MEvtbvjNCbDvJKNHWupMRpIpNwFCi620X2AZOoI4/X3ayQEwyk+ja2sUIYctLbH87
+        h3kCo9AsJIfMQrJwFpKWWUhaFjCyrGIUSS0tzk3PLTbUK07MLS7NS9dLzs/dxAiM123Hfm7e
+        wTjv1Ue9Q4xMHIyHGCU4mJVEeN2++CQL8aYkVlalFuXHF5XmpBYfYjQFhsZEZinR5Hxgwsgr
+        iTc0MzA1NDGzNDC1NDNWEuf1LOhIFBJITyxJzU5NLUgtgulj4uCUamASCdUtaD4kcnveyc9/
+        7k0q/S7O0LhS81Xtrs3R/KJJ0+ROsxr53kw1v/HmhVRIUuXPj2cbdnI8zRAMyVDK0vxj8yOx
+        yqaEo3WGT/bxJrVEj3vF/VIBXXWvo/yPPVuZcVphTnryM6Pdnz5s+pgv7LKlNuT+z4ru1tag
+        matYok9KXGzNdSi2rlcVv3xb+8eBmxvqmS++eDTv+6SjW7bbPJ36dmp83xyX+mUZUra/bJyy
+        3/6/u8PmrGDSRK0i7jdh0180SbzN2nhw6l8RtzifR1GvAjR2nHU02vP8W1vD5abtDFYqT+fX
+        zHm9R7hZXHC2gZTF44sJS0oEHXLnbG+s11h2LWb2pmPi1TcFPB1O5b1TYinOSDTUYi4qTgQA
+        rC+WC2ADAAA=
+X-CMS-MailID: 20221017134856eucas1p12f978192d409c5ada476591d26e90b02
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20221003133014eucas1p1fe47bf216e05f96e946c7dcc5fc7eea9
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20221003133014eucas1p1fe47bf216e05f96e946c7dcc5fc7eea9
+References: <4e4d873b-4a40-334a-34e7-defb0fcc4e6b@samsung.com>
+        <CGME20221003133014eucas1p1fe47bf216e05f96e946c7dcc5fc7eea9@eucas1p1.samsung.com>
+        <20221003132943.1383065-1-daniel.lezcano@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 17 Oct 2022 17:42:44 +0530
-Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com> wrote:
+Hi Daniel,
 
-> For adding multi CS support & to prevent any existing driver from
-> breaking, replaced all spi->chip_select references to spi->chip_slect[0].
-> 
-> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+On 03.10.2022 15:29, Daniel Lezcano wrote:
+> The driver is assuming the get_critical temperature exists as it is
+> inherited by the thermal of ops. But this one has been removed in
+> favor of the generic one.
+>
+> Use the generic thermal_zone_get_crit_temp() function instead
+>
+> Fixes: 13bea86623b ("thermal/of: Remove of_thermal_get_crit_temp(")
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Hmm. No particular reason why that print should exist at all.
-The warning above it covers the case where there is a mismatch
-in IDs so this adds nothing useful.
+This patch has been dropped from -next, is there are reason for that?
 
-So patch is fine, but I'd be equally happy with just dropping the
-print.
-
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
 > ---
->  drivers/iio/imu/adis16400.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/imu/adis16400.c b/drivers/iio/imu/adis16400.c
-> index 17bb0c40a149..aa7bfcee3510 100644
-> --- a/drivers/iio/imu/adis16400.c
-> +++ b/drivers/iio/imu/adis16400.c
-> @@ -466,7 +466,7 @@ static int adis16400_initial_setup(struct iio_dev *indio_dev)
->  
->  		dev_info(&indio_dev->dev, "%s: prod_id 0x%04x at CS%d (irq %d)\n",
->  			indio_dev->name, prod_id,
-> -			st->adis.spi->chip_select, st->adis.spi->irq);
-> +			st->adis.spi->chip_select[0], st->adis.spi->irq);
->  	}
->  	/* use high spi speed if possible */
->  	if (st->variant->flags & ADIS16400_HAS_SLOW_MODE) {
+>   drivers/thermal/samsung/exynos_tmu.c | 5 ++---
+>   1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index 5a1ffe2f3134..37465af59262 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -264,9 +264,8 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>   	unsigned int status;
+>   	int ret = 0, temp;
+>   
+> -	if (data->soc != SOC_ARCH_EXYNOS5433) /* FIXME */
+> -		ret = tzd->ops->get_crit_temp(tzd, &temp);
+> -	if (ret) {
+> +	ret = thermal_zone_get_crit_temp(tzd, &temp);
+> +	if (ret && data->soc != SOC_ARCH_EXYNOS5433) { /* FIXME */
+>   		dev_err(&pdev->dev,
+>   			"No CRITICAL trip point defined in device tree!\n");
+>   		goto out;
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
