@@ -2,58 +2,58 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A14FC4167D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Oct 2022 08:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC4CC43219
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Oct 2022 08:56:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230341AbiJQI4D (ORCPT
+        id S230378AbiJQI44 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Oct 2022 04:56:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47572 "EHLO
+        Mon, 17 Oct 2022 04:56:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230297AbiJQIz6 (ORCPT
+        with ESMTP id S230091AbiJQI4z (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Oct 2022 04:55:58 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C45DF1EAF2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Oct 2022 01:55:54 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id u21so15015203edi.9
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Oct 2022 01:55:54 -0700 (PDT)
+        Mon, 17 Oct 2022 04:56:55 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B380227CEE
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Oct 2022 01:56:51 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id a6so13118208ljq.5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Oct 2022 01:56:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0VJfZvANzZSSJeUMuF0Bxg8wfo9w1jXMkbWMGF7oMMk=;
-        b=h8+aqXSTBEqQ0IHMBMNPhjr9SeCQwb1DFE7zkS7DuxOCyYhHHtEWnTIS3wxspPh+e+
-         dUFV5PNa0sGCsNrwAajogaI8BJInUOBN9fIYiJI/oU5K+wai5B9kXx/nWczzGZn3YnwP
-         dSN9YZlxfr1D33tXkQPlB+vMfiTQmXxIk9siNbYHU2BhxLv9gcaHQJHRdNBb5x7wM8O+
-         +VLFpvPmLHSDc/qglGFSwgzIKVsEZYrUlNVCgmB7aiCvO/FbFGei6MZbNlqZs7gJcLZF
-         8EdrOlLH7TUP0zCW+HtIWbOKHx5eCALtG+HqK2uSjMBtvJ6kLKy1FcrS23HAKCV8r3ir
-         nX9Q==
+        bh=683v4hUy0SmafI83To+Isl3SKfGOBhxnh8RoSe2BfVE=;
+        b=Qv6q8FWLtueHdd8V7+1ydYsFYZEEJpWavnxcBT7D5eWhQItA1/pVYccISbJFICMSkr
+         Ey3TbxDRm9PfKYS4JmGflA/lpJIrLC38NdXvtV9vC2uiARu6HbiwOaeUGshIc/MABNa8
+         iNRkxG6CAitkZXfK3EBPH0GPp9IUKLoi93vr8Qzhug5C9h9fTgikj/rU7ycMw3UELcZI
+         SVpiBRV4ckNiul+QC7IBmCWqxEcaYjPqjNgLxIT732CKswGqjuVZqI94LQYwNync9INI
+         KcYAHFuQHjoZ8bwkDPJN/fr3Cs0cqXeq4t5oCj9+Z09FuoB3p3Vj0At/JENf/LIAikzH
+         Ubfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0VJfZvANzZSSJeUMuF0Bxg8wfo9w1jXMkbWMGF7oMMk=;
-        b=TWImmYK2F5fGrS24osoNgipWbwtejDVv0Bkl38sam11CPvcoXtuXUsPqCNY4EFSzcw
-         6FTWbkdvk1yGu+K5MhGwZVxaCIw057LgtAcx34HrQryuxxHhbwrsixmqtT3rF2bxKIhp
-         KUZUcEbkb1VGSsuKfgfuRfBQz9aKHSJgheO9/VNbpBAhHCiXHyKyJqML28lfE4dBqdj9
-         R1Zv63q0ymFWKOYsNjqbhWEZJhdO4yVAMwkavOIyUEPqhnBmy82r09pRTEgRBFuMi8Px
-         ZD9xHFOgIQq7Eax7E+nu8CpNGatEBDtXSpKoVBAVlDzfbdy51pFKmyuxWRvDXru/Yuov
-         U4gg==
-X-Gm-Message-State: ACrzQf3PhApt75hes13x4OpI8uwheeV6Osy+o8YSZrkAEmWQZKXuLowr
-        LwaIiMNwdu5kBY6gYuBnNEmynaBQWd4ncPcS3QV+rg==
-X-Google-Smtp-Source: AMsMyM57m/gTM4FXoXHWW8JhWcxwAvnJ7+QZw08tKnD2ELBC87aTVl3IiilpZvbf4XnjE5yqDfpwW9WdeuSfTrdIvn4=
-X-Received: by 2002:a05:6402:448:b0:45c:8de5:4fc with SMTP id
- p8-20020a056402044800b0045c8de504fcmr9328128edw.133.1665996953352; Mon, 17
- Oct 2022 01:55:53 -0700 (PDT)
+        bh=683v4hUy0SmafI83To+Isl3SKfGOBhxnh8RoSe2BfVE=;
+        b=qXdG5Jk7FKVZw8gzXe9kyJopmYtr4fZUYIQlbPcaJbLzYrHSt74hgWeFeU4dY93dPH
+         G+2TJixhHx+mzeEKTc58O1zMdM+i7TThDlgSOkYoMIicaRQjCAGU8ShVaTm/fBRk42nW
+         DIiG/ZYFgEDfAoMiElu3/RCm3b3THgDrpex467PfLK5bb40Xj3dVdU/QMV4I+1+c4Fnb
+         e60kwHIf7H6+7iwZOLvKDoupqFNYg1U84xwn7DDcOgd5LWzWcEX0Cd/9jM1xEJ3vGQym
+         Q+S/R5wkAr28sR7wo4tJOD7ajgTUihrTXG42pNW6l5iKseeO0vEhaWY/+vfEGEyBDbKu
+         UJBA==
+X-Gm-Message-State: ACrzQf3qowOSGM8iQss07+J06jWk1IzODy4Vcf45QRXRyXgMNwpEgUMH
+        hVGvKoS7D1bzWRsRzmqP/tclqwKYVvp9JnKBfDkGVTMUmkc=
+X-Google-Smtp-Source: AMsMyM54Es/rcRwZ3d5m5p40C0eL91BNOKnYNSaIiRiDdnSBs8EPAVZPWnDFbd89WM1r3BkjvyLcetoBa+sYeNXylYg=
+X-Received: by 2002:a17:906:5d04:b0:77f:ca9f:33d1 with SMTP id
+ g4-20020a1709065d0400b0077fca9f33d1mr7894989ejt.526.1665996999142; Mon, 17
+ Oct 2022 01:56:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com> <20221010201453.77401-6-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20221010201453.77401-6-andriy.shevchenko@linux.intel.com>
+References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com> <20221010201453.77401-7-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20221010201453.77401-7-andriy.shevchenko@linux.intel.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 17 Oct 2022 10:55:41 +0200
-Message-ID: <CACRpkdZC+7SoXqODurpamufCWQ574=X0mA26YApe_-a_ZjA-hw@mail.gmail.com>
-Subject: Re: [PATCH v2 05/36] pinctrl: aspeed: Add missed header(s)
+Date:   Mon, 17 Oct 2022 10:56:27 +0200
+Message-ID: <CACRpkdYsJtLT=D6OsJURG9Kj1c3A5x=LmUO_jNLkY=AsqPK5Ng@mail.gmail.com>
+Subject: Re: [PATCH v2 06/36] pinctrl: at91: Add missed header(s)
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     Marc Zyngier <maz@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
         Kent Gibson <warthog618@gmail.com>,
@@ -157,7 +157,7 @@ On Mon, Oct 10, 2022 at 10:15 PM Andy Shevchenko
 >
 > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Patch applied.
+Patch applied!
 
 Yours,
 Linus Walleij
