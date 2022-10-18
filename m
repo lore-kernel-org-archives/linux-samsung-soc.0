@@ -2,79 +2,109 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D7C9C43217
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Oct 2022 03:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9744BC4321E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Oct 2022 13:08:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230351AbiJRDGu (ORCPT
+        id S229554AbiJRNIA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Oct 2022 23:06:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34004 "EHLO
+        Tue, 18 Oct 2022 09:08:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230189AbiJRDGi (ORCPT
+        with ESMTP id S229574AbiJRNH4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Oct 2022 23:06:38 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B30DC73901;
-        Mon, 17 Oct 2022 20:06:36 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6596DB81C5C;
-        Tue, 18 Oct 2022 03:06:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65FB7C43141;
-        Tue, 18 Oct 2022 03:06:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666062394;
-        bh=TgPmSxG73o1j43Hh1nLaVBRIR68zjBpA0IPJMPe2ikI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kB6WuQC9TdG7ex1XbLonRWXCaE548TbuN4P80FnPNRF0nQaKFG/I+sZRPs656ttkU
-         rKAN4wdvOAc+cYEiWTP4+K+LRBngCA22vOsLepvigjV9WgIvapzV40y4moYHVwYXcQ
-         g2ByC/fM077viJKq1her6JuZirVXEYS8Ex1gzTSUIlPSPFyCZ3DpC/ItJf7tHcgfVk
-         Bp1gQZhjCfTHKuip16gzN88/7zZutGTOJ5sjodnPboODsHLGfRg/Uk1Y29DnLWuctz
-         KrDL7KDkoklmzw3yYstwvoqrrUHFKq3dywnRkyCPyZIIzkgN2aHX3YOQdh8dpVfp4U
-         NRwsqXXu0JQ6Q==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     krzysztof.kozlowski@linaro.org, dmitry.torokhov@gmail.com
-Cc:     linux-arm-kernel@lists.infradead.org, alim.akhtar@samsung.com,
-        k.opasiak@samsung.com, linux-kernel@vger.kernel.org,
-        agross@kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: (subset) [PATCH 1/3] arm64: dts: exynos: fix polarity of "enable" line of NFC chip
-Date:   Mon, 17 Oct 2022 22:05:15 -0500
-Message-Id: <166606235860.3553294.4751927209979123286.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220929011557.4165216-1-dmitry.torokhov@gmail.com>
-References: <20220929011557.4165216-1-dmitry.torokhov@gmail.com>
+        Tue, 18 Oct 2022 09:07:56 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12603C6950;
+        Tue, 18 Oct 2022 06:07:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1666098475; x=1697634475;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sEQGqXRBwnqb8HWOCi92bXpDgq1DcIK6JeLU6KGQmhU=;
+  b=CpqjtYF41V8MLGIiXWK0qubbqKjLFQqYlBatPKpj3lpciNHFOUAj6Okg
+   4NXwnwuo+HhwmkyufYnRraKxMesHb6ACsYeT1717ICwGhkyof2l8pou3m
+   fePS+HYV+aL8L4HzVll9FEtSrc4HJojwzWOEQiB1hjUa/78DqN0GdnCcP
+   Pfn1XNEiqMMlSq/F0FgUjMiikCbPdacBdz3AK+3ZX525KJROm9puZAD17
+   c4yDFqRFZRtMyolMYr0F3fAENyZ1XW6s5/aRUQZaAx9+2AxQSC20Tzi4g
+   NZukQ+YWvtQPzklNP3Ae/ZEIk99UpNGa6TLdaIxf50ay3wrP8GM7whH4J
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10504"; a="368126208"
+X-IronPort-AV: E=Sophos;i="5.95,193,1661842800"; 
+   d="scan'208";a="368126208"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2022 06:07:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10504"; a="659781896"
+X-IronPort-AV: E=Sophos;i="5.95,193,1661842800"; 
+   d="scan'208";a="659781896"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga008.jf.intel.com with ESMTP; 18 Oct 2022 06:07:49 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1okmJu-009NCP-2i;
+        Tue, 18 Oct 2022 16:07:46 +0300
+Date:   Tue, 18 Oct 2022 16:07:46 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org, linux-actions@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
+        patches@opensource.cirrus.com, linux-mediatek@lists.infradead.org,
+        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 36/36] pinctrl: Clean up headers
+Message-ID: <Y06lIq+2+MPRL45W@smile.fi.intel.com>
+References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
+ <20221010201453.77401-37-andriy.shevchenko@linux.intel.com>
+ <d63088d7-202b-a550-01e5-345a22de5f7d@amd.com>
+ <CAMuHMdUfdQnisexfs4yLjeKs-LUPY1HjChrgeNjNL1qSErir9Q@mail.gmail.com>
+ <Y0UyOWALxSFai2w6@smile.fi.intel.com>
+ <CAMuHMdVU-cTBMzgBrbzA9+ZYybVS8kdYaA9spU9oDfqrLMvCuA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVU-cTBMzgBrbzA9+ZYybVS8kdYaA9spU9oDfqrLMvCuA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 28 Sep 2022 18:15:55 -0700, Dmitry Torokhov wrote:
-> According to s3fwrn5 driver code the "enable" GPIO line is driven "high"
-> when chip is not in use (mode is S3FWRN5_MODE_COLD), and is driven "low"
-> when chip is in use.
-> 
-> s3fwrn5_phy_power_ctrl():
-> 
-> 	...
-> 	gpio_set_value(phy->gpio_en, 1);
-> 	...
-> 	if (mode != S3FWRN5_MODE_COLD) {
-> 		msleep(S3FWRN5_EN_WAIT_TIME);
-> 		gpio_set_value(phy->gpio_en, 0);
-> 		msleep(S3FWRN5_EN_WAIT_TIME);
-> 	}
-> 
-> [...]
+On Tue, Oct 18, 2022 at 03:04:44PM +0200, Geert Uytterhoeven wrote:
+> On Tue, Oct 11, 2022 at 11:07 AM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Tue, Oct 11, 2022 at 10:46:30AM +0200, Geert Uytterhoeven wrote:
+> > > On Tue, Oct 11, 2022 at 9:31 AM Basavaraj Natikar <bnatikar@amd.com> wrote:
 
-Applied, thanks!
+...
 
-[2/3] arm64: dts: qcom: msm8916-samsung-a2015: fix polarity of "enable" line of NFC chip
-      commit: 978bc4c578a6d7baffc5646b0f327da036b3051b
+> > > I can confirm adding
+> > >
+> > >     #include <linux/pinctrl/pinconf.h>
+> > >
+> > > to drivers/pinctrl/renesas/pinctrl-rzn1.c and drivers/pinctrl/pinctrl-single.c
+> > > fixes the issues I was seeing with shmobile_defconfig and (out-of-tree)
+> > > renesas_defconfig.
+> >
+> > I will add this, thank you for reporting.
+> 
+> Same for drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c.
 
-Best regards,
+Thanks!
+
+Not only. I have updated all of them (but missed zynq (it is in today's Linux
+Next).
+
 -- 
-Bjorn Andersson <andersson@kernel.org>
+With Best Regards,
+Andy Shevchenko
+
+
