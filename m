@@ -2,190 +2,95 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8624CC38A2D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Oct 2022 13:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E64C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Oct 2022 13:19:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230234AbiJRNMR convert rfc822-to-8bit (ORCPT
+        id S230361AbiJRNTb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 18 Oct 2022 09:12:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39486 "EHLO
+        Tue, 18 Oct 2022 09:19:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230305AbiJRNMK (ORCPT
+        with ESMTP id S230360AbiJRNTa (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Oct 2022 09:12:10 -0400
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE85C7075;
-        Tue, 18 Oct 2022 06:12:07 -0700 (PDT)
-Received: by mail-qk1-f176.google.com with SMTP id 8so8560592qka.1;
-        Tue, 18 Oct 2022 06:12:07 -0700 (PDT)
+        Tue, 18 Oct 2022 09:19:30 -0400
+Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EA8265AD
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Oct 2022 06:19:26 -0700 (PDT)
+Received: by mail-qk1-x732.google.com with SMTP id z30so8538507qkz.13
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Oct 2022 06:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9pHiEMFfYao+vpXSzcw1Pyr5Zb1hstE5rItxZfxpi4Q=;
+        b=NYi6NDnnA73hScjXrX/J/+AsYL8Y40X28MTeO2hJDsxxSm1wNdO+FdH4chdaxuSacS
+         l1z1WDo6/nS7LpsELf+IynRlhYDLjEc84aNcJwFcdWGM2ln4OvZ2T+9gIxG7gDsgWBBU
+         UQxyZ1a5zPGcl9+0Dkf8DfpFdiEePLaFx9EqwdyYFhvwa6vBz20UlQAq/Nwa4N/iahyG
+         4vCmfh0zDkgaNUR/dELAslrL6PSti5EZ85M7QppecGgsQd3NdiOkJjVvSnJjYUfg3L1B
+         s1rpsPXvm7IG1kHu0s3fW/qsZYTTj8PKbHOII1myZqwCi52DpblVjl5ra2i6eDKpJnuJ
+         lYtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=B3o3vYAk1VZiDmjBJfHdrW7jPj/9+r6RZmm9abHN1X0=;
-        b=w30kMkDWjpjT5ClZomXNaMEeKfkD9NWquKhdRkFtHIx8wXQSmKKztKjvDFO5jcumuR
-         KKzNaBqthc3hhaUjWRGhOHkSIFWRrzFs7JabRuyFMpsU03NvcB2juyNMptylwRlcAaUH
-         N51VaE4jGeFh5VNSFN5HbS1sQwiS1uuysjpC4GFfWBhWG7wigaJxlOC+XFwCUflT5U99
-         WhMBqAXNrgnAcG3prPENmYFs1qeb9QVkSAf8qW6pGdBcIqSXFvS1H3wtdEG9CahHiPgX
-         YJEKe8sgn7fuJ52cjeX6qXCHp75/XDZQHTsHY0ncv/wCQFAd3KTVNvaySOTpWoOb1I/W
-         A3Fw==
-X-Gm-Message-State: ACrzQf3/T+il35Qt01Yp1YWYvFVV0izubersUHS9cB3fcVGS4O8cYSE1
-        S7jyTPY/JRdwn4UA5nr0dauNgi7+7nM8iBIS
-X-Google-Smtp-Source: AMsMyM7DzJpeK7z/ARYpjDxwFhb9pIHUmbedc+cAJLNC6kKsA0vBNh3wA6IY05ojbUNWyvB0N4LRxw==
-X-Received: by 2002:a05:620a:1724:b0:6ee:e8bc:9590 with SMTP id az36-20020a05620a172400b006eee8bc9590mr1740666qkb.160.1666098726585;
-        Tue, 18 Oct 2022 06:12:06 -0700 (PDT)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
-        by smtp.gmail.com with ESMTPSA id y8-20020ac81288000000b00398a7c860c2sm1916040qti.4.2022.10.18.06.12.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Oct 2022 06:12:06 -0700 (PDT)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-357208765adso136307547b3.12;
-        Tue, 18 Oct 2022 06:12:06 -0700 (PDT)
-X-Received: by 2002:a25:26c1:0:b0:6c3:bdae:c6d6 with SMTP id
- m184-20020a2526c1000000b006c3bdaec6d6mr2457054ybm.36.1666098296216; Tue, 18
- Oct 2022 06:04:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
- <20221010201453.77401-37-andriy.shevchenko@linux.intel.com>
- <d63088d7-202b-a550-01e5-345a22de5f7d@amd.com> <CAMuHMdUfdQnisexfs4yLjeKs-LUPY1HjChrgeNjNL1qSErir9Q@mail.gmail.com>
- <Y0UyOWALxSFai2w6@smile.fi.intel.com>
-In-Reply-To: <Y0UyOWALxSFai2w6@smile.fi.intel.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 18 Oct 2022 15:04:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVU-cTBMzgBrbzA9+ZYybVS8kdYaA9spU9oDfqrLMvCuA@mail.gmail.com>
-Message-ID: <CAMuHMdVU-cTBMzgBrbzA9+ZYybVS8kdYaA9spU9oDfqrLMvCuA@mail.gmail.com>
-Subject: Re: [PATCH v2 36/36] pinctrl: Clean up headers
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Basavaraj Natikar <bnatikar@amd.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kent Gibson <warthog618@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Billy Tsai <billy_tsai@aspeedtech.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-media@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
-        patches@opensource.cirrus.com, linux-mediatek@lists.infradead.org,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        bh=9pHiEMFfYao+vpXSzcw1Pyr5Zb1hstE5rItxZfxpi4Q=;
+        b=5oRLpnu96vXImu8Sk6RQi5xIRY1XmfqZxeU+zUlKAEZYYHh4YgYMykVh8+Y4ogmmT7
+         x8ZrEL5W2HxlUwCrCYrRzSbvXN5MHoEqkUKRvnyX4h9HBqIM1tbxl4E3o9GGdgekrOmN
+         MRtWS4q6KEMmF3E0XSuKhKh5TKWML7EFYr0H/o3RZ4qcxJAeLdLVG0vrlGyBTS3S7oB7
+         NYQwQ5po7PWOkEldRtDgXIMGMCL+cpL6KfdAU4wCEJkPbgucx5qVCkBP65oy11FmwsZV
+         SIUsl7wjL2Dvozk7KH9X8RYyL9SH8MI06XpJCVcJGE2jvbiH5Hf7GenXAwivt0WL0fKu
+         iplg==
+X-Gm-Message-State: ACrzQf3ah4w4sJ8+NjwEHix3v3FyK8odpdwjrHkCPKs+LnWxuuwgxE4E
+        0ZYXsoBR2WNIrfSEUj6r7P9LsiXvU1rPdQ==
+X-Google-Smtp-Source: AMsMyM4D7tu8vG7yq6HFiUpqmmutvXXMw5bAxoPEBAtdyVgzXpcN/wiY+KW8504fK1vupNWtM5BJ0g==
+X-Received: by 2002:a05:620a:45a0:b0:6ee:e153:8d49 with SMTP id bp32-20020a05620a45a000b006eee1538d49mr1833526qkb.170.1666099165270;
+        Tue, 18 Oct 2022 06:19:25 -0700 (PDT)
+Received: from krzk-bin.MSRM (pool-72-83-177-149.washdc.east.verizon.net. [72.83.177.149])
+        by smtp.gmail.com with ESMTPSA id s6-20020a05620a0bc600b006e6a7c2a269sm2527599qki.22.2022.10.18.06.19.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Oct 2022 06:19:24 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     David Virag <virag.david003@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sean Wang <sean.wang@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Tomasz Figa <tomasz.figa@gmail.com>,
+        linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [RESEND PATCH] clk: samsung: exynos7885: Correct "div4" clock parents
+Date:   Tue, 18 Oct 2022 09:19:12 -0400
+Message-Id: <166609913433.8547.14138781440023077011.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221013151341.151208-1-virag.david003@gmail.com>
+References: <20221013151341.151208-1-virag.david003@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Andy,
+On Thu, 13 Oct 2022 17:13:40 +0200, David Virag wrote:
+> "div4" DIVs which divide PLLs by 4 are actually dividing "div2" DIVs by
+> 2 to achieve a by 4 division, thus their parents are the respective
+> "div2" DIVs. These DIVs were mistakenly set to have the PLLs as parents.
+> This leads to the kernel thinking "div4"s and everything under them run
+> at 2x the clock speed. Fix this.
+> 
+> 
+> [...]
 
-On Tue, Oct 11, 2022 at 11:07 AM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Tue, Oct 11, 2022 at 10:46:30AM +0200, Geert Uytterhoeven wrote:
-> > On Tue, Oct 11, 2022 at 9:31 AM Basavaraj Natikar <bnatikar@amd.com> wrote:
-> > > On 10/11/2022 1:44 AM, Andy Shevchenko wrote:
->
-> > > > +++ b/drivers/pinctrl/core.h
->
-> > > > -#include <linux/pinctrl/pinconf.h>
-> > >
-> > > Removing pinconf.h from the core.h may cause build failure in other files
-> > > because where-ever core.h is included to use “struct pinconf_ops”, there
-> > > is a need to include pinconf.h.
-> >
-> > I can confirm adding
-> >
-> >     #include <linux/pinctrl/pinconf.h>
-> >
-> > to drivers/pinctrl/renesas/pinctrl-rzn1.c and drivers/pinctrl/pinctrl-single.c
-> > fixes the issues I was seeing with shmobile_defconfig and (out-of-tree)
-> > renesas_defconfig.
->
-> I will add this, thank you for reporting.
+Applied, thanks!
 
-Same for drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c.
+[1/1] clk: samsung: exynos7885: Correct "div4" clock parents
+      https://git.kernel.org/krzk/linux/c/ef80c95c29dc67c3034f32d93c41e2ede398e387
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
