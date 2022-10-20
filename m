@@ -2,54 +2,54 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF2DC43219
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Oct 2022 10:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FE9C63716
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Oct 2022 10:38:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231135AbiJTKiM (ORCPT
+        id S231193AbiJTKiO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Oct 2022 06:38:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60854 "EHLO
+        Thu, 20 Oct 2022 06:38:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230435AbiJTKiJ (ORCPT
+        with ESMTP id S230523AbiJTKiL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Oct 2022 06:38:09 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D3461D298C;
-        Thu, 20 Oct 2022 03:38:04 -0700 (PDT)
+        Thu, 20 Oct 2022 06:38:11 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08CDE1D4610;
+        Thu, 20 Oct 2022 03:38:02 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 6D4FF1FA35;
-        Thu, 20 Oct 2022 10:38:02 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id D2CAA22B47;
+        Thu, 20 Oct 2022 10:38:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1666262282; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1666262280; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=mu2A6Ru6vvqSAa8anfcgwfFu/Q/j4bw+8GKC1w2HMmA=;
-        b=A0zYrW5gqOwD0UmgydO2eWGT2SqjAoP3lZQYxLBbjn1FD9iKZ+jXjtpUH4Wcx9BNQojmOb
-        LfAIQZ9VEVbQ8DBB8c1HUrKsvGi9elrzyom5nU1i1S4XEuNggVcldX3aLZek/CnvnSeedU
-        gPl5CBmbcXHi4Vbp4H4FbI+8afh2v8o=
+        bh=jWFK76GZFYsgYwc+6vxSArga9uMmZ2Tc8oMprbqiqw0=;
+        b=Ejd78jRSYmwnBxX2aipwC3Ox8skiLUbjtMay59sDp649DdHDOhbUxuiSAsJXDe59jzY039
+        7m8t3LalhptMXwLVTrzVkCxp54leuuDcxIxewQ+X5Z1wJw/nYtKJ6C9nQ6NwMv8FXkTkGO
+        3RqSYtiMQc/Rly3XWIlnJ+uGnR6kSNM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1666262282;
+        s=susede2_ed25519; t=1666262280;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=mu2A6Ru6vvqSAa8anfcgwfFu/Q/j4bw+8GKC1w2HMmA=;
-        b=2xAW0Xc2OoIRcV0fJ3IAQ47yQzwEXCQEcQPifH7AfQWKa3O1MepBsC39PfWI4G0Chr/PJa
-        Q235JYSX8M+kcEDQ==
+        bh=jWFK76GZFYsgYwc+6vxSArga9uMmZ2Tc8oMprbqiqw0=;
+        b=9Bhly1S29cGBzEZtlHvw8BUo8sDLPZ+WqFVhjceEyB7ynwh+OKfDst1qZxL/12nJNg8l+J
+        LjNHGoN0NcLl8OAw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DEF7113B72;
-        Thu, 20 Oct 2022 10:38:01 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 598D613AF5;
+        Thu, 20 Oct 2022 10:38:00 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id eJSaNQklUWPPYwAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Thu, 20 Oct 2022 10:38:01 +0000
+        id UMn+FAglUWPPYwAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Thu, 20 Oct 2022 10:38:00 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@gmail.com, sam@ravnborg.org,
         javierm@redhat.com, mripard@kernel.org,
@@ -70,9 +70,9 @@ Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 10/21] drm/tve200: Include <linux/of.h>
-Date:   Thu, 20 Oct 2022 12:37:44 +0200
-Message-Id: <20221020103755.24058-11-tzimmermann@suse.de>
+Subject: [PATCH 07/21] drm/rockchip: Don't set struct drm_driver.lastclose
+Date:   Thu, 20 Oct 2022 12:37:41 +0200
+Message-Id: <20221020103755.24058-8-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.38.0
 In-Reply-To: <20221020103755.24058-1-tzimmermann@suse.de>
 References: <20221020103755.24058-1-tzimmermann@suse.de>
@@ -82,25 +82,36 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Include <linux/of.h> for of_match_ptr().
+Don't set struct drm_driver.lastclose. It's used to restore the
+fbdev console. But as rockchip uses generic fbdev emulation, the
+console is being restored by the DRM client helpers already. See
+the call to drm_client_dev_restore() in drm_lastclose().
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/tve200/tve200_drv.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/rockchip/rockchip_drm_fb.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/tve200/tve200_drv.c b/drivers/gpu/drm/tve200/tve200_drv.c
-index 04db72e3fa9c2..611785e097576 100644
---- a/drivers/gpu/drm/tve200/tve200_drv.c
-+++ b/drivers/gpu/drm/tve200/tve200_drv.c
-@@ -32,6 +32,7 @@
- #include <linux/irq.h>
- #include <linux/io.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/shmem_fs.h>
- #include <linux/slab.h>
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+index 092bf863110b7..7de64b0ad047f 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+@@ -9,7 +9,6 @@
+ #include <drm/drm.h>
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_damage_helper.h>
+-#include <drm/drm_fb_helper.h>
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_framebuffer.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+@@ -101,7 +100,6 @@ rockchip_fb_create(struct drm_device *dev, struct drm_file *file,
+ 
+ static const struct drm_mode_config_funcs rockchip_drm_mode_config_funcs = {
+ 	.fb_create = rockchip_fb_create,
+-	.output_poll_changed = drm_fb_helper_output_poll_changed,
+ 	.atomic_check = drm_atomic_helper_check,
+ 	.atomic_commit = drm_atomic_helper_commit,
+ };
 -- 
 2.38.0
 
