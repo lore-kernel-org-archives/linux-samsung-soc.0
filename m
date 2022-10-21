@@ -2,196 +2,221 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA2DC4167B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Oct 2022 12:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83284C43217
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Oct 2022 08:20:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229947AbiJTMBK (ORCPT
+        id S229510AbiJUIUR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Oct 2022 08:01:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60986 "EHLO
+        Fri, 21 Oct 2022 04:20:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229911AbiJTMBH (ORCPT
+        with ESMTP id S229997AbiJUIUP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Oct 2022 08:01:07 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5823144083;
-        Thu, 20 Oct 2022 05:01:01 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 2CEEE20A43;
-        Thu, 20 Oct 2022 12:01:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1666267260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xkVVGkBtQDyTBLM0kpfBsn85EfLgvqE9XvpjJpebKS0=;
-        b=jH0AvdmQ5Sn82qm3xMDUFxEtzQ8Afd86NNzn7lSCGUrsJFLaw9SnOVNSzFWgYotcUsDNAg
-        GKaqBJMmMrfij+SPe7P8hnpSwt/PMM4kACWzGqryH9FajEaW0KkQM86idJuP32rsTloZ7/
-        EQO0HWAxraWBomxhUiO5JqjhYu4FO/o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1666267260;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xkVVGkBtQDyTBLM0kpfBsn85EfLgvqE9XvpjJpebKS0=;
-        b=vHl/tg1vlnnTCoJtjSfQJbaUEq4mIb+x/G13qkx57QzPLCFuuxyt3aozzSXnhYTqv6SF/Y
-        S/MUxJREit23oWCA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8E08013494;
-        Thu, 20 Oct 2022 12:00:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id FxuXIXs4UWMgFQAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Thu, 20 Oct 2022 12:00:59 +0000
-Message-ID: <8f3a7b67-d193-eb47-a5a6-8826e9c82f83@suse.de>
-Date:   Thu, 20 Oct 2022 14:00:59 +0200
+        Fri, 21 Oct 2022 04:20:15 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBF228E7BA
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Oct 2022 01:20:09 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20221021082006epoutp03fb34e86adc45f247bb4e6211927088d0~gB8VfheV81800618006epoutp03l
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Oct 2022 08:20:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20221021082006epoutp03fb34e86adc45f247bb4e6211927088d0~gB8VfheV81800618006epoutp03l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1666340406;
+        bh=EteXN5leB+XmcJHL0sfrcjm4GMBmC3l2AK/BOkWFMJM=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=Pljbaf3NyNUfgxEap+TYtq9TpeKDYGI7K+BnhaZfEU6CeyZsH56freOXywo9HJCDx
+         NqNBt3WhPZ03a2UUeCxEHiQfx38q9qQTGVi8biM6TTODzMAX4FIF/m703uMRlRBwo7
+         wwLR+p8+xa2Z1BlzrExS/DP/fsBBXHG6g9Ut4/Bc=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20221021082005epcas5p274f7ed038bb09b24040de2a620bb4e30~gB8UsIVCv2087820878epcas5p2C;
+        Fri, 21 Oct 2022 08:20:05 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4Mty7l54JGz4x9Px; Fri, 21 Oct
+        2022 08:20:03 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B3.26.56352.33652536; Fri, 21 Oct 2022 17:20:03 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20221021080031epcas5p10588e8f7ebe3b7b79efa340c9f9a7f36~gBrO7TFLO1629516295epcas5p1x;
+        Fri, 21 Oct 2022 08:00:31 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20221021080031epsmtrp19daf2cfe19f4fe2b41627bd8684dee10~gBrO5-jnS2862728627epsmtrp1N;
+        Fri, 21 Oct 2022 08:00:31 +0000 (GMT)
+X-AuditID: b6c32a4b-383ff7000001dc20-de-635256335d4f
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        99.5F.18644.E9152536; Fri, 21 Oct 2022 17:00:31 +0900 (KST)
+Received: from FDSFTE070 (unknown [107.116.189.86]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20221021080027epsmtip150a7815cebd9b4c4ca9c3bf6c12073e7~gBrLl28A90171101711epsmtip1m;
+        Fri, 21 Oct 2022 08:00:27 +0000 (GMT)
+From:   "Padmanabhan Rajanbabu" <p.rajanbabu@samsung.com>
+To:     "'Mark Brown'" <broonie@kernel.org>
+Cc:     <lgirdwood@gmail.com>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <s.nawrocki@samsung.com>,
+        <perex@perex.cz>, <tiwai@suse.com>, <pankaj.dubey@samsung.com>,
+        <alim.akhtar@samsung.com>, <rcsekar@samsung.com>,
+        <aswani.reddy@samsung.com>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <Y0lPz91gbovAub9D@sirena.org.uk>
+Subject: RE: [PATCH 2/6] ASoC: samsung: i2s: configure PSR from sound card
+Date:   Fri, 21 Oct 2022 13:30:25 +0530
+Message-ID: <04a101d8e523$30804b80$9180e280$@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.3
-Subject: Re: [PATCH 01/21] drm/amdgpu: Don't set struct drm_driver.lastclose
-Content-Language: en-US
-To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        daniel@ffwll.ch, airlied@gmail.com, sam@ravnborg.org,
-        javierm@redhat.com, mripard@kernel.org,
-        maarten.lankhorst@linux.intel.com
-Cc:     linux-hyperv@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-samsung-soc@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org,
-        spice-devel@lists.freedesktop.org, linux-sunxi@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        etnaviv@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-        xen-devel@lists.xenproject.org, linux-tegra@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, freedreno@lists.freedesktop.org
-References: <20221020103755.24058-1-tzimmermann@suse.de>
- <20221020103755.24058-2-tzimmermann@suse.de>
- <b26e508b-7599-3953-6803-7db00b3cfbcb@amd.com>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <b26e508b-7599-3953-6803-7db00b3cfbcb@amd.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------WYrb0xK08aT03AsuaxFIILPE"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKFI9qd/qMOsyXBjKz4d8Q6MS4QvwJEXTuNARMAzQMCgN8f5qyRLLvA
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMJsWRmVeSWpSXmKPExsWy7bCmhq5xWFCyQftSFYsH87axWVy5eIjJ
+        4tDmrewWUx8+YbOYf+Qcq0Xfi4fMFt+udDBZXN41h81ixvl9TBaLtn5ht+jc1c9qMevCDlaL
+        1r1H2C0Ov2lntdjwfS2jA7/Hhs9NbB47Z91l99i0qpPN4861PWwe+94uY/Po27KK0WP9lqss
+        Hp83yQVwRGXbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl
+        5gBdr6RQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpMCnQK07MLS7NS9fLSy2xMjQw
+        MDIFKkzIzni/5wpjQbd8xfWdW1kbGP9IdDFyckgImEjsX7+CsYuRi0NIYDejxKQDfawQzidG
+        iQuvdrNAOJ8ZJfb+WMgK07Lo4xsmiMQuRokNTbvZIJwXjBIT1m5lAaliEzCXWLR3KSOILSKg
+        LnF000awucwCXcwSG468AyviFNCVeHn7AjuILSzgJXGmZx0ziM0ioCqx5UM/2DpeAUuJ9ydO
+        MELYghInZz4B62UWkJfY/nYOM8RJChI/ny4DqucAWuYmcX6HCUSJuMTRnz3MIHslBN5wSPxs
+        X8UEUe8i8WfCH6h3hCVeHd/CDmFLSbzsb4Oy8yWmfWxmg7ArJNo+boDqtZc4cGUOC8guZgFN
+        ifW79CHCshJTT61jgtjLJ9H7+wlUOa/EjnkwtqrE+uWbGCFsaYl91/cyTmBUmoXks1lIPpuF
+        5IVZCNsWMLKsYpRMLSjOTU8tNi0wzksth8d4cn7uJkZw6tby3sH46MEHvUOMTByMhxglOJiV
+        RHgL3gUkC/GmJFZWpRblxxeV5qQWH2I0BQb3RGYp0eR8YPbIK4k3NLE0MDEzMzOxNDYzVBLn
+        XTxDK1lIID2xJDU7NbUgtQimj4mDU6qB6eXyCcIPpx3pK/9g+sNSUEvl849vR7MOBl/4fDN0
+        2sKirOOPe/vMTXbtPujUmfTHXk8w4hIfj8pvm2u3XrCvX2vo6BlepSAxYXOv1mujkkcTtk2W
+        v1k895nZ96p/Ryc+m5UuWvvkgNGmp01Ljk5xmHupJdauKvi99vLHGo2n/oQffb/PrTZaRd3/
+        4rHU43oqU90+spj43Z2s3f/pDZfgLd7WC5KVwh8DOyXLItqXM/Zsb826/0/3/xsuph/BDizx
+        Vam6VRv1nN7s2nCT78lH8VKThXkGkw5rf0lr/rB8D6P9Co4rpwN3RGm+dHnENCE/eUb+ncl2
+        O5cXaiYtd440i9Kw2mRxbr/LEx6XgiW8e5RYijMSDbWYi4oTATpEPHtmBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJIsWRmVeSWpSXmKPExsWy7bCSnO78wKBkg6dzmS0ezNvGZnHl4iEm
+        i0Obt7JbTH34hM1i/pFzrBZ9Lx4yW3y70sFkcXnXHDaLGef3MVks2vqF3aJzVz+rxawLO1gt
+        WvceYbc4/Kad1WLD97WMDvweGz43sXnsnHWX3WPTqk42jzvX9rB57Hu7jM2jb8sqRo/1W66y
+        eHzeJBfAEcVlk5Kak1mWWqRvl8CV8X7PFcaCbvmK6zu3sjYw/pHoYuTkkBAwkVj08Q1TFyMX
+        h5DADkaJxgXv2SAS0hLT+/dA2cISK/89Z4coesYosWFxFxNIgk3AXGLR3qWMILaIgLrE0U0b
+        WUGKmAVmMEscunWJFaLjEaPErYXzwUZxCuhKvLx9gR3EFhbwkjjTs44ZxGYRUJXY8qGfFcTm
+        FbCUeH/iBCOELShxcuYTli5GDqCpehJtG8HCzALyEtvfzmGGuE5B4ufTZawgJSICbhLnd5hA
+        lIhLHP3ZwzyBUXgWkkGzEAbNQjJoFpKOBYwsqxglUwuKc9Nziw0LjPJSy/WKE3OLS/PS9ZLz
+        czcxgmNXS2sH455VH/QOMTJxMB5ilOBgVhLhLXgXkCzEm5JYWZValB9fVJqTWnyIUZqDRUmc
+        90LXyXghgfTEktTs1NSC1CKYLBMHp1QDk5lnLaNLkJvm2ZnzTRnUhTeJlF141tm8Tli2747j
+        heLDgjtyrN5WtfqenvBddkN+n2hQ+cF9MpvWnfMP2LP4ceistPDyopO/KjfLTdW+zhVxzbfP
+        Y6r4zKh/9+ZIXFsRyDIrSsBAza1uholdy7q0pZde/WHy1Db1ns5q9nhNdUTjui3OFzd+c7zq
+        GaWrfmb/TNnkj/kK8hw1869WfZ+flsnrcGzB7vBfb3dHcR2M9P0bYrIq8jC/S/2XhzERzAk/
+        BOd8ya0Wlzqtu5Vf6BXLzbX8dz4sarorVqcW8/z+pPXaHALPXNh/ahxw2CD+Ri3NJv9xod2B
+        28dOVq+U4d6d5aXVtaHIe5bFOpFTbn1TlFiKMxINtZiLihMB4TkzLUwDAAA=
+X-CMS-MailID: 20221021080031epcas5p10588e8f7ebe3b7b79efa340c9f9a7f36
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20221014104857epcas5p2a275a1d606ca066227228d13bcf5b120
+References: <20221014102151.108539-1-p.rajanbabu@samsung.com>
+        <CGME20221014104857epcas5p2a275a1d606ca066227228d13bcf5b120@epcas5p2.samsung.com>
+        <20221014102151.108539-3-p.rajanbabu@samsung.com>
+        <Y0lPz91gbovAub9D@sirena.org.uk>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------WYrb0xK08aT03AsuaxFIILPE
-Content-Type: multipart/mixed; boundary="------------gwXK6OaLfaQ8iAMdjblSoB42";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
- daniel@ffwll.ch, airlied@gmail.com, sam@ravnborg.org, javierm@redhat.com,
- mripard@kernel.org, maarten.lankhorst@linux.intel.com
-Cc: linux-hyperv@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
- nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- virtualization@lists.linux-foundation.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org,
- amd-gfx@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
- spice-devel@lists.freedesktop.org, linux-sunxi@lists.linux.dev,
- linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- etnaviv@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- xen-devel@lists.xenproject.org, linux-tegra@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- freedreno@lists.freedesktop.org
-Message-ID: <8f3a7b67-d193-eb47-a5a6-8826e9c82f83@suse.de>
-Subject: Re: [PATCH 01/21] drm/amdgpu: Don't set struct drm_driver.lastclose
-References: <20221020103755.24058-1-tzimmermann@suse.de>
- <20221020103755.24058-2-tzimmermann@suse.de>
- <b26e508b-7599-3953-6803-7db00b3cfbcb@amd.com>
-In-Reply-To: <b26e508b-7599-3953-6803-7db00b3cfbcb@amd.com>
 
---------------gwXK6OaLfaQ8iAMdjblSoB42
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
 
-SGkNCg0KQW0gMjAuMTAuMjIgdW0gMTM6NDggc2NocmllYiBDaHJpc3RpYW4gS8O2bmlnOg0K
-PiBBbSAyMC4xMC4yMiB1bSAxMjozNyBzY2hyaWViIFRob21hcyBaaW1tZXJtYW5uOg0KPj4g
-RG9uJ3Qgc2V0IHN0cnVjdCBkcm1fZHJpdmVyLmxhc3RjbG9zZS4gSXQncyB1c2VkIHRvIHJl
-c3RvcmUgdGhlDQo+PiBmYmRldiBjb25zb2xlLiBCdXQgYXMgYW1kZ3B1IHVzZXMgZ2VuZXJp
-YyBmYmRldiBlbXVsYXRpb24sIHRoZQ0KPj4gY29uc29sZSBpcyBiZWluZyByZXN0b3JlZCBi
-eSB0aGUgRFJNIGNsaWVudCBoZWxwZXJzIGFscmVhZHkuIFNlZQ0KPj4gdGhlIGNhbGwgdG8g
-ZHJtX2NsaWVudF9kZXZfcmVzdG9yZSgpIGluIGRybV9sYXN0Y2xvc2UoKS4NCj4gDQo+ID8/
-Pw0KPiANCj4gVGhlIGNvbW1pdCBtZXNzYWdlIGRvZXNuJ3QgbWF0Y2ggd2hhdCB0aGUgcGF0
-Y2ggaXMgZG9pbmcuIFlvdSBhcmUgDQo+IHJlbW92aW5nIG91dHB1dF9wb2xsX2NoYW5nZWQg
-aW5zdGVhZCBvZiBsYXN0Y2xvc2UgaGVyZS4NCj4gDQo+IERpZCBzb21ldGhpbmcgZ290IG1p
-eGVkIHVwPw0KDQpBcmdoaC4gVGhlcmUgYXJlIHBhdGNoZXMgZm9yIGxhc3RjbG9zZSBhbmQg
-b3V0cHV0X3BvbGxfY2hhbmdlZC4gVGhlIA0KcmVhc29uIGZvciByZW1vdmluZyB0aGVtIGlz
-IHRoZSBzYW1lLCBidXQgdGhhbmtzIHRvIGNvcHkgYW5kIHBhc3RlIHRoZSANCm5hbWVzIGFy
-ZSB3cm9uZy4gU28gdGhlIHBhdGNoIGlzIGNvcnJlY3QsIGJ1dCB0aGUgZGVzY3JpcHRpb24g
-aXNuJ3QuIA0KV2lsbCBiZSBmaXhlZC4NCg0KQmVzdCByZWdhcmRzDQpUaG9tYXMNCg0KPiAN
-Cj4gQ2hlZXJzLA0KPiBDaHJpc3RpYW4uDQo+IA0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IFRo
-b21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPg0KPj4gLS0tDQo+PiDCoCBk
-cml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfZGlzcGxheS5jwqDCoMKgwqDCoMKg
-IHwgMSAtDQo+PiDCoCBkcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvYW1kZ3B1X2RtL2Ft
-ZGdwdV9kbS5jIHwgMiAtLQ0KPj4gwqAgMiBmaWxlcyBjaGFuZ2VkLCAzIGRlbGV0aW9ucygt
-KQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRn
-cHVfZGlzcGxheS5jIA0KPj4gYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVf
-ZGlzcGxheS5jDQo+PiBpbmRleCAyMzk5OGY3MjdjN2Y5Li5mYjcxODZjNWFkZTJhIDEwMDY0
-NA0KPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2Rpc3BsYXku
-Yw0KPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2Rpc3BsYXku
-Yw0KPj4gQEAgLTEyMjQsNyArMTIyNCw2IEBAIGFtZGdwdV9kaXNwbGF5X3VzZXJfZnJhbWVi
-dWZmZXJfY3JlYXRlKHN0cnVjdCANCj4+IGRybV9kZXZpY2UgKmRldiwNCj4+IMKgIGNvbnN0
-IHN0cnVjdCBkcm1fbW9kZV9jb25maWdfZnVuY3MgYW1kZ3B1X21vZGVfZnVuY3MgPSB7DQo+
-PiDCoMKgwqDCoMKgIC5mYl9jcmVhdGUgPSBhbWRncHVfZGlzcGxheV91c2VyX2ZyYW1lYnVm
-ZmVyX2NyZWF0ZSwNCj4+IC3CoMKgwqAgLm91dHB1dF9wb2xsX2NoYW5nZWQgPSBkcm1fZmJf
-aGVscGVyX291dHB1dF9wb2xsX2NoYW5nZWQsDQo+PiDCoCB9Ow0KPj4gwqAgc3RhdGljIGNv
-bnN0IHN0cnVjdCBkcm1fcHJvcF9lbnVtX2xpc3QgYW1kZ3B1X3VuZGVyc2Nhbl9lbnVtX2xp
-c3RbXSA9DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5L2Ft
-ZGdwdV9kbS9hbWRncHVfZG0uYyANCj4+IGIvZHJpdmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5
-L2FtZGdwdV9kbS9hbWRncHVfZG0uYw0KPj4gaW5kZXggZjZhOWU4ZmRkODdkNi4uZTlhMjhh
-NTM2M2I5YSAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9h
-bWRncHVfZG0vYW1kZ3B1X2RtLmMNCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvZGlz
-cGxheS9hbWRncHVfZG0vYW1kZ3B1X2RtLmMNCj4+IEBAIC04Miw3ICs4Miw2IEBADQo+PiDC
-oCAjaW5jbHVkZSA8ZHJtL2RybV9hdG9taWNfdWFwaS5oPg0KPj4gwqAgI2luY2x1ZGUgPGRy
-bS9kcm1fYXRvbWljX2hlbHBlci5oPg0KPj4gwqAgI2luY2x1ZGUgPGRybS9kcm1fYmxlbmQu
-aD4NCj4+IC0jaW5jbHVkZSA8ZHJtL2RybV9mYl9oZWxwZXIuaD4NCj4+IMKgICNpbmNsdWRl
-IDxkcm0vZHJtX2ZvdXJjYy5oPg0KPj4gwqAgI2luY2x1ZGUgPGRybS9kcm1fZWRpZC5oPg0K
-Pj4gwqAgI2luY2x1ZGUgPGRybS9kcm1fdmJsYW5rLmg+DQo+PiBAQCAtMjgxMCw3ICsyODA5
-LDYgQEAgY29uc3Qgc3RydWN0IGFtZGdwdV9pcF9ibG9ja192ZXJzaW9uIGRtX2lwX2Jsb2Nr
-ID0NCj4+IMKgIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX21vZGVfY29uZmlnX2Z1bmNzIGFt
-ZGdwdV9kbV9tb2RlX2Z1bmNzID0gew0KPj4gwqDCoMKgwqDCoCAuZmJfY3JlYXRlID0gYW1k
-Z3B1X2Rpc3BsYXlfdXNlcl9mcmFtZWJ1ZmZlcl9jcmVhdGUsDQo+PiDCoMKgwqDCoMKgIC5n
-ZXRfZm9ybWF0X2luZm8gPSBhbWRfZ2V0X2Zvcm1hdF9pbmZvLA0KPj4gLcKgwqDCoCAub3V0
-cHV0X3BvbGxfY2hhbmdlZCA9IGRybV9mYl9oZWxwZXJfb3V0cHV0X3BvbGxfY2hhbmdlZCwN
-Cj4+IMKgwqDCoMKgwqAgLmF0b21pY19jaGVjayA9IGFtZGdwdV9kbV9hdG9taWNfY2hlY2ss
-DQo+PiDCoMKgwqDCoMKgIC5hdG9taWNfY29tbWl0ID0gZHJtX2F0b21pY19oZWxwZXJfY29t
-bWl0LA0KPj4gwqAgfTsNCj4gDQoNCi0tIA0KVGhvbWFzIFppbW1lcm1hbm4NCkdyYXBoaWNz
-IERyaXZlciBEZXZlbG9wZXINClNVU0UgU29mdHdhcmUgU29sdXRpb25zIEdlcm1hbnkgR21i
-SA0KTWF4ZmVsZHN0ci4gNSwgOTA0MDkgTsO8cm5iZXJnLCBHZXJtYW55DQooSFJCIDM2ODA5
-LCBBRyBOw7xybmJlcmcpDQpHZXNjaMOkZnRzZsO8aHJlcjogSXZvIFRvdGV2DQo=
+> -----Original Message-----
+> From: Mark Brown [mailto:broonie@kernel.org]
+> Sent: 14 October 2022 05:32 PM
+> To: Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+> Cc: lgirdwood@gmail.com; robh+dt@kernel.org;
+> krzysztof.kozlowski+dt@linaro.org; s.nawrocki@samsung.com;
+> perex@perex.cz; tiwai@suse.com; pankaj.dubey@samsung.com;
+> alim.akhtar@samsung.com; rcsekar@samsung.com;
+> aswani.reddy@samsung.com; alsa-devel@alsa-project.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-samsung-
+> soc@vger.kernel.org
+> Subject: Re: [PATCH 2/6] ASoC: samsung: i2s: configure PSR from sound card
+> 
+> On Fri, Oct 14, 2022 at 03:51:47PM +0530, Padmanabhan Rajanbabu wrote:
+> > Currently the prescaler value in samsung I2S dai is calculated by
+> > dividing the peripheral input clock frequency with frame clock
+> > frequency and root clock frequency divider. This prescaler value is
+> > used to divide the input clock to generate root clock (RCLK) from
+> > which frame clock is generated for I2S communication.
+> >
+> > However for the platforms which does not have a dedicated audio PLL as
+> > an input clock source, the prescaler divider will not generate
+> > accurate root clock frequency, which inturn affects sampling frequency
+> also.
+> >
+> > To overcome this scenario, support has been added to let the sound
+> > card identify right prescaler divider value and configure the
+> > prescaler (PSR) divider directly the from the sound card to achieve
+> > near accurate sample frequencies
+> 
+> It's not clear to me why the solution here is to move the configuration to
+the
+> sound card rather than to improve the I2S driver to be able to cope with
+> whatever the restrictions are on the PSR in these systems - it seems more
+> cumbersome for system integrators, especially since you've not documented
+> the issues or how to configure it.  Could you expand on what the
+constraints
+> are here and why it's not possible for the driver to figure things out
+(given
+> some quirk information)?
 
---------------gwXK6OaLfaQ8iAMdjblSoB42--
+Thank you for reviewing the patch.
 
---------------WYrb0xK08aT03AsuaxFIILPE
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
+In Samsung I2S CPU controller, to derive the frame clock, we are supposed to
+configure the PSR and RFS internal dividers. i.e.
 
------BEGIN PGP SIGNATURE-----
+OPCLK -> PSR -> RCLK -> RFS -> Frame clock
 
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmNROHsFAwAAAAAACgkQlh/E3EQov+Af
-qg/8DLfmRUYvAEkOGUdb+UPWlqwaao88s9cPeIA3h2HV6bYLuN3tcbcDWHFeQuAGVFYRgYLVboNR
-UtD8lzBIfELkuzD83B+VRxYJBSUdOWNVr5cmES8vFHFcFPQKMLAl/NCnOZOkXBa2xbSyfsJ9t/t4
-yXi4FqFTtRT4SWIfAHVY2cduEA/oRkqwmhB1nu+Nv+dWdMxKlWT5W5cc9D/tV7PNyU0D43q/xC3U
-UPqtz6yMg2u6UXyQ4smF0HltdBU+CjGDnCKVwKfW1JHy3eo2ONTt3ORu7QnXAGImozT2vrN3G3rF
-9FxNTpfh6Hv15QQMOPJqlCicq4nVRIXFHA2Za5jvGWa4m+bLzS4OH7KB+KqeWUEtX+QKl3eqgC56
-HBs9QpM0tp9VLVX4ws1GcGoJ48BWHSSNQv2suBrtz7yhdrquiPhXM4+XqWo/MZAxS1jnki7QdBhj
-PgYr3LQM68v3qRoLkKoAvqpkMDCUeAP7Sql6H1EmSBYcKupo8RvWEi0xTIoeHWA3WMXS+Lst+3uT
-gOVa/gN0OgRYykGJ6NRHykDPW2fBb50tDngSNH9Mh6zxabnKGwbgzG6q6w+SZy4uEceuLu9yfkv7
-bc/vqXu6UkH5/6ofgivW2hkPpkiyjQj5u9L55R67jqYOZCZfVsG2nGCNPoWHmDSbMdO1Fgmx46g4
-koE=
-=eccN
------END PGP SIGNATURE-----
+Where:
+OPCLK - Operational clock
+PSR - Operational clock prescaler
+RCLK - Root Clock (derived from OPCLK based on PSR)
+RFS - Root frequency selection (divider)
+Frame clock - Sample frequency (derived from RCLK based on RFS)
 
---------------WYrb0xK08aT03AsuaxFIILPE--
+Ultimately,
+
+PSR = OPCLK / Frame clock / RFS
+
+Unlike other platforms utilizing Samsung CPU DAI, FSD SoC has a limitation
+on
+operational clock, where the clock frequency is fixed (66 MHz) and cannot be
+modified. 
+
+Assuming that an userspace application wants perform playback @44100 Hz
+and assuming that RFS divider value is configured as 256, the PSR value will
+yield to
+
+66 MHz / 44.1 KHz / 256 = 5
+
+However if HW uses PSR = 5 to derive the frame clock from operational clock,
+then
+
+RCLK = OPCLK / PSR = 66 MHz / 5 = 13.2 MHz
+Frame clock = RCLK / RFS = 13.2 MHz / 256 = 51562 Hz
+
+The actual frame clock derived based on PSR is now different from what user
+application has intended. The situation did not improve even if the RFS is
+swept throughout the entire valid range.
+
+We can overcome this scenario to an extent if we can get a flexibility to
+Configure both PSR as well as RFS.
+
+i.e. to achieve frame clock of 44100 Hz, if PSR  = 23 and RFS = 64
+then frame clock = 66 MHz / 23 / 64 = 44836 Hz 
+
+Although the sample frequency is not precise, it is very much closer to the
+Intended frequency, when compared to that of the existing solution. Since
+this
+scenario is specific to FSD SoC and has no changes in the Samsung I2S CPU
+DAI,
+the configuration is being done from the sound card of FSD SoC during
+hw_params.
+
+Please let me know if you think this scenario can be approached in any other
+way possible, rather than configuring from sound card.
+
