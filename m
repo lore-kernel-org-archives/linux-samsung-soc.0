@@ -2,57 +2,57 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5A8C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Oct 2022 08:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03821C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Oct 2022 09:53:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230310AbiJUIyc (ORCPT
+        id S230199AbiJUJxm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 21 Oct 2022 04:54:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46756 "EHLO
+        Fri, 21 Oct 2022 05:53:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230378AbiJUIy2 (ORCPT
+        with ESMTP id S230133AbiJUJxl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Oct 2022 04:54:28 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 806A22505E8
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Oct 2022 01:54:17 -0700 (PDT)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20221021085412epoutp02eeae3f5e055fd2ff21ed1d7136025250~gCaHSUgYS1293712937epoutp02W
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Oct 2022 08:54:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20221021085412epoutp02eeae3f5e055fd2ff21ed1d7136025250~gCaHSUgYS1293712937epoutp02W
+        Fri, 21 Oct 2022 05:53:41 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96D4B250281
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Oct 2022 02:53:39 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20221021095336epoutp047f1776a13edc62d4e3725b11cf2a0193~gDN_MwdrR1246412464epoutp04b
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Oct 2022 09:53:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20221021095336epoutp047f1776a13edc62d4e3725b11cf2a0193~gDN_MwdrR1246412464epoutp04b
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1666342452;
-        bh=5U6kbdEwtstzuJzqj8njNs2aevGge2h2etECD8bzp58=;
+        s=mail20170921; t=1666346016;
+        bh=9aPB06MF+/YHgJus+BbRjRYNXreCQbXjjMGXk/zIOa8=;
         h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=s4vuaj6JdcOh5bVH2FC8GRmX4JsNeZT2ZI7nF3EpKdjqNmFQyXXYs7XCtBNY3umj2
-         oQJHKV915VnDCSNlqEhYKTtfH+GXXI5lSv55RG/DNVTOhRZqkJq34xkqeXFWHfY0oh
-         Bzy1Rb2362ba32p+F2kxFA75lHv5C/tETI1M8iYQ=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20221021085412epcas5p4301f28acc7e3dd811f5421029590f5ff~gCaGoVoYr2099120991epcas5p4w;
-        Fri, 21 Oct 2022 08:54:12 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.178]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4Mtyv52Vrhz4x9Q8; Fri, 21 Oct
-        2022 08:54:09 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        b=aiBx2MlyJ1WEvTpC9dygCFDADRX8BMBSlJlkLuOF8vQEH/WkviYnokQgpoa5ULsAC
+         p0lTKpY47UTOxqwVTDz2BwiF4cZLGL5z93XieSMkOVN4QKwBVJ7eFwxY4yWFdYHXg0
+         VPeq6V6CIySlBOjbsylu2vWardjioR3f3v5lR710=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20221021095335epcas5p1369d6d802bfd2e61234602b697fb4dc1~gDN9LVy5N2499724997epcas5p1R;
+        Fri, 21 Oct 2022 09:53:35 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4Mv0Cd1hzfz4x9Pv; Fri, 21 Oct
+        2022 09:53:33 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
         epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        25.81.56352.13E52536; Fri, 21 Oct 2022 17:54:09 +0900 (KST)
+        F9.54.56352.C1C62536; Fri, 21 Oct 2022 18:53:32 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20221021084938epcas5p402b6c1dc47137914fabcbb655ffa85ef~gCWIEbas72051320513epcas5p4y;
-        Fri, 21 Oct 2022 08:49:38 +0000 (GMT)
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20221021090406epcas5p269f531aa7b70c59670111c041a1f9cf3~gCiwCw05r1863018630epcas5p2J;
+        Fri, 21 Oct 2022 09:04:06 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20221021084938epsmtrp126e775ab3dc74f229417bf94211c6ea7~gCWIDk6752558625586epsmtrp1n;
-        Fri, 21 Oct 2022 08:49:38 +0000 (GMT)
-X-AuditID: b6c32a4b-5f7fe7000001dc20-31-63525e31eb57
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        20221021090406epsmtrp1c9f0e2fc305937d55c4bb01f19a50daf~gCiwBphlh0168401684epsmtrp1C;
+        Fri, 21 Oct 2022 09:04:06 +0000 (GMT)
+X-AuditID: b6c32a4b-5f7fe7000001dc20-ab-63526c1cf702
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4B.D4.18644.22D52536; Fri, 21 Oct 2022 17:49:38 +0900 (KST)
-Received: from FDSFTE070 (unknown [107.116.189.86]) by epsmtip1.samsung.com
+        90.26.18644.68062536; Fri, 21 Oct 2022 18:04:06 +0900 (KST)
+Received: from FDSFTE070 (unknown [107.116.189.86]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20221021084935epsmtip1426827a59937fb73ac13f5c1894f1a5d~gCWFXFPSF0067100671epsmtip1V;
-        Fri, 21 Oct 2022 08:49:35 +0000 (GMT)
+        20221021090403epsmtip2308674d4050632b8728e0e22b455eed6~gCitgPmAa2229022290epsmtip2T;
+        Fri, 21 Oct 2022 09:04:03 +0000 (GMT)
 From:   "Padmanabhan Rajanbabu" <p.rajanbabu@samsung.com>
 To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
         <lgirdwood@gmail.com>, <broonie@kernel.org>, <robh+dt@kernel.org>,
@@ -62,61 +62,61 @@ To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
         <aswani.reddy@samsung.com>
 Cc:     <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>
-In-Reply-To: <c11f92be-1d86-17e4-e3bb-05e7b17d5fc8@linaro.org>
-Subject: RE: [PATCH 5/6] arm64: dts: fsd: Add I2S DAI node for Tesla FSD
-Date:   Fri, 21 Oct 2022 14:19:34 +0530
-Message-ID: <04ba01d8e52a$0d55bee0$28013ca0$@samsung.com>
+In-Reply-To: <60620ca9-80cd-9b13-800b-130a3f75442a@linaro.org>
+Subject: RE: [PATCH 4/6] ASoC: samsung: fsd: Add FSD soundcard driver
+Date:   Fri, 21 Oct 2022 14:34:01 +0530
+Message-ID: <04bf01d8e52c$125d0f40$37172dc0$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKFI9qd/qMOsyXBjKz4d8Q6MS4QvwIMhU34AXuYdz8DFSTEIKyLIU2w
+Thread-Index: AQKFI9qd/qMOsyXBjKz4d8Q6MS4QvwG1dkA8AWCzSJ4C+Pd42KyPk1+A
 Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TfUwTdxjO73q9HhrIWVj4rWasuUgWyIBWS7kaYGYiqdMY4jLiSDa8tTfK
-        KNdbWyoff4hsK0JAIKZIG4QBggajdIisFluxfCx+BPzAunTiZMOMTVkEFmanc2s52PjveZ/3
-        efK+z+8DF4j9mAQvZM2MkaX1JLYBHRxJSEiSf7xfI6v9Pop61DaIUVO3fQjlu3BRRNlmZjGq
-        fXRCSB2bmxFQnichbnnqKELddbdiVMukF6E6L/4homrcDULKccslpL7yjIqokafVQsr55zmw
-        g1A7l6ow9SXHtEjd31uDqR/4L2Nq73wPpj420AvUfQP3UPVSf1wOnleUrmNoLWOUMqzGoC1k
-        CzLIPe/n78xPVcrkSXIVlUZKWbqYySCz9uYkZRfqQxFIqYXWl4SoHNpkIlMy042GEjMj1RlM
-        5gyS4bR6TsElm+hiUwlbkMwy5u1ymWxrakh4sEh3xTaIcPXxpT+edIBK0BRXCyJwSCjgX/fm
-        hbVgAy4mhgD8taEH4YtFABcDQ6KwSkwsARjsqlhzjL28gPK8G8DLfjlvmAOwq9a3YsCINNjp
-        6QbhRgwxhcDg2Wo0XAgIK4Ce2+dCHRyPIDLhq9HysCGaUMOqlx5hmEaJeOjo3hKmIwkV9DgC
-        CI83wWv22ZXBAuJN+O18q4BfSAqDj3uEYRxDZMOxvmUhr4mFY8E6QXgsJJ7hsK2jGeUNWdDV
-        YUd4HA1/+25AxGNJKL51FRtg88IXGI9LoXXBuap/Bw5PtaLhPQVEAuxzp/D0G9B2/TzCz42C
-        9S9mV+WR0NW2huNh3+l+wOPN0HvfAxoB6VgXzbEummNdBMf/074GaC94neFMxQWMKZXbxjKH
-        /rtvjaG4H6w88MQ9LvDTo2fJPoDgwAcgLiBjIrnfczTiSC1dVs4YDfnGEj1j8oHU0HE3CSSv
-        aQyhH8Ka8+UKlUyhVCoVqm1KORkb2dWSqBETBbSZKWIYjjGu+RA8QlKJfGIuV6HXD+ceP/Kp
-        152Te23kxMIl68mlaLvkrdI8K3sTWDsHkvM2gnencwvpU8VyZtN+f82VuLoX4yqJsF7fVUW2
-        vX228bPOMtvzWHLyYKM9vyhjbGLi0N0HfR3OmPM/R7xn3Oz1tle7drWNFZWlL99sGo9qf1W5
-        eLTixtNdRFrSL9rtHFvB3Y9qEP8zPRjYG0tZdtjOHB66c9yyM5iylHW1XnjAR27dnWY8NbNv
-        Xuqs+xtxtFhuxWU2eys5/+KTwh+sc1+OfGjr/kCZVb9c8HyL0z589bRu4iPLiY0SLmgt//yO
-        Gx1OzDtCG3brHurGv8medAckD2u10d3cY+ONAImadLQ8UWA00f8CSEuguGkEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsWy7bCSnK5SbFCywZcuZYsH87axWVy5eIjJ
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJJsWRmVeSWpSXmKPExsWy7bCmlq5MTlCywdSvJhYP5m1js7hy8RCT
+        xaHNW9ktpj58wmYx/8g5Vou+Fw+ZLfa+Bop9u9LBZHF51xw2ixnn9zFZLNr6hd2ic1c/q8Ws
+        CztYLVr3HmG3OPymndViw/e1jA4CHhs+N7F57Jx1l91j06pONo871/aweex7u4zNo2/LKkaP
+        9Vuusnh83iQXwBGVbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+Ti
+        E6DrlpkD9IKSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1
+        xMrQwMDIFKgwITvjy/KXzAUTgytufJzP3MD4yr6LkZNDQsBE4uXnbexdjFwcQgK7GSX+777P
+        BOF8YpT48ngOC4TzmVHi4KzTLDAtKy+egErsYpTY/aoTqv8Fo8T1+4+ZQarYBMwlFu1dygiS
+        EBG4wiTxc3U7WAuzQBujxN6LaxlBqjgF7CTa974E6xAWcJWY9e0zK4jNIqAqseTAdLAaXgFL
+        iSOT7rFC2IISJ2c+AbuDWUBeYvvbOcwQNylI/Hy6DKxGRMBN4sfNecwQNeISR3/2QNV84ZD4
+        vwjqBxeJbV0roWxhiVfHt7BD2FISL/vboOx8iWkfm9kg7AqJto8bmCBse4kDV0ABwwE0X1Ni
+        /S59iLCsxNRT65gg1vJJ9P5+AlXOK7FjHoytKrF++SZGCFtaYt/1vYwTGJVmIflsFpLPZiH5
+        YBbCtgWMLKsYJVMLinPTU4tNC4zzUsvhUZ6cn7uJEZzGtbx3MD568EHvECMTB+MhRgkOZiUR
+        3oJ3AclCvCmJlVWpRfnxRaU5qcWHGE2BwT2RWUo0OR+YSfJK4g1NLA1MzMzMTCyNzQyVxHkX
+        z9BKFhJITyxJzU5NLUgtgulj4uCUamBaJr3kyan++HNr3COyS/aLBhRs6f27UTP+gu6zS0IN
+        NiYee77YqfC2Ttsj88ho/4/9G7g368XJXb/04urSolbFQxPW52t66X/Yd9MoXVL9gEB41J6k
+        rkshX9g8Ay/fPnN200kpW/Ymm7jplQf+R9+dHJT2ulOhQHYKy+PcRCkxy9yvth/7931ZkDP3
+        rfbEry7mDrP+iQXdD+uvPH37nWdfm2b4K3/H7ispKgWpgrffbap/fXHS88cLo7LSZwm93xd0
+        o6zCdMebB9+LH3J4OsXdjtrzbEebs985Melc+ceBjo+/+rzYl7VPcc6W1aKNc1IWVSiZ6oSs
+        rJf9amhwbeYMlQMf9JQ2WHQdOnR8aqqvEktxRqKhFnNRcSIAwubwXWwEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsWy7bCSvG5bQlCywc9WdosH87axWVy5eIjJ
         4tDmrewWUx8+YbOYf+Qcq0Xfi4fMFntfA8W+Xelgsri8aw6bxYzz+5gsFm39wm7Ruauf1WLW
         hR2sFq17j7BbHH7Tzmqx4ftaRgcBjw2fm9g8ds66y+6xaVUnm8eda3vYPPa9Xcbm0bdlFaPH
-        +i1XWTw+b5IL4IjisklJzcksSy3St0vgytg/dRtTQa9qxf25sxgbGCfKdTFyckgImEgc/bOZ
-        pYuRi0NIYAejxJ/D25khEtIS0/v3sEHYwhIr/z1nhyh6xijxo/UzO0iCTcBcYtHepYwgCRGB
-        R0wSc+c/YgNxmAW6GCWO/13JDNHymVHi5/ofQBkODk4BO4l/R6pAuoUFPCSa/uxlBQmzCKhK
-        zFqqAhLmFbCU2DvrFhOELShxcuYTFhCbWUBbovdhKyOELS+x/e0cqEsVJH4+XcYKYosIuEkc
-        Xf+NFaJGXOLozx7mCYzCs5CMmoVk1Cwko2YhaVnAyLKKUTK1oDg3PbfYsMAoL7Vcrzgxt7g0
-        L10vOT93EyM4krW0djDuWfVB7xAjEwfjIUYJDmYlEd6CdwHJQrwpiZVVqUX58UWlOanFhxil
-        OViUxHkvdJ2MFxJITyxJzU5NLUgtgskycXBKNTDl8XDaLtukIPcu/3HZunfbGzo4Lhy5M7ur
-        cU343wtbFB9039nZynFDYV9ZDIf4G9bqFq6jN6XefFBT7v+9/M6v7VciE8/cM7n1KSd5i7mm
-        C+fe019Ep/irLndnuxyWJR/xbCrjg80K03OUA7lZ1++y+Lg5183WQDDgRJGzvvjta+lzCjNq
-        Ttq6vm1/aOhiUm29dV6Ga0zZDJ3KCe7mvOzb9RLjnjgIHpLYZqpS4/chRWZxZJZE52eD5e62
-        tv1MDAej+fhYLU22r27tOsWZ0nXki8bHX9MUL2wxu/RiX1t34kqdAmv7OYXnKpJtug+qPXa/
-        YeFc9mHeq6O7WNXOyvIElL6/IRNcvZczxMnxlBJLcUaioRZzUXEiALmcMvpTAwAA
-X-CMS-MailID: 20221021084938epcas5p402b6c1dc47137914fabcbb655ffa85ef
+        +i1XWTw+b5IL4IjisklJzcksSy3St0vgyviy/CVzwcTgihsf5zM3ML6y72Lk5JAQMJFYefEE
+        SxcjF4eQwA5GidlX2lkgEtIS0/v3sEHYwhIr/z1nhyh6xijx//RHRpAEm4C5xKK9SxlBEiIC
+        j5gk5s5/xAbiMAt0MUoc/7uSGaLlM6PEmj8vmUBaOAXsJNr3vmQGsYUFXCVmffvMCmKzCKhK
+        LDkwHWwsr4ClxJFJ91ghbEGJkzOfgN3ELKAt0fuwlRHClpfY/nYOM8R9ChI/ny4DqxcRcJP4
+        cXMeM0SNuMTRnz3MExiFZyEZNQvJqFlIRs1C0rKAkWUVo2RqQXFuem6xYYFRXmq5XnFibnFp
+        Xrpecn7uJkZwNGtp7WDcs+qD3iFGJg7GQ4wSHMxKIrwF7wKShXhTEiurUovy44tKc1KLDzFK
+        c7AoifNe6DoZLySQnliSmp2aWpBaBJNl4uCUamDKefPx9u8Ljp8rFvbO3WnSGC398z6rhVi/
+        sF5QZ4TRl/ApBl9S318sTPw4mb/4Q6XK/rnrin7fnJWve8LKTk33gX3duYAjsyx9xR5f+Lp9
+        9pznU458nrfn0Kw9N3MXnL6idMWF5+mWyTn9tTfF1xzQ+WT7QzpbbYKaSP51u951VlsqVvZt
+        m/HZ4OiB6unm0lKaASWJr792fRPQ0+CMXjpJdZX6W+3w2ffyDUSXisy/Y1klLm2sprZn99+E
+        /FnLY5dflbZueRbid3LBpHed3nt2vfxs6yzqyLfa10J0wzP3O396b/T33Dk1beMO0+3/dZxb
+        24T7nvBdrG389lpbbeez+FeebzNbz5hcY9u7S/qMmRJLcUaioRZzUXEiACXapWdVAwAA
+X-CMS-MailID: 20221021090406epcas5p269f531aa7b70c59670111c041a1f9cf3
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221014104911epcas5p394100ff6ed53be32c4d64c7e23e48833
+X-CMS-RootMailID: 20221014104904epcas5p4f458182cc9ac9c223d9a25566f3dd300
 References: <20221014102151.108539-1-p.rajanbabu@samsung.com>
-        <CGME20221014104911epcas5p394100ff6ed53be32c4d64c7e23e48833@epcas5p3.samsung.com>
-        <20221014102151.108539-6-p.rajanbabu@samsung.com>
-        <c11f92be-1d86-17e4-e3bb-05e7b17d5fc8@linaro.org>
+        <CGME20221014104904epcas5p4f458182cc9ac9c223d9a25566f3dd300@epcas5p4.samsung.com>
+        <20221014102151.108539-5-p.rajanbabu@samsung.com>
+        <60620ca9-80cd-9b13-800b-130a3f75442a@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -125,7 +125,7 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 > -----Original Message-----
 > From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@linaro.org]
-> Sent: 16 October 2022 08:44 PM
+> Sent: 16 October 2022 08:48 PM
 > To: Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>;
 > lgirdwood@gmail.com; broonie@kernel.org; robh+dt@kernel.org;
 > krzysztof.kozlowski+dt@linaro.org; s.nawrocki@samsung.com;
@@ -134,129 +134,355 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 > aswani.reddy@samsung.com
 > Cc: alsa-devel@alsa-project.org; devicetree@vger.kernel.org; linux-
 > kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org
-> Subject: Re: [PATCH 5/6] arm64: dts: fsd: Add I2S DAI node for Tesla FSD
+> Subject: Re: [PATCH 4/6] ASoC: samsung: fsd: Add FSD soundcard driver
 > 
 > On 14/10/2022 06:21, Padmanabhan Rajanbabu wrote:
-> > Add device tree node for I2S0 and I2S1 CPU DAI instances for Tesla FSD
-> > board
+> > Add a soundcard driver for FSD audio interface to bridge the CPU DAI
+> > of samsung I2S with the codec and platform driver.
 > >
-> > Signed-off-by: Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
-> > ---
-> >  arch/arm64/boot/dts/tesla/fsd-evb.dts      |  8 +++++
-> >  arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi | 14 ++++++++
-> >  arch/arm64/boot/dts/tesla/fsd.dtsi         | 38 ++++++++++++++++++++++
-> >  3 files changed, 60 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> > b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> > index 1db6ddf03f01..c0a4509499ab 100644
-> > --- a/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> > +++ b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> > @@ -41,3 +41,11 @@
-> >  &ufs {
-> >  	status = "okay";
-> >  };
-> > +
-> > +&tdm_0 {
 > 
-> Alphabetical order against other label-overrides.
+> Thank you for your patch. There is something to discuss/improve.
+> 
+> > +
+> > +#define FSD_PREFIX		"tesla,"
+> > +#define FSD_DAI_SRC_PCLK	3
+> > +#define FSD_DAI_RFS_192		192
+> > +#define FSD_DAI_BFS_48		48
+> > +#define FSD_DAI_BFS_96		96
+> > +#define FSD_DAI_BFS_192		192
+> > +
+> > +struct fsd_card_priv {
+> > +	struct snd_soc_card card;
+> > +	struct snd_soc_dai_link *dai_link;
+> > +	u32 tdm_slots;
+> > +	u32 tdm_slot_width;
+> > +};
+> > +
+> > +static unsigned int fsd_card_get_rfs(unsigned int rate) {
+> > +	return FSD_DAI_RFS_192;
+> 
+> This wrapper is a bit silly...
+okay, will remove the wrapper and assign the macro value directly
+> 
+> > +}
+> > +
+> > +static unsigned int fsd_card_get_bfs(unsigned int channels) {
+> > +	switch (channels) {
+> > +	case 1:
+> > +	case 2:
+> > +		return FSD_DAI_BFS_48;
+> > +	case 3:
+> > +	case 4:
+> > +		return FSD_DAI_BFS_96;
+> > +	case 5:
+> > +	case 6:
+> > +	case 7:
+> > +	case 8:
+> > +		return FSD_DAI_BFS_192;
+> > +	default:
+> > +		return FSD_DAI_BFS_48;
+> > +	}
+> > +}
+> > +
+> > +static unsigned int fsd_card_get_psr(unsigned int rate) {
+> > +	switch (rate) {
+> > +	case 8000:	return 43;
+> > +	case 11025:	return 31;
+> > +	case 16000:	return 21;
+> > +	case 22050:	return 16;
+> > +	case 32000:	return 11;
+> > +	case 44100:	return 8;
+> > +	case 48000:	return 7;
+> > +	case 64000:	return 5;
+> > +	case 88200:	return 4;
+> > +	case 96000:	return 4;
+> > +	case 192000:	return 2;
+> > +	default:	return 1;
+> > +	}
+> > +}
+> > +
+> > +static int fsd_card_hw_params(struct snd_pcm_substream *substream,
+> > +					struct snd_pcm_hw_params
+> *params) {
+> > +	struct snd_soc_pcm_runtime *rtd	= substream->private_data;
+> > +	struct snd_soc_card *card	= rtd->card;
+> > +	struct snd_soc_dai *cpu_dai	= asoc_rtd_to_cpu(rtd, 0);
+> > +	struct snd_soc_dai_link *link	= rtd->dai_link;
+> > +	struct fsd_card_priv *priv	= snd_soc_card_get_drvdata(card);
+> > +	unsigned int rfs, bfs, psr;
+> > +	int ret = 0, cdclk_dir;
+> > +
+> > +	rfs = fsd_card_get_rfs(params_rate(params));
+> > +	bfs = fsd_card_get_bfs(params_channels(params));
+> > +	psr = fsd_card_get_psr(params_rate(params));
+> > +
+> > +	/* Configure the Root Clock Source */
+> > +	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_OPCLK,
+> > +					false, FSD_DAI_SRC_PCLK);
+> > +	if (ret < 0) {
+> > +		dev_err(card->dev, "Failed to set OPCLK: %d\n", ret);
+> > +		goto err;
+> > +	}
+> > +
+> > +	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_RCLKSRC_0,
+> > +					false, false);
+> > +	if (ret < 0) {
+> > +		dev_err(card->dev, "Failed to set RCLKSRC: %d\n", ret);
+> 
+> Don't you need to cleanup on error paths?
+we might not be needing, since the sound card neither configures any
+clock sources directly nor involves in any memory allocation during
+hw_params.
+> 
+> > +		goto err;
+> > +	}
+> > +
+> > +	/* Set CPU DAI configuration */
+> > +	ret = snd_soc_dai_set_fmt(cpu_dai, link->dai_fmt);
+> > +	if (ret < 0) {
+> > +		dev_err(card->dev, "Failed to set DAIFMT: %d\n", ret);
+> > +		goto err;
+> > +	}
+> > +
+> > +	if (link->dai_fmt & SND_SOC_DAIFMT_CBC_CFC) {
+> > +		cdclk_dir = SND_SOC_CLOCK_OUT;
+> > +	} else if (link->dai_fmt & SND_SOC_DAIFMT_CBP_CFP) {
+> > +		cdclk_dir = SND_SOC_CLOCK_IN;
+> > +	} else {
+> > +		dev_err(card->dev, "Missing Clock Master information\n");
+> > +		goto err;
+> > +	}
+> > +
+> > +	/* Set Clock Source for CDCLK */
+> > +	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
+> > +					rfs, cdclk_dir);
+> > +	if (ret < 0) {
+> > +		dev_err(card->dev, "Failed to set CDCLK: %d\n", ret);
+> > +		goto err;
+> > +	}
+> > +
+> > +	ret = snd_soc_dai_set_clkdiv(cpu_dai, SAMSUNG_I2S_DIV_RCLK, psr);
+> > +	if (ret < 0) {
+> > +		dev_err(card->dev, "Failed to set PSR: %d\n", ret);
+> > +		goto err;
+> > +	}
+> > +
+> > +	ret = snd_soc_dai_set_clkdiv(cpu_dai, SAMSUNG_I2S_DIV_BCLK, bfs);
+> > +	if (ret < 0) {
+> > +		dev_err(card->dev, "Failed to set BCLK: %d\n", ret);
+> > +		goto err;
+> > +	}
+> > +
+> > +	if (priv->tdm_slots) {
+> > +		ret = snd_soc_dai_set_tdm_slot(cpu_dai, false, false,
+> > +				priv->tdm_slots, priv->tdm_slot_width);
+> > +		if (ret < 0) {
+> > +			dev_err(card->dev,
+> > +				"Failed to configure in TDM mode:%d\n", ret);
+> > +			goto err;
+> > +		}
+> > +	}
+> > +
+> > +err:
+> > +	return ret;
+> > +}
+> > +
+> > +static const struct snd_soc_ops fsd_card_ops = {
+> > +	.hw_params	= fsd_card_hw_params,
+> > +};
+> > +
+> > +static struct fsd_card_priv *fsd_card_parse_of(struct snd_soc_card
+> > +*card) {
+> > +	struct fsd_card_priv *priv;
+> > +	struct snd_soc_dai_link *link;
+> > +	struct device *dev = card->dev;
+> > +	struct device_node *node = dev->of_node;
+> > +	struct device_node *np, *cpu_node, *codec_node;
+> > +	struct snd_soc_dai_link_component *dlc;
+> > +	int ret, id = 0, num_links;
+> > +
+> > +	ret = snd_soc_of_parse_card_name(card, "model");
+> > +	if (ret) {
+> > +		dev_err(dev, "Error parsing card name: %d\n", ret);
+> > +		return ERR_PTR(ret);
+> 
+> return dev_err_probe
 Okay
 > 
-> > +	status = "okay";
+> > +	}
+> > +
+> > +	if (of_property_read_bool(dev->of_node, "widgets")) {
+> > +		ret = snd_soc_of_parse_audio_simple_widgets(card, "widgets");
+> > +		if (ret)
+> > +			return ERR_PTR(ret);
+> > +	}
+> > +
+> > +	/* Add DAPM routes to the card */
+> > +	if (of_property_read_bool(node, "audio-routing")) {
+> > +		ret = snd_soc_of_parse_audio_routing(card, "audio-routing");
+> > +		if (ret)
+> > +			return ERR_PTR(ret);
+> > +	}
+> > +
+> > +	num_links = of_get_child_count(node);
+> > +
+> > +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > +	if (!priv)
+> > +		return ERR_PTR(-ENOMEM);
+> > +
+> > +	priv->dai_link = devm_kzalloc(dev, num_links * sizeof(*priv-
+> >dai_link),
+> > + 	GFP_KERNEL);
+> > +	if (!priv->dai_link)
+> > +		return ERR_PTR(-ENOMEM);
+> > +
+> > +	priv->tdm_slots = 0;
+> > +	priv->tdm_slot_width = 0;
+> > +
+> > +	snd_soc_of_parse_tdm_slot(node, NULL, NULL, &priv->tdm_slots,
+> > +			&priv->tdm_slot_width);
+> > +
+> > +	link = priv->dai_link;
+> > +
+> > +	for_each_child_of_node(node, np) {
+> > +		dlc = devm_kzalloc(dev, 2 * sizeof(*dlc), GFP_KERNEL);
+> > +		if (!dlc)
+> > +			return ERR_PTR(-ENOMEM);
+> > +
+> > +		link->id		= id;
+> > +		link->cpus		= &dlc[0];
+> > +		link->platforms		= &dlc[1];
+> > +		link->num_cpus		= 1;
+> > +		link->num_codecs	= 1;
+> > +		link->num_platforms	= 1;
+> > +
+> > +		cpu_node = of_get_child_by_name(np, "cpu");
+> > +		if (!cpu_node) {
+> > +			dev_err(dev, "Missing CPU/Codec node\n");
+> > +			ret = -EINVAL;
+> > +			goto err_cpu_node;
+> > +		}
+> > +
+> > +		ret = snd_soc_of_get_dai_link_cpus(dev, cpu_node, link);
+> > +		if (ret < 0) {
+> > +			dev_err(dev, "Error Parsing CPU DAI name\n");
+> > +			goto err_cpu_name;
+> > +		}
+> > +
+> > +		link->platforms->of_node = link->cpus->of_node;
+> > +
+> > +		codec_node = of_get_child_by_name(np, "codec");
+> > +		if (codec_node) {
+> > +			ret = snd_soc_of_get_dai_link_codecs(dev, codec_node,
+> > +					link);
+> > +			if (ret < 0) {
+> > +				dev_err(dev, "Error Parsing Codec DAI name\n");
+> > +				goto err_codec_name;
+> > +			}
+> > +		} else {
+> > +			dlc = devm_kzalloc(dev, sizeof(*dlc), GFP_KERNEL);
+> > +			if (!dlc) {
+> > +				ret = -ENOMEM;
+> > +				goto err_cpu_name;
+> > +			}
+> > +
+> > +			link->codecs = dlc;
+> > +
+> > +			link->codecs->dai_name = "snd-soc-dummy-dai";
+> > +			link->codecs->name = "snd-soc-dummy";
+> > +			link->dynamic = 1;
+> > +
+> > +			snd_soc_dai_link_set_capabilities(link);
+> > +			link->ignore_suspend = 1;
+> > +			link->nonatomic = 1;
+> > +		}
+> > +
+> > +		ret = asoc_simple_parse_daifmt(dev, np, codec_node,
+> > +					FSD_PREFIX, &link->dai_fmt);
+> > +		if (ret)
+> > +			link->dai_fmt = SND_SOC_DAIFMT_NB_NF |
+> > +					SND_SOC_DAIFMT_CBC_CFC |
+> > +					SND_SOC_DAIFMT_I2S;
+> > +
+> > +		ret = of_property_read_string(np, "link-name", &link-
+> >name);
+> > +		if (ret) {
+> > +			dev_err(card->dev, "Error Parsing link name\n");
+> > +			goto err_codec_name;
+> > +		}
+> > +
+> > +		link->stream_name = link->name;
+> > +		link->ops = &fsd_card_ops;
+> > +
+> > +		link++;
+> > +		id++;
+> > +
+> > +		of_node_put(cpu_node);
+> > +		of_node_put(codec_node);
+> > +	}
+> > +
+> > +	card->dai_link = priv->dai_link;
+> > +	card->num_links = num_links;
+> > +
+> > +	return priv;
+> > +
+> > +err_codec_name:
+> > +	of_node_put(codec_node);
+> > +err_cpu_name:
+> > +	of_node_put(cpu_node);
+> > +err_cpu_node:
+> > +	of_node_put(np);
+> > +	return ERR_PTR(ret);
+> > +}
+> > +
+> > +static int fsd_platform_probe(struct platform_device *pdev) {
+> > +	struct device *dev = &pdev->dev;
+> > +	struct snd_soc_card *card;
+> > +	struct fsd_card_priv *fsd_priv;
+> > +
+> > +	card = devm_kzalloc(dev, sizeof(*card), GFP_KERNEL);
+> > +	if (!card)
+> > +		return -ENOMEM;
+> > +
+> > +	card->dev	= dev;
+> > +	fsd_priv	= fsd_card_parse_of(card);
+> 
+> Drop the indentation before =
+Okay
+> 
+> > +
+> > +	if (IS_ERR(fsd_priv)) {
+> > +		dev_err(&pdev->dev, "Error Parsing DAI Link: %ld\n",
+> > +				PTR_ERR(fsd_priv));
+> > +		return PTR_ERR(fsd_priv);
+> 
+> return dev_err_probe
+Okay
+> 
+> > +	}
+> > +
+> > +	snd_soc_card_set_drvdata(card, fsd_priv);
+> > +
+> > +	return devm_snd_soc_register_card(&pdev->dev, card); }
+> > +
+> > +static const struct of_device_id fsd_device_id[] = {
+> > +	{ .compatible = "tesla,fsd-card" },
+> > +	{},
 > > +};
+> > +MODULE_DEVICE_TABLE(of, fsd_device_id);
 > > +
-> > +&tdm_1 {
-> > +	status = "okay";
-> > +};
-> > diff --git a/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-> > b/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-> > index e3852c946352..ff6f5d4b16dd 100644
-> > --- a/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-> > +++ b/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-> > @@ -339,6 +339,20 @@
-> >  		samsung,pin-pud = <FSD_PIN_PULL_UP>;
-> >  		samsung,pin-drv = <FSD_PIN_DRV_LV4>;
-> >  	};
-> > +
-> > +	i2s0_bus: i2s0-bus {
+> > +static struct platform_driver fsd_platform_driver = {
+> > +	.driver = {
+> > +		.name = "fsd-card",
+> > +		.of_match_table = of_match_ptr(fsd_device_id),
 > 
-> Does not look like you tested the DTS against bindings. Please run `make
-> dtbs_check` (see Documentation/devicetree/bindings/writing-schema.rst
-> for instructions).
-I'll double check and run dtbs_check to see if I'm hitting any errors.
+> of_match_ptr comes with maybe_unused. Or drop it.
+Okay
 > 
-> > +		samsung,pins = "gpd1-0", "gpd1-1", "gpd1-2", "gpd1-3",
-> "gpd1-4";
-> > +		samsung,pin-function = <FSD_PIN_FUNC_2>;
-> > +		samsung,pin-pud = <FSD_PIN_PULL_DOWN>;
-> > +		samsung,pin-drv = <FSD_PIN_DRV_LV4>;
-> > +	};
-> > +
-> > +	i2s1_bus: i2s1-bus {
-> > +		samsung,pins = "gpd2-0", "gpd2-1", "gpd2-2", "gpd2-3",
-> "gpd2-4";
-> > +		samsung,pin-function = <FSD_PIN_FUNC_2>;
-> > +		samsung,pin-pud = <FSD_PIN_PULL_DOWN>;
-> > +		samsung,pin-drv = <FSD_PIN_DRV_LV4>;
-> > +	};
-> >  };
-> >
-> >  &pinctrl_pmu {
-> > diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi
-> > b/arch/arm64/boot/dts/tesla/fsd.dtsi
-> > index f35bc5a288c2..5decad45a1b6 100644
-> > --- a/arch/arm64/boot/dts/tesla/fsd.dtsi
-> > +++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
-> > @@ -32,6 +32,8 @@
-> >  		spi0 = &spi_0;
-> >  		spi1 = &spi_1;
-> >  		spi2 = &spi_2;
-> > +		tdm0 = &tdm_0;
-> > +		tdm1 = &tdm_1;
 > 
-> Why?
-Sorry, these aliases are not used right now. I'll remove it.
-
-> 
-> >  	};
-> >
-> >  	cpus {
-> > @@ -809,6 +811,42 @@
-> >  			status = "disabled";
-> >  		};
-> >
-> > +		tdm_0: tdm@140e0000 {
-> 
-> Node names should be generic, so this looks like i2s.
-> https://protect2.fireeye.com/v1/url?k=2cfaa5af-4d874de8-2cfb2ee0-
-> 74fe485fff30-cb16acc0c0c574e9&q=1&e=fc8e3b54-a0ef-475e-a4f2-
-> 83626a86ac8a&u=https%3A%2F%2Fdevicetree-
-> specification.readthedocs.io%2Fen%2Flatest%2Fchapter2-devicetree-
-> basics.html%23generic-names-recommendation
-
-Thank you for the link. I could only find audio-controller in the list and
-not i2s. so I believe I can use audio-controller node name. Please correct
-me otherwise.
-> 
-> > +			compatible = "samsung,exynos7-i2s";
-> > +			reg = <0x0 0x140E0000 0x0 0x100>;
-> > +			interrupts = <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>;
-> > +			dmas = <&pdma1 14>, <&pdma1 13>, <&pdma1 12>;
-> > +			dma-names = "tx", "rx", "tx-sec";
-> > +			#clock-cells = <1>;
-> > +			#sound-dai-cells = <1>;
-> > +			clocks = <&clock_peric PERIC_HCLK_TDM0>,
-> > +				 <&clock_peric PERIC_HCLK_TDM0>,
-> > +				 <&clock_peric PERIC_PCLK_TDM0>;
-> > +			clock-names = "i2s_opclk0", "i2s_opclk1", "iis";
-> 
-> Does not look like you tested the DTS against bindings. Please run `make
-> dtbs_check` (see Documentation/devicetree/bindings/writing-schema.rst
-> for instructions).
-I'll double check and run dtbs_check to see if I'm hitting any errors.
 > 
 > Best regards,
 > Krzysztof
-Thank you for reviewing the patch
+Thank you for reviewing the patch.
 
 
