@@ -2,37 +2,37 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE053C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Oct 2022 20:39:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70416C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Oct 2022 20:42:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229602AbiJUUjA (ORCPT
+        id S229519AbiJUUmU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 21 Oct 2022 16:39:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43914 "EHLO
+        Fri, 21 Oct 2022 16:42:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbiJUUi7 (ORCPT
+        with ESMTP id S230125AbiJUUmB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Oct 2022 16:38:59 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92C5E29E9BC;
-        Fri, 21 Oct 2022 13:38:58 -0700 (PDT)
+        Fri, 21 Oct 2022 16:42:01 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED52140E43;
+        Fri, 21 Oct 2022 13:41:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 50F88B82D4A;
-        Fri, 21 Oct 2022 20:38:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BEFCC433D6;
-        Fri, 21 Oct 2022 20:38:53 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2ADFBB82D23;
+        Fri, 21 Oct 2022 20:41:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0017C433D6;
+        Fri, 21 Oct 2022 20:41:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666384736;
-        bh=oApeJB65dHHGk0FGZpBTdXtePZh16PGmOvugpwr59QE=;
+        s=k20201202; t=1666384870;
+        bh=tehsC4Nds0UIzYea1wZIFRCjPzJjx5qNx8jGpeoAIiA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bzMmvQTkB+9QRYoYXud5vjOSYi7QS5pmuHpCSpsmuW317bUTNRlFh3LxqOJBWSJYO
-         o7dcKLAsQNpaeigxRUJS/HLg8ekRoFwC30hD43aOpdrtTq2zMAWjmiQsSUWwFTN8pW
-         PNgpWNhSVbRSXIY2EfOmlA3ouBmDuRT1+ZicqPSzcgQOh3jb8EgozEzO97MGXgkRBf
-         ZALktUSIiLjVE+I5Y3khskZ7eSVCO2WOXeKKcuoIwDHEtqCeuozz69dHzn8zk6K3a0
-         LY53IrJp1FuWzGpcYGub9FECem4hNtZTUtUaV1NoEv0yNB1fBLUy2x5W6kLXxO4WnX
-         VTuLUc5LW9z3A==
+        b=WR4HBn2uLAMK7iJnrKPhpVEnsfLCJJllc74DrBjEEEi+RSzERCAb8G9TZoB57X4BX
+         BdhZAvgCX2PCD6Ek5iHcozKkz+dJL3EXuxNPK/Xe65IRHHb8PfLL1pyK+4VTK8wrSa
+         6ZZvW62Y5X7w1gQYJ+V9s854nUlnB1XrmWE4Iflk2Nb97BbF8M8hY8puonuqLNE4xJ
+         IGG04GlSLx/LUVIZJ4Z2VHj3ym+WhGGX5cpGGwbp3/vkzicdgrIH1SDGBSKdc+CWWF
+         pgndYGl/e+ujgbprZUF7rnWeRJ+gHEAaytfiTF5x2AuQ3Q3r1Szpxmz4pSo/boaozf
+         pmA+VLYedJgkw==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     linux-arm-kernel@lists.infradead.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
@@ -40,15 +40,12 @@ Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
         Simtec Linux Team <linux@simtec.co.uk>,
         Arnd Bergmann <arnd@arndb.de>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
+        Heiko Stuebner <heiko@sntech.de>,
         Tomasz Figa <tomasz.figa@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Subject: [PATCH 04/21] ARM: s3c: remove adc.c
-Date:   Fri, 21 Oct 2022 22:27:37 +0200
-Message-Id: <20221021203329.4143397-4-arnd@kernel.org>
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 06/21] ARM: s3c: remove s3c6400 support
+Date:   Fri, 21 Oct 2022 22:27:39 +0200
+Message-Id: <20221021203329.4143397-6-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20221021202254.4142411-1-arnd@kernel.org>
 References: <20221021202254.4142411-1-arnd@kernel.org>
@@ -60,104 +57,55 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-This driver could not be enabled on s3c64xx for a long time
-because of the ARCH_MULTIPLATFORM dependency, so remove it.
+No board file and no dts file references the s3c6400 now, it's only
+s3c6410, so remove the final bits as well.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-s3c/Kconfig           |  15 -
- arch/arm/mach-s3c/Kconfig.s3c64xx   |   1 -
- arch/arm/mach-s3c/Makefile          |   4 -
- arch/arm/mach-s3c/adc.c             | 510 ----------------------------
- arch/arm/mach-s3c/mach-crag6410.c   |   1 -
- arch/arm/mach-s3c/regs-adc.h        |  64 ----
- include/linux/soc/samsung/s3c-adc.h |  32 --
- 7 files changed, 627 deletions(-)
- delete mode 100644 arch/arm/mach-s3c/adc.c
- delete mode 100644 arch/arm/mach-s3c/regs-adc.h
- delete mode 100644 include/linux/soc/samsung/s3c-adc.h
+ arch/arm/mach-s3c/Makefile.s3c64xx |  1 -
+ arch/arm/mach-s3c/s3c6400.c        | 84 ------------------------------
+ arch/arm/mach-s3c/s3c64xx.c        |  8 ---
+ 3 files changed, 93 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c/s3c6400.c
 
-diff --git a/arch/arm/mach-s3c/Kconfig b/arch/arm/mach-s3c/Kconfig
-index 809f84fca0b8..0dde4010aa64 100644
---- a/arch/arm/mach-s3c/Kconfig
-+++ b/arch/arm/mach-s3c/Kconfig
-@@ -63,16 +63,6 @@ config S3C_GPIO_TRACK
- 	  Internal configuration option to enable the s3c specific gpio
- 	  chip tracking if the platform requires it.
+diff --git a/arch/arm/mach-s3c/Makefile.s3c64xx b/arch/arm/mach-s3c/Makefile.s3c64xx
+index 13cda2fe7b6c..61287ad2ea42 100644
+--- a/arch/arm/mach-s3c/Makefile.s3c64xx
++++ b/arch/arm/mach-s3c/Makefile.s3c64xx
+@@ -16,7 +16,6 @@ obj-$(CONFIG_PM_SLEEP)          += irq-pm-s3c64xx.o
+ # Core
  
--# ADC driver
--
--config S3C_ADC
--	bool "ADC common driver support"
--	depends on !ARCH_MULTIPLATFORM
--	help
--	  Core support for the ADC block found in the Samsung SoC systems
--	  for drivers such as the touchscreen and hwmon to use to share
--	  this resource.
--
- # device definitions to compile in
+ obj-y				+= s3c64xx.o
+-obj-$(CONFIG_CPU_S3C6400)	+= s3c6400.o
+ obj-$(CONFIG_CPU_S3C6410)	+= s3c6410.o
  
- config S3C_DEV_HSMMC
-@@ -165,11 +155,6 @@ config S3C_DEV_RTC
- 	help
- 	  Compile in platform device definition for RTC
- 
--config SAMSUNG_DEV_ADC
--	bool
--	help
--	  Compile in platform device definition for ADC controller
--
- config S3C64XX_DEV_SPI0
- 	bool
- 	help
-diff --git a/arch/arm/mach-s3c/Kconfig.s3c64xx b/arch/arm/mach-s3c/Kconfig.s3c64xx
-index 0da214c43fba..c403d7642f0a 100644
---- a/arch/arm/mach-s3c/Kconfig.s3c64xx
-+++ b/arch/arm/mach-s3c/Kconfig.s3c64xx
-@@ -125,7 +125,6 @@ config MACH_WLF_CRAGG_6410
- 	select S3C_DEV_USB_HOST
- 	select S3C_DEV_USB_HSOTG
- 	select S3C_DEV_WDT
--	select SAMSUNG_DEV_ADC
- 	select SAMSUNG_DEV_KEYPAD
- 	select SAMSUNG_DEV_PWM
- 	help
-diff --git a/arch/arm/mach-s3c/Makefile b/arch/arm/mach-s3c/Makefile
-index a5135137e648..bae7316be5c7 100644
---- a/arch/arm/mach-s3c/Makefile
-+++ b/arch/arm/mach-s3c/Makefile
-@@ -8,10 +8,6 @@ include $(src)/Makefile.s3c64xx
- 
- obj-y				+= init.o cpu.o
- 
--# ADC
--
--obj-$(CONFIG_S3C_ADC)	+= adc.o
--
- # devices
- 
- obj-$(CONFIG_SAMSUNG_ATAGS)	+= platformdata.o
-diff --git a/arch/arm/mach-s3c/adc.c b/arch/arm/mach-s3c/adc.c
+ # DMA support
+diff --git a/arch/arm/mach-s3c/s3c6400.c b/arch/arm/mach-s3c/s3c6400.c
 deleted file mode 100644
-index 0232520d3c13..000000000000
-diff --git a/arch/arm/mach-s3c/mach-crag6410.c b/arch/arm/mach-s3c/mach-crag6410.c
-index 9a45474d1bf7..fab6b3efc9f6 100644
---- a/arch/arm/mach-s3c/mach-crag6410.c
-+++ b/arch/arm/mach-s3c/mach-crag6410.c
-@@ -57,7 +57,6 @@
- #include "keypad.h"
- #include "devs.h"
- #include "cpu.h"
--#include <linux/soc/samsung/s3c-adc.h>
- #include <linux/platform_data/i2c-s3c2410.h>
- #include "pm.h"
+index d47f1d6067b4..000000000000
+diff --git a/arch/arm/mach-s3c/s3c64xx.c b/arch/arm/mach-s3c/s3c64xx.c
+index 0a8116c108fe..ad13d7e13e5e 100644
+--- a/arch/arm/mach-s3c/s3c64xx.c
++++ b/arch/arm/mach-s3c/s3c64xx.c
+@@ -72,18 +72,10 @@ static void __init s3c64xx_init_uarts(struct s3c2410_uartcfg *cfg, int no)
  
-diff --git a/arch/arm/mach-s3c/regs-adc.h b/arch/arm/mach-s3c/regs-adc.h
-deleted file mode 100644
-index 58953c7381dd..000000000000
-diff --git a/include/linux/soc/samsung/s3c-adc.h b/include/linux/soc/samsung/s3c-adc.h
-deleted file mode 100644
-index 591c94ef957d..000000000000
+ /* table of supported CPUs */
+ 
+-static const char name_s3c6400[] = "S3C6400";
+ static const char name_s3c6410[] = "S3C6410";
+ 
+ static struct cpu_table cpu_ids[] __initdata = {
+ 	{
+-		.idcode		= S3C6400_CPU_ID,
+-		.idmask		= S3C64XX_CPU_MASK,
+-		.map_io		= s3c6400_map_io,
+-		.init_uarts	= s3c64xx_init_uarts,
+-		.init		= s3c6400_init,
+-		.name		= name_s3c6400,
+-	}, {
+ 		.idcode		= S3C6410_CPU_ID,
+ 		.idmask		= S3C64XX_CPU_MASK,
+ 		.map_io		= s3c6410_map_io,
 -- 
 2.29.2
 
