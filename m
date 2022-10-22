@@ -2,70 +2,88 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D119C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Oct 2022 04:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 108BBC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Oct 2022 10:48:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229596AbiJVEoG (ORCPT
+        id S230466AbiJVKsp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 22 Oct 2022 00:44:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42364 "EHLO
+        Sat, 22 Oct 2022 06:48:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229934AbiJVEoF (ORCPT
+        with ESMTP id S230298AbiJVKsF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 22 Oct 2022 00:44:05 -0400
-X-Greylist: delayed 2810 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 21 Oct 2022 21:44:01 PDT
-Received: from eclip245.hostpapavps.net (eclip245.hostpapavps.net [103.26.143.239])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A53D12A934C
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Oct 2022 21:44:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=oaa-archery.on.ca; s=default; h=Content-Type:MIME-Version:Message-ID:
-        Reply-To:From:Date:Subject:To:Sender:Cc:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=xJXRdyAKV05LyDYNM6a7GhUo4Yl5e5US9YGxa4AS+Mg=; b=CfJv3YQT0eMvpqaiC1KxJl1Mgm
-        aynoA/qMQUOwy6CbyfXCz4t7j7PDww21pmbSBNAnjTTZkbPc0tTzD+CWRC2FN742mi2NCMuuicBt+
-        CKh8PtVLoCnTUAoEvswi1j5hDA+Rd36JyCv9ILMuxetUnaduV3ECwIwVlBQwhpbKVSVHwAbYDQJbS
-        7qu1EFuaDsJkIffCH9Qj67YQY+5UW6DukIxCQsFk6fam1/GQ4Xtr2sGzdKEAnO9TpwqBzJvAORwST
-        zWLEtoJV/d2sGSck6EFwtdPD94c36KS+pgwZBsb3GMvPgTD6q5h+Yi4Xw/W7V3HlyAHe38XqRTqoy
-        1l3CakGg==;
-Received: from oaa by eclip245.hostpapavps.net with local (Exim 4.95)
-        (envelope-from <website@oaa-archery.on.ca>)
-        id 1om5dG-0007Cq-0Q
-        for linux-samsung-soc@vger.kernel.org;
-        Sat, 22 Oct 2022 03:57:10 +0000
-To:     linux-samsung-soc@vger.kernel.org
-Subject: Copy of: fully_nude_sex nlq.page.link/CmoN#
-X-PHP-Script: archeryontario.ca/index.php for 109.169.158.135
-X-PHP-Originating-Script: 1015:class.phpmailer.php
-Date:   Sat, 22 Oct 2022 03:57:09 +0000
-From:   Archery Ontario <website@oaa-archery.on.ca>
-Reply-To: "free_online_young_sex ujc.page.link/39gu#biani" 
-          <linux-samsung-soc@vger.kernel.org>
-Message-ID: <6e50430048840097dd8c786451a7a46f@archeryontario.ca>
+        Sat, 22 Oct 2022 06:48:05 -0400
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE6C736DF4;
+        Sat, 22 Oct 2022 03:05:42 -0700 (PDT)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 42D611C09E5; Sat, 22 Oct 2022 12:04:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+        t=1666433091;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=dglD9eYSoY+3krortBgXrhoLYnL9pFjbZFahJEBGrus=;
+        b=jxD7H1772uFc+xkDEUXOUxBX27YukDMzrm02WH+qL6K+4jZpBm1L5ruhpOlDDRiaQAZeir
+        KJtHd1k3R/xh+mcnTUgeuwTtZxLGOqbvWtv+mD1yOefh0HA65FNeRFDfWHtDrYtvMu2jJV
+        3PqU5vBktC1N4TFkfKMSBirTMEFzrHc=
+Date:   Sat, 22 Oct 2022 12:04:50 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sven Schwermer <sven.schwermer@disruptive-technologies.com>,
+        linux-leds@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 12/21] leds: remove s3c24xx driver
+Message-ID: <20221022100450.GD10427@duo.ucw.cz>
+References: <20221021202254.4142411-1-arnd@kernel.org>
+ <20221021203329.4143397-12-arnd@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - eclip245.hostpapavps.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [1015 993] / [47 12]
-X-AntiAbuse: Sender Address Domain - oaa-archery.on.ca
-X-Get-Message-Sender-Via: eclip245.hostpapavps.net: authenticated_id: oaa/from_h
-X-Authenticated-Sender: eclip245.hostpapavps.net: website@oaa-archery.on.ca
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ieNMXl1Fr3cevapt"
+Content-Disposition: inline
+In-Reply-To: <20221021203329.4143397-12-arnd@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This is a copy of the following message you sent to Ontario Association of Archers via Archery Ontario | Provincial Sport Governing body for Archery
 
-This is an enquiry email via https://archeryontario.ca/ from:
-free_online_young_sex
- ujc.page.link/39gu#
-biani <linux-samsung-soc@vger.kernel.org>
+--ieNMXl1Fr3cevapt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-free_celebrity_sex_scenes_videos
- xsg.page.link/BkRX#
+Hi!
 
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> The s3c24xx platform is gone, so the led driver can be
+> removed as well.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+git am failed, but I guess this is not critical...
+
+Best regards,
+								Pavel
+							=09
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--ieNMXl1Fr3cevapt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCY1PAQgAKCRAw5/Bqldv6
+8j2UAJ9TSLqUb87pUMzXln9X7UAKeZvTRgCfWgHUaFpSlcgtO7F7LJE9R5khcUs=
+=pSY8
+-----END PGP SIGNATURE-----
+
+--ieNMXl1Fr3cevapt--
