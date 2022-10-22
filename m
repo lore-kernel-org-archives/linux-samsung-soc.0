@@ -2,33 +2,36 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 108BBC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Oct 2022 10:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA1DFA3742
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Oct 2022 11:37:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230466AbiJVKsp (ORCPT
+        id S230415AbiJVLhy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 22 Oct 2022 06:48:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59608 "EHLO
+        Sat, 22 Oct 2022 07:37:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230298AbiJVKsF (ORCPT
+        with ESMTP id S230020AbiJVLhi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 22 Oct 2022 06:48:05 -0400
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE6C736DF4;
-        Sat, 22 Oct 2022 03:05:42 -0700 (PDT)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 42D611C09E5; Sat, 22 Oct 2022 12:04:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-        t=1666433091;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dglD9eYSoY+3krortBgXrhoLYnL9pFjbZFahJEBGrus=;
-        b=jxD7H1772uFc+xkDEUXOUxBX27YukDMzrm02WH+qL6K+4jZpBm1L5ruhpOlDDRiaQAZeir
-        KJtHd1k3R/xh+mcnTUgeuwTtZxLGOqbvWtv+mD1yOefh0HA65FNeRFDfWHtDrYtvMu2jJV
-        3PqU5vBktC1N4TFkfKMSBirTMEFzrHc=
-Date:   Sat, 22 Oct 2022 12:04:50 +0200
-From:   Pavel Machek <pavel@ucw.cz>
+        Sat, 22 Oct 2022 07:37:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0F30DF9;
+        Sat, 22 Oct 2022 04:24:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3920260D34;
+        Sat, 22 Oct 2022 11:24:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED202C433C1;
+        Sat, 22 Oct 2022 11:24:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1666437854;
+        bh=QlHVwvQAZAIgvjk8abE10EkrdDUL7r/AigVC5ALYQK4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=un1PldCoLSJ88cWZRYnjm5Oi1KiCHJHB0LueFTTYXn8D7fIAxS0vK6V48SeMy9VdW
+         ZuWEiHtsrYztxbCEB+Ntyz+QhjY7UYniFteggfYw/ntXKMozNoEsqsq66wk3rOhU3K
+         hzsEaBZQY3uGlKbG/0kkX3FnGtw/tJtrFvWLyT24=
+Date:   Sat, 22 Oct 2022 13:24:12 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     Arnd Bergmann <arnd@kernel.org>
 Cc:     linux-arm-kernel@lists.infradead.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
@@ -36,54 +39,50 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         Simtec Linux Team <linux@simtec.co.uk>,
         Arnd Bergmann <arnd@arndb.de>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sven Schwermer <sven.schwermer@disruptive-technologies.com>,
-        linux-leds@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 12/21] leds: remove s3c24xx driver
-Message-ID: <20221022100450.GD10427@duo.ucw.cz>
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 02/21] ARM: s3c: remove s3c24xx specific hacks
+Message-ID: <Y1PS3A75mXIEb+MA@kroah.com>
 References: <20221021202254.4142411-1-arnd@kernel.org>
- <20221021203329.4143397-12-arnd@kernel.org>
+ <20221021203329.4143397-2-arnd@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ieNMXl1Fr3cevapt"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221021203329.4143397-12-arnd@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20221021203329.4143397-2-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
---ieNMXl1Fr3cevapt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
+On Fri, Oct 21, 2022 at 10:27:35PM +0200, Arnd Bergmann wrote:
 > From: Arnd Bergmann <arnd@arndb.de>
->=20
-> The s3c24xx platform is gone, so the led driver can be
-> removed as well.
->=20
+> 
+> A number of device drivers reference CONFIG_ARM_S3C24XX_CPUFREQ or
+> similar symbols that are no longer available with the platform gone,
+> though the drivers themselves are still used on newer platforms,
+> so remove these hacks.
+> 
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-git am failed, but I guess this is not critical...
-
-Best regards,
-								Pavel
-							=09
---=20
-People of Russia, stop Putin before his war on Ukraine escalates.
-
---ieNMXl1Fr3cevapt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCY1PAQgAKCRAw5/Bqldv6
-8j2UAJ9TSLqUb87pUMzXln9X7UAKeZvTRgCfWgHUaFpSlcgtO7F7LJE9R5khcUs=
-=pSY8
------END PGP SIGNATURE-----
-
---ieNMXl1Fr3cevapt--
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
