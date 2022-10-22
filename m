@@ -2,318 +2,125 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C318C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Oct 2022 16:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D509C04A95
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Oct 2022 19:48:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229893AbiJVQtU (ORCPT
+        id S229970AbiJVTsy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 22 Oct 2022 12:49:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53252 "EHLO
+        Sat, 22 Oct 2022 15:48:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229885AbiJVQtR (ORCPT
+        with ESMTP id S229847AbiJVTsq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 22 Oct 2022 12:49:17 -0400
-Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8136613A7EC
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Oct 2022 09:49:00 -0700 (PDT)
-Received: by mail-qt1-x82a.google.com with SMTP id bb5so3442256qtb.11
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Oct 2022 09:49:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MWHwWqM3BXKlqAbT6QrzFF/UUpibvbLYi2O5amk60U4=;
-        b=ogCxatazZKWZRhhAUwP+5F6AJ8YlAWU+ohtbMidz6OXm1yNePCRATsxZp5oRVpW+A0
-         p9NYEDjH83TE8PMVPOfIkhT6CS6HDkxOGBdeUU/Sl4GpxX/p+bOp+TQ2TviTAGPYfEN7
-         Fg5gOOGp+oH8bXUlwYJ6688yOFmDGYpQbO3wjVusgiWYagHvCkKeywXEojgiHQ3WH0k4
-         mEi9Y0KzuyjiANtaGM2LmBWL4021SGDvEyZdzGZS/3PWXsSDtZFm0KM8apP73oACp0Nf
-         QN1tePmnF5nWKZJUcm8X0JoAeAJOKcdwwdlMY7prETHOllDQoTyKZ9YmXZRR0F2eQm+3
-         f6DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MWHwWqM3BXKlqAbT6QrzFF/UUpibvbLYi2O5amk60U4=;
-        b=pWo5RqngTzRZxZRFI2dunYNBUeebozLxoLiHMx6bG0ZRmBcBCtkU9BRcfFAif70SxR
-         +REsVgOC3l5ZR2TVYJG2qzX0TEHHuIJwDJIZzo4aeop/9S4346ymOYrK+JkuWFCpRYZ+
-         8cdV92Y2p1qsU/3uXobPDWvApSBk+oIy5kZfZjlaOX/lwSAEHJz6MG+oFLFLBrQs7b7u
-         +9BVRpoLvi7yPhLl2eHrXCrjmYQ1fzq0YC//46XiIZMqHT8+WMAa/minZ4+KaPEJepig
-         YtPkScUOqyLOoGq3zFvT92lJhQPIJIgh28JfuJRx6AMtjIeERMN/8F+kgF2qIawbmEpt
-         yPVA==
-X-Gm-Message-State: ACrzQf3g5hJDUhU2qrLcVFBaM8sj5H7u+wWgpsj/RtsbGLmSlYUipwO0
-        yTwMn/XsBtk445NcP+mvGq94UQ==
-X-Google-Smtp-Source: AMsMyM7MX1BEUs2JSI2Qn3PmiNnVDugW3rD+1D64oX5nMvP/6Fj64lJHcVW1yUkBKT8ar+TIesapXw==
-X-Received: by 2002:ac8:5b10:0:b0:39c:d63a:d88 with SMTP id m16-20020ac85b10000000b0039cd63a0d88mr20932702qtw.682.1666457339565;
-        Sat, 22 Oct 2022 09:48:59 -0700 (PDT)
-Received: from [10.203.8.70] ([205.153.95.177])
-        by smtp.gmail.com with ESMTPSA id c25-20020ac81119000000b003996aa171b9sm9752605qtj.97.2022.10.22.09.48.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Oct 2022 09:48:58 -0700 (PDT)
-Message-ID: <253fc459-c3dc-7710-6f34-0466d5301482@linaro.org>
-Date:   Sat, 22 Oct 2022 12:48:56 -0400
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH 3/6] dt-bindings: sound: Add sound card bindings for Tesla
- FSD
-Content-Language: en-US
-To:     Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>,
-        'Rob Herring' <robh@kernel.org>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, s.nawrocki@samsung.com,
-        perex@perex.cz, tiwai@suse.com, pankaj.dubey@samsung.com,
-        alim.akhtar@samsung.com, rcsekar@samsung.com,
-        aswani.reddy@samsung.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20221014102151.108539-1-p.rajanbabu@samsung.com>
- <CGME20221014104901epcas5p1a61ea81c3b1640bd8a064633c0b1e40d@epcas5p1.samsung.com>
- <20221014102151.108539-4-p.rajanbabu@samsung.com>
- <20221014151325.GA1940481-robh@kernel.org>
- <04b901d8e529$573b17e0$05b147a0$@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <04b901d8e529$573b17e0$05b147a0$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Sat, 22 Oct 2022 15:48:46 -0400
+Received: from new1-smtp.messagingengine.com (new1-smtp.messagingengine.com [66.111.4.221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6F5412D80A;
+        Sat, 22 Oct 2022 12:48:44 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 6AD1458012A;
+        Sat, 22 Oct 2022 15:48:41 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute3.internal (MEProxy); Sat, 22 Oct 2022 15:48:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; t=1666468121; x=1666475321; bh=UGS1Mg1RbR
+        rjg7l/C4uODk6tRvKSFxQmBze4CDiRUok=; b=R769R20cvAUvCJzdLxBnDkwPBp
+        EbTpyCnh90ePwkW/W271GgnujcaxKPNlKUZTD1QiMzbOX6UUmX5GBGQy5YnoG3Hz
+        7bIbm4GGSebbV6RK2kBgjxCEhVjRMxNaLgKsw+7i5e4f4W2C2HsQFTmKv8S+gZdE
+        jcEJHfdX99rjFuuQuzOPTEkJYLvC3gJ1f7jx+9U6cwktdP6NSfqNvxTgarEWxD1c
+        GFRrikCndHmtZnFVFspin0GH0nBuno9DFl/vX1YEuWJJ1DmabcJBI+QgW+pFl13L
+        PUlTUh21czWS+IFSiTNJyGJ4p7ipLzCb7UJepNPQ1EVgfsLevgq5To41FFEw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; t=1666468121; x=1666475321; bh=UGS1Mg1RbRrjg7l/C4uODk6tRvKS
+        FxQmBze4CDiRUok=; b=DZdlxJQ1/OPf/Y6KDYWPfdC+mu56NzIOlbXghWxjCj9D
+        9CPMuzFO6wSIpYXaVVKO5ogBmtK5zrRUpai6gPg5qF7aq51p1Tf8zgVV+aEGQIpg
+        Le7lvLJR+05feR3Q+7owk4RsmE3rzpsqGg/UOGa7xGgp5BzvreC3G8OxhZ0WzoTZ
+        kHVkLu1P+KTSJm4dYCrODRLVTVeSHwuFqAuyI9eyO0UD5B3tL3/NipBn2AFumQvr
+        +xjvFjLrJEOmbNOFedB+o0knlGPPR7li0EwNxPvDXhDL0DJhj4plmQqEZJg8uEWZ
+        ljUtVQj8llXCVqwnpTmY8Mpk0y+FjFMyLlNEuZEfiA==
+X-ME-Sender: <xms:GElUY9vt3ItviEp5AJXQjYcX0YyV47YTITTgtkGjjNw0aSie0vzYkg>
+    <xme:GElUY2cknoJTeDpYvjbC4RFS-FtPGbyfFDbbyjNFIChdDqrc0xYFVavFYI99vu8kl
+    0KtHqNspAg1e6vBhwY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrgedttddgudegtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:GElUYwxiXoqPMILm1SZ_32__qu1Q5l_zrlV4KYN9jBrAlex9SwSKIg>
+    <xmx:GElUY0PzOcbbrTlSQkCZ5j1lrS1Cnv1p6FZXhLQlA1lHQyiDXRQGng>
+    <xmx:GElUY9-JQg9pRkXJG00aarf_3pC2T4jG_plPdMl-YxzKsRcEtsxZ9g>
+    <xmx:GUlUYyKFp-5FR5wwM3xl6nutJeKlKU0pfMGHX_pxDvaIG8i-amMB_w>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 90C24B60086; Sat, 22 Oct 2022 15:48:40 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.7.0-alpha0-1047-g9e4af4ada4-fm-20221005.001-g9e4af4ad
+Mime-Version: 1.0
+Message-Id: <7c4531b8-a296-4ea3-9564-b094704d10b2@app.fastmail.com>
+In-Reply-To: <e7ace68a-98e5-63c8-7dd7-a35d0eba1c6e@linaro.org>
+References: <20221021202254.4142411-1-arnd@kernel.org>
+ <e7ace68a-98e5-63c8-7dd7-a35d0eba1c6e@linaro.org>
+Date:   Sat, 22 Oct 2022 21:48:19 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+        "Arnd Bergmann" <arnd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, "Ben Dooks" <ben-linux@fluff.org>,
+        "Simtec Linux Team" <linux@simtec.co.uk>,
+        linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        "linux-mmc @ vger . kernel . org" <linux-mmc@vger.kernel.org>,
+        linux-mtd@lists.infradead.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-rtc@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-watchdog@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-pwm@vger.kernel.org
+Subject: Re: [PATCH 00/21] ARM: s3c: clean out obsolete platforms
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 21/10/2022 04:44, Padmanabhan Rajanbabu wrote:
->> On Fri, Oct 14, 2022 at 03:51:48PM +0530, Padmanabhan Rajanbabu wrote:
->>> Add dt-binding reference document to configure the DAI link for Tesla
->>> FSD sound card driver.
->>
->> The simple-card or graph-card bindings don't work for you?
-> Thank you for reviewing the patch.
-> 
-> The actual reason for having a custom sound card driver lies in the fact
-> that the Samsung i2s cpu dai requires configuration of some Samsung
-> specific properties like rfs, bfs, codec clock direction and root clock
-> source. We do not have flexibility of configuring the same in simple card
-> driver (sound/soc/generic/simple-card.c) or audio graph card driver 
-> (sound/soc/generic/audio-graph-card.c). The binding has been added to
-> support the custom sound card driver.
-> 
-> I understand from your query that the newly added card has device tree
-> nodes and properties which are used in simple card as well, but having a
-> different or new prefixes. I believe to address that, we can restructure
-> the string names to generic ones. 
+On Sat, Oct 22, 2022, at 17:18, Krzysztof Kozlowski wrote:
+> On 21/10/2022 16:22, Arnd Bergmann wrote:
+>> From: Arnd Bergmann <arnd@arndb.de>
+>> 
+>> The s3c24xx platform was marked as deprecated a while ago,
+>> and for the s3c64xx platform, we marked all except one legacy
+>> board file as unused.
+>> 
+>> This series removes all of those, leaving only s3c64xx support
+>> for DT based boots as well as the cragg6410 board file.
+>> 
+>> About half of the s3c specific drivers were only used on
+>> the now removed machines, so these drivers can be retired
+>> as well. I can either merge the driver removal patches through
+>> the soc tree along with the board file patches, or subsystem
+>> maintainers can pick them up into their own trees, whichever
+>> they prefer.
+>
+> Just to be sure - do you expect me to ack the series, or rather as usual
+> pick them up?
 
-You must use generic, existing properties where applicable.
+I think in this case it is easier if I pick them up with your
+Ack along with the other platforms I posted, as there are
+some minor conflicts between Makefile/Kconfig changes where
+I remove adjacent lines.
 
-> But I would like to understand, to reuse
-> the simple card or audio graph card bindings, can we add secondary
-> compatible strings in the simple card dt-binding for the custom sound card
-> to probe ?
-
-If you see other vendor compatibles there, then yes... But there aren't
-any, right?
-
->>
->>>
->>> Signed-off-by: Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
->>> ---
->>>  .../bindings/sound/tesla,fsd-card.yaml        | 158 ++++++++++++++++++
->>>  1 file changed, 158 insertions(+)
->>>  create mode 100644
->>> Documentation/devicetree/bindings/sound/tesla,fsd-card.yaml
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/sound/tesla,fsd-card.yaml
->>> b/Documentation/devicetree/bindings/sound/tesla,fsd-card.yaml
->>> new file mode 100644
->>> index 000000000000..4bd590f4ee27
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/sound/tesla,fsd-card.yaml
->>> @@ -0,0 +1,158 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) # Copyright
->>> +2022 Samsung Electronics Co. Ltd.
->>> +%YAML 1.2
->>> +---
->>> +$id:
->>> +https://protect2.fireeye.com/v1/url?k=4ae54403-157e7d1c-4ae4cf4c-
->> 000b
->>> +abdfecba-9eb398ea304f8ae8&q=1&e=4935bed0-ce62-47dd-8faf-
->> 4750b01e22d3&
->>>
->> +u=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fsound%2Ftesla%2Cfsd-
->> card.ya
->>> +ml%23
->>> +$schema:
->>> +https://protect2.fireeye.com/v1/url?k=8c72226e-d3e91b71-8c73a921-
->> 000b
->>> +abdfecba-3ce999f6c052255b&q=1&e=4935bed0-ce62-47dd-8faf-
->> 4750b01e22d3&
->>> +u=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23
->>> +
->>> +title: Tesla FSD ASoC sound card driver
->>> +
->>> +maintainers:
->>> +  - Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
->>> +
->>> +description: |
->>> +  This binding describes the node properties and essential DT entries
->>> +of FSD
->>> +  SoC sound card node
->>> +
->>> +select: false
->>
->> Never apply this schema. Why?
-> Sorry about it, let me change the select property to true in the next
-> patchset
-
-No, just drop it. Look at other bindings or at example-schema
-
->>
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - tesla,fsd-sndcard
->>> +
->>> +  model:
->>> +    description: Describes the Name of the sound card
->>> +    $ref: /schemas/types.yaml#/definitions/string
->>> +
->>> +  widgets:
->>> +    description: A list of DAPM widgets in the sound card. Each entry
-> is a pair
->>> +      of strings, the first being the widget name and the second being
-> the
->>> +      widget alias
->>> +    $ref: /schemas/types.yaml#/definitions/string-array
->>> +
->>> +  audio-routing:
->>> +    description: A list of the connections between audio components.
-> Each entry
->>> +      is a pair of strings, the first being the connection's sink, the
-> second
->>> +      being the connection's source
->>> +    $ref: /schemas/types.yaml#/definitions/string-array
->>> +
->>> +  dai-tdm-slot-num:
->>> +    description: Enables TDM mode and specifies the number of TDM slots
-> to be
->>> +      enabled
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    enum: [0, 1, 2, 3, 4, 5, 6, 7, 8]
->>
->> maximum: 8
-> Okay
->>
->>> +    default: 2
->>> +
->>> +  dai-tdm-slot-width:
->>> +    description: Specifies the slot width of each TDm slot enabled
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    enum: [8, 16, 24]
->>> +    default: 16
->>
->> All the above have types defined. You should not be redefining the types.
-> Okay
->>
->>> +
->>> +  dai-link:
->>> +    description: Holds the DAI link data between CPU, Codec and
-> Platform
->>> +    type: object
->>
->>        additionalProperties: false
-> okay
->>
->>> +    properties:
->>> +      link-name:
->>> +        description: Specifies the name of the DAI link
->>> +        $ref: /schemas/types.yaml#/definitions/string
->>> +
->>> +      dai-format:
->>> +        description: Specifies the serial data format of CPU DAI
->>> +        $ref: /schemas/types.yaml#/definitions/string
->>> +
->>> +      tesla,bitclock-master:
->>> +        description: Specifies the phandle of bitclock master DAI
->>> +        $ref: /schemas/types.yaml#/definitions/phandle
->>> +
->>> +      tesla,frame-master:
->>> +        description: Specifies the phandle of frameclock master DAI
->>> +        $ref: /schemas/types.yaml#/definitions/phandle
->>
->> These are common properties. Drop 'tesla'.
-> Okay
->>
->>> +
->>> +      cpu:
->>> +        description: Holds the CPU DAI node and instance
->>> +        type: object
->>
->>            additionalProperties: false
-> Okay
->>
->>> +        properties:
->>> +          sound-dai:
->>> +            description: Specifies the phandle of CPU DAI node
->>> +            $ref: /schemas/types.yaml#/definitions/phandle-array
->>> +
->>> +        required:
->>> +          - sound-dai
->>> +
->>> +      codec:
->>> +        description: Holds the Codec DAI node and instance
->>> +        type: object
->>
->>            additionalProperties: false
-> Okay
->>
->>> +        properties:
->>> +          sound-dai:
->>> +            description: Specifies the phandle of Codec DAI node
->>> +            $ref: /schemas/types.yaml#/definitions/phandle-array
->>
->> Already has a type. Need to define how many entries (maxItems: 1 ?).
-> Okay. I'll update in the upcoming patch set
->>
->>> +
->>> +        required:
->>> +          - sound-dai
->>> +
->>> +    required:
->>> +      - link-name
->>> +      - dai-format
->>> +      - tesla,bitclock-master
->>> +      - tesla,frame-master
->>> +      - cpu
->>> +
->>> +dependencies:
->>> +  dai-tdm-slot-width: [ 'dai-tdm-slot-num' ]
->>
->> This should be captured with tdm-slot.txt converted to schema.
-> Okay
->>
->>> +
->>> +required:
->>> +  - compatible
->>> +  - model
->>> +  - dai-link
->>> +
->>> +additionalProperties: false
->>> +
->>> +examples:
->>> +  - |
->>> +    sound {
->>> +        compatible = "tesla,fsd-sndcard";
->>> +        status = "disabled";
->>
->> Why have a disabled example? Other than your example won't pass your
->> schema.
-> Thanks for noticing, I'll double check and change the example keeping the
-> status 
-> as enabled
-
-No, just drop. Start with example-schema instead.
-
-Best regards,
-Krzysztof
-
+       Arnd
