@@ -2,156 +2,119 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90608ECAAA1
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 23 Oct 2022 13:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 967ACC3A59D
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 23 Oct 2022 18:09:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230216AbiJWNNd (ORCPT
+        id S230434AbiJWSJF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 23 Oct 2022 09:13:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53320 "EHLO
+        Sun, 23 Oct 2022 14:09:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230373AbiJWNNc (ORCPT
+        with ESMTP id S229497AbiJWSJC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 23 Oct 2022 09:13:32 -0400
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4F6661D4E
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Oct 2022 06:13:18 -0700 (PDT)
-Received: by mail-qk1-x735.google.com with SMTP id d13so4766794qko.5
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Oct 2022 06:13:18 -0700 (PDT)
+        Sun, 23 Oct 2022 14:09:02 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55CA472968
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Oct 2022 11:09:00 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id jb18so1889018wmb.4
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Oct 2022 11:09:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=uZZVZxGYHwnE1PIam0i2Ywe02Lmqk/XzV+z7/E9fIPY=;
-        b=V8u/hQ+wAFe2HLlBScSXqDxNPKgepGTKIfTPzyCu51pVOETTB0gLPomcBItqz6HPbl
-         G9zPgraSprrqeRJevz7fn1GKZ9on1AhbhTGPMPze68F3IxToHI91fn7h4Qv8ZcDidMyd
-         lqDthJ1FhWqM/pkkhCthaqS53jnJCvZiWp5rMx3dD53eZSpKQjOOplBLfkjltjOohpVK
-         m8XJWE7H3boEsVlB2nGceZjelBO2Zl3TvFhRvy0G7dm+bzqqg6zk8wIAUpmX15w2ej1b
-         SBDcI2eVMs7URG/xV6UyyP/MeAL2Lwn0uhhJMz9SeP9zAKwoyLp1aXeMSKHqwUvxt00P
-         FCkw==
+        bh=SqFi2wmLGXsQfu/MZ0ShWytXRLk9pwr7X9yOqzu3XMM=;
+        b=xr1jMXVmN57HPedWjHBHw1rrR1I978R/fF6s6AJxl5r6la7lQvhSNZVE8+g2y0CLiO
+         sDalDXJWkgYjhjEW/tk2thpgvWl6aN/4cUoHucR/vgyQGfBHk/P8fVym9OLTYL9CaDNc
+         gW1/wghLPtZzxuOCGhEE5dyrYtYTJsZ7jphSDYrKqG+oJwnjxwiZMzhfPhUVrkSGT+zu
+         5VweFASmBJDlLQN+flFQth9QRLtbPOQNBbETZ75/uwAkj0tW+hrOnW5GnQhWc/dIW6xR
+         vnkUaLQLdc5GSXiDVFlRPo8TgQp1RGMp1/59R56exH01qg/nbJrdKRA5l0wPE4Qmy1c+
+         JkKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uZZVZxGYHwnE1PIam0i2Ywe02Lmqk/XzV+z7/E9fIPY=;
-        b=V0YKDVcLiaQEcHad4p5btIWLbVAxOD3eXKBWZ1vBBqn3G8jCltFbhKM25R0NCGId92
-         btBpopYY0PMK0/ciiouzzkIJHRtEQNheRsTzBjh6nrkd2K4v6WYZvzWmz8BNAdaRHK9i
-         x0R7VaRXYEeGlalMNNwGYAgcFBT3rPF6S0PzY6QiRDRM3p3RVoJgvg1QclFvDAEkN/0t
-         Uxl1ocg5TnG9nFNV9qhwpQ/ZZ9P/HkwiXrHp6OcVOaaj6o7/FBvIqrs+nqWoj5oEHbTd
-         f+igE44XyEOdeDTKubTOoMGHMGQ2oBFS0Ri97I0LBD1OGimyrgeVGJUpz1k+a051Zxqj
-         5Mjg==
-X-Gm-Message-State: ACrzQf1IheD0O3+kNFUik2WfJjowMbGcu1qHPmMCVaIfKBXLpt12BGS/
-        ku2thNFDF39TDOT50FgRY6ZTyA==
-X-Google-Smtp-Source: AMsMyM7nxzKp2ffgUCDO/X5GoslLPIunxildH8dLc0Nz0E5MubAlrLfOCbLO21902pFFqNdlkh7PSw==
-X-Received: by 2002:a05:620a:2406:b0:6ec:c5f5:6304 with SMTP id d6-20020a05620a240600b006ecc5f56304mr19801640qkn.95.1666530756908;
-        Sun, 23 Oct 2022 06:12:36 -0700 (PDT)
-Received: from [192.168.1.8] ([64.57.193.93])
-        by smtp.gmail.com with ESMTPSA id p7-20020a05620a132700b006b61b2cb1d2sm12994401qkj.46.2022.10.23.06.12.34
+        bh=SqFi2wmLGXsQfu/MZ0ShWytXRLk9pwr7X9yOqzu3XMM=;
+        b=ryRDNdt1ufKzsrBS8RTNZJ0Ix+WyoEUoxiEUXSHmACnn32jav++VJd6BfiuOmXb6bn
+         2WQBPF+iiCMUfoAbJN7L2Ejf63co3SO+gvS4ekovl3//84lFARgNSFB5LYq7wPqO5k2N
+         zPckYp7SqTmglbFRYir5v+Fh8W0JYEFlTG+vYgCvzNynOyEYNS2hzNxR0K5QK917jcRU
+         raCwrRGikE7uVIqNTMBNo6ruyy3BMvYVZHMrs+0mqYjCnzDNqDbQO1HKV+5oP6W0jMu5
+         VYOWEkrQnplQ+jFsqy9UkYZp7FXR5cS6zdI8Bgh2qZMtGd0O7xMealTdvpMlpD0/iylF
+         pnKw==
+X-Gm-Message-State: ACrzQf39IevZ/kNypauDs7vGFBXUUZD1sjfOF09XnY0sdQzi4RFa0JVI
+        6u9L6T1aUlddqNfWsAjXAwaXZA==
+X-Google-Smtp-Source: AMsMyM72SUpT+H3YAHck0Mm/xenvuseMLAPPp2oOExNAh4/7iab4VjcAEYTBVCFws4DOL079RWUZ7Q==
+X-Received: by 2002:a05:600c:5104:b0:3c6:d8e0:bc2e with SMTP id o4-20020a05600c510400b003c6d8e0bc2emr19762303wms.156.1666548538775;
+        Sun, 23 Oct 2022 11:08:58 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:14a0:fbb0:c618:c972? ([2a05:6e02:1041:c10:14a0:fbb0:c618:c972])
+        by smtp.googlemail.com with ESMTPSA id g10-20020a5d554a000000b002364c77bcacsm8318216wrw.38.2022.10.23.11.08.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Oct 2022 06:12:35 -0700 (PDT)
-Message-ID: <909abf31-91d9-159b-baef-6ffcfc3e07b2@linaro.org>
-Date:   Sun, 23 Oct 2022 09:12:33 -0400
+        Sun, 23 Oct 2022 11:08:58 -0700 (PDT)
+Message-ID: <b085d1ee-2924-47f5-a952-27040ae3eb1c@linaro.org>
+Date:   Sun, 23 Oct 2022 20:08:55 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH 2/6] ASoC: samsung: i2s: configure PSR from sound card
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH 02/21] ARM: s3c: remove s3c24xx specific hacks
 Content-Language: en-US
-To:     Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>,
-        'Mark Brown' <broonie@kernel.org>
-Cc:     lgirdwood@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, s.nawrocki@samsung.com,
-        perex@perex.cz, tiwai@suse.com, pankaj.dubey@samsung.com,
-        alim.akhtar@samsung.com, rcsekar@samsung.com,
-        aswani.reddy@samsung.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20221014102151.108539-1-p.rajanbabu@samsung.com>
- <CGME20221014104857epcas5p2a275a1d606ca066227228d13bcf5b120@epcas5p2.samsung.com>
- <20221014102151.108539-3-p.rajanbabu@samsung.com>
- <Y0lPz91gbovAub9D@sirena.org.uk>
- <04a101d8e523$30804b80$9180e280$@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <04a101d8e523$30804b80$9180e280$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Arnd Bergmann <arnd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20221021202254.4142411-1-arnd@kernel.org>
+ <20221021203329.4143397-2-arnd@kernel.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20221021203329.4143397-2-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 21/10/2022 04:00, Padmanabhan Rajanbabu wrote:
->> It's not clear to me why the solution here is to move the configuration to
-> the
->> sound card rather than to improve the I2S driver to be able to cope with
->> whatever the restrictions are on the PSR in these systems - it seems more
->> cumbersome for system integrators, especially since you've not documented
->> the issues or how to configure it.  Could you expand on what the
-> constraints
->> are here and why it's not possible for the driver to figure things out
-> (given
->> some quirk information)?
+On 21/10/2022 22:27, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Thank you for reviewing the patch.
+> A number of device drivers reference CONFIG_ARM_S3C24XX_CPUFREQ or
+> similar symbols that are no longer available with the platform gone,
+> though the drivers themselves are still used on newer platforms,
+> so remove these hacks.
 > 
-> In Samsung I2S CPU controller, to derive the frame clock, we are supposed to
-> configure the PSR and RFS internal dividers. i.e.
-> 
-> OPCLK -> PSR -> RCLK -> RFS -> Frame clock
-> 
-> Where:
-> OPCLK - Operational clock
-> PSR - Operational clock prescaler
-> RCLK - Root Clock (derived from OPCLK based on PSR)
-> RFS - Root frequency selection (divider)
-> Frame clock - Sample frequency (derived from RCLK based on RFS)
-> 
-> Ultimately,
-> 
-> PSR = OPCLK / Frame clock / RFS
-> 
-> Unlike other platforms utilizing Samsung CPU DAI, FSD SoC has a limitation
-> on
-> operational clock, where the clock frequency is fixed (66 MHz) and cannot be
-> modified. 
-> 
-> Assuming that an userspace application wants perform playback @44100 Hz
-> and assuming that RFS divider value is configured as 256, the PSR value will
-> yield to
-> 
-> 66 MHz / 44.1 KHz / 256 = 5
-> 
-> However if HW uses PSR = 5 to derive the frame clock from operational clock,
-> then
-> 
-> RCLK = OPCLK / PSR = 66 MHz / 5 = 13.2 MHz
-> Frame clock = RCLK / RFS = 13.2 MHz / 256 = 51562 Hz
-> 
-> The actual frame clock derived based on PSR is now different from what user
-> application has intended. The situation did not improve even if the RFS is
-> swept throughout the entire valid range.
-> 
-> We can overcome this scenario to an extent if we can get a flexibility to
-> Configure both PSR as well as RFS.
-> 
-> i.e. to achieve frame clock of 44100 Hz, if PSR  = 23 and RFS = 64
-> then frame clock = 66 MHz / 23 / 64 = 44836 Hz 
-> 
-> Although the sample frequency is not precise, it is very much closer to the
-> Intended frequency, when compared to that of the existing solution. Since
-> this
-> scenario is specific to FSD SoC and has no changes in the Samsung I2S CPU
-> DAI,
-> the configuration is being done from the sound card of FSD SoC during
-> hw_params.
-> 
-> Please let me know if you think this scenario can be approached in any other
-> way possible, rather than configuring from sound card.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Entire new driver for this, instead of improving existing Samsung
-drivers... no, it is no the way. If you followed this approach you would
-send 20 drivers for each "specific" quirk difference.
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Best regards,
-Krzysztof
 
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
