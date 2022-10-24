@@ -2,96 +2,199 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6BDFA3740
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Oct 2022 07:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E97ECDFA1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Oct 2022 08:45:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230012AbiJXHzW (ORCPT
+        id S229817AbiJXIpJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Oct 2022 03:55:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47288 "EHLO
+        Mon, 24 Oct 2022 04:45:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbiJXHzU (ORCPT
+        with ESMTP id S230115AbiJXIpG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Oct 2022 03:55:20 -0400
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A9C93B735;
-        Mon, 24 Oct 2022 00:55:14 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id BC1EF1C000E;
-        Mon, 24 Oct 2022 07:55:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1666598113;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=v+DtEIbWCTrMoEhxqNZp5xO+0p2o8LDxYvX/bSafQhA=;
-        b=EKvNS6u8jnjegmr7GDNhG+HxpDM+Wj8+KWSwkrOzg4G/WtiE/ROOrbblmt3pAjrvfgueMZ
-        jNTxNy9LBLmzrpAyINZWgaV33dHQsxd2oSo/1LGCIw3PJwc8S4Gp1tPDIZwDQizaBcpvvY
-        S3ztUWTpqBY/bKIMXiZzkz2tMvCnNm3MdwXcvuQA9cOxsDUOftYKyK5T8gE5BZQRipHKSD
-        MEoTEyocU8KUQ2bKMtZt6sK6di8sKvOZGKxCEN0+nn2aWJyMv0pJI2PBN9TXXCi3sZ5UiY
-        Jci8bOiL/oSTvMdSx5T2vTxAVT3MDnq5GdNYYMuKfU1RrQ0HaA8QlN4H7V8uHw==
-Date:   Mon, 24 Oct 2022 09:55:07 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 02/21] ARM: s3c: remove s3c24xx specific hacks
-Message-ID: <20221024095507.302687f8@xps-13>
-In-Reply-To: <20221021203329.4143397-2-arnd@kernel.org>
-References: <20221021202254.4142411-1-arnd@kernel.org>
-        <20221021203329.4143397-2-arnd@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        Mon, 24 Oct 2022 04:45:06 -0400
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6924C205ED
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Oct 2022 01:45:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1666601102; x=1698137102;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=NA5Ny2XoE1i5QuR33NYRl8zhNYn5fWE/UngumuM7BWY=;
+  b=emaAOgPmAvUnWJHpRqs4ghIo4esYo7UtieHFe2WL8OgJKv0Ij1Q6m4X3
+   GJF2ojoeP+hbTjSLbJQQW/CD+CQIUWNtmc0MlRqduCwJT/+WWS5Z8Rnvu
+   MTmKdNxbaShxo91maBRDTlAgK9rYoaN6CdI0rwVsCEq1/Oripl4PY3R+5
+   7hLDxdTMVGxyjAkRiIuYMTCP3T6ZwbOjTibpIITQAfU5GJTt4wqbcaDqW
+   taoi8wd4BQa58Lr+/lPreNuJw7Dnztm5Y0TF/9mN0Uvp7+xic8OYGrpbg
+   NeuX1p5b0aK1Ln4rMlS/SSIy1/QSY2Ll8dDrVpjQ/cJPwDmUcfSRGWPVf
+   g==;
+X-IronPort-AV: E=Sophos;i="5.95,207,1661810400"; 
+   d="scan'208";a="26925681"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 24 Oct 2022 10:45:00 +0200
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Mon, 24 Oct 2022 10:45:00 +0200
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Mon, 24 Oct 2022 10:45:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1666601100; x=1698137100;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=NA5Ny2XoE1i5QuR33NYRl8zhNYn5fWE/UngumuM7BWY=;
+  b=biL6DWSvBy4ewrOSUktNF1vAIXD7GXkRXE/+EFtJY3e7NuIfz3LkAveW
+   xsqsNyts+HenRSJ5Uw3jvwznKigpqiuq7Dq0Yz7X9BInYT1t1Ws3Cpr7n
+   HlPA4gnbmAY3IXz1xCnX0SuPfuIChy/5kGr16iG/IisMoSUxtWW4kCc6V
+   7Se3pnYU0wIsp6cz+KxaoVwXxOH9IsAHyCGpq+YjpW+/s03TQ3RAW9TH3
+   T+1qv8Vhz+Oe4e/A2YWSYoE6J10yRH2poMxpZzfNrBp0gsPyNMfjT+RnU
+   ALY0oaYvG2M6WYKEmI2KiGnVAt3bllZ7VsZGGnE5FstzmEfFnKzitq++0
+   w==;
+X-IronPort-AV: E=Sophos;i="5.95,207,1661810400"; 
+   d="scan'208";a="26925680"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 24 Oct 2022 10:45:00 +0200
+Received: from steina-w.localnet (unknown [10.123.53.21])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 302B9280056;
+        Mon, 24 Oct 2022 10:45:00 +0200 (CEST)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Marek Vasut <marex@denx.de>, dri-devel@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: Re: [PATCH v7 00/10] drm: bridge: Add Samsung MIPI DSIM bridge
+Date:   Mon, 24 Oct 2022 10:44:57 +0200
+Message-ID: <4778210.31r3eYUQgx@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20221005151309.7278-1-jagan@amarulasolutions.com>
+References: <20221005151309.7278-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Arnd,
+Hi Jagan,
 
-arnd@kernel.org wrote on Fri, 21 Oct 2022 22:27:35 +0200:
+Am Mittwoch, 5. Oktober 2022, 17:12:59 CEST schrieb Jagan Teki:
+> This series supports common bridge support for Samsung MIPI DSIM
+> which is used in Exynos and i.MX8MM SoC's.
+> 
+> The final bridge supports both the Exynos and i.MX8MM DSI devices.
+> 
+> Changes for v7:
+> * fix the drm bridge attach chain for exynos drm dsi driver
+> * fix the hw_type checking logic
+> 
+> Changes for v6:
+> * handle previous bridge for exynos dsi while attaching bridge
+> 
+> Changes for v5:
+> * bridge changes to support multi-arch
+> * updated and clear commit messages
+> * add hw_type via plat data
+> * removed unneeded quirk
+> * rebased on linux-next
+> 
+> Changes for v4:
+> * include Inki Dae in MAINTAINERS
+> * remove dsi_driver probe in exynos_drm_drv to support multi-arch build
+> * update init handling to ensure host init done on first cmd transfer
+> 
+> Changes for v3:
+> * fix the mult-arch build
+> * fix dsi host init
+> * updated commit messages
+> 
+> Changes for v2:
+> * fix bridge handling
+> * fix dsi host init
+> * correct the commit messages
+> 
+> Patch 0001: 	Samsung DSIM bridge
+> 
+> Patch 0002:	PHY optional
+> 
+> Patch 0003:	OF-graph or Child node lookup
+> 
+> Patch 0004: 	DSI host initialization
+> 
+> Patch 0005:	atomic check
+> 
+> Patch 0006:	PMS_P offset via plat data
+> 
+> Patch 0007:	atomic_get_input_bus_fmts
+> 
+> Patch 0008:	input_bus_flags
+> 
+> Patch 0009:	document fsl,imx8mm-mipi-dsim
+> 
+> Patch 0010:	add i.MX8MM DSIM support
+> 
+> Tested in Engicam i.Core MX8M Mini SoM.
 
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> A number of device drivers reference CONFIG_ARM_S3C24XX_CPUFREQ or
-> similar symbols that are no longer available with the platform gone,
-> though the drivers themselves are still used on newer platforms,
-> so remove these hacks.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Thanks for working on this!
 
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+This works on TQMa8MQML + MBa8Mx (imx8mm) using a SN65DSI83 DSI-LVDS-Bridge.
+Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-Thanks,
-Miqu=C3=A8l
+Best regards,
+Alexander
+
+> Repo:
+> https://gitlab.com/openedev/kernel/-/commits/imx8mm-dsi-v7
+> 
+> Any inputs?
+> Jagan.
+> 
+> Jagan Teki (10):
+>   drm: bridge: Add Samsung DSIM bridge driver
+>   drm: bridge: samsung-dsim: Lookup OF-graph or Child node devices
+>   drm: bridge: samsung-dsim: Mark PHY as optional
+>   drm: bridge: samsung-dsim: Handle proper DSI host initialization
+>   drm: bridge: samsung-dsim: Add atomic_check
+>   drm: bridge: samsung-dsim: Add platform PLL_P (PMS_P) offset
+>   drm: bridge: samsung-dsim: Add atomic_get_input_bus_fmts
+>   drm: bridge: samsung-dsim: Add input_bus_flags
+>   dt-bindings: display: exynos: dsim: Add NXP i.MX8MM support
+>   drm: bridge: samsung-dsim: Add i.MX8MM support
+> 
+>  .../bindings/display/exynos/exynos_dsim.txt   |    1 +
+>  MAINTAINERS                                   |    9 +
+>  drivers/gpu/drm/bridge/Kconfig                |   12 +
+>  drivers/gpu/drm/bridge/Makefile               |    1 +
+>  drivers/gpu/drm/bridge/samsung-dsim.c         | 1856 +++++++++++++++++
+>  drivers/gpu/drm/exynos/Kconfig                |    1 +
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c       | 1766 +---------------
+>  include/drm/bridge/samsung-dsim.h             |  115 +
+>  8 files changed, 2108 insertions(+), 1653 deletions(-)
+>  create mode 100644 drivers/gpu/drm/bridge/samsung-dsim.c
+>  create mode 100644 include/drm/bridge/samsung-dsim.h
+
+
+
+
