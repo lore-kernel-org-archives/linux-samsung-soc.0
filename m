@@ -2,54 +2,54 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18504EB6462
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Oct 2022 11:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8433EB6466
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Oct 2022 11:20:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230400AbiJXLUu (ORCPT
+        id S230407AbiJXLUx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Oct 2022 07:20:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55958 "EHLO
+        Mon, 24 Oct 2022 07:20:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230289AbiJXLUP (ORCPT
+        with ESMTP id S230334AbiJXLUT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Oct 2022 07:20:15 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4030831DC4;
-        Mon, 24 Oct 2022 04:20:05 -0700 (PDT)
+        Mon, 24 Oct 2022 07:20:19 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6175A39B97;
+        Mon, 24 Oct 2022 04:20:13 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 1AA231FD8C;
-        Mon, 24 Oct 2022 11:20:03 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id ABA7C22165;
+        Mon, 24 Oct 2022 11:20:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1666610403; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1666610408; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=TEgpl55AepC361EexBBEYuHLTFWdn6vIDOCsAIRAdbs=;
-        b=tTPj3Ajm/W7k4xAj/NjREnCuteNThvM5rK5/j9FGA2C7plkeoxu705D1SVfIq19i/Q8vDD
-        Hh3loR0GZWj+xZBF42TiFg+xablbQ5RsXgTm9VOzMNBL+zTUcHbC3i3JX1ZTLBaXTF7pMH
-        twjAUrF4GYnBD1Cb57pe2fKkGImYEhI=
+        bh=RsAQdHzLmddns92tHuvM6Lu3vuWZMSsqH8X6KbiDvyM=;
+        b=Kx1ESk/2KWWWJMh3Mri7dZecKO9mDXs/G5Kh0hAdewWvuLJo1pmQHD6rKx9LyO4DYlvE07
+        UGREIOW+1c7j8jBFE461HY6tuNFiQnMEGgwugb6mTlj5JySyPdYx6wCGz/kRV3vA9LOEnU
+        7GPrrBN1V+6dySJr6LCuxBMM9CtyYDY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1666610403;
+        s=susede2_ed25519; t=1666610408;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=TEgpl55AepC361EexBBEYuHLTFWdn6vIDOCsAIRAdbs=;
-        b=XkLdHuGn9oWWLTzK+dldjiKNlN1DDYMycvmmFEG53dbzQ/rRcXmxp45qbnZbGAegvjt7UQ
-        gXwxSlh/nr53HABQ==
+        bh=RsAQdHzLmddns92tHuvM6Lu3vuWZMSsqH8X6KbiDvyM=;
+        b=I2Hs34Ejsna6X414YeSewXudyPLIgsJ7R9rpNpC8j9+h3eJE58RTZnzq5HJHAxqpk4Udik
+        FqboT04ghHFQrhAA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A06FC13B34;
-        Mon, 24 Oct 2022 11:20:02 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 034EE13357;
+        Mon, 24 Oct 2022 11:20:07 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id YGlqJuJ0VmOYMgAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Mon, 24 Oct 2022 11:20:02 +0000
+        id 8O1PO+d0VmOYMgAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Mon, 24 Oct 2022 11:20:07 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@gmail.com, sam@ravnborg.org,
         javierm@redhat.com, mripard@kernel.org,
@@ -70,9 +70,9 @@ Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 09/21] drm/panel-ili9341: Include <linux/backlight.h>
-Date:   Mon, 24 Oct 2022 13:19:41 +0200
-Message-Id: <20221024111953.24307-10-tzimmermann@suse.de>
+Subject: [PATCH v2 19/21] drm/fb-helper: Always initialize generic fbdev emulation
+Date:   Mon, 24 Oct 2022 13:19:51 +0200
+Message-Id: <20221024111953.24307-20-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.38.0
 In-Reply-To: <20221024111953.24307-1-tzimmermann@suse.de>
 References: <20221024111953.24307-1-tzimmermann@suse.de>
@@ -82,25 +82,44 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Include <linux/backlight.h> for devm_of_find_backlight().
+Initialize the generic fbdev emulation even if it has been disabled
+on the kernel command line. The hotplug and mode initialization will
+fail accordingly.
+
+The kernel parameter can still be changed at runtime and the emulation
+will initialize after hotplugging the connector.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/panel/panel-ilitek-ili9341.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/drm_fb_helper.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
-index 39dc40cf681f0..b59472c29a40d 100644
---- a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
-+++ b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
-@@ -18,6 +18,7 @@
-  * Copyright 2018 David Lechner <david@lechnology.com>
-  */
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index fbc5c5445fdb0..d1afb420c6e06 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -526,11 +526,6 @@ int drm_fb_helper_init(struct drm_device *dev,
+ {
+ 	int ret;
  
-+#include <linux/backlight.h>
- #include <linux/bitops.h>
- #include <linux/delay.h>
- #include <linux/gpio/consumer.h>
+-	if (!drm_fbdev_emulation) {
+-		dev->fb_helper = fb_helper;
+-		return 0;
+-	}
+-
+ 	/*
+ 	 * If this is not the generic fbdev client, initialize a drm_client
+ 	 * without callbacks so we can use the modesets.
+@@ -2716,9 +2711,6 @@ void drm_fbdev_generic_setup(struct drm_device *dev,
+ 	drm_WARN(dev, !dev->registered, "Device has not been registered.\n");
+ 	drm_WARN(dev, dev->fb_helper, "fb_helper is already set!\n");
+ 
+-	if (!drm_fbdev_emulation)
+-		return;
+-
+ 	fb_helper = kzalloc(sizeof(*fb_helper), GFP_KERNEL);
+ 	if (!fb_helper) {
+ 		drm_err(dev, "Failed to allocate fb_helper\n");
 -- 
 2.38.0
 
