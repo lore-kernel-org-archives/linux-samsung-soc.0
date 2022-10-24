@@ -2,72 +2,95 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8726FFA3740
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Oct 2022 00:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A014FA373D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Oct 2022 00:52:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229955AbiJYAqc (ORCPT
+        id S231259AbiJYAw5 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Oct 2022 20:46:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40142 "EHLO
+        Mon, 24 Oct 2022 20:52:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230182AbiJYAqT (ORCPT
+        with ESMTP id S230422AbiJYAwk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Oct 2022 20:46:19 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8B76CA895;
-        Mon, 24 Oct 2022 16:20:15 -0700 (PDT)
-Received: from dggpemm500020.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MwxG62ZjyzHtt6;
-        Mon, 24 Oct 2022 21:47:26 +0800 (CST)
-Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 24 Oct 2022 21:47:37 +0800
-Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
- (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Mon, 24 Oct
- 2022 21:47:37 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <linux-media@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>
-CC:     <s.nawrocki@samsung.com>, <kyungmin.park@samsung.com>,
-        <mchehab@kernel.org>, <yangyingliang@huawei.com>
-Subject: [PATCH] media: platform: exynos4-is: fix return value check in fimc_md_probe()
-Date:   Mon, 24 Oct 2022 21:46:50 +0800
-Message-ID: <20221024134650.2871287-1-yangyingliang@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 24 Oct 2022 20:52:40 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ACE115994D;
+        Mon, 24 Oct 2022 16:34:13 -0700 (PDT)
+Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1omzeK-00031R-RG; Mon, 24 Oct 2022 17:46:00 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     linux-arm-kernel@lists.infradead.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Arnd Bergmann <arnd@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Arnaud Patard <arnaud.patard@rtp-net.org>,
+        Christer Weinigel <christer@weinigel.se>,
+        Guillaume GOURAT <guillaume.gourat@nexvision.tv>,
+        openmoko-kernel@lists.openmoko.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Olof Johansson <olof@lixom.net>, soc@kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-doc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 01/21] ARM: s3c: remove all s3c24xx support
+Date:   Mon, 24 Oct 2022 17:45:59 +0200
+Message-ID: <2120112.irdbgypaU6@diego>
+In-Reply-To: <8d6ddb0d-98be-4c4d-9523-f024c339c8d0@app.fastmail.com>
+References: <20221021202254.4142411-1-arnd@kernel.org> <2204103.iZASKD2KPV@diego> <8d6ddb0d-98be-4c4d-9523-f024c339c8d0@app.fastmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.103.91]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500007.china.huawei.com (7.185.36.183)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-devm_pinctrl_get() may return ERR_PTR(-EPROBE_DEFER), add a minus sign
-to fix it.
+Am Montag, 24. Oktober 2022, 16:27:31 CEST schrieb Arnd Bergmann:
+> On Sat, Oct 22, 2022, at 22:56, Heiko Stübner wrote:
+> > Am Freitag, 21. Oktober 2022, 22:27:34 CEST schrieb Arnd Bergmann:
+> >> From: Arnd Bergmann <arnd@arndb.de>
+> >> 
+> >> The platform was deprecated in commit 6a5e69c7ddea ("ARM: s3c: mark
+> >> as deprecated and schedule removal") and can be removed. This includes
+> >> all files that are exclusively for s3c24xx and not shared with s3c64xx,
+> >> as well as the glue logic in Kconfig and the maintainer file entries.
+> >> 
+> >> Cc: Arnaud Patard <arnaud.patard@rtp-net.org>
+> >> Cc: Ben Dooks <ben-linux@fluff.org>
+> >> Cc: Christer Weinigel <christer@weinigel.se>
+> >> Cc: Guillaume GOURAT <guillaume.gourat@nexvision.tv>
+> >> Cc: Heiko Stuebner <heiko@sntech.de>
+> >> Cc: Simtec Linux Team <linux@simtec.co.uk>
+> >> Cc: openmoko-kernel@lists.openmoko.org
+> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> >
+> > So many memories of me starting out in the kernel on s3c24xx.
+> > But it's no use trying to keep stuff around that nobody will likely
+> > ever use again. So with a sad face
+> >
+> > Acked-by: Heiko Stuebner <heiko@sntech.de>
+> >
+> >
+> > though you might want to also include
+> > 	drivers/dma/s3c24xx-dma.c
+> 
+> This was in a separate patch that removes the driver:
+> 
+> https://lore.kernel.org/linux-arm-kernel/20221021203329.4143397-14-arnd@kernel.org/
 
-Fixes: 4163851f7b99 ("[media] s5p-fimc: Use pinctrl API for camera ports configuration")
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
- drivers/media/platform/samsung/exynos4-is/media-dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ah ok, I guess git-send-email didn't want to send me that patch.
+So all is good in that part then :-)
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/media-dev.c b/drivers/media/platform/samsung/exynos4-is/media-dev.c
-index 52b43ea04030..a0367f8cb9ec 100644
---- a/drivers/media/platform/samsung/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/samsung/exynos4-is/media-dev.c
-@@ -1474,7 +1474,7 @@ static int fimc_md_probe(struct platform_device *pdev)
- 	pinctrl = devm_pinctrl_get(dev);
- 	if (IS_ERR(pinctrl)) {
- 		ret = PTR_ERR(pinctrl);
--		if (ret != EPROBE_DEFER)
-+		if (ret != -EPROBE_DEFER)
- 			dev_err(dev, "Failed to get pinctrl: %d\n", ret);
- 		goto err_clk;
- 	}
--- 
-2.25.1
+
+Heiko
+
 
