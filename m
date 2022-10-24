@@ -2,104 +2,189 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF90ECAAA1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Oct 2022 18:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC0F3C38A2D
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Oct 2022 18:50:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232759AbiJXSsJ (ORCPT
+        id S231582AbiJXSuX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Oct 2022 14:48:09 -0400
+        Mon, 24 Oct 2022 14:50:23 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232103AbiJXSr3 (ORCPT
+        with ESMTP id S232075AbiJXStz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Oct 2022 14:47:29 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D21120BF8;
-        Mon, 24 Oct 2022 10:28:57 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id y10so7023428wma.0;
-        Mon, 24 Oct 2022 10:28:57 -0700 (PDT)
+        Mon, 24 Oct 2022 14:49:55 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41B02B515B
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Oct 2022 10:30:47 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id e4so5618332pfl.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Oct 2022 10:30:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0vrMEaRTOwjPGYos2d/zehtmsU3IkMfRxjv+/1fbd3Q=;
-        b=VKJ1G1o7+2+SQele4larDZ/2K25UrUVVp54Nrve6h20LExDBaKHIClcbBnpbrrzvyk
-         WnWyToK5iRYdzsch3pSLsG9Hqwe8ZjdpZKvuIE33xS/WfWt+GK7OMY6gPqIJ7u/9X5es
-         KxKivLyP7x9AmhjGc8iwzBixaN4zLaD6rREhMrdm84TnLUvF1dUgQv3nHZicWWEJWrwT
-         soU1/txlsKhDtZwzOfy96JWzJn6olk6EIXZMh86SH0shMUspuBx5cS/xVRtlvye6uKiq
-         78fTBDDQfXkpdKrIZlsvgJOXcrQLaU6Nnz9OunF0l6uFeL6OR/y1cYRyclV8VLnXLK93
-         6btg==
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qmRRnyqrCvwVZ4E+oJVYPxgBWe3Nt02//jegX+ZgfXw=;
+        b=kdHeBtjq4ZnpqOIg+37lgXyiiaV3XXQxNaZGixyhH4yGbriDik/YMamv1PIALwJB3S
+         PIhDMnY/vm/pkGypr1P6W3mkZZj/2eaXU6mzGOoZcdl15PA9lATbTdansjVERGg0m6er
+         TtwGBd743y163YzlUIa8+YRjEtr6k89CN001APSknZuojX58QHVySFt9nd7/w+vnOv9f
+         9MUTXHe9sVFD7VrygaScnu1jgprdX2Aqdui4C5n0KQ+bWEAFClJIABGxkMxysD581Jg/
+         YVGY7Nfdl3L+cCNFnRl2ww+khw7cJYfuDEfYxVJxuXDmnJj8xurh9sOI6++yZTCfq+pa
+         VTQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0vrMEaRTOwjPGYos2d/zehtmsU3IkMfRxjv+/1fbd3Q=;
-        b=gcuoiVl/tAvF7hVCLgPxnWAuXxLcWXrGA3ARSvq/4BPNw7TH+XdSTlXxMR4VVcQVV2
-         FU++KDQP2zwIF8UfLvFTvPK4uF/tvONcN/wEuACEQlH/94/RzwHuaapvyz56EPeuC+4h
-         d+vmrVkhN7NcJMGrFaTshyNMWuC1QYvTwVfHATaDRc94OiyV5Z92erkM7gJ5siUr+GsX
-         +0vD+NirsdRRePvnZ7LD3KfZgyuhohGf1d9sB/Izx0CIgitQci9szkfVWpcPvzHZyoQG
-         oF4eEhurFBcFiaZCnRo0NXUXp0UGvE28QqP/9H8VG4pVlnLBh5iGameVi3G74rQCRCz/
-         UjSw==
-X-Gm-Message-State: ACrzQf2jJn9/Hs6Qt5Ggky22oFjAmpssHKKdhHK7PLsmhRDRkcATgXjt
-        CQ1gbUvCoNHtm0q6/ZJUon+YVWwD77l02HD7
-X-Google-Smtp-Source: AMsMyM46DTJTSuuP9DKHEnco5O7iTBp1tIwmtk2u/tX203ZYgVIXhOZKuUbIOH6/cBGqYy2PNgPhfA==
-X-Received: by 2002:a05:600c:3b11:b0:3c6:c02d:babb with SMTP id m17-20020a05600c3b1100b003c6c02dbabbmr42613493wms.69.1666617328451;
-        Mon, 24 Oct 2022 06:15:28 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b7-20020adfe307000000b0022cbf4cda62sm32201847wrj.27.2022.10.24.06.15.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 06:15:27 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: samsung: remove variable pin
-Date:   Mon, 24 Oct 2022 14:15:27 +0100
-Message-Id: <20221024131527.2156810-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        bh=qmRRnyqrCvwVZ4E+oJVYPxgBWe3Nt02//jegX+ZgfXw=;
+        b=haqpBIABWFhUrdYFtWUj9RLKQCO81V7C1wZ8AWWsCmUwjmF0T6U/L5qYyHy50g72MP
+         Y5VHtZsiATrL0P0DJuHQCwymWqVSAm3kcF16WiCjSw/Dmr3czEpIrEPEHpXnzAMf8thI
+         7ogMmf3pCZaLs1w3+lgFL5oP+V0tR5TlwmprCdIUgEqbLluHh5WsgnVeglyCJu2pnyBG
+         b5kjLk+3bnyJYf4b14lELNnZWayTBOXbNiTUjRhZ6ud7fneOohc2AMnNO39nspUNMEsy
+         yGCEOFwgOP6UT/FQcS7SXr5c1m0pRgw5ApYVDwTZH4hK6ee9edHlqI4urGqvBndz3qh7
+         mZ0Q==
+X-Gm-Message-State: ACrzQf1FpJnYBiXy+QYgVGuWQ3UwirilLyWQjkTzUXKIfc7qIcWpXKMo
+        a3/P6w+U2I99R64tfIZaGVuf/U7u5MEcdNPYmP9kkn1O0eg=
+X-Google-Smtp-Source: AMsMyM6z4NWUjsrgFdg2kbiI+O6qCein5eD6LUCQUgk6TnK5ysp32+5l+WsLYktaQ1Vb3USEOGT8E2HIVczRn7CUhKw=
+X-Received: by 2002:a63:464d:0:b0:441:5968:cd0e with SMTP id
+ v13-20020a63464d000000b004415968cd0emr29972204pgk.595.1666630413870; Mon, 24
+ Oct 2022 09:53:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20221021202254.4142411-1-arnd@kernel.org> <20221021203329.4143397-10-arnd@kernel.org>
+In-Reply-To: <20221021203329.4143397-10-arnd@kernel.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 24 Oct 2022 18:52:55 +0200
+Message-ID: <CAPDyKFpUzDD7X0GhP4ahqF=AyCGCMfSXjPW0qZ5vUnJMc=iT6Q@mail.gmail.com>
+Subject: Re: [PATCH 10/21] mmc: remove s3cmci driver
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Variable pin is just being incremented and it's never used
-anywhere else. The variable and the increment are redundant so
-remove it.
+On Fri, 21 Oct 2022 at 22:45, Arnd Bergmann <arnd@kernel.org> wrote:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The s3c24xx platform is gone, so this driver can be removed as well.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-index 625cb1065eaf..78b7bd133566 100644
---- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-+++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-@@ -509,7 +509,6 @@ static int s3c24xx_eint_init(struct samsung_pinctrl_drv_data *d)
- 		struct s3c24xx_eint_domain_data *ddata;
- 		unsigned int mask;
- 		unsigned int irq;
--		unsigned int pin;
- 
- 		if (bank->eint_type != EINT_TYPE_WKUP)
- 			continue;
-@@ -534,7 +533,7 @@ static int s3c24xx_eint_init(struct samsung_pinctrl_drv_data *d)
- 
- 		irq = bank->eint_offset;
- 		mask = bank->eint_mask;
--		for (pin = 0; mask; ++pin, mask >>= 1) {
-+		for (; mask; mask >>= 1) {
- 			if (irq >= NUM_EINT)
- 				break;
- 			if (!(mask & 1))
--- 
-2.37.3
+Kind regards
+Uffe
 
+
+> ---
+>  MAINTAINERS                              |    6 -
+>  drivers/mmc/host/Kconfig                 |   43 -
+>  drivers/mmc/host/Makefile                |    1 -
+>  drivers/mmc/host/s3cmci.c                | 1777 ----------------------
+>  drivers/mmc/host/s3cmci.h                |   75 -
+>  include/linux/platform_data/mmc-s3cmci.h |   51 -
+>  6 files changed, 1953 deletions(-)
+>  delete mode 100644 drivers/mmc/host/s3cmci.c
+>  delete mode 100644 drivers/mmc/host/s3cmci.h
+>  delete mode 100644 include/linux/platform_data/mmc-s3cmci.h
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 2caf42b0328a..503ebd9800db 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -17920,12 +17920,6 @@ S:     Supported
+>  W:     http://www.ibm.com/developerworks/linux/linux390/
+>  F:     drivers/s390/scsi/zfcp_*
+>
+> -S3C24XX SD/MMC Driver
+> -M:     Ben Dooks <ben-linux@fluff.org>
+> -L:     linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> -S:     Supported
+> -F:     drivers/mmc/host/s3cmci.*
+> -
+>  SAA6588 RDS RECEIVER DRIVER
+>  M:     Hans Verkuil <hverkuil@xs4all.nl>
+>  L:     linux-media@vger.kernel.org
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 79d8ddf1f616..75e8c364243d 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -619,49 +619,6 @@ config MMC_SPI
+>
+>           If unsure, or if your system has no SPI master driver, say N.
+>
+> -config MMC_S3C
+> -       tristate "Samsung S3C SD/MMC Card Interface support"
+> -       depends on ARCH_S3C24XX || COMPILE_TEST
+> -       depends on S3C24XX_DMAC || COMPILE_TEST
+> -       help
+> -         This selects a driver for the MCI interface found in
+> -         Samsung's S3C2410, S3C2412, S3C2440, S3C2442 CPUs.
+> -         If you have a board based on one of those and a MMC/SD
+> -         slot, say Y or M here.
+> -
+> -         If unsure, say N.
+> -
+> -config MMC_S3C_HW_SDIO_IRQ
+> -       bool "Hardware support for SDIO IRQ"
+> -       depends on MMC_S3C
+> -       help
+> -         Enable the hardware support for SDIO interrupts instead of using
+> -         the generic polling code.
+> -
+> -choice
+> -       prompt "Samsung S3C SD/MMC transfer code"
+> -       depends on MMC_S3C
+> -
+> -config MMC_S3C_PIO
+> -       bool "Use PIO transfers only"
+> -       help
+> -         Use PIO to transfer data between memory and the hardware.
+> -
+> -         PIO is slower than DMA as it requires CPU instructions to
+> -         move the data. This has been the traditional default for
+> -         the S3C MCI driver.
+> -
+> -config MMC_S3C_DMA
+> -       bool "Use DMA transfers only"
+> -       help
+> -         Use DMA to transfer data between memory and the hardware.
+> -
+> -         Currently, the DMA support in this driver seems to not be
+> -         working properly and needs to be debugged before this
+> -         option is useful.
+> -
+> -endchoice
+> -
+>  config MMC_SDRICOH_CS
+>         tristate "MMC/SD driver for Ricoh Bay1Controllers"
+>         depends on PCI && PCMCIA
+> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+> index 0baeb0b004f7..885e19e21e75 100644
+> --- a/drivers/mmc/host/Makefile
+> +++ b/drivers/mmc/host/Makefile
+> @@ -34,7 +34,6 @@ obj-$(CONFIG_MMC_MVSDIO)      += mvsdio.o
+>  obj-$(CONFIG_MMC_DAVINCI)       += davinci_mmc.o
+>  obj-$(CONFIG_MMC_SPI)          += mmc_spi.o
+>  obj-$(CONFIG_MMC_SPI)          += of_mmc_spi.o
+> -obj-$(CONFIG_MMC_S3C)          += s3cmci.o
+>  obj-$(CONFIG_MMC_SDRICOH_CS)   += sdricoh_cs.o
+>  obj-$(CONFIG_MMC_TMIO_CORE)    += tmio_mmc_core.o
+>  obj-$(CONFIG_MMC_SDHI)         += renesas_sdhi_core.o
+> diff --git a/drivers/mmc/host/s3cmci.c b/drivers/mmc/host/s3cmci.c
+> deleted file mode 100644
+> index 8d5929a32d34..000000000000
+> diff --git a/drivers/mmc/host/s3cmci.h b/drivers/mmc/host/s3cmci.h
+> deleted file mode 100644
+> index 8b65d7ad9f97..000000000000
+> diff --git a/include/linux/platform_data/mmc-s3cmci.h b/include/linux/platform_data/mmc-s3cmci.h
+> deleted file mode 100644
+> index bacb86db3112..000000000000
+> --
+> 2.29.2
+>
