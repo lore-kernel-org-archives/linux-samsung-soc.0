@@ -2,92 +2,94 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5EC2ECAAA1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Oct 2022 11:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F092FA3740
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Oct 2022 11:49:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231304AbiJXLm0 (ORCPT
+        id S231309AbiJXLtl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Oct 2022 07:42:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50064 "EHLO
+        Mon, 24 Oct 2022 07:49:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231332AbiJXLlw (ORCPT
+        with ESMTP id S231891AbiJXLtK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Oct 2022 07:41:52 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1F6F1146D;
-        Mon, 24 Oct 2022 04:39:36 -0700 (PDT)
+        Mon, 24 Oct 2022 07:49:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9433B6DAD0;
+        Mon, 24 Oct 2022 04:43:56 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D5971B81134;
-        Mon, 24 Oct 2022 11:37:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E10C3C43145;
-        Mon, 24 Oct 2022 11:37:32 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E6E36612B4;
+        Mon, 24 Oct 2022 11:41:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48252C433D7;
+        Mon, 24 Oct 2022 11:41:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666611455;
-        bh=UDRWxHpUXDQtdc7IHgSsaUbIHdAv+fVPeKI+Z5q2R7s=;
+        s=k20201202; t=1666611671;
+        bh=A6/oipM71dqfAOwoHLSoCZr4TU1lNCTmy5FXPcGzouo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=A1/RhpNpP5X66qZOSkZ/SwPbAZJJql5Op19GBWa2Cv5z9rMTTBl710vhuUWLPlDQq
-         f7MNtNVWjAIHjSyCQ74f8WBsovclqRuUmKZCaCIN0TI1KU9fE1xNIE1UmiLnLZNWwQ
-         wZ2dUnbwUOdYmEsAti8y11OcTuko/8IxUgPh2Dgjt+aN8PJmoodGd/OKfZXCr8sznf
-         Ov/iwdbfelClyfgY9pmFp8mIa9ordG2agLrZMxIyNfYrEiYmuwyT/SpgKRtCPnJD+W
-         42fgGIoJvzayes1fBd7U2jnUBWgIjfew33P+7tCo+cHJqQctu3k3cK+lwXHYIYOK+z
-         cU5oe+b+47SlA==
-Date:   Mon, 24 Oct 2022 12:37:29 +0100
+        b=cbS82jc0CZ1yyefji8RT33SmBxwpPrpttejfn+Zfe+r42CJe9fZxMMFa/WhmVXcz3
+         3RZ8e/+Z5pgPlEI+COlTJ9K256TfTaTUjsB8oZmZ1OIBOQbD4u7hBmgbdpvA6M1b0m
+         8XzJhVJg6EjxxZvI9/sLyLwozToT0XKxJ0BvPwTbc6jbdrkSBDVjYYF6FsBA5fzkLC
+         VvRz57xySik+kE5hU5lAkgtJusvZurWmieD1D0uZW3MQOP96nF7jaCt0SqDRxSjd4g
+         QBo/i/Rl3fGtY/35fvYHyNn4iPXHq0EoafhmMbgtzrlp3LWX64nDvtt+fxMrn+dtPG
+         zlJCme3YuxgyQ==
+Date:   Mon, 24 Oct 2022 12:41:05 +0100
 From:   Mark Brown <broonie@kernel.org>
 To:     Arnd Bergmann <arnd@kernel.org>
 Cc:     linux-arm-kernel@lists.infradead.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
         Simtec Linux Team <linux@simtec.co.uk>,
         Arnd Bergmann <arnd@arndb.de>,
         Alim Akhtar <alim.akhtar@samsung.com>,
+        Juerg Haefliger <juerg.haefliger@canonical.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
         Tomasz Figa <tomasz.figa@gmail.com>,
-        linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 04/21] ARM: s3c: remove adc.c
-Message-ID: <Y1Z4+Vx1/eBEJidP@sirena.org.uk>
+        Heiko Stuebner <heiko@sntech.de>,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 05/21] ARM: s3c: simplify platform code
+Message-ID: <Y1Z50S/PNmN8AC80@sirena.org.uk>
 References: <20221021202254.4142411-1-arnd@kernel.org>
- <20221021203329.4143397-4-arnd@kernel.org>
+ <20221021203329.4143397-5-arnd@kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="TjBesAEwJjzbs13b"
+        protocol="application/pgp-signature"; boundary="9pGWQfBvLlZkCvgv"
 Content-Disposition: inline
-In-Reply-To: <20221021203329.4143397-4-arnd@kernel.org>
+In-Reply-To: <20221021203329.4143397-5-arnd@kernel.org>
 X-Cookie: You will forget that you ever knew me.
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
---TjBesAEwJjzbs13b
+--9pGWQfBvLlZkCvgv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 21, 2022 at 10:27:37PM +0200, Arnd Bergmann wrote:
+On Fri, Oct 21, 2022 at 10:27:38PM +0200, Arnd Bergmann wrote:
 > From: Arnd Bergmann <arnd@arndb.de>
 >=20
-> This driver could not be enabled on s3c64xx for a long time
-> because of the ARCH_MULTIPLATFORM dependency, so remove it.
+> Following down the now unused symbols and header files, some additional
+> content can be dropped that is used by neither the s3c64xx DT support
+> nor the crag6410 board.
 
 Acked-by: Mark Brown <broonie@kernel.org>
 
---TjBesAEwJjzbs13b
+--9pGWQfBvLlZkCvgv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmNWePgACgkQJNaLcl1U
-h9Cf+Af/VN6wHC7CvPwnkEZPiQwmDfKJ0zUj9sK6e4yTi+q9JBbCWo70NXs7QDV+
-qJ1IdJUjYtDMLuJugV+1A9yk/M73HakD9OTK4drZk3Tq6skDI+2h30RWtbezGSEO
-j9pIF9eGWAPJrLr2wEk2fdHc4p96G5ecRED9DXIgxtJiXIzlUMvft+Y4AYr8gNdc
-RDssoGSqZwJOMa2w+WalYCffJcxJUh2B2vzog0VzxdkgoQX+V6eCTJeG4/px/ZTP
-PCXR/8DwYgbpXADG2bAycARKy4s2WaKHAsU4znv0xoVIDn8EGxAoUqQ/xdNQij/K
-ciNCJA7tstlKnbjcuYMUvmFOetwO1g==
-=QtEb
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmNWedAACgkQJNaLcl1U
+h9ArOQf+K5qqoOOxAGzLopphyCLIbse0iafJnFcSrDjVkLggygiFXAq8cE0AcwTZ
+dBQ76sL/NMCgdghnaM0S7iwRqc0SXfciE31GgnjqnbZdgImxEAfDe5N0lbUBVjOQ
+eF8EjYasv7LH/sVfk0fKP109S8Qb5KAxVzVAe1Dn6k7NkiqPsMk9iorBsUP5z22R
++KmhrB0unrOe8HaR8htn9AF15fJgMKENsOkxr1guNotYz4VtdrS3ozKavFkPJzxh
+xe3aIgJaHRwuUH/NYsJ25Y3xrUO2i5nNUpRIlto3YqbxXxg+bWKKnYcMDM5RBKno
+KKKyUfGrF2TYP8icVtKAI8w3OCSAfg==
+=wtbH
 -----END PGP SIGNATURE-----
 
---TjBesAEwJjzbs13b--
+--9pGWQfBvLlZkCvgv--
