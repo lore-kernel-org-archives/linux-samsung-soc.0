@@ -2,95 +2,233 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A014FA373D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Oct 2022 00:52:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE07C38A2D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Oct 2022 05:19:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231259AbiJYAw5 convert rfc822-to-8bit (ORCPT
+        id S230111AbiJYFTJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Oct 2022 20:52:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42878 "EHLO
+        Tue, 25 Oct 2022 01:19:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230422AbiJYAwk (ORCPT
+        with ESMTP id S230046AbiJYFTI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Oct 2022 20:52:40 -0400
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ACE115994D;
-        Mon, 24 Oct 2022 16:34:13 -0700 (PDT)
-Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1omzeK-00031R-RG; Mon, 24 Oct 2022 17:46:00 +0200
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     linux-arm-kernel@lists.infradead.org,
+        Tue, 25 Oct 2022 01:19:08 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC80D10B794
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Oct 2022 22:19:07 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id u6so10259831plq.12
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Oct 2022 22:19:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GgT+i+mNGVNzDg9gJdmB+hvKe7NxeiMDaFiv+R5BkjI=;
+        b=hS/9ChV3YJjxmxKMMW0+9GKawXwm6i2bJc3ggEukZeiwEqBTN2jVDOdLHs7nVr/02T
+         uvtw5ciWt17N2Z4lGB72wGamUjgLinNJnYGf3I1TGB66PiKPAsFRkM8CNddP7Sfo0gpE
+         hlg8UDvWIH8lWEHc+vyQCdqx24j+ZeY1orpSfxegBD3jyIQSSvbc8rEcy54iDea3uKCa
+         sWpaKAj842/jffHqySE/YT0jurlIOK94XWDOieSR8QObRTzzJU3kVn5qAQeG8btuXr2n
+         ol/pzWYEJUD6FeRjaWVRvjPJi+r6LyM9r3IrhUAJClpZf6PJISK07q87SdgJfUaYjn8S
+         +ExA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GgT+i+mNGVNzDg9gJdmB+hvKe7NxeiMDaFiv+R5BkjI=;
+        b=xztmYKk5oFh+SGaxClHRdbzwvSzTB2MCifSAiZ63uxaP6DWzQmURs89f5xLMt2ksrZ
+         XyyvGQ85D+E9/KmhgR4TMLR7Hv8gvoGbToeMlHfucc5QQ+mH2jG2JgcUY4w7FLkfLmlP
+         abul43Lxt56TDoJ4QwzJDoIEHHcjMz4zm0xgHfNTmH4IjR0WxWjanjH0ozkSndNJTSCk
+         b+FBrumg+at8cZy7I2QpHOFpsZGf4MYis55612jRh0q6KkWVLUDjLCQy8cQu3FgZxSyx
+         zxH2JrNTQbAe5pP937q1no1GNbq7GLyiLAORx9YvbqAVcX1RVDQ2xbdEK/QF2ELDvT1u
+         /Pww==
+X-Gm-Message-State: ACrzQf2JNS3gIIh7B3/4Wj3OREHIcefjkJySLzZ5yFepZDXmYrMB4bAf
+        eOHCVyGULJgMnkWEjKKr+J2pzQ==
+X-Google-Smtp-Source: AMsMyM6Tvh3NyCwZZpW/G4t3QWnDmVy5fg+RJUrXLVeBomdLSq9nppjepJpaOD7RNf+Q1/PxzSI7pQ==
+X-Received: by 2002:a17:902:748c:b0:186:6a25:b6a8 with SMTP id h12-20020a170902748c00b001866a25b6a8mr24207796pll.40.1666675147201;
+        Mon, 24 Oct 2022 22:19:07 -0700 (PDT)
+Received: from localhost ([122.172.87.26])
+        by smtp.gmail.com with ESMTPSA id u2-20020a1709026e0200b00186b4565d1bsm525753plk.61.2022.10.24.22.19.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Oct 2022 22:19:06 -0700 (PDT)
+Date:   Tue, 25 Oct 2022 10:49:04 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Arnd Bergmann <arnd@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
         Simtec Linux Team <linux@simtec.co.uk>,
-        Arnaud Patard <arnaud.patard@rtp-net.org>,
-        Christer Weinigel <christer@weinigel.se>,
-        Guillaume GOURAT <guillaume.gourat@nexvision.tv>,
-        openmoko-kernel@lists.openmoko.org,
-        Jonathan Corbet <corbet@lwn.net>,
+        Arnd Bergmann <arnd@arndb.de>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Olof Johansson <olof@lixom.net>, soc@kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-doc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 01/21] ARM: s3c: remove all s3c24xx support
-Date:   Mon, 24 Oct 2022 17:45:59 +0200
-Message-ID: <2120112.irdbgypaU6@diego>
-In-Reply-To: <8d6ddb0d-98be-4c4d-9523-f024c339c8d0@app.fastmail.com>
-References: <20221021202254.4142411-1-arnd@kernel.org> <2204103.iZASKD2KPV@diego> <8d6ddb0d-98be-4c4d-9523-f024c339c8d0@app.fastmail.com>
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 15/21] cpufreq: remove s3c24xx drivers
+Message-ID: <20221025051904.yius5ugsuhucpmxs@vireshk-i7>
+References: <20221021202254.4142411-1-arnd@kernel.org>
+ <20221021203329.4143397-15-arnd@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221021203329.4143397-15-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Am Montag, 24. Oktober 2022, 16:27:31 CEST schrieb Arnd Bergmann:
-> On Sat, Oct 22, 2022, at 22:56, Heiko Stübner wrote:
-> > Am Freitag, 21. Oktober 2022, 22:27:34 CEST schrieb Arnd Bergmann:
-> >> From: Arnd Bergmann <arnd@arndb.de>
-> >> 
-> >> The platform was deprecated in commit 6a5e69c7ddea ("ARM: s3c: mark
-> >> as deprecated and schedule removal") and can be removed. This includes
-> >> all files that are exclusively for s3c24xx and not shared with s3c64xx,
-> >> as well as the glue logic in Kconfig and the maintainer file entries.
-> >> 
-> >> Cc: Arnaud Patard <arnaud.patard@rtp-net.org>
-> >> Cc: Ben Dooks <ben-linux@fluff.org>
-> >> Cc: Christer Weinigel <christer@weinigel.se>
-> >> Cc: Guillaume GOURAT <guillaume.gourat@nexvision.tv>
-> >> Cc: Heiko Stuebner <heiko@sntech.de>
-> >> Cc: Simtec Linux Team <linux@simtec.co.uk>
-> >> Cc: openmoko-kernel@lists.openmoko.org
-> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >
-> > So many memories of me starting out in the kernel on s3c24xx.
-> > But it's no use trying to keep stuff around that nobody will likely
-> > ever use again. So with a sad face
-> >
-> > Acked-by: Heiko Stuebner <heiko@sntech.de>
-> >
-> >
-> > though you might want to also include
-> > 	drivers/dma/s3c24xx-dma.c
+On 21-10-22, 22:27, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> This was in a separate patch that removes the driver:
+> All s3c24xx platforms were removed, so these five drivers are all
+> obsolete now.
 > 
-> https://lore.kernel.org/linux-arm-kernel/20221021203329.4143397-14-arnd@kernel.org/
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/cpufreq/Kconfig.arm                  |  78 ---
+>  drivers/cpufreq/Makefile                     |   6 -
+>  drivers/cpufreq/s3c2410-cpufreq.c            | 155 -----
+>  drivers/cpufreq/s3c2412-cpufreq.c            | 240 -------
+>  drivers/cpufreq/s3c2416-cpufreq.c            | 492 --------------
+>  drivers/cpufreq/s3c2440-cpufreq.c            | 321 ---------
+>  drivers/cpufreq/s3c24xx-cpufreq-debugfs.c    | 163 -----
+>  drivers/cpufreq/s3c24xx-cpufreq.c            | 648 -------------------
+>  include/linux/soc/samsung/s3c-cpufreq-core.h | 299 ---------
+>  9 files changed, 2402 deletions(-)
+>  delete mode 100644 drivers/cpufreq/s3c2410-cpufreq.c
+>  delete mode 100644 drivers/cpufreq/s3c2412-cpufreq.c
+>  delete mode 100644 drivers/cpufreq/s3c2416-cpufreq.c
+>  delete mode 100644 drivers/cpufreq/s3c2440-cpufreq.c
+>  delete mode 100644 drivers/cpufreq/s3c24xx-cpufreq-debugfs.c
+>  delete mode 100644 drivers/cpufreq/s3c24xx-cpufreq.c
+>  delete mode 100644 include/linux/soc/samsung/s3c-cpufreq-core.h
+> 
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 8f7a1065f344..e3e0367305ec 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -180,84 +180,6 @@ config ARM_RASPBERRYPI_CPUFREQ
+>  
+>  	  If in doubt, say N.
+>  
+> -config ARM_S3C_CPUFREQ
+> -	bool
+> -	help
+> -	  Internal configuration node for common cpufreq on Samsung SoC
+> -
+> -config ARM_S3C24XX_CPUFREQ
+> -	bool "CPUfreq driver for Samsung S3C24XX series CPUs (EXPERIMENTAL)"
+> -	depends on ARCH_S3C24XX
+> -	select ARM_S3C_CPUFREQ
+> -	help
+> -	  This enables the CPUfreq driver for the Samsung S3C24XX family
+> -	  of CPUs.
+> -
+> -	  For details, take a look at <file:Documentation/cpu-freq>.
+> -
+> -	  If in doubt, say N.
+> -
+> -config ARM_S3C24XX_CPUFREQ_DEBUG
+> -	bool "Debug CPUfreq Samsung driver core"
+> -	depends on ARM_S3C24XX_CPUFREQ
+> -	help
+> -	  Enable s3c_freq_dbg for the Samsung S3C CPUfreq core
+> -
+> -config ARM_S3C24XX_CPUFREQ_IODEBUG
+> -	bool "Debug CPUfreq Samsung driver IO timing"
+> -	depends on ARM_S3C24XX_CPUFREQ
+> -	help
+> -	  Enable s3c_freq_iodbg for the Samsung S3C CPUfreq core
+> -
+> -config ARM_S3C24XX_CPUFREQ_DEBUGFS
+> -	bool "Export debugfs for CPUFreq"
+> -	depends on ARM_S3C24XX_CPUFREQ && DEBUG_FS
+> -	help
+> -	  Export status information via debugfs.
+> -
+> -config ARM_S3C2410_CPUFREQ
+> -	bool
+> -	depends on ARM_S3C24XX_CPUFREQ && CPU_S3C2410
+> -	help
+> -	  CPU Frequency scaling support for S3C2410
+> -
+> -config ARM_S3C2412_CPUFREQ
+> -	bool
+> -	depends on ARM_S3C24XX_CPUFREQ && CPU_S3C2412
+> -	default y
+> -	select S3C2412_IOTIMING
+> -	help
+> -	  CPU Frequency scaling support for S3C2412 and S3C2413 SoC CPUs.
+> -
+> -config ARM_S3C2416_CPUFREQ
+> -	bool "S3C2416 CPU Frequency scaling support"
+> -	depends on CPU_S3C2416
+> -	help
+> -	  This adds the CPUFreq driver for the Samsung S3C2416 and
+> -	  S3C2450 SoC. The S3C2416 supports changing the rate of the
+> -	  armdiv clock source and also entering a so called dynamic
+> -	  voltage scaling mode in which it is possible to reduce the
+> -	  core voltage of the CPU.
+> -
+> -	  If in doubt, say N.
+> -
+> -config ARM_S3C2416_CPUFREQ_VCORESCALE
+> -	bool "Allow voltage scaling for S3C2416 arm core"
+> -	depends on ARM_S3C2416_CPUFREQ && REGULATOR
+> -	help
+> -	  Enable CPU voltage scaling when entering the dvs mode.
+> -	  It uses information gathered through existing hardware and
+> -	  tests but not documented in any datasheet.
+> -
+> -	  If in doubt, say N.
+> -
+> -config ARM_S3C2440_CPUFREQ
+> -	bool "S3C2440/S3C2442 CPU Frequency scaling support"
+> -	depends on ARM_S3C24XX_CPUFREQ && (CPU_S3C2440 || CPU_S3C2442)
+> -	default y
+> -	help
+> -	  CPU Frequency scaling support for S3C2440 and S3C2442 SoC CPUs.
+> -
+>  config ARM_S3C64XX_CPUFREQ
+>  	bool "Samsung S3C64XX"
+>  	depends on CPU_S3C6410
+> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> index 8de99b213146..692c16e4ee55 100644
+> --- a/drivers/cpufreq/Makefile
+> +++ b/drivers/cpufreq/Makefile
+> @@ -70,13 +70,7 @@ obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
+>  obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)	+= qcom-cpufreq-hw.o
+>  obj-$(CONFIG_ARM_QCOM_CPUFREQ_NVMEM)	+= qcom-cpufreq-nvmem.o
+>  obj-$(CONFIG_ARM_RASPBERRYPI_CPUFREQ) 	+= raspberrypi-cpufreq.o
+> -obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
+> -obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
+> -obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
+> -obj-$(CONFIG_ARM_S3C2440_CPUFREQ)	+= s3c2440-cpufreq.o
+>  obj-$(CONFIG_ARM_S3C64XX_CPUFREQ)	+= s3c64xx-cpufreq.o
+> -obj-$(CONFIG_ARM_S3C24XX_CPUFREQ)	+= s3c24xx-cpufreq.o
+> -obj-$(CONFIG_ARM_S3C24XX_CPUFREQ_DEBUGFS) += s3c24xx-cpufreq-debugfs.o
+>  obj-$(CONFIG_ARM_S5PV210_CPUFREQ)	+= s5pv210-cpufreq.o
+>  obj-$(CONFIG_ARM_SA1110_CPUFREQ)	+= sa1110-cpufreq.o
+>  obj-$(CONFIG_ARM_SCMI_CPUFREQ)		+= scmi-cpufreq.o
+> diff --git a/drivers/cpufreq/s3c2410-cpufreq.c b/drivers/cpufreq/s3c2410-cpufreq.c
+> deleted file mode 100644
+> index 5dcfbf0bfb74..000000000000
+> diff --git a/drivers/cpufreq/s3c2412-cpufreq.c b/drivers/cpufreq/s3c2412-cpufreq.c
+> deleted file mode 100644
+> index 5945945ead7c..000000000000
+> diff --git a/drivers/cpufreq/s3c2416-cpufreq.c b/drivers/cpufreq/s3c2416-cpufreq.c
+> deleted file mode 100644
+> index 5c221bc90210..000000000000
+> diff --git a/drivers/cpufreq/s3c2440-cpufreq.c b/drivers/cpufreq/s3c2440-cpufreq.c
+> deleted file mode 100644
+> index 2011fb9c03a4..000000000000
+> diff --git a/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c b/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c
+> deleted file mode 100644
+> index 93971dfe7c75..000000000000
+> diff --git a/drivers/cpufreq/s3c24xx-cpufreq.c b/drivers/cpufreq/s3c24xx-cpufreq.c
+> deleted file mode 100644
+> index 7380c32b238e..000000000000
+> diff --git a/include/linux/soc/samsung/s3c-cpufreq-core.h b/include/linux/soc/samsung/s3c-cpufreq-core.h
+> deleted file mode 100644
+> index 3b278afb769b..000000000000
 
-ah ok, I guess git-send-email didn't want to send me that patch.
-So all is good in that part then :-)
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-
-Heiko
-
-
+-- 
+viresh
