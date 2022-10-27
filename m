@@ -2,119 +2,91 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA79BC67871
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Oct 2022 09:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57566FA3746
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Oct 2022 23:11:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234831AbiJ0JJg (ORCPT
+        id S235704AbiJ0XLH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 27 Oct 2022 05:09:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37892 "EHLO
+        Thu, 27 Oct 2022 19:11:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234728AbiJ0JJf (ORCPT
+        with ESMTP id S229941AbiJ0XLF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Oct 2022 05:09:35 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 924D9FEE;
-        Thu, 27 Oct 2022 02:09:32 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 620FF5C0138;
-        Thu, 27 Oct 2022 05:09:31 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute3.internal (MEProxy); Thu, 27 Oct 2022 05:09:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; t=1666861771; x=1666948171; bh=u2xJJZS73/
-        d/o0CIY2bxlyBu06Lupq5Y1/URzXoJcZI=; b=rUKXcm/ZhA8H39d7Mex+vFksm2
-        Qmi6KcNPjWQvRWB12gV8FTf66HPVHIIA3nYIek0C31gN+JN5Ak1sDL7DM2mLRfVs
-        RRCRnZ4q9ByYglAPDZDcXb6P/ICiQYtL44cdpumyX3jIexaSuM8Kcj0H20+eaZfy
-        sfFqsByd37G0970SHeKG/pbBAKPNChWG61mB6DzOMkKCSXTFYrEzXOEgzSWO9N/I
-        tPDXvnIxRMLa9EAbW0ieaMW45agQW6DqvolCY3qc/quOEV7qb5UL4ANB2KWjeP3R
-        Xvee8PU9sHJZaDkiPxLB73yJi0h1g2p2TV3c4uj6imLbCJVzolZzAAgacAUQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; t=1666861771; x=1666948171; bh=u2xJJZS73/d/o0CIY2bxlyBu06Lu
-        pq5Y1/URzXoJcZI=; b=SdiOIhdIJ8srI2G1QM70siY4nnlcIEMsHF0g+Lil2Rd2
-        kAyh8Nhsrgu6iyT89NTTAAAyvaE4Z0B8SeXYyI4GeKuq+Y33p9D3cVC9yBi5tCpK
-        FL30Acjm208Dkl2yl+PyKSPq8xKMs+eb+hg39HUISIdVDkttQxsjS6eyusj6Klqs
-        Xlnk0VFqhU1eTOLybznPzWfbKgfLJLGasSlfCUBzs646X3Q5ev1AmKKnUiA1GUOm
-        y8olD3ck/4/NMjMivWcs2/j0NF4zrTC1+KhxlgWaHtIb3rVkizCCBE8bW061WD+3
-        2jh4AdSgPcRBt1m0t6N02o6pHkwE5U0sU94GYCWuNQ==
-X-ME-Sender: <xms:ykpaY0KWaotJ45JC5ZtlrW6LfAJDZgJlDBi_8IKWod2VHL4uNJ9khQ>
-    <xme:ykpaY0JiLyiWR0aGDXKRIbpXHPlk7D59WCk4jGnM9WB7pgelEpzV93GVZSj_WCHLi
-    LW6drCasIWZs7TEZpA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrtdeggddutdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:ykpaY0t6rHaBzO-MUiy4m4ByeJtxXyIoWktJqjfaEIqRfy1rnC_5Pg>
-    <xmx:ykpaYxbgVok8mkEjSt4JuyEVPwIutPHGRIKM5wENuAsMfmLDuezsoA>
-    <xmx:ykpaY7bx3GuB4uFZWbCuELJxeklHf0ZBaBK9AFreCoD8ekn9mJqP9A>
-    <xmx:y0paY5OLajxl7OmgsdR88wMXGeN1HKW-byrpc7FgDG5_-b-k5QYZ9Q>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 88ADEB60089; Thu, 27 Oct 2022 05:09:30 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-1087-g968661d8e1-fm-20221021.001-g968661d8
-Mime-Version: 1.0
-Message-Id: <83c93b5e-c589-4ca9-8bc0-ad3571f7f54d@app.fastmail.com>
-In-Reply-To: <CA+G9fYvvtyO8fsYQb25L+bLXUnHJ5LoFToD+cYbKCcE6JUk5FQ@mail.gmail.com>
-References: <CA+G9fYvvtyO8fsYQb25L+bLXUnHJ5LoFToD+cYbKCcE6JUk5FQ@mail.gmail.com>
-Date:   Thu, 27 Oct 2022 11:09:10 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Naresh Kamboju" <naresh.kamboju@linaro.org>,
-        patches@opensource.cirrus.com,
-        "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
-        "Linux Samsung SOC" <linux-samsung-soc@vger.kernel.org>,
-        "open list" <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev
-Cc:     "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
-        "Russell King" <linux@armlinux.org.uk>,
-        "Alim Akhtar" <alim.akhtar@samsung.com>,
-        "Nathan Chancellor" <nathan@kernel.org>,
-        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-Subject: Re: s3c6400_defconfig: arch/arm/mach-s3c/mach-crag6410.c:183:12: error: use of
- undeclared identifier 'KEY_VOLUMEUP'
-Content-Type: text/plain
+        Thu, 27 Oct 2022 19:11:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E14709A28C;
+        Thu, 27 Oct 2022 16:11:01 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7C51B62595;
+        Thu, 27 Oct 2022 23:11:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C76F5C43470;
+        Thu, 27 Oct 2022 23:11:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666912260;
+        bh=KpiEoi6pX2qKSKUG5diicN97WlLWtC2P66cRAuNsOnE=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Aoa2evZvjzvRF4K1QlaTMcMNpdb1/mxlcG+r8YmUmGF1l34Uecq70uF9O7xf+ICY6
+         2cQdLsVudksJ9udKltQeOWBIHEEye9dHJGVqiAjWS1HbTV3UVisCAbuiYMvo2Yp81o
+         asisy+aHeOSh5t7qrsLsMnpIID7Zcb5MfYQ5OtLH7NB8PDjZjjDupHr5NQYBVwFcrX
+         FxDZmmz94qFYesdi7izz8Foh4VPm/W80yAAQUKjsumAbM9JWXX9cNuSpvXAi0rdQnQ
+         s2pS4HeRbDMHCI541D2Tyy5G1DySXnjARmYp7LWWxFqOiLRKVgWgxXCnMg4BON7kDZ
+         na7zbhXEsEnwQ==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20221021203329.4143397-2-arnd@kernel.org>
+References: <20221021202254.4142411-1-arnd@kernel.org> <20221021203329.4143397-2-arnd@kernel.org>
+Subject: Re: [PATCH 02/21] ARM: s3c: remove s3c24xx specific hacks
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org
+To:     Arnd Bergmann <arnd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org
+Date:   Thu, 27 Oct 2022 16:10:58 -0700
+User-Agent: alot/0.10
+Message-Id: <20221027231100.C76F5C43470@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 27, 2022, at 09:29, Naresh Kamboju wrote:
-> Following build warnings / errors noticed while building arm s3c6400_defconfig
-> with clang tool chain.
+Quoting Arnd Bergmann (2022-10-21 13:27:35)
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> A number of device drivers reference CONFIG_ARM_S3C24XX_CPUFREQ or
+> similar symbols that are no longer available with the platform gone,
+> though the drivers themselves are still used on newer platforms,
+> so remove these hacks.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-Do you mean this is a clang specific issue? 
-
-> arch/arm/mach-s3c/mach-crag6410.c:183:12: error: use of undeclared
-> identifier 'KEY_VOLUMEUP'
->         KEY(0, 0, KEY_VOLUMEUP),
->                   ^
-
-I can see that KEY_VOLUMEUP is defined in <linux/input-event-codes.h>,
-which is included by a couple of files in the kernel, but not
-from this specific board file, so I don't see how it works with gcc.
-
-Isn't this just a regression from commit 1810e248b2dc ("Input:
-matrix_keypad - replace header inclusions by forward declarations")?
-
-If that is the problem, I would expect to see the same thing in
-all of these files, regardless of the compiler:
-
-$ git grep -wl '\(linux/input/matrix_keypad.h\|linux/mfd/twl.h\|linux/platform_data/keyboard-spear.h\|linux/platform_data/keypad-nomadik-ske.h\|linux/platform_data/keypad-omap.h\|linux/platform_data/keypad-pxa27x.h\|linux/input/samsung-keypad.h\|\"keypad.h\"\)'  | xargs grep -l \\\<KEY_ | xargs grep -L '\(linux/input-events-code.h\|linux/input.h\)' | grep '\.c$'
-
-arch/arm/mach-pxa/corgi.c
-arch/arm/mach-pxa/littleton.c
-arch/arm/mach-pxa/spitz.c
-arch/arm/mach-pxa/tavorevb.c
-arch/arm/mach-pxa/z2.c
-arch/arm/mach-pxa/zylonite.c
-arch/arm/mach-s3c/mach-crag6410.c
-
-   Arnd
+Acked-by: Stephen Boyd <sboyd@kernel.org> # clk
