@@ -2,472 +2,182 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22012FA3740
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Oct 2022 19:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AD5ECAAA1
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Oct 2022 19:26:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230049AbiJ1TNL (ORCPT
+        id S229802AbiJ1T00 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 28 Oct 2022 15:13:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60936 "EHLO
+        Fri, 28 Oct 2022 15:26:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229696AbiJ1TNA (ORCPT
+        with ESMTP id S229494AbiJ1T0Z (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Oct 2022 15:13:00 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2685B23AB69
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Oct 2022 12:12:55 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 21so9245130edv.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Oct 2022 12:12:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=deMSZFUhvNmRdIfYG/C3RyBQaijBl5jkuXDMUwHOSfU=;
-        b=ITbfN5eFzSlarpfm6uqKJEMWgyggUQN+lNoa9zCXhXHPcYfNQJ2H4hx+xTBeYE/llo
-         EdEPh1b27nTt6KvLrJ/pXVkD/pE6Yz54gTQr4bhyvozC0Npne1qN92uZnXET0cx4JVOV
-         OIf32eGS4HV6oBvFTlBRqHsc1vSKR4Yndk7FovaFMDVlH9jKv407c77vFEGoKLKx3Lpx
-         00aMv/M7su9Eomf1x27yzLxJ55SMvdXcI4yW8UlWN/xobQg71hnNUCLuWRFSUVrw6eCy
-         XpaKyIlbOpZ7lYMhXVK8NXHed8YPZKN5BmVRib+GQqe8JN35zRS6UFEVsrCGmh/Hne4d
-         RvzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=deMSZFUhvNmRdIfYG/C3RyBQaijBl5jkuXDMUwHOSfU=;
-        b=2ACuhMTPy5mnyIIVERz8YelUhb3Mn+RYW2BvvFMC8Uun6mdpx2CyWjjnNLzdXFadRV
-         MZrqJFSELuj0/xtRZWpYb/JYiGrnh2hMUk75/xqt21/bUZEagTMkInz5MkYXUdviP6ny
-         uBu2jEnXvGD5MGK7rIw36WRWxYvdrRo9ru98WPQCxZ9m6FzUkpG5J2/TM6SXuJ7C5bsn
-         5gvnDjAQ1j9OXnddvMlg86PTO5WeRJMr9w+fLPACOzsvRQd6kXDQ0dgROi7VJZu+l+v7
-         nfdbU+/q8FUqSQg+TNzTbsA+196hTFF9Xt5nng3jQxZv2rAt7LUF3ZpVRZkbAfs2NWbs
-         uzaA==
-X-Gm-Message-State: ACrzQf0W3eX+f1yPxA59FmdInTPpK9y7MrHj+m+3ZVAy5lzb0i1IqdmO
-        gY+c5BmHnfE6CUkfYZpOK0tDDLB0LUYdAZ2GhDs=
-X-Google-Smtp-Source: AMsMyM6avMFshulH77RloU/mF32waXGsMPKerdgE9UbPWuVeBJIddF1PsG+b3odsc165qF4xXhcX6A==
-X-Received: by 2002:a05:6402:430a:b0:462:2e05:30b5 with SMTP id m10-20020a056402430a00b004622e0530b5mr920629edc.246.1666984373603;
-        Fri, 28 Oct 2022 12:12:53 -0700 (PDT)
-Received: from localhost (cgw.msart-bajzova4.ke.cust.o2bs.sk. [90.176.4.227])
-        by smtp.gmail.com with ESMTPSA id kz2-20020a17090777c200b0079dbf06d558sm2487737ejc.184.2022.10.28.12.12.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Oct 2022 12:12:53 -0700 (PDT)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Janghyuck Kim <janghyuck.kim@samsung.com>,
-        Cho KyongHo <pullip.cho@samsung.com>,
-        Daniel Mentz <danielmentz@google.com>,
-        David Virag <virag.david003@gmail.com>, iommu@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 4/4] iommu/exynos: Rearrange the platform driver code
-Date:   Fri, 28 Oct 2022 21:12:43 +0200
-Message-Id: <20221028191243.31721-5-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221028191243.31721-1-semen.protsenko@linaro.org>
-References: <20221028191243.31721-1-semen.protsenko@linaro.org>
+        Fri, 28 Oct 2022 15:26:25 -0400
+X-Greylist: delayed 4199 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 28 Oct 2022 12:26:19 PDT
+Received: from 14.mo581.mail-out.ovh.net (14.mo581.mail-out.ovh.net [178.33.251.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41DF82339BB
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Oct 2022 12:26:18 -0700 (PDT)
+Received: from player726.ha.ovh.net (unknown [10.111.172.1])
+        by mo581.mail-out.ovh.net (Postfix) with ESMTP id 2B59525F08
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Oct 2022 14:40:31 +0000 (UTC)
+Received: from armadeus.com (atoulouse-656-1-53-167.w90-11.abo.wanadoo.fr [90.11.232.167])
+        (Authenticated sender: sebastien.szymanski@armadeus.com)
+        by player726.ha.ovh.net (Postfix) with ESMTPSA id 9D11A3027C682;
+        Fri, 28 Oct 2022 14:40:06 +0000 (UTC)
+Authentication-Results: garm.ovh; auth=pass (GARM-106R006ac69e528-1130-4c49-8acd-183c37d7f8d6,
+                    C74AB133D8C85D7EA747E38E0BF9CEFC19178B59) smtp.auth=sebastien.szymanski@armadeus.com
+X-OVh-ClientIp: 90.11.232.167
+Message-ID: <4c9475d0-f76f-0c59-1208-6e5395496c9e@armadeus.com>
+Date:   Fri, 28 Oct 2022 16:37:13 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.3
+Content-Language: en-US
+To:     Jagan Teki <jagan@amarulasolutions.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Marek Vasut <marex@denx.de>
+Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+References: <20221005151309.7278-1-jagan@amarulasolutions.com>
+From:   =?UTF-8?Q?S=c3=a9bastien_Szymanski?= 
+        <sebastien.szymanski@armadeus.com>
+Subject: Re: [PATCH v7 00/10] drm: bridge: Add Samsung MIPI DSIM bridge
+In-Reply-To: <20221005151309.7278-1-jagan@amarulasolutions.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 16851906856032857034
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvgedrtdeigdejjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfvvehfhffujggtgfesthekredttdefjeenucfhrhhomhepuforsggrshhtihgvnhcuufiihihmrghnshhkihcuoehsvggsrghsthhivghnrdhsiiihmhgrnhhskhhisegrrhhmrgguvghushdrtghomheqnecuggftrfgrthhtvghrnhepteeuuedtffefgeeguedtheehleeggeduvdeukeeiteekgeekhfdugffgheehgeevnecuffhomhgrihhnpehgihhtlhgrsgdrtghomhenucfkphepuddvjedrtddrtddruddpledtrdduuddrvdefvddrudeijeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepoehsvggsrghsthhivghnrdhsiiihmhgrnhhskhhisegrrhhmrgguvghushdrtghomheqpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqshgrmhhsuhhnghdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheekuddpmhhouggvpehsmhhtphhouhht
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Move the platform_driver code to the bottom of the driver, as it's a
-canonical form for that. No functional change.
+Hello Jagan,
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
- drivers/iommu/exynos-iommu.c | 359 +++++++++++++++++------------------
- 1 file changed, 179 insertions(+), 180 deletions(-)
+On 10/5/22 17:12, Jagan Teki wrote:
+> This series supports common bridge support for Samsung MIPI DSIM
+> which is used in Exynos and i.MX8MM SoC's.
+> 
+> The final bridge supports both the Exynos and i.MX8MM DSI devices.
+> 
+> Changes for v7:
+> * fix the drm bridge attach chain for exynos drm dsi driver
+> * fix the hw_type checking logic
+> 
+> Changes for v6:
+> * handle previous bridge for exynos dsi while attaching bridge
+> 
+> Changes for v5:
+> * bridge changes to support multi-arch
+> * updated and clear commit messages
+> * add hw_type via plat data
+> * removed unneeded quirk
+> * rebased on linux-next
+> 
+> Changes for v4:
+> * include Inki Dae in MAINTAINERS
+> * remove dsi_driver probe in exynos_drm_drv to support multi-arch build
+> * update init handling to ensure host init done on first cmd transfer
+> 
+> Changes for v3:
+> * fix the mult-arch build
+> * fix dsi host init
+> * updated commit messages
+> 
+> Changes for v2:
+> * fix bridge handling
+> * fix dsi host init
+> * correct the commit messages
+> 
+> Patch 0001: 	Samsung DSIM bridge
+> 
+> Patch 0002:	PHY optional
+> 
+> Patch 0003:	OF-graph or Child node lookup
+> 
+> Patch 0004: 	DSI host initialization
+> 
+> Patch 0005:	atomic check
+> 
+> Patch 0006:	PMS_P offset via plat data
+> 
+> Patch 0007:	atomic_get_input_bus_fmts
+> 
+> Patch 0008:	input_bus_flags
+> 
+> Patch 0009:	document fsl,imx8mm-mipi-dsim
+> 
+> Patch 0010:	add i.MX8MM DSIM support
+> 
+> Tested in Engicam i.Core MX8M Mini SoM.
+> 
+> Repo:
+> https://gitlab.com/openedev/kernel/-/commits/imx8mm-dsi-v7
+> 
+> Any inputs?
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 57492db877e2..af1c8ddcf5e4 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -641,186 +641,6 @@ static void sysmmu_tlb_invalidate_entry(struct sysmmu_drvdata *data,
- 	spin_unlock_irqrestore(&data->lock, flags);
- }
- 
--static const struct iommu_ops exynos_iommu_ops;
--
--static int exynos_sysmmu_probe(struct platform_device *pdev)
--{
--	int irq, ret;
--	struct device *dev = &pdev->dev;
--	struct sysmmu_drvdata *data;
--	struct resource *res;
--
--	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
--	if (!data)
--		return -ENOMEM;
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	data->sfrbase = devm_ioremap_resource(dev, res);
--	if (IS_ERR(data->sfrbase))
--		return PTR_ERR(data->sfrbase);
--
--	irq = platform_get_irq(pdev, 0);
--	if (irq <= 0)
--		return irq;
--
--	ret = devm_request_irq(dev, irq, exynos_sysmmu_irq, 0,
--				dev_name(dev), data);
--	if (ret) {
--		dev_err(dev, "Unabled to register handler of irq %d\n", irq);
--		return ret;
--	}
--
--	data->clk = devm_clk_get(dev, "sysmmu");
--	if (PTR_ERR(data->clk) == -ENOENT)
--		data->clk = NULL;
--	else if (IS_ERR(data->clk))
--		return PTR_ERR(data->clk);
--
--	data->aclk = devm_clk_get(dev, "aclk");
--	if (PTR_ERR(data->aclk) == -ENOENT)
--		data->aclk = NULL;
--	else if (IS_ERR(data->aclk))
--		return PTR_ERR(data->aclk);
--
--	data->pclk = devm_clk_get(dev, "pclk");
--	if (PTR_ERR(data->pclk) == -ENOENT)
--		data->pclk = NULL;
--	else if (IS_ERR(data->pclk))
--		return PTR_ERR(data->pclk);
--
--	if (!data->clk && (!data->aclk || !data->pclk)) {
--		dev_err(dev, "Failed to get device clock(s)!\n");
--		return -ENOENT;
--	}
--
--	data->clk_master = devm_clk_get(dev, "master");
--	if (PTR_ERR(data->clk_master) == -ENOENT)
--		data->clk_master = NULL;
--	else if (IS_ERR(data->clk_master))
--		return PTR_ERR(data->clk_master);
--
--	data->sysmmu = dev;
--	spin_lock_init(&data->lock);
--
--	__sysmmu_get_version(data);
--
--	ret = iommu_device_sysfs_add(&data->iommu, &pdev->dev, NULL,
--				     dev_name(data->sysmmu));
--	if (ret)
--		return ret;
--
--	ret = iommu_device_register(&data->iommu, &exynos_iommu_ops, dev);
--	if (ret)
--		goto err_iommu_register;
--
--	platform_set_drvdata(pdev, data);
--
--	if (PG_ENT_SHIFT < 0) {
--		if (MMU_MAJ_VER(data->version) < 5) {
--			PG_ENT_SHIFT = SYSMMU_PG_ENT_SHIFT;
--			LV1_PROT = SYSMMU_LV1_PROT;
--			LV2_PROT = SYSMMU_LV2_PROT;
--		} else {
--			PG_ENT_SHIFT = SYSMMU_V5_PG_ENT_SHIFT;
--			LV1_PROT = SYSMMU_V5_LV1_PROT;
--			LV2_PROT = SYSMMU_V5_LV2_PROT;
--		}
--	}
--
--	if (MMU_MAJ_VER(data->version) >= 5) {
--		ret = dma_set_mask(dev, DMA_BIT_MASK(36));
--		if (ret) {
--			dev_err(dev, "Unable to set DMA mask: %d\n", ret);
--			goto err_dma_set_mask;
--		}
--	}
--
--	/*
--	 * use the first registered sysmmu device for performing
--	 * dma mapping operations on iommu page tables (cpu cache flush)
--	 */
--	if (!dma_dev)
--		dma_dev = &pdev->dev;
--
--	pm_runtime_enable(dev);
--
--	return 0;
--
--err_dma_set_mask:
--	iommu_device_unregister(&data->iommu);
--err_iommu_register:
--	iommu_device_sysfs_remove(&data->iommu);
--	return ret;
--}
--
--static void exynos_sysmmu_shutdown(struct platform_device *pdev)
--{
--	struct sysmmu_drvdata *data = platform_get_drvdata(pdev);
--	struct device *dev = &pdev->dev;
--	int irq = platform_get_irq(pdev, 0);
--
--	devm_free_irq(dev, irq, data);
--	pm_runtime_force_suspend(dev);
--}
--
--static int __maybe_unused exynos_sysmmu_suspend(struct device *dev)
--{
--	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
--	struct device *master = data->master;
--
--	if (master) {
--		struct exynos_iommu_owner *owner = dev_iommu_priv_get(master);
--
--		mutex_lock(&owner->rpm_lock);
--		if (data->domain) {
--			dev_dbg(data->sysmmu, "saving state\n");
--			__sysmmu_disable(data);
--		}
--		mutex_unlock(&owner->rpm_lock);
--	}
--	return 0;
--}
--
--static int __maybe_unused exynos_sysmmu_resume(struct device *dev)
--{
--	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
--	struct device *master = data->master;
--
--	if (master) {
--		struct exynos_iommu_owner *owner = dev_iommu_priv_get(master);
--
--		mutex_lock(&owner->rpm_lock);
--		if (data->domain) {
--			dev_dbg(data->sysmmu, "restoring state\n");
--			__sysmmu_enable(data);
--		}
--		mutex_unlock(&owner->rpm_lock);
--	}
--	return 0;
--}
--
--static const struct dev_pm_ops sysmmu_pm_ops = {
--	SET_RUNTIME_PM_OPS(exynos_sysmmu_suspend, exynos_sysmmu_resume, NULL)
--	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
--				pm_runtime_force_resume)
--};
--
--static const struct of_device_id sysmmu_of_match[] = {
--	{ .compatible	= "samsung,exynos-sysmmu", },
--	{ },
--};
--
--static struct platform_driver exynos_sysmmu_driver = {
--	.probe	= exynos_sysmmu_probe,
--	.shutdown = exynos_sysmmu_shutdown,
--	.driver	= {
--		.name		= "exynos-sysmmu",
--		.of_match_table	= sysmmu_of_match,
--		.pm		= &sysmmu_pm_ops,
--		.suppress_bind_attrs = true,
--	}
--};
--
- static inline void exynos_iommu_set_pte(sysmmu_pte_t *ent, sysmmu_pte_t val)
- {
- 	dma_sync_single_for_cpu(dma_dev, virt_to_phys(ent), sizeof(*ent),
-@@ -1427,6 +1247,184 @@ static const struct iommu_ops exynos_iommu_ops = {
- 	}
- };
- 
-+static int exynos_sysmmu_probe(struct platform_device *pdev)
-+{
-+	int irq, ret;
-+	struct device *dev = &pdev->dev;
-+	struct sysmmu_drvdata *data;
-+	struct resource *res;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	data->sfrbase = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(data->sfrbase))
-+		return PTR_ERR(data->sfrbase);
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq <= 0)
-+		return irq;
-+
-+	ret = devm_request_irq(dev, irq, exynos_sysmmu_irq, 0,
-+				dev_name(dev), data);
-+	if (ret) {
-+		dev_err(dev, "Unabled to register handler of irq %d\n", irq);
-+		return ret;
-+	}
-+
-+	data->clk = devm_clk_get(dev, "sysmmu");
-+	if (PTR_ERR(data->clk) == -ENOENT)
-+		data->clk = NULL;
-+	else if (IS_ERR(data->clk))
-+		return PTR_ERR(data->clk);
-+
-+	data->aclk = devm_clk_get(dev, "aclk");
-+	if (PTR_ERR(data->aclk) == -ENOENT)
-+		data->aclk = NULL;
-+	else if (IS_ERR(data->aclk))
-+		return PTR_ERR(data->aclk);
-+
-+	data->pclk = devm_clk_get(dev, "pclk");
-+	if (PTR_ERR(data->pclk) == -ENOENT)
-+		data->pclk = NULL;
-+	else if (IS_ERR(data->pclk))
-+		return PTR_ERR(data->pclk);
-+
-+	if (!data->clk && (!data->aclk || !data->pclk)) {
-+		dev_err(dev, "Failed to get device clock(s)!\n");
-+		return -ENOENT;
-+	}
-+
-+	data->clk_master = devm_clk_get(dev, "master");
-+	if (PTR_ERR(data->clk_master) == -ENOENT)
-+		data->clk_master = NULL;
-+	else if (IS_ERR(data->clk_master))
-+		return PTR_ERR(data->clk_master);
-+
-+	data->sysmmu = dev;
-+	spin_lock_init(&data->lock);
-+
-+	__sysmmu_get_version(data);
-+
-+	ret = iommu_device_sysfs_add(&data->iommu, &pdev->dev, NULL,
-+				     dev_name(data->sysmmu));
-+	if (ret)
-+		return ret;
-+
-+	ret = iommu_device_register(&data->iommu, &exynos_iommu_ops, dev);
-+	if (ret)
-+		goto err_iommu_register;
-+
-+	platform_set_drvdata(pdev, data);
-+
-+	if (PG_ENT_SHIFT < 0) {
-+		if (MMU_MAJ_VER(data->version) < 5) {
-+			PG_ENT_SHIFT = SYSMMU_PG_ENT_SHIFT;
-+			LV1_PROT = SYSMMU_LV1_PROT;
-+			LV2_PROT = SYSMMU_LV2_PROT;
-+		} else {
-+			PG_ENT_SHIFT = SYSMMU_V5_PG_ENT_SHIFT;
-+			LV1_PROT = SYSMMU_V5_LV1_PROT;
-+			LV2_PROT = SYSMMU_V5_LV2_PROT;
-+		}
-+	}
-+
-+	if (MMU_MAJ_VER(data->version) >= 5) {
-+		ret = dma_set_mask(dev, DMA_BIT_MASK(36));
-+		if (ret) {
-+			dev_err(dev, "Unable to set DMA mask: %d\n", ret);
-+			goto err_dma_set_mask;
-+		}
-+	}
-+
-+	/*
-+	 * use the first registered sysmmu device for performing
-+	 * dma mapping operations on iommu page tables (cpu cache flush)
-+	 */
-+	if (!dma_dev)
-+		dma_dev = &pdev->dev;
-+
-+	pm_runtime_enable(dev);
-+
-+	return 0;
-+
-+err_dma_set_mask:
-+	iommu_device_unregister(&data->iommu);
-+err_iommu_register:
-+	iommu_device_sysfs_remove(&data->iommu);
-+	return ret;
-+}
-+
-+static void exynos_sysmmu_shutdown(struct platform_device *pdev)
-+{
-+	struct sysmmu_drvdata *data = platform_get_drvdata(pdev);
-+	struct device *dev = &pdev->dev;
-+	int irq = platform_get_irq(pdev, 0);
-+
-+	devm_free_irq(dev, irq, data);
-+	pm_runtime_force_suspend(dev);
-+}
-+
-+static int __maybe_unused exynos_sysmmu_suspend(struct device *dev)
-+{
-+	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
-+	struct device *master = data->master;
-+
-+	if (master) {
-+		struct exynos_iommu_owner *owner = dev_iommu_priv_get(master);
-+
-+		mutex_lock(&owner->rpm_lock);
-+		if (data->domain) {
-+			dev_dbg(data->sysmmu, "saving state\n");
-+			__sysmmu_disable(data);
-+		}
-+		mutex_unlock(&owner->rpm_lock);
-+	}
-+	return 0;
-+}
-+
-+static int __maybe_unused exynos_sysmmu_resume(struct device *dev)
-+{
-+	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
-+	struct device *master = data->master;
-+
-+	if (master) {
-+		struct exynos_iommu_owner *owner = dev_iommu_priv_get(master);
-+
-+		mutex_lock(&owner->rpm_lock);
-+		if (data->domain) {
-+			dev_dbg(data->sysmmu, "restoring state\n");
-+			__sysmmu_enable(data);
-+		}
-+		mutex_unlock(&owner->rpm_lock);
-+	}
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops sysmmu_pm_ops = {
-+	SET_RUNTIME_PM_OPS(exynos_sysmmu_suspend, exynos_sysmmu_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				pm_runtime_force_resume)
-+};
-+
-+static const struct of_device_id sysmmu_of_match[] = {
-+	{ .compatible	= "samsung,exynos-sysmmu", },
-+	{ },
-+};
-+
-+static struct platform_driver exynos_sysmmu_driver = {
-+	.probe	= exynos_sysmmu_probe,
-+	.shutdown = exynos_sysmmu_shutdown,
-+	.driver	= {
-+		.name		= "exynos-sysmmu",
-+		.of_match_table	= sysmmu_of_match,
-+		.pm		= &sysmmu_pm_ops,
-+		.suppress_bind_attrs = true,
-+	}
-+};
-+
- static int __init exynos_iommu_init(void)
- {
- 	struct device_node *np;
-@@ -1460,6 +1458,7 @@ static int __init exynos_iommu_init(void)
- 	}
- 
- 	return 0;
-+
- err_zero_lv2:
- 	platform_driver_unregister(&exynos_sysmmu_driver);
- err_reg_driver:
+I tried this series on Armadeus OPOS8MM Dev (i.MX8MM) board with the 
+PowerTrip PH720128T004-ZBC02 DSI panel  (720x1280, 2 lanes).
+
+It works after I fixed the logic of some video mode flags:
+
+in function samsung_dsim_init_link(struct samsung_dsim *dsi):
+
+-if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HFP))
++if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HFP)
+	reg |= DSIM_HFP_MODE;
+
+The bit has to be set to disable HFP.
+Same logic for HPB, HSA and EOT packets.
+
+Regards,
+
+> Jagan.
+> 
+> Jagan Teki (10):
+>    drm: bridge: Add Samsung DSIM bridge driver
+>    drm: bridge: samsung-dsim: Lookup OF-graph or Child node devices
+>    drm: bridge: samsung-dsim: Mark PHY as optional
+>    drm: bridge: samsung-dsim: Handle proper DSI host initialization
+>    drm: bridge: samsung-dsim: Add atomic_check
+>    drm: bridge: samsung-dsim: Add platform PLL_P (PMS_P) offset
+>    drm: bridge: samsung-dsim: Add atomic_get_input_bus_fmts
+>    drm: bridge: samsung-dsim: Add input_bus_flags
+>    dt-bindings: display: exynos: dsim: Add NXP i.MX8MM support
+>    drm: bridge: samsung-dsim: Add i.MX8MM support
+> 
+>   .../bindings/display/exynos/exynos_dsim.txt   |    1 +
+>   MAINTAINERS                                   |    9 +
+>   drivers/gpu/drm/bridge/Kconfig                |   12 +
+>   drivers/gpu/drm/bridge/Makefile               |    1 +
+>   drivers/gpu/drm/bridge/samsung-dsim.c         | 1856 +++++++++++++++++
+>   drivers/gpu/drm/exynos/Kconfig                |    1 +
+>   drivers/gpu/drm/exynos/exynos_drm_dsi.c       | 1766 +---------------
+>   include/drm/bridge/samsung-dsim.h             |  115 +
+>   8 files changed, 2108 insertions(+), 1653 deletions(-)
+>   create mode 100644 drivers/gpu/drm/bridge/samsung-dsim.c
+>   create mode 100644 include/drm/bridge/samsung-dsim.h
+> 
+
 -- 
-2.35.1
+Sébastien Szymanski, Armadeus Systems
+Software engineer
 
