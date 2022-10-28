@@ -2,169 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10904C38A02
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Oct 2022 12:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE80C38A02
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Oct 2022 16:48:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229616AbiJ1MMp (ORCPT
+        id S230093AbiJ1QsL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 28 Oct 2022 08:12:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39678 "EHLO
+        Fri, 28 Oct 2022 12:48:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbiJ1MMo (ORCPT
+        with ESMTP id S230027AbiJ1QsF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Oct 2022 08:12:44 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B58279A5B
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Oct 2022 05:12:43 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id e15so4380840iof.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Oct 2022 05:12:43 -0700 (PDT)
+        Fri, 28 Oct 2022 12:48:05 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D052B20DB4C;
+        Fri, 28 Oct 2022 09:48:04 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id f5-20020a17090a4a8500b002131bb59d61so8145826pjh.1;
+        Fri, 28 Oct 2022 09:48:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=x4ejCqr3vNjDNfMKXxsxlFT1lysYHgEOTPagMJjkJ2w=;
-        b=EwzwbK83NKY/wVifYdoFcS0E+E+QzMC3KcSwq49PB79/3ktlSW9euEapqZLqYRTaHE
-         sjnIcg2h2LTc6Ie2NuMctDiLryLRkobCiSQfK4X+m2YcSZ7IL/cAqyGj7Ca4nax8jAeB
-         LK56IDmgQi7/pdRYAIIlSKk9eVVNzHeo74E4o=
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RR8Z7rR+4Otjj8031JjWN5QhQw6XT4kLdd/JjgmxDRk=;
+        b=ncYThJ/NG5TsocZtUBIBjVm0F3HNUnrYoQSM1kHBpJAL0vF0kOjmeGvSCJV62I25jF
+         CKxf3l5zWKBpWo3qkQBxUGNy134Ka9fAhGRbF5Ay3hbcCLAu0Z0CCmfBI6Ez34Ie5hPA
+         25sZwKZPb4PENOH5VYwORRQGcukXR+271JjY3jDDhyXGxNIauzDPfg+PLUJjgAvTKQwX
+         JqQ0a031wUt3Bi0Fd1Lzhm9Gwj4m4dPmTc4vwb+18vmLpFkiTTTUIdXUzGPrvmeL+Jjj
+         9R061vb94G65VGTUT7wUspurgTU1nKO0lg4Ddtrir2m4NpW1YLlxtsQ//qDEUgDbYDi2
+         9fAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x4ejCqr3vNjDNfMKXxsxlFT1lysYHgEOTPagMJjkJ2w=;
-        b=Ep/SqhC2p7BmgfkF37La8F4TOmrfhqaKMCkq7O2fWsmGkLAF2KO5DGtzX5aSEv5VdF
-         iuTQWgOIqDhYou0yfxuwd9q2Ls71KXdad41/befCRuCkWHZVGp6Ix095XQGya6SBnCha
-         tfEuqn7TGWdpCGYp2xjrbXI+VjDR155CvFM+17PYNtqXFHSGr6oGysxctDlnhXdAEiUr
-         D87kbsHVXB/NKxrrGLf8WT2y+EQryXd7TTARZdgDiKh+c9hy9QWEIos9TZAldKV79HxA
-         AKro3TUpsv5PBjmBHp2F7wjpAshwmR7eQq68wEpQPggokh8kAxakCx7MJfna2TzjEgWR
-         K0Xg==
-X-Gm-Message-State: ACrzQf3nnIjYsn2YyBLNUvz3G31mRLdF26RD18nHls7KADPy5HWessXp
-        ZuTZINBGWSuwnx8pRA3g9Os6LxtwJx4Do31gIPKBZg==
-X-Google-Smtp-Source: AMsMyM5enro+z1lym3cQp+DmD9qshR9qr8ZsgCyq2fDyPAd1TMja7D7tFcXTsuIxpjYwAmCddFybLYkv4bxEtZ22cOY=
-X-Received: by 2002:a6b:3f44:0:b0:6c2:c90e:dc30 with SMTP id
- m65-20020a6b3f44000000b006c2c90edc30mr8183460ioa.156.1666959162762; Fri, 28
- Oct 2022 05:12:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20221005151309.7278-1-jagan@amarulasolutions.com>
- <20221005151309.7278-2-jagan@amarulasolutions.com> <d3012cac-6672-70cf-5cde-c3152cfd5a84@denx.de>
- <CAMty3ZAw-iXKcYgWuPCT_RwksKHVSipxL6tXb6WNLEeB7YvYmA@mail.gmail.com>
- <bad48f67-5fe6-d69c-51b0-bac3fa9d2719@denx.de> <CAMty3ZBLQu8YijrSVdt84-J9hoOx8qcRSaGF-FvZVsJEWVaXjQ@mail.gmail.com>
- <CGME20221017084832eucas1p190091bef8dce651ad0bf582880a56117@eucas1p1.samsung.com>
- <76423028-e58e-7271-0d74-fb4bb2bf65c8@denx.de> <2b0350ba-070a-8df0-9a2d-8c18da03b6cb@samsung.com>
- <CAMty3ZBFy0r1YFVpA73bG2t2FAz1SbJRQ1yvBYo62wSAde7XnA@mail.gmail.com>
-In-Reply-To: <CAMty3ZBFy0r1YFVpA73bG2t2FAz1SbJRQ1yvBYo62wSAde7XnA@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Fri, 28 Oct 2022 17:42:31 +0530
-Message-ID: <CAMty3ZCV3SCaqXD3y_=1YpJm3Z+61C0GjzPgwE4Hn4ux3apLng@mail.gmail.com>
-Subject: Re: [PATCH v7 01/10] drm: bridge: Add Samsung DSIM bridge driver
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Marek Vasut <marex@denx.de>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RR8Z7rR+4Otjj8031JjWN5QhQw6XT4kLdd/JjgmxDRk=;
+        b=KQsAh3UIgGwGUUkpQFSfZVzrDRaRwPHTcxj774bJfgiCiq2FCYis1ClG+XZOq5kjXw
+         zfONRxSHRUdVsSuB1+gdGQzJ7LgO8tDELuPCCVabaQB+YxTaIDFkIx8uCLKluVnNs2Q9
+         j1vsXliEK+95gDz/4DbS7gXzUesP0I3kqT6RrT18nfq5iQks7A0xrsUK4RCVVSSYs3eP
+         HBlov9ylwbIUsVcnbq5DAWiTNCT4IWRZEKEafJjbS863+tI3KFmzFiXzdP7x2MN2i8A3
+         QKvzeisfNHWQ3p39Mg9V7KwTEgiLHXQQX99US7T+sf7ywly5NWmTlCBtgVFHGFjn+vtF
+         h2cw==
+X-Gm-Message-State: ACrzQf1718qGzjHxj9PML86jyE3SQkbfXGNYZKowHN2JE8rjZZ1RLA9T
+        vW6OYZLPMiwWPF6Ij/DHAps=
+X-Google-Smtp-Source: AMsMyM4LWQE6fzSFM3fzwhSTTU4GcSOPv+pDOnJPTJoss0vV1+VRih1BdHkQDD7Lqr3DESmyjb+enw==
+X-Received: by 2002:a17:902:a9c6:b0:178:b2d4:f8b2 with SMTP id b6-20020a170902a9c600b00178b2d4f8b2mr37647plr.79.1666975684133;
+        Fri, 28 Oct 2022 09:48:04 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:ea9a:801b:ed52:2db1])
+        by smtp.gmail.com with ESMTPSA id u12-20020a63140c000000b0042b5095b7b4sm2945336pgl.5.2022.10.28.09.48.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Oct 2022 09:48:03 -0700 (PDT)
+Date:   Fri, 28 Oct 2022 09:48:00 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>, patches@opensource.cirrus.com,
         linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: s3c64xx: include header defining input event codes
+Message-ID: <Y1wHwEm15/K87tdq@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Oct 18, 2022 at 8:35 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> On Mon, Oct 17, 2022 at 2:31 PM Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
-> >
-> > Hi,
-> >
-> > On 17.10.2022 10:48, Marek Vasut wrote:
-> > > On 10/17/22 09:43, Jagan Teki wrote:
-> > >> On Mon, Oct 17, 2022 at 12:49 PM Marek Vasut <marex@denx.de> wrote:
-> > >>> On 10/17/22 04:49, Jagan Teki wrote:
-> > >>>> On Sun, Oct 16, 2022 at 3:16 AM Marek Vasut <marex@denx.de> wrote:
-> > >>>>>
-> > >>>>> On 10/5/22 17:13, Jagan Teki wrote:
-> > >>>>>> Samsung MIPI DSIM controller is common DSI IP that can be used in
-> > >>>>>> various
-> > >>>>>> SoCs like Exynos, i.MX8M Mini/Nano.
-> > >>>>>>
-> > >>>>>> In order to access this DSI controller between various platform
-> > >>>>>> SoCs,
-> > >>>>>> the ideal way to incorporate this in the drm stack is via the drm
-> > >>>>>> bridge
-> > >>>>>> driver.
-> > >>>>>>
-> > >>>>>> This patch is trying to differentiate platform-specific and
-> > >>>>>> bridge driver
-> > >>>>>> code by maintaining exynos platform glue code in exynos_drm_dsi.c
-> > >>>>>> driver
-> > >>>>>> and common bridge driver code in samsung-dsim.c providing that
-> > >>>>>> the new
-> > >>>>>> platform-specific glue should be supported in the bridge driver,
-> > >>>>>> unlike
-> > >>>>>> exynos platform drm drivers.
-> > >>>>>>
-> > >>>>>> - Add samsung_dsim_plat_data for keeping platform-specific
-> > >>>>>> attributes like
-> > >>>>>>      host_ops, irq_ops, and hw_type.
-> > >>>>>>
-> > >>>>>> - Initialize the plat_data hooks for exynos platform in
-> > >>>>>> exynos_drm_dsi.c.
-> > >>>>>>
-> > >>>>>> - samsung_dsim_probe is the common probe call across
-> > >>>>>> exynos_drm_dsi.c and
-> > >>>>>>      samsung-dsim.c.
-> > >>>>>>
-> > >>>>>> - plat_data hooks like host_ops and irq_ops are invoked during the
-> > >>>>>>      respective bridge call chains.
-> > >>>>>
-> > >>>>> Maybe the Subject should say "Split ... driver" or "Move ...
-> > >>>>> driver" ,
-> > >>>>> since it is not adding a new driver here ?
-> > >>>>
-> > >>>> Though it is not added a completely new driver, it is adding more
-> > >>>> infrastructure platform code to be compatible with both Exynos and
-> > >>>> i.MX8M. This is the prime reason for adding that commit head and
-> > >>>> explaining the same in the commit body.
-> > >>>
-> > >>> Diffstat looks like this:
-> > >>>
-> > >>>    drivers/gpu/drm/bridge/samsung-dsim.c   | 1703
-> > >>> ++++++++++++++++++++++
-> > >>>    drivers/gpu/drm/exynos/Kconfig          |    1 +
-> > >>>    drivers/gpu/drm/exynos/exynos_drm_dsi.c | 1766
-> > >>> ++---------------------
-> > >>>    include/drm/bridge/samsung-dsim.h       |  113 ++
-> > >>>    7 files changed, 1952 insertions(+), 1653 deletions(-)
-> > >>>
-> > >>> Looks to me like most of the code is just moved from existing driver in
-> > >>> this patch.
-> > >>
-> > >> Yeah, as I explained (from commit) it is moved, updated, and written
-> > >> the plat code. How about this head?
-> > >>
-> > >> "drm: bridge: Add Samsung DSIM bridge (Split from exynos_drm_dsi)"
-> > >
-> > > I disagree with the "Add" part of the Subject, but I'll wait for
-> > > others' opinion here.
-> >
-> > Maybe something like a "Generalize Exynos-DSI DRM driver into a generic
-> > Samsung DSIM bridge"?
+The board file for Wolfson Cragganmore 6410 uses various KEY_* defines,
+but does not include the relevant header directly and instead relies on
+other headers to include it indirectly. With the upcoming cleanup of
+matrix_keypad.h this indirection is now broken and we should include the
+relevant header directly.
 
-I'm using this commit head for next version patches, hope all Okay with it.
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
 
-Thanks,
-Jagan.
+If possible I'd like to get this through input tree so I can take
+another stab at landing matrix_keypad.h patch.
+
+ arch/arm/mach-s3c/mach-crag6410.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/mach-s3c/mach-crag6410.c b/arch/arm/mach-s3c/mach-crag6410.c
+index 9a45474d1bf7..2ecb85856e24 100644
+--- a/arch/arm/mach-s3c/mach-crag6410.c
++++ b/arch/arm/mach-s3c/mach-crag6410.c
+@@ -14,6 +14,7 @@
+ #include <linux/fb.h>
+ #include <linux/io.h>
+ #include <linux/init.h>
++#include <linux/input-event-codes.h>
+ #include <linux/gpio.h>
+ #include <linux/gpio/machine.h>
+ #include <linux/leds.h>
+-- 
+2.38.1.273.g43a17bfeac-goog
+
+
+-- 
+Dmitry
