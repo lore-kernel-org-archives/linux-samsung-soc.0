@@ -2,68 +2,67 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48011FA3740
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Oct 2022 12:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3755FA3742
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Oct 2022 12:22:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231438AbiJaMU4 (ORCPT
+        id S231347AbiJaMWx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 Oct 2022 08:20:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46450 "EHLO
+        Mon, 31 Oct 2022 08:22:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231325AbiJaMUl (ORCPT
+        with ESMTP id S231247AbiJaMWu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Oct 2022 08:20:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E033EF58B
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Oct 2022 05:19:16 -0700 (PDT)
+        Mon, 31 Oct 2022 08:22:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EB2062CF
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Oct 2022 05:21:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667218756;
+        s=mimecast20190719; t=1667218912;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=riNVOBu8e2pIZERXBmAvmwAOPdhd6MsYxn78jTBB4dE=;
-        b=OBolPdy1AF2o/wp/D6pjRilLNmLCu644iVdp5xYog2AGWhwfTXstwshmx++UNF4iRTd/IR
-        jS9w5k7O4w9vyLefikbi3kfZncrS0YuBJ6WI0VA/zfuZcxwuMYDzb81+LuY9T31pd3vlIg
-        mCYLNeoX02c0cqrZteXZnpM1aBeklys=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=Sz8PAZx0cLc5RAaRO0sQR4MZQyCy7VtrjJT7yq4jHuw=;
+        b=dtQVGo+IZpIyUJY4zXXEG/jalqF9M1pfn2IdTmrz7mYYRpF87IBrQkBlR5B3RpuR3G+aTI
+        k40MuyKuCdqnmW1jG7fFCXifOR3s3Ok4Quh2y1JHM0a5/wUppWpI1Ut0YG88m5KLySqOoG
+        LhUFfBKyizj5dA8s/Vl8MiAhsJnE5hc=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-387-xJujIVMLM2q3OvvoBUKRhA-1; Mon, 31 Oct 2022 08:19:14 -0400
-X-MC-Unique: xJujIVMLM2q3OvvoBUKRhA-1
-Received: by mail-wm1-f71.google.com with SMTP id v23-20020a1cf717000000b003bff630f31aso2542342wmh.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Oct 2022 05:19:14 -0700 (PDT)
+ us-mta-388-yVjgmMdeMTO1nsAgOaTQNg-1; Mon, 31 Oct 2022 08:21:51 -0400
+X-MC-Unique: yVjgmMdeMTO1nsAgOaTQNg-1
+Received: by mail-wm1-f70.google.com with SMTP id x10-20020a05600c420a00b003cf4dbff2e4so5737824wmh.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Oct 2022 05:21:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=riNVOBu8e2pIZERXBmAvmwAOPdhd6MsYxn78jTBB4dE=;
-        b=TD8mFaxma8S/ZgJrsml0QGvbxpF8bL+SAlOr64IeNYsYofOEZ2F4dXVoTWyOd9JTQU
-         o8SHe1qGtgVqo6EYC0wvEnRE32HnsVVeg3kDGc1LW8rYOq3LcVdXEodQFt7jiYurt5NO
-         jV3KfEdyS3ot/1fDD1o2nVZ3aGk2p/xbhLdPZ2jnX7XfFXZRts3bq4zLVcCpQub1pFpo
-         3/73ob1S3nXQ3M2nkqZpT3Zy+n6XXg9lj1TYPmjILTKapDZWohu8/52va9iTySfyGCoU
-         rcyySWr0aKB9KrqvwWwQKmQ1SaGYmql3fI8Tk3CBuRPhiVd+o7GgW9alPX+BNJsFzeVY
-         EGlg==
-X-Gm-Message-State: ACrzQf0JEgaVac5MJemzniv2q6bHdcog3m1AkkuXvgFOEyzT1s1A7/YB
-        TS8KKUEVlFFWiN9mVp3rQzqaAxxV6qHnLXYECUyvJQd7sBhJyM6EyVGA2aTJaZcLA8RdtboT11w
-        S5ZGKqfeMxPaKE/GF5dkucNp7hent/G8=
-X-Received: by 2002:a1c:7405:0:b0:3cf:55ea:6520 with SMTP id p5-20020a1c7405000000b003cf55ea6520mr7948713wmc.46.1667218753685;
-        Mon, 31 Oct 2022 05:19:13 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM4oPDcyHgSUP9i1GOihR+fx3MXqkZeIX2xB6yE7P9f9dsxB6V14E0IWVQPIhFCjpfp7XUuGLg==
-X-Received: by 2002:a1c:7405:0:b0:3cf:55ea:6520 with SMTP id p5-20020a1c7405000000b003cf55ea6520mr7948695wmc.46.1667218753455;
-        Mon, 31 Oct 2022 05:19:13 -0700 (PDT)
+        bh=Sz8PAZx0cLc5RAaRO0sQR4MZQyCy7VtrjJT7yq4jHuw=;
+        b=dsVV1hAs+iy56S7GZx2fN/PaoGimam3g634MZZd1uXi6cvzB4oa3lEniQP4SPQKp5n
+         7DmrcuJjX0kFvC7GaTdD7Ez+q+09ZvTQ5sNvQp0FrXebmRuG6U2PKbZdi0usLHqr0NSZ
+         gS3a3na5866vZsV8p1h718GH7RLtWCPnAI89csh0xgQs3B3S/etVEdC4xtEWwcit7kHh
+         KbiU8tXOrCDTF4spgWtQzFx+/gZNQgst8Bmrvlg7KEzMWUV8OkDg+7Cn3GUJg3RXCQml
+         /8zHfS/zzJgtKz0qmGhNmaPta0ZMpzrbYzfDi6lNDv9XeM8ecSWnI4ojjiWh3A3AxtS/
+         Y21A==
+X-Gm-Message-State: ACrzQf1YWC2g+SLeJCGZMkhlJt8d7qSV8ybLrQ512jnCFUYkUDIRSM8L
+        jODUPyvCnloIXzh7sth1MQl6qHNMyQDmZSax+J8RXqWM6ZP2IRUYglQ3FeiOJCfaASFCG3ubxpQ
+        jFoiSJ9/Yzv5vqQouFQK4xUPxS0qcNpU=
+X-Received: by 2002:a05:600c:3c8e:b0:3b4:d224:ae27 with SMTP id bg14-20020a05600c3c8e00b003b4d224ae27mr7935999wmb.187.1667218910344;
+        Mon, 31 Oct 2022 05:21:50 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM7kQh5/EvsJvI9K3W2EFLXezwgTMZr8BgFr4Dt+IxgUiTtboeKKAu1FK4Es/7ETyez8XSTV6g==
+X-Received: by 2002:a05:600c:3c8e:b0:3b4:d224:ae27 with SMTP id bg14-20020a05600c3c8e00b003b4d224ae27mr7935971wmb.187.1667218910155;
+        Mon, 31 Oct 2022 05:21:50 -0700 (PDT)
 Received: from [192.168.1.130] (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id x11-20020adff0cb000000b0023660f6cecfsm7060089wro.80.2022.10.31.05.19.12
+        by smtp.gmail.com with ESMTPSA id i4-20020a05600c354400b003cf4c1e211fsm7421692wmq.38.2022.10.31.05.21.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Oct 2022 05:19:13 -0700 (PDT)
-Message-ID: <01f85874-6beb-c325-8b94-7a7aeec30d5a@redhat.com>
-Date:   Mon, 31 Oct 2022 13:19:11 +0100
+        Mon, 31 Oct 2022 05:21:49 -0700 (PDT)
+Message-ID: <e9192382-f04c-4ebd-ca1c-b2fceaa29f86@redhat.com>
+Date:   Mon, 31 Oct 2022 13:21:48 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.1
-Subject: Re: [PATCH v2 08/21] drm/rockchip: Don't set struct
- drm_driver.output_poll_changed
+Subject: Re: [PATCH v2 09/21] drm/panel-ili9341: Include <linux/backlight.h>
 Content-Language: en-US
 To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
         airlied@gmail.com, sam@ravnborg.org, mripard@kernel.org,
@@ -84,9 +83,9 @@ Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org
 References: <20221024111953.24307-1-tzimmermann@suse.de>
- <20221024111953.24307-9-tzimmermann@suse.de>
+ <20221024111953.24307-10-tzimmermann@suse.de>
 From:   Javier Martinez Canillas <javierm@redhat.com>
-In-Reply-To: <20221024111953.24307-9-tzimmermann@suse.de>
+In-Reply-To: <20221024111953.24307-10-tzimmermann@suse.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -94,14 +93,7 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 10/24/22 13:19, Thomas Zimmermann wrote:
-> Don't set struct drm_driver.output_poll_changed. It's used to restore
-> the fbdev console. But as rockchip uses generic fbdev emulation, the
-> console is being restored by the DRM client helpers already. See the
-> functions drm_kms_helper_hotplug_event() and
-> drm_kms_helper_connector_hotplug_event() in drm_probe_helper.c.
-> 
-> v2:
-> 	* fix commit description (Christian)
+> Include <linux/backlight.h> for devm_of_find_backlight().
 > 
 > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 > ---
