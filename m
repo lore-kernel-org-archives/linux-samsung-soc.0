@@ -2,68 +2,68 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7536FA3742
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Oct 2022 12:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACBBDFA3742
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Oct 2022 12:09:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231178AbiJaMB1 (ORCPT
+        id S230228AbiJaMJY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 Oct 2022 08:01:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34420 "EHLO
+        Mon, 31 Oct 2022 08:09:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230148AbiJaMB0 (ORCPT
+        with ESMTP id S231193AbiJaMJX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Oct 2022 08:01:26 -0400
+        Mon, 31 Oct 2022 08:09:23 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 256F15F4C
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Oct 2022 05:00:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69654C05
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Oct 2022 05:08:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667217626;
+        s=mimecast20190719; t=1667218101;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=HRPxwW2zKPepuA8PR9mUAwCAVRj8pp1PiT5CedYG760=;
-        b=A81TQWzRANSt9UBXkN6GWZECwAj2+GPLXn6gdwd5irFl8gEo3FGTWQ0tGgzwhMkxQ2lwHk
-        9EJ9dIXq62KH3h5oOwgKZ83yltwQfjYnOnaHOR1ePZXUP1C+hxUKtaADOJgdSnV4tlZcO1
-        vZWbNYGFj0c0lpX1hv6hD75EP2wEoSM=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=UzviKTRQBMSKwIl6kvNWZgMaFQwic4ec30sKv7m652k=;
+        b=HVwgxIFnTQWShJIbAp+p3yMHeOQrB6J5obh03OwUqlJlXbm90w49w/nPJiu98HKGScM9Uj
+        vcR2K1W6wwdh1fa05SHdk+3fuL31eun9CsHTnQBBPzXgM2GVsUWvjC59Qd/0aT4EbN9Vql
+        WRS4q8gCbvbwjjBXqhS0GpswFgCgaLQ=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-271-MXNOjkzcMYK56dPBDxnpeg-1; Mon, 31 Oct 2022 08:00:25 -0400
-X-MC-Unique: MXNOjkzcMYK56dPBDxnpeg-1
-Received: by mail-wm1-f72.google.com with SMTP id o18-20020a05600c4fd200b003c6ceb1339bso5571071wmq.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Oct 2022 05:00:24 -0700 (PDT)
+ us-mta-663-zkrOriI8NwCaieSbvybq6w-1; Mon, 31 Oct 2022 08:08:19 -0400
+X-MC-Unique: zkrOriI8NwCaieSbvybq6w-1
+Received: by mail-wr1-f72.google.com with SMTP id n13-20020adf8b0d000000b0023658a75751so3006195wra.23
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Oct 2022 05:08:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HRPxwW2zKPepuA8PR9mUAwCAVRj8pp1PiT5CedYG760=;
-        b=0aOTYhVQsK0HN6ALXv5SHWypyYmaSyzNxl7lfl4693TmRdiO3oQLdck/wQmbUjMz5X
-         oP4qTNykjKDQs5trADFLYzBo2UMobOiEyqT1wm1hEaAbNyxfIDtUbM4RxkWsdsnc7n70
-         mUCzXDL4gzCTBt3w/bK+50xJhlzko8Qkn/6Aea3HxlivWMrz1rVxG6EmprOilLrKgg6X
-         I7+h0gOja5N51CzetEjiR9/cVdli3ebGl7aHVSwmDkWfe8bx6NJLyl2h3J0B1EbzEyjZ
-         OFt7h7XtBHTo1XRIOZIViNKeTHess8n5CD6O72bGzb49/Q6/v56vouth2K93NNVoj+ek
-         JBLA==
-X-Gm-Message-State: ACrzQf1Q6boDntizC2417R6AGvIV5b4QExXeuXzrQoEzCvtUwrVi/QGY
-        BtY+UCN1ivL1D54S/NlUM+lRusCJJ6k12SerqjtrzAbgRIr/vxONbhi10E6PjJW7eQEV8IN4LmQ
-        cEeESNAYJckktLUlQAh28INgwlp6yYCk=
-X-Received: by 2002:a5d:560e:0:b0:236:c325:4858 with SMTP id l14-20020a5d560e000000b00236c3254858mr4606537wrv.259.1667217623892;
-        Mon, 31 Oct 2022 05:00:23 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM7SGo+SId6me5X0r4rljOgpSC8TPNcKC+21wfNb2F4dclcZs6G1cIUREq2tk/ot5/dgyLJVEQ==
-X-Received: by 2002:a5d:560e:0:b0:236:c325:4858 with SMTP id l14-20020a5d560e000000b00236c3254858mr4606520wrv.259.1667217623655;
-        Mon, 31 Oct 2022 05:00:23 -0700 (PDT)
+        bh=UzviKTRQBMSKwIl6kvNWZgMaFQwic4ec30sKv7m652k=;
+        b=cOjL/s7495VGyEwWPIrIVmPHpTTBAQ7/ea8AD6Wu8cIV4Y/JYx8g+cTGs0gnNilRIk
+         q8j+Km60Hb4y4I/grN+rlo4GrZKG8ms3JtszYGJRUo9OPuuyLaMC+tnPOavavb4/0Isw
+         neB9NSY6LA6IjDvAsRsh7OQN6ovto71ZuzAAp1u2OkRqQfigSBTHzKKsYnXzD7DG9qse
+         MSNdqDXOUWL+Gfd1zj2ih7MQnMalPNEKIxIw6wnPRN6ihqLMoLnwX3T1g3SGAkhVVZ9c
+         ikGNxW/Ku5x1BRVe5VsTvtNgLHB/gMZi2mUwKxywsxcG6D2yKg18cS6+g+Ypa0mJf3Q8
+         GazQ==
+X-Gm-Message-State: ACrzQf1RyhpybkOFRIyoPbNJEjna5wvcyCGKerd6ZkHMy9a7n0ImGXc6
+        9XilB5erAzzhJM0udZz96kYk2FiWwbEyQzgf2sMzulDK7ABqxOpRtCu6F53Y7h+4CTIP4SLhb29
+        IkrXR9x4M3Bg+OfyyZjk27XP34Zjrfw0=
+X-Received: by 2002:a05:6000:15cd:b0:236:9701:7939 with SMTP id y13-20020a05600015cd00b0023697017939mr7691180wry.248.1667218098865;
+        Mon, 31 Oct 2022 05:08:18 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM6Xfc/ao13H30KX93ABjLq4iUJ6oQF+1EOXF8gvz+3LvWSBMjjIijdjEWsEsBBK0GpYNHL8UA==
+X-Received: by 2002:a05:6000:15cd:b0:236:9701:7939 with SMTP id y13-20020a05600015cd00b0023697017939mr7691171wry.248.1667218098682;
+        Mon, 31 Oct 2022 05:08:18 -0700 (PDT)
 Received: from [192.168.1.130] (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id bi19-20020a05600c3d9300b003c6c1686b10sm5388458wmb.7.2022.10.31.05.00.21
+        by smtp.gmail.com with ESMTPSA id bn26-20020a056000061a00b0022cd0c8c696sm6948033wrb.103.2022.10.31.05.08.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Oct 2022 05:00:23 -0700 (PDT)
-Message-ID: <2e2e3915-a7b2-d030-2ffd-117b12deedb2@redhat.com>
-Date:   Mon, 31 Oct 2022 13:00:21 +0100
+        Mon, 31 Oct 2022 05:08:18 -0700 (PDT)
+Message-ID: <fd53a4f9-34a8-f5f3-1b1f-baf4a456bcc9@redhat.com>
+Date:   Mon, 31 Oct 2022 13:08:16 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.1
-Subject: Re: [PATCH v2 03/21] drm/vboxvideo: Don't set struct
- drm_driver.lastclose
+Subject: Re: [PATCH v2 04/21] drm/amdgpu: Don't set struct
+ drm_driver.output_poll_changed
 Content-Language: en-US
 To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
         airlied@gmail.com, sam@ravnborg.org, mripard@kernel.org,
@@ -84,9 +84,9 @@ Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org
 References: <20221024111953.24307-1-tzimmermann@suse.de>
- <20221024111953.24307-4-tzimmermann@suse.de>
+ <20221024111953.24307-5-tzimmermann@suse.de>
 From:   Javier Martinez Canillas <javierm@redhat.com>
-In-Reply-To: <20221024111953.24307-4-tzimmermann@suse.de>
+In-Reply-To: <20221024111953.24307-5-tzimmermann@suse.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -94,15 +94,26 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 10/24/22 13:19, Thomas Zimmermann wrote:
-> Don't set struct drm_driver.lastclose. It's used to restore the
-> fbdev console. But as vboxvideo uses generic fbdev emulation, the
-> console is being restored by the DRM client helpers already. See
-> the call to drm_client_dev_restore() in drm_lastclose().
+> Don't set struct drm_driver.output_poll_changed. It's used to restore
+> the fbdev console. But as amdgpu uses generic fbdev emulation, the
+> console is being restored by the DRM client helpers already. See the
+> functions drm_kms_helper_hotplug_event() and
+> drm_kms_helper_connector_hotplug_event() in drm_probe_helper.c.
+> 
+> v2:
+> 	* fix commit description (Christian)
 > 
 > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 > ---
 
 Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+
+Do you think that the fbdev helpers kernel doc has to be updated to mention
+that drm_fb_helper_lastclose() and drm_fb_helper_output_poll_changed() are
+not needed when generic fbdev emulation is used? Because by reading that is
+not clear that's the case:
+
+https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/drm_fb_helper.c#L86
 
 -- 
 Best regards,
