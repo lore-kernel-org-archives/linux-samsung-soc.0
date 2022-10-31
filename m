@@ -2,67 +2,68 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BDCFA3744
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Oct 2022 12:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6421FA3740
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Oct 2022 12:24:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230492AbiJaMYG (ORCPT
+        id S229785AbiJaMYt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 Oct 2022 08:24:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48862 "EHLO
+        Mon, 31 Oct 2022 08:24:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231245AbiJaMXt (ORCPT
+        with ESMTP id S231354AbiJaMYs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Oct 2022 08:23:49 -0400
+        Mon, 31 Oct 2022 08:24:48 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CF2DF58F
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Oct 2022 05:22:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D00F8101C0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Oct 2022 05:23:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667218949;
+        s=mimecast20190719; t=1667219003;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=xVJodACOlUyVw6jJB0o/QffeIPQi24/sF6MmyMfBvgg=;
-        b=AD3YqiH6p2ttr44BpYQxrxqMRTPybN7R/b6HdOO7WVOug/Q1OjwZu85lR+0dhw9vB0ZNLp
-        v7HafG6DmjwvnlLt3brJJxuyUzEl6cdvpUV5fqKr5ZAt+IBZq1/R/Xx18Uo02XSc4VOIrG
-        Mu6cRHxrbzkM8L0aY3CeC+LMDI6BwZY=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=VQCx1YM0kmrgAAcvKhWafunY3KuhCAquKBUmZJVCfV8=;
+        b=OXxETfR4g8DTtsYOgeAYKp+EQgjNGaqLLCMi4dhrYZ+lPfcfdS5h5O8mwAFhR877yun0Zf
+        nn2XbQOGwj8SjrqEVIoXsAliYDbiWm27JjHNCKViA/plFCtoSisI7Dw8DPfoOt6SWLCrcj
+        xhNghWqsLn4MotOmVecD81rNWnwv9F8=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-375-O6W4HJgeNqKDkQ6KYYUcvw-1; Mon, 31 Oct 2022 08:22:28 -0400
-X-MC-Unique: O6W4HJgeNqKDkQ6KYYUcvw-1
-Received: by mail-wm1-f72.google.com with SMTP id 1-20020a05600c028100b003cf7833293cso234988wmk.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Oct 2022 05:22:27 -0700 (PDT)
+ us-mta-599-cwpSoQdROpGgXSTb3k0zyQ-1; Mon, 31 Oct 2022 08:23:19 -0400
+X-MC-Unique: cwpSoQdROpGgXSTb3k0zyQ-1
+Received: by mail-wm1-f71.google.com with SMTP id h204-20020a1c21d5000000b003cf4e055442so5238561wmh.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Oct 2022 05:23:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xVJodACOlUyVw6jJB0o/QffeIPQi24/sF6MmyMfBvgg=;
-        b=jN6E8yXc5xoWGQlTRj6GpLwwqsGiWaiIxqE1Zh5nrzEFQIzFY4CGWRPUfe6VyVqP9J
-         DydloqDrPcRZHzr11miN0O3druS5YveJGdYdsREt1rKHgni+Ae9mwCHzq8eTolPJwJbc
-         6lfx/429wyLkFEeMnX1Q09hhCu//IbqE2UDjsJX+bcbcaH2Gtv6xvb/rnYgReF1+YykD
-         lHJR/Fld2H2AsTv9P9L6VS8altaYprCTS8JsZZL8OWSkargAEMn8lrbHIiLlPtVoii9V
-         991Wb0vm6aEPbLC/F1PiEvw54R3Q/yw2/ppgQ9RkSatX9gA+ZbVABOQe3F/qr0fUQqJw
-         G37w==
-X-Gm-Message-State: ACrzQf1a+cfXQsdYZPwmnN2v6ZSszGTEzvBHJY/nuzF00G6X4QmfAD+p
-        qm+UjnptC4AbbGDndhEyMLLENULImiIcP9WzoptFMDDQpnGEIB6BDOvS6TX3WkBzCvOsEuVRwCe
-        g5e6LmtGbex1LUJbZTL8prCdBXJWsdjI=
-X-Received: by 2002:a05:600c:46ce:b0:3c6:f274:33b2 with SMTP id q14-20020a05600c46ce00b003c6f27433b2mr7860181wmo.27.1667218947037;
-        Mon, 31 Oct 2022 05:22:27 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM4zVdpLNc1mYDp74XAWVtjpPddzcwMDONTh4D+G0X15w3fKqsphKr/pP9hn5PrcknLAkhJ5Mg==
-X-Received: by 2002:a05:600c:46ce:b0:3c6:f274:33b2 with SMTP id q14-20020a05600c46ce00b003c6f27433b2mr7860165wmo.27.1667218946788;
-        Mon, 31 Oct 2022 05:22:26 -0700 (PDT)
+        bh=VQCx1YM0kmrgAAcvKhWafunY3KuhCAquKBUmZJVCfV8=;
+        b=Fwply7TJQz77uzFvIpusfHEXhz7enIrOLbvZVwmoF+b4XyjpadIwDQTJLVI+hKyhgb
+         phvi12vT9NWh++0bHBDY7GARwQY19JusjSBlxw/2SfRjGKO2A//tFmObT0hUZtRWLIeV
+         YPWyoKiA6RvLxTgLFMfV+02nzMnTnZHZBObJwGlEFgwjt/X6I9VpsBKxPlgPaDym+jiE
+         Gx+OKBwrFzqILOSh3gbHcMluFQA2FEhktgmwM8/1Evl7W60hnh/Ei5diaZtyAHyLEszy
+         y66syjFqMDmXwhYAQYB2wqahiJabA//Q4ZeMkMDzVke+oCE+EYUOh4Uto8fcv8jz/cft
+         6Xbg==
+X-Gm-Message-State: ACrzQf1CsaZHb7PlLDA1GlXtWU6SFs6HHeGMXDT4kuFHZtFxOM2AX96+
+        vuJBpEfgluAW6DVlBU13MZJmdR1664+8efmrDWudxk5ceQq4iK/dA0AZX3uMKiLf+P2rgJ05LWt
+        sZhtLgc2lFexY8WIHVa7v6C+RtHCLMag=
+X-Received: by 2002:adf:aa8d:0:b0:236:588f:71f with SMTP id h13-20020adfaa8d000000b00236588f071fmr7582877wrc.205.1667218998716;
+        Mon, 31 Oct 2022 05:23:18 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM7e34dAcxvP3Vi0CwbwP1YeMi235O6q6VyKCYvEf93eDT38FEWiyAv5s+MTc8QNv7Bgz3ny/w==
+X-Received: by 2002:adf:aa8d:0:b0:236:588f:71f with SMTP id h13-20020adfaa8d000000b00236588f071fmr7582855wrc.205.1667218998538;
+        Mon, 31 Oct 2022 05:23:18 -0700 (PDT)
 Received: from [192.168.1.130] (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id f16-20020a05600c4e9000b003cf568a736csm5157904wmq.20.2022.10.31.05.22.25
+        by smtp.gmail.com with ESMTPSA id ci8-20020a5d5d88000000b0023662245d3csm7011927wrb.95.2022.10.31.05.23.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Oct 2022 05:22:26 -0700 (PDT)
-Message-ID: <ea046b06-fb0e-b7c2-8f70-b299401d9adf@redhat.com>
-Date:   Mon, 31 Oct 2022 13:22:24 +0100
+        Mon, 31 Oct 2022 05:23:18 -0700 (PDT)
+Message-ID: <63a804b4-ab2c-f5b7-73b5-edefdeff038e@redhat.com>
+Date:   Mon, 31 Oct 2022 13:23:16 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.1
-Subject: Re: [PATCH v2 10/21] drm/tve200: Include <linux/of.h>
+Subject: Re: [PATCH v2 11/21] drm/fb-helper: Cleanup include statements in
+ header file
 Content-Language: en-US
 To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
         airlied@gmail.com, sam@ravnborg.org, mripard@kernel.org,
@@ -83,9 +84,9 @@ Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org
 References: <20221024111953.24307-1-tzimmermann@suse.de>
- <20221024111953.24307-11-tzimmermann@suse.de>
+ <20221024111953.24307-12-tzimmermann@suse.de>
 From:   Javier Martinez Canillas <javierm@redhat.com>
-In-Reply-To: <20221024111953.24307-11-tzimmermann@suse.de>
+In-Reply-To: <20221024111953.24307-12-tzimmermann@suse.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -93,10 +94,11 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 10/24/22 13:19, Thomas Zimmermann wrote:
-> Include <linux/of.h> for of_match_ptr().
+> Only include what we have to.
 > 
 > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 > ---
+Nice cleanup.
 
 Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
