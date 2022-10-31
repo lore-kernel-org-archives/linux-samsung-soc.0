@@ -2,111 +2,104 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A179FA3744
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Oct 2022 13:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FD5FA3746
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Oct 2022 22:08:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230024AbiJaN2U (ORCPT
+        id S229487AbiJaWIX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 Oct 2022 09:28:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36628 "EHLO
+        Mon, 31 Oct 2022 18:08:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229839AbiJaN2T (ORCPT
+        with ESMTP id S229619AbiJaWIW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Oct 2022 09:28:19 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BFFB1004D
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Oct 2022 06:27:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667222838;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GwqNSS0OJIleR6uoXEXg4AgYpmJqcWP2KGT201SIVMg=;
-        b=W0vqrJETrrXTqQoG3vpBmoqKSRrJS1/Jq7LTpPu+mO9deitZfgbdUDFUfCZ5bixBYlMIUZ
-        GrDC02uosAahqXIn6bqCVSZB6T87vh0yNDdytr1uBX2vmgQpsTb5GxCpQz186gv0yM5s91
-        Ju+RHUdGinbYv4UwP1yzMQLflk8HTSQ=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-73-ZQaxPrfgM8Wz2XZ6wBmavA-1; Mon, 31 Oct 2022 09:27:17 -0400
-X-MC-Unique: ZQaxPrfgM8Wz2XZ6wBmavA-1
-Received: by mail-wr1-f70.google.com with SMTP id e13-20020adf9bcd000000b00236b36cd8cbso1577965wrc.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Oct 2022 06:27:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GwqNSS0OJIleR6uoXEXg4AgYpmJqcWP2KGT201SIVMg=;
-        b=qGDm1kaD2A3krDNGFp17wPGnG7FxtLdJj3egphTyMJiN8E2p0CDgG6R4Sz6lAfBplu
-         +EDaNVwcB+8jV3Od3RK6EyeO4K2ltw2X325QqFM/RM9iLRxE+EKjQp9CXbUYmgMk+LSL
-         nrxLGOjUg9MPHMBao6QlB6xngoDVVYxCXF43brmV4xcJ9a/B76UmGMRJGCThukG8pbAO
-         oPNV2jYwOFVj/ehBZ/pcigBeeYFgQC2v436rJERtNSwdtMXhCy0z+DUn/yYYXtzO9df9
-         /+pA7lVN4lXDQV3nAkUcrQa1EQYk0tISSKnn8uHu2h1VtUpxfHoro/ulrKnfY/jw6TW5
-         QVvg==
-X-Gm-Message-State: ACrzQf2M3366hJ/blwM0dQDvpbqI3x5D5xYcvgnkOoSeYTWzMVKZcmkP
-        W0dWZ/iJBf7o4K5gPZFQKkVh6NJhbgAI+hw88PGCTZQ9mB2rRiczU8j4Ce8wCuzlfNwI8pmFs1n
-        tF6g84/77vMrpgWdYx+YfO98H11bQxU8=
-X-Received: by 2002:adf:ec8a:0:b0:236:5b80:da83 with SMTP id z10-20020adfec8a000000b002365b80da83mr7858612wrn.509.1667222835964;
-        Mon, 31 Oct 2022 06:27:15 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM4XoYVkE5jE7vlhuKQ/BuqMv6qQj/pE66jVA36/qVXv1WZdIDiMFN0/ixJs2zjwBzGxtBPgyA==
-X-Received: by 2002:adf:ec8a:0:b0:236:5b80:da83 with SMTP id z10-20020adfec8a000000b002365b80da83mr7858599wrn.509.1667222835772;
-        Mon, 31 Oct 2022 06:27:15 -0700 (PDT)
-Received: from [192.168.1.130] (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id bg37-20020a05600c3ca500b003b477532e66sm25116881wmb.2.2022.10.31.06.27.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Oct 2022 06:27:15 -0700 (PDT)
-Message-ID: <0fe3974c-de66-9eaa-b56a-ed1d07644e4c@redhat.com>
-Date:   Mon, 31 Oct 2022 14:27:13 +0100
+        Mon, 31 Oct 2022 18:08:22 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D305725D;
+        Mon, 31 Oct 2022 15:08:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net; s=s31663417;
+        t=1667254076; bh=VveKbMG/LTeQaxRP8VX1jI0G0ua9jD0BD6rfLDH/y98=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=sP4CweUGFldYkPrWsc+3fdSmFaSTIOLYa7Bgd1XTvLX6MnXXUmZQm4Ur/EvHVsi5t
+         nbYgNmKvkDf9qxdWbnmyLKyCcDWBcQQGpw+6YTUv2RKQmsW5e9qz/vWf8dzisCgqpb
+         BCvH3aSuzuBTZI54n9cBz2MDPZIMg0sn5JFOUHVA47StxKAVxMtuUKqNka2iyV54NN
+         mks5m7dcIPD+Owh/fYQgWda3SKSM1RSA/aKoZapdRzA4sqBJQTV2LwcMR6GQbyr6ts
+         qkD4+8tygQNex9my9491VWXHHU0R4tHwIA/facv+hBL01yvCTAsqK87PUXDlruppbl
+         PUBa7o0MpqZlw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from probook ([78.35.189.154]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MWAOQ-1oWMrO0hWE-00XeGW; Mon, 31
+ Oct 2022 23:07:56 +0100
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-clk@vger.kernel.org
+Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: samsung: Fix reference to CLK_OF_DECLARE in comment
+Date:   Mon, 31 Oct 2022 23:07:51 +0100
+Message-Id: <20221031220751.158341-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH v2 14/21] drm/fb-helper: Rename
- drm_fb_helper_unregister_fbi() to use _info postfix
-Content-Language: en-US
-To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
-        airlied@gmail.com, sam@ravnborg.org, mripard@kernel.org,
-        maarten.lankhorst@linux.intel.com
-Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-aspeed@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        spice-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-References: <20221024111953.24307-1-tzimmermann@suse.de>
- <20221024111953.24307-15-tzimmermann@suse.de>
-From:   Javier Martinez Canillas <javierm@redhat.com>
-In-Reply-To: <20221024111953.24307-15-tzimmermann@suse.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:j5Emc8TafbsF2QWUEXsuiBD6yXMpy+wKwVPFFwFvU3Zh8C+CfRF
+ h1keTk4bH98w1t+4AbGCbiggaJDXvvFAjkP696LacxG9NuEHiVBTRVXBPlMfKkis1417Ab2
+ zlPVbgbbI/dKXInlEd/YiF0NQiJbxNMnqBMmaSIErWguIn/U8n2whZ9ERDCP/OnBUXifQ/s
+ IBG+iYlWuJdkcCw/x7AVg==
+UI-OutboundReport: notjunk:1;M01:P0:vg87klxitfo=;mH/hOW9HM30y8XcYhkyU5YF5z8l
+ CuldXJj+yBuKqHrG/f6gNkXZOz3aDm47AxQ2Y+0Cog5x1jWGeUKEEEjDHN7ENxPkTpmdYGRj2
+ cTfqCmaxuLeY3M9ha7TC5qHUGZP4QclOD1wPprHkBhJmCL44zbgLT+rScSzVB6l1x74JIiGRD
+ 8NW4+X4IvNjI5bC0uYGgw6YAaAuH1e3Kv8jwpv4On/U9HL3ZuYm+W4GlYIdJElV6FdKmZ9bVQ
+ gN2EEjhzgO+mM+vGjqk13TWkeIjMK7wLpvxnnP0CGRrkQXTtD2GgevtV/RT7kP56mFxnAS0cp
+ v/AeiGs/X3p0XeOXgquPtM93KsvcdG2V4Ri6KDtv5wBrLj1JEjpTnUjUi/QIei7G55MGmteVH
+ bQQ8WzUra46dITtmSXa55bBHBJzt5p2VZ3h+j/749sJ0p7vpXFJD30UJHJnboURm+vuwyMqN/
+ 2lH4AVRmG4W/X8SbBHJ8XF/uwZ9c+MdeT75RGavMAmyNP0uNbe+8Ah28pMEG8YiT+x16gt5Ij
+ o8jMSjxVuW6E0OaqbysR7aiIs47DEkoi23YIL6hBM8LcecPki4mpBIIP+Q0411akjdrUWmo2E
+ pwFqnHH1lbbw8OY4JoHO2N0YBu2uOePhn/HzKUwloFUjV4OuIhZ305kuqiSHfamVGO74ArPJA
+ v2ZimHm24GECRSOQKvmrAOKkCtRMeZxgUO30eMyXYPLSJbAPHsSYdcFAKW/jxvmfAiE5Fq4i1
+ UcGNODo3zBJwzX3XWyzL/GC+tZrBFyK65BIzGltyXS+GrUFzke7hfiA6XazI5IgMisP4rB6Ls
+ j8BXjx5cUGlQIAmDNrweB4RMVkhM2GXC9bG1K0yL85rw8MhjSpqyu3Rdw95H+K6OA2cmhXJTa
+ iIQvRTpugRX+evRbT5XWudKa5Kn/LJl+2YT34ZzmbnFIBh4SAE71aMzC86KmIDPumSBo3fJKF
+ 0Zb8ww==
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 10/24/22 13:19, Thomas Zimmermann wrote:
-> Rename drm_fb_helper_unregister_fbi() to drm_fb_helper_unregister_info()
-> as part of unifying the naming within fbdev helpers. Adapt drivers. No
-> functional changes.
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
+It was misspelled as OF_CLK_DECLARE. Fix it.
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
+ drivers/clk/samsung/clk-exynos5-subcmu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
--- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsun=
+g/clk-exynos5-subcmu.c
+index 65c82d922b05c..96d74bc250e5d 100644
+=2D-- a/drivers/clk/samsung/clk-exynos5-subcmu.c
++++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
+@@ -47,10 +47,10 @@ static void exynos5_subcmu_defer_gate(struct samsung_c=
+lk_provider *ctx,
+ /*
+  * Pass the needed clock provider context and register sub-CMU clocks
+  *
+- * NOTE: This function has to be called from the main, OF_CLK_DECLARE-
++ * NOTE: This function has to be called from the main, CLK_OF_DECLARE-
+  * initialized clock provider driver. This happens very early during boot
+  * process. Then this driver, during core_initcall registers two platform
+- * drivers: one which binds to the same device-tree node as OF_CLK_DECLAR=
+E
++ * drivers: one which binds to the same device-tree node as CLK_OF_DECLAR=
+E
+  * driver and second, for handling its per-domain child-devices. Those
+  * platform drivers are bound to their devices a bit later in arch_initca=
+ll,
+  * when OF-core populates all device-tree nodes.
+=2D-
+2.35.1
 
