@@ -2,49 +2,49 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6979BC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Nov 2022 11:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E85EFA3743
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Nov 2022 11:31:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230235AbiKAL15 (ORCPT
+        id S230501AbiKALbW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 1 Nov 2022 07:27:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34744 "EHLO
+        Tue, 1 Nov 2022 07:31:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230182AbiKAL1l (ORCPT
+        with ESMTP id S230410AbiKALbC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Nov 2022 07:27:41 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D19118B0A;
-        Tue,  1 Nov 2022 04:27:40 -0700 (PDT)
+        Tue, 1 Nov 2022 07:31:02 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C4F819026;
+        Tue,  1 Nov 2022 04:29:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DFD8CB81CA2;
-        Tue,  1 Nov 2022 11:27:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD559C4347C;
-        Tue,  1 Nov 2022 11:27:36 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id AFBBECE1B32;
+        Tue,  1 Nov 2022 11:29:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F3D6C433C1;
+        Tue,  1 Nov 2022 11:29:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667302057;
-        bh=ZGKCWIJtIoTc/0D3wapeparC4CIoSlk/PVPHoM3wg8k=;
+        s=k20201202; t=1667302168;
+        bh=7PwGxb7r347LjxhB4O5/10fNOWAkErVJVpC0gzC3rw8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EwKfcDa4OUvKS8HWbYQvolvXAgY6i49hNq34t644iMdPlMVoctCNGrf8dm+cNnpUF
-         s6RPchHPaTZ3+zS/pzPtP0QNSr1fsVjan8HwxZxjdcO3q9zMKYEwqMfbhW4pYGHj+5
-         XholcDoEOqr8OUb+FnApJ85HnDVFtKC3gCP96q4GV93tiAdL1zifphl0+JnsH0ibQ0
-         3EQDSb2c7LRqUpEq9DHBdHDaA/CslqaqATseXZ8aS/p4T/d6zlrsVh1emkzPrvaNRY
-         boSZsTmaTT1LC3PC5lQWJSbymw/T6h0dM5QpVaSi14nluI2T8HjZhs2/2CPkCv0iyU
-         3FPFsc19guzlA==
+        b=vRaGlmNt81K5CjqDJX04w5soeTpVrPheIvf3ehoJcA1FNCJ1hHaJwGhV8mnGe46EW
+         N4DByIxJB3Ey98ub8NBy5SfBBG+th3tSfyFWpN/Iz0dyzL2+uVE7+ai3ISSPAQKw6H
+         Yxyo0E00dCWLhT8U+DrMPAIxsGLcQgMmggDC0U/+B4K1fSvcxmhOkX1J3nTRrj3pYt
+         49IZWb9nktnWHFtnfp5a0eFRPxKm4jgqqYqGVCbl83lsPldwQ4NlKroFhPrOjOyhoe
+         gT44m3ejH5jrh9qIitZC15tr/ATMXYJ1zJOaX6Xp5xWSCbwX9w60P60ja/mkSUQGE4
+         ycNYA3cAgYPqw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Sasha Levin <sashal@kernel.org>, m.szyprowski@samsung.com,
         linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.0 06/34] media: s5p_cec: limit msg.len to CEC_MAX_MSG_SIZE
-Date:   Tue,  1 Nov 2022 07:26:58 -0400
-Message-Id: <20221101112726.799368-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 05/19] media: s5p_cec: limit msg.len to CEC_MAX_MSG_SIZE
+Date:   Tue,  1 Nov 2022 07:29:05 -0400
+Message-Id: <20221101112919.799868-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221101112726.799368-1-sashal@kernel.org>
-References: <20221101112726.799368-1-sashal@kernel.org>
+In-Reply-To: <20221101112919.799868-1-sashal@kernel.org>
+References: <20221101112919.799868-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -68,7 +68,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/media/cec/platform/s5p/s5p_cec.c b/drivers/media/cec/platform/s5p/s5p_cec.c
-index ce9a9d922f11..0a30e7acdc10 100644
+index 028a09a7531e..102f1af01000 100644
 --- a/drivers/media/cec/platform/s5p/s5p_cec.c
 +++ b/drivers/media/cec/platform/s5p/s5p_cec.c
 @@ -115,6 +115,8 @@ static irqreturn_t s5p_cec_irq_handler(int irq, void *priv)
