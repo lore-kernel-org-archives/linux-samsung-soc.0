@@ -2,104 +2,84 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FD5FA3746
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Oct 2022 22:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6979BC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Nov 2022 11:28:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229487AbiJaWIX (ORCPT
+        id S230235AbiKAL15 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 Oct 2022 18:08:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57290 "EHLO
+        Tue, 1 Nov 2022 07:27:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229619AbiJaWIW (ORCPT
+        with ESMTP id S230182AbiKAL1l (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Oct 2022 18:08:22 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D305725D;
-        Mon, 31 Oct 2022 15:08:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net; s=s31663417;
-        t=1667254076; bh=VveKbMG/LTeQaxRP8VX1jI0G0ua9jD0BD6rfLDH/y98=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=sP4CweUGFldYkPrWsc+3fdSmFaSTIOLYa7Bgd1XTvLX6MnXXUmZQm4Ur/EvHVsi5t
-         nbYgNmKvkDf9qxdWbnmyLKyCcDWBcQQGpw+6YTUv2RKQmsW5e9qz/vWf8dzisCgqpb
-         BCvH3aSuzuBTZI54n9cBz2MDPZIMg0sn5JFOUHVA47StxKAVxMtuUKqNka2iyV54NN
-         mks5m7dcIPD+Owh/fYQgWda3SKSM1RSA/aKoZapdRzA4sqBJQTV2LwcMR6GQbyr6ts
-         qkD4+8tygQNex9my9491VWXHHU0R4tHwIA/facv+hBL01yvCTAsqK87PUXDlruppbl
-         PUBa7o0MpqZlw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from probook ([78.35.189.154]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MWAOQ-1oWMrO0hWE-00XeGW; Mon, 31
- Oct 2022 23:07:56 +0100
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linux-clk@vger.kernel.org
-Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: samsung: Fix reference to CLK_OF_DECLARE in comment
-Date:   Mon, 31 Oct 2022 23:07:51 +0100
-Message-Id: <20221031220751.158341-1-j.neuschaefer@gmx.net>
+        Tue, 1 Nov 2022 07:27:41 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D19118B0A;
+        Tue,  1 Nov 2022 04:27:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DFD8CB81CA2;
+        Tue,  1 Nov 2022 11:27:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD559C4347C;
+        Tue,  1 Nov 2022 11:27:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667302057;
+        bh=ZGKCWIJtIoTc/0D3wapeparC4CIoSlk/PVPHoM3wg8k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=EwKfcDa4OUvKS8HWbYQvolvXAgY6i49hNq34t644iMdPlMVoctCNGrf8dm+cNnpUF
+         s6RPchHPaTZ3+zS/pzPtP0QNSr1fsVjan8HwxZxjdcO3q9zMKYEwqMfbhW4pYGHj+5
+         XholcDoEOqr8OUb+FnApJ85HnDVFtKC3gCP96q4GV93tiAdL1zifphl0+JnsH0ibQ0
+         3EQDSb2c7LRqUpEq9DHBdHDaA/CslqaqATseXZ8aS/p4T/d6zlrsVh1emkzPrvaNRY
+         boSZsTmaTT1LC3PC5lQWJSbymw/T6h0dM5QpVaSi14nluI2T8HjZhs2/2CPkCv0iyU
+         3FPFsc19guzlA==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, m.szyprowski@samsung.com,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.0 06/34] media: s5p_cec: limit msg.len to CEC_MAX_MSG_SIZE
+Date:   Tue,  1 Nov 2022 07:26:58 -0400
+Message-Id: <20221101112726.799368-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20221101112726.799368-1-sashal@kernel.org>
+References: <20221101112726.799368-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:j5Emc8TafbsF2QWUEXsuiBD6yXMpy+wKwVPFFwFvU3Zh8C+CfRF
- h1keTk4bH98w1t+4AbGCbiggaJDXvvFAjkP696LacxG9NuEHiVBTRVXBPlMfKkis1417Ab2
- zlPVbgbbI/dKXInlEd/YiF0NQiJbxNMnqBMmaSIErWguIn/U8n2whZ9ERDCP/OnBUXifQ/s
- IBG+iYlWuJdkcCw/x7AVg==
-UI-OutboundReport: notjunk:1;M01:P0:vg87klxitfo=;mH/hOW9HM30y8XcYhkyU5YF5z8l
- CuldXJj+yBuKqHrG/f6gNkXZOz3aDm47AxQ2Y+0Cog5x1jWGeUKEEEjDHN7ENxPkTpmdYGRj2
- cTfqCmaxuLeY3M9ha7TC5qHUGZP4QclOD1wPprHkBhJmCL44zbgLT+rScSzVB6l1x74JIiGRD
- 8NW4+X4IvNjI5bC0uYGgw6YAaAuH1e3Kv8jwpv4On/U9HL3ZuYm+W4GlYIdJElV6FdKmZ9bVQ
- gN2EEjhzgO+mM+vGjqk13TWkeIjMK7wLpvxnnP0CGRrkQXTtD2GgevtV/RT7kP56mFxnAS0cp
- v/AeiGs/X3p0XeOXgquPtM93KsvcdG2V4Ri6KDtv5wBrLj1JEjpTnUjUi/QIei7G55MGmteVH
- bQQ8WzUra46dITtmSXa55bBHBJzt5p2VZ3h+j/749sJ0p7vpXFJD30UJHJnboURm+vuwyMqN/
- 2lH4AVRmG4W/X8SbBHJ8XF/uwZ9c+MdeT75RGavMAmyNP0uNbe+8Ah28pMEG8YiT+x16gt5Ij
- o8jMSjxVuW6E0OaqbysR7aiIs47DEkoi23YIL6hBM8LcecPki4mpBIIP+Q0411akjdrUWmo2E
- pwFqnHH1lbbw8OY4JoHO2N0YBu2uOePhn/HzKUwloFUjV4OuIhZ305kuqiSHfamVGO74ArPJA
- v2ZimHm24GECRSOQKvmrAOKkCtRMeZxgUO30eMyXYPLSJbAPHsSYdcFAKW/jxvmfAiE5Fq4i1
- UcGNODo3zBJwzX3XWyzL/GC+tZrBFyK65BIzGltyXS+GrUFzke7hfiA6XazI5IgMisP4rB6Ls
- j8BXjx5cUGlQIAmDNrweB4RMVkhM2GXC9bG1K0yL85rw8MhjSpqyu3Rdw95H+K6OA2cmhXJTa
- iIQvRTpugRX+evRbT5XWudKa5Kn/LJl+2YT34ZzmbnFIBh4SAE71aMzC86KmIDPumSBo3fJKF
- 0Zb8ww==
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-It was misspelled as OF_CLK_DECLARE. Fix it.
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-=2D--
- drivers/clk/samsung/clk-exynos5-subcmu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+[ Upstream commit 93f65ce036863893c164ca410938e0968964b26c ]
 
-diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsun=
-g/clk-exynos5-subcmu.c
-index 65c82d922b05c..96d74bc250e5d 100644
-=2D-- a/drivers/clk/samsung/clk-exynos5-subcmu.c
-+++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-@@ -47,10 +47,10 @@ static void exynos5_subcmu_defer_gate(struct samsung_c=
-lk_provider *ctx,
- /*
-  * Pass the needed clock provider context and register sub-CMU clocks
-  *
-- * NOTE: This function has to be called from the main, OF_CLK_DECLARE-
-+ * NOTE: This function has to be called from the main, CLK_OF_DECLARE-
-  * initialized clock provider driver. This happens very early during boot
-  * process. Then this driver, during core_initcall registers two platform
-- * drivers: one which binds to the same device-tree node as OF_CLK_DECLAR=
-E
-+ * drivers: one which binds to the same device-tree node as CLK_OF_DECLAR=
-E
-  * driver and second, for handling its per-domain child-devices. Those
-  * platform drivers are bound to their devices a bit later in arch_initca=
-ll,
-  * when OF-core populates all device-tree nodes.
-=2D-
+I expect that the hardware will have limited this to 16, but just in
+case it hasn't, check for this corner case.
+
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/cec/platform/s5p/s5p_cec.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/media/cec/platform/s5p/s5p_cec.c b/drivers/media/cec/platform/s5p/s5p_cec.c
+index ce9a9d922f11..0a30e7acdc10 100644
+--- a/drivers/media/cec/platform/s5p/s5p_cec.c
++++ b/drivers/media/cec/platform/s5p/s5p_cec.c
+@@ -115,6 +115,8 @@ static irqreturn_t s5p_cec_irq_handler(int irq, void *priv)
+ 				dev_dbg(cec->dev, "Buffer overrun (worker did not process previous message)\n");
+ 			cec->rx = STATE_BUSY;
+ 			cec->msg.len = status >> 24;
++			if (cec->msg.len > CEC_MAX_MSG_SIZE)
++				cec->msg.len = CEC_MAX_MSG_SIZE;
+ 			cec->msg.rx_status = CEC_RX_STATUS_OK;
+ 			s5p_cec_get_rx_buf(cec, cec->msg.len,
+ 					cec->msg.msg);
+-- 
 2.35.1
 
