@@ -2,144 +2,92 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 726A1C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Nov 2022 10:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A13C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Nov 2022 20:22:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229988AbiKBKrs (ORCPT
+        id S230056AbiKBUWD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Nov 2022 06:47:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34812 "EHLO
+        Wed, 2 Nov 2022 16:22:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229761AbiKBKrr (ORCPT
+        with ESMTP id S230510AbiKBUWB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Nov 2022 06:47:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66E3020BF7
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Nov 2022 03:46:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667386014;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=iUJvEUx8gtjx3iaw6xY22YZZMkx+Fxj3A7QQSAUB80Y=;
-        b=ehpNOtBTQYNpRQxkFDL8eV2nZHSnTO2m/wySfiT0kifuzaZ70oo1UGAmAmkJqR2bI9RtX8
-        D2X4tZtYaKVXyaG1H2Afs7i1EIMB3hSW1kweSKZC51t3fHsRnNaJmA3l62F4D6nlzSkqDI
-        wAG+1PoAYX/T3+wXnbJ7vMkdwhuHyK0=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-609-ncc7cL1hPH6c-Lnm7RcbXw-1; Wed, 02 Nov 2022 06:46:46 -0400
-X-MC-Unique: ncc7cL1hPH6c-Lnm7RcbXw-1
-Received: by mail-wm1-f69.google.com with SMTP id 1-20020a05600c028100b003cf7833293cso926221wmk.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Nov 2022 03:46:45 -0700 (PDT)
+        Wed, 2 Nov 2022 16:22:01 -0400
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27E5755A7
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Nov 2022 13:21:59 -0700 (PDT)
+Received: by mail-qt1-x82e.google.com with SMTP id c15so34560qtw.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Nov 2022 13:21:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lNJVosPNdci0vHdXGVs2cdHuEF7DCHwmyiOAOfe3bjg=;
+        b=aag3Q6rvohNiU2mvHEM/YNYMwiTlmVlXjpg2FkFSf2xvsl4jlUZe2s3GGDSTnb7Ule
+         1ztKxAm0hvppt+0TkbP9fVRWxWHq18cr2bQ34aEgoo1yYATiCBtrbt31+X46FHnC5S3t
+         fpJJ/7woPzc6EzA+DxDjwd1K0+HMUUXFmjdKKGGtcM9c2OM+S7SWdzldPaBwFJF6PGfV
+         oqnugcvbFdyJMMLqniuNW+3OBLz5Tfo9miucJN/UvRfQG8tYKbFOsGlA/fTq6c9UMWm6
+         mWybycEUQ+vnkYg8oqXmEp4PBrgxWQh/xrKqwhFZ3QtnJK/VzTITp9l6uyTz3Cr+dgDU
+         mcuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iUJvEUx8gtjx3iaw6xY22YZZMkx+Fxj3A7QQSAUB80Y=;
-        b=Bj1gZ9OiuHG93nUmEtLZykEpcv+dj//8+CsvCafOjdW5LfykDeX3WPnyssr7FrrfhO
-         Tp5DzidIOktGZoT1cPPWBv9nEVEp/q+yk3wVB4jdglHpYWkp5DdnYHuNGLUKnARt2r07
-         hckCGQT66ylkF7WPLYBnUxZQZIQ9m6OGh7WG0/7R9Iz0KWAVTfNXIRIX5bIxaFY7XIpQ
-         e5j7ClE+zfCw/7xnwsFL1fCTSDwQg4MOriM8hcvIXUWsLiTu9vi4r26NX7m+LmbouKzI
-         bab1LSS3nyLqm94HljhnS6UgmK/lNn342C+OGdEH8uiu3BYtc5N3Xo8jV/ainn+wsmla
-         Rmbg==
-X-Gm-Message-State: ACrzQf2TEF0hcPOuTVmJ5l3703GJ2y5dd26uhG/JF6eeWtZS/pr9dYgZ
-        FhstI+wYiovIdB65YlLEI6wUT4d7vwAQJGZQVOEINI7idHhLIkcUbvSXrhPWmnFUXVViP4AFY7h
-        xZFEU7apk8kTlA7vwZiRqEapA4VCDBM0=
-X-Received: by 2002:a05:600c:3556:b0:3ca:771d:701a with SMTP id i22-20020a05600c355600b003ca771d701amr14652020wmq.61.1667386004900;
-        Wed, 02 Nov 2022 03:46:44 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM5jzv0egtLEIAVaxEN/tayyZgqvKvq+1qzahuWoTfzpPIfJE04AyAO6MvJnCllXJsp0I0J18w==
-X-Received: by 2002:a05:600c:3556:b0:3ca:771d:701a with SMTP id i22-20020a05600c355600b003ca771d701amr14651998wmq.61.1667386004691;
-        Wed, 02 Nov 2022 03:46:44 -0700 (PDT)
-Received: from [192.168.1.130] (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id c18-20020a05600c0a5200b003b3365b38f9sm1701531wmq.10.2022.11.02.03.46.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Nov 2022 03:46:44 -0700 (PDT)
-Message-ID: <5abf94d6-9a48-525e-c562-605529c5793a@redhat.com>
-Date:   Wed, 2 Nov 2022 11:46:42 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH v2 17/21] drm/fb-helper: Perform all fbdev I/O with the
- same implementation
-Content-Language: en-US
-To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
-        airlied@gmail.com, sam@ravnborg.org, mripard@kernel.org,
-        maarten.lankhorst@linux.intel.com
-Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-aspeed@lists.ozlabs.org,
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lNJVosPNdci0vHdXGVs2cdHuEF7DCHwmyiOAOfe3bjg=;
+        b=2gg2X/hleRUps9OqgV1+RzORD8GDhg2yU3t8BBZ9EU9ynbhu0zPuEk7hISBUpI7o4E
+         VcZvRau9iO6gewHIwYrWOovMQXIwWeZho4SGjIwfgvpjNgxxJwTXTKU+cz588YAnhsnY
+         WqYZVIpRJY3r59tl6q+OwhxOQJang1qNZxGuRLQCfWs3vUDFh4hE1qUbJR3fy3ni2LI+
+         IetZA2Vrz62rdbrlBRctoHIGY1dm/3FFtrAhMOHEC9uyjHLdKCK7R9IXhBi5WYYYPmEe
+         I9K5nG67Wb1YJz8IRcZJXqfuYH0XRFXPZ0ESC/k9HSYTvx8zrlGJAv6cbUDX6o/hjqcd
+         ONKA==
+X-Gm-Message-State: ACrzQf3/M8bg//CT7/Do84h7OGOUrqjq0FZNENEDJLs5MJOSO/hAumEK
+        F2SU3P0bqzSyEITbJDidgAl6Ew==
+X-Google-Smtp-Source: AMsMyM55attEsYX0NHeDvMJiDWhSkZby8BQWWdMuvTRAlvzA5XgZG0q3sde2KYvGY5AfXLic9icfWQ==
+X-Received: by 2002:ac8:5245:0:b0:3a5:3e52:2d97 with SMTP id y5-20020ac85245000000b003a53e522d97mr7396482qtn.121.1667420518371;
+        Wed, 02 Nov 2022 13:21:58 -0700 (PDT)
+Received: from krzk-bin.. ([2601:586:5000:570:28d9:4790:bc16:cc93])
+        by smtp.gmail.com with ESMTPSA id f11-20020ac8498b000000b00399ad646794sm7119581qtq.41.2022.11.02.13.21.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Nov 2022 13:21:58 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Pierre Gondois <pierre.gondois@arm.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
-        etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        spice-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-References: <20221024111953.24307-1-tzimmermann@suse.de>
- <20221024111953.24307-18-tzimmermann@suse.de>
- <3ab32fc3-f2aa-1b42-fd87-557482ab56d5@redhat.com>
- <0ca70b76-c24a-4fdb-cf0d-2647d37379df@suse.de>
-From:   Javier Martinez Canillas <javierm@redhat.com>
-In-Reply-To: <0ca70b76-c24a-4fdb-cf0d-2647d37379df@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob.Herring@arm.com, linux-samsung-soc@vger.kernel.org
+Subject: Re: (subset) [PATCH 06/20] arm64: dts: Update cache properties for exynos
+Date:   Wed,  2 Nov 2022 16:21:55 -0400
+Message-Id: <166742051292.139492.12539582422109367063.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221031091945.531874-1-pierre.gondois@arm.com>
+References: <20221031091945.531874-1-pierre.gondois@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/2/22 11:33, Thomas Zimmermann wrote:
-
-[...]
-
->>
->>> +static ssize_t __drm_fb_helper_write(struct fb_info *info, const char __user *buf, size_t count,
->>> +				     loff_t *ppos, drm_fb_helper_write_screen write_screen)
->>> +{
->>
->> [...]
->>
->>> +	/*
->>> +	 * Copy to framebuffer even if we already logged an error. Emulates
->>> +	 * the behavior of the original fbdev implementation.
->>> +	 */
->>> +	ret = write_screen(info, buf, count, pos);
->>> +	if (ret < 0)
->>> +		return ret; /* return last error, if any */
->>> +	else if (!ret)
->>> +		return err; /* return previous error, if any */
->>> +
->>> +	*ppos += ret;
->>> +
->>
->> Should *ppos be incremented even if the previous error is returned?
+On Mon, 31 Oct 2022 10:19:45 +0100, Pierre Gondois wrote:
+> The DeviceTree Specification v0.3 specifies that the cache node
+> 'compatible' and 'cache-level' properties are 'required'. Cf.
+> s3.8 Multi-level and Shared Cache Nodes
 > 
-> Yes. It emulates the original fbdev code at [1]. Further down in that 
-> function, the position is being updated even if an error occured. We 
-> only return the initial error if no bytes got written.
+> The recently added init_of_cache_level() function checks
+> these properties. Add them if missing.
 > 
-> It could happen that some userspace program hits to error, but still 
-> relies on the output and position being updated. IIRC I even added 
-> validation of this behavior to the IGT fbdev tests.  I agree that this 
-> is somewhat bogus behavior, but changing it would change long-standing 
-> userspace semantics.
->
+> [...]
 
-Thanks for the explanation, feel free then to also add to this patch:
+Applied, thanks!
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+[06/20] arm64: dts: Update cache properties for exynos
+        https://git.kernel.org/krzk/linux/c/58710ae94589a2b2baaab6b6986064b691124b0d
 
--- 
 Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
-
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
