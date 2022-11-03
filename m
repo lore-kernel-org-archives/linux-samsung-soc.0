@@ -2,54 +2,54 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8240C4708E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Nov 2022 15:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4704EC4167D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Nov 2022 15:15:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231993AbiKCPO4 (ORCPT
+        id S232098AbiKCPO6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Nov 2022 11:14:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55104 "EHLO
+        Thu, 3 Nov 2022 11:14:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231898AbiKCPOy (ORCPT
+        with ESMTP id S232027AbiKCPOy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Thu, 3 Nov 2022 11:14:54 -0400
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 553E3F60;
-        Thu,  3 Nov 2022 08:14:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29FB25FA2;
+        Thu,  3 Nov 2022 08:14:54 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id B1A2821DCC;
-        Thu,  3 Nov 2022 15:14:51 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id AEA7821DE0;
+        Thu,  3 Nov 2022 15:14:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1667488491; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1667488492; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Z0wfNAEJd89nT4SyNUVt6p4RuNoCzMIzBFEMM4zIO5U=;
-        b=i8+DCMmnRejJUBw11UFIc7YVWo+wNl2Ude1Om07l7QVPjXzjv/q2TyhyT36qe2omb+DC52
-        PzMZ8AcArVHhs+jNBUYAtX05fXJhKe/Tru6HQuL3SzjND7bsnFhPaeM9+O5PhVhUPfz63G
-        coAzCVH9m1p9BvhdkBiv0gGmCw5oBE4=
+        bh=D7A0BT0Vh8AgLJUbTrGZC771i4laNkvN7+YXn/oSiXM=;
+        b=teaI80VNLtAMlz1n/ply3x2TwZGNebhz0A+J6/5WgOT2AF8S0bKZz1Vl5kBK8EMOKDCZ5X
+        48i1H/SQPsjDvzmwDmW/ZVQquMM4yYzsv3tYQDBndqq02yfm2e/rRgJb1X0+Fz80M03tZZ
+        ojfKdm26W/HeGJGMgxIi4rID1/OZTtc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1667488491;
+        s=susede2_ed25519; t=1667488492;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Z0wfNAEJd89nT4SyNUVt6p4RuNoCzMIzBFEMM4zIO5U=;
-        b=8Is+1fD2IaqB4CGmTpfRMWC03nC8mJwB00gGEQD1UClP1k1DS5h4SJl2pBqsrhOxtc42s5
-        OQ6nDjNmA7ogSBCw==
+        bh=D7A0BT0Vh8AgLJUbTrGZC771i4laNkvN7+YXn/oSiXM=;
+        b=jkXjgKm0Clu9GzzE9jAeZXIa5UvldCgq+ZLL8ukN/N/+Wb1G9RP4PPzj4gslAzEIUY+OVX
+        Cz9WQAA5z+R1alDw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2EC3013AAF;
-        Thu,  3 Nov 2022 15:14:51 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3EAE213AAF;
+        Thu,  3 Nov 2022 15:14:52 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id aIF1CuvaY2PBGgAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Thu, 03 Nov 2022 15:14:51 +0000
+        id OHhLDuzaY2PBGgAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Thu, 03 Nov 2022 15:14:52 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@gmail.com, sam@ravnborg.org,
         javierm@redhat.com, mripard@kernel.org,
@@ -69,9 +69,9 @@ Cc:     "linux-hyperv@vger.kernel.orglinux-hyperv"@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, freedreno@lists.freedesktop.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v3 04/23] drm/amdgpu: Don't set struct drm_driver.output_poll_changed
-Date:   Thu,  3 Nov 2022 16:14:27 +0100
-Message-Id: <20221103151446.2638-5-tzimmermann@suse.de>
+Subject: [PATCH v3 06/23] drm/ingenic: Don't set struct drm_driver.output_poll_changed
+Date:   Thu,  3 Nov 2022 16:14:29 +0100
+Message-Id: <20221103151446.2638-7-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.38.0
 In-Reply-To: <20221103151446.2638-1-tzimmermann@suse.de>
 References: <20221103151446.2638-1-tzimmermann@suse.de>
@@ -82,52 +82,31 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Don't set struct drm_driver.output_poll_changed. It's used to restore
-the fbdev console. But as amdgpu uses generic fbdev emulation, the
+the fbdev console. But as ingenic uses generic fbdev emulation, the
 console is being restored by the DRM client helpers already. See the
 functions drm_kms_helper_hotplug_event() and
 drm_kms_helper_connector_hotplug_event() in drm_probe_helper.c.
 
 v2:
-	* fix commit description (Christian)
+	* fix commit description (Christian, Sergey)
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_display.c       | 1 -
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 --
- 2 files changed, 3 deletions(-)
+ drivers/gpu/drm/ingenic/ingenic-drm-drv.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-index 1a06b8d724f39..dd6f9ae6fbe9f 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-@@ -1214,7 +1214,6 @@ amdgpu_display_user_framebuffer_create(struct drm_device *dev,
+diff --git a/drivers/gpu/drm/ingenic/ingenic-drm-drv.c b/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
+index ab0515d2c420a..99f86f1ba8bee 100644
+--- a/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
++++ b/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
+@@ -1018,7 +1018,6 @@ static const struct drm_bridge_funcs ingenic_drm_bridge_funcs = {
  
- const struct drm_mode_config_funcs amdgpu_mode_funcs = {
- 	.fb_create = amdgpu_display_user_framebuffer_create,
--	.output_poll_changed = drm_fb_helper_output_poll_changed,
- };
- 
- static const struct drm_prop_enum_list amdgpu_underscan_enum_list[] =
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 3c072754738d2..d58dd916488a1 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -82,7 +82,6 @@
- #include <drm/drm_atomic_uapi.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_blend.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_edid.h>
- #include <drm/drm_vblank.h>
-@@ -2810,7 +2809,6 @@ const struct amdgpu_ip_block_version dm_ip_block =
- static const struct drm_mode_config_funcs amdgpu_dm_mode_funcs = {
- 	.fb_create = amdgpu_display_user_framebuffer_create,
- 	.get_format_info = amd_get_format_info,
--	.output_poll_changed = drm_fb_helper_output_poll_changed,
- 	.atomic_check = amdgpu_dm_atomic_check,
- 	.atomic_commit = drm_atomic_helper_commit,
+ static const struct drm_mode_config_funcs ingenic_drm_mode_config_funcs = {
+ 	.fb_create		= ingenic_drm_gem_fb_create,
+-	.output_poll_changed	= drm_fb_helper_output_poll_changed,
+ 	.atomic_check		= drm_atomic_helper_check,
+ 	.atomic_commit		= drm_atomic_helper_commit,
  };
 -- 
 2.38.0
