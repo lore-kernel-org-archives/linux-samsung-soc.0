@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEA1C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Nov 2022 19:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5748C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Nov 2022 19:52:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229871AbiKCTwG (ORCPT
+        id S229672AbiKCTwH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Nov 2022 15:52:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45062 "EHLO
+        Thu, 3 Nov 2022 15:52:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230423AbiKCTwE (ORCPT
+        with ESMTP id S230473AbiKCTwE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Thu, 3 Nov 2022 15:52:04 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BC16201A8
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE45520341
         for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Nov 2022 12:52:02 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id r14so4683011edc.7
+Received: by mail-ed1-x529.google.com with SMTP id v27so4718008eda.1
         for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Nov 2022 12:52:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aXCO9a7x2xoJr3hX2LIdzuSb2rVW3qJQzBsWlbB8ZK0=;
-        b=nQGsSI60wh19jmS5rh2BuaBTcb5URMCprPZR1Qt20h8IGzb8IM4pplEyq6DQ3Q+n0C
-         h5qaEV3zI/t4vLs0Je8PEyDomt+aBsAELhfOyIdRwQBWKObdhTH3xshRT9xXWpIwrTjW
-         l5TryGbITzNYIzK155TRxE63/dj/a/V9XNmyzurtcNFQs5g6emh1Mp2+GdixLYxcuJNU
-         hrOdEkVQM6OG83HiAUYRvmpIgGmU8Msf9q5a6Kti8Fnah1eeJ5JWaQgmgO+n2dgM1PIP
-         Uq2NJ6bEBBQFVVXElJ10vvwkVK4BE96g5CeDj+Ro58KWu7BsrOA/CqM/hHL9mbNNkYTP
-         cJkw==
+        bh=8GteW77xtmVFSxJeOH5lkPz2xCnVHhXZ4689sF4PXr4=;
+        b=XS+nYmWGxVzp8b3+Ikv2y44FFDaFheYgYIbiPVlgn49mfTqtgEsOyaHPJ3r/p5B3tt
+         Nt5dBpQKml2iwalKxnRphnFIG/LSj40LX/DzeEwbsW5Dg19uBCqt/dPpJ2mM/QlxNP0t
+         ViMsoPF0uR0Y3DKOyO063X/SvB/Y+eaqBrfHolnwX/6pjNtDDh3k1wIWEqvSHb7fE5B7
+         BIhEjckfBLuXmH/TBcTQHGLPIYq+oavrnSOxXg6z7utaTTQs+wYLNmcNTZ/7g3YeuT0q
+         LHdaXBVv5HYmGiczZ9CUEcLy03QRnuty4MISIWcoLtHL7iaGIIQ20TYEJGlpEADAFiA4
+         Gw+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aXCO9a7x2xoJr3hX2LIdzuSb2rVW3qJQzBsWlbB8ZK0=;
-        b=Vucesr3b4JnP5RyGmgz6DEW3jiUSkWQKAtEABwj++aSIdWlO43S2ppeDIX6Y2mIQL/
-         zg0dM7ysLbe0QCU/jRC1rwsAJpVU/4cpPZOG2YeZFBrvMW4xCcEnvMCMtnidxIB/IbmM
-         dsbshtKdU31x/AsI48hTe7S79sC+9AJGOKKvfq85wo5Eot+B1C+ab6QNcWp7oeeLEmsQ
-         JUM2kygMKRjuaymyFFDCJAhbNayeBi20JWTfXUEhL5jD6N69MwZhFQt1KHZARFvsJKNX
-         FJaMZ0dBORb6FjZVVG4mL/Qql/aOJX2GSK0Kr3vLEKNEkuHGCk9Dy883Yl5TNt7kCT6K
-         g/WQ==
-X-Gm-Message-State: ACrzQf0MBweUvd02OTxKqRDZzQxB8q/S8jh519q01dTf+nZCUbQQKetq
-        cjMIf79WD8c1UFBfizaJWKf61w==
-X-Google-Smtp-Source: AMsMyM6GuGLXLDhRmMnsQt0YiPv3zTLETFhVFIZP2Bap/XDV65f5mB5C1KHbKH7MNTJRJt+lwpbmlA==
-X-Received: by 2002:a05:6402:440f:b0:45d:297b:c70a with SMTP id y15-20020a056402440f00b0045d297bc70amr31990965eda.187.1667505121017;
-        Thu, 03 Nov 2022 12:52:01 -0700 (PDT)
+        bh=8GteW77xtmVFSxJeOH5lkPz2xCnVHhXZ4689sF4PXr4=;
+        b=IJsVC2WinUqCy5rDTfZ8NCSuXZcH/mJVVv/QLs3uZIXvhxc9lDLKt3SRA1nBgO5j4G
+         jHz3sEMmuEtU1X43BDvjswWLpIYVcUPRx53nYebSv5rGn4svYEZo/zb1dSpdZzzgtewh
+         mET6FrwB6W/453+Djkxuu4YogLXXSH6zWcV4Yw4h0jzErwMdx29uNLmigcCUo65H7Hr/
+         SibVstMA4/PsXAHByQJ1QMk1NmUa+0cxFuLLRlfz5PhyRRtQhr0L98wblvUJ2lqnmVvp
+         +rTXTQM6HFpCgvsDNYRgTE64q87pOk5IWNOFswrPwEUDgcarQ6nr3HcNr/LyyMJA/MPc
+         O9Qw==
+X-Gm-Message-State: ACrzQf2EfHEnj9EHjolIb/CrWDK/KYZSVtSAUsdgFfmRllrmXp009pM2
+        xbGFacmzxizgM2U6Hp99ImfmUQ==
+X-Google-Smtp-Source: AMsMyM4DNEi7YFpsAkwoRPewFN1jOqD6yNDTR6Aqxrw0T9uOy1Ku99Cu3zusUZikSVaqJSi9fToi2A==
+X-Received: by 2002:a05:6402:1f06:b0:457:149d:beaa with SMTP id b6-20020a0564021f0600b00457149dbeaamr31567406edb.238.1667505122589;
+        Thu, 03 Nov 2022 12:52:02 -0700 (PDT)
 Received: from localhost (cgw.msart-bajzova4.ke.cust.o2bs.sk. [90.176.4.227])
-        by smtp.gmail.com with ESMTPSA id g16-20020a170906539000b007ad98918743sm880137ejo.1.2022.11.03.12.52.00
+        by smtp.gmail.com with ESMTPSA id m4-20020a1709062b8400b0078c213ad441sm864087ejg.101.2022.11.03.12.52.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Nov 2022 12:52:00 -0700 (PDT)
+        Thu, 03 Nov 2022 12:52:02 -0700 (PDT)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
@@ -64,9 +64,9 @@ Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         David Virag <virag.david003@gmail.com>, iommu@lists.linux.dev,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 3/6] iommu/exynos: Modularize the driver
-Date:   Thu,  3 Nov 2022 20:51:51 +0100
-Message-Id: <20221103195154.21495-4-semen.protsenko@linaro.org>
+Subject: [PATCH v2 4/6] iommu/exynos: Implement shutdown driver method
+Date:   Thu,  3 Nov 2022 20:51:52 +0100
+Message-Id: <20221103195154.21495-5-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221103195154.21495-1-semen.protsenko@linaro.org>
 References: <20221103195154.21495-1-semen.protsenko@linaro.org>
@@ -76,85 +76,48 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Rework the driver so it can be built as a loadable module. That can be
-useful as not all ARM64 platforms need it. And that's ok for it to be a
-module because it's not a critical driver (platform can work when it's
-disabled).
-
-Remove method and module exit function are not implemented, as the
-removal of IOMMUs cannot be done reliably. As Robin Murphy mentioned in
-[1]:
-
-    ...it's better not to even pretend that removing an IOMMU's driver
-    while other drivers are using it (usually via DMA ops without even
-    realising) is going to have anything other than catastrophic
-    results.
-
-[1] https://lore.kernel.org/lkml/20220702213724.3949-2-semen.protsenko@linaro.org/T/#md7e1e3f5b2c9e7fa5bc28fe33e818b6aa4a7237c
+While remove method shouldn't be implemented, as it can't be done
+reliably, the shutdown method can be useful for performing a kexec.
+That was inspired by other IOMMU drivers, see commit 1a4e90f25b2c
+("iommu/rockchip: Perform a reset on shutdown") for example.
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
 Changes in v2:
-  - Add MODULE_DEVICE_TABLE(of, ...) to support hot-plug loading
-  - Add MODULE_ALIAS() line
-  - Extracted "shutdown" driver method adding into a separate patch
+  - New patch
 
- drivers/iommu/Kconfig        | 2 +-
- drivers/iommu/exynos-iommu.c | 9 ++++++++-
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ drivers/iommu/exynos-iommu.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index dc5f7a156ff5..6f7055606679 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -259,7 +259,7 @@ config TEGRA_IOMMU_SMMU
- 	  SoCs (Tegra30 up to Tegra210).
- 
- config EXYNOS_IOMMU
--	bool "Exynos IOMMU Support"
-+	tristate "Exynos IOMMU Support"
- 	depends on ARCH_EXYNOS || COMPILE_TEST
- 	depends on !CPU_BIG_ENDIAN # revisit driver if we can enable big-endian ptes
- 	select IOMMU_API
 diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 0d150b383d04..aad845677bda 100644
+index aad845677bda..cd3f74e638f0 100644
 --- a/drivers/iommu/exynos-iommu.c
 +++ b/drivers/iommu/exynos-iommu.c
-@@ -16,6 +16,7 @@
- #include <linux/interrupt.h>
- #include <linux/kmemleak.h>
- #include <linux/list.h>
-+#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
-@@ -798,8 +799,9 @@ static const struct of_device_id sysmmu_of_match[] = {
- 	{ .compatible	= "samsung,exynos-sysmmu", },
- 	{ },
- };
-+MODULE_DEVICE_TABLE(of, sysmmu_of_match);
- 
--static struct platform_driver exynos_sysmmu_driver __refdata = {
-+static struct platform_driver exynos_sysmmu_driver = {
- 	.probe	= exynos_sysmmu_probe,
- 	.driver	= {
- 		.name		= "exynos-sysmmu",
-@@ -1404,6 +1406,7 @@ static const struct iommu_ops exynos_iommu_ops = {
- 	.release_device = exynos_iommu_release_device,
- 	.pgsize_bitmap = SECT_SIZE | LPAGE_SIZE | SPAGE_SIZE,
- 	.of_xlate = exynos_iommu_of_xlate,
-+	.owner = THIS_MODULE,
- 	.default_domain_ops = &(const struct iommu_domain_ops) {
- 		.attach_dev	= exynos_iommu_attach_device,
- 		.detach_dev	= exynos_iommu_detach_device,
-@@ -1454,3 +1457,7 @@ static int __init exynos_iommu_init(void)
+@@ -753,6 +753,16 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
  	return ret;
  }
- core_initcall(exynos_iommu_init);
+ 
++static void exynos_sysmmu_shutdown(struct platform_device *pdev)
++{
++	struct sysmmu_drvdata *data = platform_get_drvdata(pdev);
++	struct device *dev = &pdev->dev;
++	int irq = platform_get_irq(pdev, 0);
 +
-+MODULE_DESCRIPTION("IOMMU driver for Exynos SoCs");
-+MODULE_ALIAS("platform:exynos-sysmmu");
-+MODULE_LICENSE("GPL");
++	devm_free_irq(dev, irq, data);
++	pm_runtime_force_suspend(dev);
++}
++
+ static int __maybe_unused exynos_sysmmu_suspend(struct device *dev)
+ {
+ 	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
+@@ -803,6 +813,7 @@ MODULE_DEVICE_TABLE(of, sysmmu_of_match);
+ 
+ static struct platform_driver exynos_sysmmu_driver = {
+ 	.probe	= exynos_sysmmu_probe,
++	.shutdown = exynos_sysmmu_shutdown,
+ 	.driver	= {
+ 		.name		= "exynos-sysmmu",
+ 		.of_match_table	= sysmmu_of_match,
 -- 
 2.35.1
 
