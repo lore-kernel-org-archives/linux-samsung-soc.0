@@ -2,152 +2,101 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F8EC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Nov 2022 09:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F392C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Nov 2022 13:05:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbiKCJjU (ORCPT
+        id S231318AbiKCNFE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Nov 2022 05:39:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52644 "EHLO
+        Thu, 3 Nov 2022 09:05:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229551AbiKCJjT (ORCPT
+        with ESMTP id S230139AbiKCNEk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Nov 2022 05:39:19 -0400
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25C7410B5
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Nov 2022 02:39:18 -0700 (PDT)
-Received: by mail-io1-xd2a.google.com with SMTP id p141so855068iod.6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Nov 2022 02:39:18 -0700 (PDT)
+        Thu, 3 Nov 2022 09:04:40 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFFA5D60
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Nov 2022 06:03:20 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id c15-20020a17090a1d0f00b0021365864446so1719431pjd.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Nov 2022 06:03:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
+        d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=z2aDcE30KF6HV9WFix/WfXdq/qSSwshUhyx5dJXQkJ4=;
-        b=ELGro+sn5jcjR2FNxoF403hqzoOVhYjmyRb40ZXG/98xaiPxbusLsic81F/WmeymwB
-         JW0/DhP0LvbnEX27TeOd9OqLbxsr7eZRkSPq+jxyDpGGd5cH1my7Ywna2d7/2MRjQeVq
-         wm5dL8WocJMLbQzEiBc8o5suTCMzcbV7fL4Q8=
+        bh=sCUBB08PoVZ26bcT4Cxprl0+CgnyFaSro8o/etFxILQ=;
+        b=NMOF7LMrwGZkM4Tpc29C7h3cTqZFKOVJ3vIia5vjFEJJ4H7B5PBOcPyzkq455HN7gk
+         FTmv3c9jmCde5kxbFdR10ZoLz4a0JGb7Znsy/G7IW3aeadZOKKCIwmKa6neDPb/+PMlQ
+         G5q3pQ/DzKlFHkwEqE1EWRBb8h1BN/hw2oOsWTTcIxbTC8Rbh0h6JO5zsVlRMtfDcPmG
+         EwsBA48uyosKZ2jbVe5iAc8agQJkePiVass7YVRzKWxPROkBwJrrtbt0YtPlspLlftVk
+         CaAE3bU5N7T2BznUtAq+AbzJjt2hmk0sVJOfygsa2zvm6OklRDJ4p1kusTQunUxAS2Uc
+         +2fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=z2aDcE30KF6HV9WFix/WfXdq/qSSwshUhyx5dJXQkJ4=;
-        b=38FJSsuXNJZehtumbjWCPVaHTT1q+tF+ZHmBB4h6ACpXt6lk7e7uIokmXHE5hpTCju
-         4JdpcDl7K0G/mpiPazBmD8mdsRk/106MkioZoNm3zPriBu7tTKgIUnepQQ57BC+uPmUb
-         9ABIuctRdjh9axKKA/oTpMDsOPDmgUOwNShB0DAeoRzA4FazBeZSlxkCExPG/i0fBHXS
-         hybXdS9EHAE/cxvlt0S9uLRoCKNuVCRCVp87KVooeN8+McOFgX6KzQHuIufuJEC3cMrA
-         bi/Zbr08VTq2gZ1zNanf8n58N9yNZFGd7OHAuDlsvEYlgSw0u3+TqeQvuk3/HiqQhwbw
-         P5bA==
-X-Gm-Message-State: ACrzQf2Io19yZM6eZz/5/cFpKuWsV3nwtYgSID729CqKm9zW1xytIjPU
-        WWma/wIzpwl++ynMHpobU0jbzVepzWpGYsdlUYxoWA==
-X-Google-Smtp-Source: AMsMyM7i1cJ1adfQWknZqHerOPoSLPE6wIKNG9c7HDL6ZbUsVzokbpzslvuWbSNLdQA0thLll9jH3R3bNPwhSqm4Q9E=
-X-Received: by 2002:a05:6638:240a:b0:375:4e6:1d98 with SMTP id
- z10-20020a056638240a00b0037504e61d98mr18517437jat.37.1667468357544; Thu, 03
- Nov 2022 02:39:17 -0700 (PDT)
+        bh=sCUBB08PoVZ26bcT4Cxprl0+CgnyFaSro8o/etFxILQ=;
+        b=nKld1sBBK5iu4PRrr761d2aO2L71tmB5u24oGB8La+2USfvIDaTp/MOOhNiNBcMb1J
+         uJh3pVmphTQRyc8yrsuzh90kiCK7iayQC6ZUnTBRHsde5pYIcV77JQl4qvvZ96gAclO5
+         32rAetIzNPpIJetWGNBvoZ+dD5+yZQANjOodkM4SjbKxAFElTINGC7vOHUwZFGvRB1fU
+         SllavVWaxTEsu71mpFkTU2OK3dOTTaGaEz522Sg0xSJo1Rso6fWFLCtajrP8slu3kdkI
+         qo9V3wKkVci1XyyVFIuk1PeBQCxdT62rPdiUBojuuQCF5CpZDceJICNfgqb20ayRl5Ft
+         D4HA==
+X-Gm-Message-State: ACrzQf1ZDwOJhvnY8jgWmNTfXBJ8o06VWkSSwynccwSZdGDmt5oHZRbF
+        I/jybnYTJA2fnVpZ7ZyqSMGcuZxHBiSCPHTQb8aoeg==
+X-Google-Smtp-Source: AMsMyM7FZiZCLkFDkx1bnVpjXpomckekbyKXpexKWDuVwHGpOCtLDD7blXzZ7m7RqCbEnHJAeDZqypgjZcrJQy4UliA=
+X-Received: by 2002:a17:903:41cc:b0:186:b756:a5f0 with SMTP id
+ u12-20020a17090341cc00b00186b756a5f0mr30145351ple.132.1667480600358; Thu, 03
+ Nov 2022 06:03:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221005151309.7278-1-jagan@amarulasolutions.com>
- <20221005151309.7278-8-jagan@amarulasolutions.com> <d837f6e3-d869-6543-2361-a7843c00ed8a@denx.de>
-In-Reply-To: <d837f6e3-d869-6543-2361-a7843c00ed8a@denx.de>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 3 Nov 2022 15:09:06 +0530
-Message-ID: <CAMty3ZDQCsJF+EuG_gvZ-MbkePO55GHfX_yvmKdzqE1fdAR55g@mail.gmail.com>
-Subject: Re: [PATCH v7 07/10] drm: bridge: samsung-dsim: Add atomic_get_input_bus_fmts
-To:     Marek Vasut <marex@denx.de>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
+References: <20221028191243.31721-1-semen.protsenko@linaro.org>
+ <CGME20221028191256eucas1p1a4fd95cbcc44959fa968956a92738f03@eucas1p1.samsung.com>
+ <20221028191243.31721-4-semen.protsenko@linaro.org> <7ed8c884-cee1-7cb0-f2ce-f7ec156cd841@samsung.com>
+In-Reply-To: <7ed8c884-cee1-7cb0-f2ce-f7ec156cd841@samsung.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Thu, 3 Nov 2022 14:03:08 +0100
+Message-ID: <CAPLW+4nrns9BovWCTOsi3F7=2FWLi2sK0+Cid4Cva2Vs2ZWdqQ@mail.gmail.com>
+Subject: Re: [PATCH 3/4] iommu/exynos: Modularize the driver
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Janghyuck Kim <janghyuck.kim@samsung.com>,
+        Cho KyongHo <pullip.cho@samsung.com>,
+        Daniel Mentz <danielmentz@google.com>,
+        David Virag <virag.david003@gmail.com>, iommu@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Oct 16, 2022 at 3:31 AM Marek Vasut <marex@denx.de> wrote:
+Hi Marek,
+
+[snip]
+
+> MODULE_DEVICE_TABLE(of, sysmmu_of_match); is missing, so the driver
+> won't be automatically loaded, what breaks its operation if compiled as
+> module.
 >
-> On 10/5/22 17:13, Jagan Teki wrote:
+
+Right, didn't think about hot-plug case. Will add
+MODULE_DEVICE_TABLE() along with MODULE_ALIAS() in v2, thanks.
+
+> Also Exynos DRM and S5P-MFC drivers rely on the Exynos IOMMU being
+> built-in, so they need to be adjusted for modularized builds too imho,
+> at least in the Kconfig dependency.
 >
-> [...]
->
-> > @@ -1321,6 +1322,32 @@ static void samsung_dsim_atomic_post_disable(struct drm_bridge *bridge,
-> >       pm_runtime_put_sync(dsi->dev);
-> >   }
-> >
-> > +#define MAX_INPUT_SEL_FORMATS        1
-> > +
-> > +static u32 *
-> > +samsung_dsim_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
-> > +                                    struct drm_bridge_state *bridge_state,
-> > +                                    struct drm_crtc_state *crtc_state,
-> > +                                    struct drm_connector_state *conn_state,
-> > +                                    u32 output_fmt,
-> > +                                    unsigned int *num_input_fmts)
-> > +{
-> > +     u32 *input_fmts;
-> > +
-> > +     *num_input_fmts = 0;
-> > +
-> > +     input_fmts = kcalloc(MAX_INPUT_SEL_FORMATS, sizeof(*input_fmts),
-> > +                          GFP_KERNEL);
-> > +     if (!input_fmts)
-> > +             return NULL;
-> > +
-> > +     /* This is the DSI-end bus format */
-> > +     input_fmts[0] = MEDIA_BUS_FMT_RGB888_1X24;
-> > +     *num_input_fmts = 1;
->
-> Is this the only supported format ? NXP AN13573 lists the following:
->
-> i.MX 8/RT MIPI DSI/CSI-2, Rev. 0, 21 March 2022
-> 3.7.4 Pixel formats
-> Table 14. DSI pixel packing formats
->
-> Loosely Packed Pixel Stream, 20-bit YCbCr, 4:2:2
-> Packed Pixel Stream, 24-bit YCbCr, 4:2:2
-> Packed Pixel Stream, 16-bit YCbCr, 4:2:2
 
-Look like these are unsupported in media-bus-format.h list.
+Sure, I'll check all Kconfigs and defconfigs before sending out v2.
 
-> Packed Pixel Stream, 30-bit RGB, 10-10-10
-> Packed Pixel Stream, 36-bit RGB, 12-12-12
-> Packed Pixel Stream, 12-bit YCbCr, 4:2:0
+Btw, can you please also check my most recent reply [1] for the
+"[PATCH 1/2] iommu/exynos: Abstract getting the fault info"?
 
-Same issue, unsupported.
+[1] https://lore.kernel.org/lkml/CAPLW+4n-Lf6je61rxdJ9nJnX9h9F8F-y+qikG7eFF0avQpMV9Q@mail.gmail.com/
 
-> Packed Pixel Stream, 16-bit RGB, 5-6-5
+Thanks!
 
-MEDIA_BUS_FMT_RGB565_1X16
-
-> Packed Pixel Stream, 18-bit RGB, 6-6-6
-
-Same issue, unsupported.
-
-> Loosely Packed Pixel Stream, 18-bit RGB, 6-6-6
-> Packed Pixel Stream, 24-bit RGB, 8-8-8 Format
-
-MEDIA_BUS_FMT_RGB666_1X18
-MEDIA_BUS_FMT_RGB888_1X24
-
->
-> The MX8MM/MN LCDIF can generate all of those RGB formats , the MX8MP
-> LCDIFv3 can also generate the 16bit YCbCr .
-
-Is YCbCr denoted as UYVY in media-bus-format.h ?
-
-Thanks,
-Jagan.
+[snip]
