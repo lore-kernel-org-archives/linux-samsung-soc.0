@@ -2,76 +2,84 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0234CC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Nov 2022 14:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 978A2C43217
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Nov 2022 14:42:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231667AbiKCOkc (ORCPT
+        id S231670AbiKCOmS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Nov 2022 10:40:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57516 "EHLO
+        Thu, 3 Nov 2022 10:42:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231623AbiKCOk2 (ORCPT
+        with ESMTP id S231667AbiKCOmQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Nov 2022 10:40:28 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9092725E5;
-        Thu,  3 Nov 2022 07:40:27 -0700 (PDT)
+        Thu, 3 Nov 2022 10:42:16 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12C8225E5;
+        Thu,  3 Nov 2022 07:42:14 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2869461EAC;
-        Thu,  3 Nov 2022 14:40:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2B88C433D7;
-        Thu,  3 Nov 2022 14:40:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1667486426;
-        bh=FX8DaYkGJUIjMtkFF0QjXEwRsUNfg54NBu8u9llBGqw=;
+        by ams.source.kernel.org (Postfix) with ESMTPS id BC269B828A3;
+        Thu,  3 Nov 2022 14:42:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5557BC433C1;
+        Thu,  3 Nov 2022 14:42:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667486531;
+        bh=Fr6sZ3qWHRn7BERHIwMyNvr7N6OXXLadvSljoW3ZvFQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IkvUIinksYUEpKv9Rf5tFYWZBtC+MyeXjDK1Z80b5sfn0wMxS7vhB1ElhQoGUwvSB
-         ylTR7OhNlQj7ZnLU8xzBXWfD3AGgCi9/utTnEpCzu6+FkZb8utSBbl7VhajKMgNtYV
-         99k8H8zlerrMUH0KzxAGZJdgoOGk1gClv1fEHqHo=
-Date:   Thu, 3 Nov 2022 23:41:06 +0900
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        b=MBhatZl1Akp9WnlwZwFdLXaKLvLhTjktdWs2nRbsXmaCWF4OKvp2aks0zPJKYplPa
+         NJFghZykiajjprv1pkIr7Tk8Z+xDkay/hFNIdzH8pDuDqzezC0E5BtkSYT34Ntv55q
+         dkBQh5PTgNNOk8Kx0OmdeX3nBox1tkpyjCClZiFmvmXzrt545NARSdaw3uz05Zq/Zv
+         FhW/cdRSBS6zvj24X8O/odpOPUZDzXoTN1NL4zGcOyyr3z+sdv/oE1xzshVOdhjcK4
+         W0mKvO0NhB7M4hDWWf0/vAdWTbBInJQ8F8JQ49MBq6KE4i/ewmLp1xWMyowiHWu3ZR
+         eKCKs05zgKdSA==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1oqbPl-0003bY-VD; Thu, 03 Nov 2022 15:41:54 +0100
+Date:   Thu, 3 Nov 2022 15:41:53 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Stefan Agner <stefan@agner.ch>,
-        Johan Hovold <johan@kernel.org>,
         Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Frank Rowand <frowand.list@gmail.com>
 Subject: Re: [PATCH 1/2] usb: dwc3: exynos: force PHY control from XHCI HCD
-Message-ID: <Y2PTAj0gAyWcx+HI@kroah.com>
+Message-ID: <Y2PTMWhg+xEx5Dy5@hovoldconsulting.com>
 References: <CGME20221103141239eucas1p29dac7ffb7202852c18e48c48c068a90f@eucas1p2.samsung.com>
  <20221103141233.20179-1-m.szyprowski@samsung.com>
+ <Y2PTAj0gAyWcx+HI@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221103141233.20179-1-m.szyprowski@samsung.com>
+In-Reply-To: <Y2PTAj0gAyWcx+HI@kroah.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Nov 03, 2022 at 03:12:32PM +0100, Marek Szyprowski wrote:
-> Force controlling of the generic USB PHYs also from XHCI HCD to let XHCI
-> driver call calibrate() method during the HCD reset. DWC3 also controls
-> USB PHYs, but it is not able to call the calibrate() method at the right
-> moment.
+On Thu, Nov 03, 2022 at 11:41:06PM +0900, Greg Kroah-Hartman wrote:
+> On Thu, Nov 03, 2022 at 03:12:32PM +0100, Marek Szyprowski wrote:
+> > Force controlling of the generic USB PHYs also from XHCI HCD to let XHCI
+> > driver call calibrate() method during the HCD reset. DWC3 also controls
+> > USB PHYs, but it is not able to call the calibrate() method at the right
+> > moment.
+> > 
+> > Fixes: 6000b8d900cd ("usb: dwc3: disable USB core PHY management")
+> > Reported-by: Stefan Agner <stefan@agner.ch>
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > ---
+> > This fixes the issue reported here:
+> > https://lore.kernel.org/all/808bdba846bb60456adf10a3016911ee@agner.ch/
+> > 
+> > Alternative for this change is a complete revert of the 6000b8d900cd
+> > ("usb: dwc3: disable USB core PHY management") commit.
 > 
-> Fixes: 6000b8d900cd ("usb: dwc3: disable USB core PHY management")
-> Reported-by: Stefan Agner <stefan@agner.ch>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> This fixes the issue reported here:
-> https://lore.kernel.org/all/808bdba846bb60456adf10a3016911ee@agner.ch/
-> 
-> Alternative for this change is a complete revert of the 6000b8d900cd
-> ("usb: dwc3: disable USB core PHY management") commit.
+> We can revert that commit if something is broken so it can be fixed
+> properly instead of this.
 
-We can revert that commit if something is broken so it can be fixed
-properly instead of this.
+Yeah, I'll send the revert I've prepared.
 
-thanks,
-
-greg k-h
+Johan
