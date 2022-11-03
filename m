@@ -2,101 +2,136 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F392C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Nov 2022 13:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDF9C4167B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Nov 2022 14:13:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231318AbiKCNFE (ORCPT
+        id S231611AbiKCONB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Nov 2022 09:05:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42300 "EHLO
+        Thu, 3 Nov 2022 10:13:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230139AbiKCNEk (ORCPT
+        with ESMTP id S230262AbiKCOMu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Nov 2022 09:04:40 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFFA5D60
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Nov 2022 06:03:20 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id c15-20020a17090a1d0f00b0021365864446so1719431pjd.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Nov 2022 06:03:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sCUBB08PoVZ26bcT4Cxprl0+CgnyFaSro8o/etFxILQ=;
-        b=NMOF7LMrwGZkM4Tpc29C7h3cTqZFKOVJ3vIia5vjFEJJ4H7B5PBOcPyzkq455HN7gk
-         FTmv3c9jmCde5kxbFdR10ZoLz4a0JGb7Znsy/G7IW3aeadZOKKCIwmKa6neDPb/+PMlQ
-         G5q3pQ/DzKlFHkwEqE1EWRBb8h1BN/hw2oOsWTTcIxbTC8Rbh0h6JO5zsVlRMtfDcPmG
-         EwsBA48uyosKZ2jbVe5iAc8agQJkePiVass7YVRzKWxPROkBwJrrtbt0YtPlspLlftVk
-         CaAE3bU5N7T2BznUtAq+AbzJjt2hmk0sVJOfygsa2zvm6OklRDJ4p1kusTQunUxAS2Uc
-         +2fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sCUBB08PoVZ26bcT4Cxprl0+CgnyFaSro8o/etFxILQ=;
-        b=nKld1sBBK5iu4PRrr761d2aO2L71tmB5u24oGB8La+2USfvIDaTp/MOOhNiNBcMb1J
-         uJh3pVmphTQRyc8yrsuzh90kiCK7iayQC6ZUnTBRHsde5pYIcV77JQl4qvvZ96gAclO5
-         32rAetIzNPpIJetWGNBvoZ+dD5+yZQANjOodkM4SjbKxAFElTINGC7vOHUwZFGvRB1fU
-         SllavVWaxTEsu71mpFkTU2OK3dOTTaGaEz522Sg0xSJo1Rso6fWFLCtajrP8slu3kdkI
-         qo9V3wKkVci1XyyVFIuk1PeBQCxdT62rPdiUBojuuQCF5CpZDceJICNfgqb20ayRl5Ft
-         D4HA==
-X-Gm-Message-State: ACrzQf1ZDwOJhvnY8jgWmNTfXBJ8o06VWkSSwynccwSZdGDmt5oHZRbF
-        I/jybnYTJA2fnVpZ7ZyqSMGcuZxHBiSCPHTQb8aoeg==
-X-Google-Smtp-Source: AMsMyM7FZiZCLkFDkx1bnVpjXpomckekbyKXpexKWDuVwHGpOCtLDD7blXzZ7m7RqCbEnHJAeDZqypgjZcrJQy4UliA=
-X-Received: by 2002:a17:903:41cc:b0:186:b756:a5f0 with SMTP id
- u12-20020a17090341cc00b00186b756a5f0mr30145351ple.132.1667480600358; Thu, 03
- Nov 2022 06:03:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <20221028191243.31721-1-semen.protsenko@linaro.org>
- <CGME20221028191256eucas1p1a4fd95cbcc44959fa968956a92738f03@eucas1p1.samsung.com>
- <20221028191243.31721-4-semen.protsenko@linaro.org> <7ed8c884-cee1-7cb0-f2ce-f7ec156cd841@samsung.com>
-In-Reply-To: <7ed8c884-cee1-7cb0-f2ce-f7ec156cd841@samsung.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Thu, 3 Nov 2022 14:03:08 +0100
-Message-ID: <CAPLW+4nrns9BovWCTOsi3F7=2FWLi2sK0+Cid4Cva2Vs2ZWdqQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] iommu/exynos: Modularize the driver
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Janghyuck Kim <janghyuck.kim@samsung.com>,
-        Cho KyongHo <pullip.cho@samsung.com>,
-        Daniel Mentz <danielmentz@google.com>,
-        David Virag <virag.david003@gmail.com>, iommu@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 3 Nov 2022 10:12:50 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AEF613F07
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Nov 2022 07:12:42 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20221103141241euoutp02125995a43954250d86b57654aa41234d~kGI4wqtHQ0722207222euoutp02r
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Nov 2022 14:12:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20221103141241euoutp02125995a43954250d86b57654aa41234d~kGI4wqtHQ0722207222euoutp02r
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1667484761;
+        bh=ikLgX5+rC6etpCFPJGJZsqRLbkT4hXzogxYFAeG3eE0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NAmTrprcWoRnN07Usy4IXOHPSKUEvTz9Jt6GHVQCvXUqZwwgWWdsQUmyC+wz+SELL
+         Y+rRAY39KYfB/NiDv6Y599Z2b6k9dSzumj5ZVG370CS6AUFSyzQJIzATfcYUkTOB8e
+         IhDy5AGqNKPpzskPbrxt+4XXyWM7tgEkUaPgb+9g=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20221103141240eucas1p1214a82150536870f5d1392a3e326cc3b~kGI4O4Q_X1074310743eucas1p1X;
+        Thu,  3 Nov 2022 14:12:40 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 9C.EB.29727.85CC3636; Thu,  3
+        Nov 2022 14:12:40 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20221103141239eucas1p167f44609369010a20293d5123214426d~kGI3lHwri2591525915eucas1p1L;
+        Thu,  3 Nov 2022 14:12:39 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20221103141239eusmtrp24f5d9beb1b97a2911cbd2c4e6abc37cc~kGI3hJchK2293622936eusmtrp2c;
+        Thu,  3 Nov 2022 14:12:39 +0000 (GMT)
+X-AuditID: cbfec7f2-205ff7000001741f-f8-6363cc585153
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 11.ED.10862.75CC3636; Thu,  3
+        Nov 2022 14:12:39 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20221103141238eusmtip2b65d8b299762ab3b9d2cc75c389d6a6d~kGI2387YI1617316173eusmtip2T;
+        Thu,  3 Nov 2022 14:12:38 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Johan Hovold <johan@kernel.org>,
+        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Subject: [PATCH 2/2] of: export of_device_add()
+Date:   Thu,  3 Nov 2022 15:12:33 +0100
+Message-Id: <20221103141233.20179-2-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20221103141233.20179-1-m.szyprowski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRmVeSWpSXmKPExsWy7djP87oRZ5KTDXov8VnMP3KO1WLmm/9s
+        Fs2L17NZNN3oYbXY+3oru8XlXXPYLGac38dksWhZK7PF2iN32S1a9x5ht9i8rp3dYtWCA+wO
+        PB6Lv99j9tg56y67x6ZVnWwed67tYfPYP3cNu0ffllWMHlv2f2b0+LxJLoAjissmJTUnsyy1
+        SN8ugStjzfb/zAXHWCt235zE1MB4naWLkZNDQsBE4s2DNYxdjFwcQgIrGCWuXZ0L5XxhlHj/
+        vYMFwvnMKHFhwxFmmJZLMx9CJZYzSsx+9YQdruXqsr3sIFVsAoYSXW+72EBsEYEaiZ0XN7OB
+        FDELXGGSmDOpnwkkISygL/H+9F9GEJtFQFVi78wtYDavgK3Evj1LodbJS6zecADI5uDgFLCT
+        eNvNBDJHQuAKh0TTghdQNS4S676/hPpIWOLV8S3sELaMxP+d86Ea2hklFvy+D+VMYJRoeH6L
+        EaLKWuLOuV9sIBuYBTQl1u/Shwg7Spz9C7KNA8jmk7jxVhAkzAxkTto2nRkizCvR0SYEUa0m
+        Mev4Ori1By9cgjrNQ2L+gilskACayCjRfeYtywRG+VkIyxYwMq5iFE8tLc5NTy02zEst1ytO
+        zC0uzUvXS87P3cQITDyn/x3/tINx7quPeocYmTgYDzFKcDArifB+2pacLMSbklhZlVqUH19U
+        mpNafIhRmoNFSZyXbYZWspBAemJJanZqakFqEUyWiYNTqoGp8IHyU0tHh8QLch1hGu8dvuZy
+        NGxVv31HV3j7q6Jq7xPfC8+LsGp/ZTlcJhLjE743aYsXW59Bmmvashu7eo+oZC1dMDnA7M0D
+        poNioYrHjW+Yt+ffidr74JHtlVa7Ip0Ned+/NU122bvu8G/Rc+svXfmSmKSYevnTydtKse8f
+        e2xlLrX8x1NXv8I//I4p35HmU0/DJ3BwPfM3/hf740DY6m035wva+m099J+t7uJsGdFzvtM8
+        Xh2MXO6poSr5Lie8brnO+7tz70/blbh6Mf9jTbVHsYvdvklW7N4b0TI7NPrxInNRlT8sL2I+
+        ZOyTehzwNDCLI3kPl0T959rlEYVuay76Wux4ub0qr0IyvcJViaU4I9FQi7moOBEAWvI9yKsD
+        AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOLMWRmVeSWpSXmKPExsVy+t/xe7rhZ5KTDc60qlnMP3KO1WLmm/9s
+        Fs2L17NZNN3oYbXY+3oru8XlXXPYLGac38dksWhZK7PF2iN32S1a9x5ht9i8rp3dYtWCA+wO
+        PB6Lv99j9tg56y67x6ZVnWwed67tYfPYP3cNu0ffllWMHlv2f2b0+LxJLoAjSs+mKL+0JFUh
+        I7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS9jzfb/zAXHWCt235zE
+        1MB4naWLkZNDQsBE4tLMh2C2kMBSRom+lRwQcRmJk9MaWCFsYYk/17rYuhi5gGo+MUocn3qC
+        DSTBJmAo0fUWIiEi0MAosWPyXyYQh1ngBpPEhLl9YFXCAvoS70//ZQSxWQRUJfbO3AJm8wrY
+        Suzbs5QZYoW8xOoNB4BsDg5OATuJt91MIKYQUMm1ndETGPkWMDKsYhRJLS3OTc8tNtIrTswt
+        Ls1L10vOz93ECIyBbcd+btnBuPLVR71DjEwcjIcYJTiYlUR4P21LThbiTUmsrEotyo8vKs1J
+        LT7EaAp0xURmKdHkfGAU5pXEG5oZmBqamFkamFqaGSuJ83oWdCQKCaQnlqRmp6YWpBbB9DFx
+        cEo1MC3U/WTBbOP/Skf2i1s5y9ub17Jkt34693QVZ0PiUen93r+LTRuv5z1mit/ix3h2CsPD
+        9weN7wjPmJA16a7z5K/cDz/sbNplv0idTa1+br6hbt4ZAc6w5yzfa3sW+0q2x8/RqvD0dtbg
+        9Xu2qu/2dr/G7jw9f/uQJU7nC9eG/dBKuh3WxMnqfNybxzTupsMy4SeRcQv186e1PLlv7DZL
+        W+2XUoOglWOcnsF14UUv7BI3LDj/7ZpF+KrMD3zdC+VVUua9n+NhWf8iIZJn0+QFClcC7t0X
+        vVxQuDzsE/uOGyvjJxtcPh/qxtZ+d8+MJ9881rB+uOc3ie/K0da8p9tXLjXbvfCU7cXHNyZt
+        /Bn6dKYSS3FGoqEWc1FxIgANDhUICgMAAA==
+X-CMS-MailID: 20221103141239eucas1p167f44609369010a20293d5123214426d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20221103141239eucas1p167f44609369010a20293d5123214426d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20221103141239eucas1p167f44609369010a20293d5123214426d
+References: <20221103141233.20179-1-m.szyprowski@samsung.com>
+        <CGME20221103141239eucas1p167f44609369010a20293d5123214426d@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Export of_device_add() function to let DWC3 driver (Exynos variant) to
+instantiate DWC3 core device from the respective child OF-node with a
+custom, addtional properties added.
 
-[snip]
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/of/device.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> MODULE_DEVICE_TABLE(of, sysmmu_of_match); is missing, so the driver
-> won't be automatically loaded, what breaks its operation if compiled as
-> module.
->
+diff --git a/drivers/of/device.c b/drivers/of/device.c
+index 8cefe5a7d04e..bc60c9b6863c 100644
+--- a/drivers/of/device.c
++++ b/drivers/of/device.c
+@@ -52,6 +52,7 @@ int of_device_add(struct platform_device *ofdev)
+ 
+ 	return device_add(&ofdev->dev);
+ }
++EXPORT_SYMBOL(of_device_add);
+ 
+ static void
+ of_dma_set_restricted_buffer(struct device *dev, struct device_node *np)
+-- 
+2.17.1
 
-Right, didn't think about hot-plug case. Will add
-MODULE_DEVICE_TABLE() along with MODULE_ALIAS() in v2, thanks.
-
-> Also Exynos DRM and S5P-MFC drivers rely on the Exynos IOMMU being
-> built-in, so they need to be adjusted for modularized builds too imho,
-> at least in the Kconfig dependency.
->
-
-Sure, I'll check all Kconfigs and defconfigs before sending out v2.
-
-Btw, can you please also check my most recent reply [1] for the
-"[PATCH 1/2] iommu/exynos: Abstract getting the fault info"?
-
-[1] https://lore.kernel.org/lkml/CAPLW+4n-Lf6je61rxdJ9nJnX9h9F8F-y+qikG7eFF0avQpMV9Q@mail.gmail.com/
-
-Thanks!
-
-[snip]
