@@ -2,191 +2,110 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE79C4167B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Nov 2022 18:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE0AC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Nov 2022 19:52:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231246AbiKCS60 (ORCPT
+        id S230370AbiKCTv7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Nov 2022 14:58:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45492 "EHLO
+        Thu, 3 Nov 2022 15:51:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230435AbiKCS6Z (ORCPT
+        with ESMTP id S229501AbiKCTv6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Nov 2022 14:58:25 -0400
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24850F40
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Nov 2022 11:58:23 -0700 (PDT)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 1D85A84EF0;
-        Thu,  3 Nov 2022 19:58:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1667501900;
-        bh=ftckN5vaZOrLCBxzERkC05Xp9LWxMmtC41/5oUzKBiE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=xy9nrcaWAD0Uvxs5GdYKYtQqgpPobNuvJG6mPSh/yZ8OfXXIwIn8lGwe8TSSc3sjC
-         ughvOjL/DP54qJ6w1t7q2+1PM11sK+MktQqNC50RCjCwWV2VFyIlsAUtFSLfQ6lyMv
-         v4MezbW/N6M8UrDfUK9pxqz+wecGr0fbgSA33oD4rFNTQy9icOroeaSdMb4sl4NNZ0
-         x5WoQ0DNTgJbFAujW1AoFb380jLpeDFiyJhe3uXlOTF2l2NLWPxcR/k26vncDblMD2
-         M4g5nQzD1J/7TQfdwZzfvwmiDrxn3cqFXx+FMS/xF5vvnFwJn+hNtMrAM3QFCjwD0b
-         VhmmBnbOsDvCA==
-Message-ID: <2f0c2dae-07c9-814b-a252-5fdd3e0d9dda@denx.de>
-Date:   Thu, 3 Nov 2022 19:58:18 +0100
+        Thu, 3 Nov 2022 15:51:58 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AE9F1E3D8
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Nov 2022 12:51:57 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id bj12so8084618ejb.13
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Nov 2022 12:51:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dSoY1RFfLiYGbG6PVIWaPMns1WQq6G1mUH0o4v3ezJs=;
+        b=jXb0goUM1eMoI1vo0YE498npOwxh/JsIH3dtk03GixxejFSVByMt5Dl6Oj9UpEy2W9
+         Pf8lK5SE9nKJLqX7fqqHjAKN4x8cTWoBC/ZO7NmVESWXWlgiku667ugCRTUlki6fNW62
+         4aJsr84+PNy515JKoqpLImWu/5xN8FtmAHgQKjqLtggAsm39S7frbEXGlFG59qD144CR
+         7+lrhEeKGAsBbKo5uOUH426MhT6SnUzT2vBvRxhCUrKOJtrcUrJovRbrtKy0VNuT5kOS
+         Jfw13SRy0c7DWpiQN9LurfnyRJQXmhFBacMlSISHuC7N78xKzzX9rDrxxcNd6dhhmr1g
+         DxIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dSoY1RFfLiYGbG6PVIWaPMns1WQq6G1mUH0o4v3ezJs=;
+        b=WHrSSNtqo+83iFoiLz3UVz+DCfFnX/QiHXeqvnZ5BKHHv9cQXV3cTmz8oz9tAxG0uq
+         DVgeLdva5ot5YB30L2ptXNge5kEKdpU5aAU4E/INXC8qzaAU3Y/Lnpx4geOQ1wn9KIKI
+         JararhFgYRYiXmWCpsaeNlBOizCe+DH1UavfRN18ng8elW9NuWlReQIadpT71sLh3tNc
+         37EF5QhRID0vDkol3+PLrAcJdNvl2seQH7rVWO+8TOWp7G0WuNdqgK0zm+dMfH8gH9w0
+         yR2F2BzH9Uj5rPECDrrhAZhz6pZ0dyyyqb8zU8kazjk3ijAHJTxaV4FmwlUvPPH9SBCq
+         5k0w==
+X-Gm-Message-State: ACrzQf1dEUkYbPPCEx3JJ6t1b5VQFgB0xrnLsDhsDuWvX1qmf1aE08YP
+        DH6OvyzdUeifL52kSqdP6Rbxsg==
+X-Google-Smtp-Source: AMsMyM7oHxP/WKbsDall/gZqsAjIooBN50fjNtXMSu/4PKkO5F+CS5IHBjfjNr2w+TaIs3Ggwoj52g==
+X-Received: by 2002:a17:906:730d:b0:78e:9ca5:3269 with SMTP id di13-20020a170906730d00b0078e9ca53269mr31172648ejc.366.1667505115999;
+        Thu, 03 Nov 2022 12:51:55 -0700 (PDT)
+Received: from localhost (cgw.msart-bajzova4.ke.cust.o2bs.sk. [90.176.4.227])
+        by smtp.gmail.com with ESMTPSA id j14-20020a1709062a0e00b007415f8ffcbbsm870386eje.98.2022.11.03.12.51.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Nov 2022 12:51:55 -0700 (PDT)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Janghyuck Kim <janghyuck.kim@samsung.com>,
+        Cho KyongHo <pullip.cho@samsung.com>,
+        Daniel Mentz <danielmentz@google.com>,
+        David Virag <virag.david003@gmail.com>, iommu@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 0/6] iommu/exynos: Convert to a module
+Date:   Thu,  3 Nov 2022 20:51:48 +0100
+Message-Id: <20221103195154.21495-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH v7 07/10] drm: bridge: samsung-dsim: Add
- atomic_get_input_bus_fmts
-Content-Language: en-US
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-References: <20221005151309.7278-1-jagan@amarulasolutions.com>
- <20221005151309.7278-8-jagan@amarulasolutions.com>
- <d837f6e3-d869-6543-2361-a7843c00ed8a@denx.de>
- <CAMty3ZDQCsJF+EuG_gvZ-MbkePO55GHfX_yvmKdzqE1fdAR55g@mail.gmail.com>
- <9262c207-2b72-6638-0274-0ce1d0d830c9@denx.de>
- <CAMty3ZAzDMRYiWWRwKvA+QSaXRHYgadJ7d4JwKnJWHPqPBua7A@mail.gmail.com>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <CAMty3ZAzDMRYiWWRwKvA+QSaXRHYgadJ7d4JwKnJWHPqPBua7A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/3/22 18:27, Jagan Teki wrote:
-> On Thu, Nov 3, 2022 at 9:56 PM Marek Vasut <marex@denx.de> wrote:
->>
->> On 11/3/22 10:39, Jagan Teki wrote:
->>> On Sun, Oct 16, 2022 at 3:31 AM Marek Vasut <marex@denx.de> wrote:
->>>>
->>>> On 10/5/22 17:13, Jagan Teki wrote:
->>>>
->>>> [...]
->>>>
->>>>> @@ -1321,6 +1322,32 @@ static void samsung_dsim_atomic_post_disable(struct drm_bridge *bridge,
->>>>>         pm_runtime_put_sync(dsi->dev);
->>>>>     }
->>>>>
->>>>> +#define MAX_INPUT_SEL_FORMATS        1
->>>>> +
->>>>> +static u32 *
->>>>> +samsung_dsim_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
->>>>> +                                    struct drm_bridge_state *bridge_state,
->>>>> +                                    struct drm_crtc_state *crtc_state,
->>>>> +                                    struct drm_connector_state *conn_state,
->>>>> +                                    u32 output_fmt,
->>>>> +                                    unsigned int *num_input_fmts)
->>>>> +{
->>>>> +     u32 *input_fmts;
->>>>> +
->>>>> +     *num_input_fmts = 0;
->>>>> +
->>>>> +     input_fmts = kcalloc(MAX_INPUT_SEL_FORMATS, sizeof(*input_fmts),
->>>>> +                          GFP_KERNEL);
->>>>> +     if (!input_fmts)
->>>>> +             return NULL;
->>>>> +
->>>>> +     /* This is the DSI-end bus format */
->>>>> +     input_fmts[0] = MEDIA_BUS_FMT_RGB888_1X24;
->>>>> +     *num_input_fmts = 1;
->>>>
->>>> Is this the only supported format ? NXP AN13573 lists the following:
->>>>
->>>> i.MX 8/RT MIPI DSI/CSI-2, Rev. 0, 21 March 2022
->>>> 3.7.4 Pixel formats
->>>> Table 14. DSI pixel packing formats
->>>>
->>>> Loosely Packed Pixel Stream, 20-bit YCbCr, 4:2:2
->>>> Packed Pixel Stream, 24-bit YCbCr, 4:2:2
->>>> Packed Pixel Stream, 16-bit YCbCr, 4:2:2
->>>
->>> Look like these are unsupported in media-bus-format.h list.
->>
->> Aren't those:
->>
->> MEDIA_BUS_FMT_UYVY12_1X24
-> 
-> Why is UYVY12 - YCbCr, 4:2:2 is 4+2+2 = 8 then it has UYVY8 ?
+As exynos-iommu driver is not a critical platform driver, it can be
+converted to a loadable module to avoid loading it on non-Exynos
+platforms in order to improve the RAM footprint. This patch series
+converts it to a module and does some related cleanups. IOMMU/DMA
+specifics were taken into the account, so remove/exit methods weren't
+added.
 
-(someone please correct me if I'm totally wrong here)
+There are two drivers using CONFIG_EXYNOS_IOMMU in their code:
+DRM_EXYNOS and S5P_MFC. Both were checked, and only a slight change was
+needed for S5P_MFC driver (patch #6).
 
-The 12 is channel width (12 bit for each Y1/Y2/U/V channel sample).
-The 4:2:2 is subsampling (where are the color components sampled 
-relative to brightness component).
+Changes in v2:
+  - Extracted the "shutdown" method addition into a separate patch
+  - Added MODULE_DEVICE_TABLE(of, ...) to support hot-plug loading
+  - Added MODULE_ALIAS("platform:exynos-sysmmu")
+  - Added fix for S5P_MFC driver to work correctly with EXYNOS_IOMMU=m
+  - Fixed checkpatch coding style suggestion with "--strict" flag
+  - Rebased on top of most recent joro/iommu.git:next
 
-Picture is here:
-https://upload.wikimedia.org/wikipedia/commons/f/f2/Common_chroma_subsampling_ratios.svg
+Sam Protsenko (6):
+  iommu: Export iommu_group_default_domain() API
+  iommu/exynos: Fix retval on getting clocks in probe
+  iommu/exynos: Modularize the driver
+  iommu/exynos: Implement shutdown driver method
+  iommu/exynos: Rearrange the platform driver code
+  media: platform: Use IS_ENABLED() to check EXYNOS_IOMMU in s5p_mfc
 
-Each Y square of the left is 12bit sample.
-Each U+V square is 12bit sample for U and 12bit sample for V.
+ drivers/iommu/Kconfig                         |   2 +-
+ drivers/iommu/exynos-iommu.c                  | 355 +++++++++---------
+ drivers/iommu/iommu.c                         |   1 +
+ .../platform/samsung/s5p-mfc/s5p_mfc_iommu.h  |   4 +-
+ 4 files changed, 191 insertions(+), 171 deletions(-)
 
-In case of 4:4:4 subsampling, each luminance (brightness) component has 
-matching chrominance (color) components.
+-- 
+2.35.1
 
-In case of the 4:2:2 subsampling, two neighboring luminance components 
-share two chrominance components. To transfer one pixel including color 
-information, you have to transfer two pixels, Y0+U as 2x12bit sample in 
-one cycle of 24bit bus, and then Y1+V as 2x12bit sample in another cycle 
-of 24bit bus (2 clock cycles total, 4 samples total). From that you can 
-reconstruct the two top-left squares (purple pixels) in the rightmost 
-YUV column of 4:2:2 row.
-
-The entire trick is that because eye is less sensitive to color than it 
-is to light, you can transfer less color information and thus save 
-bandwidth without anyone noticing (much of it).
-
->> MEDIA_BUS_FMT_UYVY8_1X16
-> 
-> If YCbCr is UYVY (I still don't get this notation, sorry) then Packed
-> Pixel Stream, 24-bit YCbCr, 4:2:2 with 2 Pixels per packet from Table
-> 14 can be
-> 
-> MEDIA_BUS_FMT_UYVY8_2X24
-> (YCbCr 4:2:2 is UYVY8)
-> 
->   " based on a reference example from media bus format doc
-> 4.13.3.4.1.1.3. Packed YUV Formats, For instance, a format where
-> pixels are encoded as 8-bit YUV values downsampled to 4:2:2 and
-> transferred as 2 8-bit bus samples per pixel in the U, Y, V, Y order
-> will be named MEDIA_BUS_FMT_UYVY8_2X8."
-
-The way I read the above is that the channel width of each channel is 
-8-bit , so you start with two pixels Y0/U/Y1/V which add up to 32bit 
-total. That is transferred over 8-bit bus, in 4 bus cycles total. One 
-pixel therefore takes 2 cycles of the 8 bit bus to transfer, even if you 
-cannot transfer one pixel separately .
-
-> https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/subdev-formats.html
-> 
-> _2X24 here 2 Pixels per packet is the exact packets to consider or we
-> can consider 1 Pixel per packet also. If later is true then _1X24 from
-> your notation is correct.
-
-Since the DSIM input bus is 32bit wide, to transfer one such 4:2:2 
-pixel, you need 1 bus cycle (2x12 bits per half of two pixels).
-
-[...]
