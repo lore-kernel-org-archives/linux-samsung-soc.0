@@ -2,144 +2,110 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42859C43217
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Nov 2022 10:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C593DC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Nov 2022 10:38:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231592AbiKDKEz (ORCPT
+        id S231802AbiKDKir (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 4 Nov 2022 06:04:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39126 "EHLO
+        Fri, 4 Nov 2022 06:38:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230029AbiKDKEy (ORCPT
+        with ESMTP id S231812AbiKDKiZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Nov 2022 06:04:54 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03C972BFE
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  4 Nov 2022 03:04:51 -0700 (PDT)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20221104100448epoutp03cbccc1bdcce4acb3b4985d8b534074d1~kWZwJZnb70054700547epoutp03g
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  4 Nov 2022 10:04:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20221104100448epoutp03cbccc1bdcce4acb3b4985d8b534074d1~kWZwJZnb70054700547epoutp03g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1667556288;
-        bh=6YrZb4rIVThny1YuuCHZdKWp6Aza2885Qa/dxfwyNuQ=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=mYS9m7Ql92fYAk4lrGxoaVV+7L/HVCLztf5afuC5VK96VmVBFHwwWFl82aS7Olrm1
-         cjoH0xO3gCFargwoMQRE4OPKcMRj5XE1swKd2T/wjcP877Zx9uZX1wWUrGTKBVDk2/
-         bRzjjHE8ErmviPQxxemDZBZ+UR0IA2EfXwRA9uTA=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20221104100447epcas5p3a3cd553ac66cd4f4b0a0b6c2a7788725~kWZvcJpah3214732147epcas5p3Z;
-        Fri,  4 Nov 2022 10:04:47 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.179]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4N3bp5331Bz4x9Pp; Fri,  4 Nov
-        2022 10:04:45 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9F.4D.39477.DB3E4636; Fri,  4 Nov 2022 19:04:45 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20221104085410epcas5p24d88f59001b739075e9e190e2c47841e~kVcEwUP0W1926119261epcas5p2v;
-        Fri,  4 Nov 2022 08:54:10 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20221104085410epsmtrp2877b16b524ac75f74d9f92dcf0b996b1~kVcEvaESi0462404624epsmtrp2P;
-        Fri,  4 Nov 2022 08:54:10 +0000 (GMT)
-X-AuditID: b6c32a4a-007ff70000019a35-92-6364e3bda44e
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        86.46.18644.233D4636; Fri,  4 Nov 2022 17:54:10 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-        [107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20221104085407epsmtip1b37a75115cfe527d8477208458815b7d~kVcCHIU_Q3261232612epsmtip1h;
-        Fri,  4 Nov 2022 08:54:07 +0000 (GMT)
-From:   Inbaraj <inbaraj.e@samsung.com>
-To:     krzysztof.kozlowski@linaro.org, s.nawrocki@samsung.com,
-        tomasz.figa@gmail.com, cw00.choi@samsung.com,
-        alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, chanho61.park@samsung.com
-Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, pankaj.dubey@samsung.com,
-        Inbaraj <inbaraj.e@samsung.com>
-Subject: [PATCH] dt-bindings: clock: exynosautov9: fix reference to
- CMU_FSYS1 mmc card clock
-Date:   Fri,  4 Nov 2022 14:30:19 +0530
-Message-Id: <20221104090019.88387-1-inbaraj.e@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkk+LIzCtJLcpLzFFi42LZdlhTQ3fv45Rkg7tfBC0ezNvGZnF5v7bF
-        9S/PWS3mHznHanH3zyQ2i72vt7JbbHp8jdXiY889VovLu+awWcw4v4/J4uIpV4tFW7+wW7Tu
-        PcJucfhNO6vFv2sbWSxW7frD6CDg8f5GK7vHzll32T02repk87hzbQ+bx+Yl9R59W1Yxenze
-        JBfAHpVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQN0
-        upJCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwKRArzgxt7g0L10vL7XEytDAwMgU
-        qDAhO6Nn9wW2ghlcFSuP72BuYDzK0cXIySEhYCKxu/sHG4gtJLCbUWJHS1gXIxeQ/YlRYubf
-        e+wQzmdGiXsn9jPBdGzpuM0GkdjFKHHr8maoqlYmiaPHnoLNYhNQlTiw/RUjSEJE4CGjxP7m
-        ZjCHGcS5/+Q8O0iVsECcxNlF78BsFqCO/4ungHXzClgB1VxkgdgnL7F6wwFmkGYJgUYOiVPf
-        N7JCJFwk7s7pYoewhSVeHd8CZUtJfH63lw3C9pHYP+cXI4SdIXFs+3KoXnuJA1fmAC3gALpI
-        U2L9Ln2IsKzE1FPrwP5kFuCT6P39BOpnXokd82BsZYmZR+5DjZeU2Hl5J9SdHhJTe75AQzJW
-        Yu61z0wTGGVnIWxYwMi4ilEytaA4Nz212LTAKC+1HB5Vyfm5mxjBaVLLawfjwwcf9A4xMnEw
-        HmKU4GBWEuH9tC05WYg3JbGyKrUoP76oNCe1+BCjKTDMJjJLiSbnAxN1Xkm8oYmlgYmZmZmJ
-        pbGZoZI47+IZWslCAumJJanZqakFqUUwfUwcnFINTNMtPhbfu9ufOvu/sP+y1NmV+v9vTd61
-        Kk3Q9FbebotXO9b7PBb6bbb6yfqU0Gr1ZYbHfZPO7q4y4trXt4vx9a+VfirKRxcdLl/96qyP
-        VvSjR6uDVWKaOALDFqk17lX9N23KvJMp268tWP6p422SWmHvjmzd99Mit7Bmya9LLtDiso6S
-        DuL5uZzpi/Ks+okfLHZZdC7av+i1a3nJS/eq38cmW957aOBeFNBkbektqZj5XsU0ot1wk/2N
-        3PMxEdsF72/Ne97w6b7O2tIPtgsbdKoDAu+/ZSlPnXXCvO7/FudNZZ/tVS8xPlbd9KZhTQtv
-        5uxSY3X9+PU+onX7O87N5WfeWFy6ZeaFvubmCw09GUosxRmJhlrMRcWJANjxpH0cBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKLMWRmVeSWpSXmKPExsWy7bCSnK7R5ZRkg51n2SwezNvGZnF5v7bF
-        9S/PWS3mHznHanH3zyQ2i72vt7JbbHp8jdXiY889VovLu+awWcw4v4/J4uIpV4tFW7+wW7Tu
-        PcJucfhNO6vFv2sbWSxW7frD6CDg8f5GK7vHzll32T02repk87hzbQ+bx+Yl9R59W1Yxenze
-        JBfAHsVlk5Kak1mWWqRvl8CV0bP7AlvBDK6Klcd3MDcwHuXoYuTkkBAwkdjScZuti5GLQ0hg
-        B6PE/qbprBAJSYnZv6ezQ9jCEiv/PWeHKGpmkvj0dTITSIJNQFXiwPZXjCAJEYHXjBL/731j
-        BnGYBZ4zSlx/sYkFpEpYIEZi8cJ/YB0sQB3/F09hA7F5Bawk7j+5yAKxQl5i9YYDzBMYeRYw
-        MqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAgOWS2tHYx7Vn3QO8TIxMF4iFGCg1lJ
-        hPfTtuRkId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGphS
-        ZsZsSj5QyPQnpPFOxJTS/280zdV9v1hm3XDf8fOBkdeTmh73joZuRmn/V48ubj/Tu/KX5fTj
-        uWd2rH8XJVwx7ZL9D75u1s38ec03xCPXSHsUCLn/unZWUeJc0469gQt0JJdN/mxyznWd45rw
-        XzlBe/TaC2cGVJy3FTX9Nuf8g/pGnyvGMY/y3Cdt++D+LbNNf5Nj5rtZ97gUgqrCw4PuSjxe
-        phbCbqzyW5C/yzvMkstk45r5M8XXXDsRIGR19dPGlzHsXpfnJ3aYJl0MCs0Xnn8wb4EzWwZT
-        wunfq+43/bnyymZqRrLTspfMFp2PXrIb/VYVeGI5eYPXwb03pltYdDLnKYaJfNn9RzMyy02J
-        pTgj0VCLuag4EQDevkDgyAIAAA==
-X-CMS-MailID: 20221104085410epcas5p24d88f59001b739075e9e190e2c47841e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221104085410epcas5p24d88f59001b739075e9e190e2c47841e
-References: <CGME20221104085410epcas5p24d88f59001b739075e9e190e2c47841e@epcas5p2.samsung.com>
+        Fri, 4 Nov 2022 06:38:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B44482B251
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  4 Nov 2022 03:37:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667558242;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FvcSXdbTIY6j0RtoeMW2Oyvbsf0knEKyh2vmjeJsi+Y=;
+        b=St7D7ehThSDrtLqHdvQnn2WfHBt15iEUoNcK89DkYK6fUJR8Hr1is7IZG9ceODHkA6gFXI
+        ngUo1HBmvkWirq/lO6JHvGOU40Iot1jfIbMob7Gwsquc0rf8q1T4aFuZWoVZqco7SubxdZ
+        Mwahe+YR/tNNRLzxy/M3JVILNmgFBjY=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-536-ijap45U7NVOMyf0x18YlLw-1; Fri, 04 Nov 2022 06:37:20 -0400
+X-MC-Unique: ijap45U7NVOMyf0x18YlLw-1
+Received: by mail-wm1-f72.google.com with SMTP id h8-20020a1c2108000000b003cf550bfc8dso4052089wmh.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Nov 2022 03:37:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FvcSXdbTIY6j0RtoeMW2Oyvbsf0knEKyh2vmjeJsi+Y=;
+        b=FbgLUly8HDW17l0H2ge0SvBwFG9/SyNe4kWM0R03YlzprxVj8+AO1U0XJ1BcGTVcHI
+         KXYuh4Gt9pBHv+s0RhSADB76on66RgSqFpLNrYE2v7F9B++CaUOV9EbMX008TJJbIwpm
+         YoCVmkQgOD71z4yLqhcUWHLWIHo1JMrsg22oNs0sPRqyuW9RypDSa7crUr+txcIGDTVn
+         5+w+Y1oEphyaL053TMRlTcgYgw8wmngK3AK0fdNXhhDBiWvDN5UD1W5K4+XuAKxgNoBB
+         NagT0HjX+R0hUTHJ7CQufxE+BWslMbL8p3RmqCE0ZgRunq4O0MFSBtPIShRt6gwCYMvH
+         6YDg==
+X-Gm-Message-State: ACrzQf11xJil4CDssdmJ9kRcW4E1T4/53NJ89gtiGISPim5AXK6RAlq0
+        XhNyENLi6JQHHP7u3JiIkmdI/90o9a6Jpl8iscjZ+Vw/QXX8dV5ZN9+w0kI5o5fCf+mMyLH1h6h
+        eme9o3WZkYCD4aIQAq+YyKUbmvM+lKWw=
+X-Received: by 2002:a05:600c:1e2a:b0:3c3:d770:1756 with SMTP id ay42-20020a05600c1e2a00b003c3d7701756mr23539594wmb.134.1667558239644;
+        Fri, 04 Nov 2022 03:37:19 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM4LKXhwK5qh8ieFEkCSZgi7mblk9sJOfnr0awtpFbS+pIQGNE9IUSRaCOrs9CG3VpGFJY/xjQ==
+X-Received: by 2002:a05:600c:1e2a:b0:3c3:d770:1756 with SMTP id ay42-20020a05600c1e2a00b003c3d7701756mr23539569wmb.134.1667558239379;
+        Fri, 04 Nov 2022 03:37:19 -0700 (PDT)
+Received: from [192.168.1.130] (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id f15-20020a5d50cf000000b0022e36c1113fsm3031008wrt.13.2022.11.04.03.37.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Nov 2022 03:37:18 -0700 (PDT)
+Message-ID: <ab8358a9-8450-0d49-627f-26afe7ba4f9d@redhat.com>
+Date:   Fri, 4 Nov 2022 11:37:17 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH v3 20/23] drm/fb-helper: Set flag in struct drm_fb_helper
+ for leaking physical addresses
+Content-Language: en-US
+To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
+        airlied@gmail.com, sam@ravnborg.org, mripard@kernel.org,
+        maarten.lankhorst@linux.intel.com
+Cc:     linux-aspeed@lists.ozlabs.org, nouveau@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-samsung-soc@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xenproject.org,
+        linux-sunxi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org,
+        spice-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, freedreno@lists.freedesktop.org
+References: <20221103151446.2638-1-tzimmermann@suse.de>
+ <20221103151446.2638-21-tzimmermann@suse.de>
+From:   Javier Martinez Canillas <javierm@redhat.com>
+In-Reply-To: <20221103151446.2638-21-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Fix reference to CMU_FSYS1 mmc card clock to gout clock instead of dout.
+On 11/3/22 16:14, Thomas Zimmermann wrote:
+> Uncouple the parameter drm_leak_fbdev_smem from the implementation by
+> setting a flag in struct drm_fb_helper. This will help to move the
+> generic fbdev emulation into its own source file, while keeping the
+> parameter in drm_fb_helper.c. No functional changes.
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
 
-This fixes make dtbs_check warning as shown below:
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
-arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb: clock-controller@17040000:
-clock-names:2: 'dout_clkcmu_fsys1_mmc_card' was expected
-From schema: /home/inbaraj/mainline/linux/Documentation/devicetree/
-bindings/clock/samsung,exynosautov9-clock.yaml
-
-Fixes: 4b6ec8d88623 ("dt-bindings: clock: exynosautov9: add schema for cmu_fsys0/1")
-Signed-off-by: Inbaraj <inbaraj.e@samsung.com>
----
- .../devicetree/bindings/clock/samsung,exynosautov9-clock.yaml   | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
-index 2ab4642679c0..55c4f94a14d1 100644
---- a/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
-@@ -148,7 +148,7 @@ allOf:
-           items:
-             - const: oscclk
-             - const: dout_clkcmu_fsys1_bus
--            - const: dout_clkcmu_fsys1_mmc_card
-+            - const: gout_clkcmu_fsys1_mmc_card
-             - const: dout_clkcmu_fsys1_usbdrd
- 
-   - if:
 -- 
-2.17.1
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
 
