@@ -2,477 +2,144 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDA3C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Nov 2022 19:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42859C43217
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Nov 2022 10:04:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231197AbiKCTwT (ORCPT
+        id S231592AbiKDKEz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Nov 2022 15:52:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45182 "EHLO
+        Fri, 4 Nov 2022 06:04:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231146AbiKCTwI (ORCPT
+        with ESMTP id S230029AbiKDKEy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Nov 2022 15:52:08 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B995020185
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Nov 2022 12:52:05 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id ud5so8204209ejc.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Nov 2022 12:52:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9AClRHYQmmiljK9Z1RfiVXUSaeI4B4a5JMw83y2hLjc=;
-        b=I+yQTuz7Ehdp6gLmvTSiRfW8d7safqQgm6xFo5ffNjn2ymI6ele5uztQfdKB4w4of1
-         yrdAXb+n5lMSvHrXuRCJOJd+gH8sXRbJpxlOgvSiFHqDtwIDsxml9RVmYOg+GFT8gTrS
-         YTmIBlFiJlnYK8RaSHjXa6bKk3jKG0F1eTZEaQDfUMHldgm3Tt2pxx8HelUqTLOmRBbA
-         uqONeXXZErQ2pmSgLWy+3iRhMLG+GvxowruU7JdfgPlA7i5d3zK1FlR146IqWScRjSN8
-         Si36SZHhp0LSKvd4jiiwjucmqr3vgbhiGYOGK+03e6QnliPU18z+4wy1nkIopXZtEI/O
-         05eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9AClRHYQmmiljK9Z1RfiVXUSaeI4B4a5JMw83y2hLjc=;
-        b=4LV7R1vkjjOorK1ig+Yrf7Np19UDyW11bZJ6MnHD747itQXyH6u2KoZY8VrCJ3p5JJ
-         Gi/vPJcpnyxDUjXFM3fQwe7LWkVtU5vwzAcHfkMSXFTXvZJwJcscaM7xJwxf1hyTwnEI
-         qJYm8TNopzI6RFsyHNYospKWLX0XU9yPetxZ7EVco5q6iUPmjPLT92RRj591sfznyYqV
-         00dX4vPd+SNMKycA8rnJ++u+MLvkCN/7GMBQMpMrwmtQ2lRSD6lGkEa4yme0A/i+dYrK
-         5PI3+2Fu5GiT5da9z+ZOBJjDIQJCX5ITa5YuQ+aRplJVJvUOA07tyONlImzn6xk6bGrM
-         fcZg==
-X-Gm-Message-State: ACrzQf0VF2CnELu5MtOqRvtNDL46sfDlz5Kk91nSgh0AzOJLGRMN6v/l
-        yYNaicxwS5V/ujhPSaYHCEpQcw==
-X-Google-Smtp-Source: AMsMyM6J5RCvHZ4nfAKpAsy44oTqJ0eAdadZ1UgP4V2W93kLu/WbhZUuA/LB4sy2MA3T1iCYEwidFA==
-X-Received: by 2002:a17:907:3f26:b0:78d:9c30:4529 with SMTP id hq38-20020a1709073f2600b0078d9c304529mr30510256ejc.195.1667505124242;
-        Thu, 03 Nov 2022 12:52:04 -0700 (PDT)
-Received: from localhost (cgw.msart-bajzova4.ke.cust.o2bs.sk. [90.176.4.227])
-        by smtp.gmail.com with ESMTPSA id br26-20020a170906d15a00b0072af4af2f46sm872441ejb.74.2022.11.03.12.52.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Nov 2022 12:52:03 -0700 (PDT)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Janghyuck Kim <janghyuck.kim@samsung.com>,
-        Cho KyongHo <pullip.cho@samsung.com>,
-        Daniel Mentz <danielmentz@google.com>,
-        David Virag <virag.david003@gmail.com>, iommu@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 5/6] iommu/exynos: Rearrange the platform driver code
-Date:   Thu,  3 Nov 2022 20:51:53 +0100
-Message-Id: <20221103195154.21495-6-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221103195154.21495-1-semen.protsenko@linaro.org>
-References: <20221103195154.21495-1-semen.protsenko@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 4 Nov 2022 06:04:54 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03C972BFE
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  4 Nov 2022 03:04:51 -0700 (PDT)
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20221104100448epoutp03cbccc1bdcce4acb3b4985d8b534074d1~kWZwJZnb70054700547epoutp03g
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  4 Nov 2022 10:04:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20221104100448epoutp03cbccc1bdcce4acb3b4985d8b534074d1~kWZwJZnb70054700547epoutp03g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1667556288;
+        bh=6YrZb4rIVThny1YuuCHZdKWp6Aza2885Qa/dxfwyNuQ=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=mYS9m7Ql92fYAk4lrGxoaVV+7L/HVCLztf5afuC5VK96VmVBFHwwWFl82aS7Olrm1
+         cjoH0xO3gCFargwoMQRE4OPKcMRj5XE1swKd2T/wjcP877Zx9uZX1wWUrGTKBVDk2/
+         bRzjjHE8ErmviPQxxemDZBZ+UR0IA2EfXwRA9uTA=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20221104100447epcas5p3a3cd553ac66cd4f4b0a0b6c2a7788725~kWZvcJpah3214732147epcas5p3Z;
+        Fri,  4 Nov 2022 10:04:47 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.179]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4N3bp5331Bz4x9Pp; Fri,  4 Nov
+        2022 10:04:45 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        9F.4D.39477.DB3E4636; Fri,  4 Nov 2022 19:04:45 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20221104085410epcas5p24d88f59001b739075e9e190e2c47841e~kVcEwUP0W1926119261epcas5p2v;
+        Fri,  4 Nov 2022 08:54:10 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20221104085410epsmtrp2877b16b524ac75f74d9f92dcf0b996b1~kVcEvaESi0462404624epsmtrp2P;
+        Fri,  4 Nov 2022 08:54:10 +0000 (GMT)
+X-AuditID: b6c32a4a-007ff70000019a35-92-6364e3bda44e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        86.46.18644.233D4636; Fri,  4 Nov 2022 17:54:10 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+        [107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20221104085407epsmtip1b37a75115cfe527d8477208458815b7d~kVcCHIU_Q3261232612epsmtip1h;
+        Fri,  4 Nov 2022 08:54:07 +0000 (GMT)
+From:   Inbaraj <inbaraj.e@samsung.com>
+To:     krzysztof.kozlowski@linaro.org, s.nawrocki@samsung.com,
+        tomasz.figa@gmail.com, cw00.choi@samsung.com,
+        alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, chanho61.park@samsung.com
+Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, pankaj.dubey@samsung.com,
+        Inbaraj <inbaraj.e@samsung.com>
+Subject: [PATCH] dt-bindings: clock: exynosautov9: fix reference to
+ CMU_FSYS1 mmc card clock
+Date:   Fri,  4 Nov 2022 14:30:19 +0530
+Message-Id: <20221104090019.88387-1-inbaraj.e@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkk+LIzCtJLcpLzFFi42LZdlhTQ3fv45Rkg7tfBC0ezNvGZnF5v7bF
+        9S/PWS3mHznHanH3zyQ2i72vt7JbbHp8jdXiY889VovLu+awWcw4v4/J4uIpV4tFW7+wW7Tu
+        PcJucfhNO6vFv2sbWSxW7frD6CDg8f5GK7vHzll32T02repk87hzbQ+bx+Yl9R59W1Yxenze
+        JBfAHpVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQN0
+        upJCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwKRArzgxt7g0L10vL7XEytDAwMgU
+        qDAhO6Nn9wW2ghlcFSuP72BuYDzK0cXIySEhYCKxu/sHG4gtJLCbUWJHS1gXIxeQ/YlRYubf
+        e+wQzmdGiXsn9jPBdGzpuM0GkdjFKHHr8maoqlYmiaPHnoLNYhNQlTiw/RUjSEJE4CGjxP7m
+        ZjCHGcS5/+Q8O0iVsECcxNlF78BsFqCO/4ungHXzClgB1VxkgdgnL7F6wwFmkGYJgUYOiVPf
+        N7JCJFwk7s7pYoewhSVeHd8CZUtJfH63lw3C9pHYP+cXI4SdIXFs+3KoXnuJA1fmAC3gALpI
+        U2L9Ln2IsKzE1FPrwP5kFuCT6P39BOpnXokd82BsZYmZR+5DjZeU2Hl5J9SdHhJTe75AQzJW
+        Yu61z0wTGGVnIWxYwMi4ilEytaA4Nz212LTAKC+1HB5Vyfm5mxjBaVLLawfjwwcf9A4xMnEw
+        HmKU4GBWEuH9tC05WYg3JbGyKrUoP76oNCe1+BCjKTDMJjJLiSbnAxN1Xkm8oYmlgYmZmZmJ
+        pbGZoZI47+IZWslCAumJJanZqakFqUUwfUwcnFINTNMtPhbfu9ufOvu/sP+y1NmV+v9vTd61
+        Kk3Q9FbebotXO9b7PBb6bbb6yfqU0Gr1ZYbHfZPO7q4y4trXt4vx9a+VfirKRxcdLl/96qyP
+        VvSjR6uDVWKaOALDFqk17lX9N23KvJMp268tWP6p422SWmHvjmzd99Mit7Bmya9LLtDiso6S
+        DuL5uZzpi/Ks+okfLHZZdC7av+i1a3nJS/eq38cmW957aOBeFNBkbektqZj5XsU0ot1wk/2N
+        3PMxEdsF72/Ne97w6b7O2tIPtgsbdKoDAu+/ZSlPnXXCvO7/FudNZZ/tVS8xPlbd9KZhTQtv
+        5uxSY3X9+PU+onX7O87N5WfeWFy6ZeaFvubmCw09GUosxRmJhlrMRcWJANjxpH0cBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKLMWRmVeSWpSXmKPExsWy7bCSnK7R5ZRkg51n2SwezNvGZnF5v7bF
+        9S/PWS3mHznHanH3zyQ2i72vt7JbbHp8jdXiY889VovLu+awWcw4v4/J4uIpV4tFW7+wW7Tu
+        PcJucfhNO6vFv2sbWSxW7frD6CDg8f5GK7vHzll32T02repk87hzbQ+bx+Yl9R59W1Yxenze
+        JBfAHsVlk5Kak1mWWqRvl8CV0bP7AlvBDK6Klcd3MDcwHuXoYuTkkBAwkdjScZuti5GLQ0hg
+        B6PE/qbprBAJSYnZv6ezQ9jCEiv/PWeHKGpmkvj0dTITSIJNQFXiwPZXjCAJEYHXjBL/731j
+        BnGYBZ4zSlx/sYkFpEpYIEZi8cJ/YB0sQB3/F09hA7F5Bawk7j+5yAKxQl5i9YYDzBMYeRYw
+        MqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAgOWS2tHYx7Vn3QO8TIxMF4iFGCg1lJ
+        hPfTtuRkId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGphS
+        ZsZsSj5QyPQnpPFOxJTS/280zdV9v1hm3XDf8fOBkdeTmh73joZuRmn/V48ubj/Tu/KX5fTj
+        uWd2rH8XJVwx7ZL9D75u1s38ec03xCPXSHsUCLn/unZWUeJc0469gQt0JJdN/mxyznWd45rw
+        XzlBe/TaC2cGVJy3FTX9Nuf8g/pGnyvGMY/y3Cdt++D+LbNNf5Nj5rtZ97gUgqrCw4PuSjxe
+        phbCbqzyW5C/yzvMkstk45r5M8XXXDsRIGR19dPGlzHsXpfnJ3aYJl0MCs0Xnn8wb4EzWwZT
+        wunfq+43/bnyymZqRrLTspfMFp2PXrIb/VYVeGI5eYPXwb03pltYdDLnKYaJfNn9RzMyy02J
+        pTgj0VCLuag4EQDevkDgyAIAAA==
+X-CMS-MailID: 20221104085410epcas5p24d88f59001b739075e9e190e2c47841e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20221104085410epcas5p24d88f59001b739075e9e190e2c47841e
+References: <CGME20221104085410epcas5p24d88f59001b739075e9e190e2c47841e@epcas5p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Move the platform_driver code to the bottom of the driver, as it's a
-canonical form for that. No functional change.
+Fix reference to CMU_FSYS1 mmc card clock to gout clock instead of dout.
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+This fixes make dtbs_check warning as shown below:
+
+arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb: clock-controller@17040000:
+clock-names:2: 'dout_clkcmu_fsys1_mmc_card' was expected
+From schema: /home/inbaraj/mainline/linux/Documentation/devicetree/
+bindings/clock/samsung,exynosautov9-clock.yaml
+
+Fixes: 4b6ec8d88623 ("dt-bindings: clock: exynosautov9: add schema for cmu_fsys0/1")
+Signed-off-by: Inbaraj <inbaraj.e@samsung.com>
 ---
-Changes in v2:
-  - Fixed checkpatch style suggestion with "--strict" flag
+ .../devicetree/bindings/clock/samsung,exynosautov9-clock.yaml   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/iommu/exynos-iommu.c | 361 +++++++++++++++++------------------
- 1 file changed, 180 insertions(+), 181 deletions(-)
-
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index cd3f74e638f0..c995cf8294cf 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -641,187 +641,6 @@ static void sysmmu_tlb_invalidate_entry(struct sysmmu_drvdata *data,
- 	spin_unlock_irqrestore(&data->lock, flags);
- }
+diff --git a/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
+index 2ab4642679c0..55c4f94a14d1 100644
+--- a/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
+@@ -148,7 +148,7 @@ allOf:
+           items:
+             - const: oscclk
+             - const: dout_clkcmu_fsys1_bus
+-            - const: dout_clkcmu_fsys1_mmc_card
++            - const: gout_clkcmu_fsys1_mmc_card
+             - const: dout_clkcmu_fsys1_usbdrd
  
--static const struct iommu_ops exynos_iommu_ops;
--
--static int exynos_sysmmu_probe(struct platform_device *pdev)
--{
--	int irq, ret;
--	struct device *dev = &pdev->dev;
--	struct sysmmu_drvdata *data;
--	struct resource *res;
--
--	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
--	if (!data)
--		return -ENOMEM;
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	data->sfrbase = devm_ioremap_resource(dev, res);
--	if (IS_ERR(data->sfrbase))
--		return PTR_ERR(data->sfrbase);
--
--	irq = platform_get_irq(pdev, 0);
--	if (irq <= 0)
--		return irq;
--
--	ret = devm_request_irq(dev, irq, exynos_sysmmu_irq, 0,
--				dev_name(dev), data);
--	if (ret) {
--		dev_err(dev, "Unabled to register handler of irq %d\n", irq);
--		return ret;
--	}
--
--	data->clk = devm_clk_get(dev, "sysmmu");
--	if (PTR_ERR(data->clk) == -ENOENT)
--		data->clk = NULL;
--	else if (IS_ERR(data->clk))
--		return PTR_ERR(data->clk);
--
--	data->aclk = devm_clk_get(dev, "aclk");
--	if (PTR_ERR(data->aclk) == -ENOENT)
--		data->aclk = NULL;
--	else if (IS_ERR(data->aclk))
--		return PTR_ERR(data->aclk);
--
--	data->pclk = devm_clk_get(dev, "pclk");
--	if (PTR_ERR(data->pclk) == -ENOENT)
--		data->pclk = NULL;
--	else if (IS_ERR(data->pclk))
--		return PTR_ERR(data->pclk);
--
--	if (!data->clk && (!data->aclk || !data->pclk)) {
--		dev_err(dev, "Failed to get device clock(s)!\n");
--		return -ENOENT;
--	}
--
--	data->clk_master = devm_clk_get(dev, "master");
--	if (PTR_ERR(data->clk_master) == -ENOENT)
--		data->clk_master = NULL;
--	else if (IS_ERR(data->clk_master))
--		return PTR_ERR(data->clk_master);
--
--	data->sysmmu = dev;
--	spin_lock_init(&data->lock);
--
--	__sysmmu_get_version(data);
--
--	ret = iommu_device_sysfs_add(&data->iommu, &pdev->dev, NULL,
--				     dev_name(data->sysmmu));
--	if (ret)
--		return ret;
--
--	ret = iommu_device_register(&data->iommu, &exynos_iommu_ops, dev);
--	if (ret)
--		goto err_iommu_register;
--
--	platform_set_drvdata(pdev, data);
--
--	if (PG_ENT_SHIFT < 0) {
--		if (MMU_MAJ_VER(data->version) < 5) {
--			PG_ENT_SHIFT = SYSMMU_PG_ENT_SHIFT;
--			LV1_PROT = SYSMMU_LV1_PROT;
--			LV2_PROT = SYSMMU_LV2_PROT;
--		} else {
--			PG_ENT_SHIFT = SYSMMU_V5_PG_ENT_SHIFT;
--			LV1_PROT = SYSMMU_V5_LV1_PROT;
--			LV2_PROT = SYSMMU_V5_LV2_PROT;
--		}
--	}
--
--	if (MMU_MAJ_VER(data->version) >= 5) {
--		ret = dma_set_mask(dev, DMA_BIT_MASK(36));
--		if (ret) {
--			dev_err(dev, "Unable to set DMA mask: %d\n", ret);
--			goto err_dma_set_mask;
--		}
--	}
--
--	/*
--	 * use the first registered sysmmu device for performing
--	 * dma mapping operations on iommu page tables (cpu cache flush)
--	 */
--	if (!dma_dev)
--		dma_dev = &pdev->dev;
--
--	pm_runtime_enable(dev);
--
--	return 0;
--
--err_dma_set_mask:
--	iommu_device_unregister(&data->iommu);
--err_iommu_register:
--	iommu_device_sysfs_remove(&data->iommu);
--	return ret;
--}
--
--static void exynos_sysmmu_shutdown(struct platform_device *pdev)
--{
--	struct sysmmu_drvdata *data = platform_get_drvdata(pdev);
--	struct device *dev = &pdev->dev;
--	int irq = platform_get_irq(pdev, 0);
--
--	devm_free_irq(dev, irq, data);
--	pm_runtime_force_suspend(dev);
--}
--
--static int __maybe_unused exynos_sysmmu_suspend(struct device *dev)
--{
--	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
--	struct device *master = data->master;
--
--	if (master) {
--		struct exynos_iommu_owner *owner = dev_iommu_priv_get(master);
--
--		mutex_lock(&owner->rpm_lock);
--		if (data->domain) {
--			dev_dbg(data->sysmmu, "saving state\n");
--			__sysmmu_disable(data);
--		}
--		mutex_unlock(&owner->rpm_lock);
--	}
--	return 0;
--}
--
--static int __maybe_unused exynos_sysmmu_resume(struct device *dev)
--{
--	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
--	struct device *master = data->master;
--
--	if (master) {
--		struct exynos_iommu_owner *owner = dev_iommu_priv_get(master);
--
--		mutex_lock(&owner->rpm_lock);
--		if (data->domain) {
--			dev_dbg(data->sysmmu, "restoring state\n");
--			__sysmmu_enable(data);
--		}
--		mutex_unlock(&owner->rpm_lock);
--	}
--	return 0;
--}
--
--static const struct dev_pm_ops sysmmu_pm_ops = {
--	SET_RUNTIME_PM_OPS(exynos_sysmmu_suspend, exynos_sysmmu_resume, NULL)
--	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
--				pm_runtime_force_resume)
--};
--
--static const struct of_device_id sysmmu_of_match[] = {
--	{ .compatible	= "samsung,exynos-sysmmu", },
--	{ },
--};
--MODULE_DEVICE_TABLE(of, sysmmu_of_match);
--
--static struct platform_driver exynos_sysmmu_driver = {
--	.probe	= exynos_sysmmu_probe,
--	.shutdown = exynos_sysmmu_shutdown,
--	.driver	= {
--		.name		= "exynos-sysmmu",
--		.of_match_table	= sysmmu_of_match,
--		.pm		= &sysmmu_pm_ops,
--		.suppress_bind_attrs = true,
--	}
--};
--
- static inline void exynos_iommu_set_pte(sysmmu_pte_t *ent, sysmmu_pte_t val)
- {
- 	dma_sync_single_for_cpu(dma_dev, virt_to_phys(ent), sizeof(*ent),
-@@ -1428,6 +1247,185 @@ static const struct iommu_ops exynos_iommu_ops = {
- 	}
- };
- 
-+static int exynos_sysmmu_probe(struct platform_device *pdev)
-+{
-+	int irq, ret;
-+	struct device *dev = &pdev->dev;
-+	struct sysmmu_drvdata *data;
-+	struct resource *res;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	data->sfrbase = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(data->sfrbase))
-+		return PTR_ERR(data->sfrbase);
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq <= 0)
-+		return irq;
-+
-+	ret = devm_request_irq(dev, irq, exynos_sysmmu_irq, 0, dev_name(dev),
-+			       data);
-+	if (ret) {
-+		dev_err(dev, "Unabled to register handler of irq %d\n", irq);
-+		return ret;
-+	}
-+
-+	data->clk = devm_clk_get(dev, "sysmmu");
-+	if (PTR_ERR(data->clk) == -ENOENT)
-+		data->clk = NULL;
-+	else if (IS_ERR(data->clk))
-+		return PTR_ERR(data->clk);
-+
-+	data->aclk = devm_clk_get(dev, "aclk");
-+	if (PTR_ERR(data->aclk) == -ENOENT)
-+		data->aclk = NULL;
-+	else if (IS_ERR(data->aclk))
-+		return PTR_ERR(data->aclk);
-+
-+	data->pclk = devm_clk_get(dev, "pclk");
-+	if (PTR_ERR(data->pclk) == -ENOENT)
-+		data->pclk = NULL;
-+	else if (IS_ERR(data->pclk))
-+		return PTR_ERR(data->pclk);
-+
-+	if (!data->clk && (!data->aclk || !data->pclk)) {
-+		dev_err(dev, "Failed to get device clock(s)!\n");
-+		return -ENOENT;
-+	}
-+
-+	data->clk_master = devm_clk_get(dev, "master");
-+	if (PTR_ERR(data->clk_master) == -ENOENT)
-+		data->clk_master = NULL;
-+	else if (IS_ERR(data->clk_master))
-+		return PTR_ERR(data->clk_master);
-+
-+	data->sysmmu = dev;
-+	spin_lock_init(&data->lock);
-+
-+	__sysmmu_get_version(data);
-+
-+	ret = iommu_device_sysfs_add(&data->iommu, &pdev->dev, NULL,
-+				     dev_name(data->sysmmu));
-+	if (ret)
-+		return ret;
-+
-+	ret = iommu_device_register(&data->iommu, &exynos_iommu_ops, dev);
-+	if (ret)
-+		goto err_iommu_register;
-+
-+	platform_set_drvdata(pdev, data);
-+
-+	if (PG_ENT_SHIFT < 0) {
-+		if (MMU_MAJ_VER(data->version) < 5) {
-+			PG_ENT_SHIFT = SYSMMU_PG_ENT_SHIFT;
-+			LV1_PROT = SYSMMU_LV1_PROT;
-+			LV2_PROT = SYSMMU_LV2_PROT;
-+		} else {
-+			PG_ENT_SHIFT = SYSMMU_V5_PG_ENT_SHIFT;
-+			LV1_PROT = SYSMMU_V5_LV1_PROT;
-+			LV2_PROT = SYSMMU_V5_LV2_PROT;
-+		}
-+	}
-+
-+	if (MMU_MAJ_VER(data->version) >= 5) {
-+		ret = dma_set_mask(dev, DMA_BIT_MASK(36));
-+		if (ret) {
-+			dev_err(dev, "Unable to set DMA mask: %d\n", ret);
-+			goto err_dma_set_mask;
-+		}
-+	}
-+
-+	/*
-+	 * use the first registered sysmmu device for performing
-+	 * dma mapping operations on iommu page tables (cpu cache flush)
-+	 */
-+	if (!dma_dev)
-+		dma_dev = &pdev->dev;
-+
-+	pm_runtime_enable(dev);
-+
-+	return 0;
-+
-+err_dma_set_mask:
-+	iommu_device_unregister(&data->iommu);
-+err_iommu_register:
-+	iommu_device_sysfs_remove(&data->iommu);
-+	return ret;
-+}
-+
-+static void exynos_sysmmu_shutdown(struct platform_device *pdev)
-+{
-+	struct sysmmu_drvdata *data = platform_get_drvdata(pdev);
-+	struct device *dev = &pdev->dev;
-+	int irq = platform_get_irq(pdev, 0);
-+
-+	devm_free_irq(dev, irq, data);
-+	pm_runtime_force_suspend(dev);
-+}
-+
-+static int __maybe_unused exynos_sysmmu_suspend(struct device *dev)
-+{
-+	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
-+	struct device *master = data->master;
-+
-+	if (master) {
-+		struct exynos_iommu_owner *owner = dev_iommu_priv_get(master);
-+
-+		mutex_lock(&owner->rpm_lock);
-+		if (data->domain) {
-+			dev_dbg(data->sysmmu, "saving state\n");
-+			__sysmmu_disable(data);
-+		}
-+		mutex_unlock(&owner->rpm_lock);
-+	}
-+	return 0;
-+}
-+
-+static int __maybe_unused exynos_sysmmu_resume(struct device *dev)
-+{
-+	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
-+	struct device *master = data->master;
-+
-+	if (master) {
-+		struct exynos_iommu_owner *owner = dev_iommu_priv_get(master);
-+
-+		mutex_lock(&owner->rpm_lock);
-+		if (data->domain) {
-+			dev_dbg(data->sysmmu, "restoring state\n");
-+			__sysmmu_enable(data);
-+		}
-+		mutex_unlock(&owner->rpm_lock);
-+	}
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops sysmmu_pm_ops = {
-+	SET_RUNTIME_PM_OPS(exynos_sysmmu_suspend, exynos_sysmmu_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				pm_runtime_force_resume)
-+};
-+
-+static const struct of_device_id sysmmu_of_match[] = {
-+	{ .compatible	= "samsung,exynos-sysmmu", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, sysmmu_of_match);
-+
-+static struct platform_driver exynos_sysmmu_driver = {
-+	.probe	= exynos_sysmmu_probe,
-+	.shutdown = exynos_sysmmu_shutdown,
-+	.driver	= {
-+		.name		= "exynos-sysmmu",
-+		.of_match_table	= sysmmu_of_match,
-+		.pm		= &sysmmu_pm_ops,
-+		.suppress_bind_attrs = true,
-+	}
-+};
-+
- static int __init exynos_iommu_init(void)
- {
- 	struct device_node *np;
-@@ -1461,6 +1459,7 @@ static int __init exynos_iommu_init(void)
- 	}
- 
- 	return 0;
-+
- err_zero_lv2:
- 	platform_driver_unregister(&exynos_sysmmu_driver);
- err_reg_driver:
+   - if:
 -- 
-2.35.1
+2.17.1
 
