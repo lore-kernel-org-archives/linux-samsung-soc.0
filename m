@@ -2,244 +2,146 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB48C4167D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B67C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:20:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231693AbiKGQUO (ORCPT
+        id S232391AbiKGQUl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Nov 2022 11:20:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41476 "EHLO
+        Mon, 7 Nov 2022 11:20:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231953AbiKGQUC (ORCPT
+        with ESMTP id S232402AbiKGQUQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2022 11:20:02 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B3844E90;
-        Mon,  7 Nov 2022 08:19:45 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9698823A;
-        Mon,  7 Nov 2022 08:19:51 -0800 (PST)
-Received: from pierre123.arm.com (pierre123.nice.arm.com [10.34.100.128])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4B0CB3F534;
-        Mon,  7 Nov 2022 08:19:30 -0800 (PST)
-From:   Pierre Gondois <pierre.gondois@arm.com>
+        Mon, 7 Nov 2022 11:20:16 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 420081DA57
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 08:18:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667837916;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IYDRz25IYQjafttz7S2rblYgKrpIBuhep8CtEmNwApc=;
+        b=QT5+C23c0A5ntnyhqk6lh/Qy8MP/AglGo+8Kb43zAkGMpSewi3eUzvI2dGl/EcbI0Qucr7
+        CvACckwg/Ba6eVvDxY5q8yAIn3tw/nztmTJ68A3qZqfggaJ0Yj68Gb3bzZr0KJG6NQc7Zx
+        9ifVRiHvK/xn2BNalGLueXx9FcT3Nng=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-527-gL9TAPUqOVKRnMGmjKJ-GQ-1; Mon, 07 Nov 2022 11:18:29 -0500
+X-MC-Unique: gL9TAPUqOVKRnMGmjKJ-GQ-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6F1913811F3B;
+        Mon,  7 Nov 2022 16:18:28 +0000 (UTC)
+Received: from t480s.redhat.com (unknown [10.39.195.106])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 666144B3FC6;
+        Mon,  7 Nov 2022 16:18:23 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Pierre Gondois <pierre.gondois@arm.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
-        Antoine Tenart <atenart@kernel.org>,
-        Brijesh Singh <brijeshkumar.singh@amd.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        William Zhang <william.zhang@broadcom.com>,
-        Anand Gore <anand.gore@broadcom.com>,
-        Kursad Oney <kursad.oney@broadcom.com>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Chester Lin <clin@suse.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Matthias Brugger <mbrugger@suse.com>,
-        NXP S32 Linux Team <s32@nxp.com>,
-        Wei Xu <xuwei5@hisilicon.com>, Chanho Min <chanho.min@lge.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        UNGLinuxDriver@microchip.com, Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jisheng Zhang <jszhang@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Ming Qian <ming.qian@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Adam Ford <aford173@gmail.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, Li Jun <jun.li@nxp.com>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Marek Vasut <marex@denx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Paul Elder <paul.elder@ideasonboard.com>,
-        Martin Kepplinger <martink@posteo.de>,
-        David Heidelberg <david@ixit.cz>,
-        Liu Ying <victor.liu@nxp.com>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Shijie Qin <shijie.qin@nxp.com>,
-        Zhou Peng <eagle.zhou@nxp.com>, Wei Fang <wei.fang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        Vadym Kochan <vadym.kochan@plvision.eu>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Akhil R <akhilrajeev@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>,
-        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Johan Jonker <jbx6244@gmail.com>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Aswani Reddy <aswani.reddy@samsung.com>,
-        Shashank Prashar <s.prashar@samsung.com>,
-        Bharat Uppal <bharat.uppal@samsung.com>,
-        devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+Cc:     linux-mm@kvack.org, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-realtek-soc@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH v2 11/23] arm64: dts: Update cache properties for marvell
-Date:   Mon,  7 Nov 2022 16:57:04 +0100
-Message-Id: <20221107155825.1644604-12-pierre.gondois@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221107155825.1644604-1-pierre.gondois@arm.com>
-References: <20221107155825.1644604-1-pierre.gondois@arm.com>
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH RFC 07/19] mm: don't call vm_ops->huge_fault() in wp_huge_pmd()/wp_huge_pud() for private mappings
+Date:   Mon,  7 Nov 2022 17:17:28 +0100
+Message-Id: <20221107161740.144456-8-david@redhat.com>
+In-Reply-To: <20221107161740.144456-1-david@redhat.com>
+References: <20221107161740.144456-1-david@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The DeviceTree Specification v0.3 specifies that the cache node
-'compatible' and 'cache-level' properties are 'required'. Cf.
-s3.8 Multi-level and Shared Cache Nodes
-The 'cache-unified' property should be present if one of the
-properties for unified cache is present ('cache-size', ...).
+If we already have a PMD/PUD mapped write-protected in a private mapping
+and we want to break COW either due to FAULT_FLAG_WRITE or
+FAULT_FLAG_UNSHARE, there is no need to inform the file system just like on
+the PTE path.
 
-Update the Device Trees accordingly.
+Let's just split (->zap) + fallback in that case.
 
-Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
-For ac5-98dx25xx.dtsi:
-Reviewed-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+This is a preparation for more generic FAULT_FLAG_UNSHARE support in
+COW mappings.
+
+Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi      | 1 +
- arch/arm64/boot/dts/marvell/armada-ap806-dual.dtsi | 2 ++
- arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi | 4 ++++
- arch/arm64/boot/dts/marvell/armada-ap807-quad.dtsi | 4 ++++
- 4 files changed, 11 insertions(+)
+ mm/memory.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi b/arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi
-index 44ed6f963b75..7308f7b6b22c 100644
---- a/arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi
-+++ b/arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi
-@@ -49,6 +49,7 @@ cpu1: cpu@1 {
+diff --git a/mm/memory.c b/mm/memory.c
+index 41e4c697033a..d2f9673755be 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4791,6 +4791,7 @@ static inline vm_fault_t create_huge_pmd(struct vm_fault *vmf)
+ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
+ {
+ 	const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
++	vm_fault_t ret;
  
- 		l2: l2-cache {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 	};
+ 	if (vma_is_anonymous(vmf->vma)) {
+ 		if (likely(!unshare) &&
+@@ -4798,11 +4799,13 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
+ 			return handle_userfault(vmf, VM_UFFD_WP);
+ 		return do_huge_pmd_wp_page(vmf);
+ 	}
+-	if (vmf->vma->vm_ops->huge_fault) {
+-		vm_fault_t ret = vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
  
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806-dual.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806-dual.dtsi
-index fcab5173fe67..6713b2ee50c9 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806-dual.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806-dual.dtsi
-@@ -48,9 +48,11 @@ cpu1: cpu@1 {
+-		if (!(ret & VM_FAULT_FALLBACK))
+-			return ret;
++	if (vmf->vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) {
++		if (vmf->vma->vm_ops->huge_fault) {
++			ret = vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
++			if (!(ret & VM_FAULT_FALLBACK))
++				return ret;
++		}
+ 	}
  
- 		l2: l2-cache {
- 			compatible = "cache";
-+			cache-unified;
- 			cache-size = <0x80000>;
- 			cache-line-size = <64>;
- 			cache-sets = <512>;
-+			cache-level = <2>;
- 		};
- 	};
- 
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
-index 3db427122f9e..695c8f070dbc 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
-@@ -78,16 +78,20 @@ cpu3: cpu@101 {
- 
- 		l2_0: l2-cache0 {
- 			compatible = "cache";
-+			cache-unified;
- 			cache-size = <0x80000>;
- 			cache-line-size = <64>;
- 			cache-sets = <512>;
-+			cache-level = <2>;
- 		};
- 
- 		l2_1: l2-cache1 {
- 			compatible = "cache";
-+			cache-unified;
- 			cache-size = <0x80000>;
- 			cache-line-size = <64>;
- 			cache-sets = <512>;
-+			cache-level = <2>;
- 		};
- 	};
- };
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap807-quad.dtsi b/arch/arm64/boot/dts/marvell/armada-ap807-quad.dtsi
-index 68782f161f12..878d82bb1052 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap807-quad.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap807-quad.dtsi
-@@ -78,16 +78,20 @@ cpu3: cpu@101 {
- 
- 		l2_0: l2-cache0 {
- 			compatible = "cache";
-+			cache-unified;
- 			cache-size = <0x80000>;
- 			cache-line-size = <64>;
- 			cache-sets = <512>;
-+			cache-level = <2>;
- 		};
- 
- 		l2_1: l2-cache1 {
- 			compatible = "cache";
-+			cache-unified;
- 			cache-size = <0x80000>;
- 			cache-line-size = <64>;
- 			cache-sets = <512>;
-+			cache-level = <2>;
- 		};
- 	};
- };
+ 	/* COW or write-notify handled on pte level: split pmd. */
+@@ -4828,14 +4831,17 @@ static vm_fault_t wp_huge_pud(struct vm_fault *vmf, pud_t orig_pud)
+ {
+ #if defined(CONFIG_TRANSPARENT_HUGEPAGE) &&			\
+ 	defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
++	vm_fault_t ret;
++
+ 	/* No support for anonymous transparent PUD pages yet */
+ 	if (vma_is_anonymous(vmf->vma))
+ 		goto split;
+-	if (vmf->vma->vm_ops->huge_fault) {
+-		vm_fault_t ret = vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PUD);
+-
+-		if (!(ret & VM_FAULT_FALLBACK))
+-			return ret;
++	if (vmf->vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) {
++		if (vmf->vma->vm_ops->huge_fault) {
++			ret = vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PUD);
++			if (!(ret & VM_FAULT_FALLBACK))
++				return ret;
++		}
+ 	}
+ split:
+ 	/* COW or write-notify not handled on PUD level: split pud.*/
 -- 
-2.25.1
+2.38.1
 
