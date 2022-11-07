@@ -2,134 +2,74 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 986FEC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 00:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FFAC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 06:24:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230165AbiKGAEL (ORCPT
+        id S229836AbiKGGYk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 6 Nov 2022 19:04:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50512 "EHLO
+        Mon, 7 Nov 2022 01:24:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230160AbiKGAEK (ORCPT
+        with ESMTP id S231250AbiKGGYi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 6 Nov 2022 19:04:10 -0500
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5903BE3A
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Nov 2022 16:04:06 -0800 (PST)
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20221107000403epoutp048fa855ee84349e5299c5e479c8bdbdc2~lJJEv6Z0l1361213612epoutp04e
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 00:04:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20221107000403epoutp048fa855ee84349e5299c5e479c8bdbdc2~lJJEv6Z0l1361213612epoutp04e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1667779443;
-        bh=yiy9+tK/kn9g0w+SJYCkGz8hXLmunRnS/MAznVjLMC0=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=BCr9miUZJalpeBe7j8YEkG/5Rnz1lGnff6ciAU5BPlaihzzqt1qcbx4tQYe7KmI/q
-         jQU08IHXjAVmId8f/ruJjMPJ5icP/A8tnIPhK18SbldHgtwX3Ps8rDp9/n06TtCBR1
-         WnnFTncW2qMpp3glLbi4hjF29wjwI0ONOOaYaMI8=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20221107000402epcas2p46f7c6ac5789584e7c15f8c56594e67fc~lJJEImNDD0386203862epcas2p4v;
-        Mon,  7 Nov 2022 00:04:02 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.102]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4N5BKY5tRyz4x9Q2; Mon,  7 Nov
-        2022 00:04:01 +0000 (GMT)
-X-AuditID: b6c32a47-ac5b870000002127-7f-63684b711fce
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        EF.BB.08487.17B48636; Mon,  7 Nov 2022 09:04:01 +0900 (KST)
-Mime-Version: 1.0
-Subject: RE: Re: [PATCH] dt-bindings: clock: exynosautov9: fix reference to
- CMU_FSYS1 mmc card clock
-Reply-To: chanho61.park@samsung.com
-Sender: CHANHO PARK <chanho61.park@samsung.com>
-From:   CHANHO PARK <chanho61.park@samsung.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Inbaraj E <inbaraj.e@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        ALIM AKHTAR <alim.akhtar@samsung.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        CHANHO PARK <chanho61.park@samsung.com>
-CC:     "linux-samsung-soc@vger.kernel.org" 
+        Mon, 7 Nov 2022 01:24:38 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F25B10B5A;
+        Sun,  6 Nov 2022 22:24:35 -0800 (PST)
+Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4N5LmW53LHzRp42;
+        Mon,  7 Nov 2022 14:24:27 +0800 (CST)
+Received: from ubuntu1804.huawei.com (10.67.174.58) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Mon, 7 Nov 2022 14:24:33 +0800
+From:   Xiu Jianfeng <xiujianfeng@huawei.com>
+To:     <krzysztof.kozlowski@linaro.org>, <alim.akhtar@samsung.com>,
+        <gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
+        <ben-linux@fluff.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-samsung-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <8f026f38-ef09-788e-7bd8-45683b074075@linaro.org>
-X-CPGS-Detection: blocking_info_exchange
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20221107000401epcms2p3eeeecbfb2b1cdfb30dcee99bbb48780c@epcms2p3>
-Date:   Mon, 07 Nov 2022 09:04:01 +0900
-X-CMS-MailID: 20221107000401epcms2p3eeeecbfb2b1cdfb30dcee99bbb48780c
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBJsWRmVeSWpSXmKPExsWy7bCmuW6hd0aywYn3WhYP5m1js7i8X9vi
-        +pfnrBbzj5xjtbj7ZxKbxd7XW9ktNj2+xmrxseceq8XlXXPYLGac38dkcfGUq8WirV/YLVr3
-        HmG3OPymndXi37WNLBardv1hdBDweH+jld1j56y77B6bVnWyedy5tofNY/OSeo++LasYPT5v
-        kgtgj8q2yUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAE6
-        XUmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYF6gV5yYW1yal66Xl1piZWhgYGQK
-        VJiQnXH2+DSWgqvsFfdadrI3MK5g62Lk5JAQMJHYvWQ3UxcjF4eQwA5Gibap54AcDg5eAUGJ
-        vzuEQWqEBdIknt79yA4SFhJQlti4LRYirC/xvb+JBcRmE9CVmP/hEyvIGBGBQ8wSLT2PwBxm
-        gQ5mie/X3jBDLOOVmNH+lAXClpbYvnwrI8hQTgE7iRdz4yHCGhI/lvVClYtK3Fz9lh3Gfn9s
-        PiOELSLReu8sVI2gxIOfu6HikhL/l+1lAxkpIVAt8e9qBUS4QmL3+01MELa5xPWPU8DKeQV8
-        JRZteAh2DYuAqkTv5aNQNS4SjyY8AbOZBeQltr+dwwwykllAU2L9Ln2I6coSR26xQFTwSXQc
-        /ssO89+OeU+gpqhLHNg+HepXWYnuOZ9ZIWwPiak9X9gmMCrOQgTzLCS7ZiHsWsDIvIpRLLWg
-        ODc9tdiowBges8n5uZsYwUlYy30H44y3H/QOMTJxMB5ilOBgVhLhveGWlizEm5JYWZValB9f
-        VJqTWnyI0RToy4nMUqLJ+cA8kFcSb2hiaWBiZmZobmRqYK4kzts1QytZSCA9sSQ1OzW1ILUI
-        po+Jg1Oqgcm35cecyH23X6/2/KtSsP6lzmnWgE0vH3w9t2eHbrzdBQ8JfT0dwSdPNfZtiVN7
-        2sl21/Sfd7PWFK+9Cr/Z8g6uULQtuMQvk9mceHVnbslBPb0NXjV3+JJ/PNpc+8jC2fLbR9lq
-        7TO7sj5tzxI6H77TgW32vDlN/7PnLPaakds1p3Z/dh3HEpET/kyqLpod6bNvvd97905Ocs89
-        i/OSGZHpYmfnvtxUk/dY5gZPCtN8LrM7kUvkfk5+wjqvSP/r4dBrOvXPZN+47DpZFvvVU6Ti
-        QOqkpZqbKvg3aEcGzqyUX9CT1+7J76apNcn1sOW/L20Cahc4H/b++1J/9m2YwpmpvCEHQq9+
-        EXnz6W7zpWYlluKMREMt5qLiRAAkDlTUSwQAAA==
-DLP-Filter: Pass
+        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.or>
+Subject: [PATCH] tty: serial: samsung_tty: Fix clk resource leak issue
+Date:   Mon, 7 Nov 2022 14:21:20 +0800
+Message-ID: <20221107062120.20321-1-xiujianfeng@huawei.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.174.58]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221104085410epcas5p24d88f59001b739075e9e190e2c47841e
-References: <8f026f38-ef09-788e-7bd8-45683b074075@linaro.org>
-        <20221104090019.88387-1-inbaraj.e@samsung.com>
-        <CGME20221104085410epcas5p24d88f59001b739075e9e190e2c47841e@epcms2p3>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> > Fix reference to CMU_FSYS1 mmc card clock to gout clock instead of dout.
-> >
-> > This fixes make dtbs_check warning as shown below:
-> >
-> > arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb: clock-
-> controller@17040000:
-> > clock-names:2: 'dout_clkcmu_fsys1_mmc_card' was expected From schema:
-> > /home/inbaraj/mainline/linux/Documentation/devicetree/
-> > bindings/clock/samsung,exynosautov9-clock.yaml
-> 
-> I don't understand:
-> 1. Why bindings are wrong not DTSI?
-> 2. What is "gout"? "dout" had a meaning as clock divider output.
+In the s3c24xx_serial_get_options(), calling clk_get() without clk_put()
+will cause clk resource leak issue, this patch fixes it.
 
-"gout" is output of a gate clock, AFAIK.
-Unlike any other clocks, the fsys1 mmc top clock does not have a divider. So, it should be "mout -> gout" instead of "mout -> gout -> dout".
+Fixes: b497549a035c ("[ARM] S3C24XX: Split serial driver into core and per-cpu drivers")
+Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+---
+ drivers/tty/serial/samsung_tty.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> 
-> >
-> > Fixes: 4b6ec8d88623 ("dt-bindings: clock: exynosautov9: add schema for
-> > cmu_fsys0/1")
-> > Signed-off-by: Inbaraj <inbaraj.e@samsung.com>
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 77d1363029f5..8a3bb9832172 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -2529,9 +2529,10 @@ s3c24xx_serial_get_options(struct uart_port *port, int *baud,
+ 		sprintf(clk_name, "clk_uart_baud%d", clk_sel);
+ 
+ 		clk = clk_get(port->dev, clk_name);
+-		if (!IS_ERR(clk))
++		if (!IS_ERR(clk)) {
+ 			rate = clk_get_rate(clk);
+-		else
++			clk_put(clk);
++		} else
+ 			rate = 1;
+ 
+ 		*baud = rate / (16 * (ubrdiv + 1));
+-- 
+2.17.1
 
-Reviewed-by: Chanho Park <chanho61.park@samsung.com>
-
-Best Regards,
-Chanho Park
