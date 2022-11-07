@@ -2,338 +2,186 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5EEEC43219
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A6EDC43217
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:19:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232740AbiKGQRD (ORCPT
+        id S231858AbiKGQTA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Nov 2022 11:17:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40836 "EHLO
+        Mon, 7 Nov 2022 11:19:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231594AbiKGQRC (ORCPT
+        with ESMTP id S231896AbiKGQS5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2022 11:17:02 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 21A532708;
-        Mon,  7 Nov 2022 08:17:01 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10C6FED1;
-        Mon,  7 Nov 2022 08:17:07 -0800 (PST)
-Received: from pierre123.arm.com (pierre123.nice.arm.com [10.34.100.128])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D943E3F534;
-        Mon,  7 Nov 2022 08:16:45 -0800 (PST)
-From:   Pierre Gondois <pierre.gondois@arm.com>
+        Mon, 7 Nov 2022 11:18:57 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A8A315FE0
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 08:18:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667837880;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=9cods/w8rqgeUJG27hSpYwAK3kmd3FHu+oLejBSIpOc=;
+        b=Hg8cyVb3uxvbJNcP7k4UuVat7nENIzHXn/ARZ0iCLQTMFUJ3rl3IavmEq2ujqO+ngHizlX
+        DJy9+61cxpHVG73M8v9W/nQz+USbnILpH4ShjZrAq+URNGYXoj4RpPIt6UpJD4+c4rzLHq
+        sjw/8gUlTeCGQLWQPzSTqW8Rwfd++IQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-515-izDZkPSsPkGvihn_mMeNNw-1; Mon, 07 Nov 2022 11:17:49 -0500
+X-MC-Unique: izDZkPSsPkGvihn_mMeNNw-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A911185A59D;
+        Mon,  7 Nov 2022 16:17:47 +0000 (UTC)
+Received: from t480s.redhat.com (unknown [10.39.195.106])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E6FEE4B3FC8;
+        Mon,  7 Nov 2022 16:17:41 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Pierre Gondois <pierre.gondois@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
-        Antoine Tenart <atenart@kernel.org>,
-        Brijesh Singh <brijeshkumar.singh@amd.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        William Zhang <william.zhang@broadcom.com>,
-        Anand Gore <anand.gore@broadcom.com>,
-        Kursad Oney <kursad.oney@broadcom.com>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Chester Lin <clin@suse.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Matthias Brugger <mbrugger@suse.com>,
-        NXP S32 Linux Team <s32@nxp.com>,
-        Wei Xu <xuwei5@hisilicon.com>, Chanho Min <chanho.min@lge.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        UNGLinuxDriver@microchip.com, Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jisheng Zhang <jszhang@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>, Ming Qian <ming.qian@nxp.com>,
-        Shijie Qin <shijie.qin@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Adam Ford <aford173@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, Li Jun <jun.li@nxp.com>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Marek Vasut <marex@denx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Paul Elder <paul.elder@ideasonboard.com>,
-        Martin Kepplinger <martink@posteo.de>,
-        David Heidelberg <david@ixit.cz>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Liu Ying <victor.liu@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        Wei Fang <wei.fang@nxp.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Vadym Kochan <vadym.kochan@plvision.eu>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Akhil R <akhilrajeev@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>,
-        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Johan Jonker <jbx6244@gmail.com>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Aswani Reddy <aswani.reddy@samsung.com>,
-        Shashank Prashar <s.prashar@samsung.com>,
-        Andi Shyti <andi@etezian.org>, devicetree@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
+Cc:     linux-mm@kvack.org, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-realtek-soc@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH v2 09/23] arm64: dts: Update cache properties for hisilicon
-Date:   Mon,  7 Nov 2022 16:57:02 +0100
-Message-Id: <20221107155825.1644604-10-pierre.gondois@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221107155825.1644604-1-pierre.gondois@arm.com>
-References: <20221107155825.1644604-1-pierre.gondois@arm.com>
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH RFC 00/19] mm/gup: remove FOLL_FORCE usage from drivers (reliable R/O long-term pinning)
+Date:   Mon,  7 Nov 2022 17:17:21 +0100
+Message-Id: <20221107161740.144456-1-david@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The DeviceTree Specification v0.3 specifies that the cache node
-'compatible' and 'cache-level' properties are 'required'. Cf.
-s3.8 Multi-level and Shared Cache Nodes
-The 'cache-unified' property should be present if one of the
-properties for unified cache is present ('cache-size', ...).
+For now, we did not support reliable R/O long-term pinning in COW mappings.
+That means, if we would trigger R/O long-term pinning in MAP_PRIVATE
+mapping, we could end up pinning the (R/O-mapped) shared zeropage or a
+pagecache page.
 
-Update the Device Trees accordingly.
+The next write access would trigger a write fault and replace the pinned
+page by an exclusive anonymous page in the process page table; whatever the
+process would write to that private page copy would not be visible by the
+owner of the previous page pin: for example, RDMA could read stale data.
+The end result is essentially an unexpected and hard-to-debug memory
+corruption.
 
-Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
----
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi |  2 ++
- arch/arm64/boot/dts/hisilicon/hi6220.dtsi |  2 ++
- arch/arm64/boot/dts/hisilicon/hip05.dtsi  |  4 ++++
- arch/arm64/boot/dts/hisilicon/hip06.dtsi  |  4 ++++
- arch/arm64/boot/dts/hisilicon/hip07.dtsi  | 16 ++++++++++++++++
- 5 files changed, 28 insertions(+)
+Some drivers tried working around that limitation by using
+"FOLL_FORCE|FOLL_WRITE|FOLL_LONGTERM" for R/O long-term pinning for now.
+FOLL_WRITE would trigger a write fault, if required, and break COW before
+pinning the page. FOLL_FORCE is required because the VMA might lack write
+permissions, and drivers wanted to make that working as well, just like
+one would expect (no write access, but still triggering a write access to
+break COW).
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-index 8343d0cedde3..a57f35eb5ef6 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-@@ -203,10 +203,12 @@ CLUSTER_SLEEP_1: cluster-sleep-1 {
- 
- 		A53_L2: l2-cache0 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		A73_L2: l2-cache1 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 	};
- 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-index ae0a7cfeeb47..f6d3202b0d1a 100644
---- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-@@ -186,10 +186,12 @@ cpu7: cpu@103 {
- 
- 		CLUSTER0_L2: l2-cache0 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		CLUSTER1_L2: l2-cache1 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 	};
- 
-diff --git a/arch/arm64/boot/dts/hisilicon/hip05.dtsi b/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-index 7b2abd10d3d6..5b2b1bfd0d2a 100644
---- a/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-@@ -211,18 +211,22 @@ cpu15: cpu@20303 {
- 
- 		cluster0_l2: l2-cache0 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster1_l2: l2-cache1 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster2_l2: l2-cache2 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster3_l2: l2-cache3 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 	};
- 
-diff --git a/arch/arm64/boot/dts/hisilicon/hip06.dtsi b/arch/arm64/boot/dts/hisilicon/hip06.dtsi
-index 2f8b03b0d365..291c2ee38288 100644
---- a/arch/arm64/boot/dts/hisilicon/hip06.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hip06.dtsi
-@@ -211,18 +211,22 @@ cpu15: cpu@10303 {
- 
- 		cluster0_l2: l2-cache0 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster1_l2: l2-cache1 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster2_l2: l2-cache2 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster3_l2: l2-cache3 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 	};
- 
-diff --git a/arch/arm64/boot/dts/hisilicon/hip07.dtsi b/arch/arm64/boot/dts/hisilicon/hip07.dtsi
-index 1a16662f8867..b8746fb959b5 100644
---- a/arch/arm64/boot/dts/hisilicon/hip07.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hip07.dtsi
-@@ -842,66 +842,82 @@ cpu63: cpu@70303 {
- 
- 		cluster0_l2: l2-cache0 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster1_l2: l2-cache1 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster2_l2: l2-cache2 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster3_l2: l2-cache3 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster4_l2: l2-cache4 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster5_l2: l2-cache5 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster6_l2: l2-cache6 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster7_l2: l2-cache7 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster8_l2: l2-cache8 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster9_l2: l2-cache9 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster10_l2: l2-cache10 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster11_l2: l2-cache11 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster12_l2: l2-cache12 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster13_l2: l2-cache13 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster14_l2: l2-cache14 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		cluster15_l2: l2-cache15 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 	};
- 
+However, that is not a practical solution, because
+(1) Drivers that don't stick to that undocumented and debatable pattern
+    would still run into that issue. For example, VFIO only uses
+    FOLL_LONGTERM for R/O long-term pinning.
+(2) Using FOLL_WRITE just to work around a COW mapping + page pinning
+    limitation is unintuitive. FOLL_WRITE would, for example, mark the
+    page softdirty or trigger uffd-wp, even though, there actually isn't
+    going to be any write access.
+(3) The purpose of FOLL_FORCE is debug access, not access without lack of
+    VMA permissions by arbitrarty drivers.
+
+So instead, make R/O long-term pinning work as expected, by breaking COW
+in a COW mapping early, such that we can remove any FOLL_FORCE usage from
+drivers. More details in patch #8.
+
+Patches #1--#3 add COW tests for non-anonymous pages.
+Patches #4--#7 prepare core MM for extended FAULT_FLAG_UNSHARE support in
+COW mappings.
+Patch #8 implements reliable R/O long-term pinning in COW mappings
+Patches #9--#19 remove any FOLL_FORCE usage from drivers.
+
+I'm refraining from CCing all driver maintainers on the whole patch set.
+
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Nadav Amit <namit@vmware.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Muchun Song <songmuchun@bytedance.com>
+Cc: Shuah Khan <shuah@kernel.org
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Oded Gabbay <ogabbay@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+
+David Hildenbrand (19):
+  selftests/vm: anon_cow: prepare for non-anonymous COW tests
+  selftests/vm: cow: basic COW tests for non-anonymous pages
+  selftests/vm: cow: R/O long-term pinning reliability tests for
+    non-anon pages
+  mm: add early FAULT_FLAG_UNSHARE consistency checks
+  mm: add early FAULT_FLAG_WRITE consistency checks
+  mm: rework handling in do_wp_page() based on private vs. shared
+    mappings
+  mm: don't call vm_ops->huge_fault() in wp_huge_pmd()/wp_huge_pud() for
+    private mappings
+  mm: extend FAULT_FLAG_UNSHARE support to anything in a COW mapping
+  mm/gup: reliable R/O long-term pinning in COW mappings
+  RDMA/umem: remove FOLL_FORCE usage
+  RDMA/usnic: remove FOLL_FORCE usage
+  RDMA/siw: remove FOLL_FORCE usage
+  media: videobuf-dma-sg: remove FOLL_FORCE usage
+  drm/etnaviv: remove FOLL_FORCE usage
+  media: pci/ivtv: remove FOLL_FORCE usage
+  mm/frame-vector: remove FOLL_FORCE usage
+  drm/exynos: remove FOLL_FORCE usage
+  RDMA/hw/qib/qib_user_pages: remove FOLL_FORCE usage
+  habanalabs: remove FOLL_FORCE usage
+
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c         |   8 +-
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c       |   2 +-
+ drivers/infiniband/core/umem.c                |   8 +-
+ drivers/infiniband/hw/qib/qib_user_pages.c    |   2 +-
+ drivers/infiniband/hw/usnic/usnic_uiom.c      |   9 +-
+ drivers/infiniband/sw/siw/siw_mem.c           |   9 +-
+ drivers/media/common/videobuf2/frame_vector.c |   2 +-
+ drivers/media/pci/ivtv/ivtv-udma.c            |   2 +-
+ drivers/media/pci/ivtv/ivtv-yuv.c             |   5 +-
+ drivers/media/v4l2-core/videobuf-dma-sg.c     |  14 +-
+ drivers/misc/habanalabs/common/memory.c       |   3 +-
+ include/linux/mm.h                            |  27 +-
+ include/linux/mm_types.h                      |   8 +-
+ mm/gup.c                                      |  10 +-
+ mm/huge_memory.c                              |   5 +-
+ mm/hugetlb.c                                  |  12 +-
+ mm/memory.c                                   |  97 +++--
+ tools/testing/selftests/vm/.gitignore         |   2 +-
+ tools/testing/selftests/vm/Makefile           |  10 +-
+ tools/testing/selftests/vm/check_config.sh    |   4 +-
+ .../selftests/vm/{anon_cow.c => cow.c}        | 387 +++++++++++++++++-
+ tools/testing/selftests/vm/run_vmtests.sh     |   8 +-
+ 22 files changed, 516 insertions(+), 118 deletions(-)
+ rename tools/testing/selftests/vm/{anon_cow.c => cow.c} (74%)
+
 -- 
-2.25.1
+2.38.1
 
