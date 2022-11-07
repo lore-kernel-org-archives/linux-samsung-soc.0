@@ -2,186 +2,99 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 323C6C4167D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 18:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D72CC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 18:15:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232861AbiKGSIA (ORCPT
+        id S233152AbiKGSPZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Nov 2022 13:08:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51478 "EHLO
+        Mon, 7 Nov 2022 13:15:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232081AbiKGSHp (ORCPT
+        with ESMTP id S233155AbiKGSPB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2022 13:07:45 -0500
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 481712C65B
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 10:03:56 -0800 (PST)
-Received: by mail-lj1-x236.google.com with SMTP id s24so17493968ljs.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Nov 2022 10:03:55 -0800 (PST)
+        Mon, 7 Nov 2022 13:15:01 -0500
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58FC41087
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 10:14:02 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id z24so17570757ljn.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Nov 2022 10:14:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+ir96l+QDjXFux43KwFJhlNV7YT1OSh/8apFuqiZtho=;
-        b=nT3CgucQtQ1gVhgea+s6MbSPrlUCSZ6j43gzpB71/IhaN3vIRUyUQg9rFIOQ0EOSOI
-         l1p8KXfPEyVrbLHtZU/V0ENKGuD7OmI+eqRCHWED0EpxhpQrOr2ktf7eSoJ7kEhDVEG/
-         /VttDUEf6u71RNqAgu4GudNAz+jDgaxFKRVUWIX1Gaax+w43cwBjvhZg0rqSE+RUiNYL
-         tC+k2Snids+rFyic656eMYikt5iVJbJujpa4BR9hvfsVPuXxEqNU56ziemfweSeTJ7YY
-         r4HHT5C/KL/ROQtuTTbrXmkr8zNarexAeib+Ha6s4u+Wau8hhKauEXzK8HgyEh1HdIhG
-         JMNQ==
+        bh=pvuKD18nXs5C0f6du6Wvit7+4UGLgSc//n9KNZJnd2U=;
+        b=ZeE2g8FJuwjaUrwBzqjDJ7ffHwLQMyHb4BNDQ9bSphP0A3VS5xIvw496dMkbbYQbu3
+         /a+qEq5ToWhdsqapUhlEFgjaQLzySs41v9OJjptqER2dCQ+lpVdWPsqa+CPbZ6RJUeXN
+         MkTMjE8MUQyH3wRJTv7QBq8+H/OuKyQV9iKjJizM+9ohu/0Pl+juTsGat8dBUNhAPtnp
+         FI55nc6g8mwfAX4d9Dj6doGt+sx/V6RI+d7UdA/ruSehYZlkeLcYsbqRzLbGN6cvaYAO
+         0J1wyQv4slSP9p8RGcRwD8PJdrYn4sGjX8y9E2GFH4RTxjBqKeu4VmIF/0GQnZF+L1it
+         wyDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+ir96l+QDjXFux43KwFJhlNV7YT1OSh/8apFuqiZtho=;
-        b=JD/FB1LZdZAmBOqT9xcMGq+Vni7dImTYOzPRaG5/6el+9kCigRcsUYh0RNCpnwlr+J
-         wtBg12xnI67/TaG91X7p8KRM2UEeuF/pDXxcuCUCxKPnZHdhtKkfQjrgGNuTRjnwoYZM
-         kFfYUC3vRkl0djFTuNEmWVq0eXIwKGmNPfd3HxqjGaoHBWSIb5nWPFQ7bEUJSdpLDu+Y
-         ibiyS2NFs4U1yNe3HixJMlECTfCYoyrcqt2+DOGmctKRZlFAx3FGAg/aQ+48SHkP1CZz
-         hWeAOoNqGL8W8yFUb+WULgslfcPIst++7ePjRWqnU8UgNW/lyrJJoRauEtGHL+9ondBe
-         7LwQ==
-X-Gm-Message-State: ACrzQf38jtJ4GJ4g8RP+uh2GkN3wlbW4IgbpvfB4VMM33kLFp7AUl4ZH
-        l7qbH4zyMY3HydngXEoAk95TUw==
-X-Google-Smtp-Source: AMsMyM59MymaW14rwcCR//K6Z824DJsWuzy2Lj65+BM7fRjMmwmBrrErq2391fOQILS2QOeD1c70uA==
-X-Received: by 2002:a2e:2405:0:b0:277:524c:f83d with SMTP id k5-20020a2e2405000000b00277524cf83dmr5914462ljk.217.1667844232060;
-        Mon, 07 Nov 2022 10:03:52 -0800 (PST)
+        bh=pvuKD18nXs5C0f6du6Wvit7+4UGLgSc//n9KNZJnd2U=;
+        b=5uuJpf6ME3okb1T6Xmxi6f/POkg+Y6pF5aweupsezh+Pe2z/KCw4Pse0GLDoSwMA7B
+         3I27/g03VKh1IcoKlQQql6CwNfPhKZD1cMo4qrhuNIWQj9pZ/8k7kGoa/H50jb+eAgbc
+         Tf56DOWNG8SOeCdA9NPz0D3yAIIgVn/JehbQvheAQxE5HUUt0FfcF4tVX+ydlXblEBJK
+         AIH4Fa1b9aO5WJU0wmwBScNPVEHA68OBgJRJDG6FiBhqUTehEPFFhPjVrybkq2tApKDe
+         0hwFgzDee/UbY/GULzUDnq63hGyiR3d3LxxXpyb0fqiYDzl+8LpOhBdBvVieNkavhHMn
+         mg+w==
+X-Gm-Message-State: ACrzQf2lqBiiIX2OYTbM7UauqX9ulx+1Wfn78PlYjWbgUVIQ4oQOXlKO
+        G2JdKUzlEvfZE/HPcuCkl8/l8A==
+X-Google-Smtp-Source: AMsMyM4cUoHwZTyngzcx+bF4UO192jEYqwXF5DtB+xrdiGnSYEVJ1CIPPQHLl5OH6HQOikomQ8sJ5A==
+X-Received: by 2002:a2e:98d2:0:b0:26c:66c1:87f9 with SMTP id s18-20020a2e98d2000000b0026c66c187f9mr5900566ljj.47.1667844840764;
+        Mon, 07 Nov 2022 10:14:00 -0800 (PST)
 Received: from [192.168.0.20] (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
-        by smtp.gmail.com with ESMTPSA id z4-20020a056512376400b00499b1873d6dsm1353254lft.269.2022.11.07.10.03.48
+        by smtp.gmail.com with ESMTPSA id t12-20020a056512208c00b00492aefd73a5sm1360716lfr.132.2022.11.07.10.13.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Nov 2022 10:03:51 -0800 (PST)
-Message-ID: <e6fbdee5-24b0-ef0f-9cff-1d77220d9d73@linaro.org>
-Date:   Mon, 7 Nov 2022 19:03:48 +0100
+        Mon, 07 Nov 2022 10:14:00 -0800 (PST)
+Message-ID: <9e0d2b3e-d3a6-0249-8cb3-29e0344708d4@linaro.org>
+Date:   Mon, 7 Nov 2022 19:13:59 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
-Subject: Re: [PATCH v2 00/23] Update cache properties for arm64 DTS
+Subject: Re: (subset) [PATCH 06/20] arm64: dts: Update cache properties for
+ exynos
 Content-Language: en-US
 To:     Pierre Gondois <pierre.gondois@arm.com>,
         linux-kernel@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
-        Antoine Tenart <atenart@kernel.org>,
-        Brijesh Singh <brijeshkumar.singh@amd.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        William Zhang <william.zhang@broadcom.com>,
-        Anand Gore <anand.gore@broadcom.com>,
-        Kursad Oney <kursad.oney@broadcom.com>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Chester Lin <clin@suse.com>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Matthias Brugger <mbrugger@suse.com>,
-        NXP S32 Linux Team <s32@nxp.com>,
-        Wei Xu <xuwei5@hisilicon.com>, Chanho Min <chanho.min@lge.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        UNGLinuxDriver@microchip.com, Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jisheng Zhang <jszhang@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Ming Qian <ming.qian@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Adam Ford <aford173@gmail.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, Li Jun <jun.li@nxp.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Marek Vasut <marex@denx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Arjun K V <arjun.kv@samsung.com>, devicetree@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-realtek-soc@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-References: <20221107155825.1644604-1-pierre.gondois@arm.com>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob.Herring@arm.com, linux-samsung-soc@vger.kernel.org
+References: <20221031091945.531874-1-pierre.gondois@arm.com>
+ <166742051292.139492.12539582422109367063.b4-ty@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221107155825.1644604-1-pierre.gondois@arm.com>
+In-Reply-To: <166742051292.139492.12539582422109367063.b4-ty@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 07/11/2022 16:56, Pierre Gondois wrote:
-> v2:
-> - Update/Add patches for missed cache properties requiring to be
->   updated for the following platforns: bcm, amazon, arm, exynos,
->   freescale, marvell, mediatek, nvidia, socinext, tesla, ti.
->   Missed cache properties were detected using Rob Herring's branch:
->   https://github.com/robherring/dt-schema/tree/cache-rework
-> - v1 of exynos, tesla were merged.
+On 02/11/2022 21:21, Krzysztof Kozlowski wrote:
+> On Mon, 31 Oct 2022 10:19:45 +0100, Pierre Gondois wrote:
+>> The DeviceTree Specification v0.3 specifies that the cache node
+>> 'compatible' and 'cache-level' properties are 'required'. Cf.
+>> s3.8 Multi-level and Shared Cache Nodes
+>>
+>> The recently added init_of_cache_level() function checks
+>> these properties. Add them if missing.
+>>
+>> [...]
+> 
+> Applied, thanks!
+> 
+> [06/20] arm64: dts: Update cache properties for exynos
+>         https://git.kernel.org/krzk/linux/c/58710ae94589a2b2baaab6b6986064b691124b0d
 
-So you now duplicated the properties... You need to explicitly ask for a
-patch to be dropped.
+Now dropped. I understand this is the intention/request of v2.
 
-This cannot be sent like this because it is unmanageable.
-1. Split the patchset per sub arch:
-
-"Sending of the message failed.
-An error occurred while sending mail. The mail server responded:
-Your message has too many recipients. For more information regarding
-Google's sending limits, please visit:
- https://support.google.com/mail/?p=TooManyRecipientsError
-w8-20020ac24428000000b00492ea54beeasm1344368lfl.306 - gsmtp.
- Please check the message recipient "chris.obbard@collabora.com" and try
-again."
-
-2. Ask explicitly for dropping already merged patches (I assume they are
-incorrect if you send v2 of them).
-
-3. Use subject prefixes matching the subsystem (git log --oneline -- ...).
-
-4. Send such patches only to interested parties, not as part of everything.
+When resending be sure to use proper subject prefixes.
 
 Best regards,
 Krzysztof
