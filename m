@@ -2,110 +2,113 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EE8C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 08:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE024C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 09:12:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230426AbiKGI4Y (ORCPT
+        id S231585AbiKGJMT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Nov 2022 03:56:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55886 "EHLO
+        Mon, 7 Nov 2022 04:12:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231589AbiKGI4L (ORCPT
+        with ESMTP id S231783AbiKGJMI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2022 03:56:11 -0500
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F5D515A10
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 00:56:08 -0800 (PST)
-Received: by mail-lj1-x230.google.com with SMTP id k19so15168711lji.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Nov 2022 00:56:08 -0800 (PST)
+        Mon, 7 Nov 2022 04:12:08 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4469863EF
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 01:12:07 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id f37so15850595lfv.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Nov 2022 01:12:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=P4yobrH389xViJ4SBZFWFfQcSb3b4iE/4kaJv9Tjz9k=;
-        b=C8nwMjrXclHLiiA9mnqL7dMI7CotpWmWWcW8tJTYs5IfQImFCwFYQGGd0msXx23n8Z
-         PwyeSQFpKxiermhIXfHOr8zVnhtZw1M14z0/XLC/6UccJ1v2rQ+ehmzoqPlIisbvuGrD
-         7v3eDxi19pA3Z/5NbNmx2E/IcIRrxdJ4PUPyOxfVmQl1uUTVIqy/hpNUHdwo/W4/6Bm4
-         uKQDYjX/nbXKAudwwhePEemXKJn6bOc2ZxunHxTC+nHIwgBNKTYk0nELI/2CCnE/zQMf
-         82kFR86JK+DZoJAhFRO6+nvCjVeSjVnFR0zwnWigQ//8SJZrzcWgVBbw6Pi9EBbsyY/z
-         PLEQ==
+        bh=lnsPOK5motup9T8XBniEK+peF/D2fTuyq/bCy58k14U=;
+        b=bvOlLbXhahamOjqO+zkLPF8mhi4RlovgUaredeyun24ljOLREs9ppJVlJDipQmET9F
+         10KOQMwRSPJjZGOSvfSm+AQ5/8x2yTkCwd56WPI0oFTGR/YDdJj1OHtJldSWYo5mnP6R
+         TtjJxmftemResRP6WaV+b/pga2IveLsputjMd78VuHC/RFKQv9EW+LSntd246g2gMK/h
+         WTzSLL4hmksJhkznSmwYLEeEObYEShDfxLRvKoWZ2JHFY5bxV7oNR4oYjAEhJrKlCMqG
+         GNqY42NPIBSaMgccF3sYiF7GTRMlidv+/1s2KiuFGPoDatfTKdFYB7jng7EtmADN4Tqo
+         ivHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P4yobrH389xViJ4SBZFWFfQcSb3b4iE/4kaJv9Tjz9k=;
-        b=MkjWAVeYIJ7H1Mpgg2fjPshlZ+sIer6DSzd7eRd5RMqdnP6pAdNYcgSQY7Ta3rhswn
-         vW0kOclOoteugvSHt6bHCfbH8L/Q1MJk66eAVzjm7F/bq2TPGYy2PCyFBUZKAGp1WJOe
-         r01IQkbbxha2tHKW5cygpNN0yp/xM0mjVWvD3tLKe3QNzXwNIWsO0ZCS2BcVc1iFAu9R
-         L/R6ZNGvAydnXCfR2OmCHprrZyYnCZP3DrYNKAYSjM00k7QLisQDPDP/OqK65wJjlc0z
-         TlCHTk0OP7vCwjC+doGHqKMm2mOUKQkiSfeQcQj4RC2WtohB9Vrl2K5FwCROJSrI8aoQ
-         F+ag==
-X-Gm-Message-State: ACrzQf1GYSmPy2a3kOP0L3EPD2mNywGexw5IpYjCf50XXa6AYfj+WPuQ
-        m8hjm8FwuVU9y8bviY4DN4FVLw==
-X-Google-Smtp-Source: AMsMyM4ZERp7BWFG36Cafz3vkYEC3LGMahSlKJC0z0UT6sIbju2zMZTPur0IwA5eMDswCZOMP2wVnw==
-X-Received: by 2002:a2e:c4a:0:b0:277:3931:6dc9 with SMTP id o10-20020a2e0c4a000000b0027739316dc9mr18055896ljd.45.1667811367911;
-        Mon, 07 Nov 2022 00:56:07 -0800 (PST)
+        bh=lnsPOK5motup9T8XBniEK+peF/D2fTuyq/bCy58k14U=;
+        b=tkWvkefurohd2KHsV9pHh+V6WGkRSGjIJ6oA62SNXNOkWG+FaRhlzO8pISLr7tuLnp
+         U1j5xnUqfi71MgMW9N7arh3wfn26yoYUbQ1D9wu2LfK6wqnHhC7cNbmjemdITH0wM51H
+         cozcUlAEIfD5RPh86KN2cMrOy0UhtAqHJV72Z1xQrcTI5n3uddlY7i4U9mRpm8WQsqL9
+         acOPnfa/sJntwk6Hk0OtLZJxVY5HkMiT7Pm0bDyrADBtVxmQjyjSNhWUbAzad/Wll1hh
+         4vXgzxpmuAqmcEA8wOs9FQ5zXRqUg6e5jG3H1YVvvoBOF9vH+28EYHKLoIwPsZE4rf0e
+         ZXnQ==
+X-Gm-Message-State: ACrzQf3MHMkZARefZRNXPUrjF0DSgB00QKilKWwEWEUz6U//vU7kUpwx
+        LuQ4n36AuOcIbLcgGMkhelstMg==
+X-Google-Smtp-Source: AMsMyM7bXG55cIesK9wxtNvqOTQV+Xf1GiFjjQy9uqOkUa9uGlR/Zjx94GQGqhw1F7vSxJkhQLmuQA==
+X-Received: by 2002:a19:654a:0:b0:4b0:831b:ef35 with SMTP id c10-20020a19654a000000b004b0831bef35mr15143654lfj.206.1667812325644;
+        Mon, 07 Nov 2022 01:12:05 -0800 (PST)
 Received: from [192.168.0.20] (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
-        by smtp.gmail.com with ESMTPSA id e23-20020a196917000000b004979df1c1fasm1145290lfc.61.2022.11.07.00.56.06
+        by smtp.gmail.com with ESMTPSA id r17-20020a194411000000b0048a9e899693sm1146236lfa.16.2022.11.07.01.12.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Nov 2022 00:56:06 -0800 (PST)
-Message-ID: <d7e7e6cb-eeb4-49b1-595b-8b44c519b586@linaro.org>
-Date:   Mon, 7 Nov 2022 09:56:06 +0100
+        Mon, 07 Nov 2022 01:12:05 -0800 (PST)
+Message-ID: <0e929d35-2a90-94fb-49d6-7f6a0f0a3ed0@linaro.org>
+Date:   Mon, 7 Nov 2022 10:12:04 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
-Subject: Re: [PATCH] tty: serial: samsung_tty: Fix clk resource leak issue
+Subject: Re: [PATCH] dt-bindings: clock: exynosautov9: fix reference to
+ CMU_FSYS1 mmc card clock
 Content-Language: en-US
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>
-Cc:     alim.akhtar@samsung.com, jirislaby@kernel.org, ben-linux@fluff.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.or
-References: <20221107062120.20321-1-xiujianfeng@huawei.com>
- <Y2iw+QdyfGGNz9pU@kroah.com>
+To:     chanho61.park@samsung.com, Inbaraj E <inbaraj.e@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        ALIM AKHTAR <alim.akhtar@samsung.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+Cc:     "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>
+References: <8f026f38-ef09-788e-7bd8-45683b074075@linaro.org>
+ <20221104090019.88387-1-inbaraj.e@samsung.com>
+ <CGME20221104085410epcas5p24d88f59001b739075e9e190e2c47841e@epcms2p3>
+ <20221107000401epcms2p3eeeecbfb2b1cdfb30dcee99bbb48780c@epcms2p3>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <Y2iw+QdyfGGNz9pU@kroah.com>
+In-Reply-To: <20221107000401epcms2p3eeeecbfb2b1cdfb30dcee99bbb48780c@epcms2p3>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 07/11/2022 08:17, Greg KH wrote:
-> On Mon, Nov 07, 2022 at 02:21:20PM +0800, Xiu Jianfeng wrote:
->> In the s3c24xx_serial_get_options(), calling clk_get() without clk_put()
->> will cause clk resource leak issue, this patch fixes it.
+On 07/11/2022 01:04, CHANHO PARK wrote:
+>>> Fix reference to CMU_FSYS1 mmc card clock to gout clock instead of dout.
+>>>
+>>> This fixes make dtbs_check warning as shown below:
+>>>
+>>> arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb: clock-
+>> controller@17040000:
+>>> clock-names:2: 'dout_clkcmu_fsys1_mmc_card' was expected From schema:
+>>> /home/inbaraj/mainline/linux/Documentation/devicetree/
+>>> bindings/clock/samsung,exynosautov9-clock.yaml
 >>
->> Fixes: b497549a035c ("[ARM] S3C24XX: Split serial driver into core and per-cpu drivers")
->> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
->> ---
->>  drivers/tty/serial/samsung_tty.c | 5 +++--
->>  1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
->> index 77d1363029f5..8a3bb9832172 100644
->> --- a/drivers/tty/serial/samsung_tty.c
->> +++ b/drivers/tty/serial/samsung_tty.c
->> @@ -2529,9 +2529,10 @@ s3c24xx_serial_get_options(struct uart_port *port, int *baud,
->>  		sprintf(clk_name, "clk_uart_baud%d", clk_sel);
->>  
->>  		clk = clk_get(port->dev, clk_name);
->> -		if (!IS_ERR(clk))
->> +		if (!IS_ERR(clk)) {
->>  			rate = clk_get_rate(clk);
->> -		else
->> +			clk_put(clk);
->> +		} else
+>> I don't understand:
+>> 1. Why bindings are wrong not DTSI?
+>> 2. What is "gout"? "dout" had a meaning as clock divider output.
 > 
-> How was this tested?
+> "gout" is output of a gate clock, AFAIK.
+> Unlike any other clocks, the fsys1 mmc top clock does not have a divider. So, it should be "mout -> gout" instead of "mout -> gout -> dout".
 
-The driver has such potential missing clk_put in few other places as
-well: here on success path and few error paths after calling
-s3c24xx_serial_enable_baudclk(). Yet I am concerned that none of these
-paths were actually tested...
+OK, then this should be in commit msg.
+
+My question about full legal name remains, as here in replies I see
+"Inbaraj E".
 
 Best regards,
 Krzysztof
