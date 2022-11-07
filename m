@@ -2,180 +2,244 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16CFCC4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB48C4167D
 	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231966AbiKGQUN (ORCPT
+        id S231693AbiKGQUO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Nov 2022 11:20:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42282 "EHLO
+        Mon, 7 Nov 2022 11:20:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232062AbiKGQUB (ORCPT
+        with ESMTP id S231953AbiKGQUC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2022 11:20:01 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E170B209AA
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 08:18:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667837896;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jDk9bhO7j0dBiRTBonVIWKZ9rsqO0bmea9iIm0D/070=;
-        b=iFVY41cTTPRSJ1kODRwBXGuHNaqrVjb/x7mEg1GSJ5pfD/hAoWvpFbAqCLyqf3HWkOPFEt
-        Gq2a1XNUS8+MibYDBuwbl2FeJQ76ljUzQ+HZK7dZ1xQzF7QE2iqK/pa+3a8kJADDQS2uxr
-        fQPEiF+vhX6llOOgdwXcH7ZELSfwGqg=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-316-TGbR2pUAPIyw3MgPlt6EzA-1; Mon, 07 Nov 2022 11:18:13 -0500
-X-MC-Unique: TGbR2pUAPIyw3MgPlt6EzA-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D2455857FAB;
-        Mon,  7 Nov 2022 16:18:11 +0000 (UTC)
-Received: from t480s.redhat.com (unknown [10.39.195.106])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 497EF4B3FC6;
-        Mon,  7 Nov 2022 16:18:05 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
+        Mon, 7 Nov 2022 11:20:02 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B3844E90;
+        Mon,  7 Nov 2022 08:19:45 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9698823A;
+        Mon,  7 Nov 2022 08:19:51 -0800 (PST)
+Received: from pierre123.arm.com (pierre123.nice.arm.com [10.34.100.128])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4B0CB3F534;
+        Mon,  7 Nov 2022 08:19:30 -0800 (PST)
+From:   Pierre Gondois <pierre.gondois@arm.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, etnaviv@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
+Cc:     Pierre Gondois <pierre.gondois@arm.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
+        Antoine Tenart <atenart@kernel.org>,
+        Brijesh Singh <brijeshkumar.singh@amd.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Khuong Dinh <khuong@os.amperecomputing.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        William Zhang <william.zhang@broadcom.com>,
+        Anand Gore <anand.gore@broadcom.com>,
+        Kursad Oney <kursad.oney@broadcom.com>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Chester Lin <clin@suse.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Matthias Brugger <mbrugger@suse.com>,
+        NXP S32 Linux Team <s32@nxp.com>,
+        Wei Xu <xuwei5@hisilicon.com>, Chanho Min <chanho.min@lge.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Daniel Machon <daniel.machon@microchip.com>,
+        UNGLinuxDriver@microchip.com, Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jisheng Zhang <jszhang@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Shenwei Wang <shenwei.wang@nxp.com>,
+        Ming Qian <ming.qian@nxp.com>,
         Lucas Stach <l.stach@pengutronix.de>,
-        David Airlie <airlied@gmail.com>,
-        Oded Gabbay <ogabbay@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH RFC 04/19] mm: add early FAULT_FLAG_UNSHARE consistency checks
-Date:   Mon,  7 Nov 2022 17:17:25 +0100
-Message-Id: <20221107161740.144456-5-david@redhat.com>
-In-Reply-To: <20221107161740.144456-1-david@redhat.com>
-References: <20221107161740.144456-1-david@redhat.com>
+        Adam Ford <aford173@gmail.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, Li Jun <jun.li@nxp.com>,
+        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Marek Vasut <marex@denx.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Paul Elder <paul.elder@ideasonboard.com>,
+        Martin Kepplinger <martink@posteo.de>,
+        David Heidelberg <david@ixit.cz>,
+        Liu Ying <victor.liu@nxp.com>,
+        Oliver Graute <oliver.graute@kococonnector.com>,
+        Shijie Qin <shijie.qin@nxp.com>,
+        Zhou Peng <eagle.zhou@nxp.com>, Wei Fang <wei.fang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Clark Wang <xiaoning.wang@nxp.com>,
+        Vadym Kochan <vadym.kochan@plvision.eu>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Akhil R <akhilrajeev@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Sumit Gupta <sumitg@nvidia.com>,
+        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Ashish Mhetre <amhetre@nvidia.com>,
+        Johan Jonker <jbx6244@gmail.com>,
+        Christopher Obbard <chris.obbard@collabora.com>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Aswani Reddy <aswani.reddy@samsung.com>,
+        Shashank Prashar <s.prashar@samsung.com>,
+        Bharat Uppal <bharat.uppal@samsung.com>,
+        devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-realtek-soc@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH v2 11/23] arm64: dts: Update cache properties for marvell
+Date:   Mon,  7 Nov 2022 16:57:04 +0100
+Message-Id: <20221107155825.1644604-12-pierre.gondois@arm.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221107155825.1644604-1-pierre.gondois@arm.com>
+References: <20221107155825.1644604-1-pierre.gondois@arm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-For now, FAULT_FLAG_UNSHARE only applies to anonymous pages, which
-implies a COW mapping. Let's hide FAULT_FLAG_UNSHARE early if we're not
-dealing with a COW mapping, such that we treat it like a read fault as
-documented and don't have to worry about the flag throughout all fault
-handlers.
+The DeviceTree Specification v0.3 specifies that the cache node
+'compatible' and 'cache-level' properties are 'required'. Cf.
+s3.8 Multi-level and Shared Cache Nodes
+The 'cache-unified' property should be present if one of the
+properties for unified cache is present ('cache-size', ...).
 
-While at it, centralize the check for mutual exclusion of
-FAULT_FLAG_UNSHARE and FAULT_FLAG_WRITE and just drop the check that
-either flag is set in the WP handler.
+Update the Device Trees accordingly.
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+For ac5-98dx25xx.dtsi:
+Reviewed-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 ---
- mm/huge_memory.c |  3 ---
- mm/hugetlb.c     |  5 -----
- mm/memory.c      | 23 ++++++++++++++++++++---
- 3 files changed, 20 insertions(+), 11 deletions(-)
+ arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi      | 1 +
+ arch/arm64/boot/dts/marvell/armada-ap806-dual.dtsi | 2 ++
+ arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi | 4 ++++
+ arch/arm64/boot/dts/marvell/armada-ap807-quad.dtsi | 4 ++++
+ 4 files changed, 11 insertions(+)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 1d47b3f7b877..7173756d6868 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1267,9 +1267,6 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
- 	vmf->ptl = pmd_lockptr(vma->vm_mm, vmf->pmd);
- 	VM_BUG_ON_VMA(!vma->anon_vma, vma);
+diff --git a/arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi b/arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi
+index 44ed6f963b75..7308f7b6b22c 100644
+--- a/arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi
++++ b/arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi
+@@ -49,6 +49,7 @@ cpu1: cpu@1 {
  
--	VM_BUG_ON(unshare && (vmf->flags & FAULT_FLAG_WRITE));
--	VM_BUG_ON(!unshare && !(vmf->flags & FAULT_FLAG_WRITE));
--
- 	if (is_huge_zero_pmd(orig_pmd))
- 		goto fallback;
+ 		l2: l2-cache {
+ 			compatible = "cache";
++			cache-level = <2>;
+ 		};
+ 	};
  
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index be572af75d9c..3672c7e06748 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -5316,9 +5316,6 @@ static vm_fault_t hugetlb_wp(struct mm_struct *mm, struct vm_area_struct *vma,
- 	unsigned long haddr = address & huge_page_mask(h);
- 	struct mmu_notifier_range range;
+diff --git a/arch/arm64/boot/dts/marvell/armada-ap806-dual.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806-dual.dtsi
+index fcab5173fe67..6713b2ee50c9 100644
+--- a/arch/arm64/boot/dts/marvell/armada-ap806-dual.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-ap806-dual.dtsi
+@@ -48,9 +48,11 @@ cpu1: cpu@1 {
  
--	VM_BUG_ON(unshare && (flags & FOLL_WRITE));
--	VM_BUG_ON(!unshare && !(flags & FOLL_WRITE));
--
- 	/*
- 	 * hugetlb does not support FOLL_FORCE-style write faults that keep the
- 	 * PTE mapped R/O such as maybe_mkwrite() would do.
-@@ -5328,8 +5325,6 @@ static vm_fault_t hugetlb_wp(struct mm_struct *mm, struct vm_area_struct *vma,
+ 		l2: l2-cache {
+ 			compatible = "cache";
++			cache-unified;
+ 			cache-size = <0x80000>;
+ 			cache-line-size = <64>;
+ 			cache-sets = <512>;
++			cache-level = <2>;
+ 		};
+ 	};
  
- 	/* Let's take out MAP_SHARED mappings first. */
- 	if (vma->vm_flags & VM_MAYSHARE) {
--		if (unlikely(unshare))
--			return 0;
- 		set_huge_ptep_writable(vma, haddr, ptep);
- 		return 0;
- 	}
-diff --git a/mm/memory.c b/mm/memory.c
-index 78e2c58f6f31..fe131273217a 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3343,9 +3343,6 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct folio *folio;
+diff --git a/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
+index 3db427122f9e..695c8f070dbc 100644
+--- a/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
+@@ -78,16 +78,20 @@ cpu3: cpu@101 {
  
--	VM_BUG_ON(unshare && (vmf->flags & FAULT_FLAG_WRITE));
--	VM_BUG_ON(!unshare && !(vmf->flags & FAULT_FLAG_WRITE));
--
- 	if (likely(!unshare)) {
- 		if (userfaultfd_pte_wp(vma, *vmf->pte)) {
- 			pte_unmap_unlock(vmf->pte, vmf->ptl);
-@@ -5150,6 +5147,22 @@ static void lru_gen_exit_fault(void)
- }
- #endif /* CONFIG_LRU_GEN */
+ 		l2_0: l2-cache0 {
+ 			compatible = "cache";
++			cache-unified;
+ 			cache-size = <0x80000>;
+ 			cache-line-size = <64>;
+ 			cache-sets = <512>;
++			cache-level = <2>;
+ 		};
  
-+static vm_fault_t sanitize_fault_flags(struct vm_area_struct *vma,
-+				       unsigned int *flags)
-+{
-+	if (unlikely(*flags & FAULT_FLAG_UNSHARE)) {
-+		if (WARN_ON_ONCE(*flags & FAULT_FLAG_WRITE))
-+			return VM_FAULT_SIGSEGV;
-+		/*
-+		 * FAULT_FLAG_UNSHARE only applies to COW mappings. Let's
-+		 * just treat it like an ordinary read-fault otherwise.
-+		 */
-+		if (!is_cow_mapping(vma->vm_flags))
-+			*flags &= ~FAULT_FLAG_UNSHARE;
-+	}
-+	return 0;
-+}
-+
- /*
-  * By the time we get here, we already hold the mm semaphore
-  *
-@@ -5166,6 +5179,10 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
- 	count_vm_event(PGFAULT);
- 	count_memcg_event_mm(vma->vm_mm, PGFAULT);
+ 		l2_1: l2-cache1 {
+ 			compatible = "cache";
++			cache-unified;
+ 			cache-size = <0x80000>;
+ 			cache-line-size = <64>;
+ 			cache-sets = <512>;
++			cache-level = <2>;
+ 		};
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/marvell/armada-ap807-quad.dtsi b/arch/arm64/boot/dts/marvell/armada-ap807-quad.dtsi
+index 68782f161f12..878d82bb1052 100644
+--- a/arch/arm64/boot/dts/marvell/armada-ap807-quad.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-ap807-quad.dtsi
+@@ -78,16 +78,20 @@ cpu3: cpu@101 {
  
-+	ret = sanitize_fault_flags(vma, &flags);
-+	if (ret)
-+		return ret;
-+
- 	if (!arch_vma_access_permitted(vma, flags & FAULT_FLAG_WRITE,
- 					    flags & FAULT_FLAG_INSTRUCTION,
- 					    flags & FAULT_FLAG_REMOTE))
+ 		l2_0: l2-cache0 {
+ 			compatible = "cache";
++			cache-unified;
+ 			cache-size = <0x80000>;
+ 			cache-line-size = <64>;
+ 			cache-sets = <512>;
++			cache-level = <2>;
+ 		};
+ 
+ 		l2_1: l2-cache1 {
+ 			compatible = "cache";
++			cache-unified;
+ 			cache-size = <0x80000>;
+ 			cache-line-size = <64>;
+ 			cache-sets = <512>;
++			cache-level = <2>;
+ 		};
+ 	};
+ };
 -- 
-2.38.1
+2.25.1
 
