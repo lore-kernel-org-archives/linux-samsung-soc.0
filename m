@@ -2,210 +2,177 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82182C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD714C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:35:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231319AbiKGQel (ORCPT
+        id S231580AbiKGQfD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Nov 2022 11:34:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56744 "EHLO
+        Mon, 7 Nov 2022 11:35:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232344AbiKGQef (ORCPT
+        with ESMTP id S231302AbiKGQfC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2022 11:34:35 -0500
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on20718.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe1a::718])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F0E232E
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 08:34:33 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VijNftVku17jVVDpaRm5P+Qaod85VDCtGDuastL2Cry8789mQY/wEwf0gUxK5gKNMnaPf+s16bIr0f8XHPDz9Vwpbm9qtkjYCryeuf0RVBroqi8io3M8jHANN06HqmOnlAmx7e9p92s5b/R7B2VIbbGc+EOFOVBF6g5vfuVk0xqbxbQ1L32YazjlWKP4xm/gnyyTOihOHTL6EEbk0jVMcavuKLLUik7ze/0/BFtxKnacVZF2QWmOo+7vDKZeJRQ1uxhm9FrzWQibnMPhueMfGGdq4r5HxsM4mUUPoWSKQwmRwkja+jKH2y1a4rilkczMARjtI8f7DM2cXVHsGiaLeQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rn0JROt1+5ttHaSFycw1dSxfOz9Pnz1ZQza+jUWOTg0=;
- b=lgr2RKONoKpnHoCE04EwStdKyeOmmVaR22ki2/Ycdm4oCGUYQNuC2t2e5/jbfJ95mVpXU+PQzuXL8SlBx9A+vwBzHZRmK/wEqTQ6N0DCwqBLyzkK9bFODO83KL8iQgB1zIoEC/NL8hJb0YryX300+7khxf2/l76inZm+FFTtc+B3LqY0YFFlJ9Kf0h7MT8qiJ+geubwQ9T8qFybIjkGuMsh03LhUkEUskh5INnuRZow9+vtYqmwHdyGBCxn8xO03M0js6AlxjV4zHXN/MW9/ChQVNMAdxpQ1Ub5nsB2WqDB7cv0bi19mQAIyKQ6cdJlBnZyz/zwJqqwLfuLQ1x0aCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
- dkim=pass header.d=kontron.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mysnt.onmicrosoft.com;
- s=selector2-mysnt-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rn0JROt1+5ttHaSFycw1dSxfOz9Pnz1ZQza+jUWOTg0=;
- b=DtrOscR8RSdcegXWOZqbBwBwWtmM4zP6genw878wGhCO3fdGGTV/WxCh5V8J7cmyWKY4c4jXyndG/K+gqFMwCy0H0xuThploTuS05d5x09shLiFYBnQ6Gf1POM0uVykhW/DMqco+HlkWzlrrZlWfuxuFHB3pnsgi1UkVI0Actho=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kontron.de;
-Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::10)
- by AM7PR10MB3480.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:132::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.26; Mon, 7 Nov
- 2022 16:34:29 +0000
-Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::f209:bc86:3574:2ae6]) by PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::f209:bc86:3574:2ae6%5]) with mapi id 15.20.5791.026; Mon, 7 Nov 2022
- 16:34:29 +0000
-Message-ID: <f1dfac7d-643e-db29-28fe-7a2fcde01894@kontron.de>
-Date:   Mon, 7 Nov 2022 17:34:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH v7 00/10] drm: bridge: Add Samsung MIPI DSIM bridge
-Content-Language: en-US
-To:     Jagan Teki <jagan@amarulasolutions.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Marek Vasut <marex@denx.de>
-Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Mon, 7 Nov 2022 11:35:02 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 956762F5;
+        Mon,  7 Nov 2022 08:35:01 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 795B223A;
+        Mon,  7 Nov 2022 08:35:07 -0800 (PST)
+Received: from pierre123.arm.com (pierre123.nice.arm.com [10.34.100.128])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C5A693F534;
+        Mon,  7 Nov 2022 08:34:45 -0800 (PST)
+From:   Pierre Gondois <pierre.gondois@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Pierre Gondois <pierre.gondois@arm.com>,
+        Jisheng Zhang <jszhang@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
+        Antoine Tenart <atenart@kernel.org>,
+        Brijesh Singh <brijeshkumar.singh@amd.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Khuong Dinh <khuong@os.amperecomputing.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        William Zhang <william.zhang@broadcom.com>,
+        Anand Gore <anand.gore@broadcom.com>,
+        Kursad Oney <kursad.oney@broadcom.com>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-References: <20221005151309.7278-1-jagan@amarulasolutions.com>
-From:   Frieder Schrempf <frieder.schrempf@kontron.de>
-In-Reply-To: <20221005151309.7278-1-jagan@amarulasolutions.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM6PR01CA0047.eurprd01.prod.exchangelabs.com
- (2603:10a6:20b:e0::24) To PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:102:263::10)
+        Chester Lin <clin@suse.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Matthias Brugger <mbrugger@suse.com>,
+        NXP S32 Linux Team <s32@nxp.com>,
+        Wei Xu <xuwei5@hisilicon.com>, Chanho Min <chanho.min@lge.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Daniel Machon <daniel.machon@microchip.com>,
+        UNGLinuxDriver@microchip.com, Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Shenwei Wang <shenwei.wang@nxp.com>,
+        Ming Qian <ming.qian@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Adam Ford <aford173@gmail.com>, Li Jun <jun.li@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Marek Vasut <marex@denx.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Paul Elder <paul.elder@ideasonboard.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Martin Kepplinger <martink@posteo.de>,
+        Joy Zou <joy.zou@nxp.com>, David Heidelberg <david@ixit.cz>,
+        Liu Ying <victor.liu@nxp.com>,
+        Oliver Graute <oliver.graute@kococonnector.com>,
+        Zhou Peng <eagle.zhou@nxp.com>,
+        Shijie Qin <shijie.qin@nxp.com>,
+        Haibo Chen <haibo.chen@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Wei Fang <wei.fang@nxp.com>,
+        Clark Wang <xiaoning.wang@nxp.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Vadym Kochan <vadym.kochan@plvision.eu>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Akhil R <akhilrajeev@nvidia.com>,
+        Sumit Gupta <sumitg@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Ashish Mhetre <amhetre@nvidia.com>,
+        Johan Jonker <jbx6244@gmail.com>,
+        Christopher Obbard <chris.obbard@collabora.com>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Aswani Reddy <aswani.reddy@samsung.com>,
+        Shashank Prashar <s.prashar@samsung.com>,
+        Andi Shyti <andi@etezian.org>, devicetree@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-realtek-soc@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH v2 21/23] arm64: dts: Update cache properties for synaptics
+Date:   Mon,  7 Nov 2022 16:57:14 +0100
+Message-Id: <20221107155825.1644604-22-pierre.gondois@arm.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221107155825.1644604-1-pierre.gondois@arm.com>
+References: <20221107155825.1644604-1-pierre.gondois@arm.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR10MB5681:EE_|AM7PR10MB3480:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8d4dfe7d-8fcc-4034-62a1-08dac0ddf0f9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: wGVOI4Qg/3QHDJJ9bvBaYTgpvtbmDW39Htsroe2a+6pVb1w/sIVQAo+nWTgHgzFvvM/Ik6o40afhqsnpQF+TknZsCTDL8SG9XXD7mpF9Eb22j584DgkLUTMgiTbFhZmYqf6Xk8UShg7ltyKxOxvpWiUGsfH1zJ6d86fcryQpqeQAnC/eSIxJXHepDQmUOXYI24oPNoWfpPTb7grcRlLqAcr1HLx+gNElK/LcZoUsPBlEFP8mxmQ69t1us6gqgOMy/zRI9Zba1681PD/5cmU0/iTj2Nm5ZgxhvdTBHVPo2yqTNOt0iyjtcc4ke9klEPsopy4B2W/K6QtxUIxhRpZ6725r/cJxmBRupXlHl/Ky05W2HGYMAAMUzxkNukZ6DZ2CJweDYIkO2ayFofGfqHZs0/Z+p40KtY3WyvY0gDllsGb745G/4+4UbbLATo/yPzvXKUbCuA93af/qswK1IRKOTAjXG9HiGwNm0QIHQvlO9rjXK+pMgX4XpxzUfj7TJAhEZydSkchEBHqv97as8/lxSrLMZlaBTauELtjzJgTsHIZDltTx7dEcMHYouXc2xOhG1l3rIwh+gKANrJKLBEHL8nggYKpjiAnccKLwn6eOQUmjugGbmPmi5bZboolD0vwRz38KDFjlqCNiGVxDwPBvlXiHJ/HE4IVeDNhYfDxZDoOai6YrR07f16lE4bLGSoUZmlPe4n0GQK2vcr/ipxip3w5hAF/OIGedtvET6furrr1etmHViVGGrQHitI4bXOejyIMuPYd5GAlEZCrKnYSRZRyPkg7YcAPTAgB6SBwRYrBlzUNL4U5MXrc5Ls4sPUfT8l4ZHMki+tQgcnBRer8ecg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(39860400002)(346002)(136003)(366004)(376002)(451199015)(36756003)(31686004)(31696002)(86362001)(921005)(2906002)(7416002)(44832011)(26005)(6506007)(2616005)(53546011)(186003)(6512007)(83380400001)(66556008)(66946007)(316002)(54906003)(66476007)(8676002)(478600001)(110136005)(4326008)(8936002)(6486002)(966005)(5660300002)(38100700002)(41300700001)(43740500002)(45980500001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UTQvdzhwL0haOEROSWJkbFdmZVc0c0N6L29EU2FkMUliSHVob1ZUR0hNYVpL?=
- =?utf-8?B?TGQrQWRLMDROc3pWa1kwQXg4SXh5V0I2VktBK2lKTFpINjJHOGZUMkcxeWZH?=
- =?utf-8?B?RlFqeEhnWFI2dllqYnVrb1h6dVJNTUM3ZEF6dlhUcnQxSGJTQTBTeHVkcHdH?=
- =?utf-8?B?NU15Y0N3YXVKV1VoTEo3T2hsOXhCMXc5RTdKUERBcHdMNVpZTG1FY1hwcGov?=
- =?utf-8?B?RGltT1pkM3JBZmVUVHBmWG5XUmsvMk1VOEdtaTF6RmFKbFF0bzd3aWFnQ0c4?=
- =?utf-8?B?TjhUN0JLeEZTTDJvZjRaRFBEMlduNzFPTzlXanBUYWlqVURneFh3RGxWcFR0?=
- =?utf-8?B?M2tXMEtBeWVxSytnOVVTU0pJRVdwNGRSbTNjS3plZUMxNzdDeDRxdUJiWC9M?=
- =?utf-8?B?dk11N3FZWFhUaStTMVZhYmdkQTdHZGl0ZlUyVnovckxRQVZyNkdxUENzQVRt?=
- =?utf-8?B?QjBOZ0JUK2VPaEpiVWJSS2xvZHhCdTVmbDFISjN3RnhHbmZ0NXJPL2pqMkt6?=
- =?utf-8?B?N05pUDZmVXpjc1BNNjFOb2I4TTYrbkVEMlU4YzNwQUdMNEZ4bnMydlVxajFD?=
- =?utf-8?B?eHdhM0dQVzIydVZ5ZEVIQnNWVktOU3JiMlpZeldSNkN3VStyWU9pQXJyMzN6?=
- =?utf-8?B?Qm5wZ2cwVWQ2bDBvT3RFMzJnSVg5RzNycVB3RDYrbEtkVVNMQ0hpbEdKRG0z?=
- =?utf-8?B?Zml3eEloYnF3S3lTS250aHRJV1RLS1E5Si80bzZBb3NxOXg4SzQ1VytlcmVG?=
- =?utf-8?B?T1dIYWhuVlZzWE51VDduQi9USFU4ZjlmT3M2RDduMkxUbDZvN0pPZmVvQ1M2?=
- =?utf-8?B?ZVRVVmllTE5aWTAzYUhCQW1ZbUV3QTFxbUE0U2FvU2dlaFRUR0xxZW5GSUZK?=
- =?utf-8?B?Z2NSRXlXZ2FVQjVsYklFZ1lnWjFldktqL1FxOTkxREVQVW9OWUV4cHdPTWJx?=
- =?utf-8?B?Z0p5MittYjdPTmxXdUNCS0hldWFiUGhKS2U2ZUhyeU5TNWRkNWxJelV2OWFN?=
- =?utf-8?B?b1NBa0JPaHZweEtkcjBRbEpHNk8rK1dXdlJYM292WTNGU25Dd1BSS2tkT0hZ?=
- =?utf-8?B?RG95MG4vczJBQUJpc3pJcGY4eC9ubXNSUTNIMUZOLzdYbTZ3K2gxMC9YQnFs?=
- =?utf-8?B?dEtkRFRYcTJ0a0VUWnFNVVgyNis1N3ZkelF0bmNlMldiYVZGTDl6NDBsRFBZ?=
- =?utf-8?B?cWlJd0VyU1BXOFVRQzNLa0pRZGRsN24vV1ZtcDVaSS8xVGFlMDFWMGQwa25u?=
- =?utf-8?B?QkMzNkcvQW1YVU9TOFA1djcrNGVGOVU0ZTV6UWJnZEJna3Q4QnhjeVJadWJY?=
- =?utf-8?B?RkNrR21RcUxZend0VElIYy9nNzB4Q2w0QW5sZnRRdi9rU1dCZ3NwTDRKcVBC?=
- =?utf-8?B?bG1OU0I2WU5CVllIMVRUU2M1aG9zelFOY1dVQ1hDRm40RzltVHlENjd4T2VI?=
- =?utf-8?B?KysyZDVaMUYrREhKY1oxblV4Rm1RY0dQOERrWmphbFRsR1krUG5uRzUyMklM?=
- =?utf-8?B?bjdIcXN3WTJORCsvQi9oMEx4UVJPYWx2RFlPRVZ5M1k0V09LWFpvVHVaaER4?=
- =?utf-8?B?cjlRdDBwWGlWQXdVeXZOMjhydVVYcDF0eURmTGF1ZmJPWnd1UzNHL2p0dzNt?=
- =?utf-8?B?OXAzaW85WlhRYVAzaEZ2T1BMb1FpeE0rU2xqREpRc1g5QXp1NzZWUmFkcTM1?=
- =?utf-8?B?S0sxQWdyL3lNbEZWVFZPNU5VNFZwNVU2VWVhK1psT1NHNVdLUWJ2VVpYVzdR?=
- =?utf-8?B?RGNxbW9CZ05CSzJWWFVTZHppK29lN3JwQnk3TTAxQUs1TElTRjVyQWQxQXRV?=
- =?utf-8?B?cTRHVS9WV0VvTTQzVkNsbXVPYkFvRTVVNGMzaHBZV2xFdDJQQUpLczFIL2lF?=
- =?utf-8?B?VG1PNTZyWmRJK3VhUVRXR2VzaFRTTWlCaFBldjdILzBqbDgwYWNpd0FMSllk?=
- =?utf-8?B?ZmRoNjVkTjJuVXU4elZaUU1zWHlKZElWQnU4S3FHbEtLVTZJSEFsb3c2aEhR?=
- =?utf-8?B?TFlnR0dsWVd4MFZsbTBnS3VDa2dGdWR1clVJVjd4NWNNV0hXU1RBbHVuZnZR?=
- =?utf-8?B?a0U4MWREa2E3d2wyK0U3Nmtqb0NnbVluR1I4QmppZWhHQ0J0RHp6ZWh5MEND?=
- =?utf-8?B?N3RkaWd3T05rRE5FOTFDVXBVOTh0MnhtZjdZVUJsQy9PcmpKWUwzczJPMERE?=
- =?utf-8?B?NlE9PQ==?=
-X-OriginatorOrg: kontron.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d4dfe7d-8fcc-4034-62a1-08dac0ddf0f9
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2022 16:34:29.1402
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FK8e2chKXZtLZKBMxFVC4UcLlazhwXA7ALF2+QwwCXhNxsWJQ6gh0XxRfKJauj8hjXKOnhdyzzdqOEwPzaDFQ2wAfI6LpgJc5tF83+ufZQU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3480
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 05.10.22 17:12, Jagan Teki wrote:
-> This series supports common bridge support for Samsung MIPI DSIM
-> which is used in Exynos and i.MX8MM SoC's.
-> 
-> The final bridge supports both the Exynos and i.MX8MM DSI devices.
-> 
-> Changes for v7:
-> * fix the drm bridge attach chain for exynos drm dsi driver
-> * fix the hw_type checking logic
-> 
-> Changes for v6:
-> * handle previous bridge for exynos dsi while attaching bridge 
-> 
-> Changes for v5:
-> * bridge changes to support multi-arch
-> * updated and clear commit messages
-> * add hw_type via plat data
-> * removed unneeded quirk
-> * rebased on linux-next
-> 
-> Changes for v4:
-> * include Inki Dae in MAINTAINERS
-> * remove dsi_driver probe in exynos_drm_drv to support multi-arch build
-> * update init handling to ensure host init done on first cmd transfer
-> 
-> Changes for v3:
-> * fix the mult-arch build
-> * fix dsi host init
-> * updated commit messages
-> 
-> Changes for v2:
-> * fix bridge handling
-> * fix dsi host init
-> * correct the commit messages
-> 
-> Patch 0001: 	Samsung DSIM bridge
-> 
-> Patch 0002:	PHY optional
-> 
-> Patch 0003:	OF-graph or Child node lookup
-> 
-> Patch 0004: 	DSI host initialization 
-> 
-> Patch 0005:	atomic check
-> 
-> Patch 0006:	PMS_P offset via plat data
-> 
-> Patch 0007:	atomic_get_input_bus_fmts
-> 
-> Patch 0008:	input_bus_flags
-> 
-> Patch 0009:	document fsl,imx8mm-mipi-dsim
-> 
-> Patch 0010:	add i.MX8MM DSIM support
-> 
-> Tested in Engicam i.Core MX8M Mini SoM.
-> 
-> Repo:
-> https://gitlab.com/openedev/kernel/-/commits/imx8mm-dsi-v7
-> 
-> Any inputs?
-> Jagan.
+The DeviceTree Specification v0.3 specifies that the cache node
+'compatible' and 'cache-level' properties are 'required'. Cf.
+s3.8 Multi-level and Shared Cache Nodes
+The 'cache-unified' property should be present if one of the
+properties for unified cache is present ('cache-size', ...).
 
-I tested this on the Kontron DL i.MX8MM which uses a TI SN65DSI84 bridge
-and a Jenson 7" LVDS Display.
+Update the Device Trees accordingly.
 
-Thanks for your work, Jagan!
+Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+Reviewed-by: Jisheng Zhang <jszhang@kernel.org>
+---
+ arch/arm64/boot/dts/synaptics/berlin4ct.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-Tested-by: Frieder Schrempf <frieder.schrempf@kontron.de> # Kontron DL
-i.MX8MM
+diff --git a/arch/arm64/boot/dts/synaptics/berlin4ct.dtsi b/arch/arm64/boot/dts/synaptics/berlin4ct.dtsi
+index 0949acee4728..926da7e1a6ba 100644
+--- a/arch/arm64/boot/dts/synaptics/berlin4ct.dtsi
++++ b/arch/arm64/boot/dts/synaptics/berlin4ct.dtsi
+@@ -64,6 +64,7 @@ cpu3: cpu@3 {
+ 
+ 		l2: cache {
+ 			compatible = "cache";
++			cache-level = <2>;
+ 		};
+ 
+ 		idle-states {
+-- 
+2.25.1
+
