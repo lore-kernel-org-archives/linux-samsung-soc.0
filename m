@@ -2,184 +2,93 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A92C4167B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 14:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5BDC43217
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 14:36:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232524AbiKGO1t (ORCPT
+        id S231376AbiKGOge (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Nov 2022 09:27:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39592 "EHLO
+        Mon, 7 Nov 2022 09:36:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231921AbiKGO10 (ORCPT
+        with ESMTP id S229638AbiKGOgb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2022 09:27:26 -0500
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C148F1E728
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 06:21:24 -0800 (PST)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20221107142123epoutp04aabf23dab7d754e41b11c24d13fd7c35~lU1oR0nwy2151521515epoutp04C
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 14:21:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20221107142123epoutp04aabf23dab7d754e41b11c24d13fd7c35~lU1oR0nwy2151521515epoutp04C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1667830883;
-        bh=GJPGR28YHzLW8aa+11D1L3daiZSgpHyWT54CiXQP0a0=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=lBQxt8BIpyT45Jwg1blX2mWvsWzx5hkFCce68XiILqidCo8GysX5GHUpnV2po7JXP
-         /8EiTeXmgu2zKdvDSRFrpvy+OSOn+pVaxoBkDdD+LUcKjuipDZL13eoMVJNQXyic8S
-         iBu0wcHJ0WBeEfiu/2LknwRAXppKIWmNpnpjrP2c=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20221107142122epcas5p2c58404c8859ef86ae9ce9725f137d723~lU1nUdSMw1427014270epcas5p2h;
-        Mon,  7 Nov 2022 14:21:22 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.175]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4N5YLm0HYGz4x9Pv; Mon,  7 Nov
-        2022 14:21:20 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        27.24.56352.F5419636; Mon,  7 Nov 2022 23:21:19 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20221107123746epcas5p41165707efc8f199d341bcbcd308cd1e1~lTbKBbDJw2127721277epcas5p4K;
-        Mon,  7 Nov 2022 12:37:46 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20221107123746epsmtrp2b8de868dccbc7f7e7093c96ad3542b0f~lTbKAf5q82307523075epsmtrp2T;
-        Mon,  7 Nov 2022 12:37:46 +0000 (GMT)
-X-AuditID: b6c32a4b-5f7fe7000001dc20-32-6369145f010a
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7F.4C.14392.91CF8636; Mon,  7 Nov 2022 21:37:45 +0900 (KST)
-Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20221107123743epsmtip1eae7ecf77d881767d0f45f2c1faa5d2b~lTbH77Bmc1469414694epsmtip1N;
-        Mon,  7 Nov 2022 12:37:43 +0000 (GMT)
-From:   "Inbaraj E" <inbaraj.e@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        <chanho61.park@samsung.com>,
-        "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-        <tomasz.figa@gmail.com>, "'Chanwoo Choi'" <cw00.choi@samsung.com>,
-        "'ALIM AKHTAR'" <alim.akhtar@samsung.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>
-Cc:     <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "'PANKAJ KUMAR DUBEY'" <pankaj.dubey@samsung.com>
-In-Reply-To: <0e929d35-2a90-94fb-49d6-7f6a0f0a3ed0@linaro.org>
-Subject: RE: [PATCH] dt-bindings: clock: exynosautov9: fix reference to
- CMU_FSYS1 mmc card clock
-Date:   Mon, 7 Nov 2022 18:07:42 +0530
-Message-ID: <001201d8f2a5$bcb8e870$362ab950$@samsung.com>
+        Mon, 7 Nov 2022 09:36:31 -0500
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD5DC21A
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 06:36:29 -0800 (PST)
+Received: by mail-lj1-x232.google.com with SMTP id u2so16578142ljl.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Nov 2022 06:36:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LqIVZEeBf3uiHZU4NmaZFcaInDSQv2WV0V3yZxmUSaM=;
+        b=yriZm8CvC+/u6Ha3VhxGKctXjrWrVtg04n+IwoYHZrkNOK1i4AZyiQrN0r5smL+q/Z
+         rMDrz/WV9fTd+TWZurNqWfGl9UVEPubVX0HsnsOTuRkASKznAQ+Py1NI8k6AZIb45bn7
+         JjgadSRwG92CPFIrd80y8SVbIHEuMq8C8SnmeK86rgOhQcZhwLBvOuldlkmHXIRK+fKf
+         xDPbJfjutvOTiUsRrKaebBS8bohdPmB3HeEXgMoULGexEzAyFTwyaS67LHs465jt8Vuu
+         1d+xKFJYqSHms60eWWkaFFmFiVol3KEfwD20ekcqoJRli8n9ChHhO8TakrYLsBvqYUqU
+         yelQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LqIVZEeBf3uiHZU4NmaZFcaInDSQv2WV0V3yZxmUSaM=;
+        b=ktQdCFmxWMiJ03XykHP3kel/GJ8AUYepGPwfR8XzPAmmk31K7/tt5aNKZu3k159v5Y
+         8GuzX3V+6X+QXvKgHj82nyn87yQ+HQx7uaOE7yUaht8LZBxFhmC7SwHIB4+5oY11XkCC
+         zjAM3d+XC0oGZpCtP4IrxuhsdCtOZLYT6X/kSnR4Zhv6+Bs/fdWxMxumrLQgr4w9PHqE
+         QERPFb8u0/fAYjvGcMZk+zGRQpu5CB3ewPeEQL/NvI7Kscdo9z9Dy2IQRX31xddIl4xz
+         zQFlmwW4oGTIeAFUf9hQAxL2x/0tYd8mf2OYpfgcvroLyQv1itYlm3q8X5kzqwTwuoP3
+         OHkw==
+X-Gm-Message-State: ANoB5plpE2WYGDF7IbUChKU9/FV0K+Ejnt+B5a+fRz+2zj8blTB51Hl+
+        YO/L0Y3OV9y/uMIbUfRbamcnEg==
+X-Google-Smtp-Source: AA0mqf5RmQNBqtBRxyGo20Mn+gZ2BBYK+tzFf/gbojSwxL0JPqZy60SjJAwKKAFCXqi8QNURwjvKjQ==
+X-Received: by 2002:a05:651c:212a:b0:278:a461:cb7d with SMTP id a42-20020a05651c212a00b00278a461cb7dmr1576286ljq.246.1667831787939;
+        Mon, 07 Nov 2022 06:36:27 -0800 (PST)
+Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
+        by smtp.gmail.com with ESMTPSA id v12-20020a2ea60c000000b0026fb5525ee4sm1250408ljp.116.2022.11.07.06.36.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Nov 2022 06:36:27 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     s.nawrocki@samsung.com, tomasz.figa@gmail.com,
+        cw00.choi@samsung.com, chanho61.park@samsung.com,
+        alim.akhtar@samsung.com, sboyd@kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, Inbaraj E <inbaraj.e@samsung.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        pankaj.dubey@samsung.com, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: clock: exynosautov9: fix reference to CMU_FSYS1
+Date:   Mon,  7 Nov 2022 15:36:25 +0100
+Message-Id: <166783178314.199427.8409536178718528714.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221107124337.114135-1-inbaraj.e@samsung.com>
+References: <CGME20221107123641epcas5p26e310f1ab6addb4fa6757f5147b8e50b@epcas5p2.samsung.com> <20221107124337.114135-1-inbaraj.e@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQC1phSFSdu+vla0SFvWf4cJPX/nGQGqLtLGAhvc4qsBWKVYVQHZlEqXsEI86EA=
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFJsWRmVeSWpSXmKPExsWy7bCmlm68SGaywca/lhYP5m1js7i8X9vi
-        +pfnrBbzj5xjtdj7eiu7xabH11gtPvbcY7W4vGsOm8WM8/uYLC6ecrVYtPULu0Xr3iPsFoff
-        tLNa/Lu2kcVi1a4/jA78Hu9vtLJ77Jx1l91j06pONo871/aweWxeUu/Rt2UVo8fnTXIB7FHZ
-        NhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAVysplCXm
-        lAKFAhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCkwK9IoTc4tL89L18lJLrAwNDIxMgQoTsjM2
-        fGljLWjmr5j3dC9bA+MZni5GTg4JAROJPzsWsHYxcnEICexmlFg+8zEbhPOJUeLPpzXsIFVC
-        At8YJeYu5ofpOP7kKhNE0V5GidvbLjJDOC8ZJXa9amMDqWIT0JS4efQfI0hCROAok8Sct2dZ
-        QBxmgceMEs0zuoA2cnBwCthJnDsgCtIgLJAkMeP4IyYQm0VARWL/xLdgNq+ApcTD59dYIGxB
-        iZMzn4DZzALaEssWvmaGOElB4ufTZWAjRQT8JA5fToMoEZc4+rMH7DgJgTscEvd3vGOBqHeR
-        aDjZwQ5hC0u8Or4FypaS+PxuLxuE7SOxf84vRgg7Q+LY9uWsELa9xIErc1hAdjEDPbl+lz5E
-        WFZi6ql1TBB7+SR6fz9hgojzSuyYB2MrS8w8ch9qvKTEzss7WSYwKs1C8tksJJ/NQvLCLIRt
-        CxhZVjFKphYU56anFpsWGOellsMjPDk/dxMjOFFree9gfPTgg94hRiYOxkOMEhzMSiK8N9zS
-        koV4UxIrq1KL8uOLSnNSiw8xmgKDeyKzlGhyPjBX5JXEG5pYGpiYmZmZWBqbGSqJ8y6eoZUs
-        JJCeWJKanZpakFoE08fEwSnVwLRot3/nCpvwJ6UHZGvnvLUJX+ZfcuD6I44flTeMfrVNavKw
-        P2YqcbafteL4rUZOteuXQ5fJBCUsCOD24BQQXTg9S+76rZWtvdK7WL5kb/vFtP3ZbtW+jUov
-        T6858qfGMer6yW7rr6GB4kYm617xfNQKztTI53/c7JOpd+vwKSW9OYzXBV7Ofeemwyi4rKbF
-        /P3xrin3rO2vzy64cWte5UZZt4hjKbs78mQXTF28z8BPKK789dPShXOYte49bVw23XibkIlH
-        1eJAjV+x1k07XFe9s1c8NLE+vfZ3b71S4bEiq7j8qVoO4gslkq3yKsJOBMfe6+cRqU5MtWV4
-        dn2eVMHFzyddQx5Vfbu3zyTKVYmlOCPRUIu5qDgRAIqfntFdBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsWy7bCSnK7kn4xkg9X/zC0ezNvGZnF5v7bF
-        9S/PWS3mHznHarH39VZ2i02Pr7FafOy5x2pxedccNosZ5/cxWVw85WqxaOsXdovWvUfYLQ6/
-        aWe1+HdtI4vFql1/GB34Pd7faGX32DnrLrvHplWdbB53ru1h89i8pN6jb8sqRo/Pm+QC2KO4
-        bFJSczLLUov07RK4MmZtXsxUsJuv4lT3O8YGxg6eLkZODgkBE4njT64ydTFycQgJ7GaUOLjq
-        HjtEQlJi9u/pULawxMp/z9khip4zSixd8JMRJMEmoClx8+g/RpCEiMBZJom/GxrARjGDVC1/
-        fIINomUZk0RTbzdrFyMHB6eAncS5A6Ig3cICCRJ9+yYyg9gsAioS+ye+ZQKxeQUsJR4+v8YC
-        YQtKnJz5BMxmFtCWeHrzKZy9bOFrZojzFCR+Pl0GNl5EwE/i8OU0iBJxiaM/e5gnMArPQjJp
-        FpJJs5BMmoWkZQEjyypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k/NxNjOB41dLcwbh91Qe9
-        Q4xMHIyHGCU4mJVEeG+4pSUL8aYkVlalFuXHF5XmpBYfYpTmYFES573QdTJeSCA9sSQ1OzW1
-        ILUIJsvEwSnVwNSU7iOZOrWnd8YTztK2Gz1z59w8Y382N3bL31aL9NOvdoQm894+tmh/WNN0
-        rRMPl/0+YqVz8+Pc9pcvLrl8Ul+YwRwdvmvSl22nN9iLrZDmvqe210PL8Wt1bgCrY8eK8Jky
-        Yis4q7tPuH46X8nb4y+4MfLsydD+QvHVX2b8XemzKvz0kWAt8cqY97ZCi5fFCUSlcR0pffzd
-        qzLxn9vDk60ef5y/F3scO29UEX3uyX3HzcrTpnwIaXlZl95meM47oX/vo23Hj5b0bsjSE4ye
-        t3pVqdYjn4qgrU6L9P8+ehx3X6vklnJa/nnbhcFRVWf//Az3Vil/pXE57abd5Gsa38WSMxeG
-        n8+onXrjbf/FE2pKLMUZiYZazEXFiQDUdp06RgMAAA==
-X-CMS-MailID: 20221107123746epcas5p41165707efc8f199d341bcbcd308cd1e1
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221104085410epcas5p24d88f59001b739075e9e190e2c47841e
-References: <8f026f38-ef09-788e-7bd8-45683b074075@linaro.org>
-        <20221104090019.88387-1-inbaraj.e@samsung.com>
-        <CGME20221104085410epcas5p24d88f59001b739075e9e190e2c47841e@epcms2p3>
-        <20221107000401epcms2p3eeeecbfb2b1cdfb30dcee99bbb48780c@epcms2p3>
-        <0e929d35-2a90-94fb-49d6-7f6a0f0a3ed0@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Mon, 7 Nov 2022 18:13:37 +0530, Inbaraj E wrote:
+> Fix reference to CMU_FSYS1 mmc card clock to gout clock instead of dout.
+> 
+> "gout" is output of a gate clock.
+> Unlike any other clocks, the fsys1 mmc top clock does not have a divider.
+> So, it should be "mout -> gout" instead of "mout -> gout -> dout".
+> 
+> This fixes make dtbs_check warning as shown below:
+> 
+> [...]
 
+Applied, thanks!
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski =5Bmailto:krzysztof.kozlowski=40linaro.org=5D
-> Sent: 07 November 2022 14:42
-> To: chanho61.park=40samsung.com; Inbaraj E <inbaraj.e=40samsung.com>;
-> Sylwester Nawrocki <s.nawrocki=40samsung.com>; tomasz.figa=40gmail.com;
-> Chanwoo Choi <cw00.choi=40samsung.com>; ALIM AKHTAR
-> <alim.akhtar=40samsung.com>; mturquette=40baylibre.com;
-> sboyd=40kernel.org; robh+dt=40kernel.org
-> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> kernel=40vger.kernel.org; PANKAJ KUMAR DUBEY
-> <pankaj.dubey=40samsung.com>
-> Subject: Re: =5BPATCH=5D dt-bindings: clock: exynosautov9: fix reference =
-to
-> CMU_FSYS1 mmc card clock
->=20
-> On 07/11/2022 01:04, CHANHO PARK wrote:
-> >>> Fix reference to CMU_FSYS1 mmc card clock to gout clock instead of
-> dout.
-> >>>
-> >>> This fixes make dtbs_check warning as shown below:
-> >>>
-> >>> arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb: clock-
-> >> controller=4017040000:
-> >>> clock-names:2: 'dout_clkcmu_fsys1_mmc_card' was expected From
-> schema:
-> >>> /home/inbaraj/mainline/linux/Documentation/devicetree/
-> >>> bindings/clock/samsung,exynosautov9-clock.yaml
-> >>
-> >> I don't understand:
-> >> 1. Why bindings are wrong not DTSI?
-> >> 2. What is =22gout=22? =22dout=22 had a meaning as clock divider outpu=
-t.
-> >
-> > =22gout=22 is output of a gate clock, AFAIK.
-> > Unlike any other clocks, the fsys1 mmc top clock does not have a divide=
-r.
-> So, it should be =22mout -> gout=22 instead of =22mout -> gout -> dout=22=
-.
->=20
-> OK, then this should be in commit msg.
->=20
-> My question about full legal name remains, as here in replies I see =22In=
-baraj
-> E=22.
->=20
+[1/1] dt-bindings: clock: exynosautov9: fix reference to CMU_FSYS1
+      https://git.kernel.org/krzk/linux/c/4854e8b083d800b421c02d3a8482fbfe27fb33ec
 
-I have address your review comment, and posted v2.=20
-Thanks for review.
-
-> Best regards,
-> Krzysztof
-
-
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
