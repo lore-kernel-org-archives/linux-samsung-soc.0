@@ -2,43 +2,43 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5806C43219
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B99C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:22:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232801AbiKGQVm (ORCPT
+        id S232568AbiKGQWV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Nov 2022 11:21:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42334 "EHLO
+        Mon, 7 Nov 2022 11:22:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232167AbiKGQVJ (ORCPT
+        with ESMTP id S232836AbiKGQVK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2022 11:21:09 -0500
+        Mon, 7 Nov 2022 11:21:10 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 828AD638B
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 08:19:57 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3337663A5
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 08:19:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667837996;
+        s=mimecast20190719; t=1667837991;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=DuB2xXWo7LwhnuotOHRyBqnGxRkaEWf9/y+D6i6uzJ8=;
-        b=g6IPFeA0OFTZbnsiyRHxUoSW2SqB3Xwq6KtOO+jUzUZlyrqcnrIP2eW55kdVcp7a0lUL+D
-        4lEsW2yeXVP/ZGW6VaZLEipkuMDxqSYErYM2w1p8KyB+OdwAi3SGO3lZl5F38ZCK6yL6Pf
-        2Un4t3pwTsmqvJZA5F3P7MKtBy4Ciqk=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=YOo62k08dZs6wGM2uXnfWLz8uRl6y4dnAZ5ycx0hqNo=;
+        b=ce0V/vTR0sFfWE4sq2vzu+JhDURK7bqlQ5gHK00lr8JIy9sUHSsygn10ydVEunDtoIh5oY
+        K6Zlo0A/DlFRKG6lAIAWY0dYjLcogzB79aC+R73vgd4+9Hw8+1tcVypc2Oxl2Dtx99JJgU
+        rup6GvfbaU2re80FRvE8O6SUxuh+aZc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-17-Jw4agQGfPwGSW7qMCb5CiQ-1; Mon, 07 Nov 2022 11:19:51 -0500
-X-MC-Unique: Jw4agQGfPwGSW7qMCb5CiQ-1
+ us-mta-15-BxY65V9NN2KYMlrGWKu1xA-1; Mon, 07 Nov 2022 11:19:45 -0500
+X-MC-Unique: BxY65V9NN2KYMlrGWKu1xA-1
 Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7457B296A60A;
-        Mon,  7 Nov 2022 16:19:49 +0000 (UTC)
-Received: from t480s.redhat.com (unknown [10.39.195.106])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DFEFE4B3FC6;
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9D109811E87;
         Mon,  7 Nov 2022 16:19:43 +0000 (UTC)
+Received: from t480s.redhat.com (unknown [10.39.195.106])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 100634B3FC6;
+        Mon,  7 Nov 2022 16:19:37 +0000 (UTC)
 From:   David Hildenbrand <david@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-mm@kvack.org, etnaviv@lists.freedesktop.org,
@@ -61,10 +61,13 @@ Cc:     linux-mm@kvack.org, etnaviv@lists.freedesktop.org,
         Muchun Song <songmuchun@bytedance.com>,
         Lucas Stach <l.stach@pengutronix.de>,
         David Airlie <airlied@gmail.com>,
-        Oded Gabbay <ogabbay@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH RFC 19/19] habanalabs: remove FOLL_FORCE usage
-Date:   Mon,  7 Nov 2022 17:17:40 +0100
-Message-Id: <20221107161740.144456-20-david@redhat.com>
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>
+Subject: [PATCH RFC 18/19] RDMA/hw/qib/qib_user_pages: remove FOLL_FORCE usage
+Date:   Mon,  7 Nov 2022 17:17:39 +0100
+Message-Id: <20221107161740.144456-19-david@redhat.com>
 In-Reply-To: <20221107161740.144456-1-david@redhat.com>
 References: <20221107161740.144456-1-david@redhat.com>
 MIME-Version: 1.0
@@ -78,31 +81,30 @@ FOLL_FORCE is really only for debugger access. As we unpin the pinned pages
 using unpin_user_pages_dirty_lock(true), the assumption is that all these
 pages are writable.
 
-FOLL_FORCE in this case seems to be due to copy-and-past from other
-drivers. Let's just remove it.
+FOLL_FORCE in this case seems to be a legacy leftover. Let's just remove
+it.
 
-Cc: Oded Gabbay <ogabbay@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Leon Romanovsky <leon@kernel.org>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- drivers/misc/habanalabs/common/memory.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/infiniband/hw/qib/qib_user_pages.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/habanalabs/common/memory.c b/drivers/misc/habanalabs/common/memory.c
-index ef28f3b37b93..e35cca96bbef 100644
---- a/drivers/misc/habanalabs/common/memory.c
-+++ b/drivers/misc/habanalabs/common/memory.c
-@@ -2312,8 +2312,7 @@ static int get_user_memory(struct hl_device *hdev, u64 addr, u64 size,
- 	if (!userptr->pages)
- 		return -ENOMEM;
- 
--	rc = pin_user_pages_fast(start, npages,
--				 FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM,
-+	rc = pin_user_pages_fast(start, npages, FOLL_WRITE | FOLL_LONGTERM,
- 				 userptr->pages);
- 
- 	if (rc != npages) {
+diff --git a/drivers/infiniband/hw/qib/qib_user_pages.c b/drivers/infiniband/hw/qib/qib_user_pages.c
+index f4b5f05058e4..f693bc753b6b 100644
+--- a/drivers/infiniband/hw/qib/qib_user_pages.c
++++ b/drivers/infiniband/hw/qib/qib_user_pages.c
+@@ -110,7 +110,7 @@ int qib_get_user_pages(unsigned long start_page, size_t num_pages,
+ 	for (got = 0; got < num_pages; got += ret) {
+ 		ret = pin_user_pages(start_page + got * PAGE_SIZE,
+ 				     num_pages - got,
+-				     FOLL_LONGTERM | FOLL_WRITE | FOLL_FORCE,
++				     FOLL_LONGTERM | FOLL_WRITE,
+ 				     p + got, NULL);
+ 		if (ret < 0) {
+ 			mmap_read_unlock(current->mm);
 -- 
 2.38.1
 
