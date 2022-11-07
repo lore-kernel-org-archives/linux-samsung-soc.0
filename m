@@ -2,214 +2,102 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2358CC43217
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 17:00:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BEBC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 17:27:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231461AbiKGRAp (ORCPT
+        id S231733AbiKGR1n (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Nov 2022 12:00:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52828 "EHLO
+        Mon, 7 Nov 2022 12:27:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232349AbiKGRAo (ORCPT
+        with ESMTP id S231351AbiKGR1n (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2022 12:00:44 -0500
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDA0F22B08
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 09:00:42 -0800 (PST)
-Received: by mail-io1-xd2c.google.com with SMTP id r81so9380662iod.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Nov 2022 09:00:42 -0800 (PST)
+        Mon, 7 Nov 2022 12:27:43 -0500
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42E3F23BD7
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 09:27:42 -0800 (PST)
+Received: by mail-qv1-xf34.google.com with SMTP id u7so8542953qvn.13
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Nov 2022 09:27:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
+        d=linux-foundation.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zi1AzIotPjgee1WjMW/2lCnRF/Zux4fjSan/PWGqHXA=;
-        b=Xyo5lSyER8B3jdtAksNfx+B+WXHa0Vd92xoDyHv20BXD948TTavHtQ6gVlUn5975MT
-         /X0K0Im48+7tuE3VoRDQwITfanwbDtN0x9Ka1qkNZV3BsOQluTZa0z0pnKnMt/m7dWFB
-         TtCguRYCO40UKwcLjAgQGeEZjdUHmQRwcewq4=
+        bh=OtwMIMageNgEFgITDbP/X4AlmExFVOD7QsjK39jRkOs=;
+        b=ZrBbGd0NE5W3bFjfpMfVEGchJiOqL5vKGUnJZWHQEDCz71oryF6CDiPscJkkJaNeeg
+         /pKDfIl6hW5yw8tjgrcZSOwrloCrFqYb1/s9Bc1/cV94xFkaKkZwH1bCSgyaTCtOH5Nq
+         2ijwSehO6aXkrD87GuWevIaaXGPhzXmGc/u0k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Zi1AzIotPjgee1WjMW/2lCnRF/Zux4fjSan/PWGqHXA=;
-        b=GksMj3AqdFv5nE8dmxd0vGBMX6daa1nDxVMwpXbIplMcPkgXDuSzskafiLA9hWxQEs
-         J24fIED+5ItdMtdwNnseDlKrwo+u08gGNsfvThDJLAOvKTNnSP4mIDMk/sG5to71YVSy
-         BH2AeDQK7fVXTGcNqh6CHJRSBoiSVH4sQwzYVfxzkTTxWbBEG5k7N3tvnPEwSzsGuB+h
-         aoKlrpv+g5tTVTaz2kAjue4UZDcdiW8QZPeP4b0ZcBj/ps0N4NHwVKmgmJ9HYKkWYUcZ
-         oR8tPSdYq+QpCAvuzgAh4ERSx40dH5NM8Xe4b4wNAbtPHsZCXGENb9bDphZ1422JnVFg
-         EDSg==
-X-Gm-Message-State: ACrzQf3EtONixeeIMrOT7wFjqyvnQ0sEFp4CB2Zqh/6iwSMGWLUNUzDa
-        pFxQEdUCl4qra7Iiy18b+AKgEez+4i/bQtzWOHOWSg==
-X-Google-Smtp-Source: AMsMyM4HLKgn0Ui+fGxorZRefXlugK/s+o0o8HaeQEbFJ88dHtP+XquF7Q74DteCHkWU3Z573Mt+tw1NKgeel5+aJSA=
-X-Received: by 2002:a5e:9e0a:0:b0:6c0:dbd0:cfac with SMTP id
- i10-20020a5e9e0a000000b006c0dbd0cfacmr31120387ioq.106.1667840442185; Mon, 07
- Nov 2022 09:00:42 -0800 (PST)
+        bh=OtwMIMageNgEFgITDbP/X4AlmExFVOD7QsjK39jRkOs=;
+        b=yf6pm1iMZYqH6EKiVBaawCLDYq5WPUW0Xmk+HA+Y13xsMT/NOrdOd1XtB51r1+XfUi
+         YSQssXmdMptW2eoHGD6UcRuY35n7IK+BduThHo5QJAh7HQkD7E2JJpXba9S9Tqt/lvyN
+         hEgq0rfxCHbb9qaW1WAZXUMMOtQ2HjBZY01YaR9MRMDq/U2Ranl6YPi6n6l4a6NB+uzF
+         suuVz0l49wHzjcBaw9PU7TLKljLEi3LHhMeKmiZGciXGTZYH5nNe/q693WtUe9aErTzA
+         CaMHOAm6KXKtGJ5zATBm8QvTFuPbXfiph+k3Iv+imAyJIvHcisntn/LQwDfvjnitl1zk
+         m+SQ==
+X-Gm-Message-State: ACrzQf1inTzrY0eSnReahxAvnTGh686juS4Lh7uks63HSnxaCaYHPCjf
+        sQkxjZ5RwznSBqR2k5/0eN/4tYtm71vN0Q==
+X-Google-Smtp-Source: AMsMyM7tS8sErPzwpvc4mgNHjM4SBDfiFK69FH6IpUNhkSKlTrkTZxfPkXYN2qM9Bzb358XZ+22s4w==
+X-Received: by 2002:a05:6214:2484:b0:4bb:de5d:b6e4 with SMTP id gi4-20020a056214248400b004bbde5db6e4mr42337907qvb.126.1667842061308;
+        Mon, 07 Nov 2022 09:27:41 -0800 (PST)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
+        by smtp.gmail.com with ESMTPSA id q22-20020a05620a0d9600b006fafaac72a6sm680410qkl.84.2022.11.07.09.27.39
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Nov 2022 09:27:40 -0800 (PST)
+Received: by mail-yb1-f178.google.com with SMTP id o70so14421532yba.7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Nov 2022 09:27:39 -0800 (PST)
+X-Received: by 2002:a05:6902:1352:b0:6bb:3f4b:9666 with SMTP id
+ g18-20020a056902135200b006bb3f4b9666mr46634218ybu.101.1667842059236; Mon, 07
+ Nov 2022 09:27:39 -0800 (PST)
 MIME-Version: 1.0
-References: <20221005151309.7278-1-jagan@amarulasolutions.com>
- <20221005151309.7278-8-jagan@amarulasolutions.com> <d837f6e3-d869-6543-2361-a7843c00ed8a@denx.de>
- <CAMty3ZDQCsJF+EuG_gvZ-MbkePO55GHfX_yvmKdzqE1fdAR55g@mail.gmail.com>
- <9262c207-2b72-6638-0274-0ce1d0d830c9@denx.de> <CAMty3ZAzDMRYiWWRwKvA+QSaXRHYgadJ7d4JwKnJWHPqPBua7A@mail.gmail.com>
- <2f0c2dae-07c9-814b-a252-5fdd3e0d9dda@denx.de>
-In-Reply-To: <2f0c2dae-07c9-814b-a252-5fdd3e0d9dda@denx.de>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 7 Nov 2022 22:30:30 +0530
-Message-ID: <CAMty3ZAM+fetmBQWaSbfjME7-Up4h+Ln3BRHaPgg5tuSsObPdw@mail.gmail.com>
-Subject: Re: [PATCH v7 07/10] drm: bridge: samsung-dsim: Add atomic_get_input_bus_fmts
-To:     Marek Vasut <marex@denx.de>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+References: <20221107161740.144456-1-david@redhat.com>
+In-Reply-To: <20221107161740.144456-1-david@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 7 Nov 2022 09:27:23 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj51-dtxf8BQBYP+9Kc3ejq4Y0=-6hCbf_XAnkT3fsgDQ@mail.gmail.com>
+Message-ID: <CAHk-=wj51-dtxf8BQBYP+9Kc3ejq4Y0=-6hCbf_XAnkT3fsgDQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 00/19] mm/gup: remove FOLL_FORCE usage from drivers
+ (reliable R/O long-term pinning)
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>, Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+On Mon, Nov 7, 2022 at 8:18 AM David Hildenbrand <david@redhat.com> wrote:
+>
+> So instead, make R/O long-term pinning work as expected, by breaking COW
+> in a COW mapping early, such that we can remove any FOLL_FORCE usage from
+> drivers.
 
-On Fri, Nov 4, 2022 at 12:28 AM Marek Vasut <marex@denx.de> wrote:
->
-> On 11/3/22 18:27, Jagan Teki wrote:
-> > On Thu, Nov 3, 2022 at 9:56 PM Marek Vasut <marex@denx.de> wrote:
-> >>
-> >> On 11/3/22 10:39, Jagan Teki wrote:
-> >>> On Sun, Oct 16, 2022 at 3:31 AM Marek Vasut <marex@denx.de> wrote:
-> >>>>
-> >>>> On 10/5/22 17:13, Jagan Teki wrote:
-> >>>>
-> >>>> [...]
-> >>>>
-> >>>>> @@ -1321,6 +1322,32 @@ static void samsung_dsim_atomic_post_disable(struct drm_bridge *bridge,
-> >>>>>         pm_runtime_put_sync(dsi->dev);
-> >>>>>     }
-> >>>>>
-> >>>>> +#define MAX_INPUT_SEL_FORMATS        1
-> >>>>> +
-> >>>>> +static u32 *
-> >>>>> +samsung_dsim_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
-> >>>>> +                                    struct drm_bridge_state *bridge_state,
-> >>>>> +                                    struct drm_crtc_state *crtc_state,
-> >>>>> +                                    struct drm_connector_state *conn_state,
-> >>>>> +                                    u32 output_fmt,
-> >>>>> +                                    unsigned int *num_input_fmts)
-> >>>>> +{
-> >>>>> +     u32 *input_fmts;
-> >>>>> +
-> >>>>> +     *num_input_fmts = 0;
-> >>>>> +
-> >>>>> +     input_fmts = kcalloc(MAX_INPUT_SEL_FORMATS, sizeof(*input_fmts),
-> >>>>> +                          GFP_KERNEL);
-> >>>>> +     if (!input_fmts)
-> >>>>> +             return NULL;
-> >>>>> +
-> >>>>> +     /* This is the DSI-end bus format */
-> >>>>> +     input_fmts[0] = MEDIA_BUS_FMT_RGB888_1X24;
-> >>>>> +     *num_input_fmts = 1;
-> >>>>
-> >>>> Is this the only supported format ? NXP AN13573 lists the following:
-> >>>>
-> >>>> i.MX 8/RT MIPI DSI/CSI-2, Rev. 0, 21 March 2022
-> >>>> 3.7.4 Pixel formats
-> >>>> Table 14. DSI pixel packing formats
-> >>>>
-> >>>> Loosely Packed Pixel Stream, 20-bit YCbCr, 4:2:2
-> >>>> Packed Pixel Stream, 24-bit YCbCr, 4:2:2
-> >>>> Packed Pixel Stream, 16-bit YCbCr, 4:2:2
-> >>>
-> >>> Look like these are unsupported in media-bus-format.h list.
-> >>
-> >> Aren't those:
-> >>
-> >> MEDIA_BUS_FMT_UYVY12_1X24
-> >
-> > Why is UYVY12 - YCbCr, 4:2:2 is 4+2+2 = 8 then it has UYVY8 ?
->
-> (someone please correct me if I'm totally wrong here)
->
-> The 12 is channel width (12 bit for each Y1/Y2/U/V channel sample).
-> The 4:2:2 is subsampling (where are the color components sampled
-> relative to brightness component).
->
-> Picture is here:
-> https://upload.wikimedia.org/wikipedia/commons/f/f2/Common_chroma_subsampling_ratios.svg
->
-> Each Y square of the left is 12bit sample.
-> Each U+V square is 12bit sample for U and 12bit sample for V.
->
-> In case of 4:4:4 subsampling, each luminance (brightness) component has
-> matching chrominance (color) components.
->
-> In case of the 4:2:2 subsampling, two neighboring luminance components
-> share two chrominance components. To transfer one pixel including color
-> information, you have to transfer two pixels, Y0+U as 2x12bit sample in
-> one cycle of 24bit bus, and then Y1+V as 2x12bit sample in another cycle
-> of 24bit bus (2 clock cycles total, 4 samples total). From that you can
-> reconstruct the two top-left squares (purple pixels) in the rightmost
-> YUV column of 4:2:2 row.
->
-> The entire trick is that because eye is less sensitive to color than it
-> is to light, you can transfer less color information and thus save
-> bandwidth without anyone noticing (much of it).
->
-> >> MEDIA_BUS_FMT_UYVY8_1X16
-> >
-> > If YCbCr is UYVY (I still don't get this notation, sorry) then Packed
-> > Pixel Stream, 24-bit YCbCr, 4:2:2 with 2 Pixels per packet from Table
-> > 14 can be
-> >
-> > MEDIA_BUS_FMT_UYVY8_2X24
-> > (YCbCr 4:2:2 is UYVY8)
-> >
-> >   " based on a reference example from media bus format doc
-> > 4.13.3.4.1.1.3. Packed YUV Formats, For instance, a format where
-> > pixels are encoded as 8-bit YUV values downsampled to 4:2:2 and
-> > transferred as 2 8-bit bus samples per pixel in the U, Y, V, Y order
-> > will be named MEDIA_BUS_FMT_UYVY8_2X8."
->
-> The way I read the above is that the channel width of each channel is
-> 8-bit , so you start with two pixels Y0/U/Y1/V which add up to 32bit
-> total. That is transferred over 8-bit bus, in 4 bus cycles total. One
-> pixel therefore takes 2 cycles of the 8 bit bus to transfer, even if you
-> cannot transfer one pixel separately .
->
-> > https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/subdev-formats.html
-> >
-> > _2X24 here 2 Pixels per packet is the exact packets to consider or we
-> > can consider 1 Pixel per packet also. If later is true then _1X24 from
-> > your notation is correct.
->
-> Since the DSIM input bus is 32bit wide, to transfer one such 4:2:2
-> pixel, you need 1 bus cycle (2x12 bits per half of two pixels).
+Nothing makes me unhappy from a quick scan through these patches.
 
-Thanks for your explanation. I need some time to understand and it
-looks worth waiting for others to comment on this.
+And I'd really love to just have this long saga ended, and FOLL_FORCE
+finally relegated to purely ptrace accesses.
 
-Meanwhile, I'm planning to send subsequent version patches with
-possible supported formats like,
+So an enthusiastic Ack from me.
 
-MEDIA_BUS_FMT_UYVY8_1X16,
-MEDIA_BUS_FMT_RGB101010_1X30,
-MEDIA_BUS_FMT_RGB121212_1X36,
-MEDIA_BUS_FMT_RGB565_1X16,
-MEDIA_BUS_FMT_RGB666_1X18,
-MEDIA_BUS_FMT_RGB888_1X24,
-
-Let me know.
-
-Jagan.
+                   Linus
