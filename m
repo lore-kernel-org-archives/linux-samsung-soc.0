@@ -2,93 +2,307 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5BDC43217
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 14:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C31C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:04:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231376AbiKGOge (ORCPT
+        id S232269AbiKGQEf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Nov 2022 09:36:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50616 "EHLO
+        Mon, 7 Nov 2022 11:04:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbiKGOgb (ORCPT
+        with ESMTP id S230434AbiKGQEc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2022 09:36:31 -0500
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD5DC21A
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 06:36:29 -0800 (PST)
-Received: by mail-lj1-x232.google.com with SMTP id u2so16578142ljl.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Nov 2022 06:36:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LqIVZEeBf3uiHZU4NmaZFcaInDSQv2WV0V3yZxmUSaM=;
-        b=yriZm8CvC+/u6Ha3VhxGKctXjrWrVtg04n+IwoYHZrkNOK1i4AZyiQrN0r5smL+q/Z
-         rMDrz/WV9fTd+TWZurNqWfGl9UVEPubVX0HsnsOTuRkASKznAQ+Py1NI8k6AZIb45bn7
-         JjgadSRwG92CPFIrd80y8SVbIHEuMq8C8SnmeK86rgOhQcZhwLBvOuldlkmHXIRK+fKf
-         xDPbJfjutvOTiUsRrKaebBS8bohdPmB3HeEXgMoULGexEzAyFTwyaS67LHs465jt8Vuu
-         1d+xKFJYqSHms60eWWkaFFmFiVol3KEfwD20ekcqoJRli8n9ChHhO8TakrYLsBvqYUqU
-         yelQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LqIVZEeBf3uiHZU4NmaZFcaInDSQv2WV0V3yZxmUSaM=;
-        b=ktQdCFmxWMiJ03XykHP3kel/GJ8AUYepGPwfR8XzPAmmk31K7/tt5aNKZu3k159v5Y
-         8GuzX3V+6X+QXvKgHj82nyn87yQ+HQx7uaOE7yUaht8LZBxFhmC7SwHIB4+5oY11XkCC
-         zjAM3d+XC0oGZpCtP4IrxuhsdCtOZLYT6X/kSnR4Zhv6+Bs/fdWxMxumrLQgr4w9PHqE
-         QERPFb8u0/fAYjvGcMZk+zGRQpu5CB3ewPeEQL/NvI7Kscdo9z9Dy2IQRX31xddIl4xz
-         zQFlmwW4oGTIeAFUf9hQAxL2x/0tYd8mf2OYpfgcvroLyQv1itYlm3q8X5kzqwTwuoP3
-         OHkw==
-X-Gm-Message-State: ANoB5plpE2WYGDF7IbUChKU9/FV0K+Ejnt+B5a+fRz+2zj8blTB51Hl+
-        YO/L0Y3OV9y/uMIbUfRbamcnEg==
-X-Google-Smtp-Source: AA0mqf5RmQNBqtBRxyGo20Mn+gZ2BBYK+tzFf/gbojSwxL0JPqZy60SjJAwKKAFCXqi8QNURwjvKjQ==
-X-Received: by 2002:a05:651c:212a:b0:278:a461:cb7d with SMTP id a42-20020a05651c212a00b00278a461cb7dmr1576286ljq.246.1667831787939;
-        Mon, 07 Nov 2022 06:36:27 -0800 (PST)
-Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
-        by smtp.gmail.com with ESMTPSA id v12-20020a2ea60c000000b0026fb5525ee4sm1250408ljp.116.2022.11.07.06.36.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Nov 2022 06:36:27 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     s.nawrocki@samsung.com, tomasz.figa@gmail.com,
-        cw00.choi@samsung.com, chanho61.park@samsung.com,
-        alim.akhtar@samsung.com, sboyd@kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org, Inbaraj E <inbaraj.e@samsung.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        pankaj.dubey@samsung.com, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: clock: exynosautov9: fix reference to CMU_FSYS1
-Date:   Mon,  7 Nov 2022 15:36:25 +0100
-Message-Id: <166783178314.199427.8409536178718528714.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221107124337.114135-1-inbaraj.e@samsung.com>
-References: <CGME20221107123641epcas5p26e310f1ab6addb4fa6757f5147b8e50b@epcas5p2.samsung.com> <20221107124337.114135-1-inbaraj.e@samsung.com>
+        Mon, 7 Nov 2022 11:04:32 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 594331115F;
+        Mon,  7 Nov 2022 08:04:31 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3EC39ED1;
+        Mon,  7 Nov 2022 08:04:37 -0800 (PST)
+Received: from pierre123.arm.com (pierre123.nice.arm.com [10.34.100.128])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0AE9A3F534;
+        Mon,  7 Nov 2022 08:04:15 -0800 (PST)
+From:   Pierre Gondois <pierre.gondois@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Pierre Gondois <pierre.gondois@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
+        Antoine Tenart <atenart@kernel.org>,
+        Brijesh Singh <brijeshkumar.singh@amd.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Khuong Dinh <khuong@os.amperecomputing.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        William Zhang <william.zhang@broadcom.com>,
+        Anand Gore <anand.gore@broadcom.com>,
+        Kursad Oney <kursad.oney@broadcom.com>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Chester Lin <clin@suse.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Matthias Brugger <mbrugger@suse.com>,
+        NXP S32 Linux Team <s32@nxp.com>,
+        Wei Xu <xuwei5@hisilicon.com>, Chanho Min <chanho.min@lge.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Daniel Machon <daniel.machon@microchip.com>,
+        UNGLinuxDriver@microchip.com, Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jisheng Zhang <jszhang@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Shenwei Wang <shenwei.wang@nxp.com>,
+        Ming Qian <ming.qian@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Adam Ford <aford173@gmail.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, Li Jun <jun.li@nxp.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Marek Vasut <marex@denx.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Paul Elder <paul.elder@ideasonboard.com>,
+        Martin Kepplinger <martink@posteo.de>,
+        David Heidelberg <david@ixit.cz>,
+        Oliver Graute <oliver.graute@kococonnector.com>,
+        Liu Ying <victor.liu@nxp.com>, Shijie Qin <shijie.qin@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Clark Wang <xiaoning.wang@nxp.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Vadym Kochan <vadym.kochan@plvision.eu>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Akhil R <akhilrajeev@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Sumit Gupta <sumitg@nvidia.com>,
+        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Ashish Mhetre <amhetre@nvidia.com>,
+        Johan Jonker <jbx6244@gmail.com>,
+        Christopher Obbard <chris.obbard@collabora.com>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Aswani Reddy <aswani.reddy@samsung.com>,
+        Shashank Prashar <s.prashar@samsung.com>,
+        Arjun K V <arjun.kv@samsung.com>, devicetree@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-realtek-soc@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH v2 00/23] Update cache properties for arm64 DTS
+Date:   Mon,  7 Nov 2022 16:56:53 +0100
+Message-Id: <20221107155825.1644604-1-pierre.gondois@arm.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 7 Nov 2022 18:13:37 +0530, Inbaraj E wrote:
-> Fix reference to CMU_FSYS1 mmc card clock to gout clock instead of dout.
-> 
-> "gout" is output of a gate clock.
-> Unlike any other clocks, the fsys1 mmc top clock does not have a divider.
-> So, it should be "mout -> gout" instead of "mout -> gout -> dout".
-> 
-> This fixes make dtbs_check warning as shown below:
-> 
-> [...]
+v2:
+- Update/Add patches for missed cache properties requiring to be
+  updated for the following platforns: bcm, amazon, arm, exynos,
+  freescale, marvell, mediatek, nvidia, socinext, tesla, ti.
+  Missed cache properties were detected using Rob Herring's branch:
+  https://github.com/robherring/dt-schema/tree/cache-rework
+- v1 of exynos, tesla were merged.
+- Updated wrong reference in commit message.
+- Added received Rb/Acked-by.
 
-Applied, thanks!
+Align arm64 DTS to the DeviceTree specification v0.3 regarding
+cache properties. The patch-set mainly adds 'cache-level' or
+'cache' compatibility properties.
+For one qcom DTS, level 1 cache nodes are removed as they should
+be in the cpu nodes.
 
-[1/1] dt-bindings: clock: exynosautov9: fix reference to CMU_FSYS1
-      https://git.kernel.org/krzk/linux/c/4854e8b083d800b421c02d3a8482fbfe27fb33ec
+On another node, it seems that the 'cache-unified' is under-used.
+cache-unified:
+  If present, specifies the cache has a unified or-
+  ganization. If not present, specifies that the
+  cache has a Harvard architecture with separate
+  caches for instructions and data.
+Only a few l2 cache nodes have this property, and in the absence
+of [|d|i]-cache-size properties (or other), the cache is assumed to be
+split.
 
-Best regards,
+The l2 cache of the Rockchip RK3308 platform is thus assumed to be
+split:
+l2: l2-cache {
+	compatible = "cache";
+	cache-level = <2>;
+};
+when the platform datasheet advertises a unified cache.
+
+No modification/check was made to correct that due to the lack of
+cache information for most platforms.
+
+Pierre Gondois (23):
+  arm64: dts: Update cache properties for amazon
+  arm64: dts: Update cache properties for amd
+  arm64: dts: Update cache properties for amlogic
+  arm64: dts: Update cache properties for apm
+  arm64: dts: Update cache properties for arm
+  arm64: dts: Update cache properties for broadcom
+  arm64: dts: Update cache properties for exynos
+  arm64: dts: Update cache properties for freescale
+  arm64: dts: Update cache properties for hisilicon
+  arm64: dts: Update cache properties for lg
+  arm64: dts: Update cache properties for marvell
+  arm64: dts: Update cache properties for mediatek
+  arm64: dts: Update cache properties for microchip
+  arm64: dts: Update cache properties for nuvoton
+  arm64: dts: Update cache properties for nvidia
+  arm64: dts: Update cache properties for qcom
+  arm64: dts: Update cache properties for realtek
+  arm64: dts: Update cache properties for renesas
+  arm64: dts: Update cache properties for rockchip
+  arm64: dts: Update cache properties for socionext
+  arm64: dts: Update cache properties for synaptics
+  arm64: dts: Update cache properties for tesla
+  arm64: dts: Update cache properties for ti
+
+ arch/arm/boot/dts/bcm2711.dtsi                |  1 +
+ arch/arm/boot/dts/bcm2837.dtsi                |  1 +
+ arch/arm64/boot/dts/amazon/alpine-v3.dtsi     |  4 ++
+ arch/arm64/boot/dts/amd/amd-seattle-cpus.dtsi |  9 +++
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi     |  1 +
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi    |  1 +
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi   |  1 +
+ arch/arm64/boot/dts/amlogic/meson-g12b.dtsi   |  1 +
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi     |  1 +
+ arch/arm64/boot/dts/amlogic/meson-sm1.dtsi    |  1 +
+ arch/arm64/boot/dts/apm/apm-shadowcat.dtsi    |  4 ++
+ arch/arm64/boot/dts/apm/apm-storm.dtsi        |  4 ++
+ arch/arm64/boot/dts/arm/corstone1000.dtsi     |  1 +
+ arch/arm64/boot/dts/arm/foundation-v8.dtsi    |  1 +
+ arch/arm64/boot/dts/arm/juno-r1.dts           |  2 +
+ arch/arm64/boot/dts/arm/juno-r2.dts           |  2 +
+ arch/arm64/boot/dts/arm/juno.dts              |  2 +
+ arch/arm64/boot/dts/arm/rtsm_ve-aemv8a.dts    |  1 +
+ .../boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dts |  1 +
+ .../boot/dts/broadcom/bcmbca/bcm4908.dtsi     |  1 +
+ .../boot/dts/broadcom/bcmbca/bcm4912.dtsi     |  1 +
+ .../boot/dts/broadcom/bcmbca/bcm63146.dtsi    |  1 +
+ .../boot/dts/broadcom/bcmbca/bcm63158.dtsi    |  1 +
+ .../boot/dts/broadcom/bcmbca/bcm6813.dtsi     |  1 +
+ .../boot/dts/broadcom/bcmbca/bcm6856.dtsi     |  1 +
+ .../boot/dts/broadcom/bcmbca/bcm6858.dtsi     |  1 +
+ .../boot/dts/broadcom/northstar2/ns2.dtsi     |  1 +
+ .../boot/dts/broadcom/stingray/stingray.dtsi  |  4 ++
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi    |  4 ++
+ arch/arm64/boot/dts/exynos/exynos7.dtsi       |  2 +
+ .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi |  1 +
+ .../arm64/boot/dts/freescale/fsl-ls1043a.dtsi |  1 +
+ .../arm64/boot/dts/freescale/fsl-ls1046a.dtsi |  1 +
+ .../arm64/boot/dts/freescale/fsl-ls2080a.dtsi |  4 ++
+ .../arm64/boot/dts/freescale/fsl-ls2088a.dtsi |  4 ++
+ .../arm64/boot/dts/freescale/fsl-lx2160a.dtsi |  8 +++
+ arch/arm64/boot/dts/freescale/imx8dxl.dtsi    |  1 +
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi     |  1 +
+ arch/arm64/boot/dts/freescale/imx8mn.dtsi     |  1 +
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi     |  1 +
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi     |  1 +
+ arch/arm64/boot/dts/freescale/imx8qm.dtsi     |  2 +
+ arch/arm64/boot/dts/freescale/imx8qxp.dtsi    |  1 +
+ arch/arm64/boot/dts/freescale/imx8ulp.dtsi    |  1 +
+ arch/arm64/boot/dts/freescale/s32g2.dtsi      |  2 +
+ arch/arm64/boot/dts/freescale/s32v234.dtsi    |  2 +
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi     |  2 +
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi     |  2 +
+ arch/arm64/boot/dts/hisilicon/hip05.dtsi      |  4 ++
+ arch/arm64/boot/dts/hisilicon/hip06.dtsi      |  4 ++
+ arch/arm64/boot/dts/hisilicon/hip07.dtsi      | 16 ++++++
+ arch/arm64/boot/dts/lg/lg1312.dtsi            |  1 +
+ arch/arm64/boot/dts/lg/lg1313.dtsi            |  1 +
+ arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi |  1 +
+ .../boot/dts/marvell/armada-ap806-dual.dtsi   |  2 +
+ .../boot/dts/marvell/armada-ap806-quad.dtsi   |  4 ++
+ .../boot/dts/marvell/armada-ap807-quad.dtsi   |  4 ++
+ arch/arm64/boot/dts/mediatek/mt8186.dtsi      |  3 +
+ arch/arm64/boot/dts/mediatek/mt8192.dtsi      |  3 +
+ arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  3 +
+ arch/arm64/boot/dts/microchip/sparx5.dtsi     |  1 +
+ .../boot/dts/nuvoton/nuvoton-npcm845.dtsi     |  1 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      | 15 +++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi      |  1 +
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 33 +++++++++++
+ arch/arm64/boot/dts/qcom/msm8953.dtsi         | 56 -------------------
+ arch/arm64/boot/dts/qcom/sc7180.dtsi          |  9 +++
+ arch/arm64/boot/dts/qcom/sc7280.dtsi          |  9 +++
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi        |  9 +++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          |  9 +++
+ arch/arm64/boot/dts/qcom/sm6125.dtsi          |  2 +
+ arch/arm64/boot/dts/qcom/sm6350.dtsi          |  9 +++
+ arch/arm64/boot/dts/qcom/sm8150.dtsi          |  9 +++
+ arch/arm64/boot/dts/qcom/sm8250.dtsi          |  9 +++
+ arch/arm64/boot/dts/qcom/sm8350.dtsi          |  9 +++
+ arch/arm64/boot/dts/qcom/sm8450.dtsi          |  9 +++
+ arch/arm64/boot/dts/realtek/rtd1293.dtsi      |  1 +
+ arch/arm64/boot/dts/realtek/rtd1295.dtsi      |  1 +
+ arch/arm64/boot/dts/realtek/rtd1296.dtsi      |  1 +
+ arch/arm64/boot/dts/realtek/rtd1395.dtsi      |  1 +
+ arch/arm64/boot/dts/realtek/rtd16xx.dtsi      |  2 +
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi    |  1 +
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |  1 +
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi    |  1 +
+ arch/arm64/boot/dts/rockchip/rk3308.dtsi      |  1 +
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi      |  1 +
+ .../boot/dts/socionext/uniphier-ld11.dtsi     |  1 +
+ .../boot/dts/socionext/uniphier-ld20.dtsi     |  2 +
+ .../boot/dts/socionext/uniphier-pxs3.dtsi     |  1 +
+ arch/arm64/boot/dts/synaptics/berlin4ct.dtsi  |  1 +
+ arch/arm64/boot/dts/tesla/fsd.dtsi            |  2 +
+ arch/arm64/boot/dts/ti/k3-am625.dtsi          |  1 +
+ arch/arm64/boot/dts/ti/k3-am62a7.dtsi         |  1 +
+ arch/arm64/boot/dts/ti/k3-am642.dtsi          |  1 +
+ arch/arm64/boot/dts/ti/k3-am654.dtsi          |  2 +
+ arch/arm64/boot/dts/ti/k3-j7200.dtsi          |  1 +
+ arch/arm64/boot/dts/ti/k3-j721e.dtsi          |  1 +
+ arch/arm64/boot/dts/ti/k3-j721s2.dtsi         |  1 +
+ 98 files changed, 299 insertions(+), 56 deletions(-)
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.25.1
+
