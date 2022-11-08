@@ -2,160 +2,124 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EC8DC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Nov 2022 09:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F8AC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Nov 2022 10:37:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233215AbiKHJlk (ORCPT
+        id S233683AbiKHKho (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Nov 2022 04:41:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54102 "EHLO
+        Tue, 8 Nov 2022 05:37:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233773AbiKHJlY (ORCPT
+        with ESMTP id S233710AbiKHKhT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Nov 2022 04:41:24 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0069326C2
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Nov 2022 01:40:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667900428;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lW38e6pXJ1acSlo/JcbNSc5AQG/ffLUgHR8IViSMTS4=;
-        b=UA8+oXJC+IW9OLSaXL9eq6ACo1uKgTXMGDp8u7oC1Eb0QB22A1MviLU6Azrm3pS2KZC++b
-        W7rYPAu3vFu2/B4ilK3kQ08oBrOwkpk6r3vu40vEjTj4jkcJ5EaV/Pzryqx+XXCcDMVBZv
-        7jvykvQekgcak06736A8bjvr1uY+kdo=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-151-EvJ-kUyTMuyOjEFb9YTVVA-1; Tue, 08 Nov 2022 04:40:26 -0500
-X-MC-Unique: EvJ-kUyTMuyOjEFb9YTVVA-1
-Received: by mail-wm1-f69.google.com with SMTP id l42-20020a05600c1d2a00b003cf8e70c1ecso6116276wms.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Nov 2022 01:40:26 -0800 (PST)
+        Tue, 8 Nov 2022 05:37:19 -0500
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B8BA4090E
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Nov 2022 02:37:01 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id g7so20646187lfv.5
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Nov 2022 02:37:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=F1eU2MNzr9lEfofB/L6YKz5jRjvrNUwGoC1RPrJsqIc=;
+        b=qxlKoNOCj8bwEn/unr4ZPcnBCXcdPnwp6/SZBWWeD1f+nNzLQZ17cHnkenX1JoZ+nJ
+         l5mhxoz3baMzHRwcGvuZBeAgFsbmfiw5waqPt908NhhIv4tecxmqQPdV0Dhf9IJm8Dt0
+         k0NtuvI7zoLtlVsm93UDSI5nvXT8giTAEmr04mTtPEhLQpmnA/bd5jRs34pBIxkPVDZp
+         sLD6ufM7RkVvdGhirGvWrEpWffO+PQUzvRoxY2bs+2fNm4Hu8I9+dliDE1l3I0yRMuNK
+         qnErbVUK+0FDLBkKVwWv6dWzXNsnSoy7R0nrBCaZxdKQNiCL0RQeH6J78bt+69PPVLrT
+         Kytw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :references:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lW38e6pXJ1acSlo/JcbNSc5AQG/ffLUgHR8IViSMTS4=;
-        b=UIetOJsUOmBZTc6r4HFmS+N/SRtiEk+Psr+bjJ/LhCoQmio1oMZZ1gCW65aDeYQ9FC
-         h8OqfVjV0kTfFw3vnbtN95p9XpeqBPj2CXaq0ER2wuhrK59YEj5YF7pQRfqJpdk1cWkn
-         YrmcnfP4iXkfqV7Jr6rEEtnVNWQfvaQTAuclwtaqQ52otILPO0GoZwXFzrEOLeEKgfer
-         qFsfB2awrJv+LVZF1cxTY73oD7IXt8GyCWlskhJQI+kO6NzFSU/mBYkEQn2723S/5GKn
-         w/6EZxGtoXb03YXrssbWp6bqHJBuCLXQz10NPByxcy+pcDfh75W7K9MjURi9w6MS1ySj
-         JSGQ==
-X-Gm-Message-State: ACrzQf2Scl6JajsY8gl97eES/scrcm/7et3Y49YQmWjd9WthAXC1XMvT
-        bVnrle6Dxw38G+AFQj9PQaSc+e1dSiz212qzAWM6ecnbcCG1LyQv0JdjvdR8FujcKCm5T8+u55d
-        aMlgJnkofjXcfi91+vQsjgBh+ymQHj28=
-X-Received: by 2002:a05:600c:54ca:b0:3cf:8e5d:7146 with SMTP id iw10-20020a05600c54ca00b003cf8e5d7146mr18675268wmb.191.1667900425631;
-        Tue, 08 Nov 2022 01:40:25 -0800 (PST)
-X-Google-Smtp-Source: AMsMyM5cH9tWJ/7f+h1bsvSFgTQP1m4PENc1Ye2cP0NqhUl7fQavJfxFFKESh5AiG6/w6GmkhSUyjQ==
-X-Received: by 2002:a05:600c:54ca:b0:3cf:8e5d:7146 with SMTP id iw10-20020a05600c54ca00b003cf8e5d7146mr18675241wmb.191.1667900425279;
-        Tue, 08 Nov 2022 01:40:25 -0800 (PST)
-Received: from ?IPV6:2003:cb:c708:db00:6510:da8d:df40:abbb? (p200300cbc708db006510da8ddf40abbb.dip0.t-ipconnect.de. [2003:cb:c708:db00:6510:da8d:df40:abbb])
-        by smtp.gmail.com with ESMTPSA id bu12-20020a056000078c00b0023655e51c33sm10027356wrb.4.2022.11.08.01.40.23
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F1eU2MNzr9lEfofB/L6YKz5jRjvrNUwGoC1RPrJsqIc=;
+        b=XUC7i4dYmyjx5oq0sgoY9ATxQUdS9o3OCW5ayTgtiYBvjjpojpgx44PPaq5lSQaxJp
+         6BdEBax/EC1lXasi/vYzSMhunml2Gifgtw7EqF5WJ/6grXv2Td6k1NDXkqYTrs3U798e
+         iMzrl6h15bfyXnxk8OovQ+eA95KDZyNJIpzFo5L2CFg900+XPfYUHllgMwXvnInez6jI
+         G7vL1EBW99CQV/KU+1YC2Wt10B4YMnxeRmYCVhC1JuwoBRKwzRzx5A7GOS8kqPH8w6ZH
+         h8Qge6XWXr/i8vTicFmDQA4Q149O6XVXT5lvNvqHpchI7bmytFY0v2y+5kjGlZMMDIdE
+         EL6g==
+X-Gm-Message-State: ACrzQf1xqRF7QLMCF6n6MdKpPrwGx1FvXYS+HbWehv7O77wUW7vPyE/W
+        3ca8CAB8ZZxaHY1iRLKJNUHV8oODusj2zQ==
+X-Google-Smtp-Source: AMsMyM6S9IhbB/K0PCnZCtTSePbIeEuS4EFok4irDdkDhHZDjaoZyjyvFW3wOa0V66uhD+fgmiISkQ==
+X-Received: by 2002:ac2:569c:0:b0:4b1:966f:7a19 with SMTP id 28-20020ac2569c000000b004b1966f7a19mr8890286lfr.587.1667903819567;
+        Tue, 08 Nov 2022 02:36:59 -0800 (PST)
+Received: from [192.168.0.20] (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
+        by smtp.gmail.com with ESMTPSA id l10-20020a056512110a00b00497b198987bsm1726912lfg.26.2022.11.08.02.36.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Nov 2022 01:40:24 -0800 (PST)
-Message-ID: <040542e7-7d1c-4f25-b1ed-459f3c165283@redhat.com>
-Date:   Tue, 8 Nov 2022 10:40:23 +0100
+        Tue, 08 Nov 2022 02:36:59 -0800 (PST)
+Message-ID: <2ba09d50-229a-25d6-e437-c0b31429eaf0@linaro.org>
+Date:   Tue, 8 Nov 2022 11:36:57 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
+ Thunderbird/102.4.2
+Subject: Re: [PATCH 3/6] dt-bindings: sound: Add sound card bindings for Tesla
+ FSD
+To:     Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>,
+        'Rob Herring' <robh@kernel.org>
+Cc:     lgirdwood@gmail.com, broonie@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, s.nawrocki@samsung.com,
+        perex@perex.cz, tiwai@suse.com, pankaj.dubey@samsung.com,
+        alim.akhtar@samsung.com, rcsekar@samsung.com,
+        aswani.reddy@samsung.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20221014102151.108539-1-p.rajanbabu@samsung.com>
+ <CGME20221014104901epcas5p1a61ea81c3b1640bd8a064633c0b1e40d@epcas5p1.samsung.com>
+ <20221014102151.108539-4-p.rajanbabu@samsung.com>
+ <20221014151325.GA1940481-robh@kernel.org>
+ <04b901d8e529$573b17e0$05b147a0$@samsung.com>
+ <253fc459-c3dc-7710-6f34-0466d5301482@linaro.org>
+ <01c101d8f333$b3bc8db0$1b35a910$@samsung.com>
 Content-Language: en-US
-To:     Tomasz Figa <tfiga@chromium.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        David Airlie <airlied@gmail.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-References: <20221107161740.144456-1-david@redhat.com>
- <20221107161740.144456-17-david@redhat.com>
- <CAAFQd5C3Ba1WhjYJF_7tW06mgvzoz9KTakNo+Tz8h_f6dGKzHQ@mail.gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH RFC 16/19] mm/frame-vector: remove FOLL_FORCE usage
-In-Reply-To: <CAAFQd5C3Ba1WhjYJF_7tW06mgvzoz9KTakNo+Tz8h_f6dGKzHQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <01c101d8f333$b3bc8db0$1b35a910$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 08.11.22 05:45, Tomasz Figa wrote:
-> Hi David,
-
-Hi Tomasz,
-
-thanks for looking into this!
-
-> 
-> On Tue, Nov 8, 2022 at 1:19 AM David Hildenbrand <david@redhat.com> wrote:
+On 08/11/2022 06:33, Padmanabhan Rajanbabu wrote:
+>>>
+>>> The actual reason for having a custom sound card driver lies in the
+>>> fact that the Samsung i2s cpu dai requires configuration of some
+>>> Samsung specific properties like rfs, bfs, codec clock direction and
+>>> root clock source. We do not have flexibility of configuring the same
+>>> in simple card driver (sound/soc/generic/simple-card.c) or audio graph
+>>> card driver (sound/soc/generic/audio-graph-card.c). The binding has
+>>> been added to support the custom sound card driver.
+>>>
+>>> I understand from your query that the newly added card has device tree
+>>> nodes and properties which are used in simple card as well, but having
+>>> a different or new prefixes. I believe to address that, we can
+>>> restructure the string names to generic ones.
 >>
->> FOLL_FORCE is really only for debugger access. According to commit
->> 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are always
->> writable"), the pinned pages are always writable.
+>> You must use generic, existing properties where applicable.
 > 
+> Okay
+> 
+>>
+>>> But I would like to understand, to reuse the simple card or audio
+>>> graph card bindings, can we add secondary compatible strings in the
+>>> simple card dt-binding for the custom sound card to probe ?
+>>
+>> If you see other vendor compatibles there, then yes... But there aren't any,
+>> right?
+> 
+> Yes you are right, we don't see other vendor compatibles. But, am I allowed
+> to add such secondary compatibles so that we can extend the simple card
+> and its utilities to a large extent?
+> 
+> If no, then I believe we will need a separate binding to extend the generic
+> properties.
 
-As reference, the cover letter of the series:
-
-https://lkml.kernel.org/r/20221107161740.144456-1-david@redhat.com
-
-> Actually that patch is only a workaround to temporarily disable
-> support for read-only pages as they seemed to suffer from some
-> corruption issues in the retrieved user pages. We expect to support
-> read-only pages as hardware input after. That said, FOLL_FORCE doesn't
-> sound like the right thing even in that case, but I don't know the
-> background behind it being added here in the first place. +Hans
-> Verkuil +Marek Szyprowski do you happen to remember anything about it?
-
-Maybe I mis-interpreted 707947247e95; re-reading it again, I am not 
-quite sure what the actual problem is and how it relates to GUP 
-FOLL_WRITE handling. FOLL_FORCE already was in place before 707947247e95 
-and should be removed.
-
-What I understood is "Just always call vb2_create_framevec() with 
-FOLL_WRITE to always allow writing to the buffers.".
+If you have any custom properties, then yes. But you don't have.
 
 
-If the pinned page is never written to via the obtained GUP reference:
-* FOLL_WRITE should not be set
-* FOLL_FORCE should not be set
-* We should not dirty the page when unpinning
-
-If the pinned page may be written to via the obtained GUP reference:
-* FOLL_WRITE should be set
-* FOLL_FORCE should not be set
-* We should dirty the page when unpinning
-
-
-If the function is called for both, we should think about doing it 
-conditional based on a "write" variable, like pre-707947247e95 did.
-
-@Hans, any insight?
-
--- 
-Thanks,
-
-David / dhildenb
+Best regards,
+Krzysztof
 
