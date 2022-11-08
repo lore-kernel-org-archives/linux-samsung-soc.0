@@ -2,124 +2,136 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F8AC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Nov 2022 10:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8294DC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Nov 2022 14:14:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233683AbiKHKho (ORCPT
+        id S235333AbiKHOO3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Nov 2022 05:37:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58260 "EHLO
+        Tue, 8 Nov 2022 09:14:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233710AbiKHKhT (ORCPT
+        with ESMTP id S235345AbiKHOOX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Nov 2022 05:37:19 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B8BA4090E
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Nov 2022 02:37:01 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id g7so20646187lfv.5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Nov 2022 02:37:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=F1eU2MNzr9lEfofB/L6YKz5jRjvrNUwGoC1RPrJsqIc=;
-        b=qxlKoNOCj8bwEn/unr4ZPcnBCXcdPnwp6/SZBWWeD1f+nNzLQZ17cHnkenX1JoZ+nJ
-         l5mhxoz3baMzHRwcGvuZBeAgFsbmfiw5waqPt908NhhIv4tecxmqQPdV0Dhf9IJm8Dt0
-         k0NtuvI7zoLtlVsm93UDSI5nvXT8giTAEmr04mTtPEhLQpmnA/bd5jRs34pBIxkPVDZp
-         sLD6ufM7RkVvdGhirGvWrEpWffO+PQUzvRoxY2bs+2fNm4Hu8I9+dliDE1l3I0yRMuNK
-         qnErbVUK+0FDLBkKVwWv6dWzXNsnSoy7R0nrBCaZxdKQNiCL0RQeH6J78bt+69PPVLrT
-         Kytw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F1eU2MNzr9lEfofB/L6YKz5jRjvrNUwGoC1RPrJsqIc=;
-        b=XUC7i4dYmyjx5oq0sgoY9ATxQUdS9o3OCW5ayTgtiYBvjjpojpgx44PPaq5lSQaxJp
-         6BdEBax/EC1lXasi/vYzSMhunml2Gifgtw7EqF5WJ/6grXv2Td6k1NDXkqYTrs3U798e
-         iMzrl6h15bfyXnxk8OovQ+eA95KDZyNJIpzFo5L2CFg900+XPfYUHllgMwXvnInez6jI
-         G7vL1EBW99CQV/KU+1YC2Wt10B4YMnxeRmYCVhC1JuwoBRKwzRzx5A7GOS8kqPH8w6ZH
-         h8Qge6XWXr/i8vTicFmDQA4Q149O6XVXT5lvNvqHpchI7bmytFY0v2y+5kjGlZMMDIdE
-         EL6g==
-X-Gm-Message-State: ACrzQf1xqRF7QLMCF6n6MdKpPrwGx1FvXYS+HbWehv7O77wUW7vPyE/W
-        3ca8CAB8ZZxaHY1iRLKJNUHV8oODusj2zQ==
-X-Google-Smtp-Source: AMsMyM6S9IhbB/K0PCnZCtTSePbIeEuS4EFok4irDdkDhHZDjaoZyjyvFW3wOa0V66uhD+fgmiISkQ==
-X-Received: by 2002:ac2:569c:0:b0:4b1:966f:7a19 with SMTP id 28-20020ac2569c000000b004b1966f7a19mr8890286lfr.587.1667903819567;
-        Tue, 08 Nov 2022 02:36:59 -0800 (PST)
-Received: from [192.168.0.20] (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
-        by smtp.gmail.com with ESMTPSA id l10-20020a056512110a00b00497b198987bsm1726912lfg.26.2022.11.08.02.36.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Nov 2022 02:36:59 -0800 (PST)
-Message-ID: <2ba09d50-229a-25d6-e437-c0b31429eaf0@linaro.org>
-Date:   Tue, 8 Nov 2022 11:36:57 +0100
+        Tue, 8 Nov 2022 09:14:23 -0500
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 305982AE28
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Nov 2022 06:14:20 -0800 (PST)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20221108141416euoutp0296e0c09f6691fdd67550c7ba5870e6b0~loYtDGC4v2860628606euoutp025
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Nov 2022 14:14:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20221108141416euoutp0296e0c09f6691fdd67550c7ba5870e6b0~loYtDGC4v2860628606euoutp025
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1667916856;
+        bh=yfRquXsgl4DPwfb4YyfvsQR+6RqICoP4tXe77OfL+SA=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=gd7foAFdn2MRlAzJU4EntzvR4afhdg/q7bS+qh+VilDJ5p91sT61U3plIRMZagiNu
+         /+Cr24pEV6HsxNoHORMzhDAtx+0oU9oaTnFQEp4dAa49uRJUpijiDoKghUidrX90aK
+         eyHig7W+82ckAqEDZRCFC5onxfNKO2XzgMvSP1rA=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20221108141416eucas1p1d530e957493e99850c53c40cc0a4d38f~loYswJVRI2722927229eucas1p1d;
+        Tue,  8 Nov 2022 14:14:16 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id FF.8B.09561.8346A636; Tue,  8
+        Nov 2022 14:14:16 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20221108141415eucas1p2fa88f294c9b8907c0fa5d4cb6a79863e~loYschiRs2558625586eucas1p2w;
+        Tue,  8 Nov 2022 14:14:15 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20221108141415eusmtrp23cf4ea3c9ff0bd0509452dd17cd438bd~loYsbucCC2746727467eusmtrp2d;
+        Tue,  8 Nov 2022 14:14:15 +0000 (GMT)
+X-AuditID: cbfec7f2-0b3ff70000002559-c9-636a643837fe
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 88.9F.08916.7346A636; Tue,  8
+        Nov 2022 14:14:15 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20221108141415eusmtip16a94a1c4d182eb5e8a212095612568c1~loYr_A7T60032600326eusmtip1A;
+        Tue,  8 Nov 2022 14:14:15 +0000 (GMT)
+Message-ID: <fa77dbaa-e62a-b365-3b54-357e2074932f@samsung.com>
+Date:   Tue, 8 Nov 2022 15:14:14 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH 3/6] dt-bindings: sound: Add sound card bindings for Tesla
- FSD
-To:     Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>,
-        'Rob Herring' <robh@kernel.org>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, s.nawrocki@samsung.com,
-        perex@perex.cz, tiwai@suse.com, pankaj.dubey@samsung.com,
-        alim.akhtar@samsung.com, rcsekar@samsung.com,
-        aswani.reddy@samsung.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20221014102151.108539-1-p.rajanbabu@samsung.com>
- <CGME20221014104901epcas5p1a61ea81c3b1640bd8a064633c0b1e40d@epcas5p1.samsung.com>
- <20221014102151.108539-4-p.rajanbabu@samsung.com>
- <20221014151325.GA1940481-robh@kernel.org>
- <04b901d8e529$573b17e0$05b147a0$@samsung.com>
- <253fc459-c3dc-7710-6f34-0466d5301482@linaro.org>
- <01c101d8f333$b3bc8db0$1b35a910$@samsung.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
+        Gecko/20100101 Thunderbird/102.4.1
+Subject: Re: [PATCH] media: exynos4-is: don't rely on the v4l2_async_subdev
+ internals
 Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <01c101d8f333$b3bc8db0$1b35a910$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-media@vger.kernel.org,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+Cc:     Daniel Scally <djrscally@gmail.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <ad5d4efb-c31f-585a-cdc5-c66744deee59@samsung.com>
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKKsWRmVeSWpSXmKPExsWy7djPc7oWKVnJBr0dnBbbDr9jtTg1+RmT
+        RefEJewWPRu2slrMOL+PyeLwm3ZWizP7V7I5sHvsnHWX3WN2x0xWj8NfF7J49G1ZxejxeZOc
+        x6mvn9kD2KK4bFJSczLLUov07RK4MibO7WUquMZesXr/YtYGxr1sXYycHBICJhKz/m9g7WLk
+        4hASWMEo0f1uNTuE84VRonH7ZqjMZ0aJrnfdLDAtM/dNh0osZ5T4tnYfC4TzkVFiyZ12dpAq
+        XgE7iX07zoHZLAIqEh8alrJAxAUlTs58AmaLCqRI7O7eBmYLC4RLHGztZAWxmQXEJW49mc8E
+        MlREoJNR4sCXnYwgDjPIhbtuLwObyiZgKNH1tgvoDQ4OTgF7iXW/XSCa5SW2v53DDFIvIfCE
+        Q6Jnw0pGiLtdJO5NuMwMYQtLvDq+hR3ClpH4vxNim4RAO6PEgt/3oZwJjBINz29BdVtL3Dn3
+        C2wbs4CmxPpd+hBhR4muuauYQcISAnwSN94KQhzBJzFp23SoMK9ER5sQRLWaxKzj6+DWHrxw
+        iXkCo9IspHCZheT/WUjemYWwdwEjyypG8dTS4tz01GLDvNRyveLE3OLSvHS95PzcTYzAlHT6
+        3/FPOxjnvvqod4iRiYPxEKMEB7OSCK9ITWayEG9KYmVValF+fFFpTmrxIUZpDhYlcV62GVrJ
+        QgLpiSWp2ampBalFMFkmDk6pBqbaUEa3h7qmi6b9yLyRLNuXduG1Fod6T0PGpsu8lgf5NwV7
+        nmDK6K8Mvzmhdb8ED/vHJeHJ1fLrOZ//Zu+RY23kVt577/P6lRZa3D4u7w68zfpuZHTr2+0n
+        DutFuhbf2hZivVU3zGjjcmYPpyzfowHC4bs9b8md2bRFdtKNJ7M+mq6ZLvU/RkvqlEOrqZvK
+        JzbZy7KML3IfVnJ+Mcyw//eyNMQ/f+qhO3xr3A45LLSyexty7nvTSbbADyY/tFp3f/c/GndV
+        peTEAZ2vhgX7SqL2FDoHrfv6jHVJVHDK9/8ZkU4F2w9ym3KXcM9onMu44YvPuj+FC4wKfoUp
+        lucI/eK6KXDbvruP70M5+9qGVCWW4oxEQy3mouJEAJxpIrq4AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCIsWRmVeSWpSXmKPExsVy+t/xu7rmKVnJBvP7dC22HX7HanFq8jMm
+        i86JS9gtejZsZbWYcX4fk8XhN+2sFmf2r2RzYPfYOesuu8fsjpmsHoe/LmTx6NuyitHj8yY5
+        j1NfP7MHsEXp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp
+        2yXoZUyc28tUcI29YvX+xawNjHvZuhg5OSQETCRm7pvO2sXIxSEksJRR4sTmHVAJGYmT0xpY
+        IWxhiT/Xutggit4zSvSubAFL8ArYSezbcY4dxGYRUJH40LCUBSIuKHFy5hMgm4NDVCBF4tu5
+        OpCwsEC4xMHWTrBWZgFxiVtP5jOB2CIC7YwSuzeygMxnFljBKNE45yDYTCGBY4wSH147gths
+        AoYSXW9BjuDg4BSwl1j32wVijplE19YuRghbXmL72znMExiFZiG5YhaSdbOQtMxC0rKAkWUV
+        o0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYPRtO/Zz8w7Gea8+6h1iZOJgPMQowcGsJMIrUpOZ
+        LMSbklhZlVqUH19UmpNafIjRFBgUE5mlRJPzgfGfVxJvaGZgamhiZmlgamlmrCTO61nQkSgk
+        kJ5YkpqdmlqQWgTTx8TBKdXAJNAcOsnnbllq7M3Qr6Wh7oXMO+xeP9puJL+nUlKvf+MOM/fb
+        IpJOfnF92WzVazz2KkzUmrN7v9RX+V83DMuPxb9feubGaWGRKmV5h5BtkbXh9vXdCXO/zPqg
+        sPfB7jkzVvvO5VXmfbl7adPvDVc9Pkyxf8KSfn1H3gl2A8VP+2eo2Fftc3uf+CB9k+ipaNnq
+        m1W955sP3bE6NOH55FMnukMbvzSzKjhH/fJnvNpvtTTrZkKGmbG+UtKi84qPisuZP/I8Ut7R
+        kvVgecAy7rkRHv8mcS5ZopDz/e4t+QNt3m0qx04+MTuRl/bTqTc4welVcvZGhsTonYeY5U4d
+        edY3+6AQp1zBrpTfZ5TvLnedocRSnJFoqMVcVJwIAJpU949HAwAA
+X-CMS-MailID: 20221108141415eucas1p2fa88f294c9b8907c0fa5d4cb6a79863e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220923094232eucas1p1deb3985c9637a0876609c75967175e9b
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220923094232eucas1p1deb3985c9637a0876609c75967175e9b
+References: <CGME20220923094232eucas1p1deb3985c9637a0876609c75967175e9b@eucas1p1.samsung.com>
+        <20220923094201.18047-1-m.szyprowski@samsung.com>
+        <ad5d4efb-c31f-585a-cdc5-c66744deee59@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 08/11/2022 06:33, Padmanabhan Rajanbabu wrote:
->>>
->>> The actual reason for having a custom sound card driver lies in the
->>> fact that the Samsung i2s cpu dai requires configuration of some
->>> Samsung specific properties like rfs, bfs, codec clock direction and
->>> root clock source. We do not have flexibility of configuring the same
->>> in simple card driver (sound/soc/generic/simple-card.c) or audio graph
->>> card driver (sound/soc/generic/audio-graph-card.c). The binding has
->>> been added to support the custom sound card driver.
->>>
->>> I understand from your query that the newly added card has device tree
->>> nodes and properties which are used in simple card as well, but having
->>> a different or new prefixes. I believe to address that, we can
->>> restructure the string names to generic ones.
+On 05.10.2022 16:47, Sylwester Nawrocki wrote:
+> On 23.09.2022 11:42, Marek Szyprowski wrote:
+>> Commit 1f391df44607 ("media: v4l2-async: Use endpoints in
+>> __v4l2_async_nf_add_fwnode_remote()") changed the data that is stored in
+>> the v4l2_async_subdev internals from the fwnode pointer to the parent
+>> device to the fwnode pointer to the matched endpoint. This broke the
+>> sensor matching code, which relied on the particular fwnode data in the
+>> v4l2_async_subdev internals. Fix this by simply matching the
+>> v4l2_async_subdev pointer, which is already available there.
 >>
->> You must use generic, existing properties where applicable.
-> 
-> Okay
-> 
->>
->>> But I would like to understand, to reuse the simple card or audio
->>> graph card bindings, can we add secondary compatible strings in the
->>> simple card dt-binding for the custom sound card to probe ?
->>
->> If you see other vendor compatibles there, then yes... But there aren't any,
->> right?
-> 
-> Yes you are right, we don't see other vendor compatibles. But, am I allowed
-> to add such secondary compatibles so that we can extend the simple card
-> and its utilities to a large extent?
-> 
-> If no, then I believe we will need a separate binding to extend the generic
-> properties.
+>> Reported-by: Daniel Scally <djrscally@gmail.com>
+>> Fixes: fa91f1056f17 ("[media] exynos4-is: Add support for asynchronous subdevices registration")
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-If you have any custom properties, then yes. But you don't have.
+Gentle ping for merging this fix.
 
-
-Best regards,
-Krzysztof
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
