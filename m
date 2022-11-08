@@ -2,271 +2,210 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B733C43219
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Nov 2022 06:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C95F8C43217
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Nov 2022 08:34:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233507AbiKHGTu (ORCPT
+        id S233582AbiKHIei (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Nov 2022 01:19:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38806 "EHLO
+        Tue, 8 Nov 2022 03:34:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233473AbiKHGTc (ORCPT
+        with ESMTP id S233087AbiKHIeh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Nov 2022 01:19:32 -0500
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92B751AD95
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Nov 2022 22:19:25 -0800 (PST)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20221108061924epoutp01f2933edfd50a485b7bc485d95a7a838f~lh6FYXClX2026220262epoutp01p
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Nov 2022 06:19:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20221108061924epoutp01f2933edfd50a485b7bc485d95a7a838f~lh6FYXClX2026220262epoutp01p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1667888364;
-        bh=wQw59ZJkL430DS0zBeDtb6FDh4OKqj/913SOIKgtwlc=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=tFiEhYYQS8jt8BkLz7m6Ur2AAp+h37hHoPJoNMs1D6v85jZAdTDJVlhhmBSDimG+e
-         B8YTld1Sn71SavcijxC9ZEeojLj6ThUMjPFJpUh1xn07B3+9c45KqTkTlqPgA+1s8N
-         K4CzHvZVrhhtScqGnQpiHoYiyVwdYs2tXGsSW1DQ=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20221108061923epcas5p30527e1d0ad96e5e4305277baae99afc6~lh6EiGMiu0649206492epcas5p3a;
-        Tue,  8 Nov 2022 06:19:23 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4N5yc56L6xz4x9QP; Tue,  8 Nov
-        2022 06:19:17 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        92.FE.56352.5E4F9636; Tue,  8 Nov 2022 15:19:17 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20221108052516epcas5p3a1006bd334b83bcc46b5a38474657b42~lhK1RMTPt1066810668epcas5p3L;
-        Tue,  8 Nov 2022 05:25:16 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20221108052516epsmtrp1b8a29f53d550aa23998ccaaa7da5178f~lhK1Pdkxu2223122231epsmtrp1f;
-        Tue,  8 Nov 2022 05:25:16 +0000 (GMT)
-X-AuditID: b6c32a4b-383ff7000001dc20-37-6369f4e5d0d5
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5D.AF.18644.C38E9636; Tue,  8 Nov 2022 14:25:16 +0900 (KST)
-Received: from FDSFTE070 (unknown [107.116.189.86]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20221108052514epsmtip2a08ff035d5970dbd9ba69361439c44f4~lhKy8BqHs2168921689epsmtip2N;
-        Tue,  8 Nov 2022 05:25:14 +0000 (GMT)
-From:   "Padmanabhan Rajanbabu" <p.rajanbabu@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Alim Akhtar'" <alim.akhtar@samsung.com>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <s.nawrocki@samsung.com>,
-        <perex@perex.cz>, <tiwai@suse.com>, <pankaj.dubey@samsung.com>,
-        <rcsekar@samsung.com>, <aswani.reddy@samsung.com>
-Cc:     <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>
-In-Reply-To: <89340edb-2451-e648-e2e6-94c8f2410084@linaro.org>
-Subject: RE: [PATCH 6/6] arm64: dts: fsd: Add sound card node for Tesla FSD
-Date:   Tue, 8 Nov 2022 10:55:13 +0530
-Message-ID: <01bf01d8f332$7c15fdc0$7441f940$@samsung.com>
+        Tue, 8 Nov 2022 03:34:37 -0500
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57037E0A3;
+        Tue,  8 Nov 2022 00:34:36 -0800 (PST)
+Received: by mail-qk1-f176.google.com with SMTP id s20so8693810qkg.5;
+        Tue, 08 Nov 2022 00:34:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9rjK+cFGvl0bYlnbNWlNdjkQ+vEPF5KQW+G9V7jNEfE=;
+        b=qLHu9TDpIr9TIgM9ckBuIT5QkQ+gAPZNdSQFo3KlE/uVUaji3Ilx1pHnIBS+93YWKY
+         S4Zqt91gzM3tYWFWL7uxeK0bsZBFge8lYNJmFUDSK2oKz7hOXVTGuSHc8gKP9q0RrnM/
+         8TsJnjBm0Nyc6n4rd4SW1zB8C85rUYfJGoS6UEO3M3S1ch7M3sS1dhnb+YymwqPvgfn6
+         6rxjBHvhz5z9nwiWL1YgFXWGguP8RLVO3UVACfk/O31yk1MpTmRK4MPvlRCmGSufLfdV
+         UGysRs3IT9dXSuGFqpSczUsq9zk9+rKjjjcRYxlzIdo9JB4EYTTQw6fpMAkZTGvusUig
+         EnaA==
+X-Gm-Message-State: ACrzQf3GHtPiX//Aj69OI8k7Tmha+c3PUb41fyWmNojt5jsjs3dCdteB
+        OQz94oVNkoBIiuqwAt4Sb/8tPuNKX8aP07XL
+X-Google-Smtp-Source: AMsMyM5n9RFBhHumsOb4egODJZvbGArk5mUKAGa3NMc6j96Px/+Fkq5AmEvHgTbZKacp4j3Ibdj07Q==
+X-Received: by 2002:a05:620a:888:b0:6f5:ec2:6398 with SMTP id b8-20020a05620a088800b006f50ec26398mr840149qka.617.1667896475305;
+        Tue, 08 Nov 2022 00:34:35 -0800 (PST)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
+        by smtp.gmail.com with ESMTPSA id cn3-20020a05622a248300b003a5430ee366sm7668958qtb.60.2022.11.08.00.34.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Nov 2022 00:34:34 -0800 (PST)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-36cbcda2157so127132167b3.11;
+        Tue, 08 Nov 2022 00:34:32 -0800 (PST)
+X-Received: by 2002:a0d:e301:0:b0:374:a8ba:99b0 with SMTP id
+ m1-20020a0de301000000b00374a8ba99b0mr6035680ywe.358.1667896472556; Tue, 08
+ Nov 2022 00:34:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKFI9qd/qMOsyXBjKz4d8Q6MS4QvwItme6KAWz5sEgBhUP0cQGPN5hmASAqNi2snaMRcA==
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJJsWRmVeSWpSXmKPExsWy7bCmhu7TL5nJBk8mG1o8mLeNzeLKxUNM
-        Foc2b2W3mPrwCZvF/CPnWC36Xjxkttj7Gij27UoHk8XlXXPYLGac38dksWjrF3aLzl39rBaz
-        LuxgtWjde4Td4vCbdlaLDd/XMjoIeGz43MTmsXPWXXaPTas62TzuXNvD5rHv7TI2j74tqxg9
-        1m+5yuLxeZNcAEdUtk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5kkJeYm6qrZKL
-        T4CuW2YO0AtKCmWJOaVAoYDE4mIlfTubovzSklSFjPziElul1IKUnAKTAr3ixNzi0rx0vbzU
-        EitDAwMjU6DChOyMvucbGAs2qVdsmfmZpYFxqkIXIyeHhICJxPxL3SxdjFwcQgK7GSUaFj6E
-        cj4xSuzpm8AI4XxmlHjf3skG03L44C52iMQuRonds5YwQzgvGCV2XbzGBFLFJmAusWjvUrB2
-        EYFnTBLt65+AVTELtDFK7L24lhGkilPATqLxwXtmEFtYwFuiaelDoDgHB4uAisT5TRkgYV4B
-        S4m2aVvYIGxBiZMzn7CA2MwC8hLb385hhjhJQeLn02WsILaIQJjEnfZOJogacYmjP3vA9koI
-        fOCQ6Lq0kxGiwUXi687trBC2sMSr41vYIWwpiZf9bVB2vsS0j81QP1dItH3cwARh20scuDKH
-        BeROZgFNifW79CHCshJTT62D2ssn0fv7CVQ5r8SOeTC2qsT65ZugTpCW2Hd9L+MERqVZSF6b
-        heS1WUhemIWwbQEjyypGydSC4tz01GLTAuO81HJ4lCfn525iBKdxLe8djI8efNA7xMjEwXiI
-        UYKDWUmEV6QmM1mINyWxsiq1KD++qDQntfgQoykwuCcyS4km5wMzSV5JvKGJpYGJmZmZiaWx
-        maGSOO/iGVrJQgLpiSWp2ampBalFMH1MHJxSDUwJJqbJF/xOVjltmqHmqnTykN2vbN51wvWx
-        ZVnnrBwjCxYuf/n65PlV1mZbVgmW+b8K2OGltUQ9+b3aRL59GQbzpCQyb938oSJn+8wlRkAk
-        6vhEx3PLYmZ9LpTVUN3XsGLBzPmTGla/MLuyp2et0VpGtQh5VV3zuTf7z8c3ct/4FXnvTr5X
-        3/lpM41P3/jw/EfGV64zB3qfsiwWbJzV96Pl/P8oxSD/GaLyD51+mFjXZ0xaLP3m5qSTimfY
-        2DmFd++b7Gaw08u4+hSDhmhUzJYTnAs7GZ+tnKGgfnplj0k5+xKtLzfrjkxxk4mxj9l08dOC
-        19MCGcIPBu01fHYxtHy34vnm+XVLNRZv4mc+XVesxFKckWioxVxUnAgAENuweGwEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsWy7bCSvK7Ni8xkg60b9CwezNvGZnHl4iEm
-        i0Obt7JbTH34hM1i/pFzrBZ9Lx4yW+x9DRT7dqWDyeLyrjlsFjPO72OyWLT1C7tF565+VotZ
-        F3awWrTuPcJucfhNO6vFhu9rGR0EPDZ8bmLz2DnrLrvHplWdbB53ru1h89j3dhmbR9+WVYwe
-        67dcZfH4vEkugCOKyyYlNSezLLVI3y6BK6Pv+QbGgk3qFVtmfmZpYJyq0MXIySEhYCJx+OAu
-        9i5GLg4hgR2MEpvOrmeGSEhLTO/fwwZhC0us/PccqugZo8Tnr3tZQBJsAuYSi/YuZQRJiAh8
-        YpJ4/xaiilmgi1Hi+N+VYKOEBM4zSTQflwKxOQXsJBofvAeLCwt4SzQtfQjUzcHBIqAicX5T
-        BkiYV8BSom3aFjYIW1Di5MwnYMuYBbQleh+2MkLY8hLb386BulRB4ufTZawgtohAmMSd9k4m
-        iBpxiaM/e5gnMArPQjJqFpJRs5CMmoWkZQEjyypGydSC4tz03GLDAqO81HK94sTc4tK8dL3k
-        /NxNjOBI1tLawbhn1Qe9Q4xMHIyHGCU4mJVEeEVqMpOFeFMSK6tSi/Lji0pzUosPMUpzsCiJ
-        817oOhkvJJCeWJKanZpakFoEk2Xi4JRqYOKsnflwg+TL7wtrbjXcmHrhnua1HSsYWArV5/tI
-        7OO3n7r8p2ZcnrzH382JSjxZlV4JB+7GtzzzL7XkemmgfVhzzc9t075GrEqa+jrylWx2SVJU
-        5lvjTUVPJqWXTO3bpyWrF/BdOnrPtJfB7Xr5/jMV9m851jGj3v9cu/OEtmOBGmWSk19Z6ezY
-        czI5quO21UF91/KLl87MetSblWVbfDnQXH2Wr7CNo8Ovy88XCnleO7pip4rsvENC1dLbP+cE
-        egbNUll7aMJW7ovVZn+lmVckly3Yf/pwYrTF1VXr9jFX3QtREfrTqzdpj0L4rDNnNlmpzDts
-        9uROcOWuiEU1ycevPAnxFTS6xvGs/F3w0u1KLMUZiYZazEXFiQCp4MI2UwMAAA==
-X-CMS-MailID: 20221108052516epcas5p3a1006bd334b83bcc46b5a38474657b42
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221014104915epcas5p12414b87ea127b2d5bf521556bf841b00
-References: <20221014102151.108539-1-p.rajanbabu@samsung.com>
-        <CGME20221014104915epcas5p12414b87ea127b2d5bf521556bf841b00@epcas5p1.samsung.com>
-        <20221014102151.108539-7-p.rajanbabu@samsung.com>
-        <00c301d8dfd0$f55ca230$e015e690$@samsung.com>
-        <04aa01d8e524$d253f2d0$76fbd870$@samsung.com>
-        <89340edb-2451-e648-e2e6-94c8f2410084@linaro.org>
+References: <20221107155825.1644604-1-pierre.gondois@arm.com> <20221107155825.1644604-19-pierre.gondois@arm.com>
+In-Reply-To: <20221107155825.1644604-19-pierre.gondois@arm.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 8 Nov 2022 09:34:20 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWOZemsvMfM8+NTvQ4=cDd9hu3=0tVFRmNzFmjaxVhgig@mail.gmail.com>
+Message-ID: <CAMuHMdWOZemsvMfM8+NTvQ4=cDd9hu3=0tVFRmNzFmjaxVhgig@mail.gmail.com>
+Subject: Re: [PATCH v2 18/23] arm64: dts: Update cache properties for renesas
+To:     Pierre Gondois <pierre.gondois@arm.com>
+Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
+        Antoine Tenart <atenart@kernel.org>,
+        Brijesh Singh <brijeshkumar.singh@amd.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Khuong Dinh <khuong@os.amperecomputing.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        William Zhang <william.zhang@broadcom.com>,
+        Anand Gore <anand.gore@broadcom.com>,
+        Kursad Oney <kursad.oney@broadcom.com>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Chester Lin <clin@suse.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Matthias Brugger <mbrugger@suse.com>,
+        NXP S32 Linux Team <s32@nxp.com>,
+        Wei Xu <xuwei5@hisilicon.com>, Chanho Min <chanho.min@lge.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Daniel Machon <daniel.machon@microchip.com>,
+        UNGLinuxDriver@microchip.com, Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jisheng Zhang <jszhang@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Shenwei Wang <shenwei.wang@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Ming Qian <ming.qian@nxp.com>,
+        Adam Ford <aford173@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, Li Jun <jun.li@nxp.com>,
+        Marek Vasut <marex@denx.de>,
+        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Paul Elder <paul.elder@ideasonboard.com>,
+        Martin Kepplinger <martink@posteo.de>,
+        Joy Zou <joy.zou@nxp.com>, David Heidelberg <david@ixit.cz>,
+        Liu Ying <victor.liu@nxp.com>,
+        Oliver Graute <oliver.graute@kococonnector.com>,
+        Shijie Qin <shijie.qin@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Wei Fang <wei.fang@nxp.com>,
+        Clark Wang <xiaoning.wang@nxp.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Vadym Kochan <vadym.kochan@plvision.eu>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Akhil R <akhilrajeev@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Sumit Gupta <sumitg@nvidia.com>,
+        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Ashish Mhetre <amhetre@nvidia.com>,
+        Johan Jonker <jbx6244@gmail.com>,
+        Christopher Obbard <chris.obbard@collabora.com>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Aswani Reddy <aswani.reddy@samsung.com>,
+        Shashank Prashar <s.prashar@samsung.com>,
+        devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-realtek-soc@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi Pierre,
 
+Thanks for your patch!
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@linaro.org]
-> Sent: 21 October 2022 06:24 PM
-> To: Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>; 'Alim Akhtar'
-> <alim.akhtar@samsung.com>; lgirdwood@gmail.com; broonie@kernel.org;
-> robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
-> s.nawrocki@samsung.com; perex@perex.cz; tiwai@suse.com;
-> pankaj.dubey@samsung.com; rcsekar@samsung.com;
-> aswani.reddy@samsung.com
-> Cc: alsa-devel@alsa-project.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org
-> Subject: Re: [PATCH 6/6] arm64: dts: fsd: Add sound card node for Tesla FSD
-> 
-> On 21/10/2022 04:12, Padmanabhan Rajanbabu wrote:
-> >
-> >
-> >> -----Original Message-----
-> >> From: Alim Akhtar [mailto:alim.akhtar@samsung.com]
-> >> Sent: 14 October 2022 06:59 PM
-> >> To: 'Padmanabhan Rajanbabu' <p.rajanbabu@samsung.com>;
-> >> lgirdwood@gmail.com; broonie@kernel.org; robh+dt@kernel.org;
-> >> krzysztof.kozlowski+dt@linaro.org; s.nawrocki@samsung.com;
-> >> perex@perex.cz; tiwai@suse.com; pankaj.dubey@samsung.com;
-> >> rcsekar@samsung.com; aswani.reddy@samsung.com
-> >> Cc: alsa-devel@alsa-project.org; devicetree@vger.kernel.org; linux-
-> >> kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org
-> >> Subject: RE: [PATCH 6/6] arm64: dts: fsd: Add sound card node for
-> >> Tesla FSD
-> >>
-> >>
-> >>
-> >>> -----Original Message-----
-> >>> From: Padmanabhan Rajanbabu [mailto:p.rajanbabu@samsung.com]
-> >>> Sent: Friday, October 14, 2022 3:52 PM
-> >>> To: lgirdwood@gmail.com; broonie@kernel.org; robh+dt@kernel.org;
-> >>> krzysztof.kozlowski+dt@linaro.org; s.nawrocki@samsung.com;
-> >>> perex@perex.cz; tiwai@suse.com; pankaj.dubey@samsung.com;
-> >>> alim.akhtar@samsung.com; rcsekar@samsung.com;
-> >> aswani.reddy@samsung.com
-> >>> Cc: alsa-devel@alsa-project.org; devicetree@vger.kernel.org; linux-
-> >>> kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
-> >> Padmanabhan
-> >>> Rajanbabu <p.rajanbabu@samsung.com>
-> >>> Subject: [PATCH 6/6] arm64: dts: fsd: Add sound card node for Tesla
-> >>> FSD
-> >>>
-> >>> Add device tree node support for sound card on Tesla FSD board
-> >>>
-> >>> Signed-off-by: Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
-> >>> ---
-> >>> arch/arm64/boot/dts/tesla/fsd-evb.dts | 49
-> >>> +++++++++++++++++++++++++++
-> >>> arch/arm64/boot/dts/tesla/fsd.dtsi    |  3 ++
-> >>> 2 files changed, 52 insertions(+)
-> >>>
-> >>> diff --git a/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> >>> b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> >>> index c0a4509499ab..ecaa3c2e3045 100644
-> >>> --- a/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> >>> +++ b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> >>> @@ -49,3 +49,52 @@
-> >>> &tdm_1 {
-> >>> 	status = "okay";
-> >>> };
-> >>> +
-> >>> +&sound {
-> >>> +	compatible = "tesla,fsd-sndcard";
-> >>> +	status = "okay";
-> >>> +	model = "fsd-i2s";
-> >>> +	widgets =
-> >>> +		"Speaker", "MAIN SPK",
-> >>> +		"Microphone", "MAIN MIC";
-> >>> +
-> >>> +	primary-dai-link-0 {
-> >>> +		link-name = "fsd-primary-0";
-> >>> +		dai-format = "i2s";
-> >>> +		tesla,bitclock-master = <&tdm_0>;
-> >>> +		tesla,frame-master = <&tdm_0>;
-> >>> +		cpu {
-> >>> +			sound-dai = <&tdm_0 0>;
-> >>> +		};
-> >>> +	};
-> >>> +
-> >>> +	secondary-dai-link-0 {
-> >>> +		link-name = "fsd-secondary-0";
-> >>> +		dai-format = "i2s";
-> >>> +		tesla,bitclock-master = <&tdm_0>;
-> >>> +		tesla,frame-master = <&tdm_0>;
-> >>> +		cpu {
-> >>> +			sound-dai = <&tdm_0 1>;
-> >>> +		};
-> >>> +	};
-> >>> +
-> >>> +	primary-dai-link-1 {
-> >>> +		link-name = "fsd-primary-1";
-> >>> +		dai-format = "i2s";
-> >>> +		tesla,bitclock-master = <&tdm_1>;
-> >>> +		tesla,frame-master = <&tdm_1>;
-> >>> +		cpu {
-> >>> +			sound-dai = <&tdm_1 0>;
-> >>> +		};
-> >>> +	};
-> >>> +
-> >>> +	secondary-dai-link-1 {
-> >>> +		link-name = "fsd-secondary-1";
-> >>> +		dai-format = "i2s";
-> >>> +		tesla,bitclock-master = <&tdm_1>;
-> >>> +		tesla,frame-master = <&tdm_1>;
-> >>> +		cpu {
-> >>> +			sound-dai = <&tdm_1 1>;
-> >>> +		};
-> >>> +	};
-> >>> +};
-> >>> diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi
-> >>> b/arch/arm64/boot/dts/tesla/fsd.dtsi
-> >>> index 5decad45a1b6..fc8931f830a7 100644
-> >>> --- a/arch/arm64/boot/dts/tesla/fsd.dtsi
-> >>> +++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
-> >>> @@ -847,6 +847,9 @@
-> >>> 			status = "disabled";
-> >>> 		};
-> >>>
-> >>> +		sound: sound {
-> >>> +		};
-> >>> +
-> >> Why to have an empty node in dtsi?
-> > This is required as every node we use in dts should have the same
-> > declared in
-> 
-> I see no reason why this is required.
-> 
-> > dtsi. Sound nodes in most of the platform is only declared (dummy
-> > node) in dtsi and defining only in dts. Thus we are following the same.
-> 
-> Can you point me to Samsung platform doing this?
-> 
-> Keep the code consistent with Exynos style.
+On Mon, Nov 7, 2022 at 5:33 PM Pierre Gondois <pierre.gondois@arm.com> wrote:
+> The DeviceTree Specification v0.3 specifies that the cache node
+> 'compatible' and 'cache-level' properties are 'required'. Cf.
+> s3.8 Multi-level and Shared Cache Nodes
 
-Okay, will add the sound node in accordance with Exynos style
+"compatible" is present?
 
-> 
-> Best regards,
-> Krzysztof
+> The 'cache-unified' property should be present if one of the
+> properties for unified cache is present ('cache-size', ...).
 
+Present, too?
 
+> Update the Device Trees accordingly.
+>
+> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+
+> --- a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+> @@ -88,6 +88,7 @@ L3_CA55: cache-controller-0 {
+>                         compatible = "cache";
+>                         cache-unified;
+>                         cache-size = <0x40000>;
+> +                       cache-level = <3>;
+>                 };
+>         };
+'
+This hunk now applies to arch/arm64/boot/dts/renesas/r9a07g043u.dtsi.
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.2, with the patch description
+and the file names updated to match the real world.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
