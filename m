@@ -2,62 +2,61 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C49C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Nov 2022 11:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F23CC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Nov 2022 11:17:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229902AbiKILLJ (ORCPT
+        id S229951AbiKILRD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 9 Nov 2022 06:11:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56166 "EHLO
+        Wed, 9 Nov 2022 06:17:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230090AbiKILLE (ORCPT
+        with ESMTP id S229790AbiKILRB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Nov 2022 06:11:04 -0500
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A8B828710
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Nov 2022 03:11:03 -0800 (PST)
-Received: by mail-lj1-x232.google.com with SMTP id d3so25236040ljl.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Nov 2022 03:11:03 -0800 (PST)
+        Wed, 9 Nov 2022 06:17:01 -0500
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8792B279
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Nov 2022 03:16:59 -0800 (PST)
+Received: by mail-lj1-x235.google.com with SMTP id s24so25232839ljs.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Nov 2022 03:16:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=RBYC2sQin+8K6ysS38BCoDSJAXb+ifX+8YqSQIM6ZNE=;
-        b=PT7IdvLowfx3KdqSMDXmaDTaWI+owL9r4MbPbtgI8uN1LsJa/SsSKSbfdvPpsFUz+b
-         qrbzfspBUTgop+tdztUoMusYGwyj55hlUTJ5Qicgmz90ixY8sRUQsCtg3EAicRj62vXL
-         GguVtP+Cfc1lmZ/pKjjifXO3oLmYZcauuvtHXOt+SHTkQxNl9mkzI2iemqICbMGk2NjS
-         ZQPAJT4JF9F9vUfhc+GtIkG3vVbJAUFnffwzMeOwSBqRh6rgbcLpNKBF28m4zwd7sgLP
-         I6CG1teRO/3/moE3b3GKMxNDH0HGAkTEwpcPcS4iCpmRRIGzEoww9wZZnTmjcCc3Hl+R
-         t6ug==
+        bh=4rsVLg9MNVYcsu7j/AVDjA3CpudFe+3V/rIcx//bM/8=;
+        b=B/CmR1XUEcS5WLZWLUVsjGgsF4fuXr92HkbkYKQNxq0ZqHv4kcXVa5/bwWgEDUIY5Z
+         /+5gl1MCszn9Jk/348pjFi68PPnWaXHHSvlVZH7gtjqYmaDq/TzzcJTIqI5+I4JMwPmw
+         LejMH2rkXFIWB+YtpkZrRHE1D3/yzthxVfF0nhGKUUvdpLcIT9OYfPPPVdbsN8ggYh6W
+         +zAbKxXfWsskneRQp2FiZAvwBdiHGCTxPCaWBAYRWXANCnXHM8U7F+OwDeNrqJJt98gG
+         hVjaiXXsSPVqrhw/APyr2cH28j8D9k+run4gELf3d8EuL3LfR1EUf69Y6FHGgmlFw1Fn
+         0NPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RBYC2sQin+8K6ysS38BCoDSJAXb+ifX+8YqSQIM6ZNE=;
-        b=nmDr/gq5TK5shusYliJmlhvg9cV5sFuVJWR9LbisqMPbaGfgaH3nmmi9mCbBLmGYCr
-         S9/Yadki5DqMs1PUUhejkaOeN77TFJdYDHuNhvd1VaEsvJTiYndm3b2+Z5cOUOS7aPaI
-         VAU6unsr4iIKe/b3qJl795ep5L2xeebldqXFblT4DU7e4leRHVQraWF0N40Z4SFaL5/V
-         SK5JzC51joI6XBcxiz6gFNOJFwsL6LEgwmqkxWF0EPYa+tSdJGeW55p6ISLO12drXHrR
-         KjRhn8BmXXfFvTJ1ydZOlmwRyKX0YtBDkNN2gI8Ygfhok6JGRWN5aqGUpMnJDSeONnBx
-         WeBA==
-X-Gm-Message-State: ACrzQf0EEirWUmy8MXAAbjlTahtspITiDjyyuxeZNw74m3p2BmWbJofK
-        IfVWhuyp5kW6Iqb7wQtJq6j7yA==
-X-Google-Smtp-Source: AMsMyM7UtzPEqp3da7BV+7So92Og/3kSdtsDjfAfnH8rib/01LUvRanVw1xriRs6aLAVUpLm3c/8KA==
-X-Received: by 2002:a05:651c:88b:b0:26e:261:5052 with SMTP id d11-20020a05651c088b00b0026e02615052mr19368472ljq.182.1667992261625;
-        Wed, 09 Nov 2022 03:11:01 -0800 (PST)
+        bh=4rsVLg9MNVYcsu7j/AVDjA3CpudFe+3V/rIcx//bM/8=;
+        b=57AamNqo+oLp5l+2AnFAN0VpQwbDaqbz8VLP0ONvrEzuoDDeEenZ6J9i3GoiQsxEvv
+         ZMB7v6PaP701T3O2XO6T/Vf2AnxDb8Nm2QuTtUKvUKsjA1QcRfYhjT8vSAknuC3U7v7A
+         jIz9m3+6JnR/J141U3OHfY/d8gN4dUlrM1zLSFqvpWE4MALiNXuvdPRSKrWlH5sIBZUL
+         GZaycVNVNMSoxVLZh7/p8tl1AcCJjufRhgMJuIjwpUgcKzE8b1SxR1gb+Qi8LeImq1RU
+         JBRKkXXQr1iL+RetwC7w5QgRdVy5i4vYmOmTPgHsSvwMbFQeZwNj5WfNWaz4GDeSnbBM
+         uDHg==
+X-Gm-Message-State: ACrzQf3OyfiDHiRNKfQERGP4a5AKTiE1tti6D0CUacoOV1X+yI6COHJz
+        z5VHY5pwseK4KB99PXd8yJiRpQ==
+X-Google-Smtp-Source: AMsMyM6sOcBec1Du0eXhO+Yr7RRND9y3KXBX470kt/YbaN8UFxrkx/2eswIcD7gcwZsEB3IdXHxgzw==
+X-Received: by 2002:a05:651c:54b:b0:277:2f02:8da8 with SMTP id q11-20020a05651c054b00b002772f028da8mr21780310ljp.73.1667992617922;
+        Wed, 09 Nov 2022 03:16:57 -0800 (PST)
 Received: from [192.168.0.20] (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
-        by smtp.gmail.com with ESMTPSA id r26-20020ac25c1a000000b00497a879e552sm2154796lfp.291.2022.11.09.03.11.00
+        by smtp.gmail.com with ESMTPSA id bp9-20020a056512158900b004b19f766b07sm2187362lfb.91.2022.11.09.03.16.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Nov 2022 03:11:01 -0800 (PST)
-Message-ID: <fe9b3e7f-c852-5f5e-1d3b-d30218ee497a@linaro.org>
-Date:   Wed, 9 Nov 2022 12:11:00 +0100
+        Wed, 09 Nov 2022 03:16:57 -0800 (PST)
+Message-ID: <953916b4-5c00-29a3-11a8-015911d23f69@linaro.org>
+Date:   Wed, 9 Nov 2022 12:16:56 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
-Subject: Re: [PATCH v2 2/6] dt-bindings: can: mcan: Add ECC functionality to
- message ram
+Subject: Re: [PATCH v2 3/6] arm64: dts: fsd: add sysreg device node
 Content-Language: en-US
 To:     Vivek Yadav <vivek.2311@samsung.com>, rcsekar@samsung.com,
         krzysztof.kozlowski+dt@linaro.org, wg@grandegger.com,
@@ -70,10 +69,10 @@ Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         aswani.reddy@samsung.com, sriranjani.p@samsung.com
 References: <20221109100928.109478-1-vivek.2311@samsung.com>
- <CGME20221109100249epcas5p142a0a9f7e822c466f7ca778cd341e6d9@epcas5p1.samsung.com>
- <20221109100928.109478-3-vivek.2311@samsung.com>
+ <CGME20221109100254epcas5p48c574876756f899875df8ac71464ce11@epcas5p4.samsung.com>
+ <20221109100928.109478-4-vivek.2311@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221109100928.109478-3-vivek.2311@samsung.com>
+In-Reply-To: <20221109100928.109478-4-vivek.2311@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -81,46 +80,37 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 09/11/2022 11:09, Vivek Yadav wrote:
-> Whenever the data is transferred or stored on message ram, there are
-> inherent risks of it being lost or corruption known as single-bit errors.
+> From: Sriranjani P <sriranjani.p@samsung.com>
 > 
-> ECC constantly scans data as it is processed to the message ram, using a
-> method known as parity checking and raise the error signals for corruption.
-> 
-> Add error correction code config property to enable/disable the
-> error correction code (ECC) functionality for Message RAM used to create
-> valid ECC checksums.
-> 
-> Signed-off-by: Chandrasekar R <rcsekar@samsung.com>
+> Add SYSREG controller device node, which is available in PERIC and FSYS0
+> block of FSD SoC.
+> > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Signed-off-by: Pankaj Kumar Dubey <pankaj.dubey@samsung.com>
 > Cc: devicetree@vger.kernel.org
 > Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 > Cc: Rob Herring <robh+dt@kernel.org>
-> Signed-off-by: Vivek Yadav <vivek.2311@samsung.com>
+
+Drop Cc list from commit msgs. Instead use get_maintainers.pl.
+
+> Signed-off-by: Sriranjani P <sriranjani.p@samsung.com>
 > ---
->  .../bindings/net/can/bosch,m_can.yaml         | 31 +++++++++++++++++++
->  1 file changed, 31 insertions(+)
+>  arch/arm64/boot/dts/tesla/fsd.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
-> index 26aa0830eea1..91dc458ec33f 100644
-> --- a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
-> +++ b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
-> @@ -50,6 +50,12 @@ properties:
->        - const: hclk
->        - const: cclk
+> diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
+> index f35bc5a288c2..3d8ebbfc27f4 100644
+> --- a/arch/arm64/boot/dts/tesla/fsd.dtsi
+> +++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
+> @@ -518,6 +518,16 @@
+>  				"dout_cmu_fsys1_shared0div4";
+>  		};
 >  
-> +  tesla,mram-ecc-cfg:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      Handle to system control region that contains the ECC INIT register
-> +      and register offset to the ECC INIT register.
+> +		sysreg_peric: system-controller@14030000 {
+> +			compatible = "tesla,sysreg_peric", "syscon";
+> +			reg = <0x0 0x14030000 0x0 0x1000>;
 
-That's not way to describe syscon phandle. Property name is ok. For the
-rest look at:
-https://elixir.bootlin.com/linux/v5.18-rc1/source/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml#L42
-
-Anyway, this looks like SoC-specific hack, so it does not really fit to
-the driver. You have to think of something generic.
-
+Put it next  to the other system-controller node (and ordered by unit
+address against it).
 
 Best regards,
 Krzysztof
