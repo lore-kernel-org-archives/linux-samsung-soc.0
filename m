@@ -2,102 +2,173 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B626C43217
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Nov 2022 11:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36678C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Nov 2022 17:39:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230410AbiKILWG (ORCPT
+        id S229806AbiKIRjB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 9 Nov 2022 06:22:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40390 "EHLO
+        Wed, 9 Nov 2022 12:39:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231246AbiKILV5 (ORCPT
+        with ESMTP id S231587AbiKIRi7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Nov 2022 06:21:57 -0500
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88A1055A3
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Nov 2022 03:21:56 -0800 (PST)
-Received: by mail-lj1-x231.google.com with SMTP id u11so25269145ljk.6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Nov 2022 03:21:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vCxYg4WgOjP/bm5a9BsDTG0c45MKZEsJG67lP9MsgSg=;
-        b=HO+gw2fSW5E05U6Iq8JqzMRKLuM08uJDLhQRuJlxdr8dPesLMigBWgAyzAeExa/QeM
-         nw0R5KrFXl+7T/GNrFhphNcbZaMhwSA3VB9Th1nj3R5wpJ6CcHE8rDHzETkHzHM0Oiwt
-         in7VXNBFy/07Kz3EgHs7G0g0nZqONOpmfoGbGYOjZ3kVH55CNNAMH/bbX5ieNbd0Pqi9
-         iuupt++I5YcAQlyePI7uickafZLUSSNtSPzpPb09dR/Xi5x3lBPgbm3CYeuBfvBGx6vL
-         tkYQboJ0epeJoFCdNGZa3ThE7N8YaUG3rR4meKJAM5CPnNbbNrzqmAhmW0erUsceeqeb
-         MRmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vCxYg4WgOjP/bm5a9BsDTG0c45MKZEsJG67lP9MsgSg=;
-        b=zEZ52UIZkFQedou7lvuyt+mka6WlIa1BvQVFBV0rykP5Ka17/G6Lc2gAXLtDSqv4gE
-         8Q2+Aelf+pUQa1kft+VDrYjiK2ekatuujiVaVJurYc5HeKB7wzj95Iui7acaYDiOQUBW
-         Y9q8xmgNm4wuPJis4Tl8rAsSIiAXr9aY1BOGqNQF04poQUiAdQyE9o+dCwtnQZh7F812
-         p+sHzd55JhS4x65fLHqYzVZI7gemZYgpWoOI3tu3Evqj3cdeDGt6QicfS/XPfmxjxLfw
-         8xWL86FJP/Zp7nfoCReKpO3F2Qt041Jfx1bdFjcdF/6WAF4N+DNSgY1r1lWLx51nMd+x
-         6ORw==
-X-Gm-Message-State: ACrzQf2h8E+gitZif/llHI7+1cHQsl8epO/Lu/hmU/zwyXbtW1F/spkQ
-        IFgRVKkWDEi2gJuUlh9fiJ5MHQ==
-X-Google-Smtp-Source: AMsMyM5qV7jVeG2pPQIG8qp/abMPvu2TVr8VijShCi76V0U224nQCkI55e+QRkjLdIj+vRoGV2Cf7g==
-X-Received: by 2002:a05:651c:2226:b0:277:4818:a1ca with SMTP id y38-20020a05651c222600b002774818a1camr7905330ljq.361.1667992914945;
-        Wed, 09 Nov 2022 03:21:54 -0800 (PST)
-Received: from [192.168.0.20] (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
-        by smtp.gmail.com with ESMTPSA id c6-20020ac25f66000000b0047f7722b73csm2187030lfc.142.2022.11.09.03.21.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Nov 2022 03:21:54 -0800 (PST)
-Message-ID: <32240212-7460-9d37-8986-e7d3e34cb1b7@linaro.org>
-Date:   Wed, 9 Nov 2022 12:21:53 +0100
+        Wed, 9 Nov 2022 12:38:59 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4797C77A;
+        Wed,  9 Nov 2022 09:38:56 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8323E61B8D;
+        Wed,  9 Nov 2022 17:38:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC570C433C1;
+        Wed,  9 Nov 2022 17:38:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668015535;
+        bh=Jhd6aCma2Qjlqkwlxvewothq3IuiiBcixDdKQqWZQoY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OqHLVc+YYMqqaL3t7XggSXyYKPMyrjib1stj/zXTNiZn4hsSg52BCI1dm18P7Q7H4
+         7tbUR/ESyED4uHx8geKe9OSBhNFx6KuLHtkYAcvoulAvCT9E0jlBfUOKkROcb6+GkN
+         goCG0aemFGOfx7wXDNHMot0CS1lZO7wHvPDorHpR4CUWa7L9eoWzAma78QdzAicZxp
+         m1hxyhoDt6hPPrH84dcpgNDxSvskaaNbh23jyrOSm9xfFQEXdzR4+T5Ge3hMwgla+m
+         RsWcoUJagoIdZdhKqLm+8Hejby7fR53WBXpZMZ9olYj/1Iw1Ry+dgnPR2YCx343vha
+         iI38/RafASC+w==
+Date:   Wed, 9 Nov 2022 17:38:49 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+Cc:     lgirdwood@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, s.nawrocki@samsung.com,
+        perex@perex.cz, tiwai@suse.com, pankaj.dubey@samsung.com,
+        alim.akhtar@samsung.com, rcsekar@samsung.com,
+        aswani.reddy@samsung.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 2/6] ASoC: samsung: i2s: configure PSR from sound card
+Message-ID: <Y2vlqatX7dfPJ3Zi@sirena.org.uk>
+References: <20221014102151.108539-1-p.rajanbabu@samsung.com>
+ <CGME20221014104857epcas5p2a275a1d606ca066227228d13bcf5b120@epcas5p2.samsung.com>
+ <20221014102151.108539-3-p.rajanbabu@samsung.com>
+ <Y0lPz91gbovAub9D@sirena.org.uk>
+ <04a101d8e523$30804b80$9180e280$@samsung.com>
+ <Y1KIT4nk7C8SQ45x@sirena.org.uk>
+ <01ba01d8f332$44eb3810$cec1a830$@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v2 6/6] arm64: dts: fsd: Add support for error correction
- code for message RAM
-Content-Language: en-US
-To:     Vivek Yadav <vivek.2311@samsung.com>, rcsekar@samsung.com,
-        krzysztof.kozlowski+dt@linaro.org, wg@grandegger.com,
-        mkl@pengutronix.de, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, pankaj.dubey@samsung.com,
-        ravi.patel@samsung.com, alim.akhtar@samsung.com,
-        linux-fsd@tesla.com, robh+dt@kernel.org
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        aswani.reddy@samsung.com, sriranjani.p@samsung.com
-References: <20221109100928.109478-1-vivek.2311@samsung.com>
- <CGME20221109100309epcas5p4bc1ddd62048098d681ba8af8d35e2e73@epcas5p4.samsung.com>
- <20221109100928.109478-7-vivek.2311@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221109100928.109478-7-vivek.2311@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="vJpVlYaVMgKIVLqK"
+Content-Disposition: inline
+In-Reply-To: <01ba01d8f332$44eb3810$cec1a830$@samsung.com>
+X-Cookie: Sign here without admitting guilt.
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 09/11/2022 11:09, Vivek Yadav wrote:
-> Add mram-ecc-cfg property which indicates the error correction code config
-> and enable the same for FSD platform.
-> 
-> In FSD, error correction code (ECC) is configured via PERIC SYSREG
-> registers.
-> 
-> Signed-off-by: Chandrasekar R <rcsekar@samsung.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Signed-off-by: Vivek Yadav <vivek.2311@samsung.com>
-> ---
 
-For net-folks: although the DTS patches are here as well, but they must
-go via ARM SOC tree, so pick only network/can drivers and bindings when
-they are ready.
+--vJpVlYaVMgKIVLqK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+On Tue, Nov 08, 2022 at 10:53:40AM +0530, Padmanabhan Rajanbabu wrote:
 
+> > > We can overcome this scenario to an extent if we can get a flexibility
+> > > to Configure both PSR as well as RFS.
+
+> > Why does it make sense for the machine driver to worry about this rather
+> > than having the I2S controller driver configure the clock tree?
+
+> _____           |                  __
+> |=20
+> |         |	        |	             |   \
+> |
+> |CMU|	        |	             |     \
+> |
+> |FSD  |-  |---|-|--------->|       \        _________    _________
+> |
+> |___  |    |    | |op_clk0|         |      |               |     |
+> |             |
+> 	  |    | |	             |MUX|----|  PSR       |----|  RFS
+> |--cdclk  |
+> 	  |    | |              |         |      |_______|     |_______|
+> |
+> 	  |    | |--------->|        /
+> |
+> 	  |    |  op_clk1 |      /
+> |
+> 	  |    | 	             |_ /
+> |
+> 	  |    |___________________________________________|
+> 	  |
+> 	  |-----> To other FSD SoC Peripherals
+
+> In FSD I2S, the clock source is not an independent source but a common cl=
+ock
+> source being shared by many IPs in the same domain.
+
+> Changing the clock tree will impact other IPs in the domain as they are
+> dependent on the same source for functionality.
+
+I'm not sure I follow.  Perhaps your diagram is unclear but it looks
+like PSR and RFS are both after a mux which appears to select which
+clock is going to be used by the I2S controller?  The usage by other
+clocks appears to be upstream of the mux and dividers.
+
+> We can understand your point to bring the PSR changes under the I2S CPU D=
+AI
+> driver by adding a separate compatible and data for the FSD SoC. But If we
+> take
+> the example of existing sound cards such as sound/soc/samsung/tm2_wm5110.=
+c,
+> the op_clk is supplied via external audio pll to the controller and PLL
+> configuration
+> is taken care by the sound card. Since the configuration of PLL is more
+> specific to
+> the tm2 platform, it makes use of the flexibility of changing the RFS and
+> BFS
+> using the sysclk and clkdiv hooks provided by exynos7-i2s CPU DAI along w=
+ith
+> PLL tuning for precise sampling frequency.
+
+The big reason for the clocking control (and indeed having a custom
+machine driver) with the WM5110 is that it has multiple clocks to
+control and a good deal of flexibility with placing them in clock
+domains and so on which have power and performance impacts.  It's
+frankly a bit unclear to me if the CPU I2S controller even needs the
+bitclock configuring given that the clocks are being driven by the CODEC
+there, but regardless it's not clear to me why the I2S controller would
+need anything other than the input clock to the block configuring?=20
+
+> Similar to the above example, the choice of clock source under discussion=
+ is
+> not a
+> limitation of exynos7-i2s controller, but instead is a limitation on the =
+FSD
+> SoC.
+> By using the proposed change, we can ensure that the exynos CPU DAI driver
+> is
+> giving additional hooks similar to existing hooks for BFS, RFS and CDCLK
+> direction
+> so that sound cards can use snd_soc_dai_set_sysclk and
+> snd_soc_dai_set_clkdiv
+> to customize the same.
+
+I'm still not seeing anything that articulates why pushing the
+configuration of the dividers within the block into the machine driver
+solves a problem here.  Again, what's the upside to configuring clocks
+that are purely within the block?
+
+--vJpVlYaVMgKIVLqK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmNr5agACgkQJNaLcl1U
+h9Aa8wf6AtuTJerKp9o05gCs7egH+tVbReZ3DrGcTxoejtlSSUPw7JySho88VBSn
+VxEx9NUF+oL1nxUZOSbSmPdZfVD0uysuFnoenUvCf0VYOR2MhRVqXJH8huPDaDYG
+7In86Zog3gWu4bCGkKaxLRAxUkf7Jp+46bDbZiE8a0TOFZbGL5WNJoj56xVs3ZR7
+UHF08nRupMRBdLi8iE4T4mn7+/F8L5S3bXFUlZNc74eeVo91rfARXb1xVUtse39x
+bJK0QMRx3RgA7vpnCDftzk4bYvVY7Gf8CGIvLMGMQpHE8Y5YNZicdhah47hEVPvB
+3gPf+6fw/Qxa4oCotwNGY8B/yaXyPA==
+=P1ty
+-----END PGP SIGNATURE-----
+
+--vJpVlYaVMgKIVLqK--
