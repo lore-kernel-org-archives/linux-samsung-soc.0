@@ -2,62 +2,62 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAECC43219
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Nov 2022 11:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C49C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Nov 2022 11:11:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230138AbiKILIw (ORCPT
+        id S229902AbiKILLJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 9 Nov 2022 06:08:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53772 "EHLO
+        Wed, 9 Nov 2022 06:11:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230012AbiKILIt (ORCPT
+        with ESMTP id S230090AbiKILLE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Nov 2022 06:08:49 -0500
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3DC064F0
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Nov 2022 03:08:48 -0800 (PST)
-Received: by mail-lj1-x230.google.com with SMTP id x21so25203737ljg.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Nov 2022 03:08:48 -0800 (PST)
+        Wed, 9 Nov 2022 06:11:04 -0500
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A8B828710
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Nov 2022 03:11:03 -0800 (PST)
+Received: by mail-lj1-x232.google.com with SMTP id d3so25236040ljl.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Nov 2022 03:11:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Po/oE6njQiBff55UY7iHnbnmP3bUmGTTPuxVa98ca/E=;
-        b=nfvstYiVEqJ4B/Y7gFTtFqb+zwkfqLe2oUHFU7Q7YPebY7s0Y6eV4YDZyHV1gJacNS
-         ZPGY+4n7/m/BJmeCmxTqmJZCZ1H7NIlqd1/s4Fn0bmREAl5j6epjgIZ3ZPwEmM5DSUks
-         emNd1839fXZhKI5ZA4UDQoEZTtaFr2k3DKpAqO+hEJBsHUAO+JCrZrmvSaC5NTHmy0nY
-         OAkNK2SKZ0EvUF1McrXoUIO0vZVObAiCga1Y2o/BX3D8+ouuwWAKdJZDERtnFv+ppMnA
-         oyp67D8pTGPkTxbgiuEXznxJydKPCw4mjf2p1RxCTLFIxZvV7Y5K+rIAv9NJu2c79Rbe
-         xV9Q==
+        bh=RBYC2sQin+8K6ysS38BCoDSJAXb+ifX+8YqSQIM6ZNE=;
+        b=PT7IdvLowfx3KdqSMDXmaDTaWI+owL9r4MbPbtgI8uN1LsJa/SsSKSbfdvPpsFUz+b
+         qrbzfspBUTgop+tdztUoMusYGwyj55hlUTJ5Qicgmz90ixY8sRUQsCtg3EAicRj62vXL
+         GguVtP+Cfc1lmZ/pKjjifXO3oLmYZcauuvtHXOt+SHTkQxNl9mkzI2iemqICbMGk2NjS
+         ZQPAJT4JF9F9vUfhc+GtIkG3vVbJAUFnffwzMeOwSBqRh6rgbcLpNKBF28m4zwd7sgLP
+         I6CG1teRO/3/moE3b3GKMxNDH0HGAkTEwpcPcS4iCpmRRIGzEoww9wZZnTmjcCc3Hl+R
+         t6ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Po/oE6njQiBff55UY7iHnbnmP3bUmGTTPuxVa98ca/E=;
-        b=gNmVN4EurNyxQbXtD+gtQwcXbhurJT0PZOmWP0rqqY+F1k/Eb7SDCV8BiBaXwyAWK+
-         nEGaw+mY4VUL+DBoqpb8P6gq7HwTYSKlZ5xRifk7EeA1BupiS5KsBi2gs3C5IFMhf8wm
-         HmAAJgR21Dv6XXqCug/eQDJN6M1BOy3g6xHKKJVq/PgeNvCrAoIctPUNe3tHBbER/+T0
-         wzCbIXn//H8AOC+4wBTG+ci4AUahVWG+vicjvYyX9gQ68kfFCinPE1reLY4Ws4rRrBdp
-         zy6mb5k3tVUdvYpFNwgdY2Wn1VoABS5nLGpxIXx05hCGCCEISaNAzeSp1x9aYEs/M3rk
-         Hr8w==
-X-Gm-Message-State: ACrzQf1aBQDUV0QJggdV+oeIfyJove3joYzVtqSJPCIXjCfyXIBAs/Vg
-        e85MvI7JGpUoRylwHgqJapxGIQ==
-X-Google-Smtp-Source: AMsMyM5p0ZHZaQ/AP0mdulopVpCZmJQWvNB1dMM+Yrnm3uXNeQ33S1MOn6+4hX7dBKV3PZJIN/qZWA==
-X-Received: by 2002:a2e:b006:0:b0:277:21c8:aac1 with SMTP id y6-20020a2eb006000000b0027721c8aac1mr8208645ljk.430.1667992127040;
-        Wed, 09 Nov 2022 03:08:47 -0800 (PST)
+        bh=RBYC2sQin+8K6ysS38BCoDSJAXb+ifX+8YqSQIM6ZNE=;
+        b=nmDr/gq5TK5shusYliJmlhvg9cV5sFuVJWR9LbisqMPbaGfgaH3nmmi9mCbBLmGYCr
+         S9/Yadki5DqMs1PUUhejkaOeN77TFJdYDHuNhvd1VaEsvJTiYndm3b2+Z5cOUOS7aPaI
+         VAU6unsr4iIKe/b3qJl795ep5L2xeebldqXFblT4DU7e4leRHVQraWF0N40Z4SFaL5/V
+         SK5JzC51joI6XBcxiz6gFNOJFwsL6LEgwmqkxWF0EPYa+tSdJGeW55p6ISLO12drXHrR
+         KjRhn8BmXXfFvTJ1ydZOlmwRyKX0YtBDkNN2gI8Ygfhok6JGRWN5aqGUpMnJDSeONnBx
+         WeBA==
+X-Gm-Message-State: ACrzQf0EEirWUmy8MXAAbjlTahtspITiDjyyuxeZNw74m3p2BmWbJofK
+        IfVWhuyp5kW6Iqb7wQtJq6j7yA==
+X-Google-Smtp-Source: AMsMyM7UtzPEqp3da7BV+7So92Og/3kSdtsDjfAfnH8rib/01LUvRanVw1xriRs6aLAVUpLm3c/8KA==
+X-Received: by 2002:a05:651c:88b:b0:26e:261:5052 with SMTP id d11-20020a05651c088b00b0026e02615052mr19368472ljq.182.1667992261625;
+        Wed, 09 Nov 2022 03:11:01 -0800 (PST)
 Received: from [192.168.0.20] (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
-        by smtp.gmail.com with ESMTPSA id p23-20020a2ea4d7000000b002770473d813sm2040839ljm.140.2022.11.09.03.08.45
+        by smtp.gmail.com with ESMTPSA id r26-20020ac25c1a000000b00497a879e552sm2154796lfp.291.2022.11.09.03.11.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Nov 2022 03:08:46 -0800 (PST)
-Message-ID: <709daf8b-a58e-9247-c5d8-f3be3e60fe70@linaro.org>
-Date:   Wed, 9 Nov 2022 12:08:45 +0100
+        Wed, 09 Nov 2022 03:11:01 -0800 (PST)
+Message-ID: <fe9b3e7f-c852-5f5e-1d3b-d30218ee497a@linaro.org>
+Date:   Wed, 9 Nov 2022 12:11:00 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
-Subject: Re: [PATCH v2 1/6] dt-bindings: Document the SYSREG specific
- compatibles found on FSD SoC
+Subject: Re: [PATCH v2 2/6] dt-bindings: can: mcan: Add ECC functionality to
+ message ram
 Content-Language: en-US
 To:     Vivek Yadav <vivek.2311@samsung.com>, rcsekar@samsung.com,
         krzysztof.kozlowski+dt@linaro.org, wg@grandegger.com,
@@ -70,10 +70,10 @@ Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         aswani.reddy@samsung.com, sriranjani.p@samsung.com
 References: <20221109100928.109478-1-vivek.2311@samsung.com>
- <CGME20221109100245epcas5p38a01aed025f491d39a09508ebcdcef84@epcas5p3.samsung.com>
- <20221109100928.109478-2-vivek.2311@samsung.com>
+ <CGME20221109100249epcas5p142a0a9f7e822c466f7ca778cd341e6d9@epcas5p1.samsung.com>
+ <20221109100928.109478-3-vivek.2311@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221109100928.109478-2-vivek.2311@samsung.com>
+In-Reply-To: <20221109100928.109478-3-vivek.2311@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -81,117 +81,46 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 09/11/2022 11:09, Vivek Yadav wrote:
-> From: Sriranjani P <sriranjani.p@samsung.com>
+> Whenever the data is transferred or stored on message ram, there are
+> inherent risks of it being lost or corruption known as single-bit errors.
 > 
-
-Use subject prefixes matching the subsystem (git log --oneline -- ...).
-
-> Describe the compatible properties for SYSREG controllers found on
-> FSD SoC.
-
-This is ARM SoC patch, split it from the patchset.
-
+> ECC constantly scans data as it is processed to the message ram, using a
+> method known as parity checking and raise the error signals for corruption.
 > 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Signed-off-by: Pankaj Kumar Dubey <pankaj.dubey@samsung.com>
-> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
-> Signed-off-by: Vivek Yadav <vivek.2311@samsung.com>
+> Add error correction code config property to enable/disable the
+> error correction code (ECC) functionality for Message RAM used to create
+> valid ECC checksums.
+> 
+> Signed-off-by: Chandrasekar R <rcsekar@samsung.com>
 > Cc: devicetree@vger.kernel.org
 > Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 > Cc: Rob Herring <robh+dt@kernel.org>
-
-Drop the Cc list from commit log. It's not helpful.
-
-> Signed-off-by: Sriranjani P <sriranjani.p@samsung.com>
+> Signed-off-by: Vivek Yadav <vivek.2311@samsung.com>
 > ---
->  .../devicetree/bindings/arm/tesla-sysreg.yaml | 50 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/tesla-sysreg.yaml
+>  .../bindings/net/can/bosch,m_can.yaml         | 31 +++++++++++++++++++
+>  1 file changed, 31 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/tesla-sysreg.yaml b/Documentation/devicetree/bindings/arm/tesla-sysreg.yaml
-> new file mode 100644
-> index 000000000000..bbcc6dd75918
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/tesla-sysreg.yaml
-
-arm is only for top level stuff. This goes to soc under tesla or samsung
-directory.
-
-> @@ -0,0 +1,50 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/tesla-sysreg.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Tesla Full Self-Driving platform's system registers
-> +
-> +maintainers:
-> +  - Alim Akhtar <alim.akhtar@samsung.com>
-> +
-> +description: |
-> +  This is a system control registers block, providing multiple low level
-> +  platform functions like board detection and identification, software
-> +  interrupt generation.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-
-No need for oneOf.
-
-> +      - items:
-> +          - enum:
-> +              - tesla,sysreg_fsys0
-> +              - tesla,sysreg_peric
-
-From where did you get underscores in compatibles?
-
-> +          - const: syscon
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    soc {
-> +      #address-cells = <2>;
-> +      #size-cells = <2>;
-> +
-> +      sysreg_fsys0: system-controller@15030000 {
-> +            compatible = "tesla,sysreg_fsys0", "syscon";
-
-Use 4 spaces for example indentation.
-
-> +            reg = <0x0 0x15030000 0x0 0x1000>;
-> +      };
-> +
-> +      sysreg_peric: system-controller@14030000 {
-> +            compatible = "tesla,sysreg_peric", "syscon";
-> +            reg = <0x0 0x14030000 0x0 0x1000>;
-> +      };
-
-One example is enough, they are the same.
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a198da986146..56995e7d63ad 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2943,6 +2943,7 @@ M:	linux-fsd@tesla.com
->  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->  L:	linux-samsung-soc@vger.kernel.org
->  S:	Maintained
-> +F:	Documentation/devicetree/bindings/arm/tesla-sysreg.yaml
->  F:	arch/arm64/boot/dts/tesla*
+> diff --git a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+> index 26aa0830eea1..91dc458ec33f 100644
+> --- a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+> +++ b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+> @@ -50,6 +50,12 @@ properties:
+>        - const: hclk
+>        - const: cclk
 >  
->  ARM/TETON BGA MACHINE SUPPORT
+> +  tesla,mram-ecc-cfg:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Handle to system control region that contains the ECC INIT register
+> +      and register offset to the ECC INIT register.
+
+That's not way to describe syscon phandle. Property name is ok. For the
+rest look at:
+https://elixir.bootlin.com/linux/v5.18-rc1/source/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml#L42
+
+Anyway, this looks like SoC-specific hack, so it does not really fit to
+the driver. You have to think of something generic.
+
 
 Best regards,
 Krzysztof
