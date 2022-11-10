@@ -2,52 +2,52 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 841A2C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Nov 2022 18:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEDCAC43217
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Nov 2022 18:40:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229710AbiKJSkd (ORCPT
+        id S229862AbiKJSkr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Nov 2022 13:40:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37998 "EHLO
+        Thu, 10 Nov 2022 13:40:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229586AbiKJSkd (ORCPT
+        with ESMTP id S229586AbiKJSkq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Nov 2022 13:40:33 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE0BB19C0B
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 10:40:31 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id l2so2169455pld.13
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 10:40:31 -0800 (PST)
+        Thu, 10 Nov 2022 13:40:46 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 312A919C0B
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 10:40:45 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id c15-20020a17090a1d0f00b0021365864446so2437947pjd.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 10:40:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dWQPw8kMGq61u2i3C2KyyYluiC9el7Rd/PLrQ+mO7W0=;
-        b=goQ7p8zPMXgAfhGlVCGrkGciAvJvmErOHid9LNIxI1xYET7qKUmr9Bywo1rflRousl
-         odZTkXfJVZ6eW4sC9UlxmmjbB018tUSujGgQOqVZVtFlext72knTU56pDrw3FxYreB1R
-         LqJH4YejnEge4CFgaubqgxeWpPhqGKmYIqJxo=
+        bh=+e2h+lCQ/0aC2q9ZjBOYGxDlyScJI/33GnJoPGCGoxA=;
+        b=CtMOAp3VozcbWmQiJIsTkyWYYJ7l8iVWXnpCMCbRi1+jrTQIqSm8P9PN+t28BT2oF4
+         RCtvfEdoGIyctml3pBPNgl5DmewZsnc+EnW71MqnUoKyYytZlmJQQQ0DvQS9xPzn2vHU
+         mmqfnQkJiZ1pqeuRV3qJaONdG/BJQGnsnvYGU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dWQPw8kMGq61u2i3C2KyyYluiC9el7Rd/PLrQ+mO7W0=;
-        b=uzBf4Bv5NYZWVdXiDvely1ftKI7R6otDuelom6lEFakGHSBa7zSPtIeRi0MXSPxnny
-         gzBRVuztmnEUWmBcVhPn64Pqe8vrVAj4ubtRQwEdk/98aV3IuK/3FgKiXE57Gv9QRhIZ
-         QTJcQcBtR0s43kWWjiOBKpLmaHSUQJFVeKkz18455eixKeHjJ/i/4tGyJ/QPsPQNH6tn
-         cn6lBKN4gr9vE6/3vFZoeNyu9VnAhnWlwnpasgv9ojwZHba52JDfYHRqKE4sZgSm5GIt
-         KN59KDmTZa55CePdqmxyQOwl6r1bQC2E09EKxCRQHgzLr0CI3u3li+D/QNpdQDizfMMy
-         JPZg==
-X-Gm-Message-State: ANoB5pmccz0/ufF+uQas/6flr3H9Mr4dX5vWCISQwH3wy85OQE8hnP+B
-        Df5KAbts3w/br0m9pz+l8NyjPQ==
-X-Google-Smtp-Source: AA0mqf5tMAPa5oKIRBRnWVvCjzLXh/u5bEn5mb8qPkVZv230xJzCgmMNSwOxtAdxATEyBohMaemNbA==
-X-Received: by 2002:a17:902:c3d1:b0:188:758f:f473 with SMTP id j17-20020a170902c3d100b00188758ff473mr25672647plj.113.1668105631202;
-        Thu, 10 Nov 2022 10:40:31 -0800 (PST)
+        bh=+e2h+lCQ/0aC2q9ZjBOYGxDlyScJI/33GnJoPGCGoxA=;
+        b=TNByL7Ywse/szHSxXAFJoS9YWAbDPwhYFrZuV1zmdzj4546z1rucrUy/wD5nD2W5nS
+         A4XnELF3D/Ozq6VUPF94+7er6tsQN1l/9Wpl9DlYty8pF/xTyCda3f0pLO2qlADrmL/z
+         njTXCbDrrZzQ+ljxziQIj1+2F2a3M6zEbix90OR4RFMdBmGyludRPiYPYhrP2OEWhyRs
+         EtFzWKOH1QRifxEzvD97u1HFAhEK7d+6pK/5AP1lq3VZCnHT5MDFCBouEFv6Tcdqu3Uk
+         ojEGt0nHFanpd7KfoMW6jgqKpy4EuElF2LZ0nvCBTjoOIod9mcQOzWaFn3o5+zVhNGEs
+         41sA==
+X-Gm-Message-State: ACrzQf0xMT5tjR+uI8SSX6zZyle7b1WwrPKa391MnV6oU/5GqhbRfyeh
+        S8RddbNci+NpL3WjPncs8M6g4A==
+X-Google-Smtp-Source: AMsMyM4hr2XeY+1ZmSmMqWBR503tVW8vWKD7O5+J2WuDJBld65pVxf5BUa+PvYRgY2UNfbqBgE165w==
+X-Received: by 2002:a17:902:d4c7:b0:186:8cda:c9c3 with SMTP id o7-20020a170902d4c700b001868cdac9c3mr63797254plg.154.1668105644850;
+        Thu, 10 Nov 2022 10:40:44 -0800 (PST)
 Received: from localhost.localdomain ([2405:201:c00a:a809:b5a4:486a:f07:f67e])
-        by smtp.gmail.com with ESMTPSA id c2-20020a170903234200b001869efb722csm11635627plh.215.2022.11.10.10.40.23
+        by smtp.gmail.com with ESMTPSA id c2-20020a170903234200b001869efb722csm11635627plh.215.2022.11.10.10.40.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Nov 2022 10:40:29 -0800 (PST)
+        Thu, 10 Nov 2022 10:40:44 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
@@ -71,9 +71,9 @@ Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v8 02/14] drm: exynos: dsi: Properly name HSA/HBP/HFP/HSE bits
-Date:   Fri, 11 Nov 2022 00:08:41 +0530
-Message-Id: <20221110183853.3678209-3-jagan@amarulasolutions.com>
+Subject: [PATCH v8 04/14] drm: bridge: samsung-dsim: Lookup OF-graph or Child node devices
+Date:   Fri, 11 Nov 2022 00:08:43 +0530
+Message-Id: <20221110183853.3678209-5-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221110183853.3678209-1-jagan@amarulasolutions.com>
 References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
@@ -83,54 +83,130 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-HSA/HBP/HFP/HSE mode bits in Exynos DSI host specify a naming
-conversion as 'disable mode bit' due to its bit definition,
-0 = Enable and 1 = Disable.
+The child devices in MIPI DSI can be binding with OF-graph
+and also via child nodes.
 
-Fix the naming convention of the mode bits.
+The OF-graph interface represents the child devices via
+remote and associated endpoint numbers like
+
+dsi {
+   compatible = "fsl,imx8mm-mipi-dsim";
+
+   ports {
+	port@0 {
+	     reg = <0>;
+
+	     dsi_in_lcdif: endpoint@0 {
+		  reg = <0>;
+		  remote-endpoint = <&lcdif_out_dsi>;
+	     };
+	};
+
+	port@1 {
+	     reg = <1>;
+
+	     dsi_out_bridge: endpoint {
+		  remote-endpoint = <&bridge_in_dsi>;
+	     };
+	};
+};
+
+The child node interface represents the child devices via
+conventional child nodes on given DSI parent like
+
+dsi {
+   compatible = "samsung,exynos5433-mipi-dsi";
+
+   ports {
+        port@0 {
+             reg = <0>;
+
+             dsi_to_mic: endpoint {
+                  remote-endpoint = <&mic_to_dsi>;
+             };
+        };
+   };
+
+   panel@0 {
+        reg = <0>;
+   };
+};
+
+As Samsung DSIM bridge is common DSI IP across all Exynos DSI
+and NXP i.MX8M host controllers, this patch adds support to
+lookup the child devices whether its bindings on the associated
+host represent OF-graph or child node interfaces.
+
+v8, v7, v6, v5, v4, v3:
+* none
+
+v2:
+* new patch
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/bridge/samsung-dsim.c | 38 +++++++++++++++++++++++++--
+ 1 file changed, 36 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index b5305b145ddb..fce7f0a7e4ee 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -75,10 +75,10 @@
- #define DSIM_MAIN_PIX_FORMAT_RGB565	(0x4 << 12)
- #define DSIM_SUB_VC			(((x) & 0x3) << 16)
- #define DSIM_MAIN_VC			(((x) & 0x3) << 18)
--#define DSIM_HSA_MODE			(1 << 20)
--#define DSIM_HBP_MODE			(1 << 21)
--#define DSIM_HFP_MODE			(1 << 22)
--#define DSIM_HSE_MODE			(1 << 23)
-+#define DSIM_HSA_DISABLE		(1 << 20)
-+#define DSIM_HBP_DISABLE		(1 << 21)
-+#define DSIM_HFP_DISABLE		(1 << 22)
-+#define DSIM_HSE_DISABLE		(1 << 23)
- #define DSIM_AUTO_MODE			(1 << 24)
- #define DSIM_VIDEO_MODE			(1 << 25)
- #define DSIM_BURST_MODE			(1 << 26)
-@@ -804,13 +804,13 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
- 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_AUTO_VERT)
- 			reg |= DSIM_AUTO_MODE;
- 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_HSE)
--			reg |= DSIM_HSE_MODE;
-+			reg |= DSIM_HSE_DISABLE;
- 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HFP)
--			reg |= DSIM_HFP_MODE;
-+			reg |= DSIM_HFP_DISABLE;
- 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HBP)
--			reg |= DSIM_HBP_MODE;
-+			reg |= DSIM_HBP_DISABLE;
- 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HSA)
--			reg |= DSIM_HSA_MODE;
-+			reg |= DSIM_HSA_DISABLE;
+diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+index b63e0479e71d..1c1a824b4ea7 100644
+--- a/drivers/gpu/drm/bridge/samsung-dsim.c
++++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+@@ -1356,18 +1356,52 @@ static int samsung_dsim_host_attach(struct mipi_dsi_host *host,
+ 	struct samsung_dsim *dsi = host_to_dsi(host);
+ 	const struct samsung_dsim_plat_data *pdata = dsi->plat_data;
+ 	struct device *dev = dsi->dev;
++	struct device_node *np = dev->of_node;
++	struct device_node *remote;
+ 	struct drm_panel *panel;
+ 	int ret;
+ 
+-	panel = of_drm_find_panel(device->dev.of_node);
++	/**
++	 * Devices can also be child nodes when we also control that device
++	 * through the upstream device (ie, MIPI-DCS for a MIPI-DSI device).
++	 *
++	 * Lookup for a child node of the given parent that isn't either port
++	 * or ports.
++	 */
++	for_each_available_child_of_node(np, remote) {
++		if (of_node_name_eq(remote, "port") ||
++		    of_node_name_eq(remote, "ports"))
++			continue;
++
++		goto of_find_panel_or_bridge;
++	}
++
++	/*
++	 * of_graph_get_remote_node() produces a noisy error message if port
++	 * node isn't found and the absence of the port is a legit case here,
++	 * so at first we silently check whether graph presents in the
++	 * device-tree node.
++	 */
++	if (!of_graph_is_present(np))
++		return -ENODEV;
++
++	remote = of_graph_get_remote_node(np, 1, 0);
++
++of_find_panel_or_bridge:
++	if (!remote)
++		return -ENODEV;
++
++	panel = of_drm_find_panel(remote);
+ 	if (!IS_ERR(panel)) {
+ 		dsi->out_bridge = devm_drm_panel_bridge_add(dev, panel);
+ 	} else {
+-		dsi->out_bridge = of_drm_find_bridge(device->dev.of_node);
++		dsi->out_bridge = of_drm_find_bridge(remote);
+ 		if (!dsi->out_bridge)
+ 			dsi->out_bridge = ERR_PTR(-EINVAL);
  	}
  
- 	if (dsi->mode_flags & MIPI_DSI_MODE_NO_EOT_PACKET)
++	of_node_put(remote);
++
+ 	if (IS_ERR(dsi->out_bridge)) {
+ 		ret = PTR_ERR(dsi->out_bridge);
+ 		DRM_DEV_ERROR(dev, "failed to find the bridge: %d\n", ret);
 -- 
 2.25.1
 
