@@ -2,52 +2,52 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C74C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Nov 2022 18:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6352C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Nov 2022 18:41:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229586AbiKJSl2 (ORCPT
+        id S229973AbiKJSlf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Nov 2022 13:41:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38144 "EHLO
+        Thu, 10 Nov 2022 13:41:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229757AbiKJSl1 (ORCPT
+        with ESMTP id S229757AbiKJSle (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Nov 2022 13:41:27 -0500
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBC7E19C0B
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 10:41:26 -0800 (PST)
-Received: by mail-pg1-x52a.google.com with SMTP id v3so2523557pgh.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 10:41:26 -0800 (PST)
+        Thu, 10 Nov 2022 13:41:34 -0500
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF28E19C0B
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 10:41:33 -0800 (PST)
+Received: by mail-pj1-x1031.google.com with SMTP id b1-20020a17090a7ac100b00213fde52d49so2450316pjl.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 10:41:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+uQe3bmrV0zmghe9Tre6aGt5ad4Xsr/J3KkGBkCAzjo=;
-        b=kW6ySL9n+9McJX1vufvewvJWt6Ghf7ABWg4WL9I+w6MnWhduVB35BPxbNF1DaBapee
-         lfJ2uSLRVSEoWJB5nvBm4mtKhHomnYDQbNe7H8xgpYtr2N7idFdkXbj0B3ovQWpgCClF
-         eeI5A8w8WVPOzrU0FPTCuuWwjaduiJ9GSTt5k=
+        bh=W5IVp1MDfQ3jiErdrhdd9wfvmibtzkcHb8CP2mX46Mg=;
+        b=TqyJO/2TPjhePxJuIr6UGBjZEF1cVqa5tRYJYiK30IM7Qex4fe0FkZB1kEFzRk00jO
+         aq1HDVncgzW10eRjda6HWSdz6/jRayzyKkjYn9iT0ClvML8DRfVq83o+u8aXNAVKtcjo
+         db/y31E1FVSN9Mho+xxnnuhAkjLHS/nku5U6M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+uQe3bmrV0zmghe9Tre6aGt5ad4Xsr/J3KkGBkCAzjo=;
-        b=YlSyr3v8AqCQ8oHh+5v/zyVrXRKVGCCPZOnLJvIKeFzbzf48eDu+f/wFY0PrH9pehB
-         6cUNR2+cgQwoM1CCH0uEJq+wyfYnR7ijxEgW1hXeG1sQ2z/7FRVDFHoiPgpmHn2xx9At
-         O8Bl+nqYo49tt9CSB5alEMB9h+6YI/YYCoGmhh72JEKYtfkHzQr7VqvFhPZYKLPk/iNp
-         T1ns0GfHzjLsYi0eteZBXkiGyK0e+5G2b/v4JvuPA7fqJD+5v9sYhkqg4OfX+g5+vvHr
-         9CdhuwHAmISr99P3SDono+xcA8Nnv2jBaoTr4CpI8cOQRwgIV+TmzK/0hm0e8u9/qaMG
-         aIeg==
-X-Gm-Message-State: ACrzQf3ursF01CgeCISqpxkDuxevA/2WDeUQhW+2oFssnwkJkoxqMzxL
-        v+TV7/zkh1olsJntLvODfheFjw==
-X-Google-Smtp-Source: AMsMyM51ddcMMgzfIkx+DjiizwQGBjkpQqu0oehnqrEhCTJv0lFzNgYTi3y88dbmqpHoCNlaI1zW3w==
-X-Received: by 2002:a63:1053:0:b0:439:4c73:821c with SMTP id 19-20020a631053000000b004394c73821cmr2977955pgq.109.1668105686267;
-        Thu, 10 Nov 2022 10:41:26 -0800 (PST)
+        bh=W5IVp1MDfQ3jiErdrhdd9wfvmibtzkcHb8CP2mX46Mg=;
+        b=g5vFq/ffvaIYomy/1ZMTBKKOtolIvVps3Bzt0+PMGzdG/cBKZvFSp41qsd15Xe1toB
+         RvMW2DFnxzaHdLPU7Rk7eFzfzYMkKk+eyNPU+96JQEnRzChkyfZWPLxrZHa2IZlUKKpa
+         8wmAw8eHTxRlr5cXvEo+2AnettJG9CDpw4ZcET5j839QoOMq/nHFydVsowUV4KuiUC+4
+         pCvnTjsVCVJ7vwq42c0ef0PNjd6aLZ2gLIfZZF1S1NycihbZ8/c7A0J14EIIhkHG+2Nw
+         +jWS8lKdweeuiQKG5gFik7W/vrr36HVf8is155HJKIBg5kDfbmdJ/FrU0Z2M/AQUxzuy
+         FLaw==
+X-Gm-Message-State: ANoB5pkitW1ERkzcdhIzGfxnjEQ/I5xmJ186RTAOlFh6OIXXa12UOdt1
+        MjpjJjGZJMCTC7Kdpa3FEZ4qeedrpoW1sBk4
+X-Google-Smtp-Source: AA0mqf7jMH4MZRPkHb9D3lL/p2OidQ8oQzollWBrRPl5eWSOwD+NE4vfq8zYFR6EzXbHbAhMRgME/w==
+X-Received: by 2002:a17:902:c211:b0:188:9806:2dfa with SMTP id 17-20020a170902c21100b0018898062dfamr4353858pll.10.1668105693275;
+        Thu, 10 Nov 2022 10:41:33 -0800 (PST)
 Received: from localhost.localdomain ([2405:201:c00a:a809:b5a4:486a:f07:f67e])
-        by smtp.gmail.com with ESMTPSA id c2-20020a170903234200b001869efb722csm11635627plh.215.2022.11.10.10.41.19
+        by smtp.gmail.com with ESMTPSA id c2-20020a170903234200b001869efb722csm11635627plh.215.2022.11.10.10.41.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Nov 2022 10:41:25 -0800 (PST)
+        Thu, 10 Nov 2022 10:41:32 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
@@ -70,10 +70,11 @@ Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
         linux-arm-kernel@lists.infradead.org,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v8 10/14] drm: bridge: samsung-dsim: Add input_bus_flags
-Date:   Fri, 11 Nov 2022 00:08:49 +0530
-Message-Id: <20221110183853.3678209-11-jagan@amarulasolutions.com>
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v8 11/14] dt-bindings: display: exynos: dsim: Add NXP i.MX8M Mini/Nano support
+Date:   Fri, 11 Nov 2022 00:08:50 +0530
+Message-Id: <20221110183853.3678209-12-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221110183853.3678209-1-jagan@amarulasolutions.com>
 References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
@@ -83,57 +84,43 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-LCDIF-DSIM glue logic inverts the HS/VS/DE signals and expecting
-the i.MX8M Mini/Nano DSI host to add additional Data Enable signal
-active low (DE_LOW). This makes the valid data transfer on each
-horizontal line.
+Samsung MIPI DSIM bridge can also be found in i.MX8M Mini/Nano SoC.
 
-So, add additional bus flags DE_LOW setting via input_bus_flags for
-i.MX8M Mini/Nano platforms.
+Add dt-bingings for it.
 
 v8:
-* add DE_LOW for i.MX8M Mini/Nano platforms.
+* add comment to include i.MX8M Nano.
 
-v7, v6:
+v7, v6, v5, v4:
 * none
 
-v5:
-* rebased based on updated bridge changes
+v3:
+* collect Rob Acked-by
 
-v4, v3, v2, v1:
-* none
+v2:
+* updated comments
 
+v1:
+* new patch
+
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/gpu/drm/bridge/samsung-dsim.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-index 33e5ae9c865f..65f7d8522bc1 100644
---- a/drivers/gpu/drm/bridge/samsung-dsim.c
-+++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -1627,6 +1627,10 @@ static const struct samsung_dsim_host_ops samsung_dsim_generic_host_ops = {
- 	.unregister_host = samsung_dsim_unregister_host,
- };
- 
-+static const struct drm_bridge_timings samsung_dsim_bridge_timings_de_low = {
-+	.input_bus_flags = DRM_BUS_FLAG_DE_LOW,
-+};
-+
- int samsung_dsim_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -1709,6 +1713,10 @@ int samsung_dsim_probe(struct platform_device *pdev)
- 	dsi->bridge.of_node = dev->of_node;
- 	dsi->bridge.type = DRM_MODE_CONNECTOR_DSI;
- 
-+	/* DE_LOW: i.MX8M Mini/Nano LCDIF-DSIM glue logic inverts HS/VS/DE */
-+	if (dsi->plat_data->hw_type == SAMSUNG_DSIM_TYPE_IMX8MM)
-+		dsi->bridge.timings = &samsung_dsim_bridge_timings_de_low;
-+
- 	if (dsi->plat_data->host_ops && dsi->plat_data->host_ops->register_host)
- 		ret = dsi->plat_data->host_ops->register_host(dsi);
- 
+diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
+index be377786e8cd..5133d4d39190 100644
+--- a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
++++ b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
+@@ -7,6 +7,7 @@ Required properties:
+ 		"samsung,exynos5410-mipi-dsi" /* for Exynos5410/5420/5440 SoCs */
+ 		"samsung,exynos5422-mipi-dsi" /* for Exynos5422/5800 SoCs */
+ 		"samsung,exynos5433-mipi-dsi" /* for Exynos5433 SoCs */
++		"fsl,imx8mm-mipi-dsim" /* for i.MX8M Mini/Nano SoCs */
+   - reg: physical base address and length of the registers set for the device
+   - interrupts: should contain DSI interrupt
+   - clocks: list of clock specifiers, must contain an entry for each required
 -- 
 2.25.1
 
