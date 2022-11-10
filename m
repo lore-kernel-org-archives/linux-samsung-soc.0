@@ -2,148 +2,182 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D6EC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Nov 2022 15:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E061C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Nov 2022 15:44:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231398AbiKJPlr (ORCPT
+        id S231681AbiKJPoY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Nov 2022 10:41:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57202 "EHLO
+        Thu, 10 Nov 2022 10:44:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231594AbiKJPlq (ORCPT
+        with ESMTP id S231667AbiKJPoW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Nov 2022 10:41:46 -0500
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BED89589
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 07:41:44 -0800 (PST)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20221110154142euoutp0167f624592e3cace0ea7595ed846dd965~mQ3m_E0Dz3077430774euoutp010
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 15:41:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20221110154142euoutp0167f624592e3cace0ea7595ed846dd965~mQ3m_E0Dz3077430774euoutp010
+        Thu, 10 Nov 2022 10:44:22 -0500
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BDA52DA98
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 07:44:15 -0800 (PST)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20221110154413euoutp02ad1e1989d0ca62c65acaddad5291c65d~mQ50Iy-hT1577815778euoutp02g
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 15:44:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20221110154413euoutp02ad1e1989d0ca62c65acaddad5291c65d~mQ50Iy-hT1577815778euoutp02g
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1668094902;
-        bh=fd5p8aksmy9UiVn+D8PCYzWaUuHsJ2tCEvCv/Rm0KCk=;
+        s=mail20170921; t=1668095053;
+        bh=RTlqPRPkAF90sJzQgDeIHX/QvRtLXffz+QWdpPDpvu0=;
         h=From:To:Cc:Subject:Date:References:From;
-        b=LX3ntitBa9x6s55Bt5uFG3nnB27OzWD9LI1PxSaJGAAxXi4cWC6fFe37OqIH3i9GF
-         EOljzwpnfm/NFBTwqq0LsB6VxNa+N9SmBJc8237rUMKTL8sBJzswyONAtmxbhYIcRZ
-         +ECh2seSLq1/CdLNyUaEAXu/SISJlxOTJajDEcv4=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        b=PPBY9FdTlPCZiQNo3z/VV6Xob5CEgAjsIceYhT70gwsSPo21nGDLq/ANakprb+rkf
+         wj51s8xPdpSgd5l0McPwGjvin6zks7jbepzjokg5SEFqLrrAk2fUg43JGbPa7v83Kh
+         Wu0Xb5Ahjg+06UM/k7ZtqFF3mC/mbz38M5EoKZn8=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20221110154141eucas1p2ef9f9a1299eb1e9705b0e7d51aeaf5fd~mQ3mmbuFC1919919199eucas1p2m;
-        Thu, 10 Nov 2022 15:41:41 +0000 (GMT)
+        20221110154413eucas1p272965ba486543310ee03f7b39be7e985~mQ5zwOBmE3053030530eucas1p2-;
+        Thu, 10 Nov 2022 15:44:13 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 31.86.10112.5BB1D636; Thu, 10
-        Nov 2022 15:41:41 +0000 (GMT)
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 6A.C8.09561.D4C1D636; Thu, 10
+        Nov 2022 15:44:13 +0000 (GMT)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20221110154141eucas1p1e69a91704c32c07307a9c73b95e0d9a3~mQ3mOmKio0296002960eucas1p14;
-        Thu, 10 Nov 2022 15:41:41 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20221110154412eucas1p26182a3d691584b577ddced9a1287df60~mQ5zRAH4K1747017470eucas1p2y;
+        Thu, 10 Nov 2022 15:44:12 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20221110154141eusmtrp24f23e9429f1247377d2faaddf4137383~mQ3mN8VaS2466524665eusmtrp2m;
-        Thu, 10 Nov 2022 15:41:41 +0000 (GMT)
-X-AuditID: cbfec7f4-cf3ff70000002780-af-636d1bb5c524
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 32.6E.08916.5BB1D636; Thu, 10
-        Nov 2022 15:41:41 +0000 (GMT)
+        20221110154412eusmtrp201742c1069475873496966eb17dc1b29~mQ5zQbXZ32581425814eusmtrp2R;
+        Thu, 10 Nov 2022 15:44:12 +0000 (GMT)
+X-AuditID: cbfec7f2-0b3ff70000002559-72-636d1c4d29d7
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 4E.10.09026.C4C1D636; Thu, 10
+        Nov 2022 15:44:12 +0000 (GMT)
 Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20221110154140eusmtip20734298fba776ec0fa098dfceb081455~mQ3lu_fMC1468614686eusmtip2e;
-        Thu, 10 Nov 2022 15:41:40 +0000 (GMT)
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20221110154412eusmtip1c91bac3ccf25c9263887bb4091735d2c~mQ5yycaMz2203222032eusmtip1N;
+        Thu, 10 Nov 2022 15:44:12 +0000 (GMT)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To:     iommu@lists.linux.dev, linux-samsung-soc@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>, stable@vger.kernel.org
-Subject: [PATCH v2] usb: dwc3: exynos: Fix remove() function
-Date:   Thu, 10 Nov 2022 16:41:31 +0100
-Message-Id: <20221110154131.2577-1-m.szyprowski@samsung.com>
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>
+Subject: [PATCH v2] iommu/exynos: Fix driver initialization sequence
+Date:   Thu, 10 Nov 2022 16:44:07 +0100
+Message-Id: <20221110154407.26531-1-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGIsWRmVeSWpSXmKPExsWy7djP87pbpXOTDR6/VLV4MG8bm0Xz4vVs
-        Fntfb2W3mHF+H5PFomWtzBZrj9xlt1iw8RGjxaoFB9gdODzuXNvD5rF/7hp2j74tqxg9tuz/
-        zOjxeZNcAGsUl01Kak5mWWqRvl0CV8biA7uZCjZyV3zb/JCxgfEqZxcjJ4eEgInEpWmL2LsY
-        uTiEBFYwSjz5fZUZJCEk8IVRonFjAYT9mVFi9lEpmIZprTeYIRqWM0q0Nv9ngnCAGjZfu8oE
-        UsUmYCjR9baLDcQWEXCQWLL0DhtIEbNAO5PE3+1zWEASwgI2Ev8/7wdbxyKgKrF1bzdYnBco
-        /unEWXaIdfISqzccAFsnIdDJIdF86h8LRMJF4siKLqgiYYlXx7dA2TIS/3fOZ4JoaGeUWPD7
-        PpQzgVGi4fktRogqa4k7534B3cQBdJOmxPpd+iCmhICjRMuFKAiTT+LGW0GQYmYgc9K26cwQ
-        YV6JjjYhiBlqErOOr4PbevDCJWYI20Ni4ZHzjJCQi5Xo2fOTcQKj3CyEVQsYGVcxiqeWFuem
-        pxYb5aWW6xUn5haX5qXrJefnbmIEJoXT/45/2cG4/NVHvUOMTByMhxglOJiVRHi5NbKThXhT
-        EiurUovy44tKc1KLDzFKc7AoifOyzdBKFhJITyxJzU5NLUgtgskycXBKNTCtP/CVt9I3ZseC
-        F50N8qY+Hg3S5rb/7ghqnePmybStFHjmV/hX//Irh59CTPcfe5hZFZ1jKA0V/Sdiu+Rw3q1X
-        fNJBaRkfdXw/M2TUBIa+3tWY3HyQOfai0/7nypmPL17a+VnwpvpL9o8P9MwWzn8V15s85xD3
-        9f5UM6eN2fb/+9ftcbn89cbHM6c/RW8PdqlYIp5cdeVhz9xyU9+4p3tkeMJCWrJrutM8i2d6
-        prreVlk6fcOvVyo3DX8KLTVbKdy7MNTuxNwVO5Y76H/tb2XeLbGzIFRgbq24fPYz68XaL7Z8
-        1+Jsf372psGLqvL75kvexd87Ecc351WLMVfykUSL3PgMlpffS287c+0QqlBiKc5INNRiLipO
-        BACEpmNaeQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHLMWRmVeSWpSXmKPExsVy+t/xe7pbpXOTDR6dFrB4MG8bm0Xz4vVs
-        Fntfb2W3mHF+H5PFomWtzBZrj9xlt1iw8RGjxaoFB9gdODzuXNvD5rF/7hp2j74tqxg9tuz/
-        zOjxeZNcAGuUnk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqR
-        vl2CXsbiA7uZCjZyV3zb/JCxgfEqZxcjJ4eEgInEtNYbzF2MXBxCAksZJd6cXscGkZCRODmt
-        gRXCFpb4c62LDaLoE6PE8qOX2UESbAKGEl1vu8AaRAScJDrXngYrYhboZJLY2b0HLCEsYCPx
-        //N+ZhCbRUBVYuvebhYQmxco/unEWXaIDfISqzccYJ7AyLOAkWEVo0hqaXFuem6xoV5xYm5x
-        aV66XnJ+7iZGYEBuO/Zz8w7Gea8+6h1iZOJgPMQowcGsJMLLrZGdLMSbklhZlVqUH19UmpNa
-        fIjRFGjfRGYp0eR8YEzklcQbmhmYGpqYWRqYWpoZK4nzehZ0JAoJpCeWpGanphakFsH0MXFw
-        SjUw6b89Mzes4GzLNYVFds+TPxatPDrTZlFKQaqzpkiFUsOUdW8eXprsFDDFjkH87bZl7z0U
-        0pqM3rYcVz+Xx1H2+c/j8juOhe/Y+Vs3RcZfiem20rqwi9tz4joLW7NtJqv2/FL6uXjO//eL
-        plmvi+J17lC2WPeoNsvY8dOPi8qCEUtmZXYfvrZw68HPBxXrdZ7emZe74V3Ho4O65+4cT5KV
-        nHxEOnBG0Mqt4r/vnu26tFw7rWahIMe6UHWpY+Xxx9m0unSfbXN3uvlHc3vgpLUTGzLaH1wS
-        XLLl3cm/OyfM2az7Xltgxf5NUqVbvRxM/yuG3le3i1/01+Kr3spvE6x/btFkb1z368vCdc05
-        qmb7OSOUWIozEg21mIuKEwGAGZX+0QIAAA==
-X-CMS-MailID: 20221110154141eucas1p1e69a91704c32c07307a9c73b95e0d9a3
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFIsWRmVeSWpSXmKPExsWy7djP87q+MrnJBntm8Fg8mLeNzeLXFwuL
+        ztkb2C32vt7KbjHj/D4mi7VH7rJbPO8DslrumDpweDw5OI/JY9OqTjaPO9f2sHm82DyT0aNv
+        yypGj8+b5ALYorhsUlJzMstSi/TtErgyOtYaF1wUqtix8ztLA+MJ/i5GTg4JAROJpsWv2LsY
+        uTiEBFYwSvxa+58RwvnCKHFxwVyozGdGiUPb/jDDtMy7PYcNIrGcUeLf9EYmuJaeZ6/BqtgE
+        DCW63naxgdgiAjYSV04tAetgFvjLKHHt0hzWLkYODmEBF4m2XywgNSwCqhJPTp4Hq+cVsJVY
+        vusAO8Q2eYnVGw4wg/RKCHRySMxrPckGkXCROHzxFAuELSzx6vgWqAYZif875zNBNLQzSiz4
+        fR/KmcAo0fD8FiNElbXEnXO/2ECuYBbQlFi/Sx8i7CjRv3wXM0hYQoBP4sZbQZAwM5A5adt0
+        qDCvREebEES1msSs4+vg1h68cAkaQh4SzxYtYgWxhQRiJRa3zmGcwCg3C2HXAkbGVYziqaXF
+        uempxYZ5qeV6xYm5xaV56XrJ+bmbGIHJ4fS/4592MM599VHvECMTB+MhRgkOZiURXm6N7GQh
+        3pTEyqrUovz4otKc1OJDjNIcLErivGwztJKFBNITS1KzU1MLUotgskwcnFINTDHnnj7VSpm4
+        RUGD9ZHu0YLZpzw13a63Nm1Mvcx4zXHDJ7WNkou/Cqy70JdpXFgfP/eWnPoV/+tlB7a4/BIT
+        t9Se/6VfPnrvx/4/C+NNTabHl93WFM/as6hSZOkasYwzpk4i6SULnq89bponscP3V1zIysxv
+        fz3fyGmdDaudw7LmxH2mA0b9uqad/X3XOnsrhYI/733/eanwrjKLWr11oj/dDwrJ2cxXVrNP
+        /LVl//MW7n9q5279feokHZG+/s3yWc45XS0778964/I1fR7PuSeHz7XN7Tgabhy6YDOvUX7c
+        j9LA1Wwi/Ods2d+tDFLe3Hp9t8Nr58f1a803GdZfc/39yGxxz7GND363mAamximxFGckGmox
+        FxUnAgBtpP8KfQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPLMWRmVeSWpSXmKPExsVy+t/xu7o+MrnJBlPv6Vg8mLeNzeLXFwuL
+        ztkb2C32vt7KbjHj/D4mi7VH7rJbPO8DslrumDpweDw5OI/JY9OqTjaPO9f2sHm82DyT0aNv
+        yypGj8+b5ALYovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstS
+        i/TtEvQyOtYaF1wUqtix8ztLA+MJ/i5GTg4JAROJebfnsHUxcnEICSxllLh0ZDsbREJG4uS0
+        BlYIW1jiz7UuqKJPjBJd2/aCJdgEDCW63naBNYgI2Elc+7yYGaSIWaCRSeLB+17GLkYODmEB
+        F4m2XywgNSwCqhJPTp4Hq+cVsJVYvusAO8QCeYnVGw4wT2DkWcDIsIpRJLW0ODc9t9hIrzgx
+        t7g0L10vOT93EyMwJLcd+7llB+PKVx/1DjEycTAeYpTgYFYS4eXWyE4W4k1JrKxKLcqPLyrN
+        SS0+xGgKtG8is5Rocj4wKvJK4g3NDEwNTcwsDUwtzYyVxHk9CzoShQTSE0tSs1NTC1KLYPqY
+        ODilGpj2dtienb695oHfeb6CVBNmmezlUapm2vcDJ7l9dd/bqnzqWMP2M1YnisrPNW813bfQ
+        RJL5pM3jVwcqphse6K24sEFAI/Xzc1bFT9cafS++LpGx2uKzr/rXz8qFIvMXbNl6L3/3WoGg
+        wlUc3cknt5wvjPUSnbdFiltjcntkSCH3yfVt8j4Rf6wst0XFZmk8XNThFfIrJGKf49ozwolL
+        Lczuf7vg4+cV5rYjc1dbyNmeg5+Mbmq9u+fL+XKW7d3/L1QPc6onn3GJm+q2pr2wS81+6m+9
+        jhuP2MN33pz6e8bx5ENSE1ROz3f+Ze5aset0fvZDrvzqtCdtF85Ovl3yJvMwz5wb7EtuMnSc
+        6D755EKbEktxRqKhFnNRcSIAFMdDodICAAA=
+X-CMS-MailID: 20221110154412eucas1p26182a3d691584b577ddced9a1287df60
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20221110154141eucas1p1e69a91704c32c07307a9c73b95e0d9a3
+X-RootMTR: 20221110154412eucas1p26182a3d691584b577ddced9a1287df60
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20221110154141eucas1p1e69a91704c32c07307a9c73b95e0d9a3
-References: <CGME20221110154141eucas1p1e69a91704c32c07307a9c73b95e0d9a3@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20221110154412eucas1p26182a3d691584b577ddced9a1287df60
+References: <CGME20221110154412eucas1p26182a3d691584b577ddced9a1287df60@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The core DWC3 device node was not properly removed by the custom
-dwc3_exynos_remove_child() function. Replace it with generic
-of_platform_depopulate() which does that job right.
+Registering a SYSMMU platform driver might directly trigger initializing
+IOMMU domains and performing the initial mappings. Also the IOMMU core
+might use the IOMMU hardware once it has been registered with
+iommu_device_register() function. Ensure that all driver resources are
+allocated and initialized before the driver advertise its presence to the
+platform bus and the IOMMU subsystem.
 
-Fixes: adcf20dcd262 ("usb: dwc3: exynos: Use of_platform API to create dwc3 core pdev")
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: stable@vger.kernel.org
 ---
- drivers/usb/dwc3/dwc3-exynos.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ drivers/iommu/exynos-iommu.c | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-index 0ecf20eeceee..4be6a873bd07 100644
---- a/drivers/usb/dwc3/dwc3-exynos.c
-+++ b/drivers/usb/dwc3/dwc3-exynos.c
-@@ -37,15 +37,6 @@ struct dwc3_exynos {
- 	struct regulator	*vdd10;
- };
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 45fd4850bacb..b0cde2211987 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -708,10 +708,6 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
  
--static int dwc3_exynos_remove_child(struct device *dev, void *unused)
--{
--	struct platform_device *pdev = to_platform_device(dev);
+-	ret = iommu_device_register(&data->iommu, &exynos_iommu_ops, dev);
+-	if (ret)
+-		goto err_iommu_register;
 -
--	platform_device_unregister(pdev);
--
--	return 0;
--}
--
- static int dwc3_exynos_probe(struct platform_device *pdev)
- {
- 	struct dwc3_exynos	*exynos;
-@@ -142,7 +133,7 @@ static int dwc3_exynos_remove(struct platform_device *pdev)
- 	struct dwc3_exynos	*exynos = platform_get_drvdata(pdev);
- 	int i;
+ 	platform_set_drvdata(pdev, data);
  
--	device_for_each_child(&pdev->dev, NULL, dwc3_exynos_remove_child);
-+	of_platform_depopulate(&pdev->dev);
+ 	if (PG_ENT_SHIFT < 0) {
+@@ -743,11 +739,13 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
  
- 	for (i = exynos->num_clks - 1; i >= 0; i--)
- 		clk_disable_unprepare(exynos->clks[i]);
+ 	pm_runtime_enable(dev);
+ 
++	ret = iommu_device_register(&data->iommu, &exynos_iommu_ops, dev);
++	if (ret)
++		goto err_dma_set_mask;
++
+ 	return 0;
+ 
+ err_dma_set_mask:
+-	iommu_device_unregister(&data->iommu);
+-err_iommu_register:
+ 	iommu_device_sysfs_remove(&data->iommu);
+ 	return ret;
+ }
+@@ -1432,12 +1430,6 @@ static int __init exynos_iommu_init(void)
+ 		return -ENOMEM;
+ 	}
+ 
+-	ret = platform_driver_register(&exynos_sysmmu_driver);
+-	if (ret) {
+-		pr_err("%s: Failed to register driver\n", __func__);
+-		goto err_reg_driver;
+-	}
+-
+ 	zero_lv2_table = kmem_cache_zalloc(lv2table_kmem_cache, GFP_KERNEL);
+ 	if (zero_lv2_table == NULL) {
+ 		pr_err("%s: Failed to allocate zero level2 page table\n",
+@@ -1446,10 +1438,16 @@ static int __init exynos_iommu_init(void)
+ 		goto err_zero_lv2;
+ 	}
+ 
++	ret = platform_driver_register(&exynos_sysmmu_driver);
++	if (ret) {
++		pr_err("%s: Failed to register driver\n", __func__);
++		goto err_reg_driver;
++	}
++
+ 	return 0;
+-err_zero_lv2:
+-	platform_driver_unregister(&exynos_sysmmu_driver);
+ err_reg_driver:
++	platform_driver_unregister(&exynos_sysmmu_driver);
++err_zero_lv2:
+ 	kmem_cache_destroy(lv2table_kmem_cache);
+ 	return ret;
+ }
 -- 
 2.17.1
 
