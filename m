@@ -2,169 +2,301 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6277BC43217
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Nov 2022 09:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0ABDC43217
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Nov 2022 11:37:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229836AbiKJJVU (ORCPT
+        id S230193AbiKJLho (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Nov 2022 04:21:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48102 "EHLO
+        Thu, 10 Nov 2022 06:37:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229767AbiKJJVR (ORCPT
+        with ESMTP id S230293AbiKJLhm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Nov 2022 04:21:17 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0300668C64
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 01:21:16 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id d6so2001935lfs.10
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 01:21:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yEVHYkNLaKaVRtKWsEFztX3vRYcFwb5P6qHusc9rNXA=;
-        b=KKS49WTtT6lta72rnCAUh3ESikVI5Y3HIqrgfHLaR6EgHNzRi6kWmkWd0xpN2+xtwG
-         JqYhwOi9VC+J6UTA872LagXNkLUI3IR7fGMgAjsirHl7M/Z8AVS0yNglzllEJCLh2Gdy
-         k66k0GYtOCEbPCebeN1HpbjWZpGypiqvO/F7xRPwFNBglEPe3oaIrUjrJaBNUPTAY/tF
-         c7BsAL9PdmIXeDLtRnx+aTLXHbg4JhM8T1jA0RmsM2TJKe15uufVDi8JCn3uKT5Vb2MJ
-         LeGPFSsxDR2RceH6pMPLs7rpf8OC35hQdC73x28CrYCBueHXhbmB785cnvCne1ZPR3ZL
-         btWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yEVHYkNLaKaVRtKWsEFztX3vRYcFwb5P6qHusc9rNXA=;
-        b=hgr9DUc6UQu4ATz+xGQQMbyvuyk/2fEAcct8MWzWjNAncXAC+WdVx9GnnQzq/DkH+J
-         vo6/ugp8f9gLxv93Y73wcaHvK/7C8qddi7Q27Xri6w3fXAn1P2JvoBtjj/8hEgbuaH7U
-         HIyYXWHfN0VpXvzAhhGlOnWij64KEw+gJ0FKlNlxF6dqEeyRpcXs9bOKEj1xg7jP/Csy
-         SOefYgLagOwcqGB/8Mgdh4lnizvhFWkXdUZVI1rpZBDzjEK27ahRavd/w1iBVeZNs5La
-         hS/fkxh5k/MvA5jfbm5OhYV3PYRr5TJ/tQTuQTNedAjUcdV8hoyvPZluDLU8AW5heGhT
-         4lXw==
-X-Gm-Message-State: ACrzQf2hOzvMuBZ72VeWD36KiKQGxTTuAGrMjlnTgJI3mi8flo7qFNpJ
-        +3QTtNb3MMfaGS83gc6l8VrAbA==
-X-Google-Smtp-Source: AMsMyM5vi7JtYPxbKQOwE53mcnrQPH9NtIclvr731Cak0G2jNM4Icnn66SdEBCOP8civ5KxBNGKKyA==
-X-Received: by 2002:a05:6512:532:b0:4af:e7d3:9478 with SMTP id o18-20020a056512053200b004afe7d39478mr20269727lfc.102.1668072074365;
-        Thu, 10 Nov 2022 01:21:14 -0800 (PST)
-Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
-        by smtp.gmail.com with ESMTPSA id u8-20020a2e2e08000000b0026dcf81d804sm2592082lju.31.2022.11.10.01.21.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Nov 2022 01:21:13 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] ARM: dts: Cleanups for v6.2
-Date:   Thu, 10 Nov 2022 10:21:11 +0100
-Message-Id: <20221110092111.18581-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Thu, 10 Nov 2022 06:37:42 -0500
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6B51716F7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 03:37:36 -0800 (PST)
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20221110113731epoutp04d70ad9f4bdbb37f27955c624a8ea9274~mNia47pbG2253922539epoutp042
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 11:37:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20221110113731epoutp04d70ad9f4bdbb37f27955c624a8ea9274~mNia47pbG2253922539epoutp042
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1668080251;
+        bh=9zUsfjvOSOmVdmyUOZmjw0Q0VPTlS+N90JXHGCj4Mhc=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=HdxFhknJy4RWQngprZVsEcQytT6a+7omCPMSOMFjWxAEDH0DvSTvKu0LiA5+tJbKs
+         CCiezoYSuudVOx1FpfbwdETd0vYbTzHlfZPsdgDQ1QYODZoplCBcewvunPePg5oSVT
+         Z7FCaZg8pEPTdQWXvpipNa8NtilDAmXnQ2FuX4bM=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20221110113731epcas5p171c3b8dd3bf2ee37d27369eced74836c~mNiaDNEKV2798527985epcas5p1X;
+        Thu, 10 Nov 2022 11:37:31 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4N7KZJ3jRCz4x9Pt; Thu, 10 Nov
+        2022 11:37:28 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C3.AD.39477.872EC636; Thu, 10 Nov 2022 20:37:28 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20221110111808epcas5p475327708571c477926f9e5ddf20bcd39~mNRfskxaa1388313883epcas5p4m;
+        Thu, 10 Nov 2022 11:18:08 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20221110111808epsmtrp1532b9e6b0f65557c128c39615ac3c698~mNRfretKX0272502725epsmtrp1a;
+        Thu, 10 Nov 2022 11:18:08 +0000 (GMT)
+X-AuditID: b6c32a4a-259fb70000019a35-e1-636ce278e53e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        EA.A3.14392.0FDDC636; Thu, 10 Nov 2022 20:18:08 +0900 (KST)
+Received: from FDSFTE314 (unknown [107.122.81.85]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20221110111804epsmtip249f45df58778954cb2a60ffccd6f857b~mNRb-7phY1167011670epsmtip2h;
+        Thu, 10 Nov 2022 11:18:04 +0000 (GMT)
+From:   "Vivek Yadav" <vivek.2311@samsung.com>
+To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+        <rcsekar@samsung.com>, <krzysztof.kozlowski+dt@linaro.org>,
+        <wg@grandegger.com>, <mkl@pengutronix.de>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <pankaj.dubey@samsung.com>, <ravi.patel@samsung.com>,
+        <alim.akhtar@samsung.com>, <linux-fsd@tesla.com>,
+        <robh+dt@kernel.org>
+Cc:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <aswani.reddy@samsung.com>, <sriranjani.p@samsung.com>
+In-Reply-To: <709daf8b-a58e-9247-c5d8-f3be3e60fe70@linaro.org>
+Subject: RE: [PATCH v2 1/6] dt-bindings: Document the SYSREG specific
+ compatibles found on FSD SoC
+Date:   Thu, 10 Nov 2022 16:48:03 +0530
+Message-ID: <000001d8f4f6$1c7e96e0$557bc4a0$@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFejcOECimRbNc2gYBlewkpfd/ZqQHz7ogqAVwjo3kCSHwOh68AC28Q
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta0ybVRjm9OsVZPlsuRyILk0jkcGAlpX6gbAtSuYn+qNRoon7AaX9RoHS
+        Nv1a2XQTBDaESLlMRikVGUPYqoKWy0q5uBQG022MbY5togsdW9m4yQAhZG7YCyj/nvd9n+c8
+        5zknLxNhFzBCmVlKLaFRShQ8ui+1e3DXq1GH7yuk/OWNAGyyoZuO2Tu6GJjpWjEV+2ZolIY9
+        HL7PwPSPHAjWP+sajHXraZhlapyGmddqEMwx8yF202aiY4ZrAxSsvekrKjbcGIStXp4DWFPX
+        CgNzLPYxMOOYlYYd7x9iYBNzbTTs23s9tP1BeOe5uxS80aLDn9yYALjFXErH/xjvo+Mdzfl4
+        xTM+/tfALTqu7zQD/Hnh1wx82bJT7PdRTqKckMgIDZdQSlWyLGVmEu+d99PeTIsT8QVRgnjs
+        NR5XKcklknjJ74qjDmQpXFF53I8lCp2rJZaQJC9mb6JGpdMSXLmK1CbxCLVMoRaqo0lJLqlT
+        ZkYrCW2CgM+PjXMR03PkG9dtQN0bfbiovJZRAGxhZYDFhKgQOs+OgjLgy2SjvQAWl7VQ3AM2
+        ugTgfLvWO1gFUP99D2NLcbq1mOYd9APYf+oB1VtMA7hhGvHI6ehuWHTymefcAPRzBNYuDXsK
+        BC2kwIFZO93NYqF7YYnT5FFwUBns+nkKcWMqGgZr6897OP5oPDzVuQK8+EX4S53bjuU6KBK2
+        nJ5FvHfiwvWHLTQ3DkAPQINpZZMTDC+uf4m4jSHayoKrP7ZvCpKh3q6neTEHzox0boYLhY8r
+        TmxiKbQ+L93kyGFjVR/w4n3wwm8mlwHTZbALtttivO2XYc2vbRSv7w5Y/vQBxdv3h9aGLfwK
+        fLRcSXNL3Vblo5xKwDNuS2bclsy4LYHxf7NGQDWDEEJN5mYSZJw6Vknk/ffjUlWuBXhWISLF
+        ChyTi9F2QGECO4BMhBfg7xeeI2X7yyRHPiE0qjSNTkGQdhDneu4qJDRQqnLtklKbJhDG84Ui
+        kUgYv0ck4AX7nzFESNlopkRL5BCEmtBs6ShMVmgBZXdfT4AxY+bySycnj9Xr6gMDJxP8548+
+        3mm+Y/qCEdn7RFx5ayEPB6UUn6qIq6ns9JLb4ogf9oclcK+XplR8l654vfWqPtwRc9RJjsqn
+        sWaHKfXMTVxeveAzdpDMeOPQn3OJkvzBuQ/2Zedl9z43OI+PR7/1dlB1SXDsTyGsoeI435rI
+        2WOF5w23ZQwqaWs3rpk/O9FpE4cm/56xJ9ZpENW+cKXuIEuiadmxPNGTf+RKol9GCOfO2ZGU
+        1KcX0+VTF6YRIZJmSa1eGuLcyHQ2tQ3+/c+hBXb4qrWosH+eg62tf9qRXaW/1KwZf+9uFm7F
+        740u1uULuvSXCrId52p9GsJ4VFIuEUQgGlLyL21KpPWTBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfVCLcQDH/fa8bC25R6N+5So3cYWio7uft7yc0+Oi83qcl8vkEVpb9zzF
+        1GFmjuIy8pK1NEm7doRJ0dqQdNeFxQ510YkWKsQW8hLWcP33ufu+3PePrwDzfYsHCrbK0hhW
+        JpGKSSFecUccEtHzXJo4+f6bMPTiTAWJaq5e4yOdTY2jwtoHBHLUveSjnDdtGLJ0/REaK3II
+        ZHr1hEDGLycw1Na5CtmrdCTKs1l56FLRcRzV6f3Q54ZugIquufioraeaj7SN1wm031LLRy3d
+        ZQQ633qDmONHl5c282i9KZ3++KgF0CZjFkk/e1JN0leL99BHfk6mP1gfk3ROuRHQ/aoCPu00
+        BS/xXiOcuYmRbt3OsJNiNgi3tJ/fj6VeiVBUH+oileBCaDbwEkBqKjxrUBPZQCjwpcwAFmsO
+        Ao8QCI/fe4t7WARL+1/zPSYHgIa+Y4RbIKmJcF/uz4HACOooBi1Fo90mjMrmwftN/bgn8RHA
+        0m+dmNvlRcXAAx06nptF1EZY9/AW3804NRaeyq8k3exDTYMny13Aw8Nh/en2gRkYNQE6mh3/
+        ueRsF+aZNxr2OUoIz4oFME/n+uvxh3f7DmMaINIOqtIOqtIOqtIOiugBbgQBTCqXkpTCRaVG
+        yZgdkZwkhUuXJUUmylNMYOAN48Ovg0pjT2QN4AlADYACTDzCxzssOdHXZ5NkZwbDyhPYdCnD
+        1YBRAlzs79OYXZ/gSyVJ0phkhkll2H8qT+AVqORVEN2rCq12lSr5F3r5WmKIXjFNON02139t
+        uJYHevHqGHOXsqTVTtvjvDIUu8LOBcH1HYqD+N2vmli5OO/ip/hb5sZoVrVyX7T5e+TT2IAW
+        RW/VmIBYNbdWP8Zbk/9jZEPO3pELle31May81LKI7Hmasc6vzllU+G5Wll5dUJVr0P2Yvdp2
+        27JwytDdrLlbLG0L1cTG6R7aYa19XHDllaHCkNAGdXLo5alBsovFJ+NsWb1N+fG75Nbm/G1B
+        N1qXZnYsLktTufZEPMhUNImWc/NdmSJNwKNlvVaJczMxb8F7Mtzw4iZjnr4+fbVJObcsYYZ1
+        yMzLncOCFSEbvjudYpzbIokaj7Gc5Dcj2Y1/fAMAAA==
+X-CMS-MailID: 20221110111808epcas5p475327708571c477926f9e5ddf20bcd39
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20221109100245epcas5p38a01aed025f491d39a09508ebcdcef84
+References: <20221109100928.109478-1-vivek.2311@samsung.com>
+        <CGME20221109100245epcas5p38a01aed025f491d39a09508ebcdcef84@epcas5p3.samsung.com>
+        <20221109100928.109478-2-vivek.2311@samsung.com>
+        <709daf8b-a58e-9247-c5d8-f3be3e60fe70@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-Various cleanups missed or acked by maintainers.
-
-Best regards,
-Krzysztof
 
 
-The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
+> Sent: 09 November 2022 16:39
+> To: Vivek Yadav <vivek.2311=40samsung.com>; rcsekar=40samsung.com;
+> krzysztof.kozlowski+dt=40linaro.org; wg=40grandegger.com;
+> mkl=40pengutronix.de; davem=40davemloft.net; edumazet=40google.com;
+> kuba=40kernel.org; pabeni=40redhat.com; pankaj.dubey=40samsung.com;
+> ravi.patel=40samsung.com; alim.akhtar=40samsung.com; linux-fsd=40tesla.co=
+m;
+> robh+dt=40kernel.org
+> Cc: linux-can=40vger.kernel.org; netdev=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-
+> samsung-soc=40vger.kernel.org; devicetree=40vger.kernel.org;
+> aswani.reddy=40samsung.com; sriranjani.p=40samsung.com
+> Subject: Re: =5BPATCH v2 1/6=5D dt-bindings: Document the SYSREG specific
+> compatibles found on FSD SoC
+>=20
+> On 09/11/2022 11:09, Vivek Yadav wrote:
+> > From: Sriranjani P <sriranjani.p=40samsung.com>
+> >
+>=20
+> Use subject prefixes matching the subsystem (git log --oneline -- ...).
+>=20
+Okay, I will add the correct prefixes.
+> > Describe the compatible properties for SYSREG controllers found on FSD
+> > SoC.
+>=20
+> This is ARM SoC patch, split it from the patchset.
+>
+I understand this patch is not to be subset of CAN patches, I will send the=
+se patches separately.
+These patches will be used by EQos patches. As per reference, I am adding t=
+he Address link.
+https://lore.kernel.org/all/20221104120517.77980-1-sriranjani.p=40samsung.c=
+om/
+=20
+> >
+> > Signed-off-by: Alim Akhtar <alim.akhtar=40samsung.com>
+> > Signed-off-by: Pankaj Kumar Dubey <pankaj.dubey=40samsung.com>
+> > Signed-off-by: Ravi Patel <ravi.patel=40samsung.com>
+> > Signed-off-by: Vivek Yadav <vivek.2311=40samsung.com>
+> > Cc: devicetree=40vger.kernel.org
+> > Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt=40linaro.org>
+> > Cc: Rob Herring <robh+dt=40kernel.org>
+>=20
+> Drop the Cc list from commit log. It's not helpful.
+>=20
+Okay, I will remove.
+> > Signed-off-by: Sriranjani P <sriranjani.p=40samsung.com>
+> > ---
+> >  .../devicetree/bindings/arm/tesla-sysreg.yaml =7C 50
+> +++++++++++++++++++
+> >  MAINTAINERS                                   =7C  1 +
+> >  2 files changed, 51 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/arm/tesla-sysreg.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/arm/tesla-sysreg.yaml
+> > b/Documentation/devicetree/bindings/arm/tesla-sysreg.yaml
+> > new file mode 100644
+> > index 000000000000..bbcc6dd75918
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/arm/tesla-sysreg.yaml
+>=20
+> arm is only for top level stuff. This goes to soc under tesla or samsung
+> directory.
+>=20
+Okay, this is specific to Samsung fsd SoC, I will be moving this file to ar=
+m/samsung in next patch series. Hope that is fine.
+> > =40=40 -0,0 +1,50 =40=40
+> > +=23 SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause %YAML 1.2
+> > +---
+> > +=24id:
+> > +https://protect2.fireeye.com/v1/url?k=3D1ad2834a-7b59967c-1ad30805-
+> 000b
+> > +abff9b5d-1f65584e412e916c&q=3D1&e=3Da870a282-632a-4896-ae53-
+> 3ecb50f02be5&
+> > +u=3Dhttp%3A%2F%2Fdevicetree.org%2Fschemas%2Farm%2Ftesla-
+> sysreg.yaml%23
+> > +=24schema:
+> > +https://protect2.fireeye.com/v1/url?k=3D13876e33-720c7b05-1386e57c-
+> 000b
+> > +abff9b5d-edae3ff711999305&q=3D1&e=3Da870a282-632a-4896-ae53-
+> 3ecb50f02be5&
+> > +u=3Dhttp%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23
+> > +
+> > +title: Tesla Full Self-Driving platform's system registers
+> > +
+> > +maintainers:
+> > +  - Alim Akhtar <alim.akhtar=40samsung.com>
+> > +
+> > +description: =7C
+> > +  This is a system control registers block, providing multiple low
+> > +level
+> > +  platform functions like board detection and identification,
+> > +software
+> > +  interrupt generation.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+>=20
+> No need for oneOf.
+>=20
+Removing this results into dt_binding_check error, so this is required.
+> > +      - items:
+> > +          - enum:
+> > +              - tesla,sysreg_fsys0
+> > +              - tesla,sysreg_peric
+>=20
+> From where did you get underscores in compatibles?
+>=20
+I have seen in MCAN Driver <drivers/net/can/m_can/m_can_platform.c> and als=
+o too many other yaml files.
+Do you have any ref standard guideline of compatible which says underscore =
+is not allowed.
+> > +          - const: syscon
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - =7C
+> > +    soc =7B
+> > +      =23address-cells =3D <2>;
+> > +      =23size-cells =3D <2>;
+> > +
+> > +      sysreg_fsys0: system-controller=4015030000 =7B
+> > +            compatible =3D =22tesla,sysreg_fsys0=22, =22syscon=22;
+>=20
+> Use 4 spaces for example indentation.
+>=20
+Okay I will make it 4 spaces indentation.
+> > +            reg =3D <0x0 0x15030000 0x0 0x1000>;
+> > +      =7D;
+> > +
+> > +      sysreg_peric: system-controller=4014030000 =7B
+> > +            compatible =3D =22tesla,sysreg_peric=22, =22syscon=22;
+> > +            reg =3D <0x0 0x14030000 0x0 0x1000>;
+> > +      =7D;
+>=20
+> One example is enough, they are the same.
+kay  I will remove 1 example.
+> > +    =7D;
+> > diff --git a/MAINTAINERS b/MAINTAINERS index
+> > a198da986146..56995e7d63ad 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > =40=40 -2943,6 +2943,7 =40=40 M:	linux-fsd=40tesla.com
+> >  L:	linux-arm-kernel=40lists.infradead.org (moderated for non-
+> subscribers)
+> >  L:	linux-samsung-soc=40vger.kernel.org
+> >  S:	Maintained
+> > +F:	Documentation/devicetree/bindings/arm/tesla-sysreg.yaml
+> >  F:	arch/arm64/boot/dts/tesla*
+> >
+> >  ARM/TETON BGA MACHINE SUPPORT
+>=20
+> Best regards,
+> Krzysztof
 
-  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
+Thanks for reviewing the patches.
 
-are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git tags/dt-cleanup-6.2
-
-for you to fetch changes up to 001b38cea30961e0f4e562a1872f2409a8024ff0:
-
-  dt-bindings: arm: aspeed: adjust qcom,dc-scm-v1-bmc compatible after rename (2022-11-10 10:18:49 +0100)
-
-----------------------------------------------------------------
-Minor improvements in ARM DTS for v6.2
-
-1. Aspeed: fix qcom,dc-scm-v1-bmc compatible in the bindings.
-2. Marvell: include bindings in maintainers entry.
-3. Cleanup DTS according to bindings (panel endpoint unit address,
-   incorrect spi-max-frequency, generic node names).
-4. Few indentation fixes.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (10):
-      ARM: dts: am335x: drop panel endpoint unit address
-      ARM: dts: sunplus: sp7021: drop incorrect spi-max-frequency
-      MAINTAINERS: ARM: marvell: include bindings
-      ARM: dts: aspeed: align SPI node name with dtschema
-      ARM: dts: ti: correct indentation
-      ARM: dts: armada: correct indentation
-      ARM: dts: kirkwood: correct indentation
-      ARM: dts: omap: correct indentation
-      ARM: dts: sunxi: correct indentation
-      dt-bindings: arm: aspeed: adjust qcom,dc-scm-v1-bmc compatible after rename
-
- .../devicetree/bindings/arm/aspeed/aspeed.yaml     |  2 +-
- MAINTAINERS                                        |  3 +
- arch/arm/boot/dts/am335x-evm.dts                   |  2 +-
- arch/arm/boot/dts/am335x-evmsk.dts                 |  2 +-
- arch/arm/boot/dts/am335x-moxa-uc-2100-common.dtsi  | 10 ++--
- arch/arm/boot/dts/am335x-moxa-uc-8100-common.dtsi  | 10 ++--
- arch/arm/boot/dts/am335x-pepper.dts                |  4 +-
- arch/arm/boot/dts/am3517-evm.dts                   | 16 +++---
- arch/arm/boot/dts/armada-370-netgear-rn102.dts     | 10 ++--
- arch/arm/boot/dts/armada-370-netgear-rn104.dts     | 10 ++--
- arch/arm/boot/dts/armada-370-rd.dts                | 16 +++---
- arch/arm/boot/dts/armada-370-synology-ds213j.dts   |  6 +-
- arch/arm/boot/dts/armada-xp-netgear-rn2120.dts     | 10 ++--
- .../boot/dts/aspeed-bmc-facebook-cloudripper.dts   |  2 +-
- arch/arm/boot/dts/aspeed-bmc-facebook-elbert.dts   |  2 +-
- arch/arm/boot/dts/aspeed-bmc-facebook-fuji.dts     |  2 +-
- arch/arm/boot/dts/aspeed-bmc-facebook-wedge400.dts |  2 +-
- .../boot/dts/ast2600-facebook-netbmc-common.dtsi   |  2 +-
- arch/arm/boot/dts/kirkwood-b3.dts                  |  2 +-
- arch/arm/boot/dts/kirkwood-db-88f6281.dts          |  2 +-
- arch/arm/boot/dts/kirkwood-db-88f6282.dts          |  2 +-
- arch/arm/boot/dts/kirkwood-dir665.dts              | 14 ++---
- arch/arm/boot/dts/kirkwood-ds112.dts               |  2 +-
- arch/arm/boot/dts/kirkwood-ds411.dts               |  2 +-
- arch/arm/boot/dts/kirkwood-iconnect.dts            |  2 +-
- arch/arm/boot/dts/kirkwood-km_common.dtsi          |  2 +-
- arch/arm/boot/dts/kirkwood-l-50.dts                | 24 ++++----
- arch/arm/boot/dts/kirkwood-laplug.dts              |  2 +-
- arch/arm/boot/dts/kirkwood-linkstation.dtsi        |  2 +-
- arch/arm/boot/dts/kirkwood-mplcec4.dts             | 16 +++---
- arch/arm/boot/dts/kirkwood-mv88f6281gtw-ge.dts     |  2 +-
- arch/arm/boot/dts/kirkwood-nas2big.dts             |  2 +-
- arch/arm/boot/dts/kirkwood-net2big.dts             | 10 ++--
- arch/arm/boot/dts/kirkwood-net5big.dts             | 10 ++--
- .../boot/dts/kirkwood-netgear_readynas_nv+_v2.dts  | 12 ++--
- arch/arm/boot/dts/kirkwood-nsa310.dts              |  2 +-
- arch/arm/boot/dts/kirkwood-nsa320.dts              |  2 +-
- arch/arm/boot/dts/kirkwood-nsa325.dts              |  2 +-
- arch/arm/boot/dts/kirkwood-nsa3x0-common.dtsi      |  2 +-
- arch/arm/boot/dts/kirkwood-rd88f6192.dts           | 60 ++++++++++----------
- arch/arm/boot/dts/kirkwood-rd88f6281-z0.dts        |  2 +-
- arch/arm/boot/dts/kirkwood-rd88f6281.dtsi          |  4 +-
- arch/arm/boot/dts/kirkwood-rs212.dts               |  2 +-
- arch/arm/boot/dts/kirkwood-synology.dtsi           |  2 +-
- arch/arm/boot/dts/kirkwood-t5325.dts               |  2 +-
- arch/arm/boot/dts/kirkwood-ts219.dtsi              |  4 +-
- arch/arm/boot/dts/kirkwood.dtsi                    | 34 ++++++------
- arch/arm/boot/dts/omap-gpmc-smsc911x.dtsi          |  6 +-
- arch/arm/boot/dts/omap-gpmc-smsc9221.dtsi          |  6 +-
- arch/arm/boot/dts/omap3-cm-t3517.dts               | 12 ++--
- arch/arm/boot/dts/omap3-gta04.dtsi                 |  6 +-
- arch/arm/boot/dts/omap3-ldp.dts                    |  2 +-
- arch/arm/boot/dts/omap3-n900.dts                   | 38 ++++++-------
- arch/arm/boot/dts/omap3-zoom3.dts                  | 44 +++++++--------
- arch/arm/boot/dts/omap4-cpu-thermal.dtsi           | 24 ++++----
- arch/arm/boot/dts/omap5-cm-t54.dts                 | 64 +++++++++++-----------
- arch/arm/boot/dts/sunplus-sp7021.dtsi              |  3 -
- arch/arm/boot/dts/sunxi-bananapi-m2-plus.dtsi      | 14 ++---
- 58 files changed, 278 insertions(+), 278 deletions(-)
