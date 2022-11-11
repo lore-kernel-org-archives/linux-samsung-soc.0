@@ -2,116 +2,154 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F07C43217
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Nov 2022 12:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D37BC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Nov 2022 12:46:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233570AbiKKMkn (ORCPT
+        id S232609AbiKKMqA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 11 Nov 2022 07:40:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53392 "EHLO
+        Fri, 11 Nov 2022 07:46:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233384AbiKKMkm (ORCPT
+        with ESMTP id S231615AbiKKMp6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 11 Nov 2022 07:40:42 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FCD67BE43
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Nov 2022 04:40:41 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id g24so4171996plq.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Nov 2022 04:40:41 -0800 (PST)
+        Fri, 11 Nov 2022 07:45:58 -0500
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7894819C0B
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Nov 2022 04:45:57 -0800 (PST)
+Received: by mail-io1-xd32.google.com with SMTP id 63so3461951iov.8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Nov 2022 04:45:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+pSb3nKIXHaiftR3v+Evz/+SDGPAA0OKtaaUaJuams=;
-        b=Sjp+mfbMzTuBd24OSiZRNL5zBW3SR3VhtM052t7yx/J6peolwpXst7LHpoNhlP9dD8
-         9mseGD3RSu7bRw7aHIcBd1wSnaU5o6nLd7pEv3S+kb9HP0IcUDkg2hUASCyg+4M+IOyE
-         08L8NwAfmRui4CAQhMSxF+aTuV/l8wcqkMXVYZbjWVQYWPDnBNNNiJEr6Kxm8PeX1vgH
-         FLI4W3mxjcPdLzWn3o6pv0if/c7n2L6SagBoUnKYUCGKsYHLGdAYMDvhe06ghDz5HLG8
-         PfvCLm5t2xvoWdnWkk5Pt1zDQKOuBgzys4CtR9MMJ7PJFtqbRtt4/W5uBhyl6vpt7Kjf
-         3lxg==
+        d=amarulasolutions.com; s=google;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1xS4s0avgD255rcYtA4Gae74h0+wxtz39GOAv7A9upU=;
+        b=ObGg9stT9HoCf/3hi1Z8le25KXMunJrziAtRLVbUrZC4OS5ZtiDcTMHcaGRON8E8GL
+         f70DgnO7ZlPPXUeY1riLAsY4ZhsJ37ghiVyGrL3GrcSv6n+V+1vU8ZIskBXu6uGBlifV
+         uuHw2MHM12kOhnHVUcPa9b4kVnHlJ3/egwDuk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z+pSb3nKIXHaiftR3v+Evz/+SDGPAA0OKtaaUaJuams=;
-        b=lrzMalFluLenWdY0b7jaa9xhUDlIs9OzpeSU2Zzj951m0Lgrz/iHhgmy7/X2j2MeOH
-         5ZTAKApV192CVe4yy/+O4dyzog9b1pT7rG0WnIiAzmbtVGJTqXe/r6kabwZ+GI+F6Omy
-         2MjietAXJSPK3a0J+5WJo1v5+AXxng+/xYCp97X3JGJ9fxUyQW6vAi23br21Uf0puVW4
-         KR9xyIhlRvww9duWU5Iv0H4pvqef8eOD00tRwTNd6UxfUFwAmJs4hSYdsDQ5BuBbAFnd
-         VwykMZWy7vT5q+AKyhC2MaY/xHIB6OoTjh7qALR/m5AUbBEA5Q+slONqSlBPUBPqe2SY
-         o0Jw==
-X-Gm-Message-State: ANoB5pmH10WPbx6c225x2TDT0sOPBl1gP+v0JqIv2y8kOLel0Jd2VA8f
-        TUaC5tKZSJznRLrthEFGDNjmKShjxc0CbFYQG+hSUg==
-X-Google-Smtp-Source: AA0mqf4ti3oIKNWdDvRGk3CYFGxw+N1DPpSsx+LEvKJ59w+/d/YXkMZ5jOTCwUxB+wZd+6Fsj3xULFkVVj/qRccDZtQ=
-X-Received: by 2002:a17:90a:f18f:b0:218:8f4:bad5 with SMTP id
- bv15-20020a17090af18f00b0021808f4bad5mr1786731pjb.55.1668170440958; Fri, 11
- Nov 2022 04:40:40 -0800 (PST)
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1xS4s0avgD255rcYtA4Gae74h0+wxtz39GOAv7A9upU=;
+        b=t5p7+e3nIixRSaJnC1xHmLf8ZqFcvtQ868KjOGwqez17JxZmZbRH4rVGRSqsViPtJ8
+         3zJT3GPgFCZmwj00N90XyIEOf+26UnVvXDUYYbl9+QVEgx+18h3jd6JT171bm/03JyoT
+         e115zRXtTDQyC/6102w2fKwImatpwOTnz1PDQMZ1BCPXdPSkZuqSHhwimid5BKJrut+y
+         KVlk+2jHuBOJpHHCdxJFwL+cdlGQNWCb2eKCaoV+pFZZUPr5YCgpseHEgdHzmMVK5+0x
+         mi0V+uihnWJgIadaWZhlzTC5JySoaRuEiJk7wBLEA2DEuoNgdCYL2sKfpr8HQ8C92gem
+         Ogaw==
+X-Gm-Message-State: ANoB5plyr9BCxvsS/BNt7d3/Hby4tA/ao0XQ1jOSj85yXqughZSDpSpw
+        JHlg4PDil+pvdy162xUecvLTwsGyK4lSjRlYH3Nrxg==
+X-Google-Smtp-Source: AA0mqf7rYEZg0X5ct8WvgQlQepH0xO2ddeWLJ/U9eXDDUpUybtT+Gidz8gRXMfRuJhf1bDsJCgY4OkIFIvHR1swiyNI=
+X-Received: by 2002:a02:860e:0:b0:375:2c83:3f2f with SMTP id
+ e14-20020a02860e000000b003752c833f2fmr636049jai.104.1668170756860; Fri, 11
+ Nov 2022 04:45:56 -0800 (PST)
 MIME-Version: 1.0
-References: <CGME20221110154141eucas1p1e69a91704c32c07307a9c73b95e0d9a3@eucas1p1.samsung.com>
- <20221110154131.2577-1-m.szyprowski@samsung.com>
-In-Reply-To: <20221110154131.2577-1-m.szyprowski@samsung.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Fri, 11 Nov 2022 13:40:29 +0100
-Message-ID: <CAPLW+4mpZWJHg6qQi1SOAwB-KRrzQo1sOnY4ku5FV3zgVAqNYw@mail.gmail.com>
-Subject: Re: [PATCH v2] usb: dwc3: exynos: Fix remove() function
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>, stable@vger.kernel.org
+References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
+ <20221110183853.3678209-2-jagan@amarulasolutions.com> <CANMq1KCHQExVVp1jHjhRB2pMqeFFE1Cg1GVmnN83v=z1KzJt0Q@mail.gmail.com>
+ <CAMty3ZBC3pbWf4yixjv4DZWFR+fYkPctiL3hzubgY8RF4ZGHmA@mail.gmail.com> <CANMq1KDmF+cMo8qZh7UyM1vyZ6BD_cFPc6j2MNMNPFiutqxL3w@mail.gmail.com>
+In-Reply-To: <CANMq1KDmF+cMo8qZh7UyM1vyZ6BD_cFPc6j2MNMNPFiutqxL3w@mail.gmail.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Fri, 11 Nov 2022 18:15:45 +0530
+Message-ID: <CAMty3ZBzNZgJkKDXTSG4onqtFK9SJ2qN9Cxv2XTg40JyX4TjaA@mail.gmail.com>
+Subject: Re: [PATCH v8 01/14] drm: exynos: dsi: Fix MIPI_DSI*_NO_* mode flags
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Marek Vasut <marex@denx.de>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        =?UTF-8?Q?S=C3=A9bastien_Szymanski?= 
+        <sebastien.szymanski@armadeus.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 10 Nov 2022 at 16:41, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+On Fri, Nov 11, 2022 at 5:42 PM Nicolas Boichat <drinkcat@chromium.org> wro=
+te:
 >
-> The core DWC3 device node was not properly removed by the custom
-> dwc3_exynos_remove_child() function. Replace it with generic
-> of_platform_depopulate() which does that job right.
+> On Fri, Nov 11, 2022 at 4:49 PM Jagan Teki <jagan@amarulasolutions.com> w=
+rote:
+> >
+> > On Fri, Nov 11, 2022 at 6:19 AM Nicolas Boichat <drinkcat@chromium.org>=
+ wrote:
+> > >
+> > > On Fri, Nov 11, 2022 at 2:40 AM Jagan Teki <jagan@amarulasolutions.co=
+m> wrote:
+> > > >
+> > > > HFP/HBP/HSA/EOT_PACKET modes in Exynos DSI host specifies
+> > > > 0 =3D Enable and 1 =3D Disable.
+> > >
+> > > Oh I see, that's confusing... IMHO you might want to change the
+> > > register macro name... (but if that's what the datasheet uses, it
+> > > might not be ideal either). At the _very_ least, I'd add a comment in
+> > > the code so the next person doesn't attempt to "fix" it again...
+> >
+> > 02/14 on the same series doing the name change.
+> > https://lore.kernel.org/all/20221110183853.3678209-3-jagan@amarulasolut=
+ions.com/
 >
-> Fixes: adcf20dcd262 ("usb: dwc3: exynos: Use of_platform API to create dwc3 core pdev")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-> Cc: stable@vger.kernel.org
-> ---
+> Oh thanks I wasn't cc'ed on that one, makes sense.
+>
+> You can add my reviewed tag to this one, as my HSE comment doesn't change=
+ this.
+>
+> Reviewed-by: Nicolas Boichat <drinkcat@chromium.org>
+>
+> But please double check HSE.
+>
+> >
+> > >
+> > > BTW, are you sure DSIM_HSE_MODE is correct now?
+> >
+> > Yes, we have tested in imx8m platforms as well. S=C3=A9bastien Szymansk=
+i
+> > initially observed this issue on the imx8m platform.
+>
+> I'll repeat, are you sure about HSE specifically? You invert the
+> polarity for HBP, HFP, and HSA, which makes sense given your patch
+> 02/14.
+>
+> I'm concerned about HSE. Is the bit really a disable bit?
+> MIPI_DSI_MODE_VIDEO_HSE is supposed to be an enable flag, so you
+> should not do `reg |=3D DSIM_HSE_DISABLE;`, probably.
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+HSE typically enables bit logic, unlike other bits which are disabled bits.
 
->  drivers/usb/dwc3/dwc3-exynos.c | 11 +----------
->  1 file changed, 1 insertion(+), 10 deletions(-)
->
-> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-> index 0ecf20eeceee..4be6a873bd07 100644
-> --- a/drivers/usb/dwc3/dwc3-exynos.c
-> +++ b/drivers/usb/dwc3/dwc3-exynos.c
-> @@ -37,15 +37,6 @@ struct dwc3_exynos {
->         struct regulator        *vdd10;
->  };
->
-> -static int dwc3_exynos_remove_child(struct device *dev, void *unused)
-> -{
-> -       struct platform_device *pdev = to_platform_device(dev);
-> -
-> -       platform_device_unregister(pdev);
-> -
-> -       return 0;
-> -}
-> -
->  static int dwc3_exynos_probe(struct platform_device *pdev)
->  {
->         struct dwc3_exynos      *exynos;
-> @@ -142,7 +133,7 @@ static int dwc3_exynos_remove(struct platform_device *pdev)
->         struct dwc3_exynos      *exynos = platform_get_drvdata(pdev);
->         int i;
->
-> -       device_for_each_child(&pdev->dev, NULL, dwc3_exynos_remove_child);
-> +       of_platform_depopulate(&pdev->dev);
->
->         for (i = exynos->num_clks - 1; i >= 0; i--)
->                 clk_disable_unprepare(exynos->clks[i]);
-> --
-> 2.17.1
->
+HseDisableMod:
+In Vsync pulse and Vporch area, MIPI DSI master transfers only Hsync
+start packet to MIPI DSI slave at
+MIPI DSI spec 1.1r02. This bit transfers Hsync end packet in Vsync
+pulse and Vporch area (optional).
+0 =3D Disables transfer
+1 =3D Enables transfer
+
+HfpDisableMode:
+Specifies HFP disable mode. If this bit set, DSI master ignores HFP
+area in Video mode.
+0 =3D Enables
+1 =3D Disables
+
+I think the naming of 'HseDisableMod' is misleading in the datasheet,
+but I have used it as per the spec.
+
+Jagan.
