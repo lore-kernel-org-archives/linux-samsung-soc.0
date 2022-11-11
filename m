@@ -2,109 +2,166 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97576C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Nov 2022 06:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D48A4C43219
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Nov 2022 07:54:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231221AbiKKGKf (ORCPT
+        id S232746AbiKKHyS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 11 Nov 2022 01:10:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43274 "EHLO
+        Fri, 11 Nov 2022 02:54:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbiKKGKe (ORCPT
+        with ESMTP id S232675AbiKKHyR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 11 Nov 2022 01:10:34 -0500
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB9BC65E58;
-        Thu, 10 Nov 2022 22:10:32 -0800 (PST)
-Received: from dggpeml500024.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4N7pGH47hpzmVfg;
-        Fri, 11 Nov 2022 14:10:15 +0800 (CST)
-Received: from huawei.com (10.175.112.208) by dggpeml500024.china.huawei.com
- (7.185.36.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Fri, 11 Nov
- 2022 14:10:30 +0800
-From:   Yuan Can <yuancan@huawei.com>
-To:     <s.nawrocki@samsung.com>, <mchehab@kernel.org>,
-        <krzysztof.kozlowski@linaro.org>, <alim.akhtar@samsung.com>,
-        <kyungmin.park@samsung.com>, <linux-media@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>
-CC:     <yuancan@huawei.com>
-Subject: [PATCH] media: platform: exynos4-is: Fix error handling in fimc_md_init()
-Date:   Fri, 11 Nov 2022 06:08:53 +0000
-Message-ID: <20221111060853.18199-1-yuancan@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 11 Nov 2022 02:54:17 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F8D63CD7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 23:54:15 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id g12so7224863lfh.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2022 23:54:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Eaz8rHIcSO/5c8M2Ayn4zrNXSNjG7GfZ/jdIg1XwOgA=;
+        b=J3AbFJ8cIqRzH2fhR1XrH3MnM1HVU4mcGEoyTcJkXXo4nX9J6jc0pwlWZepPocbUuy
+         UM2tC8MXwMnBA0JR/RD5ZXj7HLHqHwo80tloQORIVN03iYbvrpJk24yqRxXK9Pg9V6yR
+         p3sOD1acn9xRmpilZIZV0alAoaPptkHizT5krAdXP0NMVIyCc5ced+YT4qtoNuLDDvjV
+         q93VbSAENLsyODxJFduf9D35vrjtmTYa8/U0/PctnvB+hviiYadtAUDqx6pmdyvdpgSn
+         Wgj709hlNgGWEweaFfTqhkWRCxZt7IU3UZWd0ar3g8fmVHKmRX/YpJxX5aTW+firdsiL
+         jmwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eaz8rHIcSO/5c8M2Ayn4zrNXSNjG7GfZ/jdIg1XwOgA=;
+        b=h943SomZx+JkEBrH8Bc1Ijj5bwBwhfEuag0nTAEca8DI6SAeigxueBM+V9yUS+Ai7w
+         CHfLK2JGTGfm1XjZDCJxsh/FPP5h5JniEsB5fii7wXnk/qHvLi0lAsNyVdi+xQzk3jys
+         OxWKiYtF1GJLfw7cQKhp4dzf7qO9oI1c2H6+Uq0lAygacZnVErrJNRiiUJ0CqqNo++7d
+         NyEJTQ8jaPQmjz3zqfr2siDbeNx80o1Ug8qzMPKYp9og5FtBFeu7cgyxmd7sNF3JixfI
+         B5Y98Q3r8C/Q9Pe94LXVqNlVcMcL93Ian81+F6IhH7olkth/RUgAiGpX80pTWhcRgAKq
+         411Q==
+X-Gm-Message-State: ANoB5pkoK3RaAeBA3Utbid734589SoXo3lCea50EOxmAMKatNATwQ4mX
+        3rjKp5IZux+xNV5Of2DVhbbIEQ==
+X-Google-Smtp-Source: AA0mqf4CfAb0ejuNv/vlB1MbMRuCFDuhOchMg6og3ELLn1Igw/6mDt28eQ9V82iX9RY5EZR3O7fcEA==
+X-Received: by 2002:ac2:5461:0:b0:4a2:8cac:96ab with SMTP id e1-20020ac25461000000b004a28cac96abmr342005lfn.415.1668153253439;
+        Thu, 10 Nov 2022 23:54:13 -0800 (PST)
+Received: from [192.168.0.20] (088156142199.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.199])
+        by smtp.gmail.com with ESMTPSA id c8-20020a056512324800b004afc1607130sm209411lfr.8.2022.11.10.23.54.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Nov 2022 23:54:12 -0800 (PST)
+Message-ID: <21becc16-c69d-5dd1-09d6-b85ee3e5ce9b@linaro.org>
+Date:   Fri, 11 Nov 2022 08:54:11 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.112.208]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpeml500024.china.huawei.com (7.185.36.10)
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v2 1/6] dt-bindings: Document the SYSREG specific
+ compatibles found on FSD SoC
+Content-Language: en-US
+To:     Vivek Yadav <vivek.2311@samsung.com>, rcsekar@samsung.com,
+        krzysztof.kozlowski+dt@linaro.org, wg@grandegger.com,
+        mkl@pengutronix.de, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, pankaj.dubey@samsung.com,
+        ravi.patel@samsung.com, alim.akhtar@samsung.com,
+        linux-fsd@tesla.com, robh+dt@kernel.org
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        aswani.reddy@samsung.com, sriranjani.p@samsung.com
+References: <20221109100928.109478-1-vivek.2311@samsung.com>
+ <CGME20221109100245epcas5p38a01aed025f491d39a09508ebcdcef84@epcas5p3.samsung.com>
+ <20221109100928.109478-2-vivek.2311@samsung.com>
+ <709daf8b-a58e-9247-c5d8-f3be3e60fe70@linaro.org>
+ <000001d8f4f6$1c7e96e0$557bc4a0$@samsung.com>
+ <277004ed-3b6b-4ee5-39e4-beb75a272e60@linaro.org>
+ <001601d8f583$06d01250$147036f0$@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <001601d8f583$06d01250$147036f0$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-A problem about modprobe s5p_fimc failed is triggered with the
-following log given:
+On 11/11/2022 05:06, Vivek Yadav wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Sent: 10 November 2022 17:42
+>> To: Vivek Yadav <vivek.2311@samsung.com>; rcsekar@samsung.com;
+>> krzysztof.kozlowski+dt@linaro.org; wg@grandegger.com;
+>> mkl@pengutronix.de; davem@davemloft.net; edumazet@google.com;
+>> kuba@kernel.org; pabeni@redhat.com; pankaj.dubey@samsung.com;
+>> ravi.patel@samsung.com; alim.akhtar@samsung.com; linux-fsd@tesla.com;
+>> robh+dt@kernel.org
+>> Cc: linux-can@vger.kernel.org; netdev@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+>> samsung-soc@vger.kernel.org; devicetree@vger.kernel.org;
+>> aswani.reddy@samsung.com; sriranjani.p@samsung.com
+>> Subject: Re: [PATCH v2 1/6] dt-bindings: Document the SYSREG specific
+>> compatibles found on FSD SoC
+>>
+>> On 10/11/2022 12:18, Vivek Yadav wrote:
+>>>>> +maintainers:
+>>>>> +  - Alim Akhtar <alim.akhtar@samsung.com>
+>>>>> +
+>>>>> +description: |
+>>>>> +  This is a system control registers block, providing multiple low
+>>>>> +level
+>>>>> +  platform functions like board detection and identification,
+>>>>> +software
+>>>>> +  interrupt generation.
+>>>>> +
+>>>>> +properties:
+>>>>> +  compatible:
+>>>>> +    oneOf:
+>>>>
+>>>> No need for oneOf.
+>>>>
+>>> Removing this results into dt_binding_check error, so this is required.
+>>
+>> No, this is not required. You do not have more than one condition for oneOf.
+>>
+> Oh, ok I got it. I was not removing "-" before items, which is resulting an error. I will update this in next patch series. Sorry for confusion.
+>>>>> +      - items:
+>>>>> +          - enum:
+>>>>> +              - tesla,sysreg_fsys0
+>>>>> +              - tesla,sysreg_peric
+>>>>
+>>>> From where did you get underscores in compatibles?
+>>>>
+>>> I have seen in MCAN Driver <drivers/net/can/m_can/m_can_platform.c>
+>> and also too many other yaml files.
+>>> Do you have any ref standard guideline of compatible which says
+>> underscore is not allowed.
+>>
+>> git grep compatible arch/arm64/boot/dts/exynos/ | grep _ git grep
+>> compatible arch/arm/boot/dts/exynos* | grep _
+>>
+>> Both give 0 results. For few other SoCs there such cases but that's really,
+>> really exception. Drop underscores.
+>>
+> git grep compatible arch/arm64/boot/dts/ | grep _ | wc -l 
+> This gives me 456 location, am I missing anything here ?
 
- [  272.075275] Error: Driver 'exynos4-fimc' is already registered, aborting...
- modprobe: ERROR: could not insert 's5p_fimc': Device or resource busy
+You mean entries like this:
 
-The reason is that fimc_md_init() returns platform_driver_register()
-directly without checking its return value, if platform_driver_register()
-failed, it returns without unregister fimc_driver, resulting the
-s5p_fimc can never be installed later.
-A simple call graph is shown as below:
+arch/arm64/boot/dts/qcom/pmm8155au_1.dtsi:		compatible =
+"qcom,pmm8155au", "qcom,spmi-pmic";
 
- fimc_md_init()
-   fimc_register_driver() # register fimc_driver
-   platform_driver_register()
-     platform_driver_register()
-       driver_register()
-         bus_add_driver()
-           dev = kzalloc(...) # OOM happened
-   # return without unregister fimc_driver
+or this:
 
-Fix by unregister fimc_driver when platform_driver_register() returns
-error.
+arch/arm64/boot/dts/microchip/sparx5_pcb135_board.dtsi:		compatible =
+"gpio-leds";
 
-Fixes: d3953223b090 ("[media] s5p-fimc: Add the media device driver")
-Signed-off-by: Yuan Can <yuancan@huawei.com>
----
- drivers/media/platform/samsung/exynos4-is/fimc-core.c | 2 +-
- drivers/media/platform/samsung/exynos4-is/media-dev.c | 6 +++++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
+or this:
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-core.c b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-index 91cc8d58a663..1791100b6935 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-@@ -1173,7 +1173,7 @@ int __init fimc_register_driver(void)
- 	return platform_driver_register(&fimc_driver);
- }
- 
--void __exit fimc_unregister_driver(void)
-+void fimc_unregister_driver(void)
- {
- 	platform_driver_unregister(&fimc_driver);
- }
-diff --git a/drivers/media/platform/samsung/exynos4-is/media-dev.c b/drivers/media/platform/samsung/exynos4-is/media-dev.c
-index a0367f8cb9ec..0ccd877338aa 100644
---- a/drivers/media/platform/samsung/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/samsung/exynos4-is/media-dev.c
-@@ -1586,7 +1586,11 @@ static int __init fimc_md_init(void)
- 	if (ret)
- 		return ret;
- 
--	return platform_driver_register(&fimc_md_driver);
-+	ret = platform_driver_register(&fimc_md_driver);
-+	if (ret)
-+		fimc_unregister_driver();
-+
-+	return ret;
- }
- 
- static void __exit fimc_md_exit(void)
--- 
-2.17.1
+arch/arm64/boot/dts/intel/socfpga_agilex.dtsi:			compatible = "fixed-clock";
+
+And how many compatibles are with hyphen, not underscore?
+
+Best regards,
+Krzysztof
 
