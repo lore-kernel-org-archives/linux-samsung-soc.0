@@ -2,116 +2,122 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FAE0C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Nov 2022 08:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F2AC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Nov 2022 08:27:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236209AbiKNIIn (ORCPT
+        id S236475AbiKNI1a (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Nov 2022 03:08:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59176 "EHLO
+        Mon, 14 Nov 2022 03:27:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236231AbiKNIIi (ORCPT
+        with ESMTP id S236435AbiKNI1U (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Nov 2022 03:08:38 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45C1B1A049
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Nov 2022 00:07:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668413260;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Sc3OD/33LVOTPB4+NFeZBiaw904aPGsKctdDvYBcdUs=;
-        b=YR0p0aO6PVrPvwqwxzudxf94hsi3yofHzoRfbY8JbG01dVV0/scqVKqgh49jK6hpM+BYz4
-        Co22oExnbEtoOLcVIInCtbDjyASnQyMNHVGa4yKKU//3r5EWGiz/oUDXZJlXzWZWvXL+Ar
-        lYkkEN7lo3Q3NMUz9LEXiRWWu0hA3sE=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-302-hM51ijWIPmuxmGY6ZcqZow-1; Mon, 14 Nov 2022 03:07:38 -0500
-X-MC-Unique: hM51ijWIPmuxmGY6ZcqZow-1
-Received: by mail-wr1-f70.google.com with SMTP id s11-20020adfbc0b000000b0023659af24a8so1743148wrg.14
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Nov 2022 00:07:38 -0800 (PST)
+        Mon, 14 Nov 2022 03:27:20 -0500
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41FB51AF02
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Nov 2022 00:27:18 -0800 (PST)
+Received: by mail-io1-xd2f.google.com with SMTP id z3so7631289iof.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Nov 2022 00:27:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mmp1dYQCbZLGOPjiM2VzGz3cHY77hSYHeqQM7i6gYwU=;
+        b=pP2VMtbFMeWnVX6GpnQ/REv1U4873cMuvb+A5Xt16esbTDwV6k7EOk+Whl9RhAI2VS
+         V6ZqKgYBpWwp79cNQT3ivYrBfr89Vxob1V11IqGwvrN0UrB9dLkRRGo/n2Z7gI5O020D
+         mSWMnR8tY+l9tNHYR8+0DL1ZFCUBlSuWoK8wQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sc3OD/33LVOTPB4+NFeZBiaw904aPGsKctdDvYBcdUs=;
-        b=Vtv1NEVTSibR1DtadwKb/tpNLkhekJToC4QpGFdDNqSOXh/LeOlWa2p6mVSpMDapQX
-         ihKCHPD61WPgTurjTM7srgm2FAL9Iw1XkpnKt0KuB/u6onED/WvmvFMPRPlDU4F0JODh
-         kzKurCEsxa8HtVKgq7ov+jqLR/IB0+3RmmvcAQUt1ojsaxsMqzwFkqpwufRMTmq+qO7C
-         Q2vQl5SIEX9NW1wVl7Uh0oDcJ27R7EfoIcTzqqNxh9thuTIfv+Ph1bZBVhHBRycz05Js
-         AWUGiAF69Rn8jRA3fROeLHHXtejZ2OBx0nIkS1sUl+RSzigTmIPho+ii5rX/+Lg9evzK
-         aXUg==
-X-Gm-Message-State: ANoB5pmZOnodcGiR1dT1X8D1WOxn9P/cEjEOeIcffB9jscRn+XzlY3L6
-        GbVLTWEVBfW9LzUlvau4TtRiHa+aqh+OUO00JBh1qaOcSIvY/nBXlkS/2XT9l1jsbG7gfl/c58s
-        SEFdvHlKN7cHSgu1iHKBlu/Ep2LwIhF0=
-X-Received: by 2002:a5d:4575:0:b0:236:6e4b:8c2 with SMTP id a21-20020a5d4575000000b002366e4b08c2mr6336353wrc.545.1668413257327;
-        Mon, 14 Nov 2022 00:07:37 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf7nVXgU/8Jv+xzckTpvD06sshk0g6lWh6ohMy1bXzH3vi7keYGWVfIARGixyNY+Rc8WvFWGhQ==
-X-Received: by 2002:a5d:4575:0:b0:236:6e4b:8c2 with SMTP id a21-20020a5d4575000000b002366e4b08c2mr6336334wrc.545.1668413256954;
-        Mon, 14 Nov 2022 00:07:36 -0800 (PST)
-Received: from ?IPV6:2003:cb:c703:d300:8765:6ef2:3111:de53? (p200300cbc703d30087656ef23111de53.dip0.t-ipconnect.de. [2003:cb:c703:d300:8765:6ef2:3111:de53])
-        by smtp.gmail.com with ESMTPSA id g11-20020a5d540b000000b0022cdeba3f83sm8798705wrv.84.2022.11.14.00.07.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Nov 2022 00:07:36 -0800 (PST)
-Message-ID: <f233f77b-a065-37aa-e2fb-5b92899dd13b@redhat.com>
-Date:   Mon, 14 Nov 2022 09:07:34 +0100
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mmp1dYQCbZLGOPjiM2VzGz3cHY77hSYHeqQM7i6gYwU=;
+        b=ac1wM8aFfWyL/RVHV8a1THyfzprW2YI2h/Q/9F79/AgymQ+0eR13Rahnm29veVGGi3
+         b7X5XDu+3KGvdHs5C5/XAndWe5iUHZCNkkrgX6PtxsT0uaIRsHsWhpV4ANyOYFIvSUmy
+         mVj5PZvghTn7CQFNmRQTdWP92i4SC+AxAf/eqkQ9AJ7/+6wlfxKmIsXEaFDT+hOnm2Cl
+         2j4sF29eWsv/ufRd1iitbSxxuQM7bRJ2DHk2cw9KE++WnDHmv+pvM9jmJpr8ObdvfrEr
+         NpGlBFs/dKojOQKkC3OwiZkzHztko6WxZNmQr+BkJ/MUel7GMv8cdo0/5s6AlW030xeh
+         p8gg==
+X-Gm-Message-State: ANoB5pms5KQEjZ3mdrfWC+Cwa2FY31xcFhPA8HxEL/bqqVuvqCeYUC7s
+        NEhbxCUpRGgOYDeEJtHVxLK0RNP9JwcZ34VqZpXl1Q==
+X-Google-Smtp-Source: AA0mqf4CJNi/WT6y/nKg/6/MbojI99gy2fNilUDmZmqOZVGq3dUI3+Z3OCdc4F9z5LpkCdp5KzydLeE67p8aNZ/vyQ8=
+X-Received: by 2002:a6b:b7c6:0:b0:6d6:bff5:bbdf with SMTP id
+ h189-20020a6bb7c6000000b006d6bff5bbdfmr5126103iof.156.1668414437562; Mon, 14
+ Nov 2022 00:27:17 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH RFC 00/19] mm/gup: remove FOLL_FORCE usage from drivers
- (reliable R/O long-term pinning)
-To:     Christoph Hellwig <hch@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
+ <20221110183853.3678209-3-jagan@amarulasolutions.com> <19761b19-72ac-249a-05f3-d99e27733ae0@denx.de>
+In-Reply-To: <19761b19-72ac-249a-05f3-d99e27733ae0@denx.de>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 14 Nov 2022 13:57:06 +0530
+Message-ID: <CAMty3ZAAYnDyWpZSmq2MRk2SHg7Oi2wUuA83K1Zno2WnrLPaJA@mail.gmail.com>
+Subject: Re: [PATCH v8 02/14] drm: exynos: dsi: Properly name HSA/HBP/HFP/HSE bits
+To:     Marek Vasut <marex@denx.de>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        David Airlie <airlied@gmail.com>,
-        Oded Gabbay <ogabbay@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-References: <20221107161740.144456-1-david@redhat.com>
- <CAHk-=wj51-dtxf8BQBYP+9Kc3ejq4Y0=-6hCbf_XAnkT3fsgDQ@mail.gmail.com>
- <Y3HaGbPcGfTxlLPZ@infradead.org>
-Content-Language: en-US
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <Y3HaGbPcGfTxlLPZ@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14.11.22 07:03, Christoph Hellwig wrote:
-> On Mon, Nov 07, 2022 at 09:27:23AM -0800, Linus Torvalds wrote:
->> And I'd really love to just have this long saga ended, and FOLL_FORCE
->> finally relegated to purely ptrace accesses.
-> 
-> At that point we should also rename it to FOLL_PTRACE to make that
-> very clear, and also break anything in-flight accidentally readding it,
-> which I'd otherwise expect to happen.
+On Sun, Nov 13, 2022 at 5:55 AM Marek Vasut <marex@denx.de> wrote:
+>
+> On 11/10/22 19:38, Jagan Teki wrote:
+> > HSA/HBP/HFP/HSE mode bits in Exynos DSI host specify a naming
+> > conversion as 'disable mode bit' due to its bit definition,
+> > 0 = Enable and 1 = Disable.
+> >
+> > Fix the naming convention of the mode bits.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> >   drivers/gpu/drm/exynos/exynos_drm_dsi.c | 16 ++++++++--------
+> >   1 file changed, 8 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > index b5305b145ddb..fce7f0a7e4ee 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > @@ -75,10 +75,10 @@
+> >   #define DSIM_MAIN_PIX_FORMAT_RGB565 (0x4 << 12)
+> >   #define DSIM_SUB_VC                 (((x) & 0x3) << 16)
+> >   #define DSIM_MAIN_VC                        (((x) & 0x3) << 18)
+> > -#define DSIM_HSA_MODE                        (1 << 20)
+> > -#define DSIM_HBP_MODE                        (1 << 21)
+> > -#define DSIM_HFP_MODE                        (1 << 22)
+> > -#define DSIM_HSE_MODE                        (1 << 23)
+> > +#define DSIM_HSA_DISABLE             (1 << 20)
+> > +#define DSIM_HBP_DISABLE             (1 << 21)
+> > +#define DSIM_HFP_DISABLE             (1 << 22)
+> > +#define DSIM_HSE_DISABLE             (1 << 23)
+>
+> Those four bits are called Hxx_DISABLE_MODE in the MX8M{M,N,P}RM at
+> least, so keep both suffixes .
 
-Good idea; I'll include a patch in v1.
+Okay, I will update the suffixes.
 
--- 
-Thanks,
+>
+> A separate patch which turns those bits to BIT() macro would be nice.
 
-David / dhildenb
+I plan to do this conversion for all bits once this basic patchset
+merges. I hope it is okay with it.
 
+Jagan.
