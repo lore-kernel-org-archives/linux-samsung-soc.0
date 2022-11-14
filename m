@@ -2,54 +2,57 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 862EEC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Nov 2022 08:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 113DDC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Nov 2022 08:47:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235948AbiKNImC (ORCPT
+        id S235899AbiKNIrv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Nov 2022 03:42:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58872 "EHLO
+        Mon, 14 Nov 2022 03:47:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229933AbiKNImC (ORCPT
+        with ESMTP id S236612AbiKNIrl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Nov 2022 03:42:02 -0500
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2095.outbound.protection.outlook.com [40.107.21.95])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38CA12FE
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Nov 2022 00:42:01 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Yqz7HAbk3wYFDSmvmFFgCfT/k5/Lwt94ifBm7pVcnAmQHLWl6ZunBnybtPs3gG+IQmjE7dNq0WtaF79cfxxYVL3LniSPLRbLqF/NDnoOOZf3QJ0sGAj3nY3SWdtD5KUfZtmDS2nlD7VNRPNsYxRF9AaNhzeG6l+q7HkHXdgTa85Y9WyzjwfdqFyWjCC8/txQbzaan28tn31Jm/Oqtb0W6AB9OnlEeLyMChVAQmjJiI7dy2olBFU8r32LDFjUPEWzZIZwGkhVyv8YXF2j3kcOKdAWriLc6v7X7R+fnSEqmibI4LABdIEqGRCMrzlwHHGCZl7hbOE9Sr8Dedk9yGciUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BgVeKHC/gI6LYrPDTckMM3d4ld7fkhuwXz4UW7CrfEw=;
- b=LrbWX0w+QXeUCZrYVAjUchnMVCe0giS/9sl0lt/AD6wDj/XdZUdpuZoBcoTgHTKAgFWuo7FuO3uccmb1neufoJHpNCv1nm6mV5I1Pra0k8UlRhrIkJK117pwKCkIddssO8a/h2G0fTWHPiHpRquULxIERy/LmAQbGnZxZAp271ygbUgOCSFk8mqGdQGtumTUkUzH9QW6cHBjjjWFWXhhLuiIjsWmOrrggk3TaHLUpz8Yh1THu12oxLIe2YWUonAA9nakKEfAt7PdOXO7EGX8a42cmp6CNch71lfgay2fA5Qcn8GcvzdHnYJbaXHquzEcT5uXQROiM37FhmIO/wdnfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
- dkim=pass header.d=kontron.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mysnt.onmicrosoft.com;
- s=selector2-mysnt-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BgVeKHC/gI6LYrPDTckMM3d4ld7fkhuwXz4UW7CrfEw=;
- b=HGAdUNQgqoJMv+b93ac+Gu5LV0hH7nlecHjq3ZeG62V8DpRbHyRoPLMQFAI7UHlpSS+VPOT785E1znvJsDM+nCy2SSSzaklxGNOe/y5rVvcHGmN2H80ROYgCXUVPtvm73WY2TWoOrpYYQccjYoaAWgY201QW9OBzv+HGIy4sY5w=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kontron.de;
-Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::10)
- by AS4PR10MB6134.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:585::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.17; Mon, 14 Nov
- 2022 08:41:58 +0000
-Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::f209:bc86:3574:2ae6]) by PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::f209:bc86:3574:2ae6%5]) with mapi id 15.20.5813.017; Mon, 14 Nov 2022
- 08:41:58 +0000
-Message-ID: <abfb3397-a0b4-ce31-3b49-172d8256bee1@kontron.de>
-Date:   Mon, 14 Nov 2022 09:41:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
+        Mon, 14 Nov 2022 03:47:41 -0500
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBBD81C924
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Nov 2022 00:47:40 -0800 (PST)
+Received: by mail-il1-x12e.google.com with SMTP id o13so5386593ilc.7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Nov 2022 00:47:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vQZaGyGGRMG9WSnxx0EKgQyP34O/zWxUK3kr2RIAKt8=;
+        b=m3Ypy7jgqA7HJ9d03+D79kNjn4LqBSbI1ZO72wNhweOHOKxwJ5xgtLNQx8zsqXpziZ
+         cHaEix1EjrZKwkv9ovN3KJlQapuaDvkifJk0Q21Q+h1B9sy09P7NhQSsZO+hONpGmZhP
+         NJhdDokKiIab2LPAaegj09Usq+SKIkLga/FdA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vQZaGyGGRMG9WSnxx0EKgQyP34O/zWxUK3kr2RIAKt8=;
+        b=H0zzDYVHHdglT0tpUXC/s+BLI0fm5ouFXDvbDn9rfyyymAGeAF1KDR9ub2NEfPyY4c
+         rhkguEiGfCYeM3VnbpoMJWA/1Gbq0tVAOjDGyg2WlAMmCqWtHIZJ/nNjbZa73Us+TgM9
+         f0mdk+hxD5lPDTCqiAeiqdBoaVBWYOE/8GlC0lHFDvXfFiRDkEOUL84EQ2i5QfbLwKK3
+         S/67WNnC2BQCB2eiWtgKAcB6v6ackN5Fj+Qq9opG2x4gejKN/5kiwUm7FBOc8sO5TOoN
+         SEZVKiOCDTK/4+QtVZE8hVy/eQtgq7ALpwr2SG9eEsZ3s8hoJVWF7z6P34Mfqioyab5T
+         Xzyw==
+X-Gm-Message-State: ANoB5pnq2sSaNAIJir1EZXC60IhVBNH/ZpBycgoVEHuHBS24Ke6rNWEH
+        Kt6qmM3xPVPzW4s0de/gsnNhxESBC8Ka2EYklkcxdQ==
+X-Google-Smtp-Source: AA0mqf6GVlTdNStkdafmYuPoOe6C9UIZRwut/dQ2SxahOodAVWaxTbIKNBB/R2sQ7J7EZ4sAvFSSNLxReqypBpNsYo8=
+X-Received: by 2002:a05:6e02:1a4b:b0:302:43b8:d42f with SMTP id
+ u11-20020a056e021a4b00b0030243b8d42fmr5359490ilv.64.1668415660226; Mon, 14
+ Nov 2022 00:47:40 -0800 (PST)
+MIME-Version: 1.0
+References: <20221110183853.3678209-1-jagan@amarulasolutions.com> <abfb3397-a0b4-ce31-3b49-172d8256bee1@kontron.de>
+In-Reply-To: <abfb3397-a0b4-ce31-3b49-172d8256bee1@kontron.de>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 14 Nov 2022 14:17:29 +0530
+Message-ID: <CAMty3ZCcm8nPrP+0z6AVkN7TK3OEeDDdUogQuEpr8gKt0x+vSw@mail.gmail.com>
 Subject: Re: [PATCH v8 00/14] drm: bridge: Add Samsung MIPI DSIM bridge
-Content-Language: en-US
-To:     Jagan Teki <jagan@amarulasolutions.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
+To:     Frieder Schrempf <frieder.schrempf@kontron.de>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Joonyoung Shim <jy0922.shim@samsung.com>,
@@ -63,101 +66,42 @@ To:     Jagan Teki <jagan@amarulasolutions.com>,
         Robert Foss <robert.foss@linaro.org>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Marek Vasut <marex@denx.de>
-Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
+        Marek Vasut <marex@denx.de>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
         dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>
-References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
-From:   Frieder Schrempf <frieder.schrempf@kontron.de>
-In-Reply-To: <20221110183853.3678209-1-jagan@amarulasolutions.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR10CA0013.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:208:17c::23) To PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:102:263::10)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR10MB5681:EE_|AS4PR10MB6134:EE_
-X-MS-Office365-Filtering-Correlation-Id: 55d7c0ab-5c1d-43a5-aa74-08dac61c17cc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: J8Eq8rNysgEjGv6J3k+4GISX1D4ul/y4LlBAUf/ETt4qRziR832VEnqJiUyPyN14J6OMymHY6I6+AhcWHH6OcUzDSmutuycm55OHwoI2TodXJACjpI4wbxIR0NamXkI9d4y9E88dGeDhAeoF50BwXCHKxNSfKtIDXm0Ka6dTYN99OWPpr3RcG1XcQeKVpaUt78JEdY6//skV6eTTOXn1OGgOW3T1QaZ/5AS3dfchqo2IyRjFHa+hd3CwMdMX+/PkrvxMoYbX50N9xUwxy9/n4sPwCg+OGm0C5xOHF6u5Mj03SjjEX8ktZ0mY703LSNQtnIcLWZfGAUF1vCGAV+Whi3GPtYmc6HceIyQI825JpIR2gy81glMDpYIsuXh8p20iubkQTA097cMPke7CHxEE557Yak/rGLAtqkVP/3YBSZQ7RGr1zfaTAHQyfrJWyXp5dkarq4uqTODMi+8qAH+NbTSZP8cbC7Jzkgaxo1IfSWvnjIpZ1Vyrl34mLuzBIaGjHFtTOakdZVG6rPSNOhSghfM61tBLIIr1wd6rSR1In3hEeAZ1DTWFc7X+Y+/JTydIgpbG8ycOMgnVhEpmbKs5YxLuEkHSoXGARC4zR0tHtquR/P6wWY8rHBYMq11P7ALoYVjY0YKJsFDDI571z1oCEq+gctxDRgFzL4qlE8MpNXAD/fiB/Xe5GI+Z4aJgIGJ1Lf7l5xUbJfV8UfVBBRlobs2vEr98m8XSWDCiNjIcr5eqS+uETCf36kszIhIu+bcl/CI8ljjVgvnbeaEW16bDroPq0E2/bGDZ+ChGzS5DJyfLomsJbrMIAY9IugAh6YIA
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(39860400002)(396003)(346002)(376002)(366004)(451199015)(186003)(44832011)(83380400001)(66556008)(36756003)(66946007)(2906002)(66476007)(110136005)(54906003)(8676002)(2616005)(6486002)(4326008)(316002)(26005)(6512007)(8936002)(921005)(7416002)(38100700002)(5660300002)(4744005)(86362001)(6506007)(53546011)(31696002)(31686004)(41300700001)(478600001)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SXMxOFo1RDV3TE9kVWUvOXRNelAvRkR2SEpVSm9TWGRxMmdOTDBra0VxUGpZ?=
- =?utf-8?B?TjNNUEFwaVlLSUdodWdCNFNyeGVGRW92d2NibFJENTZkTGlYbEtJalB5a1Fo?=
- =?utf-8?B?OGlESEpRbVJDMTM1dWh1MUswVU5qV25BVEROWTA1SzBsUDZFYXZaNm93aHZQ?=
- =?utf-8?B?VFBkdy9HdmNUNTF0UUs4MERyRVpHNUN0STJQQjRCd1hhZVBiZjcwNWYxSk41?=
- =?utf-8?B?cXFtNVZzakRnS1E3ZTUrdkNDQnNncUlXblcrSlljSFVOTWhsbVQ0ZEtLS01n?=
- =?utf-8?B?NmJGMXVUWllZOGgzczJnK2d0K0VGcE9NSTY4dnFaeWRDY2ZUUlpJMXk1UEdG?=
- =?utf-8?B?S2hqUHV2dDEzQnZUMnlINlJ0N3hCeTVXSCtnK3V5UjY2d3plR3NIY3k0UUFZ?=
- =?utf-8?B?bjU1cS9tTTRaMHJJaEp0NWQ0SW1rbTdRdXczcFBieDRhVmx1SW45QXNsYnNk?=
- =?utf-8?B?NFlnTDdkRU55dGRSWDFYaUhjeGhsenA3bjJDL0x2Yzh3OHJ5OEFtdEF2a2dI?=
- =?utf-8?B?Qm5DTzl1elJKODFETkZ1c21FMmhzV0RCK2VNYTNtWlZUOGdpQ2Qwc3k4MU03?=
- =?utf-8?B?aWJrR0FGUEYwTklka0ZDR1FKQ3NjQ0hzclBuTk9vMXcwdWc4ZTBESmc5bzYv?=
- =?utf-8?B?ZlEwRjJNbGRSTHlvTHNvQ2UyWXJrVVFad0VwYnB3VmR1MWlnbXN0RUJCdytI?=
- =?utf-8?B?cU5wNjA3Z0xsT3RXUnVUemFENC8rZ3VTVmF2cHFOd2paUUZSUHJDMHlEK3dn?=
- =?utf-8?B?Ti9PWG1iSEdaVUpRRnlkd1M2U1Y1QXNaNSthb0hmdU5CdGRCM1A4Rm9ZTWZN?=
- =?utf-8?B?djJDaTBtWUEvZkZxVDVFQmlnK2tSVXZWcGR2YlVmR2VMbWEzYTYxUFlNOEJX?=
- =?utf-8?B?Q3dIN2U2dm15OU5zWFRWVHd6TlVKbzdRc3JNWTM1b0YySzUxUmRGM3hkM1Q3?=
- =?utf-8?B?b0kyR096cStYYjB0VXlaTndIaEwyeklVTGZSeUhPVWxuZTM3V0JzdDhkbUZW?=
- =?utf-8?B?NVlzUEZGZm1kY1hNSjQyN0RCdHV4RXJGNGhrcGhLYzFOZkR2QWE3MzZRVXZ2?=
- =?utf-8?B?NTBhVnB1MFBvYk9KS1hHUWhGbDFQUlFFNndtR2tjMW5leFB5b3UyOVp2aFJm?=
- =?utf-8?B?c3N2ZlNxZU4yUjVsTkhsdTRkUHdka0xyM2Z2TXkzN3NuaXZKZWRLOEpRb1pj?=
- =?utf-8?B?VUc4bnpKdjk1ZjQzV255YWNKVzNUcmZ3UmlJNkN3SDB4c2pOV1ZEaGloQ1BD?=
- =?utf-8?B?bnllN1crei9aZTNDeUJCbTNOVEJEUFM5WGpobldGRDU4ZGI1a09BUklGR21M?=
- =?utf-8?B?cElOa1N6ckJVMjVJU2Ywc3g2RnZ4bVV0YW4wT3Y1RjhWeEF4azRrcE05V1Fx?=
- =?utf-8?B?QjB1Y2JBQVgvYnpmRjhCaHdYaWlsZnpvL0FRL1dGM24rUVdsUVhPNnYrQzFN?=
- =?utf-8?B?QjV5bHB3R3QxcVdiTklDMzJzSUhROXcwT1RQUjlpRkRHVEF1SnN2UXZ0SDdw?=
- =?utf-8?B?azAzQlhINVd2MXhRY25XclhJRGhlZGMvMU84dmhBR0NBd3FqK01XRjU0L2Fj?=
- =?utf-8?B?T2cxQ1h0aFpZdDFnQVBCajRtY0JHSkZQOHZHQ0ZoOTR3MDhLTi81dGR6eXZQ?=
- =?utf-8?B?MjRNZmJ1U0dQWXNWWWFlRUhoWTZuSzZNTmc1RDQxcVNwa2hsQ2RYM0NqL2Fq?=
- =?utf-8?B?dDlMRXcvYnFUQ3Y0bWZhL0ZYZ3EydVMxbE9rRVB1OUlHQUplNUdidkUvUmFN?=
- =?utf-8?B?Rkl2Z1VTOFE5NDdzVXV3cEU1VTUzcGxLbDI4UE83cW5FZjgxa0RnUXNMTDZQ?=
- =?utf-8?B?azJScDNrdk4yRDNPTkR4YVA4VlhmVDlEMlV0akJHSFNBOHVydjEyZ00wcnYz?=
- =?utf-8?B?M1R5Z1lFZXN2dUdCNnh4c3NUcXFvL3lWZmhzVzNVRUFaa2phcWlVQ0JXL1N3?=
- =?utf-8?B?UEt5Z0g2WmhFQXZHcGs3Y0FhZkd0NVF3NXFpODBRcEovcHZFNm9LWkZqM2V1?=
- =?utf-8?B?WXJhdUwxRzZwbzNSZW4xb3FZaCtSaWlYMndyT3ZHYnJzTWVzak1HekFJR1N0?=
- =?utf-8?B?Qmwwakh5YWhhajBMN2thTVZJbUIxays5K0FyWWIrcWVFaEVGZWFKWUJJU3Yx?=
- =?utf-8?B?RDBHT2dIK1cxaEljcksyVnMrcXlxeHBjZlQyWkNhYUtHOTZMSDFzRlBRUml2?=
- =?utf-8?B?WlE9PQ==?=
-X-OriginatorOrg: kontron.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55d7c0ab-5c1d-43a5-aa74-08dac61c17cc
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2022 08:41:58.8269
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0sciVNjavcxEohRw9pZdpALVGlAyCu+en4dJHyExJc2faMEBHx0gRqWFGAQE1pqVDJPLqnYfOms+jUl44wnt/7GrbrIu9zvfhEctbdJDq7E=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB6134
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Jagan,
+Hi Frieder,
 
-On 10.11.22 19:38, Jagan Teki wrote:
-> This series supports common bridge support for Samsung MIPI DSIM
-> which is used in Exynos and i.MX8MM SoC's.
-> 
-> The final bridge supports both the Exynos and i.MX8M Mini/Nano/Plus.
-> 
-> Changes for v8:
-> * fixed comment lines
-> * fixed commit messages
-> * fixed video mode bits
-> * collect Marek Ack
-> * fixed video mode bit names
-> * update input formats logic
-> * added imx8mplus support
+On Mon, Nov 14, 2022 at 2:12 PM Frieder Schrempf
+<frieder.schrempf@kontron.de> wrote:
+>
+> Hi Jagan,
+>
+> On 10.11.22 19:38, Jagan Teki wrote:
+> > This series supports common bridge support for Samsung MIPI DSIM
+> > which is used in Exynos and i.MX8MM SoC's.
+> >
+> > The final bridge supports both the Exynos and i.MX8M Mini/Nano/Plus.
+> >
+> > Changes for v8:
+> > * fixed comment lines
+> > * fixed commit messages
+> > * fixed video mode bits
+> > * collect Marek Ack
+> > * fixed video mode bit names
+> > * update input formats logic
+> > * added imx8mplus support
+>
+> Did you miss to collect all the Tested-by tags from v7, or did you drop
+> them deliberately?
 
-Did you miss to collect all the Tested-by tags from v7, or did you drop
-them deliberately?
+Few changes in v8 compared to v7, so I've not picked these tags as code changes.
 
-Best regards
-Frieder
+Jagan.
