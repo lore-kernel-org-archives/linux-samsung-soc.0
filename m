@@ -2,315 +2,113 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26967C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Nov 2022 09:21:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 408F1C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Nov 2022 09:38:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229698AbiKOJVL (ORCPT
+        id S232405AbiKOJiT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Nov 2022 04:21:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49988 "EHLO
+        Tue, 15 Nov 2022 04:38:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbiKOJVK (ORCPT
+        with ESMTP id S232197AbiKOJiS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Nov 2022 04:21:10 -0500
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 587EC1F4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Nov 2022 01:21:08 -0800 (PST)
-Received: by mail-il1-x134.google.com with SMTP id i5so7081425ilc.12
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Nov 2022 01:21:08 -0800 (PST)
+        Tue, 15 Nov 2022 04:38:18 -0500
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E714C1A065
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Nov 2022 01:38:16 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id c1so23539098lfi.7
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Nov 2022 01:38:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eTHlNx224MYgFGEKj1x0yVtfV7nyotfOs7IW/rNlccw=;
-        b=AcKggX/DTb0H6fGM1GpPvvhxRgDRGi65XhhzCvvsKzwSKXA+Asuy2L2lcpXuWwMxVh
-         dt7mKVqoeSitG6PX0oJ3Gao69lZtzU7/HdnUO3AflrEXnXXzulVjsbWHMvCJ/6hfd37t
-         d96Pi5zSwqQ+JJL6oP3pB1vc4vd7GsXw78Ifw=
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ADm39rqyfjpSRfhU67zfC4NHD+8x5Nv/QWMyB5+FVho=;
+        b=kcuus02aGgmW9RkzhYkKs7RMlJRHKg8VOHIQIatQ1i8EC/xuDAJbqm45ZyPbIhC9Ap
+         npuhQU5jYW+JYFLsCPpKEoXkCoIRsWKg7vKqp8iIDcJWmrx3w2Q4qqtJ4yyjnAZuRFOY
+         2pIM0lLYTGb02zTnW9gSxEwhB/npVdozq4gMnVW5c7MHcFB+3+YKY4QH6S+L9VA/i0Ht
+         XOH9SpcjDs8Er1RNjWNpR3J3H1MyRSEuyuqFoJm8Jmo4mCMxcHnlltu5/MFFagzqMBrn
+         puQvAq4hXSKMZlClKPR7sRsKkyQYKGcrPydvZFUDdooeQT32MbozBfX6q+GRDdvN0ll2
+         IeDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eTHlNx224MYgFGEKj1x0yVtfV7nyotfOs7IW/rNlccw=;
-        b=WfE2H2P1ZcOwkq8OaEj3wPikGKJopkBJ2XG9N7IBe8M4XhRH0ECnUM/tTIZeDwOtAW
-         ltH09prwhqThy2LuTmQW5hXA2VUw9/VGn0ltRONRckaaLANgyeGZrATj6aJg5BeglGt8
-         jh7aXU8nNTrAFMah+pgky3LwKXykvgztiuw+mn1hoQFpM0dWZZzytNgUvap8AUgk1CLi
-         Jr3S4qm5yziUQDEuQsh7sxbOupjpjDIubX/fpvMzk/RVUapOQ9IbFH0pqq4WqXaf05QQ
-         EFQKaYGRNVyZVzKSH+hl/2ks51kDqGu6lGJFLg9JqAYNDbzqbdxucOKCZOFeWxeYi5JP
-         ttlA==
-X-Gm-Message-State: ANoB5pmMFDqJ1q/7qJyypzHwxai54nrsGs4WZRDpMtqVT0pyUtn7sKRB
-        lnad0WZ8n0D2r9IXJ4MCDPTdicpH51Bb3cZTtJc0kQ==
-X-Google-Smtp-Source: AA0mqf6NRX7+7kBngydA9jwxOk2aRKtJ5TZV3B8MNwAMo0KnJAUqd8O6aVaN2Ppz4Jc+6fAkUu9AFxwhd8D2/ysv30Q=
-X-Received: by 2002:a92:ce8f:0:b0:300:c63a:796c with SMTP id
- r15-20020a92ce8f000000b00300c63a796cmr7460695ilo.43.1668504067612; Tue, 15
- Nov 2022 01:21:07 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ADm39rqyfjpSRfhU67zfC4NHD+8x5Nv/QWMyB5+FVho=;
+        b=pXO/QNiRVHYkomiAoYV4f0YcJJv8UBXJLOgWHFA/+C+AwZJKU3E1Seba5ehBQdyScj
+         ywzrr63MnPqRUOI1QvtXQ7S6TWfNHmu749gyIcS0kiwxHLSz1UpPpembMFDhqESd6H8y
+         VhI/zbLPbgvLzowJR8JuBb6ypqQvTKDZE8Vw/za+jpj3l+KAwt9aSUk88T+9itsT5xf6
+         sy6xdXOE5OgPFoUvV9vyXE3n6a/m04uFsVuTpjoBlrczZhQ0SFy/YAC1C6BPBqqkS/MI
+         B0xEIizcBHgFg092S+rN7iUREExnxVdEU/b6rs9RhNfPpEJKRRX+iWSuhfxZTOfNhvdA
+         rzrA==
+X-Gm-Message-State: ANoB5pnmedQzk9nlvuK7l+PKU77rRYvNyxD5iGpWmi1kEbTy25qHO9gT
+        PihSbp77i/sluKx/Gsj6VzraRw==
+X-Google-Smtp-Source: AA0mqf7Nyn0t/l3gblajEa+AIkxJIRCjo0o6dQgQ3O9rpdPVmbthJxcjTjLs7LvfD6PkT2jTJuYOOg==
+X-Received: by 2002:ac2:4a8e:0:b0:4b3:b6db:8ca7 with SMTP id l14-20020ac24a8e000000b004b3b6db8ca7mr5333118lfp.590.1668505095302;
+        Tue, 15 Nov 2022 01:38:15 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id t14-20020a2e8e6e000000b0026bf0d71b1esm2415560ljk.93.2022.11.15.01.38.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Nov 2022 01:38:14 -0800 (PST)
+Message-ID: <6976d129-a274-f3a7-52fe-b26275a900cd@linaro.org>
+Date:   Tue, 15 Nov 2022 10:38:13 +0100
 MIME-Version: 1.0
-References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
- <CGME20221110184122eucas1p11379ff6b85cf9a66455a026259c93340@eucas1p1.samsung.com>
- <20221110183853.3678209-10-jagan@amarulasolutions.com> <b13635de-26ce-a8e8-e38e-13c49a99312d@samsung.com>
- <56cab7d0-d9fb-d890-0b1c-678980eafd9c@samsung.com> <CAMty3ZD_+m_3aj2-rXThaEDtP=m3Knfo=bmXvMPH_7LSf6N5qA@mail.gmail.com>
- <928ec100-83c0-cbfe-8005-ccf872538999@samsung.com> <4f9dd1bd-a5c8-c14a-fabd-bcc53406a4a9@kontron.de>
-In-Reply-To: <4f9dd1bd-a5c8-c14a-fabd-bcc53406a4a9@kontron.de>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 15 Nov 2022 14:50:56 +0530
-Message-ID: <CAMty3ZB-uxzTP0umnkhhdw1nBRYab_K+EdYheGmS_SO+v8dcBg@mail.gmail.com>
-Subject: Re: [PATCH v8 09/14] drm: bridge: samsung-dsim: Add atomic_get_input_bus_fmts
-To:     Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Marek Vasut <marex@denx.de>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH] clk: samsung: Revert "clk: samsung: exynos-clkout: Use
+ of_device_get_match_data()"
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        "Minghao Chi (CGEL ZTE)" <chi.minghao@zte.com.cn>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Vinod Koul <vkoul@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Mark Brown <broonie@kernel.org>
+References: <CGME20221108213728eucas1p2aa97d7925e280b7347bb9e76d3c9a177@eucas1p2.samsung.com>
+ <20221108213718.32076-1-m.szyprowski@samsung.com>
+ <0da15378-ca0d-4f26-c21c-184de2a89350@linaro.org>
+ <d4b49cb6-f7c1-e859-98a8-e78a132b421b@samsung.com>
+ <e6cf63f1-ec5f-e600-570d-70e933740f4b@linaro.org>
+In-Reply-To: <e6cf63f1-ec5f-e600-570d-70e933740f4b@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 15, 2022 at 2:18 PM Frieder Schrempf
-<frieder.schrempf@kontron.de> wrote:
->
-> On 15.11.22 09:09, Marek Szyprowski wrote:
-> > Hi Jagan,
-> >
-> > On 14.11.2022 18:07, Jagan Teki wrote:
-> >> On Mon, Nov 14, 2022 at 8:10 PM Marek Szyprowski
-> >> <m.szyprowski@samsung.com> wrote:
-> >>> On 14.11.2022 11:57, Marek Szyprowski wrote:
-> >>>> On 10.11.2022 19:38, Jagan Teki wrote:
-> >>>>> Finding the right input bus format throughout the pipeline is hard
-> >>>>> so add atomic_get_input_bus_fmts callback and initialize with the
-> >>>>> proper input format from list of supported output formats.
-> >>>>>
-> >>>>> This format can be used in pipeline for negotiating bus format betw=
-een
-> >>>>> the DSI-end of this bridge and the other component closer to pipeli=
-ne
-> >>>>> components.
-> >>>>>
-> >>>>> List of Pixel formats are taken from,
-> >>>>> AN13573 i.MX 8/RT MIPI DSI/CSI-2, Rev. 0, 21 March 2022
-> >>>>> 3.7.4 Pixel formats
-> >>>>> Table 14. DSI pixel packing formats
-> >>>>>
-> >>>>> v8:
-> >>>>> * added pixel formats supported by NXP AN13573 i.MX 8/RT MIPI DSI/C=
-SI-2
-> >>>>>
-> >>>>> v7, v6, v5, v4:
-> >>>>> * none
-> >>>>>
-> >>>>> v3:
-> >>>>> * include media-bus-format.h
-> >>>>>
-> >>>>> v2:
-> >>>>> * none
-> >>>>>
-> >>>>> v1:
-> >>>>> * new patch
-> >>>>>
-> >>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> >>>>> ---
-> >>>>>    drivers/gpu/drm/bridge/samsung-dsim.c | 53 +++++++++++++++++++++=
-++++++
-> >>>>>    1 file changed, 53 insertions(+)
-> >>>>>
-> >>>>> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c
-> >>>>> b/drivers/gpu/drm/bridge/samsung-dsim.c
-> >>>>> index 0fe153b29e4f..33e5ae9c865f 100644
-> >>>>> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
-> >>>>> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-> >>>>> @@ -15,6 +15,7 @@
-> >>>>>    #include <linux/clk.h>
-> >>>>>    #include <linux/delay.h>
-> >>>>>    #include <linux/irq.h>
-> >>>>> +#include <linux/media-bus-format.h>
-> >>>>>    #include <linux/of_device.h>
-> >>>>>    #include <linux/phy/phy.h>
-> >>>>>    @@ -1321,6 +1322,57 @@ static void
-> >>>>> samsung_dsim_atomic_post_disable(struct drm_bridge *bridge,
-> >>>>>        pm_runtime_put_sync(dsi->dev);
-> >>>>>    }
-> >>>>>    +/*
-> >>>>> + * This pixel output formats list referenced from,
-> >>>>> + * AN13573 i.MX 8/RT MIPI DSI/CSI-2, Rev. 0, 21 March 2022
-> >>>>> + * 3.7.4 Pixel formats
-> >>>>> + * Table 14. DSI pixel packing formats
-> >>>>> + */
-> >>>>> +static const u32 samsung_dsim_pixel_output_fmts[] =3D {
-> >>>>> +    MEDIA_BUS_FMT_UYVY8_1X16,
-> >>>>> +    MEDIA_BUS_FMT_RGB101010_1X30,
-> >>>>> +    MEDIA_BUS_FMT_RGB121212_1X36,
-> >>>>> +    MEDIA_BUS_FMT_RGB565_1X16,
-> >>>>> +    MEDIA_BUS_FMT_RGB666_1X18,
-> >>>>> +    MEDIA_BUS_FMT_RGB888_1X24,
-> >>>>> +};
-> >>>>> +
-> >>>>> +static bool samsung_dsim_pixel_output_fmt_supported(u32 fmt)
-> >>>>> +{
-> >>>>> +    int i;
-> >>>>> +
-> >>>>> +    for (i =3D 0; i < ARRAY_SIZE(samsung_dsim_pixel_output_fmts); =
-i++) {
-> >>>>> +        if (samsung_dsim_pixel_output_fmts[i] =3D=3D fmt)
-> >>>>> +            return true;
-> >>>>> +    }
-> >>>>> +
-> >>>>> +    return false;
-> >>>>> +}
-> >>>>> +
-> >>>>> +static u32 *
-> >>>>> +samsung_dsim_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
-> >>>>> +                       struct drm_bridge_state *bridge_state,
-> >>>>> +                       struct drm_crtc_state *crtc_state,
-> >>>>> +                       struct drm_connector_state *conn_state,
-> >>>>> +                       u32 output_fmt,
-> >>>>> +                       unsigned int *num_input_fmts)
-> >>>>> +{
-> >>>>> +    u32 *input_fmts;
-> >>>>> +
-> >>>>> +    if (!samsung_dsim_pixel_output_fmt_supported(output_fmt))
-> >>>>> +        return NULL;
-> >>>>
-> >>>> Please add support for MEDIA_BUS_FMT_FIXED and maybe default to
-> >>>> MEDIA_BUS_FMT_RGB888_1X24 if requested format is not matched.
-> >>>>
-> >>>> Otherwise the above check breaks all current clients of the Samsung
-> >>>> DSIM/Exynos DSI. I didn't dig into the bus matching code yet, but al=
-l
-> >>>> DSI panels requests such format on my test systems...
-> >>> I've checked a bit more the bus format related code and it looks that
-> >>> there are more issues. The DSI panels don't use the MEDIA_BUS_FMT_*
-> >>> formats thus the bridge negotiation code selects MEDIA_BUS_FMT_FIXED =
-for
-> >>> them. On Arndale board with Toshiba tc358764 bridge the
-> >>> MEDIA_BUS_FMT_RGB888_1X7X4_SPWG output_fmt is requested in
-> >>> samsung_dsim_atomic_get_input_bus_fmts() (forwarded from the LVDS pan=
-el,
-> >> dsim =3D> tc358764 =3D> panel-simple
-> >>
-> >> If I understand the bridge format negotiation correctly - If
-> >> atomic_get_input_bus_fmts is not implemented in tc358764 then
-> >> MEDIA_BUS_FMT_FIXED will be the output_fmt for dsim so we can assign
-> >> MEDIA_BUS_FMT_RGB888_1X24 for FIXED formats.
-> >>
-> >> from include/drm/drm_bridge.h:
-> >>
-> >>           * This method is called on all elements of the bridge chain =
-as part of
-> >>           * the bus format negotiation process that happens in
-> >>           * drm_atomic_bridge_chain_select_bus_fmts().
-> >>           * This method is optional. When not implemented, the core wi=
-ll bypass
-> >>           * bus format negotiation on this element of the bridge witho=
-ut
-> >>           * failing, and the previous element in the chain will be pas=
-sed
-> >>           * MEDIA_BUS_FMT_FIXED as its output bus format.
-> >>
-> >> As I can see tc358764 is not implemented either
-> >> atomic_get_input_bus_fmts or atomic API, so I think dsim gets the
-> >> MEDIA_BUS_FMT_FIXED bridge pipeline. I have tested sn65dsi without
-> >> atomic_get_input_bus_fmts I can see the dsim is getting
-> >> MEDIA_BUS_FMT_FIXED.
-> >>
-> >> Can you check the same from your side?
-> >
-> > Here in case of Arndale 5250 with the following pipeline:
-> >
-> > dsim =3D> tc358764 =3D> panel-simple (boe,hv070wsa-100 panel)
-> >
-> > the DRM core requests MEDIA_BUS_FMT_RGB888_1X7X4_SPWG format, taken fro=
-m the boe_hv070wsa panel (see from drivers/gpu/drm/panel/panel-simple.c). P=
-lease note that in case of Exynos, the reversed bridge chain order is used =
-for dsim, so this is another nasty consequence of that hack. :/
-> >
-> > Maybe if no compatible bus format is found, the driver should force
-> > MEDIA_BUS_FMT_RGB888_1X24 until a proper format negotiation is
-> > implemented and hacks removed?
->
-> For this specific case, wouldn't it be better to just fix the format
-> negotiation for tc358764 using atomic_get_input_bus_fmts()? It should
-> probably do the same as sn65dsi83 and request MEDIA_BUS_FMT_RGB888_1X24
-> from the DSI.
->
-> Forwarding the LVDS-specific format to the input is obviously the wrong
-> thing for the tc358764 driver to do.
->
-> But I agree, if there are other problematic pipelines with other
-> bridge/display drivers that don't pass a correct format, we should
-> accept them for now and fall back to a sane default
-> (MEDIA_BUS_FMT_RGB888_1X24) and fix the other drivers afterwards.
->
-> Let's not delay this series any further and better work on how to get it
-> merged before we miss another merge window.
+On 09/11/2022 10:14, Krzysztof Kozlowski wrote:
+> On 08/11/2022 23:53, Marek Szyprowski wrote:
+>> On 08.11.2022 22:44, Krzysztof Kozlowski wrote:
+>>> On 08/11/2022 22:37, Marek Szyprowski wrote:
+>>>> of_device_get_match_data() function should not be used on the device
+>>>> other than the one matched to the given driver, because it always returns
+>>>> the match_data of the matched driver. In case of exynos-clkout driver,
+>>>> the code matched the OF IDs on the PARENT device, so replacing it with
+>>>> of_device_get_match_data() broke the driver.
+>>>>
+>>>> This reverts commit 777aaf3d1daf793461269b49c063aca1cee06a44.
+>>> This was untested, automated commit and there were several other like
+>>> that from Minghao. Other driver owners should check if they have the
+>>> same issue. I made a quick look and seems fine, but it all depends what
+>>> was the of_device_get_match_data() argument.
+>>>
+>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> Please add Cc-stable tag. Do reverts need a Fixes tag? I guess as well...
+>>
+>> Do we really need a CC-stable tag? v6.1-rc1 is the first release that 
+>> contains that bug, so this revert imho should be simply applied as a fix 
+>> for v6.1-rcX cycle.
+> 
+> No, then it's fine.
+> 
 
-Agreed this point, here is the updated diff (on top of this patch) for
-falling back to the default format for those.
+I applied it.
 
-+++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -1387,6 +1387,8 @@ static const u32 samsung_dsim_pixel_output_fmts[] =3D=
- {
-        MEDIA_BUS_FMT_RGB565_1X16,
-        MEDIA_BUS_FMT_RGB666_1X18,
-        MEDIA_BUS_FMT_RGB888_1X24,
-+
-+       MEDIA_BUS_FMT_FIXED,
- };
+Best regards,
+Krzysztof
 
- static bool samsung_dsim_pixel_output_fmt_supported(u32 fmt)
-@@ -1412,7 +1414,13 @@ samsung_dsim_atomic_get_input_bus_fmts(struct
-drm_bridge *bridge,
-        u32 *input_fmts;
-
-        if (!samsung_dsim_pixel_output_fmt_supported(output_fmt))
--               return NULL;
-+               /*
-+                * Some bridge/display drivers are still not able to pass
-+                * the correct format, so handle those pipelines by falling
-+                * back to the default format till the supported format lis=
-t
-+                * gets finalized.
-+                */
-+               output_fmt =3D MEDIA_BUS_FMT_RGB888_1X24;
-
-        *num_input_fmts =3D 1;
-
-@@ -1420,7 +1428,14 @@ samsung_dsim_atomic_get_input_bus_fmts(struct
-drm_bridge *bridge,
-        if (!input_fmts)
-                return NULL;
-
--       input_fmts[0] =3D output_fmt;
-+       switch (output_fmt) {
-+       case MEDIA_BUS_FMT_FIXED:
-+               input_fmts[0] =3D MEDIA_BUS_FMT_RGB888_1X24;
-+               break;
-+       default:
-+               input_fmts[0] =3D output_fmt;
-+               break;
-+       }
-
-        return input_fmts;
-
-If all is okay, I will send v9 which would probably test it for the
-final version to merge.
-
-Thanks,
-Jagan.
