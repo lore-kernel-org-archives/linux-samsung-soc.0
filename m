@@ -2,549 +2,351 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEE6C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Nov 2022 10:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC5EC4167B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Nov 2022 10:53:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233571AbiKPKtW (ORCPT
+        id S238734AbiKPKxb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Nov 2022 05:49:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58186 "EHLO
+        Wed, 16 Nov 2022 05:53:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233650AbiKPKtE (ORCPT
+        with ESMTP id S238757AbiKPKxJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Nov 2022 05:49:04 -0500
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60416FAF9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 02:37:27 -0800 (PST)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20221116103722epoutp014f54a0d93b1ad37fee80234489cf4569~oClnKuscE2951429514epoutp01G
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 10:37:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20221116103722epoutp014f54a0d93b1ad37fee80234489cf4569~oClnKuscE2951429514epoutp01G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1668595042;
-        bh=2d2nToH+3CLmligaAbCbS+2i+xS+WtQiNEytigtIN7c=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=CThfVloz3i6hQcXOx6p/+6RsYxSWgC2WXcNenXszw7adetx6qS834nAgfIp1NHSCt
-         IZQ0P9nzC6P6b2ysBzURvSWlj86kuLeoqo4g1XRKs9xsT6Plj31SP2Wk3RNup8m30c
-         NqMB7E6oejRcQr5ND/HX5+4/fgnz2MdFbO23P6RM=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20221116103721epcas5p326929cd0d980c6de49ca6bbedf01092a~oClmCbrRr1961719617epcas5p3n;
-        Wed, 16 Nov 2022 10:37:21 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.178]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4NBzy7550rz4x9Pv; Wed, 16 Nov
-        2022 10:37:19 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FC.28.39477.F5DB4736; Wed, 16 Nov 2022 19:37:19 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20221116090644epcas5p3a0fa6d51819a2b2a9570f236191748ea~oBWeQC0x11719417194epcas5p3P;
-        Wed, 16 Nov 2022 09:06:44 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20221116090644epsmtrp2ac8ae7579660093a0a74b601ee0de9a8~oBWeO20s82745427454epsmtrp2h;
-        Wed, 16 Nov 2022 09:06:44 +0000 (GMT)
-X-AuditID: b6c32a4a-259fb70000019a35-e2-6374bd5f041c
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FA.11.18644.428A4736; Wed, 16 Nov 2022 18:06:44 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-        [107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20221116090639epsmtip278e51ffe96dffbb921c510fee2f04ebb~oBWZyneJz2996229962epsmtip2b;
-        Wed, 16 Nov 2022 09:06:39 +0000 (GMT)
-From:   Vivek Yadav <vivek.2311@samsung.com>
-To:     rcsekar@samsung.com, krzysztof.kozlowski+dt@linaro.org,
-        wg@grandegger.com, mkl@pengutronix.de, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        pankaj.dubey@samsung.com, ravi.patel@samsung.com,
-        alim.akhtar@samsung.com, linux-fsd@tesla.com, robh+dt@kernel.org
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        aswani.reddy@samsung.com, sriranjani.p@samsung.com,
-        ajaykumar.rs@samsung.com, Vivek Yadav <vivek.2311@samsung.com>
-Subject: [PATCH] arm64: dts: fsd: Change the reg properties from 64-bit to
- 32-bit
-Date:   Wed, 16 Nov 2022 14:42:47 +0530
-Message-Id: <20221116091247.52388-1-vivek.2311@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA0WTfUxTVxjGc+5HWzS4S3HzyMLATmckAi22eEDByRi5cW6wMCIuI6yUK2X0
-        y97WgWYRFvkDJkg3SBhf6xibATZwpXyIwLAw1EmkUzT4MUJlIIFGWKsITtxaL2z//d7nfZ88
-        Oe85R4ALe3gBgmyNgdFr5CoRbx3RMbBje2h6r0Ehbh3fgvrnLxJooq6Dh2xt7XxUM3KKQN8M
-        XiPR1NB9PiqdceDI3lFKIsvkLRI1PanAkWP2ELrRXcNDlSN9GGqtLyfQkPkVtHjVCVB9+yM+
-        ciz08FGVvYtEhb2DfHTX2UKip98OEOj78fPkm5toa+NtjDZbjPRf1+8C2tJUxKPv3erh0W0N
-        J+kzK2J6vu8mjy61NgH6+ee1fNpteS1p/Yc5e5WMPJPRBzMahTYzW5MVI3onOf2tdFmkWBIq
-        iUK7RcEauZqJEcUfTApNyFZ5zisKPiZXGT1SkpxlReGxe/Vao4EJVmpZQ4yI0WWqdFJdGCtX
-        s0ZNVpiGMURLxOIImWfw4xxlfuUdTHdFnetqH+Tlg4fJxcBHACkprL54hvCykLoAoGtYWAzW
-        edgF4Py5SZIr3AB21BQRa46CqT4+1+gGsLrKvVoUYvBS8ZcvpnhUCJwsMhPexkaqGYNWtwN4
-        C5yyYnD5HxPwTvlTyXBo4Z7HLhAQ1DZYXfGJV/al9sCV60urcUGw+Vw/7vVCalgASxobcK4R
-        D39srl1lfzh7ycrnOAC6H/byOFbArudFJMdKaDb1AI73wf7RGsKbi1M7YGt3OCcHworfWjAv
-        49QGWPL3nxin+8KuujXeCmfcZaTX6o0quebPyTQsnBohuT2mQctZGygDgVX/B5gBaAKbGR2r
-        zmJYmS5Cw3z630UptGoLePGMQw50AcfEQpgNYAJgA1CAizb6ar8yKIS+mfK844xem643qhjW
-        BmSejZnwgJcVWs8/0BjSJdIosTQyMlIatStSItrk+11liEJIZckNTA7D6Bj9mg8T+ATkY/vt
-        ifGF9oGbMW3Rv46898iwuJ70ixtzsUHPylNlt/Xzttd/7hfuWs49vLv7M1PxF78ciC8fe2kq
-        r+jKs9g/Qvcspo7dGU3YNhdYPyQlV17t1Fx+HNt+nlBETByRvOsz1JDywc6cN5yPf0gxZz4Y
-        GG2axjbEJqsr3z66FJ1ytDbt7GzuglGhTpyYCVzwG08Qpp3enGGvlNpj61syHFvjH9zojD7R
-        05n1k6vx/rEQudsktJaNm+a2xB3yU/YHuPZ1BBekfjRdsWyIG8g/sv+k/+mv5yMuhJ4aTX4S
-        5nRS21Wy6dSl8KDfh9/Pv3y1YHa2LNGSV5fntMwdrlKdcCfsbLBltEweFBGsUi4JwfWs/F/V
-        gjvmTwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSvK7KipJkgwVbuSwOvD/IYvFg3jY2
-        i0Obt7JbzDnfwmIx/8g5Vounxx6xW/S9eMhscWFbH6vFpsfXWC1WfZ/KbPHwVbjF5V1z2Cxm
-        nN/HZLF+0RQWi2MLxCy+nX7DaLFo6xd2i4cf9rBbzLqwg9Wide8Rdovbb9axWvxaeJjFYum9
-        nawO4h5bVt5k8liwqdTj46XbjB6bVnWyedy5tofNY/OSeo/+vwYe7/ddZfPo27KK0eNf01x2
-        j8+b5AK4o7hsUlJzMstSi/TtErgyGmbcYio4mVvxaesRtgbGd8FdjJwcEgImEo1P97F3MXJx
-        CAnsYJT48PwqK0RCSmLKmZcsELawxMp/z6GKmpkkdpz6yASSYBPQknjcuYAFJCEisJtJ4m33
-        XLAqZoF9TBJH9+wEaxcWCJQ4fegk0FgODhYBVYnZU7NAwrwC1hJ/L/2A2iAvsXrDAeYJjDwL
-        GBlWMUqmFhTnpucWGxYY5aWW6xUn5haX5qXrJefnbmIEx4aW1g7GPas+6B1iZOJgPMQowcGs
-        JMKbP7kkWYg3JbGyKrUoP76oNCe1+BCjNAeLkjjvha6T8UIC6YklqdmpqQWpRTBZJg5OqQam
-        YudHrhWe6RJ90S8rVViDVnReiNK3nnC4eOXdyiVSbiueHgwVmXHRK8B5rvrWaGUhzWsnrBzY
-        lcP8n5X92bHN/cTE/pBclfehmpPCBL3vX+eQrflwUsfQ18xml+HXrrtiYfIMad+lf0wQrROc
-        GLxNWs/+0AFPduMzCznW1G6/989jk/hRv9TtV+O+dm25ULAqrfhahPLC9wdfbLY0u5zP9XDb
-        48VaV/r5re4v6n4a1bTld6e25mRJ67LDhmp1/TbvCn4cehx7okGzUGV+2BExu/lODvw2UnNu
-        yDtny4XuefRa5OKlvYdyz324E1Yy2+dHd29sWYQzJ0fU1raVO3d9zH4dHLZlV4bwZcXrOcFK
-        LMUZiYZazEXFiQAYji3w/AIAAA==
-X-CMS-MailID: 20221116090644epcas5p3a0fa6d51819a2b2a9570f236191748ea
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221116090644epcas5p3a0fa6d51819a2b2a9570f236191748ea
-References: <CGME20221116090644epcas5p3a0fa6d51819a2b2a9570f236191748ea@epcas5p3.samsung.com>
+        Wed, 16 Nov 2022 05:53:09 -0500
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA16B4046D
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 02:42:31 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id m22so42983537eji.10
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 02:42:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZAxgUbyddhVo3IpeBqw30ZEwW76ZkPJXdLUvQUYid84=;
+        b=d6cfkbaiUCF3jcE7ciXC2aRYYXmw+87IqcIKVhOtpEFdRJZ4KQxm3iVcblx23BHUgr
+         HHoa/sDW2T40HWjeQ0kliGvDSS72XP4aauOCABGXC6QG9VIpsAyR1xUR1pt8BJH+DYar
+         pkm7PpJ+NTGeeFwTqcLoSZt1WQaVqx7ds2jig=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZAxgUbyddhVo3IpeBqw30ZEwW76ZkPJXdLUvQUYid84=;
+        b=smFKdJEikLPN8fYJI2cmyckmJdDY5z2Mzss2mR8ioTTKCA+jYY0/zeiqNT0gIeSmjf
+         taO5Mmw1WFG3yl+BiWIBrkFerxvxRysCxFKaMrPmI0S90vLr9v7TjtgCxnqgeJ3wKwbO
+         FXJHEeYbtMKG5zxgrHK05mc6jEcvlqYHvnk5oxpbv/XkBcsgjYJQkUMzIhg8xJpsTJRQ
+         J6YU6c4zdOMkxx688B0D7f/+Kj5P9811ReS6oCcWDn8rEpUO250uDDBa++0LwGYBUS59
+         Pom4YbYtlI6LDfPM7diVgeNoOFvaca6cBd2PYy690mT3KWSqQJSZht9tZpdNrmqMNp8P
+         UKfA==
+X-Gm-Message-State: ANoB5plOjCqIOUStf/3B4/Z6ntN4+z51cYckMDe7ozeIxkXjNiWf/lkt
+        q2FSEcEFjWx9I7qdxzGgMBNgog==
+X-Google-Smtp-Source: AA0mqf5vNSHCm0QqWZxKVpOqG6Th29+InWEHYWlpCOTfASasX9eEkW1nFZpzghpLRsB5JUmRrJDGJA==
+X-Received: by 2002:a17:906:33da:b0:78d:b046:aaae with SMTP id w26-20020a17090633da00b0078db046aaaemr16631929eja.218.1668595350196;
+        Wed, 16 Nov 2022 02:42:30 -0800 (PST)
+Received: from phenom.ffwll.local (212-51-149-33.fiber7.init7.net. [212.51.149.33])
+        by smtp.gmail.com with ESMTPSA id k26-20020aa7d2da000000b00467c3cbab6fsm4606455edr.77.2022.11.16.02.42.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Nov 2022 02:42:29 -0800 (PST)
+Date:   Wed, 16 Nov 2022 11:42:27 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        Nadav Amit <namit@vmware.com>, linux-kselftest@vger.kernel.org,
+        sparclinux@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        x86@kernel.org, Hugh Dickins <hughd@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-media@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        linux-um@lists.infradead.org, etnaviv@lists.freedesktop.org,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, Oded Gabbay <ogabbay@kernel.org>,
+        linux-mips@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: Re: [PATCH mm-unstable v1 09/20] mm/gup: reliable R/O long-term
+ pinning in COW mappings
+Message-ID: <Y3S+kwuxaJKR1A5I@phenom.ffwll.local>
+Mail-Followup-To: David Hildenbrand <david@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        Nadav Amit <namit@vmware.com>, linux-kselftest@vger.kernel.org,
+        sparclinux@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        x86@kernel.org, Hugh Dickins <hughd@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Vlastimil Babka <vbabka@suse.cz>,
+        linux-media@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        John Hubbard <jhubbard@nvidia.com>, linux-um@lists.infradead.org,
+        etnaviv@lists.freedesktop.org,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        Oded Gabbay <ogabbay@kernel.org>, linux-mips@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+References: <20221116102659.70287-1-david@redhat.com>
+ <20221116102659.70287-10-david@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221116102659.70287-10-david@redhat.com>
+X-Operating-System: Linux phenom 5.19.0-2-amd64 
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Change the reg properties from 64-bit to 32-bit for all IPs, as none of
-the nodes are above 32-bit range in the fsd SoC.
+On Wed, Nov 16, 2022 at 11:26:48AM +0100, David Hildenbrand wrote:
+> We already support reliable R/O pinning of anonymous memory. However,
+> assume we end up pinning (R/O long-term) a pagecache page or the shared
+> zeropage inside a writable private ("COW") mapping. The next write access
+> will trigger a write-fault and replace the pinned page by an exclusive
+> anonymous page in the process page tables to break COW: the pinned page no
+> longer corresponds to the page mapped into the process' page table.
+> 
+> Now that FAULT_FLAG_UNSHARE can break COW on anything mapped into a
+> COW mapping, let's properly break COW first before R/O long-term
+> pinning something that's not an exclusive anon page inside a COW
+> mapping. FAULT_FLAG_UNSHARE will break COW and map an exclusive anon page
+> instead that can get pinned safely.
+> 
+> With this change, we can stop using FOLL_FORCE|FOLL_WRITE for reliable
+> R/O long-term pinning in COW mappings.
+> 
+> With this change, the new R/O long-term pinning tests for non-anonymous
+> memory succeed:
+>   # [RUN] R/O longterm GUP pin ... with shared zeropage
+>   ok 151 Longterm R/O pin is reliable
+>   # [RUN] R/O longterm GUP pin ... with memfd
+>   ok 152 Longterm R/O pin is reliable
+>   # [RUN] R/O longterm GUP pin ... with tmpfile
+>   ok 153 Longterm R/O pin is reliable
+>   # [RUN] R/O longterm GUP pin ... with huge zeropage
+>   ok 154 Longterm R/O pin is reliable
+>   # [RUN] R/O longterm GUP pin ... with memfd hugetlb (2048 kB)
+>   ok 155 Longterm R/O pin is reliable
+>   # [RUN] R/O longterm GUP pin ... with memfd hugetlb (1048576 kB)
+>   ok 156 Longterm R/O pin is reliable
+>   # [RUN] R/O longterm GUP-fast pin ... with shared zeropage
+>   ok 157 Longterm R/O pin is reliable
+>   # [RUN] R/O longterm GUP-fast pin ... with memfd
+>   ok 158 Longterm R/O pin is reliable
+>   # [RUN] R/O longterm GUP-fast pin ... with tmpfile
+>   ok 159 Longterm R/O pin is reliable
+>   # [RUN] R/O longterm GUP-fast pin ... with huge zeropage
+>   ok 160 Longterm R/O pin is reliable
+>   # [RUN] R/O longterm GUP-fast pin ... with memfd hugetlb (2048 kB)
+>   ok 161 Longterm R/O pin is reliable
+>   # [RUN] R/O longterm GUP-fast pin ... with memfd hugetlb (1048576 kB)
+>   ok 162 Longterm R/O pin is reliable
+> 
+> Note 1: We don't care about short-term R/O-pinning, because they have
+> snapshot semantics: they are not supposed to observe modifications that
+> happen after pinning.
+> 
+> As one example, assume we start direct I/O to read from a page and store
+> page content into a file: modifications to page content after starting
+> direct I/O are not guaranteed to end up in the file. So even if we'd pin
+> the shared zeropage, the end result would be as expected -- getting zeroes
+> stored to the file.
+> 
+> Note 2: For shared mappings we'll now always fallback to the slow path to
+> lookup the VMA when R/O long-term pining. While that's the necessary price
+> we have to pay right now, it's actually not that bad in practice: most
+> FOLL_LONGTERM users already specify FOLL_WRITE, for example, along with
+> FOLL_FORCE because they tried dealing with COW mappings correctly ...
+> 
+> Note 3: For users that use FOLL_LONGTERM right now without FOLL_WRITE,
+> such as VFIO, we'd now no longer pin the shared zeropage. Instead, we'd
+> populate exclusive anon pages that we can pin. There was a concern that
+> this could affect the memlock limit of existing setups.
+> 
+> For example, a VM running with VFIO could run into the memlock limit and
+> fail to run. However, we essentially had the same behavior already in
+> commit 17839856fd58 ("gup: document and work around "COW can break either
+> way" issue") which got merged into some enterprise distros, and there were
+> not any such complaints. So most probably, we're fine.
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Since dma-ranges length does not fit into 32-bit size, keep it 64-bit
-and move it to specific node where it is used instead of SoC section.
+I don't think my ack is any good for the implementation, but for the
+driver side semantics this sounds like what we want :-)
 
-Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Signed-off-by: Vivek Yadav <vivek.2311@samsung.com>
----
- arch/arm64/boot/dts/tesla/fsd-evb.dts |   2 +
- arch/arm64/boot/dts/tesla/fsd.dtsi    | 109 ++++++++++++++------------
- 2 files changed, 62 insertions(+), 49 deletions(-)
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-diff --git a/arch/arm64/boot/dts/tesla/fsd-evb.dts b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-index 1db6ddf03f01..81d9937d8828 100644
---- a/arch/arm64/boot/dts/tesla/fsd-evb.dts
-+++ b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-@@ -14,6 +14,8 @@
- / {
- 	model = "Tesla Full Self-Driving (FSD) Evaluation board";
- 	compatible = "tesla,fsd-evb", "tesla,fsd";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
- 
- 	aliases {
- 		serial0 = &serial_0;
-diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
-index f35bc5a288c2..7378ae39233a 100644
---- a/arch/arm64/boot/dts/tesla/fsd.dtsi
-+++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
-@@ -342,23 +342,22 @@
- 
- 	soc: soc@0 {
- 		compatible = "simple-bus";
--		#address-cells = <2>;
--		#size-cells = <2>;
--		ranges = <0x0 0x0 0x0 0x0 0x0 0x18000000>;
--		dma-ranges = <0x0 0x0 0x0 0x0 0x10 0x0>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x0 0x0 0x0 0x18000000>;
- 
- 		gic: interrupt-controller@10400000 {
- 			compatible = "arm,gic-v3";
- 			#interrupt-cells = <3>;
- 			interrupt-controller;
--			reg =	<0x0 0x10400000 0x0 0x10000>, /* GICD */
--				<0x0 0x10600000 0x0 0x200000>; /* GICR_RD+GICR_SGI */
-+			reg =	<0x10400000 0x10000>, /* GICD */
-+				<0x10600000 0x200000>; /* GICR_RD+GICR_SGI */
- 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
- 		smmu_imem: iommu@10200000 {
- 			compatible = "arm,mmu-500";
--			reg = <0x0 0x10200000 0x0 0x10000>;
-+			reg = <0x10200000 0x10000>;
- 			#iommu-cells = <2>;
- 			#global-interrupts = <7>;
- 			interrupts = <GIC_SPI 438 IRQ_TYPE_LEVEL_HIGH>, /* Global secure fault */
-@@ -378,7 +377,7 @@
- 
- 		smmu_isp: iommu@12100000 {
- 			compatible = "arm,mmu-500";
--			reg = <0x0 0x12100000 0x0 0x10000>;
-+			reg = <0x12100000 0x10000>;
- 			#iommu-cells = <2>;
- 			#global-interrupts = <11>;
- 			interrupts = <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>, /* Global secure fault */
-@@ -406,7 +405,7 @@
- 
- 		smmu_peric: iommu@14900000 {
- 			compatible = "arm,mmu-500";
--			reg = <0x0 0x14900000 0x0 0x10000>;
-+			reg = <0x14900000 0x10000>;
- 			#iommu-cells = <2>;
- 			#global-interrupts = <5>;
- 			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>, /* Global secure fault */
-@@ -422,7 +421,7 @@
- 
- 		smmu_fsys0: iommu@15450000 {
- 			compatible = "arm,mmu-500";
--			reg = <0x0 0x15450000 0x0 0x10000>;
-+			reg = <0x15450000 0x10000>;
- 			#iommu-cells = <2>;
- 			#global-interrupts = <5>;
- 			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>, /* Global secure fault */
-@@ -438,7 +437,7 @@
- 
- 		clock_imem: clock-controller@10010000 {
- 			compatible = "tesla,fsd-clock-imem";
--			reg = <0x0 0x10010000 0x0 0x3000>;
-+			reg = <0x10010000 0x3000>;
- 			#clock-cells = <1>;
- 			clocks = <&fin_pll>,
- 				<&clock_cmu DOUT_CMU_IMEM_TCUCLK>,
-@@ -452,7 +451,7 @@
- 
- 		clock_cmu: clock-controller@11c10000 {
- 			compatible = "tesla,fsd-clock-cmu";
--			reg = <0x0 0x11c10000 0x0 0x3000>;
-+			reg = <0x11c10000 0x3000>;
- 			#clock-cells = <1>;
- 			clocks = <&fin_pll>;
- 			clock-names = "fin_pll";
-@@ -460,7 +459,7 @@
- 
- 		clock_csi: clock-controller@12610000 {
- 			compatible = "tesla,fsd-clock-cam_csi";
--			reg = <0x0 0x12610000 0x0 0x3000>;
-+			reg = <0x12610000 0x3000>;
- 			#clock-cells = <1>;
- 			clocks = <&fin_pll>;
- 			clock-names = "fin_pll";
-@@ -468,7 +467,7 @@
- 
- 		clock_mfc: clock-controller@12810000 {
- 			compatible = "tesla,fsd-clock-mfc";
--			reg = <0x0 0x12810000 0x0 0x3000>;
-+			reg = <0x12810000 0x3000>;
- 			#clock-cells = <1>;
- 			clocks = <&fin_pll>;
- 			clock-names = "fin_pll";
-@@ -476,7 +475,7 @@
- 
- 		clock_peric: clock-controller@14010000 {
- 			compatible = "tesla,fsd-clock-peric";
--			reg = <0x0 0x14010000 0x0 0x3000>;
-+			reg = <0x14010000 0x3000>;
- 			#clock-cells = <1>;
- 			clocks = <&fin_pll>,
- 				<&clock_cmu DOUT_CMU_PLL_SHARED0_DIV4>,
-@@ -494,7 +493,7 @@
- 
- 		clock_fsys0: clock-controller@15010000 {
- 			compatible = "tesla,fsd-clock-fsys0";
--			reg = <0x0 0x15010000 0x0 0x3000>;
-+			reg = <0x15010000 0x3000>;
- 			#clock-cells = <1>;
- 			clocks = <&fin_pll>,
- 				<&clock_cmu DOUT_CMU_PLL_SHARED0_DIV6>,
-@@ -508,7 +507,7 @@
- 
- 		clock_fsys1: clock-controller@16810000 {
- 			compatible = "tesla,fsd-clock-fsys1";
--			reg = <0x0 0x16810000 0x0 0x3000>;
-+			reg = <0x16810000 0x3000>;
- 			#clock-cells = <1>;
- 			clocks = <&fin_pll>,
- 				<&clock_cmu DOUT_CMU_FSYS1_SHARED0DIV8>,
-@@ -520,47 +519,59 @@
- 
- 		mdma0: dma-controller@10100000 {
- 			compatible = "arm,pl330", "arm,primecell";
--			reg = <0x0 0x10100000 0x0 0x1000>;
-+			reg = <0x10100000 0x1000>;
- 			interrupts = <GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>;
- 			#dma-cells = <1>;
- 			clocks = <&clock_imem IMEM_DMA0_IPCLKPORT_ACLK>;
- 			clock-names = "apb_pclk";
- 			iommus = <&smmu_imem 0x800 0x0>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			dma-ranges = <0x0 0x0 0x0 0x10 0x0>;
- 		};
- 
- 		mdma1: dma-controller@10110000 {
- 			compatible = "arm,pl330", "arm,primecell";
--			reg = <0x0 0x10110000 0x0 0x1000>;
-+			reg = <0x10110000 0x1000>;
- 			interrupts = <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>;
- 			#dma-cells = <1>;
- 			clocks = <&clock_imem IMEM_DMA1_IPCLKPORT_ACLK>;
- 			clock-names = "apb_pclk";
- 			iommus = <&smmu_imem 0x801 0x0>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			dma-ranges = <0x0 0x0 0x0 0x10 0x0>;
- 		};
- 
- 		pdma0: dma-controller@14280000 {
- 			compatible = "arm,pl330", "arm,primecell";
--			reg = <0x0 0x14280000 0x0 0x1000>;
-+			reg = <0x14280000 0x1000>;
- 			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
- 			#dma-cells = <1>;
- 			clocks = <&clock_peric PERIC_DMA0_IPCLKPORT_ACLK>;
- 			clock-names = "apb_pclk";
- 			iommus = <&smmu_peric 0x2 0x0>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			dma-ranges = <0x0 0x0 0x0 0x10 0x0>;
- 		};
- 
- 		pdma1: dma-controller@14290000 {
- 			compatible = "arm,pl330", "arm,primecell";
--			reg = <0x0 0x14290000 0x0 0x1000>;
-+			reg = <0x14290000 0x1000>;
- 			interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
- 			#dma-cells = <1>;
- 			clocks = <&clock_peric PERIC_DMA1_IPCLKPORT_ACLK>;
- 			clock-names = "apb_pclk";
- 			iommus = <&smmu_peric 0x1 0x0>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			dma-ranges = <0x0 0x0 0x0 0x10 0x0>;
- 		};
- 
- 		serial_0: serial@14180000 {
- 			compatible = "samsung,exynos4210-uart";
--			reg = <0x0 0x14180000 0x0 0x100>;
-+			reg = <0x14180000 0x100>;
- 			interrupts = <GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>;
- 			dmas = <&pdma1 1>, <&pdma1 0>;
- 			dma-names = "rx", "tx";
-@@ -572,7 +583,7 @@
- 
- 		serial_1: serial@14190000 {
- 			compatible = "samsung,exynos4210-uart";
--			reg = <0x0 0x14190000 0x0 0x100>;
-+			reg = <0x14190000 0x100>;
- 			interrupts = <GIC_SPI 172 IRQ_TYPE_LEVEL_HIGH>;
- 			dmas = <&pdma1 3>, <&pdma1 2>;
- 			dma-names = "rx", "tx";
-@@ -584,12 +595,12 @@
- 
- 		pmu_system_controller: system-controller@11400000 {
- 			compatible = "samsung,exynos7-pmu", "syscon";
--			reg = <0x0 0x11400000 0x0 0x5000>;
-+			reg = <0x11400000 0x5000>;
- 		};
- 
- 		watchdog_0: watchdog@100a0000 {
- 			compatible = "samsung,exynos7-wdt";
--			reg = <0x0 0x100a0000 0x0 0x100>;
-+			reg = <0x100a0000 0x100>;
- 			interrupts = <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH>;
- 			samsung,syscon-phandle = <&pmu_system_controller>;
- 			clocks = <&fin_pll>;
-@@ -598,7 +609,7 @@
- 
- 		watchdog_1: watchdog@100b0000 {
- 			compatible = "samsung,exynos7-wdt";
--			reg = <0x0 0x100b0000 0x0 0x100>;
-+			reg = <0x100b0000 0x100>;
- 			interrupts = <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>;
- 			samsung,syscon-phandle = <&pmu_system_controller>;
- 			clocks = <&fin_pll>;
-@@ -607,7 +618,7 @@
- 
- 		watchdog_2: watchdog@100c0000 {
- 			compatible = "samsung,exynos7-wdt";
--			reg = <0x0 0x100c0000 0x0 0x100>;
-+			reg = <0x100c0000 0x100>;
- 			interrupts = <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>;
- 			samsung,syscon-phandle = <&pmu_system_controller>;
- 			clocks = <&fin_pll>;
-@@ -616,7 +627,7 @@
- 
- 		pwm_0: pwm@14100000 {
- 			compatible = "samsung,exynos4210-pwm";
--			reg = <0x0 0x14100000 0x0 0x100>;
-+			reg = <0x14100000 0x100>;
- 			samsung,pwm-outputs = <0>, <1>, <2>, <3>;
- 			#pwm-cells = <3>;
- 			clocks = <&clock_peric PERIC_PWM0_IPCLKPORT_I_PCLK_S0>;
-@@ -626,7 +637,7 @@
- 
- 		pwm_1: pwm@14110000 {
- 			compatible = "samsung,exynos4210-pwm";
--			reg = <0x0 0x14110000 0x0 0x100>;
-+			reg = <0x14110000 0x100>;
- 			samsung,pwm-outputs = <0>, <1>, <2>, <3>;
- 			#pwm-cells = <3>;
- 			clocks = <&clock_peric PERIC_PWM1_IPCLKPORT_I_PCLK_S0>;
-@@ -636,7 +647,7 @@
- 
- 		hsi2c_0: i2c@14200000 {
- 			compatible = "samsung,exynos7-hsi2c";
--			reg = <0x0 0x14200000 0x0 0x1000>;
-+			reg = <0x14200000 0x1000>;
- 			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -649,7 +660,7 @@
- 
- 		hsi2c_1: i2c@14210000 {
- 			compatible = "samsung,exynos7-hsi2c";
--			reg = <0x0 0x14210000 0x0 0x1000>;
-+			reg = <0x14210000 0x1000>;
- 			interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -662,7 +673,7 @@
- 
- 		hsi2c_2: i2c@14220000 {
- 			compatible = "samsung,exynos7-hsi2c";
--			reg = <0x0 0x14220000 0x0 0x1000>;
-+			reg = <0x14220000 0x1000>;
- 			interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -675,7 +686,7 @@
- 
- 		hsi2c_3: i2c@14230000 {
- 			compatible = "samsung,exynos7-hsi2c";
--			reg = <0x0 0x14230000 0x0 0x1000>;
-+			reg = <0x14230000 0x1000>;
- 			interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -688,7 +699,7 @@
- 
- 		hsi2c_4: i2c@14240000 {
- 			compatible = "samsung,exynos7-hsi2c";
--			reg = <0x0 0x14240000 0x0 0x1000>;
-+			reg = <0x14240000 0x1000>;
- 			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -701,7 +712,7 @@
- 
- 		hsi2c_5: i2c@14250000 {
- 			compatible = "samsung,exynos7-hsi2c";
--			reg = <0x0 0x14250000 0x0 0x1000>;
-+			reg = <0x14250000 0x1000>;
- 			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -714,7 +725,7 @@
- 
- 		hsi2c_6: i2c@14260000 {
- 			compatible = "samsung,exynos7-hsi2c";
--			reg = <0x0 0x14260000 0x0 0x1000>;
-+			reg = <0x14260000 0x1000>;
- 			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -727,7 +738,7 @@
- 
- 		hsi2c_7: i2c@14270000 {
- 			compatible = "samsung,exynos7-hsi2c";
--			reg = <0x0 0x14270000 0x0 0x1000>;
-+			reg = <0x14270000 0x1000>;
- 			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -740,24 +751,24 @@
- 
- 		pinctrl_pmu: pinctrl@114f0000 {
- 			compatible = "tesla,fsd-pinctrl";
--			reg = <0x0 0x114f0000 0x0 0x1000>;
-+			reg = <0x114f0000 0x1000>;
- 		};
- 
- 		pinctrl_peric: pinctrl@141f0000 {
- 			compatible = "tesla,fsd-pinctrl";
--			reg = <0x0 0x141f0000 0x0 0x1000>;
-+			reg = <0x141f0000 0x1000>;
- 			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
- 		pinctrl_fsys0: pinctrl@15020000 {
- 			compatible = "tesla,fsd-pinctrl";
--			reg = <0x0 0x15020000 0x0 0x1000>;
-+			reg = <0x15020000 0x1000>;
- 			interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
- 		spi_0: spi@14140000 {
- 			compatible = "tesla,fsd-spi";
--			reg = <0x0 0x14140000 0x0 0x100>;
-+			reg = <0x14140000 0x100>;
- 			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
- 			dmas = <&pdma1 4>, <&pdma1 5>;
- 			dma-names = "tx", "rx";
-@@ -775,7 +786,7 @@
- 
- 		spi_1: spi@14150000 {
- 			compatible = "tesla,fsd-spi";
--			reg = <0x0 0x14150000 0x0 0x100>;
-+			reg = <0x14150000 0x100>;
- 			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
- 			dmas = <&pdma1 6>, <&pdma1 7>;
- 			dma-names = "tx", "rx";
-@@ -793,7 +804,7 @@
- 
- 		spi_2: spi@14160000 {
- 			compatible = "tesla,fsd-spi";
--			reg = <0x0 0x14160000 0x0 0x100>;
-+			reg = <0x14160000 0x100>;
- 			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
- 			dmas = <&pdma1 8>, <&pdma1 9>;
- 			dma-names = "tx", "rx";
-@@ -811,7 +822,7 @@
- 
- 		timer@10040000 {
- 			compatible = "tesla,fsd-mct", "samsung,exynos4210-mct";
--			reg = <0x0 0x10040000 0x0 0x800>;
-+			reg = <0x10040000 0x800>;
- 			interrupts = <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
- 				<GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
- 				<GIC_SPI 457 IRQ_TYPE_LEVEL_HIGH>,
-@@ -834,10 +845,10 @@
- 
- 		ufs: ufs@15120000 {
- 			compatible = "tesla,fsd-ufs";
--			reg = <0x0 0x15120000 0x0 0x200>,  /* 0: HCI standard */
--			      <0x0 0x15121100 0x0 0x200>,  /* 1: Vendor specified */
--			      <0x0 0x15110000 0x0 0x8000>,  /* 2: UNIPRO */
--			      <0x0 0x15130000 0x0 0x100>;  /* 3: UFS protector */
-+			reg = <0x15120000 0x200>,  /* 0: HCI standard */
-+			      <0x15121100 0x200>,  /* 1: Vendor specified */
-+			      <0x15110000 0x8000>,  /* 2: UNIPRO */
-+			      <0x15130000 0x100>;  /* 3: UFS protector */
- 			reg-names = "hci", "vs_hci", "unipro", "ufsp";
- 			interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock_fsys0 UFS0_TOP0_HCLK_BUS>,
-@@ -853,7 +864,7 @@
- 
- 		ufs_phy: ufs-phy@15124000 {
- 			compatible = "tesla,fsd-ufs-phy";
--			reg = <0x0 0x15124000 0x0 0x800>;
-+			reg = <0x15124000 0x800>;
- 			reg-names = "phy-pma";
- 			samsung,pmu-syscon = <&pmu_system_controller>;
- 			#phy-cells = <0>;
+> ---
+>  include/linux/mm.h | 27 ++++++++++++++++++++++++---
+>  mm/gup.c           | 10 +++++-----
+>  mm/huge_memory.c   |  2 +-
+>  mm/hugetlb.c       |  7 ++++---
+>  4 files changed, 34 insertions(+), 12 deletions(-)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 6bd2ee5872dd..e8cc838f42f9 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3095,8 +3095,12 @@ static inline int vm_fault_to_errno(vm_fault_t vm_fault, int foll_flags)
+>   * Must be called with the (sub)page that's actually referenced via the
+>   * page table entry, which might not necessarily be the head page for a
+>   * PTE-mapped THP.
+> + *
+> + * If the vma is NULL, we're coming from the GUP-fast path and might have
+> + * to fallback to the slow path just to lookup the vma.
+>   */
+> -static inline bool gup_must_unshare(unsigned int flags, struct page *page)
+> +static inline bool gup_must_unshare(struct vm_area_struct *vma,
+> +				    unsigned int flags, struct page *page)
+>  {
+>  	/*
+>  	 * FOLL_WRITE is implicitly handled correctly as the page table entry
+> @@ -3109,8 +3113,25 @@ static inline bool gup_must_unshare(unsigned int flags, struct page *page)
+>  	 * Note: PageAnon(page) is stable until the page is actually getting
+>  	 * freed.
+>  	 */
+> -	if (!PageAnon(page))
+> -		return false;
+> +	if (!PageAnon(page)) {
+> +		/*
+> +		 * We only care about R/O long-term pining: R/O short-term
+> +		 * pinning does not have the semantics to observe successive
+> +		 * changes through the process page tables.
+> +		 */
+> +		if (!(flags & FOLL_LONGTERM))
+> +			return false;
+> +
+> +		/* We really need the vma ... */
+> +		if (!vma)
+> +			return true;
+> +
+> +		/*
+> +		 * ... because we only care about writable private ("COW")
+> +		 * mappings where we have to break COW early.
+> +		 */
+> +		return is_cow_mapping(vma->vm_flags);
+> +	}
+>  
+>  	/* Paired with a memory barrier in page_try_share_anon_rmap(). */
+>  	if (IS_ENABLED(CONFIG_HAVE_FAST_GUP))
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 5182abaaecde..01116699c863 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -578,7 +578,7 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+>  		}
+>  	}
+>  
+> -	if (!pte_write(pte) && gup_must_unshare(flags, page)) {
+> +	if (!pte_write(pte) && gup_must_unshare(vma, flags, page)) {
+>  		page = ERR_PTR(-EMLINK);
+>  		goto out;
+>  	}
+> @@ -2338,7 +2338,7 @@ static int gup_pte_range(pmd_t pmd, pmd_t *pmdp, unsigned long addr,
+>  			goto pte_unmap;
+>  		}
+>  
+> -		if (!pte_write(pte) && gup_must_unshare(flags, page)) {
+> +		if (!pte_write(pte) && gup_must_unshare(NULL, flags, page)) {
+>  			gup_put_folio(folio, 1, flags);
+>  			goto pte_unmap;
+>  		}
+> @@ -2506,7 +2506,7 @@ static int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long addr,
+>  		return 0;
+>  	}
+>  
+> -	if (!pte_write(pte) && gup_must_unshare(flags, &folio->page)) {
+> +	if (!pte_write(pte) && gup_must_unshare(NULL, flags, &folio->page)) {
+>  		gup_put_folio(folio, refs, flags);
+>  		return 0;
+>  	}
+> @@ -2572,7 +2572,7 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+>  		return 0;
+>  	}
+>  
+> -	if (!pmd_write(orig) && gup_must_unshare(flags, &folio->page)) {
+> +	if (!pmd_write(orig) && gup_must_unshare(NULL, flags, &folio->page)) {
+>  		gup_put_folio(folio, refs, flags);
+>  		return 0;
+>  	}
+> @@ -2612,7 +2612,7 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
+>  		return 0;
+>  	}
+>  
+> -	if (!pud_write(orig) && gup_must_unshare(flags, &folio->page)) {
+> +	if (!pud_write(orig) && gup_must_unshare(NULL, flags, &folio->page)) {
+>  		gup_put_folio(folio, refs, flags);
+>  		return 0;
+>  	}
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 68d00196b519..dec7a7c0eca8 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -1434,7 +1434,7 @@ struct page *follow_trans_huge_pmd(struct vm_area_struct *vma,
+>  	if (pmd_protnone(*pmd) && !gup_can_follow_protnone(flags))
+>  		return NULL;
+>  
+> -	if (!pmd_write(*pmd) && gup_must_unshare(flags, page))
+> +	if (!pmd_write(*pmd) && gup_must_unshare(vma, flags, page))
+>  		return ERR_PTR(-EMLINK);
+>  
+>  	VM_BUG_ON_PAGE((flags & FOLL_PIN) && PageAnon(page) &&
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 383b26069b33..c3aab6d5b7aa 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -6195,7 +6195,8 @@ static void record_subpages_vmas(struct page *page, struct vm_area_struct *vma,
+>  	}
+>  }
+>  
+> -static inline bool __follow_hugetlb_must_fault(unsigned int flags, pte_t *pte,
+> +static inline bool __follow_hugetlb_must_fault(struct vm_area_struct *vma,
+> +					       unsigned int flags, pte_t *pte,
+>  					       bool *unshare)
+>  {
+>  	pte_t pteval = huge_ptep_get(pte);
+> @@ -6207,7 +6208,7 @@ static inline bool __follow_hugetlb_must_fault(unsigned int flags, pte_t *pte,
+>  		return false;
+>  	if (flags & FOLL_WRITE)
+>  		return true;
+> -	if (gup_must_unshare(flags, pte_page(pteval))) {
+> +	if (gup_must_unshare(vma, flags, pte_page(pteval))) {
+>  		*unshare = true;
+>  		return true;
+>  	}
+> @@ -6336,7 +6337,7 @@ long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
+>  		 * directly from any kind of swap entries.
+>  		 */
+>  		if (absent ||
+> -		    __follow_hugetlb_must_fault(flags, pte, &unshare)) {
+> +		    __follow_hugetlb_must_fault(vma, flags, pte, &unshare)) {
+>  			vm_fault_t ret;
+>  			unsigned int fault_flags = 0;
+>  
+> -- 
+> 2.38.1
+> 
+
 -- 
-2.17.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
