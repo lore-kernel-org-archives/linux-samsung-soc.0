@@ -2,98 +2,255 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 862DCC43217
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Nov 2022 09:30:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BEEFC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Nov 2022 10:31:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232401AbiKPJaQ (ORCPT
+        id S232125AbiKPKbo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Nov 2022 04:30:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51184 "EHLO
+        Wed, 16 Nov 2022 05:31:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232082AbiKPJaP (ORCPT
+        with ESMTP id S230003AbiKPKbf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Nov 2022 04:30:15 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0228312ACB
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 01:30:15 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id c1so28568567lfi.7
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 01:30:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W3xDpe3WqLIJ4vWlNtEKnmXozr/q5qKt2awRyjeyGr8=;
-        b=cKDokkgwNoTPGUU+9LGCv0aFdwy+mxnCu2is5Bw7otXZunpg4GbYBPW4ePEkZlyk+5
-         V6OlzN61lg3bDAI6B9Qq6TlYwGyW7V8T8dpoD/szCqC3TLiqQZDbJqGgJh7NDczxG1FQ
-         6QkSKI8yseUr0XhAo0IRZll5XLQu86Ud7f0xCXASoWvvFZeadtraDvskBkK9VlBZrmpI
-         /MArBfL2AVRDL2VfJk15aqyMDXS0IJnorn0EPBvCepJBRomkkfENamNHrf/lrd4JcT22
-         NCIzvluLHjCN2UO05Gd6bzSoGIordncKC5qBj5L2PzjpuYJQXPtlbg5pm3sE0GZqVT69
-         8anQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W3xDpe3WqLIJ4vWlNtEKnmXozr/q5qKt2awRyjeyGr8=;
-        b=LmFMbYrTYvij2xPsrhz0IcNIfyZlhiSVCB4PrB8KLghh4sivLdANCGq8cjvWOc86x1
-         g4Vx81wAmnm7NuJQYmHH6zvnFhKZkkKyLjHPhs+96fgPr0HERGM/UFERAb8d0YrHwVy7
-         k96K3lkHTPeOGfMK4OhKdbn5lftTHuchCI7zgCMDhwrfaeg6oG9LSTwRgjcyJezyopMZ
-         DGg8Brzl4Tyc7twt2bV6XxS+0XyXwDMquXHDwgU1hk02sX8k3V3JVT+qJofYnUmwnflf
-         YyJh+MlXMXxYAEZbpIhhJx0A+69J+t81KmF1sfLaAGFkVJUAk4qJU6K5s5U4ez1l0FZ5
-         pdww==
-X-Gm-Message-State: ANoB5pkwBZ0GsA6G5s25AuXFAlwMaxaIRePsYWt3tSjvdDbhWWPQz14R
-        8Ttc3sQ+1BxXYT7s/cpOXtKmKA==
-X-Google-Smtp-Source: AA0mqf6FXWk24nAVgpV7mXl+2LnsfzbOAjXFhyukT+R5ZHoVyTJf0CF1npAn/gGfDcYBSiK6aftIHQ==
-X-Received: by 2002:a05:6512:360e:b0:4a2:6907:98d8 with SMTP id f14-20020a056512360e00b004a2690798d8mr6515285lfs.28.1668591013337;
-        Wed, 16 Nov 2022 01:30:13 -0800 (PST)
-Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id s18-20020a197712000000b004b18830af7asm2517325lfc.54.2022.11.16.01.30.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 01:30:13 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/2] arm64: dts: samsung: Pull for v6.2
-Date:   Wed, 16 Nov 2022 10:30:10 +0100
-Message-Id: <20221116093010.18515-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221116093010.18515-1-krzysztof.kozlowski@linaro.org>
-References: <20221116093010.18515-1-krzysztof.kozlowski@linaro.org>
+        Wed, 16 Nov 2022 05:31:35 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EEFD2F016
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 02:27:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1668594449;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=/1/81f1bc3wgoHEbP5M1Zz0wSDu9jba91U8WGSjmQ70=;
+        b=BkSFv68S2uoLbMwJz7SpFb/qXq5glGtlc8ELhUeQhmP/TG1Kldf88+DN3GsFbAVLpu2Ria
+        IajkahEDHwVVZiqgOhyC8YEVp9UdTX367erbx2Ndt4uwGARX1q8OHXK8OtaYzZ0OE0i2jA
+        CVIbT6GIuUkfMP2xepuBqeP4gL2m+7k=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-634-ZOxGenHbOYKZhsRLkhfmqA-1; Wed, 16 Nov 2022 05:27:25 -0500
+X-MC-Unique: ZOxGenHbOYKZhsRLkhfmqA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 71CBB833AED;
+        Wed, 16 Nov 2022 10:27:23 +0000 (UTC)
+Received: from t480s.fritz.box (unknown [10.39.193.216])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6687D2024CCA;
+        Wed, 16 Nov 2022 10:27:02 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Walls <awalls@md.metrocast.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Benvenuti <benve@cisco.com>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        James Morris <jmorris@namei.org>, Jiri Olsa <jolsa@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Kees Cook <keescook@chromium.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Leon Romanovsky <leonro@nvidia.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Richard Weinberger <richard@nod.at>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tomasz Figa <tfiga@chromium.org>, Will Deacon <will@kernel.org>
+Subject: [PATCH mm-unstable v1 00/20] mm/gup: remove FOLL_FORCE usage from drivers (reliable R/O long-term pinning)
+Date:   Wed, 16 Nov 2022 11:26:39 +0100
+Message-Id: <20221116102659.70287-1-david@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
+For now, we did not support reliable R/O long-term pinning in COW mappings.
+That means, if we would trigger R/O long-term pinning in MAP_PRIVATE
+mapping, we could end up pinning the (R/O-mapped) shared zeropage or a
+pagecache page.
 
-  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
+The next write access would trigger a write fault and replace the pinned
+page by an exclusive anonymous page in the process page table; whatever the
+process would write to that private page copy would not be visible by the
+owner of the previous page pin: for example, RDMA could read stale data.
+The end result is essentially an unexpected and hard-to-debug memory
+corruption.
 
-are available in the Git repository at:
+Some drivers tried working around that limitation by using
+"FOLL_FORCE|FOLL_WRITE|FOLL_LONGTERM" for R/O long-term pinning for now.
+FOLL_WRITE would trigger a write fault, if required, and break COW before
+pinning the page. FOLL_FORCE is required because the VMA might lack write
+permissions, and drivers wanted to make that working as well, just like
+one would expect (no write access, but still triggering a write access to
+break COW).
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-6.2
+However, that is not a practical solution, because
+(1) Drivers that don't stick to that undocumented and debatable pattern
+    would still run into that issue. For example, VFIO only uses
+    FOLL_LONGTERM for R/O long-term pinning.
+(2) Using FOLL_WRITE just to work around a COW mapping + page pinning
+    limitation is unintuitive. FOLL_WRITE would, for example, mark the
+    page softdirty or trigger uffd-wp, even though, there actually isn't
+    going to be any write access.
+(3) The purpose of FOLL_FORCE is debug access, not access without lack of
+    VMA permissions by arbitrarty drivers.
 
-for you to fetch changes up to 21f6546e8bf68a847601e2710378e2224bf49704:
+So instead, make R/O long-term pinning work as expected, by breaking COW
+in a COW mapping early, such that we can remove any FOLL_FORCE usage from
+drivers and make FOLL_FORCE ptrace-specific (renaming it to FOLL_PTRACE).
+More details in patch #8.
 
-  arm64: dts: fsd: fix drive strength values as per FSD HW UM (2022-10-18 09:24:00 -0400)
+Patches #1--#3 add COW tests for non-anonymous pages.
+Patches #4--#7 prepare core MM for extended FAULT_FLAG_UNSHARE support in
+COW mappings.
+Patch #8 implements reliable R/O long-term pinning in COW mappings
+Patches #9--#19 remove any FOLL_FORCE usage from drivers.
+Patch #20 renames FOLL_FORCE to FOLL_PTRACE.
 
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v6.2
+I'm refraining from CCing all driver/arch maintainers on the whole patch
+set, but only CC them on the cover letter and the applicable patch
+(I know, I know, someone is always unhappy ... sorry).
 
-Correct pin drive strength macros (names) and values used on Tesla FSD
-SoC.
+RFC -> v1:
+* Use term "ptrace" instead of "debuggers" in patch descriptions
+* Added ACK/Tested-by
+* "mm/frame-vector: remove FOLL_FORCE usage"
+ -> Adjust description
+* "mm: rename FOLL_FORCE to FOLL_PTRACE"
+ -> Added
 
-----------------------------------------------------------------
-Padmanabhan Rajanbabu (2):
-      arm64: dts: fsd: fix drive strength macros as per FSD HW UM
-      arm64: dts: fsd: fix drive strength values as per FSD HW UM
+David Hildenbrand (20):
+  selftests/vm: anon_cow: prepare for non-anonymous COW tests
+  selftests/vm: cow: basic COW tests for non-anonymous pages
+  selftests/vm: cow: R/O long-term pinning reliability tests for
+    non-anon pages
+  mm: add early FAULT_FLAG_UNSHARE consistency checks
+  mm: add early FAULT_FLAG_WRITE consistency checks
+  mm: rework handling in do_wp_page() based on private vs. shared
+    mappings
+  mm: don't call vm_ops->huge_fault() in wp_huge_pmd()/wp_huge_pud() for
+    private mappings
+  mm: extend FAULT_FLAG_UNSHARE support to anything in a COW mapping
+  mm/gup: reliable R/O long-term pinning in COW mappings
+  RDMA/umem: remove FOLL_FORCE usage
+  RDMA/usnic: remove FOLL_FORCE usage
+  RDMA/siw: remove FOLL_FORCE usage
+  media: videobuf-dma-sg: remove FOLL_FORCE usage
+  drm/etnaviv: remove FOLL_FORCE usage
+  media: pci/ivtv: remove FOLL_FORCE usage
+  mm/frame-vector: remove FOLL_FORCE usage
+  drm/exynos: remove FOLL_FORCE usage
+  RDMA/hw/qib/qib_user_pages: remove FOLL_FORCE usage
+  habanalabs: remove FOLL_FORCE usage
+  mm: rename FOLL_FORCE to FOLL_PTRACE
 
- arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi | 34 +++++++++++++++---------------
- arch/arm64/boot/dts/tesla/fsd-pinctrl.h    |  6 +++---
- 2 files changed, 20 insertions(+), 20 deletions(-)
+ arch/alpha/kernel/ptrace.c                    |   6 +-
+ arch/arm64/kernel/mte.c                       |   2 +-
+ arch/ia64/kernel/ptrace.c                     |  10 +-
+ arch/mips/kernel/ptrace32.c                   |   4 +-
+ arch/mips/math-emu/dsemul.c                   |   2 +-
+ arch/powerpc/kernel/ptrace/ptrace32.c         |   4 +-
+ arch/sparc/kernel/ptrace_32.c                 |   4 +-
+ arch/sparc/kernel/ptrace_64.c                 |   8 +-
+ arch/x86/kernel/step.c                        |   2 +-
+ arch/x86/um/ptrace_32.c                       |   2 +-
+ arch/x86/um/ptrace_64.c                       |   2 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c         |   8 +-
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c       |   2 +-
+ drivers/infiniband/core/umem.c                |   8 +-
+ drivers/infiniband/hw/qib/qib_user_pages.c    |   2 +-
+ drivers/infiniband/hw/usnic/usnic_uiom.c      |   9 +-
+ drivers/infiniband/sw/siw/siw_mem.c           |   9 +-
+ drivers/media/common/videobuf2/frame_vector.c |   2 +-
+ drivers/media/pci/ivtv/ivtv-udma.c            |   2 +-
+ drivers/media/pci/ivtv/ivtv-yuv.c             |   5 +-
+ drivers/media/v4l2-core/videobuf-dma-sg.c     |  14 +-
+ drivers/misc/habanalabs/common/memory.c       |   3 +-
+ fs/exec.c                                     |   2 +-
+ fs/proc/base.c                                |   2 +-
+ include/linux/mm.h                            |  35 +-
+ include/linux/mm_types.h                      |   8 +-
+ kernel/events/uprobes.c                       |   4 +-
+ kernel/ptrace.c                               |  12 +-
+ mm/gup.c                                      |  38 +-
+ mm/huge_memory.c                              |  13 +-
+ mm/hugetlb.c                                  |  14 +-
+ mm/memory.c                                   |  97 +++--
+ mm/util.c                                     |   4 +-
+ security/tomoyo/domain.c                      |   2 +-
+ tools/testing/selftests/vm/.gitignore         |   2 +-
+ tools/testing/selftests/vm/Makefile           |  10 +-
+ tools/testing/selftests/vm/check_config.sh    |   4 +-
+ .../selftests/vm/{anon_cow.c => cow.c}        | 387 +++++++++++++++++-
+ tools/testing/selftests/vm/run_vmtests.sh     |   8 +-
+ 39 files changed, 575 insertions(+), 177 deletions(-)
+ rename tools/testing/selftests/vm/{anon_cow.c => cow.c} (75%)
+
+-- 
+2.38.1
+
