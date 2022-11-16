@@ -2,43 +2,43 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9266EC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Nov 2022 10:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A00C43217
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Nov 2022 10:39:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232195AbiKPKjU (ORCPT
+        id S236954AbiKPKjq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Nov 2022 05:39:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43854 "EHLO
+        Wed, 16 Nov 2022 05:39:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232557AbiKPKiG (ORCPT
+        with ESMTP id S233631AbiKPKiU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Nov 2022 05:38:06 -0500
+        Wed, 16 Nov 2022 05:38:20 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DB5625C7F
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 02:29:06 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDADD2D1CF
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 02:29:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668594546;
+        s=mimecast20190719; t=1668594556;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Os9mhvYmMDrU7oRu07Gt40tRhtITIyLN3UTJWIxCBGQ=;
-        b=Np5mjxEQ6nkEvC55WFc+8lnTQduUxuP+2dfPKZNeS2rk/mVM8fhjpQwnWucL2zS360O6zL
-        RbnP6kXzyBTFlhakIQvJ8B2E+axaTZrD34u0z2BLjSCx9ZqeftT79MQqpx70HDKLanLY2+
-        qjkb3nFkqOTWvmQeLXWZKPOlbxCxVc8=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=ddMjxbE+d57ySmRYhTvAErVzb9ykjmc/iLClBCHgJ7c=;
+        b=DhHV24hOaKvXDcUFqkwDJXrzBUGBac6gqjYnjARNMKoN5fsv/1OOWNEcwhmi9aDHscZf/D
+        FUWuaUSSeAQF86bCykToDE5EKFQ9cgMA8IRzYET6Yne7cMf9KKqRtsLgXFHICXC3eGRo+o
+        s7XxE0A0wygquc8/drhQPpoWdtNlgj4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-169-8bSBee3zN2WWjnQux77ZrA-1; Wed, 16 Nov 2022 05:28:54 -0500
-X-MC-Unique: 8bSBee3zN2WWjnQux77ZrA-1
+ us-mta-281-3wHpF2z_Ol-w_Oz0Io_Gqg-1; Wed, 16 Nov 2022 05:29:09 -0500
+X-MC-Unique: 3wHpF2z_Ol-w_Oz0Io_Gqg-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E444E29ABA07;
-        Wed, 16 Nov 2022 10:28:52 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id ED87586F130;
+        Wed, 16 Nov 2022 10:29:07 +0000 (UTC)
 Received: from t480s.fritz.box (unknown [10.39.193.216])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8254B20290A5;
-        Wed, 16 Nov 2022 10:28:45 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0046B2027064;
+        Wed, 16 Nov 2022 10:29:00 +0000 (UTC)
 From:   David Hildenbrand <david@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
@@ -71,11 +71,12 @@ Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         Alex Williamson <alex.williamson@redhat.com>,
         David Hildenbrand <david@redhat.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Leon Romanovsky <leon@kernel.org>
-Subject: [PATCH mm-unstable v1 12/20] RDMA/siw: remove FOLL_FORCE usage
-Date:   Wed, 16 Nov 2022 11:26:51 +0100
-Message-Id: <20221116102659.70287-13-david@redhat.com>
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>
+Subject: [PATCH mm-unstable v1 14/20] drm/etnaviv: remove FOLL_FORCE usage
+Date:   Wed, 16 Nov 2022 11:26:53 +0100
+Message-Id: <20221116102659.70287-15-david@redhat.com>
 In-Reply-To: <20221116102659.70287-1-david@redhat.com>
 References: <20221116102659.70287-1-david@redhat.com>
 MIME-Version: 1.0
@@ -91,52 +92,55 @@ far in one corner case (DAXFS file with holes), which can be ignored
 because GUP does not support long-term pinning in fsdax (see
 check_vma_flags()).
 
+commit cd5297b0855f ("drm/etnaviv: Use FOLL_FORCE for userptr")
+documents that FOLL_FORCE | FOLL_WRITE was really only used for reliable
+R/O pinning.
+
 Consequently, FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM is no longer required
 for reliable R/O long-term pinning: FOLL_LONGTERM is sufficient. So stop
 using FOLL_FORCE, which is really only for ptrace access.
 
-Cc: Bernard Metzler <bmt@zurich.ibm.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Leon Romanovsky <leon@kernel.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Russell King <linux+etnaviv@armlinux.org.uk>
+Cc: Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc: David Airlie <airlied@gmail.com>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- drivers/infiniband/sw/siw/siw_mem.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/sw/siw/siw_mem.c b/drivers/infiniband/sw/siw/siw_mem.c
-index 61c17db70d65..b2b33dd3b4fa 100644
---- a/drivers/infiniband/sw/siw/siw_mem.c
-+++ b/drivers/infiniband/sw/siw/siw_mem.c
-@@ -368,7 +368,7 @@ struct siw_umem *siw_umem_get(u64 start, u64 len, bool writable)
- 	struct mm_struct *mm_s;
- 	u64 first_page_va;
- 	unsigned long mlock_limit;
--	unsigned int foll_flags = FOLL_WRITE;
-+	unsigned int foll_flags = FOLL_LONGTERM;
- 	int num_pages, num_chunks, i, rv = 0;
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+index cc386f8a7116..efe2240945d0 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+@@ -638,6 +638,7 @@ static int etnaviv_gem_userptr_get_pages(struct etnaviv_gem_object *etnaviv_obj)
+ 	struct page **pvec = NULL;
+ 	struct etnaviv_gem_userptr *userptr = &etnaviv_obj->userptr;
+ 	int ret, pinned = 0, npages = etnaviv_obj->base.size >> PAGE_SHIFT;
++	unsigned int gup_flags = FOLL_LONGTERM;
  
- 	if (!can_do_mlock())
-@@ -391,8 +391,8 @@ struct siw_umem *siw_umem_get(u64 start, u64 len, bool writable)
+ 	might_lock_read(&current->mm->mmap_lock);
  
- 	mmgrab(mm_s);
+@@ -648,14 +649,15 @@ static int etnaviv_gem_userptr_get_pages(struct etnaviv_gem_object *etnaviv_obj)
+ 	if (!pvec)
+ 		return -ENOMEM;
  
--	if (!writable)
--		foll_flags |= FOLL_FORCE;
-+	if (writable)
-+		foll_flags |= FOLL_WRITE;
++	if (!userptr->ro)
++		gup_flags |= FOLL_WRITE;
++
+ 	do {
+ 		unsigned num_pages = npages - pinned;
+ 		uint64_t ptr = userptr->ptr + pinned * PAGE_SIZE;
+ 		struct page **pages = pvec + pinned;
  
- 	mmap_read_lock(mm_s);
- 
-@@ -423,8 +423,7 @@ struct siw_umem *siw_umem_get(u64 start, u64 len, bool writable)
- 		while (nents) {
- 			struct page **plist = &umem->page_chunk[i].plist[got];
- 
--			rv = pin_user_pages(first_page_va, nents,
--					    foll_flags | FOLL_LONGTERM,
-+			rv = pin_user_pages(first_page_va, nents, foll_flags,
- 					    plist, NULL);
- 			if (rv < 0)
- 				goto out_sem_up;
+-		ret = pin_user_pages_fast(ptr, num_pages,
+-					  FOLL_WRITE | FOLL_FORCE | FOLL_LONGTERM,
+-					  pages);
++		ret = pin_user_pages_fast(ptr, num_pages, gup_flags, pages);
+ 		if (ret < 0) {
+ 			unpin_user_pages(pvec, pinned);
+ 			kvfree(pvec);
 -- 
 2.38.1
 
