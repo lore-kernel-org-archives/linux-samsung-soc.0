@@ -2,785 +2,549 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1B5C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Nov 2022 10:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEE6C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Nov 2022 10:49:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238663AbiKPKnY (ORCPT
+        id S233571AbiKPKtW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Nov 2022 05:43:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49800 "EHLO
+        Wed, 16 Nov 2022 05:49:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238755AbiKPKnH (ORCPT
+        with ESMTP id S233650AbiKPKtE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Nov 2022 05:43:07 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77BBA29F
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 02:30:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668594607;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vZsyOpdl0voGwp/2HQsh2gXxw68zLpPACCuw4AqnFM0=;
-        b=FTG8UqObf9OU3dhRGlI9ZtAEdME8sNv+lp5YltUe1I7jkfo15h2KzB7je7CjKoJFaDeSti
-        IbuCjKFBi+emC6d3hKypYE+9oEqqQmfy+BR9HtzQwLGgcE/XtcgmUfqy3DrMfbQyFElYgG
-        2gM/Swil6dmPNkuZyT4uxCsVAHuRe3c=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-631-uvWfBmc3PGG4yxhlAu7-Aw-1; Wed, 16 Nov 2022 05:30:04 -0500
-X-MC-Unique: uvWfBmc3PGG4yxhlAu7-Aw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4A0592A5957A;
-        Wed, 16 Nov 2022 10:30:03 +0000 (UTC)
-Received: from t480s.fritz.box (unknown [10.39.193.216])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 39CE3207AD4C;
-        Wed, 16 Nov 2022 10:29:48 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        David Airlie <airlied@gmail.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: [PATCH mm-unstable v1 20/20] mm: rename FOLL_FORCE to FOLL_PTRACE
-Date:   Wed, 16 Nov 2022 11:26:59 +0100
-Message-Id: <20221116102659.70287-21-david@redhat.com>
-In-Reply-To: <20221116102659.70287-1-david@redhat.com>
-References: <20221116102659.70287-1-david@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+        Wed, 16 Nov 2022 05:49:04 -0500
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60416FAF9
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 02:37:27 -0800 (PST)
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20221116103722epoutp014f54a0d93b1ad37fee80234489cf4569~oClnKuscE2951429514epoutp01G
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 10:37:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20221116103722epoutp014f54a0d93b1ad37fee80234489cf4569~oClnKuscE2951429514epoutp01G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1668595042;
+        bh=2d2nToH+3CLmligaAbCbS+2i+xS+WtQiNEytigtIN7c=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=CThfVloz3i6hQcXOx6p/+6RsYxSWgC2WXcNenXszw7adetx6qS834nAgfIp1NHSCt
+         IZQ0P9nzC6P6b2ysBzURvSWlj86kuLeoqo4g1XRKs9xsT6Plj31SP2Wk3RNup8m30c
+         NqMB7E6oejRcQr5ND/HX5+4/fgnz2MdFbO23P6RM=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20221116103721epcas5p326929cd0d980c6de49ca6bbedf01092a~oClmCbrRr1961719617epcas5p3n;
+        Wed, 16 Nov 2022 10:37:21 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.178]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4NBzy7550rz4x9Pv; Wed, 16 Nov
+        2022 10:37:19 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        FC.28.39477.F5DB4736; Wed, 16 Nov 2022 19:37:19 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20221116090644epcas5p3a0fa6d51819a2b2a9570f236191748ea~oBWeQC0x11719417194epcas5p3P;
+        Wed, 16 Nov 2022 09:06:44 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20221116090644epsmtrp2ac8ae7579660093a0a74b601ee0de9a8~oBWeO20s82745427454epsmtrp2h;
+        Wed, 16 Nov 2022 09:06:44 +0000 (GMT)
+X-AuditID: b6c32a4a-259fb70000019a35-e2-6374bd5f041c
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        FA.11.18644.428A4736; Wed, 16 Nov 2022 18:06:44 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+        [107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20221116090639epsmtip278e51ffe96dffbb921c510fee2f04ebb~oBWZyneJz2996229962epsmtip2b;
+        Wed, 16 Nov 2022 09:06:39 +0000 (GMT)
+From:   Vivek Yadav <vivek.2311@samsung.com>
+To:     rcsekar@samsung.com, krzysztof.kozlowski+dt@linaro.org,
+        wg@grandegger.com, mkl@pengutronix.de, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        pankaj.dubey@samsung.com, ravi.patel@samsung.com,
+        alim.akhtar@samsung.com, linux-fsd@tesla.com, robh+dt@kernel.org
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        aswani.reddy@samsung.com, sriranjani.p@samsung.com,
+        ajaykumar.rs@samsung.com, Vivek Yadav <vivek.2311@samsung.com>
+Subject: [PATCH] arm64: dts: fsd: Change the reg properties from 64-bit to
+ 32-bit
+Date:   Wed, 16 Nov 2022 14:42:47 +0530
+Message-Id: <20221116091247.52388-1-vivek.2311@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WTfUxTVxjGc+5HWzS4S3HzyMLATmckAi22eEDByRi5cW6wMCIuI6yUK2X0
+        y97WgWYRFvkDJkg3SBhf6xibATZwpXyIwLAw1EmkUzT4MUJlIIFGWKsITtxaL2z//d7nfZ88
+        Oe85R4ALe3gBgmyNgdFr5CoRbx3RMbBje2h6r0Ehbh3fgvrnLxJooq6Dh2xt7XxUM3KKQN8M
+        XiPR1NB9PiqdceDI3lFKIsvkLRI1PanAkWP2ELrRXcNDlSN9GGqtLyfQkPkVtHjVCVB9+yM+
+        ciz08FGVvYtEhb2DfHTX2UKip98OEOj78fPkm5toa+NtjDZbjPRf1+8C2tJUxKPv3erh0W0N
+        J+kzK2J6vu8mjy61NgH6+ee1fNpteS1p/Yc5e5WMPJPRBzMahTYzW5MVI3onOf2tdFmkWBIq
+        iUK7RcEauZqJEcUfTApNyFZ5zisKPiZXGT1SkpxlReGxe/Vao4EJVmpZQ4yI0WWqdFJdGCtX
+        s0ZNVpiGMURLxOIImWfw4xxlfuUdTHdFnetqH+Tlg4fJxcBHACkprL54hvCykLoAoGtYWAzW
+        edgF4Py5SZIr3AB21BQRa46CqT4+1+gGsLrKvVoUYvBS8ZcvpnhUCJwsMhPexkaqGYNWtwN4
+        C5yyYnD5HxPwTvlTyXBo4Z7HLhAQ1DZYXfGJV/al9sCV60urcUGw+Vw/7vVCalgASxobcK4R
+        D39srl1lfzh7ycrnOAC6H/byOFbArudFJMdKaDb1AI73wf7RGsKbi1M7YGt3OCcHworfWjAv
+        49QGWPL3nxin+8KuujXeCmfcZaTX6o0quebPyTQsnBohuT2mQctZGygDgVX/B5gBaAKbGR2r
+        zmJYmS5Cw3z630UptGoLePGMQw50AcfEQpgNYAJgA1CAizb6ar8yKIS+mfK844xem643qhjW
+        BmSejZnwgJcVWs8/0BjSJdIosTQyMlIatStSItrk+11liEJIZckNTA7D6Bj9mg8T+ATkY/vt
+        ifGF9oGbMW3Rv46898iwuJ70ixtzsUHPylNlt/Xzttd/7hfuWs49vLv7M1PxF78ciC8fe2kq
+        r+jKs9g/Qvcspo7dGU3YNhdYPyQlV17t1Fx+HNt+nlBETByRvOsz1JDywc6cN5yPf0gxZz4Y
+        GG2axjbEJqsr3z66FJ1ytDbt7GzuglGhTpyYCVzwG08Qpp3enGGvlNpj61syHFvjH9zojD7R
+        05n1k6vx/rEQudsktJaNm+a2xB3yU/YHuPZ1BBekfjRdsWyIG8g/sv+k/+mv5yMuhJ4aTX4S
+        5nRS21Wy6dSl8KDfh9/Pv3y1YHa2LNGSV5fntMwdrlKdcCfsbLBltEweFBGsUi4JwfWs/F/V
+        gjvmTwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSvK7KipJkgwVbuSwOvD/IYvFg3jY2
+        i0Obt7JbzDnfwmIx/8g5Vounxx6xW/S9eMhscWFbH6vFpsfXWC1WfZ/KbPHwVbjF5V1z2Cxm
+        nN/HZLF+0RQWi2MLxCy+nX7DaLFo6xd2i4cf9rBbzLqwg9Wide8Rdovbb9axWvxaeJjFYum9
+        nawO4h5bVt5k8liwqdTj46XbjB6bVnWyedy5tofNY/OSeo/+vwYe7/ddZfPo27KK0eNf01x2
+        j8+b5AK4o7hsUlJzMstSi/TtErgyGmbcYio4mVvxaesRtgbGd8FdjJwcEgImEo1P97F3MXJx
+        CAnsYJT48PwqK0RCSmLKmZcsELawxMp/z6GKmpkkdpz6yASSYBPQknjcuYAFJCEisJtJ4m33
+        XLAqZoF9TBJH9+wEaxcWCJQ4fegk0FgODhYBVYnZU7NAwrwC1hJ/L/2A2iAvsXrDAeYJjDwL
+        GBlWMUqmFhTnpucWGxYY5aWW6xUn5haX5qXrJefnbmIEx4aW1g7GPas+6B1iZOJgPMQowcGs
+        JMKbP7kkWYg3JbGyKrUoP76oNCe1+BCjNAeLkjjvha6T8UIC6YklqdmpqQWpRTBZJg5OqQam
+        YudHrhWe6RJ90S8rVViDVnReiNK3nnC4eOXdyiVSbiueHgwVmXHRK8B5rvrWaGUhzWsnrBzY
+        lcP8n5X92bHN/cTE/pBclfehmpPCBL3vX+eQrflwUsfQ18xml+HXrrtiYfIMad+lf0wQrROc
+        GLxNWs/+0AFPduMzCznW1G6/989jk/hRv9TtV+O+dm25ULAqrfhahPLC9wdfbLY0u5zP9XDb
+        48VaV/r5re4v6n4a1bTld6e25mRJ67LDhmp1/TbvCn4cehx7okGzUGV+2BExu/lODvw2UnNu
+        yDtny4XuefRa5OKlvYdyz324E1Yy2+dHd29sWYQzJ0fU1raVO3d9zH4dHLZlV4bwZcXrOcFK
+        LMUZiYZazEXFiQAYji3w/AIAAA==
+X-CMS-MailID: 20221116090644epcas5p3a0fa6d51819a2b2a9570f236191748ea
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20221116090644epcas5p3a0fa6d51819a2b2a9570f236191748ea
+References: <CGME20221116090644epcas5p3a0fa6d51819a2b2a9570f236191748ea@epcas5p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Let's make it clearer that functionality provided by FOLL_FORCE is
-really only for ptrace access. Prevent accidental re-use in drivers
-by renaming FOLL_FORCE to FOLL_PTRACE:
+Change the reg properties from 64-bit to 32-bit for all IPs, as none of
+the nodes are above 32-bit range in the fsd SoC.
 
-  git grep -l 'FOLL_FORCE' | xargs sed -i 's/FOLL_FORCE/FOLL_PTRACE/g'
+Since dma-ranges length does not fit into 32-bit size, keep it 64-bit
+and move it to specific node where it is used instead of SoC section.
 
-In the future, we might want to use a separate set of flags for the
-access_vm interface: most FOLL_* flags don't apply and we mostly only
-want to pass FOLL_PTRACE and FOLL_WRITE.
-
-Suggested-by: Christoph Hellwig <hch@infradead.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Richard Henderson <richard.henderson@linaro.org>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: Matt Turner <mattst88@gmail.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Muchun Song <songmuchun@bytedance.com>
-Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Signed-off-by: Vivek Yadav <vivek.2311@samsung.com>
 ---
- arch/alpha/kernel/ptrace.c            |  6 +++---
- arch/arm64/kernel/mte.c               |  2 +-
- arch/ia64/kernel/ptrace.c             | 10 +++++-----
- arch/mips/kernel/ptrace32.c           |  4 ++--
- arch/mips/math-emu/dsemul.c           |  2 +-
- arch/powerpc/kernel/ptrace/ptrace32.c |  4 ++--
- arch/sparc/kernel/ptrace_32.c         |  4 ++--
- arch/sparc/kernel/ptrace_64.c         |  8 ++++----
- arch/x86/kernel/step.c                |  2 +-
- arch/x86/um/ptrace_32.c               |  2 +-
- arch/x86/um/ptrace_64.c               |  2 +-
- fs/exec.c                             |  2 +-
- fs/proc/base.c                        |  2 +-
- include/linux/mm.h                    |  8 ++++----
- kernel/events/uprobes.c               |  4 ++--
- kernel/ptrace.c                       | 12 ++++++------
- mm/gup.c                              | 28 +++++++++++++--------------
- mm/huge_memory.c                      |  8 ++++----
- mm/hugetlb.c                          |  2 +-
- mm/memory.c                           |  4 ++--
- mm/util.c                             |  4 ++--
- security/tomoyo/domain.c              |  2 +-
- 22 files changed, 61 insertions(+), 61 deletions(-)
+ arch/arm64/boot/dts/tesla/fsd-evb.dts |   2 +
+ arch/arm64/boot/dts/tesla/fsd.dtsi    | 109 ++++++++++++++------------
+ 2 files changed, 62 insertions(+), 49 deletions(-)
 
-diff --git a/arch/alpha/kernel/ptrace.c b/arch/alpha/kernel/ptrace.c
-index a1a239ea002d..55def6479ff2 100644
---- a/arch/alpha/kernel/ptrace.c
-+++ b/arch/alpha/kernel/ptrace.c
-@@ -158,7 +158,7 @@ static inline int
- read_int(struct task_struct *task, unsigned long addr, int * data)
- {
- 	int copied = access_process_vm(task, addr, data, sizeof(int),
--			FOLL_FORCE);
-+			FOLL_PTRACE);
- 	return (copied == sizeof(int)) ? 0 : -EIO;
- }
+diff --git a/arch/arm64/boot/dts/tesla/fsd-evb.dts b/arch/arm64/boot/dts/tesla/fsd-evb.dts
+index 1db6ddf03f01..81d9937d8828 100644
+--- a/arch/arm64/boot/dts/tesla/fsd-evb.dts
++++ b/arch/arm64/boot/dts/tesla/fsd-evb.dts
+@@ -14,6 +14,8 @@
+ / {
+ 	model = "Tesla Full Self-Driving (FSD) Evaluation board";
+ 	compatible = "tesla,fsd-evb", "tesla,fsd";
++	#address-cells = <2>;
++	#size-cells = <2>;
  
-@@ -166,7 +166,7 @@ static inline int
- write_int(struct task_struct *task, unsigned long addr, int data)
- {
- 	int copied = access_process_vm(task, addr, &data, sizeof(int),
--			FOLL_FORCE | FOLL_WRITE);
-+			FOLL_PTRACE | FOLL_WRITE);
- 	return (copied == sizeof(int)) ? 0 : -EIO;
- }
+ 	aliases {
+ 		serial0 = &serial_0;
+diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
+index f35bc5a288c2..7378ae39233a 100644
+--- a/arch/arm64/boot/dts/tesla/fsd.dtsi
++++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
+@@ -342,23 +342,22 @@
  
-@@ -284,7 +284,7 @@ long arch_ptrace(struct task_struct *child, long request,
- 	case PTRACE_PEEKTEXT: /* read word at location addr. */
- 	case PTRACE_PEEKDATA:
- 		copied = ptrace_access_vm(child, addr, &tmp, sizeof(tmp),
--				FOLL_FORCE);
-+				FOLL_PTRACE);
- 		ret = -EIO;
- 		if (copied != sizeof(tmp))
- 			break;
-diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
-index 7467217c1eaf..fa29fecaedbc 100644
---- a/arch/arm64/kernel/mte.c
-+++ b/arch/arm64/kernel/mte.c
-@@ -525,7 +525,7 @@ int mte_ptrace_copy_tags(struct task_struct *child, long request,
- 	int ret;
- 	struct iovec kiov;
- 	struct iovec __user *uiov = (void __user *)data;
--	unsigned int gup_flags = FOLL_FORCE;
-+	unsigned int gup_flags = FOLL_PTRACE;
+ 	soc: soc@0 {
+ 		compatible = "simple-bus";
+-		#address-cells = <2>;
+-		#size-cells = <2>;
+-		ranges = <0x0 0x0 0x0 0x0 0x0 0x18000000>;
+-		dma-ranges = <0x0 0x0 0x0 0x0 0x10 0x0>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x0 0x0 0x18000000>;
  
- 	if (!system_supports_mte())
- 		return -EIO;
-diff --git a/arch/ia64/kernel/ptrace.c b/arch/ia64/kernel/ptrace.c
-index ab8aeb34d1d9..3781db1f506c 100644
---- a/arch/ia64/kernel/ptrace.c
-+++ b/arch/ia64/kernel/ptrace.c
-@@ -452,7 +452,7 @@ ia64_peek (struct task_struct *child, struct switch_stack *child_stack,
- 			return 0;
- 		}
- 	}
--	copied = access_process_vm(child, addr, &ret, sizeof(ret), FOLL_FORCE);
-+	copied = access_process_vm(child, addr, &ret, sizeof(ret), FOLL_PTRACE);
- 	if (copied != sizeof(ret))
- 		return -EIO;
- 	*val = ret;
-@@ -489,7 +489,7 @@ ia64_poke (struct task_struct *child, struct switch_stack *child_stack,
- 			}
- 		}
- 	} else if (access_process_vm(child, addr, &val, sizeof(val),
--				FOLL_FORCE | FOLL_WRITE)
-+				FOLL_PTRACE | FOLL_WRITE)
- 		   != sizeof(val))
- 		return -EIO;
- 	return 0;
-@@ -544,7 +544,7 @@ ia64_sync_user_rbs (struct task_struct *child, struct switch_stack *sw,
- 		if (ret < 0)
- 			return ret;
- 		if (access_process_vm(child, addr, &val, sizeof(val),
--				FOLL_FORCE | FOLL_WRITE)
-+				FOLL_PTRACE | FOLL_WRITE)
- 		    != sizeof(val))
- 			return -EIO;
- 	}
-@@ -561,7 +561,7 @@ ia64_sync_kernel_rbs (struct task_struct *child, struct switch_stack *sw,
- 	/* now copy word for word from user rbs to kernel rbs: */
- 	for (addr = user_rbs_start; addr < user_rbs_end; addr += 8) {
- 		if (access_process_vm(child, addr, &val, sizeof(val),
--				FOLL_FORCE)
-+				FOLL_PTRACE)
- 				!= sizeof(val))
- 			return -EIO;
+ 		gic: interrupt-controller@10400000 {
+ 			compatible = "arm,gic-v3";
+ 			#interrupt-cells = <3>;
+ 			interrupt-controller;
+-			reg =	<0x0 0x10400000 0x0 0x10000>, /* GICD */
+-				<0x0 0x10600000 0x0 0x200000>; /* GICR_RD+GICR_SGI */
++			reg =	<0x10400000 0x10000>, /* GICD */
++				<0x10600000 0x200000>; /* GICR_RD+GICR_SGI */
+ 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
  
-@@ -1105,7 +1105,7 @@ arch_ptrace (struct task_struct *child, long request,
- 	case PTRACE_PEEKDATA:
- 		/* read word at location addr */
- 		if (ptrace_access_vm(child, addr, &data, sizeof(data),
--				FOLL_FORCE)
-+				FOLL_PTRACE)
- 		    != sizeof(data))
- 			return -EIO;
- 		/* ensure return value is not mistaken for error code */
-diff --git a/arch/mips/kernel/ptrace32.c b/arch/mips/kernel/ptrace32.c
-index afcf27a877cb..31c1c805bb8e 100644
---- a/arch/mips/kernel/ptrace32.c
-+++ b/arch/mips/kernel/ptrace32.c
-@@ -71,7 +71,7 @@ long compat_arch_ptrace(struct task_struct *child, compat_long_t request,
- 			break;
+ 		smmu_imem: iommu@10200000 {
+ 			compatible = "arm,mmu-500";
+-			reg = <0x0 0x10200000 0x0 0x10000>;
++			reg = <0x10200000 0x10000>;
+ 			#iommu-cells = <2>;
+ 			#global-interrupts = <7>;
+ 			interrupts = <GIC_SPI 438 IRQ_TYPE_LEVEL_HIGH>, /* Global secure fault */
+@@ -378,7 +377,7 @@
  
- 		copied = ptrace_access_vm(child, (u64)addrOthers, &tmp,
--				sizeof(tmp), FOLL_FORCE);
-+				sizeof(tmp), FOLL_PTRACE);
- 		if (copied != sizeof(tmp))
- 			break;
- 		ret = put_user(tmp, (u32 __user *) (unsigned long) data);
-@@ -185,7 +185,7 @@ long compat_arch_ptrace(struct task_struct *child, compat_long_t request,
- 		ret = 0;
- 		if (ptrace_access_vm(child, (u64)addrOthers, &data,
- 					sizeof(data),
--					FOLL_FORCE | FOLL_WRITE) == sizeof(data))
-+					FOLL_PTRACE | FOLL_WRITE) == sizeof(data))
- 			break;
- 		ret = -EIO;
- 		break;
-diff --git a/arch/mips/math-emu/dsemul.c b/arch/mips/math-emu/dsemul.c
-index e02bd20b60a6..6111a46de2df 100644
---- a/arch/mips/math-emu/dsemul.c
-+++ b/arch/mips/math-emu/dsemul.c
-@@ -271,7 +271,7 @@ int mips_dsemul(struct pt_regs *regs, mips_instruction ir,
- 	/* Write the frame to user memory */
- 	fr_uaddr = (unsigned long)&dsemul_page()[fr_idx];
- 	ret = access_process_vm(current, fr_uaddr, &fr, sizeof(fr),
--				FOLL_FORCE | FOLL_WRITE);
-+				FOLL_PTRACE | FOLL_WRITE);
- 	if (unlikely(ret != sizeof(fr))) {
- 		MIPS_FPU_EMU_INC_STATS(errors);
- 		free_emuframe(fr_idx, current->mm);
-diff --git a/arch/powerpc/kernel/ptrace/ptrace32.c b/arch/powerpc/kernel/ptrace/ptrace32.c
-index 19c224808982..336cfebd70df 100644
---- a/arch/powerpc/kernel/ptrace/ptrace32.c
-+++ b/arch/powerpc/kernel/ptrace/ptrace32.c
-@@ -65,7 +65,7 @@ long compat_arch_ptrace(struct task_struct *child, compat_long_t request,
- 			break;
+ 		smmu_isp: iommu@12100000 {
+ 			compatible = "arm,mmu-500";
+-			reg = <0x0 0x12100000 0x0 0x10000>;
++			reg = <0x12100000 0x10000>;
+ 			#iommu-cells = <2>;
+ 			#global-interrupts = <11>;
+ 			interrupts = <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>, /* Global secure fault */
+@@ -406,7 +405,7 @@
  
- 		copied = ptrace_access_vm(child, (u64)addrOthers, &tmp,
--				sizeof(tmp), FOLL_FORCE);
-+				sizeof(tmp), FOLL_PTRACE);
- 		if (copied != sizeof(tmp))
- 			break;
- 		ret = put_user(tmp, (u32 __user *)data);
-@@ -169,7 +169,7 @@ long compat_arch_ptrace(struct task_struct *child, compat_long_t request,
- 		ret = 0;
- 		if (ptrace_access_vm(child, (u64)addrOthers, &tmp,
- 					sizeof(tmp),
--					FOLL_FORCE | FOLL_WRITE) == sizeof(tmp))
-+					FOLL_PTRACE | FOLL_WRITE) == sizeof(tmp))
- 			break;
- 		ret = -EIO;
- 		break;
-diff --git a/arch/sparc/kernel/ptrace_32.c b/arch/sparc/kernel/ptrace_32.c
-index e7db48acb838..b5c91855faee 100644
---- a/arch/sparc/kernel/ptrace_32.c
-+++ b/arch/sparc/kernel/ptrace_32.c
-@@ -56,7 +56,7 @@ static int regwindow32_get(struct task_struct *target,
- 			return -EFAULT;
- 	} else {
- 		if (access_process_vm(target, reg_window, uregs, size,
--				      FOLL_FORCE) != size)
-+				      FOLL_PTRACE) != size)
- 			return -EFAULT;
- 	}
- 	return 0;
-@@ -74,7 +74,7 @@ static int regwindow32_set(struct task_struct *target,
- 			return -EFAULT;
- 	} else {
- 		if (access_process_vm(target, reg_window, uregs, size,
--				      FOLL_FORCE | FOLL_WRITE) != size)
-+				      FOLL_PTRACE | FOLL_WRITE) != size)
- 			return -EFAULT;
- 	}
- 	return 0;
-diff --git a/arch/sparc/kernel/ptrace_64.c b/arch/sparc/kernel/ptrace_64.c
-index 86a7eb5c27ba..4de97cd1e55a 100644
---- a/arch/sparc/kernel/ptrace_64.c
-+++ b/arch/sparc/kernel/ptrace_64.c
-@@ -165,7 +165,7 @@ static int get_from_target(struct task_struct *target, unsigned long uaddr,
- 			return -EFAULT;
- 	} else {
- 		int len2 = access_process_vm(target, uaddr, kbuf, len,
--				FOLL_FORCE);
-+				FOLL_PTRACE);
- 		if (len2 != len)
- 			return -EFAULT;
- 	}
-@@ -180,7 +180,7 @@ static int set_to_target(struct task_struct *target, unsigned long uaddr,
- 			return -EFAULT;
- 	} else {
- 		int len2 = access_process_vm(target, uaddr, kbuf, len,
--				FOLL_FORCE | FOLL_WRITE);
-+				FOLL_PTRACE | FOLL_WRITE);
- 		if (len2 != len)
- 			return -EFAULT;
- 	}
-@@ -592,7 +592,7 @@ static int genregs32_set(struct task_struct *target,
- 						      &reg_window[pos],
- 						      (void *) k,
- 						      sizeof(*k),
--						      FOLL_FORCE | FOLL_WRITE)
-+						      FOLL_PTRACE | FOLL_WRITE)
- 				    != sizeof(*k))
- 					return -EFAULT;
- 				k++;
-@@ -622,7 +622,7 @@ static int genregs32_set(struct task_struct *target,
- 						      (unsigned long)
- 						      &reg_window[pos],
- 						      &reg, sizeof(reg),
--						      FOLL_FORCE | FOLL_WRITE)
-+						      FOLL_PTRACE | FOLL_WRITE)
- 				    != sizeof(reg))
- 					return -EFAULT;
- 				pos++;
-diff --git a/arch/x86/kernel/step.c b/arch/x86/kernel/step.c
-index 8e2b2552b5ee..7c11da8bbe4c 100644
---- a/arch/x86/kernel/step.c
-+++ b/arch/x86/kernel/step.c
-@@ -60,7 +60,7 @@ static int is_setting_trap_flag(struct task_struct *child, struct pt_regs *regs)
- 	unsigned long addr = convert_ip_to_linear(child, regs);
+ 		smmu_peric: iommu@14900000 {
+ 			compatible = "arm,mmu-500";
+-			reg = <0x0 0x14900000 0x0 0x10000>;
++			reg = <0x14900000 0x10000>;
+ 			#iommu-cells = <2>;
+ 			#global-interrupts = <5>;
+ 			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>, /* Global secure fault */
+@@ -422,7 +421,7 @@
  
- 	copied = access_process_vm(child, addr, opcode, sizeof(opcode),
--			FOLL_FORCE);
-+			FOLL_PTRACE);
- 	for (i = 0; i < copied; i++) {
- 		switch (opcode[i]) {
- 		/* popf and iret */
-diff --git a/arch/x86/um/ptrace_32.c b/arch/x86/um/ptrace_32.c
-index 0bc4b73a9cde..a40430123448 100644
---- a/arch/x86/um/ptrace_32.c
-+++ b/arch/x86/um/ptrace_32.c
-@@ -38,7 +38,7 @@ int is_syscall(unsigned long addr)
- 		 * in case of singlestepping, if copy_from_user failed.
- 		 */
- 		n = access_process_vm(current, addr, &instr, sizeof(instr),
--				FOLL_FORCE);
-+				FOLL_PTRACE);
- 		if (n != sizeof(instr)) {
- 			printk(KERN_ERR "is_syscall : failed to read "
- 			       "instruction from 0x%lx\n", addr);
-diff --git a/arch/x86/um/ptrace_64.c b/arch/x86/um/ptrace_64.c
-index 289d0159b041..d9f8cba121d6 100644
---- a/arch/x86/um/ptrace_64.c
-+++ b/arch/x86/um/ptrace_64.c
-@@ -203,7 +203,7 @@ int is_syscall(unsigned long addr)
- 		 * in case of singlestepping, if copy_from_user failed.
- 		 */
- 		n = access_process_vm(current, addr, &instr, sizeof(instr),
--				FOLL_FORCE);
-+				FOLL_PTRACE);
- 		if (n != sizeof(instr)) {
- 			printk("is_syscall : failed to read instruction from "
- 			       "0x%lx\n", addr);
-diff --git a/fs/exec.c b/fs/exec.c
-index a0b1f0337a62..e616abec8b82 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -199,7 +199,7 @@ static struct page *get_arg_page(struct linux_binprm *bprm, unsigned long pos,
- {
- 	struct page *page;
- 	int ret;
--	unsigned int gup_flags = FOLL_FORCE;
-+	unsigned int gup_flags = FOLL_PTRACE;
+ 		smmu_fsys0: iommu@15450000 {
+ 			compatible = "arm,mmu-500";
+-			reg = <0x0 0x15450000 0x0 0x10000>;
++			reg = <0x15450000 0x10000>;
+ 			#iommu-cells = <2>;
+ 			#global-interrupts = <5>;
+ 			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>, /* Global secure fault */
+@@ -438,7 +437,7 @@
  
- #ifdef CONFIG_STACK_GROWSUP
- 	if (write) {
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 9e479d7d202b..f84a85a0f36d 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -854,7 +854,7 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
- 	if (!mmget_not_zero(mm))
- 		goto free;
+ 		clock_imem: clock-controller@10010000 {
+ 			compatible = "tesla,fsd-clock-imem";
+-			reg = <0x0 0x10010000 0x0 0x3000>;
++			reg = <0x10010000 0x3000>;
+ 			#clock-cells = <1>;
+ 			clocks = <&fin_pll>,
+ 				<&clock_cmu DOUT_CMU_IMEM_TCUCLK>,
+@@ -452,7 +451,7 @@
  
--	flags = FOLL_FORCE | (write ? FOLL_WRITE : 0);
-+	flags = FOLL_PTRACE | (write ? FOLL_WRITE : 0);
+ 		clock_cmu: clock-controller@11c10000 {
+ 			compatible = "tesla,fsd-clock-cmu";
+-			reg = <0x0 0x11c10000 0x0 0x3000>;
++			reg = <0x11c10000 0x3000>;
+ 			#clock-cells = <1>;
+ 			clocks = <&fin_pll>;
+ 			clock-names = "fin_pll";
+@@ -460,7 +459,7 @@
  
- 	while (count > 0) {
- 		size_t this_len = min_t(size_t, count, PAGE_SIZE);
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index e8cc838f42f9..037423431225 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2999,7 +2999,7 @@ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
- #define FOLL_TOUCH	0x02	/* mark page accessed */
- #define FOLL_GET	0x04	/* do get_page on page */
- #define FOLL_DUMP	0x08	/* give error on hole if it would be zero */
--#define FOLL_FORCE	0x10	/* get_user_pages read/write w/o permission */
-+#define FOLL_PTRACE	0x10	/* get_user_pages read/write w/o permission */
- #define FOLL_NOWAIT	0x20	/* if a disk transfer is needed, start the IO
- 				 * and return without waiting upon it */
- #define FOLL_NOFAULT	0x80	/* do not fault in pages */
-@@ -3151,12 +3151,12 @@ static inline bool gup_must_unshare(struct vm_area_struct *vma,
- static inline bool gup_can_follow_protnone(unsigned int flags)
- {
- 	/*
--	 * FOLL_FORCE has to be able to make progress even if the VMA is
--	 * inaccessible. Further, FOLL_FORCE access usually does not represent
-+	 * FOLL_PTRACE has to be able to make progress even if the VMA is
-+	 * inaccessible. Further, FOLL_PTRACE access usually does not represent
- 	 * application behaviour and we should avoid triggering NUMA hinting
- 	 * faults.
- 	 */
--	return flags & FOLL_FORCE;
-+	return flags & FOLL_PTRACE;
- }
+ 		clock_csi: clock-controller@12610000 {
+ 			compatible = "tesla,fsd-clock-cam_csi";
+-			reg = <0x0 0x12610000 0x0 0x3000>;
++			reg = <0x12610000 0x3000>;
+ 			#clock-cells = <1>;
+ 			clocks = <&fin_pll>;
+ 			clock-names = "fin_pll";
+@@ -468,7 +467,7 @@
  
- typedef int (*pte_fn_t)(pte_t *pte, unsigned long addr, void *data);
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index d9e357b7e17c..6f67c1164f10 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -466,7 +466,7 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
- 	struct vm_area_struct *vma;
- 	int ret, is_register, ref_ctr_updated = 0;
- 	bool orig_page_huge = false;
--	unsigned int gup_flags = FOLL_FORCE;
-+	unsigned int gup_flags = FOLL_PTRACE;
+ 		clock_mfc: clock-controller@12810000 {
+ 			compatible = "tesla,fsd-clock-mfc";
+-			reg = <0x0 0x12810000 0x0 0x3000>;
++			reg = <0x12810000 0x3000>;
+ 			#clock-cells = <1>;
+ 			clocks = <&fin_pll>;
+ 			clock-names = "fin_pll";
+@@ -476,7 +475,7 @@
  
- 	is_register = is_swbp_insn(&opcode);
- 	uprobe = container_of(auprobe, struct uprobe, arch);
-@@ -2028,7 +2028,7 @@ static int is_trap_at_addr(struct mm_struct *mm, unsigned long vaddr)
- 	 * but we treat this as a 'remote' access since it is
- 	 * essentially a kernel access to the memory.
- 	 */
--	result = get_user_pages_remote(mm, vaddr, 1, FOLL_FORCE, &page,
-+	result = get_user_pages_remote(mm, vaddr, 1, FOLL_PTRACE, &page,
- 			NULL, NULL);
- 	if (result < 0)
- 		return result;
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index 54482193e1ed..81394ebd96aa 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -632,7 +632,7 @@ int ptrace_readdata(struct task_struct *tsk, unsigned long src, char __user *dst
- 		int this_len, retval;
+ 		clock_peric: clock-controller@14010000 {
+ 			compatible = "tesla,fsd-clock-peric";
+-			reg = <0x0 0x14010000 0x0 0x3000>;
++			reg = <0x14010000 0x3000>;
+ 			#clock-cells = <1>;
+ 			clocks = <&fin_pll>,
+ 				<&clock_cmu DOUT_CMU_PLL_SHARED0_DIV4>,
+@@ -494,7 +493,7 @@
  
- 		this_len = (len > sizeof(buf)) ? sizeof(buf) : len;
--		retval = ptrace_access_vm(tsk, src, buf, this_len, FOLL_FORCE);
-+		retval = ptrace_access_vm(tsk, src, buf, this_len, FOLL_PTRACE);
+ 		clock_fsys0: clock-controller@15010000 {
+ 			compatible = "tesla,fsd-clock-fsys0";
+-			reg = <0x0 0x15010000 0x0 0x3000>;
++			reg = <0x15010000 0x3000>;
+ 			#clock-cells = <1>;
+ 			clocks = <&fin_pll>,
+ 				<&clock_cmu DOUT_CMU_PLL_SHARED0_DIV6>,
+@@ -508,7 +507,7 @@
  
- 		if (!retval) {
- 			if (copied)
-@@ -661,7 +661,7 @@ int ptrace_writedata(struct task_struct *tsk, char __user *src, unsigned long ds
- 		if (copy_from_user(buf, src, this_len))
- 			return -EFAULT;
- 		retval = ptrace_access_vm(tsk, dst, buf, this_len,
--				FOLL_FORCE | FOLL_WRITE);
-+				FOLL_PTRACE | FOLL_WRITE);
- 		if (!retval) {
- 			if (copied)
- 				break;
-@@ -1309,7 +1309,7 @@ int generic_ptrace_peekdata(struct task_struct *tsk, unsigned long addr,
- 	unsigned long tmp;
- 	int copied;
+ 		clock_fsys1: clock-controller@16810000 {
+ 			compatible = "tesla,fsd-clock-fsys1";
+-			reg = <0x0 0x16810000 0x0 0x3000>;
++			reg = <0x16810000 0x3000>;
+ 			#clock-cells = <1>;
+ 			clocks = <&fin_pll>,
+ 				<&clock_cmu DOUT_CMU_FSYS1_SHARED0DIV8>,
+@@ -520,47 +519,59 @@
  
--	copied = ptrace_access_vm(tsk, addr, &tmp, sizeof(tmp), FOLL_FORCE);
-+	copied = ptrace_access_vm(tsk, addr, &tmp, sizeof(tmp), FOLL_PTRACE);
- 	if (copied != sizeof(tmp))
- 		return -EIO;
- 	return put_user(tmp, (unsigned long __user *)data);
-@@ -1321,7 +1321,7 @@ int generic_ptrace_pokedata(struct task_struct *tsk, unsigned long addr,
- 	int copied;
+ 		mdma0: dma-controller@10100000 {
+ 			compatible = "arm,pl330", "arm,primecell";
+-			reg = <0x0 0x10100000 0x0 0x1000>;
++			reg = <0x10100000 0x1000>;
+ 			interrupts = <GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>;
+ 			#dma-cells = <1>;
+ 			clocks = <&clock_imem IMEM_DMA0_IPCLKPORT_ACLK>;
+ 			clock-names = "apb_pclk";
+ 			iommus = <&smmu_imem 0x800 0x0>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			dma-ranges = <0x0 0x0 0x0 0x10 0x0>;
+ 		};
  
- 	copied = ptrace_access_vm(tsk, addr, &data, sizeof(data),
--			FOLL_FORCE | FOLL_WRITE);
-+			FOLL_PTRACE | FOLL_WRITE);
- 	return (copied == sizeof(data)) ? 0 : -EIO;
- }
+ 		mdma1: dma-controller@10110000 {
+ 			compatible = "arm,pl330", "arm,primecell";
+-			reg = <0x0 0x10110000 0x0 0x1000>;
++			reg = <0x10110000 0x1000>;
+ 			interrupts = <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>;
+ 			#dma-cells = <1>;
+ 			clocks = <&clock_imem IMEM_DMA1_IPCLKPORT_ACLK>;
+ 			clock-names = "apb_pclk";
+ 			iommus = <&smmu_imem 0x801 0x0>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			dma-ranges = <0x0 0x0 0x0 0x10 0x0>;
+ 		};
  
-@@ -1339,7 +1339,7 @@ int compat_ptrace_request(struct task_struct *child, compat_long_t request,
- 	case PTRACE_PEEKTEXT:
- 	case PTRACE_PEEKDATA:
- 		ret = ptrace_access_vm(child, addr, &word, sizeof(word),
--				FOLL_FORCE);
-+				FOLL_PTRACE);
- 		if (ret != sizeof(word))
- 			ret = -EIO;
- 		else
-@@ -1349,7 +1349,7 @@ int compat_ptrace_request(struct task_struct *child, compat_long_t request,
- 	case PTRACE_POKETEXT:
- 	case PTRACE_POKEDATA:
- 		ret = ptrace_access_vm(child, addr, &data, sizeof(data),
--				FOLL_FORCE | FOLL_WRITE);
-+				FOLL_PTRACE | FOLL_WRITE);
- 		ret = (ret != sizeof(data) ? -EIO : 0);
- 		break;
+ 		pdma0: dma-controller@14280000 {
+ 			compatible = "arm,pl330", "arm,primecell";
+-			reg = <0x0 0x14280000 0x0 0x1000>;
++			reg = <0x14280000 0x1000>;
+ 			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
+ 			#dma-cells = <1>;
+ 			clocks = <&clock_peric PERIC_DMA0_IPCLKPORT_ACLK>;
+ 			clock-names = "apb_pclk";
+ 			iommus = <&smmu_peric 0x2 0x0>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			dma-ranges = <0x0 0x0 0x0 0x10 0x0>;
+ 		};
  
-diff --git a/mm/gup.c b/mm/gup.c
-index 01116699c863..323edebd0399 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -482,7 +482,7 @@ static int follow_pfn_pte(struct vm_area_struct *vma, unsigned long address,
- 	return -EEXIST;
- }
+ 		pdma1: dma-controller@14290000 {
+ 			compatible = "arm,pl330", "arm,primecell";
+-			reg = <0x0 0x14290000 0x0 0x1000>;
++			reg = <0x14290000 0x1000>;
+ 			interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
+ 			#dma-cells = <1>;
+ 			clocks = <&clock_peric PERIC_DMA1_IPCLKPORT_ACLK>;
+ 			clock-names = "apb_pclk";
+ 			iommus = <&smmu_peric 0x1 0x0>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			dma-ranges = <0x0 0x0 0x0 0x10 0x0>;
+ 		};
  
--/* FOLL_FORCE can write to even unwritable PTEs in COW mappings. */
-+/* FOLL_PTRACE can write to even unwritable PTEs in COW mappings. */
- static inline bool can_follow_write_pte(pte_t pte, struct page *page,
- 					struct vm_area_struct *vma,
- 					unsigned int flags)
-@@ -491,11 +491,11 @@ static inline bool can_follow_write_pte(pte_t pte, struct page *page,
- 	if (pte_write(pte))
- 		return true;
+ 		serial_0: serial@14180000 {
+ 			compatible = "samsung,exynos4210-uart";
+-			reg = <0x0 0x14180000 0x0 0x100>;
++			reg = <0x14180000 0x100>;
+ 			interrupts = <GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&pdma1 1>, <&pdma1 0>;
+ 			dma-names = "rx", "tx";
+@@ -572,7 +583,7 @@
  
--	/* Maybe FOLL_FORCE is set to override it? */
--	if (!(flags & FOLL_FORCE))
-+	/* Maybe FOLL_PTRACE is set to override it? */
-+	if (!(flags & FOLL_PTRACE))
- 		return false;
+ 		serial_1: serial@14190000 {
+ 			compatible = "samsung,exynos4210-uart";
+-			reg = <0x0 0x14190000 0x0 0x100>;
++			reg = <0x14190000 0x100>;
+ 			interrupts = <GIC_SPI 172 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&pdma1 3>, <&pdma1 2>;
+ 			dma-names = "rx", "tx";
+@@ -584,12 +595,12 @@
  
--	/* But FOLL_FORCE has no effect on shared mappings */
-+	/* But FOLL_PTRACE has no effect on shared mappings */
- 	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
- 		return false;
+ 		pmu_system_controller: system-controller@11400000 {
+ 			compatible = "samsung,exynos7-pmu", "syscon";
+-			reg = <0x0 0x11400000 0x0 0x5000>;
++			reg = <0x11400000 0x5000>;
+ 		};
  
-@@ -942,7 +942,7 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+ 		watchdog_0: watchdog@100a0000 {
+ 			compatible = "samsung,exynos7-wdt";
+-			reg = <0x0 0x100a0000 0x0 0x100>;
++			reg = <0x100a0000 0x100>;
+ 			interrupts = <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH>;
+ 			samsung,syscon-phandle = <&pmu_system_controller>;
+ 			clocks = <&fin_pll>;
+@@ -598,7 +609,7 @@
  
- 	if (write) {
- 		if (!(vm_flags & VM_WRITE)) {
--			if (!(gup_flags & FOLL_FORCE))
-+			if (!(gup_flags & FOLL_PTRACE))
- 				return -EFAULT;
- 			/*
- 			 * We used to let the write,force case do COW in a
-@@ -957,7 +957,7 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
- 				return -EFAULT;
- 		}
- 	} else if (!(vm_flags & VM_READ)) {
--		if (!(gup_flags & FOLL_FORCE))
-+		if (!(gup_flags & FOLL_PTRACE))
- 			return -EFAULT;
- 		/*
- 		 * Is there actually any vma we can reach here which does not
-@@ -1455,7 +1455,7 @@ long populate_vma_page_range(struct vm_area_struct *vma,
- 	 * other than PROT_NONE.
- 	 */
- 	if (vma_is_accessible(vma))
--		gup_flags |= FOLL_FORCE;
-+		gup_flags |= FOLL_PTRACE;
+ 		watchdog_1: watchdog@100b0000 {
+ 			compatible = "samsung,exynos7-wdt";
+-			reg = <0x0 0x100b0000 0x0 0x100>;
++			reg = <0x100b0000 0x100>;
+ 			interrupts = <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>;
+ 			samsung,syscon-phandle = <&pmu_system_controller>;
+ 			clocks = <&fin_pll>;
+@@ -607,7 +618,7 @@
  
- 	/*
- 	 * We made sure addr is within a VMA, so the following will
-@@ -1507,11 +1507,11 @@ long faultin_vma_page_range(struct vm_area_struct *vma, unsigned long start,
- 	/*
- 	 * FOLL_TOUCH: Mark page accessed and thereby young; will also mark
- 	 *	       the page dirty with FOLL_WRITE -- which doesn't make a
--	 *	       difference with !FOLL_FORCE, because the page is writable
-+	 *	       difference with !FOLL_PTRACE, because the page is writable
- 	 *	       in the page table.
- 	 * FOLL_HWPOISON: Return -EHWPOISON instead of -EFAULT when we hit
- 	 *		  a poisoned page.
--	 * !FOLL_FORCE: Require proper access permissions.
-+	 * !FOLL_PTRACE: Require proper access permissions.
- 	 */
- 	gup_flags = FOLL_TOUCH | FOLL_HWPOISON;
- 	if (write)
-@@ -1601,11 +1601,11 @@ static long __get_user_pages_locked(struct mm_struct *mm, unsigned long start,
- 	long i;
+ 		watchdog_2: watchdog@100c0000 {
+ 			compatible = "samsung,exynos7-wdt";
+-			reg = <0x0 0x100c0000 0x0 0x100>;
++			reg = <0x100c0000 0x100>;
+ 			interrupts = <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>;
+ 			samsung,syscon-phandle = <&pmu_system_controller>;
+ 			clocks = <&fin_pll>;
+@@ -616,7 +627,7 @@
  
- 	/* calculate required read or write permissions.
--	 * If FOLL_FORCE is set, we only require the "MAY" flags.
-+	 * If FOLL_PTRACE is set, we only require the "MAY" flags.
- 	 */
- 	vm_flags  = (foll_flags & FOLL_WRITE) ?
- 			(VM_WRITE | VM_MAYWRITE) : (VM_READ | VM_MAYREAD);
--	vm_flags &= (foll_flags & FOLL_FORCE) ?
-+	vm_flags &= (foll_flags & FOLL_PTRACE) ?
- 			(VM_MAYREAD | VM_MAYWRITE) : (VM_READ | VM_WRITE);
+ 		pwm_0: pwm@14100000 {
+ 			compatible = "samsung,exynos4210-pwm";
+-			reg = <0x0 0x14100000 0x0 0x100>;
++			reg = <0x14100000 0x100>;
+ 			samsung,pwm-outputs = <0>, <1>, <2>, <3>;
+ 			#pwm-cells = <3>;
+ 			clocks = <&clock_peric PERIC_PWM0_IPCLKPORT_I_PCLK_S0>;
+@@ -626,7 +637,7 @@
  
- 	for (i = 0; i < nr_pages; i++) {
-@@ -1807,7 +1807,7 @@ struct page *get_dump_page(unsigned long addr)
- 	if (mmap_read_lock_killable(mm))
- 		return NULL;
- 	ret = __get_user_pages_locked(mm, addr, 1, &page, NULL, &locked,
--				      FOLL_FORCE | FOLL_DUMP | FOLL_GET);
-+				      FOLL_PTRACE | FOLL_DUMP | FOLL_GET);
- 	if (locked)
- 		mmap_read_unlock(mm);
- 	return (ret == 1) ? page : NULL;
-@@ -2198,7 +2198,7 @@ EXPORT_SYMBOL(get_user_pages);
-  *
-  * It is functionally equivalent to get_user_pages_fast so
-  * get_user_pages_fast should be used instead if specific gup_flags
-- * (e.g. FOLL_FORCE) are not required.
-+ * (e.g. FOLL_PTRACE) are not required.
-  */
- long get_user_pages_unlocked(unsigned long start, unsigned long nr_pages,
- 			     struct page **pages, unsigned int gup_flags)
-@@ -2869,7 +2869,7 @@ static int internal_get_user_pages_fast(unsigned long start,
- 	int ret;
+ 		pwm_1: pwm@14110000 {
+ 			compatible = "samsung,exynos4210-pwm";
+-			reg = <0x0 0x14110000 0x0 0x100>;
++			reg = <0x14110000 0x100>;
+ 			samsung,pwm-outputs = <0>, <1>, <2>, <3>;
+ 			#pwm-cells = <3>;
+ 			clocks = <&clock_peric PERIC_PWM1_IPCLKPORT_I_PCLK_S0>;
+@@ -636,7 +647,7 @@
  
- 	if (WARN_ON_ONCE(gup_flags & ~(FOLL_WRITE | FOLL_LONGTERM |
--				       FOLL_FORCE | FOLL_PIN | FOLL_GET |
-+				       FOLL_PTRACE | FOLL_PIN | FOLL_GET |
- 				       FOLL_FAST_ONLY | FOLL_NOFAULT)))
- 		return -EINVAL;
+ 		hsi2c_0: i2c@14200000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+-			reg = <0x0 0x14200000 0x0 0x1000>;
++			reg = <0x14200000 0x1000>;
+ 			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -649,7 +660,7 @@
  
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index dec7a7c0eca8..695792d2495d 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1371,7 +1371,7 @@ static inline bool can_change_pmd_writable(struct vm_area_struct *vma,
- 	return pmd_dirty(pmd);
- }
+ 		hsi2c_1: i2c@14210000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+-			reg = <0x0 0x14210000 0x0 0x1000>;
++			reg = <0x14210000 0x1000>;
+ 			interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -662,7 +673,7 @@
  
--/* FOLL_FORCE can write to even unwritable PMDs in COW mappings. */
-+/* FOLL_PTRACE can write to even unwritable PMDs in COW mappings. */
- static inline bool can_follow_write_pmd(pmd_t pmd, struct page *page,
- 					struct vm_area_struct *vma,
- 					unsigned int flags)
-@@ -1380,11 +1380,11 @@ static inline bool can_follow_write_pmd(pmd_t pmd, struct page *page,
- 	if (pmd_write(pmd))
- 		return true;
+ 		hsi2c_2: i2c@14220000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+-			reg = <0x0 0x14220000 0x0 0x1000>;
++			reg = <0x14220000 0x1000>;
+ 			interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -675,7 +686,7 @@
  
--	/* Maybe FOLL_FORCE is set to override it? */
--	if (!(flags & FOLL_FORCE))
-+	/* Maybe FOLL_PTRACE is set to override it? */
-+	if (!(flags & FOLL_PTRACE))
- 		return false;
+ 		hsi2c_3: i2c@14230000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+-			reg = <0x0 0x14230000 0x0 0x1000>;
++			reg = <0x14230000 0x1000>;
+ 			interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -688,7 +699,7 @@
  
--	/* But FOLL_FORCE has no effect on shared mappings */
-+	/* But FOLL_PTRACE has no effect on shared mappings */
- 	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
- 		return false;
+ 		hsi2c_4: i2c@14240000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+-			reg = <0x0 0x14240000 0x0 0x1000>;
++			reg = <0x14240000 0x1000>;
+ 			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -701,7 +712,7 @@
  
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index c3aab6d5b7aa..de78ff9db801 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -5315,7 +5315,7 @@ static vm_fault_t hugetlb_wp(struct mm_struct *mm, struct vm_area_struct *vma,
- 	struct mmu_notifier_range range;
+ 		hsi2c_5: i2c@14250000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+-			reg = <0x0 0x14250000 0x0 0x1000>;
++			reg = <0x14250000 0x1000>;
+ 			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -714,7 +725,7 @@
  
- 	/*
--	 * hugetlb does not support FOLL_FORCE-style write faults that keep the
-+	 * hugetlb does not support FOLL_PTRACE-style write faults that keep the
- 	 * PTE mapped R/O such as maybe_mkwrite() would do.
- 	 */
- 	if (WARN_ON_ONCE(!unshare && !(vma->vm_flags & VM_WRITE)))
-diff --git a/mm/memory.c b/mm/memory.c
-index 56b21ab1e4d2..8b47cd40a7b9 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3383,7 +3383,7 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
+ 		hsi2c_6: i2c@14260000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+-			reg = <0x0 0x14260000 0x0 0x1000>;
++			reg = <0x14260000 0x1000>;
+ 			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -727,7 +738,7 @@
  
- 	/*
- 	 * Private mapping: create an exclusive anonymous page copy if reuse
--	 * is impossible. We might miss VM_WRITE for FOLL_FORCE handling.
-+	 * is impossible. We might miss VM_WRITE for FOLL_PTRACE handling.
- 	 */
- 	if (folio && folio_test_anon(folio)) {
- 		/*
-@@ -5172,7 +5172,7 @@ static vm_fault_t sanitize_fault_flags(struct vm_area_struct *vma,
- 		/* Write faults on read-only mappings are impossible ... */
- 		if (WARN_ON_ONCE(!(vma->vm_flags & VM_MAYWRITE)))
- 			return VM_FAULT_SIGSEGV;
--		/* ... and FOLL_FORCE only applies to COW mappings. */
-+		/* ... and FOLL_PTRACE only applies to COW mappings. */
- 		if (WARN_ON_ONCE(!(vma->vm_flags & VM_WRITE) &&
- 				 !is_cow_mapping(vma->vm_flags)))
- 			return VM_FAULT_SIGSEGV;
-diff --git a/mm/util.c b/mm/util.c
-index b56c92fb910f..04be917bfb1b 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -985,7 +985,7 @@ int get_cmdline(struct task_struct *task, char *buffer, int buflen)
- 	if (len > buflen)
- 		len = buflen;
+ 		hsi2c_7: i2c@14270000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+-			reg = <0x0 0x14270000 0x0 0x1000>;
++			reg = <0x14270000 0x1000>;
+ 			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -740,24 +751,24 @@
  
--	res = access_process_vm(task, arg_start, buffer, len, FOLL_FORCE);
-+	res = access_process_vm(task, arg_start, buffer, len, FOLL_PTRACE);
+ 		pinctrl_pmu: pinctrl@114f0000 {
+ 			compatible = "tesla,fsd-pinctrl";
+-			reg = <0x0 0x114f0000 0x0 0x1000>;
++			reg = <0x114f0000 0x1000>;
+ 		};
  
- 	/*
- 	 * If the nul at the end of args has been overwritten, then
-@@ -1001,7 +1001,7 @@ int get_cmdline(struct task_struct *task, char *buffer, int buflen)
- 				len = buflen - res;
- 			res += access_process_vm(task, env_start,
- 						 buffer+res, len,
--						 FOLL_FORCE);
-+						 FOLL_PTRACE);
- 			res = strnlen(buffer, res);
- 		}
- 	}
-diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
-index 31af29f669d2..c52a93631866 100644
---- a/security/tomoyo/domain.c
-+++ b/security/tomoyo/domain.c
-@@ -916,7 +916,7 @@ bool tomoyo_dump_page(struct linux_binprm *bprm, unsigned long pos,
- 	 */
- 	mmap_read_lock(bprm->mm);
- 	ret = get_user_pages_remote(bprm->mm, pos, 1,
--				    FOLL_FORCE, &page, NULL, NULL);
-+				    FOLL_PTRACE, &page, NULL, NULL);
- 	mmap_read_unlock(bprm->mm);
- 	if (ret <= 0)
- 		return false;
+ 		pinctrl_peric: pinctrl@141f0000 {
+ 			compatible = "tesla,fsd-pinctrl";
+-			reg = <0x0 0x141f0000 0x0 0x1000>;
++			reg = <0x141f0000 0x1000>;
+ 			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
+ 		pinctrl_fsys0: pinctrl@15020000 {
+ 			compatible = "tesla,fsd-pinctrl";
+-			reg = <0x0 0x15020000 0x0 0x1000>;
++			reg = <0x15020000 0x1000>;
+ 			interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
+ 		spi_0: spi@14140000 {
+ 			compatible = "tesla,fsd-spi";
+-			reg = <0x0 0x14140000 0x0 0x100>;
++			reg = <0x14140000 0x100>;
+ 			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&pdma1 4>, <&pdma1 5>;
+ 			dma-names = "tx", "rx";
+@@ -775,7 +786,7 @@
+ 
+ 		spi_1: spi@14150000 {
+ 			compatible = "tesla,fsd-spi";
+-			reg = <0x0 0x14150000 0x0 0x100>;
++			reg = <0x14150000 0x100>;
+ 			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&pdma1 6>, <&pdma1 7>;
+ 			dma-names = "tx", "rx";
+@@ -793,7 +804,7 @@
+ 
+ 		spi_2: spi@14160000 {
+ 			compatible = "tesla,fsd-spi";
+-			reg = <0x0 0x14160000 0x0 0x100>;
++			reg = <0x14160000 0x100>;
+ 			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&pdma1 8>, <&pdma1 9>;
+ 			dma-names = "tx", "rx";
+@@ -811,7 +822,7 @@
+ 
+ 		timer@10040000 {
+ 			compatible = "tesla,fsd-mct", "samsung,exynos4210-mct";
+-			reg = <0x0 0x10040000 0x0 0x800>;
++			reg = <0x10040000 0x800>;
+ 			interrupts = <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
+ 				<GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
+ 				<GIC_SPI 457 IRQ_TYPE_LEVEL_HIGH>,
+@@ -834,10 +845,10 @@
+ 
+ 		ufs: ufs@15120000 {
+ 			compatible = "tesla,fsd-ufs";
+-			reg = <0x0 0x15120000 0x0 0x200>,  /* 0: HCI standard */
+-			      <0x0 0x15121100 0x0 0x200>,  /* 1: Vendor specified */
+-			      <0x0 0x15110000 0x0 0x8000>,  /* 2: UNIPRO */
+-			      <0x0 0x15130000 0x0 0x100>;  /* 3: UFS protector */
++			reg = <0x15120000 0x200>,  /* 0: HCI standard */
++			      <0x15121100 0x200>,  /* 1: Vendor specified */
++			      <0x15110000 0x8000>,  /* 2: UNIPRO */
++			      <0x15130000 0x100>;  /* 3: UFS protector */
+ 			reg-names = "hci", "vs_hci", "unipro", "ufsp";
+ 			interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock_fsys0 UFS0_TOP0_HCLK_BUS>,
+@@ -853,7 +864,7 @@
+ 
+ 		ufs_phy: ufs-phy@15124000 {
+ 			compatible = "tesla,fsd-ufs-phy";
+-			reg = <0x0 0x15124000 0x0 0x800>;
++			reg = <0x15124000 0x800>;
+ 			reg-names = "phy-pma";
+ 			samsung,pmu-syscon = <&pmu_system_controller>;
+ 			#phy-cells = <0>;
 -- 
-2.38.1
+2.17.1
 
