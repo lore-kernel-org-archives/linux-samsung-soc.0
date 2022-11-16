@@ -2,193 +2,233 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE4DC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Nov 2022 11:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D853C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Nov 2022 11:02:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231310AbiKPLB3 (ORCPT
+        id S229531AbiKPLCe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Nov 2022 06:01:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44916 "EHLO
+        Wed, 16 Nov 2022 06:02:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233745AbiKPLBB (ORCPT
+        with ESMTP id S233149AbiKPLBU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Nov 2022 06:01:01 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB81445A3B
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 02:49:00 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id ud5so43142294ejc.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 02:49:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OSCwvxDUrivspPm0mWYSEKkrMB19obOv39RUwyA0PH0=;
-        b=VJ17UkTNHUXDMc38lOye7y2paGd4FOYHBRYpe2vgelPuC55Z4g5rnX+xNi0NFRGTrN
-         mdMUVKijrbkJJfn3y8Tm8vf3pLdF4omxIOM6UM8S6CVz2p3NrVUPvz4FNRN3RF3rQ/lN
-         9z9ibLXy5LDPJfO5cF7QIpPDKsW5E+659K7gg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OSCwvxDUrivspPm0mWYSEKkrMB19obOv39RUwyA0PH0=;
-        b=MrxAI03cq8rBDApc+KLsccASr+dKiyBeRZYNwJ4P0gQ4RqMs5AN0XpTtz7IrSADlBW
-         P5ZraYE/ErZNSDiwnpnUNX2RGGg2qSjlos/s1J2yZXf2GOSFP2ZaOCuGbQ+xFD+0PRo7
-         1My5SJyOo+Z3xp+ezS+iz23BP6YQekUk0QUNppmo2alPBougj83qEP/AWxW8zGglHSDH
-         Z1daFmMMw3AIDblLW/FEZRr7qcmhCRYj/27toHYE53mZV3blZbAjlGq1rXrtwg7oxcU5
-         5OmuDBZCaDtb2BHXG0He9R2gxWgarYZ5hNRHHaT3gaVPGdTE5GXLs6T9V0VSR8ice9i5
-         2zCw==
-X-Gm-Message-State: ANoB5pnfA8fFDnBRvKeyyk2aI/3FU2gq1x5+zRxC7i1frWO0YXHIywOg
-        RwTTEUZPTfujEGTUk7AIx/x2Bg==
-X-Google-Smtp-Source: AA0mqf6lc5lrEzUlEqYgu67h96R4r19JtBnDlqqKBl9ey0VuIf1EYIOTKVPSxvCTipQmxuaB88n35Q==
-X-Received: by 2002:a17:906:970e:b0:7ad:ccae:a30d with SMTP id k14-20020a170906970e00b007adccaea30dmr18079730ejx.704.1668595739329;
-        Wed, 16 Nov 2022 02:48:59 -0800 (PST)
-Received: from phenom.ffwll.local (212-51-149-33.fiber7.init7.net. [212.51.149.33])
-        by smtp.gmail.com with ESMTPSA id g13-20020a50ec0d000000b0045b3853c4b7sm7352935edr.51.2022.11.16.02.48.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 02:48:58 -0800 (PST)
-Date:   Wed, 16 Nov 2022 11:48:56 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
-        Nadav Amit <namit@vmware.com>, linux-kselftest@vger.kernel.org,
-        sparclinux@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
-        x86@kernel.org, Hugh Dickins <hughd@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-media@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        John Hubbard <jhubbard@nvidia.com>,
-        linux-um@lists.infradead.org, etnaviv@lists.freedesktop.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, Oded Gabbay <ogabbay@kernel.org>,
-        linux-mips@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH mm-unstable v1 13/20] media: videobuf-dma-sg: remove
- FOLL_FORCE usage
-Message-ID: <Y3TAGAUIo/IR+tAa@phenom.ffwll.local>
-Mail-Followup-To: David Hildenbrand <david@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
-        Nadav Amit <namit@vmware.com>, linux-kselftest@vger.kernel.org,
-        sparclinux@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
-        x86@kernel.org, Hugh Dickins <hughd@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Vlastimil Babka <vbabka@suse.cz>,
-        linux-media@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        John Hubbard <jhubbard@nvidia.com>, linux-um@lists.infradead.org,
-        etnaviv@lists.freedesktop.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        Oded Gabbay <ogabbay@kernel.org>, linux-mips@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-References: <20221116102659.70287-1-david@redhat.com>
- <20221116102659.70287-14-david@redhat.com>
+        Wed, 16 Nov 2022 06:01:20 -0500
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9872263BD
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 02:49:12 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id CA181849CD;
+        Wed, 16 Nov 2022 11:49:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1668595750;
+        bh=sibu3ZcbuUqrJzBypYt6NUSckTBHKUd106eG2tssPso=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=KdPR/f+oN6pSojybMhlrN/yr6kW6QjdgDsAGRD3zaI05KTriTjaXnLiMUVGFj4KWh
+         wJ4K86Pf1kSleI3EbOWHwEkZfJ0hsaoCsUq4OC6h2Pfy6bj9WMB1v2oA7JqZX4qWG1
+         ld9GNWzbgcydm6Ml7RnImKqZDFZAn4juOiMKisKeqwmOviNJHGXOQt0XpR7ZhxOWQW
+         JL0oZAkkAeJH0gLjVhXC2hBf6pRXK8O73+U2LuFWcJTI3p6s2YQT09Ky3soiHt2jIT
+         ar7kFDwGiwFMuXAD5cRmjXQ0R8PTrUcDwFk27jOqd6tYbV3PFT+n7Mf/xiXxi/lTxW
+         TVoKex7FUkOBQ==
+Message-ID: <7635358a-fc32-5a78-6130-7c5f4dd2d81b@denx.de>
+Date:   Wed, 16 Nov 2022 11:49:08 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221116102659.70287-14-david@redhat.com>
-X-Operating-System: Linux phenom 5.19.0-2-amd64 
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [PATCH v8 09/14] drm: bridge: samsung-dsim: Add
+ atomic_get_input_bus_fmts
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
+ <20221110183853.3678209-10-jagan@amarulasolutions.com>
+ <694ccb10-15ad-5192-dd1b-86628227fb65@denx.de>
+ <CAMty3ZDE4gt_Hhb3pgXW570d6F5f8F3WeEEHiMVuXyrqmka9Kw@mail.gmail.com>
+ <CGME20221115120119eucas1p1c57ca32b0a372d00cfb7b6dfb86cc1a7@eucas1p1.samsung.com>
+ <35a96ba1-1022-5f7a-ffb6-b3400279e244@denx.de>
+ <60729cf5-04b1-b9aa-fb0f-60efacde285d@samsung.com>
+Content-Language: en-US
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <60729cf5-04b1-b9aa-fb0f-60efacde285d@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 16, 2022 at 11:26:52AM +0100, David Hildenbrand wrote:
-> GUP now supports reliable R/O long-term pinning in COW mappings, such
-> that we break COW early. MAP_SHARED VMAs only use the shared zeropage so
-> far in one corner case (DAXFS file with holes), which can be ignored
-> because GUP does not support long-term pinning in fsdax (see
-> check_vma_flags()).
+On 11/16/22 09:07, Marek Szyprowski wrote:
+> On 15.11.2022 13:00, Marek Vasut wrote:
+>> On 11/14/22 08:49, Jagan Teki wrote:
+>>> On Sun, Nov 13, 2022 at 5:51 AM Marek Vasut <marex@denx.de> wrote:
+>>>>
+>>>> On 11/10/22 19:38, Jagan Teki wrote:
+>>>>> Finding the right input bus format throughout the pipeline is hard
+>>>>> so add atomic_get_input_bus_fmts callback and initialize with the
+>>>>> proper input format from list of supported output formats.
+>>>>>
+>>>>> This format can be used in pipeline for negotiating bus format between
+>>>>> the DSI-end of this bridge and the other component closer to pipeline
+>>>>> components.
+>>>>>
+>>>>> List of Pixel formats are taken from,
+>>>>> AN13573 i.MX 8/RT MIPI DSI/CSI-2, Rev. 0, 21 March 2022
+>>>>> 3.7.4 Pixel formats
+>>>>> Table 14. DSI pixel packing formats
+>>>>>
+>>>>> v8:
+>>>>> * added pixel formats supported by NXP AN13573 i.MX 8/RT MIPI
+>>>>> DSI/CSI-2
+>>>>>
+>>>>> v7, v6, v5, v4:
+>>>>> * none
+>>>>>
+>>>>> v3:
+>>>>> * include media-bus-format.h
+>>>>>
+>>>>> v2:
+>>>>> * none
+>>>>>
+>>>>> v1:
+>>>>> * new patch
+>>>>>
+>>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>>>>> ---
+>>>>>     drivers/gpu/drm/bridge/samsung-dsim.c | 53
+>>>>> +++++++++++++++++++++++++++
+>>>>>     1 file changed, 53 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c
+>>>>> b/drivers/gpu/drm/bridge/samsung-dsim.c
+>>>>> index 0fe153b29e4f..33e5ae9c865f 100644
+>>>>> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+>>>>> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+>>>>> @@ -15,6 +15,7 @@
+>>>>>     #include <linux/clk.h>
+>>>>>     #include <linux/delay.h>
+>>>>>     #include <linux/irq.h>
+>>>>> +#include <linux/media-bus-format.h>
+>>>>>     #include <linux/of_device.h>
+>>>>>     #include <linux/phy/phy.h>
+>>>>>
+>>>>> @@ -1321,6 +1322,57 @@ static void
+>>>>> samsung_dsim_atomic_post_disable(struct drm_bridge *bridge,
+>>>>>         pm_runtime_put_sync(dsi->dev);
+>>>>>     }
+>>>>>
+>>>>> +/*
+>>>>> + * This pixel output formats list referenced from,
+>>>>> + * AN13573 i.MX 8/RT MIPI DSI/CSI-2, Rev. 0, 21 March 2022
+>>>>> + * 3.7.4 Pixel formats
+>>>>> + * Table 14. DSI pixel packing formats
+>>>>> + */
+>>>>> +static const u32 samsung_dsim_pixel_output_fmts[] = {
+>>>>
+>>>> You can also add :
+>>>>
+>>>> MEDIA_BUS_FMT_YUYV10_1X20
+>>>>
+>>>> MEDIA_BUS_FMT_YUYV12_1X24
+>>>
+>>> Are these for the below formats?
+>>>
+>>> "Loosely Packed Pixel Stream, 20-bit YCbCr, 4:2:2
+>>>    Packed Pixel Stream, 24-bit YCbCr, 4:2:2"
+>>>>
+>>>>> +     MEDIA_BUS_FMT_UYVY8_1X16,
+>>>>> +     MEDIA_BUS_FMT_RGB101010_1X30,
+>>>>> +     MEDIA_BUS_FMT_RGB121212_1X36,
+>>>>> +     MEDIA_BUS_FMT_RGB565_1X16,
+>>>>> +     MEDIA_BUS_FMT_RGB666_1X18,
+>>>>> +     MEDIA_BUS_FMT_RGB888_1X24,
+>>>>> +};
+>>>>> +
+>>>>> +static bool samsung_dsim_pixel_output_fmt_supported(u32 fmt)
+>>>>> +{
+>>>>> +     int i;
+>>>>> +
+>>>>> +     for (i = 0; i < ARRAY_SIZE(samsung_dsim_pixel_output_fmts);
+>>>>> i++) {
+>>>>> +             if (samsung_dsim_pixel_output_fmts[i] == fmt)
+>>>>> +                     return true;
+>>>>> +     }
+>>>>> +
+>>>>> +     return false;
+>>>>> +}
+>>>>> +
+>>>>> +static u32 *
+>>>>> +samsung_dsim_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
+>>>>> +                                    struct drm_bridge_state
+>>>>> *bridge_state,
+>>>>> +                                    struct drm_crtc_state
+>>>>> *crtc_state,
+>>>>> +                                    struct drm_connector_state
+>>>>> *conn_state,
+>>>>> +                                    u32 output_fmt,
+>>>>> +                                    unsigned int *num_input_fmts)
+>>>>> +{
+>>>>> +     u32 *input_fmts;
+>>>>> +
+>>>>> +     if (!samsung_dsim_pixel_output_fmt_supported(output_fmt))
+>>>>> +             return NULL;
+>>>>> +
+>>>>> +     *num_input_fmts = 1;
+>>>>
+>>>> Shouldn't this be 6 ?
+>>>>
+>>>>> +     input_fmts = kmalloc(sizeof(*input_fmts), GFP_KERNEL);
+>>>>> +     if (!input_fmts)
+>>>>> +             return NULL;
+>>>>> +
+>>>>> +     input_fmts[0] = output_fmt;
+>>>>
+>>>> Shouldn't this be a list of all 6 supported pixel formats ?
+>>>
+>>> Negotiation would settle to return one input_fmt from the list of
+>>> supporting output_fmts. so the num_input_fmts would be 1 rather than
+>>> the number of fmts in the supporting list. This is what I understood
+>>> from the atomic_get_input_bus_fmts API. let me know if I miss
+>>> something here.
+>>
+>> How does the negotiation work for this kind of pipeline:
+>>
+>> LCDIFv3<->DSIM<->HDMI bridge<->HDMI connector
+>>
+>> where all elements (LCDIFv3, DSIM, HDMI bridge) can support either
+>> RGB888 or packed YUV422 ?
+>>
+>> Who decides the format used by such pipeline ?
+>>
+>> Why should it be the DSIM bridge and not e.g. the HDMI bridge or the
+>> LCDIFv3 ?
 > 
-> Consequently, FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM is no longer required
-> for reliable R/O long-term pinning: FOLL_LONGTERM is sufficient. So stop
-> using FOLL_FORCE, which is really only for ptrace access.
 > 
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> If I got it right, the drivers reports their preference for the returned
+> formats. The format that is first in the reported array is the most
+> preferred one. This probably means that in your case the HDMI bridge
+> decides by reporting RGB or YUV first (if all elements supports both).
 
-I looked at this a while ago when going through some of the follow_pfn
-stuff, so
-
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-> ---
->  drivers/media/v4l2-core/videobuf-dma-sg.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
-> index f75e5eedeee0..234e9f647c96 100644
-> --- a/drivers/media/v4l2-core/videobuf-dma-sg.c
-> +++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
-> @@ -151,17 +151,16 @@ static void videobuf_dma_init(struct videobuf_dmabuf *dma)
->  static int videobuf_dma_init_user_locked(struct videobuf_dmabuf *dma,
->  			int direction, unsigned long data, unsigned long size)
->  {
-> +	unsigned int gup_flags = FOLL_LONGTERM;
->  	unsigned long first, last;
-> -	int err, rw = 0;
-> -	unsigned int flags = FOLL_FORCE;
-> +	int err;
->  
->  	dma->direction = direction;
->  	switch (dma->direction) {
->  	case DMA_FROM_DEVICE:
-> -		rw = READ;
-> +		gup_flags |= FOLL_WRITE;
->  		break;
->  	case DMA_TO_DEVICE:
-> -		rw = WRITE;
->  		break;
->  	default:
->  		BUG();
-> @@ -177,14 +176,11 @@ static int videobuf_dma_init_user_locked(struct videobuf_dmabuf *dma,
->  	if (NULL == dma->pages)
->  		return -ENOMEM;
->  
-> -	if (rw == READ)
-> -		flags |= FOLL_WRITE;
-> -
->  	dprintk(1, "init user [0x%lx+0x%lx => %lu pages]\n",
->  		data, size, dma->nr_pages);
->  
-> -	err = pin_user_pages(data & PAGE_MASK, dma->nr_pages,
-> -			     flags | FOLL_LONGTERM, dma->pages, NULL);
-> +	err = pin_user_pages(data & PAGE_MASK, dma->nr_pages, gup_flags,
-> +			     dma->pages, NULL);
->  
->  	if (err != dma->nr_pages) {
->  		dma->nr_pages = (err >= 0) ? err : 0;
-> -- 
-> 2.38.1
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+But in that case, we need to list input_fmts[0]...input_fmts[n-1] in 
+samsung_dsim_atomic_get_input_bus_fmts() and also set *num_input_fmts = 
+n, correct ?
