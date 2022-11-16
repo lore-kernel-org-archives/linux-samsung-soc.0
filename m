@@ -2,352 +2,293 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62526C43217
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Nov 2022 02:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB50C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Nov 2022 08:07:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231341AbiKPCRr (ORCPT
+        id S233085AbiKPIHX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Nov 2022 21:17:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42702 "EHLO
+        Wed, 16 Nov 2022 03:07:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230175AbiKPCRq (ORCPT
+        with ESMTP id S233084AbiKPIHV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Nov 2022 21:17:46 -0500
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0468D12ACB;
-        Tue, 15 Nov 2022 18:17:44 -0800 (PST)
-Received: from kwepemi500011.china.huawei.com (unknown [172.30.72.56])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NBmnD0gTXzqSSy;
-        Wed, 16 Nov 2022 10:13:52 +0800 (CST)
-Received: from [10.67.103.39] (10.67.103.39) by kwepemi500011.china.huawei.com
- (7.221.188.124) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Wed, 16 Nov
- 2022 10:17:36 +0800
-Message-ID: <6374483F.3060604@hisilicon.com>
-Date:   Wed, 16 Nov 2022 10:17:35 +0800
-From:   Wei Xu <xuwei5@hisilicon.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:24.0) Gecko/20100101 Thunderbird/24.2.0
+        Wed, 16 Nov 2022 03:07:21 -0500
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB43E6583
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 00:07:18 -0800 (PST)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20221116080712euoutp02b19ebaa2b13b6034ef9352c4eaf9671f~oAiflOeDn0657506575euoutp02m
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 08:07:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20221116080712euoutp02b19ebaa2b13b6034ef9352c4eaf9671f~oAiflOeDn0657506575euoutp02m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1668586032;
+        bh=1dvfyZJzIch4ops1Y1TmH/ZkJapEUvVcJx91QRUj8q4=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=aesPu5uorwgOjYlhl5YBJGXPuSafA/AV9pauL7NiEVdHl+9ATCy7Rv5Lhvb6h1xg4
+         y8EWFAdJJ6nyZxc67wFvmFsNfGxExmu7x2yiUy2+imROGOdzW36qaYRcdpwXhyTNX6
+         mc2rBr3GuyOrw1B9B+q30nuyKyJOsbDKmBwB4Zvk=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20221116080711eucas1p1d179bf6626c54f1ed2712a02cc0d8636~oAifAtKb83025630256eucas1p1T;
+        Wed, 16 Nov 2022 08:07:11 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id F1.B3.09561.F2A94736; Wed, 16
+        Nov 2022 08:07:11 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20221116080710eucas1p2f18eb7a627b9b40d5f01dfeb6000e7b0~oAieWVrtK1437514375eucas1p2a;
+        Wed, 16 Nov 2022 08:07:10 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20221116080710eusmtrp281daf1d1e0f0796b19de988948bcc920~oAieVbd-M0136101361eusmtrp2V;
+        Wed, 16 Nov 2022 08:07:10 +0000 (GMT)
+X-AuditID: cbfec7f2-0c9ff70000002559-35-63749a2f14b4
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id E5.42.08916.E2A94736; Wed, 16
+        Nov 2022 08:07:10 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20221116080709eusmtip2b5a676ea336b438560e0e8d61268b0df~oAidVlsJx0112001120eusmtip2O;
+        Wed, 16 Nov 2022 08:07:09 +0000 (GMT)
+Message-ID: <60729cf5-04b1-b9aa-fb0f-60efacde285d@samsung.com>
+Date:   Wed, 16 Nov 2022 09:07:08 +0100
 MIME-Version: 1.0
-To:     Pierre Gondois <pierre.gondois@arm.com>,
-        <linux-kernel@vger.kernel.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
-        Antoine Tenart <atenart@kernel.org>,
-        Brijesh Singh <brijeshkumar.singh@amd.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        William Zhang <william.zhang@broadcom.com>,
-        Anand Gore <anand.gore@broadcom.com>,
-        Kursad Oney <kursad.oney@broadcom.com>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Chester Lin <clin@suse.com>,
-        =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>,
-        Matthias Brugger <mbrugger@suse.com>,
-        NXP S32 Linux Team <s32@nxp.com>,
-        Chanho Min <chanho.min@lge.com>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        <UNGLinuxDriver@microchip.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jisheng Zhang <jszhang@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>, Ming Qian <ming.qian@nxp.com>,
-        Shijie Qin <shijie.qin@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
+        Gecko/20100101 Thunderbird/102.4.2
+Subject: Re: [PATCH v8 09/14] drm: bridge: samsung-dsim: Add
+ atomic_get_input_bus_fmts
+Content-Language: en-US
+To:     Marek Vasut <marex@denx.de>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
         Tim Harvey <tharvey@gateworks.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
         Adam Ford <aford173@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, Li Jun <jun.li@nxp.com>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Marek Vasut <marex@denx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Paul Elder <paul.elder@ideasonboard.com>,
-        Martin Kepplinger <martink@posteo.de>,
-        David Heidelberg <david@ixit.cz>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Liu Ying <victor.liu@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        Wei Fang <wei.fang@nxp.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Vadym Kochan <vadym.kochan@plvision.eu>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Akhil R <akhilrajeev@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>,
-        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Johan Jonker <jbx6244@gmail.com>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Aswani Reddy <aswani.reddy@samsung.com>,
-        Shashank Prashar <s.prashar@samsung.com>,
-        Andi Shyti <andi@etezian.org>, <devicetree@vger.kernel.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <openbmc@lists.ozlabs.org>,
-        <linux-tegra@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-realtek-soc@lists.infradead.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>
-Subject: Re: [PATCH v2 09/23] arm64: dts: Update cache properties for hisilicon
-References: <20221107155825.1644604-1-pierre.gondois@arm.com> <20221107155825.1644604-10-pierre.gondois@arm.com>
-In-Reply-To: <20221107155825.1644604-10-pierre.gondois@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.103.39]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemi500011.china.huawei.com (7.221.188.124)
-X-CFilter-Loop: Reflected
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <35a96ba1-1022-5f7a-ffb6-b3400279e244@denx.de>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKJsWRmVeSWpSXmKPExsWy7djPc7r6s0qSDWbcVrK4c/s0s8X9xZ9Z
+        LF7fXsFmceXrezaL3qXnWC0m3Z/AYvFl0wQ2ixf3LrJYnG16w27ROXEJu8XyCfvYLDY9vsZq
+        0fVrJbPFjPP7mCzetDUyWpx+tJ7Z4lRjK4vFpSmH2Sw+zXoIlJ38ks3i4olPzBbff59ldhDz
+        WPvxPqvHvFknWDymnDjC6nGu5y6bx85Zd9k9ZnfMZPVYvOclk8eRq4tZPe5c28Pmcb/7OJPH
+        5iX1Hhvf7WDy6NuyitHj8ya5AL4oLpuU1JzMstQifbsEroxVP7exFfzUrFj//DJTA+Nk5S5G
+        Tg4JAROJB8+msHcxcnEICaxglJgz8wwzhPOFUaJ5yksWCOczo8SMb09YYFp2rzvNBmILCSxn
+        lFg3Rxai6COjxOrlD4FmcXDwCthJdLyxAqlhEVCVmDyvC6yXV0BQ4uRMiDmiAikSC7fcYAKx
+        hQUiJPZOXQoWZxYQl7j1ZD5YXETAQ+Lfi21gRzAL3GCT+NR5ESzBJmAo0fW2C+wITgFriRsN
+        TawQzfISzVtng70gITCVS2LqtQVMEFe7SNx7OJcNwhaWeHV8CzuELSPxfyfINpCGdkaJBb/v
+        QzkTGCUant9ihKiylrhz7hcbyGvMApoS63fpQ4QdJRYePc0KEpYQ4JO48VYQ4gg+iUnbpjND
+        hHklOtqEIKrVJGYdXwe39uCFS8wTGJVmIYXLLCT/z0LyziyEvQsYWVYxiqeWFuempxYb5qWW
+        6xUn5haX5qXrJefnbmIEptzT/45/2sE499VHvUOMTByMhxglOJiVRHjzJ5ckC/GmJFZWpRbl
+        xxeV5qQWH2KU5mBREudlm6GVLCSQnliSmp2aWpBaBJNl4uCUamBqO9Ittkazl9N3r4WseOj8
+        A8/de/33v8h6uktQ1s8k8lWU0oHwIu3PtdOTbn7f9Pb9WaPOjYFzw8+FSAfp7qvbEqDmofnj
+        d/urrijPNK2Ti20NGY/oG2sxPWDkvvemrFkhyd7owgk3mZlCXM6ZcfUJeuadl+eomNY+Czy9
+        5kv2kUk7ynU+fH13LiT9V/6EH28OqiQtTb6Tzub/dWr/yY0Kk57vW3gzsMB3xY8mc+4DZ1eo
+        Nnbz3F55hsN0ZeSBMxW6t7ft8BJfOsEz68ixxfKB9znE1nZcfyO9//XhSW1SOnquAqm7jrnu
+        COy2dm4uPa9kc36BObfFlyyG2X4TbC5/adXwTxLlvHOl3DjNYo8SS3FGoqEWc1FxIgDpGTRe
+        KAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOKsWRmVeSWpSXmKPExsVy+t/xe7p6s0qSDTa8MrO4c/s0s8X9xZ9Z
+        LF7fXsFmceXrezaL3qXnWC0m3Z/AYvFl0wQ2ixf3LrJYnG16w27ROXEJu8XyCfvYLDY9vsZq
+        0fVrJbPFjPP7mCzetDUyWpx+tJ7Z4lRjK4vFpSmH2Sw+zXoIlJ38ks3i4olPzBbff59ldhDz
+        WPvxPqvHvFknWDymnDjC6nGu5y6bx85Zd9k9ZnfMZPVYvOclk8eRq4tZPe5c28Pmcb/7OJPH
+        5iX1Hhvf7WDy6NuyitHj8ya5AL4oPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsj
+        UyV9O5uU1JzMstQifbsEvYxVP7exFfzUrFj//DJTA+Nk5S5GTg4JAROJ3etOs3UxcnEICSxl
+        lJi+9xsjREJG4uS0BlYIW1jiz7UuqKL3jBIXm6cBORwcvAJ2Eh1vrEBqWARUJSbP62IBsXkF
+        BCVOznzCAlIiKpAise5IFEhYWCBCYu/UpWAlzALiEreezGcCsUUEPCT+vdjGAjKeWeAWm8Sp
+        MyuYIXZ9Z5L4uO0gO0gVm4ChRNdbkCM4OTgFrCVuNDSxQkwyk+ja2sUIYctLNG+dzTyBUWgW
+        kjtmIVk4C0nLLCQtCxhZVjGKpJYW56bnFhvqFSfmFpfmpesl5+duYgSmmG3Hfm7ewTjv1Ue9
+        Q4xMHIyHGCU4mJVEePMnlyQL8aYkVlalFuXHF5XmpBYfYjQFBsZEZinR5HxgkssriTc0MzA1
+        NDGzNDC1NDNWEuf1LOhIFBJITyxJzU5NLUgtgulj4uCUamDa/GiGwHRG9vL9Xyy6CzUL63dx
+        VAun8H5nvnrMLovd9blZ7+GC1/ePBCRqfoiZ/cdyxavgribPnafNU656s1xMTXlxIr0lrTp5
+        We0Jg22GHbsZrM+UmdtvfKr27OCkCcvWBoT8q3hjvLTvxtS5RW+trbTZkm59MebPPcN+ijV3
+        fY8tQ9HNGoFFjmoN+k172a5ckLJSPCT5f0/3vxk25jKTF/1V/vHOxc1WyHNJ5/1jyrPZ07fX
+        58fLar5x6FCdve37XdmrHyReCcqGBepymfjZ3Fq0ROX0Bp/pm3tcd3+o6jdo07qhzVrnOzfZ
+        kNts77lLM+8t/aXLvLem2HH+zZeW1+4cE8s8H7T/SrV2/xYlluKMREMt5qLiRADcWaXBugMA
+        AA==
+X-CMS-MailID: 20221116080710eucas1p2f18eb7a627b9b40d5f01dfeb6000e7b0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20221115120119eucas1p1c57ca32b0a372d00cfb7b6dfb86cc1a7
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20221115120119eucas1p1c57ca32b0a372d00cfb7b6dfb86cc1a7
+References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
+        <20221110183853.3678209-10-jagan@amarulasolutions.com>
+        <694ccb10-15ad-5192-dd1b-86628227fb65@denx.de>
+        <CAMty3ZDE4gt_Hhb3pgXW570d6F5f8F3WeEEHiMVuXyrqmka9Kw@mail.gmail.com>
+        <CGME20221115120119eucas1p1c57ca32b0a372d00cfb7b6dfb86cc1a7@eucas1p1.samsung.com>
+        <35a96ba1-1022-5f7a-ffb6-b3400279e244@denx.de>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Pierre,
+On 15.11.2022 13:00, Marek Vasut wrote:
+> On 11/14/22 08:49, Jagan Teki wrote:
+>> On Sun, Nov 13, 2022 at 5:51 AM Marek Vasut <marex@denx.de> wrote:
+>>>
+>>> On 11/10/22 19:38, Jagan Teki wrote:
+>>>> Finding the right input bus format throughout the pipeline is hard
+>>>> so add atomic_get_input_bus_fmts callback and initialize with the
+>>>> proper input format from list of supported output formats.
+>>>>
+>>>> This format can be used in pipeline for negotiating bus format between
+>>>> the DSI-end of this bridge and the other component closer to pipeline
+>>>> components.
+>>>>
+>>>> List of Pixel formats are taken from,
+>>>> AN13573 i.MX 8/RT MIPI DSI/CSI-2, Rev. 0, 21 March 2022
+>>>> 3.7.4 Pixel formats
+>>>> Table 14. DSI pixel packing formats
+>>>>
+>>>> v8:
+>>>> * added pixel formats supported by NXP AN13573 i.MX 8/RT MIPI 
+>>>> DSI/CSI-2
+>>>>
+>>>> v7, v6, v5, v4:
+>>>> * none
+>>>>
+>>>> v3:
+>>>> * include media-bus-format.h
+>>>>
+>>>> v2:
+>>>> * none
+>>>>
+>>>> v1:
+>>>> * new patch
+>>>>
+>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>>>> ---
+>>>>    drivers/gpu/drm/bridge/samsung-dsim.c | 53 
+>>>> +++++++++++++++++++++++++++
+>>>>    1 file changed, 53 insertions(+)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c 
+>>>> b/drivers/gpu/drm/bridge/samsung-dsim.c
+>>>> index 0fe153b29e4f..33e5ae9c865f 100644
+>>>> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+>>>> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+>>>> @@ -15,6 +15,7 @@
+>>>>    #include <linux/clk.h>
+>>>>    #include <linux/delay.h>
+>>>>    #include <linux/irq.h>
+>>>> +#include <linux/media-bus-format.h>
+>>>>    #include <linux/of_device.h>
+>>>>    #include <linux/phy/phy.h>
+>>>>
+>>>> @@ -1321,6 +1322,57 @@ static void 
+>>>> samsung_dsim_atomic_post_disable(struct drm_bridge *bridge,
+>>>>        pm_runtime_put_sync(dsi->dev);
+>>>>    }
+>>>>
+>>>> +/*
+>>>> + * This pixel output formats list referenced from,
+>>>> + * AN13573 i.MX 8/RT MIPI DSI/CSI-2, Rev. 0, 21 March 2022
+>>>> + * 3.7.4 Pixel formats
+>>>> + * Table 14. DSI pixel packing formats
+>>>> + */
+>>>> +static const u32 samsung_dsim_pixel_output_fmts[] = {
+>>>
+>>> You can also add :
+>>>
+>>> MEDIA_BUS_FMT_YUYV10_1X20
+>>>
+>>> MEDIA_BUS_FMT_YUYV12_1X24
+>>
+>> Are these for the below formats?
+>>
+>> "Loosely Packed Pixel Stream, 20-bit YCbCr, 4:2:2
+>>   Packed Pixel Stream, 24-bit YCbCr, 4:2:2"
+>>>
+>>>> +     MEDIA_BUS_FMT_UYVY8_1X16,
+>>>> +     MEDIA_BUS_FMT_RGB101010_1X30,
+>>>> +     MEDIA_BUS_FMT_RGB121212_1X36,
+>>>> +     MEDIA_BUS_FMT_RGB565_1X16,
+>>>> +     MEDIA_BUS_FMT_RGB666_1X18,
+>>>> +     MEDIA_BUS_FMT_RGB888_1X24,
+>>>> +};
+>>>> +
+>>>> +static bool samsung_dsim_pixel_output_fmt_supported(u32 fmt)
+>>>> +{
+>>>> +     int i;
+>>>> +
+>>>> +     for (i = 0; i < ARRAY_SIZE(samsung_dsim_pixel_output_fmts); 
+>>>> i++) {
+>>>> +             if (samsung_dsim_pixel_output_fmts[i] == fmt)
+>>>> +                     return true;
+>>>> +     }
+>>>> +
+>>>> +     return false;
+>>>> +}
+>>>> +
+>>>> +static u32 *
+>>>> +samsung_dsim_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
+>>>> +                                    struct drm_bridge_state 
+>>>> *bridge_state,
+>>>> +                                    struct drm_crtc_state 
+>>>> *crtc_state,
+>>>> +                                    struct drm_connector_state 
+>>>> *conn_state,
+>>>> +                                    u32 output_fmt,
+>>>> +                                    unsigned int *num_input_fmts)
+>>>> +{
+>>>> +     u32 *input_fmts;
+>>>> +
+>>>> +     if (!samsung_dsim_pixel_output_fmt_supported(output_fmt))
+>>>> +             return NULL;
+>>>> +
+>>>> +     *num_input_fmts = 1;
+>>>
+>>> Shouldn't this be 6 ?
+>>>
+>>>> +     input_fmts = kmalloc(sizeof(*input_fmts), GFP_KERNEL);
+>>>> +     if (!input_fmts)
+>>>> +             return NULL;
+>>>> +
+>>>> +     input_fmts[0] = output_fmt;
+>>>
+>>> Shouldn't this be a list of all 6 supported pixel formats ?
+>>
+>> Negotiation would settle to return one input_fmt from the list of
+>> supporting output_fmts. so the num_input_fmts would be 1 rather than
+>> the number of fmts in the supporting list. This is what I understood
+>> from the atomic_get_input_bus_fmts API. let me know if I miss
+>> something here.
+>
+> How does the negotiation work for this kind of pipeline:
+>
+> LCDIFv3<->DSIM<->HDMI bridge<->HDMI connector
+>
+> where all elements (LCDIFv3, DSIM, HDMI bridge) can support either 
+> RGB888 or packed YUV422 ?
+>
+> Who decides the format used by such pipeline ?
+>
+> Why should it be the DSIM bridge and not e.g. the HDMI bridge or the 
+> LCDIFv3 ?
 
-On 2022/11/7 23:57, Pierre Gondois wrote:
-> The DeviceTree Specification v0.3 specifies that the cache node
-> 'compatible' and 'cache-level' properties are 'required'. Cf.
-> s3.8 Multi-level and Shared Cache Nodes
-> The 'cache-unified' property should be present if one of the
-> properties for unified cache is present ('cache-size', ...).
-> 
-> Update the Device Trees accordingly.
-> 
-> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
 
-Applied to the HiSilicon arm64 dt tree.
-Thanks!
+If I got it right, the drivers reports their preference for the returned 
+formats. The format that is first in the reported array is the most 
+preferred one. This probably means that in your case the HDMI bridge 
+decides by reporting RGB or YUV first (if all elements supports both).
 
-Best Regards,
-Wei
 
-> ---
->  arch/arm64/boot/dts/hisilicon/hi3660.dtsi |  2 ++
->  arch/arm64/boot/dts/hisilicon/hi6220.dtsi |  2 ++
->  arch/arm64/boot/dts/hisilicon/hip05.dtsi  |  4 ++++
->  arch/arm64/boot/dts/hisilicon/hip06.dtsi  |  4 ++++
->  arch/arm64/boot/dts/hisilicon/hip07.dtsi  | 16 ++++++++++++++++
->  5 files changed, 28 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> index 8343d0cedde3..a57f35eb5ef6 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> @@ -203,10 +203,12 @@ CLUSTER_SLEEP_1: cluster-sleep-1 {
->  
->  		A53_L2: l2-cache0 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		A73_L2: l2-cache1 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  	};
->  
-> diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-> index ae0a7cfeeb47..f6d3202b0d1a 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-> @@ -186,10 +186,12 @@ cpu7: cpu@103 {
->  
->  		CLUSTER0_L2: l2-cache0 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		CLUSTER1_L2: l2-cache1 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  	};
->  
-> diff --git a/arch/arm64/boot/dts/hisilicon/hip05.dtsi b/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-> index 7b2abd10d3d6..5b2b1bfd0d2a 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-> @@ -211,18 +211,22 @@ cpu15: cpu@20303 {
->  
->  		cluster0_l2: l2-cache0 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster1_l2: l2-cache1 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster2_l2: l2-cache2 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster3_l2: l2-cache3 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  	};
->  
-> diff --git a/arch/arm64/boot/dts/hisilicon/hip06.dtsi b/arch/arm64/boot/dts/hisilicon/hip06.dtsi
-> index 2f8b03b0d365..291c2ee38288 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hip06.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hip06.dtsi
-> @@ -211,18 +211,22 @@ cpu15: cpu@10303 {
->  
->  		cluster0_l2: l2-cache0 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster1_l2: l2-cache1 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster2_l2: l2-cache2 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster3_l2: l2-cache3 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  	};
->  
-> diff --git a/arch/arm64/boot/dts/hisilicon/hip07.dtsi b/arch/arm64/boot/dts/hisilicon/hip07.dtsi
-> index 1a16662f8867..b8746fb959b5 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hip07.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hip07.dtsi
-> @@ -842,66 +842,82 @@ cpu63: cpu@70303 {
->  
->  		cluster0_l2: l2-cache0 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster1_l2: l2-cache1 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster2_l2: l2-cache2 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster3_l2: l2-cache3 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster4_l2: l2-cache4 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster5_l2: l2-cache5 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster6_l2: l2-cache6 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster7_l2: l2-cache7 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster8_l2: l2-cache8 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster9_l2: l2-cache9 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster10_l2: l2-cache10 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster11_l2: l2-cache11 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster12_l2: l2-cache12 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster13_l2: l2-cache13 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster14_l2: l2-cache14 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  
->  		cluster15_l2: l2-cache15 {
->  			compatible = "cache";
-> +			cache-level = <2>;
->  		};
->  	};
->  
-> 
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
