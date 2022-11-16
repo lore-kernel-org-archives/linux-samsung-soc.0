@@ -2,189 +2,170 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96ADFC43219
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Nov 2022 16:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D510EC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Nov 2022 18:24:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234211AbiKPQrU (ORCPT
+        id S239145AbiKPSY2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Nov 2022 11:47:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59834 "EHLO
+        Wed, 16 Nov 2022 13:24:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239161AbiKPQq5 (ORCPT
+        with ESMTP id S239082AbiKPSY1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Nov 2022 11:46:57 -0500
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBADCB3E;
-        Wed, 16 Nov 2022 08:43:36 -0800 (PST)
-Received: by mail-oi1-f178.google.com with SMTP id t62so19078779oib.12;
-        Wed, 16 Nov 2022 08:43:36 -0800 (PST)
+        Wed, 16 Nov 2022 13:24:27 -0500
+Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C836E26
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 10:24:26 -0800 (PST)
+Received: by mail-qk1-x72e.google.com with SMTP id p18so12241311qkg.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 10:24:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PBgZn+u117R7gFQNpsnvlIYlwSeo0LUTLoxlFKr3wyI=;
+        b=eH0YS14VezMu1YoYc8i9L/9V4Rda12NtBPhbyEQG9con1K8dLIyV9b4KNCmIq0wzpX
+         WqxRC9GRz2SSVMeoKLZbZ25GRVxvk4TLZwapfzc9KJm3PzFnUZgrmijMI3uqPEOn38/b
+         +5K39+JbiCr6klzOuT84Gyzf87KIYKFM/ltfQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8B5/87gKzEK1DHTjBN460dWTsUxNgyOjDKt1AO8fAIM=;
-        b=oAxI32fGulcdp1ItejT1LU8zWaS3pJYwwycnLq3rDJ+weEGqCDYTn0Vss1nuDiopo8
-         BbW1nFIjow9d+Fl21PKQukL5OzT8aiou15BzORKZ+MMeDt/S61Z5nmDnsnEUX3r0vV1O
-         0fefZABKhKwHzNAIoWWTpw8RaKxHo+KWd3y6HkpBwRhVTBNjwBIKDMqkXStY9z2HOOZS
-         OQtD7FivovlEgmkfZzw+ooplt4VeK0gqgiV/RbNVmUjUHEFMXEd/JStFrlS1EAA4Ra0C
-         6L+Em5KO7B32X8cHHT3Op6RCYEGzykM0HHEMyo88ubptRu45BYLO0AFRXKozVpgw1sb/
-         Zrqg==
-X-Gm-Message-State: ANoB5plFX29inmjNu5g3TA7jno8gxcpAQq0kEJ7csXOWNCYE5YGo6YkA
-        5NX8zhK7Ji0djPVFPwd1PQ==
-X-Google-Smtp-Source: AA0mqf6l6fNt+UU2Tz8uYxAZJZVv7nnrGresiuFjASgy/dwkv0ln2dV9GKYUUtcrm7tX4B48WXq3lw==
-X-Received: by 2002:a05:6808:a83:b0:354:b300:16d5 with SMTP id q3-20020a0568080a8300b00354b30016d5mr1972701oij.253.1668617015856;
-        Wed, 16 Nov 2022 08:43:35 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id f21-20020a9d6c15000000b00661ad8741b4sm6805514otq.24.2022.11.16.08.43.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 08:43:35 -0800 (PST)
-Received: (nullmailer pid 217080 invoked by uid 1000);
-        Wed, 16 Nov 2022 16:43:37 -0000
-Date:   Wed, 16 Nov 2022 10:43:37 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Vivek Yadav <vivek.2311@samsung.com>
-Cc:     'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>,
-        rcsekar@samsung.com, krzysztof.kozlowski+dt@linaro.org,
-        wg@grandegger.com, mkl@pengutronix.de, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        pankaj.dubey@samsung.com, ravi.patel@samsung.com,
-        alim.akhtar@samsung.com, linux-fsd@tesla.com,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        aswani.reddy@samsung.com, sriranjani.p@samsung.com
-Subject: Re: [PATCH v2 1/6] dt-bindings: Document the SYSREG specific
- compatibles found on FSD SoC
-Message-ID: <20221116164337.GA203961-robh@kernel.org>
-References: <20221109100928.109478-1-vivek.2311@samsung.com>
- <CGME20221109100245epcas5p38a01aed025f491d39a09508ebcdcef84@epcas5p3.samsung.com>
- <20221109100928.109478-2-vivek.2311@samsung.com>
- <709daf8b-a58e-9247-c5d8-f3be3e60fe70@linaro.org>
- <000001d8f4f6$1c7e96e0$557bc4a0$@samsung.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PBgZn+u117R7gFQNpsnvlIYlwSeo0LUTLoxlFKr3wyI=;
+        b=OHeYXUiKn7jFyXpH9ft9vqjg12lcrl2zlkr+jE3AQRxcYLQN+3SYB3rOSXyXQu9i0k
+         FIX56mahMYsEjbWCUHWci91HdlMdNC/1javljsVLfqiXSUuCE5MJm9b+84Dm1LWEuvoq
+         kbSOubJN19UcRFqYcfbWNARMoE6giOwzXrcEr0CK8JizSv+dupsem24nrPYW8zfiqQcs
+         oRrGmcylAc7khjIqgL7YwcHvXAbH1HWQOWSDZqzpKrwCLIDuqqnAZNppji5ao2nQGsy+
+         OvnnZTb6JGVp1EdDwLmkNO0s92xMorpPud0F199tsc0bArUPqyjY2A1CblEW55pNdf38
+         CyAQ==
+X-Gm-Message-State: ANoB5pkxZ9cYgOIWha8rkPq1Y7uPEOGH36upulSu+qWDiam+8wWrc6E5
+        /CA+NAN17MSg3WtNbQN7tGTwehFqLPjuog==
+X-Google-Smtp-Source: AA0mqf7SsTwTwipbko+MIg+r7ioBgy4oFUXVNsGyd3m4qg7ex8/91eWEHe1PhGy4wTr++Mlju8eu7Q==
+X-Received: by 2002:a05:620a:2b4e:b0:6ce:7f5a:7bac with SMTP id dp14-20020a05620a2b4e00b006ce7f5a7bacmr19596067qkb.345.1668623065070;
+        Wed, 16 Nov 2022 10:24:25 -0800 (PST)
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com. [209.85.222.182])
+        by smtp.gmail.com with ESMTPSA id de43-20020a05620a372b00b006fbb4b98a25sm784621qkb.109.2022.11.16.10.24.24
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Nov 2022 10:24:24 -0800 (PST)
+Received: by mail-qk1-f182.google.com with SMTP id x21so12264358qkj.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 10:24:24 -0800 (PST)
+X-Received: by 2002:a05:622a:1c15:b0:3a5:49fa:3983 with SMTP id
+ bq21-20020a05622a1c1500b003a549fa3983mr21860304qtb.436.1668622610752; Wed, 16
+ Nov 2022 10:16:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000001d8f4f6$1c7e96e0$557bc4a0$@samsung.com>
+References: <20221116102659.70287-1-david@redhat.com> <20221116102659.70287-21-david@redhat.com>
+In-Reply-To: <20221116102659.70287-21-david@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 16 Nov 2022 10:16:34 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgtEwpR-rE_=cXzecHMZ+zgrx5zf9UfvH0w-mKgckn4=Q@mail.gmail.com>
+Message-ID: <CAHk-=wgtEwpR-rE_=cXzecHMZ+zgrx5zf9UfvH0w-mKgckn4=Q@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable v1 20/20] mm: rename FOLL_FORCE to FOLL_PTRACE
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Nov 10, 2022 at 04:48:03PM +0530, Vivek Yadav wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Sent: 09 November 2022 16:39
-> > To: Vivek Yadav <vivek.2311@samsung.com>; rcsekar@samsung.com;
-> > krzysztof.kozlowski+dt@linaro.org; wg@grandegger.com;
-> > mkl@pengutronix.de; davem@davemloft.net; edumazet@google.com;
-> > kuba@kernel.org; pabeni@redhat.com; pankaj.dubey@samsung.com;
-> > ravi.patel@samsung.com; alim.akhtar@samsung.com; linux-fsd@tesla.com;
-> > robh+dt@kernel.org
-> > Cc: linux-can@vger.kernel.org; netdev@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> > samsung-soc@vger.kernel.org; devicetree@vger.kernel.org;
-> > aswani.reddy@samsung.com; sriranjani.p@samsung.com
-> > Subject: Re: [PATCH v2 1/6] dt-bindings: Document the SYSREG specific
-> > compatibles found on FSD SoC
-> > 
-> > On 09/11/2022 11:09, Vivek Yadav wrote:
-> > > From: Sriranjani P <sriranjani.p@samsung.com>
-> > >
-> > 
-> > Use subject prefixes matching the subsystem (git log --oneline -- ...).
-> > 
-> Okay, I will add the correct prefixes.
-> > > Describe the compatible properties for SYSREG controllers found on FSD
-> > > SoC.
-> > 
-> > This is ARM SoC patch, split it from the patchset.
-> >
-> I understand this patch is not to be subset of CAN patches, I will send these patches separately.
-> These patches will be used by EQos patches. As per reference, I am adding the Address link.
-> https://lore.kernel.org/all/20221104120517.77980-1-sriranjani.p@samsung.com/
->  
-> > >
-> > > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> > > Signed-off-by: Pankaj Kumar Dubey <pankaj.dubey@samsung.com>
-> > > Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
-> > > Signed-off-by: Vivek Yadav <vivek.2311@samsung.com>
-> > > Cc: devicetree@vger.kernel.org
-> > > Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-> > > Cc: Rob Herring <robh+dt@kernel.org>
-> > 
-> > Drop the Cc list from commit log. It's not helpful.
-> > 
-> Okay, I will remove.
-> > > Signed-off-by: Sriranjani P <sriranjani.p@samsung.com>
-> > > ---
-> > >  .../devicetree/bindings/arm/tesla-sysreg.yaml | 50
-> > +++++++++++++++++++
-> > >  MAINTAINERS                                   |  1 +
-> > >  2 files changed, 51 insertions(+)
-> > >  create mode 100644
-> > > Documentation/devicetree/bindings/arm/tesla-sysreg.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/arm/tesla-sysreg.yaml
-> > > b/Documentation/devicetree/bindings/arm/tesla-sysreg.yaml
-> > > new file mode 100644
-> > > index 000000000000..bbcc6dd75918
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/arm/tesla-sysreg.yaml
-> > 
-> > arm is only for top level stuff. This goes to soc under tesla or samsung
-> > directory.
-> > 
-> Okay, this is specific to Samsung fsd SoC, I will be moving this file to arm/samsung in next patch series. Hope that is fine.
-> > > @@ -0,0 +1,50 @@
-> > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause %YAML 1.2
-> > > +---
-> > > +$id:
-> > > +https://protect2.fireeye.com/v1/url?k=1ad2834a-7b59967c-1ad30805-
-> > 000b
-> > > +abff9b5d-1f65584e412e916c&q=1&e=a870a282-632a-4896-ae53-
-> > 3ecb50f02be5&
-> > > +u=http%3A%2F%2Fdevicetree.org%2Fschemas%2Farm%2Ftesla-
-> > sysreg.yaml%23
-> > > +$schema:
-> > > +https://protect2.fireeye.com/v1/url?k=13876e33-720c7b05-1386e57c-
-> > 000b
-> > > +abff9b5d-edae3ff711999305&q=1&e=a870a282-632a-4896-ae53-
-> > 3ecb50f02be5&
-> > > +u=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23
-> > > +
-> > > +title: Tesla Full Self-Driving platform's system registers
-> > > +
-> > > +maintainers:
-> > > +  - Alim Akhtar <alim.akhtar@samsung.com>
-> > > +
-> > > +description: |
-> > > +  This is a system control registers block, providing multiple low
-> > > +level
-> > > +  platform functions like board detection and identification,
-> > > +software
-> > > +  interrupt generation.
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    oneOf:
-> > 
-> > No need for oneOf.
-> > 
-> Removing this results into dt_binding_check error, so this is required.
-> > > +      - items:
-> > > +          - enum:
-> > > +              - tesla,sysreg_fsys0
-> > > +              - tesla,sysreg_peric
-> > 
-> > From where did you get underscores in compatibles?
-> > 
-> I have seen in MCAN Driver <drivers/net/can/m_can/m_can_platform.c> and also too many other yaml files.
-> Do you have any ref standard guideline of compatible which says underscore is not allowed.
+On Wed, Nov 16, 2022 at 2:30 AM David Hildenbrand <david@redhat.com> wrote:
+>
+> Let's make it clearer that functionality provided by FOLL_FORCE is
+> really only for ptrace access.
 
-Section 2.3.1 defining 'compatible' in the DT spec:
+I'm not super-happy about this one.
 
-The compatible string should consist only of lowercase letters, digits  
-and dashes, and should start with a letter. A single comma is typically 
-only used following a vendor prefix. Underscores should not be used.
+I do understand the "let's rename the bit so that no new user shows up".
+
+And it's true that the main traditional use is ptrace.
+
+But from the patch itself it becomes obvious that no, it's not *just*
+ptrace. At least not yet.
+
+It's used for get_arg_page(), which uses it to basically look up (and
+install) pages in the newly created VM.
+
+Now, I'm not entirely sure why it even uses FOLL_FORCE, - I think it
+might be historical, because the target should always be the new stack
+vma.
+
+Following the history of it is a big of a mess, because there's a
+number of renamings and re-organizations, but it seems to go back to
+2007 and commit b6a2fea39318 ("mm: variable length argument support").
+
+Before that commit, we kept our own array of "this is the set of pages
+that I will install in the new VM". That commit basically just inserts
+the pages directly into the VM instead, getting rid of the array size
+limitation.
+
+So at a minimum, I think that FOLL_FORCE would need to be removed
+before any renaming to FOLL_PTRACE, because that's not some kind of
+small random case.
+
+It *might* be as simple as just removing it, but maybe there's some
+reason for having it that I don't immediately see.
+
+There _are_ also small random cases too, like get_cmdline(). Maybe
+that counts as ptrace, but the execve() case most definitely does not.
+
+                Linus
