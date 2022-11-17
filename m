@@ -2,243 +2,135 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A35D6C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Nov 2022 13:04:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B416C4321E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Nov 2022 22:58:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234665AbiKQNEf (ORCPT
+        id S239916AbiKQW6Z (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 17 Nov 2022 08:04:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56604 "EHLO
+        Thu, 17 Nov 2022 17:58:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239585AbiKQNEa (ORCPT
+        with ESMTP id S239263AbiKQW6X (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 17 Nov 2022 08:04:30 -0500
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 806CB48763
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Nov 2022 05:04:26 -0800 (PST)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20221117130423euoutp02d3efb0ed9a218dde3123ba347494d975~oYPQBoOue0992009920euoutp02i
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Nov 2022 13:04:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20221117130423euoutp02d3efb0ed9a218dde3123ba347494d975~oYPQBoOue0992009920euoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1668690263;
-        bh=xGDVxvKfwa3R0oyCPonq7H0nvZ7sLY54dyqnEqQZHus=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=sGunYvHpOQW9+RWQby6RAkrUwynE7sPxijpd0ztFcoTKwPmU2U7vgKkYu8z+QR1pa
-         x+BgvJ9LSXRFGf1d5GxvJ1zXebclDn7KY5Z57CKbcJBh4p97urocxKxojutZm6pLHK
-         91YtvOYouHE8aRZG1p/80b7r8fcPqmlubhM5uxJ0=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20221117130422eucas1p110f565a061b17fd4b11704a77003b2f6~oYPPrd3Sj0742107421eucas1p1H;
-        Thu, 17 Nov 2022 13:04:22 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id AD.DE.10112.65136736; Thu, 17
-        Nov 2022 13:04:22 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20221117130422eucas1p26fc0059d4c58441fdffa54650455c678~oYPPPDWgV2561125611eucas1p2n;
-        Thu, 17 Nov 2022 13:04:22 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20221117130422eusmtrp19d04f685c5e20489bac1b8f8d899a872~oYPPOMZl92607426074eusmtrp1e;
-        Thu, 17 Nov 2022 13:04:22 +0000 (GMT)
-X-AuditID: cbfec7f4-cf3ff70000002780-0f-63763156fb0d
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id D7.68.08916.65136736; Thu, 17
-        Nov 2022 13:04:22 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20221117130421eusmtip21abbda0c12132896cbc3fd9a86e5c3fc~oYPON3vQ-0238802388eusmtip2g;
-        Thu, 17 Nov 2022 13:04:21 +0000 (GMT)
-Message-ID: <f33142de-862e-9775-b1c9-b871bb9a243c@samsung.com>
-Date:   Thu, 17 Nov 2022 14:04:21 +0100
+        Thu, 17 Nov 2022 17:58:23 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7BA51CB02
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Nov 2022 14:58:21 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id d13-20020a17090a3b0d00b00213519dfe4aso3408415pjc.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Nov 2022 14:58:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gB4fu8WxG++brcac1xEx09Jo8IsSv6jaRuNq5hahL+I=;
+        b=Fy4BdUGW9a1WNEtqYFLG188KBaVxCW7dlYHJCJYByhqbYzWtrREex26XefPtc0cld6
+         YCRtECSkUML5k6sMmax4MrQy/8YHDQGVY6nBvl6IgyA0kq1FCwf8z9yqhcxsos46Zhwv
+         H1rDgpoCNHoreRPMRNhXYMHZ9u7/T1h/SC+nQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gB4fu8WxG++brcac1xEx09Jo8IsSv6jaRuNq5hahL+I=;
+        b=3xaH5/qTyPBVZcHBdU1Q7BZGZ46PJ3bVdFPAsDzn4Eoyrx3rHh9L7TkeiW2zqs+tmy
+         oh7Is8KIicDS8KV+w4bI8M66fOKVo6gyUPkRIlqDZFxTv8d35fYPeBP6zhAkZkhq8zO4
+         aZXtAxRbMywcXUwU8tnKdAjvB5Gng6nxXjzKwaRjoN0kl62TPXzkmuJEUVNHvtEI9tHI
+         V9M+lL//XAscPeY+OPQvM8LjF30Z1CUnS9LVaObMjYLc6EncWj4/62HUlb/seYdPLSVB
+         4ShTbpqIJiRmlvPwTWws66sA/Z2GsOWJNu7zKFK+Z/w3iiw9/1se9c9F4iGECN55zzHv
+         CnHg==
+X-Gm-Message-State: ANoB5pkrRvlqNQ5+Sms5kCd7HgztnF/9FsxXA/kzlLhSHcLJXemaHIaf
+        nL78BTpM0hTJ12Z+LK7+wA03dw==
+X-Google-Smtp-Source: AA0mqf5a5ur58uPnDpwIjYXEwn4PnQ44wkjJwk4UbGX/PChCoGId0YIreHCZd3TM/oH8mIHpTiFUgA==
+X-Received: by 2002:a17:90a:2b46:b0:213:aa5f:a026 with SMTP id y6-20020a17090a2b4600b00213aa5fa026mr4652677pjc.243.1668725901245;
+        Thu, 17 Nov 2022 14:58:21 -0800 (PST)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id a11-20020a170902710b00b00186bc66d2cbsm1970473pll.73.2022.11.17.14.58.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Nov 2022 14:58:20 -0800 (PST)
+Date:   Thu, 17 Nov 2022 14:58:19 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH mm-unstable v1 20/20] mm: rename FOLL_FORCE to FOLL_PTRACE
+Message-ID: <202211171439.CDE720EAD@keescook>
+References: <20221116102659.70287-1-david@redhat.com>
+ <20221116102659.70287-21-david@redhat.com>
+ <CAHk-=wgtEwpR-rE_=cXzecHMZ+zgrx5zf9UfvH0w-mKgckn4=Q@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
-        Gecko/20100101 Thunderbird/102.4.2
-Subject: Re: [PATCH v8 06/14] drm: bridge: samsung-dsim: Handle proper DSI
- host initialization
-Content-Language: en-US
-To:     Marek Vasut <marex@denx.de>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>
-Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <04fb17e2-1b55-fbd9-d846-da3e3da4edb8@denx.de>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa1BUZRie79z2sOPCYbH4ArNaJ4ZwAunifI261tTUKS/DdNEZRd0zu6eV
-        2gXa5SYxI5dCWMBZZSs8FJFArBpxEQgbdUZuC26wQYQOYidCQQlt2EVXkSQPJ4t/z/u8z/s+
-        7/PNR+Pqz6kwOiExhbckciYNpSRau+96nt0Wm6ZfU+dfhUYvuXEkVvkI9OclJ4WGbv1FoZKa
-        fhIdFu0Emm2yU+jabwME6sudVqDCQ9UKVGs/S6Gm8WES2eaO4ajMcxZD0/k5ALn/qMfR+ZxP
-        CTTo6KCQVxh70C29TqGBHi+O/Pf68JcfZetmRJKtEHoI1tHTSbL9xZcp9pRwWcGWFxwh2arT
-        1zG289cqkh0dPk2xYpELY09W72cbb7Zh7MHm44D1Na2MC9yhXG/gTQlpvCVGq1Pu7VrwEcni
-        kxmdF86DbNASbgMBNGRegN6KPNwGlLSacQLYWXmHkItZAHOPngFy4QOwr2CCfDjS0HcBkxu1
-        AM6dXPh3ZAZAzzURSCoVo4UlYiEmYYJ5GtrdFzGZD4a9R64QEn6EMcBvmiWepkMYHRzp/Vii
-        cSYUjlz5etFgOVNHwu6fZhcNcMmg+M4YLqkoJhbabtgoCQcw62D7uBOTp5+AeS3li4kg85kS
-        Oju6SMkBMq/B8ltQjhACp1zNChmvgO7SYkLWHwCw8p6IyYUdwOzJESCr1sHR/jlKWoQzz8D6
-        H2Nk+hVY1nufkvcHwos3guUbAuHh1i9wmVbBgny1rI6Aguv7/2zP/TyI24FGWPIswpL8wpI0
-        wv++lYA4DkL5VKvZyFufS+TTo62c2ZqaaIzWJ5mbwIOv677vmm0DtVMz0e0Ao0E7gDSuWa4y
-        D6Tq1SoDty+TtyTtsaSaeGs7CKcJTaiKKovSqxkjl8J/yPPJvOVhF6MDwrIx0j05VpQjlK6u
-        2Iw51pasZJIm9u2aJxpzCu3qNV+90Vy+cfqHc7enBhXYY1mtDa4e9belWm8N2Ja1xenn6p9v
-        M2s3Fb0zqb76we5hEGVE73YYyduRQV3rR/foX4/RaVsaK7n3TMFv/mIaj/8u6MuEuA2oNWKX
-        QeU58+pUS+7mq7Qh7EQ4HUet3ekPC9mwyuO4eaJwh6+ho+z9SQfnT8os2Y7Rjfx8sidPPV38
-        lDYSj39r6/yLWEZNYG+ms3pntzc/fOylSF1A/NDvKctEOi19YjxrmS9ixcLbHz2erjiU61W6
-        j9Ibt2/dn2FffXfkVLbG9neQ8eDuA66hYzaG/0Sn0xDWvVxsFG6xcv8AaFYkcykEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOKsWRmVeSWpSXmKPExsVy+t/xe7phhmXJBnePsFncuX2a2eL+4s8s
-        Fq9vr2CzuPL1PZtF79JzrBaT7k9gsfiyaQKbxYt7F1kszja9YbfonLiE3WL5hH1sFpseX2O1
-        6Pq1ktlixvl9TBZv2hoZLU4/Ws9scaqxlcXi0pTDbBafZj0Eyk5+yWZx8cQnZovvv88yO4h5
-        rP14n9Vj3qwTLB5TThxh9TjXc5fNY+esu+wesztmsnos3vOSyePI1cWsHneu7WHzuN99nMlj
-        85J6j43vdjB59G1ZxejxeZNcAF+Unk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWR
-        qZK+nU1Kak5mWWqRvl2CXsbR/59ZCu4rVBy5foqxgXGrdBcjJ4eEgInEhrPXmUBsIYGljBLL
-        zqlBxGUkTk5rYIWwhSX+XOti62LkAqp5zyjxd+EqNpAEr4CdRO/9TrBmFgFViQmnbzBBxAUl
-        Ts58wtLFyMEhKpAise5IFIgpLJAgcetkNUgFs4C4xK0n85lARooIbGSVeP6kjxnEYRb4yChx
-        afIWdohl/xglVvedYgRpYRMwlOh62wW2mFPAWuLQ4xVMEKPMJLq2djFC2PISzVtnM09gFJqF
-        5I5ZSDbOQtIyC0nLAkaWVYwiqaXFuem5xYZ6xYm5xaV56XrJ+bmbGIEpZtuxn5t3MM579VHv
-        ECMTB+MhRgkOZiUR3tyLpclCvCmJlVWpRfnxRaU5qcWHGE2BgTGRWUo0OR+Y5PJK4g3NDEwN
-        TcwsDUwtzYyVxHk9CzoShQTSE0tSs1NTC1KLYPqYODilGpikDauDai9U/ZxwfJYM09O0I3mp
-        czl6HT3nOp72a/6709HDef6Jk5lnj7w+6vrQ9fnl8t0qvH5/qtkjbun/maNbmKclrDn5xq9P
-        /nabi/4m8aXkve9VOazzzHba/ol77l4IndM97UZt+4uNH2obK3YddHC49C7//XOVcIacuXE9
-        NvF7j+eq11l75xYlalbxPb8rr7i64NMer9LnlhYrBKx6M95NWRk365xG6P/IXQfWuk1PK38z
-        n0Hs7M1zhm53IqZaWJice1Ytv3bz32nZ334d6ZafEb3pTWR0gsy/HS0nF1sWJ5nPiLhn1Ro4
-        6a5vteXDi73f07jVLW4acbqxzCifNfNtaUl/ZIOygyhXproSS3FGoqEWc1FxIgBCMXafugMA
-        AA==
-X-CMS-MailID: 20221117130422eucas1p26fc0059d4c58441fdffa54650455c678
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20221117045817eucas1p1778503aa62ef18ef5ee0502d2189cd15
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20221117045817eucas1p1778503aa62ef18ef5ee0502d2189cd15
-References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
-        <20221110183853.3678209-7-jagan@amarulasolutions.com>
-        <CGME20221117045817eucas1p1778503aa62ef18ef5ee0502d2189cd15@eucas1p1.samsung.com>
-        <04fb17e2-1b55-fbd9-d846-da3e3da4edb8@denx.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgtEwpR-rE_=cXzecHMZ+zgrx5zf9UfvH0w-mKgckn4=Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 17.11.2022 05:58, Marek Vasut wrote:
-> On 11/10/22 19:38, Jagan Teki wrote:
->> DSI host initialization handling in previous exynos dsi driver has
->> some pitfalls. It initializes the host during host transfer() hook
->> that is indeed not the desired call flow for I2C and any other DSI
->> configured downstream bridges.
->>
->> Host transfer() is usually triggered for downstream DSI panels or
->> bridges and I2C-configured-DSI bridges miss these host initialization
->> as these downstream bridges use bridge operations hooks like pre_enable,
->> and enable in order to initialize or set up the host.
->>
->> This patch is trying to handle the host init handler to satisfy all
->> downstream panels and bridges. Added the DSIM_STATE_REINITIALIZED state
->> flag to ensure that host init is also done on first cmd transfer, this
->> helps existing DSI panels work on exynos platform (form Marek
->> Szyprowski).
->>
->> v8, v7, v6, v5:
->> * none
->>
->> v4:
->> * update init handling to ensure host init done on first cmd transfer
->>
->> v3:
->> * none
->>
->> v2:
->> * check initialized state in samsung_dsim_init
->>
->> v1:
->> * keep DSI init in host transfer
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->> ---
->>   drivers/gpu/drm/bridge/samsung-dsim.c | 25 +++++++++++++++++--------
->>   include/drm/bridge/samsung-dsim.h     |  5 +++--
->>   2 files changed, 20 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c 
->> b/drivers/gpu/drm/bridge/samsung-dsim.c
->> index bb1f45fd5a88..ec7e01ae02ea 100644
->> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
->> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
->> @@ -1234,12 +1234,17 @@ static void samsung_dsim_disable_irq(struct 
->> samsung_dsim *dsi)
->>       disable_irq(dsi->irq);
->>   }
->>   -static int samsung_dsim_init(struct samsung_dsim *dsi)
->> +static int samsung_dsim_init(struct samsung_dsim *dsi, unsigned int 
->> flag)
->>   {
->>       const struct samsung_dsim_driver_data *driver_data = 
->> dsi->driver_data;
->>   +    if (dsi->state & flag)
->> +        return 0;
->> +
->>       samsung_dsim_reset(dsi);
->> -    samsung_dsim_enable_irq(dsi);
->> +
->> +    if (!(dsi->state & DSIM_STATE_INITIALIZED))
->> +        samsung_dsim_enable_irq(dsi);
->>         if (driver_data->reg_values[RESET_TYPE] == DSIM_FUNCRST)
->>           samsung_dsim_enable_lane(dsi, BIT(dsi->lanes) - 1);
->> @@ -1250,6 +1255,8 @@ static int samsung_dsim_init(struct 
->> samsung_dsim *dsi)
->>       samsung_dsim_set_phy_ctrl(dsi);
->>       samsung_dsim_init_link(dsi);
->>   +    dsi->state |= flag;
->> +
->>       return 0;
->>   }
->>   @@ -1269,6 +1276,10 @@ static void 
->> samsung_dsim_atomic_pre_enable(struct drm_bridge *bridge,
->>       }
->>         dsi->state |= DSIM_STATE_ENABLED;
->> +
->> +    ret = samsung_dsim_init(dsi, DSIM_STATE_INITIALIZED);
->> +    if (ret)
->> +        return;
->>   }
->>     static void samsung_dsim_atomic_enable(struct drm_bridge *bridge,
->> @@ -1458,12 +1469,9 @@ static ssize_t 
->> samsung_dsim_host_transfer(struct mipi_dsi_host *host,
->>       if (!(dsi->state & DSIM_STATE_ENABLED))
->>           return -EINVAL;
->>   -    if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
->> -        ret = samsung_dsim_init(dsi);
->> -        if (ret)
->> -            return ret;
->> -        dsi->state |= DSIM_STATE_INITIALIZED;
->> -    }
->> +    ret = samsung_dsim_init(dsi, DSIM_STATE_REINITIALIZED);
->
-> This triggers full controller reset and reprogramming upon first 
-> command transfer, is such heavy handed reload really necessary ?
+On Wed, Nov 16, 2022 at 10:16:34AM -0800, Linus Torvalds wrote:
+> There _are_ also small random cases too, like get_cmdline(). Maybe
+> that counts as ptrace, but the execve() case most definitely does not.
 
-Yes it is, otherwise the proper DSI panels doesn't work with Exynos DRM 
-DSI. If this is a real issue for you, then maybe the driver could do the 
-initialization conditionally, in prepare() callback in case of IMX and 
-on the first transfer in case of Exynos?
+Oh, er, why does get_arg_page() even need FOLL_FORCE? This is writing the
+new stack contents to the nascent brpm->vma, which was newly allocated
+with VM_STACK_FLAGS, which an arch can override, but they all appear to include
+VM_WRITE | VM_MAYWRITE.
 
-
-Best regards
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Kees Cook
