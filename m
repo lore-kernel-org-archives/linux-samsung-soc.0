@@ -2,123 +2,171 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01AA6C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Nov 2022 00:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A0C4C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Nov 2022 04:58:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238867AbiKQAsS (ORCPT
+        id S233963AbiKQE6S (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Nov 2022 19:48:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40162 "EHLO
+        Wed, 16 Nov 2022 23:58:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231394AbiKQAre (ORCPT
+        with ESMTP id S233725AbiKQE6R (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Nov 2022 19:47:34 -0500
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCEA970197
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 16:46:05 -0800 (PST)
-Received: by mail-qk1-x729.google.com with SMTP id k4so225828qkj.8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 16:46:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rT9xjSJmKp4cCvf16bTKl9Dc4YEY7MjOtsK/w44qv+E=;
-        b=VV2cb+pd6jfcSL2tauZE67KBioAHcybPQR+VfU40dKebsvpG7CB3+xd0Uv8h8MKz8R
-         sbSQ7TqeMCU61fYQIjRwQoQBWrCcg8ekkdEQ8V7xYjRGPq0DN+C0Atnpvt0eAux7Zvaz
-         PXr7WI31PYcmErRNWRYdBKljCyptLiKShcOF4gqH5bxcH7c9a48sUWSu+SLW+D60rEcT
-         94q2cJm8yEvdEzbYpl0Vwvwu6uXwvrse0KXhbaR5xd9/LECZYdD6vR+hmUeAJTlxbvcq
-         ueSGRE+vNlUSsDE90kXWUWeAcS6lHSqHDXkbeBbAuFPPnKLrO2HgUtltNTPZxflFTx6j
-         B+8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rT9xjSJmKp4cCvf16bTKl9Dc4YEY7MjOtsK/w44qv+E=;
-        b=NTZH7aAvQF5wmyn+tnwP4qTNkVE+WJNFpesW3yoePyydA9fvqkVdrQshcIHvGOHtA5
-         3lxFq/EashVvfKIxePOvd7R4l20iOnsTsckztuQdTcdpIY5khpxJaekB0fHAuyailMw2
-         qMMZJuXghQhtaAjOmHi5LWy7eyAo/6ZigljH1JFrI1ltRZoJfO6TKOiUL5m2WNYK9CwB
-         zq0KItrJbpXzlADaCb9IXXWlY5cxbNODX9sD6EeCvdtcbt8I0pnqJ2N3v5Yjq2GK0OVA
-         u2o2KZKxBIPjBwc83mNnka9Qf2lJOpZKv8VhQ3yI4u3wjZl3eOoRirT9kRreo0QlbtKz
-         xURg==
-X-Gm-Message-State: ANoB5pnBvCn8kXh/DXZH7OYcV2xBcMvIIdbh2Zw7MwQLcC+G/DHwI7sb
-        Ps5e/Na6E8Bft/1PtFkPZOCXIA==
-X-Google-Smtp-Source: AA0mqf607w9C7cuVA1Gk/5OO594s7B3KGBk4c2yq8D1+/1YgY/KvFwESfDj3NEnwxZjz0MAqyk7Deg==
-X-Received: by 2002:a37:424c:0:b0:6fb:a0ec:c5ba with SMTP id p73-20020a37424c000000b006fba0ecc5bamr8177915qka.493.1668645964499;
-        Wed, 16 Nov 2022 16:46:04 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-47-55-122-23.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.122.23])
-        by smtp.gmail.com with ESMTPSA id i18-20020a05620a405200b006fa84082b6dsm11394495qko.128.2022.11.16.16.46.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 16:46:03 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.95)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1ovT2Z-0066UZ-3n;
-        Wed, 16 Nov 2022 20:46:03 -0400
-Date:   Wed, 16 Nov 2022 20:46:03 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, etnaviv@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        David Airlie <airlied@gmail.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Leon Romanovsky <leon@kernel.org>
-Subject: Re: [PATCH mm-unstable v1 12/20] RDMA/siw: remove FOLL_FORCE usage
-Message-ID: <Y3WES5adl6yyS4ZB@ziepe.ca>
-References: <20221116102659.70287-1-david@redhat.com>
- <20221116102659.70287-13-david@redhat.com>
+        Wed, 16 Nov 2022 23:58:17 -0500
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A199B2B251
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2022 20:58:14 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id DF00B851C0;
+        Thu, 17 Nov 2022 05:58:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1668661091;
+        bh=H75EdlqcmUQ++use3EJrvAxburWA1YNFKBN6VdzLs40=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=oY3SaVFCj7rrR8HBaKH/bz7jQ1FT5fF6hPm0rsNm4A8TSTtBGTCf85SL0eaQoeWeL
+         o5blLz5/yLhw8wW7mSo51epgCuFi/sDc7bvqQC1D8NIZWwtYHuVFYLgtq5Hti0Yz6I
+         45Tc21agQDdO3AEMkJuDcWSZNnCkrUJJz14fKq+kgns0yfslVi9XLmWEGPwwVBL5MC
+         R0ACna4JDbnyNNjtvja6GXagq/9zdFqOINbBNjhB3kQ7wDwHG9ElaCsP+5LrAf1wqK
+         P/6phoZ95aonXCdaKAT3fxXvaQaTSfRtATYpZycQTVbk2J8WGmqmi/pry5NS0YQc4i
+         TJGPZ5bU2mjig==
+Message-ID: <04fb17e2-1b55-fbd9-d846-da3e3da4edb8@denx.de>
+Date:   Thu, 17 Nov 2022 05:58:09 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221116102659.70287-13-david@redhat.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [PATCH v8 06/14] drm: bridge: samsung-dsim: Handle proper DSI
+ host initialization
+To:     Jagan Teki <jagan@amarulasolutions.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>
+Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
+ <20221110183853.3678209-7-jagan@amarulasolutions.com>
+Content-Language: en-US
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <20221110183853.3678209-7-jagan@amarulasolutions.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 16, 2022 at 11:26:51AM +0100, David Hildenbrand wrote:
-> GUP now supports reliable R/O long-term pinning in COW mappings, such
-> that we break COW early. MAP_SHARED VMAs only use the shared zeropage so
-> far in one corner case (DAXFS file with holes), which can be ignored
-> because GUP does not support long-term pinning in fsdax (see
-> check_vma_flags()).
+On 11/10/22 19:38, Jagan Teki wrote:
+> DSI host initialization handling in previous exynos dsi driver has
+> some pitfalls. It initializes the host during host transfer() hook
+> that is indeed not the desired call flow for I2C and any other DSI
+> configured downstream bridges.
 > 
-> Consequently, FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM is no longer required
-> for reliable R/O long-term pinning: FOLL_LONGTERM is sufficient. So stop
-> using FOLL_FORCE, which is really only for ptrace access.
+> Host transfer() is usually triggered for downstream DSI panels or
+> bridges and I2C-configured-DSI bridges miss these host initialization
+> as these downstream bridges use bridge operations hooks like pre_enable,
+> and enable in order to initialize or set up the host.
 > 
-> Cc: Bernard Metzler <bmt@zurich.ibm.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Leon Romanovsky <leon@kernel.org>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> This patch is trying to handle the host init handler to satisfy all
+> downstream panels and bridges. Added the DSIM_STATE_REINITIALIZED state
+> flag to ensure that host init is also done on first cmd transfer, this
+> helps existing DSI panels work on exynos platform (form Marek
+> Szyprowski).
+> 
+> v8, v7, v6, v5:
+> * none
+> 
+> v4:
+> * update init handling to ensure host init done on first cmd transfer
+> 
+> v3:
+> * none
+> 
+> v2:
+> * check initialized state in samsung_dsim_init
+> 
+> v1:
+> * keep DSI init in host transfer
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > ---
->  drivers/infiniband/sw/siw/siw_mem.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
+>   drivers/gpu/drm/bridge/samsung-dsim.c | 25 +++++++++++++++++--------
+>   include/drm/bridge/samsung-dsim.h     |  5 +++--
+>   2 files changed, 20 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+> index bb1f45fd5a88..ec7e01ae02ea 100644
+> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> @@ -1234,12 +1234,17 @@ static void samsung_dsim_disable_irq(struct samsung_dsim *dsi)
+>   	disable_irq(dsi->irq);
+>   }
+>   
+> -static int samsung_dsim_init(struct samsung_dsim *dsi)
+> +static int samsung_dsim_init(struct samsung_dsim *dsi, unsigned int flag)
+>   {
+>   	const struct samsung_dsim_driver_data *driver_data = dsi->driver_data;
+>   
+> +	if (dsi->state & flag)
+> +		return 0;
+> +
+>   	samsung_dsim_reset(dsi);
+> -	samsung_dsim_enable_irq(dsi);
+> +
+> +	if (!(dsi->state & DSIM_STATE_INITIALIZED))
+> +		samsung_dsim_enable_irq(dsi);
+>   
+>   	if (driver_data->reg_values[RESET_TYPE] == DSIM_FUNCRST)
+>   		samsung_dsim_enable_lane(dsi, BIT(dsi->lanes) - 1);
+> @@ -1250,6 +1255,8 @@ static int samsung_dsim_init(struct samsung_dsim *dsi)
+>   	samsung_dsim_set_phy_ctrl(dsi);
+>   	samsung_dsim_init_link(dsi);
+>   
+> +	dsi->state |= flag;
+> +
+>   	return 0;
+>   }
+>   
+> @@ -1269,6 +1276,10 @@ static void samsung_dsim_atomic_pre_enable(struct drm_bridge *bridge,
+>   	}
+>   
+>   	dsi->state |= DSIM_STATE_ENABLED;
+> +
+> +	ret = samsung_dsim_init(dsi, DSIM_STATE_INITIALIZED);
+> +	if (ret)
+> +		return;
+>   }
+>   
+>   static void samsung_dsim_atomic_enable(struct drm_bridge *bridge,
+> @@ -1458,12 +1469,9 @@ static ssize_t samsung_dsim_host_transfer(struct mipi_dsi_host *host,
+>   	if (!(dsi->state & DSIM_STATE_ENABLED))
+>   		return -EINVAL;
+>   
+> -	if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
+> -		ret = samsung_dsim_init(dsi);
+> -		if (ret)
+> -			return ret;
+> -		dsi->state |= DSIM_STATE_INITIALIZED;
+> -	}
+> +	ret = samsung_dsim_init(dsi, DSIM_STATE_REINITIALIZED);
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-
-Jason
+This triggers full controller reset and reprogramming upon first command 
+transfer, is such heavy handed reload really necessary ?
