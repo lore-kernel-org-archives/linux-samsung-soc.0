@@ -2,83 +2,147 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61780C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Nov 2022 21:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F19F8C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Nov 2022 22:29:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231201AbiKRVyj (ORCPT
+        id S229904AbiKRW3K (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 18 Nov 2022 16:54:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54710 "EHLO
+        Fri, 18 Nov 2022 17:29:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231129AbiKRVyg (ORCPT
+        with ESMTP id S231622AbiKRW3F (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Nov 2022 16:54:36 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FFD68514D
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Nov 2022 13:54:36 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ow9JN-0001VE-Mm; Fri, 18 Nov 2022 22:54:13 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ow9JI-0057eY-6O; Fri, 18 Nov 2022 22:54:09 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ow9JI-00HaPG-6M; Fri, 18 Nov 2022 22:54:08 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Arnd Bergmann <arnd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        dmaengine@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: [PATCH] ARM: s3c: Fix a build error after the s3c24xx dma driver was removed
-Date:   Fri, 18 Nov 2022 22:54:01 +0100
-Message-Id: <20221118215401.505480-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221021203329.4143397-14-arnd@kernel.org>
-References: <20221021203329.4143397-14-arnd@kernel.org>
+        Fri, 18 Nov 2022 17:29:05 -0500
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9FE4725CC
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Nov 2022 14:29:03 -0800 (PST)
+Received: by mail-pj1-x1035.google.com with SMTP id o7so5688119pjj.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Nov 2022 14:29:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UbBsvDU//DL6nEBTfVogOGw4gtrIt5cEgoWU7wg0yqE=;
+        b=An8R27hBelrmHfCbOWIi0CQbpB+FbdUKZd/K74OWA+t1inv8v4494buerQXpAbVoQ/
+         hawXo5IWqwOaOJXIlgQJ62nY4aZ8mzIQL8T0sN5QawgAa8EGZw3klOrzN/KXycM8ohn1
+         PnwiDQNXHvwQENzmlhMaoO6BFIxzwB92hREPE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UbBsvDU//DL6nEBTfVogOGw4gtrIt5cEgoWU7wg0yqE=;
+        b=ueMWlixqlJOPUuQroUc2sWHMxMj0ko1grWc3yEMuQBN/dqTHMLX7GooAmCTpvneYW1
+         +E9Dpgwv3b2EQybtsjhreOx9tUtMTLrgmjyutlFBhb++2K5OReiiQeXjcQ0AhXBShrVL
+         eZgIV62rnNZ7qSeF/jblLMEvGFHergWbt3qRVHKahD6xpeYDOQo7giVmVstcFO2wofmm
+         rRpvZ+G2Vu/DtLh2Z0xstmT/oQCuru0IUC6xjySfBzy+s98NBOjPQ0TUnjFZlDrSUC7x
+         0kHwnfTFquo4COUds4RsNFHcsjxQM80JD3S1DTk1Ju3FLLrdyKgnmb3W/jdPovOYzDO9
+         o3dw==
+X-Gm-Message-State: ANoB5pnJZzh6RaHJwEvzhxMiiBog9eENpzoJc1Aq1CkBUUMOg6ger0df
+        GC0pwcGaHfYmNy2eM9bHey1fZg==
+X-Google-Smtp-Source: AA0mqf6x3WR1+0wUVWwli47/xk6od69+oUWF0cQjmoupKb1o7R1u9AWIvzDIrLxmCvQfjLJnyEjRtg==
+X-Received: by 2002:a17:902:e009:b0:188:649b:9dbe with SMTP id o9-20020a170902e00900b00188649b9dbemr1414800plo.107.1668810543395;
+        Fri, 18 Nov 2022 14:29:03 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b29-20020aa7951d000000b00561382a5a25sm3714931pfp.26.2022.11.18.14.29.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Nov 2022 14:29:02 -0800 (PST)
+Date:   Fri, 18 Nov 2022 14:29:02 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH mm-unstable v1 20/20] mm: rename FOLL_FORCE to FOLL_PTRACE
+Message-ID: <202211181427.4D1C3132FE@keescook>
+References: <20221116102659.70287-1-david@redhat.com>
+ <20221116102659.70287-21-david@redhat.com>
+ <CAHk-=wgtEwpR-rE_=cXzecHMZ+zgrx5zf9UfvH0w-mKgckn4=Q@mail.gmail.com>
+ <Y3dnzgwJpjTQXI9y@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=789; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=MQY1mKOHphIR2YvCjrphAII3VS7+7iYHC7fhsww+j8w=; b=owGbwMvMwMV48I9IxdpTbzgZT6slMSSX//ua9fr08cpF3wMzXx2QYMvNjLz6dYfKM7P3JcWrNxZy BM1c1clozMLAyMUgK6bIUlekJTZBYs1/u5Il3DCDWJlApjBwcQrARE5UsP+PV9M77fDWfJM8w+2Kw8 UnfiWJ7znC2f3T54qeT6laQu8n5yq9n1tdlneoO14WtnjDwrr4YamuzIS5rCsk/6XFPxXzSVHNPDy5 ved3nIHfkc6bmvYKgbaV3GfYHMwSS8qidL/rTza8GTuf9X3azfOCASYz1n9bmHa58XsKp2Rty1cGn6 D2nZEzws13pTv0KjRPXemQGxPVqDvZZldAbqnN3LN2YWZTN+/2/ZH+53Lcw9gbjmJel6ZLKekwL9jH 1P+C4/L7+v3Ft40P9Xmum72Py23dyyrNmp+1STqOcfWVBsq7L0fu7mDpY1U3rEjiy/xaW6LTqbmqSt Ti4hMZvQrtlzlsFq3Xt9XOtRIBAA==
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y3dnzgwJpjTQXI9y@hirez.programming.kicks-ass.net>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The linux/platform_data/dma-s3c24xx.h header file was removed. It didn't
-declare or define any symbol needed in devs.c though, so the #include
-can just be dropped.
+On Fri, Nov 18, 2022 at 12:09:02PM +0100, Peter Zijlstra wrote:
+> On Wed, Nov 16, 2022 at 10:16:34AM -0800, Linus Torvalds wrote:
+> > Following the history of it is a big of a mess, because there's a
+> > number of renamings and re-organizations, but it seems to go back to
+> > 2007 and commit b6a2fea39318 ("mm: variable length argument support").
+> 
+> I went back and read parts of the discussions with Ollie, and the
+> .force=1 thing just magically appeared one day when we were sending
+> work-in-progress patches back and forth without mention of where it came
+> from :-/
+> 
+> And I certainly can't remember now..
+> 
+> Looking at it now, I have the same reaction as both you and Kees had, it
+> seems entirely superflous. So I'm all for trying to remove it.
 
-Fixes: cccc46ae3623 ("dmaengine: remove s3c24xx driver")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- arch/arm/mach-s3c/devs.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks for digging through the history! I've pushed the change to -next:
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=for-next/execve&id=cd57e443831d8eeb083c7165bce195d886e216d4
 
-diff --git a/arch/arm/mach-s3c/devs.c b/arch/arm/mach-s3c/devs.c
-index 9ac07c023adf..a31d1c3038e8 100644
---- a/arch/arm/mach-s3c/devs.c
-+++ b/arch/arm/mach-s3c/devs.c
-@@ -29,7 +29,6 @@
- #include <linux/sizes.h>
- #include <linux/platform_data/s3c-hsudc.h>
- #include <linux/platform_data/s3c-hsotg.h>
--#include <linux/platform_data/dma-s3c24xx.h>
- 
- #include <linux/platform_data/media/s5p_hdmi.h>
- 
 -- 
-2.38.1
-
+Kees Cook
