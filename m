@@ -2,37 +2,37 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A75E3C43219
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Nov 2022 11:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE58C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Nov 2022 14:56:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241540AbiKRLYT (ORCPT
+        id S242192AbiKRO4g (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 18 Nov 2022 06:24:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56540 "EHLO
+        Fri, 18 Nov 2022 09:56:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241749AbiKRLXd (ORCPT
+        with ESMTP id S242023AbiKROzz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Nov 2022 06:23:33 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3CC58C7B5;
-        Fri, 18 Nov 2022 03:22:59 -0800 (PST)
+        Fri, 18 Nov 2022 09:55:55 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CDB390397;
+        Fri, 18 Nov 2022 06:55:31 -0800 (PST)
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 24094224B6;
-        Fri, 18 Nov 2022 11:22:58 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTP id A1D8221FB8;
+        Fri, 18 Nov 2022 14:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1668770578; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1668783329; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=8+Mt338auMAPyZ6wHbrxbwJ1oWL2/y5Lq8MjJbkctG8=;
-        b=Mqsids9jdixeoyQ3eEblSjOT6qn2nKBBxnXO4YIV6MczkJIueBfOWf5IH+Qgu5GEThrRT6
-        hSgJwbIBgcAARZnSZqZlRalEkqp3F27xcCibtgAVfz9XkwKNyhdLPpWTxITfMMyrMmaYir
-        bQTfFlUi5/jqo+/cVb1R0youfVPvkVY=
+        bh=RcWbup5BnnjHzEPpsHQeQ/9zmfC/ktCQBWDNShm4WAU=;
+        b=EDb4yO6yUhovxR1R/uuiYft78ukr2h+oU+IjaIre1crSLD6FqDa7tOBl7T9GdFyjImWzLl
+        fuZVE7BJe7raqlKMXUK6GnRr1NqEKply8FF3aod58x9Whn9xAOWMtUkNgxO/GnqpzSdULK
+        TFzAN6y09Rae96AY+OVlAOuIn3VhXg8=
 Received: from suse.cz (unknown [10.100.201.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 871B52C141;
-        Fri, 18 Nov 2022 11:22:56 +0000 (UTC)
-Date:   Fri, 18 Nov 2022 12:22:56 +0100
+        by relay2.suse.de (Postfix) with ESMTPS id 093D42C141;
+        Fri, 18 Nov 2022 14:55:28 +0000 (UTC)
+Date:   Fri, 18 Nov 2022 15:55:27 +0100
 From:   Petr Mladek <pmladek@suse.com>
 To:     John Ogness <john.ogness@linutronix.de>
 Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
@@ -77,32 +77,37 @@ Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
         Tom Rix <trix@redhat.com>, linux-fbdev@vger.kernel.org,
         dri-devel@lists.freedesktop.org
 Subject: Re: [PATCH printk v5 00/40] reduce console_lock scope
-Message-ID: <Y3drEOkD1fuZcvV2@alley>
+Message-ID: <Y3ec3/fpdAQacAOW@alley>
 References: <20221116162152.193147-1-john.ogness@linutronix.de>
+ <Y3drEOkD1fuZcvV2@alley>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221116162152.193147-1-john.ogness@linutronix.de>
+In-Reply-To: <Y3drEOkD1fuZcvV2@alley>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed 2022-11-16 17:27:12, John Ogness wrote:
-> This is v5 of a series to prepare for threaded/atomic
-> printing. v4 is here [0]. This series focuses on reducing the
-> scope of the BKL console_lock. It achieves this by switching to
-> SRCU and a dedicated mutex for console list iteration and
-> modification, respectively. The console_lock will no longer
-> offer this protection.
+On Fri 2022-11-18 12:22:58, Petr Mladek wrote:
+> On Wed 2022-11-16 17:27:12, John Ogness wrote:
+> > This is v5 of a series to prepare for threaded/atomic
+> > printing. v4 is here [0]. This series focuses on reducing the
+> > scope of the BKL console_lock. It achieves this by switching to
+> > SRCU and a dedicated mutex for console list iteration and
+> > modification, respectively. The console_lock will no longer
+> > offer this protection.
+> 
+> The patchset looks ready for linux-next from my POV.
+> 
+> I am going to push it there right now to get as much testing
+> as possible before the merge window.
 
-The patchset looks ready for linux-next from my POV.
+JFYI, the patchset is committed in printk/linux.git,
+branch rework/console-list-lock.
 
-I am going to push it there right now to get as much testing
-as possible before the merge window.
-
-Any review and comments are still appreciate. We could always
-take it back if some critical problems are discovered and
-can't be solved easily.
+I'll eventually merge it into rework/kthreads. But I wanted to have
+it separated until it gets some more testing in linux-next and
+eventually some more review.
 
 Best Regards,
 Petr
