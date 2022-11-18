@@ -2,142 +2,83 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C7F5C41535
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Nov 2022 17:03:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61780C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Nov 2022 21:54:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242425AbiKRRDK (ORCPT
+        id S231201AbiKRVyj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 18 Nov 2022 12:03:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42220 "EHLO
+        Fri, 18 Nov 2022 16:54:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242402AbiKRRDF (ORCPT
+        with ESMTP id S231129AbiKRVyg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Nov 2022 12:03:05 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D05C87564;
-        Fri, 18 Nov 2022 09:03:03 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id D4BF31FDA4;
-        Fri, 18 Nov 2022 17:03:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1668790981; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fK2sdLfZqlxwdzyzeVC6Yy7wx8vYkqbsaxCq7BgcB58=;
-        b=LS+hNeQ4geGgj4IXWO5+0pS41T+O+kbhrtYk+pP+vVRIoeuKs+oW13F6Ht+tR7USTuEyYF
-        w44h38vtDK2kFPU+O2RCals0tqkM1nJKUf86qC24NucyatqLyr4TTvgkMY8PsBAD2uBX+L
-        cHUUR5s7utA0uOsl3r11W1mUfWblbh8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1668790981;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fK2sdLfZqlxwdzyzeVC6Yy7wx8vYkqbsaxCq7BgcB58=;
-        b=khb2AjlSZXqyWGI6UYbr+/ZmYWHGQEHMU8He9yK4yvl4DWCKZ0jYtp3ha5rFTfTmR/yC2u
-        C7/yrrNfpsGvyLBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 41DED1345B;
-        Fri, 18 Nov 2022 17:03:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id kEZlD8W6d2PfGAAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Fri, 18 Nov 2022 17:03:01 +0000
-Message-ID: <e4dd50b8-7ae9-a6fd-8765-2b2dd90ea1a8@suse.cz>
-Date:   Fri, 18 Nov 2022 18:03:00 +0100
+        Fri, 18 Nov 2022 16:54:36 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FFD68514D
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Nov 2022 13:54:36 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ow9JN-0001VE-Mm; Fri, 18 Nov 2022 22:54:13 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ow9JI-0057eY-6O; Fri, 18 Nov 2022 22:54:09 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ow9JI-00HaPG-6M; Fri, 18 Nov 2022 22:54:08 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Arnd Bergmann <arnd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        dmaengine@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH] ARM: s3c: Fix a build error after the s3c24xx dma driver was removed
+Date:   Fri, 18 Nov 2022 22:54:01 +0100
+Message-Id: <20221118215401.505480-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20221021203329.4143397-14-arnd@kernel.org>
+References: <20221021203329.4143397-14-arnd@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH mm-unstable v1 05/20] mm: add early FAULT_FLAG_WRITE
- consistency checks
-Content-Language: en-US
-To:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        David Airlie <airlied@gmail.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20221116102659.70287-1-david@redhat.com>
- <20221116102659.70287-6-david@redhat.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20221116102659.70287-6-david@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=789; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=MQY1mKOHphIR2YvCjrphAII3VS7+7iYHC7fhsww+j8w=; b=owGbwMvMwMV48I9IxdpTbzgZT6slMSSX//ua9fr08cpF3wMzXx2QYMvNjLz6dYfKM7P3JcWrNxZy BM1c1clozMLAyMUgK6bIUlekJTZBYs1/u5Il3DCDWJlApjBwcQrARE5UsP+PV9M77fDWfJM8w+2Kw8 UnfiWJ7znC2f3T54qeT6laQu8n5yq9n1tdlneoO14WtnjDwrr4YamuzIS5rCsk/6XFPxXzSVHNPDy5 ved3nIHfkc6bmvYKgbaV3GfYHMwSS8qidL/rTza8GTuf9X3azfOCASYz1n9bmHa58XsKp2Rty1cGn6 D2nZEzws13pTv0KjRPXemQGxPVqDvZZldAbqnN3LN2YWZTN+/2/ZH+53Lcw9gbjmJel6ZLKekwL9jH 1P+C4/L7+v3Ft40P9Xmum72Py23dyyrNmp+1STqOcfWVBsq7L0fu7mDpY1U3rEjiy/xaW6LTqbmqSt Ti4hMZvQrtlzlsFq3Xt9XOtRIBAA==
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/16/22 11:26, David Hildenbrand wrote:
-> Let's catch abuse of FAULT_FLAG_WRITE early, such that we don't have to
-> care in all other handlers and might get "surprises" if we forget to do
-> so.
-> 
-> Write faults without VM_MAYWRITE don't make any sense, and our
-> maybe_mkwrite() logic could have hidden such abuse for now.
-> 
-> Write faults without VM_WRITE on something that is not a COW mapping is
-> similarly broken, and e.g., do_wp_page() could end up placing an
-> anonymous page into a shared mapping, which would be bad.
-> 
-> This is a preparation for reliable R/O long-term pinning of pages in
-> private mappings, whereby we want to make sure that we will never break
-> COW in a read-only private mapping.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+The linux/platform_data/dma-s3c24xx.h header file was removed. It didn't
+declare or define any symbol needed in devs.c though, so the #include
+can just be dropped.
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+Fixes: cccc46ae3623 ("dmaengine: remove s3c24xx driver")
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ arch/arm/mach-s3c/devs.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> ---
->  mm/memory.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index e014435a87db..c4fa378ec2a0 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -5170,6 +5170,14 @@ static vm_fault_t sanitize_fault_flags(struct vm_area_struct *vma,
->  		 */
->  		if (!is_cow_mapping(vma->vm_flags))
->  			*flags &= ~FAULT_FLAG_UNSHARE;
-> +	} else if (*flags & FAULT_FLAG_WRITE) {
-> +		/* Write faults on read-only mappings are impossible ... */
-> +		if (WARN_ON_ONCE(!(vma->vm_flags & VM_MAYWRITE)))
-> +			return VM_FAULT_SIGSEGV;
-> +		/* ... and FOLL_FORCE only applies to COW mappings. */
-> +		if (WARN_ON_ONCE(!(vma->vm_flags & VM_WRITE) &&
-> +				 !is_cow_mapping(vma->vm_flags)))
-> +			return VM_FAULT_SIGSEGV;
->  	}
->  	return 0;
->  }
+diff --git a/arch/arm/mach-s3c/devs.c b/arch/arm/mach-s3c/devs.c
+index 9ac07c023adf..a31d1c3038e8 100644
+--- a/arch/arm/mach-s3c/devs.c
++++ b/arch/arm/mach-s3c/devs.c
+@@ -29,7 +29,6 @@
+ #include <linux/sizes.h>
+ #include <linux/platform_data/s3c-hsudc.h>
+ #include <linux/platform_data/s3c-hsotg.h>
+-#include <linux/platform_data/dma-s3c24xx.h>
+ 
+ #include <linux/platform_data/media/s5p_hdmi.h>
+ 
+-- 
+2.38.1
 
