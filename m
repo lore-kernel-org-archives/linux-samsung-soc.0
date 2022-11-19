@@ -2,104 +2,65 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9DDFC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 19 Nov 2022 06:50:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14671C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 19 Nov 2022 09:16:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232726AbiKSGuj (ORCPT
+        id S230391AbiKSJP7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 19 Nov 2022 01:50:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43954 "EHLO
+        Sat, 19 Nov 2022 04:15:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231847AbiKSGuU (ORCPT
+        with ESMTP id S229470AbiKSJP6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 19 Nov 2022 01:50:20 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C7D9193C3;
-        Fri, 18 Nov 2022 22:50:19 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sat, 19 Nov 2022 04:15:58 -0500
+Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 552FF66CAA
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 Nov 2022 01:15:57 -0800 (PST)
+Received: from 8bytes.org (p200300c27724780086ad4f9d2505dd0d.dip0.t-ipconnect.de [IPv6:2003:c2:7724:7800:86ad:4f9d:2505:dd0d])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 14FB6B82716;
-        Sat, 19 Nov 2022 06:50:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 86E7AC433B5;
-        Sat, 19 Nov 2022 06:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668840616;
-        bh=J6A2zN+GaxubPoA4pynMpJ9aRQjTm1qSEAaKvZV9V00=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=d+WNCYrodp79kOfNGIXr5PvvIs5GCF6E/TB0CDa2g+OZEp77Ua/U5QlZvwsWMDrK4
-         OlLD/U4jjbYyhWaiA4rct4JoYkz9IWVscixQD26JhUaXY3yUQEg8Y11+kSP0F7KpB8
-         zMZfwDOJzrlQ9jze8VoIW1mJ3xn1MyS9umDxW8U4aWjYwb6wOYhonyX7dPSQGn//c3
-         ES9sycuBVsgfSKQQ6UBEnGpryiRSmirdvQs2tXppPiSbnayeSEWB/Bx525GuMc+yZz
-         4Kon/n6VmXCwbfBd8TB8yHub9wkc/uggzN+T8rGWKeov06QFTXG5sVNeaRlrWw+yQP
-         EzUp1tL6honhQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 64E94E524E4;
-        Sat, 19 Nov 2022 06:50:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        by mail.8bytes.org (Postfix) with ESMTPSA id CF9B62A02E2;
+        Sat, 19 Nov 2022 10:15:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+        s=default; t=1668849356;
+        bh=bAWWr9POnrJ3vGSz6N2a/qyoeet6mFZL89l+jLDNx4k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MXNtOzhcEWoeblnEK/Cv/yBvH/uu8SXZyyLyzwTEiZtT8wf+nceecXfKL9xSLzmbm
+         iRqQ2WTySzxTSt7aDXXiICV6+YnoaWEitQ8kYLcHOqU0YaiSwgzR3HKFJCwSCHyEke
+         jRqvIFvWsWQP2wH7zKi9Bx+drMMFnuru/PrLiR/DCzNddNdA73V3L2hmGpRUkyrbz6
+         xmgDw3KlbLYjay1grKJoJB6uCt7uTgKRqIKXDTD0N2BbhWERZF+wHqO+ANkZP0zybo
+         T/HcUvxyBwoJC674b+iC0/ESaSO1r3kUHGrDWKCseHFupcqBYcnoXrUUtI+zoC5Pob
+         bfKKAqBcpzw3g==
+Date:   Sat, 19 Nov 2022 10:15:54 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     iommu@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+        Will Deacon <will@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>
+Subject: Re: [PATCH] iommu/exynos: Fix driver initialization sequence
+Message-ID: <Y3ieyubpoq5U62/B@8bytes.org>
+References: <CGME20221104115521eucas1p2ef149555574e8f6cbd1bb3df0bdbbb20@eucas1p2.samsung.com>
+ <20221104115511.28256-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 000/606] i2c: Complete conversion to i2c_probe_new
-From:   patchwork-bot+chrome-platform@kernel.org
-Message-Id: <166884061640.19423.12726268813615488480.git-patchwork-notify@kernel.org>
-Date:   Sat, 19 Nov 2022 06:50:16 +0000
-References: <20221118224540.619276-1-uwe@kleine-koenig.org>
-In-Reply-To: <20221118224540.619276-1-uwe@kleine-koenig.org>
-To:     =?utf-8?q?Uwe_Kleine-K=C3=B6nig_=3Cuwe=40kleine-koenig=2Eorg=3E?=@ci.codeaurora.org
-Cc:     ang.iglesiasg@gmail.com, lee.jones@linaro.org,
-        grant.likely@linaro.org, wsa@kernel.org, linux-i2c@vger.kernel.org,
-        kernel@pengutronix.de, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-crypto@vger.kernel.org, linux-gpio@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-media@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-actions@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, alsa-devel@alsa-project.org,
-        linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, chrome-platform@lists.linux.dev,
-        linux-pm@vger.kernel.org, kernel@puri.sm,
-        linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221104115511.28256-1-m.szyprowski@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello:
-
-This patch was applied to chrome-platform/linux.git (for-next)
-by Tzung-Bi Shih <tzungbi@kernel.org>:
-
-On Fri, 18 Nov 2022 23:35:34 +0100 you wrote:
-> Hello,
+On Fri, Nov 04, 2022 at 12:55:11PM +0100, Marek Szyprowski wrote:
+> Registering SYSMMU platform driver might directly trigger initializing
+> IOMMU domains and performing initial mappings. That time all common
+> resources for the SYSMMU driver must be already allocated, so move
+> platform driver registration to the end of exynos_iommu_init() function.
 > 
-> since commit b8a1a4cd5a98 ("i2c: Provide a temporary .probe_new()
-> call-back type") from 2016 there is a "temporary" alternative probe
-> callback for i2c drivers.
-> 
-> This series completes all drivers to this new callback (unless I missed
-> something). It's based on current next/master.
-> A part of the patches depend on commit 662233731d66 ("i2c: core:
-> Introduce i2c_client_get_device_id helper function"), there is a branch that
-> you can pull into your tree to get it:
-> 
-> [...]
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/iommu/exynos-iommu.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
 
-Here is the summary with links:
-  - [512/606] platform/chrome: cros_ec: Convert to i2c's .probe_new()
-    https://git.kernel.org/chrome-platform/c/f9e510dc92df
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Applied, thanks.
