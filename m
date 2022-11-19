@@ -2,148 +2,184 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F983C47088
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 19 Nov 2022 11:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D44A4C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 19 Nov 2022 14:15:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232243AbiKSLKY (ORCPT
+        id S230073AbiKSOPx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 19 Nov 2022 06:10:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44268 "EHLO
+        Sat, 19 Nov 2022 09:15:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiKSLKS (ORCPT
+        with ESMTP id S229689AbiKSOPw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 19 Nov 2022 06:10:18 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32F3F6B9E9;
-        Sat, 19 Nov 2022 03:10:18 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sat, 19 Nov 2022 09:15:52 -0500
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52ED986FDE
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 Nov 2022 06:15:51 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 99C4960A1F;
-        Sat, 19 Nov 2022 11:10:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 763BCC433C1;
-        Sat, 19 Nov 2022 11:10:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668856217;
-        bh=ene1SzTvsJEbW7r9yE4HzkF6rHfAR+aLIm+4UV/wgpo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AwWwg8hTEvU1lRotHevSh1bppQ+LWfLwM9aU/yyuaFSoeFCmSwjJ4hNXPYNKPqyxF
-         RwoQt69tGMzjEml+0YwDwVnLfETtKSINebD6ZDDIjJG2YZ26iP67zsjgz4cgG6uGnz
-         NeH6bx6FUo9hgiiy06aaBkM2k9pRw5peXY9fXGbpIdefsltNF4FVq05z66zkCjnicj
-         f/YnghTN3aq/ykMs6EmMfO5tnMvkQz4JaZBC1pmyIfU8l5HPFc7Qkk3nYySibldc2a
-         4zm4rXtEkUSkKLdGBy0DoGhHf7XI5Gph/tChnTnqwzMKjNhd3aisTxqnB1pP+2RhuX
-         Z5WZrjjMLqJaQ==
-Date:   Sat, 19 Nov 2022 12:10:11 +0100
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
-Cc:     Angel Iglesias <ang.iglesiasg@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Grant Likely <grant.likely@linaro.org>,
-        linux-i2c@vger.kernel.org, kernel@pengutronix.de,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        linux-rpi-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-media@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-actions@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, alsa-devel@alsa-project.org,
-        linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, chrome-platform@lists.linux.dev,
-        linux-pm@vger.kernel.org, Purism Kernel Team <kernel@puri.sm>,
-        linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net
-Subject: Re: [PATCH 000/606] i2c: Complete conversion to i2c_probe_new
-Message-ID: <Y3i5kz6IL7tFbVwX@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
-        Angel Iglesias <ang.iglesiasg@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Grant Likely <grant.likely@linaro.org>, linux-i2c@vger.kernel.org,
-        kernel@pengutronix.de, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-crypto@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-        linux-rpi-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-media@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-actions@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, alsa-devel@alsa-project.org,
-        linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, chrome-platform@lists.linux.dev,
-        linux-pm@vger.kernel.org, Purism Kernel Team <kernel@puri.sm>,
-        linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net
-References: <20221118224540.619276-1-uwe@kleine-koenig.org>
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 90E0184BD2;
+        Sat, 19 Nov 2022 15:15:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1668867348;
+        bh=7rx9uYnh+rj1G/UCVB8b/JfIpu6ljTHswUOoG1lLnmc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=KHP0+nN89H9kkhl3044qB6VyyWIKWnxmUhThXyO13ab13MLHEsuapyf68GQFy4DdA
+         3kTVYeFEWse9cT9d6CPEXekXejYLF6gHkgAfRy1QBCE3EtwhotkNQl0iAXYJIH3QCM
+         nS0YkEUOCt3nw/7EeHO2fq09Qe5iNrp3qNS5/L60hQUvclzcW7+Or/gLtrhs3e9+eZ
+         4QgagZYg813BmpsbYffONWGW1AO/5W79u7gF7gmL4Wt9EBAVDvj4tFwP116WjuXwYV
+         AZ0rITROVQw+8Lj8AiuHFr6sL2M0ESsHiwI2XbUvin3yM4sGBvMPwHqYrzXZ9FOiSu
+         LZlp26nz6CXwQ==
+Message-ID: <b66b44fc-5d4c-d3a8-8538-79003b14691e@denx.de>
+Date:   Sat, 19 Nov 2022 14:36:09 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xRatB1/o2GNYTDWD"
-Content-Disposition: inline
-In-Reply-To: <20221118224540.619276-1-uwe@kleine-koenig.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [PATCH v8 06/14] drm: bridge: samsung-dsim: Handle proper DSI
+ host initialization
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>
+Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
+ <20221110183853.3678209-7-jagan@amarulasolutions.com>
+ <CGME20221117045817eucas1p1778503aa62ef18ef5ee0502d2189cd15@eucas1p1.samsung.com>
+ <04fb17e2-1b55-fbd9-d846-da3e3da4edb8@denx.de>
+ <f33142de-862e-9775-b1c9-b871bb9a243c@samsung.com>
+Content-Language: en-US
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <f33142de-862e-9775-b1c9-b871bb9a243c@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On 11/17/22 14:04, Marek Szyprowski wrote:
+> On 17.11.2022 05:58, Marek Vasut wrote:
+>> On 11/10/22 19:38, Jagan Teki wrote:
+>>> DSI host initialization handling in previous exynos dsi driver has
+>>> some pitfalls. It initializes the host during host transfer() hook
+>>> that is indeed not the desired call flow for I2C and any other DSI
+>>> configured downstream bridges.
+>>>
+>>> Host transfer() is usually triggered for downstream DSI panels or
+>>> bridges and I2C-configured-DSI bridges miss these host initialization
+>>> as these downstream bridges use bridge operations hooks like pre_enable,
+>>> and enable in order to initialize or set up the host.
+>>>
+>>> This patch is trying to handle the host init handler to satisfy all
+>>> downstream panels and bridges. Added the DSIM_STATE_REINITIALIZED state
+>>> flag to ensure that host init is also done on first cmd transfer, this
+>>> helps existing DSI panels work on exynos platform (form Marek
+>>> Szyprowski).
+>>>
+>>> v8, v7, v6, v5:
+>>> * none
+>>>
+>>> v4:
+>>> * update init handling to ensure host init done on first cmd transfer
+>>>
+>>> v3:
+>>> * none
+>>>
+>>> v2:
+>>> * check initialized state in samsung_dsim_init
+>>>
+>>> v1:
+>>> * keep DSI init in host transfer
+>>>
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>>> ---
+>>>    drivers/gpu/drm/bridge/samsung-dsim.c | 25 +++++++++++++++++--------
+>>>    include/drm/bridge/samsung-dsim.h     |  5 +++--
+>>>    2 files changed, 20 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c
+>>> b/drivers/gpu/drm/bridge/samsung-dsim.c
+>>> index bb1f45fd5a88..ec7e01ae02ea 100644
+>>> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+>>> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+>>> @@ -1234,12 +1234,17 @@ static void samsung_dsim_disable_irq(struct
+>>> samsung_dsim *dsi)
+>>>        disable_irq(dsi->irq);
+>>>    }
+>>>    -static int samsung_dsim_init(struct samsung_dsim *dsi)
+>>> +static int samsung_dsim_init(struct samsung_dsim *dsi, unsigned int
+>>> flag)
+>>>    {
+>>>        const struct samsung_dsim_driver_data *driver_data =
+>>> dsi->driver_data;
+>>>    +    if (dsi->state & flag)
+>>> +        return 0;
+>>> +
+>>>        samsung_dsim_reset(dsi);
+>>> -    samsung_dsim_enable_irq(dsi);
+>>> +
+>>> +    if (!(dsi->state & DSIM_STATE_INITIALIZED))
+>>> +        samsung_dsim_enable_irq(dsi);
+>>>          if (driver_data->reg_values[RESET_TYPE] == DSIM_FUNCRST)
+>>>            samsung_dsim_enable_lane(dsi, BIT(dsi->lanes) - 1);
+>>> @@ -1250,6 +1255,8 @@ static int samsung_dsim_init(struct
+>>> samsung_dsim *dsi)
+>>>        samsung_dsim_set_phy_ctrl(dsi);
+>>>        samsung_dsim_init_link(dsi);
+>>>    +    dsi->state |= flag;
+>>> +
+>>>        return 0;
+>>>    }
+>>>    @@ -1269,6 +1276,10 @@ static void
+>>> samsung_dsim_atomic_pre_enable(struct drm_bridge *bridge,
+>>>        }
+>>>          dsi->state |= DSIM_STATE_ENABLED;
+>>> +
+>>> +    ret = samsung_dsim_init(dsi, DSIM_STATE_INITIALIZED);
+>>> +    if (ret)
+>>> +        return;
+>>>    }
+>>>      static void samsung_dsim_atomic_enable(struct drm_bridge *bridge,
+>>> @@ -1458,12 +1469,9 @@ static ssize_t
+>>> samsung_dsim_host_transfer(struct mipi_dsi_host *host,
+>>>        if (!(dsi->state & DSIM_STATE_ENABLED))
+>>>            return -EINVAL;
+>>>    -    if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
+>>> -        ret = samsung_dsim_init(dsi);
+>>> -        if (ret)
+>>> -            return ret;
+>>> -        dsi->state |= DSIM_STATE_INITIALIZED;
+>>> -    }
+>>> +    ret = samsung_dsim_init(dsi, DSIM_STATE_REINITIALIZED);
+>>
+>> This triggers full controller reset and reprogramming upon first
+>> command transfer, is such heavy handed reload really necessary ?
+> 
+> Yes it is, otherwise the proper DSI panels doesn't work with Exynos DRM
+> DSI. If this is a real issue for you, then maybe the driver could do the
+> initialization conditionally, in prepare() callback in case of IMX and
+> on the first transfer in case of Exynos?
 
---xRatB1/o2GNYTDWD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Uwe,
-
-> This series completes all drivers to this new callback (unless I missed
-> something). It's based on current next/master.
-
-Thanks for this work, really, but oh my poor inbox...
-
-> I don't think it's feasable to apply this series in one go, so I ask the
-> maintainers of the changed files to apply via their tree.
-
-This seems reasonable. It would have made sense to send "patch series
-per subsystem" then. So people only see the subset they are interested
-in. I know filename-to-subsys mapping is hardly ever perfect. But in my
-experience, even imperfect, it is more convenient than such a huge patch
-series.
-
-Happy hacking,
-
-   Wolfram
-
-
---xRatB1/o2GNYTDWD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmN4uY8ACgkQFA3kzBSg
-KbYEfw/+L6nVN4bUDqiN6AeU0yv+Wq/oAFkIUgM8TLT/4gzeEwPsCcTwHBaHQFEF
-sO9yZWukjVYlt2YlcEZglBVIAl7Ha17oQfv2HbWzZXl4cv8PEMfodh6PuOpcPuna
-P+RjiB40nPPxUt5hZ7EjiOpqML0Xy9G8X9Uzs5rA4Yt2OSXcGSYhCZb+U/Vygwlo
-VmLhSQhUnluCyhMZlbTn+bnmVCSHW8Bk5YBKOWygj8K7/LRYKfcNKXjMV35OsBix
-3rezawgwT9KZlZ6ABJZ6U/o5Lp91OP/XeUfhMp76fmAOBcrh25HhWcunmbfRNto7
-gsYho2Ov6yLtz3/Gq4gsDB2HULSajZW1behtfyfufpmkyGd8+C5+/uUjfltWtpqm
-qaAL4YC+kjzarFDRKtIINCqlixjh0VUUKCkf6c4IDCNoLD4HW5KGevjvMvG0kJ9S
-ftPKDwBpZ+cMZtpTcYgRQRiEb30VekQVyWM8SL+350sLO2dVhy7tjAX1jTnWZ843
-4L3c6tSTioFtNmuIREzKl4EX2xkZUq6ajI4QeAcleHXAsBKHB5kvDpfKYIfGZ49X
-mvIEEWRaUXGZAyqx2tMBXvuSA2aL+Gk9hrW3cvCHoBh6EkGfa6R4flw7yN0RkYHR
-Fzq+Jpg1jOHfQhNDoZ8yqFo2xQZQpp1oDdVAjW70IRrE5KPvV0k=
-=eSNj
------END PGP SIGNATURE-----
-
---xRatB1/o2GNYTDWD--
+That's odd , it does actually break panel support for me, without this 
+double reset the panel works again. But I have to wonder, why would such 
+a full reset be necessary at all , even on the exynos ?
