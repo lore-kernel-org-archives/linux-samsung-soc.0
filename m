@@ -2,184 +2,92 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D44A4C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 19 Nov 2022 14:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BABCC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 20 Nov 2022 10:31:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230073AbiKSOPx (ORCPT
+        id S229590AbiKTKbv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 19 Nov 2022 09:15:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34214 "EHLO
+        Sun, 20 Nov 2022 05:31:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbiKSOPw (ORCPT
+        with ESMTP id S229530AbiKTKbs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 19 Nov 2022 09:15:52 -0500
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52ED986FDE
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 Nov 2022 06:15:51 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 90E0184BD2;
-        Sat, 19 Nov 2022 15:15:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1668867348;
-        bh=7rx9uYnh+rj1G/UCVB8b/JfIpu6ljTHswUOoG1lLnmc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=KHP0+nN89H9kkhl3044qB6VyyWIKWnxmUhThXyO13ab13MLHEsuapyf68GQFy4DdA
-         3kTVYeFEWse9cT9d6CPEXekXejYLF6gHkgAfRy1QBCE3EtwhotkNQl0iAXYJIH3QCM
-         nS0YkEUOCt3nw/7EeHO2fq09Qe5iNrp3qNS5/L60hQUvclzcW7+Or/gLtrhs3e9+eZ
-         4QgagZYg813BmpsbYffONWGW1AO/5W79u7gF7gmL4Wt9EBAVDvj4tFwP116WjuXwYV
-         AZ0rITROVQw+8Lj8AiuHFr6sL2M0ESsHiwI2XbUvin3yM4sGBvMPwHqYrzXZ9FOiSu
-         LZlp26nz6CXwQ==
-Message-ID: <b66b44fc-5d4c-d3a8-8538-79003b14691e@denx.de>
-Date:   Sat, 19 Nov 2022 14:36:09 +0100
+        Sun, 20 Nov 2022 05:31:48 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9BBC78190
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Nov 2022 02:31:45 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id c1so14894002lfi.7
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Nov 2022 02:31:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0OGFENIO3DSQAq7m00vJ/5Y2wI4AbIbEyIhhqocLUF8=;
+        b=G34Ax0pxDeb0umq8Wg6bINoXwwg4xrj4gplMlIvhlhJkfWDjRCpDAB0/KcrvlKUOuM
+         bcjLjGLw1TYr9l3GciuUlFJvEt+qaAoVZvVtamrkMzA9S/qyU2QXdMi07aMGRH5+thUv
+         MxGiUnohfGraIr+OObOUTHxPkkj28ZjUghw+U2LGIaZvBTJ9IQ8/mkUnfTbE7wgukfet
+         R0zmP4k3cpRXhIlTwttu/Aj+/AuCbopVR3lnSVwqmPuPqugFqXRgqooYlDyD+Xq9GbU6
+         PyE3ejo+lFOiNdUJ/KWtVrGlxmtc04l3PtLHeF3S8TpTc2S/Got65pRsIEp/HsDmLQlt
+         7koQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0OGFENIO3DSQAq7m00vJ/5Y2wI4AbIbEyIhhqocLUF8=;
+        b=pq9YLXiurdbm8/O6YKTPhmwk0LSJZPBQ+QxMcRfNpevD+si0FQGp3fG7He1l8UM8Yz
+         98+NNlC7NiRJwKCA6DKYPVWtjZx8tLph5e4QSaG9tzfvyOybPIqJplnrTmm9XqLhuTrZ
+         O0SxJoMFHjjeCi8iktrSP+buV5ag3gc6PiyPhyMMZdi6yAOwLdRemB8xglYcKLwsr6oq
+         vq62tRmUZyVF2mxcdjvzSMuywT5XKkoSQu7ekii3Zdn7e41EyzNyrpEpRHkHHM8eYFMq
+         Gx3QdXVHgyaPgLl+4yaMUh1h5pqQy7lnZkGf2rTwe1bFSQTIwp2vZvaxdDW9+KQzFFDd
+         VRSA==
+X-Gm-Message-State: ANoB5pkgBUpVWkj6O65tdaLTvLqoq07gaFf3rti5reAZ5QtoqJOGSmFF
+        U53Tc5dwSGsUCqw4R8HA413sxQ==
+X-Google-Smtp-Source: AA0mqf6Q6IMpj3NP1GucZRXTNScUlowQod5pAwuxeeweJ7M+4+YKBtZlVjbdYqoZWICNRSEzitXHZw==
+X-Received: by 2002:ac2:5dea:0:b0:4b2:2cff:8446 with SMTP id z10-20020ac25dea000000b004b22cff8446mr4560400lfq.572.1668940304033;
+        Sun, 20 Nov 2022 02:31:44 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id v23-20020a056512349700b004994c190581sm1491384lfr.123.2022.11.20.02.31.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Nov 2022 02:31:43 -0800 (PST)
+Message-ID: <f0425349-d965-0a40-0672-27dfbe45eb44@linaro.org>
+Date:   Sun, 20 Nov 2022 11:31:42 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH v8 06/14] drm: bridge: samsung-dsim: Handle proper DSI
- host initialization
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>
-Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
- <20221110183853.3678209-7-jagan@amarulasolutions.com>
- <CGME20221117045817eucas1p1778503aa62ef18ef5ee0502d2189cd15@eucas1p1.samsung.com>
- <04fb17e2-1b55-fbd9-d846-da3e3da4edb8@denx.de>
- <f33142de-862e-9775-b1c9-b871bb9a243c@samsung.com>
+ Thunderbird/102.4.2
+Subject: Re: [PATCH] ARM: s3c: Fix a build error after the s3c24xx dma driver
+ was removed
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Arnd Bergmann <arnd@kernel.org>, Vinod Koul <vkoul@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        dmaengine@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        kernel@pengutronix.de
+References: <20221021203329.4143397-14-arnd@kernel.org>
+ <20221118215401.505480-1-u.kleine-koenig@pengutronix.de>
 Content-Language: en-US
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <f33142de-862e-9775-b1c9-b871bb9a243c@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221118215401.505480-1-u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/17/22 14:04, Marek Szyprowski wrote:
-> On 17.11.2022 05:58, Marek Vasut wrote:
->> On 11/10/22 19:38, Jagan Teki wrote:
->>> DSI host initialization handling in previous exynos dsi driver has
->>> some pitfalls. It initializes the host during host transfer() hook
->>> that is indeed not the desired call flow for I2C and any other DSI
->>> configured downstream bridges.
->>>
->>> Host transfer() is usually triggered for downstream DSI panels or
->>> bridges and I2C-configured-DSI bridges miss these host initialization
->>> as these downstream bridges use bridge operations hooks like pre_enable,
->>> and enable in order to initialize or set up the host.
->>>
->>> This patch is trying to handle the host init handler to satisfy all
->>> downstream panels and bridges. Added the DSIM_STATE_REINITIALIZED state
->>> flag to ensure that host init is also done on first cmd transfer, this
->>> helps existing DSI panels work on exynos platform (form Marek
->>> Szyprowski).
->>>
->>> v8, v7, v6, v5:
->>> * none
->>>
->>> v4:
->>> * update init handling to ensure host init done on first cmd transfer
->>>
->>> v3:
->>> * none
->>>
->>> v2:
->>> * check initialized state in samsung_dsim_init
->>>
->>> v1:
->>> * keep DSI init in host transfer
->>>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->>> ---
->>>    drivers/gpu/drm/bridge/samsung-dsim.c | 25 +++++++++++++++++--------
->>>    include/drm/bridge/samsung-dsim.h     |  5 +++--
->>>    2 files changed, 20 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c
->>> b/drivers/gpu/drm/bridge/samsung-dsim.c
->>> index bb1f45fd5a88..ec7e01ae02ea 100644
->>> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
->>> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
->>> @@ -1234,12 +1234,17 @@ static void samsung_dsim_disable_irq(struct
->>> samsung_dsim *dsi)
->>>        disable_irq(dsi->irq);
->>>    }
->>>    -static int samsung_dsim_init(struct samsung_dsim *dsi)
->>> +static int samsung_dsim_init(struct samsung_dsim *dsi, unsigned int
->>> flag)
->>>    {
->>>        const struct samsung_dsim_driver_data *driver_data =
->>> dsi->driver_data;
->>>    +    if (dsi->state & flag)
->>> +        return 0;
->>> +
->>>        samsung_dsim_reset(dsi);
->>> -    samsung_dsim_enable_irq(dsi);
->>> +
->>> +    if (!(dsi->state & DSIM_STATE_INITIALIZED))
->>> +        samsung_dsim_enable_irq(dsi);
->>>          if (driver_data->reg_values[RESET_TYPE] == DSIM_FUNCRST)
->>>            samsung_dsim_enable_lane(dsi, BIT(dsi->lanes) - 1);
->>> @@ -1250,6 +1255,8 @@ static int samsung_dsim_init(struct
->>> samsung_dsim *dsi)
->>>        samsung_dsim_set_phy_ctrl(dsi);
->>>        samsung_dsim_init_link(dsi);
->>>    +    dsi->state |= flag;
->>> +
->>>        return 0;
->>>    }
->>>    @@ -1269,6 +1276,10 @@ static void
->>> samsung_dsim_atomic_pre_enable(struct drm_bridge *bridge,
->>>        }
->>>          dsi->state |= DSIM_STATE_ENABLED;
->>> +
->>> +    ret = samsung_dsim_init(dsi, DSIM_STATE_INITIALIZED);
->>> +    if (ret)
->>> +        return;
->>>    }
->>>      static void samsung_dsim_atomic_enable(struct drm_bridge *bridge,
->>> @@ -1458,12 +1469,9 @@ static ssize_t
->>> samsung_dsim_host_transfer(struct mipi_dsi_host *host,
->>>        if (!(dsi->state & DSIM_STATE_ENABLED))
->>>            return -EINVAL;
->>>    -    if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
->>> -        ret = samsung_dsim_init(dsi);
->>> -        if (ret)
->>> -            return ret;
->>> -        dsi->state |= DSIM_STATE_INITIALIZED;
->>> -    }
->>> +    ret = samsung_dsim_init(dsi, DSIM_STATE_REINITIALIZED);
->>
->> This triggers full controller reset and reprogramming upon first
->> command transfer, is such heavy handed reload really necessary ?
+On 18/11/2022 22:54, Uwe Kleine-König wrote:
+> The linux/platform_data/dma-s3c24xx.h header file was removed. It didn't
+> declare or define any symbol needed in devs.c though, so the #include
+> can just be dropped.
 > 
-> Yes it is, otherwise the proper DSI panels doesn't work with Exynos DRM
-> DSI. If this is a real issue for you, then maybe the driver could do the
-> initialization conditionally, in prepare() callback in case of IMX and
-> on the first transfer in case of Exynos?
+> Fixes: cccc46ae3623 ("dmaengine: remove s3c24xx driver")
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> ---
 
-That's odd , it does actually break panel support for me, without this 
-double reset the panel works again. But I have to wonder, why would such 
-a full reset be necessary at all , even on the exynos ?
+The file was not removed... or it should not have been yet. The s3c24xx
+dma driver removal should be part of Arnd series taken via SoC ARM.
+
+Best regards,
+Krzysztof
+
