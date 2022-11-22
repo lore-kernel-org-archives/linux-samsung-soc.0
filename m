@@ -2,87 +2,64 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68753C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Nov 2022 01:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C33D3C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Nov 2022 09:41:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232347AbiKVBmq (ORCPT
+        id S233320AbiKVJlS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 21 Nov 2022 20:42:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46012 "EHLO
+        Tue, 22 Nov 2022 04:41:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232342AbiKVBmo (ORCPT
+        with ESMTP id S233289AbiKVJlM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Nov 2022 20:42:44 -0500
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30F0811457;
-        Mon, 21 Nov 2022 17:42:42 -0800 (PST)
-Received: from mxct.zte.com.cn (unknown [192.168.251.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mxhk.zte.com.cn (FangMail) with ESMTPS id 4NGRpS6tcHz8RV6L;
-        Tue, 22 Nov 2022 09:42:40 +0800 (CST)
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mxct.zte.com.cn (FangMail) with ESMTPS id 4NGRpP3HKwz4y0vV;
-        Tue, 22 Nov 2022 09:42:37 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.40.50])
-        by mse-fl1.zte.com.cn with SMTP id 2AM1gR7S031422;
-        Tue, 22 Nov 2022 09:42:27 +0800 (+08)
-        (envelope-from ye.xingchen@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-        by mapi (Zmail) with MAPI id mid31;
-        Tue, 22 Nov 2022 09:42:28 +0800 (CST)
-Date:   Tue, 22 Nov 2022 09:42:28 +0800 (CST)
-X-Zmail-TransId: 2afa637c29044ce033db
-X-Mailer: Zmail v1.0
-Message-ID: <202211220942288196359@zte.com.cn>
-Mime-Version: 1.0
-From:   <ye.xingchen@zte.com.cn>
-To:     <cw00.choi@samsung.com>
-Cc:     <myungjoo.ham@samsung.com>, <kyungmin.park@samsung.com>,
-        <krzysztof.kozlowski@linaro.org>, <linux-pm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <chi.minghao@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIXSBQTSAvIGRldmZyZXE6IGV2ZW50OiB1c2UKCiBkZXZtX3BsYXRmb3JtX2dldF9hbmRfaW9yZW1hcF9yZXNvdXJjZSgp?=
-Content-Type: text/plain;
-        charset="UTF-8"
-X-MAIL: mse-fl1.zte.com.cn 2AM1gR7S031422
-X-Fangmail-Gw-Spam-Type: 0
-X-FangMail-Miltered: at cgslv5.04-192.168.250.137.novalocal with ID 637C2910.000 by FangMail milter!
-X-FangMail-Envelope: 1669081360/4NGRpS6tcHz8RV6L/637C2910.000/192.168.251.13/[192.168.251.13]/mxct.zte.com.cn/<ye.xingchen@zte.com.cn>
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 637C2910.000/4NGRpS6tcHz8RV6L
+        Tue, 22 Nov 2022 04:41:12 -0500
+X-Greylist: delayed 904 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 22 Nov 2022 01:41:09 PST
+Received: from mail.axisfairfi.com (mail.axisfairfi.com [94.177.230.134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D8A751C2E
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Nov 2022 01:41:08 -0800 (PST)
+Received: by mail.axisfairfi.com (Postfix, from userid 1001)
+        id 1CEDE82634; Tue, 22 Nov 2022 09:15:31 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=axisfairfi.com;
+        s=mail; t=1669108535;
+        bh=0BgaW9t8GFER5QecxVkFsHrVi3gO/4V5KAZgJaiRYBs=;
+        h=Date:From:To:Subject:From;
+        b=W+Z7BAYbMFkmyjWhIz8xuBfWkvvTBhQ0e8PLgMhD/8peZeb+nVMzJj/PCZ5pL081q
+         b2hUgILQgitkkkIunzd5QZN1lKw3kFRslNOuKQcYvVMbmt4Y7WDfd0UQ8s18a4DG83
+         EWvuxfsSNxRAr4GLsHlyyHtG6ZTbR0sejB/qhwdE1h+Az6gJar++XYNbWtxQf0Dhfc
+         qqUj2yovd5/AYlK01+28ukNu8YvMmQBJD/pHZiHgchiJJwJHN5GmGIQAET1SJQp7kP
+         yk3CuodjwnmYCn4/rYL8XPhbRz60Sf7y/OL5LShT5/xyTop8MzkL6vSyUBFAhlOknJ
+         FBRKpUPjxvtRQ==
+Received: by mail.axisfairfi.com for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Nov 2022 09:15:27 GMT
+Message-ID: <20221122074500-0.1.d.obw.0.e8hooa057h@axisfairfi.com>
+Date:   Tue, 22 Nov 2022 09:15:27 GMT
+From:   "Zbynek Spacek" <zbynek.spacek@axisfairfi.com>
+To:     <linux-samsung-soc@vger.kernel.org>
+Subject: Silikonmischungen
+X-Mailer: mail.axisfairfi.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Minghao Chi <chi.minghao@zte.com.cn>
+Good morning,
 
-Convert platform_get_resource(), devm_ioremap_resource() to a single
-call to devm_platform_get_and_ioremap_resource(), as this is exactly
-what this function does.
+do you need intermediates for processing, plastics (e.g. rubber) or silic=
+one mixtures?
 
-Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
-Signed-off-by: ye xingchen <ye.xingchen@zte.com.cn>
----
- drivers/devfreq/event/exynos-nocp.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+We provide a wide range of silicone rubbers with various properties, sili=
+cone mixtures from renowned manufacturers such as Wacker, Elastosil LR an=
+d dyes, stabilizers, primers and anti-adhesive additives.
 
-diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/event/exynos-nocp.c
-index ccc531ee6938..c1cc23bcb995 100644
---- a/drivers/devfreq/event/exynos-nocp.c
-+++ b/drivers/devfreq/event/exynos-nocp.c
-@@ -214,8 +214,7 @@ static int exynos_nocp_parse_dt(struct platform_device *pdev,
- 		nocp->clk = NULL;
+We also produce technical silicone compounds with increased resistance to=
+ oils, resistant to high temperatures and water vapor, conductive and man=
+y more.
 
- 	/* Maps the memory mapped IO to control nocp register */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(dev, res);
-+	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
+We provide fast order fulfillment, timely deliveries and cost optimizatio=
+n.
 
--- 
-2.25.1
+Can I introduce what we can offer you?
+
+
+Zbynek Spacek
