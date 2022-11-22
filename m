@@ -2,79 +2,152 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBB8C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Nov 2022 16:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D03C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Nov 2022 17:34:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231475AbiKVQwP (ORCPT
+        id S234478AbiKVReA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Nov 2022 11:52:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51342 "EHLO
+        Tue, 22 Nov 2022 12:34:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232355AbiKVQwN (ORCPT
+        with ESMTP id S234514AbiKVRdq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Nov 2022 11:52:13 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D592870A23;
-        Tue, 22 Nov 2022 08:52:11 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20B591FB;
-        Tue, 22 Nov 2022 08:52:18 -0800 (PST)
-Received: from [10.34.100.128] (pierre123.nice.arm.com [10.34.100.128])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 585093F73D;
-        Tue, 22 Nov 2022 08:52:10 -0800 (PST)
-Message-ID: <7681ba8e-1036-7540-5eda-417ed204d35f@arm.com>
-Date:   Tue, 22 Nov 2022 17:52:02 +0100
+        Tue, 22 Nov 2022 12:33:46 -0500
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ED7F490A0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Nov 2022 09:33:37 -0800 (PST)
+Received: by mail-qk1-x736.google.com with SMTP id x21so10789807qkj.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Nov 2022 09:33:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=y0TG7RSDJLBsFmv13T+kVLFnKE/Gs/+y0yFrl/WZR6s=;
+        b=L0dZyDnVDHFIaOItmPGH7qgeLVW0usPCwRH/4nTimj8Xh9l2UXEZKNFm/ei9gDcq24
+         Pk3u7Gq7lJi0kmr8z8NjnWgqP5s/GTGAjlS5nF3Rg8c28BPysVoaAoT/SPX3zkQcRIfE
+         uip9ptnbHvWOX/Zei2bksChNqBhHUUkmXbxVE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y0TG7RSDJLBsFmv13T+kVLFnKE/Gs/+y0yFrl/WZR6s=;
+        b=qUlnJtKhXeteAEQxaRoVWGRAHx7gXlQZmMKUXiQCt9iL/RrEzlI0O1UinuAPQedPsF
+         mGNlAi0Otn8GwY4t3WtfLV4PiLFjHCdnYhred3vMot6osEFe7cyvn5bhV1ACJQ/KkgId
+         Y0Yrf34ORWJBBpOrqtypwelG6t3tZuchYaY41fYDNIq9A4Y12oTVyv8W4tboAfOJJeXz
+         VzK3JoRpxZbWirVSknaBrecJNpRuPoxfhEaRvV0YSuZdTsJLpURwSsE0bla4h+N9VSK6
+         lmbY5gbfZ3Im5Iz24NdjUlf/z5LbpfN6dZHS+xcR8Y3v/gL7x66nDmzYpTiB7lpqgTmt
+         tzPQ==
+X-Gm-Message-State: ANoB5pl/5Dzq8ym2BGbN+HogtGzsXuxN3suOHhxBvQcTHSzuABXNgvrN
+        1WrIOvhm5CrC30qWdX2wDRf029ODmUjGKQ==
+X-Google-Smtp-Source: AA0mqf4Nx22zVCt6wT9uQXW3OUD5Sczug1Leehg6WHuLdIrDvUSxVHjNBusQ1dIgIEq3jaxrvOfXIQ==
+X-Received: by 2002:a05:620a:8086:b0:6fa:7b74:1cc1 with SMTP id ef6-20020a05620a808600b006fa7b741cc1mr6112955qkb.144.1669138416006;
+        Tue, 22 Nov 2022 09:33:36 -0800 (PST)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com. [209.85.222.175])
+        by smtp.gmail.com with ESMTPSA id u3-20020a05620a0c4300b006e42a8e9f9bsm10894908qki.121.2022.11.22.09.33.32
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Nov 2022 09:33:33 -0800 (PST)
+Received: by mail-qk1-f175.google.com with SMTP id x21so10789643qkj.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Nov 2022 09:33:32 -0800 (PST)
+X-Received: by 2002:a05:620a:1fa:b0:6ee:24d5:b8fc with SMTP id
+ x26-20020a05620a01fa00b006ee24d5b8fcmr21656006qkn.336.1669138412298; Tue, 22
+ Nov 2022 09:33:32 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: (subset) [PATCH 06/20] arm64: dts: Update cache properties for
- exynos
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob.Herring@arm.com, linux-samsung-soc@vger.kernel.org
-References: <20221031091945.531874-1-pierre.gondois@arm.com>
- <166742051292.139492.12539582422109367063.b4-ty@linaro.org>
-Content-Language: en-US
-From:   Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <166742051292.139492.12539582422109367063.b4-ty@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20221107161740.144456-1-david@redhat.com> <20221107161740.144456-17-david@redhat.com>
+ <CAAFQd5C3Ba1WhjYJF_7tW06mgvzoz9KTakNo+Tz8h_f6dGKzHQ@mail.gmail.com> <6175d780-3307-854c-448a-8e6c7ad0772c@xs4all.nl>
+In-Reply-To: <6175d780-3307-854c-448a-8e6c7ad0772c@xs4all.nl>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 22 Nov 2022 09:33:16 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh0nuSn=zYB1z9bHXJRPi33mmbpv-Z6z7ARkHQupbQ3fQ@mail.gmail.com>
+Message-ID: <CAHk-=wh0nuSn=zYB1z9bHXJRPi33mmbpv-Z6z7ARkHQupbQ3fQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 16/19] mm/frame-vector: remove FOLL_FORCE usage
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Tomasz Figa <tfiga@chromium.org>,
+        David Hildenbrand <david@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
+On Tue, Nov 22, 2022 at 4:25 AM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>
+> I tracked the use of 'force' all the way back to the first git commit
+> (2.6.12-rc1) in the very old video-buf.c. So it is very, very old and the
+> reason is lost in the mists of time.
 
-This patch and [1] were dropped after a bad patch management from my part.
-v1 and v2 are identical, but [2] lead to the 2 patches to be removed.
-Not willing to worsen the situation, I wanted to wait a bit before getting
-back to these 2 patches and let them be removed.
-Would it be possible to take back these 2 patches ?
+Well, not entirely.
 
-Regards,
-Pierre
+For archaeology reasons, I went back to the old BK history, which
+exists as a git conversion in
 
-[1] https://lore.kernel.org/all/2d8b2d85-7bc6-026a-baf9-11a47171ddc5@linaro.org/
-[2] https://lore.kernel.org/all/bb36df3f-5aee-256a-4d64-eaeb9bff998e@arm.com/
+    https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/
 
-On 11/2/22 21:21, Krzysztof Kozlowski wrote:
-> On Mon, 31 Oct 2022 10:19:45 +0100, Pierre Gondois wrote:
->> The DeviceTree Specification v0.3 specifies that the cache node
->> 'compatible' and 'cache-level' properties are 'required'. Cf.
->> s3.8 Multi-level and Shared Cache Nodes
->>
->> The recently added init_of_cache_level() function checks
->> these properties. Add them if missing.
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [06/20] arm64: dts: Update cache properties for exynos
->          https://git.kernel.org/krzk/linux/c/58710ae94589a2b2baaab6b6986064b691124b0d
-> 
-> Best regards,
+and there you can actually find it.
+
+Not with a lot of explanations, though - it's commit b7649ef789
+("[PATCH] videobuf update"):
+
+    This updates the video-buf.c module (helper module for video buffer
+    management).  Some memory management fixes, also some adaptions to the
+    final v4l2 api.
+
+but it went from
+
+         err = get_user_pages(current,current->mm,
+-                            data, dma->nr_pages,
+-                            rw == READ, 0, /* don't force */
++                            data & PAGE_MASK, dma->nr_pages,
++                            rw == READ, 1, /* force */
+                             dma->pages, NULL);
+
+in that commit.
+
+So it goes back to October 2002.
+
+> Looking at this old LWN article https://lwn.net/Articles/28548/ suggests
+> that it might be related to calling get_user_pages for write buffers
+
+The timing roughly matches.
+
+> I assume that removing FOLL_FORCE from 'FOLL_FORCE|FOLL_WRITE' will still
+> allow drivers to read from the buffer?
+
+The issue with some of the driver hacks has been that
+
+ - they only want to read, and the buffer may be read-only
+
+ - they then used FOLL_WRITE despite that, because they want to break
+COW (due to the issue that David is now fixing with his series)
+
+ - but that means that the VM layer says "nope, you can't write to
+this read-only user mapping"
+
+ - ... and then they use FOLL_FORCE to say "yes, I can".
+
+iOW, the FOLL_FORCE may be entirely due to an (incorrect, but
+historically needed) FOLL_WRITE.
+
+             Linus
