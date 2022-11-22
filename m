@@ -2,140 +2,79 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8E8C43217
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Nov 2022 16:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBB8C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Nov 2022 16:52:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234399AbiKVQnc (ORCPT
+        id S231475AbiKVQwP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Nov 2022 11:43:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44288 "EHLO
+        Tue, 22 Nov 2022 11:52:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234110AbiKVQnW (ORCPT
+        with ESMTP id S232355AbiKVQwN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Nov 2022 11:43:22 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DABC61B8C;
-        Tue, 22 Nov 2022 08:43:13 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0EAEE61796;
-        Tue, 22 Nov 2022 16:43:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7CD1C433D6;
-        Tue, 22 Nov 2022 16:43:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1669135392;
-        bh=HhGB03f7yfLJTw6SIRqhGxERi9Gom4x4ToervBUNQF8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ai29wCwrSrFMalECnQg3VZFE6JJ7w1PVvNsX/nUcTdZGvwJT9FgVXh0Qu1fP/KZjg
-         gLL1mmmGyJUPfkwUZ8U8rfzyORb4k7cg2ocWkdlYVwXPJu4ByDHKX8FbqktGuqI0/r
-         L84ihOeSNwOdUyo5JUrjvyIoAUgVxWDKIToY6zCM=
-Date:   Tue, 22 Nov 2022 17:43:08 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-um@lists.infradead.org, Aaron Tomlin <atomlin@redhat.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org, Ard Biesheuvel <ardb@kernel.org>,
-        linux-efi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        linux-usb@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        Helge Deller <deller@gmx.de>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Tom Rix <trix@redhat.com>, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH printk v5 00/40] reduce console_lock scope
-Message-ID: <Y3z8HOt0yOd1nceY@kroah.com>
-References: <20221116162152.193147-1-john.ogness@linutronix.de>
+        Tue, 22 Nov 2022 11:52:13 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D592870A23;
+        Tue, 22 Nov 2022 08:52:11 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20B591FB;
+        Tue, 22 Nov 2022 08:52:18 -0800 (PST)
+Received: from [10.34.100.128] (pierre123.nice.arm.com [10.34.100.128])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 585093F73D;
+        Tue, 22 Nov 2022 08:52:10 -0800 (PST)
+Message-ID: <7681ba8e-1036-7540-5eda-417ed204d35f@arm.com>
+Date:   Tue, 22 Nov 2022 17:52:02 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221116162152.193147-1-john.ogness@linutronix.de>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: (subset) [PATCH 06/20] arm64: dts: Update cache properties for
+ exynos
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob.Herring@arm.com, linux-samsung-soc@vger.kernel.org
+References: <20221031091945.531874-1-pierre.gondois@arm.com>
+ <166742051292.139492.12539582422109367063.b4-ty@linaro.org>
+Content-Language: en-US
+From:   Pierre Gondois <pierre.gondois@arm.com>
+In-Reply-To: <166742051292.139492.12539582422109367063.b4-ty@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 16, 2022 at 05:27:12PM +0106, John Ogness wrote:
-> This is v5 of a series to prepare for threaded/atomic
-> printing. v4 is here [0]. This series focuses on reducing the
-> scope of the BKL console_lock. It achieves this by switching to
-> SRCU and a dedicated mutex for console list iteration and
-> modification, respectively. The console_lock will no longer
-> offer this protection.
-> 
-> Also, during the review of v2 it came to our attention that
-> many console drivers are checking CON_ENABLED to see if they
-> are registered. Because this flag can change without
-> unregistering and because this flag does not represent an
-> atomic point when an (un)registration process is complete,
-> a new console_is_registered() function is introduced. This
-> function uses the console_list_lock to synchronize with the
-> (un)registration process to provide a reliable status.
-> 
-> All users of the console_lock for list iteration have been
-> modified. For the call sites where the console_lock is still
-> needed (for other reasons), comments are added to explain
-> exactly why the console_lock is needed.
-> 
-> All users of CON_ENABLED for registration status have been
-> modified to use console_is_registered(). Note that there are
-> still users of CON_ENABLED, but this is for legitimate purposes
-> about a registered console being able to print.
-> 
-> The base commit for this series is from Paul McKenney's RCU tree
-> and provides an NMI-safe SRCU implementation [1]. Without the
-> NMI-safe SRCU implementation, this series is not less safe than
-> mainline. But we will need the NMI-safe SRCU implementation for
-> atomic consoles anyway, so we might as well get it in
-> now. Especially since it _does_ increase the reliability for
-> mainline in the panic path.
-> 
-> Changes since v4:
-> 
-> printk:
-> 
-> - Introduce console_init_seq() to handle the now rather complex
->   procedure to find an appropriate start sequence number for a
->   new console upon registration.
-> 
-> - When registering a non-boot console and boot consoles are
->   registered, try to flush all the consoles to get the next @seq
->   value before falling back to use the @seq of the enabled boot
->   console that is furthest behind.
-> 
-> - For console_force_preferred_locked(), make the console the
->   head of the console list.
-> 
+Hello Krzysztof,
 
+This patch and [1] were dropped after a bad patch management from my part.
+v1 and v2 are identical, but [2] lead to the 2 patches to be removed.
+Not willing to worsen the situation, I wanted to wait a bit before getting
+back to these 2 patches and let them be removed.
+Would it be possible to take back these 2 patches ?
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Regards,
+Pierre
+
+[1] https://lore.kernel.org/all/2d8b2d85-7bc6-026a-baf9-11a47171ddc5@linaro.org/
+[2] https://lore.kernel.org/all/bb36df3f-5aee-256a-4d64-eaeb9bff998e@arm.com/
+
+On 11/2/22 21:21, Krzysztof Kozlowski wrote:
+> On Mon, 31 Oct 2022 10:19:45 +0100, Pierre Gondois wrote:
+>> The DeviceTree Specification v0.3 specifies that the cache node
+>> 'compatible' and 'cache-level' properties are 'required'. Cf.
+>> s3.8 Multi-level and Shared Cache Nodes
+>>
+>> The recently added init_of_cache_level() function checks
+>> these properties. Add them if missing.
+>>
+>> [...]
+> 
+> Applied, thanks!
+> 
+> [06/20] arm64: dts: Update cache properties for exynos
+>          https://git.kernel.org/krzk/linux/c/58710ae94589a2b2baaab6b6986064b691124b0d
+> 
+> Best regards,
