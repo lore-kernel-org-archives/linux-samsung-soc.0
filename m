@@ -2,167 +2,235 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E059C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Nov 2022 04:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4910C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Nov 2022 05:31:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235488AbiKWEDU (ORCPT
+        id S235785AbiKWFa6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Nov 2022 23:03:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34346 "EHLO
+        Wed, 23 Nov 2022 00:30:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235686AbiKWEDP (ORCPT
+        with ESMTP id S229529AbiKWFa5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Nov 2022 23:03:15 -0500
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB2FF53EE7
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Nov 2022 20:03:08 -0800 (PST)
+        Wed, 23 Nov 2022 00:30:57 -0500
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4BC6ED70C
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Nov 2022 21:30:53 -0800 (PST)
 Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20221123040302epoutp019b6dc6045aad1431fef16d3fc9d1a9df~qGuTzBmtD2886428864epoutp01m
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Nov 2022 04:03:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20221123040302epoutp019b6dc6045aad1431fef16d3fc9d1a9df~qGuTzBmtD2886428864epoutp01m
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20221123053050epoutp043e89f0d940f2828da197aa1cdbf89c9f~qH6_Xc4LR1693916939epoutp04Y
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Nov 2022 05:30:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20221123053050epoutp043e89f0d940f2828da197aa1cdbf89c9f~qH6_Xc4LR1693916939epoutp04Y
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1669176182;
-        bh=4+LuTRetsOem5wM3LudAqA6LHPacm1Zpfhf1LB2Q0Zw=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=kn/Y2ulBjaM4M9AePNRLjLoOs7S+rup4qbdcyC5n1487xzG9GOoMQzKxk0QdzlVFH
-         Xoiv4RyOGbbQRy6IBVo6oMefu11kZNIdCt8Xp9y497uwQDK6X/oX/DbRs4XfuKHnnv
-         a+lmBBEGmGJ9wTqaKMMu+GccMTMxHrVbwK8ORZ64=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20221123040301epcas5p3a9ed4c6e147feb62168616a4dcc82ffe~qGuTQ-cw02089920899epcas5p3R;
-        Wed, 23 Nov 2022 04:03:01 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.174]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4NH6sw2CnSz4x9Ps; Wed, 23 Nov
-        2022 04:03:00 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        s=mail20170921; t=1669181450;
+        bh=PeHQNfRsUuOEDOm6P6LGWXjKFyyfkz97NfHAPd4GyJk=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=FyTwKChw3xERiVyLZ19SkFeFxevm+9muH6lVih581kmJzCil/7XySyfjAnEPQcaf/
+         0iuqWUMYkgp0UEZXHbOYBbFl9MKGMTaJxpTjzIWHVtNg1aFYsK5NseOd1Zx5EDFS4B
+         RdA23v3sjdt/rPxtYa1QHOF4BymwKVgzDpkJYsCs=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20221123053050epcas5p4b4875f16ba7b937d64c4e5e59a17ea2d~qH690mLxB2883728837epcas5p4W;
+        Wed, 23 Nov 2022 05:30:50 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.181]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4NH8qD0kJ3z4x9QH; Wed, 23 Nov
+        2022 05:30:48 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
         epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9C.0C.56352.47B9D736; Wed, 23 Nov 2022 13:03:00 +0900 (KST)
+        37.67.56352.700BD736; Wed, 23 Nov 2022 14:30:47 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
         epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20221123040259epcas5p25b09846a349e11a7e23374c75d87cdc3~qGuRVMssL1465614656epcas5p2l;
-        Wed, 23 Nov 2022 04:02:59 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        20221122105017epcas5p269e97219d3ebe2eaf37fa428a7275f35~p4omNphOz2771827718epcas5p2B;
+        Tue, 22 Nov 2022 10:50:17 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20221123040259epsmtrp100a0f7c01c65134584dbf0a4fcb9a1c9~qGuRUYhUC0849508495epsmtrp1d;
-        Wed, 23 Nov 2022 04:02:59 +0000 (GMT)
-X-AuditID: b6c32a4b-5f7fe7000001dc20-9c-637d9b7435d4
+        20221122105017epsmtrp1f2069736b62669576daefbcaaba036d9~p4omMCJIE0938009380epsmtrp1q;
+        Tue, 22 Nov 2022 10:50:17 +0000 (GMT)
+X-AuditID: b6c32a4b-383ff7000001dc20-37-637db0073ed9
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4F.03.18644.37B9D736; Wed, 23 Nov 2022 13:02:59 +0900 (KST)
-Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20221123040257epsmtip12d9d20da3d0131f69cab802adebc1001~qGuPM437-0646406464epsmtip1z;
-        Wed, 23 Nov 2022 04:02:57 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Xiu Jianfeng'" <xiujianfeng@huawei.com>,
-        <krzysztof.kozlowski@linaro.org>, <s.nawrocki@samsung.com>,
-        <tomasz.figa@gmail.com>, <cw00.choi@samsung.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <dianders@chromium.org>, <yadi.brar@samsung.com>,
-        <mturquette@linaro.org>
-Cc:     <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-In-Reply-To: <20221123032015.63980-1-xiujianfeng@huawei.com>
-Subject: RE: [PATCH] clk: samsung: Fix memory leak in
- _samsung_clk_register_pll()
-Date:   Wed, 23 Nov 2022 09:32:56 +0530
-Message-ID: <000001d8fef0$79cb1c70$6d615550$@samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQI0s+zTjYHKjxc1/SfsBPJ2IwYZMwIWIRkVrYPHnYA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAJsWRmVeSWpSXmKPExsWy7bCmhm7J7NpkgyP7eC2uf3nOanF22UE2
-        i72vt7JbfOy5x2pxedccNosZ5/cxWVw85WrxdMJFNovDb9pZLf5d28hisWrXH0aL7bN2MDrw
-        eLy/0cruMbvhIovHzll32T1ajrxl9di0qpPN4861PWwefVtWMXp83iQXwBGVbZORmpiSWqSQ
-        mpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdK2SQlliTilQKCCxuFhJ
-        386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITvj3ZwtLAXNPBXf
-        7razNzCu4epi5OSQEDCRmD6rhbGLkYtDSGA3o8TibfvZIJxPjBIzJzVBOZ8ZJRa0XGaHaela
-        sIIZxBYS2MUo8Wu/I4T9klFi7c8wEJtNQFdix+I2sGYRgblMErt232YFSTALpEmsOLUFbBCn
-        gI3ExrXLweLCAsESE7d2sIHYLAKqEhunPAOzeQUsJS4+XMYMYQtKnJz5hAVijrzE9rdzmCEO
-        UpD4+XQZ2BwRASuJ/wfWs0PUiEu8PHqEHeQICYErHBKdqzczQjS4SMx/s5sJwhaWeHV8C9Rn
-        UhIv+9uAbA4g20Ni0R8piHCGxNvl66Fa7SUOXJnDAlLCLKApsX6XPsQqPone30+YIDp5JTra
-        hCCqVSWa311lgbClJSZ2d7NC2B4Sx89tYpzAqDgLyWOzkDw2C8kDsxCWLWBkWcUomVpQnJue
-        WmxaYJyXWg6P7uT83E2M4KSs5b2D8dGDD3qHGJk4GA8xSnAwK4nw1nvWJAvxpiRWVqUW5ccX
-        leakFh9iNAWG9kRmKdHkfGBeyCuJNzSxNDAxMzMzsTQ2M1QS5108QytZSCA9sSQ1OzW1ILUI
-        po+Jg1OqgSlcYP+S7u13f6qpBEQlJggt11khemNTYf/je/+3Z2SYdUaJn9vkJhG+p4hd2ODv
-        GrNVkVLVgrk2v2cy+b6xLdi0JUFm4jTxhGMrYu1lPFMUXE+fSXzAHBeh/Fxn+qGW9cHH72i7
-        1M+POvTE73bky7Ktu2wuSiqYmaRf+qwpb/V6O5v8zq7iBouGOxLX0nnXaF3qZOpQKE+/tkSM
-        TUxzXudM+9uMu47OnXnmR+X5+xs/VK6Wznnq925BWKgB19Wd5cJ3jf+wmpzb7Hz0hoLC0vz7
-        YdszVDlKn2Qdq55moBvM5H82jONNhsXmI/VmYg9NT4t480n8nfU9eLr//jNrHFyUL3mF9DeV
-        WXAe5jlRqMRSnJFoqMVcVJwIAFo481JTBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJIsWRmVeSWpSXmKPExsWy7bCSnG7x7NpkgxXv9Syuf3nOanF22UE2
-        i72vt7JbfOy5x2pxedccNosZ5/cxWVw85WrxdMJFNovDb9pZLf5d28hisWrXH0aL7bN2MDrw
-        eLy/0cruMbvhIovHzll32T1ajrxl9di0qpPN4861PWwefVtWMXp83iQXwBHFZZOSmpNZllqk
-        b5fAlfFuzhaWgmaeim9329kbGNdwdTFyckgImEh0LVjB3MXIxSEksINRou/gdVaIhLTE9Y0T
-        2CFsYYmV/56D2UICzxkltuyPBbHZBHQldixuYwNpFhFYziTx6dV5JpAEs0CGxKFr79kgpvYy
-        Sjz7sR2sm1PARmLj2uVgG4QFAiUe7drABmKzCKhKbJzyDMzmFbCUuPhwGTOELShxcuYTli5G
-        DqChehJtGxkh5stLbH87hxniOAWJn0+XgY0UEbCS+H9gPTtEjbjEy6NH2CcwCs9CMmkWwqRZ
-        SCbNQtKxgJFlFaNkakFxbnpusWGBUV5quV5xYm5xaV66XnJ+7iZGcGxqae1g3LPqg94hRiYO
-        xkOMEhzMSiK89Z41yUK8KYmVValF+fFFpTmpxYcYpTlYlMR5L3SdjBcSSE8sSc1OTS1ILYLJ
-        MnFwSjUwzdDxXPm3WDFwJYfNJ9Xzz/qUE3b0SElvf75VV+No3cquJtuf9SrXWCM5drzY26D3
-        kOmt+Gwtg3MZCba/Cv5M39nq8jb75YFtsTNvnZ+4zVGh9mbU1Ey26XEi59J/rnTsLjmbdSnX
-        63aZu8mDn2IBC3ZXL2g/7pSpWl+e+G92knPEO43jOhcbf0XcbvNUKrv7nN/ynZjGoVndJbtr
-        RSb/atzBUX78/4MVk+c5yRsYh69cO/XBt60/dz/9FHCEl6NGQqxk7VKDQ8XVHtwmkn9O7Xl6
-        gFuYWfqplt30NZs6efe62OffsLr43KFDrzx31pfjxQ6u7k4/livo7piypCmh/vvsCQu3MFzZ
-        eXHarRknopRYijMSDbWYi4oTAY55XfM8AwAA
-X-CMS-MailID: 20221123040259epcas5p25b09846a349e11a7e23374c75d87cdc3
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        34.72.14392.969AC736; Tue, 22 Nov 2022 19:50:17 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+        [107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20221122105014epsmtip1c52304a7e24ac748f20a126b140ec795~p4ojVM-ao0766107661epsmtip1R;
+        Tue, 22 Nov 2022 10:50:14 +0000 (GMT)
+From:   Vivek Yadav <vivek.2311@samsung.com>
+To:     rcsekar@samsung.com, krzysztof.kozlowski+dt@linaro.org,
+        wg@grandegger.com, mkl@pengutronix.de, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        pankaj.dubey@samsung.com, ravi.patel@samsung.com,
+        alim.akhtar@samsung.com, linux-fsd@tesla.com, robh+dt@kernel.org
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        aswani.reddy@samsung.com, sriranjani.p@samsung.com,
+        Vivek Yadav <vivek.2311@samsung.com>
+Subject: [PATCH v3 0/2] can: mcan: Add MCAN support for FSD SoC
+Date:   Tue, 22 Nov 2022 16:24:53 +0530
+Message-Id: <20221122105455.39294-1-vivek.2311@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOJsWRmVeSWpSXmKPExsWy7bCmli77htpkgw97rC0ezNvGZnFo81Z2
+        iznnW1gs5h85x2rx9Ngjdou+Fw+ZLS5s62O12PT4GqvFqu9TmS0evgq3uLxrDpvFjPP7mCzW
+        L5rCYnFsgZjFt9NvGC0Wbf3CbvHwwx52i1kXdrBatO49wm5x+806VotfCw+zWCy9t5PVQcxj
+        y8qbTB4LNpV6fLx0m9Fj06pONo871/aweWxeUu/R/9fA4/2+q2wefVtWMXr8a5rL7vF5k1wA
+        d1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7Qq0oK
+        ZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpScApMCveLE3OLSvHS9vNQSK0MDAyNToMKE
+        7IylOxcxF9zSqGj9uYe5gfGEfBcjJ4eEgInE/jtnmbsYuTiEBHYzSjyZPxvK+cQo8XFlCyuE
+        841RYuq+e4wwLfd/X2aBSOxllJh08TwbhNPKJLH4/FdmkCo2AS2Jx50LwKpEBFYzSWz5/JAR
+        xGEWmMUksaT5FgtIlbCAvcSHn23sIDaLgKrEvD0dTCA2r4C1RN/Oc+wQ++QlVm84wAxhn+CQ
+        eL5LDcJ2kTix7TYbhC0s8er4Fqh6KYmX/W1QdrLEjn+drBB2hsSCiXugfrCXOHBlDtANHEAH
+        aUqs36UPEZaVmHpqHdgJzAJ8Er2/nzBBxHkldsyDsVUkXnyewArSCrKq95wwRNhDYk/jQ2aQ
+        sJBArETnRN0JjLKzEOYvYGRcxSiZWlCcm55abFpgnJdaDo+o5PzcTYzgFKzlvYPx0YMPeocY
+        mTgYDzFKcDArifDWe9YkC/GmJFZWpRblxxeV5qQWH2I0BQbYRGYp0eR8YBbIK4k3NLE0MDEz
+        MzOxNDYzVBLnXTxDK1lIID2xJDU7NbUgtQimj4mDU6qB6an0bMfdvjlf3ks9KMu67mLgNqN0
+        L8vBTg5Go56oPN3la/WvrQ+atdPohlRmsKBb06ZvF2bu220u+3qVt+OUpCWex4x4312osGpZ
+        5rfWwWGZB+9JK9VNeyT3mR1Y9EH/UfyimOc7hQ8vsW5r5PIx9F209lVo8c9ZX7XN4s/whL87
+        pHCmZ8u387+tXY58aOjenuj9cEGapkyKdtn2m3cX//Y7+PrfkhcdJ/vnqgq7nfCIqvROPLS5
+        6obWseZ/Z/s4d/jqS/ZpnWS4vkBZ4QozL/u0G0sFHcpuC7jb/th9fV79jmt7Fj93Wh4SeV74
+        aGFG/RyDGfLOB4N/Vh6re6/1dKttrJPkFK2Dyn13pjx6Za3EUpyRaKjFXFScCAD/h8/wSgQA
+        AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsWy7bCSnG7myppkg48fOSwezNvGZnFo81Z2
+        iznnW1gs5h85x2rx9Ngjdou+Fw+ZLS5s62O12PT4GqvFqu9TmS0evgq3uLxrDpvFjPP7mCzW
+        L5rCYnFsgZjFt9NvGC0Wbf3CbvHwwx52i1kXdrBatO49wm5x+806VotfCw+zWCy9t5PVQcxj
+        y8qbTB4LNpV6fLx0m9Fj06pONo871/aweWxeUu/R/9fA4/2+q2wefVtWMXr8a5rL7vF5k1wA
+        dxSXTUpqTmZZapG+XQJXxtKdi5gLbmlUtP7cw9zAeEK+i5GTQ0LAROL+78ssXYxcHEICuxkl
+        fqzYygKRkJKYcuYllC0ssfLfc3aIomYmib6NUxhBEmwCWhKPOxeAdYsI7GaSeNs9F6yKWWAR
+        k8TLK73MIFXCAvYSH362sYPYLAKqEvP2dDCB2LwC1hJ9O8+xQ6yQl1i94QDzBEaeBYwMqxgl
+        UwuKc9Nziw0LDPNSy/WKE3OLS/PS9ZLzczcxgmNCS3MH4/ZVH/QOMTJxMB5ilOBgVhLhrfes
+        SRbiTUmsrEotyo8vKs1JLT7EKM3BoiTOe6HrZLyQQHpiSWp2ampBahFMlomDU6qBiffjgu1q
+        3x5Ns0t6pC8lnTO/+J/64urdC7dPeeoQ4iX8b9ejn3avWB8tX3IsZ9N7plO+CcdcTkr89L9+
+        rXCCwk3fPQvtbAp/yXjpsDk/vr5FsV37imA/b5SIuIv+VJkFMVo/bUPnT3RX/tikFbJ2RfdW
+        5TSdiFurZvNoRngtrwh9P+OGpDOvzuQbH7by1MlIX4rnMDn3UUVu1f8lV+4fPrsh2r5laYZz
+        ztPpLnyLpV8/W+MhpMP+f8fe/9XX3VenPD1lmKWRrTzx2SeD82kX7q+f2Wg0SULiyepPZ8Un
+        zGY0mHcx66TVIhvZSbN9MhvSRQzck0tPFZSXBqlsFW2pPv2ca+H7phuzrZwF+paxmiuxFGck
+        GmoxFxUnAgAFlijH+AIAAA==
+X-CMS-MailID: 20221122105017epcas5p269e97219d3ebe2eaf37fa428a7275f35
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221123032321epcas5p235a61ac36bf6c90dc4f0fbf516646dd9
-References: <CGME20221123032321epcas5p235a61ac36bf6c90dc4f0fbf516646dd9@epcas5p2.samsung.com>
-        <20221123032015.63980-1-xiujianfeng@huawei.com>
+X-CMS-RootMailID: 20221122105017epcas5p269e97219d3ebe2eaf37fa428a7275f35
+References: <CGME20221122105017epcas5p269e97219d3ebe2eaf37fa428a7275f35@epcas5p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Xiu
+Add support for MCAN instances present on the FSD platform.
 
->-----Original Message-----
->From: Xiu Jianfeng [mailto:xiujianfeng@huawei.com]
->Sent: Wednesday, November 23, 2022 8:50 AM
->To: krzysztof.kozlowski@linaro.org; s.nawrocki@samsung.com;
->tomasz.figa@gmail.com; cw00.choi@samsung.com;
->alim.akhtar@samsung.com; mturquette@baylibre.com; sboyd@kernel.org;
->dianders@chromium.org; yadi.brar@samsung.com; mturquette@linaro.org
->Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; linux-
->kernel@vger.kernel.org
->Subject: [PATCH] clk: samsung: Fix memory leak in
->_samsung_clk_register_pll()
->
->If clk_register() fails, @pll->rate_table may have allocated memory by
->kmemdup(), so it needs to be freed, otherwise will cause memory leak issue,
->this patch fixes it.
->
->Fixes: 3ff6e0d8d64d ("clk: samsung: Add support to register rate_table for
->samsung plls")
->Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
->---
-Thanks!
+Vivek Yadav (2):
+  can: m_can: Move mram init to mcan device setup
+  arm64: dts: fsd: Add MCAN device node
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+changes since v2:
 
-> drivers/clk/samsung/clk-pll.c | 1 +
-> 1 file changed, 1 insertion(+)
->
->diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index
->fe383471c5f0..0ff28938943f 100644
->--- a/drivers/clk/samsung/clk-pll.c
->+++ b/drivers/clk/samsung/clk-pll.c
->@@ -1583,6 +1583,7 @@ static void __init _samsung_clk_register_pll(struct
->samsung_clk_provider *ctx,
-> 	if (ret) {
-> 		pr_err("%s: failed to register pll clock %s : %d\n",
-> 			__func__, pll_clk->name, ret);
->+		kfree(pll->rate_table);
-> 		kfree(pll);
-> 		return;
-> 	}
->--
->2.17.1
+[PATCH v2 1/6] dt-bindings: Document the SYSREG specific compatibles found
+on FSD SoC
+link:
+https://lore.kernel.org/lkml/20221109100928.109478-2-vivek.2311@samsung.com/
+    1: Addressed review comment given by Krzysztof Kozlowski
+        a) As per suggestion separated this patch and posted separately.
+          ref: https://www.spinics.net/lists/kernel/msg4597970.html 
 
+[PATCH v2 2/6] dt-bindings: can: mcan: Add ECC functionality to message ram
+link: 
+https://lore.kernel.org/lkml/20221109100928.109478-3-vivek.2311@samsung.com/
+    1: Addressed review comment given by Krzysztof Kozlowski
+       a) For now I am dropping this. I will reconsider the implementation and
+          will resend as separate patch.
+
+[PATCH v2 3/6] arm64: dts: fsd: add sysreg device node
+link:
+https://lore.kernel.org/lkml/20221109100928.109478-4-vivek.2311@samsung.com/
+    1: Addressed review comment given by Krzysztof Kozlowski
+       a) Dropped Cc from commit message.
+       b) As per suggestion separated this and corresponding DT-binding
+	  patch and posted separately.
+          ref: https://www.spinics.net/lists/kernel/msg4597921.html
+
+[PATCH v2 4/6] arm64: dts: fsd: Add MCAN device node
+link: 
+https://lore.kernel.org/lkml/20221109100928.109478-5-vivek.2311@samsung.com/
+    1: Addressed review comment given by Krzysztof Kozlowski
+       a) Aligned the lines.
+
+[PATCH v2 5/6] can: m_can: Add ECC functionality for message RAM
+link: 
+https://lore.kernel.org/lkml/20221109100928.109478-6-vivek.2311@samsung.com/
+    1: Addressed review comment given by Krzysztof Kozlowski
+       a) We are dropping this for now and will reconsider it's
+          implementation and resend as separate patch.
+
+[PATCH v2 6/6] arm64: dts: fsd: Add support for error correction code for
+message RAM
+link: 
+https://lore.kernel.org/lkml/20221109100928.109478-7-vivek.2311@samsung.com/
+    1: Addressed review comment given by Krzysztof Kozlowski
+       a) Subject is updated and patch go via ARM SOC tree, we will
+          resend this as separate patch along with ECC patch.
+
+changes since v1:
+
+[PATCH 0/7] can: mcan: Add MCAN support for FSD SoC 
+    1: Addressed review comment given by  Marc Kleine-Budde
+       a) Added my signed off.
+
+[PATCH 2/7] dt-bindings: can: mcan: Add ECC functionality to message ram
+link: 
+https://lore.kernel.org/netdev/87k04oxsvb.fsf@hardanger.blackshift.org/ 
+    1: Addressed review comment given by  Marc Kleine-Budde
+       a) Added an example to the yaml that makes use of the 
+          mram-ecc-cfg property.
+       b) Added prefix to "mram-ecc-cfg" property and
+          "$ref: /schemas/types.yaml#/definitions/phandle".
+
+[PATCH 4/7] can: mcan: enable peripheral clk to access mram
+link:
+https://lore.kernel.org/netdev/20221021095833.62406-5-vivek.2311@samsung.com/
+    1: Addressed review comment given by  Marc Kleine-Budde
+       a) Moved mram init into m_can_dev_setup function by then
+          clocks are enabled and prevent probe failure.
+       b) Added the platform init ops in m_can_plat_ops and
+          moved mram init into it.
+
+[PATCH 5/7] arm64: dts: fsd: Add MCAN device node
+link:
+https://lore.kernel.org/netdev/20221021095833.62406-6-vivek.2311@samsung.com/
+    1: Addressed review comment given by  Marc Kleine-Budde
+       a) Added the DT people on Cc.
+
+[PATCH 6/7] can: m_can: Add ECC functionality for message RAM
+link:
+https://lore.kernel.org/netdev/20221021095833.62406-7-vivek.2311@samsung.com/
+    1: Addressed review comment given by kernel test robot.
+       a) Addressed missing prototypes warnings.
+
+    2: Addressed review comment given by  Marc Kleine-Budde
+       a) Sorted the declaration of local variable by reverse Christmas 
+          tree.
+       b) Used syscon_regmap_lookup_by_phandle_args to get the syscon
+          Base Address and offset.
+       c) Used FIELD_PREP instead of logical operation.
+       d) Used regmap_read_poll_timeout API to give timeout condition
+          for ECC cfg done status instead of using while loop counter.
+       e) Moved all the ECC mcaros in m_can.c file and changed the name
+          with a common prefix M_CAN.
+       f) Moved ECC init into platform init function called during m_can
+          device setup.
+ 
+
+ .../devicetree/bindings/arm/tesla-sysreg.yaml | 50 +++++++++++
+ .../bindings/net/can/bosch,m_can.yaml         | 31 +++++++
+ MAINTAINERS                                   |  1 +
+ arch/arm64/boot/dts/tesla/fsd-evb.dts         | 16 ++++
+ arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi    | 28 +++++++
+ arch/arm64/boot/dts/tesla/fsd.dtsi            | 82 +++++++++++++++++++
+ drivers/net/can/m_can/m_can.c                 | 48 ++++++++++-
+ drivers/net/can/m_can/m_can.h                 | 17 ++++
+ drivers/net/can/m_can/m_can_platform.c        | 76 ++++++++++++++++-
+ 9 files changed, 343 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/tesla-sysreg.yaml
+
+-- 
+2.17.1
 
