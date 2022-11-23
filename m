@@ -2,199 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08356C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Nov 2022 20:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7280BC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Nov 2022 22:42:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234468AbiKWUJk (ORCPT
+        id S229697AbiKWWmX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Nov 2022 15:09:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60632 "EHLO
+        Wed, 23 Nov 2022 17:42:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230195AbiKWUJj (ORCPT
+        with ESMTP id S229641AbiKWWmW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Nov 2022 15:09:39 -0500
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 871317C464
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Nov 2022 12:09:38 -0800 (PST)
-Received: by mail-io1-xd30.google.com with SMTP id d123so13963139iof.7
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Nov 2022 12:09:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+NmSKYTm+4EXQGx4rpOu3VMvA2Vnb2EyVYmIAKmYijI=;
-        b=qG9uq1dHY6C4KsDJDBhv+jT482M2w4vT9U73QerpU0Vkz0g0q6FQVi738XhydqowE5
-         tD0Q+mn/Q8kPUoWMVZPN0+Bfep94lTkT5s2PAaiRcwhpGs6XrfQLpU7JNcWJIp5DSPDl
-         gAFDS9Aq36461s5l87lEDes0XOKsI7PZDqCx8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+NmSKYTm+4EXQGx4rpOu3VMvA2Vnb2EyVYmIAKmYijI=;
-        b=bwh6fEHlAPN9UR1UQuqV03FyCd1s0JHI8CpiWqKbqWbozJvNURDCGMKFM0D5YvgWc4
-         pw7UPbHutFWTy5uCr5nu2HFzyF3+9C5uvy6J5ArDKgujgDte7Fs7HNymAso26x8sDCMR
-         wDM3ZeDCjw2DJoj/eqshgQ1Jfl5aNM9topbSBa6H+fUxzw5DX+8M74f0OHrSyqLD0DAC
-         Crnq/s43tJ3q/WcqN6DgZM3oFJ56t+DnjiOcJV8Cmajw6Xoi9RSGZevAX15LpwBuyF63
-         HYPAoY/fO11SAwtUZ2RPFpANHWJC2R50NhvXhxQjLwzPZiUIZ+OJEyAf1OLSZVE6jFE/
-         GTvQ==
-X-Gm-Message-State: ANoB5pmLxgg6Xr2oUXbmTd09UFdqc4Qawo/UBeXfGzVDrCBGGG3nFFj/
-        DbjQxs+HYAZb6pPUaRqDYWB9HWuJwvm3tMuKilorPA==
-X-Google-Smtp-Source: AA0mqf7DmEM1Zp1a+678ACxDv6NMQTQuOR0LAfjZVPBj20palYUDVyDIB3pTU+suIuwtvZuc/4a8hjUP9vrNekqc7vw=
-X-Received: by 2002:a05:6638:1a98:b0:375:61b2:825a with SMTP id
- ce24-20020a0566381a9800b0037561b2825amr14188511jab.147.1669234177851; Wed, 23
- Nov 2022 12:09:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
- <20221110183853.3678209-7-jagan@amarulasolutions.com> <CGME20221117045817eucas1p1778503aa62ef18ef5ee0502d2189cd15@eucas1p1.samsung.com>
- <04fb17e2-1b55-fbd9-d846-da3e3da4edb8@denx.de> <f33142de-862e-9775-b1c9-b871bb9a243c@samsung.com>
- <b66b44fc-5d4c-d3a8-8538-79003b14691e@denx.de>
-In-Reply-To: <b66b44fc-5d4c-d3a8-8538-79003b14691e@denx.de>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 24 Nov 2022 01:39:26 +0530
-Message-ID: <CAMty3ZBfAY86fp7XxS9frrBiT9FRkJaNSRY-4CVpqGOvdpn1fw@mail.gmail.com>
-Subject: Re: [PATCH v8 06/14] drm: bridge: samsung-dsim: Handle proper DSI
- host initialization
-To:     Marek Vasut <marex@denx.de>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        Wed, 23 Nov 2022 17:42:22 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 751CE92B72
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Nov 2022 14:42:21 -0800 (PST)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1oxyRE-00020Y-Hi; Wed, 23 Nov 2022 23:41:52 +0100
+Received: from pengutronix.de (unknown [IPv6:2a03:f580:87bc:d400:2e2e:9f36:4c74:dde5])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        (Authenticated sender: mkl-all@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id 994ED127BF5;
+        Wed, 23 Nov 2022 22:41:48 +0000 (UTC)
+Date:   Wed, 23 Nov 2022 23:41:46 +0100
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+To:     Vivek Yadav <vivek.2311@samsung.com>
+Cc:     rcsekar@samsung.com, krzysztof.kozlowski+dt@linaro.org,
+        wg@grandegger.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, pankaj.dubey@samsung.com,
+        ravi.patel@samsung.com, alim.akhtar@samsung.com,
+        linux-fsd@tesla.com, robh+dt@kernel.org, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        aswani.reddy@samsung.com, sriranjani.p@samsung.com
+Subject: Re: [PATCH v3 1/2] can: m_can: Move mram init to mcan device setup
+Message-ID: <20221123224146.iic52cuhhnwqk2te@pengutronix.de>
+References: <20221122105455.39294-1-vivek.2311@samsung.com>
+ <CGME20221122105022epcas5p3f5db1c5790b605bac8d319fe06ad915b@epcas5p3.samsung.com>
+ <20221122105455.39294-2-vivek.2311@samsung.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="cil7nudg4royyvqc"
+Content-Disposition: inline
+In-Reply-To: <20221122105455.39294-2-vivek.2311@samsung.com>
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Nov 19, 2022 at 7:45 PM Marek Vasut <marex@denx.de> wrote:
->
-> On 11/17/22 14:04, Marek Szyprowski wrote:
-> > On 17.11.2022 05:58, Marek Vasut wrote:
-> >> On 11/10/22 19:38, Jagan Teki wrote:
-> >>> DSI host initialization handling in previous exynos dsi driver has
-> >>> some pitfalls. It initializes the host during host transfer() hook
-> >>> that is indeed not the desired call flow for I2C and any other DSI
-> >>> configured downstream bridges.
-> >>>
-> >>> Host transfer() is usually triggered for downstream DSI panels or
-> >>> bridges and I2C-configured-DSI bridges miss these host initialization
-> >>> as these downstream bridges use bridge operations hooks like pre_enable,
-> >>> and enable in order to initialize or set up the host.
-> >>>
-> >>> This patch is trying to handle the host init handler to satisfy all
-> >>> downstream panels and bridges. Added the DSIM_STATE_REINITIALIZED state
-> >>> flag to ensure that host init is also done on first cmd transfer, this
-> >>> helps existing DSI panels work on exynos platform (form Marek
-> >>> Szyprowski).
-> >>>
-> >>> v8, v7, v6, v5:
-> >>> * none
-> >>>
-> >>> v4:
-> >>> * update init handling to ensure host init done on first cmd transfer
-> >>>
-> >>> v3:
-> >>> * none
-> >>>
-> >>> v2:
-> >>> * check initialized state in samsung_dsim_init
-> >>>
-> >>> v1:
-> >>> * keep DSI init in host transfer
-> >>>
-> >>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> >>> ---
-> >>>    drivers/gpu/drm/bridge/samsung-dsim.c | 25 +++++++++++++++++--------
-> >>>    include/drm/bridge/samsung-dsim.h     |  5 +++--
-> >>>    2 files changed, 20 insertions(+), 10 deletions(-)
-> >>>
-> >>> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c
-> >>> b/drivers/gpu/drm/bridge/samsung-dsim.c
-> >>> index bb1f45fd5a88..ec7e01ae02ea 100644
-> >>> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
-> >>> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-> >>> @@ -1234,12 +1234,17 @@ static void samsung_dsim_disable_irq(struct
-> >>> samsung_dsim *dsi)
-> >>>        disable_irq(dsi->irq);
-> >>>    }
-> >>>    -static int samsung_dsim_init(struct samsung_dsim *dsi)
-> >>> +static int samsung_dsim_init(struct samsung_dsim *dsi, unsigned int
-> >>> flag)
-> >>>    {
-> >>>        const struct samsung_dsim_driver_data *driver_data =
-> >>> dsi->driver_data;
-> >>>    +    if (dsi->state & flag)
-> >>> +        return 0;
-> >>> +
-> >>>        samsung_dsim_reset(dsi);
-> >>> -    samsung_dsim_enable_irq(dsi);
-> >>> +
-> >>> +    if (!(dsi->state & DSIM_STATE_INITIALIZED))
-> >>> +        samsung_dsim_enable_irq(dsi);
-> >>>          if (driver_data->reg_values[RESET_TYPE] == DSIM_FUNCRST)
-> >>>            samsung_dsim_enable_lane(dsi, BIT(dsi->lanes) - 1);
-> >>> @@ -1250,6 +1255,8 @@ static int samsung_dsim_init(struct
-> >>> samsung_dsim *dsi)
-> >>>        samsung_dsim_set_phy_ctrl(dsi);
-> >>>        samsung_dsim_init_link(dsi);
-> >>>    +    dsi->state |= flag;
-> >>> +
-> >>>        return 0;
-> >>>    }
-> >>>    @@ -1269,6 +1276,10 @@ static void
-> >>> samsung_dsim_atomic_pre_enable(struct drm_bridge *bridge,
-> >>>        }
-> >>>          dsi->state |= DSIM_STATE_ENABLED;
-> >>> +
-> >>> +    ret = samsung_dsim_init(dsi, DSIM_STATE_INITIALIZED);
-> >>> +    if (ret)
-> >>> +        return;
-> >>>    }
-> >>>      static void samsung_dsim_atomic_enable(struct drm_bridge *bridge,
-> >>> @@ -1458,12 +1469,9 @@ static ssize_t
-> >>> samsung_dsim_host_transfer(struct mipi_dsi_host *host,
-> >>>        if (!(dsi->state & DSIM_STATE_ENABLED))
-> >>>            return -EINVAL;
-> >>>    -    if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
-> >>> -        ret = samsung_dsim_init(dsi);
-> >>> -        if (ret)
-> >>> -            return ret;
-> >>> -        dsi->state |= DSIM_STATE_INITIALIZED;
-> >>> -    }
-> >>> +    ret = samsung_dsim_init(dsi, DSIM_STATE_REINITIALIZED);
-> >>
-> >> This triggers full controller reset and reprogramming upon first
-> >> command transfer, is such heavy handed reload really necessary ?
-> >
-> > Yes it is, otherwise the proper DSI panels doesn't work with Exynos DRM
-> > DSI. If this is a real issue for you, then maybe the driver could do the
-> > initialization conditionally, in prepare() callback in case of IMX and
-> > on the first transfer in case of Exynos?
->
-> That's odd , it does actually break panel support for me, without this
-> double reset the panel works again. But I have to wonder, why would such
-> a full reset be necessary at all , even on the exynos ?
 
-Is it breaking samsung_dsim_reset from host_transfer? maybe checking
-whether a reset is required before calling it might fix the issue.  I
-agree with double initialization is odd but it seems it is required on
-some panels in Exynos, I think tweaking them and adjusting the panel
-code might resolve this discrepancy.
+--cil7nudg4royyvqc
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Jagan.
+On 22.11.2022 16:24:54, Vivek Yadav wrote:
+> When we try to access the mcan message ram addresses, hclk is
+> gated by any other drivers or disabled, because of that probe gets
+> failed.
+>=20
+> Move the mram init functionality to mcan device setup called by
+> mcan class register from mcan probe function, by that time clocks
+> are enabled.
+
+Why not call the RAM init directly from m_can_chip_config()?
+
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde           |
+Embedded Linux                   | https://www.pengutronix.de  |
+Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
+
+--cil7nudg4royyvqc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEBsvAIBsPu6mG7thcrX5LkNig010FAmN+oagACgkQrX5LkNig
+011CiQf/e32bdb0BoAliyr1ZRwrW/c5KZqmDEeb4gpGTrA+uk73UwZje2Z7ONoUG
+i/N5b0FpZTka1LfBi+XANlo77wmwTrvRut5OdXSw++JobVghAqqJOOLGZLJ5k4xz
+glFz35NhXTNlY6VMs5l8Mg0X/lBNcTQ0WkjUUZylqF63c8szMbZcIxG2avMB00dS
+BPIsmfMwSjwQqle7i2VXnjH8cW7A2jrDytYx0Azai4a6NrZ8ZxK47aAiyuMfvUsA
+t2kJZHqp1IfSnhZ99QHvAPMOsYVO26bqvN0EDdd0ZVo9kij/moh2aqOh3XwCoqQF
+OA1iycEnvVQh1ytL69snZMIEm1GkEw==
+=geD9
+-----END PGP SIGNATURE-----
+
+--cil7nudg4royyvqc--
