@@ -2,141 +2,199 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 637C8C46467
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Nov 2022 14:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08356C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Nov 2022 20:09:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238749AbiKWOah (ORCPT
+        id S234468AbiKWUJk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Nov 2022 09:30:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57786 "EHLO
+        Wed, 23 Nov 2022 15:09:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238450AbiKWOaJ (ORCPT
+        with ESMTP id S230195AbiKWUJj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Nov 2022 09:30:09 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C93290580;
-        Wed, 23 Nov 2022 06:28:36 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 60E9E61D3B;
-        Wed, 23 Nov 2022 14:28:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B521C433D6;
-        Wed, 23 Nov 2022 14:28:28 +0000 (UTC)
-Message-ID: <0da1813a-7e37-bc35-cf8d-8c41590f3b1a@xs4all.nl>
-Date:   Wed, 23 Nov 2022 15:28:27 +0100
+        Wed, 23 Nov 2022 15:09:39 -0500
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 871317C464
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Nov 2022 12:09:38 -0800 (PST)
+Received: by mail-io1-xd30.google.com with SMTP id d123so13963139iof.7
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Nov 2022 12:09:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+NmSKYTm+4EXQGx4rpOu3VMvA2Vnb2EyVYmIAKmYijI=;
+        b=qG9uq1dHY6C4KsDJDBhv+jT482M2w4vT9U73QerpU0Vkz0g0q6FQVi738XhydqowE5
+         tD0Q+mn/Q8kPUoWMVZPN0+Bfep94lTkT5s2PAaiRcwhpGs6XrfQLpU7JNcWJIp5DSPDl
+         gAFDS9Aq36461s5l87lEDes0XOKsI7PZDqCx8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+NmSKYTm+4EXQGx4rpOu3VMvA2Vnb2EyVYmIAKmYijI=;
+        b=bwh6fEHlAPN9UR1UQuqV03FyCd1s0JHI8CpiWqKbqWbozJvNURDCGMKFM0D5YvgWc4
+         pw7UPbHutFWTy5uCr5nu2HFzyF3+9C5uvy6J5ArDKgujgDte7Fs7HNymAso26x8sDCMR
+         wDM3ZeDCjw2DJoj/eqshgQ1Jfl5aNM9topbSBa6H+fUxzw5DX+8M74f0OHrSyqLD0DAC
+         Crnq/s43tJ3q/WcqN6DgZM3oFJ56t+DnjiOcJV8Cmajw6Xoi9RSGZevAX15LpwBuyF63
+         HYPAoY/fO11SAwtUZ2RPFpANHWJC2R50NhvXhxQjLwzPZiUIZ+OJEyAf1OLSZVE6jFE/
+         GTvQ==
+X-Gm-Message-State: ANoB5pmLxgg6Xr2oUXbmTd09UFdqc4Qawo/UBeXfGzVDrCBGGG3nFFj/
+        DbjQxs+HYAZb6pPUaRqDYWB9HWuJwvm3tMuKilorPA==
+X-Google-Smtp-Source: AA0mqf7DmEM1Zp1a+678ACxDv6NMQTQuOR0LAfjZVPBj20palYUDVyDIB3pTU+suIuwtvZuc/4a8hjUP9vrNekqc7vw=
+X-Received: by 2002:a05:6638:1a98:b0:375:61b2:825a with SMTP id
+ ce24-20020a0566381a9800b0037561b2825amr14188511jab.147.1669234177851; Wed, 23
+ Nov 2022 12:09:37 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH mm-unstable v1 16/20] mm/frame-vector: remove FOLL_FORCE
- usage
-Content-Language: en-US
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-To:     David Hildenbrand <david@redhat.com>,
-        Tomasz Figa <tfiga@chromium.org>
-Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        David Airlie <airlied@gmail.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-References: <20221116102659.70287-1-david@redhat.com>
- <20221116102659.70287-17-david@redhat.com>
- <36dd800b-d96b-af39-d0de-a5a8ca1034dd@xs4all.nl>
-In-Reply-To: <36dd800b-d96b-af39-d0de-a5a8ca1034dd@xs4all.nl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
+ <20221110183853.3678209-7-jagan@amarulasolutions.com> <CGME20221117045817eucas1p1778503aa62ef18ef5ee0502d2189cd15@eucas1p1.samsung.com>
+ <04fb17e2-1b55-fbd9-d846-da3e3da4edb8@denx.de> <f33142de-862e-9775-b1c9-b871bb9a243c@samsung.com>
+ <b66b44fc-5d4c-d3a8-8538-79003b14691e@denx.de>
+In-Reply-To: <b66b44fc-5d4c-d3a8-8538-79003b14691e@denx.de>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 24 Nov 2022 01:39:26 +0530
+Message-ID: <CAMty3ZBfAY86fp7XxS9frrBiT9FRkJaNSRY-4CVpqGOvdpn1fw@mail.gmail.com>
+Subject: Re: [PATCH v8 06/14] drm: bridge: samsung-dsim: Handle proper DSI
+ host initialization
+To:     Marek Vasut <marex@denx.de>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 23/11/2022 14:26, Hans Verkuil wrote:
-> Hi David, Tomasz,
-> 
-> On 16/11/2022 11:26, David Hildenbrand wrote:
->> FOLL_FORCE is really only for ptrace access. According to commit
->> 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are always
->> writable"), get_vaddr_frames() currently pins all pages writable as a
->> workaround for issues with read-only buffers.
-> 
-> I've decided to revert 707947247e95: I have not been able to reproduce the problem
-> described in that commit, and Tomasz reported that it caused problems with a
-> specific use-case they encountered. I'll post that patch soon and I expect it
-> to land in 6.2. It will cause a conflict with this patch, though.
-> 
-> If the problem described in that patch occurs again, then I will revisit it
-> and hopefully do a better job than I did before. That commit was not my
-> finest moment.
+On Sat, Nov 19, 2022 at 7:45 PM Marek Vasut <marex@denx.de> wrote:
+>
+> On 11/17/22 14:04, Marek Szyprowski wrote:
+> > On 17.11.2022 05:58, Marek Vasut wrote:
+> >> On 11/10/22 19:38, Jagan Teki wrote:
+> >>> DSI host initialization handling in previous exynos dsi driver has
+> >>> some pitfalls. It initializes the host during host transfer() hook
+> >>> that is indeed not the desired call flow for I2C and any other DSI
+> >>> configured downstream bridges.
+> >>>
+> >>> Host transfer() is usually triggered for downstream DSI panels or
+> >>> bridges and I2C-configured-DSI bridges miss these host initialization
+> >>> as these downstream bridges use bridge operations hooks like pre_enable,
+> >>> and enable in order to initialize or set up the host.
+> >>>
+> >>> This patch is trying to handle the host init handler to satisfy all
+> >>> downstream panels and bridges. Added the DSIM_STATE_REINITIALIZED state
+> >>> flag to ensure that host init is also done on first cmd transfer, this
+> >>> helps existing DSI panels work on exynos platform (form Marek
+> >>> Szyprowski).
+> >>>
+> >>> v8, v7, v6, v5:
+> >>> * none
+> >>>
+> >>> v4:
+> >>> * update init handling to ensure host init done on first cmd transfer
+> >>>
+> >>> v3:
+> >>> * none
+> >>>
+> >>> v2:
+> >>> * check initialized state in samsung_dsim_init
+> >>>
+> >>> v1:
+> >>> * keep DSI init in host transfer
+> >>>
+> >>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> >>> ---
+> >>>    drivers/gpu/drm/bridge/samsung-dsim.c | 25 +++++++++++++++++--------
+> >>>    include/drm/bridge/samsung-dsim.h     |  5 +++--
+> >>>    2 files changed, 20 insertions(+), 10 deletions(-)
+> >>>
+> >>> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>> b/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>> index bb1f45fd5a88..ec7e01ae02ea 100644
+> >>> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>> @@ -1234,12 +1234,17 @@ static void samsung_dsim_disable_irq(struct
+> >>> samsung_dsim *dsi)
+> >>>        disable_irq(dsi->irq);
+> >>>    }
+> >>>    -static int samsung_dsim_init(struct samsung_dsim *dsi)
+> >>> +static int samsung_dsim_init(struct samsung_dsim *dsi, unsigned int
+> >>> flag)
+> >>>    {
+> >>>        const struct samsung_dsim_driver_data *driver_data =
+> >>> dsi->driver_data;
+> >>>    +    if (dsi->state & flag)
+> >>> +        return 0;
+> >>> +
+> >>>        samsung_dsim_reset(dsi);
+> >>> -    samsung_dsim_enable_irq(dsi);
+> >>> +
+> >>> +    if (!(dsi->state & DSIM_STATE_INITIALIZED))
+> >>> +        samsung_dsim_enable_irq(dsi);
+> >>>          if (driver_data->reg_values[RESET_TYPE] == DSIM_FUNCRST)
+> >>>            samsung_dsim_enable_lane(dsi, BIT(dsi->lanes) - 1);
+> >>> @@ -1250,6 +1255,8 @@ static int samsung_dsim_init(struct
+> >>> samsung_dsim *dsi)
+> >>>        samsung_dsim_set_phy_ctrl(dsi);
+> >>>        samsung_dsim_init_link(dsi);
+> >>>    +    dsi->state |= flag;
+> >>> +
+> >>>        return 0;
+> >>>    }
+> >>>    @@ -1269,6 +1276,10 @@ static void
+> >>> samsung_dsim_atomic_pre_enable(struct drm_bridge *bridge,
+> >>>        }
+> >>>          dsi->state |= DSIM_STATE_ENABLED;
+> >>> +
+> >>> +    ret = samsung_dsim_init(dsi, DSIM_STATE_INITIALIZED);
+> >>> +    if (ret)
+> >>> +        return;
+> >>>    }
+> >>>      static void samsung_dsim_atomic_enable(struct drm_bridge *bridge,
+> >>> @@ -1458,12 +1469,9 @@ static ssize_t
+> >>> samsung_dsim_host_transfer(struct mipi_dsi_host *host,
+> >>>        if (!(dsi->state & DSIM_STATE_ENABLED))
+> >>>            return -EINVAL;
+> >>>    -    if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
+> >>> -        ret = samsung_dsim_init(dsi);
+> >>> -        if (ret)
+> >>> -            return ret;
+> >>> -        dsi->state |= DSIM_STATE_INITIALIZED;
+> >>> -    }
+> >>> +    ret = samsung_dsim_init(dsi, DSIM_STATE_REINITIALIZED);
+> >>
+> >> This triggers full controller reset and reprogramming upon first
+> >> command transfer, is such heavy handed reload really necessary ?
+> >
+> > Yes it is, otherwise the proper DSI panels doesn't work with Exynos DRM
+> > DSI. If this is a real issue for you, then maybe the driver could do the
+> > initialization conditionally, in prepare() callback in case of IMX and
+> > on the first transfer in case of Exynos?
+>
+> That's odd , it does actually break panel support for me, without this
+> double reset the panel works again. But I have to wonder, why would such
+> a full reset be necessary at all , even on the exynos ?
 
-In any case, for this patch:
+Is it breaking samsung_dsim_reset from host_transfer? maybe checking
+whether a reset is required before calling it might fix the issue.  I
+agree with double initialization is odd but it seems it is required on
+some panels in Exynos, I think tweaking them and adjusting the panel
+code might resolve this discrepancy.
 
-Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-
-Regards,
-
-	Hans
-
-> 
-> Regards,
-> 
-> 	Hans
-> 
->>
->> FOLL_FORCE, however, seems to be a legacy leftover as it predates
->> commit 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are
->> always writable"). Let's just remove it.
->>
->> Once the read-only buffer issue has been resolved, FOLL_WRITE could
->> again be set depending on the DMA direction.
->>
->> Cc: Hans Verkuil <hverkuil@xs4all.nl>
->> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
->> Cc: Tomasz Figa <tfiga@chromium.org>
->> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
->> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
->>  drivers/media/common/videobuf2/frame_vector.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
->> index 542dde9d2609..062e98148c53 100644
->> --- a/drivers/media/common/videobuf2/frame_vector.c
->> +++ b/drivers/media/common/videobuf2/frame_vector.c
->> @@ -50,7 +50,7 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
->>  	start = untagged_addr(start);
->>  
->>  	ret = pin_user_pages_fast(start, nr_frames,
->> -				  FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM,
->> +				  FOLL_WRITE | FOLL_LONGTERM,
->>  				  (struct page **)(vec->ptrs));
->>  	if (ret > 0) {
->>  		vec->got_ref = true;
-> 
-
+Jagan.
