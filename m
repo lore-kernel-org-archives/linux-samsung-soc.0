@@ -2,59 +2,56 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63985C352A1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Nov 2022 14:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6623C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Nov 2022 08:51:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbiKXOyu (ORCPT
+        id S229761AbiKYIvr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 24 Nov 2022 09:54:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55316 "EHLO
+        Fri, 25 Nov 2022 03:51:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbiKXOyj (ORCPT
+        with ESMTP id S229897AbiKYIvl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 24 Nov 2022 09:54:39 -0500
+        Fri, 25 Nov 2022 03:51:41 -0500
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC524B1D8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Nov 2022 06:54:37 -0800 (PST)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 673AD31F91
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Nov 2022 00:51:36 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1oyDcB-00049Y-5E; Thu, 24 Nov 2022 15:54:11 +0100
-Received: from pengutronix.de (unknown [IPv6:2a03:f580:87bc:d400:5507:4aba:5e0a:4c27])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        (Authenticated sender: mkl-all@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id 9A1041286A3;
-        Thu, 24 Nov 2022 14:54:07 +0000 (UTC)
-Date:   Thu, 24 Nov 2022 15:54:05 +0100
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-To:     Vivek Yadav <vivek.2311@samsung.com>
-Cc:     rcsekar@samsung.com, krzysztof.kozlowski+dt@linaro.org,
-        wg@grandegger.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, pankaj.dubey@samsung.com,
-        ravi.patel@samsung.com, alim.akhtar@samsung.com,
-        linux-fsd@tesla.com, robh+dt@kernel.org, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        aswani.reddy@samsung.com, sriranjani.p@samsung.com
-Subject: Re: RE: [PATCH v3 1/2] can: m_can: Move mram init to mcan device
- setup
-Message-ID: <20221124145405.d67cb6xmoiqfdsq3@pengutronix.de>
-References: <20221122105455.39294-1-vivek.2311@samsung.com>
- <CGME20221122105022epcas5p3f5db1c5790b605bac8d319fe06ad915b@epcas5p3.samsung.com>
- <20221122105455.39294-2-vivek.2311@samsung.com>
- <20221123224146.iic52cuhhnwqk2te@pengutronix.de>
- <01a101d8ffe4$1797f290$46c7d7b0$@samsung.com>
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oyUQe-0008Qt-8q; Fri, 25 Nov 2022 09:51:24 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oyUQX-000Bz1-Gz; Fri, 25 Nov 2022 09:51:18 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oyUQX-000FZX-M5; Fri, 25 Nov 2022 09:51:17 +0100
+Date:   Fri, 25 Nov 2022 09:51:17 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     Arnd Bergmann <arnd@kernel.org>, kernel@pengutronix.de,
+        linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        linux-kernel@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        dmaengine@vger.kernel.org, Simtec Linux Team <linux@simtec.co.uk>,
+        linux-next@vger.kernel.org
+Subject: Re: [PATCH] ARM: s3c: Fix a build error after the s3c24xx dma driver
+ was removed
+Message-ID: <20221125085117.23p7yv6wgo6b5l3v@pengutronix.de>
+References: <20221021203329.4143397-14-arnd@kernel.org>
+ <20221118215401.505480-1-u.kleine-koenig@pengutronix.de>
+ <f0425349-d965-0a40-0672-27dfbe45eb44@linaro.org>
+ <b759a3e7-7a45-3dc9-14ba-8b01da798f10@linaro.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7molxfrf5k54fpwk"
+        protocol="application/pgp-signature"; boundary="esiizevgytu3ebii"
 Content-Disposition: inline
-In-Reply-To: <01a101d8ffe4$1797f290$46c7d7b0$@samsung.com>
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
+In-Reply-To: <b759a3e7-7a45-3dc9-14ba-8b01da798f10@linaro.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
@@ -62,56 +59,65 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
---7molxfrf5k54fpwk
-Content-Type: text/plain; charset=utf-8
+--esiizevgytu3ebii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 24.11.2022 14:36:48, Vivek Yadav wrote:
-> > Why not call the RAM init directly from m_can_chip_config()?
+Hello,
+
+On Sun, Nov 20, 2022 at 12:22:31PM +0100, Krzysztof Kozlowski wrote:
+> On 20/11/2022 11:31, Krzysztof Kozlowski wrote:
+> > On 18/11/2022 22:54, Uwe Kleine-K=F6nig wrote:
+> >> The linux/platform_data/dma-s3c24xx.h header file was removed. It didn=
+'t
+> >> declare or define any symbol needed in devs.c though, so the #include
+> >> can just be dropped.
+> >>
+> >> Fixes: cccc46ae3623 ("dmaengine: remove s3c24xx driver")
+> >> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> >> ---
 > >=20
-> m_can_chip_config function is called from m_can open.
->=20
-> Configuring RAM init every time we open the CAN instance is not
-> needed, I think only once during the probe is enough.
+> > The file was not removed... or it should not have been yet. The s3c24xx
+> > dma driver removal should be part of Arnd series taken via SoC ARM.
 
-That probably depends on you power management. If I add a regulator to
-power the external tcan4x5x chip and power it up during open(), I need
-to initialize the RAM.
+The patch enters next with the merge of
 
-> If message RAM init failed then fifo Transmit and receive will fail
-> and there will be no communication. So there is no point to "open and
-> Configure CAN chip".
+	git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git next
 
-For mmio devices the RAM init will probably not fail. There are return
-values and error checking for the SPI attached devices. Where the SPI
-communication will fail. However if this is problem, I assume the chip
-will not be detected in the first place.
+Ah, the patch that became cccc46ae3623 (i.e. patch #14) is part of a
+bigger series. Its patch #1 removes s3c24xx.c (which you pointed out to be =
+still
+broken) and patch #2 includes the change I suggested here.
 
-> From my understanding it's better to keep RAM init inside the probe
-> and if there is a failure happened goes to CAN probe failure.
+> I think that commit should be just dropped instead.
 
-Marc
++1
+
+BTW, cccc46ae3623 is included in next since next-20221107 and breaks
+(at least) arm/s3c2410_defconfig. So I would consider reverting
+cccc46ae3623 a fix. (Added linux-next to Cc:)
+
+Best regards
+Uwe
 
 --=20
-Pengutronix e.K.                 | Marc Kleine-Budde           |
-Embedded Linux                   | https://www.pengutronix.de  |
-Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
 
---7molxfrf5k54fpwk
+--esiizevgytu3ebii
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEBsvAIBsPu6mG7thcrX5LkNig010FAmN/hYsACgkQrX5LkNig
-01087Qf9Gx/Nk41SCCj7+rrggRE7qKHXE5G+Qk02d7IXfzxLbUmsgUk5dsi29H/Z
-P7czNTvipDDshilhlAfYDGZKD01XfogCP2DAwVIBE0kCxRAfpBpC1xmEhGSG7mtV
-SHlKTj8cHNQ7J+IFmzCUq9R3ywgRyrX+PYgwg9danzR1dv049+kP/ptoTSUBOjqk
-OWbU4BsTtl/iIs/3pOxfoq9NMEXnS44zAHgJlkA10LGESj7wCfTMX2oG2V/10C+J
-/odw2rODOYOdcE30Lk5xEKvbbiHwIpMwQ2+8LSBckoqYhklPuC8H9oGrE0sIkCz8
-T4zcFCce6yQGR1tpOZ2JxMXb0qDsTQ==
-=rGjh
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmOAggIACgkQwfwUeK3K
+7AlqoQf+KRbGDmlQGJTMMKxkt2L3KLegKVD+jLC7UDsLNb0hvIZfNNT+rHssdKoT
+ECq3d0DiK74j5sRtBthgpx3HXMMv5Pu8KgdCNFctiqrfKHugthsaVUNCoEx3Y6cN
+JUfGERyytyAduNPLUzUNS79ANWeVpZ2z9lIYwbDZpdcwLp8JY2RFSfvIqU25l8ug
+3S+e+/NXj37PgCkgvyp8DWbcEoRpNrHLmpaXivhayf3D//0MYa6kdGM0Xejdtw0T
+an5yLUFEdndcRBpp0t9yWh/M83/xTJZ9ndcp8RZMjEVdcBedKpPo/UyO4K+sWQFp
+hfWyBh44QeIwv64XfzGst+xJRoGOuw==
+=WdqC
 -----END PGP SIGNATURE-----
 
---7molxfrf5k54fpwk--
+--esiizevgytu3ebii--
