@@ -2,93 +2,102 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79FD3C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 27 Nov 2022 21:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCFAC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 27 Nov 2022 21:26:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229685AbiK0VZr (ORCPT
+        id S229723AbiK0V01 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 27 Nov 2022 16:25:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33948 "EHLO
+        Sun, 27 Nov 2022 16:26:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbiK0VZr (ORCPT
+        with ESMTP id S229712AbiK0V00 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 27 Nov 2022 16:25:47 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB457DF0A
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Nov 2022 13:25:45 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id f13so14637653lfa.6
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Nov 2022 13:25:45 -0800 (PST)
+        Sun, 27 Nov 2022 16:26:26 -0500
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE0C7F5A8
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Nov 2022 13:26:24 -0800 (PST)
+Received: by mail-lj1-x232.google.com with SMTP id z4so11120263ljq.6
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Nov 2022 13:26:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qdNlfxFpNA9v+siDfBOeG/1CGaIc/PiTgC9L8Cnj6l4=;
-        b=JC9GbIQZD/+dALaeWM7wgUgenBU4oHG7ObLpkFoqYuDDyAG8qmswzXvMSsI+yL/BkM
-         LjH86DKS8yNrS6xt78FTTE/69oEKdpaaAw2pPc/byw7wT+kNejZ1tDRALFYrqA+KT+1O
-         trw66R9zcakW86YlVbUmcJHDnRFgQJWLcSwejusloM+Yd05pyuxN9XcgZ6aHQTdkxEjz
-         2qU5kKntP7pvkMuupXFm6JOWrC4jYy7KePJKrnAX9VTAA2NVV62AYuo79lzBIXIxRHAh
-         yGLWh3k+gzVMGOZV9hI8xyvUPKqZ7700MP+gCZJphVphG7fb1pUSSPRJ7KJqc349ejb5
-         ZxQg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LpYPbhCIxdq9zb9RtQtEbIq7/DCEPoj36+5WZRRtCkY=;
+        b=AX0vLsCbgw8p+0tT8lQ3aebcqI+FvAoUVjgtrVuGupxDFsTrtFE3MWdXFgWYDWsgPD
+         wIMhMd0j04AuW1HwiDxn8pIjBnxbCGGNtg9TKZMxn1Yb1yykMODR3yudB/Nt803NaQ2t
+         p71Ulqlf4Fp7fI0aZ03mW59okyZM5xXSGKtZqLLX7N7YUTfaZ6Vz57olyVJMYRaV0oOu
+         Vn9Q2ivM6biaQAK3RKTE3O0gWfNVXgibtqON2rmgLTM4AivWjwJy1UJJbwiHMVZ26Jlr
+         Y/AaMGpNqIh2nLbCGezR/Jw2axTCYx506Ofn1I8q1c+8rzmpbDuqY+wfTyWrcliug0aH
+         M2Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qdNlfxFpNA9v+siDfBOeG/1CGaIc/PiTgC9L8Cnj6l4=;
-        b=F5PyJLE/qiooZqLfgewA5B3xMTUhxCIuVL2NQY33IESXgn9nutIeJwXk3ekUy5f11d
-         mwvnGQr8z0aVy3fybz+xlRCpi8ubHiozLs/zD1utji2kSEKaCTQGolU1q6nhKKY5PqF4
-         QoENkbGWkpmDtIOl3VUdGW2g0YxN1VVZQXXqGnbpRuQExqpOizjAkOAmJ2BP3aaXZrqx
-         Ydhf4VcDtecrkd8B5jidFdhG+2QTHu58Kg/kFcVJ81a5dyEFw4eiS/b/XmgOrkJ/MPt1
-         jeWgMCa2ixHkv3nzirJ0/W/NXIimywAUKF1aCoS1HD1U3ZrtNYRlRqedyAJvMIlOLPKP
-         C3JQ==
-X-Gm-Message-State: ANoB5pmq5mrI6q2JLSAmSzzKg9ZYFU6icFn5+mFHUywnXUa7OA5WFwft
-        BBv+GokNHXaIUtyp1LBx6pnGkrQH7IBNx466
-X-Google-Smtp-Source: AA0mqf6tl5cDOhSilQAphSRO6mOQxIuWDKYqMIz/VSua8WhMyPN14GwX1pMXB38rOIzFTuZ9SOi3Ug==
-X-Received: by 2002:a19:e012:0:b0:4b4:7b39:6edf with SMTP id x18-20020a19e012000000b004b47b396edfmr11647286lfg.157.1669584344319;
-        Sun, 27 Nov 2022 13:25:44 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id o29-20020ac25b9d000000b004b491fe071fsm1409870lfn.36.2022.11.27.13.25.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Nov 2022 13:25:43 -0800 (PST)
-Message-ID: <17bf93b5-dca7-8eac-3f0a-3dbd13479a55@linaro.org>
-Date:   Sun, 27 Nov 2022 22:25:43 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v4 0/2] arm64: dts: [exynos|fsd]: Update cache properties
-Content-Language: en-US
-To:     Pierre Gondois <pierre.gondois@arm.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LpYPbhCIxdq9zb9RtQtEbIq7/DCEPoj36+5WZRRtCkY=;
+        b=g/8uRxEj1dqBfZhIusiC1gBpeH7d5GGBkn8x59c/M6jPAFQOjOJsKa90TZjfmPrJBX
+         2dY5uxB9AiO1F+5/SrnRgQ7gwv0BmyKJ66yYAMlAxQNJtCEWQb1eDtZQtqKWnDaQT5aj
+         uMifPgEEL8CTRUY2gKcvTwJ6x6VFfWS65YNgrvA+0FDA2CJXl0m4SLV+5CtfqlfK9QXC
+         IH0+TR8Dz6TuG00Na04jp2T6EF7yLTSt4ZXlspYGsYXiA/c8/aRgg7BXRDTUKrXBiPAR
+         bteg9zdeoP91SYBGjqPXciULPbAOsUT2/JukIe/7ROyFPyv6/RdUgBKCQvx+epRfRkBJ
+         ozVw==
+X-Gm-Message-State: ANoB5pkKkGG6lLySP/aOGGllmYJsY88JY1GO/PaOXmGp/DUx1qnaR+EI
+        UxUGWzWa1VotJWMbGu8AuYfTLQ==
+X-Google-Smtp-Source: AA0mqf6Dg324ZZZEmjiJ2EXuM/mufU09uLC8mRgyCZS6eiLXXVFdX65fVC8xggbEcd3AtxwOKKW+vA==
+X-Received: by 2002:a2e:a224:0:b0:277:309:f1ad with SMTP id i4-20020a2ea224000000b002770309f1admr9712153ljm.244.1669584383311;
+        Sun, 27 Nov 2022 13:26:23 -0800 (PST)
+Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id 4-20020ac25f04000000b004b4b90a6992sm1074361lfq.95.2022.11.27.13.26.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Nov 2022 13:26:22 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     linux-kernel@vger.kernel.org,
+        Pierre Gondois <pierre.gondois@arm.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Arjun K V <arjun.kv@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Aswani Reddy <aswani.reddy@samsung.com>,
         Shashank Prashar <s.prashar@samsung.com>,
-        Arjun K V <arjun.kv@samsung.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20221123092449.88097-1-pierre.gondois@arm.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH v4 0/2] arm64: dts: [exynos|fsd]: Update cache properties
+Date:   Sun, 27 Nov 2022 22:26:21 +0100
+Message-Id: <166958437707.66932.13795451978278069331.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221123092449.88097-1-pierre.gondois@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20221123092449.88097-1-pierre.gondois@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 23/11/2022 10:24, Pierre Gondois wrote:
+On Wed, 23 Nov 2022 10:24:43 +0100, Pierre Gondois wrote:
 > v1:
 >  - exynos: [1]
 >  - fds: [2]
 > v2:
+>   No change.
+>  - exynos: [3]
+>  - fds: [4]
+> v3:
+>  - Update commit header for fsd platform. [5]
+> v4:
+>  - Update commit header for fsd platform.
+> 
+> [...]
 
+Applied, thanks!
 
-Thanks, applied.
-It is however very late in the cycle, so there is a chance this will
-miss the merge window. If this happens, I will keep it for the next
-cycle (no need for resending).
+[1/2] arm64: dts: exynos: Update cache properties
+      https://git.kernel.org/krzk/linux/c/784287950d8613132d3c3fd502906ba844d63166
+[2/2] arm64: dts: fsd: Update cache properties
+      https://git.kernel.org/krzk/linux/c/bf2ae716bc4a442e6e8270c18fd29441c031ace8
 
 Best regards,
-Krzysztof
-
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
