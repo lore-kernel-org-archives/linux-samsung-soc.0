@@ -2,128 +2,217 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 641BFC636F8
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 26 Nov 2022 15:44:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 919CFC4321E
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 27 Nov 2022 10:37:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229737AbiKZPoL (ORCPT
+        id S229589AbiK0KhD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 26 Nov 2022 10:44:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45430 "EHLO
+        Sun, 27 Nov 2022 05:37:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229521AbiKZPoI (ORCPT
+        with ESMTP id S229495AbiK0KhB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 26 Nov 2022 10:44:08 -0500
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1E0EF7A;
-        Sat, 26 Nov 2022 07:44:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1669477447; x=1701013447;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=TYZva1qhZaDDzx7ssD6565IlpCg24ayIFbcaC7tY8Tc=;
-  b=afaV5wieNPUjxu0caJC6JdakAXQOqaG+mJP11E9sBOfdvxW/FCdDmoSq
-   uszGkpjb5nf3De548PRwyr8tA0gjYkdzZijT5eCkTI9MaUL7wuDEK5FNd
-   DHxxEedinEuG50v1wryTy8tuS2GfxLpPE0gycyCpJAkwIvhrwC+gn8YZP
-   vqGEDAZKZz5uKM+4zWczaOB+RJUrHWVl1v9DiPG/G1MsaoSG/5NPhScuG
-   JcNKVf2MOUenZM/iTJdfierEPIRgcSWgA7CVeokYeMdRvPe3t3BpDN/xD
-   57LDEQ+dPBOukc9S9pF7aZDWoHCdzdL+VmK/32YN6VaBwDrOJGpoZ9vaZ
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10543"; a="376747252"
-X-IronPort-AV: E=Sophos;i="5.96,196,1665471600"; 
-   d="scan'208";a="376747252"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2022 07:44:06 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10543"; a="620587303"
-X-IronPort-AV: E=Sophos;i="5.96,196,1665471600"; 
-   d="scan'208";a="620587303"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga006.jf.intel.com with ESMTP; 26 Nov 2022 07:43:54 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1oyxLL-000Bco-1n;
-        Sat, 26 Nov 2022 17:43:51 +0200
-Date:   Sat, 26 Nov 2022 17:43:51 +0200
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
-        alsa-devel@alsa-project.org, linux-staging@lists.linux.dev,
-        linux-pwm@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-leds@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        linux-serial@vger.kernel.org, linux-input@vger.kernel.org,
-        Grant Likely <grant.likely@linaro.org>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, chrome-platform@lists.linux.dev,
-        linux-actions@lists.infradead.org, linux-gpio@vger.kernel.org,
-        Angel Iglesias <ang.iglesiasg@gmail.com>,
-        gregkh@linuxfoundation.org, linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Purism Kernel Team <kernel@puri.sm>,
-        patches@opensource.cirrus.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        Wolfram Sang <wsa@kernel.org>, linux-crypto@vger.kernel.org,
-        kernel@pengutronix.de, netdev@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 000/606] i2c: Complete conversion to i2c_probe_new
-Message-ID: <Y4I0N3KpU/LSJYpd@smile.fi.intel.com>
-References: <20221118224540.619276-1-uwe@kleine-koenig.org>
- <20221122185818.3740200d@jic23-huawei>
- <20221122201654.5rdaisqho33buibj@pengutronix.de>
+        Sun, 27 Nov 2022 05:37:01 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 414D3E0DA
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Nov 2022 02:35:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669545314;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=a/FKhEJUKr4Au5jEDV0nA39boCfv1uOAmeL78/XZzlw=;
+        b=O27xJtPpaXX+WGWtRHYJetfQf0LitOuWyYASTvh9BOIc76OBbAvqAJoksVcyj8ihyyybuL
+        K0BzXUXxU998BrnvTHmhdCmjqJ56s5MlltXbtXEOh8pcP8m9+etTCwEOVSMLMxVzLD+KhE
+        02JICc1N+vm9jg/GhumwHtE2HYBwStg=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-156-cE3YdbN-OwWdxQdQ64qSBg-1; Sun, 27 Nov 2022 05:35:13 -0500
+X-MC-Unique: cE3YdbN-OwWdxQdQ64qSBg-1
+Received: by mail-wm1-f69.google.com with SMTP id o5-20020a05600c510500b003cfca1a327fso4817704wms.8
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Nov 2022 02:35:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:subject:organization:from
+         :content-language:references:cc:to:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a/FKhEJUKr4Au5jEDV0nA39boCfv1uOAmeL78/XZzlw=;
+        b=dTpcroThELuuKIoHNYOew7g3L9ySQt8xDXEWD3e3ftou+fIAQdxAiA3Bz6Vkh5x12X
+         itmVSjPe1FCIkUh42Qt8367tfaqIPIRsebc+KDoVhXIe1vRNKm9dmgLmLT/CMDryeEli
+         EUK+PVmfp9QHGwZhqt1V4vUGJ3Btmj1wHWlUgqT2ThPGUVp19DMGbG/t/GmGffoRy/hF
+         SAfhqOUNlVDcmB9Hr7VjuDoSrO2T6mFJP3ofa3JuzPwnRh7rlUAFegtek6Gm6Ue4mOtF
+         J9aCKe/4i/QUfFMk0kT2TYI9bvrjfR/Yj7eX54cN8p2+1yYqMc7A7TfVwGXVsKngsTRS
+         z7EQ==
+X-Gm-Message-State: ANoB5plA8inWkxLctY09cPH1XqwgDFx9gq66jsGSJTUOQHpiB5QZf5N6
+        j3T1XgNvTS1MqOdbZ+KkypymNsh9w67qMx+NXWrQTqaNGc9tmzQezmtZoAGhHBuzteRz/4WkNRS
+        wfKSM0XBGNv2xNCdQn9dEPN0IyQLMX6I=
+X-Received: by 2002:a05:600c:4e88:b0:3b5:477:1e80 with SMTP id f8-20020a05600c4e8800b003b504771e80mr34594853wmq.200.1669545311989;
+        Sun, 27 Nov 2022 02:35:11 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf44zTk6J1KBaqs1seffTqR2+v9TqwwPSmjBWI2JrtJKUPaYELfhGu32bDJHUXiVwBKDfUuj3g==
+X-Received: by 2002:a05:600c:4e88:b0:3b5:477:1e80 with SMTP id f8-20020a05600c4e8800b003b504771e80mr34594816wmq.200.1669545311706;
+        Sun, 27 Nov 2022 02:35:11 -0800 (PST)
+Received: from ?IPV6:2003:cb:c724:dc00:5ea8:da59:8609:7da? (p200300cbc724dc005ea8da59860907da.dip0.t-ipconnect.de. [2003:cb:c724:dc00:5ea8:da59:8609:7da])
+        by smtp.gmail.com with ESMTPSA id u10-20020a05600c19ca00b003c5571c27a1sm14797024wmq.32.2022.11.27.02.35.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Nov 2022 02:35:11 -0800 (PST)
+Message-ID: <81fb0fa3-2e06-b765-56ac-a7d981194e59@redhat.com>
+Date:   Sun, 27 Nov 2022 11:35:09 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20221122201654.5rdaisqho33buibj@pengutronix.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+To:     linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20221116102659.70287-1-david@redhat.com>
+ <20221116102659.70287-17-david@redhat.com>
+Content-Language: en-US
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH mm-unstable v1 16/20] mm/frame-vector: remove FOLL_FORCE
+ usage
+In-Reply-To: <20221116102659.70287-17-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 22, 2022 at 09:16:54PM +0100, Uwe Kleine-König wrote:
-> On Tue, Nov 22, 2022 at 06:58:18PM +0000, Jonathan Cameron wrote:
-
-> > Queued all of the below:
-> > with one tweaked as per your suggestion and the highlighted one dropped on basis
-> > I was already carrying the equivalent - as you pointed out.
-> > 
-> > I was already carrying the required dependency.
-> > 
-> > Includes the IIO ones in staging.
-> > 
-
-> > p.s. I perhaps foolishly did this in a highly manual way so as to
-> > also pick up Andy's RB.  So might have dropped one...
+On 16.11.22 11:26, David Hildenbrand wrote:
+> FOLL_FORCE is really only for ptrace access. According to commit
+> 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are always
+> writable"), get_vaddr_frames() currently pins all pages writable as a
+> workaround for issues with read-only buffers.
 > 
-> You could have done:
+> FOLL_FORCE, however, seems to be a legacy leftover as it predates
+> commit 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are
+> always writable"). Let's just remove it.
 > 
-> 	H=$(git rev-parse @)
-> 	b4 am -P 49-190 20221118224540.619276-1-uwe@kleine-koenig.org
-> 	git am ...
-> 	git filter-branch -f --msg-filter "grep -v 'Signed-off-by: Jonathan'; echo 'Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>'; echo 'Signed-off-by: Jonathan Cameron <jic23@kernel.org>'" $H..
+> Once the read-only buffer issue has been resolved, FOLL_WRITE could
+> again be set depending on the DMA direction.
 > 
-> (untested, but you get the idea).
+> Cc: Hans Verkuil <hverkuil@xs4all.nl>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Tomasz Figa <tfiga@chromium.org>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>   drivers/media/common/videobuf2/frame_vector.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
+> index 542dde9d2609..062e98148c53 100644
+> --- a/drivers/media/common/videobuf2/frame_vector.c
+> +++ b/drivers/media/common/videobuf2/frame_vector.c
+> @@ -50,7 +50,7 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+>   	start = untagged_addr(start);
+>   
+>   	ret = pin_user_pages_fast(start, nr_frames,
+> -				  FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM,
+> +				  FOLL_WRITE | FOLL_LONGTERM,
+>   				  (struct page **)(vec->ptrs));
+>   	if (ret > 0) {
+>   		vec->got_ref = true;
 
-That's, for example (just last from the history as is), how I usually do it
-(tested):
 
- git filter-branch --msg-filter 'sed -e "/Signed-off-by: Andy Shevchenko/ a Tested-by: Daniel Scally <dan.scally@ideasonboard.com>"' -f HEAD~4..HEAD
+Hi Andrew,
 
+see the discussion at [1] regarding a conflict and how to proceed with
+upstreaming. The conflict would be easy to resolve, however, also
+the patch description doesn't make sense anymore with [1].
+
+
+On top of mm-unstable, reverting this patch and applying [1] gives me
+an updated patch:
+
+
+ From 1e66c25f1467c1f1e5f275312f2c6df29308d4df Mon Sep 17 00:00:00 2001
+From: David Hildenbrand <david@redhat.com>
+Date: Wed, 16 Nov 2022 11:26:55 +0100
+Subject: [PATCH] mm/frame-vector: remove FOLL_FORCE usage
+
+GUP now supports reliable R/O long-term pinning in COW mappings, such
+that we break COW early. MAP_SHARED VMAs only use the shared zeropage so
+far in one corner case (DAXFS file with holes), which can be ignored
+because GUP does not support long-term pinning in fsdax (see
+check_vma_flags()).
+
+Consequently, FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM is no longer required
+for reliable R/O long-term pinning: FOLL_LONGTERM is sufficient. So stop
+using FOLL_FORCE, which is really only for ptrace access.
+
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tomasz Figa <tfiga@chromium.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+  drivers/media/common/videobuf2/frame_vector.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
+index aad72640f055..8606fdacf5b8 100644
+--- a/drivers/media/common/videobuf2/frame_vector.c
++++ b/drivers/media/common/videobuf2/frame_vector.c
+@@ -41,7 +41,7 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames, bool write,
+  	int ret_pin_user_pages_fast = 0;
+  	int ret = 0;
+  	int err;
+-	unsigned int gup_flags = FOLL_FORCE | FOLL_LONGTERM;
++	unsigned int gup_flags = FOLL_LONGTERM;
+  
+  	if (nr_frames == 0)
+  		return 0;
+-- 
+2.38.1
+
+
+
+Please let me know how you want to proceed. Ideally, you'd pick up
+[1] and apply this updated patch. Also, please tell me if I should
+send this updated patch in a separate mail (e.g., as reply to this mail).
+
+
+[1] https://lkml.kernel.org/r/71bdd3cf-b044-3f12-df58-7c16d5749587@xs4all.nl
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Thanks,
 
+David / dhildenb
 
