@@ -2,217 +2,130 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 919CFC4321E
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 27 Nov 2022 10:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8191DC4321E
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 27 Nov 2022 12:33:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229589AbiK0KhD (ORCPT
+        id S229608AbiK0MdH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 27 Nov 2022 05:37:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52322 "EHLO
+        Sun, 27 Nov 2022 07:33:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229495AbiK0KhB (ORCPT
+        with ESMTP id S229593AbiK0MdE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 27 Nov 2022 05:37:01 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 414D3E0DA
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Nov 2022 02:35:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669545314;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=a/FKhEJUKr4Au5jEDV0nA39boCfv1uOAmeL78/XZzlw=;
-        b=O27xJtPpaXX+WGWtRHYJetfQf0LitOuWyYASTvh9BOIc76OBbAvqAJoksVcyj8ihyyybuL
-        K0BzXUXxU998BrnvTHmhdCmjqJ56s5MlltXbtXEOh8pcP8m9+etTCwEOVSMLMxVzLD+KhE
-        02JICc1N+vm9jg/GhumwHtE2HYBwStg=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-156-cE3YdbN-OwWdxQdQ64qSBg-1; Sun, 27 Nov 2022 05:35:13 -0500
-X-MC-Unique: cE3YdbN-OwWdxQdQ64qSBg-1
-Received: by mail-wm1-f69.google.com with SMTP id o5-20020a05600c510500b003cfca1a327fso4817704wms.8
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Nov 2022 02:35:12 -0800 (PST)
+        Sun, 27 Nov 2022 07:33:04 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFB4DC76E
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Nov 2022 04:33:03 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id j4so13528079lfk.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Nov 2022 04:33:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cPN+BmEQYUICy1UGQadZzNzqjOx78Sh8uSqQROeddZE=;
+        b=R2Bv2zPBNAl3ZUxMwVQ94JqwxnJpJG5mXOKSYD3VHvLrUz2pmoO7egVrIX2SfqctqC
+         6l6g8zPjichLkNqzdYCMoJRUHCqnXy0PoWi74E5GCi6FX3W7QV0qMOVyW2DRpSpCXYqN
+         DCrOt/IVhX6tYwdu9wqij+3COEEPWoP3Q12rFyI6YHzwUR0oMD2DpU+ii8QnSGXQmjmo
+         lM3RJodFsgGFfR7Ge079wQ5nSFBkHa0L+KDJjk8CBV00WGVk96N6nvcUwOXLRjcUySHL
+         /ki5yRrNugHMXrnV6H36Gyfw2qCokuvQ0Y2u0zH/ZGNaAWdwEHG/Mwwj9bph2TsmSQAb
+         0KvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :content-language:references:cc:to:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=a/FKhEJUKr4Au5jEDV0nA39boCfv1uOAmeL78/XZzlw=;
-        b=dTpcroThELuuKIoHNYOew7g3L9ySQt8xDXEWD3e3ftou+fIAQdxAiA3Bz6Vkh5x12X
-         itmVSjPe1FCIkUh42Qt8367tfaqIPIRsebc+KDoVhXIe1vRNKm9dmgLmLT/CMDryeEli
-         EUK+PVmfp9QHGwZhqt1V4vUGJ3Btmj1wHWlUgqT2ThPGUVp19DMGbG/t/GmGffoRy/hF
-         SAfhqOUNlVDcmB9Hr7VjuDoSrO2T6mFJP3ofa3JuzPwnRh7rlUAFegtek6Gm6Ue4mOtF
-         J9aCKe/4i/QUfFMk0kT2TYI9bvrjfR/Yj7eX54cN8p2+1yYqMc7A7TfVwGXVsKngsTRS
-         z7EQ==
-X-Gm-Message-State: ANoB5plA8inWkxLctY09cPH1XqwgDFx9gq66jsGSJTUOQHpiB5QZf5N6
-        j3T1XgNvTS1MqOdbZ+KkypymNsh9w67qMx+NXWrQTqaNGc9tmzQezmtZoAGhHBuzteRz/4WkNRS
-        wfKSM0XBGNv2xNCdQn9dEPN0IyQLMX6I=
-X-Received: by 2002:a05:600c:4e88:b0:3b5:477:1e80 with SMTP id f8-20020a05600c4e8800b003b504771e80mr34594853wmq.200.1669545311989;
-        Sun, 27 Nov 2022 02:35:11 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf44zTk6J1KBaqs1seffTqR2+v9TqwwPSmjBWI2JrtJKUPaYELfhGu32bDJHUXiVwBKDfUuj3g==
-X-Received: by 2002:a05:600c:4e88:b0:3b5:477:1e80 with SMTP id f8-20020a05600c4e8800b003b504771e80mr34594816wmq.200.1669545311706;
-        Sun, 27 Nov 2022 02:35:11 -0800 (PST)
-Received: from ?IPV6:2003:cb:c724:dc00:5ea8:da59:8609:7da? (p200300cbc724dc005ea8da59860907da.dip0.t-ipconnect.de. [2003:cb:c724:dc00:5ea8:da59:8609:7da])
-        by smtp.gmail.com with ESMTPSA id u10-20020a05600c19ca00b003c5571c27a1sm14797024wmq.32.2022.11.27.02.35.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Nov 2022 02:35:11 -0800 (PST)
-Message-ID: <81fb0fa3-2e06-b765-56ac-a7d981194e59@redhat.com>
-Date:   Sun, 27 Nov 2022 11:35:09 +0100
+        bh=cPN+BmEQYUICy1UGQadZzNzqjOx78Sh8uSqQROeddZE=;
+        b=xh3o4vh5Buh+MTJko730CUHY03Iz8lzaQ+hYPJhlPzFZ0sMfX5BXrm0lSpEz0+A15u
+         eEGdazXrsnSkLGxu/FpHfpy98I0QEnS1nEF+gFVYxi2GXx62px4Sm4wdw7R3Bpa7R9uM
+         ot04OJLn+bZ/06hTmzrq3aI465q1sVK6zUeaOPLEo2wkvrItx9PPka8H6BwZ7wvihVzS
+         29dqqB8mT9LYM5VLQtNYaF6n7vsx7dFtv14GN9M2QXQadlLPwn5/H36q0LRpqhZVzaZ0
+         hze6Rgo+quSSoQb/B798sl8izaOjS6c3Ie3PAQesSPpocHJYc6zGBSRGYVbicxq/DdiK
+         E62g==
+X-Gm-Message-State: ANoB5pnN64M6aZWVyqq/E2NQhq3OZnR16fx22iXmiYVv/avwoj+4RU7n
+        tVeXHvnmLAv3H156gFVQAoq12g==
+X-Google-Smtp-Source: AA0mqf4ZGewxA+MAxTSYQyTdPfXIgmWFQs7H/WvB19mYSjPeHIYBsOkM7+Ouac+VhOeyig59zSJdfQ==
+X-Received: by 2002:a05:6512:c06:b0:4b4:a843:38b3 with SMTP id z6-20020a0565120c0600b004b4a84338b3mr12120722lfu.417.1669552382298;
+        Sun, 27 Nov 2022 04:33:02 -0800 (PST)
+Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id bf36-20020a05651225a400b0049fff3f645esm1270435lfb.70.2022.11.27.04.33.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Nov 2022 04:33:01 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Lee Jones <lee@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Sriranjani P <sriranjani.p@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>
+Subject: [PATCH v2 1/4] arm64: dts: exynos: add dedicated SYSREG compatibles to Exynos5433
+Date:   Sun, 27 Nov 2022 13:32:56 +0100
+Message-Id: <20221127123259.20339-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-To:     linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        David Airlie <airlied@gmail.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-References: <20221116102659.70287-1-david@redhat.com>
- <20221116102659.70287-17-david@redhat.com>
-Content-Language: en-US
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH mm-unstable v1 16/20] mm/frame-vector: remove FOLL_FORCE
- usage
-In-Reply-To: <20221116102659.70287-17-david@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 16.11.22 11:26, David Hildenbrand wrote:
-> FOLL_FORCE is really only for ptrace access. According to commit
-> 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are always
-> writable"), get_vaddr_frames() currently pins all pages writable as a
-> workaround for issues with read-only buffers.
-> 
-> FOLL_FORCE, however, seems to be a legacy leftover as it predates
-> commit 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are
-> always writable"). Let's just remove it.
-> 
-> Once the read-only buffer issue has been resolved, FOLL_WRITE could
-> again be set depending on the DMA direction.
-> 
-> Cc: Hans Verkuil <hverkuil@xs4all.nl>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Tomasz Figa <tfiga@chromium.org>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->   drivers/media/common/videobuf2/frame_vector.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
-> index 542dde9d2609..062e98148c53 100644
-> --- a/drivers/media/common/videobuf2/frame_vector.c
-> +++ b/drivers/media/common/videobuf2/frame_vector.c
-> @@ -50,7 +50,7 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
->   	start = untagged_addr(start);
->   
->   	ret = pin_user_pages_fast(start, nr_frames,
-> -				  FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM,
-> +				  FOLL_WRITE | FOLL_LONGTERM,
->   				  (struct page **)(vec->ptrs));
->   	if (ret > 0) {
->   		vec->got_ref = true;
+Exynos5433 has several different SYSREGs, so use dedicated compatibles
+for them.
 
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+Reviewed-by: Sriranjani P <sriranjani.p@samsung.com>
 
-Hi Andrew,
-
-see the discussion at [1] regarding a conflict and how to proceed with
-upstreaming. The conflict would be easy to resolve, however, also
-the patch description doesn't make sense anymore with [1].
-
-
-On top of mm-unstable, reverting this patch and applying [1] gives me
-an updated patch:
-
-
- From 1e66c25f1467c1f1e5f275312f2c6df29308d4df Mon Sep 17 00:00:00 2001
-From: David Hildenbrand <david@redhat.com>
-Date: Wed, 16 Nov 2022 11:26:55 +0100
-Subject: [PATCH] mm/frame-vector: remove FOLL_FORCE usage
-
-GUP now supports reliable R/O long-term pinning in COW mappings, such
-that we break COW early. MAP_SHARED VMAs only use the shared zeropage so
-far in one corner case (DAXFS file with holes), which can be ignored
-because GUP does not support long-term pinning in fsdax (see
-check_vma_flags()).
-
-Consequently, FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM is no longer required
-for reliable R/O long-term pinning: FOLL_LONGTERM is sufficient. So stop
-using FOLL_FORCE, which is really only for ptrace access.
-
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tomasz Figa <tfiga@chromium.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
-  drivers/media/common/videobuf2/frame_vector.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
-index aad72640f055..8606fdacf5b8 100644
---- a/drivers/media/common/videobuf2/frame_vector.c
-+++ b/drivers/media/common/videobuf2/frame_vector.c
-@@ -41,7 +41,7 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames, bool write,
-  	int ret_pin_user_pages_fast = 0;
-  	int ret = 0;
-  	int err;
--	unsigned int gup_flags = FOLL_FORCE | FOLL_LONGTERM;
-+	unsigned int gup_flags = FOLL_LONGTERM;
-  
-  	if (nr_frames == 0)
-  		return 0;
+Changes since v1:
+1. Add Rb tags.
+
+Cc: Sriranjani P <sriranjani.p@samsung.com>
+Cc: Chanho Park <chanho61.park@samsung.com>
+Cc: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index bd6a354b9cb5..6976e45aa769 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -1118,22 +1118,26 @@ hdmiphy: hdmiphy@13af0000 {
+ 		};
+ 
+ 		syscon_disp: syscon@13b80000 {
+-			compatible = "samsung,exynos5433-sysreg", "syscon";
++			compatible = "samsung,exynos5433-disp-sysreg",
++				     "samsung,exynos5433-sysreg", "syscon";
+ 			reg = <0x13b80000 0x1010>;
+ 		};
+ 
+ 		syscon_cam0: syscon@120f0000 {
+-			compatible = "samsung,exynos5433-sysreg", "syscon";
++			compatible = "samsung,exynos5433-cam0-sysreg",
++				     "samsung,exynos5433-sysreg", "syscon";
+ 			reg = <0x120f0000 0x1020>;
+ 		};
+ 
+ 		syscon_cam1: syscon@145f0000 {
+-			compatible = "samsung,exynos5433-sysreg", "syscon";
++			compatible = "samsung,exynos5433-cam1-sysreg",
++				     "samsung,exynos5433-sysreg", "syscon";
+ 			reg = <0x145f0000 0x1038>;
+ 		};
+ 
+ 		syscon_fsys: syscon@156f0000 {
+-			compatible = "samsung,exynos5433-sysreg", "syscon";
++			compatible = "samsung,exynos5433-fsys-sysreg",
++				     "samsung,exynos5433-sysreg", "syscon";
+ 			reg = <0x156f0000 0x1044>;
+ 		};
+ 
 -- 
-2.38.1
-
-
-
-Please let me know how you want to proceed. Ideally, you'd pick up
-[1] and apply this updated patch. Also, please tell me if I should
-send this updated patch in a separate mail (e.g., as reply to this mail).
-
-
-[1] https://lkml.kernel.org/r/71bdd3cf-b044-3f12-df58-7c16d5749587@xs4all.nl
-
--- 
-Thanks,
-
-David / dhildenb
+2.34.1
 
