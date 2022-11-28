@@ -2,102 +2,184 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCFAC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 27 Nov 2022 21:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 366D2C4708A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Nov 2022 08:17:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229723AbiK0V01 (ORCPT
+        id S230104AbiK1IRQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 27 Nov 2022 16:26:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34484 "EHLO
+        Mon, 28 Nov 2022 03:17:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229712AbiK0V00 (ORCPT
+        with ESMTP id S229629AbiK1IRN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 27 Nov 2022 16:26:26 -0500
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE0C7F5A8
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Nov 2022 13:26:24 -0800 (PST)
-Received: by mail-lj1-x232.google.com with SMTP id z4so11120263ljq.6
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Nov 2022 13:26:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LpYPbhCIxdq9zb9RtQtEbIq7/DCEPoj36+5WZRRtCkY=;
-        b=AX0vLsCbgw8p+0tT8lQ3aebcqI+FvAoUVjgtrVuGupxDFsTrtFE3MWdXFgWYDWsgPD
-         wIMhMd0j04AuW1HwiDxn8pIjBnxbCGGNtg9TKZMxn1Yb1yykMODR3yudB/Nt803NaQ2t
-         p71Ulqlf4Fp7fI0aZ03mW59okyZM5xXSGKtZqLLX7N7YUTfaZ6Vz57olyVJMYRaV0oOu
-         Vn9Q2ivM6biaQAK3RKTE3O0gWfNVXgibtqON2rmgLTM4AivWjwJy1UJJbwiHMVZ26Jlr
-         Y/AaMGpNqIh2nLbCGezR/Jw2axTCYx506Ofn1I8q1c+8rzmpbDuqY+wfTyWrcliug0aH
-         M2Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LpYPbhCIxdq9zb9RtQtEbIq7/DCEPoj36+5WZRRtCkY=;
-        b=g/8uRxEj1dqBfZhIusiC1gBpeH7d5GGBkn8x59c/M6jPAFQOjOJsKa90TZjfmPrJBX
-         2dY5uxB9AiO1F+5/SrnRgQ7gwv0BmyKJ66yYAMlAxQNJtCEWQb1eDtZQtqKWnDaQT5aj
-         uMifPgEEL8CTRUY2gKcvTwJ6x6VFfWS65YNgrvA+0FDA2CJXl0m4SLV+5CtfqlfK9QXC
-         IH0+TR8Dz6TuG00Na04jp2T6EF7yLTSt4ZXlspYGsYXiA/c8/aRgg7BXRDTUKrXBiPAR
-         bteg9zdeoP91SYBGjqPXciULPbAOsUT2/JukIe/7ROyFPyv6/RdUgBKCQvx+epRfRkBJ
-         ozVw==
-X-Gm-Message-State: ANoB5pkKkGG6lLySP/aOGGllmYJsY88JY1GO/PaOXmGp/DUx1qnaR+EI
-        UxUGWzWa1VotJWMbGu8AuYfTLQ==
-X-Google-Smtp-Source: AA0mqf6Dg324ZZZEmjiJ2EXuM/mufU09uLC8mRgyCZS6eiLXXVFdX65fVC8xggbEcd3AtxwOKKW+vA==
-X-Received: by 2002:a2e:a224:0:b0:277:309:f1ad with SMTP id i4-20020a2ea224000000b002770309f1admr9712153ljm.244.1669584383311;
-        Sun, 27 Nov 2022 13:26:23 -0800 (PST)
-Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id 4-20020ac25f04000000b004b4b90a6992sm1074361lfq.95.2022.11.27.13.26.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Nov 2022 13:26:22 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     linux-kernel@vger.kernel.org,
-        Pierre Gondois <pierre.gondois@arm.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Arjun K V <arjun.kv@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Aswani Reddy <aswani.reddy@samsung.com>,
-        Shashank Prashar <s.prashar@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH v4 0/2] arm64: dts: [exynos|fsd]: Update cache properties
-Date:   Sun, 27 Nov 2022 22:26:21 +0100
-Message-Id: <166958437707.66932.13795451978278069331.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221123092449.88097-1-pierre.gondois@arm.com>
-References: <20221123092449.88097-1-pierre.gondois@arm.com>
+        Mon, 28 Nov 2022 03:17:13 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3F5D5FC2;
+        Mon, 28 Nov 2022 00:17:11 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7B7ABB80B3A;
+        Mon, 28 Nov 2022 08:17:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF774C433D6;
+        Mon, 28 Nov 2022 08:17:01 +0000 (UTC)
+Message-ID: <08b65ac6-6786-1080-18f8-d2be109c85fc@xs4all.nl>
+Date:   Mon, 28 Nov 2022 09:17:00 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Content-Language: en-US
+To:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20221116102659.70287-1-david@redhat.com>
+ <20221116102659.70287-17-david@redhat.com>
+ <81fb0fa3-2e06-b765-56ac-a7d981194e59@redhat.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH mm-unstable v1 16/20] mm/frame-vector: remove FOLL_FORCE
+ usage
+In-Reply-To: <81fb0fa3-2e06-b765-56ac-a7d981194e59@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 23 Nov 2022 10:24:43 +0100, Pierre Gondois wrote:
-> v1:
->  - exynos: [1]
->  - fds: [2]
-> v2:
->   No change.
->  - exynos: [3]
->  - fds: [4]
-> v3:
->  - Update commit header for fsd platform. [5]
-> v4:
->  - Update commit header for fsd platform.
+Hi David,
+
+On 27/11/2022 11:35, David Hildenbrand wrote:
+> On 16.11.22 11:26, David Hildenbrand wrote:
+>> FOLL_FORCE is really only for ptrace access. According to commit
+>> 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are always
+>> writable"), get_vaddr_frames() currently pins all pages writable as a
+>> workaround for issues with read-only buffers.
+>>
+>> FOLL_FORCE, however, seems to be a legacy leftover as it predates
+>> commit 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are
+>> always writable"). Let's just remove it.
+>>
+>> Once the read-only buffer issue has been resolved, FOLL_WRITE could
+>> again be set depending on the DMA direction.
+>>
+>> Cc: Hans Verkuil <hverkuil@xs4all.nl>
+>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Cc: Tomasz Figa <tfiga@chromium.org>
+>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> ---
+>>   drivers/media/common/videobuf2/frame_vector.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
+>> index 542dde9d2609..062e98148c53 100644
+>> --- a/drivers/media/common/videobuf2/frame_vector.c
+>> +++ b/drivers/media/common/videobuf2/frame_vector.c
+>> @@ -50,7 +50,7 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+>>       start = untagged_addr(start);
+>>         ret = pin_user_pages_fast(start, nr_frames,
+>> -                  FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM,
+>> +                  FOLL_WRITE | FOLL_LONGTERM,
+>>                     (struct page **)(vec->ptrs));
+>>       if (ret > 0) {
+>>           vec->got_ref = true;
 > 
-> [...]
+> 
+> Hi Andrew,
+> 
+> see the discussion at [1] regarding a conflict and how to proceed with
+> upstreaming. The conflict would be easy to resolve, however, also
+> the patch description doesn't make sense anymore with [1].
 
-Applied, thanks!
+Might it be easier and less confusing if you post a v2 of this series
+with my patch first? That way it is clear that 1) my patch has to come
+first, and 2) that it is part of a single series and should be merged
+by the mm subsystem.
 
-[1/2] arm64: dts: exynos: Update cache properties
-      https://git.kernel.org/krzk/linux/c/784287950d8613132d3c3fd502906ba844d63166
-[2/2] arm64: dts: fsd: Update cache properties
-      https://git.kernel.org/krzk/linux/c/bf2ae716bc4a442e6e8270c18fd29441c031ace8
+Less chances of things going wrong that way.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Just mention in the v2 cover letter that the first patch was added to
+make it easy to backport that fix without being hampered by merge
+conflicts if it was added after your frame_vector.c patch.
+
+Regards,
+
+	Hans
+
+> 
+> 
+> On top of mm-unstable, reverting this patch and applying [1] gives me
+> an updated patch:
+> 
+> 
+> From 1e66c25f1467c1f1e5f275312f2c6df29308d4df Mon Sep 17 00:00:00 2001
+> From: David Hildenbrand <david@redhat.com>
+> Date: Wed, 16 Nov 2022 11:26:55 +0100
+> Subject: [PATCH] mm/frame-vector: remove FOLL_FORCE usage
+> 
+> GUP now supports reliable R/O long-term pinning in COW mappings, such
+> that we break COW early. MAP_SHARED VMAs only use the shared zeropage so
+> far in one corner case (DAXFS file with holes), which can be ignored
+> because GUP does not support long-term pinning in fsdax (see
+> check_vma_flags()).
+> 
+> Consequently, FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM is no longer required
+> for reliable R/O long-term pinning: FOLL_LONGTERM is sufficient. So stop
+> using FOLL_FORCE, which is really only for ptrace access.
+> 
+> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> Cc: Hans Verkuil <hverkuil@xs4all.nl>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Tomasz Figa <tfiga@chromium.org>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  drivers/media/common/videobuf2/frame_vector.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
+> index aad72640f055..8606fdacf5b8 100644
+> --- a/drivers/media/common/videobuf2/frame_vector.c
+> +++ b/drivers/media/common/videobuf2/frame_vector.c
+> @@ -41,7 +41,7 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames, bool write,
+>      int ret_pin_user_pages_fast = 0;
+>      int ret = 0;
+>      int err;
+> -    unsigned int gup_flags = FOLL_FORCE | FOLL_LONGTERM;
+> +    unsigned int gup_flags = FOLL_LONGTERM;
+>  
+>      if (nr_frames == 0)
+>          return 0;
+
