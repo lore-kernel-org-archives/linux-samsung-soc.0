@@ -2,181 +2,211 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C073BC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Nov 2022 08:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D5EC43217
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Nov 2022 14:45:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229976AbiK1I6K (ORCPT
+        id S231880AbiK1Ooh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 28 Nov 2022 03:58:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33100 "EHLO
+        Mon, 28 Nov 2022 09:44:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230001AbiK1I6I (ORCPT
+        with ESMTP id S232754AbiK1On4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Nov 2022 03:58:08 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6CEF616B
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Nov 2022 00:58:07 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id bj12so23941552ejb.13
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Nov 2022 00:58:07 -0800 (PST)
+        Mon, 28 Nov 2022 09:43:56 -0500
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8402723142
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Nov 2022 06:43:48 -0800 (PST)
+Received: by mail-io1-xd2c.google.com with SMTP id y6so7705060iof.9
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Nov 2022 06:43:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=amarulasolutions.com; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iRo5DYRndKCx9sGSXzsZxPr88K/zqtuLTLl1O32mcFE=;
-        b=XOKEpyQaMH8DtU4ghoeum5LLPSyZKKSeL9ukREYJEhE5Pet4ng53VcgxrNVIVOiN3z
-         qM9BvX69vBwubqV7gI66eEPgV5zFoyHzRXj6Y/c3o1k6BVytkDV23dS8hW9lN3urO8Q7
-         YycsWj1XAMOHph6L7v2J+A4VSfKO7i7WBHunk=
+        bh=S6L8RhRfV8VSXtRPH3xyzuQhldpf9D/TJSFNTl5XmzE=;
+        b=CVJh8kUzolx1OUJGGpdg/lJPM96XGU/QBR/WAdFT6BsPewiq/a5tcwjVEjiuVeN9pb
+         u+9flehiW4qFqTMbyORly/V20CeNK1R+k9RgTKNi35G4GtdW41hUkX4HjJWTCbEEwM/0
+         aqzE6cOIJClwC+UdGPn9Ma0QLvh0bsKJgKFNc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iRo5DYRndKCx9sGSXzsZxPr88K/zqtuLTLl1O32mcFE=;
-        b=rLt1k2h5fkWEkmkhxmIHwE0IXE6vn67qpaI1TE2EQasqSNBtfiBxKeUZ8AGzQ9KFf3
-         nUWwdLMRw91UqQV7bO9Mwkt0nw6mhXAH3rKYXcNWppTARP+pz1TVoO2zRDAVN3GzTMD3
-         p6o14CmzeeFzF2OOjwaS+2DoglgyzglmfMXHPp8FhERWI9mf5abLTwUm2zEV7G1emZ0Q
-         OcvrG2rH5BCb18HGlYM0Pub9t1OXR8CgE8ZFiTM8o1LX74lgWfZZJXpAckTTLDU4Zp/W
-         pVMTHEKt4CzQpvrcBxcjBwfpVMhBwRuMr3dFdMOruhpaynsFwf36D5GRe+EHjVPH39lV
-         SlSQ==
-X-Gm-Message-State: ANoB5pm1UVHy8oVl5Rc+zqpWWKWyTJ4FspN4/b02W3J6C4B5ZaA+cqmN
-        2HCb2dnpggGAns14s7NjY2xcdh1L6Fsd1w==
-X-Google-Smtp-Source: AA0mqf6L/6aZn/3M9K3k1K9SpfvtopC28Mdofyh9DG7skprE4HvsxjRVXKgNaHnQEjGAqIJJSRaVHA==
-X-Received: by 2002:a17:906:ad97:b0:7bc:42f6:153d with SMTP id la23-20020a170906ad9700b007bc42f6153dmr13944200ejb.204.1669625886077;
-        Mon, 28 Nov 2022 00:58:06 -0800 (PST)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
-        by smtp.gmail.com with ESMTPSA id 18-20020a170906311200b007c07909eb9asm543487ejx.1.2022.11.28.00.58.04
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Nov 2022 00:58:05 -0800 (PST)
-Received: by mail-ed1-f47.google.com with SMTP id f7so14468776edc.6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Nov 2022 00:58:04 -0800 (PST)
-X-Received: by 2002:aa7:db98:0:b0:46a:d57:d9d0 with SMTP id
- u24-20020aa7db98000000b0046a0d57d9d0mr25216647edt.113.1669625884043; Mon, 28
- Nov 2022 00:58:04 -0800 (PST)
+        bh=S6L8RhRfV8VSXtRPH3xyzuQhldpf9D/TJSFNTl5XmzE=;
+        b=FAb64f15CwM+/tKkA4LrnpKtOxbUJbPwNN2toVokjasliQs/OLAzWB9Q03/hHTpCV/
+         aDhTqB8dCtAAF+U2G5y4HoK8gTAzl0aHRmzQgRGgS3MVQHGc/3YyHwcXUh2/W2aoL5qU
+         694b40McRQAqo4wcCLY9hI/fEpKZ7cUFdnhK9HXxXpbmFjSfjGHBObTnp/ygqlMu6wZS
+         dz+Ck9w6s2CLosDyFs0zzPEb2pi4q658DCn2vXfyTC/0FfuSeLDhWGjaarKgX5Jo+BLM
+         WhMuNyTFP4YusarbgJ2sbwIgarvzloapp+BsP9rL+Z2JIbDAvCA3p/9eD/mYGQPfRPJO
+         jEuw==
+X-Gm-Message-State: ANoB5pksErn1D4gEEmRf/En9E+yJxvdylVEGk/eyosyu0bKny3LtkUIL
+        ynpm0ogNmvdfdDAtkrfIITd4aJ5LFGt9TEhoz9UkqQ==
+X-Google-Smtp-Source: AA0mqf5vRJvkAFzH7VGIyHUjlGgAv2lBjTLz5hLmAadd9Rhl1puEWwY2LuzVLPv0D1h21eak04UMa1TAgyxKU74rp+M=
+X-Received: by 2002:a05:6638:5aa:b0:363:bd7e:ce1c with SMTP id
+ b10-20020a05663805aa00b00363bd7ece1cmr24944670jar.37.1669646627876; Mon, 28
+ Nov 2022 06:43:47 -0800 (PST)
 MIME-Version: 1.0
-References: <20221116102659.70287-1-david@redhat.com> <20221116102659.70287-17-david@redhat.com>
- <81fb0fa3-2e06-b765-56ac-a7d981194e59@redhat.com> <08b65ac6-6786-1080-18f8-d2be109c85fc@xs4all.nl>
- <9d0bf98a-3d6a-1082-e992-1338e1525935@redhat.com>
-In-Reply-To: <9d0bf98a-3d6a-1082-e992-1338e1525935@redhat.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Mon, 28 Nov 2022 17:57:51 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5BQBsBiY48o3FxmQT7H4063=dvDDwSB4S=AyLxXbXuJeA@mail.gmail.com>
-Message-ID: <CAAFQd5BQBsBiY48o3FxmQT7H4063=dvDDwSB4S=AyLxXbXuJeA@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable v1 16/20] mm/frame-vector: remove FOLL_FORCE usage
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, etnaviv@lists.freedesktop.org,
+References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
+ <20221110183853.3678209-7-jagan@amarulasolutions.com> <CGME20221117045817eucas1p1778503aa62ef18ef5ee0502d2189cd15@eucas1p1.samsung.com>
+ <04fb17e2-1b55-fbd9-d846-da3e3da4edb8@denx.de> <f33142de-862e-9775-b1c9-b871bb9a243c@samsung.com>
+ <b66b44fc-5d4c-d3a8-8538-79003b14691e@denx.de> <CAMty3ZBfAY86fp7XxS9frrBiT9FRkJaNSRY-4CVpqGOvdpn1fw@mail.gmail.com>
+ <58671662-9242-c7ef-53ef-60f9cdc3399a@denx.de>
+In-Reply-To: <58671662-9242-c7ef-53ef-60f9cdc3399a@denx.de>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 28 Nov 2022 20:13:36 +0530
+Message-ID: <CAMty3ZDVZJ6TjKjtq9wSHudmeD+7O1vB_j0V1xKjYGWnwMKa6Q@mail.gmail.com>
+Subject: Re: [PATCH v8 06/14] drm: bridge: samsung-dsim: Handle proper DSI
+ host initialization
+To:     Marek Vasut <marex@denx.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
         dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        David Airlie <airlied@gmail.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Nov 28, 2022 at 5:19 PM David Hildenbrand <david@redhat.com> wrote:
+,On Sat, Nov 26, 2022 at 3:44 AM Marek Vasut <marex@denx.de> wrote:
 >
-> On 28.11.22 09:17, Hans Verkuil wrote:
-> > Hi David,
-> >
-> > On 27/11/2022 11:35, David Hildenbrand wrote:
-> >> On 16.11.22 11:26, David Hildenbrand wrote:
-> >>> FOLL_FORCE is really only for ptrace access. According to commit
-> >>> 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are always
-> >>> writable"), get_vaddr_frames() currently pins all pages writable as a
-> >>> workaround for issues with read-only buffers.
-> >>>
-> >>> FOLL_FORCE, however, seems to be a legacy leftover as it predates
-> >>> commit 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are
-> >>> always writable"). Let's just remove it.
-> >>>
-> >>> Once the read-only buffer issue has been resolved, FOLL_WRITE could
-> >>> again be set depending on the DMA direction.
-> >>>
-> >>> Cc: Hans Verkuil <hverkuil@xs4all.nl>
-> >>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> >>> Cc: Tomasz Figa <tfiga@chromium.org>
-> >>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> >>> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> >>> Signed-off-by: David Hildenbrand <david@redhat.com>
-> >>> ---
-> >>>    drivers/media/common/videobuf2/frame_vector.c | 2 +-
-> >>>    1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
-> >>> index 542dde9d2609..062e98148c53 100644
-> >>> --- a/drivers/media/common/videobuf2/frame_vector.c
-> >>> +++ b/drivers/media/common/videobuf2/frame_vector.c
-> >>> @@ -50,7 +50,7 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
-> >>>        start = untagged_addr(start);
-> >>>          ret = pin_user_pages_fast(start, nr_frames,
-> >>> -                  FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM,
-> >>> +                  FOLL_WRITE | FOLL_LONGTERM,
-> >>>                      (struct page **)(vec->ptrs));
-> >>>        if (ret > 0) {
-> >>>            vec->got_ref = true;
+> On 11/23/22 21:09, Jagan Teki wrote:
+> > On Sat, Nov 19, 2022 at 7:45 PM Marek Vasut <marex@denx.de> wrote:
 > >>
+> >> On 11/17/22 14:04, Marek Szyprowski wrote:
+> >>> On 17.11.2022 05:58, Marek Vasut wrote:
+> >>>> On 11/10/22 19:38, Jagan Teki wrote:
+> >>>>> DSI host initialization handling in previous exynos dsi driver has
+> >>>>> some pitfalls. It initializes the host during host transfer() hook
+> >>>>> that is indeed not the desired call flow for I2C and any other DSI
+> >>>>> configured downstream bridges.
+> >>>>>
+> >>>>> Host transfer() is usually triggered for downstream DSI panels or
+> >>>>> bridges and I2C-configured-DSI bridges miss these host initialization
+> >>>>> as these downstream bridges use bridge operations hooks like pre_enable,
+> >>>>> and enable in order to initialize or set up the host.
+> >>>>>
+> >>>>> This patch is trying to handle the host init handler to satisfy all
+> >>>>> downstream panels and bridges. Added the DSIM_STATE_REINITIALIZED state
+> >>>>> flag to ensure that host init is also done on first cmd transfer, this
+> >>>>> helps existing DSI panels work on exynos platform (form Marek
+> >>>>> Szyprowski).
+> >>>>>
+> >>>>> v8, v7, v6, v5:
+> >>>>> * none
+> >>>>>
+> >>>>> v4:
+> >>>>> * update init handling to ensure host init done on first cmd transfer
+> >>>>>
+> >>>>> v3:
+> >>>>> * none
+> >>>>>
+> >>>>> v2:
+> >>>>> * check initialized state in samsung_dsim_init
+> >>>>>
+> >>>>> v1:
+> >>>>> * keep DSI init in host transfer
+> >>>>>
+> >>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> >>>>> ---
+> >>>>>     drivers/gpu/drm/bridge/samsung-dsim.c | 25 +++++++++++++++++--------
+> >>>>>     include/drm/bridge/samsung-dsim.h     |  5 +++--
+> >>>>>     2 files changed, 20 insertions(+), 10 deletions(-)
+> >>>>>
+> >>>>> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>>>> b/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>>>> index bb1f45fd5a88..ec7e01ae02ea 100644
+> >>>>> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>>>> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>>>> @@ -1234,12 +1234,17 @@ static void samsung_dsim_disable_irq(struct
+> >>>>> samsung_dsim *dsi)
+> >>>>>         disable_irq(dsi->irq);
+> >>>>>     }
+> >>>>>     -static int samsung_dsim_init(struct samsung_dsim *dsi)
+> >>>>> +static int samsung_dsim_init(struct samsung_dsim *dsi, unsigned int
+> >>>>> flag)
+> >>>>>     {
+> >>>>>         const struct samsung_dsim_driver_data *driver_data =
+> >>>>> dsi->driver_data;
+> >>>>>     +    if (dsi->state & flag)
+> >>>>> +        return 0;
+> >>>>> +
+> >>>>>         samsung_dsim_reset(dsi);
+> >>>>> -    samsung_dsim_enable_irq(dsi);
+> >>>>> +
+> >>>>> +    if (!(dsi->state & DSIM_STATE_INITIALIZED))
+> >>>>> +        samsung_dsim_enable_irq(dsi);
+> >>>>>           if (driver_data->reg_values[RESET_TYPE] == DSIM_FUNCRST)
+> >>>>>             samsung_dsim_enable_lane(dsi, BIT(dsi->lanes) - 1);
+> >>>>> @@ -1250,6 +1255,8 @@ static int samsung_dsim_init(struct
+> >>>>> samsung_dsim *dsi)
+> >>>>>         samsung_dsim_set_phy_ctrl(dsi);
+> >>>>>         samsung_dsim_init_link(dsi);
+> >>>>>     +    dsi->state |= flag;
+> >>>>> +
+> >>>>>         return 0;
+> >>>>>     }
+> >>>>>     @@ -1269,6 +1276,10 @@ static void
+> >>>>> samsung_dsim_atomic_pre_enable(struct drm_bridge *bridge,
+> >>>>>         }
+> >>>>>           dsi->state |= DSIM_STATE_ENABLED;
+> >>>>> +
+> >>>>> +    ret = samsung_dsim_init(dsi, DSIM_STATE_INITIALIZED);
+> >>>>> +    if (ret)
+> >>>>> +        return;
+> >>>>>     }
+> >>>>>       static void samsung_dsim_atomic_enable(struct drm_bridge *bridge,
+> >>>>> @@ -1458,12 +1469,9 @@ static ssize_t
+> >>>>> samsung_dsim_host_transfer(struct mipi_dsi_host *host,
+> >>>>>         if (!(dsi->state & DSIM_STATE_ENABLED))
+> >>>>>             return -EINVAL;
+> >>>>>     -    if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
+> >>>>> -        ret = samsung_dsim_init(dsi);
+> >>>>> -        if (ret)
+> >>>>> -            return ret;
+> >>>>> -        dsi->state |= DSIM_STATE_INITIALIZED;
+> >>>>> -    }
+> >>>>> +    ret = samsung_dsim_init(dsi, DSIM_STATE_REINITIALIZED);
+> >>>>
+> >>>> This triggers full controller reset and reprogramming upon first
+> >>>> command transfer, is such heavy handed reload really necessary ?
+> >>>
+> >>> Yes it is, otherwise the proper DSI panels doesn't work with Exynos DRM
+> >>> DSI. If this is a real issue for you, then maybe the driver could do the
+> >>> initialization conditionally, in prepare() callback in case of IMX and
+> >>> on the first transfer in case of Exynos?
 > >>
-> >> Hi Andrew,
-> >>
-> >> see the discussion at [1] regarding a conflict and how to proceed with
-> >> upstreaming. The conflict would be easy to resolve, however, also
-> >> the patch description doesn't make sense anymore with [1].
+> >> That's odd , it does actually break panel support for me, without this
+> >> double reset the panel works again. But I have to wonder, why would such
+> >> a full reset be necessary at all , even on the exynos ?
 > >
-> > Might it be easier and less confusing if you post a v2 of this series
-> > with my patch first? That way it is clear that 1) my patch has to come
-> > first, and 2) that it is part of a single series and should be merged
-> > by the mm subsystem.
-> >
-> > Less chances of things going wrong that way.
-> >
-> > Just mention in the v2 cover letter that the first patch was added to
-> > make it easy to backport that fix without being hampered by merge
-> > conflicts if it was added after your frame_vector.c patch.
+> > Is it breaking samsung_dsim_reset from host_transfer? maybe checking
+> > whether a reset is required before calling it might fix the issue.  I
+> > agree with double initialization is odd but it seems it is required on
+> > some panels in Exynos, I think tweaking them and adjusting the panel
+> > code might resolve this discrepancy.
 >
-> Yes, that's the way I would naturally do, it, however, Andrew prefers
-> delta updates for minor changes.
->
-> @Andrew, whatever you prefer!
->
-> Thanks!
->
+> Can someone provide further details on the exynos problem ?
 
-However you folks proceed with taking this patch, feel free to add my
-Acked-by. Thanks!
+If I'm correct this sequence is required in order to work the existing
+panel/bridges on exynos. Adjusting these panel/bridge codes can
+possibly fix the sequence further.
 
-Best regards,
-Tomasz
+Marek Szyprowski, please add if you have anything.
 
-> --
-> Thanks,
->
-> David / dhildenb
->
+Jagan.
