@@ -2,58 +2,125 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3FCC47089
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Nov 2022 08:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 929C9C4708E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Nov 2022 09:08:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229732AbiK2I5o (ORCPT
+        id S230319AbiK2JI4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Nov 2022 03:57:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39180 "EHLO
+        Tue, 29 Nov 2022 04:08:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231462AbiK2I5m (ORCPT
+        with ESMTP id S229730AbiK2JIx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Nov 2022 03:57:42 -0500
-X-Greylist: delayed 369 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 29 Nov 2022 00:57:41 PST
-Received: from mail.lucidfour.pl (mail.lucidfour.pl [217.61.97.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 910342DDC
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Nov 2022 00:57:41 -0800 (PST)
-Received: by mail.lucidfour.pl (Postfix, from userid 1001)
-        id E37C081BF3; Tue, 29 Nov 2022 08:51:39 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucidfour.pl; s=mail;
-        t=1669711899; bh=CSKXLMgcdpWkXuTgJn5+jsCVobtU9JEF4vCnS5z6McM=;
-        h=Date:From:To:Subject:From;
-        b=kuP3B3rtUApIIFFVt/Shor1hVuYTSAKUJzw2kTbzIqJVsh7qGc4+Dh2RXEz7eUFgG
-         OMmSApVKcxm09oFOKAwUYkrusY+i7Z0YDPSAcUmAESrwYVTwjDsWgx+7DXyNVaCB7/
-         GXpBQuyhMnbfZ0bQ+yZqpAAUwWtLuEHGRZshSyHs7QrbTWDLWM5VTPOQcmwgzLklKJ
-         tQNqeDsf7tyA68MX0y7cIGe4AlwYT9ZQ+lVtsx1pKR6J4nHAoOFYSPgIbPaOxJK+wy
-         D9kg7V0Q59S5UkRrV5J+IeQKXnMjUQINfDsLiSOfeswc4pi2Sf9Pptz3koQjtMdkDn
-         mMJyOVNwPSxzQ==
-Received: by mail.lucidfour.pl for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Nov 2022 08:50:01 GMT
-Message-ID: <20221129074501-0.1.e.1g8u.0.5em2114b1x@lucidfour.pl>
-Date:   Tue, 29 Nov 2022 08:50:01 GMT
-From:   "Wiktor Nurek" <wiktor.nurek@lucidfour.pl>
-To:     <linux-samsung-soc@vger.kernel.org>
-Subject: =?UTF-8?Q?Nap=C5=82yw_Klient=C3=B3w_ze_strony?=
-X-Mailer: mail.lucidfour.pl
+        Tue, 29 Nov 2022 04:08:53 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00A572BC5;
+        Tue, 29 Nov 2022 01:08:51 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 90112615FC;
+        Tue, 29 Nov 2022 09:08:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EBBAC433D6;
+        Tue, 29 Nov 2022 09:08:43 +0000 (UTC)
+Message-ID: <c2681582-1e24-7ed9-e4fb-e2dd17a93aed@xs4all.nl>
+Date:   Tue, 29 Nov 2022 10:08:41 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH mm-unstable v1 16/20] mm/frame-vector: remove FOLL_FORCE
+ usage
+Content-Language: en-US
+To:     David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20221116102659.70287-1-david@redhat.com>
+ <20221116102659.70287-17-david@redhat.com>
+ <81fb0fa3-2e06-b765-56ac-a7d981194e59@redhat.com>
+ <08b65ac6-6786-1080-18f8-d2be109c85fc@xs4all.nl>
+ <9d0bf98a-3d6a-1082-e992-1338e1525935@redhat.com>
+ <20221128145927.df895bf1966cfa125cae9668@linux-foundation.org>
+ <22b1107b-0acc-5772-a883-8f3c4682eb1b@redhat.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+In-Reply-To: <22b1107b-0acc-5772-a883-8f3c4682eb1b@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On 29/11/2022 09:48, David Hildenbrand wrote:
+> On 28.11.22 23:59, Andrew Morton wrote:
+>> On Mon, 28 Nov 2022 09:18:47 +0100 David Hildenbrand <david@redhat.com> wrote:
+>>
+>>>> Less chances of things going wrong that way.
+>>>>
+>>>> Just mention in the v2 cover letter that the first patch was added to
+>>>> make it easy to backport that fix without being hampered by merge
+>>>> conflicts if it was added after your frame_vector.c patch.
+>>>
+>>> Yes, that's the way I would naturally do, it, however, Andrew prefers
+>>> delta updates for minor changes.
+>>>
+>>> @Andrew, whatever you prefer!
+>>
+>> I'm inclined to let things sit as they are.  Cross-tree conflicts
+>> happen, and Linus handles them.  I'll flag this (very simple) conflict
+>> in the pull request, if MM merges second.  If v4l merges second then
+>> hopefully they will do the same.  But this one is so simple that Linus
+>> hardly needs our help.
 
-chcia=C5=82bym poinformowa=C4=87 Pa=C5=84stwa o mo=C5=BCliwo=C5=9Bci pozy=
-skania nowych zlece=C5=84 ze strony www.
+It's not about cross-tree conflicts, it's about the fact that my patch is
+a fix that needs to be backported to older kernels. It should apply cleanly
+to those older kernels if my patch goes in first, but if it is the other way
+around I would have to make a new patch for the stable kernels.
 
-Widzimy zainteresowanie potencjalnych Klient=C3=B3w Pa=C5=84stwa firm=C4=85=
-, dlatego ch=C4=99tnie pomo=C5=BCemy Pa=C5=84stwu dotrze=C4=87 z ofert=C4=
-=85 do wi=C4=99kszego grona odbiorc=C3=B3w poprzez efektywne metody pozyc=
-jonowania strony w Google.
+Also, the updated changelog in David's patch that sits on top of mine
+makes a lot more sense.
 
-Czy m=C3=B3g=C5=82bym liczy=C4=87 na kontakt zwrotny?
+If you really don't want to take my patch as part of this, then let me know
+and I'll take it through the media subsystem and hope for the best :-)
 
+Regards,
 
-Pozdrawiam serdecznie,
-Wiktor Nurek
+	Hans
+
+>>
+>> But Linus won't be editing changelogs so that the changelog makes more
+>> sense after both trees are joined.  I'm inclined to let the changelog
+>> sit as it is as well.
+> 
+> Works for me. Thanks Andrew!
+> 
+
