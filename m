@@ -2,131 +2,96 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B13C43217
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  1 Dec 2022 10:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EDCC47088
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  1 Dec 2022 21:50:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230264AbiLAKdq (ORCPT
+        id S230464AbiLAVut (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 1 Dec 2022 05:33:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39110 "EHLO
+        Thu, 1 Dec 2022 16:50:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230481AbiLAKdX (ORCPT
+        with ESMTP id S230450AbiLAVus (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 1 Dec 2022 05:33:23 -0500
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 125DC57B5D
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  1 Dec 2022 02:33:04 -0800 (PST)
-Received: by mail-lj1-x235.google.com with SMTP id l8so1344490ljh.13
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Dec 2022 02:33:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XwrQbOBiKU75Cv/78jGn299AlgNFY94s/4aL2Jtvkug=;
-        b=U2APtYn8ADfJPtXk2bBZ5QmzwpCuGGm0/sHSwMgkMZ8K1wnozc+9t4sJxA6mcz7fdk
-         LVh8POmMC5P6w/O/nSl1+2J5iZOWSAaT29DCXdfhTLapHWmBO0gDwMwxtnYWvQideWqn
-         NWTHIwNQHyZQQxrdxXKva0i1Br+OPhz1u5pfjPgyZLftALrVzuvA5yWuFcJmfhkdB80c
-         08Va70e3GGxA2DIpKEnLhObXCiZk0e1R3sR1U3LFM378eyMgTlEcb3YYGQQ6OtkBkz8o
-         aAgcEpgVoZCS4fL5lb6U6xnmYwUnbB50riHTvUWcyb5iEMv929kNm0pVz9i7Zm/DKCHS
-         AZ8A==
+        Thu, 1 Dec 2022 16:50:48 -0500
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1A33C23C7;
+        Thu,  1 Dec 2022 13:50:47 -0800 (PST)
+Received: by mail-ot1-f52.google.com with SMTP id p8-20020a056830130800b0066bb73cf3bcso1823503otq.11;
+        Thu, 01 Dec 2022 13:50:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XwrQbOBiKU75Cv/78jGn299AlgNFY94s/4aL2Jtvkug=;
-        b=zJjnP0SK5/DEpdEORX8p3Wj2P07z4XPmmpRQPZryaKu8z0FHKbvEvT6Zu7p3q9/t++
-         +fOX0Swwri1u2F4D8dMbgBAKg6y5z5nDbYwXGfVu8lgRmR1mhVE4KnmgW5iE2rmSwLSN
-         0941oMNbgWprWB51NrxPB48kW87qOE7g+dbNFuHYHdFTxSZxoUe0f/M+FlZFuqN+Ippq
-         eNTFJEJ5uD7oPHA5Pk43HO1ZsC6MfRL2z9rI7+QgMkCk8AHyH8EHalYwnL6Sqgu7CY2y
-         EBvDyytqbyCfKv1fUGul157FvBbvcTVwFSBaUgox1/U44pLs24oouay1dOyKs4VdXAqf
-         G6zQ==
-X-Gm-Message-State: ANoB5pmJCnRubF6xi58IC3F4CfYFxf9fgDDyGZilo3mkNWkRfJZoBhDZ
-        ssBjJ3TsqD4jRO9vH5K047buww==
-X-Google-Smtp-Source: AA0mqf4un9UBXikeqgMV0WRJT2NbBA+SqC0tiaRYqi1zzzkW5X1ace3hDaZ0+z+IqFfmFyQAeFvOrg==
-X-Received: by 2002:a2e:a263:0:b0:276:be89:5616 with SMTP id k3-20020a2ea263000000b00276be895616mr13844272ljm.347.1669890782423;
-        Thu, 01 Dec 2022 02:33:02 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id p21-20020a2eba15000000b002796fb63dbdsm356393lja.13.2022.12.01.02.33.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Dec 2022 02:33:02 -0800 (PST)
-Message-ID: <d00b6f5e-0966-3ab8-d559-b0f9e843845c@linaro.org>
-Date:   Thu, 1 Dec 2022 11:33:00 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [RFC PATCH v1 2/2] usb: host: add xhci-exynos to support Exynos
- SOCs
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daehwan Jung <dh10.jung@samsung.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+jgJgRNaHld9gb5rSZvL/PyTZHu4sldrsMLvOaIfMsg=;
+        b=k7kgy+xTRFhvzOCJkP/+QqJQeTngry3sI0ciNfq94n7lniD2iLNiM/b/CRcoyGTUWH
+         BBX3aOpy9Nctue8dNSieIhveIO84wBq1wxhDgZpdI3CR1v1wBJoOLSRGN6AdUC0hyPWh
+         PDP7aHtHp3zKbLFILT7/yACRJTYmpYYnEwFXkgBREKDfxd0G/5ptQ8Vc4Z64jDSYLO0x
+         dRoqT2KuClLJQCtqsUJJSCLO82a90AOzuT0RMauclSt7kMvS+r5x/qbez6yX2UQPeDh6
+         bcjPfGrqoLkb0RmbbMmAwIVOlA+224Vpa8DxxUF5vm96kdOfJjRVT/E8yIpMLD+rGUK2
+         ANkQ==
+X-Gm-Message-State: ANoB5plzLTNbJiyY3TlXOWbdZjTXYeqLCTykRejtsKctBPp5fT15HlxO
+        QwkYfrihadvDW0Ri8z2bng==
+X-Google-Smtp-Source: AA0mqf7a9CN/VqTUx6wJBV9AMr7VW+Ph/y/VwY25+fBiEyLCO+i5U4ofRL+QIWVprk48N1V9XxM1Rw==
+X-Received: by 2002:a05:6830:18f1:b0:66b:99a2:feb9 with SMTP id d17-20020a05683018f100b0066b99a2feb9mr34385584otf.359.1669931447052;
+        Thu, 01 Dec 2022 13:50:47 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id d2-20020a4aa582000000b0049e9a80c690sm2233176oom.1.2022.12.01.13.50.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Dec 2022 13:50:46 -0800 (PST)
+Received: (nullmailer pid 1508234 invoked by uid 1000);
+        Thu, 01 Dec 2022 21:50:45 -0000
+Date:   Thu, 1 Dec 2022 15:50:45 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        linux-kernel@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        Artur Bujdoso <artur.bujdoso@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>, sc.suh@samsung.com,
-        taehyun.cho@samsung.com, jh0801.jung@samsung.com,
-        eomji.oh@samsung.com
-References: <1669860811-171746-1-git-send-email-dh10.jung@samsung.com>
- <CGME20221201021942epcas2p2429ed37e1f6146b6e1a5bef23141b3f7@epcas2p2.samsung.com>
- <1669860811-171746-3-git-send-email-dh10.jung@samsung.com>
- <Y4hgnxGMEuizJumr@kroah.com>
- <c524cba6-4438-461a-ab05-9325fe09f832@app.fastmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <c524cba6-4438-461a-ab05-9325fe09f832@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Sriranjani P <sriranjani.p@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Chanho Park <chanho61.park@samsung.com>,
+        devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Subject: Re: [PATCH v2 2/4] dt-bindings: soc: samsung: exynos-sysreg: split
+ from syscon
+Message-ID: <166993144474.1508149.1523006540100879286.robh@kernel.org>
+References: <20221127123259.20339-1-krzysztof.kozlowski@linaro.org>
+ <20221127123259.20339-2-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221127123259.20339-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 01/12/2022 10:01, Arnd Bergmann wrote:
-> On Thu, Dec 1, 2022, at 09:06, Greg Kroah-Hartman wrote:
->> On Thu, Dec 01, 2022 at 11:13:31AM +0900, Daehwan Jung wrote:
->>> This driver works with xhci platform driver. It needs to override
->>> functions of xhci_plat_hc_driver. Wakelocks are used for sleep/wakeup
->>> scenario of system.
->>
->> So this means that no other platform xhci driver can be supported in the
->> same system at the same time.
->>
->> Which kind of makes sense as that's not anything a normal system would
->> have, BUT it feels very odd.  This whole idea of "override the platform
->> driver" feels fragile, why not make these just real platform drivers and
->> have the xhci platform code be a library that the other ones can use?
->> That way you have more control overall, right?
+
+On Sun, 27 Nov 2022 13:32:57 +0100, Krzysztof Kozlowski wrote:
+> Split Samsung Exynos SoC SYSREG bindings to own file to narrow the
+> bindings and do not allow other parts of syscon.yaml.  This allows
+> further customization of Samsung SoC bindings.
 > 
-> Agreed, having another layer here (hcd -> xhci -> xhcd_platform ->
-> xhcd_exynos) would fit perfectly well into how other SoC specific
-> drivers are abstracted. This could potentially also help reduce
-> the amount of code duplication between other soc specific variants
-> (mtk, tegra, mvebu, ...) that are all platform drivers but don't
-> share code with xhci-plat.c.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Acked-by: Lee Jones <lee@kernel.org>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Reviewed-by: Sriranjani P <sriranjani.p@samsung.com>
 > 
-> Alternatively, it seems that all of the xhci-exynos support could
-> just be part of the generic xhci-platform driver: as far as I can
-> tell, none of the added code is exynos specific at all, instead it
-> is a generic xhci that is using the wakeup_source framework.
+> ---
+> 
+> Changes since v1:
+> 1. Add Rb tags.
+> 
+> Cc: Sriranjani P <sriranjani.p@samsung.com>
+> Cc: Chanho Park <chanho61.park@samsung.com>
+> Cc: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  .../devicetree/bindings/mfd/syscon.yaml       |  6 ---
+>  .../soc/samsung/samsung,exynos-sysreg.yaml    | 39 +++++++++++++++++++
+>  2 files changed, 39 insertions(+), 6 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+> 
 
-There is nothing here Exynos SoC related, it's only for the purpose of
-using wakelocks. We do not use wakelocks in other drivers, so I wonder
-what makes this one so special... It does not look like generic approach
-to the problem (which is BTW not really described in commit).
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Rob Herring <robh@kernel.org>
