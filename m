@@ -2,149 +2,110 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF72C47089
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  2 Dec 2022 15:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ECFEC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  2 Dec 2022 23:23:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233703AbiLBPFe (ORCPT
+        id S233561AbiLBXXP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 2 Dec 2022 10:05:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36690 "EHLO
+        Fri, 2 Dec 2022 18:23:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233730AbiLBPF0 (ORCPT
+        with ESMTP id S233044AbiLBXXP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 2 Dec 2022 10:05:26 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6284737F88
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  2 Dec 2022 07:05:25 -0800 (PST)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1p17as-0004iX-Qd; Fri, 02 Dec 2022 16:04:50 +0100
-Received: from pengutronix.de (unknown [IPv6:2a03:f580:87bc:d400:63a6:d4c5:22e2:f72a])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        (Authenticated sender: mkl-all@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id 135E2131753;
-        Fri,  2 Dec 2022 15:04:48 +0000 (UTC)
-Date:   Fri, 2 Dec 2022 16:04:39 +0100
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-To:     Vivek Yadav <vivek.2311@samsung.com>
-Cc:     rcsekar@samsung.com, krzysztof.kozlowski+dt@linaro.org,
-        wg@grandegger.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, pankaj.dubey@samsung.com,
-        ravi.patel@samsung.com, alim.akhtar@samsung.com,
-        linux-fsd@tesla.com, robh+dt@kernel.org, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        aswani.reddy@samsung.com, sriranjani.p@samsung.com
-Subject: Re: RE: RE: [PATCH v3 1/2] can: m_can: Move mram init to mcan device
- setup
-Message-ID: <20221202150439.dmt7omdck7wdjpbv@pengutronix.de>
-References: <20221122105455.39294-1-vivek.2311@samsung.com>
- <CGME20221122105022epcas5p3f5db1c5790b605bac8d319fe06ad915b@epcas5p3.samsung.com>
- <20221122105455.39294-2-vivek.2311@samsung.com>
- <20221123224146.iic52cuhhnwqk2te@pengutronix.de>
- <01a101d8ffe4$1797f290$46c7d7b0$@samsung.com>
- <20221124145405.d67cb6xmoiqfdsq3@pengutronix.de>
- <01f901d9053a$f138bdd0$d3aa3970$@samsung.com>
+        Fri, 2 Dec 2022 18:23:15 -0500
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EF67BB007;
+        Fri,  2 Dec 2022 15:23:14 -0800 (PST)
+Received: by mail-pf1-x432.google.com with SMTP id n3so2008589pfq.10;
+        Fri, 02 Dec 2022 15:23:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aKfchYwXntIzxvzacjQAm257xQlqoADf84p5ijUnCK0=;
+        b=TaCN5yg5es/OCGcj/NfRM2JW10uoQVGBXHx4nPm2YvNINoWjPB/7TD4giwLlv1wmiQ
+         MrVnyFLL88Au5p3oYp1EJYZR/IVa/Sg+w13ge9FLN42eRLZ8YCEcMn0LYkAgWqmlWXru
+         Ys77EdaRACuFl4UD7Zc5QA0sT2gdllTsO02SnM3KKb9q1lGMhzoyg9r39ZhxGEKuFUZL
+         3NyIyjVvfssCdHP1hiknRb2HJ7Fhoh0tfD7E1AHVMxpSYIK9SYHU5ukdOWphGRfSlCWk
+         I20zRW9PJCZ+zcJRTZWzsfaJicGKJVFa6tGplkl1y6uhCqlPXK6Lg9tshNdCdkQChJ0J
+         HC3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aKfchYwXntIzxvzacjQAm257xQlqoADf84p5ijUnCK0=;
+        b=U5UyXbBFenA+T5dsU/5Ioin3sWZX3pikwt76bjNa1KE9emZOKy3NWZrXgsZrrn1uTb
+         /llXQM440vwf0jQIOtvfyCQjNHjQLJlLM9h1Wi7TU1xG47mkW+2mT1jdLWrDOp2A9gH/
+         Q+0sCAKA5We11RS4vPznAludltyga/uOpgcR6nG4NnsUXsmLKahygA2IWQeUj5kRPlD1
+         Ns6o/E0N4d44iFaxpwz95Fd9JuFW2qQYgrZY3+lMBlPDQEpDsVaX3pQohA5776n0PwG+
+         UFnVhZEXyMQCegronUvUuY+uZZ6iKrBsRemRQVg/8WDP6A9OavCl9DYgkJStjfBmS2xy
+         +dsA==
+X-Gm-Message-State: ANoB5pmjY9fxI/WtSvZlWwTr/pr/nf/Z+feNpjvhvByzd2+BB/4UGaY0
+        c4QiFL4ycjMfAw9w91DFuUU=
+X-Google-Smtp-Source: AA0mqf469Y/cLftoGZmaO0lNzpRTefrBSYqmtP4hEkeLeoQt6FlGPNCfB6JCSw1jptFd6fmJSV4lEw==
+X-Received: by 2002:a63:2c05:0:b0:477:ceeb:cb9c with SMTP id s5-20020a632c05000000b00477ceebcb9cmr37582557pgs.17.1670023393811;
+        Fri, 02 Dec 2022 15:23:13 -0800 (PST)
+Received: from [172.30.1.1] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id n9-20020aa79849000000b005769ccca18csm35204pfq.85.2022.12.02.15.23.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Dec 2022 15:23:13 -0800 (PST)
+Message-ID: <e13357cb-bc5f-1a66-db54-0fa41e788668@gmail.com>
+Date:   Sat, 3 Dec 2022 08:23:09 +0900
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nnzicvks5gam4beu"
-Content-Disposition: inline
-In-Reply-To: <01f901d9053a$f138bdd0$d3aa3970$@samsung.com>
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH] PM / devfreq: event: use
+ devm_platform_get_and_ioremap_resource()
+Content-Language: en-US
+To:     ye.xingchen@zte.com.cn, cw00.choi@samsung.com
+Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        krzysztof.kozlowski@linaro.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chi.minghao@zte.com.cn
+References: <202211220942288196359@zte.com.cn>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+In-Reply-To: <202211220942288196359@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On 22. 11. 22. 10:42, ye.xingchen@zte.com.cn wrote:
+> From: Minghao Chi <chi.minghao@zte.com.cn>
+> 
+> Convert platform_get_resource(), devm_ioremap_resource() to a single
+> call to devm_platform_get_and_ioremap_resource(), as this is exactly
+> what this function does.
+> 
+> Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
+> Signed-off-by: ye xingchen <ye.xingchen@zte.com.cn>
+> ---
+>  drivers/devfreq/event/exynos-nocp.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/event/exynos-nocp.c
+> index ccc531ee6938..c1cc23bcb995 100644
+> --- a/drivers/devfreq/event/exynos-nocp.c
+> +++ b/drivers/devfreq/event/exynos-nocp.c
+> @@ -214,8 +214,7 @@ static int exynos_nocp_parse_dt(struct platform_device *pdev,
+>  		nocp->clk = NULL;
+> 
+>  	/* Maps the memory mapped IO to control nocp register */
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	base = devm_ioremap_resource(dev, res);
+> +	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+>  	if (IS_ERR(base))
+>  		return PTR_ERR(base);
+> 
 
---nnzicvks5gam4beu
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied it. Thanks.
 
-On 01.12.2022 09:40:50, Vivek Yadav wrote:
-> > That probably depends on you power management. If I add a regulator
-> > to power the external tcan4x5x chip and power it up during open(), I
-> > need to initialize the RAM.
-> >=20
-> Thanks for the clarification,
->
-> There is one doubt for which I need clarity if I add ram init in
-> m_can_chip_config.
->=20
-> In the current implementation, m_can_ram_init is added in the probe
-> and m_can_class_resume function.
->
-> If I add the ram init function in chip_config which is getting called
-> from m_can_start, then m_can_init_ram will be called two times, once
-> in resume and next from m_can_start also.
+-- 
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
 
-As m_can_start() is called from resume, remove the direct call to
-m_can_init_ram() from m_can_class_resume().
-
-> Can we add ram init inside the m_can_open function itself? Because it
-> is independent of m_can resume functionality.
-
-See above.
-
-mainline implementation:
-
-m_can_class_resume()
-        -> m_can_init_ram()
-
-m_can_open()
-        -> m_can_start()
-        -> m_can_chip_config()
-        -> ops->init
-                m_can_init_ram() (for tcan only)
-
-
-proposed:
-
-m_can_class_resume()
-        -> m_can_start()
-        -> m_can_chip_config()
-        -> m_can_init_ram()
-
-m_can_open()
-        -> m_can_start()
-        -> m_can_chip_config()
-        -> m_can_init_ram()
-
-In mainline m_can_init_ram() is called for the tcan during open(). So if
-you call m_can_init_ram() from m_can_chip_config(), remove it from the
-tcan's tcan4x5x_init() functions, and from m_can_class_resume() it
-should only be called once for open and once for resume.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde           |
-Embedded Linux                   | https://www.pengutronix.de  |
-Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
-
---nnzicvks5gam4beu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEBsvAIBsPu6mG7thcrX5LkNig010FAmOKFAUACgkQrX5LkNig
-011Q9Af8D5n0O+psn9BhVDedhpW//hB/XQMMH7zksV1ocaFaqRhrKndNq/6VxvaQ
-76p0XvaMDoItxBNZOQPFCNibWg8okFne0hyy1QiFmAxzxstuitQJmdsdRAAFZ3Sd
-wheA/xiL2BYQtbRgDkK2ANmQawU9+tOyRmIRRWCki9vcZ4J346uhAzRs6G7BShOr
-w1KH/8oTD5dDIwoyAXvaFeGKNgaf/YDV4JUhwrjFr9dpX4g7HrVsacPxD0V9gyVX
-nI8hamSZM4JAB5tN16hCIsUlnejUHR7QRPy+/q88HyvULstvXWZJ64OERksd++7G
-TCm0ycMZAmZ8WzJmxhCKz01go341Zg==
-=1sZ5
------END PGP SIGNATURE-----
-
---nnzicvks5gam4beu--
