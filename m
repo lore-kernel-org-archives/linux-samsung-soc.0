@@ -2,237 +2,133 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5A7C4321E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  2 Dec 2022 12:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 780FCC47088
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  2 Dec 2022 12:24:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233291AbiLBMWK (ORCPT
+        id S233464AbiLBMYD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 2 Dec 2022 07:22:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45918 "EHLO
+        Fri, 2 Dec 2022 07:24:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233501AbiLBMWA (ORCPT
+        with ESMTP id S233440AbiLBMYC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 2 Dec 2022 07:22:00 -0500
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B64EFD378C
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  2 Dec 2022 04:21:52 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id E5CCF84F62;
-        Fri,  2 Dec 2022 13:21:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1669983710;
-        bh=DAGUPW1K0fo7i5LI1mBlSSU7CpoTBUXsHq+pagui1DQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=FvfjKoXx+k1LZiSiqRqrx6bAYqdCqJsjUKXcECsFyAt3MVdHtezuJjbgguSjD+fG3
-         mb5n+/k58PklYuB4tNTJOIhI5dfXqIUpRATUPq/uGrDlZWB5P9W2TpFDiEk7IOEM/l
-         z66Zac9f2KnAlroqrhEBH1Iedw+fMEmpAcLAJIVxIU3V2wE+EyIFcLHpPJktl7Obuk
-         yjhiGAo/DlWvIgkhnmuFzYZi1CLOoALdi27xunKqVX99g4R9x/y2Jk8xcCAgeec0ux
-         7I0EegmjFdQkpzLlfm1uHOnk9kq/ndI/odUlaBrlQ73nlSyCob7nRzL3F8jaINcJoh
-         5TfnoUBI5+7Kg==
-Message-ID: <2ef1aae1-8ff9-22bc-9817-69d1eae8b485@denx.de>
-Date:   Fri, 2 Dec 2022 13:21:48 +0100
+        Fri, 2 Dec 2022 07:24:02 -0500
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F07ACBA70
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  2 Dec 2022 04:24:00 -0800 (PST)
+Received: by mail-lj1-x230.google.com with SMTP id x11so5227518ljh.7
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 02 Dec 2022 04:24:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B1IE4PC6erRK/A01N47UIMsmxLEl+S0fBRDo4ibGO5I=;
+        b=dn1rHkT/ZUpHyXQkzsJGPlvGVowx9j7sNI5P/+sOF6lJyJwhCYBWbkJwSr3gHcJJPT
+         Q9r6ceBkL275DvXfUzbEqklBMKatqISFq5ByqpfiH77IxA+aqi1nsdx8UqE8aFKOCUve
+         JVl4GDzVLUSZQmwVNuJ/GSOdKxu2UouZMWjkJfJHNeUZLbvWJMeGu6G7EkkctXoe+qmv
+         rbHyfjT0CrCz0n2I7qy7bNGvfhYgxstTUXa3No67EHRP1GiAkgEqGl7/PYlbjat6XoMe
+         Pa6uhNEly0HAYIIlDUmSuXuZXiB1sz/6HXkgNwufU+VG60kgLAEtS1ancfJo+5o2GS09
+         PVFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B1IE4PC6erRK/A01N47UIMsmxLEl+S0fBRDo4ibGO5I=;
+        b=Kq4EH7MoIsUwGtMy2ceVWO/QEUVBn9FaizfEpTobeRc61qzUXNaKJox61qmqQgkbbQ
+         +coboDpAk+rOpsXRQ9T8B0qFE0soisWVeOkoksTnGyUXMmaR4EjSRNmnzjl/qGHQbwvT
+         S0rhEB7IBojQoxGAXj9K9VLMDuId/yjruuSF4St12dCyi64p+GxHsoMTTwk+wGPuOBxd
+         4BTdFpmwpSQW4NoZFC61B6QCBmJLDxxNhtsRolxLGw7XKJzvui7Hw492m5tTDz9sFs1X
+         oFB+JmrhuduQnJL6akPCqdhxUizGxijuwVqfC4u4lpYdu6XEOkGElodFvS4TJwzm33Bn
+         oW2g==
+X-Gm-Message-State: ANoB5pnA4A5Pbltz6vMQFgWdtObKeckCoTFhR9ihyFdjTVFqCuIUmq6/
+        6u0FA/4kQj7BceZLGTwo5uFaGg==
+X-Google-Smtp-Source: AA0mqf5wOgdF/ULr5YJPk+SAVqYWOsw8ngbLK8kRKQAy9jLV7eusYZ85qij8jL5qnFKYUl2GvVdx6Q==
+X-Received: by 2002:a2e:b894:0:b0:277:1c8f:7e8c with SMTP id r20-20020a2eb894000000b002771c8f7e8cmr18986171ljp.296.1669983838529;
+        Fri, 02 Dec 2022 04:23:58 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id c24-20020a056512075800b004a01105eea2sm997019lfs.150.2022.12.02.04.23.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Dec 2022 04:23:58 -0800 (PST)
+Message-ID: <f633b0f3-9fdb-8beb-7edf-7967c7c0c3d5@linaro.org>
+Date:   Fri, 2 Dec 2022 13:23:56 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.5.0
-Subject: Re: [PATCH v8 06/14] drm: bridge: samsung-dsim: Handle proper DSI
- host initialization
+Subject: Re: [RFC PATCH v1 2/2] usb: host: add xhci-exynos to support Exynos
+ SOCs
 Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>
-References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
- <20221110183853.3678209-7-jagan@amarulasolutions.com>
- <CGME20221117045817eucas1p1778503aa62ef18ef5ee0502d2189cd15@eucas1p1.samsung.com>
- <04fb17e2-1b55-fbd9-d846-da3e3da4edb8@denx.de>
- <f33142de-862e-9775-b1c9-b871bb9a243c@samsung.com>
- <b66b44fc-5d4c-d3a8-8538-79003b14691e@denx.de>
- <CAMty3ZBfAY86fp7XxS9frrBiT9FRkJaNSRY-4CVpqGOvdpn1fw@mail.gmail.com>
- <58671662-9242-c7ef-53ef-60f9cdc3399a@denx.de>
- <CAMty3ZDVZJ6TjKjtq9wSHudmeD+7O1vB_j0V1xKjYGWnwMKa6Q@mail.gmail.com>
- <9f08a902-049c-1c00-7fed-3d7ee18b3d2c@samsung.com>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <9f08a902-049c-1c00-7fed-3d7ee18b3d2c@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daehwan Jung <dh10.jung@samsung.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Colin Ian King <colin.i.king@gmail.com>,
+        Artur Bujdoso <artur.bujdoso@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>, sc.suh@samsung.com,
+        taehyun.cho@samsung.com, jh0801.jung@samsung.com,
+        eomji.oh@samsung.com
+References: <1669860811-171746-1-git-send-email-dh10.jung@samsung.com>
+ <CGME20221201021942epcas2p2429ed37e1f6146b6e1a5bef23141b3f7@epcas2p2.samsung.com>
+ <1669860811-171746-3-git-send-email-dh10.jung@samsung.com>
+ <Y4hgnxGMEuizJumr@kroah.com>
+ <c524cba6-4438-461a-ab05-9325fe09f832@app.fastmail.com>
+ <ec0ce90c-b165-d84f-340d-4973b65609b3@linux.intel.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <ec0ce90c-b165-d84f-340d-4973b65609b3@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 12/2/22 11:52, Marek Szyprowski wrote:
-> Hi,
+On 02/12/2022 13:22, Mathias Nyman wrote:
+> On 1.12.2022 11.01, Arnd Bergmann wrote:
+>> On Thu, Dec 1, 2022, at 09:06, Greg Kroah-Hartman wrote:
+>>> On Thu, Dec 01, 2022 at 11:13:31AM +0900, Daehwan Jung wrote:
+>>>> This driver works with xhci platform driver. It needs to override
+>>>> functions of xhci_plat_hc_driver. Wakelocks are used for sleep/wakeup
+>>>> scenario of system.
+>>>
+>>> So this means that no other platform xhci driver can be supported in the
+>>> same system at the same time.
+>>>
+>>> Which kind of makes sense as that's not anything a normal system would
+>>> have, BUT it feels very odd.  This whole idea of "override the platform
+>>> driver" feels fragile, why not make these just real platform drivers and
+>>> have the xhci platform code be a library that the other ones can use?
+>>> That way you have more control overall, right?
 > 
-> Sorry for delay, I was on a sick leave last 2 weeks.
+> Agree that overriding the generic platform driver xhci_hc_platform_driver
+> from this exynos driver is odd.
 > 
-> On 28.11.2022 15:43, Jagan Teki wrote:
->> ,On Sat, Nov 26, 2022 at 3:44 AM Marek Vasut <marex@denx.de> wrote:
->>> On 11/23/22 21:09, Jagan Teki wrote:
->>>> On Sat, Nov 19, 2022 at 7:45 PM Marek Vasut <marex@denx.de> wrote:
->>>>> On 11/17/22 14:04, Marek Szyprowski wrote:
->>>>>> On 17.11.2022 05:58, Marek Vasut wrote:
->>>>>>> On 11/10/22 19:38, Jagan Teki wrote:
->>>>>>>> DSI host initialization handling in previous exynos dsi driver has
->>>>>>>> some pitfalls. It initializes the host during host transfer() hook
->>>>>>>> that is indeed not the desired call flow for I2C and any other DSI
->>>>>>>> configured downstream bridges.
->>>>>>>>
->>>>>>>> Host transfer() is usually triggered for downstream DSI panels or
->>>>>>>> bridges and I2C-configured-DSI bridges miss these host initialization
->>>>>>>> as these downstream bridges use bridge operations hooks like pre_enable,
->>>>>>>> and enable in order to initialize or set up the host.
->>>>>>>>
->>>>>>>> This patch is trying to handle the host init handler to satisfy all
->>>>>>>> downstream panels and bridges. Added the DSIM_STATE_REINITIALIZED state
->>>>>>>> flag to ensure that host init is also done on first cmd transfer, this
->>>>>>>> helps existing DSI panels work on exynos platform (form Marek
->>>>>>>> Szyprowski).
->>>>>>>>
->>>>>>>> v8, v7, v6, v5:
->>>>>>>> * none
->>>>>>>>
->>>>>>>> v4:
->>>>>>>> * update init handling to ensure host init done on first cmd transfer
->>>>>>>>
->>>>>>>> v3:
->>>>>>>> * none
->>>>>>>>
->>>>>>>> v2:
->>>>>>>> * check initialized state in samsung_dsim_init
->>>>>>>>
->>>>>>>> v1:
->>>>>>>> * keep DSI init in host transfer
->>>>>>>>
->>>>>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>>>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->>>>>>>> ---
->>>>>>>>       drivers/gpu/drm/bridge/samsung-dsim.c | 25 +++++++++++++++++--------
->>>>>>>>       include/drm/bridge/samsung-dsim.h     |  5 +++--
->>>>>>>>       2 files changed, 20 insertions(+), 10 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c
->>>>>>>> b/drivers/gpu/drm/bridge/samsung-dsim.c
->>>>>>>> index bb1f45fd5a88..ec7e01ae02ea 100644
->>>>>>>> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
->>>>>>>> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
->>>>>>>> @@ -1234,12 +1234,17 @@ static void samsung_dsim_disable_irq(struct
->>>>>>>> samsung_dsim *dsi)
->>>>>>>>           disable_irq(dsi->irq);
->>>>>>>>       }
->>>>>>>>       -static int samsung_dsim_init(struct samsung_dsim *dsi)
->>>>>>>> +static int samsung_dsim_init(struct samsung_dsim *dsi, unsigned int
->>>>>>>> flag)
->>>>>>>>       {
->>>>>>>>           const struct samsung_dsim_driver_data *driver_data =
->>>>>>>> dsi->driver_data;
->>>>>>>>       +    if (dsi->state & flag)
->>>>>>>> +        return 0;
->>>>>>>> +
->>>>>>>>           samsung_dsim_reset(dsi);
->>>>>>>> -    samsung_dsim_enable_irq(dsi);
->>>>>>>> +
->>>>>>>> +    if (!(dsi->state & DSIM_STATE_INITIALIZED))
->>>>>>>> +        samsung_dsim_enable_irq(dsi);
->>>>>>>>             if (driver_data->reg_values[RESET_TYPE] == DSIM_FUNCRST)
->>>>>>>>               samsung_dsim_enable_lane(dsi, BIT(dsi->lanes) - 1);
->>>>>>>> @@ -1250,6 +1255,8 @@ static int samsung_dsim_init(struct
->>>>>>>> samsung_dsim *dsi)
->>>>>>>>           samsung_dsim_set_phy_ctrl(dsi);
->>>>>>>>           samsung_dsim_init_link(dsi);
->>>>>>>>       +    dsi->state |= flag;
->>>>>>>> +
->>>>>>>>           return 0;
->>>>>>>>       }
->>>>>>>>       @@ -1269,6 +1276,10 @@ static void
->>>>>>>> samsung_dsim_atomic_pre_enable(struct drm_bridge *bridge,
->>>>>>>>           }
->>>>>>>>             dsi->state |= DSIM_STATE_ENABLED;
->>>>>>>> +
->>>>>>>> +    ret = samsung_dsim_init(dsi, DSIM_STATE_INITIALIZED);
->>>>>>>> +    if (ret)
->>>>>>>> +        return;
->>>>>>>>       }
->>>>>>>>         static void samsung_dsim_atomic_enable(struct drm_bridge *bridge,
->>>>>>>> @@ -1458,12 +1469,9 @@ static ssize_t
->>>>>>>> samsung_dsim_host_transfer(struct mipi_dsi_host *host,
->>>>>>>>           if (!(dsi->state & DSIM_STATE_ENABLED))
->>>>>>>>               return -EINVAL;
->>>>>>>>       -    if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
->>>>>>>> -        ret = samsung_dsim_init(dsi);
->>>>>>>> -        if (ret)
->>>>>>>> -            return ret;
->>>>>>>> -        dsi->state |= DSIM_STATE_INITIALIZED;
->>>>>>>> -    }
->>>>>>>> +    ret = samsung_dsim_init(dsi, DSIM_STATE_REINITIALIZED);
->>>>>>> This triggers full controller reset and reprogramming upon first
->>>>>>> command transfer, is such heavy handed reload really necessary ?
->>>>>> Yes it is, otherwise the proper DSI panels doesn't work with Exynos DRM
->>>>>> DSI. If this is a real issue for you, then maybe the driver could do the
->>>>>> initialization conditionally, in prepare() callback in case of IMX and
->>>>>> on the first transfer in case of Exynos?
->>>>> That's odd , it does actually break panel support for me, without this
->>>>> double reset the panel works again. But I have to wonder, why would such
->>>>> a full reset be necessary at all , even on the exynos ?
->>>> Is it breaking samsung_dsim_reset from host_transfer? maybe checking
->>>> whether a reset is required before calling it might fix the issue.  I
->>>> agree with double initialization is odd but it seems it is required on
->>>> some panels in Exynos, I think tweaking them and adjusting the panel
->>>> code might resolve this discrepancy.
->>> Can someone provide further details on the exynos problem ?
->> If I'm correct this sequence is required in order to work the existing
->> panel/bridges on exynos. Adjusting these panel/bridge codes can
->> possibly fix the sequence further.
->>
->> Marek Szyprowski, please add if you have anything.
+> But I don't understand how this works.
+> Where are the hcds created and added when this xhci-exonys driver binds to
+> the device? all this driver does in probe is the overriding?
 > 
-> 
-> Well, frankly speaking the double initialization is not a correct
-> sequence, but this is the only one that actually works on Exynos based
-> boards with DSI panels after moving the initialization to bridge's
-> .prepare() callback.
+> Am I missing something here?
 
-Somehow, I suspect this is related to the LP11 mode handling, which 
-differs for different panels, right ? I think the RPi people worked on 
-fixing that.
+Because it is not a driver for Exynos... it's a driver for wakelocks for
+their specific Android use-cases which the manufacturer ships for their
+Android devices. Due to Google GKI, they try to squeeze into upstream.
+But this is huge misconception what should go to upstream and Samsung
+does not want to keep discussing. They just send random patches and
+disappear...
 
-+CC Dave
+Best regards,
+Krzysztof
 
-> I've already explained this and shared the results
-> of my investigation in my replies to the previous versions of this
-> patchset. The original Exynos DSI driver does the initialization on the
-> first DSI command. This however doesn't work for Jagan with I2C
-> controlled panels/bridges, so he moved the initialization to the
-> .prepare() callback, what broke the Exynos case (in-short - all tested
-> panels works fine only if the DSI host initialization is done AFTER
-> turning the panel's power on). For more information, see this thread:
-> https://lore.kernel.org/all/e96197f9-948a-997e-5453-9f9d179b5f5a@samsung.com/
-> 
-> Now, the more I think of it, the more I'm convinced that we simply
-> should add a hack based on the HW type: do the initialization in
-> .prepare() for non-Exynos case and before the first transfer for the
-> Exynos case, as there is no way to detect the panel/next bridge type
-> (I2C or DSI controlled).
-
-Let's see what Dave has to say about this, maybe there is some further help.
