@@ -2,114 +2,129 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B068DC4321E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  2 Dec 2022 11:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7108EC4167B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  2 Dec 2022 12:21:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233318AbiLBLnE (ORCPT
+        id S232877AbiLBMVg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 2 Dec 2022 06:43:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59248 "EHLO
+        Fri, 2 Dec 2022 07:21:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233217AbiLBLnC (ORCPT
+        with ESMTP id S232190AbiLBMVf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 2 Dec 2022 06:43:02 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02115B71F3;
-        Fri,  2 Dec 2022 03:43:01 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AE77FB8214A;
-        Fri,  2 Dec 2022 11:42:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 986B6C433D6;
-        Fri,  2 Dec 2022 11:42:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669981378;
-        bh=pdUKlgFaAZW4ra2WV3yNnhTKwFRVC6AFm4conLODUCw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=h/rf5rFVofcm5/sbLjxbxa+snUXVrk76ewPFYtIm/Bl83qh5bJ10ml1mD138RjQyT
-         yfWEGtDirv2n0DTahKwcRVEKf8ddM7iMz1DAPpXx206hdYl0Cp2EVpsKIuxkLKdXYK
-         vfy580TrkYVO3VgEGIl+mkGFUh8L+0wqLV2JJOTOK39YhXZazycs3EraHiKYTOENyT
-         G5osG7FHfpn+19K7TptouVE5dmuMpDdUV4nHXFZ/la6snpVAedU+U7uTRHccvt1MQA
-         UoH1lfL+BZTPftoxMN8lhG9ZXXpzyeJjZizc7DdXvo9exqKwX3RMFg/HYNKb8+/TlX
-         OLi8KO01NCsvg==
-Date:   Fri, 2 Dec 2022 17:12:53 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Arnd Bergmann <arnd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
-        linux-kernel@vger.kernel.org,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        linux-next@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
-        dmaengine@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: Regression in dmaengine/next was removed
-Message-ID: <Y4nkvT+R8t6eGrWj@matsya>
-References: <20221021203329.4143397-14-arnd@kernel.org>
- <20221118215401.505480-1-u.kleine-koenig@pengutronix.de>
- <f0425349-d965-0a40-0672-27dfbe45eb44@linaro.org>
- <b759a3e7-7a45-3dc9-14ba-8b01da798f10@linaro.org>
- <20221125085117.23p7yv6wgo6b5l3v@pengutronix.de>
- <7f5cf3d8-4a3b-41eb-fed9-1ade4ba1e4e2@linaro.org>
- <20221202112003.kanwr7bixbaiqdgz@pengutronix.de>
+        Fri, 2 Dec 2022 07:21:35 -0500
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2321865A5;
+        Fri,  2 Dec 2022 04:21:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1669983694; x=1701519694;
+  h=message-id:date:mime-version:to:cc:references:from:
+   subject:in-reply-to:content-transfer-encoding;
+  bh=RCNCqkazhFBYrQaykaK4k78oh0l+6rQ5XaKkf5iBXLo=;
+  b=St31RbfvJnvwS2xlikxiTbRCnTxYavzCnp3NNhpeiK0axAoTkv9Ggtyf
+   7napnRMgATF0F8XOUBkPvBPcEylPTAEwMeSPSyFG3wODhFiRkz+ES2nDy
+   fAPNTVLtfGUtMcWBgl8LQHp5LYhjBnaBJ4Rx4L6yVeIwdypZCjVgwX4A7
+   FGDEgHNVSF29eA3nYpHt6yDLNe2O5+SlLMJHr00VANQ1SlJTRgWPe68Eo
+   ix1x9ql9IdycSf/iD6/lLiqFjqHa+cPcR6iOvfJOl1bda0che50Im4sI+
+   ZSh4eIuDhylx/5E0GWQ1BzkndBOJ/IPgdGAiTi5Zu/P+3shpoymC3v9ko
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10548"; a="317091090"
+X-IronPort-AV: E=Sophos;i="5.96,212,1665471600"; 
+   d="scan'208";a="317091090"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2022 04:21:32 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10548"; a="645012213"
+X-IronPort-AV: E=Sophos;i="5.96,212,1665471600"; 
+   d="scan'208";a="645012213"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.199]) ([10.237.72.199])
+  by orsmga002.jf.intel.com with ESMTP; 02 Dec 2022 04:21:23 -0800
+Message-ID: <ec0ce90c-b165-d84f-340d-4973b65609b3@linux.intel.com>
+Date:   Fri, 2 Dec 2022 14:22:39 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20221202112003.kanwr7bixbaiqdgz@pengutronix.de>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Firefox/102.0 Thunderbird/102.4.2
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daehwan Jung <dh10.jung@samsung.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Colin Ian King <colin.i.king@gmail.com>,
+        Artur Bujdoso <artur.bujdoso@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>, sc.suh@samsung.com,
+        taehyun.cho@samsung.com, jh0801.jung@samsung.com,
+        eomji.oh@samsung.com
+References: <1669860811-171746-1-git-send-email-dh10.jung@samsung.com>
+ <CGME20221201021942epcas2p2429ed37e1f6146b6e1a5bef23141b3f7@epcas2p2.samsung.com>
+ <1669860811-171746-3-git-send-email-dh10.jung@samsung.com>
+ <Y4hgnxGMEuizJumr@kroah.com>
+ <c524cba6-4438-461a-ab05-9325fe09f832@app.fastmail.com>
+Content-Language: en-US
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: Re: [RFC PATCH v1 2/2] usb: host: add xhci-exynos to support Exynos
+ SOCs
+In-Reply-To: <c524cba6-4438-461a-ab05-9325fe09f832@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 02-12-22, 12:20, Uwe Kleine-König wrote:
-> Hello,
+On 1.12.2022 11.01, Arnd Bergmann wrote:
+> On Thu, Dec 1, 2022, at 09:06, Greg Kroah-Hartman wrote:
+>> On Thu, Dec 01, 2022 at 11:13:31AM +0900, Daehwan Jung wrote:
+>>> This driver works with xhci platform driver. It needs to override
+>>> functions of xhci_plat_hc_driver. Wakelocks are used for sleep/wakeup
+>>> scenario of system.
+>>
+>> So this means that no other platform xhci driver can be supported in the
+>> same system at the same time.
+>>
+>> Which kind of makes sense as that's not anything a normal system would
+>> have, BUT it feels very odd.  This whole idea of "override the platform
+>> driver" feels fragile, why not make these just real platform drivers and
+>> have the xhci platform code be a library that the other ones can use?
+>> That way you have more control overall, right?
+
+Agree that overriding the generic platform driver xhci_hc_platform_driver
+from this exynos driver is odd.
+
+But I don't understand how this works.
+Where are the hcds created and added when this xhci-exonys driver binds to
+the device? all this driver does in probe is the overriding?
+
+Am I missing something here?
+
 > 
-> I made the subject a bit more expressive.
+> Agreed, having another layer here (hcd -> xhci -> xhcd_platform ->
+> xhcd_exynos) would fit perfectly well into how other SoC specific
+> drivers are abstracted. This could potentially also help reduce
+> the amount of code duplication between other soc specific variants
+> (mtk, tegra, mvebu, ...) that are all platform drivers but don't
+> share code with xhci-plat.c.
 > 
-> On Fri, Nov 25, 2022 at 09:52:51AM +0100, Krzysztof Kozlowski wrote:
-> > On 25/11/2022 09:51, Uwe Kleine-König wrote:
-> > > On Sun, Nov 20, 2022 at 12:22:31PM +0100, Krzysztof Kozlowski wrote:
-> > >> On 20/11/2022 11:31, Krzysztof Kozlowski wrote:
-> > >>> On 18/11/2022 22:54, Uwe Kleine-König wrote:
-> > >>>> The linux/platform_data/dma-s3c24xx.h header file was removed. It didn't
-> > >>>> declare or define any symbol needed in devs.c though, so the #include
-> > >>>> can just be dropped.
-> > >>>>
-> > >>>> Fixes: cccc46ae3623 ("dmaengine: remove s3c24xx driver")
-> > >>>> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> > >>>> ---
-> > >>>
-> > >>> The file was not removed... or it should not have been yet. The s3c24xx
-> > >>> dma driver removal should be part of Arnd series taken via SoC ARM.
-> > > 
-> > > The patch enters next with the merge of
-> > > 
-> > > 	git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git next
-> > > 
-> > > Ah, the patch that became cccc46ae3623 (i.e. patch #14) is part of a
-> > > bigger series. Its patch #1 removes s3c24xx.c (which you pointed out to be still
-> > > broken) and patch #2 includes the change I suggested here.
-> > > 
-> > >> I think that commit should be just dropped instead.
-> > > 
-> > > +1
-> > > 
-> > > BTW, cccc46ae3623 is included in next since next-20221107 and breaks
-> > > (at least) arm/s3c2410_defconfig. So I would consider reverting
-> > > cccc46ae3623 a fix. (Added linux-next to Cc:)
-> > 
-> > Yes. The build failure of next was reported already by kernel test robot.
-> > 
-> > Vinod, can we drop this patch?
-> 
-> That patch is still contained in the next tags of this week. :-(
+> Alternatively, it seems that all of the xhci-exynos support could
+> just be part of the generic xhci-platform driver: as far as I can
+> tell, none of the added code is exynos specific at all, instead it
+> is a generic xhci that is using the wakeup_source framework.
 
-Apologies for delay, I was moving...
+Sounds reasonable as well, and if some exynos specific code is needed
+then just create a xhci_plat_priv struct for exynos and pass it in
+of_device_id data like other vendors that use the generic
+xhci-platform driver do.
 
-I have reverted and pushed now
+-Mathias
 
-Thanks for following up!
-
--- 
-~Vinod
