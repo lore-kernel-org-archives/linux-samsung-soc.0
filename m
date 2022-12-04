@@ -2,110 +2,142 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ECFEC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  2 Dec 2022 23:23:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3472EC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Dec 2022 08:29:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233561AbiLBXXP (ORCPT
+        id S229945AbiLDI3U (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 2 Dec 2022 18:23:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52842 "EHLO
+        Sun, 4 Dec 2022 03:29:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233044AbiLBXXP (ORCPT
+        with ESMTP id S229805AbiLDI3T (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 2 Dec 2022 18:23:15 -0500
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EF67BB007;
-        Fri,  2 Dec 2022 15:23:14 -0800 (PST)
-Received: by mail-pf1-x432.google.com with SMTP id n3so2008589pfq.10;
-        Fri, 02 Dec 2022 15:23:14 -0800 (PST)
+        Sun, 4 Dec 2022 03:29:19 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77CC9175AA
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  4 Dec 2022 00:29:17 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id b3so14036455lfv.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 Dec 2022 00:29:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aKfchYwXntIzxvzacjQAm257xQlqoADf84p5ijUnCK0=;
-        b=TaCN5yg5es/OCGcj/NfRM2JW10uoQVGBXHx4nPm2YvNINoWjPB/7TD4giwLlv1wmiQ
-         MrVnyFLL88Au5p3oYp1EJYZR/IVa/Sg+w13ge9FLN42eRLZ8YCEcMn0LYkAgWqmlWXru
-         Ys77EdaRACuFl4UD7Zc5QA0sT2gdllTsO02SnM3KKb9q1lGMhzoyg9r39ZhxGEKuFUZL
-         3NyIyjVvfssCdHP1hiknRb2HJ7Fhoh0tfD7E1AHVMxpSYIK9SYHU5ukdOWphGRfSlCWk
-         I20zRW9PJCZ+zcJRTZWzsfaJicGKJVFa6tGplkl1y6uhCqlPXK6Lg9tshNdCdkQChJ0J
-         HC3Q==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uB/aOmhuc/lIwYa7cjtgI3/zSgF7chfDnm9pJPWT000=;
+        b=iWiyVLtGi+CbjSF3LefwU1h8UF6+xG8GaHHWyRoXaPJmF7N1pZIAL5u97lRhUtIETH
+         096bcKYKVHLB+uon57U77rW4WSFUh43v69WmCgJJuKpLqNOk+JMDYcxvW94RCyPnMbGV
+         IIENM/TiLaUonKsZ5v9eyvZ+QjPuGKaBRw45sylDdZmBriSEEvCqIE/nu2Bsh6f5hyc6
+         UY+aaHKkhujaNVpvz6ORFwrOxlo3JuDyob5T7Z1fZZDne40tpfh0UkqQ/1+7EwecBfkT
+         fzZCqzDOa/scUYHWhkSkVbmHIF/k6ln1uH5DdzqE7zG8xFJmQm9TA8XLr1MnPl57Ftzq
+         e3VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aKfchYwXntIzxvzacjQAm257xQlqoADf84p5ijUnCK0=;
-        b=U5UyXbBFenA+T5dsU/5Ioin3sWZX3pikwt76bjNa1KE9emZOKy3NWZrXgsZrrn1uTb
-         /llXQM440vwf0jQIOtvfyCQjNHjQLJlLM9h1Wi7TU1xG47mkW+2mT1jdLWrDOp2A9gH/
-         Q+0sCAKA5We11RS4vPznAludltyga/uOpgcR6nG4NnsUXsmLKahygA2IWQeUj5kRPlD1
-         Ns6o/E0N4d44iFaxpwz95Fd9JuFW2qQYgrZY3+lMBlPDQEpDsVaX3pQohA5776n0PwG+
-         UFnVhZEXyMQCegronUvUuY+uZZ6iKrBsRemRQVg/8WDP6A9OavCl9DYgkJStjfBmS2xy
-         +dsA==
-X-Gm-Message-State: ANoB5pmjY9fxI/WtSvZlWwTr/pr/nf/Z+feNpjvhvByzd2+BB/4UGaY0
-        c4QiFL4ycjMfAw9w91DFuUU=
-X-Google-Smtp-Source: AA0mqf469Y/cLftoGZmaO0lNzpRTefrBSYqmtP4hEkeLeoQt6FlGPNCfB6JCSw1jptFd6fmJSV4lEw==
-X-Received: by 2002:a63:2c05:0:b0:477:ceeb:cb9c with SMTP id s5-20020a632c05000000b00477ceebcb9cmr37582557pgs.17.1670023393811;
-        Fri, 02 Dec 2022 15:23:13 -0800 (PST)
-Received: from [172.30.1.1] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id n9-20020aa79849000000b005769ccca18csm35204pfq.85.2022.12.02.15.23.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Dec 2022 15:23:13 -0800 (PST)
-Message-ID: <e13357cb-bc5f-1a66-db54-0fa41e788668@gmail.com>
-Date:   Sat, 3 Dec 2022 08:23:09 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] PM / devfreq: event: use
- devm_platform_get_and_ioremap_resource()
-Content-Language: en-US
-To:     ye.xingchen@zte.com.cn, cw00.choi@samsung.com
-Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        krzysztof.kozlowski@linaro.org, linux-pm@vger.kernel.org,
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uB/aOmhuc/lIwYa7cjtgI3/zSgF7chfDnm9pJPWT000=;
+        b=sGQvA8O2Q2FJgLtTpSxBypra/Eh4J+trRzwGdmx/1H3RI3wcnA8hriawuzdLfb9RCk
+         03mRzoMqEb6gCp2/nTCXgOGne1B3bc6lfgvr4DsUIe2V7bM4+Mk1qmR7f9L+bVlWrO8R
+         D/ydkU76BX5ezexfR7CqJtgzYKD1QWt1D9OB9ILRxfyfwqVxSHVH2ehl1LLKNUnGzxqE
+         Nc84J0bp9XenWT6lqCWHkBIB8OiD+y/iUULf+WCZToHlwEr+iFjxom8BOr/Awj8fsnFF
+         RNc1tZ/0AKnkvhI7Mbq0C+AzCXgASjfKsx1f8uS01BH/7xc3znY/zLSeEAmrRfDLXvIN
+         GVuA==
+X-Gm-Message-State: ANoB5pnQ2Vrz9XCpDifPW5xl0kwsXZV+gnYyeWJ0eFAiZDVmwMQKbNJS
+        h5GjPxablEZVb5JiY1a1DyUdeA==
+X-Google-Smtp-Source: AA0mqf40k/EVXZZA+iO1Hh7riI/DoSG3qM6w+9oRN7gdip/swv1D8iq3Ax6N/AL/gcGi3aarmuZA+g==
+X-Received: by 2002:a05:6512:3133:b0:4a4:7f36:c62e with SMTP id p19-20020a056512313300b004a47f36c62emr24828258lfd.389.1670142555788;
+        Sun, 04 Dec 2022 00:29:15 -0800 (PST)
+Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id z8-20020a056512370800b004a91d1b3070sm1694540lfr.308.2022.12.04.00.29.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Dec 2022 00:29:15 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        chi.minghao@zte.com.cn
-References: <202211220942288196359@zte.com.cn>
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-In-Reply-To: <202211220942288196359@zte.com.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] ARM: dts: Second cleanup for v6.2
+Date:   Sun,  4 Dec 2022 09:29:09 +0100
+Message-Id: <20221204082909.5649-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 22. 11. 22. 10:42, ye.xingchen@zte.com.cn wrote:
-> From: Minghao Chi <chi.minghao@zte.com.cn>
-> 
-> Convert platform_get_resource(), devm_ioremap_resource() to a single
-> call to devm_platform_get_and_ioremap_resource(), as this is exactly
-> what this function does.
-> 
-> Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
-> Signed-off-by: ye xingchen <ye.xingchen@zte.com.cn>
-> ---
->  drivers/devfreq/event/exynos-nocp.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/event/exynos-nocp.c
-> index ccc531ee6938..c1cc23bcb995 100644
-> --- a/drivers/devfreq/event/exynos-nocp.c
-> +++ b/drivers/devfreq/event/exynos-nocp.c
-> @@ -214,8 +214,7 @@ static int exynos_nocp_parse_dt(struct platform_device *pdev,
->  		nocp->clk = NULL;
-> 
->  	/* Maps the memory mapped IO to control nocp register */
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	base = devm_ioremap_resource(dev, res);
-> +	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
->  	if (IS_ERR(base))
->  		return PTR_ERR(base);
-> 
+Hi,
 
-Applied it. Thanks.
+I had few remaining cleanup patches for ARM DTS.  The imx and lpc32xx one did
+not get maintainer acks, but the rest got.
 
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+On top of previous pull request / tag.
 
+Best regards,
+Krzysztof
+
+
+The following changes since commit 001b38cea30961e0f4e562a1872f2409a8024ff0:
+
+  dt-bindings: arm: aspeed: adjust qcom,dc-scm-v1-bmc compatible after rename (2022-11-10 10:18:49 +0100)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git tags/dt-cleanup-6.2-2
+
+for you to fetch changes up to 91bf30a42b16257f98345c9ba519d72babbbaf8a:
+
+  ARM: dts: sti: align LED node names with dtschema (2022-12-01 18:04:47 +0100)
+
+----------------------------------------------------------------
+Minor improvements in ARM DTS for v6.2, part two
+
+Few cleanups which should not have any functional impact:
+1. Trim addresses in "reg" to 8 digits.
+2. Align LED node names with dtschema.
+3. omap: echo: Use preferred enable-gpios property for LP5523 LED.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (8):
+      ARM: dts: omap: trim addresses to 8 digits
+      ARM: dts: imx: trim addresses to 8 digits
+      ARM: dts: lpc32xx: trim addresses to 8 digits
+      ARM: dts: logicpd: align LED node names with dtschema
+      ARM: dts: omap: align LED node names with dtschema
+      ARM: dts: omap: echo: use preferred enable-gpios for LP5523 LED
+      ARM: dts: am335x: align LED node names with dtschema
+      ARM: dts: sti: align LED node names with dtschema
+
+ arch/arm/boot/dts/am335x-baltos-leds.dtsi            | 6 +++---
+ arch/arm/boot/dts/am335x-evm.dts                     | 2 +-
+ arch/arm/boot/dts/am335x-igep0033.dtsi               | 4 ++--
+ arch/arm/boot/dts/am335x-pocketbeagle.dts            | 8 ++++----
+ arch/arm/boot/dts/am437x-idk-evm.dts                 | 2 +-
+ arch/arm/boot/dts/am437x-sk-evm.dts                  | 2 +-
+ arch/arm/boot/dts/am43x-epos-evm.dts                 | 2 +-
+ arch/arm/boot/dts/am57xx-idk-common.dtsi             | 2 +-
+ arch/arm/boot/dts/dra7-evm-common.dtsi               | 2 +-
+ arch/arm/boot/dts/dra7-evm.dts                       | 2 +-
+ arch/arm/boot/dts/dra72-evm-common.dtsi              | 4 ++--
+ arch/arm/boot/dts/imx6sx.dtsi                        | 2 +-
+ arch/arm/boot/dts/logicpd-torpedo-som.dtsi           | 2 +-
+ arch/arm/boot/dts/lpc32xx.dtsi                       | 2 +-
+ arch/arm/boot/dts/omap3-beagle.dts                   | 6 +++---
+ arch/arm/boot/dts/omap3-devkit8000-common.dtsi       | 8 ++++----
+ arch/arm/boot/dts/omap3-echo.dts                     | 2 +-
+ arch/arm/boot/dts/omap3-n900.dts                     | 2 +-
+ arch/arm/boot/dts/omap3-overo-alto35-common.dtsi     | 8 ++++----
+ arch/arm/boot/dts/omap3-overo-chestnut43-common.dtsi | 4 ++--
+ arch/arm/boot/dts/omap3-overo-gallop43-common.dtsi   | 4 ++--
+ arch/arm/boot/dts/omap3-overo-palo35-common.dtsi     | 4 ++--
+ arch/arm/boot/dts/omap3-overo-palo43-common.dtsi     | 4 ++--
+ arch/arm/boot/dts/omap3-overo-summit-common.dtsi     | 2 +-
+ arch/arm/boot/dts/omap3-overo-tobi-common.dtsi       | 2 +-
+ arch/arm/boot/dts/omap4-panda-common.dtsi            | 4 ++--
+ arch/arm/boot/dts/omap4-panda-es.dts                 | 4 ++--
+ arch/arm/boot/dts/stih410-b2260.dts                  | 8 ++++----
+ arch/arm/boot/dts/stih418-b2199.dts                  | 4 ++--
+ arch/arm/boot/dts/stih418-b2264.dts                  | 2 +-
+ arch/arm/boot/dts/stihxxx-b2120.dtsi                 | 4 ++--
+ 31 files changed, 57 insertions(+), 57 deletions(-)
