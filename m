@@ -2,225 +2,120 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21064C4321E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Dec 2022 13:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB33FC47089
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Dec 2022 15:08:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231149AbiLENXC (ORCPT
+        id S231895AbiLEPIU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 5 Dec 2022 08:23:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48408 "EHLO
+        Mon, 5 Dec 2022 10:08:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230035AbiLENXB (ORCPT
+        with ESMTP id S232160AbiLEPIE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Dec 2022 08:23:01 -0500
-Received: from EUR01-DB5-obe.outbound.protection.outlook.com (mail-db5eur01on2101.outbound.protection.outlook.com [40.107.15.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB87CF34
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Dec 2022 05:22:59 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=d9Fzu1VlJho/MOqBADYbSl6+oKCz05ora0x8JD6QY6hGCtNjiCbWRLd+vClnowsuCPgDvdu/ew5cMfUzWKHAuqljFb5n2XXwpBIdV6xpAh7kg524jdXbi/A4vib4Eb7PC3oBwP25+06X1ww1I4e7QO8QC6G+6GCE0MOItZJpXqi2ytInG8TTFySBfqK3WJ1gIopASazAkkuDEnISx8wzoiZOnhZVjkROyOkWVA3RjjPXcskA+4seXcfcBIT5PK+vvk+XQP7m25XBsa61+zHWXKDJS9aZJc+allya5ZG9DUXk0uUerrgZAc7fEvkpngh7FOqTHZqpgbfRZXK/1hrh5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ppD7IPJT8gsuR2pINn7ofLgt1G1C1jn+eZNPCbLbAOg=;
- b=lnbqIq7T73UOLiXydM5iAecre+2INby1+vYMLhGVo8RnycuP2kg23x7SD709cab3u5yVK4up67qFLqARImiSXYXeJclt82acI5zptNqlGYES8/Kst972T7KfcoNsv/utXconb6zjjKxaEfI4yHbmtggOMnYegnyi1w/58PWSi8V1foRN47E7CD946nx9FROMjnhvIBibkvgtfv8MEm+MWeX4vW5NsT2uC6BMChjlnf4WA6DCONJr5P3juQMOhlGdXyzQWWHfwtb4p31sFr0g8422z0NTsRTSUU1zxbSltrE//x0r7mOWUnEd05nRHm24gYp6zP7Hv9enWHGcE/M0wg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
- dkim=pass header.d=kontron.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mysnt.onmicrosoft.com;
- s=selector2-mysnt-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ppD7IPJT8gsuR2pINn7ofLgt1G1C1jn+eZNPCbLbAOg=;
- b=FSw1zFfVBeZrq0xoA8foAvZ8DPCq2jf7q+8TglomCxZUIB+MmisE/5b1NVZvNAM8QAfAgKW9Z+wXpDeA9+hiw9EYqiiWtN2DeW8ReG1Xgn0hj6mQ8DUBig++a3GLZbLJEGnw35y+tLhYFHSB8Dp1BTPTtDuhNgXbprSXCOrKXwE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kontron.de;
-Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::10)
- by AS2PR10MB7901.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:64e::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5880.11; Mon, 5 Dec
- 2022 13:22:56 +0000
-Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::f209:bc86:3574:2ae6]) by PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::f209:bc86:3574:2ae6%6]) with mapi id 15.20.5880.013; Mon, 5 Dec 2022
- 13:22:56 +0000
-Message-ID: <c8ad8b14-fac3-2815-ed37-ebe6c78fec7b@kontron.de>
-Date:   Mon, 5 Dec 2022 14:22:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v8 00/14] drm: bridge: Add Samsung MIPI DSIM bridge
-Content-Language: en-US
-To:     Jagan Teki <jagan@amarulasolutions.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Marek Vasut <marex@denx.de>
-Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
-From:   Frieder Schrempf <frieder.schrempf@kontron.de>
-In-Reply-To: <20221110183853.3678209-1-jagan@amarulasolutions.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM9P195CA0007.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:20b:21f::12) To PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:102:263::10)
+        Mon, 5 Dec 2022 10:08:04 -0500
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 986F81D0EC;
+        Mon,  5 Dec 2022 07:07:52 -0800 (PST)
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-1442977d77dso12628994fac.6;
+        Mon, 05 Dec 2022 07:07:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=un2tfy4ahNo9zjbkY7O4xE/RSkvkF3i02AWzGP/4rig=;
+        b=c32sEX4J51LjwbpWvqQmgfrylQBJbDFBd7LEAK6d4r6Ogq5C91Q09bCAO+qBw/zp5b
+         y5xBq4WWyA7H1AOPEIwLnvHarse0nW7C3fmZnHBP9jbc27qmn6eL3dgj5xNC3pnG8aG5
+         Z4bdCM+Nfd7I5fq8Z7kdWTUzd36h5ZmXAenzzvFZxLpUjt3QkSo6nf9AdxDSeVy+rTj5
+         ib+1k6408KivxnckKxsZwQYA26+MHQpOOPq/c43XyNDtCYseybnKJatK8pL1qWvMKyp+
+         wNifi1TyVFeAx5sGTpCzUclTpycxeIl6xnzwUBfkBV/yHMd2QRZ6s4pTPsUADUQ3usTi
+         o6Pg==
+X-Gm-Message-State: ANoB5pmFCmjrsQIAQG9yA2F4tfRwnWSTXwY5IuHr/vxX0VA2hnpPC+VF
+        oJUbG45rml0MBbVdfdb/gw==
+X-Google-Smtp-Source: AA0mqf4u4kzZ1ZBWoQtzp872W52LKIVRXUvm43N91ZDjaWGZJYwEgFGMaehPuBK+w9wgO1cB9V4ooA==
+X-Received: by 2002:a05:6870:ee16:b0:144:a24c:e1cb with SMTP id ga22-20020a056870ee1600b00144a24ce1cbmr2227077oab.164.1670252870872;
+        Mon, 05 Dec 2022 07:07:50 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id y30-20020a9d22a1000000b0066ea9650da8sm3195971ota.20.2022.12.05.07.07.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Dec 2022 07:07:50 -0800 (PST)
+Received: (nullmailer pid 1794161 invoked by uid 1000);
+        Mon, 05 Dec 2022 15:07:49 -0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR10MB5681:EE_|AS2PR10MB7901:EE_
-X-MS-Office365-Filtering-Correlation-Id: c596d815-29a4-4dd6-9be8-08dad6c3d283
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: jDHrvmdZGQ9F5FdyMyi9wYolpel2xOXEVrx+zO3hcHCakjDQpSVYAodXd9zYqFHHmJGGXSn+awC0FrKQHpt6EW2V4Q7y9nj0nw+aIZ23/OEXrY1qgYntoZeCE9+IaKFSJvfKh2TxfTsAR4dTQAif+2AgORfhIzcX+JZjiv0aCMeGnNNkvV6ZcCqhEPuTzOH7XK2fDWrT1U9PMhtvPswkxqcO/J9kE+OT9/DMy6EHTDbNyxP1rb+EjykTqFfBnAfkO5x67xog/75k0nNtr53RhR9SdwOcZYk2aQyWow5d/0REmA3wOjl/VeMNjPpg3CCBFumT0El3Hed3qw4n6IWhuLYFIzz4o4kI32PqwiWXGchFvfhA0USI22o2HZae89IAe00Y6LfRMleSUqBkhJeVHwBrvWdgGtPrnJg1ssd+yiwJV2xKnmiuZROWVgT/gE6Tby/PzfNWlUkvErm5RIPgpf655P0qhiVSLpvuN9bDkATQLeQBBk2mz+mBqrWULoIIlFmAVl2IO3lumllbd675tZ7bewsBMIAwjLJbp2mZU+szsnH9x/3Cv4Kp80x64NhmpXSM7fUcUZhCQ3IrtGjc3+lHKgdthpF4de6KTSHqz0skNxjFNigqLwU8KudQf1qU/QLtHQdA31j6ENcSCZnIpsvounM7bt/QF22O+f2um9UdDHpHjRXbA1aziBu8f23W+05tSK0Sf/5oZhSP4PX1TxlKr27QKzOBcdrSkh9ahkXiJ1Hsk4IPXnsskkbJNizR57Y6rcy+EBtn48kCz5qXBw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(376002)(136003)(346002)(366004)(39860400002)(451199015)(921005)(36756003)(31696002)(86362001)(478600001)(966005)(6486002)(6506007)(53546011)(6512007)(316002)(4326008)(8936002)(41300700001)(44832011)(6666004)(5660300002)(7416002)(2906002)(110136005)(54906003)(66946007)(66476007)(8676002)(186003)(66556008)(83380400001)(38100700002)(2616005)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QmtOSTZpUHl5STRNZDUvWjVsRVZ0amYrMTRMcW5OSnlRMXBXK1VGWGt5aDg0?=
- =?utf-8?B?cXlVNEMveitsNjZ5bGRWZ2p4VHlza3RrZ1pFcm53OENDOVo5Rm4vY1NqMnFj?=
- =?utf-8?B?MnZZQjkvVXg0YlRleXV5Vlc4NkdtNXZkaEtySWlzWUxMZUJ1eGFRaW1UVFND?=
- =?utf-8?B?S3FGQS9sYWhnc1hBUXU2dTJBZmVKbXM1M3FIRnI4NTRHUFdMUDZvUGN0bjlS?=
- =?utf-8?B?bzB4SUNVYmRnWXdRa1d3c2pYdG11bnFwYnNQOVpQTzU2WnJlNUt5ekRUaEt5?=
- =?utf-8?B?OUNXWmIyU0ZzT01veU5uOUdIeW1GampWeGxibXd6dTRMRjR3dlFUZzN3V1pH?=
- =?utf-8?B?a2JCZnpVemFHRXJTek4zdXJDU1hxTUdnZFRZcHFTNEMwM2tqRGN5QXFTdk50?=
- =?utf-8?B?Qjd0VHhDVXcrYVM0b252Q1NnMHU0VzFQT21Sc1NveVJQQll5R21yYUkwOFZJ?=
- =?utf-8?B?SVNWY0Vpa0FQalhwekoxQVI5ZXhFMWYwVGJFdzNoclZBNkVvcXVxNElXcWs5?=
- =?utf-8?B?QW5ydWFEbmVaampLMWdNc3NOdkhCaFhCdVVMR2xqWDFBOUdybU9WNnllajNX?=
- =?utf-8?B?UHRwbjZ1NS81YWpQYnpnTmZpcDIrWllkRVRJek52QnNZVVFDemRhTGFuNVBW?=
- =?utf-8?B?eHdFMDZJRzhtSXk3bFBSYVFhZ0pWQWpDaDRSZVdNUldheml1YnZObEVNL05F?=
- =?utf-8?B?MFdXeUVrUzUrRG4xZE80SlBWeUZmMkl3RUxxTUpaVTVBSXRJaXlYOXZEWnRi?=
- =?utf-8?B?WVpNMWRMeDRoNjB5K3VBcndvUTFXZ1RYVVprK0NJbkZIZXpKV0lsckl2ZnEr?=
- =?utf-8?B?NkdrSHdIVGNFanZOUDVLOFN1R0IycFZscHZaYXlWdm44UGVHYjl6LzJJbE91?=
- =?utf-8?B?aHNhWjNSSWo4NWJmS1QzWGlsNUwwdGk4M2c5QlB3SS9pRWdwWXZXbm9Wem1R?=
- =?utf-8?B?NUhmMHJDalFyN09iaENSMlpOREdrMDcwNkpCUlRoTk1tbGhXa002dXIvMnBl?=
- =?utf-8?B?VGNmL1o5WkoyQ3ZTM0g1RjBVNVVCakhYQXd5ZlF2aGlORy9uVVJ4ODVDMzUr?=
- =?utf-8?B?TW9jSUJKQmFicWZHUVUrS2MvSXlMTjZxTmhnc05DS2ExeUIvd1RXREdYaXEx?=
- =?utf-8?B?WFlIMjdIZ2FhNDVUL0xBVWpBTUcrdER0U09LS2RZSU1WY1JOL0xET0pMZzZN?=
- =?utf-8?B?aUtORDFyMG5HZ3BtUkkrNHczRktOZjY3N2ZrRkp0WGtGVmZzT2puUXBUWHVn?=
- =?utf-8?B?L0k5OS9qMUswOXBGaWtqeW82NXpmdjdVWWkzS3N6OWR2LzkzTnpkeXNNNnBT?=
- =?utf-8?B?OG90b3Yzc1k4bGY4K1VnbnpWVVJmK0N3MEg2OFZ4bnhrMldXM1J0czNVNXR4?=
- =?utf-8?B?eDZCRGx0d04yL0xoWUhqM2o5c1JtVVY4Z2FsVWZZU0p5RlAza0RpR2RWSW9Z?=
- =?utf-8?B?UUQxbXpacElOaWtqL2VoK0syWjF4WThMMXJyUFppeGdYYi9KVUlFN1ppR0hS?=
- =?utf-8?B?T2JaM1RRTWpGUWIyZUppa3MzaU9maXlzL2k2anJUZWd5NVM2SGduNW5iODJX?=
- =?utf-8?B?K0pIbGJIRU5NUzZYNWM5U3o0WFkvbWhZWCtzSjZBRkREQk1KVnI5VjZrcHNR?=
- =?utf-8?B?Kzl3L2MzOEpyL0V6YlVRaStUeEtpbVc3amdoMXJiaW9PUDgwSCtKUHAzaWJP?=
- =?utf-8?B?OFVaajVYMmozV2FTZDYwNkcrR2FFMFc5eDA0U0tSUDY3SzFMWEJmYVZsMjZU?=
- =?utf-8?B?WXdxQmVmZkVHQ1NjckQ1VExGQWE2QzFxbHQ4NTZkSmxXczJ3K1h4MkMzYUMv?=
- =?utf-8?B?cG9pVkY1YUlpcy9rdjIwSTc1bkdHbTNvOWtDOHRxS1BxTHFHM29UdHo4VVBZ?=
- =?utf-8?B?Ly90WTFrbHoxVkl1N0szVWhQRE8xbUVBKzA5THQvazNvOUM4UWhycnFISUZ0?=
- =?utf-8?B?QzVjVnBLZjAzWXo0TlYrKzg5c2FyTUViOUtSa05yVElpaUV4V0RKUHVYNFBu?=
- =?utf-8?B?TnloQ0ovVkQ1dVhqUmxnaUJnR0ZESkRTQ3BCNjFYdmhDTldOYVlPRlpwTVRE?=
- =?utf-8?B?cTBoNWdubTR3RW1zU0tSM0J2SlR0b2l0Qzc2T1JMTGpPcFBsTFFUc01xWHE5?=
- =?utf-8?B?bGluV3dob2Q4TkN1ZlpvcEkvVk94YVYybS9uUFBpdFpnTjArRFlncnlSUWln?=
- =?utf-8?Q?uF0wdFUyFtd2oXEmM6LxpHIkurxMoGA8ENdcQzcnDdoU?=
-X-OriginatorOrg: kontron.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: c596d815-29a4-4dd6-9be8-08dad6c3d283
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2022 13:22:56.7184
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DTCgRZZWZ3WX9nOz9NgTauoVZGeN8+ZwoPCCVFgUNaR1i2G/bUuoHg8AIKzDEHvji2bnxxK0utdPAj1AJdrATYwNy/Nd3gU9TGcUrk88Ses=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB7901
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Alain Volmat <alain.volmat@foss.st.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-arm-kernel@lists.infradead.org,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-amlogic@lists.infradead.org, Joe Tessler <jrt@google.com>,
+        Jeff Chase <jnchase@google.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Yannick Fertre <yannick.fertre@foss.st.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20221204182908.138910-5-krzysztof.kozlowski@linaro.org>
+References: <20221204182908.138910-1-krzysztof.kozlowski@linaro.org>
+ <20221204182908.138910-5-krzysztof.kozlowski@linaro.org>
+Message-Id: <167025248440.1785019.8058849269946787324.robh@kernel.org>
+Subject: Re: [PATCH 5/9] media: dt-bindings: chrontel,ch7322: reference common
+ CEC properties
+Date:   Mon, 05 Dec 2022 09:07:49 -0600
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 10.11.22 19:38, Jagan Teki wrote:
-> This series supports common bridge support for Samsung MIPI DSIM
-> which is used in Exynos and i.MX8MM SoC's.
-> 
-> The final bridge supports both the Exynos and i.MX8M Mini/Nano/Plus.
-> 
-> Changes for v8:
-> * fixed comment lines
-> * fixed commit messages
-> * fixed video mode bits
-> * collect Marek Ack
-> * fixed video mode bit names
-> * update input formats logic
-> * added imx8mplus support
-> 
-> Changes for v7:
-> * fix the drm bridge attach chain for exynos drm dsi driver
-> * fix the hw_type checking logic
-> 
-> Changes for v6:
-> * handle previous bridge for exynos dsi while attaching bridge 
-> 
-> Changes for v5:
-> * bridge changes to support multi-arch
-> * updated and clear commit messages
-> * add hw_type via plat data
-> * removed unneeded quirk
-> * rebased on linux-next
-> 
-> Changes for v4:
-> * include Inki Dae in MAINTAINERS
-> * remove dsi_driver probe in exynos_drm_drv to support multi-arch build
-> * update init handling to ensure host init done on first cmd transfer
-> 
-> Changes for v3:
-> * fix the mult-arch build
-> * fix dsi host init
-> * updated commit messages
-> 
-> Changes for v2:
-> * fix bridge handling
-> * fix dsi host init
-> * correct the commit messages
-> 
-> Patch 0001:	Fix MIPI_DSI*_NO_* mode bits
-> 
-> Patch 0002:	Properly name HSA/HBP/HFP/HSE bits
-> 
-> Patch 0003: 	Samsung DSIM bridge
-> 
-> Patch 0004:	PHY optional
-> 
-> Patch 0005:	OF-graph or Child node lookup
-> 
-> Patch 0006: 	DSI host initialization 
-> 
-> Patch 0007:	atomic check
-> 
-> Patch 0008:	PMS_P offset via plat data
-> 
-> Patch 0009:	atomic_get_input_bus_fmts
-> 
-> Patch 0010:	input_bus_flags
-> 
-> Patch 0011:	document fsl,imx8mm-mipi-dsim
-> 
-> Patch 0012:	add i.MX8M Mini/Nano DSIM support
-> 
-> Patch 0013:	document fsl,imx8mp-mipi-dsim
-> 
-> Patch 0014:	add i.MX8M Plus DSIM support
-> 
-> Tested in Engicam i.Core MX8M Mini SoM.
-> 
-> Repo:
-> https://gitlab.com/openedev/kernel/-/commits/imx8mm-dsi-v8
-> 
-> Any inputs?
-> Jagan.
 
-I tested this on the Kontron DL i.MX8MM which uses a TI SN65DSI84 bridge
-and a Jenson 7" LVDS Display.
+On Sun, 04 Dec 2022 19:29:04 +0100, Krzysztof Kozlowski wrote:
+> Reference common HDMI CEC adapter properties to simplify the binding and
+> have only one place of definition for common properties.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../devicetree/bindings/media/i2c/chrontel,ch7322.yaml   | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+> 
 
-Tested-by: Frieder Schrempf <frieder.schrempf@kontron.de> # Kontron DL
-i.MX8MM
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.example.dtb: ch7322@75: $nodename:0: 'ch7322@75' does not match '^cec(@[0-9a-f]+|-[0-9]+)?$'
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.example.dtb: ch7322@75: Unevaluated properties are not allowed ('hdmi-phandle' was unexpected)
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20221204182908.138910-5-krzysztof.kozlowski@linaro.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
