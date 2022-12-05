@@ -2,178 +2,344 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB94C4321E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Dec 2022 03:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B2FC636F8
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Dec 2022 07:31:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231345AbiLEDgY (ORCPT
+        id S231538AbiLEHbC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 4 Dec 2022 22:36:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42832 "EHLO
+        Mon, 5 Dec 2022 02:31:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231222AbiLEDgV (ORCPT
+        with ESMTP id S231473AbiLEHbA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 4 Dec 2022 22:36:21 -0500
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1EDA13D7A
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  4 Dec 2022 19:36:18 -0800 (PST)
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20221205033615epoutp01c3efb19e8804f7a3d3dbeb59cf8e0d88~tyGV9BMOC2628426284epoutp01v
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Dec 2022 03:36:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20221205033615epoutp01c3efb19e8804f7a3d3dbeb59cf8e0d88~tyGV9BMOC2628426284epoutp01v
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1670211375;
-        bh=vykUbSZQ2tSNJ4Q6qaLHYNUo8WIpdFle8u7wtY6lG5A=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=G0PQ0aGfbsmH2quk4G3iyHZgJJSDkAixc5TS58HNxPaoS/nDrgVNBDybfXaappqjt
-         J62hSqOKjKnBavBXS1xNZcb6OW6UStLKVDtV20dFY/ZxiCyvyKSHBsJic0qMeA5KAb
-         eJpGaCwICqv132CgiY9cmnpuRPhHm7INZ1qTJBFE=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20221205033614epcas2p1868ca6484b026c918fe3d253cc156712~tyGVahCgL1877318773epcas2p1G;
-        Mon,  5 Dec 2022 03:36:14 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.101]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4NQTjT6Y4tz4x9Pt; Mon,  5 Dec
-        2022 03:36:13 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9B.17.12278.D276D836; Mon,  5 Dec 2022 12:36:13 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-        20221205033613epcas2p26b786c2a02615009d5d8c705187c3f76~tyGUKviyE2041720417epcas2p2-;
-        Mon,  5 Dec 2022 03:36:13 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20221205033613epsmtrp2989e175d66a68b16f0b25424b5609b85~tyGUJo7Pc0472304723epsmtrp2r;
-        Mon,  5 Dec 2022 03:36:13 +0000 (GMT)
-X-AuditID: b6c32a46-ad1fd70000012ff6-04-638d672d6153
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B7.74.14392.C276D836; Mon,  5 Dec 2022 12:36:12 +0900 (KST)
-Received: from ubuntu (unknown [10.229.95.128]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20221205033612epsmtip22e7eca52c67549d89f161b3e1a48b628~tyGT13sWv0727907279epsmtip27;
-        Mon,  5 Dec 2022 03:36:12 +0000 (GMT)
-Date:   Mon, 5 Dec 2022 12:30:34 +0900
-From:   Jung Daehwan <dh10.jung@samsung.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        Artur Bujdoso <artur.bujdoso@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>, sc.suh@samsung.com,
-        taehyun.cho@samsung.com, jh0801.jung@samsung.com,
-        eomji.oh@samsung.com
-Subject: Re: [RFC PATCH v1 2/2] usb: host: add xhci-exynos to support Exynos
- SOCs
-Message-ID: <20221205033034.GE54922@ubuntu>
+        Mon, 5 Dec 2022 02:31:00 -0500
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2100.outbound.protection.outlook.com [40.107.105.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88BBC10060
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  4 Dec 2022 23:30:57 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=S/Ri83uPiOwWi4OxshvmzopX3voViOx2/tM56sdRp8mfBpIoTaM+OZ7+PclfvZ/41RPxydaSJBbMcW+MHIsAlGBdG4Xf9eOzBMjXWhxhWqVdnUtxc00sXCQcxGLnchfagvqJXayhZ/CjixLJIGl7+QKeOf73SFBtx6kfqWxwu88H00SAyMmt+sMxrcMBSjJB2JS0jzk0DgJu4ocqPD41FL3HVqy2lFRmaMGigHPkkWeEntPfXo/Sfr6gyuFseQwYkJ2x+gm00Z5DSxR7VH4SHOB9a7Sqiv2JrFRex5gj9dmd7CcKzU++6vhlzKJUVcJPb6FGifzsTeErNzbhuuKb1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M/MqAP7DXk7ReGQiBfk/kPPcNhXnXG1lJE7q1WURXIg=;
+ b=g7WJv19dPu6o7gtF2oH7+nd+hsx3eVMT24hsEQFDUhMSir5sMKysVIg7wS7wk8Jd3d5PEGtntbAQzhWTkpwEHIZwW93mlF38Dgs/agfOC7jpLJoFesn+RinF24ydEBaj006Ro2y1lDpuMZjMOYAjGsVYsFn0mbY0MSByvQSKa6Z9E/w2U4v5eY5NGjCvir6S+4oUKV7VgCW+emGvg71ry7Ug/k8GpDxtQfozcdLO6l7DlWnbe9rOkkE6KwoG8TmQ9Hr4ZgS1QYqP2j9Ax0wpLd2Tcm7rvspJ69z+4kgZrq45tuQM1WhkNSUOvOhwTa0QoHNzW07PBRdKJXLImXZ3vg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
+ dkim=pass header.d=kontron.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mysnt.onmicrosoft.com;
+ s=selector2-mysnt-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M/MqAP7DXk7ReGQiBfk/kPPcNhXnXG1lJE7q1WURXIg=;
+ b=JXnK76NTgG5au9Cxsvl/mEh4vrcnv5aOkO/fsS461S32I+2jXl+RU2lTkvVELi6+ObAlYatB0WHqnEQygvLobcb0tPLPE8ZEBQhc3SW4mmK5ZDo6uPXYDUy8uZRdLpUJW07VwdyFh8bNJnxce+tXrWjRFucbulPhqIEr5MoX2Po=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kontron.de;
+Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::10)
+ by PAWPR10MB6829.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:339::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5880.13; Mon, 5 Dec
+ 2022 07:30:54 +0000
+Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::f209:bc86:3574:2ae6]) by PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::f209:bc86:3574:2ae6%6]) with mapi id 15.20.5880.013; Mon, 5 Dec 2022
+ 07:30:54 +0000
+Message-ID: <cc3814d2-a300-be10-168c-7313a7cd9006@kontron.de>
+Date:   Mon, 5 Dec 2022 08:30:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v8 06/14] drm: bridge: samsung-dsim: Handle proper DSI
+ host initialization
+Content-Language: en-US
+To:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Marek Vasut <marex@denx.de>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+References: <20221110183853.3678209-1-jagan@amarulasolutions.com>
+ <20221110183853.3678209-7-jagan@amarulasolutions.com>
+ <CGME20221117045817eucas1p1778503aa62ef18ef5ee0502d2189cd15@eucas1p1.samsung.com>
+ <04fb17e2-1b55-fbd9-d846-da3e3da4edb8@denx.de>
+ <f33142de-862e-9775-b1c9-b871bb9a243c@samsung.com>
+ <b66b44fc-5d4c-d3a8-8538-79003b14691e@denx.de>
+ <CAMty3ZBfAY86fp7XxS9frrBiT9FRkJaNSRY-4CVpqGOvdpn1fw@mail.gmail.com>
+ <58671662-9242-c7ef-53ef-60f9cdc3399a@denx.de>
+ <CAMty3ZDVZJ6TjKjtq9wSHudmeD+7O1vB_j0V1xKjYGWnwMKa6Q@mail.gmail.com>
+ <9f08a902-049c-1c00-7fed-3d7ee18b3d2c@samsung.com>
+ <2ef1aae1-8ff9-22bc-9817-69d1eae8b485@denx.de>
+ <CAPY8ntDH7QgLfg_MsXSeyD4uwiG7EHMd75qQA6SbDbO1P6ftow@mail.gmail.com>
+From:   Frieder Schrempf <frieder.schrempf@kontron.de>
+In-Reply-To: <CAPY8ntDH7QgLfg_MsXSeyD4uwiG7EHMd75qQA6SbDbO1P6ftow@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BE1P281CA0037.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:22::18) To PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:102:263::10)
 MIME-Version: 1.0
-In-Reply-To: <Y4hgnxGMEuizJumr@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf0xTVxTHd/va11JW8qyAd7AoK8MEGNDyq1cUMgdqF4khISbL3NbV9gW6
-        Qtv1tQZ/bEAIP6wTETBikQFCRIEMh6Xj96AykIpAcDAx1ADSTVncFBUYyraWB8b/PufH95x7
-        zr2Xg/Ef4z4cpVpP6tSyNAHOZVpuBIpDQlJOy4UlFRFo+nsLjlaL+9losqgRoOL85yxU2TfM
-        Qra6agbKqWnC0cXJcGSfWWaiwoczGCp9VcdAzQ8mWOhO+0UclY10M9Cly7kYymkuZaHcrj42
-        MtrvOiv1eqEV8zz40FPycqUYSNpMdrakpvMRQ9JcfxKXTE104pKfKxrZkuu1mZJCcz2QNJnH
-        mZJnzVuTuJ+qdqWSMgWp8yPVco1CqU6JFexPlsZLo6KFohDRDiQW+Kll6WSsICExKWSvMs05
-        ncDviCzN4HQlyShKEBa3S6cx6Em/VA2ljxWQWkWaVqwNpWTplEGdEqom9TEioTA8ypn4pSr1
-        v9ojWsfbGY7BFmYW6OAagRsHEpFwcOYnlhFwOXyiFcCmaiuTNhYAtAz9g9HGIoC/VtayNiTX
-        HIU4HegC0PaiZF0/B2DluTK2K4tJvA9/LG3FXIwTQfD+8s019iQi4JnbJrZLgBGn2LBnboLp
-        CmwmkmF+3rk1MY8IhgV1Heu8CQ5emFvLcSMCYU5lnpM5HC9ng/neTFcdSCxzoKP1JObyQyIB
-        lvRtpU+6Gc4PmNk0+8Bnf3XhNKvgb4unmDRnwCtdGxwBTb/nAxdjRCo05toYdEl/2HePSbs9
-        YMGNVTbt5sGCPD6t9Ifn7xSt7+cd2PvnMEazBN6rKWe/XuL90VpWEdhmemMw0xvdaP4AVnUs
-        4CZnC4zwhXX/cmgMhE3tYVWAVQ+8SS2VnkJS4drw13ct16Q3g7V3H7S3FZQ+fhJqBQwOsALI
-        wQSevO0138n5PIXs6DFSp5HqDGkkZQVRzms6i/l4yTXOj6PWS0WRO4SR0dEicXiUUCzYwisv
-        LZDziRSZnlSRpJbUbegYHDefLIbCu737m7lWqa1w37tDjk3jQVwbbyDg6wXD3IvOAJV7deLQ
-        9T3dY6f3BWd7ZI/oRwrGRHp7T/DS8emn58cGDk01Hvyca5hfsmSfeGQZGWv6rIJ/U/qHanSK
-        aqsKFh5IGFZefciLj3mpND/P7OmP5FYdv3trVhG57drRp/m7R5G4pSFOi2z22wc/it+5CJIu
-        bZmNt37cUm7dOXFMmkwJz3gfeBX0lr9d1XBh+tvJlUT3J3Ewr3+2TYmMk76rGb1fmH+pteK7
-        tweU7f8bC/2B3+W4ZalpUFCfxCRVZH81vudw95XcB3n+I8b6xPrDJ2S899wDl8oGGdFZHmFU
-        m6/BdigZCphUqkwUhOko2f8jbdz+gAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKIsWRmVeSWpSXmKPExsWy7bCSvK5Oem+ywcPJlhYP5m1js/g76Ri7
-        xc0JaxgtJrV/YbWYf+Qcq8Wp5QuZLJoXr2ezmHPTyOLuwx8sFn0vHjJbTPmznMli0+NrrBaX
-        d81hs5hxfh+TxaJlrcwWzZumsFq07j3CbtF19wbQpIOiFr+2vGJ0EPH4/WsSo8fOWXfZPRbv
-        ecnksWlVJ5vHnWt72Dz2z13D7rF5Sb1H35ZVjB7rt1xl8fi8SS6AK4rLJiU1J7MstUjfLoEr
-        Y8mhv0wFS7kqnv8/yNrAOIWji5GTQ0LARGLD0z62LkYuDiGB3YwS+7fdY4dISEosnXsDyhaW
-        uN9yhBWi6BGjRM+Kq8wgCRYBFYmNU3aA2WwCWhL3fpwAs0UEjCX6z85iB2lgFpjILtG7YxEb
-        SEJYIFiivW0q2FReAW2JjuW72SGmfmOU2HL0HAtEQlDi5MwnYDYz0NQb/14ydTFyANnSEsv/
-        gZ3NKaAp0Ty/jQUkLAp0xKuD9RMYBWchaZ6FpHkWQvMCRuZVjJKpBcW56bnFhgWGeanlesWJ
-        ucWleel6yfm5mxjBMauluYNx+6oPeocYmTgYDzFKcDArifCqLe5JFuJNSaysSi3Kjy8qzUkt
-        PsQozcGiJM57oetkvJBAemJJanZqakFqEUyWiYNTqoFpao/BlyA3dd4E8/urHrm8t7/El2Ym
-        ur9XWCQur7eKcWVHz6vN0+L/+W0NurHpPm/JrrTn62ZNL1gU8rip4cSS5IDcClUP9hXSysw5
-        WyTsN2/cd0XhQRTTntezEzYGtSu8+s5qcNMgMqZuYYd2l4g3X6ie+CQpjctKt7ad3Cy1cw/z
-        Ib7jvJuuC/7RYDm4I4Tv3LPtp28zLVhiZc7qvJ3trIX8lasH9rMsMGD68OtORreu0z6rwoh+
-        S/U+nQTTeRaqlwqTtgh27+HdVvznuVnZczNJ4ymLYu6sCer7ukh/dkHmjKptJrtULm/Welwf
-        vzh+13L++zELFrNpm9bP2Bg6y6ZmS1ZyjqPHv6t7pe4qsRRnJBpqMRcVJwIAzNtGT0gDAAA=
-X-CMS-MailID: 20221205033613epcas2p26b786c2a02615009d5d8c705187c3f76
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----nsGjZeq2cmX7r6z8R2mwVRxDvTH8Yl9kQPEM01OfpImQQXYH=_15cf8_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221201021942epcas2p2429ed37e1f6146b6e1a5bef23141b3f7
-References: <1669860811-171746-1-git-send-email-dh10.jung@samsung.com>
-        <CGME20221201021942epcas2p2429ed37e1f6146b6e1a5bef23141b3f7@epcas2p2.samsung.com>
-        <1669860811-171746-3-git-send-email-dh10.jung@samsung.com>
-        <Y4hgnxGMEuizJumr@kroah.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PA4PR10MB5681:EE_|PAWPR10MB6829:EE_
+X-MS-Office365-Filtering-Correlation-Id: f55da63e-0046-40db-311f-08dad692a4df
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: SmDmGBlKQXnhTFeSCIFr3eknJJmRrYjKptuOx5NhuCOAn0SM+J9SFh9rQza1C4xAPKmnyMgxyN2cu/6HRkk/BkNyv2B71LhG6khujyZc9AdWx6NiO5Gc0vfcgnT2EVM/zBHYkbQmv1ZdKMuNzjGJgUiQZctfA2myNRgc4JbgQGuw16OmVARc4Y4ytY3IQQVn+UDvCOqTKf/Ai4Y94pVuJNoESMmaGihv8QT1zKpr7vemDsxfqun8vDFszBlRAcdt9aQdOnv2YwkDoMKuJGKIXj3sf4z9PttWmDM+2U2xfSlv7HRdw+/viY/bM6I4mE24/1J4BkwI6YfJjgJu78zQnVV7oGVd1XdvR52q7t5hYMsT1EYohgL6GnGoISEo6K6taBqxlivmYXK/LzhVzBqjQ5gB/ZXctTVqsghmMttv1UstewL3pu7V60kn3BVbRVImGdsL7EIqyptJTugOKv5qiHX7hmLgCDIXR0bUji+sFtJi4dln2+p4ZpNwmDVXSeuocIBpZkQTQpd93jFz09p5e256C+Bdv9pZZgBms+DfEh0Mk7PO5lsmlC5CrT4FWbu7WnP4xQ5oJWshTi6KvszCeidTFceSkijFZUHSpr5nNUrNoU9/0VGGGnwRaJG9rjBX3Lvz8DjVClrikvkmSrOJOol7/16Iw+15ccD1fxIe5/g3hQYayu+6SpzwouUZ05hE0CLoeIwMbULoEEttvoJiWzuk5sM9WfD84fQhXKZMt6z/jE41LZpIdpfngkOkWIdn
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(346002)(396003)(376002)(39850400004)(366004)(451199015)(36756003)(31696002)(31686004)(38100700002)(86362001)(8936002)(5660300002)(41300700001)(4326008)(2906002)(7416002)(44832011)(83380400001)(66946007)(66476007)(966005)(478600001)(6486002)(316002)(66556008)(54906003)(110136005)(45080400002)(2616005)(8676002)(186003)(6666004)(6512007)(6506007)(53546011)(43740500002)(45980500001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RFF1b2ZIU3c0TW1vUFh3alJmeDFYRFRmVEl0WU9EcVJScjFpVmJMeXZCQ2d0?=
+ =?utf-8?B?dkJmMmpXOFEvWEJDR3RuR2NXSlQrcVpxUkx2Y2hJV0dLdDJ2QTN6cUZjcnhW?=
+ =?utf-8?B?bnUzWXduNzFLUUlTb1l4Y3piZlpUbnhmQndVWU53VVVqaWJKYVBOM1lQOWli?=
+ =?utf-8?B?MTJLZXpYd1kyclJ6SGp2RUs0d2wyTDFzMVNVcHhMMXpUUC9TSnUyTnkyOTZD?=
+ =?utf-8?B?VStBeFV2Zi9PeDJFd0lLZklJNWpYZjV2dU9CMVY2K0diZk9lK0l0dDN6VDBD?=
+ =?utf-8?B?d095ck82Zk91VE1WL3dkakRRZUw2TEVwdll0UEx4L2NrYS9RYlJNczV6Zldh?=
+ =?utf-8?B?RTE2eTRFWnlEY2MwUWRwYUhWZ0dSZ3I4YXFjQkloR0w0eXpmc3ArNHpJZG14?=
+ =?utf-8?B?NXJXcEFxWEhBYjNkZ3FNdzBqbUIrT1NYQmhDL2w5VE8vamFhSDZCYzF5cDRO?=
+ =?utf-8?B?MXQxT2lBQmRiR0lzUkt0Nm1kcjZDaHRQYjNFaWEwc0hKdEFZRFRORUtTY1ZR?=
+ =?utf-8?B?RWt4YUVTalpreEh6cGs2c1ZsKzcxM2FSR1NQakhmSVBBV3ZkdW8vNmMrc3hI?=
+ =?utf-8?B?NERhK3YrT1pzZTRIajNKZ2hZeEpYV1NlTnRmT2Y0ajM2OHFONEdJejlCdFFR?=
+ =?utf-8?B?elJKQ0x2OXRoN0FnalE0WUV4OVdtbE8zT1dyeDMyNlhRME9uaVBXUDQ5Rkw5?=
+ =?utf-8?B?OTV2NWdNYzVZazdpMmFQOW1sRXQzN1owcTEvcWEvaE5nSGpHblp3WUJQRTVp?=
+ =?utf-8?B?d2tpbktBbW1nWTBYTUJDdGlTQ3hlcmNoRE1nRSsxdFM5NUxJdTNtNERGSnh0?=
+ =?utf-8?B?bEpRay9kdmhSRTdNQTlLU0xKOHpuU2QrZUlSQXRKRnpVMWtraEl6QTZmdDlY?=
+ =?utf-8?B?WjFCOWY5cDFONEduWkFqL3ZPd253RXBPMEI4c3htOXp6dHlGcUdVemt1Mi93?=
+ =?utf-8?B?V2huNHRqK1ZmT0hjRVBOa2VpVGJDVVREZm5pQTVXWjk1eWh5dlhHZzhkd1BW?=
+ =?utf-8?B?WHdwejVEOHhFVEszOEQ1bGsyVGxGMzVPU1llRmhyN0JzS01LdDFHdUd4NkJx?=
+ =?utf-8?B?c0k3a0ZTVlhXMVYyN0ltQTBIV3BSbzhrT0drRXJlRUg4Z2VseGVsTWxwYnJ6?=
+ =?utf-8?B?VGZld1NVQk9rZmp6eEFvb0FGYWlxcmdTYW9Ldnd3VEtEZWhqanNBOFBVY1Rz?=
+ =?utf-8?B?WE0waHMvUmlhSDRyTG5qOHM3S3hvMTIrcnNQQkhKQ0ZmMVVSRStlbjFLalg1?=
+ =?utf-8?B?OUZyQll4Z2V2VkFKdG11Zk1GQnE2QXV0ZHlKWFFhSSt5RHVXZEh2SkFtd3ha?=
+ =?utf-8?B?Z1ZzVnF2WFVva3FDaisrOW5BLzNXRnJoVzhhazdPWWorK0lLajFCdEc2MkU0?=
+ =?utf-8?B?Y01iMGNyaDlPcjZ3SjhCYjk0RWJGcEtPbWZHZUZnMDhtbk1hWEswbU5CL1Iv?=
+ =?utf-8?B?VTFsOWNPS0dXbkkxL3dOakc3UXQzNUJTbWx3bnkwdExTY0dqY1NhWU1QbmZr?=
+ =?utf-8?B?dms2WjFUK0RRNXRUQnZYSklhakpvVEo2VUVncW1HRi8yRE5jOTRrcXNiK0VW?=
+ =?utf-8?B?MU5ZMElZTStuMlViendaMEhPRUM2NDBjOEJwS0M1VHM2R2RWZlZWLzlCQnNx?=
+ =?utf-8?B?RSttU29IK0JjWUxIcWsxTjYrT0h1MlExOFN5L292VXQvemRpZzVRMnZkd2N0?=
+ =?utf-8?B?VnJlU3o5cjZBT2ZFK1g5UE5LWjZram1MbEN6cUlrY2RHZ3k4MHdhc0l3YXVx?=
+ =?utf-8?B?VDVXRndnU0xFZWJvL3NxSkliamZBQXVycVZUMnNKLzA2UWtmdEcrM0RJK3U2?=
+ =?utf-8?B?V0RtaTFoRFVVN24vK0xCYStNQ0RLUXpHVjlydEdxQUlUTHErZmZ1WTcxeXFQ?=
+ =?utf-8?B?T0wzUklsN3REOFoxRGRTam9lMUhoMFkvbWVEZVJuMzFvbFM2SDBWWWJZUnRX?=
+ =?utf-8?B?R2tjMTRZTTV5dFJIekUwclViRGk1b2JvMys0Q3R0cWtrMlpCQXdtMHU5YWh5?=
+ =?utf-8?B?QU5PelNITktVZmpxcEhrczVXZ1BrNURTcEU2ZlFPd1BuZzZhY0p5SWxiRjN6?=
+ =?utf-8?B?d2VYVmVDbThzUC9iOXU1Qm45WisrNWM5Vk8ydWtwUzdnaWtwelQwSzNiUUxz?=
+ =?utf-8?B?T2xrdkZDUnZUNzBEVTNVZVdLVmtQK0V2am5aRG5aWTFkTjhqdmRENUFtVVE0?=
+ =?utf-8?Q?/bzGzrYJDuM2HyOzx1jkWIIwHsg7VTeu2vMczKcxF9eV?=
+X-OriginatorOrg: kontron.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: f55da63e-0046-40db-311f-08dad692a4df
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2022 07:30:54.7880
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CYoAhQsiDIHB9dyfgxHai5riQMgHOib16IYbJQT34/rHMYomGcrRqdw8ihkKX4M+Lx5/Pw28KzReJM1Im0OWa7XqtfuY+NWakDlRGKwCCdM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR10MB6829
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-------nsGjZeq2cmX7r6z8R2mwVRxDvTH8Yl9kQPEM01OfpImQQXYH=_15cf8_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-
-On Thu, Dec 01, 2022 at 09:06:55AM +0100, Greg Kroah-Hartman wrote:
-> On Thu, Dec 01, 2022 at 11:13:31AM +0900, Daehwan Jung wrote:
-> > This driver works with xhci platform driver. It needs to override
-> > functions of xhci_plat_hc_driver. Wakelocks are used for sleep/wakeup
-> > scenario of system.
+On 02.12.22 15:55, Dave Stevenson wrote:
+> Hi Marek
 > 
-> So this means that no other platform xhci driver can be supported in the
-> same system at the same time.
+> On Fri, 2 Dec 2022 at 12:21, Marek Vasut <marex@denx.de> wrote:
+>>
+>> On 12/2/22 11:52, Marek Szyprowski wrote:
+>>> Hi,
+>>>
+>>> Sorry for delay, I was on a sick leave last 2 weeks.
+>>>
+>>> On 28.11.2022 15:43, Jagan Teki wrote:
+>>>> ,On Sat, Nov 26, 2022 at 3:44 AM Marek Vasut <marex@denx.de> wrote:
+>>>>> On 11/23/22 21:09, Jagan Teki wrote:
+>>>>>> On Sat, Nov 19, 2022 at 7:45 PM Marek Vasut <marex@denx.de> wrote:
+>>>>>>> On 11/17/22 14:04, Marek Szyprowski wrote:
+>>>>>>>> On 17.11.2022 05:58, Marek Vasut wrote:
+>>>>>>>>> On 11/10/22 19:38, Jagan Teki wrote:
+>>>>>>>>>> DSI host initialization handling in previous exynos dsi driver has
+>>>>>>>>>> some pitfalls. It initializes the host during host transfer() hook
+>>>>>>>>>> that is indeed not the desired call flow for I2C and any other DSI
+>>>>>>>>>> configured downstream bridges.
+>>>>>>>>>>
+>>>>>>>>>> Host transfer() is usually triggered for downstream DSI panels or
+>>>>>>>>>> bridges and I2C-configured-DSI bridges miss these host initialization
+>>>>>>>>>> as these downstream bridges use bridge operations hooks like pre_enable,
+>>>>>>>>>> and enable in order to initialize or set up the host.
+>>>>>>>>>>
+>>>>>>>>>> This patch is trying to handle the host init handler to satisfy all
+>>>>>>>>>> downstream panels and bridges. Added the DSIM_STATE_REINITIALIZED state
+>>>>>>>>>> flag to ensure that host init is also done on first cmd transfer, this
+>>>>>>>>>> helps existing DSI panels work on exynos platform (form Marek
+>>>>>>>>>> Szyprowski).
+>>>>>>>>>>
+>>>>>>>>>> v8, v7, v6, v5:
+>>>>>>>>>> * none
+>>>>>>>>>>
+>>>>>>>>>> v4:
+>>>>>>>>>> * update init handling to ensure host init done on first cmd transfer
+>>>>>>>>>>
+>>>>>>>>>> v3:
+>>>>>>>>>> * none
+>>>>>>>>>>
+>>>>>>>>>> v2:
+>>>>>>>>>> * check initialized state in samsung_dsim_init
+>>>>>>>>>>
+>>>>>>>>>> v1:
+>>>>>>>>>> * keep DSI init in host transfer
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>>>>>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>>>>>>>>>> ---
+>>>>>>>>>>       drivers/gpu/drm/bridge/samsung-dsim.c | 25 +++++++++++++++++--------
+>>>>>>>>>>       include/drm/bridge/samsung-dsim.h     |  5 +++--
+>>>>>>>>>>       2 files changed, 20 insertions(+), 10 deletions(-)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c
+>>>>>>>>>> b/drivers/gpu/drm/bridge/samsung-dsim.c
+>>>>>>>>>> index bb1f45fd5a88..ec7e01ae02ea 100644
+>>>>>>>>>> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+>>>>>>>>>> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+>>>>>>>>>> @@ -1234,12 +1234,17 @@ static void samsung_dsim_disable_irq(struct
+>>>>>>>>>> samsung_dsim *dsi)
+>>>>>>>>>>           disable_irq(dsi->irq);
+>>>>>>>>>>       }
+>>>>>>>>>>       -static int samsung_dsim_init(struct samsung_dsim *dsi)
+>>>>>>>>>> +static int samsung_dsim_init(struct samsung_dsim *dsi, unsigned int
+>>>>>>>>>> flag)
+>>>>>>>>>>       {
+>>>>>>>>>>           const struct samsung_dsim_driver_data *driver_data =
+>>>>>>>>>> dsi->driver_data;
+>>>>>>>>>>       +    if (dsi->state & flag)
+>>>>>>>>>> +        return 0;
+>>>>>>>>>> +
+>>>>>>>>>>           samsung_dsim_reset(dsi);
+>>>>>>>>>> -    samsung_dsim_enable_irq(dsi);
+>>>>>>>>>> +
+>>>>>>>>>> +    if (!(dsi->state & DSIM_STATE_INITIALIZED))
+>>>>>>>>>> +        samsung_dsim_enable_irq(dsi);
+>>>>>>>>>>             if (driver_data->reg_values[RESET_TYPE] == DSIM_FUNCRST)
+>>>>>>>>>>               samsung_dsim_enable_lane(dsi, BIT(dsi->lanes) - 1);
+>>>>>>>>>> @@ -1250,6 +1255,8 @@ static int samsung_dsim_init(struct
+>>>>>>>>>> samsung_dsim *dsi)
+>>>>>>>>>>           samsung_dsim_set_phy_ctrl(dsi);
+>>>>>>>>>>           samsung_dsim_init_link(dsi);
+>>>>>>>>>>       +    dsi->state |= flag;
+>>>>>>>>>> +
+>>>>>>>>>>           return 0;
+>>>>>>>>>>       }
+>>>>>>>>>>       @@ -1269,6 +1276,10 @@ static void
+>>>>>>>>>> samsung_dsim_atomic_pre_enable(struct drm_bridge *bridge,
+>>>>>>>>>>           }
+>>>>>>>>>>             dsi->state |= DSIM_STATE_ENABLED;
+>>>>>>>>>> +
+>>>>>>>>>> +    ret = samsung_dsim_init(dsi, DSIM_STATE_INITIALIZED);
+>>>>>>>>>> +    if (ret)
+>>>>>>>>>> +        return;
+>>>>>>>>>>       }
+>>>>>>>>>>         static void samsung_dsim_atomic_enable(struct drm_bridge *bridge,
+>>>>>>>>>> @@ -1458,12 +1469,9 @@ static ssize_t
+>>>>>>>>>> samsung_dsim_host_transfer(struct mipi_dsi_host *host,
+>>>>>>>>>>           if (!(dsi->state & DSIM_STATE_ENABLED))
+>>>>>>>>>>               return -EINVAL;
+>>>>>>>>>>       -    if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
+>>>>>>>>>> -        ret = samsung_dsim_init(dsi);
+>>>>>>>>>> -        if (ret)
+>>>>>>>>>> -            return ret;
+>>>>>>>>>> -        dsi->state |= DSIM_STATE_INITIALIZED;
+>>>>>>>>>> -    }
+>>>>>>>>>> +    ret = samsung_dsim_init(dsi, DSIM_STATE_REINITIALIZED);
+>>>>>>>>> This triggers full controller reset and reprogramming upon first
+>>>>>>>>> command transfer, is such heavy handed reload really necessary ?
+>>>>>>>> Yes it is, otherwise the proper DSI panels doesn't work with Exynos DRM
+>>>>>>>> DSI. If this is a real issue for you, then maybe the driver could do the
+>>>>>>>> initialization conditionally, in prepare() callback in case of IMX and
+>>>>>>>> on the first transfer in case of Exynos?
+>>>>>>> That's odd , it does actually break panel support for me, without this
+>>>>>>> double reset the panel works again. But I have to wonder, why would such
+>>>>>>> a full reset be necessary at all , even on the exynos ?
+>>>>>> Is it breaking samsung_dsim_reset from host_transfer? maybe checking
+>>>>>> whether a reset is required before calling it might fix the issue.  I
+>>>>>> agree with double initialization is odd but it seems it is required on
+>>>>>> some panels in Exynos, I think tweaking them and adjusting the panel
+>>>>>> code might resolve this discrepancy.
+>>>>> Can someone provide further details on the exynos problem ?
+>>>> If I'm correct this sequence is required in order to work the existing
+>>>> panel/bridges on exynos. Adjusting these panel/bridge codes can
+>>>> possibly fix the sequence further.
+>>>>
+>>>> Marek Szyprowski, please add if you have anything.
+>>>
+>>>
+>>> Well, frankly speaking the double initialization is not a correct
+>>> sequence, but this is the only one that actually works on Exynos based
+>>> boards with DSI panels after moving the initialization to bridge's
+>>> .prepare() callback.
+>>
+>> Somehow, I suspect this is related to the LP11 mode handling, which
+>> differs for different panels, right ? I think the RPi people worked on
+>> fixing that.
+>>
+>> +CC Dave
 > 
-> Which kind of makes sense as that's not anything a normal system would
-> have, BUT it feels very odd.  This whole idea of "override the platform
-> driver" feels fragile, why not make these just real platform drivers and
-> have the xhci platform code be a library that the other ones can use?
-> That way you have more control overall, right?
+> Yes. I've just sent out a v3 of that patch set.
 > 
-> thanks,
+> Hopefully setting the pre_enable_prev_first flag on your peripheral's
+> drm_bridge, or prepare_prev_first if a drm_panel, will result in a
+> more sensible initialisation order for your panel.
 > 
-> greg k-h
+> Note that host_transfer should ensure that the host is initialised, as
+> it is valid to call it with the host in any state. If it has to
+> initialise, then it should deinitialise once the transfer has
+> completed.
 > 
+> Dave
+> 
+>>> I've already explained this and shared the results
+>>> of my investigation in my replies to the previous versions of this
+>>> patchset. The original Exynos DSI driver does the initialization on the
+>>> first DSI command. This however doesn't work for Jagan with I2C
+>>> controlled panels/bridges, so he moved the initialization to the
+>>> .prepare() callback, what broke the Exynos case (in-short - all tested
+>>> panels works fine only if the DSI host initialization is done AFTER
+>>> turning the panel's power on). For more information, see this thread:
+>>> https://eur04.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Fall%2Fe96197f9-948a-997e-5453-9f9d179b5f5a%40samsung.com%2F&amp;data=05%7C01%7Cfrieder.schrempf%40kontron.de%7Cc770caab3f274d9b50d108dad4753e1f%7C8c9d3c973fd941c8a2b1646f3942daf1%7C0%7C0%7C638055897263056680%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=1YV551YUhXQAjE4Cg0nAtMdMksWzMtscH49O83iKHRo%3D&amp;reserved=0
+>>>
+>>> Now, the more I think of it, the more I'm convinced that we simply
+>>> should add a hack based on the HW type: do the initialization in
+>>> .prepare() for non-Exynos case and before the first transfer for the
+>>> Exynos case, as there is no way to detect the panel/next bridge type
+>>> (I2C or DSI controlled).
+>>
+>> Let's see what Dave has to say about this, maybe there is some further help.
 
-Currently It seems there are 2 ways to excute own function.
-1. xhci_plat_priv
--> This is hard to use it if the driver invokes xhci platform driver from
-dwc3_host_init(usb/dwc/host.c). I can't pass driver data during probe.
-2. xhci_driver_overrides
--> This is only useful if I has own xhci driver.
+Could we agree on adding the HW type based hack Marek S. proposed as a
+quick fix?
 
-That's why I wanted to extend overriding concept of xhci platform driver.
-If some code is better to be directly in xhci platform driver than xhci-exynos,
-I will modify it.
+This patchset was tested on Exynos so it's likely to not break any
+existing setups. And for i.MX8, this is a new driver so there's not
+really a requirement to have all setups working/supported from the
+beginning.
 
-Best Regard,
-Jung Daehwan
+Also having one or two hacks (marked with FIXME) in the code doesn't
+hurt. As we can see there are drafts to fix them in conjunction with
+changes in the DRM framework.
 
-------nsGjZeq2cmX7r6z8R2mwVRxDvTH8Yl9kQPEM01OfpImQQXYH=_15cf8_
-Content-Type: text/plain; charset="utf-8"
+This has been pending for months and in my opinion if there's a chance
+to get this into v6.2-rc1 we should take it.
 
+If everyone agrees, Jagan, can you post a v9 which does the host
+initialization in .prepare() for i.MX and on first transfer for Exynos?
 
-------nsGjZeq2cmX7r6z8R2mwVRxDvTH8Yl9kQPEM01OfpImQQXYH=_15cf8_--
