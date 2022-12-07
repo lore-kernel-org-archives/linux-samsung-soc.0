@@ -2,58 +2,63 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA42C352A1
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Dec 2022 16:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F5D8C47089
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Dec 2022 09:08:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235544AbiLFQiR (ORCPT
+        id S229819AbiLGJI5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 6 Dec 2022 11:38:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51974 "EHLO
+        Wed, 7 Dec 2022 04:08:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235582AbiLFQhd (ORCPT
+        with ESMTP id S229840AbiLGJIp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 6 Dec 2022 11:37:33 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFAC1CE8;
-        Tue,  6 Dec 2022 08:36:47 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id z92so21127146ede.1;
-        Tue, 06 Dec 2022 08:36:47 -0800 (PST)
+        Wed, 7 Dec 2022 04:08:45 -0500
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E44672CE15
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Dec 2022 01:08:41 -0800 (PST)
+Received: by mail-lj1-x236.google.com with SMTP id b9so20161237ljr.5
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Dec 2022 01:08:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cu4l7c7T/KB912u2Bgs9LaIHGYUGD4KvKD2RT7SocLI=;
-        b=PMIsbCZcJUnwlcb85e4se4Lhmnkg5/p3CZ/cDZsAukZ3f3i3tmY4g5sANJgykCYirK
-         mlvGaIPbXgCyzpAmH06sYNk8vCmaADFoE6zZqQHb8hGg4x0/WHv6Z8hYJ0LBIWS+LTtc
-         u+Elv8Ugh2Cba3MU9nJxstXdxBM91J+/NK6gRkjIOK3iiQ+uH5og/9UApeMWkOKnd9cj
-         1HfW0ZgVT20uEcispZUyLDadLhenYxpl6mq5JxMXKgftr+gVs0wv+tsc+y54FBjZx7F/
-         u//HOUZNxymJ9GIObTMD8FDbnCFX9F/nCVNnq/jzUgW6MoBC+f52FSuv+e3PAFbJwBdU
-         tGnQ==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8WyD6+4TOtnUZ3buZrfTvZlmLnV/84EmqHh/FS/HaPA=;
+        b=L51sXgM7Hxi4SbUu1GAGwaWH8+oChEaG+fH/OfL9hIiFxjSBSLXKFotpowsHk3SDhN
+         p4cZ9Blp6YSzDOgACKD9avjX7BW17+aEsZ3QYKvjRXFuZp75GP7SmTGJDzFOnsShyeDj
+         11UruWJXKsGl029Y26Lg4SX+I2DtKEoj5FTQFMCWtF3/Z1KuUX3gM0t7OuDl12x3tc+j
+         /1IvglKFAGAeHBnwqkQne+a7jkoBQfQ6jVctZJsAT1zyYX5oj/Wev1yD4YvQfff/nUh8
+         p//ZmuGEqWgyIBpjMAU1ix+krZXB5tg9XLOL6SGmrshHF3sfOrGuBANw9h9OADYmOT2g
+         6cmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cu4l7c7T/KB912u2Bgs9LaIHGYUGD4KvKD2RT7SocLI=;
-        b=QqgvWJFuBx4Dlbq3c2K4BFr3EmtAo1gXs7Sd9pixTs2mMVmgJm5rpnyKyOuk0VBvhx
-         v35X45QzmJLTsm0tTIJ6vLUPqkhCRoPQmPETpEzIwCzHW3vh11ExPn9wJvDbhJ9TazUl
-         6jD/L14lToXbia9j4D0IlzI69fJpDBqjz/izRfhtPed2g2Zn0qpUhA2kDS28X8CXArqW
-         XgivAtJTMLQs4ByUQ5PSubW39xwPDmwq4WpmBw6+UP8hRlgs653/LQq1IKsBjXpXx+s4
-         TTRRWFltKV8RtmMICfxgcGPBB5NMqnSTkgXtzV+58CqJKJN6cSxv9cP6ax1ZM6GI4M6g
-         KTXA==
-X-Gm-Message-State: ANoB5pntnd1xbY5FVipUuD9fid1wW1UiXIMmnOThvcw8AGmdAM44wGBs
-        QzY2jSR9CrnpEqENlvtSdK0=
-X-Google-Smtp-Source: AA0mqf73SzGZEjm/ohEPWqbfiYGIO3rXn2gObtryTw0s7vUBeNfZ9CzBOpFc3oS8A3V5nkWXr1+saw==
-X-Received: by 2002:aa7:d1c5:0:b0:46b:a536:e8d0 with SMTP id g5-20020aa7d1c5000000b0046ba536e8d0mr26626675edp.261.1670344606270;
-        Tue, 06 Dec 2022 08:36:46 -0800 (PST)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id y20-20020a50eb94000000b004589da5e5cesm1168852edr.41.2022.12.06.08.36.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Dec 2022 08:36:45 -0800 (PST)
-Date:   Tue, 6 Dec 2022 17:36:43 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8WyD6+4TOtnUZ3buZrfTvZlmLnV/84EmqHh/FS/HaPA=;
+        b=01PV2ofSDGz6aADTlt644ShPK/e+7k9ystkdp+IT14j6onPPsHPLlLaTae3ua1zeTq
+         yX01RU98NxBla/LcPHvZLC3SIgV+ExAqXq/g5cMP40greDEHEXMYNIwQFTMEIKSYMf8j
+         StcmsH4U924raXFg98elbbfodvdEUCUKTj0awkh72BQAK8qFWttsyWvk+LiT9A2Q91Ku
+         ybV8tZ9Jcu9irxLg9TgxNM5+VAIOHrHbDUu3OX74DEr0juc/6CCS10vQWTc/8oSUGqkI
+         +CUtoVlGurhmxJ/m1SOLbkGACl0nhg6iJvOSdN486hQxrl1JeiHo/eoGTtzQBSp05ci+
+         Z5+w==
+X-Gm-Message-State: ANoB5pmIMlTEo8wnMv+IX1Ck8axRH2Wn7SNJAl4iUK2wmH4e2aX/Yzmr
+        EvZFqIw89Ntw46FDzLy7jrwz1Q==
+X-Google-Smtp-Source: AA0mqf5csyV+ZQkovsgzCNVOH5rNxgnnX0/bj5YjAEE7jb/b2fXvUxMbfi0o2/X1/JDCViBzm8O8bg==
+X-Received: by 2002:a2e:96d6:0:b0:279:dcde:84b2 with SMTP id d22-20020a2e96d6000000b00279dcde84b2mr7575311ljj.207.1670404120162;
+        Wed, 07 Dec 2022 01:08:40 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id 142-20020a2e0994000000b00279a5b85791sm69308ljj.88.2022.12.07.01.08.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Dec 2022 01:08:39 -0800 (PST)
+Message-ID: <ebd963e5-fc27-b70d-8cc4-b18978a5de39@linaro.org>
+Date:   Wed, 7 Dec 2022 10:08:38 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v2 8/9] media: dt-bindings: nvidia,tegra-cec: convert to
+ DT schema
+To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -74,88 +79,65 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 8/9] media: dt-bindings: nvidia,tegra-cec: convert to
- DT schema
-Message-ID: <Y49vm34cwgilAA33@orome>
 References: <20221205151845.21618-1-krzysztof.kozlowski@linaro.org>
  <20221205151845.21618-9-krzysztof.kozlowski@linaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Go2Ynh+Vu1nkhJ/W"
-Content-Disposition: inline
-In-Reply-To: <20221205151845.21618-9-krzysztof.kozlowski@linaro.org>
-User-Agent: Mutt/2.2.9 (2022-11-12)
+ <Y49vm34cwgilAA33@orome>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <Y49vm34cwgilAA33@orome>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On 06/12/2022 17:36, Thierry Reding wrote:
+> On Mon, Dec 05, 2022 at 04:18:44PM +0100, Krzysztof Kozlowski wrote:
+>> Convert Nvidia Tegra HDMI CEC bindings to DT schema.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+>> ---
+>>  .../bindings/media/cec/nvidia,tegra-cec.yaml  | 58 +++++++++++++++++++
+>>  .../devicetree/bindings/media/tegra-cec.txt   | 27 ---------
+>>  MAINTAINERS                                   |  2 +-
+>>  3 files changed, 59 insertions(+), 28 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/media/cec/nvidia,tegra-cec.yaml
+>>  delete mode 100644 Documentation/devicetree/bindings/media/tegra-cec.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/cec/nvidia,tegra-cec.yaml b/Documentation/devicetree/bindings/media/cec/nvidia,tegra-cec.yaml
+>> new file mode 100644
+>> index 000000000000..9a4025ff7fad
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/media/cec/nvidia,tegra-cec.yaml
+> 
+> For consistency with other DT bindings on Tegra, it'd be good to name
+> this nvidia,tegra114-cec.yaml since that's the first generation where
+> this IP was added. Not a big deal, though.
 
---Go2Ynh+Vu1nkhJ/W
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sure, I can rename it.
 
-On Mon, Dec 05, 2022 at 04:18:44PM +0100, Krzysztof Kozlowski wrote:
-> Convert Nvidia Tegra HDMI CEC bindings to DT schema.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> ---
->  .../bindings/media/cec/nvidia,tegra-cec.yaml  | 58 +++++++++++++++++++
->  .../devicetree/bindings/media/tegra-cec.txt   | 27 ---------
->  MAINTAINERS                                   |  2 +-
->  3 files changed, 59 insertions(+), 28 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/media/cec/nvidia,te=
-gra-cec.yaml
->  delete mode 100644 Documentation/devicetree/bindings/media/tegra-cec.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/media/cec/nvidia,tegra-cec=
-=2Eyaml b/Documentation/devicetree/bindings/media/cec/nvidia,tegra-cec.yaml
-> new file mode 100644
-> index 000000000000..9a4025ff7fad
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/cec/nvidia,tegra-cec.yaml
+> 
+>> @@ -0,0 +1,58 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/media/cec/nvidia,tegra-cec.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Nvidia Tegra HDMI CEC
+> 
+> Again, for consistency with other bindings, NVIDIA is the preferred
+> spelling. It's not a big deal and could be fixed up in a subsequent
+> patch, there are a few other cases where the alternative spelling has
+> been used.
+> 
+> The rest looks okay, so either way:
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-For consistency with other DT bindings on Tegra, it'd be good to name
-this nvidia,tegra114-cec.yaml since that's the first generation where
-this IP was added. Not a big deal, though.
+OK
 
-> @@ -0,0 +1,58 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/cec/nvidia,tegra-cec.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Nvidia Tegra HDMI CEC
+Best regards,
+Krzysztof
 
-Again, for consistency with other bindings, NVIDIA is the preferred
-spelling. It's not a big deal and could be fixed up in a subsequent
-patch, there are a few other cases where the alternative spelling has
-been used.
-
-The rest looks okay, so either way:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---Go2Ynh+Vu1nkhJ/W
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmOPb5sACgkQ3SOs138+
-s6GLkQ/+JBbjUjYZFvRHaZqueKhqQcvpNxzAo/fyN5BnZRl/Dr6r9OkfSNoSVuEm
-io5uqdiYDfXXvkApiv7BbHeNaXH8BX0PxRZ9J+hsE41zpGVHRHE+dmRlcE+rhY54
-/TpkHx0VCMROkD6C1KQShCE4n9CQGRixLL2sHdhIWxmkaC2fLR609+duNNQ4t8Up
-ASXC4hJuo1TaO31lGydUoB6S7SeU+iSO71B68Pc0HZ2cFib1ZnsdLPgK1gMJyO9q
-ooyvj+IZsPX+YMfId0bMq9owxQRdqZhxSx58LOELQPR/5Ac8Cyfll70L9eZ9uw/8
-5PKT6Eb5ilJnjfCDzF/ef8BGMBL1Ko5qoZBAdqE2Pgk01joFuRIclgZBHcujEaMl
-ymMSnEla9I8thLrJ+8grukft6H6FcuKDnqsn4jhCoIm8b7tID+jyKCbmaBxb0AmC
-VBn13BuYlSv6czihQawg9cfUyjnam/f6t/KksETr1Ne6HzC0qN7ZrxXNjcqFVB48
-mrmKcUbT1adE4eq5czWTEExxckY91LIGSBxZVO6JFRp+13qv4HUV6ZfC8bHM+0x+
-g8WACmp+9HsfNHLR53X2ASF7UIzPicMXNMw2SHK2Zx8y2/WF1MdWRkYIj9NpfkhD
-eIbGX2q9nIG7nsmqzH66uQO59Wqdv40FseT6dQM5KPpNNz9Z8eI=
-=2Wsf
------END PGP SIGNATURE-----
-
---Go2Ynh+Vu1nkhJ/W--
