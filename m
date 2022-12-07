@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA12CC47089
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Dec 2022 10:23:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB59C63708
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Dec 2022 10:23:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230406AbiLGKXF (ORCPT
+        id S230357AbiLGKXH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 7 Dec 2022 05:23:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49908 "EHLO
+        Wed, 7 Dec 2022 05:23:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230386AbiLGKXC (ORCPT
+        with ESMTP id S230392AbiLGKXE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 7 Dec 2022 05:23:02 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2162D167F1
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Dec 2022 02:23:00 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id s10so6339670ljg.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Dec 2022 02:23:00 -0800 (PST)
+        Wed, 7 Dec 2022 05:23:04 -0500
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82D12EE3D
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Dec 2022 02:23:01 -0800 (PST)
+Received: by mail-lj1-x230.google.com with SMTP id bn5so20384483ljb.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Dec 2022 02:23:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/AxgtdSHYHP1YbbzJqlPfT18aEYuRk09InbeSd0JHNg=;
-        b=tOruhaPzNOR3bQD/ouWBj+2tp/tUN/H/5pGNgjSe2ABiV3vA61PRSLsVlqeAvI3Oro
-         vHe3xvQC6FSO988F88LJTaSEr7beyBCC0Xr5mjSQNDZchgwGX/zzIK/HzVUFQm9VSFme
-         1SwIrYDkMGRN9sZr262zvK3Rqvw0K0UZRe3qgHO2FEKAoLEeQbmgdeRgDgkeB2V1Z9KU
-         ymxi4wc9pFKvlNmuXwlViGvq4nf0puoGFSzB+NSl2FGkbWnZ1skK7Dng2cwxys79bQBL
-         B2o3FQDAN5bNXMdZu277dHREbYgTFCPcottzQGS2KMyJNymjfRP+abAi8h8GpG1+lETO
-         jymg==
+        bh=LfazEVXJDWm5fHCm2MG3wz5cKNMzAQ0JQdcxbxRWLtQ=;
+        b=C9yLsR5b/Cx52mByQQifB57ckxFCXxoBQpv9fFs31Z9hQwWZdnwzn6ag5f30h5tVub
+         xCF4E6N0rLWswWVuAMaOKopQCNSUkFyby4tzB7k00DtJKZ13lk32MAenHcVOz+f14Ml3
+         E+Egy1LmlxDIfDRfIkZYOH3tunSAYTM2P4tLzqOocbJqHk9oNu9CevgDaXrqQcznG85P
+         9PoSUkRNzDYjUa5+8FbxKphUC8GcdOo7FB/Vghu5yOAAj0BmyCdbbgiZPagZ3ud6iEwp
+         NnkTIYwoiWJYzLbs1l3JPWI1eXYygn+Aeg0j+SlE2MhAo00Kf6JGWvKG3r8PjEkWISQe
+         RUfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/AxgtdSHYHP1YbbzJqlPfT18aEYuRk09InbeSd0JHNg=;
-        b=HoxT+1kObhi0WI/wIPEg6UGyXVRhz9J+3WwhHPo8MDWaoyQh1Q7Cu8Ie36KFff33Fq
-         J9x14QclpuxpGjazgrDPrWN3rpBetU74ZZ2UmNIsVS7wNvDrg00YmmN86kWps9zGjlxN
-         EOn7iqwXMUhVm6ZYqy2KhSNCBx3KWndLZBPtXMmzGhOV9GGiDIl262IqbPTaJ6fPRk4T
-         jYYQwF2wb7GBX3+NNkQ73cqRwp28v/3r3DMGXyh20MqRjvvYFeu6ki/C48FApl/7IcAz
-         2tc79wygOJfsCfigz/rQPd8PAne2IWdLlsI1YZl+udn+hWxFP2jpoJaEpIlNYhHx/pOB
-         scRQ==
-X-Gm-Message-State: ANoB5pnoa5OGsIMVp3bwsQKxDZ3b5HfEt9Zg1vBYSMlIiyg1oJKVqL0g
-        4UMsdh5FnmtKZwMuC4GbBcz0tw==
-X-Google-Smtp-Source: AA0mqf77/+pUWb1Bn4v6zLGZhuX5q4wF2Fzv0XKIu9nI2Iw4J7TFxfO02J2gesAVCe0NSJikkfILHA==
-X-Received: by 2002:a2e:87d5:0:b0:27a:1ce7:bbcb with SMTP id v21-20020a2e87d5000000b0027a1ce7bbcbmr369003ljj.420.1670408578398;
-        Wed, 07 Dec 2022 02:22:58 -0800 (PST)
+        bh=LfazEVXJDWm5fHCm2MG3wz5cKNMzAQ0JQdcxbxRWLtQ=;
+        b=t7sR+tIKN0zFnPd9SdwA88MHpxNVttDEhi4sYZkGSpvRm6IhNXDL28eswcWefwo+wN
+         /jynMVL0HkXAi0IPOYYYJOpqngU1iAIwaS+gkXnNty8OXFmGJpq9TEfkflP/BRwxbgq3
+         vkETUbwTaNOF5PN7uQAiKNh9zi2YkMcCzuqzqvWlq3F5OOz9VTno2T7yNk0yj/GUET3t
+         cRhyC5CXjc+PCBD2boGJkA0Symspo1TDL/C5LsasXaD5YW6dNFcL6ntv65hV2rbpWt9j
+         sDN96LUuhNe3Fmr0TVzrzhd9GyeuSJynHFXZUo4QF2xm+eRueQbc1naLsdxqOQZXxwD9
+         LTOA==
+X-Gm-Message-State: ANoB5pncIsK6y0nVfd81oJXqc/nprRd1clsb2n/W3QDC2L6sa6QvuFqt
+        xtHihOE1abxqYLYynIOfyvH+uQ==
+X-Google-Smtp-Source: AA0mqf41SM4D2vM+BSmHmNdhhKcC4/vtMSw8znb1EFc9AIfv2Wzh+NgjzB/04efqO1eqlaMTQ2zZIg==
+X-Received: by 2002:a2e:bcc5:0:b0:279:3851:1420 with SMTP id z5-20020a2ebcc5000000b0027938511420mr24972408ljp.265.1670408579931;
+        Wed, 07 Dec 2022 02:22:59 -0800 (PST)
 Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id bu31-20020a056512169f00b00499b27a329esm1953183lfb.300.2022.12.07.02.22.56
+        by smtp.gmail.com with ESMTPSA id bu31-20020a056512169f00b00499b27a329esm1953183lfb.300.2022.12.07.02.22.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Dec 2022 02:22:58 -0800 (PST)
+        Wed, 07 Dec 2022 02:22:59 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -75,9 +75,9 @@ To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-stm32@st-md-mailman.stormreply.com
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 1/9] media: dt-bindings: amlogic,meson-gx-ao-cec: move to cec subfolder
-Date:   Wed,  7 Dec 2022 11:22:45 +0100
-Message-Id: <20221207102253.26663-2-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 2/9] media: dt-bindings: st,stm32-cec: move to cec subfolder
+Date:   Wed,  7 Dec 2022 11:22:46 +0100
+Message-Id: <20221207102253.26663-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221207102253.26663-1-krzysztof.kozlowski@linaro.org>
 References: <20221207102253.26663-1-krzysztof.kozlowski@linaro.org>
@@ -87,49 +87,36 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Move amlogic,meson-gx-ao-cec.yaml bindings to cec subfolder and drop
-unneeded quotes.
+Move st,stm32-cec.yaml bindings to cec subfolder and drop unneeded
+"bindings" in the title.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
 Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/media/{ => cec}/amlogic,meson-gx-ao-cec.yaml     | 4 ++--
- MAINTAINERS                                                   | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
- rename Documentation/devicetree/bindings/media/{ => cec}/amlogic,meson-gx-ao-cec.yaml (93%)
+ .../devicetree/bindings/media/{ => cec}/st,stm32-cec.yaml     | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+ rename Documentation/devicetree/bindings/media/{ => cec}/st,stm32-cec.yaml (89%)
 
-diff --git a/Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml b/Documentation/devicetree/bindings/media/cec/amlogic,meson-gx-ao-cec.yaml
-similarity index 93%
-rename from Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
-rename to Documentation/devicetree/bindings/media/cec/amlogic,meson-gx-ao-cec.yaml
-index 8d844f4312d1..f65c9681a9f7 100644
---- a/Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
-+++ b/Documentation/devicetree/bindings/media/cec/amlogic,meson-gx-ao-cec.yaml
-@@ -2,8 +2,8 @@
- # Copyright 2019 BayLibre, SAS
+diff --git a/Documentation/devicetree/bindings/media/st,stm32-cec.yaml b/Documentation/devicetree/bindings/media/cec/st,stm32-cec.yaml
+similarity index 89%
+rename from Documentation/devicetree/bindings/media/st,stm32-cec.yaml
+rename to Documentation/devicetree/bindings/media/cec/st,stm32-cec.yaml
+index 77144cc6f7db..2314a9a14650 100644
+--- a/Documentation/devicetree/bindings/media/st,stm32-cec.yaml
++++ b/Documentation/devicetree/bindings/media/cec/st,stm32-cec.yaml
+@@ -1,10 +1,10 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
  %YAML 1.2
  ---
--$id: "http://devicetree.org/schemas/media/amlogic,meson-gx-ao-cec.yaml#"
--$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/media/cec/amlogic,meson-gx-ao-cec.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+-$id: http://devicetree.org/schemas/media/st,stm32-cec.yaml#
++$id: http://devicetree.org/schemas/media/cec/st,stm32-cec.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
  
- title: Amlogic Meson AO-CEC Controller
+-title: STMicroelectronics STM32 CEC bindings
++title: STMicroelectronics STM32 CEC
  
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e3f3c3e53f77..07cb85cac4c3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13553,7 +13553,7 @@ L:	linux-amlogic@lists.infradead.org
- S:	Supported
- W:	http://linux-meson.com/
- T:	git git://linuxtv.org/media_tree.git
--F:	Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
-+F:	Documentation/devicetree/bindings/media/cec/amlogic,meson-gx-ao-cec.yaml
- F:	drivers/media/cec/platform/meson/ao-cec-g12a.c
- F:	drivers/media/cec/platform/meson/ao-cec.c
- 
+ maintainers:
+   - Yannick Fertre <yannick.fertre@foss.st.com>
 -- 
 2.34.1
 
