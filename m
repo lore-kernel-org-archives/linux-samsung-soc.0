@@ -2,66 +2,105 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 932F4C63703
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Dec 2022 02:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF11C3A5A7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Dec 2022 09:14:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229689AbiLHC07 (ORCPT
+        id S230170AbiLHJOP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 7 Dec 2022 21:26:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51846 "EHLO
+        Thu, 8 Dec 2022 04:14:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbiLHC0z (ORCPT
+        with ESMTP id S230190AbiLHJN4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 7 Dec 2022 21:26:55 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 148158E599;
-        Wed,  7 Dec 2022 18:26:54 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 95A5461D22;
-        Thu,  8 Dec 2022 02:26:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E436DC433D6;
-        Thu,  8 Dec 2022 02:26:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670466413;
-        bh=EEXv31EHijcWe+oAPW/O/oSGFu1i6dgrthd8lpIk1JE=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=QFRj0NUJc2P+g/jO+Akg9dD4y0vBw9PBp0aq/ExBHu2lvdDF3AKdeZnsMsxvP9V33
-         iVXkDdFaXObf7ow9tCK11q8FiBY1SIiTpnWf0Vq1UfcsM1NTJyrGZlMmHuU7P6f8uZ
-         mmFulhQ+1JmrU9q4yfE6FNyvpbgivu7DIoxzHfnLFux+SlauCZUyelJYD6q8QnheMh
-         iy8nY6xV1Er2EhVpw2CezbfFLBNGT9nG8hBrqApl8HMdvdqbnfHZtbe6vkfKQccWLz
-         SW3ITzzEvA2KmobEM4NC5Nfz+jz8pAb4ea9ymRUWD2vAkSkOYnbrChpy3M34vDc21S
-         xmhqGvv+3/7Eg==
-Content-Type: text/plain; charset="utf-8"
+        Thu, 8 Dec 2022 04:13:56 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC6B17061E
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Dec 2022 01:12:56 -0800 (PST)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1p3Cx3-0006oc-8k; Thu, 08 Dec 2022 10:12:21 +0100
+Received: from pengutronix.de (unknown [IPv6:2a03:f580:87bc:d400:92e:b9fb:f0e7:2adf])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        (Authenticated sender: mkl-all@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id 76E921394C2;
+        Thu,  8 Dec 2022 09:12:19 +0000 (UTC)
+Date:   Thu, 8 Dec 2022 10:12:11 +0100
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+To:     Vivek Yadav <vivek.2311@samsung.com>
+Cc:     rcsekar@samsung.com, krzysztof.kozlowski+dt@linaro.org,
+        wg@grandegger.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, pankaj.dubey@samsung.com,
+        ravi.patel@samsung.com, alim.akhtar@samsung.com,
+        linux-fsd@tesla.com, robh+dt@kernel.org, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        aswani.reddy@samsung.com, sriranjani.p@samsung.com
+Subject: Re: [Patch v4 1/2] can: m_can: Call the RAM init directly from
+ m_can_chip_config
+Message-ID: <20221208091211.622jm5raebedxboa@pengutronix.de>
+References: <20221207100632.96200-1-vivek.2311@samsung.com>
+ <CGME20221207100650epcas5p408d280e0e2d2d6acfb5e252e37f504b2@epcas5p4.samsung.com>
+ <20221207100632.96200-2-vivek.2311@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221123032015.63980-1-xiujianfeng@huawei.com>
-References: <20221123032015.63980-1-xiujianfeng@huawei.com>
-Subject: Re: [PATCH] clk: samsung: Fix memory leak in _samsung_clk_register_pll()
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Xiu Jianfeng <xiujianfeng@huawei.com>, alim.akhtar@samsung.com,
-        cw00.choi@samsung.com, dianders@chromium.org,
-        krzysztof.kozlowski@linaro.org, mturquette@baylibre.com,
-        mturquette@linaro.org, s.nawrocki@samsung.com,
-        tomasz.figa@gmail.com, yadi.brar@samsung.com
-Date:   Wed, 07 Dec 2022 18:26:50 -0800
-User-Agent: alot/0.10
-Message-Id: <20221208022652.E436DC433D6@smtp.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qo5ntlmugze2qlne"
+Content-Disposition: inline
+In-Reply-To: <20221207100632.96200-2-vivek.2311@samsung.com>
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Quoting Xiu Jianfeng (2022-11-22 19:20:15)
-> If clk_register() fails, @pll->rate_table may have allocated memory by
-> kmemdup(), so it needs to be freed, otherwise will cause memory leak
-> issue, this patch fixes it.
->=20
-> Fixes: 3ff6e0d8d64d ("clk: samsung: Add support to register rate_table fo=
-r samsung plls")
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-> ---
 
-Applied to clk-next
+--qo5ntlmugze2qlne
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 07.12.2022 15:36:31, Vivek Yadav wrote:
+> When we try to access the mcan message ram addresses during the probe,
+> hclk is gated by any other drivers or disabled, because of that probe
+> gets failed.
+>=20
+> Move the mram init functionality to mcan chip config called by
+> m_can_start from mcan open function, by that time clocks are
+> enabled.
+>=20
+> Suggested-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> Signed-off-by: Vivek Yadav <vivek.2311@samsung.com>
+
+Applied to linux-can-next.
+
+Thanks,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde           |
+Embedded Linux                   | https://www.pengutronix.de  |
+Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
+
+--qo5ntlmugze2qlne
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEBsvAIBsPu6mG7thcrX5LkNig010FAmORqmkACgkQrX5LkNig
+013EGAgAqIsT8Spgs5YSH/Ia25bQG5vb66rPRb4TpsVjmLjycBzY26fgnsXhMqnD
+EJ0x3PhYxpZS3/XI8IiRXPgewekGZBl9DkZWk7BreOLS7MbKR+jnW/82FOrYoDvm
+JleZrFmHQB65YiJTZwzmNmcuEgiQ/KJBfnvVWFbN2KZu8zyEJT6OIRpjDCztetuA
+a/lPfdZJybyh4fTrHJo98KTKie/xuzHGcWtu0YXdI6u3R3O7Z8PBr2jhvuzsvFh/
+7ZrrKY55DAp4TfYI472mR3V4IJpM+Xhs0CJhxPBzqjWw6XxckjrJSTk5k1ZLRymX
+Nf3Bm8cceg345Bu4LOi1AiI+AjxzOw==
+=aA7E
+-----END PGP SIGNATURE-----
+
+--qo5ntlmugze2qlne--
