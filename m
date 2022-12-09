@@ -2,52 +2,52 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DE2C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Dec 2022 15:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C030FC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Dec 2022 15:25:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229724AbiLIPZl (ORCPT
+        id S230388AbiLIPZ4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 9 Dec 2022 10:25:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46464 "EHLO
+        Fri, 9 Dec 2022 10:25:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229696AbiLIPZj (ORCPT
+        with ESMTP id S230194AbiLIPZy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Dec 2022 10:25:39 -0500
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8D3578B92
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Dec 2022 07:25:38 -0800 (PST)
-Received: by mail-pj1-x1031.google.com with SMTP id t11-20020a17090a024b00b0021932afece4so8456574pje.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Dec 2022 07:25:38 -0800 (PST)
+        Fri, 9 Dec 2022 10:25:54 -0500
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E203A8DBE3
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Dec 2022 07:25:52 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id k88-20020a17090a4ce100b00219d0b857bcso5294612pjh.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Dec 2022 07:25:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6CUJYu0PBu1wfIOC7kGOkRHJr7T1+ycl/j32CgnvDxw=;
-        b=BNqDuX9tCXUwEPPEht+0AtSFgnlyXtEfwk5mlTDou/QjBGbxg9H0RiKTcLx1xGgD9j
-         +PD333SYes27F95zWb5J9dfT6mlpPftq+QRAoPUzZe7i/+/UEWt4Ov4wFOsG6GYubiSe
-         SBSSVq3qOVziT57z4MuOHJh21bupHIvwL6QCc=
+        bh=LFDauSpXdcfcdulBlIlfj04e257Z0kmZtXLY+iJX2Pg=;
+        b=ryEFa27h8SLc1qWdmoMlBp0bx55NLrrGgH8Zv2/ERI2Xh22eUHA7BUmUDn/Gc7LQBT
+         hYdFsZFpSKssP6unOy5EqipGJ6JuD+hZ7QZ1x4lS9Ym95THHWxHBTsodhxHcgjl24yMq
+         nubrbGC+/k210FrvNnYYGqWDjg7PARSDn65NY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6CUJYu0PBu1wfIOC7kGOkRHJr7T1+ycl/j32CgnvDxw=;
-        b=Q6PIg20kbte8B9Yj/Vg6i7Q3dxfbbiZeazN2yWvgnBVnDxFYv9p/57rCB45K3rrjmM
-         E3duWpBinZ/NFuXZV/I2vvd0jtQ63Ly0MY4DE8qHheF5lYa8cYhbDTU25Jut7PUzn1QC
-         vhXMh3oNYWzQizeyWql9mMpUtrx5nId31Z9HiDKuQ1WtCyF/ZIcVDjaOnY4YEtJmZr0X
-         u9VVtNSyV/6HugekaL73ALfBygLWOeS0MQlme9CPedBq9ddxcRAr5Mhj3HcZB36bIWYG
-         0ZGItgzaq6fUDcJ4UphF3PHcAkkDaW0lI+PJSjHTXi4xc4WbhFZNdmy0n/p9dCeJa2sx
-         YVUA==
-X-Gm-Message-State: ANoB5pmuM+6ThkByw62FNCTushL5eYRP/l8AByjpEvKSnW62Nhzdk+ku
-        G5UDyJlbPVRZEPiXDgpmCZdnog==
-X-Google-Smtp-Source: AA0mqf465vsLSnLp/ogCPrLxZJp71LtF3FRDfQ+QQy3YrIC+dGWepCwsDCXMx3VH4Fq/lJnFoIGrqQ==
-X-Received: by 2002:a17:902:c745:b0:189:9519:87b6 with SMTP id q5-20020a170902c74500b00189951987b6mr5017053plq.5.1670599538323;
-        Fri, 09 Dec 2022 07:25:38 -0800 (PST)
+        bh=LFDauSpXdcfcdulBlIlfj04e257Z0kmZtXLY+iJX2Pg=;
+        b=W4Kj3/D8su06XXw3B5oCt0q7eZPVWYgVCkakfuPgatAhtDJUtxBhIAlRY9+n8dlCw7
+         fvVU+nHpidqaQVoF8Br3FxIEbkxntcqgulLFGsGmQXuPi9jvQG4ByJsgzPCMQPeqsdg5
+         hxV1bzErvvAgmOqMTZSBPTqtiD0mvnmAz5JRU7v7EELhU0a8SGpBkIEL9AaV78kO6kUO
+         dWIXEIT8EzDkpPbN64NFVsEuR63APGeGSA6+WVUqh1x9d8H3wofkyKglwABzoWfsV4xf
+         nf4vOBfJ+fxPVKdQWFE9N3GPPbBrVke9BFv5JffrNTq/f9Z6dxIC5Ft3hA9YqtUsGdIk
+         H9Aw==
+X-Gm-Message-State: ANoB5pk3NMrQC8nA+SUGhBvbmYb3972ABMceBBdGdywwDZUC2S+cdZp9
+        PSIlUQr7zDJwTD4VZuEYUt8EMQ==
+X-Google-Smtp-Source: AA0mqf4L+0It51zXy3WVW7YZtaQAOe0SU2ffTuGt5Qne8mX7Sf8W244wwyLuWxnnc1tRpHva6L5yfA==
+X-Received: by 2002:a17:902:e787:b0:187:1d13:f6d1 with SMTP id cp7-20020a170902e78700b001871d13f6d1mr5927784plb.52.1670599552412;
+        Fri, 09 Dec 2022 07:25:52 -0800 (PST)
 Received: from localhost.localdomain ([2405:201:c00a:a809:6ba1:bbda:c542:ba0b])
-        by smtp.gmail.com with ESMTPSA id x14-20020a170902ec8e00b00188c5f0f9e9sm1477587plg.199.2022.12.09.07.25.21
+        by smtp.gmail.com with ESMTPSA id x14-20020a170902ec8e00b00188c5f0f9e9sm1477587plg.199.2022.12.09.07.25.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Dec 2022 07:25:37 -0800 (PST)
+        Fri, 09 Dec 2022 07:25:51 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
@@ -71,66 +71,97 @@ Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>,
         Jagan Teki <jagan@amarulasolutions.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        =?UTF-8?q?S=C3=A9bastien=20Szymanski?= 
-        <sebastien.szymanski@armadeus.com>
-Subject: [PATCH v9 04/18] drm: exynos: dsi: Fix MIPI_DSI*_NO_* mode flags
-Date:   Fri,  9 Dec 2022 20:53:29 +0530
-Message-Id: <20221209152343.180139-5-jagan@amarulasolutions.com>
+        Nicolas Boichat <drinkcat@chromium.org>
+Subject: [PATCH v9 05/18] drm: exynos: dsi: Properly name HSA/HBP/HFP/HSE bits
+Date:   Fri,  9 Dec 2022 20:53:30 +0530
+Message-Id: <20221209152343.180139-6-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221209152343.180139-1-jagan@amarulasolutions.com>
 References: <20221209152343.180139-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-HFP/HBP/HSA/EOT_PACKET modes in Exynos DSI host specifies
+HSA/HBP/HFP/HSE mode bits in Processor Reference Manuals specify
+a naming conversion as 'disable mode bit' due to its bit definition,
 0 = Enable and 1 = Disable.
 
-The logic for checking these mode flags was correct before
-the MIPI_DSI*_NO_* mode flag conversion.
+For HSE bit, the i.MX 8M Mini/Nano/Plus Applications Processor
+Reference Manual named this bit as 'HseDisableMode' but the bit
+definition is quite opposite like
+0 = Disables transfer
+1 = Enables transfer
+which clearly states that HSE is not a disable bit.
 
-Fix the MIPI_DSI*_NO_* mode flags handling.
+HSE is named as per the manual even though it is not a disable
+bit however the driver logic for handling HSE is based on the
+MIPI_DSI_MODE_VIDEO_HSE flag itself.
 
-Fixes: <0f3b68b66a6d> ("drm/dsi: Add _NO_ to MIPI_DSI_* flags disabling
-features")
-Reviewed-by: Nicolas Boichat <drinkcat@chromium.org>
-Reported-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+Cc: Nicolas Boichat <drinkcat@chromium.org>
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
 Changes for v9:
-- none
+- new patch
 
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 33 +++++++++++++++++++------
+ 1 file changed, 25 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index e5b1540c4ae4..50a2a9ca88a9 100644
+index 50a2a9ca88a9..b64bb6006b7d 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -805,15 +805,15 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
+@@ -75,10 +75,27 @@
+ #define DSIM_MAIN_PIX_FORMAT_RGB565	(0x4 << 12)
+ #define DSIM_SUB_VC			(((x) & 0x3) << 16)
+ #define DSIM_MAIN_VC			(((x) & 0x3) << 18)
+-#define DSIM_HSA_MODE			(1 << 20)
+-#define DSIM_HBP_MODE			(1 << 21)
+-#define DSIM_HFP_MODE			(1 << 22)
+-#define DSIM_HSE_MODE			(1 << 23)
++#define DSIM_HSA_DISABLE_MODE		(1 << 20)
++#define DSIM_HBP_DISABLE_MODE		(1 << 21)
++#define DSIM_HFP_DISABLE_MODE		(1 << 22)
++/*
++ * The i.MX 8M Mini Applications Processor Reference Manual,
++ * Rev. 3, 11/2020 Page 4091
++ * The i.MX 8M Nano Applications Processor Reference Manual,
++ * Rev. 2, 07/2022 Page 3058
++ * The i.MX 8M Plus Applications Processor Reference Manual,
++ * Rev. 1, 06/2021 Page 5436
++ * named this bit as 'HseDisableMode' but the bit definition
++ * is quite opposite like
++ * 0 = Disables transfer
++ * 1 = Enables transfer
++ * which clearly states that HSE is not a disable bit.
++ *
++ * This bit is named as per the manual even though it is not
++ * a disable bit however the driver logic for handling HSE
++ * is based on the MIPI_DSI_MODE_VIDEO_HSE flag itself.
++ */
++#define DSIM_HSE_DISABLE_MODE		(1 << 23)
+ #define DSIM_AUTO_MODE			(1 << 24)
+ #define DSIM_VIDEO_MODE			(1 << 25)
+ #define DSIM_BURST_MODE			(1 << 26)
+@@ -804,13 +821,13 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
+ 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_AUTO_VERT)
  			reg |= DSIM_AUTO_MODE;
  		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_HSE)
- 			reg |= DSIM_HSE_MODE;
--		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HFP))
-+		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HFP)
- 			reg |= DSIM_HFP_MODE;
--		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HBP))
-+		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HBP)
- 			reg |= DSIM_HBP_MODE;
--		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HSA))
-+		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HSA)
- 			reg |= DSIM_HSA_MODE;
+-			reg |= DSIM_HSE_MODE;
++			reg |= DSIM_HSE_DISABLE_MODE;
+ 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HFP)
+-			reg |= DSIM_HFP_MODE;
++			reg |= DSIM_HFP_DISABLE_MODE;
+ 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HBP)
+-			reg |= DSIM_HBP_MODE;
++			reg |= DSIM_HBP_DISABLE_MODE;
+ 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HSA)
+-			reg |= DSIM_HSA_MODE;
++			reg |= DSIM_HSA_DISABLE_MODE;
  	}
  
--	if (!(dsi->mode_flags & MIPI_DSI_MODE_NO_EOT_PACKET))
-+	if (dsi->mode_flags & MIPI_DSI_MODE_NO_EOT_PACKET)
- 		reg |= DSIM_EOT_DISABLE;
- 
- 	switch (dsi->format) {
+ 	if (dsi->mode_flags & MIPI_DSI_MODE_NO_EOT_PACKET)
 -- 
 2.25.1
 
