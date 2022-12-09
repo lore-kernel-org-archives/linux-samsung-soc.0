@@ -2,188 +2,168 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94AB7C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Dec 2022 14:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E17F1C04FDE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Dec 2022 12:00:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229785AbiLHOO7 (ORCPT
+        id S229997AbiLIMAx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 8 Dec 2022 09:14:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47300 "EHLO
+        Fri, 9 Dec 2022 07:00:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229759AbiLHOO5 (ORCPT
+        with ESMTP id S229948AbiLIMAs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Dec 2022 09:14:57 -0500
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14F128139C
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Dec 2022 06:14:53 -0800 (PST)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20221208141449epoutp04a39c637ccbf3995a2b85e6d98be83645~u1vwRWtZN1339213392epoutp04f
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Dec 2022 14:14:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20221208141449epoutp04a39c637ccbf3995a2b85e6d98be83645~u1vwRWtZN1339213392epoutp04f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1670508889;
-        bh=y9qUn4mXBv4NSRx5v9NuWhOMRw9GaeQfdHzFhonAdg0=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=IIDgzWcfGhPXW+e9yVbjuCqiGs0ytBI1g4dStBAaq/v9isdUsGUKEaGzJteWTE25F
-         6cIjwIeqVa2EEpNld2ihsmXh2Xw0IPGj9HWNifh/+2UlxUmAYxgij0lo39UDiR88Su
-         MxqVmIpWWeRiWWvx40W/rAE+QjtvihPgEFYhqliw=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20221208141449epcas5p45d35d6ca14aef2e0d906c9ee87d4d958~u1vvyyt340520505205epcas5p4P;
-        Thu,  8 Dec 2022 14:14:49 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.175]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4NSbkv5Vbrz4x9Pp; Thu,  8 Dec
-        2022 14:14:47 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9F.29.39477.751F1936; Thu,  8 Dec 2022 23:14:47 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20221208141447epcas5p44220ff166d8b4c594274cff4011b339e~u1vt-NmN_0520505205epcas5p4N;
-        Thu,  8 Dec 2022 14:14:47 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20221208141447epsmtrp24fa15b13372427ab8710cafb51f29bbd~u1vt9Sv_m2935429354epsmtrp2H;
-        Thu,  8 Dec 2022 14:14:47 +0000 (GMT)
-X-AuditID: b6c32a4a-259fb70000019a35-16-6391f1575356
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        38.83.14392.751F1936; Thu,  8 Dec 2022 23:14:47 +0900 (KST)
-Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20221208141445epsmtip2a75fc708e4e957c0b9dd1ca49ad5b82a~u1vsmR-rM1136411364epsmtip2Q;
-        Thu,  8 Dec 2022 14:14:45 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Colin Ian King'" <colin.i.king@gmail.com>,
-        "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-        "'Mauro Carvalho Chehab'" <mchehab@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        <linux-media@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>
-Cc:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20221208115847.2433777-1-colin.i.king@gmail.com>
-Subject: RE: [PATCH] media: platform: exynos4-is: Fix spelling mistake
- "palne" -> "plane"
-Date:   Thu, 8 Dec 2022 19:44:44 +0530
-Message-ID: <000801d90b0f$6d621620$48264260$@samsung.com>
+        Fri, 9 Dec 2022 07:00:48 -0500
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB45F31376
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Dec 2022 04:00:38 -0800 (PST)
+Received: by mail-ej1-x62e.google.com with SMTP id m18so10960779eji.5
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Dec 2022 04:00:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CCwzWMPdgO9Dcc0FuYTNg8nT6gaYsC62geOPdirkTlQ=;
+        b=blV6eki9f/dE3yt8k9vQjmYbdmKqtjXhWL8aRDi0+PTy9DZ7PoASn6Hb4YDawt6/Pq
+         TOTWkNyJ1bQ0LXeAOKmZsgrohPEAxg4I9Vxq8Iql4MCfOpzd9bk59Kg8A1l2aCabzc1i
+         Pwb8zUD5pTagBDWz9wlqw8be8RXHOe4ntLhBEh7HXgPppKgizTPX68btz3fJ69iSfJef
+         zAFAyKFjvCY4s0mBfuw+77i/sj6ivMcyXsKkk5Q+7miuQY1uqqYMcxvazgbad3gQhSeN
+         osKwSC1CYREx2mikz7Rsbjiro/V/gVq1uBZVJYbtUMGcexuFEHFb/xJK0jJPCO1YVyoF
+         GpZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CCwzWMPdgO9Dcc0FuYTNg8nT6gaYsC62geOPdirkTlQ=;
+        b=z6wU9bdnUKdbW8I33aRs9kIKYxARjDXcrjCCU5pQKp5KMsN0sImtEZLvNMIEfhx72f
+         9Z4v33ZxW9N5elq4Icd/l4vi++Yhk1DIgngXUyxpa5dEBfAiFZWd+GTc0AMxaYSEPpQW
+         i+LjKMJwx7/ojXQS9IWCpB6D0SAk/ULQ9DIChlk8u9cJacYBS/PWAtaVw3nNJRUa60mu
+         6rWQiohkhGzXm4UjHDTbuUUQKqmF8nbZV4U7p1ZbPvaeZnjY+2b/hPXDAj+rnk5H5mOS
+         a+JEpLFC6F1tEjE/t279v0am+TzkkK54zmDX8H2Tttp6MPlQzrG87Uuj9+/dpP+2xQa3
+         EMgg==
+X-Gm-Message-State: ANoB5plsiPaO+0w+73qWPTSSoCpFX65MdVmPiotKDk0hGTktRcDsz5F9
+        nLR+lB30yu0nv4SOQ9yGI/KcVw==
+X-Google-Smtp-Source: AA0mqf7P1uuFrcKToZQL1Qs7OSMRUELHntqUphTx86r+y9eGx8OMntNtg5Twtz4wxSVo6DNFFYUZgg==
+X-Received: by 2002:a17:906:4907:b0:7c0:d4fa:3151 with SMTP id b7-20020a170906490700b007c0d4fa3151mr4765674ejq.17.1670587236522;
+        Fri, 09 Dec 2022 04:00:36 -0800 (PST)
+Received: from prec5560.. (freifunk-gw.bsa1-cpe1.syseleven.net. [176.74.57.43])
+        by smtp.gmail.com with ESMTPSA id o23-20020a170906861700b007c0a7286c0asm489597ejx.58.2022.12.09.04.00.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Dec 2022 04:00:35 -0800 (PST)
+From:   Robert Foss <robert.foss@linaro.org>
+To:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
+        Wolfram Sang <wsa@kernel.org>,
+        Angel Iglesias <ang.iglesiasg@gmail.com>,
+        Grant Likely <grant.likely@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     Robert Foss <robert.foss@linaro.org>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-media@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-spi@vger.kernel.org, kernel@pengutronix.de,
+        Purism Kernel Team <kernel@puri.sm>,
+        linux-rpi-kernel@lists.infradead.org, linux-leds@vger.kernel.org,
+        linux-actions@lists.infradead.org, netdev@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-staging@lists.linux.dev, chrome-platform@lists.linux.dev,
+        linux-crypto@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-fbdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linuxppc-dev@lists.ozlabs.org, patches@opensource.cirrus.com,
+        linux-omap@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: (subset) [PATCH 000/606] i2c: Complete conversion to i2c_probe_new
+Date:   Fri,  9 Dec 2022 13:00:14 +0100
+Message-Id: <167058708567.1651663.18170722235132459286.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221118224540.619276-1-uwe@kleine-koenig.org>
+References: <20221118224540.619276-1-uwe@kleine-koenig.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQI0vk9RW1iZ4BXMTfsejTy1hxIu1gDaeiQgraXOGYA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGJsWRmVeSWpSXmKPExsWy7bCmhm74x4nJBv8maVpMav/CarH1lrTF
-        3tdb2S02Pb7GanF51xw2i54NW1ktZpzfx2SxbNMfJovDb9pZHTg9ds66y+6xaVUnm8eda3vY
-        PDYvqffo27KK0ePzJrkAtqhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE
-        3FRbJRefAF23zBygm5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BSYFesWJucWl
-        eel6eaklVoYGBkamQIUJ2RkfpvYxF+wVqbhwaC9zA+N/wS5GTg4JAROJU8+esHcxcnEICexm
-        lLh++DsLhPOJUWLVlZtQmW+MEiu3fQFyOMBaHk11BOkWEtjLKPH2TTJEzUtGidPzVrKAJNgE
-        dCV2LG5jA0mICOxjkvg/fQMjSIJZwFXizpl7rCA2p4CdRN/eV0wgtrBAtMTRP4+ZQWwWARWJ
-        Dzfmgg3iFbCUaHp5jRnCFpQ4OfMJC8QcbYllC18zQ/ygIPHz6TKwmSICVhLb1y5hgqgRl3h5
-        9AjYBxICazkkpt7fwA7R4CKxvauDEcIWlnh1fAtUXEri87u9bBBfekgs+iMFEc6QeLt8PVS5
-        vcSBK3NYQEqYBTQl1u/Sh1jFJ9H7+wkTRCevREebEES1qkTzu6ssELa0xMTublYI20Nix7Mf
-        rBMYFWcheWwWksdmIXlgFsKyBYwsqxglUwuKc9NTi00LjPJSy+HRnZyfu4kRnGC1vHYwPnzw
-        Qe8QIxMH4yFGCQ5mJRHeZcsmJgvxpiRWVqUW5ccXleakFh9iNAWG9kRmKdHkfGCKzyuJNzSx
-        NDAxMzMzsTQ2M1QS5106pSNZSCA9sSQ1OzW1ILUIpo+Jg1OqganG+OTytqWspfz5Wb03Fvxb
-        Z31wTUnCnYiA2y+u+gZErY0J/F7XsnZWsG5qjJ3Z9M8mGl9EHVMrktO3XPbnnTT56jGZaQ9e
-        LpotGP+/q3+xUP2l4xUr5q9b3hFhITL5lIqZl8l6O26Fcysm3Pj8PMvidZixQ9afQ5uTOY8t
-        nJ01z0OWzS9+wjmdhEu6get8Wb51aZY6xKavVa2OZXXc+OrGx08as+59r2A66Lapr377pQ23
-        Vx35Gaqw0bD+SBXzu/ncPgXpDuy5re0s4SkTk1OctN99+miukPw52EJiclm40faHz+LMjV7x
-        MLQtvx7pKNdWaZRg8TXLpLxpq27vLe9pf08+Zou9bTBf6ODJciWW4oxEQy3mouJEAMOIhWk5
-        BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIIsWRmVeSWpSXmKPExsWy7bCSvG74x4nJBnv/CVlMav/CarH1lrTF
-        3tdb2S02Pb7GanF51xw2i54NW1ktZpzfx2SxbNMfJovDb9pZHTg9ds66y+6xaVUnm8eda3vY
-        PDYvqffo27KK0ePzJrkAtigum5TUnMyy1CJ9uwSujKXHdrIVvBauuNm8mK2Bca1gFyMHh4SA
-        icSjqY5djFwcQgK7GSV23/7P2MXICRSXlri+cQI7hC0ssfLfc3aIoueMEg8272EBSbAJ6Ers
-        WNzGBpIQETjEJDF52x0mkASzgLvEtKadjBAd/YwST5tnsYIkOAXsJPr2vgIrEhaIlLh3YREz
-        iM0ioCLx4cZcsKm8ApYSTS+vMUPYghInZz5hgRiqLdH7sJURxl628DUzxHkKEj+fLgObLyJg
-        JbF97RKoI8QlXh49wj6BUXgWklGzkIyahWTULCQtCxhZVjFKphYU56bnFhsWGOallusVJ+YW
-        l+al6yXn525iBMealuYOxu2rPugdYmTiYDzEKMHBrCTCu2zZxGQh3pTEyqrUovz4otKc1OJD
-        jNIcLErivBe6TsYLCaQnlqRmp6YWpBbBZJk4OKUamLYlJFq/Tpp0arWTrLrA3EusIa1bNky+
-        07xpT3Zy70Qn8y1haz5zCR9uCvE9r80Swj9bzWHd2Qim6Deziiv4/u77OVPp8Clx7ef1ohbd
-        OUfUkk7kLaxOV+g5OV+Bcd6rFT92TU1z+HLy8fvD8yr2KO090XBtQk+Rps0vnqZn01jbVsXO
-        ai/Q9+K84ij4L2x/us7O+ycaY9ZqBP7ujOlp2vNCr7bq7dXmwHkL0j/mia39ZX4skcX4v1Rk
-        vObTToPH/P/E53nMUlSrddT2Ppw82XyX582ZN5+YJUwUPPQmwvaCCHvICWm5BbM3bao/eFV2
-        d4Od0KK2w3/fbJNjaFhhyb5DRozpz5Fd/A8SD3WG7FViKc5INNRiLipOBAAesAeWJAMAAA==
-X-CMS-MailID: 20221208141447epcas5p44220ff166d8b4c594274cff4011b339e
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221208115852epcas5p476b048a9661b4ac6d11971475968c73e
-References: <CGME20221208115852epcas5p476b048a9661b4ac6d11971475968c73e@epcas5p4.samsung.com>
-        <20221208115847.2433777-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Fri, 18 Nov 2022 23:35:34 +0100, Uwe Kleine-König wrote:
+> since commit b8a1a4cd5a98 ("i2c: Provide a temporary .probe_new()
+> call-back type") from 2016 there is a "temporary" alternative probe
+> callback for i2c drivers.
+> 
+> This series completes all drivers to this new callback (unless I missed
+> something). It's based on current next/master.
+> A part of the patches depend on commit 662233731d66 ("i2c: core:
+> Introduce i2c_client_get_device_id helper function"), there is a branch that
+> you can pull into your tree to get it:
+> 
+> [...]
+
+Applied all patches that build.
+
+Patches excluded:
+ - ps8622
+ - ti-sn65dsi83
+ - adv7511
+
+Repo: https://cgit.freedesktop.org/drm/drm-misc/
 
 
->-----Original Message-----
->From: Colin Ian King =5Bmailto:colin.i.king=40gmail.com=5D
->Sent: Thursday, December 8, 2022 5:29 PM
->To: Sylwester Nawrocki <s.nawrocki=40samsung.com>; Mauro Carvalho
->Chehab <mchehab=40kernel.org>; Krzysztof Kozlowski
-><krzysztof.kozlowski=40linaro.org>; Alim Akhtar <alim.akhtar=40samsung.com=
->;
->linux-media=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
->samsung-soc=40vger.kernel.org
->Cc: kernel-janitors=40vger.kernel.org; linux-kernel=40vger.kernel.org
->Subject: =5BPATCH=5D media: platform: exynos4-is: Fix spelling mistake =22=
-palne=22 ->
->=22plane=22
->
->There are spelling mistakes in a literal string and a comment. Fix them.
->
->Signed-off-by: Colin Ian King <colin.i.king=40gmail.com>
->---
+[014/606] drm/bridge: adv7511: Convert to i2c's .probe_new()
+          (no commit info)
+[015/606] drm/bridge/analogix/anx6345: Convert to i2c's .probe_new()
+          (no commit info)
+[016/606] drm/bridge/analogix/anx78xx: Convert to i2c's .probe_new()
+          (no commit info)
+[017/606] drm/bridge: anx7625: Convert to i2c's .probe_new()
+          (no commit info)
+[018/606] drm/bridge: icn6211: Convert to i2c's .probe_new()
+          (no commit info)
+[019/606] drm/bridge: chrontel-ch7033: Convert to i2c's .probe_new()
+          commit: 8dc6de280f01c0f7b8d40435736f3c975368ad70
+[020/606] drm/bridge: it6505: Convert to i2c's .probe_new()
+          (no commit info)
+[021/606] drm/bridge: it66121: Convert to i2c's .probe_new()
+          (no commit info)
+[022/606] drm/bridge: lt8912b: Convert to i2c's .probe_new()
+          (no commit info)
+[023/606] drm/bridge: lt9211: Convert to i2c's .probe_new()
+          (no commit info)
+[024/606] drm/bridge: lt9611: Convert to i2c's .probe_new()
+          (no commit info)
+[025/606] drm/bridge: lt9611uxc: Convert to i2c's .probe_new()
+          (no commit info)
+[026/606] drm/bridge: megachips: Convert to i2c's .probe_new()
+          (no commit info)
+[027/606] drm/bridge: nxp-ptn3460: Convert to i2c's .probe_new()
+          (no commit info)
+[028/606] drm/bridge: parade-ps8622: Convert to i2c's .probe_new()
+          (no commit info)
+[029/606] drm/bridge: sii902x: Convert to i2c's .probe_new()
+          (no commit info)
+[030/606] drm/bridge: sii9234: Convert to i2c's .probe_new()
+          (no commit info)
+[031/606] drm/bridge: sii8620: Convert to i2c's .probe_new()
+          (no commit info)
+[032/606] drm/bridge: tc358767: Convert to i2c's .probe_new()
+          (no commit info)
+[033/606] drm/bridge: tc358768: Convert to i2c's .probe_new()
+          (no commit info)
+[034/606] drm/bridge/tc358775: Convert to i2c's .probe_new()
+          (no commit info)
+[035/606] drm/bridge: ti-sn65dsi83: Convert to i2c's .probe_new()
+          (no commit info)
+[037/606] drm/bridge: tfp410: Convert to i2c's .probe_new()
+          (no commit info)
 
-Thanks=21
-
-Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
 
 
-> drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c =7C 2 +-
->drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h =7C 2 +-
-> 2 files changed, 2 insertions(+), 2 deletions(-)
->
->diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c
->b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c
->index 5d9f4c1cdc5e..7a48fad1df16 100644
->--- a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c
->+++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c
->=40=40 -54,7 +54,7 =40=40 const char *fimc_is_param_strerr(unsigned int er=
-ror)
-> 	case ERROR_DMA_INPUT_ORDER:
-> 		return =22ERROR_DMA_INPUT_ORDER: Invalid order(DRC:
->YYCbCr,YCbYCr,FD:NO,YYCbCr,YCbYCr,CbCr,CrCb)=22;
-> 	case ERROR_DMA_INPUT_PLANE:
->-		return =22ERROR_DMA_INPUT_PLANE: Invalid palne (DRC: 3,
->FD: 1, 2, 3)=22;
->+		return =22ERROR_DMA_INPUT_PLANE: Invalid plane (DRC: 3,
->FD: 1, 2, 3)=22;
-> 	case ERROR_OTF_OUTPUT_WIDTH:
-> 		return =22ERROR_OTF_OUTPUT_WIDTH: Invalid width (DRC:
->128=7E8192)=22;
-> 	case ERROR_OTF_OUTPUT_HEIGHT:
->diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
->b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
->index 9dcbb9853ac0..809e117331c0 100644
->--- a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
->+++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
->=40=40 -156,7 +156,7 =40=40 enum fimc_is_error =7B
-> 	ERROR_DMA_INPUT_BIT_WIDTH	=3D 34,
-> 	/* invalid order(DRC: YYCbCrorYCbYCr,
->FD:NO,YYCbCr,YCbYCr,CbCr,CrCb) */
-> 	ERROR_DMA_INPUT_ORDER		=3D 35,
->-	/* invalid palne (DRC: 3, FD: 1, 2, 3) */
->+	/* invalid plane (DRC: 3, FD: 1, 2, 3) */
-> 	ERROR_DMA_INPUT_PLANE		=3D 36,
->
-> 	ERROR_OTF_OUTPUT_NONE		=3D ERROR_COMMON_NONE,
->--
->2.38.1
-
+rob
 
