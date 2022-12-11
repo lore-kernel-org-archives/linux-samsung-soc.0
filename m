@@ -2,56 +2,44 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74399C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 11 Dec 2022 05:48:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22701C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 11 Dec 2022 18:06:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229952AbiLKFs2 (ORCPT
+        id S230186AbiLKSGR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 11 Dec 2022 00:48:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48060 "EHLO
+        Sun, 11 Dec 2022 13:06:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229932AbiLKFs1 (ORCPT
+        with ESMTP id S229896AbiLKSGQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 11 Dec 2022 00:48:27 -0500
-Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF69DE0EE
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Dec 2022 21:48:23 -0800 (PST)
-Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-3b48b139b46so104287537b3.12
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Dec 2022 21:48:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=k65HKQ4QsOLEKRFSAAwmrlaySPBMcA+krHdRpgmUHq8=;
-        b=WT5FmpHx3gP/2F9fOP/OzTFEOuB/reCESWb8Gz+V0Av4ZCCdeJ2noh8MhG9h/xeiDZ
-         uhWWRSCZgtN5IN7p7u/rWFSEi4GhNLneqvDXI41q+0jDm9bwQXIwIDONauFA5uDjJYOG
-         H/rqtRQCyQlxq5PJC/oRggsAf8usmN6dJf2V8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k65HKQ4QsOLEKRFSAAwmrlaySPBMcA+krHdRpgmUHq8=;
-        b=JUT41DblKS6v7peAxNKNONuzYx+1addYa7VeicDveg19RdWh4Ijz8PX3DiNxyGdBWb
-         z9/raiFQqXwxMm17X4gEgMzjc3vdtY+lwGu2j8DfpfGMCpcpKPv/zrIDLUKu9HHbTu0T
-         ET3xJiX1PDgpu/6Kt6zXtDtsm+h8dEaKfP0thdsErMGm09O1zmbK4z8HAICmHKadpoSg
-         if1Z8R4FmZsEeGe1WDv+kF6dbJ5bPfUXtCkfnrU2tRWEYzpc40mCbDKK1pFDInD6Lz/x
-         Mi8BCQFGCbJvYQXR2ZHlBusIEEdSZlrNogppYZEXV4GDKMyoQa8f1fIuWHt3s3P3Nh36
-         ctKg==
-X-Gm-Message-State: ANoB5pl322O6eRunjb8qm8uXzhdOkyVJX3zfpem/cvsvzusV4XHZNWJy
-        mGwatE4L1gmcZtE5voINSZ+jNdblsmi/9vkJQOlBjA==
-X-Google-Smtp-Source: AA0mqf7NJDIXXb3U/76yXnuQAR4j2ELErehHZxueLD1ipjEBOHDsiXw/utcM1K3c4TqRcJToedbz0rxKDVSqiG0LF4M=
-X-Received: by 2002:a81:1a4d:0:b0:368:75ab:a50e with SMTP id
- a74-20020a811a4d000000b0036875aba50emr24993783ywa.235.1670737702965; Sat, 10
- Dec 2022 21:48:22 -0800 (PST)
+        Sun, 11 Dec 2022 13:06:16 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67DF6DFED
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 11 Dec 2022 10:06:13 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 0EA8C8537C;
+        Sun, 11 Dec 2022 19:06:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1670781970;
+        bh=Nxixld48CREQJ6BpwcmoKastD0tTJWM81ebYUdiisiQ=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Wiq+PfQMBMm4iEA5SOJixW6SiEXpQgEsqBMTosH229JoDiSPWfLEAtbFmqI/uQ1UC
+         e7l/pp8HFMeV0JUiIUoxpJt9D61uIoUPPqcQfEBL7ppXaI70HCNfqWMJ5V+9DY9CLz
+         TaoWWf1I3we90UPSfSvP9JVwYWIV+fgqDA+ejGJzC0CDmkbBrvCCXzbLpv/dDNdONJ
+         bhO59qeswK+cuP39z8KQMHN95VJ5jsNiHwUQzqVnBq8ckcXFWim0nK5kO4SpZ2OpcQ
+         XRktlKiUg54XGMPuvVdDfsKwDZFeEuwZEAmn5W+pdViGuTa2Jbm19hsBGRKx3ymCAk
+         vioxImkwNYyzQ==
+Message-ID: <deb78a20-11f7-8618-4064-76f0397a2657@denx.de>
+Date:   Sun, 11 Dec 2022 19:06:07 +0100
 MIME-Version: 1.0
-References: <20221209152343.180139-1-jagan@amarulasolutions.com> <90c2e63d-138b-502d-5188-da49196e0ff1@denx.de>
-In-Reply-To: <90c2e63d-138b-502d-5188-da49196e0ff1@denx.de>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Sun, 11 Dec 2022 11:18:11 +0530
-Message-ID: <CAMty3ZB7imKgS4ovyPfi5OMSHeBN=-hesTk6K+kuM-a+SvxbAQ@mail.gmail.com>
-Subject: Re: [PATCH v9 00/18] drm: bridge: Add Samsung MIPI DSIM bridge
-To:     Marek Vasut <marex@denx.de>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v9 07/18] drm: bridge: samsung-dsim: Lookup OF-graph or
+ Child node devices
+To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -72,27 +60,90 @@ Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
         linux-arm-kernel@lists.infradead.org,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <20221209152343.180139-1-jagan@amarulasolutions.com>
+ <20221209152343.180139-8-jagan@amarulasolutions.com>
+ <4396da63-d9c0-a9b4-3953-67e6bcfb1bf1@denx.de>
+ <CAMty3ZBOR_Bif9PUdiFgVzFLANhFn57pQTrn5=aFXgHEnA1=rA@mail.gmail.com>
+Content-Language: en-US
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <CAMty3ZBOR_Bif9PUdiFgVzFLANhFn57pQTrn5=aFXgHEnA1=rA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Dec 11, 2022 at 7:58 AM Marek Vasut <marex@denx.de> wrote:
->
-> On 12/9/22 16:23, Jagan Teki wrote:
-> > This series supports common bridge support for Samsung MIPI DSIM
-> > which is used in Exynos and i.MX8MM SoC's.
-> >
-> > The final bridge supports both the Exynos and i.MX8M Mini/Nano/Plus.
->
-> I wonder if it would rather make sense to split the series up and submit
-> all the various partial fixes and additions separately, instead of
-> piling them up in this series and ever growing the series.
->
-> It seems to me 3..5 and 7..14 can just go in before the rest.
+On 12/11/22 06:42, Jagan Teki wrote:
+> On Sun, Dec 11, 2022 at 7:58 AM Marek Vasut <marex@denx.de> wrote:
+>>
+>> On 12/9/22 16:23, Jagan Teki wrote:
+>>> The child devices in MIPI DSI can be binding with OF-graph
+>>> and also via child nodes.
+>>>
+>>> The OF-graph interface represents the child devices via
+>>> remote and associated endpoint numbers like
+>>>
+>>> dsi {
+>>>      compatible = "fsl,imx8mm-mipi-dsim";
+>>>
+>>>      ports {
+>>>        port@0 {
+>>>             reg = <0>;
+>>>
+>>>             dsi_in_lcdif: endpoint@0 {
+>>>                  reg = <0>;
+>>>                  remote-endpoint = <&lcdif_out_dsi>;
+>>>             };
+>>>        };
+>>>
+>>>        port@1 {
+>>>             reg = <1>;
+>>>
+>>>             dsi_out_bridge: endpoint {
+>>>                  remote-endpoint = <&bridge_in_dsi>;
+>>>             };
+>>>        };
+>>> };
+>>>
+>>> The child node interface represents the child devices via
+>>> conventional child nodes on given DSI parent like
+>>>
+>>> dsi {
+>>>      compatible = "samsung,exynos5433-mipi-dsi";
+>>>
+>>>      ports {
+>>>           port@0 {
+>>>                reg = <0>;
+>>>
+>>>                dsi_to_mic: endpoint {
+>>>                     remote-endpoint = <&mic_to_dsi>;
+>>>                };
+>>>           };
+>>>      };
+>>>
+>>>      panel@0 {
+>>>           reg = <0>;
+>>>      };
+>>> };
+>>>
+>>> As Samsung DSIM bridge is common DSI IP across all Exynos DSI
+>>> and NXP i.MX8M host controllers, this patch adds support to
+>>> lookup the child devices whether its bindings on the associated
+>>> host represent OF-graph or child node interfaces.
+>>>
+>>> v9, v8, v7, v6, v5, v4, v3:
+>>> * none
+>>>
+>>> v2:
+>>> * new patch
+>>
+>> This looks like a good candidate for common/helper code which can be
+>> reused by other similar drivers.
+> 
+> Yes, I have responded to the same comment of yours in v7 [1]. It is
+> hard to make this code work in a generic way.
 
-Only 4 and 5 come under fixes and the rest of them seem dependent on
-the series. However, 4, and 5 are reproduced in i.MX8M platform hence
-I have added it as part of this series.
-
-Jagan,
+It seems the patch adds a for_each...() loop and a function call. Should 
+be easy enough to turn that into a helper. What am I missing ?
