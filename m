@@ -2,43 +2,42 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81530C10F1B
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 11 Dec 2022 02:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E67C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 11 Dec 2022 02:28:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229929AbiLKC2v (ORCPT
+        id S229930AbiLKC2w (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 10 Dec 2022 21:28:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37178 "EHLO
+        Sat, 10 Dec 2022 21:28:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229930AbiLKC2r (ORCPT
+        with ESMTP id S229932AbiLKC2r (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Sat, 10 Dec 2022 21:28:47 -0500
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85EE813E03
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E25C813E04
         for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Dec 2022 18:28:43 -0800 (PST)
 Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id E9DAB8530B;
-        Sun, 11 Dec 2022 03:28:36 +0100 (CET)
+        by phobos.denx.de (Postfix) with ESMTPSA id E9446852F9;
+        Sun, 11 Dec 2022 03:28:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1670725719;
-        bh=dRxVA2BQiDkM58w5Tnfym1n6XDaN6zBKm1jRyJvaf/A=;
+        s=phobos-20191101; t=1670725721;
+        bh=a7OGGyzB3bRRvcuqRMgBWQlfKRLtcP1rUZLMlxeOuVA=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=vh45KXwq8fMqS5iSyqch529BuxrJU0nJfyJCV4eNyNXc9KPR3w8SCjDmqQiAAC4Zd
-         ylY/ctnGZ8IqHes/8ianPrYEWXJvwhHzpnQPugIqTOL2cofLD4MRpbK36vorvlCb4c
-         1qjy2WZxUD2JOkZ7YcVRn71M9Fn0USEl3eCywKgLWfOnaziarGFmC1Ql/1l+r52gPh
-         hKqjEcdmkU6gyaGi6BI3NfF0oyv4uFphssqGEZQonnaWoNTiICVJqPEF5N9YbNLPGg
-         NozaZdziCxthp+oT37KvD16ynG9xk5ujjt9pUGLQBJq1HpksccQ6K6pQYHPuVScyry
-         v+pFXz6VR+3HQ==
-Message-ID: <ae29a634-928b-3e77-3999-2a8d9b546432@denx.de>
-Date:   Sun, 11 Dec 2022 03:15:44 +0100
+        b=tsa00Od7MtlmifiMsvkREhfSJQ33NtHD4yyyDVEg7Q0m+08XHjhdhfGLa8Llk3aGq
+         MIVYyglSvm0JOUIsIXdaP7Atpq+lqa0hWtiiauSFI09ImyoDQ0pWXtLGMle8/d7cH4
+         gQZBzedJeIqAEJd5LvlQxQ3f0TcYInbOKVq/0QELam/Xj6+aGEsp0bdMbByTegTeeu
+         QQ7ivvLD4WkJhgqoYphPeCqSFhjwFc7jbQKF3yGmJdDt0rV6xceb2u9YlXIPoHAJ8C
+         NkS36GRHCfbWOz4kE2UFUZadIBE3brDJA9wbKjnuOoWSgZ3gu3FRXKesyGV2tRb6OH
+         utTekM9uQ7lGg==
+Message-ID: <d93b1fac-df4d-0de8-80f8-f9fcef811862@denx.de>
+Date:   Sun, 11 Dec 2022 03:15:56 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.5.1
-Subject: Re: [PATCH v9 03/18] drm: exynos: dsi: Restore proper bridge chain
- order
+Subject: Re: [PATCH v9 04/18] drm: exynos: dsi: Fix MIPI_DSI*_NO_* mode flags
 Content-Language: en-US
 To:     Jagan Teki <jagan@amarulasolutions.com>,
         Andrzej Hajda <andrzej.hajda@intel.com>,
@@ -60,13 +59,16 @@ Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
         dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        =?UTF-8?Q?S=c3=a9bastien_Szymanski?= 
+        <sebastien.szymanski@armadeus.com>
 References: <20221209152343.180139-1-jagan@amarulasolutions.com>
- <20221209152343.180139-4-jagan@amarulasolutions.com>
+ <20221209152343.180139-5-jagan@amarulasolutions.com>
 From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <20221209152343.180139-4-jagan@amarulasolutions.com>
+In-Reply-To: <20221209152343.180139-5-jagan@amarulasolutions.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
 X-Virus-Status: Clean
 Precedence: bulk
@@ -74,21 +76,18 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 12/9/22 16:23, Jagan Teki wrote:
-> From: Marek Szyprowski <m.szyprowski@samsung.com>
+> HFP/HBP/HSA/EOT_PACKET modes in Exynos DSI host specifies
+> 0 = Enable and 1 = Disable.
 > 
-> Restore the proper bridge chain by finding the previous bridge
-> in the chain instead of passing NULL.
+> The logic for checking these mode flags was correct before
+> the MIPI_DSI*_NO_* mode flag conversion.
 > 
-> This establishes a proper bridge chain while attaching downstream
-> bridges.
+> Fix the MIPI_DSI*_NO_* mode flags handling.
 > 
-> v9, v4:
-> * none
-> 
-> v3:
-> * new patch
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Fixes: <0f3b68b66a6d> ("drm/dsi: Add _NO_ to MIPI_DSI_* flags disabling
+> features")
+> Reviewed-by: Nicolas Boichat <drinkcat@chromium.org>
+> Reported-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
 > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 
 Reviewed-by: Marek Vasut <marex@denx.de>
