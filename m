@@ -2,57 +2,55 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FDDFC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 11 Dec 2022 05:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74399C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 11 Dec 2022 05:48:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229656AbiLKFmk (ORCPT
+        id S229952AbiLKFs2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 11 Dec 2022 00:42:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46918 "EHLO
+        Sun, 11 Dec 2022 00:48:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbiLKFmj (ORCPT
+        with ESMTP id S229932AbiLKFs1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 11 Dec 2022 00:42:39 -0500
-Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C19A83A7
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Dec 2022 21:42:37 -0800 (PST)
-Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-3c090251d59so104545747b3.4
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Dec 2022 21:42:37 -0800 (PST)
+        Sun, 11 Dec 2022 00:48:27 -0500
+Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF69DE0EE
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Dec 2022 21:48:23 -0800 (PST)
+Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-3b48b139b46so104287537b3.12
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Dec 2022 21:48:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NFxawhL0KfDzuzdjctBHI9Ha+b92IrPz3S8apbaIAuw=;
-        b=n4xri01w9mgE1NGrQAztjwvfE9iV3uWuueuIXpbo7KZk5QIt/7wHDEo0EozqtsddWQ
-         QE9CryX4yy27NDoOyxLed3YjtmiWnyozfpODdcqHqGbHkNaN7medJEGdIMQch34L8o7B
-         a4efIUKf7em/YpUoslNIif0gjmy3BVPCNdfq4=
+        bh=k65HKQ4QsOLEKRFSAAwmrlaySPBMcA+krHdRpgmUHq8=;
+        b=WT5FmpHx3gP/2F9fOP/OzTFEOuB/reCESWb8Gz+V0Av4ZCCdeJ2noh8MhG9h/xeiDZ
+         uhWWRSCZgtN5IN7p7u/rWFSEi4GhNLneqvDXI41q+0jDm9bwQXIwIDONauFA5uDjJYOG
+         H/rqtRQCyQlxq5PJC/oRggsAf8usmN6dJf2V8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NFxawhL0KfDzuzdjctBHI9Ha+b92IrPz3S8apbaIAuw=;
-        b=FjZbkXs+JYwo/+3w7TCy6gznX4vhAPQrPhv13PAnv8uT3B64XMQjR/v8QlOfp9aN2d
-         ixb7tVdQjcG52HZcvA5bMbSquFz311FW1qkKiVdJz3KnIsCAq1xmocTsCxUcHBTHq2TP
-         BmXhd/1YzuyGHO4CSUppOEZuV9Lhkq8iMV+qajKX9f88TdLzB+yYZ2YVNlpodhWOoJCG
-         qd3AMQQYTggLaWCzqeqk9f3qiONWOpbFfgL0KFp/E2irjtYv1kK2nBoYsmLqBG5bocrg
-         sbYy/bgyusU4BaSHmjoV7ICB65ziKsInCZh6esbo+Li+tlCL2lfAG2aUy3FfhTrfxS2R
-         RYTg==
-X-Gm-Message-State: ANoB5plTbY58yp0fXujh/9y4QxqRbgTzjIO1xrErmauwDxcYXWisM9sK
-        aQcuhKc3NHkeUgRwJV/6f3JggRpzMfmid9DvMeDspw==
-X-Google-Smtp-Source: AA0mqf7thi1tNlYFTPA6vPcT/C7J48KFPQeC2m6uwVTSUSWtmYDnaf5i22q4xvbZwndDQQq6XZzQcMJ23MZKlKlKhAE=
-X-Received: by 2002:a0d:d595:0:b0:3c4:df92:a3d2 with SMTP id
- x143-20020a0dd595000000b003c4df92a3d2mr49499665ywd.487.1670737356880; Sat, 10
- Dec 2022 21:42:36 -0800 (PST)
+        bh=k65HKQ4QsOLEKRFSAAwmrlaySPBMcA+krHdRpgmUHq8=;
+        b=JUT41DblKS6v7peAxNKNONuzYx+1addYa7VeicDveg19RdWh4Ijz8PX3DiNxyGdBWb
+         z9/raiFQqXwxMm17X4gEgMzjc3vdtY+lwGu2j8DfpfGMCpcpKPv/zrIDLUKu9HHbTu0T
+         ET3xJiX1PDgpu/6Kt6zXtDtsm+h8dEaKfP0thdsErMGm09O1zmbK4z8HAICmHKadpoSg
+         if1Z8R4FmZsEeGe1WDv+kF6dbJ5bPfUXtCkfnrU2tRWEYzpc40mCbDKK1pFDInD6Lz/x
+         Mi8BCQFGCbJvYQXR2ZHlBusIEEdSZlrNogppYZEXV4GDKMyoQa8f1fIuWHt3s3P3Nh36
+         ctKg==
+X-Gm-Message-State: ANoB5pl322O6eRunjb8qm8uXzhdOkyVJX3zfpem/cvsvzusV4XHZNWJy
+        mGwatE4L1gmcZtE5voINSZ+jNdblsmi/9vkJQOlBjA==
+X-Google-Smtp-Source: AA0mqf7NJDIXXb3U/76yXnuQAR4j2ELErehHZxueLD1ipjEBOHDsiXw/utcM1K3c4TqRcJToedbz0rxKDVSqiG0LF4M=
+X-Received: by 2002:a81:1a4d:0:b0:368:75ab:a50e with SMTP id
+ a74-20020a811a4d000000b0036875aba50emr24993783ywa.235.1670737702965; Sat, 10
+ Dec 2022 21:48:22 -0800 (PST)
 MIME-Version: 1.0
-References: <20221209152343.180139-1-jagan@amarulasolutions.com>
- <20221209152343.180139-8-jagan@amarulasolutions.com> <4396da63-d9c0-a9b4-3953-67e6bcfb1bf1@denx.de>
-In-Reply-To: <4396da63-d9c0-a9b4-3953-67e6bcfb1bf1@denx.de>
+References: <20221209152343.180139-1-jagan@amarulasolutions.com> <90c2e63d-138b-502d-5188-da49196e0ff1@denx.de>
+In-Reply-To: <90c2e63d-138b-502d-5188-da49196e0ff1@denx.de>
 From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Sun, 11 Dec 2022 11:12:25 +0530
-Message-ID: <CAMty3ZBOR_Bif9PUdiFgVzFLANhFn57pQTrn5=aFXgHEnA1=rA@mail.gmail.com>
-Subject: Re: [PATCH v9 07/18] drm: bridge: samsung-dsim: Lookup OF-graph or
- Child node devices
+Date:   Sun, 11 Dec 2022 11:18:11 +0530
+Message-ID: <CAMty3ZB7imKgS4ovyPfi5OMSHeBN=-hesTk6K+kuM-a+SvxbAQ@mail.gmail.com>
+Subject: Re: [PATCH v9 00/18] drm: bridge: Add Samsung MIPI DSIM bridge
 To:     Marek Vasut <marex@denx.de>
 Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
@@ -82,70 +80,19 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 On Sun, Dec 11, 2022 at 7:58 AM Marek Vasut <marex@denx.de> wrote:
 >
 > On 12/9/22 16:23, Jagan Teki wrote:
-> > The child devices in MIPI DSI can be binding with OF-graph
-> > and also via child nodes.
+> > This series supports common bridge support for Samsung MIPI DSIM
+> > which is used in Exynos and i.MX8MM SoC's.
 > >
-> > The OF-graph interface represents the child devices via
-> > remote and associated endpoint numbers like
-> >
-> > dsi {
-> >     compatible = "fsl,imx8mm-mipi-dsim";
-> >
-> >     ports {
-> >       port@0 {
-> >            reg = <0>;
-> >
-> >            dsi_in_lcdif: endpoint@0 {
-> >                 reg = <0>;
-> >                 remote-endpoint = <&lcdif_out_dsi>;
-> >            };
-> >       };
-> >
-> >       port@1 {
-> >            reg = <1>;
-> >
-> >            dsi_out_bridge: endpoint {
-> >                 remote-endpoint = <&bridge_in_dsi>;
-> >            };
-> >       };
-> > };
-> >
-> > The child node interface represents the child devices via
-> > conventional child nodes on given DSI parent like
-> >
-> > dsi {
-> >     compatible = "samsung,exynos5433-mipi-dsi";
-> >
-> >     ports {
-> >          port@0 {
-> >               reg = <0>;
-> >
-> >               dsi_to_mic: endpoint {
-> >                    remote-endpoint = <&mic_to_dsi>;
-> >               };
-> >          };
-> >     };
-> >
-> >     panel@0 {
-> >          reg = <0>;
-> >     };
-> > };
-> >
-> > As Samsung DSIM bridge is common DSI IP across all Exynos DSI
-> > and NXP i.MX8M host controllers, this patch adds support to
-> > lookup the child devices whether its bindings on the associated
-> > host represent OF-graph or child node interfaces.
-> >
-> > v9, v8, v7, v6, v5, v4, v3:
-> > * none
-> >
-> > v2:
-> > * new patch
+> > The final bridge supports both the Exynos and i.MX8M Mini/Nano/Plus.
 >
-> This looks like a good candidate for common/helper code which can be
-> reused by other similar drivers.
+> I wonder if it would rather make sense to split the series up and submit
+> all the various partial fixes and additions separately, instead of
+> piling them up in this series and ever growing the series.
+>
+> It seems to me 3..5 and 7..14 can just go in before the rest.
 
-Yes, I have responded to the same comment of yours in v7 [1]. It is
-hard to make this code work in a generic way.
+Only 4 and 5 come under fixes and the rest of them seem dependent on
+the series. However, 4, and 5 are reproduced in i.MX8M platform hence
+I have added it as part of this series.
 
-[1] https://lore.kernel.org/all/CAMty3ZBtRZ-vDPQYX+m8uWmsD+vmbFOnCGVba8swQ8GWtWaKJQ@mail.gmail.com/
+Jagan,
