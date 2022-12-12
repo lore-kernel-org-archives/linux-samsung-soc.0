@@ -2,52 +2,52 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 567E3C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 12 Dec 2022 14:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EEF9C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 12 Dec 2022 14:55:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232271AbiLLOzc (ORCPT
+        id S232282AbiLLOzh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 12 Dec 2022 09:55:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58462 "EHLO
+        Mon, 12 Dec 2022 09:55:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229827AbiLLOzb (ORCPT
+        with ESMTP id S229827AbiLLOzg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 12 Dec 2022 09:55:31 -0500
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3257B1D
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Dec 2022 06:55:30 -0800 (PST)
-Received: by mail-pl1-x62a.google.com with SMTP id d7so12318580pll.9
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Dec 2022 06:55:30 -0800 (PST)
+        Mon, 12 Dec 2022 09:55:36 -0500
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5811B1D
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Dec 2022 06:55:35 -0800 (PST)
+Received: by mail-pj1-x1036.google.com with SMTP id o1-20020a17090a678100b00219cf69e5f0so29061pjj.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Dec 2022 06:55:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v4ea8rvmGnrS/8sRSsoYglrzM9FWA5fUizBf/l/CVMc=;
-        b=nt1qHxoUkFtSYDEH24MU3Zr1sZ5imgK/FR3091m9lCKlCS0zN1OR0Hr9JPZ3dJJ9eP
-         +UO+hGhO3DZRXmDDg8PBN7K8JXncFazWDw2OnuuR3MyCA1GHgf0jF2Yv71bVONV3pVte
-         qAiY+6HitJTUUlXQcYl4v46tWCuWvi9A8EEp8=
+        bh=y/y5vw0u9kB/6hX1ihxQilGZuqMG9YrydhtDvt3iYOI=;
+        b=BuTOUmaReEVhSmrY4tNdyrVDylbaCAI9zI2x/KRj7AlKYnD+crXBjLg6I7Tl/K9/vI
+         7QH/rUKSJ+wzvtLhF/iZXahZ0wjb/yur7gwTxnf3Qeoh059IGL2sgnZosXbPWh+9+ZlZ
+         cLirNBdGyjHNotHKA9aW8XHZvkVPpgqMebgpM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=v4ea8rvmGnrS/8sRSsoYglrzM9FWA5fUizBf/l/CVMc=;
-        b=SNgh91eKae5oKt3OMfwzhze0RA49A0+N+3+4ix+kZDUo2KC4nIzYHPAsgKXCxw7MS5
-         jmepPU2vzxsJK4oG2L4Iv3gc9Rlo35X0dEnOkzhCTm2jiy4wQIIFAhb5pfwV3pRBj+c+
-         7izIbYy1FbzVwk/cASb83JZMedqlNrF+fQZuN0TD+hWzg8djYOaIlWio6F3uaYga06Rl
-         cA/OBjH8e0o7gFwYiWcTr7wbygN4FWn4vtzz8m9lpxslbo59Q5oCWWjiFfVW11Hpc+JF
-         amQD5Bu6NNRfRzY1dUJ3mOa46UVXBosoyXizWKmIEle/K2SFX9QQXffqe07KMUeHeJ3A
-         CzNQ==
-X-Gm-Message-State: ANoB5pkQ5f7ytfXzagTurDGZohe2kgVzbgBh+yRHZ8x+F5yS0KvLQ1IW
-        a41ha4Vw6YqCvtsriWp7RGmzHg==
-X-Google-Smtp-Source: AA0mqf6WJEW3banWVF1AHkY7665xfeS0AMVZwAlise4jZmkDo1Cpd3nFYLOJGi6TID6YpovqBoQXgA==
-X-Received: by 2002:a17:902:6b05:b0:186:b063:32e with SMTP id o5-20020a1709026b0500b00186b063032emr17616981plk.62.1670856930519;
-        Mon, 12 Dec 2022 06:55:30 -0800 (PST)
+        bh=y/y5vw0u9kB/6hX1ihxQilGZuqMG9YrydhtDvt3iYOI=;
+        b=38NpfehruPe2JYL3DXx/f6g1C4He/5QspC9IpgWGLjTTWglttDTUz56XUC5zqwKQVN
+         3PXT8/RTDHs3dx/N4VPnd75rUTlkzGdl2emSfZKnvipKhGOUfLtiMhnBZIFQnh2++glH
+         qd1JBCIh5uiL603o4IOctbCjvbchFpKun5dvieSBUkIM87mMiSCHpgeN3RQFQDMmymRH
+         lwd/NYMZwXbB0zAZVMk/T6LDr3p8uC+B5ypmzIfxLq7RN4AE0UIiRtSypDad1W+mZw//
+         79jJKrccilHHmTJJ3LbQ/n2aeF500Ws1kwSyMRnJeDCE6W5kScDB3Y3YfTpO3zyUTMGj
+         kIRA==
+X-Gm-Message-State: ANoB5plY0wEu2Tddfkxa+RpSlmBmz7+CIvxZi/EpU/av8GcFzYFaJkaN
+        hJomduqH8vUIRDwTlYbUemKdPw==
+X-Google-Smtp-Source: AA0mqf78CzP6wF4vC+jXEZ80TBSbKmyUeLFBAdMzjJ3bFN/hcrsPFs0IqmKVYOdlesA41J6QEB2Xew==
+X-Received: by 2002:a17:902:b494:b0:188:635d:4ca9 with SMTP id y20-20020a170902b49400b00188635d4ca9mr17072148plr.2.1670856935321;
+        Mon, 12 Dec 2022 06:55:35 -0800 (PST)
 Received: from localhost.localdomain ([2405:201:c00a:a809:c713:dc69:f2de:e52f])
-        by smtp.gmail.com with ESMTPSA id e11-20020a170902784b00b001782aab6318sm6463272pln.68.2022.12.12.06.55.26
+        by smtp.gmail.com with ESMTPSA id e11-20020a170902784b00b001782aab6318sm6463272pln.68.2022.12.12.06.55.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Dec 2022 06:55:29 -0800 (PST)
+        Mon, 12 Dec 2022 06:55:34 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Inki Dae <inki.dae@samsung.com>,
@@ -61,9 +61,9 @@ Cc:     Marek Vasut <marex@denx.de>, linux-samsung-soc@vger.kernel.org,
         dri-devel@lists.freedesktop.org,
         linux-amarula <linux-amarula@amarulasolutions.com>,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v10 2/3] drm/bridge: tc358764: Enable pre_enable_prev_first flag
-Date:   Mon, 12 Dec 2022 20:25:07 +0530
-Message-Id: <20221212145508.15096-3-jagan@amarulasolutions.com>
+Subject: [PATCH v10 3/3] drm: exynos: dsi: Restore proper bridge chain order
+Date:   Mon, 12 Dec 2022 20:25:08 +0530
+Message-Id: <20221212145508.15096-4-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221212145508.15096-1-jagan@amarulasolutions.com>
 References: <20221212145508.15096-1-jagan@amarulasolutions.com>
@@ -75,34 +75,48 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Enable the drm bridge pre_enable_prev_first flag so that the
-previous bridge pre_enable should be called first before the
-pre_enable for the tc358764 bridge is called.
+Restore the proper bridge chain by finding the previous bridge
+in the chain instead of passing NULL.
 
-This makes sure that the previous bridge should be initialized
-properly before the tc358764 bridge is powered up.
+This establishes a proper bridge chain while attaching downstream
+bridges.
 
+Reviewed-by: Marek Vasut <marex@denx.de>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
 Changes for v10:
-- none
+- collect Marek review tag
 
- drivers/gpu/drm/bridge/tc358764.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/tc358764.c b/drivers/gpu/drm/bridge/tc358764.c
-index 53259c12d777..f85654f1b104 100644
---- a/drivers/gpu/drm/bridge/tc358764.c
-+++ b/drivers/gpu/drm/bridge/tc358764.c
-@@ -369,6 +369,7 @@ static int tc358764_probe(struct mipi_dsi_device *dsi)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index ec673223d6b7..e5b1540c4ae4 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1428,7 +1428,8 @@ static int exynos_dsi_attach(struct drm_bridge *bridge,
+ {
+ 	struct exynos_dsi *dsi = bridge_to_dsi(bridge);
  
- 	ctx->bridge.funcs = &tc358764_bridge_funcs;
- 	ctx->bridge.of_node = dev->of_node;
-+	ctx->bridge.pre_enable_prev_first = true;
+-	return drm_bridge_attach(bridge->encoder, dsi->out_bridge, NULL, flags);
++	return drm_bridge_attach(bridge->encoder, dsi->out_bridge, bridge,
++				 flags);
+ }
  
- 	drm_bridge_add(&ctx->bridge);
+ static const struct drm_bridge_funcs exynos_dsi_bridge_funcs = {
+@@ -1474,7 +1475,10 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
  
+ 	drm_bridge_add(&dsi->bridge);
+ 
+-	drm_bridge_attach(encoder, &dsi->bridge, NULL, 0);
++	drm_bridge_attach(encoder, &dsi->bridge,
++			  list_first_entry_or_null(&encoder->bridge_chain,
++						   struct drm_bridge,
++						   chain_node), 0);
+ 
+ 	/*
+ 	 * This is a temporary solution and should be made by more generic way.
 -- 
 2.25.1
 
