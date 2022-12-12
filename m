@@ -2,45 +2,56 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E50B1C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 11 Dec 2022 18:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CADAC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 12 Dec 2022 07:49:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229696AbiLKSHP (ORCPT
+        id S231202AbiLLHtf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 11 Dec 2022 13:07:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44650 "EHLO
+        Mon, 12 Dec 2022 02:49:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbiLKSHP (ORCPT
+        with ESMTP id S229448AbiLLHte (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 11 Dec 2022 13:07:15 -0500
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A7C7BC26
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 11 Dec 2022 10:07:14 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id BDF1F853A9;
-        Sun, 11 Dec 2022 19:07:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1670782033;
-        bh=2AtcgXnsxhHlHGiQYvXRaF8zbcbDFUcFUSSeX6nTRq8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=SZaj1WGXGNe4T7vvtOpJsVVmUTi/aegSDIb5pEhwRdBn/OrBKvDSGeXxHzYC63AzU
-         s60mUruAR81KJoq8wYbHxTYEKEiACfuKp3X4deAkByHcSTzkcQuhQbOfQxxMHx1D78
-         GffZA7/Tfgtd2pJuc1oHIA0pNUd8CIbflOEvnhU5HrLQRMFuoF2bzfuNkLATUuOEhe
-         L/vE/DHCV6kLkhK3+F30pAZqtJJPeO3N/u6FoYPTLTRDQj/PeSdsJAB9//m5vXNBKw
-         C6May2T4IclH5/U+q1P7xtn99IvM6ZOSqZ0UEkKI48yosL1eLTTW6XmEsG1Q4idruk
-         9MKOsT03grfHQ==
-Message-ID: <0276d7f4-5768-09c8-56fc-e738b4fadf9b@denx.de>
-Date:   Sun, 11 Dec 2022 19:07:11 +0100
+        Mon, 12 Dec 2022 02:49:34 -0500
+Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CC8BB86B
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 11 Dec 2022 23:49:33 -0800 (PST)
+Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-3bf4ade3364so135056787b3.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 11 Dec 2022 23:49:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SCbvvVskDyDlgaw21k/t1kR8QAcMi6s99/nya394pFA=;
+        b=W2dEPyiEAYcUgBqWWTNf3dJsVQX0DPqNBRL+7NziTAbhM06Qn6r2D9U4PFwWdmRC6V
+         DGkoqnKKf6XLhYCGzMJxMTjl+1qg6dD6tdklIrCc5IYryZ1l4Uqr/HAJuX/heMFemaxp
+         E8KW+zizik4Y3BI410qS1+BFIt1xiMchaoIpw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SCbvvVskDyDlgaw21k/t1kR8QAcMi6s99/nya394pFA=;
+        b=R4cBOkn98FIex3QG2XMG4zevA2q9t0SZHvnuV/aO/EIGP/HZcNd2jBPeDbnoq+gAOv
+         kyRj39C77Od73GusUr+16IPipl9mLuhJGlGn2rQ7E9dKmNlTWq0WjcBEzEwA77+SN3EE
+         u1JaNMfpHkti5aGjTP2nuJUS6AzDNeXAjW5+PexVBV7A3VNFtDGruH5dbknIhl6pW8PZ
+         fqAx5+4itvUCZWvGCwTA7pJvqMR2nWfxjkAf26y9h4AY8DSXRwZoruPMYdMYavAhD7Ix
+         ayZ+0fXR9LgjXU7oChYSCU+dLQe5SDeeY6k0R9KeUBp4VxGKVfqLfh3RtQmZcjcQrZpN
+         r6jg==
+X-Gm-Message-State: ANoB5pk19twyrSDvgu2naC8ryWCcN/WLQIjbHUgAYIUTGmraD11e5iIV
+        sEZZQKkUX6ud8ebVwQPsIJw1YJmNnOHmAjv9zZMb7Q==
+X-Google-Smtp-Source: AA0mqf6vx87GZmGdICIaNHq5fMIf2ooBL9IwVK3Un+IGggZAtyqlNY3rCvzgKUqB+kl4rli/pdoRMso2oiqL9FXOcHo=
+X-Received: by 2002:a81:69d7:0:b0:3c4:df92:a3d2 with SMTP id
+ e206-20020a8169d7000000b003c4df92a3d2mr165808ywc.487.1670831372186; Sun, 11
+ Dec 2022 23:49:32 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
+References: <20221209152343.180139-1-jagan@amarulasolutions.com>
+In-Reply-To: <20221209152343.180139-1-jagan@amarulasolutions.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 12 Dec 2022 13:19:20 +0530
+Message-ID: <CAMty3ZC5P3NaiZotWHgXTa9-VK7zNDPDbfuKDYPLeoCQUQjLiA@mail.gmail.com>
 Subject: Re: [PATCH v9 00/18] drm: bridge: Add Samsung MIPI DSIM bridge
-Content-Language: en-US
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+To:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Joonyoung Shim <jy0922.shim@samsung.com>,
@@ -55,42 +66,109 @@ Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Robert Foss <robert.foss@linaro.org>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
+        Marek Vasut <marex@denx.de>
+Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
         dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>
-References: <20221209152343.180139-1-jagan@amarulasolutions.com>
- <90c2e63d-138b-502d-5188-da49196e0ff1@denx.de>
- <CAMty3ZB7imKgS4ovyPfi5OMSHeBN=-hesTk6K+kuM-a+SvxbAQ@mail.gmail.com>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <CAMty3ZB7imKgS4ovyPfi5OMSHeBN=-hesTk6K+kuM-a+SvxbAQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 12/11/22 06:48, Jagan Teki wrote:
-> On Sun, Dec 11, 2022 at 7:58 AM Marek Vasut <marex@denx.de> wrote:
->>
->> On 12/9/22 16:23, Jagan Teki wrote:
->>> This series supports common bridge support for Samsung MIPI DSIM
->>> which is used in Exynos and i.MX8MM SoC's.
->>>
->>> The final bridge supports both the Exynos and i.MX8M Mini/Nano/Plus.
->>
->> I wonder if it would rather make sense to split the series up and submit
->> all the various partial fixes and additions separately, instead of
->> piling them up in this series and ever growing the series.
->>
->> It seems to me 3..5 and 7..14 can just go in before the rest.
-> 
-> Only 4 and 5 come under fixes and the rest of them seem dependent on
-> the series. However, 4, and 5 are reproduced in i.MX8M platform hence
-> I have added it as part of this series.
+On Fri, Dec 9, 2022 at 8:54 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> This series supports common bridge support for Samsung MIPI DSIM
+> which is used in Exynos and i.MX8MM SoC's.
+>
+> The final bridge supports both the Exynos and i.MX8M Mini/Nano/Plus.
+>
+> Changes for v9:
+> - rebase on drm-misc-next
+> - drop drm bridge attach fix for Exynos
+> - added prepare_prev_first flag
+> - added pre_enable_prev_first flag
+> - fix bridge chain order for exynos
+> - added fix for Exynos host init for first DSI transfer
+> - added MEDIA_BUS_FMT_FIXED
+> - return MEDIA_BUS_FMT_RGB888_1X24 output_fmt if supported output_fmt
+>   list is unsupported.
+> - added MEDIA_BUS_FMT_YUYV10_1X20
+> - added MEDIA_BUS_FMT_YUYV12_1X24
+>
+> Changes for v8:
+> * fixed comment lines
+> * fixed commit messages
+> * fixed video mode bits
+> * collect Marek Ack
+> * fixed video mode bit names
+> * update input formats logic
+> * added imx8mplus support
+>
+> Changes for v7:
+> * fix the drm bridge attach chain for exynos drm dsi driver
+> * fix the hw_type checking logic
+>
+> Changes for v6:
+> * handle previous bridge for exynos dsi while attaching bridge
+>
+> Changes for v5:
+> * bridge changes to support multi-arch
+> * updated and clear commit messages
+> * add hw_type via plat data
+> * removed unneeded quirk
+> * rebased on linux-next
+> t
+> Changes for v4:
+> * include Inki Dae in MAINTAINERS
+> * remove dsi_driver probe in exynos_drm_drv to support multi-arch build
+> * update init handling to ensure host init done on first cmd transfer
+>
+> Changes for v3:
+> * fix the mult-arch build
+> * fix dsi host init
+> * updated commit messages
+>
+> Changes for v2:
+> * fix bridge handling
+> * fix dsi host init
+> * correct the commit messages
+>
+> Tested in Engicam i.Core MX8M Mini SoM.
+>
+> Repo:
+> https://gitlab.com/openedev/kernel/-/commits/imx8mm-dsi-v9
+>
+> v8:
+> https://lore.kernel.org/all/20221110183853.3678209-1-jagan@amarulasolutions.com/
+>
+> Any inputs?
+> Jagan.
+>
+> Jagan Teki (16):
+>   drm: panel: Enable prepare_prev_first flag for samsung-s6e panels
+>   drm: exynos: dsi: Fix MIPI_DSI*_NO_* mode flags
+>   drm: exynos: dsi: Properly name HSA/HBP/HFP/HSE bits
+>   drm: bridge: Generalize Exynos-DSI driver into a Samsung DSIM bridge
+>   drm: bridge: samsung-dsim: Lookup OF-graph or Child node devices
+>   drm: bridge: samsung-dsim: Mark PHY as optional
+>   drm: bridge: samsung-dsim: Add host init in pre_enable
+>   drm: bridge: samsung-dsim: Init exynos host for first DSI transfer
+>   drm: bridge: samsung-dsim: Add atomic_check
+>   drm: bridge: samsung-dsim: Add platform PLL_P (PMS_P) offset
+>   drm: bridge: samsung-dsim: Add atomic_get_input_bus_fmts
+>   drm: bridge: samsung-dsim: Add input_bus_flags
+>   dt-bindings: display: exynos: dsim: Add NXP i.MX8M Mini/Nano support
+>   drm: bridge: samsung-dsim: Add i.MX8M Mini/Nano support
+>   dt-bindings: display: exynos: dsim: Add NXP i.MX8M Plus support
+>   drm: bridge: samsung-dsim: Add i.MX8M Plus support
+>
+> Marek Szyprowski (2):
+>   drm/bridge: tc358764: Enable pre_enable_prev_first flag
+>   drm: exynos: dsi: Restore proper bridge chain order
 
-You could try and reorder the series such that 7..14 can go in before 6 
-. And send it in smaller chunks too.
+Can someone apply 1 to 5 patches, so I can send the following version
+with DSIM conversion?
+
+Jagan.
