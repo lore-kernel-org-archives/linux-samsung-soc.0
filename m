@@ -2,129 +2,211 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 749ABC4708D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 12 Dec 2022 18:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B561CC04FDE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 13 Dec 2022 10:40:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233146AbiLLScG (ORCPT
+        id S234969AbiLMKko (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 12 Dec 2022 13:32:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50266 "EHLO
+        Tue, 13 Dec 2022 05:40:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233973AbiLLSbj (ORCPT
+        with ESMTP id S234943AbiLMKkk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 12 Dec 2022 13:31:39 -0500
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4D2E186E7
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Dec 2022 10:29:47 -0800 (PST)
-Received: by mail-pl1-x631.google.com with SMTP id d7so12944887pll.9
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Dec 2022 10:29:47 -0800 (PST)
+        Tue, 13 Dec 2022 05:40:40 -0500
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF7EB6332
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Dec 2022 02:40:39 -0800 (PST)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-417b63464c6so85873507b3.8
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Dec 2022 02:40:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+3thu+TFV75UQnUKi5H5iMkprh+mVb/ueAKw6cINH6Y=;
-        b=Gh4sGxHl66CkePx1uPOJ9+QfVzVDgI4LtnOjg6S3enaAA8amtaSKxIc/AxDLV1zq9A
-         G1R37KCSbqBH6KzjCaqAdxMJVO/MzdncBEqy4ILe3rt5FJizcEaXuswSKND97NTFSUCa
-         oonxwo7+nQS6+1kiVnJHvW6chzKruYpkqdr7k=
+        bh=OgaNyZ5x1h+jMKektNE6VuQR1NP6W7drX5dxHtMPlQI=;
+        b=RDXEgdT6yVC7DW5EyDhcIf6vwcRJIWkt3UP0rOA11lSxdm59tY0IsUMdQp2WycH7Pc
+         Z3h7MMckJvu0VKwzFCwRsgQyqX0TGyQFyMX3HmGC5Seb19hFKucWFtFpfjPIEOCLTl7Q
+         vvqxaAQqrtyRQDOlLJx/Ip/6Kk4wyJSxwfMcg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+3thu+TFV75UQnUKi5H5iMkprh+mVb/ueAKw6cINH6Y=;
-        b=YNDSbMmscIiS36V027ET7nePXsyrrL03mLRP/y1kZV9L5j0U1a/8ASqV0L+GXHHiE0
-         0LvgpcJUDV3mzhPQcTXoOcU6C0pcJFXqnDA2k8Gwgnv5cHOiWOQzeHs2xfhDDTZhEJPh
-         5U+LE4xhpKL8KPw2DRwtG4/uZzvIC9Ibr9hvmN4XBj6GSworLXr6Z8P+1EJgxw9l4TKa
-         3CZNGrPHtiKsGQJn0W+Yd6Bwx4neea9diing2KOPg9UHId3e674NhRTe3W4AhCSEJyCD
-         WXjY9RQ0xi3Tcf1ASjlspul4LUcwRDXxHyQyVWZbj25dj1BkAHvfxld57qP/GjoVrME4
-         RWvA==
-X-Gm-Message-State: ANoB5pmatdje0k5NtEnffkMobFviUvZpe/3wNQCDfGaU1GaLa+meZi0E
-        DgNcuQLQM+QgrxdIpH78Qsxxqg==
-X-Google-Smtp-Source: AA0mqf59dINh/5fm38yRqrF5Y6rB+ErCZKmj7qHXjh5d283hE7csggHWbwm7onwdkzkqk9T/WefmpA==
-X-Received: by 2002:a05:6a21:3996:b0:a7:345a:1024 with SMTP id ad22-20020a056a21399600b000a7345a1024mr22612382pzc.50.1670869787169;
-        Mon, 12 Dec 2022 10:29:47 -0800 (PST)
-Received: from localhost.localdomain ([2405:201:c00a:a809:c713:dc69:f2de:e52f])
-        by smtp.gmail.com with ESMTPSA id n28-20020a634d5c000000b0046fefb18a09sm5357998pgl.91.2022.12.12.10.29.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Dec 2022 10:29:46 -0800 (PST)
+        bh=OgaNyZ5x1h+jMKektNE6VuQR1NP6W7drX5dxHtMPlQI=;
+        b=Hx03JZxXHh8iuOiajpCUzPa0qSZkyqCgqcs2WwkvHTUcBwE1P+QLMroY5K5uKfH88P
+         I0vtLvaBcQVMyZiHTSjnnQZ0yJrYEgnylZIF9+YJT5wCVzL6r+EoeZlrN3RN2j4nMoyh
+         jS3iOs9dACy93ASN0lsNVptaeKS782jcy0X0SQHTGtYV18dS2F7vPhU6+tVROgC/iJqp
+         o67YMGo1JaYPF5zEUUd5l169ai22IuJ75rkroBnp+mvN0dO0vC+UaozWEU5Ez5f4AVtE
+         f+l8DxlmxpPVY8oYMHwuU9r/MQeWGSoDkVr+4IjaldIt2lcSN8PVnXFuiBFbWKMVvemm
+         Z65A==
+X-Gm-Message-State: ANoB5plFSW4izOhR/zqY6eCgcj12seaxdeY63Fdf5/rsj9R/9zlr1wbS
+        nFrD1xf1TZTZxcyFof6PWnAQxjH8nqddR9jCK9g85Q==
+X-Google-Smtp-Source: AA0mqf5DankXuvzmLW7KEnaFY93f/DEga3DelFoCUPUnc4GwBdl+S8ngxEG2JOAUAfhFyIJW08TXMjSkik/hyNM6QKo=
+X-Received: by 2002:a81:7357:0:b0:407:7bc3:d949 with SMTP id
+ o84-20020a817357000000b004077bc3d949mr2669877ywc.186.1670928039143; Tue, 13
+ Dec 2022 02:40:39 -0800 (PST)
+MIME-Version: 1.0
+References: <20221209152343.180139-1-jagan@amarulasolutions.com>
+ <CGME20221209152722eucas1p2534c4e4837d3006683fc57c0dcb1ab52@eucas1p2.samsung.com>
+ <20221209152343.180139-11-jagan@amarulasolutions.com> <df99edbd-7150-7274-2c5e-fe6d4ed4d92d@samsung.com>
+ <CAMty3ZCCscqE8e_Rr9KpmUONxh4aCBWB7qh4xSvuCGrUT4kUeQ@mail.gmail.com>
+ <b1e38212-985c-21c9-58a5-7504719c3af8@samsung.com> <ed13b791-ab47-7aaa-7993-bb49478e7f2a@samsung.com>
+ <CAMty3ZBzpmwAV7e7wdBu+GOmg6M7xqqc46QtGzuLsnv2kT0Zdw@mail.gmail.com> <395a4762-70fe-1caf-579f-2b5952232470@samsung.com>
+In-Reply-To: <395a4762-70fe-1caf-579f-2b5952232470@samsung.com>
 From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+Date:   Tue, 13 Dec 2022 16:10:27 +0530
+Message-ID: <CAMty3ZABHUjSHRBR6RCnyE19HOWknw67s__0WBKgMnX5nQBy9w@mail.gmail.com>
+Subject: Re: [PATCH v9 10/18] drm: bridge: samsung-dsim: Init exynos host for
+ first DSI transfer
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
         Neil Armstrong <narmstrong@linaro.org>,
         Robert Foss <robert.foss@linaro.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Sam Ravnborg <sam@ravnborg.org>
-Cc:     Marek Vasut <marex@denx.de>, linux-samsung-soc@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v11 3/3] drm: exynos: dsi: Restore proper bridge chain order
-Date:   Mon, 12 Dec 2022 23:59:23 +0530
-Message-Id: <20221212182923.29155-4-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221212182923.29155-1-jagan@amarulasolutions.com>
-References: <20221212182923.29155-1-jagan@amarulasolutions.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Marek Vasut <marex@denx.de>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Restore the proper bridge chain by finding the previous bridge
-in the chain instead of passing NULL.
+Hi Marek,
 
-This establishes a proper bridge chain while attaching downstream
-bridges.
+On Tue, Dec 13, 2022 at 2:28 PM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+>
+> On 12.12.2022 16:33, Jagan Teki wrote:
+>
+> On Mon, Dec 12, 2022 at 8:52 PM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>
+> On 12.12.2022 09:43, Marek Szyprowski wrote:
+>
+> On 12.12.2022 09:32, Jagan Teki wrote:
+>
+> On Mon, Dec 12, 2022 at 1:56 PM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>
+> Hi Jagan,
+>
+> On 09.12.2022 16:23, Jagan Teki wrote:
+>
+> The existing drm panels and bridges in Exynos required host
+> initialization during the first DSI command transfer even though
+> the initialization was done before.
+>
+> This host reinitialization is handled via DSIM_STATE_REINITIALIZED
+> flag and triggers from host transfer.
+>
+> Do this exclusively for Exynos.
+>
+> Initial logic is derived from Marek Szyprowski changes.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+> Changes from v9:
+> - derived from v8
+> - added comments
+>
+>    drivers/gpu/drm/bridge/samsung-dsim.c | 15 ++++++++++++++-
+>    include/drm/bridge/samsung-dsim.h     |  5 +++--
+>    2 files changed, 17 insertions(+), 3 deletions(-)
+>
+> The following chunk is missing compared to v8:
+>
+> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c
+> b/drivers/gpu/drm/bridge/samsung-dsim.c
+> index 6e9ad955ebd3..6a9403cb92ae 100644
+> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> @@ -1315,7 +1315,9 @@ static int samsung_dsim_init(struct samsung_dsim
+> *dsi, unsigned int flag)
+>                   return 0;
+>
+>           samsung_dsim_reset(dsi);
+> -       samsung_dsim_enable_irq(dsi);
+> +
+> +       if (!(dsi->state & DSIM_STATE_INITIALIZED))
+> +               samsung_dsim_enable_irq(dsi);
+>
+> Is this really required? does it make sure that the IRQ does not
+> enable twice?
+>
+> That's what that check does. Without the 'if (!(dsi->state &
+> DSIM_STATE_INITIALIZED))' check, the irqs will be enabled twice (first
+> from pre_enable, then from the first transfer), what leads to a
+> warning from irq core.
+>
+> I've just noticed that we also would need to clear the
+> DSIM_STATE_REINITIALIZED flag in dsim_suspend.
+>
+> However I've found that a bit simpler patch would keep the current code
+> flow for Exynos instead of this reinitialization hack. This can be
+> applied on the "[PATCH v9 09/18] drm: bridge: samsung-dsim: Add host
+> init in pre_enable" patch:
+>
+> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c
+> b/drivers/gpu/drm/bridge/samsung-dsim.c
+> index 0b2e52585485..acc95c61ae45 100644
+> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> @@ -1291,9 +1291,11 @@ static void samsung_dsim_atomic_pre_enable(struct
+> drm_bridge *bridge,
+>
+>          dsi->state |=3D DSIM_STATE_ENABLED;
+>
+> -       ret =3D samsung_dsim_init(dsi, DSIM_STATE_INITIALIZED);
+> -       if (ret)
+> -               return;
+> +       if (!samsung_dsim_hw_is_exynos(dsi->plat_data->hw_type)) {
+> +               ret =3D samsung_dsim_init(dsi, DSIM_STATE_INITIALIZED);
+> +               if (ret)
+> +                       return;
+> +       }
+>
+> Sorry, I don't understand this. Does it mean Exynos doesn't need to
+> init host in pre_enable? If I remember correctly even though the host
+> is initialized it has to reinitialize during the first transfer - This
+> is what the Exynos requirement is. Please correct or explain here.
+>
+> This is a matter of enabling power regulator(s) in the right order and do=
+ing the host initialization in the right moment. It was never a matter of r=
+e-initialization. See the current code for the reference (it uses the same =
+approach as my above change). I've already explained that here:
+>
+> https://lore.kernel.org/all/e96197f9-948a-997e-5453-9f9d179b5f5a@samsung.=
+com/
+>
+> If you would like to see the exact proper moment of the dsi host initiali=
+zation on the Exynos see the code here:
+>
+> https://github.com/mszyprow/linux/tree/v5.18-next-20220511-dsi-rework and=
+ patches adding mipi_dsi_host_init() to panel/bridge drivers.
 
-Reviewed-by: Marek Vasut <marex@denx.de>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v11:
-- add bridge.pre_enable_prev_first
-Changes for v10:
-- collect Marek review tag
+As I said before, the downstream bridge needs an explicit call to host
+init via mipi_dsi_host_init - this is indeed not a usual use-case
+scenario. Let's handle this with a REINIT fix and see if we can update
+this later to handle both scenarios.
 
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Would you please test this repo, I have included all.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index ec673223d6b7..9d10a89d28f1 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1428,7 +1428,8 @@ static int exynos_dsi_attach(struct drm_bridge *bridge,
- {
- 	struct exynos_dsi *dsi = bridge_to_dsi(bridge);
- 
--	return drm_bridge_attach(bridge->encoder, dsi->out_bridge, NULL, flags);
-+	return drm_bridge_attach(bridge->encoder, dsi->out_bridge, bridge,
-+				 flags);
- }
- 
- static const struct drm_bridge_funcs exynos_dsi_bridge_funcs = {
-@@ -1474,7 +1475,10 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
- 
- 	drm_bridge_add(&dsi->bridge);
- 
--	drm_bridge_attach(encoder, &dsi->bridge, NULL, 0);
-+	drm_bridge_attach(encoder, &dsi->bridge,
-+			  list_first_entry_or_null(&encoder->bridge_chain,
-+						   struct drm_bridge,
-+						   chain_node), 0);
- 
- 	/*
- 	 * This is a temporary solution and should be made by more generic way.
-@@ -1709,6 +1713,7 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 	dsi->bridge.funcs = &exynos_dsi_bridge_funcs;
- 	dsi->bridge.of_node = dev->of_node;
- 	dsi->bridge.type = DRM_MODE_CONNECTOR_DSI;
-+	dsi->bridge.pre_enable_prev_first = true;
- 
- 	ret = component_add(dev, &exynos_dsi_component_ops);
- 	if (ret)
--- 
-2.25.1
+https://gitlab.com/openedev/kernel/-/commits/imx8mm-dsi-v10
 
+Thanks,
+Jagan.
