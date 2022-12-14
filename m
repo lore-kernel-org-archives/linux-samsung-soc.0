@@ -2,143 +2,341 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D919C4167B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Dec 2022 08:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 981BBC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Dec 2022 08:23:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237450AbiLNIGS (ORCPT
+        id S237523AbiLNIXv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 14 Dec 2022 03:06:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34782 "EHLO
+        Wed, 14 Dec 2022 03:23:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237415AbiLNIGO (ORCPT
+        with ESMTP id S237358AbiLNIXu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 14 Dec 2022 03:06:14 -0500
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22DC81E3FC
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Dec 2022 00:06:13 -0800 (PST)
-Received: by mail-lj1-x22e.google.com with SMTP id l8so5838476ljh.13
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Dec 2022 00:06:13 -0800 (PST)
+        Wed, 14 Dec 2022 03:23:50 -0500
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C7D9E5A
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Dec 2022 00:23:49 -0800 (PST)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-3bf4ade3364so226645727b3.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Dec 2022 00:23:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ekJvCFBAUBvty7SAV1eGHEEOeCneFptl9FWN+37m0+U=;
-        b=oNAidUI3eefQHODYG30eOAYutA+0TvIR7AXLlEC/P6qRMMNSMXBxu3e7Zr5u0PptcW
-         eG3cDd/rQ/5dfCEeYjPkkrFN9aoA4ADlLIaIelAyjiQ1otiBHPH7M5quDEPxZRbGZKX2
-         UnRVU3zNY7/51Z9M3V4mcV63tTV6CyUl3YPsGHS6ACwVr1SS5mJRv2+hEReTeULMbkdP
-         pLJaR1tfvn0c15xt7vIlBN2J4WUaor3ZRzcTZevSOGpMSrCbrrXasonsli0OeoFgS9Ap
-         UqADxAKuvgoubJdHgnQSZRK5CnNxPiXr8mf8eQonvjkru+ckxG6l3fLeDtriWJkacLI5
-         C8Yg==
+        d=amarulasolutions.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NPVBArO/3vGDoZ19JAZr8yxxpIrgmbg6NNKsERykz+s=;
+        b=Rj0fE8gU7NO1YYknN5C/o/0q+SCkURCxUpMeHR02zyPmUu9s2b9oLpkwvvV5eIzIlm
+         IgJYn04enZ4XkW2QZYaNhVsmoOC7jlEJhczKjFrYj2qxqpRlylM6taAz29eUfEy14RLj
+         nNujnWMJzg1pRnU254UA3a6W10OBBrPHjIwus=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ekJvCFBAUBvty7SAV1eGHEEOeCneFptl9FWN+37m0+U=;
-        b=oou5hM98wOVssZJSiqTwLFNMfniKxFJdtuFKQkBVmhsXFMU4Vxoqu/c2qn1ShC6G3K
-         l2LFAkpLu03+RETZOj/wFJorBs9qvgMHuIPVTQUwcRhj7eIyvgePdKsdtOZVVH+OvkoR
-         dgDwqxtHSMw/SbRYVqCQBf3Tz+vc3ORnga1RsRHayI8rYgHso/Rtm1tpD2yLkvFGGkEN
-         HzyyjwZr0pj33+cZbeKY7ZUvwtvGmyEygZd5A4WOMUzyyA0pYWym3yt2s7YruDxg6KfJ
-         dM7SbEB9WUwOjFlVH6hOByEDjciTYsn6VQnGqhkWSky6ekhppYI6N09OIqEBwcRKHFMt
-         boZQ==
-X-Gm-Message-State: ANoB5pk5xY1xSj3z1K361fyTYmRZKsEYb6g7+rLSdAiEV6x7aEPVONGH
-        I1LzaLlZe9veb7D7B8g0VXB6Dg==
-X-Google-Smtp-Source: AA0mqf6nhE1kxI0HlUaXo15VVyULmxvNEfOIWIaUmc1dr89nTxvWpV/+lPf3GP1nc6kEzBHZILe9+Q==
-X-Received: by 2002:a05:651c:50e:b0:26f:eac4:10ca with SMTP id o14-20020a05651c050e00b0026feac410camr7829713ljp.21.1671005171183;
-        Wed, 14 Dec 2022 00:06:11 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id y15-20020a2e95cf000000b0027741daec09sm509910ljh.107.2022.12.14.00.06.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Dec 2022 00:06:10 -0800 (PST)
-Message-ID: <49b6b5f0-02d5-5840-3d0b-f7eff1555133@linaro.org>
-Date:   Wed, 14 Dec 2022 09:06:09 +0100
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NPVBArO/3vGDoZ19JAZr8yxxpIrgmbg6NNKsERykz+s=;
+        b=7xYUBtylJFSQNPb5BnZt96PwyxHg6SWoeJr0IESpo3GFaZyI+MeGO5jLlniRNgI0k9
+         iPsdsRhlqczkOlYHFJTHIzCHaeH9WJHtGg3MXbylk3as2qFalqxuAFP9V2n/dsd0QfA1
+         +5jXDOcZb6hPdoHCV1c+oVUDvrR4dpP78t65NVmuSxWsQUHLVZEnm2S5DratP1agaTO0
+         ulhkI+eHvRnFgLLSsdy0xj9NemHe+YzuT9zdAzS67EUbjeCd9GKPPzFoIYs8nvWx3sGi
+         bL45fTre8yTOcnGdg24MjtmqbF2ArIvXdX9ZvmT3jkgtZntscdTZfLz9ClnIAbQJhT7S
+         Gvyg==
+X-Gm-Message-State: ANoB5pnK3SIJr2Cs4A+sthXwwLtCrHtrO//1jMyBbOg5wMB2z+DWhOPT
+        ntX73kDvxumOXYEF2CU+OWPgKbxOC8JlwwIbrVyGLw==
+X-Google-Smtp-Source: AA0mqf6BqK231o80Qo+UjAyZwEkEXUNQURM13ZLAucKPtBvDjB4j8fvhQEmCPx8FyOqRsZ/4FK2gou8m61daSfTQ0K8=
+X-Received: by 2002:a0d:cac5:0:b0:3c9:6f0d:5197 with SMTP id
+ m188-20020a0dcac5000000b003c96f0d5197mr852310ywd.230.1671006228130; Wed, 14
+ Dec 2022 00:23:48 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v2 1/4] dt-bindings: soc: samsung: exynos-sysreg: add
- dedicated SYSREG compatibles to Exynos850
-To:     Sriranjani P <sriranjani.p@samsung.com>,
-        'Rob Herring' <robh@kernel.org>
-Cc:     krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
-        alim.akhtar@samsung.com, pankaj.dubey@samsung.com,
-        ravi.patel@samsung.com, linux-kernel@vger.kernel.org,
+References: <20221209152343.180139-1-jagan@amarulasolutions.com>
+ <20221209152343.180139-11-jagan@amarulasolutions.com> <df99edbd-7150-7274-2c5e-fe6d4ed4d92d@samsung.com>
+ <CAMty3ZCCscqE8e_Rr9KpmUONxh4aCBWB7qh4xSvuCGrUT4kUeQ@mail.gmail.com>
+ <b1e38212-985c-21c9-58a5-7504719c3af8@samsung.com> <ed13b791-ab47-7aaa-7993-bb49478e7f2a@samsung.com>
+ <CAMty3ZBzpmwAV7e7wdBu+GOmg6M7xqqc46QtGzuLsnv2kT0Zdw@mail.gmail.com>
+ <395a4762-70fe-1caf-579f-2b5952232470@samsung.com> <CAMty3ZABHUjSHRBR6RCnyE19HOWknw67s__0WBKgMnX5nQBy9w@mail.gmail.com>
+ <c3f0c5c2-aae8-dc39-be02-dc4dfd0e7073@samsung.com> <3ce9def4-9fdf-0bde-fd2c-3a8755ebdf9d@samsung.com>
+ <CAMty3ZAqfhV4b69GthcEzBOgpYSJ0yziZcpFC2oGyySWOu-tkA@mail.gmail.com>
+ <17f7772b-ca46-53b8-5bf9-98d3242fa703@samsung.com> <CAMty3ZC0Ca5yt4jFHi0KtcEszzRs1KrUTF2SqYizMF+1NYPAUQ@mail.gmail.com>
+ <7e0ba9fb-387d-6bf7-585e-9fc79de31bd8@samsung.com> <CGME20221214080445eucas1p2e9e92b27621cf6124e5cb791338284a4@eucas1p2.samsung.com>
+ <CAMty3ZAG7F_j8HWSot=auf15yrtVtz-Ur5HV6mop4OaL2qc-aQ@mail.gmail.com> <0afa7602-a549-5c6c-93a1-855aa88562e0@samsung.com>
+In-Reply-To: <0afa7602-a549-5c6c-93a1-855aa88562e0@samsung.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Wed, 14 Dec 2022 13:53:36 +0530
+Message-ID: <CAMty3ZDwoXk=Uka9DPUqRy+AU09+0w9j7-PStizJHGH==soGAA@mail.gmail.com>
+Subject: Re: [PATCH v9 10/18] drm: bridge: samsung-dsim: Init exynos host for
+ first DSI transfer
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Marek Vasut <marex@denx.de>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20221207105032.103510-1-sriranjani.p@samsung.com>
- <CGME20221207105043epcas5p306086213835a5287f39de9016dcd43d2@epcas5p3.samsung.com>
- <20221207105032.103510-2-sriranjani.p@samsung.com>
- <20221209211004.GA3847427-robh@kernel.org>
- <051901d90f76$4e557040$eb0050c0$@samsung.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <051901d90f76$4e557040$eb0050c0$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14/12/2022 05:41, Sriranjani P wrote:
-> 
-> 
->> -----Original Message-----
->> From: Rob Herring [mailto:robh@kernel.org]
->> Sent: 10 December 2022 02:40
->> To: Sriranjani P <sriranjani.p@samsung.com>
->> Cc: krzysztof.kozlowski+dt@linaro.org; devicetree@vger.kernel.org;
->> alim.akhtar@samsung.com; pankaj.dubey@samsung.com;
->> ravi.patel@samsung.com; linux-kernel@vger.kernel.org; linux-arm-
->> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org
->> Subject: Re: [PATCH v2 1/4] dt-bindings: soc: samsung: exynos-sysreg: add
->> dedicated SYSREG compatibles to Exynos850
->>
->> On Wed, Dec 07, 2022 at 04:20:29PM +0530, Sriranjani P wrote:
->>> Exynos850 has two different SYSREGs, hence add dedicated compatibles
->>> for them and deprecate usage of generic Exynos850 compatible alone.
->>>
->>> Signed-off-by: Sriranjani P <sriranjani.p@samsung.com>
->>> ---
->>>  .../soc/samsung/samsung,exynos-sysreg.yaml        | 15 ++++++++++++---
->>>  1 file changed, 12 insertions(+), 3 deletions(-)
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-
->> sysreg.
->>> yaml
->>> b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-
->> sysreg.
->>> yaml index 4954790eda6c..a37452965100 100644
->>> ---
->>> a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-
->> sysreg.
->>> yaml
->>> +++
->> b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sys
->>> +++ reg.yaml
->>> @@ -17,7 +17,6 @@ properties:
->>>                - samsung,exynos3-sysreg
->>>                - samsung,exynos4-sysreg
->>>                - samsung,exynos5-sysreg
->>> -              - samsung,exynos850-sysreg
->>>                - samsung,exynosautov9-sysreg
->>>                - tesla,fsd-cam-sysreg
->>>                - tesla,fsd-fsys0-sysreg @@ -33,9 +32,17 @@ properties:
->>>            - const: samsung,exynos5433-sysreg
->>>            - const: syscon
->>>        - items:
->>> -          - const: samsung,exynos5433-sysreg
->>> +          - enum:
->>> +              - const: samsung,exynos5433-sysreg
->>
->> This says the compatible entry is "const: samsung,exynos5433-sysreg".
->>
->> That should be a schema warning. You did test this, right?
-> Thanks for pointing it out, somehow dtbs check not showed any error. Will
-> fix it in the next version.
+On Wed, Dec 14, 2022 at 1:34 PM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+>
+> On 14.12.2022 06:33, Jagan Teki wrote:
+> > On Tue, Dec 13, 2022 at 9:11 PM Marek Szyprowski
+> > <m.szyprowski@samsung.com> wrote:
+> >> On 13.12.2022 16:15, Jagan Teki wrote:
+> >>> On Tue, Dec 13, 2022 at 8:24 PM Marek Szyprowski
+> >>> <m.szyprowski@samsung.com> wrote:
+> >>>> On 13.12.2022 15:18, Jagan Teki wrote:
+> >>>>> On Tue, Dec 13, 2022 at 7:31 PM Marek Szyprowski
+> >>>>> <m.szyprowski@samsung.com> wrote:
+> >>>>>> On 13.12.2022 13:20, Marek Szyprowski wrote:
+> >>>>>>> On 13.12.2022 11:40, Jagan Teki wrote:
+> >>>>>>>> On Tue, Dec 13, 2022 at 2:28 PM Marek Szyprowski
+> >>>>>>>> <m.szyprowski@samsung.com> wrote:
+> >>>>>>>>> On 12.12.2022 16:33, Jagan Teki wrote:
+> >>>>>>>>>
+> >>>>>>>>> On Mon, Dec 12, 2022 at 8:52 PM Marek Szyprowski
+> >>>>>>>>> <m.szyprowski@samsung.com> wrote:
+> >>>>>>>>>
+> >>>>>>>>> On 12.12.2022 09:43, Marek Szyprowski wrote:
+> >>>>>>>>>
+> >>>>>>>>> On 12.12.2022 09:32, Jagan Teki wrote:
+> >>>>>>>>>
+> >>>>>>>>> On Mon, Dec 12, 2022 at 1:56 PM Marek Szyprowski
+> >>>>>>>>> <m.szyprowski@samsung.com> wrote:
+> >>>>>>>>>
+> >>>>>>>>> Hi Jagan,
+> >>>>>>>>>
+> >>>>>>>>> On 09.12.2022 16:23, Jagan Teki wrote:
+> >>>>>>>>>
+> >>>>>>>>> The existing drm panels and bridges in Exynos required host
+> >>>>>>>>> initialization during the first DSI command transfer even though
+> >>>>>>>>> the initialization was done before.
+> >>>>>>>>>
+> >>>>>>>>> This host reinitialization is handled via DSIM_STATE_REINITIALIZED
+> >>>>>>>>> flag and triggers from host transfer.
+> >>>>>>>>>
+> >>>>>>>>> Do this exclusively for Exynos.
+> >>>>>>>>>
+> >>>>>>>>> Initial logic is derived from Marek Szyprowski changes.
+> >>>>>>>>>
+> >>>>>>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >>>>>>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> >>>>>>>>> ---
+> >>>>>>>>> Changes from v9:
+> >>>>>>>>> - derived from v8
+> >>>>>>>>> - added comments
+> >>>>>>>>>
+> >>>>>>>>>        drivers/gpu/drm/bridge/samsung-dsim.c | 15 ++++++++++++++-
+> >>>>>>>>>        include/drm/bridge/samsung-dsim.h     |  5 +++--
+> >>>>>>>>>        2 files changed, 17 insertions(+), 3 deletions(-)
+> >>>>>>>>>
+> >>>>>>>>> The following chunk is missing compared to v8:
+> >>>>>>>>>
+> >>>>>>>>> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>>>>>>>> b/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>>>>>>>> index 6e9ad955ebd3..6a9403cb92ae 100644
+> >>>>>>>>> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>>>>>>>> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>>>>>>>> @@ -1315,7 +1315,9 @@ static int samsung_dsim_init(struct samsung_dsim
+> >>>>>>>>> *dsi, unsigned int flag)
+> >>>>>>>>>                       return 0;
+> >>>>>>>>>
+> >>>>>>>>>               samsung_dsim_reset(dsi);
+> >>>>>>>>> -       samsung_dsim_enable_irq(dsi);
+> >>>>>>>>> +
+> >>>>>>>>> +       if (!(dsi->state & DSIM_STATE_INITIALIZED))
+> >>>>>>>>> +               samsung_dsim_enable_irq(dsi);
+> >>>>>>>>>
+> >>>>>>>>> Is this really required? does it make sure that the IRQ does not
+> >>>>>>>>> enable twice?
+> >>>>>>>>>
+> >>>>>>>>> That's what that check does. Without the 'if (!(dsi->state &
+> >>>>>>>>> DSIM_STATE_INITIALIZED))' check, the irqs will be enabled twice (first
+> >>>>>>>>> from pre_enable, then from the first transfer), what leads to a
+> >>>>>>>>> warning from irq core.
+> >>>>>>>>>
+> >>>>>>>>> I've just noticed that we also would need to clear the
+> >>>>>>>>> DSIM_STATE_REINITIALIZED flag in dsim_suspend.
+> >>>>>>>>>
+> >>>>>>>>> However I've found that a bit simpler patch would keep the current code
+> >>>>>>>>> flow for Exynos instead of this reinitialization hack. This can be
+> >>>>>>>>> applied on the "[PATCH v9 09/18] drm: bridge: samsung-dsim: Add host
+> >>>>>>>>> init in pre_enable" patch:
+> >>>>>>>>>
+> >>>>>>>>> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>>>>>>>> b/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>>>>>>>> index 0b2e52585485..acc95c61ae45 100644
+> >>>>>>>>> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>>>>>>>> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>>>>>>>> @@ -1291,9 +1291,11 @@ static void
+> >>>>>>>>> samsung_dsim_atomic_pre_enable(struct
+> >>>>>>>>> drm_bridge *bridge,
+> >>>>>>>>>
+> >>>>>>>>>              dsi->state |= DSIM_STATE_ENABLED;
+> >>>>>>>>>
+> >>>>>>>>> -       ret = samsung_dsim_init(dsi, DSIM_STATE_INITIALIZED);
+> >>>>>>>>> -       if (ret)
+> >>>>>>>>> -               return;
+> >>>>>>>>> +       if (!samsung_dsim_hw_is_exynos(dsi->plat_data->hw_type)) {
+> >>>>>>>>> +               ret = samsung_dsim_init(dsi, DSIM_STATE_INITIALIZED);
+> >>>>>>>>> +               if (ret)
+> >>>>>>>>> +                       return;
+> >>>>>>>>> +       }
+> >>>>>>>>>
+> >>>>>>>>> Sorry, I don't understand this. Does it mean Exynos doesn't need to
+> >>>>>>>>> init host in pre_enable? If I remember correctly even though the host
+> >>>>>>>>> is initialized it has to reinitialize during the first transfer - This
+> >>>>>>>>> is what the Exynos requirement is. Please correct or explain here.
+> >>>>>>>>>
+> >>>>>>>>> This is a matter of enabling power regulator(s) in the right order
+> >>>>>>>>> and doing the host initialization in the right moment. It was never
+> >>>>>>>>> a matter of re-initialization. See the current code for the
+> >>>>>>>>> reference (it uses the same approach as my above change). I've
+> >>>>>>>>> already explained that here:
+> >>>>>>>>>
+> >>>>>>>>> https://lore.kernel.org/all/e96197f9-948a-997e-5453-9f9d179b5f5a@samsung.com/
+> >>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> If you would like to see the exact proper moment of the dsi host
+> >>>>>>>>> initialization on the Exynos see the code here:
+> >>>>>>>>>
+> >>>>>>>>> https://protect2.fireeye.com/v1/url?k=5dc33900-0258001f-5dc2b24f-000babdfecba-f7c1a2a1905c83ca&q=1&e=f086bfdb-9055-48bd-b9c2-5dffb6c0d558&u=https%3A%2F%2Fgithub.com%2Fmszyprow%2Flinux%2Ftree%2Fv5.18-next-20220511-dsi-rework
+> >>>>>>>>> and patches adding mipi_dsi_host_init() to panel/bridge drivers.
+> >>>>>>>> As I said before, the downstream bridge needs an explicit call to host
+> >>>>>>>> init via mipi_dsi_host_init - this is indeed not a usual use-case
+> >>>>>>>> scenario. Let's handle this with a REINIT fix and see if we can update
+> >>>>>>>> this later to handle both scenarios.
+> >>>>>>>>
+> >>>>>>>> Would you please test this repo, I have included all.
+> >>>>>>>>
+> >>>>>>>> https://gitlab.com/openedev/kernel/-/commits/imx8mm-dsi-v10
+> >>>>>>> This doesn't work on TM2e board. Give me some time to find why...
+> >>>>>>>
+> >>>>>> The following change is missing in "drm: bridge: Generalize Exynos-DSI
+> >>>>>> driver into a Samsung DSIM bridge" patch:
+> >>>>>>
+> >>>>>> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>>>>> b/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>>>>> index 1dbff2bee93f..81828b5ee0ac 100644
+> >>>>>> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>>>>> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> >>>>>> @@ -1745,6 +1745,7 @@ int samsung_dsim_probe(struct platform_device *pdev)
+> >>>>>>             dsi->bridge.funcs = &samsung_dsim_bridge_funcs;
+> >>>>>>             dsi->bridge.of_node = dev->of_node;
+> >>>>>>             dsi->bridge.type = DRM_MODE_CONNECTOR_DSI;
+> >>>>>> +       dsi->bridge.pre_enable_prev_first = true;
+> >>>>> Can you check this and confirm, I keep this in exynos side.
+> >>>>> https://gitlab.com/openedev/kernel/-/commit/ccb02df7a313fdf91d8e116b0ec3d6c945fbb6fd#c93f0ce4d81b854fbde970e341fb307f1be78c16_1865_189
+> >>>> This one is fine!
+> >>>>
+> >>>>>>             /* DE_LOW: i.MX8M Mini/Nano LCDIF-DSIM glue logic inverts
+> >>>>>> HS/VS/DE */
+> >>>>>>             if (dsi->plat_data->hw_type == DSIM_TYPE_IMX8MM)
+> >>>>>>
+> >>>>>>
+> >>>>>> After adding the above, all my test platform works fine.
+> >>>>>>
+> >>>>>> BTW, I still think that it is worth replacing the "drm: exynos: dsi: Add
+> >>>>>> host initialization in pre_enable" patch with the following simple
+> >>>>>> change and propagate it to bridge/samsung-dsim.c:
+> >>>>>>
+> >>>>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> >>>>>> b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> >>>>>> index fdaf514b39f2..071b74d60dcb 100644
+> >>>>>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> >>>>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> >>>>>> @@ -254,6 +254,9 @@ struct exynos_dsi_transfer {
+> >>>>>>      #define DSIM_STATE_CMD_LPM             BIT(2)
+> >>>>>>      #define DSIM_STATE_VIDOUT_AVAILABLE    BIT(3)
+> >>>>>>
+> >>>>>> +#define exynos_dsi_hw_is_exynos(hw) \
+> >>>>>> +       ((hw) >= DSIM_TYPE_EXYNOS3250 && (hw) <= DSIM_TYPE_EXYNOS5433)
+> >>>>>> +
+> >>>>>>      enum exynos_dsi_type {
+> >>>>>>             DSIM_TYPE_EXYNOS3250,
+> >>>>>>             DSIM_TYPE_EXYNOS4210,
+> >>>>>> @@ -1344,6 +1347,9 @@ static int exynos_dsi_init(struct exynos_dsi *dsi)
+> >>>>>>      {
+> >>>>>>             const struct exynos_dsi_driver_data *driver_data =
+> >>>>>> dsi->driver_data;
+> >>>>>>
+> >>>>>> +       if (dsi->state & DSIM_STATE_INITIALIZED)
+> >>>>>> +               return 0;
+> >>>>>> +
+> >>>>>>             exynos_dsi_reset(dsi);
+> >>>>>>             exynos_dsi_enable_irq(dsi);
+> >>>>>>
+> >>>>>> @@ -1356,6 +1362,8 @@ static int exynos_dsi_init(struct exynos_dsi *dsi)
+> >>>>>>             exynos_dsi_set_phy_ctrl(dsi);
+> >>>>>>             exynos_dsi_init_link(dsi);
+> >>>>>>
+> >>>>>> +       dsi->state |= DSIM_STATE_INITIALIZED;
+> >>>>>> +
+> >>>>>>             return 0;
+> >>>>>>      }
+> >>>>>>
+> >>>>>> @@ -1411,6 +1419,12 @@ static void exynos_dsi_atomic_pre_enable(struct
+> >>>>>> drm_bridge *bridge,
+> >>>>>>             }
+> >>>>>>
+> >>>>>>             dsi->state |= DSIM_STATE_ENABLED;
+> >>>>>> +
+> >>>>>> +       if (!exynos_dsi_hw_is_exynos(dsi->plat_data->hw_type)) {
+> >>>>>> +               ret = exynos_dsi_init(dsi);
+> >>>>>> +               if (ret)
+> >>>>>> +                       return;
+> >>>>>> +       }
+> >>>>>>      }
+> >>>>>>
+> >>>>>>      static void exynos_dsi_atomic_enable(struct drm_bridge *bridge,
+> >>>>>> @@ -1557,12 +1571,9 @@ static ssize_t exynos_dsi_host_transfer(struct
+> >>>>>> mipi_dsi_host *host,
+> >>>>>>             if (!(dsi->state & DSIM_STATE_ENABLED))
+> >>>>>>                     return -EINVAL;
+> >>>>>>
+> >>>>>> -       if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
+> >>>>>> -               ret = exynos_dsi_init(dsi);
+> >>>>>> -               if (ret)
+> >>>>>> -                       return ret;
+> >>>>>> -               dsi->state |= DSIM_STATE_INITIALIZED;
+> >>>>>> -       }
+> >>>>>> +       ret = exynos_dsi_init(dsi);
+> >>>>>> +       if (ret)
+> >>>>>> +               return ret;
+> >>>>> Below patch handling similar behavior by checking exynos hw_type at
+> >>>>> exynos_dsi_init, isn't it? Please check and let me know if I missing
+> >>>>> anything.
+> >>>>>
+> >>>>> https://gitlab.com/openedev/kernel/-/commit/d19d491eef92b92e12a26265697274ce666eddb5
+> >>>> You don't miss anything. Your version also works, but I just proposed a
+> >>>> bit simpler code.
+> >>> Do your changes don't need a DSIM_STATE_REINITIALIZED flag? would you
+> >>> please share the change on top of this commit?
+> >>> https://gitlab.com/openedev/kernel/-/commit/d19d491eef92b92e12a26265697274ce666eddb5
+> >> It doesn't need the DSIM_STATE_REINITIALIZED flag because the
+> >> initialization is done only once - in pre_enable for non-Exynos case and
+> >> on the first transfer for the Exynos case. In both cases the same flag
+> >> (DSIM_STATE_INITIALIZED) is used.
+> >>
+> >> See the attached patch.
+> > Thanks, I have included the changes and added your authorship as well.
+> >
+> > Please test this final version and let me know if you have any comments.
+> > https://gitlab.com/openedev/kernel/-/commits/imx8mm-dsi-v10
+>
+>
+> Fine for me.
 
-To test binding please run dt_binding_check instead.
-
-Best regards,
-Krzysztof
-
+Thanks, I will send V10.
