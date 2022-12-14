@@ -2,52 +2,52 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D5DC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Dec 2022 13:02:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8897C4167B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Dec 2022 13:02:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238488AbiLNNCO (ORCPT
+        id S238469AbiLNNCp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 14 Dec 2022 08:02:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60392 "EHLO
+        Wed, 14 Dec 2022 08:02:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238499AbiLNNBx (ORCPT
+        with ESMTP id S238391AbiLNNCJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 14 Dec 2022 08:01:53 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A90D222B3D
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Dec 2022 05:01:06 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id a9so3238682pld.7
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Dec 2022 05:01:06 -0800 (PST)
+        Wed, 14 Dec 2022 08:02:09 -0500
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A0CB333
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Dec 2022 05:01:23 -0800 (PST)
+Received: by mail-pl1-x629.google.com with SMTP id g10so3217396plo.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Dec 2022 05:01:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aGZeH2FdyQWuLWEBAEjslXzZMZhb/E1elB1aBOym2sM=;
-        b=m56FT1oDanBW9PWKnbeSb5IkAr3se5DC8jwthntnCF5kuV2stnlogAuf1cPJAOhSns
-         8K6+gHDk8tePtSjYJ975gK5ScL/2mUa72wc5eW7qigY7fK0eaH8d8AIYf4H6ZmkJME6i
-         SYVS2w3N1yojeEFQmr4x5I0CVP3xwaCiwfUZU=
+        bh=sNhfKLGMsZ0aggFiEANW2mfqP3edcefEl83mZ67A658=;
+        b=NzvqmR13ABf0HU/dZrVYG/X+6PULFtHpNFMSp8qDMhxBQySaoKLxl8GVUMAdKQL0Ju
+         KhZ2TO/OLGQet0AvSAsnEIoDFlphcfplZITEcrdlU9z5cpjk46ZYyWVnf+DPd62Wjz2S
+         7lbz+xL7hsXIkV/2NBHFy13Gk8CA1yN0oynwk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aGZeH2FdyQWuLWEBAEjslXzZMZhb/E1elB1aBOym2sM=;
-        b=L5KpLHEPWuQzCg/sSnQks0NctxW3W0LOPwL/i07qEIeHWuM9TLdYJPfE7uzZkqY50M
-         kvYRB8RIhbN7tRgSga9t3X6bTxfhTO4G8nJX+c7DM/dBJ+wKNaGHZ9KSH093fX3RZOJN
-         kMczqLi9UvSM7bvUVG2Twf44ng0hzJpR9XSgZldcebXJcEFFsUy3Lp+AFTidoaj+2Eeu
-         2CNMtUfXQmtGsYMScj7peggfC8nWNsLagcDS6JUWVvwT0lMnEhSyb3mrPEvT7EShcu1J
-         TClbtKF7gN7sPuokcH32mUajo81d1L8TwYY3K/ZtEznqPa/OFBT243h1AJr+94lSknDq
-         Y6Ow==
-X-Gm-Message-State: ANoB5plmAoTjJAJtmkLJh4hnr6oF7W+ZyTQNPhV8lLDWobvLiHS7ax31
-        +0buNEKqZXSbmXcrlwFF70ki3A==
-X-Google-Smtp-Source: AA0mqf5vqTiLEXGnaKR4utMJdHpQhiCDtMxqCdfrrlJXTvjjbI9xNmjnIyqYEJSocU6h3k6MtaC8RQ==
-X-Received: by 2002:a17:902:e8d0:b0:187:3921:2b1c with SMTP id v16-20020a170902e8d000b0018739212b1cmr25543764plg.55.1671022865974;
-        Wed, 14 Dec 2022 05:01:05 -0800 (PST)
+        bh=sNhfKLGMsZ0aggFiEANW2mfqP3edcefEl83mZ67A658=;
+        b=nvB2JhIsNjceoeQxoinepA4/CIIwXNYubZJtyYb0fNjHsZYNQaL9VXuCMSWo19K8Lg
+         Z3xo9ApWeZgl+74LZHEKhvbuGEcmpOyaczO/7V54XTAnZ748Zfw7VpA7kbRatvZPg9tw
+         6EaF3kD9rYb4HM8lFivNDuHcOtjJYF4bWStu01qOrC4ftIRYFtszMVRiRHQ9Caz6oy9K
+         Ljubfs9dLhU1UOSN6hCF483tH6Zjq+94YtL1BiZPYnnRKNeYuiA5U15peIXJNhgx8vMl
+         mjybnWqyhmDZi10oJTxDKTriMLHGYEKJeofgiQXMx214gwME+gRnbmR7zemgCaRTaHEq
+         WufA==
+X-Gm-Message-State: ANoB5ploghtLTn7qvA8xrihRT77/WHLadyZOf9nGiLb48wx0zuUhKGN4
+        ik3bdw1CU2eWsGYOmugG+ZGQfg==
+X-Google-Smtp-Source: AA0mqf794GIVCP9QXOkaF5DGeOHnxtj8JFhFsZrUbCy7YWo3OTZn5ApzeZ5lwf71KRRAasNlbJb/AQ==
+X-Received: by 2002:a17:902:f243:b0:189:8c6b:8ed7 with SMTP id j3-20020a170902f24300b001898c6b8ed7mr21419574plc.21.1671022882468;
+        Wed, 14 Dec 2022 05:01:22 -0800 (PST)
 Received: from localhost.localdomain ([2405:201:c00a:a809:5e03:faf:846e:352d])
-        by smtp.gmail.com with ESMTPSA id ix17-20020a170902f81100b001895f7c8a71sm1838651plb.97.2022.12.14.05.00.59
+        by smtp.gmail.com with ESMTPSA id ix17-20020a170902f81100b001895f7c8a71sm1838651plb.97.2022.12.14.05.01.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Dec 2022 05:01:05 -0800 (PST)
+        Wed, 14 Dec 2022 05:01:21 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
@@ -70,10 +70,11 @@ Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
         linux-arm-kernel@lists.infradead.org,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v10 13/18] drm: exynos: dsi: Add Exynos based host irq hooks
-Date:   Wed, 14 Dec 2022 18:29:02 +0530
-Message-Id: <20221214125907.376148-14-jagan@amarulasolutions.com>
+        Jagan Teki <jagan@amarulasolutions.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>
+Subject: [PATCH v10 15/18] dt-bindings: display: exynos: dsim: Add NXP i.MX8M Mini/Nano support
+Date:   Wed, 14 Dec 2022 18:29:04 +0530
+Message-Id: <20221214125907.376148-16-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221214125907.376148-1-jagan@amarulasolutions.com>
 References: <20221214125907.376148-1-jagan@amarulasolutions.com>
@@ -83,183 +84,42 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Enable and disable of te_gpio's are Exynos platform specific
-irq handling, so add the exynos based irq operations and hook
-them for exynos plat_data.
+Samsung MIPI DSIM bridge can also be found in i.MX8M Mini/Nano SoC.
 
+Add dt-bingings for it.
+
+Cc: devicetree@vger.kernel.org
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
-Changes for v10:
-- split from previous series patch
-"drm: bridge: Generalize Exynos-DSI driver into a Samsung DSIM bridge"
+Changes for v10, v9:
+- none
+Changes for v8:
+- add comment to include i.MX8M Nano.
+Changes for v7, v6, v5, v4:
+- none
+Changes for v3:
+- collect Rob Acked-by
+Changes for v2:
+- updated comments
+Changes for v1:
+- new patch
 
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 55 +++++++++++++++++++++----
- 1 file changed, 47 insertions(+), 8 deletions(-)
+ Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 819131a36b96..580e06595b37 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -291,9 +291,15 @@ struct exynos_dsim_host_ops {
- 	int (*detach)(struct exynos_dsi *dsim, struct mipi_dsi_device *device);
- };
- 
-+struct exynos_dsim_irq_ops {
-+	void (*enable)(struct exynos_dsi *dsim);
-+	void (*disable)(struct exynos_dsi *dsim);
-+};
-+
- struct exynos_dsi_plat_data {
- 	enum exynos_dsi_type hw_type;
- 	const struct exynos_dsim_host_ops *host_ops;
-+	const struct exynos_dsim_irq_ops *irq_ops;
- };
- 
- struct exynos_dsi {
-@@ -308,7 +314,6 @@ struct exynos_dsi {
- 	struct clk **clks;
- 	struct regulator_bulk_data supplies[2];
- 	int irq;
--	struct gpio_desc *te_gpio;
- 
- 	u32 pll_clk_rate;
- 	u32 burst_clk_rate;
-@@ -332,6 +337,7 @@ struct exynos_dsi {
- 
- struct exynos_dsi_enc {
- 	struct drm_encoder encoder;
-+	struct gpio_desc *te_gpio;
- };
- 
- #define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
-@@ -1345,18 +1351,38 @@ static irqreturn_t exynos_dsi_te_irq_handler(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
--static void exynos_dsi_enable_irq(struct exynos_dsi *dsi)
-+static void _exynos_dsi_enable_irq(struct exynos_dsi *dsim)
- {
--	enable_irq(dsi->irq);
-+	struct _exynos_dsi *dsi = dsim->priv;
- 
- 	if (dsi->te_gpio)
- 		enable_irq(gpiod_to_irq(dsi->te_gpio));
- }
- 
--static void exynos_dsi_disable_irq(struct exynos_dsi *dsi)
-+static void _exynos_dsi_disable_irq(struct exynos_dsi *dsim)
- {
-+	struct _exynos_dsi *dsi = dsim->priv;
-+
- 	if (dsi->te_gpio)
- 		disable_irq(gpiod_to_irq(dsi->te_gpio));
-+}
-+
-+static void exynos_dsi_enable_irq(struct exynos_dsi *dsi)
-+{
-+	const struct exynos_dsi_plat_data *pdata = dsi->plat_data;
-+
-+	enable_irq(dsi->irq);
-+
-+	if (pdata->irq_ops && pdata->irq_ops->enable)
-+		pdata->irq_ops->enable(dsi);
-+}
-+
-+static void exynos_dsi_disable_irq(struct exynos_dsi *dsi)
-+{
-+	const struct exynos_dsi_plat_data *pdata = dsi->plat_data;
-+
-+	if (pdata->irq_ops && pdata->irq_ops->disable)
-+		pdata->irq_ops->disable(dsi);
- 
- 	disable_irq(dsi->irq);
- }
-@@ -1385,9 +1411,10 @@ static int exynos_dsi_init(struct exynos_dsi *dsi)
- 	return 0;
- }
- 
--static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi,
-+static int exynos_dsi_register_te_irq(struct exynos_dsi *dsim,
- 				      struct device *panel)
- {
-+	struct _exynos_dsi *dsi = dsim->priv;
- 	int ret;
- 	int te_gpio_irq;
- 
-@@ -1395,7 +1422,7 @@ static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi,
- 	if (!dsi->te_gpio) {
- 		return 0;
- 	} else if (IS_ERR(dsi->te_gpio)) {
--		dev_err(dsi->dev, "gpio request failed with %ld\n",
-+		dev_err(dsim->dev, "gpio request failed with %ld\n",
- 				PTR_ERR(dsi->te_gpio));
- 		return PTR_ERR(dsi->te_gpio);
- 	}
-@@ -1405,7 +1432,7 @@ static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi,
- 	ret = request_threaded_irq(te_gpio_irq, exynos_dsi_te_irq_handler, NULL,
- 				   IRQF_TRIGGER_RISING | IRQF_NO_AUTOEN, "TE", dsi);
- 	if (ret) {
--		dev_err(dsi->dev, "request interrupt failed with %d\n", ret);
-+		dev_err(dsim->dev, "request interrupt failed with %d\n", ret);
- 		gpiod_put(dsi->te_gpio);
- 		return ret;
- 	}
-@@ -1413,8 +1440,10 @@ static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi,
- 	return 0;
- }
- 
--static void exynos_dsi_unregister_te_irq(struct exynos_dsi *dsi)
-+static void exynos_dsi_unregister_te_irq(struct exynos_dsi *dsim)
- {
-+	struct _exynos_dsi *dsi = dsim->priv;
-+
- 	if (dsi->te_gpio) {
- 		free_irq(gpiod_to_irq(dsi->te_gpio), dsi);
- 		gpiod_put(dsi->te_gpio);
-@@ -2035,6 +2064,11 @@ static const struct dev_pm_ops exynos_dsi_pm_ops = {
- 				pm_runtime_force_resume)
- };
- 
-+static const struct exynos_dsim_irq_ops exynos_dsi_irq_ops = {
-+	.enable = _exynos_dsi_enable_irq,
-+	.disable = _exynos_dsi_disable_irq,
-+};
-+
- static const struct exynos_dsim_host_ops exynos_dsi_host_ops = {
- 	.register_host = exynos_dsi_register_host,
- 	.unregister_host = exynos_dsi_unregister_host,
-@@ -2045,26 +2079,31 @@ static const struct exynos_dsim_host_ops exynos_dsi_host_ops = {
- static const struct exynos_dsi_plat_data exynos3250_dsi_pdata = {
- 	.hw_type = DSIM_TYPE_EXYNOS3250,
- 	.host_ops = &exynos_dsi_host_ops,
-+	.irq_ops = &exynos_dsi_irq_ops,
- };
- 
- static const struct exynos_dsi_plat_data exynos4210_dsi_pdata = {
- 	.hw_type = DSIM_TYPE_EXYNOS4210,
- 	.host_ops = &exynos_dsi_host_ops,
-+	.irq_ops = &exynos_dsi_irq_ops,
- };
- 
- static const struct exynos_dsi_plat_data exynos5410_dsi_pdata = {
- 	.hw_type = DSIM_TYPE_EXYNOS5410,
- 	.host_ops = &exynos_dsi_host_ops,
-+	.irq_ops = &exynos_dsi_irq_ops,
- };
- 
- static const struct exynos_dsi_plat_data exynos5422_dsi_pdata = {
- 	.hw_type = DSIM_TYPE_EXYNOS5422,
- 	.host_ops = &exynos_dsi_host_ops,
-+	.irq_ops = &exynos_dsi_irq_ops,
- };
- 
- static const struct exynos_dsi_plat_data exynos5433_dsi_pdata = {
- 	.hw_type = DSIM_TYPE_EXYNOS5433,
- 	.host_ops = &exynos_dsi_host_ops,
-+	.irq_ops = &exynos_dsi_irq_ops,
- };
- 
- static const struct of_device_id exynos_dsi_of_match[] = {
+diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
+index be377786e8cd..5133d4d39190 100644
+--- a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
++++ b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
+@@ -7,6 +7,7 @@ Required properties:
+ 		"samsung,exynos5410-mipi-dsi" /* for Exynos5410/5420/5440 SoCs */
+ 		"samsung,exynos5422-mipi-dsi" /* for Exynos5422/5800 SoCs */
+ 		"samsung,exynos5433-mipi-dsi" /* for Exynos5433 SoCs */
++		"fsl,imx8mm-mipi-dsim" /* for i.MX8M Mini/Nano SoCs */
+   - reg: physical base address and length of the registers set for the device
+   - interrupts: should contain DSI interrupt
+   - clocks: list of clock specifiers, must contain an entry for each required
 -- 
 2.25.1
 
