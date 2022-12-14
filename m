@@ -2,178 +2,138 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C82C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Dec 2022 04:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECE0C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Dec 2022 04:47:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237148AbiLNEos (ORCPT
+        id S237256AbiLNEr1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 13 Dec 2022 23:44:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33826 "EHLO
+        Tue, 13 Dec 2022 23:47:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236626AbiLNEor (ORCPT
+        with ESMTP id S236890AbiLNErY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 13 Dec 2022 23:44:47 -0500
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB35C627F
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Dec 2022 20:44:45 -0800 (PST)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20221214044442epoutp039037a9a23add40682f1cf394904eb774~wj1rTLVPv0993109931epoutp038
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Dec 2022 04:44:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20221214044442epoutp039037a9a23add40682f1cf394904eb774~wj1rTLVPv0993109931epoutp038
+        Tue, 13 Dec 2022 23:47:24 -0500
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77A436568
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Dec 2022 20:47:23 -0800 (PST)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20221214044722epoutp0118e30f36a53855cb5327491f2d9bbc7e~wj4AU3S8x2863428634epoutp01Q
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Dec 2022 04:47:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20221214044722epoutp0118e30f36a53855cb5327491f2d9bbc7e~wj4AU3S8x2863428634epoutp01Q
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1670993082;
-        bh=Nj4eOyaIYIxyFmCb03hT1yCV9IhQqWrapJ9UkMtcOI4=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=pKDuz0C8MZ8DNUKZIBxfckEKdvfR4uluk8lCIpLTI3pAMyUTL2XVPJvRhu6GZG8QJ
-         4DcsXcFphKpGzZNPKsOUnZSpmzY+2by6L1KbtnhHh8TDpJ+ioTUwYqJjIkaFkQ/FY0
-         tcT24wqVEel3ooQca5W4YdIV1sg10U6O8+GmDQn8=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20221214044441epcas5p1652b9874687e222ea4b932624ce30ba5~wj1q2ypPx1275912759epcas5p15;
-        Wed, 14 Dec 2022 04:44:41 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.179]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4NX2pH6WR1z4x9QK; Wed, 14 Dec
-        2022 04:44:39 +0000 (GMT)
+        s=mail20170921; t=1670993242;
+        bh=ZmZoMOjOa4JMZn2uHWvONE/O2fvGS7cXjDU2uVfdc38=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=VTm1MvjzV3H6n14gONH2JpDXYA2ZWw5JhesOBErA3+blh7wYQG8b18RS8+5mQNoqg
+         di0nUqMIXy+lybGlmwWn3B/QPEdbwx/OgUGYL0G+W2r03SQpTvCmGeIXzjFSriE/MF
+         96cklen6DqeWHOeD0FqQIZrdkbkWwdC6ZB/dsN4c=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20221214044721epcas5p3c3514b71be610c97cd14a4311b94ccf1~wj3-0UxUW1018210182epcas5p3I;
+        Wed, 14 Dec 2022 04:47:21 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.177]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4NX2sM69jWz4x9Pp; Wed, 14 Dec
+        2022 04:47:19 +0000 (GMT)
 Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
         epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9F.BA.39477.4B459936; Wed, 14 Dec 2022 13:44:36 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20221214044118epcas5p1031923bfce745b90bd0930632d5e89c8~wjyta9UfF2054120541epcas5p13;
-        Wed, 14 Dec 2022 04:41:18 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20221214044118epsmtrp1f2da44ad34a93153b8ea1704d3361182~wjytaPVBc2718327183epsmtrp1O;
-        Wed, 14 Dec 2022 04:41:18 +0000 (GMT)
-X-AuditID: b6c32a4a-007ff70000019a35-6f-639954b47f0f
+        1C.AB.39477.75559936; Wed, 14 Dec 2022 13:47:19 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20221214044418epcas5p3c2708eda3abcf5b217eddacf533e0a0f~wj1U8xb1I2925929259epcas5p3E;
+        Wed, 14 Dec 2022 04:44:18 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20221214044417epsmtrp2cbe30cc23678cee3a9427019b58f46af~wj1U8A93p2211422114epsmtrp2e;
+        Wed, 14 Dec 2022 04:44:17 +0000 (GMT)
+X-AuditID: b6c32a4a-259fb70000019a35-3a-63995557f75e
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FD.99.18644.DE359936; Wed, 14 Dec 2022 13:41:18 +0900 (KST)
-Received: from FDSFTE302 (unknown [107.122.81.78]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20221214044116epsmtip213ea867997d61490b86aa081fe9c4d5a~wjyryTwzv2904229042epsmtip2w;
-        Wed, 14 Dec 2022 04:41:16 +0000 (GMT)
-From:   "Sriranjani P" <sriranjani.p@samsung.com>
-To:     "'Rob Herring'" <robh@kernel.org>
-Cc:     <krzysztof.kozlowski+dt@linaro.org>, <devicetree@vger.kernel.org>,
-        <alim.akhtar@samsung.com>, <pankaj.dubey@samsung.com>,
-        <ravi.patel@samsung.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>
-In-Reply-To: <20221209211004.GA3847427-robh@kernel.org>
-Subject: RE: [PATCH v2 1/4] dt-bindings: soc: samsung: exynos-sysreg: add
- dedicated SYSREG compatibles to Exynos850
-Date:   Wed, 14 Dec 2022 10:11:13 +0530
-Message-ID: <051901d90f76$4e557040$eb0050c0$@samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQLZYKx+9pYBmb//OFyznS7+M00/rAEXh8oHAbCk0ccBkwrlWaxJUJxA
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKJsWRmVeSWpSXmKPExsWy7bCmlu6WkJnJBrNWCFs8mLeNzWL+kXOs
-        Fn0vHjJbbHp8jdXi8q45bBYzzu9jsli09Qu7xcMPe9gt/u/Zwe7A6bFpVSebx51re9g8Ni+p
-        9+jbsorR4/MmuQDWqGybjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFsl
-        F58AXbfMHKB7lBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkFJgV6xYm5xaV56Xp5
-        qSVWhgYGRqZAhQnZGe0dG1kKHgpW3H9xkaWB8SlvFyMnh4SAicTv6XNZuxi5OIQEdjNKzFr0
-        jAnC+cQoMaF9KzuE85lRYtLTf+wwLWv2fmOBSOxilFjS2AzV/5xRYn77PCaQKjYBfYnXK+az
-        gdgiAqoSTbMegHUwC3QySSy+eYUFJMEpYC7xYdYWMFtYoFRi95d5jCA2C1DDjWUvwZp5BSwl
-        Wl6vYYewBSVOznwCVs8sIC+x/e0cZoiTFCR+Pl0GdAUH0DI3iW//LSBKxCWO/uxhBtkrIbCQ
-        Q6Jx9TyoF1wkpl+/yQRhC0u8Or4FKi4l8bK/DcpOl9h8ZDMrhJ0j0dHUDLXLXuLAlTksILuY
-        BTQl1u/ShwjLSkw9tY4JYi+fRO/vJ1DjeSV2zIOx1SQWP+qEsmUk1j76xDqBUWkWks9mIfls
-        FpIXZiFsW8DIsopRMrWgODc9tdi0wCgvtRwe48n5uZsYwelVy2sH48MHH/QOMTJxMB5ilOBg
-        VhLhVdWYlizEm5JYWZValB9fVJqTWnyI0RQY3BOZpUST84EJPq8k3tDE0sDEzMzMxNLYzFBJ
-        nHfplI5kIYH0xJLU7NTUgtQimD4mDk6pBqYSJ/FprhG7JRkfl1ZlXoredWjLeUMPVsfssyJv
-        8zaIHQp0+McSsqT83u/jK/Inl80xnXU+cuLptUZPpNM/Bp7RTvf+eILn7BcGdodOrqULxI8n
-        lin2BId0ME6cF3Pokt2jnulMTLv7vL4V6nDtKMxbvjw+i2FmpeLsEMvDdQ3sz9+d+/JTL/C2
-        9FmmhFXLJ9+fa1x0OST2/PYzvesSPuwU/n50hTWzxmf1jmVFJ22kjuzel1NtqrNls2Kc+vnr
-        QSEzGO2cS28teGiRyej1RXbd+ZMBKqUukTvamYvcVEvvXBK8cG76Efu5fU+vemuvZXh17qKz
-        wMlNnrMVVN1u92/cH6Rj1Jv3SHM1t9zJDDUlluKMREMt5qLiRADIw8PVOAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplkeLIzCtJLcpLzFFi42LZdlhJXvdd8MxkgzsTmCwezNvGZjH/yDlW
-        i74XD5ktNj2+xmpxedccNosZ5/cxWSza+oXd4uGHPewW//fsYHfg9Ni0qpPN4861PWwem5fU
-        e/RtWcXo8XmTXABrFJdNSmpOZllqkb5dAldGe8dGloKHghX3X1xkaWB8ytvFyMkhIWAisWbv
-        N5YuRi4OIYEdjBKH589mhUjISJx8sIQZwhaWWPnvOTtE0VNGie6eRUwgCTYBfYnXK+azgdgi
-        AqoSTbMegE1iFpjIJPH+/C9miI53jBJv2x6zgFRxCphLfJi1BcwWFiiW+PxgGZjNAtR9Y9lL
-        sEm8ApYSLa/XsEPYghInZz4Bq2EW0JNYv34OI4QtL7H97Ryo8xQkfj5dBnQ2B9AVbhLf/ltA
-        lIhLHP3ZwzyBUXgWkkmzkEyahWTSLCQtCxhZVjFKphYU56bnFhsWGOWllusVJ+YWl+al6yXn
-        525iBMeYltYOxj2rPugdYmTiYDzEKMHBrCTCq6oxLVmINyWxsiq1KD++qDQntfgQozQHi5I4
-        74Wuk/FCAumJJanZqakFqUUwWSYOTqkGpoqrmctTtNLKFxYvK8pjNc+b23bPZWtD+1WvM/qv
-        HP161noofjD71DttzbJJTj6Xu2SaAw/NODstuWxKQqYUa9RtyU5nsR8CN/pXdPJmPJNZ83WH
-        647mR0Wfpof3tpjeUrPcvVSnc2vcnOUbhAs37a5/3XAxnGumLqceZ5Os+sGOs1m+SaY/Jtww
-        KOb7bqr4adsV5QvlT/gvfmSWE/qqr8nJdfG+xJkir8bpa4QerYkSyq+dLr+kiVdqyYIUOZW7
-        6jfWX9j4YGf7J5sW95s/Dn+2PffskfK8BbWyZ7xCdq1V6pu2/eeS1axxhzt2hjHo5xudlTaL
-        yazR6n786xGT+FRbW6tsnZgnnW2Xz54sUmIpzkg01GIuKk4EAIL9Os0gAwAA
-X-CMS-MailID: 20221214044118epcas5p1031923bfce745b90bd0930632d5e89c8
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F3.2C.14392.1A459936; Wed, 14 Dec 2022 13:44:17 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+        [107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20221214044416epsmtip29c37e8d4f33bc0bfe729861a367e5a41~wj1TX-NVv3149831498epsmtip2J;
+        Wed, 14 Dec 2022 04:44:16 +0000 (GMT)
+From:   Sriranjani P <sriranjani.p@samsung.com>
+To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        devicetree@vger.kernel.org, alim.akhtar@samsung.com,
+        pankaj.dubey@samsung.com, ravi.patel@samsung.com,
+        sathya@samsung.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Sriranjani P <sriranjani.p@samsung.com>
+Subject: [PATCH v3 0/4] amr64: dts: exynos: add dedicated SYSREG compatibles
+ to Exynos850 and Exynosautov9
+Date:   Wed, 14 Dec 2022 10:13:38 +0530
+Message-Id: <20221214044342.49766-1-sriranjani.p@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOKsWRmVeSWpSXmKPExsWy7bCmlm546Mxkg039BhYP5m1js5h/5Byr
+        Rd+Lh8wWmx5fY7W4vGsOm8WM8/uYLBZt/cJu8fDDHnaL1r1H2C2+HHnNaHH7zTpWB26PTas6
+        2TzuXNvD5rF5Sb1H35ZVjB6fN8kFsEZl22SkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpa
+        WpgrKeQl5qbaKrn4BOi6ZeYAXaakUJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTAp
+        0CtOzC0uzUvXy0stsTI0MDAyBSpMyM5YsG0+e8FP9oprP2UaGA+wdTFyckgImEjsfzeJvYuR
+        i0NIYDejxJKb99ggnE+MEofvP2WFcL4xSrSd72GHabnauB0qsZdRYtmkL0wQTiuTxLWrN8Cq
+        2AR0JVqvfQZLiAjsYJR4PekAmMMsMIVRovvbeqB+Dg5hgRyJo4tkQRpYBFQl9rzYAdbMK2Ar
+        cfzDf6h18hKrNxxgBumVEDjFLjFlchsTRMJF4uyEZ8wQtrDEq+NboBqkJD6/2wv1XrrE5iOb
+        WSHsHImOpmaoenuJA1fmsIDcwCygKbF+lz5EWFZi6ql1YOOZBfgken8/gVrFK7FjHoytJrH4
+        USeULSOx9tEnqPEeEovmPAY7QUggVqLjbRvrBEbZWQgbFjAyrmKUTC0ozk1PLTYtMMpLLYfH
+        VHJ+7iZGcIrT8trB+PDBB71DjEwcjIcYJTiYlUR4VTWmJQvxpiRWVqUW5ccXleakFh9iNAWG
+        2URmKdHkfGCSzSuJNzSxNDAxMzMzsTQ2M1QS5106pSNZSCA9sSQ1OzW1ILUIpo+Jg1OqgWli
+        7lHlwj0ztdrP1wht97+zVVjYY/etr5++CN94XO2usUDE53mmza4lGjcOTopp+KpkserI03u+
+        UYFH454az9G89bz0GNPPoqCJdSHLnxjts2N+/zfUPer4ctsNQgzCehUrLx+8s+bVzdfce1pD
+        LTg+Om1k6egvKVv4aOO+d1NVLYoWrT2hdiL07t5dvrZFTxSiu5sq9JqnvgnreC4eWPftwQrV
+        nPfLlumo7leuqHFbbqm4u5m1ezO7dhwLR/Il1z2WW6TnyxyWken5H5M+iVvD71dP6dl5EXXG
+        07dayEzbfU4v6tvpRsMTa17OKbN13O446YjwlQW8CcLKJjLv/p07lFydsfpCSLflEv7/O5WV
+        WIozEg21mIuKEwGSwNjK+gMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMLMWRmVeSWpSXmKPExsWy7bCSvO7CkJnJBjuemFk8mLeNzWL+kXOs
+        Fn0vHjJbbHp8jdXi8q45bBYzzu9jsli09Qu7xcMPe9gtWvceYbf4cuQ1o8XtN+tYHbg9Nq3q
+        ZPO4c20Pm8fmJfUefVtWMXp83iQXwBrFZZOSmpNZllqkb5fAlbFg23z2gp/sFdd+yjQwHmDr
+        YuTkkBAwkbjauJ21i5GLQ0hgN6PEm0+fGCESMhInHyxhhrCFJVb+e84OUdTMJHF87R+wbjYB
+        XYnWa5+ZQBIiAgcYJXb3LmEEcZgFZjBK/F0/B2yUsECWxPS5O8E6WARUJfa82MEOYvMK2Eoc
+        //CfHWKFvMTqDQeYJzDyLGBkWMUomVpQnJueW2xYYJiXWq5XnJhbXJqXrpecn7uJERxuWpo7
+        GLev+qB3iJGJg/EQowQHs5IIr6rGtGQh3pTEyqrUovz4otKc1OJDjNIcLErivBe6TsYLCaQn
+        lqRmp6YWpBbBZJk4OKUamFwN7aQMb91O8bb2F5Y1X+2+OVihev+75+E1Ld6mkXdZojZ+Xs8j
+        OEHk+krrjy33VotdeGu16+6bs22N7643fV9+hVnkvLVi1IVKmwY337NHr5tYcF/TOqbxbff0
+        2pgvrxZ+LeybdHJ3WvK0u280T/R39b7huWK6PC1mxqanTTE/JIRYjy/OOfSVuVnZaLPQvVXZ
+        UiasM3sildNs5nVHb/r70uZW3M8jllbLPdy3TQiOcMjziDjIppr14ci55Sp8F6ftncb+VK5V
+        RftBNItwZaKKf0HgymOT7ZxUZPct8qx0NT9++2Sn+Tu9J04vGKfuTM38dNzg0iub5XPY5l4t
+        5N/aeG99Dc+EKD0mIY2jn5RYijMSDbWYi4oTAWknhHKmAgAA
+X-CMS-MailID: 20221214044418epcas5p3c2708eda3abcf5b217eddacf533e0a0f
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221207105043epcas5p306086213835a5287f39de9016dcd43d2
-References: <20221207105032.103510-1-sriranjani.p@samsung.com>
-        <CGME20221207105043epcas5p306086213835a5287f39de9016dcd43d2@epcas5p3.samsung.com>
-        <20221207105032.103510-2-sriranjani.p@samsung.com>
-        <20221209211004.GA3847427-robh@kernel.org>
+X-CMS-RootMailID: 20221214044418epcas5p3c2708eda3abcf5b217eddacf533e0a0f
+References: <CGME20221214044418epcas5p3c2708eda3abcf5b217eddacf533e0a0f@epcas5p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Exynos850 and Exynosautov9 has several different SYSREGs, so use dedicated
+compatibles for them in dtsi file and add respective compatible in the
+samsung exynos devicetree binding document.
 
+Changes since v2:
+1. Addressed the review comment from Rob and removed const from the enum
+compatible list.
 
-> -----Original Message-----
-> From: Rob Herring [mailto:robh@kernel.org]
-> Sent: 10 December 2022 02:40
-> To: Sriranjani P <sriranjani.p@samsung.com>
-> Cc: krzysztof.kozlowski+dt@linaro.org; devicetree@vger.kernel.org;
-> alim.akhtar@samsung.com; pankaj.dubey@samsung.com;
-> ravi.patel@samsung.com; linux-kernel@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org
-> Subject: Re: [PATCH v2 1/4] dt-bindings: soc: samsung: exynos-sysreg: add
-> dedicated SYSREG compatibles to Exynos850
-> 
-> On Wed, Dec 07, 2022 at 04:20:29PM +0530, Sriranjani P wrote:
-> > Exynos850 has two different SYSREGs, hence add dedicated compatibles
-> > for them and deprecate usage of generic Exynos850 compatible alone.
-> >
-> > Signed-off-by: Sriranjani P <sriranjani.p@samsung.com>
-> > ---
-> >  .../soc/samsung/samsung,exynos-sysreg.yaml        | 15 ++++++++++++---
-> >  1 file changed, 12 insertions(+), 3 deletions(-)
-> >
-> > diff --git
-> > a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-
-> sysreg.
-> > yaml
-> > b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-
-> sysreg.
-> > yaml index 4954790eda6c..a37452965100 100644
-> > ---
-> > a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-
-> sysreg.
-> > yaml
-> > +++
-> b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sys
-> > +++ reg.yaml
-> > @@ -17,7 +17,6 @@ properties:
-> >                - samsung,exynos3-sysreg
-> >                - samsung,exynos4-sysreg
-> >                - samsung,exynos5-sysreg
-> > -              - samsung,exynos850-sysreg
-> >                - samsung,exynosautov9-sysreg
-> >                - tesla,fsd-cam-sysreg
-> >                - tesla,fsd-fsys0-sysreg @@ -33,9 +32,17 @@ properties:
-> >            - const: samsung,exynos5433-sysreg
-> >            - const: syscon
-> >        - items:
-> > -          - const: samsung,exynos5433-sysreg
-> > +          - enum:
-> > +              - const: samsung,exynos5433-sysreg
-> 
-> This says the compatible entry is "const: samsung,exynos5433-sysreg".
-> 
-> That should be a schema warning. You did test this, right?
-Thanks for pointing it out, somehow dtbs check not showed any error. Will
-fix it in the next version.
-> 
-> Rob
+Changes since v1:
+1. As per Krzysztof comment made an enum of deprecated compatibles.
+
+Sriranjani P (4):
+  dt-bindings: soc: samsung: exynos-sysreg: add dedicated SYSREG
+    compatibles to Exynos850
+  arm64: dts: exynos: add dedicated SYSREG compatibles to Exynos850
+  dt-bindings: soc: samsung: exynos-sysreg: add dedicated SYSREG
+    compatibles to Exynosautov9
+  arm64: dts: exynos: add dedicated SYSREG compatibles to Exynosautov9
+
+ .../soc/samsung/samsung,exynos-sysreg.yaml    | 24 +++++++++++++++----
+ arch/arm64/boot/dts/exynos/exynos850.dtsi     |  6 +++--
+ arch/arm64/boot/dts/exynos/exynosautov9.dtsi  |  9 ++++---
+ 3 files changed, 30 insertions(+), 9 deletions(-)
+
+-- 
+2.17.1
 
