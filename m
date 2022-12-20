@@ -2,163 +2,118 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC34C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Dec 2022 22:28:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B364C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Dec 2022 12:32:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229865AbiLRW23 (ORCPT
+        id S233199AbiLTMcv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 18 Dec 2022 17:28:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45182 "EHLO
+        Tue, 20 Dec 2022 07:32:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbiLRW22 (ORCPT
+        with ESMTP id S233195AbiLTMcu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 18 Dec 2022 17:28:28 -0500
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B50B627E
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Dec 2022 14:28:26 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id D9AE484D64;
-        Sun, 18 Dec 2022 23:28:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1671402502;
-        bh=iuXCqeIUsLlSIeXI9kcQoEZ8u44blrztgSAawdGH+o8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=r4cI9eXW2N7UXAhbYZNoHISoXrhPRTN/S7CaarPgZsdFzWWc1VDCdk6gSJNQZsrd0
-         OrKAZk/kRhj7cUpAX9D7fo3kUvKV0n25JBFqcn4LvqvVc31oUUp0WwOM0TeZ0kcMyW
-         iLCv58qDRvkxupT8xdhjRm/J2XOk2piZ3db/c5/3igFoZJmF/NFGRYZtlh/yGGR/tr
-         uUOB63bVAL2QVrpaBkol6V9VIdV7TTaMH+itaUGamvKwkH+VepXtvIW55fC3MY/jJn
-         h9yhApfUFNtPYuKodKLhc1eteyJHqkhxhnt9ewOz8P8wJM8rDwH5CNjtwGtV9GpJxQ
-         kfvLJf5a6C7+w==
-Message-ID: <449d03be-226f-9a90-aff3-8afee68c346d@denx.de>
-Date:   Sun, 18 Dec 2022 23:28:20 +0100
+        Tue, 20 Dec 2022 07:32:50 -0500
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C773562F7;
+        Tue, 20 Dec 2022 04:32:49 -0800 (PST)
+Received: by mail-pg1-x536.google.com with SMTP id 82so8284025pgc.0;
+        Tue, 20 Dec 2022 04:32:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=o4247CLx6gFYzZUaVHXmE9zScZpJiWQUyjfu3zqwr1o=;
+        b=d2iSLqMcf1LwXRrMgfJsZPLl8GZMFPIdkG2SQ9hJYjfXAa2gjG7r7k+cYu+pSbQKjF
+         0gvr1TMJlrmuTnrZnra1GD2lNQiHscdm0Yw07dMEe5R/FAGU3xOPoylJzCbT2AODobA2
+         9uVdGJjpJkzQY0rSsHuHuutuJ0JO6zRbrtZxStZMpozvmn9tvUDUVTIIZ7FbTwPQhWsh
+         6NE1bE8SA0J9inkGwy9vX4M02SsBk12wacLEYGXAXTpv9XT42k9gZwiq+VnNI2k4Hr1G
+         AsDUX265S/Zyr50qqmqb7A9ULbo4L3venRTnl+SpuVlnC9J+bbJn/H8cveuL0qn1/MQ9
+         Hdqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o4247CLx6gFYzZUaVHXmE9zScZpJiWQUyjfu3zqwr1o=;
+        b=Th0dgFjnJI7SSf0KT9eKJPboZbetAx6IZB9PDTgU0mrrB0VyK5j5LReO1VT1JNcwo8
+         a4diyrjYrha7pX/KmKz9PSpya/tx6iSUf0DVKtP2YTsZw4aOEXIGLGev3d1jjbUHUp6O
+         UfadlgOQkS7a4gqNKMMIkg1D6eJoIDzQ9EXnXRMNE6cq4tDmX8ziIEeROs9l2KK2PmC6
+         N6LwCBlfy3p4s1ll1Gb+1cgn3j7s0V7eQO4cK8L/lo3U8Y9v4CHxZTPmaEHXpp5pe5aT
+         KlqyIyQFbiaEm0jSf5/2p7L1xPdoQo+2QT9KQwEK+jU12jocBGi6dXzUd9fyyoxH5Qkx
+         NCIA==
+X-Gm-Message-State: ANoB5plb/4DW3SHyJqJ/r119f1X2l8x0nopwxuSaZ6r76jFG3RjYlMBb
+        jdz2b25Bw5hdcU9osEqibjvrxLIs7KGoBYM2tRE=
+X-Google-Smtp-Source: AA0mqf5ORbhtsICJ6CWH4DXsTkp/tg1I1HWdntU0oEDsSF4ZLdYUMIACgQpc9ywBdnosZXcB5lcMsEncL/pCeKmGWAM=
+X-Received: by 2002:aa7:8744:0:b0:576:af2d:4c4d with SMTP id
+ g4-20020aa78744000000b00576af2d4c4dmr25669912pfo.69.1671539569206; Tue, 20
+ Dec 2022 04:32:49 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v10 00/18] drm: Add Samsung MIPI DSIM bridge
-Content-Language: en-US
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Alexander Stein <Alexander.Stein@ew.tq-group.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Jagan Teki <jagan@amarulasolutions.com>
-References: <kcEE.rJtELH1tRkiK3DwrGM4cgg.ADqA2lER2QE@vtuxmail01.tq-net.de>
- <a6ad86a0-2831-34aa-2c2a-f6d683dc5713@denx.de>
- <CAHCN7xJnepugHxVR2oCd6YyUDA=RED33PTYmsXQkZ-wa4xgHbg@mail.gmail.com>
- <8e5755da-db8c-7169-b140-d5f964f34a86@denx.de>
- <CAHCN7xL1qqhFkroBUswpSyTGUFo6B26rmp0zRL2K8ATT4HtUGg@mail.gmail.com>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <CAHCN7xL1qqhFkroBUswpSyTGUFo6B26rmp0zRL2K8ATT4HtUGg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+References: <CGME20221214044430epcas5p4c896fde60471fea774387bd74abe0ea5@epcas5p4.samsung.com>
+ <20221214044342.49766-1-sriranjani.p@samsung.com> <20221214044342.49766-4-sriranjani.p@samsung.com>
+In-Reply-To: <20221214044342.49766-4-sriranjani.p@samsung.com>
+From:   Chanho Park <parkch98@gmail.com>
+Date:   Tue, 20 Dec 2022 21:32:37 +0900
+Message-ID: <CAPTzV151-v5Akb47uXrEOFrC2XdWCVztEwLiDrV-Zqq0yAtYTg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] dt-bindings: soc: samsung: exynos-sysreg: add
+ dedicated SYSREG compatibles to Exynosautov9
+To:     Sriranjani P <sriranjani.p@samsung.com>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        devicetree@vger.kernel.org, alim.akhtar@samsung.com,
+        pankaj.dubey@samsung.com, ravi.patel@samsung.com,
+        sathya@samsung.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 12/18/22 23:24, Adam Ford wrote:
-> On Sat, Dec 17, 2022 at 10:33 PM Marek Vasut <marex@denx.de> wrote:
->>
->> On 12/18/22 05:23, Adam Ford wrote:
->>> On Sat, Dec 17, 2022 at 5:56 PM Marek Vasut <marex@denx.de> wrote:
->>>>
->>>> On 12/16/22 14:25, Alexander Stein wrote:
->>>> Hi,
->>>>
->>>> [...]
->>>>
->>>>> Oh, nice, thanks for the pointer. When setting
->>>>>> samsung,burst-clock-frequency = <668250000>;
->>>>> in imx8mm.dtsi
->>>>> I get a non-flickering display using 4 lanes. Although admittedly this is just
->>>>> random guessing. I'm not sure which clock exactly has to be in the range
->>>>> CHA_DSI_CLK_RANGE is configured to. With 4 lanes SN65DSI84 is configured for
->>>>> 205-210 MHz (0x29), while I get these PLL PMS settings on DSIM:
->>>>>> samsung-dsim 32e10000.dsi: PLL freq 668250000, (p 4, m 99, s 0)
->>>>>> samsung-dsim 32e10000.dsi: hs_clk = 668250000, byte_clk = 83531250, esc_clk
->>>>> = 16706250
->>>>
->>>> If I recall it right, minimum PLL frequency is:
->>>>
->>>> fPMS=1.2*width*height*bpp*fps=1.2*800*480*24*60=663.5 MHz
->>>>
->>>> the link frequency is then
->>>>
->>>> fHS=fPMS/lanes/2=82.9 MHz (on the DDR clock lane)
->>>>
->>>> So DSI83 should be in the range of 80..85 MHz input clock if I calculate
->>>> this right. Can you check what is the value of mode->clock, the
->>>> mipi_dsi_panel_format_to_bpp() return value, ctx->dsi->lanes in dsi83
->>>> sm65dsi83_get_dsi_range() ?
->>>>
->>>>> AFAICS DSIM bridge is configurung hs_clk, byte_clk and esc_clk just from DT
->>>>> properties, while SN65DSI84 is using display mode and number of lanes.
->>>>>
->>>>> Is it expected that the DSIM PLL frequencies are set in DT for a specific
->>>>> bridge/display setup?
->>>>
->>>> No, there should be negotiation between the host and bridge/panel, I
->>>> tried to propose two variants, but they were all rejected.
->>>
->>> For one of Jagan's previous revisions, I added some code to let the
->>> PHY auto adjust the frequencies instead of being fixed.  NXP had this
->>> in their downstream kernel, but with this patch and another, I was
->>> able to set a variety of pixel clocks from my HDMI monitor and my
->>> DSI83. I haven't had time to re-base my work on Jagan's latest work,
->>> but you can link to the patch I did for the older stuff here:
->>>
->>> https://github.com/aford173/linux/commit/e845274b0f22ba3b24813ffd6bb3cb88ab4b67e4
->>> and
->>> https://github.com/aford173/linux/commit/3f90057eb608f96d106029ef639813475241936f
->>>
->>> I've been traveling a lot lately, so I haven't had time to evaluate
->>> his series, but I hope to get something like those re-based once the
->>> DSI stuff has been accepted.
->>
->> I have these two attempts, both rejected:
->>
->> https://patchwork.freedesktop.org/patch/475207/
->> https://patchwork.freedesktop.org/patch/496049/
-> 
-> I have some patches re-based to Jagan's latest branch.  It doesn't
-> impact any drivers other than the new samsung-dsim driver, and it
-> doesn't touch any of the drm helper functions either.  It adjusts hs
-> clock based on the connected device.  I am not sure what the impact
-> will have on the attached Exynos devices, so I am expecting some
-> iterations.  Right now it's working with my DSI83 chip, but I need to
-> get it working with my adv7535 part as well.  On the older branch, I
-> was able to sync the ad7535 with a variety of resolutions using
-> different pixel clock rates.
-> 
-> Once I get it working again with my adv7535 and cleaned up, I'll
-> submit the patches to the drm group, and I'll CC you, Jagan and Marek
-> Szyprowski with a reference to Jagan's series so people wanting to try
-> it can apply it to his branch.
+On Wed, Dec 14, 2022 at 1:49 PM Sriranjani P <sriranjani.p@samsung.com> wrote:
+>
+> Exynosautov9 has several different SYSREGs, so use dedicated compatibles
+> for them and deprecate usage of generic Exynosautov9 compatible alone.
+>
+> Signed-off-by: Sriranjani P <sriranjani.p@samsung.com>
 
-The negotiation has to happen between the host and the bridge/panel, 
-otherwise you won't be able to support bridge/panel devices which 
-require specific clock rate on the DSI. Only the bridge/panel driver 
-knows about such requirement.
+Reviewed-by: Chanho Park <chanho61.park@samsung.com>
+
+> ---
+>  .../bindings/soc/samsung/samsung,exynos-sysreg.yaml      | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+> index 427df05224e5..da43efb0ce80 100644
+> --- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+> +++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+> @@ -17,7 +17,6 @@ properties:
+>                - samsung,exynos3-sysreg
+>                - samsung,exynos4-sysreg
+>                - samsung,exynos5-sysreg
+> -              - samsung,exynosautov9-sysreg
+>                - tesla,fsd-cam-sysreg
+>                - tesla,fsd-fsys0-sysreg
+>                - tesla,fsd-fsys1-sysreg
+> @@ -35,6 +34,7 @@ properties:
+>            - enum:
+>                - samsung,exynos5433-sysreg
+>                - samsung,exynos850-sysreg
+> +              - samsung,exynosautov9-sysreg
+>            - const: syscon
+>              deprecated: true
+>        - items:
+> @@ -43,6 +43,13 @@ properties:
+>                - samsung,exynos850-peri-sysreg
+>            - const: samsung,exynos850-sysreg
+>            - const: syscon
+> +      - items:
+> +          - enum:
+> +              - samsung,exynosautov9-fsys2-sysreg
+> +              - samsung,exynosautov9-peric0-sysreg
+> +              - samsung,exynosautov9-peric1-sysreg
+> +          - const: samsung,exynosautov9-sysreg
+> +          - const: syscon
+>
+>    reg:
+>      maxItems: 1
+> --
+> 2.17.1
+>
