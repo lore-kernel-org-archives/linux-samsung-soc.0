@@ -1,100 +1,151 @@
-Return-Path: <linux-samsung-soc-owner@kernel.org>
+Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FEDC4167B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Dec 2022 17:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF753C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Dec 2022 21:32:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233340AbiLTR0g (ORCPT
+        id S234459AbiLUVcm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 20 Dec 2022 12:26:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33506 "EHLO
+        Wed, 21 Dec 2022 16:32:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbiLTR0f (ORCPT
+        with ESMTP id S230451AbiLUVcl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Dec 2022 12:26:35 -0500
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C458E109F;
-        Tue, 20 Dec 2022 09:26:34 -0800 (PST)
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-144bd860fdbso16255953fac.0;
-        Tue, 20 Dec 2022 09:26:34 -0800 (PST)
+        Wed, 21 Dec 2022 16:32:41 -0500
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AED13248E7
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Dec 2022 13:32:40 -0800 (PST)
+Received: by mail-pg1-x52b.google.com with SMTP id w37so80621pga.5
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Dec 2022 13:32:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MrBMXlM/PPucL2ewFp8ah2l3bi7uAYq0NzUMHnh5YoI=;
+        b=pRNb0ldWbyMBo7VrEAvBmAT+yPI2hLPO0fYYHkAS9PNkHBEQmql77FkcG8c6cHtTXs
+         LIDs90mEdA4kYXr06z6pv8Q6gkMgRgAs9+5yXvLOUDO1uBuLS3lTSn6pWr8f0/JgN5Tn
+         P5Y83E+ai7bF/FCCZdEdAfbTsYUKf0K32/7OysyCLNLVy9iQwpC0poi2oW9cmMUTistt
+         jCYpOJSpHbAnigX14r29F+d7XoaGHJI+Q9gqiyE8yRKXwlDcQNcVgB6qL2KhjlvdWzch
+         2YwLEubM/P4sogocS7S9rZmk632faVL0H7psNswtIX4EeTRyBF8/oM7QylRpnDXSIm1C
+         1SRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4M2G5tAP96aHEIkyll33q5MFWXKDDZiGpZ9U6HjjopI=;
-        b=fHtGsY3iOATQ7ARPLKIKUWk2YzOPT5oI63t9Li+6ZK+DO5b1mQjOcQ48RiivlYvIdc
-         e3bJZRJg3UZH2Ho4Akk8lubtdIlbtldQnn9k3mN9NfHwOQKLkKsYIxqWWw5CNdMS2ycX
-         dZArGPv0e7eQR2n//k1aloPR7nW2OeOQXOelK9HE69tq8RVtwOtJ6KcT/gz1SRumMEVZ
-         yvI4t7JUcFRdRJPbVEM6vN7t3rrzEkVLYB1VWMsaS0xJdDP8meHdIaOCcE0p/EhMGFu5
-         ffF3ddMgcUr45bqWjxh0D0PqpyXxWPb9XdLtqBezFzyAdq6Hu0WYkFbq7ztpX05wZsWk
-         BJmQ==
-X-Gm-Message-State: ANoB5pkYB+n1KVpYkxkqhUYvvRuCZfoxWA/SRyQNLLxiICxZgkkzFyGV
-        oAIyKmLyErz77Vni2sEVOA==
-X-Google-Smtp-Source: AA0mqf6PMqjVBcS2KbfPfigLZKoFqm3zbK1aNyc6aBW3vGD43BaZGHI5hNI7IiHtjf4xgVp56uF32A==
-X-Received: by 2002:a05:6870:44d1:b0:144:d3f9:ff14 with SMTP id t17-20020a05687044d100b00144d3f9ff14mr21897111oai.14.1671557194070;
-        Tue, 20 Dec 2022 09:26:34 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id be13-20020a056870588d00b00142fa439ee5sm6222204oab.39.2022.12.20.09.26.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Dec 2022 09:26:32 -0800 (PST)
-Received: (nullmailer pid 778943 invoked by uid 1000);
-        Tue, 20 Dec 2022 17:26:31 -0000
-Date:   Tue, 20 Dec 2022 11:26:31 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Robert Foss <robert.foss@linaro.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Fancy Fang <chen.fang@nxp.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        devicetree@vger.kernel.org,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH v10 17/18] dt-bindings: display: exynos: dsim: Add NXP
- i.MX8M Plus support
-Message-ID: <167155719100.778885.10539247780206262698.robh@kernel.org>
-References: <20221214125907.376148-1-jagan@amarulasolutions.com>
- <20221214125907.376148-18-jagan@amarulasolutions.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MrBMXlM/PPucL2ewFp8ah2l3bi7uAYq0NzUMHnh5YoI=;
+        b=lwZczTMMghsMjwT4CvWznMlL5KaTNCnx8q2sKs3hU1oJm1Pn7rRq/Tcolwtquu0U7Q
+         JZKiA1En/nC6RnQ4j17kuEvbp8f1JOcnE2p5Wt4oK35aB+n9MyIALuNu1nXBP7Dia+UY
+         HUZgdZW983LwEAhFvqcruchqss9TPRcMiGJf9uy1WlPQ/fAg87WNrZQszkX5L1JCUIdZ
+         9TjxS+Dt9Q+ZXeHegoc2lLH1f3rxFTsDYEW7jETMRu8iDhC2dbLhmdv1maOolbuIHGZF
+         kNWDucVZbFc5X9Q6xUrOQCfcBku+2SbE5yWjUUgtgg5r4Q5vq3ESIgp/yh/mySnVZMXn
+         ssdA==
+X-Gm-Message-State: AFqh2koLVrlFzWZjO2lqmkOzi67gx6CQAXx5r8Kgoon5gpW/HuxqF1wq
+        goXn7/iq3J4T5O0bqxtWuLADI6isGv0hUbA0s8qbeQ==
+X-Google-Smtp-Source: AMrXdXsNBi8/ReLwjQzffiE6gznKI76a59rEhIrU/zCiqZylXSFp5D1KHj386Cvgn+Ab613xGEYChgmQa5IhgZRmGdc=
+X-Received: by 2002:aa7:85d3:0:b0:577:599d:b2b7 with SMTP id
+ z19-20020aa785d3000000b00577599db2b7mr234449pfn.25.1671658360171; Wed, 21 Dec
+ 2022 13:32:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221214125907.376148-18-jagan@amarulasolutions.com>
+References: <20220726200739.30017-1-semen.protsenko@linaro.org>
+ <CGME20220726200747eucas1p226a18ed7760741ddaed94483ba1f9228@eucas1p2.samsung.com>
+ <20220726200739.30017-2-semen.protsenko@linaro.org> <7e9e509a-0ef7-087d-e379-14fb58e3e14f@samsung.com>
+ <CAPLW+4n-Lf6je61rxdJ9nJnX9h9F8F-y+qikG7eFF0avQpMV9Q@mail.gmail.com>
+In-Reply-To: <CAPLW+4n-Lf6je61rxdJ9nJnX9h9F8F-y+qikG7eFF0avQpMV9Q@mail.gmail.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Wed, 21 Dec 2022 15:32:28 -0600
+Message-ID: <CAPLW+4mPeX-cQR_oLKh+zPwEXuwfQtk2t2USP77C6Y9UmgYq_w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] iommu/exynos: Abstract getting the fault info
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Janghyuck Kim <janghyuck.kim@samsung.com>,
+        Cho KyongHo <pullip.cho@samsung.com>,
+        Daniel Mentz <danielmentz@google.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>, iommu@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi Marek,
 
-On Wed, 14 Dec 2022 18:29:06 +0530, Jagan Teki wrote:
-> Samsung MIPI DSIM bridge can also be found in i.MX8M Plus SoC.
-> 
-> Add dt-bingings for it.
-> 
-> Cc: devicetree@vger.kernel.org
-> Cc: Rob Herring <robh@kernel.org>
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
-> Changes for v10, v9:
-> - none
-> 
->  Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
+On Mon, 24 Oct 2022 at 09:43, Sam Protsenko <semen.protsenko@linaro.org> wrote:
+>
+> Hi Marek,
+>
+> On Fri, 12 Aug 2022 at 14:25, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> >
+> > Hi Sam,
+> >
+>
+> [snip]
+>
+> > > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> >
+> > I'm not very happy with converting the sysmmu_fault_info arrays into the
+> > decoding functions. If I got the code right, adding v7 is still possible
+> > with the current approach. The main advantage of the array-based
+> > approach is readability and keeping all the information together in a
+> > single place.
+> >
+> > I agree for the items listed above as 'minor functional changes',
+> > though. Those sysmmu_fault_info arrays might be a part of sysmmu hw
+> > variant to avoid decoding hw version for each fault.
+> >
+> > I'm not sure that the linear scan is so problematic with regards to the
+> > performance. You really don't want your drivers to trigger IOMMU fault
+> > so often during normal operation. It is just a way to get some debugging
+> > information or handle some exception.
+> >
+> > You mentioned that the transaction type is read from the separate
+> > register in case of v7, but your code (here and in second patch) still
+> > relies on the reported interrupt bits.
+> >
+> > Could you try to rework all your changes in a such way, that the
+> > sysmmu_fault_info arrays are still used? V7 is really very similar to
+> > the v5 already supported by the current driver.
+> >
+>
+> That's actually how I implemented this patch on my first attempt.
+> Really didn't like it, because a half of existing sysmmu_fault_info
+> structure doesn't make sense for v7, and some functionality of v7 has
+> to be implemented separately from that structure. I'd argue that
+> previous abstraction is just broken, and doesn't work for all SysMMU
+> versions anymore. It's easy to see how much difference between v5 and
+> v7, just by looking at corresponding get_fault_info() functions I
+> implemented. For example, the transaction type is probed from
+> different registers using different version, etc. There is also the
+> need to handle new VM/non-VM registers on v7. Also there is some extra
+> functionality that will be added later, like multiple translation
+> domains support, which is also quite different from how things done
+> for v5.
+>
+> I'd show more specifics to demonstrate my statements above, but alas I
+> already deleted my initial implementation (which was exactly what you
+> suggest). This callback-style HAL seems to be a perfect choice, and I
+> spent several days just experimenting with different approaches and
+> seeing all pros and cons. And from my point of view, this way is the
+> best for providing actual solid abstraction, which doesn't require
+> adding any workarounds on top of that. I understand that my patch
+> changes the very conception of how IRQ is handled in this driver, but
+> I'm still convinced it's a proper way to do that for all v1/v5/v7,
+> especially w.r.t. further v7 additions, to keep the abstraction solid.
+> Not that I'm lazy and don't want to rework things :) But in this
+> particular case I'd go with unchanged patches.
+>
+> Do you think it's reasonable to take this series as is? I can try and
+> collect more particular code snippets to demonstrate my point, if you
+> like.
+>
+> Thanks!
+>
 
-Acked-by: Rob Herring <robh@kernel.org>
+So, what do you think about this?
+
+> [snip]
