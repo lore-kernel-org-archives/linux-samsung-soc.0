@@ -2,119 +2,98 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E2DC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Dec 2022 14:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D13C8C001B2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Dec 2022 15:25:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229884AbiLVOdx (ORCPT
+        id S235794AbiLVPZS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 22 Dec 2022 09:33:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38192 "EHLO
+        Thu, 22 Dec 2022 10:25:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229830AbiLVOdx (ORCPT
+        with ESMTP id S235540AbiLVPYp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 22 Dec 2022 09:33:53 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 359F81903D;
-        Thu, 22 Dec 2022 06:33:52 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id jo4so5321705ejb.7;
-        Thu, 22 Dec 2022 06:33:52 -0800 (PST)
+        Thu, 22 Dec 2022 10:24:45 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A430F3134C
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Dec 2022 07:23:29 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id hd14-20020a17090b458e00b0021909875bccso5828385pjb.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Dec 2022 07:23:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3spaG/gmW2iurMqKAzeqtwdB73qDEY0NRjhBceQ6XKs=;
-        b=CRqcUNirJ7ntkMUU3JTGsOB20UlhBrxRoqyYx/3ZS4wzpgONJrG2I2eRg06hDXUMcN
-         CGWzv1hqWty3MdmlDNEkmXm5Wvd75JsO30NtYG6rUExTOsSTd2ejWM/Ph0Vvl4znq5cR
-         ASJyzhJg7dtPga9J3IzuVm8cO4HrT5GWRX5Z2wnWWU8R+ioOxrk5PylVbB6v7DZuFC0I
-         LJ6OcTUs0vB5PaNojBTWE7NVnvc8iR57BDNCFcPC5dyI2v2Z41IO48C8khaMVX+F2wOH
-         2itQG6e4aRjBmTmFUmWle4aNRLym2mhAYcibcMvG+bDMR8Ho8oYFuUC6WFf/Q1+viOC9
-         GsfQ==
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TDClChrfZ3CM22ZB33Zhm+2Cm6wH/+CI7RGcO5VoIOc=;
+        b=AYVTaF/tvAYpuIo2cO2xMxmq3YZvWi6+P+eVf4M2dI7HOuiq+2MDwl9LaSf6k0Q2xf
+         NPHYSfR6YtiIB6asp9gGjWy6wsf5bQqUmdZKu8QRBhEQexhf4MPLOISEx2aK/8TtHlRR
+         9I0GHuT1G2mp1O09pJVNg/G1QrXj+crjTKvH5W/otSK3mQHE5PUZue0pcWA0IzIY7YIa
+         T862w3cdjToAA1KJ8OLiVpzIreW30gXsmU2eQRnmzGYKrelk4mTnN/8Jp6campkRPvy0
+         8rzwDwpHB0AKhWdyF6sQB12XHCcM6n9NxBPz8QOhnuMGRR88luDh6utQet3lP0CHMrwn
+         QQvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3spaG/gmW2iurMqKAzeqtwdB73qDEY0NRjhBceQ6XKs=;
-        b=qPB8+OvS5Qf8AbLQtbP5a21xgHSuPpVASEUTaPJZTsY/ZtUvBwweUX60x/DCOGHjAv
-         Mo3Eh2Z4ryzKuf1G0L1AilxbzNwfi1p5G5/NxkXv7ep9LYShpJ9Tt947HGKnvX91O4UR
-         TGaxgM2anEOozpwZM92gGLYIxpapXJspLyHN+/LQas20N6ID7rnmx17XLMyotfAIudpn
-         Rt8o0H3RU+bgto3j1GgVTFfVGOz4C1bXuwLNeQgovD11J7UPipVIdDd2Z1EVxbdzCdq6
-         +o4PaH5RPJadvNX5c2XdDbYBfGxB4eP1gCwA5hAvoK5MR3Em+a0eN2SlpL6xx+rkvwrA
-         8GFg==
-X-Gm-Message-State: AFqh2kosErui76+V+WlLqRonRDt0jojNvhr3PxjTZh21/2qmYWAhUiDG
-        oEcRkFnW1V7M7JxJOx5mwsE=
-X-Google-Smtp-Source: AMrXdXs5nNL5GxAUeP1wdSH8AGyRtbt3ZUxJM9gwb+vJpq0IniGq4U7xZeYGlX3TVYis4RhsdPUVwQ==
-X-Received: by 2002:a17:907:6d95:b0:7c0:aabd:fef0 with SMTP id sb21-20020a1709076d9500b007c0aabdfef0mr5674298ejc.17.1671719630737;
-        Thu, 22 Dec 2022 06:33:50 -0800 (PST)
-Received: from [192.168.2.1] (81-204-249-205.fixed.kpn.net. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id jj20-20020a170907985400b007c0b6e1c7fdsm304754ejc.104.2022.12.22.06.33.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Dec 2022 06:33:50 -0800 (PST)
-Message-ID: <4df211eb-4fcd-ee20-48a1-ce7712de552c@gmail.com>
-Date:   Thu, 22 Dec 2022 15:33:49 +0100
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TDClChrfZ3CM22ZB33Zhm+2Cm6wH/+CI7RGcO5VoIOc=;
+        b=Qz1jZk3TmPY4DQlXWFTPRCX26Om+jHASrw16VFHgrWbg4/jH8R0wtC1FjZxqZidJAG
+         FgqhGIK5IfWy/xmdxBITIQ0J9/ZAikB7qAXsh7Gxiv9OvdtoQ20o5G95+0EBGQN+/yMG
+         Vi9OP29wiUqop5TTBKFJa0AgEKxNjRe9yr3K2g3mh/rFlkZxZzfR8YxeUQg7KYK+qhTW
+         azm9ClXAO4Ztv0QIBVaYI6nCQyx5+6ICxaOZfPY2RwPVPTzhMuNR8DA/3My6b2v+19Rd
+         WMQkPhMvojvz/jKb5PPyUngZUcpJSzdNw1MVD/DMQYitn9sV253s6WUDmCDyjEj4aHCX
+         89CQ==
+X-Gm-Message-State: AFqh2kowgJeeaRyD1k9v2BaIvvepGdd0tZm8Smy7+LE9QCebyl4+ub5Z
+        /xLNsdSg0EZxLB03l1qK8CZIiQKwBMO1eXzAxV3cUg==
+X-Google-Smtp-Source: AMrXdXtPZ0oPZ7gYP9RSL3je4qwX/SGfRW2HgVpAuXOcyTc9fXtZevwi3y3gE3yeLHcQmvVrDyFyxm2Jmt9mOlc9J18=
+X-Received: by 2002:a17:902:dc83:b0:189:9ee0:cca4 with SMTP id
+ n3-20020a170902dc8300b001899ee0cca4mr578301pld.74.1671722607302; Thu, 22 Dec
+ 2022 07:23:27 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-From:   Johan Jonker <jbx6244@gmail.com>
-Subject: [PATCH v6 17/17] arm64: dts: rockchip: rk356x: remove hclk from dsi
- node
-To:     heiko@sntech.de
-Cc:     hjc@rock-chips.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
-        airlied@gmail.com, daniel@ffwll.ch, andrzej.hajda@intel.com,
-        neil.armstrong@linaro.org, robert.foss@linaro.org,
-        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-        jernej.skrabec@gmail.com, philippe.cornu@foss.st.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-usb@vger.kernel.org,
-        linus.walleij@linaro.org, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        alim.akhtar@samsung.com, linux-samsung-soc@vger.kernel.org
-References: <67771143-fd83-383d-41b2-68e8707134e8@gmail.com>
-Content-Language: en-US
-In-Reply-To: <67771143-fd83-383d-41b2-68e8707134e8@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220726200739.30017-1-semen.protsenko@linaro.org>
+ <CGME20220726200747eucas1p226a18ed7760741ddaed94483ba1f9228@eucas1p2.samsung.com>
+ <20220726200739.30017-2-semen.protsenko@linaro.org> <7e9e509a-0ef7-087d-e379-14fb58e3e14f@samsung.com>
+ <CAPLW+4n-Lf6je61rxdJ9nJnX9h9F8F-y+qikG7eFF0avQpMV9Q@mail.gmail.com>
+ <CAPLW+4mPeX-cQR_oLKh+zPwEXuwfQtk2t2USP77C6Y9UmgYq_w@mail.gmail.com> <3751c425-aefa-a3b4-62f4-53d7e369bc1e@samsung.com>
+In-Reply-To: <3751c425-aefa-a3b4-62f4-53d7e369bc1e@samsung.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Thu, 22 Dec 2022 09:23:15 -0600
+Message-ID: <CAPLW+4=-cqQPmQi57_ARn1C6LqK+LffrFEgLqi6Lwb=YJ7sRSw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] iommu/exynos: Abstract getting the fault info
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Janghyuck Kim <janghyuck.kim@samsung.com>,
+        Cho KyongHo <pullip.cho@samsung.com>,
+        Daniel Mentz <danielmentz@google.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>, iommu@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The hclk is not used in the dw-mipi-dsi-rockchip.c driver,
-so remove hclk from the rk356x.dtsi dsi node.
+On Thu, 22 Dec 2022 at 07:20, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- arch/arm64/boot/dts/rockchip/rk356x.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+[snip]
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-index 5706c3e24..2cb61a783 100644
---- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-@@ -743,8 +743,8 @@
- 		compatible = "rockchip,rk3568-mipi-dsi", "snps,dw-mipi-dsi";
- 		reg = <0x00 0xfe060000 0x00 0x10000>;
- 		interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
--		clock-names = "pclk", "hclk";
--		clocks = <&cru PCLK_DSITX_0>, <&cru HCLK_VO>;
-+		clock-names = "pclk";
-+		clocks = <&cru PCLK_DSITX_0>;
- 		phy-names = "dphy";
- 		phys = <&dsi_dphy0>;
- 		power-domains = <&power RK3568_PD_VO>;
-@@ -771,8 +771,8 @@
- 		compatible = "rockchip,rk3568-mipi-dsi", "snps,dw-mipi-dsi";
- 		reg = <0x0 0xfe070000 0x0 0x10000>;
- 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
--		clock-names = "pclk", "hclk";
--		clocks = <&cru PCLK_DSITX_1>, <&cru HCLK_VO>;
-+		clock-names = "pclk";
-+		clocks = <&cru PCLK_DSITX_1>;
- 		phy-names = "dphy";
- 		phys = <&dsi_dphy1>;
- 		power-domains = <&power RK3568_PD_VO>;
---
-2.20.1
+> > So, what do you think about this?
+>
+> Okay, go ahead with your approach. If I find a better way, I will rework
+> it then. I would just like to have the code for fault handling for hw
+> v1, v5 and v7 similar as much as possible.
+>
 
+Thanks, Marek!
+
+Joerg, can you please apply this series? Please let me know if I need
+to rebase it first, but I guess there shouldn't be any issues, the
+SysMMU driver doesn't seem to get updated often.
+
+> Best regards
+> --
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+>
