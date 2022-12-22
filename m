@@ -2,62 +2,62 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3FF6C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Dec 2022 14:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF01EC4167B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Dec 2022 14:30:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235578AbiLVOaN (ORCPT
+        id S229884AbiLVOaq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 22 Dec 2022 09:30:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34442 "EHLO
+        Thu, 22 Dec 2022 09:30:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235694AbiLVOaM (ORCPT
+        with ESMTP id S229846AbiLVOap (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 22 Dec 2022 09:30:12 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4BF32937D;
-        Thu, 22 Dec 2022 06:30:09 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id a1so3150401edf.5;
-        Thu, 22 Dec 2022 06:30:09 -0800 (PST)
+        Thu, 22 Dec 2022 09:30:45 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 734AE218;
+        Thu, 22 Dec 2022 06:30:43 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id t17so5352782eju.1;
+        Thu, 22 Dec 2022 06:30:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=Sr8iGvYv8Y+FUygmw8CozO+P35yD6ZFMgxS2kANtCbQ=;
-        b=VaczJC3DYayhT39mpuYMMNQmAe6pOd8vIUqq19xXuzH+xCl2aEgwN3IsaSTR1hH9Uk
-         uhePN9hjMzX2lQmaG5d/c05laMe4ShHPUzQGyeoa+ifSKElXnlrR7QVH1dHdGsEq4Dd7
-         j+2E9Nv5SN8HhYJ/3tCDbTmsiDzyETXjVCKKQ4CliNHJvrDaZRuVM2E5oFHZjHBq7ll3
-         rsTJIybJ3he9K3Hknr7Q3zVnh3000wSsLfVK4dAce7Eh+5sIc1uyQ1wXS2u08Cd+vcdM
-         uE7H5gbSfx73XuMy3cHOBtr37+FwZSQr5cPPCCtXwG8592mjHRMdiKKJtAASJxH7GfEe
-         HY9A==
+        bh=9pQhvyxS2+lxPQqiIeyKdGOnYGr9Eh6AUJtIVNTuj+A=;
+        b=pra17mBr3JgRZv93t/vpFNPmD0aO+J9on1u8LfSQlR0gvmVU7fCiy6aUFxsMq6vsTw
+         88osDMCGg4w9sYCHIY2iGRaYDHMJmDFgtRBmnAhzbeuay1wknN9zrOnqyK/S+hYEfPJE
+         ufGsRbb6TMoDnIzM1EiGs+P3rUo4keriGyIoxZtVPJ+FTT9wvk/BsASkl8ne0hLBtesG
+         fx5ygMW4pFrPfjoxdWuc9HzeTQ7HdH0E4rYv9y0ysaJnaezO5OwUnf46GvaOLDPH+FEf
+         ASEjvCOYvV2eIck3hnoJR3W8dOEXhA2eKeZuGPxcvX+6peAsNRCahyRvlqJf5WhFkyeJ
+         eKgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:subject:from:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sr8iGvYv8Y+FUygmw8CozO+P35yD6ZFMgxS2kANtCbQ=;
-        b=QVuHuI1cGPlvMMhIZOI57sRuqoPANulasJfxchZGwmhdJ336AWMDt14DTWKgPFF1Iv
-         h63hJ92UNGTBc2QLCYhYuwXwnWK6aPA1ZtsYGbeatleZ7PjSQnxQS651VLz0j/Ysq3eQ
-         Ya+8QP3TV81WXLFNHDaLLmDmlh8oqdWmISGbqE47m6suBCCjSz7ESBTM/I1P8hBMjEx+
-         mnYG2i+gdGxfsSza/PnNJRiA/WhrWndRvEGszZBAX7lNc12AiTOx0pLg1RBSCaNW11jY
-         AUsNxhDjtzHAlOPOJkfRk5fammyj8osu2wLscaZerbSUGkjV4JnLOGNyPix+sVTqE/PK
-         0i3g==
-X-Gm-Message-State: AFqh2kofzx+58hUChh+sI4eN4Ok69si7PnOBSu3grv0PIEIaiTOR6obe
-        lTV/P17bgLfCVDjKG8zAM/I=
-X-Google-Smtp-Source: AMrXdXurqoOFkI2ZF/Yr2+mXCk6PmZYuuFqlaFxmwRRIisoHNe/8QJlN0NWxlPobXkNO6fFrIoIZpw==
-X-Received: by 2002:a05:6402:33a:b0:47b:2524:5cf6 with SMTP id q26-20020a056402033a00b0047b25245cf6mr5189089edw.40.1671719408575;
-        Thu, 22 Dec 2022 06:30:08 -0800 (PST)
+        bh=9pQhvyxS2+lxPQqiIeyKdGOnYGr9Eh6AUJtIVNTuj+A=;
+        b=yUu12UipQrcgDoc6JTctbwSO2duHV2BoqOwkY2Gd1/yQpbUAevLsLCqjw+sA74+/Sl
+         sjUlub+YHKuoFNkD1mQfkBehD4Gmhwt91Hzo0MesEznWzd0BIkbdqaMBmklNUxsXmz1w
+         AyHONeSsU0irIP9HuXb5Pbg8nb6DgusikSZh4Y2p+J4k/co/oxbYxM/hzCnw4z5uXoJi
+         vQQtd+YJIXv8VvKfbhedwRAF+/Sv3SZl5cXeYJmIyG5R+E+pq1YUn1HOOGaZW8qiy7qk
+         4vgmnIR32JR0AWRbyyhlZFCVtfJd2yVtsAU3vHlroVHfCxlEWDIkQrU348KO5YLrkucM
+         4C8g==
+X-Gm-Message-State: AFqh2koSCH+0X0400v+Zoe96j8U305v6kPBZaRjgXeLu5PrGKRD7VXUl
+        LWxgK/QiVHLzP15OUgnQsjQ=
+X-Google-Smtp-Source: AMrXdXtmL49MyBKUjTsMoWtqCRlV2PHafs92EJpPC3lRCxLlFg44CyiVrl1MfAnIoLBEhLRJvzfKQA==
+X-Received: by 2002:a17:906:71cc:b0:7c0:ff72:e877 with SMTP id i12-20020a17090671cc00b007c0ff72e877mr5058112ejk.63.1671719440099;
+        Thu, 22 Dec 2022 06:30:40 -0800 (PST)
 Received: from [192.168.2.1] (81-204-249-205.fixed.kpn.net. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id h13-20020a0564020e0d00b0046b00a9eeb5sm427095edh.49.2022.12.22.06.30.07
+        by smtp.gmail.com with ESMTPSA id ku2-20020a170907788200b007c0e23b5615sm317771ejc.34.2022.12.22.06.30.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Dec 2022 06:30:08 -0800 (PST)
-Message-ID: <e7b78a73-0e89-d9e9-2ecc-a8a380635f64@gmail.com>
-Date:   Thu, 22 Dec 2022 15:30:06 +0100
+        Thu, 22 Dec 2022 06:30:39 -0800 (PST)
+Message-ID: <0a423eb4-0ab6-7ecb-d450-d93639160dbc@gmail.com>
+Date:   Thu, 22 Dec 2022 15:30:38 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.0
 From:   Johan Jonker <jbx6244@gmail.com>
-Subject: [PATCH v6 10/17] ARM: dts: rockchip: rk3288: fix lvds node
+Subject: [PATCH v6 11/17] ARM: dts: rockchip: rk3288: fix dp node
 To:     heiko@sntech.de
 Cc:     hjc@rock-chips.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
@@ -80,46 +80,41 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-With the conversion of rockchip,lvds.yaml a port@1 node
-is required, so add a node with label lvds_out.
+With the conversion of rockchip,analogix-dp.yaml a port@1 node
+is required, so add a node with label edp_out.
 Also restyle.
 
 Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
-
-Changed V6:
-  Restyle
-
-Changed V5:
-  Rename title
----
- arch/arm/boot/dts/rk3288.dtsi | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/rk3288.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index fbb174729..9def3988e 100644
+index 9def3988e..4d1bc6784 100644
 --- a/arch/arm/boot/dts/rk3288.dtsi
 +++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -1167,7 +1167,6 @@
-
- 			lvds_in: port@0 {
+@@ -1203,19 +1203,26 @@
+ 		ports {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++
+ 			edp_in: port@0 {
  				reg = <0>;
--
  				#address-cells = <1>;
  				#size-cells = <0>;
-
-@@ -1175,11 +1174,16 @@
++
+ 				edp_in_vopb: endpoint@0 {
  					reg = <0>;
- 					remote-endpoint = <&vopb_out_lvds>;
+ 					remote-endpoint = <&vopb_out_edp>;
  				};
 +
- 				lvds_in_vopl: endpoint@1 {
+ 				edp_in_vopl: endpoint@1 {
  					reg = <1>;
- 					remote-endpoint = <&vopl_out_lvds>;
+ 					remote-endpoint = <&vopl_out_edp>;
  				};
  			};
 +
-+			lvds_out: port@1 {
++			edp_out: port@1 {
 +				reg = <1>;
 +			};
  		};
