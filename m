@@ -2,63 +2,63 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C77CC001B2
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Dec 2022 14:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7653C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Dec 2022 14:27:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235456AbiLVO1D (ORCPT
+        id S235659AbiLVO1x (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 22 Dec 2022 09:27:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60164 "EHLO
+        Thu, 22 Dec 2022 09:27:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229674AbiLVO1C (ORCPT
+        with ESMTP id S235728AbiLVO1p (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 22 Dec 2022 09:27:02 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E81FF2877B;
-        Thu, 22 Dec 2022 06:27:00 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id d14so3110820edj.11;
-        Thu, 22 Dec 2022 06:27:00 -0800 (PST)
+        Thu, 22 Dec 2022 09:27:45 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14BA12A27C;
+        Thu, 22 Dec 2022 06:27:39 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id b69so3148853edf.6;
+        Thu, 22 Dec 2022 06:27:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=SERN4kEo2CMNf8GF0efdtkAYhp6v4Evj57qnLITu7NU=;
-        b=j30RPDKJX9Y7Jpi/c7UHD3cUl/yr3VA+FbvN1cAXTbwd+wo/2UFTbbClQiB11met+x
-         rHRI7IdyzN3ZP3aUXrgGgHWfJoD9QmhMldGiCO5QdRhdUoIs3jBCffy+20CfzyKpkMlK
-         Db8PhSzEp3jPwJ1oIdS943HWOysd0xRS3l7aBEuz/wd5+NGcRguTB9IGqgvWJvkX+PnG
-         eACZB5G5avCbvlRjPaOpRu/RjG+PX5Mtv2M9/YK4LNtbiW7LhwBXAmITFYpSyMjbpsp4
-         61L2Y1S+7Rpeqwq0y9l9w1bYfHfhP1/SC40s7q2xYBkjARrxam3xXfX6m8z+Vip5NZlt
-         bmiQ==
+        bh=O9UePTIdh8BLFeT/9sLTPNaa6psTC9fQZbGE7Nodn9I=;
+        b=hLYUbYUNOzWKT8UBWlJ51u2iJA1D9bz/x01b8uQLLe0r+lxgJcH5k7DKE2eVkOWQIX
+         glX/2BPYpbtrS/A/M+irYpogYerFjEv47Xq0hYcJQzcrnJEqlRV1meEpId/cZ/2bvBeu
+         eZwBTSz99uyZ/ohl5vAMMqjiYlUCKPpeaF3wEgfEFJ+l2tgmahGaoM8Kd5s5syhvL9Ft
+         v2aIxyD/oimeosAhZg6/4eFM/2BpVhYWFnKQuvp3/psKirkpTKnLrBVKO40G2ypqaaZv
+         wi/twPnbyp+yvlcPmDGN7wsiH4YMsec6chf6BXVT4e7mbNI+VLTGXp/P+XNlgysAxzfJ
+         oHmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:subject:from:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SERN4kEo2CMNf8GF0efdtkAYhp6v4Evj57qnLITu7NU=;
-        b=qisHeBZq5JcUUzTNgNqI2ux0/490UptM6Y8LiG4ZlzubtJBJE8YZaSbGlDWyJ1ldpJ
-         T/1SURt3JD5t9zkvBW2rh2Ze+7iEK4kPY0NnImWX58IITEQcSed9cizgmtkWxIqh+QxQ
-         E3aBT0SQdUv0yRhMeULUx/zlgE3rAEaFYNmhkebC4oN6VX61ij2Ai06W76jihZQW+eZe
-         HlqzOvF2mcQ1/ak5OApjAt7aOF2M5XkQiW7YgFNo4BOe3Rn5z2Dtfd/DFixKNNmWPGQL
-         gCzSvMtvodWd9dT2rOhJi17YLQiSK6kLZ4OzBaDKF3db6XXSZ56bhC6Vh7s0pkfwj+En
-         njaw==
-X-Gm-Message-State: AFqh2kr7APZdgYhJB0s7e2Cf5fP9c3phL4AVylinYiMHYvTd9i4nz309
-        GCnaGB52qIquXemn3bN2s8A=
-X-Google-Smtp-Source: AMrXdXtZZhvrnCk8MuWsTwTZgIwBm1u//i9hASx1/6SBJ5TzLR5Y6vQpyCLCSUIS7iRuar9RGDl6tg==
-X-Received: by 2002:a05:6402:2a04:b0:47a:f54c:1ba4 with SMTP id ey4-20020a0564022a0400b0047af54c1ba4mr5473876edb.25.1671719219471;
-        Thu, 22 Dec 2022 06:26:59 -0800 (PST)
+        bh=O9UePTIdh8BLFeT/9sLTPNaa6psTC9fQZbGE7Nodn9I=;
+        b=JfvxWhk+dYh6MRJOuCPB+knq76R+nDxJEe0C/kuzO2BB1DvTdcO4rGcluzfng8rjzm
+         qV/FK+/3/4j+egY6fUzGhobqnVT3WGECmMkCbH1Pp87vFXulvWfC1UdALHgsJu+2C3I/
+         LgtTp0OhrTduk3OxvvJwxpOU012xRZUHfx8vwU2BDwVr874yRJRTghZvQ8EVpWKj4poa
+         7rCA5K5v3/TFfrVUmhHYe7Yaw/lAiUOLbFE1XF/Eb/0BPyCrhzD/2yHmL5HHHhgbwoS2
+         WGnAD/iu8B6UbhAd1wFiFfB0tuh3L9f97Tvb8J/F3fiKEVf+1pLrQhm/cQavYTDyJdnE
+         kKnA==
+X-Gm-Message-State: AFqh2kroyRW4pOizHf6MoAEIbnbkzuV58rBXvvsRbkXGgVMSeH2AbzeC
+        jxRBnLNkgTD11k5ZKxu9XJ4=
+X-Google-Smtp-Source: AMrXdXuFTs5mURL/LSDTL8IcGuh27Bwo1dU7Yjt7h6xB4T5t6YKFMjM97FQ4834XnJSqneb7EOE2Ag==
+X-Received: by 2002:aa7:ccc2:0:b0:462:2e05:30ce with SMTP id y2-20020aa7ccc2000000b004622e0530cemr4663623edt.42.1671719257488;
+        Thu, 22 Dec 2022 06:27:37 -0800 (PST)
 Received: from [192.168.2.1] (81-204-249-205.fixed.kpn.net. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id p14-20020a05640210ce00b0047025bf942bsm426459edu.16.2022.12.22.06.26.58
+        by smtp.gmail.com with ESMTPSA id l26-20020a056402125a00b0046b471596e6sm426812edw.57.2022.12.22.06.27.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Dec 2022 06:26:59 -0800 (PST)
-Message-ID: <489e7bd3-fa26-885f-4104-8b0b29aa4f2b@gmail.com>
-Date:   Thu, 22 Dec 2022 15:26:57 +0100
+        Thu, 22 Dec 2022 06:27:37 -0800 (PST)
+Message-ID: <88a5a9e3-9bc8-5966-22ec-5bdb1fa7a5b1@gmail.com>
+Date:   Thu, 22 Dec 2022 15:27:35 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.0
 From:   Johan Jonker <jbx6244@gmail.com>
-Subject: [PATCH v6 06/17] dt-bindings: display: bridge: convert
- analogix_dp.txt to yaml
+Subject: [PATCH v6 07/17] dt-bindings: display: rockchip: convert
+ analogix_dp-rockchip.txt to yaml
 To:     heiko@sntech.de
 Cc:     hjc@rock-chips.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
@@ -81,159 +81,233 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert analogix_dp.txt to yaml for use as common document.
+Convert analogix_dp-rockchip.txt to yaml.
 
 Changed:
-  Relexed requirements
+  Add power-domains property
+  File name
 
 Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- .../bindings/display/bridge/analogix,dp.yaml  | 63 +++++++++++++++++++
- .../bindings/display/bridge/analogix_dp.txt   | 51 ---------------
- .../bindings/display/exynos/exynos_dp.txt     |  2 +-
- 3 files changed, 64 insertions(+), 52 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/analogix,dp.yaml
- delete mode 100644 Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
+ .../display/rockchip/analogix_dp-rockchip.txt |  98 -----------------
+ .../rockchip/rockchip,analogix-dp.yaml        | 103 ++++++++++++++++++
+ 2 files changed, 103 insertions(+), 98 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
+ create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,analogix-dp.yaml
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/analogix,dp.yaml b/Documentation/devicetree/bindings/display/bridge/analogix,dp.yaml
-new file mode 100644
-index 000000000..c9b06885c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/bridge/analogix,dp.yaml
-@@ -0,0 +1,63 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/display/bridge/analogix,dp.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Analogix Display Port bridge
-+
-+maintainers:
-+  - Rob Herring <robh@kernel.org>
-+
-+properties:
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks: true
-+
-+  clock-names: true
-+
-+  phys: true
-+
-+  phy-names:
-+    const: dp
-+
-+  force-hpd:
-+    description:
-+      Indicate driver need force hpd when hpd detect failed, this
-+      is used for some eDP screen which don not have a hpd signal.
-+
-+  hpd-gpios:
-+    description:
-+      Hotplug detect GPIO.
-+      Indicates which GPIO should be used for hotplug detection
-+
-+  ports:
-+    $ref: /schemas/graph.yaml#/properties/ports
-+
-+    properties:
-+      port@0:
-+        $ref: /schemas/graph.yaml#/properties/port
-+        description:
-+          Input node to receive pixel data.
-+
-+      port@1:
-+        $ref: /schemas/graph.yaml#/properties/port
-+        description:
-+          Port node with one endpoint connected to a dp-connector node.
-+
-+    required:
-+      - port@0
-+      - port@1
-+
-+required:
-+  - reg
-+  - interrupts
-+  - clock-names
-+  - clocks
-+  - ports
-+
-+additionalProperties: true
-diff --git a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
+diff --git a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
 deleted file mode 100644
-index 027d76c27..000000000
---- a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
+index 43561584c..000000000
+--- a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
 +++ /dev/null
-@@ -1,51 +0,0 @@
--Analogix Display Port bridge bindings
+@@ -1,98 +0,0 @@
+-Rockchip RK3288 specific extensions to the Analogix Display Port
+-================================
 -
--Required properties for dp-controller:
--	-compatible:
--		platform specific such as:
--		 * "samsung,exynos5-dp"
--		 * "rockchip,rk3288-dp"
--		 * "rockchip,rk3399-edp"
--	-reg:
--		physical base address of the controller and length
--		of memory mapped region.
--	-interrupts:
--		interrupt combiner values.
--	-clocks:
--		from common clock binding: handle to dp clock.
--	-clock-names:
--		from common clock binding: Shall be "dp".
--	-phys:
--		from general PHY binding: the phandle for the PHY device.
--	-phy-names:
--		from general PHY binding: Should be "dp".
+-Required properties:
+-- compatible: "rockchip,rk3288-dp",
+-	      "rockchip,rk3399-edp";
 -
--Optional properties for dp-controller:
--	-force-hpd:
--		Indicate driver need force hpd when hpd detect failed, this
--		is used for some eDP screen which don't have hpd signal.
--	-hpd-gpios:
--		Hotplug detect GPIO.
--		Indicates which GPIO should be used for hotplug detection
--	-port@[X]: SoC specific port nodes with endpoint definitions as defined
--		in Documentation/devicetree/bindings/media/video-interfaces.txt,
--		please refer to the SoC specific binding document:
--		* Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
--		* Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
+-- reg: physical base address of the controller and length
 -
--[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
+-- clocks: from common clock binding: handle to dp clock.
+-	  of memory mapped region.
+-
+-- clock-names: from common clock binding:
+-	       Required elements: "dp" "pclk"
+-
+-- resets: Must contain an entry for each entry in reset-names.
+-	  See ../reset/reset.txt for details.
+-
+-- pinctrl-names: Names corresponding to the chip hotplug pinctrl states.
+-- pinctrl-0: pin-control mode. should be <&edp_hpd>
+-
+-- reset-names: Must include the name "dp"
+-
+-- rockchip,grf: this soc should set GRF regs, so need get grf here.
+-
+-- ports: there are 2 port nodes with endpoint definitions as defined in
+-  Documentation/devicetree/bindings/media/video-interfaces.txt.
+-    Port 0: contained 2 endpoints, connecting to the output of vop.
+-    Port 1: contained 1 endpoint, connecting to the input of panel.
+-
+-Optional property for different chips:
+-- clocks: from common clock binding: handle to grf_vio clock.
+-
+-- clock-names: from common clock binding:
+-	       Required elements: "grf"
+-
+-For the below properties, please refer to Analogix DP binding document:
+- * Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
+-- phys (required)
+-- phy-names (required)
+-- hpd-gpios (optional)
+-- force-hpd (optional)
 --------------------------------------------------------------------------------
 -
 -Example:
--
--	dp-controller {
--		compatible = "samsung,exynos5-dp";
--		reg = <0x145b0000 0x10000>;
--		interrupts = <10 3>;
--		interrupt-parent = <&combiner>;
--		clocks = <&clock 342>;
--		clock-names = "dp";
--
+-	dp-controller: dp@ff970000 {
+-		compatible = "rockchip,rk3288-dp";
+-		reg = <0xff970000 0x4000>;
+-		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&cru SCLK_EDP>, <&cru PCLK_EDP_CTRL>;
+-		clock-names = "dp", "pclk";
 -		phys = <&dp_phy>;
 -		phy-names = "dp";
+-
+-		rockchip,grf = <&grf>;
+-		resets = <&cru 111>;
+-		reset-names = "dp";
+-
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&edp_hpd>;
+-
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-			edp_in: port@0 {
+-				reg = <0>;
+-				#address-cells = <1>;
+-				#size-cells = <0>;
+-				edp_in_vopb: endpoint@0 {
+-					reg = <0>;
+-					remote-endpoint = <&vopb_out_edp>;
+-				};
+-				edp_in_vopl: endpoint@1 {
+-					reg = <1>;
+-					remote-endpoint = <&vopl_out_edp>;
+-				};
+-			};
+-
+-			edp_out: port@1 {
+-				reg = <1>;
+-				#address-cells = <1>;
+-				#size-cells = <0>;
+-				edp_out_panel: endpoint {
+-					reg = <0>;
+-					remote-endpoint = <&panel_in_edp>
+-				};
+-			};
+-		};
 -	};
-diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
-index 9b6cba3f8..3a4015903 100644
---- a/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
-+++ b/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
-@@ -50,7 +50,7 @@ Optional properties for dp-controller:
- 		Documentation/devicetree/bindings/display/panel/display-timing.txt
-
- For the below properties, please refer to Analogix DP binding document:
-- * Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
-+ * Documentation/devicetree/bindings/display/bridge/analogix,dp.yaml
- 	-phys (required)
- 	-phy-names (required)
- 	-hpd-gpios (optional)
+-
+-	pinctrl {
+-		edp {
+-			edp_hpd: edp-hpd {
+-				rockchip,pins = <7 11 RK_FUNC_2 &pcfg_pull_none>;
+-			};
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip,analogix-dp.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip,analogix-dp.yaml
+new file mode 100644
+index 000000000..60dedf9b2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/rockchip/rockchip,analogix-dp.yaml
+@@ -0,0 +1,103 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/rockchip/rockchip,analogix-dp.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Rockchip specific extensions to the Analogix Display Port
++
++maintainers:
++  - Sandy Huang <hjc@rock-chips.com>
++  - Heiko Stuebner <heiko@sntech.de>
++
++properties:
++  compatible:
++    enum:
++      - rockchip,rk3288-dp
++      - rockchip,rk3399-edp
++
++  clocks:
++    minItems: 2
++    maxItems: 3
++
++  clock-names:
++    minItems: 2
++    items:
++      - const: dp
++      - const: pclk
++      - const: grf
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  reset-names:
++    const: dp
++
++  rockchip,grf:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      This SoC makes use of GRF regs.
++
++required:
++  - compatible
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++  - rockchip,grf
++
++allOf:
++  - $ref: /schemas/display/bridge/analogix,dp.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/rk3288-cru.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    dp@ff970000 {
++      compatible = "rockchip,rk3288-dp";
++      reg = <0xff970000 0x4000>;
++      interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++      clocks = <&cru SCLK_EDP>, <&cru PCLK_EDP_CTRL>;
++      clock-names = "dp", "pclk";
++      phys = <&dp_phy>;
++      phy-names = "dp";
++      resets = <&cru 111>;
++      reset-names = "dp";
++      rockchip,grf = <&grf>;
++      pinctrl-0 = <&edp_hpd>;
++      pinctrl-names = "default";
++
++      ports {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        edp_in: port@0 {
++          reg = <0>;
++          #address-cells = <1>;
++          #size-cells = <0>;
++
++          edp_in_vopb: endpoint@0 {
++            reg = <0>;
++            remote-endpoint = <&vopb_out_edp>;
++          };
++          edp_in_vopl: endpoint@1 {
++            reg = <1>;
++            remote-endpoint = <&vopl_out_edp>;
++          };
++        };
++
++        edp_out: port@1 {
++          reg = <1>;
++
++          edp_out_panel: endpoint {
++            remote-endpoint = <&panel_in_edp>;
++          };
++        };
++      };
++    };
 --
 2.20.1
 
