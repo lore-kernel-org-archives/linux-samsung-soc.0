@@ -2,68 +2,136 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0442DC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Jan 2023 09:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 564E1C4708D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Jan 2023 15:55:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233995AbjADJjG (ORCPT
+        id S235020AbjADPzh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 Jan 2023 04:39:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53878 "EHLO
+        Wed, 4 Jan 2023 10:55:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234644AbjADJi2 (ORCPT
+        with ESMTP id S234370AbjADPzf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Jan 2023 04:38:28 -0500
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 598DDE83
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Jan 2023 01:38:26 -0800 (PST)
-Received: from dggpemm500007.china.huawei.com (unknown [172.30.72.53])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Nn4Dv2Q8hzJpwT;
-        Wed,  4 Jan 2023 17:34:23 +0800 (CST)
-Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
- (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Wed, 4 Jan
- 2023 17:38:23 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <iommu@lists.linux.dev>, <linux-samsung-soc@vger.kernel.org>
-CC:     <m.szyprowski@samsung.com>, <semen.protsenko@linaro.org>,
-        <jroedel@suse.de>, <yangyingliang@huawei.com>
-Subject: [PATCH] iommu/exynos: fix error handling in exynos_iommu_init()
-Date:   Wed, 4 Jan 2023 17:57:02 +0800
-Message-ID: <20230104095702.2591122-1-yangyingliang@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 4 Jan 2023 10:55:35 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71F1E1B9FA
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Jan 2023 07:55:34 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id C8FA885587;
+        Wed,  4 Jan 2023 16:55:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1672847732;
+        bh=qpe86/VOKogpP9vEQFF1UhGX1wkgmWwoH3JshZjs8yk=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=ZTIOhdillnagoU2CBpVFHzkYmaRftUgjTH++x1y6ft3tvE3UPuPEHZy1oNK1lROcx
+         H5R4b4iTLj5OHA0ucrN03KpoC5nWRJMNHCBgpFriZk86XbKLt3jo4elfUhJddG6ofq
+         RQGcVLyZxcdV6xyjYW66bDxvM8z3oP0YpL4+vdFYYkNjmgX6ktrDt4L0KJDh28iuzf
+         DA8hjpDBUgnGOo7ptF5ogrodpWcRyrHyGrIbXkDVtVwV1HikVvIsVQyO7lQPcRIqzA
+         rMhacMFaGrNQJDYlROQ41aPM0Lygw4O2iC/Tx9dY5Rxqusz/qFJjZREG6unNbRLHEg
+         DqhiC71Gzv60A==
+Message-ID: <af0bd46b-8bbe-1602-1f34-67589bb7f71e@denx.de>
+Date:   Wed, 4 Jan 2023 16:07:39 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.103.91]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemm500007.china.huawei.com (7.185.36.183)
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v10 00/18] drm: Add Samsung MIPI DSIM bridge
+Content-Language: en-US
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Cc:     "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Jagan Teki <jagan@amarulasolutions.com>
+References: <kcEE.rJtELH1tRkiK3DwrGM4cgg.ADqA2lER2QE@vtuxmail01.tq-net.de>
+ <a6ad86a0-2831-34aa-2c2a-f6d683dc5713@denx.de> <1983452.PIDvDuAF1L@steina-w>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <1983452.PIDvDuAF1L@steina-w>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-If platform_driver_register() fails, it don't need unregister and call
-kmem_cache_free() to free the memory allocated before calling register.
+On 1/3/23 10:51, Alexander Stein wrote:
+> Hi Marek,
+> 
+> Am Sonntag, 18. Dezember 2022, 00:55:57 CET schrieb Marek Vasut:
+>> On 12/16/22 14:25, Alexander Stein wrote:
+>> Hi,
+>>
+>> [...]
+>>
+>>> Oh, nice, thanks for the pointer. When setting
+>>>
+>>>> samsung,burst-clock-frequency = <668250000>;
+>>>
+>>> in imx8mm.dtsi
+>>> I get a non-flickering display using 4 lanes. Although admittedly this is
+>>> just random guessing. I'm not sure which clock exactly has to be in the
+>>> range CHA_DSI_CLK_RANGE is configured to. With 4 lanes SN65DSI84 is
+>>> configured for>
+>>> 205-210 MHz (0x29), while I get these PLL PMS settings on DSIM:
+>>>> samsung-dsim 32e10000.dsi: PLL freq 668250000, (p 4, m 99, s 0)
+>>>> samsung-dsim 32e10000.dsi: hs_clk = 668250000, byte_clk = 83531250,
+>>>> esc_clk
+>>>
+>>> = 16706250
+>>
+>> If I recall it right, minimum PLL frequency is:
+>>
+>> fPMS=1.2*width*height*bpp*fps=1.2*800*480*24*60=663.5 MHz
+>>
+>> the link frequency is then
+>>
+>> fHS=fPMS/lanes/2=82.9 MHz (on the DDR clock lane)
+> 
+> Mh, there is something bogus about this. Right now the PLL freq is set
+> depending on 'samsung,burst-clock-frequency' property. But this actually is
+> somehow depending on the number of lanes I configure. From the debug output
+> hs_clk and PLL freq are identical. AFAICS there is also no divider from PLL to
+> hs_clk in the register map.
 
-Fixes: bbc4d205d93f ("iommu/exynos: Fix driver initialization sequence")
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
- drivers/iommu/exynos-iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Could it be that samsung,burst-clock-frequency is fPMS / 2 ?
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index b0cde2211987..c1d579c24740 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -1446,7 +1446,7 @@ static int __init exynos_iommu_init(void)
- 
- 	return 0;
- err_reg_driver:
--	platform_driver_unregister(&exynos_sysmmu_driver);
-+	kmem_cache_free(lv2table_kmem_cache, zero_lv2_table);
- err_zero_lv2:
- 	kmem_cache_destroy(lv2table_kmem_cache);
- 	return ret;
--- 
-2.25.1
+>> So DSI83 should be in the range of 80..85 MHz input clock if I calculate
+>> this right. Can you check what is the value of mode->clock, the
+>> mipi_dsi_panel_format_to_bpp() return value, ctx->dsi->lanes in dsi83
+>> sm65dsi83_get_dsi_range() ?
+> 
+> A working setup on a tianma,tm070jvhg33 display (1280x800) is:
+>> samsung-dsim 32e10000.dsi: PLL freq 891000000, (p 3, m 99, s 0)
+>> samsung-dsim 32e10000.dsi: hs_clk = 891000000, byte_clk = 111375000, esc_clk
+> = 18562500
+>> sn65dsi83 2-002d: mode->clock: 68200
+>> sn65dsi83 2-002d: mode bpp: 24
+>> sn65dsi83 2-002d: ctx->dsi->lanes: 3
+>> sn65dsi83 2-002d: samsung_dsim_set_pll: 0x37
+> 
+> Calculating backwards, sn64dsi83 is expecting a clock in the range of 275-280
+> MHz. But I fail to see a corresponding clock in the DSIM PLL configuration.
 
+294.9 MHz, no ? 1280x800x24x60x1.2 / 3 / 2 = 294.9 .
