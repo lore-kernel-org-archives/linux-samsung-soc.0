@@ -2,208 +2,318 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 877F8C3DA7A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Jan 2023 10:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7370CC54EBE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Jan 2023 14:13:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233209AbjAEKbY (ORCPT
+        id S234103AbjAEONT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Jan 2023 05:31:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55412 "EHLO
+        Thu, 5 Jan 2023 09:13:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233210AbjAEKbH (ORCPT
+        with ESMTP id S233674AbjAEOMv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Jan 2023 05:31:07 -0500
-Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799BC5E0BA
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Jan 2023 02:25:25 -0800 (PST)
-Received: by mail-yb1-xb35.google.com with SMTP id 203so39558264yby.10
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Jan 2023 02:25:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=G/dyLLm8QMU71DT4o1jiDbUQdJSSz8sU5W2KpVdkZ64=;
-        b=D3awVxbC7TZHFowV5KAHADuWFawsgvCiL6kxdAU0yhWIZdsorHAhRax36xD0K/wFnf
-         sC8wyWUJu2DyNHbs/wAdfwGdSKo52d+7zt8QLfZxdV4IxTEwwUiyMoGUg3PcClbhp2K4
-         ylybLxvFXkE/X5u7lSg9y1qCPSrnLMJLdhsAk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G/dyLLm8QMU71DT4o1jiDbUQdJSSz8sU5W2KpVdkZ64=;
-        b=QexHyj7NRyJkvIQUsEXAyOwC5GVlOCwhqZ7KwFIXp2BW20tM8YlwqUi1knqtsLkWYC
-         eKuiePVprvfS34Ax0I/E8UGMslJWoV6wdqK5VbOLgR9b16fQ5feK6Kp5go0HsNIds7dk
-         o/W1Swgrm1ItCE6YlZhPumOGxa6oroY+ZQfXBw8QV9ah9bDqGDV83MF9JJRdCzdIj8bD
-         7pFIA8rL241pDmhnjQYsF5N1lS7wKLjyyi2eSnrTzmwp526RnXevM/dlP7qZ4oKs5myE
-         hQt22vZMeuO4eBklFpt9XauWFWjDvHXZsNow61H3qzsr73DhJ8s2fPd6H2o8OFd1yxID
-         Y+WQ==
-X-Gm-Message-State: AFqh2kozOFE/AralGMIrDDJRtXbNa1CMGL4UzptHFHNUM8w+7us3jWCZ
-        ZlIMMsZhkYj+0J8bTujdZX2YyRfSEclykTAAgKMoDw==
-X-Google-Smtp-Source: AMrXdXvvCa38KG+MoU104XU9a3F25FbeTIXhowtBchKRQjzNAjAw0U2JlO8CqPNavOr8WmZbX19nSnbMFTg9PHlWAzc=
-X-Received: by 2002:a25:ca02:0:b0:6f2:bad:1be7 with SMTP id
- a2-20020a25ca02000000b006f20bad1be7mr5741604ybg.84.1672914286159; Thu, 05 Jan
- 2023 02:24:46 -0800 (PST)
+        Thu, 5 Jan 2023 09:12:51 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A15B81A828;
+        Thu,  5 Jan 2023 06:12:40 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 17A41B81AE8;
+        Thu,  5 Jan 2023 14:12:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB9DBC433D2;
+        Thu,  5 Jan 2023 14:12:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1672927957;
+        bh=ocATKMmPSE/H0CNy95RCV7iKXDdQZcxiCMwmjV3ux+U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=F3aG8Herl/gKaJbVfJYJHf9ZytlMD8vIqAY0/mKfg8aomW1L/GwUPuODiIdnzO4vk
+         X94wVumozfSxsbRU87Ybq75S6D5KBTcims1Onn0CZoNz7WOjCk7dsGwBi4KgRT0OmK
+         gZaP7j7FxqU7P96qqPN/BYARI90fPBHy0Ct1vAokWVgDxTtMj4yCN1tXalAma9UzzF
+         JJK/QkMeIhLeZ3LZj85ttL4l/YPxanQuLm/zI/fDAQn2mTV6mHyVyy1Go//Q/Bw7iM
+         f3E9V6mXMT6fgBfxO7wiEPUsBadw+koRqoTa804o0zUIUbUAzEMETq5DuuxX0eQURH
+         nEILQKM6n3oGw==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Chanwoo Choi <cwchoi00@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Ajay Kumar <ajaykumar.rs@samsung.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: samsung: remove s3c24xx specific pll bits
+Date:   Thu,  5 Jan 2023 15:12:13 +0100
+Message-Id: <20230105141231.2006353-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-References: <20221214125907.376148-1-jagan@amarulasolutions.com>
-In-Reply-To: <20221214125907.376148-1-jagan@amarulasolutions.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 5 Jan 2023 15:54:34 +0530
-Message-ID: <CAMty3ZC9TtnupJKF4LA9e-jnYMux28u4Pn3femJZXi4ogV+drA@mail.gmail.com>
-Subject: Re: [PATCH v10 00/18] drm: Add Samsung MIPI DSIM bridge
-To:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Marek Vasut <marex@denx.de>
-Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 14, 2022 at 6:29 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> This series supports common bridge support for Samsung MIPI DSIM
-> which is used in Exynos and i.MX8MM SoC's.
->
-> The final bridge supports both the Exynos and i.MX8M Mini/Nano/Plus.
->
-> Patch 0001 - 0004: adding devm_drm_of_dsi_get_bridge
->
-> Patch 0005 - 0006: optional PHY, PMS_P offset
->
-> Patch 0007       : introduce hw_type
->
-> Patch 0008       : fixing host init
->
-> Patch 0009       : atomic_check
->
-> Patch 0010       : input_bus_flags
->
-> Patch 0011       : atomic_get_input_bus_fmts
->
-> Patch 0012 - 0013: component vs bridge
->
-> Patch 0014       : DSIM bridge
->
-> Patch 0015 - 0016: i.MX8M Mini/Nano
->
-> Patch 0017 - 0018: i.MX8M Plus
->
-> Changes for v10:
-> - rebase on drm-misc-next
-> - add drm_of_dsi_find_panel_or_bridge
-> - add devm_drm_of_dsi_get_bridge
-> - fix host initialization (Thanks to Marek Szyprowski)
-> - rearrange the tiny patches for easy to review
-> - update simple names for enum hw_type
-> - add is_hw_exynos macro
-> - rework on commit messages
->
-> Changes for v9:
-> - rebase on drm-misc-next
-> - drop drm bridge attach fix for Exynos
-> - added prepare_prev_first flag
-> - added pre_enable_prev_first flag
-> - fix bridge chain order for exynos
-> - added fix for Exynos host init for first DSI transfer
-> - added MEDIA_BUS_FMT_FIXED
-> - return MEDIA_BUS_FMT_RGB888_1X24 output_fmt if supported output_fmt
->   list is unsupported.
-> - added MEDIA_BUS_FMT_YUYV10_1X20
-> - added MEDIA_BUS_FMT_YUYV12_1X24
->
-> Changes for v8:
-> * fixed comment lines
-> * fixed commit messages
-> * fixed video mode bits
-> * collect Marek Ack
-> * fixed video mode bit names
-> * update input formats logic
-> * added imx8mplus support
->
-> Changes for v7:
-> * fix the drm bridge attach chain for exynos drm dsi driver
-> * fix the hw_type checking logic
->
-> Changes for v6:
-> * handle previous bridge for exynos dsi while attaching bridge
->
-> Changes for v5:
-> * bridge changes to support multi-arch
-> * updated and clear commit messages
-> * add hw_type via plat data
-> * removed unneeded quirk
-> * rebased on linux-next
->
-> Changes for v4:
-> * include Inki Dae in MAINTAINERS
-> * remove dsi_driver probe in exynos_drm_drv to support multi-arch build
-> * update init handling to ensure host init done on first cmd transfer
->
-> Changes for v3:
-> * fix the mult-arch build
-> * fix dsi host init
-> * updated commit messages
->
-> Changes for v2:
-> * fix bridge handling
-> * fix dsi host init
-> * correct the commit messages
->
-> Tested in Engicam i.Core MX8M Mini SoM.
->
-> Repo:
-> https://gitlab.com/openedev/kernel/-/commits/imx8mm-dsi-v10
->
-> v9:
-> https://lore.kernel.org/all/20221209152343.180139-1-jagan@amarulasolutions.com/
->
-> Any inputs?
-> Jagan.
->
-> Jagan Teki (16):
->   drm: of: Lookup if child node has DSI panel or bridge
->   drm: bridge: panel: Add devm_drm_of_dsi_get_bridge helper
->   drm: exynos: dsi: Drop explicit call to bridge detach
->   drm: exynos: dsi: Switch to devm_drm_of_dsi_get_bridge
->   drm: exynos: dsi: Mark PHY as optional
->   drm: exynos: dsi: Add platform PLL_P (PMS_P) offset
->   drm: exynos: dsi: Introduce hw_type platform data
->   drm: exynos: dsi: Add atomic check
->   drm: exynos: dsi: Add input_bus_flags
->   drm: exynos: dsi: Add atomic_get_input_bus_fmts
->   drm: exynos: dsi: Consolidate component and bridge
->   drm: exynos: dsi: Add Exynos based host irq hooks
->   drm: bridge: Generalize Exynos-DSI driver into a Samsung DSIM bridge
->   dt-bindings: display: exynos: dsim: Add NXP i.MX8M Mini/Nano support
->   drm: bridge: samsung-dsim: Add i.MX8M Mini/Nano support
->   dt-bindings: display: exynos: dsim: Add NXP i.MX8M Plus support
->
-> Marek Szyprowski (1):
->   drm: exynos: dsi: Handle proper host initialization
->
-> Marek Vasut (1):
->   drm: bridge: samsung-dsim: Add i.MX8M Plus support
+From: Arnd Bergmann <arnd@arndb.de>
 
-Does anyone have any other comments on this? I would like to send v11
-with a few nits on v10. Please let me know.
+With the s3c24xx clk driver gone, the portions of the pll driver
+for it can also be removed.
 
-Thanks,
-Jagan.
+Suggested-by: Chanwoo Choi <cwchoi00@gmail.com>
+Cc: Chanwoo Choi <cwchoi00@gmail.com>
+Link: https://lore.kernel.org/linux-arm-kernel/0e0eff12-d8ea-72e9-d135-4259dda9a750@gmail.com/
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+I'm trying to get the boardfile removal patches into shape for
+6.3, and came across the comment from Chanwoo Choi that I had
+not addressed yet. I've added this patch to my s3c24xx series now,
+to be merged through the soc tree unless there are objections.
+
+ drivers/clk/samsung/clk-pll.c | 181 ----------------------------------
+ drivers/clk/samsung/clk-pll.h |  21 ----
+ 2 files changed, 202 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 0ff28938943f..df7812371d70 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -940,169 +940,6 @@ static const struct clk_ops samsung_pll6553_clk_ops = {
+ 	.recalc_rate = samsung_pll6553_recalc_rate,
+ };
+ 
+-/*
+- * PLL Clock Type of S3C24XX before S3C2443
+- */
+-
+-#define PLLS3C2410_MDIV_MASK		(0xff)
+-#define PLLS3C2410_PDIV_MASK		(0x1f)
+-#define PLLS3C2410_SDIV_MASK		(0x3)
+-#define PLLS3C2410_MDIV_SHIFT		(12)
+-#define PLLS3C2410_PDIV_SHIFT		(4)
+-#define PLLS3C2410_SDIV_SHIFT		(0)
+-
+-#define PLLS3C2410_ENABLE_REG_OFFSET	0x10
+-
+-static unsigned long samsung_s3c2410_pll_recalc_rate(struct clk_hw *hw,
+-					unsigned long parent_rate)
+-{
+-	struct samsung_clk_pll *pll = to_clk_pll(hw);
+-	u32 pll_con, mdiv, pdiv, sdiv;
+-	u64 fvco = parent_rate;
+-
+-	pll_con = readl_relaxed(pll->con_reg);
+-	mdiv = (pll_con >> PLLS3C2410_MDIV_SHIFT) & PLLS3C2410_MDIV_MASK;
+-	pdiv = (pll_con >> PLLS3C2410_PDIV_SHIFT) & PLLS3C2410_PDIV_MASK;
+-	sdiv = (pll_con >> PLLS3C2410_SDIV_SHIFT) & PLLS3C2410_SDIV_MASK;
+-
+-	fvco *= (mdiv + 8);
+-	do_div(fvco, (pdiv + 2) << sdiv);
+-
+-	return (unsigned int)fvco;
+-}
+-
+-static unsigned long samsung_s3c2440_mpll_recalc_rate(struct clk_hw *hw,
+-					unsigned long parent_rate)
+-{
+-	struct samsung_clk_pll *pll = to_clk_pll(hw);
+-	u32 pll_con, mdiv, pdiv, sdiv;
+-	u64 fvco = parent_rate;
+-
+-	pll_con = readl_relaxed(pll->con_reg);
+-	mdiv = (pll_con >> PLLS3C2410_MDIV_SHIFT) & PLLS3C2410_MDIV_MASK;
+-	pdiv = (pll_con >> PLLS3C2410_PDIV_SHIFT) & PLLS3C2410_PDIV_MASK;
+-	sdiv = (pll_con >> PLLS3C2410_SDIV_SHIFT) & PLLS3C2410_SDIV_MASK;
+-
+-	fvco *= (2 * (mdiv + 8));
+-	do_div(fvco, (pdiv + 2) << sdiv);
+-
+-	return (unsigned int)fvco;
+-}
+-
+-static int samsung_s3c2410_pll_set_rate(struct clk_hw *hw, unsigned long drate,
+-					unsigned long prate)
+-{
+-	struct samsung_clk_pll *pll = to_clk_pll(hw);
+-	const struct samsung_pll_rate_table *rate;
+-	u32 tmp;
+-
+-	/* Get required rate settings from table */
+-	rate = samsung_get_pll_settings(pll, drate);
+-	if (!rate) {
+-		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
+-			drate, clk_hw_get_name(hw));
+-		return -EINVAL;
+-	}
+-
+-	tmp = readl_relaxed(pll->con_reg);
+-
+-	/* Change PLL PMS values */
+-	tmp &= ~((PLLS3C2410_MDIV_MASK << PLLS3C2410_MDIV_SHIFT) |
+-			(PLLS3C2410_PDIV_MASK << PLLS3C2410_PDIV_SHIFT) |
+-			(PLLS3C2410_SDIV_MASK << PLLS3C2410_SDIV_SHIFT));
+-	tmp |= (rate->mdiv << PLLS3C2410_MDIV_SHIFT) |
+-			(rate->pdiv << PLLS3C2410_PDIV_SHIFT) |
+-			(rate->sdiv << PLLS3C2410_SDIV_SHIFT);
+-	writel_relaxed(tmp, pll->con_reg);
+-
+-	/* Time to settle according to the manual */
+-	udelay(300);
+-
+-	return 0;
+-}
+-
+-static int samsung_s3c2410_pll_enable(struct clk_hw *hw, int bit, bool enable)
+-{
+-	struct samsung_clk_pll *pll = to_clk_pll(hw);
+-	u32 pll_en = readl_relaxed(pll->lock_reg + PLLS3C2410_ENABLE_REG_OFFSET);
+-	u32 pll_en_orig = pll_en;
+-
+-	if (enable)
+-		pll_en &= ~BIT(bit);
+-	else
+-		pll_en |= BIT(bit);
+-
+-	writel_relaxed(pll_en, pll->lock_reg + PLLS3C2410_ENABLE_REG_OFFSET);
+-
+-	/* if we started the UPLL, then allow to settle */
+-	if (enable && (pll_en_orig & BIT(bit)))
+-		udelay(300);
+-
+-	return 0;
+-}
+-
+-static int samsung_s3c2410_mpll_enable(struct clk_hw *hw)
+-{
+-	return samsung_s3c2410_pll_enable(hw, 5, true);
+-}
+-
+-static void samsung_s3c2410_mpll_disable(struct clk_hw *hw)
+-{
+-	samsung_s3c2410_pll_enable(hw, 5, false);
+-}
+-
+-static int samsung_s3c2410_upll_enable(struct clk_hw *hw)
+-{
+-	return samsung_s3c2410_pll_enable(hw, 7, true);
+-}
+-
+-static void samsung_s3c2410_upll_disable(struct clk_hw *hw)
+-{
+-	samsung_s3c2410_pll_enable(hw, 7, false);
+-}
+-
+-static const struct clk_ops samsung_s3c2410_mpll_clk_min_ops = {
+-	.recalc_rate = samsung_s3c2410_pll_recalc_rate,
+-	.enable = samsung_s3c2410_mpll_enable,
+-	.disable = samsung_s3c2410_mpll_disable,
+-};
+-
+-static const struct clk_ops samsung_s3c2410_upll_clk_min_ops = {
+-	.recalc_rate = samsung_s3c2410_pll_recalc_rate,
+-	.enable = samsung_s3c2410_upll_enable,
+-	.disable = samsung_s3c2410_upll_disable,
+-};
+-
+-static const struct clk_ops samsung_s3c2440_mpll_clk_min_ops = {
+-	.recalc_rate = samsung_s3c2440_mpll_recalc_rate,
+-	.enable = samsung_s3c2410_mpll_enable,
+-	.disable = samsung_s3c2410_mpll_disable,
+-};
+-
+-static const struct clk_ops samsung_s3c2410_mpll_clk_ops = {
+-	.recalc_rate = samsung_s3c2410_pll_recalc_rate,
+-	.enable = samsung_s3c2410_mpll_enable,
+-	.disable = samsung_s3c2410_mpll_disable,
+-	.round_rate = samsung_pll_round_rate,
+-	.set_rate = samsung_s3c2410_pll_set_rate,
+-};
+-
+-static const struct clk_ops samsung_s3c2410_upll_clk_ops = {
+-	.recalc_rate = samsung_s3c2410_pll_recalc_rate,
+-	.enable = samsung_s3c2410_upll_enable,
+-	.disable = samsung_s3c2410_upll_disable,
+-	.round_rate = samsung_pll_round_rate,
+-	.set_rate = samsung_s3c2410_pll_set_rate,
+-};
+-
+-static const struct clk_ops samsung_s3c2440_mpll_clk_ops = {
+-	.recalc_rate = samsung_s3c2440_mpll_recalc_rate,
+-	.enable = samsung_s3c2410_mpll_enable,
+-	.disable = samsung_s3c2410_mpll_disable,
+-	.round_rate = samsung_pll_round_rate,
+-	.set_rate = samsung_s3c2410_pll_set_rate,
+-};
+-
+ /*
+  * PLL2550x Clock Type
+  */
+@@ -1530,24 +1367,6 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 		else
+ 			init.ops = &samsung_pll46xx_clk_ops;
+ 		break;
+-	case pll_s3c2410_mpll:
+-		if (!pll->rate_table)
+-			init.ops = &samsung_s3c2410_mpll_clk_min_ops;
+-		else
+-			init.ops = &samsung_s3c2410_mpll_clk_ops;
+-		break;
+-	case pll_s3c2410_upll:
+-		if (!pll->rate_table)
+-			init.ops = &samsung_s3c2410_upll_clk_min_ops;
+-		else
+-			init.ops = &samsung_s3c2410_upll_clk_ops;
+-		break;
+-	case pll_s3c2440_mpll:
+-		if (!pll->rate_table)
+-			init.ops = &samsung_s3c2440_mpll_clk_min_ops;
+-		else
+-			init.ops = &samsung_s3c2440_mpll_clk_ops;
+-		break;
+ 	case pll_2550x:
+ 		init.ops = &samsung_pll2550x_clk_ops;
+ 		break;
+diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+index a9892c2d1f57..5d5a58d40e7e 100644
+--- a/drivers/clk/samsung/clk-pll.h
++++ b/drivers/clk/samsung/clk-pll.h
+@@ -25,9 +25,6 @@ enum samsung_pll_type {
+ 	pll_6552,
+ 	pll_6552_s3c2416,
+ 	pll_6553,
+-	pll_s3c2410_mpll,
+-	pll_s3c2410_upll,
+-	pll_s3c2440_mpll,
+ 	pll_2550x,
+ 	pll_2550xx,
+ 	pll_2650x,
+@@ -56,24 +53,6 @@ enum samsung_pll_type {
+ 		.sdiv	=	(_s),				\
+ 	}
+ 
+-#define PLL_S3C2410_MPLL_RATE(_fin, _rate, _m, _p, _s)		\
+-	{							\
+-		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
+-				_m + 8, _p + 2, _s, 0, 16),	\
+-		.mdiv	=	(_m),				\
+-		.pdiv	=	(_p),				\
+-		.sdiv	=	(_s),				\
+-	}
+-
+-#define PLL_S3C2440_MPLL_RATE(_fin, _rate, _m, _p, _s)		\
+-	{							\
+-		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
+-				2 * (_m + 8), _p + 2, _s, 0, 16), \
+-		.mdiv	=	(_m),				\
+-		.pdiv	=	(_p),				\
+-		.sdiv	=	(_s),				\
+-	}
+-
+ #define PLL_36XX_RATE(_fin, _rate, _m, _p, _s, _k)		\
+ 	{							\
+ 		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
+-- 
+2.39.0
+
