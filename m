@@ -2,318 +2,93 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7370CC54EBE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Jan 2023 14:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E73C3DA7D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Jan 2023 18:08:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234103AbjAEONT (ORCPT
+        id S232101AbjAESIl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Jan 2023 09:13:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57366 "EHLO
+        Thu, 5 Jan 2023 13:08:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233674AbjAEOMv (ORCPT
+        with ESMTP id S235631AbjAESIH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Jan 2023 09:12:51 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A15B81A828;
-        Thu,  5 Jan 2023 06:12:40 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 17A41B81AE8;
-        Thu,  5 Jan 2023 14:12:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB9DBC433D2;
-        Thu,  5 Jan 2023 14:12:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672927957;
-        bh=ocATKMmPSE/H0CNy95RCV7iKXDdQZcxiCMwmjV3ux+U=;
-        h=From:To:Cc:Subject:Date:From;
-        b=F3aG8Herl/gKaJbVfJYJHf9ZytlMD8vIqAY0/mKfg8aomW1L/GwUPuODiIdnzO4vk
-         X94wVumozfSxsbRU87Ybq75S6D5KBTcims1Onn0CZoNz7WOjCk7dsGwBi4KgRT0OmK
-         gZaP7j7FxqU7P96qqPN/BYARI90fPBHy0Ct1vAokWVgDxTtMj4yCN1tXalAma9UzzF
-         JJK/QkMeIhLeZ3LZj85ttL4l/YPxanQuLm/zI/fDAQn2mTV6mHyVyy1Go//Q/Bw7iM
-         f3E9V6mXMT6fgBfxO7wiEPUsBadw+koRqoTa804o0zUIUbUAzEMETq5DuuxX0eQURH
-         nEILQKM6n3oGw==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Chanwoo Choi <cwchoi00@gmail.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: samsung: remove s3c24xx specific pll bits
-Date:   Thu,  5 Jan 2023 15:12:13 +0100
-Message-Id: <20230105141231.2006353-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.0
+        Thu, 5 Jan 2023 13:08:07 -0500
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99DA654DA6
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Jan 2023 10:06:46 -0800 (PST)
+Received: by mail-pf1-x42b.google.com with SMTP id g20so17668132pfb.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Jan 2023 10:06:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mc/7VUEGk3DXTVO68IbWilfesz8TNRLC/2uUgWIo0Cw=;
+        b=knT2sBXM8+bseyvKS+AxxxUDHFN6rXGYXAs0bxnAmUGBXUxEwpfGvuTKnVAOESkp6q
+         pAREYRJ15r1aRkMTWXU1RtT0HpDRvvfE15l1Ja39oe3aOa/L1YEN5pZVRVM8RBtpevd5
+         oZQzH0PS1SZiIQUm6/NVHO6IqxabFqds1/opr6L5KHjgcJRdRk4CO3HZmORDlhF7OgKg
+         aPYsEh0QcEIa1Cen7jvhaanxyZxKEyAYuhcWF3+F5YFLq5vvSXNrFdK2qG6lMffF8MLi
+         I9r6Xml9yh/3Y/sXC3hz9n/BxxGC9mnYsZPiLrJDjlVcRdw6FkG9ogIXqvBoO9Ngx5WV
+         zyag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mc/7VUEGk3DXTVO68IbWilfesz8TNRLC/2uUgWIo0Cw=;
+        b=zD6/ekPwwzUUFimOj7P69hDnTJfA8H5s62pXE8V87F9eerRK3CC7l/uUkV4dRCKQ1v
+         RSE3zc/XT7KXazJeU0YNTpxhsVH6lF534xeHxfBkQ3+fuj4tC6knloNfDH7IUB8VkRbd
+         2lvO+8pDrY2mfNHW/uqYUvvMcYmcQixyPnaKeKlSXBbvMLyX0CStKsSn86WkVDdiPoN/
+         Bb0odyoZeRKaH61srhU3nyBi/kDEuzTz89yniMpCmkr5JI1gyRpjDbT95odXLJEEWrIB
+         RdeS94jfjSZZZT+dT5hBImv1dPJ4rx6Ad9yKBdiPGYRcEw0P+udya10FK47jrqtqQhyP
+         LjRw==
+X-Gm-Message-State: AFqh2kpU1u6JonfCNpr7XMrIVGuh9npXRwTsoH30aRbeNCQRrA/3w+XG
+        JDY78dEeKH++Be2Zmt6aUO5b/jUyVysvS+HprcKlg0HyxZ/3Fg==
+X-Google-Smtp-Source: AMrXdXvo69j9YoPEoO2lldH79hHn+c58oW4FRh9Wp+zEyjV9ZZP+lufBeNlYfqep7QRkeVVzM/Ex1QTu1p1SvtAO16g=
+X-Received: by 2002:a05:6a00:a1a:b0:580:8b92:ecff with SMTP id
+ p26-20020a056a000a1a00b005808b92ecffmr3298706pfh.4.1672942006019; Thu, 05 Jan
+ 2023 10:06:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230104095702.2591122-1-yangyingliang@huawei.com>
+In-Reply-To: <20230104095702.2591122-1-yangyingliang@huawei.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Thu, 5 Jan 2023 12:06:34 -0600
+Message-ID: <CAPLW+4=eE=YXSSEMRPJ2g_FK68PO2h9By-FGZOtDG4jyFWLq2w@mail.gmail.com>
+Subject: Re: [PATCH] iommu/exynos: fix error handling in exynos_iommu_init()
+To:     Yang Yingliang <yangyingliang@huawei.com>
+Cc:     iommu@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+        m.szyprowski@samsung.com, jroedel@suse.de
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Wed, 4 Jan 2023 at 03:38, Yang Yingliang <yangyingliang@huawei.com> wrote:
+>
+> If platform_driver_register() fails, it don't need unregister and call
+> kmem_cache_free() to free the memory allocated before calling register.
+>
+> Fixes: bbc4d205d93f ("iommu/exynos: Fix driver initialization sequence")
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+> ---
 
-With the s3c24xx clk driver gone, the portions of the pll driver
-for it can also be removed.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-Suggested-by: Chanwoo Choi <cwchoi00@gmail.com>
-Cc: Chanwoo Choi <cwchoi00@gmail.com>
-Link: https://lore.kernel.org/linux-arm-kernel/0e0eff12-d8ea-72e9-d135-4259dda9a750@gmail.com/
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-I'm trying to get the boardfile removal patches into shape for
-6.3, and came across the comment from Chanwoo Choi that I had
-not addressed yet. I've added this patch to my s3c24xx series now,
-to be merged through the soc tree unless there are objections.
-
- drivers/clk/samsung/clk-pll.c | 181 ----------------------------------
- drivers/clk/samsung/clk-pll.h |  21 ----
- 2 files changed, 202 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 0ff28938943f..df7812371d70 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -940,169 +940,6 @@ static const struct clk_ops samsung_pll6553_clk_ops = {
- 	.recalc_rate = samsung_pll6553_recalc_rate,
- };
- 
--/*
-- * PLL Clock Type of S3C24XX before S3C2443
-- */
--
--#define PLLS3C2410_MDIV_MASK		(0xff)
--#define PLLS3C2410_PDIV_MASK		(0x1f)
--#define PLLS3C2410_SDIV_MASK		(0x3)
--#define PLLS3C2410_MDIV_SHIFT		(12)
--#define PLLS3C2410_PDIV_SHIFT		(4)
--#define PLLS3C2410_SDIV_SHIFT		(0)
--
--#define PLLS3C2410_ENABLE_REG_OFFSET	0x10
--
--static unsigned long samsung_s3c2410_pll_recalc_rate(struct clk_hw *hw,
--					unsigned long parent_rate)
--{
--	struct samsung_clk_pll *pll = to_clk_pll(hw);
--	u32 pll_con, mdiv, pdiv, sdiv;
--	u64 fvco = parent_rate;
--
--	pll_con = readl_relaxed(pll->con_reg);
--	mdiv = (pll_con >> PLLS3C2410_MDIV_SHIFT) & PLLS3C2410_MDIV_MASK;
--	pdiv = (pll_con >> PLLS3C2410_PDIV_SHIFT) & PLLS3C2410_PDIV_MASK;
--	sdiv = (pll_con >> PLLS3C2410_SDIV_SHIFT) & PLLS3C2410_SDIV_MASK;
--
--	fvco *= (mdiv + 8);
--	do_div(fvco, (pdiv + 2) << sdiv);
--
--	return (unsigned int)fvco;
--}
--
--static unsigned long samsung_s3c2440_mpll_recalc_rate(struct clk_hw *hw,
--					unsigned long parent_rate)
--{
--	struct samsung_clk_pll *pll = to_clk_pll(hw);
--	u32 pll_con, mdiv, pdiv, sdiv;
--	u64 fvco = parent_rate;
--
--	pll_con = readl_relaxed(pll->con_reg);
--	mdiv = (pll_con >> PLLS3C2410_MDIV_SHIFT) & PLLS3C2410_MDIV_MASK;
--	pdiv = (pll_con >> PLLS3C2410_PDIV_SHIFT) & PLLS3C2410_PDIV_MASK;
--	sdiv = (pll_con >> PLLS3C2410_SDIV_SHIFT) & PLLS3C2410_SDIV_MASK;
--
--	fvco *= (2 * (mdiv + 8));
--	do_div(fvco, (pdiv + 2) << sdiv);
--
--	return (unsigned int)fvco;
--}
--
--static int samsung_s3c2410_pll_set_rate(struct clk_hw *hw, unsigned long drate,
--					unsigned long prate)
--{
--	struct samsung_clk_pll *pll = to_clk_pll(hw);
--	const struct samsung_pll_rate_table *rate;
--	u32 tmp;
--
--	/* Get required rate settings from table */
--	rate = samsung_get_pll_settings(pll, drate);
--	if (!rate) {
--		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
--			drate, clk_hw_get_name(hw));
--		return -EINVAL;
--	}
--
--	tmp = readl_relaxed(pll->con_reg);
--
--	/* Change PLL PMS values */
--	tmp &= ~((PLLS3C2410_MDIV_MASK << PLLS3C2410_MDIV_SHIFT) |
--			(PLLS3C2410_PDIV_MASK << PLLS3C2410_PDIV_SHIFT) |
--			(PLLS3C2410_SDIV_MASK << PLLS3C2410_SDIV_SHIFT));
--	tmp |= (rate->mdiv << PLLS3C2410_MDIV_SHIFT) |
--			(rate->pdiv << PLLS3C2410_PDIV_SHIFT) |
--			(rate->sdiv << PLLS3C2410_SDIV_SHIFT);
--	writel_relaxed(tmp, pll->con_reg);
--
--	/* Time to settle according to the manual */
--	udelay(300);
--
--	return 0;
--}
--
--static int samsung_s3c2410_pll_enable(struct clk_hw *hw, int bit, bool enable)
--{
--	struct samsung_clk_pll *pll = to_clk_pll(hw);
--	u32 pll_en = readl_relaxed(pll->lock_reg + PLLS3C2410_ENABLE_REG_OFFSET);
--	u32 pll_en_orig = pll_en;
--
--	if (enable)
--		pll_en &= ~BIT(bit);
--	else
--		pll_en |= BIT(bit);
--
--	writel_relaxed(pll_en, pll->lock_reg + PLLS3C2410_ENABLE_REG_OFFSET);
--
--	/* if we started the UPLL, then allow to settle */
--	if (enable && (pll_en_orig & BIT(bit)))
--		udelay(300);
--
--	return 0;
--}
--
--static int samsung_s3c2410_mpll_enable(struct clk_hw *hw)
--{
--	return samsung_s3c2410_pll_enable(hw, 5, true);
--}
--
--static void samsung_s3c2410_mpll_disable(struct clk_hw *hw)
--{
--	samsung_s3c2410_pll_enable(hw, 5, false);
--}
--
--static int samsung_s3c2410_upll_enable(struct clk_hw *hw)
--{
--	return samsung_s3c2410_pll_enable(hw, 7, true);
--}
--
--static void samsung_s3c2410_upll_disable(struct clk_hw *hw)
--{
--	samsung_s3c2410_pll_enable(hw, 7, false);
--}
--
--static const struct clk_ops samsung_s3c2410_mpll_clk_min_ops = {
--	.recalc_rate = samsung_s3c2410_pll_recalc_rate,
--	.enable = samsung_s3c2410_mpll_enable,
--	.disable = samsung_s3c2410_mpll_disable,
--};
--
--static const struct clk_ops samsung_s3c2410_upll_clk_min_ops = {
--	.recalc_rate = samsung_s3c2410_pll_recalc_rate,
--	.enable = samsung_s3c2410_upll_enable,
--	.disable = samsung_s3c2410_upll_disable,
--};
--
--static const struct clk_ops samsung_s3c2440_mpll_clk_min_ops = {
--	.recalc_rate = samsung_s3c2440_mpll_recalc_rate,
--	.enable = samsung_s3c2410_mpll_enable,
--	.disable = samsung_s3c2410_mpll_disable,
--};
--
--static const struct clk_ops samsung_s3c2410_mpll_clk_ops = {
--	.recalc_rate = samsung_s3c2410_pll_recalc_rate,
--	.enable = samsung_s3c2410_mpll_enable,
--	.disable = samsung_s3c2410_mpll_disable,
--	.round_rate = samsung_pll_round_rate,
--	.set_rate = samsung_s3c2410_pll_set_rate,
--};
--
--static const struct clk_ops samsung_s3c2410_upll_clk_ops = {
--	.recalc_rate = samsung_s3c2410_pll_recalc_rate,
--	.enable = samsung_s3c2410_upll_enable,
--	.disable = samsung_s3c2410_upll_disable,
--	.round_rate = samsung_pll_round_rate,
--	.set_rate = samsung_s3c2410_pll_set_rate,
--};
--
--static const struct clk_ops samsung_s3c2440_mpll_clk_ops = {
--	.recalc_rate = samsung_s3c2440_mpll_recalc_rate,
--	.enable = samsung_s3c2410_mpll_enable,
--	.disable = samsung_s3c2410_mpll_disable,
--	.round_rate = samsung_pll_round_rate,
--	.set_rate = samsung_s3c2410_pll_set_rate,
--};
--
- /*
-  * PLL2550x Clock Type
-  */
-@@ -1530,24 +1367,6 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
- 		else
- 			init.ops = &samsung_pll46xx_clk_ops;
- 		break;
--	case pll_s3c2410_mpll:
--		if (!pll->rate_table)
--			init.ops = &samsung_s3c2410_mpll_clk_min_ops;
--		else
--			init.ops = &samsung_s3c2410_mpll_clk_ops;
--		break;
--	case pll_s3c2410_upll:
--		if (!pll->rate_table)
--			init.ops = &samsung_s3c2410_upll_clk_min_ops;
--		else
--			init.ops = &samsung_s3c2410_upll_clk_ops;
--		break;
--	case pll_s3c2440_mpll:
--		if (!pll->rate_table)
--			init.ops = &samsung_s3c2440_mpll_clk_min_ops;
--		else
--			init.ops = &samsung_s3c2440_mpll_clk_ops;
--		break;
- 	case pll_2550x:
- 		init.ops = &samsung_pll2550x_clk_ops;
- 		break;
-diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
-index a9892c2d1f57..5d5a58d40e7e 100644
---- a/drivers/clk/samsung/clk-pll.h
-+++ b/drivers/clk/samsung/clk-pll.h
-@@ -25,9 +25,6 @@ enum samsung_pll_type {
- 	pll_6552,
- 	pll_6552_s3c2416,
- 	pll_6553,
--	pll_s3c2410_mpll,
--	pll_s3c2410_upll,
--	pll_s3c2440_mpll,
- 	pll_2550x,
- 	pll_2550xx,
- 	pll_2650x,
-@@ -56,24 +53,6 @@ enum samsung_pll_type {
- 		.sdiv	=	(_s),				\
- 	}
- 
--#define PLL_S3C2410_MPLL_RATE(_fin, _rate, _m, _p, _s)		\
--	{							\
--		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
--				_m + 8, _p + 2, _s, 0, 16),	\
--		.mdiv	=	(_m),				\
--		.pdiv	=	(_p),				\
--		.sdiv	=	(_s),				\
--	}
--
--#define PLL_S3C2440_MPLL_RATE(_fin, _rate, _m, _p, _s)		\
--	{							\
--		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
--				2 * (_m + 8), _p + 2, _s, 0, 16), \
--		.mdiv	=	(_m),				\
--		.pdiv	=	(_p),				\
--		.sdiv	=	(_s),				\
--	}
--
- #define PLL_36XX_RATE(_fin, _rate, _m, _p, _s, _k)		\
- 	{							\
- 		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
--- 
-2.39.0
-
+>  drivers/iommu/exynos-iommu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index b0cde2211987..c1d579c24740 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -1446,7 +1446,7 @@ static int __init exynos_iommu_init(void)
+>
+>         return 0;
+>  err_reg_driver:
+> -       platform_driver_unregister(&exynos_sysmmu_driver);
+> +       kmem_cache_free(lv2table_kmem_cache, zero_lv2_table);
+>  err_zero_lv2:
+>         kmem_cache_destroy(lv2table_kmem_cache);
+>         return ret;
+> --
+> 2.25.1
+>
