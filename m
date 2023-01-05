@@ -2,93 +2,112 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E73C3DA7D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Jan 2023 18:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7CDC3DA7A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Jan 2023 22:19:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232101AbjAESIl (ORCPT
+        id S235656AbjAEWTA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Jan 2023 13:08:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36798 "EHLO
+        Thu, 5 Jan 2023 17:19:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235631AbjAESIH (ORCPT
+        with ESMTP id S229694AbjAEWS7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Jan 2023 13:08:07 -0500
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99DA654DA6
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Jan 2023 10:06:46 -0800 (PST)
-Received: by mail-pf1-x42b.google.com with SMTP id g20so17668132pfb.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Jan 2023 10:06:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mc/7VUEGk3DXTVO68IbWilfesz8TNRLC/2uUgWIo0Cw=;
-        b=knT2sBXM8+bseyvKS+AxxxUDHFN6rXGYXAs0bxnAmUGBXUxEwpfGvuTKnVAOESkp6q
-         pAREYRJ15r1aRkMTWXU1RtT0HpDRvvfE15l1Ja39oe3aOa/L1YEN5pZVRVM8RBtpevd5
-         oZQzH0PS1SZiIQUm6/NVHO6IqxabFqds1/opr6L5KHjgcJRdRk4CO3HZmORDlhF7OgKg
-         aPYsEh0QcEIa1Cen7jvhaanxyZxKEyAYuhcWF3+F5YFLq5vvSXNrFdK2qG6lMffF8MLi
-         I9r6Xml9yh/3Y/sXC3hz9n/BxxGC9mnYsZPiLrJDjlVcRdw6FkG9ogIXqvBoO9Ngx5WV
-         zyag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mc/7VUEGk3DXTVO68IbWilfesz8TNRLC/2uUgWIo0Cw=;
-        b=zD6/ekPwwzUUFimOj7P69hDnTJfA8H5s62pXE8V87F9eerRK3CC7l/uUkV4dRCKQ1v
-         RSE3zc/XT7KXazJeU0YNTpxhsVH6lF534xeHxfBkQ3+fuj4tC6knloNfDH7IUB8VkRbd
-         2lvO+8pDrY2mfNHW/uqYUvvMcYmcQixyPnaKeKlSXBbvMLyX0CStKsSn86WkVDdiPoN/
-         Bb0odyoZeRKaH61srhU3nyBi/kDEuzTz89yniMpCmkr5JI1gyRpjDbT95odXLJEEWrIB
-         RdeS94jfjSZZZT+dT5hBImv1dPJ4rx6Ad9yKBdiPGYRcEw0P+udya10FK47jrqtqQhyP
-         LjRw==
-X-Gm-Message-State: AFqh2kpU1u6JonfCNpr7XMrIVGuh9npXRwTsoH30aRbeNCQRrA/3w+XG
-        JDY78dEeKH++Be2Zmt6aUO5b/jUyVysvS+HprcKlg0HyxZ/3Fg==
-X-Google-Smtp-Source: AMrXdXvo69j9YoPEoO2lldH79hHn+c58oW4FRh9Wp+zEyjV9ZZP+lufBeNlYfqep7QRkeVVzM/Ex1QTu1p1SvtAO16g=
-X-Received: by 2002:a05:6a00:a1a:b0:580:8b92:ecff with SMTP id
- p26-20020a056a000a1a00b005808b92ecffmr3298706pfh.4.1672942006019; Thu, 05 Jan
- 2023 10:06:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20230104095702.2591122-1-yangyingliang@huawei.com>
-In-Reply-To: <20230104095702.2591122-1-yangyingliang@huawei.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Thu, 5 Jan 2023 12:06:34 -0600
-Message-ID: <CAPLW+4=eE=YXSSEMRPJ2g_FK68PO2h9By-FGZOtDG4jyFWLq2w@mail.gmail.com>
-Subject: Re: [PATCH] iommu/exynos: fix error handling in exynos_iommu_init()
-To:     Yang Yingliang <yangyingliang@huawei.com>
-Cc:     iommu@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
-        m.szyprowski@samsung.com, jroedel@suse.de
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 5 Jan 2023 17:18:59 -0500
+Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F0967BFF;
+        Thu,  5 Jan 2023 14:18:58 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.west.internal (Postfix) with ESMTP id DEFA132007CF;
+        Thu,  5 Jan 2023 17:18:56 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Thu, 05 Jan 2023 17:18:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; t=1672957136; x=1673043536; bh=TCaP7y5pzb
+        RmEVCDjX4if25GDRs9o9AP2CCvuXdY0Rc=; b=PIcSr8fYa2Ax3wFTq+g4lz8Egp
+        wYqg/YGdva+cVwXt9uZTfsZxQ27iGq06akBW3eOl9ixhfehTWB3WrkYUFvKlqjGX
+        fkDHxuUKwRqhFU1fJZSEY72aKgS7wK2oGkZR7hPZvBR0TXrRwI0DErsLhfuXL+wq
+        1LLFWpIgTcG0jicVeuyuEbB1QIEb5MjM9WGhT/ubOkKMCkLH0Ecwpw4LJeu0yVym
+        8hYV59utE/civUmOmUnpquSOzbUyoK9wysJUWv9vnspWvw5sfzU5Ag4wm6ReiNln
+        hAHk2M9XwcRNPpdW5VxqeC2pxe4BoWnEcm5XB9ErG77SnAx9MeaFEfDCqnIA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; t=1672957136; x=1673043536; bh=TCaP7y5pzbRmEVCDjX4if25GDRs9
+        o9AP2CCvuXdY0Rc=; b=KMsvE1ioZEJTW+IdbA+3wGtpwUfjL4X5vYLLsXNwgRnF
+        kJNW9lSFH1mTj5y2b1o0Pf7/+uQWyAWHH6Tt3czXMXjWK5TPdyOUBX3D1X2xuLah
+        VoopmZ/WCRH2kgGIVVD8aF3Wtz2E1wtxUtfdwq/Ls6K5VKY5EnInSGSxnQhHrZKj
+        Njf8/2KyYFpkQooJ/i7iA4cPqzLRHOkl3u4tqFogRRJPF9lA9ecv/v7+MTio1Lh0
+        9qrlhlSkboVbAeyPPCvPquI0nycez6ygf4E3uP0mHa4LqxzGu0XMO10xmMwYihJE
+        /oTmRbH/NzOFpIh+ovc2x83PqXBVKej9uuxjxn4sAg==
+X-ME-Sender: <xms:0Ey3Y-N9OIa30Ll-O0fn6BQt1edYAiQecStmo9eRbf_bE0ocd_Tpaw>
+    <xme:0Ey3Y8-nYRa5KFIlQKnDj11hBYzEX2cbhtnVcgKH88s73q_5vcRzZMHV920RPpAK0
+    zCC3CIafHqmLRWOldI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrjeekgdduiedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepudeiffeghfdtueeigeeljedvfeeludffkedtkeeuvdeifeefudeiteefffev
+    gfeunecuffhomhgrihhnpehgihhtqdhstghmrdgtohhmnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:0Ey3Y1TFjHCzrZ2JaGGMwVbtgyXn7sd4iaiuXTWXh5qFZMUTRdMWcw>
+    <xmx:0Ey3Y-vojGuC9-6fZRpSlURSXNeCG0jVb64p7noARUjoj6nrMK4aeg>
+    <xmx:0Ey3Y2cSKiNDTsmyL3QQIXUndMdjQUSDDWXZW7HyP2T7YVnjjFE7mg>
+    <xmx:0Ey3Y81ofk1jtNnS7fQq4IK9qdJxpsx_hJ3kTP1jYmHzhwlQlYJZlA>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 1B0ECB60086; Thu,  5 Jan 2023 17:18:55 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.7.0-alpha0-1185-g841157300a-fm-20221208.002-g84115730
+Mime-Version: 1.0
+Message-Id: <8b50ce1d-59d8-44b6-b330-d2ab56fb85a7@app.fastmail.com>
+In-Reply-To: <202301060326.qh0NHlzm-lkp@intel.com>
+References: <20230105141231.2006353-1-arnd@kernel.org>
+ <202301060326.qh0NHlzm-lkp@intel.com>
+Date:   Thu, 05 Jan 2023 23:18:36 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "kernel test robot" <lkp@intel.com>,
+        "Arnd Bergmann" <arnd@kernel.org>,
+        "Krzysztof Kozlowski" <krzk@kernel.org>,
+        "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+        "Tomasz Figa" <tomasz.figa@gmail.com>,
+        "Chanwoo Choi" <cw00.choi@samsung.com>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>
+Cc:     oe-kbuild-all@lists.linux.dev,
+        "Alim Akhtar" <alim.akhtar@samsung.com>,
+        "Ajay Kumar" <ajaykumar.rs@samsung.com>,
+        "Pankaj Dubey" <pankaj.dubey@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: samsung: remove s3c24xx specific pll bits
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 4 Jan 2023 at 03:38, Yang Yingliang <yangyingliang@huawei.com> wrote:
+On Thu, Jan 5, 2023, at 20:49, kernel test robot wrote:
+> Hi Arnd,
 >
-> If platform_driver_register() fails, it don't need unregister and call
-> kmem_cache_free() to free the memory allocated before calling register.
+> I love your patch! Yet something to improve:
 >
-> Fixes: bbc4d205d93f ("iommu/exynos: Fix driver initialization sequence")
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-> ---
+> [auto build test ERROR on krzk/for-next]
+> [also build test ERROR on linus/master v6.2-rc2 next-20230105]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+>
+>>> drivers/clk/samsung/clk-s3c2410.c:123:9: error: implicit declaration of function 'PLL_S3C2410_MPLL_RATE' [-Werror=implicit-function-declaration]
+>      123 |         PLL_S3C2410_MPLL_RATE(12 * MHZ, 270000000, 127, 1, 1),
+>          |         ^~~~~~~~~~~~~~~~~~~~~
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+For clarification, the order in the patch series puts this
+patch after the one that removes clk-s3c2410.c, so there should
+be no bisection problem.
 
->  drivers/iommu/exynos-iommu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index b0cde2211987..c1d579c24740 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -1446,7 +1446,7 @@ static int __init exynos_iommu_init(void)
->
->         return 0;
->  err_reg_driver:
-> -       platform_driver_unregister(&exynos_sysmmu_driver);
-> +       kmem_cache_free(lv2table_kmem_cache, zero_lv2_table);
->  err_zero_lv2:
->         kmem_cache_destroy(lv2table_kmem_cache);
->         return ret;
-> --
-> 2.25.1
->
+    Arnd
