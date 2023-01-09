@@ -2,91 +2,124 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0746C3DA7A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Jan 2023 17:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F00FC54EBD
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Jan 2023 01:16:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234650AbjAFR57 (ORCPT
+        id S233725AbjAIBQN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Jan 2023 12:57:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46962 "EHLO
+        Sun, 8 Jan 2023 20:16:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235050AbjAFR56 (ORCPT
+        with ESMTP id S233703AbjAIBQM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Jan 2023 12:57:58 -0500
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CA497DE0F
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Jan 2023 09:57:57 -0800 (PST)
-Received: by mail-yb1-xb2f.google.com with SMTP id p188so2661507yba.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Jan 2023 09:57:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/Vm9njLv8zSsK/sovVu1laEs0HZNte5oiMpQpKlG/5s=;
-        b=iblujaKvE23FC0d+06OXSlVZYClMsGamZ6ZXj7SRyl76Cd9aSRaM//jp+6HUfiAM22
-         AGIHlex0uoqVRoi+puZP+udjS1nipXOpM6KjXMOobPSxcE8NH+oX6X7WuDRktInmnAcV
-         lnJpU+nya5Uvq0WaQo0OQjZoaxyXMIFKuGhk4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/Vm9njLv8zSsK/sovVu1laEs0HZNte5oiMpQpKlG/5s=;
-        b=HTOK/d9+OVt2zpt4LaWYA2SQxE+R82c8N4rzNlIRk+Toh5Z8rOsUN2DSyLmSdirZ6g
-         VKa7+P5Pmg9jf+PcpmaU0Pz9ZokPZA4cLZej3pAV4bXF+gzdHW4IwVy/z85qjnYR5iyu
-         S4+hoek2ryMUaPgjyn5Hl9vPYO2VJrByfiBs6ILAzh3JM4cYcxu0+Q0oza1iiiYp54E6
-         8RBfJO9xksC07mWW0mrMUu/k9G/oyC41hbeB/RbiKt88LG0ytICEsMmzqRJOmMra7Z3q
-         DoKg6qE68Y143xVz0cLBeD5Z3/r3cVRDZF7NM1fTOtZNlcDlQiV1KQ3pBOaKrv0VFTIi
-         /PMQ==
-X-Gm-Message-State: AFqh2krQxqwJCHUa8UGcXsCm3OsLIefGvFBNIHv6k0UABpMepJ5ok890
-        IF8EL2xCswTeNhBojKul2wdMtfJIAsbSXcVzvII33g==
-X-Google-Smtp-Source: AMrXdXu0obOSob9FWM4o+nQkLY3Z9FDbaDA1nbeYcRSxOcmxYJSLrSyQFqUOtSF2fLLy8N92OKoGhxU6gQg6V5DJ6T8=
-X-Received: by 2002:a25:cc82:0:b0:6f9:bd14:f0b4 with SMTP id
- l124-20020a25cc82000000b006f9bd14f0b4mr7181577ybf.408.1673027876839; Fri, 06
- Jan 2023 09:57:56 -0800 (PST)
+        Sun, 8 Jan 2023 20:16:12 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDEA4DFF;
+        Sun,  8 Jan 2023 17:16:10 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6E78760EA5;
+        Mon,  9 Jan 2023 01:16:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB27BC433F1;
+        Mon,  9 Jan 2023 01:16:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673226969;
+        bh=I7uRhzzKfn+fJFzre0fr0A96dZ17V23thWuW3j3BOQg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=pP+iQ+VXytwoQx8X5jton7J/vMtVUiABkGC0oVWf/hdfIfZWT1Bd0IS/BodfXs+gY
+         Ih0w5IwQrz5V2gLfkriGJlNcOrVcbFpLZK2HzCdqUQpR3Y20/p34wTK+TX3nkYZX0C
+         lZFfT2YjhZ6pc5yCfaN5fZRttiGfZXvHrziusCIcpC/xtVIHGgBnkpim26dRN5nbl3
+         HUhX09BfNcZnXDPoMgi38OtizqXF/dl76Dktf3zgXJgX2HmNItXgMD+brCeI9HTKE/
+         SKEwMpQcJvbeDN1HrOqeT+ewWlXJTJOmxiI1SNvcnkCBDJEpKNiDukceDmxlLzDu1k
+         t1WkQgYg2iaGA==
+Received: by mail-ua1-f48.google.com with SMTP id z23so1657446uae.7;
+        Sun, 08 Jan 2023 17:16:09 -0800 (PST)
+X-Gm-Message-State: AFqh2kp9Xd98qLKmQEXpZ93lGwnKpWRhcc59WfPTnMf++vzFTy40bDFX
+        rZv9Is4UAb1urAid68jjqNY3keO74tZJbH/9Lg==
+X-Google-Smtp-Source: AMrXdXtu1ZODwK9qx/LS3GDF1PgE1EtAbnaQtR39OMzYo0BRd36pFYWpqo21w8COL0zisKQVqz74Q2sk6UuNIqd7Ir0=
+X-Received: by 2002:a05:6130:2ac:b0:573:d2a:e6cf with SMTP id
+ q44-20020a05613002ac00b005730d2ae6cfmr3485209uac.36.1673226968780; Sun, 08
+ Jan 2023 17:16:08 -0800 (PST)
 MIME-Version: 1.0
-References: <20221212145745.15387-1-jagan@amarulasolutions.com>
-In-Reply-To: <20221212145745.15387-1-jagan@amarulasolutions.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Fri, 6 Jan 2023 23:27:45 +0530
-Message-ID: <CAMty3ZAvJb-TT5M2PPwDZ29=rmELF=5DWyMAMFLSzKXFcMHmgg@mail.gmail.com>
-Subject: Re: [PATCH v10 1/2] drm: exynos: dsi: Fix MIPI_DSI*_NO_* mode flags
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Sam Ravnborg <sam@ravnborg.org>
-Cc:     Marek Vasut <marex@denx.de>, linux-samsung-soc@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        =?UTF-8?Q?S=C3=A9bastien_Szymanski?= 
-        <sebastien.szymanski@armadeus.com>
+References: <CGME20221214044423epcas5p2920e87930665345169745002ec6993c3@epcas5p2.samsung.com>
+ <20221214044342.49766-1-sriranjani.p@samsung.com> <20221214044342.49766-2-sriranjani.p@samsung.com>
+In-Reply-To: <20221214044342.49766-2-sriranjani.p@samsung.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Sun, 8 Jan 2023 19:15:57 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLAqSoVdExrHXZ4xVaY4Ut5R54izoumOY8zsXWN2e8++w@mail.gmail.com>
+Message-ID: <CAL_JsqLAqSoVdExrHXZ4xVaY4Ut5R54izoumOY8zsXWN2e8++w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] dt-bindings: soc: samsung: exynos-sysreg: add
+ dedicated SYSREG compatibles to Exynos850
+To:     Sriranjani P <sriranjani.p@samsung.com>
+Cc:     krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
+        alim.akhtar@samsung.com, pankaj.dubey@samsung.com,
+        ravi.patel@samsung.com, sathya@samsung.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Dec 12, 2022 at 8:28 PM Jagan Teki <jagan@amarulasolutions.com> wro=
-te:
+On Tue, Dec 13, 2022 at 10:47 PM Sriranjani P <sriranjani.p@samsung.com> wrote:
 >
-> HFP/HBP/HSA/EOT_PACKET modes in Exynos DSI host specifies
-> 0 =3D Enable and 1 =3D Disable.
+> Exynos850 has two different SYSREGs, hence add dedicated compatibles for
+> them and deprecate usage of generic Exynos850 compatible alone.
 >
-> The logic for checking these mode flags was correct before
-> the MIPI_DSI*_NO_* mode flag conversion.
->
-> This patch is trying to fix this MIPI_DSI*_NO_* mode flags handling
-> Exynos DSI host and update the mode_flags in relevant panel drivers.
->
-> Fixes: <0f3b68b66a6d> ("drm/dsi: Add _NO_ to MIPI_DSI_* flags disabling
-> features")
-> Reviewed-by: Marek Vasut <marex@denx.de>
-> Reviewed-by: Nicolas Boichat <drinkcat@chromium.org>
-> Reported-by: S=C3=A9bastien Szymanski <sebastien.szymanski@armadeus.com>
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> Signed-off-by: Sriranjani P <sriranjani.p@samsung.com>
 > ---
+>  .../soc/samsung/samsung,exynos-sysreg.yaml        | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+> index 4954790eda6c..427df05224e5 100644
+> --- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+> +++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+> @@ -17,7 +17,6 @@ properties:
+>                - samsung,exynos3-sysreg
+>                - samsung,exynos4-sysreg
+>                - samsung,exynos5-sysreg
+> -              - samsung,exynos850-sysreg
+>                - samsung,exynosautov9-sysreg
+>                - tesla,fsd-cam-sysreg
+>                - tesla,fsd-fsys0-sysreg
+> @@ -33,9 +32,17 @@ properties:
+>            - const: samsung,exynos5433-sysreg
+>            - const: syscon
+>        - items:
+> -          - const: samsung,exynos5433-sysreg
+> +          - enum:
+> +              - samsung,exynos5433-sysreg
+> +              - samsung,exynos850-sysreg
+> +          - const: syscon
+> +            deprecated: true
 
-Any update on this?
+This is throwing an error in linux-next now.
+
+How can 1 item in a list be deprecated? What's the not deprecated
+value for the entry? Probably this needs to move up to 'items' as the
+whole entry is deprecated.
+
+> +      - items:
+> +          - enum:
+> +              - samsung,exynos850-cmgp-sysreg
+> +              - samsung,exynos850-peri-sysreg
+> +          - const: samsung,exynos850-sysreg
+>            - const: syscon
+> -        deprecated: true
+>
+>    reg:
+>      maxItems: 1
+> @@ -53,6 +60,8 @@ allOf:
+>          compatible:
+>            contains:
+>              enum:
+> +              - samsung,exynos850-cmgp-sysreg
+> +              - samsung,exynos850-peri-sysreg
+>                - samsung,exynos850-sysreg
+>      then:
+>        required:
+> --
+> 2.17.1
+>
