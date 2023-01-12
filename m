@@ -2,295 +2,571 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C068AC61DB3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Jan 2023 15:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB72C7EE21
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Jan 2023 20:04:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240610AbjALPll (ORCPT
+        id S240894AbjALUEH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 12 Jan 2023 10:41:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54656 "EHLO
+        Thu, 12 Jan 2023 15:04:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240430AbjALPlO (ORCPT
+        with ESMTP id S232875AbjALT7P (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 12 Jan 2023 10:41:14 -0500
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2085.outbound.protection.outlook.com [40.107.244.85])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1961E0DA;
-        Thu, 12 Jan 2023 07:31:58 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hUejrCYtQMknSTe3GlwcGOgTw7j3lgsrdhRckBC/pIcBAXccMefDBf9HhAyJgspWk0GCpbP2RdkZJyx6CzCSJAY2kNE4A2FbjIAPVp/Rhhl+jQbA4TfwN+YZvfan+thws6PQIk+NF2QDnqcmuP7Ty+a2RcAeJ0P6XgARV4Fk8R+oQf7bOj3CScHPwBZFon+tIH4NPhcKkxA92gAZoKiNmPxIQu4gtQR3aYmanhmq6b0oPhlPGSBFPfbADFYmYYI/orBUkPwuw14NvGIIAcxxzCwBHjMvI5HdZojvW/wQA2OC6X+nmIZdL9gHU2f97YaKOgf0GBQC4p11D8jaIIMVmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3ypVkPRINook+yraif37jJjjkLxdxcUoPnMic3Y5bsI=;
- b=EUf5qk0F9H6Bph94QXHGptvcoOZawL9o0gwXDQEzy/mDD8ysHket/DWbI1raCbO4ayoTrUcQi7WdAb7sun+wWoxBA6lMGiILCd3v81HX2wRc2QHDgBCyXPkNaTyaP8xk1l7Bn92xp+5BVDS7oikIiprjfWE5+URhYr8P5LRQr5nxggxYpLLrBQReWnRhHp9O92xdULicuh4PCspzOeH5hj3Cg2RIhN84qnfTnjrwqA3bfM5GxjT22l8U1PR4zdjQCmOXivw9kuw0yaR0K/z+JukklUJHYznC5MAY7KAlJRit0f4TAblRnCGP9D+33SEYeK/17IdPXd7VtOBkLo+3CQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3ypVkPRINook+yraif37jJjjkLxdxcUoPnMic3Y5bsI=;
- b=Wd/89GCB0taZXs9L9Q6N/sJ2XE9ouATh1yvD/J4gIO/osU9Si1Jfn52tzSyvMQ0JX39gLso8E9eqHU+8qU1e5uvuERhpwGgeut8raUjhZyY79FNo6Vr2lDsNhDRKcyjhmDfEh7HXwtgNDZcGfHqhsMpIDHRcYTqzYNdOGazcxQs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5229.namprd12.prod.outlook.com (2603:10b6:5:398::12)
- by IA1PR12MB6211.namprd12.prod.outlook.com (2603:10b6:208:3e5::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.18; Thu, 12 Jan
- 2023 15:31:52 +0000
-Received: from DM4PR12MB5229.namprd12.prod.outlook.com
- ([fe80::8200:4042:8db4:63d7]) by DM4PR12MB5229.namprd12.prod.outlook.com
- ([fe80::8200:4042:8db4:63d7%3]) with mapi id 15.20.6002.013; Thu, 12 Jan 2023
- 15:31:52 +0000
-Message-ID: <7b7cd84a-e9ff-b2c1-4bf0-0ed05cca76bd@amd.com>
-Date:   Thu, 12 Jan 2023 09:31:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v2 02/23] arm64: dts: Update cache properties for amd
-Content-Language: en-US
-To:     Pierre Gondois <pierre.gondois@arm.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
-        Antoine Tenart <atenart@kernel.org>,
-        Brijesh Singh <brijeshkumar.singh@amd.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        William Zhang <william.zhang@broadcom.com>,
-        Anand Gore <anand.gore@broadcom.com>,
-        Kursad Oney <kursad.oney@broadcom.com>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Chester Lin <clin@suse.com>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Matthias Brugger <mbrugger@suse.com>,
-        NXP S32 Linux Team <s32@nxp.com>,
-        Wei Xu <xuwei5@hisilicon.com>, Chanho Min <chanho.min@lge.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        UNGLinuxDriver@microchip.com, Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jisheng Zhang <jszhang@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Zhou Peng <eagle.zhou@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Ming Qian <ming.qian@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Adam Ford <aford173@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Richard Zhu <hongxing.zhu@nxp.com>, Li Jun <jun.li@nxp.com>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Marek Vasut <marex@denx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Paul Elder <paul.elder@ideasonboard.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Martin Kepplinger <martink@posteo.de>,
-        David Heidelberg <david@ixit.cz>,
-        Liu Ying <victor.liu@nxp.com>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Wei Fang <wei.fang@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Vadym Kochan <vadym.kochan@plvision.eu>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Akhil R <akhilrajeev@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>,
-        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Johan Jonker <jbx6244@gmail.com>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Aswani Reddy <aswani.reddy@samsung.com>,
-        Shashank Prashar <s.prashar@samsung.com>,
-        devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-realtek-soc@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-References: <20221107155825.1644604-1-pierre.gondois@arm.com>
- <20221107155825.1644604-3-pierre.gondois@arm.com>
-From:   Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <20221107155825.1644604-3-pierre.gondois@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH0PR13CA0005.namprd13.prod.outlook.com
- (2603:10b6:610:b1::10) To DM4PR12MB5229.namprd12.prod.outlook.com
- (2603:10b6:5:398::12)
+        Thu, 12 Jan 2023 14:59:15 -0500
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6204BF02;
+        Thu, 12 Jan 2023 11:58:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
+        Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To;
+        bh=U+TfVkp0QsADQiBGN/hq9wf1EsYpsa4vTkdZ0mLdl1k=; b=X3sYuy6fL3RqgKJT5/kyY/T0ww
+        A4w/aGqBXYzbjq0ovUGzSiXSnwqu0hAP6aWbAx6EM9RQMixaeSFkTeMoq5Tp8g8+2xTyyfjh6NtMy
+        mC6f71rhHNZc8yxzfzYNgVvDLSBEmfEe+153OuiRRLXriJ46cM5MvqvIC8SrpxxjzTew2zrO+fd+H
+        yeusXlMUu35aUpqRVpXLv7cU+tiHfK7ZE9ipHRum1o7+Yb+riAOhBcycD9sPHIAzeWqFkY5/vtieb
+        ve85chw+D6aD1ff3Jdui4CMF6z/ux8MH+wBBaRcv1NSj17Q08cT1A6MpfchKYVWU8r5TfnmKZG09P
+        RV5gCBxw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1pG3hD-0045oL-2T;
+        Thu, 12 Jan 2023 19:57:08 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2E054303410;
+        Thu, 12 Jan 2023 20:57:13 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id C388F2CCF1F60; Thu, 12 Jan 2023 20:57:07 +0100 (CET)
+Message-ID: <20230112195540.130014793@infradead.org>
+User-Agent: quilt/0.66
+Date:   Thu, 12 Jan 2023 20:43:27 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     peterz@infradead.org
+Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
+        nsekhar@ti.com, brgl@bgdev.pl, ulli.kroll@googlemail.com,
+        linus.walleij@linaro.org, shawnguo@kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com,
+        khilman@kernel.org, krzysztof.kozlowski@linaro.org,
+        alim.akhtar@samsung.com, catalin.marinas@arm.com, will@kernel.org,
+        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
+        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
+        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
+        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
+        shorne@gmail.com, James.Bottomley@HansenPartnership.com,
+        deller@gmx.de, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, paul.walmsley@sifive.com,
+        palmer@dabbelt.com, aou@eecs.berkeley.edu, hca@linux.ibm.com,
+        gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        richard@nod.at, anton.ivanov@cambridgegreys.com,
+        johannes@sipsolutions.net, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+        hpa@zytor.com, acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, anup@brainfault.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        jacob.jun.pan@linux.intel.com, atishp@atishpatra.org,
+        Arnd Bergmann <arnd@arndb.de>, yury.norov@gmail.com,
+        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
+        dennis@kernel.org, tj@kernel.org, cl@linux.com,
+        rostedt@goodmis.org, mhiramat@kernel.org, frederic@kernel.org,
+        paulmck@kernel.org, pmladek@suse.com, senozhatsky@chromium.org,
+        john.ogness@linutronix.de, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
+        vschneid@redhat.com, ryabinin.a.a@gmail.com, glider@google.com,
+        andreyknvl@gmail.com, dvyukov@google.com,
+        vincenzo.frascino@arm.com,
+        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-csky@vger.kernel.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v3 13/51] cpuidle: Fix ct_idle_*() usage
+References: <20230112194314.845371875@infradead.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5229:EE_|IA1PR12MB6211:EE_
-X-MS-Office365-Filtering-Correlation-Id: a062c05d-9055-44e5-402e-08daf4b220e0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 8TUH8PsIFKnGxIVf0IAQD6kX28An3Y3E4vLgq7qyZZZHWKQCZ5s6QgaeBmo7vqHsEC3SRvcTfb+gDNtUK2Ko7Hyp7Yg5XIjzzlFzXqLBAgXt0snPUPYaxpSQCytm66e5UqhxWKC+TU1crs1HXZZ5oSpLxFVwY3Br9DUtf10sefl/hN9NoRH41nGjnKizTsQH+U3SDDNW7QgZfIlSXJkOqBPYRJfW48dQyWfNM+yow48r1vW9GQM1FWW1L1JUIsiAizx6v98ulKHj14vwRLRIdtMJt/bT7nIZFwV2K2ZKRj40JRCl29HeFFNl/z8nWHvMbCR/aSEi8Xf4EgCPwk2fBokUsfd0cnpvVWB2vlaq7X/nkyDT/cIEOH1Na7KV68cCqB8xsIZ3jVT41tc1nBuMT3SNfpTD3RE8jWXBdCJooT8izwF3qLbnk2Fzaca1t6QdY1WEvbpocnzcHXjDsMN8vvwojdcs4UoWSDngtX+IWMvZwNP6ono6+iJf+kUAjqnPtBhun2b7idwpH4cYgP9WFqMYmftugqB5r39brHpnZMQx+W9ByFd+ky5rZ8JRHKzs/EcgZK+08jkiyEkyIADW2EfiXtyWnk4OtABuATeA4LDzFf9pqjPklsJC/VwTzDv3ImUIi0xzphkUW5rpq7KYd1qvutD5PhDiWMVF5NJT4L+egWeyhThg0ojkuem+kbA0Dgq1cgS0t/7bodxTvYPfuPK7ZcCBGgxC2+wtFEDsaJQ=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5229.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(39860400002)(396003)(136003)(376002)(346002)(451199015)(53546011)(2906002)(15650500001)(6506007)(6486002)(6666004)(26005)(478600001)(6512007)(186003)(31686004)(316002)(54906003)(4326008)(36756003)(8676002)(66946007)(7406005)(66476007)(2616005)(66556008)(41300700001)(8936002)(83380400001)(5660300002)(38100700002)(7416002)(7276002)(7366002)(7336002)(86362001)(31696002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Y3VOZGFsM3V0OCs4VjcyZERYUWZtZ0NORndQL1k0MzlWRzY2dlJnQ0NWc2ht?=
- =?utf-8?B?VHQ5L1V5YU1VUnZFRC8wRTB3N0h5L1BtaUJXc28yZGtzQlk2NWtNaUNEQ0Z1?=
- =?utf-8?B?R2ZHa1Z0aUl4eE5Yd1VBeWgxb2plVGoySU1BN1FIVndZMnpZei9kQit4bEwz?=
- =?utf-8?B?Z1RhLzZYejhGSFVueVd5a0pwVzBOTk1YNDZQR3RCcnc2VW9MTGRFdjh3V01y?=
- =?utf-8?B?cFBEeW0vT0REVG5UM2I2U2N4ZHZPNzhqNjFaaU1iRkhZRXpZNWh6em9VZVM2?=
- =?utf-8?B?elhlTTJ2QUI3end1SmVtN2EyUFVQKytDLzdxRjQ0eWI2SC9IUXMwUk1idEcz?=
- =?utf-8?B?d2F5RmpTNGV5Y28yMmtRNDE4N2NXYzZHNGR3UVd1K29sN0Vjc3dFRFhlZHpB?=
- =?utf-8?B?ZUpJc1JINUtoQW82cVUzOGZLRjRHdllxQWtiMTdjc09GcXNPT2xVUVVSUTY4?=
- =?utf-8?B?bmxLN3FKZ1hBdUNzTERHL0RiNWpPS2xIODJ5VXE0eXBqRkwzaGJhdTNxd01s?=
- =?utf-8?B?VE1nKzVwTElVUHJmOXY3YjZRSVZXcjc3a2xjekRRWWM5ZWUxMlNQSVVkNzAx?=
- =?utf-8?B?TmdQQm9zS3lRelF4ajBOYlRvVk02Q25JYmNoSWREVm5SYVk3aTFDbnBzMk1n?=
- =?utf-8?B?a0luVEFnVmRWaFhmWE96OS9NY3R6R2ErZ21FWlRZL1dlTE1uU1V6bUplSlpT?=
- =?utf-8?B?YjZ5dC93NHVlZUJvMjJiejg0THhLWDRXeThxbXFtVGo4dnU4c3dvLzJ0ZGN4?=
- =?utf-8?B?SEd0R1ZpbmFPMWJFb055S0hvYzRzeWNHSDN1YkdqMVJBZnZwYngwR2RCZlI2?=
- =?utf-8?B?QTBzU2pXWDIvZ1VLaFJhd1hmQk9POTk0OUpGYndXMWtpVU9NNUpBNVhVOE84?=
- =?utf-8?B?cWY2U2VRb3pZdmJyTmZoRW1zbkpjaGNjVUhGK20zUDVDQUxUWHNKM2hRUE14?=
- =?utf-8?B?WFFqaHhwdHRZZVlSVVRjVUd3TDhXOEdVV2ZkazlrU0JtZC9zQzhRWk1SMFVF?=
- =?utf-8?B?T3dXZURyVGtiaVBONmsvYjdQWUFGMjVFNGErUzg3S1IzbFhGdVUvK2xPZFRK?=
- =?utf-8?B?dyt1b2xBTXBhZU1QSG1CR04xQkNlUFFiQW1ianE0TWF3WDZMM1ZOS2o2MTE2?=
- =?utf-8?B?Sk92clo3TnY1YnNqMDJXNjkzY1d2S2hFbjlXOU9UN2tRVTJwTWhiSDJuTFFt?=
- =?utf-8?B?K3d1S3hLTjcwSGlWaDRkN1FzZDN6SXZ1Y2VBT1NlKzQ2clBlMnFxVWFkbHB3?=
- =?utf-8?B?TURuaG4yY1RxUmZvR0tEQlp3VUwwZnVrdEVOR1FqNEVycmtndjk2VTAzK0o0?=
- =?utf-8?B?MHVPZVVFanNMSy83SnRIM2toUmhURzFaT3A1RFF5SDB2Rm1tYlhPazJHQkJj?=
- =?utf-8?B?VTN0MmNXOEhzajg3N09ETkpZTFY5RHoxWkF2bnkxYWFmNEpIUXhTbkJJOTRG?=
- =?utf-8?B?ZEVOMU9BTk51QjVLRDRvZHYwbW9DN05zeTlhTlNKU3I5VkUrdWpReldxbCs0?=
- =?utf-8?B?dlhBU1M4VjgrYTN1cnl5NUpyVDRRZGhkRG1vZEsxUDZjR2FCckRrQkgxNks0?=
- =?utf-8?B?NkRvM1FVbnVQSHNxRUU0czV0enNoaTliZ0JjZFVqYlhsMTJXZ1NwV0hCZmM4?=
- =?utf-8?B?bjZDbDBXZmZpL2xwZXN3Wi9qOFFic2p3MnY4UE4zcmdlTWtBcDlLWmNwR251?=
- =?utf-8?B?Nm9wVktvZGJnR2ZQSk5jNjVhb3hHQmdxa3NXeHovTUF4NVBxSkJjaTVlK2RY?=
- =?utf-8?B?QURxSGk3U3pyWWVXTzVZMktIdXB6a3FCNTNCclAwUThzcmhMd1FmZWFOcFkv?=
- =?utf-8?B?L3g1RTg2OEpUa0Z6SGJlekhSbDZwWjF6UFlnWU1vRnhLR254VWZlZmZxSEtN?=
- =?utf-8?B?RWVFcnc1VWpGdU14bWRRTGNCSGNoV2szQkZZN3BBektrVkszeW9ySTBmYjZz?=
- =?utf-8?B?TnBFV1Bnakk2TkZhcjhweWFRK0tyWi9zNEhuWHlmUDBWUW1TYjlkRjVlaXBT?=
- =?utf-8?B?bVZrbGdZSzF3UVZIWC83OHVlUHYrWU5VcGgwR1hNL3pFTXJZSWMvaTF4b1hW?=
- =?utf-8?B?L2NSWUF1OTRsNlZrUU1RMzFRenMzcVhLZkFyRU11R3JrTjFpS0hYL1oxZ1J6?=
- =?utf-8?Q?B5ax5vAtZ862qfhM6klYHG0aD?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a062c05d-9055-44e5-402e-08daf4b220e0
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5229.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jan 2023 15:31:52.2863
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7t/eEDE3kMlj1iHqlQjkoQmkkqShsVxCkGHmhayI6j7xw63i+GnEkqsmI7aUCgFaoBdqh213mqUwtvEhO1vyxw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6211
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/7/22 09:56, Pierre Gondois wrote:
-> The DeviceTree Specification v0.3 specifies that the cache node
-> 'compatible' and 'cache-level' properties are 'required'. Cf.
-> s3.8 Multi-level and Shared Cache Nodes
-> The 'cache-unified' property should be present if one of the
-> properties for unified cache is present ('cache-size', ...).
-> 
-> Update the Device Trees accordingly.
-> 
-> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+The whole disable-RCU, enable-IRQS dance is very intricate since
+changing IRQ state is traced, which depends on RCU.
 
-Acked-by: Tom Lendacky <thomas.lendacky@amd.com>
+Add two helpers for the cpuidle case that mirror the entry code.
 
-> ---
->   arch/arm64/boot/dts/amd/amd-seattle-cpus.dtsi | 9 +++++++++
->   1 file changed, 9 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/amd/amd-seattle-cpus.dtsi b/arch/arm64/boot/dts/amd/amd-seattle-cpus.dtsi
-> index 93688a0b6820..9f2d983e082d 100644
-> --- a/arch/arm64/boot/dts/amd/amd-seattle-cpus.dtsi
-> +++ b/arch/arm64/boot/dts/amd/amd-seattle-cpus.dtsi
-> @@ -163,38 +163,47 @@ CPU7: cpu@301 {
->   	};
->   
->   	L2_0: l2-cache0 {
-> +		compatible = "cache";
->   		cache-size = <0x100000>;
->   		cache-line-size = <64>;
->   		cache-sets = <1024>;
->   		cache-unified;
-> +		cache-level = <2>;
->   		next-level-cache = <&L3>;
->   	};
->   
->   	L2_1: l2-cache1 {
-> +		compatible = "cache";
->   		cache-size = <0x100000>;
->   		cache-line-size = <64>;
->   		cache-sets = <1024>;
->   		cache-unified;
-> +		cache-level = <2>;
->   		next-level-cache = <&L3>;
->   	};
->   
->   	L2_2: l2-cache2 {
-> +		compatible = "cache";
->   		cache-size = <0x100000>;
->   		cache-line-size = <64>;
->   		cache-sets = <1024>;
->   		cache-unified;
-> +		cache-level = <2>;
->   		next-level-cache = <&L3>;
->   	};
->   
->   	L2_3: l2-cache3 {
-> +		compatible = "cache";
->   		cache-size = <0x100000>;
->   		cache-line-size = <64>;
->   		cache-sets = <1024>;
->   		cache-unified;
-> +		cache-level = <2>;
->   		next-level-cache = <&L3>;
->   	};
->   
->   	L3: l3-cache {
-> +		compatible = "cache";
->   		cache-level = <3>;
->   		cache-size = <0x800000>;
->   		cache-line-size = <64>;
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Tested-by: Tony Lindgren <tony@atomide.com>
+Tested-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ arch/arm/mach-imx/cpuidle-imx6q.c    |    4 +--
+ arch/arm/mach-imx/cpuidle-imx6sx.c   |    4 +--
+ arch/arm/mach-omap2/cpuidle34xx.c    |    4 +--
+ arch/arm/mach-omap2/cpuidle44xx.c    |    8 +++---
+ drivers/acpi/processor_idle.c        |    8 ++++--
+ drivers/cpuidle/cpuidle-big_little.c |    4 +--
+ drivers/cpuidle/cpuidle-mvebu-v7.c   |    4 +--
+ drivers/cpuidle/cpuidle-psci.c       |    4 +--
+ drivers/cpuidle/cpuidle-riscv-sbi.c  |    4 +--
+ drivers/cpuidle/cpuidle-tegra.c      |    8 +++---
+ drivers/cpuidle/cpuidle.c            |   11 ++++----
+ include/linux/clockchips.h           |    4 +--
+ include/linux/cpuidle.h              |   34 ++++++++++++++++++++++++--
+ kernel/sched/idle.c                  |   45 ++++++++++-------------------------
+ kernel/time/tick-broadcast.c         |    6 +++-
+ 15 files changed, 86 insertions(+), 66 deletions(-)
+
+--- a/arch/arm/mach-imx/cpuidle-imx6q.c
++++ b/arch/arm/mach-imx/cpuidle-imx6q.c
+@@ -25,9 +25,9 @@ static int imx6q_enter_wait(struct cpuid
+ 		imx6_set_lpm(WAIT_UNCLOCKED);
+ 	raw_spin_unlock(&cpuidle_lock);
+ 
+-	ct_idle_enter();
++	ct_cpuidle_enter();
+ 	cpu_do_idle();
+-	ct_idle_exit();
++	ct_cpuidle_exit();
+ 
+ 	raw_spin_lock(&cpuidle_lock);
+ 	if (num_idle_cpus-- == num_online_cpus())
+--- a/arch/arm/mach-imx/cpuidle-imx6sx.c
++++ b/arch/arm/mach-imx/cpuidle-imx6sx.c
+@@ -47,9 +47,9 @@ static int imx6sx_enter_wait(struct cpui
+ 		cpu_pm_enter();
+ 		cpu_cluster_pm_enter();
+ 
+-		ct_idle_enter();
++		ct_cpuidle_enter();
+ 		cpu_suspend(0, imx6sx_idle_finish);
+-		ct_idle_exit();
++		ct_cpuidle_exit();
+ 
+ 		cpu_cluster_pm_exit();
+ 		cpu_pm_exit();
+--- a/arch/arm/mach-omap2/cpuidle34xx.c
++++ b/arch/arm/mach-omap2/cpuidle34xx.c
+@@ -133,9 +133,9 @@ static int omap3_enter_idle(struct cpuid
+ 	}
+ 
+ 	/* Execute ARM wfi */
+-	ct_idle_enter();
++	ct_cpuidle_enter();
+ 	omap_sram_idle();
+-	ct_idle_exit();
++	ct_cpuidle_exit();
+ 
+ 	/*
+ 	 * Call idle CPU PM enter notifier chain to restore
+--- a/arch/arm/mach-omap2/cpuidle44xx.c
++++ b/arch/arm/mach-omap2/cpuidle44xx.c
+@@ -105,9 +105,9 @@ static int omap_enter_idle_smp(struct cp
+ 	}
+ 	raw_spin_unlock_irqrestore(&mpu_lock, flag);
+ 
+-	ct_idle_enter();
++	ct_cpuidle_enter();
+ 	omap4_enter_lowpower(dev->cpu, cx->cpu_state);
+-	ct_idle_exit();
++	ct_cpuidle_exit();
+ 
+ 	raw_spin_lock_irqsave(&mpu_lock, flag);
+ 	if (cx->mpu_state_vote == num_online_cpus())
+@@ -186,10 +186,10 @@ static int omap_enter_idle_coupled(struc
+ 		}
+ 	}
+ 
+-	ct_idle_enter();
++	ct_cpuidle_enter();
+ 	omap4_enter_lowpower(dev->cpu, cx->cpu_state);
+ 	cpu_done[dev->cpu] = true;
+-	ct_idle_exit();
++	ct_cpuidle_exit();
+ 
+ 	/* Wakeup CPU1 only if it is not offlined */
+ 	if (dev->cpu == 0 && cpumask_test_cpu(1, cpu_online_mask)) {
+--- a/drivers/acpi/processor_idle.c
++++ b/drivers/acpi/processor_idle.c
+@@ -642,6 +642,8 @@ static int __cpuidle acpi_idle_enter_bm(
+ 	 */
+ 	bool dis_bm = pr->flags.bm_control;
+ 
++	instrumentation_begin();
++
+ 	/* If we can skip BM, demote to a safe state. */
+ 	if (!cx->bm_sts_skip && acpi_idle_bm_check()) {
+ 		dis_bm = false;
+@@ -663,11 +665,11 @@ static int __cpuidle acpi_idle_enter_bm(
+ 		raw_spin_unlock(&c3_lock);
+ 	}
+ 
+-	ct_idle_enter();
++	ct_cpuidle_enter();
+ 
+ 	acpi_idle_do_entry(cx);
+ 
+-	ct_idle_exit();
++	ct_cpuidle_exit();
+ 
+ 	/* Re-enable bus master arbitration */
+ 	if (dis_bm) {
+@@ -677,6 +679,8 @@ static int __cpuidle acpi_idle_enter_bm(
+ 		raw_spin_unlock(&c3_lock);
+ 	}
+ 
++	instrumentation_end();
++
+ 	return index;
+ }
+ 
+--- a/drivers/cpuidle/cpuidle-big_little.c
++++ b/drivers/cpuidle/cpuidle-big_little.c
+@@ -126,13 +126,13 @@ static int bl_enter_powerdown(struct cpu
+ 				struct cpuidle_driver *drv, int idx)
+ {
+ 	cpu_pm_enter();
+-	ct_idle_enter();
++	ct_cpuidle_enter();
+ 
+ 	cpu_suspend(0, bl_powerdown_finisher);
+ 
+ 	/* signals the MCPM core that CPU is out of low power state */
+ 	mcpm_cpu_powered_up();
+-	ct_idle_exit();
++	ct_cpuidle_exit();
+ 
+ 	cpu_pm_exit();
+ 
+--- a/drivers/cpuidle/cpuidle-mvebu-v7.c
++++ b/drivers/cpuidle/cpuidle-mvebu-v7.c
+@@ -36,9 +36,9 @@ static int mvebu_v7_enter_idle(struct cp
+ 	if (drv->states[index].flags & MVEBU_V7_FLAG_DEEP_IDLE)
+ 		deepidle = true;
+ 
+-	ct_idle_enter();
++	ct_cpuidle_enter();
+ 	ret = mvebu_v7_cpu_suspend(deepidle);
+-	ct_idle_exit();
++	ct_cpuidle_exit();
+ 
+ 	cpu_pm_exit();
+ 
+--- a/drivers/cpuidle/cpuidle-psci.c
++++ b/drivers/cpuidle/cpuidle-psci.c
+@@ -74,7 +74,7 @@ static int __psci_enter_domain_idle_stat
+ 	else
+ 		pm_runtime_put_sync_suspend(pd_dev);
+ 
+-	ct_idle_enter();
++	ct_cpuidle_enter();
+ 
+ 	state = psci_get_domain_state();
+ 	if (!state)
+@@ -82,7 +82,7 @@ static int __psci_enter_domain_idle_stat
+ 
+ 	ret = psci_cpu_suspend_enter(state) ? -1 : idx;
+ 
+-	ct_idle_exit();
++	ct_cpuidle_exit();
+ 
+ 	if (s2idle)
+ 		dev_pm_genpd_resume(pd_dev);
+--- a/drivers/cpuidle/cpuidle-riscv-sbi.c
++++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
+@@ -126,7 +126,7 @@ static int __sbi_enter_domain_idle_state
+ 	else
+ 		pm_runtime_put_sync_suspend(pd_dev);
+ 
+-	ct_idle_enter();
++	ct_cpuidle_enter();
+ 
+ 	if (sbi_is_domain_state_available())
+ 		state = sbi_get_domain_state();
+@@ -135,7 +135,7 @@ static int __sbi_enter_domain_idle_state
+ 
+ 	ret = sbi_suspend(state) ? -1 : idx;
+ 
+-	ct_idle_exit();
++	ct_cpuidle_exit();
+ 
+ 	if (s2idle)
+ 		dev_pm_genpd_resume(pd_dev);
+--- a/drivers/cpuidle/cpuidle-tegra.c
++++ b/drivers/cpuidle/cpuidle-tegra.c
+@@ -183,7 +183,7 @@ static int tegra_cpuidle_state_enter(str
+ 	tegra_pm_set_cpu_in_lp2();
+ 	cpu_pm_enter();
+ 
+-	ct_idle_enter();
++	ct_cpuidle_enter();
+ 
+ 	switch (index) {
+ 	case TEGRA_C7:
+@@ -199,7 +199,7 @@ static int tegra_cpuidle_state_enter(str
+ 		break;
+ 	}
+ 
+-	ct_idle_exit();
++	ct_cpuidle_exit();
+ 
+ 	cpu_pm_exit();
+ 	tegra_pm_clear_cpu_in_lp2();
+@@ -240,10 +240,10 @@ static int tegra_cpuidle_enter(struct cp
+ 
+ 	if (index == TEGRA_C1) {
+ 		if (do_rcu)
+-			ct_idle_enter();
++			ct_cpuidle_enter();
+ 		ret = arm_cpuidle_simple_enter(dev, drv, index);
+ 		if (do_rcu)
+-			ct_idle_exit();
++			ct_cpuidle_exit();
+ 	} else
+ 		ret = tegra_cpuidle_state_enter(dev, index, cpu);
+ 
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -14,6 +14,7 @@
+ #include <linux/mutex.h>
+ #include <linux/sched.h>
+ #include <linux/sched/clock.h>
++#include <linux/sched/idle.h>
+ #include <linux/notifier.h>
+ #include <linux/pm_qos.h>
+ #include <linux/cpu.h>
+@@ -152,12 +153,12 @@ static void enter_s2idle_proper(struct c
+ 	 */
+ 	stop_critical_timings();
+ 	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
+-		ct_idle_enter();
++		ct_cpuidle_enter();
+ 	target_state->enter_s2idle(dev, drv, index);
+ 	if (WARN_ON_ONCE(!irqs_disabled()))
+-		local_irq_disable();
++		raw_local_irq_disable();
+ 	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
+-		ct_idle_exit();
++		ct_cpuidle_exit();
+ 	tick_unfreeze();
+ 	start_critical_timings();
+ 
+@@ -235,14 +236,14 @@ int cpuidle_enter_state(struct cpuidle_d
+ 
+ 	stop_critical_timings();
+ 	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
+-		ct_idle_enter();
++		ct_cpuidle_enter();
+ 
+ 	entered_state = target_state->enter(dev, drv, index);
+ 	if (WARN_ONCE(!irqs_disabled(), "%ps leaked IRQ state", target_state->enter))
+ 		raw_local_irq_disable();
+ 
+ 	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
+-		ct_idle_exit();
++		ct_cpuidle_exit();
+ 	start_critical_timings();
+ 
+ 	sched_clock_idle_wakeup_event();
+--- a/include/linux/clockchips.h
++++ b/include/linux/clockchips.h
+@@ -211,7 +211,7 @@ extern int tick_receive_broadcast(void);
+ extern void tick_setup_hrtimer_broadcast(void);
+ extern int tick_check_broadcast_expired(void);
+ # else
+-static inline int tick_check_broadcast_expired(void) { return 0; }
++static __always_inline int tick_check_broadcast_expired(void) { return 0; }
+ static inline void tick_setup_hrtimer_broadcast(void) { }
+ # endif
+ 
+@@ -219,7 +219,7 @@ static inline void tick_setup_hrtimer_br
+ 
+ static inline void clockevents_suspend(void) { }
+ static inline void clockevents_resume(void) { }
+-static inline int tick_check_broadcast_expired(void) { return 0; }
++static __always_inline int tick_check_broadcast_expired(void) { return 0; }
+ static inline void tick_setup_hrtimer_broadcast(void) { }
+ 
+ #endif /* !CONFIG_GENERIC_CLOCKEVENTS */
+--- a/include/linux/cpuidle.h
++++ b/include/linux/cpuidle.h
+@@ -14,6 +14,7 @@
+ #include <linux/percpu.h>
+ #include <linux/list.h>
+ #include <linux/hrtimer.h>
++#include <linux/context_tracking.h>
+ 
+ #define CPUIDLE_STATE_MAX	10
+ #define CPUIDLE_NAME_LEN	16
+@@ -115,6 +116,35 @@ struct cpuidle_device {
+ DECLARE_PER_CPU(struct cpuidle_device *, cpuidle_devices);
+ DECLARE_PER_CPU(struct cpuidle_device, cpuidle_dev);
+ 
++static __always_inline void ct_cpuidle_enter(void)
++{
++	lockdep_assert_irqs_disabled();
++	/*
++	 * Idle is allowed to (temporary) enable IRQs. It
++	 * will return with IRQs disabled.
++	 *
++	 * Trace IRQs enable here, then switch off RCU, and have
++	 * arch_cpu_idle() use raw_local_irq_enable(). Note that
++	 * ct_idle_enter() relies on lockdep IRQ state, so switch that
++	 * last -- this is very similar to the entry code.
++	 */
++	trace_hardirqs_on_prepare();
++	lockdep_hardirqs_on_prepare();
++	instrumentation_end();
++	ct_idle_enter();
++	lockdep_hardirqs_on(_RET_IP_);
++}
++
++static __always_inline void ct_cpuidle_exit(void)
++{
++	/*
++	 * Carefully undo the above.
++	 */
++	lockdep_hardirqs_off(_RET_IP_);
++	ct_idle_exit();
++	instrumentation_begin();
++}
++
+ /****************************
+  * CPUIDLE DRIVER INTERFACE *
+  ****************************/
+@@ -289,9 +319,9 @@ extern s64 cpuidle_governor_latency_req(
+ 	if (!is_retention)						\
+ 		__ret =  cpu_pm_enter();				\
+ 	if (!__ret) {							\
+-		ct_idle_enter();					\
++		ct_cpuidle_enter();					\
+ 		__ret = low_level_idle_enter(state);			\
+-		ct_idle_exit();						\
++		ct_cpuidle_exit();					\
+ 		if (!is_retention)					\
+ 			cpu_pm_exit();					\
+ 	}								\
+--- a/kernel/sched/idle.c
++++ b/kernel/sched/idle.c
+@@ -51,18 +51,22 @@ __setup("hlt", cpu_idle_nopoll_setup);
+ 
+ static noinline int __cpuidle cpu_idle_poll(void)
+ {
++	instrumentation_begin();
+ 	trace_cpu_idle(0, smp_processor_id());
+ 	stop_critical_timings();
+-	ct_idle_enter();
+-	local_irq_enable();
++	ct_cpuidle_enter();
+ 
++	raw_local_irq_enable();
+ 	while (!tif_need_resched() &&
+ 	       (cpu_idle_force_poll || tick_check_broadcast_expired()))
+ 		cpu_relax();
++	raw_local_irq_disable();
+ 
+-	ct_idle_exit();
++	ct_cpuidle_exit();
+ 	start_critical_timings();
+ 	trace_cpu_idle(PWR_EVENT_EXIT, smp_processor_id());
++	local_irq_enable();
++	instrumentation_end();
+ 
+ 	return 1;
+ }
+@@ -85,44 +89,21 @@ void __weak arch_cpu_idle(void)
+  */
+ void __cpuidle default_idle_call(void)
+ {
+-	if (current_clr_polling_and_test()) {
+-		local_irq_enable();
+-	} else {
+-
++	instrumentation_begin();
++	if (!current_clr_polling_and_test()) {
+ 		trace_cpu_idle(1, smp_processor_id());
+ 		stop_critical_timings();
+ 
+-		/*
+-		 * arch_cpu_idle() is supposed to enable IRQs, however
+-		 * we can't do that because of RCU and tracing.
+-		 *
+-		 * Trace IRQs enable here, then switch off RCU, and have
+-		 * arch_cpu_idle() use raw_local_irq_enable(). Note that
+-		 * ct_idle_enter() relies on lockdep IRQ state, so switch that
+-		 * last -- this is very similar to the entry code.
+-		 */
+-		trace_hardirqs_on_prepare();
+-		lockdep_hardirqs_on_prepare();
+-		ct_idle_enter();
+-		lockdep_hardirqs_on(_THIS_IP_);
+-
++		ct_cpuidle_enter();
+ 		arch_cpu_idle();
+-
+-		/*
+-		 * OK, so IRQs are enabled here, but RCU needs them disabled to
+-		 * turn itself back on.. funny thing is that disabling IRQs
+-		 * will cause tracing, which needs RCU. Jump through hoops to
+-		 * make it 'work'.
+-		 */
+ 		raw_local_irq_disable();
+-		lockdep_hardirqs_off(_THIS_IP_);
+-		ct_idle_exit();
+-		lockdep_hardirqs_on(_THIS_IP_);
+-		raw_local_irq_enable();
++		ct_cpuidle_exit();
+ 
+ 		start_critical_timings();
+ 		trace_cpu_idle(PWR_EVENT_EXIT, smp_processor_id());
+ 	}
++	local_irq_enable();
++	instrumentation_end();
+ }
+ 
+ static int call_cpuidle_s2idle(struct cpuidle_driver *drv,
+--- a/kernel/time/tick-broadcast.c
++++ b/kernel/time/tick-broadcast.c
+@@ -622,9 +622,13 @@ struct cpumask *tick_get_broadcast_onesh
+  * to avoid a deep idle transition as we are about to get the
+  * broadcast IPI right away.
+  */
+-int tick_check_broadcast_expired(void)
++noinstr int tick_check_broadcast_expired(void)
+ {
++#ifdef _ASM_GENERIC_BITOPS_INSTRUMENTED_NON_ATOMIC_H
++	return arch_test_bit(smp_processor_id(), cpumask_bits(tick_broadcast_force_mask));
++#else
+ 	return cpumask_test_cpu(smp_processor_id(), tick_broadcast_force_mask);
++#endif
+ }
+ 
+ /*
+
+
