@@ -2,92 +2,135 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE1BC678D5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Jan 2023 14:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B31FFC677F1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Jan 2023 14:12:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233427AbjALOEM (ORCPT
+        id S234913AbjALOM0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 12 Jan 2023 09:04:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58218 "EHLO
+        Thu, 12 Jan 2023 09:12:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234919AbjALODr (ORCPT
+        with ESMTP id S235122AbjALOKo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 12 Jan 2023 09:03:47 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28578517CD
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jan 2023 06:03:46 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id tz12so45007247ejc.9
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jan 2023 06:03:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=My5pjeUClAjTF9dSWjS7HwACXv9ARtmx5WO8ZfndvtA=;
-        b=uBy7G5Rox1wP6B4fH9uy5CmEflO6HygSAGGHurab3cnZrdiaHCdUjBrlvDAKPJHkr7
-         MiWmt7ezLDtrvtJdFH4F4yYUGBWfAI+X17IxfsvlM1ViBZRxmt1jB3ycNx6Y3lidI49E
-         O1oKilXC5ef76Lhx+/q8U7U6rmVjDfW7yNA3WkYrqwMlE4whGt8kUEK6Cb29R7AluF5y
-         +I8UefUeOI4BZyWNxMdvTL/ep55guLz+d2Z32mIpPq1dgH2veD2CBR0hwkSqqDJJS4Id
-         ZCCFsGLPydd8vF26ZbQk+hX4sU/c8AQRFDwRfUfof6LT0OR2LilEoaCRpS9WF6xh11Ya
-         sLkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=My5pjeUClAjTF9dSWjS7HwACXv9ARtmx5WO8ZfndvtA=;
-        b=VOcdW791E4+7mbH+0THynXFS0hu/SGwPIPj+5Xvjjcqq6UMFWsimM2mjIFhSjQ39Kt
-         bpVceaGUZit464SCBDeRERQS82WhfhQtiQQ/HmRxFmC6bke+W/ns5iboLwiDTl9LHKHl
-         tBxTUZiIpb9yDD0AGxyjBeapVk7xTJkaqla5+kM4hG6y1MTVzW1z8hAZaS4HT2mfb/e8
-         H3dbxGVlzHTn1HhBOL5jN2GrOes/z0xmbMOdXBhzrbKhi38dtWy38ttloniVSnGefhMd
-         0dSRs3a9EcEb8C2K3E6GkCunBkuI7Hj/DB5hm3rYfJwAGsYSpkT6Jt1JjMOMC6kQLaww
-         NDvw==
-X-Gm-Message-State: AFqh2kqgoT/wvHP+ts/Y4Nrnwz5HbTlJ1olHlMxtB2kbzcqSlu7xPkkT
-        J+AKWcErIjfjsA5rboUNfzYT7A==
-X-Google-Smtp-Source: AMrXdXvGbdkQmK11XIYeXqsM2R9ZZHZRbxHVGXyT82WofEzYZUCqFMHjTZxbDkoGkeNeMW1pn3jBEQ==
-X-Received: by 2002:a17:906:308b:b0:7ae:cda1:76d0 with SMTP id 11-20020a170906308b00b007aecda176d0mr59917554ejv.15.1673532224583;
-        Thu, 12 Jan 2023 06:03:44 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id f12-20020a170906494c00b00860c51f7de5sm1709975ejt.131.2023.01.12.06.03.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jan 2023 06:03:44 -0800 (PST)
-Message-ID: <9ce176c4-60df-6768-1c4c-b387a9c3a2e3@linaro.org>
-Date:   Thu, 12 Jan 2023 15:03:42 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v1 1/1] pinctrl: samsung: Do not mention legacy API in the
- code
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thu, 12 Jan 2023 09:10:44 -0500
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [IPv6:2a0b:5c81:1c1::37])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 253DD59319;
+        Thu, 12 Jan 2023 06:05:36 -0800 (PST)
+Received: from meesny.iki.fi (meesny.iki.fi [IPv6:2001:67c:2b0:1c1::201])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by lahtoruutu.iki.fi (Postfix) with ESMTPS id B42B51B001DE;
+        Thu, 12 Jan 2023 16:05:33 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+        t=1673532333;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=a42ddED8o+V9ePA7ykJUXoFIdNLHF7yzyFQBjqmdKao=;
+        b=vIQ2YXfr3xNvbTOdl83e19bPe2xDIasfxZoBuZhkEVGPFSiOzJ+V+p9lGqs1t+tnYnQC9I
+        g0sjgAGGOWS466QiM5sJITzzpIo20DcR0tv3je/mm+gWMEhqoqGgm4yigBpIqsF0N+53g5
+        Rd1oGaPoOZ4Qfcgo2DMnVExb2b9CEcEFtXo4xdEddZ23kGIEJtT6T7pLvQ2TLKbnY4tzBN
+        fe2oMEBSRJ+my7bR0Mus3ELFfjvfTfjh359DEXsulC5+rzqjXJ4aKedwG5k/FqG/yb317P
+        I7qACWS+XJKBjFIQlYxWZELN/KnS8ncVsoXbWC65FYzySrVmAYT+7dC4us0OEA==
+Received: from darkstar.musicnaut.iki.fi (85-76-134-241-nat.elisa-mobile.fi [85.76.134.241])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: aaro.koskinen)
+        by meesny.iki.fi (Postfix) with ESMTPSA id B240B20035;
+        Thu, 12 Jan 2023 16:05:26 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+        t=1673532327;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=a42ddED8o+V9ePA7ykJUXoFIdNLHF7yzyFQBjqmdKao=;
+        b=OTVmEy7cAIC2YV0GRP5Z3UN/hqAAHBlBXTIklXfbIH1sGgjB7Mj7y8KXvhCWuetxxixmgo
+        63Pu9yO2S3/gGck7DgkYTKCfF4KMG1mN4zW4wpDkJ8jn5nl3e8hVta8QrCzDE5Rkq3LUlk
+        yq4oJRSEew/o9UYuutj3V2Q+vKtTDbs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+        s=meesny; t=1673532327;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=a42ddED8o+V9ePA7ykJUXoFIdNLHF7yzyFQBjqmdKao=;
+        b=Yf6JJnmg9Rvc7t5bCOrwCKFEbA6lIuM3GH35pHypszsVX+SW0NbSA1WElYoxKSEwQ0efZ6
+        16Lra2Ssjhqg0EQ1Y8kx9DAJE3YU1DYq8wF7HvkjcFxm+Rl8AOJUnZT39Z+PqwforTEloh
+        8ejnkD8Gz1RaKBwqNT7LCzLyVyY2mD8=
+ARC-Authentication-Results: i=1;
+        ORIGINATING;
+        auth=pass smtp.auth=aaro.koskinen smtp.mailfrom=aaro.koskinen@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1673532327; a=rsa-sha256; cv=none;
+        b=BlSSRJwBB6M1x9Im046gh9g8xl8qv7hOi7A9fvWSGH4nbeAlKYllI6fXycSgDmOpT4dFiY
+        fksFAIIhPyio/cLPRaSJeFBPhSdMY3m5LvbmYWOajvzJ2HE16Cyj3dz8hP0S9mPQXGzr0x
+        Dw5xu8Lo+q390+6BwGu9TTZyZJwZUk8=
+Date:   Thu, 12 Jan 2023 16:05:24 +0200
+From:   Aaro Koskinen <aaro.koskinen@iki.fi>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-References: <20230112134849.59534-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230112134849.59534-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] usb: remove OMAP USB Device Controller and OHCI
+ support for OMAP1/2 chips
+Message-ID: <20230112140524.GK730856@darkstar.musicnaut.iki.fi>
+References: <20230112083746.9551-1-lukas.bulwahn@gmail.com>
+ <20230112083746.9551-4-lukas.bulwahn@gmail.com>
+ <3f2663ff-ff3f-4632-853a-ba4d38df9701@app.fastmail.com>
+ <Y7/YiMPIDN0Cf5Ky@atomide.com>
+ <c9821df0-cd3e-43a0-b903-430d1251d51c@app.fastmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c9821df0-cd3e-43a0-b903-430d1251d51c@app.fastmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 12/01/2023 14:48, Andy Shevchenko wrote:
-> Replace mentioning of legacy API by the latest one.
+Hi,
+
+On Thu, Jan 12, 2023 at 11:19:53AM +0100, Arnd Bergmann wrote:
+> On Thu, Jan 12, 2023, at 10:53, Tony Lindgren wrote:
+> > * Arnd Bergmann <arnd@arndb.de> [230112 09:03]:
+> >> On Thu, Jan 12, 2023, at 09:37, Lukas Bulwahn wrote:
+> >> > Commit 0fee2eac5c2b ("usb: phy: remove phy-isp1301-omap driver") removes
+> >> > the Philips ISP1301 with OMAP OTG driver and its corresponding config
+> >> > ISP1301_OMAP. The drivers, OMAP USB Device Controller and OHCI support for
+> >> > OMAP1/2 chips, with corresponding configs, USB_OMAP and USB_OHCI_HCD_OMAP1,
+> >> > need this removed driver (see "depends on ISP1301_OMAP") to build.
+> >> >
+> >> > Remove those two drivers.
+> >> >
+> >> > With the config USB_OMAP removed in this commit, remove some further code
+> >> > in the omap-dma header and mach-omap1 architecture code.
+> >> >
+> >> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> >> 
+> >> This would be a great cleanup because of the simplications of the
+> >> omap-dma code. I had previously looked at it and concluded that
+> >> the driver is still in use though, and I think my mistake was
+> >> just in the Kconfig part of this patch:
+> >
+> > It sure would be nice to drop the old custom dma api in omap-dma.c
+> > while keeping the dma.c in arch/arm/mach-omap1.
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
+> I see that four out of the five remaining board files still use
+> omap_udc, which is the only remaining user of the custom
+> DMA interface. What I had not noticed earlier is that DMA support
+> in that driver is actually optional, though it's hardwired
+> to be enabled.
+> 
+> So if we want to kill off the old DMA stuff there is actually
+> a choice between either making omap_udc PIO-only or converting
+> it to use the standard dmaengine interface.
 
+I use this driver on Palm TE and 770, and without it those boards would
+be useless for my use cases. Also DMA doubles the throughput, probably
+also power usage is smaller.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Linus, please pick it up directly.
-
-Best regards,
-Krzysztof
-
+A.
