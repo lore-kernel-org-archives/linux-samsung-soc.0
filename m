@@ -2,44 +2,45 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10140C77B62
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26809C77B61
 	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Jan 2023 20:04:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241670AbjALUEh (ORCPT
+        id S241678AbjALUEi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 12 Jan 2023 15:04:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44158 "EHLO
+        Thu, 12 Jan 2023 15:04:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233589AbjALT7R (ORCPT
+        with ESMTP id S233054AbjALT7P (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 12 Jan 2023 14:59:17 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9219F200F;
+        Thu, 12 Jan 2023 14:59:15 -0500
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58B42111A;
         Thu, 12 Jan 2023 11:58:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=iAxp8x4lKKvpjseCn+ZLFQYojoG8LdH6O7HFdGbhL8c=; b=iB4zaU8acs4mdnCux/EhppaQnv
-        fuEmLrend3HPuirTdd/bJ6G2nd+qGUpzlOBN9jlFeSeuQKbBH6cQLTCvznJAHfabcUQGPp9nxQjD/
-        u7GZnLG4RzmJkwXIn45CcA+9MzmOH8JDUVilxTB0EPSu9kQdxCsgzCifhTjyJwfv8ovorx7TNrhni
-        NotEMkq0qKb0ZSzE61psyjeh2Pw3ACUfX/V9vkQyxkXKopKQ0ecpOoBwaz2H9qUkou15Fq32IqZAG
-        o0gf3BKIJpVKs4Wi8RUevw7dyWIqj59cgCi096mvXcRWq2W6t4MotfjNMPm9/CINltllAxWqo3PjI
-        eGUKQklw==;
+        bh=REiFsq8Cu55BI5UIL8KISCBnMH5PlDDv/02JyaHCfws=; b=ZubM8vIp9Gjo7GwJsBdrYzbOzs
+        QOVGmZ4bWo0Q6sv20x1XlcD9CRW8N4IP7OgbgESc5RJ6qK0XbpduvgLbtC0g+RocjgmzuC01nPkxn
+        Nll1ch6FXB7zNPboeIh6WXrc2C5vVgpNXrYASNYw878FKX2W98ff9mJt7YcW2DLL4Kvaz6ApwZ2QZ
+        8LnFl7cnW88pgaQ3H98ktINkHpxIuRtLPTKQJumh2b6fK1BqXpPU1/rzjoyF4kcz0/Cm1ZTiiORYm
+        cBN7GiCc0pPVS0TbTFnZfo5/yX1v5qFf5zifIEQjIZN7jBbFEein8h2c69qoGRQNBpnSSi3z9vbhr
+        mBjy5WPQ==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pG3hZ-005OdW-32; Thu, 12 Jan 2023 19:57:29 +0000
+        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1pG3hC-0045o9-24;
+        Thu, 12 Jan 2023 19:57:07 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 370B4303413;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0A1943033F4;
         Thu, 12 Jan 2023 20:57:13 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id CBBB02CCF1F6D; Thu, 12 Jan 2023 20:57:07 +0100 (CET)
-Message-ID: <20230112195540.190860672@infradead.org>
+        id A81F92CCF1F5A; Thu, 12 Jan 2023 20:57:07 +0100 (CET)
+Message-ID: <20230112195539.760296658@infradead.org>
 User-Agent: quilt/0.66
-Date:   Thu, 12 Jan 2023 20:43:28 +0100
+Date:   Thu, 12 Jan 2023 20:43:21 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     peterz@infradead.org
 Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
@@ -104,9 +105,10 @@ Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
         linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
         linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH v3 14/51] cpuidle,cpu_pm: Remove RCU fiddling from cpu_pm_{enter,exit}()
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Kajetan Puchalski <kajetan.puchalski@arm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v3 07/51] cpuidle,psci: Push RCU-idle into driver
 References: <20230112194314.845371875@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -114,49 +116,62 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-All callers should still have RCU enabled.
+Doing RCU-idle outside the driver, only to then temporarily enable it
+again, at least twice, before going idle is daft.
+
+Notably once implicitly through the cpu_pm_*() calls and once
+explicitly doing ct_irq_*_irqon().
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Reviewed-by: Guo Ren <guoren@kernel.org>
 Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Tested-by: Kajetan Puchalski <kajetan.puchalski@arm.com>
 Tested-by: Tony Lindgren <tony@atomide.com>
 Tested-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- kernel/cpu_pm.c |    9 ---------
- 1 file changed, 9 deletions(-)
+ drivers/cpuidle/cpuidle-psci.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/kernel/cpu_pm.c
-+++ b/kernel/cpu_pm.c
-@@ -30,16 +30,9 @@ static int cpu_pm_notify(enum cpu_pm_eve
- {
- 	int ret;
+--- a/drivers/cpuidle/cpuidle-psci.c
++++ b/drivers/cpuidle/cpuidle-psci.c
+@@ -69,12 +69,12 @@ static int __psci_enter_domain_idle_stat
+ 		return -1;
  
--	/*
--	 * This introduces a RCU read critical section, which could be
--	 * disfunctional in cpu idle. Copy RCU_NONIDLE code to let RCU know
--	 * this.
--	 */
+ 	/* Do runtime PM to manage a hierarchical CPU toplogy. */
 -	ct_irq_enter_irqson();
- 	rcu_read_lock();
- 	ret = raw_notifier_call_chain(&cpu_pm_notifier.chain, event, NULL);
- 	rcu_read_unlock();
+ 	if (s2idle)
+ 		dev_pm_genpd_suspend(pd_dev);
+ 	else
+ 		pm_runtime_put_sync_suspend(pd_dev);
 -	ct_irq_exit_irqson();
++
++	ct_idle_enter();
  
- 	return notifier_to_errno(ret);
- }
-@@ -49,11 +42,9 @@ static int cpu_pm_notify_robust(enum cpu
- 	unsigned long flags;
- 	int ret;
+ 	state = psci_get_domain_state();
+ 	if (!state)
+@@ -82,12 +82,12 @@ static int __psci_enter_domain_idle_stat
+ 
+ 	ret = psci_cpu_suspend_enter(state) ? -1 : idx;
  
 -	ct_irq_enter_irqson();
- 	raw_spin_lock_irqsave(&cpu_pm_notifier.lock, flags);
- 	ret = raw_notifier_call_chain_robust(&cpu_pm_notifier.chain, event_up, event_down, NULL);
- 	raw_spin_unlock_irqrestore(&cpu_pm_notifier.lock, flags);
++	ct_idle_exit();
++
+ 	if (s2idle)
+ 		dev_pm_genpd_resume(pd_dev);
+ 	else
+ 		pm_runtime_get_sync(pd_dev);
 -	ct_irq_exit_irqson();
  
- 	return notifier_to_errno(ret);
- }
+ 	cpu_pm_exit();
+ 
+@@ -240,6 +240,7 @@ static int psci_dt_cpu_init_topology(str
+ 	 * of a shared state for the domain, assumes the domain states are all
+ 	 * deeper states.
+ 	 */
++	drv->states[state_count - 1].flags |= CPUIDLE_FLAG_RCU_IDLE;
+ 	drv->states[state_count - 1].enter = psci_enter_domain_idle_state;
+ 	drv->states[state_count - 1].enter_s2idle = psci_enter_s2idle_domain_idle_state;
+ 	psci_cpuidle_use_cpuhp = true;
 
 
