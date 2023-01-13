@@ -2,81 +2,105 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9406C677F1
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Jan 2023 07:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D95C54EBE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Jan 2023 08:59:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239917AbjAMHYR (ORCPT
+        id S240292AbjAMI7y (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 13 Jan 2023 02:24:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54270 "EHLO
+        Fri, 13 Jan 2023 03:59:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241253AbjAMHXo (ORCPT
+        with ESMTP id S240555AbjAMI7o (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Jan 2023 02:23:44 -0500
-Received: from muru.com (muru.com [72.249.23.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A522972886;
-        Thu, 12 Jan 2023 23:14:32 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 2210F80FA;
-        Fri, 13 Jan 2023 07:14:32 +0000 (UTC)
-Date:   Fri, 13 Jan 2023 09:14:30 +0200
-From:   Tony Lindgren <tony@atomide.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] usb: remove OMAP USB Device Controller and OHCI
- support for OMAP1/2 chips
-Message-ID: <Y8EE1qQ3uArtYc+w@atomide.com>
-References: <20230112083746.9551-1-lukas.bulwahn@gmail.com>
- <20230112083746.9551-4-lukas.bulwahn@gmail.com>
- <3f2663ff-ff3f-4632-853a-ba4d38df9701@app.fastmail.com>
- <Y7/YiMPIDN0Cf5Ky@atomide.com>
- <c9821df0-cd3e-43a0-b903-430d1251d51c@app.fastmail.com>
- <20230112140524.GK730856@darkstar.musicnaut.iki.fi>
- <179739a0-5d75-412b-964b-16d5cb6d306d@app.fastmail.com>
+        Fri, 13 Jan 2023 03:59:44 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56B3D718BC
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Jan 2023 00:59:36 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id fy8so50637286ejc.13
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Jan 2023 00:59:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:cc:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9YM8Shx2IZukw9YcFp8FhnA2qd5i13IeliX120PH17I=;
+        b=UswNafJ8Hcq8szwzEdclRDjcNXXT+kfG7zB9GvtX0hGjvzrZfoStfz9NgA0jc+sJR3
+         Rixfzk4u9VFwLwgURno/IXUlVFigpNu39LT9NDc5Xw8YuyEjr0CWwYATZyCodqdH1c81
+         LpzCJ5kKDL0FzvtYfXLmrJuwXjxK5Tz2XZbNW9Lrn/B/jTpyk8/A4/avobX/texpV4H0
+         unOstmnettk1gSMvYCtzZWZiRcF5otG5OlQau/8UI/hZ82dJiVTh9sTwE37KjRaysgSw
+         uquU+BTFsZXsw+9vVCkEjnOKOrgswmnORNmMR+V1qEAi7/K3ojaXMj/PYkoitAjerQsE
+         B4RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:cc:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9YM8Shx2IZukw9YcFp8FhnA2qd5i13IeliX120PH17I=;
+        b=khwDE+Urlw7MOIKHWWKjQW2XVy7GUz0lmEDDoVR0fGZ+FdhzV14VimIzHga7MCvxtp
+         XUpUqA+r3akBU2P2pSLxOEcYjKTpyzCoBMvVmoSsrT2QimaitDgRgI73k2L7HbPE/eXh
+         a/RpSqBBdzi7fDm3mVKF67Gb2/vRd3hbpZSsVN2OpV8TRti3wSjQNxo5Jexgrm45npt2
+         cjwyooCrbVWl2mDDnm+jUhE94gps1cAOmEWblRJY9nODve49XhzOoZ6HBWLZxmka204u
+         MvEEypZhWY18kTifOKi1KIklOqT89HxnyrH0WZdvLbMddWVADQYNaOGIX0jDj/fkY7XS
+         bh9Q==
+X-Gm-Message-State: AFqh2kpY7cYlwrSjoCeHNXub4FwZIDpnySnvsR2R40UU4gPNUQE2tadR
+        t5a3ufNz8WYnwUScRXgn2Yvhkw==
+X-Google-Smtp-Source: AMrXdXsPxc2oqEqJfGabmBqgzaWDsQkxV3GmdjQPkiDF+d6dv+FHlRbTN+U0t+9cYBoJoZb4U0H6gg==
+X-Received: by 2002:a17:906:1e8a:b0:864:223:40b with SMTP id e10-20020a1709061e8a00b008640223040bmr6721662ejj.33.1673600374808;
+        Fri, 13 Jan 2023 00:59:34 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id en6-20020a056402528600b00499b3d09bd2sm5792349edb.91.2023.01.13.00.59.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Jan 2023 00:59:33 -0800 (PST)
+Message-ID: <cd803c70-faf0-963e-fca3-0edd13fa8a29@linaro.org>
+Date:   Fri, 13 Jan 2023 09:59:30 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <179739a0-5d75-412b-964b-16d5cb6d306d@app.fastmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v4 0/9] media: dt-bindings: common CEC properties
+Content-Language: en-US
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+References: <20221208103115.25512-1-krzysztof.kozlowski@linaro.org>
+Cc:     Neil Armstrong <neil.armstrong@linaro.org>,
+        Alain Volmat <alain.volmat@foss.st.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        devicetree@vger.kernel.org, Joe Tessler <jrt@google.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-tegra@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-media@vger.kernel.org, Jeff Chase <jnchase@google.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Yannick Fertre <yannick.fertre@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-kernel@vger.kernel.org
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221208103115.25512-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-* Arnd Bergmann <arnd@arndb.de> [230112 14:31]:
-> On Thu, Jan 12, 2023, at 15:05, Aaro Koskinen wrote:
-> > On Thu, Jan 12, 2023 at 11:19:53AM +0100, Arnd Bergmann wrote:
-> >> On Thu, Jan 12, 2023, at 10:53, Tony Lindgren wrote:
-> >> 
-> >> So if we want to kill off the old DMA stuff there is actually
-> >> a choice between either making omap_udc PIO-only or converting
-> >> it to use the standard dmaengine interface.
-> >
-> > I use this driver on Palm TE and 770, and without it those boards would
-> > be useless for my use cases. Also DMA doubles the throughput, probably
-> > also power usage is smaller.
-> 
-> Ok, if the performance is important, converting to dmaengine
-> is probably best. Do you know if this is just a straightforward
-> replacement of the function calls, or are there technical reasons
-> why it's not using the dmaengine interface yet?
+On 08/12/2022 11:31, Krzysztof Kozlowski wrote:
+> Hi,
+>
+> Changes since v3
+> ================
+> 1. cec-gpio: Add missing SPDX.
+> 2. nvidia,tegra114-cec: Correct path in maintainers.
+>
 
-Yes I agree dmaengine is the best solution. Seems like this is the
-last driver using the old api that never got updated probably because
-it's not used on the newer SoCs.
 
-I don't think there are any technical reasons to not use dmaengine
-here.
+Mauro (and maybe Hans?), any comments here. Can you apply the patchset?
 
-FYI, the last blocker for dmaengine use was for drivers using
-port_window that got added with the drivers/usb/musb/tusb6010_omap.c
-dmaengine conversion a few years back.
-
-Regards,
-
-Tony
+Best regards,
+Krzysztof
