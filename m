@@ -2,169 +2,298 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B409C54EBE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Jan 2023 13:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A10C678D6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Jan 2023 18:16:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241904AbjAMNT4 (ORCPT
+        id S230193AbjAMSQU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 13 Jan 2023 08:19:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53618 "EHLO
+        Fri, 13 Jan 2023 13:16:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241616AbjAMNT3 (ORCPT
+        with ESMTP id S230088AbjAMSPi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Jan 2023 08:19:29 -0500
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF7D76318C
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Jan 2023 05:09:14 -0800 (PST)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230113130912epoutp04fcf50c15f6dc15a8678f969c0c5e1a18~54EvXUIAi1538415384epoutp04V
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Jan 2023 13:09:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230113130912epoutp04fcf50c15f6dc15a8678f969c0c5e1a18~54EvXUIAi1538415384epoutp04V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1673615352;
-        bh=FF4fIradTxWfdCmmweL+K/bOvGnz0k6lWTffD4axmFQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LPAC8a+3XfU+fX1WA1CYl3RoJ6B4Wwng6Cg47Vj0FYaK7qlBdQtzqQObMXjsjXCb6
-         tnnva66LDpPMlE6hxr7edQgYBoRfZLgkirVSgxPnI46qBvCfVVHEr/Zu83g50rR4QS
-         MukmpbpeM4M5eU4k80NNJ9EQOPDGq4ZT0F2WwAIo=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20230113130912epcas5p3bef3464f9aa152852f7e620acd681f26~54Eu3bJx72349123491epcas5p3S;
-        Fri, 13 Jan 2023 13:09:12 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.181]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4NthZZ5djBz4x9Pp; Fri, 13 Jan
-        2023 13:09:10 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        57.7D.03362.6F751C36; Fri, 13 Jan 2023 22:09:10 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20230113121834epcas5p490aba088dce64f880c95e4f9b9a220d4~53Yh9pqRw0803308033epcas5p4a;
-        Fri, 13 Jan 2023 12:18:34 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230113121834epsmtrp15410bfac6edacf2a93f76e34cd0ba95f~53Yh7xaSA1537415374epsmtrp1x;
-        Fri, 13 Jan 2023 12:18:34 +0000 (GMT)
-X-AuditID: b6c32a4b-4e5fa70000010d22-4d-63c157f6c717
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AB.19.02211.A1C41C36; Fri, 13 Jan 2023 21:18:34 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-        [107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230113121832epsmtip27c49184191c84baed4bca7865123fdfc~53Yfh_67h0850708507epsmtip2a;
-        Fri, 13 Jan 2023 12:18:32 +0000 (GMT)
-From:   Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
-To:     lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, s.nawrocki@samsung.com,
-        perex@perex.cz, tiwai@suse.com, pankaj.dubey@samsung.com,
-        alim.akhtar@samsung.com, rcsekar@samsung.com,
-        aswani.reddy@samsung.com
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
-Subject: [PATCH v3 5/5] arm64: dts: fsd: Add sound card node for Tesla FSD
-Date:   Fri, 13 Jan 2023 17:47:49 +0530
-Message-Id: <20230113121749.4657-6-p.rajanbabu@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230113121749.4657-1-p.rajanbabu@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmhu638IPJBj23NC0ezNvGZnHl4iEm
-        i0Obt7JbTH34hM1i/pFzrBZ9Lx4yW3y70sFkcXnXHDaLGef3MVkc3RhssWjrF3aLzl39rBaz
-        LuxgtWjde4Td4vCbdlaLDd/XMjoIeGz43MTmsXPWXXaPTas62TzuXNvD5rHv7TI2j74tqxg9
-        1m+5yuLxeZNcAEdUtk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5kkJeYm6qrZKL
-        T4CuW2YO0AdKCmWJOaVAoYDE4mIlfTubovzSklSFjPziElul1IKUnAKTAr3ixNzi0rx0vbzU
-        EitDAwMjU6DChOyMrgs72QpOclV0bT/K3MA4maOLkZNDQsBE4smpaUxdjFwcQgK7GSV29h1g
-        g3A+MUps/72WHcL5xiix8e9ONpiWjlOXGSESexklzi5YCdXfyiSxcdsbFpAqNgFTiVVzGllB
-        EiICTUwSbW8msoA4zAIbGSVOH3vIBFIlLOAlsWjHFaBZHBwsAqoS+5/qg4R5BawlLv49B7VO
-        XmL1hgPMICWcAjYSS4/ngoyREJjLIXFs3iFWiBoXiRtr37FA2MISr45vYYewpSRe9rdB2fkS
-        0z42Q82skGj7uIEJwraXOHBlDgvIfGYBTYn1u/QhwrISU0+tAythFuCT6P39BKqcV2LHPBhb
-        VWL98k2MELa0xL7re6FsD4nzP1ewQgKln1Fi9fJPLBMY5WYhrFjAyLiKUTK1oDg3PbXYtMA4
-        L7UcHm3J+bmbGMHJVMt7B+OjBx/0DjEycTAeYpTgYFYS4d1zdH+yEG9KYmVValF+fFFpTmrx
-        IUZTYPBNZJYSTc4HpvO8knhDE0sDEzMzMxNLYzNDJXHe1K3zk4UE0hNLUrNTUwtSi2D6mDg4
-        pRqYLm25LXyMOTNtkf7BWbWFiQpeSakbn3rt4A9ocXh1yrKJj3PFZf+mtynuj3beOOuXvnhP
-        JEv7Evl1ph2b6rq1py98/pE56V213g2fq2sSHQS2yLoJdU29rOnrtFdaIHmKzcZ9hmt4gn5u
-        W3blpP3lrra9DtyFz/N9OJg9u0567GY8MGlXbCnDx+ZwIb0DGjWHtvblX4ow89WZ3aX2eMlj
-        hTnV9effRhm8jzUVPC/7u65mtd6FuSIhbxUPbFvDzp5uE1B49dUyHw4faZaS/N9xYUVCLeyR
-        P6t+G62z9hT9nOSUoXX/SEd3G09f/v7go18W6ljNu5W6yzHF49PxK5cfrz704caZ5oW6x+Yr
-        L/VQYinOSDTUYi4qTgQAMZeTpS8EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrALMWRmVeSWpSXmKPExsWy7bCSvK6Uz8Fkg6Vd2hYP5m1js7hy8RCT
-        xaHNW9ktpj58wmYx/8g5Vou+Fw+ZLb5d6WCyuLxrDpvFjPP7mCyObgy2WLT1C7tF565+VotZ
-        F3awWrTuPcJucfhNO6vFhu9rGR0EPDZ8bmLz2DnrLrvHplWdbB53ru1h89j3dhmbR9+WVYwe
-        67dcZfH4vEkugCOKyyYlNSezLLVI3y6BK6Prwk62gpNcFV3bjzI3ME7m6GLk5JAQMJHoOHWZ
-        sYuRi0NIYDejxNZjT5ggEtIS0/v3sEHYwhIr/z1nB7GFBJqZJLb1eYPYbAKmEqvmNLKCNIsI
-        TGCSOPnuGAtIgllgK6PE1M9GILawgJfEoh1XgDZwcLAIqErsf6oPEuYVsJa4+Pcc1Hx5idUb
-        DjCDlHAK2EgsPZ4LscpaYu/Lx0wTGPkWMDKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P
-        3cQIDnQtzR2M21d90DvEyMTBeIhRgoNZSYR3z9H9yUK8KYmVValF+fFFpTmpxYcYpTlYlMR5
-        L3SdjBcSSE8sSc1OTS1ILYLJMnFwSjUw5fnML1iXPV+HIeLpip2S56NP8PgxWE9a2C13oX11
-        67b4goamhRHBLlGthes9q8XWyXSs3mCo9el34cJVb3d0HZ5SaqktZ+nibHmT23KP05+S/9NZ
-        /UsEYmpnzG08rRL05nEGy9srqakfCybUHKrwZ956yz5mv2lLd9/Knm/flB51NLLZuYgW31jB
-        dLGU89PpbVKmKdZW7u5VwChuuvBm+/Rlc8w7ZkpUXM++0O/CkSTWxN4SMFdwleLvK3f7sgxa
-        2LvVppcuEss9ufnyyfr28+t0W/0nJTTvbGQo3a+vqyCi+VrnT82/k48aZ37/Yt/5fonU9dSY
-        F05pxsbhexJtCxReiuqa/WcNU14crcRSnJFoqMVcVJwIAF4d02/jAgAA
-X-CMS-MailID: 20230113121834epcas5p490aba088dce64f880c95e4f9b9a220d4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230113121834epcas5p490aba088dce64f880c95e4f9b9a220d4
-References: <20230113121749.4657-1-p.rajanbabu@samsung.com>
-        <CGME20230113121834epcas5p490aba088dce64f880c95e4f9b9a220d4@epcas5p4.samsung.com>
+        Fri, 13 Jan 2023 13:15:38 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77D0E6DB8A;
+        Fri, 13 Jan 2023 10:06:41 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 555DACE2122;
+        Fri, 13 Jan 2023 18:06:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DD93C433F1;
+        Fri, 13 Jan 2023 18:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673633197;
+        bh=9JM2l3wQvAeTEYaZAWr5I3gZoNrgDAq2iaamsrQXne0=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=d/TyPrfu3TMN3RDQxpqP5fajACgLxUzrO1o0lviquPae0CCREqyfMhbNaFpmIDnAD
+         gc9rcn8tXi7SZ4Sa6feTIN2Ae1ZeCBFbV5dmTzybf+txFmSo/tzOIYxAQ5C/w8Dqvn
+         lUFscWLbHB7PxSvBS0qnt6QQanZXshhTtjgmZdd4dd7UYrIROlbOAFQjGgiw28eaXg
+         ZWAP2DT2ukYPCwIGpUnzoCfZFD2NIBDmWoE7vSQ2LoozWiuoZLz82Zhhis8k4Jr+Bj
+         yNgUqYimkNr/a2hjrvrPsnsWtLyOCrg7bz13Vy3HC3zIgb+UrU6VBUs4Zs2yFiDWYy
+         hI2RWs0YaghDg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+        id D78905C06D0; Fri, 13 Jan 2023 10:06:36 -0800 (PST)
+Date:   Fri, 13 Jan 2023 10:06:36 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
+        nsekhar@ti.com, brgl@bgdev.pl, ulli.kroll@googlemail.com,
+        linus.walleij@linaro.org, shawnguo@kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com,
+        khilman@kernel.org, krzysztof.kozlowski@linaro.org,
+        alim.akhtar@samsung.com, catalin.marinas@arm.com, will@kernel.org,
+        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
+        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
+        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
+        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
+        shorne@gmail.com, James.Bottomley@HansenPartnership.com,
+        deller@gmx.de, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, paul.walmsley@sifive.com,
+        palmer@dabbelt.com, aou@eecs.berkeley.edu, hca@linux.ibm.com,
+        gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        richard@nod.at, anton.ivanov@cambridgegreys.com,
+        johannes@sipsolutions.net, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+        hpa@zytor.com, acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, anup@brainfault.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        jacob.jun.pan@linux.intel.com, atishp@atishpatra.org,
+        Arnd Bergmann <arnd@arndb.de>, yury.norov@gmail.com,
+        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
+        dennis@kernel.org, tj@kernel.org, cl@linux.com,
+        rostedt@goodmis.org, mhiramat@kernel.org, frederic@kernel.org,
+        pmladek@suse.com, senozhatsky@chromium.org,
+        john.ogness@linutronix.de, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
+        vschneid@redhat.com, ryabinin.a.a@gmail.com, glider@google.com,
+        andreyknvl@gmail.com, dvyukov@google.com,
+        vincenzo.frascino@arm.com,
+        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-csky@vger.kernel.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com
+Subject: Re: [PATCH v3 00/51] cpuidle,rcu: Clean up the mess
+Message-ID: <20230113180636.GA4028633@paulmck-ThinkPad-P17-Gen-1>
+Reply-To: paulmck@kernel.org
+References: <20230112194314.845371875@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230112194314.845371875@infradead.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add device tree node support for sound card on Tesla FSD platform
+On Thu, Jan 12, 2023 at 08:43:14PM +0100, Peter Zijlstra wrote:
+> Hi All!
+> 
+> The (hopefully) final respin of cpuidle vs rcu cleanup patches. Barring any
+> objections I'll be queueing these patches in tip/sched/core in the next few
+> days.
+> 
+> v2: https://lkml.kernel.org/r/20220919095939.761690562@infradead.org
+> 
+> These here patches clean up the mess that is cpuidle vs rcuidle.
+> 
+> At the end of the ride there's only on RCU_NONIDLE user left:
+> 
+>   arch/arm64/kernel/suspend.c:            RCU_NONIDLE(__cpu_suspend_exit());
+> 
+> And I know Mark has been prodding that with something sharp.
+> 
+> The last version was tested by a number of people and I'm hoping to not have
+> broken anything in the meantime ;-)
+> 
+> 
+> Changes since v2:
 
-Signed-off-by: Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
----
- arch/arm64/boot/dts/tesla/fsd-evb.dts | 33 +++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+150 rcutorture hours on each of the default scenarios passed.  This
+is qemu/KVM on x86:
 
-diff --git a/arch/arm64/boot/dts/tesla/fsd-evb.dts b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-index 2f211a1ad50d..83281e305f20 100644
---- a/arch/arm64/boot/dts/tesla/fsd-evb.dts
-+++ b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-@@ -29,6 +29,39 @@
- 		device_type = "memory";
- 		reg = <0x0 0x80000000 0x2 0x00000000>;
- 	};
-+
-+	sound {
-+		compatible = "simple-audio-card";
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		simple-audio-card,name = "FSD Audio Card";
-+		simple-audio-card,widgets = "Line", "Line Out",
-+					    "Line", "Line In";
-+		simple-audio-card,routing = "Line Out", "LLOUT",
-+					    "Line Out", "RLOUT",
-+					    "MIC2L", "Line In",
-+					    "MIC2R", "Line In";
-+
-+		simple-audio-card,dai-link@0 {
-+			reg = <0>;
-+			format = "i2s";
-+			bitclock-master = <&tlv320aic3x>;
-+			frame-master = <&tlv320aic3x>;
-+
-+			cpu-0 {
-+				sound-dai = <&i2s_0 0>;
-+			};
-+			cpu-1 {
-+				sound-dai = <&i2s_0 1>;
-+			};
-+			codec {
-+				sound-dai = <&tlv320aic3x>;
-+				system-clock-frequency = <33000000>;
-+			};
-+		};
-+	};
- };
- 
- &fin_pll {
--- 
-2.17.1
+Tested-by: Paul E. McKenney <paulmck@kernel.org>
 
+>  - rebased to v6.2-rc3; as available at:
+>      git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/idle
+> 
+>  - folded: https://lkml.kernel.org/r/Y3UBwYNY15ETUKy9@hirez.programming.kicks-ass.net
+>    which makes the ARM cpuidle index 0 consistently not use
+>    CPUIDLE_FLAG_RCU_IDLE, as requested by Ulf.
+> 
+>  - added a few more __always_inline to empty stub functions as found by the
+>    robot.
+> 
+>  - Used _RET_IP_ instead of _THIS_IP_ in a few placed because of:
+>    https://github.com/ClangBuiltLinux/linux/issues/263
+> 
+>  - Added new patches to address various robot reports:
+> 
+>      #35:  trace,hardirq: No moar _rcuidle() tracing
+>      #47:  cpuidle: Ensure ct_cpuidle_enter() is always called from noinstr/__cpuidle
+>      #48:  cpuidle,arch: Mark all ct_cpuidle_enter() callers __cpuidle
+>      #49:  cpuidle,arch: Mark all regular cpuidle_state::enter methods __cpuidle
+>      #50:  cpuidle: Comments about noinstr/__cpuidle
+>      #51:  context_tracking: Fix noinstr vs KASAN
+> 
+> 
+> ---
+>  arch/alpha/kernel/process.c               |  1 -
+>  arch/alpha/kernel/vmlinux.lds.S           |  1 -
+>  arch/arc/kernel/process.c                 |  3 ++
+>  arch/arc/kernel/vmlinux.lds.S             |  1 -
+>  arch/arm/include/asm/vmlinux.lds.h        |  1 -
+>  arch/arm/kernel/cpuidle.c                 |  4 +-
+>  arch/arm/kernel/process.c                 |  1 -
+>  arch/arm/kernel/smp.c                     |  6 +--
+>  arch/arm/mach-davinci/cpuidle.c           |  4 +-
+>  arch/arm/mach-gemini/board-dt.c           |  3 +-
+>  arch/arm/mach-imx/cpuidle-imx5.c          |  4 +-
+>  arch/arm/mach-imx/cpuidle-imx6q.c         |  8 ++--
+>  arch/arm/mach-imx/cpuidle-imx6sl.c        |  4 +-
+>  arch/arm/mach-imx/cpuidle-imx6sx.c        |  9 ++--
+>  arch/arm/mach-imx/cpuidle-imx7ulp.c       |  4 +-
+>  arch/arm/mach-omap2/common.h              |  6 ++-
+>  arch/arm/mach-omap2/cpuidle34xx.c         | 16 ++++++-
+>  arch/arm/mach-omap2/cpuidle44xx.c         | 29 +++++++------
+>  arch/arm/mach-omap2/omap-mpuss-lowpower.c | 12 +++++-
+>  arch/arm/mach-omap2/pm.h                  |  2 +-
+>  arch/arm/mach-omap2/pm24xx.c              | 51 +---------------------
+>  arch/arm/mach-omap2/pm34xx.c              | 14 +++++--
+>  arch/arm/mach-omap2/pm44xx.c              |  2 +-
+>  arch/arm/mach-omap2/powerdomain.c         | 10 ++---
+>  arch/arm/mach-s3c/cpuidle-s3c64xx.c       |  5 +--
+>  arch/arm64/kernel/cpuidle.c               |  2 +-
+>  arch/arm64/kernel/idle.c                  |  1 -
+>  arch/arm64/kernel/smp.c                   |  4 +-
+>  arch/arm64/kernel/vmlinux.lds.S           |  1 -
+>  arch/csky/kernel/process.c                |  1 -
+>  arch/csky/kernel/smp.c                    |  2 +-
+>  arch/csky/kernel/vmlinux.lds.S            |  1 -
+>  arch/hexagon/kernel/process.c             |  1 -
+>  arch/hexagon/kernel/vmlinux.lds.S         |  1 -
+>  arch/ia64/kernel/process.c                |  1 +
+>  arch/ia64/kernel/vmlinux.lds.S            |  1 -
+>  arch/loongarch/kernel/idle.c              |  1 +
+>  arch/loongarch/kernel/vmlinux.lds.S       |  1 -
+>  arch/m68k/kernel/vmlinux-nommu.lds        |  1 -
+>  arch/m68k/kernel/vmlinux-std.lds          |  1 -
+>  arch/m68k/kernel/vmlinux-sun3.lds         |  1 -
+>  arch/microblaze/kernel/process.c          |  1 -
+>  arch/microblaze/kernel/vmlinux.lds.S      |  1 -
+>  arch/mips/kernel/idle.c                   | 14 +++----
+>  arch/mips/kernel/vmlinux.lds.S            |  1 -
+>  arch/nios2/kernel/process.c               |  1 -
+>  arch/nios2/kernel/vmlinux.lds.S           |  1 -
+>  arch/openrisc/kernel/process.c            |  1 +
+>  arch/openrisc/kernel/vmlinux.lds.S        |  1 -
+>  arch/parisc/kernel/process.c              |  2 -
+>  arch/parisc/kernel/vmlinux.lds.S          |  1 -
+>  arch/powerpc/kernel/idle.c                |  5 +--
+>  arch/powerpc/kernel/vmlinux.lds.S         |  1 -
+>  arch/riscv/kernel/process.c               |  1 -
+>  arch/riscv/kernel/vmlinux-xip.lds.S       |  1 -
+>  arch/riscv/kernel/vmlinux.lds.S           |  1 -
+>  arch/s390/kernel/idle.c                   |  1 -
+>  arch/s390/kernel/vmlinux.lds.S            |  1 -
+>  arch/sh/kernel/idle.c                     |  1 +
+>  arch/sh/kernel/vmlinux.lds.S              |  1 -
+>  arch/sparc/kernel/leon_pmc.c              |  4 ++
+>  arch/sparc/kernel/process_32.c            |  1 -
+>  arch/sparc/kernel/process_64.c            |  3 +-
+>  arch/sparc/kernel/vmlinux.lds.S           |  1 -
+>  arch/um/kernel/dyn.lds.S                  |  1 -
+>  arch/um/kernel/process.c                  |  1 -
+>  arch/um/kernel/uml.lds.S                  |  1 -
+>  arch/x86/boot/compressed/vmlinux.lds.S    |  1 +
+>  arch/x86/coco/tdx/tdcall.S                | 15 +------
+>  arch/x86/coco/tdx/tdx.c                   | 25 ++++-------
+>  arch/x86/events/amd/brs.c                 | 13 +++---
+>  arch/x86/include/asm/fpu/xcr.h            |  4 +-
+>  arch/x86/include/asm/irqflags.h           | 11 ++---
+>  arch/x86/include/asm/mwait.h              | 14 +++----
+>  arch/x86/include/asm/nospec-branch.h      |  2 +-
+>  arch/x86/include/asm/paravirt.h           |  6 ++-
+>  arch/x86/include/asm/perf_event.h         |  2 +-
+>  arch/x86/include/asm/shared/io.h          |  4 +-
+>  arch/x86/include/asm/shared/tdx.h         |  1 -
+>  arch/x86/include/asm/special_insns.h      |  8 ++--
+>  arch/x86/include/asm/xen/hypercall.h      |  2 +-
+>  arch/x86/kernel/cpu/bugs.c                |  2 +-
+>  arch/x86/kernel/fpu/core.c                |  4 +-
+>  arch/x86/kernel/paravirt.c                | 14 ++++++-
+>  arch/x86/kernel/process.c                 | 65 ++++++++++++++--------------
+>  arch/x86/kernel/vmlinux.lds.S             |  1 -
+>  arch/x86/lib/memcpy_64.S                  |  5 +--
+>  arch/x86/lib/memmove_64.S                 |  4 +-
+>  arch/x86/lib/memset_64.S                  |  4 +-
+>  arch/x86/xen/enlighten_pv.c               |  2 +-
+>  arch/x86/xen/irq.c                        |  2 +-
+>  arch/xtensa/kernel/process.c              |  1 +
+>  arch/xtensa/kernel/vmlinux.lds.S          |  1 -
+>  drivers/acpi/processor_idle.c             | 28 ++++++++-----
+>  drivers/base/power/runtime.c              | 24 +++++------
+>  drivers/clk/clk.c                         |  8 ++--
+>  drivers/cpuidle/cpuidle-arm.c             |  4 +-
+>  drivers/cpuidle/cpuidle-big_little.c      | 12 ++++--
+>  drivers/cpuidle/cpuidle-mvebu-v7.c        | 13 ++++--
+>  drivers/cpuidle/cpuidle-psci.c            | 26 +++++-------
+>  drivers/cpuidle/cpuidle-qcom-spm.c        |  4 +-
+>  drivers/cpuidle/cpuidle-riscv-sbi.c       | 19 +++++----
+>  drivers/cpuidle/cpuidle-tegra.c           | 31 +++++++++-----
+>  drivers/cpuidle/cpuidle.c                 | 70 ++++++++++++++++++++++---------
+>  drivers/cpuidle/dt_idle_states.c          |  2 +-
+>  drivers/cpuidle/poll_state.c              | 10 ++++-
+>  drivers/idle/intel_idle.c                 | 19 ++++-----
+>  drivers/perf/arm_pmu.c                    | 11 +----
+>  drivers/perf/riscv_pmu_sbi.c              |  8 +---
+>  include/asm-generic/vmlinux.lds.h         |  9 ++--
+>  include/linux/clockchips.h                |  4 +-
+>  include/linux/compiler_types.h            | 18 +++++++-
+>  include/linux/cpu.h                       |  3 --
+>  include/linux/cpuidle.h                   | 32 ++++++++++++++
+>  include/linux/cpumask.h                   |  4 +-
+>  include/linux/percpu-defs.h               |  2 +-
+>  include/linux/sched/idle.h                | 40 +++++++++++++-----
+>  include/linux/thread_info.h               | 18 +++++++-
+>  include/linux/tracepoint.h                | 15 ++++++-
+>  kernel/context_tracking.c                 | 12 +++---
+>  kernel/cpu_pm.c                           |  9 ----
+>  kernel/printk/printk.c                    |  2 +-
+>  kernel/sched/idle.c                       | 47 ++++++---------------
+>  kernel/time/tick-broadcast-hrtimer.c      | 29 ++++++-------
+>  kernel/time/tick-broadcast.c              |  6 ++-
+>  kernel/trace/trace.c                      |  3 ++
+>  kernel/trace/trace_preemptirq.c           | 50 ++++++----------------
+>  lib/ubsan.c                               |  5 ++-
+>  mm/kasan/kasan.h                          |  4 ++
+>  mm/kasan/shadow.c                         | 38 +++++++++++++++++
+>  tools/objtool/check.c                     | 17 ++++++++
+>  131 files changed, 617 insertions(+), 523 deletions(-)
+> 
