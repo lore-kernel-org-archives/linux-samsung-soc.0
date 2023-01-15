@@ -2,61 +2,61 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 613FEC63797
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Jan 2023 15:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE546C3DA78
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Jan 2023 15:06:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231315AbjAOPFL (ORCPT
+        id S231160AbjAOPGl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 15 Jan 2023 10:05:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48140 "EHLO
+        Sun, 15 Jan 2023 10:06:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231229AbjAOPFK (ORCPT
+        with ESMTP id S231243AbjAOPGk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 15 Jan 2023 10:05:10 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99C90B446
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 15 Jan 2023 07:05:08 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id v30so37605343edb.9
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 15 Jan 2023 07:05:08 -0800 (PST)
+        Sun, 15 Jan 2023 10:06:40 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 484AF8689
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 15 Jan 2023 07:06:39 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id ss4so55423914ejb.11
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 15 Jan 2023 07:06:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NBz7cqiVd9e6aGzJO6sSxgMMp/c0wf7CWjQCjUZnLOc=;
-        b=weB02iuxCQuUjR4eMOm06SjJc0Z5vrhFbbAE3stJQdycLx+dcneNAyyAvcBVrv0NKi
-         rbOfYnOrZnjoywNVCrdOlpcifs5m3b5LfAfunprejC+QfIkhbn2jP0J4XLqltVfXLxMU
-         VOWQHzw8GBkIGUc/zCD7oGEalc5a1FtiR68rXVpbj+3WvO6K/fDtFhvh+wTUjCNgb9T8
-         HarYW4HESB2aXafQJM7jfvZsexB3Bf+RyFVyDNOiPhsRx3V3wG7OX+9bou/WXkJl10Ce
-         Z/61GHe94sVipTyZmoHoLldfNABGWSPI6WlVKtpIzUN1dTOEhVnt5Fobj32C9F+QLeuW
-         3t2A==
+        bh=6mV2i5/nB+6SQc3dRdfPMP5cMJSxy5rQiGnmFtQCfgQ=;
+        b=Gxs+wgA/dB9MSMphhEcVZMGRdxcy+UPE25FznZluA2FOhVqJ8U4Eo6zqWEi5g8q+A6
+         T2YCrsRaw2aw287emFzJt2/ALkOUorBkXUkLb7nQcm3aMpYdWdY34Y4e9tzVftHi5pB/
+         QUiyVIb7EhiDGlRUBHdxbLoXoux/oAaLuWbDE8nUnxECJO1s2AgEyv89Zw85RCoGuqky
+         1c006IJMXIKKrHw8onTaVEqeCArUieCwzFrrPxeH/Ev52mY+GtzWhHq6Jh5u7Jm63qbQ
+         BtuEzdm7hMKrDoNu9eA8iDVemEFbPuV1wjrMIIAv1Yngxj7XKL/ZayYJEs7BRku/+Al0
+         C56g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NBz7cqiVd9e6aGzJO6sSxgMMp/c0wf7CWjQCjUZnLOc=;
-        b=7uwXLRuDcHD2h1Zde3M4CsEyDHnEM8aZ3jCdvGAATCGGVi/RCdNZCHuyeDiwoMw5C7
-         95GVksAkEwyhd0gcJenJ0MljfBhyNycl6j0jMx99YfEl2tTeW9P1DIb8g4WapBVQjzyS
-         67SdQawbfVzKRWiOuUbfCrghVsYNZZfeLv66IECTbwz4LpomSXAtaFRj/GqeJ4RO/DxI
-         EkcU7f1RgRdjjaHKqlXgie/MkEi3LMUBD8VLJRjhFRLZlHwlyDdhQvX49On5X6ZeIFBY
-         VD1jRS6JR8ZcITewJH/5QtBKeiOxqJP0gCcpuWIXnP6Oqm+v33bt37JkLuMx7vm4KHz4
-         p72w==
-X-Gm-Message-State: AFqh2koPHRUF3nXBFU/CsXqSb14L1KBbP6vJzYNxQUCkWK70djBZS1nx
-        0vsfSYYmLPBGqrXJKeFe8iwgkw==
-X-Google-Smtp-Source: AMrXdXtMA5nHafq8S3q65oQm07Cx3buGe5X/vT5EvmcIHYotqgTk9qjfEoOx470xrqgup9PRfNMbsg==
-X-Received: by 2002:a05:6402:528f:b0:47e:eaae:9a69 with SMTP id en15-20020a056402528f00b0047eeaae9a69mr78754776edb.41.1673795107259;
-        Sun, 15 Jan 2023 07:05:07 -0800 (PST)
+        bh=6mV2i5/nB+6SQc3dRdfPMP5cMJSxy5rQiGnmFtQCfgQ=;
+        b=2wFdSCElF9gaN23u3JJv35xjmTRuh46EyQReRqRZysehdqmA82EXKNoAmnLi+nW3XZ
+         MDRIrXqlSNTKZgLFsQ/ZKXlVXtPps61bUV3y/aDI22ru+Zq2irSnhUTZmaer/na9OOnm
+         rv9GUNxw9gg7eFYGP9uYNTHxpt1fR+MULNmsruhXSoMRjFnR6DLPFACOkBvUmkgUdXbL
+         OKCLwyE+nqTbi3KvyLmXPFkLjxwZ7I/ZFqPDDzyntVnicAVpuKn2QDSo+qQHkg5tne1f
+         V+YMrrHq4eOCF3SzEJM4NCYr9/O7S9hznZDpPzQQixxQpAl1vW+Xi4TvfTdvQZW0GvCz
+         X2Fw==
+X-Gm-Message-State: AFqh2kq+tKbRDwuyvU5gNouexKv0jmSTHicO5xWErx8t6bshk8b5IYC9
+        VHzEdkxVxaNl+HeLWkBpr2LwGQ==
+X-Google-Smtp-Source: AMrXdXtoJE1Ir5Xn52Iji4CbQo6oLweEklRVp9bvVaH0Nk2PtWen++DWHI0yZaagkGlYpbUC+Ijg7A==
+X-Received: by 2002:a17:906:b108:b0:843:a9fe:f115 with SMTP id u8-20020a170906b10800b00843a9fef115mr79416292ejy.32.1673795197836;
+        Sun, 15 Jan 2023 07:06:37 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id c39-20020a509faa000000b00483cccdfeaesm10646282edf.38.2023.01.15.07.05.05
+        by smtp.gmail.com with ESMTPSA id kz14-20020a17090777ce00b007c17b3a4163sm10914026ejc.15.2023.01.15.07.06.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Jan 2023 07:05:06 -0800 (PST)
-Message-ID: <55e2d839-1488-c5a9-0ef8-55248554b86a@linaro.org>
-Date:   Sun, 15 Jan 2023 16:05:04 +0100
+        Sun, 15 Jan 2023 07:06:37 -0800 (PST)
+Message-ID: <a4982e06-a6a4-a8c9-3b24-24f798c61f73@linaro.org>
+Date:   Sun, 15 Jan 2023 16:06:34 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH v3 3/5] arm64: dts: fsd: Add I2S DAI node for Tesla FSD
+Subject: Re: [PATCH v3 4/5] arm64: dts: fsd: Add codec node for Tesla FSD
 Content-Language: en-US
 To:     Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>,
         lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
@@ -67,10 +67,10 @@ To:     Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>,
 Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 References: <20230113121749.4657-1-p.rajanbabu@samsung.com>
- <CGME20230113121825epcas5p30053dc48475ee6a8cf33bd5112d9d6ed@epcas5p3.samsung.com>
- <20230113121749.4657-4-p.rajanbabu@samsung.com>
+ <CGME20230113121830epcas5p4cc336a48f4597ba84ab1352774242f75@epcas5p4.samsung.com>
+ <20230113121749.4657-5-p.rajanbabu@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230113121749.4657-4-p.rajanbabu@samsung.com>
+In-Reply-To: <20230113121749.4657-5-p.rajanbabu@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -78,41 +78,43 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 13/01/2023 13:17, Padmanabhan Rajanbabu wrote:
-> Add device tree node for I2S0 and I2S1 CPU DAI instances for Tesla
-> FSD platform.
-> 
-> FSD SoC has 2 I2S instances driving stereo channel I2S audio playback
-> and capture with external DMA support.
+> Add device tree node support for codec on Tesla FSD platform.
 > 
 > Signed-off-by: Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
 > ---
->  arch/arm64/boot/dts/tesla/fsd-evb.dts      |  8 +++++
->  arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi | 14 +++++++++
->  arch/arm64/boot/dts/tesla/fsd.dtsi         | 34 ++++++++++++++++++++++
->  3 files changed, 56 insertions(+)
+>  arch/arm64/boot/dts/tesla/fsd-evb.dts | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
 > diff --git a/arch/arm64/boot/dts/tesla/fsd-evb.dts b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> index 1db6ddf03f01..cf5f2ce4d2a7 100644
+> index cf5f2ce4d2a7..2f211a1ad50d 100644
 > --- a/arch/arm64/boot/dts/tesla/fsd-evb.dts
 > +++ b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> @@ -38,6 +38,14 @@
->  	status = "okay";
+> @@ -10,6 +10,7 @@
+>  
+>  /dts-v1/;
+>  #include "fsd.dtsi"
+> +#include <dt-bindings/gpio/gpio.h>
+>  
+>  / {
+>  	model = "Tesla Full Self-Driving (FSD) Evaluation board";
+> @@ -34,6 +35,17 @@
+>  	clock-frequency = <24000000>;
 >  };
 >  
-> +&i2s_0 {
+> +&hsi2c_5 {
 > +	status = "okay";
-> +};
 > +
-> +&i2s_1 {
-> +	status = "okay";
+> +	tlv320aic3x: codec@18 {
+> +		compatible = "ti,tlv320aic3104";
+> +		reg = <0x18>;
+> +		#sound-dai-cells = <0>;
+> +		reset-gpios = <&gpg1 6 GPIO_ACTIVE_LOW>;
+> +	};
 > +};
 > +
 
-You need to rebase.
+Why there is i2s here? What was the base of this patch?
 
->  &ufs {
->  	status = "okay";
->  };
 
 Best regards,
 Krzysztof
