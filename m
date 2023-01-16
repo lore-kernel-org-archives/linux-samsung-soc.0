@@ -2,201 +2,155 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB368C678D7
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Jan 2023 04:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B99C63797
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Jan 2023 08:21:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234405AbjAQEZV (ORCPT
+        id S236035AbjAQIVs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 16 Jan 2023 23:25:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55980 "EHLO
+        Tue, 17 Jan 2023 03:21:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234808AbjAQEZN (ORCPT
+        with ESMTP id S236025AbjAQIVr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 16 Jan 2023 23:25:13 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25E1B12F2F;
-        Mon, 16 Jan 2023 20:25:12 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8B38D611B3;
-        Tue, 17 Jan 2023 04:25:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0701C433EF;
-        Tue, 17 Jan 2023 04:24:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673929510;
-        bh=LKPfAbcdavLMCpifQk05Aqw+1tD2xg5qsuB6VorVVnI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=rvDfVQk7Tsas4+LZFK04iCV/SqfYXmqYXLFi42JOngYW1dOP0QSo6CLiBkpjYosKx
-         nKUcD4fx6Lu1RT5hJ5yblHd47Jqpvv59kmEAKtriWUWkTZ7hmC4Za3q3BgpEtr891G
-         Uhe5azCk4FahsTTDCEc3lE2+MzsUQWKU5CAcTO6IYBsGKCz8NivYw+lk7qeBhykDxt
-         x23XNA0A5LxituWhIHyg6sCe7NTSUKsY2ON6C3g6I/nFT8i/VEH7jmIvKLWoo8AYZN
-         JlOlRfIFLAGKs5+FVWy9q/WwqqbuzK/Mvbqfsgyxm4gYqDdXx2B1Vx+ckQBMj8vEfk
-         ICBnmkeUNpdwg==
-Date:   Tue, 17 Jan 2023 13:24:46 +0900
-From:   Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-        nsekhar@ti.com, brgl@bgdev.pl, ulli.kroll@googlemail.com,
-        linus.walleij@linaro.org, shawnguo@kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com,
-        khilman@kernel.org, krzysztof.kozlowski@linaro.org,
-        alim.akhtar@samsung.com, catalin.marinas@arm.com, will@kernel.org,
-        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
-        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
-        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
-        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
-        shorne@gmail.com, James.Bottomley@HansenPartnership.com,
-        deller@gmx.de, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, paul.walmsley@sifive.com,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu, hca@linux.ibm.com,
-        gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
-        richard@nod.at, anton.ivanov@cambridgegreys.com,
-        johannes@sipsolutions.net, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-        hpa@zytor.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        jacob.jun.pan@linux.intel.com, atishp@atishpatra.org,
-        Arnd Bergmann <arnd@arndb.de>, yury.norov@gmail.com,
-        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
-        dennis@kernel.org, tj@kernel.org, cl@linux.com,
-        rostedt@goodmis.org, mhiramat@kernel.org, frederic@kernel.org,
-        paulmck@kernel.org, pmladek@suse.com, senozhatsky@chromium.org,
-        john.ogness@linutronix.de, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
-        vschneid@redhat.com, ryabinin.a.a@gmail.com, glider@google.com,
-        andreyknvl@gmail.com, dvyukov@google.com,
-        vincenzo.frascino@arm.com,
-        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-csky@vger.kernel.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: Re: [PATCH v3 35/51] trace,hardirq: No moar _rcuidle() tracing
-Message-Id: <20230117132446.02ec12e4c10718de27790900@kernel.org>
-In-Reply-To: <20230112195541.477416709@infradead.org>
-References: <20230112194314.845371875@infradead.org>
-        <20230112195541.477416709@infradead.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Jan 2023 03:21:47 -0500
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41874C152
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Jan 2023 00:21:44 -0800 (PST)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230117082142epoutp0185c058548505e71eabb187cb18d8cdb1~7Cu2oOOHR2654526545epoutp01S
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Jan 2023 08:21:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230117082142epoutp0185c058548505e71eabb187cb18d8cdb1~7Cu2oOOHR2654526545epoutp01S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1673943702;
+        bh=ENCE8uiLf8l1fHPrs46GI/aw9Xxe4V1T7lZO3YvNhXk=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=DFVfVAV+H6JKsKeHA+GJJQzt2uHWpRmzAc3PW9yGrYICk9GWX043UlIiKlcdiNP6K
+         dObbPlFv01XjfZmt8i38eaaI5RWAOz/vVhJ4qEqUV+BIbu028kISvyXVwtRDiCX7aX
+         mRTLgykmuMiDLU7lqP1WMZJs3G0G+9ZyHC6hrgc0=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20230117082141epcas5p476e44f422744ae1abd079e6b6313ee64~7Cu2Bm3Bl0211002110epcas5p4D;
+        Tue, 17 Jan 2023 08:21:41 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.174]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4Nx2100zPDz4x9Pw; Tue, 17 Jan
+        2023 08:21:40 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        8C.49.02301.39A56C36; Tue, 17 Jan 2023 17:21:40 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230116103841epcas5p17b33f2b6567935d6be59b4d2b5d9f847~6w9KzjTOU1456314563epcas5p1q;
+        Mon, 16 Jan 2023 10:38:41 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230116103841epsmtrp20600063219915088cf83f394d7256cb8~6w9KyrIlu0521705217epsmtrp2D;
+        Mon, 16 Jan 2023 10:38:41 +0000 (GMT)
+X-AuditID: b6c32a49-473fd700000108fd-a1-63c65a93bf2e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        71.F8.10542.13925C36; Mon, 16 Jan 2023 19:38:41 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+        [107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230116103835epsmtip13afc6816ffd45f4df958c248f3fee2ff~6w9F47GGD0462804628epsmtip18;
+        Mon, 16 Jan 2023 10:38:35 +0000 (GMT)
+From:   Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+To:     lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, s.nawrocki@samsung.com,
+        perex@perex.cz, tiwai@suse.com, pankaj.dubey@samsung.com,
+        alim.akhtar@samsung.com, rcsekar@samsung.com,
+        aswani.reddy@samsung.com
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+Subject: [PATCH v4 0/5] ASoC: samsung: fsd: audio support for FSD SoC
+Date:   Mon, 16 Jan 2023 16:08:18 +0530
+Message-Id: <20230116103823.90757-1-p.rajanbabu@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnk+LIzCtJLcpLzFFi42LZdlhTQ3dK1LFkg6ZZLBYP5m1js7hy8RCT
+        xaHNW9ktpj58wmYx/8g5Vou+Fw+ZLb5d6WCyuLxrDpvFjPP7mCyObgy2WLT1C7tF565+VotZ
+        F3awWrTuPcJucfhNO6vFhu9rGR0EPDZ8bmLz2DnrLrvHplWdbB53ru1h89j3dhmbR9+WVYwe
+        67dcZfH4vEkugCMq2yYjNTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnF
+        J0DXLTMH6AMlhbLEnFKgUEBicbGSvp1NUX5pSapCRn5xia1SakFKToFJgV5xYm5xaV66Xl5q
+        iZWhgYGRKVBhQnbGo819jAW7eSrenZjK0sB4kbOLkZNDQsBEYu3s56wgtpDAbkaJtfuiuhi5
+        gOxPjBKrD21nhEh8ZpQ42SUP03Dv6E52iKJdjBIvTh1ggnBamSR2vbsM1sEmYCqxak4jK0hC
+        RKCJSaLtzUQWEIdZYCOjxOljD5lAqoQFXCWmf+9nBrFZBFQlfp7dARbnFbCR+Pq6gQlin7zE
+        6g0HmEGaJQQ6OSTWTbvHBpFwkVgzdQ8rhC0s8er4FnYIW0ri87u9UDX5EtM+NkPZFRJtHzdA
+        DbWXOHBlDtBFHEAXaUqs36UPEZaVmHpqHVgJswCfRO/vJ1DlvBI75sHYqhLrl29ihLClJfZd
+        3wtle0i0b18CDa9Yieady5gmMMrOQtiwgJFxFaNkakFxbnpqsWmBYV5qOTymkvNzNzGCU6aW
+        5w7Guw8+6B1iZOJgPMQowcGsJMLrt+twshBvSmJlVWpRfnxRaU5q8SFGU2CYTWSWEk3OBybt
+        vJJ4QxNLAxMzMzMTS2MzQyVx3tSt85OFBNITS1KzU1MLUotg+pg4OKUamNQi+r9qKn298M9I
+        yuJryXK+owu0hKyueGTzTptiEBe7aZug8L29/RYWTe2S74+lz91Zde4h55OKII1bG/dP3JYp
+        NeFkin/h00OKza9rD0lunNxVrHGqVSY7dbJ4KUtp3qtar/mnlvnvc+F9tLR3yom1RbvDGRKZ
+        +htXrxEz39tmui6ew8cz+a3JnTS/z5av2Y783r8zW8Rn3++cby+r4jaubeQzqakJtN7ht8bH
+        lV98xuTAfWlWuQbs9+aYXrlpr6HuGzdhwyWR9TE+1gwal823msR/WOMsW5DXtHqf5hbG/ISf
+        xVLckw1C2bRnLb40JYc9oN4sY5Py3/A9dnEG9blndsxsdjZpO+9mk9OhxFKckWioxVxUnAgA
+        hEGw4CIEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsWy7bCSnK6h5tFkg74LnBYP5m1js7hy8RCT
+        xaHNW9ktpj58wmYx/8g5Vou+Fw+ZLb5d6WCyuLxrDpvFjPP7mCyObgy2WLT1C7tF565+VotZ
+        F3awWrTuPcJucfhNO6vFhu9rGR0EPDZ8bmLz2DnrLrvHplWdbB53ru1h89j3dhmbR9+WVYwe
+        67dcZfH4vEkugCOKyyYlNSezLLVI3y6BK+PR5j7Ggt08Fe9OTGVpYLzI2cXIySEhYCJx7+hO
+        9i5GLg4hgR2MEs8nH2aBSEhLTO/fwwZhC0us/PecHcQWEmhmkli8SRDEZhMwlVg1p5EVpFlE
+        YAKTxMl3x8CamQW2MkpM/WwEYgsLuEpM/97PDGKzCKhK/Dy7gwnE5hWwkfj6uoEJYoG8xOoN
+        B5gnMPIsYGRYxSiZWlCcm55bbFhglJdarlecmFtcmpeul5yfu4kRHLxaWjsY96z6oHeIkYmD
+        8RCjBAezkgiv367DyUK8KYmVValF+fFFpTmpxYcYpTlYlMR5L3SdjBcSSE8sSc1OTS1ILYLJ
+        MnFwSjUwLSmr6krWeTj/4dsJaT1ZjFWPjs9L5pD5PzH694oTqw338xgmR3WJ/GjlPhZT/8G4
+        Pu9NVMo7aWGeIgFPt4B14WcWb372I0PuZpTumiOfFa78rDmsd6wvmVOlJP3AOmWHNo0T1xIi
+        1Pf/rLVX/vI/I0Wi+Er+5Ou3bNW9ktO1jX7Hp/QWvNULmLB9XmbMrICf/YzHrRzqLlUumNSn
+        IFa00+nGuiTVGCtz48KzR3uCDiov+RTYu+WputG8Ny/V0ll7Fv24uvfO1IuFC1RtDzjbX+W+
+        K7M5NmLxjbL7PvoN+cwyR4Md82dP2vlojbuc4AZ+Dr7gqm2f/t7dd9svV+5rQJndZC/PPVPk
+        IxYKTz6vxFKckWioxVxUnAgAJ7JgIc0CAAA=
+X-CMS-MailID: 20230116103841epcas5p17b33f2b6567935d6be59b4d2b5d9f847
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230116103841epcas5p17b33f2b6567935d6be59b4d2b5d9f847
+References: <CGME20230116103841epcas5p17b33f2b6567935d6be59b4d2b5d9f847@epcas5p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Peter,
+This patch series enables audio support on FSD SoC.
 
-On Thu, 12 Jan 2023 20:43:49 +0100
-Peter Zijlstra <peterz@infradead.org> wrote:
+Changes in v4:
+1. Rebased and addressed review comments provided for v3.
 
-> Robot reported that trace_hardirqs_{on,off}() tickle the forbidden
-> _rcuidle() tracepoint through local_irq_{en,dis}able().
-> 
-> For 'sane' configs, these calls will only happen with RCU enabled and
-> as such can use the regular tracepoint. This also means it's possible
-> to trace them from NMI context again.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Changes in v3:
+1. Addressed all the review comments provided for v2 patch.
+2. Fixed compilation warnings reported by kernel test robot.
 
-The code looks good to me. I just have a question about comment.
+Changes in v2:
+1. New compatible added in Exynos I2S driver for FSD platform.
+2. Added Fixup support for Exynos I2S CPU DAI.
+3. Migration of manual PSR, OPCLK configuration to Exynos CPU DAI driver as
+fixup.
+4. Migrated from dedicated sound card to simple audio card.
+5. Support added for tlv320aic3x-i2c codec on FSD platform.
 
-> ---
->  kernel/trace/trace_preemptirq.c |   21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
-> 
-> --- a/kernel/trace/trace_preemptirq.c
-> +++ b/kernel/trace/trace_preemptirq.c
-> @@ -20,6 +20,15 @@
->  static DEFINE_PER_CPU(int, tracing_irq_cpu);
->  
->  /*
-> + * ...
+Changes in v1:
+1. Add TDM support on samsung I2S interface.
+2. Allow sound card to directly configure I2S prescaler divider instead of
+calculating it from frame clock.
+3. The sound card support for FSD SoC which utilizes samsung I2S interface
+as CPU DAI.
 
-Is this intended? Wouldn't you leave any comment here?
+Padmanabhan Rajanbabu (5):
+  ASoC: dt-bindings: Add FSD I2S controller bindings
+  ASoC: samsung: i2s: add support for FSD I2S
+  arm64: dts: fsd: Add I2S DAI node for Tesla FSD
+  arm64: dts: fsd: Add codec node for Tesla FSD
+  arm64: dts: fsd: Add sound card node for Tesla FSD
 
-Thank you,
-
-> + */
-> +#ifdef CONFIG_ARCH_WANTS_NO_INSTR
-> +#define trace(point)	trace_##point
-> +#else
-> +#define trace(point)	if (!in_nmi()) trace_##point##_rcuidle
-> +#endif
-> +
-> +/*
->   * Like trace_hardirqs_on() but without the lockdep invocation. This is
->   * used in the low level entry code where the ordering vs. RCU is important
->   * and lockdep uses a staged approach which splits the lockdep hardirq
-> @@ -28,8 +37,7 @@ static DEFINE_PER_CPU(int, tracing_irq_c
->  void trace_hardirqs_on_prepare(void)
->  {
->  	if (this_cpu_read(tracing_irq_cpu)) {
-> -		if (!in_nmi())
-> -			trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
-> +		trace(irq_enable)(CALLER_ADDR0, CALLER_ADDR1);
->  		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
->  		this_cpu_write(tracing_irq_cpu, 0);
->  	}
-> @@ -40,8 +48,7 @@ NOKPROBE_SYMBOL(trace_hardirqs_on_prepar
->  void trace_hardirqs_on(void)
->  {
->  	if (this_cpu_read(tracing_irq_cpu)) {
-> -		if (!in_nmi())
-> -			trace_irq_enable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
-> +		trace(irq_enable)(CALLER_ADDR0, CALLER_ADDR1);
->  		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
->  		this_cpu_write(tracing_irq_cpu, 0);
->  	}
-> @@ -63,8 +70,7 @@ void trace_hardirqs_off_finish(void)
->  	if (!this_cpu_read(tracing_irq_cpu)) {
->  		this_cpu_write(tracing_irq_cpu, 1);
->  		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
-> -		if (!in_nmi())
-> -			trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
-> +		trace(irq_disable)(CALLER_ADDR0, CALLER_ADDR1);
->  	}
->  
->  }
-> @@ -78,8 +84,7 @@ void trace_hardirqs_off(void)
->  	if (!this_cpu_read(tracing_irq_cpu)) {
->  		this_cpu_write(tracing_irq_cpu, 1);
->  		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
-> -		if (!in_nmi())
-> -			trace_irq_disable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
-> +		trace(irq_disable)(CALLER_ADDR0, CALLER_ADDR1);
->  	}
->  }
->  EXPORT_SYMBOL(trace_hardirqs_off);
-> 
-> 
-
+ .../bindings/sound/samsung-i2s.yaml           |  8 +++
+ arch/arm64/boot/dts/tesla/fsd-evb.dts         | 53 +++++++++++++++++++
+ arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi    | 14 +++++
+ arch/arm64/boot/dts/tesla/fsd.dtsi            | 34 ++++++++++++
+ sound/soc/samsung/i2s-regs.h                  |  1 +
+ sound/soc/samsung/i2s.c                       | 53 +++++++++++++++++++
+ 6 files changed, 163 insertions(+)
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.17.1
+
