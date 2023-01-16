@@ -2,149 +2,255 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB00C63797
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Jan 2023 08:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF3B7C3DA78
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Jan 2023 10:02:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236105AbjAQIyq (ORCPT
+        id S235791AbjAQKCD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 17 Jan 2023 03:54:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57046 "EHLO
+        Tue, 17 Jan 2023 05:02:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235927AbjAQIyk (ORCPT
+        with ESMTP id S236374AbjAQKBt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 17 Jan 2023 03:54:40 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA4213C07;
-        Tue, 17 Jan 2023 00:54:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=82O7MPpmKDKH/y6naoktZs3WQBLC/PHyEl3Wjqd7/dM=; b=Ke5GdVNvGDwhG+k46q7dng0FmD
-        4svqJ3BuhIzpCyRd3d34EzrwpAYhtIPNP9U0JudPObAhyc7mKDDB2ufRnVUe8NMuF1emh9A0PNWIH
-        p1R0fL14Y4BiUEbkIt1kuIDfTIDr+dtl1B0SONy0L6U6H9msSNXgpTQM8WUKpqJC+XOMDTKkpqJUy
-        A0FDeq5XRHSYeh/RQjtt4CQSF65Phgmx7FmreCSehAcpaORvkTTe37Nk1Kd9I9heUV3/iILob+ev7
-        j5Jfjn7noy51S9Ufs13OCaNuk4vpeID6Jvr5f0ui2whQba0QF6a+wxAzj0g5CzDexgL5+ikNTlFRJ
-        Sa81nPeg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pHhjP-009Wew-5Z; Tue, 17 Jan 2023 08:54:11 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 99EF1302D60;
-        Tue, 17 Jan 2023 09:53:52 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 46751201ABB3C; Tue, 17 Jan 2023 09:53:52 +0100 (CET)
-Date:   Tue, 17 Jan 2023 09:53:52 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-        nsekhar@ti.com, brgl@bgdev.pl, ulli.kroll@googlemail.com,
-        linus.walleij@linaro.org, shawnguo@kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com,
-        khilman@kernel.org, krzysztof.kozlowski@linaro.org,
-        alim.akhtar@samsung.com, catalin.marinas@arm.com, will@kernel.org,
-        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
-        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
-        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
-        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
-        shorne@gmail.com, James.Bottomley@hansenpartnership.com,
-        deller@gmx.de, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, paul.walmsley@sifive.com,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu, hca@linux.ibm.com,
-        gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
-        richard@nod.at, anton.ivanov@cambridgegreys.com,
-        johannes@sipsolutions.net, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-        hpa@zytor.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        jacob.jun.pan@linux.intel.com, atishp@atishpatra.org,
-        Arnd Bergmann <arnd@arndb.de>, yury.norov@gmail.com,
-        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
-        dennis@kernel.org, tj@kernel.org, cl@linux.com,
-        rostedt@goodmis.org, frederic@kernel.org, paulmck@kernel.org,
-        pmladek@suse.com, senozhatsky@chromium.org,
-        john.ogness@linutronix.de, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
-        vschneid@redhat.com, ryabinin.a.a@gmail.com, glider@google.com,
-        andreyknvl@gmail.com, dvyukov@google.com,
-        vincenzo.frascino@arm.com,
-        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-csky@vger.kernel.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: Re: [PATCH v3 35/51] trace,hardirq: No moar _rcuidle() tracing
-Message-ID: <Y8ZiIMHyXX/yW1EI@hirez.programming.kicks-ass.net>
-References: <20230112194314.845371875@infradead.org>
- <20230112195541.477416709@infradead.org>
- <20230117132446.02ec12e4c10718de27790900@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230117132446.02ec12e4c10718de27790900@kernel.org>
+        Tue, 17 Jan 2023 05:01:49 -0500
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 859372DE48
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Jan 2023 02:01:45 -0800 (PST)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230117100143epoutp0257ec1a9d526f69c44b980a4ac8245647~7EGLpFZ3-1296712967epoutp02Z
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Jan 2023 10:01:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230117100143epoutp0257ec1a9d526f69c44b980a4ac8245647~7EGLpFZ3-1296712967epoutp02Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1673949703;
+        bh=wWGnNGV0K80my33qdYO+3w0zAebtUViujp9+aBWfQaw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hbB0dlmIY/8FunfVLNV5dLcOQJrgtV24SjEK/M4rW7V9JftYgVQwj113aSxysYmAM
+         UJ/NbjEpHimcgL65v2BozAaI0yIjyHncI7hK+amI9lEKEg2i4JBxipuyQGZzkp+TlY
+         osKN75CoU3VsFbRRuBsPmJYFaHXVGkbjFESrOg1U=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20230117100142epcas5p18a0e24b14047e04fb38c136175a55d2e~7EGLAPhM41092410924epcas5p1p;
+        Tue, 17 Jan 2023 10:01:42 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.175]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4Nx4DP07W7z4x9Q8; Tue, 17 Jan
+        2023 10:01:41 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        69.27.02301.40276C36; Tue, 17 Jan 2023 19:01:40 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20230116103856epcas5p3dea4b4a1e6073257c66b7562f263b5b1~6w9ZRBb_11961519615epcas5p3F;
+        Mon, 16 Jan 2023 10:38:56 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230116103856epsmtrp12850d3beb00a71dafa28ffefe08f4ac9~6w9ZQHjqK2177121771epsmtrp1O;
+        Mon, 16 Jan 2023 10:38:56 +0000 (GMT)
+X-AuditID: b6c32a49-201ff700000108fd-42-63c67204d94c
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E6.F8.10542.04925C36; Mon, 16 Jan 2023 19:38:56 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+        [107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230116103854epsmtip11cd3f6db3ef6b880833cddc265a5d32a~6w9W7RZFY0462804628epsmtip1-;
+        Mon, 16 Jan 2023 10:38:54 +0000 (GMT)
+From:   Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+To:     lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, s.nawrocki@samsung.com,
+        perex@perex.cz, tiwai@suse.com, pankaj.dubey@samsung.com,
+        alim.akhtar@samsung.com, rcsekar@samsung.com,
+        aswani.reddy@samsung.com
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+Subject: [PATCH v4 2/5] ASoC: samsung: i2s: add support for FSD I2S
+Date:   Mon, 16 Jan 2023 16:08:20 +0530
+Message-Id: <20230116103823.90757-3-p.rajanbabu@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230116103823.90757-1-p.rajanbabu@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNJsWRmVeSWpSXmKPExsWy7bCmui5L0bFkg3MvrSwezNvGZnHl4iEm
+        i0Obt7JbTH34hM1i/pFzrBZ9Lx4yW3y70sFkcXnXHDaLGef3MVkc3RhssWjrF3aLzl39rBaz
+        LuxgtWjde4Td4vCbdlaLDd/XMjoIeGz43MTmsXPWXXaPTas62TzuXNvD5rHv7TI2j74tqxg9
+        1m+5yuLxeZNcAEdUtk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5kkJeYm6qrZKL
+        T4CuW2YO0AdKCmWJOaVAoYDE4mIlfTubovzSklSFjPziElul1IKUnAKTAr3ixNzi0rx0vbzU
+        EitDAwMjU6DChOyMo1Ousxc8Vq5ofnmWuYHxsGwXIyeHhICJxL/ZzWxdjFwcQgK7GSUmLNnE
+        2sXIAeR8YpQ4pQgR/8wo8WjhFiaYhieXDkI17GKU6Fl5jwnCaWWSWLJxDTtIFZuAqcSqOY2s
+        IAkRgSYmibY3E1lAHGaBjYwSp489BJslLOAsceHid7B9LAKqEv82GYOEeQVsJC5f7oNaJy+x
+        esMBZhCbU8BW4uveG8wgcyQEFnJInJ/3mB2iyEXi2ORNULawxKvjW6BsKYmX/W1Qdr7EtI8g
+        j4LYFRJtHzdALbCXOHBlDgvIDcwCmhLrd+lDhGUlpp5aB1bCLMAn0fv7CVQ5r8SOeTC2qsT6
+        5ZsYIWxpiX3X90LZHhIHZ1+BhsoERolZS8+zTGCUm4WwYgEj4ypGydSC4tz01GLTAsO81HJ4
+        rCXn525iBKdSLc8djHcffNA7xMjEwXiIUYKDWUmE12/X4WQh3pTEyqrUovz4otKc1OJDjKbA
+        8JvILCWanA9M5nkl8YYmlgYmZmZmJpbGZoZK4rypW+cnCwmkJ5akZqemFqQWwfQxcXBKNTAp
+        LT8ltD1Ov1vw/s2Oi3qbfj5X3CtnxxgZ/nDx2tYIh98njl41elG6ujPho8aEyaYS06QOvt74
+        M0dNf2NFxVauhbkHyxXlNhx5WO7NZhR5/sNSZVOOZ8ftK9/7f5FiC+Mw+rHl+4q3QaqBvUtu
+        W9b1bGfYuU5y+To17Vf9bz+ur15WqVm8vr9/ok792n/tP1dfYcla+t4ruj6Vo2mu4wmlJRen
+        zG5nrVCaYFi2S//lQbPlbH9vup19dOPw962WRxraLdas0gtN4wpvWcx/8xLL9rBr9scWPX15
+        MTln2/qob4829Ryq3nMm/+bDyutOqja9ykaf7/jcnL6vd2eiZ/K+tTsXerU+6j81da56/qOt
+        ekosxRmJhlrMRcWJAC29pI8uBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrELMWRmVeSWpSXmKPExsWy7bCSnK6D5tFkg85lqhYP5m1js7hy8RCT
+        xaHNW9ktpj58wmYx/8g5Vou+Fw+ZLb5d6WCyuLxrDpvFjPP7mCyObgy2WLT1C7tF565+VotZ
+        F3awWrTuPcJucfhNO6vFhu9rGR0EPDZ8bmLz2DnrLrvHplWdbB53ru1h89j3dhmbR9+WVYwe
+        67dcZfH4vEkugCOKyyYlNSezLLVI3y6BK+PolOvsBY+VK5pfnmVuYDws28XIySEhYCLx5NJB
+        ti5GLg4hgR2MElvWTWWESEhLTO/fwwZhC0us/PecHaKomUni5OXZ7CAJNgFTiVVzGllBEiIC
+        E4AS746xgCSYBbYySkz9bARiCws4S1y4+B2oiIODRUBV4t8mY5Awr4CNxOXLfUwQC+QlVm84
+        wAxicwrYSnzdewPMFgKqeTLhPOMERr4FjAyrGCVTC4pz03OLDQuM8lLL9YoTc4tL89L1kvNz
+        NzGCg11LawfjnlUf9A4xMnEwHmKU4GBWEuH123U4WYg3JbGyKrUoP76oNCe1+BCjNAeLkjjv
+        ha6T8UIC6YklqdmpqQWpRTBZJg5OqQam2PJ1545N/N2+vDReJWXjFLPnm50/b9iconl+tuc/
+        sw/GkVMX+GVrfd9j3X3gufyu4vzLv+J+Osx8mvn37cnrp9gnzohd3dB3VNZh2tzG8IezZ7Gb
+        JUetUVwqub+zTejgdHPWsvjUHU+FCplXrE5+cTAy9+lkF+HJNU+d5l35ue7ZrvU1+itvLOcz
+        0xaMnfvr4fMTS/bFXwsTuM+lLtERPiHzjll6w9v+U4tDb80M+f7tuxbHE4/d7kKXrOaEdHkm
+        swd+qWE6XCefqPisPKbH0kizfMtSg6TL/0N73B6ZPJj4O+jFhlyDY8wrnn3yfMlRF7ZpEWvm
+        k4P1AZmaPy62x/18aHlNjj0k8duny5JvzZRYijMSDbWYi4oTAZSwgF/lAgAA
+X-CMS-MailID: 20230116103856epcas5p3dea4b4a1e6073257c66b7562f263b5b1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230116103856epcas5p3dea4b4a1e6073257c66b7562f263b5b1
+References: <20230116103823.90757-1-p.rajanbabu@samsung.com>
+        <CGME20230116103856epcas5p3dea4b4a1e6073257c66b7562f263b5b1@epcas5p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 17, 2023 at 01:24:46PM +0900, Masami Hiramatsu wrote:
-> Hi Peter,
-> 
-> On Thu, 12 Jan 2023 20:43:49 +0100
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > Robot reported that trace_hardirqs_{on,off}() tickle the forbidden
-> > _rcuidle() tracepoint through local_irq_{en,dis}able().
-> > 
-> > For 'sane' configs, these calls will only happen with RCU enabled and
-> > as such can use the regular tracepoint. This also means it's possible
-> > to trace them from NMI context again.
-> > 
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> 
-> The code looks good to me. I just have a question about comment.
-> 
-> > ---
-> >  kernel/trace/trace_preemptirq.c |   21 +++++++++++++--------
-> >  1 file changed, 13 insertions(+), 8 deletions(-)
-> > 
-> > --- a/kernel/trace/trace_preemptirq.c
-> > +++ b/kernel/trace/trace_preemptirq.c
-> > @@ -20,6 +20,15 @@
-> >  static DEFINE_PER_CPU(int, tracing_irq_cpu);
-> >  
-> >  /*
-> > + * ...
-> 
-> Is this intended? Wouldn't you leave any comment here?
+Add support for enabling I2S controller on FSD platform.
 
-I indeed forgot to write the comment before posting, my bad :/ Ingo fixed
-it up when he applied.
+FSD I2S controller is based on Exynos7 I2S controller, supporting
+2CH playback/capture in I2S mode and 7.1CH playback/capture in TDM
+mode.
+
+Signed-off-by: Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+---
+ sound/soc/samsung/i2s-regs.h |  1 +
+ sound/soc/samsung/i2s.c      | 53 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 54 insertions(+)
+
+diff --git a/sound/soc/samsung/i2s-regs.h b/sound/soc/samsung/i2s-regs.h
+index b4b5d6053503..138e95581979 100644
+--- a/sound/soc/samsung/i2s-regs.h
++++ b/sound/soc/samsung/i2s-regs.h
+@@ -132,6 +132,7 @@
+ #define EXYNOS7_MOD_RCLK_192FS	7
+ 
+ #define PSR_PSREN		(1 << 15)
++#define PSR_PSVAL(x)		((((x) - 1) << 8) & 0x3f00)
+ 
+ #define FIC_TX2COUNT(x)		(((x) >>  24) & 0xf)
+ #define FIC_TX1COUNT(x)		(((x) >>  16) & 0xf)
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 9505200f3d11..6f96032090de 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -50,6 +50,10 @@ struct samsung_i2s_dai_data {
+ 	u32 quirks;
+ 	unsigned int pcm_rates;
+ 	const struct samsung_i2s_variant_regs *i2s_variant_regs;
++	void (*fixup_early)(struct snd_pcm_substream *substream,
++					struct snd_soc_dai *dai);
++	void (*fixup_late)(struct snd_pcm_substream *substream,
++					struct snd_soc_dai *dai);
+ };
+ 
+ struct i2s_dai {
+@@ -111,6 +115,10 @@ struct samsung_i2s_priv {
+ 	u32 suspend_i2spsr;
+ 
+ 	const struct samsung_i2s_variant_regs *variant_regs;
++	void (*fixup_early)(struct snd_pcm_substream *substream,
++						struct snd_soc_dai *dai);
++	void (*fixup_late)(struct snd_pcm_substream *substream,
++						struct snd_soc_dai *dai);
+ 	u32 quirks;
+ 
+ 	/* The clock provider's data */
+@@ -940,6 +948,10 @@ static int i2s_trigger(struct snd_pcm_substream *substream,
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+ 		pm_runtime_get_sync(dai->dev);
++
++		if (priv->fixup_early)
++			priv->fixup_early(substream, dai);
++
+ 		spin_lock_irqsave(&priv->lock, flags);
+ 
+ 		if (config_setup(i2s)) {
+@@ -947,6 +959,9 @@ static int i2s_trigger(struct snd_pcm_substream *substream,
+ 			return -EINVAL;
+ 		}
+ 
++		if (priv->fixup_late)
++			priv->fixup_late(substream, dai);
++
+ 		if (capture)
+ 			i2s_rxctrl(i2s, 1);
+ 		else
+@@ -1410,6 +1425,8 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 
+ 	if (np) {
+ 		priv->quirks = i2s_dai_data->quirks;
++		priv->fixup_early = i2s_dai_data->fixup_early;
++		priv->fixup_late = i2s_dai_data->fixup_late;
+ 	} else {
+ 		if (!i2s_pdata) {
+ 			dev_err(&pdev->dev, "Missing platform data\n");
+@@ -1563,6 +1580,31 @@ static int samsung_i2s_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static void fsd_i2s_fixup_early(struct snd_pcm_substream *substream,
++		struct snd_soc_dai *dai)
++{
++	struct snd_soc_pcm_runtime *rtd = asoc_substream_to_rtd(substream);
++	struct i2s_dai *i2s = to_info(asoc_rtd_to_cpu(rtd, 0));
++	struct i2s_dai *other = get_other_dai(i2s);
++
++	if (!is_opened(other)) {
++		i2s_set_sysclk(dai, SAMSUNG_I2S_CDCLK, 0, SND_SOC_CLOCK_OUT);
++		i2s_set_sysclk(dai, SAMSUNG_I2S_OPCLK, 0, MOD_OPCLK_PCLK);
++	}
++}
++
++static void fsd_i2s_fixup_late(struct snd_pcm_substream *substream,
++		struct snd_soc_dai *dai)
++{
++	struct snd_soc_pcm_runtime *rtd = asoc_substream_to_rtd(substream);
++	struct samsung_i2s_priv *priv = snd_soc_dai_get_drvdata(dai);
++	struct i2s_dai *i2s = to_info(asoc_rtd_to_cpu(rtd, 0));
++	struct i2s_dai *other = get_other_dai(i2s);
++
++	if (!is_opened(other))
++		writel(PSR_PSVAL(2) | PSR_PSREN, priv->addr + I2SPSR);
++}
++
+ static const struct samsung_i2s_variant_regs i2sv3_regs = {
+ 	.bfs_off = 1,
+ 	.rfs_off = 3,
+@@ -1652,6 +1694,14 @@ static const struct samsung_i2s_dai_data i2sv5_dai_type_i2s1 __maybe_unused = {
+ 	.i2s_variant_regs = &i2sv5_i2s1_regs,
+ };
+ 
++static const struct samsung_i2s_dai_data fsd_dai_type __maybe_unused = {
++	.quirks = QUIRK_SEC_DAI | QUIRK_NEED_RSTCLR | QUIRK_SUPPORTS_TDM,
++	.pcm_rates = SNDRV_PCM_RATE_8000_192000,
++	.i2s_variant_regs = &i2sv7_regs,
++	.fixup_early = fsd_i2s_fixup_early,
++	.fixup_late = fsd_i2s_fixup_late,
++};
++
+ static const struct platform_device_id samsung_i2s_driver_ids[] = {
+ 	{
+ 		.name           = "samsung-i2s",
+@@ -1678,6 +1728,9 @@ static const struct of_device_id exynos_i2s_match[] = {
+ 	}, {
+ 		.compatible = "samsung,exynos7-i2s1",
+ 		.data = &i2sv5_dai_type_i2s1,
++	}, {
++		.compatible = "tesla,fsd-i2s",
++		.data = &fsd_dai_type,
+ 	},
+ 	{},
+ };
+-- 
+2.17.1
+
