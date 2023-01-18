@@ -2,32 +2,36 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F0EC32793
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Jan 2023 11:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93675C32793
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Jan 2023 11:13:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230193AbjARLJZ (ORCPT
+        id S230047AbjARLN1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 18 Jan 2023 06:09:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57262 "EHLO
+        Wed, 18 Jan 2023 06:13:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230241AbjARLIw (ORCPT
+        with ESMTP id S229598AbjARLM4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 18 Jan 2023 06:08:52 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 194DC95758
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jan 2023 02:15:48 -0800 (PST)
+        Wed, 18 Jan 2023 06:12:56 -0500
+X-Greylist: delayed 387 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 18 Jan 2023 02:22:13 PST
+Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [IPv6:2a02:1800:120:4::f00:11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8117147085
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jan 2023 02:22:04 -0800 (PST)
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by gauss.telenet-ops.be (Postfix) with ESMTPS id 4Nxhd66M9Tz4x21F
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jan 2023 11:21:46 +0100 (CET)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:4745:2e6d:e3a6:3327])
-        by albert.telenet-ops.be with bizsmtp
-        id AAFN290022zf9gW06AFN2Z; Wed, 18 Jan 2023 11:15:46 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id AAFN290092zf9gW01AFNxV; Wed, 18 Jan 2023 11:15:42 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pI5TQ-005aIM-Lz;
+        id 1pI5TQ-005aIh-PT;
         Wed, 18 Jan 2023 11:15:22 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pI5TV-001JVj-W5;
-        Wed, 18 Jan 2023 11:15:21 +0100
+        id 1pI5TW-001JW3-3f;
+        Wed, 18 Jan 2023 11:15:22 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Madalin Bucur <madalin.bucur@nxp.com>,
         "David S . Miller" <davem@davemloft.net>,
@@ -55,9 +59,9 @@ Cc:     netdev@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/7] phy: Add devm_of_phy_optional_get() helper
-Date:   Wed, 18 Jan 2023 11:15:14 +0100
-Message-Id: <f53a1bcca637ceeafb04ce3540a605532d3bc34a.1674036164.git.geert+renesas@glider.be>
+Subject: [PATCH 6/7] usb: host: ehci-exynos: Convert to devm_of_phy_optional_get()
+Date:   Wed, 18 Jan 2023 11:15:19 +0100
+Message-Id: <96fce347ffa2d6efaa3fd24bf2d91e2a0a91c371.1674036164.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1674036164.git.geert+renesas@glider.be>
 References: <cover.1674036164.git.geert+renesas@glider.be>
@@ -67,79 +71,70 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add an optional variant of devm_of_phy_get(), so drivers no longer have
-to open-code this operation.
+Use the new devm_of_phy_optional_get() helper instead of open-coding the
+same operation.
+
+This lets us drop several checks for IS_ERR(), as phy_power_{on,off}()
+handle NULL parameters fine.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/phy/phy-core.c  | 26 ++++++++++++++++++++++++++
- include/linux/phy/phy.h |  9 ++++++++
- 2 files changed, 35 insertions(+)
+ drivers/usb/host/ehci-exynos.c | 24 +++++++-----------------
+ 1 file changed, 7 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index d93ddf1262c5178b..ea009a611e19c705 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -879,6 +879,32 @@ struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
- }
- EXPORT_SYMBOL_GPL(devm_of_phy_get);
+diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+index a333231616f437b8..0f8d7df4937b2da4 100644
+--- a/drivers/usb/host/ehci-exynos.c
++++ b/drivers/usb/host/ehci-exynos.c
+@@ -80,19 +80,12 @@ static int exynos_ehci_get_phy(struct device *dev,
+ 			return -EINVAL;
+ 		}
  
-+/**
-+ * devm_of_phy_optional_get() - lookup and obtain a reference to an optional
-+ * phy.
-+ * @dev: device that requests this phy
-+ * @np: node containing the phy
-+ * @con_id: name of the phy from device's point of view
-+ *
-+ * Gets the phy using of_phy_get(), and associates a device with it using
-+ * devres. On driver detach, release function is invoked on the devres data,
-+ * then, devres data is freed.  This differs to devm_of_phy_get() in
-+ * that if the phy does not exist, it is not considered an error and
-+ * -ENODEV will not be returned. Instead the NULL phy is returned,
-+ * which can be passed to all other phy consumer calls.
-+ */
-+struct phy *devm_of_phy_optional_get(struct device *dev, struct device_node *np,
-+				     const char *con_id)
-+{
-+	struct phy *phy = devm_of_phy_get(dev, np, con_id);
-+
-+	if (PTR_ERR(phy) == -ENODEV)
-+		phy = NULL;
-+
-+	return phy;
-+}
-+EXPORT_SYMBOL_GPL(devm_of_phy_optional_get);
-+
- /**
-  * devm_of_phy_get_by_index() - lookup and obtain a reference to a phy by index.
-  * @dev: device that requests this phy
-diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-index 559c3da515073697..5f6e669b616da0b0 100644
---- a/include/linux/phy/phy.h
-+++ b/include/linux/phy/phy.h
-@@ -255,6 +255,8 @@ struct phy *devm_phy_get(struct device *dev, const char *string);
- struct phy *devm_phy_optional_get(struct device *dev, const char *string);
- struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
- 			    const char *con_id);
-+struct phy *devm_of_phy_optional_get(struct device *dev, struct device_node *np,
-+				     const char *con_id);
- struct phy *devm_of_phy_get_by_index(struct device *dev, struct device_node *np,
- 				     int index);
- void of_phy_put(struct phy *phy);
-@@ -450,6 +452,13 @@ static inline struct phy *devm_of_phy_get(struct device *dev,
- 	return ERR_PTR(-ENOSYS);
+-		phy = devm_of_phy_get(dev, child, NULL);
++		phy = devm_of_phy_optional_get(dev, child, NULL);
+ 		exynos_ehci->phy[phy_number] = phy;
+ 		if (IS_ERR(phy)) {
+-			ret = PTR_ERR(phy);
+-			if (ret == -EPROBE_DEFER) {
+-				of_node_put(child);
+-				return ret;
+-			} else if (ret != -ENOSYS && ret != -ENODEV) {
+-				dev_err(dev,
+-					"Error retrieving usb2 phy: %d\n", ret);
+-				of_node_put(child);
+-				return ret;
+-			}
++			of_node_put(child);
++			return dev_err_probe(dev, PTR_ERR(phy),
++					     "Error retrieving usb2 phy\n");
+ 		}
+ 	}
+ 
+@@ -108,12 +101,10 @@ static int exynos_ehci_phy_enable(struct device *dev)
+ 	int ret = 0;
+ 
+ 	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
+-		if (!IS_ERR(exynos_ehci->phy[i]))
+-			ret = phy_power_on(exynos_ehci->phy[i]);
++		ret = phy_power_on(exynos_ehci->phy[i]);
+ 	if (ret)
+ 		for (i--; i >= 0; i--)
+-			if (!IS_ERR(exynos_ehci->phy[i]))
+-				phy_power_off(exynos_ehci->phy[i]);
++			phy_power_off(exynos_ehci->phy[i]);
+ 
+ 	return ret;
+ }
+@@ -125,8 +116,7 @@ static void exynos_ehci_phy_disable(struct device *dev)
+ 	int i;
+ 
+ 	for (i = 0; i < PHY_NUMBER; i++)
+-		if (!IS_ERR(exynos_ehci->phy[i]))
+-			phy_power_off(exynos_ehci->phy[i]);
++		phy_power_off(exynos_ehci->phy[i]);
  }
  
-+static inline struct phy *devm_of_phy_optional_get(struct device *dev,
-+						   struct device_node *np,
-+						   const char *con_id)
-+{
-+	return NULL;
-+}
-+
- static inline struct phy *devm_of_phy_get_by_index(struct device *dev,
- 						   struct device_node *np,
- 						   int index)
+ static void exynos_setup_vbus_gpio(struct device *dev)
 -- 
 2.34.1
 
