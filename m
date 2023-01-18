@@ -2,31 +2,31 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9494C678D4
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Jan 2023 11:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDCCEC38159
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Jan 2023 11:09:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229695AbjARLJC (ORCPT
+        id S229879AbjARLJF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 18 Jan 2023 06:09:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57182 "EHLO
+        Wed, 18 Jan 2023 06:09:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230202AbjARLIp (ORCPT
+        with ESMTP id S230206AbjARLIq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 18 Jan 2023 06:08:45 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E34CA6F887
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jan 2023 02:15:44 -0800 (PST)
+        Wed, 18 Jan 2023 06:08:46 -0500
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3FBB95197
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jan 2023 02:15:45 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:4745:2e6d:e3a6:3327])
-        by baptiste.telenet-ops.be with bizsmtp
-        id AAFN2900E2zf9gW01AFN4M; Wed, 18 Jan 2023 11:15:42 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id AAFN2900B2zf9gW06AFNzY; Wed, 18 Jan 2023 11:15:44 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pI5TQ-005aIV-N1;
+        id 1pI5TQ-005aId-Oc;
         Wed, 18 Jan 2023 11:15:22 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pI5TW-001JVp-1J;
+        id 1pI5TW-001JVz-2p;
         Wed, 18 Jan 2023 11:15:22 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Madalin Bucur <madalin.bucur@nxp.com>,
@@ -55,9 +55,9 @@ Cc:     netdev@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/7] net: lan966x: Convert to devm_of_phy_optional_get()
-Date:   Wed, 18 Jan 2023 11:15:16 +0100
-Message-Id: <a8673e0ed97d41721bb9718d3338fa6957a7f0f7.1674036164.git.geert+renesas@glider.be>
+Subject: [PATCH 5/7] PCI: tegra: Convert to devm_of_phy_optional_get()
+Date:   Wed, 18 Jan 2023 11:15:18 +0100
+Message-Id: <e9e0aa207d531ccea00e8947678a4f6ce1c625ac.1674036164.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1674036164.git.geert+renesas@glider.be>
 References: <cover.1674036164.git.geert+renesas@glider.be>
@@ -72,25 +72,27 @@ same operation.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/net/ethernet/microchip/lan966x/lan966x_main.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/pci/controller/pci-tegra.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-index cadde20505ba0689..d64a525cdc9ea18b 100644
---- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-+++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-@@ -1147,9 +1147,8 @@ static int lan966x_probe(struct platform_device *pdev)
- 		lan966x->ports[p]->config.portmode = phy_mode;
- 		lan966x->ports[p]->fwnode = fwnode_handle_get(portnp);
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index 929f9363e94bec71..5b8907c663e516ad 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -1330,12 +1330,9 @@ static struct phy *devm_of_phy_optional_get_index(struct device *dev,
+ 	if (!name)
+ 		return ERR_PTR(-ENOMEM);
  
--		serdes = devm_of_phy_get(lan966x->dev, to_of_node(portnp), NULL);
--		if (PTR_ERR(serdes) == -ENODEV)
--			serdes = NULL;
-+		serdes = devm_of_phy_optional_get(lan966x->dev,
-+						  to_of_node(portnp), NULL);
- 		if (IS_ERR(serdes)) {
- 			err = PTR_ERR(serdes);
- 			goto cleanup_ports;
+-	phy = devm_of_phy_get(dev, np, name);
++	phy = devm_of_phy_optional_get(dev, np, name);
+ 	kfree(name);
+ 
+-	if (PTR_ERR(phy) == -ENODEV)
+-		phy = NULL;
+-
+ 	return phy;
+ }
+ 
 -- 
 2.34.1
 
