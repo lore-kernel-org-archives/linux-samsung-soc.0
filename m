@@ -2,91 +2,100 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4991EC54EBE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Jan 2023 09:52:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0251C46467
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Jan 2023 11:09:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229891AbjARJw1 (ORCPT
+        id S230210AbjARLJA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 18 Jan 2023 04:52:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37550 "EHLO
+        Wed, 18 Jan 2023 06:09:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230163AbjARJvn (ORCPT
+        with ESMTP id S230188AbjARLIo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 18 Jan 2023 04:51:43 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11A2E8CE53;
-        Wed, 18 Jan 2023 01:02:32 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 301CCCE1BB0;
-        Wed, 18 Jan 2023 09:02:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2CD9C433D2;
-        Wed, 18 Jan 2023 09:02:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674032549;
-        bh=EuAgTB/iPW4vJ/ZRJE/nY3/BVUH2eT5SYitsWMD6MXk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=KjM6elgrcBl+tAIy6K9MSWdfuHOUYGcdsn8MmZRkX8t86g5RRK1AFOIfidSqqG9+c
-         12E26EhK9+ax/HMr2aFqjgbfSs65XfcbBtagFTZyyoV8K9NV63cTveHFvfXW8p81+Z
-         feeB66PxqeptnbKJX6Cyd7ImBXCXYLS0ZCN92bQbRJ2GpRSwdDLhkOnXd5V02IJkjl
-         qDirtVG2ogDjcOOCq64NNGLzkz0iZHoh3YlQ9vkJiaNzZMxEBaUMnL9MZWt6fM3ND/
-         mLWnXfrgOVx+V0AWDSiGLLn8F9PEaCGE8xgaNqMKfAbPuPFkEKI76mviiP81NsEmND
-         xOBJ1Nbr8+pUA==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Russell King <linux@armlinux.org.uk>,
+        Wed, 18 Jan 2023 06:08:44 -0500
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE6A366CF7
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jan 2023 02:15:44 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:4745:2e6d:e3a6:3327])
+        by baptiste.telenet-ops.be with bizsmtp
+        id AAFN2900B2zf9gW01AFN4L; Wed, 18 Jan 2023 11:15:42 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pI5TQ-005aIP-MK;
+        Wed, 18 Jan 2023 11:15:22 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pI5TW-001JVm-0b;
+        Wed, 18 Jan 2023 11:15:22 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Madalin Bucur <madalin.bucur@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        UNGLinuxDriver@microchip.com,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: s3c: fix s3c64xx_set_timer_source prototype
-Date:   Wed, 18 Jan 2023 10:02:12 +0100
-Message-Id: <20230118090224.2162863-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.0
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     netdev@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/7] net: fman: memac: Convert to devm_of_phy_optional_get()
+Date:   Wed, 18 Jan 2023 11:15:15 +0100
+Message-Id: <0c2302aceb4739ec846edebbc57e71819a8b8ad3.1674036164.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1674036164.git.geert+renesas@glider.be>
+References: <cover.1674036164.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+Use the new devm_of_phy_optional_get() helper instead of open-coding the
+same operation.
 
-The prototype does not match the definition, as gcc-13 points
-out:
-
-arch/arm/mach-s3c/s3c64xx.c:169:13: error: conflicting types for 's3c64xx_set_timer_source' due to enum/integer mismatch; have 'void(unsigned int,  unsigned int)' [-Werror=enum-int-mismatch]
-  169 | void __init s3c64xx_set_timer_source(unsigned int event, unsigned int source)
-      |             ^~~~~~~~~~~~~~~~~~~~~~~~
-In file included from arch/arm/mach-s3c/s3c64xx.c:50:
-arch/arm/mach-s3c/s3c64xx.h:62:20: note: previous declaration of 's3c64xx_set_timer_source' with type 'void(enum s3c64xx_timer_mode,  enum s3c64xx_timer_mode)'
-   62 | extern void __init s3c64xx_set_timer_source(enum s3c64xx_timer_mode event,
-      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
-
-Fixes: 4280506ac9bb ("ARM: SAMSUNG: Move all platforms to new clocksource driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mach-s3c/s3c64xx.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/freescale/fman/fman_memac.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-s3c/s3c64xx.c b/arch/arm/mach-s3c/s3c64xx.c
-index 32b1bc82d700..c5aa4d8ed8bd 100644
---- a/arch/arm/mach-s3c/s3c64xx.c
-+++ b/arch/arm/mach-s3c/s3c64xx.c
-@@ -166,7 +166,8 @@ static struct samsung_pwm_platform_data s3c64xx_pwm_variant = {
- 	.tclk_mask	= (1 << 7) | (1 << 6) | (1 << 5),
- };
+diff --git a/drivers/net/ethernet/freescale/fman/fman_memac.c b/drivers/net/ethernet/freescale/fman/fman_memac.c
+index 9349f841bd0645a0..892277f13048660d 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_memac.c
++++ b/drivers/net/ethernet/freescale/fman/fman_memac.c
+@@ -1152,12 +1152,12 @@ int memac_initialization(struct mac_device *mac_dev,
+ 	else
+ 		memac->sgmii_pcs = pcs;
  
--void __init s3c64xx_set_timer_source(unsigned int event, unsigned int source)
-+void __init s3c64xx_set_timer_source(enum s3c64xx_timer_mode event,
-+				     enum s3c64xx_timer_mode source)
- {
- 	s3c64xx_pwm_variant.output_mask = BIT(SAMSUNG_PWM_NUM) - 1;
- 	s3c64xx_pwm_variant.output_mask &= ~(BIT(event) | BIT(source));
+-	memac->serdes = devm_of_phy_get(mac_dev->dev, mac_node, "serdes");
+-	err = PTR_ERR(memac->serdes);
+-	if (err == -ENODEV || err == -ENOSYS) {
++	memac->serdes = devm_of_phy_optional_get(mac_dev->dev, mac_node,
++						 "serdes");
++	if (!memac->serdes) {
+ 		dev_dbg(mac_dev->dev, "could not get (optional) serdes\n");
+-		memac->serdes = NULL;
+ 	} else if (IS_ERR(memac->serdes)) {
++		err = PTR_ERR(memac->serdes);
+ 		dev_err_probe(mac_dev->dev, err, "could not get serdes\n");
+ 		goto _return_fm_mac_free;
+ 	}
 -- 
-2.39.0
+2.34.1
 
