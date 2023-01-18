@@ -2,215 +2,91 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9680BC32793
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Jan 2023 09:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4991EC54EBE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Jan 2023 09:52:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230002AbjARJEJ (ORCPT
+        id S229891AbjARJw1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 18 Jan 2023 04:04:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60294 "EHLO
+        Wed, 18 Jan 2023 04:52:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230119AbjARJCK (ORCPT
+        with ESMTP id S230163AbjARJvn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 18 Jan 2023 04:02:10 -0500
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78A75521D3;
-        Wed, 18 Jan 2023 00:21:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1674030121; x=1705566121;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=2Pi2FhYms8rU5qm8xKHkMWUh3m1gamMEnH3Omx98304=;
-  b=yAraKtcy+KaUZweRuH2exmkk3gxihkIY8QHCXfgHhwzkSFs3fcwMZS+c
-   8XPfxzirdKieQNGG/dyx6NVmOik927Hhh7stkHYIQEUnG0EsvT5ab+XyO
-   rbDcWssQhVMAMxfMRZW1xThnUqWZG68cldIUpMdSYhqiGHXObDN2OgJY7
-   jxntT4zQ3T64ievE8MMr/YXtWeGS27Izf9TaHGhXAaSgUDXstRrOxpNgv
-   wprYfv+1eKtyDSStoqbmsJI7AulyvnPWkosnUm2giUOTGkikeyGKfqDRA
-   oNOnwglhKqyfD7hTMRximXiyir+de0EnZI+aM/ySRQS2M3woMJPHM28ea
-   g==;
-X-IronPort-AV: E=Sophos;i="5.97,224,1669100400"; 
-   d="scan'208";a="196300402"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 18 Jan 2023 01:21:27 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Wed, 18 Jan 2023 01:21:26 -0700
-Received: from den-dk-m31857.microchip.com (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.16 via Frontend Transport; Wed, 18 Jan 2023 01:21:07 -0700
-Message-ID: <7eb58e2459715a6b2bb5eb45e2ce1f1e88050dff.camel@microchip.com>
-Subject: Re: [PATCH v2 13/23] arm64: dts: Update cache properties for
- microchip
-From:   Steen Hegelund <steen.hegelund@microchip.com>
-To:     Pierre Gondois <pierre.gondois@arm.com>,
-        <linux-kernel@vger.kernel.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        "Tsahee Zidenberg" <tsahee@annapurnalabs.com>,
-        Antoine Tenart <atenart@kernel.org>,
-        Brijesh Singh <brijeshkumar.singh@amd.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        "Neil Armstrong" <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        "Sudeep Holla" <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        William Zhang <william.zhang@broadcom.com>,
-        Anand Gore <anand.gore@broadcom.com>,
-        Kursad Oney <kursad.oney@broadcom.com>,
-        =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>,
+        Wed, 18 Jan 2023 04:51:43 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11A2E8CE53;
+        Wed, 18 Jan 2023 01:02:32 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 301CCCE1BB0;
+        Wed, 18 Jan 2023 09:02:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2CD9C433D2;
+        Wed, 18 Jan 2023 09:02:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674032549;
+        bh=EuAgTB/iPW4vJ/ZRJE/nY3/BVUH2eT5SYitsWMD6MXk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KjM6elgrcBl+tAIy6K9MSWdfuHOUYGcdsn8MmZRkX8t86g5RRK1AFOIfidSqqG9+c
+         12E26EhK9+ax/HMr2aFqjgbfSs65XfcbBtagFTZyyoV8K9NV63cTveHFvfXW8p81+Z
+         feeB66PxqeptnbKJX6Cyd7ImBXCXYLS0ZCN92bQbRJ2GpRSwdDLhkOnXd5V02IJkjl
+         qDirtVG2ogDjcOOCq64NNGLzkz0iZHoh3YlQ9vkJiaNzZMxEBaUMnL9MZWt6fM3ND/
+         mLWnXfrgOVx+V0AWDSiGLLn8F9PEaCGE8xgaNqMKfAbPuPFkEKI76mviiP81NsEmND
+         xOBJ1Nbr8+pUA==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Russell King <linux@armlinux.org.uk>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        "NXP Linux Team" <linux-imx@nxp.com>, Chester Lin <clin@suse.com>,
-        Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Matthias Brugger <mbrugger@suse.com>,
-        NXP S32 Linux Team <s32@nxp.com>,
-        Wei Xu <xuwei5@hisilicon.com>, Chanho Min <chanho.min@lge.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        <UNGLinuxDriver@microchip.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        "Tomer Maimon" <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        "Patrick Venture" <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        "Bjorn Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
         Heiko Stuebner <heiko@sntech.de>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jisheng Zhang <jszhang@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Ming Qian <ming.qian@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Adam Ford <aford173@gmail.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Richard Zhu <hongxing.zhu@nxp.com>, Li Jun <jun.li@nxp.com>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Marek Vasut <marex@denx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Paul Elder <paul.elder@ideasonboard.com>,
-        Martin Kepplinger <martink@posteo.de>,
-        David Heidelberg <david@ixit.cz>, "Joy Zou" <joy.zou@nxp.com>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        "Liu Ying" <victor.liu@nxp.com>, Zhou Peng <eagle.zhou@nxp.com>,
-        Shijie Qin <shijie.qin@nxp.com>, Wei Fang <wei.fang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Vadym Kochan <vadym.kochan@plvision.eu>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Akhil R <akhilrajeev@nvidia.com>,
-        "Mikko Perttunen" <mperttunen@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>,
-        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        "Johan Jonker" <jbx6244@gmail.com>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Aswani Reddy <aswani.reddy@samsung.com>,
-        Shashank Prashar <s.prashar@samsung.com>,
-        "Arnd Bergmann" <arnd@arndb.de>, <devicetree@vger.kernel.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <openbmc@lists.ozlabs.org>,
-        <linux-tegra@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-realtek-soc@lists.infradead.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>
-Date:   Wed, 18 Jan 2023 09:21:07 +0100
-In-Reply-To: <20221107155825.1644604-14-pierre.gondois@arm.com>
-References: <20221107155825.1644604-1-pierre.gondois@arm.com>
-         <20221107155825.1644604-14-pierre.gondois@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.3 
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: s3c: fix s3c64xx_set_timer_source prototype
+Date:   Wed, 18 Jan 2023 10:02:12 +0100
+Message-Id: <20230118090224.2162863-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Pierre,
+From: Arnd Bergmann <arnd@arndb.de>
 
-This looks good to me.
+The prototype does not match the definition, as gcc-13 points
+out:
 
-Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
+arch/arm/mach-s3c/s3c64xx.c:169:13: error: conflicting types for 's3c64xx_set_timer_source' due to enum/integer mismatch; have 'void(unsigned int,  unsigned int)' [-Werror=enum-int-mismatch]
+  169 | void __init s3c64xx_set_timer_source(unsigned int event, unsigned int source)
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from arch/arm/mach-s3c/s3c64xx.c:50:
+arch/arm/mach-s3c/s3c64xx.h:62:20: note: previous declaration of 's3c64xx_set_timer_source' with type 'void(enum s3c64xx_timer_mode,  enum s3c64xx_timer_mode)'
+   62 | extern void __init s3c64xx_set_timer_source(enum s3c64xx_timer_mode event,
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
 
-BR
-Steen
+Fixes: 4280506ac9bb ("ARM: SAMSUNG: Move all platforms to new clocksource driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/mach-s3c/s3c64xx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-On Mon, 2022-11-07 at 16:57 +0100, Pierre Gondois wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
-e
-> content is safe
->=20
-> The DeviceTree Specification v0.3 specifies that the cache node
-> 'compatible' and 'cache-level' properties are 'required'. Cf.
-> s3.8 Multi-level and Shared Cache Nodes
-> The 'cache-unified' property should be present if one of the
-> properties for unified cache is present ('cache-size', ...).
->=20
-> Update the Device Trees accordingly.
->=20
-> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
-> ---
-> =C2=A0arch/arm64/boot/dts/microchip/sparx5.dtsi | 1 +
-> =C2=A01 file changed, 1 insertion(+)
->=20
-> diff --git a/arch/arm64/boot/dts/microchip/sparx5.dtsi
-> b/arch/arm64/boot/dts/microchip/sparx5.dtsi
-> index 2dd5e38820b1..c4bca23b96b9 100644
-> --- a/arch/arm64/boot/dts/microchip/sparx5.dtsi
-> +++ b/arch/arm64/boot/dts/microchip/sparx5.dtsi
-> @@ -52,6 +52,7 @@ cpu1: cpu@1 {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 };
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 L2_0: l2-cache0 {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatib=
-le =3D "cache";
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cache-level =
-=3D <2>;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 };
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
->=20
-> --
-> 2.25.1
->=20
+diff --git a/arch/arm/mach-s3c/s3c64xx.c b/arch/arm/mach-s3c/s3c64xx.c
+index 32b1bc82d700..c5aa4d8ed8bd 100644
+--- a/arch/arm/mach-s3c/s3c64xx.c
++++ b/arch/arm/mach-s3c/s3c64xx.c
+@@ -166,7 +166,8 @@ static struct samsung_pwm_platform_data s3c64xx_pwm_variant = {
+ 	.tclk_mask	= (1 << 7) | (1 << 6) | (1 << 5),
+ };
+ 
+-void __init s3c64xx_set_timer_source(unsigned int event, unsigned int source)
++void __init s3c64xx_set_timer_source(enum s3c64xx_timer_mode event,
++				     enum s3c64xx_timer_mode source)
+ {
+ 	s3c64xx_pwm_variant.output_mask = BIT(SAMSUNG_PWM_NUM) - 1;
+ 	s3c64xx_pwm_variant.output_mask &= ~(BIT(event) | BIT(source));
+-- 
+2.39.0
 
