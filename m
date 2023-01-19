@@ -2,69 +2,84 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDD2C677F1
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 05:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA348C678D6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 05:37:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229707AbjATFLr (ORCPT
+        id S230349AbjATFhd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Jan 2023 00:11:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45052 "EHLO
+        Fri, 20 Jan 2023 00:37:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230043AbjATFLM (ORCPT
+        with ESMTP id S230176AbjATFgt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Jan 2023 00:11:12 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD3C072C14;
-        Thu, 19 Jan 2023 20:59:18 -0800 (PST)
+        Fri, 20 Jan 2023 00:36:49 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E978CE3AE;
+        Thu, 19 Jan 2023 21:33:24 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9BA15B824B4;
-        Thu, 19 Jan 2023 14:52:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4C65C433EF;
-        Thu, 19 Jan 2023 14:52:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1674139966;
-        bh=pFEkGzZclr313dDw7QOuP7VKAbnZdzWUSenn71Hk3OM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lGjAcHMA3ALVP/Ub8bSHSnMxeSb+mrRUeNLQ3ks/BKM3BYvdkxeTiID7Q+T0ihS9F
-         Et0IullpHEj/1/lCzFmzmEGHj1eVINAd2ExZ/4rD4/aqGBGmo89xe5cZlAmcDJQJ/8
-         lUMJaZ4yl+PuT1dqIzpA+u0OqzSHKFCEGR1P9FAg=
-Date:   Thu, 19 Jan 2023 15:52:38 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     "Alexey V. Vissarionov" <gremlin@altlinux.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4B7DCB82667;
+        Thu, 19 Jan 2023 17:07:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAF1DC433F1;
+        Thu, 19 Jan 2023 17:07:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674148040;
+        bh=p21pGzD22MpoWatcSjUEkm1IDstJhidS3Q/BmnFObP8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=VB0v90HPUpSjfT4dp4KDfWV1uLlPh58zX+dCdCUBE7r5uS8I/kVy0uQm4Rj/cjB0F
+         2jaWmuy9HcXj6JlHF0/pXjIMwDKTbjkYG7OZ+JiZrbmCzp0bjeyVvJpryCjU+P6xnv
+         d3mAt3WP0R3QtfXWQuTLTWJ4jmUZzk+gNpU6lE8fOAeyZv5y0BFKAJvyMAnzCOmqdY
+         Xaifjh0J9LbdsYoXe+rhoUf/VhC2dEMfYZdqviCVeq2XXrnw0g6XxS3rMZ95ar7BPZ
+         92a933OMWBfksIZY+rCEZXrW5NSJrMILond4EbEpNxBxiHSxgErwKqAoQC70VNMTHM
+         HWLpW3oNDstgw==
+Date:   Thu, 19 Jan 2023 09:07:17 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        UNGLinuxDriver@microchip.com,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Thomas Abraham <thomas.abraham@linaro.org>,
-        Kukjin Kim <kgene.kim@samsung.com>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-usb@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        lvc-project@linuxtesting.org
-Subject: Re: [PATCH] serial: samsung: fix buffer size for clk_name
-Message-ID: <Y8lZNi9pYVFkYvh9@kroah.com>
-References: <20230116141658.GC8107@altlinux.org>
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 1/7] phy: Add devm_of_phy_optional_get() helper
+Message-ID: <20230119090717.3e220c30@kernel.org>
+In-Reply-To: <Y8kmG+jB/s7stebA@matsya>
+References: <cover.1674036164.git.geert+renesas@glider.be>
+        <f53a1bcca637ceeafb04ce3540a605532d3bc34a.1674036164.git.geert+renesas@glider.be>
+        <20230118192809.2082b004@kernel.org>
+        <Y8kmG+jB/s7stebA@matsya>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230116141658.GC8107@altlinux.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 16, 2023 at 05:16:58PM +0300, Alexey V. Vissarionov wrote:
-> Although very unlikely, the 'clk_num' value may be as big as
-> 2**32 - 1 (uint32_max), so the buffer should have enough
-> space for storing "clk_uart_baud4294967295\0".
-> Also, the numbers in clk_name are expected to be unsigned.
+On Thu, 19 Jan 2023 16:44:35 +0530 Vinod Koul wrote:
+> > For merging could you put this one on an immutable branch and then
+> > everyone can pull + apply patches for callers from their section?  
 > 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: 5f5a7a5578c58852 ("serial: samsung: switch to clkdev based clock lookup")
+> Since this is phy, I can do that and everyone else can merge that in or
+> all changes can go thru phy tree
 
-Please fix your scripts to use the proper number of SHA1 digits in a
-Fixes: line as the documentation asks for.
-
-thanks,
-
-greg k-h
+Great! The microchip and ti drivers are relatively actively developed, 
+I reckon it's worth going the branch way.
