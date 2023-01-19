@@ -2,44 +2,41 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9573C38142
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Jan 2023 11:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5BEC00A5A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Jan 2023 12:17:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230259AbjASLOz (ORCPT
+        id S230345AbjASMRn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 19 Jan 2023 06:14:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57222 "EHLO
+        Thu, 19 Jan 2023 07:17:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230310AbjASLOt (ORCPT
+        with ESMTP id S231224AbjASMRj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 19 Jan 2023 06:14:49 -0500
+        Thu, 19 Jan 2023 07:17:39 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85D266DB33;
-        Thu, 19 Jan 2023 03:14:40 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E5B675A10;
+        Thu, 19 Jan 2023 04:17:20 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 23CCB611F8;
-        Thu, 19 Jan 2023 11:14:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A48B6C433D2;
-        Thu, 19 Jan 2023 11:14:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674126879;
-        bh=p3Z8Q4RuUEKmn89jofySoCuckl7D3b7GECL7f6tdmis=;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9D3FE60BAD;
+        Thu, 19 Jan 2023 12:17:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84736C433F0;
+        Thu, 19 Jan 2023 12:17:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1674130639;
+        bh=eXnAnfAUFHlEjL8uPdD40P2OapTCQ/xIdBuBqDGaxJ4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Oammpthbp+k17llgdvjQtywF/mkmiCatFL8NT7ZjboYjzeOzvWUj2onOepljpgKr9
-         HO+1huJW58CWoSX2gypnx7qm4NT4/YTZcSBGg2qy4Ydk7BptInzehY7Ts0j2eOIbda
-         WOgP8/Z6oN5qBuhhnGqqxzN7HCBuf/b6GXCURSK/7+VNS45FUoOjxhX87s2gAbABFH
-         EkCxym/b2Jy9Hle3z7lY1IpT+Rhc7/TjX63MLpoANzR0cmUL2ACLFjmpbg+/xbhEHL
-         lTlU0X6yKDV5QqO9TRRze5eXx5WNAAJUThQibPM36+eObIIlidHCmBi9IVthNt5kUB
-         YJOvCNYogX6Rg==
-Date:   Thu, 19 Jan 2023 16:44:35 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
+        b=N3y+xYmdxWPyzTRr5EgvegVVKvaEEiFz9xtQ2SjdHaitSRqwc9lkB2dYdTLvFgRxP
+         WS2IsQhPHkr20MFa8a4vhtHE9FEbFO8gs7eQHB3azzZz4ygqjtf+heOwuN20H/rhSA
+         QANZpJZuD2OHH+j3xTGX6G8Z/6gTpI0JzPATTKvs=
+Date:   Thu, 19 Jan 2023 13:17:16 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Madalin Bucur <madalin.bucur@nxp.com>,
         "David S . Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
         Horatiu Vultur <horatiu.vultur@microchip.com>,
         UNGLinuxDriver@microchip.com,
@@ -49,9 +46,9 @@ Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
         Kishon Vijay Abraham I <kishon@kernel.org>,
         Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Siddharth Vadapalli <s-vadapalli@ti.com>,
@@ -60,30 +57,30 @@ Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-phy@lists.infradead.org, linux-usb@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 1/7] phy: Add devm_of_phy_optional_get() helper
-Message-ID: <Y8kmG+jB/s7stebA@matsya>
+Subject: Re: [PATCH 6/7] usb: host: ehci-exynos: Convert to
+ devm_of_phy_optional_get()
+Message-ID: <Y8k0zOQan6SihtUU@kroah.com>
 References: <cover.1674036164.git.geert+renesas@glider.be>
- <f53a1bcca637ceeafb04ce3540a605532d3bc34a.1674036164.git.geert+renesas@glider.be>
- <20230118192809.2082b004@kernel.org>
+ <96fce347ffa2d6efaa3fd24bf2d91e2a0a91c371.1674036164.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230118192809.2082b004@kernel.org>
+In-Reply-To: <96fce347ffa2d6efaa3fd24bf2d91e2a0a91c371.1674036164.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 18-01-23, 19:28, Jakub Kicinski wrote:
-> On Wed, 18 Jan 2023 11:15:14 +0100 Geert Uytterhoeven wrote:
-> > Add an optional variant of devm_of_phy_get(), so drivers no longer have
-> > to open-code this operation.
+On Wed, Jan 18, 2023 at 11:15:19AM +0100, Geert Uytterhoeven wrote:
+> Use the new devm_of_phy_optional_get() helper instead of open-coding the
+> same operation.
 > 
-> For merging could you put this one on an immutable branch and then
-> everyone can pull + apply patches for callers from their section?
+> This lets us drop several checks for IS_ERR(), as phy_power_{on,off}()
+> handle NULL parameters fine.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/usb/host/ehci-exynos.c | 24 +++++++-----------------
+>  1 file changed, 7 insertions(+), 17 deletions(-)
+> 
 
-Since this is phy, I can do that and everyone else can merge that in or
-all changes can go thru phy tree
-
-Thanks
--- 
-~Vinod
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
