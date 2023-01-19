@@ -2,168 +2,120 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D95C1C678DC
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Jan 2023 20:14:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6C7C004D4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Jan 2023 23:21:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230221AbjASUOm (ORCPT
+        id S229879AbjASXVT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 19 Jan 2023 15:14:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35578 "EHLO
+        Thu, 19 Jan 2023 18:21:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230218AbjASUOi (ORCPT
+        with ESMTP id S229865AbjASXVF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 19 Jan 2023 15:14:38 -0500
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F5E6951A1;
-        Thu, 19 Jan 2023 12:14:33 -0800 (PST)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id E94845FD0B;
-        Thu, 19 Jan 2023 23:14:28 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1674159269;
-        bh=aaR9evVc2lGAxgc1j/OH4BgiwZu8Sx2LjYz7IF3WmyE=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=IVx6sMXPad9O6kUyupdXBr38dNNjeS2a9tD41LuD4fjg0SBi+eegOpmcl4idROZi8
-         Fj0ju5drKSGyEfmAIiRaxvRXYE9dUXnRl7iNpZDNJRsSWmmL1TqghFQ0DXGso8uxjP
-         jaCeVZRxvavFnXcGDusMsMHMMQKsQ+F7+KvXvZdUFbf9FHGzDtOzmJzfFeHBZ5K+rL
-         WhBddfYAXt817R0Yos21SaAuqpgqim/9KGZnlzx7r6buXEjO4rOSKRCZ+rJ23MOSwa
-         mrfYbzZ4VXevWpK0F4sDEHuBG1avsWWHVFIZtYkMpbAfmNWAkXfkZmhYwzNBQm47Np
-         QM1+cGt7qWMfg==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Thu, 19 Jan 2023 23:14:14 +0300 (MSK)
-Date:   Thu, 19 Jan 2023 23:14:14 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Lucas Stankus <lucas.p.stankus@gmail.com>,
-        Puranjay Mohan <puranjay12@gmail.com>,
-        Alexandru Tachici <alexandru.tachici@analog.com>,
-        Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
-        Renato Lui Geh <renatogeh@gmail.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Andreas Klinger <ak@it-klinger.de>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Kent Gustavsson <kent@minoris.se>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Thu, 19 Jan 2023 18:21:05 -0500
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C063C392AC;
+        Thu, 19 Jan 2023 15:20:32 -0800 (PST)
+Received: by mail-pg1-x52f.google.com with SMTP id q9so2837732pgq.5;
+        Thu, 19 Jan 2023 15:20:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/8VFYGKVQDx9YS3Bf+JaHr5ao9ClGu3C5S4SGB4QR9A=;
+        b=SN+eVLi1DRWR6rpSY2PJV70czrUs98v9bI5D2abVAhBXs5JbxT/xeCGOi/5PrneIJv
+         z8ts8tKo4C2kelodjYn8/A81cUlm28upoURRlm+J3SwgKIC01dXP2G9mlfR21jEHagOt
+         AgdpBaAAlgbn1ztP2fKNvRA16SRAE6fd/KNyNSMEp3yG90WZUR6JdDwzIEuZ60GMMBIE
+         0XW8EH0lnzwVIF2gaOHYmtuS8/6EgJrt7pM2GPYjOpyq+cVDOixiF7Uz5YrybdLgs16/
+         FgdBrfm+RiuTgWcb7GVH3jUu5b05CKFys9IlL3fkrZvq7rmH07TFi4ZX/XR8GLWNyRjK
+         HeGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/8VFYGKVQDx9YS3Bf+JaHr5ao9ClGu3C5S4SGB4QR9A=;
+        b=YMKU7iR/pVkiKulxaDcL2fwiSdG3cwEHInqNGE+cT4ClDuQvGI0tHHJH0Z1sjDGRc1
+         85jGwZnGnlNdxqFCHMy/doSdnmurMZ1RApUkTVvqsAjgPoJs0iLL5ZcGp5N8NXpYShNb
+         t3TM80JJNofPQ+thbGMFfHlFKkJUVEQgRdRvk6QymUCXmgi4NB3rJhsgnFulobxv36QX
+         C22XZDdZ4ejuxfY8MfPEQ+0dzZkpwqFWXaLHaEwLGbA4hlR8/octloSEFAdCH6F7hSXO
+         ucxU5XPzT3hS8ZpWdaS14WNJTYxCgsncnl0ZOXub+Htr9jGBVjnEkubZMjUMkJBZL0tP
+         eB3A==
+X-Gm-Message-State: AFqh2kpFHEhJpqFVH9mtm2/XhsVMVWVXSZSNOd41ftNSi+aga6Zj1VsD
+        0pP/JsF6m6Ci1iqgeTFbGIM=
+X-Google-Smtp-Source: AMrXdXurMgRBKbvVa+DeeN1KDnY9oIpSJ0B1l7OtzdgBetQn9I69jfzDhB7UqBrcd/mZIzoZShPITQ==
+X-Received: by 2002:aa7:8506:0:b0:58d:966b:2f63 with SMTP id v6-20020aa78506000000b0058d966b2f63mr11421708pfn.20.1674170432247;
+        Thu, 19 Jan 2023 15:20:32 -0800 (PST)
+Received: from localhost ([2a00:79e1:abd:4a00:2703:3c72:eb1a:cffd])
+        by smtp.gmail.com with ESMTPSA id d8-20020aa797a8000000b0058837da69edsm21036005pfq.128.2023.01.19.15.20.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jan 2023 15:20:31 -0800 (PST)
+From:   Rob Clark <robdclark@gmail.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Rob Clark <robdclark@chromium.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        <kernel@pengutronix.de>,
-        Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
-        Nishant Malpani <nish.malpani25@gmail.com>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        Dragos Bogdan <dragos.bogdan@analog.com>,
-        Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>,
-        Lorenzo Bianconi <lorenzo@kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Stefan Popa <stefan.popa@analog.com>,
-        Robert Yang <decatf@gmail.com>,
-        Sean Nyekjaer <sean@geanix.com>,
-        Artur Rojek <contact@artur-rojek.eu>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Philippe Reynes <tremyfr@yahoo.fr>,
-        Alexandru Lazar <alazar@startmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Caleb Connolly <caleb.connolly@linaro.org>,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Harald Geyer <harald@ccbib.org>,
-        Eugene Zaikonnikov <ez@norophonic.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Matt Ranostay <matt.ranostay@konsulko.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Sankar Velliangiri <navin@linumiz.com>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <chrome-platform@lists.linux.dev>
-Subject: Re: [PATCH 1/5] dt-bindings: iio: drop unneeded quotes
-Message-ID: <20230119201414.2gt2lw2qozm7vyjh@CAB-WSD-L081021>
-References: <20230118184413.395820-1-krzysztof.kozlowski@linaro.org>
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C,
+        S5P AND EXYNOS ARM ARCHITECTURES),
+        linux-samsung-soc@vger.kernel.org (open list:ARM/SAMSUNG S3C, S5P AND
+        EXYNOS ARM ARCHITECTURES),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/exynos: Drop unbalanced obj unref
+Date:   Thu, 19 Jan 2023 15:20:37 -0800
+Message-Id: <20230119232037.2885568-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20230118184413.395820-1-krzysztof.kozlowski@linaro.org>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/01/19 16:54:00 #20783955
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Dear Krzysztof,
+From: Rob Clark <robdclark@chromium.org>
 
-Thank you for the patch!
-I'm okay with changes to memsensing,msa311.yaml schema.
+In the error path, exynos_drm_gem_mmap() was dropping an obj reference
+that it doesn't own.
 
-On Wed, Jan 18, 2023 at 07:44:09PM +0100, Krzysztof Kozlowski wrote:
-> Cleanup by removing unneeded quotes from refs and redundant blank lines.
-> No functional impact except adjusting to preferred coding style.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../devicetree/bindings/iio/accel/memsensing,msa311.yaml  | 5 ++---
->  Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml | 2 +-
->  Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml | 2 +-
->  .../devicetree/bindings/iio/adc/atmel,sama5d2-adc.yaml    | 2 +-
->  Documentation/devicetree/bindings/iio/adc/avia-hx711.yaml | 4 ++--
->  .../devicetree/bindings/iio/adc/ingenic,adc.yaml          | 4 ++--
->  .../devicetree/bindings/iio/adc/microchip,mcp3911.yaml    | 4 ++--
->  .../devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml    | 2 +-
->  .../devicetree/bindings/iio/adc/samsung,exynos-adc.yaml   | 2 +-
->  .../devicetree/bindings/iio/adc/st,stm32-adc.yaml         | 8 ++++----
->  .../devicetree/bindings/iio/adc/ti,ads131e08.yaml         | 2 +-
->  Documentation/devicetree/bindings/iio/adc/ti,tsc2046.yaml | 2 +-
->  .../devicetree/bindings/iio/dac/lltc,ltc1660.yaml         | 4 ++--
->  .../devicetree/bindings/iio/dac/lltc,ltc2632.yaml         | 4 ++--
->  .../devicetree/bindings/iio/dac/st,stm32-dac.yaml         | 4 ++--
->  Documentation/devicetree/bindings/iio/imu/st,lsm6dsx.yaml | 2 +-
->  .../devicetree/bindings/iio/temperature/ti,tmp117.yaml    | 6 +++---
->  17 files changed, 29 insertions(+), 30 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/accel/memsensing,msa311.yaml b/Documentation/devicetree/bindings/iio/accel/memsensing,msa311.yaml
-> index 23528dcaa073..d530ec041fe7 100644
-> --- a/Documentation/devicetree/bindings/iio/accel/memsensing,msa311.yaml
-> +++ b/Documentation/devicetree/bindings/iio/accel/memsensing,msa311.yaml
-> @@ -1,9 +1,8 @@
->  # SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> -
->  %YAML 1.2
->  ---
-> -$id: "http://devicetree.org/schemas/iio/accel/memsensing,msa311.yaml#"
-> -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +$id: http://devicetree.org/schemas/iio/accel/memsensing,msa311.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: MEMSensing digital 3-Axis accelerometer
->  
+Fixes: 832316c704fe ("drm/exynos: use drm generic mmap interface")
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+ drivers/gpu/drm/exynos/exynos_drm_gem.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-Reviewed-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-
-[...]
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+index 3e493f48e0d4..65bca61e63a3 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+@@ -363,7 +363,6 @@ int exynos_drm_gem_dumb_create(struct drm_file *file_priv,
+ static int exynos_drm_gem_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
+ {
+ 	struct exynos_drm_gem *exynos_gem = to_exynos_gem(obj);
+-	int ret;
+ 
+ 	if (obj->import_attach)
+ 		return dma_buf_mmap(obj->dma_buf, vma, 0);
+@@ -383,16 +382,7 @@ static int exynos_drm_gem_mmap(struct drm_gem_object *obj, struct vm_area_struct
+ 		vma->vm_page_prot =
+ 			pgprot_noncached(vm_get_page_prot(vma->vm_flags));
+ 
+-	ret = exynos_drm_gem_mmap_buffer(exynos_gem, vma);
+-	if (ret)
+-		goto err_close_vm;
+-
+-	return ret;
+-
+-err_close_vm:
+-	drm_gem_vm_close(vma);
+-
+-	return ret;
++	return exynos_drm_gem_mmap_buffer(exynos_gem, vma);
+ }
+ 
+ /* low-level interface prime helpers */
 -- 
-Thank you,
-Dmitry
+2.38.1
+
