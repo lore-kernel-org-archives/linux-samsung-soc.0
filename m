@@ -2,58 +2,57 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB38C004D4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Jan 2023 17:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B46F3C004D4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Jan 2023 17:59:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229709AbjASR1o (ORCPT
+        id S229720AbjASR7N (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 19 Jan 2023 12:27:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37174 "EHLO
+        Thu, 19 Jan 2023 12:59:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbjASR1k (ORCPT
+        with ESMTP id S229712AbjASR7M (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 19 Jan 2023 12:27:40 -0500
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAA39798F9
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jan 2023 09:27:32 -0800 (PST)
-Received: by mail-pj1-x102b.google.com with SMTP id y3-20020a17090a390300b00229add7bb36so2435195pjb.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jan 2023 09:27:32 -0800 (PST)
+        Thu, 19 Jan 2023 12:59:12 -0500
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D129BBA2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jan 2023 09:59:11 -0800 (PST)
+Received: by mail-yb1-xb2b.google.com with SMTP id 66so3580552yba.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jan 2023 09:59:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=amarulasolutions.com; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+yByDB22HCudt49W/UmVaOb7KMALvWI5oNh+3zy2EdM=;
-        b=YysEOaic5JVNZ5gOMnYf04BSi94eSQzxcKt0U77fM2sd5uXJM+gIX3K0rZtfNlzJGK
-         nLBpzOC8kIYXV/FMbakdlfEqaZliLn4b89TpA6xSCW6+hyt/1RB2zqH6IHmJrvLzvHyw
-         8gr13J6nkfOS6bW4VzfthYQX0v+0698pOvCfdtjFsTaN/1dazGKEbDShKdt6KE2MXcxQ
-         PzSsEPUmbbxMgxFwloIi6BLaMf3Es5/UVsb08Lf3fn34gQJn29+RL8U8TZAQzCk5/cZ9
-         9zsv8LtzYh8UFNPI9AyaeucIXSevdwuwNpB6MAZjtdX86FE2wrLFzMWjLkah3+Wmrf31
-         HT+w==
+        bh=FOB72L75kaXcfttasRM4isMQGOgu0vhdc6xDEfltXi4=;
+        b=UcZGizbHQPhN5XlWcZLIoend9g0Pd/2lt3awrzLsp/3tWRFHIIT80h1mn1JZWltiBR
+         r+LpABSbs0p0J0nSev2xzxqf6/Kdov6cR5Tw7yBjsEYEsS2fhsq55lVhnIROce8xFRNa
+         kb2vzkTRSTLZe04GJ03bFPELvLdss6ByDjW6s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+yByDB22HCudt49W/UmVaOb7KMALvWI5oNh+3zy2EdM=;
-        b=fSdlIwqT1D4GIN+WOK0U5VVdis0T7Cew66vzxEOa7Jr1ffUQlWOw214cPKS+OtBha2
-         LwtHB533RUKnjGx032MwasXUt1FCReqj4+w+5UPyww1lFrZramBb29UPXfIC/eow/dMu
-         f1dCkaYkzvhF5MFESZcB4Jq1K8R248P/Zprs71pWt/y8Y086YR13LmLPneGBaiCP0iYF
-         nsYtcpX83A612MupRYPnR0R66JvF6IiYTBuq+39fBZEvj6nm6DGsNexUdZxHjHabfIJU
-         YtMRUiWy2uz3n+1vNzw9wciF6B1iHlhf7foZl4vmAQMbD3FdsbAWbxn/rP31RTlfb0kO
-         XoaA==
-X-Gm-Message-State: AFqh2kqjO6uGg1v2E7rcV3zfLYIZ3ms6zEv/2XqfCvIE5/wsNPx/a/j+
-        TzVR6VpAiDB3sdzuNFMnu2w7IDdGl6kQPfrXzgw=
-X-Google-Smtp-Source: AMrXdXv/g8vYV6jhwbL6XrS6ExuEFvgvSA5QzaUfxtJGoTacWqzI+vDaZ0qiUZmd9vjmvVKxQXXMvEa6kSgqIXSflos=
-X-Received: by 2002:a17:90b:83:b0:229:5037:d9 with SMTP id bb3-20020a17090b008300b00229503700d9mr1197103pjb.195.1674149252291;
- Thu, 19 Jan 2023 09:27:32 -0800 (PST)
+        bh=FOB72L75kaXcfttasRM4isMQGOgu0vhdc6xDEfltXi4=;
+        b=kTXNUcih/JBRWc/AshpH3BAtSvSv42uwNVxIV89sEKD73d4sOP1ROxbuoAjouS2spN
+         7CiwTSBOcVWZuZ3yXOvXNQDyMtvVKzdxahM77Ckhrrxsy4Oa0fXTANNyZHyPbxnsHDI1
+         XZFoIutzfzL79+o+xyit22XnmUnjfDMj0pWT4OZS5qCiLUP26s0qprDUgo1eOfmEgO8U
+         Pbqo1pOm69Cc/j8BahYZEorvPD/dACE+9U6CXInDbMxNxn/XJ5fR5lWqgvPFG6KxbZS/
+         M5XRRkMxrQQ1+mS+ZPckj1JpKfMfAN2DVfo3ls5GI0J6AYiMiCRZOdf8LEFEj74e+spx
+         p3JQ==
+X-Gm-Message-State: AFqh2kphCl7S//71hpwWNh9q1AQ0Q/JbGDIetD3HkM55R7+MKfHMeROQ
+        iGLUc32A79tKIvDopZ/0Z9IlhsUBOE0B918+OzP1rg==
+X-Google-Smtp-Source: AMrXdXuF9zrLNubB1uj9LLnW9ShFQMDII+h2HV7IuRhlB+d1jfu3knfPe6TAk54PczHt/7M4DvphFWwgzpVPmg8OY6M=
+X-Received: by 2002:a25:b6c2:0:b0:6fc:c36a:1d06 with SMTP id
+ f2-20020a25b6c2000000b006fcc36a1d06mr1044577ybm.462.1674151150523; Thu, 19
+ Jan 2023 09:59:10 -0800 (PST)
 MIME-Version: 1.0
-References: <20221214125907.376148-1-jagan@amarulasolutions.com> <CAMty3ZC9TtnupJKF4LA9e-jnYMux28u4Pn3femJZXi4ogV+drA@mail.gmail.com>
-In-Reply-To: <CAMty3ZC9TtnupJKF4LA9e-jnYMux28u4Pn3femJZXi4ogV+drA@mail.gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 19 Jan 2023 14:27:17 -0300
-Message-ID: <CAOMZO5AYzZXQ_7jqktKrGcZyE_CaZHZpfyQPWAzbcxGvByH5Kg@mail.gmail.com>
+References: <20221214125907.376148-1-jagan@amarulasolutions.com>
+ <CAMty3ZC9TtnupJKF4LA9e-jnYMux28u4Pn3femJZXi4ogV+drA@mail.gmail.com> <CAOMZO5AYzZXQ_7jqktKrGcZyE_CaZHZpfyQPWAzbcxGvByH5Kg@mail.gmail.com>
+In-Reply-To: <CAOMZO5AYzZXQ_7jqktKrGcZyE_CaZHZpfyQPWAzbcxGvByH5Kg@mail.gmail.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 19 Jan 2023 23:28:58 +0530
+Message-ID: <CAMty3ZDnNJJQ2=Xbi6tNDzp17Ye=mnVhPOEtWVZbZuot_N513w@mail.gmail.com>
 Subject: Re: [PATCH v10 00/18] drm: Add Samsung MIPI DSIM bridge
-To:     Jagan Teki <jagan@amarulasolutions.com>
+To:     Fabio Estevam <festevam@gmail.com>
 Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -80,11 +79,29 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Jagan,
+Hi Fabio,
 
-On Thu, Jan 5, 2023 at 7:24 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+On Thu, Jan 19, 2023 at 10:57 PM Fabio Estevam <festevam@gmail.com> wrote:
+>
+> Hi Jagan,
+>
+> On Thu, Jan 5, 2023 at 7:24 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> > Does anyone have any other comments on this? I would like to send v11
+> > with a few nits on v10. Please let me know.
+>
+> What is blocking this series to be applied?
 
-> Does anyone have any other comments on this? I would like to send v11
-> with a few nits on v10. Please let me know.
+There are two patch series prior to this need to apply.
 
-What is blocking this series to be applied?
+https://patchwork.kernel.org/project/dri-devel/patch/20221212145745.15387-1-jagan@amarulasolutions.com/
+https://patchwork.kernel.org/project/dri-devel/cover/20221212182923.29155-1-jagan@amarulasolutions.com/
+
+Regarding this series, the patch 09/18 commit message has "FIXME" this
+need to remove.
+https://patchwork.kernel.org/project/dri-devel/patch/20221214125907.376148-10-jagan@amarulasolutions.com/
+
+I think it is possible to remove it while applying otherwise I will
+resend this patch alone or in series again.
+
+Jagan.
