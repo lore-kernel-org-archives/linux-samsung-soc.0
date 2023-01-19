@@ -2,66 +2,43 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA5CC00A5A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Jan 2023 15:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0204C004D4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Jan 2023 16:59:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230395AbjASPjM (ORCPT
+        id S230177AbjASQ7I (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 19 Jan 2023 10:39:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41510 "EHLO
+        Thu, 19 Jan 2023 11:59:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229710AbjASPjM (ORCPT
+        with ESMTP id S230432AbjASQ7G (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 19 Jan 2023 10:39:12 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1349C7E4B9
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jan 2023 07:39:11 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id d2so2248098wrp.8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jan 2023 07:39:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OOhxRkaK5iJsPmgu7cE4ichYw4bJxnhNB1oQShnuPiw=;
-        b=RzbKzm235PZAcKc7WeZAK6jCGYYnK4e2HJxFybcU+CbC/oAe/unT6TT0MwdrpHKAsj
-         RRUNd3X+YacYM5A2vApQLC3G1GD9/d8eIweSSVzatbqb5N6GdpgMxpgq4R6e20qiUWM6
-         K/U7FqDMSbYwMiO2tywoqCgXZ4qeoDgMcu1pKj0BtE4dAoroKbdF91Qi6bPNUU8qFIgI
-         wj47VfIf8eT3AvXTjigfzfDBSOOK5/Y7n3fnlD6B7oUcZYDjZbfK8PLIvA4S/0XoRJ41
-         rCmxG9WuaF4qO5SpIGutLo/aVmZnc3JL1dsMfCri595JTaEI6rh2rLGJdTkJva3CMRiD
-         vN9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OOhxRkaK5iJsPmgu7cE4ichYw4bJxnhNB1oQShnuPiw=;
-        b=hOEWiFwxOPihUEN5aS+yBsXd7HS2fjCJ0NMuyXSV9IQHi2EXzVLFyXQNqKOOVcIa6e
-         ermfFoekP3NI6U0EUsmPQJs5T7BemyFIP1sMSPrGqwe+W9fCTv+QFS8fqmuWvzuZxacG
-         5uQi1JXITIn0h4NtWwPSE6cTqfXS6Jh/f7ihR2XjoPHTRGVrlYGL3wQx3+ViXCL5tFuW
-         mTyY4mH0H9k/xUMH1dqg+tzZ+eAgHno594YEP9w2Ov63LiFxWMMo7TsK+5zTcLfcb0/P
-         6Qy12M6jjWErWFuDAs5xKxJjuxjbZ/s8Y/rewKt7p8ddmhqM5R6azqaYntLrRRdgN6s5
-         +H7Q==
-X-Gm-Message-State: AFqh2kq994PPqlfLXevLofGyjh4Sngh5XzxfpivMw0UvT6dmdXXt4smv
-        W+i86uEsoWJ8el3Cx8KYcbyxvA==
-X-Google-Smtp-Source: AMrXdXtwYxY5U66bazeYqy96ygdXa4/ViKWR2UtRp2JjJBOGMcGXo6hk/d07aUoCXYWnvDgztytwnw==
-X-Received: by 2002:adf:f6cf:0:b0:2bc:858a:3def with SMTP id y15-20020adff6cf000000b002bc858a3defmr18528056wrp.5.1674142749637;
-        Thu, 19 Jan 2023 07:39:09 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id n13-20020a5d67cd000000b002bdcce37d31sm23591319wrw.99.2023.01.19.07.39.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Jan 2023 07:39:09 -0800 (PST)
-Message-ID: <479bc3b3-b923-d7c7-5c5c-b6b8b8eec7a8@linaro.org>
-Date:   Thu, 19 Jan 2023 16:39:07 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH 1/5] ASoC: samsung: remove DMA filter function and data
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Thu, 19 Jan 2023 11:59:06 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08BAB9035;
+        Thu, 19 Jan 2023 08:59:05 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 92CC661CE4;
+        Thu, 19 Jan 2023 16:59:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85341C433F1;
+        Thu, 19 Jan 2023 16:59:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674147544;
+        bh=RF7r/yCO3++XGdA6LiIF6KXulOuZEe98+/7LlxVZQH0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GQoiqCvpDUa/QybJ5jQbTus0Ja3L42zIp3CXFNNBQP4Xlnb9lds2RMM4gFocuVpGj
+         qLy1YiCfZsavYjAE+nNIy6OGPmZ2X8GKk1bXMUs7LGVxGkWCEKGwq18iMqs5SZPTpn
+         Vyq3aImgkKElrrDXpMiW49C1q+HsPz1eP3DndMul2VfU3bwK1YEgrpd+/3TEMzpzmZ
+         jmNwSEV0ARGnsnjvz84OOUFXkTZ32MTLsc5WOR1H0MTa9jQJ7cxeQZZvxYSdMSoQEp
+         AsLy9GuTBDWnaNuXGdvsZIxi8PWneHED/nUbbJP2g7Em2Bnq54PaH6AvsG7ovcq9io
+         0OT8HHx2A5GZQ==
+Date:   Thu, 19 Jan 2023 16:59:00 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>,
@@ -70,33 +47,68 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org
+Subject: Re: [PATCH 1/5] ASoC: samsung: remove DMA filter function and data
+Message-ID: <Y8l21Kb42l2ZcIC+@sirena.org.uk>
 References: <20230118161110.521504-1-arnd@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="bzVt0O2u5Oo2htJ5"
+Content-Disposition: inline
 In-Reply-To: <20230118161110.521504-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Cookie: What is the sound of one hand clapping?
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 18/01/2023 17:10, Arnd Bergmann wrote:
+
+--bzVt0O2u5Oo2htJ5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jan 18, 2023 at 05:10:45PM +0100, Arnd Bergmann wrote:
 > From: Arnd Bergmann <arnd@arndb.de>
-> 
+>=20
 > This data is no longer passed by the platform code, so
 > there is no point passing it down at all.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  include/linux/platform_data/asoc-s3c.h |  6 ------
->  sound/soc/samsung/dma.h                |  2 +-
->  sound/soc/samsung/dmaengine.c          |  3 +--
->  sound/soc/samsung/i2s.c                | 21 +++------------------
->  sound/soc/samsung/pcm.c                | 11 +----------
->  sound/soc/samsung/spdif.c              |  9 +--------
->  6 files changed, 7 insertions(+), 45 deletions(-)
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This breaks an x86 allmodconfig build:
 
-Best regards,
-Krzysztof
+/build/stage/linux/sound/soc/samsung/s3c24xx-i2s.c: In function =E2=80=98s3=
+c24xx_iis_dev_probe=E2=80=99:
+/build/stage/linux/sound/soc/samsung/s3c24xx-i2s.c:436:56: error: passing a=
+rgument 4 of =E2=80=98samsung_asoc_dma_platform_register=E2=80=99 from inco=
+mpatible pointer type [-Werror=3Dincompatible-pointer-types]
+  436 |                                                  "tx", "rx", NULL);
+      |                                                        ^~~~
+      |                                                        |
+      |                                                        char *
+In file included from /build/stage/linux/sound/soc/samsung/s3c24xx-i2s.c:21:
+/build/stage/linux/sound/soc/samsung/dma.h:17:55: note: expected =E2=80=98s=
+truct device *=E2=80=99 but argument is of type =E2=80=98char *=E2=80=99
+   17 |                                        struct device *dma_dev);
+      |                                        ~~~~~~~~~~~~~~~^~~~~~~
+/build/stage/linux/sound/soc/samsung/s3c24xx-i2s.c:435:15: error: too many =
+arguments to function =E2=80=98samsung_asoc_dma_platform_register=E2=80=99
+  435 |         ret =3D samsung_asoc_dma_platform_register(&pdev->dev, NULL,
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/build/stage/linux/sound/soc/samsung/dma.h:15:5: note: declared here
+   15 | int samsung_asoc_dma_platform_register(struct device *dev,
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+--bzVt0O2u5Oo2htJ5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmPJdtQACgkQJNaLcl1U
+h9DgjwgAgU0/cJsXAH8jVFRez5j0+Ywfwgj3yHcHuFoz+nMGVyWiantq0Ngpc4hl
+A2xXiyPAUihszEWIB8CsTZZ6QkinxuTVzhvCfZsBHP9cxv4N+wLUkCEZyFof1V9T
+Y260keksOWfsGEv2j4kiwf/sjEUp7rpiBhRal7Anf3wB9RDRuRhEVTIIWXqoFfZd
+l4NnvS9Nzis5VdmtlUd9mmz3EOPZ/MCjeaZk3Su5Wq4B2tCxxR3zhINn6Fugkk7p
+pF4BzZvVHKiO2TACVEd22dyF4Jl5e7tDnFNaWB4SVr8AyKg4XbPxJueIoNp0Ix80
+vwaqN+MsmKDjZvMhsU4KsP9HmfzP9w==
+=aHDc
+-----END PGP SIGNATURE-----
+
+--bzVt0O2u5Oo2htJ5--
