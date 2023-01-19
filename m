@@ -2,85 +2,101 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5BEC00A5A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Jan 2023 12:17:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA5CC00A5A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Jan 2023 15:39:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230345AbjASMRn (ORCPT
+        id S230395AbjASPjM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 19 Jan 2023 07:17:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43802 "EHLO
+        Thu, 19 Jan 2023 10:39:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231224AbjASMRj (ORCPT
+        with ESMTP id S229710AbjASPjM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 19 Jan 2023 07:17:39 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E5B675A10;
-        Thu, 19 Jan 2023 04:17:20 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9D3FE60BAD;
-        Thu, 19 Jan 2023 12:17:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84736C433F0;
-        Thu, 19 Jan 2023 12:17:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1674130639;
-        bh=eXnAnfAUFHlEjL8uPdD40P2OapTCQ/xIdBuBqDGaxJ4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N3y+xYmdxWPyzTRr5EgvegVVKvaEEiFz9xtQ2SjdHaitSRqwc9lkB2dYdTLvFgRxP
-         WS2IsQhPHkr20MFa8a4vhtHE9FEbFO8gs7eQHB3azzZz4ygqjtf+heOwuN20H/rhSA
-         QANZpJZuD2OHH+j3xTGX6G8Z/6gTpI0JzPATTKvs=
-Date:   Thu, 19 Jan 2023 13:17:16 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        UNGLinuxDriver@microchip.com,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 6/7] usb: host: ehci-exynos: Convert to
- devm_of_phy_optional_get()
-Message-ID: <Y8k0zOQan6SihtUU@kroah.com>
-References: <cover.1674036164.git.geert+renesas@glider.be>
- <96fce347ffa2d6efaa3fd24bf2d91e2a0a91c371.1674036164.git.geert+renesas@glider.be>
+        Thu, 19 Jan 2023 10:39:12 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1349C7E4B9
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jan 2023 07:39:11 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id d2so2248098wrp.8
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jan 2023 07:39:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OOhxRkaK5iJsPmgu7cE4ichYw4bJxnhNB1oQShnuPiw=;
+        b=RzbKzm235PZAcKc7WeZAK6jCGYYnK4e2HJxFybcU+CbC/oAe/unT6TT0MwdrpHKAsj
+         RRUNd3X+YacYM5A2vApQLC3G1GD9/d8eIweSSVzatbqb5N6GdpgMxpgq4R6e20qiUWM6
+         K/U7FqDMSbYwMiO2tywoqCgXZ4qeoDgMcu1pKj0BtE4dAoroKbdF91Qi6bPNUU8qFIgI
+         wj47VfIf8eT3AvXTjigfzfDBSOOK5/Y7n3fnlD6B7oUcZYDjZbfK8PLIvA4S/0XoRJ41
+         rCmxG9WuaF4qO5SpIGutLo/aVmZnc3JL1dsMfCri595JTaEI6rh2rLGJdTkJva3CMRiD
+         vN9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OOhxRkaK5iJsPmgu7cE4ichYw4bJxnhNB1oQShnuPiw=;
+        b=hOEWiFwxOPihUEN5aS+yBsXd7HS2fjCJ0NMuyXSV9IQHi2EXzVLFyXQNqKOOVcIa6e
+         ermfFoekP3NI6U0EUsmPQJs5T7BemyFIP1sMSPrGqwe+W9fCTv+QFS8fqmuWvzuZxacG
+         5uQi1JXITIn0h4NtWwPSE6cTqfXS6Jh/f7ihR2XjoPHTRGVrlYGL3wQx3+ViXCL5tFuW
+         mTyY4mH0H9k/xUMH1dqg+tzZ+eAgHno594YEP9w2Ov63LiFxWMMo7TsK+5zTcLfcb0/P
+         6Qy12M6jjWErWFuDAs5xKxJjuxjbZ/s8Y/rewKt7p8ddmhqM5R6azqaYntLrRRdgN6s5
+         +H7Q==
+X-Gm-Message-State: AFqh2kq994PPqlfLXevLofGyjh4Sngh5XzxfpivMw0UvT6dmdXXt4smv
+        W+i86uEsoWJ8el3Cx8KYcbyxvA==
+X-Google-Smtp-Source: AMrXdXtwYxY5U66bazeYqy96ygdXa4/ViKWR2UtRp2JjJBOGMcGXo6hk/d07aUoCXYWnvDgztytwnw==
+X-Received: by 2002:adf:f6cf:0:b0:2bc:858a:3def with SMTP id y15-20020adff6cf000000b002bc858a3defmr18528056wrp.5.1674142749637;
+        Thu, 19 Jan 2023 07:39:09 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id n13-20020a5d67cd000000b002bdcce37d31sm23591319wrw.99.2023.01.19.07.39.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Jan 2023 07:39:09 -0800 (PST)
+Message-ID: <479bc3b3-b923-d7c7-5c5c-b6b8b8eec7a8@linaro.org>
+Date:   Thu, 19 Jan 2023 16:39:07 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <96fce347ffa2d6efaa3fd24bf2d91e2a0a91c371.1674036164.git.geert+renesas@glider.be>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH 1/5] ASoC: samsung: remove DMA filter function and data
+Content-Language: en-US
+To:     Arnd Bergmann <arnd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+References: <20230118161110.521504-1-arnd@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230118161110.521504-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jan 18, 2023 at 11:15:19AM +0100, Geert Uytterhoeven wrote:
-> Use the new devm_of_phy_optional_get() helper instead of open-coding the
-> same operation.
+On 18/01/2023 17:10, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> This lets us drop several checks for IS_ERR(), as phy_power_{on,off}()
-> handle NULL parameters fine.
+> This data is no longer passed by the platform code, so
+> there is no point passing it down at all.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/usb/host/ehci-exynos.c | 24 +++++++-----------------
->  1 file changed, 7 insertions(+), 17 deletions(-)
-> 
+>  include/linux/platform_data/asoc-s3c.h |  6 ------
+>  sound/soc/samsung/dma.h                |  2 +-
+>  sound/soc/samsung/dmaengine.c          |  3 +--
+>  sound/soc/samsung/i2s.c                | 21 +++------------------
+>  sound/soc/samsung/pcm.c                | 11 +----------
+>  sound/soc/samsung/spdif.c              |  9 +--------
+>  6 files changed, 7 insertions(+), 45 deletions(-)
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
