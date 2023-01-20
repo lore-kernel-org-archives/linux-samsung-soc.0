@@ -2,94 +2,101 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D5E1C25B4E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 12:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F3CC05027
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 12:07:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229500AbjATMG1 (ORCPT
+        id S229677AbjATMHo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Jan 2023 07:06:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43598 "EHLO
+        Fri, 20 Jan 2023 07:07:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230044AbjATMG0 (ORCPT
+        with ESMTP id S229464AbjATMHn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Jan 2023 07:06:26 -0500
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2BE49D2AE
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 04:06:22 -0800 (PST)
-Received: by mail-pf1-x42f.google.com with SMTP id w2so3762628pfc.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 04:06:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0fHoLFugivtMZ86kgSLqMbkMyqartt/N4bdBqj9xnEE=;
-        b=EDQ3LbZIORQv6Wc6NXt5iUyV4RuaokaUOgR77k1Aa/RMyX/8Y5U4RwLjSG/K6XkFWP
-         rhFm1GCcdTA+Q0BXiAKOY0Bxh5yQede1Occ/2SSErgBbcnS3xWcilhSwZx1AU2+/nAg8
-         uqdZooE11ryi6UPO+/rAAjZMQST0xvB2xZc9zI+XgeYp1EgXXkswaO3NtVuR/9cpM9Yv
-         BdC46FAv2X7txfFbeb6oPEGBVqwlx4NJLPv7tvaLUIAgnysFuyvTJJJVoki3NrpCOezS
-         NUELWOty/dGfgX1jYEbg7BiYaMQH1ckN+Js0KjADAJ313RtBPyZIqlnX5jpNItnzkGJr
-         pTNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0fHoLFugivtMZ86kgSLqMbkMyqartt/N4bdBqj9xnEE=;
-        b=PD7CIXa8/Ps6V6qzsATPwrRhNVcJpTBJWycuF6RDkW7KZeVexNXZHJijVBaEA3uS7W
-         DbiInbvdwHl1ae2G5YNpV/LusurWGO4HSFSBNjzpoCfbwubBq5seM7qFyPLJBxeSeyEH
-         r2QsFGcZz/3oZdX13dnoqJ1OTdwouyv5sxI5kTEkji8PUNUvMe3nIiBX5JD+reP6L3sZ
-         kIBiiOVIyYfSiqvJesOUd+//5B2SBNE9gVnnasGopIRJoOQqaug+EBUR1avGM3Dk0CYq
-         frLAD3Qajht8wOYyOML9jzhwPCOYt08L6UHd6PDanH8ySBZjCfCqNJ+wzvSHq4qbDs7m
-         tm2g==
-X-Gm-Message-State: AFqh2kq98IPbKHmQ0NCqqx+pqL3Y3fd+NrCiGP6iaCMMQOpJZjw77GQv
-        AMwjaETEKpC+wDNG/iZ8ybezO/t8yPmtWu4nh3GIXpfe
-X-Google-Smtp-Source: AMrXdXuRpBSOGSkq99Qq3DZEX5OA7nhrBDuhQ3ECyo4J1HInmfP5JWg/z7eNUFrp4cEL7c4dz3gFndCovBaeoHW2mdg=
-X-Received: by 2002:a63:e23:0:b0:4cf:122f:2102 with SMTP id
- d35-20020a630e23000000b004cf122f2102mr1043434pgl.98.1674216382168; Fri, 20
- Jan 2023 04:06:22 -0800 (PST)
+        Fri, 20 Jan 2023 07:07:43 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA1637DF99;
+        Fri, 20 Jan 2023 04:07:41 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5E4CC61F42;
+        Fri, 20 Jan 2023 12:07:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EE9DC433EF;
+        Fri, 20 Jan 2023 12:07:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674216460;
+        bh=59rSi/VRPu6xeT5pr3e5nabXo3izJ7s9J6YeNyStd2s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tPAmeqmt2csu9VnCd1sjLPw+uhI+ttnEjDiNSoQEKBWdSiJncvZbUAdbXrm6FmLWV
+         u3a4B59YF7EW03Gn7+KA6UrjUM7am35gpX6LndaIfZTC9PHiKbJ0JMBpeGg4l4e3Lc
+         KTbf5qLgoZx9ETajRwnFWTCcCkZmvn+GbEDVjndQTVfwqEdrEGQpnufB6cAyCoTc7v
+         gDfi2aHSU3lJP2o1Qp/0Opln/LsGkbRhdbp3b/xBVv4mU2Nmyz+S6XJyuEfElOJDt5
+         y0F+/AFa/z9MjcZ97912liNTqh+XwHdOrIHxMe9OQ1jIEUU3r5xX/Is8ji8EhdjRvf
+         4KSDxnrLqrxsA==
+Date:   Fri, 20 Jan 2023 12:07:37 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Arnd Bergmann <arnd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH 1/5] ASoC: samsung: remove DMA filter function and data
+Message-ID: <Y8qECf4CgsNkLNho@sirena.org.uk>
+References: <20230118161110.521504-1-arnd@kernel.org>
+ <Y8l21Kb42l2ZcIC+@sirena.org.uk>
+ <99519eb0-399d-4972-ae09-955a34830b55@app.fastmail.com>
 MIME-Version: 1.0
-References: <20221214125907.376148-1-jagan@amarulasolutions.com>
- <CAMty3ZC9TtnupJKF4LA9e-jnYMux28u4Pn3femJZXi4ogV+drA@mail.gmail.com>
- <CAOMZO5AYzZXQ_7jqktKrGcZyE_CaZHZpfyQPWAzbcxGvByH5Kg@mail.gmail.com> <CAMty3ZDnNJJQ2=Xbi6tNDzp17Ye=mnVhPOEtWVZbZuot_N513w@mail.gmail.com>
-In-Reply-To: <CAMty3ZDnNJJQ2=Xbi6tNDzp17Ye=mnVhPOEtWVZbZuot_N513w@mail.gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 20 Jan 2023 09:06:10 -0300
-Message-ID: <CAOMZO5CXCYjmmjs97=c6pVzyG8s0W=XN01k0C_0M_X2-pCFuMQ@mail.gmail.com>
-Subject: Re: [PATCH v10 00/18] drm: Add Samsung MIPI DSIM bridge
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Marek Vasut <marex@denx.de>, linux-samsung-soc@vger.kernel.org,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="hWy1TWofl5oPHiyo"
+Content-Disposition: inline
+In-Reply-To: <99519eb0-399d-4972-ae09-955a34830b55@app.fastmail.com>
+X-Cookie: Serving suggestion.
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Jagan,
 
-On Thu, Jan 19, 2023 at 2:59 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+--hWy1TWofl5oPHiyo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> There are two patch series prior to this need to apply.
->
-> https://patchwork.kernel.org/project/dri-devel/patch/20221212145745.15387-1-jagan@amarulasolutions.com/
-> https://patchwork.kernel.org/project/dri-devel/cover/20221212182923.29155-1-jagan@amarulasolutions.com/
+On Fri, Jan 20, 2023 at 10:05:59AM +0100, Arnd Bergmann wrote:
 
-Would it make sense to re-submit these two patches as part of your series?
+> I see, this patch still depends on the s3c24xx removal, which
+> is in soc/for-next and I used for testing. I see a similar
+> problem with the MMP platform in patch 2/5. The series here
+> is mostly older patches I did a while ago and rebased on top
+> of the boardfile removal, but it breaks when it gets applied
+> first.
+
+> Unless there is anything in here that you really want to apply
+> for 6.3, lets drop all five for now, and I'll resend it
+> after the dust has settled on the boardfile removal.
+
+I'd left the ux500 stuff running through my testing, no
+particular urgency just it saves rereviewing anything.  Assuming
+it's fine (seems so thus far) I'll push it out.
+
+--hWy1TWofl5oPHiyo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmPKhAgACgkQJNaLcl1U
+h9BUrAf/UMkGgrt0kpEybfiAhWigEbFnU1JOMdv5V+73qzx1D4vcLNB0qcRCKRsJ
+avfFIgqgKKlMewmj0Ndy3JtNpza7jn7Rkfewtu+V51hTVDasZOBfZIuxsloY+gZK
+aR+x0tuZIZcbDavJtchai3QD6PxZIZWP4efyNvlZMd4dokFwX4lom4rMycVsF4Mp
+nS3TSfg3Zf6++dW59iduEZMG4XESx6TtS86AjIRqc6pBt1Y3YSEneV4klfQX2BzO
+tOHAO9pWPxSq3DElsgnRPmfkixguKapT3+lvaseqZZw9V1AZLIbNBXjq2ujiLEYK
+jBNJdGuNqVv3dfSknaSd6eB/APHYkw==
+=s2qN
+-----END PGP SIGNATURE-----
+
+--hWy1TWofl5oPHiyo--
