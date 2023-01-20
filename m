@@ -2,122 +2,100 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FE8C27C7C
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 13:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4264EC05027
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 14:42:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231174AbjATNSj (ORCPT
+        id S230080AbjATOmh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Jan 2023 08:18:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36122 "EHLO
+        Fri, 20 Jan 2023 09:42:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230507AbjATNSf (ORCPT
+        with ESMTP id S230290AbjATOmc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Jan 2023 08:18:35 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76544C41D3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 05:14:52 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id g10so4042839wmo.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 05:14:52 -0800 (PST)
+        Fri, 20 Jan 2023 09:42:32 -0500
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F4256EDF
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 06:42:02 -0800 (PST)
+Received: by mail-yb1-xb35.google.com with SMTP id 129so2934015ybb.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 06:42:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AfFIuRH2b9FfD0CydIJ5oSJmwUczAEd83CzMQhgLMzM=;
-        b=V0vHFo7ysajexa+NmYC+hGR0na69vwSKGypzgdxWvgYKSvjzxKe352iDiDda+iA3mx
-         yV1M86QhpEfjVSIfxLh7krDmwkDhF1x6zb78M3srZw5LGqDLW3bKJYIhANFA63HuYH2k
-         PtsSQbuSmNOD2lKTl5e8lILbSdv3Sr8Xv/lVYIgFsuYJ0V9nnw6tfT4DGjAtY5B8TwcW
-         vJUB3A04EV0j2x4NJa8OvGtYMo+UKu+CEKXa08aQrgEpwxxi7U9hdaA968AwQ1mykVlM
-         qR/gfFLCDu2i0Pb0UeHyyhPK/KzcJe33g2to4tX1G50G4DtKjFJLXPzIVkKMhWELCs0o
-         TCGg==
+        d=amarulasolutions.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ody2VwbWyzJCEoTCrPWuZTMErMgICWUGOLVYILw0XoA=;
+        b=Eae9Of/Ov1XhcCmov+o08TB7ndmw04F4U9QlIiHCWqegFzyQicvUpYy9ALP6GmPL1d
+         Uil5SoEzJYNYz/MkJl9Yxr5yLe1DkJV6a4Ckzzpwo17R9IL5VIFdSr+z66Tqlqymp4VK
+         wcegKTLIGammf1WrCXoPS18e3xYQlObfQJS9M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AfFIuRH2b9FfD0CydIJ5oSJmwUczAEd83CzMQhgLMzM=;
-        b=u3oVNMBsdqoWSBGTPm2JstbqHZ9zlk1rj92fW7aF7O1QsXYcxk3DAoBlmTbfO1f4M+
-         Y/UYRyRauluud0QSd8Wt5sXcGNRVo3bZB/t/DdZ8rUCCeJlyMsTbBqYQP7NLUTNSf4pW
-         pKPcJu3yEcTKUvu3sN7cZritxHrEjmzrsUzKeJgEonwzPm/KZlvChzmJKYIoRTeSB32S
-         19Vf6pxKaiOHuGJpShcSP84FN1nBDQZwi/MLcVGhLd+T6PBOr1LzHTM0yt4foU9LQYWB
-         Ivz034vt6s17nB3XPkuFvytw5Cz9N9XIGyfbouoso6KRmk12Ei9tpUQdLG5mo1h+mf3O
-         XpJA==
-X-Gm-Message-State: AFqh2kpBXhXOBEK069w3jG4bf8clMv8pvvDjWEQFaY+0frrrCbSfXgq5
-        onnyn7gg7DoSuus+V+1rLjkSTA==
-X-Google-Smtp-Source: AMrXdXvP3mf/U+3R2kQJkj9RTHm/6Qvd9bJpocAhTuHbHTW4xJISAGMZj4sGLykeOAtsY+vu4wFQ6Q==
-X-Received: by 2002:a05:600c:a29e:b0:3d9:ee01:ae5b with SMTP id hu30-20020a05600ca29e00b003d9ee01ae5bmr14064047wmb.12.1674220491033;
-        Fri, 20 Jan 2023 05:14:51 -0800 (PST)
-Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id q18-20020adfdfd2000000b002bdc129c8f6sm24518977wrn.43.2023.01.20.05.14.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jan 2023 05:14:50 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     stable@vger.kernel.org
-Subject: [PATCH] regulator: dt-bindings: samsung,s2mps14: add lost samsung,ext-control-gpios
-Date:   Fri, 20 Jan 2023 14:14:47 +0100
-Message-Id: <20230120131447.289702-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        bh=ody2VwbWyzJCEoTCrPWuZTMErMgICWUGOLVYILw0XoA=;
+        b=Apc8WY78U2tXdZtmCcb8NBdIlo1+9tzJ3opTVZi9YcNBxl2dO7ANKjfWlwiGqdPGg3
+         MaM96UbZ7g+cx84UdKM85LAHzJVC54z6oBVo1SH3unQ1zzER+xk8hoyk58a8wMcU4eJt
+         uwiHJKnxtS7tgZnml7MoOQAaua7cwyYXZoKNj6/JSiQgadVGk0n38S8bUvrq1aUlWuy2
+         mIcyEhiUtdqWfgOD9vTmSWDLeF2fJc4GAhIEDuwJVCllMicNuHNPL0vYTtaGZ9WIlGVb
+         5MVXUz1yE7eK1AS4r7uQLBV26sKUOjcDXbV73pKyVigMLVtl8bOsnFLdV6k+lgQZZ0ym
+         rcSg==
+X-Gm-Message-State: AFqh2koVoqMYivAPvbHKheboFS2RceGo+qwE393u386ybQtC3kyhiW1v
+        YQy/pnjtdOIBdSR12ASQ1X6cqwZto2ru7bqwDrCmpw==
+X-Google-Smtp-Source: AMrXdXs+dnVURFc+udtKNceuDm29bsMaET8vGrIITAFJcxpO5SeW7X85UMxRmvAoWDnQk+iWyE1bwHwtLPEi+HNOqTE=
+X-Received: by 2002:a25:ac66:0:b0:800:5d4e:8063 with SMTP id
+ r38-20020a25ac66000000b008005d4e8063mr353173ybd.126.1674225688483; Fri, 20
+ Jan 2023 06:41:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221214125907.376148-1-jagan@amarulasolutions.com>
+ <CAMty3ZC9TtnupJKF4LA9e-jnYMux28u4Pn3femJZXi4ogV+drA@mail.gmail.com>
+ <CAOMZO5AYzZXQ_7jqktKrGcZyE_CaZHZpfyQPWAzbcxGvByH5Kg@mail.gmail.com>
+ <CAMty3ZDnNJJQ2=Xbi6tNDzp17Ye=mnVhPOEtWVZbZuot_N513w@mail.gmail.com> <CAOMZO5CXCYjmmjs97=c6pVzyG8s0W=XN01k0C_0M_X2-pCFuMQ@mail.gmail.com>
+In-Reply-To: <CAOMZO5CXCYjmmjs97=c6pVzyG8s0W=XN01k0C_0M_X2-pCFuMQ@mail.gmail.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Fri, 20 Jan 2023 20:11:16 +0530
+Message-ID: <CAMty3ZAc=t5FEphQkd=O1eaA70-779zhESwPFqoiGs8x569H2w@mail.gmail.com>
+Subject: Re: [PATCH v10 00/18] drm: Add Samsung MIPI DSIM bridge
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Marek Vasut <marex@denx.de>, linux-samsung-soc@vger.kernel.org,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The samsung,ext-control-gpios property was lost during conversion to DT
-schema:
+Hi Fabio,
 
-  exynos3250-artik5-eval.dtb: pmic@66: regulators:LDO11: Unevaluated properties are not allowed ('samsung,ext-control-gpios' was unexpected)
+On Fri, Jan 20, 2023 at 5:36 PM Fabio Estevam <festevam@gmail.com> wrote:
+>
+> Hi Jagan,
+>
+> On Thu, Jan 19, 2023 at 2:59 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> > There are two patch series prior to this need to apply.
+> >
+> > https://patchwork.kernel.org/project/dri-devel/patch/20221212145745.15387-1-jagan@amarulasolutions.com/
+> > https://patchwork.kernel.org/project/dri-devel/cover/20221212182923.29155-1-jagan@amarulasolutions.com/
+>
+> Would it make sense to re-submit these two patches as part of your series?
 
-Fixes: ea98b9eba05c ("regulator: dt-bindings: samsung,s2m: convert to dtschema")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/regulator/samsung,s2mps14.yaml   | 21 +++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+The previous version's comment was to separate them from the DSIM series.
 
-diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mps14.yaml b/Documentation/devicetree/bindings/regulator/samsung,s2mps14.yaml
-index 01f9d4e236e9..a7feb497eb89 100644
---- a/Documentation/devicetree/bindings/regulator/samsung,s2mps14.yaml
-+++ b/Documentation/devicetree/bindings/regulator/samsung,s2mps14.yaml
-@@ -19,8 +19,8 @@ description: |
-   additional information and example.
- 
- patternProperties:
--  # 25 LDOs
--  "^LDO([1-9]|[1][0-9]|2[0-5])$":
-+  # 25 LDOs, without LDO10-12
-+  "^LDO([1-9]|1[3-9]|2[0-5])$":
-     type: object
-     $ref: regulator.yaml#
-     unevaluatedProperties: false
-@@ -30,6 +30,23 @@ patternProperties:
-     required:
-       - regulator-name
- 
-+  "^LDO(1[0-2])$":
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    description:
-+      Properties for single LDO regulator.
-+
-+    properties:
-+      samsung,ext-control-gpios:
-+        maxItems: 1
-+        description:
-+          LDO10, LDO11 and LDO12 can be configured to external control over
-+          GPIO.
-+
-+    required:
-+      - regulator-name
-+
-   # 5 bucks
-   "^BUCK[1-5]$":
-     type: object
--- 
-2.34.1
-
+Jagan.
