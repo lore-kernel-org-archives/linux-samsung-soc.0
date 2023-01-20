@@ -2,99 +2,131 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D05E2C27C7C
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 17:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3706C05027
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 18:54:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230393AbjATRb6 (ORCPT
+        id S229501AbjATSy1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Jan 2023 12:31:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46218 "EHLO
+        Fri, 20 Jan 2023 13:54:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230409AbjATRbq (ORCPT
+        with ESMTP id S229491AbjATSy0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Jan 2023 12:31:46 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68124DF975
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 09:31:29 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id f12-20020a7bc8cc000000b003daf6b2f9b9so6332563wml.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 09:31:29 -0800 (PST)
+        Fri, 20 Jan 2023 13:54:26 -0500
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4D5FB75B
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 10:54:25 -0800 (PST)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-4fda31c3351so56351787b3.11
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 10:54:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qnJsl+tKHBAuLUhbXOInszro3NqsIemlyvle96ntb4I=;
-        b=PgcV440RcWEhqyIj3zPrNb8+YnrO24qe2W+1lWKDgXlsby5MzIineuz6lPc7F2dPu9
-         eMiYBPRBxeEtpXkV0Gtnbp1TN/HB06vuu8IS0llMGLYeHtlo4RstthsyfOC1mF0/5yn7
-         rpBWgRIoIaICRxeFpZm2/kunisTENcMVn4SHMIWXvquoRjEAXPexYnci/nd19N5dI9h4
-         WVMmvKGU7Qj0HAOgrdcGtv5H5ZNdqAPdOZhvaQkTHcR7f5Oo8MokOXDj6IQv4q5ITVqI
-         2GqpOKv3/H+ivB/yjOhr6WKJ8iqgTWMTBR6wcxzdOJBhyPJqh880BukYRFsXgd7uGkwk
-         G3/Q==
+        d=amarulasolutions.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rHCw+jdQ+RwMyHJTKZZA6HBeTDpYJqecnOo4nlATkG0=;
+        b=dqkuZKJe44Kp7grbAyJDy65BbqS7X/1+IOQSz09NVaDW/BR7V76Ab3VueI0E6penfO
+         pM1aQgHim8cCUXaOpXhJ2V2CPT0tqnltGIaUL1SvrEwTARSt+QowJ1FZiSO+e8kkMcH+
+         j1cPssuGq0f5kBWScYY+sJeIk+M6Z1c36ftf4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qnJsl+tKHBAuLUhbXOInszro3NqsIemlyvle96ntb4I=;
-        b=6SVlsKx1ZCH9spAE7mmsinWjKRgDLqDEtd/t6q45XfBEOKujaKklVO9hnc0QQYd8wA
-         7BtoLO0NMJFS8QmwkGy+7wcQ35atQDOz2z2WIGTkfBehF0BBT38BQV40z8GJYkdpblUK
-         /WgmpGnAOTkPL55lHAF3H+ZtLBQl3MCb55LBHnWvMF8cVBPrAqMnjeh+cg1VFLNb9j78
-         B4db+Y4nLP+u1b9lqfS8spuGeEEhC/w7jjcz3xATd6FeWZ4Ik8Rd0cUdBKQGyMBYxVIs
-         IHbFvJWEwYmBxtP6dOpbAk+dfMUx4tt6ZDruvFLWhGQiEncH/b7lecNGLXW24FkDeilA
-         QBHg==
-X-Gm-Message-State: AFqh2ko0vjQi59zQFo7DUhI5fXEJjbIu+9PPT4klE0MMPt0qc59cnjx8
-        dkV65cQDFvRoAySjPCRhoXaYSk14mQAO/MDF
-X-Google-Smtp-Source: AMrXdXuxn+Rgj/bSyedEi7mHhJzfjwZD1lT14YpwdvDBJqgJQI6G0zsLISH0IBj7DModcu6AaxOu2g==
-X-Received: by 2002:a05:600c:54d0:b0:3da:f9c9:cec9 with SMTP id iw16-20020a05600c54d000b003daf9c9cec9mr15077027wmb.1.1674235887758;
-        Fri, 20 Jan 2023 09:31:27 -0800 (PST)
-Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id d22-20020a1c7316000000b003db0dbbea53sm2819179wmb.30.2023.01.20.09.31.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jan 2023 09:31:27 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 6/6] arm64: dts: exynos: correct wlf,micd-dbtime on TM2
-Date:   Fri, 20 Jan 2023 18:31:16 +0100
-Message-Id: <20230120173116.341270-6-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230120173116.341270-1-krzysztof.kozlowski@linaro.org>
-References: <20230120173116.341270-1-krzysztof.kozlowski@linaro.org>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rHCw+jdQ+RwMyHJTKZZA6HBeTDpYJqecnOo4nlATkG0=;
+        b=taAJkzlfJkbPiKiphIYelqxnBM7JsO/+QgUI8+VQgB3HR21FkPhzXtosmZSeqetUN/
+         ca7slKyxkyibr/nzN7DKv/g9tKb11LsiikH9IBasS8XWPBP99gO5O2/wPOWYyx3XJelj
+         wd45yIpji3NW5TihryvYAr8M56aVnzorS+8lpfZg8y8nRZa1L1JgmnddmZh2CcElahFY
+         3rIg3HffTAwpOtjKVynkIhxNhqyGgbU/p+nJ4avoB262dMYmSXnGnxuB+u236IIYekFn
+         ERpyUQuRcjr3GLLtPMQhBdvLOx4DZ3NJP650aVTGN03rZSZVVKc7ZpuTzfhfahql4PTg
+         /xMw==
+X-Gm-Message-State: AFqh2ko0ypSn4dIJ9z92IytYMqGFxhxEwuNB1Pd+Pi89pN6fDNf2wMYc
+        ePrOMqUfD4SWwZOLsAYyQcb1f6RntYONRVqa75H5bg==
+X-Google-Smtp-Source: AMrXdXuASJUoeRhn+a30lvvkLjD73slswxVrAoEEvYxTG3RHOaVnLvNm7JiLc274TLhoFaGzQmaXUFl+N2zqvC5IQAY=
+X-Received: by 2002:a81:a146:0:b0:4ed:916b:d3e4 with SMTP id
+ y67-20020a81a146000000b004ed916bd3e4mr1956512ywg.487.1674240865117; Fri, 20
+ Jan 2023 10:54:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221214125907.376148-1-jagan@amarulasolutions.com>
+ <CAMty3ZC9TtnupJKF4LA9e-jnYMux28u4Pn3femJZXi4ogV+drA@mail.gmail.com>
+ <CAOMZO5AYzZXQ_7jqktKrGcZyE_CaZHZpfyQPWAzbcxGvByH5Kg@mail.gmail.com>
+ <CAMty3ZDnNJJQ2=Xbi6tNDzp17Ye=mnVhPOEtWVZbZuot_N513w@mail.gmail.com>
+ <CAOMZO5CXCYjmmjs97=c6pVzyG8s0W=XN01k0C_0M_X2-pCFuMQ@mail.gmail.com>
+ <CAMty3ZAc=t5FEphQkd=O1eaA70-779zhESwPFqoiGs8x569H2w@mail.gmail.com> <ea400d44-a6cb-2f26-9c03-ee1ede2cdf09@denx.de>
+In-Reply-To: <ea400d44-a6cb-2f26-9c03-ee1ede2cdf09@denx.de>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Sat, 21 Jan 2023 00:24:13 +0530
+Message-ID: <CAMty3ZA6SBA4XAvSTgCTq_WC1Uq6jPXD5oP9MZisj3YdActoYw@mail.gmail.com>
+Subject: Re: [PATCH v10 00/18] drm: Add Samsung MIPI DSIM bridge
+To:     Marek Vasut <marex@denx.de>
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The wlf,micd-dbtime property of WM5110 codec can be either 2 or 4
-(driver ignores other values, so assume author wanted something here):
+On Fri, Jan 20, 2023 at 8:36 PM Marek Vasut <marex@denx.de> wrote:
+>
+> On 1/20/23 15:41, Jagan Teki wrote:
+> > Hi Fabio,
+>
+> Hello all,
+>
+> > On Fri, Jan 20, 2023 at 5:36 PM Fabio Estevam <festevam@gmail.com> wrote:
+> >>
+> >> Hi Jagan,
+> >>
+> >> On Thu, Jan 19, 2023 at 2:59 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> >>
+> >>> There are two patch series prior to this need to apply.
+> >>>
+> >>> https://patchwork.kernel.org/project/dri-devel/patch/20221212145745.15387-1-jagan@amarulasolutions.com/
+> >>> https://patchwork.kernel.org/project/dri-devel/cover/20221212182923.29155-1-jagan@amarulasolutions.com/
+> >>
+> >> Would it make sense to re-submit these two patches as part of your series?
+> >
+> > The previous version's comment was to separate them from the DSIM series.
+>
+> Hmmmmm, seems like those first two patches got stuck. I fixed up the
+> malformed Fixes: line (it was split across two lines and had angular
+> brackets around it) and picked the first series via drm-misc-next .
 
-  exynos5433-tm2e.dtb: audio-codec@0: wlf,micd-dbtime:0:0: 1 is not one of [2, 4]
+Thanks.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+We have another series for Exynos, prior to DSIM
+https://patchwork.kernel.org/project/dri-devel/cover/20221212182923.29155-1-jagan@amarulasolutions.com/
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index 5124027d7541..f54f30633417 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -1291,7 +1291,7 @@ wm5110: audio-codec@0 {
- 		wlf,micd-detect-debounce = <300>;
- 		wlf,micd-bias-start-time = <0x1>;
- 		wlf,micd-rate = <0x7>;
--		wlf,micd-dbtime = <0x1>;
-+		wlf,micd-dbtime = <0x2>;
- 		wlf,micd-force-micbias;
- 		wlf,micd-configs = <0x0 1 0>;
- 		wlf,hpdet-channel = <1>;
--- 
-2.34.1
+>
+> Can you send a subsequent patch to convert the DSIM_* macros to BIT()
+> macro , since checkpatch --strict complains about it ?
 
+Okay.
+
+>
+> For the second series, you likely want a RB from Maxime Ripard and Dave
+> Stevenson first about the probe order handling.
+
+Do you mean for 01/18 and 02/18 patches?
+
+Jagan.
