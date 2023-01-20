@@ -2,254 +2,187 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 578E6C05027
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 19:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7904EC05027
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 19:42:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229778AbjATTQC (ORCPT
+        id S230085AbjATTm0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Jan 2023 14:16:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49342 "EHLO
+        Fri, 20 Jan 2023 14:42:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229937AbjATTP7 (ORCPT
+        with ESMTP id S229445AbjATTm0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Jan 2023 14:15:59 -0500
-X-Greylist: delayed 327 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 20 Jan 2023 11:15:46 PST
-Received: from new1-smtp.messagingengine.com (new1-smtp.messagingengine.com [66.111.4.221])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC165CA1C
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 11:15:46 -0800 (PST)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 7A66F581F44;
-        Fri, 20 Jan 2023 14:10:16 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Fri, 20 Jan 2023 14:10:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm1; t=1674241816; x=
-        1674249016; bh=cNlI+KksvzptdXxI5ZVjZOHaj/EyWoi9wHcmf+pWjtc=; b=a
-        WDTKvVN630dAa5rdSPz5O7/evgDoc4cu+i+0fZWz7TqFRvrX0gS1JwcuMapyu5xi
-        kqQeVsbyRfkALu5MP2CxOcUeoliT7QCBXG29GaH3ueeNkKXP1GbtP81tkrbLTTNf
-        pbIjbDJzsi4R6GEgBqLZUInJrPiach47gvSglUOUQFn+ZaJYlLbcT88Ga2Y4fJWz
-        pdtTOb4DuCW/Ww0o5MXncRJ6n+oQY/FpJO6yDzb4Yc2DWJNM0E8Vbm4YYL6pEI24
-        XFk+3xTXD7tA9V54wCqzsmCZcAurxfasFDMR02e6ZrcqyFEg6IiO/1CS250lRQBL
-        0zFxrbqa/ryssfTFDLbKA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1674241816; x=
-        1674249016; bh=cNlI+KksvzptdXxI5ZVjZOHaj/EyWoi9wHcmf+pWjtc=; b=N
-        V06uTaOXRmY5n2IPNNBx60U9Q130vUJaVsiP5H4oXqDOaqh+PCBRVvh+ZsTkjCZq
-        oFrcqqBWPxaUTAo9shy35U7wlaxY2VA4LWdUdSA6rvEjvh9pVfshPx3xWjKq3F+K
-        fml9Uoa3+RfLwgKkQalgrYr9FYlMNoTmWDEVQeX5lJDYeGmAFuWoV+g5RbfdGi0c
-        GklhRqYUU4PY64RELAhvo6AdvvPFNBgluRBQIUV7ABu4y6VauVvyQdHsjzKwTR4R
-        vfhlKLSc0WGhVBQY53Ak7luvSOEMO7flWX0Pm7gKvmgsTQBPyrZXWFdI5rSEqip9
-        uIPQmLFehli+mLe0pFdMA==
-X-ME-Sender: <xms:FufKY8ABQRIDSzLRt-p7OgxUskY00-qAJbNuMfWP8dcifGOnHp5tcQ>
-    <xme:FufKY-haNpLIbydb3AxVsGCl7eIK025cO5l207rVpvVGWe5EuV4v-AK95xGVUyNo6
-    vAHR6Q1idBtbeSQ9r8>
-X-ME-Received: <xmr:FufKY_l8EQyKWeEXJj3O40i2YaW00nNNty7ajD7iac3IbJeNBRGiKgqrZxpVzCpa6V2FWrEbAX3G3W7T_QQWif_uPaIStg0_zCwcMhHkHaPLPw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudduvddguddvgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtugfgjgesthhqredttddtvdenucfhrhhomhepofgr
-    gihimhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtf
-    frrghtthgvrhhnpefhuddvjeelhfetteffvdfgueehvdeugefgteehiefhkeetffdttdei
-    ffdvtdeuheenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhfrhgvvgguvghskhhtoh
-    hprdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhho
-    mhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:F-fKYyxYKUIYITVPw3V1LYhVrIVzNubtnulWiYH3QWguosfRieCFMQ>
-    <xmx:F-fKYxTXpf1s_8mQYea_FW4HC3KogWduPd0FPD3v88gNu342wheBTA>
-    <xmx:F-fKY9YnLx7eMp8vzOPnrNwA3lqt4oJZ6pF_UjjrDhkyRZgLUc4W1Q>
-    <xmx:GOfKYxjU9VtTvfgoOPyadpihu5ZSv8kcIbHM0qFV_mYTQcNtt43Kzw>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 20 Jan 2023 14:10:14 -0500 (EST)
-Date:   Fri, 20 Jan 2023 20:10:11 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Marek Vasut <marex@denx.de>
-Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Adam Ford <aford173@gmail.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Fri, 20 Jan 2023 14:42:26 -0500
+Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE8B67C84B
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 11:42:24 -0800 (PST)
+Received: by mail-vs1-xe2e.google.com with SMTP id i185so6809993vsc.6
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 11:42:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2smM+yAWTiv5fXgEcxXSH5+gacjV2/xa7Y1VVuSpHVc=;
+        b=dnbrvAFHX7LrcoYnwpJ/yzadPtwbcD2GTtvYuQk3deWwHwbho5aK5Kw3a33NE7qF80
+         woqxumQwC6rgQ11cWHKeAsQQwNdOAV3oHUMA0cDBumNvLnF9b0r/dK1eghXfGTFO7bhF
+         NytFYxYSfaAVBcgHj3nTa1jcFQ0v6bwMl56OYWyESwTakEoK9EUOOpQJAk23/0msE7ov
+         NxPGuWwiebeic1yh8fEHZhZYaLBjD88abMUznBmim5riu4Xoy331xl8zqE7ztjHWHM80
+         GmYQ9ZeOACOil3SNTuRtds9EM1JVLhB7wNKKS/EA5tQcZIToaavDxcpRIH9qHUR/VC6B
+         gEwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2smM+yAWTiv5fXgEcxXSH5+gacjV2/xa7Y1VVuSpHVc=;
+        b=AU4G4ODPiQcHP+b+C7wgjMJMlep7Q3s5R5QZcrCa+R/63CRCA7eIwxbD2n6fcnJJDd
+         rRselfFa6kG+bZLH4B4JNghECgRDyNFuPBFYomRkZR1weELukI6DsS2nZHuj59NHKwj4
+         HLVDnOI2zDafzTZHtxkMlZdTUV7cr0QE3rkLMgDDVZBqxSSvbTXDiVRMsrauM+Qu0nUq
+         If3cM8Eea2L1ABLVSUf19qH8+Z3bkQGeuosrJWs/GJzQWFL0nr251j4M4a5sL1NzyzrL
+         C2gyU0W3FNon+8WlJbFP8RdQlbiZyDbY0BgL+CFbxRNPrcZSekOtChh3CcSNc0dPWXm1
+         UVrg==
+X-Gm-Message-State: AFqh2kpuqw02Cvl5uw8n03ejWixrtgjCMD+2X9864O6TnkhzTJWRrJqL
+        gAFI8tQW4FF7Wa3izBBN/L8ng//MZv/mlbWY6x4gcQ==
+X-Google-Smtp-Source: AMrXdXuVv09inmDMzECR3rvJhE7sMfC0Zb6V5CzqpmUDPa/fQN1hNEg6zum3S7L+bKt2Zwp44qqTbZlREFFQPNIUTaQ=
+X-Received: by 2002:a67:d312:0:b0:3d4:542:12ad with SMTP id
+ a18-20020a67d312000000b003d4054212admr2192444vsj.84.1674243744070; Fri, 20
+ Jan 2023 11:42:24 -0800 (PST)
+MIME-Version: 1.0
+References: <20221212182923.29155-1-jagan@amarulasolutions.com>
+ <20221212182923.29155-4-jagan@amarulasolutions.com> <CAPY8ntCBL2Tq2sz6poJZzqP4qWS+OE7NQQqpqX+evfWZgCzwCA@mail.gmail.com>
+ <CAMty3ZCGn+ickyA5qaEYcB16P_xpgXjoOsYMsDMz2ELuspifgQ@mail.gmail.com>
+In-Reply-To: <CAMty3ZCGn+ickyA5qaEYcB16P_xpgXjoOsYMsDMz2ELuspifgQ@mail.gmail.com>
+From:   Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date:   Fri, 20 Jan 2023 19:42:07 +0000
+Message-ID: <CAPY8ntAtY45nnx_X6cBafoUBG3Z8kpROFt7kZs7mVC1NBsnAxw@mail.gmail.com>
+Subject: Re: [PATCH v11 3/3] drm: exynos: dsi: Restore proper bridge chain order
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
         Neil Armstrong <narmstrong@linaro.org>,
         Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Sam Ravnborg <sam@ravnborg.org>, Marek Vasut <marex@denx.de>,
+        linux-samsung-soc@vger.kernel.org,
         linux-amarula <linux-amarula@amarulasolutions.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: Re: [PATCH v10 00/18] drm: Add Samsung MIPI DSIM bridge
-Message-ID: <20230120191011.4ehxgxbpyvliye63@houat>
-References: <kcEE.rJtELH1tRkiK3DwrGM4cgg.ADqA2lER2QE@vtuxmail01.tq-net.de>
- <CAHCN7xL1qqhFkroBUswpSyTGUFo6B26rmp0zRL2K8ATT4HtUGg@mail.gmail.com>
- <449d03be-226f-9a90-aff3-8afee68c346d@denx.de>
- <4207863.mogB4TqSGs@steina-w>
- <8172fbfd-a1b9-bfca-983d-b97a1f9560da@denx.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <8172fbfd-a1b9-bfca-983d-b97a1f9560da@denx.de>
+        dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jan 04, 2023 at 04:08:47PM +0100, Marek Vasut wrote:
-> On 1/3/23 11:59, Alexander Stein wrote:
-> > Hi,
-> >=20
-> > Am Sonntag, 18. Dezember 2022, 23:28:20 CET schrieb Marek Vasut:
-> > > On 12/18/22 23:24, Adam Ford wrote:
-> > > > On Sat, Dec 17, 2022 at 10:33 PM Marek Vasut <marex@denx.de> wrote:
-> > > > > On 12/18/22 05:23, Adam Ford wrote:
-> > > > > > On Sat, Dec 17, 2022 at 5:56 PM Marek Vasut <marex@denx.de> wro=
-te:
-> > > > > > > On 12/16/22 14:25, Alexander Stein wrote:
-> > > > > > > Hi,
-> > > > > > >=20
-> > > > > > > [...]
-> > > > > > >=20
-> > > > > > > > Oh, nice, thanks for the pointer. When setting
-> > > > > > > >=20
-> > > > > > > > > samsung,burst-clock-frequency =3D <668250000>;
-> > > > > > > >=20
-> > > > > > > > in imx8mm.dtsi
-> > > > > > > > I get a non-flickering display using 4 lanes. Although admi=
-ttedly this
-> > > > > > > > is just random guessing. I'm not sure which clock exactly h=
-as to be
-> > > > > > > > in the range CHA_DSI_CLK_RANGE is configured to. With 4 lan=
-es
-> > > > > > > > SN65DSI84 is configured for>>>>>
-> > > > > > > > 205-210 MHz (0x29), while I get these PLL PMS settings on D=
-SIM:
-> > > > > > > > > samsung-dsim 32e10000.dsi: PLL freq 668250000, (p 4, m 99=
-, s 0)
-> > > > > > > > > samsung-dsim 32e10000.dsi: hs_clk =3D 668250000, byte_clk=
- =3D 83531250,
-> > > > > > > > > esc_clk
-> > > > > > > >=20
-> > > > > > > > =3D 16706250
-> > > > > > >=20
-> > > > > > > If I recall it right, minimum PLL frequency is:
-> > > > > > >=20
-> > > > > > > fPMS=3D1.2*width*height*bpp*fps=3D1.2*800*480*24*60=3D663.5 M=
-Hz
-> > > > > > >=20
-> > > > > > > the link frequency is then
-> > > > > > >=20
-> > > > > > > fHS=3DfPMS/lanes/2=3D82.9 MHz (on the DDR clock lane)
-> > > > > > >=20
-> > > > > > > So DSI83 should be in the range of 80..85 MHz input clock if I
-> > > > > > > calculate
-> > > > > > > this right. Can you check what is the value of mode->clock, t=
-he
-> > > > > > > mipi_dsi_panel_format_to_bpp() return value, ctx->dsi->lanes =
-in dsi83
-> > > > > > > sm65dsi83_get_dsi_range() ?
-> > > > > > >=20
-> > > > > > > > AFAICS DSIM bridge is configurung hs_clk, byte_clk and esc_=
-clk just
-> > > > > > > > from DT
-> > > > > > > > properties, while SN65DSI84 is using display mode and numbe=
-r of lanes.
-> > > > > > > >=20
-> > > > > > > > Is it expected that the DSIM PLL frequencies are set in DT =
-for a
-> > > > > > > > specific
-> > > > > > > > bridge/display setup?
-> > > > > > >=20
-> > > > > > > No, there should be negotiation between the host and bridge/p=
-anel, I
-> > > > > > > tried to propose two variants, but they were all rejected.
-> > > > > >=20
-> > > > > > For one of Jagan's previous revisions, I added some code to let=
- the
-> > > > > > PHY auto adjust the frequencies instead of being fixed.  NXP ha=
-d this
-> > > > > > in their downstream kernel, but with this patch and another, I =
-was
-> > > > > > able to set a variety of pixel clocks from my HDMI monitor and =
-my
-> > > > > > DSI83. I haven't had time to re-base my work on Jagan's latest =
-work,
-> > > > > > but you can link to the patch I did for the older stuff here:
-> > > > > >=20
-> > > > > > https://github.com/aford173/linux/commit/e845274b0f22ba3b24813f=
-fd6bb3cb8
-> > > > > > 8ab4b67e4 and
-> > > > > > https://github.com/aford173/linux/commit/3f90057eb608f96d106029=
-ef6398134
-> > > > > > 75241936f
-> > > > > >=20
-> > > > > > I've been traveling a lot lately, so I haven't had time to eval=
-uate
-> > > > > > his series, but I hope to get something like those re-based onc=
-e the
-> > > > > > DSI stuff has been accepted.
-> > > > >=20
-> > > > > I have these two attempts, both rejected:
-> > > > >=20
-> > > > > https://patchwork.freedesktop.org/patch/475207/
-> > > > > https://patchwork.freedesktop.org/patch/496049/
-> > > >=20
-> > > > I have some patches re-based to Jagan's latest branch.  It doesn't
-> > > > impact any drivers other than the new samsung-dsim driver, and it
-> > > > doesn't touch any of the drm helper functions either.  It adjusts hs
-> > > > clock based on the connected device.  I am not sure what the impact
-> > > > will have on the attached Exynos devices, so I am expecting some
-> > > > iterations.  Right now it's working with my DSI83 chip, but I need =
-to
-> > > > get it working with my adv7535 part as well.  On the older branch, I
-> > > > was able to sync the ad7535 with a variety of resolutions using
-> > > > different pixel clock rates.
-> > > >=20
-> > > > Once I get it working again with my adv7535 and cleaned up, I'll
-> > > > submit the patches to the drm group, and I'll CC you, Jagan and Mar=
-ek
-> > > > Szyprowski with a reference to Jagan's series so people wanting to =
-try
-> > > > it can apply it to his branch.
-> > >=20
-> > > The negotiation has to happen between the host and the bridge/panel,
-> > > otherwise you won't be able to support bridge/panel devices which
-> > > require specific clock rate on the DSI. Only the bridge/panel driver
-> > > knows about such requirement.
-> >=20
-> > AFAICS using Adam's patch the dynamic DPHY config is done in atomic_pre=
-_enable
-> > callback. So at this point the negotiation has to be finished already.
-> > Wouldn't it be possible to setup 'dsi->format' within a atomic_check for
-> > samsung_dsim? But I don't know how you would get the expected clock fre=
-quency
-> > from the downward bridge.
+Hi Jagan
 
-I have zero context there, so I'm not sure what proposals have been made
-already, but why isn't it possible to do it the other way around and
-make the bridge ask the upstream driver if it can provide the clock
-frequency the bridge require?
+On Fri, 20 Jan 2023 at 19:10, Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> Hi Dave,
+>
+> On Sat, Jan 21, 2023 at 12:26 AM Dave Stevenson
+> <dave.stevenson@raspberrypi.com> wrote:
+> >
+> > Hi Jagan
+> >
+> > Responding due to Marek's comment on the "Add Samsung MIPI DSIM
+> > bridge" series, although I know very little about the Exynos
+> > specifics, and may well be missing context of what you're trying to
+> > achieve.
+> >
+> > On Mon, 12 Dec 2022 at 18:29, Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > >
+> > > Restore the proper bridge chain by finding the previous bridge
+> > > in the chain instead of passing NULL.
+> > >
+> > > This establishes a proper bridge chain while attaching downstream
+> > > bridges.
+> > >
+> > > Reviewed-by: Marek Vasut <marex@denx.de>
+> > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > ---
+> > > Changes for v11:
+> > > - add bridge.pre_enable_prev_first
+> > > Changes for v10:
+> > > - collect Marek review tag
+> > >
+> > >  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 9 +++++++--
+> > >  1 file changed, 7 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > > index ec673223d6b7..9d10a89d28f1 100644
+> > > --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > > +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > > @@ -1428,7 +1428,8 @@ static int exynos_dsi_attach(struct drm_bridge *bridge,
+> > >  {
+> > >         struct exynos_dsi *dsi = bridge_to_dsi(bridge);
+> > >
+> > > -       return drm_bridge_attach(bridge->encoder, dsi->out_bridge, NULL, flags);
+> > > +       return drm_bridge_attach(bridge->encoder, dsi->out_bridge, bridge,
+> > > +                                flags);
+> >
+> > Agreed on this change.
+> >
+> > >  }
+> > >
+> > >  static const struct drm_bridge_funcs exynos_dsi_bridge_funcs = {
+> > > @@ -1474,7 +1475,10 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+> > >
+> > >         drm_bridge_add(&dsi->bridge);
+> > >
+> > > -       drm_bridge_attach(encoder, &dsi->bridge, NULL, 0);
+> > > +       drm_bridge_attach(encoder, &dsi->bridge,
+> > > +                         list_first_entry_or_null(&encoder->bridge_chain,
+> > > +                                                  struct drm_bridge,
+> > > +                                                  chain_node), 0);
+> >
+> > What bridge are you expecting between the encoder and this bridge?
+> > The encoder is the drm_simple_encoder_init encoder that you've created
+> > in exynos_dsi_bind, so separating that from the bridge you're also
+> > creating here seems weird.
+> >
+> > >
+> > >         /*
+> > >          * This is a temporary solution and should be made by more generic way.
+> > > @@ -1709,6 +1713,7 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+> > >         dsi->bridge.funcs = &exynos_dsi_bridge_funcs;
+> > >         dsi->bridge.of_node = dev->of_node;
+> > >         dsi->bridge.type = DRM_MODE_CONNECTOR_DSI;
+> > > +       dsi->bridge.pre_enable_prev_first = true;
+> >
+> > Setting dsi->bridge.pre_enable_prev_first on what is presumably the
+> > DSI host controller seems a little odd.
+> > Same question again - what bridge are you expecting to be upstream of
+> > the DSI host that needs to be preenabled before it? Whilst it's
+> > possible that there's another bridge, I'd have expected that to be the
+> > first link from your encoder as they appear to both belong to the same
+> > bit of driver.
+>
+> Let me answer all together here. I can explain a bit about one of the
+> pipelines used in Exynos. Exynos DSI DRM drivers have some strict host
+> initialization which is not the same as what we used in i.MX8M even
+> though it uses the same DSIM IP.
+>
+> Exynos5433 Decon -> Exynos MIC -> Exynos DSI -> s6e3ha2 DSI panel
+>
+> Here MIC is the bridge, Exynos DSI is the bridge and the requirement
+> is to expect the upstream bridge to pre_enable first from DSI which
+> means the MIC.
 
-It's pretty much how the common clock framework works too: you set the
-rate on the leaf clock, and it propagates upwards in your tree,
-adjusting for any constraint we have along the way.
+That makes sense for the pre_enable_prev_first flag.
 
-It does need to happen at atomic_check time though, otherwise it would
-be terrible for anyone attempting to use that driver.
+The drm_bridge_attach(... list_first_entry_or_null) still seems a
+little weird. I think you are making the assumption that there is only
+ever going to be the zero or one bridge (the MIC) between encoder and
+DSI bridge - the DSI bridge is linking itself to the first entry off
+the encoder bridge_chain (or NULL to link to the encoder). Is that
+reasonable? I've no idea!
 
-Maxime
+I must confess to not having looked at the attaching sequence
+recently, and I'm about to head home for the weekend.
+I have no real knowledge of how Exynos is working, and am aware that
+you're having to rejuggle stuff to try and support i.MX8M and Exynos,
+so leave that one up to you.
+
+Cheers
+  Dave
