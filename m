@@ -2,130 +2,163 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B68C52D77
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 19:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3DB8C05027
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 19:10:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230161AbjATTI1 (ORCPT
+        id S229616AbjATTKG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Jan 2023 14:08:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45782 "EHLO
+        Fri, 20 Jan 2023 14:10:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230182AbjATTI0 (ORCPT
+        with ESMTP id S229970AbjATTKF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Jan 2023 14:08:26 -0500
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F99572C38
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 11:08:25 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 6CEAB85203;
-        Fri, 20 Jan 2023 20:08:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1674241702;
-        bh=Tov0XxaFg4AeMetuCc/FSCGv5o+vmLUFOd1sTFSqNPg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ywwY/7D4zN63SMp1a6K58R7x3l7dmmrIrA+pnKphjQJwnh/wWKx5tblC0cUhyJY/O
-         P/WBN7Ijm/McNj4gOqbggxmwa0bx1q51glhcb9dyEAKBi3DVpdX3WqXa7aqdveXZmq
-         qFLDFAv+Ju63dl/MNlVNtN0VLYV9tjgZwFhCdUiPAD1Jn+vVef8F26pRwEvqdHCPfG
-         baJShQ/af9m1mkGCVD4Y8iOB56r8KhxShgqPg5ZsxQj8LZG1pAMLRgsVkrbihrON4Q
-         7519OKrh5MH8yUyNosFobVst1zUx8bCMyXDqgrraikgSQNVRsshRgxFhTAmb30iPrC
-         w2ZKRlo2pk2IA==
-Message-ID: <c363af34-9f62-b172-47a8-0816afd7be9f@denx.de>
-Date:   Fri, 20 Jan 2023 20:08:19 +0100
+        Fri, 20 Jan 2023 14:10:05 -0500
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 302AADBCB
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 11:10:04 -0800 (PST)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-5018be4ae8eso23299067b3.4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 11:10:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XIuta0hz/9qzxxPv21YqtA6V0A5hmBJomzpWwkOtGdk=;
+        b=f/UNfMLk+Gv/qc79D7S+rKxL8GRO/Ls9nkh3w5avbFmQUy+CNXEf4OILP7Bkv5DsDY
+         iBWSn3XhIbEzwEpD+RCYP6cSo/Frp9qjcX2OchTnHtg0fkX/Kv18eo6EMuO+m3PDl0ZL
+         /GGaG60xmFOmDY2x48dXW6J04FfPwOJZcC6Co=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XIuta0hz/9qzxxPv21YqtA6V0A5hmBJomzpWwkOtGdk=;
+        b=P0pPJrv6H/Xi+DPyPu7VueuPzQgP0YrlQms0iI8wWKvCqkB2vKV/sh4kYJATyvZ+gp
+         zfkdsnKnSLUMDczMyTxZ/ZK9IvDpUOr927b0W+NS3pyiwHKpfyAFE/IpQjx0VINA+b8a
+         zl4KmuQR0dknznfLpwnmgPJSbHoswqJ5vECoimH7oJnVODmiPl9c5/eqNNcAyIUuze63
+         kUInHF9+6waWQBC1TncHvkEygs+plvenf9ZtMhj0NHwQcDFSuRzf+vCExBj2ZvZnwGhK
+         ljvRWZqmJqHrRmSAcj03UCYZILiqWiHp3hdriqqYB6TOMN1Z8HSGrZ6aOqnekwZu35H/
+         l+uw==
+X-Gm-Message-State: AFqh2koqKmmvevy9doaizRFYz1tDm0IFJ64aLdjgdPRFw9HgPu+kIbdg
+        Bvk7TdRpOrUXCXcVx9qI6n9LEW32o+HDIhb5ZqI0+Q==
+X-Google-Smtp-Source: AMrXdXsZ/asUObaZDuqOUxbcs01dzSNhv5vM2VBeMcaV/D7L1Uw4XvYwWdwoKdM0elPjiGwV0ASOUQg2f8DmFofw29A=
+X-Received: by 2002:a05:690c:852:b0:4d7:eb11:6bf7 with SMTP id
+ bz18-20020a05690c085200b004d7eb116bf7mr1872714ywb.235.1674241803361; Fri, 20
+ Jan 2023 11:10:03 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v10 00/18] drm: Add Samsung MIPI DSIM bridge
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
+References: <20221212182923.29155-1-jagan@amarulasolutions.com>
+ <20221212182923.29155-4-jagan@amarulasolutions.com> <CAPY8ntCBL2Tq2sz6poJZzqP4qWS+OE7NQQqpqX+evfWZgCzwCA@mail.gmail.com>
+In-Reply-To: <CAPY8ntCBL2Tq2sz6poJZzqP4qWS+OE7NQQqpqX+evfWZgCzwCA@mail.gmail.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Sat, 21 Jan 2023 00:39:51 +0530
+Message-ID: <CAMty3ZCGn+ickyA5qaEYcB16P_xpgXjoOsYMsDMz2ELuspifgQ@mail.gmail.com>
+Subject: Re: [PATCH v11 3/3] drm: exynos: dsi: Restore proper bridge chain order
+To:     Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
         Neil Armstrong <narmstrong@linaro.org>,
         Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Sam Ravnborg <sam@ravnborg.org>, Marek Vasut <marex@denx.de>,
         linux-samsung-soc@vger.kernel.org,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org,
-        NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <20221214125907.376148-1-jagan@amarulasolutions.com>
- <CAMty3ZC9TtnupJKF4LA9e-jnYMux28u4Pn3femJZXi4ogV+drA@mail.gmail.com>
- <CAOMZO5AYzZXQ_7jqktKrGcZyE_CaZHZpfyQPWAzbcxGvByH5Kg@mail.gmail.com>
- <CAMty3ZDnNJJQ2=Xbi6tNDzp17Ye=mnVhPOEtWVZbZuot_N513w@mail.gmail.com>
- <CAOMZO5CXCYjmmjs97=c6pVzyG8s0W=XN01k0C_0M_X2-pCFuMQ@mail.gmail.com>
- <CAMty3ZAc=t5FEphQkd=O1eaA70-779zhESwPFqoiGs8x569H2w@mail.gmail.com>
- <ea400d44-a6cb-2f26-9c03-ee1ede2cdf09@denx.de>
- <CAMty3ZA6SBA4XAvSTgCTq_WC1Uq6jPXD5oP9MZisj3YdActoYw@mail.gmail.com>
-Content-Language: en-US
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <CAMty3ZA6SBA4XAvSTgCTq_WC1Uq6jPXD5oP9MZisj3YdActoYw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+        dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 1/20/23 19:54, Jagan Teki wrote:
-> On Fri, Jan 20, 2023 at 8:36 PM Marek Vasut <marex@denx.de> wrote:
->>
->> On 1/20/23 15:41, Jagan Teki wrote:
->>> Hi Fabio,
->>
->> Hello all,
->>
->>> On Fri, Jan 20, 2023 at 5:36 PM Fabio Estevam <festevam@gmail.com> wrote:
->>>>
->>>> Hi Jagan,
->>>>
->>>> On Thu, Jan 19, 2023 at 2:59 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->>>>
->>>>> There are two patch series prior to this need to apply.
->>>>>
->>>>> https://patchwork.kernel.org/project/dri-devel/patch/20221212145745.15387-1-jagan@amarulasolutions.com/
->>>>> https://patchwork.kernel.org/project/dri-devel/cover/20221212182923.29155-1-jagan@amarulasolutions.com/
->>>>
->>>> Would it make sense to re-submit these two patches as part of your series?
->>>
->>> The previous version's comment was to separate them from the DSIM series.
->>
->> Hmmmmm, seems like those first two patches got stuck. I fixed up the
->> malformed Fixes: line (it was split across two lines and had angular
->> brackets around it) and picked the first series via drm-misc-next .
-> 
-> Thanks.
-> 
-> We have another series for Exynos, prior to DSIM
-> https://patchwork.kernel.org/project/dri-devel/cover/20221212182923.29155-1-jagan@amarulasolutions.com/
-> 
->>
->> Can you send a subsequent patch to convert the DSIM_* macros to BIT()
->> macro , since checkpatch --strict complains about it ?
-> 
-> Okay.
-> 
->>
->> For the second series, you likely want a RB from Maxime Ripard and Dave
->> Stevenson first about the probe order handling.
-> 
-> Do you mean for 01/18 and 02/18 patches?
+Hi Dave,
 
-I mean
+On Sat, Jan 21, 2023 at 12:26 AM Dave Stevenson
+<dave.stevenson@raspberrypi.com> wrote:
+>
+> Hi Jagan
+>
+> Responding due to Marek's comment on the "Add Samsung MIPI DSIM
+> bridge" series, although I know very little about the Exynos
+> specifics, and may well be missing context of what you're trying to
+> achieve.
+>
+> On Mon, 12 Dec 2022 at 18:29, Jagan Teki <jagan@amarulasolutions.com> wrote:
+> >
+> > Restore the proper bridge chain by finding the previous bridge
+> > in the chain instead of passing NULL.
+> >
+> > This establishes a proper bridge chain while attaching downstream
+> > bridges.
+> >
+> > Reviewed-by: Marek Vasut <marex@denx.de>
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> > Changes for v11:
+> > - add bridge.pre_enable_prev_first
+> > Changes for v10:
+> > - collect Marek review tag
+> >
+> >  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > index ec673223d6b7..9d10a89d28f1 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > @@ -1428,7 +1428,8 @@ static int exynos_dsi_attach(struct drm_bridge *bridge,
+> >  {
+> >         struct exynos_dsi *dsi = bridge_to_dsi(bridge);
+> >
+> > -       return drm_bridge_attach(bridge->encoder, dsi->out_bridge, NULL, flags);
+> > +       return drm_bridge_attach(bridge->encoder, dsi->out_bridge, bridge,
+> > +                                flags);
+>
+> Agreed on this change.
+>
+> >  }
+> >
+> >  static const struct drm_bridge_funcs exynos_dsi_bridge_funcs = {
+> > @@ -1474,7 +1475,10 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+> >
+> >         drm_bridge_add(&dsi->bridge);
+> >
+> > -       drm_bridge_attach(encoder, &dsi->bridge, NULL, 0);
+> > +       drm_bridge_attach(encoder, &dsi->bridge,
+> > +                         list_first_entry_or_null(&encoder->bridge_chain,
+> > +                                                  struct drm_bridge,
+> > +                                                  chain_node), 0);
+>
+> What bridge are you expecting between the encoder and this bridge?
+> The encoder is the drm_simple_encoder_init encoder that you've created
+> in exynos_dsi_bind, so separating that from the bridge you're also
+> creating here seems weird.
+>
+> >
+> >         /*
+> >          * This is a temporary solution and should be made by more generic way.
+> > @@ -1709,6 +1713,7 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+> >         dsi->bridge.funcs = &exynos_dsi_bridge_funcs;
+> >         dsi->bridge.of_node = dev->of_node;
+> >         dsi->bridge.type = DRM_MODE_CONNECTOR_DSI;
+> > +       dsi->bridge.pre_enable_prev_first = true;
+>
+> Setting dsi->bridge.pre_enable_prev_first on what is presumably the
+> DSI host controller seems a little odd.
+> Same question again - what bridge are you expecting to be upstream of
+> the DSI host that needs to be preenabled before it? Whilst it's
+> possible that there's another bridge, I'd have expected that to be the
+> first link from your encoder as they appear to both belong to the same
+> bit of driver.
 
-https://patchwork.kernel.org/project/dri-devel/cover/20221212182923.29155-1-jagan@amarulasolutions.com/
+Let me answer all together here. I can explain a bit about one of the
+pipelines used in Exynos. Exynos DSI DRM drivers have some strict host
+initialization which is not the same as what we used in i.MX8M even
+though it uses the same DSIM IP.
+
+Exynos5433 Decon -> Exynos MIC -> Exynos DSI -> s6e3ha2 DSI panel
+
+Here MIC is the bridge, Exynos DSI is the bridge and the requirement
+is to expect the upstream bridge to pre_enable first from DSI which
+means the MIC.
+
+Jagan.
