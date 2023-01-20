@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDEB9C52D77
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 15:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 680B0C54794
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 15:54:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231654AbjATPyf (ORCPT
+        id S231629AbjATPyh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Jan 2023 10:54:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57586 "EHLO
+        Fri, 20 Jan 2023 10:54:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231615AbjATPyZ (ORCPT
+        with ESMTP id S231604AbjATPyd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Jan 2023 10:54:25 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89543DF94D
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 07:54:20 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id c10-20020a05600c0a4a00b003db0636ff84so4053409wmq.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 07:54:20 -0800 (PST)
+        Fri, 20 Jan 2023 10:54:33 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 231C9DF954
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 07:54:23 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id fl11-20020a05600c0b8b00b003daf72fc844so6166057wmb.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2023 07:54:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/BOZzGkzYofIjRH5wSmH3Wx6pmMCQFDR6yFiN3AmUA4=;
-        b=I4/TwKIqbnFoGjxUHbgYa6l+mCPpUztsUkDpqnKlHjuxkrEi7CK2V3B+F+xkF9wzTG
-         Z6TGnN66HpL6VvrOzR8GKOA/QICVFbtxS6k3/68wdjX97mg3OKUkSKWPFPFr84tRR1hR
-         UBbPXHY5uqq/bJT4ZULTvTHnUmNeh+kKdEwvfeadEKTOt7rkAs6MSYzztaigZYM5eyC0
-         fsQjbGY0ApKFQ9n60SDQXcnNuiLEKtDx9gmajbPJX8ogxOmqb8Qu9rKFIe5lbWY0oS36
-         Y/xKbNSPEqoy/PDW4j98QmEoLsd6JOAPrvlyg0qO/60xwb4j8J4GqM7rRfDh5KOX850p
-         gx9g==
+        bh=FmvkahJnJPGZHnYSzbVDVni5JGwF4pYBp1CYe5p5z9g=;
+        b=JSREVOLUC18RqwaXMd7Zkdfwk2edeiKs39U+FngduPFHHcw7Ylmr3bbDFlMMkrBxbH
+         RyTeMmhifDDjDjZN68KnhDMf8Je469Kbjprn3fsvjHvJeI7lWBwfqoevCgL9vfdLrdKS
+         5w7xOdWn0G4OSgXSSG5cjIakHa+RlvJdiqT7Pzq+VT128Fuk+ay0R1jyG/wy35WifCDo
+         EahNQ5KaDKzx3ADBmcAwa2rRxbPU35Yw2mHIE2/3F5lgGfyB2TPOB0u0M1hNjbl5a/Rx
+         zMPChhMLJa5ovxv+hhPejoIhjuOrp7ix1OMgGYdxdfvMgYRrULkN2DtVmdCcFqAeo4As
+         tkJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/BOZzGkzYofIjRH5wSmH3Wx6pmMCQFDR6yFiN3AmUA4=;
-        b=p02YHdfVxnHhUkfMRmtmOr3BVOfG/hmoUbplX5UBM8J8KWLuF2W/fpBqIl3eUrRsoP
-         SkyR1GMy5HAdSRkVgUQHmjOSRio4a11ZDp3YHTyEx1xCPprIgb/D0p4bjR57UFUiq2WU
-         JUcOpduhBCm0Sz7szakRm8vMcrGpy1fI2zS3K+AN+gNrHUTn16MSeSPimjj19qdxsrCg
-         Jt/ubfGpJpvJ5BKAZXzn68YZlrAZ00hUF/MkH4QQtDbbM5l8sqIttJdH8MK+8QtOaQxB
-         gGpoQfOVhRe+itT06q4Oo/6i9lIusvWwlqmGqoUkMC5ohjmwpm7Ia7wbUUf1fbIygCUE
-         AQ0g==
-X-Gm-Message-State: AFqh2kqo/wmUP1FQ3g81TZoBkd40UGHxh+4BOgkHncBtcvhNe2YuYE8B
-        +N7DUbXOC5s4nQu/QUfNkOitZQ==
-X-Google-Smtp-Source: AMrXdXuyB9rJNrg5s4KZ0KRYaA+HIHG+VPlnM5HY7K+Mj9OOfIve5tQVNtZFdWXcWp+O2+eQXS+m+w==
-X-Received: by 2002:a05:600c:1d8a:b0:3db:f0a:cfa1 with SMTP id p10-20020a05600c1d8a00b003db0f0acfa1mr11317502wms.9.1674230060091;
-        Fri, 20 Jan 2023 07:54:20 -0800 (PST)
+        bh=FmvkahJnJPGZHnYSzbVDVni5JGwF4pYBp1CYe5p5z9g=;
+        b=JO29saHDkzjoH1rtMKEbYfmMzgqMLoo1UYnYiVl+2Ll4OgZuIK/iy52GOS66CJxWVW
+         U7xsHfXEXumPZEPOVRpQzgMV+8EmsygHlPfXeDNTw/QyWdl8iDdhn1uwamLZf25D52Y6
+         EyvpuaTQdfXhg//xjv2Ed7NxtuQMMdTD0i4P3AXnGuewaJYpeAykBwwjeOHBINaz1oTI
+         k4js7w+2P/ItBbd5JCFKVm0QjZIZF7VJufuWpjS1mk/7ICRr8lgT/q0ulABYwJwp2q37
+         XhyqLxhZNnMoWs6IAS2GhUQQNsur10nsfrwJDg/LBvSG+HwdFuXf4SQlfUJE7gCSk9xG
+         RQWw==
+X-Gm-Message-State: AFqh2kqbZ68TnyZg3xYfcI9EJLMxhbSy3P42Xb1q9xBL2VFz3s3Au43o
+        w/VvWemfIJe+lhVFUPklpt3h+Q==
+X-Google-Smtp-Source: AMrXdXtT+/pjtAzumRFn7MR9+GO3xfqIabangPY5gfiLmeuvvw3RNhnTSCieqQLklmOSM63c7oiBqg==
+X-Received: by 2002:a05:600c:1e21:b0:3d0:7fee:8a70 with SMTP id ay33-20020a05600c1e2100b003d07fee8a70mr14995666wmb.19.1674230061636;
+        Fri, 20 Jan 2023 07:54:21 -0800 (PST)
 Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id n42-20020a05600c3baa00b003d96efd09b7sm3349596wms.19.2023.01.20.07.54.18
+        by smtp.gmail.com with ESMTPSA id n42-20020a05600c3baa00b003d96efd09b7sm3349596wms.19.2023.01.20.07.54.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jan 2023 07:54:19 -0800 (PST)
+        Fri, 20 Jan 2023 07:54:21 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -65,9 +65,9 @@ Cc:     replicant@osuosl.org, phone-devel@vger.kernel.org,
         =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>,
         Henrik Grimler <henrik@grimler.se>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [RFT 05/11] ARM: dts: exynos: add ports in HDMI bridge in Exynos4412 Midas
-Date:   Fri, 20 Jan 2023 16:53:58 +0100
-Message-Id: <20230120155404.323386-6-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 06/11] ARM: dts: exynos: add panel supply in Tiny4412
+Date:   Fri, 20 Jan 2023 16:53:59 +0100
+Message-Id: <20230120155404.323386-7-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230120155404.323386-1-krzysztof.kozlowski@linaro.org>
 References: <20230120155404.323386-1-krzysztof.kozlowski@linaro.org>
@@ -77,40 +77,42 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The SII9234 HDMI bridge expects ports property:
+The simple panel should have a supply.  Provide a stub, as the board DTS
+does not have a PMIC node, to silence warning:
 
-  exynos4412-i9305.dtb: hdmi-bridge@39: 'ports' is a required property
-  exynos4412-i9305.dtb: hdmi-bridge@39: 'port' does not match any of the regexes: 'pinctrl-[0-9]+'
+  exynos4412-tiny4412.dtb: panel: 'power-supply' is a required property
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm/boot/dts/exynos4412-midas.dtsi | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/exynos4412-tiny4412.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
-index 8e1c19a8ad06..a626d33d1330 100644
---- a/arch/arm/boot/dts/exynos4412-midas.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
-@@ -273,9 +273,16 @@ sii9234: hdmi-bridge@39 {
- 			interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
- 			reg = <0x39>;
+diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+index 04388c575efe..e0b6162d2e2a 100644
+--- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
++++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+@@ -79,6 +79,7 @@ pmic_ap_clk: pmic-ap-clk {
  
--			port {
--				mhl_to_hdmi: endpoint {
--					remote-endpoint = <&hdmi_to_mhl>;
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					mhl_to_hdmi: endpoint {
-+						remote-endpoint = <&hdmi_to_mhl>;
-+					};
- 				};
+ 	panel {
+ 		compatible = "innolux,at070tn92";
++		power-supply = <&vddq_lcd>;
+ 
+ 		port {
+ 			panel_input: endpoint {
+@@ -86,6 +87,13 @@ panel_input: endpoint {
  			};
  		};
+ 	};
++
++	vddq_lcd: regulator-vddq-lcd {
++		compatible = "regulator-fixed";
++		regulator-name = "vddq-lcd";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++	};
+ };
+ 
+ &cpu_thermal {
 -- 
 2.34.1
 
