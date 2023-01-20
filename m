@@ -2,95 +2,100 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B8CC25B50
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 07:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D591DC27C76
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 07:24:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229982AbjATHMM (ORCPT
+        id S230095AbjATHY1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Jan 2023 02:12:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53178 "EHLO
+        Fri, 20 Jan 2023 02:24:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229981AbjATHML (ORCPT
+        with ESMTP id S230098AbjATHYX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Jan 2023 02:12:11 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5C865CE68
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jan 2023 23:11:58 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id q10-20020a1cf30a000000b003db0edfdb74so406404wmq.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jan 2023 23:11:58 -0800 (PST)
+        Fri, 20 Jan 2023 02:24:23 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DF5779EAD
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jan 2023 23:24:15 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id q8so3274119wmo.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jan 2023 23:24:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=i3+Bkk+XIU7Y4ICBofg74wb2Khfebi4kOszzdZMn3mg=;
-        b=ZafJBSbiARhqyQ+ssIrBJPwCDCTw8hwzqRdhRLUocHV8pBmbdzLVZ8/wzLiVgDdk5r
-         5wtITDv5Fwus1LjK7H0CGSINKU15KVD6KqKeA0GJlalHg2KJkB+Im6Fl905QWItN1QEC
-         v6E695HBTdZRsL5PBBu4HXvbMHMDDNBhdiNljf6hcMRLE0/DeHi+UOVYeK7Zt62iTa3o
-         zp4GmEyDAKCsj4G7M+6BBR0NAmrsXph/uTr5hR+gU1QoXrpxTbQW1GaPGdIMXKuOTucu
-         4M7ONLVBauSkuyAzE0k33L5VaMucqHDtuorCuPU5gf9Vds2Gbud/rrPK8dvCDEo2/ycb
-         omvA==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GesNmtHa6aQtBhnAwvoqZM4E2zDjhjZA8qJvFc9rfSA=;
+        b=xMiaRd4+8sUatrUSZz5VVPoHPnJiuUczfMH6Qqzw/uQ1SnkNcJEu0V3T802k+3msez
+         kCJUo3BnEih/t1a+3LqeI+e/OKmTJ1Gt766lVYmi2cthJG89ByzugJvWZeOE3BhnXROL
+         M5/78rsJB9Plu6+dK0q+Wl9gzWWErI50s2g6bgqkNmJaADc5eBLBERlyJQVQxvG6w7tx
+         GqUBAj+PRZGeQieqpRH4EAAisgYSP3pmE4p6s5Ku0bRDKG4dmsE1ABYmp6yhd0PfCxLz
+         hXzLZIdBpsoZZGE1SONhO5s2uLUSRohtGepG5pS2afGRxk+7cQq991stQ3IVoW6RzgKs
+         hfWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i3+Bkk+XIU7Y4ICBofg74wb2Khfebi4kOszzdZMn3mg=;
-        b=1+WGjSE2sUDixXG1afiN/zlhBfM1y0U9cFIOGT26TN3/SGOGZAJ8aFiWPdqy8bG54O
-         MwUZAhJau+PeUR8ODzLHiDmp6KzEa8r7HcsNgrYbhWfIlYjfwsOkniRM3FhdQ8+h+9WF
-         CC11787kzLg2okikTWHGPEpypHKjWxwqIndK6ReQ8VoOO1irutpepyc0Ov2iqsfGIjL6
-         LccAIe75HMrLGgvUEW94Kza/gk51xj6yjP60J14Z18/dJNayaaLY4EGSWUXFKyekNiGV
-         Fdd8CsOsT/M/vvfslpnX8wQH2vq/9vpC2g9ot2xWoAzXEp9WovpNnHFODdVgAsNVCV4m
-         OlSA==
-X-Gm-Message-State: AFqh2kr2aXWk62SxxpNFvmPS9wnBBTG/TugibsA5vbhv/I32D9SiD4hb
-        gf13Uin1L/0+g+4df6ydcME+fA==
-X-Google-Smtp-Source: AMrXdXt7+nh8ca7/1yrIp9E/1nrNSGJ4aQFzrZgnmtyQHesPuo7ROe81rlXJlua239KYSzV7UlASFA==
-X-Received: by 2002:a05:600c:4e93:b0:3db:d3f:a91f with SMTP id f19-20020a05600c4e9300b003db0d3fa91fmr10681001wmq.23.1674198716414;
-        Thu, 19 Jan 2023 23:11:56 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GesNmtHa6aQtBhnAwvoqZM4E2zDjhjZA8qJvFc9rfSA=;
+        b=uR60377KAsZ2hn9U13Xnmxh1JVuNXRAKlUWB6e1MsHxwPCt+9Dq8g1zVKHF275iYhh
+         3bqD/FwpCQRrU/Kqevr87GtdDxeIpzcxvb+uK/dnvg9pYyKWK5/fQOoNyF/6mm3t4QXF
+         oLBX4PEnfXUCmXexaJXz2Kywkbm/3fogBpprVGDw40E9iPUU+TtQEFq50jMHXbuhxVwQ
+         7He1UbYqCkO7KKilATQDN/gVup7/rfOoy1WRyMd+Ymn9J18Kd/x6rhlzzjrT4HRaraub
+         8EKIR5MzHH9Xu7rtD5n9JX0j/2QHK3U51wtNHOI9xBZt0xF+QD18yuh2WjEVqAIDUOis
+         XOnA==
+X-Gm-Message-State: AFqh2kqzh31kKgJUXdS1OVB0YdedpSu1oPclHSNzmUPEAgO/OB8eCuLe
+        L4N4xoSnZA2rLejAc9T/Vf0GirCXrRuRtirt
+X-Google-Smtp-Source: AMrXdXuOfe6NLgJMULnPHX37n5uuWPkt1bVE2lokMgpk5vYtjRxfphFFUK9VakAAaXk4tHspPRZGKA==
+X-Received: by 2002:a05:600c:1d12:b0:3db:53f:baea with SMTP id l18-20020a05600c1d1200b003db053fbaeamr12781705wms.6.1674199453738;
+        Thu, 19 Jan 2023 23:24:13 -0800 (PST)
 Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id l30-20020a05600c1d1e00b003c6b70a4d69sm1386377wms.42.2023.01.19.23.11.54
+        by smtp.gmail.com with ESMTPSA id q11-20020a05600000cb00b002be53aa2260sm1450559wrx.117.2023.01.19.23.24.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jan 2023 23:11:55 -0800 (PST)
+        Thu, 19 Jan 2023 23:24:13 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+To:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-samsung-soc@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] ARM: dts: exynos: drop incorrect power-supplies in P4 Note
-Date:   Fri, 20 Jan 2023 08:11:51 +0100
-Message-Id: <20230120071151.116272-1-krzysztof.kozlowski@linaro.org>
+        Heiko Stuebner <heiko@sntech.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH] ARM: s3c: fix s3c64xx_set_timer_source prototype
+Date:   Fri, 20 Jan 2023 08:24:11 +0100
+Message-Id: <167419944210.139121.12555885098749511339.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230118090224.2162863-1-arnd@kernel.org>
+References: <20230118090224.2162863-1-arnd@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-simple-battery does not have supplies, but it is referenced by charger
-instead:
+On Wed, 18 Jan 2023 10:02:12 +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The prototype does not match the definition, as gcc-13 points
+> out:
+> 
+> arch/arm/mach-s3c/s3c64xx.c:169:13: error: conflicting types for 's3c64xx_set_timer_source' due to enum/integer mismatch; have 'void(unsigned int,  unsigned int)' [-Werror=enum-int-mismatch]
+>   169 | void __init s3c64xx_set_timer_source(unsigned int event, unsigned int source)
+>       |             ^~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from arch/arm/mach-s3c/s3c64xx.c:50:
+> arch/arm/mach-s3c/s3c64xx.h:62:20: note: previous declaration of 's3c64xx_set_timer_source' with type 'void(enum s3c64xx_timer_mode,  enum s3c64xx_timer_mode)'
+>    62 | extern void __init s3c64xx_set_timer_source(enum s3c64xx_timer_mode event,
+>       |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> [...]
 
-  exynos4412-p4note-n8010.dtb: battery-cell: 'power-supplies' does not match any of the regexes: '^ocv-capacity-table-[0-9]+$', 'pinctrl-[0-9]+'
+Applied, thanks!
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm/boot/dts/exynos4412-p4note.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+[1/1] ARM: s3c: fix s3c64xx_set_timer_source prototype
+      https://git.kernel.org/krzk/linux/c/5bf52f5e4d12b8109f348cab60cb7d51092c4270
 
-diff --git a/arch/arm/boot/dts/exynos4412-p4note.dtsi b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-index 7a515b87bc7c..e41cf3ed362d 100644
---- a/arch/arm/boot/dts/exynos4412-p4note.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-@@ -132,8 +132,6 @@ battery_cell: battery-cell {
- 		precharge-current-microamp = <250000>;
- 		charge-term-current-microamp = <250000>;
- 		constant-charge-voltage-max-microvolt = <4200000>;
--
--		power-supplies = <&power_supply>;
- 	};
- 
- 	i2c-gpio-1 {
+Best regards,
 -- 
-2.34.1
-
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
