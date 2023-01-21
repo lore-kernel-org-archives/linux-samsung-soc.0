@@ -2,114 +2,122 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EF9C54EAA
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Jan 2023 20:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23DAEC54E94
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Jan 2023 20:19:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229831AbjAUUTF (ORCPT
+        id S229878AbjAUUTx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 21 Jan 2023 15:19:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46290 "EHLO
+        Sat, 21 Jan 2023 15:19:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229789AbjAUUTE (ORCPT
+        with ESMTP id S229880AbjAUUTw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 21 Jan 2023 15:19:04 -0500
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06CC423653;
-        Sat, 21 Jan 2023 12:19:03 -0800 (PST)
-Received: by mail-ed1-x530.google.com with SMTP id g11so4920024eda.12;
-        Sat, 21 Jan 2023 12:19:02 -0800 (PST)
+        Sat, 21 Jan 2023 15:19:52 -0500
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E422E23137;
+        Sat, 21 Jan 2023 12:19:32 -0800 (PST)
+Received: by mail-ej1-x630.google.com with SMTP id bk15so21747124ejb.9;
+        Sat, 21 Jan 2023 12:19:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CH5ssNbMjjziLJwNcTMZ2d/eFIt2gMohhe8o5T2jQ1M=;
-        b=cmlPIsUKJIXzWwqnC4S5Q6Sh3AiU8MryNr3cqUXSVhP42gUD0VfJGZsO9FNpADkAVC
-         oyZWkecCioCu9CFyvvW4s4luOl1aSnKERWv1dsDFj2v8wwfSwFenA8UC4t/PtoXp8tSC
-         V4vnx8CcjfkLS7KBz3EeOLEmmHI6dyPb43ize4jsyIAzcmnr7XVMf9pAw2Qj8l+4RRjP
-         uaWlcfutQUME1qsMyRgJAmVL8FRjzl6ZtH56MV5Nq3iXHLS19sSlhgs0rlzPXLP9m34u
-         yEhcfZQfiKa8qjge/o5uu2RTRXy29JhSN2w6fRMFlbnSNsjZ7lqxbpddCHpjzHLN9S4B
-         2o+w==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7G5+S/PVSHz7yMGza3qinD/tbKeLPcUtpFdDTPTxNbI=;
+        b=MTfhvV0TM0mIGem6JR2KdbLB6KGqQ7nQOVoRtU+VXzVPlbiulNIuAeWQ40jis9+4j1
+         Z5snXhrwBw233PC1FwRjR7I+VJM88+QiEwNEyspOKGMKWNn+5vW1QSIJ9k7nAUZwCNRY
+         iPdFkIMIIT69xFbWUu849EXBjyq6jYYn3OWufbPaKZJ/kSmNtS3JYsga8PH3p2M3y8tD
+         3lSe2esid2tL/FAww/0T3IsdjUmgjA5EPeEecvGYvQ34GYVM9uZIHcyvgMYTbPKClzQw
+         TOZ2fL4N2q4iQSKS5+GIKpHTZhOekGKbQeoxSOytnqFjkau5J+nq00UTy5HKzTzM6wKs
+         1u3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CH5ssNbMjjziLJwNcTMZ2d/eFIt2gMohhe8o5T2jQ1M=;
-        b=SiBRVxelcAeYOj90hOOhMmNY8ZwtQnRQZMmo7Qzwpuo+s1cXfu82RT4qk9//rtBFvl
-         0S4nI5ex6EM1h98XuyrBz1On43UC92k+T4V3qkx6HlwQh8BoHnGezQ2+tBO3p9ZCBWxu
-         wtPSphQgyyVI/FfVv6njLdYk8srTbhl9/7EY21WtMph4iA6V4YVC18d9YMFLelOjwInF
-         xAhFfZsG8rhaEpcL5IORKgeQpZnluwA0qgtseeKqlR7dtZV1gEJnNYOFNXvr4YGCYRjA
-         sBHprYTC2JDjsoxFVIgRQoMEl3l4hfa+L6mPpG1NisYETSLsoNQyf6FesQfuft2/PWCI
-         JYlQ==
-X-Gm-Message-State: AFqh2kr/wTJkRQmI3mrEoJxVpLQSwLzd8Bft+H8mJfb+QJLCX+kKIsze
-        SUp1ohTSYTMsehuWxoVaM/TkyGIhmUj1aQ==
-X-Google-Smtp-Source: AMrXdXt2T1rSWy07cfoufrTsb4Ux/gRiVjdxbuoH6X7KzDV2UqKSIKXY976EzcAdpKOxcUNxlm2uFw==
-X-Received: by 2002:aa7:ccd3:0:b0:49d:f44f:7ef1 with SMTP id y19-20020aa7ccd3000000b0049df44f7ef1mr22672142edt.14.1674332341236;
-        Sat, 21 Jan 2023 12:19:01 -0800 (PST)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7G5+S/PVSHz7yMGza3qinD/tbKeLPcUtpFdDTPTxNbI=;
+        b=utu5IPrnjqyzW02W3SWmqUXPnKLPkUAL8721E57syxzzwCeXmP3xdOkgPGvais1pUP
+         CLdcvNZ2PkULwcV+v2WfHyKlB1A3Q6+lFG1omAsLdSsGSrF7VGDOE32/R4WoTT5q6Um5
+         LWnovFmcwvcV0PZSQCY/zegSKBaZBT2LswPc1L2E/bLC5f+ek9Qi8UTY3GlJE+sWsy3Z
+         ZaD2ak13FpDkD++ZQYanULg8Hmv+btNnyplqihLfA77ome6HYf+2Sgopy4OoSn23ltRO
+         Wcmtj7+JlEzhi3RsyBht3cIr5D47JNiWIVuU+CDsEoAiuWNm0y9SLuM+kjXu7R5gcu4U
+         ItGQ==
+X-Gm-Message-State: AFqh2kpDEgSQ6HLrZbz9omSOeeKUF0V/+7VZiq1VoV4YCjNNxvTajaZD
+        rfivgWffB0iQC/DR2FnDrqvQy4cYe1mIqg==
+X-Google-Smtp-Source: AMrXdXsc5nPomzzhujeJdro79hQ+NL5g2BjdwcuW8fCjiwzRWfJ3jjK4zVr1RSsWyaX5Mff+YcBkcQ==
+X-Received: by 2002:a17:907:a2cb:b0:870:7b:94db with SMTP id re11-20020a170907a2cb00b00870007b94dbmr23435891ejc.28.1674332371207;
+        Sat, 21 Jan 2023 12:19:31 -0800 (PST)
 Received: from localhost.localdomain ([194.39.226.133])
-        by smtp.gmail.com with ESMTPSA id i23-20020a50fc17000000b0047c6f3eccb2sm19203423edr.50.2023.01.21.12.18.59
+        by smtp.gmail.com with ESMTPSA id ku26-20020a170907789a00b0084d46461852sm17462057ejc.126.2023.01.21.12.19.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Jan 2023 12:19:00 -0800 (PST)
+        Sat, 21 Jan 2023 12:19:30 -0800 (PST)
 From:   Markuss Broks <markuss.broks@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Markuss Broks <markuss.broks@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        soc@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 2/2] arm: dts: exynos5800: Use Exynos5422 compatible for the DSI controller
-Date:   Sat, 21 Jan 2023 22:18:43 +0200
-Message-Id: <20230121201844.46872-3-markuss.broks@gmail.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        soc@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v2 0/2] Add support for Samsung Galaxy S5 (Exynos)
+Date:   Sat, 21 Jan 2023 22:19:23 +0200
+Message-Id: <20230121201926.46990-1-markuss.broks@gmail.com>
 X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230121201844.46872-1-markuss.broks@gmail.com>
-References: <20230121201844.46872-1-markuss.broks@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The driver adding support for Exynos5422/Exynos5800 DSI controller was
-merged in 2016, yet it wasn't actually used. Add a proper compatible
-for it.
+Samsung Galaxy S5 (Exynos) is a mobile phone released in 2014.
+It has an Exynos5422 platform. This version of Galaxy S5 is only
+capable of 3G communication using the Intel modem, while the
+LTE version of the device (klte) has a Qualcomm Snapdragon SoC.
 
-Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
----
- arch/arm/boot/dts/exynos5420.dtsi | 2 +-
- arch/arm/boot/dts/exynos5800.dtsi | 4 ++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+Currently, internal eMMC, USB, regulators on a PMIC, and touchscreen
+are enabled in the device-tree.
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 62263eb91b3c..b612468515eb 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -597,7 +597,7 @@ mipi_phy: mipi-video-phy {
- 			#phy-cells = <1>;
- 		};
- 
--		dsi@14500000 {
-+		dsi: dsi@14500000 {
- 			compatible = "samsung,exynos5410-mipi-dsi";
- 			reg = <0x14500000 0x10000>;
- 			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
-index 526729dad53f..8328ddb3b02f 100644
---- a/arch/arm/boot/dts/exynos5800.dtsi
-+++ b/arch/arm/boot/dts/exynos5800.dtsi
-@@ -148,6 +148,10 @@ opp-200000000 {
- 	};
- };
- 
-+&dsi {
-+	compatible = "samsung,exynos5422-mipi-dsi";
-+};
-+
- &mfc {
- 	compatible = "samsung,mfc-v8";
- };
+It also has the following peripherals:
+
+- 5" 1080p S6E3FA2 DSI display,
+- Cypress StreetFighter touch buttons,
+- Broadcom BCM4354 wireless connectivity module,
+- Intel XMM6360 3G modem,
+- STM32F401 serving as a sensor hub,
+- Validify Solutions VFS61 series fingerprint sensor,
+- Lattice ICE401M FPGA as an IRDA controller,
+- Maxim MAX86900 heart rate sensor,
+- NXP PN547 NFC controller,
+- Wolfson WM5110 Audio DSP,
+- Broadcom BCM4753 GPS radio,
+- Maxim MAX77804 PMIC,
+- Silicon Image SII8240 MHL controller,
+- TI LP5562 LED driver
+
+Cc: Mark Brown <broonie@kernel.org>
+
+v1 -> v2:
+- use better subject prefixes
+- rename Galaxy S5 (Exynos) to Galaxy S5 (SM-G900H)
+- align the compatibles and clock output names
+- reorder the includes
+- generic node name for regulator-tsp-vdd-en
+- GPIO flag for regulator
+- rename all the regulators, leaving the voltage values only where
+  it makes sense (e.g. on 3V3 and 1V8 supplies for the HRM)
+
+Markuss Broks (2):
+  Documentation: devicetree: bindings: Add compatible for Samsung Galaxy
+    S5 (Exynos)
+  arm: dts: Add device-tree for Samsung Galaxy S5 (Exynos)
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |   1 +
+ arch/arm/boot/dts/Makefile                    |   1 +
+ arch/arm/boot/dts/exynos5422-samsung-k3g.dts  | 676 ++++++++++++++++++
+ 3 files changed, 678 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos5422-samsung-k3g.dts
+
 -- 
 2.39.0
 
