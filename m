@@ -2,102 +2,146 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E4BC05027
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Jan 2023 22:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62BC8C38142
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Jan 2023 16:39:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229553AbjATWW6 (ORCPT
+        id S229841AbjAUQjP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Jan 2023 17:22:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39770 "EHLO
+        Sat, 21 Jan 2023 11:39:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbjATWW4 (ORCPT
+        with ESMTP id S229637AbjAUQjO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Jan 2023 17:22:56 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 806D330FD;
-        Fri, 20 Jan 2023 14:22:50 -0800 (PST)
+        Sat, 21 Jan 2023 11:39:14 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8880827488;
+        Sat, 21 Jan 2023 08:39:13 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 12312620A8;
-        Fri, 20 Jan 2023 22:22:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 876B7C4339B;
-        Fri, 20 Jan 2023 22:22:46 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2CD08B8075D;
+        Sat, 21 Jan 2023 16:39:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FBD0C433D2;
+        Sat, 21 Jan 2023 16:38:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674253369;
-        bh=deX7jDxlX/W6uQkqoupHiyuH1WVUYRSy7lZvPqAJLbk=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=MX2hM4TQ+A95PgAsk2oSMOmtuYi/CNxMzUFd3n4OdNLbpv6oGxxm0gT4btzep0acC
-         JZRnNbOPfsos+fym+BNN4eEqc5STi/cRQzTQlb4wQHSLn4M+Y9wuwMAH/J7+NpHQxp
-         J3n1rFozIqrpYCqZosyt561/jgpnqYz8acIaZzdt0yQzzd5fpDsWBLSj3GNDbDBjji
-         Tvb+svcNol1LcxOwjk1Ovikt85ll9zMILbCmgg/pN0dLxGu2j5RYf5Imudq7LIyegk
-         XausqtoetS97YMu2auFuaOLykRX/6CTCUP6vgsYUMBIytotxpiYV5ob61zvv/dkIgz
-         /n2ilaDAPvxbg==
-From:   Mark Brown <broonie@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Arnd Bergmann <arnd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-In-Reply-To: <20230118161110.521504-1-arnd@kernel.org>
-References: <20230118161110.521504-1-arnd@kernel.org>
-Subject: Re: [PATCH 1/5] ASoC: samsung: remove DMA filter function and data
-Message-Id: <167425336610.1425934.15022702108965764366.b4-ty@kernel.org>
-Date:   Fri, 20 Jan 2023 22:22:46 +0000
+        s=k20201202; t=1674319150;
+        bh=gT/5AvVpeDrgKjkh47OXtzrBPwHm9WVXPk88PeHkYdg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=T2T2vnT1Xs4tW5V/oTrCVF/YscJHiNq+7HTjvmQMO07kIVdALzUWUY/Lg7jgN8oeV
+         wDH/jrinV14zyuMq2EWtvqw0MJqCVYQkQmSM97I02rGKmkJT8mWnP+XySroZ4rplWG
+         RlAswjzAZLSIUe5xREEi1xk7mpGRJ+el+yXQps4AW3OLVqJhTAobryzkTKQ7IcmeFR
+         gz9n7eY4kKn03iiqGBkjRAI/u36bgFn5jBskRGSmm4cNBL/uaGM08TtLTQYXpHtqxx
+         meoZpovFIIHToxzFIsTk068dsFlMtc5YJ3ropDVVqr5LoNdkRAl4Bqac9L/I3U7BVM
+         lonUWh/lOpEIw==
+Date:   Sat, 21 Jan 2023 16:52:35 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+Cc:     <broonie@kernel.org>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <vigneshr@ti.com>, <tudor.ambarus@microchip.com>,
+        <pratyush@kernel.org>, <sanju.mehta@amd.com>,
+        <chin-ting_kuo@aspeedtech.com>, <clg@kaod.org>,
+        <kdasu.kdev@gmail.com>, <f.fainelli@gmail.com>,
+        <rjui@broadcom.com>, <sbranden@broadcom.com>,
+        <eajames@linux.ibm.com>, <olteanv@gmail.com>, <han.xu@nxp.com>,
+        <john.garry@huawei.com>, <shawnguo@kernel.org>,
+        <s.hauer@pengutronix.de>, <narmstrong@baylibre.com>,
+        <khilman@baylibre.com>, <matthias.bgg@gmail.com>,
+        <haibo.chen@nxp.com>, <linus.walleij@linaro.org>,
+        <daniel@zonque.org>, <haojian.zhuang@gmail.com>,
+        <robert.jarzmik@free.fr>, <agross@kernel.org>,
+        <bjorn.andersson@linaro.org>, <heiko@sntech.de>,
+        <krzysztof.kozlowski@linaro.org>, <andi@etezian.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <wens@csie.org>, <jernej.skrabec@gmail.com>, <samuel@sholland.org>,
+        <masahisa.kojima@linaro.org>, <jaswinder.singh@linaro.org>,
+        <rostedt@goodmis.org>, <mingo@redhat.com>,
+        <l.stelmach@samsung.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <alex.aring@gmail.com>, <stefan@datenfreihafen.org>,
+        <kvalo@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <skomatineni@nvidia.com>,
+        <sumit.semwal@linaro.org>, <christian.koenig@amd.com>,
+        <j.neuschaefer@gmx.net>, <vireshk@kernel.org>, <rmfrfs@gmail.com>,
+        <johan@kernel.org>, <elder@kernel.org>,
+        <gregkh@linuxfoundation.org>, <git@amd.com>,
+        <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <joel@jms.id.au>, <andrew@aj.id.au>, <radu_nicolae.pirea@upb.ro>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <claudiu.beznea@microchip.com>,
+        <bcm-kernel-feedback-list@broadcom.com>, <fancer.lancer@gmail.com>,
+        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>,
+        <jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
+        <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
+        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
+        <benjaminfair@google.com>, <yogeshgaur.83@gmail.com>,
+        <konrad.dybcio@somainline.org>, <alim.akhtar@samsung.com>,
+        <ldewangan@nvidia.com>, <michal.simek@amd.com>,
+        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-wpan@vger.kernel.org>,
+        <libertas-dev@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <linux-iio@vger.kernel.org>, <michael@walle.cc>,
+        <palmer@dabbelt.com>, <linux-riscv@lists.infradead.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <greybus-dev@lists.linaro.org>, <linux-staging@lists.linux.dev>,
+        <amitrkcian2002@gmail.com>
+Subject: Re: [PATCH v2 04/13] iio: imu: Replace all spi->chip_select and
+ spi->cs_gpiod references with function call
+Message-ID: <20230121165235.13da9db2@jic23-huawei>
+In-Reply-To: <20230119185342.2093323-5-amit.kumar-mahapatra@amd.com>
+References: <20230119185342.2093323-1-amit.kumar-mahapatra@amd.com>
+        <20230119185342.2093323-5-amit.kumar-mahapatra@amd.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.36; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12-dev-77e06
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 18 Jan 2023 17:10:45 +0100, Arnd Bergmann wrote:
-> This data is no longer passed by the platform code, so
-> there is no point passing it down at all.
+On Fri, 20 Jan 2023 00:23:33 +0530
+Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com> wrote:
+
+> Supporting multi-cs in spi drivers would require the chip_select & cs_gpiod
+> members of struct spi_device to be an array. But changing the type of these
+> members to array would break the spi driver functionality. To make the
+> transition smoother introduced four new APIs to get/set the
+> spi->chip_select & spi->cs_gpiod and replaced all spi->chip_select and
+> spi->cs_gpiod references with get or set API calls.
+> While adding multi-cs support in further patches the chip_select & cs_gpiod
+> members of the spi_device structure would be converted to arrays & the
+> "idx" parameter of the APIs would be used as array index i.e.,
+> spi->chip_select[idx] & spi->cs_gpiod[idx] respectively.
 > 
+> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+> ---
+>  drivers/iio/imu/adis16400.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-
-Applied to
-
-   broonie/sound.git for-next
-
-Thanks!
-
-[1/5] ASoC: samsung: remove DMA filter function and data
-      (no commit info)
-[2/5] ASoC: pxa: remove snd_dmaengine_pcm_open_request_chan()
-      (no commit info)
-[3/5] ASoC: ux500: remove platform_data support
-      commit: 1766ac5248063c25d1fe46e04bb936c46313ed89
-[4/5] ASoC: ux500: remove stedma40 references
-      commit: aafe9375b386010e28614f58499d199250a16874
-[5/5] ASoC: remove snd_dmaengine_pcm_config->compat_request_channel
-      (no commit info)
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+> diff --git a/drivers/iio/imu/adis16400.c b/drivers/iio/imu/adis16400.c
+> index c02fc35dceb4..3eda32e12a53 100644
+> --- a/drivers/iio/imu/adis16400.c
+> +++ b/drivers/iio/imu/adis16400.c
+> @@ -466,7 +466,7 @@ static int adis16400_initial_setup(struct iio_dev *indio_dev)
+>  
+>  		dev_info(&indio_dev->dev, "%s: prod_id 0x%04x at CS%d (irq %d)\n",
+>  			indio_dev->name, prod_id,
+> -			st->adis.spi->chip_select, st->adis.spi->irq);
+> +			spi_get_chipselect(st->adis.spi, 0), st->adis.spi->irq);
+>  	}
+>  	/* use high spi speed if possible */
+>  	if (st->variant->flags & ADIS16400_HAS_SLOW_MODE) {
 
