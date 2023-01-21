@@ -2,162 +2,96 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B599AC38142
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Jan 2023 18:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C393C54EB4
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Jan 2023 20:17:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229687AbjAUSbd (ORCPT
+        id S229810AbjAUURE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 21 Jan 2023 13:31:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42604 "EHLO
+        Sat, 21 Jan 2023 15:17:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbjAUSbc (ORCPT
+        with ESMTP id S229493AbjAUURD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 21 Jan 2023 13:31:32 -0500
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7C201D928
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Jan 2023 10:31:30 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id f12-20020a7bc8cc000000b003daf6b2f9b9so7931579wml.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Jan 2023 10:31:30 -0800 (PST)
+        Sat, 21 Jan 2023 15:17:03 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F14522A3E;
+        Sat, 21 Jan 2023 12:17:02 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id ud5so21826878ejc.4;
+        Sat, 21 Jan 2023 12:17:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZwoDBvRhZ51HVwRruPaZJDCI07MDbJL4OZ/OSacJub4=;
-        b=DXZKAycNcbv1iXdoy5RHgDDWZYz4w+4tSZhy7uzlZ9WRKzJP0NHHQJfd+DVK6/tnoH
-         r0LTdWDEOFwGr8v5G0MY8ojjJ4DNAlLLqpbItFA0EFgwFJcEisGZ+af3rxoFmuCZIUy3
-         nX8GimRZPlWnpgUn/oFN7WktFnkdjfLqP4bWRObvDi/5Mj3sochYa7CCTEIjGWrZykPY
-         5eUcrPhUqIPQag//q7hEEA7V7NR/4nLP4zSA87Hd7j0GRbZxRbI7v8M8X64YSyad29En
-         O0cAi0zkhFgAu3eqbW5Fsxiirur0CXaQB1EGjsZnxMPQqNtW1i0Qs6cPKlj3pP9GeBfr
-         tVjw==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DVSO49G+90zNDzrj6MAr5GjdLJ2Rrum8smiQJoUXN+E=;
+        b=iejkVLTzMekISSw7CuLQ4ejyCGyo3rzrEO/81IsoLg9rNEnI6pWKM7s4ws93O7rGEB
+         92N1S3ak2gbjYCrf/Lm8C76cDgePs6mtbqELstgxYAhz9NDmSTy2x//JB05Hx/8dbEos
+         7uEfMg5RFZo27PQf7ytsB2zfbrkG/X7XnjlUB34lhlFybPEkWSx6hHsVaVUm7riZ7qDz
+         bmqQN2NsoZSSRIcmsqx3gI8LMHCxozMYubQ1h5WUIuIpKlzd36OqhuRNxB1eYs6Q/aGa
+         L5UXTP5bOEUWiLlZKabKMMGBK5Ha3/m/6GccEWiBPB7j7T4yyXjnx4fIBKHcT2sYgCng
+         XQ+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZwoDBvRhZ51HVwRruPaZJDCI07MDbJL4OZ/OSacJub4=;
-        b=1De344J/cYGKRgo1VXnQ/yFl3ylfrpLI/6qY/5fSXuV9Nz+OYshIDIaGEB2qAhvVaO
-         W4pcq0uRLCj6QBR5AxmQJdrvKjuJFfhiRxFFBR80BJK73SqotxXeqlu59icLY0g4Zg7c
-         L6MJlXJ/1XNiyO5xgzvAxUlKChHhqyDRYcbK41CBDpj95Wo5ElriYJ1PBZfjzozPHQWE
-         R4dy7jtTb7kfNgtyGjuOXIyAFA/Z1/SYZe5T7T5jbM0qGF2IGCyl7MlTzTfaaHXHbycO
-         reuxzopCUZjTFaiaxhZygnDyonSgwmQIMkvnIn/kSXCUI5s95eU7+UY+AE3WlUFahWoS
-         cYvg==
-X-Gm-Message-State: AFqh2kp7SsVak0bUYw81ALVu3bQiHsXNXJt6B1hDgiengbpptAbo/eBr
-        dTxkZypb8utNLBj+QxAxn9/s/w==
-X-Google-Smtp-Source: AMrXdXtzA0VhWJr5PaMDSwqlmcQOuGEVhWjqw2Lcr/7uvjQ2leyTYFBOPlCVPt9XkFdATbe08+PT5Q==
-X-Received: by 2002:a05:600c:5386:b0:3da:f670:a199 with SMTP id hg6-20020a05600c538600b003daf670a199mr18285088wmb.36.1674325889305;
-        Sat, 21 Jan 2023 10:31:29 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id c2-20020a05600c0a4200b003daf6e3bc2fsm16026540wmq.1.2023.01.21.10.31.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 Jan 2023 10:31:28 -0800 (PST)
-Message-ID: <45b9b378-6619-c47a-b5ea-6b6b7edca785@linaro.org>
-Date:   Sat, 21 Jan 2023 19:31:23 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH 3/5] dt-bindings: iio: correct node names in examples
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DVSO49G+90zNDzrj6MAr5GjdLJ2Rrum8smiQJoUXN+E=;
+        b=3OyhDmNB6Wkw2PeGS1s+RmH9Cbr8AFtAfUENENLDMSyxy+/jvUIljyq2EljMFfswaL
+         /RZooAHTEI9SiAwLdr6CA/AHzpDEXIyZCxqXLsgjr7ARxmm36fFPv1W0X1j1R+FkH7Cj
+         Us4Ox/TGIke3VZEUamrrFDznBE6APi5fVqjbxWM4EdZqlhvjnN2rw0sMh3Sy51rR/D2E
+         Iz2sg0oZSBLbTNHMDgcbVGZ0heuxpEYc/TagpfHCZCKAKskztpT+7QSpQ8koUOXMVaKR
+         qnakSq7+t4aKLDNIxSRDdH1D+J1OmmoLMIfVtNIVrQOZkOT13HpSL6WftVLg0RQLTZg8
+         jw8Q==
+X-Gm-Message-State: AFqh2kp2+sC3H7jFmLfDg5inW8j8uiYQBU89C0qJaD3EF5KRHd+VXV5i
+        Exkwkqf4z7An7eC+4esWcNVdbBztn0/bTQ==
+X-Google-Smtp-Source: AMrXdXvsw4VtD76/xrwX5+TzLQDVpMWA1ZIvWyAa1Z/4uArg0b19K+cHV2txsCX07YXiBPZ+e1dr3Q==
+X-Received: by 2002:a17:906:25db:b0:877:6a03:9ad1 with SMTP id n27-20020a17090625db00b008776a039ad1mr11055618ejb.7.1674332220452;
+        Sat, 21 Jan 2023 12:17:00 -0800 (PST)
+Received: from localhost.localdomain ([194.39.226.133])
+        by smtp.gmail.com with ESMTPSA id g8-20020aa7d1c8000000b0049e1f167956sm8278427edp.9.2023.01.21.12.16.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Jan 2023 12:16:59 -0800 (PST)
+From:   Markuss Broks <markuss.broks@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Markuss Broks <markuss.broks@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>, soc@kernel.org,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Lucas Stankus <lucas.p.stankus@gmail.com>,
-        Puranjay Mohan <puranjay12@gmail.com>,
-        Dmitry Rokosov <ddrokosov@sberdevices.ru>,
-        Alexandru Tachici <alexandru.tachici@analog.com>,
-        Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
-        Renato Lui Geh <renatogeh@gmail.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Andreas Klinger <ak@it-klinger.de>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Kent Gustavsson <kent@minoris.se>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Oleksij Rempel <linux@rempel-privat.de>, kernel@pengutronix.de,
-        =?UTF-8?Q?Nuno_S=c3=a1?= <nuno.sa@analog.com>,
-        Nishant Malpani <nish.malpani25@gmail.com>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        Dragos Bogdan <dragos.bogdan@analog.com>,
-        Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>,
-        Lorenzo Bianconi <lorenzo@kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Stefan Popa <stefan.popa@analog.com>,
-        Robert Yang <decatf@gmail.com>,
-        Sean Nyekjaer <sean@geanix.com>,
-        Artur Rojek <contact@artur-rojek.eu>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Philippe Reynes <tremyfr@yahoo.fr>,
-        Alexandru Lazar <alazar@startmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Caleb Connolly <caleb.connolly@linaro.org>,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Harald Geyer <harald@ccbib.org>,
-        Eugene Zaikonnikov <ez@norophonic.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Matt Ranostay <matt.ranostay@konsulko.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Sankar Velliangiri <navin@linumiz.com>,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        chrome-platform@lists.linux.dev
-References: <20230118184413.395820-1-krzysztof.kozlowski@linaro.org>
- <20230118184413.395820-3-krzysztof.kozlowski@linaro.org>
- <20230121171709.5eb75e94@jic23-huawei>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230121171709.5eb75e94@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 0/3] Correct inaccuracies in Exynos5420 and Exynos5800 device trees
+Date:   Sat, 21 Jan 2023 22:16:47 +0200
+Message-Id: <20230121201650.46560-1-markuss.broks@gmail.com>
+X-Mailer: git-send-email 2.39.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 21/01/2023 18:17, Jonathan Cameron wrote:
-> On Wed, 18 Jan 2023 19:44:11 +0100
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-> 
->> Do not use underscores and unneeded suffixes (e.g. i2c0) in node name in
->> examples.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
-> 
->> diff --git a/Documentation/devicetree/bindings/iio/health/ti,afe4403.yaml b/Documentation/devicetree/bindings/iio/health/ti,afe4403.yaml
->> index 6c5ad426a016..12f75ddc4a70 100644
->> --- a/Documentation/devicetree/bindings/iio/health/ti,afe4403.yaml
->> +++ b/Documentation/devicetree/bindings/iio/health/ti,afe4403.yaml
->> @@ -42,7 +42,7 @@ examples:
->>          #address-cells = <1>;
->>          #size-cells = <0>;
->>  
->> -        heart_mon@0 {
->> +        heart-rate@0 {
-> 
-> These are both heart-rate and pulse oximeters so measure more than just
-> the rate (oxygen saturation in the blood). Reality is they actually
-> measure light absorption over time, but you can calculate an estimate
-> of both rate and oxygen saturation from that.
-> 
-> I don't really mind simplifying that to heart-rate, but wanted to
-> call this out for possible discussion.
+Use the proper compatibles for the DSI host controller and MIPI
+video phy, as the current ones are not compatible with the hardware.
 
-They could be heart-mon. The fix is mostly around the underscore. I
-don't have any arguments for changing it to heart-rate, thus we can go
-with whatever you prefer.
+While this fixes the kernel panic while trying to use DSI, I was still
+unsuccessful to consistently produce image that isn't noise on S6E3FA2
+panel of Samsung Galaxy S5. It seems to only work sometimes.
 
-Best regards,
-Krzysztof
+Cc: Mark Brown <broonie@kernel.org>
+
+v1 -> v2:
+- squash patch 1 and patch 3, making it one patch for adding the label and
+  changing the compatible
+- use better subject prefixes
+
+Markuss Broks (2):
+  arm: dts: exynos5420: Use Exynos5420 compatible for the MIPI video phy
+  arm: dts: exynos5800: Use Exynos5422 compatible for the DSI controller
+
+ arch/arm/boot/dts/exynos5420.dtsi | 4 ++--
+ arch/arm/boot/dts/exynos5800.dtsi | 4 ++++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+-- 
+2.39.0
 
