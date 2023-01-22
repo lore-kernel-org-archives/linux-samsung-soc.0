@@ -2,113 +2,95 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 349AFC54E94
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Jan 2023 20:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C14B4C54EAA
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 22 Jan 2023 12:15:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229735AbjAUU2v (ORCPT
+        id S229986AbjAVMPt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 21 Jan 2023 15:28:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50838 "EHLO
+        Sun, 22 Jan 2023 07:15:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229493AbjAUU2v (ORCPT
+        with ESMTP id S229841AbjAVMPs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 21 Jan 2023 15:28:51 -0500
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4328525292
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Jan 2023 12:28:50 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id u1-20020a17090a450100b0022936a63a21so12094020pjg.4
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Jan 2023 12:28:50 -0800 (PST)
+        Sun, 22 Jan 2023 07:15:48 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34D3AC141
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Jan 2023 04:15:47 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id fl11-20020a05600c0b8b00b003daf72fc844so8800601wmb.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Jan 2023 04:15:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kw+rDkNLwBsHFPfuOub9wI9lZiy1N7CBbHJRkBpxch8=;
-        b=uj04C5rq2HjGK4mocBeuyHigZm14p9ZqcCckQCU1cTRSa6fr0EoYvULkjcESCJ4yCl
-         ys7VdkOe807LUnydqRfFWS4x2Bp/6BU7oFVzv/sInJ52cttWu5Wa4yxhrgDoaC2i97a/
-         T+qeq6NvFNwRiYlk4vvW626U2waJoKILRigKjcULzSFv2pEARduoYYtUX4zfuKzbQOTR
-         Ju21NqPCsc72wTMu8Yw6rlVrEwe2qTCtnk097gNrpZF9OjOzDb61wgUgl5+hl/LV87ay
-         YzLJyfjGzw4VI7Y+FJo/VX2BUuhJ0jiK4x2MHpJm6l07oq9KfserrnIZN5f6trlo5GWP
-         RCog==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1tGaV/vVqSe7j5jHscTpb4g/SPxvj1PFsDHZ7F3jeUE=;
+        b=BkYrz6odRMNCNMp9kPc0Ffg9qh8Xex6eIYZ/Zw3lR9wRnVIXDY2K9fQSj6mgdI3hE8
+         4X/r1EdLYgTwZg/82E+CTSUEQbDv1qvbCwFxN98iVd1HfgkjySgyqUBq5jumi2U3890P
+         IONGlbI7SK4anAurrWgToBfAtvH2s4zUvyMf8LY/RJFpjel35GNiZzMCRHqxznZaw/DE
+         MR+/ldN/UqFC+0NSd5t9bGcl2jEblcsP0cMfVK57MJK++tJtU9dl1Lub7hhOTRo4DG3m
+         gTGcvVJBdW99T/in0Ejhar1d5pFYQ4Z0+k1sX602/x9ve0EWXK5zNZ8Tv6QXiuJSSNCj
+         D63A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Kw+rDkNLwBsHFPfuOub9wI9lZiy1N7CBbHJRkBpxch8=;
-        b=oWJwMTwna2CQYphQrUYKq40ErA7zKGqO0cqlwgE4+YmIaHMBF9s+wvty1xHHP2sM23
-         tLr6SGjn9FBpGM8XR0R1G85+G+0lzXAoia55kyDtwwjtfsXUF+mB2Vupj9rgVa5KtiI4
-         EsAm9CyvHGLhgwAy25PUPKZGX6ycvWhrsSHJ0BU1CPdVSsIQe21J7AQyw6rws5iuHk/W
-         /EqU+zrYkNe72sHWl/GrpsIBnJDGZKEPbDvsMs2sw1TjVGM19/mciAjN0Vx91IeoNsX2
-         tx5SI63HmP1j02CBoF+icypvZgM2hS2KTLAMlCICf4O8O9OmPhEoTi0lqXg3siq/ffN8
-         x8rg==
-X-Gm-Message-State: AFqh2kr8cfGfR3iLxe2EdU/VpDdeyRgbLvvkrK1foSfP66nT1Zj5tmqX
-        1GB4z0UkOq41QDjnK1q7zHNAdq8UfZAIc/7gv65A7Q==
-X-Google-Smtp-Source: AMrXdXsEMvpIDmBk7ijUINDgglFo5IRfBMJQj2Q2J3zetJqNnPQjmSL7Y96Y2YoTBR+Uh4mML/nFFQ4lRYAdEkKDfuQ=
-X-Received: by 2002:a17:90b:3711:b0:226:197:63fd with SMTP id
- mg17-20020a17090b371100b00226019763fdmr1915508pjb.55.1674332929525; Sat, 21
- Jan 2023 12:28:49 -0800 (PST)
-MIME-Version: 1.0
-References: <20220726200739.30017-1-semen.protsenko@linaro.org>
- <CGME20220726200747eucas1p226a18ed7760741ddaed94483ba1f9228@eucas1p2.samsung.com>
- <20220726200739.30017-2-semen.protsenko@linaro.org> <7e9e509a-0ef7-087d-e379-14fb58e3e14f@samsung.com>
- <CAPLW+4n-Lf6je61rxdJ9nJnX9h9F8F-y+qikG7eFF0avQpMV9Q@mail.gmail.com>
- <CAPLW+4mPeX-cQR_oLKh+zPwEXuwfQtk2t2USP77C6Y9UmgYq_w@mail.gmail.com>
- <3751c425-aefa-a3b4-62f4-53d7e369bc1e@samsung.com> <CAPLW+4=-cqQPmQi57_ARn1C6LqK+LffrFEgLqi6Lwb=YJ7sRSw@mail.gmail.com>
- <5757a45f-0685-a82b-edd6-ae5c98781ad3@samsung.com>
-In-Reply-To: <5757a45f-0685-a82b-edd6-ae5c98781ad3@samsung.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Sat, 21 Jan 2023 14:28:37 -0600
-Message-ID: <CAPLW+4==df_3KjLG5-5As-1HB11q3j55JmGwBCv0XqbYiB8ieg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] iommu/exynos: Abstract getting the fault info
-To:     Joerg Roedel <joro@8bytes.org>, Joerg Roedel <jroedel@suse.de>
+        bh=1tGaV/vVqSe7j5jHscTpb4g/SPxvj1PFsDHZ7F3jeUE=;
+        b=E8gpW0YI/tuYGZIl4l7HWu7AredVghanvQrLIC2Kf3svkPMpmbpxPp4Swicz4O8hcQ
+         ovPnuUqHSHxkCYrp5iRpDGQ61zJ2izP1ljWnKB14YeY4nenwC0yhIMiw6KqJRjfmbT3C
+         J1iiFvCtVxGmT2XzV9A9C2kXdvut0ZHH8uZsoU+s8xKQtXSQHq+PZQS/3Ml1owcX4tT0
+         j++WKhFeUhmmFJYC+0Lae0f3OFk41y14ZQcG7K7UnfgUz8e7QrXpebSajaXs9qlHiLf5
+         fTJYWetJo9eF/q9nzWorS03lODmTvTiPigrUjxJE2XZXPo+Xvvc6t3PRUU2JFPoGRGuS
+         b9Yw==
+X-Gm-Message-State: AFqh2kpOla7UNreur9BUOdfKmnab+6aipZ3Wjhu3s8KGpTVHMwxIkcdY
+        IljXCjU10mgKtBt2rm4WYWIAwjUFDWp6chzZ
+X-Google-Smtp-Source: AMrXdXu2ngAApBUjdl+X0iQODuuOctW1xFD2HBQEjn9ESCYNGbuk/KECrZmQ6uFWU+OoL3ix2RG8nw==
+X-Received: by 2002:a05:600c:1c2a:b0:3cf:d0b1:8aa1 with SMTP id j42-20020a05600c1c2a00b003cfd0b18aa1mr20036181wms.0.1674389745818;
+        Sun, 22 Jan 2023 04:15:45 -0800 (PST)
+Received: from krzk-bin.. ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id o28-20020a05600c511c00b003dab40f9eafsm8543663wms.35.2023.01.22.04.15.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Jan 2023 04:15:45 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Janghyuck Kim <janghyuck.kim@samsung.com>,
-        Cho KyongHo <pullip.cho@samsung.com>,
-        Daniel Mentz <danielmentz@google.com>,
-        David Virag <virag.david003@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>, iommu@lists.linux.dev,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] arm64: dts: Cleanup for v6.3
+Date:   Sun, 22 Jan 2023 13:15:40 +0100
+Message-Id: <20230122121541.29312-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Joerg,
+The following changes since commit 1b929c02afd37871d5afb9d498426f83432e71c2:
 
-On Thu, 22 Dec 2022 at 09:34, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> On 22.12.2022 16:23, Sam Protsenko wrote:
-> > On Thu, 22 Dec 2022 at 07:20, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> >
-> > [snip]
-> >
-> >>> So, what do you think about this?
-> >> Okay, go ahead with your approach. If I find a better way, I will rework
-> >> it then. I would just like to have the code for fault handling for hw
-> >> v1, v5 and v7 similar as much as possible.
-> >>
-> > Thanks, Marek!
-> >
-> > Joerg, can you please apply this series? Please let me know if I need
-> > to rebase it first, but I guess there shouldn't be any issues, the
-> > SysMMU driver doesn't seem to get updated often.
->
-> Just to makes things a bit more formal - feel free to add:
->
-> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
->
+  Linux 6.2-rc1 (2022-12-25 13:41:39 -0800)
 
-Can you please apply this series?
+are available in the Git repository at:
 
-Thanks!
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git tags/dt64-cleanup-6.3
 
+for you to fetch changes up to d0931f1d5e9c1655cfa8128edd14e813b4044801:
 
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
+  arm64: dts: hisilicon: align LED node names with dtschema (2023-01-13 11:38:56 +0100)
+
+----------------------------------------------------------------
+Minor improvements in ARM64 DTS for v6.3
+
+1. Drop 0x from unit address (microchip).
+2. Align HDMI CEC and LED nodes with bindings (hisilicon).
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (2):
+      arm64: dts: microchip: drop 0x from unit address
+      arm64: dts: hisilicon: align LED node names with dtschema
+
+ arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts | 12 ++++++------
+ arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts    | 12 ++++++------
+ arch/arm64/boot/dts/microchip/sparx5.dtsi         |  2 +-
+ 3 files changed, 13 insertions(+), 13 deletions(-)
