@@ -2,114 +2,187 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D8C5C05027
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Jan 2023 21:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62141C54EED
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Jan 2023 21:07:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232042AbjAWVBL (ORCPT
+        id S232942AbjAWVHL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Jan 2023 16:01:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34424 "EHLO
+        Mon, 23 Jan 2023 16:07:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232560AbjAWVBJ (ORCPT
+        with ESMTP id S232896AbjAWVHK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Jan 2023 16:01:09 -0500
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84DFE38665
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 13:00:39 -0800 (PST)
-Received: by mail-qt1-x82f.google.com with SMTP id h24so7448755qta.12
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 13:00:39 -0800 (PST)
+        Mon, 23 Jan 2023 16:07:10 -0500
+X-Greylist: delayed 965 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 23 Jan 2023 13:07:07 PST
+Received: from mailrelay1-1.pub.mailoutpod2-cph3.one.com (mailrelay1-1.pub.mailoutpod2-cph3.one.com [IPv6:2a02:2350:5:400::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61D1838B4D
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 13:07:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZXDL5RuH8txeRC32pIrNwcID1tphIyL0d4ewJC29Z2k=;
-        b=Jp7IYY9SFAf0Bb7VotdhTUvYg7B6B0cvQHe4FKQX6C3QHoscsyLUJz0f2xvjeftLZV
-         5JeCwh27TIPuUoaoS51XmkfP1mxlhfXH7KXMC3cYG2JDqJrsZ1XzsuVDrQXRoT+X+g9d
-         tWq1eep+fLdZyB95A8ZGYK3YxzWMIP4hvefJ4GISVx72x5PiKeyZaMF7zDDElCerPNpD
-         ZuWXabLdyaH+1E00GRrb2ydrVguomBAn0izjQDmw8IO1P4p1RWN3M77BUxuVVUbNHnp+
-         PJ3VibU5aXiqbu3hIIsKZY5sgkajitLLCW9gvb6CAv9A0K0SMh/4/hI0iH20gFgIS0X2
-         Ofgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZXDL5RuH8txeRC32pIrNwcID1tphIyL0d4ewJC29Z2k=;
-        b=GPV4t2xfgYodNhW0HLE0onl5gaaOHxbhiv3VZx9VWyNwxRYqXipVyzI6NC9shpL0mV
-         BAFTjW0yOV7i7QvKaw7v1CH0kR2c7ZqJi5yg7B6HljKv6pOj2HqmtfeL5GZVrvlGQSMt
-         AZipsNMXN2iyu0P02iJOX8AhJsicFGRf3GEELKd5+8q5mr6yLy2cQOFwgklfacDT2Xcw
-         mOqkgCIIOzlfQyNJyMVZIDOzbk0EdGAMlJ5V0exhY2iMLpsXbuGB0o0NsjaI1U/Sg6lT
-         pFmgSoy9N9wWpr/bO9vktKS91h0LNmhK8lDC2C91ueq3jHUcdKO1ZrNnZulKq8HUWtmO
-         YnoQ==
-X-Gm-Message-State: AFqh2kqOxNAv9vcylTNg/QKId1hSzlm7RGOXqcNhVzULBJ2DXGM2CSZD
-        U9saR8iAcOuQ4HawXHnExV0oMQ==
-X-Google-Smtp-Source: AMrXdXvk0lKk3hog7WDGIvJKXmhpeR0Oamsk2YOzXOrJOL5dD26wKyjUmFgat09PiP8CQ1mRLtE3MQ==
-X-Received: by 2002:ac8:760b:0:b0:3ac:7f6b:ed11 with SMTP id t11-20020ac8760b000000b003ac7f6bed11mr35732463qtq.15.1674507629037;
-        Mon, 23 Jan 2023 13:00:29 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-167-59-176.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.59.176])
-        by smtp.gmail.com with ESMTPSA id r3-20020ac87943000000b003a82562c90fsm11274878qtt.62.2023.01.23.13.00.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jan 2023 13:00:28 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.95)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1pK3vX-00GND6-C4;
-        Mon, 23 Jan 2023 17:00:27 -0400
-Date:   Mon, 23 Jan 2023 17:00:27 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     iommu@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        lim Akhtar <alim.akhtar@samsung.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [PATCH] iommu/exynos: add missing set_platform_dma_ops callback
-Message-ID: <Y871a3elCP1gmPQi@ziepe.ca>
-References: <CGME20230123093116eucas1p19b8fe8afc4b631debbdc5321c53009e9@eucas1p1.samsung.com>
- <20230123093102.12392-1-m.szyprowski@samsung.com>
+        d=ravnborg.org; s=rsa2;
+        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+         from:date:from;
+        bh=6xlJitFXBs8UqFqbNXtsqz4Qe4cxHRrL4RHl5+HWVV8=;
+        b=BYQB1r9230Rhlr9d4tlQD/BzVdvjxRnPEk9wov3faQk2ckbz06LXW2HPwHA/4TyrQdLvlpnJklOfG
+         FXDMxvjuc8dnXEYTUwgcbFiBfstPjMdyyH0YX2LO4+w6qRdSvHnnlJ5VUd/vEv8cp4732SJ1G1Oxwm
+         XDILz3LGNXkxa94+o32JYdV1q8wgZyO/UDr6LQHMMor8Nqr6+EYZ/6mqDJwtaHYgIBcPdc0C+PbaVC
+         MC2TS3+vJy41LdgNmuafvswsaPs0nSZII8RqLUnszrRYbh16WDrhUaFtP/Itlj58s4XyO5EZ4IDuDF
+         jRL7m85J+clhsyWnmXyUsjbJyzwd5aA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
+        d=ravnborg.org; s=ed2;
+        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+         from:date:from;
+        bh=6xlJitFXBs8UqFqbNXtsqz4Qe4cxHRrL4RHl5+HWVV8=;
+        b=TvwoevhBurigcyIfAcq+VWI6JaPtfF139Yc4vlWQbp6YNbsnZUwUpsVBURsM+ZPfScBMEH9fCMbO3
+         jQpf0XYBQ==
+X-HalOne-ID: a3c44e78-9b5f-11ed-a91a-11abd97b9443
+Received: from ravnborg.org (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
+        by mailrelay1 (Halon) with ESMTPSA
+        id a3c44e78-9b5f-11ed-a91a-11abd97b9443;
+        Mon, 23 Jan 2023 20:51:00 +0000 (UTC)
+Date:   Mon, 23 Jan 2023 21:50:58 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     airlied@gmail.com, daniel@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        javierm@redhat.com, linux-samsung-soc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 10/10] drm/fbdev-generic: Rename struct fb_info 'fbi' to
+ 'info'
+Message-ID: <Y87zMk0sJc6EOG/6@ravnborg.org>
+References: <20230123100559.12351-1-tzimmermann@suse.de>
+ <20230123100559.12351-11-tzimmermann@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230123093102.12392-1-m.szyprowski@samsung.com>
+In-Reply-To: <20230123100559.12351-11-tzimmermann@suse.de>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 23, 2023 at 10:31:01AM +0100, Marek Szyprowski wrote:
-> Add set_platform_dma_ops() required for proper driver operation on ARM
-> 32bit arch after recent changes in the IOMMU framework (detach ops
-> removal).
+Hi Thomas,
 
-Thanks for looking into this!
+a quick drive-by comment.
 
-Can you explain more about how this actually solves the problem in the
-commit message? I don't get it.
-
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index 6fc58e89712f..c4955d045855 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -1346,8 +1346,10 @@ static void exynos_iommu_release_device(struct device *dev)
->  		struct iommu_group *group = iommu_group_get(dev);
+On Mon, Jan 23, 2023 at 11:05:59AM +0100, Thomas Zimmermann wrote:
+> The generic fbdev emulation names variables of type struct fb_info
+> both 'fbi' and 'info'. The latter seems to be more common in fbdev
+> code, so name fbi accordingly.
+> 
+> Also replace the duplicate variable in drm_fbdev_fb_destroy().
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>  drivers/gpu/drm/drm_fbdev_generic.c | 49 ++++++++++++++---------------
+>  1 file changed, 24 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
+> index 49a0bba86ce7..7633da5c13c3 100644
+> --- a/drivers/gpu/drm/drm_fbdev_generic.c
+> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
+> @@ -46,17 +46,16 @@ static int drm_fbdev_fb_release(struct fb_info *info, int user)
+>  static void drm_fbdev_fb_destroy(struct fb_info *info)
+>  {
+>  	struct drm_fb_helper *fb_helper = info->par;
+> -	struct fb_info *fbi = fb_helper->info;
+>  	void *shadow = NULL;
 >  
->  		if (group) {
-> +#ifndef CONFIG_ARM
->  			WARN_ON(owner->domain !=
->  				iommu_group_default_domain(group));
-> +#endif
->  			exynos_iommu_detach_device(owner->domain, dev);
->  			iommu_group_put(group);
+>  	if (!fb_helper->dev)
+>  		return;
+>  
+> -	if (fbi) {
+> -		if (fbi->fbdefio)
+> -			fb_deferred_io_cleanup(fbi);
+> +	if (info) {
+As info is already used above to find fb_helper, this check is
+redundant.
+
+	Sam
+
+> +		if (info->fbdefio)
+> +			fb_deferred_io_cleanup(info);
+>  		if (drm_fbdev_use_shadow_fb(fb_helper))
+> -			shadow = fbi->screen_buffer;
+> +			shadow = info->screen_buffer;
+>  	}
+>  
+>  	drm_fb_helper_fini(fb_helper);
+> @@ -173,7 +172,7 @@ static int drm_fbdev_fb_probe(struct drm_fb_helper *fb_helper,
+>  	struct drm_device *dev = fb_helper->dev;
+>  	struct drm_client_buffer *buffer;
+>  	struct drm_framebuffer *fb;
+> -	struct fb_info *fbi;
+> +	struct fb_info *info;
+>  	u32 format;
+>  	struct iosys_map map;
+>  	int ret;
+> @@ -192,35 +191,35 @@ static int drm_fbdev_fb_probe(struct drm_fb_helper *fb_helper,
+>  	fb_helper->fb = buffer->fb;
+>  	fb = buffer->fb;
+>  
+> -	fbi = drm_fb_helper_alloc_info(fb_helper);
+> -	if (IS_ERR(fbi))
+> -		return PTR_ERR(fbi);
+> +	info = drm_fb_helper_alloc_info(fb_helper);
+> +	if (IS_ERR(info))
+> +		return PTR_ERR(info);
+>  
+> -	fbi->fbops = &drm_fbdev_fb_ops;
+> -	fbi->screen_size = sizes->surface_height * fb->pitches[0];
+> -	fbi->fix.smem_len = fbi->screen_size;
+> -	fbi->flags = FBINFO_DEFAULT;
+> +	info->fbops = &drm_fbdev_fb_ops;
+> +	info->screen_size = sizes->surface_height * fb->pitches[0];
+> +	info->fix.smem_len = info->screen_size;
+> +	info->flags = FBINFO_DEFAULT;
+>  
+> -	drm_fb_helper_fill_info(fbi, fb_helper, sizes);
+> +	drm_fb_helper_fill_info(info, fb_helper, sizes);
+>  
+>  	if (drm_fbdev_use_shadow_fb(fb_helper)) {
+> -		fbi->screen_buffer = vzalloc(fbi->screen_size);
+> -		if (!fbi->screen_buffer)
+> +		info->screen_buffer = vzalloc(info->screen_size);
+> +		if (!info->screen_buffer)
+>  			return -ENOMEM;
+> -		fbi->flags |= FBINFO_VIRTFB | FBINFO_READS_FAST;
+> +		info->flags |= FBINFO_VIRTFB | FBINFO_READS_FAST;
+>  
+> -		fbi->fbdefio = &drm_fbdev_defio;
+> -		fb_deferred_io_init(fbi);
+> +		info->fbdefio = &drm_fbdev_defio;
+> +		fb_deferred_io_init(info);
+>  	} else {
+>  		/* buffer is mapped for HW framebuffer */
+>  		ret = drm_client_buffer_vmap(fb_helper->buffer, &map);
+>  		if (ret)
+>  			return ret;
+>  		if (map.is_iomem) {
+> -			fbi->screen_base = map.vaddr_iomem;
+> +			info->screen_base = map.vaddr_iomem;
+>  		} else {
+> -			fbi->screen_buffer = map.vaddr;
+> -			fbi->flags |= FBINFO_VIRTFB;
+> +			info->screen_buffer = map.vaddr;
+> +			info->flags |= FBINFO_VIRTFB;
 >  		}
-> @@ -1398,6 +1400,9 @@ static int exynos_iommu_of_xlate(struct device *dev,
->  static const struct iommu_ops exynos_iommu_ops = {
->  	.domain_alloc = exynos_iommu_domain_alloc,
->  	.device_group = generic_device_group,
-> +#ifdef CONFIG_ARM
-> +	.set_platform_dma_ops = exynos_iommu_release_device,
-> +#endif
-
-This is ugly, if you need a set_platform_dma_ops it should not be
-called release... Release is supposed to be about putting the HW back
-to some idle state because we are unplugging the struct device.
-
-Jason
+>  
+>  		/*
+> @@ -229,10 +228,10 @@ static int drm_fbdev_fb_probe(struct drm_fb_helper *fb_helper,
+>  		 * case.
+>  		 */
+>  #if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
+> -		if (fb_helper->hint_leak_smem_start && fbi->fix.smem_start == 0 &&
+> +		if (fb_helper->hint_leak_smem_start && info->fix.smem_start == 0 &&
+>  		    !drm_WARN_ON_ONCE(dev, map.is_iomem))
+> -			fbi->fix.smem_start =
+> -				page_to_phys(virt_to_page(fbi->screen_buffer));
+> +			info->fix.smem_start =
+> +				page_to_phys(virt_to_page(info->screen_buffer));
+>  #endif
+>  	}
+>  
+> -- 
+> 2.39.0
