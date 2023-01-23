@@ -2,51 +2,52 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B44C38142
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Jan 2023 15:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0EFEC38142
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Jan 2023 15:12:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231371AbjAWPMc (ORCPT
+        id S229956AbjAWPMk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Jan 2023 10:12:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38954 "EHLO
+        Mon, 23 Jan 2023 10:12:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229956AbjAWPMb (ORCPT
+        with ESMTP id S231163AbjAWPMj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Jan 2023 10:12:31 -0500
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7687B1350D
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 07:12:30 -0800 (PST)
-Received: by mail-pl1-x631.google.com with SMTP id c6so11694755pls.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 07:12:30 -0800 (PST)
+        Mon, 23 Jan 2023 10:12:39 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFCD6976F
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 07:12:37 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id x24-20020a17090ab01800b00229f43b506fso10523674pjq.5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 07:12:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aIEL5P6p2AgUUtZFiRe5g0PuF0Ki6dnU36M7iQ78QJo=;
-        b=SzS69RtdXMVjVZ2/D20bqOsvC9sKb7wC70TGuDdHIdWm0D5cbBGp6THvMoyf7Uy1eh
-         X+XZX8AFJMBjR8IoqX1bvAxUYKKEClOm5a7Q/6+uVEL0YgzeBllWhp+LaiKz99fjQTAP
-         TLp5bE57FQPBSMOc47TcMMPWi4tesQHH4+SrM=
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MmdIsQUt1eQ5Mg1zNk3b8g7tN9qiVqUYt0El2a9KJYU=;
+        b=QrWykG4KLOcsV5BBUKZlDg5cUp4bSFi4kSRT8dupt8GDj3Co5P9uvxEdoMss1djNWm
+         Ho3nKXuEnU77UbOYADQpaTdd2sgeROwh5Uyn6ZOcb5gH9k33hjm/sZ4h15d/QOqwpMoT
+         Y9EuIWgg41iYI8HO74Kh/m8PiwlYeM/6SVq6g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aIEL5P6p2AgUUtZFiRe5g0PuF0Ki6dnU36M7iQ78QJo=;
-        b=Ok0A9/SA4YS8+eRnG4foKimhQFyozTHWSUDFFPInF0zkQiSjkTiO6j4WUmduYuVmmc
-         YVOnNIihCD5iMcPtD5tP+entqd34I+wbX7I08OF8IGExq4rhI9v5dlzuJ5WFp3nLbk8R
-         05NmBv8B/gpU8bgH4W7OXgVGTIU8o7IKYGiJVZfbyND3GaILqYVhq9rOLn++VmdvW4Be
-         WFj+s9Qbw816QQq8++yB6HkNCO5F4ZHdpJMlfEcUvRtZHjQ4Onts7QBMrlT9P91yLufK
-         1xrm39vhzlKmjhycaqHRZBdVsDFvvqUto3lXKWtHCEfRmMruGSteQ+bTxevjDBIrLSDM
-         oazw==
-X-Gm-Message-State: AFqh2kobOZuF2kyMsU9VthWTylK2EeU+jmap8T3Gp97kaAljoEI6jIsT
-        sikyNOW6igUeOB2E/FFl8+xBYQ==
-X-Google-Smtp-Source: AMrXdXvKF7hD5EBOLkg/dVd8GQpMQIh3MOHOzCX0cSM7guTFHsIvn2JktCR4moT94Gd2UVT9P2FdUg==
-X-Received: by 2002:a17:903:2405:b0:194:5116:c3ee with SMTP id e5-20020a170903240500b001945116c3eemr29096925plo.37.1674486749923;
-        Mon, 23 Jan 2023 07:12:29 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MmdIsQUt1eQ5Mg1zNk3b8g7tN9qiVqUYt0El2a9KJYU=;
+        b=wYpwsB3nwF2RtAgCdqbcZ5/vUXzORDRwXN/fckRnhH1viCtaTURu1ORNw5IUu2hlKu
+         Aub5HX6Du6800FWFvVYxDCO7/e0a5aIEbdB/U0G6sjP8gLPj/CvwHER9UXM/RoXCEx59
+         rfK/A/Mylj/t5vJG7EzTimyXpB9QxzxKtEdFuuns47NPvkRhWq6WOtWteQLX68JMSATR
+         LL8opKSOSjR8HGRYhE8mBCEOn6cabvn/ccd5wvbn5uj7FXcfbtFQeQJ4gTkpxENrLLyk
+         BDTgBFeLEKyssti7UXit2HZMj54yjhb+HD5EC2jNaTGKoihg+so+I4k4M45t/g3NHpvM
+         trvw==
+X-Gm-Message-State: AFqh2kpo6Xbk1PnfeaxFelRIdu1q+Naf2oK3x0hiW29SSgz4oy6K2a9d
+        LjeSG6tdDHJoE2rVOVw8sO4uWQ==
+X-Google-Smtp-Source: AMrXdXvTvuVSIoF+mzSR2/tOrSmgvWy68tExMEz4KG9HRb8TUwNfnPNlom+f9x0hd7ReIQUPAQvOvQ==
+X-Received: by 2002:a17:902:ab50:b0:194:d5ed:b9ea with SMTP id ij16-20020a170902ab5000b00194d5edb9eamr13099534plb.57.1674486757426;
+        Mon, 23 Jan 2023 07:12:37 -0800 (PST)
 Received: from localhost.localdomain ([2405:201:c00a:a15f:2279:f361:f93b:7971])
-        by smtp.gmail.com with ESMTPSA id d5-20020a170903230500b001754fa42065sm19207111plh.143.2023.01.23.07.12.22
+        by smtp.gmail.com with ESMTPSA id d5-20020a170903230500b001754fa42065sm19207111plh.143.2023.01.23.07.12.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jan 2023 07:12:29 -0800 (PST)
+        Mon, 23 Jan 2023 07:12:36 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
@@ -69,165 +70,288 @@ Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
         linux-arm-kernel@lists.infradead.org,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [RESEND PATCH v11 00/18] drm: Add Samsung MIPI DSIM bridge
-Date:   Mon, 23 Jan 2023 20:41:54 +0530
-Message-Id: <20230123151212.269082-1-jagan@amarulasolutions.com>
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Subject: [RESEND PATCH v11 01/18] drm: of: Lookup if child node has DSI panel or bridge
+Date:   Mon, 23 Jan 2023 20:41:55 +0530
+Message-Id: <20230123151212.269082-2-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230123151212.269082-1-jagan@amarulasolutions.com>
+References: <20230123151212.269082-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This series supports common bridge support for Samsung MIPI DSIM
-which is used in Exynos and i.MX8MM SoC's.
+Devices can also be child nodes when we also control that device
+through the upstream device (ie, MIPI-DCS for a MIPI-DSI device).
 
-The final bridge supports both the Exynos and i.MX8M Mini/Nano/Plus.
+Unlike the drm_of_find_panel_or_bridge helper it requires a special
+case to lookup a child node of the given parent that isn't either
+port or ports.
 
-Patch 0001 - 0004: adding devm_drm_of_dsi_get_bridge
+Lookup for a child DSI node of the given parent that isn't either
+port or ports. If it is found then it will directly find the panel
+or bridge otherwise lookup for the child node with a given port and
+endpoint number as drm_of_find_panel_or_bridge does.
 
-Patch 0005 - 0006: optional PHY, PMS_P offset
+Supporting this feature via existing drm_of_find_panel_or_bridge
+found several issues while handling usecases.
 
-Patch 0007       : introduce hw_type
+Here is the previously failed attempt of similar and the same has
+been reverted later.
 
-Patch 0008	 : fixing host init
+commit <80253168dbfd> ("drm: of: Lookup if child node has panel or bridge")
 
-Patch 0009	 : atomic_check
+So, add a separate helper to handle this DSI use case.
 
-Patch 0010	 : input_bus_flags
+Example OF graph representation of DSI host, which has port but
+not has ports and has child panel node.
 
-Patch 0011	 : atomic_get_input_bus_fmts
+dsi {
+	compatible = "allwinner,sun6i-a31-mipi-dsi";
+	#address-cells = <1>;
+	#size-cells = <0>;
 
-Patch 0012 - 0013: component vs bridge
+	port {
+		dsi_in_tcon0: endpoint {
+			remote-endpoint = <tcon0_out_dsi>;
+	};
 
-Patch 0014	 : DSIM bridge
+	panel@0 {
+		reg = <0>;
+	};
+};
 
-Patch 0015 - 0016: i.MX8M Mini/Nano
+Example OF graph representation of DSI host, which has ports but
+not has port and has child panel node.
 
-Patch 0017 - 0018: i.MX8M Plus
+dsi {
+        compatible = "samsung,exynos5433-mipi-dsi";
+        #address-cells = <1>;
+        #size-cells = <0>;
 
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@0 {
+			reg = <0>;
+
+                	dsi_to_mic: endpoint {
+                        	remote-endpoint = <&mic_to_dsi>;
+                	};
+                };
+        };
+
+        panel@0 {
+                reg = <0>;
+        };
+};
+
+Example OF graph representation of DSI host, which has neither a port
+nor a ports but has child panel node.
+
+dsi0 {
+	compatible = "ste,mcde-dsi";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	panel@0 {
+		reg = <0>;
+	};
+};
+
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
 Changes for v11:
-- collect RB from Frieder Schrempf
-- collect ACK from Rob
-- collect ACK from Robert
-- fix BIT macro replacements
-- fix checkpatch --strict warnings
-- fix unneeded commit text
-- drop extra lines
-
+- drop extra line
 Changes for v10:
-- rebase on drm-misc-next
-- add drm_of_dsi_find_panel_or_bridge
-- add devm_drm_of_dsi_get_bridge
-- fix host initialization (Thanks to Marek Szyprowski)
-- rearrange the tiny patches for easy to review
-- update simple names for enum hw_type
-- add is_hw_exynos macro
-- rework on commit messages
+- new patch
 
-Changes for v9:
-- rebase on drm-misc-next
-- drop drm bridge attach fix for Exynos
-- added prepare_prev_first flag
-- added pre_enable_prev_first flag
-- fix bridge chain order for exynos
-- added fix for Exynos host init for first DSI transfer
-- added MEDIA_BUS_FMT_FIXED
-- return MEDIA_BUS_FMT_RGB888_1X24 output_fmt if supported output_fmt
-  list is unsupported.
-- added MEDIA_BUS_FMT_YUYV10_1X20
-- added MEDIA_BUS_FMT_YUYV12_1X24
+ drivers/gpu/drm/drm_of.c | 112 ++++++++++++++++++++++++++++++++-------
+ include/drm/drm_of.h     |  12 +++++
+ 2 files changed, 104 insertions(+), 20 deletions(-)
 
-Changes for v8:
-* fixed comment lines
-* fixed commit messages
-* fixed video mode bits
-* collect Marek Ack
-* fixed video mode bit names
-* update input formats logic
-* added imx8mplus support
-
-Changes for v7:
-* fix the drm bridge attach chain for exynos drm dsi driver
-* fix the hw_type checking logic
-
-Changes for v6:
-* handle previous bridge for exynos dsi while attaching bridge 
-
-Changes for v5:
-* bridge changes to support multi-arch
-* updated and clear commit messages
-* add hw_type via plat data
-* removed unneeded quirk
-* rebased on linux-next
-
-Changes for v4:
-* include Inki Dae in MAINTAINERS
-* remove dsi_driver probe in exynos_drm_drv to support multi-arch build
-* update init handling to ensure host init done on first cmd transfer
-
-Changes for v3:
-* fix the mult-arch build
-* fix dsi host init
-* updated commit messages
-
-Changes for v2:
-* fix bridge handling
-* fix dsi host init
-* correct the commit messages
-
-Tested in Engicam i.Core MX8M Mini SoM.
-
-Repo:
-https://github.com/openedev/kernel/tree/imx8mm-dsi-v11
-
-v10:
-https://lore.kernel.org/all/20221214125907.376148-1-jagan@amarulasolutions.com/
-
-Any inputs?
-Jagan.
-
-Jagan Teki (16):
-  drm: of: Lookup if child node has DSI panel or bridge
-  drm: bridge: panel: Add devm_drm_of_dsi_get_bridge helper
-  drm: exynos: dsi: Drop explicit call to bridge detach
-  drm: exynos: dsi: Switch to devm_drm_of_dsi_get_bridge
-  drm: exynos: dsi: Mark PHY as optional
-  drm: exynos: dsi: Add platform PLL_P (PMS_P) offset
-  drm: exynos: dsi: Introduce hw_type platform data
-  drm: exynos: dsi: Add atomic check
-  drm: exynos: dsi: Add input_bus_flags
-  drm: exynos: dsi: Add atomic_get_input_bus_fmts
-  drm: exynos: dsi: Consolidate component and bridge
-  drm: exynos: dsi: Add Exynos based host irq hooks
-  drm: bridge: Generalize Exynos-DSI driver into a Samsung DSIM bridge
-  dt-bindings: display: exynos: dsim: Add NXP i.MX8M Mini/Nano support
-  drm: bridge: samsung-dsim: Add i.MX8M Mini/Nano support
-  dt-bindings: display: exynos: dsim: Add NXP i.MX8M Plus support
-
-Marek Szyprowski (1):
-  drm: exynos: dsi: Handle proper host initialization
-
-Marek Vasut (1):
-  drm: bridge: samsung-dsim: Add i.MX8M Plus support
-
- .../bindings/display/exynos/exynos_dsim.txt   |    2 +
- MAINTAINERS                                   |    9 +
- drivers/gpu/drm/bridge/Kconfig                |   12 +
- drivers/gpu/drm/bridge/Makefile               |    1 +
- drivers/gpu/drm/bridge/panel.c                |   34 +
- drivers/gpu/drm/bridge/samsung-dsim.c         | 1884 +++++++++++++++++
- drivers/gpu/drm/drm_of.c                      |  112 +-
- drivers/gpu/drm/exynos/Kconfig                |    1 +
- drivers/gpu/drm/exynos/exynos_drm_dsi.c       | 1793 +---------------
- include/drm/bridge/samsung-dsim.h             |  118 ++
- include/drm/drm_bridge.h                      |    2 +
- include/drm/drm_of.h                          |   12 +
- 12 files changed, 2284 insertions(+), 1696 deletions(-)
- create mode 100644 drivers/gpu/drm/bridge/samsung-dsim.c
- create mode 100644 include/drm/bridge/samsung-dsim.h
-
+diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
+index 7bbcb999bb75..e165951e3545 100644
+--- a/drivers/gpu/drm/drm_of.c
++++ b/drivers/gpu/drm/drm_of.c
+@@ -216,6 +216,35 @@ int drm_of_encoder_active_endpoint(struct device_node *node,
+ }
+ EXPORT_SYMBOL_GPL(drm_of_encoder_active_endpoint);
+ 
++static int of_drm_find_panel_or_bridge(struct device_node *remote,
++				       struct drm_panel **panel,
++				       struct drm_bridge **bridge)
++{
++	int ret = -EPROBE_DEFER;
++
++	if (panel) {
++		*panel = of_drm_find_panel(remote);
++		if (!IS_ERR(*panel))
++			ret = 0;
++		else
++			*panel = NULL;
++	}
++
++	/* No panel found yet, check for a bridge next. */
++	if (bridge) {
++		if (ret) {
++			*bridge = of_drm_find_bridge(remote);
++			if (*bridge)
++				ret = 0;
++		} else {
++			*bridge = NULL;
++		}
++	}
++
++	of_node_put(remote);
++	return ret;
++}
++
+ /**
+  * drm_of_find_panel_or_bridge - return connected panel or bridge device
+  * @np: device tree node containing encoder output ports
+@@ -238,7 +267,6 @@ int drm_of_find_panel_or_bridge(const struct device_node *np,
+ 				struct drm_panel **panel,
+ 				struct drm_bridge **bridge)
+ {
+-	int ret = -EPROBE_DEFER;
+ 	struct device_node *remote;
+ 
+ 	if (!panel && !bridge)
+@@ -259,30 +287,74 @@ int drm_of_find_panel_or_bridge(const struct device_node *np,
+ 	if (!remote)
+ 		return -ENODEV;
+ 
+-	if (panel) {
+-		*panel = of_drm_find_panel(remote);
+-		if (!IS_ERR(*panel))
+-			ret = 0;
+-		else
+-			*panel = NULL;
+-	}
++	return of_drm_find_panel_or_bridge(remote, panel, bridge);
++}
++EXPORT_SYMBOL_GPL(drm_of_find_panel_or_bridge);
+ 
+-	/* No panel found yet, check for a bridge next. */
+-	if (bridge) {
+-		if (ret) {
+-			*bridge = of_drm_find_bridge(remote);
+-			if (*bridge)
+-				ret = 0;
+-		} else {
+-			*bridge = NULL;
+-		}
++/**
++ * drm_of_dsi_find_panel_or_bridge - return connected DSI panel or bridge device
++ * @np: device tree node containing encoder output ports
++ * @port: port in the device tree node
++ * @endpoint: endpoint in the device tree node
++ * @panel: pointer to hold returned drm_panel
++ * @bridge: pointer to hold returned drm_bridge
++ *
++ * Lookup for a child DSI node of the given parent that isn't either port
++ * or ports. If it is found then it will directly find the panel or bridge
++ * otherwise lookup for the child node with a given port and endpoint number
++ * as drm_of_find_panel_or_bridge does.
++ *
++ * Lookup a given child DSI node or a DT node's port and endpoint number,
++ * find the connected node and return either the associated struct drm_panel
++ * or drm_bridge device. Either @panel or @bridge must not be NULL.
++ *
++ * Returns zero if successful, or one of the standard error codes if it fails.
++ */
++int drm_of_dsi_find_panel_or_bridge(const struct device_node *np,
++				    int port, int endpoint,
++				    struct drm_panel **panel,
++				    struct drm_bridge **bridge)
++{
++	struct device_node *remote;
++
++	if (!panel && !bridge)
++		return -EINVAL;
++	if (panel)
++		*panel = NULL;
+ 
++	/**
++	 * Devices can also be child nodes when we also control that device
++	 * through the upstream device (ie, MIPI-DCS for a MIPI-DSI device).
++	 *
++	 * Lookup for a child node of the given parent that isn't either port
++	 * or ports.
++	 */
++	for_each_available_child_of_node(np, remote) {
++		if (of_node_name_eq(remote, "port") ||
++		    of_node_name_eq(remote, "ports"))
++			continue;
++
++		goto of_find_panel_or_bridge;
+ 	}
+ 
+-	of_node_put(remote);
+-	return ret;
++	/*
++	 * of_graph_get_remote_node() produces a noisy error message if port
++	 * node isn't found and the absence of the port is a legit case here,
++	 * so at first we silently check whether graph presents in the
++	 * device-tree node.
++	 */
++	if (!of_graph_is_present(np))
++		return -ENODEV;
++
++	remote = of_graph_get_remote_node(np, port, endpoint);
++
++of_find_panel_or_bridge:
++	if (!remote)
++		return -ENODEV;
++
++	return of_drm_find_panel_or_bridge(remote, panel, bridge);
+ }
+-EXPORT_SYMBOL_GPL(drm_of_find_panel_or_bridge);
++EXPORT_SYMBOL_GPL(drm_of_dsi_find_panel_or_bridge);
+ 
+ enum drm_of_lvds_pixels {
+ 	DRM_OF_LVDS_EVEN = BIT(0),
+diff --git a/include/drm/drm_of.h b/include/drm/drm_of.h
+index 10ab58c40746..7a97157c1fa0 100644
+--- a/include/drm/drm_of.h
++++ b/include/drm/drm_of.h
+@@ -47,6 +47,10 @@ int drm_of_find_panel_or_bridge(const struct device_node *np,
+ 				int port, int endpoint,
+ 				struct drm_panel **panel,
+ 				struct drm_bridge **bridge);
++int drm_of_dsi_find_panel_or_bridge(const struct device_node *np,
++				    int port, int endpoint,
++				    struct drm_panel **panel,
++				    struct drm_bridge **bridge);
+ int drm_of_lvds_get_dual_link_pixel_order(const struct device_node *port1,
+ 					  const struct device_node *port2);
+ int drm_of_lvds_get_data_mapping(const struct device_node *port);
+@@ -99,6 +103,14 @@ static inline int drm_of_find_panel_or_bridge(const struct device_node *np,
+ 	return -EINVAL;
+ }
+ 
++static inline int drm_of_dsi_find_panel_or_bridge(const struct device_node *np,
++						  int port, int endpoint,
++						  struct drm_panel **panel,
++						  struct drm_bridge **bridge)
++{
++	return -EINVAL;
++}
++
+ static inline int
+ drm_of_lvds_get_dual_link_pixel_order(const struct device_node *port1,
+ 				      const struct device_node *port2)
 -- 
 2.25.1
 
