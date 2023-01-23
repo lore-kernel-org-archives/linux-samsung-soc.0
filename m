@@ -2,124 +2,207 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AE1C54E94
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Jan 2023 15:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BD6C05027
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Jan 2023 17:17:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232940AbjAWPs4 (ORCPT
+        id S233536AbjAWRRw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Jan 2023 10:48:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54734 "EHLO
+        Mon, 23 Jan 2023 12:17:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232920AbjAWPsr (ORCPT
+        with ESMTP id S233558AbjAWRRq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Jan 2023 10:48:47 -0500
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CE581ABE1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 07:48:42 -0800 (PST)
-Received: by mail-yb1-xb31.google.com with SMTP id c124so15270719ybb.13
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 07:48:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lad2S3DmWAOKK3//NALgU6IibSlQrTkUVTfexl9hK28=;
-        b=iZkcSIQzF/MH/mRCVgA0S+N54Fw4FdVsgLfkRYCRNmmnxQg3ucT9g4RbICTeA1dNdo
-         wECwxxE7HSZ1q+E599vwhYLEsvttvYgzdQQMsCVe/sYal0P2zmNR9qYjkqpX3KqtdrVu
-         gKJel2BN9+zhKQL8IS5zGQWVQxDccR/2hrdDM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lad2S3DmWAOKK3//NALgU6IibSlQrTkUVTfexl9hK28=;
-        b=FkEJEtjdH7wt/0liJCqlhpUNnFSi4pjNyhiIJDBqBeZBHBNCyVAuZYTBZAP7y6BTyc
-         +D8oENz0VlTN2vOtHf5Qv2vJTVHWhWgAh74G7bRmzSQO5NETwMAbvH4u1wTaTYmRLR7G
-         7kLePbpkk51RJO+QD37lNBfgZfyk3tVWg8LAblQg5xuH2pRS+peUJ/Iuu81Z3pZWSgEh
-         TogZU6eK5xA7FpnnC1CjmTPKau4BJcUj1kevtGXZ+vHeLT9fNWv/DfgQILNPfFwXTj2G
-         CQQssYho4yxYPpuPwGzPJ3u4cgRz1nsHAww+OhZpGI8Kmq0KpOEpzW5UrEtBTuSO+9L5
-         3Z6g==
-X-Gm-Message-State: AFqh2kqW0BAuf/ElNxOmXwOcVuGmKmsLKF8PXB+D7e1crxLPJ2PLIRzA
-        PXbc3d6poFaL0cQQY4BEOEzKpaFHVrht8bzNwzqHrA==
-X-Google-Smtp-Source: AMrXdXtQ6or+o73bm1Dy+HD5HO5+7SmuUrYsEF6I2faUuPEkt7lv4xXbqVlYtJkd+l6OUmAN509bUeHbdrb4wDtMjNw=
-X-Received: by 2002:a05:6902:1822:b0:800:e4d5:1bf3 with SMTP id
- cf34-20020a056902182200b00800e4d51bf3mr1270342ybb.159.1674488921411; Mon, 23
- Jan 2023 07:48:41 -0800 (PST)
+        Mon, 23 Jan 2023 12:17:46 -0500
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CBB930182;
+        Mon, 23 Jan 2023 09:17:14 -0800 (PST)
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30NEJN7P009518;
+        Mon, 23 Jan 2023 18:16:41 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=R1aMUGjTbxhxY6hkyKRGBk4zxbzWjzxiNcedON6udFo=;
+ b=Zm5ggXoNZruq7Bb3b8N1qmVGlQxdkRIHa80INaPpZBBpXyjLW8eCZLOi26l5A6+RB5/w
+ Z+PZ3/cL4Va46yqtmJi5PORwYTY46FioxWKylbeuPxm436newkRnSC7hmZnYsKWHL2Kb
+ E8O4kMxS5/CdwDsQ4mM0v4xIMFleF1b25tB/cNt2YL3f/fwzgGAIWdrLxxMD8SuKdWQu
+ cPFgMv67SOjqXrPKNSoqvl1+YjTlQbFYmJvNya7GzzdG/j6Oyh9icv6JPWXR/j9Hrm2V
+ cNegJauCMm20Z1Gl+nUL+NtrY2i2G1zVxWNtOmY+nTZipz1phWQlTPi0LXd8tXF5+ztP QA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3n89epk4d1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 23 Jan 2023 18:16:41 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 995FC100038;
+        Mon, 23 Jan 2023 18:16:37 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 89E49228A2B;
+        Mon, 23 Jan 2023 18:16:37 +0100 (CET)
+Received: from [10.201.21.26] (10.201.21.26) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.13; Mon, 23 Jan
+ 2023 18:16:34 +0100
+Message-ID: <e068c541-b492-a513-6212-fd698e4fc9c4@foss.st.com>
+Date:   Mon, 23 Jan 2023 18:16:33 +0100
 MIME-Version: 1.0
-References: <20221214125907.376148-1-jagan@amarulasolutions.com>
- <CAMty3ZC9TtnupJKF4LA9e-jnYMux28u4Pn3femJZXi4ogV+drA@mail.gmail.com>
- <CAOMZO5AYzZXQ_7jqktKrGcZyE_CaZHZpfyQPWAzbcxGvByH5Kg@mail.gmail.com>
- <CAMty3ZDnNJJQ2=Xbi6tNDzp17Ye=mnVhPOEtWVZbZuot_N513w@mail.gmail.com>
- <CAOMZO5CXCYjmmjs97=c6pVzyG8s0W=XN01k0C_0M_X2-pCFuMQ@mail.gmail.com>
- <CAMty3ZAc=t5FEphQkd=O1eaA70-779zhESwPFqoiGs8x569H2w@mail.gmail.com> <ea400d44-a6cb-2f26-9c03-ee1ede2cdf09@denx.de>
-In-Reply-To: <ea400d44-a6cb-2f26-9c03-ee1ede2cdf09@denx.de>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 23 Jan 2023 21:18:29 +0530
-Message-ID: <CAMty3ZDeAKhp4W1oA4eLXcw5YjsPjOTshjsipSn-pko06fUzdQ@mail.gmail.com>
-Subject: Re: [PATCH v10 00/18] drm: Add Samsung MIPI DSIM bridge
-To:     Marek Vasut <marex@denx.de>
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v2 02/13] spi: Replace all spi->chip_select and
+ spi->cs_gpiod references with function call
+To:     Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>,
+        <broonie@kernel.org>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <vigneshr@ti.com>, <jic23@kernel.org>,
+        <tudor.ambarus@microchip.com>, <pratyush@kernel.org>,
+        <sanju.mehta@amd.com>, <chin-ting_kuo@aspeedtech.com>,
+        <clg@kaod.org>, <kdasu.kdev@gmail.com>, <f.fainelli@gmail.com>,
+        <rjui@broadcom.com>, <sbranden@broadcom.com>,
+        <eajames@linux.ibm.com>, <olteanv@gmail.com>, <han.xu@nxp.com>,
+        <john.garry@huawei.com>, <shawnguo@kernel.org>,
+        <s.hauer@pengutronix.de>, <narmstrong@baylibre.com>,
+        <khilman@baylibre.com>, <matthias.bgg@gmail.com>,
+        <haibo.chen@nxp.com>, <linus.walleij@linaro.org>,
+        <daniel@zonque.org>, <haojian.zhuang@gmail.com>,
+        <robert.jarzmik@free.fr>, <agross@kernel.org>,
+        <bjorn.andersson@linaro.org>, <heiko@sntech.de>,
+        <krzysztof.kozlowski@linaro.org>, <andi@etezian.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <wens@csie.org>, <jernej.skrabec@gmail.com>, <samuel@sholland.org>,
+        <masahisa.kojima@linaro.org>, <jaswinder.singh@linaro.org>,
+        <rostedt@goodmis.org>, <mingo@redhat.com>,
+        <l.stelmach@samsung.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <alex.aring@gmail.com>, <stefan@datenfreihafen.org>,
+        <kvalo@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <skomatineni@nvidia.com>,
+        <sumit.semwal@linaro.org>, <christian.koenig@amd.com>,
+        <j.neuschaefer@gmx.net>, <vireshk@kernel.org>, <rmfrfs@gmail.com>,
+        <johan@kernel.org>, <elder@kernel.org>,
+        <gregkh@linuxfoundation.org>
+CC:     <git@amd.com>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <joel@jms.id.au>,
+        <andrew@aj.id.au>, <radu_nicolae.pirea@upb.ro>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <claudiu.beznea@microchip.com>,
+        <bcm-kernel-feedback-list@broadcom.com>, <fancer.lancer@gmail.com>,
+        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>,
+        <jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
+        <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
+        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
+        <benjaminfair@google.com>, <yogeshgaur.83@gmail.com>,
+        <konrad.dybcio@somainline.org>, <alim.akhtar@samsung.com>,
+        <ldewangan@nvidia.com>, <michal.simek@amd.com>,
+        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-wpan@vger.kernel.org>,
+        <libertas-dev@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <linux-iio@vger.kernel.org>, <michael@walle.cc>,
+        <palmer@dabbelt.com>, <linux-riscv@lists.infradead.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <greybus-dev@lists.linaro.org>, <linux-staging@lists.linux.dev>,
+        <amitrkcian2002@gmail.com>
+References: <20230119185342.2093323-1-amit.kumar-mahapatra@amd.com>
+ <20230119185342.2093323-3-amit.kumar-mahapatra@amd.com>
+Content-Language: en-US
+From:   Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <20230119185342.2093323-3-amit.kumar-mahapatra@amd.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.201.21.26]
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-23_12,2023-01-23_01,2022-06-22_01
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Hi Amit
 
-On Fri, Jan 20, 2023 at 8:36 PM Marek Vasut <marex@denx.de> wrote:
->
-> On 1/20/23 15:41, Jagan Teki wrote:
-> > Hi Fabio,
->
-> Hello all,
->
-> > On Fri, Jan 20, 2023 at 5:36 PM Fabio Estevam <festevam@gmail.com> wrote:
-> >>
-> >> Hi Jagan,
-> >>
-> >> On Thu, Jan 19, 2023 at 2:59 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> >>
-> >>> There are two patch series prior to this need to apply.
-> >>>
-> >>> https://patchwork.kernel.org/project/dri-devel/patch/20221212145745.15387-1-jagan@amarulasolutions.com/
-> >>> https://patchwork.kernel.org/project/dri-devel/cover/20221212182923.29155-1-jagan@amarulasolutions.com/
-> >>
-> >> Would it make sense to re-submit these two patches as part of your series?
-> >
-> > The previous version's comment was to separate them from the DSIM series.
->
-> Hmmmmm, seems like those first two patches got stuck. I fixed up the
-> malformed Fixes: line (it was split across two lines and had angular
-> brackets around it) and picked the first series via drm-misc-next .
->
-> Can you send a subsequent patch to convert the DSIM_* macros to BIT()
-> macro , since checkpatch --strict complains about it ?
+On 1/19/23 19:53, Amit Kumar Mahapatra wrote:
+> Supporting multi-cs in spi drivers would require the chip_select & cs_gpiod
+> members of struct spi_device to be an array. But changing the type of these
+> members to array would break the spi driver functionality. To make the
+> transition smoother introduced four new APIs to get/set the
+> spi->chip_select & spi->cs_gpiod and replaced all spi->chip_select and
+> spi->cs_gpiod references with get or set API calls.
+> While adding multi-cs support in further patches the chip_select & cs_gpiod
+> members of the spi_device structure would be converted to arrays & the
+> "idx" parameter of the APIs would be used as array index i.e.,
+> spi->chip_select[idx] & spi->cs_gpiod[idx] respectively.
+> 
+> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+> ---
 
-Fyi: I sent the v11 series for this with RESEND prefix.
+[...]
 
-Let me know if you have any further comments on this.
+>  drivers/spi/spi-stm32-qspi.c      | 12 ++++++------
 
-Thanks,
-Jagan.
+[...]
+
+> diff --git a/drivers/spi/spi-stm32-qspi.c b/drivers/spi/spi-stm32-qspi.c
+> index 9131660c1afb..b9e61372dcfb 100644
+> --- a/drivers/spi/spi-stm32-qspi.c
+> +++ b/drivers/spi/spi-stm32-qspi.c
+> @@ -359,7 +359,7 @@ static int stm32_qspi_get_mode(u8 buswidth)
+>  static int stm32_qspi_send(struct spi_device *spi, const struct spi_mem_op *op)
+>  {
+>  	struct stm32_qspi *qspi = spi_controller_get_devdata(spi->master);
+> -	struct stm32_qspi_flash *flash = &qspi->flash[spi->chip_select];
+> +	struct stm32_qspi_flash *flash = &qspi->flash[spi_get_chipselect(spi, 0)];
+>  	u32 ccr, cr;
+>  	int timeout, err = 0, err_poll_status = 0;
+>  
+> @@ -564,7 +564,7 @@ static int stm32_qspi_transfer_one_message(struct spi_controller *ctrl,
+>  	struct spi_mem_op op;
+>  	int ret = 0;
+>  
+> -	if (!spi->cs_gpiod)
+> +	if (!spi_get_csgpiod(spi, 0))
+>  		return -EOPNOTSUPP;
+>  
+>  	ret = pm_runtime_resume_and_get(qspi->dev);
+> @@ -573,7 +573,7 @@ static int stm32_qspi_transfer_one_message(struct spi_controller *ctrl,
+>  
+>  	mutex_lock(&qspi->lock);
+>  
+> -	gpiod_set_value_cansleep(spi->cs_gpiod, true);
+> +	gpiod_set_value_cansleep(spi_get_csgpiod(spi, 0), true);
+>  
+>  	list_for_each_entry(transfer, &msg->transfers, transfer_list) {
+>  		u8 dummy_bytes = 0;
+> @@ -626,7 +626,7 @@ static int stm32_qspi_transfer_one_message(struct spi_controller *ctrl,
+>  	}
+>  
+>  end_of_transfer:
+> -	gpiod_set_value_cansleep(spi->cs_gpiod, false);
+> +	gpiod_set_value_cansleep(spi_get_csgpiod(spi, 0), false);
+>  
+>  	mutex_unlock(&qspi->lock);
+>  
+> @@ -669,8 +669,8 @@ static int stm32_qspi_setup(struct spi_device *spi)
+>  
+>  	presc = DIV_ROUND_UP(qspi->clk_rate, spi->max_speed_hz) - 1;
+>  
+> -	flash = &qspi->flash[spi->chip_select];
+> -	flash->cs = spi->chip_select;
+> +	flash = &qspi->flash[spi_get_chipselect(spi, 0)];
+> +	flash->cs = spi_get_chipselect(spi, 0);
+>  	flash->presc = presc;
+>  
+>  	mutex_lock(&qspi->lock);
+
+Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
+
+Thanks
+Patrice
