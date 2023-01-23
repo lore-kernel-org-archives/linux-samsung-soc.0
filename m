@@ -2,148 +2,120 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8053C05027
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Jan 2023 09:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDB7C54EB4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Jan 2023 09:59:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231580AbjAWJbX (ORCPT
+        id S231487AbjAWJ7j (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Jan 2023 04:31:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35664 "EHLO
+        Mon, 23 Jan 2023 04:59:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231535AbjAWJbW (ORCPT
+        with ESMTP id S231532AbjAWJ7h (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Jan 2023 04:31:22 -0500
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63A0315547
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 01:31:20 -0800 (PST)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230123093116euoutp02996e26ba6b783d4b4d3f61209c9160a3~85jUFcz7v2438124381euoutp02O
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 09:31:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230123093116euoutp02996e26ba6b783d4b4d3f61209c9160a3~85jUFcz7v2438124381euoutp02O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1674466276;
-        bh=4zV+eG9XbXpFrZW9hlNXTuBt/h9eAz60gaf5VjB/OIc=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=RbMFD4ta7/6KM5RljtQU/LHpVWr+l7rVbh+ZVc/MJXBp+AMAkQ+UdfxMhzI22IB8j
-         eyEb7aP5d8DvBvTGDMBM3e2t+y69ImII+3i7y6go9EeNkf0+ie+ExXKFYXFMfxQkHK
-         SgHwj3a8DMbAkl8RIgwS5vq8XvTSA7kax5VjNo3k=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230123093116eucas1p137e58e30a755dd783c46dc3c04a2fa08~85jTupqKz1918919189eucas1p1J;
-        Mon, 23 Jan 2023 09:31:16 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 4F.6A.13597.4E35EC36; Mon, 23
-        Jan 2023 09:31:16 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230123093116eucas1p19b8fe8afc4b631debbdc5321c53009e9~85jTdo1NZ1918919189eucas1p1G;
-        Mon, 23 Jan 2023 09:31:16 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230123093116eusmtrp2bf3a9e709b94b7f3b795b39ce4b89d12~85jTc8l4O3141931419eusmtrp26;
-        Mon, 23 Jan 2023 09:31:16 +0000 (GMT)
-X-AuditID: cbfec7f4-1f1ff7000000351d-af-63ce53e4a0a5
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 5C.06.00518.4E35EC36; Mon, 23
-        Jan 2023 09:31:16 +0000 (GMT)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230123093115eusmtip20321ffdb202fbd9a701979b1b180ce12~85jS3ke5U0807508075eusmtip2_;
-        Mon, 23 Jan 2023 09:31:15 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     iommu@lists.linux.dev, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        lim Akhtar <alim.akhtar@samsung.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Subject: [PATCH] iommu/exynos: add missing set_platform_dma_ops callback
-Date:   Mon, 23 Jan 2023 10:31:01 +0100
-Message-Id: <20230123093102.12392-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.39.0
+        Mon, 23 Jan 2023 04:59:37 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F51623307
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 01:59:09 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id f12-20020a7bc8cc000000b003daf6b2f9b9so10160095wml.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 01:59:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CtTLJQUHERlGTA1ecjP4ZAB6KPAk/7NPYqYgWuT3Suw=;
+        b=qxRb667FT8O0NQhgeJ5a4fDl242loKNLzX78YKu7cjtJIjcjYHMUzIz584ad53Q5hI
+         bOsyDw8+lkqNVQrw/O0oEVLcIz9OtXayoL6/6l695GMdLIOhXAKDg9iEH8BlQLN83I99
+         miTOO3xCyNBTjscQ3cktsmky2lyQ44RzX1XxlZRXIB3r+ZTcdmRFmBdujfwsjVU9smFp
+         IxGkQqQF1c7RqbEGtA6R75ZTzInores6UmsJtH7UwrLCZpa5TRJ3lOWrLhmfnU/sv0M7
+         fGqg7JG/0oAghdTBOIuPdBg1XaSdVE93v0tQD7nrPvN/vNZvdzudY/qus+UJDjAcoCg/
+         LM8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CtTLJQUHERlGTA1ecjP4ZAB6KPAk/7NPYqYgWuT3Suw=;
+        b=H4onGJRBfK/5q8WS/xJnePBhSK+7GaXGmy5ETk9n9gl+07GdImgEu5B7JtONTug4AT
+         wFTCG5JT8v/YxeGBZFoa1TcPOX05lr6u6iSNf++cJNftHI+Jw1F0zveeOc6m03BghlKv
+         H2aNs+aGnI4M7T7q3oL0esF1vEMxFwjk7jf2VA3FuyzvWjAf0oHxSGlFZFo29QwCUIxi
+         LxUQ313a30ATaLdNCtBnMAGMMYlwp+MaMw9lTx49FytqZdvi/4MQpYk5+CxHkrnjfN6K
+         5VKd4qlvqH0qdxnr1wrSpAcEvlScTdifwsKQ+AfL3A2/+RB/UJK8k7TjhRWxHbJ3IyES
+         4ZOQ==
+X-Gm-Message-State: AFqh2kpAmZC4semOCVlFHfrWFYRfmLs1YjDpeGcQG8xn1MDFNt/8fegD
+        EwxmbvokHwmeV3DFjfZ4SQwF3hDcQSVbnikS
+X-Google-Smtp-Source: AMrXdXsGbgUE3umL1U3RniV7/odixrkxY9sW262BHvRmFLtF52S8OAEs3s/oFW819rxhIhuG1QTQ5g==
+X-Received: by 2002:a05:600c:a15:b0:3db:18a0:310f with SMTP id z21-20020a05600c0a1500b003db18a0310fmr17735845wmp.33.1674467945322;
+        Mon, 23 Jan 2023 01:59:05 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id o28-20020a05600c511c00b003dab40f9eafsm11183305wms.35.2023.01.23.01.59.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Jan 2023 01:59:04 -0800 (PST)
+Message-ID: <703ad169-fb10-651c-96fe-22d2eae959b6@linaro.org>
+Date:   Mon, 23 Jan 2023 10:59:03 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMKsWRmVeSWpSXmKPExsWy7djPc7pPgs8lG8z7JGnxYN42NovNE7ey
-        Wfz6YmExc8YJRovO2RvYLfa+3spuMeP8PiaLtUfuslsc/PCE1aLljqkDl8eTg/OYPNbMW8Po
-        sWlVJ5vHnWt72DzmnQz0eLF5JqNH35ZVjB6fN8l5bP18myWAM4rLJiU1J7MstUjfLoEr4+3U
-        +UwF17gqvs4SaGDs4Oxi5OSQEDCRmNl0i6WLkYtDSGAFo0TTUxjnC6PE3ptPWSGcz4wSN7t7
-        mWBalrw+wwaRWM4o0Xd9IULL8m/fGUGq2AQMJbredrGB2CICNhJXTi0B62AW2MMkseXlPXaQ
-        hLCAh8TZA7/AxrIIqErMuf6fFcTmFbCVWDF1BTvEOnmJ1udboeKCEidnPmEBsZmB4s1bZzOD
-        DJUQOMMhcWLRY0aIBheJaR+6WCFsYYlXx7dADZKR+L9zPhNEQzujxILf96GcCYwSDc9vQXVb
-        S9w59wvoVg6gFZoS63fpQ4QdJfadbWEHCUsI8EnceCsIcQSfxKRt05khwrwSHW1CENVqErOO
-        r4Nbe/DCJWYI20NiweQDYHEhgViJQ6ses05gVJiF5LVZSF6bhXDDAkbmVYziqaXFuempxUZ5
-        qeV6xYm5xaV56XrJ+bmbGIHp6vS/4192MC5/9VHvECMTB+MhRgkOZiUR3jOLTycL8aYkVlal
-        FuXHF5XmpBYfYpTmYFES59W2PZksJJCeWJKanZpakFoEk2Xi4JRqYGpZ9cfvWJ5+sel9lwCW
-        V0rtF7RXXtP7cjv2acN8/R5R5ayPW5/P9PPnVP97vPCR1KFPZ71DivZJhImfCNyz9ne0uc79
-        nf+C83UbSu8uje3xlMySljx5bc406auuhnzbFjql7jmhfyOi9P6Z+5uMdBeb60/r+XlUxO35
-        dcagkxmpJ7IeSeasClys+9s5LeNiViP3Pcvs6FfLNXjsJs3XWBsgY3Lhb8HyG11/DL5/XFAZ
-        vjnt1/UfvZmhiXMtGRMeequ2KdodcfsuOctNabFPS0VsyNtJp+wb1yRyrDu8Z7HWjTvZ6a01
-        PSHOGxmealbrlfcmmqg/O9GQdu7txl/Ppmf9vcAs6Xj61OxJgk7d15RYijMSDbWYi4oTAdcH
-        hLTGAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42I5/e/4Pd0nweeSDa7O5bB4MG8bm8XmiVvZ
-        LH59sbCYOeMEo0Xn7A3sFntfb2W3mHF+H5PF2iN32S0OfnjCatFyx9SBy+PJwXlMHmvmrWH0
-        2LSqk83jzrU9bB7zTgZ6vNg8k9Gjb8sqRo/Pm+Q8tn6+zRLAGaVnU5RfWpKqkJFfXGKrFG1o
-        YaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CX8XbqfKaCa1wVX2cJNDB2cHYxcnJI
-        CJhILHl9hq2LkYtDSGApo0Tz6mdsEAkZiZPTGlghbGGJP9e6oIo+MUqsP/GZGSTBJmAo0fW2
-        C6xBRMBO4trnxcwgRcwCh5gkXu6ZB1YkLOAhcfbALyYQm0VAVWLO9f9gU3kFbCVWTF3BDrFB
-        XqL1+VaouKDEyZlPWEBsZqB489bZzBMY+WYhSc1CklrAyLSKUSS1tDg3PbfYSK84Mbe4NC9d
-        Lzk/dxMjMEq2Hfu5ZQfjylcf9Q4xMnEwHmKU4GBWEuE9s/h0shBvSmJlVWpRfnxRaU5q8SFG
-        U6D7JjJLiSbnA+M0ryTe0MzA1NDEzNLA1NLMWEmc17OgI1FIID2xJDU7NbUgtQimj4mDU6qB
-        qVjl/LFfrE8F/wv4rX5+QXxGl1X5+bS7xWlzH5k0PjeVk7zyXIjJ5HaYoUwQ4/3Gl74bN77/
-        Izijwa/O+0G4bNnDlQ0vpxaXHa/n+sqbw2L4lrFAxTeLS+qYZ4OxhK1VirxpSXXvnduXtlwJ
-        /ccptmq39+bNaTO86sQLJx6c8bTy3OfUVNZpO2cWF5k7O52bLb8uTuJ6YlNb3h3+OccF1vkv
-        eKjpmWae6X3n8KlFUw8m7Wnf1jalzHP2FZclrr1vnv42D/Kq3JvE4/TIJ31DLV9IqO2y6/0v
-        33094n61pvZT783DHGL1sSEe7zQutT45Kiu95NeKHVIhLc/P/LzX3v0ub87/wIuHq9Qbiies
-        VGIpzkg01GIuKk4EAHhK0SobAwAA
-X-CMS-MailID: 20230123093116eucas1p19b8fe8afc4b631debbdc5321c53009e9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230123093116eucas1p19b8fe8afc4b631debbdc5321c53009e9
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230123093116eucas1p19b8fe8afc4b631debbdc5321c53009e9
-References: <CGME20230123093116eucas1p19b8fe8afc4b631debbdc5321c53009e9@eucas1p1.samsung.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH v2 0/2] Add support for Samsung Galaxy S5 (Exynos)
+Content-Language: en-US
+To:     Markuss Broks <markuss.broks@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Mark Brown <broonie@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        soc@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+References: <20230121201926.46990-1-markuss.broks@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230121201926.46990-1-markuss.broks@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add set_platform_dma_ops() required for proper driver operation on ARM
-32bit arch after recent changes in the IOMMU framework (detach ops
-removal).
+On 21/01/2023 21:19, Markuss Broks wrote:
+> Samsung Galaxy S5 (Exynos) is a mobile phone released in 2014.
+> It has an Exynos5422 platform. This version of Galaxy S5 is only
+> capable of 3G communication using the Intel modem, while the
+> LTE version of the device (klte) has a Qualcomm Snapdragon SoC.
+> 
+> Currently, internal eMMC, USB, regulators on a PMIC, and touchscreen
+> are enabled in the device-tree.
+> 
+> It also has the following peripherals:
+> 
+> - 5" 1080p S6E3FA2 DSI display,
+> - Cypress StreetFighter touch buttons,
+> - Broadcom BCM4354 wireless connectivity module,
+> - Intel XMM6360 3G modem,
+> - STM32F401 serving as a sensor hub,
+> - Validify Solutions VFS61 series fingerprint sensor,
+> - Lattice ICE401M FPGA as an IRDA controller,
+> - Maxim MAX86900 heart rate sensor,
+> - NXP PN547 NFC controller,
+> - Wolfson WM5110 Audio DSP,
+> - Broadcom BCM4753 GPS radio,
+> - Maxim MAX77804 PMIC,
+> - Silicon Image SII8240 MHL controller,
+> - TI LP5562 LED driver
+> 
+> Cc: Mark Brown <broonie@kernel.org>
+> 
+> v1 -> v2:
+> - use better subject prefixes
+> - rename Galaxy S5 (Exynos) to Galaxy S5 (SM-G900H)
+> - align the compatibles and clock output names
+> - reorder the includes
+> - generic node name for regulator-tsp-vdd-en
+> - GPIO flag for regulator
+> - rename all the regulators, leaving the voltage values only where
+>   it makes sense (e.g. on 3V3 and 1V8 supplies for the HRM)
 
-Fixes: c1fe9119ee70 ("iommu: Add set_platform_dma_ops callbacks")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/iommu/exynos-iommu.c | 5 +++++
- 1 file changed, 5 insertions(+)
+I got two v2 patchsets from you. No clue which one is correct. Please
+send v3 if there were differences. Otherwise please annotate somehow...
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 6fc58e89712f..c4955d045855 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -1346,8 +1346,10 @@ static void exynos_iommu_release_device(struct device *dev)
- 		struct iommu_group *group = iommu_group_get(dev);
- 
- 		if (group) {
-+#ifndef CONFIG_ARM
- 			WARN_ON(owner->domain !=
- 				iommu_group_default_domain(group));
-+#endif
- 			exynos_iommu_detach_device(owner->domain, dev);
- 			iommu_group_put(group);
- 		}
-@@ -1398,6 +1400,9 @@ static int exynos_iommu_of_xlate(struct device *dev,
- static const struct iommu_ops exynos_iommu_ops = {
- 	.domain_alloc = exynos_iommu_domain_alloc,
- 	.device_group = generic_device_group,
-+#ifdef CONFIG_ARM
-+	.set_platform_dma_ops = exynos_iommu_release_device,
-+#endif
- 	.probe_device = exynos_iommu_probe_device,
- 	.release_device = exynos_iommu_release_device,
- 	.pgsize_bitmap = SECT_SIZE | LPAGE_SIZE | SPAGE_SIZE,
--- 
-2.39.0
+Best regards,
+Krzysztof
 
