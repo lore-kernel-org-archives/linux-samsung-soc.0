@@ -2,64 +2,34 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9313AC05027
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Jan 2023 15:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB13C38142
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Jan 2023 15:41:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232757AbjAWPiT (ORCPT
+        id S232801AbjAWPlW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Jan 2023 10:38:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44770 "EHLO
+        Mon, 23 Jan 2023 10:41:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232743AbjAWPiR (ORCPT
+        with ESMTP id S232786AbjAWPlV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Jan 2023 10:38:17 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E687A20047
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 07:38:14 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id j17so9372838wms.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 07:38:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1fGEa7pia/vjFjDOTPETCQ2V9Ir9MaJJODSdKTEO+fM=;
-        b=C7i+aByjflUQRwyoqonJtGDwQtJAjnW5nQyslS4wEtv/erfjBha/wFh8sCc86PyI2h
-         3m06BkuOUIGbws+uxEKADu5tvoK6FZapkR9GyaWbxIYIx+wIMDfwZqlqDe6mIvuYcdvU
-         oLiSQi/MiIuJubSiIwFUdM9Y8apXYQ3p80XsvuNrcoqADoJlStG43XunxvDk4K+1o2Fe
-         G6cxOXoaLx0LBb5MD5IJtZBBG34qpB4OxeFnrvfN9p7tBlH+IgODPWlf7VL2PNLm82Zp
-         u5ZHMj/ITc7eziHLgj4pTnmDDOiEAFWlzlj9U2tB1TA20SVvpkb6oYWJiGqTxaf9+mCf
-         U4HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1fGEa7pia/vjFjDOTPETCQ2V9Ir9MaJJODSdKTEO+fM=;
-        b=hwiQ4mj7J7rTZMkhC8W1X1dce6QU84uve3GmLfQYwPOSDy5XDCF6Wpm4NB+X+9RQnr
-         +IDGd4JGBW1B3+4DtldcHQZjBYTUP/EwzeR4hhhbQFSH/yizhoPUVNehzpFVRNOAwAoZ
-         AAqi8l1y6qP8OquttvoOaHsW4M90POY7SF5Z4Jzvm/p70pOjUbOQfidG92SPyr+ai5+6
-         5Nj6knFSWbV8jVW0aJkwulBIhYdrZonLavPED3c1TagukgazypPCwO/38/8OwN4UWGTj
-         hcihlkl/RxcqElW8zD7schZbTDjvpzoVtCzfBYSOY4Iz+Oi2+nCH6oCAh/85f+d+MU+t
-         wySg==
-X-Gm-Message-State: AFqh2koSIo8LS5gMuNn4BE9SPUUWwm5zY7Ds8hlpMH34gTCSM42YfoNv
-        N/YLd9crRcSRHTZ+aJ/aGbgcLw==
-X-Google-Smtp-Source: AMrXdXt9PUKswvYKFpgGGZCt3zs+1orNLPpP5m8QoLlwhrfwhzx7XCSGw3gCQehVYX+vHWyZjKZh/w==
-X-Received: by 2002:a05:600c:3d8d:b0:3d2:bca5:10a2 with SMTP id bi13-20020a05600c3d8d00b003d2bca510a2mr24167140wmb.22.1674488293482;
-        Mon, 23 Jan 2023 07:38:13 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id x15-20020a05600c188f00b003db122d5ac2sm10494913wmp.15.2023.01.23.07.38.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jan 2023 07:38:13 -0800 (PST)
-Message-ID: <88f64463-51e6-aee4-c542-a3cff5406405@linaro.org>
-Date:   Mon, 23 Jan 2023 16:38:11 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [RFT 05/11] ARM: dts: exynos: add ports in HDMI bridge in
- Exynos4412 Midas
-Content-Language: en-US
-To:     Henrik Grimler <henrik@grimler.se>
+        Mon, 23 Jan 2023 10:41:21 -0500
+X-Greylist: delayed 405 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 23 Jan 2023 07:41:19 PST
+Received: from out-140.mta0.migadu.com (out-140.mta0.migadu.com [IPv6:2001:41d0:1004:224b::8c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCE552A15B
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 07:41:19 -0800 (PST)
+Date:   Mon, 23 Jan 2023 16:34:27 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+        t=1674488070;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qa6ykdif3qPx60n5o/W3CrQiW/SVFhDTfRQq7YvN39Q=;
+        b=I+1YPVl4ZXJkYR/A6IFAO9yGwLw1SDhN+vVTnMO0fqh2CvgQvL+P6biJdtUl4c6rbmBCiH
+        UqCbPteCoOoWpyjL8Cmj1+gcPTJBZ1AJFkEGRlAAF8s+nQj95HdCNtFD2oWB1dhT/lkuc8
+        Y6oO+AfVsJtk9cSFqRroX1U7Q487LP0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Henrik Grimler <henrik@grimler.se>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
@@ -70,34 +40,71 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         replicant@osuosl.org, phone-devel@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht,
-        =?UTF-8?Q?Martin_J=c3=bccker?= <martin.juecker@gmail.com>
+        Martin =?iso-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>
+Subject: Re: [RFT 05/11] ARM: dts: exynos: add ports in HDMI bridge in
+ Exynos4412 Midas
+Message-ID: <Y86pA6xo9EttJJ6g@L14.lan>
 References: <20230120155404.323386-1-krzysztof.kozlowski@linaro.org>
  <20230120155404.323386-6-krzysztof.kozlowski@linaro.org>
- <Y86pA6xo9EttJJ6g@L14.lan>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <Y86pA6xo9EttJJ6g@L14.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230120155404.323386-6-krzysztof.kozlowski@linaro.org>
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 23/01/2023 16:34, Henrik Grimler wrote:
-> Hi,
-> 
-> I see you have already merged this, but FWIW HDMI works as well as
-> before on exynos4412-i9300, so:
-> 
-> Tested-by: Henrik Grimler <henrik@grimler.se>
+Hi,
 
-Great, thanks! I'll add your tag.
+I see you have already merged this, but FWIW HDMI works as well as
+before on exynos4412-i9300, so:
 
-> 
-> Longer explanation: HDMI output only works on i9300 if MHL cable is
-> attached before device boots, so probably bootloader sets up some
-> settings that the sii9234 driver does not handle (correctly) if cable
-> is hot plugged.
+Tested-by: Henrik Grimler <henrik@grimler.se>
+
+Longer explanation: HDMI output only works on i9300 if MHL cable is
+attached before device boots, so probably bootloader sets up some
+settings that the sii9234 driver does not handle (correctly) if cable
+is hot plugged.
 
 Best regards,
-Krzysztof
+Henrik Grimler
 
+On Fri, Jan 20, 2023 at 04:53:58PM +0100, Krzysztof Kozlowski wrote:
+> The SII9234 HDMI bridge expects ports property:
+> 
+>   exynos4412-i9305.dtb: hdmi-bridge@39: 'ports' is a required property
+>   exynos4412-i9305.dtb: hdmi-bridge@39: 'port' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos4412-midas.dtsi | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
+> index 8e1c19a8ad06..a626d33d1330 100644
+> --- a/arch/arm/boot/dts/exynos4412-midas.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
+> @@ -273,9 +273,16 @@ sii9234: hdmi-bridge@39 {
+>  			interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
+>  			reg = <0x39>;
+>  
+> -			port {
+> -				mhl_to_hdmi: endpoint {
+> -					remote-endpoint = <&hdmi_to_mhl>;
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					mhl_to_hdmi: endpoint {
+> +						remote-endpoint = <&hdmi_to_mhl>;
+> +					};
+>  				};
+>  			};
+>  		};
+> -- 
+> 2.34.1
+> 
