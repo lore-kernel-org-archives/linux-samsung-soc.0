@@ -2,187 +2,122 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62141C54EED
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Jan 2023 21:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB1CC05027
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Jan 2023 22:04:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232942AbjAWVHL (ORCPT
+        id S231789AbjAWWEV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Jan 2023 16:07:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41114 "EHLO
+        Mon, 23 Jan 2023 17:04:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232896AbjAWVHK (ORCPT
+        with ESMTP id S229777AbjAWWEV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Jan 2023 16:07:10 -0500
-X-Greylist: delayed 965 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 23 Jan 2023 13:07:07 PST
-Received: from mailrelay1-1.pub.mailoutpod2-cph3.one.com (mailrelay1-1.pub.mailoutpod2-cph3.one.com [IPv6:2a02:2350:5:400::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61D1838B4D
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2023 13:07:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ravnborg.org; s=rsa2;
-        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-         from:date:from;
-        bh=6xlJitFXBs8UqFqbNXtsqz4Qe4cxHRrL4RHl5+HWVV8=;
-        b=BYQB1r9230Rhlr9d4tlQD/BzVdvjxRnPEk9wov3faQk2ckbz06LXW2HPwHA/4TyrQdLvlpnJklOfG
-         FXDMxvjuc8dnXEYTUwgcbFiBfstPjMdyyH0YX2LO4+w6qRdSvHnnlJ5VUd/vEv8cp4732SJ1G1Oxwm
-         XDILz3LGNXkxa94+o32JYdV1q8wgZyO/UDr6LQHMMor8Nqr6+EYZ/6mqDJwtaHYgIBcPdc0C+PbaVC
-         MC2TS3+vJy41LdgNmuafvswsaPs0nSZII8RqLUnszrRYbh16WDrhUaFtP/Itlj58s4XyO5EZ4IDuDF
-         jRL7m85J+clhsyWnmXyUsjbJyzwd5aA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
-        d=ravnborg.org; s=ed2;
-        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-         from:date:from;
-        bh=6xlJitFXBs8UqFqbNXtsqz4Qe4cxHRrL4RHl5+HWVV8=;
-        b=TvwoevhBurigcyIfAcq+VWI6JaPtfF139Yc4vlWQbp6YNbsnZUwUpsVBURsM+ZPfScBMEH9fCMbO3
-         jQpf0XYBQ==
-X-HalOne-ID: a3c44e78-9b5f-11ed-a91a-11abd97b9443
-Received: from ravnborg.org (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
-        by mailrelay1 (Halon) with ESMTPSA
-        id a3c44e78-9b5f-11ed-a91a-11abd97b9443;
-        Mon, 23 Jan 2023 20:51:00 +0000 (UTC)
-Date:   Mon, 23 Jan 2023 21:50:58 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     airlied@gmail.com, daniel@ffwll.ch,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        javierm@redhat.com, linux-samsung-soc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, freedreno@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 10/10] drm/fbdev-generic: Rename struct fb_info 'fbi' to
- 'info'
-Message-ID: <Y87zMk0sJc6EOG/6@ravnborg.org>
-References: <20230123100559.12351-1-tzimmermann@suse.de>
- <20230123100559.12351-11-tzimmermann@suse.de>
+        Mon, 23 Jan 2023 17:04:21 -0500
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 531EE4489;
+        Mon, 23 Jan 2023 14:04:20 -0800 (PST)
+Received: by mail-oi1-f173.google.com with SMTP id r9so11651174oie.13;
+        Mon, 23 Jan 2023 14:04:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fpuxLyhBst2nOzeGBnZjMCF3/gd2HElPUlYwXSvlCHQ=;
+        b=XAWPeFQnPUi/8xV8vvsULRen/GOjlpqCCvHxp7gzmIeJpVhrh9aa9YoeZmDHK0qpPg
+         HVNzeLdfOgw0WnapElD5P6LvtHHgzzFOcatOVL+h0eKlUhJWVK0m5lMGS5TXhFMesnj2
+         RDIIAzX/28cDoOz/m7gaLBXWrMMhuuEN7/+m7xe7EXuGwXl7Bhou081oyx0U6+IqX7Xi
+         kNTKXOraT0++Cj0Spn9x+Va6zbJEJZ866ldezDoVvbXEimJphvRpMzBFNEplUkNJQMqt
+         zlZZDR5PiU1X/MvuiPoHIj7bBcvUg9tD97+rD32iOsFqcRWjR8OY0UM6Ciaz8k1QnXex
+         7Jag==
+X-Gm-Message-State: AFqh2krY/D04ECzlDbmnqxQctZBsLMgPJB0vVraF9b6MOhJXCpm+acEW
+        sRkhpYXH39kOGSNEqhrE9w==
+X-Google-Smtp-Source: AMrXdXvgQ12re4a3YxVwTSF0Qz/NX5WxqeUHb2/GhWU5TZhVunu5BYf8mwhHnwtYWmXTwGSj1UfgUA==
+X-Received: by 2002:aca:b882:0:b0:35e:d30c:e918 with SMTP id i124-20020acab882000000b0035ed30ce918mr10351484oif.39.1674511459544;
+        Mon, 23 Jan 2023 14:04:19 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id j88-20020a9d17e1000000b00684ccbfe012sm184800otj.27.2023.01.23.14.04.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jan 2023 14:04:19 -0800 (PST)
+Received: (nullmailer pid 2719397 invoked by uid 1000);
+        Mon, 23 Jan 2023 22:04:17 -0000
+Date:   Mon, 23 Jan 2023 16:04:17 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Daniel Machon <daniel.machon@microchip.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        ", Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Markus Pargmann <mpa@pengutronix.de>,
+        UNGLinuxDriver@microchip.com, linux-tegra@vger.kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        "linux-rockchip@lists.infradead.org , Tony Huang" 
+        <tonyhuang.sunplus@gmail.com>, Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-actions@lists.infradead.org,
+        Maxime Ripard <mripard@kernel.org>,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, Li-hao Kuo <lhjeff911@gmail.com>,
+        linux-amlogic@lists.infradead.org,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Chen-Yu Tsai <wens@csie.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH 1/2] dt-bindings: mmc: drop unneeded quotes
+Message-ID: <167451145691.2719339.9543782878107648705.robh@kernel.org>
+References: <20230120085722.171965-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230123100559.12351-11-tzimmermann@suse.de>
+In-Reply-To: <20230120085722.171965-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Thomas,
 
-a quick drive-by comment.
-
-On Mon, Jan 23, 2023 at 11:05:59AM +0100, Thomas Zimmermann wrote:
-> The generic fbdev emulation names variables of type struct fb_info
-> both 'fbi' and 'info'. The latter seems to be more common in fbdev
-> code, so name fbi accordingly.
+On Fri, 20 Jan 2023 09:57:21 +0100, Krzysztof Kozlowski wrote:
+> Cleanup by removing unneeded quotes from refs and redundant blank lines.
+> No functional impact except adjusting to preferred coding style.
 > 
-> Also replace the duplicate variable in drm_fbdev_fb_destroy().
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  drivers/gpu/drm/drm_fbdev_generic.c | 49 ++++++++++++++---------------
->  1 file changed, 24 insertions(+), 25 deletions(-)
+>  .../bindings/mmc/allwinner,sun4i-a10-mmc.yaml |  2 +-
+>  .../bindings/mmc/amlogic,meson-mx-sdhc.yaml   |  2 +-
+>  .../devicetree/bindings/mmc/arasan,sdhci.yaml |  6 ++--
+>  .../devicetree/bindings/mmc/cdns,sdhci.yaml   | 22 ++++++------
+>  .../bindings/mmc/fsl-imx-esdhc.yaml           |  4 +--
+>  .../devicetree/bindings/mmc/fsl-imx-mmc.yaml  |  2 +-
+>  .../mmc/microchip,dw-sparx5-sdhci.yaml        |  4 +--
+>  .../devicetree/bindings/mmc/mmc-spi-slot.yaml |  2 +-
+>  .../devicetree/bindings/mmc/mxs-mmc.yaml      |  2 +-
+>  .../bindings/mmc/nvidia,tegra20-sdhci.yaml    | 36 +++++++++----------
+>  .../devicetree/bindings/mmc/owl-mmc.yaml      |  2 +-
+>  .../bindings/mmc/renesas,mmcif.yaml           |  2 +-
+>  .../devicetree/bindings/mmc/renesas,sdhi.yaml |  6 ++--
+>  .../bindings/mmc/rockchip-dw-mshc.yaml        |  2 +-
+>  .../bindings/mmc/samsung,exynos-dw-mshc.yaml  |  2 +-
+>  .../devicetree/bindings/mmc/sunplus,mmc.yaml  |  2 +-
+>  .../bindings/mmc/synopsys-dw-mshc-common.yaml |  2 +-
+>  17 files changed, 50 insertions(+), 50 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
-> index 49a0bba86ce7..7633da5c13c3 100644
-> --- a/drivers/gpu/drm/drm_fbdev_generic.c
-> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
-> @@ -46,17 +46,16 @@ static int drm_fbdev_fb_release(struct fb_info *info, int user)
->  static void drm_fbdev_fb_destroy(struct fb_info *info)
->  {
->  	struct drm_fb_helper *fb_helper = info->par;
-> -	struct fb_info *fbi = fb_helper->info;
->  	void *shadow = NULL;
->  
->  	if (!fb_helper->dev)
->  		return;
->  
-> -	if (fbi) {
-> -		if (fbi->fbdefio)
-> -			fb_deferred_io_cleanup(fbi);
-> +	if (info) {
-As info is already used above to find fb_helper, this check is
-redundant.
 
-	Sam
-
-> +		if (info->fbdefio)
-> +			fb_deferred_io_cleanup(info);
->  		if (drm_fbdev_use_shadow_fb(fb_helper))
-> -			shadow = fbi->screen_buffer;
-> +			shadow = info->screen_buffer;
->  	}
->  
->  	drm_fb_helper_fini(fb_helper);
-> @@ -173,7 +172,7 @@ static int drm_fbdev_fb_probe(struct drm_fb_helper *fb_helper,
->  	struct drm_device *dev = fb_helper->dev;
->  	struct drm_client_buffer *buffer;
->  	struct drm_framebuffer *fb;
-> -	struct fb_info *fbi;
-> +	struct fb_info *info;
->  	u32 format;
->  	struct iosys_map map;
->  	int ret;
-> @@ -192,35 +191,35 @@ static int drm_fbdev_fb_probe(struct drm_fb_helper *fb_helper,
->  	fb_helper->fb = buffer->fb;
->  	fb = buffer->fb;
->  
-> -	fbi = drm_fb_helper_alloc_info(fb_helper);
-> -	if (IS_ERR(fbi))
-> -		return PTR_ERR(fbi);
-> +	info = drm_fb_helper_alloc_info(fb_helper);
-> +	if (IS_ERR(info))
-> +		return PTR_ERR(info);
->  
-> -	fbi->fbops = &drm_fbdev_fb_ops;
-> -	fbi->screen_size = sizes->surface_height * fb->pitches[0];
-> -	fbi->fix.smem_len = fbi->screen_size;
-> -	fbi->flags = FBINFO_DEFAULT;
-> +	info->fbops = &drm_fbdev_fb_ops;
-> +	info->screen_size = sizes->surface_height * fb->pitches[0];
-> +	info->fix.smem_len = info->screen_size;
-> +	info->flags = FBINFO_DEFAULT;
->  
-> -	drm_fb_helper_fill_info(fbi, fb_helper, sizes);
-> +	drm_fb_helper_fill_info(info, fb_helper, sizes);
->  
->  	if (drm_fbdev_use_shadow_fb(fb_helper)) {
-> -		fbi->screen_buffer = vzalloc(fbi->screen_size);
-> -		if (!fbi->screen_buffer)
-> +		info->screen_buffer = vzalloc(info->screen_size);
-> +		if (!info->screen_buffer)
->  			return -ENOMEM;
-> -		fbi->flags |= FBINFO_VIRTFB | FBINFO_READS_FAST;
-> +		info->flags |= FBINFO_VIRTFB | FBINFO_READS_FAST;
->  
-> -		fbi->fbdefio = &drm_fbdev_defio;
-> -		fb_deferred_io_init(fbi);
-> +		info->fbdefio = &drm_fbdev_defio;
-> +		fb_deferred_io_init(info);
->  	} else {
->  		/* buffer is mapped for HW framebuffer */
->  		ret = drm_client_buffer_vmap(fb_helper->buffer, &map);
->  		if (ret)
->  			return ret;
->  		if (map.is_iomem) {
-> -			fbi->screen_base = map.vaddr_iomem;
-> +			info->screen_base = map.vaddr_iomem;
->  		} else {
-> -			fbi->screen_buffer = map.vaddr;
-> -			fbi->flags |= FBINFO_VIRTFB;
-> +			info->screen_buffer = map.vaddr;
-> +			info->flags |= FBINFO_VIRTFB;
->  		}
->  
->  		/*
-> @@ -229,10 +228,10 @@ static int drm_fbdev_fb_probe(struct drm_fb_helper *fb_helper,
->  		 * case.
->  		 */
->  #if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
-> -		if (fb_helper->hint_leak_smem_start && fbi->fix.smem_start == 0 &&
-> +		if (fb_helper->hint_leak_smem_start && info->fix.smem_start == 0 &&
->  		    !drm_WARN_ON_ONCE(dev, map.is_iomem))
-> -			fbi->fix.smem_start =
-> -				page_to_phys(virt_to_page(fbi->screen_buffer));
-> +			info->fix.smem_start =
-> +				page_to_phys(virt_to_page(info->screen_buffer));
->  #endif
->  	}
->  
-> -- 
-> 2.39.0
+Acked-by: Rob Herring <robh@kernel.org>
