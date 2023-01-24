@@ -2,31 +2,31 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C55EC61DA2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Jan 2023 18:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BB6C61DA0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Jan 2023 18:38:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233440AbjAXSiI (ORCPT
+        id S233716AbjAXSiH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 24 Jan 2023 13:38:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41904 "EHLO
+        Tue, 24 Jan 2023 13:38:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233524AbjAXSiF (ORCPT
+        with ESMTP id S233499AbjAXSiF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Tue, 24 Jan 2023 13:38:05 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BF872A99F
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C2CC3251A
         for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jan 2023 10:37:58 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:2f4a:8573:c294:b2ce])
-        by albert.telenet-ops.be with bizsmtp
-        id CidZ2900356uRqi06idZVY; Tue, 24 Jan 2023 19:37:55 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id CidZ2900956uRqi06idZyD; Tue, 24 Jan 2023 19:37:57 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pKOAe-007HCO-Ho;
+        id 1pKOAe-007HCh-L0;
         Tue, 24 Jan 2023 19:37:33 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pKOAn-002n0c-1h;
+        id 1pKOAn-002n0t-5c;
         Tue, 24 Jan 2023 19:37:33 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Vinod Koul <vkoul@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
@@ -56,9 +56,9 @@ Cc:     linux-phy@lists.infradead.org, linux-doc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/9] doc: phy: Document devm_of_phy_get()
-Date:   Tue, 24 Jan 2023 19:37:21 +0100
-Message-Id: <768d5845668f081620098a0b4479d1481e212bac.1674584626.git.geert+renesas@glider.be>
+Subject: [PATCH v2 6/9] net: ethernet: ti: am65-cpsw: Convert to devm_of_phy_optional_get()
+Date:   Tue, 24 Jan 2023 19:37:25 +0100
+Message-Id: <3d612c95031cf5c6d5af4ec35f40121288a2c1c6.1674584626.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1674584626.git.geert+renesas@glider.be>
 References: <cover.1674584626.git.geert+renesas@glider.be>
@@ -68,45 +68,38 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add the missing documentation for devm_of_phy_get(), which was forgotten
-when the function was introduced.
+Use the new devm_of_phy_optional_get() helper instead of open-coding the
+same operation.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
-  - New.
+  - Rebase on top of commit 854617f52ab42418 ("net: ethernet: ti:
+    am65-cpsw: Handle -EPROBE_DEFER for Serdes PHY") in net-next
+    (next-20230123 and later).
 ---
- Documentation/driver-api/phy/phy.rst | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/driver-api/phy/phy.rst b/Documentation/driver-api/phy/phy.rst
-index 26467dd4f291505e..6cadc58f4ce07ce4 100644
---- a/Documentation/driver-api/phy/phy.rst
-+++ b/Documentation/driver-api/phy/phy.rst
-@@ -106,6 +106,8 @@ it. This framework provides the following APIs to get a reference to the PHY.
- 	struct phy *devm_phy_get(struct device *dev, const char *string);
- 	struct phy *devm_phy_optional_get(struct device *dev,
- 					  const char *string);
-+	struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
-+				    const char *con_id);
- 	struct phy *devm_of_phy_get_by_index(struct device *dev,
- 					     struct device_node *np,
- 					     int index);
-@@ -119,10 +121,10 @@ successful PHY get. On driver detach, release function is invoked on
- the devres data and devres data is freed.
- devm_phy_optional_get should be used when the phy is optional. This
- function will never return -ENODEV, but instead returns NULL when
--the phy cannot be found.Some generic drivers, such as ehci, may use multiple
--phys and for such drivers referencing phy(s) by name(s) does not make sense. In
--this case, devm_of_phy_get_by_index can be used to get a phy reference based on
--the index.
-+the phy cannot be found.
-+Some generic drivers, such as ehci, may use multiple phys. In this case,
-+devm_of_phy_get or devm_of_phy_get_by_index can be used to get a phy
-+reference based on name or index.
+diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+index c696da89962f1ae3..794f228c8d632f7a 100644
+--- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
++++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+@@ -1460,11 +1460,9 @@ static int am65_cpsw_init_serdes_phy(struct device *dev, struct device_node *por
+ 	struct phy *phy;
+ 	int ret;
  
- It should be noted that NULL is a valid phy reference. All phy
- consumer calls on the NULL phy become NOPs. That is the release calls,
+-	phy = devm_of_phy_get(dev, port_np, name);
+-	if (PTR_ERR(phy) == -ENODEV)
+-		return 0;
+-	if (IS_ERR(phy))
+-		return PTR_ERR(phy);
++	phy = devm_of_phy_optional_get(dev, port_np, name);
++	if (IS_ERR_OR_NULL(phy))
++		return PTR_ERR_OR_ZERO(phy);
+ 
+ 	/* Serdes PHY exists. Store it. */
+ 	port->slave.serdes_phy = phy;
 -- 
 2.34.1
 
