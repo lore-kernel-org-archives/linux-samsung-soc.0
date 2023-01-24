@@ -2,32 +2,32 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED69C25B4E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Jan 2023 18:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0D5C54EB4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Jan 2023 18:38:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229792AbjAXSiC (ORCPT
+        id S233676AbjAXSiH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 24 Jan 2023 13:38:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41904 "EHLO
+        Tue, 24 Jan 2023 13:38:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233488AbjAXSiB (ORCPT
+        with ESMTP id S233549AbjAXSiF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 24 Jan 2023 13:38:01 -0500
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24DA6233F4
+        Tue, 24 Jan 2023 13:38:05 -0500
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D8A838B6B
         for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jan 2023 10:37:58 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:2f4a:8573:c294:b2ce])
-        by laurent.telenet-ops.be with bizsmtp
-        id CidZ2900K56uRqi01idZ2h; Tue, 24 Jan 2023 19:37:55 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id CidZ2900656uRqi01idZDF; Tue, 24 Jan 2023 19:37:56 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pKOAe-007HCs-OB;
+        id 1pKOAe-007HCL-GZ;
         Tue, 24 Jan 2023 19:37:33 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pKOAn-002n1A-8j;
-        Tue, 24 Jan 2023 19:37:33 +0100
+        id 1pKOAm-002n0W-Uv;
+        Tue, 24 Jan 2023 19:37:32 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Vinod Koul <vkoul@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
         Madalin Bucur <madalin.bucur@nxp.com>,
@@ -56,91 +56,81 @@ Cc:     linux-phy@lists.infradead.org, linux-doc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 9/9] usb: host: ohci-exynos: Convert to devm_of_phy_optional_get()
-Date:   Tue, 24 Jan 2023 19:37:28 +0100
-Message-Id: <3adc5dd1149a17ea7daf4463549feab886c6b145.1674584626.git.geert+renesas@glider.be>
+Subject: [PATCH treewide v2 0/9] phy: Add devm_of_phy_optional_get() helper
+Date:   Tue, 24 Jan 2023 19:37:19 +0100
+Message-Id: <cover.1674584626.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1674584626.git.geert+renesas@glider.be>
-References: <cover.1674584626.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use the new devm_of_phy_optional_get() helper instead of open-coding the
-same operation.
+	Hi Vinod et al,
 
-As devm_of_phy_optional_get() returns NULL if either the PHY cannot be
-found, or if support for the PHY framework is not enabled, it is no
-longer needed to check for -ENODEV or -ENOSYS.
+While there exist several optional_get() PHY helper functions, there is
+no optional variant of devm_of_phy_get(), leading to several drivers
+implementing this theirselves, sometimes in buggy ways.
 
-This lets us drop several checks for IS_ERR(), as phy_power_{on,off}()
-handle NULL parameters fine.
+Hence this series, after two cleanup patches, introduces a
+devm_of_phy_optional_get() helper(), and converts existing users of
+devm_of_phy_get() where appropriate.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
----
-v2:
-  - Add Acked-by,
+Changes compared to v1[1]:
+  - Incorporate "[PATCH v2 1/9] phy: Remove unused phy_optional_get()",
+    as it touches the same documentation,
+  - New patch "[PATCH v2 2/9] doc: phy: Document devm_of_phy_get()",
+  - Print an error message in case of failure, as requested by RobH,
+  - Update Documentation,
   - Clarify removed checks for -ENODEV and -ENOSYS,
-  - Remove error printing in case of real failures.
----
- drivers/usb/host/ohci-exynos.c | 23 ++++++-----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
+  - Remove error printing in case of real failures from callers,
+  - Rebase am65-cpsw change on top of commit 854617f52ab42418 ("net:
+    ethernet: ti: am65-cpsw: Handle -EPROBE_DEFER for Serdes PHY") in
+    net-next (next-20230123 and later),
+  - Add Reviewed-by, Acked-by.
 
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index 8d7977fd5d3bd502..8af17c1ee5cc8f1e 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -69,19 +69,11 @@ static int exynos_ohci_get_phy(struct device *dev,
- 			return -EINVAL;
- 		}
- 
--		phy = devm_of_phy_get(dev, child, NULL);
-+		phy = devm_of_phy_optional_get(dev, child, NULL);
- 		exynos_ohci->phy[phy_number] = phy;
- 		if (IS_ERR(phy)) {
--			ret = PTR_ERR(phy);
--			if (ret == -EPROBE_DEFER) {
--				of_node_put(child);
--				return ret;
--			} else if (ret != -ENOSYS && ret != -ENODEV) {
--				dev_err(dev,
--					"Error retrieving usb2 phy: %d\n", ret);
--				of_node_put(child);
--				return ret;
--			}
-+			of_node_put(child);
-+			return PTR_ERR(phy);
- 		}
- 	}
- 
-@@ -97,12 +89,10 @@ static int exynos_ohci_phy_enable(struct device *dev)
- 	int ret = 0;
- 
- 	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
--		if (!IS_ERR(exynos_ohci->phy[i]))
--			ret = phy_power_on(exynos_ohci->phy[i]);
-+		ret = phy_power_on(exynos_ohci->phy[i]);
- 	if (ret)
- 		for (i--; i >= 0; i--)
--			if (!IS_ERR(exynos_ohci->phy[i]))
--				phy_power_off(exynos_ohci->phy[i]);
-+			phy_power_off(exynos_ohci->phy[i]);
- 
- 	return ret;
- }
-@@ -114,8 +104,7 @@ static void exynos_ohci_phy_disable(struct device *dev)
- 	int i;
- 
- 	for (i = 0; i < PHY_NUMBER; i++)
--		if (!IS_ERR(exynos_ohci->phy[i]))
--			phy_power_off(exynos_ohci->phy[i]);
-+		phy_power_off(exynos_ohci->phy[i]);
- }
- 
- static int exynos_ohci_probe(struct platform_device *pdev)
+Most of this series been compile-tested only, but the new helper itself
+has been tested with a new user[2].
+
+Thanks for your comments!
+
+[1] "[PATCH treewide 0/7] phy: Add devm_of_phy_optional_get() helper"
+    https://lore.kernel.org/r/cover.1674036164.git.geert+renesas@glider.be
+[2] "[PATCH 12/12] can: rcar_canfd: Add transceiver support"
+    https://lore.kernel.org/r/e825b50a843ffe40e33f34e4d858c07c1b2ff259.1674499048.git.geert+renesas@glider.be
+
+Geert Uytterhoeven (9):
+  phy: Remove unused phy_optional_get()
+  doc: phy: Document devm_of_phy_get()
+  phy: Add devm_of_phy_optional_get() helper
+  net: fman: memac: Convert to devm_of_phy_optional_get()
+  net: lan966x: Convert to devm_of_phy_optional_get()
+  net: ethernet: ti: am65-cpsw: Convert to devm_of_phy_optional_get()
+  PCI: tegra: Convert to devm_of_phy_optional_get()
+  usb: host: ehci-exynos: Convert to devm_of_phy_optional_get()
+  usb: host: ohci-exynos: Convert to devm_of_phy_optional_get()
+
+ Documentation/driver-api/phy/phy.rst          | 24 +++++----
+ .../net/ethernet/freescale/fman/fman_memac.c  |  9 ++--
+ .../ethernet/microchip/lan966x/lan966x_main.c |  5 +-
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c      |  8 ++-
+ drivers/pci/controller/pci-tegra.c            |  5 +-
+ drivers/phy/phy-core.c                        | 51 +++++++++++--------
+ drivers/usb/host/ehci-exynos.c                | 23 +++------
+ drivers/usb/host/ohci-exynos.c                | 23 +++------
+ include/linux/phy/phy.h                       | 16 +++---
+ 9 files changed, 75 insertions(+), 89 deletions(-)
+
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
