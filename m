@@ -2,56 +2,46 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7861C25B4E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Jan 2023 19:13:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C4B7C54EED
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Jan 2023 20:45:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233235AbjAXTNH (ORCPT
+        id S234326AbjAXUpa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 24 Jan 2023 14:13:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50512 "EHLO
+        Tue, 24 Jan 2023 15:45:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231142AbjAXTNG (ORCPT
+        with ESMTP id S234364AbjAXUp1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 24 Jan 2023 14:13:06 -0500
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54E6112063
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jan 2023 11:13:05 -0800 (PST)
-Received: by mail-yb1-xb30.google.com with SMTP id 203so20145114yby.10
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jan 2023 11:13:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dZlQnd1Ps/0Xsk7T1j6t5D52f6MhzQcFEYAGns4bZa8=;
-        b=bmagdcu7XlzGpU70LABD8M5lxLdhXB3wkOKWSZPqyH4GTVU8JoSgHROWfoCexhHGwm
-         xR+WxKbhO9XiouHFq3q9vrkFI+Lbq+iVRKA3eu5WGCgr05ppxAzJiLkQ0I+K+ZwmyAqN
-         m1uO34/0FWHositfHFOaXDpuiqKLPi4JxAMBw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dZlQnd1Ps/0Xsk7T1j6t5D52f6MhzQcFEYAGns4bZa8=;
-        b=00MEHZq6I66qXKp4YPhS+qrpoLBog4LetsKVPaYIjPGR255JWf9C2ORKnxTo5eTsZ2
-         wagcUekeRFboG8xvEKA0BshyzqU2NJyrRXRb41y6rWU4hvGaZwNyzE8XoddCa4FGypKI
-         0mm0j969dJu2LRk5CdHdqvlOCvuHyBmBjDBIDr9Zv2OFmYIToCoG2+iG3P3h9plloTvW
-         eUwBH/gUbCGoX5DMo9ZNPmey39qRwUN/avBPfcRpv+Q2QyCbxwi5/F5IetKJFO98k1xf
-         VL43VdXrvaXo6ptPQjOSpo+JGY4iuzA+4s8B+RvUUpe/6gxj4Rg9cJABcNDZeAa+lSzu
-         ViEg==
-X-Gm-Message-State: AO0yUKW2vPYwcBt2ITUh2k149OBxChMUjLrqdW3vIqRPw5CXkZB41N4a
-        h97G83o3G3s5k8sng1fEVSnL856xIetPc3fjtjUfIw==
-X-Google-Smtp-Source: AK7set+dvgIYsqjXszDD6gvJGJkbFtzPgeRu3GVbZ+V2Gz2p01ZAknJFQcCL43ZzIHSiF8zR9Q1b0VIFNXsC9Hdsl1k=
-X-Received: by 2002:a25:d7d1:0:b0:80b:69cc:78d8 with SMTP id
- o200-20020a25d7d1000000b0080b69cc78d8mr386955ybg.475.1674587584433; Tue, 24
- Jan 2023 11:13:04 -0800 (PST)
+        Tue, 24 Jan 2023 15:45:27 -0500
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F58D4F865
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jan 2023 12:45:23 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id B03D6817FB;
+        Tue, 24 Jan 2023 21:45:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1674593120;
+        bh=5NTBROYdPWn9AnfsKxRDsXDu4LyTMFtmByE17bfoomM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=wnhN7fesBIQye2m7qlmLA7eLXLnVxafGZ6Ub8c6rm+iFyJcEd2tV7oHbc6tcOojLi
+         X3dIruMINR8OVdNeEmDnMr7RFKA3+/77+ufrgsj2Vet/qgLN04y0zhKBHo5yzqSBD2
+         i+lyLCQ9xcn0ak35czLoQz6QCH9ZBoRWOZ5n+MHrCRaRLy2rHSIsP8ukm1ozKjeL8S
+         h/BpM/nKhxdZgTX7KLDGG0782Z6XXJ6gQt0HRVfbEGuqRPSmRcqqLZCTJk3snQQMkL
+         Moc1hYtu+lD4J1uH8Wyhs3REXsjz7mvI1QvBL/kHklnSGXFZ51MLUNKc6dZeWpAZkr
+         TNZ4W7Zg63tpA==
+Message-ID: <75b01e4c-5994-5931-7030-ab86705d67b3@denx.de>
+Date:   Tue, 24 Jan 2023 21:45:18 +0100
 MIME-Version: 1.0
-References: <20230123151212.269082-1-jagan@amarulasolutions.com>
-In-Reply-To: <20230123151212.269082-1-jagan@amarulasolutions.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Wed, 25 Jan 2023 00:42:51 +0530
-Message-ID: <CAMty3ZBurwPHZ3bCSV-L+Fk3NGjJKnM8r4gWHPdb3VnqWhzVtA@mail.gmail.com>
-Subject: Re: [RESEND PATCH v11 00/18] drm: Add Samsung MIPI DSIM bridge
-To:     Andrzej Hajda <andrzej.hajda@intel.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [RESEND PATCH v11 11/18] drm: exynos: dsi: Add
+ atomic_get_input_bus_fmts
+Content-Language: en-US
+To:     Jagan Teki <jagan@amarulasolutions.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Joonyoung Shim <jy0922.shim@samsung.com>,
@@ -65,153 +55,85 @@ To:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Neil Armstrong <narmstrong@linaro.org>,
         Robert Foss <robert.foss@linaro.org>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Marek Vasut <marex@denx.de>
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>
 Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
         dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <20230123151212.269082-1-jagan@amarulasolutions.com>
+ <20230123151212.269082-12-jagan@amarulasolutions.com>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <20230123151212.269082-12-jagan@amarulasolutions.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 23, 2023 at 8:42 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> This series supports common bridge support for Samsung MIPI DSIM
-> which is used in Exynos and i.MX8MM SoC's.
->
-> The final bridge supports both the Exynos and i.MX8M Mini/Nano/Plus.
->
-> Patch 0001 - 0004: adding devm_drm_of_dsi_get_bridge
->
-> Patch 0005 - 0006: optional PHY, PMS_P offset
->
-> Patch 0007       : introduce hw_type
->
-> Patch 0008       : fixing host init
->
-> Patch 0009       : atomic_check
->
-> Patch 0010       : input_bus_flags
->
-> Patch 0011       : atomic_get_input_bus_fmts
->
-> Patch 0012 - 0013: component vs bridge
->
-> Patch 0014       : DSIM bridge
->
-> Patch 0015 - 0016: i.MX8M Mini/Nano
->
-> Patch 0017 - 0018: i.MX8M Plus
->
-> Changes for v11:
-> - collect RB from Frieder Schrempf
-> - collect ACK from Rob
-> - collect ACK from Robert
-> - fix BIT macro replacements
-> - fix checkpatch --strict warnings
-> - fix unneeded commit text
-> - drop extra lines
->
-> Changes for v10:
-> - rebase on drm-misc-next
-> - add drm_of_dsi_find_panel_or_bridge
-> - add devm_drm_of_dsi_get_bridge
-> - fix host initialization (Thanks to Marek Szyprowski)
-> - rearrange the tiny patches for easy to review
-> - update simple names for enum hw_type
-> - add is_hw_exynos macro
-> - rework on commit messages
->
-> Changes for v9:
-> - rebase on drm-misc-next
-> - drop drm bridge attach fix for Exynos
-> - added prepare_prev_first flag
-> - added pre_enable_prev_first flag
-> - fix bridge chain order for exynos
-> - added fix for Exynos host init for first DSI transfer
-> - added MEDIA_BUS_FMT_FIXED
-> - return MEDIA_BUS_FMT_RGB888_1X24 output_fmt if supported output_fmt
->   list is unsupported.
-> - added MEDIA_BUS_FMT_YUYV10_1X20
-> - added MEDIA_BUS_FMT_YUYV12_1X24
->
-> Changes for v8:
-> * fixed comment lines
-> * fixed commit messages
-> * fixed video mode bits
-> * collect Marek Ack
-> * fixed video mode bit names
-> * update input formats logic
-> * added imx8mplus support
->
-> Changes for v7:
-> * fix the drm bridge attach chain for exynos drm dsi driver
-> * fix the hw_type checking logic
->
-> Changes for v6:
-> * handle previous bridge for exynos dsi while attaching bridge
->
-> Changes for v5:
-> * bridge changes to support multi-arch
-> * updated and clear commit messages
-> * add hw_type via plat data
-> * removed unneeded quirk
-> * rebased on linux-next
->
-> Changes for v4:
-> * include Inki Dae in MAINTAINERS
-> * remove dsi_driver probe in exynos_drm_drv to support multi-arch build
-> * update init handling to ensure host init done on first cmd transfer
->
-> Changes for v3:
-> * fix the mult-arch build
-> * fix dsi host init
-> * updated commit messages
->
-> Changes for v2:
-> * fix bridge handling
-> * fix dsi host init
-> * correct the commit messages
->
-> Tested in Engicam i.Core MX8M Mini SoM.
->
-> Repo:
-> https://github.com/openedev/kernel/tree/imx8mm-dsi-v11
->
-> v10:
-> https://lore.kernel.org/all/20221214125907.376148-1-jagan@amarulasolutions.com/
->
-> Any inputs?
-> Jagan.
->
-> Jagan Teki (16):
->   drm: of: Lookup if child node has DSI panel or bridge
->   drm: bridge: panel: Add devm_drm_of_dsi_get_bridge helper
->   drm: exynos: dsi: Drop explicit call to bridge detach
->   drm: exynos: dsi: Switch to devm_drm_of_dsi_get_bridge
->   drm: exynos: dsi: Mark PHY as optional
->   drm: exynos: dsi: Add platform PLL_P (PMS_P) offset
->   drm: exynos: dsi: Introduce hw_type platform data
->   drm: exynos: dsi: Add atomic check
->   drm: exynos: dsi: Add input_bus_flags
->   drm: exynos: dsi: Add atomic_get_input_bus_fmts
->   drm: exynos: dsi: Consolidate component and bridge
->   drm: exynos: dsi: Add Exynos based host irq hooks
->   drm: bridge: Generalize Exynos-DSI driver into a Samsung DSIM bridge
->   dt-bindings: display: exynos: dsim: Add NXP i.MX8M Mini/Nano support
->   drm: bridge: samsung-dsim: Add i.MX8M Mini/Nano support
->   dt-bindings: display: exynos: dsim: Add NXP i.MX8M Plus support
->
-> Marek Szyprowski (1):
->   drm: exynos: dsi: Handle proper host initialization
->
-> Marek Vasut (1):
->   drm: bridge: samsung-dsim: Add i.MX8M Plus support
+On 1/23/23 16:12, Jagan Teki wrote:
 
-Can anyone pick this series?
+[...]
 
-Thanks,
-Jagan.
+> +static bool exynos_dsi_pixel_output_fmt_supported(u32 fmt)
+> +{
+> +	int i;
+
+if (fmt == MEDIA_BUS_FMT_FIXED)
+  return false;
+
+> +	for (i = 0; i < ARRAY_SIZE(exynos_dsi_pixel_output_fmts); i++) {
+> +		if (exynos_dsi_pixel_output_fmts[i] == fmt)
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +static u32 *
+> +exynos_dsi_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
+> +				     struct drm_bridge_state *bridge_state,
+> +				     struct drm_crtc_state *crtc_state,
+> +				     struct drm_connector_state *conn_state,
+> +				     u32 output_fmt,
+> +				     unsigned int *num_input_fmts)
+> +{
+> +	u32 *input_fmts;
+> +
+> +	if (!exynos_dsi_pixel_output_fmt_supported(output_fmt))
+> +		/*
+> +		 * Some bridge/display drivers are still not able to pass the
+> +		 * correct format, so handle those pipelines by falling back
+> +		 * to the default format till the supported formats finalized.
+> +		 */
+> +		output_fmt = MEDIA_BUS_FMT_RGB888_1X24;
+
+You can move this ^ past the kmalloc() call, so in unlikely case the 
+kmalloc() fails, it would fail first.
+
+> +	input_fmts = kmalloc(sizeof(*input_fmts), GFP_KERNEL);
+> +	if (!input_fmts)
+> +		return NULL;
+
+Delete from here ...
+
+> +	switch (output_fmt) {
+> +	case MEDIA_BUS_FMT_FIXED:
+> +		input_fmts[0] = MEDIA_BUS_FMT_RGB888_1X24;
+> +		break;
+> +	default:
+> +		input_fmts[0] = output_fmt;
+> +		break;
+> +	}
+
+... until here, and do simple:
+
+input_fmts[0] = output_fmt;
+
+The effect should be the same, the code should be simpler and faster.
+
+> +	*num_input_fmts = 1;
+
+[...]
