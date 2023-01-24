@@ -2,180 +2,216 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D28C61D9D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Jan 2023 18:38:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7861C25B4E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Jan 2023 19:13:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233820AbjAXSiX (ORCPT
+        id S233235AbjAXTNH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 24 Jan 2023 13:38:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42040 "EHLO
+        Tue, 24 Jan 2023 14:13:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232550AbjAXSiJ (ORCPT
+        with ESMTP id S231142AbjAXTNG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 24 Jan 2023 13:38:09 -0500
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3430B460A4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jan 2023 10:37:59 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:2f4a:8573:c294:b2ce])
-        by michel.telenet-ops.be with bizsmtp
-        id CidZ2900456uRqi06idZy8; Tue, 24 Jan 2023 19:37:57 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1pKOAe-007HCT-Ig;
-        Tue, 24 Jan 2023 19:37:33 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1pKOAn-002n0h-2v;
-        Tue, 24 Jan 2023 19:37:33 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Vinod Koul <vkoul@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        UNGLinuxDriver@microchip.com,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     linux-phy@lists.infradead.org, linux-doc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/9] phy: Add devm_of_phy_optional_get() helper
-Date:   Tue, 24 Jan 2023 19:37:22 +0100
-Message-Id: <4cd0069bcff424ffc5c3a102397c02370b91985b.1674584626.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1674584626.git.geert+renesas@glider.be>
-References: <cover.1674584626.git.geert+renesas@glider.be>
+        Tue, 24 Jan 2023 14:13:06 -0500
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54E6112063
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jan 2023 11:13:05 -0800 (PST)
+Received: by mail-yb1-xb30.google.com with SMTP id 203so20145114yby.10
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jan 2023 11:13:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dZlQnd1Ps/0Xsk7T1j6t5D52f6MhzQcFEYAGns4bZa8=;
+        b=bmagdcu7XlzGpU70LABD8M5lxLdhXB3wkOKWSZPqyH4GTVU8JoSgHROWfoCexhHGwm
+         xR+WxKbhO9XiouHFq3q9vrkFI+Lbq+iVRKA3eu5WGCgr05ppxAzJiLkQ0I+K+ZwmyAqN
+         m1uO34/0FWHositfHFOaXDpuiqKLPi4JxAMBw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dZlQnd1Ps/0Xsk7T1j6t5D52f6MhzQcFEYAGns4bZa8=;
+        b=00MEHZq6I66qXKp4YPhS+qrpoLBog4LetsKVPaYIjPGR255JWf9C2ORKnxTo5eTsZ2
+         wagcUekeRFboG8xvEKA0BshyzqU2NJyrRXRb41y6rWU4hvGaZwNyzE8XoddCa4FGypKI
+         0mm0j969dJu2LRk5CdHdqvlOCvuHyBmBjDBIDr9Zv2OFmYIToCoG2+iG3P3h9plloTvW
+         eUwBH/gUbCGoX5DMo9ZNPmey39qRwUN/avBPfcRpv+Q2QyCbxwi5/F5IetKJFO98k1xf
+         VL43VdXrvaXo6ptPQjOSpo+JGY4iuzA+4s8B+RvUUpe/6gxj4Rg9cJABcNDZeAa+lSzu
+         ViEg==
+X-Gm-Message-State: AO0yUKW2vPYwcBt2ITUh2k149OBxChMUjLrqdW3vIqRPw5CXkZB41N4a
+        h97G83o3G3s5k8sng1fEVSnL856xIetPc3fjtjUfIw==
+X-Google-Smtp-Source: AK7set+dvgIYsqjXszDD6gvJGJkbFtzPgeRu3GVbZ+V2Gz2p01ZAknJFQcCL43ZzIHSiF8zR9Q1b0VIFNXsC9Hdsl1k=
+X-Received: by 2002:a25:d7d1:0:b0:80b:69cc:78d8 with SMTP id
+ o200-20020a25d7d1000000b0080b69cc78d8mr386955ybg.475.1674587584433; Tue, 24
+ Jan 2023 11:13:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230123151212.269082-1-jagan@amarulasolutions.com>
+In-Reply-To: <20230123151212.269082-1-jagan@amarulasolutions.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Wed, 25 Jan 2023 00:42:51 +0530
+Message-ID: <CAMty3ZBurwPHZ3bCSV-L+Fk3NGjJKnM8r4gWHPdb3VnqWhzVtA@mail.gmail.com>
+Subject: Re: [RESEND PATCH v11 00/18] drm: Add Samsung MIPI DSIM bridge
+To:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Marek Vasut <marex@denx.de>
+Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add an optional variant of devm_of_phy_get() that also takes care of
-printing real errors, so drivers no longer have to open-code this
-operation.
+On Mon, Jan 23, 2023 at 8:42 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> This series supports common bridge support for Samsung MIPI DSIM
+> which is used in Exynos and i.MX8MM SoC's.
+>
+> The final bridge supports both the Exynos and i.MX8M Mini/Nano/Plus.
+>
+> Patch 0001 - 0004: adding devm_drm_of_dsi_get_bridge
+>
+> Patch 0005 - 0006: optional PHY, PMS_P offset
+>
+> Patch 0007       : introduce hw_type
+>
+> Patch 0008       : fixing host init
+>
+> Patch 0009       : atomic_check
+>
+> Patch 0010       : input_bus_flags
+>
+> Patch 0011       : atomic_get_input_bus_fmts
+>
+> Patch 0012 - 0013: component vs bridge
+>
+> Patch 0014       : DSIM bridge
+>
+> Patch 0015 - 0016: i.MX8M Mini/Nano
+>
+> Patch 0017 - 0018: i.MX8M Plus
+>
+> Changes for v11:
+> - collect RB from Frieder Schrempf
+> - collect ACK from Rob
+> - collect ACK from Robert
+> - fix BIT macro replacements
+> - fix checkpatch --strict warnings
+> - fix unneeded commit text
+> - drop extra lines
+>
+> Changes for v10:
+> - rebase on drm-misc-next
+> - add drm_of_dsi_find_panel_or_bridge
+> - add devm_drm_of_dsi_get_bridge
+> - fix host initialization (Thanks to Marek Szyprowski)
+> - rearrange the tiny patches for easy to review
+> - update simple names for enum hw_type
+> - add is_hw_exynos macro
+> - rework on commit messages
+>
+> Changes for v9:
+> - rebase on drm-misc-next
+> - drop drm bridge attach fix for Exynos
+> - added prepare_prev_first flag
+> - added pre_enable_prev_first flag
+> - fix bridge chain order for exynos
+> - added fix for Exynos host init for first DSI transfer
+> - added MEDIA_BUS_FMT_FIXED
+> - return MEDIA_BUS_FMT_RGB888_1X24 output_fmt if supported output_fmt
+>   list is unsupported.
+> - added MEDIA_BUS_FMT_YUYV10_1X20
+> - added MEDIA_BUS_FMT_YUYV12_1X24
+>
+> Changes for v8:
+> * fixed comment lines
+> * fixed commit messages
+> * fixed video mode bits
+> * collect Marek Ack
+> * fixed video mode bit names
+> * update input formats logic
+> * added imx8mplus support
+>
+> Changes for v7:
+> * fix the drm bridge attach chain for exynos drm dsi driver
+> * fix the hw_type checking logic
+>
+> Changes for v6:
+> * handle previous bridge for exynos dsi while attaching bridge
+>
+> Changes for v5:
+> * bridge changes to support multi-arch
+> * updated and clear commit messages
+> * add hw_type via plat data
+> * removed unneeded quirk
+> * rebased on linux-next
+>
+> Changes for v4:
+> * include Inki Dae in MAINTAINERS
+> * remove dsi_driver probe in exynos_drm_drv to support multi-arch build
+> * update init handling to ensure host init done on first cmd transfer
+>
+> Changes for v3:
+> * fix the mult-arch build
+> * fix dsi host init
+> * updated commit messages
+>
+> Changes for v2:
+> * fix bridge handling
+> * fix dsi host init
+> * correct the commit messages
+>
+> Tested in Engicam i.Core MX8M Mini SoM.
+>
+> Repo:
+> https://github.com/openedev/kernel/tree/imx8mm-dsi-v11
+>
+> v10:
+> https://lore.kernel.org/all/20221214125907.376148-1-jagan@amarulasolutions.com/
+>
+> Any inputs?
+> Jagan.
+>
+> Jagan Teki (16):
+>   drm: of: Lookup if child node has DSI panel or bridge
+>   drm: bridge: panel: Add devm_drm_of_dsi_get_bridge helper
+>   drm: exynos: dsi: Drop explicit call to bridge detach
+>   drm: exynos: dsi: Switch to devm_drm_of_dsi_get_bridge
+>   drm: exynos: dsi: Mark PHY as optional
+>   drm: exynos: dsi: Add platform PLL_P (PMS_P) offset
+>   drm: exynos: dsi: Introduce hw_type platform data
+>   drm: exynos: dsi: Add atomic check
+>   drm: exynos: dsi: Add input_bus_flags
+>   drm: exynos: dsi: Add atomic_get_input_bus_fmts
+>   drm: exynos: dsi: Consolidate component and bridge
+>   drm: exynos: dsi: Add Exynos based host irq hooks
+>   drm: bridge: Generalize Exynos-DSI driver into a Samsung DSIM bridge
+>   dt-bindings: display: exynos: dsim: Add NXP i.MX8M Mini/Nano support
+>   drm: bridge: samsung-dsim: Add i.MX8M Mini/Nano support
+>   dt-bindings: display: exynos: dsim: Add NXP i.MX8M Plus support
+>
+> Marek Szyprowski (1):
+>   drm: exynos: dsi: Handle proper host initialization
+>
+> Marek Vasut (1):
+>   drm: bridge: samsung-dsim: Add i.MX8M Plus support
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Print an error message in case of failure, as requested by RobH,
-  - Update Documentation.
----
- Documentation/driver-api/phy/phy.rst |  7 +++++--
- drivers/phy/phy-core.c               | 30 ++++++++++++++++++++++++++++
- include/linux/phy/phy.h              |  9 +++++++++
- 3 files changed, 44 insertions(+), 2 deletions(-)
+Can anyone pick this series?
 
-diff --git a/Documentation/driver-api/phy/phy.rst b/Documentation/driver-api/phy/phy.rst
-index 6cadc58f4ce07ce4..81785c084f3ec2dd 100644
---- a/Documentation/driver-api/phy/phy.rst
-+++ b/Documentation/driver-api/phy/phy.rst
-@@ -108,6 +108,9 @@ it. This framework provides the following APIs to get a reference to the PHY.
- 					  const char *string);
- 	struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
- 				    const char *con_id);
-+	struct phy *devm_of_phy_optional_get(struct device *dev,
-+					     struct device_node *np,
-+					     const char *con_id);
- 	struct phy *devm_of_phy_get_by_index(struct device *dev,
- 					     struct device_node *np,
- 					     int index);
-@@ -119,8 +122,8 @@ non-dt boot, it should contain the label of the PHY.  The two
- devm_phy_get associates the device with the PHY using devres on
- successful PHY get. On driver detach, release function is invoked on
- the devres data and devres data is freed.
--devm_phy_optional_get should be used when the phy is optional. This
--function will never return -ENODEV, but instead returns NULL when
-+The _optional_get variants should be used when the phy is optional. These
-+functions will never return -ENODEV, but instead return NULL when
- the phy cannot be found.
- Some generic drivers, such as ehci, may use multiple phys. In this case,
- devm_of_phy_get or devm_of_phy_get_by_index can be used to get a phy
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index 672f5c86588609f3..9951efc03eaaf842 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -858,6 +858,36 @@ struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
- }
- EXPORT_SYMBOL_GPL(devm_of_phy_get);
- 
-+/**
-+ * devm_of_phy_optional_get() - lookup and obtain a reference to an optional
-+ * phy.
-+ * @dev: device that requests this phy
-+ * @np: node containing the phy
-+ * @con_id: name of the phy from device's point of view
-+ *
-+ * Gets the phy using of_phy_get(), and associates a device with it using
-+ * devres. On driver detach, release function is invoked on the devres data,
-+ * then, devres data is freed.  This differs to devm_of_phy_get() in
-+ * that if the phy does not exist, it is not considered an error and
-+ * -ENODEV will not be returned. Instead the NULL phy is returned,
-+ * which can be passed to all other phy consumer calls.
-+ */
-+struct phy *devm_of_phy_optional_get(struct device *dev, struct device_node *np,
-+				     const char *con_id)
-+{
-+	struct phy *phy = devm_of_phy_get(dev, np, con_id);
-+
-+	if (PTR_ERR(phy) == -ENODEV)
-+		phy = NULL;
-+
-+	if (IS_ERR(phy))
-+		dev_err_probe(dev, PTR_ERR(phy), "failed to get PHY %pOF:%s",
-+			      np, con_id);
-+
-+	return phy;
-+}
-+EXPORT_SYMBOL_GPL(devm_of_phy_optional_get);
-+
- /**
-  * devm_of_phy_get_by_index() - lookup and obtain a reference to a phy by index.
-  * @dev: device that requests this phy
-diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-index 1b4f9be21e01f4c7..3a570bc59fc7f4a1 100644
---- a/include/linux/phy/phy.h
-+++ b/include/linux/phy/phy.h
-@@ -254,6 +254,8 @@ struct phy *devm_phy_get(struct device *dev, const char *string);
- struct phy *devm_phy_optional_get(struct device *dev, const char *string);
- struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
- 			    const char *con_id);
-+struct phy *devm_of_phy_optional_get(struct device *dev, struct device_node *np,
-+				     const char *con_id);
- struct phy *devm_of_phy_get_by_index(struct device *dev, struct device_node *np,
- 				     int index);
- void of_phy_put(struct phy *phy);
-@@ -443,6 +445,13 @@ static inline struct phy *devm_of_phy_get(struct device *dev,
- 	return ERR_PTR(-ENOSYS);
- }
- 
-+static inline struct phy *devm_of_phy_optional_get(struct device *dev,
-+						   struct device_node *np,
-+						   const char *con_id)
-+{
-+	return NULL;
-+}
-+
- static inline struct phy *devm_of_phy_get_by_index(struct device *dev,
- 						   struct device_node *np,
- 						   int index)
--- 
-2.34.1
-
+Thanks,
+Jagan.
