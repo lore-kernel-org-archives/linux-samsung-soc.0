@@ -2,115 +2,131 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59155C27C76
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 06:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B99E2C54EED
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 08:31:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234393AbjAYGyz (ORCPT
+        id S235123AbjAYIbg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 25 Jan 2023 01:54:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47114 "EHLO
+        Wed, 25 Jan 2023 03:31:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233425AbjAYGyz (ORCPT
+        with ESMTP id S235137AbjAYIbf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Jan 2023 01:54:55 -0500
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19DD94609D
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jan 2023 22:54:54 -0800 (PST)
-Received: by mail-yb1-xb2f.google.com with SMTP id c124so21772556ybb.13
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jan 2023 22:54:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wqs8wbPlAZDTLJakmydgiMmPGts6HLlVoCIHxpQubjo=;
-        b=U9e8Wb1myASouSuwhQv8BZllXOdBrkn1B/LD3/eQtP3RbEskY2eAbeGHgnDeI2u+wL
-         xbYUpDGHjyh2Jk2q5v/wz3K3I5cC0fvFcxFWAqPPMvbnivzVZplnxdM1DNMn6W8ctfKb
-         cNe5JM5I3ZqDMasXSnCsqHwv2ijsTc1omaCaI=
+        Wed, 25 Jan 2023 03:31:35 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F29634FCD3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 00:30:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674635447;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kr0S8akD6qUBjK/SM2fF6lu+0ihmEwSHU9fQtaMUMNo=;
+        b=c82vQHfGvl69RfAXVYFrW2N0W8Ijsjsjpnjk1bowJm/pXrJxdkxGqIuUhU5SsgTTLLfChe
+        WCLgudtbd4i2a67T5yUtWti3Rrnvc7tjBjBAa2DISqSv0KJPjNuKUh2mamIk8uLrVTgKsh
+        45QcAOaKX2KrCFHZDN0PbyR4zQgJDHI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-230-C91x-ryvNGCwUktkHJ_aWw-1; Wed, 25 Jan 2023 03:30:45 -0500
+X-MC-Unique: C91x-ryvNGCwUktkHJ_aWw-1
+Received: by mail-wm1-f71.google.com with SMTP id r15-20020a05600c35cf00b003d9a14517b2so734754wmq.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 00:30:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wqs8wbPlAZDTLJakmydgiMmPGts6HLlVoCIHxpQubjo=;
-        b=H9AHx3dgtOODL4FN5LK1Fr1Ddif7bky5ACYr2KTiIv5DaqrxVH1BZivIUnsDv6F8wU
-         J7MHZ6BnUv2YoYoC6HFUtq+Vheh/q5jb1ICUfmx6VFoJWKAiQN0izOseEJ7d9r45/6/A
-         2P7Ujw1Tx0QghKYjA5oSFnRJrnlyoaU7kZlyknDLbZEBZ8tjEMV7fUxW0zJJ8QSC2T7Q
-         wukcpAazlGmRHbW+2El9XXeZU13tsROqGq8wxujC1dmZ8s/dpoTYWIfqsrWQqjxKWqr0
-         rvfc4MTGw5ljlPTVit+DSUCNAe68//P6BSjZzidgQp+YIpH1nwUFRFx5Lj+BjlPxIeYX
-         XOrA==
-X-Gm-Message-State: AFqh2kou4QS6b9rMwyR6mQ23jJc9o2so6ODdY43rikbCUiSz0eDq8+II
-        9QUfPdzbUUdx3lql7JHPWoeC65d5XiXq+VVmkAkQnQ==
-X-Google-Smtp-Source: AMrXdXvvAsurupMLHcGBtjeQclADi/LmwKvn2BnkYvtRMrfeYGqUbYn8zvts83S+YXbNwfYM1DXRJYMkL3VgSnzAZcc=
-X-Received: by 2002:a25:5f43:0:b0:7fe:b611:d88c with SMTP id
- h3-20020a255f43000000b007feb611d88cmr2270813ybm.594.1674629693289; Tue, 24
- Jan 2023 22:54:53 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kr0S8akD6qUBjK/SM2fF6lu+0ihmEwSHU9fQtaMUMNo=;
+        b=4L8nIYliIOdIK5gUuhBr2THmzDLUZTYmWv9zODsV2xl8BHfuXXKf4rVO5x42tf/lgL
+         j+rDbfSnTUsgQp22FfCHOgHZckpG4/g5JGsiPC37tsMXwx8ud++vx1K8P/U7hwoKMAT3
+         tWtAorqNwsFNNokjAqJOtwnD0xsMq/ly9SVateQAb4qGCRI4laBS6bM+Ux/FqQNywtPd
+         FSyS/cz1bHgvLT7DsdBlk4hy02InM0/NgvInIdRO3CY4wfo2N4wAJYkYsOOXvc9XNKYv
+         yx1WBAZeR4ZfCKcCahA+gcW2m8MiDliHMRbivm0Y9zm+iSvmBXkoqf5ZeqfTe7/oZFnV
+         NelA==
+X-Gm-Message-State: AFqh2kraxgRCRPl+M5lI6YXI6ZRWj50FBuzM/mqMzPC5hAGEgp9GvmQZ
+        JS5/x3/ywTnRFP8foiLsJyzf4VjdC5gps87Mo3ala2EvXXKOLIr1GHDLhDZvtK5z6PvMJosm82/
+        cIfDyt+koesTzFT0x+YTB3CxaRddRZLU=
+X-Received: by 2002:a05:6000:388:b0:2bc:7ec3:8b2 with SMTP id u8-20020a056000038800b002bc7ec308b2mr29736118wrf.68.1674635444579;
+        Wed, 25 Jan 2023 00:30:44 -0800 (PST)
+X-Google-Smtp-Source: AMrXdXvJXEPl3F4VP/2Wui1NMuiLkn1RDtzF7t2lLspd9Qgz+v3EiIOxwRmTCt+QhhFH4DIAkfWI6g==
+X-Received: by 2002:a05:6000:388:b0:2bc:7ec3:8b2 with SMTP id u8-20020a056000038800b002bc7ec308b2mr29736083wrf.68.1674635444065;
+        Wed, 25 Jan 2023 00:30:44 -0800 (PST)
+Received: from [192.168.1.130] (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id n17-20020a5d67d1000000b002425be3c9e2sm3716862wrw.60.2023.01.25.00.30.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Jan 2023 00:30:43 -0800 (PST)
+Message-ID: <296bcff0-9d75-3d6b-e101-dddb26edadf1@redhat.com>
+Date:   Wed, 25 Jan 2023 09:30:42 +0100
 MIME-Version: 1.0
-References: <20230123151212.269082-1-jagan@amarulasolutions.com>
- <20230123151212.269082-14-jagan@amarulasolutions.com> <43f4a7dc-a4cc-7552-1a6d-a2a49fae6020@denx.de>
- <CAMty3ZBZWERT=HpjSepSaFbpKpwZUvuG82s6+z7EgDRY5D+TFg@mail.gmail.com>
- <fb7dfb89-42d6-139e-7ff1-4985838e222f@denx.de> <CAMty3ZAYz=XEN6s1XhBWg5b77kk+s942qa9Oz4E4oHtSfaVZtA@mail.gmail.com>
- <CAMty3ZB8jAoKzXpPJzrfH6bOGBOpJRuTacgQDSg8kVuhg7p37Q@mail.gmail.com>
-In-Reply-To: <CAMty3ZB8jAoKzXpPJzrfH6bOGBOpJRuTacgQDSg8kVuhg7p37Q@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Wed, 25 Jan 2023 12:24:41 +0530
-Message-ID: <CAMty3ZDNwJ40pPJFKqwMd13y-rF9ELb5N6JZffea6T4dnD-0nA@mail.gmail.com>
-Subject: Re: [RESEND PATCH v11 13/18] drm: exynos: dsi: Add Exynos based host
- irq hooks
-To:     Marek Vasut <marex@denx.de>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v2 01/10] drm/client: Test for connectors before sending
+ hotplug event
+Content-Language: en-US
+To:     Thomas Zimmermann <tzimmermann@suse.de>, airlied@gmail.com,
+        daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org
+Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20230124134010.30263-1-tzimmermann@suse.de>
+ <20230124134010.30263-2-tzimmermann@suse.de>
+From:   Javier Martinez Canillas <javierm@redhat.com>
+In-Reply-To: <20230124134010.30263-2-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jan 25, 2023 at 2:54 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> On Wed, Jan 25, 2023 at 2:54 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> >
-> > On Wed, Jan 25, 2023 at 2:42 AM Marek Vasut <marex@denx.de> wrote:
-> > >
-> > > On 1/24/23 22:01, Jagan Teki wrote:
-> > > > On Wed, Jan 25, 2023 at 2:18 AM Marek Vasut <marex@denx.de> wrote:
-> > > >>
-> > > >> On 1/23/23 16:12, Jagan Teki wrote:
-> > > >>> Enable and disable of te_gpio's are Exynos platform specific
-> > > >>> irq handling, so add the exynos based irq operations and hook
-> > > >>> them for exynos plat_data.
-> > > >>
-> > > >> If this is just an optional generic GPIO IRQ, why not keep it in the
-> > > >> core code ? TE (tearing enable?) should be available on MX8M too.
-> > > >
-> > > > So far the discussion (since from initial versions) with Marek
-> > > > Szyprowski, seems to be available in Exynos. So, I keep it separate
-> > > > from the DSIM core.
-> > >
-> > > Isn't TE a generic GPIO IRQ ? If so, it is available also on i.MX8M .
->
-> I will check this.
+Hello Thomas,
 
-In order to use TE_GPIO we need te handler implementation, right now
-Exynos CRTC DRM drivers have implementation for this. That is the main
-reason to keep the TE_GPIO handling in exynos, maybe if we handle that
-generically then it is a viable option to move TE_GPIO to the DSIM
-core.
+On 1/24/23 14:40, Thomas Zimmermann wrote:
+> Test for connectors in the client code and remove a similar test
+> from the generic fbdev emulation. Do nothing if the test fails.
+> Not having connectors indicates a driver bug.
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
 
-Jagan.
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+
+but I've a question below.
+
+>  drivers/gpu/drm/drm_client.c        | 5 +++++
+>  drivers/gpu/drm/drm_fbdev_generic.c | 5 -----
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+
+[...]
+
+> --- a/drivers/gpu/drm/drm_fbdev_generic.c
+> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
+> @@ -389,11 +389,6 @@ static int drm_fbdev_client_hotplug(struct drm_client_dev *client)
+>  	if (dev->fb_helper)
+>  		return drm_fb_helper_hotplug_event(dev->fb_helper);
+>  
+> -	if (!dev->mode_config.num_connector) {
+> -		drm_dbg_kms(dev, "No connectors found, will not create framebuffer!\n");
+> -		return 0;
+> -	}
+> -
+
+What about the following code snippet:
+
+	if (!drm_drv_uses_atomic_modeset(dev))
+		drm_helper_disable_unused_functions(dev);
+
+that seems to be something that should be in the core client dev hotplug
+as well, since it isn't specific to the fbdev emulation client ?
+
+-- 
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
