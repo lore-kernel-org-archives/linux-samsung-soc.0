@@ -2,118 +2,109 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB04C54E94
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 17:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 826B7C54EED
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 18:04:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235878AbjAYR7w (ORCPT
+        id S230257AbjAYSEC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 25 Jan 2023 12:59:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40674 "EHLO
+        Wed, 25 Jan 2023 13:04:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230188AbjAYR7v (ORCPT
+        with ESMTP id S235046AbjAYSEC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Jan 2023 12:59:51 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EAD2AD35
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 09:59:50 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id y1so13408272wru.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 09:59:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sTOOyplbHxnZ+EFGvkRK9RseAv80+oP0c90JV+EsvHc=;
-        b=b3xrzTS5gcAyZdQpRwmO6xq87K/+gmwj3GtougbVYdVQRQCOEZHNlrsx6LRYrb2KnG
-         AVIP1dZjGgS8PfB9/OiiHLgXsTAYL+xYW4OSiWSmwiYjizCelQw9X/ga3CFj5xse05gS
-         lmmZ/fj88VeBXnC0Yr9ZZbmCzwNMdFn6+yAc669OjP/0o3F8l8/1W4vqUv6jPElbvzAt
-         KbOEoXZbQRCAqWvdM/FsVZZhUZ7t+7Xm6g0JlpWUCAjOsq9TEF/C3X/NT5cl2n55zn6z
-         ga8meNb/niwL0bojsOlp8FgZjgdx8/11jRwcP0pFjW2I4yR/OSwrAW4RClEXCQXYMGTo
-         eMnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sTOOyplbHxnZ+EFGvkRK9RseAv80+oP0c90JV+EsvHc=;
-        b=kgpD2gitQ3zT6h5YpANGEJrItBsj56TVNblO8XDfAw4Qg73CdDUM68DPbZ29NVoZZS
-         UCwzJs0AdTMcLj9Si34CKXUWgh1ralYgapFii65QijYJySB4+pJjVua7I0Gxrc7SN5Z2
-         xGmOgg/+2FdXy/oZnagCAxp/awHYK2SqTB+PQa+iY2M9NkDcmdP0CFRoLbGLOP1As9Xh
-         0Sj5exJkNOPugY0C6X3CS+3zvypjnCEdvHvwJf0Lrl52CL3A8Ldm+q8NZmpx6Tk6UzHX
-         +MYP6rX9YEqPJtjitGUS58Lq7HaedIIcAgMJqNiTW+wk3UbtxBkPEyUKji5aWpK1nLdZ
-         ml6A==
-X-Gm-Message-State: AO0yUKV73fqWW0scZOs68yBWGcpLOmS4j4KO6AXvRHrE4XePectzhuIG
-        DQDU5jXVUbcXld2fTw4Vw+88dEMAKFYw2fpw
-X-Google-Smtp-Source: AK7set8wYctbejAZWGPmx51Hf1KyVA1kzcMV4t6Iwl3vyOvPDFih0BorVAjojrAKqLqCV6ssK3VAiA==
-X-Received: by 2002:adf:fa09:0:b0:2bf:ac2c:4489 with SMTP id m9-20020adffa09000000b002bfac2c4489mr6572646wrr.54.1674669588976;
-        Wed, 25 Jan 2023 09:59:48 -0800 (PST)
-Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id w14-20020a5d608e000000b002bc84c55758sm6048927wrt.63.2023.01.25.09.59.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jan 2023 09:59:48 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: usb: samsung,exynos-dwc3: allow unit address in DTS
-Date:   Wed, 25 Jan 2023 18:59:43 +0100
-Message-Id: <20230125175943.675823-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Wed, 25 Jan 2023 13:04:02 -0500
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C163C1716F
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 10:03:58 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id D914785650;
+        Wed, 25 Jan 2023 19:03:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1674669836;
+        bh=FhB7JxYWcqW8il2ylyHc5LIbArGOgglZdO4x5ZSntwI=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=kYXCEuMRZxIIKI8ZI5SQY00v8IDk0ILsNe1Ki5gHHiEiaod/H5/cT00HZsz4CLlHK
+         oU4YDX2ZbzoHbx/n4VmH+8sBgj2UkfwwtAEDnmpPNuQAwin9hRcs848By/aAeaM5Pg
+         LarBH4phktWSI+ZJX1dr21Zyd1XVrcbzse0NCEOBweRTiX625WxS1g5lNyk2OSNORn
+         FRLx/cytoNYbmkWcjYSlhjXkDWMRHlP4eTQuDFDDUrZvVG7tXE/5NHSozgsdJNC6Ki
+         Ls58kwsM7cuWQqZP5dO2GH+fpHqhxSYapugFEiTG/lm8SyGIzSjHbLCRavGDBbH55x
+         CFZgN3rz4Pq4A==
+Message-ID: <94f847b0-769d-e28b-11c0-b817b30c704f@denx.de>
+Date:   Wed, 25 Jan 2023 19:03:54 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [RESEND PATCH v11 13/18] drm: exynos: dsi: Add Exynos based host
+ irq hooks
+Content-Language: en-US
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+References: <20230123151212.269082-1-jagan@amarulasolutions.com>
+ <20230123151212.269082-14-jagan@amarulasolutions.com>
+ <43f4a7dc-a4cc-7552-1a6d-a2a49fae6020@denx.de>
+ <CAMty3ZBZWERT=HpjSepSaFbpKpwZUvuG82s6+z7EgDRY5D+TFg@mail.gmail.com>
+ <fb7dfb89-42d6-139e-7ff1-4985838e222f@denx.de>
+ <CAMty3ZAYz=XEN6s1XhBWg5b77kk+s942qa9Oz4E4oHtSfaVZtA@mail.gmail.com>
+ <CAMty3ZB8jAoKzXpPJzrfH6bOGBOpJRuTacgQDSg8kVuhg7p37Q@mail.gmail.com>
+ <CAMty3ZDNwJ40pPJFKqwMd13y-rF9ELb5N6JZffea6T4dnD-0nA@mail.gmail.com>
+ <d8e539bd-93db-fb6f-eaec-463f382a1dfb@denx.de>
+ <CAMty3ZBxbwwocAwZ18o8tis54SRC64853b+p8VfzcD=OWrjP6Q@mail.gmail.com>
+ <c67cdb83-2fef-ad7c-f2c4-e2a6eb09a3e8@denx.de>
+ <CAMty3ZAh7J6_X9NkE+-mBrHBFx+KfuQXPBUYyL5g2vu_Y5X9iw@mail.gmail.com>
+ <a756fd20-28e4-85e7-3947-4c468bf3366d@denx.de>
+ <CAMty3ZDTcnN_NgjL8hEBnABpFcaE=hCegZnzaC9tz-7wFxYSmw@mail.gmail.com>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <CAMty3ZDTcnN_NgjL8hEBnABpFcaE=hCegZnzaC9tz-7wFxYSmw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The Samsung Exynos SoC USB 3.0 DWC3 Controller is a simple wrapper of
-actual DWC3 Controller device node.  It handles necessary Samsung
-Exynos-specific resources (regulators, clocks), but does not have its
-own MMIO address space.
+On 1/25/23 18:35, Jagan Teki wrote:
 
-However neither simple-bus bindings nor dtc W=1 accept device nodes in
-soc@ node which do not have unit address.  Therefore allow using
-the address space of child device (actual DWC3 Controller) as the
-wrapper's address.
+[...]
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>> exynos_dsi_register_te_irq is done after the bridge attach is done in
+>>> Exynos, here bridge attach is triggered in the component ops bind
+>>> call, since samsung-dsim is a pure bridge w/o any component ops.
+>>> https://github.com/openedev/kernel/blob/imx8mm-dsi-v12/drivers/gpu/drm/bridge/samsung-dsim.c#L1527
+>>> https://github.com/openedev/kernel/blob/imx8mm-dsi-v12/drivers/gpu/drm/exynos/exynos_drm_dsi.c#L112
+>>>
+>>> Any suggestion on how to handle this?
+>>
+>> Why isn't the generic code calling drm_bridge_attach() in
+>> samsung_dsim_host_attach(), like the exynos one ?
+> 
+> Exynos drm drivers follow component ops and generic dsim is a pure drm
+> bridge whose downstream bridge will attach in bridge ops attach and
+> the component-based drivers require an initial bridge attach (whose
+> previous is NULL) call in the component bind hook for establishing the
+> bridge chain.
 
----
-
-DTS fixes are here:
-https://lore.kernel.org/linux-samsung-soc/20230125175751.675090-1-krzysztof.kozlowski@linaro.org/T/#t
----
- .../devicetree/bindings/usb/samsung,exynos-dwc3.yaml        | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml b/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-index 6b9a3bcb3926..a94b1926dda0 100644
---- a/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-@@ -29,6 +29,9 @@ properties:
- 
-   ranges: true
- 
-+  reg:
-+    maxItems: 1
-+
-   '#size-cells':
-     const: 1
- 
-@@ -108,8 +111,9 @@ examples:
-     #include <dt-bindings/clock/exynos5420.h>
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
--    usb {
-+    usb-wrapper@12000000 {
-         compatible = "samsung,exynos5250-dwusb3";
-+        reg = <0x12000000 0x10000>;
-         #address-cells = <1>;
-         #size-cells = <1>;
-         ranges;
--- 
-2.34.1
-
+Well in that case, call the exynos optional host_attach and register the 
+TE IRQ handler at the end, that should work just fine too, right ? If 
+so, then you can also move the IRQ handler registration into the generic 
+part of the driver.
