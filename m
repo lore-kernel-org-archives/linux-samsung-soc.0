@@ -2,77 +2,119 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0253AC27C76
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 21:04:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E283C54EED
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 21:09:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236663AbjAYVEL (ORCPT
+        id S236685AbjAYVJm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 25 Jan 2023 16:04:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59214 "EHLO
+        Wed, 25 Jan 2023 16:09:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236602AbjAYVEK (ORCPT
+        with ESMTP id S236406AbjAYVJR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Jan 2023 16:04:10 -0500
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 309932F791;
-        Wed, 25 Jan 2023 13:04:09 -0800 (PST)
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-12c8312131fso125662fac.4;
-        Wed, 25 Jan 2023 13:04:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3umJdp0RAk9hjr5PrBIEZs36K07t7ZzqXE0MOXb8Q90=;
-        b=d18HZfo/WBhFZGs2FGglXmPaeGrapQgxzz3jRm8+j5X1OKJMHDc7lmwAvcJHOuNXjh
-         0S9XngN0hL65zpT7Vhiiwlu4ptU9phPD02eTRDiF6eNhBS9D+RW0CkWZqB2f1URXjvXl
-         bsXJNo1HJtdArvtRYKxQVmFvaex+SXiDouS0n7OAQO4dmWtcCcxrTApC2w8B3UNEHqHW
-         bJIyv0j6x7cLWV1HhrWNbCpFkUIw5S7y7D1MNl3TEIgu7WlyE9UGx2lO0Iy1+kc0rKkG
-         7ZxcColQx+NUNfZZi7zrS9kl/38xy52ETHCQJgRgpXzUGFVAzYqB6ZP9a2jTZn6Az8Fj
-         AapA==
-X-Gm-Message-State: AO0yUKVVZ9Dqb97yfamJd2e1kAUtkkdH12cLaDfE7vSlJ98sm2hL3deA
-        WojJh43c3hjYDHGCWgRV3zr8LqZ/WQ==
-X-Google-Smtp-Source: AK7set92TI7dfJnJyXOZWBGbJwJQ1xgBdvAZKKEZQCyJ9GCO64gsAyaoEPDoxz0n5d3Q1ORj8jIelg==
-X-Received: by 2002:a05:6870:b289:b0:163:1ea3:2151 with SMTP id c9-20020a056870b28900b001631ea32151mr3418388oao.40.1674680648356;
-        Wed, 25 Jan 2023 13:04:08 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id ls11-20020a0568704b4b00b0014c8b5d54b2sm2364197oab.20.2023.01.25.13.04.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jan 2023 13:04:08 -0800 (PST)
-Received: (nullmailer pid 2892386 invoked by uid 1000);
-        Wed, 25 Jan 2023 21:04:07 -0000
-Date:   Wed, 25 Jan 2023 15:04:07 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: interconnect: samsung,exynos-bus: allow
- opp-table
-Message-ID: <167468064668.2892331.14944394685213771126.robh@kernel.org>
-References: <20230125090849.122189-1-krzysztof.kozlowski@linaro.org>
+        Wed, 25 Jan 2023 16:09:17 -0500
+Received: from mailrelay2-1.pub.mailoutpod2-cph3.one.com (mailrelay2-1.pub.mailoutpod2-cph3.one.com [IPv6:2a02:2350:5:401::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77CB361D41
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 13:08:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ravnborg.org; s=rsa2;
+        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+         from:date:from;
+        bh=/NbmLZPfTUBNuvwpuIq7jzdYXjOyhys3va43pns/wME=;
+        b=fXzCVuKRusidZBn0C8DUfgcuqFi/xH4Dq66tyHbKA0oEuRzZuyoIBOiLjsOwSvr+XkS5Aj6/8FjfS
+         f1d19b3n2z0KUneSoilCiaNmzUWxDKPyG6eKXAoW0igFvtDQo9SGKXCtGVlpoN0OfqSLgAw+CIbCVN
+         csYcffChBpGi6AJIHGSwJinq5tjrmRtv6oc2CdNm9Q7TFsLahoU5Ms05Lebn4W0llb1eVofn1EdPxe
+         GpcepYkR9FhzvhXT8jy0QE5+B9n5nSxXE3HPA8K05S/hpAQso901xLBhlv7iXHZHbmXbLK3ua9aUzv
+         Z0NFaunagWqq8MfE3TtCNIwsrOjBVtg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
+        d=ravnborg.org; s=ed2;
+        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+         from:date:from;
+        bh=/NbmLZPfTUBNuvwpuIq7jzdYXjOyhys3va43pns/wME=;
+        b=H0mcFvUdtrxvOtOWjFbsUaf7rnbOCi8U9iXjFrJBOzDccJr1E5qa1ZOuQ3ZOe3mcbAztOHHM8l8/s
+         V3o0dAlBQ==
+X-HalOne-ID: 24b509b3-9cf2-11ed-a537-3df7d73157c4
+Received: from ravnborg.org (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
+        by mailrelay2 (Halon) with ESMTPSA
+        id 24b509b3-9cf2-11ed-a537-3df7d73157c4;
+        Wed, 25 Jan 2023 20:52:16 +0000 (UTC)
+Date:   Wed, 25 Jan 2023 21:52:14 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     airlied@gmail.com, daniel@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        javierm@redhat.com, linux-samsung-soc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 01/10] drm/client: Test for connectors before sending
+ hotplug event
+Message-ID: <Y9GWfi4EiCDPa6BJ@ravnborg.org>
+References: <20230125200415.14123-1-tzimmermann@suse.de>
+ <20230125200415.14123-2-tzimmermann@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230125090849.122189-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230125200415.14123-2-tzimmermann@suse.de>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi Thomas,
 
-On Wed, 25 Jan 2023 10:08:49 +0100, Krzysztof Kozlowski wrote:
-> The opp-table can be located in the exynos-bus node which uses it, so
-> allow such child node.
+On Wed, Jan 25, 2023 at 09:04:06PM +0100, Thomas Zimmermann wrote:
+> Test for connectors in the client code and remove a similar test
+> from the generic fbdev emulation. Do nothing if the test fails.
+> Not having connectors indicates a driver bug.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 > ---
->  .../interconnect/samsung,exynos-bus.yaml      | 27 +++++++++++++++++++
->  1 file changed, 27 insertions(+)
+>  drivers/gpu/drm/drm_client.c        | 5 +++++
+>  drivers/gpu/drm/drm_fbdev_generic.c | 5 -----
+>  2 files changed, 5 insertions(+), 5 deletions(-)
 > 
+> diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
+> index 262ec64d4397..09ac191c202d 100644
+> --- a/drivers/gpu/drm/drm_client.c
+> +++ b/drivers/gpu/drm/drm_client.c
+> @@ -198,6 +198,11 @@ void drm_client_dev_hotplug(struct drm_device *dev)
+>  	if (!drm_core_check_feature(dev, DRIVER_MODESET))
+>  		return;
+>  
+> +	if (!dev->mode_config.num_connector) {
+> +		drm_dbg_kms(dev, "No connectors found, will not send hotplug events!\n");
+> +		return;
+This deserves a more visible logging - if a driver fails here it would
+be good to spot it in the normal kernel log.
+drm_info or drm_notice?
 
-Acked-by: Rob Herring <robh@kernel.org>
+The original code had this on the debug level, but when moving the log
+level could also be updated.
+
+	Sam
+
+> +	}
+> +
+>  	mutex_lock(&dev->clientlist_mutex);
+>  	list_for_each_entry(client, &dev->clientlist, list) {
+>  		if (!client->funcs || !client->funcs->hotplug)
+> diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
+> index 0a4c160e0e58..3d455a2e3fb5 100644
+> --- a/drivers/gpu/drm/drm_fbdev_generic.c
+> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
+> @@ -389,11 +389,6 @@ static int drm_fbdev_client_hotplug(struct drm_client_dev *client)
+>  	if (dev->fb_helper)
+>  		return drm_fb_helper_hotplug_event(dev->fb_helper);
+>  
+> -	if (!dev->mode_config.num_connector) {
+> -		drm_dbg_kms(dev, "No connectors found, will not create framebuffer!\n");
+> -		return 0;
+> -	}
+> -
+>  	drm_fb_helper_prepare(dev, fb_helper, &drm_fb_helper_generic_funcs);
+>  
+>  	ret = drm_fb_helper_init(dev, fb_helper);
+> -- 
+> 2.39.0
