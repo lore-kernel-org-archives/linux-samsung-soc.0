@@ -2,301 +2,169 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E06AC61DA0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 00:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC5CC61D9D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 04:51:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231646AbjAYA57 (ORCPT
+        id S230461AbjAYEvu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 24 Jan 2023 19:57:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55704 "EHLO
+        Tue, 24 Jan 2023 23:51:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbjAYA56 (ORCPT
+        with ESMTP id S229625AbjAYEvt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 24 Jan 2023 19:57:58 -0500
-Received: from mail-vs1-xe2f.google.com (mail-vs1-xe2f.google.com [IPv6:2607:f8b0:4864:20::e2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 244A0222ED
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jan 2023 16:57:55 -0800 (PST)
-Received: by mail-vs1-xe2f.google.com with SMTP id q125so18408428vsb.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jan 2023 16:57:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=cc:to:subject:message-id:date:thread-index:mime-version:in-reply-to
-         :references:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sm6+KYjfeiwovYM/CWBMVenfLjfx0OvQDl2l0e/g814=;
-        b=G1iX0Pm744SA2luGxOUv+5cyugd5e4GazM82n2WCUkbMpUUR8Z1oJURMZZpiWvxjDi
-         c2beEJW7dmTIH5aQS7ksCCPc1OtKvE+deTzmIzQpZnjF8s9haDEraoVAxIhbYNxhTZtM
-         CRAdSZa28leimc+KI94JjIS87LebZ8ElXCXCQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:thread-index:mime-version:in-reply-to
-         :references:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sm6+KYjfeiwovYM/CWBMVenfLjfx0OvQDl2l0e/g814=;
-        b=zpnYL5kq0AFHZUJj8v63xUYlQmciSXbKb8nCUjgfbdJagO95a8rnywOvnqeL1rJuV9
-         WUuThtyb34Ph12D51490olpUvF3zlhRXSfBizDtW9QmDnZrGcBawYVH3bpnkDXf5pi8Q
-         kiAEWNfU28PeWqN6ags8p4SCWQkfGSQFgyF+OOMGL/eSqo4T2BBHkHdq8R0Y294rN1Qf
-         nGPlSCqraFZSVIQwC81/pVImcUecoYYotGojzjFmDWcTqxSqM3Sx3kQYa0PGPJtS1+Kt
-         8cmfQ1qPT1Ks2K92QI1dzFI9nJaD3g8Br3D02lHffiNFJKrxfMIvYKVZjL5tUJB7rP+g
-         4kAw==
-X-Gm-Message-State: AFqh2kpzWNtIfkq/8R92dgbUvWztB8WtACc8yrUyQQjGtO0eOpJdNSU9
-        gZ44QjpKZ5Py4XXWO0uAHYzCkxjHFrth3CYD9HIlQA==
-X-Google-Smtp-Source: AMrXdXu0WEVAHtkl/7WrGp7gsGmIxeNAjZACQY1znOQilpBjqALn5uFkSCuep3Y6cqMY533KDesP8Mmq99uNyBp2hTA=
-X-Received: by 2002:a67:f246:0:b0:3b1:5690:a240 with SMTP id
- y6-20020a67f246000000b003b15690a240mr3921552vsm.68.1674608274113; Tue, 24 Jan
- 2023 16:57:54 -0800 (PST)
-From:   William Zhang <william.zhang@broadcom.com>
-References: <20230119185342.2093323-1-amit.kumar-mahapatra@amd.com> <20230119185342.2093323-3-amit.kumar-mahapatra@amd.com>
-In-Reply-To: <20230119185342.2093323-3-amit.kumar-mahapatra@amd.com>
+        Tue, 24 Jan 2023 23:51:49 -0500
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9D6C41B52;
+        Tue, 24 Jan 2023 20:51:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674622307; x=1706158307;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KD4JMgqxwED5gr4VrmwBvzAy0O3wbRpFXRdRP7EMoe0=;
+  b=HXV4kAdmq932Nq+W5ELE4m//hKu4InBd4wvmpg1dicgSIn5F0Y5Zo8cy
+   6HgFQue5SFNZkRl3LlPF9DRSCDu0wdrQ82v6znmc3ijqBElJlPl2rdcL7
+   Bu7oFlLBjEiZhrlcwU9TIKY35FRxI9O7o7wOJUvsuwbPd/gRIOcZmr34t
+   rVIM6VnS3U5GLcHMucxxo9Npl46XneU7wDAJ8G2Ap0U03nrrIFK68hrC1
+   Sce8gklmBDNwOIx/KWWMidNZjvHAnlVAJRnnHxGjF5tLnSG+2Dxmj4DUA
+   hAGPGiPUFBPB6FIXlFRpup9tS2EOosJ0ma6YJjcErbyNbUTzl9oz8yvZK
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10600"; a="310057096"
+X-IronPort-AV: E=Sophos;i="5.97,244,1669104000"; 
+   d="scan'208";a="310057096"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2023 20:51:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10600"; a="725743677"
+X-IronPort-AV: E=Sophos;i="5.97,244,1669104000"; 
+   d="scan'208";a="725743677"
+Received: from lkp-server01.sh.intel.com (HELO 5646d64e7320) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 24 Jan 2023 20:51:42 -0800
+Received: from kbuild by 5646d64e7320 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pKXl7-00072i-39;
+        Wed, 25 Jan 2023 04:51:41 +0000
+Date:   Wed, 25 Jan 2023 12:51:20 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>, airlied@gmail.com,
+        daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, javierm@redhat.com
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        linux-tegra@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [Intel-gfx] [PATCH v2 06/10] drm/fb-helper: Initialize
+ fb-helper's preferred BPP in prepare function
+Message-ID: <202301251250.eyIn4zjn-lkp@intel.com>
+References: <20230124134010.30263-7-tzimmermann@suse.de>
 MIME-Version: 1.0
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGsd40KKMSPSaowQedOCmq8Q0lhhQIBWekOAbfQgXk=
-Date:   Tue, 24 Jan 2023 16:57:49 -0800
-Message-ID: <36840e0caeca5f53eef4fab615fc7976@mail.gmail.com>
-Subject: Re: [PATCH v2 02/13] spi: Replace all spi->chip_select and
- spi->cs_gpiod references with function call
-To:     Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>,
-        broonie@kernel.org, miquel.raynal@bootlin.com, richard@nod.at,
-        vigneshr@ti.com, jic23@kernel.org, tudor.ambarus@microchip.com,
-        pratyush@kernel.org, sanju.mehta@amd.com,
-        chin-ting_kuo@aspeedtech.com, clg@kaod.org, kdasu.kdev@gmail.com,
-        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
-        eajames@linux.ibm.com, olteanv@gmail.com, han.xu@nxp.com,
-        john.garry@huawei.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        narmstrong@baylibre.com, khilman@baylibre.com,
-        matthias.bgg@gmail.com, haibo.chen@nxp.com,
-        linus.walleij@linaro.org, daniel@zonque.org,
-        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
-        agross@kernel.org, bjorn.andersson@linaro.org, heiko@sntech.de,
-        krzysztof.kozlowski@linaro.org, andi@etezian.org,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
-        masahisa.kojima@linaro.org, jaswinder.singh@linaro.org,
-        rostedt@goodmis.org, mingo@redhat.com, l.stelmach@samsung.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, alex.aring@gmail.com, stefan@datenfreihafen.org,
-        kvalo@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        skomatineni@nvidia.com, sumit.semwal@linaro.org,
-        christian.koenig@amd.com, j.neuschaefer@gmx.net,
-        vireshk@kernel.org, rmfrfs@gmail.com, johan@kernel.org,
-        elder@kernel.org, gregkh@linuxfoundation.org
-Cc:     git@amd.com, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, joel@jms.id.au, andrew@aj.id.au,
-        radu_nicolae.pirea@upb.ro, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, claudiu.beznea@microchip.com,
-        bcm-kernel-feedback-list@broadcom.com, fancer.lancer@gmail.com,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
-        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-        venture@google.com, yuenn@google.com, benjaminfair@google.com,
-        yogeshgaur.83@gmail.com, konrad.dybcio@somainline.org,
-        alim.akhtar@samsung.com, ldewangan@nvidia.com,
-        michal.simek@amd.com, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wpan@vger.kernel.org,
-        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-mtd@lists.infradead.org, lars@metafoo.de,
-        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
-        michael@walle.cc, palmer@dabbelt.com,
-        linux-riscv@lists.infradead.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, greybus-dev@lists.linaro.org,
-        linux-staging@lists.linux.dev, amitrkcian2002@gmail.com
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="000000000000563b9f05f30c1f6f"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230124134010.30263-7-tzimmermann@suse.de>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
---000000000000563b9f05f30c1f6f
-Content-Type: text/plain; charset="UTF-8"
+Hi Thomas,
 
-On 01/19/2023 10:53 AM, 'Amit Kumar Mahapatra' via
-BCM-KERNEL-FEEDBACK-LIST,PDL wrote:
-> diff --git a/drivers/spi/spi-bcm63xx-hsspi.c
-> b/drivers/spi/spi-bcm63xx-hsspi.c
-> index b871fd810d80..dc179c4677d4 100644
-> --- a/drivers/spi/spi-bcm63xx-hsspi.c
-> +++ b/drivers/spi/spi-bcm63xx-hsspi.c
-> @@ -130,7 +130,7 @@ static void bcm63xx_hsspi_set_cs(struct bcm63xx_hsspi
-> *bs, unsigned int cs,
->   static void bcm63xx_hsspi_set_clk(struct bcm63xx_hsspi *bs,
->   				  struct spi_device *spi, int hz)
->   {
-> -	unsigned int profile = spi->chip_select;
-> +	unsigned int profile = spi_get_chipselect(spi, 0);
->   	u32 reg;
->
->   	reg = DIV_ROUND_UP(2048, DIV_ROUND_UP(bs->speed_hz, hz));
-> @@ -157,7 +157,7 @@ static void bcm63xx_hsspi_set_clk(struct bcm63xx_hsspi
-> *bs,
->   static int bcm63xx_hsspi_do_txrx(struct spi_device *spi, struct
-> spi_transfer *t)
->   {
->   	struct bcm63xx_hsspi *bs = spi_master_get_devdata(spi->master);
-> -	unsigned int chip_select = spi->chip_select;
-> +	unsigned int chip_select = spi_get_chipselect(spi, 0);
->   	u16 opcode = 0;
->   	int pending = t->len;
->   	int step_size = HSSPI_BUFFER_LEN;
-> @@ -165,7 +165,7 @@ static int bcm63xx_hsspi_do_txrx(struct spi_device
-> *spi, struct spi_transfer *t)
->   	u8 *rx = t->rx_buf;
->
->   	bcm63xx_hsspi_set_clk(bs, spi, t->speed_hz);
-> -	bcm63xx_hsspi_set_cs(bs, spi->chip_select, true);
-> +	bcm63xx_hsspi_set_cs(bs, spi_get_chipselect(spi, 0), true);
->
->   	if (tx && rx)
->   		opcode = HSSPI_OP_READ_WRITE;
-> @@ -228,14 +228,14 @@ static int bcm63xx_hsspi_setup(struct spi_device
-> *spi)
->   	u32 reg;
->
->   	reg = __raw_readl(bs->regs +
-> -			  HSSPI_PROFILE_SIGNAL_CTRL_REG(spi->chip_select));
-> +			  HSSPI_PROFILE_SIGNAL_CTRL_REG(spi_get_chipselect(spi, 0)));
->   	reg &= ~(SIGNAL_CTRL_LAUNCH_RISING | SIGNAL_CTRL_LATCH_RISING);
->   	if (spi->mode & SPI_CPHA)
->   		reg |= SIGNAL_CTRL_LAUNCH_RISING;
->   	else
->   		reg |= SIGNAL_CTRL_LATCH_RISING;
->   	__raw_writel(reg, bs->regs +
-> -		     HSSPI_PROFILE_SIGNAL_CTRL_REG(spi->chip_select));
-> +		     HSSPI_PROFILE_SIGNAL_CTRL_REG(spi_get_chipselect(spi, 0)));
->
->   	mutex_lock(&bs->bus_mutex);
->   	reg = __raw_readl(bs->regs + HSSPI_GLOBAL_CTRL_REG);
-> @@ -243,16 +243,16 @@ static int bcm63xx_hsspi_setup(struct spi_device
-> *spi)
->   	/* only change actual polarities if there is no transfer */
->   	if ((reg & GLOBAL_CTRL_CS_POLARITY_MASK) == bs->cs_polarity) {
->   		if (spi->mode & SPI_CS_HIGH)
-> -			reg |= BIT(spi->chip_select);
-> +			reg |= BIT(spi_get_chipselect(spi, 0));
->   		else
-> -			reg &= ~BIT(spi->chip_select);
-> +			reg &= ~BIT(spi_get_chipselect(spi, 0));
->   		__raw_writel(reg, bs->regs + HSSPI_GLOBAL_CTRL_REG);
->   	}
->
->   	if (spi->mode & SPI_CS_HIGH)
-> -		bs->cs_polarity |= BIT(spi->chip_select);
-> +		bs->cs_polarity |= BIT(spi_get_chipselect(spi, 0));
->   	else
-> -		bs->cs_polarity &= ~BIT(spi->chip_select);
-> +		bs->cs_polarity &= ~BIT(spi_get_chipselect(spi, 0));
->
->   	mutex_unlock(&bs->bus_mutex);
->
-> @@ -283,7 +283,7 @@ static int bcm63xx_hsspi_transfer_one(struct
-> spi_master *master,
->   	 * e. At the end restore the polarities again to their default values.
->   	 */
->
-> -	dummy_cs = !spi->chip_select;
-> +	dummy_cs = !spi_get_chipselect(spi, 0);
->   	bcm63xx_hsspi_set_cs(bs, dummy_cs, true);
->
->   	list_for_each_entry(t, &msg->transfers, transfer_list) {
-> @@ -296,7 +296,7 @@ static int bcm63xx_hsspi_transfer_one(struct
-> spi_master *master,
->   		spi_transfer_delay_exec(t);
->
->   		if (t->cs_change)
-> -			bcm63xx_hsspi_set_cs(bs, spi->chip_select, false);
-> +			bcm63xx_hsspi_set_cs(bs, spi_get_chipselect(spi, 0), false);
->   	}
->
->   	mutex_lock(&bs->bus_mutex);
+I love your patch! Yet something to improve:
 
-For bcm63xx-hsspi driver,
+[auto build test ERROR on 7d3e7f64a42d66ba8da6e7b66a8d85457ef84570]
 
-Acked-by: William Zhang <william.zhang@broadcom.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Zimmermann/drm-client-Test-for-connectors-before-sending-hotplug-event/20230124-214220
+base:   7d3e7f64a42d66ba8da6e7b66a8d85457ef84570
+patch link:    https://lore.kernel.org/r/20230124134010.30263-7-tzimmermann%40suse.de
+patch subject: [Intel-gfx] [PATCH v2 06/10] drm/fb-helper: Initialize fb-helper's preferred BPP in prepare function
+config: riscv-randconfig-r042-20230123 (https://download.01.org/0day-ci/archive/20230125/202301251250.eyIn4zjn-lkp@intel.com/config)
+compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 4196ca3278f78c6e19246e54ab0ecb364e37d66a)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install riscv cross compiling tool for clang build
+        # apt-get install binutils-riscv64-linux-gnu
+        # https://github.com/intel-lab-lkp/linux/commit/70e38534e74e4d12bb02b3b352bba2aed417f541
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Thomas-Zimmermann/drm-client-Test-for-connectors-before-sending-hotplug-event/20230124-214220
+        git checkout 70e38534e74e4d12bb02b3b352bba2aed417f541
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash drivers/gpu/drm/radeon/
 
---000000000000563b9f05f30c1f6f
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
 
-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
-YDZuuBJwnyCzevMoPtVYPharioL5H3BRnQi8YoTXH7/uRo33dewYFm474yFjwwnt82TFtveVZkVq
-6h4WIQ4wTcwFfET8zMkELnGzS5SHCl8sPD+lNxxJ1JDZYwIDAQABo4IB2zCCAdcwDgYDVR0PAQH/
-BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3VyZS5nbG9i
-YWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEGCCsGAQUF
-BzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAy
-MDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xv
-YmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6hjhodHRw
-Oi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNybDAlBgNV
-HREEHjAcgRp3aWxsaWFtLnpoYW5nQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAf
-BgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUq65GzwZxydFHjjYEU/9h
-xHhPWlwwDQYJKoZIhvcNAQELBQADggEBAA2hGG3JPAdGPH0ZdohGUCIVjKz+U+EFuIDbS6A/5jqX
-VhYAxZlzj7tSjUIM7G7IhyfqPC46GKJ/4x+Amz1Z6YxNGy71L68kYD6hIbBcA5AM42QBUufly6Oa
-/ppSz3WoflVyFFQ5YXniZ+eU+2/cdnYZg4aVUnFjimOF5o3NfMLzOkhQNxbaDjFUfUYD8hKmU6v4
-0vUBj8KZ9Gi1LIagLKUREn8jku0lcLsRbnJ5Ey5ScajC/FESPyYWasOW8j8/1EoJksmhbYGKNS6C
-urb/KlmDGfVrIRYDbL0ckhGQIP5c6L+kSQZ2sHnQK0e0WgIaZYxaPYeY5u0GLCOze+3vyRMxggJt
-MIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYD
-VQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwxuh2XG3FXRL1W
-JOEwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIPV0GPci7PjhkOLQr5YYlwfjp9bZ
-8n4Nhqy3DqNgqzROMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIz
-MDEyNTAwNTc1NFowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
-CWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFl
-AwQCATANBgkqhkiG9w0BAQEFAASCAQCDeRwW7sqpu5MnOyyvjxmJvRUbfI/L5CP1JkPtuA2BZ0WX
-P6pe/eXLFP9A//7IMZwRnMYubkHF2KOwoW3nTAZfFZU1MJtjpUcUMyAey4sODSCw78wnDub+b0R4
-rbtgWN26AOILOF9V7rUdA5hd4ZZZWrSVlZOxQOnkEnrrXwRMTZ6H4LILkENVRytDPX6WcNSzofVt
-bTZisKrK4TQRGwagjsH1XbjDJQy3in8wE53Bemw/woVR/U5dKkgH5bIc7O+yvfRkg3Dze87oKtUn
-0jlTOX7lGBKRqMHxDVl2SRBQXJ+ytWpT1WR9l3AFCBIp4QCo4isjywLpWTF5YramMP+j
---000000000000563b9f05f30c1f6f--
+All errors (new ones prefixed by >>):
+
+>> drivers/gpu/drm/radeon/radeon_fb.c:352:10: error: too many arguments to function call, expected 3, have 4
+                                 &radeon_fb_helper_funcs);
+                                 ^~~~~~~~~~~~~~~~~~~~~~~
+   include/drm/drm_fb_helper.h:295:20: note: 'drm_fb_helper_prepare' declared here
+   static inline void drm_fb_helper_prepare(struct drm_device *dev,
+                      ^
+>> drivers/gpu/drm/radeon/radeon_fb.c:361:52: error: too few arguments to function call, expected 2, have 1
+           ret = drm_fb_helper_initial_config(&rfbdev->helper);
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~                ^
+   include/drm/drm_fb_helper.h:459:19: note: 'drm_fb_helper_initial_config' declared here
+   static inline int drm_fb_helper_initial_config(struct drm_fb_helper *fb_helper,
+                     ^
+   2 errors generated.
+
+
+vim +352 drivers/gpu/drm/radeon/radeon_fb.c
+
+386516744ba45d Dave Airlie       2010-03-30  326  
+386516744ba45d Dave Airlie       2010-03-30  327  int radeon_fbdev_init(struct radeon_device *rdev)
+386516744ba45d Dave Airlie       2010-03-30  328  {
+8be48d924c307e Dave Airlie       2010-03-30  329  	struct radeon_fbdev *rfbdev;
+4abe35204af82a Dave Airlie       2010-03-30  330  	int bpp_sel = 32;
+5a79395b2791cc Chris Wilson      2010-06-06  331  	int ret;
+4abe35204af82a Dave Airlie       2010-03-30  332  
+e5f243bd2edd95 Alex Deucher      2016-03-10  333  	/* don't enable fbdev if no connectors */
+e5f243bd2edd95 Alex Deucher      2016-03-10  334  	if (list_empty(&rdev->ddev->mode_config.connector_list))
+e5f243bd2edd95 Alex Deucher      2016-03-10  335  		return 0;
+e5f243bd2edd95 Alex Deucher      2016-03-10  336  
+7b8bd6bb4298ac Egbert Eich       2017-07-18  337  	/* select 8 bpp console on 8MB cards, or 16 bpp on RN50 or 32MB */
+7b8bd6bb4298ac Egbert Eich       2017-07-18  338  	if (rdev->mc.real_vram_size <= (8*1024*1024))
+4abe35204af82a Dave Airlie       2010-03-30  339  		bpp_sel = 8;
+7b8bd6bb4298ac Egbert Eich       2017-07-18  340  	else if (ASIC_IS_RN50(rdev) ||
+7b8bd6bb4298ac Egbert Eich       2017-07-18  341  		 rdev->mc.real_vram_size <= (32*1024*1024))
+7b8bd6bb4298ac Egbert Eich       2017-07-18  342  		bpp_sel = 16;
+8be48d924c307e Dave Airlie       2010-03-30  343  
+8be48d924c307e Dave Airlie       2010-03-30  344  	rfbdev = kzalloc(sizeof(struct radeon_fbdev), GFP_KERNEL);
+8be48d924c307e Dave Airlie       2010-03-30  345  	if (!rfbdev)
+8be48d924c307e Dave Airlie       2010-03-30  346  		return -ENOMEM;
+771fe6b912fca5 Jerome Glisse     2009-06-05  347  
+8be48d924c307e Dave Airlie       2010-03-30  348  	rfbdev->rdev = rdev;
+8be48d924c307e Dave Airlie       2010-03-30  349  	rdev->mode_info.rfbdev = rfbdev;
+10a231026574f9 Thierry Reding    2014-06-27  350  
+70e38534e74e4d Thomas Zimmermann 2023-01-24  351  	drm_fb_helper_prepare(rdev->ddev, &rfbdev->helper, bpp_sel,
+10a231026574f9 Thierry Reding    2014-06-27 @352  			      &radeon_fb_helper_funcs);
+785b93ef8c3097 Dave Airlie       2009-08-28  353  
+2dea2d1182179e Pankaj Bharadiya  2020-03-05  354  	ret = drm_fb_helper_init(rdev->ddev, &rfbdev->helper);
+01934c2a691882 Thierry Reding    2014-12-19  355  	if (ret)
+01934c2a691882 Thierry Reding    2014-12-19  356  		goto free;
+5a79395b2791cc Chris Wilson      2010-06-06  357  
+76a39dbfb2d1bc Daniel Vetter     2013-01-20  358  	/* disable all the possible outputs/crtcs before entering KMS mode */
+76a39dbfb2d1bc Daniel Vetter     2013-01-20  359  	drm_helper_disable_unused_functions(rdev->ddev);
+76a39dbfb2d1bc Daniel Vetter     2013-01-20  360  
+70e38534e74e4d Thomas Zimmermann 2023-01-24 @361  	ret = drm_fb_helper_initial_config(&rfbdev->helper);
+01934c2a691882 Thierry Reding    2014-12-19  362  	if (ret)
+01934c2a691882 Thierry Reding    2014-12-19  363  		goto fini;
+01934c2a691882 Thierry Reding    2014-12-19  364  
+771fe6b912fca5 Jerome Glisse     2009-06-05  365  	return 0;
+01934c2a691882 Thierry Reding    2014-12-19  366  
+01934c2a691882 Thierry Reding    2014-12-19  367  fini:
+01934c2a691882 Thierry Reding    2014-12-19  368  	drm_fb_helper_fini(&rfbdev->helper);
+01934c2a691882 Thierry Reding    2014-12-19  369  free:
+01934c2a691882 Thierry Reding    2014-12-19  370  	kfree(rfbdev);
+01934c2a691882 Thierry Reding    2014-12-19  371  	return ret;
+386516744ba45d Dave Airlie       2010-03-30  372  }
+386516744ba45d Dave Airlie       2010-03-30  373  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
