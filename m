@@ -2,161 +2,146 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A4BC54EAA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 17:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CF9C54E94
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 17:27:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236029AbjAYRWz (ORCPT
+        id S235286AbjAYR1s (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 25 Jan 2023 12:22:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47220 "EHLO
+        Wed, 25 Jan 2023 12:27:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236227AbjAYRWr (ORCPT
+        with ESMTP id S235580AbjAYR1n (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Jan 2023 12:22:47 -0500
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E4C95AA5D
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 09:22:36 -0800 (PST)
-Received: by mail-yb1-xb30.google.com with SMTP id c124so23837310ybb.13
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 09:22:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IqJXv+IInDU1mKTOWecSjx46uIp9RhIiEah7PjvPLrg=;
-        b=QlZyecSvRJAlH7daZiVbTmdMCDJawwIkjqybbPcYd50INvCOOFwycJjGFsDCENBvPF
-         JeBM9yeOQDknmaZC6LT0p7wlzLAJo3QYgAn7K1xQNCTJjPrh6oinOxgRNGwGedAqUfeH
-         4EF6oknHwKU0N6BIZOc0CJi1hrgM4W0zxm3gicvvOuEGF7JC9HCNICDdMPEAz6Lz/B5y
-         FN2dpyuojKkpe3r7ipsFxRIyHaJ4nJmkiiUGkQy6aOsuBhBZ3WzwUsGkq0uXDlGTKFEH
-         iRh4N/trPN148wcbBUC1DmqB3ErHQLF9n9pkmMXooLK6oXyXf0aS41iIJv2buhnN7zSu
-         X8Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IqJXv+IInDU1mKTOWecSjx46uIp9RhIiEah7PjvPLrg=;
-        b=2jFl/o4VB7QzYAhQM+vI3LZX+DPNlRbsD9a2lR+hqffXA9sxcCvrR8gg9C98ZiluFA
-         wt5aIsRNIJOpmtIh59YHIlcFYmVEZHpOGw63MNXpblr6tSP4wbgvUSeU8hhJHy9VHKPH
-         qbez9zpJ0ivpfjEfYASehNoGrmR8d9rtLT/1YhMeK15QzozeeFsDQhhdG98DfNSPKVPr
-         Jh0KGpERyDLlGmmLihReiRMtw9/1tqBxwBsNo/eHlRFD3SZ+Qnnth0FCMicMjUEAKjrI
-         UU9Lz/0cbjJlObmaEKCxsgoUSDxBl7zBC6XjzSyk04uRFfpBqEt6KSQjHEvlJky8dKhU
-         q3tg==
-X-Gm-Message-State: AFqh2koBpRijE/Qhrtv6x9EN450DesGDTCMnxWFPQ9+DkW8GCdb17xWu
-        /+Zu5MZyaHgTkrODjBbg4LJogovaTfWLZpSwNJS+uw==
-X-Google-Smtp-Source: AMrXdXv634nY3BrnZ3PlTUGlyUi8i7L3YenO2gMgxW5qJ4tF6Xha6yZp+2FFeWeU8OQrXrCFeHpomo5nr++haHZW7UI=
-X-Received: by 2002:a25:a408:0:b0:800:28d4:6936 with SMTP id
- f8-20020a25a408000000b0080028d46936mr2303639ybi.431.1674667354997; Wed, 25
- Jan 2023 09:22:34 -0800 (PST)
+        Wed, 25 Jan 2023 12:27:43 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 471CE55B2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 09:27:38 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 02B5F856D2;
+        Wed, 25 Jan 2023 18:27:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1674667656;
+        bh=mKeBXM5NYZAL7n1CXK8qeUt4oWmXhpL0hxj2dlk3G0c=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=EzQfkdHAI3S7I6gB8mwcy1TWYYEdHip3z7c6aBwwWttO6rcFM4ZQdbTQRtCdDm6Mt
+         mhmMTWMZGn4bmS8frP2VrseJhPaawhEtTTM9fml8cg4cr4iG7mxI2PLnlTyULe/ggw
+         JJ37qogJAb0Y8kPXeyTxsw/DLRbt9mrvtwpgylb6opReG7NUGEtv5EP++Z5wMPm0d6
+         GN3udMOkr0YiQ0b/grU/zmWM/aizOyHRYYC5eUk3W/K1YtGJUYFpStUFjcYg/2I9FG
+         mpd9rHrofLNl0MkLPZqerWm9KmdQW1Sj9SNl1npOjBmZf6XaPSCkunoRGkgueuUKW1
+         4CZd9C4ekTu0A==
+Message-ID: <a756fd20-28e4-85e7-3947-4c468bf3366d@denx.de>
+Date:   Wed, 25 Jan 2023 18:27:26 +0100
 MIME-Version: 1.0
-References: <20230125083851.27759-1-surenb@google.com> <20230125083851.27759-5-surenb@google.com>
- <Y9D4rWEsajV/WfNx@dhcp22.suse.cz> <CAJuCfpGd2eG0RSMte9OVgsRVWPo+Sj7+t8EOo8o_iKzZoh1MXA@mail.gmail.com>
- <Y9Fh9joU3vTCwYbX@dhcp22.suse.cz>
-In-Reply-To: <Y9Fh9joU3vTCwYbX@dhcp22.suse.cz>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 25 Jan 2023 09:22:23 -0800
-Message-ID: <CAJuCfpEJ1U2UHBNhLx4gggN3PLZKP5RejiZL_U5ZLxU_wdviVg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] mm: replace vma->vm_flags indirect modification in ksm_madvise
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     akpm@linux-foundation.org, michel@lespinasse.org,
-        jglisse@google.com, vbabka@suse.cz, hannes@cmpxchg.org,
-        mgorman@techsingularity.net, dave@stgolabs.net,
-        willy@infradead.org, liam.howlett@oracle.com, peterz@infradead.org,
-        ldufour@linux.ibm.com, paulmck@kernel.org, luto@kernel.org,
-        songliubraving@fb.com, peterx@redhat.com, david@redhat.com,
-        dhowells@redhat.com, hughd@google.com, bigeasy@linutronix.de,
-        kent.overstreet@linux.dev, punit.agrawal@bytedance.com,
-        lstoakes@gmail.com, peterjung1337@gmail.com, rientjes@google.com,
-        axelrasmussen@google.com, joelaf@google.com, minchan@google.com,
-        jannh@google.com, shakeelb@google.com, tatashin@google.com,
-        edumazet@google.com, gthelen@google.com, gurua@google.com,
-        arjunroy@google.com, soheil@google.com, hughlynch@google.com,
-        leewalsh@google.com, posk@google.com, will@kernel.org,
-        aneesh.kumar@linux.ibm.com, npiggin@gmail.com,
-        chenhuacai@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        qianweili@huawei.com, wangzhou1@hisilicon.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org,
-        airlied@gmail.com, daniel@ffwll.ch,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, l.stach@pengutronix.de,
-        krzysztof.kozlowski@linaro.org, patrik.r.jakobsson@gmail.com,
-        matthias.bgg@gmail.com, robdclark@gmail.com,
-        quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org,
-        tomba@kernel.org, hjc@rock-chips.com, heiko@sntech.de,
-        ray.huang@amd.com, kraxel@redhat.com, sre@kernel.org,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        tfiga@chromium.org, m.szyprowski@samsung.com, mchehab@kernel.org,
-        dimitri.sivanich@hpe.com, zhangfei.gao@linaro.org,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        dgilbert@interlog.com, hdegoede@redhat.com, mst@redhat.com,
-        jasowang@redhat.com, alex.williamson@redhat.com, deller@gmx.de,
-        jayalk@intworks.biz, viro@zeniv.linux.org.uk, nico@fluxnic.net,
-        xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, miklos@szeredi.hu,
-        mike.kravetz@oracle.com, muchun.song@linux.dev, bhe@redhat.com,
-        andrii@kernel.org, yoshfuji@linux-ipv6.org, dsahern@kernel.org,
-        kuba@kernel.org, pabeni@redhat.com, perex@perex.cz, tiwai@suse.com,
-        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-graphics-maintainer@vmware.com,
-        linux-ia64@vger.kernel.org, linux-arch@vger.kernel.org,
-        loongarch@lists.linux.dev, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-sgx@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
-        linux-crypto@vger.kernel.org, nvdimm@lists.linux.dev,
-        dmaengine@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-accelerators@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
-        target-devel@vger.kernel.org, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        devel@lists.orangefs.org, kexec@lists.infradead.org,
-        linux-xfs@vger.kernel.org, bpf@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, kasan-dev@googlegroups.com,
-        selinux@vger.kernel.org, alsa-devel@alsa-project.org,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [RESEND PATCH v11 13/18] drm: exynos: dsi: Add Exynos based host
+ irq hooks
+Content-Language: en-US
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+References: <20230123151212.269082-1-jagan@amarulasolutions.com>
+ <20230123151212.269082-14-jagan@amarulasolutions.com>
+ <43f4a7dc-a4cc-7552-1a6d-a2a49fae6020@denx.de>
+ <CAMty3ZBZWERT=HpjSepSaFbpKpwZUvuG82s6+z7EgDRY5D+TFg@mail.gmail.com>
+ <fb7dfb89-42d6-139e-7ff1-4985838e222f@denx.de>
+ <CAMty3ZAYz=XEN6s1XhBWg5b77kk+s942qa9Oz4E4oHtSfaVZtA@mail.gmail.com>
+ <CAMty3ZB8jAoKzXpPJzrfH6bOGBOpJRuTacgQDSg8kVuhg7p37Q@mail.gmail.com>
+ <CAMty3ZDNwJ40pPJFKqwMd13y-rF9ELb5N6JZffea6T4dnD-0nA@mail.gmail.com>
+ <d8e539bd-93db-fb6f-eaec-463f382a1dfb@denx.de>
+ <CAMty3ZBxbwwocAwZ18o8tis54SRC64853b+p8VfzcD=OWrjP6Q@mail.gmail.com>
+ <c67cdb83-2fef-ad7c-f2c4-e2a6eb09a3e8@denx.de>
+ <CAMty3ZAh7J6_X9NkE+-mBrHBFx+KfuQXPBUYyL5g2vu_Y5X9iw@mail.gmail.com>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <CAMty3ZAh7J6_X9NkE+-mBrHBFx+KfuQXPBUYyL5g2vu_Y5X9iw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jan 25, 2023 at 9:08 AM Michal Hocko <mhocko@suse.com> wrote:
->
-> On Wed 25-01-23 08:57:48, Suren Baghdasaryan wrote:
-> > On Wed, Jan 25, 2023 at 1:38 AM 'Michal Hocko' via kernel-team
-> > <kernel-team@android.com> wrote:
-> > >
-> > > On Wed 25-01-23 00:38:49, Suren Baghdasaryan wrote:
-> > > > Replace indirect modifications to vma->vm_flags with calls to modifier
-> > > > functions to be able to track flag changes and to keep vma locking
-> > > > correctness. Add a BUG_ON check in ksm_madvise() to catch indirect
-> > > > vm_flags modification attempts.
-> > >
-> > > Those BUG_ONs scream to much IMHO. KSM is an MM internal code so I
-> > > gueess we should be willing to trust it.
-> >
-> > Yes, but I really want to prevent an indirect misuse since it was not
-> > easy to find these. If you feel strongly about it I will remove them
-> > or if you have a better suggestion I'm all for it.
->
-> You can avoid that by making flags inaccesible directly, right?
+On 1/25/23 18:12, Jagan Teki wrote:
+> On Wed, Jan 25, 2023 at 10:16 PM Marek Vasut <marex@denx.de> wrote:
+>>
+>> On 1/25/23 15:04, Jagan Teki wrote:
+>>> On Wed, Jan 25, 2023 at 7:23 PM Marek Vasut <marex@denx.de> wrote:
+>>>>
+>>>> On 1/25/23 07:54, Jagan Teki wrote:
+>>>>> On Wed, Jan 25, 2023 at 2:54 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>>>>>>
+>>>>>> On Wed, Jan 25, 2023 at 2:54 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>>>>>>>
+>>>>>>> On Wed, Jan 25, 2023 at 2:42 AM Marek Vasut <marex@denx.de> wrote:
+>>>>>>>>
+>>>>>>>> On 1/24/23 22:01, Jagan Teki wrote:
+>>>>>>>>> On Wed, Jan 25, 2023 at 2:18 AM Marek Vasut <marex@denx.de> wrote:
+>>>>>>>>>>
+>>>>>>>>>> On 1/23/23 16:12, Jagan Teki wrote:
+>>>>>>>>>>> Enable and disable of te_gpio's are Exynos platform specific
+>>>>>>>>>>> irq handling, so add the exynos based irq operations and hook
+>>>>>>>>>>> them for exynos plat_data.
+>>>>>>>>>>
+>>>>>>>>>> If this is just an optional generic GPIO IRQ, why not keep it in the
+>>>>>>>>>> core code ? TE (tearing enable?) should be available on MX8M too.
+>>>>>>>>>
+>>>>>>>>> So far the discussion (since from initial versions) with Marek
+>>>>>>>>> Szyprowski, seems to be available in Exynos. So, I keep it separate
+>>>>>>>>> from the DSIM core.
+>>>>>>>>
+>>>>>>>> Isn't TE a generic GPIO IRQ ? If so, it is available also on i.MX8M .
+>>>>>>
+>>>>>> I will check this.
+>>>>>
+>>>>> In order to use TE_GPIO we need te handler implementation, right now
+>>>>> Exynos CRTC DRM drivers have implementation for this. That is the main
+>>>>> reason to keep the TE_GPIO handling in exynos, maybe if we handle that
+>>>>> generically then it is a viable option to move TE_GPIO to the DSIM
+>>>>> core.
+>>>>
+>>>> I think you can do this exactly the same way exynos does it -- check
+>>>> whether te_handler() callback is implemented by the glue code (the one
+>>>> you already have for various exynos and imx8mm/imx8mm SoCs) and if so,
+>>>> call it. If it is not implemented, do not call anything in the TE IRQ
+>>>> handler.
+>>>
+>>> I need to understand how i.MX8MM handles this on TE IRQ in the DSIM
+>>> host side, Can I do this in future patch set as it might involve
+>>> bindings changes as well if it's part of DSIM?
+>>
+>> Why not leave an empty te_handler implementation on MX8M for now ?
+>> You can fill that implementation in future patchset, but the generic
+>> part of the code would be in place .
+> 
+> Look like we have one issue to move regster te_irq into samsung-dsim.
+> 
+> exynos_dsi_register_te_irq is done after the bridge attach is done in
+> Exynos, here bridge attach is triggered in the component ops bind
+> call, since samsung-dsim is a pure bridge w/o any component ops.
+> https://github.com/openedev/kernel/blob/imx8mm-dsi-v12/drivers/gpu/drm/bridge/samsung-dsim.c#L1527
+> https://github.com/openedev/kernel/blob/imx8mm-dsi-v12/drivers/gpu/drm/exynos/exynos_drm_dsi.c#L112
+> 
+> Any suggestion on how to handle this?
 
-Ah, you mean Peter's suggestion of using __private? I guess that would
-cover it. I'll drop these BUG_ONs in the next version. Thanks!
-
->
-> --
-> Michal Hocko
-> SUSE Labs
+Why isn't the generic code calling drm_bridge_attach() in 
+samsung_dsim_host_attach(), like the exynos one ?
