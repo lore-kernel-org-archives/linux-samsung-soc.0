@@ -2,156 +2,117 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB11C27C76
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 12:13:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE5BC27C76
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 13:53:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235424AbjAYMNH (ORCPT
+        id S235248AbjAYNxy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 25 Jan 2023 07:13:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52084 "EHLO
+        Wed, 25 Jan 2023 08:53:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235387AbjAYMNF (ORCPT
+        with ESMTP id S235236AbjAYNxv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Jan 2023 07:13:05 -0500
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D079614E8C;
-        Wed, 25 Jan 2023 04:13:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674648782; x=1706184782;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BlYL5ZWxfpIGJfWCOvZGguBgymIDRUM5a8fZph+HpbU=;
-  b=IVms/xwalWAAxbxSySt4IZtjNoJfVX+X4bN6bFWWFIeJC4tNGsBhus6Y
-   Bv+2jVbRe75jnV0o+m4bmtbRLZcaGpu/aKmB9ifJLs/MYpqRiAXS82j6v
-   2yGtPPHHqWH9vcaEY/JhBdH5KyxGqlswSO9FK7ctcEtjVDUz6MWGAF0lQ
-   TMABESVcDhXcoGhriDVw8iG32Uw5qchAasm6RGwVX0HbF1GTJHd9fz//v
-   ZOxLM86mF/3lzcLlB2y4KYCTNUTt8IVaSEWRKWGYQYruBM80FzwSi4qP+
-   XFh5tmLm9GpeV9g4CS6GoAJU9FXKhubop6iSwOf+7AXcMA4ljDyq4sGG1
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10600"; a="391044966"
-X-IronPort-AV: E=Sophos;i="5.97,245,1669104000"; 
-   d="scan'208";a="391044966"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2023 04:13:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10600"; a="725833858"
-X-IronPort-AV: E=Sophos;i="5.97,245,1669104000"; 
-   d="scan'208";a="725833858"
-Received: from lkp-server01.sh.intel.com (HELO 5646d64e7320) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 25 Jan 2023 04:12:57 -0800
-Received: from kbuild by 5646d64e7320 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pKee9-0007He-0L;
-        Wed, 25 Jan 2023 12:12:57 +0000
-Date:   Wed, 25 Jan 2023 20:12:30 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>, airlied@gmail.com,
-        daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, javierm@redhat.com
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        linux-tegra@vger.kernel.org, freedreno@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [Intel-gfx] [PATCH v2 06/10] drm/fb-helper: Initialize
- fb-helper's preferred BPP in prepare function
-Message-ID: <202301252016.vm7ksFra-lkp@intel.com>
-References: <20230124134010.30263-7-tzimmermann@suse.de>
+        Wed, 25 Jan 2023 08:53:51 -0500
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 948E72B2B8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 05:53:50 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id C6613851A8;
+        Wed, 25 Jan 2023 14:53:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1674654828;
+        bh=uEaUp4riWCv7pn9QdMjebBrffleNL6j6TZrtCY1PtqY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=btzHJ8bKbmH8X1h1M0PUY3cyA5jslvFSwes1bdTKsT9rTYouM5Ca63kTY+UAUjoUf
+         lpbk8BrRPBJ44O54hV9T310hBCBJ5ngTRUGQoxuNTPshIMWBwNsr341d2/hXn5B8l1
+         G7KkonfOp2KWPwuaEi8wvdqEvHVUjMx5PVOMfl8BgEZGLk0/KpEwSNK/4SNeBqs54N
+         8haEAgd+MpuqJXPz5tdxoKaABgzZyUjbjooH+2Y1wKdb4zk6TOAPt5hmAmw+b+XtW3
+         F+Cyo/8STxSIMqH2zHUA4iT77lw1OQb1WDo+s5W6vekx5ndnj8TAZh5xKrBg5timnR
+         NlUshHgjuYSfA==
+Message-ID: <d8e539bd-93db-fb6f-eaec-463f382a1dfb@denx.de>
+Date:   Wed, 25 Jan 2023 14:53:46 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230124134010.30263-7-tzimmermann@suse.de>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [RESEND PATCH v11 13/18] drm: exynos: dsi: Add Exynos based host
+ irq hooks
+Content-Language: en-US
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+References: <20230123151212.269082-1-jagan@amarulasolutions.com>
+ <20230123151212.269082-14-jagan@amarulasolutions.com>
+ <43f4a7dc-a4cc-7552-1a6d-a2a49fae6020@denx.de>
+ <CAMty3ZBZWERT=HpjSepSaFbpKpwZUvuG82s6+z7EgDRY5D+TFg@mail.gmail.com>
+ <fb7dfb89-42d6-139e-7ff1-4985838e222f@denx.de>
+ <CAMty3ZAYz=XEN6s1XhBWg5b77kk+s942qa9Oz4E4oHtSfaVZtA@mail.gmail.com>
+ <CAMty3ZB8jAoKzXpPJzrfH6bOGBOpJRuTacgQDSg8kVuhg7p37Q@mail.gmail.com>
+ <CAMty3ZDNwJ40pPJFKqwMd13y-rF9ELb5N6JZffea6T4dnD-0nA@mail.gmail.com>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <CAMty3ZDNwJ40pPJFKqwMd13y-rF9ELb5N6JZffea6T4dnD-0nA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Thomas,
+On 1/25/23 07:54, Jagan Teki wrote:
+> On Wed, Jan 25, 2023 at 2:54 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>>
+>> On Wed, Jan 25, 2023 at 2:54 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>>>
+>>> On Wed, Jan 25, 2023 at 2:42 AM Marek Vasut <marex@denx.de> wrote:
+>>>>
+>>>> On 1/24/23 22:01, Jagan Teki wrote:
+>>>>> On Wed, Jan 25, 2023 at 2:18 AM Marek Vasut <marex@denx.de> wrote:
+>>>>>>
+>>>>>> On 1/23/23 16:12, Jagan Teki wrote:
+>>>>>>> Enable and disable of te_gpio's are Exynos platform specific
+>>>>>>> irq handling, so add the exynos based irq operations and hook
+>>>>>>> them for exynos plat_data.
+>>>>>>
+>>>>>> If this is just an optional generic GPIO IRQ, why not keep it in the
+>>>>>> core code ? TE (tearing enable?) should be available on MX8M too.
+>>>>>
+>>>>> So far the discussion (since from initial versions) with Marek
+>>>>> Szyprowski, seems to be available in Exynos. So, I keep it separate
+>>>>> from the DSIM core.
+>>>>
+>>>> Isn't TE a generic GPIO IRQ ? If so, it is available also on i.MX8M .
+>>
+>> I will check this.
+> 
+> In order to use TE_GPIO we need te handler implementation, right now
+> Exynos CRTC DRM drivers have implementation for this. That is the main
+> reason to keep the TE_GPIO handling in exynos, maybe if we handle that
+> generically then it is a viable option to move TE_GPIO to the DSIM
+> core.
 
-I love your patch! Yet something to improve:
-
-[auto build test ERROR on 7d3e7f64a42d66ba8da6e7b66a8d85457ef84570]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Zimmermann/drm-client-Test-for-connectors-before-sending-hotplug-event/20230124-214220
-base:   7d3e7f64a42d66ba8da6e7b66a8d85457ef84570
-patch link:    https://lore.kernel.org/r/20230124134010.30263-7-tzimmermann%40suse.de
-patch subject: [Intel-gfx] [PATCH v2 06/10] drm/fb-helper: Initialize fb-helper's preferred BPP in prepare function
-config: x86_64-randconfig-a014-20230123 (https://download.01.org/0day-ci/archive/20230125/202301252016.vm7ksFra-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/70e38534e74e4d12bb02b3b352bba2aed417f541
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Thomas-Zimmermann/drm-client-Test-for-connectors-before-sending-hotplug-event/20230124-214220
-        git checkout 70e38534e74e4d12bb02b3b352bba2aed417f541
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash drivers/gpu/drm/gma500/
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
->> drivers/gpu/drm/gma500/framebuffer.c:412:44: error: too many arguments to function call, expected 3, have 4
-           drm_fb_helper_prepare(dev, fb_helper, 32, &psb_fb_helper_funcs);
-           ~~~~~~~~~~~~~~~~~~~~~                     ^~~~~~~~~~~~~~~~~~~~
-   include/drm/drm_fb_helper.h:295:20: note: 'drm_fb_helper_prepare' declared here
-   static inline void drm_fb_helper_prepare(struct drm_device *dev,
-                      ^
->> drivers/gpu/drm/gma500/framebuffer.c:421:46: error: too few arguments to function call, expected 2, have 1
-           ret = drm_fb_helper_initial_config(fb_helper);
-                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~          ^
-   include/drm/drm_fb_helper.h:459:19: note: 'drm_fb_helper_initial_config' declared here
-   static inline int drm_fb_helper_initial_config(struct drm_fb_helper *fb_helper,
-                     ^
-   2 errors generated.
-
-
-vim +412 drivers/gpu/drm/gma500/framebuffer.c
-
-   397	
-   398	int psb_fbdev_init(struct drm_device *dev)
-   399	{
-   400		struct drm_fb_helper *fb_helper;
-   401		struct drm_psb_private *dev_priv = to_drm_psb_private(dev);
-   402		int ret;
-   403	
-   404		fb_helper = kzalloc(sizeof(*fb_helper), GFP_KERNEL);
-   405		if (!fb_helper) {
-   406			dev_err(dev->dev, "no memory\n");
-   407			return -ENOMEM;
-   408		}
-   409	
-   410		dev_priv->fb_helper = fb_helper;
-   411	
- > 412		drm_fb_helper_prepare(dev, fb_helper, 32, &psb_fb_helper_funcs);
-   413	
-   414		ret = drm_fb_helper_init(dev, fb_helper);
-   415		if (ret)
-   416			goto free;
-   417	
-   418		/* disable all the possible outputs/crtcs before entering KMS mode */
-   419		drm_helper_disable_unused_functions(dev);
-   420	
- > 421		ret = drm_fb_helper_initial_config(fb_helper);
-   422		if (ret)
-   423			goto fini;
-   424	
-   425		return 0;
-   426	
-   427	fini:
-   428		drm_fb_helper_fini(fb_helper);
-   429	free:
-   430		kfree(fb_helper);
-   431		return ret;
-   432	}
-   433	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+I think you can do this exactly the same way exynos does it -- check 
+whether te_handler() callback is implemented by the glue code (the one 
+you already have for various exynos and imx8mm/imx8mm SoCs) and if so, 
+call it. If it is not implemented, do not call anything in the TE IRQ 
+handler.
