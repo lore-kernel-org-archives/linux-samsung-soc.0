@@ -2,157 +2,131 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6B1C54E94
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 19:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C7FC27C76
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 19:25:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236177AbjAYTXI (ORCPT
+        id S235303AbjAYTZC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 25 Jan 2023 14:23:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38050 "EHLO
+        Wed, 25 Jan 2023 14:25:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236146AbjAYTXE (ORCPT
+        with ESMTP id S234966AbjAYTZA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Jan 2023 14:23:04 -0500
-Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D078B5BAF
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 11:22:50 -0800 (PST)
-Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-4c24993965eso278097067b3.12
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 11:22:50 -0800 (PST)
+        Wed, 25 Jan 2023 14:25:00 -0500
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 983F172BB
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 11:24:58 -0800 (PST)
+Received: by mail-yb1-xb2c.google.com with SMTP id t16so19692211ybk.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 11:24:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
+        d=amarulasolutions.com; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PCnMypYs8jymH6Ufuva+9r/69Y/DZs8kYxwQEYrzQFk=;
-        b=hXTUs83qvSMCw0sqrewtph/1zyRGQA8EwV9VOqASoIhN1O27YlTeLHvU30LwpkaPKE
-         6ZtbduOBpeU0Mk6yScQyxHGjdOZ8W8NbAK7HCSbKR2qQVwpslpoP2Mqh8DnM60UrkSEV
-         Fy/rJx/xAj6ReR1yQheSDvUeiLsUOZe36GsXUe+/pA5dp4+pot+ScO1k5jhTafZOkoJo
-         vEjMe7B3/0BupSIQn5CSlkYjolaKBFMYB73xyId061H8p1ZYZbkvvK9SPdZltanRDpUl
-         vOuM+M/xFo7tmOP85pcv8h038+SVqlBqYWxO3Lgun0O5W06va+PJHK2pFsHgrhvmIiGL
-         lvow==
+        bh=kjCOH+Bah/rBQEkuY52H26Uj32tdQ7thposSFvWsa0U=;
+        b=TN7YHmXzQ3wjzP9Ck1OVEcK4t58+AbefJbHKE0l3WJcjJP4Om58Gjokv1C8CaXnAcW
+         nYKB9qZ2B52WKif5+y7HAWSSYJPxo5I01oMIw1YkZMIGi6arOuz55v2gCE2gy7DHkhws
+         fA3Or4HKz9/pqH4DDEhzRNR+DFWPjP63+6YRo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PCnMypYs8jymH6Ufuva+9r/69Y/DZs8kYxwQEYrzQFk=;
-        b=oS/MLYB8hSJ8MOf8h2A7pbD8p/7MlLMeI5zX8968Ab+3H1o2wNz23v4ZgSpOB4y32j
-         IrPVcvk1IbVt6cmyXeenzNwIZN/YDqkFYIu+vFJqJsrNH8tWM4Yu1ClR7AoF7zazZWXz
-         qeBdy+AXFY1IyHicA/75CIa3eBMtZub4eKOGZn96EPXUGlAnCIkMQ/FwIzXKwCV6xg4c
-         rvbqALZGhYLHC9A1PD3uMKbdAO9wILx+oGSF1Eq2tQeoDZaCIa06HNq9VVNE0SX8eEW9
-         tURzupkGFzQga+X7DsGOUyIytV/rJfayagwpxvTUjFC+tTQDZv4w8lI+hfSmDJX5ab51
-         X5Lg==
-X-Gm-Message-State: AO0yUKWXtyNScqJldWRtWhO8fc+ZNuh1GzLsRgAvzJKXA651JvTgcHgf
-        lA4kyYzpvBFyzKDlcOMLQSJPGFjrYVLH583RfKadog==
-X-Google-Smtp-Source: AK7set/Rj29H3r8vHaYccCmp943Un+QyMRF/w8dcRdt99GFw8apI+/L+5tSmXBTsBLdlTBniti7hA8kyFbpjr3H10kc=
-X-Received: by 2002:a0d:d456:0:b0:507:26dc:ebd with SMTP id
- w83-20020a0dd456000000b0050726dc0ebdmr298632ywd.455.1674674569763; Wed, 25
- Jan 2023 11:22:49 -0800 (PST)
+        bh=kjCOH+Bah/rBQEkuY52H26Uj32tdQ7thposSFvWsa0U=;
+        b=zyl19EkVMP44ICffAe7dur3rqr97VNnnE361lePC0Po2Owf/gVvMZh60TTf0Cnmxb3
+         H10Y6BTMZndeASy+Ign0cqIA/jedyCXzRlkp7WxK+E1d1J1kncZUHQb87E1OuRtq5irA
+         CoGeQns8/sNMRAP8gQwmbJM9kARwo+HottUNdMu0mU1L7STHCucDipQSttYAYCYLgGnq
+         5LQO6cbeYOhAAb3JXt2XdAD1iQg4guBL8+wbQoZJGVP/HkefOlIiqNFlTTy1iS0TwK8s
+         K8BnRFzsNQL09L16TWpjQ7qFEfzBUoP0RfcGwswZQMpnIr7rp7tu9n668vB40Yzq6iRb
+         fDOA==
+X-Gm-Message-State: AO0yUKWVNA9FtiSYk/yQNAsK8QF40cAbrqLHgKdmsevvfuof8BLHTIsj
+        T2B1u8p32zgPcQajtCaX2jXLtKJBrlN2wTfZaXCnCA==
+X-Google-Smtp-Source: AK7set/Ubjl/kR4XwJKyXJklCNuk6uw5bs8ayrSC/puhHItAJpvdjyRHNS7xDQs6m2Sadjo8lcfO3DKG2/svHfyov2E=
+X-Received: by 2002:a25:3749:0:b0:80b:6fc1:8b32 with SMTP id
+ e70-20020a253749000000b0080b6fc18b32mr665824yba.126.1674674697800; Wed, 25
+ Jan 2023 11:24:57 -0800 (PST)
 MIME-Version: 1.0
-References: <20230125083851.27759-1-surenb@google.com> <20230125083851.27759-2-surenb@google.com>
- <Y9F19QEDX5d/44EV@casper.infradead.org>
-In-Reply-To: <Y9F19QEDX5d/44EV@casper.infradead.org>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 25 Jan 2023 11:22:38 -0800
-Message-ID: <CAJuCfpH+LMFX=TT04gSMA05cz_-CXMum6fobRrduWvzm1HWPmQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] mm: introduce vma->vm_flags modifier functions
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     akpm@linux-foundation.org, michel@lespinasse.org,
-        jglisse@google.com, mhocko@suse.com, vbabka@suse.cz,
-        hannes@cmpxchg.org, mgorman@techsingularity.net, dave@stgolabs.net,
-        liam.howlett@oracle.com, peterz@infradead.org,
-        ldufour@linux.ibm.com, paulmck@kernel.org, luto@kernel.org,
-        songliubraving@fb.com, peterx@redhat.com, david@redhat.com,
-        dhowells@redhat.com, hughd@google.com, bigeasy@linutronix.de,
-        kent.overstreet@linux.dev, punit.agrawal@bytedance.com,
-        lstoakes@gmail.com, peterjung1337@gmail.com, rientjes@google.com,
-        axelrasmussen@google.com, joelaf@google.com, minchan@google.com,
-        jannh@google.com, shakeelb@google.com, tatashin@google.com,
-        edumazet@google.com, gthelen@google.com, gurua@google.com,
-        arjunroy@google.com, soheil@google.com, hughlynch@google.com,
-        leewalsh@google.com, posk@google.com, will@kernel.org,
-        aneesh.kumar@linux.ibm.com, npiggin@gmail.com,
-        chenhuacai@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        qianweili@huawei.com, wangzhou1@hisilicon.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org,
-        airlied@gmail.com, daniel@ffwll.ch,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, l.stach@pengutronix.de,
-        krzysztof.kozlowski@linaro.org, patrik.r.jakobsson@gmail.com,
-        matthias.bgg@gmail.com, robdclark@gmail.com,
-        quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org,
-        tomba@kernel.org, hjc@rock-chips.com, heiko@sntech.de,
-        ray.huang@amd.com, kraxel@redhat.com, sre@kernel.org,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        tfiga@chromium.org, m.szyprowski@samsung.com, mchehab@kernel.org,
-        dimitri.sivanich@hpe.com, zhangfei.gao@linaro.org,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        dgilbert@interlog.com, hdegoede@redhat.com, mst@redhat.com,
-        jasowang@redhat.com, alex.williamson@redhat.com, deller@gmx.de,
-        jayalk@intworks.biz, viro@zeniv.linux.org.uk, nico@fluxnic.net,
-        xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, miklos@szeredi.hu,
-        mike.kravetz@oracle.com, muchun.song@linux.dev, bhe@redhat.com,
-        andrii@kernel.org, yoshfuji@linux-ipv6.org, dsahern@kernel.org,
-        kuba@kernel.org, pabeni@redhat.com, perex@perex.cz, tiwai@suse.com,
-        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-graphics-maintainer@vmware.com,
-        linux-ia64@vger.kernel.org, linux-arch@vger.kernel.org,
-        loongarch@lists.linux.dev, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-sgx@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
-        linux-crypto@vger.kernel.org, nvdimm@lists.linux.dev,
-        dmaengine@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-accelerators@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
-        target-devel@vger.kernel.org, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        devel@lists.orangefs.org, kexec@lists.infradead.org,
-        linux-xfs@vger.kernel.org, bpf@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, kasan-dev@googlegroups.com,
-        selinux@vger.kernel.org, alsa-devel@alsa-project.org,
-        kernel-team@android.com
+References: <20230123151212.269082-1-jagan@amarulasolutions.com>
+ <20230123151212.269082-14-jagan@amarulasolutions.com> <43f4a7dc-a4cc-7552-1a6d-a2a49fae6020@denx.de>
+ <CAMty3ZBZWERT=HpjSepSaFbpKpwZUvuG82s6+z7EgDRY5D+TFg@mail.gmail.com>
+ <fb7dfb89-42d6-139e-7ff1-4985838e222f@denx.de> <CAMty3ZAYz=XEN6s1XhBWg5b77kk+s942qa9Oz4E4oHtSfaVZtA@mail.gmail.com>
+ <CAMty3ZB8jAoKzXpPJzrfH6bOGBOpJRuTacgQDSg8kVuhg7p37Q@mail.gmail.com>
+ <CAMty3ZDNwJ40pPJFKqwMd13y-rF9ELb5N6JZffea6T4dnD-0nA@mail.gmail.com>
+ <d8e539bd-93db-fb6f-eaec-463f382a1dfb@denx.de> <CAMty3ZBxbwwocAwZ18o8tis54SRC64853b+p8VfzcD=OWrjP6Q@mail.gmail.com>
+ <c67cdb83-2fef-ad7c-f2c4-e2a6eb09a3e8@denx.de> <CAMty3ZAh7J6_X9NkE+-mBrHBFx+KfuQXPBUYyL5g2vu_Y5X9iw@mail.gmail.com>
+ <a756fd20-28e4-85e7-3947-4c468bf3366d@denx.de> <CAMty3ZDTcnN_NgjL8hEBnABpFcaE=hCegZnzaC9tz-7wFxYSmw@mail.gmail.com>
+ <94f847b0-769d-e28b-11c0-b817b30c704f@denx.de>
+In-Reply-To: <94f847b0-769d-e28b-11c0-b817b30c704f@denx.de>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 26 Jan 2023 00:54:46 +0530
+Message-ID: <CAMty3ZBTRO55N87u+YS+MtOn-D=-YRbe1Gnm8uuQM04ULuT_Vw@mail.gmail.com>
+Subject: Re: [RESEND PATCH v11 13/18] drm: exynos: dsi: Add Exynos based host
+ irq hooks
+To:     Marek Vasut <marex@denx.de>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jan 25, 2023 at 10:33 AM Matthew Wilcox <willy@infradead.org> wrote:
+On Wed, Jan 25, 2023 at 11:33 PM Marek Vasut <marex@denx.de> wrote:
 >
-> On Wed, Jan 25, 2023 at 12:38:46AM -0800, Suren Baghdasaryan wrote:
-> > +/* Use when VMA is not part of the VMA tree and needs no locking */
-> > +static inline void init_vm_flags(struct vm_area_struct *vma,
-> > +                              unsigned long flags)
-> > +{
-> > +     vma->vm_flags = flags;
+> On 1/25/23 18:35, Jagan Teki wrote:
 >
-> vm_flags are supposed to have type vm_flags_t.  That's not been
-> fully realised yet, but perhaps we could avoid making it worse?
+> [...]
 >
-> >       pgprot_t vm_page_prot;
-> > -     unsigned long vm_flags;         /* Flags, see mm.h. */
-> > +
-> > +     /*
-> > +      * Flags, see mm.h.
-> > +      * WARNING! Do not modify directly.
-> > +      * Use {init|reset|set|clear|mod}_vm_flags() functions instead.
-> > +      */
-> > +     unsigned long vm_flags;
+> >>> exynos_dsi_register_te_irq is done after the bridge attach is done in
+> >>> Exynos, here bridge attach is triggered in the component ops bind
+> >>> call, since samsung-dsim is a pure bridge w/o any component ops.
+> >>> https://github.com/openedev/kernel/blob/imx8mm-dsi-v12/drivers/gpu/drm/bridge/samsung-dsim.c#L1527
+> >>> https://github.com/openedev/kernel/blob/imx8mm-dsi-v12/drivers/gpu/drm/exynos/exynos_drm_dsi.c#L112
+> >>>
+> >>> Any suggestion on how to handle this?
+> >>
+> >> Why isn't the generic code calling drm_bridge_attach() in
+> >> samsung_dsim_host_attach(), like the exynos one ?
+> >
+> > Exynos drm drivers follow component ops and generic dsim is a pure drm
+> > bridge whose downstream bridge will attach in bridge ops attach and
+> > the component-based drivers require an initial bridge attach (whose
+> > previous is NULL) call in the component bind hook for establishing the
+> > bridge chain.
 >
-> Including changing this line to vm_flags_t
+> Well in that case, call the exynos optional host_attach and register the
+> TE IRQ handler at the end, that should work just fine too, right ? If
+> so, then you can also move the IRQ handler registration into the generic
+> part of the driver.
 
-Good point. Will make the change. Thanks!
+Something like this?
+
+samsung_dsim_host_attach()
+{
+        drm_bridge_add(&dsi->bridge);
+
+        if (pdata->host_ops && pdata->host_ops->attach)
+                pdata->host_ops->attach(dsi, device);
+
+        exynos_dsi_register_te_irq
+
+        dsi->lanes = device->lanes;
+        dsi->format = device->format;
+        dsi->mode_flags = device->mode_flags;
+}
+
+Jagan.
