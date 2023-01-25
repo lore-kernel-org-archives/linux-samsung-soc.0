@@ -2,59 +2,44 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32081C27C76
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 16:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD2ADC54EAA
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 16:46:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229953AbjAYQDD (ORCPT
+        id S235078AbjAYQqt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 25 Jan 2023 11:03:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43298 "EHLO
+        Wed, 25 Jan 2023 11:46:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235501AbjAYQDA (ORCPT
+        with ESMTP id S234493AbjAYQqs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Jan 2023 11:03:00 -0500
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58FFD6EB6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 08:02:59 -0800 (PST)
-Received: by mail-yb1-xb36.google.com with SMTP id h5so6660326ybj.8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 08:02:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GWAQIHIaK4kY4F/qnaA0oyYRwbLACZjXU/o10X03g+8=;
-        b=oSDVXFnRqBTSFX9MpTINvF4dwnkWCgh7Ct/vBhzxizJUNRw4cPZ5y310BiD9rZ+5rg
-         3oGuB6Gqc2SLy0j+D9JRbdDjdKf5KQkNWStHRtrJid6R4BHx+eMwTrqQQmokqx4OC+zZ
-         FfPX26+TfD2FTGNv2CSp66Nz1HxteM4DaJk6Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GWAQIHIaK4kY4F/qnaA0oyYRwbLACZjXU/o10X03g+8=;
-        b=EtArLzYkcYK/1Xhk6XIHrdcKKQQdMLnvqO7kcLadas42Q33UKTUsF0tVoRv1vmqbeJ
-         n469SG8vidPu9j7QrT9cAVFrx4dnzMzTb+suVI+9Gi/E6Os1lH9oeFMncHxQqJqUq+aT
-         MlJbNKS4zYJN4LGGZbjLVyuNxCmeZKN3bqxCtKfAFy7+ZO6YW7Xjg6dHTbdJxNiLL+Se
-         BjJQbS/gWLtGHMs5UfTfi/87t7B8Pk+OqwHHeV23fSAnW09tKWnGvXCk8d+rxSaRCSGZ
-         AhI3X3rWQYfZsRgLbxT3SSRVi/1QDGHRPif+rtzWVD6pvsdgOGT6YadYduriQFQencAN
-         5shA==
-X-Gm-Message-State: AO0yUKVKsxKJke4zZ4+0ZTnJ2rQIZJTyvkTP/Xbstv3fbWSqmiUNqJ+h
-        H6jROrc3xe4NSbdatqfB0eIr339g3yfRt8QAWOU3Mw==
-X-Google-Smtp-Source: AK7set905btTY92dMXWIlD16t90XzLedSU7F8cTub6DM31WHila/I3M6Bf4jEXYJqclVmDSdBDKapuKj1ctwlZ175Pg=
-X-Received: by 2002:a25:d7d1:0:b0:80b:69cc:78d8 with SMTP id
- o200-20020a25d7d1000000b0080b69cc78d8mr812189ybg.475.1674662578459; Wed, 25
- Jan 2023 08:02:58 -0800 (PST)
+        Wed, 25 Jan 2023 11:46:48 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6552D59E8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 08:46:46 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 9BCA0856CA;
+        Wed, 25 Jan 2023 17:46:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1674665204;
+        bh=ELe7sNCIKhzIhAIEvK/gbGq94iiKiM0v2v0PvH85gc0=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=oz8XbnxCu2ZV30t6/kQEk5rYvTgHME+DYJnAsThYPGJ0XIoITi45VS2UV/mMxbEH9
+         li4X3z/C5ihPYKMksanzsojAI+iteGg9X3798kM3x+wuf8wa+VMwFr6b6hZ1UZ2WXO
+         OKlj9zv1ZTesft9RGiMXpCiF4wI9NQR9gvpuNGH+SYdVBSOmbZeq0U+FB5ShH2tH9W
+         m4j+cEZ+i32tCIgByfsIBeNNwwkmKRLsCvIMdhkGMHcLljAkscD0mLw3hzATHupZRZ
+         JdFfBLx61gccRCnAAsEikcvix6uALOkCn+vAO4UN4xlqCBjMxJJ6MLWBbFG0GWDh48
+         yHWRse7IFay3Q==
+Message-ID: <c67cdb83-2fef-ad7c-f2c4-e2a6eb09a3e8@denx.de>
+Date:   Wed, 25 Jan 2023 17:46:41 +0100
 MIME-Version: 1.0
-References: <20230123151212.269082-1-jagan@amarulasolutions.com>
- <20230123151212.269082-14-jagan@amarulasolutions.com> <43f4a7dc-a4cc-7552-1a6d-a2a49fae6020@denx.de>
- <CAMty3ZBZWERT=HpjSepSaFbpKpwZUvuG82s6+z7EgDRY5D+TFg@mail.gmail.com> <fb7dfb89-42d6-139e-7ff1-4985838e222f@denx.de>
-In-Reply-To: <fb7dfb89-42d6-139e-7ff1-4985838e222f@denx.de>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Wed, 25 Jan 2023 21:32:46 +0530
-Message-ID: <CAMty3ZDvdWu4E3J+8KY=fsuNCSD837AY24X4VyBhR63HYCsO0A@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
 Subject: Re: [RESEND PATCH v11 13/18] drm: exynos: dsi: Add Exynos based host
  irq hooks
-To:     Marek Vasut <marex@denx.de>
+To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -62,11 +47,9 @@ Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
         Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
         Tim Harvey <tharvey@gateworks.com>,
         Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
         Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
         Robert Foss <robert.foss@linaro.org>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
@@ -75,49 +58,72 @@ Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
         linux-arm-kernel@lists.infradead.org,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <20230123151212.269082-1-jagan@amarulasolutions.com>
+ <20230123151212.269082-14-jagan@amarulasolutions.com>
+ <43f4a7dc-a4cc-7552-1a6d-a2a49fae6020@denx.de>
+ <CAMty3ZBZWERT=HpjSepSaFbpKpwZUvuG82s6+z7EgDRY5D+TFg@mail.gmail.com>
+ <fb7dfb89-42d6-139e-7ff1-4985838e222f@denx.de>
+ <CAMty3ZAYz=XEN6s1XhBWg5b77kk+s942qa9Oz4E4oHtSfaVZtA@mail.gmail.com>
+ <CAMty3ZB8jAoKzXpPJzrfH6bOGBOpJRuTacgQDSg8kVuhg7p37Q@mail.gmail.com>
+ <CAMty3ZDNwJ40pPJFKqwMd13y-rF9ELb5N6JZffea6T4dnD-0nA@mail.gmail.com>
+ <d8e539bd-93db-fb6f-eaec-463f382a1dfb@denx.de>
+ <CAMty3ZBxbwwocAwZ18o8tis54SRC64853b+p8VfzcD=OWrjP6Q@mail.gmail.com>
+Content-Language: en-US
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <CAMty3ZBxbwwocAwZ18o8tis54SRC64853b+p8VfzcD=OWrjP6Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jan 25, 2023 at 2:42 AM Marek Vasut <marex@denx.de> wrote:
->
-> On 1/24/23 22:01, Jagan Teki wrote:
-> > On Wed, Jan 25, 2023 at 2:18 AM Marek Vasut <marex@denx.de> wrote:
-> >>
-> >> On 1/23/23 16:12, Jagan Teki wrote:
-> >>> Enable and disable of te_gpio's are Exynos platform specific
-> >>> irq handling, so add the exynos based irq operations and hook
-> >>> them for exynos plat_data.
-> >>
-> >> If this is just an optional generic GPIO IRQ, why not keep it in the
-> >> core code ? TE (tearing enable?) should be available on MX8M too.
-> >
-> > So far the discussion (since from initial versions) with Marek
-> > Szyprowski, seems to be available in Exynos. So, I keep it separate
-> > from the DSIM core.
->
-> Isn't TE a generic GPIO IRQ ? If so, it is available also on i.MX8M .
+On 1/25/23 15:04, Jagan Teki wrote:
+> On Wed, Jan 25, 2023 at 7:23 PM Marek Vasut <marex@denx.de> wrote:
+>>
+>> On 1/25/23 07:54, Jagan Teki wrote:
+>>> On Wed, Jan 25, 2023 at 2:54 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>>>>
+>>>> On Wed, Jan 25, 2023 at 2:54 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>>>>>
+>>>>> On Wed, Jan 25, 2023 at 2:42 AM Marek Vasut <marex@denx.de> wrote:
+>>>>>>
+>>>>>> On 1/24/23 22:01, Jagan Teki wrote:
+>>>>>>> On Wed, Jan 25, 2023 at 2:18 AM Marek Vasut <marex@denx.de> wrote:
+>>>>>>>>
+>>>>>>>> On 1/23/23 16:12, Jagan Teki wrote:
+>>>>>>>>> Enable and disable of te_gpio's are Exynos platform specific
+>>>>>>>>> irq handling, so add the exynos based irq operations and hook
+>>>>>>>>> them for exynos plat_data.
+>>>>>>>>
+>>>>>>>> If this is just an optional generic GPIO IRQ, why not keep it in the
+>>>>>>>> core code ? TE (tearing enable?) should be available on MX8M too.
+>>>>>>>
+>>>>>>> So far the discussion (since from initial versions) with Marek
+>>>>>>> Szyprowski, seems to be available in Exynos. So, I keep it separate
+>>>>>>> from the DSIM core.
+>>>>>>
+>>>>>> Isn't TE a generic GPIO IRQ ? If so, it is available also on i.MX8M .
+>>>>
+>>>> I will check this.
+>>>
+>>> In order to use TE_GPIO we need te handler implementation, right now
+>>> Exynos CRTC DRM drivers have implementation for this. That is the main
+>>> reason to keep the TE_GPIO handling in exynos, maybe if we handle that
+>>> generically then it is a viable option to move TE_GPIO to the DSIM
+>>> core.
+>>
+>> I think you can do this exactly the same way exynos does it -- check
+>> whether te_handler() callback is implemented by the glue code (the one
+>> you already have for various exynos and imx8mm/imx8mm SoCs) and if so,
+>> call it. If it is not implemented, do not call anything in the TE IRQ
+>> handler.
+> 
+> I need to understand how i.MX8MM handles this on TE IRQ in the DSIM
+> host side, Can I do this in future patch set as it might involve
+> bindings changes as well if it's part of DSIM?
 
-I didn't find this in the DSIM part in i.MX8M Manual nor in the i.MX
-8/RT MIPI DSI/CSI-2 or bsp kernel [1], did you find anywhere in i.MX8M
-part? Look like TE GPIO means tearing effect signal handle on the
-panel side.
-
-from, Documentation/devicetree/bindings/display/panel/panel-common.yaml
-
-  te-gpios:
-    maxItems: 1
-    description:
-      GPIO spec for the tearing effect synchronization signal.
-      The tearing effect signal is active high. Active low signals can be
-      supported by inverting the GPIO specifier polarity flag.
-
-Maybe Exynos hack this gpio on the host side instead of on the panel
-side for some reason, not sure about it - Marek Szypeowski any
-comments please?
-
-[1] https://source.codeaurora.org/external/imx/linux-imx/tree/drivers/gpu/drm/bridge/sec-dsim.c?h=imx_5.4.47_2.2.0
-
-Thanks,
-Jagan.
+Why not leave an empty te_handler implementation on MX8M for now ?
+You can fill that implementation in future patchset, but the generic 
+part of the code would be in place .
