@@ -2,193 +2,148 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9010BC05027
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 14:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA68C636D3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 14:49:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230371AbjAZOs3 (ORCPT
+        id S232081AbjAZOs7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 Jan 2023 09:48:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55750 "EHLO
+        Thu, 26 Jan 2023 09:48:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229639AbjAZOs2 (ORCPT
+        with ESMTP id S229473AbjAZOsz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Jan 2023 09:48:28 -0500
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 430083D098
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 06:48:26 -0800 (PST)
-Received: by mail-pl1-x62a.google.com with SMTP id v23so2034912plo.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 06:48:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mMIeNlQX1kpLCSK2213Nh/t20sw/zDBNyvoSqBTr940=;
-        b=F7NyYLMycjIoMjaP3DOlXk6uH4cBhJSK095XAZrEqeiEhtY0234kpDJ/jCKP5Ar58q
-         nWPzD0tNrOIdogcYU4PeAARxyDFgIjaIESTbr4eRvYsJPKKfF2Dl7aVIiYivl6+xeDXZ
-         c1AQfTvFB19+pXXKriuFj/n9hZE4e5muXIMLE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mMIeNlQX1kpLCSK2213Nh/t20sw/zDBNyvoSqBTr940=;
-        b=P5C2161eNPixiE8QmuhBtu8xj/r9IQXk7xCkoRteFtneMxiKKdgIO7G48tupOCvOi9
-         CzyRa7jMVkazTjxtCnqlLl4UM4qTPjk9mOlXuArQgNWO1f5bU0j0Krt0epM63AkxM+eU
-         PTJn2JqeyOp0Y3Mrx9E2H0dxHImXQzz/anHMDHl/oH1LikCp/q3SIF5QuJGVou9VOOOd
-         pRfz3ROeslpG7p5/Ge9Uo7OR0s1WP9hsfjbHoFllTUxsRy+k67s1z7x4mWB0Cf7MO4J6
-         KsEoWYNzL0olRXGCQt7wiewHVwPnvHI+D21302Ni0pSNBp8StuO/gotywX2dGcTR4w0o
-         Yzbg==
-X-Gm-Message-State: AO0yUKXlO1F2+nmloPu+3G8abwOzQRjsjPvAMKw5cHRTkgl9bv3LgwPX
-        sZfKomiJPTYTUXsWoVN11vylsg==
-X-Google-Smtp-Source: AK7set8m7x1NPxEBd47AGk3fztqr+4pr/7FTzJtG4adsdxO8pdkbQBiGBxb1NTJBcAvA8X+J/mhTyA==
-X-Received: by 2002:a05:6a20:ba14:b0:b8:723f:e21b with SMTP id fa20-20020a056a20ba1400b000b8723fe21bmr2005411pzb.3.1674744505688;
-        Thu, 26 Jan 2023 06:48:25 -0800 (PST)
-Received: from localhost.localdomain ([2405:201:c00a:a238:3cb1:2156:ef87:8af5])
-        by smtp.gmail.com with ESMTPSA id d197-20020a6336ce000000b0042988a04bfdsm823660pga.9.2023.01.26.06.48.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jan 2023 06:48:25 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Adam Ford <aford173@gmail.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Marek Vasut <marex@denx.de>
-Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v12 18/18] drm: bridge: samsung-dsim: Add i.MX8M Plus support
-Date:   Thu, 26 Jan 2023 20:14:27 +0530
-Message-Id: <20230126144427.607098-19-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230126144427.607098-1-jagan@amarulasolutions.com>
-References: <20230126144427.607098-1-jagan@amarulasolutions.com>
+        Thu, 26 Jan 2023 09:48:55 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 606A94489;
+        Thu, 26 Jan 2023 06:48:53 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EE0DA61856;
+        Thu, 26 Jan 2023 14:48:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05241C4339B;
+        Thu, 26 Jan 2023 14:48:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674744532;
+        bh=WNohoknU9nLfbwIXeO77neZ4yMyv64MASZK2UIAfOfc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OyaVsT5ePzTFS76R1FH5KLxOUgzscan6sLv55lgf+totKkalpj5P4hTJ0CFzpg2nB
+         FjnAcEI6WBL0tfwF/TTw8b+wwY6a9pfQDEoFaNDhDzv4Bx4E//TKL2HIis05iqFTqA
+         6cWnwUhcKJagQmydnhE9MWdKN98RZA7QH0/g2op6Qc+WX5kkWc6P8AxP1IQok4d4Iv
+         rC+rDq5bfpCpp87TX2zmlNbavkxhh4pjEZT5VQ1/5GQQQR5j3P3SiDxYUla0TLmDmY
+         tHoanGw9DWG+oAt/RnrhsxsQ7gltrsJN75kvWssUX4MOKayClNcjWM9UluK5fqquNs
+         P9OGQuC06AeFQ==
+Date:   Thu, 26 Jan 2023 16:48:04 +0200
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     akpm@linux-foundation.org, michel@lespinasse.org,
+        jglisse@google.com, mhocko@suse.com, vbabka@suse.cz,
+        hannes@cmpxchg.org, mgorman@techsingularity.net, dave@stgolabs.net,
+        willy@infradead.org, liam.howlett@oracle.com, peterz@infradead.org,
+        ldufour@linux.ibm.com, paulmck@kernel.org, luto@kernel.org,
+        songliubraving@fb.com, peterx@redhat.com, david@redhat.com,
+        dhowells@redhat.com, hughd@google.com, bigeasy@linutronix.de,
+        kent.overstreet@linux.dev, punit.agrawal@bytedance.com,
+        lstoakes@gmail.com, peterjung1337@gmail.com, rientjes@google.com,
+        axelrasmussen@google.com, joelaf@google.com, minchan@google.com,
+        jannh@google.com, shakeelb@google.com, tatashin@google.com,
+        edumazet@google.com, gthelen@google.com, gurua@google.com,
+        arjunroy@google.com, soheil@google.com, hughlynch@google.com,
+        leewalsh@google.com, posk@google.com, will@kernel.org,
+        aneesh.kumar@linux.ibm.com, npiggin@gmail.com,
+        chenhuacai@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, dave.hansen@linux.intel.com, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        qianweili@huawei.com, wangzhou1@hisilicon.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org,
+        airlied@gmail.com, daniel@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, l.stach@pengutronix.de,
+        krzysztof.kozlowski@linaro.org, patrik.r.jakobsson@gmail.com,
+        matthias.bgg@gmail.com, robdclark@gmail.com,
+        quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org,
+        tomba@kernel.org, hjc@rock-chips.com, heiko@sntech.de,
+        ray.huang@amd.com, kraxel@redhat.com, sre@kernel.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        tfiga@chromium.org, m.szyprowski@samsung.com, mchehab@kernel.org,
+        dimitri.sivanich@hpe.com, zhangfei.gao@linaro.org,
+        jejb@linux.ibm.com, martin.petersen@oracle.com,
+        dgilbert@interlog.com, hdegoede@redhat.com, mst@redhat.com,
+        jasowang@redhat.com, alex.williamson@redhat.com, deller@gmx.de,
+        jayalk@intworks.biz, viro@zeniv.linux.org.uk, nico@fluxnic.net,
+        xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, miklos@szeredi.hu,
+        mike.kravetz@oracle.com, muchun.song@linux.dev, bhe@redhat.com,
+        andrii@kernel.org, yoshfuji@linux-ipv6.org, dsahern@kernel.org,
+        kuba@kernel.org, pabeni@redhat.com, perex@perex.cz, tiwai@suse.com,
+        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-graphics-maintainer@vmware.com,
+        linux-ia64@vger.kernel.org, linux-arch@vger.kernel.org,
+        loongarch@lists.linux.dev, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-sgx@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
+        linux-crypto@vger.kernel.org, nvdimm@lists.linux.dev,
+        dmaengine@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-accelerators@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
+        target-devel@vger.kernel.org, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        devel@lists.orangefs.org, kexec@lists.infradead.org,
+        linux-xfs@vger.kernel.org, bpf@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, kasan-dev@googlegroups.com,
+        selinux@vger.kernel.org, alsa-devel@alsa-project.org,
+        kernel-team@android.com
+Subject: Re: [PATCH v2 6/6] mm: export dump_mm()
+Message-ID: <Y9KSpNJ4y0GMwkrW@kernel.org>
+References: <20230125083851.27759-1-surenb@google.com>
+ <20230125083851.27759-7-surenb@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230125083851.27759-7-surenb@google.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Marek Vasut <marex@denx.de>
+On Wed, Jan 25, 2023 at 12:38:51AM -0800, Suren Baghdasaryan wrote:
+> mmap_assert_write_locked() is used in vm_flags modifiers. Because
+> mmap_assert_write_locked() uses dump_mm() and vm_flags are sometimes
+> modified from from inside a module, it's necessary to export
+> dump_mm() function.
+> 
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 
-Add extras to support i.MX8M Plus. The main change is the removal of
-HS/VS/DE signal inversion in the LCDIFv3-DSIM glue logic, otherwise
-the implementation of this IP in i.MX8M Plus is very much compatible
-with the i.MX8M Mini/Nano one.
+Acked-by: Mike Rapoport (IBM) <rppt@kernel.org>
 
-Reviewed-by: Marek Vasut <marex@denx.de>
-Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-Acked-by: Robert Foss <robert.foss@linaro.org>
-Signed-off-by: Marek Vasut <marex@denx.de>
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v12:
-- collect RB from Marek
-Changes for v11:
-- collect RB from Frieder
-- collect ACK from Robert
-Changes for v10:
-- none
-Changes for v9:
-- added im8mp in DSIM_STATE_REINITIALIZED check
-- drop previous = NULL check
-
- drivers/gpu/drm/bridge/samsung-dsim.c | 23 +++++++++++++++++++++++
- include/drm/bridge/samsung-dsim.h     |  1 +
- 2 files changed, 24 insertions(+)
-
-diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-index fd042dbcd8d6..ec4a2106d34f 100644
---- a/drivers/gpu/drm/bridge/samsung-dsim.c
-+++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -479,6 +479,7 @@ samsung_dsim_types[DSIM_TYPE_COUNT] = {
- 	[DSIM_TYPE_EXYNOS5422] = &exynos5422_dsi_driver_data,
- 	[DSIM_TYPE_EXYNOS5433] = &exynos5433_dsi_driver_data,
- 	[DSIM_TYPE_IMX8MM] = &imx8mm_dsi_driver_data,
-+	[DSIM_TYPE_IMX8MP] = &imx8mm_dsi_driver_data,
- };
- 
- static inline struct samsung_dsim *host_to_dsi(struct mipi_dsi_host *h)
-@@ -1452,10 +1453,17 @@ static int samsung_dsim_atomic_check(struct drm_bridge *bridge,
- 	 * 13.6.2.7.2 RGB interface
- 	 * both claim "Vsync, Hsync, and VDEN are active high signals.", the
- 	 * LCDIF must generate inverted HS/VS/DE signals, i.e. active LOW.
-+	 *
-+	 * The i.MX8M Plus glue logic between LCDIFv3 and DSIM does not
-+	 * implement the same behavior, therefore LCDIFv3 must generate
-+	 * HS/VS/DE signals active HIGH.
- 	 */
- 	if (dsi->plat_data->hw_type == DSIM_TYPE_IMX8MM) {
- 		adjusted_mode->flags |= (DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC);
- 		adjusted_mode->flags &= ~(DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC);
-+	} else if (dsi->plat_data->hw_type == DSIM_TYPE_IMX8MP) {
-+		adjusted_mode->flags &= ~(DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC);
-+		adjusted_mode->flags |= (DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC);
- 	}
- 
- 	return 0;
-@@ -1678,6 +1686,10 @@ static const struct samsung_dsim_host_ops generic_dsim_host_ops = {
- 	.unregister_host = generic_dsim_unregister_host,
- };
- 
-+static const struct drm_bridge_timings samsung_dsim_bridge_timings_de_high = {
-+	.input_bus_flags = DRM_BUS_FLAG_DE_HIGH,
-+};
-+
- static const struct drm_bridge_timings samsung_dsim_bridge_timings_de_low = {
- 	.input_bus_flags = DRM_BUS_FLAG_DE_LOW,
- };
-@@ -1767,6 +1779,8 @@ int samsung_dsim_probe(struct platform_device *pdev)
- 	/* DE_LOW: i.MX8M Mini/Nano LCDIF-DSIM glue logic inverts HS/VS/DE */
- 	if (dsi->plat_data->hw_type == DSIM_TYPE_IMX8MM)
- 		dsi->bridge.timings = &samsung_dsim_bridge_timings_de_low;
-+	else
-+		dsi->bridge.timings = &samsung_dsim_bridge_timings_de_high;
- 
- 	if (dsi->plat_data->host_ops && dsi->plat_data->host_ops->register_host)
- 		ret = dsi->plat_data->host_ops->register_host(dsi);
-@@ -1872,11 +1886,20 @@ static const struct samsung_dsim_plat_data samsung_dsim_imx8mm_pdata = {
- 	.host_ops = &generic_dsim_host_ops,
- };
- 
-+static const struct samsung_dsim_plat_data samsung_dsim_imx8mp_pdata = {
-+	.hw_type = DSIM_TYPE_IMX8MP,
-+	.host_ops = &generic_dsim_host_ops,
-+};
-+
- static const struct of_device_id samsung_dsim_of_match[] = {
- 	{
- 		.compatible = "fsl,imx8mm-mipi-dsim",
- 		.data = &samsung_dsim_imx8mm_pdata,
- 	},
-+	{
-+		.compatible = "fsl,imx8mp-mipi-dsim",
-+		.data = &samsung_dsim_imx8mp_pdata,
-+	},
- 	{ /* sentinel. */ }
- };
- MODULE_DEVICE_TABLE(of, samsung_dsim_of_match);
-diff --git a/include/drm/bridge/samsung-dsim.h b/include/drm/bridge/samsung-dsim.h
-index 4ba387c958ae..fb923caf09e1 100644
---- a/include/drm/bridge/samsung-dsim.h
-+++ b/include/drm/bridge/samsung-dsim.h
-@@ -28,6 +28,7 @@ enum samsung_dsim_type {
- 	DSIM_TYPE_EXYNOS5422,
- 	DSIM_TYPE_EXYNOS5433,
- 	DSIM_TYPE_IMX8MM,
-+	DSIM_TYPE_IMX8MP,
- 	DSIM_TYPE_COUNT,
- };
- 
--- 
-2.25.1
-
+> ---
+>  mm/debug.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/mm/debug.c b/mm/debug.c
+> index 9d3d893dc7f4..96d594e16292 100644
+> --- a/mm/debug.c
+> +++ b/mm/debug.c
+> @@ -215,6 +215,7 @@ void dump_mm(const struct mm_struct *mm)
+>  		mm->def_flags, &mm->def_flags
+>  	);
+>  }
+> +EXPORT_SYMBOL(dump_mm);
+>  
+>  static bool page_init_poisoning __read_mostly = true;
+>  
+> -- 
+> 2.39.1
+> 
