@@ -2,128 +2,141 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7EB2C05027
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 10:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C01C05027
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 12:12:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237061AbjAZK76 (ORCPT
+        id S237059AbjAZMMe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 Jan 2023 05:59:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50948 "EHLO
+        Thu, 26 Jan 2023 07:12:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237047AbjAZK7h (ORCPT
+        with ESMTP id S237060AbjAZMMd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Jan 2023 05:59:37 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B37D86C563
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 02:59:25 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id h16so1328877wrz.12
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 02:59:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XGNWex4aZN5UnK5VI5imptsnGrCfs7V+r6MZ8tVGZ/Y=;
-        b=LottchB5TxsgpB2icKKUb0uQvPmmooqPUnNLmFanJPZ6UI6Mf4I57CctxPo91SuO36
-         k0KBNcTJDROO4xdaMAayMBLctuyRRTLZ6/+pm/dJXv4l36tYu1pypCuN8rIPFbUFmHTS
-         9r+za/3N3agXVpY4/yoOnN9gvA/O2JKvnm2t48IuD4vOJpWnHhbKrd8Q+chuItyScfy6
-         y7B2wNE+M3R3vP5+HBu96uavIjwrNP98vXL/8QgDSgKeGXKepW7mynyutZyMzhfExCIv
-         wbDQZxi9GryEVOsaMR/lAMUNAq4WdyB6b2Mf+TkibwVTFtdM1dCXaJ2wOEUhHdvxgh9I
-         z81A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XGNWex4aZN5UnK5VI5imptsnGrCfs7V+r6MZ8tVGZ/Y=;
-        b=oLmmyCuwK053/1gqyPu7T9sekBJ9EzB5/MR91X1DAHsFzHxyWA2JR3T4hcoeeSoepp
-         Vt8Y5KhXtf7jbpdRJaLmY+Xce4uf5o3jnYr76ZcCHclZbXN7E+HD+kLaxmgugjySN6lp
-         rD0gE2uGs1DxUGOUAoGlfzwqhshM88dhP/klzkkhJ8C1xWNtj9I4hLW+LU8w8Q1L0loj
-         MUJkulDNYFGJ2zjSVG1xb4XKx9CGtvEWsuB0Ejyy8C9K6VhYelBFC0wRcJ7LvWJjhA69
-         le3AFoK+QZ7/PTL2FQi6No0Bv1WRZRNL4vykOQ8N8rHmY+JLXcsX1ia4lC+3PZlbFzD3
-         JxHA==
-X-Gm-Message-State: AO0yUKWkc/VUDO7teLttoNNL7MeVNXr7+fZfvECgoRNkyyWuh/3fWv1x
-        YERpi+sQvAPWhEs7DIDLH+QBxg==
-X-Google-Smtp-Source: AK7set/IByWURjBOmBXELn9EmHeTvWxS4Hd9iEsMvqCqp8M/Q+k2MH5dLTurrxVoafBryTbY/LggbQ==
-X-Received: by 2002:adf:ea01:0:b0:2bf:b35d:2797 with SMTP id q1-20020adfea01000000b002bfb35d2797mr7800062wrm.11.1674730764134;
-        Thu, 26 Jan 2023 02:59:24 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id e7-20020adfe387000000b002be15ee1377sm986687wrm.22.2023.01.26.02.59.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jan 2023 02:59:23 -0800 (PST)
-Message-ID: <d8f5fa57-da3a-09f9-e297-197068264d26@linaro.org>
-Date:   Thu, 26 Jan 2023 11:59:21 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH 2/9] ARM: dts: exynos: move exynos-bus nodes out of soc in
- Exynos5420
-Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
+        Thu, 26 Jan 2023 07:12:33 -0500
+Received: from new1-smtp.messagingengine.com (new1-smtp.messagingengine.com [66.111.4.221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E26D69B26
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 04:12:32 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 43C895832A4;
+        Thu, 26 Jan 2023 07:12:31 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Thu, 26 Jan 2023 07:12:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm1; t=1674735151; x=1674742351; bh=h+X9F9/Ov3
+        IoqHzLlmAlnrB+n/1ONiXGP4XLtnNsEs0=; b=RaU6rHlVnmR2CkA2ZCRURML+2m
+        ZGBoei4WU6RaehRFjBSb1MNGTH5cs3h3PMHBYaBOc60bU5rM4ibTYqmMp0RQ94CO
+        Ly4Vy9+e+Aoks5S7VbirSvI6VQekNoka78VBbklummZQ4UbmggbXki0r+jNG4oMn
+        4xuIOU9aBFVPyCqV84r7E4R503cliAF1K+5n/Dn8jBr9qeKnlXrvQb03unp6/0RD
+        xMGIqHP74vzijeCt68FjOpdp4E/sG7f440oUtA32GBiEUYej3JcbEJVT6fycBoDX
+        9kVykq8Z2Kyt0AjGJ7f5gEcEwZoOkA4uqj+eP+NtmTEhR2yuNxQgLAUurz7g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; t=1674735151; x=1674742351; bh=h+X9F9/Ov3IoqHzLlmAlnrB+n/1O
+        NiXGP4XLtnNsEs0=; b=OepO88OFz7am6UzIu+uLKplQPHEmKFoyeLtcozGpww7O
+        qCBW55gMdLkU2USaER/65dBx1MNU+3KNw+0T80Fev0C6b/VK9lfuxyC5GC0BT1E2
+        SIiTNYCzvoncOg4SpotgWSssVPxP7c3oajfw19oFnHADyN7YZz6PFHuZnlo2mNa1
+        nYKaYf+elxDQspdO5HBd7w3fDGcVi7umcj0dfip12DGLzOPI8vFTzYmG2743cWbk
+        26pmV4SylnrW6lMz6XV+Ik0fOWwgkFsATDVqkM9bW2cLX9soss1ufKF78HO+9VIZ
+        P8wjPcE5Zz/UcE32k4aDzWSywWPKcD8gX1m6SBbkhA==
+X-ME-Sender: <xms:LW7SYxvBEipxjqKRqHkqFoOp6UuV8K6SdgJZFz9DIm6rsfitJSoY-w>
+    <xme:LW7SY6eWVHq5YN6hXCXaYL2bmupkFsj8N9ynb99Wum3_IZPWJqTigmmhUG7V0uh7t
+    PUydpv0x2PMSF-TFao>
+X-ME-Received: <xmr:LW7SY0yHssCE_h0ClVzcVpTILope-i0mLg_TiraZpaFKJn_ua0H8AQqHre4nMgbGKczzrS-dmuD0TAeiyJY33cO_34WFOatQzL9wZmYHiixOcw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedruddvgedgfeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeetfefffefgkedtfefgledugfdtjeefjedvtddtkeetieffjedvgfehheff
+    hfevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:LW7SY4NPhVicQxU9rt06Uf0U4KJYIVQUYrtpZ-WoH4AHEqfYoAvgsQ>
+    <xmx:LW7SYx9ROpl3gX3enIZEM0y-y-6FHsCmEx5BYD_SkVvEP0SBqP41Pw>
+    <xmx:LW7SY4UAMc4YfeX4Wgls7CMsGT7K4ozLSTK1QRbEV4PNgzZBJu1MEA>
+    <xmx:L27SYwA-J4c7cGshqKZSWzZAsplL3FKf6uyFbxQS1WFrGr0A4eZ3wQ>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 26 Jan 2023 07:12:29 -0500 (EST)
+Date:   Thu, 26 Jan 2023 13:12:27 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Marek Vasut <marex@denx.de>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     replicant@osuosl.org, phone-devel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        =?UTF-8?Q?Martin_J=c3=bccker?= <martin.juecker@gmail.com>,
-        Henrik Grimler <henrik@grimler.se>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-References: <20230125094513.155063-1-krzysztof.kozlowski@linaro.org>
- <CGME20230125094529eucas1p29b5f25af2c658abef13a93c49eca975f@eucas1p2.samsung.com>
- <20230125094513.155063-2-krzysztof.kozlowski@linaro.org>
- <cd42b8c9-a79a-068c-a967-810c05e818bd@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <cd42b8c9-a79a-068c-a967-810c05e818bd@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Subject: Re: [RESEND PATCH v11 02/18] drm: bridge: panel: Add
+ devm_drm_of_dsi_get_bridge helper
+Message-ID: <20230126121227.qcnftqvgiz44egpg@houat>
+References: <20230123151212.269082-1-jagan@amarulasolutions.com>
+ <20230123151212.269082-3-jagan@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4plkw473wjs2mrvy"
+Content-Disposition: inline
+In-Reply-To: <20230123151212.269082-3-jagan@amarulasolutions.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 26/01/2023 10:47, Marek Szyprowski wrote:
-> Hi Krzysztof,
-> 
-> On 25.01.2023 10:45, Krzysztof Kozlowski wrote:
->> The soc node is supposed to have only device nodes with MMIO addresses,
->> as reported by dtc W=1:
->>
->>    arch/arm/boot/dts/exynos5420.dtsi:1070.24-1075.5:
->>      Warning (simple_bus_reg): /soc/bus-wcore: missing or empty reg/ranges property
->>
->> and dtbs_check:
->>
->>    exynos5420-arndale-octa.dtb: soc: bus-wcore:
->>      {'compatible': ['samsung,exynos-bus'], 'clocks': [[2, 769]], 'clock-names': ['bus'], 'status': ['disabled']} should not be valid under {'type': 'object'}
->>
->> Move the bus nodes and their OPP tables out of SoC to fix this.
->> Re-order them alphabetically while moving and put some of the OPP tables
->> in device nodes (if they are not shared).
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Frankly speaking I'm not very keen on moving those bus nodes out of 
-> /soc. Technically speaking this is definitely a part of soc and doesn't 
-> make much sense outside of it. IMHO they describe SoC hardware details 
-> and they might be moved somehow under clock controller device(s), 
-> although this would require some changes in the bindings and drivers.
 
-That's the only way to fix it without change of drivers any ABI
-compatibility issue. The same we do for Qualcomm interconnects, e.g.
-arch/arm64/boot/dts/qcom/sm8450.dtsi where some interconnects have some
-do not have MMIO space.
+--4plkw473wjs2mrvy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I want to achieve finally clean dtbs_check run for all Exynos sources.
-The in-tree bindings already pass, so now I am fixing the ones coming
-from dtschema (simple-bus.yaml in particular).
+Hi,
 
-If you have any other idea how to seamlessly clean it up, I am happy to
-hear. But I guess the main problem is that no one is being paid for
-doing anything for Samsung Exynos, so for free not many put much effort
-into working on it.
+On Mon, Jan 23, 2023 at 08:41:56PM +0530, Jagan Teki wrote:
+> Add devm OF helper to return the next DSI bridge in the chain.
+>=20
+> Unlike general bridge return helper devm_drm_of_get_bridge, this
+> helper uses the dsi specific panel_or_bridge helper to find the
+> next DSI device in the pipeline.
+>=20
+> Helper lookup a given child DSI node or a DT node's port and
+> endpoint number, find the connected node and return either
+> the associated struct drm_panel or drm_bridge device.
 
-Best regards,
-Krzysztof
+I'm not sure that using a device managed helper is the right choice
+here. The bridge will stay longer than the backing device so it will
+create a use-after-free. You should probably use a DRM-managed action
+here instead.
 
+Maxime
+
+--4plkw473wjs2mrvy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCY9JuKwAKCRDj7w1vZxhR
+xSymAQC9Iq3pCnbt2LojyWMd4OEfhmUAFJqWCxCseECQy70ryAD+LHI6RQQqM3gO
+Ic/5QXBWP5sANjuX8q+Tjb7h4dQsXg8=
+=eyo5
+-----END PGP SIGNATURE-----
+
+--4plkw473wjs2mrvy--
