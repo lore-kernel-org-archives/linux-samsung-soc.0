@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D39C05027
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 10:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCBEC61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 10:19:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236651AbjAZKSk (ORCPT
+        id S236964AbjAZKTB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 Jan 2023 05:18:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42648 "EHLO
+        Thu, 26 Jan 2023 05:19:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236599AbjAZKSb (ORCPT
+        with ESMTP id S236990AbjAZKSg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Jan 2023 05:18:31 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D23353E54
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 02:17:58 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id q10so1247923wrm.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 02:17:58 -0800 (PST)
+        Thu, 26 Jan 2023 05:18:36 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75B7A577DC
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 02:18:08 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id z5so1240967wrt.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 02:18:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6z34fmBFNDBt2+q06vNBZRGJLH/EgsBPP//vb2pYq4c=;
-        b=rRW+CtGFsOX+61GmPS24FW99ChsfZ80tH6HR6eJc+EblK9j8e9cSPX36Qg3zfnTPRq
-         5u3pupvtJECxDNpdbvD4gzgsuVFsGzSg0eClL7XZ87pEKvvmO+resNATlmC9utytzWYX
-         KUY20CsfgqKwuYBbSdOleQ9gdGAx02CniCp+MSOz72ikNxl7E/5aLdwMiC3v2Uif8HLR
-         vIX4RpbWVVPQJiz4/yEXFIHozL0RTXcJtaMHagM+4xuMdvFn37IqxlmIBjOkjXUHeNgI
-         nGgkZ08rdwkR/TE3J7gOUQNEkgemLd741GPAcofhD0ACgbRI2tGhAGwPJaSaufLM34PE
-         rEgQ==
+        bh=j+p2wGZjjhA8Z5oEebmL0UJ5yGp1eLDKs4zAEYYJl8s=;
+        b=foVkUMpxmBnudnLqXkpTMoobC2vVFDj6kdOnO4UWhv/vnFL4vs+GZEAgfL/CBVO6VI
+         47ilwy06VTcyNTfCYLvZCf1vnhbg5s/y27OwNWYzBPx+SdSAbbqIk8h9Ss+07mcwxxX/
+         gbHNqZ1MKgqaD5GH/JZqweaRG8KH32ZkNu7DygYecOzGSWqjWrwssbakbASi03oSsaO1
+         g5qO4pGqB10GVrLK6uCqZSC00H9fy65TO1YmUpbCn+d2qxxNgG0NsBJjSmkCqMEokZP9
+         TKMIVQnMJcudCiEnXBcVSmh82/we34qkiBsCKF9DwRjVJcNcpfG/35wXl6Mlns92PNzj
+         9/og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6z34fmBFNDBt2+q06vNBZRGJLH/EgsBPP//vb2pYq4c=;
-        b=cK86tEZeRiS/I2g0KLNj2R9lk5OENbXQ/H3FMt0cmEytzqotCqbpy+eIzV9Qu9skt0
-         Mo9f+z52/6zXmg8zndawd76+xlt334ihox0Ol4kpU3OqQnoM8cOSjfGNP/C9068wGQBH
-         awkMaty65ssBHnW/yHjvNoUzD4zN83PPNGh3Jkv7Whh78FU2UTArnVJW/damqa+BQVec
-         XnPPuCFPrU+TPuaOeCcJVK3lqJ9O0FzWDhPCjwjQ+usg/PfAezC4AGOAst05sNWZhESg
-         bNEl50mN/jqMYL3KG2e8il4ZMEWXrnC2FJwGSFCAZRZ3RC2o7O5PaYmBaEE9e0J1TX4F
-         o2UA==
-X-Gm-Message-State: AFqh2krcYCVg7nORhed32krj7ZUMeqFbP1Bq1rDsXYap9LwL3Qk3jdaH
-        /KsK7tqURS+sTL+OX2dyIklq3n0ZIZXdOjMn
-X-Google-Smtp-Source: AMrXdXtc+pqtGjIHD3l9l2nxVr6EYPuHKfoEm+Mg8GpqzGGIwdvCMdY/baBL+vBIpkE0FlDSXTS7bQ==
-X-Received: by 2002:adf:c78b:0:b0:2bd:dd13:170f with SMTP id l11-20020adfc78b000000b002bddd13170fmr38484445wrg.26.1674728272547;
-        Thu, 26 Jan 2023 02:17:52 -0800 (PST)
+        bh=j+p2wGZjjhA8Z5oEebmL0UJ5yGp1eLDKs4zAEYYJl8s=;
+        b=PDYmI399v+9ZKCrtx8vaCM9wVHqxee2Yo715PtbqyBfk50O8ncIV7DcB166eDtSLRx
+         JrprmUgw+DoDImhyRkVCkGWby1DSZJfZYwdviTtGRxfbb88BgIgNbv/WIkXyQeBhRE7A
+         W8SOqLKqfpO01AZtj1KWbWh4Qvd8TeHLAEEjb611v/ky3rUZFgoTYfA2cUtpEhLuknKw
+         rujrgO8+dGDMHTyq0FscVwCKbe2ioMeoSh11QhnoCHdZoHFbJA3xEJr5v2+gdwRwqENC
+         cjtbAXekAtASvQLJRqCWzq41YE6AANBYwgNz5DW8g2fQRsjQq80bTVfjrnnhHsFxY4Z5
+         8ZXg==
+X-Gm-Message-State: AO0yUKUXmhIPjXBkgO4ZU1YcYL3clu7uoYUGDJkRQGdGV4xGBdpG7/S+
+        xXxH+iFzPa3Z7dcTLBc+2RfogXffVL7VmbYl
+X-Google-Smtp-Source: AK7set8KhgUPl9JoiASNhQZw6LZV0FTtcmv99S+Bkhp/aB74AbcInfRUPWHEFWrap15wJe24ZVa6Tw==
+X-Received: by 2002:a05:6000:18a9:b0:2bf:b54f:61f0 with SMTP id b9-20020a05600018a900b002bfb54f61f0mr10118347wri.57.1674728274099;
+        Thu, 26 Jan 2023 02:17:54 -0800 (PST)
 Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id a17-20020adffb91000000b002bddac15b3dsm868315wrr.33.2023.01.26.02.17.51
+        by smtp.gmail.com with ESMTPSA id a17-20020adffb91000000b002bddac15b3dsm868315wrr.33.2023.01.26.02.17.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jan 2023 02:17:52 -0800 (PST)
+        Thu, 26 Jan 2023 02:17:53 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     linux-samsung-soc@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -65,12 +65,12 @@ Cc:     =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         phone-devel@vger.kernel.org, replicant@osuosl.org,
         ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: (subset) [PATCH 7/9] ARM: dts: exynos: use lowercase hex addresses
-Date:   Thu, 26 Jan 2023 11:17:45 +0100
-Message-Id: <167472826059.11433.13535148546376778683.b4-ty@linaro.org>
+Subject: Re: (subset) [PATCH 9/9] arm64: dts: exynos: use lowercase hex addresses
+Date:   Thu, 26 Jan 2023 11:17:46 +0100
+Message-Id: <167472826060.11433.16383674280550477949.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230125094513.155063-7-krzysztof.kozlowski@linaro.org>
-References: <20230125094513.155063-1-krzysztof.kozlowski@linaro.org> <20230125094513.155063-7-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230125094513.155063-9-krzysztof.kozlowski@linaro.org>
+References: <20230125094513.155063-1-krzysztof.kozlowski@linaro.org> <20230125094513.155063-9-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -78,15 +78,15 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 25 Jan 2023 10:45:11 +0100, Krzysztof Kozlowski wrote:
+On Wed, 25 Jan 2023 10:45:13 +0100, Krzysztof Kozlowski wrote:
 > By convention the hex addresses should be lowercase.
 > 
 > 
 
 Applied, thanks!
 
-[7/9] ARM: dts: exynos: use lowercase hex addresses
-      https://git.kernel.org/krzk/linux/c/9ca5a7ce492d182c25ea2e785eeb72cee1d5056b
+[9/9] arm64: dts: exynos: use lowercase hex addresses
+      https://git.kernel.org/krzk/linux/c/5cff13f07eec38ecb70e6839060d0a795b690a53
 
 Best regards,
 -- 
