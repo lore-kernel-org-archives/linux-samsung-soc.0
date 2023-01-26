@@ -2,132 +2,181 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58DF6C54EED
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Jan 2023 21:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44944C05027
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 06:20:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235442AbjAYVxN (ORCPT
+        id S229536AbjAZGUr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 25 Jan 2023 16:53:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47922 "EHLO
+        Thu, 26 Jan 2023 01:20:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235443AbjAYVxM (ORCPT
+        with ESMTP id S229458AbjAZGUq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Jan 2023 16:53:12 -0500
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8243C3A87
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 13:53:10 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id D86B185666;
-        Wed, 25 Jan 2023 22:53:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1674683588;
-        bh=cDj0qNJmpBxszzzfzQeDa9hoXH6ASKfJgUV396KDoi4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=yMYppRbEmxuVlCk2I+6gewu8P4WRG05+Af/RIB+8WcOlNsMMF3KBHAgT0Ct1Nga7J
-         Q6j+KwRQiThlcV4Ir/d9/McGjdjbnNH120c0mbKudmAXOJqQUX8LvKd3vFTfjwtRPH
-         nv8SaGeIg+bhY3b01CV0zQuliqrh/gpLz18+fwnxEKhKek8oxCqU97VeGHnwyBXFFC
-         wvt9cu7FbJIi8cSSKReQefPOo4vcRQBeSjmXIs4rOIJfd0Pq8BQkUcULB9qLxUa0zm
-         Uhzei/E8FhLLlvqGt36dCLvVaTkH+GjlTW6pixHsf3iDMmpCqeNW99qdg8GMqzIJxV
-         lpKprB7/2oWfg==
-Message-ID: <0a318675-8a9f-58da-ad3f-9eda6a701626@denx.de>
-Date:   Wed, 25 Jan 2023 22:53:04 +0100
+        Thu, 26 Jan 2023 01:20:46 -0500
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B54901CAC8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 22:20:43 -0800 (PST)
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230126062040epoutp034f68a583827f63f38017f6e877df2006~9x4vne_0D0065500655epoutp03-
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 06:20:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230126062040epoutp034f68a583827f63f38017f6e877df2006~9x4vne_0D0065500655epoutp03-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1674714040;
+        bh=BzwzS4n8VEHQ62w09yKv4JMlAQPeaYZ77o7h6FSbOU0=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=rnG8jJShyPtkpLAS08boFysrDV0JqH1jK/kJvHlZVTp98HuFe35ARRqLb1DPgpOh+
+         S02xkIqbyrLdpR3srB9S7oNt5psFTJEZml8oXB7iAndVnyQrhp6BUXq1+FzUR+qJRC
+         U08ovPvu06H/D1GfWG/iBBRe+33s+r6TpXbLipPM=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20230126062039epcas1p3919cd2ea0729a89832fc8a787f0a3383~9x4vG-q0Y2493424934epcas1p3V;
+        Thu, 26 Jan 2023 06:20:39 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.38.233]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4P2VvB4VRVz4x9Pt; Thu, 26 Jan
+        2023 06:20:38 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        3D.CF.54823.6BB12D36; Thu, 26 Jan 2023 15:20:38 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230126062038epcas1p2d2f898be360f8400521d2de81c01b8f6~9x4tvU7DO2754827548epcas1p2P;
+        Thu, 26 Jan 2023 06:20:38 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230126062038epsmtrp12575439365fc005c85674c9394aa23f1~9x4tuiP3y2855228552epsmtrp1Y;
+        Thu, 26 Jan 2023 06:20:38 +0000 (GMT)
+X-AuditID: b6c32a39-d01fc7000000d627-51-63d21bb6fc8d
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6D.3F.05839.5BB12D36; Thu, 26 Jan 2023 15:20:38 +0900 (KST)
+Received: from inkidae002 (unknown [10.113.221.213]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20230126062037epsmtip222c02d6b642e5b6df3c6ddcfa979a1e8~9x4tg7enQ0395603956epsmtip2N;
+        Thu, 26 Jan 2023 06:20:37 +0000 (GMT)
+From:   =?UTF-8?B?64yA7J246riwL1RpemVuIFBsYXRmb3JtIExhYihTUikv7IK87ISx7KCE7J6Q?= 
+        <inki.dae@samsung.com>
+To:     "'Jagan Teki'" <jagan@amarulasolutions.com>
+Cc:     "'Marek Szyprowski'" <m.szyprowski@samsung.com>,
+        "'Seung-Woo Kim'" <sw0312.kim@samsung.com>,
+        "'Kyungmin Park'" <kyungmin.park@samsung.com>,
+        "'Neil Armstrong'" <narmstrong@linaro.org>,
+        "'Robert Foss'" <robert.foss@linaro.org>,
+        "'Andrzej Hajda'" <andrzej.hajda@intel.com>,
+        "'Sam Ravnborg'" <sam@ravnborg.org>, <thierry.reding@gmail.com>,
+        "'Marek Vasut'" <marex@denx.de>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        "'linux-amarula'" <linux-amarula@amarulasolutions.com>
+In-Reply-To: <CAMty3ZD=RDY_NH6rt+ibY_4drEenmHhxKpn=BRD551jRoK=MxQ@mail.gmail.com>
+Subject: RE: [PATCH v11 0/3] drm: exynos: dsi: Restore the bridge chain
+Date:   Thu, 26 Jan 2023 15:20:37 +0900
+Message-ID: <001501d9314e$4eb1de30$ec159a90$@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [RESEND PATCH v11 13/18] drm: exynos: dsi: Add Exynos based host
- irq hooks
-Content-Language: en-US
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-References: <20230123151212.269082-1-jagan@amarulasolutions.com>
- <20230123151212.269082-14-jagan@amarulasolutions.com>
- <43f4a7dc-a4cc-7552-1a6d-a2a49fae6020@denx.de>
- <CAMty3ZBZWERT=HpjSepSaFbpKpwZUvuG82s6+z7EgDRY5D+TFg@mail.gmail.com>
- <fb7dfb89-42d6-139e-7ff1-4985838e222f@denx.de>
- <CAMty3ZAYz=XEN6s1XhBWg5b77kk+s942qa9Oz4E4oHtSfaVZtA@mail.gmail.com>
- <CAMty3ZB8jAoKzXpPJzrfH6bOGBOpJRuTacgQDSg8kVuhg7p37Q@mail.gmail.com>
- <CAMty3ZDNwJ40pPJFKqwMd13y-rF9ELb5N6JZffea6T4dnD-0nA@mail.gmail.com>
- <d8e539bd-93db-fb6f-eaec-463f382a1dfb@denx.de>
- <CAMty3ZBxbwwocAwZ18o8tis54SRC64853b+p8VfzcD=OWrjP6Q@mail.gmail.com>
- <c67cdb83-2fef-ad7c-f2c4-e2a6eb09a3e8@denx.de>
- <CAMty3ZAh7J6_X9NkE+-mBrHBFx+KfuQXPBUYyL5g2vu_Y5X9iw@mail.gmail.com>
- <a756fd20-28e4-85e7-3947-4c468bf3366d@denx.de>
- <CAMty3ZDTcnN_NgjL8hEBnABpFcaE=hCegZnzaC9tz-7wFxYSmw@mail.gmail.com>
- <94f847b0-769d-e28b-11c0-b817b30c704f@denx.de>
- <CAMty3ZBTRO55N87u+YS+MtOn-D=-YRbe1Gnm8uuQM04ULuT_Vw@mail.gmail.com>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <CAMty3ZBTRO55N87u+YS+MtOn-D=-YRbe1Gnm8uuQM04ULuT_Vw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIgyi8WHi+AM2s4a5bnyovkxHh4sgE7ee16AjPDcKMB0WyXlgHxeuPsred1yjA=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xbdRT2115ub0nKrh0bP9m61Jtgthmg3Vq8ZZRNxa0JSljmZGocuynX
+        Qiht7YPXhABqxUFGCY7REpDH2OgIOnGPguPVztYtwbEhshhqnW5KKZOXLEGMse1lyn/fOec7
+        5/vO74Gx+bfQWCxPY6T1GkpNoJHIVdcuUfzVbXeVIsvcDtLXuYyQ36/Mo+SffRaUHKua45AX
+        LEMo2XR7iEX23vByyDlzJSDvfupCySXbfTbZvXoFkE0NfpRcHWhFDvAUvYu+CEWr7VtE0W/z
+        chSd1/0sxfQP11GFr8bDUpxrnEQVpy9fBIrlvh2Z3LfyU3JpKofWC2mNUpuTp1HJifQj2S9n
+        S5NE4nixjHyBEGqoAlpOpL2aGX8wTx00TggLKbUpmMqkDAYiMTVFrzUZaWGu1mCUE7QuR62T
+        6hIMVIHBpFElaGhjslgk2iMNEk/k537cPYzoJgTFK2c+AxXg3vZTgItBXAKHxpzoKRCJ8XEH
+        gNdmXEiowMeXAJz5OZYpPAZwqN0CnnTUTk4iTGEQwJGxkfXAD2Cr5+9wO4qroLemghXC0Xgi
+        HHE2hjEbr0TgBwv7QpiLH4YTPaNoCG/GD8GuRmtYAcHjYMDhiAhhHi6DK1/+xWHw0/Cm9QHC
+        zHkenm8PsBlHQrj68HyQjwW1MmDLYzZDiYbNn5jZIW8Qn8Hg/e9GEYafBmcH+lEGb4aznssc
+        BsdCf52ZwzQ0ADg91Y0wQROArtWp9f33wuGuBlZIjY3vgl8MJDLpZ2H/WgtglKPgHyu1YUMQ
+        58FqM5+hENB95976FAjHz9WjFkDYNqxm27CabcMOtv/F2gByEWyldYYCFW0Q66T/3bZSW9AH
+        wo96t8wBzj5aSHACFgacAGJsIppX23xbyeflUCWltF6brTepaYMTSIOHXc+O3aLUBn+Fxpgt
+        lshEkqQ9eyWkOElMxPBi5DeVfFxFGel8mtbR+id9LIwbW8Ha9nDnUmKR2W/t9NcFFtKfqUr9
+        dVNcfUCsK91pr/vn8Oj2G2C2qMf9u7MjP6q0uqyPe3y/IEv7qOFOakDw1HyxpDfdGBAdzRS8
+        FmXdurw2UaKraTvt1F3SX/qquVDWITPVp+VGfPOG3xMzMpVBucuSy1kOumz6vWv9pFCaYcc+
+        T/Z0vX2sWir/aVCrOOB+sFZe7RGc4Pi43cLn1s7y00pWkxbbE0Zf6jgUUzFX6JYehdaTKXaJ
+        PHLGe7JZ+XVl3SvpysH39y362oqOv/jLMMG/1RLx4ZV33j1zYf/BoU328SO/HfvRvqUcowXu
+        17NSed75uNEs+WxxT1XTm4vjSx+NuwjEkEuJd7P1BupfGK4KUF0EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsWy7bCSvO426UvJBm/nMVvcX/yZxeLK1/ds
+        Fl82TWCzONv0ht1i+YR9bBYzzu9jslh75C67xZu2RkaLS1MOs1l8mvWQ2WLFz62MFjMmv2Sz
+        +LlrHosDr8faj/dZPebNOsHisXPWXXaPxXteMnncubaHzeN+93EmjyXTrrJ59G1ZxejxeZNc
+        AGcUl01Kak5mWWqRvl0CV8aqxzMYC9aJVrz/0sHWwLhRsIuRk0NCwESi5+pVli5GLg4hgd2M
+        Eq2ntrF1MXIAJSQktmzlgDCFJQ4fLgYpFxJ4zihx40w0iM0mkCpx49NHdhBbREBf4sChaUwg
+        Y5gFOlkk7v74zQwx8ySTxPmrf1hAqjgFAiUurz7IBmILC7hLLJ02kxHEZhFQlXi9YwcriM0r
+        YCnxdeMvdghbUOLkzCdgvcwC2hK9D1sZYexlC18zQzygIPHz6TJWkENFBPwk5n5jhigRkZjd
+        2cY8gVF4FpJJs5BMmoVk0iwkLQsYWVYxSqYWFOem5xYbFhjmpZbrFSfmFpfmpesl5+duYgTH
+        q5bmDsbtqz7oHWJk4mA8xCjBwawkwtsz+3yyEG9KYmVValF+fFFpTmrxIUZpDhYlcd4LXSfj
+        hQTSE0tSs1NTC1KLYLJMHJxSDUwnrnPsffVfZt8WlQM1r2sLPDI3XquaXX7V3Zbr1BMtlsg0
+        Bu3Z7PKG/bcWtm0zWG/95MS5xV1K3ll/JhXoNkR62jFXKs6/eZOxWZJpj9SR5rPL8nQsol48
+        O+kV7/M7xi576we/qdPCFrBf+6Ka+X3mTpfYUI//XwtfPjP6ceVmxKfEd2nFH0wfekzcf9nl
+        9ZWq+ICvtavYF3MVft5VyDV7P8/x1Ve35zZ3L+5u2D3v12llX/eHU+/qas/6fGm9xfvXh4rc
+        1l5w7MpeP6PouXvh9B0z3E00tQ/HvZPkOLf3a92sE7Jbbx6RTrzJYDuJwYC18NnFj/53VV4y
+        Vq16dJVHxvlH6OYG70D715nNM5q2KLEUZyQaajEXFScCAC15FSBGAwAA
+X-CMS-MailID: 20230126062038epcas1p2d2f898be360f8400521d2de81c01b8f6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230106175722epcas1p152dacb511ee08d563c51bb8a8deb0bfe
+References: <20221212182923.29155-1-jagan@amarulasolutions.com>
+        <CGME20230106175722epcas1p152dacb511ee08d563c51bb8a8deb0bfe@epcas1p1.samsung.com>
+        <CAMty3ZDGu-acuZ9Bhp_=JcTYn5YWKVZnEUf3nC28Spm8v4+KQg@mail.gmail.com>
+        <000001d9262d$42bc49c0$c834dd40$@samsung.com>
+        <CAMty3ZD=RDY_NH6rt+ibY_4drEenmHhxKpn=BRD551jRoK=MxQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 1/25/23 20:24, Jagan Teki wrote:
-> On Wed, Jan 25, 2023 at 11:33 PM Marek Vasut <marex@denx.de> wrote:
->>
->> On 1/25/23 18:35, Jagan Teki wrote:
->>
->> [...]
->>
->>>>> exynos_dsi_register_te_irq is done after the bridge attach is done in
->>>>> Exynos, here bridge attach is triggered in the component ops bind
->>>>> call, since samsung-dsim is a pure bridge w/o any component ops.
->>>>> https://github.com/openedev/kernel/blob/imx8mm-dsi-v12/drivers/gpu/drm/bridge/samsung-dsim.c#L1527
->>>>> https://github.com/openedev/kernel/blob/imx8mm-dsi-v12/drivers/gpu/drm/exynos/exynos_drm_dsi.c#L112
->>>>>
->>>>> Any suggestion on how to handle this?
->>>>
->>>> Why isn't the generic code calling drm_bridge_attach() in
->>>> samsung_dsim_host_attach(), like the exynos one ?
->>>
->>> Exynos drm drivers follow component ops and generic dsim is a pure drm
->>> bridge whose downstream bridge will attach in bridge ops attach and
->>> the component-based drivers require an initial bridge attach (whose
->>> previous is NULL) call in the component bind hook for establishing the
->>> bridge chain.
->>
->> Well in that case, call the exynos optional host_attach and register the
->> TE IRQ handler at the end, that should work just fine too, right ? If
->> so, then you can also move the IRQ handler registration into the generic
->> part of the driver.
-> 
-> Something like this?
-> 
-> samsung_dsim_host_attach()
-> {
->          drm_bridge_add(&dsi->bridge);
-> 
->          if (pdata->host_ops && pdata->host_ops->attach)
->                  pdata->host_ops->attach(dsi, device);
-> 
->          exynos_dsi_register_te_irq
-> 
->          dsi->lanes = device->lanes;
->          dsi->format = device->format;
->          dsi->mode_flags = device->mode_flags;
-> }
+Hi Jagan Teki,
 
-Yes, I think that should work .
+> -----Original Message-----
+> From: Jagan Teki <jagan=40amarulasolutions.com>
+> Sent: Friday, January 20, 2023 3:19 AM
+> To: =EB=8C=80=EC=9D=B8=EA=B8=B0/Tizen=20Platform=20Lab(SR)/=EC=82=BC=EC=
+=84=B1=EC=A0=84=EC=9E=90=20<inki.dae=40samsung.com>=0D=0A>=20Cc:=20Marek=20=
+Szyprowski=20<m.szyprowski=40samsung.com>;=20Seung-Woo=20Kim=0D=0A>=20<sw03=
+12.kim=40samsung.com>;=20Kyungmin=20Park=20<kyungmin.park=40samsung.com>;=
+=20Neil=0D=0A>=20Armstrong=20<narmstrong=40linaro.org>;=20Robert=20Foss=20<=
+robert.foss=40linaro.org>;=0D=0A>=20Andrzej=20Hajda=20<andrzej.hajda=40inte=
+l.com>;=20Sam=20Ravnborg=20<sam=40ravnborg.org>;=0D=0A>=20thierry.reding=40=
+gmail.com;=20Marek=20Vasut=20<marex=40denx.de>;=20linux-samsung-=0D=0A>=20s=
+oc=40vger.kernel.org;=20dri-devel=40lists.freedesktop.org;=20linux-amarula=
+=20<linux-=0D=0A>=20amarula=40amarulasolutions.com>=0D=0A>=20Subject:=20Re:=
+=20=5BPATCH=20v11=200/3=5D=20drm:=20exynos:=20dsi:=20Restore=20the=20bridge=
+=20chain=0D=0A>=20=0D=0A>=20Hi=20Inki=20Dae,=0D=0A>=20=0D=0A>=20On=20Thu,=
+=20Jan=2012,=202023=20at=207:56=20AM=20=EB=8C=80=EC=9D=B8=EA=B8=B0/Tizen=20=
+Platform=20Lab(SR)/=EC=82=BC=EC=84=B1=EC=A0=84=EC=9E=90=0D=0A>=20<inki.dae=
+=40samsung.com>=20wrote:=0D=0A>=20>=0D=0A>=20>=20Hi=20Jagan=20Teki,=0D=0A>=
+=20>=0D=0A>=20>=20Sorry=20for=20late.=0D=0A>=20>=0D=0A>=20>=20>=20-----Orig=
+inal=20Message-----=0D=0A>=20>=20>=20From:=20Jagan=20Teki=20<jagan=40amarul=
+asolutions.com>=0D=0A>=20>=20>=20Sent:=20Saturday,=20January=207,=202023=20=
+2:56=20AM=0D=0A>=20>=20>=20To:=20Marek=20Szyprowski=20<m.szyprowski=40samsu=
+ng.com>;=20Inki=20Dae=0D=0A>=20>=20>=20<inki.dae=40samsung.com>;=20Seung-Wo=
+o=20Kim=20<sw0312.kim=40samsung.com>;=20Kyungmin=0D=0A>=20Park=0D=0A>=20>=
+=20>=20<kyungmin.park=40samsung.com>;=20Neil=20Armstrong=20<narmstrong=40li=
+naro.org>;=0D=0A>=20Robert=0D=0A>=20>=20>=20Foss=20<robert.foss=40linaro.or=
+g>;=20Andrzej=20Hajda=20<andrzej.hajda=40intel.com>;=0D=0A>=20Sam=0D=0A>=20=
+>=20>=20Ravnborg=20<sam=40ravnborg.org>=0D=0A>=20>=20>=20Cc:=20Marek=20Vasu=
+t=20<marex=40denx.de>;=20linux-samsung-soc=40vger.kernel.org;=20dri-=0D=0A>=
+=20>=20>=20devel=40lists.freedesktop.org;=20linux-amarula=20<linux-=0D=0A>=
+=20>=20>=20amarula=40amarulasolutions.com>=0D=0A>=20>=20>=20Subject:=20Re:=
+=20=5BPATCH=20v11=200/3=5D=20drm:=20exynos:=20dsi:=20Restore=20the=20bridge=
+=20chain=0D=0A>=20>=20>=0D=0A>=20>=20>=20On=20Mon,=20Dec=2012,=202022=20at=
+=2011:59=20PM=20Jagan=20Teki=20<jagan=40amarulasolutions.com>=0D=0A>=20wrot=
+e:=0D=0A>=20>=20>=20>=0D=0A>=20>=20>=20>=20Split=20the=20Exynos=20DSI=20bri=
+dge=20chain=20update=20patches=20from=20Samsung=20DSIM=0D=0A>=20>=20>=20>=
+=20bridge=20driver=20for=20easy=20to=20apply.=0D=0A>=20>=20>=20>=0D=0A>=20>=
+=20>=20>=20Changes=20for=20v11:=0D=0A>=20>=20>=20>=20-=20enable=20bridge.pr=
+e_enable_prev_first=0D=0A>=20>=20>=20>=20Changes=20for=20v10:=0D=0A>=20>=20=
+>=20>=20-=20collect=20Marek.V=20Review=20tag=0D=0A>=20>=20>=0D=0A>=20>=20>=
+=20Any=20update=20on=20this?=0D=0A>=20>=20>=0D=0A>=20>=0D=0A>=20>=20Added=
+=20Thierry=20Reding=20who=20is=20a=20maintainer=20of=20DRM=20panel=20driver=
+s.=0D=0A>=20>=0D=0A>=20>=20I=20will=20pick=20this=20patch=20series=20-=20in=
+cluding=20panel=20and=20bride=20patches=20-=20up.=0D=0A>=20>=0D=0A>=20>=20T=
+hierry=20and=20Andrzej,=20please=20let=20me=20know=20if=20any=20problem.=0D=
+=0A>=20=0D=0A>=20Any=20further=20update=20on=20this?=0D=0A=0D=0AAlready=20m=
+erged=20to=20exynos-drm-next=20so=20this=20patch=20series=20will=20go=20to=
+=20-next=20as=20long=20as=20no=20feedback=20from=20Thierry=20and=20Andrzej.=
+=0D=0AI=20will=20request=20a=20PR=20this=20or=20next=20week.=0D=0A=0D=0ATha=
+nks,=0D=0AInki=20Dae=0D=0A=0D=0A>=20=0D=0A>=20Thanks,=0D=0A>=20Jagan.=0D=0A=
+=0D=0A
