@@ -2,54 +2,70 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8841C05027
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 14:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97EB9C05027
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 14:47:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230360AbjAZOrc (ORCPT
+        id S229473AbjAZOrj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 Jan 2023 09:47:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54494 "EHLO
+        Thu, 26 Jan 2023 09:47:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230482AbjAZOrc (ORCPT
+        with ESMTP id S231774AbjAZOrf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Jan 2023 09:47:32 -0500
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FF336A31F
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 06:47:23 -0800 (PST)
-Received: by mail-pl1-x630.google.com with SMTP id be8so2005355plb.7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 06:47:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A1BDEAt+rxWWloQDlKB/2I6ZLTZG0ASWjyAAcB7oGTE=;
-        b=lMOybId87xz2ZyOHJXou8xZjJy2Gienx1uyxdWQ0pNTgLk+M2+B9DN4O5BJIr5Pji+
-         XW6Xp6rjEnaG7YFn/hj/Oh93k0G7s506IcxiYqxAg4dAN2bBej0MOTA+2h77TSGv5DcS
-         XBUawWXccLWOHRppDnOqp1h5c8rU/sGkxnT8c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A1BDEAt+rxWWloQDlKB/2I6ZLTZG0ASWjyAAcB7oGTE=;
-        b=hgdvB6ZmOjsyLQOP0N13ERc0bxahGLYHiUd2DJtHQdjTQHMwdssdTkK0RBGcwmqCDy
-         iQNlo0UoDzmxOwclj8v3DuuwBg1VSxShzEubLpCVRWIp5XZWB5Ojw4KrtZhDKw2ixZNm
-         1kGhoL23zeo/Ciug2Ma961ziqZsCjCDAaOO2ocVOXXlxCTAHIf5jQug99sSU34JBEqsB
-         OQXcFvWfkFw0C+4KKoXPl+Yrf7E541B0GQigvrRIU0OY3SI8uruuYU/NUfexzYG9cxZp
-         w9KjPANctPEcKd0+MMZpixR9jRgKjOmd+OI40oirAPcpZgxxmshZBx3Fe0Pv+aQ3Y4zz
-         OhiA==
-X-Gm-Message-State: AFqh2kope224jmBTRhnYCORJF1PHAGwyUb4EVZCfWQ+iP47ZlBdX2WLX
-        Wsugtwyw9fKwaEjQ/2XEEXGH8qg7pbxHSUOzpbI=
-X-Google-Smtp-Source: AMrXdXsQ9iGnU7hZJbbFFwwp29B7k3r1WFplJKzJsKhS/P+qYxclQigi3wIX8J/engpZhelsyuPTsg==
-X-Received: by 2002:a05:6a21:3381:b0:af:6cc0:5b3d with SMTP id yy1-20020a056a21338100b000af6cc05b3dmr50400165pzb.7.1674744442878;
-        Thu, 26 Jan 2023 06:47:22 -0800 (PST)
-Received: from localhost.localdomain ([2405:201:c00a:a238:3cb1:2156:ef87:8af5])
-        by smtp.gmail.com with ESMTPSA id d197-20020a6336ce000000b0042988a04bfdsm823660pga.9.2023.01.26.06.47.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jan 2023 06:47:22 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Thu, 26 Jan 2023 09:47:35 -0500
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F4FB40D9
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 06:47:29 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id F162A5C0429;
+        Thu, 26 Jan 2023 09:47:26 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Thu, 26 Jan 2023 09:47:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm1; t=1674744446; x=1674830846; bh=50XbxMxXh3
+        RnYrbxek0Iuq+3NjnCbFXEdGPqPgrKdjA=; b=oebNCiCB5ZL++pWeYOiWRfEjOk
+        uHmb5IIfKWiRvNkKjs+RHnP4GwJujKxyvj51drK1kTub7W0OxVrYB7kgKiqqkVTI
+        AIiPDWSgiqg0/8mVkRmTGr2j7EwfMOmLcA8yoF6gMV058n6amhp7gHywvFqiAfJN
+        kOPRTB3kjuv6Ze9eSvu952U6sXgdN8qDtGnn5/90fmB37C33jgTRBXNxVP7m61qX
+        ddP3DR/N5+2IHjFAv/7OCyQROafh26ID6cU7Lp76LdGhv1UDjiGDlghmDaUbUfH+
+        OMZ6N+mEWdPxnD3FfDI4QZ4MqJnmFdrh0wMDbGaAfFDgqaILptqIi28a62Ng==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; t=1674744446; x=1674830846; bh=50XbxMxXh3RnYrbxek0Iuq+3NjnC
+        bFXEdGPqPgrKdjA=; b=s/k4J0wzrUvRpm6ObjjVHdJPJNmniHXDTfpvE1OhWtj8
+        ozlnp+9Z9/it24Xev9nG5VmOPDBf8j9tum6ix8FUlhySE/RQAojzXAYdL3jvbJdd
+        Zo1QYQDjtdKFGr8RsrSN586D1xQHlLWmqhPpmuAobIfsA5yAeUgfY0F9F/iYACUd
+        qBez8qaduGYKZIHAB1dkDh0tu35xrbZtGlH3yoXvn/Y9H72RLu0BJ7j1O57qAMHz
+        8yc2IWHsyjs0IlT/fUFwbrerlqfEZSt91ckPGeyOYlbGteeWEuuii9w3OwqbPmUB
+        SJmPFbXE1lOX7Jndrot+bHX7/7AgStAxo+Mg+vDlZQ==
+X-ME-Sender: <xms:fpLSY7QFvNfg0CTsoTLLz4mQIUK4bERK2m5kys5ZLh9QvQBEXa8AfQ>
+    <xme:fpLSY8xBFGpuMJPl_EKz81a308g-xVfOpW3rxUmWe_24wXi64ywX7mN0VmyeDW9kz
+    nepSU7227GPy8SnwiM>
+X-ME-Received: <xmr:fpLSYw2kLeUzZ_pRNNB_SgWVADdeUJGGXbp1TZtacBT0Ct6L7clGT0i39wcj1xOXWUW45gN5pomRX7gq2VTua696PsDydwPWkGzr9XXxPRPMIQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedruddvgedgieekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeetfefffefgkedtfefgledugfdtjeefjedvtddtkeetieffjedvgfehheff
+    hfevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:fpLSY7DzsVzHIHOOEnyf7iHJ4vfurnf_O1hPCFtLiEaQo_imajd24w>
+    <xmx:fpLSY0imONtGciDuliaVUTzB4w04yGsuTH_yAlF2vHTdVMPSVR__zA>
+    <xmx:fpLSY_oYyneifSHnLumA-sWEzhiqnRGIzRSjgGUbN9tTwtC2H9uzig>
+    <xmx:fpLSYzqf5HoZZ_nguBemXoZVZczS5V029IQa3YCFKhKK0HRUFCFG5Q>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 26 Jan 2023 09:47:25 -0500 (EST)
+Date:   Thu, 26 Jan 2023 15:47:22 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
@@ -59,106 +75,69 @@ To:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Adam Ford <aford173@gmail.com>,
         Robert Foss <robert.foss@linaro.org>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Marek Vasut <marex@denx.de>
-Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
+        Marek Vasut <marex@denx.de>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
         dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v12 13/18] drm: exynos: dsi: Add host helper for te_irq_handler
-Date:   Thu, 26 Jan 2023 20:14:22 +0530
-Message-Id: <20230126144427.607098-14-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230126144427.607098-1-jagan@amarulasolutions.com>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Subject: Re: [PATCH v12 02/18] drm: bridge: panel: Add
+ devm_drm_of_dsi_get_bridge helper
+Message-ID: <20230126144722.ahnfzrl7ohy4lsah@houat>
 References: <20230126144427.607098-1-jagan@amarulasolutions.com>
+ <20230126144427.607098-3-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ctbirwvbqktam5or"
+Content-Disposition: inline
+In-Reply-To: <20230126144427.607098-3-jagan@amarulasolutions.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-IRQ handler for te-gpio seems to be common across DSIM host.
 
-However, Exynos is handling this via CRTC drivers but there is no clear
-evidence on how the same has been handled in i.MX8MM. Keeping the handler
-as-it-is can be a viable option but adding DSIM bridge core in upcoming
-patches is not possible to call Exynos CRTC handler as DSIM bridge has
-to be common across DRM bridge core instead of platform specific DRM
-drivers like Exynos here.
+--ctbirwvbqktam5or
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So, this patch handles the handler via platform host helper, so-that
-handling platform specific hook across Exynos and generic can be
-reasonable till it makes it generic across all platforms.
+On Thu, Jan 26, 2023 at 08:14:11PM +0530, Jagan Teki wrote:
+> Add devm OF helper to return the next DSI bridge in the chain.
+>=20
+> Unlike general bridge return helper devm_drm_of_get_bridge, this
+> helper uses the dsi specific panel_or_bridge helper to find the
+> next DSI device in the pipeline.
+>=20
+> Helper lookup a given child DSI node or a DT node's port and
+> endpoint number, find the connected node and return either
+> the associated struct drm_panel or drm_bridge device.
+>=20
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+> Changes for v12, v11:
+> - none
+> Changes for v10:
+> - new patch
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v12:
-- updated patch
-- suggested by Marek V
-Changes for v11:
-- none
-Changes for v10:
-- split from previous series patch
-"drm: bridge: Generalize Exynos-DSI driver into a Samsung DSIM bridge"
+I sent you an email earlier today telling you to change this.
 
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+Maxime
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 488fae218205..1d95909391e2 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -325,6 +325,7 @@ struct exynos_dsim_host_ops {
- 	void (*unregister_host)(struct exynos_dsi *dsim);
- 	int (*attach)(struct exynos_dsi *dsim, struct mipi_dsi_device *device);
- 	int (*detach)(struct exynos_dsi *dsim, struct mipi_dsi_device *device);
-+	irqreturn_t (*te_irq_handler)(struct exynos_dsi *dsim);
- };
- 
- struct exynos_dsi_enc {
-@@ -1333,11 +1334,10 @@ static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
- static irqreturn_t exynos_dsi_te_irq_handler(int irq, void *dev_id)
- {
- 	struct exynos_dsi *dsi = (struct exynos_dsi *)dev_id;
--	struct exynos_dsi_enc *dsi_enc = dsi->priv;
--	struct drm_encoder *encoder = &dsi_enc->encoder;
-+	const struct exynos_dsi_plat_data *pdata = dsi->plat_data;
- 
--	if (dsi->state & DSIM_STATE_VIDOUT_AVAILABLE)
--		exynos_drm_crtc_te_handler(encoder->crtc);
-+	if (pdata->host_ops && pdata->host_ops->te_irq_handler)
-+		return pdata->host_ops->te_irq_handler(dsi);
- 
- 	return IRQ_HANDLED;
- }
-@@ -1716,6 +1716,17 @@ static int exynos_dsi_parse_dt(struct exynos_dsi *dsi)
- 	return 0;
- }
- 
-+static irqreturn_t _exynos_dsi_te_irq_handler(struct exynos_dsi *dsim)
-+{
-+	struct exynos_dsi_enc *dsi_enc = dsim->priv;
-+	struct drm_encoder *encoder = &dsi_enc->encoder;
-+
-+	if (dsim->state & DSIM_STATE_VIDOUT_AVAILABLE)
-+		exynos_drm_crtc_te_handler(encoder->crtc);
-+
-+	return IRQ_HANDLED;
-+}
-+
- static int _exynos_dsi_host_attach(struct exynos_dsi *dsim,
- 				   struct mipi_dsi_device *device)
- {
-@@ -2030,6 +2041,7 @@ static const struct exynos_dsim_host_ops exynos_dsi_host_ops = {
- 	.unregister_host = exynos_dsi_unregister_host,
- 	.attach = _exynos_dsi_host_attach,
- 	.detach = _exynos_dsi_host_detach,
-+	.te_irq_handler = _exynos_dsi_te_irq_handler,
- };
- 
- static const struct exynos_dsi_plat_data exynos3250_dsi_pdata = {
--- 
-2.25.1
+--ctbirwvbqktam5or
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCY9KSegAKCRDj7w1vZxhR
+xQk7APsFDe/QFarTUSJaYAYtwFTlzNBwwdJbq1FxCjhKMEESbQD+LltGByM+Fojq
+hUNh+f9wsXS4juUiEHvAOjoRjUQ8CAI=
+=pQFN
+-----END PGP SIGNATURE-----
+
+--ctbirwvbqktam5or--
