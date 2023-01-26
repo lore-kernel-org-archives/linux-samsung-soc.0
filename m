@@ -2,181 +2,210 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44944C05027
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 06:20:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 164A9C54EAA
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 09:18:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229536AbjAZGUr (ORCPT
+        id S236752AbjAZJSL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 Jan 2023 01:20:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33678 "EHLO
+        Thu, 26 Jan 2023 04:18:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbjAZGUq (ORCPT
+        with ESMTP id S236703AbjAZJSG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Jan 2023 01:20:46 -0500
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B54901CAC8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jan 2023 22:20:43 -0800 (PST)
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230126062040epoutp034f68a583827f63f38017f6e877df2006~9x4vne_0D0065500655epoutp03-
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 06:20:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230126062040epoutp034f68a583827f63f38017f6e877df2006~9x4vne_0D0065500655epoutp03-
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1674714040;
-        bh=BzwzS4n8VEHQ62w09yKv4JMlAQPeaYZ77o7h6FSbOU0=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=rnG8jJShyPtkpLAS08boFysrDV0JqH1jK/kJvHlZVTp98HuFe35ARRqLb1DPgpOh+
-         S02xkIqbyrLdpR3srB9S7oNt5psFTJEZml8oXB7iAndVnyQrhp6BUXq1+FzUR+qJRC
-         U08ovPvu06H/D1GfWG/iBBRe+33s+r6TpXbLipPM=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20230126062039epcas1p3919cd2ea0729a89832fc8a787f0a3383~9x4vG-q0Y2493424934epcas1p3V;
-        Thu, 26 Jan 2023 06:20:39 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.38.233]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4P2VvB4VRVz4x9Pt; Thu, 26 Jan
-        2023 06:20:38 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3D.CF.54823.6BB12D36; Thu, 26 Jan 2023 15:20:38 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230126062038epcas1p2d2f898be360f8400521d2de81c01b8f6~9x4tvU7DO2754827548epcas1p2P;
-        Thu, 26 Jan 2023 06:20:38 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230126062038epsmtrp12575439365fc005c85674c9394aa23f1~9x4tuiP3y2855228552epsmtrp1Y;
-        Thu, 26 Jan 2023 06:20:38 +0000 (GMT)
-X-AuditID: b6c32a39-d01fc7000000d627-51-63d21bb6fc8d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6D.3F.05839.5BB12D36; Thu, 26 Jan 2023 15:20:38 +0900 (KST)
-Received: from inkidae002 (unknown [10.113.221.213]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230126062037epsmtip222c02d6b642e5b6df3c6ddcfa979a1e8~9x4tg7enQ0395603956epsmtip2N;
-        Thu, 26 Jan 2023 06:20:37 +0000 (GMT)
-From:   =?UTF-8?B?64yA7J246riwL1RpemVuIFBsYXRmb3JtIExhYihTUikv7IK87ISx7KCE7J6Q?= 
-        <inki.dae@samsung.com>
-To:     "'Jagan Teki'" <jagan@amarulasolutions.com>
-Cc:     "'Marek Szyprowski'" <m.szyprowski@samsung.com>,
-        "'Seung-Woo Kim'" <sw0312.kim@samsung.com>,
-        "'Kyungmin Park'" <kyungmin.park@samsung.com>,
-        "'Neil Armstrong'" <narmstrong@linaro.org>,
-        "'Robert Foss'" <robert.foss@linaro.org>,
-        "'Andrzej Hajda'" <andrzej.hajda@intel.com>,
-        "'Sam Ravnborg'" <sam@ravnborg.org>, <thierry.reding@gmail.com>,
-        "'Marek Vasut'" <marex@denx.de>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        "'linux-amarula'" <linux-amarula@amarulasolutions.com>
-In-Reply-To: <CAMty3ZD=RDY_NH6rt+ibY_4drEenmHhxKpn=BRD551jRoK=MxQ@mail.gmail.com>
-Subject: RE: [PATCH v11 0/3] drm: exynos: dsi: Restore the bridge chain
-Date:   Thu, 26 Jan 2023 15:20:37 +0900
-Message-ID: <001501d9314e$4eb1de30$ec159a90$@samsung.com>
+        Thu, 26 Jan 2023 04:18:06 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C30C13534;
+        Thu, 26 Jan 2023 01:18:05 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CD93FB81D09;
+        Thu, 26 Jan 2023 09:18:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B686C433EF;
+        Thu, 26 Jan 2023 09:17:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674724682;
+        bh=A3jqgSV9WUxdb3ZkujtLcqAQwnfqkoU5ybDSQdNw5cg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sky5enLFwJr3DfJ9b2ymbv/d7rE2oypuJvDM2cNeWmTa68+LJkoJeMjxMVF911xjR
+         /p46Fe2/pbyCsXipax42/Hou3ZWrY6fA7yy3y0E4tly4hSn7A+WSEbwQZyXAjmF/fy
+         t3crMkotzOdGBKQN+I5JbdstqSnsQJbVUv4CaD/JnI/YsWTl+N0fRV5BPO+OqFre41
+         7ERJV1xNKFLVanuVeJ94drHEBHBdP99mIJAbLamNbCF2r05esRYyfEqSbQFmRXAtIl
+         xm2AXIIoDKu6q2SCf9/o5Ej3L+rCFY/nYnTN8yhQCyREfEIhRdSCFxGuw7sIOiHW7k
+         L6KyLx8xuXeew==
+Date:   Thu, 26 Jan 2023 11:17:09 +0200
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     akpm@linux-foundation.org, michel@lespinasse.org,
+        jglisse@google.com, mhocko@suse.com, vbabka@suse.cz,
+        hannes@cmpxchg.org, mgorman@techsingularity.net, dave@stgolabs.net,
+        willy@infradead.org, liam.howlett@oracle.com, peterz@infradead.org,
+        ldufour@linux.ibm.com, paulmck@kernel.org, luto@kernel.org,
+        songliubraving@fb.com, peterx@redhat.com, david@redhat.com,
+        dhowells@redhat.com, hughd@google.com, bigeasy@linutronix.de,
+        kent.overstreet@linux.dev, punit.agrawal@bytedance.com,
+        lstoakes@gmail.com, peterjung1337@gmail.com, rientjes@google.com,
+        axelrasmussen@google.com, joelaf@google.com, minchan@google.com,
+        jannh@google.com, shakeelb@google.com, tatashin@google.com,
+        edumazet@google.com, gthelen@google.com, gurua@google.com,
+        arjunroy@google.com, soheil@google.com, hughlynch@google.com,
+        leewalsh@google.com, posk@google.com, will@kernel.org,
+        aneesh.kumar@linux.ibm.com, npiggin@gmail.com,
+        chenhuacai@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, dave.hansen@linux.intel.com, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        qianweili@huawei.com, wangzhou1@hisilicon.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org,
+        airlied@gmail.com, daniel@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, l.stach@pengutronix.de,
+        krzysztof.kozlowski@linaro.org, patrik.r.jakobsson@gmail.com,
+        matthias.bgg@gmail.com, robdclark@gmail.com,
+        quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org,
+        tomba@kernel.org, hjc@rock-chips.com, heiko@sntech.de,
+        ray.huang@amd.com, kraxel@redhat.com, sre@kernel.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        tfiga@chromium.org, m.szyprowski@samsung.com, mchehab@kernel.org,
+        dimitri.sivanich@hpe.com, zhangfei.gao@linaro.org,
+        jejb@linux.ibm.com, martin.petersen@oracle.com,
+        dgilbert@interlog.com, hdegoede@redhat.com, mst@redhat.com,
+        jasowang@redhat.com, alex.williamson@redhat.com, deller@gmx.de,
+        jayalk@intworks.biz, viro@zeniv.linux.org.uk, nico@fluxnic.net,
+        xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, miklos@szeredi.hu,
+        mike.kravetz@oracle.com, muchun.song@linux.dev, bhe@redhat.com,
+        andrii@kernel.org, yoshfuji@linux-ipv6.org, dsahern@kernel.org,
+        kuba@kernel.org, pabeni@redhat.com, perex@perex.cz, tiwai@suse.com,
+        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-graphics-maintainer@vmware.com,
+        linux-ia64@vger.kernel.org, linux-arch@vger.kernel.org,
+        loongarch@lists.linux.dev, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-sgx@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
+        linux-crypto@vger.kernel.org, nvdimm@lists.linux.dev,
+        dmaengine@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-accelerators@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
+        target-devel@vger.kernel.org, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        devel@lists.orangefs.org, kexec@lists.infradead.org,
+        linux-xfs@vger.kernel.org, bpf@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, kasan-dev@googlegroups.com,
+        selinux@vger.kernel.org, alsa-devel@alsa-project.org,
+        kernel-team@android.com
+Subject: Re: [PATCH v2 1/6] mm: introduce vma->vm_flags modifier functions
+Message-ID: <Y9JFFYjfJf9uDijE@kernel.org>
+References: <20230125083851.27759-1-surenb@google.com>
+ <20230125083851.27759-2-surenb@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIgyi8WHi+AM2s4a5bnyovkxHh4sgE7ee16AjPDcKMB0WyXlgHxeuPsred1yjA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xbdRT2115ub0nKrh0bP9m61Jtgthmg3Vq8ZZRNxa0JSljmZGocuynX
-        Qiht7YPXhABqxUFGCY7REpDH2OgIOnGPguPVztYtwbEhshhqnW5KKZOXLEGMse1lyn/fOec7
-        5/vO74Gx+bfQWCxPY6T1GkpNoJHIVdcuUfzVbXeVIsvcDtLXuYyQ36/Mo+SffRaUHKua45AX
-        LEMo2XR7iEX23vByyDlzJSDvfupCySXbfTbZvXoFkE0NfpRcHWhFDvAUvYu+CEWr7VtE0W/z
-        chSd1/0sxfQP11GFr8bDUpxrnEQVpy9fBIrlvh2Z3LfyU3JpKofWC2mNUpuTp1HJifQj2S9n
-        S5NE4nixjHyBEGqoAlpOpL2aGX8wTx00TggLKbUpmMqkDAYiMTVFrzUZaWGu1mCUE7QuR62T
-        6hIMVIHBpFElaGhjslgk2iMNEk/k537cPYzoJgTFK2c+AxXg3vZTgItBXAKHxpzoKRCJ8XEH
-        gNdmXEiowMeXAJz5OZYpPAZwqN0CnnTUTk4iTGEQwJGxkfXAD2Cr5+9wO4qroLemghXC0Xgi
-        HHE2hjEbr0TgBwv7QpiLH4YTPaNoCG/GD8GuRmtYAcHjYMDhiAhhHi6DK1/+xWHw0/Cm9QHC
-        zHkenm8PsBlHQrj68HyQjwW1MmDLYzZDiYbNn5jZIW8Qn8Hg/e9GEYafBmcH+lEGb4aznssc
-        BsdCf52ZwzQ0ADg91Y0wQROArtWp9f33wuGuBlZIjY3vgl8MJDLpZ2H/WgtglKPgHyu1YUMQ
-        58FqM5+hENB95976FAjHz9WjFkDYNqxm27CabcMOtv/F2gByEWyldYYCFW0Q66T/3bZSW9AH
-        wo96t8wBzj5aSHACFgacAGJsIppX23xbyeflUCWltF6brTepaYMTSIOHXc+O3aLUBn+Fxpgt
-        lshEkqQ9eyWkOElMxPBi5DeVfFxFGel8mtbR+id9LIwbW8Ha9nDnUmKR2W/t9NcFFtKfqUr9
-        dVNcfUCsK91pr/vn8Oj2G2C2qMf9u7MjP6q0uqyPe3y/IEv7qOFOakDw1HyxpDfdGBAdzRS8
-        FmXdurw2UaKraTvt1F3SX/qquVDWITPVp+VGfPOG3xMzMpVBucuSy1kOumz6vWv9pFCaYcc+
-        T/Z0vX2sWir/aVCrOOB+sFZe7RGc4Pi43cLn1s7y00pWkxbbE0Zf6jgUUzFX6JYehdaTKXaJ
-        PHLGe7JZ+XVl3SvpysH39y362oqOv/jLMMG/1RLx4ZV33j1zYf/BoU328SO/HfvRvqUcowXu
-        17NSed75uNEs+WxxT1XTm4vjSx+NuwjEkEuJd7P1BupfGK4KUF0EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsWy7bCSvO426UvJBm/nMVvcX/yZxeLK1/ds
-        Fl82TWCzONv0ht1i+YR9bBYzzu9jslh75C67xZu2RkaLS1MOs1l8mvWQ2WLFz62MFjMmv2Sz
-        +LlrHosDr8faj/dZPebNOsHisXPWXXaPxXteMnncubaHzeN+93EmjyXTrrJ59G1ZxejxeZNc
-        AGcUl01Kak5mWWqRvl0CV8aqxzMYC9aJVrz/0sHWwLhRsIuRk0NCwESi5+pVli5GLg4hgd2M
-        Eq2ntrF1MXIAJSQktmzlgDCFJQ4fLgYpFxJ4zihx40w0iM0mkCpx49NHdhBbREBf4sChaUwg
-        Y5gFOlkk7v74zQwx8ySTxPmrf1hAqjgFAiUurz7IBmILC7hLLJ02kxHEZhFQlXi9YwcriM0r
-        YCnxdeMvdghbUOLkzCdgvcwC2hK9D1sZYexlC18zQzygIPHz6TJWkENFBPwk5n5jhigRkZjd
-        2cY8gVF4FpJJs5BMmoVk0iwkLQsYWVYxSqYWFOem5xYbFhjmpZbrFSfmFpfmpesl5+duYgTH
-        q5bmDsbtqz7oHWJk4mA8xCjBwawkwtsz+3yyEG9KYmVValF+fFFpTmrxIUZpDhYlcd4LXSfj
-        hQTSE0tSs1NTC1KLYLJMHJxSDUwnrnPsffVfZt8WlQM1r2sLPDI3XquaXX7V3Zbr1BMtlsg0
-        Bu3Z7PKG/bcWtm0zWG/95MS5xV1K3ll/JhXoNkR62jFXKs6/eZOxWZJpj9SR5rPL8nQsol48
-        O+kV7/M7xi576we/qdPCFrBf+6Ka+X3mTpfYUI//XwtfPjP6ceVmxKfEd2nFH0wfekzcf9nl
-        9ZWq+ICvtavYF3MVft5VyDV7P8/x1Ve35zZ3L+5u2D3v12llX/eHU+/qas/6fGm9xfvXh4rc
-        1l5w7MpeP6PouXvh9B0z3E00tQ/HvZPkOLf3a92sE7Jbbx6RTrzJYDuJwYC18NnFj/53VV4y
-        Vq16dJVHxvlH6OYG70D715nNM5q2KLEUZyQaajEXFScCAC15FSBGAwAA
-X-CMS-MailID: 20230126062038epcas1p2d2f898be360f8400521d2de81c01b8f6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230106175722epcas1p152dacb511ee08d563c51bb8a8deb0bfe
-References: <20221212182923.29155-1-jagan@amarulasolutions.com>
-        <CGME20230106175722epcas1p152dacb511ee08d563c51bb8a8deb0bfe@epcas1p1.samsung.com>
-        <CAMty3ZDGu-acuZ9Bhp_=JcTYn5YWKVZnEUf3nC28Spm8v4+KQg@mail.gmail.com>
-        <000001d9262d$42bc49c0$c834dd40$@samsung.com>
-        <CAMty3ZD=RDY_NH6rt+ibY_4drEenmHhxKpn=BRD551jRoK=MxQ@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230125083851.27759-2-surenb@google.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Jagan Teki,
+On Wed, Jan 25, 2023 at 12:38:46AM -0800, Suren Baghdasaryan wrote:
+> vm_flags are among VMA attributes which affect decisions like VMA merging
+> and splitting. Therefore all vm_flags modifications are performed after
+> taking exclusive mmap_lock to prevent vm_flags updates racing with such
+> operations. Introduce modifier functions for vm_flags to be used whenever
+> flags are updated. This way we can better check and control correct
+> locking behavior during these updates.
+> 
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> ---
+>  include/linux/mm.h       | 37 +++++++++++++++++++++++++++++++++++++
+>  include/linux/mm_types.h |  8 +++++++-
+>  2 files changed, 44 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index c2f62bdce134..b71f2809caac 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -627,6 +627,43 @@ static inline void vma_init(struct vm_area_struct *vma, struct mm_struct *mm)
+>  	INIT_LIST_HEAD(&vma->anon_vma_chain);
+>  }
+>  
+> +/* Use when VMA is not part of the VMA tree and needs no locking */
+> +static inline void init_vm_flags(struct vm_area_struct *vma,
+> +				 unsigned long flags)
 
-> -----Original Message-----
-> From: Jagan Teki <jagan=40amarulasolutions.com>
-> Sent: Friday, January 20, 2023 3:19 AM
-> To: =EB=8C=80=EC=9D=B8=EA=B8=B0/Tizen=20Platform=20Lab(SR)/=EC=82=BC=EC=
-=84=B1=EC=A0=84=EC=9E=90=20<inki.dae=40samsung.com>=0D=0A>=20Cc:=20Marek=20=
-Szyprowski=20<m.szyprowski=40samsung.com>;=20Seung-Woo=20Kim=0D=0A>=20<sw03=
-12.kim=40samsung.com>;=20Kyungmin=20Park=20<kyungmin.park=40samsung.com>;=
-=20Neil=0D=0A>=20Armstrong=20<narmstrong=40linaro.org>;=20Robert=20Foss=20<=
-robert.foss=40linaro.org>;=0D=0A>=20Andrzej=20Hajda=20<andrzej.hajda=40inte=
-l.com>;=20Sam=20Ravnborg=20<sam=40ravnborg.org>;=0D=0A>=20thierry.reding=40=
-gmail.com;=20Marek=20Vasut=20<marex=40denx.de>;=20linux-samsung-=0D=0A>=20s=
-oc=40vger.kernel.org;=20dri-devel=40lists.freedesktop.org;=20linux-amarula=
-=20<linux-=0D=0A>=20amarula=40amarulasolutions.com>=0D=0A>=20Subject:=20Re:=
-=20=5BPATCH=20v11=200/3=5D=20drm:=20exynos:=20dsi:=20Restore=20the=20bridge=
-=20chain=0D=0A>=20=0D=0A>=20Hi=20Inki=20Dae,=0D=0A>=20=0D=0A>=20On=20Thu,=
-=20Jan=2012,=202023=20at=207:56=20AM=20=EB=8C=80=EC=9D=B8=EA=B8=B0/Tizen=20=
-Platform=20Lab(SR)/=EC=82=BC=EC=84=B1=EC=A0=84=EC=9E=90=0D=0A>=20<inki.dae=
-=40samsung.com>=20wrote:=0D=0A>=20>=0D=0A>=20>=20Hi=20Jagan=20Teki,=0D=0A>=
-=20>=0D=0A>=20>=20Sorry=20for=20late.=0D=0A>=20>=0D=0A>=20>=20>=20-----Orig=
-inal=20Message-----=0D=0A>=20>=20>=20From:=20Jagan=20Teki=20<jagan=40amarul=
-asolutions.com>=0D=0A>=20>=20>=20Sent:=20Saturday,=20January=207,=202023=20=
-2:56=20AM=0D=0A>=20>=20>=20To:=20Marek=20Szyprowski=20<m.szyprowski=40samsu=
-ng.com>;=20Inki=20Dae=0D=0A>=20>=20>=20<inki.dae=40samsung.com>;=20Seung-Wo=
-o=20Kim=20<sw0312.kim=40samsung.com>;=20Kyungmin=0D=0A>=20Park=0D=0A>=20>=
-=20>=20<kyungmin.park=40samsung.com>;=20Neil=20Armstrong=20<narmstrong=40li=
-naro.org>;=0D=0A>=20Robert=0D=0A>=20>=20>=20Foss=20<robert.foss=40linaro.or=
-g>;=20Andrzej=20Hajda=20<andrzej.hajda=40intel.com>;=0D=0A>=20Sam=0D=0A>=20=
->=20>=20Ravnborg=20<sam=40ravnborg.org>=0D=0A>=20>=20>=20Cc:=20Marek=20Vasu=
-t=20<marex=40denx.de>;=20linux-samsung-soc=40vger.kernel.org;=20dri-=0D=0A>=
-=20>=20>=20devel=40lists.freedesktop.org;=20linux-amarula=20<linux-=0D=0A>=
-=20>=20>=20amarula=40amarulasolutions.com>=0D=0A>=20>=20>=20Subject:=20Re:=
-=20=5BPATCH=20v11=200/3=5D=20drm:=20exynos:=20dsi:=20Restore=20the=20bridge=
-=20chain=0D=0A>=20>=20>=0D=0A>=20>=20>=20On=20Mon,=20Dec=2012,=202022=20at=
-=2011:59=20PM=20Jagan=20Teki=20<jagan=40amarulasolutions.com>=0D=0A>=20wrot=
-e:=0D=0A>=20>=20>=20>=0D=0A>=20>=20>=20>=20Split=20the=20Exynos=20DSI=20bri=
-dge=20chain=20update=20patches=20from=20Samsung=20DSIM=0D=0A>=20>=20>=20>=
-=20bridge=20driver=20for=20easy=20to=20apply.=0D=0A>=20>=20>=20>=0D=0A>=20>=
-=20>=20>=20Changes=20for=20v11:=0D=0A>=20>=20>=20>=20-=20enable=20bridge.pr=
-e_enable_prev_first=0D=0A>=20>=20>=20>=20Changes=20for=20v10:=0D=0A>=20>=20=
->=20>=20-=20collect=20Marek.V=20Review=20tag=0D=0A>=20>=20>=0D=0A>=20>=20>=
-=20Any=20update=20on=20this?=0D=0A>=20>=20>=0D=0A>=20>=0D=0A>=20>=20Added=
-=20Thierry=20Reding=20who=20is=20a=20maintainer=20of=20DRM=20panel=20driver=
-s.=0D=0A>=20>=0D=0A>=20>=20I=20will=20pick=20this=20patch=20series=20-=20in=
-cluding=20panel=20and=20bride=20patches=20-=20up.=0D=0A>=20>=0D=0A>=20>=20T=
-hierry=20and=20Andrzej,=20please=20let=20me=20know=20if=20any=20problem.=0D=
-=0A>=20=0D=0A>=20Any=20further=20update=20on=20this?=0D=0A=0D=0AAlready=20m=
-erged=20to=20exynos-drm-next=20so=20this=20patch=20series=20will=20go=20to=
-=20-next=20as=20long=20as=20no=20feedback=20from=20Thierry=20and=20Andrzej.=
-=0D=0AI=20will=20request=20a=20PR=20this=20or=20next=20week.=0D=0A=0D=0ATha=
-nks,=0D=0AInki=20Dae=0D=0A=0D=0A>=20=0D=0A>=20Thanks,=0D=0A>=20Jagan.=0D=0A=
-=0D=0A
+I'd suggest to make it vm_flags_init() etc.
+Except that
+
+Acked-by: Mike Rapoport (IBM) <rppt@kernel.org>
+
+> +{
+> +	vma->vm_flags = flags;
+> +}
+> +
+> +/* Use when VMA is part of the VMA tree and modifications need coordination */
+> +static inline void reset_vm_flags(struct vm_area_struct *vma,
+> +				  unsigned long flags)
+> +{
+> +	mmap_assert_write_locked(vma->vm_mm);
+> +	init_vm_flags(vma, flags);
+> +}
+> +
+> +static inline void set_vm_flags(struct vm_area_struct *vma,
+> +				unsigned long flags)
+> +{
+> +	mmap_assert_write_locked(vma->vm_mm);
+> +	vma->vm_flags |= flags;
+> +}
+> +
+> +static inline void clear_vm_flags(struct vm_area_struct *vma,
+> +				  unsigned long flags)
+> +{
+> +	mmap_assert_write_locked(vma->vm_mm);
+> +	vma->vm_flags &= ~flags;
+> +}
+> +
+> +static inline void mod_vm_flags(struct vm_area_struct *vma,
+> +				unsigned long set, unsigned long clear)
+> +{
+> +	mmap_assert_write_locked(vma->vm_mm);
+> +	vma->vm_flags |= set;
+> +	vma->vm_flags &= ~clear;
+> +}
+> +
+>  static inline void vma_set_anonymous(struct vm_area_struct *vma)
+>  {
+>  	vma->vm_ops = NULL;
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 2d6d790d9bed..6c7c70bf50dd 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -491,7 +491,13 @@ struct vm_area_struct {
+>  	 * See vmf_insert_mixed_prot() for discussion.
+>  	 */
+>  	pgprot_t vm_page_prot;
+> -	unsigned long vm_flags;		/* Flags, see mm.h. */
+> +
+> +	/*
+> +	 * Flags, see mm.h.
+> +	 * WARNING! Do not modify directly.
+> +	 * Use {init|reset|set|clear|mod}_vm_flags() functions instead.
+> +	 */
+> +	unsigned long vm_flags;
+>  
+>  	/*
+>  	 * For areas with an address space and backing store,
+> -- 
+> 2.39.1
+> 
+> 
