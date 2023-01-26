@@ -2,31 +2,31 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C23FC05027
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 10:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A285C61DA7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 10:40:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237148AbjAZKk3 (ORCPT
+        id S237139AbjAZKkb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 Jan 2023 05:40:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34004 "EHLO
+        Thu, 26 Jan 2023 05:40:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236997AbjAZKkW (ORCPT
+        with ESMTP id S237032AbjAZKkZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Jan 2023 05:40:22 -0500
-Received: from out0.migadu.com (out0.migadu.com [94.23.1.103])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 835916DB10;
-        Thu, 26 Jan 2023 02:40:11 -0800 (PST)
+        Thu, 26 Jan 2023 05:40:25 -0500
+Received: from out0.migadu.com (out0.migadu.com [IPv6:2001:41d0:2:267::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C999D6DB22;
+        Thu, 26 Jan 2023 02:40:12 -0800 (PST)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-        t=1674729609;
+        t=1674729611;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=AL7Cx0CdV/CMB1DM1nnXv+J97iJ72P++bxybb/0LZtM=;
-        b=eTtvcUsj7BhtCKWS939C5Vn5hrbCH24z8hrRrFjLw37kuR6JH5CBRxT/QmJKiK//krllF0
-        /PCvLhBgJBC63H7LbIigd7mgy/WtbdfIlqmbq4CEjuDqebE8uxGkbRNkQDbHeD3XeRf+6T
-        WNyHqd61f2+GXtum2ykbUTHkAdGI6QY=
+        bh=wz5jcqMJAq6z77aIztno7yadg9KTxRI5ZYyyEhvqWmc=;
+        b=P/FEW+sXAWmosczZS9GovnwfceG/ZYRCiH7Vf6V6XmOHSiQMvEnZg7IvDykMpu7mrpjVyG
+        +x7TAvomwiGEOjDuVEgoz/7UEOxLx5H3qKyw7QYR+wYB2uPMsWsy4IAzR/0td0c01e2682
+        lsDtfJT5Ywqf9VsoyC/xbHR07vx+nVA=
 From:   Henrik Grimler <henrik@grimler.se>
 To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         alim.akhtar@samsung.com, devicetree@vger.kernel.org,
@@ -34,9 +34,9 @@ To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
 Cc:     Henrik Grimler <henrik@grimler.se>
-Subject: [PATCH 5/6] ARM: dts: exynos: add mmc aliases for Exynos5410
-Date:   Thu, 26 Jan 2023 11:38:27 +0100
-Message-Id: <20230126103828.481441-6-henrik@grimler.se>
+Subject: [PATCH 6/6] ARM: dts: exynos: add mmc aliases for Exynos5420
+Date:   Thu, 26 Jan 2023 11:38:28 +0100
+Message-Id: <20230126103828.481441-7-henrik@grimler.se>
 In-Reply-To: <20230126103828.481441-1-henrik@grimler.se>
 References: <20230126103828.481441-1-henrik@grimler.se>
 MIME-Version: 1.0
@@ -47,21 +47,25 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 So that mmcblk numbering is fixed for the eMMC and sdcard, no matter
-if a storage device is attached or not.
+if a storage device is attached or not.  Also remove old, no longer
+used, mshc alias while we are at it.
 
 Signed-off-by: Henrik Grimler <henrik@grimler.se>
 ---
- arch/arm/boot/dts/exynos5410.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/exynos5420.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 350b8afa0a3a..9ecbe3cf27e8 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -20,6 +20,9 @@ / {
- 	interrupt-parent = <&gic>;
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index b1051a7d07af..3179174a23c4 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -19,9 +19,9 @@ / {
+ 	compatible = "samsung,exynos5420", "samsung,exynos5";
  
  	aliases {
+-		mshc0 = &mmc_0;
+-		mshc1 = &mmc_1;
+-		mshc2 = &mmc_2;
 +		mmc0 = &mmc_0;
 +		mmc1 = &mmc_1;
 +		mmc2 = &mmc_2;
