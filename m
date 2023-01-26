@@ -2,107 +2,136 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA5A2C54E94
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 13:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E10C54E94
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 13:41:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237097AbjAZN3e (ORCPT
+        id S230019AbjAZNln (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 Jan 2023 08:29:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38700 "EHLO
+        Thu, 26 Jan 2023 08:41:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236979AbjAZN3X (ORCPT
+        with ESMTP id S229472AbjAZNlm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Jan 2023 08:29:23 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05A786F223
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 05:28:48 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id r2so1764082wrv.7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 05:28:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lx1DAkubOAlYe3YKXCmyxQpUHCB1kRDO2QcQY7OYxMs=;
-        b=pq+99UzAUffw0B5EaOLSqCukAfbBg5cy0Zyv114NM3mReAyn09ZzdwfeQtd1yi80Xv
-         BFR4xxBW10H88OGoSlSv8cBVtq4t6lTAekNnAk9SuBFoNSejm8JJpDeJm8SXnDlj3ocU
-         wa5EBXSq427FtLItR/UekrIbinAmne9P5T4n10jn8p0gKwT2Sm/PnWX5tkP2Bl2tohnq
-         kEgcm6/ZipxQNzmdfQv8s8X3BX+LjHPuNhHaQdk+zE2AdCvHbx60el1HWaghGN8oGtC4
-         7UXq9fmkV+8Yl5Xh7wJi07E7TGR34joBh6mqZujW6cGNp67VoS9JrBhjSsXUEQZ/HNnA
-         1UuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lx1DAkubOAlYe3YKXCmyxQpUHCB1kRDO2QcQY7OYxMs=;
-        b=z1TbdZL3ltGC6DfgTQM9YcanXnn9lbJuygqvp1pWZQHH+9GDAb8kn8TOESgkO7DRxm
-         pUz5s5xAsd4vMKi9kAhlY23b3dxH6MCs/yWoFOyb3eIBdyRTF2SsNwvpSqmHYIUtiOSu
-         gRqVd3tkawhTVgZo71IA+3EYBxDMdSWGSoEo0u3N2DRn5OKkUOFtpdqPF/1Yi5J43SM2
-         hAYG7sEk0u3lsuz2mlnbhw1XbIG0nfls2F7FuDqEtsOQc4NM8CiZGNT0oBTLaVsAY5el
-         4bSEXSWUtmElzw3RErBRdJ4K9/OCdYH2Tgv0kXHcpfpeCimern5IQpUFgIBPAMvvM9zz
-         95Iw==
-X-Gm-Message-State: AFqh2koPXZctQo0WkQvMLzbupd/zPwxbzhVTpgYPutH+8joZqcj6WcR9
-        Up6NOcmebXqBX+kW49klxTxvHA==
-X-Google-Smtp-Source: AMrXdXs/beqvYpPiPnonpjIItu1cPLPKj6Samh65jUCGRVhdi9JtDNGb0Sg72VPia4bfs/daV7+9wQ==
-X-Received: by 2002:a5d:4bce:0:b0:2be:4ae1:215a with SMTP id l14-20020a5d4bce000000b002be4ae1215amr20630645wrt.16.1674739726577;
-        Thu, 26 Jan 2023 05:28:46 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id a5-20020adfeec5000000b002bfae6b17d2sm1324488wrp.55.2023.01.26.05.28.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jan 2023 05:28:46 -0800 (PST)
-Message-ID: <22067557-5753-9bff-a060-7be587b92478@linaro.org>
-Date:   Thu, 26 Jan 2023 14:28:43 +0100
+        Thu, 26 Jan 2023 08:41:42 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54024457FE;
+        Thu, 26 Jan 2023 05:41:41 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C3010B81DBE;
+        Thu, 26 Jan 2023 13:41:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72FCCC4339B;
+        Thu, 26 Jan 2023 13:41:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674740498;
+        bh=OfjvJlFHKnWvYxycX8NSllNoKHk1aH1b6L4NLVoak14=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KvJFq9K9eto2JqqoAFUOX/dUmibZpc3MmkO1gjyBIQE/GpBB6BeKWzVngDmJ8u2lm
+         lB/oBz06HGHnjGWlVQDwIeD38j2xRbtUiSqknObpNRjWnzyipVFCeteJR1Mkqwtrpd
+         fq709+RWXH67L6dHXvwDmTJURFGs3hjjoE0406BuusrGNKM+ajX3GvUX52f5tz/1dk
+         DaxfprWiHcOGWBoFJ5cFi0Tx1sthjh+aLN62le3jrsrN8+m125eSwk4WUcWq/HE/3Z
+         Fi4tirDCp5H2hrJlAntmw5TqAsPCpblvSBcLi/yIj9IrIqXgO6W5KMR9ShmoO6Rxu7
+         FnTzio1ywds1w==
+Received: by mail-vs1-f49.google.com with SMTP id 187so1877360vsv.10;
+        Thu, 26 Jan 2023 05:41:38 -0800 (PST)
+X-Gm-Message-State: AFqh2kr0fWORURRV4c8EiGUCQplZTp9ULoCUilfIuzNXaYNosPO5nc3u
+        chAaOwsumvIzp9yU9qYy7Yjvcz0a+7UaUGVImw==
+X-Google-Smtp-Source: AMrXdXsWENzKkYOuOdC+oVtMFqxH4XRwLpmuHN77BN9u4u6pqZ52lbeZfgKydbou4+U0NFA6ehsUq0i0oKKw3/eQRlM=
+X-Received: by 2002:a05:6102:5490:b0:3b5:1fe4:f1c2 with SMTP id
+ bk16-20020a056102549000b003b51fe4f1c2mr4864173vsb.0.1674740497377; Thu, 26
+ Jan 2023 05:41:37 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH 0/6] ARM: dts: add mmc aliases for Exynos devices
-Content-Language: en-US
-To:     Henrik Grimler <henrik@grimler.se>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        alim.akhtar@samsung.com, devicetree@vger.kernel.org,
+References: <20230125175943.675823-1-krzysztof.kozlowski@linaro.org>
+ <20230125211329.GA2899932-robh@kernel.org> <afce38b0-be90-a3b5-f181-a88ad3025bd9@linaro.org>
+In-Reply-To: <afce38b0-be90-a3b5-f181-a88ad3025bd9@linaro.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 26 Jan 2023 07:41:25 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKpibaWgWXwhNFQ4U_tT0cdvUMO4attSsYqoSFmbq4RZQ@mail.gmail.com>
+Message-ID: <CAL_JsqKpibaWgWXwhNFQ4U_tT0cdvUMO4attSsYqoSFmbq4RZQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: usb: samsung,exynos-dwc3: allow unit address
+ in DTS
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20230126103828.481441-1-henrik@grimler.se>
- <0807a4ab-c544-2695-67d4-df9a3b1de4cf@linaro.org>
- <Y9J97CU7f5qoiO/F@grimlerstat>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <Y9J97CU7f5qoiO/F@grimlerstat>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 26/01/2023 14:19, Henrik Grimler wrote:
-> Hi Krzysztof,
-> 
-> On Thu, Jan 26, 2023 at 01:22:54PM +0100, Krzysztof Kozlowski wrote:
->> On 26/01/2023 11:38, Henrik Grimler wrote:
->>> It is convenient to have fixed mmcblk numbering of the eMMC and
->>> sdcard, and with these aliases all Exynos 4 and 5 devices (and
->>> probably Exynos 3, but I do not have one of those boards so cannot
->>> verify) will have the eMMC as mmc0 and sdcard as mmc2.
->>>
->>> I also removed sdhc aliases, as they should not be needed after [1] as
->>> I understand it.
->>>
->>> [1] https://lkml.kernel.org/lkml/20211124184603.3897245-1-john@metanate.com/
->>
->> Marek sent the same in the past:
->> https://lore.kernel.org/all/?q=%22exynos%3A+Use+fixed+index+for+the+MMC+devices%22
->>
->> The patches are fine for me except, that these actually do not belong to
->> DTSI. Aliases for board or user-exposable interfaces are actually board
->> specific and each board should customize the ones it uses.
-> 
-> Thanks for reviewing!  I will change the series to only add aliases to
-> the boards I am familiar with.
+On Thu, Jan 26, 2023 at 4:48 AM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 25/01/2023 22:13, Rob Herring wrote:
+> > On Wed, Jan 25, 2023 at 06:59:43PM +0100, Krzysztof Kozlowski wrote:
+> >> The Samsung Exynos SoC USB 3.0 DWC3 Controller is a simple wrapper of
+> >> actual DWC3 Controller device node.  It handles necessary Samsung
+> >> Exynos-specific resources (regulators, clocks), but does not have its
+> >> own MMIO address space.
+> >>
+> >> However neither simple-bus bindings nor dtc W=1 accept device nodes in
+> >> soc@ node which do not have unit address.  Therefore allow using
+> >> the address space of child device (actual DWC3 Controller) as the
+> >> wrapper's address.
+> >
+> > The correct fix is 'ranges' should have a value. Though the whole
+> > wrapper thing when there are no registers I dislike...
+>
+> You mean something like this (diff against this patchset):
+> ----------
+> diff --git a/arch/arm/boot/dts/exynos54xx.dtsi
+> b/arch/arm/boot/dts/exynos54xx.dtsi
+> index 08786fd9c6ea..75b6f9678672 100644
+> --- a/arch/arm/boot/dts/exynos54xx.dtsi
+> +++ b/arch/arm/boot/dts/exynos54xx.dtsi
+> @@ -142,16 +142,15 @@ hsi2c_7: i2c@12cd0000 {
+>                         status = "disabled";
+>                 };
+>
+> -               usbdrd3_0: usb-wrapper@12000000 {
+> +               usbdrd3_0: usb-wrapper {
 
-I think you can move all of them to all of the boards. Add aliases for
-interfaces which are enabled in the board.
+Why did you drop the unit-address? Unit-address is valid with 'reg' or 'ranges'.
 
-Best regards,
-Krzysztof
-
+>                         compatible = "samsung,exynos5250-dwusb3";
+> -                       reg = <0x12000000 0x10000>;
+>                         #address-cells = <1>;
+>                         #size-cells = <1>;
+> -                       ranges;
+> +                       ranges = <0x0 0x12000000 0x10000>;
+>
+> -                       usbdrd_dwc3_0: usb@12000000 {
+> +                       usbdrd_dwc3_0: usb@0 {
+>                                 compatible = "snps,dwc3";
+> -                               reg = <0x12000000 0x10000>;
+> +                               reg = <0x0 0x10000>;
+>
+> ---------
+>
+> Unfortunately dtc W=1 is still not happy:
+>
+> exynos54xx.dtsi:145.26-159.5: Warning (unit_address_vs_reg):
+> /soc/usb-wrapper: node has a reg or ranges property, but no unit name
+>
+> neither dtbs_check is:
+>
+> exynos5410-smdk5410.dtb: soc: usb-wrapper: {'compatible':
+> ['samsung,exynos5250-dwusb3'], '#address-cells': [[1]], '#size-cells':
+> [[1]], 'ranges': [[0, 301989888, 65536]], 'clocks': [[5, 366]],
+> 'clock-names': ['usbdrd30'], 'pinctrl-names': ['default'], 'pinctrl-0':
+> [[21, 22]], 'vdd10-supply': [[23]], 'vdd33-supply': [[23]], 'usb@0':
+> {'compatible': ['snps,dwc3'], 'reg': [[0, 65536]], 'interrupts': [[0,
+> 72, 4]], 'phys': [[24, 0], [24, 1]], 'phy-names': ['usb2-phy',
+> 'usb3-phy'], 'snps,dis_u3_susphy_quirk': True}} should not be valid
+> under {'type': 'object'}
+>         From schema:
+> /home/krzk/.local/lib/python3.10/site-packages/dtschema/schemas/simple-bus.yaml
+>
+>
+> Best regards,
+> Krzysztof
+>
