@@ -2,142 +2,127 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6F9C54E94
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 10:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7EB2C05027
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Jan 2023 10:59:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236680AbjAZKtK (ORCPT
+        id S237061AbjAZK76 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 Jan 2023 05:49:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41120 "EHLO
+        Thu, 26 Jan 2023 05:59:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236130AbjAZKtI (ORCPT
+        with ESMTP id S237047AbjAZK7h (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Jan 2023 05:49:08 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20B1443467
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 02:48:32 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id b7so1341805wrt.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 02:48:32 -0800 (PST)
+        Thu, 26 Jan 2023 05:59:37 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B37D86C563
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 02:59:25 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id h16so1328877wrz.12
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2023 02:59:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=S1oHIv84+gqWpeprpYr5WHtUeIKRCWjFxOmQZdohkr0=;
-        b=k/HX4mkyFa8lPlhUKq14mrbcyBZFE3LLULrAnrsgDM/fXCRrK552LC5x4/apKOBt2q
-         cbgiUvNsdJi8SWBW1dBq+EApvnGwBfjaTJ/yeLop4ncIf3QZbfjiJdqj9JSjQNAcPYuK
-         cUPuJaHZI4I5RxqtCnDwXuEH1gkPrloiGhnSbNDk/qORMIBNhH/GLz5mEtw65YJ4MN2C
-         iYQ7DDUiIGJpTpgXdNr4NzZ3HaiX8rs3zkTD/96thlIPRc0LqO9wJdg91CPxlZjZCBKn
-         2ZEP+PDKn7Szx8g5N9ftDnnNo+t/XHfzZFv1NjWzMTc+n+/eRQ1WkeIrVwjWW8um7cS4
-         Y3Hg==
+        bh=XGNWex4aZN5UnK5VI5imptsnGrCfs7V+r6MZ8tVGZ/Y=;
+        b=LottchB5TxsgpB2icKKUb0uQvPmmooqPUnNLmFanJPZ6UI6Mf4I57CctxPo91SuO36
+         k0KBNcTJDROO4xdaMAayMBLctuyRRTLZ6/+pm/dJXv4l36tYu1pypCuN8rIPFbUFmHTS
+         9r+za/3N3agXVpY4/yoOnN9gvA/O2JKvnm2t48IuD4vOJpWnHhbKrd8Q+chuItyScfy6
+         y7B2wNE+M3R3vP5+HBu96uavIjwrNP98vXL/8QgDSgKeGXKepW7mynyutZyMzhfExCIv
+         wbDQZxi9GryEVOsaMR/lAMUNAq4WdyB6b2Mf+TkibwVTFtdM1dCXaJ2wOEUhHdvxgh9I
+         z81A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S1oHIv84+gqWpeprpYr5WHtUeIKRCWjFxOmQZdohkr0=;
-        b=aN5MKXdHbfGnNI56okAn7hgGBWOwbNKNkEBRY3KivzykxT2UHlqSWvjSoEn+Zneoid
-         v8F5vIeFC/5Tjs66x4JXrqh0tkUU5PufX1COjcd4JzLAXeYe38m6++gfJtDWQ5TFfYN5
-         biimmDSlesgPyT9rluCy+IuG0CMTmgOHTySTSIEos/B8y9jinaPtGN5Jk2iLWc2dOMdV
-         P29DeBjTErd/GrWSvFuuQlMRBtMyIEHcd1PXFGMquNcN6HS/lOHbscgZaxPjQetq6Q34
-         frRDsxqjK33dAVPqm6JyAdPGVi0dLFErdBiA6VvUa6js15og2rl105fTyMCIYTlUXTKJ
-         iGvQ==
-X-Gm-Message-State: AO0yUKXwd+wTb+2ur0mIywt7+4NefWf1M9hmi9RECWhPX+CJonIbxOIG
-        EQjMUR0anNWnWH97PEBbKJbnwQ==
-X-Google-Smtp-Source: AK7set9ng1No/R1yeLGXdRUAQYm/shCPRwBRFuOjvcleaWNJ5RfczIJwORV/9dTBmib4dq4Z2jYg4A==
-X-Received: by 2002:adf:a30d:0:b0:2bf:b44d:6dae with SMTP id c13-20020adfa30d000000b002bfb44d6daemr8076614wrb.28.1674730108083;
-        Thu, 26 Jan 2023 02:48:28 -0800 (PST)
+        bh=XGNWex4aZN5UnK5VI5imptsnGrCfs7V+r6MZ8tVGZ/Y=;
+        b=oLmmyCuwK053/1gqyPu7T9sekBJ9EzB5/MR91X1DAHsFzHxyWA2JR3T4hcoeeSoepp
+         Vt8Y5KhXtf7jbpdRJaLmY+Xce4uf5o3jnYr76ZcCHclZbXN7E+HD+kLaxmgugjySN6lp
+         rD0gE2uGs1DxUGOUAoGlfzwqhshM88dhP/klzkkhJ8C1xWNtj9I4hLW+LU8w8Q1L0loj
+         MUJkulDNYFGJ2zjSVG1xb4XKx9CGtvEWsuB0Ejyy8C9K6VhYelBFC0wRcJ7LvWJjhA69
+         le3AFoK+QZ7/PTL2FQi6No0Bv1WRZRNL4vykOQ8N8rHmY+JLXcsX1ia4lC+3PZlbFzD3
+         JxHA==
+X-Gm-Message-State: AO0yUKWkc/VUDO7teLttoNNL7MeVNXr7+fZfvECgoRNkyyWuh/3fWv1x
+        YERpi+sQvAPWhEs7DIDLH+QBxg==
+X-Google-Smtp-Source: AK7set/IByWURjBOmBXELn9EmHeTvWxS4Hd9iEsMvqCqp8M/Q+k2MH5dLTurrxVoafBryTbY/LggbQ==
+X-Received: by 2002:adf:ea01:0:b0:2bf:b35d:2797 with SMTP id q1-20020adfea01000000b002bfb35d2797mr7800062wrm.11.1674730764134;
+        Thu, 26 Jan 2023 02:59:24 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id a17-20020adffb91000000b002bddac15b3dsm940450wrr.33.2023.01.26.02.48.27
+        by smtp.gmail.com with ESMTPSA id e7-20020adfe387000000b002be15ee1377sm986687wrm.22.2023.01.26.02.59.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jan 2023 02:48:27 -0800 (PST)
-Message-ID: <afce38b0-be90-a3b5-f181-a88ad3025bd9@linaro.org>
-Date:   Thu, 26 Jan 2023 11:48:26 +0100
+        Thu, 26 Jan 2023 02:59:23 -0800 (PST)
+Message-ID: <d8f5fa57-da3a-09f9-e297-197068264d26@linaro.org>
+Date:   Thu, 26 Jan 2023 11:59:21 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.0
-Subject: Re: [PATCH] dt-bindings: usb: samsung,exynos-dwc3: allow unit address
- in DTS
+Subject: Re: [PATCH 2/9] ARM: dts: exynos: move exynos-bus nodes out of soc in
+ Exynos5420
 Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230125175943.675823-1-krzysztof.kozlowski@linaro.org>
- <20230125211329.GA2899932-robh@kernel.org>
+Cc:     replicant@osuosl.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        =?UTF-8?Q?Martin_J=c3=bccker?= <martin.juecker@gmail.com>,
+        Henrik Grimler <henrik@grimler.se>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+References: <20230125094513.155063-1-krzysztof.kozlowski@linaro.org>
+ <CGME20230125094529eucas1p29b5f25af2c658abef13a93c49eca975f@eucas1p2.samsung.com>
+ <20230125094513.155063-2-krzysztof.kozlowski@linaro.org>
+ <cd42b8c9-a79a-068c-a967-810c05e818bd@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230125211329.GA2899932-robh@kernel.org>
+In-Reply-To: <cd42b8c9-a79a-068c-a967-810c05e818bd@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 25/01/2023 22:13, Rob Herring wrote:
-> On Wed, Jan 25, 2023 at 06:59:43PM +0100, Krzysztof Kozlowski wrote:
->> The Samsung Exynos SoC USB 3.0 DWC3 Controller is a simple wrapper of
->> actual DWC3 Controller device node.  It handles necessary Samsung
->> Exynos-specific resources (regulators, clocks), but does not have its
->> own MMIO address space.
->>
->> However neither simple-bus bindings nor dtc W=1 accept device nodes in
->> soc@ node which do not have unit address.  Therefore allow using
->> the address space of child device (actual DWC3 Controller) as the
->> wrapper's address.
+On 26/01/2023 10:47, Marek Szyprowski wrote:
+> Hi Krzysztof,
 > 
-> The correct fix is 'ranges' should have a value. Though the whole 
-> wrapper thing when there are no registers I dislike...
+> On 25.01.2023 10:45, Krzysztof Kozlowski wrote:
+>> The soc node is supposed to have only device nodes with MMIO addresses,
+>> as reported by dtc W=1:
+>>
+>>    arch/arm/boot/dts/exynos5420.dtsi:1070.24-1075.5:
+>>      Warning (simple_bus_reg): /soc/bus-wcore: missing or empty reg/ranges property
+>>
+>> and dtbs_check:
+>>
+>>    exynos5420-arndale-octa.dtb: soc: bus-wcore:
+>>      {'compatible': ['samsung,exynos-bus'], 'clocks': [[2, 769]], 'clock-names': ['bus'], 'status': ['disabled']} should not be valid under {'type': 'object'}
+>>
+>> Move the bus nodes and their OPP tables out of SoC to fix this.
+>> Re-order them alphabetically while moving and put some of the OPP tables
+>> in device nodes (if they are not shared).
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> Frankly speaking I'm not very keen on moving those bus nodes out of 
+> /soc. Technically speaking this is definitely a part of soc and doesn't 
+> make much sense outside of it. IMHO they describe SoC hardware details 
+> and they might be moved somehow under clock controller device(s), 
+> although this would require some changes in the bindings and drivers.
 
-You mean something like this (diff against this patchset):
-----------
-diff --git a/arch/arm/boot/dts/exynos54xx.dtsi
-b/arch/arm/boot/dts/exynos54xx.dtsi
-index 08786fd9c6ea..75b6f9678672 100644
---- a/arch/arm/boot/dts/exynos54xx.dtsi
-+++ b/arch/arm/boot/dts/exynos54xx.dtsi
-@@ -142,16 +142,15 @@ hsi2c_7: i2c@12cd0000 {
-                        status = "disabled";
-                };
+That's the only way to fix it without change of drivers any ABI
+compatibility issue. The same we do for Qualcomm interconnects, e.g.
+arch/arm64/boot/dts/qcom/sm8450.dtsi where some interconnects have some
+do not have MMIO space.
 
--               usbdrd3_0: usb-wrapper@12000000 {
-+               usbdrd3_0: usb-wrapper {
-                        compatible = "samsung,exynos5250-dwusb3";
--                       reg = <0x12000000 0x10000>;
-                        #address-cells = <1>;
-                        #size-cells = <1>;
--                       ranges;
-+                       ranges = <0x0 0x12000000 0x10000>;
+I want to achieve finally clean dtbs_check run for all Exynos sources.
+The in-tree bindings already pass, so now I am fixing the ones coming
+from dtschema (simple-bus.yaml in particular).
 
--                       usbdrd_dwc3_0: usb@12000000 {
-+                       usbdrd_dwc3_0: usb@0 {
-                                compatible = "snps,dwc3";
--                               reg = <0x12000000 0x10000>;
-+                               reg = <0x0 0x10000>;
-
----------
-
-Unfortunately dtc W=1 is still not happy:
-
-exynos54xx.dtsi:145.26-159.5: Warning (unit_address_vs_reg):
-/soc/usb-wrapper: node has a reg or ranges property, but no unit name
-
-neither dtbs_check is:
-
-exynos5410-smdk5410.dtb: soc: usb-wrapper: {'compatible':
-['samsung,exynos5250-dwusb3'], '#address-cells': [[1]], '#size-cells':
-[[1]], 'ranges': [[0, 301989888, 65536]], 'clocks': [[5, 366]],
-'clock-names': ['usbdrd30'], 'pinctrl-names': ['default'], 'pinctrl-0':
-[[21, 22]], 'vdd10-supply': [[23]], 'vdd33-supply': [[23]], 'usb@0':
-{'compatible': ['snps,dwc3'], 'reg': [[0, 65536]], 'interrupts': [[0,
-72, 4]], 'phys': [[24, 0], [24, 1]], 'phy-names': ['usb2-phy',
-'usb3-phy'], 'snps,dis_u3_susphy_quirk': True}} should not be valid
-under {'type': 'object'}
-	From schema:
-/home/krzk/.local/lib/python3.10/site-packages/dtschema/schemas/simple-bus.yaml
-
+If you have any other idea how to seamlessly clean it up, I am happy to
+hear. But I guess the main problem is that no one is being paid for
+doing anything for Samsung Exynos, so for free not many put much effort
+into working on it.
 
 Best regards,
 Krzysztof
