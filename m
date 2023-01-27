@@ -2,122 +2,58 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D567C54EAA
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Jan 2023 17:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6A6C61DB3
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Jan 2023 18:02:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229711AbjA0Rjk (ORCPT
+        id S234632AbjA0SCf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 27 Jan 2023 12:39:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59414 "EHLO
+        Fri, 27 Jan 2023 13:02:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234568AbjA0Rjj (ORCPT
+        with ESMTP id S233745AbjA0SCe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Jan 2023 12:39:39 -0500
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C82E31CAD3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jan 2023 09:39:38 -0800 (PST)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-506609635cbso76737597b3.4
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jan 2023 09:39:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=e2YXWr1HG5PC3aXK4CzFGhgLqF4TwbPxIsqKBeKBW4g=;
-        b=gA0EatzTjAacYhO0/TiDJdnXTuNNdWjyIt0DkW1qsY9p2TRJsCAFdsNZUiz4QyezT+
-         XkPQ2kSc3j93oxdfnMkzO9fBPoCRo34HTApdF4eTkDFt0niTOH+aWm4ZRwBt1gSmupIU
-         9XjIxZ2jsjOTb3WU1902XnI/4kpuuQAcNkrrs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e2YXWr1HG5PC3aXK4CzFGhgLqF4TwbPxIsqKBeKBW4g=;
-        b=z0OuljvihwPqSFdbeGjYyTB2omX95YLNZu50XhnVfFkaffWiPyMTt5+tsDT6PkGzue
-         g7na/UzQW+LTswM1X6x8pgmDePP1LZcGm7Z7bqIHdcHW8pQsVRfZCs4rer0ZfPqvkDxI
-         0bcS636pjzYeo85hJ47YkXFolQQLrjqO3/i0VRV32YFzgJqmUqEveisjk/CkgHSClnFz
-         owEICcN+PWCiCJsdE9O56vKM/0oKZGlnAabrFZv++g+WD0p+Y+56spdd8WWYz5dRABnU
-         aK+UJKgqpZGvyUols1CVi/wpB2MJAxkG4rsb8Ukkt3Shjwx0FsZAqDNFiSiWmt4CcNOx
-         va0A==
-X-Gm-Message-State: AFqh2kpBasoa9j1TjZRkEvQiDQmNp+mNm/Dgm09Xkxj6hBjVdW9q/w2S
-        i8G/Qv8S3zddiFJCGEUJjop9X3qM5ypr6jBwHh5fdQ==
-X-Google-Smtp-Source: AMrXdXuVNwSWKBh/6v0X8S1+k0INDffwXqKFD9ZdtW09goRn50INi1zYFaJ87D2lzXSkCd/8DMiIHazjH3DcrGBwhNY=
-X-Received: by 2002:a0d:fe03:0:b0:470:533:cb89 with SMTP id
- o3-20020a0dfe03000000b004700533cb89mr5543044ywf.81.1674841178008; Fri, 27 Jan
- 2023 09:39:38 -0800 (PST)
+        Fri, 27 Jan 2023 13:02:34 -0500
+Received: from mail-4018.proton.ch (mail-4018.proton.ch [185.70.40.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C74ED7D2BA
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jan 2023 10:02:32 -0800 (PST)
+Date:   Fri, 27 Jan 2023 18:02:23 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emersion.fr;
+        s=protonmail; t=1674842549; x=1675101749;
+        bh=G3N1dUBCoS3HUBukvqJJ/tzvPtsoCbWhZtyZKVUf/Uw=;
+        h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+         Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+         Message-ID:BIMI-Selector;
+        b=nZ7r7awSwyh0CWD7LR7Uo8G18yAuRzK/BHVOCsJCTwZuLv48eWgTHHODREcaEqVRK
+         4AXYVehhR7ffzpiV0nx/eZr78rXRozRr0v/oesPTBuYDgRQWKbeNtHuJJ8Dhtcl+yq
+         y1jTt0yuURsHGOb3B3g7RllVa45/XyiDsRJ4MUtfXuKVUsJ5dY3lOU5D2qogZ3dAtv
+         W6MNwOP0Z/DjpodbcuRWJlESPN7PEsXsW3U0QVJcYZZHCmcALXzXOdlp37/vksAC73
+         XST6c/9eEfZnB1QQXH/PSZsAce7Gnkf39/x2odP6Gs5mYjDdWFzskWx2sqgGtGk6Qf
+         3orddiMWiXAAA==
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+From:   Simon Ser <contact@emersion.fr>
+Cc:     airlied@gmail.com, daniel@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        javierm@redhat.com, linux-samsung-soc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 01/10] drm/client: Test for connectors before sending hotplug event
+Message-ID: <tc_igyYrgA_B5xJ15j6H2fQ00aA6vzd4nuQ8XusqeJqWWNZDJx8fFRgBAWoWOV8L5BEhjFDMYgANfdKXLqJZ0DMcsZfy8OUHDRatj36oOXo=@emersion.fr>
+In-Reply-To: <20230125200415.14123-2-tzimmermann@suse.de>
+References: <20230125200415.14123-1-tzimmermann@suse.de> <20230125200415.14123-2-tzimmermann@suse.de>
+Feedback-ID: 1358184:user:proton
 MIME-Version: 1.0
-References: <20230123151212.269082-1-jagan@amarulasolutions.com>
- <20230123151212.269082-3-jagan@amarulasolutions.com> <20230126121227.qcnftqvgiz44egpg@houat>
- <CAMty3ZB6QiqgQN_zWEXULHiipQWU_VaWxDWf9W8OTVQvkACu5A@mail.gmail.com>
-In-Reply-To: <CAMty3ZB6QiqgQN_zWEXULHiipQWU_VaWxDWf9W8OTVQvkACu5A@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Fri, 27 Jan 2023 23:09:26 +0530
-Message-ID: <CAMty3ZDTuvYKQYpVnoUU_-b3znJiyR0yBADO-5_5+86KgwYv3Q@mail.gmail.com>
-Subject: Re: [RESEND PATCH v11 02/18] drm: bridge: panel: Add
- devm_drm_of_dsi_get_bridge helper
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Marek Vasut <marex@denx.de>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Wednesday, January 25th, 2023 at 21:04, Thomas Zimmermann <tzimmermann@s=
+use.de> wrote:
 
-On Thu, Jan 26, 2023 at 8:48 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> On Thu, Jan 26, 2023 at 5:42 PM Maxime Ripard <maxime@cerno.tech> wrote:
-> >
-> > Hi,
-> >
-> > On Mon, Jan 23, 2023 at 08:41:56PM +0530, Jagan Teki wrote:
-> > > Add devm OF helper to return the next DSI bridge in the chain.
-> > >
-> > > Unlike general bridge return helper devm_drm_of_get_bridge, this
-> > > helper uses the dsi specific panel_or_bridge helper to find the
-> > > next DSI device in the pipeline.
-> > >
-> > > Helper lookup a given child DSI node or a DT node's port and
-> > > endpoint number, find the connected node and return either
-> > > the associated struct drm_panel or drm_bridge device.
-> >
-> > I'm not sure that using a device managed helper is the right choice
-> > here. The bridge will stay longer than the backing device so it will
-> > create a use-after-free. You should probably use a DRM-managed action
-> > here instead.
->
-> Thanks for the comments. If I understand correctly we can use
-> drmm_panel_bridge_add instead devm_drm_panel_bridge_add once we found
-> the panel or bridge - am I correct?
+> Not having connectors indicates a driver bug.
 
-Look like it is not possible to use DRM-managed action helper here as
-devm_drm_of_dsi_get_bridge is calling from the DSI host attach hook in
-which we cannot find drm_device pointer (as drm_device pointer is
-mandatory for using DRM-managed action).
-https://github.com/openedev/kernel/blob/imx8mm-dsi-v12/drivers/gpu/drm/bridge/samsung-dsim.c#L1545
-
-Please check and correct me if I mentioned any incorrect details.
-
-Thanks,
-Jagan.
+Is it? What if all connectors are of the DP-MST type, ie. they are
+created on-the-fly?
