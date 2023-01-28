@@ -2,90 +2,139 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A0AC38142
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 28 Jan 2023 10:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA4DC61DA7
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 28 Jan 2023 10:43:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234165AbjA1Kjg (ORCPT
+        id S234252AbjA1Kn1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 28 Jan 2023 05:39:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45262 "EHLO
+        Sat, 28 Jan 2023 05:43:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233571AbjA1Kje (ORCPT
+        with ESMTP id S234241AbjA1Kn0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 28 Jan 2023 05:39:34 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63DC1761F1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 28 Jan 2023 02:39:33 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id y1so7093316wru.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 28 Jan 2023 02:39:33 -0800 (PST)
+        Sat, 28 Jan 2023 05:43:26 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1C5031E35
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 28 Jan 2023 02:43:24 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id j36-20020a05600c1c2400b003dc39cb9c33so2774669wms.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 28 Jan 2023 02:43:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=WBB/UrWepXBkkfPd45IwxI+2oUrHzDJVZIL0q4lKLdQ=;
-        b=JTKqHAytmPbQXk3+t7QAF91Sbvylmycvn9b9Xqpbu+tkUZ8DKWjQI5yFlHhhce9C7n
-         n0naK1rAnkUKdu9wo0RlUMs9F9TtL+OiKvAhYqDBCni92qZbHNrj2VDPCdRnyjyVdjLO
-         dmb4I7d3F/rX9gL9KqCHgzNtb/QLBdfMHAY+6p9gnGIm2+H08Z7wtdNZ4EVOMwA6kaFQ
-         0Io+IU8a4OTRVkgELi6/udFAj1gocAqP5GLK6MGloIn6mfa08eFB1lMcTTE/wMW9sr7f
-         QdJzc2fYd27TfNohiTNKlb2rs4iLDKxGBcur1sNJQcd//7z8zJx1M3MUSnPo/2rI2Oyu
-         dh1A==
+        bh=qI6QvwwoMEoMGG2lrNC8roadH7Dk5Bdka3LjXTKFsas=;
+        b=mrEMDFPeaxlF47YSoNrlv7fMopJhfQavMyDPmPwddw79+WhlV4yJI3mKXazLZtgSYT
+         GPl2pwOoJ61egi55HunFRMZn+ALjkvLnv8vjkZHyIHoUZEZU75ts43pf387hTtPiqGzq
+         5RL3b8+AH/ZfoyLRlYdFK1BWYP94yB3Sg5CtSkKb7RzGWb9j3AcyxxV9r/gN2/1+geCV
+         vg4cPQyv2yK44r+5sWO4q9RgzIzOhTtb0wFVTm7DWFopwzuNL4V7Vhy0c9grgR5y3lQm
+         ddIeuJ5bI/y6xVT/o9cwHV/+a873lEbGmaSWZajxmfod7Z9rRbvvBMP+kPqH1vy9A2xa
+         WhaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WBB/UrWepXBkkfPd45IwxI+2oUrHzDJVZIL0q4lKLdQ=;
-        b=FGfzFdjSQ8hwuSRdKtfWU86M0nD3Awd0vBC8XRnIrxWcKBlvcbR5e92zkFlANVxzAO
-         O4fItIyL2qfVK0XEyikdgeCdxUrbEWBpdMUQAk0jY/BubP9jJq7DKJzRlzgWKVsazzum
-         URXrTGbe4rZ1M5IIBqqPQO6W7PlSKj7KD/0rze7CdR0sSBdFXAzSmshNkjNehqK49skY
-         DzNiua4bB3YYqbAuFteNxmwR3GdtNSE4WIQd4aoqAJa8UcwoHPn/dsV7eg9aqWcZTEtA
-         cK04AAZigRIDq2u7MPUQX1y0PD2iPBuS58v9NQjNBlOquFpJVKTd2d5fJR5PUR9XFgtD
-         qv1g==
-X-Gm-Message-State: AO0yUKXUhz71BEmeM+Xft3zrHQ7zHhFJluMOlymV4dHRnjdgmR/0nJOV
-        ScBZORz9jHIFLxsbj9DB+gGR8g==
-X-Google-Smtp-Source: AK7set+Zk9DiBCZq8AhGj9ng0r6KKDJ850gbX0mVQjmwnTlgxBxrDed1NWcHnxk7tB3Ixi0Dug+JVw==
-X-Received: by 2002:a5d:62d1:0:b0:2bf:d680:e37a with SMTP id o17-20020a5d62d1000000b002bfd680e37amr3988339wrv.67.1674902371978;
-        Sat, 28 Jan 2023 02:39:31 -0800 (PST)
+        bh=qI6QvwwoMEoMGG2lrNC8roadH7Dk5Bdka3LjXTKFsas=;
+        b=dUAgBS0nwlZjdF042/Kk0aexEhC1tjfposJ30PVWFxUb+2/+zqmqUQri1gy+CuM2xk
+         Bc6ScOWThesFcGSDhS2Q1Z8IZLnQedxdrASBjK6iD5eN2Zl0gf1AX3fCO74UCO6/jAB0
+         X9OPURjK2n2yNaeIcSK9TvR0kT8Xi10EG8uJ5Mya705VTZe7UuSHHef4eUagxkV2TnIw
+         7NhWYIS64kU2ZS00OhmPKqokwFi8lmybt3ly65ancW3ubpKklC1hQMu1xySepokDuDA7
+         E5O7aouOuHlVvf3GGUh8Mox/Gd5l1+MdL76ZsFNLk4/MIfLVTAcYlCK0u7zRxBgtEM1t
+         oHTg==
+X-Gm-Message-State: AFqh2kr4ObdDFVEgYEYSEPZFhxlpONtEEJEBfPcjNRSr03V87ky/Ui42
+        zyVOB99ZlfHr41m2vZcpMEvl+A==
+X-Google-Smtp-Source: AMrXdXtFHsnvA8WGNi+nEEgZjjW5/ECaWn9n1buzthZdLLG95KFCPxPExue3RykYjGqzhrddrej9Sw==
+X-Received: by 2002:a05:600c:35c1:b0:3d3:5319:b6d3 with SMTP id r1-20020a05600c35c100b003d35319b6d3mr42819876wmq.38.1674902603445;
+        Sat, 28 Jan 2023 02:43:23 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id y8-20020adfdf08000000b002bfb31bda06sm6644422wrl.76.2023.01.28.02.39.31
+        by smtp.gmail.com with ESMTPSA id y3-20020a1c4b03000000b003dc434b39c2sm2508838wma.26.2023.01.28.02.43.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 28 Jan 2023 02:39:31 -0800 (PST)
-Message-ID: <eeed3984-3ad2-01c3-365e-443ab664bda2@linaro.org>
-Date:   Sat, 28 Jan 2023 11:39:30 +0100
+        Sat, 28 Jan 2023 02:43:22 -0800 (PST)
+Message-ID: <4dea3da5-54b6-bc50-a802-cb73ddccf5d8@linaro.org>
+Date:   Sat, 28 Jan 2023 11:43:21 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH] regulator: s5m8767: Bounds check id indexing into arrays
+Subject: Re: [PATCH 2/9] ARM: dts: exynos: move exynos-bus nodes out of soc in
+ Exynos5420
 Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org
-References: <20230128005358.never.313-kees@kernel.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230128005358.never.313-kees@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     replicant@osuosl.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        =?UTF-8?Q?Martin_J=c3=bccker?= <martin.juecker@gmail.com>,
+        Henrik Grimler <henrik@grimler.se>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+References: <20230125094513.155063-1-krzysztof.kozlowski@linaro.org>
+ <CGME20230125094529eucas1p29b5f25af2c658abef13a93c49eca975f@eucas1p2.samsung.com>
+ <20230125094513.155063-2-krzysztof.kozlowski@linaro.org>
+ <cd42b8c9-a79a-068c-a967-810c05e818bd@samsung.com>
+ <d8f5fa57-da3a-09f9-e297-197068264d26@linaro.org>
+In-Reply-To: <d8f5fa57-da3a-09f9-e297-197068264d26@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 28/01/2023 01:53, Kees Cook wrote:
-> The compiler has no way to know if "id" is within the array bounds of
+On 26/01/2023 11:59, Krzysztof Kozlowski wrote:
+> On 26/01/2023 10:47, Marek Szyprowski wrote:
+>> Hi Krzysztof,
+>>
+>> On 25.01.2023 10:45, Krzysztof Kozlowski wrote:
+>>> The soc node is supposed to have only device nodes with MMIO addresses,
+>>> as reported by dtc W=1:
+>>>
+>>>    arch/arm/boot/dts/exynos5420.dtsi:1070.24-1075.5:
+>>>      Warning (simple_bus_reg): /soc/bus-wcore: missing or empty reg/ranges property
+>>>
+>>> and dtbs_check:
+>>>
+>>>    exynos5420-arndale-octa.dtb: soc: bus-wcore:
+>>>      {'compatible': ['samsung,exynos-bus'], 'clocks': [[2, 769]], 'clock-names': ['bus'], 'status': ['disabled']} should not be valid under {'type': 'object'}
+>>>
+>>> Move the bus nodes and their OPP tables out of SoC to fix this.
+>>> Re-order them alphabetically while moving and put some of the OPP tables
+>>> in device nodes (if they are not shared).
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+>> Frankly speaking I'm not very keen on moving those bus nodes out of 
+>> /soc. Technically speaking this is definitely a part of soc and doesn't 
+>> make much sense outside of it. IMHO they describe SoC hardware details 
+>> and they might be moved somehow under clock controller device(s), 
+>> although this would require some changes in the bindings and drivers.
+> 
+> That's the only way to fix it without change of drivers any ABI
+> compatibility issue. The same we do for Qualcomm interconnects, e.g.
+> arch/arm64/boot/dts/qcom/sm8450.dtsi where some interconnects have some
+> do not have MMIO space.
+> 
+> I want to achieve finally clean dtbs_check run for all Exynos sources.
+> The in-tree bindings already pass, so now I am fixing the ones coming
+> from dtschema (simple-bus.yaml in particular).
+> 
+> If you have any other idea how to seamlessly clean it up, I am happy to
+> hear. But I guess the main problem is that no one is being paid for
+> doing anything for Samsung Exynos, so for free not many put much effort
+> into working on it.
 
-It has. For the CONFIG_OF (the only way parent device - sec-core.c - can
-match now), the id is assigned in s5m8767_pmic_dt_parse_pdata() and kept
-within limits <0,ARRAY_SIZE(regulators)-1>.
+Marek, I value your feedback a lot and I appreciate your help here. Just
+to be clear that I am not ignoring it, little disclaimer:
 
-The device cannot match via old non-OF way, so there is no real bug to
-fix. You are silencing compiler warning, which is fine, but it's not a
-real case. The code is not easy to follow, so I am fine with such checks
-(WARN_ON_ONCE). The BUILD_BUG_ON is indeed meaningful.
+Unless there is a clear NAK from you or someone else, with an idea to
+fix or with a commitment to change driver/bindings, I am planning to
+grab these changes.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+I really want to get the dtbs_check done. With these and my other fixes,
+the arm64 exynos DTS pass fully all dtschema and in-kernel dtbs_check.
 
 Best regards,
 Krzysztof
