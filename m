@@ -2,183 +2,91 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01329C61DA7
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 28 Jan 2023 08:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A0AC38142
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 28 Jan 2023 10:39:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229933AbjA1IGP (ORCPT
+        id S234165AbjA1Kjg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 28 Jan 2023 03:06:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48828 "EHLO
+        Sat, 28 Jan 2023 05:39:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229599AbjA1IGO (ORCPT
+        with ESMTP id S233571AbjA1Kje (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 28 Jan 2023 03:06:14 -0500
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CACA86609
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 28 Jan 2023 00:06:11 -0800 (PST)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230128080608epoutp037553b93c2c5247d8f31e196d7748297a~_anZ_HnNj2587125871epoutp03Q
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 28 Jan 2023 08:06:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230128080608epoutp037553b93c2c5247d8f31e196d7748297a~_anZ_HnNj2587125871epoutp03Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1674893168;
-        bh=TWf9lzvirf35dO4oA2W1RhJPrVzqSUzkzFALa1aULJ8=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=hvbUzBGMj/zJP9KT0TDJfTIBrIjj9CsCXw0rJb8ZwOdeMwcqK+nsOf4PU+ym2JYfF
-         dzFU61JCtoA0Yll/nlmn1Uy6im0TaHwtwCHOqRf4FZlzE7WHHeWk8OYkE7fl5U4nfL
-         ULDw7zPqUvceFFqwkwuKzG+NLS7KOO4+X1aRU3vE=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20230128080607epcas5p3e3a264c3e18c3b18ebd53a49901415aa~_anZDpqe42786027860epcas5p3b;
-        Sat, 28 Jan 2023 08:06:07 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4P3n7x6FSNz4x9Px; Sat, 28 Jan
-        2023 08:06:05 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        83.F1.06765.D67D4D36; Sat, 28 Jan 2023 17:06:05 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20230128080605epcas5p39994bb472119a1bfa23ddeb8f6396039~_anW3L29k2786127861epcas5p3Y;
-        Sat, 28 Jan 2023 08:06:05 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230128080605epsmtrp275930f74f82d18032add9cc6e69ee75d~_anWx30n_2023420234epsmtrp2J;
-        Sat, 28 Jan 2023 08:06:05 +0000 (GMT)
-X-AuditID: b6c32a4b-46dfa70000011a6d-d7-63d4d76dbcba
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CE.70.17995.C67D4D36; Sat, 28 Jan 2023 17:06:05 +0900 (KST)
-Received: from alimakhtar04 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230128080602epsmtip15c7bed1e1a4e15e2f7110e02758824c1~_anUkigXs0554005540epsmtip18;
-        Sat, 28 Jan 2023 08:06:02 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc:     <replicant@osuosl.org>, <phone-devel@vger.kernel.org>,
-        <~postmarketos/upstreaming@lists.sr.ht>,
-        =?utf-8?Q?'Martin_J=C3=BCcker'?= <martin.juecker@gmail.com>,
-        "'Henrik Grimler'" <henrik@grimler.se>,
-        "'Sam Protsenko'" <semen.protsenko@linaro.org>,
-        "'Chanho Park'" <chanho61.park@samsung.com>,
-        "'Marek Szyprowski'" <m.szyprowski@samsung.com>,
-        "'Chanwoo Choi'" <cw00.choi@samsung.com>
-In-Reply-To: <20230127212713.267014-4-krzysztof.kozlowski@linaro.org>
-Subject: RE: [RFT PATCH v3 4/4] arm64: dts: exynos: add unit address to DWC3
- node wrapper in Exynos7
-Date:   Sat, 28 Jan 2023 13:36:01 +0530
-Message-ID: <001201d932ef$5e74dd70$1b5e9850$@samsung.com>
+        Sat, 28 Jan 2023 05:39:34 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63DC1761F1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 28 Jan 2023 02:39:33 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id y1so7093316wru.2
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 28 Jan 2023 02:39:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WBB/UrWepXBkkfPd45IwxI+2oUrHzDJVZIL0q4lKLdQ=;
+        b=JTKqHAytmPbQXk3+t7QAF91Sbvylmycvn9b9Xqpbu+tkUZ8DKWjQI5yFlHhhce9C7n
+         n0naK1rAnkUKdu9wo0RlUMs9F9TtL+OiKvAhYqDBCni92qZbHNrj2VDPCdRnyjyVdjLO
+         dmb4I7d3F/rX9gL9KqCHgzNtb/QLBdfMHAY+6p9gnGIm2+H08Z7wtdNZ4EVOMwA6kaFQ
+         0Io+IU8a4OTRVkgELi6/udFAj1gocAqP5GLK6MGloIn6mfa08eFB1lMcTTE/wMW9sr7f
+         QdJzc2fYd27TfNohiTNKlb2rs4iLDKxGBcur1sNJQcd//7z8zJx1M3MUSnPo/2rI2Oyu
+         dh1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WBB/UrWepXBkkfPd45IwxI+2oUrHzDJVZIL0q4lKLdQ=;
+        b=FGfzFdjSQ8hwuSRdKtfWU86M0nD3Awd0vBC8XRnIrxWcKBlvcbR5e92zkFlANVxzAO
+         O4fItIyL2qfVK0XEyikdgeCdxUrbEWBpdMUQAk0jY/BubP9jJq7DKJzRlzgWKVsazzum
+         URXrTGbe4rZ1M5IIBqqPQO6W7PlSKj7KD/0rze7CdR0sSBdFXAzSmshNkjNehqK49skY
+         DzNiua4bB3YYqbAuFteNxmwR3GdtNSE4WIQd4aoqAJa8UcwoHPn/dsV7eg9aqWcZTEtA
+         cK04AAZigRIDq2u7MPUQX1y0PD2iPBuS58v9NQjNBlOquFpJVKTd2d5fJR5PUR9XFgtD
+         qv1g==
+X-Gm-Message-State: AO0yUKXUhz71BEmeM+Xft3zrHQ7zHhFJluMOlymV4dHRnjdgmR/0nJOV
+        ScBZORz9jHIFLxsbj9DB+gGR8g==
+X-Google-Smtp-Source: AK7set+Zk9DiBCZq8AhGj9ng0r6KKDJ850gbX0mVQjmwnTlgxBxrDed1NWcHnxk7tB3Ixi0Dug+JVw==
+X-Received: by 2002:a5d:62d1:0:b0:2bf:d680:e37a with SMTP id o17-20020a5d62d1000000b002bfd680e37amr3988339wrv.67.1674902371978;
+        Sat, 28 Jan 2023 02:39:31 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id y8-20020adfdf08000000b002bfb31bda06sm6644422wrl.76.2023.01.28.02.39.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 28 Jan 2023 02:39:31 -0800 (PST)
+Message-ID: <eeed3984-3ad2-01c3-365e-443ab664bda2@linaro.org>
+Date:   Sat, 28 Jan 2023 11:39:30 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFzvEVwWLN0sEUdJm8gcJkigxsA0gKyTjLNAakoc06vW4NzgA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGJsWRmVeSWpSXmKPExsWy7bCmum7u9SvJBvMmaVtc3q9tcf3Lc1aL
-        +UfOsVq8XbKL0aLvxUNmi72vt7JbbHp8jdXi8q45bBYzzu9jslh75C67xZl/U1ksFvyxs1i3
-        RtCide8RdovnfUC5zd//MjoIeOycdZfd4+iVe6wem1Z1snncubaHzWPzknqP/3fWsnt8ae5m
-        9ejbsorR4/MmuQDOqGybjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFsl
-        F58AXbfMHKAflBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkFJgV6xYm5xaV56Xp5
-        qSVWhgYGRqZAhQnZGfs3P2Is+CBXsfrEEtYGxoeyXYycHBICJhI/1k1n7GLk4hAS2M0oMeXt
-        ZVYI5xOjRMuVq8wQzmdGifOzpzDBtOzetJEdIrGLUWLGlINQzkug/v5zYFVsAroSOxa3sYEk
-        RAQ2MUl82b8XrIpZoJNZYsHyp6wgVZwCrhL/nq8E6xAWSJPonfIbaCEHB4uAqkTDlnIQk1fA
-        UuLnRGOQCl4BQYmTM5+wgNjMAtoSyxa+Zoa4SEHi59NlYBNFBJwk+u4vhqoRl3h59Ag7RM0H
-        DomTTbkQtovEhI5VbBC2sMSr41ugaqQkPr/bywayVkLAQ2LRHymIcIbE2+XrGSFse4kDV+aw
-        gJQwC2hKrN+lD7GJT6L39xMmiE5eiY42IYhqVYnmd1dZIGxpiYnd3awQtofEvIlbWCcwKs5C
-        8tcsJH/NQnL/LIRlCxhZVjFKphYU56anFpsWGOellsOjOzk/dxMjOIFree9gfPTgg94hRiYO
-        xkOMEhzMSiK8Wx0vJQvxpiRWVqUW5ccXleakFh9iNAUG9URmKdHkfGAOySuJNzSxNDAxMzMz
-        sTQ2M1QS51W3PZksJJCeWJKanZpakFoE08fEwSnVwFQyubT+nYntHPvNTDbMBUtyj6ZdTv62
-        OVPb+oud7dTQ9L95h8xmy71dKlnQuHfJ8cUz6874TF4m/THXc8GkB+sXHt9X974ysnBD1O+k
-        gOfqNbmrX3eHmpj+vyBSNlvC4NyOuuCkn/HNpnvM3UNim3RZImzcN7CJmkZvXXZmMbPAHouS
-        K/brF5ckH8yY62nt8/CehStXRbyU4Awdp23C2t/KY5LP2VTFXI7knrROZOmPGIH6Asmb1/w3
-        27xYKfmobWHJ1U2NhmqRcZXFK00ubk+Vvbt3//N/+wv3s7hN2hC2JvH/KaW9myXdVD6JuNw7
-        cl76RzGz3uaZ695JXm2Pjl960+dYZEvyhadCP7lsO5VYijMSDbWYi4oTATz1WAdpBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsWy7bCSnG7u9SvJBi/3MVlc3q9tcf3Lc1aL
-        +UfOsVq8XbKL0aLvxUNmi72vt7JbbHp8jdXi8q45bBYzzgPVrj1yl93izL+pLBYL/thZrFsj
-        aNG69wi7xfM+oNzm738ZHQQ8ds66y+5x9Mo9Vo9NqzrZPO5c28PmsXlJvcf/O2vZPb40d7N6
-        9G1ZxejxeZNcAGcUl01Kak5mWWqRvl0CV8byLV1sBX9FK168ncPUwNgu1MXIySEhYCKxe9NG
-        9i5GLg4hgR2MEvPePWKFSEhLXN84gR3CFpZY+e85mC0k8JxR4t3WdBCbTUBXYsfiNjaQZhGB
-        bUwSq5r/gDnMAv3MEm/PbmaDGHueUeLe/QtMIC2cAq4S/56vBLOFBVIkJs+YzNzFyMHBIqAq
-        0bClHMTkFbCU+DnRGKSCV0BQ4uTMJywgNrOAtsTTm0/h7GULXzNDHKcg8fPpMrCjRQScJPru
-        L4aqEZd4efQI+wRG4VlIRs1CMmoWklGzkLQsYGRZxSiZWlCcm55bbFhglJdarlecmFtcmpeu
-        l5yfu4kRHMlaWjsY96z6oHeIkYmD8RCjBAezkgjvVsdLyUK8KYmVValF+fFFpTmpxYcYpTlY
-        lMR5L3SdjBcSSE8sSc1OTS1ILYLJMnFwSjUwMWTvexG3es6kd7un96x0sTgsZBuhP4fn3cHP
-        q01n8j/ex27b6xJ56bjd96LHVtc/M+iFOv3cb+omEqTU8D/8cO49b8WXt2VW6gdaZp63PLqn
-        NOmM7FuX3m8qy3xPmfH2JW3b/KrnFZ+3SdipM7pmD2acvZleN+/sZlWzkyuvlt2+7tGuz/G1
-        oXKPu/m9tuqAPWuXxd1f7cP2uWDhhQX1+2xv+UdsDv90Q6dUdbG4vtk/+90n6r9wzN2ax7dO
-        JEA+N8Q/THinQPDT0pCmU4KNU2wU7gcst7jAZPfVYPchrz17+0sK/4cVn5j1lD/emmFXPqfm
-        K02NFJGtMmXM52Z8ndOQYmL19Wjgj1KZ4yX/lViKMxINtZiLihMBaT4+LlMDAAA=
-X-CMS-MailID: 20230128080605epcas5p39994bb472119a1bfa23ddeb8f6396039
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230127212733epcas5p24868be035c0f2c3190b8cfe4a6310ccd
-References: <20230127212713.267014-1-krzysztof.kozlowski@linaro.org>
-        <CGME20230127212733epcas5p24868be035c0f2c3190b8cfe4a6310ccd@epcas5p2.samsung.com>
-        <20230127212713.267014-4-krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH] regulator: s5m8767: Bounds check id indexing into arrays
+Content-Language: en-US
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org
+References: <20230128005358.never.313-kees@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230128005358.never.313-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On 28/01/2023 01:53, Kees Cook wrote:
+> The compiler has no way to know if "id" is within the array bounds of
+
+It has. For the CONFIG_OF (the only way parent device - sec-core.c - can
+match now), the id is assigned in s5m8767_pmic_dt_parse_pdata() and kept
+within limits <0,ARRAY_SIZE(regulators)-1>.
+
+The device cannot match via old non-OF way, so there is no real bug to
+fix. You are silencing compiler warning, which is fine, but it's not a
+real case. The code is not easy to follow, so I am fine with such checks
+(WARN_ON_ONCE). The BUILD_BUG_ON is indeed meaningful.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
-> Sent: Saturday, January 28, 2023 2:57 AM
-> To: Rob Herring <robh+dt=40kernel.org>; Krzysztof Kozlowski
-> <krzysztof.kozlowski+dt=40linaro.org>; Alim Akhtar
-> <alim.akhtar=40samsung.com>; devicetree=40vger.kernel.org; linux-arm-
-> kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.org; linux-
-> kernel=40vger.kernel.org
-> Cc: replicant=40osuosl.org; phone-devel=40vger.kernel.org;
-> =7Epostmarketos/upstreaming=40lists.sr.ht; Martin J=C3=BCcker=0D=0A>=20<m=
-artin.juecker=40gmail.com>;=20Henrik=20Grimler=20<henrik=40grimler.se>;=20S=
-am=0D=0A>=20Protsenko=20<semen.protsenko=40linaro.org>;=20Chanho=20Park=0D=
-=0A>=20<chanho61.park=40samsung.com>;=20Marek=20Szyprowski=0D=0A>=20<m.szyp=
-rowski=40samsung.com>;=20Chanwoo=20Choi=0D=0A>=20<cw00.choi=40samsung.com>;=
-=20Krzysztof=20Kozlowski=0D=0A>=20<krzysztof.kozlowski=40linaro.org>=0D=0A>=
-=20Subject:=20=5BRFT=20PATCH=20v3=204/4=5D=20arm64:=20dts:=20exynos:=20add=
-=20unit=20address=20to=20DWC3=0D=0A>=20node=20wrapper=20in=20Exynos7=0D=0A>=
-=20=0D=0A>=20Neither=20simple-bus=20bindings=20nor=20dtc=20W=3D1=20accept=
-=20device=20nodes=20in=20soc=40=20node=0D=0A>=20which=20do=20not=20have=20u=
-nit=20address.=20=20Therefore=20usethe=20address=20space=20of=20child=0D=0A=
->=20device=20(actual=20DWC3=20Controller)=20as=20the=20wrapper's=20address=
-=20to=0D=0A>=20fix:=0D=0A>=20=0D=0A>=20=20=20exynos7-espresso.dtb:=20soc=40=
-0:=20usb:=20=7B'compatible':=20=5B'samsung,exynos7-=0D=0A>=20dwusb3'=5D,=20=
-...=0D=0A>=20=20=20=20=20should=20not=20be=20valid=20under=20=7B'type':=20'=
-object'=7D=0D=0A>=20=0D=0A>=20Signed-off-by:=20Krzysztof=20Kozlowski=20<krz=
-ysztof.kozlowski=40linaro.org>=0D=0A>=20=0D=0A>=20---=0D=0AReviewed-by:=20A=
-lim=20Akhtar=20<alim.akhtar=40samsung.com>=0D=0A=0D=0ATested=20on=20exynos7=
--espresso=20and=20xHCI=20driver=20still=20gets=20probed,=20so=20=0D=0A=0D=
-=0ATested-by:=20Alim=20Akhtar=20<alim.akhtar=40samsung.com>=0D=0A=0D=0A=0D=
-=0A>=20=0D=0A>=20Changes=20since=20v1:=0D=0A>=201.=20New=20patch=0D=0A>=20-=
---=0D=0A>=20=20arch/arm64/boot/dts/exynos/exynos7.dtsi=20=7C=208=20++++----=
-=0D=0A>=20=201=20file=20changed,=204=20insertions(+),=204=20deletions(-)=0D=
-=0A>=20=0D=0A>=20diff=20--git=20a/arch/arm64/boot/dts/exynos/exynos7.dtsi=
-=0D=0A>=20b/arch/arm64/boot/dts/exynos/exynos7.dtsi=0D=0A>=20index=2082fee1=
-b7caab..b1fa68835b09=20100644=0D=0A>=20---=20a/arch/arm64/boot/dts/exynos/e=
-xynos7.dtsi=0D=0A>=20+++=20b/arch/arm64/boot/dts/exynos/exynos7.dtsi=0D=0A>=
-=20=40=40=20-690,7=20+690,7=20=40=40=20usbdrd_phy:=20phy=4015500000=20=7B=
-=0D=0A>=20=20=09=09=09=23phy-cells=20=3D=20<1>;=0D=0A>=20=20=09=09=7D;=0D=
-=0A>=20=0D=0A>=20-=09=09usbdrd:=20usb=20=7B=0D=0A>=20+=09=09usbdrd:=20usb=
-=4015400000=20=7B=0D=0A>=20=20=09=09=09compatible=20=3D=20=22samsung,exynos=
-7-dwusb3=22;=0D=0A>=20=20=09=09=09clocks=20=3D=20<&clock_fsys0=20ACLK_USBDR=
-D300>,=0D=0A>=20=20=09=09=09=20=20=20=20=20=20=20<&clock_fsys0=20SCLK_USBDR=
-D300_SUSPENDCLK>,=0D=0A>=20=40=40=20-699,11=20+699,11=20=40=40=20usbdrd:=20=
-usb=20=7B=0D=0A>=20=20=09=09=09=09=22usbdrd30_axius_clk=22;=0D=0A>=20=20=09=
-=09=09=23address-cells=20=3D=20<1>;=0D=0A>=20=20=09=09=09=23size-cells=20=
-=3D=20<1>;=0D=0A>=20-=09=09=09ranges;=0D=0A>=20+=09=09=09ranges=20=3D=20<0x=
-0=200x15400000=200x10000>;=0D=0A>=20=0D=0A>=20-=09=09=09usb=4015400000=20=
-=7B=0D=0A>=20+=09=09=09usb=400=20=7B=0D=0A>=20=20=09=09=09=09compatible=20=
-=3D=20=22snps,dwc3=22;=0D=0A>=20-=09=09=09=09reg=20=3D=20<0x15400000=200x10=
-000>;=0D=0A>=20+=09=09=09=09reg=20=3D=20<0x0=200x10000>;=0D=0A>=20=20=09=09=
-=09=09interrupts=20=3D=20<GIC_SPI=20223=0D=0A>=20IRQ_TYPE_LEVEL_HIGH>;=0D=
-=0A>=20=20=09=09=09=09phys=20=3D=20<&usbdrd_phy=200>,=20<&usbdrd_phy=201>;=
-=0D=0A>=20=20=09=09=09=09phy-names=20=3D=20=22usb2-phy=22,=20=22usb3-phy=22=
-;=0D=0A>=20--=0D=0A>=202.34.1=0D=0A=0D=0A=0D=0A
+Best regards,
+Krzysztof
+
