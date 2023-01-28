@@ -2,569 +2,418 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CCDC38142
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 28 Jan 2023 13:32:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 170F6C61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 28 Jan 2023 16:02:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234283AbjA1NcM (ORCPT
+        id S232579AbjA1QCe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 28 Jan 2023 08:32:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35756 "EHLO
+        Sat, 28 Jan 2023 11:02:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234309AbjA1NcK (ORCPT
+        with ESMTP id S229530AbjA1QCc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 28 Jan 2023 08:32:10 -0500
-Received: from out-229.mta0.migadu.com (out-229.mta0.migadu.com [IPv6:2001:41d0:1004:224b::e5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2742A20D3D
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 28 Jan 2023 05:32:08 -0800 (PST)
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-        t=1674912726;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=feuA0KJ6YbvLfUa3ntr338vV6ZkldyLDXJH7jPPqBJ0=;
-        b=bkjWwlJbPQnvV/sl9npGuxlkdN9oYfarjOBDIOpl/3XTjdC8AruJpMeXhhSXwLA8e8xjH7
-        AfOMXgYrM1TQXe48tNioHQBupMuGz94cx+dG/m6Pw/dxZLnVDeVB1htSkKnytMEdSv2YXh
-        o78z/tBJwLJkPHNbrN70peCHQzA7lvA=
-From:   Henrik Grimler <henrik@grimler.se>
-To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        alim.akhtar@samsung.com, m.szyprowski@samsung.com,
-        jenneron@protonmail.com, markuss.broks@gmail.com,
-        martin.juecker@gmail.com, devicetree@vger.kernel.org,
+        Sat, 28 Jan 2023 11:02:32 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 460562684A;
+        Sat, 28 Jan 2023 08:02:30 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8C4E760C2A;
+        Sat, 28 Jan 2023 16:02:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3876C433EF;
+        Sat, 28 Jan 2023 16:02:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674921748;
+        bh=MEnSVM9h1tfvj22o8Ls43RK2vAq9wORRPqY+/TUQ/ak=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=EKQ2Dfl5334OTddL+pBem88MlleZTLI48FJv9Q061JlY0EQa+RN/MoPXyOJTr/bnF
+         9LHRcCbCmb+ZhXvmdpkwPYqxmt34eQtldDaj0AIg0Q90Fl4fOXf9IY10SGmGb2kn1I
+         GIg6ZQdsInuHmQhJHasTGGt7aNGyhUCqJE0nMRCkvQpsZKhvZWfDrVA2MdZg2dr9eW
+         4pCuoEr1hoJbOTYvDFo6wJelHel4BAQYERqFKuRHuoW4j8Wce2qNmPdTswq8geTUrn
+         ZYcR0anHqTzPYuD34hSaETsin4FCIWoZJnCad2bJee9jQjyAEFNggQ+EI8XMSnGSWR
+         9WDzZ49OEwF2w==
+Date:   Sat, 28 Jan 2023 16:16:13 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Lucas Stankus <lucas.p.stankus@gmail.com>,
+        Puranjay Mohan <puranjay12@gmail.com>,
+        Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+        Alexandru Tachici <alexandru.tachici@analog.com>,
+        Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+        Renato Lui Geh <renatogeh@gmail.com>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Andreas Klinger <ak@it-klinger.de>,
+        Marcus Folkesson <marcus.folkesson@gmail.com>,
+        Kent Gustavsson <kent@minoris.se>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Oleksij Rempel <linux@rempel-privat.de>, kernel@pengutronix.de,
+        Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+        Nishant Malpani <nish.malpani25@gmail.com>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        Dragos Bogdan <dragos.bogdan@analog.com>,
+        Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Stefan Popa <stefan.popa@analog.com>,
+        Robert Yang <decatf@gmail.com>,
+        Sean Nyekjaer <sean@geanix.com>,
+        Artur Rojek <contact@artur-rojek.eu>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Philippe Reynes <tremyfr@yahoo.fr>,
+        Alexandru Lazar <alazar@startmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Caleb Connolly <caleb.connolly@linaro.org>,
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Harald Geyer <harald@ccbib.org>,
+        Eugene Zaikonnikov <ez@norophonic.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Matt Ranostay <matt.ranostay@konsulko.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Sankar Velliangiri <navin@linumiz.com>,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Cc:     Henrik Grimler <henrik@grimler.se>,
-        Valentine Iourine <iourine@iourine.msk.su>
-Subject: [PATCH v2 2/2] ARM: dts: exynos: add mmc aliases
-Date:   Sat, 28 Jan 2023 14:31:51 +0100
-Message-Id: <20230128133151.29471-3-henrik@grimler.se>
-In-Reply-To: <20230128133151.29471-1-henrik@grimler.se>
-References: <20230128133151.29471-1-henrik@grimler.se>
+        linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        chrome-platform@lists.linux.dev, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 1/5] dt-bindings: iio: drop unneeded quotes
+Message-ID: <20230128161613.1d321b16@jic23-huawei>
+In-Reply-To: <20230124081037.31013-1-krzysztof.kozlowski@linaro.org>
+References: <20230124081037.31013-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.36; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add aliases for eMMC, SD card and WiFi where applicable, so that
-assigned mmcblk numbers are always the same.
+On Tue, 24 Jan 2023 09:10:33 +0100
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-Co-developed-by: Anton Bambura <jenneron@protonmail.com>
-Signed-off-by: Anton Bambura <jenneron@protonmail.com>
-[ Tested on exynos5800-peach-pi ]
-Tested-by: Valentine Iourine <iourine@iourine.msk.su>
-Signed-off-by: Henrik Grimler <henrik@grimler.se>
----
- arch/arm/boot/dts/exynos3250-artik5-eval.dts        | 5 +++++
- arch/arm/boot/dts/exynos3250-artik5.dtsi            | 5 +++++
- arch/arm/boot/dts/exynos3250-monk.dts               | 1 +
- arch/arm/boot/dts/exynos3250-rinato.dts             | 2 ++
- arch/arm/boot/dts/exynos4210-i9100.dts              | 6 ++++++
- arch/arm/boot/dts/exynos4210-origen.dts             | 5 +++++
- arch/arm/boot/dts/exynos4210-smdkv310.dts           | 4 ++++
- arch/arm/boot/dts/exynos4210-trats.dts              | 6 ++++++
- arch/arm/boot/dts/exynos4210-universal_c210.dts     | 6 ++++++
- arch/arm/boot/dts/exynos4412-itop-elite.dts         | 5 +++++
- arch/arm/boot/dts/exynos4412-midas.dtsi             | 3 +++
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi     | 5 +++++
- arch/arm/boot/dts/exynos4412-origen.dts             | 5 +++++
- arch/arm/boot/dts/exynos4412-p4note.dtsi            | 6 ++++++
- arch/arm/boot/dts/exynos4412-smdk4412.dts           | 4 ++++
- arch/arm/boot/dts/exynos4412-tiny4412.dts           | 4 ++++
- arch/arm/boot/dts/exynos5250-arndale.dts            | 5 +++++
- arch/arm/boot/dts/exynos5250-smdk5250.dts           | 2 ++
- arch/arm/boot/dts/exynos5250-snow-common.dtsi       | 3 +++
- arch/arm/boot/dts/exynos5250-spring.dts             | 5 +++++
- arch/arm/boot/dts/exynos5260-xyref5260.dts          | 5 +++++
- arch/arm/boot/dts/exynos5410-odroidxu.dts           | 2 ++
- arch/arm/boot/dts/exynos5410-smdk5410.dts           | 5 +++++
- arch/arm/boot/dts/exynos5420-arndale-octa.dts       | 5 +++++
- arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi | 5 +++++
- arch/arm/boot/dts/exynos5420-peach-pit.dts          | 3 +++
- arch/arm/boot/dts/exynos5420-smdk5420.dts           | 5 +++++
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi       | 5 +++++
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi  | 4 ++++
- arch/arm/boot/dts/exynos5422-samsung-k3g.dts        | 4 ++++
- arch/arm/boot/dts/exynos5800-peach-pi.dts           | 3 +++
- 31 files changed, 133 insertions(+)
+> Cleanup by removing unneeded quotes from refs and redundant blank lines.
+> No functional impact except adjusting to preferred coding style.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Dmitry Rokosov <ddrokosov@sberdevices.ru> # memsensing
+> Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com> # sama5d2-adc
+> Reviewed-by: Puranjay Mohan <puranjay12@gmail.com> # tmp117
+> Acked-by: Rob Herring <robh@kernel.org>
+> Acked-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com> # ad7292
+Hi Krzysztof,
 
-diff --git a/arch/arm/boot/dts/exynos3250-artik5-eval.dts b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-index a1e22f630638..83266a66124b 100644
---- a/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-+++ b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-@@ -16,6 +16,11 @@ / {
- 	model = "Samsung ARTIK5 evaluation board";
- 	compatible = "samsung,artik5-eval", "samsung,artik5",
- 			"samsung,exynos3250", "samsung,exynos3";
-+
-+	aliases {
-+		mmc2 = &mshc_2;
-+	};
-+
- };
- 
- &mshc_2 {
-diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-index 0ac3f284fbb8..a6e2f46917a8 100644
---- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-@@ -17,6 +17,11 @@
- / {
- 	compatible = "samsung,artik5", "samsung,exynos3250", "samsung,exynos3";
- 
-+	aliases {
-+		mmc0 = &mshc_0;
-+		mmc1 = &mshc_1;
-+	};
-+
- 	chosen {
- 		stdout-path = &serial_2;
- 	};
-diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-index 80d90fe7fad1..a68e5f81404c 100644
---- a/arch/arm/boot/dts/exynos3250-monk.dts
-+++ b/arch/arm/boot/dts/exynos3250-monk.dts
-@@ -22,6 +22,7 @@ / {
- 
- 	aliases {
- 		i2c7 = &i2c_max77836;
-+		mmc0 = &mshc_0;
- 	};
- 
- 	memory@40000000 {
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index 1f9cba0607e1..f0fb6890e4a8 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -23,6 +23,8 @@ / {
- 
- 	aliases {
- 		i2c7 = &i2c_max77836;
-+		mmc0 = &mshc_0;
-+		mmc1 = &mshc_1;
- 	};
- 
- 	chosen {
-diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
-index bba85011ecc9..7051e2c4b391 100644
---- a/arch/arm/boot/dts/exynos4210-i9100.dts
-+++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-@@ -25,6 +25,12 @@ memory@40000000 {
- 		reg = <0x40000000 0x40000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &sdhci_0;
-+		mmc2 = &sdhci_2;
-+		mmc3 = &sdhci_3;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index 5f37b751f700..41c73ee0d556 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -30,6 +30,11 @@ memory@40000000 {
- 		       0x70000000 0x10000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &sdhci_0;
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M init=/linuxrc";
- 		stdout-path = "serial2:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index a5dfd7fd49b3..2b8141f2912e 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -25,6 +25,10 @@ memory@40000000 {
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M init=/linuxrc";
- 		stdout-path = "serial1:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index b8e9dd23fc51..b6b0c116016c 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -26,6 +26,12 @@ memory@40000000 {
- 			0x70000000 0x10000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &sdhci_0;
-+		mmc2 = &sdhci_2;
-+		mmc3 = &sdhci_3;
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/mmcblk0p5 rootwait earlyprintk panic=5";
- 		stdout-path = "serial2:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index 62bf335d5bed..2135a6843511 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -24,6 +24,12 @@ memory@40000000 {
- 			0x50000000 0x10000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &sdhci_0;
-+		mmc2 = &sdhci_2;
-+		mmc3 = &sdhci_3;
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/mmcblk0p5 rw rootwait earlyprintk panic=5 maxcpus=1";
- 		stdout-path = "serial2:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-index b596e997e451..c0132e537663 100644
---- a/arch/arm/boot/dts/exynos4412-itop-elite.dts
-+++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-@@ -20,6 +20,11 @@ / {
- 	model = "TOPEET iTop 4412 Elite board based on Exynos4412";
- 	compatible = "topeet,itop4412-elite", "samsung,exynos4412", "samsung,exynos4";
- 
-+	aliases {
-+		mmc0 = &mshc_0;
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/mmcblk0p2 rw rootfstype=ext4 rootdelay=1 rootwait";
- 		stdout-path = "serial2:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
-index d5074fa57142..56382bb07939 100644
---- a/arch/arm/boot/dts/exynos4412-midas.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
-@@ -25,6 +25,9 @@ / {
- 	aliases {
- 		i2c11 = &i2c_max77693;
- 		i2c12 = &i2c_max77693_fuel;
-+		mmc0 = &mshc_0;
-+		mmc2 = &sdhci_2;
-+		mmc3 = &sdhci_3;
- 	};
- 
- 	chosen {
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 7c2780d3e37c..4bfbe960be43 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -13,6 +13,11 @@
- #include "exynos-mfc-reserved-memory.dtsi"
- 
- / {
-+	aliases {
-+		mmc0 = &mshc_0;
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		stdout-path = &serial_1;
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index ea9fd284386d..2e25415aa2d4 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -25,6 +25,11 @@ memory@40000000 {
- 		reg = <0x40000000 0x40000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mshc_0;
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-p4note.dtsi b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-index 3e05a49f29ff..a21440062b1e 100644
---- a/arch/arm/boot/dts/exynos4412-p4note.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-@@ -26,6 +26,12 @@ memory@40000000 {
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mshc_0;
-+		mmc2 = &sdhci_2;
-+		mmc3 = &sdhci_3;
-+	};
-+
- 	chosen {
- 		stdout-path = &serial_2;
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-index a40ff394977c..6296a5a06630 100644
---- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-@@ -22,6 +22,10 @@ memory@40000000 {
- 		reg = <0x40000000 0x40000000>;
- 	};
- 
-+	aliases {
-+		mmc2 = &sdhci_2;
-+	};
-+        
- 	chosen {
- 		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M init=/linuxrc";
- 		stdout-path = "serial1:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-index e0b6162d2e2a..e010b75a9d49 100644
---- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-@@ -17,6 +17,10 @@ / {
- 	model = "FriendlyARM TINY4412 board based on Exynos4412";
- 	compatible = "friendlyarm,tiny4412", "samsung,exynos4412", "samsung,exynos4";
- 
-+	aliases {
-+		mmc2 = &sdhci_2;
-+	};
-+        
- 	chosen {
- 		stdout-path = &serial_0;
- 	};
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index 71c0e87d3a1d..3ef04e59939e 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -23,6 +23,11 @@ memory@40000000 {
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 71293749ac48..e8087d7d6305 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -17,6 +17,8 @@ / {
- 	compatible = "samsung,smdk5250", "samsung,exynos5250", "samsung,exynos5";
- 
- 	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
- 	};
- 
- 	memory@40000000 {
-diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-index 3d84b9c6dea3..cdf1ebff11db 100644
---- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-@@ -15,6 +15,9 @@
- / {
- 	aliases {
- 		i2c104 = &i2c_104;
-+		mmc0 = &mmc_0; /* eMMC */
-+		mmc1 = &mmc_2; /* SD */
-+		mmc2 = &mmc_3; /* WiFi */
- 	};
- 
- 	memory@40000000 {
-diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
-index 5eca10ecd550..96050fea93f8 100644
---- a/arch/arm/boot/dts/exynos5250-spring.dts
-+++ b/arch/arm/boot/dts/exynos5250-spring.dts
-@@ -23,6 +23,11 @@ memory@40000000 {
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc1 = &mmc_1;
-+	};
-+
- 	chosen {
- 		bootargs = "console=tty1";
- 		stdout-path = "serial3:115200n8";
-diff --git a/arch/arm/boot/dts/exynos5260-xyref5260.dts b/arch/arm/boot/dts/exynos5260-xyref5260.dts
-index 387b8494f18f..1e2f6af6d311 100644
---- a/arch/arm/boot/dts/exynos5260-xyref5260.dts
-+++ b/arch/arm/boot/dts/exynos5260-xyref5260.dts
-@@ -18,6 +18,11 @@ memory@20000000 {
- 		reg = <0x20000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-index 232561620da2..f495514d88b3 100644
---- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
-+++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-@@ -21,6 +21,8 @@ / {
- 
- 	aliases {
- 		ethernet = &ethernet;
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
- 	};
- 
- 	memory@40000000 {
-diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-index b8f953c41c73..1d3d220f3fcc 100644
---- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
-+++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-@@ -18,6 +18,11 @@ memory@40000000 {
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-index 55b7759682a9..54398db244ad 100644
---- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-+++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -23,6 +23,11 @@ memory@20000000 {
- 		reg = <0x20000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial3:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi b/arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi
-index 63675fe189cd..18874125ac64 100644
---- a/arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi
-@@ -28,6 +28,11 @@ / {
- 	 * for more details.
- 	 */
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 9e2123470cad..8b2bbeb7f64f 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -31,6 +31,9 @@ / {
- 	aliases {
- 		/* Assign 20 so we don't get confused w/ builtin ones */
- 		i2c20 = &i2c_tunnel;
-+		mmc0 = &mmc_0; /* eMMC */
-+		mmc1 = &mmc_2; /* uSD */
-+		mmc2 = &mmc_1; /* WiFi */
- 	};
- 
- 	backlight: backlight {
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index 4d7b6d9008a7..134ed8931ba7 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -21,6 +21,11 @@ memory@20000000 {
- 		reg = <0x20000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		bootargs = "init=/linuxrc";
- 		stdout-path = "serial2:115200n8";
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index 30fc677d8bac..9f2ec636436e 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -19,6 +19,11 @@ memory@40000000 {
- 		reg = <0x40000000 0x7ea00000>;
- 	};
- 
-+	aliases {
-+		mmc2 = &mmc_2;
-+	};
-+
-+        
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index a6961ff24030..55fd2b94be3f 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -13,6 +13,10 @@
- #include "exynos5422-odroid-core.dtsi"
- 
- / {
-+	aliases {
-+		mmc0 = &mmc_0;
-+	};
-+
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 		pinctrl-names = "default";
-diff --git a/arch/arm/boot/dts/exynos5422-samsung-k3g.dts b/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
-index df41723d56d4..4a0c8f29ccbc 100644
---- a/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
-+++ b/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
-@@ -24,6 +24,10 @@ memory@20000000 {
- 		reg = <0x20000000 0x80000000>; /* 2 GiB */
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+	};
-+
- 	fixed-rate-clocks {
- 		oscclk {
- 			compatible = "samsung,exynos5420-oscclk";
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 0ebcb66c6319..50e9e884c51f 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -29,6 +29,9 @@ / {
- 	aliases {
- 		/* Assign 20 so we don't get confused w/ builtin ones */
- 		i2c20 = &i2c_tunnel;
-+		mmc0 = &mmc_0; /* eMMC */
-+		mmc1 = &mmc_2; /* SD */
-+		mmc2 = &mmc_1; /* WiFi */
- 	};
- 
- 	backlight: backlight {
--- 
-2.39.1
+Series applied to the togreg branch of iio.git, initially pushed out
+(once build test finishes) as testing for 0-day to poke at.
+
+One trivial comment. It's helpful for any series with more than
+one or two patches to have a cover letter even if there isn't much to say
+as it provides somewhere for people to give tags for the whole series etc
+that b4 will then pick up with out the maintainer having to be careful
+that the tag was really meant for the whole series.
+
+Also gives a nice place for me to reply to when saying I picked up the
+series :)
+
+Thanks,
+
+Jonathan
+
+
+
+> ---
+>  .../devicetree/bindings/iio/accel/memsensing,msa311.yaml  | 5 ++---
+>  Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml | 2 +-
+>  Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml | 2 +-
+>  .../devicetree/bindings/iio/adc/atmel,sama5d2-adc.yaml    | 2 +-
+>  Documentation/devicetree/bindings/iio/adc/avia-hx711.yaml | 4 ++--
+>  .../devicetree/bindings/iio/adc/ingenic,adc.yaml          | 4 ++--
+>  .../devicetree/bindings/iio/adc/microchip,mcp3911.yaml    | 4 ++--
+>  .../devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml    | 2 +-
+>  .../devicetree/bindings/iio/adc/samsung,exynos-adc.yaml   | 2 +-
+>  .../devicetree/bindings/iio/adc/st,stm32-adc.yaml         | 8 ++++----
+>  .../devicetree/bindings/iio/adc/ti,ads131e08.yaml         | 2 +-
+>  Documentation/devicetree/bindings/iio/adc/ti,tsc2046.yaml | 2 +-
+>  .../devicetree/bindings/iio/dac/lltc,ltc1660.yaml         | 4 ++--
+>  .../devicetree/bindings/iio/dac/lltc,ltc2632.yaml         | 4 ++--
+>  .../devicetree/bindings/iio/dac/st,stm32-dac.yaml         | 4 ++--
+>  Documentation/devicetree/bindings/iio/imu/st,lsm6dsx.yaml | 2 +-
+>  .../devicetree/bindings/iio/temperature/ti,tmp117.yaml    | 6 +++---
+>  17 files changed, 29 insertions(+), 30 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/accel/memsensing,msa311.yaml b/Documentation/devicetree/bindings/iio/accel/memsensing,msa311.yaml
+> index 23528dcaa073..d530ec041fe7 100644
+> --- a/Documentation/devicetree/bindings/iio/accel/memsensing,msa311.yaml
+> +++ b/Documentation/devicetree/bindings/iio/accel/memsensing,msa311.yaml
+> @@ -1,9 +1,8 @@
+>  # SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> -
+>  %YAML 1.2
+>  ---
+> -$id: "http://devicetree.org/schemas/iio/accel/memsensing,msa311.yaml#"
+> -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +$id: http://devicetree.org/schemas/iio/accel/memsensing,msa311.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: MEMSensing digital 3-Axis accelerometer
+>  
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
+> index 75a7184a4735..35ed04350e28 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
+> @@ -61,7 +61,7 @@ required:
+>  
+>  patternProperties:
+>    "^channel@([0-9]|1[0-5])$":
+> -    $ref: "adc.yaml"
+> +    $ref: adc.yaml
+>      type: object
+>      description: |
+>        Represents the external channels which are connected to the ADC.
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml
+> index 1bfbeed6f299..7cc4ddc4e9b7 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml
+> @@ -43,7 +43,7 @@ required:
+>  
+>  patternProperties:
+>    "^channel@[0-7]$":
+> -    $ref: "adc.yaml"
+> +    $ref: adc.yaml
+>      type: object
+>      description: |
+>        Represents the external channels which are connected to the ADC.
+> diff --git a/Documentation/devicetree/bindings/iio/adc/atmel,sama5d2-adc.yaml b/Documentation/devicetree/bindings/iio/adc/atmel,sama5d2-adc.yaml
+> index 31f840d59303..4817b840977a 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/atmel,sama5d2-adc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/atmel,sama5d2-adc.yaml
+> @@ -41,7 +41,7 @@ properties:
+>      description: Startup time expressed in ms, it depends on SoC.
+>  
+>    atmel,trigger-edge-type:
+> -    $ref: '/schemas/types.yaml#/definitions/uint32'
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+>      description:
+>        One of possible edge types for the ADTRG hardware trigger pin.
+>        When the specific edge type is detected, the conversion will
+> diff --git a/Documentation/devicetree/bindings/iio/adc/avia-hx711.yaml b/Documentation/devicetree/bindings/iio/adc/avia-hx711.yaml
+> index 77605f17901c..9c57eb13f892 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/avia-hx711.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/avia-hx711.yaml
+> @@ -1,8 +1,8 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  %YAML 1.2
+>  ---
+> -$id: "http://devicetree.org/schemas/iio/adc/avia-hx711.yaml#"
+> -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +$id: http://devicetree.org/schemas/iio/adc/avia-hx711.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: AVIA HX711 ADC chip for weight cells
+>  
+> diff --git a/Documentation/devicetree/bindings/iio/adc/ingenic,adc.yaml b/Documentation/devicetree/bindings/iio/adc/ingenic,adc.yaml
+> index 517e8b1fcb73..b71c951e6d02 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/ingenic,adc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/ingenic,adc.yaml
+> @@ -2,8 +2,8 @@
+>  # Copyright 2019-2020 Artur Rojek
+>  %YAML 1.2
+>  ---
+> -$id: "http://devicetree.org/schemas/iio/adc/ingenic,adc.yaml#"
+> -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +$id: http://devicetree.org/schemas/iio/adc/ingenic,adc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: Ingenic JZ47xx ADC controller IIO
+>  
+> diff --git a/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml b/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml
+> index 2c93fb41f172..f7b3fde4115a 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml
+> @@ -2,8 +2,8 @@
+>  # Copyright 2019 Marcus Folkesson <marcus.folkesson@gmail.com>
+>  %YAML 1.2
+>  ---
+> -$id: "http://devicetree.org/schemas/iio/adc/microchip,mcp3911.yaml#"
+> -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +$id: http://devicetree.org/schemas/iio/adc/microchip,mcp3911.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: Microchip MCP3911 Dual channel analog front end (ADC)
+>  
+> diff --git a/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml b/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
+> index 8b743742a5f9..ba86c7b7d622 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
+> @@ -69,7 +69,7 @@ required:
+>  
+>  patternProperties:
+>    "^channel@[0-7]$":
+> -    $ref: "adc.yaml"
+> +    $ref: adc.yaml
+>      type: object
+>      description: |
+>        Represents the external channels which are connected to the ADC.
+> diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> index 81c87295912c..e27d094cfa05 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> @@ -52,7 +52,7 @@ properties:
+>    vdd-supply: true
+>  
+>    samsung,syscon-phandle:
+> -    $ref: '/schemas/types.yaml#/definitions/phandle'
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+>      description:
+>        Phandle to the PMU system controller node (to access the ADC_PHY
+>        register on Exynos3250/4x12/5250/5420/5800).
+> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
+> index 1c340c95df16..995cbf8cefc6 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
+> @@ -1,8 +1,8 @@
+>  # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>  %YAML 1.2
+>  ---
+> -$id: "http://devicetree.org/schemas/iio/adc/st,stm32-adc.yaml#"
+> -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +$id: http://devicetree.org/schemas/iio/adc/st,stm32-adc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: STMicroelectronics STM32 ADC
+>  
+> @@ -80,7 +80,7 @@ properties:
+>      description:
+>        Phandle to system configuration controller. It can be used to control the
+>        analog circuitry on stm32mp1.
+> -    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>  
+>    interrupt-controller: true
+>  
+> @@ -341,7 +341,7 @@ patternProperties:
+>      patternProperties:
+>        "^channel@([0-9]|1[0-9])$":
+>          type: object
+> -        $ref: "adc.yaml"
+> +        $ref: adc.yaml
+>          description: Represents the external channels which are connected to the ADC.
+>  
+>          properties:
+> diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads131e08.yaml b/Documentation/devicetree/bindings/iio/adc/ti,ads131e08.yaml
+> index 55c2c73626f4..890f125d422c 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/ti,ads131e08.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/ti,ads131e08.yaml
+> @@ -77,7 +77,7 @@ required:
+>  
+>  patternProperties:
+>    "^channel@([0-7])$":
+> -    $ref: "adc.yaml"
+> +    $ref: adc.yaml
+>      type: object
+>      description: |
+>        Represents the external channels which are connected to the ADC.
+> diff --git a/Documentation/devicetree/bindings/iio/adc/ti,tsc2046.yaml b/Documentation/devicetree/bindings/iio/adc/ti,tsc2046.yaml
+> index bdf3bba2d750..32c52f9fe18b 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/ti,tsc2046.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/ti,tsc2046.yaml
+> @@ -41,7 +41,7 @@ required:
+>  
+>  patternProperties:
+>    "^channel@[0-7]$":
+> -    $ref: "adc.yaml"
+> +    $ref: adc.yaml
+>      type: object
+>  
+>      properties:
+> diff --git a/Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml b/Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
+> index 133b0f867992..c9f51d00fa8f 100644
+> --- a/Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
+> +++ b/Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
+> @@ -2,8 +2,8 @@
+>  # Copyright 2019 Marcus Folkesson <marcus.folkesson@gmail.com>
+>  %YAML 1.2
+>  ---
+> -$id: "http://devicetree.org/schemas/iio/dac/lltc,ltc1660.yaml#"
+> -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +$id: http://devicetree.org/schemas/iio/dac/lltc,ltc1660.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: Linear Technology Micropower octal 8-Bit and 10-Bit DACs
+>  
+> diff --git a/Documentation/devicetree/bindings/iio/dac/lltc,ltc2632.yaml b/Documentation/devicetree/bindings/iio/dac/lltc,ltc2632.yaml
+> index b1eb77335d05..c9e3be3b5754 100644
+> --- a/Documentation/devicetree/bindings/iio/dac/lltc,ltc2632.yaml
+> +++ b/Documentation/devicetree/bindings/iio/dac/lltc,ltc2632.yaml
+> @@ -1,8 +1,8 @@
+>  # SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
+>  %YAML 1.2
+>  ---
+> -$id: "http://devicetree.org/schemas/iio/dac/lltc,ltc2632.yaml#"
+> -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +$id: http://devicetree.org/schemas/iio/dac/lltc,ltc2632.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: Linear Technology LTC263x 12-/10-/8-Bit Rail-to-Rail DAC
+>  
+> diff --git a/Documentation/devicetree/bindings/iio/dac/st,stm32-dac.yaml b/Documentation/devicetree/bindings/iio/dac/st,stm32-dac.yaml
+> index 0f1bf1110122..04045b932bd2 100644
+> --- a/Documentation/devicetree/bindings/iio/dac/st,stm32-dac.yaml
+> +++ b/Documentation/devicetree/bindings/iio/dac/st,stm32-dac.yaml
+> @@ -1,8 +1,8 @@
+>  # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>  %YAML 1.2
+>  ---
+> -$id: "http://devicetree.org/schemas/iio/dac/st,stm32-dac.yaml#"
+> -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +$id: http://devicetree.org/schemas/iio/dac/st,stm32-dac.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: STMicroelectronics STM32 DAC
+>  
+> diff --git a/Documentation/devicetree/bindings/iio/imu/st,lsm6dsx.yaml b/Documentation/devicetree/bindings/iio/imu/st,lsm6dsx.yaml
+> index 68b481c63318..decf022335d8 100644
+> --- a/Documentation/devicetree/bindings/iio/imu/st,lsm6dsx.yaml
+> +++ b/Documentation/devicetree/bindings/iio/imu/st,lsm6dsx.yaml
+> @@ -63,7 +63,7 @@ properties:
+>      description: if defined provides VDD IO power to the sensor.
+>  
+>    st,drdy-int-pin:
+> -    $ref: '/schemas/types.yaml#/definitions/uint32'
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+>      description: |
+>        The pin on the package that will be used to signal data ready
+>      enum:
+> diff --git a/Documentation/devicetree/bindings/iio/temperature/ti,tmp117.yaml b/Documentation/devicetree/bindings/iio/temperature/ti,tmp117.yaml
+> index 347bc16a4671..c4f1c69f9330 100644
+> --- a/Documentation/devicetree/bindings/iio/temperature/ti,tmp117.yaml
+> +++ b/Documentation/devicetree/bindings/iio/temperature/ti,tmp117.yaml
+> @@ -1,10 +1,10 @@
+>  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>  %YAML 1.2
+>  ---
+> -$id: "http://devicetree.org/schemas/iio/temperature/ti,tmp117.yaml#"
+> -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +$id: http://devicetree.org/schemas/iio/temperature/ti,tmp117.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+> -title: "TI TMP117 - Digital temperature sensor with integrated NV memory"
+> +title: TI TMP117 - Digital temperature sensor with integrated NV memory
+>  
+>  description: |
+>      TI TMP117 - Digital temperature sensor with integrated NV memory that supports
 
