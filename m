@@ -2,57 +2,57 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79AD7C38142
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 28 Jan 2023 06:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 892FFC27C76
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 28 Jan 2023 06:53:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232943AbjA1GtQ (ORCPT
+        id S231534AbjA1Gxs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 28 Jan 2023 01:49:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44276 "EHLO
+        Sat, 28 Jan 2023 01:53:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232929AbjA1GtP (ORCPT
+        with ESMTP id S233312AbjA1Gxr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 28 Jan 2023 01:49:15 -0500
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56527761CB
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jan 2023 22:49:12 -0800 (PST)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230128064908epoutp0359d9bc50664d2f3f865713a4aba83f1b~_ZkLJzS4e0326303263epoutp03U
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 28 Jan 2023 06:49:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230128064908epoutp0359d9bc50664d2f3f865713a4aba83f1b~_ZkLJzS4e0326303263epoutp03U
+        Sat, 28 Jan 2023 01:53:47 -0500
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91C0F88CCF
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jan 2023 22:53:42 -0800 (PST)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230128065340epoutp016a7bfa8d51551dd983ae11b400a96f84~_ZoIppsOw1247112471epoutp01X
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 28 Jan 2023 06:53:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230128065340epoutp016a7bfa8d51551dd983ae11b400a96f84~_ZoIppsOw1247112471epoutp01X
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1674888548;
-        bh=VJ2pG+ckD9qFBF4Xx1wjHGh94yT/NcTTgKTru3uOzXw=;
+        s=mail20170921; t=1674888820;
+        bh=5n4iboq7S91MUlbJ5yR11EbHrNTkBIoIbonSSb6/xhw=;
         h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=Mlh/KMWV/9fpqfd17tZjoXSYdov+ATqZ9Az/azQ0sGpKe8GgctYGuZbzl+4Pj2bI9
-         s4OsHUWPL7y75wUA+q+TnOOH2U5bjb1lZ94NOF2hCjpPHlfQODCSPtyD0NW+GqwhB0
-         AunjFSubSECdQbX3aK+p/uMFeymM2zzOrr168HkY=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        b=BbtKJvgfJyQVZt+kgZzkqXqZo9vEEVnbNc2YvAluiu5tqrggw4H4v0GVrkO6jluLz
+         G7oMMnSxGzKO2UWnPl2681UyDAZDBwGyhYGJ35EEHhHlNc3VIEfZWgtelhUQ2kPJeL
+         PdRft5tfGq4xU63GfzbDpKUp4tmmA54sFQAw80tw=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
         epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20230128064907epcas5p3ed12a8f4786ba781fb6067955e77fb0f~_ZkKlge9H2777827778epcas5p3R;
-        Sat, 28 Jan 2023 06:49:07 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.177]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4P3lR61vDvz4x9Pp; Sat, 28 Jan
-        2023 06:49:06 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        20230128065339epcas5p399168ac3b550225d3edea90eb2861a70~_ZoH2-kzU1167511675epcas5p34;
+        Sat, 28 Jan 2023 06:53:39 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4P3lXL1DPYz4x9Pp; Sat, 28 Jan
+        2023 06:53:38 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
         epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        79.B9.55678.265C4D36; Sat, 28 Jan 2023 15:49:06 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20230128064905epcas5p44504190b5790d8d43c98ad802819e781~_ZkH998542328923289epcas5p4Z;
-        Sat, 28 Jan 2023 06:49:05 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230128064905epsmtrp103b9a4ff7b5c285b3a5e5d37a64994eb~_ZkH9NNXq0314003140epsmtrp1y;
-        Sat, 28 Jan 2023 06:49:05 +0000 (GMT)
-X-AuditID: b6c32a4a-909fc7000000d97e-50-63d4c562f864
+        6D.4A.55678.276C4D36; Sat, 28 Jan 2023 15:53:38 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230128065337epcas5p1cf180bb85a9b1fd5fb075a83e9f1fbfc~_ZoFx7gT42917629176epcas5p1D;
+        Sat, 28 Jan 2023 06:53:37 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230128065337epsmtrp2dc54ded66d358b69bf39e16b2d515ef3~_ZoFxExiG0820808208epsmtrp2e;
+        Sat, 28 Jan 2023 06:53:37 +0000 (GMT)
+X-AuditID: b6c32a4a-909fc7000000d97e-48-63d4c6729f2b
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        87.4F.17995.065C4D36; Sat, 28 Jan 2023 15:49:04 +0900 (KST)
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C5.70.05839.176C4D36; Sat, 28 Jan 2023 15:53:37 +0900 (KST)
 Received: from alimakhtar04 (unknown [107.122.12.5]) by epsmtip1.samsung.com
         (KnoxPortal) with ESMTPA id
-        20230128064902epsmtip134d350d422a8b39c8967a10c33c91de1~_ZkFUExmT1987319873epsmtip1C;
-        Sat, 28 Jan 2023 06:49:02 +0000 (GMT)
+        20230128065335epsmtip199d221183516dd2f6a07c02362bcfc53~_ZoEGLOky1987319873epsmtip1T;
+        Sat, 28 Jan 2023 06:53:35 +0000 (GMT)
 From:   "Alim Akhtar" <alim.akhtar@samsung.com>
 To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
         "'Rob Herring'" <robh+dt@kernel.org>,
@@ -62,57 +62,58 @@ To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
         <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 Cc:     "'Sam Protsenko'" <semen.protsenko@linaro.org>,
         "'Chanho Park'" <chanho61.park@samsung.com>
-In-Reply-To: <20230120173116.341270-1-krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH 1/6] arm64: dts: exynos: disable non-working GPU on
- Exynos7 Espresso
-Date:   Sat, 28 Jan 2023 12:19:00 +0530
-Message-ID: <001001d932e4$9ca8f0f0$d5fad2d0$@samsung.com>
+In-Reply-To: <20230120173116.341270-2-krzysztof.kozlowski@linaro.org>
+Subject: RE: [PATCH 2/6] arm64: dts: exynos: add ADC supply on Exynos7
+ Espresso
+Date:   Sat, 28 Jan 2023 12:23:32 +0530
+Message-ID: <001101d932e5$3f11c8d0$bd355a70$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQMdAgS5dZRQAkVO6hc3mtnWMtV85gHe9LN3rBzNBwA=
+Thread-Index: AQHe9LN3kxpYXwzfJTNDGvK99jO1aAK8aG7kAlPSQnquf17cIA==
 Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPJsWRmVeSWpSXmKPExsWy7bCmpm7S0SvJBuemcFtc3q9tMf/IOVaL
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIJsWRmVeSWpSXmKPExsWy7bCmum7RsSvJBlOPsFlc3q9tMf/IOVaL
         vhcPmS32vt7KbrHp8TVWi8u75rBZzDi/j8mide8RdovnffuYHDg9Nq3qZPO4c20Pm8fmJfUe
         fVtWMXp83iQXwBqVbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+Ti
         E6DrlpkDdI6SQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1
-        xMrQwMDIFKgwITujc/FE1oKpfBXdq1cyNzB+5u5i5OCQEDCR+Nvj18XIxSEksJtRYu/yWUwQ
-        zidGiUdn7rJCOJ8ZJXav72XrYuQE65hzsoMZIrGLUWLu2QlQLS8ZJf7NA2nh5GAT0JXYsbiN
-        DSQhIrCJSeLL/r3sIAuZBRIlWo4wg9RwCrhK3J/2nQXEFhaIktj95i0bSAmLgKpEz3EnkDCv
-        gKXEml+XGCFsQYmTM5+AlTMLyEtsfzuHGeIgBYmfT5eBrRURsJLY2HCOCaJGXOLl0SPsICdI
-        CKzkkOh6tosFosFFYt6U+1C2sMSr41vYIWwpiZf9beyQcPGQWPRHCiKcIfF2+XpGCNte4sCV
-        OSwQn2hKrN+lD7GKT6L39xMmiE5eiY42IYhqVYnmd1ehFklLTOzuZoUZ3vMheAKj4iwkf81C
-        8tcsJPfPQti1gJFlFaNkakFxbnpqsWmBUV5qOTyyk/NzNzGCU6qW1w7Ghw8+6B1iZOJgPMQo
-        wcGsJMK71fFSshBvSmJlVWpRfnxRaU5q8SFGU2BYT2SWEk3OByb1vJJ4QxNLAxMzMzMTS2Mz
-        QyVxXnXbk8lCAumJJanZqakFqUUwfUwcnFINTGwuIs2+J32KNk/9H6ZSkHZ0z9tI+aXaboeX
-        391y/UNLeHryLrvquFXrW0STXbwmTL457c+PXsY3td4iDOfPdr7vYDLL9ysqZuLuPMt+1vqE
-        60vvGQsuRN6N/c62oX9JxKwvMxMumpz9Za7ge0nk+OPXUoXuB2w0BGcV6v77stKXbfahq5W3
-        T0ntED0luUXX6Nej6LDYn412DTIb99Wny856Y+GnaPJzVmDVxri2Cb9KAr4x8VxfLrFt8vyf
-        66q4ZYzXHtvQdGBPFKvpjzy/V41XQ//Gfr18gne9lM4U31AnvZzpszi1zmaGr48V21jhpi9z
-        9J7kv7At028/2F76fTPzNpXga02zbzM8C1wuUaDEUpyRaKjFXFScCAD1dMwHMgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42LZdlhJTjfh6JVkg0uvrSwu79e2mH/kHKtF
+        xMrQwMDIFKgwITtj6YmrTAUreCq+/L7G3MC4iauLkZNDQsBE4vW7I2xdjFwcQgK7GSX6vv9l
+        gnA+MUrM2ToRyvnGKDF7xg5WmJZ9p46xQyT2Mkr8+vUfqv8lo0T/glVMIFVsAroSOxa3gSVE
+        BDYxSXzZvxeohYODWSBRouUIM0gNp4CrxIl9exhBbGGBQInjL1aAbWARUJXYPuUDG0g5r4Cl
+        xKlbOiBhXgFBiZMzn7CA2MwC8hLb385hhjhIQeLn02VgrSICThIn1vxlhqgRl3h59AjYoRIC
+        Kzkknr75zATR4CJxfNdjRghbWOLV8S3sELaUxOd3e8H2Sgh4SCz6IwURzpB4u3w9VLm9xIEr
+        c1ggPtGUWL9LH2IVn0Tv7ydMEJ28Eh1tQhDVqhLN766yQNjSEhO7u6FB6CGx5O8RpgmMirOQ
+        PDYLyWOzkDwwC2HZAkaWVYySqQXFuempxaYFRnmp5fDoTs7P3cQITqtaXjsYHz74oHeIkYmD
+        8RCjBAezkgjvVsdLyUK8KYmVValF+fFFpTmpxYcYTYGBPZFZSjQ5H5jY80riDU0sDUzMzMxM
+        LI3NDJXEedVtTyYLCaQnlqRmp6YWpBbB9DFxcEo1MLVm31Nhi3F/e/On/fxucfm480az5vC7
+        pobNygrZ7rnszvwdvS/vprzkj+PbbsS+xpB/psvMSK/ZL+Zqvddu/3lhUotranXzyo9rNxze
+        vLu9cWt06r7YR03Bs0tbCvbKrFyaqTtxgoaIh4jdrbJTGqI9i48UuiwW/HH0/f3eq4tCvs5U
+        WujyQ+3MlyUL7v2Ytull3aL9z9b+Xr/ls6Sbm/iexceEFT78ylbiFvIxcb62QPzTskXC7nNW
+        cTB33U2qjA2Oeb/pp8+tzKtVjy5brWKMfNrvJ+/L0nrjdJXg9dtbJ4eavHVem3BJ3Hi6jXYI
+        X8J/mRY+d6XjWaolV+d+XXVFforiT+Pcd1fj/J0kbhorsRRnJBpqMRcVJwIApTk1VTQEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupikeLIzCtJLcpLzFFi42LZdlhJTrfw2JVkg9t/pCwu79e2mH/kHKtF
         34uHzBZ7X29lt9j0+BqrxeVdc9gsZpzfx2TRuvcIu8Xzvn1MDpwem1Z1snncubaHzWPzknqP
-        vi2rGD0+b5ILYI3isklJzcksSy3St0vgyuhcPJG1YCpfRffqlcwNjJ+5uxg5OSQETCTmnOxg
-        7mLk4hAS2MEoMffwGSaIhLTE9Y0T2CFsYYmV/56zQxQ9Z5T4sWwFI0iCTUBXYsfiNjaQhIjA
-        NiaJVc1/2EASzAKJEmtXtjJCdExjlOj//5AVJMEp4Cpxf9p3li5GDg5hgQiJb3ODQEwWAVWJ
-        nuNOIBW8ApYSa35dYoSwBSVOznwCVs0soCfRtpERYrq8xPa3c5ghblOQ+Pl0GdhwEQEriY0N
-        55ggasQlXh49wj6BUXgWkkmzECbNQjJpFpKOBYwsqxglUwuKc9Nziw0LjPJSy/WKE3OLS/PS
-        9ZLzczcxgmNLS2sH455VH/QOMTJxMB5ilOBgVhLh3ep4KVmINyWxsiq1KD++qDQntfgQozQH
-        i5I474Wuk/FCAumJJanZqakFqUUwWSYOTqkGpoi4aIGEE1PXb1hk09b9T9+j0mjVpTCz/skN
-        udk5r6oeLOOZdaOSNSC4/W+hcvECsddT7m3x+t9Ru8Bn17Z7aQcTI25VrPu3cufT/z8Ohx2Q
-        2jnlrL+J0Pu9ybtKdHat/Pljo7eh2EOxydzxU/0PG4kUW556/pLzdCuvql/zhj3Ldfx9+Tge
-        HO75nXf8csiqN13Llux5M2HtGqOkCR+m7S95EJ7/efbr1emeG5gnfRJeN7fZgCl2zgcJtVKD
-        yP/6zYdNlytIb2RbcdI7eNGMnUcnvb3B/fZT4OXHXKvNi+8+XXd3n75t4Ctl56qyix3zik1d
-        jzSU+s/eZbrx28VtruFvns/b/N8kysI2TKJ5xl1RJZbijERDLeai4kQA5WdmnhwDAAA=
-X-CMS-MailID: 20230128064905epcas5p44504190b5790d8d43c98ad802819e781
+        vi2rGD0+b5ILYI3isklJzcksSy3St0vgylh64ipTwQqeii+/rzE3MG7i6mLk5JAQMJHYd+oY
+        excjF4eQwG5Gia61P5khEtIS1zdOYIewhSVW/nsOVfScUeLQlxusIAk2AV2JHYvb2EASIgLb
+        mCRWNf9hA0kwCyRKrF3ZygjRcZ5RYuOcBSwgCU4BV4kT+/YwgtjCAv4ST/49B1vHIqAqsX3K
+        B6BmDg5eAUuJU7d0QMK8AoISJ2c+YQEJMwvoSbRtZIQYLy+x/e0cqEMVJH4+XQZ2j4iAk8SJ
+        NX+ZIWrEJV4ePcI+gVF4FpJJsxAmzUIyaRaSjgWMLKsYJVMLinPTc4sNCwzzUsv1ihNzi0vz
+        0vWS83M3MYKjS0tzB+P2VR/0DjEycTAeYpTgYFYS4d3qeClZiDclsbIqtSg/vqg0J7X4EKM0
+        B4uSOO+FrpPxQgLpiSWp2ampBalFMFkmDk6pBiaz9ANct+4mC/oYpjE22fwr3Lf0XPrOcMfL
+        zi9+HW2oMnxVuGd6g6z7nDvPBS7ZrSy4bCm5fOWTFTOrpkTu/7B0I//l7dvWG2YuthMxYP15
+        4PS2A24SO4xm/v11+O477TnzXty70qj8OucdU721jvmsuHqfxyYMWoW/y2SY1qTNZO+eW/ix
+        Jl3hS3D7tolbVyW7L8iT6I9f8yZcyGl9/jfW7tdNeSw+ISzGd48IrLvF8yVplZ9NR+t+1TSG
+        Mq6DewOZatudr8c/vlLDI60ksyG4y+nsUQueNqeDpX4vwyaEB/35sTE7LaMmYPYFx5tJ56df
+        yGKU7NrRmsrcXjT3Qtwtwdl1JRXx6/99n3Ms1V2JpTgj0VCLuag4EQBBRXXQHQMAAA==
+X-CMS-MailID: 20230128065337epcas5p1cf180bb85a9b1fd5fb075a83e9f1fbfc
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230120173124epcas5p319f4f913d455734edb1b63eec2120e77
-References: <CGME20230120173124epcas5p319f4f913d455734edb1b63eec2120e77@epcas5p3.samsung.com>
-        <20230120173116.341270-1-krzysztof.kozlowski@linaro.org>
+X-CMS-RootMailID: 20230120173125epcas5p1c2b9e0c03f2776b8ca277919e0ba7be8
+References: <20230120173116.341270-1-krzysztof.kozlowski@linaro.org>
+        <CGME20230120173125epcas5p1c2b9e0c03f2776b8ca277919e0ba7be8@epcas5p1.samsung.com>
+        <20230120173116.341270-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -130,45 +131,37 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 > Cc: Sam Protsenko <semen.protsenko@linaro.org>; Chanho Park
 > <chanho61.park@samsung.com>; Krzysztof Kozlowski
 > <krzysztof.kozlowski@linaro.org>
-> Subject: [PATCH 1/6] arm64: dts: exynos: disable non-working GPU on
-> Exynos7 Espresso
+> Subject: [PATCH 2/6] arm64: dts: exynos: add ADC supply on Exynos7
+> Espresso
 > 
-> The Panfrost GPU drivers require clock but such was not provided in
-> Exynos7 DTSI.  The CMU_G3D clock controller was not upstreamed, thus
-> consider GPU as non-working and simply disable it to silence warnings
-> like:
+> ADC requires supply and it seems LDO3 (same as on Exynos5433 TM2 boards)
+> fits in voltage range of 1.8 V.  Use it to silence warning:
 > 
->   exynos7-espresso.dtb: gpu@14ac0000: 'clocks' is a required property
+Yes, it is LDO3 for exynos7_espresso board as well.
+
+>   exynos7-espresso.dtb: adc@13620000: 'vdd-supply' is a required property
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
 > ---
 
 Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-> 
-> This patchset fixes remaining Exynos/Tesla ARMv8 dtbs_check warnings. No
-> more excuses for not running dtbs_check on new patches.
-
-Thanks Krzysztof for cleaning it up.
-
-> ---
->  arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 1 -
->  1 file changed, 1 deletion(-)
+>  arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 > diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
 > b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> index b846c0be90e3..829657c9c7ca 100644
+> index 829657c9c7ca..abb3bd700d6f 100644
 > --- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
 > +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> @@ -61,7 +61,6 @@ &fin_pll {
-> 
->  &gpu {
->  	mali-supply = <&buck6_reg>;
-> -	status = "okay";
+> @@ -78,6 +78,7 @@ &watchdog {
 >  };
 > 
->  &serial_2 {
+>  &adc {
+> +	vdd-supply = <&ldo3_reg>;
+>  	status = "okay";
+>  };
+> 
 > --
 > 2.34.1
 
