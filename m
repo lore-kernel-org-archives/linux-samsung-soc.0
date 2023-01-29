@@ -2,54 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85AB8C636CC
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Jan 2023 14:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C66ECC61D97
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Jan 2023 14:39:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232553AbjA2Ojv (ORCPT
+        id S235000AbjA2Ojy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 29 Jan 2023 09:39:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37648 "EHLO
+        Sun, 29 Jan 2023 09:39:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231707AbjA2Ojv (ORCPT
+        with ESMTP id S229835AbjA2Ojx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 29 Jan 2023 09:39:51 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 874DC7EE0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2023 06:39:49 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id m5-20020a05600c4f4500b003db03b2559eso6511429wmq.5
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2023 06:39:49 -0800 (PST)
+        Sun, 29 Jan 2023 09:39:53 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 141FD7EE0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2023 06:39:51 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id k16so6432859wms.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2023 06:39:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=n/xwwbOs7efGaQMD0UIaeGQeP0AwlUSs0l695B7gQqs=;
-        b=H37AxqvpkcQPDY31nuqRg2AOOocJfGxNxKC58KcEuQOl088wgsSKto7c4b2NNC+yWW
-         KBf01la7BInnT9ieP8DrFMYnPnL0AT34srYjpVYDIC25GsL9Vzku0u/EOGjyIDg5Vgsb
-         sG/IIs9loCETu/2kyIPrhK0fH0Ag+7CH2p+0LQNnflIWziqg2Jr91jfir9JvuL+gsLM4
-         bUslMG33lFQxVjyxIQprAF2nETIUxBFx9byKCH0PxkA+7R21ul+fkgvaPepETkdnamQ8
-         JyxXajHCJvmF86109hiJRXXAfd7y/4uk+kYUFMlg3zcz5KAVkoP8GWB1l/mlY9wro37N
-         O6Gw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9vwCDrwzwASozRbMEd2/FLEyNdaiBVfiRFqS2U6PKXc=;
+        b=Pm/FTmbEWjDAnrrTHvkJVTaTJjIiy6wc94E/+NvkP7UiES9qVlY1UDn/S4jZUOgLPc
+         ORM+hKN5n7ic3IX7LIct5rfgeMWPC7SlNLrJxFW9agNNMoq6Ii0fNPghKcfpOvDWD7CQ
+         tFYnO4LYjrvm/9vV6C7DRptNJBns+X78TUdIVXgaqW78KtqFNCT02Jmg29P823rJUUUM
+         GqkYzTA5UPv1PrZEAuYNLgGDJMDUHwtgzfYOBc3+KIG7BqtR8p+2xegMO26EYLAPdHwG
+         bHv4VYbWWMYDGcBRMnfbWkt1wh0nURzpaImp+O1RmZbz9QWhgmsuKwduc82U0qU+C3f7
+         sXjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n/xwwbOs7efGaQMD0UIaeGQeP0AwlUSs0l695B7gQqs=;
-        b=hkNKv+Rah8SeGRrZw6UE3XAxVdzlBNFxXwRh0dsnyjMLYFireYKAIX/dzZIuFn0c6w
-         +PigC7jhG1WD2VsSRqn5oSl5SWxvNJcZFmi5UQJoNggMknblDdgbS8XZKgHfS+fgafJD
-         JiC6Ifah3tILMjMNN9FdTKe5eLIRGynyKtXFs7j3S3lkcJvSvXHS9X0Lm6o0zbZgyTPe
-         9cwK7OsUe2neCknmXZNcsbqqw5YN/h6ufbDvzz/w94yggc7PKn7knlEoyaZQvv5QAJ1o
-         zpLfAes1O8ISAWEljS32RbyaSIBWJ6mCOP8FAX+IME0X6k/TYBx6q66FgQ1lLKzJf3EE
-         egWg==
-X-Gm-Message-State: AO0yUKUcmRy8ykSxUCq1sBARix2CpEOaRlqqo5pajAJWxbWrwTtXtac5
-        pYowZM4DE4Rm+m6i9c6L+AAbOA==
-X-Google-Smtp-Source: AK7set82BeaboxstGi6b9jRgXk4CsYI4beNgiDWOusTguSgRBlIDNkQyRbiYOh9/lkWhcJL+jDkl7g==
-X-Received: by 2002:a05:600c:4f93:b0:3dc:2b62:ee9f with SMTP id n19-20020a05600c4f9300b003dc2b62ee9fmr12897820wmq.3.1675003188063;
-        Sun, 29 Jan 2023 06:39:48 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9vwCDrwzwASozRbMEd2/FLEyNdaiBVfiRFqS2U6PKXc=;
+        b=rNeW5OedjDqsQlB8ZBG6rO0CEFCQY0T1gcXotOL49HtciqUBkVGyRaRfotCOmFGiSO
+         FJ+KNglQLHgzuJnNMsTVrPnZ7pfa7SOSDR3pErS36YTrw3blwDLw2U7O1BB6k556+xf9
+         dqZ2MblPrk+7wJrhGYzrt0WtTZo0egsap+1AybET7vFt8ptT87NpP6/960VLEodWE6OU
+         ORQtoH9uYzx2E9e3jls9/LmoPkVkpSkfqLDJKDaih2F3aNAOSs9B/6CMWKiRcgJ8bYm9
+         vIk8fuCzbVz9tachCbDqvf7L56voZWKdIqT5tTHkc69tI9EulQAL1MFiP+eV5eocL4Hn
+         FGqw==
+X-Gm-Message-State: AFqh2kru9O8jkOyd+o0uW/DAi9beoElxwfia9nx7JyuCBoR31kWBZOhj
+        jO960GNN+csBEGWpQmRb+XjvjQ==
+X-Google-Smtp-Source: AMrXdXv3fE5FTTFWA26uLIOONUJtpIGmWATa5HWqBPiG3vrqxwsYYqapa5akPDlv2UDeILCfAmhVYw==
+X-Received: by 2002:a05:600c:c05:b0:3db:2252:e50e with SMTP id fm5-20020a05600c0c0500b003db2252e50emr38909020wmb.24.1675003190556;
+        Sun, 29 Jan 2023 06:39:50 -0800 (PST)
 Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id bi5-20020a05600c3d8500b003db0bb81b6asm10477843wmb.1.2023.01.29.06.39.46
+        by smtp.gmail.com with ESMTPSA id bi5-20020a05600c3d8500b003db0bb81b6asm10477843wmb.1.2023.01.29.06.39.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jan 2023 06:39:47 -0800 (PST)
+        Sun, 29 Jan 2023 06:39:50 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
         arm@kernel.org, soc@kernel.org
@@ -58,10 +59,12 @@ Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 1/3] ARM: dts: samsung: exynos for v6.3
-Date:   Sun, 29 Jan 2023 15:39:42 +0100
-Message-Id: <20230129143944.5104-1-krzysztof.kozlowski@linaro.org>
+Subject: [GIT PULL 3/3] ARM: samsung: pull for v6.3
+Date:   Sun, 29 Jan 2023 15:39:44 +0100
+Message-Id: <20230129143944.5104-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230129143944.5104-1-krzysztof.kozlowski@linaro.org>
+References: <20230129143944.5104-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -74,93 +77,27 @@ The following changes since commit 1b929c02afd37871d5afb9d498426f83432e71c2:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-6.3
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-6.3
 
-for you to fetch changes up to 27be20e3b9d125f2c1b066d1d238c67bf5b89dc3:
+for you to fetch changes up to fe6a952b567f6a771d087d2e969914f31574d6ab:
 
-  ARM: dts: exynos: add unit address to DWC3 node wrapper in Exynos54xx (2023-01-29 11:34:12 +0100)
-
-----------------------------------------------------------------
-Samsung DTS ARM changes for v6.3
-
-1. Big cleanup and rework towards achieving zero-warning of dtbs_check
-   and dtc W=1:
-    - align node names with the bindings,
-    - drop or correct incorrect properties in several boards,
-    - correct HDMI bridge ports nodes on Exynos4412 Midas,
-    - add dummy regulator supplies when necessary to fullfil bindings
-      requirements,
-    - use lowercase hex,
-    - move non-MMIO exynos-bus nodes out of soc node,
-    - add unit address to USB DWC3 nodes.
-
-2. Correct Exynos5420 MIPI DSI and phy compatibles.
-3. Correct Exynos4210 and Exynos4412 HDMI phy compatibles.
-4. Add Samsung Galaxy S5 (SM-G900H) board.
+  dt-bindings: soc: samsung: exynos-pmu: allow phys as child (2023-01-29 11:36:10 +0100)
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (23):
-      ARM: dts: exynos: drop unused pinctrl-names from Galaxy Tab
-      ARM: dts: exynos: align OPP table names with DT schema
-      ARM: dts: exynos: drop incorrect power-supplies in P4 Note
-      ARM: dts: exynos: correct wr-active property in Exynos3250 Rinato
-      ARM: dts: exynos: drop unsupported desc-num in Exynos3250
-      ARM: dts: exynos: correct cd-gpios property in Exynos4412 Itop Elite
-      ARM: dts: exynos: align pin node names in Exynos4412
-      ARM: dts: exynos: add ports in HDMI bridge in Exynos4412 Midas
-      ARM: dts: exynos: add panel supply in Tiny4412
-      ARM: dts: exynos: add backlight supply in P4 Note
-      ARM: dts: exynos: align HSOTG/USB node names
-      ARM: dts: exynos: correct SATA clocks in Exynos5250
-      ARM: dts: exynos: correct HS200 property in Exynos5260
-      ARM: dts: exynos: correct HSI2C properties in Exynos5410 Odroid XU
-      ARM: dts: exynos: correct HDMI phy compatible in Exynos4
-      ARM: dts: exynos: use generic node names for phy
-      ARM: dts: exynos: use lowercase hex addresses
-      ARM: dts: exynos: move exynos-bus nodes out of soc in Exynos5420
-      ARM: dts: exynos: move exynos-bus nodes out of soc in Exynos3250
-      ARM: dts: exynos: move exynos-bus nodes out of soc in Exynos4210
-      ARM: dts: exynos: move exynos-bus nodes out of soc in Exynos4412
-      ARM: dts: exynos: add unit address to DWC3 node wrapper in Exynos5250
-      ARM: dts: exynos: add unit address to DWC3 node wrapper in Exynos54xx
+Samsung mach/soc changes for v6.3
 
-Markuss Broks (4):
-      ARM: dts: exynos: Use Exynos5420 compatible for the MIPI video phy
-      ARM: dts: exynos: Use Exynos5422 compatible for the DSI controller
-      dt-bindings: arm: samsung: Add compatible for Samsung Galaxy S5 (SM-G900H)
-      ARM: dts: exynos: Add Samsung Galaxy S5 (SM-G900H) board
+1. Correct s3c64xx_set_timer_source() prototype.
+2. Re-work MIPI and DP phys as children of Exynos PMU system controller.
+   This both better reflects actual device hierarchy and allows to
+   remove later few warnings from dtc W=1 and dtbs_check.
 
- .../bindings/arm/samsung/samsung-boards.yaml       |   1 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/exynos-syscon-restart.dtsi       |   2 +-
- arch/arm/boot/dts/exynos3250-monk.dts              |   3 +-
- arch/arm/boot/dts/exynos3250-rinato.dts            |   5 +-
- arch/arm/boot/dts/exynos3250.dtsi                  | 386 ++++++------
- arch/arm/boot/dts/exynos4.dtsi                     |  66 +-
- arch/arm/boot/dts/exynos4210.dtsi                  | 326 +++++-----
- arch/arm/boot/dts/exynos4412-itop-elite.dts        |   2 +-
- arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi    |   2 +-
- arch/arm/boot/dts/exynos4412-midas.dtsi            |  15 +-
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |   2 +-
- arch/arm/boot/dts/exynos4412-odroidu3.dts          |   2 +-
- arch/arm/boot/dts/exynos4412-odroidx.dts           |   2 +-
- arch/arm/boot/dts/exynos4412-odroidx2.dts          |   2 +-
- arch/arm/boot/dts/exynos4412-origen.dts            |   2 +-
- arch/arm/boot/dts/exynos4412-p4note.dtsi           |   7 +-
- arch/arm/boot/dts/exynos4412-pinctrl.dtsi          |   2 +-
- arch/arm/boot/dts/exynos4412-tiny4412.dts          |   8 +
- arch/arm/boot/dts/exynos4412.dtsi                  | 381 ++++++------
- arch/arm/boot/dts/exynos5.dtsi                     |  22 +-
- arch/arm/boot/dts/exynos5250.dtsi                  |  84 +--
- arch/arm/boot/dts/exynos5260-xyref5260.dts         |   2 +-
- arch/arm/boot/dts/exynos5260.dtsi                  |  36 +-
- arch/arm/boot/dts/exynos5410-odroidxu.dts          |   3 +-
- arch/arm/boot/dts/exynos5410.dtsi                  |   2 +-
- .../arm/boot/dts/exynos5420-galaxy-tab-common.dtsi |   1 -
- arch/arm/boot/dts/exynos5420.dtsi                  | 299 +++++----
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi      |  34 +-
- arch/arm/boot/dts/exynos5422-samsung-k3g.dts       | 674 +++++++++++++++++++++
- arch/arm/boot/dts/exynos54xx.dtsi                  |  16 +-
- arch/arm/boot/dts/exynos5800.dtsi                  |   4 +
- 32 files changed, 1541 insertions(+), 853 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos5422-samsung-k3g.dts
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      ARM: s3c: fix s3c64xx_set_timer_source prototype
+
+Krzysztof Kozlowski (1):
+      dt-bindings: soc: samsung: exynos-pmu: allow phys as child
+
+ .../bindings/soc/samsung/exynos-pmu.yaml           | 71 +++++++++++++++++-----
+ arch/arm/mach-s3c/s3c64xx.c                        |  3 +-
+ 2 files changed, 59 insertions(+), 15 deletions(-)
