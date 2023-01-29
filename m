@@ -2,102 +2,123 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C66ECC61D97
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Jan 2023 14:39:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA00C61D97
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Jan 2023 14:45:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235000AbjA2Ojy (ORCPT
+        id S232422AbjA2Opc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 29 Jan 2023 09:39:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37672 "EHLO
+        Sun, 29 Jan 2023 09:45:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229835AbjA2Ojx (ORCPT
+        with ESMTP id S229825AbjA2Opb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 29 Jan 2023 09:39:53 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 141FD7EE0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2023 06:39:51 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id k16so6432859wms.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2023 06:39:51 -0800 (PST)
+        Sun, 29 Jan 2023 09:45:31 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFF5815C8F
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2023 06:45:29 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id l41-20020a05600c1d2900b003daf986faaeso6520338wms.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2023 06:45:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9vwCDrwzwASozRbMEd2/FLEyNdaiBVfiRFqS2U6PKXc=;
-        b=Pm/FTmbEWjDAnrrTHvkJVTaTJjIiy6wc94E/+NvkP7UiES9qVlY1UDn/S4jZUOgLPc
-         ORM+hKN5n7ic3IX7LIct5rfgeMWPC7SlNLrJxFW9agNNMoq6Ii0fNPghKcfpOvDWD7CQ
-         tFYnO4LYjrvm/9vV6C7DRptNJBns+X78TUdIVXgaqW78KtqFNCT02Jmg29P823rJUUUM
-         GqkYzTA5UPv1PrZEAuYNLgGDJMDUHwtgzfYOBc3+KIG7BqtR8p+2xegMO26EYLAPdHwG
-         bHv4VYbWWMYDGcBRMnfbWkt1wh0nURzpaImp+O1RmZbz9QWhgmsuKwduc82U0qU+C3f7
-         sXjA==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L3+adTROaQB+gYcBuJMg8idTi/GfFjWlX30uDggGK3g=;
+        b=yJxkCDePAZSNSiIp6Ms3j0H9NQgCYu0j0f/BHOuZ1GzoQUXsOC1ppbl7Cmtiznrzx/
+         wA0MYkuEXDU68p1lIApL1j6GWw1IbUlUelnXiHdEZl/lnRF6Eo0qTQL0Wy9RcHt0sJI+
+         xMx5F+lGstj/0SBWuyNU2iTvHhI/+EEjCrSY3CieBUsYJdjHMbYe7AwPuXTZDJjjA5cr
+         SM1WlRgwnnz42D9K30xYafCa+rhT7s8Q6MePm3fEUaq49Lf8kRbM3bIKwXgA9TWcAhhW
+         4MKQGgKoeJtVOMo3al7o4fqVP22O4z5AmRL4oxZSq/gl27QYbnxIIb/18kr4wkcH+fOX
+         KH5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9vwCDrwzwASozRbMEd2/FLEyNdaiBVfiRFqS2U6PKXc=;
-        b=rNeW5OedjDqsQlB8ZBG6rO0CEFCQY0T1gcXotOL49HtciqUBkVGyRaRfotCOmFGiSO
-         FJ+KNglQLHgzuJnNMsTVrPnZ7pfa7SOSDR3pErS36YTrw3blwDLw2U7O1BB6k556+xf9
-         dqZ2MblPrk+7wJrhGYzrt0WtTZo0egsap+1AybET7vFt8ptT87NpP6/960VLEodWE6OU
-         ORQtoH9uYzx2E9e3jls9/LmoPkVkpSkfqLDJKDaih2F3aNAOSs9B/6CMWKiRcgJ8bYm9
-         vIk8fuCzbVz9tachCbDqvf7L56voZWKdIqT5tTHkc69tI9EulQAL1MFiP+eV5eocL4Hn
-         FGqw==
-X-Gm-Message-State: AFqh2kru9O8jkOyd+o0uW/DAi9beoElxwfia9nx7JyuCBoR31kWBZOhj
-        jO960GNN+csBEGWpQmRb+XjvjQ==
-X-Google-Smtp-Source: AMrXdXv3fE5FTTFWA26uLIOONUJtpIGmWATa5HWqBPiG3vrqxwsYYqapa5akPDlv2UDeILCfAmhVYw==
-X-Received: by 2002:a05:600c:c05:b0:3db:2252:e50e with SMTP id fm5-20020a05600c0c0500b003db2252e50emr38909020wmb.24.1675003190556;
-        Sun, 29 Jan 2023 06:39:50 -0800 (PST)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L3+adTROaQB+gYcBuJMg8idTi/GfFjWlX30uDggGK3g=;
+        b=1rJamODtipCUvx35488/wYblhjXY+C8bFGTy6EWgBpftbgnCBut+u1R4UdRcsJ3dmB
+         JJB5wralO5wNAxh0h+HzFFgYUAgM+11ewCADKysbVUQDvCoy13kfIAl0ILL791PPadmI
+         ibShEJTR9efzJ5F2VLPR3uxihnRanqzl0TTLfhuwxRi5YQqKPTE8FHhGUpeh7cVFuAwC
+         RWdvAgonEVcHQFpJql3p+ONnkPCA9fYmR2yUj29d1qMNthwmkQJH3H53msqtsOSyXpCf
+         PGlK24YKNF0Q0w/tnPoV/xo0X2xP4jvrsTeZCjrYg9/gERuy2qMWudoJgM8mzOT2s/Ri
+         8Tdw==
+X-Gm-Message-State: AO0yUKVjfcMJInM3f9xblZweGMYaXWCzj4eNipedU6Jc25IBFpRqG1AB
+        RkOuxtpXlCuiBMmDUrCNQ1IdcQ==
+X-Google-Smtp-Source: AK7set+Sx3rrx+oc+SUEi1ahvM+ewtnnrVP7wTBDdd9hcsB+U6I5HSbLvhQ0mvSzwuidc+pojB60Yg==
+X-Received: by 2002:a05:600c:188a:b0:3dc:506e:6559 with SMTP id x10-20020a05600c188a00b003dc506e6559mr4061076wmp.37.1675003528361;
+        Sun, 29 Jan 2023 06:45:28 -0800 (PST)
 Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id bi5-20020a05600c3d8500b003db0bb81b6asm10477843wmb.1.2023.01.29.06.39.49
+        by smtp.gmail.com with ESMTPSA id m14-20020a05600c4f4e00b003a3442f1229sm14950038wmq.29.2023.01.29.06.45.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jan 2023 06:39:50 -0800 (PST)
+        Sun, 29 Jan 2023 06:45:27 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
         arm@kernel.org, soc@kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 3/3] ARM: samsung: pull for v6.3
-Date:   Sun, 29 Jan 2023 15:39:44 +0100
-Message-Id: <20230129143944.5104-3-krzysztof.kozlowski@linaro.org>
+Subject: [GIT PULL 1/2] arm64: dts: cleanup for v6.3, part two
+Date:   Sun, 29 Jan 2023 15:45:24 +0100
+Message-Id: <20230129144525.5802-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230129143944.5104-1-krzysztof.kozlowski@linaro.org>
-References: <20230129143944.5104-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The following changes since commit 1b929c02afd37871d5afb9d498426f83432e71c2:
+Hi,
 
-  Linux 6.2-rc1 (2022-12-25 13:41:39 -0800)
+Cleanup of several platforms, not picked up by maintainers. On top of previous
+pull request.
+
+Best regards,
+Krzysztof
+
+
+The following changes since commit d0931f1d5e9c1655cfa8128edd14e813b4044801:
+
+  arm64: dts: hisilicon: align LED node names with dtschema (2023-01-13 11:38:56 +0100)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-6.3
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git tags/dt64-cleanup-6.3-2
 
-for you to fetch changes up to fe6a952b567f6a771d087d2e969914f31574d6ab:
+for you to fetch changes up to 9f2c9170934eace462499ba0bfe042cc72900173:
 
-  dt-bindings: soc: samsung: exynos-pmu: allow phys as child (2023-01-29 11:36:10 +0100)
-
-----------------------------------------------------------------
-Samsung mach/soc changes for v6.3
-
-1. Correct s3c64xx_set_timer_source() prototype.
-2. Re-work MIPI and DP phys as children of Exynos PMU system controller.
-   This both better reflects actual device hierarchy and allows to
-   remove later few warnings from dtc W=1 and dtbs_check.
+  arm64: dts: amd: use "okay" for status (2023-01-28 11:16:00 +0100)
 
 ----------------------------------------------------------------
-Arnd Bergmann (1):
-      ARM: s3c: fix s3c64xx_set_timer_source prototype
+Minor improvements in ARM64 DTS for v6.3, part two
 
-Krzysztof Kozlowski (1):
-      dt-bindings: soc: samsung: exynos-pmu: allow phys as child
+1. Drop deprecated "device_type" property from serial nodes (apm,
+   amazon).
+2. Align UART node names and OPP table names with bindings (hisilicon,
+   realtek, synaptics).
+3. Use "okay" for status, as expected by Devicetree specification and
+   dtschema.
 
- .../bindings/soc/samsung/exynos-pmu.yaml           | 71 +++++++++++++++++-----
- arch/arm/mach-s3c/s3c64xx.c                        |  3 +-
- 2 files changed, 59 insertions(+), 15 deletions(-)
+----------------------------------------------------------------
+Krzysztof Kozlowski (8):
+      arm64: dts: apm: drop deprecated serial device_type
+      arm64: dts: amazon: drop deprecated serial device_type
+      arm64: dts: realtek: align UART node name with bindings
+      arm64: dts: hisilicon: align UART node name with bindings
+      arm64: dts: synaptics: align UART node name with bindings
+      arm64: dts: microchip: use "okay" for status
+      arm64: dts: apm: use "okay" for status
+      arm64: dts: amd: use "okay" for status
+
+ arch/arm64/boot/dts/amazon/alpine-v2.dtsi          |  4 ----
+ arch/arm64/boot/dts/amd/amd-overdrive-rev-b0.dts   | 16 +++++++--------
+ arch/arm64/boot/dts/amd/amd-overdrive-rev-b1.dts   | 24 +++++++++++-----------
+ arch/arm64/boot/dts/apm/apm-merlin.dts             | 16 +++++++--------
+ arch/arm64/boot/dts/apm/apm-mustang.dts            | 16 +++++++--------
+ arch/arm64/boot/dts/apm/apm-shadowcat.dtsi         |  1 -
+ arch/arm64/boot/dts/apm/apm-storm.dtsi             | 16 ++++++---------
+ arch/arm64/boot/dts/hisilicon/hip07.dtsi           |  2 +-
+ .../boot/dts/microchip/sparx5_pcb134_board.dtsi    |  2 +-
+ .../boot/dts/microchip/sparx5_pcb135_board.dtsi    |  6 +++---
+ arch/arm64/boot/dts/realtek/rtd16xx.dtsi           |  6 +++---
+ arch/arm64/boot/dts/synaptics/berlin4ct.dtsi       |  2 +-
+ 12 files changed, 51 insertions(+), 60 deletions(-)
