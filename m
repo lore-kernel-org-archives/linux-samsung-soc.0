@@ -2,62 +2,63 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A0DC636CD
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Jan 2023 10:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6184BC636CB
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Jan 2023 10:42:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230522AbjA2Kl5 (ORCPT
+        id S231295AbjA2KmG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 29 Jan 2023 05:41:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38212 "EHLO
+        Sun, 29 Jan 2023 05:42:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230204AbjA2Kl4 (ORCPT
+        with ESMTP id S231387AbjA2KmE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 29 Jan 2023 05:41:56 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E0E21A0C
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2023 02:41:54 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id d4-20020a05600c3ac400b003db1de2aef0so6315416wms.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2023 02:41:54 -0800 (PST)
+        Sun, 29 Jan 2023 05:42:04 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 883F723843
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2023 02:42:02 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id k16so6225916wms.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2023 02:42:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ABOPXo+vgZx0ugSosEN45asIKHRXs9VuvlJa6SU0Dis=;
-        b=dkO0qH/zaSjAzdEj90pcW5ViVKz8qJeWHtIZnJQaQIO/BGjOf0rFOB+KQB9Ch8a96x
-         C2/0l5o/wLooOB3YO6PsLEruoh8JvqpbzjopQcd2qApH3A4+HbIFw84g3syJ3Lq8Gm40
-         W3xLcoPlOX7r3cfHVFNy5vX2Ssqs286OKOYWY3A7SkVRf9GLG08bGDoWa5IdQWFe3l+M
-         RmPYCZwa0P84kxGY6XXV6rmmbxyruaBx98YcQKt1XwqNyp+kKyNQBBoFIuOmtW0NIFxv
-         lw4GPQb07TAHEjF3Dk5dt/GtYE60xl6/q2ZTxQ/f1243Pasae6MSurhRR1w32f6xp+0q
-         v6Yg==
+        bh=Qu9zW2/pcaEz98l/exRBjyTn4lCXJa/N2NbVQqkOAs0=;
+        b=Yie2IrLk4VUlOlToT1fVVBZYfikeER8gNpgPeAkT4yT2vg7juPBsECXpziV/K30RXf
+         G0tK0hKV4kyb9NyXFy/4BdEr0/fqzKgOfguZPDz2AJ4PSOEaqjWnl8zoFk4XupLSnOTY
+         6ikI0LX5N2SF1jlqex53K0UXXoJudfJJf4zvsVFuEXQRKU6muF+vzFqZMmEzzsxNfowm
+         9zb9veMKsBzVta1R4CJr2H+oYfsk/93TpA9YPnQOjfGMjgHk9iSsvEmlSoJUTJe7Z7OJ
+         5DHkBMdcoZzHG1NjXP6LNFT5JRiY2hdvfYdDhoQ0Cds0mqn94r3tkTGLxM4ahzFDuJwF
+         4A6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ABOPXo+vgZx0ugSosEN45asIKHRXs9VuvlJa6SU0Dis=;
-        b=hp8zJS/E2XcxrXlXVQ4tpOvYgJljrs1I61jlwb5WTGBQxyeZnHDJjYDwm9uOFbl+MO
-         btXtQqipmMqpzNhEFel5Blnc0wuD1o2iOqVwcgqVptJfjtrTn0HA9VrsII1xQpeOGarD
-         poDzIZfnRITKeUGMdVCIFAxJNh6GWUhHtlT2s+74VtxEpropBj4K8rv373/s8vyqIBrQ
-         TCp4oGaIyUg4/YYZlS166tDBMQYvCgaG56vsZQNUbJcUJRhC+YY2eNvFX4E9segYDATf
-         wdDukX5499L/thjTd0smhiytJmYico2TnIoYsUIf8JHtJy3DQZXAwddNhPozg2J6TZHd
-         gffQ==
-X-Gm-Message-State: AO0yUKWWucOfEpUFcwCNQHfX1oRY6ahA8jpAiL3Q3kmliHIzzDbgoh01
-        9e5E/KcwXGmVgaJTSE/qOwkg3g==
-X-Google-Smtp-Source: AK7set+k1n8Li7xTXQDAlFACNKneV85+M14FiXGZez6mvrj5+SAuqVREzJnWNHLw9K01lR39uBk6qQ==
-X-Received: by 2002:a05:600c:1e85:b0:3dc:557f:6126 with SMTP id be5-20020a05600c1e8500b003dc557f6126mr1165942wmb.4.1674988913135;
-        Sun, 29 Jan 2023 02:41:53 -0800 (PST)
+        bh=Qu9zW2/pcaEz98l/exRBjyTn4lCXJa/N2NbVQqkOAs0=;
+        b=OYV4KaQXh0FSG3KK8ewrk+BE46P4VDnEp0z0fNSrGci/ajMjHGTIJ0xhtYUmqMExKp
+         BhgspgkcRSYB+MZ8KDAImTJEjtx+Y0yNQaiij0+/lk84GapaZuJzJUIfCqnMvgZ8jB26
+         qZhGyBwWLho/pqaq7mYH8IXw3+O1DGuXzk3IUtA6IMFF/LGETmu8r3mhxx0sgPjgeQFD
+         zCozJEi3BcsWIW0tXa1gn2qrgaHdm4apWbzxXYjfm4dhbmpY/vQQY7GYUGRNMC3tj4ce
+         vpo3GZA4BughV1aW5K+Aalhr96Mfr707bnwpImR8Ca9DMmIFFpAHRPtVjn1iLyKQoqHT
+         1tKg==
+X-Gm-Message-State: AO0yUKVrq/xY2MAFijgAnaDMXf0NfTWMiN60ziByTxrzCwCV/UiDhybH
+        xgke5YHlMfNlBqPZ2w6YRuOiig==
+X-Google-Smtp-Source: AK7set/qswB8Rx+YqebPoBwWCnixpuhJo9pEd2rUApyZolTbgY24FcSrGlQkzfI0XTQOLG08uW0l6Q==
+X-Received: by 2002:a05:600c:54e5:b0:3dc:4f2c:c856 with SMTP id jb5-20020a05600c54e500b003dc4f2cc856mr3793689wmb.32.1674988920896;
+        Sun, 29 Jan 2023 02:42:00 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id f1-20020a7bc8c1000000b003c6bbe910fdsm14873836wml.9.2023.01.29.02.41.51
+        by smtp.gmail.com with ESMTPSA id y21-20020a05600c17d500b003dc46242c4csm4430861wmo.10.2023.01.29.02.41.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 29 Jan 2023 02:41:52 -0800 (PST)
-Message-ID: <341373ac-b493-d44a-727d-aca3ff4421e4@linaro.org>
-Date:   Sun, 29 Jan 2023 11:41:50 +0100
+        Sun, 29 Jan 2023 02:42:00 -0800 (PST)
+Message-ID: <d4b53d69-2d09-438b-0419-6eef4ad6b254@linaro.org>
+Date:   Sun, 29 Jan 2023 11:41:58 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH 2/9] ARM: dts: exynos: move exynos-bus nodes out of soc in
- Exynos5420
+Subject: Re: [PATCH 3/9] ARM: dts: exynos: move exynos-bus nodes out of soc in
+ Exynos3250
+Content-Language: en-US
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
@@ -71,10 +72,9 @@ Cc:     replicant@osuosl.org, phone-devel@vger.kernel.org,
         Henrik Grimler <henrik@grimler.se>,
         Chanwoo Choi <cw00.choi@samsung.com>
 References: <20230125094513.155063-1-krzysztof.kozlowski@linaro.org>
- <20230125094513.155063-2-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
+ <20230125094513.155063-3-krzysztof.kozlowski@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230125094513.155063-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230125094513.155063-3-krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -85,17 +85,18 @@ On 25/01/2023 10:45, Krzysztof Kozlowski wrote:
 > The soc node is supposed to have only device nodes with MMIO addresses,
 > as reported by dtc W=1:
 > 
->   arch/arm/boot/dts/exynos5420.dtsi:1070.24-1075.5:
->     Warning (simple_bus_reg): /soc/bus-wcore: missing or empty reg/ranges property
+>   exynos3250.dtsi:775.20-781.5:
+>     Warning (simple_bus_reg): /soc/bus-dmc: missing or empty reg/ranges property
 > 
 > and dtbs_check:
 > 
->   exynos5420-arndale-octa.dtb: soc: bus-wcore:
->     {'compatible': ['samsung,exynos-bus'], 'clocks': [[2, 769]], 'clock-names': ['bus'], 'status': ['disabled']} should not be valid under {'type': 'object'}
+>   exynos3250-artik5-eval.dtb: soc: bus-dmc:
+>     {'compatible': ['samsung,exynos-bus'], 'clocks': [[67, 16]], 'clock-names': ['bus'], 'operating-points-v2': [[68]], 'status': ['disabled']} should not be valid under {'type': 'object'}
 > 
 > Move the bus nodes and their OPP tables out of SoC to fix this.
 > Re-order them alphabetically while moving and put some of the OPP tables
 > in device nodes (if they are not shared).
+> 
 
 Applied.
 
