@@ -2,60 +2,60 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F83CC54EAA
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Jan 2023 13:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A40C54EED
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Jan 2023 13:28:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236024AbjA3N2L (ORCPT
+        id S235037AbjA3N2n (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 30 Jan 2023 08:28:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42984 "EHLO
+        Mon, 30 Jan 2023 08:28:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236448AbjA3N2J (ORCPT
+        with ESMTP id S236454AbjA3N2j (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Jan 2023 08:28:09 -0500
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9365D34C30
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jan 2023 05:28:06 -0800 (PST)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230130132805euoutp0205f4bb9232b9f47f326a541ff2d4624a~-GTErQwLF0964909649euoutp02G
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jan 2023 13:28:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230130132805euoutp0205f4bb9232b9f47f326a541ff2d4624a~-GTErQwLF0964909649euoutp02G
+        Mon, 30 Jan 2023 08:28:39 -0500
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 188982887D
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jan 2023 05:28:30 -0800 (PST)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230130132828euoutp01136b067998e7cfe74418c5ad1790a819~-GTafmtpR2225022250euoutp01H
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jan 2023 13:28:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230130132828euoutp01136b067998e7cfe74418c5ad1790a819~-GTafmtpR2225022250euoutp01H
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1675085285;
-        bh=RqQRs/QU7JnpcV+aGcASIwDZBDxV+VfqQqFrW0eUg6E=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=rX/+JYZztKoYRKOG0C8UKZzu2zYgxT6r4nYu3V9ktmOKBbp2J9K08GDDCxOKjm6jw
-         0Ikux/VRwrkDJFRIKQYxAKdQYaystFi2wXRQy3SlB39txTIARkeesT6IcwuiZnygq0
-         FHxQMXMrUhOOnDSEqYPZtBGWIC0M4yeWEjeTR/XY=
+        s=mail20170921; t=1675085308;
+        bh=bDY5A5cq8sQtqsucJOwqmtZss8qHKDPSRvKZiNaQsu8=;
+        h=Date:Subject:To:From:In-Reply-To:References:From;
+        b=hHiiu57CQgDdEz/qztj8DhAsiQ3IXCps96vU5nG2z3ihENUHjXCPy1MOaCgBI1hyg
+         tKDruyCOptEblFj2wJN/LoaoCAwOZYh0WCFFmay0ooJxjUlIyNOIj20DJ74rb48r92
+         x2DvQn7/gXQ3RgMevQ44ej8TMA4tTSZlr5KPFNB4=
 Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230130132804eucas1p25c9335de720d548fe5309d973ffa10cb~-GTEOgFBG0836408364eucas1p2t;
-        Mon, 30 Jan 2023 13:28:04 +0000 (GMT)
+        20230130132828eucas1p2d59e602b4365f2bd486d993cfce0feeb~-GTZ1nVCk0790507905eucas1p2g;
+        Mon, 30 Jan 2023 13:28:28 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id AE.F2.01471.4E5C7D36; Mon, 30
-        Jan 2023 13:28:04 +0000 (GMT)
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 15.13.01471.BF5C7D36; Mon, 30
+        Jan 2023 13:28:28 +0000 (GMT)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230130132804eucas1p238de7009da3f4d53ff80ff2273c6d7f6~-GTDtC_z80836408364eucas1p2s;
-        Mon, 30 Jan 2023 13:28:04 +0000 (GMT)
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230130132827eucas1p1c5eb66e9c3875e0330de6f9d4258f5c3~-GTZP77rf0789307893eucas1p1o;
+        Mon, 30 Jan 2023 13:28:27 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230130132804eusmtrp204260b00a22acc8afc1aa9366276704b~-GTDsPsvh3270932709eusmtrp2A;
-        Mon, 30 Jan 2023 13:28:04 +0000 (GMT)
-X-AuditID: cbfec7f2-29bff700000105bf-c3-63d7c5e48297
+        20230130132827eusmtrp202faae76a27818c1e1cd99881641a2a0~-GTZPDr6Y0069800698eusmtrp2O;
+        Mon, 30 Jan 2023 13:28:27 +0000 (GMT)
+X-AuditID: cbfec7f2-2b1ff700000105bf-1a-63d7c5fb4735
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 82.5A.02722.4E5C7D36; Mon, 30
-        Jan 2023 13:28:04 +0000 (GMT)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id C7.6A.02722.BF5C7D36; Mon, 30
+        Jan 2023 13:28:27 +0000 (GMT)
 Received: from [106.210.134.192] (unknown [106.210.134.192]) by
         eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230130132803eusmtip18d046482866b92e1a91be4951219eb36~-GTC_Ulxo3030030300eusmtip1A;
-        Mon, 30 Jan 2023 13:28:03 +0000 (GMT)
-Message-ID: <d7e0d375-f790-42c8-e615-67bbadd03e89@samsung.com>
-Date:   Mon, 30 Jan 2023 14:28:03 +0100
+        20230130132826eusmtip19081864366da5f2af4f3a6d70d45962a~-GTYmq4Fg3198131981eusmtip1x;
+        Mon, 30 Jan 2023 13:28:26 +0000 (GMT)
+Message-ID: <e41a0a4c-b9c6-e396-313e-ea2990b2dd6f@samsung.com>
+Date:   Mon, 30 Jan 2023 14:28:27 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
         Gecko/20100101 Thunderbird/102.6.1
-Subject: Re: [PATCH v2 2/2] ARM: dts: exynos: add mmc aliases
+Subject: Re: [PATCH v2 0/2] ARM: dts: add mmc aliases for Exynos devices
 Content-Language: en-US
 To:     Henrik Grimler <henrik@grimler.se>, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, alim.akhtar@samsung.com,
@@ -64,72 +64,100 @@ To:     Henrik Grimler <henrik@grimler.se>, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Cc:     Valentine Iourine <iourine@iourine.msk.su>
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20230128133151.29471-3-henrik@grimler.se>
+In-Reply-To: <20230128133151.29471-1-henrik@grimler.se>
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFKsWRmVeSWpSXmKPExsWy7djP87pPjl5PNti8xsDiwbxtbBbzj5xj
-        tXi7ZBejxdRHx5gsdly6wGrR9+Ihs8Wmx9dYLS7vmsNmMeP8PiaLcwfWMVuc+TeVxWLBHzuL
-        1r1H2C02f//L6MDnsXPWXXaPo1fusXos3P2PzWPTqk42jzvX9rB5bF5S7/H/zlp2j562TUwe
-        fVtWMXp83iQXwBXFZZOSmpNZllqkb5fAlbHizgmmgjM9jBXfmu4wNTBuKehi5OSQEDCReLnm
-        MHsXIxeHkMAKRolFp1uZIZwvjBJn591mgnA+M0pcntPHBNPStn8LG0RiOaPExWunoPo/Mkoc
-        3r2cDaSKV8BOYvm+rWAdLAKqEntXn2WHiAtKnJz5hKWLkYNDVCBFYtOfMpCwsICtxOWZN8HK
-        mQXEJW49mQ+2WURgMrPE1hUXmCESehIz3i4Gm8MmYCjR9bYLbBengLnEv3lToGrkJba/nQP2
-        g4TAek6JN08PskGc7SIxcc5lRghbWOLV8S3sELaMxP+dENskBNoZJRb8vg/lTGCUaHh+C6rD
-        WuLOuV9sIGczC2hKrN+lDxF2lPhyci4zSFhCgE/ixltBiCP4JCZtmw4V5pXoaBOCqFaTmHV8
-        HdzagxcuMU9gVJqFFCyzkPw/C8k7sxD2LmBkWcUonlpanJueWmyYl1quV5yYW1yal66XnJ+7
-        iRGY/E7/O/5pB+PcVx/1DjEycTAeYpTgYFYS4Y03u5YsxJuSWFmVWpQfX1Sak1p8iFGag0VJ
-        nFfb9mSykEB6YklqdmpqQWoRTJaJg1OqgUlNjN+kd044Q1JlkYC1km7T/saN4bzsn55NYa7X
-        a86dMaU7eL9Rt0Bh0V7vC99uX5P5vtokWO11z/TUd/+3r+nd9eiKq4ieoc33jVc3pFWI1MVF
-        a8XLGO/l/2rCZ3TyQbYk+0PZzX3zVPmfr//6/i/r6rk7T2U8criY8fXmhPUCt8tmVPxk/tr+
-        W1uMzZbjBoen3JzTrzZsFX6VLsKr/THr+/IppZWcPYEq5Q8tpi5cc0LN+JEkB5uSZGfbGf/2
-        tLCur78sFD1q6ooXRhmtjsl4K/f+7tel7R/CFosv/azrsnDlxpaP1w85neLLuK7HWW/IXLng
-        2f4LF5oMO1Su6jCn714tW7yc5UPEktjTMUosxRmJhlrMRcWJAOwkWO3tAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLIsWRmVeSWpSXmKPExsVy+t/xu7pPjl5PNtj9hd/iwbxtbBbzj5xj
-        tXi7ZBejxdRHx5gsdly6wGrR9+Ihs8Wmx9dYLS7vmsNmMeP8PiaLcwfWMVuc+TeVxWLBHzuL
-        1r1H2C02f//L6MDnsXPWXXaPo1fusXos3P2PzWPTqk42jzvX9rB5bF5S7/H/zlp2j562TUwe
-        fVtWMXp83iQXwBWlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZ
-        llqkb5egl7HizgmmgjM9jBXfmu4wNTBuKehi5OSQEDCRaNu/ha2LkYtDSGApo8TBZTdYIBIy
-        EienNbBC2MISf651QRW9Z5SY2HoYLMErYCexfN9WJhCbRUBVYu/qs+wQcUGJkzOfgA0SFUiR
-        aH5+EqxeWMBW4vLMm2D1zALiEreezGcCGSoiMJlZ4uWOxcwQCT2JGW8Xs0Ns2w607WI3WDeb
-        gKFE11uQMzg5OAXMJf7NmwLVYCbRtbWLEcKWl9j+dg7zBEahWUgOmYVk4SwkLbOQtCxgZFnF
-        KJJaWpybnltsqFecmFtcmpeul5yfu4kRGO/bjv3cvINx3quPeocYmTgYDzFKcDArifDGm11L
-        FuJNSaysSi3Kjy8qzUktPsRoCgyNicxSosn5wISTVxJvaGZgamhiZmlgamlmrCTO61nQkSgk
-        kJ5YkpqdmlqQWgTTx8TBKdXAxH7IU7VL/c2vhvYDFUc9jJJ3X3xV9PcLa9TKv2enOunzXsjM
-        u3eXdfKuz9dzr1/bs0es97XzBxEGYfYJ1rfDNSd6BPa0L/FeZvvp+SeNySFzl3u6vv3071qg
-        mGDV4d0OIeJKxursES/ZCzd83dM6IWh/6MVVxbb7mladPaRb89vovNXt6VLmwUtmpq8r/BT2
-        yfD21NgGny3Z9+zcu7+oBvM/fdCWlObz2O7jjUM6jO9q0zx2NX3c/DrQWjKrc662cB6nw5ft
-        8wtmlPN992rbsCfgVNf5mUmLlKc6eN9KMZ78/EWkoNHL1cf2Blx5V3hVv7Jiw7vkpj3Wd4J+
-        lR9nK/BlkJhg1h4kYc26YvIEUyWW4oxEQy3mouJEAOrlDI+AAwAA
-X-CMS-MailID: 20230130132804eucas1p238de7009da3f4d53ff80ff2273c6d7f6
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNKsWRmVeSWpSXmKPExsWy7djP87p/jl5PNlhzjcniwbxtbBbzj5xj
+        tXi7ZBejxY5LF1gt+l48ZLbY9Pgaq8XlXXPYLGac38dkce7AOmaLM/+mslgs+GNn0br3CLvF
+        5u9/GR14PXbOusvucfTKPVaPTas62TzuXNvD5rF5Sb3H/ztr2T162jYxefRtWcXo8XmTXABn
+        FJdNSmpOZllqkb5dAlfGjmVLWAueyVWce9nD0sC4RLyLkZNDQsBE4sr2p+xdjFwcQgIrGCX2
+        LWhmgXC+MEocaOqDynxmlDi19hZbFyMHWMuaDZ4Q8eWMEgueTWODcD4yShzq+wlWxCtgJ7Fx
+        HQuIySKgKvF1PSvINl4BQYmTM5+AhUUFUiQ2/SkDCQsLeEh0bGxiArGZBcQlbj2ZzwQyUURg
+        MrPE1hUXmEESbAKGEl1vu9hAbE4Bc4mr19rYIRrkJba/ncMM0iAhMJ9TYsLqj+wQr7lIfHhy
+        E8oWlnh1fAuULSPxfyfEBgmBdqAHft+HciYwSjQ8v8UIUWUtcefcL7BnmAU0Jdbv0od43lHi
+        xV5+CJNP4sZbQYgb+CQmbZvODBHmlehoE4KYoSYx6/g6uK0HL1xihrA9JF6fvsA8gVFxFlKo
+        zELy/iwkn81COGEBI8sqRvHU0uLc9NRiw7zUcr3ixNzi0rx0veT83E2MwPR2+t/xTzsY5776
+        qHeIkYmD8RCjBAezkghvvNm1ZCHelMTKqtSi/Pii0pzU4kOM0hwsSuK82rYnk4UE0hNLUrNT
+        UwtSi2CyTBycUg1M9q+jbvb9nZbmrHEhP535wDI33Wme5lVd3YwGlp25x0JmPXjvuejrAUll
+        r6efIt86P/F0PuBtrRiVeerdjLsfmqT3Lbbe/qZkUc82uXt+GxdemHJs0nfh/O7pN635lt16
+        kzfpycmjp6ytXxdZ3mi4uEe4JrDGRcd9/n2TaCfOUO8dSxa6WIs+5Ll1/XhA0e/OwKmRx4z4
+        p98Klo/N0TxeeOyPlVVhqHNhClvM/AoJnSvpMko5q1jO+j9blLlZuPDa5847axkWHlt38594
+        7OvHEw8X1bSGBXb01fHVvbhbtm+as31WjUDtYS4+03XXct8uSNB4MHOq4R/GuR4yEjc/nhLp
+        EmG+mFtyOOpZd9VWJZbijERDLeai4kQAdiOHsN4DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsVy+t/xu7q/j15PNpixWcLiwbxtbBbzj5xj
+        tXi7ZBejxY5LF1gt+l48ZLbY9Pgaq8XlXXPYLGac38dkce7AOmaLM/+mslgs+GNn0br3CLvF
+        5u9/GR14PXbOusvucfTKPVaPTas62TzuXNvD5rF5Sb3H/ztr2T162jYxefRtWcXo8XmTXABn
+        lJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7GjmVL
+        WAueyVWce9nD0sC4RLyLkYNDQsBEYs0Gzy5GLg4hgaWMEtvOtjB3MXICxWUkTk5rYIWwhSX+
+        XOtigyh6zyix/tQXJpBmXgE7iY3rWEBMFgFVia/rwcp5BQQlTs58wgJiiwqkSDQ/PwkWFxbw
+        kOjY2MQEYjMLiEvcejKfCWSkiMBkZomXOxYzQ8zvYpR4tnIBO0gVm4ChRNdbkMWcHJwC5hJX
+        r7WxQ3SbSXRt7WKEsOUltr+dwzyBUXAWkuWzkCyZhaRlFpKWBYwsqxhFUkuLc9Nziw31ihNz
+        i0vz0vWS83M3MQJjd9uxn5t3MM579VHvECMTB+MhRgkOZiUR3niza8lCvCmJlVWpRfnxRaU5
+        qcWHGE2BATCRWUo0OR+YPPJK4g3NDEwNTcwsDUwtzYyVxHk9CzoShQTSE0tSs1NTC1KLYPqY
+        ODilGpjs/x11UjioOqPr64WU2D8q3MvSZVJWW7+ekmp7ZOckxt2sJ6rWGNy5P/2B/W7P9X1c
+        TSnX1n4oaPS9X892IMLMsLD+zW/dmXVLUrpz59ZXTA1a4ep38Vfc6szM6yw2gr9Cpqj3zjXv
+        TCrwb2I5nVhmmOy8Q+5v86402Ywf2ephX54d6KhRW/RoAf+PNdv+VN2qrIpv/Vx7kKfz2zO+
+        E5WVVSd+5PV8rwq49D790Pcj75e9S8theWYv2rK8SbH8xY2NBeJL+HgYlOtbtSddPfAuf2r8
+        fd4dJfe84o9zzhd7HyuinK/MIfdG9NnfrKfcAdtvPN54dRL/TsZ/UoeNLrKd4GrslJsewLT/
+        3tHz814osRRnJBpqMRcVJwIAz7FGw2YDAAA=
+X-CMS-MailID: 20230130132827eucas1p1c5eb66e9c3875e0330de6f9d4258f5c3
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230128133214eucas1p265db4e22108f3579300b2a3bdb428d1e
+X-RootMTR: 20230128133213eucas1p274ea3393199fe711fba8f542197e1dea
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20230128133214eucas1p265db4e22108f3579300b2a3bdb428d1e
-References: <20230128133151.29471-1-henrik@grimler.se>
-        <CGME20230128133214eucas1p265db4e22108f3579300b2a3bdb428d1e@eucas1p2.samsung.com>
-        <20230128133151.29471-3-henrik@grimler.se>
+X-CMS-RootMailID: 20230128133213eucas1p274ea3393199fe711fba8f542197e1dea
+References: <CGME20230128133213eucas1p274ea3393199fe711fba8f542197e1dea@eucas1p2.samsung.com>
+        <20230128133151.29471-1-henrik@grimler.se>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 28.01.2023 14:31, Henrik Grimler wrote:
-> Add aliases for eMMC, SD card and WiFi where applicable, so that
-> assigned mmcblk numbers are always the same.
+> It is convenient to have fixed mmcblk numbering of the eMMC and sdcard
+> so that assigned numbers will not change from boot-to-boot or
+> depending on if storage devices are actually attached or not.
 >
-> Co-developed-by: Anton Bambura <jenneron@protonmail.com>
-> Signed-off-by: Anton Bambura <jenneron@protonmail.com>
-> [ Tested on exynos5800-peach-pi ]
-> Tested-by: Valentine Iourine <iourine@iourine.msk.su>
-> Signed-off-by: Henrik Grimler <henrik@grimler.se>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Anton Bambura has done the work for the chromebooks while I have
+> looked at the other devices.  On the chromebooks, mmc0 is used for
+> eMMC and mmc1 for sdcard, while mmc0 is used for eMMC and mmc2 for
+> sdcard on the other boards, simply because Anton and I had different
+> preferences.
+>
+> Also remove mshc aliases, as they should not be needed after [1] as
+> I understand it.
+
+Thanks for this patchset. Long time ago I've tried to submit something 
+similar, but that time it has been rejected:
+
+https://lore.kernel.org/all/20201105114804.18326-1-m.szyprowski@samsung.com/
+
+I hope that the mshc alias removal will help here.
+
+BTW, similar patchset is needed for arch/arm64/boot/dts/exynos
+
+
+> [1] https://lkml.kernel.org/lkml/20211124184603.3897245-1-john@metanate.com
+>
 > ---
+>
+> Changes since v1:
+> * Move mshc alias cleanup to a separate commit
+> * Use mmc0 and mmc1 (instead of mmc0 and mmc2) for eMMC and sdcard on
+>    chromebooks
+> * Address Krzysztof's review comments:
+>   - Make changes per device rather than in soc dtsi
+>
+>
+> Henrik Grimler (2):
+>    ARM: dts: exynos: drop mshc aliases
+>    ARM: dts: exynos: add mmc aliases
+>
 >   arch/arm/boot/dts/exynos3250-artik5-eval.dts        | 5 +++++
 >   arch/arm/boot/dts/exynos3250-artik5.dtsi            | 5 +++++
 >   arch/arm/boot/dts/exynos3250-monk.dts               | 1 +
 >   arch/arm/boot/dts/exynos3250-rinato.dts             | 2 ++
+>   arch/arm/boot/dts/exynos3250.dtsi                   | 3 ---
 >   arch/arm/boot/dts/exynos4210-i9100.dts              | 6 ++++++
 >   arch/arm/boot/dts/exynos4210-origen.dts             | 5 +++++
 >   arch/arm/boot/dts/exynos4210-smdkv310.dts           | 4 ++++
@@ -142,10 +170,12 @@ Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 >   arch/arm/boot/dts/exynos4412-p4note.dtsi            | 6 ++++++
 >   arch/arm/boot/dts/exynos4412-smdk4412.dts           | 4 ++++
 >   arch/arm/boot/dts/exynos4412-tiny4412.dts           | 4 ++++
+>   arch/arm/boot/dts/exynos4412.dtsi                   | 1 -
 >   arch/arm/boot/dts/exynos5250-arndale.dts            | 5 +++++
 >   arch/arm/boot/dts/exynos5250-smdk5250.dts           | 2 ++
 >   arch/arm/boot/dts/exynos5250-snow-common.dtsi       | 3 +++
 >   arch/arm/boot/dts/exynos5250-spring.dts             | 5 +++++
+>   arch/arm/boot/dts/exynos5250.dtsi                   | 4 ----
 >   arch/arm/boot/dts/exynos5260-xyref5260.dts          | 5 +++++
 >   arch/arm/boot/dts/exynos5410-odroidxu.dts           | 2 ++
 >   arch/arm/boot/dts/exynos5410-smdk5410.dts           | 5 +++++
@@ -153,486 +183,15 @@ Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 >   arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi | 5 +++++
 >   arch/arm/boot/dts/exynos5420-peach-pit.dts          | 3 +++
 >   arch/arm/boot/dts/exynos5420-smdk5420.dts           | 5 +++++
+>   arch/arm/boot/dts/exynos5420.dtsi                   | 3 ---
 >   arch/arm/boot/dts/exynos5422-odroid-core.dtsi       | 5 +++++
 >   arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi  | 4 ++++
 >   arch/arm/boot/dts/exynos5422-samsung-k3g.dts        | 4 ++++
 >   arch/arm/boot/dts/exynos5800-peach-pi.dts           | 3 +++
->   31 files changed, 133 insertions(+)
+>   35 files changed, 133 insertions(+), 11 deletions(-)
 >
-> diff --git a/arch/arm/boot/dts/exynos3250-artik5-eval.dts b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-> index a1e22f630638..83266a66124b 100644
-> --- a/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-> +++ b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-> @@ -16,6 +16,11 @@ / {
->   	model = "Samsung ARTIK5 evaluation board";
->   	compatible = "samsung,artik5-eval", "samsung,artik5",
->   			"samsung,exynos3250", "samsung,exynos3";
-> +
-> +	aliases {
-> +		mmc2 = &mshc_2;
-> +	};
-> +
->   };
->   
->   &mshc_2 {
-> diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-> index 0ac3f284fbb8..a6e2f46917a8 100644
-> --- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
-> +++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-> @@ -17,6 +17,11 @@
->   / {
->   	compatible = "samsung,artik5", "samsung,exynos3250", "samsung,exynos3";
->   
-> +	aliases {
-> +		mmc0 = &mshc_0;
-> +		mmc1 = &mshc_1;
-> +	};
-> +
->   	chosen {
->   		stdout-path = &serial_2;
->   	};
-> diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-> index 80d90fe7fad1..a68e5f81404c 100644
-> --- a/arch/arm/boot/dts/exynos3250-monk.dts
-> +++ b/arch/arm/boot/dts/exynos3250-monk.dts
-> @@ -22,6 +22,7 @@ / {
->   
->   	aliases {
->   		i2c7 = &i2c_max77836;
-> +		mmc0 = &mshc_0;
->   	};
->   
->   	memory@40000000 {
-> diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-> index 1f9cba0607e1..f0fb6890e4a8 100644
-> --- a/arch/arm/boot/dts/exynos3250-rinato.dts
-> +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-> @@ -23,6 +23,8 @@ / {
->   
->   	aliases {
->   		i2c7 = &i2c_max77836;
-> +		mmc0 = &mshc_0;
-> +		mmc1 = &mshc_1;
->   	};
->   
->   	chosen {
-> diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
-> index bba85011ecc9..7051e2c4b391 100644
-> --- a/arch/arm/boot/dts/exynos4210-i9100.dts
-> +++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-> @@ -25,6 +25,12 @@ memory@40000000 {
->   		reg = <0x40000000 0x40000000>;
->   	};
->   
-> +	aliases {
-> +		mmc0 = &sdhci_0;
-> +		mmc2 = &sdhci_2;
-> +		mmc3 = &sdhci_3;
-> +	};
-> +
->   	chosen {
->   		stdout-path = "serial2:115200n8";
->   	};
-> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-> index 5f37b751f700..41c73ee0d556 100644
-> --- a/arch/arm/boot/dts/exynos4210-origen.dts
-> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
-> @@ -30,6 +30,11 @@ memory@40000000 {
->   		       0x70000000 0x10000000>;
->   	};
->   
-> +	aliases {
-> +		mmc0 = &sdhci_0;
-> +		mmc2 = &sdhci_2;
-> +	};
-> +
->   	chosen {
->   		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M init=/linuxrc";
->   		stdout-path = "serial2:115200n8";
-> diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-> index a5dfd7fd49b3..2b8141f2912e 100644
-> --- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-> +++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-> @@ -25,6 +25,10 @@ memory@40000000 {
->   		reg = <0x40000000 0x80000000>;
->   	};
->   
-> +	aliases {
-> +		mmc2 = &sdhci_2;
-> +	};
-> +
->   	chosen {
->   		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M init=/linuxrc";
->   		stdout-path = "serial1:115200n8";
-> diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-> index b8e9dd23fc51..b6b0c116016c 100644
-> --- a/arch/arm/boot/dts/exynos4210-trats.dts
-> +++ b/arch/arm/boot/dts/exynos4210-trats.dts
-> @@ -26,6 +26,12 @@ memory@40000000 {
->   			0x70000000 0x10000000>;
->   	};
->   
-> +	aliases {
-> +		mmc0 = &sdhci_0;
-> +		mmc2 = &sdhci_2;
-> +		mmc3 = &sdhci_3;
-> +	};
-> +
->   	chosen {
->   		bootargs = "root=/dev/mmcblk0p5 rootwait earlyprintk panic=5";
->   		stdout-path = "serial2:115200n8";
-> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> index 62bf335d5bed..2135a6843511 100644
-> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> @@ -24,6 +24,12 @@ memory@40000000 {
->   			0x50000000 0x10000000>;
->   	};
->   
-> +	aliases {
-> +		mmc0 = &sdhci_0;
-> +		mmc2 = &sdhci_2;
-> +		mmc3 = &sdhci_3;
-> +	};
-> +
->   	chosen {
->   		bootargs = "root=/dev/mmcblk0p5 rw rootwait earlyprintk panic=5 maxcpus=1";
->   		stdout-path = "serial2:115200n8";
-> diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-> index b596e997e451..c0132e537663 100644
-> --- a/arch/arm/boot/dts/exynos4412-itop-elite.dts
-> +++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-> @@ -20,6 +20,11 @@ / {
->   	model = "TOPEET iTop 4412 Elite board based on Exynos4412";
->   	compatible = "topeet,itop4412-elite", "samsung,exynos4412", "samsung,exynos4";
->   
-> +	aliases {
-> +		mmc0 = &mshc_0;
-> +		mmc2 = &sdhci_2;
-> +	};
-> +
->   	chosen {
->   		bootargs = "root=/dev/mmcblk0p2 rw rootfstype=ext4 rootdelay=1 rootwait";
->   		stdout-path = "serial2:115200n8";
-> diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
-> index d5074fa57142..56382bb07939 100644
-> --- a/arch/arm/boot/dts/exynos4412-midas.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
-> @@ -25,6 +25,9 @@ / {
->   	aliases {
->   		i2c11 = &i2c_max77693;
->   		i2c12 = &i2c_max77693_fuel;
-> +		mmc0 = &mshc_0;
-> +		mmc2 = &sdhci_2;
-> +		mmc3 = &sdhci_3;
->   	};
->   
->   	chosen {
-> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> index 7c2780d3e37c..4bfbe960be43 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> @@ -13,6 +13,11 @@
->   #include "exynos-mfc-reserved-memory.dtsi"
->   
->   / {
-> +	aliases {
-> +		mmc0 = &mshc_0;
-> +		mmc2 = &sdhci_2;
-> +	};
-> +
->   	chosen {
->   		stdout-path = &serial_1;
->   	};
-> diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-> index ea9fd284386d..2e25415aa2d4 100644
-> --- a/arch/arm/boot/dts/exynos4412-origen.dts
-> +++ b/arch/arm/boot/dts/exynos4412-origen.dts
-> @@ -25,6 +25,11 @@ memory@40000000 {
->   		reg = <0x40000000 0x40000000>;
->   	};
->   
-> +	aliases {
-> +		mmc0 = &mshc_0;
-> +		mmc2 = &sdhci_2;
-> +	};
-> +
->   	chosen {
->   		stdout-path = "serial2:115200n8";
->   	};
-> diff --git a/arch/arm/boot/dts/exynos4412-p4note.dtsi b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-> index 3e05a49f29ff..a21440062b1e 100644
-> --- a/arch/arm/boot/dts/exynos4412-p4note.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-> @@ -26,6 +26,12 @@ memory@40000000 {
->   		reg = <0x40000000 0x80000000>;
->   	};
->   
-> +	aliases {
-> +		mmc0 = &mshc_0;
-> +		mmc2 = &sdhci_2;
-> +		mmc3 = &sdhci_3;
-> +	};
-> +
->   	chosen {
->   		stdout-path = &serial_2;
->   	};
-> diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-> index a40ff394977c..6296a5a06630 100644
-> --- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
-> +++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-> @@ -22,6 +22,10 @@ memory@40000000 {
->   		reg = <0x40000000 0x40000000>;
->   	};
->   
-> +	aliases {
-> +		mmc2 = &sdhci_2;
-> +	};
-> +
->   	chosen {
->   		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M init=/linuxrc";
->   		stdout-path = "serial1:115200n8";
-> diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-> index e0b6162d2e2a..e010b75a9d49 100644
-> --- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
-> +++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-> @@ -17,6 +17,10 @@ / {
->   	model = "FriendlyARM TINY4412 board based on Exynos4412";
->   	compatible = "friendlyarm,tiny4412", "samsung,exynos4412", "samsung,exynos4";
->   
-> +	aliases {
-> +		mmc2 = &sdhci_2;
-> +	};
-> +
->   	chosen {
->   		stdout-path = &serial_0;
->   	};
-> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-> index 71c0e87d3a1d..3ef04e59939e 100644
-> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
-> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-> @@ -23,6 +23,11 @@ memory@40000000 {
->   		reg = <0x40000000 0x80000000>;
->   	};
->   
-> +	aliases {
-> +		mmc0 = &mmc_0;
-> +		mmc2 = &mmc_2;
-> +	};
-> +
->   	chosen {
->   		stdout-path = "serial2:115200n8";
->   	};
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> index 71293749ac48..e8087d7d6305 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -17,6 +17,8 @@ / {
->   	compatible = "samsung,smdk5250", "samsung,exynos5250", "samsung,exynos5";
->   
->   	aliases {
-> +		mmc0 = &mmc_0;
-> +		mmc2 = &mmc_2;
->   	};
->   
->   	memory@40000000 {
-> diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-> index 3d84b9c6dea3..cdf1ebff11db 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-> @@ -15,6 +15,9 @@
->   / {
->   	aliases {
->   		i2c104 = &i2c_104;
-> +		mmc0 = &mmc_0; /* eMMC */
-> +		mmc1 = &mmc_2; /* SD */
-> +		mmc2 = &mmc_3; /* WiFi */
->   	};
->   
->   	memory@40000000 {
-> diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
-> index 5eca10ecd550..96050fea93f8 100644
-> --- a/arch/arm/boot/dts/exynos5250-spring.dts
-> +++ b/arch/arm/boot/dts/exynos5250-spring.dts
-> @@ -23,6 +23,11 @@ memory@40000000 {
->   		reg = <0x40000000 0x80000000>;
->   	};
->   
-> +	aliases {
-> +		mmc0 = &mmc_0;
-> +		mmc1 = &mmc_1;
-> +	};
-> +
->   	chosen {
->   		bootargs = "console=tty1";
->   		stdout-path = "serial3:115200n8";
-> diff --git a/arch/arm/boot/dts/exynos5260-xyref5260.dts b/arch/arm/boot/dts/exynos5260-xyref5260.dts
-> index 387b8494f18f..1e2f6af6d311 100644
-> --- a/arch/arm/boot/dts/exynos5260-xyref5260.dts
-> +++ b/arch/arm/boot/dts/exynos5260-xyref5260.dts
-> @@ -18,6 +18,11 @@ memory@20000000 {
->   		reg = <0x20000000 0x80000000>;
->   	};
->   
-> +	aliases {
-> +		mmc0 = &mmc_0;
-> +		mmc2 = &mmc_2;
-> +	};
-> +
->   	chosen {
->   		stdout-path = "serial2:115200n8";
->   	};
-> diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-> index 232561620da2..f495514d88b3 100644
-> --- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
-> +++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-> @@ -21,6 +21,8 @@ / {
->   
->   	aliases {
->   		ethernet = &ethernet;
-> +		mmc0 = &mmc_0;
-> +		mmc2 = &mmc_2;
->   	};
->   
->   	memory@40000000 {
-> diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-> index b8f953c41c73..1d3d220f3fcc 100644
-> --- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
-> +++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-> @@ -18,6 +18,11 @@ memory@40000000 {
->   		reg = <0x40000000 0x80000000>;
->   	};
->   
-> +	aliases {
-> +		mmc0 = &mmc_0;
-> +		mmc2 = &mmc_2;
-> +	};
-> +
->   	chosen {
->   		stdout-path = "serial2:115200n8";
->   	};
-> diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> index 55b7759682a9..54398db244ad 100644
-> --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> @@ -23,6 +23,11 @@ memory@20000000 {
->   		reg = <0x20000000 0x80000000>;
->   	};
->   
-> +	aliases {
-> +		mmc0 = &mmc_0;
-> +		mmc2 = &mmc_2;
-> +	};
-> +
->   	chosen {
->   		stdout-path = "serial3:115200n8";
->   	};
-> diff --git a/arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi b/arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi
-> index 63675fe189cd..18874125ac64 100644
-> --- a/arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi
-> @@ -28,6 +28,11 @@ / {
->   	 * for more details.
->   	 */
->   
-> +	aliases {
-> +		mmc0 = &mmc_0;
-> +		mmc2 = &mmc_2;
-> +	};
-> +
->   	chosen {
->   		stdout-path = "serial2:115200n8";
->   	};
-> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> index 9e2123470cad..8b2bbeb7f64f 100644
-> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> @@ -31,6 +31,9 @@ / {
->   	aliases {
->   		/* Assign 20 so we don't get confused w/ builtin ones */
->   		i2c20 = &i2c_tunnel;
-> +		mmc0 = &mmc_0; /* eMMC */
-> +		mmc1 = &mmc_2; /* uSD */
-> +		mmc2 = &mmc_1; /* WiFi */
->   	};
->   
->   	backlight: backlight {
-> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> index 4d7b6d9008a7..134ed8931ba7 100644
-> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> @@ -21,6 +21,11 @@ memory@20000000 {
->   		reg = <0x20000000 0x80000000>;
->   	};
->   
-> +	aliases {
-> +		mmc0 = &mmc_0;
-> +		mmc2 = &mmc_2;
-> +	};
-> +
->   	chosen {
->   		bootargs = "init=/linuxrc";
->   		stdout-path = "serial2:115200n8";
-> diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-> index 30fc677d8bac..9f2ec636436e 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-> @@ -19,6 +19,11 @@ memory@40000000 {
->   		reg = <0x40000000 0x7ea00000>;
->   	};
->   
-> +	aliases {
-> +		mmc2 = &mmc_2;
-> +	};
-> +
-> +
->   	chosen {
->   		stdout-path = "serial2:115200n8";
->   	};
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> index a6961ff24030..55fd2b94be3f 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> @@ -13,6 +13,10 @@
->   #include "exynos5422-odroid-core.dtsi"
->   
->   / {
-> +	aliases {
-> +		mmc0 = &mmc_0;
-> +	};
-> +
->   	gpio-keys {
->   		compatible = "gpio-keys";
->   		pinctrl-names = "default";
-> diff --git a/arch/arm/boot/dts/exynos5422-samsung-k3g.dts b/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
-> index df41723d56d4..4a0c8f29ccbc 100644
-> --- a/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
-> +++ b/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
-> @@ -24,6 +24,10 @@ memory@20000000 {
->   		reg = <0x20000000 0x80000000>; /* 2 GiB */
->   	};
->   
-> +	aliases {
-> +		mmc0 = &mmc_0;
-> +	};
-> +
->   	fixed-rate-clocks {
->   		oscclk {
->   			compatible = "samsung,exynos5420-oscclk";
-> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-> index 0ebcb66c6319..50e9e884c51f 100644
-> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-> @@ -29,6 +29,9 @@ / {
->   	aliases {
->   		/* Assign 20 so we don't get confused w/ builtin ones */
->   		i2c20 = &i2c_tunnel;
-> +		mmc0 = &mmc_0; /* eMMC */
-> +		mmc1 = &mmc_2; /* SD */
-> +		mmc2 = &mmc_1; /* WiFi */
->   	};
->   
->   	backlight: backlight {
+>
+> base-commit: 9ca5a7ce492d182c25ea2e785eeb72cee1d5056b
 
 Best regards
 -- 
