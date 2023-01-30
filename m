@@ -2,127 +2,159 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E230C636CD
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Jan 2023 14:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA5DC54EED
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Jan 2023 05:11:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234837AbjA2Opd (ORCPT
+        id S229735AbjA3FLH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 29 Jan 2023 09:45:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39236 "EHLO
+        Mon, 30 Jan 2023 00:11:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231586AbjA2Opc (ORCPT
+        with ESMTP id S229592AbjA3FLF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 29 Jan 2023 09:45:32 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 016221ADFD
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2023 06:45:30 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id m16-20020a05600c3b1000b003dc4050c94aso3699568wms.4
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2023 06:45:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fYZkdrMXMeEPg3GRieLPg0wSSepZGYYAWur6SgaAHH0=;
-        b=f/xa2DykNqZe9VBEt7kH6rje8ZlM1nq6aMa+BXbH1FRXonPH83eswZNQZiR0X9sI27
-         oVVJpIfpxQrnIWl5qLewh2d2A4p6/HrqzziPJXn0EWtUitke8qm1Y24JpsTFTyWHPwKW
-         R4v+uRMp/rZDSvQgw0mNm9frFii5skBtTyylrdSE3arfyZpOwynVqN2GmHow62e8GvNv
-         OeoZUt6c+7RlJuroikcW1dO76u49I9lyYhHLgvaHQ1Fh5zEsVXNfMnCWHGtYjCCoEexL
-         FVMsp9owevieL1ZNKr3Mmu1H06EonAaOw53+NWBELFf95J+JgvYNf5mhc91FHo+RO9KC
-         ZtZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fYZkdrMXMeEPg3GRieLPg0wSSepZGYYAWur6SgaAHH0=;
-        b=TLn12yA6GSEofF/0i7ySerD/32ShzjSgmwW1Ep7wxav/k8acof3FBMCkYDDHBY20Fz
-         ZmXG91I622AadVXlZt4bEpxrEkdGom0kMJ5VKT6sTqmbQtSzNqdMCr/7R1/xTcVixZyV
-         2wP/t+cMrGrL6miE3rSpr7nB7Iic4f8VKDJiaxXbjrKskwE0JZZxQaFhTcZzND9tFG8t
-         OqimHCgwJUYaErQJvFy2lHTm5BgG45zJAZJeBzG8lIHZvs0OYjEscG4pvD0/7Gzqsb7d
-         CYWBRflVzXggbCr8JvKwIz798JipG9l6y8sGW0ktH9z41arlyA1MvI2Uy0/e32sNsGgM
-         GXBw==
-X-Gm-Message-State: AFqh2kr1TniOyWVAMSTgN4KdOJA0clkJWIYoRbN/Inb6mDj95ruHVrRb
-        Ehoz0xzs85Z3S3HgP5no7u57JA==
-X-Google-Smtp-Source: AMrXdXue3XS92JSUvV0ZZZSgiZgiNQr2+KdurebgIrezvPcNpy5XTgtz5zRTNAYrFb+/sLmbcnTswA==
-X-Received: by 2002:a05:600c:348f:b0:3db:742:cfe9 with SMTP id a15-20020a05600c348f00b003db0742cfe9mr46866684wmq.34.1675003529545;
-        Sun, 29 Jan 2023 06:45:29 -0800 (PST)
-Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id m14-20020a05600c4f4e00b003a3442f1229sm14950038wmq.29.2023.01.29.06.45.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jan 2023 06:45:29 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/2] ARM: dts: cleanup for v6.3, part two
-Date:   Sun, 29 Jan 2023 15:45:25 +0100
-Message-Id: <20230129144525.5802-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230129144525.5802-1-krzysztof.kozlowski@linaro.org>
-References: <20230129144525.5802-1-krzysztof.kozlowski@linaro.org>
+        Mon, 30 Jan 2023 00:11:05 -0500
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1874A23845
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2023 21:11:01 -0800 (PST)
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230130051058epoutp040814f58885bf694625a89fbfc7425fc9~_-hCrYTiF0167601676epoutp046
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jan 2023 05:10:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230130051058epoutp040814f58885bf694625a89fbfc7425fc9~_-hCrYTiF0167601676epoutp046
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1675055459;
+        bh=eJa/ABef80sC4wWricjAmL+ZdecM7xhVEvWQf4JlA/k=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=D0a3Nvd7NaOhsjxqUMVzmCEIHV6c3rb4BlN1ZY5KEnGWMb5FmQoocix3IVvB0x8u9
+         IbHdczYuYqPKdr9hqqNP6+VYEk9HzuPd5TPVI9xVvnaiV18VmQD8zU6/64quKBR/no
+         nN99bjpsSDWUFuieGFJBa6bAaYLVua+edFDLK53w=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20230130051058epcas1p230726f4ea2e43c048a43da2e404099fa~_-hCY-WHQ3098030980epcas1p2e;
+        Mon, 30 Jan 2023 05:10:58 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.38.237]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4P4x8x1kLDz4x9QK; Mon, 30 Jan
+        2023 05:10:57 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        22.41.55531.06157D36; Mon, 30 Jan 2023 14:10:56 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20230130051056epcas1p3864c816bfccf0c8a6e7f8601b240b11e~_-hACG1EJ0798207982epcas1p3a;
+        Mon, 30 Jan 2023 05:10:56 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230130051056epsmtrp2c624e1c3680bdf79070af51bf00e3cf6~_-hABdhHy2600926009epsmtrp2R;
+        Mon, 30 Jan 2023 05:10:56 +0000 (GMT)
+X-AuditID: b6c32a35-d9fff7000000d8eb-70-63d7516062b1
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        0D.27.17995.06157D36; Mon, 30 Jan 2023 14:10:56 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.211]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230130051055epsmtip1bb1f459e820e4d23e3c064944dd45066~_-g-4t2gG0503005030epsmtip1C;
+        Mon, 30 Jan 2023 05:10:55 +0000 (GMT)
+From:   Inki Dae <inki.dae@samsung.com>
+To:     airlied@linux.ie, daniel@ffwll.ch
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL] exynos-drm-next
+Date:   Mon, 30 Jan 2023 14:10:55 +0900
+Message-Id: <20230130051055.15340-1-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDKsWRmVeSWpSXmKPExsWy7bCmvm5C4PVkg84roha9504yWfzfNpHZ
+        4srX92wWM87vY3Jg8dj7bQGLx/ZvD1g97ncfZ/L4vEkugCUq2yYjNTEltUghNS85PyUzL91W
+        yTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMHaKWSQlliTilQKCCxuFhJ386mKL+0JFUh
+        I7+4xFYptSAlp8C0QK84Mbe4NC9dLy+1xMrQwMDIFKgwITvjwq/H7AX9ghVTuywbGBv4uhg5
+        OSQETCRedZ5m7WLk4hAS2MEosWzdByjnE6PEp4/7WEGqhAQ+M0ps+ecM03Fk+1MmiKJdjBI/
+        t31hgXC+MEr8eXiDEaSKTUBVYuKK+2wgtgiQ/XbSY2YQm1nATeLP0rMsILawgLLE7usQG1iA
+        am73HgSzeQUsJdoP3GaE2CYvMfPSd3aIuKDEyZlPWCDmyEs0b53NDLJYQmAdu8S9zz/ZIBpc
+        JLbfmgfVLCzx6vgWdghbSuLzu71sEA2TGSXuXF/BAuHMYJQ4/PM6VIexxP6lk4Ge4wBaoSmx
+        fpc+RFhRYufvuYwQm/kk3n3tYQUpkRDglehoE4IoUZI4dvEG1BQJiQtLJkLd4yFxqPsvCyQY
+        YyUOTvnDNIFRfhaSf2Yh+WcWwuIFjMyrGMVSC4pz01OLDQsM4bGanJ+7iRGc7LRMdzBOfPtB
+        7xAjEwfjIUYJDmYlEd54s2vJQrwpiZVVqUX58UWlOanFhxhNgSE8kVlKNDkfmG7zSuINTSwN
+        TMyMjE0sDM0MlcR5xW1PJgsJpCeWpGanphakFsH0MXFwSjUw8T00eJmyZtKuKQHzmYrEt0cv
+        X7lazimgPvrSU6l5FxrT+MtDFplf/8K7+JL4z272d/V+Yn/fTX/gd9qX3c3pqI1a4JszThz6
+        O1+dTc3bNlstTamyxOWggMN5x00JWyY615+pmPLiphTHwfI3yu4r7wuq6nzemMNQJWLNHyQ5
+        fUbvOvb/VS+U72/1ORI3S7nSyXyq3+3NeUenOHs/FdGp/vSo+fxey9sLyuTum8gvfvxcX16n
+        J2ixk87yhg0pPhem3FpmorzVbW3lEns3Jp5/vyz0MrW7kv6ofnm2o/SZm3He0t9et88Yz9me
+        G2JWeKTc8dn6p188bm9fzbog0uWWY9KqH79erXf8Yx3NN0VxmhJLcUaioRZzUXEiAAX/oVP/
+        AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBLMWRmVeSWpSXmKPExsWy7bCSnG5C4PVkg6U3WCx6z51ksvi/bSKz
+        xZWv79ksZpzfx+TA4rH32wIWj+3fHrB63O8+zuTxeZNcAEsUl01Kak5mWWqRvl0CV8aFX4/Z
+        C/oFK6Z2WTYwNvB1MXJySAiYSBzZ/pSpi5GLQ0hgB6PEgV+PmbsYOYASEhJbtnJAmMIShw8X
+        Q5R8YpRYfeQVM0gvm4CqxMQV99lAbBEBdYkHlxcygtjMAh4S7/esZgexhQWUJXZf38cKYrMA
+        1d/uPQhm8wpYSrQfuM0IcYO8xMxL39kh4oISJ2c+YYGYIy/RvHU28wRGvllIUrOQpBYwMq1i
+        lEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAgOPC2tHYx7Vn3QO8TIxMF4iFGCg1lJhDfe
+        7FqyEG9KYmVValF+fFFpTmrxIUZpDhYlcd4LXSfjhQTSE0tSs1NTC1KLYLJMHJxSDUzRfRGe
+        Z2pKUxPWPmyKmGl/SfKRY5whn+Nk13grttgaq81ZcxT0N+5m3vXrxYaEDbtZcvJD77oEndmz
+        YZlC8Kp15/0vrT/Awzyh9ODpt8vbZDa7cb9vf5dsenJ/F4fVW8dVX7hNAi4fOCO2ICDV3dUy
+        0zJ1+7El8t3hEpt1Xs//zR8tJnz11ve+XZ69ApZfve+sjfjjmD+xTJmdXfXDDY3UXLmzq512
+        tUqbz39y//jWq58CwiXCbV/0VUv8ZF6UzrAp2j5dZKqZDK8FH+eDjpI8psstk2LMY5REuE2k
+        ywKa+SxzTl/3PWpXmOD2hfVF4sVTum6Fj79VdyctWHZYt9Gted2aMhsJ5b9XX62vUmIpzkg0
+        1GIuKk4EAE2QwfurAgAA
+X-CMS-MailID: 20230130051056epcas1p3864c816bfccf0c8a6e7f8601b240b11e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230130051056epcas1p3864c816bfccf0c8a6e7f8601b240b11e
+References: <CGME20230130051056epcas1p3864c816bfccf0c8a6e7f8601b240b11e@epcas1p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Hi Dave and Daniel,
 
-Cleanup of several platforms, not picked up by maintainers. On top of previous
-pull request.
+   Just one fixup series to restore proper bridge chain order of Exynos
+   Display pipeline.
+   This is also required by a patch series[1] which makes existing Exynos
+   DSI driver to be common driver so that it can be used by Exynos and I.MX8MM
+   SoC commonly - under the review yet.
 
-Best regards,
-Krzysztof
+   [1] https://lore.kernel.org/linux-arm-kernel/d4267645-448c-f702-fcc3-6c534d9ec2b7@denx.de/T/
 
+Please let me know if there is any problem.
 
-The following changes since commit 3a48b303d44a19d335910f825f9a8473c5ff35e0:
+Thanks,
+Inki Dae
 
-  ARM: dts: at91: align LED node names with dtschema (2023-01-13 11:38:33 +0100)
+The following changes since commit 68de345e101ce9a24e5c8849e69dd0dba2e8c9b2:
+
+  Merge tag 'drm-misc-next-2023-01-24' of git://anongit.freedesktop.org/drm/drm-misc into drm-next (2023-01-25 12:14:08 +1000)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git tags/dt-cleanup-6.3-2
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v6.3
 
-for you to fetch changes up to 2ba4ff82f9dd312fb9f77168f159698c93f4841b:
+for you to fetch changes up to 1a1ce789e6c5da5a16d3d17bc228c6ab0b5863ed:
 
-  ARM: dts: berlin: align UART node name with bindings (2023-01-27 10:44:58 +0100)
-
-----------------------------------------------------------------
-Minor improvements in ARM DTS for v6.3, part two
-
-Align UART node names and OPP table names with bindings (alpine, arm
-boards, axm55xx, berlin, cx92755, dm814x, moxart, mstar, stih418).
+  drm: exynos: dsi: Restore proper bridge chain order (2023-01-26 15:11:24 +0900)
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (9):
-      ARM: dts: mstar: align UART node name with bindings
-      ARM: dts: cx92755: align UART node name with bindings
-      ARM: dts: arm: align UART node name with bindings
-      ARM: dts: alpine: align UART node name with bindings
-      ARM: dts: axm55xx: align UART node name with bindings
-      ARM: dts: moxart: align UART node name with bindings
-      ARM: dts: dm814x: align UART node name with bindings
-      ARM: dts: stih418: align OPP table names with DT schema
-      ARM: dts: berlin: align UART node name with bindings
+One fixup series
+- Make sure to restore bridge chain order by enabling the drm panel
+  prepare_prev_first flag of the bridge and panel drivers - tc358764 display
+  bridge device and Samsung s6e3ha2/s6e63j0x03/s6e8aa0 panel devices.
+  In case of any boards using Exynos5433 SoC, below Display pipeline could be
+  configured.
+      Decon -> MIC -> MIPI-DSI -> Panel
+  So, this patch series makes sure to enable previous bridge device before
+  enabling MIPI-DSI device.
 
- arch/arm/boot/dts/alpine.dtsi             | 4 ++--
- arch/arm/boot/dts/axm55xx.dtsi            | 8 ++++----
- arch/arm/boot/dts/berlin2q.dtsi           | 4 ++--
- arch/arm/boot/dts/cx92755.dtsi            | 6 +++---
- arch/arm/boot/dts/dm814x.dtsi             | 6 +++---
- arch/arm/boot/dts/dm816x.dtsi             | 6 +++---
- arch/arm/boot/dts/integrator.dtsi         | 4 ++--
- arch/arm/boot/dts/integratorap-im-pd1.dts | 4 ++--
- arch/arm/boot/dts/integratorap.dts        | 4 ++--
- arch/arm/boot/dts/integratorcp.dts        | 4 ++--
- arch/arm/boot/dts/moxart.dtsi             | 2 +-
- arch/arm/boot/dts/mstar-v7.dtsi           | 2 +-
- arch/arm/boot/dts/stih418-b2264.dts       | 2 +-
- arch/arm/boot/dts/versatile-ab.dts        | 6 +++---
- arch/arm/boot/dts/versatile-pb.dts        | 2 +-
- arch/arm/boot/dts/vexpress-v2m.dtsi       | 8 ++++----
- 16 files changed, 36 insertions(+), 36 deletions(-)
+----------------------------------------------------------------
+Jagan Teki (2):
+      drm: panel: Enable prepare_prev_first flag for samsung-s6e panels
+      drm: exynos: dsi: Restore proper bridge chain order
+
+Marek Szyprowski (1):
+      drm/bridge: tc358764: Enable pre_enable_prev_first flag
+
+ drivers/gpu/drm/bridge/tc358764.c                | 1 +
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c          | 9 +++++++--
+ drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c    | 1 +
+ drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c | 1 +
+ drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c    | 1 +
+ 5 files changed, 11 insertions(+), 2 deletions(-)
