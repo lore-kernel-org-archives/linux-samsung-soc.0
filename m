@@ -2,199 +2,140 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A40C54EED
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Jan 2023 13:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10CBBC54EAA
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Jan 2023 14:13:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235037AbjA3N2n (ORCPT
+        id S237296AbjA3ONg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 30 Jan 2023 08:28:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43782 "EHLO
+        Mon, 30 Jan 2023 09:13:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236454AbjA3N2j (ORCPT
+        with ESMTP id S237289AbjA3ONb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Jan 2023 08:28:39 -0500
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 188982887D
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jan 2023 05:28:30 -0800 (PST)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230130132828euoutp01136b067998e7cfe74418c5ad1790a819~-GTafmtpR2225022250euoutp01H
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jan 2023 13:28:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230130132828euoutp01136b067998e7cfe74418c5ad1790a819~-GTafmtpR2225022250euoutp01H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1675085308;
-        bh=bDY5A5cq8sQtqsucJOwqmtZss8qHKDPSRvKZiNaQsu8=;
-        h=Date:Subject:To:From:In-Reply-To:References:From;
-        b=hHiiu57CQgDdEz/qztj8DhAsiQ3IXCps96vU5nG2z3ihENUHjXCPy1MOaCgBI1hyg
-         tKDruyCOptEblFj2wJN/LoaoCAwOZYh0WCFFmay0ooJxjUlIyNOIj20DJ74rb48r92
-         x2DvQn7/gXQ3RgMevQ44ej8TMA4tTSZlr5KPFNB4=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230130132828eucas1p2d59e602b4365f2bd486d993cfce0feeb~-GTZ1nVCk0790507905eucas1p2g;
-        Mon, 30 Jan 2023 13:28:28 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 15.13.01471.BF5C7D36; Mon, 30
-        Jan 2023 13:28:28 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230130132827eucas1p1c5eb66e9c3875e0330de6f9d4258f5c3~-GTZP77rf0789307893eucas1p1o;
-        Mon, 30 Jan 2023 13:28:27 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230130132827eusmtrp202faae76a27818c1e1cd99881641a2a0~-GTZPDr6Y0069800698eusmtrp2O;
-        Mon, 30 Jan 2023 13:28:27 +0000 (GMT)
-X-AuditID: cbfec7f2-2b1ff700000105bf-1a-63d7c5fb4735
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id C7.6A.02722.BF5C7D36; Mon, 30
-        Jan 2023 13:28:27 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230130132826eusmtip19081864366da5f2af4f3a6d70d45962a~-GTYmq4Fg3198131981eusmtip1x;
-        Mon, 30 Jan 2023 13:28:26 +0000 (GMT)
-Message-ID: <e41a0a4c-b9c6-e396-313e-ea2990b2dd6f@samsung.com>
-Date:   Mon, 30 Jan 2023 14:28:27 +0100
+        Mon, 30 Jan 2023 09:13:31 -0500
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF2B02BF09;
+        Mon, 30 Jan 2023 06:13:27 -0800 (PST)
+Received: by mail-pl1-x629.google.com with SMTP id v23so11756481plo.1;
+        Mon, 30 Jan 2023 06:13:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jieTmRXghFVlnW/7VnBYeMI5OnEKAt15Mh9jqhvl2PI=;
+        b=Z2NgzyILUmyfoFVUQTKsKWLKA/cyed3CN/nrDp1rzDrJEJnE6luglrvvezgX8IEPVV
+         43gkWTuU8Rhxwx9ihjDQiEou89weVuT8hLGuPfzUel9k6O7z6omDMJDPgcZZFJylCV0X
+         bNOFrtnZJdczbLrFm3j0SzfJrC7OiYgENTA9VTUfwnzHQocmsHwenT//GSYGYiW99qnu
+         R1yuc4tLD2qgg1WHGHNIs+bOnYOlxX5tK9sBeKnd6j7kfF/FgtFE3y3Hyw9ATqEkxOwe
+         bVNK2TCsbd66l/CffX4JCjvszRnFRV9ZQtyI0BVwhBj8JmtiRi5RIe725pDvu0QMo+C1
+         OLiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jieTmRXghFVlnW/7VnBYeMI5OnEKAt15Mh9jqhvl2PI=;
+        b=1uG6xZ6nSh7CS4XUJTxRX3j4lyUGMSrbFwVvC+1HVP+KN01S1WRTEneSWU7wEVuKkR
+         Eil43ea6OIsiTWUXL6ziazPZErY59lf0wNCYFxxIvTXH9SThCIFmciA1DRvIv852m1Qo
+         41ZX22r+4T4QrngTMUMokhriSPMoUU615O5QKvQ+TqfpJqBCHfwzJLltoEOayzwJY0u7
+         xkZlhnl3FZwE4qcorHSrolqOxsZVwWZR7ShGGhwpbAbDtHrlttXA8mEtuOl7LOmkkuYg
+         3y4JAYltOhL548BB+aoozpAajTlffvn0xg8BPEsWzQr9mimJP9iyI3sdr1p0el9/C2Ro
+         l6Hg==
+X-Gm-Message-State: AFqh2kq2HYnOQ3BVCLO9pp3FwGT6TaizgaZC1op41Hz3qcEmdgvtZpf+
+        P+PtH5Fb1zes9pBT/KYZJJ4=
+X-Google-Smtp-Source: AMrXdXvmFdYt4x8r6PVv9J0rP4jIWdlKNwGpeCO1lB2DTi2o7Odd9OVNxxrTVMAFvC31YFuijfbT5w==
+X-Received: by 2002:a17:90a:1a0a:b0:22b:b346:4d86 with SMTP id 10-20020a17090a1a0a00b0022bb3464d86mr38064833pjk.43.1675088007063;
+        Mon, 30 Jan 2023 06:13:27 -0800 (PST)
+Received: from [172.30.1.94] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id dw18-20020a17090b095200b00218daa55e5fsm7199844pjb.12.2023.01.30.06.13.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Jan 2023 06:13:26 -0800 (PST)
+Message-ID: <cfe73771-33dd-e285-ed84-d620ee1edef0@gmail.com>
+Date:   Mon, 30 Jan 2023 23:13:25 +0900
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
-        Gecko/20100101 Thunderbird/102.6.1
-Subject: Re: [PATCH v2 0/2] ARM: dts: add mmc aliases for Exynos devices
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH] dt-bindings: interconnect: samsung,exynos-bus: allow
+ opp-table
 Content-Language: en-US
-To:     Henrik Grimler <henrik@grimler.se>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, alim.akhtar@samsung.com,
-        jenneron@protonmail.com, markuss.broks@gmail.com,
-        martin.juecker@gmail.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20230128133151.29471-1-henrik@grimler.se>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Georgi Djakov <djakov@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20230125090849.122189-1-krzysztof.kozlowski@linaro.org>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+In-Reply-To: <20230125090849.122189-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNKsWRmVeSWpSXmKPExsWy7djP87p/jl5PNlhzjcniwbxtbBbzj5xj
-        tXi7ZBejxY5LF1gt+l48ZLbY9Pgaq8XlXXPYLGac38dkce7AOmaLM/+mslgs+GNn0br3CLvF
-        5u9/GR14PXbOusvucfTKPVaPTas62TzuXNvD5rF5Sb3H/ztr2T162jYxefRtWcXo8XmTXABn
-        FJdNSmpOZllqkb5dAlfGjmVLWAueyVWce9nD0sC4RLyLkZNDQsBE4sr2p+xdjFwcQgIrGCX2
-        LWhmgXC+MEocaOqDynxmlDi19hZbFyMHWMuaDZ4Q8eWMEgueTWODcD4yShzq+wlWxCtgJ7Fx
-        HQuIySKgKvF1PSvINl4BQYmTM5+AhUUFUiQ2/SkDCQsLeEh0bGxiArGZBcQlbj2ZzwQyUURg
-        MrPE1hUXmEESbAKGEl1vu9hAbE4Bc4mr19rYIRrkJba/ncMM0iAhMJ9TYsLqj+wQr7lIfHhy
-        E8oWlnh1fAuULSPxfyfEBgmBdqAHft+HciYwSjQ8v8UIUWUtcefcL7BnmAU0Jdbv0od43lHi
-        xV5+CJNP4sZbQYgb+CQmbZvODBHmlehoE4KYoSYx6/g6uK0HL1xihrA9JF6fvsA8gVFxFlKo
-        zELy/iwkn81COGEBI8sqRvHU0uLc9NRiw7zUcr3ixNzi0rx0veT83E2MwPR2+t/xTzsY5776
-        qHeIkYmD8RCjBAezkghvvNm1ZCHelMTKqtSi/Pii0pzU4kOM0hwsSuK82rYnk4UE0hNLUrNT
-        UwtSi2CyTBycUg1M9q+jbvb9nZbmrHEhP535wDI33Wme5lVd3YwGlp25x0JmPXjvuejrAUll
-        r6efIt86P/F0PuBtrRiVeerdjLsfmqT3Lbbe/qZkUc82uXt+GxdemHJs0nfh/O7pN635lt16
-        kzfpycmjp6ytXxdZ3mi4uEe4JrDGRcd9/n2TaCfOUO8dSxa6WIs+5Ll1/XhA0e/OwKmRx4z4
-        p98Klo/N0TxeeOyPlVVhqHNhClvM/AoJnSvpMko5q1jO+j9blLlZuPDa5847axkWHlt38594
-        7OvHEw8X1bSGBXb01fHVvbhbtm+as31WjUDtYS4+03XXct8uSNB4MHOq4R/GuR4yEjc/nhLp
-        EmG+mFtyOOpZd9VWJZbijERDLeai4kQAdiOHsN4DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsVy+t/xu7q/j15PNpixWcLiwbxtbBbzj5xj
-        tXi7ZBejxY5LF1gt+l48ZLbY9Pgaq8XlXXPYLGac38dkce7AOmaLM/+mslgs+GNn0br3CLvF
-        5u9/GR14PXbOusvucfTKPVaPTas62TzuXNvD5rF5Sb3H/ztr2T162jYxefRtWcXo8XmTXABn
-        lJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7GjmVL
-        WAueyVWce9nD0sC4RLyLkYNDQsBEYs0Gzy5GLg4hgaWMEtvOtjB3MXICxWUkTk5rYIWwhSX+
-        XOtigyh6zyix/tQXJpBmXgE7iY3rWEBMFgFVia/rwcp5BQQlTs58wgJiiwqkSDQ/PwkWFxbw
-        kOjY2MQEYjMLiEvcejKfCWSkiMBkZomXOxYzQ8zvYpR4tnIBO0gVm4ChRNdbkMWcHJwC5hJX
-        r7WxQ3SbSXRt7WKEsOUltr+dwzyBUXAWkuWzkCyZhaRlFpKWBYwsqxhFUkuLc9Nziw31ihNz
-        i0vz0vWS83M3MQJjd9uxn5t3MM579VHvECMTB+MhRgkOZiUR3niza8lCvCmJlVWpRfnxRaU5
-        qcWHGE2BATCRWUo0OR+YPPJK4g3NDEwNTcwsDUwtzYyVxHk9CzoShQTSE0tSs1NTC1KLYPqY
-        ODilGpjs/x11UjioOqPr64WU2D8q3MvSZVJWW7+ekmp7ZOckxt2sJ6rWGNy5P/2B/W7P9X1c
-        TSnX1n4oaPS9X892IMLMsLD+zW/dmXVLUrpz59ZXTA1a4ep38Vfc6szM6yw2gr9Cpqj3zjXv
-        TCrwb2I5nVhmmOy8Q+5v86402Ywf2ephX54d6KhRW/RoAf+PNdv+VN2qrIpv/Vx7kKfz2zO+
-        E5WVVSd+5PV8rwq49D790Pcj75e9S8theWYv2rK8SbH8xY2NBeJL+HgYlOtbtSddPfAuf2r8
-        fd4dJfe84o9zzhd7HyuinK/MIfdG9NnfrKfcAdtvPN54dRL/TsZ/UoeNLrKd4GrslJsewLT/
-        3tHz814osRRnJBpqMRcVJwIAz7FGw2YDAAA=
-X-CMS-MailID: 20230130132827eucas1p1c5eb66e9c3875e0330de6f9d4258f5c3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230128133213eucas1p274ea3393199fe711fba8f542197e1dea
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230128133213eucas1p274ea3393199fe711fba8f542197e1dea
-References: <CGME20230128133213eucas1p274ea3393199fe711fba8f542197e1dea@eucas1p2.samsung.com>
-        <20230128133151.29471-1-henrik@grimler.se>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 28.01.2023 14:31, Henrik Grimler wrote:
-> It is convenient to have fixed mmcblk numbering of the eMMC and sdcard
-> so that assigned numbers will not change from boot-to-boot or
-> depending on if storage devices are actually attached or not.
->
-> Anton Bambura has done the work for the chromebooks while I have
-> looked at the other devices.  On the chromebooks, mmc0 is used for
-> eMMC and mmc1 for sdcard, while mmc0 is used for eMMC and mmc2 for
-> sdcard on the other boards, simply because Anton and I had different
-> preferences.
->
-> Also remove mshc aliases, as they should not be needed after [1] as
-> I understand it.
-
-Thanks for this patchset. Long time ago I've tried to submit something 
-similar, but that time it has been rejected:
-
-https://lore.kernel.org/all/20201105114804.18326-1-m.szyprowski@samsung.com/
-
-I hope that the mshc alias removal will help here.
-
-BTW, similar patchset is needed for arch/arm64/boot/dts/exynos
-
-
-> [1] https://lkml.kernel.org/lkml/20211124184603.3897245-1-john@metanate.com
->
+On 23. 1. 25. 18:08, Krzysztof Kozlowski wrote:
+> The opp-table can be located in the exynos-bus node which uses it, so
+> allow such child node.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->
-> Changes since v1:
-> * Move mshc alias cleanup to a separate commit
-> * Use mmc0 and mmc1 (instead of mmc0 and mmc2) for eMMC and sdcard on
->    chromebooks
-> * Address Krzysztof's review comments:
->   - Make changes per device rather than in soc dtsi
->
->
-> Henrik Grimler (2):
->    ARM: dts: exynos: drop mshc aliases
->    ARM: dts: exynos: add mmc aliases
->
->   arch/arm/boot/dts/exynos3250-artik5-eval.dts        | 5 +++++
->   arch/arm/boot/dts/exynos3250-artik5.dtsi            | 5 +++++
->   arch/arm/boot/dts/exynos3250-monk.dts               | 1 +
->   arch/arm/boot/dts/exynos3250-rinato.dts             | 2 ++
->   arch/arm/boot/dts/exynos3250.dtsi                   | 3 ---
->   arch/arm/boot/dts/exynos4210-i9100.dts              | 6 ++++++
->   arch/arm/boot/dts/exynos4210-origen.dts             | 5 +++++
->   arch/arm/boot/dts/exynos4210-smdkv310.dts           | 4 ++++
->   arch/arm/boot/dts/exynos4210-trats.dts              | 6 ++++++
->   arch/arm/boot/dts/exynos4210-universal_c210.dts     | 6 ++++++
->   arch/arm/boot/dts/exynos4412-itop-elite.dts         | 5 +++++
->   arch/arm/boot/dts/exynos4412-midas.dtsi             | 3 +++
->   arch/arm/boot/dts/exynos4412-odroid-common.dtsi     | 5 +++++
->   arch/arm/boot/dts/exynos4412-origen.dts             | 5 +++++
->   arch/arm/boot/dts/exynos4412-p4note.dtsi            | 6 ++++++
->   arch/arm/boot/dts/exynos4412-smdk4412.dts           | 4 ++++
->   arch/arm/boot/dts/exynos4412-tiny4412.dts           | 4 ++++
->   arch/arm/boot/dts/exynos4412.dtsi                   | 1 -
->   arch/arm/boot/dts/exynos5250-arndale.dts            | 5 +++++
->   arch/arm/boot/dts/exynos5250-smdk5250.dts           | 2 ++
->   arch/arm/boot/dts/exynos5250-snow-common.dtsi       | 3 +++
->   arch/arm/boot/dts/exynos5250-spring.dts             | 5 +++++
->   arch/arm/boot/dts/exynos5250.dtsi                   | 4 ----
->   arch/arm/boot/dts/exynos5260-xyref5260.dts          | 5 +++++
->   arch/arm/boot/dts/exynos5410-odroidxu.dts           | 2 ++
->   arch/arm/boot/dts/exynos5410-smdk5410.dts           | 5 +++++
->   arch/arm/boot/dts/exynos5420-arndale-octa.dts       | 5 +++++
->   arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi | 5 +++++
->   arch/arm/boot/dts/exynos5420-peach-pit.dts          | 3 +++
->   arch/arm/boot/dts/exynos5420-smdk5420.dts           | 5 +++++
->   arch/arm/boot/dts/exynos5420.dtsi                   | 3 ---
->   arch/arm/boot/dts/exynos5422-odroid-core.dtsi       | 5 +++++
->   arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi  | 4 ++++
->   arch/arm/boot/dts/exynos5422-samsung-k3g.dts        | 4 ++++
->   arch/arm/boot/dts/exynos5800-peach-pi.dts           | 3 +++
->   35 files changed, 133 insertions(+), 11 deletions(-)
->
->
-> base-commit: 9ca5a7ce492d182c25ea2e785eeb72cee1d5056b
+>  .../interconnect/samsung,exynos-bus.yaml      | 27 +++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/interconnect/samsung,exynos-bus.yaml b/Documentation/devicetree/bindings/interconnect/samsung,exynos-bus.yaml
+> index ad9ed596dfef..5e26e48c7217 100644
+> --- a/Documentation/devicetree/bindings/interconnect/samsung,exynos-bus.yaml
+> +++ b/Documentation/devicetree/bindings/interconnect/samsung,exynos-bus.yaml
+> @@ -196,6 +196,8 @@ properties:
+>      maxItems: 2
+>  
+>    operating-points-v2: true
+> +  opp-table:
+> +    type: object
+>  
+>    samsung,data-clock-ratio:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+> @@ -227,6 +229,31 @@ examples:
+>          operating-points-v2 = <&bus_dmc_opp_table>;
+>          devfreq-events = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
+>          vdd-supply = <&buck1_reg>;
+> +
+> +        bus_dmc_opp_table: opp-table {
+> +            compatible = "operating-points-v2";
+> +
+> +            opp-50000000 {
+> +                opp-hz = /bits/ 64 <50000000>;
+> +                opp-microvolt = <800000>;
+> +            };
+> +            opp-100000000 {
+> +                opp-hz = /bits/ 64 <100000000>;
+> +                opp-microvolt = <800000>;
+> +            };
+> +            opp-134000000 {
+> +                opp-hz = /bits/ 64 <134000000>;
+> +                opp-microvolt = <800000>;
+> +            };
+> +            opp-200000000 {
+> +                opp-hz = /bits/ 64 <200000000>;
+> +                opp-microvolt = <825000>;
+> +            };
+> +            opp-400000000 {
+> +                opp-hz = /bits/ 64 <400000000>;
+> +                opp-microvolt = <875000>;
+> +            };
+> +        };
+>      };
+>  
+>      ppmu_dmc0: ppmu@106a0000 {
 
-Best regards
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
 
