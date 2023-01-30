@@ -2,159 +2,135 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA5DC54EED
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Jan 2023 05:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A64CC636D0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Jan 2023 08:40:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229735AbjA3FLH (ORCPT
+        id S235556AbjA3IkM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 30 Jan 2023 00:11:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51588 "EHLO
+        Mon, 30 Jan 2023 03:40:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229592AbjA3FLF (ORCPT
+        with ESMTP id S235394AbjA3IkK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Jan 2023 00:11:05 -0500
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1874A23845
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2023 21:11:01 -0800 (PST)
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230130051058epoutp040814f58885bf694625a89fbfc7425fc9~_-hCrYTiF0167601676epoutp046
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jan 2023 05:10:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230130051058epoutp040814f58885bf694625a89fbfc7425fc9~_-hCrYTiF0167601676epoutp046
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1675055459;
-        bh=eJa/ABef80sC4wWricjAmL+ZdecM7xhVEvWQf4JlA/k=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=D0a3Nvd7NaOhsjxqUMVzmCEIHV6c3rb4BlN1ZY5KEnGWMb5FmQoocix3IVvB0x8u9
-         IbHdczYuYqPKdr9hqqNP6+VYEk9HzuPd5TPVI9xVvnaiV18VmQD8zU6/64quKBR/no
-         nN99bjpsSDWUFuieGFJBa6bAaYLVua+edFDLK53w=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230130051058epcas1p230726f4ea2e43c048a43da2e404099fa~_-hCY-WHQ3098030980epcas1p2e;
-        Mon, 30 Jan 2023 05:10:58 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.38.237]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4P4x8x1kLDz4x9QK; Mon, 30 Jan
-        2023 05:10:57 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        22.41.55531.06157D36; Mon, 30 Jan 2023 14:10:56 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20230130051056epcas1p3864c816bfccf0c8a6e7f8601b240b11e~_-hACG1EJ0798207982epcas1p3a;
-        Mon, 30 Jan 2023 05:10:56 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230130051056epsmtrp2c624e1c3680bdf79070af51bf00e3cf6~_-hABdhHy2600926009epsmtrp2R;
-        Mon, 30 Jan 2023 05:10:56 +0000 (GMT)
-X-AuditID: b6c32a35-d9fff7000000d8eb-70-63d7516062b1
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0D.27.17995.06157D36; Mon, 30 Jan 2023 14:10:56 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.211]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230130051055epsmtip1bb1f459e820e4d23e3c064944dd45066~_-g-4t2gG0503005030epsmtip1C;
-        Mon, 30 Jan 2023 05:10:55 +0000 (GMT)
-From:   Inki Dae <inki.dae@samsung.com>
-To:     airlied@linux.ie, daniel@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-next
-Date:   Mon, 30 Jan 2023 14:10:55 +0900
-Message-Id: <20230130051055.15340-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 30 Jan 2023 03:40:10 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70ABF193ED;
+        Mon, 30 Jan 2023 00:40:09 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 1D4E721904;
+        Mon, 30 Jan 2023 08:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1675068008; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2SVfhz4vtI64h5SERZ/9fRgC8aqv2ev6ARHJYCOeeH4=;
+        b=G2mVqFvKEL/BlzFzerKAcMGLe5N4yjYl5NQQhVVFOPOvi8MDzhZ/HfgNTmcGw1vpcO3+V/
+        qC2QH1B7wcDHgG+hGne07hmu22/jcjJ1CCma6zbPvY0lpxpR6UFScXgGG2P+7VuhSN5y91
+        K5HvfO+CrgNfQvoR+K30ExwPDfcMQtA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1675068008;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2SVfhz4vtI64h5SERZ/9fRgC8aqv2ev6ARHJYCOeeH4=;
+        b=2J6FYGxp4Pro5SY2sXN5uFjh9m5a2UI3v22+JjjdQpCOqwELpLu5MyUzkzpZ0cFkCqJCYs
+        GRUiM7cHFllcEbBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D7E4D13A06;
+        Mon, 30 Jan 2023 08:40:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id QqG+M2eC12PIUwAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Mon, 30 Jan 2023 08:40:07 +0000
+Message-ID: <23bcc048-5c74-5781-33a7-98d28fafbdf8@suse.de>
+Date:   Mon, 30 Jan 2023 09:40:07 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDKsWRmVeSWpSXmKPExsWy7bCmvm5C4PVkg84roha9504yWfzfNpHZ
-        4srX92wWM87vY3Jg8dj7bQGLx/ZvD1g97ncfZ/L4vEkugCUq2yYjNTEltUghNS85PyUzL91W
-        yTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMHaKWSQlliTilQKCCxuFhJ386mKL+0JFUh
-        I7+4xFYptSAlp8C0QK84Mbe4NC9dLy+1xMrQwMDIFKgwITvjwq/H7AX9ghVTuywbGBv4uhg5
-        OSQETCRedZ5m7WLk4hAS2MEosWzdByjnE6PEp4/7WEGqhAQ+M0ps+ecM03Fk+1MmiKJdjBI/
-        t31hgXC+MEr8eXiDEaSKTUBVYuKK+2wgtgiQ/XbSY2YQm1nATeLP0rMsILawgLLE7usQG1iA
-        am73HgSzeQUsJdoP3GaE2CYvMfPSd3aIuKDEyZlPWCDmyEs0b53NDLJYQmAdu8S9zz/ZIBpc
-        JLbfmgfVLCzx6vgWdghbSuLzu71sEA2TGSXuXF/BAuHMYJQ4/PM6VIexxP6lk4Ge4wBaoSmx
-        fpc+RFhRYufvuYwQm/kk3n3tYQUpkRDglehoE4IoUZI4dvEG1BQJiQtLJkLd4yFxqPsvCyQY
-        YyUOTvnDNIFRfhaSf2Yh+WcWwuIFjMyrGMVSC4pz01OLDQsM4bGanJ+7iRGc7LRMdzBOfPtB
-        7xAjEwfjIUYJDmYlEd54s2vJQrwpiZVVqUX58UWlOanFhxhNgSE8kVlKNDkfmG7zSuINTSwN
-        TMyMjE0sDM0MlcR5xW1PJgsJpCeWpGanphakFsH0MXFwSjUw8T00eJmyZtKuKQHzmYrEt0cv
-        X7lazimgPvrSU6l5FxrT+MtDFplf/8K7+JL4z272d/V+Yn/fTX/gd9qX3c3pqI1a4JszThz6
-        O1+dTc3bNlstTamyxOWggMN5x00JWyY615+pmPLiphTHwfI3yu4r7wuq6nzemMNQJWLNHyQ5
-        fUbvOvb/VS+U72/1ORI3S7nSyXyq3+3NeUenOHs/FdGp/vSo+fxey9sLyuTum8gvfvxcX16n
-        J2ixk87yhg0pPhem3FpmorzVbW3lEns3Jp5/vyz0MrW7kv6ofnm2o/SZm3He0t9et88Yz9me
-        G2JWeKTc8dn6p188bm9fzbog0uWWY9KqH79erXf8Yx3NN0VxmhJLcUaioRZzUXEiAAX/oVP/
-        AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBLMWRmVeSWpSXmKPExsWy7bCSnG5C4PVkg6U3WCx6z51ksvi/bSKz
-        xZWv79ksZpzfx+TA4rH32wIWj+3fHrB63O8+zuTxeZNcAEsUl01Kak5mWWqRvl0CV8aFX4/Z
-        C/oFK6Z2WTYwNvB1MXJySAiYSBzZ/pSpi5GLQ0hgB6PEgV+PmbsYOYASEhJbtnJAmMIShw8X
-        Q5R8YpRYfeQVM0gvm4CqxMQV99lAbBEBdYkHlxcygtjMAh4S7/esZgexhQWUJXZf38cKYrMA
-        1d/uPQhm8wpYSrQfuM0IcYO8xMxL39kh4oISJ2c+YYGYIy/RvHU28wRGvllIUrOQpBYwMq1i
-        lEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAgOPC2tHYx7Vn3QO8TIxMF4iFGCg1lJhDfe
-        7FqyEG9KYmVValF+fFFpTmrxIUZpDhYlcd4LXSfjhQTSE0tSs1NTC1KLYLJMHJxSDUzRfRGe
-        Z2pKUxPWPmyKmGl/SfKRY5whn+Nk13grttgaq81ZcxT0N+5m3vXrxYaEDbtZcvJD77oEndmz
-        YZlC8Kp15/0vrT/Awzyh9ODpt8vbZDa7cb9vf5dsenJ/F4fVW8dVX7hNAi4fOCO2ICDV3dUy
-        0zJ1+7El8t3hEpt1Xs//zR8tJnz11ve+XZ69ApZfve+sjfjjmD+xTJmdXfXDDY3UXLmzq512
-        tUqbz39y//jWq58CwiXCbV/0VUv8ZF6UzrAp2j5dZKqZDK8FH+eDjpI8psstk2LMY5REuE2k
-        ywKa+SxzTl/3PWpXmOD2hfVF4sVTum6Fj79VdyctWHZYt9Gted2aMhsJ5b9XX62vUmIpzkg0
-        1GIuKk4EAE2QwfurAgAA
-X-CMS-MailID: 20230130051056epcas1p3864c816bfccf0c8a6e7f8601b240b11e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230130051056epcas1p3864c816bfccf0c8a6e7f8601b240b11e
-References: <CGME20230130051056epcas1p3864c816bfccf0c8a6e7f8601b240b11e@epcas1p3.samsung.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v3 01/10] drm/client: Test for connectors before sending
+ hotplug event
+Content-Language: en-US
+To:     Simon Ser <contact@emersion.fr>
+Cc:     freedreno@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, javierm@redhat.com,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20230125200415.14123-1-tzimmermann@suse.de>
+ <20230125200415.14123-2-tzimmermann@suse.de>
+ <tc_igyYrgA_B5xJ15j6H2fQ00aA6vzd4nuQ8XusqeJqWWNZDJx8fFRgBAWoWOV8L5BEhjFDMYgANfdKXLqJZ0DMcsZfy8OUHDRatj36oOXo=@emersion.fr>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <tc_igyYrgA_B5xJ15j6H2fQ00aA6vzd4nuQ8XusqeJqWWNZDJx8fFRgBAWoWOV8L5BEhjFDMYgANfdKXLqJZ0DMcsZfy8OUHDRatj36oOXo=@emersion.fr>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------9hAz08szS0xR2UsvN0rZCqf5"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Dave and Daniel,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------9hAz08szS0xR2UsvN0rZCqf5
+Content-Type: multipart/mixed; boundary="------------WtGY1Ja0eVD12VghFsROTVfh";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Simon Ser <contact@emersion.fr>
+Cc: freedreno@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, javierm@redhat.com,
+ dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Message-ID: <23bcc048-5c74-5781-33a7-98d28fafbdf8@suse.de>
+Subject: Re: [PATCH v3 01/10] drm/client: Test for connectors before sending
+ hotplug event
+References: <20230125200415.14123-1-tzimmermann@suse.de>
+ <20230125200415.14123-2-tzimmermann@suse.de>
+ <tc_igyYrgA_B5xJ15j6H2fQ00aA6vzd4nuQ8XusqeJqWWNZDJx8fFRgBAWoWOV8L5BEhjFDMYgANfdKXLqJZ0DMcsZfy8OUHDRatj36oOXo=@emersion.fr>
+In-Reply-To: <tc_igyYrgA_B5xJ15j6H2fQ00aA6vzd4nuQ8XusqeJqWWNZDJx8fFRgBAWoWOV8L5BEhjFDMYgANfdKXLqJZ0DMcsZfy8OUHDRatj36oOXo=@emersion.fr>
 
-   Just one fixup series to restore proper bridge chain order of Exynos
-   Display pipeline.
-   This is also required by a patch series[1] which makes existing Exynos
-   DSI driver to be common driver so that it can be used by Exynos and I.MX8MM
-   SoC commonly - under the review yet.
+--------------WtGY1Ja0eVD12VghFsROTVfh
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-   [1] https://lore.kernel.org/linux-arm-kernel/d4267645-448c-f702-fcc3-6c534d9ec2b7@denx.de/T/
+SGkNCg0KQW0gMjcuMDEuMjMgdW0gMTk6MDIgc2NocmllYiBTaW1vbiBTZXI6DQo+IE9uIFdl
+ZG5lc2RheSwgSmFudWFyeSAyNXRoLCAyMDIzIGF0IDIxOjA0LCBUaG9tYXMgWmltbWVybWFu
+biA8dHppbW1lcm1hbm5Ac3VzZS5kZT4gd3JvdGU6DQo+IA0KPj4gTm90IGhhdmluZyBjb25u
+ZWN0b3JzIGluZGljYXRlcyBhIGRyaXZlciBidWcuDQo+IA0KPiBJcyBpdD8gV2hhdCBpZiBh
+bGwgY29ubmVjdG9ycyBhcmUgb2YgdGhlIERQLU1TVCB0eXBlLCBpZS4gdGhleSBhcmUNCj4g
+Y3JlYXRlZCBvbi10aGUtZmx5Pw0KDQpNeSBjb21taXQgbWVzc2FnZSB3YXMgbm9uc2Vuc2Uu
+IEkgZXZlbiB3cml0ZSB0aGlzIGhlcmUgdGhhdCBoYXZpbmcgbm8gDQpjb25uZWN0b3JzIGlz
+IGxlZ2l0aW1hdGUuDQoNCkJlc3QgcmVnYXJkcw0KVGhvbWFzDQoNCg0KLS0gDQpUaG9tYXMg
+WmltbWVybWFubg0KR3JhcGhpY3MgRHJpdmVyIERldmVsb3Blcg0KU1VTRSBTb2Z0d2FyZSBT
+b2x1dGlvbnMgR2VybWFueSBHbWJIDQpNYXhmZWxkc3RyLiA1LCA5MDQwOSBOw7xybmJlcmcs
+IEdlcm1hbnkNCihIUkIgMzY4MDksIEFHIE7DvHJuYmVyZykNCkdlc2Now6RmdHNmw7xocmVy
+OiBJdm8gVG90ZXYNCg==
 
-Please let me know if there is any problem.
+--------------WtGY1Ja0eVD12VghFsROTVfh--
 
-Thanks,
-Inki Dae
+--------------9hAz08szS0xR2UsvN0rZCqf5
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
 
-The following changes since commit 68de345e101ce9a24e5c8849e69dd0dba2e8c9b2:
+-----BEGIN PGP SIGNATURE-----
 
-  Merge tag 'drm-misc-next-2023-01-24' of git://anongit.freedesktop.org/drm/drm-misc into drm-next (2023-01-25 12:14:08 +1000)
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmPXgmcFAwAAAAAACgkQlh/E3EQov+AQ
+Lw//aZ2S6JqzI3HN2smO8qU+8YYo347edHPSYqgFtXYNPh3cskycgaxH6JIls8ewpLF85X5KdCnL
+XBt1OEkxB971xIY+IIKEpyYtSogk036qBJGGlGkhHDvPNKAjvOJqZaUjiRDPNd/pMIbQy9TUlqjo
+QITr7Pz5mfdt5iW+OEOUYWPSIDMvYjxK9CHPPmsVsVNaIsl7cW9jyVCdbv4SYqqJTwCoHONNB2XW
+vGu/wsa1c+Qtj2LRN6kx7WkEJmx9qwmgwuc5zJ7ucRRs5ODZ28FWfVxPTi7BY4yilClpvctXZLpw
+EZvCnFgjb2TASEqS1dTes6yP50lvv1wXbwc+2ujM6gqIG1HqaxAEOBUcjdUOuhTBXf2890OWaAzM
+wa/sMoxafn5lGDGT8vLnz/aUfqUIeY8xrDyb/HED/bryXsaepjUYxI8rUmXNiQsNIjG/ONle8LZd
+mKWCreWhoowp/ezL1/Hgk8vE9rlazNvx17ydqIhLK3DwrbsiH3YwY2lfYahS3sIjcnjPeOdWNGgs
+rbyNvA4m/h7VCdby8PTEthQxkkU5S5yXwJrd5Jk+d4Eewmqx0SWhr/zV9AIJ9eemNfq531zvX3Se
+E7Fmz390mmQVdwr88P2wDs1Wp8h9s9oZ+tbgYjpsVRMgzO+dUM4fYRnWvXUq4EU+1dtQLoHc0s3v
+J50=
+=3ibD
+-----END PGP SIGNATURE-----
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v6.3
-
-for you to fetch changes up to 1a1ce789e6c5da5a16d3d17bc228c6ab0b5863ed:
-
-  drm: exynos: dsi: Restore proper bridge chain order (2023-01-26 15:11:24 +0900)
-
-----------------------------------------------------------------
-One fixup series
-- Make sure to restore bridge chain order by enabling the drm panel
-  prepare_prev_first flag of the bridge and panel drivers - tc358764 display
-  bridge device and Samsung s6e3ha2/s6e63j0x03/s6e8aa0 panel devices.
-  In case of any boards using Exynos5433 SoC, below Display pipeline could be
-  configured.
-      Decon -> MIC -> MIPI-DSI -> Panel
-  So, this patch series makes sure to enable previous bridge device before
-  enabling MIPI-DSI device.
-
-----------------------------------------------------------------
-Jagan Teki (2):
-      drm: panel: Enable prepare_prev_first flag for samsung-s6e panels
-      drm: exynos: dsi: Restore proper bridge chain order
-
-Marek Szyprowski (1):
-      drm/bridge: tc358764: Enable pre_enable_prev_first flag
-
- drivers/gpu/drm/bridge/tc358764.c                | 1 +
- drivers/gpu/drm/exynos/exynos_drm_dsi.c          | 9 +++++++--
- drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c    | 1 +
- drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c | 1 +
- drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c    | 1 +
- 5 files changed, 11 insertions(+), 2 deletions(-)
+--------------9hAz08szS0xR2UsvN0rZCqf5--
