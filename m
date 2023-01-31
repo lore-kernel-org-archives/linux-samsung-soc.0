@@ -2,96 +2,150 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B03C636D3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Jan 2023 21:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC610C636CC
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Jan 2023 07:27:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230372AbjA3VWR (ORCPT
+        id S229546AbjAaH1x (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 30 Jan 2023 16:22:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44808 "EHLO
+        Tue, 31 Jan 2023 02:27:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230261AbjA3VWQ (ORCPT
+        with ESMTP id S230135AbjAaH1w (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Jan 2023 16:22:16 -0500
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B228544BD6;
-        Mon, 30 Jan 2023 13:22:14 -0800 (PST)
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-163bd802238so4722997fac.1;
-        Mon, 30 Jan 2023 13:22:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rJ+eBx2LRsO5FUwHyxKkgCUPaWB9Ix+NfxqKDqjGEZM=;
-        b=ibXibB9pE8JxQ6F48tJXS18A68mqtXfrNVPo20xZoepabyE5GkI4P+NG/0os2eswX+
-         N5GZWslrR0GnPJLaINztKSwdS5ndbqYqARm5nccUJ+nFr4yo6LD8cWcliKi+e2PmASMU
-         4aR6w5HWlvCt8fvbxlg1hCEmkon9alQlTCOkl3hKUEfuHHXbJlxh6oNrnH5KgK/gcpdY
-         N0cHpxDYP+/K7sJmHq+jxQU5I4XVWnamDQqDn7us2YVcu9rC9lstGN4kmwu78pNqStCh
-         s1Slm0XKZdlXgIuZ4ekE26KNfxJ1wvUVPaiZyeQFeAlZ7fQqJS3T7ZnrXEnvwfDr/TJG
-         WABw==
-X-Gm-Message-State: AO0yUKWicP0X20q2TXlQ4jNTHw4ioLoyy2g79w9XlGpJTKNxBRNqlDcj
-        hSQ/m5tCo/oiwafs4GSSLA==
-X-Google-Smtp-Source: AK7set/KeFL8Z5Buy3G3kH3IByoTxOzC/qb7dQzVJ/ttEJb5jzKY4nOhRTb7M61cPH8Rz6GF2oM16A==
-X-Received: by 2002:a05:6870:c18f:b0:163:97bd:814d with SMTP id h15-20020a056870c18f00b0016397bd814dmr4734826oad.27.1675113733933;
-        Mon, 30 Jan 2023 13:22:13 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id n18-20020a056870971200b0014fe4867dc7sm5695918oaq.56.2023.01.30.13.22.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jan 2023 13:22:13 -0800 (PST)
-Received: (nullmailer pid 3516638 invoked by uid 1000);
-        Mon, 30 Jan 2023 21:22:12 -0000
-Date:   Mon, 30 Jan 2023 15:22:12 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Martin =?iso-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
+        Tue, 31 Jan 2023 02:27:52 -0500
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B0B9303DD
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jan 2023 23:27:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1675150070; x=1706686070;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=xNwizkJY+v60PNO9GG4mkHO1ahzr03HqLvbQsMxs1tQ=;
+  b=phVEuMVaNlKjfXq2NakXUBX7HNOTYfaUIfOY7YwdcIgKplEVIuCh7QmW
+   JKYqgpn0f6R+gzUJJvg43fYIRXvvY6i24kzcsW4IIdcwS5xc3F9hibyEN
+   Lj+k53qIXGcfp8Jh74vEHY3U1WKlmq5grrVNan3fW4B/067f3qGnWBKCG
+   eAUtwAaBH+RKANmkh2mEzOM368WlA6e3tmFguz3nSR1AxdFLv6pQ7OUSH
+   Rj3usPfRaZogPipn66onZ6mIMsWjH/899HElFxkqBY1wPs4jNDLlZYdBW
+   5ru2D9y5/+SW+qTXGm8BZ0ouzVpbr3ryHG5cVTRmGQF9bPXi57FrQFAUW
+   g==;
+X-IronPort-AV: E=Sophos;i="5.97,259,1669071600"; 
+   d="scan'208";a="28758465"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 31 Jan 2023 08:27:48 +0100
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Tue, 31 Jan 2023 08:27:48 +0100
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Tue, 31 Jan 2023 08:27:48 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1675150068; x=1706686068;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=xNwizkJY+v60PNO9GG4mkHO1ahzr03HqLvbQsMxs1tQ=;
+  b=krbHB8bD1twLxw4NPWwxL7tuxe05ZDg4cVx300IjLc2qmrNXbf7AOsn1
+   TpN7ctjIYorY9n3HIfny1Ar3BwBWOKZyHjGWuRpiAhWr8Fq0i2s9To3pK
+   hZ0nGY0I/uI6Y+xVuNd6qidOUiqK5TDCLoZ+V0Vl4ZJpObEWbE6gF/Qmh
+   jOpchq9ZGcZPmJpE+WlFzdkjCvwhMDp/xHrjSRWa7cZuT5NpOyZghdF/i
+   NDR3BEt2QLm+I6W6jMnN4QvhA/ZbUOmtSmUdSXzzQ/5B+CSR3GX8u5HsL
+   F59HeK35gXgdb9MFTkp9Xz7zQcp1JGDYtq8qs3kmf5Rj9Pl6ZbbNCZiqE
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.97,259,1669071600"; 
+   d="scan'208";a="28758463"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 31 Jan 2023 08:27:48 +0100
+Received: from steina-w.localnet (unknown [10.123.53.21])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 2B58B280056;
+        Tue, 31 Jan 2023 08:27:48 +0100 (CET)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc:     Marek Vasut <marex@denx.de>,
+        Jagan Teki <jagan@amarulasolutions.com>,
         linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        phone-devel@vger.kernel.org, Henrik Grimler <henrik@grimler.se>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-usb@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Chanho Park <chanho61.park@samsung.com>
-Subject: Re: [PATCH v2] dt-bindings: usb: samsung,exynos-dwc3: allow unit
- address in DTS
-Message-ID: <167511373111.3516190.9618063650854117643.robh@kernel.org>
-References: <20230127211748.260718-1-krzysztof.kozlowski@linaro.org>
+        Laurent.pinchart@ideasonboard.com, aford173@gmail.com,
+        andrzej.hajda@intel.com, dri-devel@lists.freedesktop.org,
+        frieder.schrempf@kontron.de, inki.dae@samsung.com,
+        kyungmin.park@samsung.com, linux-amarula@amarulasolutions.com,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com,
+        matteo.lisi@engicam.com, sw0312.kim@samsung.com,
+        tharvey@gateworks.com
+Subject: Re: [PATCH v12 00/18] drm: Add Samsung MIPI DSIM bridge
+Date:   Tue, 31 Jan 2023 08:27:45 +0100
+Message-ID: <4811510.31r3eYUQgx@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <f6cea911-783c-f59d-503c-1576358ae7cb@prevas.dk>
+References: <20230126144427.607098-1-jagan@amarulasolutions.com> <31ccc974-4b01-ae47-9505-626617f07758@denx.de> <f6cea911-783c-f59d-503c-1576358ae7cb@prevas.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230127211748.260718-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi Rasmus,
 
-On Fri, 27 Jan 2023 22:17:48 +0100, Krzysztof Kozlowski wrote:
-> The Samsung Exynos SoC USB 3.0 DWC3 Controller is a simple wrapper of
-> actual DWC3 Controller device node.  It handles necessary Samsung
-> Exynos-specific resources (regulators, clocks), but does not have its
-> own MMIO address space.
+Am Montag, 30. Januar 2023, 13:45:38 CET schrieb Rasmus Villemoes:
+> On 27/01/2023 12.30, Marek Vasut wrote:
+> > On 1/27/23 12:04, Jagan Teki wrote:
+> >>> Thanks, but that's exactly what I'm doing, and I don't see any
+> >>> modification of imx8mp.dtsi in that branch. I'm basically looking for
+> >>> help to do the equivalent of
+> >>> 
+> >>>    88775338cd58 - arm64: dts: imx8mm: Add MIPI DSI pipeline
+> >>>    f964f67dd6ee - arm64: dts: imx8mm: Add eLCDIF node support
+> >>> 
+> >>> for imx8mp in order to test those patches on our boards (we have two
+> >>> variants).
+> >> 
+> >> Marek, any help here, thanks.
+> > 
+> > Try attached patch.
 > 
-> However neither simple-bus bindings nor dtc W=1 accept device nodes in
-> soc@ node which do not have unit address.
+> Thanks. I removed the lcdif2 and ldb nodes I had added from Alexander's
+> patch (94e6197dadc9 in linux-next) in order to apply it. I get a couple
+> of errors during boot:
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>   clk: /soc@0/bus@32c00000/mipi_dsi@32e60000: failed to reparent
+> media_apb to sys_pll1_266m: -22
 > 
-> ---
+> and enabling a pr_debug in clk_core_set_parent_nolock() shows that this
+> is because
 > 
-> Changes since v1:
-> 1. Use ranges with values and drop reg from usb-wrapper node.
-> 2. Keep "usb" as wrapper's node name.
+>   clk_core_set_parent_nolock: clk sys_pll1_266m can not be parent of clk
+> media_apb
 > 
-> DTS fixes are here:
-> https://lore.kernel.org/linux-samsung-soc/20230127211527.260060-1-krzysztof.kozlowski@linaro.org/T/#t
-> ---
->  .../devicetree/bindings/usb/samsung,exynos-dwc3.yaml      | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> Further, the mipi_dsi fails to probe due to
 > 
+>   /soc@0/bus@32c00000/mipi_dsi@32e60000: failed to get
+> 'samsung,burst-clock-frequency' property
+> 
+> All other .dtsi files seem to have those samsung,burst-clock-frequency
+> and samsung,esc-clock-frequency properties, so I suppose those should
+> also go into the imx8mp.dtsi and are not something that the board .dts
+> file should supply(?).
+> 
+> 
+> [There's also some differences between your patch and Alexander's
+> regarding the lcdif2 and ldb nodes, so while my lvds display still sorta
+> works, I get
+> 
+>   fsl-ldb 32ec0000.blk-ctrl:lvds-ldb: Configured LDB clock (297000000
+> Hz) does not match requested LVDS clock: 346500000 Hz
+> 
+> and the image is oddly distorted/shifted. But I suppose that's
+> orthogonal to getting the lcdif1 -> mipi-dsi -> ... pipeline working.]
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+It seems my patch indicates exactly what's your problem here. Your clock rate 
+configuration for LCDIF2 and LDB are not compatible (ratio 1:7). For now 
+manual clock config is necessary in this case.
+Check the clock tree in debugfs how your root clocks are configured and if it 
+affects lcdif1 and lcdif2.
+
+Best regards
+Alexander
+
+
