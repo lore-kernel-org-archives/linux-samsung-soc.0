@@ -2,117 +2,111 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B65C63797
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Feb 2023 11:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A95C636D3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Feb 2023 13:06:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232389AbjBALTK (ORCPT
+        id S232108AbjBANGf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Feb 2023 06:19:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41638 "EHLO
+        Wed, 1 Feb 2023 08:06:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232500AbjBALTF (ORCPT
+        with ESMTP id S229935AbjBANGe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Feb 2023 06:19:05 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1CFD611D3
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Feb 2023 03:18:32 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id z11so17332652ede.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Feb 2023 03:18:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LmkNkwc/roPUBoxOIRfaMs2JmM8/cj5oMwOtaYpttR0=;
-        b=DmnxSKU7s6WIyUgSYiMgSy6s+OPOlWELHyjPOLn68AIZ/TRnmhV3B4rswEkHQbvUqk
-         Y3nvRwRgX7qEMRWldjUqTrmEmSDuUsjz2RnaVKK2zFbnK3ugSuXqt2Qc9UzNq+PH4GYa
-         3JmaNKcn2jcFB4r0BxD6Ps+GbVUFcFbRJueFzcaHEro9R1tC7CXCefdo1+OY7EHnVhSN
-         ti3PkVGtzR4StfY990ViG0dDVR2WOvgj5yqV57QApSP3p+XmiqksrGtrUY3ujHsn51/0
-         wj9xJVvbjXF93sMxw2SACtJjegkpiv1BjUW+GnKLrWsd8ORz9/1eYHzsBiEvExRHNjoF
-         5sWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LmkNkwc/roPUBoxOIRfaMs2JmM8/cj5oMwOtaYpttR0=;
-        b=XlVwo5oC1JOvfGEcFwcHMDYLmEmQCXaMkEcc56t8dSs+TfzxFscLkGVsvIyMlZxiIr
-         h4Cneyqsm6stDrRbFbP/d49oMpgCXOoIgHbioULTwBj66XOGIqPANxbKKWtioWYS4YNm
-         JQ216cefAsvZxFsJJwhzZKr+pjMDrrg+v7aW4LwXQidoQdvACiRt6DYBbo+z+vLxkTG9
-         fZ7ctpakOr7e9dKWITi4XKOW9Z9xpJh9Ik0X43cjXxCauqUmBVfriailC27Z1eaNbqO0
-         x21CpxGEsPZwSMierBGZo4p2l69CI0bpGQxY0YikKJv/cGt0fwsvccWeztFEPDlSjag2
-         hMxQ==
-X-Gm-Message-State: AO0yUKUctX6pkZTLhbFMwiafLlSGXzsmzr4Tx/bzRGYCyilCkGHzEsq5
-        4qan+pGUjuH3mQSL30DoWnEaqg==
-X-Google-Smtp-Source: AK7set8RBAqgYqL/UHyvViSxh65icsNQZmgKHSdri9gKC/VCfijAbqmy6paNIDeBSH0CtXt3GutdKw==
-X-Received: by 2002:aa7:cd53:0:b0:4a3:43c1:843c with SMTP id v19-20020aa7cd53000000b004a343c1843cmr1313349edw.16.1675250311234;
-        Wed, 01 Feb 2023 03:18:31 -0800 (PST)
-Received: from [192.168.1.101] (abyl20.neoplus.adsl.tpnet.pl. [83.9.31.20])
-        by smtp.gmail.com with ESMTPSA id t21-20020a170906065500b007a4e02e32ffsm9949372ejb.60.2023.02.01.03.18.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Feb 2023 03:18:30 -0800 (PST)
-Message-ID: <93bec467-d8ff-efd0-4c7f-69e6bd42afbb@linaro.org>
-Date:   Wed, 1 Feb 2023 12:18:28 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH 01/23] interconnect: fix mem leak when freeing nodes
-Content-Language: en-US
-To:     Johan Hovold <johan+linaro@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Wed, 1 Feb 2023 08:06:34 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04A442D4C;
+        Wed,  1 Feb 2023 05:06:34 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9299A61796;
+        Wed,  1 Feb 2023 13:06:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 988ACC433EF;
+        Wed,  1 Feb 2023 13:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1675256793;
+        bh=GnaimmLKefZRjOPzvWP+ABUMPmzcZWg/oE0SlaIO8qA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=U9/871CFxrDT7QczJzo8MWNftedHmkpmn9hia5EiH2mxDCNB3+gr09zIaIRQJ0BUN
+         u7Lu5mSTWnwIf0zrI6oeo44lRLY/2XkPNdxp2cEeHVyYAKv6kS7bcv5n3sXsDGYecT
+         tJ5whSOP+pagxiKa9ZGxU7HLzk1SqAyp8lUiqYNI=
+Date:   Wed, 1 Feb 2023 14:06:29 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     "Alexey V. Vissarionov" <gremlin@altlinux.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Georgi Djakov <georgi.djakov@linaro.org>
-References: <20230201101559.15529-1-johan+linaro@kernel.org>
- <20230201101559.15529-2-johan+linaro@kernel.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230201101559.15529-2-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Jiri Slaby <jirislaby@kernel.org>,
+        Thomas Abraham <thomas.abraham@linaro.org>,
+        Kukjin Kim <kgene.kim@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        lvc-project@linuxtesting.org
+Subject: Re: [PATCH v2] serial: samsung: fix buffer size for clk_name
+Message-ID: <Y9pj1Sx7Nzjkp6pw@kroah.com>
+References: <20230116141658.GC8107@altlinux.org>
+ <Y8lZNi9pYVFkYvh9@kroah.com>
+ <20230201024457.GD446@altlinux.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230201024457.GD446@altlinux.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
-
-On 1.02.2023 11:15, Johan Hovold wrote:
-> The node link array is allocated when adding links to a node but is not
-> deallocated when nodes are destroyed.
+On Wed, Feb 01, 2023 at 05:44:57AM +0300, Alexey V. Vissarionov wrote:
+> serial: samsung: fix buffer size for clk_name
 > 
-> Fixes: 11f1ceca7031 ("interconnect: Add generic on-chip interconnect API")
-> Cc: stable@vger.kernel.org      # 5.1
-> Cc: Georgi Djakov <georgi.djakov@linaro.org>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> Although very unlikely, the 'clk_num' value may be as big as
+> 2**32 - 1 (uint32_max), so the buffer should have enough
+> space for storing "clk_uart_baud4294967295\0".
+> Also, the numbers in clk_name are expected to be unsigned.
+> 
+> Found by ALT Linux Team (altlinux.org) and Linux Verification
+> Center (linuxtesting.org) using SVACE.
+> 
+> Signed-off-by: Alexey V. Vissarionov <gremlin@altlinux.org>
+> Fixes: 5f5a7a5578c5 ("serial: samsung: switch to clkdev based clock lookup")
+> 
 > ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-
-Konrad
->  drivers/interconnect/core.c | 1 +
->  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-> index 423f875d4b54..dc61620a0191 100644
-> --- a/drivers/interconnect/core.c
-> +++ b/drivers/interconnect/core.c
-> @@ -850,6 +850,7 @@ void icc_node_destroy(int id)
+> On 2023-01-19 15:52:38 +0100, Greg Kroah-Hartman wrote:
+> 
+>  >> Fixes: 5f5a7a5578c58852 ("serial: samsung: switch to clkdev
+>  >> based clock lookup")
+>  > Please fix your scripts to use the proper number of SHA1 digits
+>  > in a Fixes: line as the documentation asks for.
+> 
+> Done. Also added the comment to the source regarding the buffer size.
+> 
+> 
+> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+> index 0fce856434dafd80..2c701dc7c6a37191 100644
+> --- a/drivers/tty/serial/samsung_tty.c
+> +++ b/drivers/tty/serial/samsung_tty.c
+> @@ -1407,7 +1407,7 @@ static void s3c24xx_serial_pm(struct uart_port *port, unsigned int level,
+>   *
+>   */
 >  
->  	mutex_unlock(&icc_lock);
+> -#define MAX_CLK_NAME_LENGTH 15
+> +#define MAX_CLK_NAME_LENGTH 24		/* "clk_uart_baud4294967295\0" */
 >  
-> +	kfree(node->links);
->  	kfree(node);
->  }
->  EXPORT_SYMBOL_GPL(icc_node_destroy);
+>  static inline int s3c24xx_serial_getsource(struct uart_port *port)
+>  {
+> @@ -1457,7 +1457,7 @@ static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
+>  			!(ourport->cfg->clk_sel & (1 << cnt)))
+>  			continue;
+>  
+> -		sprintf(clkname, "clk_uart_baud%d", cnt);
+> +		sprintf(clkname, "clk_uart_baud%u", cnt);
+
+So you bump the size of the buffer and continue to use an "unsafe" call
+that could overflow the buffer?  Is this a plan to submit a series of
+patches all "fixing" something based on the last change?  :)
+
+As Krzysztof said, this whole thing is not needed at all.  Please fix
+your tool to generate valid changes.
+
+thanks,
+
+greg k-h
