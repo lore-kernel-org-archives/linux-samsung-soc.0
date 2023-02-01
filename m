@@ -2,175 +2,143 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68AC4C05027
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Feb 2023 10:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B992C64EC3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Feb 2023 11:17:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232045AbjBAKVs (ORCPT
+        id S232273AbjBALRA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Feb 2023 05:21:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59570 "EHLO
+        Wed, 1 Feb 2023 06:17:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232413AbjBAKVh (ORCPT
+        with ESMTP id S232303AbjBALQ6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Feb 2023 05:21:37 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F7E6187B
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Feb 2023 02:21:20 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id d14so16796128wrr.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Feb 2023 02:21:20 -0800 (PST)
+        Wed, 1 Feb 2023 06:16:58 -0500
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4888E7694
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Feb 2023 03:16:55 -0800 (PST)
+Received: by mail-ej1-x62d.google.com with SMTP id mf7so31649360ejc.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Feb 2023 03:16:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=miY8Nl9pasl3CNdADib5ACTcN+W/hw5ia5NnpxR1DOs=;
-        b=uLgSYR59FG0YvqcaWR3edxkJi/+BwDtZfmZg22UEfWNcGd1MdmeJhJAkVV4YnNlPcU
-         dZrytTLPSl2JkwEoxnsKx0G1I6uHo+ihZ7/NxVZWNTPw73q6oidpJv6B3pGpwDIbnt6T
-         NDe49O7o04eqNDOJu1gFgSK2bR0/QOlfty5Nb1sLnvE6siz4fs364oke8/+aN0jUdEDc
-         OPIKwf6JiIHm6caFfnbu3ec7JwJZ6d7HGs1a4hZWkWs/9PzzD18quoRPbTI7dNZyhozC
-         JoCFilT7p/NBPjY6ichMj7h4TYSnOSADXvfiROZxAaHDGWqLBw451H3ffWWHET+Wq9ao
-         /ITg==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nUrDb3EKbEwP1E+cTaz4aoYhl8shzIQnqUH5alCaiS4=;
+        b=CBZPUQGhVvP6T/uXZYCqwU9h2SJ8G56BHcnskNnJ4P0subv/PysGZm16NTqJX1rNSa
+         G9qxcy8HOE9gDyCRrxRyRM5n2HElWKS9VoU6rRRLzNkUrYYjn18cQ+QAeZY/agndj2er
+         Ma39+WR3sTZ86HZeCDTAe6bLAazBG7aNtTDkQ4dERuKaRm1/irT2MrLCHGvVmA6naIyO
+         wXn6L0Un4Hw/JsoKwLHyFJCDa28qry65QnVV2J+JrVksf2q3sdiEn+AjHo2eRJd7+MpF
+         +QRfN6Mrbva9jAyigyKP/BWMnZkT7Eyxaq7IP1XZ+cI7JT9U/L3de8S84po2NEGfML3o
+         vyig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=miY8Nl9pasl3CNdADib5ACTcN+W/hw5ia5NnpxR1DOs=;
-        b=P8gHElk+ca29vexaxvS1bRaTo23l7gvQCGUqMJUDS8spwdSS11Iw7Jq745PMvUOTMQ
-         ElIxhYNAwB5BdyJrQychDVxQBj76SEqPsCUvQC5FhVI8LVe4hVKxRfZIrOzamPAzpD77
-         eAjz6gw73D1C8TINiVKW+jwBoDhlllvxNdAADXW4EH7cgWnuoI/Optx5kZVHFf0J950n
-         t3rbe7jzNqSRsomdR+cm+UxVaM5jxcweMHM3Xmh6oWK0AIKe2AL0Anj6ZoNshYFaMsK1
-         uLDiXvXMXoz1GZfoy9HVzeaU2qjHeN+Lw9KV1koPmS3lJ/tTJg/DcAmT+OTwVQE1ixpa
-         3NKg==
-X-Gm-Message-State: AO0yUKWphFYDwmksOo75nItKJr3fwyiPH6nVsBrlTlIpd/lzNcRx2s9l
-        pPsI4kssF4TKiS+xW87yyHG78A==
-X-Google-Smtp-Source: AK7set/IC4WGJsen1OnuWzNLHYicjdoUj049JRvIbLxwbusnIcgd9UWJMJPf4DuYsVOVsCI4Hx7xzw==
-X-Received: by 2002:a05:6000:143:b0:2bf:e7c4:898a with SMTP id r3-20020a056000014300b002bfe7c4898amr5305107wrx.51.1675246859017;
-        Wed, 01 Feb 2023 02:20:59 -0800 (PST)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id x7-20020a5d6b47000000b002bbed1388a5sm17076852wrw.15.2023.02.01.02.20.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Feb 2023 02:20:58 -0800 (PST)
-Date:   Wed, 1 Feb 2023 12:20:56 +0200
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Johan Hovold <johan+linaro@kernel.org>
-Cc:     Georgi Djakov <djakov@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nUrDb3EKbEwP1E+cTaz4aoYhl8shzIQnqUH5alCaiS4=;
+        b=rPiwI4xnmlWC9jXHtPu31bwkPJB5XxDHERm/M/Q8ecdHNusOPz8ZVFhfoxLmNjmOh8
+         gZ7ssrib6Aj/4KmHnHJqjZVn2TnXA49TbecKGMn2yqrlFTnxf6SQiJnpH208u/nVjncn
+         /rC+16ID4JhaXKvlywtDtV134W/swQXh4y8iFJYty9smcSx54jG8qxYv7GQfNnGggvji
+         6Gcf3dPI/+rIHMIlEdfS3T0KoeAAQGiVFYlU7AOBb5T15IT16K5V689q32xqhSWHM+IN
+         CFE2GFlTq8IkseAE5yaVbxZFOpyxcqLYC4kaeCspcHUvx2WYJLUwx9o2/3TrM1bHyFgY
+         PMMg==
+X-Gm-Message-State: AO0yUKVSmja5F2/cZSS4/vrHSMGi6W02hebTUgIZJ0kaN3pR2/qBV8Ry
+        VV9yE5WINtx3zjPtp33ywblTWQ==
+X-Google-Smtp-Source: AK7set8nZ5tenjhJ1UYP/fKSzZRqpA5VSaBodwJMTzJ2q15pnSFNExgvYIEYEGfWJP3FuMhx61MO4w==
+X-Received: by 2002:a17:906:ae5a:b0:878:81d7:9f6f with SMTP id lf26-20020a170906ae5a00b0087881d79f6fmr1945277ejb.67.1675250213863;
+        Wed, 01 Feb 2023 03:16:53 -0800 (PST)
+Received: from [192.168.1.101] (abyl20.neoplus.adsl.tpnet.pl. [83.9.31.20])
+        by smtp.gmail.com with ESMTPSA id w5-20020a1709061f0500b0086a2e31d1c1sm9832739ejj.28.2023.02.01.03.16.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Feb 2023 03:16:53 -0800 (PST)
+Message-ID: <9b7813d0-ec4e-a4a1-168f-de0797bcdf64@linaro.org>
+Date:   Wed, 1 Feb 2023 12:16:50 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH 02/23] interconnect: fix icc_provider_del() error handling
+Content-Language: en-US
+To:     Johan Hovold <johan+linaro@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/23] interconnect: qcom: sm8550: fix registration race
-Message-ID: <Y9o9CGeJ4W2Pm5fG@linaro.org>
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
 References: <20230201101559.15529-1-johan+linaro@kernel.org>
- <20230201101559.15529-14-johan+linaro@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230201101559.15529-14-johan+linaro@kernel.org>
+ <20230201101559.15529-3-johan+linaro@kernel.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230201101559.15529-3-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 23-02-01 11:15:49, Johan Hovold wrote:
-> The current interconnect provider registration interface is inherently
-> racy as nodes are not added until the after adding the provider. This
-> can specifically cause racing DT lookups to fail.
-> 
-> Switch to using the new API where the provider is not registered until
-> after it has been fully initialised.
 
-Sounds good to me.
+
+On 1.02.2023 11:15, Johan Hovold wrote:
+> The interconnect framework currently expects that providers are only
+> removed when there are no users and after all nodes have been removed.
+> 
+> There is currently nothing that guarantees this to be the case and the
+> framework does not do any reference counting, but refusing to remove the
+> provider is never correct as that would leave a dangling pointer to a
+> resource that is about to be released in the global provider list (e.g.
+> accessible through debugfs).
+> 
+> Replace the current sanity checks with WARN_ON() so that the provider is
+> always removed.
+I spent a considerable amount of time scratching my head what WARN_ON has
+to do with removing list items.. I suppose "don't return early and replace
+pr_warn with WARN_ON" would have been clearer, but maybe that's just me
+in the morning..
 
 > 
-> Fixes: e6f0d6a30f73 ("interconnect: qcom: Add SM8550 interconnect provider driver")
-> Cc: Abel Vesa <abel.vesa@linaro.org>
+> Fixes: 11f1ceca7031 ("interconnect: Add generic on-chip interconnect API")
+> Cc: stable@vger.kernel.org      # 5.1: 680f8666baf6: interconnect: Make icc_provider_del() return void
 > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-
 > ---
->  drivers/interconnect/qcom/sm8550.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
+>  drivers/interconnect/core.c | 14 ++------------
+>  1 file changed, 2 insertions(+), 12 deletions(-)
 > 
-> diff --git a/drivers/interconnect/qcom/sm8550.c b/drivers/interconnect/qcom/sm8550.c
-> index 54fa027ab961..7ab492ca8fe0 100644
-> --- a/drivers/interconnect/qcom/sm8550.c
-> +++ b/drivers/interconnect/qcom/sm8550.c
-> @@ -2197,9 +2197,10 @@ static int qnoc_probe(struct platform_device *pdev)
->  	provider->pre_aggregate = qcom_icc_pre_aggregate;
->  	provider->aggregate = qcom_icc_aggregate;
->  	provider->xlate_extended = qcom_icc_xlate_extended;
-> -	INIT_LIST_HEAD(&provider->nodes);
->  	provider->data = data;
->  
-> +	icc_provider_init(provider);
-> +
->  	qp->dev = &pdev->dev;
->  	qp->bcms = desc->bcms;
->  	qp->num_bcms = desc->num_bcms;
-> @@ -2208,12 +2209,6 @@ static int qnoc_probe(struct platform_device *pdev)
->  	if (IS_ERR(qp->voter))
->  		return PTR_ERR(qp->voter);
->  
-> -	ret = icc_provider_add(provider);
-> -	if (ret) {
-> -		dev_err_probe(&pdev->dev, ret,
-> -			      "error adding interconnect provider\n");
-> -		return ret;
-> -	}
->  
->  	for (i = 0; i < qp->num_bcms; i++)
->  		qcom_icc_bcm_init(qp->bcms[i], &pdev->dev);
-> @@ -2227,7 +2222,7 @@ static int qnoc_probe(struct platform_device *pdev)
->  		node = icc_node_create(qnodes[i]->id);
->  		if (IS_ERR(node)) {
->  			ret = PTR_ERR(node);
-> -			goto err;
-> +			goto err_remove_nodes;
->  		}
->  
->  		node->name = qnodes[i]->name;
-> @@ -2241,12 +2236,17 @@ static int qnoc_probe(struct platform_device *pdev)
->  	}
->  	data->num_nodes = num_nodes;
->  
-> +	ret = icc_provider_register(provider);
-> +	if (ret)
-> +		goto err_remove_nodes;
-> +
->  	platform_set_drvdata(pdev, qp);
->  
->  	return 0;
-> -err:
-> +
-> +err_remove_nodes:
->  	icc_nodes_remove(provider);
-> -	icc_provider_del(provider);
-> +
->  	return ret;
->  }
->  
-> @@ -2254,8 +2254,8 @@ static int qnoc_remove(struct platform_device *pdev)
+> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+> index dc61620a0191..43c5c8503ee8 100644
+> --- a/drivers/interconnect/core.c
+> +++ b/drivers/interconnect/core.c
+> @@ -1062,18 +1062,8 @@ EXPORT_SYMBOL_GPL(icc_provider_add);
+>  void icc_provider_del(struct icc_provider *provider)
 >  {
->  	struct qcom_icc_provider *qp = platform_get_drvdata(pdev);
+>  	mutex_lock(&icc_lock);
+> -	if (provider->users) {
+> -		pr_warn("interconnect provider still has %d users\n",
+> -			provider->users);
+> -		mutex_unlock(&icc_lock);
+> -		return;
+> -	}
+> -
+> -	if (!list_empty(&provider->nodes)) {
+> -		pr_warn("interconnect provider still has nodes\n");
+> -		mutex_unlock(&icc_lock);
+> -		return;
+> -	}
+> +	WARN_ON(provider->users);
+> +	WARN_ON(!list_empty(&provider->nodes));
 >  
-> +	icc_provider_deregister(&qp->provider);
->  	icc_nodes_remove(&qp->provider);
-> -	icc_provider_del(&qp->provider);
->  
->  	return 0;
->  }
-> -- 
-> 2.39.1
-> 
+>  	list_del(&provider->provider_list);
+>  	mutex_unlock(&icc_lock);
