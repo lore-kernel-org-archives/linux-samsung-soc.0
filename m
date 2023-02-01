@@ -2,40 +2,40 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D5AC742A7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Feb 2023 10:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EE6C636D4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Feb 2023 10:17:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232340AbjBAKRA (ORCPT
+        id S232203AbjBAKQj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Feb 2023 05:17:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52092 "EHLO
+        Wed, 1 Feb 2023 05:16:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232209AbjBAKQk (ORCPT
+        with ESMTP id S231237AbjBAKQg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Feb 2023 05:16:40 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C0D153572;
-        Wed,  1 Feb 2023 02:16:38 -0800 (PST)
+        Wed, 1 Feb 2023 05:16:36 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1154F3EFD5;
+        Wed,  1 Feb 2023 02:16:35 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 45DBDB82165;
-        Wed,  1 Feb 2023 10:16:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D4FFC4167D;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6474261760;
+        Wed,  1 Feb 2023 10:16:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 347EEC43141;
         Wed,  1 Feb 2023 10:16:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1675246593;
-        bh=KW9r2w3sR70m75wWgICIelAqw9kb2RB4YyHuGvDFwCE=;
+        bh=wRymLHXCWqnkYqQGyutZODF79K4cpesmi8Cm/ANh5+g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cgPv53iLEN4VAiZA6SdmYXkco5vAXCAZeEtkTKHYDlcei7xDMcrt2LCfxPQ1kHJZ1
-         gnkVoLVAjSvZJmtwhAFv9FjSlPA2oHzoYHKSW+n38niRDbEQI0/XJ16E9rMXtN6q5p
-         kV4YyeAx2WGz5Z05hWmyWczk/nei8HcMHvdhExSDGVjgez+7dA7uJ6ugqGQeTQNtR0
-         DHH2kwe8q2waCjB12oPznQJZDPA2Ufg61OYJ22mqx6xl27WokL0wHwWKqLaunJ0RJ2
-         XCAkfalwNZFAmHODD9v/ZefKm+YljW76KvWOX7puqbN920reKf3Hi2erkxsWe2VpEa
-         P+4EaiA8UlTlg==
+        b=TkCAzV47/PLKloW530+0THEICphvDfNQEdS+t9TEv3KlDrgGF7yZUb2YKrABsIjX6
+         FXYcW1joCD8cysr//4Ub5XaSPmTn8gE9dOiq5IWTMJPwJgWEqTfnoaZonrVoNvYQ/V
+         c7uueRVHuwcD3M/AmCO1DrRt6CL3LC6D8/56ytCqT0Pbs1CrqnvYtDtrkOiIXPk9/O
+         qf/OHqlzb2Po8dH910Z2Nd63i5cqBqS1OHmd+7s97GtYT6CZq0MBPV0Ok16ad5la/V
+         oP5BCmUdIKvdprgTtv3PU038A+Lw+N39GzGOVwRK76MqY6ZfstFOt4OUft/2YpFwd7
+         URPzlAOnE+4Ag==
 Received: from johan by xi.lan with local (Exim 4.94.2)
         (envelope-from <johan+linaro@kernel.org>)
-        id 1pNAAg-00044c-Qx; Wed, 01 Feb 2023 11:16:54 +0100
+        id 1pNAAg-00044N-Dz; Wed, 01 Feb 2023 11:16:54 +0100
 From:   Johan Hovold <johan+linaro@kernel.org>
 To:     Georgi Djakov <djakov@kernel.org>
 Cc:     Shawn Guo <shawnguo@kernel.org>,
@@ -56,9 +56,9 @@ Cc:     Shawn Guo <shawnguo@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH 21/23] interconnect: drop racy registration API
-Date:   Wed,  1 Feb 2023 11:15:57 +0100
-Message-Id: <20230201101559.15529-22-johan+linaro@kernel.org>
+Subject: [PATCH 16/23] interconnect: exynos: drop redundant link destroy
+Date:   Wed,  1 Feb 2023 11:15:52 +0100
+Message-Id: <20230201101559.15529-17-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230201101559.15529-1-johan+linaro@kernel.org>
 References: <20230201101559.15529-1-johan+linaro@kernel.org>
@@ -68,71 +68,33 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Now that all interconnect drivers have been converted to the new
-provider registration API, the old racy interface can be removed.
+There is no longer any need to explicitly destroy node links as this is
+now done when the node is destroyed as part of icc_nodes_remove().
 
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/interconnect/core.c           | 16 ----------------
- include/linux/interconnect-provider.h | 11 -----------
- 2 files changed, 27 deletions(-)
+ drivers/interconnect/samsung/exynos.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index 93d27ff8eef6..b8917823fd95 100644
---- a/drivers/interconnect/core.c
-+++ b/drivers/interconnect/core.c
-@@ -1078,22 +1078,6 @@ void icc_provider_deregister(struct icc_provider *provider)
- }
- EXPORT_SYMBOL_GPL(icc_provider_deregister);
- 
--int icc_provider_add(struct icc_provider *provider)
--{
--	icc_provider_init(provider);
--
--	return icc_provider_register(provider);
--}
--EXPORT_SYMBOL_GPL(icc_provider_add);
--
--void icc_provider_del(struct icc_provider *provider)
--{
--	WARN_ON(!list_empty(&provider->nodes));
--
--	icc_provider_deregister(provider);
--}
--EXPORT_SYMBOL_GPL(icc_provider_del);
--
- static const struct of_device_id __maybe_unused ignore_list[] = {
- 	{ .compatible = "qcom,sc7180-ipa-virt" },
- 	{ .compatible = "qcom,sc8180x-ipa-virt" },
-diff --git a/include/linux/interconnect-provider.h b/include/linux/interconnect-provider.h
-index d12cd18aab3f..b9af9016a95e 100644
---- a/include/linux/interconnect-provider.h
-+++ b/include/linux/interconnect-provider.h
-@@ -125,8 +125,6 @@ int icc_nodes_remove(struct icc_provider *provider);
- void icc_provider_init(struct icc_provider *provider);
- int icc_provider_register(struct icc_provider *provider);
- void icc_provider_deregister(struct icc_provider *provider);
--int icc_provider_add(struct icc_provider *provider);
--void icc_provider_del(struct icc_provider *provider);
- struct icc_node_data *of_icc_get_from_provider(struct of_phandle_args *spec);
- void icc_sync_state(struct device *dev);
- 
-@@ -179,15 +177,6 @@ static inline int icc_provider_register(struct icc_provider *provider)
- 
- static inline void icc_provider_deregister(struct icc_provider *provider) { }
- 
--static inline int icc_provider_add(struct icc_provider *provider)
--{
--	return -ENOTSUPP;
--}
--
--static inline void icc_provider_del(struct icc_provider *provider)
--{
--}
--
- static inline struct icc_node_data *of_icc_get_from_provider(struct of_phandle_args *spec)
+diff --git a/drivers/interconnect/samsung/exynos.c b/drivers/interconnect/samsung/exynos.c
+index 72e42603823b..ebf09bbf725b 100644
+--- a/drivers/interconnect/samsung/exynos.c
++++ b/drivers/interconnect/samsung/exynos.c
+@@ -96,14 +96,8 @@ static struct icc_node *exynos_generic_icc_xlate(struct of_phandle_args *spec,
+ static int exynos_generic_icc_remove(struct platform_device *pdev)
  {
- 	return ERR_PTR(-ENOTSUPP);
+ 	struct exynos_icc_priv *priv = platform_get_drvdata(pdev);
+-	struct icc_node *parent_node, *node = priv->node;
+ 
+ 	icc_provider_deregister(&priv->provider);
+-
+-	parent_node = exynos_icc_get_parent(priv->dev->parent->of_node);
+-	if (parent_node && !IS_ERR(parent_node))
+-		icc_link_destroy(node, parent_node);
+-
+ 	icc_nodes_remove(&priv->provider);
+ 
+ 	return 0;
 -- 
 2.39.1
 
