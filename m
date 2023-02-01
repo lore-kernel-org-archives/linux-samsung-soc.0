@@ -2,40 +2,40 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EE6C636D4
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Feb 2023 10:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18624C6FA95
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Feb 2023 10:17:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232203AbjBAKQj (ORCPT
+        id S232353AbjBAKRB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Feb 2023 05:16:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51982 "EHLO
+        Wed, 1 Feb 2023 05:17:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231237AbjBAKQg (ORCPT
+        with ESMTP id S232165AbjBAKQj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Feb 2023 05:16:36 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1154F3EFD5;
-        Wed,  1 Feb 2023 02:16:35 -0800 (PST)
+        Wed, 1 Feb 2023 05:16:39 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 227BD53542;
+        Wed,  1 Feb 2023 02:16:38 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6474261760;
-        Wed,  1 Feb 2023 10:16:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 347EEC43141;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1A396B81FDA;
+        Wed,  1 Feb 2023 10:16:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F477C4361C;
         Wed,  1 Feb 2023 10:16:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1675246593;
-        bh=wRymLHXCWqnkYqQGyutZODF79K4cpesmi8Cm/ANh5+g=;
+        bh=4DlVblB8F3elgXtYl/ybK6UQCtFfPIALduJwWumbzVs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TkCAzV47/PLKloW530+0THEICphvDfNQEdS+t9TEv3KlDrgGF7yZUb2YKrABsIjX6
-         FXYcW1joCD8cysr//4Ub5XaSPmTn8gE9dOiq5IWTMJPwJgWEqTfnoaZonrVoNvYQ/V
-         c7uueRVHuwcD3M/AmCO1DrRt6CL3LC6D8/56ytCqT0Pbs1CrqnvYtDtrkOiIXPk9/O
-         qf/OHqlzb2Po8dH910Z2Nd63i5cqBqS1OHmd+7s97GtYT6CZq0MBPV0Ok16ad5la/V
-         oP5BCmUdIKvdprgTtv3PU038A+Lw+N39GzGOVwRK76MqY6ZfstFOt4OUft/2YpFwd7
-         URPzlAOnE+4Ag==
+        b=LNsGODldlO93I8GvVgFCiD7Z+2kCq1rZ3tqmRwXziFuyep550BZXGHVg+lVKTaCzf
+         HO2c0hp0tHSBwCHl1eCEcew3mjkVJlWmtXLbcWUk7q1jmVvAfTW0E1z7VjOSTIGuuT
+         Ga2XbQhAQ2L8VswsOei8+SuYWAMwCdeaZpTVMsq39MI+mWQy2aVt3oWW74CEUJQBv0
+         TJKX9kMxvPeL39gogJyYEWdZNC/tWHV6F24wicVuAFaP/845NbUL8XpzGbzAFh6/v1
+         fRpw5ArSogRCx3n1KKCFyoDJR3o4vorvkivtBJIRqbm0oZ9s7LEXrfWmMwG1gIx5P2
+         e77bCfdMJ97xg==
 Received: from johan by xi.lan with local (Exim 4.94.2)
         (envelope-from <johan+linaro@kernel.org>)
-        id 1pNAAg-00044N-Dz; Wed, 01 Feb 2023 11:16:54 +0100
+        id 1pNAAg-00044G-7X; Wed, 01 Feb 2023 11:16:54 +0100
 From:   Johan Hovold <johan+linaro@kernel.org>
 To:     Georgi Djakov <djakov@kernel.org>
 Cc:     Shawn Guo <shawnguo@kernel.org>,
@@ -55,10 +55,10 @@ Cc:     Shawn Guo <shawnguo@kernel.org>,
         linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH 16/23] interconnect: exynos: drop redundant link destroy
-Date:   Wed,  1 Feb 2023 11:15:52 +0100
-Message-Id: <20230201101559.15529-17-johan+linaro@kernel.org>
+        Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org
+Subject: [PATCH 14/23] interconnect: exynos: fix node leak in probe PM QoS error path
+Date:   Wed,  1 Feb 2023 11:15:50 +0100
+Message-Id: <20230201101559.15529-15-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230201101559.15529-1-johan+linaro@kernel.org>
 References: <20230201101559.15529-1-johan+linaro@kernel.org>
@@ -68,33 +68,41 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-There is no longer any need to explicitly destroy node links as this is
-now done when the node is destroyed as part of icc_nodes_remove().
+Make sure to add the newly allocated interconnect node to the provider
+before adding the PM QoS request so that the node is freed on errors.
 
+Fixes: 2f95b9d5cf0b ("interconnect: Add generic interconnect driver for Exynos SoCs")
+Cc: stable@vger.kernel.org      # 5.11
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/interconnect/samsung/exynos.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/interconnect/samsung/exynos.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/interconnect/samsung/exynos.c b/drivers/interconnect/samsung/exynos.c
-index 72e42603823b..ebf09bbf725b 100644
+index 6559d8cf8068..e70665899482 100644
 --- a/drivers/interconnect/samsung/exynos.c
 +++ b/drivers/interconnect/samsung/exynos.c
-@@ -96,14 +96,8 @@ static struct icc_node *exynos_generic_icc_xlate(struct of_phandle_args *spec,
- static int exynos_generic_icc_remove(struct platform_device *pdev)
- {
- 	struct exynos_icc_priv *priv = platform_get_drvdata(pdev);
--	struct icc_node *parent_node, *node = priv->node;
+@@ -149,6 +149,9 @@ static int exynos_generic_icc_probe(struct platform_device *pdev)
+ 				 &priv->bus_clk_ratio))
+ 		priv->bus_clk_ratio = EXYNOS_ICC_DEFAULT_BUS_CLK_RATIO;
  
- 	icc_provider_deregister(&priv->provider);
--
--	parent_node = exynos_icc_get_parent(priv->dev->parent->of_node);
--	if (parent_node && !IS_ERR(parent_node))
--		icc_link_destroy(node, parent_node);
--
- 	icc_nodes_remove(&priv->provider);
++	icc_node->data = priv;
++	icc_node_add(icc_node, provider);
++
+ 	/*
+ 	 * Register a PM QoS request for the parent (devfreq) device.
+ 	 */
+@@ -157,9 +160,6 @@ static int exynos_generic_icc_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto err_node_del;
  
- 	return 0;
+-	icc_node->data = priv;
+-	icc_node_add(icc_node, provider);
+-
+ 	icc_parent_node = exynos_icc_get_parent(bus_dev->of_node);
+ 	if (IS_ERR(icc_parent_node)) {
+ 		ret = PTR_ERR(icc_parent_node);
 -- 
 2.39.1
 
