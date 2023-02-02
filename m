@@ -2,244 +2,159 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 850FCC61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Feb 2023 16:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 197A4C05027
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Feb 2023 16:52:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231895AbjBBQko (ORCPT
+        id S232047AbjBBQw6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Feb 2023 11:40:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51024 "EHLO
+        Thu, 2 Feb 2023 11:52:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230047AbjBBQkn (ORCPT
+        with ESMTP id S232123AbjBBQw5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Feb 2023 11:40:43 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 482576A33D;
-        Thu,  2 Feb 2023 08:40:42 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id gr7so7634633ejb.5;
-        Thu, 02 Feb 2023 08:40:42 -0800 (PST)
+        Thu, 2 Feb 2023 11:52:57 -0500
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D3076DFC3
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Feb 2023 08:52:55 -0800 (PST)
+Received: by mail-yb1-xb36.google.com with SMTP id g2so2959503ybk.8
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2023 08:52:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1JxadcUmstQQisxG5SMmC/yE89rXvA6AYxcU2YUnVDQ=;
-        b=F0H3B8NAgseBrYAc9OhvFrrJcHUs5RxsmEgusiWeYI4oHZkbOFHj9Ncu15Uvbi4tCO
-         GCoGClEA/o94QYw0U1UfeOAEL80uwq+5tCfPJWGsWnHH8HpmO1lWGzeCrAsIdF4Fu6zR
-         kNR+WhBg1xqNyaBWvq3l+bklN9GSWeF5rkZflnjP5JjP6Pm7phnd2Ab56G7cA8boFLp0
-         xzt+aopsRq/bEYAtjRCwCMmTji3jBwX9xCOCD4tzAC2fkbovQWodfYFH0SLzujYlkR2S
-         3SeXJQSQvZdrRrWbPhPWjXi7p2pGkVjdnp+X80CVTlvacpypSO18F0i1MgCSG84IgzXR
-         jpqA==
+        d=amarulasolutions.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nX/zKmX0Q/GemuA0YNuQhGDyE378ITO+eXfiCy/ngwE=;
+        b=o0iZfUGb6d0Kzi77xWmivymhyzo1OiRlbSXPyd4ZJkkocAluGk12XH6F7vfmddOae8
+         uu3tB5tLJrHx2+NY7vB38Tbp4hvPviU/T3gjyDpZPiynPhIBeEVQ32wBqTD8De1WqV6k
+         tSHXkufx9cQSrd5/NfwDUV77tMVBFaoUVYjto=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1JxadcUmstQQisxG5SMmC/yE89rXvA6AYxcU2YUnVDQ=;
-        b=kIYh5nPLxn++Y2JG3hn9AfOEfKPVuMBW1ZEk0WdU+5sMNs9QBxkQVMOlwQqn3TTvrq
-         52J8oee9p/Z7OnuEfLBVRRO+DUav15ojCYfDXFKk04c5V3dQzTC6rehhpczLrw8quLIT
-         Pj221va3ZlAci508fXMS1WnqJo++wgUN2Oj2KWfGn2cfnRDnyCmCGPbKOxi23vtODWML
-         7jT64ztKn0tW//fuQq54g2EFZSGvWHEb0+0ajvH4sgtNXmM1/xiknndhKYd5kLqy9DlQ
-         X9PjkONYDnVLt8nnQSMSGNiymkc1QhaL5J5yDoGCpruDEYkxB3EhWg10my6BlBlWJmNc
-         6ntA==
-X-Gm-Message-State: AO0yUKWPAXovexVWMXoxw29qPbOUTZ8tYZvL3wVSLY6zLi5FNHgFEaS4
-        MLKj3YLcOsHbzLsza1RYve8=
-X-Google-Smtp-Source: AK7set8DElzpOFybgSqmpPkVSDP76pQ9uMXg+BggB0EZ9TIGd1XdSGpOOvGTm4L9iJVvil59yp3mTw==
-X-Received: by 2002:a17:906:c156:b0:88d:ba89:1835 with SMTP id dp22-20020a170906c15600b0088dba891835mr2844484ejc.6.1675356040636;
-        Thu, 02 Feb 2023 08:40:40 -0800 (PST)
-Received: from jernej-laptop.localnet (82-149-19-102.dynamic.telemach.net. [82.149.19.102])
-        by smtp.gmail.com with ESMTPSA id by13-20020a0564021b0d00b004a277d55a6csm3387108edb.1.2023.02.02.08.40.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Feb 2023 08:40:40 -0800 (PST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     broonie@kernel.org, miquel.raynal@bootlin.com, richard@nod.at,
-        vigneshr@ti.com, jic23@kernel.org, tudor.ambarus@microchip.com,
-        pratyush@kernel.org, sanju.mehta@amd.com,
-        chin-ting_kuo@aspeedtech.com, clg@kaod.org, kdasu.kdev@gmail.com,
-        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
-        eajames@linux.ibm.com, olteanv@gmail.com, han.xu@nxp.com,
-        john.garry@huawei.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        narmstrong@baylibre.com, khilman@baylibre.com,
-        matthias.bgg@gmail.com, haibo.chen@nxp.com,
-        linus.walleij@linaro.org, daniel@zonque.org,
-        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
-        agross@kernel.org, bjorn.andersson@linaro.org, heiko@sntech.de,
-        krzysztof.kozlowski@linaro.org, andi@etezian.org,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        wens@csie.org, samuel@sholland.org, masahisa.kojima@linaro.org,
-        jaswinder.singh@linaro.org, rostedt@goodmis.org, mingo@redhat.com,
-        l.stelmach@samsung.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, alex.aring@gmail.com,
-        stefan@datenfreihafen.org, kvalo@kernel.org,
-        Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>,
-        palmer@dabbelt.com
-Cc:     git@amd.com, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, joel@jms.id.au, andrew@aj.id.au,
-        radu_nicolae.pirea@upb.ro, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, claudiu.beznea@microchip.com,
-        bcm-kernel-feedback-list@broadcom.com, fancer.lancer@gmail.com,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
-        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-        venture@google.com, yuenn@google.com, benjaminfair@google.com,
-        yogeshgaur.83@gmail.com, konrad.dybcio@somainline.org,
-        alim.akhtar@samsung.com, ldewangan@nvidia.com,
-        thierry.reding@gmail.com, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wpan@vger.kernel.org,
-        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-iio@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 01/13] spi: Replace all spi->chip_select and spi->cs_gpiod
- references with function call
-Date:   Thu, 02 Feb 2023 17:40:35 +0100
-Message-ID: <4802797.31r3eYUQgx@jernej-laptop>
-In-Reply-To: <20230202152258.512973-2-amit.kumar-mahapatra@amd.com>
-References: <20230202152258.512973-1-amit.kumar-mahapatra@amd.com>
- <20230202152258.512973-2-amit.kumar-mahapatra@amd.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nX/zKmX0Q/GemuA0YNuQhGDyE378ITO+eXfiCy/ngwE=;
+        b=pTgvDFykzItnqviqRdT3pSNFRnZK7WFXTiV9sLvsLGUXfQR+1RrJ/McM7McyDCNkC4
+         Rfi6OW0bFDzg56uzxrEI3OhXZM6z6bWpzbljrjf/crPfcnRVXNoXLYCYJftBUHfreVyp
+         RPlQWVw9ROky+ReQ9yN1B2uLtRBaciiE5ftWGZC9iqiFBGfRTC3gzOTfAK+Qb6hmrjGb
+         1S7SMC3o7UQKiw5qr+o/ayon3AJXLmp6jHxnt6jE5rutg7mlXO27Pk3THu3uJddk7vBY
+         oTeuFXG/6Jb42YFdQkHpRauAS8yXbmecJ2tgvjL8idHzJnOVOiH+DauNlrgddCYGVRO1
+         szJg==
+X-Gm-Message-State: AO0yUKUDe2nnHi3rPZBqhpWX8pxEnEu2caYmOw2Ow4MjBc8lVat/jeKC
+        biqGuLVJd45O7IoT5dWlMIQMaowiJRLfMlhxhbg/Gg==
+X-Google-Smtp-Source: AK7set9dFxtaPugkWj9eqrIvDkCPGZubPuG7mA/tRz5amPypEJNQ3lfwKqr9dOM1wL5qUUX9j9LvPI+jwsr3S12X7rY=
+X-Received: by 2002:a25:e68b:0:b0:814:9c19:383b with SMTP id
+ d133-20020a25e68b000000b008149c19383bmr697473ybh.462.1675356774675; Thu, 02
+ Feb 2023 08:52:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <20230123151212.269082-1-jagan@amarulasolutions.com>
+ <20230123151212.269082-3-jagan@amarulasolutions.com> <20230126121227.qcnftqvgiz44egpg@houat>
+ <CAMty3ZB6QiqgQN_zWEXULHiipQWU_VaWxDWf9W8OTVQvkACu5A@mail.gmail.com> <20230130125828.qkqsq6ax5mojkdbq@houat>
+In-Reply-To: <20230130125828.qkqsq6ax5mojkdbq@houat>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 2 Feb 2023 22:22:42 +0530
+Message-ID: <CAMty3ZD82xZnRxuTq2RdEGAJcEgnaJhKX3CDWGNeSWSQD7xNxg@mail.gmail.com>
+Subject: Re: [RESEND PATCH v11 02/18] drm: bridge: panel: Add
+ devm_drm_of_dsi_get_bridge helper
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Marek Vasut <marex@denx.de>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi!
+Hi Maxime,
 
-Dne =C4=8Detrtek, 02. februar 2023 ob 16:22:46 CET je Amit Kumar Mahapatra=
-=20
-napisal(a):
-> Supporting multi-cs in spi drivers would require the chip_select & cs_gpi=
-od
-> members of struct spi_device to be an array. But changing the type of the=
-se
-> members to array would break the spi driver functionality. To make the
-> transition smoother introduced four new APIs to get/set the
-> spi->chip_select & spi->cs_gpiod and replaced all spi->chip_select and
-> spi->cs_gpiod references with get or set API calls.
-> While adding multi-cs support in further patches the chip_select & cs_gpi=
-od
-> members of the spi_device structure would be converted to arrays & the
-> "idx" parameter of the APIs would be used as array index i.e.,
-> spi->chip_select[idx] & spi->cs_gpiod[idx] respectively.
->=20
-> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-> Acked-by: Heiko Stuebner <heiko@sntech.de> # Rockchip drivers
-> Reviewed-by: Michal Simek <michal.simek@amd.com>
-> Reviewed-by: C=C3=A9dric Le Goater <clg@kaod.org> # Aspeed driver
-> Reviewed-by: Dhruva Gole <d-gole@ti.com> # SPI Cadence QSPI
-> Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com> # spi-stm32-qs=
-pi
-> Acked-by: William Zhang <william.zhang@broadcom.com> # bcm63xx-hsspi driv=
-er
-> ---
->  drivers/spi/spi-altera-core.c     |  2 +-
->  drivers/spi/spi-amd.c             |  4 ++--
->  drivers/spi/spi-ar934x.c          |  2 +-
->  drivers/spi/spi-armada-3700.c     |  4 ++--
->  drivers/spi/spi-aspeed-smc.c      | 13 +++++++------
->  drivers/spi/spi-at91-usart.c      |  2 +-
->  drivers/spi/spi-ath79.c           |  4 ++--
->  drivers/spi/spi-atmel.c           | 26 +++++++++++++-------------
->  drivers/spi/spi-au1550.c          |  4 ++--
->  drivers/spi/spi-axi-spi-engine.c  |  2 +-
->  drivers/spi/spi-bcm-qspi.c        | 10 +++++-----
->  drivers/spi/spi-bcm2835.c         | 19 ++++++++++---------
->  drivers/spi/spi-bcm2835aux.c      |  4 ++--
->  drivers/spi/spi-bcm63xx-hsspi.c   | 22 +++++++++++-----------
->  drivers/spi/spi-bcm63xx.c         |  2 +-
->  drivers/spi/spi-cadence-quadspi.c |  5 +++--
->  drivers/spi/spi-cadence-xspi.c    |  4 ++--
->  drivers/spi/spi-cadence.c         |  4 ++--
->  drivers/spi/spi-cavium.c          |  8 ++++----
->  drivers/spi/spi-coldfire-qspi.c   |  8 ++++----
->  drivers/spi/spi-davinci.c         | 18 +++++++++---------
->  drivers/spi/spi-dln2.c            |  6 +++---
->  drivers/spi/spi-dw-core.c         |  2 +-
->  drivers/spi/spi-dw-mmio.c         |  4 ++--
->  drivers/spi/spi-falcon.c          |  2 +-
->  drivers/spi/spi-fsi.c             |  2 +-
->  drivers/spi/spi-fsl-dspi.c        | 16 ++++++++--------
->  drivers/spi/spi-fsl-espi.c        |  6 +++---
->  drivers/spi/spi-fsl-lpspi.c       |  2 +-
->  drivers/spi/spi-fsl-qspi.c        |  6 +++---
->  drivers/spi/spi-fsl-spi.c         |  2 +-
->  drivers/spi/spi-geni-qcom.c       |  6 +++---
->  drivers/spi/spi-gpio.c            |  4 ++--
->  drivers/spi/spi-gxp.c             |  4 ++--
->  drivers/spi/spi-hisi-sfc-v3xx.c   |  2 +-
->  drivers/spi/spi-img-spfi.c        | 14 +++++++-------
->  drivers/spi/spi-imx.c             | 30 +++++++++++++++---------------
->  drivers/spi/spi-ingenic.c         |  4 ++--
->  drivers/spi/spi-intel.c           |  2 +-
->  drivers/spi/spi-jcore.c           |  4 ++--
->  drivers/spi/spi-lantiq-ssc.c      |  6 +++---
->  drivers/spi/spi-mem.c             |  4 ++--
->  drivers/spi/spi-meson-spicc.c     |  2 +-
->  drivers/spi/spi-microchip-core.c  |  6 +++---
->  drivers/spi/spi-mpc512x-psc.c     |  8 ++++----
->  drivers/spi/spi-mpc52xx.c         |  2 +-
->  drivers/spi/spi-mt65xx.c          |  6 +++---
->  drivers/spi/spi-mt7621.c          |  2 +-
->  drivers/spi/spi-mux.c             |  8 ++++----
->  drivers/spi/spi-mxic.c            | 10 +++++-----
->  drivers/spi/spi-mxs.c             |  2 +-
->  drivers/spi/spi-npcm-fiu.c        | 20 ++++++++++----------
->  drivers/spi/spi-nxp-fspi.c        | 10 +++++-----
->  drivers/spi/spi-omap-100k.c       |  2 +-
->  drivers/spi/spi-omap-uwire.c      |  8 ++++----
->  drivers/spi/spi-omap2-mcspi.c     | 24 ++++++++++++------------
->  drivers/spi/spi-orion.c           |  4 ++--
->  drivers/spi/spi-pci1xxxx.c        |  4 ++--
->  drivers/spi/spi-pic32-sqi.c       |  2 +-
->  drivers/spi/spi-pic32.c           |  4 ++--
->  drivers/spi/spi-pl022.c           |  4 ++--
->  drivers/spi/spi-pxa2xx.c          |  6 +++---
->  drivers/spi/spi-qcom-qspi.c       |  2 +-
->  drivers/spi/spi-rb4xx.c           |  2 +-
->  drivers/spi/spi-rockchip-sfc.c    |  2 +-
->  drivers/spi/spi-rockchip.c        | 26 ++++++++++++++------------
->  drivers/spi/spi-rspi.c            | 10 +++++-----
->  drivers/spi/spi-s3c64xx.c         |  2 +-
->  drivers/spi/spi-sc18is602.c       |  4 ++--
->  drivers/spi/spi-sh-msiof.c        |  6 +++---
->  drivers/spi/spi-sh-sci.c          |  2 +-
->  drivers/spi/spi-sifive.c          |  6 +++---
->  drivers/spi/spi-sn-f-ospi.c       |  2 +-
->  drivers/spi/spi-st-ssc4.c         |  2 +-
->  drivers/spi/spi-stm32-qspi.c      | 12 ++++++------
->  drivers/spi/spi-sun4i.c           |  2 +-
->  drivers/spi/spi-sun6i.c           |  2 +-
+On Mon, Jan 30, 2023 at 6:28 PM Maxime Ripard <maxime@cerno.tech> wrote:
+>
+> On Thu, Jan 26, 2023 at 08:48:48PM +0530, Jagan Teki wrote:
+> > On Thu, Jan 26, 2023 at 5:42 PM Maxime Ripard <maxime@cerno.tech> wrote:
+> > >
+> > > Hi,
+> > >
+> > > On Mon, Jan 23, 2023 at 08:41:56PM +0530, Jagan Teki wrote:
+> > > > Add devm OF helper to return the next DSI bridge in the chain.
+> > > >
+> > > > Unlike general bridge return helper devm_drm_of_get_bridge, this
+> > > > helper uses the dsi specific panel_or_bridge helper to find the
+> > > > next DSI device in the pipeline.
+> > > >
+> > > > Helper lookup a given child DSI node or a DT node's port and
+> > > > endpoint number, find the connected node and return either
+> > > > the associated struct drm_panel or drm_bridge device.
+> > >
+> > > I'm not sure that using a device managed helper is the right choice
+> > > here. The bridge will stay longer than the backing device so it will
+> > > create a use-after-free. You should probably use a DRM-managed action
+> > > here instead.
+> >
+> > Thanks for the comments. If I understand correctly we can use
+> > drmm_panel_bridge_add instead devm_drm_panel_bridge_add once we found
+> > the panel or bridge - am I correct?
+>
+> It's not that we can, it's that the devm_panel_bridge_add is unsafe:
+> when the module is removed the device will go away and all the devm
+> resources freed, but the DRM device sticks around until the last
+> application with a fd open closes that fd.
 
-=46or sun4i, sun6i:
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+Would you please check this, Here I'm trying to do
 
-Best regards,
-Jernej
+1. find a panel or bridge
+2. if panel add it as a panel bridge
+3. add DRM-managed action with the help of bridge->dev after step 2.
 
->  drivers/spi/spi-synquacer.c       |  6 +++---
->  drivers/spi/spi-tegra114.c        | 28 ++++++++++++++--------------
->  drivers/spi/spi-tegra20-sflash.c  |  2 +-
->  drivers/spi/spi-tegra20-slink.c   |  6 +++---
->  drivers/spi/spi-tegra210-quad.c   |  8 ++++----
->  drivers/spi/spi-ti-qspi.c         | 16 ++++++++--------
->  drivers/spi/spi-topcliff-pch.c    |  4 ++--
->  drivers/spi/spi-wpcm-fiu.c        | 12 ++++++------
->  drivers/spi/spi-xcomm.c           |  2 +-
->  drivers/spi/spi-xilinx.c          |  6 +++---
->  drivers/spi/spi-xlp.c             |  4 ++--
->  drivers/spi/spi-zynq-qspi.c       |  2 +-
->  drivers/spi/spi-zynqmp-gqspi.c    |  2 +-
->  drivers/spi/spidev.c              |  6 +++---
->  include/trace/events/spi.h        | 10 +++++-----
->  92 files changed, 315 insertions(+), 310 deletions(-)
+Didn't test the behavior, just wanted to check whether it can be a
+possibility to use bridge->dev as this dev is assigned with
+encoder->dev during the bridge attach the chain. Please check and let
+me know.
 
+struct drm_bridge *devm_drm_of_dsi_get_bridge(struct device *dev,
+                                              struct device_node *np,
+                                              u32 port, u32 endpoint)
+{
+        struct drm_bridge *bridge;
+        struct drm_panel *panel;
+        int ret;
 
+        ret = drm_of_dsi_find_panel_or_bridge(np, port, endpoint,
+                                              &panel, &bridge);
+        if (ret)
+                return ERR_PTR(ret);
 
+        if (panel)
+                bridge = devm_drm_panel_bridge_add(dev, panel);
+
+        if (IS_ERR(bridge))
+                return bridge;
+
+        ret = drmm_add_action_or_reset(bridge->dev,
+drmm_drm_panel_bridge_release,
+                                       bridge);
+        if (ret)
+                return ERR_PTR(ret);
+
+        return bridge;
+}
+
+Thanks,
+Jagan.
