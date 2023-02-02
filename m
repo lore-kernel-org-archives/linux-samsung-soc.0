@@ -2,117 +2,120 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2F2C61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Feb 2023 11:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD33C636D3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Feb 2023 11:25:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230017AbjBBLNj (ORCPT
+        id S229851AbjBBLZC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Feb 2023 06:13:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44874 "EHLO
+        Thu, 2 Feb 2023 06:25:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229662AbjBBLNi (ORCPT
+        with ESMTP id S231695AbjBBLZB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Feb 2023 06:13:38 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C33D87D1B
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Feb 2023 03:13:37 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id q10-20020a1cf30a000000b003db0edfdb74so3874958wmq.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2023 03:13:37 -0800 (PST)
+        Thu, 2 Feb 2023 06:25:01 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DC928B339
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Feb 2023 03:24:58 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id a2so1109918wrd.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2023 03:24:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=eyViLD6E5jWQUyig/4yWOniALXO9ZkrdBk4rdwCVU3U=;
-        b=DYHClRngcqEE1zDJ0lS0ihNs5fy2CIGpITprFV0BuWpU//9ue4k4yx4vIm4jxJqJsu
-         RIeiasaRH9g8y+pGGIh95QCCJlMI4ycpZ7KlZKUhrBsa9RVDIrXcYhXdUgTUBGpAz4bo
-         JZwuyu0y9FZeBvXdlslShFgdRHvIjEo5G6euQEEw0MseOjNJD1Ue1l3CDm1hVaQgeOBo
-         qRrnlcc+SJ4ET8VQlW9msUD0sfNCixZUZ3mcd/CLJAlIb5WsiNOb9btuwz0797JhprdN
-         vQuEAhyVUm3nfutPmd6AfpPp+GL8qnAuokaV+r9qm0+XbtJ+CrCfmMlI+j1iOwtHPi3u
-         Ct1Q==
+        bh=7zqbU6ksyPOFoWFtHkzD3bR/obP416i9A2wkuzfdxJ0=;
+        b=nfzggKzeDy8Fooxs4/UnxsxkTaMMYY+vYKXApetalDGXsi+1ZE3gfu4/Jm8pAqAcMu
+         BaI3NoNKmY4o74pbEkItGnXS0M5ssMpD91pXu8pvr6ikBC3JoUn1fS7YdtY2j40F3hjE
+         ytvhGarE4ic4hEMccuGYb14jNbckApiwPTVOyfcvUpEY+MADIgylv/jYiyylg2CGBrFs
+         rkPoP3xyN8PARxGU52/b4uZOf3SLFRI+WAI3BefsRfS1eOghIxuAAiENzc8AeJYutlai
+         NBAiIodDauAaYMEQ6btEe7yuGuWPBrOzj0AznkmSdXd0eOe2i/ZCa9+0lPprpIMlCvAP
+         OE9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eyViLD6E5jWQUyig/4yWOniALXO9ZkrdBk4rdwCVU3U=;
-        b=b5Kn55sI6u4U1nb3+LDK9C4mCMcdyZ5gBxAT47BHMJUhOw7usTSE/G+3/cyWjf2NSt
-         OdtTojhGANsOhwyzynCkDouLnmiKMwQJKldEWoqfOLj9Hqh++Ky56yCAOLz8dT4XXBO6
-         Y0c+qobYhRQiJm25CmjvK9JogqmJZrDZrhiJzf2ZAQwaAIX8tkkaCtFFRS06Ow+UkTJS
-         +aSO3t6VtMsjgBH5AKjryT5FvjjELDChW/+M+UbRqqpl49qS5cIs4ubQ2+15HBKGe+MK
-         g876R5hQxNZruJqcZGJb2x6qPrNNG/g+JaFEvKMEpHOWUdx6s+SMtOkAj96FQGP4fA3o
-         BMng==
-X-Gm-Message-State: AO0yUKUhJ5/oeh0YP16xtwX8UXZv0/ohMgStPaWcZr42yg3+GAJQZ12v
-        SsmqM4faE2VkXVSfjGZT5L3e6A==
-X-Google-Smtp-Source: AK7set/MyADSM2GxOa7cX3Nl14EN2MXbfx5PvgBCExukm1vrfPZ/qnHvzT1fTuQac1PO0alosodmAg==
-X-Received: by 2002:a7b:ce11:0:b0:3dd:37a5:dc90 with SMTP id m17-20020a7bce11000000b003dd37a5dc90mr5483376wmc.32.1675336416011;
-        Thu, 02 Feb 2023 03:13:36 -0800 (PST)
+        bh=7zqbU6ksyPOFoWFtHkzD3bR/obP416i9A2wkuzfdxJ0=;
+        b=inyjiU0KPmzrYvu+Te4jwWMYac6XOK7RT7MSdzLVuwWy3CruZ7uic4Ok2SBDs5YQtw
+         KpIQaA4ts2+7XClgK6XsWLEUrbGwKwMJvU2hYkAGe+24BLKeYm0qSGowgQEq6LaUjtDm
+         O0dhwly14elfD+ylnVBJDXzeRhMWjWx2wOTe+j3D86hjoYz/DjtR6gQ53e8J9S4WGMVs
+         WRtHhegSIhae01WbDqM37A++yASC8hdwZkNf7uiNkx7Yu5dWX72ftQ3QazYHGurRJ/2l
+         WwviqYziQoeWutto45FgmoVnja7FAYJY1JnmiAaZu0E10nlgevxUFALhxO0XYdny3H65
+         +Kxw==
+X-Gm-Message-State: AO0yUKVthuQMo/eRq7V2vDswiyx9GnH0MQCr4cBEie4R04o89t6+FV3L
+        y/YCby8Y6VjH9pPLrt6WxaJwTQ==
+X-Google-Smtp-Source: AK7set98EFchu7XA6DGE+bwS7G96dmBZBGUFjUewEpnT2s44kbYug0/j1in/D/oPN9QUp16+dJZwGQ==
+X-Received: by 2002:adf:b355:0:b0:2bd:c83a:6e3 with SMTP id k21-20020adfb355000000b002bdc83a06e3mr4916892wrd.7.1675337096963;
+        Thu, 02 Feb 2023 03:24:56 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id u1-20020a05600c00c100b003a3442f1229sm4416676wmm.29.2023.02.02.03.13.34
+        by smtp.gmail.com with ESMTPSA id v9-20020a056000144900b002c3b2afae00sm4783977wrx.41.2023.02.02.03.24.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Feb 2023 03:13:35 -0800 (PST)
-Message-ID: <57dbcbc6-b497-53db-5a45-abce0e4dcf37@linaro.org>
-Date:   Thu, 2 Feb 2023 12:13:33 +0100
+        Thu, 02 Feb 2023 03:24:56 -0800 (PST)
+Message-ID: <35911bc7-6973-d4b0-18d4-22e93962f3c5@linaro.org>
+Date:   Thu, 2 Feb 2023 12:24:55 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH 00/23] interconnect: fix racy provider registration
+Subject: Re: [PATCH 1/2] mfd: sec: Remove PMICs without compatibles
 Content-Language: en-US
-To:     Johan Hovold <johan+linaro@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230201101559.15529-1-johan+linaro@kernel.org>
+To:     David Virag <virag.david003@gmail.com>
+Cc:     Lee Jones <lee@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+References: <20230131183008.4451-1-virag.david003@gmail.com>
+ <20230131183008.4451-2-virag.david003@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230201101559.15529-1-johan+linaro@kernel.org>
+In-Reply-To: <20230131183008.4451-2-virag.david003@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 01/02/2023 11:15, Johan Hovold wrote:
-> The current interconnect provider interface is inherently racy as
-> providers are expected to be registered before being fully initialised.
+On 31/01/2023 19:30, David Virag wrote:
+> The S5M8751 and S5M8763 PMIC chips have no corresponding compatible
+> values, so since board file support was removed for this driver, there
+> is no way to specify these PMICs as present in boards anymore.
+> Remove leftovers of these chips since it's dead code.
 > 
-> This can specifically cause racing DT lookups to fail as I recently
-> noticed when the Qualcomm cpufreq driver failed to probe:
-> 
-> 	of_icc_xlate_onecell: invalid index 0
->         cpu cpu0: error -EINVAL: error finding src node
->         cpu cpu0: dev_pm_opp_of_find_icc_paths: Unable to get path0: -22
->         qcom-cpufreq-hw: probe of 18591000.cpufreq failed with error -22
-> 
-> This only happens very rarely, but the bug is easily reproduced by
-> increasing the race window by adding an msleep() after registering
-> osm-l3 interconnect provider.
-> 
-> Note that the Qualcomm cpufreq driver is especially susceptible to this
-> race as the interconnect path is looked up from the CPU nodes so that
-> driver core does not guarantee the probe order even when device links
-> are enabled (which they not always are).
-> 
-> This series adds a new interconnect provider registration API which is
-> used to fix up the interconnect drivers before removing the old racy
-> API.
-> 
+> Signed-off-by: David Virag <virag.david003@gmail.com>
+> ---
 
-So is there a dependency or not? Can you make it clear that I shouldn't
-take memory controller bits?
+Thank you for your patch. There is something to discuss/improve.
+
+>  int sec_irq_init(struct sec_pmic_dev *sec_pmic)
+>  {
+>  	int ret = 0;
+> @@ -448,9 +362,6 @@ int sec_irq_init(struct sec_pmic_dev *sec_pmic)
+>  	}
+>  
+>  	switch (type) {
+> -	case S5M8763X:
+> -		sec_irq_chip = &s5m8763_irq_chip;
+> -		break;
+>  	case S5M8767X:
+>  		sec_irq_chip = &s5m8767_irq_chip;
+>  		break;
+> diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+> index f92fe090473d..07aae649a86f 100644
+> --- a/include/linux/mfd/samsung/core.h
+> +++ b/include/linux/mfd/samsung/core.h
+> @@ -36,7 +36,6 @@
+>  struct gpio_desc;
+>  
+>  enum sec_device_type {
+> -	S5M8751X,
+>  	S5M8763X,
+
+Drop also S5M8763X
+
+>  	S5M8767X,
+>  	S2MPA01,
+> diff --git a/include/linux/mfd/samsung/s5m8763.h b/include/linux/mfd/samsung/s5m8763.h
+> deleted file mode 100644
+
 
 Best regards,
 Krzysztof
