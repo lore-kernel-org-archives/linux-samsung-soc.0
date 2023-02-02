@@ -2,61 +2,61 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7912BC05027
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Feb 2023 11:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64672C636D3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Feb 2023 11:10:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbjBBLFy (ORCPT
+        id S232017AbjBBLKq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Feb 2023 06:05:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58362 "EHLO
+        Thu, 2 Feb 2023 06:10:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230463AbjBBLFl (ORCPT
+        with ESMTP id S232550AbjBBLKF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Feb 2023 06:05:41 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEAF18306A
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Feb 2023 03:04:57 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id c10-20020a05600c0a4a00b003db0636ff84so1092615wmq.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2023 03:04:57 -0800 (PST)
+        Thu, 2 Feb 2023 06:10:05 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53E896B011
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Feb 2023 03:09:38 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id bg13-20020a05600c3c8d00b003d9712b29d2so3442817wmb.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2023 03:09:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=84LdQG7FtMDJskUXUfOk9gQLMSBtSXh4k9NsYiJXRp8=;
-        b=YY/PxCI0eSZTB1pdl42r362jpO42bOCq9Yw+LX8Ec62FpLPKaXUgZMLo4Up3JrS8Mp
-         w/GqZ+LnGAQ/5Pj5cAd2zhHn6wzlhbFjrftMDnUqEhBMAlV1EQV0dNVXzBALcKPmHHe5
-         NPly/afncSbS4UlFwDmGuDJxRC79BghUj/WdQ+RF205Q76FrLNzY6z3WqmJfgTOwOkGY
-         uccm2bazfSmmgIa7yT6+oV+DNtsBK3Z/ydro3dd5QZ3k7Nt0Uxciowi5vfJXF3jeHPsP
-         ELWV3AgenUEy3XigQD2p6ix69Fn5VHeqgUwHjfloJ369zdyxPEgbUYu5j7uE/cgZvDzt
-         haag==
+        bh=zGhcwfRQP1vbMhQHFBN3FkAYqNe4cdk/CFn8QpsceBo=;
+        b=FDpSb+mwnlw8m5dHv+86Ui3ZrmgaXz6GfNCWc2N7biOdmOXsemof67Z+Ql7/ScD270
+         vlo8IXDmUvSzX9EhLRxmlbY9GUQ2qr7Mi+Uw9lo8o86w3HSbNgAb2Q3x2R43VIf1Bfyp
+         9SKdNxy+e8QEaLvjNrvMFx+Rq7O0NHz4qOzdedbPqbKPI2IRknH0xNWJ/J0HyJg2l+cm
+         A1rqYTSdb+EiYaI/wLKGn0+KRytAoOvUcEp4ERC4c/M6ajPmWxxUwL0Nuv8JlRXbwhKx
+         0L3YQMXEu7x+DqKQuRcOR0+LyW1/LcIUZxHzR4heBcWPZkJQ5sNvCrtOdfcYipx3Reww
+         7hvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=84LdQG7FtMDJskUXUfOk9gQLMSBtSXh4k9NsYiJXRp8=;
-        b=awPoQKD4iD/MWk2xtT2P3zZlfZXfwYB4E5SN0qPLDM8lT1xTBFY03xaYVJdfrT7ZNE
-         dmqqsMZp1fnqA/vSEQ5oEDwSrjCS+UU+bjQr5+6gPU7DRbQluyz1BqTmu6CJkNXpBKoF
-         AkXwAj3JV2b6pTEIolXBM300bo9ZOQ6oLDe8dmr1bGoB6VODc3i4/Zb0FgC/AI81hTIU
-         R2YgnmyaDRz+LAnWxw7iYYRVzlFRiEvqCZoh9mLmbam4No+j3Xd00aI62Dy4fVlTU1+G
-         IVRDww4Fyg7EulQEiPA8xhFZSmB27IZ5CpxTsCl7ib4hRvVvY8PHo6nKQ/5eLE6/Nis7
-         XzIQ==
-X-Gm-Message-State: AO0yUKVNnQcqnuFdjFqKjaojmnQA5ffLZqvG3g+8HMBitU47VxWlS7Bs
-        fAvM9mPwtEOw/DC9P1aYC3nIew==
-X-Google-Smtp-Source: AK7set9bhwS4j0q/7L9EvuG4nE3Tl5dVTO9q14HaPAJVMDLA/gZQo/8p5swe04iHnL1tsJwtBlw2iw==
-X-Received: by 2002:a1c:7906:0:b0:3d3:49db:9b25 with SMTP id l6-20020a1c7906000000b003d349db9b25mr5335894wme.26.1675335892189;
-        Thu, 02 Feb 2023 03:04:52 -0800 (PST)
+        bh=zGhcwfRQP1vbMhQHFBN3FkAYqNe4cdk/CFn8QpsceBo=;
+        b=i7BSzUCONLYeoZpti+Lej/wOv/dcybeVX+0qEurW5cGAnrWdT7SZg4CZ1lRqLrV7pc
+         xiD+U5/UpT1ggVUwTEX5SpnO2Gd6LjhUldDT+6yN4PJcVLHnuBUHWcqwQAvU3lKu89my
+         AQNIrsWidxsYDJ2+R2DxCyFNanRfEemF9XYvKNGQbxKvhZ6j7vas4RDGeMYG6t/2MF+c
+         trDo76N2ih3U7nGo+6O9+JMX4QTJNRjWVgqQpf+zHD5sKB3UTkrFsNTemnixTjFWgrZR
+         LwVAVn9NiTGgc4KxbKyi1AePycqjSrTZzOCkn4bSmDwrn2HfV0dOAKIn4tbPnsxK9uo7
+         l9zw==
+X-Gm-Message-State: AO0yUKUgGguZBfyzr2owfipIDybR1EowrZpTm01KJLkACjLu8Vo4x48L
+        zHoYbGhOTmgoPrPaTO3+UYA6Kw==
+X-Google-Smtp-Source: AK7set97949CQomMTHJXrUmVYXoP68F1grpSho+nTxTkUvOOSDw/afzyYWDMSQ0qCS57Wk1H9+6yeg==
+X-Received: by 2002:a05:600c:35cc:b0:3dc:55e6:fffd with SMTP id r12-20020a05600c35cc00b003dc55e6fffdmr5502802wmq.15.1675336175028;
+        Thu, 02 Feb 2023 03:09:35 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id r38-20020a05600c322600b003dd7edcc960sm4125824wmp.45.2023.02.02.03.04.49
+        by smtp.gmail.com with ESMTPSA id o6-20020a05600c2e0600b003dcc82ce53fsm4247203wmf.38.2023.02.02.03.09.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Feb 2023 03:04:51 -0800 (PST)
-Message-ID: <e706bb89-bb79-33e3-f319-268ec4695015@linaro.org>
-Date:   Thu, 2 Feb 2023 12:04:49 +0100
+        Thu, 02 Feb 2023 03:09:34 -0800 (PST)
+Message-ID: <40d0fff4-5d1c-3e93-1eed-132c7e1aa92e@linaro.org>
+Date:   Thu, 2 Feb 2023 12:09:32 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH 15/23] interconnect: exynos: fix registration race
+Subject: Re: [PATCH 16/23] interconnect: exynos: drop redundant link destroy
 Content-Language: en-US
 To:     Johan Hovold <johan+linaro@kernel.org>,
         Georgi Djakov <djakov@kernel.org>
@@ -75,12 +75,11 @@ Cc:     Shawn Guo <shawnguo@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230201101559.15529-1-johan+linaro@kernel.org>
- <20230201101559.15529-16-johan+linaro@kernel.org>
+ <20230201101559.15529-17-johan+linaro@kernel.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230201101559.15529-16-johan+linaro@kernel.org>
+In-Reply-To: <20230201101559.15529-17-johan+linaro@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -88,72 +87,17 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 01/02/2023 11:15, Johan Hovold wrote:
-> The current interconnect provider registration interface is inherently
-> racy as nodes are not added until the after adding the provider. This
-> can specifically cause racing DT lookups to trigger a NULL-pointer
-> deference when either a NULL pointer or not fully initialised node is
-> returned from exynos_generic_icc_xlate().
+> There is no longer any need to explicitly destroy node links as this is
+> now done when the node is destroyed as part of icc_nodes_remove().
 > 
-> Switch to using the new API where the provider is not registered until
-> after it has been fully initialised.
-> 
-> Fixes: 2f95b9d5cf0b ("interconnect: Add generic interconnect driver for Exynos SoCs")
-> Cc: stable@vger.kernel.org      # 5.11
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 > ---
->  drivers/interconnect/samsung/exynos.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/interconnect/samsung/exynos.c b/drivers/interconnect/samsung/exynos.c
-> index e70665899482..72e42603823b 100644
-> --- a/drivers/interconnect/samsung/exynos.c
-> +++ b/drivers/interconnect/samsung/exynos.c
-> @@ -98,12 +98,13 @@ static int exynos_generic_icc_remove(struct platform_device *pdev)
->  	struct exynos_icc_priv *priv = platform_get_drvdata(pdev);
->  	struct icc_node *parent_node, *node = priv->node;
->  
-> +	icc_provider_deregister(&priv->provider);
-> +
->  	parent_node = exynos_icc_get_parent(priv->dev->parent->of_node);
->  	if (parent_node && !IS_ERR(parent_node))
->  		icc_link_destroy(node, parent_node);
->  
->  	icc_nodes_remove(&priv->provider);
-> -	icc_provider_del(&priv->provider);
->  
->  	return 0;
->  }
-> @@ -132,15 +133,11 @@ static int exynos_generic_icc_probe(struct platform_device *pdev)
->  	provider->inter_set = true;
->  	provider->data = priv;
->  
-> -	ret = icc_provider_add(provider);
-> -	if (ret < 0)
-> -		return ret;
-> +	icc_provider_init(provider);
->  
->  	icc_node = icc_node_create(pdev->id);
-> -	if (IS_ERR(icc_node)) {
-> -		ret = PTR_ERR(icc_node);
-> -		goto err_prov_del;
-> -	}
-> +	if (IS_ERR(icc_node))
-> +		return PTR_ERR(icc_node);
->  
->  	priv->node = icc_node;
->  	icc_node->name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "%pOFn",
-> @@ -171,14 +168,17 @@ static int exynos_generic_icc_probe(struct platform_device *pdev)
->  			goto err_pmqos_del;
->  	}
->  
-> +	ret = icc_provider_register(provider);
-> +	if (ret < 0)
-> +		goto err_pmqos_del;
+>  drivers/interconnect/samsung/exynos.c | 6 ------
+>  1 file changed, 6 deletions(-)
 
-If I understand correctly there is no need for icc_link_destroy() in
-error path here, right? Even in case of probe retry (defer or whatever
-reason) - the link will be removed with icc_nodes_remove()?
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
 Best regards,
 Krzysztof
