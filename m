@@ -2,61 +2,61 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD5AC61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Feb 2023 11:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E18C636D3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Feb 2023 11:28:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230004AbjBBL2O (ORCPT
+        id S231663AbjBBL21 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Feb 2023 06:28:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53892 "EHLO
+        Thu, 2 Feb 2023 06:28:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231773AbjBBL2N (ORCPT
+        with ESMTP id S231835AbjBBL20 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Feb 2023 06:28:13 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7418216327
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Feb 2023 03:28:10 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id bg26so1157212wmb.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2023 03:28:10 -0800 (PST)
+        Thu, 2 Feb 2023 06:28:26 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4827820D24
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Feb 2023 03:28:25 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id hn2-20020a05600ca38200b003dc5cb96d46so3468183wmb.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2023 03:28:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xz4rQVtqStkLN1QgloBn4UVZQaeKASMZkIIj+VC1lV8=;
-        b=OLmZaQzEvAM9UQ58gMuaq/VfYYamVCPuCoyyDLXynbCDb3wpKMiqqQ3jn+0OZyDhO1
-         mARdkJKm+gHMHcQVajhKW7OAFLuD43Bwy3ll0XqlI2UZAWIP5Gvc95ExYPXVLAKKXIGT
-         215MCsRQv0rw9Uj02S5Qzak6thNs1PEvq3jZ1O5lArHCH2BJwmoKdkzUCcNfBNY8/9l9
-         +YcMZWCw04SKy4Y7qHuAKe+s6DnwylCQVfRFZILXCvN10PBGhWcPg52aHMlhq1RmPGeb
-         oNzTJ0jV5R19bjSwEfkAUi7X6DqOLFJ1OtZ0uHfFJK++3Elv5+lHmaB3tsOzdYtnYwqj
-         caiw==
+        bh=6G7C6+CbotlLHhV5pB8v4PiXcl3SeDboC1BfDqfKOuk=;
+        b=VxLUhaPGapq/mN890GskLmZRb5wZr1N1JPiiwQly1P4ZqxNFyhiITm0kzVOsbEeA9E
+         1AwYwov2+tU4UdamIIXNsBDTaaVHqkc9empQD+2wpkcPXeTjjpjDvgpnje4oMbRtA2AK
+         pf7e2KHFSjCjUx2zqa4RHVRHJe1p38l2OCKTQNREi2aoujQYC+jBAcYrtxv7FlZXkd1b
+         VqiaZp58TMt2IhvhqV2csYxfnI7zM1IoYelskqC7BAuMlyOFjCzS4/7x8weds+Q58nDg
+         moI7hB/fi8onNCjc38WeJDEljExv6/ATxp14bAJpRKcaPxBqDfM30/HrMkBczUpijPHj
+         UI/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xz4rQVtqStkLN1QgloBn4UVZQaeKASMZkIIj+VC1lV8=;
-        b=5OraKv+vvMs27ZBWgXbljTzPbSqIF77i0D7MOAxm5N8DpqwiA5h5CUwLVlY9wVMYKH
-         gPxTXrdlpFxTt2kGs4VegbyHeUhAf5/9mVxOS64xrKmW0cx+ka7YF0m8AO/o4dsl/HbP
-         0TEjvpvDsCtEEjQrYOZm9lovE0VeM9FA0eajYKcQsaGPP/N5e8BE8tAO8fBX7ecYrTJ8
-         nGcMEz/jjtPlzHyqxlJmc5cYA+aS/ONcILr/IeG/cw511DVkOWI83dqVj7dKBueAk1P9
-         4joRYaLj2+wlbmxcvO3UwTKQgTjAEMVpQmfZSMUnJOihlFCSeBTlIaU40o/8C07dzfih
-         hXlw==
-X-Gm-Message-State: AO0yUKV4bkhdVHxeeoeCarzSjB9/1SU9KCCHN8rmVv5GfloLQqaYncKg
-        IJQV9mPhrSfOVAnoFz8fDMl5hVAfqYoJh7fm
-X-Google-Smtp-Source: AK7set8x8+W/GUIVZbhPBKDNCv6UGTY9N0ydmkGFu/39U23wYEqA8P63uLXoRsP28W8BfDq+f9AnJQ==
-X-Received: by 2002:a05:600c:5406:b0:3dc:5614:919f with SMTP id he6-20020a05600c540600b003dc5614919fmr5575428wmb.23.1675337289054;
-        Thu, 02 Feb 2023 03:28:09 -0800 (PST)
+        bh=6G7C6+CbotlLHhV5pB8v4PiXcl3SeDboC1BfDqfKOuk=;
+        b=isHEfUwkWmTrywWdEaSl9xiX7yPPF7YiA5lGj/ju4j0dcywFxEParsU00WRx1vNHC5
+         GxR01OiTXgvFu7HmA9LAd7l21Aug9a+w4YHxN+CB04tu17eScvFGVyvyYEqYzgc/AtM6
+         yqcbv2HVEVzkDJ5KI2RsOGNbuEc8yDDAhG0huNyYR+4oGaLXJJg6eo3LQJYjpfkzt+F7
+         I+QsGqa489+RBptZRtIGfMlbbsF8Vf0s3J8QwUtE8OB1mWOBSTg4tz5eRlRpRRvJMsUx
+         KleFYP6f9wn/fgBdMvOXTBa2i9siV1aC/FW2qlERIbm5UUZfCWolTvPzVHiEmifPDLTl
+         QB4w==
+X-Gm-Message-State: AO0yUKUoTWpCzEQ9CTQEtOkUM3tEqfAAQMw+B2NxUdVD4/dYBUdZmt5g
+        QJ79iES06r3zGd+V69AtFkm+Ek+ff49nXHHA
+X-Google-Smtp-Source: AK7set8g8w7bdeLSLWWG6jKSrWmqZW5B7wOaDHauzzAmPFMYlzAOK0TFE7LRWIEkCIF+Qo265e4C/w==
+X-Received: by 2002:a05:600c:4447:b0:3cf:ae53:9193 with SMTP id v7-20020a05600c444700b003cfae539193mr5419631wmn.39.1675337303887;
+        Thu, 02 Feb 2023 03:28:23 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id q17-20020a05600c2e5100b003dd1aa227afsm4146628wmf.31.2023.02.02.03.28.07
+        by smtp.gmail.com with ESMTPSA id m17-20020a7bce11000000b003dc492e4430sm4576133wmc.28.2023.02.02.03.28.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Feb 2023 03:28:08 -0800 (PST)
-Message-ID: <e70b3ba0-145c-9e5e-9af8-c02b074b0ad4@linaro.org>
-Date:   Thu, 2 Feb 2023 12:28:07 +0100
+        Thu, 02 Feb 2023 03:28:23 -0800 (PST)
+Message-ID: <45ed6cd5-16b9-dab5-cdc1-9a15009fbe54@linaro.org>
+Date:   Thu, 2 Feb 2023 12:28:22 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH 2/2] rtc: s5m: Drop S5M8763 support
+Subject: Re: [PATCH 1/2] mfd: sec: Remove PMICs without compatibles
 Content-Language: en-US
 To:     David Virag <virag.david003@gmail.com>
 Cc:     Lee Jones <lee@kernel.org>,
@@ -65,9 +65,9 @@ Cc:     Lee Jones <lee@kernel.org>,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-rtc@vger.kernel.org
 References: <20230131183008.4451-1-virag.david003@gmail.com>
- <20230131183008.4451-3-virag.david003@gmail.com>
+ <20230131183008.4451-2-virag.david003@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230131183008.4451-3-virag.david003@gmail.com>
+In-Reply-To: <20230131183008.4451-2-virag.david003@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -75,17 +75,17 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 31/01/2023 19:30, David Virag wrote:
-> The S5M8763 MFD has no device tree compatible, and since board file
-> support for it was removed, there's no way to use this MFD. After
-> removing the remaining code for it from the MFD driver, also remove
-> support for it in the s5m RTC driver, and all remaining references to
-> it.
+> The S5M8751 and S5M8763 PMIC chips have no corresponding compatible
+> values, so since board file support was removed for this driver, there
+> is no way to specify these PMICs as present in boards anymore.
+> Remove leftovers of these chips since it's dead code.
 > 
 > Signed-off-by: David Virag <virag.david003@gmail.com>
 
+I see removal of define in patch 2, so:
+
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
 
 Best regards,
 Krzysztof
