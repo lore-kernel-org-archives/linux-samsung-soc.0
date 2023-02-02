@@ -2,136 +2,128 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EEB9C61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Feb 2023 12:11:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 775B2C05027
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Feb 2023 12:17:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230070AbjBBMLd (ORCPT
+        id S230169AbjBBMRK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Feb 2023 07:11:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47658 "EHLO
+        Thu, 2 Feb 2023 07:17:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231665AbjBBMLd (ORCPT
+        with ESMTP id S229848AbjBBMRJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Feb 2023 07:11:33 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FAF78DAC4;
-        Thu,  2 Feb 2023 04:11:25 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id t7so1514682wrp.5;
-        Thu, 02 Feb 2023 04:11:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3h/Avsg9llMSmsRpRzQZ6gQ0I+FoXYp7Hs1A3gdTcCk=;
-        b=RmJpNrOke90Ddh0UWKiW/Ud5p61eVG4CIFb35LnraOEhz5hFrTo2ehKglhvbEBWuSK
-         ZQQD9jtI02WcPqK1tpfd2zg/7oOi1qUEaChq9CIcypf2Hnd2HHl122xDmkulva/BYlqX
-         ZsrobUEmwCN5FS0mZO2XnEllvvwlYDVOATtKJkbzn+UA/9OZnaO5AUXpYZbBz2H/fmeU
-         QZT/EMIJF9zBJoiTSw0AjhaFOwmxGAZv3tliaZ+YqlNG9KI7ZMY4vf587OxW7JwfRE6a
-         w5XYEuJtNHXlMrW24mlINiXdlBOOKCplTcauVR5x2M+Dy4rG0lQXC/Qs+E6TL80XiaNk
-         w0yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3h/Avsg9llMSmsRpRzQZ6gQ0I+FoXYp7Hs1A3gdTcCk=;
-        b=MZuEatMJZtYOhj7227bbQTB5Hirb+ArYHRgSK3qH0fOVCOWkxuKFViiHf900WyuTRs
-         a9PNYmwQa8yXOkdjmx7VPSreuOlZ2+B6mWizibmpaSAdhKkswBG1a+nP9Pwg3HF4DJcj
-         PbDl2fC6EDErzTIw3x9gPbYQyuiJ82VVH0UVWr5gLkJ30P2UzfO+vhJO9ikgCIfPaRmD
-         Tyco09OACvN8Psy7gbhAX2LZmMHzX9WZjTvHg8HVjNKeQSmLCcK+B2xjjENCDnSHOmVJ
-         9/Q+zajKdper2DOCHnDNabQfj+2d/qAyIFK9HBUofu6AUAOnFVTcqlCB79uOda3wFbwE
-         doqg==
-X-Gm-Message-State: AO0yUKUSR3B8IdUQHB2lN23KPtNq0fc1mPXebfoAYldeMC3OJ7ilM35O
-        gr9s8Zh1J7buBoMCv/kVyRI=
-X-Google-Smtp-Source: AK7set+pEZ+QehHTxPElQjCjON39TU8ocN2F4pODbB0/6N2B4QRQrMY7lHY3S4O1WG8urzJYrCZG9Q==
-X-Received: by 2002:a5d:514d:0:b0:2bf:ae1e:84d2 with SMTP id u13-20020a5d514d000000b002bfae1e84d2mr5295276wrt.12.1675339883470;
-        Thu, 02 Feb 2023 04:11:23 -0800 (PST)
-Received: from ?IPv6:2a02:ab88:368f:2080:d12e:7ef:c89a:f600? ([2a02:ab88:368f:2080:d12e:7ef:c89a:f600])
-        by smtp.gmail.com with ESMTPSA id v12-20020a5d610c000000b0028965dc7c6bsm19484295wrt.73.2023.02.02.04.11.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Feb 2023 04:11:23 -0800 (PST)
-Message-ID: <4c95d12d5d4c423adf78c2c859c09ea7dfe98740.camel@gmail.com>
-Subject: Re: [PATCH 1/2] mfd: sec: Remove PMICs without compatibles
-From:   David Virag <virag.david003@gmail.com>
+        Thu, 2 Feb 2023 07:17:09 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1B476FD38;
+        Thu,  2 Feb 2023 04:17:08 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 42DF461AF9;
+        Thu,  2 Feb 2023 12:17:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95437C433EF;
+        Thu,  2 Feb 2023 12:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675340227;
+        bh=kXuVYOYprEDAERc9ptWyMD0dUfVOl7wsMQbwhSMi7eU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OEfzBbqOC8Hqklq9IWsxlHAenMXr143GgEE5GC9FLVByvD6w1OGp/BLIRQJPl2zKP
+         RggMPeisymcQZCUneIu57XG3OcHTXx2kc2kK5Ui9PJENo8x0zJxUhniILVKlK1eYKa
+         rZ1nov43rLlcQLG6F5iPV76qXesHS70hea+0Wv2i6C1gDLfDtshPHM2StvWUZzRgSi
+         WTjuJ7xer7xYwz6L954tuYZCRhrXZ0VuZCX+FYEeWHUQTDqXdvbJW7BK166IrAqeUQ
+         FRzV48SorFgR73bQnAmPJE1wUylAP6HohDjXIV+Oqqk25lSkzQCJyrA909aw9CKgSw
+         PW4i3J7MnChhQ==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1pNYWw-0001UF-Bx; Thu, 02 Feb 2023 13:17:31 +0100
+Date:   Thu, 2 Feb 2023 13:17:30 +0100
+From:   Johan Hovold <johan@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Lee Jones <lee@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Date:   Thu, 02 Feb 2023 13:11:22 +0100
-In-Reply-To: <35911bc7-6973-d4b0-18d4-22e93962f3c5@linaro.org>
-References: <20230131183008.4451-1-virag.david003@gmail.com>
-         <20230131183008.4451-2-virag.david003@gmail.com>
-         <35911bc7-6973-d4b0-18d4-22e93962f3c5@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.3 
+Cc:     Johan Hovold <johan+linaro@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 15/23] interconnect: exynos: fix registration race
+Message-ID: <Y9up2gKUpZXhI+J8@hovoldconsulting.com>
+References: <20230201101559.15529-1-johan+linaro@kernel.org>
+ <20230201101559.15529-16-johan+linaro@kernel.org>
+ <e706bb89-bb79-33e3-f319-268ec4695015@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e706bb89-bb79-33e3-f319-268ec4695015@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 2023-02-02 at 12:24 +0100, Krzysztof Kozlowski wrote:
-> On 31/01/2023 19:30, David Virag wrote:
-> > The S5M8751 and S5M8763 PMIC chips have no corresponding compatible
-> > values, so since board file support was removed for this driver,
-> > there
-> > is no way to specify these PMICs as present in boards anymore.
-> > Remove leftovers of these chips since it's dead code.
-> >=20
-> > Signed-off-by: David Virag <virag.david003@gmail.com>
-> > ---
->=20
-> Thank you for your patch. There is something to discuss/improve.
->=20
-> > =C2=A0int sec_irq_init(struct sec_pmic_dev *sec_pmic)
-> > =C2=A0{
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret =3D 0;
-> > @@ -448,9 +362,6 @@ int sec_irq_init(struct sec_pmic_dev *sec_pmic)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> > =C2=A0
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0switch (type) {
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0case S5M8763X:
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0sec_irq_chip =3D &s5m8763_irq_chip;
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0break;
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0case S5M8767X:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0sec_irq_chip =3D &s5m8767_irq_chip;
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0break;
-> > diff --git a/include/linux/mfd/samsung/core.h
-> > b/include/linux/mfd/samsung/core.h
-> > index f92fe090473d..07aae649a86f 100644
-> > --- a/include/linux/mfd/samsung/core.h
-> > +++ b/include/linux/mfd/samsung/core.h
-> > @@ -36,7 +36,6 @@
-> > =C2=A0struct gpio_desc;
-> > =C2=A0
-> > =C2=A0enum sec_device_type {
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0S5M8751X,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0S5M8763X,
->=20
-> Drop also S5M8763X
+On Thu, Feb 02, 2023 at 12:04:49PM +0100, Krzysztof Kozlowski wrote:
+> On 01/02/2023 11:15, Johan Hovold wrote:
 
-Dropping it in the first patch would lead to build errors in the RTC
-driver, so I do it in the second patch, but I see that you already
-realized this in the 2nd reply.
+> > @@ -98,12 +98,13 @@ static int exynos_generic_icc_remove(struct platform_device *pdev)
+> >  	struct exynos_icc_priv *priv = platform_get_drvdata(pdev);
+> >  	struct icc_node *parent_node, *node = priv->node;
+> >  
+> > +	icc_provider_deregister(&priv->provider);
+> > +
+> >  	parent_node = exynos_icc_get_parent(priv->dev->parent->of_node);
+> >  	if (parent_node && !IS_ERR(parent_node))
+> >  		icc_link_destroy(node, parent_node);
+> >  
+> >  	icc_nodes_remove(&priv->provider);
+> > -	icc_provider_del(&priv->provider);
+> >  
+> >  	return 0;
+> >  }
+> > @@ -132,15 +133,11 @@ static int exynos_generic_icc_probe(struct platform_device *pdev)
+> >  	provider->inter_set = true;
+> >  	provider->data = priv;
+> >  
+> > -	ret = icc_provider_add(provider);
+> > -	if (ret < 0)
+> > -		return ret;
+> > +	icc_provider_init(provider);
+> >  
+> >  	icc_node = icc_node_create(pdev->id);
+> > -	if (IS_ERR(icc_node)) {
+> > -		ret = PTR_ERR(icc_node);
+> > -		goto err_prov_del;
+> > -	}
+> > +	if (IS_ERR(icc_node))
+> > +		return PTR_ERR(icc_node);
+> >  
+> >  	priv->node = icc_node;
+> >  	icc_node->name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "%pOFn",
+> > @@ -171,14 +168,17 @@ static int exynos_generic_icc_probe(struct platform_device *pdev)
+> >  			goto err_pmqos_del;
+> >  	}
+> >  
+> > +	ret = icc_provider_register(provider);
+> > +	if (ret < 0)
+> > +		goto err_pmqos_del;
+> 
+> If I understand correctly there is no need for icc_link_destroy() in
+> error path here, right? Even in case of probe retry (defer or whatever
+> reason) - the link will be removed with icc_nodes_remove()?
 
->=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0S5M8767X,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0S2MPA01,
-> > diff --git a/include/linux/mfd/samsung/s5m8763.h
-> > b/include/linux/mfd/samsung/s5m8763.h
-> > deleted file mode 100644
->=20
->=20
-> Best regards,
-> Krzysztof
->=20
+Correct, it is no longer needed after the first patch in this series.
 
-Best regards,
-David
+The exynos driver was the only driver that bothered to remove links
+explicitly, all the others expected the interconnect framework to do so
+when destroying nodes even if that was not case until now.
+
+Johan
