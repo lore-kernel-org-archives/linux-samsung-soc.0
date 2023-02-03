@@ -2,61 +2,61 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51594C636D4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Feb 2023 02:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD5BC636D3
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Feb 2023 02:59:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232202AbjBCC6j (ORCPT
+        id S232152AbjBCC7l (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Feb 2023 21:58:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36856 "EHLO
+        Thu, 2 Feb 2023 21:59:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232178AbjBCC6h (ORCPT
+        with ESMTP id S229602AbjBCC7k (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Feb 2023 21:58:37 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B99322311E
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Feb 2023 18:58:31 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id m2so11719288ejb.8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2023 18:58:31 -0800 (PST)
+        Thu, 2 Feb 2023 21:59:40 -0500
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D992119F32
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Feb 2023 18:59:38 -0800 (PST)
+Received: by mail-ej1-x636.google.com with SMTP id gr7so11760751ejb.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2023 18:59:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hr14rJhyuOYS8CCUPkhJr0V/RzyGfQ4WdWOK9XcyHds=;
-        b=DPYTk9LfruNrk0yQfRVEMZfhRtdFK/yxKmc6GwnKAYfCLVOGHi+ZWILSVVaHo/h4Rj
-         j9PnLd7WJkD3q1H45Ojvmmwv5e8zj9mPpPaoZSOORM4TlcNoaIGvwAYMcxb//kbZSocz
-         4PmfYKbAcpc9BTzUlt1Xf4qN/sd2hxJpH8duI7IqxnXR9xvxdiiXwNRwJsgRByiI+JpC
-         2jk/uV9pr4sxIEa3yZr1QdYtcUVXpWnxKsRbu/uU4upnB4uGTDkmVyPQ4BLKxcpHhyuo
-         U5kE/5oZN62u9tOpIAq18vaGybiTK+B77zK3K+pU4qtkJW8T3X0YITk0FUiJIuhShbkf
-         ejXg==
+        bh=fBZRXwv5EC0srRDal6IgJ95Rn667hJg55SC5Acu1s8s=;
+        b=Yq/hwfpiFs1LQ9ywcVHMT3+I5DFDrksNUyywxOYdfJQFNBKRm85XB+wSfI6IOJxqpl
+         tQyuwZvAJFIgQsMZGu12Db659GsI3PZAowSdPSLA1apZyexMInR0cl8p3AElDouluLDv
+         WWZWXTyQ/TSCDUgd5GVpNvRjqnMzyzJS20wOVWXLESH1OKgpoTVLTuoBZY4gjfMPF8Rq
+         EmzTFrRKxB+3Wvm/VKTDFeCEJzG2VSxlT/knzXQY4VDSuWEHcgWwefsxYjGxEuKoko+A
+         6pcdjNnrsXaxocaUDn1AO+nUVJ818geexhhpJGXkJVRkb6wNSzIqN46k9D9NNNGR7Etx
+         V/gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hr14rJhyuOYS8CCUPkhJr0V/RzyGfQ4WdWOK9XcyHds=;
-        b=opg1VzwTy594xaXRzU4gnb3kq/+WlTtfJPadYMhUbXYuixQOzMqyNxqmR67uHPJMtr
-         HbRxVjnx66X5443aJ8QT0LVvaTUzJNwvH9QJy5WjRXc9T29lYBt+IAxnion01mfzAF7N
-         nFOibJ3y05CpeHaF/5RNRnmpc5uIzepQ+HU1NZLmnWRwYmLmAuIXLgrzU1seNA0lbg/D
-         XPYv52QzvijqviZZegSoH5UuIImsh6qD7R15qglUUFmwkNcjnvfrw8sKxXHFHsNNMOrn
-         9mwbyqzHsfE2ts28ndyNqYKPQ11rOUaftpUx0LlNglHoTXnM6UIKdEs5I2tOmACT9ktB
-         2aiA==
-X-Gm-Message-State: AO0yUKXCoqSU/mVByaRnlkZKs8myPQFpqaZSAct7Xp8qydQ9eFyFYZg6
-        cmGjFBDGVJ72iwSIRs+ruPNnbg==
-X-Google-Smtp-Source: AK7set+a/A9kd8g19vDm6ooyY/CnSwtS6HJyTItZX2sRwOTPiG+M9P8aPtzxyDm5bR2gT/CPNNQFuQ==
-X-Received: by 2002:a17:907:2d28:b0:88d:f759:15ae with SMTP id gs40-20020a1709072d2800b0088df75915aemr11932550ejc.42.1675393110296;
-        Thu, 02 Feb 2023 18:58:30 -0800 (PST)
+        bh=fBZRXwv5EC0srRDal6IgJ95Rn667hJg55SC5Acu1s8s=;
+        b=mFt+aycNkskL5ZA17XPmsqrGbjJs1JiDygZ7HRHfSXa7ckWGuQsl4ktDzVda/5qNN3
+         jm8O0QJ7z7YT1emen+S8WZbEuYDs8cCQ3kgZUjXmLKHBaLT9rQD+ecAbwxx+i04JdrA/
+         I8tqlPkLqXpsiQHu3U7l/Hhg/OLA0mxc6viQ/xLuNFeexQvqK5VY7q78P3BeNvjMa09m
+         WIB0iJTpK10vEFdud0/g7IeaEFGn2ZAbM+uqJesjufX3zMm8xWhGUs3z7Z2SkTMbv3Oz
+         PAIhJU+ejhWpRH9ryZuqwbD0BKeHIsbkwY0AYomTr8nsW8ko6dSStFyVq5NhiSShjxFL
+         UUHw==
+X-Gm-Message-State: AO0yUKUu5f7YXIWz+qd8WOyhrMawXN/VLs3cJtSNhxHwGDai7a6M8tm3
+        KAi+jJkfWAxl1fHnxJMJucoXiw==
+X-Google-Smtp-Source: AK7set+bT60wmwsIelvVGF4y/w5GhrY88VkA7jjz6d++JvsPPx3FkeutGTgt+6+xKe0aMwWaoXKraQ==
+X-Received: by 2002:a17:906:6d14:b0:88d:5081:e9f8 with SMTP id m20-20020a1709066d1400b0088d5081e9f8mr8648879ejr.15.1675393177375;
+        Thu, 02 Feb 2023 18:59:37 -0800 (PST)
 Received: from [192.168.1.101] (abyl20.neoplus.adsl.tpnet.pl. [83.9.31.20])
-        by smtp.gmail.com with ESMTPSA id x26-20020a1709064bda00b00886c1a02d20sm680121ejv.47.2023.02.02.18.58.28
+        by smtp.gmail.com with ESMTPSA id s19-20020a1709067b9300b008878909859bsm664237ejo.152.2023.02.02.18.59.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Feb 2023 18:58:30 -0800 (PST)
-Message-ID: <e77f197c-199d-a88b-deda-67ec6fd1c456@linaro.org>
-Date:   Fri, 3 Feb 2023 03:58:27 +0100
+        Thu, 02 Feb 2023 18:59:37 -0800 (PST)
+Message-ID: <b314c3bb-6d07-b781-c878-a22aa321a8ed@linaro.org>
+Date:   Fri, 3 Feb 2023 03:59:34 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.0
-Subject: Re: [PATCH 21/23] interconnect: drop racy registration API
+Subject: Re: [PATCH 22/23] interconnect: drop unused icc_get() interface
 Content-Language: en-US
 To:     Johan Hovold <johan+linaro@kernel.org>,
         Georgi Djakov <djakov@kernel.org>
@@ -77,9 +77,9 @@ Cc:     Shawn Guo <shawnguo@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230201101559.15529-1-johan+linaro@kernel.org>
- <20230201101559.15529-22-johan+linaro@kernel.org>
+ <20230201101559.15529-23-johan+linaro@kernel.org>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230201101559.15529-22-johan+linaro@kernel.org>
+In-Reply-To: <20230201101559.15529-23-johan+linaro@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -89,71 +89,121 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
 On 1.02.2023 11:15, Johan Hovold wrote:
-> Now that all interconnect drivers have been converted to the new
-> provider registration API, the old racy interface can be removed.
+> The icc_get() interface can be used to lookup an interconnect path based
+> on global node ids. There has never been any users of this interface and
+> all lookups are currently done from the devicetree.
+> 
+> Remove the unused icc_get() interface.
 > 
 > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 > ---
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
->  drivers/interconnect/core.c           | 16 ----------------
->  include/linux/interconnect-provider.h | 11 -----------
->  2 files changed, 27 deletions(-)
+>  drivers/interconnect/core.c  | 52 ++----------------------------------
+>  include/linux/interconnect.h |  8 ------
+>  2 files changed, 2 insertions(+), 58 deletions(-)
 > 
 > diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-> index 93d27ff8eef6..b8917823fd95 100644
+> index b8917823fd95..8cca5e9a9d5f 100644
 > --- a/drivers/interconnect/core.c
 > +++ b/drivers/interconnect/core.c
-> @@ -1078,22 +1078,6 @@ void icc_provider_deregister(struct icc_provider *provider)
+> @@ -588,7 +588,7 @@ EXPORT_SYMBOL_GPL(icc_set_tag);
+>  
+>  /**
+>   * icc_get_name() - Get name of the icc path
+> - * @path: reference to the path returned by icc_get()
+> + * @path: interconnect path
+>   *
+>   * This function is used by an interconnect consumer to get the name of the icc
+>   * path.
+> @@ -606,7 +606,7 @@ EXPORT_SYMBOL_GPL(icc_get_name);
+>  
+>  /**
+>   * icc_set_bw() - set bandwidth constraints on an interconnect path
+> - * @path: reference to the path returned by icc_get()
+> + * @path: interconnect path
+>   * @avg_bw: average bandwidth in kilobytes per second
+>   * @peak_bw: peak bandwidth in kilobytes per second
+>   *
+> @@ -705,54 +705,6 @@ int icc_disable(struct icc_path *path)
 >  }
->  EXPORT_SYMBOL_GPL(icc_provider_deregister);
+>  EXPORT_SYMBOL_GPL(icc_disable);
 >  
-> -int icc_provider_add(struct icc_provider *provider)
+> -/**
+> - * icc_get() - return a handle for path between two endpoints
+> - * @dev: the device requesting the path
+> - * @src_id: source device port id
+> - * @dst_id: destination device port id
+> - *
+> - * This function will search for a path between two endpoints and return an
+> - * icc_path handle on success. Use icc_put() to release
+> - * constraints when they are not needed anymore.
+> - * If the interconnect API is disabled, NULL is returned and the consumer
+> - * drivers will still build. Drivers are free to handle this specifically,
+> - * but they don't have to.
+> - *
+> - * Return: icc_path pointer on success, ERR_PTR() on error or NULL if the
+> - * interconnect API is disabled.
+> - */
+> -struct icc_path *icc_get(struct device *dev, const int src_id, const int dst_id)
 > -{
-> -	icc_provider_init(provider);
+> -	struct icc_node *src, *dst;
+> -	struct icc_path *path = ERR_PTR(-EPROBE_DEFER);
 > -
-> -	return icc_provider_register(provider);
+> -	mutex_lock(&icc_lock);
+> -
+> -	src = node_find(src_id);
+> -	if (!src)
+> -		goto out;
+> -
+> -	dst = node_find(dst_id);
+> -	if (!dst)
+> -		goto out;
+> -
+> -	path = path_find(dev, src, dst);
+> -	if (IS_ERR(path)) {
+> -		dev_err(dev, "%s: invalid path=%ld\n", __func__, PTR_ERR(path));
+> -		goto out;
+> -	}
+> -
+> -	path->name = kasprintf(GFP_KERNEL, "%s-%s", src->name, dst->name);
+> -	if (!path->name) {
+> -		kfree(path);
+> -		path = ERR_PTR(-ENOMEM);
+> -	}
+> -out:
+> -	mutex_unlock(&icc_lock);
+> -	return path;
 > -}
-> -EXPORT_SYMBOL_GPL(icc_provider_add);
+> -EXPORT_SYMBOL_GPL(icc_get);
 > -
-> -void icc_provider_del(struct icc_provider *provider)
-> -{
-> -	WARN_ON(!list_empty(&provider->nodes));
-> -
-> -	icc_provider_deregister(provider);
-> -}
-> -EXPORT_SYMBOL_GPL(icc_provider_del);
-> -
->  static const struct of_device_id __maybe_unused ignore_list[] = {
->  	{ .compatible = "qcom,sc7180-ipa-virt" },
->  	{ .compatible = "qcom,sc8180x-ipa-virt" },
-> diff --git a/include/linux/interconnect-provider.h b/include/linux/interconnect-provider.h
-> index d12cd18aab3f..b9af9016a95e 100644
-> --- a/include/linux/interconnect-provider.h
-> +++ b/include/linux/interconnect-provider.h
-> @@ -125,8 +125,6 @@ int icc_nodes_remove(struct icc_provider *provider);
->  void icc_provider_init(struct icc_provider *provider);
->  int icc_provider_register(struct icc_provider *provider);
->  void icc_provider_deregister(struct icc_provider *provider);
-> -int icc_provider_add(struct icc_provider *provider);
-> -void icc_provider_del(struct icc_provider *provider);
->  struct icc_node_data *of_icc_get_from_provider(struct of_phandle_args *spec);
->  void icc_sync_state(struct device *dev);
+>  /**
+>   * icc_put() - release the reference to the icc_path
+>   * @path: interconnect path
+> diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
+> index 2b0e784ba771..97ac253df62c 100644
+> --- a/include/linux/interconnect.h
+> +++ b/include/linux/interconnect.h
+> @@ -40,8 +40,6 @@ struct icc_bulk_data {
 >  
-> @@ -179,15 +177,6 @@ static inline int icc_provider_register(struct icc_provider *provider)
+>  #if IS_ENABLED(CONFIG_INTERCONNECT)
 >  
->  static inline void icc_provider_deregister(struct icc_provider *provider) { }
+> -struct icc_path *icc_get(struct device *dev, const int src_id,
+> -			 const int dst_id);
+>  struct icc_path *of_icc_get(struct device *dev, const char *name);
+>  struct icc_path *devm_of_icc_get(struct device *dev, const char *name);
+>  int devm_of_icc_bulk_get(struct device *dev, int num_paths, struct icc_bulk_data *paths);
+> @@ -61,12 +59,6 @@ void icc_bulk_disable(int num_paths, const struct icc_bulk_data *paths);
 >  
-> -static inline int icc_provider_add(struct icc_provider *provider)
+>  #else
+>  
+> -static inline struct icc_path *icc_get(struct device *dev, const int src_id,
+> -				       const int dst_id)
 > -{
-> -	return -ENOTSUPP;
+> -	return NULL;
 > -}
 > -
-> -static inline void icc_provider_del(struct icc_provider *provider)
-> -{
-> -}
-> -
->  static inline struct icc_node_data *of_icc_get_from_provider(struct of_phandle_args *spec)
+>  static inline struct icc_path *of_icc_get(struct device *dev,
+>  					  const char *name)
 >  {
->  	return ERR_PTR(-ENOTSUPP);
