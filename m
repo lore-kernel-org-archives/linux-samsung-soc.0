@@ -2,48 +2,63 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B61C1C61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Feb 2023 18:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F31C636CC
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Feb 2023 19:03:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233399AbjBCSVZ (ORCPT
+        id S232895AbjBCTDG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Feb 2023 13:21:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52114 "EHLO
+        Fri, 3 Feb 2023 14:03:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233397AbjBCSVZ (ORCPT
+        with ESMTP id S231894AbjBCTDF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Feb 2023 13:21:25 -0500
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B638A9D4A;
-        Fri,  3 Feb 2023 10:21:22 -0800 (PST)
-Received: by mail-ot1-f45.google.com with SMTP id n25-20020a9d7119000000b0068bd8c1e836so1612399otj.3;
-        Fri, 03 Feb 2023 10:21:22 -0800 (PST)
+        Fri, 3 Feb 2023 14:03:05 -0500
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A75C22D51;
+        Fri,  3 Feb 2023 11:03:00 -0800 (PST)
+Received: by mail-ej1-x62b.google.com with SMTP id gr7so17976508ejb.5;
+        Fri, 03 Feb 2023 11:03:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=29jIzExya+RWfAW2Qbt80/MjJ8msw/RiyH3xynOp0go=;
+        b=oMo2cuU46YEgGPpTn9tuc/nAV/JSYX82IVQ6fcR+rdup7Ro+7QIAvMc7u6RiSGRj8k
+         lp9nfSG/RpNEUhNlVlr3aHuBI3aSguVow4NcnE/ewGe34lBGVWV/kqNWsJOy1OnK0t3L
+         NZOTslwltVza66DDVjiccIrt9Mj1iqvf0MvFj5aktxMyYaVyCUNmLfbTYpETGvQoZZLl
+         Zlo8M52dFVI2lLPRKKBBQ/2yVXzejK05Re6uVMSp9ZwTa2kwn4pNA69mS2AJNWjKeppQ
+         bpYZT5kzF3xGiYl5fSPXLPZdkqxZ5TeagP+owJI5o0IjNhddaRbAOFg5AEXmSVoieJpR
+         VfXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CKqTtd06uef5ibtsjMifbrRQEy2r/fkXlh2L538fCSc=;
-        b=qsjHrZgIOec4fWogb9P7PcPZak2vJiQW9feXSYS2k4Xw/tKnqBazvooYTj9JOEL/jO
-         ikxg1Nw2W+N4jSpDIzszgdz+PEjk4kwiciTQyQzRpsEFlH6CwCNJnXeZ0Z/+bYKTkBs3
-         GkavRiPMh4/omY1JLMRwEFG/BoVQa0MKMp9slAZRA7qsaAHk7iq/8R7whtwl6yYyX+9p
-         wvcIE/HGke+fdW2r3OxCo8766zbhrl8qFtyPGB4qlvLNxjS1RXmTLSkMj0jTqPt94wJp
-         E9Wp7tuP89WNsL2KA2Qaw8DPMeD0rpJUIOsU1To6fLn3GMCtkBp5TP3YVHaOjek6yRJd
-         +JeA==
-X-Gm-Message-State: AO0yUKUHeDpJ7FahIHaIIw0M28qrrtsBx/ekJSOXrubZlrCCKO0U7/IG
-        UX7NQQorJp9JJ/BHU+X6UZQ5hb0few==
-X-Google-Smtp-Source: AK7set+8hw6nat6H4DhyX2Limgqmen5W+zGdMAXZEu5LDxHEuhE4wlDY9lWj4NXoZichwA+bz/wc3A==
-X-Received: by 2002:a05:6830:1e84:b0:670:9610:1ce4 with SMTP id n4-20020a0568301e8400b0067096101ce4mr6394077otr.24.1675448481741;
-        Fri, 03 Feb 2023 10:21:21 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id q12-20020a05683022cc00b0068bcf7995aesm1367341otc.64.2023.02.03.10.21.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Feb 2023 10:21:21 -0800 (PST)
-Received: (nullmailer pid 617539 invoked by uid 1000);
-        Fri, 03 Feb 2023 18:21:19 -0000
-Date:   Fri, 3 Feb 2023 12:21:19 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Johan Jonker <jbx6244@gmail.com>
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=29jIzExya+RWfAW2Qbt80/MjJ8msw/RiyH3xynOp0go=;
+        b=mADOZsRQVImyvq8ySKXVTPvwyibvORlcQ6h8KCBRibTN4pOBTfRfWoSYTw2kM6Ax7I
+         Ez4GOs6SltM0qrtZnK2GqwnvDs4hid91/YOWvGq24za//AgI9cQNACWpoYHQGbXdFadQ
+         FrF+MhKMgZhV+lvYzzZUKIatFKsvQSt9TOdjyTMTssi9G5W9gxrHJW/qlT8v0HeM4eCQ
+         VUVYRXIebwmRjNKDv4d7i0VUR9J6yAej+hi/VWqYse6tAqbD+PIx9SeLP4f1LC7awV8i
+         R08eoGRcmtr4AWIANOvm71oHhyuNZqYvJW3zMHjrc49zfs0Dvgk7cakixRq8aMXDaz8G
+         5Sww==
+X-Gm-Message-State: AO0yUKWFhahNCgA4W5pYwL1T4q31WIPMn2yZdOjvEtUeesiz6ugXLgwt
+        ZjzwadSrhwH5uYwGSZmV6WYflrLKSjk=
+X-Google-Smtp-Source: AK7set86/Odr/8QqbXvAfvz/JdLTn2GEOFrSEDN8hur+e37l2t1Wm16nqqBVtmjhNt40O7gBxDbSww==
+X-Received: by 2002:a17:907:d68c:b0:88f:8ae1:8bca with SMTP id wf12-20020a170907d68c00b0088f8ae18bcamr6189194ejc.62.1675450979058;
+        Fri, 03 Feb 2023 11:02:59 -0800 (PST)
+Received: from [192.168.2.1] (81-204-249-205.fixed.kpn.net. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id f17-20020a170906049100b00871f66bf354sm1710990eja.204.2023.02.03.11.02.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Feb 2023 11:02:57 -0800 (PST)
+Message-ID: <87f5097d-1cd0-e09f-e759-8592a9165ea6@gmail.com>
+Date:   Fri, 3 Feb 2023 20:02:54 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH v6 01/17] dt-bindings: display: rockchip: convert
+ rockchip-lvds.txt to YAML
+To:     Rob Herring <robh@kernel.org>
 Cc:     heiko@sntech.de, hjc@rock-chips.com,
         krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
         airlied@gmail.com, daniel@ffwll.ch, andrzej.hajda@intel.com,
@@ -56,45 +71,76 @@ Cc:     heiko@sntech.de, hjc@rock-chips.com,
         linus.walleij@linaro.org, inki.dae@samsung.com,
         sw0312.kim@samsung.com, kyungmin.park@samsung.com,
         alim.akhtar@samsung.com, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v6 01/17] dt-bindings: display: rockchip: convert
- rockchip-lvds.txt to YAML
-Message-ID: <20230203182119.GA615242-robh@kernel.org>
 References: <67771143-fd83-383d-41b2-68e8707134e8@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67771143-fd83-383d-41b2-68e8707134e8@gmail.com>
+ <20230203182119.GA615242-robh@kernel.org>
+Content-Language: en-US
+From:   Johan Jonker <jbx6244@gmail.com>
+In-Reply-To: <20230203182119.GA615242-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Dec 22, 2022 at 03:22:14PM +0100, Johan Jonker wrote:
-> Convert rockchip-lvds.txt to YAML.
-> 
-> Changed:
->   Add power-domains property.
->   Requirements between PX30 and RK3288
-> 
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
-> 
-> Changed V3:
->   Filename matching compatible style
->   Drop "Regulator phandle for "
->   Specify properties and requirements per SoC
->   Sort order and restyle
-> 
-> Changed V2:
->   Fix title
-> ---
->  .../display/rockchip/rockchip,lvds.yaml       | 170 ++++++++++++++++++
->  .../display/rockchip/rockchip-lvds.txt        |  92 ----------
->  2 files changed, 170 insertions(+), 92 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,lvds.yaml
->  delete mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip-lvds.txt
 
-What's the plan for these patches? Don't see them in linux-next still. 
-Do you want me to take patches 1-8?
 
-Rob
+On 2/3/23 19:21, Rob Herring wrote:
+> On Thu, Dec 22, 2022 at 03:22:14PM +0100, Johan Jonker wrote:
+>> Convert rockchip-lvds.txt to YAML.
+>>
+>> Changed:
+>>   Add power-domains property.
+>>   Requirements between PX30 and RK3288
+>>
+>> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> ---
+>>
+>> Changed V3:
+>>   Filename matching compatible style
+>>   Drop "Regulator phandle for "
+>>   Specify properties and requirements per SoC
+>>   Sort order and restyle
+>>
+>> Changed V2:
+>>   Fix title
+>> ---
+>>  .../display/rockchip/rockchip,lvds.yaml       | 170 ++++++++++++++++++
+>>  .../display/rockchip/rockchip-lvds.txt        |  92 ----------
+>>  2 files changed, 170 insertions(+), 92 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,lvds.yaml
+>>  delete mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip-lvds.txt
+> 
+
+> What's the plan for these patches? Don't see them in linux-next still. 
+> Do you want me to take patches 1-8?
+
+Hi,
+
+The display patches normally go through the DRM git.
+Patch 2 must merge with grf.yaml.
+Heiko has merged now 3 PHY related patches to grf.yaml first.
+
+[PATCH v6 02/17] dt-bindings: soc: rockchip: grf: add rockchip,lvds.yaml
+
+See current
+https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/log/?h=for-next&qt=grep&q=jonker
+
+Not sure what Heiko's plans are.
+Patch 2 replaces  only a description text and some accolades removal, so not "too" important.
+
+I urgent then you could merge without conflict:
+1, 3-8
+
+Patch 2 requires some adjusted now depending on the grf.yaml current next state.
+
+Johan
+
+
+
+
+
+
+
+> 
+> Rob
