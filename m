@@ -2,61 +2,61 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B2BC636D4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Feb 2023 02:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0235EC61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Feb 2023 02:58:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232127AbjBCC51 (ORCPT
+        id S231888AbjBCC6D (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Feb 2023 21:57:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35432 "EHLO
+        Thu, 2 Feb 2023 21:58:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231726AbjBCC50 (ORCPT
+        with ESMTP id S229602AbjBCC6C (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Feb 2023 21:57:26 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 984D05DC0E
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Feb 2023 18:57:00 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id mf7so11744270ejc.6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2023 18:57:00 -0800 (PST)
+        Thu, 2 Feb 2023 21:58:02 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E89698AC1E
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Feb 2023 18:57:39 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id f7so3954844edw.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2023 18:57:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=/ok9gGPenaG0pOj9GcctZNAhyR0+is7FwD5tHMljl+c=;
-        b=DonLghx99ZLKNMokYG8i+JU5yhLe+vdPRewmYK7mYHqkScsddLoX0iIzLtxb/TjQU9
-         Ge/RtIIGtygzVW3O0URyBA4FiMYP2qMH/9BYP0leBcQd/Tv8VpjO6+VyhhOvW2CeJ+rd
-         mUmkwrYpgbuwbsV42yR6eR1Ex7cJbL5ooXZNKEqPL71p5EH5+SBVQ7shL4rmn9hUpyO/
-         lLVtI2bRxUGmgbt1Ng7X3FZWf5yWqOLNqDgFopo+/6ySkzgGVlTGSbYxrrwC2/Q/qgIN
-         kp34koKN48KM+sVgboXPPavRVkUuQRzsFPdfH0vEuljvHmqMXbWYpr+jAtsv8hLmn3dI
-         dOUQ==
+        bh=iKQmygBEZeRuMWlXEwKwIU+7fft7wguti267JsfX7ks=;
+        b=pdGroF1ZfQZvyVUZhL+/+VNj6+FaGPWlAKE0M38vEiILELEPIWtChPgPv23p+HKltr
+         a6p1N/E5L3msAOptVOq42/Tz6tGTyET+J/6rzW5EHALrSfksBCaMWgyzWZAztloWbEVU
+         0u7B6ejkb+1plJquBzUgK+7U+iEsOshoDPe9HpQF4f449d5/TZBWfat7a8AcBcfCx2XP
+         Ewd9zIkCyUIBjzHhCA5DMrWw6NNGO8FMwqRxq9r07o7shKMhglJCn4qAG1e5Hvh/zRRt
+         0zDZUcLeMsF7PwqrXiH0IMs6RCYMlgbCdLGcH1HNi8J/fu+lse3Lr7gxLMtuOn3srHQX
+         XtCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ok9gGPenaG0pOj9GcctZNAhyR0+is7FwD5tHMljl+c=;
-        b=7QVQHEn005dEBZk8xpPXleQ1m4QQo6qk2bd/SE+HUxLdH5MZxjNIHNooACD/XbRwpO
-         psxb4fmEaaDVrF1f/4ILLveagcNDF4FxaG2pquVp6Z1tEosdk8H5V/Gsq1OOVGXq3xZd
-         NKbYYgfgsnYeND/yshvGxYH4JoK18lcQ2mgG9UhwL7qbCxt9U9pqeR4sXKJ5gNwvIjr2
-         +dYx41fSxlrBTR3IhHzQ6O5zOBdwAztBQvkxpX1uYpGLI+16h/biLsYw0xVffHgI1s1L
-         aoS5BoewX6tw4AIahBuAgvtyJQEU3p/LBtvrYNak4UgYtCzv/7mq3yFOEb7IOjMT8Ms3
-         J9LQ==
-X-Gm-Message-State: AO0yUKX1wyPFg3P3S7nA0GB+a9MU9sLngoUjXG8xRnLQdRH5SWDikef1
-        lPEpLgIcn273FdLVzsvC2mexdw==
-X-Google-Smtp-Source: AK7set/Byn6DoU49uWxDMQUBshfAhbUWyxEUatb8mJo23NUaNotYcfd4KJmg2Qvd0ixB+R/ypE+Eiw==
-X-Received: by 2002:a17:907:d08a:b0:883:258d:2951 with SMTP id vc10-20020a170907d08a00b00883258d2951mr437179ejc.4.1675393018937;
-        Thu, 02 Feb 2023 18:56:58 -0800 (PST)
+        bh=iKQmygBEZeRuMWlXEwKwIU+7fft7wguti267JsfX7ks=;
+        b=ompr48uFh7pXEENJwFnqavVpPOBaQEbbZ5A0M7DgWPt6ZfdXJy32vuGH9i5zOy5rZm
+         WLsIH3R2HNYbO4AN/0iioNcV6Y+cnXj0VXC6ZnmL3/bLAEpPya9RFdk/oUfUU/yBmolF
+         erps9ZB2IgQChDAMUN1S9cM+SOTxKhCDOCeGxEmObzEfQLs4K1bkqNLojml8S+5ezwLa
+         7QQGKWAwEhIfhz5hjBP5N+ZEzL/RYxCNyJvP/b44XXu4ceG9WQoFBS3IS/9XnCA3OPMl
+         o/YU0ZMN6i0aZ533/08oa2HtfZ8nJAfsQqVigELe3ICKGYWBe1fa94t1klYcBgs4E3Nl
+         AbVw==
+X-Gm-Message-State: AO0yUKV+n84FDc+nR663BTMmZYJpJb9ghrJz3i+GzRenfDyFKN/2XOHk
+        ITYKjc/VNG9BNi7zpnhCOMUxaA==
+X-Google-Smtp-Source: AK7set+d9yOcvNKsYTYBPkS9RL4yLRG5jvK5E0pBXawOp2p5FFeqCH5W3HQFV4iwfuvJ54JWiqdVbA==
+X-Received: by 2002:a05:6402:3589:b0:4a4:d49b:34a6 with SMTP id y9-20020a056402358900b004a4d49b34a6mr8854268edc.9.1675393058450;
+        Thu, 02 Feb 2023 18:57:38 -0800 (PST)
 Received: from [192.168.1.101] (abyl20.neoplus.adsl.tpnet.pl. [83.9.31.20])
-        by smtp.gmail.com with ESMTPSA id v9-20020a17090690c900b0088879b211easm677117ejw.69.2023.02.02.18.56.56
+        by smtp.gmail.com with ESMTPSA id et6-20020a056402378600b004a21263bbaasm480519edb.49.2023.02.02.18.57.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Feb 2023 18:56:58 -0800 (PST)
-Message-ID: <e0692f25-7114-530e-601c-fa2154fc2347@linaro.org>
-Date:   Fri, 3 Feb 2023 03:56:56 +0100
+        Thu, 02 Feb 2023 18:57:38 -0800 (PST)
+Message-ID: <5b089f60-6dec-50f6-dea3-54170bf7fef7@linaro.org>
+Date:   Fri, 3 Feb 2023 03:57:35 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.0
-Subject: Re: [PATCH 12/23] interconnect: qcom: sm8450: fix registration race
+Subject: Re: [PATCH 13/23] interconnect: qcom: sm8550: fix registration race
 Content-Language: en-US
 To:     Johan Hovold <johan+linaro@kernel.org>,
         Georgi Djakov <djakov@kernel.org>
@@ -76,11 +76,11 @@ Cc:     Shawn Guo <shawnguo@kernel.org>,
         linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
+        Abel Vesa <abel.vesa@linaro.org>
 References: <20230201101559.15529-1-johan+linaro@kernel.org>
- <20230201101559.15529-13-johan+linaro@kernel.org>
+ <20230201101559.15529-14-johan+linaro@kernel.org>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230201101559.15529-13-johan+linaro@kernel.org>
+In-Reply-To: <20230201101559.15529-14-johan+linaro@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -97,22 +97,21 @@ On 1.02.2023 11:15, Johan Hovold wrote:
 > Switch to using the new API where the provider is not registered until
 > after it has been fully initialised.
 > 
-> Fixes: fafc114a468e ("interconnect: qcom: Add SM8450 interconnect provider driver")
-> Cc: stable@vger.kernel.org      # 5.17
-> Cc: Vinod Koul <vkoul@kernel.org>
+> Fixes: e6f0d6a30f73 ("interconnect: qcom: Add SM8550 interconnect provider driver")
+> Cc: Abel Vesa <abel.vesa@linaro.org>
 > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 > ---
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
->  drivers/interconnect/qcom/sm8450.c | 22 +++++++++++-----------
+>  drivers/interconnect/qcom/sm8550.c | 22 +++++++++++-----------
 >  1 file changed, 11 insertions(+), 11 deletions(-)
 > 
-> diff --git a/drivers/interconnect/qcom/sm8450.c b/drivers/interconnect/qcom/sm8450.c
-> index e3a12e3d6e06..c7a8bbf102a3 100644
-> --- a/drivers/interconnect/qcom/sm8450.c
-> +++ b/drivers/interconnect/qcom/sm8450.c
-> @@ -1876,9 +1876,10 @@ static int qnoc_probe(struct platform_device *pdev)
+> diff --git a/drivers/interconnect/qcom/sm8550.c b/drivers/interconnect/qcom/sm8550.c
+> index 54fa027ab961..7ab492ca8fe0 100644
+> --- a/drivers/interconnect/qcom/sm8550.c
+> +++ b/drivers/interconnect/qcom/sm8550.c
+> @@ -2197,9 +2197,10 @@ static int qnoc_probe(struct platform_device *pdev)
 >  	provider->pre_aggregate = qcom_icc_pre_aggregate;
 >  	provider->aggregate = qcom_icc_aggregate;
 >  	provider->xlate_extended = qcom_icc_xlate_extended;
@@ -124,20 +123,20 @@ Konrad
 >  	qp->dev = &pdev->dev;
 >  	qp->bcms = desc->bcms;
 >  	qp->num_bcms = desc->num_bcms;
-> @@ -1887,12 +1888,6 @@ static int qnoc_probe(struct platform_device *pdev)
+> @@ -2208,12 +2209,6 @@ static int qnoc_probe(struct platform_device *pdev)
 >  	if (IS_ERR(qp->voter))
 >  		return PTR_ERR(qp->voter);
 >  
 > -	ret = icc_provider_add(provider);
 > -	if (ret) {
-> -		dev_err(&pdev->dev, "error adding interconnect provider\n");
+> -		dev_err_probe(&pdev->dev, ret,
+> -			      "error adding interconnect provider\n");
 > -		return ret;
 > -	}
-> -
+>  
 >  	for (i = 0; i < qp->num_bcms; i++)
 >  		qcom_icc_bcm_init(qp->bcms[i], &pdev->dev);
->  
-> @@ -1905,7 +1900,7 @@ static int qnoc_probe(struct platform_device *pdev)
+> @@ -2227,7 +2222,7 @@ static int qnoc_probe(struct platform_device *pdev)
 >  		node = icc_node_create(qnodes[i]->id);
 >  		if (IS_ERR(node)) {
 >  			ret = PTR_ERR(node);
@@ -146,7 +145,7 @@ Konrad
 >  		}
 >  
 >  		node->name = qnodes[i]->name;
-> @@ -1919,12 +1914,17 @@ static int qnoc_probe(struct platform_device *pdev)
+> @@ -2241,12 +2236,17 @@ static int qnoc_probe(struct platform_device *pdev)
 >  	}
 >  	data->num_nodes = num_nodes;
 >  
@@ -166,7 +165,7 @@ Konrad
 >  	return ret;
 >  }
 >  
-> @@ -1932,8 +1932,8 @@ static int qnoc_remove(struct platform_device *pdev)
+> @@ -2254,8 +2254,8 @@ static int qnoc_remove(struct platform_device *pdev)
 >  {
 >  	struct qcom_icc_provider *qp = platform_get_drvdata(pdev);
 >  
