@@ -2,71 +2,68 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD5BC636D3
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Feb 2023 02:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 126B4C6379F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Feb 2023 04:07:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232152AbjBCC7l (ORCPT
+        id S230140AbjBCEHF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Feb 2023 21:59:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37560 "EHLO
+        Thu, 2 Feb 2023 23:07:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229602AbjBCC7k (ORCPT
+        with ESMTP id S231160AbjBCEHD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Feb 2023 21:59:40 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D992119F32
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Feb 2023 18:59:38 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id gr7so11760751ejb.5
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2023 18:59:38 -0800 (PST)
+        Thu, 2 Feb 2023 23:07:03 -0500
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C47A84FA8
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Feb 2023 20:07:01 -0800 (PST)
+Received: by mail-lj1-x230.google.com with SMTP id g14so4053665ljh.10
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2023 20:07:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fBZRXwv5EC0srRDal6IgJ95Rn667hJg55SC5Acu1s8s=;
-        b=Yq/hwfpiFs1LQ9ywcVHMT3+I5DFDrksNUyywxOYdfJQFNBKRm85XB+wSfI6IOJxqpl
-         tQyuwZvAJFIgQsMZGu12Db659GsI3PZAowSdPSLA1apZyexMInR0cl8p3AElDouluLDv
-         WWZWXTyQ/TSCDUgd5GVpNvRjqnMzyzJS20wOVWXLESH1OKgpoTVLTuoBZY4gjfMPF8Rq
-         EmzTFrRKxB+3Wvm/VKTDFeCEJzG2VSxlT/knzXQY4VDSuWEHcgWwefsxYjGxEuKoko+A
-         6pcdjNnrsXaxocaUDn1AO+nUVJ818geexhhpJGXkJVRkb6wNSzIqN46k9D9NNNGR7Etx
-         V/gw==
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EdXrl6jFXUFLX/Fs8Y8vVeX1SCyz5eISp65do85FsLM=;
+        b=giRO/0Lr8QjY/NuoJqnrqZWr0LmwzOD3jmpWfjm5JbisDUMhfSppPvF2poel/JwAng
+         z4I+JYUG7niuOyibxKh4v/3DLvyOThvU/qNORVgp+KVuoz54UqGmtwi7Phws3zAMdMLT
+         2wtKpfMfkLkWzEntG6phV1GBOsNd1jIgusi5Q9a4MXoBpD5I/ivxHpW0RFF0tZBcadWU
+         5yAfyHKkkwfKmtyGy3xvsOivT7CzvDAxKI6UujeqXBQNYK4w5nf92OBQGRxUwJuQW47o
+         vuQb8gkyWXKJ9ThQKaYAH2nv/31pRGdD1fz3VyK0Py5zaedLNB6D0HYgVCkxL2LMTXat
+         FYxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fBZRXwv5EC0srRDal6IgJ95Rn667hJg55SC5Acu1s8s=;
-        b=mFt+aycNkskL5ZA17XPmsqrGbjJs1JiDygZ7HRHfSXa7ckWGuQsl4ktDzVda/5qNN3
-         jm8O0QJ7z7YT1emen+S8WZbEuYDs8cCQ3kgZUjXmLKHBaLT9rQD+ecAbwxx+i04JdrA/
-         I8tqlPkLqXpsiQHu3U7l/Hhg/OLA0mxc6viQ/xLuNFeexQvqK5VY7q78P3BeNvjMa09m
-         WIB0iJTpK10vEFdud0/g7IeaEFGn2ZAbM+uqJesjufX3zMm8xWhGUs3z7Z2SkTMbv3Oz
-         PAIhJU+ejhWpRH9ryZuqwbD0BKeHIsbkwY0AYomTr8nsW8ko6dSStFyVq5NhiSShjxFL
-         UUHw==
-X-Gm-Message-State: AO0yUKUu5f7YXIWz+qd8WOyhrMawXN/VLs3cJtSNhxHwGDai7a6M8tm3
-        KAi+jJkfWAxl1fHnxJMJucoXiw==
-X-Google-Smtp-Source: AK7set+bT60wmwsIelvVGF4y/w5GhrY88VkA7jjz6d++JvsPPx3FkeutGTgt+6+xKe0aMwWaoXKraQ==
-X-Received: by 2002:a17:906:6d14:b0:88d:5081:e9f8 with SMTP id m20-20020a1709066d1400b0088d5081e9f8mr8648879ejr.15.1675393177375;
-        Thu, 02 Feb 2023 18:59:37 -0800 (PST)
-Received: from [192.168.1.101] (abyl20.neoplus.adsl.tpnet.pl. [83.9.31.20])
-        by smtp.gmail.com with ESMTPSA id s19-20020a1709067b9300b008878909859bsm664237ejo.152.2023.02.02.18.59.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Feb 2023 18:59:37 -0800 (PST)
-Message-ID: <b314c3bb-6d07-b781-c878-a22aa321a8ed@linaro.org>
-Date:   Fri, 3 Feb 2023 03:59:34 +0100
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EdXrl6jFXUFLX/Fs8Y8vVeX1SCyz5eISp65do85FsLM=;
+        b=rHn0V6XaZik5yWEMQd30+nXzbxDp54DZY1Q2pjOzkNf+DmE9LkYA+WUtsyJ3p834MY
+         JOBHOTqkZVxcrNNaJPfGAiiGI+1KkIEyr64Z7vyEQ9G+BICAe4E/OexPucy5rlU57kgH
+         ii1UDmfY9k0FmWjr+tt/8pB6f727p2mT7eoXaGJfoTeGDTuw4XLW+/hX7vnRNdBNZaaZ
+         TGpKgtnEwjYnsg1TJmYbYdhmMjwOUB7JofVleOn2fdyPwMJrsM/If1atlUynk0dU2fK1
+         XzULdigcxAowtDqHx/khD7aTZ5tw4ii1pgatgoGBJuWeM7iscIJuNFa119hgw4fHIFIA
+         7WWQ==
+X-Gm-Message-State: AO0yUKUBl2dURerNzrU3s3xp5434SlZKXEjXqUf7r7qDKBGnZaKJw0ZS
+        sQjWXmnrSm+UtZ5Dpe4YGLCmGVN/wZa/fll9+HxI2A==
+X-Google-Smtp-Source: AK7set8ePtCHM1Iq3qNLDJDujeHBggdkNrTSmEo6kURlW1fNmHwpxqtfcCcjPvkRToDgjzFMlniM4/dhmf794eZbSl0=
+X-Received: by 2002:a2e:a4c3:0:b0:28e:92b2:a04a with SMTP id
+ p3-20020a2ea4c3000000b0028e92b2a04amr1366705ljm.34.1675397219676; Thu, 02 Feb
+ 2023 20:06:59 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH 22/23] interconnect: drop unused icc_get() interface
-Content-Language: en-US
-To:     Johan Hovold <johan+linaro@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
+References: <20230201101559.15529-1-johan+linaro@kernel.org> <20230201101559.15529-9-johan+linaro@kernel.org>
+In-Reply-To: <20230201101559.15529-9-johan+linaro@kernel.org>
+From:   Jun Nie <jun.nie@linaro.org>
+Date:   Fri, 3 Feb 2023 12:06:57 +0800
+Message-ID: <CABymUCMgmyLRGo+b4ZiVJacxc=hnfo7iiYBNj2i5UPrq3XL0nQ@mail.gmail.com>
+Subject: Re: [PATCH 08/23] interconnect: qcom: rpm: fix registration race
+To:     Johan Hovold <johan+linaro@kernel.org>
+Cc:     Georgi Djakov <djakov@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
@@ -75,135 +72,34 @@ Cc:     Shawn Guo <shawnguo@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230201101559.15529-1-johan+linaro@kernel.org>
- <20230201101559.15529-23-johan+linaro@kernel.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230201101559.15529-23-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Georgi Djakov <georgi.djakov@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
-
-On 1.02.2023 11:15, Johan Hovold wrote:
-> The icc_get() interface can be used to lookup an interconnect path based
-> on global node ids. There has never been any users of this interface and
-> all lookups are currently done from the devicetree.
-> 
-> Remove the unused icc_get() interface.
-> 
+Johan Hovold <johan+linaro@kernel.org> =E4=BA=8E2023=E5=B9=B42=E6=9C=881=E6=
+=97=A5=E5=91=A8=E4=B8=89 18:16=E5=86=99=E9=81=93=EF=BC=9A
+>
+> The current interconnect provider registration interface is inherently
+> racy as nodes are not added until the after adding the provider. This
+> can specifically cause racing DT lookups to fail.
+>
+> Switch to using the new API where the provider is not registered until
+> after it has been fully initialised.
+>
+> Fixes: 62feb14ee8a3 ("interconnect: qcom: Consolidate interconnect RPM su=
+pport")
+> Fixes: 30c8fa3ec61a ("interconnect: qcom: Add MSM8916 interconnect provid=
+er driver")
+> Cc: stable@vger.kernel.org      # 5.7
+> Cc: Jun Nie <jun.nie@linaro.org>
+> Cc: Georgi Djakov <georgi.djakov@linaro.org>
 > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 > ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-
-Konrad
->  drivers/interconnect/core.c  | 52 ++----------------------------------
->  include/linux/interconnect.h |  8 ------
->  2 files changed, 2 insertions(+), 58 deletions(-)
-> 
-> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-> index b8917823fd95..8cca5e9a9d5f 100644
-> --- a/drivers/interconnect/core.c
-> +++ b/drivers/interconnect/core.c
-> @@ -588,7 +588,7 @@ EXPORT_SYMBOL_GPL(icc_set_tag);
->  
->  /**
->   * icc_get_name() - Get name of the icc path
-> - * @path: reference to the path returned by icc_get()
-> + * @path: interconnect path
->   *
->   * This function is used by an interconnect consumer to get the name of the icc
->   * path.
-> @@ -606,7 +606,7 @@ EXPORT_SYMBOL_GPL(icc_get_name);
->  
->  /**
->   * icc_set_bw() - set bandwidth constraints on an interconnect path
-> - * @path: reference to the path returned by icc_get()
-> + * @path: interconnect path
->   * @avg_bw: average bandwidth in kilobytes per second
->   * @peak_bw: peak bandwidth in kilobytes per second
->   *
-> @@ -705,54 +705,6 @@ int icc_disable(struct icc_path *path)
->  }
->  EXPORT_SYMBOL_GPL(icc_disable);
->  
-> -/**
-> - * icc_get() - return a handle for path between two endpoints
-> - * @dev: the device requesting the path
-> - * @src_id: source device port id
-> - * @dst_id: destination device port id
-> - *
-> - * This function will search for a path between two endpoints and return an
-> - * icc_path handle on success. Use icc_put() to release
-> - * constraints when they are not needed anymore.
-> - * If the interconnect API is disabled, NULL is returned and the consumer
-> - * drivers will still build. Drivers are free to handle this specifically,
-> - * but they don't have to.
-> - *
-> - * Return: icc_path pointer on success, ERR_PTR() on error or NULL if the
-> - * interconnect API is disabled.
-> - */
-> -struct icc_path *icc_get(struct device *dev, const int src_id, const int dst_id)
-> -{
-> -	struct icc_node *src, *dst;
-> -	struct icc_path *path = ERR_PTR(-EPROBE_DEFER);
-> -
-> -	mutex_lock(&icc_lock);
-> -
-> -	src = node_find(src_id);
-> -	if (!src)
-> -		goto out;
-> -
-> -	dst = node_find(dst_id);
-> -	if (!dst)
-> -		goto out;
-> -
-> -	path = path_find(dev, src, dst);
-> -	if (IS_ERR(path)) {
-> -		dev_err(dev, "%s: invalid path=%ld\n", __func__, PTR_ERR(path));
-> -		goto out;
-> -	}
-> -
-> -	path->name = kasprintf(GFP_KERNEL, "%s-%s", src->name, dst->name);
-> -	if (!path->name) {
-> -		kfree(path);
-> -		path = ERR_PTR(-ENOMEM);
-> -	}
-> -out:
-> -	mutex_unlock(&icc_lock);
-> -	return path;
-> -}
-> -EXPORT_SYMBOL_GPL(icc_get);
-> -
->  /**
->   * icc_put() - release the reference to the icc_path
->   * @path: interconnect path
-> diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
-> index 2b0e784ba771..97ac253df62c 100644
-> --- a/include/linux/interconnect.h
-> +++ b/include/linux/interconnect.h
-> @@ -40,8 +40,6 @@ struct icc_bulk_data {
->  
->  #if IS_ENABLED(CONFIG_INTERCONNECT)
->  
-> -struct icc_path *icc_get(struct device *dev, const int src_id,
-> -			 const int dst_id);
->  struct icc_path *of_icc_get(struct device *dev, const char *name);
->  struct icc_path *devm_of_icc_get(struct device *dev, const char *name);
->  int devm_of_icc_bulk_get(struct device *dev, int num_paths, struct icc_bulk_data *paths);
-> @@ -61,12 +59,6 @@ void icc_bulk_disable(int num_paths, const struct icc_bulk_data *paths);
->  
->  #else
->  
-> -static inline struct icc_path *icc_get(struct device *dev, const int src_id,
-> -				       const int dst_id)
-> -{
-> -	return NULL;
-> -}
-> -
->  static inline struct icc_path *of_icc_get(struct device *dev,
->  					  const char *name)
->  {
+>  drivers/interconnect/qcom/icc-rpm.c | 23 ++++++++++++-----------
+>  1 file changed, 12 insertions(+), 11 deletions(-)
+>
+Reviewed-by: Jun Nie <jun.nie@linaro.org>
