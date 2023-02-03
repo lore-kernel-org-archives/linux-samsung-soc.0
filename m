@@ -2,103 +2,99 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E399C636D4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Feb 2023 16:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B61C1C61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Feb 2023 18:21:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232576AbjBCQBg (ORCPT
+        id S233399AbjBCSVZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Feb 2023 11:01:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34570 "EHLO
+        Fri, 3 Feb 2023 13:21:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231347AbjBCQBf (ORCPT
+        with ESMTP id S233397AbjBCSVZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Feb 2023 11:01:35 -0500
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65E369EE2;
-        Fri,  3 Feb 2023 08:01:33 -0800 (PST)
-Received: from booty (unknown [37.161.147.43])
-        (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 3BEFB20007;
-        Fri,  3 Feb 2023 16:01:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1675440091;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GqeUY2vjR4owbFhVMWqoG7ucu+A1MAbmXZFL/6Sqg14=;
-        b=Jm4+ERkEbhZiOGPRq71beJ/tzWo6Iqj308bxlDj8fSmPnNbOy6peySNR03AVqCv50vRbSr
-        JUmdDAgDjynjXjd9tOGE8PpvfPfRbmQMm5o3L8GNhbCsXVXQ7141efCaqiy1BICPnH8hKX
-        O/rJDzgU8LbYXpqI0cyzspnrHctWxd+9jn84cmuuNp2wXEYCCAvAC4j9JeEBvZFYc8O6tW
-        J3mUNloNtXLKjQbKBlkuDeeqgzonx/FUaIaNivaqo1U0YGyHo6s0o6KkBGcbK9lYZj8Jjx
-        lGjLlDrr6I0va7ekmfUKLE3bBx5f1gp433QFlCfQ5il1wTG9+3GpK+8ApFTppQ==
-Date:   Fri, 3 Feb 2023 17:01:21 +0100
-From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
-To:     Johan Hovold <johan+linaro@kernel.org>
-Cc:     Georgi Djakov <djakov@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Artur =?UTF-8?Q?=C5=9Awigo=C5=84?= <a.swigon@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Alexandre Bailon <abailon@baylibre.com>
-Subject: Re: [PATCH 04/23] interconnect: imx: fix registration race
-Message-ID: <20230203170121.187108bd@booty>
-In-Reply-To: <20230201101559.15529-5-johan+linaro@kernel.org>
-References: <20230201101559.15529-1-johan+linaro@kernel.org>
-        <20230201101559.15529-5-johan+linaro@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        Fri, 3 Feb 2023 13:21:25 -0500
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B638A9D4A;
+        Fri,  3 Feb 2023 10:21:22 -0800 (PST)
+Received: by mail-ot1-f45.google.com with SMTP id n25-20020a9d7119000000b0068bd8c1e836so1612399otj.3;
+        Fri, 03 Feb 2023 10:21:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CKqTtd06uef5ibtsjMifbrRQEy2r/fkXlh2L538fCSc=;
+        b=qsjHrZgIOec4fWogb9P7PcPZak2vJiQW9feXSYS2k4Xw/tKnqBazvooYTj9JOEL/jO
+         ikxg1Nw2W+N4jSpDIzszgdz+PEjk4kwiciTQyQzRpsEFlH6CwCNJnXeZ0Z/+bYKTkBs3
+         GkavRiPMh4/omY1JLMRwEFG/BoVQa0MKMp9slAZRA7qsaAHk7iq/8R7whtwl6yYyX+9p
+         wvcIE/HGke+fdW2r3OxCo8766zbhrl8qFtyPGB4qlvLNxjS1RXmTLSkMj0jTqPt94wJp
+         E9Wp7tuP89WNsL2KA2Qaw8DPMeD0rpJUIOsU1To6fLn3GMCtkBp5TP3YVHaOjek6yRJd
+         +JeA==
+X-Gm-Message-State: AO0yUKUHeDpJ7FahIHaIIw0M28qrrtsBx/ekJSOXrubZlrCCKO0U7/IG
+        UX7NQQorJp9JJ/BHU+X6UZQ5hb0few==
+X-Google-Smtp-Source: AK7set+8hw6nat6H4DhyX2Limgqmen5W+zGdMAXZEu5LDxHEuhE4wlDY9lWj4NXoZichwA+bz/wc3A==
+X-Received: by 2002:a05:6830:1e84:b0:670:9610:1ce4 with SMTP id n4-20020a0568301e8400b0067096101ce4mr6394077otr.24.1675448481741;
+        Fri, 03 Feb 2023 10:21:21 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id q12-20020a05683022cc00b0068bcf7995aesm1367341otc.64.2023.02.03.10.21.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Feb 2023 10:21:21 -0800 (PST)
+Received: (nullmailer pid 617539 invoked by uid 1000);
+        Fri, 03 Feb 2023 18:21:19 -0000
+Date:   Fri, 3 Feb 2023 12:21:19 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Johan Jonker <jbx6244@gmail.com>
+Cc:     heiko@sntech.de, hjc@rock-chips.com,
+        krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
+        airlied@gmail.com, daniel@ffwll.ch, andrzej.hajda@intel.com,
+        neil.armstrong@linaro.org, robert.foss@linaro.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, philippe.cornu@foss.st.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-usb@vger.kernel.org,
+        linus.walleij@linaro.org, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        alim.akhtar@samsung.com, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v6 01/17] dt-bindings: display: rockchip: convert
+ rockchip-lvds.txt to YAML
+Message-ID: <20230203182119.GA615242-robh@kernel.org>
+References: <67771143-fd83-383d-41b2-68e8707134e8@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67771143-fd83-383d-41b2-68e8707134e8@gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello Johan,
-
-On Wed,  1 Feb 2023 11:15:40 +0100
-Johan Hovold <johan+linaro@kernel.org> wrote:
-
-> The current interconnect provider registration interface is inherently
-> racy as nodes are not added until the after adding the provider. This
-> can specifically cause racing DT lookups to fail.
+On Thu, Dec 22, 2022 at 03:22:14PM +0100, Johan Jonker wrote:
+> Convert rockchip-lvds.txt to YAML.
 > 
-> Switch to using the new API where the provider is not registered until
-> after it has been fully initialised.
+> Changed:
+>   Add power-domains property.
+>   Requirements between PX30 and RK3288
 > 
-> Fixes: f0d8048525d7 ("interconnect: Add imx core driver")
-> Cc: stable@vger.kernel.org      # 5.8
-> Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> Cc: Alexandre Bailon <abailon@baylibre.com>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+> 
+> Changed V3:
+>   Filename matching compatible style
+>   Drop "Regulator phandle for "
+>   Specify properties and requirements per SoC
+>   Sort order and restyle
+> 
+> Changed V2:
+>   Fix title
+> ---
+>  .../display/rockchip/rockchip,lvds.yaml       | 170 ++++++++++++++++++
+>  .../display/rockchip/rockchip-lvds.txt        |  92 ----------
+>  2 files changed, 170 insertions(+), 92 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,lvds.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip-lvds.txt
 
-Georgi pointed me to this series after I reported a bug yesterday [0],
-that I found on iMX8MP. So I ran some tests with my original, failing
-tree, minus one patch with my debugging code to hunt for the bug, plus
-patches 1-4 of this series.
+What's the plan for these patches? Don't see them in linux-next still. 
+Do you want me to take patches 1-8?
 
-The original code was failing approx 5~10% of the times. With your 4
-patches applied it ran 139 times with zero errors, which looks great! I
-won't be able to do more testing until next Monday to be extra sure.
-
-[0]
-https://lore.kernel.org/linux-arm-kernel/20230202175525.3dba79a7@booty/T/#u
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Rob
