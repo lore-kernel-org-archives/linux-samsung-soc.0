@@ -2,98 +2,103 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF95DC64EC3
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Feb 2023 15:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E399C636D4
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Feb 2023 16:01:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234256AbjBCPOA (ORCPT
+        id S232576AbjBCQBg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Feb 2023 10:14:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50504 "EHLO
+        Fri, 3 Feb 2023 11:01:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234248AbjBCPNi (ORCPT
+        with ESMTP id S231347AbjBCQBf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Feb 2023 10:13:38 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBDC5AC21D
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Feb 2023 07:11:39 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id m14so4890755wrg.13
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Feb 2023 07:11:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CxmsZby7chocPQUWdQ4KxrGJYiRc+9itCp/CMEoa2u0=;
-        b=hxOuQWtTHblrspsP6lwZmKKnUnidM9YjfN9wi6ixBK/+OF3jK5p7xPu7JkcjVWWE/j
-         uRjBvkLQ5Ns4efHJMXw01qSoWrIPd06TGgreys7p6UjvjR1wkpHWf7vKZPLHe1R6sgVX
-         eFgXae/5YCCLTDoKfgrgOAAbg16nGAmTcDeRnQYSifgEc66aCZahA13wym1lkbfHfR80
-         ilzgIefuxXoG08ldxzK/A6Jv/3Gr3ixcbNz1+V2iAWwJeNHgBamVYENV22AY0lWYrMR/
-         78YXRRSkANJYBPUT7w7l3ZEBD3zQHyYzxIRxBeQ2S1U3Rqyuq5h2uU9k2O9MIlIwd5Ap
-         QrYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CxmsZby7chocPQUWdQ4KxrGJYiRc+9itCp/CMEoa2u0=;
-        b=PlcaUzqWXEDDr4rMW8iWxpXfbos56WcrS3T6Vq2vevHNffcX27DC7b46y4ovGJLnjK
-         KQ7i7thiVSGnDmI+ypZxldtYrCLkNrFB0KeoBWW2c9mn1PolGfPkyzJN9G/hb0joKOR0
-         xJtd4qYUFzeHPF4gF6yU1euuZpeBO7Ocik2YcF8yULdYv71WCdsPdE6YRepyUIVB/Kqs
-         zy4IU2cn74LDDXy3fUnv4XOAzTSqEbaqNDqCWr38Kb4ZqHLGg2W2LsrjMS1A8wC5phb2
-         foDrXyzUoFFKCQ6lbQgTv3u17mU1IjTiA6U+f3tVjUmXLZaflXQ7CV1OkD+7a9mykoXo
-         Chxg==
-X-Gm-Message-State: AO0yUKXp8a6+S9d9Uy/Q27AFRrIF263896386Mijx9+s0115BGvkqQmP
-        EDJfzD9JgLD6UNj7QcLLNkUbOw==
-X-Google-Smtp-Source: AK7set8UT1zY1JylxpqtIyxXTpJULytR2aCv1FOGATgmH8EGiuS5xzgYLdS9GtaHIdlfbLLTsTtX3Q==
-X-Received: by 2002:adf:f789:0:b0:2c3:da89:bc50 with SMTP id q9-20020adff789000000b002c3da89bc50mr1105626wrp.52.1675437036739;
-        Fri, 03 Feb 2023 07:10:36 -0800 (PST)
-Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id h4-20020a5d5044000000b002bdf3809f59sm2202419wrt.38.2023.02.03.07.10.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Feb 2023 07:10:36 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-phy@lists.infradead.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-kernel@vger.kernel.org,
+        Fri, 3 Feb 2023 11:01:35 -0500
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65E369EE2;
+        Fri,  3 Feb 2023 08:01:33 -0800 (PST)
+Received: from booty (unknown [37.161.147.43])
+        (Authenticated sender: luca.ceresoli@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 3BEFB20007;
+        Fri,  3 Feb 2023 16:01:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1675440091;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GqeUY2vjR4owbFhVMWqoG7ucu+A1MAbmXZFL/6Sqg14=;
+        b=Jm4+ERkEbhZiOGPRq71beJ/tzWo6Iqj308bxlDj8fSmPnNbOy6peySNR03AVqCv50vRbSr
+        JUmdDAgDjynjXjd9tOGE8PpvfPfRbmQMm5o3L8GNhbCsXVXQ7141efCaqiy1BICPnH8hKX
+        O/rJDzgU8LbYXpqI0cyzspnrHctWxd+9jn84cmuuNp2wXEYCCAvAC4j9JeEBvZFYc8O6tW
+        J3mUNloNtXLKjQbKBlkuDeeqgzonx/FUaIaNivaqo1U0YGyHo6s0o6KkBGcbK9lYZj8Jjx
+        lGjLlDrr6I0va7ekmfUKLE3bBx5f1gp433QFlCfQ5il1wTG9+3GpK+8ApFTppQ==
+Date:   Fri, 3 Feb 2023 17:01:21 +0100
+From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
+To:     Johan Hovold <johan+linaro@kernel.org>
+Cc:     Georgi Djakov <djakov@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Artur =?UTF-8?Q?=C5=9Awigo=C5=84?= <a.swigon@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        phone-devel@vger.kernel.org, replicant@osuosl.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Henrik Grimler <henrik@grimler.se>
-Subject: Re: (subset) [PATCH 5/8] phy: samsung,mipi-video-phy: deprecate syscon phandle
-Date:   Fri,  3 Feb 2023 16:10:28 +0100
-Message-Id: <167543702106.62628.6871055553662253962.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230127194057.186458-6-krzysztof.kozlowski@linaro.org>
-References: <20230127194057.186458-1-krzysztof.kozlowski@linaro.org> <20230127194057.186458-6-krzysztof.kozlowski@linaro.org>
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
+        Alexandre Bailon <abailon@baylibre.com>
+Subject: Re: [PATCH 04/23] interconnect: imx: fix registration race
+Message-ID: <20230203170121.187108bd@booty>
+In-Reply-To: <20230201101559.15529-5-johan+linaro@kernel.org>
+References: <20230201101559.15529-1-johan+linaro@kernel.org>
+        <20230201101559.15529-5-johan+linaro@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 27 Jan 2023 20:40:54 +0100, Krzysztof Kozlowski wrote:
-> The MIPI phy is actually part of the Power Management Unit system
-> controller, thus it should be its child, instead of sibling node with
-> syscon phandle.
+Hello Johan,
+
+On Wed,  1 Feb 2023 11:15:40 +0100
+Johan Hovold <johan+linaro@kernel.org> wrote:
+
+> The current interconnect provider registration interface is inherently
+> racy as nodes are not added until the after adding the provider. This
+> can specifically cause racing DT lookups to fail.
 > 
+> Switch to using the new API where the provider is not registered until
+> after it has been fully initialised.
 > 
+> Fixes: f0d8048525d7 ("interconnect: Add imx core driver")
+> Cc: stable@vger.kernel.org      # 5.8
+> Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> Cc: Alexandre Bailon <abailon@baylibre.com>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 
-Applied, thanks!
+Georgi pointed me to this series after I reported a bug yesterday [0],
+that I found on iMX8MP. So I ran some tests with my original, failing
+tree, minus one patch with my debugging code to hunt for the bug, plus
+patches 1-4 of this series.
 
-[5/8] phy: samsung,mipi-video-phy: deprecate syscon phandle
-      https://git.kernel.org/krzk/linux/c/965e69f2c95e5be90ef8aa009aca4294d0433e33
+The original code was failing approx 5~10% of the times. With your 4
+patches applied it ran 139 times with zero errors, which looks great! I
+won't be able to do more testing until next Monday to be extra sure.
 
-Best regards,
+[0]
+https://lore.kernel.org/linux-arm-kernel/20230202175525.3dba79a7@booty/T/#u
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
