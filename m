@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE9AC636CC
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Feb 2023 06:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2036C636CC
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Feb 2023 06:09:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231903AbjBCGJQ (ORCPT
+        id S232039AbjBCGJS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Feb 2023 01:09:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51006 "EHLO
+        Fri, 3 Feb 2023 01:09:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231688AbjBCGJH (ORCPT
+        with ESMTP id S231546AbjBCGJH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Fri, 3 Feb 2023 01:09:07 -0500
-Received: from mail-oa1-x2f.google.com (mail-oa1-x2f.google.com [IPv6:2001:4860:4864:20::2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCB2472650
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Feb 2023 22:09:05 -0800 (PST)
-Received: by mail-oa1-x2f.google.com with SMTP id 586e51a60fabf-15f97c478a8so5451928fac.13
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2023 22:09:05 -0800 (PST)
+Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 697A1728FE
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Feb 2023 22:09:06 -0800 (PST)
+Received: by mail-oi1-x232.google.com with SMTP id r205so3359628oib.9
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2023 22:09:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0yDr1A3i4lDIJ+wlIu+l4d4VuNidJwmq/Y1jBeWohDk=;
-        b=K2zByDQKA8e0euNkkSni0gOKbDACnfLRXRi54ui/9SqIbiQ2rFkNElrHR0lY34wKb2
-         wwn2+EVJXWb4jwCc7S2vXPo4/XydrGvPMYDzKf645rG/18dv81JvvOGT+k/f7HGi0ItW
-         ibdS8Gbopb+eKrbGJNAQE3ClVwDxjzMMBN18HBfvVEtWV+EuJY1lgOTMaNFcFrZsGLwp
-         +miJnlW1xouk3hSK6HoVo94ptseWtxaot4sXMkEoHBwYI+9YkvR1CPb1Yf+26ZGnjPha
-         901ifJh8+tabdAnXafQ5XsxF/6HjgTLCvG1XbDeg2blQMaSBceEDCOCgrt2+FWBk01q7
-         1xSQ==
+        bh=hGIg7efke9/GL7H7bmsFZBD24JST84PhbzNPSEQBcS0=;
+        b=Gx3JJFW5AmJIEM9E+xl833GmF3UeU0UV7IAeZXgwSRigqwr6QDvIOTnKo2EkuZ4JBm
+         K6DrHnjSeSmJoCoIh6M/27+RN5mb5f6nZnwydy6yGgHr5+c2x/Z/vTkvNBHWsFSIKOpf
+         yqBBFZG3BxR8P0ZWskEJmKvJzK5oBXAGVqV8OaVNtpBtmnKKLrgqMfFGVTYFO0jnuafZ
+         L07xfeGNfL/12k31PvlMuOkPxYvmIGj5X/g8e3VKVSP9wwjzij/2lODHwYoa/INsTTxX
+         7vYWKYSZi7zg3snrVindw0/0CaZt2VE9G4cWIdCmR/NSkvFIqDOxNLaAdXmaAok7Z3Yt
+         po+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0yDr1A3i4lDIJ+wlIu+l4d4VuNidJwmq/Y1jBeWohDk=;
-        b=TwX2aH8cwECk3WPgT6YhsMzwI1vXvVfAkoUZETTWXZqyxnefVCyAcjprTYOV/LNvnT
-         QGGj9JEELr+KIy6DWkW3P7Hdoos2ONMOzD1hgvhdPut5UMdKVtd+eG0k/VLbXZw1KZPt
-         lH/Vr5h8nCRt4SeLg7pV8EYvrY1y7jXc/lJHNgA7vuFqY1D0prMHfsFpDM0Uv0NdPehf
-         +LIfVXnnotsok96+57l5N6102T5jqaXNr4ngay7lD8j/Fb2saEeU20SL9i+6z3nfsk7a
-         5uKlt/ZQKIUce5DpNjVdcT1eGf/SoHzgFKF91iXbkJjJHm+l2BdMgWAaPsQCqrq7KkYH
-         +2/w==
-X-Gm-Message-State: AO0yUKWduYhdcuUXLFIMnJhsrD9oxG194uL8MnaNMQhsZZtfb+08Gruu
-        h6XtxXoPUrhHpooXEPNshw49bA==
-X-Google-Smtp-Source: AK7set9YBh2frMwtpfDlDcpzwrz1BTgBwLN6EiL7cpETUY+zyn/f/f+l47+u+zB5kN7qLYJOme64ng==
-X-Received: by 2002:a05:6870:4414:b0:169:c27f:abf5 with SMTP id u20-20020a056870441400b00169c27fabf5mr4082876oah.15.1675404544827;
-        Thu, 02 Feb 2023 22:09:04 -0800 (PST)
+        bh=hGIg7efke9/GL7H7bmsFZBD24JST84PhbzNPSEQBcS0=;
+        b=pfb7eUOwokNqzI0KPe2I788kAhrJOqH1wJZG2/Ut+l6euA2s8Jjv6m15zy+fkoCI+V
+         kDbFYiR74GJ2k3RgJJk9BGWB9JoywnDatj9x7lxl0JCMR08crBPAKFRuhMtnRouLD7mY
+         SOXfUMK1aEotJTarRoxSqvRCzUlI4+8UYLYl0O66I9vZgUbgDLF3eqBVfx4SRgyCfe/V
+         YIE9GIpxq6Cz2iM1xmrYritqeilKNFbdyJy0TIz+3CufeCphfSH1F6opItJXYCaJGzyx
+         8jY5+JzbmFTg2B7YkP1UJ850T79Iw1e4GzKftMN6Y7RiXUFYVXPUlXHCsSCn0wOH9Lpc
+         BvXw==
+X-Gm-Message-State: AO0yUKVOVXilJR9cKS9hmPLRmm1lBPIFaoFDxT53RqWwALYhweHmVQQC
+        nXKhRFwymu7iC/dlvluSUG4wBQ==
+X-Google-Smtp-Source: AK7set9l6Dt74iN/9jGW0AVDX6iku7ADOWzwYFPSr3Jo+72AyEvOoSgqinrOWBW3zn3x3g4yc+CPKA==
+X-Received: by 2002:a05:6808:6182:b0:378:2467:5cf0 with SMTP id dn2-20020a056808618200b0037824675cf0mr3949544oib.25.1675404545734;
+        Thu, 02 Feb 2023 22:09:05 -0800 (PST)
 Received: from localhost ([136.49.140.41])
-        by smtp.gmail.com with ESMTPSA id dt10-20020a0568705a8a00b00163b3472300sm616309oab.2.2023.02.02.22.09.04
+        by smtp.gmail.com with ESMTPSA id d2-20020a056830044200b0066ca61230casm757387otc.8.2023.02.02.22.09.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Feb 2023 22:09:04 -0800 (PST)
+        Thu, 02 Feb 2023 22:09:05 -0800 (PST)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
@@ -65,9 +65,9 @@ Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/6] clk: samsung: Set dev in samsung_clk_init()
-Date:   Fri,  3 Feb 2023 00:09:21 -0600
-Message-Id: <20230203060924.8257-4-semen.protsenko@linaro.org>
+Subject: [PATCH 4/6] clk: samsung: Extract clocks registration to common function
+Date:   Fri,  3 Feb 2023 00:09:22 -0600
+Message-Id: <20230203060924.8257-5-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230203060924.8257-1-semen.protsenko@linaro.org>
 References: <20230203060924.8257-1-semen.protsenko@linaro.org>
@@ -77,211 +77,100 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Some drivers set dev to context in order to implement PM. Make that part
-of samsung_clk_init() instead of assigning `ctx->dev = dev' separately.
-
-No functional change.
+It might be useful to have a separate clocks registration function, so
+it can be called from different users. Extract that common code from
+samsung_cmu_register_one() to samsung_cmu_register_clocks(). Also make
+that new function global as it's going to be used in other modules
+further.
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
- drivers/clk/samsung/clk-exynos4.c        |  2 +-
- drivers/clk/samsung/clk-exynos4412-isp.c |  3 +--
- drivers/clk/samsung/clk-exynos5250.c     |  2 +-
- drivers/clk/samsung/clk-exynos5420.c     |  2 +-
- drivers/clk/samsung/clk-s3c2410.c        |  2 +-
- drivers/clk/samsung/clk-s3c2412.c        |  2 +-
- drivers/clk/samsung/clk-s3c2443.c        |  2 +-
- drivers/clk/samsung/clk-s3c64xx.c        |  2 +-
- drivers/clk/samsung/clk-s5pv210.c        |  2 +-
- drivers/clk/samsung/clk.c                | 19 +++++++++++++++----
- drivers/clk/samsung/clk.h                |  5 +++--
- 11 files changed, 27 insertions(+), 16 deletions(-)
+ drivers/clk/samsung/clk.c | 46 ++++++++++++++++++++++++---------------
+ drivers/clk/samsung/clk.h |  2 ++
+ 2 files changed, 30 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 7a9994144d72..d7dbb3858347 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -1251,7 +1251,7 @@ static void __init exynos4_clk_init(struct device_node *np,
- 	if (!reg_base)
- 		panic("%s: failed to map registers\n", __func__);
- 
--	ctx = samsung_clk_init(reg_base, CLK_NR_CLKS);
-+	ctx = samsung_clk_init(NULL, reg_base, CLK_NR_CLKS);
- 	hws = ctx->clk_data.hws;
- 
- 	samsung_clk_of_register_fixed_ext(ctx, exynos4_fixed_rate_ext_clks,
-diff --git a/drivers/clk/samsung/clk-exynos4412-isp.c b/drivers/clk/samsung/clk-exynos4412-isp.c
-index 0b6390e04533..1470c15e95da 100644
---- a/drivers/clk/samsung/clk-exynos4412-isp.c
-+++ b/drivers/clk/samsung/clk-exynos4412-isp.c
-@@ -121,8 +121,7 @@ static int __init exynos4x12_isp_clk_probe(struct platform_device *pdev)
- 	if (!exynos4x12_save_isp)
- 		return -ENOMEM;
- 
--	ctx = samsung_clk_init(reg_base, CLK_NR_ISP_CLKS);
--	ctx->dev = dev;
-+	ctx = samsung_clk_init(dev, reg_base, CLK_NR_ISP_CLKS);
- 
- 	platform_set_drvdata(pdev, ctx);
- 
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index f1cb69aea10e..92fb09922f28 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -797,7 +797,7 @@ static void __init exynos5250_clk_init(struct device_node *np)
- 		panic("%s: unable to determine soc\n", __func__);
- 	}
- 
--	ctx = samsung_clk_init(reg_base, CLK_NR_CLKS);
-+	ctx = samsung_clk_init(NULL, reg_base, CLK_NR_CLKS);
- 	hws = ctx->clk_data.hws;
- 
- 	samsung_clk_of_register_fixed_ext(ctx, exynos5250_fixed_rate_ext_clks,
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 46cac4980be2..1e0cbf762408 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -1587,7 +1587,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
- 
- 	exynos5x_soc = soc;
- 
--	ctx = samsung_clk_init(reg_base, CLK_NR_CLKS);
-+	ctx = samsung_clk_init(NULL, reg_base, CLK_NR_CLKS);
- 	hws = ctx->clk_data.hws;
- 
- 	samsung_clk_of_register_fixed_ext(ctx, exynos5x_fixed_rate_ext_clks,
-diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
-index 8483d4a2be03..a30db5b5b0d3 100644
---- a/drivers/clk/samsung/clk-s3c2410.c
-+++ b/drivers/clk/samsung/clk-s3c2410.c
-@@ -332,7 +332,7 @@ void __init s3c2410_common_clk_init(struct device_node *np, unsigned long xti_f,
- 			panic("%s: failed to map registers\n", __func__);
- 	}
- 
--	ctx = samsung_clk_init(reg_base, NR_CLKS);
-+	ctx = samsung_clk_init(NULL, reg_base, NR_CLKS);
- 	hws = ctx->clk_data.hws;
- 
- 	/* Register external clocks only in non-dt cases */
-diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
-index 8f12a40790d4..c4a9abbdd1e8 100644
---- a/drivers/clk/samsung/clk-s3c2412.c
-+++ b/drivers/clk/samsung/clk-s3c2412.c
-@@ -216,7 +216,7 @@ void __init s3c2412_common_clk_init(struct device_node *np, unsigned long xti_f,
- 			panic("%s: failed to map registers\n", __func__);
- 	}
- 
--	ctx = samsung_clk_init(reg_base, NR_CLKS);
-+	ctx = samsung_clk_init(NULL, reg_base, NR_CLKS);
- 
- 	/* Register external clocks only in non-dt cases */
- 	if (!np)
-diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
-index 6db8147f0aa2..be0a378d0a92 100644
---- a/drivers/clk/samsung/clk-s3c2443.c
-+++ b/drivers/clk/samsung/clk-s3c2443.c
-@@ -353,7 +353,7 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
- 			panic("%s: failed to map registers\n", __func__);
- 	}
- 
--	ctx = samsung_clk_init(reg_base, NR_CLKS);
-+	ctx = samsung_clk_init(NULL, reg_base, NR_CLKS);
- 
- 	/* Register external clocks only in non-dt cases */
- 	if (!np)
-diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
-index 47e9d19486dc..d27a1f73f077 100644
---- a/drivers/clk/samsung/clk-s3c64xx.c
-+++ b/drivers/clk/samsung/clk-s3c64xx.c
-@@ -405,7 +405,7 @@ void __init s3c64xx_clk_init(struct device_node *np, unsigned long xtal_f,
- 			panic("%s: failed to map registers\n", __func__);
- 	}
- 
--	ctx = samsung_clk_init(reg_base, NR_CLKS);
-+	ctx = samsung_clk_init(NULL, reg_base, NR_CLKS);
- 	hws = ctx->clk_data.hws;
- 
- 	/* Register external clocks. */
-diff --git a/drivers/clk/samsung/clk-s5pv210.c b/drivers/clk/samsung/clk-s5pv210.c
-index b0ab6bc9d21d..cd85342e4ddb 100644
---- a/drivers/clk/samsung/clk-s5pv210.c
-+++ b/drivers/clk/samsung/clk-s5pv210.c
-@@ -743,7 +743,7 @@ static void __init __s5pv210_clk_init(struct device_node *np,
- 	struct samsung_clk_provider *ctx;
- 	struct clk_hw **hws;
- 
--	ctx = samsung_clk_init(reg_base, NR_CLKS);
-+	ctx = samsung_clk_init(NULL, reg_base, NR_CLKS);
- 	hws = ctx->clk_data.hws;
- 
- 	samsung_clk_register_mux(ctx, early_mux_clks,
 diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index 2436223aac1a..912dfbe5ac20 100644
+index 912dfbe5ac20..b6701905f254 100644
 --- a/drivers/clk/samsung/clk.c
 +++ b/drivers/clk/samsung/clk.c
-@@ -53,9 +53,19 @@ struct samsung_clk_reg_dump *samsung_clk_alloc_reg_dump(
- 	return rd;
+@@ -335,6 +335,33 @@ void samsung_clk_extended_sleep_init(void __iomem *reg_base,
  }
+ #endif
  
--/* setup the essentials required to support clock lookup using ccf */
--struct samsung_clk_provider * __init samsung_clk_init(void __iomem *base,
--			unsigned long nr_clks)
 +/**
-+ * samsung_clk_init() - Create and initialize a clock provider object
-+ * @dev:	CMU device to enable runtime PM, or NULL if RPM is not needed
-+ * @base:	Start address (mapped) of CMU registers
-+ * @nr_clks:	Total clock count to allocate in clock provider object
-+ *
-+ * Setup the essentials required to support clock lookup using Common Clock
-+ * Framework.
-+ *
-+ * Return: Allocated and initialized clock provider object.
++ * samsung_cmu_register_clocks() - Register all clocks provided in CMU object
++ * @ctx: Clock provider object
++ * @cmu: CMU object with clocks to register
 + */
-+struct samsung_clk_provider * __init samsung_clk_init(struct device *dev,
-+			void __iomem *base, unsigned long nr_clks)
- {
- 	struct samsung_clk_provider *ctx;
- 	int i;
-@@ -67,6 +77,7 @@ struct samsung_clk_provider * __init samsung_clk_init(void __iomem *base,
- 	for (i = 0; i < nr_clks; ++i)
- 		ctx->clk_data.hws[i] = ERR_PTR(-ENOENT);
- 
-+	ctx->dev = dev;
- 	ctx->reg_base = base;
- 	ctx->clk_data.num = nr_clks;
- 	spin_lock_init(&ctx->lock);
-@@ -341,7 +352,7 @@ struct samsung_clk_provider * __init samsung_cmu_register_one(
- 		return NULL;
++void __init samsung_cmu_register_clocks(struct samsung_clk_provider *ctx,
++					const struct samsung_cmu_info *cmu)
++{
++	if (cmu->pll_clks)
++		samsung_clk_register_pll(ctx, cmu->pll_clks, cmu->nr_pll_clks);
++	if (cmu->mux_clks)
++		samsung_clk_register_mux(ctx, cmu->mux_clks, cmu->nr_mux_clks);
++	if (cmu->div_clks)
++		samsung_clk_register_div(ctx, cmu->div_clks, cmu->nr_div_clks);
++	if (cmu->gate_clks)
++		samsung_clk_register_gate(ctx, cmu->gate_clks,
++					  cmu->nr_gate_clks);
++	if (cmu->fixed_clks)
++		samsung_clk_register_fixed_rate(ctx, cmu->fixed_clks,
++						cmu->nr_fixed_clks);
++	if (cmu->fixed_factor_clks)
++		samsung_clk_register_fixed_factor(ctx, cmu->fixed_factor_clks,
++						  cmu->nr_fixed_factor_clks);
++	if (cmu->cpu_clks)
++		samsung_clk_register_cpu(ctx, cmu->cpu_clks, cmu->nr_cpu_clks);
++}
++
+ /*
+  * Common function which registers plls, muxes, dividers and gates
+  * for each CMU. It also add CMU register list to register cache.
+@@ -353,29 +380,12 @@ struct samsung_clk_provider * __init samsung_cmu_register_one(
  	}
  
--	ctx = samsung_clk_init(reg_base, cmu->nr_clk_ids);
-+	ctx = samsung_clk_init(NULL, reg_base, cmu->nr_clk_ids);
+ 	ctx = samsung_clk_init(NULL, reg_base, cmu->nr_clk_ids);
++	samsung_cmu_register_clocks(ctx, cmu);
  
- 	if (cmu->pll_clks)
- 		samsung_clk_register_pll(ctx, cmu->pll_clks, cmu->nr_pll_clks);
+-	if (cmu->pll_clks)
+-		samsung_clk_register_pll(ctx, cmu->pll_clks, cmu->nr_pll_clks);
+-	if (cmu->mux_clks)
+-		samsung_clk_register_mux(ctx, cmu->mux_clks,
+-			cmu->nr_mux_clks);
+-	if (cmu->div_clks)
+-		samsung_clk_register_div(ctx, cmu->div_clks, cmu->nr_div_clks);
+-	if (cmu->gate_clks)
+-		samsung_clk_register_gate(ctx, cmu->gate_clks,
+-			cmu->nr_gate_clks);
+-	if (cmu->fixed_clks)
+-		samsung_clk_register_fixed_rate(ctx, cmu->fixed_clks,
+-			cmu->nr_fixed_clks);
+-	if (cmu->fixed_factor_clks)
+-		samsung_clk_register_fixed_factor(ctx, cmu->fixed_factor_clks,
+-			cmu->nr_fixed_factor_clks);
+ 	if (cmu->clk_regs)
+ 		samsung_clk_extended_sleep_init(reg_base,
+ 			cmu->clk_regs, cmu->nr_clk_regs,
+ 			cmu->suspend_regs, cmu->nr_suspend_regs);
+-	if (cmu->cpu_clks)
+-		samsung_clk_register_cpu(ctx, cmu->cpu_clks, cmu->nr_cpu_clks);
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+ 
 diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index 98753b0e5055..3fd6c0868921 100644
+index 3fd6c0868921..ab9c3d7a25b3 100644
 --- a/drivers/clk/samsung/clk.h
 +++ b/drivers/clk/samsung/clk.h
-@@ -16,6 +16,7 @@
- /**
-  * struct samsung_clk_provider: information about clock provider
-  * @reg_base: virtual address for the register base.
-+ * @dev: clock provider device needed for runtime PM.
-  * @lock: maintains exclusion between callbacks for a given clock-provider.
-  * @clk_data: holds clock related data like clk_hw* and number of clocks.
-  */
-@@ -337,8 +338,8 @@ struct samsung_cmu_info {
- 	const char *clk_name;
- };
+@@ -377,6 +377,8 @@ void samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ void samsung_clk_register_cpu(struct samsung_clk_provider *ctx,
+ 		const struct samsung_cpu_clock *list, unsigned int nr_clk);
  
--struct samsung_clk_provider *samsung_clk_init(void __iomem *base,
--			unsigned long nr_clks);
-+struct samsung_clk_provider *samsung_clk_init(struct device *dev,
-+			void __iomem *base, unsigned long nr_clks);
- void samsung_clk_of_add_provider(struct device_node *np,
- 			struct samsung_clk_provider *ctx);
- void samsung_clk_of_register_fixed_ext(
++void samsung_cmu_register_clocks(struct samsung_clk_provider *ctx,
++				 const struct samsung_cmu_info *cmu);
+ struct samsung_clk_provider *samsung_cmu_register_one(
+ 			struct device_node *,
+ 			const struct samsung_cmu_info *);
 -- 
 2.39.0
 
