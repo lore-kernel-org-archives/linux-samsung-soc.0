@@ -2,121 +2,153 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B8CC636D4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Feb 2023 05:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB5EC636D7
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Feb 2023 06:09:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231836AbjBCF1f (ORCPT
+        id S231364AbjBCGJE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Feb 2023 00:27:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38180 "EHLO
+        Fri, 3 Feb 2023 01:09:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230230AbjBCF1d (ORCPT
+        with ESMTP id S231277AbjBCGJD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Feb 2023 00:27:33 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 982381F5C1;
-        Thu,  2 Feb 2023 21:27:32 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 327FF61D0D;
-        Fri,  3 Feb 2023 05:27:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D55C433EF;
-        Fri,  3 Feb 2023 05:27:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675402051;
-        bh=fHq9IkxqxVUwz3GGvOE/Mwt4EK7elXIC9jlHvqcrh8s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b8aDl1NIsRsl5BjZTgbUD7FGwU0exrjPdV5CSous9UsW/GkGSVWtwdmywNbhtc1vP
-         qD9wUxbxs4lj9ObsBx32KTRRww8VYUVzr6hON2oshLd7CP5vusl+YUfCsiAkfcSbSw
-         7Z6mei8DcZOM3Ehye2TfF33alKtXhQjfgRng4kstNIvCyfoPX98cySlNoZWzbVFS2d
-         cor3Ij5NklP1JiZI+8k/udVX0Y6uJoq2kDnY3bYNBFzIO3aheHu2zWc5I9WQSve3bl
-         0dJycH5YhwSy/+uaptRsgK8hnl4CyBZ+y01J2rNUqcZt8yXiLMgEcbaeqXlcGIi7ry
-         TS2czWrz8ECfQ==
-Date:   Fri, 3 Feb 2023 10:57:26 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        UNGLinuxDriver@microchip.com,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Fri, 3 Feb 2023 01:09:03 -0500
+Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 782BD6A326
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Feb 2023 22:09:02 -0800 (PST)
+Received: by mail-ot1-x335.google.com with SMTP id k91-20020a9d19e4000000b0068bca1294aaso1095858otk.8
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2023 22:09:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=onrI71TD6WqFZBzvBnCt+Gild5OdRHzAV9MK+sKDnqY=;
+        b=gYQw/IZoNsuFi2SH+ea5NNpnPFwmqf03PJiE7ERwjJ6xFjfgcjQ161n03LOiPIHxHk
+         LjrEmv3Gw7ELY1yev4HdfoFiXyUUZpc2a9BHF4lPqVOh6VS/CFm44oayMOfNosX7z14I
+         Vah3pOgiT492kV6lxqngLnplVklrplugAEi5hyHqEj1iZgqkQsisMr87qpmJDeSyeyv3
+         bo5N4wpZAkI2wrOE/BvX04ejUc5vcbkoRi8OWmR+b8riJZ7hpgHH41Ikt37JnyNzspwy
+         pJ0nomi+uL6C2/TDJ3KYVaI1LGEkENRaYe1SoDZE8E7LDxUb4Gu29dOoz8I7hvwu3rav
+         v0vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=onrI71TD6WqFZBzvBnCt+Gild5OdRHzAV9MK+sKDnqY=;
+        b=2E9yTuwn7f2YMeb/AFCx7eYXywqujHb+beA2eSAOXQ4t4MDyYmXa/7eU/v7vLiJEqv
+         38QMknxwE7C3/ubIuNFym5To9gYboQiIcjRSdx7T0gv7qtTV3M3YL4reBT9Z2wjU90gA
+         8YgypPUE2ho5SLFiuFQYnRt//EqK7n9wyqshImtTWr7g6ct1GOFVzC/NMfHh1j3B0YTe
+         yIPgsIgs6UWFFB3+wJtQFGAhpkWTm/5YOE9IztNAQKB9hT47xOvFVGey1DHJF1gCJEXo
+         1gZJ1DoRie+vc52xCfgyoVQrWPCKLwKrx86vMIWFPRwvmWEh5HhOYpajvtRFKga8K+xd
+         RfJQ==
+X-Gm-Message-State: AO0yUKUYFFXEx1QHAJktysjCjK8PvWjdG0g6XzIZWATlW8EiqzMNT+yd
+        2/tJvkzVF+mvlRAdhO2ws7iIng==
+X-Google-Smtp-Source: AK7set/Eaw+FWQJ5ZOw2BxuOM6d1N0+6Zivr73NDLw4GGuMzl5IttPfbTXwzt/Dcc4KoTTjeq+aRhg==
+X-Received: by 2002:a9d:148:0:b0:68d:4eb7:49d9 with SMTP id 66-20020a9d0148000000b0068d4eb749d9mr2730497otu.37.1675404541752;
+        Thu, 02 Feb 2023 22:09:01 -0800 (PST)
+Received: from localhost ([136.49.140.41])
+        by smtp.gmail.com with ESMTPSA id 88-20020a9d02e1000000b00684cbd8dd49sm692895otl.79.2023.02.02.22.09.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Feb 2023 22:09:01 -0800 (PST)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-phy@lists.infradead.org, linux-doc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2 6/9] net: ethernet: ti: am65-cpsw: Convert to
- devm_of_phy_optional_get()
-Message-ID: <Y9ybPmWub43JpMUb@matsya>
-References: <cover.1674584626.git.geert+renesas@glider.be>
- <3d612c95031cf5c6d5af4ec35f40121288a2c1c6.1674584626.git.geert+renesas@glider.be>
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] clk: samsung: Add PM support for ARM64 Exynos chips
+Date:   Fri,  3 Feb 2023 00:09:18 -0600
+Message-Id: <20230203060924.8257-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d612c95031cf5c6d5af4ec35f40121288a2c1c6.1674584626.git.geert+renesas@glider.be>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 24-01-23, 19:37, Geert Uytterhoeven wrote:
-> Use the new devm_of_phy_optional_get() helper instead of open-coding the
-> same operation.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - Rebase on top of commit 854617f52ab42418 ("net: ethernet: ti:
->     am65-cpsw: Handle -EPROBE_DEFER for Serdes PHY") in net-next
->     (next-20230123 and later).
+In order to prepare for PM enablement in clk-exynos850, common PM code
+was extracted from clk-exynos5433 to clk-exynos-arm64. Also some related
+cleanups were done prior to that. More specifically:
 
-I was trying to apply this on rc1, so ofcourse this fails for me? How do
-we resolve this?
+  - patches #1..5: cleanups
+  - patch #6: PM code extraction
 
-I can skip this patch, provide a tag for this to be pulled into -net
-tree
+During the extraction of the exynos5433_cmu_probe() content to
+exynos_arm64_register_cmu_pm() some code was reworked a bit, and also
+split into smaller functions. In particular:
 
-> ---
->  drivers/net/ethernet/ti/am65-cpsw-nuss.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-> index c696da89962f1ae3..794f228c8d632f7a 100644
-> --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-> +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-> @@ -1460,11 +1460,9 @@ static int am65_cpsw_init_serdes_phy(struct device *dev, struct device_node *por
->  	struct phy *phy;
->  	int ret;
->  
-> -	phy = devm_of_phy_get(dev, port_np, name);
-> -	if (PTR_ERR(phy) == -ENODEV)
-> -		return 0;
-> -	if (IS_ERR(phy))
-> -		return PTR_ERR(phy);
-> +	phy = devm_of_phy_optional_get(dev, port_np, name);
-> +	if (IS_ERR_OR_NULL(phy))
-> +		return PTR_ERR_OR_ZERO(phy);
->  
->  	/* Serdes PHY exists. Store it. */
->  	port->slave.serdes_phy = phy;
-> -- 
-> 2.34.1
+  - cmu_data structure now contains a pointer to ctx, which is now
+    allocated in samsung_clk_init()
+  - cmu_data structure initialization was moved into separate function
+  - code for configuring gate clocks was added (optional)
+
+Which in turn resulted in somehow modified code of probe function:
+
+  Original
+  --------
+
+    ...
+    devm_platform_ioremap_resource(...);
+    samsung_clk_init(...);
+    exynos_arm64_cmu_prepare_pm(...);
+    exynos_arm64_enable_bus_clk(...);
+    platform_set_drvdata(...);
+    ...
+
+  Modified
+  --------
+
+    ...
+    platform_set_drvdata(...);
+    exynos_arm64_cmu_prepare_pm(...);
+    exynos_arm64_enable_bus_clk(...);
+    exynos_arm64_init_clocks(...);
+    devm_platform_ioremap_resource(...);
+    samsung_clk_init(...);
+    ...
+
+That shouldn't really change the logic or mode of operation. It was
+preliminary tested on Exynos850 based board, with some extra patches on
+top of this series (will be submitted later).
+
+Marek, could you please test these patches on Exynos5433 platform, and
+also review accordingly?
+
+Thanks!
+
+Sam Protsenko (6):
+  clk: samsung: Don't pass reg_base to samsung_clk_register_pll()
+  clk: samsung: Remove np argument from samsung_clk_init()
+  clk: samsung: Set dev in samsung_clk_init()
+  clk: samsung: Extract clocks registration to common function
+  clk: samsung: Extract parent clock enabling to common function
+  clk: samsung: exynos5433: Extract PM support to common ARM64 layer
+
+ drivers/clk/samsung/clk-exynos-arm64.c   | 219 +++++++++++++++++++++--
+ drivers/clk/samsung/clk-exynos-arm64.h   |   3 +
+ drivers/clk/samsung/clk-exynos4.c        |   6 +-
+ drivers/clk/samsung/clk-exynos4412-isp.c |   3 +-
+ drivers/clk/samsung/clk-exynos5250.c     |   5 +-
+ drivers/clk/samsung/clk-exynos5420.c     |   5 +-
+ drivers/clk/samsung/clk-exynos5433.c     | 157 +---------------
+ drivers/clk/samsung/clk-pll.c            |  11 +-
+ drivers/clk/samsung/clk-s3c2410.c        |   6 +-
+ drivers/clk/samsung/clk-s3c2412.c        |   5 +-
+ drivers/clk/samsung/clk-s3c2443.c        |   6 +-
+ drivers/clk/samsung/clk-s3c64xx.c        |   4 +-
+ drivers/clk/samsung/clk-s5pv210.c        |   6 +-
+ drivers/clk/samsung/clk.c                |  64 ++++---
+ drivers/clk/samsung/clk.h                |  10 +-
+ 15 files changed, 282 insertions(+), 228 deletions(-)
 
 -- 
-~Vinod
+2.39.0
+
