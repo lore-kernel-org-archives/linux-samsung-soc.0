@@ -2,115 +2,112 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 000F2C636CD
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Feb 2023 14:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F27A0C636CD
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Feb 2023 14:47:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229511AbjBEOMw (ORCPT
+        id S229538AbjBEOrF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 5 Feb 2023 09:12:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52620 "EHLO
+        Sun, 5 Feb 2023 09:47:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbjBEOMv (ORCPT
+        with ESMTP id S229475AbjBEOrD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 5 Feb 2023 09:12:51 -0500
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C20E026A6;
-        Sun,  5 Feb 2023 06:12:47 -0800 (PST)
-Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1pOfks-00077L-Ly; Sun, 05 Feb 2023 15:12:30 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Rob Herring <robh@kernel.org>, Johan Jonker <jbx6244@gmail.com>
-Cc:     hjc@rock-chips.com, krzysztof.kozlowski+dt@linaro.org,
-        gregkh@linuxfoundation.org, airlied@gmail.com, daniel@ffwll.ch,
-        andrzej.hajda@intel.com, neil.armstrong@linaro.org,
-        robert.foss@linaro.org, Laurent.pinchart@ideasonboard.com,
-        jonas@kwiboo.se, jernej.skrabec@gmail.com,
-        philippe.cornu@foss.st.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sun, 5 Feb 2023 09:47:03 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F9E74EE1
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  5 Feb 2023 06:47:02 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id j25so4777287wrc.4
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Feb 2023 06:47:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HR0gJobSHL9vE+BsCSIkgEZdXYIv6WLpvlg39qHg3YM=;
+        b=ue25OXS3a4CzuB1vxQMLp9XWz3vHa0DLAQwEfEaPMjMEx4GVzObfh3kmR1W5nmzz4/
+         G5vn82FlMVMJ04KGY3UmaZJmsqfQpAQGu/JR1++eJGvbLmsNaTC3/NfbgUnEmB7o7Xkc
+         bTdBYzqBvMyPJCltpbgCDPQaqxcNuNwvdPSTt+emWYuZOI3hUia4aWEdw6SpvNIllN4j
+         SikVCtmFO4fb2+8zaa8fgn5O+VX/EPJbHkQdnnF6GgT8F4bqSXHMwYZDseV1MnC4gwTI
+         coZl3AgLT4qLxFW5DoWYUDJ1hJaDeOhtMuFQeOm6xeO+xObw6F2uUh3ZRHWSpAhCtsb9
+         Otxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HR0gJobSHL9vE+BsCSIkgEZdXYIv6WLpvlg39qHg3YM=;
+        b=5u+w7ppzsyGZrQ4SezHHsDkueVyWY5L6/aunuZ/FY67/dc78uNpqfLY1GXYG89jVxu
+         tZSoEyUJ2U2lY7Vx9TKeBh4WelZBsZh24V7IkaSSvaWbvLmoJrwXZzLyKeMsKB9kOeTw
+         W79PmZwnRQMJcW4eiDQ2Zo5fkPV0B7FHKWWj9R1fsmv/GJXOhmUtUyWAAwG7scKFgN5O
+         qUmgpPLhEo4Pz8+oKbowF5VUTszboThr/pi0uGm5N9spegifp7HGZM5T9SHU1M9SlW2Z
+         neV9RNESYQtuM/tUisgqNu1NULXJTZwwOJcWTRH9fooOe9i4iUDqJhFxLXPNg/yqDqXh
+         oe3w==
+X-Gm-Message-State: AO0yUKUyhESMhKLLFeZ8JxL/RV8kuiJ4bP5gVwUO5c3888tx0Qfvokro
+        On6dTEcEyAF1bgaeTNrkAsrb3Q==
+X-Google-Smtp-Source: AK7set+F72M3wUCPpeFvd7+ejV4iEMUfZ+8nDmcg4bm7tKjZoJBQtCmQ2ecj/huPz2vyjS6ubTPI+g==
+X-Received: by 2002:a05:6000:988:b0:2bf:d88b:7b45 with SMTP id by8-20020a056000098800b002bfd88b7b45mr17833434wrb.67.1675608420767;
+        Sun, 05 Feb 2023 06:47:00 -0800 (PST)
+Received: from krzk-bin.. ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id q8-20020adfea08000000b002c3ddcf4f3asm4072354wrm.0.2023.02.05.06.46.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Feb 2023 06:47:00 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-usb@vger.kernel.org,
-        linus.walleij@linaro.org, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        alim.akhtar@samsung.com, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v6 01/17] dt-bindings: display: rockchip: convert
- rockchip-lvds.txt to YAML
-Date:   Sun, 05 Feb 2023 15:12:29 +0100
-Message-ID: <5647788.DvuYhMxLoT@diego>
-In-Reply-To: <87f5097d-1cd0-e09f-e759-8592a9165ea6@gmail.com>
-References: <67771143-fd83-383d-41b2-68e8707134e8@gmail.com>
- <20230203182119.GA615242-robh@kernel.org>
- <87f5097d-1cd0-e09f-e759-8592a9165ea6@gmail.com>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] samsung: drivers: secoond pull for v6.3
+Date:   Sun,  5 Feb 2023 15:46:57 +0100
+Message-Id: <20230205144657.951749-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-Am Freitag, 3. Februar 2023, 20:02:54 CET schrieb Johan Jonker:
-> 
-> On 2/3/23 19:21, Rob Herring wrote:
-> > On Thu, Dec 22, 2022 at 03:22:14PM +0100, Johan Jonker wrote:
-> >> Convert rockchip-lvds.txt to YAML.
-> >>
-> >> Changed:
-> >>   Add power-domains property.
-> >>   Requirements between PX30 and RK3288
-> >>
-> >> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-> >> Reviewed-by: Rob Herring <robh@kernel.org>
-> >> ---
-> >>
-> >> Changed V3:
-> >>   Filename matching compatible style
-> >>   Drop "Regulator phandle for "
-> >>   Specify properties and requirements per SoC
-> >>   Sort order and restyle
-> >>
-> >> Changed V2:
-> >>   Fix title
-> >> ---
-> >>  .../display/rockchip/rockchip,lvds.yaml       | 170 ++++++++++++++++++
-> >>  .../display/rockchip/rockchip-lvds.txt        |  92 ----------
-> >>  2 files changed, 170 insertions(+), 92 deletions(-)
-> >>  create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,lvds.yaml
-> >>  delete mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip-lvds.txt
-> > 
-> 
-> > What's the plan for these patches? Don't see them in linux-next still. 
-> > Do you want me to take patches 1-8?
-> 
-> Hi,
-> 
-> The display patches normally go through the DRM git.
-> Patch 2 must merge with grf.yaml.
-> Heiko has merged now 3 PHY related patches to grf.yaml first.
-> 
-> [PATCH v6 02/17] dt-bindings: soc: rockchip: grf: add rockchip,lvds.yaml
-> 
-> See current
-> https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/log/?h=for-next&qt=grep&q=jonker
-> 
-> Not sure what Heiko's plans are.
-> Patch 2 replaces  only a description text and some accolades removal, so not "too" important.
-> 
-> I urgent then you could merge without conflict:
-> 1, 3-8
+On top of previous pull request.
 
-So I've applied patches 1-7 to the drm-tree now.
+The phy patches were acked by phy maintainer and are necessary to fix warning
+in my next/soc branch (already pulled).  That was an ordering issue.
 
-For the GRF-patch, I've dropped the quotes changes, as they are somewhat
-unrelated to the lvds inclusion and so prevented any conflicts when applying
-the rest to the DRM tree.
-
-@Rob, if you could pick the fusb302 patch (number8), that would be great
-
-Thanks
-Heiko
+Best regards,
+Krzysztof
 
 
+The following changes since commit 5e487164afbcd917225fb701e8956f388f43b601:
+
+  MAINTAINERS: arm64: tesla: correct pattern for directory (2023-01-15 12:17:44 +0100)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-6.3-2
+
+for you to fetch changes up to 7ecd4e5f5de23022d1a1c92058949ddf1a2113ff:
+
+  phy: samsung,mipi-video-phy: deprecate syscon phandle (2023-02-03 20:21:26 +0100)
+
+----------------------------------------------------------------
+Samsung SoC driver changes for v6.3
+
+Deprecate syscon phandle to the PMU node in MIPI and DP video phy
+drivers in favor of putting the device nodes directly under the PMU
+nodes.  This better reflects device hierarchy and allows later to solve
+dtc W=1 and dtbs_check warnings.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (4):
+      dt-bindings: phy: samsung,dp-video-phy: deprecate syscon phandle
+      dt-bindings: phy: samsung,mipi-video-phy: deprecate syscon phandle
+      phy: samsung,dp-video-phy: deprecate syscon phandle
+      phy: samsung,mipi-video-phy: deprecate syscon phandle
+
+ .../devicetree/bindings/phy/samsung,dp-video-phy.yaml         |  5 ++---
+ .../devicetree/bindings/phy/samsung,mipi-video-phy.yaml       | 11 +++++------
+ drivers/phy/samsung/phy-exynos-dp-video.c                     |  7 +++++--
+ drivers/phy/samsung/phy-exynos-mipi-video.c                   |  7 +++++--
+ 4 files changed, 17 insertions(+), 13 deletions(-)
