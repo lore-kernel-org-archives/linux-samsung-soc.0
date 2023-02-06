@@ -2,206 +2,357 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4769EC636D4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Feb 2023 16:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E9EC636D4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Feb 2023 17:01:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231747AbjBFQNK (ORCPT
+        id S229519AbjBFRBa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Feb 2023 11:13:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50414 "EHLO
+        Mon, 6 Feb 2023 12:01:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231757AbjBFQM7 (ORCPT
+        with ESMTP id S229743AbjBFRB3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Feb 2023 11:12:59 -0500
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF8FD2FCE1
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Feb 2023 08:12:39 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id bg26so9073645wmb.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Feb 2023 08:12:39 -0800 (PST)
+        Mon, 6 Feb 2023 12:01:29 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3EFC2BED9
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Feb 2023 09:00:56 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id r3so2616498edq.13
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Feb 2023 09:00:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DKHwytajiOAR9nY12DKXuVDIqgp8eXSf4A1PQJbS+U0=;
-        b=rGKG7RBS7I/8vrLgjCKgyFWhKsvajQVtYanXK9FRzTibVuMOS309fl217TtWae3tb6
-         AoxnCXFwMBuYcPgjPuvyJfFC+wKjSem4B0dbuOV6Jx5bcQHqPNtGp1VBFymOsE6TO5fi
-         rOuc5C46K9s3/cV6uJMoDadxBtr+oFNiZ53tj5iugLThEHu2G6HbWqqeiNPa388f4Ryl
-         qBK5G9E836H9juaOfI6ytmpTWZ/Eq0luyX5QMouZ/zp7Nq6LuVSb83Bx4HSShKS5ffRj
-         IW8MrHVapHrq9hx2b0GUmnxhS3VritTqY6EWyHrqP0rISdau3bJoNdpFPIwFN16SiPn9
-         M9Wg==
+        d=ragnatech-se.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=a6q/V+E4w1GCT3UIo80p/1jk/eyzfrAH7kZCB3dF6EI=;
+        b=uCfTnrbkPsLAWL6gOh5JY9TMsdhSIK82e1NiuB7IshsdmrWsM5Hjr6FwUqZDOfVwE5
+         pvNIBn/sDzqqN32lvfDoOmAh45PK1wSUkPZLuoc6AEvpCgbhlvhcegjr+D6AEUDXeYYW
+         crvJhRIWcpDQskPdi0OoQGliNpJBpBY6VIzwBot4iZgUgiUf3fIUlETRkLbLODtr4PhJ
+         3TWSPMBYPdaLTxs1wac12U00iQXUDjiSDIkJN5Elr/OcQAIapmSRlT2ChNGZoaEjoLvI
+         /JAvT3ybEZlwj5jOQ0L0qHFxsB/XJq0OisD0eI8mYh3MtxQWHtEUbqVsfi2Ox0lT3Rd+
+         Q6tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DKHwytajiOAR9nY12DKXuVDIqgp8eXSf4A1PQJbS+U0=;
-        b=1m+ZkBD/LIlgR/NmQpb++uZi6xG9461neDs0l8sHktJtX8U1d7DDxE6TJhIm2VufOf
-         fVzFF822+SzGvCsHfwE5ZpVgJBBi6pMKE7eOBudqGXXQPMnA1LitxBldpURcn3pleOnl
-         Oe6dNhPR8yAe31CMmbKRncgLCbjINMQsfhaKPVIc4vzWH4uAT9VWifjXxvLBtXauWxXc
-         I+3CSQsxosPB47YYroqVHHm+suLVvBWKYpJL5vfsfQvOWjiLX9onHxRLUZbu7IHg2JCS
-         dMZNXTJ+KTbAliBRKYwxKiqP+11QWIoCbnvDaxY6YDQhZtNIrhBq22hvoBI8d8GtS/ur
-         /bIA==
-X-Gm-Message-State: AO0yUKVAzkV6ohiR3PkM+LmxKxPQ3CuY7wJ8ufr14CykgrufvFG0SiJM
-        dNukkkaG1+Hu/qw2k5VNmD/6zQ==
-X-Google-Smtp-Source: AK7set+in52AJriVcyBtTG4oXRb8OjlLdfXu3armhgkzE7x8wQzvOcf9Mdeu31PPbyMscL730X3tYA==
-X-Received: by 2002:a05:600c:13c8:b0:3da:28a9:a900 with SMTP id e8-20020a05600c13c800b003da28a9a900mr177983wmg.41.1675699958378;
-        Mon, 06 Feb 2023 08:12:38 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id r12-20020a05600c35cc00b003d9fba3c7a4sm17816889wmq.16.2023.02.06.08.12.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Feb 2023 08:12:37 -0800 (PST)
-Message-ID: <a72f8b1a-1fcc-a090-69e7-f56072185e81@linaro.org>
-Date:   Mon, 6 Feb 2023 17:12:35 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 5/9] ARM: dts: exynos: move exynos-bus nodes out of soc in
- Exynos4412
-Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        bh=a6q/V+E4w1GCT3UIo80p/1jk/eyzfrAH7kZCB3dF6EI=;
+        b=LHjbNSysgoZZXsC6zPJ7hc0LluW6g4GB+BEzf62Tou+U/taa5RUkYf6Hwt6TxLIhfF
+         TBRx2mhlbE3CsaTKCfiXp5fAJWyg08WoC15BwF8Ibvw9kCBkGzpnu4RvrxYTfDaYE4Kx
+         L+V1MZumjjk+FyUUkGHcgQiCcaHTNJO2kSi1auT5hKh8hMbZ3KB70TqnqhHJ/lNCCIKX
+         /Oo3FWI4m86YYqwU17zgK+7R82b3Mym0lr4GpFiwAxF+bDmdUAZFmMN3XajotHPuT0gz
+         YVoOWd6y6DETQQRhYnij5ISUVrs9fwhNyHPue2CrxAydUtO77T/y5SLJVfbLStZcGakg
+         fy2g==
+X-Gm-Message-State: AO0yUKXVA0SQjHNumrnKRjW8WkA3MbjmUu9ODDs5LmABU9fXngTxpDqC
+        2E10uOQ4w9FmrilrYT5n6QTlWw==
+X-Google-Smtp-Source: AK7set9cQX60hct3CmrqQYLoS0zKl3hJEZ9KOOgC/H19Hq6SMdqrMyY4g16B+aPSjyDEPbDCn8cC1A==
+X-Received: by 2002:a50:9ea9:0:b0:4a0:e323:d59c with SMTP id a38-20020a509ea9000000b004a0e323d59cmr246400edf.20.1675702854925;
+        Mon, 06 Feb 2023 09:00:54 -0800 (PST)
+Received: from localhost (h-46-59-89-207.A463.priv.bahnhof.se. [46.59.89.207])
+        by smtp.gmail.com with ESMTPSA id c5-20020a50d645000000b004aaa656887esm2668878edj.96.2023.02.06.09.00.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Feb 2023 09:00:54 -0800 (PST)
+Date:   Mon, 6 Feb 2023 18:00:53 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     replicant@osuosl.org, phone-devel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        =?UTF-8?Q?Martin_J=c3=bccker?= <martin.juecker@gmail.com>,
-        Henrik Grimler <henrik@grimler.se>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-References: <20230125094513.155063-1-krzysztof.kozlowski@linaro.org>
- <20230125094513.155063-5-krzysztof.kozlowski@linaro.org>
- <CGME20230129104220eucas1p15b70f73be86fa5600cfe170d22869836@eucas1p1.samsung.com>
- <29841f64-360b-1426-e1fd-dd4c64ee5455@linaro.org>
- <b3f31e71-fa1a-e0c0-fdfa-f65674ccc5cd@samsung.com>
- <d54792c5-2842-e5b9-26b8-1f52471211a9@linaro.org>
- <111f7364-0d7b-b4c5-721f-69c00d4619e2@samsung.com>
- <dc0c3fa9-a6d4-e1c1-7cc8-13b206e3b31f@linaro.org>
- <697aa7b5-9c9b-eb4f-8111-c9a396d9d191@linaro.org>
- <6a9fcdc9-3fe7-e8fc-3a51-385d516c6323@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <6a9fcdc9-3fe7-e8fc-3a51-385d516c6323@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Haowen Bai <baihaowen@meizu.com>,
+        Minghao Chi <chi.minghao@zte.com.cn>,
+        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
+        <linux-amlogic@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:RENESAS R-CAR THERMAL DRIVERS" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/STM32 ARCHITECTURE" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
+Message-ID: <Y+EyRb9klmwwHGjn@oden.dyn.berto.se>
+References: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 03/02/2023 23:50, Marek Szyprowski wrote:
-> On 03.02.2023 22:12, Krzysztof Kozlowski wrote:
->> On 03/02/2023 21:34, Krzysztof Kozlowski wrote:
->>> On 03/02/2023 12:51, Marek Szyprowski wrote:
->>>> On 03.02.2023 12:46, Krzysztof Kozlowski wrote:
->>>>> On 03/02/2023 12:45, Marek Szyprowski wrote:
->>>>>> On 29.01.2023 11:42, Krzysztof Kozlowski wrote:
->>>>>>> On 25/01/2023 10:45, Krzysztof Kozlowski wrote:
->>>>>>>> The soc node is supposed to have only device nodes with MMIO addresses,
->>>>>>>> as reported by dtc W=1:
->>>>>>>>
->>>>>>>>      exynos4412.dtsi:407.20-413.5:
->>>>>>>>        Warning (simple_bus_reg): /soc/bus-acp: missing or empty reg/ranges property
->>>>>>>>
->>>>>>>> and dtbs_check:
->>>>>>>>
->>>>>>>>      exynos4412-i9300.dtb: soc: bus-acp:
->>>>>>>>        {'compatible': ['samsung,exynos-bus'], 'clocks': [[7, 456]], 'clock-names': ['bus'], 'operating-points-v2': [[132]], 'status': ['okay'], 'devfreq': [[117]]} should not be valid under {'type': 'object'}
->>>>>>>>
->>>>>>>> Move the bus nodes and their OPP tables out of SoC to fix this.
->>>>>>>> Re-order them alphabetically while moving and put some of the OPP tables
->>>>>>>> in device nodes (if they are not shared).
->>>>>>>>
->>>>>>> Applied.
->>>>>> I don't have a good news. It looks that this change is responsible for
->>>>>> breaking boards that were rock-stable so far, like Odroid U3. I didn't
->>>>>> manage to analyze what exactly causes the issue, but it looks that the
->>>>>> exynos-bus devfreq driver somehow depends on the order of the nodes:
->>>>>>
->>>>>> (before)
->>>>>>
->>>>>> # dmesg | grep exynos-bus
->>>>>> [    6.415266] exynos-bus: new bus device registered: soc:bus-dmc
->>>>>> (100000 KHz ~ 400000 KHz)
->>>>>> [    6.422717] exynos-bus: new bus device registered: soc:bus-acp
->>>>>> (100000 KHz ~ 267000 KHz)
->>>>>> [    6.454323] exynos-bus: new bus device registered: soc:bus-c2c
->>>>>> (100000 KHz ~ 400000 KHz)
->>>>>> [    6.489944] exynos-bus: new bus device registered: soc:bus-leftbus
->>>>>> (100000 KHz ~ 200000 KHz)
->>>>>> [    6.493990] exynos-bus: new bus device registered: soc:bus-rightbus
->>>>>> (100000 KHz ~ 200000 KHz)
->>>>>> [    6.494612] exynos-bus: new bus device registered: soc:bus-display
->>>>>> (160000 KHz ~ 200000 KHz)
->>>>>> [    6.494932] exynos-bus: new bus device registered: soc:bus-fsys
->>>>>> (100000 KHz ~ 134000 KHz)
->>>>>> [    6.495246] exynos-bus: new bus device registered: soc:bus-peri (
->>>>>> 50000 KHz ~ 100000 KHz)
->>>>>> [    6.495577] exynos-bus: new bus device registered: soc:bus-mfc
->>>>>> (100000 KHz ~ 200000 KHz)
->>>>>>
->>>>>> (after)
->>>>>>
->>>>>> # dmesg | grep exynos-bus
->>>>>>
->>>>>> [    6.082032] exynos-bus: new bus device registered: bus-dmc (100000
->>>>>> KHz ~ 400000 KHz)
->>>>>> [    6.122726] exynos-bus: new bus device registered: bus-leftbus
->>>>>> (100000 KHz ~ 200000 KHz)
->>>>>> [    6.146705] exynos-bus: new bus device registered: bus-mfc (100000
->>>>>> KHz ~ 200000 KHz)
->>>>>> [    6.181632] exynos-bus: new bus device registered: bus-peri ( 50000
->>>>>> KHz ~ 100000 KHz)
->>>>>> [    6.204770] exynos-bus: new bus device registered: bus-rightbus
->>>>>> (100000 KHz ~ 200000 KHz)
->>>>>> [    6.211087] exynos-bus: new bus device registered: bus-acp (100000
->>>>>> KHz ~ 267000 KHz)
->>>>>> [    6.216936] exynos-bus: new bus device registered: bus-c2c (100000
->>>>>> KHz ~ 400000 KHz)
->>>>>> [    6.225748] exynos-bus: new bus device registered: bus-display
->>>>>> (160000 KHz ~ 200000 KHz)
->>>>>> [    6.242978] exynos-bus: new bus device registered: bus-fsys (100000
->>>>>> KHz ~ 134000 KHz)
->>>>>>
->>>>>> This is definitely a driver bug, but so far it worked fine, so this is a
->>>>>> regression that need to be addressed somehow...
->>>>> Thanks for checking, but what is exactly the bug? The devices registered
->>>>> - just with different name.
->>>> The bug is that the board fails to boot from time to time, freezing
->>>> after registering PPMU counters...
->>> My U3 with and without this patch, reports several warnings:
->>> iommu_group_do_set_platform_dma()
->>> exynos_iommu_domain_free()
->>> clk_core_enable()
->>>
->>> and finally:
->>> rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
->>>
->>> and keeps stalling.
->>>
->>> At least on next-20230203. Except all these (which anyway make board
->>> unbootable) look fine around PMU and exynos-bus.
->> I also booted few times my next/dt branch (with this patch) and no
->> problems. How reproducible is the issue you experience?
-> 
-> IOMMU needs a fixup, that has been merged today:
-> 
-> https://lore.kernel.org/all/20230123093102.12392-1-m.szyprowski@samsung.com/
-> 
-> I was initially convinced that this freeze is somehow related to this 
-> IOMMU fixup, but it turned out that the devfreq is a source of the problems.
-> 
-> The freeze happens here about 1 of 10 boots, usually with kernel 
-> compiled from multi_v7_defconfig, while loading the PPMU modules. It 
-> happens on your next/dt branch too.
+Hi Daniel,
 
-I was able to reproduce it easily with multi_v7. Then I commented out
-dmc bus which fixed the issue. Then I commented out acp and c2c buses
-(children/passive) which also fixed the issue. Then I uncommented
-everything and went back to next/dt - exactly the same as it was failing
-- and since then I cannot reproduce it. I triple checked, but now my
-multi_v7 on U3 on next/dt boots perfectly fine. Every time.
+Thanks for your work.
 
-Best regards,
-Krzysztof
+On 2023-02-06 16:34:29 +0100, Daniel Lezcano wrote:
+> As the name states "thermal_core.h" is the header file for the core
+> components of the thermal framework.
+> 
+> Too many drivers are including it. Hopefully the recent cleanups
+> helped to self encapsulate the code a bit more and prevented the
+> drivers to need this header.
+> 
+> Remove this inclusion in every place where it is possible.
+> 
+> Some other drivers did a confusion with the core header and the one
+> exported in linux/thermal.h. They include the former instead of the
+> latter. The changes also fix this.
+> 
+> The tegra/soctherm driver still remains as it uses an internal
+> function which need to be replaced.
+> 
+> The Intel HFI driver uses the netlink internal framework core and
+> should be changed to prevent to deal with the internals.
+> 
+> No functional changes
+> 
+> [ Applies to thermal/linux-next or linux-pm/linux-next ]
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  drivers/thermal/amlogic_thermal.c           | 1 -
+>  drivers/thermal/armada_thermal.c            | 2 --
+>  drivers/thermal/broadcom/bcm2835_thermal.c  | 1 -
+>  drivers/thermal/hisi_thermal.c              | 3 +--
+>  drivers/thermal/imx8mm_thermal.c            | 1 -
+>  drivers/thermal/imx_sc_thermal.c            | 1 -
+>  drivers/thermal/intel/intel_hfi.c           | 3 ++-
+>  drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 1 -
+>  drivers/thermal/qoriq_thermal.c             | 1 -
+>  drivers/thermal/rcar_gen3_thermal.c         | 1 -
 
+For R-Car,
+
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+>  drivers/thermal/samsung/exynos_tmu.c        | 3 +--
+>  drivers/thermal/st/stm_thermal.c            | 1 -
+>  drivers/thermal/tegra/tegra30-tsensor.c     | 1 -
+>  drivers/thermal/uniphier_thermal.c          | 2 --
+>  14 files changed, 4 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/thermal/amlogic_thermal.c b/drivers/thermal/amlogic_thermal.c
+> index d30cb791e63c..9235fda4ec1e 100644
+> --- a/drivers/thermal/amlogic_thermal.c
+> +++ b/drivers/thermal/amlogic_thermal.c
+> @@ -28,7 +28,6 @@
+>  #include <linux/regmap.h>
+>  #include <linux/thermal.h>
+>  
+> -#include "thermal_core.h"
+>  #include "thermal_hwmon.h"
+>  
+>  #define TSENSOR_CFG_REG1			0x4
+> diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
+> index 83a4080bffc7..36653f692c80 100644
+> --- a/drivers/thermal/armada_thermal.c
+> +++ b/drivers/thermal/armada_thermal.c
+> @@ -19,8 +19,6 @@
+>  #include <linux/regmap.h>
+>  #include <linux/interrupt.h>
+>  
+> -#include "thermal_core.h"
+> -
+>  /* Thermal Manager Control and Status Register */
+>  #define PMU_TDC0_SW_RST_MASK		(0x1 << 1)
+>  #define PMU_TM_DISABLE_OFFS		0
+> diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
+> index 3d0710c6e004..23918bb76ae6 100644
+> --- a/drivers/thermal/broadcom/bcm2835_thermal.c
+> +++ b/drivers/thermal/broadcom/bcm2835_thermal.c
+> @@ -18,7 +18,6 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/thermal.h>
+>  
+> -#include "../thermal_core.h"
+>  #include "../thermal_hwmon.h"
+>  
+>  #define BCM2835_TS_TSENSCTL			0x00
+> diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
+> index 45226cab466e..62c67942293e 100644
+> --- a/drivers/thermal/hisi_thermal.c
+> +++ b/drivers/thermal/hisi_thermal.c
+> @@ -16,8 +16,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/io.h>
+>  #include <linux/of_device.h>
+> -
+> -#include "thermal_core.h"
+> +#include <linux/thermal.h>
+>  
+>  #define HI6220_TEMP0_LAG			(0x0)
+>  #define HI6220_TEMP0_TH				(0x4)
+> diff --git a/drivers/thermal/imx8mm_thermal.c b/drivers/thermal/imx8mm_thermal.c
+> index d247b48696cb..72b5d6f319c1 100644
+> --- a/drivers/thermal/imx8mm_thermal.c
+> +++ b/drivers/thermal/imx8mm_thermal.c
+> @@ -17,7 +17,6 @@
+>  #include <linux/slab.h>
+>  #include <linux/thermal.h>
+>  
+> -#include "thermal_core.h"
+>  #include "thermal_hwmon.h"
+>  
+>  #define TER			0x0	/* TMU enable */
+> diff --git a/drivers/thermal/imx_sc_thermal.c b/drivers/thermal/imx_sc_thermal.c
+> index 378f574607f7..f32e59e74623 100644
+> --- a/drivers/thermal/imx_sc_thermal.c
+> +++ b/drivers/thermal/imx_sc_thermal.c
+> @@ -13,7 +13,6 @@
+>  #include <linux/slab.h>
+>  #include <linux/thermal.h>
+>  
+> -#include "thermal_core.h"
+>  #include "thermal_hwmon.h"
+>  
+>  #define IMX_SC_MISC_FUNC_GET_TEMP	13
+> diff --git a/drivers/thermal/intel/intel_hfi.c b/drivers/thermal/intel/intel_hfi.c
+> index 6e604bda2b93..c69db6c90869 100644
+> --- a/drivers/thermal/intel/intel_hfi.c
+> +++ b/drivers/thermal/intel/intel_hfi.c
+> @@ -40,10 +40,11 @@
+>  
+>  #include <asm/msr.h>
+>  
+> -#include "../thermal_core.h"
+>  #include "intel_hfi.h"
+>  #include "thermal_interrupt.h"
+>  
+> +#include "../thermal_netlink.h"
+> +
+>  /* Hardware Feedback Interface MSR configuration bits */
+>  #define HW_FEEDBACK_PTR_VALID_BIT		BIT(0)
+>  #define HW_FEEDBACK_CONFIG_HFI_ENABLE_BIT	BIT(0)
+> diff --git a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
+> index e2429676d0d2..101c75d0e13f 100644
+> --- a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
+> +++ b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
+> @@ -15,7 +15,6 @@
+>  #include <linux/regmap.h>
+>  #include <linux/thermal.h>
+>  
+> -#include "../thermal_core.h"
+>  #include "../thermal_hwmon.h"
+>  
+>  #define QPNP_TM_REG_DIG_MAJOR		0x01
+> diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
+> index d111e218f362..431c29c0898a 100644
+> --- a/drivers/thermal/qoriq_thermal.c
+> +++ b/drivers/thermal/qoriq_thermal.c
+> @@ -13,7 +13,6 @@
+>  #include <linux/thermal.h>
+>  #include <linux/units.h>
+>  
+> -#include "thermal_core.h"
+>  #include "thermal_hwmon.h"
+>  
+>  #define SITES_MAX		16
+> diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+> index 4ef927437842..0fd2fd077638 100644
+> --- a/drivers/thermal/rcar_gen3_thermal.c
+> +++ b/drivers/thermal/rcar_gen3_thermal.c
+> @@ -17,7 +17,6 @@
+>  #include <linux/sys_soc.h>
+>  #include <linux/thermal.h>
+>  
+> -#include "thermal_core.h"
+>  #include "thermal_hwmon.h"
+>  
+>  /* Register offsets */
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index 37465af59262..527d1eb0663a 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -20,11 +20,10 @@
+>  #include <linux/of_irq.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regulator/consumer.h>
+> +#include <linux/thermal.h>
+>  
+>  #include <dt-bindings/thermal/thermal_exynos.h>
+>  
+> -#include "../thermal_core.h"
+> -
+>  /* Exynos generic registers */
+>  #define EXYNOS_TMU_REG_TRIMINFO		0x0
+>  #define EXYNOS_TMU_REG_CONTROL		0x20
+> diff --git a/drivers/thermal/st/stm_thermal.c b/drivers/thermal/st/stm_thermal.c
+> index e7834ccc7976..735401958f01 100644
+> --- a/drivers/thermal/st/stm_thermal.c
+> +++ b/drivers/thermal/st/stm_thermal.c
+> @@ -19,7 +19,6 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/thermal.h>
+>  
+> -#include "../thermal_core.h"
+>  #include "../thermal_hwmon.h"
+>  
+>  /* DTS register offsets */
+> diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/tegra/tegra30-tsensor.c
+> index 0ffe37ce7df7..b3218b71b6d9 100644
+> --- a/drivers/thermal/tegra/tegra30-tsensor.c
+> +++ b/drivers/thermal/tegra/tegra30-tsensor.c
+> @@ -28,7 +28,6 @@
+>  
+>  #include <soc/tegra/fuse.h>
+>  
+> -#include "../thermal_core.h"
+>  #include "../thermal_hwmon.h"
+>  
+>  #define TSENSOR_SENSOR0_CONFIG0				0x0
+> diff --git a/drivers/thermal/uniphier_thermal.c b/drivers/thermal/uniphier_thermal.c
+> index f8ab2ca76184..47801841b3f5 100644
+> --- a/drivers/thermal/uniphier_thermal.c
+> +++ b/drivers/thermal/uniphier_thermal.c
+> @@ -17,8 +17,6 @@
+>  #include <linux/regmap.h>
+>  #include <linux/thermal.h>
+>  
+> -#include "thermal_core.h"
+> -
+>  /*
+>   * block registers
+>   * addresses are the offset from .block_base
+> -- 
+> 2.34.1
+> 
+
+-- 
+Kind Regards,
+Niklas S�derlund
