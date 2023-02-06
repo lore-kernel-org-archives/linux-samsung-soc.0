@@ -2,73 +2,79 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C17CAC05027
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Feb 2023 09:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ECABC63797
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Feb 2023 12:10:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229863AbjBFJ5y (ORCPT
+        id S230044AbjBFMK4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Feb 2023 04:57:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50726 "EHLO
+        Mon, 6 Feb 2023 07:10:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230020AbjBFJ5v (ORCPT
+        with ESMTP id S229861AbjBFMKz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Feb 2023 04:57:51 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA3E9E048;
-        Mon,  6 Feb 2023 01:57:47 -0800 (PST)
+        Mon, 6 Feb 2023 07:10:55 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6E2E4EF8;
+        Mon,  6 Feb 2023 04:10:54 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 92A7DB80E37;
-        Mon,  6 Feb 2023 09:57:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 848D7C433EF;
-        Mon,  6 Feb 2023 09:57:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1675677465;
-        bh=yqpJFL7AqTytJlea5SSDhYKVEGfY5DgY2bMudgpP8Ys=;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 422D260EBC;
+        Mon,  6 Feb 2023 12:10:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED6F3C433D2;
+        Mon,  6 Feb 2023 12:10:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675685453;
+        bh=MhW4f27C98PgGme9ON5ZgsCE3bB8QMRFivqHw0Wod5E=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=P6GwhHp12sZwtSR+/q0P+9Mb/EE88FirlweA+qfOlD5XlnkfHB6f6HurgsgVEzGxP
-         mlKzvFu0bi3uVPjSzMGO+PTE7Lnn2wXWKzFtyOeBYu0yDev7RgKzkFMsuQ0M29yHGT
-         wY9dhibI9gln78M2Et+AAk8kdZE5S/u2srMdY2w0=
-Date:   Mon, 6 Feb 2023 10:57:42 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     linux-usb@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jakob Koschel <jakobkoschel@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@kernel.org>
-Subject: Re: [PATCH 13/13] USB: gadget: s3c2410_udc: fix memory leak with
- using debugfs_lookup()
-Message-ID: <Y+DPFnpO7XnltD/B@kroah.com>
-References: <20230202153235.2412790-1-gregkh@linuxfoundation.org>
- <20230202153235.2412790-13-gregkh@linuxfoundation.org>
- <241f919c-8190-00d6-f89b-6f7f54b29df9@linaro.org>
+        b=sniiiH5oHDcUIqxuALv9KJlhS0cJPFwQ3ntn1pYZZX1DmxLjRBzKV9J/XoYkVMg3H
+         RWYDqEfatDv/UBeXAlYQ/jWW6qMbzkAgDTb7Kkl485iVzI/nyCOzBT4FprdqARdivp
+         ucotwMxXWEaY6aDAxjcOWvGFA8kRNH+YPNLi9JP+9z4ZWuqENBm2XjMaUnFo2+mikg
+         5tZZ+6D6TRMbe3W/SEo2fKrZu3WBKdfnA8DehIiMdF1+IWU07URooHpo0BFtDWpnXo
+         YyvS/AZ1IG1pV2gc4DBGU+q4jFP6LGBRbVUvMVMpgtkGcOrPjGv4kNQYquZrhR87oH
+         M+Hmmq9MgwtTg==
+Date:   Mon, 6 Feb 2023 17:40:49 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Johan Hovold <johan+linaro@kernel.org>
+Cc:     Georgi Djakov <djakov@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 12/23] interconnect: qcom: sm8450: fix registration race
+Message-ID: <Y+DuSd1NdWswskyx@matsya>
+References: <20230201101559.15529-1-johan+linaro@kernel.org>
+ <20230201101559.15529-13-johan+linaro@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <241f919c-8190-00d6-f89b-6f7f54b29df9@linaro.org>
+In-Reply-To: <20230201101559.15529-13-johan+linaro@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Feb 03, 2023 at 09:20:10AM +0100, Krzysztof Kozlowski wrote:
-> On 02/02/2023 16:32, Greg Kroah-Hartman wrote:
-> > When calling debugfs_lookup() the result must have dput() called on it,
-> > otherwise the memory will leak over time.  To make things simpler, just
-> > call debugfs_lookup_and_remove() instead which handles all of the logic
-> > at once.
-> > 
+On 01-02-23, 11:15, Johan Hovold wrote:
+> The current interconnect provider registration interface is inherently
+> racy as nodes are not added until the after adding the provider. This
+> can specifically cause racing DT lookups to fail.
 > 
-> Hi Greg,
-> 
-> This driver will be removed in v6.3 via Arnd's tree:
-> https://lore.kernel.org/all/20221021203329.4143397-13-arnd@kernel.org/
-> 
-> I think we can skip any work on this.
+> Switch to using the new API where the provider is not registered until
+> after it has been fully initialised.
 
-Ok, thanks, I'll drop it from my patch queue for now.  If it sticks
-around, I'll apply it :)
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-greg k-h
+-- 
+~Vinod
