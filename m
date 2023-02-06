@@ -2,163 +2,206 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CAEC6379F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Feb 2023 15:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4769EC636D4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Feb 2023 16:13:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231254AbjBFPxi (ORCPT
+        id S231747AbjBFQNK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Feb 2023 10:53:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34842 "EHLO
+        Mon, 6 Feb 2023 11:13:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229788AbjBFPxb (ORCPT
+        with ESMTP id S231757AbjBFQM7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Feb 2023 10:53:31 -0500
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 325B429E01;
-        Mon,  6 Feb 2023 07:53:21 -0800 (PST)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 635361C000A;
-        Mon,  6 Feb 2023 15:53:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1675698800;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=T+B3RCvnN/A9QkWUBTmslla6TsR6i6LzRlnEYAv5F3Q=;
-        b=Qtjb3GZlond/VqhH1wI9WqFkUTwIx6Xv+zssCdcz0vlldDafEWSB06zZ//x0Ak5PkC5s9y
-        ZxfUTza51NQilgjwYbUeD93lWl0YkGanyt4N/HQcJQmS+KroZcFE/xfTkRSM2sxsdcGf1f
-        20SxBUIoivwiZ6s9aJ+ixE2geS9izQBcTC0BtnofMVoclnJKbVIB5QEvwsdQxDRVvnTztn
-        mWfYNVZzBBsywzjxDjc3HnjZoENi2lYxasHSm8kpUEw2am/dKrdmudXoC8BSbNJ5qS4nRi
-        XqyYsA8WsUcyWOY6WGG+PMMJLyhBUYj2TKKx+CBVhWfLPP7d+4gsOsJ9cAGaug==
-Date:   Mon, 6 Feb 2023 16:53:11 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?= 
-        <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Haowen Bai <baihaowen@meizu.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        linux-amlogic@lists.infradead.org (open list:THERMAL DRIVER FOR AMLOGIC
-        SOCS),
-        linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM
-        BCM2711/BCM2835 ARM ARCHITECTURE),
-        linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM
-        BCM2711/BCM2835 ARM ARCHITECTURE),
-        linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT),
-        linux-renesas-soc@vger.kernel.org (open list:RENESAS R-CAR THERMAL
-        DRIVERS),
-        linux-samsung-soc@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
-        linux-stm32@st-md-mailman.stormreply.com (moderated list:ARM/STM32
-        ARCHITECTURE),
-        linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
-Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
-Message-ID: <20230206165311.0777ec69@xps-13>
-In-Reply-To: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
-References: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        Mon, 6 Feb 2023 11:12:59 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF8FD2FCE1
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Feb 2023 08:12:39 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id bg26so9073645wmb.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Feb 2023 08:12:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DKHwytajiOAR9nY12DKXuVDIqgp8eXSf4A1PQJbS+U0=;
+        b=rGKG7RBS7I/8vrLgjCKgyFWhKsvajQVtYanXK9FRzTibVuMOS309fl217TtWae3tb6
+         AoxnCXFwMBuYcPgjPuvyJfFC+wKjSem4B0dbuOV6Jx5bcQHqPNtGp1VBFymOsE6TO5fi
+         rOuc5C46K9s3/cV6uJMoDadxBtr+oFNiZ53tj5iugLThEHu2G6HbWqqeiNPa388f4Ryl
+         qBK5G9E836H9juaOfI6ytmpTWZ/Eq0luyX5QMouZ/zp7Nq6LuVSb83Bx4HSShKS5ffRj
+         IW8MrHVapHrq9hx2b0GUmnxhS3VritTqY6EWyHrqP0rISdau3bJoNdpFPIwFN16SiPn9
+         M9Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DKHwytajiOAR9nY12DKXuVDIqgp8eXSf4A1PQJbS+U0=;
+        b=1m+ZkBD/LIlgR/NmQpb++uZi6xG9461neDs0l8sHktJtX8U1d7DDxE6TJhIm2VufOf
+         fVzFF822+SzGvCsHfwE5ZpVgJBBi6pMKE7eOBudqGXXQPMnA1LitxBldpURcn3pleOnl
+         Oe6dNhPR8yAe31CMmbKRncgLCbjINMQsfhaKPVIc4vzWH4uAT9VWifjXxvLBtXauWxXc
+         I+3CSQsxosPB47YYroqVHHm+suLVvBWKYpJL5vfsfQvOWjiLX9onHxRLUZbu7IHg2JCS
+         dMZNXTJ+KTbAliBRKYwxKiqP+11QWIoCbnvDaxY6YDQhZtNIrhBq22hvoBI8d8GtS/ur
+         /bIA==
+X-Gm-Message-State: AO0yUKVAzkV6ohiR3PkM+LmxKxPQ3CuY7wJ8ufr14CykgrufvFG0SiJM
+        dNukkkaG1+Hu/qw2k5VNmD/6zQ==
+X-Google-Smtp-Source: AK7set+in52AJriVcyBtTG4oXRb8OjlLdfXu3armhgkzE7x8wQzvOcf9Mdeu31PPbyMscL730X3tYA==
+X-Received: by 2002:a05:600c:13c8:b0:3da:28a9:a900 with SMTP id e8-20020a05600c13c800b003da28a9a900mr177983wmg.41.1675699958378;
+        Mon, 06 Feb 2023 08:12:38 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id r12-20020a05600c35cc00b003d9fba3c7a4sm17816889wmq.16.2023.02.06.08.12.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Feb 2023 08:12:37 -0800 (PST)
+Message-ID: <a72f8b1a-1fcc-a090-69e7-f56072185e81@linaro.org>
+Date:   Mon, 6 Feb 2023 17:12:35 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 5/9] ARM: dts: exynos: move exynos-bus nodes out of soc in
+ Exynos4412
+Content-Language: en-US
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     replicant@osuosl.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        =?UTF-8?Q?Martin_J=c3=bccker?= <martin.juecker@gmail.com>,
+        Henrik Grimler <henrik@grimler.se>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+References: <20230125094513.155063-1-krzysztof.kozlowski@linaro.org>
+ <20230125094513.155063-5-krzysztof.kozlowski@linaro.org>
+ <CGME20230129104220eucas1p15b70f73be86fa5600cfe170d22869836@eucas1p1.samsung.com>
+ <29841f64-360b-1426-e1fd-dd4c64ee5455@linaro.org>
+ <b3f31e71-fa1a-e0c0-fdfa-f65674ccc5cd@samsung.com>
+ <d54792c5-2842-e5b9-26b8-1f52471211a9@linaro.org>
+ <111f7364-0d7b-b4c5-721f-69c00d4619e2@samsung.com>
+ <dc0c3fa9-a6d4-e1c1-7cc8-13b206e3b31f@linaro.org>
+ <697aa7b5-9c9b-eb4f-8111-c9a396d9d191@linaro.org>
+ <6a9fcdc9-3fe7-e8fc-3a51-385d516c6323@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <6a9fcdc9-3fe7-e8fc-3a51-385d516c6323@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Daniel,
+On 03/02/2023 23:50, Marek Szyprowski wrote:
+> On 03.02.2023 22:12, Krzysztof Kozlowski wrote:
+>> On 03/02/2023 21:34, Krzysztof Kozlowski wrote:
+>>> On 03/02/2023 12:51, Marek Szyprowski wrote:
+>>>> On 03.02.2023 12:46, Krzysztof Kozlowski wrote:
+>>>>> On 03/02/2023 12:45, Marek Szyprowski wrote:
+>>>>>> On 29.01.2023 11:42, Krzysztof Kozlowski wrote:
+>>>>>>> On 25/01/2023 10:45, Krzysztof Kozlowski wrote:
+>>>>>>>> The soc node is supposed to have only device nodes with MMIO addresses,
+>>>>>>>> as reported by dtc W=1:
+>>>>>>>>
+>>>>>>>>      exynos4412.dtsi:407.20-413.5:
+>>>>>>>>        Warning (simple_bus_reg): /soc/bus-acp: missing or empty reg/ranges property
+>>>>>>>>
+>>>>>>>> and dtbs_check:
+>>>>>>>>
+>>>>>>>>      exynos4412-i9300.dtb: soc: bus-acp:
+>>>>>>>>        {'compatible': ['samsung,exynos-bus'], 'clocks': [[7, 456]], 'clock-names': ['bus'], 'operating-points-v2': [[132]], 'status': ['okay'], 'devfreq': [[117]]} should not be valid under {'type': 'object'}
+>>>>>>>>
+>>>>>>>> Move the bus nodes and their OPP tables out of SoC to fix this.
+>>>>>>>> Re-order them alphabetically while moving and put some of the OPP tables
+>>>>>>>> in device nodes (if they are not shared).
+>>>>>>>>
+>>>>>>> Applied.
+>>>>>> I don't have a good news. It looks that this change is responsible for
+>>>>>> breaking boards that were rock-stable so far, like Odroid U3. I didn't
+>>>>>> manage to analyze what exactly causes the issue, but it looks that the
+>>>>>> exynos-bus devfreq driver somehow depends on the order of the nodes:
+>>>>>>
+>>>>>> (before)
+>>>>>>
+>>>>>> # dmesg | grep exynos-bus
+>>>>>> [    6.415266] exynos-bus: new bus device registered: soc:bus-dmc
+>>>>>> (100000 KHz ~ 400000 KHz)
+>>>>>> [    6.422717] exynos-bus: new bus device registered: soc:bus-acp
+>>>>>> (100000 KHz ~ 267000 KHz)
+>>>>>> [    6.454323] exynos-bus: new bus device registered: soc:bus-c2c
+>>>>>> (100000 KHz ~ 400000 KHz)
+>>>>>> [    6.489944] exynos-bus: new bus device registered: soc:bus-leftbus
+>>>>>> (100000 KHz ~ 200000 KHz)
+>>>>>> [    6.493990] exynos-bus: new bus device registered: soc:bus-rightbus
+>>>>>> (100000 KHz ~ 200000 KHz)
+>>>>>> [    6.494612] exynos-bus: new bus device registered: soc:bus-display
+>>>>>> (160000 KHz ~ 200000 KHz)
+>>>>>> [    6.494932] exynos-bus: new bus device registered: soc:bus-fsys
+>>>>>> (100000 KHz ~ 134000 KHz)
+>>>>>> [    6.495246] exynos-bus: new bus device registered: soc:bus-peri (
+>>>>>> 50000 KHz ~ 100000 KHz)
+>>>>>> [    6.495577] exynos-bus: new bus device registered: soc:bus-mfc
+>>>>>> (100000 KHz ~ 200000 KHz)
+>>>>>>
+>>>>>> (after)
+>>>>>>
+>>>>>> # dmesg | grep exynos-bus
+>>>>>>
+>>>>>> [    6.082032] exynos-bus: new bus device registered: bus-dmc (100000
+>>>>>> KHz ~ 400000 KHz)
+>>>>>> [    6.122726] exynos-bus: new bus device registered: bus-leftbus
+>>>>>> (100000 KHz ~ 200000 KHz)
+>>>>>> [    6.146705] exynos-bus: new bus device registered: bus-mfc (100000
+>>>>>> KHz ~ 200000 KHz)
+>>>>>> [    6.181632] exynos-bus: new bus device registered: bus-peri ( 50000
+>>>>>> KHz ~ 100000 KHz)
+>>>>>> [    6.204770] exynos-bus: new bus device registered: bus-rightbus
+>>>>>> (100000 KHz ~ 200000 KHz)
+>>>>>> [    6.211087] exynos-bus: new bus device registered: bus-acp (100000
+>>>>>> KHz ~ 267000 KHz)
+>>>>>> [    6.216936] exynos-bus: new bus device registered: bus-c2c (100000
+>>>>>> KHz ~ 400000 KHz)
+>>>>>> [    6.225748] exynos-bus: new bus device registered: bus-display
+>>>>>> (160000 KHz ~ 200000 KHz)
+>>>>>> [    6.242978] exynos-bus: new bus device registered: bus-fsys (100000
+>>>>>> KHz ~ 134000 KHz)
+>>>>>>
+>>>>>> This is definitely a driver bug, but so far it worked fine, so this is a
+>>>>>> regression that need to be addressed somehow...
+>>>>> Thanks for checking, but what is exactly the bug? The devices registered
+>>>>> - just with different name.
+>>>> The bug is that the board fails to boot from time to time, freezing
+>>>> after registering PPMU counters...
+>>> My U3 with and without this patch, reports several warnings:
+>>> iommu_group_do_set_platform_dma()
+>>> exynos_iommu_domain_free()
+>>> clk_core_enable()
+>>>
+>>> and finally:
+>>> rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+>>>
+>>> and keeps stalling.
+>>>
+>>> At least on next-20230203. Except all these (which anyway make board
+>>> unbootable) look fine around PMU and exynos-bus.
+>> I also booted few times my next/dt branch (with this patch) and no
+>> problems. How reproducible is the issue you experience?
+> 
+> IOMMU needs a fixup, that has been merged today:
+> 
+> https://lore.kernel.org/all/20230123093102.12392-1-m.szyprowski@samsung.com/
+> 
+> I was initially convinced that this freeze is somehow related to this 
+> IOMMU fixup, but it turned out that the devfreq is a source of the problems.
+> 
+> The freeze happens here about 1 of 10 boots, usually with kernel 
+> compiled from multi_v7_defconfig, while loading the PPMU modules. It 
+> happens on your next/dt branch too.
 
-daniel.lezcano@linaro.org wrote on Mon,  6 Feb 2023 16:34:29 +0100:
+I was able to reproduce it easily with multi_v7. Then I commented out
+dmc bus which fixed the issue. Then I commented out acp and c2c buses
+(children/passive) which also fixed the issue. Then I uncommented
+everything and went back to next/dt - exactly the same as it was failing
+- and since then I cannot reproduce it. I triple checked, but now my
+multi_v7 on U3 on next/dt boots perfectly fine. Every time.
 
-> As the name states "thermal_core.h" is the header file for the core
-> components of the thermal framework.
->=20
-> Too many drivers are including it. Hopefully the recent cleanups
-> helped to self encapsulate the code a bit more and prevented the
-> drivers to need this header.
->=20
-> Remove this inclusion in every place where it is possible.
->=20
-> Some other drivers did a confusion with the core header and the one
-> exported in linux/thermal.h. They include the former instead of the
-> latter. The changes also fix this.
->=20
-> The tegra/soctherm driver still remains as it uses an internal
-> function which need to be replaced.
->=20
-> The Intel HFI driver uses the netlink internal framework core and
-> should be changed to prevent to deal with the internals.
->=20
-> No functional changes
->=20
-> [ Applies to thermal/linux-next or linux-pm/linux-next ]
->=20
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  drivers/thermal/amlogic_thermal.c           | 1 -
->  drivers/thermal/armada_thermal.c            | 2 --
+Best regards,
+Krzysztof
 
-For armada_thermal.c:
-
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
->  drivers/thermal/broadcom/bcm2835_thermal.c  | 1 -
->  drivers/thermal/hisi_thermal.c              | 3 +--
->  drivers/thermal/imx8mm_thermal.c            | 1 -
->  drivers/thermal/imx_sc_thermal.c            | 1 -
->  drivers/thermal/intel/intel_hfi.c           | 3 ++-
->  drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 1 -
->  drivers/thermal/qoriq_thermal.c             | 1 -
->  drivers/thermal/rcar_gen3_thermal.c         | 1 -
->  drivers/thermal/samsung/exynos_tmu.c        | 3 +--
->  drivers/thermal/st/stm_thermal.c            | 1 -
->  drivers/thermal/tegra/tegra30-tsensor.c     | 1 -
->  drivers/thermal/uniphier_thermal.c          | 2 --
->  14 files changed, 4 insertions(+), 18 deletions(-)
->=20
-> diff --git a/drivers/thermal/amlogic_thermal.c b/drivers/thermal/amlogic_=
-thermal.c
-> index d30cb791e63c..9235fda4ec1e 100644
-> --- a/drivers/thermal/amlogic_thermal.c
-> +++ b/drivers/thermal/amlogic_thermal.c
-> @@ -28,7 +28,6 @@
->  #include <linux/regmap.h>
->  #include <linux/thermal.h>
-> =20
-> -#include "thermal_core.h"
->  #include "thermal_hwmon.h"
-> =20
->  #define TSENSOR_CFG_REG1			0x4
-
-Thanks,
-Miqu=C3=A8l
