@@ -2,239 +2,298 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A595C636CD
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Feb 2023 03:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31659C636CC
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Feb 2023 09:10:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230070AbjBGDdc (ORCPT
+        id S231390AbjBGJJt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Feb 2023 22:33:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42612 "EHLO
+        Tue, 7 Feb 2023 04:09:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230046AbjBGDdb (ORCPT
+        with ESMTP id S231449AbjBGJJh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Feb 2023 22:33:31 -0500
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 317C2977A
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Feb 2023 19:33:29 -0800 (PST)
-Received: by mail-pl1-x631.google.com with SMTP id w5so4310405plg.8
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Feb 2023 19:33:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jZ+4hAwmP/Wq7HMXGBwWwMQ58wAzyvKIfT8l5MVctqA=;
-        b=GEvRbWsdrNSjNTj8GEescS6JrVW0Ycs6jHwPtsXuvZCNQqQ8fjp4Y/bEcCjfGuVfvC
-         o1tY+Fq8A5guU8wf5aqYziykIYyFFLojmBqUpuZszBewyLlfUFLluBbeYphG1QlPflT7
-         MbPiavJcyehwbCxK9Wf89KafdwV59QGm9sdELqOAkPg+jqT54HmyTID2PZphVfKb7uID
-         NTsvPZY+1vPd2ewKh0pmoMSNESrVwP6vlJn0DPYV32uB25cppCz7b9CD2sO5XzYaAgQX
-         oMZkK64uGSkTw/+ce8QkuRAhh86nb8fPnfwgGLsM05bC0/bsyn4VHQEoHXsObPaVVGxR
-         Z6ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jZ+4hAwmP/Wq7HMXGBwWwMQ58wAzyvKIfT8l5MVctqA=;
-        b=dtrGC5d9ARFYAMRaWructPh56d52lh34MRosD85+mfONWX1ZCbILKR+SfvGGj+VSr4
-         39av3q2ohQ5Fgyw43E3Rx8X6vGIgMSQMswkNsmZRH4V0dNTniYJ44Zr66jQjbGpPBMWt
-         w7m50nliYYCGVggjg5PinEL5WRlUbok3/W2sWcUTXBrS/wmuYCXsytNbOOvcgWsTyQu5
-         YyOjZrdX+9Xxlqvo7ehoEiNmMXUNWO0F1kKhsa2rr0hyQDphDXR4dam+4+YW2RgwFQgo
-         o/1IhZXmu+UrJtUw1kIIPlmIrFqrVQdPTuSP7fg+K9V6eAPK62oJcaSxD0WvpjzkJMBr
-         uVyg==
-X-Gm-Message-State: AO0yUKXfjHsQ28xlJYpWW8Slnhs/TcgDLxlvlB5TdBWNUeHlJ/b8sBBl
-        KDN9/m2U+/is4Qs6OvAyd20/6NR2kPBQDs3fL+COIg==
-X-Google-Smtp-Source: AK7set8/tdh3z8+hwGRprHytiFQk4NEtrGhWl5Yoj/Zs4oIXQ4+pkldjQzMwuNY1PSyLGTcyeZ30Y0LRa22tyDhdiPw=
-X-Received: by 2002:a17:902:714b:b0:194:6253:d685 with SMTP id
- u11-20020a170902714b00b001946253d685mr332680plm.3.1675740808337; Mon, 06 Feb
- 2023 19:33:28 -0800 (PST)
+        Tue, 7 Feb 2023 04:09:37 -0500
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2111.outbound.protection.outlook.com [40.107.20.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A7DC3864D
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Feb 2023 01:09:24 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=K97Fk8jxXe+ZzH4CZgeGpZ9jZiHQWmPrCW5RXXN52ykwxZspkT2sUvli44eAmZ4l0eSt6jqo+y1JWQ/clct5xRCEwVOVmuff1hlRjFsP1t7MYsTbkSWoP2p7lTK1GhVK8ZRMweyFRM3i+GCKag80y53ysDn70WBi6/SL1mFLfsRgf3c/69jaSD4zRe9uYolJJW8JyJqy1l6fUOPUSeLL1ESAfkB008YxTsA2437kvfi1qeLaox8Y2KBpLKy1gahQmy3tkmGShBPNOBRRSm8lZwbqI/fL8FeFeNQhDyqFbBUtD3o76sGmLEMxFLlPupKAD/SyJ4KqT00+z9Ll+ggV6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eYflIpEMNX5RRGTcXFusBgyMwA1wAQ5zCps5fnTpGN4=;
+ b=KOQ4twOBI3Ifd50uT2+44mejAqjQ2rm2WiFmKN/AztIafm1i4lVW25b2CX54JbqFrNKN/a0iE6rP0ZOuiOND4lC/nWeZyAAv3H+LkavWGz0qnPO2GUF56EtZlH9WrtCcNepI4jn8Arjj3VeeygsS8+IB4HZ2ppZFLZvqtvhI1oZLgNsu5vYVaRenXWbZRR8YinnjI2nolVhI+XBbQzRTP9YxOGP6QN737qUgZyChMypG0B0YgHc3c4WXBM33L0GFY9pWek4QgWAPMyO0MwixWpG9norsMqBHGdY3jDNEX+p8OINodVVgRwTec6oc2Tyec/xgo1+El7gCuZv0IUe15Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=prevas.dk; dmarc=pass action=none header.from=prevas.dk;
+ dkim=pass header.d=prevas.dk; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.dk;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eYflIpEMNX5RRGTcXFusBgyMwA1wAQ5zCps5fnTpGN4=;
+ b=Kd44C0hz4aJx2xH5vRVG+boJMgAU34x11/N8ympkSSvbPwLRT0AjxjFRcoLd59dWRvWbOP6Wv3wstH5NMB3Xjxca4PTR/uo4WJawdnr43ZrGz36vJ485PbtVdbYlP89UicmSAIZ1U525pKeX3IwceG0dr2HY1B4Zcsh734/Aqcs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=prevas.dk;
+Received: from DU0PR10MB5266.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:34a::22)
+ by VI1PR10MB3535.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:13e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6064.34; Tue, 7 Feb
+ 2023 09:09:15 +0000
+Received: from DU0PR10MB5266.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::1286:27db:9d8a:4b72]) by DU0PR10MB5266.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::1286:27db:9d8a:4b72%8]) with mapi id 15.20.6064.032; Tue, 7 Feb 2023
+ 09:09:15 +0000
+Message-ID: <c9dc0b2b-8850-6227-163b-85c53c5d72ef@prevas.dk>
+Date:   Tue, 7 Feb 2023 10:09:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v12 00/18] drm: Add Samsung MIPI DSIM bridge
+Content-Language: en-US, da
+To:     Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Marek Vasut <marex@denx.de>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Laurent.pinchart@ideasonboard.com, aford173@gmail.com,
+        andrzej.hajda@intel.com, dri-devel@lists.freedesktop.org,
+        inki.dae@samsung.com, kyungmin.park@samsung.com,
+        linux-amarula@amarulasolutions.com,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com,
+        matteo.lisi@engicam.com, sw0312.kim@samsung.com,
+        tharvey@gateworks.com
+References: <20230126144427.607098-1-jagan@amarulasolutions.com>
+ <06e5423f-c022-7a1c-efe0-0f4fbab664c1@prevas.dk>
+ <CAMty3ZBRDDnNdmgD5ji11SdCuOcmu3ZyBPyB28cF1aRTyxp+fg@mail.gmail.com>
+ <be95e4f7-15a8-ba99-6b39-6f7f0ea71201@prevas.dk>
+ <CAMty3ZBNLpV9orVRD897ZeR3Hj9RWOau07b1ZGDUoBRej=Cj-Q@mail.gmail.com>
+ <31ccc974-4b01-ae47-9505-626617f07758@denx.de>
+ <f6cea911-783c-f59d-503c-1576358ae7cb@prevas.dk>
+ <dcc28c36-9b09-ea92-be21-665c6cbf35b3@denx.de>
+ <c21ee1e2-b92e-0fad-40bf-91cae9e57f48@prevas.dk>
+ <1745c43d-06b4-933b-5dbd-50add565828e@kontron.de>
+From:   Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+In-Reply-To: <1745c43d-06b4-933b-5dbd-50add565828e@kontron.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: GVYP280CA0002.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:150:fa::9) To DU0PR10MB5266.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:10:34a::22)
 MIME-Version: 1.0
-References: <CGME20221103195201eucas1p2a6ec2df41ebac3d9ccbb0b252c2cad34@eucas1p2.samsung.com>
- <20221103195154.21495-1-semen.protsenko@linaro.org> <a7d9cd18-a328-209c-c89f-afdcb7db3eb0@samsung.com>
- <b7ad6444-e7d2-1150-6134-3dae8129dcdb@samsung.com> <CAPLW+4=Y6qZG2XjJR_BkX-ar4GWdETKO1tteJjfbxVc664e4Kg@mail.gmail.com>
-In-Reply-To: <CAPLW+4=Y6qZG2XjJR_BkX-ar4GWdETKO1tteJjfbxVc664e4Kg@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Mon, 6 Feb 2023 19:32:51 -0800
-Message-ID: <CAGETcx9ApZFvKjEaxvvgsoHDzOq06ZiROZ5npYt+suNdE4KWDg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] iommu/exynos: Convert to a module
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Janghyuck Kim <janghyuck.kim@samsung.com>,
-        Cho KyongHo <pullip.cho@samsung.com>,
-        Daniel Mentz <danielmentz@google.com>,
-        David Virag <virag.david003@gmail.com>, iommu@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR10MB5266:EE_|VI1PR10MB3535:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0f93d5ed-2f00-45c4-8ee8-08db08eafc3e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Ka1YXkmZTV9QNg0VSINe+1M4Qbb3f2ahFa0WOTy5ke2y6KrMEg1aD9wL7lqRVr5bDyM+ugpdgcMxd8RR76yn7JzcYKcd+oIk8XHS7XYWW4SjwO2gFq7TGie5/P9+rwZi6PvbE0lZBwLGCRYiv+YaUDm52F1ojkznPJH0SflvwdXgeo1SttDFh+lIwJ02FYMbiuPDDkK7MQbddrIqpCFszOfC4ifQW5q7S0hMDFoEZdgA2nLa7THPjwdk/ZMjBvGi/4NLePxf+ukznqgDdvUYBFnX5fLcO1TxImF2eY6/RLPcO2db7IMt72mnFDnva3ORfPFU0irvGvy4Kh7Gg7P0Vv0vebTogFijl8IwmEJks5wYuCwbRw9FFcD9er6OvM9Sbm7g2tJB74XTWYrMN7rIzqy62uRemVHujGwspwIBuzyH+Bau72MviGCSbMMue24NR83ha4KLatjkXKWNgZjT2JHIfkQy7rYZ06v8H71MIRZ519WNiHrT/+QBcAEHt6t7sbB3ANvTA0H1iIp2E1oFx4HiTa/u4csbyQjgaDu67lG/ZoYSJHtNJR9ZrdmouODvwHIhXX6FXNn4jJMINL5d7I162bXmEX5aEXxUWo9hzP6ReewmGCsi58PP5gQaRZqJvrLmK4nk53LezWuo68PaKyVXKlAvRPhq5G3xSSiXrZ4dE1daU0SmFh8CkDAJ453iqrEYcRYlO3N0GSILpmb8lkds5HnTpcgoP+hXMHOPKxRN+ER7fnq9YjzJsU2UEuh1
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR10MB5266.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230025)(376002)(39840400004)(366004)(136003)(346002)(396003)(451199018)(86362001)(36756003)(31696002)(38100700002)(38350700002)(478600001)(6486002)(110136005)(52116002)(316002)(2906002)(8976002)(66946007)(7416002)(41300700001)(5660300002)(44832011)(66556008)(4326008)(8676002)(66476007)(8936002)(26005)(186003)(6512007)(6506007)(83380400001)(6666004)(53546011)(2616005)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZHZGMzdIc01rYWJlaHQ0YkJLVXFNZEpVWmpCWjFYZnh5S2JsUEU5RkY0ZzZH?=
+ =?utf-8?B?Rm53WUp2ZTdmMlc1eHNQU0tTTVFqMjAxQXhCbWV2Syt1THpyY280bHBiQ2x5?=
+ =?utf-8?B?YnNLMW1XVng4Q1BFY21FZGozRExmM0FFaWtyVFZwRzN2VXdhMlcvalJtSkNF?=
+ =?utf-8?B?dGdwZkMrM1JhSjNkeFdPVzl4V3orM0kzbkRTWmpVZEtCcXFoczhkUU9SUGZD?=
+ =?utf-8?B?UnN4dnFsSE9MeWhYRkVuM0Y0Njg2TDdEZHZnK2RPakhoTXh2NHhrWmJzbjBQ?=
+ =?utf-8?B?RitWSk5YNmF1T1A5dUlPOVRDNy81TkwyRWZYL3NvWFVLeTJNMGVLc0tBb1d0?=
+ =?utf-8?B?aUNubE1uSTJQdjJlNnJaR0hXVWdMODVVMnBQSTN0Q1duWHBrK1Byc1dZN0dR?=
+ =?utf-8?B?b002eWZhL3FSaE1QSnRWS0J2K1hWWnpTK000VDQ0dGRlUG5FV0d1TDMzYnVs?=
+ =?utf-8?B?bkpiSUlKWGloV1JmL3RNYjRveWFIWHNoQit1bkZwWlI5VHlLd0h6VnE3NnJK?=
+ =?utf-8?B?NTRJWllCc1ZQVEVpYW1nTGdQQ016WnR5R3dxNU96aEREYnlhQS9Ca3JoSHl0?=
+ =?utf-8?B?QkcxM0ZsZ2pzcHc2V1UwUXdqNnAzY3lBdUJzZE8zd0lMR1RZRmRnSTlNOURU?=
+ =?utf-8?B?VG1jc2R1VEdlaGtUZTIxMCtPOGdRZFpubFdDcmFVcisvWUF6L3JSWWZRMDZK?=
+ =?utf-8?B?b29WR21NVUNMTzdtb1VPVkVGUWd5Z2RFL01WdnNwSlNISEVyc2l6aFBJYk5v?=
+ =?utf-8?B?UENzQkhERmVjcmExRW9ENVc0V1VySmVrMFIvMnAzeHJGMEFBd21BNk42VDgr?=
+ =?utf-8?B?NjJYZG1zQXRTT2ptdERLaVhYU0NDd2RmQ1pIK2FQSmk3Q0RqZjFjUEFlY0dJ?=
+ =?utf-8?B?dUJTTlhHM1NPVythQWhkNUk0Y0l5d3AvQmljTGZtVDhMakQyMkhGTXhxc3lt?=
+ =?utf-8?B?cXZKN3dnR25EOGxSb3BJUkFkWFBVRHEwWVNJOGFrZGtLZk84VFFWT0l2elBP?=
+ =?utf-8?B?UkJ3c0M4L0d2TWIvdmVBaldDMW1IWTdrVzh6R2pOSFVMM2xZem5YbE5rQVE3?=
+ =?utf-8?B?UHNDZmxXY01DYW1vZnMzQWhKRDJ2VGtBZ3diNjAvazMxZytEWDZhcXZIYnNK?=
+ =?utf-8?B?UkNzQlJ2c2tLRHJGckRCbG5KbmpnL2w3cVVjN2FKQ3VUWng5SmEwbmR4aVJQ?=
+ =?utf-8?B?ZE05YWJLUVcyZHVDOHhrYi9nR1VlTXZHN3gxakpub0J2OWtadmxYSThBOXRk?=
+ =?utf-8?B?dTdkTStDejRCbUZ1TjVIVmo1eU9KZFdpSWkrNWFwSjBKc3N6VFZHbTM5cWxs?=
+ =?utf-8?B?UDNGc1JTSUVKY0hrNHFlUUdJbHoxMGI5VVZ1OVZlZE5nc1M4cGRHNmtOVjJ4?=
+ =?utf-8?B?MFhKRGM0RE8wR1dleTVnUWVLWFAvcmFvcDdEdzVTMXNJMloxb215ZjU4UnVa?=
+ =?utf-8?B?S09qN3lwZ0pVb0pqNEZpVHN5M3ZjamljeUM2YzF0K2ZYWjAxazNqUWNGMlJr?=
+ =?utf-8?B?cEczQjR2dlo0SmtsbTlRek1hN2dKaUJ6QVBBc0k5RHAzcHc3bThQdzNCODhi?=
+ =?utf-8?B?R1hhVmhPVEx3MTBTTE85ZVBoM05FdUtmM0M2ZnljOUEzMEFPMDRjNGhYeFFz?=
+ =?utf-8?B?VXhwYzJCTjlPK0lzK2IyUEk3VW5RQTR5R1ExRlFVdjdxUXhFSmpFTEozaTZJ?=
+ =?utf-8?B?b1JjdEw2ckFkc1RMMGszTmFtSTg0SHRsK1p6L2MycXViR0wwS3pkWWNYbi95?=
+ =?utf-8?B?UGErY2p3SURyc3VHQjJJeW5CUVZGVlVqOVlRQjdobElIRTF3RXE0Y2g3Vzla?=
+ =?utf-8?B?d2pKTUJiNWRxcDZtS1FwRENiUzUwdUQ5OXBXeFJveXFlc0s1ZzJidlN5bzhk?=
+ =?utf-8?B?ZkUzMWJkZzBqT25DVE9CRTR0aHpvbkpEeWZHSG8rWUFSeXN6UVEzb3diU0dx?=
+ =?utf-8?B?WStsUmdlZUJBRFhXalhxQjBIVVpKemVUMkkxRzdiRUJZL0dzZG5UcVY1RXlq?=
+ =?utf-8?B?cUptNmZFUmRTdm9qL2hDZTdYMjA4OXU1QjFGM2hyQVQ0ZkNCWnZrSVF5RDVr?=
+ =?utf-8?B?c0tEOVROMVR5OE5GblNwTnJvRDZSUHRlcFhNS3hhODFvT2pqeDZDN05WZTVH?=
+ =?utf-8?B?aWl6eGxvZy9KVDUveDJBcnIzeGJVd25jOXJYM00vT2dnUzNVQ3UvbWhFcU1u?=
+ =?utf-8?B?eVE9PQ==?=
+X-OriginatorOrg: prevas.dk
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f93d5ed-2f00-45c4-8ee8-08db08eafc3e
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR10MB5266.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Feb 2023 09:09:15.3040
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: d350cf71-778d-4780-88f5-071a4cb1ed61
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SlaqRNEj95mXaaQHyrn2/Lg79kKkk7NFH9y+ecUMZS7hUMEM+ua3qzFoOPerIs27HYxxTUh2eqU3b5qaCVGZoHOgWjwitV41dPwcv1VfGsA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB3535
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Nov 11, 2022 at 5:30 AM Sam Protsenko
-<semen.protsenko@linaro.org> wrote:
->
-> On Thu, 10 Nov 2022 at 15:36, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> [snip]
+On 06/02/2023 09.11, Frieder Schrempf wrote:
+> On 03.02.23 13:29, Rasmus Villemoes wrote:
+>> On 01/02/2023 23.00, Marek Vasut wrote:
+>>> On 1/30/23 13:45, Rasmus Villemoes wrote:
+>>>> On 27/01/2023 12.30, Marek Vasut wrote:
+>>>>> On 1/27/23 12:04, Jagan Teki wrote:
+>>>>
+>>>>>>> Thanks, but that's exactly what I'm doing, and I don't see any
+>>>>>>> modification of imx8mp.dtsi in that branch. I'm basically looking for
+>>>>>>> help to do the equivalent of
+>>>>>>>
+>>>>>>>     88775338cd58 - arm64: dts: imx8mm: Add MIPI DSI pipeline
+>>>>>>>     f964f67dd6ee - arm64: dts: imx8mm: Add eLCDIF node support
+>>>>>>>
+>>>>>>> for imx8mp in order to test those patches on our boards (we have two
+>>>>>>> variants).
+>>>>>>
+>>>>>> Marek, any help here, thanks.
+>>>>>
+>>>>> Try attached patch.
+>>>>
+>>>> Thanks. I removed the lcdif2 and ldb nodes I had added from Alexander's
+>>>> patch (94e6197dadc9 in linux-next) in order to apply it. I get a couple
+>>>> of errors during boot:
+>>>>
+>>>>    clk: /soc@0/bus@32c00000/mipi_dsi@32e60000: failed to reparent
+>>>> media_apb to sys_pll1_266m: -22
+>>>>
+>>>> and enabling a pr_debug in clk_core_set_parent_nolock() shows that this
+>>>> is because
+>>>>
+>>>>    clk_core_set_parent_nolock: clk sys_pll1_266m can not be parent of clk
+>>>> media_apb
+>>>>
+>>>> Further, the mipi_dsi fails to probe due to
+>>>>
+>>>>    /soc@0/bus@32c00000/mipi_dsi@32e60000: failed to get
+>>>> 'samsung,burst-clock-frequency' property
+>>>>
+>>>> All other .dtsi files seem to have those samsung,burst-clock-frequency
+>>>> and samsung,esc-clock-frequency properties, so I suppose those should
+>>>> also go into the imx8mp.dtsi and are not something that the board .dts
+>>>> file should supply(?).
+>>>
+>>> No, that samsung,esc-clock-frequency (should be some 10-20 MHz, based on
+>>> your panel/bridge) and samsung,burst-clock-frequency (that's the HS
+>>> clock) should go into board DT, as those are property of the attached
+>>> panel/bridge.
+>>
+>> OK.
+>>
+>> But I simply can't make that match what I see in that branch. For
+>> example, there's imx8mm-icore-mx8mm-ctouch2-of10.dts and
+>> imx8mm-icore-mx8mm-edimm2.2.dts which both seem to have a ti,sn65dsi84
+>> bridge, neither override the values defined in imx8mm.dtsi, which are
+>>
+>>         samsung,burst-clock-frequency = <891000000>;
+>>         samsung,esc-clock-frequency = <54000000>;
+>>
+>> and that 891MHz value seems to be out of range for the dsi84 bridge -
+>> under Recommended Operating Conditions, the data sheet says "DSI HS
+>> clock input frequency", min 40, max 500 MHz.
+> 
+> Please note that the value in samsung,burst-clock-frequency is double
+> the clock rate of the effective DSI HS clock. I can confirm that a
+> SN65DSI84 is able to work with the default settings in general. Still
+> the LVDS clock is derived from the DSI clock and the sn65dsi83 driver
+> calculates its PLL values expecting a DSI input clock matching the panel
+> mode. So you might have to tune this value.
+> 
 
-Hi Marek and Sam,
+Hm, but in my case, I don't have a DSI->LVDS bridge, but a
+DSI->DisplayPort bridge (sn65dsi86), and I obviously don't and can't
+know what monitor(s) will be attached at run-time.
 
-I'm replying to both of your comments in this email.
+I managed to get the whole chain lcdif -> mipi -> bridge -> dp-connector
+to probe with these settings
 
-> > I've finally made Exynos IOMMU working as a module on Exynos5433 based
-> > TM2e board. It looks that this will be a bit longer journey that I've
-> > initially thought. I've posted a simple update of the fix for the driver
-> > initialization sequence, but the real problem is in the platform driver
-> > framework and OF helpers.
-> >
-> > Basically to get it working as a module I had to apply the following
-> > changes:
-> >
-> > diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> > index 3dda62503102..f6921f5fcab6 100644
-> > --- a/drivers/base/dd.c
-> > +++ b/drivers/base/dd.c
-> > @@ -257,7 +257,7 @@ static int deferred_devs_show(struct seq_file *s,
-> > void *data)
-> >   DEFINE_SHOW_ATTRIBUTE(deferred_devs);
-> >
-> >   #ifdef CONFIG_MODULES
-> > -int driver_deferred_probe_timeout = 10;
-> > +int driver_deferred_probe_timeout = 30;
-> >   #else
-> >   int driver_deferred_probe_timeout;
-> >   #endif
-> > diff --git a/drivers/of/property.c b/drivers/of/property.c
-> > index 967f79b59016..e5df6672fee6 100644
-> > --- a/drivers/of/property.c
-> > +++ b/drivers/of/property.c
-> > @@ -1384,7 +1384,7 @@ static struct device_node *parse_interrupts(struct
-> > device_node *np,
-> >   static const struct supplier_bindings of_supplier_bindings[] = {
-> >          { .parse_prop = parse_clocks, },
-> >          { .parse_prop = parse_interconnects, },
-> > -       { .parse_prop = parse_iommus, .optional = true, },
-> > +       { .parse_prop = parse_iommus, },
-> >          { .parse_prop = parse_iommu_maps, .optional = true, },
-> >          { .parse_prop = parse_mboxes, },
-> >          { .parse_prop = parse_io_channels, },
-> >
-> > Without that a really nasty things happened.
+	display_port0: connector {
+		compatible = "dp-connector";
+		label = "DP0";
+		type = "full-size";
+		dp-pwr-supply = <&reg_DP_PWR>;
 
-I have a command line option to do this without code changes. Use
-fw_devlink.strict=1. That makes all optional properties into mandatory
-ones.
+		port {
+			dp_connector_in: endpoint {
+				remote-endpoint = <&sn65dsi86_out>;
+			};
+		};
+       };
 
-I sent out a series[1] that tried to make fw_devlink.strict=1 the
-default and then use the timeout behavior (more details) to handle
-cases where iommu and dmas (or any other supplier) are optional on a
-specific board. The cover letter of [1] should give some more context.
+	eDP: bridge@2c {
+		compatible = "ti,sn65dsi86";
+		reg = <0x2c>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_eDP>;
 
-> > Initialization of the built-in drivers and loading modules takes time,
-> > so the default 10s deferred probe timeout is not enough to ensure that
-> > the built-in driver won't be probed before the Exynos IOMMU driver is
-> > loaded.
+		interrupts-extended = <&gpio3 14 IRQ_TYPE_LEVEL_HIGH>;
+		enable-gpios = <&gpio3 9 GPIO_ACTIVE_HIGH>;
 
-The 10 second is the minimum delay from the time we hit late_initcall.
-If a driver is registered before the 10s expires, then the timer will
-be extended by another 10s. This behavior landed sometime around the
-end of May 2022. So it should have been in your tree when you tested
-this. I'm surprised this isn't sufficient for your case. Is there
-really a 10s gap in your boot sequence where no module is being loaded
-and then IOMMU modules get loaded later on? I'm kinda surprised by
-this. Is it this long because some serial UART is enabled and it's
-slowing down boot? Or something else?
+		vpll-supply = <&VDD_1V8>;
+		vccio-supply = <&VDD_1V8>;
+		vcca-supply = <&reg_1V2>;
+		vcc-supply = <&reg_1V2>;
 
-I'm not saying your case isn't valid or we shouldn't extend the
-timeout. I'm just trying to understand why the current timer behavior
-wasn't able to cover your case.
+		clocks = <&clk_38_4MHz>;
+		clock-names = "refclk";
 
-> Yeah, the whole time-based sync looks nasty... I remember coming
-> across the slides by Andrzej Hajda called "Deferred Problem" [1], but
-> I guess the proposed solution was never applied. Just hope that
-> increasing the timeout is upstreamable solution.
->
-> [1] https://events19.linuxfoundation.org/wp-content/uploads/2017/12/Deferred-Problem-Issues-With-Complex-Dependencies-Between-Devices-in-Linux-Kernel-Andrzej-Hajda-Samsung.pdf
+		#pwm-cells = <1>;
 
-Sam, I kinda skimmed the slides right now. Looks like it talks about
-device links and why they aren't sufficient and makes an alternate
-proposal. fw_devlink is a solution that uses device links and I think
-addresses a lot of the issues that were raised about device links.
-There's still a bunch of TODOs left, but I think the end goal is the
-same. I'm hoping to keep chipping away at it. For now, I've tried to
-make the timer a bit more smart about detecting when modules are
-getting loaded and extending the timer. fw_devlink also enables
-something called sync_state() that's invaluable on a fully modular
-system (search lore for references to that to get some idea).
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
 
-The slides talk about a solution that will allow devices to probe with
-limited functionality with whatever suppliers are available and then
-reprobe as more suppliers are available. I'm not sure how well that'll
-work across the board. It's going to be a bit weird if your phone
-display goes off and then comes on again because an IOMMU driver got
-loaded (and it can now do DRM playback). For now, I'm not going to
-focus on that option because there are enough existing issues/TODOs to
-work on for fw_devlink.
+			port@0 {
+				reg = <0>;
+				sn65dsi86_in_a: endpoint {
+					remote-endpoint = <&mipi_dsi_out>;
+				};
+			};
 
-> > The second change fixes the problem that driver core probes Exynos IOMMU
-> > controllers in parallel to probing the master devices, what results in
-> > calling exynos_iommu_of_xlate() and exynos_iommu_probe_device() even on
-> > the partially initialized IOMMU controllers or initializing the dma_ops
-> > under the already probed and working master device. This was easy to
-> > observe especially on the master devices with multiple IOMMU
-> > controllers. I wasn't able to solve this concurrency/race issues inside
-> > the Exynos IOMMU driver.
-> >
-> > Frankly speaking I don't know what is the rationale for making the
-> > 'iommus' property optional, but this simply doesn't work well with IOMMU
-> > driver being a module. CCed Saravana and Rob for this.
-> >
->
-> The patch which makes 'iommus' optional doesn't provide much of
-> insight on reasons in commit message either.
+			port@1 {
+				reg = <1>;
+				sn65dsi86_out: endpoint {
+					remote-endpoint = <&dp_connector_in>;
+				};
+			};
+		};
+	};
 
-This was the commit text:
+&mipi_dsi {
+       status = "okay";
+       samsung,burst-clock-frequency = <816000000>;
+       samsung,esc-clock-frequency = <60000000>;
 
-    Not all DT bindings are mandatory bindings. Add support for optional DT
-    bindings and mark iommus, iommu-map, dmas as optional DT bindings.
+       ports {
+	       port@1 {
+		       reg = <1>;
 
-I thought it was obvious enough, but I guess I could have done better.
-Geert convinced me that iommu's aren't always necessary and devices
-could work perfectly well without them or dmas. And he has a bunch of
-boards like that. So I went with adding optional and then introducing
-fw_devlink.strict.
+		       mipi_dsi_out: endpoint {
+			       remote-endpoint = <&sn65dsi86_in_a>;
+		       };
+	       };
+       };
+};
 
-However, at this point in time, I believe none of them should be
-marked as optional because technically any property can be optional
-depending on what the firmware has set up and what the driver does. We
-should figure this out at runtime on a board level -- which is what
-[1] is trying to do. Yeah, not very pretty, but there hasn't been a
-better solution that's not "have userspace tell us it's done loading
-modules" (that's a "kernel depends on userspace to work correctly"
-thing that no one likes). I've fixed some of the issues raised in [1]
-in a fw_devlink improvement series[2] and I plan on continuing to work
-on this until hopefully [1] can land.
+&lcdif1 {
+	status = "okay";
+};
 
-> > Without fixing the above issues, I would add a warning that compiling
-> > the driver as a module leads to serious issues.
-> >
->
-> Nice catch! It doesn't reproduce on my platform, alas. Can I expect
-> you to submit those patches? If so, I'll probably just wait for those
-> to be applied, and then re-send my modularization series on top of it.
-> Does that sounds reasonable?
+Now hotplug-detect doesn't work with the current sn65dsi86 driver, but
+that's a separate issue; when I boot with a monitor attached, its edid
+is correctly read out. But I still don't get any output, and the monitor
+says "no signal" - my naive attempt (which has worked fine in other
+cases) was to just dd /dev/urandom to /dev/fb0, so I'm clearly missing
+some important step.
 
-For now, maybe we could add a config to enable fw_devlink.strict=1 by
-default and then select it if you make specific iommu drivers into
-modules? And then Geert won't set it for his driver, but you can set
-it for your driver?
+Rasmus
 
-Thanks,
-Saravana
-
-[1] - https://lore.kernel.org/lkml/20220601070707.3946847-1-saravanak@google.com/
-[2] - https://lore.kernel.org/lkml/20230207014207.1678715-1-saravanak@google.com/
