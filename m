@@ -2,106 +2,142 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A2BC636CC
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Feb 2023 20:15:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2030BC64EC5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Feb 2023 20:53:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230131AbjBGUP1 (ORCPT
+        id S229665AbjBGUxS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Feb 2023 15:15:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57372 "EHLO
+        Tue, 7 Feb 2023 15:53:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbjBGUP0 (ORCPT
+        with ESMTP id S229441AbjBGUxQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Feb 2023 15:15:26 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17FA93A598
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Feb 2023 12:15:25 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id n28-20020a05600c3b9c00b003ddca7a2bcbso12387892wms.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Feb 2023 12:15:25 -0800 (PST)
+        Tue, 7 Feb 2023 15:53:16 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57E253B652;
+        Tue,  7 Feb 2023 12:53:15 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id c13so4137518ejz.1;
+        Tue, 07 Feb 2023 12:53:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cdinGgVazI5fUgZBgObY9YOTAF5gu6cqTGjYkW5HU9c=;
-        b=tkPGpovGMEec0DDGESsbPR6aJLfnHktdEbfldpxzQqYpHdt/1Tu42rxfwAcpDF93qQ
-         crEJ0DcNWGY2+z3oQJzXCZeVlUZ01jVAildSAMimonAgEqXobj440SE9w340FTDTRj3W
-         +Ro/yeZw6f1murs6frpkTVBJRQxdI90dxw2CAl69pl9V14kDcoE5SJBhQe9O5+nvshnA
-         XZQxtHeU3djbkPBA5sMxqeQ/pg+ZWvAEn66/soaf0Dun4Ss5KhhGADotpAVYssKRbRjb
-         Uyy8O87oh1eUULJ+azD7Rj2mVQk6Q8RXCSTW3gOINHQaXxEvGcHv1fzWAdcH+ycjEdQu
-         C1sA==
+        d=gmail.com; s=20210112;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YfKELKMAnQFkkEbZHEYEZttNxlmjlMVEh0XNdBoEsjw=;
+        b=e1mwDgXaY5E6n859Lh8E/kA9NZHYyP0k8s2hCe1rVhBqfHpVx2nL0YTe0MZ/wz2muP
+         sYRVk2PWCxOlDfKJiEYlUoBZl1Ac9dgZlGQUxRRsfo+TJ4hBpI5bJ6GGFt/iv7yZpRuV
+         QJwv/W3L55N3/gC0OcYRYriT9MeJNabif8VtIjcuEG+Uk72Ib/UpIy3A4Wl21UycyGeV
+         khphF77pzIvpuuNw3it4HAM5Bhbv+J+/cXG7jY1bIIVSkuk0pymjT4CR2+CXdZ7aILGi
+         +dV8eymgVbI7VDVjM4FRnhr/cX1PTT27Ux51VwSTwf6Ea8dAeAkQ/9jIrMwF1hoVs8mR
+         tT/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cdinGgVazI5fUgZBgObY9YOTAF5gu6cqTGjYkW5HU9c=;
-        b=LMjiRaFmt6hRN5amyZUC2OrZkaVFboSfmoWfgO20zXTRTUnvTku/a5QELthj1+EpRw
-         SQdkiLqXIU/fMCjo++gZFFCMCUb9bM2qbolFzuO6LS+1AFrvxIBmVldG2+gdsFHQgwSM
-         Lsz0kfYBvqkZJV0HoJzMq3SMDX2+l1Ex5x1cfDbeJzdpRAGHwkgegufG/xaRdCJG1EQU
-         q9Obrs/oUTxunQZy4jv43LGkoDPOThVFwlsMvyoHhwnJKLxCv5dvSxSIQPRpkltZUYSK
-         sDMAFBwPxuceoqZKE4Z59HcewXMS4L26vUSCxRkvwOe9gHwdumD7r7JJrON4Pd5WCVpU
-         RARA==
-X-Gm-Message-State: AO0yUKXbJDJjQ6UETQnbFfM3IHR3muDbzDxlCQvJazJqULyLfFeJoG9S
-        tISqPebLg+7g42nMJefdeWWtIg==
-X-Google-Smtp-Source: AK7set/5h8OvHzwHdZa8t7WRpHyDlCmAbwfSNzSfFZWUQj5pO3yjNS+ImIIb15Q2AmvMbBLoFt9JVw==
-X-Received: by 2002:a05:600c:331e:b0:3dc:5823:d6c0 with SMTP id q30-20020a05600c331e00b003dc5823d6c0mr4222460wmp.6.1675800923588;
-        Tue, 07 Feb 2023 12:15:23 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id o37-20020a05600c512500b003c6bbe910fdsm21958398wms.9.2023.02.07.12.15.22
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YfKELKMAnQFkkEbZHEYEZttNxlmjlMVEh0XNdBoEsjw=;
+        b=Il/dbBq2ROQMePEn958QJ/AYzTSyxoFhLxtHhGZZERGNALdM2WOn9Qva81c5+PYOG5
+         zxK5Bh7qX+GWT4Y0hTTlQDub/L6ThCFATuDLvO25vnYGqPDPG9Jpmr9V6BkTHga5NZO9
+         InsjahmordlUkbT/4PEIAbyAMZ3fv/yK553eA5R69Qpl6XI5aDXgY1WhSpdcwqkxiEDq
+         rzi6mxGaPKLTh/z5Uz1x/kRBe++Icrwt61JUsBbxLEk3YF2WlnJp65DoddC8PpNNEP21
+         KLDugsz6D//7O+BQx8xkW2XQaLKGW9AsdJ/xr2cizqD5e6QUVS6/EbVFL09sGmyvb9U6
+         kYAQ==
+X-Gm-Message-State: AO0yUKUQvHUScV233RfBdtvmquU9qt8+2z4/+C+D6avkJL0INX65jnxH
+        Ts4dTXAJ0z9xLwlxo/d/yKY=
+X-Google-Smtp-Source: AK7set8gSzfFyLFzaRMOX6lLIPCjFSzze6dgA1JenhwCC1vYAs7beQOSSrNlWqOlog2SIUGPkEcD0g==
+X-Received: by 2002:a17:906:bc54:b0:8aa:d923:faf0 with SMTP id s20-20020a170906bc5400b008aad923faf0mr104030ejv.10.1675803193728;
+        Tue, 07 Feb 2023 12:53:13 -0800 (PST)
+Received: from localhost ([2001:b07:5d37:537d:cd23:cd6e:ae14:44fe])
+        by smtp.gmail.com with ESMTPSA id g4-20020a170906348400b007add62dafbasm7323912ejb.157.2023.02.07.12.53.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Feb 2023 12:15:23 -0800 (PST)
-Message-ID: <6461a06b-55fa-e41a-0cf0-5a587ed2c389@linaro.org>
-Date:   Tue, 7 Feb 2023 21:15:21 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 1/2] media: samsung: exynos4-is: drop simple-bus from
- compatibles
-Content-Language: en-US
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20230207192914.549309-1-krzysztof.kozlowski@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230207192914.549309-1-krzysztof.kozlowski@linaro.org>
+        Tue, 07 Feb 2023 12:53:13 -0800 (PST)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date:   Tue, 07 Feb 2023 20:53:09 +0000
+Message-Id: <CQCMNHG923N3.3991UZTUP9WFA@vincent-arch>
+From:   "Vincenzo Palazzo" <vincenzopalazzodev@gmail.com>
+To:     "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+        "Linus Walleij" <linus.walleij@linaro.org>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
+        "Tony Lindgren" <tony@atomide.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+        "Geert Uytterhoeven" <geert@linux-m68k.org>,
+        "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+        "Michael Ellerman" <mpe@ellerman.id.au>,
+        "Devarsh Thakkar" <devarsht@ti.com>,
+        "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+        "Stefan Schmidt" <stefan@datenfreihafen.org>,
+        "Miquel Raynal" <miquel.raynal@bootlin.com>,
+        <linux-gpio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-doc-tw-discuss@lists.sourceforge.net>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-omap@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+        <linux-m68k@lists.linux-m68k.org>, <linuxppc-dev@lists.ozlabs.org>,
+        <linux-sh@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-wpan@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-wireless@vger.kernel.org>,
+        <brcm80211-dev-list.pdl@broadcom.com>,
+        <SHA-cyfmac-dev-list@infineon.com>, <linux-arch@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Cc:     "Bartosz Golaszewski" <brgl@bgdev.pl>,
+        "Jonathan Corbet" <corbet@lwn.net>, "Alex Shi" <alexs@kernel.org>,
+        "Yanteng Si" <siyanteng@loongson.cn>,
+        "Hu Haowen" <src.res@email.cn>,
+        "Russell King" <linux@armlinux.org.uk>,
+        "Aaro Koskinen" <aaro.koskinen@iki.fi>,
+        "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
+        "Andrew Lunn" <andrew@lunn.ch>,
+        "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+        "Gregory Clement" <gregory.clement@bootlin.com>,
+        "Alim Akhtar" <alim.akhtar@samsung.com>,
+        "Nicholas Piggin" <npiggin@gmail.com>,
+        "Yoshinori Sato" <ysato@users.sourceforge.jp>,
+        "Rich Felker" <dalias@libc.org>,
+        "Mun Yew Tham" <mun.yew.tham@intel.com>,
+        "Keerthy" <j-keerthy@ti.com>,
+        "Mika Westerberg" <mika.westerberg@linux.intel.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        "Alexander Aring" <alex.aring@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>,
+        "Jakub Kicinski" <kuba@kernel.org>,
+        "Paolo Abeni" <pabeni@redhat.com>,
+        "Arend van Spriel" <aspriel@gmail.com>,
+        "Franky Lin" <franky.lin@broadcom.com>,
+        "Hante Meuleman" <hante.meuleman@broadcom.com>,
+        "Kalle Valo" <kvalo@kernel.org>, "Qiang Zhao" <qiang.zhao@nxp.com>,
+        "Li Yang" <leoyang.li@nxp.com>, "Lee Jones" <lee@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        "Frank Rowand" <frowand.list@gmail.com>,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>
+Subject: Re: [PATCH v3 01/12] gpiolib: remove empty asm/gpio.h files
+References: <20230207142952.51844-1-andriy.shevchenko@linux.intel.com>
+ <20230207142952.51844-2-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20230207142952.51844-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 07/02/2023 20:29, Krzysztof Kozlowski wrote:
-> The FIMC camera node wrapper is not a bus, so using simple-bus fallback
-> compatible just to instantiate its children nodes was never correct.
-> Driver should explicitly populate all its children devices.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  drivers/media/platform/samsung/exynos4-is/media-dev.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/media/platform/samsung/exynos4-is/media-dev.c b/drivers/media/platform/samsung/exynos4-is/media-dev.c
-> index 98a60f01129d..70c4ca7844d3 100644
-> --- a/drivers/media/platform/samsung/exynos4-is/media-dev.c
-> +++ b/drivers/media/platform/samsung/exynos4-is/media-dev.c
-> @@ -1440,6 +1440,10 @@ static int fimc_md_probe(struct platform_device *pdev)
->  	if (!fmd)
->  		return -ENOMEM;
->  
-> +	ret = devm_of_platform_populate(dev);
-> +	if (ret < 0)
-> +		return -ENOMEM;
-> +
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The arm and sh versions of this file are identical to the generic
+> versions and can just be removed.
+>
+> The drivers that actually use the sh3 specific version also include
+> cpu/gpio.h directly, with the exception of magicpanelr2, which is
+> easily fixed. This leaves coldfire as the only gpio driver
+> that needs something custom for gpiolib.
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-This cannot be devm-like, because on errors unpopulating devices breaks
-links and IOMMU. I will make it of_platform_populate() instead.
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Vincenzo Palazzo <vincenzopalazzodev@gmail.com>
