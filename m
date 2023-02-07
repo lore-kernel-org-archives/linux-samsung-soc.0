@@ -2,93 +2,188 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7046EC636CC
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Feb 2023 09:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE3CC636CD
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Feb 2023 11:39:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231571AbjBGJYb (ORCPT
+        id S231422AbjBGLjC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Feb 2023 04:24:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34758 "EHLO
+        Tue, 7 Feb 2023 06:39:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231560AbjBGJXy (ORCPT
+        with ESMTP id S230176AbjBGLjB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Feb 2023 04:23:54 -0500
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 869D72D7F
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Feb 2023 01:23:22 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 1F02C85883;
-        Tue,  7 Feb 2023 10:23:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1675761800;
-        bh=5HBYFCs4vI1aDS7UhRkhM+9AOnEsulPKysY/3RB7eUE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=n3Y/p828aH+xgLeDVd+4UQ8KlOvqCvJ8UXumhwzut06Eh7bNjWdEKPUibXx6iWwaA
-         TwECPxPBzHFNOWUoJmEFIV2lr9bffcQzJdTCED8BbEfgC/MH8XTTkEsx/EemnKUaHa
-         sd+hFwXErxaF6vXQMaYP815t+ieodJZFjM8QJ5hqOo8aXIs5WZD2RPl1JODAvAgbmD
-         WjCqEUX2LaZ8HNwVup3TG8jBPTY+UD146PZmfX5SlY+s+FGy7DRgMqvHdtkyyoxsFK
-         3nlvOlGRZSwfQtoXzJZ4niZ4KHXalCpW9SnxWtbcgaLnsX4KrQiVH209Bro/nxZehs
-         P5CULrPZ+iZ8A==
-Message-ID: <12d5568f-c12c-970d-0f78-17d6dc7c0c1d@denx.de>
-Date:   Tue, 7 Feb 2023 10:23:18 +0100
+        Tue, 7 Feb 2023 06:39:01 -0500
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 666D01284F;
+        Tue,  7 Feb 2023 03:38:56 -0800 (PST)
+Received: by mail-ej1-x636.google.com with SMTP id sa10so11989863ejc.9;
+        Tue, 07 Feb 2023 03:38:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ypYaAIHbgwskXP956yUIa5G6SVK0QZ0JGeu03YaQuLg=;
+        b=j50wXizpSCgbltXPzxLm6o6EgUCwunOa3gUhOObCfsxS5zVmzaK1bbvvNUqvbd5N59
+         s38vLv0Ysjzb1iVZ1HiJGnplkCzTNqrii67ZhGZXcM6Nm93vBAaQpk0h4FApJ7wqBa7u
+         z1jm04ciGE4gBk8tYyYecFTbO6F4uEiBi5Tw5VGhyW22YPsF64IrPcOj1SWTrQ1HmnaR
+         f1ZNfG5UyLxIsSMw97PSgxOcFcN3yaX6IUcuonLpJGDzhifWcbo3vsJl4sdNKHkP4cqW
+         e+BPGiI5s6QzdCrSLCvvb05XtqKa5znj4Ell/XC4ul+ptUNQ8iQMRC0qxgFDioXRQMOq
+         8B3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ypYaAIHbgwskXP956yUIa5G6SVK0QZ0JGeu03YaQuLg=;
+        b=3LPUwvciaQMz/y+a1nRAkftJ3XnYtMWTS1LajHuNDY4Ksa/HS8tMVigcna/0VVukcc
+         otH72r/RfIY6Z8+TtJaYoudLRNi/c4bIBhly1XsENjw58xElDdk2xl1AmHmJhSRCV007
+         wdP2w0hxMAKe/UQ/L1iOCdSbzPVftYV8GYsFIr+tuHzTA3vWl/LZisjDdDnfWH0GUXk7
+         daUoeNj6GWB63r2INi+iUR3erthKK5cRl7YLizHFiCwI0vWjT3bnlXJ/fJjaWxsvnUOm
+         TcJFKGiU419SlpTGmrChfFAgfGW71j/2qMI8BM1kW+/vS7ZUM0OV770URb0ozn78y4fJ
+         7F2A==
+X-Gm-Message-State: AO0yUKV9SaAGwjB0rWIsLQKxlfPoFHh+uB30iA0ssFSohHX9Rt9pVr2+
+        QGkNSEKKQGc6o6h6Q7bhsDRs6xXBP7A=
+X-Google-Smtp-Source: AK7set9xPPTA4AVcwID7+M8jKZFboG1ezV/PnXsBHNVtCAEcRQMGr+q/tXVvH0nFPyJttT+0/8a26A==
+X-Received: by 2002:a17:906:2556:b0:8aa:1eb2:a806 with SMTP id j22-20020a170906255600b008aa1eb2a806mr1043783ejb.74.1675769934798;
+        Tue, 07 Feb 2023 03:38:54 -0800 (PST)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id m18-20020a056402511200b004a22ed9030csm6293794edd.56.2023.02.07.03.38.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Feb 2023 03:38:54 -0800 (PST)
+Date:   Tue, 7 Feb 2023 12:38:51 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Haowen Bai <baihaowen@meizu.com>,
+        Minghao Chi <chi.minghao@zte.com.cn>,
+        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
+        <linux-amlogic@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:RENESAS R-CAR THERMAL DRIVERS" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/STM32 ARCHITECTURE" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
+Message-ID: <Y+I4S7Xt4gKDYLkw@orome>
+References: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH v12 00/18] drm: Add Samsung MIPI DSIM bridge
-To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Laurent.pinchart@ideasonboard.com, aford173@gmail.com,
-        andrzej.hajda@intel.com, dri-devel@lists.freedesktop.org,
-        inki.dae@samsung.com, kyungmin.park@samsung.com,
-        linux-amarula@amarulasolutions.com,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com,
-        matteo.lisi@engicam.com, sw0312.kim@samsung.com,
-        tharvey@gateworks.com
-References: <20230126144427.607098-1-jagan@amarulasolutions.com>
- <06e5423f-c022-7a1c-efe0-0f4fbab664c1@prevas.dk>
- <CAMty3ZBRDDnNdmgD5ji11SdCuOcmu3ZyBPyB28cF1aRTyxp+fg@mail.gmail.com>
- <be95e4f7-15a8-ba99-6b39-6f7f0ea71201@prevas.dk>
- <CAMty3ZBNLpV9orVRD897ZeR3Hj9RWOau07b1ZGDUoBRej=Cj-Q@mail.gmail.com>
- <31ccc974-4b01-ae47-9505-626617f07758@denx.de>
- <f6cea911-783c-f59d-503c-1576358ae7cb@prevas.dk>
- <dcc28c36-9b09-ea92-be21-665c6cbf35b3@denx.de>
- <c21ee1e2-b92e-0fad-40bf-91cae9e57f48@prevas.dk>
- <1745c43d-06b4-933b-5dbd-50add565828e@kontron.de>
- <c9dc0b2b-8850-6227-163b-85c53c5d72ef@prevas.dk>
-Content-Language: en-US
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <c9dc0b2b-8850-6227-163b-85c53c5d72ef@prevas.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6YmCx3uIqlMso1fF"
+Content-Disposition: inline
+In-Reply-To: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
+User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2/7/23 10:09, Rasmus Villemoes wrote:
 
-[...]
+--6YmCx3uIqlMso1fF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Now hotplug-detect doesn't work with the current sn65dsi86 driver, but
-> that's a separate issue; when I boot with a monitor attached, its edid
-> is correctly read out. But I still don't get any output, and the monitor
-> says "no signal" - my naive attempt (which has worked fine in other
-> cases) was to just dd /dev/urandom to /dev/fb0, so I'm clearly missing
-> some important step.
+On Mon, Feb 06, 2023 at 04:34:29PM +0100, Daniel Lezcano wrote:
+> As the name states "thermal_core.h" is the header file for the core
+> components of the thermal framework.
+>=20
+> Too many drivers are including it. Hopefully the recent cleanups
+> helped to self encapsulate the code a bit more and prevented the
+> drivers to need this header.
+>=20
+> Remove this inclusion in every place where it is possible.
+>=20
+> Some other drivers did a confusion with the core header and the one
+> exported in linux/thermal.h. They include the former instead of the
+> latter. The changes also fix this.
+>=20
+> The tegra/soctherm driver still remains as it uses an internal
+> function which need to be replaced.
+>=20
+> The Intel HFI driver uses the netlink internal framework core and
+> should be changed to prevent to deal with the internals.
+>=20
+> No functional changes
+>=20
+> [ Applies to thermal/linux-next or linux-pm/linux-next ]
+>=20
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  drivers/thermal/amlogic_thermal.c           | 1 -
+>  drivers/thermal/armada_thermal.c            | 2 --
+>  drivers/thermal/broadcom/bcm2835_thermal.c  | 1 -
+>  drivers/thermal/hisi_thermal.c              | 3 +--
+>  drivers/thermal/imx8mm_thermal.c            | 1 -
+>  drivers/thermal/imx_sc_thermal.c            | 1 -
+>  drivers/thermal/intel/intel_hfi.c           | 3 ++-
+>  drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 1 -
+>  drivers/thermal/qoriq_thermal.c             | 1 -
+>  drivers/thermal/rcar_gen3_thermal.c         | 1 -
+>  drivers/thermal/samsung/exynos_tmu.c        | 3 +--
+>  drivers/thermal/st/stm_thermal.c            | 1 -
+>  drivers/thermal/tegra/tegra30-tsensor.c     | 1 -
+>  drivers/thermal/uniphier_thermal.c          | 2 --
+>  14 files changed, 4 insertions(+), 18 deletions(-)
 
-You could try and tweak the DSI mode flags in 
-drivers/gpu/drm/bridge/ti-sn65dsi86.c to operate in DSI burst mode 
-MIPI_DSI_MODE_VIDEO_BURST instead of MIPI_DSI_MODE_VIDEO . Then you 
-could configure the DSIM PLL to 891 MHz , but you also have to make sure 
-the DSI86 would expect the 891 MHz (please check the datasheet).
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Try and look up patches below for related approach:
-drm/bridge: ti-sn65dsi83: Add and use hs_rate and lp_rate
-drm: bridge: samsung-dsim: Select DSI HS clock rate from downstream 
-bridge limits
+--6YmCx3uIqlMso1fF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPiOEsACgkQ3SOs138+
+s6GcZg//R3MQVqmdDfUAH1wSX/RKBdIAW3IEegenVrucDauuJHfqOD6w9PZ1mhvo
+7sffnxqIcqDT4K1UrFfVoSEsDYYKTB/RbwaiHjr2bGR7DJbLe7diXmw2XZWJZ+gT
+Oyw8I6tyWR9ixwcfP5d03Vgi5h4QHSNvlAagPwCIMoYXlC8yMeK5stM5DR2pZCRJ
+ZtpT71OQa0iUf9/MP61cm1EZco7cUSbPP79b+0gkGCaEM+N9h5VRSK4wZWyDe2ED
+lRwO36ATMnOzHN27cZvYLXEsGiWRLvtSwunIfOkBW2GFf3/t0KJfLNTIIzBYyYv5
+7YWQWv2PWY7A2dx0DDskAmo3n+34qouc7lGd+pCJeoPASpEXbCRK5kXvVEVMcMW/
+fuxqLlsBpZoNLlxmMCL7LaN0xTTK5aAI930kxr1vJXlYfwvHsXN5YUBi9f+nP3lv
+k4LY4P/jgZGDJQMcjL6ysfHJ11S9yc+6mAv9D+Zd6X5sn+DitvYUbq7oH1Vid5oU
+nvu13INcwRMa/Q++f6+DOv//64fPIeZctFcq1oQr8tevgECDeJ7qy4ZTPplIcLnU
+cGEHqcomIPOkFfvAxYETborXcePZSFKpuYOzecg6YEhcZCtkYLcdiFuw9PoM8Kqn
+CYbQQDs1EKfpKznrlpqOIiaZ1PknWjl2zK4ey9b+APu0KE5eghc=
+=Zn7P
+-----END PGP SIGNATURE-----
+
+--6YmCx3uIqlMso1fF--
