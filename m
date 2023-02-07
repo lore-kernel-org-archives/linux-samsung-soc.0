@@ -2,152 +2,239 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6A8C636D3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Feb 2023 22:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A595C636CD
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Feb 2023 03:33:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229878AbjBFWfw (ORCPT
+        id S230070AbjBGDdc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Feb 2023 17:35:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50860 "EHLO
+        Mon, 6 Feb 2023 22:33:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229741AbjBFWfv (ORCPT
+        with ESMTP id S230046AbjBGDdb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Feb 2023 17:35:51 -0500
-Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AAE017155;
-        Mon,  6 Feb 2023 14:35:50 -0800 (PST)
-Received: by mail-qt1-x831.google.com with SMTP id x10so7782009qtr.2;
-        Mon, 06 Feb 2023 14:35:50 -0800 (PST)
+        Mon, 6 Feb 2023 22:33:31 -0500
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 317C2977A
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Feb 2023 19:33:29 -0800 (PST)
+Received: by mail-pl1-x631.google.com with SMTP id w5so4310405plg.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Feb 2023 19:33:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nmjD169NoXW3IkhaYFwz0SB6QUlkP+qjUZED7C6ZRTc=;
-        b=ckgvtNbLHKE7zGp1hQQH2crONIjnVmrKh4uTLOwFVE59nzmNDXe2hY25Vy/SdS2hxO
-         Dcps1DCCnhUR6uMUpbZAgd3e8d74QAybhTkzqbpGiY5KlAx4PxrkThbrKvdJQ9X6eFLI
-         kYsBUj99TpNEuneLGJ33lau5G8cp9/7SsRvgWGqTGoFXEUGKo5+YBpVCCQROO1xtG8u+
-         IoFe7ysj9JZNW2YtseYYgAOdEL5ZywEYqUMstLjxqHmT9iCp6KwTE5cTR2LZ6ZJxFCca
-         sEIMEsh7SzKMoJb7WcrXJsAGFp3TzRG35VTOXk4ujeNHnd5JE2e3IbbQn8hYhVvvZmss
-         dC1Q==
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jZ+4hAwmP/Wq7HMXGBwWwMQ58wAzyvKIfT8l5MVctqA=;
+        b=GEvRbWsdrNSjNTj8GEescS6JrVW0Ycs6jHwPtsXuvZCNQqQ8fjp4Y/bEcCjfGuVfvC
+         o1tY+Fq8A5guU8wf5aqYziykIYyFFLojmBqUpuZszBewyLlfUFLluBbeYphG1QlPflT7
+         MbPiavJcyehwbCxK9Wf89KafdwV59QGm9sdELqOAkPg+jqT54HmyTID2PZphVfKb7uID
+         NTsvPZY+1vPd2ewKh0pmoMSNESrVwP6vlJn0DPYV32uB25cppCz7b9CD2sO5XzYaAgQX
+         oMZkK64uGSkTw/+ce8QkuRAhh86nb8fPnfwgGLsM05bC0/bsyn4VHQEoHXsObPaVVGxR
+         Z6ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nmjD169NoXW3IkhaYFwz0SB6QUlkP+qjUZED7C6ZRTc=;
-        b=KaVe6UZfRSXprKunuHah/GXNnF3JKbuMTghzpYrDYdxTaqQGDKB0zKQsksz0En/TI1
-         uzAruNpkhUlyK8Xjp/DDIyeKhxSn+7k/qcfh2DaPLcxfksG2kU6L9Ztx79jJupy8p98l
-         3SI6NfnBCPrfXKfjU59nBjFSXg44w1OCwRe7IlUtiFpvWy9d9dgaHr9bY+oq1Op8k6Wi
-         rmMoZl7dsMpcLs1EWP0wW2UICGHpQDW6Qi0NsXWWj7jccpl7RwcMxEQYtWMgw/k1MC4z
-         qNtTukrqeJiXJa1pvIpdPqzCXq9c4nxoxuBNT1q3Rsvp+VNECy7em4Somk1rjTz8fEQT
-         1rSA==
-X-Gm-Message-State: AO0yUKW/xjQ3YUsdXYB/oSJqNJEEkSLAzxkbiipL6iNW6Qr7z8EGVrzh
-        2hxXT5s5zj8mRc2eVXB9QSgrb8TLsLpxNg==
-X-Google-Smtp-Source: AK7set+ds+mN/qWC4EpstrsfpJCHNe3e6+CXlaF5Nlwbm9/55WoErDc4Bw+yRg3MwF1VPLdJ7uZRmQ==
-X-Received: by 2002:a05:622a:1753:b0:3b6:43ae:d5a3 with SMTP id l19-20020a05622a175300b003b643aed5a3mr1958776qtk.26.1675722949351;
-        Mon, 06 Feb 2023 14:35:49 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id 16-20020a05620a041000b007201df7ff47sm8274920qkp.45.2023.02.06.14.35.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Feb 2023 14:35:48 -0800 (PST)
-Message-ID: <6f276332-54fb-b814-1b64-4e8aa7960eb6@gmail.com>
-Date:   Mon, 6 Feb 2023 14:35:24 -0800
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jZ+4hAwmP/Wq7HMXGBwWwMQ58wAzyvKIfT8l5MVctqA=;
+        b=dtrGC5d9ARFYAMRaWructPh56d52lh34MRosD85+mfONWX1ZCbILKR+SfvGGj+VSr4
+         39av3q2ohQ5Fgyw43E3Rx8X6vGIgMSQMswkNsmZRH4V0dNTniYJ44Zr66jQjbGpPBMWt
+         w7m50nliYYCGVggjg5PinEL5WRlUbok3/W2sWcUTXBrS/wmuYCXsytNbOOvcgWsTyQu5
+         YyOjZrdX+9Xxlqvo7ehoEiNmMXUNWO0F1kKhsa2rr0hyQDphDXR4dam+4+YW2RgwFQgo
+         o/1IhZXmu+UrJtUw1kIIPlmIrFqrVQdPTuSP7fg+K9V6eAPK62oJcaSxD0WvpjzkJMBr
+         uVyg==
+X-Gm-Message-State: AO0yUKXfjHsQ28xlJYpWW8Slnhs/TcgDLxlvlB5TdBWNUeHlJ/b8sBBl
+        KDN9/m2U+/is4Qs6OvAyd20/6NR2kPBQDs3fL+COIg==
+X-Google-Smtp-Source: AK7set8/tdh3z8+hwGRprHytiFQk4NEtrGhWl5Yoj/Zs4oIXQ4+pkldjQzMwuNY1PSyLGTcyeZ30Y0LRa22tyDhdiPw=
+X-Received: by 2002:a17:902:714b:b0:194:6253:d685 with SMTP id
+ u11-20020a170902714b00b001946253d685mr332680plm.3.1675740808337; Mon, 06 Feb
+ 2023 19:33:28 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
-Content-Language: en-US
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        rafael.j.wysocki@intel.com
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+References: <CGME20221103195201eucas1p2a6ec2df41ebac3d9ccbb0b252c2cad34@eucas1p2.samsung.com>
+ <20221103195154.21495-1-semen.protsenko@linaro.org> <a7d9cd18-a328-209c-c89f-afdcb7db3eb0@samsung.com>
+ <b7ad6444-e7d2-1150-6134-3dae8129dcdb@samsung.com> <CAPLW+4=Y6qZG2XjJR_BkX-ar4GWdETKO1tteJjfbxVc664e4Kg@mail.gmail.com>
+In-Reply-To: <CAPLW+4=Y6qZG2XjJR_BkX-ar4GWdETKO1tteJjfbxVc664e4Kg@mail.gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Mon, 6 Feb 2023 19:32:51 -0800
+Message-ID: <CAGETcx9ApZFvKjEaxvvgsoHDzOq06ZiROZ5npYt+suNdE4KWDg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] iommu/exynos: Convert to a module
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Haowen Bai <baihaowen@meizu.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
-        <linux-amlogic@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:RENESAS R-CAR THERMAL DRIVERS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "open list:SAMSUNG THERMAL DRIVER" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/STM32 ARCHITECTURE" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
-References: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Janghyuck Kim <janghyuck.kim@samsung.com>,
+        Cho KyongHo <pullip.cho@samsung.com>,
+        Daniel Mentz <danielmentz@google.com>,
+        David Virag <virag.david003@gmail.com>, iommu@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2/6/23 07:34, Daniel Lezcano wrote:
-> As the name states "thermal_core.h" is the header file for the core
-> components of the thermal framework.
-> 
-> Too many drivers are including it. Hopefully the recent cleanups
-> helped to self encapsulate the code a bit more and prevented the
-> drivers to need this header.
-> 
-> Remove this inclusion in every place where it is possible.
-> 
-> Some other drivers did a confusion with the core header and the one
-> exported in linux/thermal.h. They include the former instead of the
-> latter. The changes also fix this.
-> 
-> The tegra/soctherm driver still remains as it uses an internal
-> function which need to be replaced.
-> 
-> The Intel HFI driver uses the netlink internal framework core and
-> should be changed to prevent to deal with the internals.
-> 
-> No functional changes
-> 
-> [ Applies to thermal/linux-next or linux-pm/linux-next ]
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
+On Fri, Nov 11, 2022 at 5:30 AM Sam Protsenko
+<semen.protsenko@linaro.org> wrote:
+>
+> On Thu, 10 Nov 2022 at 15:36, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> [snip]
 
->   drivers/thermal/broadcom/bcm2835_thermal.c  | 1 -
+Hi Marek and Sam,
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com> # bcm2835_thermal.c
--- 
-Florian
+I'm replying to both of your comments in this email.
 
+> > I've finally made Exynos IOMMU working as a module on Exynos5433 based
+> > TM2e board. It looks that this will be a bit longer journey that I've
+> > initially thought. I've posted a simple update of the fix for the driver
+> > initialization sequence, but the real problem is in the platform driver
+> > framework and OF helpers.
+> >
+> > Basically to get it working as a module I had to apply the following
+> > changes:
+> >
+> > diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> > index 3dda62503102..f6921f5fcab6 100644
+> > --- a/drivers/base/dd.c
+> > +++ b/drivers/base/dd.c
+> > @@ -257,7 +257,7 @@ static int deferred_devs_show(struct seq_file *s,
+> > void *data)
+> >   DEFINE_SHOW_ATTRIBUTE(deferred_devs);
+> >
+> >   #ifdef CONFIG_MODULES
+> > -int driver_deferred_probe_timeout = 10;
+> > +int driver_deferred_probe_timeout = 30;
+> >   #else
+> >   int driver_deferred_probe_timeout;
+> >   #endif
+> > diff --git a/drivers/of/property.c b/drivers/of/property.c
+> > index 967f79b59016..e5df6672fee6 100644
+> > --- a/drivers/of/property.c
+> > +++ b/drivers/of/property.c
+> > @@ -1384,7 +1384,7 @@ static struct device_node *parse_interrupts(struct
+> > device_node *np,
+> >   static const struct supplier_bindings of_supplier_bindings[] = {
+> >          { .parse_prop = parse_clocks, },
+> >          { .parse_prop = parse_interconnects, },
+> > -       { .parse_prop = parse_iommus, .optional = true, },
+> > +       { .parse_prop = parse_iommus, },
+> >          { .parse_prop = parse_iommu_maps, .optional = true, },
+> >          { .parse_prop = parse_mboxes, },
+> >          { .parse_prop = parse_io_channels, },
+> >
+> > Without that a really nasty things happened.
+
+I have a command line option to do this without code changes. Use
+fw_devlink.strict=1. That makes all optional properties into mandatory
+ones.
+
+I sent out a series[1] that tried to make fw_devlink.strict=1 the
+default and then use the timeout behavior (more details) to handle
+cases where iommu and dmas (or any other supplier) are optional on a
+specific board. The cover letter of [1] should give some more context.
+
+> > Initialization of the built-in drivers and loading modules takes time,
+> > so the default 10s deferred probe timeout is not enough to ensure that
+> > the built-in driver won't be probed before the Exynos IOMMU driver is
+> > loaded.
+
+The 10 second is the minimum delay from the time we hit late_initcall.
+If a driver is registered before the 10s expires, then the timer will
+be extended by another 10s. This behavior landed sometime around the
+end of May 2022. So it should have been in your tree when you tested
+this. I'm surprised this isn't sufficient for your case. Is there
+really a 10s gap in your boot sequence where no module is being loaded
+and then IOMMU modules get loaded later on? I'm kinda surprised by
+this. Is it this long because some serial UART is enabled and it's
+slowing down boot? Or something else?
+
+I'm not saying your case isn't valid or we shouldn't extend the
+timeout. I'm just trying to understand why the current timer behavior
+wasn't able to cover your case.
+
+> Yeah, the whole time-based sync looks nasty... I remember coming
+> across the slides by Andrzej Hajda called "Deferred Problem" [1], but
+> I guess the proposed solution was never applied. Just hope that
+> increasing the timeout is upstreamable solution.
+>
+> [1] https://events19.linuxfoundation.org/wp-content/uploads/2017/12/Deferred-Problem-Issues-With-Complex-Dependencies-Between-Devices-in-Linux-Kernel-Andrzej-Hajda-Samsung.pdf
+
+Sam, I kinda skimmed the slides right now. Looks like it talks about
+device links and why they aren't sufficient and makes an alternate
+proposal. fw_devlink is a solution that uses device links and I think
+addresses a lot of the issues that were raised about device links.
+There's still a bunch of TODOs left, but I think the end goal is the
+same. I'm hoping to keep chipping away at it. For now, I've tried to
+make the timer a bit more smart about detecting when modules are
+getting loaded and extending the timer. fw_devlink also enables
+something called sync_state() that's invaluable on a fully modular
+system (search lore for references to that to get some idea).
+
+The slides talk about a solution that will allow devices to probe with
+limited functionality with whatever suppliers are available and then
+reprobe as more suppliers are available. I'm not sure how well that'll
+work across the board. It's going to be a bit weird if your phone
+display goes off and then comes on again because an IOMMU driver got
+loaded (and it can now do DRM playback). For now, I'm not going to
+focus on that option because there are enough existing issues/TODOs to
+work on for fw_devlink.
+
+> > The second change fixes the problem that driver core probes Exynos IOMMU
+> > controllers in parallel to probing the master devices, what results in
+> > calling exynos_iommu_of_xlate() and exynos_iommu_probe_device() even on
+> > the partially initialized IOMMU controllers or initializing the dma_ops
+> > under the already probed and working master device. This was easy to
+> > observe especially on the master devices with multiple IOMMU
+> > controllers. I wasn't able to solve this concurrency/race issues inside
+> > the Exynos IOMMU driver.
+> >
+> > Frankly speaking I don't know what is the rationale for making the
+> > 'iommus' property optional, but this simply doesn't work well with IOMMU
+> > driver being a module. CCed Saravana and Rob for this.
+> >
+>
+> The patch which makes 'iommus' optional doesn't provide much of
+> insight on reasons in commit message either.
+
+This was the commit text:
+
+    Not all DT bindings are mandatory bindings. Add support for optional DT
+    bindings and mark iommus, iommu-map, dmas as optional DT bindings.
+
+I thought it was obvious enough, but I guess I could have done better.
+Geert convinced me that iommu's aren't always necessary and devices
+could work perfectly well without them or dmas. And he has a bunch of
+boards like that. So I went with adding optional and then introducing
+fw_devlink.strict.
+
+However, at this point in time, I believe none of them should be
+marked as optional because technically any property can be optional
+depending on what the firmware has set up and what the driver does. We
+should figure this out at runtime on a board level -- which is what
+[1] is trying to do. Yeah, not very pretty, but there hasn't been a
+better solution that's not "have userspace tell us it's done loading
+modules" (that's a "kernel depends on userspace to work correctly"
+thing that no one likes). I've fixed some of the issues raised in [1]
+in a fw_devlink improvement series[2] and I plan on continuing to work
+on this until hopefully [1] can land.
+
+> > Without fixing the above issues, I would add a warning that compiling
+> > the driver as a module leads to serious issues.
+> >
+>
+> Nice catch! It doesn't reproduce on my platform, alas. Can I expect
+> you to submit those patches? If so, I'll probably just wait for those
+> to be applied, and then re-send my modularization series on top of it.
+> Does that sounds reasonable?
+
+For now, maybe we could add a config to enable fw_devlink.strict=1 by
+default and then select it if you make specific iommu drivers into
+modules? And then Geert won't set it for his driver, but you can set
+it for your driver?
+
+Thanks,
+Saravana
+
+[1] - https://lore.kernel.org/lkml/20220601070707.3946847-1-saravanak@google.com/
+[2] - https://lore.kernel.org/lkml/20230207014207.1678715-1-saravanak@google.com/
