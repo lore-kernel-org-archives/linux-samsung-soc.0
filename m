@@ -2,183 +2,256 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17796C6379F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Feb 2023 13:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 558EBC64EC4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Feb 2023 14:29:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232042AbjBGNdf (ORCPT
+        id S232661AbjBGO3c (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Feb 2023 08:33:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51584 "EHLO
+        Tue, 7 Feb 2023 09:29:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232229AbjBGNde (ORCPT
+        with ESMTP id S230080AbjBGO3b (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Feb 2023 08:33:34 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D936F32517
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Feb 2023 05:33:22 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id ba1so9500709wrb.5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Feb 2023 05:33:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:reply-to:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Gnj8mx6BQv+P/VZTc2ZRvZ4cPWBzn/d/g1R6N3t1SY=;
-        b=sywB6VKP5uMO4iMwIfYWNewUXqdyUmfAHNyhyo3OrdI4w9hMA/do0JdT6XDgbayfL+
-         hioKOeqNB9gmBTeOJ+GEqRzkacs91bBLXr18APnsVAUBpOFSSsRR/mPgDw2PAZiSngST
-         GHN3F7C6RRw0zyStZrcDu6HUwZTZEJW9//HKZNnFr8pbdBYO0ZeQTSQ1wJUc9qr39WDw
-         RAZprI560qB9/D7SJ2L2mhHzMzvqn4IkElOgb3RhfyiCRKxMOqVm8can1xTMfSUuQzTl
-         3d/Otz4g9TJG3uwzIfUqVNKE0lVe3mXM4bFnaRqiGH/VF2JhF06rxIQG2kcu+KI3CJbC
-         UTcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:reply-to:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Gnj8mx6BQv+P/VZTc2ZRvZ4cPWBzn/d/g1R6N3t1SY=;
-        b=klCybeJR2fS678LsuoTWqy+SeyzFljcePQcb25ufCs90LaDMrZcVdesYn4SeanPxN1
-         p957tYkEWvaL9jhiljjpVjdT3aQTYyRS2L9DU6YXq6UVqHbFjqb4Ru0N/cfPcTqtHUGD
-         gCaddaf2ka8YqOTw3qgbkpZuAHwKYBvFXxznPo6mCUXBq6t6Dt9t5L6XdpO9D+iIDJ4P
-         ILV6YHS8ZhRks+1ivPyqPsdvd84fvuZwBbCdSxo4R8j4egpT+imS1iV7Xa+MwCc9vVmn
-         bCaV1JubnLHGiGxhcwv66JmYXl+g4wdGjv1Or617cHJtNqbPZ5OFIxS75G3fY/ST6P1t
-         Y3aQ==
-X-Gm-Message-State: AO0yUKVKH7FzlrPrI9P1+N5rP7FHZK4zo+sSYj9Y4XJpuvnvCZOSsjNX
-        TmwqTn3zYudAIt96X6kSoXU75w==
-X-Google-Smtp-Source: AK7set9tflq7m2WGhWzU48ho/FGtJPjdoU4DUvNTQOyFDfwfzYJ/cgrUGOgVxSNmGa0o1E+FD6YRHA==
-X-Received: by 2002:a05:6000:1b0f:b0:2c3:ea4d:3f01 with SMTP id f15-20020a0560001b0f00b002c3ea4d3f01mr2338118wrz.27.1675776801421;
-        Tue, 07 Feb 2023 05:33:21 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:c58c:fc5c:67d6:e5f3? ([2a01:e0a:982:cbb0:c58c:fc5c:67d6:e5f3])
-        by smtp.gmail.com with ESMTPSA id t1-20020a5d4601000000b002bdfe3aca17sm11241983wrq.51.2023.02.07.05.33.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Feb 2023 05:33:21 -0800 (PST)
-Message-ID: <e8e983a7-5dac-507d-414e-0fdc1082644a@linaro.org>
-Date:   Tue, 7 Feb 2023 14:33:19 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
-Content-Language: en-US
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        rafael.j.wysocki@intel.com
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Tue, 7 Feb 2023 09:29:31 -0500
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBF2D190;
+        Tue,  7 Feb 2023 06:29:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1675780169; x=1707316169;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=7VgWr2VPj8L1NsfjGJ63Vno2YkqOebd37sMf+dqhyeo=;
+  b=jscZB0N2UJN/Pc0tXopZRvaT2D3XAhPMfD6oaW4L5byZnnNVyWNCxxub
+   IdHtHoQn0vOxJ7lFwzg5kbJegPaGh8leViE2X2/ElmJJeW3JejJboHfhb
+   uVp+fWDik0JBd7CBMNdBIFR8+MNTyHNuhTHewhwvJLxQmmgpP3nKgqDcT
+   MAmITuzyPvCSveL+lDTbiISrMFloCRf+k+bPpGLuTOTg4l0YoyFpnelhM
+   2yWj0R3Xq10GTQ3dXSe0UCNHRxTfG76EoI63ec5WgcJGV6+BCDn1kwm84
+   t51yfBmzvkHXx9DnlJr+kOGgvPvrAlTFOdkWON+iw1BKsF+Poga/O/lr1
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10614"; a="329537331"
+X-IronPort-AV: E=Sophos;i="5.97,278,1669104000"; 
+   d="scan'208";a="329537331"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2023 06:29:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10614"; a="790811310"
+X-IronPort-AV: E=Sophos;i="5.97,278,1669104000"; 
+   d="scan'208";a="790811310"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga004.jf.intel.com with ESMTP; 07 Feb 2023 06:29:23 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 2D031210; Tue,  7 Feb 2023 16:30:02 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Devarsh Thakkar <devarsht@ti.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-doc-tw-discuss@lists.sourceforge.net,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-wpan@vger.kernel.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        SHA-cyfmac-dev-list@infineon.com, linux-arch@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>,
+        Yanteng Si <siyanteng@loongson.cn>,
+        Hu Haowen <src.res@email.cn>,
+        Russell King <linux@armlinux.org.uk>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Haowen Bai <baihaowen@meizu.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
-        <linux-amlogic@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:RENESAS R-CAR THERMAL DRIVERS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "open list:SAMSUNG THERMAL DRIVER" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/STM32 ARCHITECTURE" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
-References: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Organization: Linaro Developer Services
-In-Reply-To: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Nicholas Piggin <npiggin@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Mun Yew Tham <mun.yew.tham@intel.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Alexander Aring <alex.aring@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Kalle Valo <kvalo@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
+        Li Yang <leoyang.li@nxp.com>, Lee Jones <lee@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 01/12] gpiolib: remove empty asm/gpio.h files
+Date:   Tue,  7 Feb 2023 16:29:41 +0200
+Message-Id: <20230207142952.51844-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230207142952.51844-1-andriy.shevchenko@linux.intel.com>
+References: <20230207142952.51844-1-andriy.shevchenko@linux.intel.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/02/2023 16:34, Daniel Lezcano wrote:
-> As the name states "thermal_core.h" is the header file for the core
-> components of the thermal framework.
-> 
-> Too many drivers are including it. Hopefully the recent cleanups
-> helped to self encapsulate the code a bit more and prevented the
-> drivers to need this header.
-> 
-> Remove this inclusion in every place where it is possible.
-> 
-> Some other drivers did a confusion with the core header and the one
-> exported in linux/thermal.h. They include the former instead of the
-> latter. The changes also fix this.
-> 
-> The tegra/soctherm driver still remains as it uses an internal
-> function which need to be replaced.
-> 
-> The Intel HFI driver uses the netlink internal framework core and
-> should be changed to prevent to deal with the internals.
-> 
-> No functional changes
-> 
-> [ Applies to thermal/linux-next or linux-pm/linux-next ]
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->   drivers/thermal/amlogic_thermal.c           | 1 -
->   drivers/thermal/armada_thermal.c            | 2 --
->   drivers/thermal/broadcom/bcm2835_thermal.c  | 1 -
->   drivers/thermal/hisi_thermal.c              | 3 +--
->   drivers/thermal/imx8mm_thermal.c            | 1 -
->   drivers/thermal/imx_sc_thermal.c            | 1 -
->   drivers/thermal/intel/intel_hfi.c           | 3 ++-
->   drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 1 -
->   drivers/thermal/qoriq_thermal.c             | 1 -
->   drivers/thermal/rcar_gen3_thermal.c         | 1 -
->   drivers/thermal/samsung/exynos_tmu.c        | 3 +--
->   drivers/thermal/st/stm_thermal.c            | 1 -
->   drivers/thermal/tegra/tegra30-tsensor.c     | 1 -
->   drivers/thermal/uniphier_thermal.c          | 2 --
->   14 files changed, 4 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/thermal/amlogic_thermal.c b/drivers/thermal/amlogic_thermal.c
-> index d30cb791e63c..9235fda4ec1e 100644
-> --- a/drivers/thermal/amlogic_thermal.c
-> +++ b/drivers/thermal/amlogic_thermal.c
-> @@ -28,7 +28,6 @@
->   #include <linux/regmap.h>
->   #include <linux/thermal.h>
->   
-> -#include "thermal_core.h"
->   #include "thermal_hwmon.h"
->   
->   #define TSENSOR_CFG_REG1			0x4
+From: Arnd Bergmann <arnd@arndb.de>
 
-For Amlogic:
+The arm and sh versions of this file are identical to the generic
+versions and can just be removed.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+The drivers that actually use the sh3 specific version also include
+cpu/gpio.h directly, with the exception of magicpanelr2, which is
+easily fixed. This leaves coldfire as the only gpio driver
+that needs something custom for gpiolib.
 
-<snip>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ arch/arm/Kconfig                    |  1 -
+ arch/arm/include/asm/gpio.h         | 21 --------------
+ arch/sh/Kconfig                     |  1 -
+ arch/sh/boards/board-magicpanelr2.c |  1 +
+ arch/sh/include/asm/gpio.h          | 45 -----------------------------
+ 5 files changed, 1 insertion(+), 68 deletions(-)
+ delete mode 100644 arch/arm/include/asm/gpio.h
+ delete mode 100644 arch/sh/include/asm/gpio.h
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index e24a9820e12f..1d1a603d964d 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -24,7 +24,6 @@ config ARM
+ 	select ARCH_HAS_SYNC_DMA_FOR_CPU
+ 	select ARCH_HAS_TEARDOWN_DMA_OPS if MMU
+ 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
+-	select ARCH_HAVE_CUSTOM_GPIO_H
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG if CPU_V7 || CPU_V7M || CPU_V6K
+ 	select ARCH_HAS_GCOV_PROFILE_ALL
+ 	select ARCH_KEEP_MEMBLOCK
+diff --git a/arch/arm/include/asm/gpio.h b/arch/arm/include/asm/gpio.h
+deleted file mode 100644
+index 4ebbb58f06ea..000000000000
+--- a/arch/arm/include/asm/gpio.h
++++ /dev/null
+@@ -1,21 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _ARCH_ARM_GPIO_H
+-#define _ARCH_ARM_GPIO_H
+-
+-#include <asm-generic/gpio.h>
+-
+-/* The trivial gpiolib dispatchers */
+-#define gpio_get_value  __gpio_get_value
+-#define gpio_set_value  __gpio_set_value
+-#define gpio_cansleep   __gpio_cansleep
+-
+-/*
+- * Provide a default gpio_to_irq() which should satisfy every case.
+- * However, some platforms want to do this differently, so allow them
+- * to override it.
+- */
+-#ifndef gpio_to_irq
+-#define gpio_to_irq	__gpio_to_irq
+-#endif
+-
+-#endif /* _ARCH_ARM_GPIO_H */
+diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+index 0665ac0add0b..ccb866750a88 100644
+--- a/arch/sh/Kconfig
++++ b/arch/sh/Kconfig
+@@ -4,7 +4,6 @@ config SUPERH
+ 	select ARCH_32BIT_OFF_T
+ 	select ARCH_ENABLE_MEMORY_HOTPLUG if SPARSEMEM && MMU
+ 	select ARCH_ENABLE_MEMORY_HOTREMOVE if SPARSEMEM && MMU
+-	select ARCH_HAVE_CUSTOM_GPIO_H
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG if (GUSA_RB || CPU_SH4A)
+ 	select ARCH_HAS_BINFMT_FLAT if !MMU
+ 	select ARCH_HAS_CURRENT_STACK_POINTER
+diff --git a/arch/sh/boards/board-magicpanelr2.c b/arch/sh/boards/board-magicpanelr2.c
+index 56bd386ff3b0..75de893152af 100644
+--- a/arch/sh/boards/board-magicpanelr2.c
++++ b/arch/sh/boards/board-magicpanelr2.c
+@@ -21,6 +21,7 @@
+ #include <linux/sh_intc.h>
+ #include <mach/magicpanelr2.h>
+ #include <asm/heartbeat.h>
++#include <cpu/gpio.h>
+ #include <cpu/sh7720.h>
+ 
+ /* Dummy supplies, where voltage doesn't matter */
+diff --git a/arch/sh/include/asm/gpio.h b/arch/sh/include/asm/gpio.h
+deleted file mode 100644
+index 588c1380e4cb..000000000000
+--- a/arch/sh/include/asm/gpio.h
++++ /dev/null
+@@ -1,45 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0
+- *
+- *  include/asm-sh/gpio.h
+- *
+- * Generic GPIO API and pinmux table support for SuperH.
+- *
+- * Copyright (c) 2008 Magnus Damm
+- */
+-#ifndef __ASM_SH_GPIO_H
+-#define __ASM_SH_GPIO_H
+-
+-#include <linux/kernel.h>
+-#include <linux/errno.h>
+-
+-#if defined(CONFIG_CPU_SH3)
+-#include <cpu/gpio.h>
+-#endif
+-
+-#include <asm-generic/gpio.h>
+-
+-#ifdef CONFIG_GPIOLIB
+-
+-static inline int gpio_get_value(unsigned gpio)
+-{
+-	return __gpio_get_value(gpio);
+-}
+-
+-static inline void gpio_set_value(unsigned gpio, int value)
+-{
+-	__gpio_set_value(gpio, value);
+-}
+-
+-static inline int gpio_cansleep(unsigned gpio)
+-{
+-	return __gpio_cansleep(gpio);
+-}
+-
+-static inline int gpio_to_irq(unsigned gpio)
+-{
+-	return __gpio_to_irq(gpio);
+-}
+-
+-#endif /* CONFIG_GPIOLIB */
+-
+-#endif /* __ASM_SH_GPIO_H */
+-- 
+2.39.1
 
