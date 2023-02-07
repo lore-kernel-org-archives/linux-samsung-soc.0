@@ -2,134 +2,131 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A0CC64EC7
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Feb 2023 18:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D612C636D3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Feb 2023 19:29:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231280AbjBGSny (ORCPT
+        id S229878AbjBGT3C (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Feb 2023 13:43:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38404 "EHLO
+        Tue, 7 Feb 2023 14:29:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230445AbjBGSnx (ORCPT
+        with ESMTP id S229699AbjBGT3B (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Feb 2023 13:43:53 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E06221E1D5;
-        Tue,  7 Feb 2023 10:43:51 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 856E1B81AB2;
-        Tue,  7 Feb 2023 18:43:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14D06C433D2;
-        Tue,  7 Feb 2023 18:43:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675795429;
-        bh=z46LV0K67pYt+9sG+8XPfphcBy3wjoS4vl+j+OOVUvk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=icQIS6QVs3SIYrh/ewyBWxOXyRdTzSi5iQLtHvNEjG7lvYhQ+DvHhk+3KEs5qU2sU
-         TMTqOav5kG8GY5JR22dKb78qqMAt/Bg2JYkWEyM+MGuclGw0hQvMcVEtbzsmiJlItD
-         IEGaquWuCLNILvUo5685guZahlOFm7IGWB2GaIQ6/vE/h0SUH8mRyEHQMupAISjrjW
-         fnVVq+bZn0SaHzKt6ZHA6LtwE38N/APEa35C82I5WgacjEtf/+fE+N1kuSQDae5KOg
-         NbPJHolFeXjK9+XKnt9280QC9hb68ZWPxwLnKvG03l5612lhbMN4Z8sBFUzc9BZ9vj
-         q3xPIHrd6PLJg==
-Date:   Tue, 7 Feb 2023 10:43:45 -0800
-From:   Lee Jones <lee@kernel.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Devarsh Thakkar <devarsht@ti.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-doc-tw-discuss@lists.sourceforge.net,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-wpan@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        SHA-cyfmac-dev-list@infineon.com, linux-arch@vger.kernel.org,
-        devicetree@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>,
-        Yanteng Si <siyanteng@loongson.cn>,
-        Hu Haowen <src.res@email.cn>,
-        Russell King <linux@armlinux.org.uk>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
+        Tue, 7 Feb 2023 14:29:01 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 818E63A859
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Feb 2023 11:28:59 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id m16-20020a05600c3b1000b003dc4050c94aso12297278wms.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Feb 2023 11:28:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U8Ap/R9bBCRwfbHGCfaOdQ/oi2hB1pqW05c0juFinY0=;
+        b=vIkCoxnEwrDeI35wrzj+TX7KKyYN4lId+J+knK7tvaXmNVu51KlchE3CIKk8jqJ87j
+         m6WF9XxXVGbT4qtTtlA0AMoH9z6CTaDulTx+iyEOznZMsylwv5gx8aNhG7a5ry3mJGc0
+         eAms2XPNv/3AzP9UzZlTHdDtJqAHSD0t8tsdqyH1RED455qvRWOd3LWWgGh8nHa10WfT
+         ma5E1TnNN9+7C3vB9dg7B/eVLM4HQ2TFV3tl7JHF37T9GYcqs84Hh8rFoT+3EkrMT/Gk
+         jGxF4LEc//YbaYLAGCGiB3ZM/8003BAGj/gVBPwOxPhHlW4sksXP44L89Aj6aonntgJ5
+         5e5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U8Ap/R9bBCRwfbHGCfaOdQ/oi2hB1pqW05c0juFinY0=;
+        b=G98eG7Qx4HwIsIQnozXZzy9V4XfHhPblnzWurjvaSBwbR0dKzLjJP3aLxVspdaM1Vc
+         6Ku9Sp8+XAk8+fap1tYHaUk3mGdT1WhOMJl5wyMgwiozsc5x7srEbkwyFSeTLpbVbL0M
+         m1zOA4+NaStKOK4iExng984DGxRHT8CdBGffry3oc9sQJJMRDf2aXACGaP+9sNni8S5i
+         pmepR05IH8oSj53RN8B7b78QsMA4wloRb8TTF+1JKXUvph4AXWWZBxQnQHF4LjKWKbRX
+         iNvVUJdq6+VfPaNHJQWrmWUICahVBCjftJM9qtnWZzubhtpIj4RgFYukLYfEPirbcAFQ
+         eWUA==
+X-Gm-Message-State: AO0yUKVodSd2OBXPRGN+rwsMBbBD9VlNotw6kk/EbsWr89XJFZXivJBG
+        d13aQK6KcMlLvujBuO2ga1YC9A==
+X-Google-Smtp-Source: AK7set9k6ax9+8EqWLt6+WaYYhjredgB03dqiFMzkGrpCA7+tKGHv3HYgWBH0mSw6TVrdK7kotJ+DQ==
+X-Received: by 2002:a05:600c:a292:b0:3df:eb5d:fbf with SMTP id hu18-20020a05600ca29200b003dfeb5d0fbfmr4158930wmb.38.1675798138113;
+        Tue, 07 Feb 2023 11:28:58 -0800 (PST)
+Received: from krzk-bin.. ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id j33-20020a05600c1c2100b003db0ad636d1sm22770818wms.28.2023.02.07.11.28.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Feb 2023 11:28:57 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Mun Yew Tham <mun.yew.tham@intel.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alexander Aring <alex.aring@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Kalle Valo <kvalo@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
-        Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: Re: [PATCH v3 06/12] gpiolib: split linux/gpio/driver.h out of
- linux/gpio.h
-Message-ID: <Y+Kb4Ql+I7/Abm48@google.com>
-References: <20230207142952.51844-1-andriy.shevchenko@linux.intel.com>
- <20230207142952.51844-7-andriy.shevchenko@linux.intel.com>
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/3] dt-bindings: soc: samsung: exynos-pmu: allow phys as child on Exynos3 and Exynos4
+Date:   Tue,  7 Feb 2023 20:28:49 +0100
+Message-Id: <20230207192851.549242-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230207142952.51844-7-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 07 Feb 2023, Andy Shevchenko wrote:
+Just like on Exynos5250, Exynos5420 and Exynos5433 the MIPI phy is
+actually part of the Power Management Unit system controller thus allow
+it as PMU's child.
 
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Almost all gpio drivers include linux/gpio/driver.h, and other
-> files should not rely on includes from this header.
-> 
-> Remove the indirect include from here and include the correct
-> headers directly from where they are used.
-> 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  arch/arm/mach-omap1/irq.c                              | 1 +
->  arch/arm/mach-orion5x/board-rd88f5182.c                | 1 +
->  arch/arm/mach-s3c/s3c64xx.c                            | 1 +
->  arch/arm/mach-sa1100/assabet.c                         | 1 +
->  arch/arm/plat-orion/gpio.c                             | 1 +
->  drivers/net/wireless/broadcom/brcm80211/brcmsmac/led.c | 1 +
->  include/linux/gpio.h                                   | 2 --
->  include/linux/mfd/ucb1x00.h                            | 1 +
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../bindings/soc/samsung/exynos-pmu.yaml      | 23 +++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
-Acked-by: Lee Jones <lee@kernel.org>
-
->  8 files changed, 7 insertions(+), 2 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+index f7c141dd11ec..5d8d9497f18e 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+@@ -48,6 +48,9 @@ properties:
+           - const: syscon
+       - items:
+           - enum:
++              - samsung,exynos3250-pmu
++              - samsung,exynos4210-pmu
++              - samsung,exynos4412-pmu
+               - samsung,exynos5250-pmu
+               - samsung,exynos5420-pmu
+               - samsung,exynos5433-pmu
+@@ -138,18 +141,34 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - samsung,exynos3250-pmu
++              - samsung,exynos4210-pmu
++              - samsung,exynos4412-pmu
+               - samsung,exynos5250-pmu
+               - samsung,exynos5420-pmu
+               - samsung,exynos5433-pmu
+     then:
+       properties:
+-        dp-phy: true
+         mipi-phy: true
+     else:
+       properties:
+-        dp-phy: false
+         mipi-phy: false
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - samsung,exynos5250-pmu
++              - samsung,exynos5420-pmu
++              - samsung,exynos5433-pmu
++    then:
++      properties:
++        dp-phy: true
++    else:
++      properties:
++        dp-phy: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/exynos5250.h>
 -- 
-Lee Jones [李琼斯]
+2.34.1
+
