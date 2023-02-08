@@ -2,124 +2,103 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88935C64ED9
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Feb 2023 14:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9594C636D4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Feb 2023 16:04:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231674AbjBHOzk (ORCPT
+        id S231645AbjBHQE6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Feb 2023 09:55:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33552 "EHLO
+        Wed, 8 Feb 2023 11:04:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231624AbjBHOzh (ORCPT
+        with ESMTP id S231179AbjBHQEs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Feb 2023 09:55:37 -0500
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C87A72CFED
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Feb 2023 06:55:31 -0800 (PST)
-Received: by mail-yb1-xb2b.google.com with SMTP id u7so148210ybk.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Feb 2023 06:55:31 -0800 (PST)
+        Wed, 8 Feb 2023 11:04:48 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66A152BF25
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Feb 2023 08:04:29 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id n28-20020a05600c3b9c00b003ddca7a2bcbso1852029wms.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Feb 2023 08:04:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=C9FYaHZff0n04HIlu0pgHp/yoYQMAR6EN4kK+A76acU=;
-        b=IIUuXKjbtNG+brYJkm3mEz/Fq2Pb+VqZxm9M/D7mrcI0D62GgsPuJzrGVbt3bjOgAe
-         FKHgjDRBffBmgUhp+Zqa3GhW+SJYVkyXIOx4UZjGR/NTZwRH+8Ec9dhaymaPJYoDF/ul
-         uhZIWfEjC/tNp17EsrH4ckdmUbeyIs5G5o9m7zp+yGzEj3sRZGfW5ns8qaXo3UmiN25P
-         jXTHx/9TXUF8ZpeVstcTHKPqER+clJey1/KPBN1LViaw99zwQggNemG7kwAykjT9Ya89
-         TEAScCGhuWQAgdfnh+kSg3K5nsReT9OKxs5o5HSi74s3waAxRJs36+1uPauU5VDw9KHc
-         l0FQ==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=R0rE8Lb8ibUWc7kHbj+yZ/hofiyZLCvQRtWGXPk+RRQ=;
+        b=ivA9vXJ5HErZ0jSUfWbxaanTS4VhVkXF/+qTcymMgj2HsI5SbC7CpaYW1pVlAA630r
+         0IybXgqzE55NBFLpmYl5ZZSOgyqHVSst5nvPe4rJN3k5VBQbyuk+fJPWA7KJ7vJe6dy3
+         97t302+R2DeFQ4SzMmMzyvYe20bJ39BWP48Vrz3M75cNKSGw7Gi5SRJcZ5ZTMlm53LQD
+         VD1hh1cu9O/BDwVEbIwGoDKPeF/SZ5fj45bmGWM/iASCrQomNJYrV3ylj2J+meWZmHmP
+         TR1YKapAr8sFwrcS4lGUz3Yc2I4vNz3USDptOt73CSR/eai7fpemnOfDe/XYxIfYkWjJ
+         5VGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=C9FYaHZff0n04HIlu0pgHp/yoYQMAR6EN4kK+A76acU=;
-        b=PBW09bpKn8LkXMyMhVNNJZG3Wf+TWTr+hMnf12quy3HC1yG+M4X2oml+hGJwyPcSGm
-         vBwJuw1jnf0FyP0+ay2vNRzv2KYIOKxvNFHue6uiY42BLQymMJJBgUtaaGmyybT2EZpP
-         jIRj1RcJ7UNQ611ba3kzNrv6cjLZ/sNkL0J59S1NG6r3UvTCipelKGAEXR+lk2c0nbXy
-         cIK2+Y4ArcffFmdlSRbAR7lZwBEGq9XJzGZTJx3g/sq2w3QUpiypN193XLDDoEE4xwH1
-         NWEu+qxadKo3uv0306ewpiODS0XlPFR5qj5j1SAGy/1SD2ZgQDeXIcp2FTFusACuPArr
-         U3yg==
-X-Gm-Message-State: AO0yUKVkcy4JeZnzQQvKxKwTjXz+A/+MS17xVpg+Yic5Oiotmb/Yuqhn
-        mkxpKa+0cbfOcKu8hY4xzLmTDeyYHPpaJGS4M416BA==
-X-Google-Smtp-Source: AK7set9QWN7XZu0/Jygke0mZWpl6dDT6sBRDV263lswVqW9oVhi8Kruq1x//EDsHd+Bda51X+66lj6ea/+9i3ige8Q4=
-X-Received: by 2002:a5b:6c5:0:b0:88f:946:bd98 with SMTP id r5-20020a5b06c5000000b0088f0946bd98mr1003903ybq.24.1675868130850;
- Wed, 08 Feb 2023 06:55:30 -0800 (PST)
+        bh=R0rE8Lb8ibUWc7kHbj+yZ/hofiyZLCvQRtWGXPk+RRQ=;
+        b=i/OT2UypPFqHYxuxfx32Jx/46PlTr87PCPS6WEhF1zxv0eEoaIM1B3a2vFLC/rPRH0
+         L9MnZ1itw/uODHd3EEsPalu62TGomH3M6axhEGDn80HR1Fn35Zf7gu6SL64X80+QXZpN
+         AmZgMWLqFcDV+x37/PtGJ1ZJis0M1G4jlv0YaFGVTXDwdncs7kPQ0eECVXK+HB/V4nKw
+         XUXQqJ53UEfYR3DkukynalwUgVEvjqMCuqHjbMLh7iF5l3EjfRAuTzonRgl2+IgauJFW
+         /k3vQzyfbWmvrok2oZwyAHjqRadgx52KmcnOsVibuVzUnfWVGy25zBaVet+ihNx0wnfj
+         U3yA==
+X-Gm-Message-State: AO0yUKVw3NCV+fJSdeWRHrEdewMuIq7FImEW+VyeoBCXpZLO/JpumsJs
+        dTcwuMJYn0tFmGtcUO4j/hwOpc9MVlK86L9b
+X-Google-Smtp-Source: AK7set+OvUX1Ujsg0vDVzePW1OFuWxgWdPpykyHrq3lV5Zs0mUMc2DcbvEzHzoz7hTiJh35Cni1OOA==
+X-Received: by 2002:a05:600c:4919:b0:3df:f2a5:49fb with SMTP id f25-20020a05600c491900b003dff2a549fbmr6719356wmp.7.1675872266974;
+        Wed, 08 Feb 2023 08:04:26 -0800 (PST)
+Received: from krzk-bin.. ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id r3-20020a05600c424300b003dc492e4430sm2114847wmm.28.2023.02.08.08.04.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Feb 2023 08:04:26 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] ARM: dts: exynos: correct max98090 DAI argument in Snow
+Date:   Wed,  8 Feb 2023 17:04:24 +0100
+Message-Id: <20230208160424.371678-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230207142952.51844-1-andriy.shevchenko@linux.intel.com>
- <20230207142952.51844-7-andriy.shevchenko@linux.intel.com>
- <CACRpkdaPgjDijPjCdinWy5_Rd8g3idv-8K=YPTv5iTfJKFuJfw@mail.gmail.com>
- <Y+LWyc4rqCVq5hEi@smile.fi.intel.com> <Y+O2/dVDcvnXByc+@smile.fi.intel.com>
-In-Reply-To: <Y+O2/dVDcvnXByc+@smile.fi.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 8 Feb 2023 15:55:19 +0100
-Message-ID: <CACRpkdacHyxPKg=Dw4xdpOPZUMMNsFAuVRuSo1093E_j4a+W-Q@mail.gmail.com>
-Subject: Re: [PATCH v3 06/12] gpiolib: split linux/gpio/driver.h out of linux/gpio.h
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-doc-tw-discuss@lists.sourceforge.net,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-wpan@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        SHA-cyfmac-dev-list@infineon.com, linux-arch@vger.kernel.org,
-        devicetree@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 8, 2023 at 3:51 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Wed, Feb 08, 2023 at 12:55:06AM +0200, Andy Shevchenko wrote:
-> > On Tue, Feb 07, 2023 at 03:55:23PM +0100, Linus Walleij wrote:
-> > > On Tue, Feb 7, 2023 at 3:29 PM Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> wrote:
-> > >
-> > > > From: Arnd Bergmann <arnd@arndb.de>
-> > > >
-> > > > Almost all gpio drivers include linux/gpio/driver.h, and other
-> > > > files should not rely on includes from this header.
-> > > >
-> > > > Remove the indirect include from here and include the correct
-> > > > headers directly from where they are used.
-> >
-> > ...
-> >
-> > > Make sure you push this to the kernel.org build servers (zeroday builds),
-> >
-> > Of course, that is the purpose of publishing this before the release (so we
-> > will have some TODO list that eventually this can be applied for v6.4-rc1).
-> >
-> > > I think this patch needs to hit some more files, in my tests with a similar
-> > > patch at least these:
-> >
-> > Right. I forgot to also incorporate your stuff into this series.
-> > Do you have anything that I can take as is?
->
-> I'm going to incorporate the following:
->
->         gpio: Make the legacy <linux/gpio.h> consumer-only
->         ARM: s3c24xx: Use the right include
->         ARM: orion/gpio: Use the right include
->         hte: tegra-194: Use proper includes
->         pcmcia: pxa2xx_viper: Include dependency
+The max98090 has only one DAI and does not take argument to DAI
+phandles:
 
-Excellent, thanks. I don't care about being credited, just want things
-to go smooth so you run into less snags.
+  exynos5250-snow-rev5.dtb: audio-codec@10: #sound-dai-cells:0:0: 0 was expected
 
-Yours,
-Linus Walleij
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm/boot/dts/exynos5250-snow-rev5.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5250-snow-rev5.dts b/arch/arm/boot/dts/exynos5250-snow-rev5.dts
+index 0a47597d6f0d..3d32c3476e84 100644
+--- a/arch/arm/boot/dts/exynos5250-snow-rev5.dts
++++ b/arch/arm/boot/dts/exynos5250-snow-rev5.dts
+@@ -27,7 +27,7 @@ cpu {
+ 		};
+ 
+ 		codec {
+-			sound-dai = <&max98090 0>, <&hdmi>;
++			sound-dai = <&max98090>, <&hdmi>;
+ 		};
+ 	};
+ };
+@@ -42,7 +42,7 @@ max98090: audio-codec@10 {
+ 		pinctrl-0 = <&max98090_irq>;
+ 		clocks = <&pmu_system_controller 0>;
+ 		clock-names = "mclk";
+-		#sound-dai-cells = <1>;
++		#sound-dai-cells = <0>;
+ 	};
+ };
+ 
+-- 
+2.34.1
+
