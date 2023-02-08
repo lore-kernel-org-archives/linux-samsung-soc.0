@@ -2,96 +2,99 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40832C05027
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Feb 2023 16:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9DBC64EC7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Feb 2023 17:27:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230290AbjBHQuC (ORCPT
+        id S231707AbjBHR1U (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Feb 2023 11:50:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58602 "EHLO
+        Wed, 8 Feb 2023 12:27:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231790AbjBHQtv (ORCPT
+        with ESMTP id S231338AbjBHR1P (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Feb 2023 11:49:51 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67F7146144
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Feb 2023 08:49:49 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id y1so17429797wru.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Feb 2023 08:49:49 -0800 (PST)
+        Wed, 8 Feb 2023 12:27:15 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE7F8A5EF
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Feb 2023 09:26:48 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id u10so10792228wmj.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Feb 2023 09:26:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p3G/Ec/I67LOBTN0hvlN6I7gSKlKYim+l8P/Jf3IE2g=;
-        b=yAg+i3GxKT4KKCtkB8mGEOx5w9nRB6FYfvtGFDR0kiwqUxT8HQfAJGtnrpnvNzqaTy
-         JLsuKN3bwVgushk/7FXG4FEbw+bzrc1RlcnX6N8feFl/bmIHy4gnb9seHRr2BZTLJ0Gg
-         M5uDQsgYcrGXImVzbBqxLW+Qp8ymxxQac+dmk+szDk5R2tsG8qHBHxd3ddzrKkwwDMrH
-         bHIHe7UDXYzQO0w2SVeh9cv1Hx6g8DGpW7obP9cA3/qzM+6xzvvm3bTiOhz7PB3pzRhf
-         bTdr+lL3ZXJ16+Nt/029aajb0gfsyIUk9Cox9EQkOFnH/zxbHuCCPU3hQiflalxQCm1O
-         Q49A==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PTB+kn5OHzrK76DFGgifiq/bBOHjSff6c06ytq0LeG8=;
+        b=PJQHQB6suTprZ+B5q6crGllreJnIOzwF6L1019hH/KbIaQN5LVKFUiQb34RosXdyIe
+         rptvHTsnKteguT0OO4GwP2rRGYxxRrit1lSjPk1DkUo6RlEzdWcHORq8ukghwDKEdRBA
+         gQBup0PxXlYGmyXrFynoZkmYkM8HResj1oW+QsgigDgz9pacJOw6Fu9EmT9XXynr4xqN
+         otrH3E0RqTKtT7f7Iuhk6ZT4tM7GfhWi/Sm/03qC8zP5BeWVdAaxofCwLFCyhLqjr5+i
+         RBJwHAzfXA5wZC/GFUY3Jkhy4N1sUmEd+WGmgy7ezv4fCmppUjfKTfcjdAZT/sSHP1Rz
+         3fGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p3G/Ec/I67LOBTN0hvlN6I7gSKlKYim+l8P/Jf3IE2g=;
-        b=3i+XqVcnt6gEyKm5a8brZd6ajVf0QnHrwq8/1thysd9dkHCkCLYdooauBn67Osc3eL
-         eL4NJhMHvf0JcReNYJ8O0YsLTB8psOYz4WKNMenAAC6ZEqXsbD8HuKZgDUCVpmbGishK
-         DAbapgB3+LNVU+l9BNVyCNy4a+pUKjhBBUDhJ0CB0Vzn4BgDxU2MqexHBKloIvWJbsUO
-         XKDwSnyyXN2SQiQLtc1ovox4H0+h1P3TJMVunUYCoLuVr+XoMrFgU3IDoV/epUHR5w9p
-         Drg+f3WmTlJqeRJfOFRPRIklJSeJTUIE6ZEnm5IR+uvhd4FehYp92jogmS4oL5jHMIt7
-         XSeQ==
-X-Gm-Message-State: AO0yUKV4wczeqbSxyOBXSqO1mee3vibJ4FkSPKiwZw8Tq7thbsg9UUob
-        K+z+MNzU/lW+FtbKISI/c2XSkg==
-X-Google-Smtp-Source: AK7set/WYwIT1r4O3G/DdIE9LO+WHY+o8aHwbmptiMaw9gZP1OI0JmP9nMPBms3gxpYGil+i7rIhZg==
-X-Received: by 2002:adf:cd84:0:b0:2c3:dafd:c729 with SMTP id q4-20020adfcd84000000b002c3dafdc729mr7162110wrj.47.1675874988003;
-        Wed, 08 Feb 2023 08:49:48 -0800 (PST)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PTB+kn5OHzrK76DFGgifiq/bBOHjSff6c06ytq0LeG8=;
+        b=oafYST6FUlHEbDPO5oO0aePi3WcGvBUb/sGr3xsMmu42tE7xHWEXc5aDut7W5S1KGD
+         Pqqbwc7De48hCwcUYl6sr/P3B/9m5421NPMwBW6HE/V7/8DhRCOftKt6PmSwkQCBGDfT
+         U7omONGVXHWrDj9N1jzt/UG8dQToJz+xbjxszOZeU1rtPUQZh6wqX++OR7U6U0m82/W6
+         94NaVzfpo+vcnktQC7WEpshCidq4St7XdBLkNfM4pyg/wttGESaYv8p630zGrELBGFpT
+         KHPs1NstzSnMI7mYr+KNwQSCHNlW3+YU60EoxJ26VlUDrhDSrDzkYgU6Zj6CJ8NKEA4n
+         AdQg==
+X-Gm-Message-State: AO0yUKXjvTgKEmw9ImYSTzHIzDu8wDsot8Wnv9cSJk1hUb8hQ/Coh25u
+        jDxKP0TI9J/CUjQonC76RAQklQ==
+X-Google-Smtp-Source: AK7set870vm3+lGW8S93Tx7ST0ROVr/EZF9AnP+//pii2ImLkyUNYR9v3kXSy0jlT23mL7LhhdcJIQ==
+X-Received: by 2002:a05:600c:16c8:b0:3e0:185:e935 with SMTP id l8-20020a05600c16c800b003e00185e935mr7214991wmn.36.1675877204933;
+        Wed, 08 Feb 2023 09:26:44 -0800 (PST)
 Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id x7-20020a5d4907000000b002c3e306d3eesm9637434wrq.17.2023.02.08.08.49.46
+        by smtp.gmail.com with ESMTPSA id h1-20020a05600c2ca100b003dc3f3d77e3sm2624502wmc.7.2023.02.08.09.26.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Feb 2023 08:49:47 -0800 (PST)
+        Wed, 08 Feb 2023 09:26:44 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] ARM: dts: exynos: correct SPI nor compatible in SMDK5250
-Date:   Wed,  8 Feb 2023 17:49:42 +0100
-Message-Id: <20230208164942.387390-2-krzysztof.kozlowski@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        replicant@osuosl.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>,
+        Henrik Grimler <henrik@grimler.se>
+Subject: [RFT PATCH 1/3] ARM: dts: exynos: add "gpios" suffix to wlf,ldo1ena on Midas
+Date:   Wed,  8 Feb 2023 18:26:32 +0100
+Message-Id: <20230208172634.404452-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230208164942.387390-1-krzysztof.kozlowski@linaro.org>
-References: <20230208164942.387390-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-SPI NOR flash compatible should come with generic jedec,spi-nor fallback
-and proper vendor prefix:
+The GPIOs properties should end with "gpios" suffix and Linux gpiolib
+already handles both names, so switch to preferred one.
 
-  exynos5250-smdk5250.dtb: /soc/spi@12d30000/flash@0: failed to match any schema with compatible: ['w25x80']
+While touching the lines, replace open-coded GPIO_ACTIVE_HIGH flag.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm/boot/dts/exynos5250-smdk5250.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos4412-midas.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 71293749ac48..831b3494bd46 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -391,7 +391,7 @@ &spi_1 {
- 	flash@0 {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
--		compatible = "w25x80";
-+		compatible = "winbond,w25x80", "jedec,spi-nor";
- 		reg = <0>;
- 		spi-max-frequency = <1000000>;
+diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
+index d5074fa57142..525f945c4b91 100644
+--- a/arch/arm/boot/dts/exynos4412-midas.dtsi
++++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
+@@ -653,8 +653,8 @@ wm1811: audio-codec@1a {
+ 		CPVDD-supply = <&vbatt_reg>;
+ 		SPKVDD1-supply = <&vbatt_reg>;
+ 		SPKVDD2-supply = <&vbatt_reg>;
+-		wlf,ldo1ena = <&gpj0 4 0>;
+-		wlf,ldo2ena = <&gpj0 4 0>;
++		wlf,ldo1ena-gpios = <&gpj0 4 GPIO_ACTIVE_HIGH>;
++		wlf,ldo2ena-gpios = <&gpj0 4 GPIO_ACTIVE_HIGH>;
+ 	};
+ };
  
 -- 
 2.34.1
