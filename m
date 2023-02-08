@@ -2,132 +2,170 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E67C9C05027
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Feb 2023 09:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A451C64EC6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Feb 2023 10:09:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230246AbjBHJti (ORCPT
+        id S230305AbjBHKJL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Feb 2023 04:49:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38660 "EHLO
+        Wed, 8 Feb 2023 05:09:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230194AbjBHJth (ORCPT
+        with ESMTP id S229706AbjBHKJG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Feb 2023 04:49:37 -0500
-Received: from mx.socionext.com (mx.socionext.com [202.248.49.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0834B166C5;
-        Wed,  8 Feb 2023 01:49:33 -0800 (PST)
-Received: from unknown (HELO kinkan2-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 08 Feb 2023 18:49:32 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan2-ex.css.socionext.com (Postfix) with ESMTP id 8C54E2083D75;
-        Wed,  8 Feb 2023 18:49:32 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Wed, 8 Feb 2023 18:49:25 +0900
-Received: from [10.212.242.61] (unknown [10.212.242.61])
-        by kinkan2.css.socionext.com (Postfix) with ESMTP id 414167361;
-        Wed,  8 Feb 2023 18:49:31 +0900 (JST)
-Message-ID: <e54ea691-f312-5a72-4ac6-defa6945c972@socionext.com>
-Date:   Wed, 8 Feb 2023 18:49:30 +0900
+        Wed, 8 Feb 2023 05:09:06 -0500
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA7293F3;
+        Wed,  8 Feb 2023 02:09:05 -0800 (PST)
+Received: by mail-qt1-f170.google.com with SMTP id h24so20055725qta.12;
+        Wed, 08 Feb 2023 02:09:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Al90dbaVnMvp1zrarwIGYloHZEfuuu1TJgBG8XepFdE=;
+        b=ODARmn87I0+wpt7STPuOcAeBBIeRkkY/k2hP75Qd4JOmZxio7IfcvQdWW9foKUFJVB
+         Itxtl8SjNumukYOQra1ho0pXyAuPGXc5EKHwHc+/IhuF0oR4RLecpLvyVrWuLfjmme5e
+         iQyJCsh85x9mH1QlC1Z0F2UPzE1dqJu+5ERGhRy0Fw4mSMG7RTes46DPLOndJAV2dwwJ
+         iLtTO54zg1K1pmS9w8eufYCnb13IZ+aEnubUQSI9oHBh5suTCdUGjQXySiKv6kymRe1j
+         nJsuIY0jQtB560gkm8r4dc131LxAylv8/D0ctnEypNhKfyks8bA5xc6sTGpo4Dv6N0AF
+         ErXg==
+X-Gm-Message-State: AO0yUKXsgEY8F3V3EFBVd8aLTRVnoEIVTxJ/SJYscTfqx5MSiwGzhJbo
+        KqNXxWQiDHoWC2aPojWoUado5EWuuINBfS2S
+X-Google-Smtp-Source: AK7set+z2q+GKKBVkMO9i5mvqn6izSiK+EF5MtJjRSaQhddI6zFY8709SiO4krMyjD9TKY81rsaDkg==
+X-Received: by 2002:ac8:5fc1:0:b0:3b8:49a9:48c0 with SMTP id k1-20020ac85fc1000000b003b849a948c0mr11975248qta.13.1675850944267;
+        Wed, 08 Feb 2023 02:09:04 -0800 (PST)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
+        by smtp.gmail.com with ESMTPSA id x11-20020a05620a448b00b0072c01a3b6aasm11511525qkp.100.2023.02.08.02.09.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Feb 2023 02:09:03 -0800 (PST)
+Received: by mail-yb1-f169.google.com with SMTP id o187so21579816ybg.3;
+        Wed, 08 Feb 2023 02:09:02 -0800 (PST)
+X-Received: by 2002:a5b:508:0:b0:8a3:59a4:340e with SMTP id
+ o8-20020a5b0508000000b008a359a4340emr741320ybp.604.1675850942618; Wed, 08 Feb
+ 2023 02:09:02 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+References: <20230207142952.51844-1-andriy.shevchenko@linux.intel.com> <20230207142952.51844-9-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20230207142952.51844-9-andriy.shevchenko@linux.intel.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 8 Feb 2023 11:08:51 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVkhymFCys_LnqKtpXLBT6sKURbVqBnp2wDUc63nhxvSw@mail.gmail.com>
+Message-ID: <CAMuHMdVkhymFCys_LnqKtpXLBT6sKURbVqBnp2wDUc63nhxvSw@mail.gmail.com>
+Subject: Re: [PATCH v3 08/12] gpio: aggregator: Add missing header(s)
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Devarsh Thakkar <devarsht@ti.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-doc-tw-discuss@lists.sourceforge.net,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-wpan@vger.kernel.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        SHA-cyfmac-dev-list@infineon.com, linux-arch@vger.kernel.org,
+        devicetree@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>,
+        Yanteng Si <siyanteng@loongson.cn>,
+        Hu Haowen <src.res@email.cn>,
+        Russell King <linux@armlinux.org.uk>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Haowen Bai <baihaowen@meizu.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
-        <linux-amlogic@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:RENESAS R-CAR THERMAL DRIVERS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "open list:SAMSUNG THERMAL DRIVER" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/STM32 ARCHITECTURE" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
-References: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
-Content-Language: en-US
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-In-Reply-To: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Nicholas Piggin <npiggin@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Mun Yew Tham <mun.yew.tham@intel.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Alexander Aring <alex.aring@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Kalle Valo <kvalo@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
+        Li Yang <leoyang.li@nxp.com>, Lee Jones <lee@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Daniel,
+Hi Andy,
 
-On 2023/02/07 0:34, Daniel Lezcano wrote:
-> As the name states "thermal_core.h" is the header file for the core
-> components of the thermal framework.
-> 
-> Too many drivers are including it. Hopefully the recent cleanups
-> helped to self encapsulate the code a bit more and prevented the
-> drivers to need this header.
-> 
-> Remove this inclusion in every place where it is possible.
-> 
-> Some other drivers did a confusion with the core header and the one
-> exported in linux/thermal.h. They include the former instead of the
-> latter. The changes also fix this.
-> 
-> The tegra/soctherm driver still remains as it uses an internal
-> function which need to be replaced.
-> 
-> The Intel HFI driver uses the netlink internal framework core and
-> should be changed to prevent to deal with the internals.
-> 
-> No functional changes
-> 
-> [ Applies to thermal/linux-next or linux-pm/linux-next ]
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Thanks for your patch!
+
+On Tue, Feb 7, 2023 at 3:29 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+> Do not imply that some of the generic headers may be always included.
+> Instead, include explicitly what we are direct user of.
+
+That applies only to the addition of #include <linux/slab.h>...
+Please also describe the other changes.
+
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
+>  drivers/gpio/gpio-aggregator.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
+> index 6d17d262ad91..20a686f12df7 100644
+> --- a/drivers/gpio/gpio-aggregator.c
+> +++ b/drivers/gpio/gpio-aggregator.c
+> @@ -10,19 +10,20 @@
+>  #include <linux/bitmap.h>
+>  #include <linux/bitops.h>
+>  #include <linux/ctype.h>
+> -#include <linux/gpio.h>
+> -#include <linux/gpio/consumer.h>
+> -#include <linux/gpio/driver.h>
+> -#include <linux/gpio/machine.h>
+>  #include <linux/idr.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+>  #include <linux/overflow.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/slab.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/string.h>
+>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/gpio/machine.h>
+> +
+>  #define AGGREGATOR_MAX_GPIOS 512
 
->   drivers/thermal/uniphier_thermal.c          | 2 --
+For the actual changes:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-For UniPhier:
+Gr{oetje,eeting}s,
 
-Reviewed-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+                        Geert
 
-Thank you,
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
----
-Best Regards
-Kunihiko Hayashi
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
