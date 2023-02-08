@@ -2,101 +2,141 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F5EC636CC
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Feb 2023 17:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 054ECC64EC6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Feb 2023 17:34:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230402AbjBHR1W (ORCPT
+        id S231928AbjBHReG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Feb 2023 12:27:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60372 "EHLO
+        Wed, 8 Feb 2023 12:34:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230457AbjBHR1R (ORCPT
+        with ESMTP id S231674AbjBHRd7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Feb 2023 12:27:17 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C9A72385F
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Feb 2023 09:26:53 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id z13so6375901wmp.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Feb 2023 09:26:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IthlQVOkiWnqAVOrcwnjK/hncHhlqSzAla08vNnpBBs=;
-        b=ncjbK/IjIRjZSVVCm5UW/GTZ1pFctUORIJobSApOZCmKKSaTi8doyaI2SmDiYIXOuG
-         rZCkrlI+NHcVmxry6ifJ4MAkKZL1YE0JPWja0PStq6Aw7JZGWO9Z6S3HdgR/lG5EEbM2
-         v/FajlbuQxgf5O1u1+aX3dWS768NFcmn0JB40cDNaGVZaqSOoGIJwwtEMY57DU3SIGAd
-         gelL1ma1E7EG3akq1gsdZ1/fgbQgknvnrkX2M+voDswgWdUm7YELvKoejTQ/foUtBQha
-         NbORHWu5QUl+RAwboA40YAC7FtpjrbBTL78i+KBfCYD+PsVlz4P/Z7azRNuZfKwG+yqi
-         c3Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IthlQVOkiWnqAVOrcwnjK/hncHhlqSzAla08vNnpBBs=;
-        b=X9OWhensTrfGKLiIhXjAMFc75Id0A17ubsKoamhebVw8bXjhT9tkbFI2QDcKcD2nIh
-         2FsObribFfLkt0ik66a1sIKOWHElYyvKHtjJ4S5ctOAus++CB13El2RRfHe6d1xdz90O
-         5Pyo7lElIH7DazwYAp0JKR/lv7bP67RepVmby90UiYZFxSJKXiCv/DmCtajK1irWf4vw
-         szgaVCvmyJAtyliA22WJNfO3+CX48G+ARAUaPKk2hLzpXRLWM224rYwM+s/19jioJvJd
-         GuJbnVfqKpSsYVdiMbE5deSH5i726r6bZhnRM4/zqpCOWHyD9Te2oPEo5iSqdhF2eY35
-         zPGw==
-X-Gm-Message-State: AO0yUKWdpVSaik6cY8klTolS/bWCMDa4eBuNJDPdXGYrUXp8WwSVqHpm
-        HpVcmqAIkrsh5OAE/3sq0P8UJw==
-X-Google-Smtp-Source: AK7set9hYTQx01kSCRhx6wENRzX+3TI0Zpz69KEaHspoUsv96TSaQhWtq5bJLXPkeBD+xH475unMCQ==
-X-Received: by 2002:a05:600c:16c5:b0:3d6:ecc4:6279 with SMTP id l5-20020a05600c16c500b003d6ecc46279mr7464750wmn.27.1675877207384;
-        Wed, 08 Feb 2023 09:26:47 -0800 (PST)
-Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id h1-20020a05600c2ca100b003dc3f3d77e3sm2624502wmc.7.2023.02.08.09.26.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Feb 2023 09:26:47 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Wed, 8 Feb 2023 12:33:59 -0500
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C55583BDBB;
+        Wed,  8 Feb 2023 09:33:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1675877636; x=1707413636;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=89Ua2SwK+9eoP7ii20ihjA/BcfunvekbP9EUK6guMxA=;
+  b=CAjO61dTj7RKn2EJPQPpYHblquK/iyxwSeG3cmPJ0pAUNVnazJySNx1M
+   6iaB7lyI2IKcgwEKsQuDIz88j5w9q+MNpmC3D3IxTTEXjzxAW1ca7R6pn
+   EACwyaxMcQXGXN/ZbJMb02iHPuR1m3gmvhtlv+GamSjTwE+qwpGyDQDf0
+   1v/Az6fO/9P7jzEKHJk3arvoS9eKLPOeyOzPlNUt3EUmU0q/fRXmw9ZsT
+   7GuOL+KSgWY0ZehkRZ0Wggj3e0pGLu8NW2TTKHWQJKv8RhfyMKguGZsjv
+   5ZN2zzF5jVi5RlnsYc/Ntg7Vw9JsxIm+Skmd5WDNusaAim6GLUuRzxRY7
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10615"; a="327564277"
+X-IronPort-AV: E=Sophos;i="5.97,281,1669104000"; 
+   d="scan'208";a="327564277"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2023 09:33:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10615"; a="644939003"
+X-IronPort-AV: E=Sophos;i="5.97,281,1669104000"; 
+   d="scan'208";a="644939003"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga006.jf.intel.com with ESMTP; 08 Feb 2023 09:33:29 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 694D3590; Wed,  8 Feb 2023 19:33:48 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Vincenzo Palazzo <vincenzopalazzodev@gmail.com>,
+        Devarsh Thakkar <devarsht@ti.com>,
+        Michael Walle <michael@walle.cc>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Dipen Patel <dipenp@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lee Jones <lee@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc-tw-discuss@lists.sourceforge.net,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        SHA-cyfmac-dev-list@infineon.com, linux-arch@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>,
+        Yanteng Si <siyanteng@loongson.cn>,
+        Hu Haowen <src.res@email.cn>,
+        Russell King <linux@armlinux.org.uk>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        replicant@osuosl.org, phone-devel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>,
-        Henrik Grimler <henrik@grimler.se>
-Subject: [RFT PATCH 3/3] ARM: dts: s5pv210: add "gpios" suffix to wlf,ldo1ena on Aries
-Date:   Wed,  8 Feb 2023 18:26:34 +0100
-Message-Id: <20230208172634.404452-3-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230208172634.404452-1-krzysztof.kozlowski@linaro.org>
-References: <20230208172634.404452-1-krzysztof.kozlowski@linaro.org>
+        Nicholas Piggin <npiggin@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Mun Yew Tham <mun.yew.tham@intel.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Alexander Aring <alex.aring@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Kalle Valo <kvalo@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
+        Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Subject: [PATCH v4 15/18] gpiolib: Drop unused forward declaration from driver.h
+Date:   Wed,  8 Feb 2023 19:33:40 +0200
+Message-Id: <20230208173343.37582-16-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230208173343.37582-1-andriy.shevchenko@linux.intel.com>
+References: <20230208173343.37582-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The GPIOs properties should end with "gpios" suffix and Linux gpiolib
-already handles both names, so switch to preferred one.
+There is no struct device_node pointers anywhere in the header,
+drop unused forward declaration.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- arch/arm/boot/dts/s5pv210-aries.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/gpio/driver.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
-index 964c5fe51755..f628d3660493 100644
---- a/arch/arm/boot/dts/s5pv210-aries.dtsi
-+++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
-@@ -135,8 +135,8 @@ wm8994: audio-codec@1a {
- 					0xa101 0x0100 0x8100 0x0100 0x0100
- 					0x0100>;
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index ccd8a512d854..262a84ce9bcb 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -16,7 +16,6 @@
  
--			wlf,ldo1ena = <&gpf3 4 GPIO_ACTIVE_HIGH>;
--			wlf,ldo2ena = <&gpf3 4 GPIO_ACTIVE_HIGH>;
-+			wlf,ldo1ena-gpios = <&gpf3 4 GPIO_ACTIVE_HIGH>;
-+			wlf,ldo2ena-gpios = <&gpf3 4 GPIO_ACTIVE_HIGH>;
- 
- 			wlf,lineout1-se;
- 			wlf,lineout2-se;
+ struct gpio_desc;
+ struct of_phandle_args;
+-struct device_node;
+ struct seq_file;
+ struct gpio_device;
+ struct module;
 -- 
-2.34.1
+2.39.1
 
