@@ -2,149 +2,91 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 253A7C636D4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Feb 2023 10:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A79BC05027
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Feb 2023 11:10:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229901AbjBIK7n (ORCPT
+        id S229871AbjBILKt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Feb 2023 05:59:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56332 "EHLO
+        Thu, 9 Feb 2023 06:10:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230021AbjBIK7j (ORCPT
+        with ESMTP id S229604AbjBILKs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Feb 2023 05:59:39 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64A8CB44D
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Feb 2023 02:59:10 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id az16so518193wrb.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Feb 2023 02:59:10 -0800 (PST)
+        Thu, 9 Feb 2023 06:10:48 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D2EE12F32
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Feb 2023 03:10:47 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id d14so1363986wrr.9
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Feb 2023 03:10:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E4qWySFdPWlDDj6CvZ29MtpOtvG59NiLUFJ1wNv+nZw=;
-        b=EUolExRwf4LfrDwUiAGQ5FhG8nDREc494r+eapphjzQWifcAV3dtqumlcac504K2Az
-         Tf03G8fnZvqpWdSJNyXO7uU6tOm3RZ7bYASOq76hlPN9fpu1dRqe6S5ciPUKRsJDvxE+
-         vQPDbJjmsVJ+zSsyY/z0FBVPlX9qR2TzhkD/Ek+D0wmkuoKZ0xNx3QUZ0K3fzgL9vXhC
-         U9ok/0mXFFxluDXd7o+0UaEvwmnTTxkuNik4H3yzoa5OdD2p/z9OzKNAFB+4pNCT72ON
-         glEJGsLpXqvlVLf4UNynoBVvtiAty1QGC4Sx8T85Em1uJsVhddPZLSafG06nvQ2mnXOK
-         db5A==
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wAHgUFFB8B91xSxCVq9O+/tpcsV4Moe9Qo0Y3nmJ+sY=;
+        b=klB0nkBqN03kCUxivHzjIIPKYz3tiTdD1IGyymPdM7uLF19Of6GMX4e0XD6gYLv8ko
+         vKs7U0CqFUPQTQYf0ZZg2rsr9FVygckISOHJ8pMLQ7McVJvzY9GUf21k+GnV39MJiPvb
+         4qSfbRyd8uWKzz2W/mtxf3tUBE1sorFXeJijcENVzb09IWo+6MQ1UAyRNymdiu/+vcAX
+         asS4mATnWYFw4FX5epYC3+ZXCroYbE5s+O5j38kxcQ4VvIe02SVkh55x186chyXlR2x+
+         csqNBF6PiyGV7GbHTK0rx7nF2XIE3J1VNCVztYlfFJvCOZ+4j9f19t3cFt7V6doYtz3H
+         DSlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E4qWySFdPWlDDj6CvZ29MtpOtvG59NiLUFJ1wNv+nZw=;
-        b=0G04PAaoaaxlB42yftnoYiT8HE37dTQTQ35FjZQlRHhmI064q5/jhViTFW29gI4eOH
-         x2fr3S+ME5WV7i3JK/R1vJHThQoB3b/UqDaw9pluO/1LHgIFjkNT7hgKtvANfVMTNMuN
-         9M6pOWH4yj6/vTqynz4lC+1JYVGca4vw9C0QcusCz91zKU0hPe3Nvo8IxNbX7UjCxZdP
-         LsGrcEvGa3cwJYBdUUzP4Y7UPysPCrwIqC9JONGg0n+JoFwpZemJQEmMy1qMBaCk/XCt
-         QBMAJyIzqwKkovnKWQrgjB+piokgV08iTYe4wNf7LbLA4EEleAPyNsUKzTkCHACmI+UJ
-         eIJA==
-X-Gm-Message-State: AO0yUKUcltIY+mdrchzMIJxeKQkaNfkXh4D1X0SFc5DLVqBcvOBJA2sp
-        OYotiIS76Sg/qudrZY1rmx03pA==
-X-Google-Smtp-Source: AK7set+atwKYMV7RT2tbpxUR8z1N14xNVSqX1awpewm7AY0VYOHXhzDGhP8g+m7t5X7BRFFIqUmsAg==
-X-Received: by 2002:a05:6000:124f:b0:2c3:ea68:c580 with SMTP id j15-20020a056000124f00b002c3ea68c580mr3963480wrx.11.1675940334812;
-        Thu, 09 Feb 2023 02:58:54 -0800 (PST)
+        bh=wAHgUFFB8B91xSxCVq9O+/tpcsV4Moe9Qo0Y3nmJ+sY=;
+        b=LknOoj2Kke85KvVD+qGDkp3UngXJIHD5PXVtfQPaR6zjWGs1Lp3VHAsPokS7EgGvXc
+         GuA5MHx2xa7rwy/FLRyG6Hb3FGRSkdvb0ExjXcuaQOshxSCc2hKIZ+pH0gRoVybyTf3/
+         e/g7C9M+93x/SW+F+2ki0tXGCIrEsdxdzUcq7jgBr0vvU6BzHe8VMgyArCYvfVbwZTZT
+         yU5GZX87QLNFTPU9S+YB/H/NWNQzZjQx7etBal055nZcWUkZxjLNy9SIe9CXQuin2yhn
+         ZgAsd9o5CmmRnDAnMVwD14+fm2zn7FvaPOkyOBQ1CAAvMojV/TXntEetLjeyxp+f+YX2
+         HXew==
+X-Gm-Message-State: AO0yUKVzkl2Q6FikwaXfyGmqZLb7H4GCpwlqhV7ZNfPuTBXe2RC6FVfG
+        TYz9Z7FH1Lwo+SKPuYCrKIOvVA==
+X-Google-Smtp-Source: AK7set/cAuKdrLZsyfQPNQ8/RUFqsxEyxq7hdoyt6Ega0UXCf/gkDIxPgyUWXUzROVcG3VsnXfbIYg==
+X-Received: by 2002:adf:d0c7:0:b0:2c3:d9cf:f406 with SMTP id z7-20020adfd0c7000000b002c3d9cff406mr10269635wrh.13.1675941045569;
+        Thu, 09 Feb 2023 03:10:45 -0800 (PST)
 Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id g7-20020a5d6987000000b002be063f6820sm927987wru.81.2023.02.09.02.58.53
+        by smtp.gmail.com with ESMTPSA id q13-20020adff94d000000b002be099f78c0sm963207wrr.69.2023.02.09.03.10.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Feb 2023 02:58:54 -0800 (PST)
+        Thu, 09 Feb 2023 03:10:45 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Lukasz Majewski <l.majewski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Anand Moon <linux.amoon@gmail.com>, devicetree@vger.kernel.org,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        stable@vger.kernel.org
-Subject: [PATCH 6/6] ARM: dts: exynos: correct TMU phandle in Odroid XU3 family
-Date:   Thu,  9 Feb 2023 11:58:41 +0100
-Message-Id: <20230209105841.779596-6-krzysztof.kozlowski@linaro.org>
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] ARM: dts: exynos: correct SPI nor compatible in SMDKv310
+Date:   Thu,  9 Feb 2023 12:10:37 +0100
+Message-Id: <167594102110.781687.10084161117064383763.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230209105841.779596-1-krzysztof.kozlowski@linaro.org>
-References: <20230209105841.779596-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230208164942.387390-1-krzysztof.kozlowski@linaro.org>
+References: <20230208164942.387390-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-TMU node uses 0 as thermal-sensor-cells, thus thermal zone referencing
-it must not have an argument to phandle.  This was not critical before,
-but since rework of thermal Devicetree initialization in the
-commit 3fd6d6e2b4e8 ("thermal/of: Rework the thermal device tree
-initialization"), this leads to errors registering thermal zones other
-than first one:
+On Wed, 8 Feb 2023 17:49:41 +0100, Krzysztof Kozlowski wrote:
+> SPI NOR flash compatible should come with generic jedec,spi-nor fallback
+> and proper vendor prefix:
+> 
+>   exynos4210-smdkv310.dtb: /soc/spi@13940000/flash@0: failed to match any schema with compatible: ['w25x80']
+> 
+> 
 
-  thermal_sys: cpu0-thermal: Failed to read thermal-sensors cells: -2
-  thermal_sys: Failed to find thermal zone for tmu id=0
-  exynos-tmu 10064000.tmu: Failed to register sensor: -2
-  exynos-tmu: probe of 10064000.tmu failed with error -2
+Applied, thanks!
 
-Fixes: f1722d7dd8b8 ("ARM: dts: Define default thermal-zones for exynos5422")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+[1/2] ARM: dts: exynos: correct SPI nor compatible in SMDKv310
+      https://git.kernel.org/krzk/linux/c/44ffd27d83042e31c4dd85c148204b7610f0dc6c
+[2/2] ARM: dts: exynos: correct SPI nor compatible in SMDK5250
+      https://git.kernel.org/krzk/linux/c/428218307dd2ef175314f39f141beb93163ae1ca
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index a6961ff24030..e6e7e2ff2a26 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -50,7 +50,7 @@ fan0: pwm-fan {
- 
- 	thermal-zones {
- 		cpu0_thermal: cpu0-thermal {
--			thermal-sensors = <&tmu_cpu0 0>;
-+			thermal-sensors = <&tmu_cpu0>;
- 			polling-delay-passive = <250>;
- 			polling-delay = <0>;
- 			trips {
-@@ -139,7 +139,7 @@ cpu0_cooling_map4: map4 {
- 			};
- 		};
- 		cpu1_thermal: cpu1-thermal {
--			thermal-sensors = <&tmu_cpu1 0>;
-+			thermal-sensors = <&tmu_cpu1>;
- 			polling-delay-passive = <250>;
- 			polling-delay = <0>;
- 			trips {
-@@ -212,7 +212,7 @@ cpu1_cooling_map4: map4 {
- 			};
- 		};
- 		cpu2_thermal: cpu2-thermal {
--			thermal-sensors = <&tmu_cpu2 0>;
-+			thermal-sensors = <&tmu_cpu2>;
- 			polling-delay-passive = <250>;
- 			polling-delay = <0>;
- 			trips {
-@@ -285,7 +285,7 @@ cpu2_cooling_map4: map4 {
- 			};
- 		};
- 		cpu3_thermal: cpu3-thermal {
--			thermal-sensors = <&tmu_cpu3 0>;
-+			thermal-sensors = <&tmu_cpu3>;
- 			polling-delay-passive = <250>;
- 			polling-delay = <0>;
- 			trips {
-@@ -358,7 +358,7 @@ cpu3_cooling_map4: map4 {
- 			};
- 		};
- 		gpu_thermal: gpu-thermal {
--			thermal-sensors = <&tmu_gpu 0>;
-+			thermal-sensors = <&tmu_gpu>;
- 			polling-delay-passive = <250>;
- 			polling-delay = <0>;
- 			trips {
+Best regards,
 -- 
-2.34.1
-
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
