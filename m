@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A79BC05027
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Feb 2023 11:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2DCC636D4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Feb 2023 11:10:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229871AbjBILKt (ORCPT
+        id S230079AbjBILKw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Feb 2023 06:10:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37188 "EHLO
+        Thu, 9 Feb 2023 06:10:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229604AbjBILKs (ORCPT
+        with ESMTP id S229963AbjBILKu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Feb 2023 06:10:48 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D2EE12F32
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Feb 2023 03:10:47 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id d14so1363986wrr.9
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Feb 2023 03:10:46 -0800 (PST)
+        Thu, 9 Feb 2023 06:10:50 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 276CF13503
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Feb 2023 03:10:48 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id bg5-20020a05600c3c8500b003e00c739ce4so1210357wmb.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Feb 2023 03:10:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wAHgUFFB8B91xSxCVq9O+/tpcsV4Moe9Qo0Y3nmJ+sY=;
-        b=klB0nkBqN03kCUxivHzjIIPKYz3tiTdD1IGyymPdM7uLF19Of6GMX4e0XD6gYLv8ko
-         vKs7U0CqFUPQTQYf0ZZg2rsr9FVygckISOHJ8pMLQ7McVJvzY9GUf21k+GnV39MJiPvb
-         4qSfbRyd8uWKzz2W/mtxf3tUBE1sorFXeJijcENVzb09IWo+6MQ1UAyRNymdiu/+vcAX
-         asS4mATnWYFw4FX5epYC3+ZXCroYbE5s+O5j38kxcQ4VvIe02SVkh55x186chyXlR2x+
-         csqNBF6PiyGV7GbHTK0rx7nF2XIE3J1VNCVztYlfFJvCOZ+4j9f19t3cFt7V6doYtz3H
-         DSlw==
+        bh=swa/BfcyEFpl7NOCIb53d06K9cNYUSLtSu5qC6x2uxc=;
+        b=Y6ztoIHrqlyiXXcUTHRWspimUfTqlqMcZslf2Em3cua+clq6zvdTlY2Q7rMJ2E8Dg4
+         Qn/W4pKf60zCkXgmqRRtwEmeZLYmC6K6rPE3ip6X1quGcq9Pg2m76+I5djF78oI4c0Ci
+         WB1MtHoT6lfmyFunz+WCmYNZ0OF/4RZNx4OXqMJ8Eei0aYrlcr2PrlC56OZTJxAo3TAY
+         ZzaZzzvT+tSFhLBQfAVWkX818n501f/dSqOyVJYOV69pESbYSgmH0DuSk0v+gLcygJ78
+         wyrgG6A3+rURHdLaYHhgoZ5lL66wHzbyzJLpA7Wd3uPt6FCM5mZ9a8zkvBm3CzvVRMxU
+         h8fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wAHgUFFB8B91xSxCVq9O+/tpcsV4Moe9Qo0Y3nmJ+sY=;
-        b=LknOoj2Kke85KvVD+qGDkp3UngXJIHD5PXVtfQPaR6zjWGs1Lp3VHAsPokS7EgGvXc
-         GuA5MHx2xa7rwy/FLRyG6Hb3FGRSkdvb0ExjXcuaQOshxSCc2hKIZ+pH0gRoVybyTf3/
-         e/g7C9M+93x/SW+F+2ki0tXGCIrEsdxdzUcq7jgBr0vvU6BzHe8VMgyArCYvfVbwZTZT
-         yU5GZX87QLNFTPU9S+YB/H/NWNQzZjQx7etBal055nZcWUkZxjLNy9SIe9CXQuin2yhn
-         ZgAsd9o5CmmRnDAnMVwD14+fm2zn7FvaPOkyOBQ1CAAvMojV/TXntEetLjeyxp+f+YX2
-         HXew==
-X-Gm-Message-State: AO0yUKVzkl2Q6FikwaXfyGmqZLb7H4GCpwlqhV7ZNfPuTBXe2RC6FVfG
-        TYz9Z7FH1Lwo+SKPuYCrKIOvVA==
-X-Google-Smtp-Source: AK7set/cAuKdrLZsyfQPNQ8/RUFqsxEyxq7hdoyt6Ega0UXCf/gkDIxPgyUWXUzROVcG3VsnXfbIYg==
-X-Received: by 2002:adf:d0c7:0:b0:2c3:d9cf:f406 with SMTP id z7-20020adfd0c7000000b002c3d9cff406mr10269635wrh.13.1675941045569;
-        Thu, 09 Feb 2023 03:10:45 -0800 (PST)
+        bh=swa/BfcyEFpl7NOCIb53d06K9cNYUSLtSu5qC6x2uxc=;
+        b=JwMGp+x/ntoHI10Da5oSGUDUF9kM+FKH4lxEsgYq1vhCp6CAbp2ptYffcvdDZBonk3
+         P3NVBLyDRFvSdfBYi+XZhEhKpVQlfppnKIczl2sqdj4NVcwKpwQOoM2oSOWSS34099Uw
+         LqkCMgYzfmWyJH0sKKozg45Fc1+watYoiwd72M6UElkZjW9BzUh9v2N8aUk3CrN33xnG
+         CBAcDm6MY4S3cUR5qi3uGy3EYs2ci68HUqOHoSkf/rn0vP0cOfo4lmayZROG7TSwYq5y
+         e9xnn4OWojyQbVGWiWgiNb0ItlZYInWBYiy+vgWfyEot14mktDiMazQuGQTNO3dmKvnh
+         li7g==
+X-Gm-Message-State: AO0yUKX+4rOBtgXygxdca6tes9Kxe4HZCRAH//QzD2zOfUMSVegJSXUD
+        ytiJsSR8wlMdDwrGY4dxA1D/uQ==
+X-Google-Smtp-Source: AK7set+3Jn7vyALc3oUuYHJej3QgqWYix+kUXfusTC4iFXVY3h1hSLVxPAlQ17rZtK9700w2gKtVyg==
+X-Received: by 2002:a05:600c:3093:b0:3dd:37a5:dc90 with SMTP id g19-20020a05600c309300b003dd37a5dc90mr9760192wmn.32.1675941046710;
+        Thu, 09 Feb 2023 03:10:46 -0800 (PST)
 Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id q13-20020adff94d000000b002be099f78c0sm963207wrr.69.2023.02.09.03.10.44
+        by smtp.gmail.com with ESMTPSA id q13-20020adff94d000000b002be099f78c0sm963207wrr.69.2023.02.09.03.10.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Feb 2023 03:10:45 -0800 (PST)
+        Thu, 09 Feb 2023 03:10:46 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -59,12 +59,12 @@ To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-samsung-soc@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] ARM: dts: exynos: correct SPI nor compatible in SMDKv310
-Date:   Thu,  9 Feb 2023 12:10:37 +0100
-Message-Id: <167594102110.781687.10084161117064383763.b4-ty@linaro.org>
+Subject: Re: (subset) [PATCH 4/7] ARM: dts: exynos: align status led name with bindings on Origen4210
+Date:   Thu,  9 Feb 2023 12:10:38 +0100
+Message-Id: <167594102110.781687.2495373621074832296.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230208164942.387390-1-krzysztof.kozlowski@linaro.org>
-References: <20230208164942.387390-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230207210020.677007-4-krzysztof.kozlowski@linaro.org>
+References: <20230207210020.677007-1-krzysztof.kozlowski@linaro.org> <20230207210020.677007-4-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -72,20 +72,20 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 8 Feb 2023 17:49:41 +0100, Krzysztof Kozlowski wrote:
-> SPI NOR flash compatible should come with generic jedec,spi-nor fallback
-> and proper vendor prefix:
+On Tue, 7 Feb 2023 22:00:17 +0100, Krzysztof Kozlowski wrote:
+> The "status" is a reserved keyword and LED nodes should have generic
+> prefix:
 > 
->   exynos4210-smdkv310.dtb: /soc/spi@13940000/flash@0: failed to match any schema with compatible: ['w25x80']
+>   exynos4210-origen.dtb: leds: status: {'gpios': [[76, 3, 1]],
+>     'function': ['heartbeat'], 'linux,default-trigger': ['heartbeat']} is not of type 'array'
 > 
 > 
+> [...]
 
 Applied, thanks!
 
-[1/2] ARM: dts: exynos: correct SPI nor compatible in SMDKv310
-      https://git.kernel.org/krzk/linux/c/44ffd27d83042e31c4dd85c148204b7610f0dc6c
-[2/2] ARM: dts: exynos: correct SPI nor compatible in SMDK5250
-      https://git.kernel.org/krzk/linux/c/428218307dd2ef175314f39f141beb93163ae1ca
+[4/7] ARM: dts: exynos: align status led name with bindings on Origen4210
+      https://git.kernel.org/krzk/linux/c/69276d702c7d8f3c9b23b66bd6540cba8d5bd088
 
 Best regards,
 -- 
