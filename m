@@ -2,151 +2,88 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E586C05027
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Feb 2023 11:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D35AC61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Feb 2023 12:08:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229954AbjBIL4P (ORCPT
+        id S229898AbjBIMIF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Feb 2023 06:56:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58394 "EHLO
+        Thu, 9 Feb 2023 07:08:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229699AbjBILzs (ORCPT
+        with ESMTP id S229873AbjBIMHx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Feb 2023 06:55:48 -0500
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3037CC1A
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Feb 2023 03:44:55 -0800 (PST)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230209114451euoutp02053b78e82cef3a2306f2e1a71b3a5fa7~CJVzRXNy02229722297euoutp02i
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Feb 2023 11:44:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230209114451euoutp02053b78e82cef3a2306f2e1a71b3a5fa7~CJVzRXNy02229722297euoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1675943091;
-        bh=MaSLN/NNg2/noTq4bWBoUtrpGKTfjbHhpAaxxEMNSfQ=;
-        h=Date:Subject:To:From:In-Reply-To:References:From;
-        b=RLY/gqnaLAgXnGiVSbQiaFVPa4TpEem6jjBKDcoK74x78PpyMDY2Ce1UT6+duUXCk
-         313R+9rTBQBx67ys4wi+vhR3I7Jd/zKoia01pIuvyGniUTD3RphplMdea+mEYuVTiz
-         yxgRITorJycZyHYc1PD+Ir6ySGBCPx/036Zv6tfw=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230209114451eucas1p1dba9b4fdff6509e8bcc1d0a2fc6ae2ed~CJVy0RKsm0126101261eucas1p1M;
-        Thu,  9 Feb 2023 11:44:51 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 9B.1D.13597.3BCD4E36; Thu,  9
-        Feb 2023 11:44:51 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230209114451eucas1p2de6ec04f18cf81fe7722758676ee5fb8~CJVyii11V0449004490eucas1p2Q;
-        Thu,  9 Feb 2023 11:44:51 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230209114451eusmtrp1e3e79a4cfa4f3e31ff5a685a00ee92f6~CJVyhxGfv2212322123eusmtrp1B;
-        Thu,  9 Feb 2023 11:44:51 +0000 (GMT)
-X-AuditID: cbfec7f4-1f1ff7000000351d-7b-63e4dcb37003
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 70.EE.00518.2BCD4E36; Thu,  9
-        Feb 2023 11:44:50 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230209114450eusmtip16c66865c658c702409f400bba1d57c0c~CJVyBMipb0705507055eusmtip1U;
-        Thu,  9 Feb 2023 11:44:50 +0000 (GMT)
-Message-ID: <f5d314df-5e22-0df5-add7-d70c13116198@samsung.com>
-Date:   Thu, 9 Feb 2023 12:44:52 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
-        Gecko/20100101 Thunderbird/102.6.1
-Subject: Re: [PATCH] ARM: dts: exynos: correct max98090 DAI argument in Snow
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Thu, 9 Feb 2023 07:07:53 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 957E11C595
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Feb 2023 03:59:48 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id j29-20020a05600c1c1d00b003dc52fed235so1336466wms.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Feb 2023 03:59:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7ENx1BlMiFFp2IoPqIDNCRtS0BoPqJfHW4nQVqKYr9o=;
+        b=F4BeqKwaARMgjeu76MVzv4QbUzWJlju3wOKLYmwaicSUmQQImF+LmXugMwe+v8PckS
+         e8SWMyh5k+8OFwmmHNSy5PmVDK8ffQI4/FC9YC01WgJzqlQnZ4fpqfvT9KtomOyHCSpL
+         LKm3iUQNwBisWpGoM/ePatMD1AJRqlTsVvQ8wh+8PctwSIlXTcmJ9dLHYlyX3K9yY8Ev
+         sPvB/Dnf6iHVOq8R1ZaHp+/STgGIw2EQ0WEJaBtG2ZsVBWut4MF82t1oyqtOT1FxfRky
+         mlQGe7X1XrPwClbiCpEaDuB7OPzvlWKj357btrD/X0IGvNCxLbrPFmMSdDKOmo/Rp2X4
+         oMcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7ENx1BlMiFFp2IoPqIDNCRtS0BoPqJfHW4nQVqKYr9o=;
+        b=aF4dUlTHSFh2hISCCWLka1E+AIPqGDoaXR8F3jlCL/CVKaZKJFI/n26gmhSrz7uhfm
+         pSlb5vjUq7j9VRSBZBeVZCuLUOykOFW7CgLnf7N23AiYUvIu7DigPSOky29kIwSAVnTi
+         GtE37wsqcURjs/7XFS1PlNd6AFWWUZ6h90CTGINlQ9HYlVJbLNlGo4r1HyNG6wUb5QX0
+         Yas6A7rYXdL23yVdprVx/I+f3lVEHBquMpDCJTP/zXVhDMPutBypSMRaqiW+6KTHiLPR
+         cvg/rMYZgO1CK1eZwDky7kKAuTvP/V3P7mDgbXqRlVUwXny1wFVAUf+ONBt0dRz6GSZG
+         fpAA==
+X-Gm-Message-State: AO0yUKXJiJpu1ikNpHNUKN4j1Sg10pgws2xPUuf3cfPGwlWS4mGmKz9m
+        0n4Tx1vnw6/h9ALgu/CMxcO1gfYBvZA/z1Sw
+X-Google-Smtp-Source: AK7set/93LzZXc2ETQeI1iMfQkCdxX2mN03ZhK1l+5AOtK6IVpqR5uADbh/hURLTNDJn+GsCsPzDmg==
+X-Received: by 2002:a05:600c:13ca:b0:3dc:5937:35a2 with SMTP id e10-20020a05600c13ca00b003dc593735a2mr10965053wmg.9.1675943945890;
+        Thu, 09 Feb 2023 03:59:05 -0800 (PST)
+Received: from krzk-bin.. ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id n19-20020a05600c3b9300b003daf7721bb3sm5264513wms.12.2023.02.09.03.59.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Feb 2023 03:59:05 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
+        Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: correct max98090 DAI argument in Snow
+Date:   Thu,  9 Feb 2023 12:59:02 +0100
+Message-Id: <167594393974.789355.9583895741497134321.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230208160424.371678-1-krzysztof.kozlowski@linaro.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIKsWRmVeSWpSXmKPExsWy7djPc7qb7zxJNvj6VtTiwbxtbBbzj5xj
-        teh78ZDZYu/rrewWmx5fY7W4vGsOm8WM8/uYLFr3HmF34PDYtKqTzePOtT1sHpuX1Hv0bVnF
-        6PF5k1wAaxSXTUpqTmZZapG+XQJXxvpdH1kKNnNW7Jw4k7WBcR97FyMnh4SAicTvz9eZuxi5
-        OIQEVjBK7H72mhXC+cIocXfXDyYI5zOjxLF3Z1hhWk7+awOzhQSWM0pM+SwOUfSRUeLsxLmM
-        IAleATuJf9NPsoDYLAIqEvPmr2GDiAtKnJz5BCjOwSEqkCKx6U8ZSFhYwEdiz9wHYK3MAuIS
-        t57MB1ssInCUSWLpjJ9MIAk2AUOJrrddYHM4BVwljp6+zA7RIC+x/e0csB8kBG5wSFxZdIUd
-        ZIGEgIvEszUFEEcLS7w6vgXqZxmJ05N7WCDq2xklFvy+zwThTGCUaHh+ixGiylrizrlfbCCD
-        mAU0Jdbv0ocIO0q0ta5mhJjPJ3HjrSDEDXwSk7ZNZ4YI80p0tAlBVKtJzDq+Dm7twQuXmCFs
-        D4k/rxtYJjAqzkIKlVlI3p+F5LNZCDcsYGRZxSieWlqcm55abJSXWq5XnJhbXJqXrpecn7uJ
-        EZiKTv87/mUH4/JXH/UOMTJxMB5ilOBgVhLh/T7xcbIQb0piZVVqUX58UWlOavEhRmkOFiVx
-        Xm3bk8lCAumJJanZqakFqUUwWSYOTqkGpqX/OeJTRT99i7lY6p8QeklKV6V6y8qpyzovXxd8
-        GPhut8Q27iWZK2e5SXpO5j/JsKOE7+/ymA38N28smPh32p2WVre1YSuKJ/I+DOKSPi39edva
-        646KSg12Fz5nNXjteTkzJ25PZ7W9y89TMnXWb0W/3GXtc0u72fR3grwI2x9lppAIne3te+fv
-        D+jKjphiEubUUDbt9svVKlWSPKe1xTWb/OdxdKddrfvKPr0lNXD1q2LHQzf/u21tnriRr8wp
-        aa6j0gox4YAuvizjRzfnaYXoC1YsbX1T1lb9t/FwXllqTrRbsdzfBrk2k0sfTrfZHE/WiL5c
-        OuNDZxVbc9rUyP2n9k/V/+P4m4PxbOcBJZbijERDLeai4kQAneukkbQDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFIsWRmVeSWpSXmKPExsVy+t/xu7qb7jxJNvh11MbiwbxtbBbzj5xj
-        teh78ZDZYu/rrewWmx5fY7W4vGsOm8WM8/uYLFr3HmF34PDYtKqTzePOtT1sHpuX1Hv0bVnF
-        6PF5k1wAa5SeTVF+aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+
-        XYJexvpdH1kKNnNW7Jw4k7WBcR97FyMnh4SAicTJf22sXYxcHEICSxklTv4/BJWQkTg5rYEV
-        whaW+HOtiw2i6D2jxI5di5lBErwCdhL/pp9kAbFZBFQk5s1fwwYRF5Q4OfMJWFxUIEWi+flJ
-        sEHCAj4Se+Y+YASxmQXEJW49mc8EMlRE4DiTxKdJC5ghNsxglLh47QnYBjYBQ4mut11gUzkF
-        XCWOnr7MDtFtJtG1tQtqkrzE9rdzmCcwCs5CsnwWkiWzkLTMQtKygJFlFaNIamlxbnpusZFe
-        cWJucWleul5yfu4mRmCkbTv2c8sOxpWvPuodYmTiYDzEKMHBrCTC+33i42Qh3pTEyqrUovz4
-        otKc1OJDjKbAEJjILCWanA+M9bySeEMzA1NDEzNLA1NLM2MlcV7Pgo5EIYH0xJLU7NTUgtQi
-        mD4mDk6pBqbyHaqvE8vXT/564WnNY+eNfRdDjjgHil2+feBeoPPyuIT/QW56ly947m/c+Fj1
-        dN6MhJTjjxY6Ox+fHKZ37Ofa1TKOSjX/27IkQ+QDF58o7bqt/9xqWX3e5sSt8xiFlgW9Pl/4
-        LfSn//9HLA5Hr6odrRCYYLhht6n69btTJNmkLbu/stmwq++ZfIftUBCnzLK7D9Ys1Kpe7z+p
-        gfndwQk5Wp8F++1DgrxTa0+mPFvvf93w9M513pMnbpt4i8/4X/KU5Gr/paJayz1sXI/nMR9n
-        Ngg8HP3WpC2qTpjncbxw/mGxB+EXdvA4GOj3MK0P8wywO1FR3WF0QM3w2z+Rv7uFsw6/y2v6
-        kNhWu3/vvnolluKMREMt5qLiRABIIrHTPQMAAA==
-X-CMS-MailID: 20230209114451eucas1p2de6ec04f18cf81fe7722758676ee5fb8
-X-Msg-Generator: CA
+References: <20230208160424.371678-1-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230208160502eucas1p1701d218cd13235cad7cbd6275ff18c26
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230208160502eucas1p1701d218cd13235cad7cbd6275ff18c26
-References: <CGME20230208160502eucas1p1701d218cd13235cad7cbd6275ff18c26@eucas1p1.samsung.com>
-        <20230208160424.371678-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 08.02.2023 17:04, Krzysztof Kozlowski wrote:
+On Wed, 8 Feb 2023 17:04:24 +0100, Krzysztof Kozlowski wrote:
 > The max98090 has only one DAI and does not take argument to DAI
 > phandles:
->
->    exynos5250-snow-rev5.dtb: audio-codec@10: #sound-dai-cells:0:0: 0 was expected
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->   arch/arm/boot/dts/exynos5250-snow-rev5.dts | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5250-snow-rev5.dts b/arch/arm/boot/dts/exynos5250-snow-rev5.dts
-> index 0a47597d6f0d..3d32c3476e84 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow-rev5.dts
-> +++ b/arch/arm/boot/dts/exynos5250-snow-rev5.dts
-> @@ -27,7 +27,7 @@ cpu {
->   		};
->   
->   		codec {
-> -			sound-dai = <&max98090 0>, <&hdmi>;
-> +			sound-dai = <&max98090>, <&hdmi>;
->   		};
->   	};
->   };
-> @@ -42,7 +42,7 @@ max98090: audio-codec@10 {
->   		pinctrl-0 = <&max98090_irq>;
->   		clocks = <&pmu_system_controller 0>;
->   		clock-names = "mclk";
-> -		#sound-dai-cells = <1>;
-> +		#sound-dai-cells = <0>;
->   	};
->   };
->   
+> 
+>   exynos5250-snow-rev5.dtb: audio-codec@10: #sound-dai-cells:0:0: 0 was expected
+> 
+> 
 
-Best regards
+Applied, thanks!
+
+[1/1] ARM: dts: exynos: correct max98090 DAI argument in Snow
+      https://git.kernel.org/krzk/linux/c/301d3dd05525e3a046f6cfa6ee4dea6a3b7111ee
+
+Best regards,
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
