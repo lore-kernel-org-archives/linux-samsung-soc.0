@@ -2,78 +2,69 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A11BCC61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Feb 2023 14:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC13C6379F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Feb 2023 15:06:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229740AbjBIO5B (ORCPT
+        id S230050AbjBIPGn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Feb 2023 09:57:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43776 "EHLO
+        Thu, 9 Feb 2023 10:06:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229834AbjBIO5A (ORCPT
+        with ESMTP id S229740AbjBIPGn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Feb 2023 09:57:00 -0500
-Received: from out-8.mta1.migadu.com (out-8.mta1.migadu.com [95.215.58.8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DB5EEFA4
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Feb 2023 06:56:57 -0800 (PST)
-Date:   Thu, 9 Feb 2023 15:56:53 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-        t=1675954615;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7pQICwV9BQwh0rqup+XjsiIjDhBDv4jvmO4frgTOT8w=;
-        b=c58lg+63q4bbXysaBaqmipgYlFzuAHV1ucjwoMv2dNxMtO1TEBtlDAJE2DWALUgq46AcHo
-        qmzzS74d7ZmXVTvjG9qeM+kNiyuCo2OD0jH0ZkZQKoL7k4Tm41m2LVrXLMQzGCSDi8rfc5
-        cAxO6fs71HJA6LaAIG8BJ7+at01DmxQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Henrik Grimler <henrik@grimler.se>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        alim.akhtar@samsung.com, m.szyprowski@samsung.com,
-        jenneron@protonmail.com, markuss.broks@gmail.com,
-        martin.juecker@gmail.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v2 1/2] ARM: dts: exynos: drop mshc aliases
-Message-ID: <Y+UJtZ2fpk+TSwqU@L14.lan>
-References: <20230128133151.29471-1-henrik@grimler.se>
- <20230128133151.29471-2-henrik@grimler.se>
- <29d63a50-bdfe-ef50-c173-cb9e37923758@linaro.org>
+        Thu, 9 Feb 2023 10:06:43 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FF73A0;
+        Thu,  9 Feb 2023 07:06:42 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0FAB6B82186;
+        Thu,  9 Feb 2023 15:06:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA404C43443;
+        Thu,  9 Feb 2023 15:06:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675955199;
+        bh=YzH3oVoNE1CjwPcE3PjI1A0MAUIcY7ST9R5Q0/Ug9Dc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=r7G1O3UjQ2cuOkEmjpThjB9EndPzQzUWeS4crAhbGCwKu9JkoPLJAxaRo8BOQSu4H
+         Wu9oOkHY3VMJiww8tV3f/Y95XuvnylF2rUD1O0bLX4o7dHgymHJaXJ3qLnQSLVFSmD
+         lTHnl3CSxaYfTI1xADtmO/Q/E4FiBd0Pa9Ne0fHU6uNBME0vYLbQPKIIKvuRrHRfG5
+         6tTARHmyZkA4WMG+tJXjDCYvLnvFrrKrQ3TpuNLIEhjCKGxjkbaRa3KzxvLf9CtCda
+         rV61BZhx1pUwWjgohItlUYs5I/pOtBL5ELfJvDVCoEf/+F+qNcfgoBH9fhu56wU11b
+         VOtSM6Mnsfh8w==
+Received: by mail-vs1-f49.google.com with SMTP id l8so2378896vsm.11;
+        Thu, 09 Feb 2023 07:06:39 -0800 (PST)
+X-Gm-Message-State: AO0yUKX7aH+AXQoAMfoR7LhxhOcg/0K9322fxEtnx81z2oZOqJ1vCJpN
+        ul0jACVq3noTBTLPHk8PgsDcUCa1oxo8WEnjGA==
+X-Google-Smtp-Source: AK7set8xITZUTZ7JTnJX/T1dUh1NB+jPvj8WgukL1xX/D/0q7BYlqVwEIJC1MmlL4EbavNkjzHZN/z55yic1gqQHloI=
+X-Received: by 2002:a05:6102:2ea:b0:411:b8c5:973a with SMTP id
+ j10-20020a05610202ea00b00411b8c5973amr1374534vsj.0.1675955198667; Thu, 09 Feb
+ 2023 07:06:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <29d63a50-bdfe-ef50-c173-cb9e37923758@linaro.org>
-X-Migadu-Flow: FLOW_OUT
+References: <20230128133151.29471-1-henrik@grimler.se> <20230128133151.29471-3-henrik@grimler.se>
+In-Reply-To: <20230128133151.29471-3-henrik@grimler.se>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 9 Feb 2023 09:06:27 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+y2_aHXsxj4sx0KPATDi9-7mujruowpbq2kxro4e13zg@mail.gmail.com>
+Message-ID: <CAL_Jsq+y2_aHXsxj4sx0KPATDi9-7mujruowpbq2kxro4e13zg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] ARM: dts: exynos: add mmc aliases
+To:     Henrik Grimler <henrik@grimler.se>
+Cc:     krzysztof.kozlowski+dt@linaro.org, alim.akhtar@samsung.com,
+        m.szyprowski@samsung.com, jenneron@protonmail.com,
+        markuss.broks@gmail.com, martin.juecker@gmail.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        Valentine Iourine <iourine@iourine.msk.su>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+On Sat, Jan 28, 2023 at 7:32 AM Henrik Grimler <henrik@grimler.se> wrote:
+>
+> Add aliases for eMMC, SD card and WiFi where applicable, so that
+> assigned mmcblk numbers are always the same.
 
-Thanks for reviewing!
-
-On Thu, Feb 09, 2023 at 03:39:37PM +0100, Krzysztof Kozlowski wrote:
-> On 28/01/2023 14:31, Henrik Grimler wrote:
-> > They are no longer needed after commit a13e8ef6008d ("mmc: dw_mmc:
-> > exynos: use common_caps").
-> > 
-> 
-> Are you sure? That commit explicitly says that the caps should be set
-> from DT and Exynos DT does not set it everywhere...
-> 
-> plus if alias is missing, then the ctrl_id in dw_mmc.c is 0 and such
-> caps are applied everywhere - to every DWMMC device.
-
-Yeah, you are right, David pointed this out in the ARM64 patchset [1]
-as well, so I will look it over again and send new versions (when
-discussion on this version is finalised).
-
-> Best regards,
-> Krzysztof
-
-[1] https://patchwork.kernel.org/project/linux-samsung-soc/patch/20230203204000.14410-2-henrik@grimler.se/#25197132
-
-Best regards,
-Henrik Grimler
+What does WiFi have to do with mmcblk?
