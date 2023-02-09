@@ -2,210 +2,145 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34603C636D6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Feb 2023 14:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9272EC61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Feb 2023 14:31:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230449AbjBIOXc (ORCPT
+        id S230318AbjBIObQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Feb 2023 09:23:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48454 "EHLO
+        Thu, 9 Feb 2023 09:31:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbjBIOXa (ORCPT
+        with ESMTP id S230515AbjBIObC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Feb 2023 09:23:30 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20E9925940
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Feb 2023 06:23:27 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id a2so1930097wrd.6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Feb 2023 06:23:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/AaeFwDtGgsiJbC0QTZeuI5q7NDTwTp278cldLgwfac=;
-        b=vSt7aNDoWSfjIgrViM6B4VY/+XFxgyEMsaZleT91wpKO7/dqn5YcVbOk1IGp9tY4zT
-         xlxw1jYHXf92U5xl0BnRer2u8AcNT0DWfMJoH5KjxZbp9YG9aG1KWwW1cyyIhkSCffGC
-         1AUMs53Ej7JklXcXWMaIcgUIe67hR7NOd2powaGjka9DZ23UjRAS2JXHdh1vGCOW/xKw
-         mhAxvxmnHNH8pWHAFewTpFnSEe/sr95llNpzXSNoWHmVMNE4sS+SqNnyNnfADAuupG5g
-         PaJRommS/p+5ndzqULeuSOWTKq0Sjhyv1+Sem5RwA8a1dZS9VRl4tTwbRZbKAZI5+9J1
-         pkBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/AaeFwDtGgsiJbC0QTZeuI5q7NDTwTp278cldLgwfac=;
-        b=HeN/wM82IgyJbx22FDl8O5cFqOPLVyqwkLPW1zdXzHJ5Gvna7gDjDO4BicqGKp2ZfY
-         dillI0n2ZGcJixX6nozWgE6ooVjzuLZevBiLrbefXedqGc5+L8xrdtzdgGHfsjm6/CM8
-         wBz99q2/mepi0A+C92cT0v92ITIsSeHeKUhO1/V4WudcgJGceRVsc89dmQ6AZxtM2OH9
-         gpEP9rXsIn2z95qbYvGBe1VlSVKcOzJ3CK2ELb64oAe+kh8DV7HfyYZUtPUW8yNwIzdi
-         EyAXQgYQq1NuVQ9YP5rN7BnXsK+dAxUBZCq2/7/yK912V+3uSdhw91gsnaZA+lb+Y9r1
-         hDnQ==
-X-Gm-Message-State: AO0yUKXk2bAwMfJEhKcWSjs42pCaCgYaJfTJIdgpTfBI/ouRGU0JRuQK
-        1pUayXQLDPBpEg7wbVpBsKJrSg==
-X-Google-Smtp-Source: AK7set/zIQgNCvI0NgV6LI0l0/eN2Kv8XajaYfnqYSl6iIgopnqcYNooxoPE3JWlBjVwcWq/6NAHJg==
-X-Received: by 2002:a05:6000:18ca:b0:2c3:db9e:4b06 with SMTP id w10-20020a05600018ca00b002c3db9e4b06mr10707805wrq.45.1675952605632;
-        Thu, 09 Feb 2023 06:23:25 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id y1-20020a5d4ac1000000b002c3be6ae0b1sm1353515wrs.65.2023.02.09.06.23.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Feb 2023 06:23:25 -0800 (PST)
-Message-ID: <99a17d21-2cf9-a573-29cb-827568c9709b@linaro.org>
-Date:   Thu, 9 Feb 2023 15:23:23 +0100
+        Thu, 9 Feb 2023 09:31:02 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53CF85D3DF;
+        Thu,  9 Feb 2023 06:30:57 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 7D695CE24F3;
+        Thu,  9 Feb 2023 14:30:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C41C433EF;
+        Thu,  9 Feb 2023 14:30:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675953052;
+        bh=n5q92jtNB++4BoYIauYygzacB4DdXZvQYlYHsoaQZHo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=L4cNRE4MQxZhPNyBF/08CXXf/FWNQlzUwcRLG/0S65J/4ZChTqeAH+gdyIm7+puo/
+         e1NMfqyqjToGWx/m2stUfU7oe9VJ+8njI+o0jyklZ6aQ10e0wIfN7idp96BYLv9Fv3
+         QhfxNouUc0qZTgyD3UIjJF1eoI/sa7sYlEflw9jIrrOTdIfoFZo0OmH5vYc0Tjwjlg
+         7k/6gJhmjkwo6pEOCZrEJ5FmUMlxfm8y1s7LLhR+jeJXraVBKucJ1jUqjs66gKI0qH
+         XjavWBRymrRU2MvlL95tjkP7Fwb0aTwHP4DAbOFosKC6AT8CudX5DVtLZ+LDNj9wE2
+         dDufUua3aqd7w==
+Date:   Thu, 9 Feb 2023 14:30:29 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+Cc:     miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+        jic23@kernel.org, tudor.ambarus@microchip.com, pratyush@kernel.org,
+        sanju.mehta@amd.com, chin-ting_kuo@aspeedtech.com, clg@kaod.org,
+        kdasu.kdev@gmail.com, f.fainelli@gmail.com, rjui@broadcom.com,
+        sbranden@broadcom.com, eajames@linux.ibm.com, olteanv@gmail.com,
+        han.xu@nxp.com, john.garry@huawei.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, narmstrong@baylibre.com,
+        khilman@baylibre.com, matthias.bgg@gmail.com, haibo.chen@nxp.com,
+        linus.walleij@linaro.org, daniel@zonque.org,
+        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
+        agross@kernel.org, bjorn.andersson@linaro.org, heiko@sntech.de,
+        krzysztof.kozlowski@linaro.org, andi@etezian.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
+        masahisa.kojima@linaro.org, jaswinder.singh@linaro.org,
+        rostedt@goodmis.org, mingo@redhat.com, l.stelmach@samsung.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, alex.aring@gmail.com, stefan@datenfreihafen.org,
+        kvalo@kernel.org, git@amd.com, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, joel@jms.id.au, andrew@aj.id.au,
+        radu_nicolae.pirea@upb.ro, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, claudiu.beznea@microchip.com,
+        bcm-kernel-feedback-list@broadcom.com, fancer.lancer@gmail.com,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
+        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+        venture@google.com, yuenn@google.com, benjaminfair@google.com,
+        yogeshgaur.83@gmail.com, konrad.dybcio@somainline.org,
+        alim.akhtar@samsung.com, ldewangan@nvidia.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        michal.simek@amd.com, linux-aspeed@lists.ozlabs.org,
+        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        netdev@vger.kernel.org, linux-wpan@vger.kernel.org,
+        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-mtd@lists.infradead.org, lars@metafoo.de,
+        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
+        michael@walle.cc, palmer@dabbelt.com,
+        linux-riscv@lists.infradead.org, amitrkcian2002@gmail.com,
+        Dhruva Gole <d-gole@ti.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        William Zhang <william.zhang@broadcom.com>
+Subject: Re: [PATCH v3 01/13] spi: Replace all spi->chip_select and
+ spi->cs_gpiod references with function call
+Message-ID: <Y+UDhWK6u9NkMTxv@sirena.org.uk>
+References: <20230202152258.512973-1-amit.kumar-mahapatra@amd.com>
+ <20230202152258.512973-2-amit.kumar-mahapatra@amd.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH v2 2/2] ARM: dts: exynos: add mmc aliases
-Content-Language: en-US
-To:     Henrik Grimler <henrik@grimler.se>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, alim.akhtar@samsung.com,
-        m.szyprowski@samsung.com, jenneron@protonmail.com,
-        markuss.broks@gmail.com, martin.juecker@gmail.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Cc:     Valentine Iourine <iourine@iourine.msk.su>
-References: <20230128133151.29471-1-henrik@grimler.se>
- <20230128133151.29471-3-henrik@grimler.se>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230128133151.29471-3-henrik@grimler.se>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="iWU3nY956KPhZko1"
+Content-Disposition: inline
+In-Reply-To: <20230202152258.512973-2-amit.kumar-mahapatra@amd.com>
+X-Cookie: Androphobia:
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 28/01/2023 14:31, Henrik Grimler wrote:
-> Add aliases for eMMC, SD card and WiFi where applicable, so that
-> assigned mmcblk numbers are always the same.
-> 
-> Co-developed-by: Anton Bambura <jenneron@protonmail.com>
-> Signed-off-by: Anton Bambura <jenneron@protonmail.com>
-> [ Tested on exynos5800-peach-pi ]
-> Tested-by: Valentine Iourine <iourine@iourine.msk.su>
-> Signed-off-by: Henrik Grimler <henrik@grimler.se>
-> ---
->  arch/arm/boot/dts/exynos3250-artik5-eval.dts        | 5 +++++
->  arch/arm/boot/dts/exynos3250-artik5.dtsi            | 5 +++++
->  arch/arm/boot/dts/exynos3250-monk.dts               | 1 +
->  arch/arm/boot/dts/exynos3250-rinato.dts             | 2 ++
->  arch/arm/boot/dts/exynos4210-i9100.dts              | 6 ++++++
->  arch/arm/boot/dts/exynos4210-origen.dts             | 5 +++++
->  arch/arm/boot/dts/exynos4210-smdkv310.dts           | 4 ++++
->  arch/arm/boot/dts/exynos4210-trats.dts              | 6 ++++++
->  arch/arm/boot/dts/exynos4210-universal_c210.dts     | 6 ++++++
->  arch/arm/boot/dts/exynos4412-itop-elite.dts         | 5 +++++
->  arch/arm/boot/dts/exynos4412-midas.dtsi             | 3 +++
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi     | 5 +++++
->  arch/arm/boot/dts/exynos4412-origen.dts             | 5 +++++
->  arch/arm/boot/dts/exynos4412-p4note.dtsi            | 6 ++++++
->  arch/arm/boot/dts/exynos4412-smdk4412.dts           | 4 ++++
->  arch/arm/boot/dts/exynos4412-tiny4412.dts           | 4 ++++
->  arch/arm/boot/dts/exynos5250-arndale.dts            | 5 +++++
->  arch/arm/boot/dts/exynos5250-smdk5250.dts           | 2 ++
->  arch/arm/boot/dts/exynos5250-snow-common.dtsi       | 3 +++
->  arch/arm/boot/dts/exynos5250-spring.dts             | 5 +++++
->  arch/arm/boot/dts/exynos5260-xyref5260.dts          | 5 +++++
->  arch/arm/boot/dts/exynos5410-odroidxu.dts           | 2 ++
->  arch/arm/boot/dts/exynos5410-smdk5410.dts           | 5 +++++
->  arch/arm/boot/dts/exynos5420-arndale-octa.dts       | 5 +++++
->  arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi | 5 +++++
->  arch/arm/boot/dts/exynos5420-peach-pit.dts          | 3 +++
->  arch/arm/boot/dts/exynos5420-smdk5420.dts           | 5 +++++
->  arch/arm/boot/dts/exynos5422-odroid-core.dtsi       | 5 +++++
->  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi  | 4 ++++
->  arch/arm/boot/dts/exynos5422-samsung-k3g.dts        | 4 ++++
->  arch/arm/boot/dts/exynos5800-peach-pi.dts           | 3 +++
->  31 files changed, 133 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos3250-artik5-eval.dts b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-> index a1e22f630638..83266a66124b 100644
-> --- a/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-> +++ b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-> @@ -16,6 +16,11 @@ / {
->  	model = "Samsung ARTIK5 evaluation board";
->  	compatible = "samsung,artik5-eval", "samsung,artik5",
->  			"samsung,exynos3250", "samsung,exynos3";
-> +
-> +	aliases {
-> +		mmc2 = &mshc_2;
-> +	};
-> +
->  };
->  
->  &mshc_2 {
-> diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-> index 0ac3f284fbb8..a6e2f46917a8 100644
-> --- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
-> +++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-> @@ -17,6 +17,11 @@
->  / {
->  	compatible = "samsung,artik5", "samsung,exynos3250", "samsung,exynos3";
->  
-> +	aliases {
-> +		mmc0 = &mshc_0;
-> +		mmc1 = &mshc_1;
-> +	};
-> +
->  	chosen {
->  		stdout-path = &serial_2;
->  	};
-> diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-> index 80d90fe7fad1..a68e5f81404c 100644
-> --- a/arch/arm/boot/dts/exynos3250-monk.dts
-> +++ b/arch/arm/boot/dts/exynos3250-monk.dts
-> @@ -22,6 +22,7 @@ / {
->  
->  	aliases {
->  		i2c7 = &i2c_max77836;
-> +		mmc0 = &mshc_0;
->  	};
->  
->  	memory@40000000 {
-> diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-> index 1f9cba0607e1..f0fb6890e4a8 100644
-> --- a/arch/arm/boot/dts/exynos3250-rinato.dts
-> +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-> @@ -23,6 +23,8 @@ / {
->  
->  	aliases {
->  		i2c7 = &i2c_max77836;
-> +		mmc0 = &mshc_0;
-> +		mmc1 = &mshc_1;
->  	};
->  
->  	chosen {
-> diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
-> index bba85011ecc9..7051e2c4b391 100644
-> --- a/arch/arm/boot/dts/exynos4210-i9100.dts
-> +++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-> @@ -25,6 +25,12 @@ memory@40000000 {
->  		reg = <0x40000000 0x40000000>;
->  	};
->  
-> +	aliases {
-> +		mmc0 = &sdhci_0;
-> +		mmc2 = &sdhci_2;
-> +		mmc3 = &sdhci_3;
 
-1. Is this actually correct? Since mmc1 was disabled, sdhci_2 had mmc1
-index but now will have mmc2.
+--iWU3nY956KPhZko1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-2. I tested Odroid U3 and the ID changed. emmc went from 1 to 0. Any
-idea why? Both patches should be transparent.
+On Thu, Feb 02, 2023 at 08:52:46PM +0530, Amit Kumar Mahapatra wrote:
+> Supporting multi-cs in spi drivers would require the chip_select & cs_gpi=
+od
+> members of struct spi_device to be an array. But changing the type of the=
+se
+> members to array would break the spi driver functionality. To make the
+> transition smoother introduced four new APIs to get/set the
 
-3. Patchset does not look bisectable, so both patches should be squashed.
+This break an arm multi_v7_defconfig build:
 
-4. Your patch has several whitespace issues:
-patch:264: trailing whitespace.
+/build/stage/linux/drivers/spi/spi-pl022.c: In function =E2=80=98pl022_tran=
+sfer_one_message=E2=80=99:
+/build/stage/linux/drivers/spi/spi-pl022.c:1592:31: error: =E2=80=98struct =
+spi_message=E2=80=99 has no member named =E2=80=98spi_get_csgpiod=E2=80=99
+ 1592 |         pl022->cur_gpiod =3D msg->spi_get_csgpiod(spi, 0);
+      |                               ^~
+/build/stage/linux/drivers/spi/spi-pl022.c:1592:49: error: =E2=80=98spi=E2=
+=80=99 undeclared (first use in this function)
+ 1592 |         pl022->cur_gpiod =3D msg->spi_get_csgpiod(spi, 0);
+      |                                                 ^~~
+/build/stage/linux/drivers/spi/spi-pl022.c:1592:49: note: each undeclared i=
+dentifier is reported only once for each function it appears in
 
-patch:279: trailing whitespace.
+--iWU3nY956KPhZko1
+Content-Type: application/pgp-signature; name="signature.asc"
 
-patch:461: trailing whitespace.
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmPlA4QACgkQJNaLcl1U
+h9Ai+wf+IWbvrI/uIEjinXzailRkkSP40/uzdnv8AAKF5zA3laimeZYZPCoKfD4X
+GzBSQEjiZOJmPZ0wBaHHFFaxHSBlL6rtUoA6r+EEktjzWc6vOsmoUVRt74R+ZMHw
+1FyvWR07nFAstJD2rPfPhIZ5bt4yiRX/CmA2SxN1qW74IwjKYAy6jLvbpSAZ4byY
+KRnij11f/xqUuiao0L/PTya+dYLUOBEQvXm5JBAIqhZaQVH4G7Ppov0MR15cEMug
+OG9oMzu197RFh7WgO6lj8rI9Cssl4vvj6+3owDZ/nK+LFq62Z6AvBGbaP7SoHOOI
+Xcz8JdTcCAH0XAgza9flmPUQME9cmQ==
+=4wBC
+-----END PGP SIGNATURE-----
 
-
-Best regards,
-Krzysztof
-
+--iWU3nY956KPhZko1--
