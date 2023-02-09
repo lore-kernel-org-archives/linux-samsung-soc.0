@@ -2,54 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 925A8C636D7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Feb 2023 10:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BBFC636D4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Feb 2023 10:59:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229641AbjBIK7U (ORCPT
+        id S229818AbjBIK7Y (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Feb 2023 05:59:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56244 "EHLO
+        Thu, 9 Feb 2023 05:59:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229721AbjBIK7T (ORCPT
+        with ESMTP id S229775AbjBIK7W (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Feb 2023 05:59:19 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 495694588A
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Feb 2023 02:58:50 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id hn2-20020a05600ca38200b003dc5cb96d46so3562879wmb.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Feb 2023 02:58:50 -0800 (PST)
+        Thu, 9 Feb 2023 05:59:22 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96B724C0C6
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Feb 2023 02:58:52 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id bk16so1323929wrb.11
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Feb 2023 02:58:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2+5nqWCuDUyZTrVyTtaVBg5+R7qkLRJ5SKf8oifJuNE=;
-        b=C69x6HcOdwDaax4dQIsZ6lvHh32/OoP4EWO2aJ0twI8ailNtWQ9OPF6jtqm5WSOtRU
-         jhN7SOyNb9O2Vy98sl79QMKWMTZnbNYWJc3/iOsmpBFROqIIVgP/F4UJXRBNHg+kEZfF
-         F6AP4Uc1VlwkIfXgeof2hxprOgIz9vhPZ13YqBDeJZHK3HTOahN+z32poEb29w+xnl3x
-         tAh82Z99/IFOecnNElo+Pt4G4UM9qTvxDx/hsp+qw1aHzUkthUt+29r8YxRim2B9If79
-         JrqUR3tvWhuaERlOzgpeDLg+Ec8eY13d9MdIOQBN3NWoNhg2gXDJ34d7+Mvy6ojYVISo
-         k9jg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DqyCPgVLwr/SMq8TuN0141mNn36IMKTzmD9m9yiTvNc=;
+        b=fA3Jvt2bYKWJ7esxt2t/Bo3yI38SKiWE7LAJlanQzF79L666FMJQix/t+LsEqsNGlS
+         HTMlbITLH5cF8YZYpcP707M8gTq337sMZc52HP4mURLTGxW2g9KHbpqlUlZX1ocacNN9
+         i4M0gXNqr5ikGf1vOTF/INyqycnxYa7OWDPvSYXsawer5gJmN+N+YBNWTSb1GY/FR83F
+         V/d1icJ5kihlSjGETHgDOl0ryWAgiPIAMQ9UQzcZJcQN7glXWM4IOqFofX924eYo9qwb
+         TuU+OVVB8HcWePNmo3kE9qiuudkKkBe4TQ+010xk0+ad+ORniEjOfbyrBdy4KZSlBHUP
+         n14A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2+5nqWCuDUyZTrVyTtaVBg5+R7qkLRJ5SKf8oifJuNE=;
-        b=Fe9R2OhujPyHuu+698sznWRUyqfq0TxWlQOP0SXtUpNpMc8Kvyw0dxrB5LZtISAFxV
-         Zgn6HXmG8taFfUpOZpeLLA5y1J9nSpTFHvPsjDCig0877lJC6ZNnqNEaOGXGmal4XbaL
-         HDeJld2CMbTrcC1z1/kgW0gmGv5uKtvcz6J1CHBEpmo8MmMg0jNHGj9Tj4aKTzpw0U2l
-         rcIYuKHl/rXxyLueYrqTqjwR9qhooqqkwwyAgwIb6Mv2Dmca6SE9Tbqlk0bwJKw1tW9H
-         hL/xBv/xmD38SPEtlbs4THmrlMB5Xq+94L7rA0MqvhcDZ7VPBJH7lRSGf2pwNYedwBdK
-         E+BQ==
-X-Gm-Message-State: AO0yUKXlNeS9WQWn7MjPA1QqdLzqEC6hYbUEUWmyA/oVt1Ovxyog2qpI
-        F0n7o3aEJqQxtgjVzOfNEsTYeA==
-X-Google-Smtp-Source: AK7set9WVWtkx2S7B89JQ/mNz6qaCe3zX687iIYP2pWF7b9uabSpfjwcAIhcz+xh7ijHdy1YxltQzA==
-X-Received: by 2002:a05:600c:3ac4:b0:3dc:18de:b20d with SMTP id d4-20020a05600c3ac400b003dc18deb20dmr10614671wms.33.1675940327411;
-        Thu, 09 Feb 2023 02:58:47 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DqyCPgVLwr/SMq8TuN0141mNn36IMKTzmD9m9yiTvNc=;
+        b=md4lYG8Kzn9Zx9T6nON2CA7uhfwWQdfMpFfio/EKGQTD0oCWdI+t/8zOdCJeBs0e+U
+         NDK4K3KMyvtqwtJUOHnblDbKfOv+ft2ieqAqbGOC/OEDXuMviNleM+jquieHfje6x8PL
+         fL1hQV33LlTfYKoT/zKykMqiP5/TBqhvFLFOnv2/uZxVhzdtzr+/0iV5fdiwmCvgTBCl
+         BovgDL0u+Yl+7gG9eolgEgbVsU01ZrqkRKgY3B1ewDeWatnuBXkBeyatoBJQKHjIW5ad
+         jAX1c0X7pIL5J0aff0TyMmngUOZ/7sn7ZDMfRrxHl24GAizdLUKLUL7CYpMoPNf6X3QD
+         lwzA==
+X-Gm-Message-State: AO0yUKV3HjsE/8YBrbLR8MAl1IF21zOh34YAN/LAekqnp+PE/3d5D1Wb
+        dZUaWoPOCYyp4+KaEaXFqZnqfw==
+X-Google-Smtp-Source: AK7set8AkDnBCYmDcO6b3+VQdgZz3RfH1PnwGDouui/n0lah+W4ABazpObkRkPUukQpoD5bEZTKQLg==
+X-Received: by 2002:a5d:6842:0:b0:2bf:ae1e:84d2 with SMTP id o2-20020a5d6842000000b002bfae1e84d2mr9990867wrw.12.1675940329234;
+        Thu, 09 Feb 2023 02:58:49 -0800 (PST)
 Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id g7-20020a5d6987000000b002be063f6820sm927987wru.81.2023.02.09.02.58.45
+        by smtp.gmail.com with ESMTPSA id g7-20020a5d6987000000b002be063f6820sm927987wru.81.2023.02.09.02.58.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Feb 2023 02:58:46 -0800 (PST)
+        Thu, 09 Feb 2023 02:58:48 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -64,10 +65,12 @@ To:     Rob Herring <robh+dt@kernel.org>,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         stable@vger.kernel.org
-Subject: [PATCH 1/6] ARM: dts: exynos: correct TMU phandle in Exynos4
-Date:   Thu,  9 Feb 2023 11:58:36 +0100
-Message-Id: <20230209105841.779596-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 2/6] ARM: dts: exynos: correct TMU phandle in Exynos4210
+Date:   Thu,  9 Feb 2023 11:58:37 +0100
+Message-Id: <20230209105841.779596-2-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230209105841.779596-1-krzysztof.kozlowski@linaro.org>
+References: <20230209105841.779596-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -75,28 +78,29 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 TMU node uses 0 as thermal-sensor-cells, thus thermal zone referencing
-it must not have an argument to phandle.
+it must not have an argument to phandle.  Since thermal-sensors property is
+already defined in included exynos4-cpu-thermal.dtsi, drop it from
+exynos4210.dtsi to fix the error and remoev redundancy.
 
-Fixes: 328829a6ad70 ("ARM: dts: define default thermal-zones for exynos4")
+Fixes: 9843a2236003 ("ARM: dts: Provide dt bindings identical for Exynos TMU")
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm/boot/dts/exynos4-cpu-thermal.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos4210.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos4-cpu-thermal.dtsi b/arch/arm/boot/dts/exynos4-cpu-thermal.dtsi
-index 021d9fc1b492..27a1a8952665 100644
---- a/arch/arm/boot/dts/exynos4-cpu-thermal.dtsi
-+++ b/arch/arm/boot/dts/exynos4-cpu-thermal.dtsi
-@@ -10,7 +10,7 @@
- / {
- thermal-zones {
- 	cpu_thermal: cpu-thermal {
--		thermal-sensors = <&tmu 0>;
-+		thermal-sensors = <&tmu>;
- 		polling-delay-passive = <0>;
- 		polling-delay = <0>;
- 		trips {
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 5a1ec714c612..0e27c3375e2e 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -393,7 +393,6 @@ &cpu_alert2 {
+ &cpu_thermal {
+ 	polling-delay-passive = <0>;
+ 	polling-delay = <0>;
+-	thermal-sensors = <&tmu 0>;
+ };
+ 
+ &gic {
 -- 
 2.34.1
 
