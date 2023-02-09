@@ -2,142 +2,101 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5CCC05027
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Feb 2023 10:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 925A8C636D7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Feb 2023 10:59:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230097AbjBIKrO (ORCPT
+        id S229641AbjBIK7U (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Feb 2023 05:47:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36378 "EHLO
+        Thu, 9 Feb 2023 05:59:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229623AbjBIKq0 (ORCPT
+        with ESMTP id S229721AbjBIK7T (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Feb 2023 05:46:26 -0500
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C1FC69523
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Feb 2023 02:45:31 -0800 (PST)
-Received: by mail-yb1-xb36.google.com with SMTP id 139so379162ybe.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Feb 2023 02:45:31 -0800 (PST)
+        Thu, 9 Feb 2023 05:59:19 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 495694588A
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Feb 2023 02:58:50 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id hn2-20020a05600ca38200b003dc5cb96d46so3562879wmb.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Feb 2023 02:58:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ECisu58Ou5Xr+AMVxHOSKNEG1TgY5Zq0H9DdDE7KjY=;
-        b=PVhgmNxsQQPyBAEDdyt8QfmWO6MNCgn8yXiI9Mk1P0Ph6Z19uULy1nXT56GCFjrWPx
-         kjKAE5+lQs+meWWdvnVXJViYasQ2BIpN581gJLur43fb8v+TauC8ZGc8lXkHOKYKGPcA
-         FP9AoOGP4SFr4QMxn1WBQianBQR4oWtc3600hrLz3lvn4coxlQ/kaFuOWt2ycqbFfbXj
-         SxVqq2jNdWE80O8KHlaeEokxbPI9aumzyK9cn0FOyw0rWNFqZc4gomcB9McjjYB1Bcm8
-         Us5DeeJ+v5hZbjP8yos1A+fhfcFeiZ/hBxsKgjJrx5lCY9fTmG5/RwJWvoKjyWMph0k2
-         WXDA==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2+5nqWCuDUyZTrVyTtaVBg5+R7qkLRJ5SKf8oifJuNE=;
+        b=C69x6HcOdwDaax4dQIsZ6lvHh32/OoP4EWO2aJ0twI8ailNtWQ9OPF6jtqm5WSOtRU
+         jhN7SOyNb9O2Vy98sl79QMKWMTZnbNYWJc3/iOsmpBFROqIIVgP/F4UJXRBNHg+kEZfF
+         F6AP4Uc1VlwkIfXgeof2hxprOgIz9vhPZ13YqBDeJZHK3HTOahN+z32poEb29w+xnl3x
+         tAh82Z99/IFOecnNElo+Pt4G4UM9qTvxDx/hsp+qw1aHzUkthUt+29r8YxRim2B9If79
+         JrqUR3tvWhuaERlOzgpeDLg+Ec8eY13d9MdIOQBN3NWoNhg2gXDJ34d7+Mvy6ojYVISo
+         k9jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6ECisu58Ou5Xr+AMVxHOSKNEG1TgY5Zq0H9DdDE7KjY=;
-        b=VWZwOITrlBS4hFpWA2f/na1Ftrqk7IntA21hCjTJE7T9G6dn3XkkxIdc89DGSBhv21
-         S+QVvgiapLC+8aoT4fd88F6jgRPLRVhghVWG9Cb+SawV5UbM5dyXcjq7erua9kcHj0zq
-         5uRmgSKp4w3r2Le7ih3pMDZJ9hvuWuCuEDYHBGQmptSxzJKhfAFbGTn1ALuDmgDlyf7i
-         IhBnHoxuYlk1pH0qIw/C/KGskDqKHzpEPW5hmNfdnQLNHZmpKHb591wrXVpRlXmmrzaZ
-         N3+AkRLeCpWWnqSBvOtHZLpXPx5gE5klaOK2lfRsRLo7YVWezH6BkpS4qOpc/m1Jtcpd
-         5q5A==
-X-Gm-Message-State: AO0yUKX5uHiFTljf1/3HCOeLIzgYYSA0q0ccHz94IFLcm8xAmFmgYJBN
-        MmVb4b0kl0XVE6k5OFPclW6s5ieTvxwlM9FydT9UaA==
-X-Google-Smtp-Source: AK7set+c8vMXQoWt9zrvvB2u9a8HdXjW8xESL/qxrGLNm0jpSb7R5TJb/uyrRXXnVWpXHWRj2G52DUyGkXuHv+E8/cU=
-X-Received: by 2002:a5b:6c5:0:b0:88f:946:bd98 with SMTP id r5-20020a5b06c5000000b0088f0946bd98mr1339211ybq.24.1675939530421;
- Thu, 09 Feb 2023 02:45:30 -0800 (PST)
-MIME-Version: 1.0
-References: <20230208173343.37582-1-andriy.shevchenko@linux.intel.com>
- <20230208173343.37582-3-andriy.shevchenko@linux.intel.com> <30234963-33e5-e2d7-a6ef-112e89efbdd0@linaro.org>
-In-Reply-To: <30234963-33e5-e2d7-a6ef-112e89efbdd0@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 9 Feb 2023 11:45:18 +0100
-Message-ID: <CACRpkdYRTq35gJq3YODGh9S_JnH1jxSOT8mNnetyRQY9Z5LhWQ@mail.gmail.com>
-Subject: Re: [PATCH v4 02/18] ARM: s3c24xx: Use the right include
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Vincenzo Palazzo <vincenzopalazzodev@gmail.com>,
-        Devarsh Thakkar <devarsht@ti.com>,
-        Michael Walle <michael@walle.cc>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Dipen Patel <dipenp@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lee Jones <lee@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc-tw-discuss@lists.sourceforge.net,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        SHA-cyfmac-dev-list@infineon.com, linux-arch@vger.kernel.org,
-        devicetree@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>,
-        Yanteng Si <siyanteng@loongson.cn>,
-        Hu Haowen <src.res@email.cn>,
-        Russell King <linux@armlinux.org.uk>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
+        bh=2+5nqWCuDUyZTrVyTtaVBg5+R7qkLRJ5SKf8oifJuNE=;
+        b=Fe9R2OhujPyHuu+698sznWRUyqfq0TxWlQOP0SXtUpNpMc8Kvyw0dxrB5LZtISAFxV
+         Zgn6HXmG8taFfUpOZpeLLA5y1J9nSpTFHvPsjDCig0877lJC6ZNnqNEaOGXGmal4XbaL
+         HDeJld2CMbTrcC1z1/kgW0gmGv5uKtvcz6J1CHBEpmo8MmMg0jNHGj9Tj4aKTzpw0U2l
+         rcIYuKHl/rXxyLueYrqTqjwR9qhooqqkwwyAgwIb6Mv2Dmca6SE9Tbqlk0bwJKw1tW9H
+         hL/xBv/xmD38SPEtlbs4THmrlMB5Xq+94L7rA0MqvhcDZ7VPBJH7lRSGf2pwNYedwBdK
+         E+BQ==
+X-Gm-Message-State: AO0yUKXlNeS9WQWn7MjPA1QqdLzqEC6hYbUEUWmyA/oVt1Ovxyog2qpI
+        F0n7o3aEJqQxtgjVzOfNEsTYeA==
+X-Google-Smtp-Source: AK7set9WVWtkx2S7B89JQ/mNz6qaCe3zX687iIYP2pWF7b9uabSpfjwcAIhcz+xh7ijHdy1YxltQzA==
+X-Received: by 2002:a05:600c:3ac4:b0:3dc:18de:b20d with SMTP id d4-20020a05600c3ac400b003dc18deb20dmr10614671wms.33.1675940327411;
+        Thu, 09 Feb 2023 02:58:47 -0800 (PST)
+Received: from krzk-bin.. ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id g7-20020a5d6987000000b002be063f6820sm927987wru.81.2023.02.09.02.58.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Feb 2023 02:58:46 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Mun Yew Tham <mun.yew.tham@intel.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alexander Aring <alex.aring@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Kalle Valo <kvalo@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
-        Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Eduardo Valentin <edubezval@gmail.com>,
+        Lukasz Majewski <l.majewski@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Anand Moon <linux.amoon@gmail.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        stable@vger.kernel.org
+Subject: [PATCH 1/6] ARM: dts: exynos: correct TMU phandle in Exynos4
+Date:   Thu,  9 Feb 2023 11:58:36 +0100
+Message-Id: <20230209105841.779596-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 8, 2023 at 6:39 PM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+TMU node uses 0 as thermal-sensor-cells, thus thermal zone referencing
+it must not have an argument to phandle.
 
-> On 08/02/2023 18:33, Andy Shevchenko wrote:
-> > From: Linus Walleij <linus.walleij@linaro.org>
-> >
-> > The file s3c64xx.c is including <linux/gpio.h> despite using no
-> > symbols from the file, however it needs it to implicitly bring in
-> > of_have_populated_dt() so include <linux/of.h> explicitly instead.
-> >
-> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >  arch/arm/mach-s3c/s3c64xx.c | 2 +-
->
-> It's not s3c24xx anymore, so subject prefix:
-> ARM: s3c64xx:
+Fixes: 328829a6ad70 ("ARM: dts: define default thermal-zones for exynos4")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm/boot/dts/exynos4-cpu-thermal.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-My mistake, mea culpa.
+diff --git a/arch/arm/boot/dts/exynos4-cpu-thermal.dtsi b/arch/arm/boot/dts/exynos4-cpu-thermal.dtsi
+index 021d9fc1b492..27a1a8952665 100644
+--- a/arch/arm/boot/dts/exynos4-cpu-thermal.dtsi
++++ b/arch/arm/boot/dts/exynos4-cpu-thermal.dtsi
+@@ -10,7 +10,7 @@
+ / {
+ thermal-zones {
+ 	cpu_thermal: cpu-thermal {
+-		thermal-sensors = <&tmu 0>;
++		thermal-sensors = <&tmu>;
+ 		polling-delay-passive = <0>;
+ 		polling-delay = <0>;
+ 		trips {
+-- 
+2.34.1
 
-Yours,
-Linus Walleij
