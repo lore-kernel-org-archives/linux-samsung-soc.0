@@ -2,142 +2,155 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0236EC64ED8
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Feb 2023 00:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB919C64EC4
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Feb 2023 09:41:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230029AbjBJAam (ORCPT
+        id S231420AbjBJJlI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Feb 2023 19:30:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51048 "EHLO
+        Fri, 10 Feb 2023 04:41:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229762AbjBJAaj (ORCPT
+        with ESMTP id S231490AbjBJJlH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Feb 2023 19:30:39 -0500
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5E5C125A4;
-        Thu,  9 Feb 2023 16:30:37 -0800 (PST)
-Received: by mail-pg1-x52f.google.com with SMTP id s8so2678534pgg.11;
-        Thu, 09 Feb 2023 16:30:37 -0800 (PST)
+        Fri, 10 Feb 2023 04:41:07 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C90C15C498
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Feb 2023 01:41:04 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id o36so3375461wms.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Feb 2023 01:41:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j/k0erUD/kDhxh7/K7OwX/bqJpwb0bJwB0iaNCFMZK4=;
-        b=m45PZQvJM/hD/Xj9vlTDu7tBQyIzoAKV+Ug121N7xEPFN7JnwalygRfN9Deee662VD
-         1QVbr7FN2GjKS80HHKfM2VRvvS5Vumhqz4Q+X5SC3+HRHqlG8a7QYMW60YZ5vMmXuVWT
-         Whj682Dxwd3DP/j9rmnilydYjFYDO78yDRgj3f2c7t5Yh9pLdW/rRTvgu6ytHpVWH4Bp
-         WyfwWCyWVkyOkZzxzrnyvN21unxPk7gjxu9VkavwgK4rgme7Roz1XT+g6ILjuGTvn1Ca
-         djNyiDLTeCH+LIzJyxsFu0Lca5uXhw3bVHkTtzSaYa2Z8GkE/XD13cpHeodi0b9EwBno
-         w3Hw==
+        d=linaro.org; s=google;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FXtJIM3du57xUfV949O/wulNn8qW+AxKoWuOnlA8Zs8=;
+        b=Q4I+nSXtzNQtYSSBlK1tnkNWOBobkj//fQnII73nliusIFWbS4CyMXwv790TWVzaIR
+         XeJFKMr09KxD6VEIwh0GADzS0KBeXwSd/Z2PuYcBx5wrwvwYKnpwCDcrhxRlRw1DIemu
+         MShr1vbHI1OaKEdj393Dhbfx1croPFoH/IAHV4O1JI2sVfq1pnRj8CyYMXARz/VHSfkB
+         +G0O6Aj1djeAFoK6kGfSCNq92z0a1Be0RoRQsmFaFkAFFZi/8jacKoA+8TQepXSM+Kfj
+         3xzyBztnswh5ZMW2uGJwfNW1lkjNA2TL5EfxLYmohtuFUIh9ADwLNXuqvunAKu5Ksdr8
+         LJyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j/k0erUD/kDhxh7/K7OwX/bqJpwb0bJwB0iaNCFMZK4=;
-        b=imNCB5YEGb78LKNyU+wzeL/H1iYwWxeAuK2mArDGOf8lHLPeMjSO63NSt9NtamWke7
-         Zcr1OXH1HLFVaFBBU4wfpjEbQ/UYisapCy9S7MDHXPPkQ41ZpA2n4YVxkNzwqs+x2Yl5
-         /Ue9tX/AmGog2dcdokrZz+QskLqzb7mKVUb0/8lxxMBR4TbDi3D7hlinmqCba2HwZbPe
-         BsCI7girFxG8nsN3PkftaAkfmvcB8i+YOOo5k4yo5JRYX9aa6jdjQZeDLgaU7EjOK9Lq
-         r6X5u/8V9dgrfGMv2nfAhhGzLJZmsQhX9879r/5XEJwW2rsavEqo2QUXmcVq7kDphFzz
-         wpAA==
-X-Gm-Message-State: AO0yUKWUstSy+4URxhLVCpX38XSe2jM5U1EZo/Lv9PIW/6ovqAysQb8h
-        En0lN9dqQExrKBxM//3uyGU=
-X-Google-Smtp-Source: AK7set8J843VCb5Swh1of6p2yfW1raUVGGmO4Q3S+xAJAvwl45nss0avFGNhPNql2c/P0j9nxUjhIg==
-X-Received: by 2002:aa7:9e42:0:b0:5a8:5424:d13a with SMTP id z2-20020aa79e42000000b005a85424d13amr3990100pfq.11.1675989036714;
-        Thu, 09 Feb 2023 16:30:36 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:4b3d:5db5:694e:89d0])
-        by smtp.gmail.com with ESMTPSA id e24-20020aa78c58000000b005815217e665sm392161pfd.65.2023.02.09.16.30.31
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FXtJIM3du57xUfV949O/wulNn8qW+AxKoWuOnlA8Zs8=;
+        b=2cSHel03/ZEuPhfJRlPg8nrSjmT1i532zH7ejefF1yLonEq2FeYeH2KZYBTee37sQg
+         o54b/c3tLi2bXk3kuzFfIVxSXR2oHPqOHcuHrZ71hGqmLOPS72blAcFnWJ50jgqWyrPT
+         VmaMAiQwryAb4tgSlAQhTLOZEMuQy7v+gXDJq2tczqGUzBlMDHlZIgM/NB45jchevEIc
+         WufG05KhjbZclm2cUTlE8s2ZUK5XgEZmrLSWKtQ92cu3KMFxM7/PWi3tPxjZKrqBmxmV
+         cqdku3EDAkgikF9StZHSmE9+d8RayiBR+lYSyqnQ+etGqIfMXNWSHty5KJRfZUPWo7Vw
+         CouA==
+X-Gm-Message-State: AO0yUKWodbHZKF1ZXFG46UK6XwIvhtzSLL0NuLTkTXK6VL+VJBEi6mgA
+        idxaontc3dHbiJ8mrF3hfDP5sQ==
+X-Google-Smtp-Source: AK7set9g8UOPh4E6E2LgZ5q7toZT7ywT9NslTSP9dH/BzqJlUMVqwQWZGYqb6Lx8fO9DrtqztHmmEQ==
+X-Received: by 2002:a05:600c:3317:b0:3e0:111:28a9 with SMTP id q23-20020a05600c331700b003e0011128a9mr12224837wmp.22.1676022063255;
+        Fri, 10 Feb 2023 01:41:03 -0800 (PST)
+Received: from linaro.org (wifi-eduroam-trans.univ-tlse3.fr. [195.220.58.237])
+        by smtp.gmail.com with ESMTPSA id f3-20020a056000128300b002c3e600d1a8sm3208693wrx.95.2023.02.10.01.40.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Feb 2023 16:30:35 -0800 (PST)
-Date:   Thu, 9 Feb 2023 16:30:29 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Vincenzo Palazzo <vincenzopalazzodev@gmail.com>,
-        Devarsh Thakkar <devarsht@ti.com>,
-        Michael Walle <michael@walle.cc>,
-        Dipen Patel <dipenp@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Fri, 10 Feb 2023 01:41:02 -0800 (PST)
+Date:   Fri, 10 Feb 2023 10:40:56 +0100
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     rafael.j.wysocki@intel.com
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lee Jones <lee@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc-tw-discuss@lists.sourceforge.net,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        SHA-cyfmac-dev-list@infineon.com, linux-arch@vger.kernel.org,
-        devicetree@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>,
-        Yanteng Si <siyanteng@loongson.cn>,
-        Hu Haowen <src.res@email.cn>,
-        Russell King <linux@armlinux.org.uk>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Mun Yew Tham <mun.yew.tham@intel.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alexander Aring <alex.aring@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Kalle Valo <kvalo@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
-        Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: Re: [PATCH v4 08/18] gpiolib: remove gpio_set_debounce()
-Message-ID: <Y+WQJTsdeZeAEs/S@google.com>
-References: <20230208173343.37582-1-andriy.shevchenko@linux.intel.com>
- <20230208173343.37582-9-andriy.shevchenko@linux.intel.com>
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Haowen Bai <baihaowen@meizu.com>,
+        Minghao Chi <chi.minghao@zte.com.cn>,
+        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
+        <linux-amlogic@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:RENESAS R-CAR THERMAL DRIVERS" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/STM32 ARCHITECTURE" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
+Message-ID: <20230210094056.GC175687@linaro.org>
+References: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230208173343.37582-9-andriy.shevchenko@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 08, 2023 at 07:33:33PM +0200, Andy Shevchenko wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> gpio_set_debounce() only has a single user, which is trivially
-> converted to gpiod_set_debounce().
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Hi Rafael,
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+On Mon, Feb 06, 2023 at 04:34:29PM +0100, Daniel Lezcano wrote:
+> As the name states "thermal_core.h" is the header file for the core
+> components of the thermal framework.
+> 
+> Too many drivers are including it. Hopefully the recent cleanups
+> helped to self encapsulate the code a bit more and prevented the
+> drivers to need this header.
+> 
+> Remove this inclusion in every place where it is possible.
+> 
+> Some other drivers did a confusion with the core header and the one
+> exported in linux/thermal.h. They include the former instead of the
+> latter. The changes also fix this.
+> 
+> The tegra/soctherm driver still remains as it uses an internal
+> function which need to be replaced.
+> 
+> The Intel HFI driver uses the netlink internal framework core and
+> should be changed to prevent to deal with the internals.
+> 
+> No functional changes
 
-Thanks.
+Are you ok if I take this patch ?
+
+Thanks
+
+  -- Daniel
+
 
 -- 
-Dmitry
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
