@@ -2,308 +2,160 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 815AAC6FA99
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Feb 2023 06:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A506EC636CC
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Feb 2023 07:53:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229667AbjBKGkC (ORCPT
+        id S229604AbjBKHx1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 11 Feb 2023 01:40:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45968 "EHLO
+        Sat, 11 Feb 2023 02:53:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229776AbjBKGj4 (ORCPT
+        with ESMTP id S229523AbjBKHx1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 11 Feb 2023 01:39:56 -0500
-Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD82EE3A6
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Feb 2023 22:39:53 -0800 (PST)
-Received: by mail-oi1-x232.google.com with SMTP id bi19so6289438oib.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Feb 2023 22:39:53 -0800 (PST)
+        Sat, 11 Feb 2023 02:53:27 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA6526594
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Feb 2023 23:53:24 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id h16so7303996wrz.12
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Feb 2023 23:53:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lnwh8PvzH4M3fqQVoLT90tP2lhDK7TTHHkCgxq6i/js=;
-        b=Ol6JWk7nCP20i/OqMHlNDkpa69RwMDOCqCohAXIm1V74QS7VxtD01TAflem6jRNV8v
-         AjWaxemfOtP1iZPXfM4kFjAFbsuvcIjqpVSIX6eVOt7FSPHRaefnfTVx7iKGjBFKClFX
-         k3ar/iZ8J3Hmj8mKjqTYrnMfjHSJhBkODhJLNY3dES/Y+3b/u1PTMebtQZIas0Ra6YdZ
-         K7RnZNK3gIhnuyB4Fdigrp2idDAjT7xS6SLABgYi3qaw7OgiU+Qch7mkOKAkPWn3oSWt
-         Aqhxzt5SP37oobrsvYIfGavADqykX0ihTJqhk5VjT09prNB1ypJ2jGr4BVh2qxx8alcb
-         fiVA==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JdyJlJsLe7UYj3HkIh5IqELvu3xeVrpcZYgePszZnTM=;
+        b=GLB3/AzmYk9r6d1M8HG+Xa6zUYiLBVeTfksz30BKXtFLjMOZAJt3SBE6RyR0tbn5MS
+         DD4H3wi9V/SDQuDV3tGPPSl8qpypTSQsfCfK9egDFUGuj9TX5Bg/7M3aEj2dHPApTycE
+         iVMMPBpYzZd0VtnU+lA9CnOYU9IA+UskmGMUMP/allk6UxbMwLl0hBxkiWxnQmmDhNk0
+         Bz8WSmwAI5ueU77V8JEpyzEs5FhACjZuwfsvwtP+cMXV+L1AwI+vifHHRly2zvJG0jsk
+         5IC2zBZPyhqDHEfyrpQvPJ1em2+wFTVJbqpatXgKrf7ezzHV/rk2Pm3qw34jJSH51cPz
+         XCmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lnwh8PvzH4M3fqQVoLT90tP2lhDK7TTHHkCgxq6i/js=;
-        b=HjNZlumAY26+iKB1qtxQ5UHUqH+zPuepYVYH9DyVcZVY+sfnFoi5zdrJiEz+65jF3G
-         FgapWMLN10gI8rl13tf9IlBy/MLhOBJJWIQOGVKQQwutRLb0bA0ndmqXzliVvk8BEkpq
-         dB+/0OX0oacu1edqONSGZXzgjTRGBCgdMhAHU9+VML8hRpiRSBNDgq0/J7mWecFyqobG
-         elHBLtl05kN7DtX5rCARrz6btjMg34AxJGpfT49MjgqW6UzE83J1wmKmC2scp8NjGIrh
-         qyKZc/Sgge9x9JjCJbu6jp7F2HwWIIlASR6Q6/vjxPIRcN2Gh4DPFiScpK0O6Elr3zY/
-         q4zA==
-X-Gm-Message-State: AO0yUKXLpdT+p25qy08Q5zzGs8M+VSQbbZ0cPTJQ7/vKSWso+NON8C/8
-        q9TmRUHwZ/8HERg3328K29U6WULcee3hcPismv0=
-X-Google-Smtp-Source: AK7set9DRIgVl+UtYocAPknZ9Hw1v5tMCSYSKv0gIfztAkSSZa5qclC3niu2jcB0QVPTd9W/iyVGDA==
-X-Received: by 2002:aca:1015:0:b0:36d:ea30:7bdf with SMTP id 21-20020aca1015000000b0036dea307bdfmr7765530oiq.49.1676097593463;
-        Fri, 10 Feb 2023 22:39:53 -0800 (PST)
-Received: from localhost ([136.49.140.41])
-        by smtp.gmail.com with ESMTPSA id w17-20020a9d6751000000b0067781a9292asm2900899otm.2.2023.02.10.22.39.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Feb 2023 22:39:53 -0800 (PST)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     David Virag <virag.david003@gmail.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] clk: samsung: exynos850: Implement CMU_G3D domain
-Date:   Sat, 11 Feb 2023 00:40:04 -0600
-Message-Id: <20230211064006.14981-5-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230211064006.14981-1-semen.protsenko@linaro.org>
-References: <20230211064006.14981-1-semen.protsenko@linaro.org>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JdyJlJsLe7UYj3HkIh5IqELvu3xeVrpcZYgePszZnTM=;
+        b=iZ9NbdfHRLr4hj4i7WIrggitZ0FtV5jx7WPFgqh39t5QNR/pGMxxkFTqy6zadBJfBu
+         bB0r4KyaG24ammEZ0yQZGRPIJL+b/2J8jyiA+xDrozaKyjjUnc4ku7H893SaRDCsHyLg
+         YCe6JEFNeL8E1D+CcWsPTUmxPr7BcjYiflJohuvCFE26RHkkE0iLHXpZxsM99vMbNDgN
+         Xolc9zjpDBPWj+EqViBh+vekuwjNl3VuK8CjyzI9fjfk4YeOb0NhbrNuBiLQzII9wQ2g
+         sN+nyl2X25LRtSiqHRCDrHNKfUEBaLq2HS6eMmgnmTnxARXmx/uIVVLz6yAN2bvmci8W
+         ytlA==
+X-Gm-Message-State: AO0yUKVGAc+6tkDGmO6wELKkDYwPP86vVIqAEMSimQizOC4OarbmMnAj
+        WMbQCANjpeyUCKGJAZm/EkUJKQ==
+X-Google-Smtp-Source: AK7set8ejeEopWyNZYhHew3TugHJmthNV0eduJzyC9rqBpPCVupmvHmzId1Mb4lViYTHg0iv3ePIXA==
+X-Received: by 2002:a05:6000:8:b0:2bf:b5e4:cd63 with SMTP id h8-20020a056000000800b002bfb5e4cd63mr15123447wrx.8.1676102003159;
+        Fri, 10 Feb 2023 23:53:23 -0800 (PST)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id q4-20020a05600000c400b002c54737e908sm3787502wrx.91.2023.02.10.23.53.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Feb 2023 23:53:22 -0800 (PST)
+Message-ID: <9a121d43-b6d9-fe99-1e4c-498dac2e6b17@linaro.org>
+Date:   Sat, 11 Feb 2023 08:53:19 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
+Content-Language: en-US
+To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc:     rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Haowen Bai <baihaowen@meizu.com>,
+        Minghao Chi <chi.minghao@zte.com.cn>,
+        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
+        <linux-amlogic@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:RENESAS R-CAR THERMAL DRIVERS" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/STM32 ARCHITECTURE" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+References: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
+ <20230211021023.GA13306@ranerica-svr.sc.intel.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20230211021023.GA13306@ranerica-svr.sc.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-CMU_G3D clock domain provides clocks for Mali-G52 GPU and bus clocks for
-BLK_G3D.
+On 11/02/2023 03:10, Ricardo Neri wrote:
+> On Mon, Feb 06, 2023 at 04:34:29PM +0100, Daniel Lezcano wrote:
+>> As the name states "thermal_core.h" is the header file for the core
+>> components of the thermal framework.
+>>
+>> Too many drivers are including it. Hopefully the recent cleanups
+>> helped to self encapsulate the code a bit more and prevented the
+>> drivers to need this header.
+>>
+>> Remove this inclusion in every place where it is possible.
+>>
+>> Some other drivers did a confusion with the core header and the one
+>> exported in linux/thermal.h. They include the former instead of the
+>> latter. The changes also fix this.
+>>
+>> The tegra/soctherm driver still remains as it uses an internal
+>> function which need to be replaced.
+>>
+>> The Intel HFI driver uses the netlink internal framework core and
+>> should be changed to prevent to deal with the internals.
+> 
+> I don't see any of the thermal netlink functionality exposed. Is
+> there any work in progress?
 
-This patch adds next clocks:
-  - bus clocks in CMU_TOP for CMU_G3D
-  - all internal CMU_G3D clocks
-  - leaf clocks for GPU, TZPC (TrustZone Protection Controller) and
-    SysReg
+commit bd30cdfd9bd73b68e4977ce7c5540aa7b14c25cd
+Author: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-G3D_CMU_G3D clock was marked as CLK_IGNORE_UNUSED, as system hangs on
-boot otherwise.
+     thermal: intel: hfi: Notify user space for HFI events
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
- drivers/clk/samsung/clk-exynos850.c | 121 ++++++++++++++++++++++++++++
- 1 file changed, 121 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
-index 541761e96aeb..a24eff42baae 100644
---- a/drivers/clk/samsung/clk-exynos850.c
-+++ b/drivers/clk/samsung/clk-exynos850.c
-@@ -36,6 +36,7 @@
- #define CLK_CON_MUX_MUX_CLKCMU_CORE_MMC_EMBD	0x101c
- #define CLK_CON_MUX_MUX_CLKCMU_CORE_SSS		0x1020
- #define CLK_CON_MUX_MUX_CLKCMU_DPU		0x1034
-+#define CLK_CON_MUX_MUX_CLKCMU_G3D_SWITCH	0x1038
- #define CLK_CON_MUX_MUX_CLKCMU_HSI_BUS		0x103c
- #define CLK_CON_MUX_MUX_CLKCMU_HSI_MMC_CARD	0x1040
- #define CLK_CON_MUX_MUX_CLKCMU_HSI_USB20DRD	0x1044
-@@ -57,6 +58,7 @@
- #define CLK_CON_DIV_CLKCMU_CORE_MMC_EMBD	0x1828
- #define CLK_CON_DIV_CLKCMU_CORE_SSS		0x182c
- #define CLK_CON_DIV_CLKCMU_DPU			0x1840
-+#define CLK_CON_DIV_CLKCMU_G3D_SWITCH		0x1844
- #define CLK_CON_DIV_CLKCMU_HSI_BUS		0x1848
- #define CLK_CON_DIV_CLKCMU_HSI_MMC_CARD		0x184c
- #define CLK_CON_DIV_CLKCMU_HSI_USB20DRD		0x1850
-@@ -84,6 +86,7 @@
- #define CLK_CON_GAT_GATE_CLKCMU_CORE_MMC_EMBD	0x2024
- #define CLK_CON_GAT_GATE_CLKCMU_CORE_SSS	0x2028
- #define CLK_CON_GAT_GATE_CLKCMU_DPU		0x203c
-+#define CLK_CON_GAT_GATE_CLKCMU_G3D_SWITCH	0x2040
- #define CLK_CON_GAT_GATE_CLKCMU_HSI_BUS		0x2044
- #define CLK_CON_GAT_GATE_CLKCMU_HSI_MMC_CARD	0x2048
- #define CLK_CON_GAT_GATE_CLKCMU_HSI_USB20DRD	0x204c
-@@ -116,6 +119,7 @@ static const unsigned long top_clk_regs[] __initconst = {
- 	CLK_CON_MUX_MUX_CLKCMU_CORE_MMC_EMBD,
- 	CLK_CON_MUX_MUX_CLKCMU_CORE_SSS,
- 	CLK_CON_MUX_MUX_CLKCMU_DPU,
-+	CLK_CON_MUX_MUX_CLKCMU_G3D_SWITCH,
- 	CLK_CON_MUX_MUX_CLKCMU_HSI_BUS,
- 	CLK_CON_MUX_MUX_CLKCMU_HSI_MMC_CARD,
- 	CLK_CON_MUX_MUX_CLKCMU_HSI_USB20DRD,
-@@ -137,6 +141,7 @@ static const unsigned long top_clk_regs[] __initconst = {
- 	CLK_CON_DIV_CLKCMU_CORE_MMC_EMBD,
- 	CLK_CON_DIV_CLKCMU_CORE_SSS,
- 	CLK_CON_DIV_CLKCMU_DPU,
-+	CLK_CON_DIV_CLKCMU_G3D_SWITCH,
- 	CLK_CON_DIV_CLKCMU_HSI_BUS,
- 	CLK_CON_DIV_CLKCMU_HSI_MMC_CARD,
- 	CLK_CON_DIV_CLKCMU_HSI_USB20DRD,
-@@ -164,6 +169,7 @@ static const unsigned long top_clk_regs[] __initconst = {
- 	CLK_CON_GAT_GATE_CLKCMU_CORE_MMC_EMBD,
- 	CLK_CON_GAT_GATE_CLKCMU_CORE_SSS,
- 	CLK_CON_GAT_GATE_CLKCMU_DPU,
-+	CLK_CON_GAT_GATE_CLKCMU_G3D_SWITCH,
- 	CLK_CON_GAT_GATE_CLKCMU_HSI_BUS,
- 	CLK_CON_GAT_GATE_CLKCMU_HSI_MMC_CARD,
- 	CLK_CON_GAT_GATE_CLKCMU_HSI_USB20DRD,
-@@ -216,6 +222,9 @@ PNAME(mout_core_mmc_embd_p)	= { "oscclk", "dout_shared0_div2",
- 				    "oscclk", "oscclk" };
- PNAME(mout_core_sss_p)		= { "dout_shared0_div3", "dout_shared1_div3",
- 				    "dout_shared0_div4", "dout_shared1_div4" };
-+/* List of parent clocks for Muxes in CMU_TOP: for CMU_G3D */
-+PNAME(mout_g3d_switch_p)	= { "dout_shared0_div2", "dout_shared1_div2",
-+				    "dout_shared0_div3", "dout_shared1_div3" };
- /* List of parent clocks for Muxes in CMU_TOP: for CMU_HSI */
- PNAME(mout_hsi_bus_p)		= { "dout_shared0_div2", "dout_shared1_div2" };
- PNAME(mout_hsi_mmc_card_p)	= { "oscclk", "dout_shared0_div2",
-@@ -283,6 +292,10 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
- 	MUX(CLK_MOUT_DPU, "mout_dpu", mout_dpu_p,
- 	    CLK_CON_MUX_MUX_CLKCMU_DPU, 0, 2),
- 
-+	/* G3D */
-+	MUX(CLK_MOUT_G3D_SWITCH, "mout_g3d_switch", mout_g3d_switch_p,
-+	    CLK_CON_MUX_MUX_CLKCMU_G3D_SWITCH, 0, 2),
-+
- 	/* HSI */
- 	MUX(CLK_MOUT_HSI_BUS, "mout_hsi_bus", mout_hsi_bus_p,
- 	    CLK_CON_MUX_MUX_CLKCMU_HSI_BUS, 0, 1),
-@@ -357,6 +370,10 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
- 	DIV(CLK_DOUT_DPU, "dout_dpu", "gout_dpu",
- 	    CLK_CON_DIV_CLKCMU_DPU, 0, 4),
- 
-+	/* G3D */
-+	DIV(CLK_DOUT_G3D_SWITCH, "dout_g3d_switch", "gout_g3d_switch",
-+	    CLK_CON_DIV_CLKCMU_G3D_SWITCH, 0, 3),
-+
- 	/* HSI */
- 	DIV(CLK_DOUT_HSI_BUS, "dout_hsi_bus", "gout_hsi_bus",
- 	    CLK_CON_DIV_CLKCMU_HSI_BUS, 0, 4),
-@@ -417,6 +434,10 @@ static const struct samsung_gate_clock top_gate_clks[] __initconst = {
- 	GATE(CLK_GOUT_DPU, "gout_dpu", "mout_dpu",
- 	     CLK_CON_GAT_GATE_CLKCMU_DPU, 21, 0, 0),
- 
-+	/* G3D */
-+	GATE(CLK_GOUT_G3D_SWITCH, "gout_g3d_switch", "mout_g3d_switch",
-+	     CLK_CON_GAT_GATE_CLKCMU_G3D_SWITCH, 21, 0, 0),
-+
- 	/* HSI */
- 	GATE(CLK_GOUT_HSI_BUS, "gout_hsi_bus", "mout_hsi_bus",
- 	     CLK_CON_GAT_GATE_CLKCMU_HSI_BUS, 21, 0, 0),
-@@ -992,6 +1013,103 @@ static const struct samsung_cmu_info cmgp_cmu_info __initconst = {
- 	.clk_name		= "gout_clkcmu_cmgp_bus",
- };
- 
-+/* ---- CMU_G3D ------------------------------------------------------------- */
-+
-+/* Register Offset definitions for CMU_G3D (0x11400000) */
-+#define PLL_LOCKTIME_PLL_G3D			0x0000
-+#define PLL_CON0_PLL_G3D			0x0100
-+#define PLL_CON3_PLL_G3D			0x010c
-+#define PLL_CON0_MUX_CLKCMU_G3D_SWITCH_USER	0x0600
-+#define CLK_CON_MUX_MUX_CLK_G3D_BUSD		0x1000
-+#define CLK_CON_DIV_DIV_CLK_G3D_BUSP		0x1804
-+#define CLK_CON_GAT_CLK_G3D_CMU_G3D_PCLK	0x2000
-+#define CLK_CON_GAT_CLK_G3D_GPU_CLK		0x2004
-+#define CLK_CON_GAT_GOUT_G3D_TZPC_PCLK		0x200c
-+#define CLK_CON_GAT_GOUT_G3D_GRAY2BIN_CLK	0x2010
-+#define CLK_CON_GAT_GOUT_G3D_BUSD_CLK		0x2024
-+#define CLK_CON_GAT_GOUT_G3D_BUSP_CLK		0x2028
-+#define CLK_CON_GAT_GOUT_G3D_SYSREG_PCLK	0x202c
-+
-+
-+static const unsigned long g3d_clk_regs[] __initconst = {
-+	PLL_LOCKTIME_PLL_G3D,
-+	PLL_CON0_PLL_G3D,
-+	PLL_CON3_PLL_G3D,
-+	PLL_CON0_MUX_CLKCMU_G3D_SWITCH_USER,
-+	CLK_CON_MUX_MUX_CLK_G3D_BUSD,
-+	CLK_CON_DIV_DIV_CLK_G3D_BUSP,
-+	CLK_CON_GAT_CLK_G3D_CMU_G3D_PCLK,
-+	CLK_CON_GAT_CLK_G3D_GPU_CLK,
-+	CLK_CON_GAT_GOUT_G3D_TZPC_PCLK,
-+	CLK_CON_GAT_GOUT_G3D_GRAY2BIN_CLK,
-+	CLK_CON_GAT_GOUT_G3D_BUSD_CLK,
-+	CLK_CON_GAT_GOUT_G3D_BUSP_CLK,
-+	CLK_CON_GAT_GOUT_G3D_SYSREG_PCLK,
-+};
-+
-+/* List of parent clocks for Muxes in CMU_G3D */
-+PNAME(mout_g3d_pll_p)		= { "oscclk", "fout_g3d_pll" };
-+PNAME(mout_g3d_switch_user_p)	= { "oscclk", "dout_g3d_switch" };
-+PNAME(mout_g3d_busd_p)		= { "mout_g3d_pll", "mout_g3d_switch_user" };
-+
-+/*
-+ * Do not provide PLL table to PLL_G3D, as MANUAL_PLL_CTRL bit is not set
-+ * for that PLL by default, so set_rate operation would fail.
-+ */
-+static const struct samsung_pll_clock g3d_pll_clks[] __initconst = {
-+	PLL(pll_0818x, CLK_FOUT_G3D_PLL, "fout_g3d_pll", "oscclk",
-+	    PLL_LOCKTIME_PLL_G3D, PLL_CON3_PLL_G3D, NULL),
-+};
-+
-+static const struct samsung_mux_clock g3d_mux_clks[] __initconst = {
-+	MUX(CLK_MOUT_G3D_PLL, "mout_g3d_pll", mout_g3d_pll_p,
-+	    PLL_CON0_PLL_G3D, 4, 1),
-+	MUX(CLK_MOUT_G3D_SWITCH_USER, "mout_g3d_switch_user",
-+	    mout_g3d_switch_user_p,
-+	    PLL_CON0_MUX_CLKCMU_G3D_SWITCH_USER, 4, 1),
-+	MUX(CLK_MOUT_G3D_BUSD, "mout_g3d_busd", mout_g3d_busd_p,
-+	    CLK_CON_MUX_MUX_CLK_G3D_BUSD, 0, 1),
-+};
-+
-+static const struct samsung_div_clock g3d_div_clks[] __initconst = {
-+	DIV(CLK_DOUT_G3D_BUSP, "dout_g3d_busp", "mout_g3d_busd",
-+	    CLK_CON_DIV_DIV_CLK_G3D_BUSP, 0, 3),
-+};
-+
-+static const struct samsung_gate_clock g3d_gate_clks[] __initconst = {
-+	GATE(CLK_GOUT_G3D_CMU_G3D_PCLK, "gout_g3d_cmu_g3d_pclk",
-+	     "dout_g3d_busp",
-+	     CLK_CON_GAT_CLK_G3D_CMU_G3D_PCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_GOUT_G3D_GPU_CLK, "gout_g3d_gpu_clk", "mout_g3d_busd",
-+	     CLK_CON_GAT_CLK_G3D_GPU_CLK, 21, 0, 0),
-+	GATE(CLK_GOUT_G3D_TZPC_PCLK, "gout_g3d_tzpc_pclk", "dout_g3d_busp",
-+	     CLK_CON_GAT_GOUT_G3D_TZPC_PCLK, 21, 0, 0),
-+	GATE(CLK_GOUT_G3D_GRAY2BIN_CLK, "gout_g3d_gray2bin_clk",
-+	     "mout_g3d_busd",
-+	     CLK_CON_GAT_GOUT_G3D_GRAY2BIN_CLK, 21, 0, 0),
-+	GATE(CLK_GOUT_G3D_BUSD_CLK, "gout_g3d_busd_clk", "mout_g3d_busd",
-+	     CLK_CON_GAT_GOUT_G3D_BUSD_CLK, 21, 0, 0),
-+	GATE(CLK_GOUT_G3D_BUSP_CLK, "gout_g3d_busp_clk", "dout_g3d_busp",
-+	     CLK_CON_GAT_GOUT_G3D_BUSP_CLK, 21, 0, 0),
-+	GATE(CLK_GOUT_G3D_SYSREG_PCLK, "gout_g3d_sysreg_pclk", "dout_g3d_busp",
-+	     CLK_CON_GAT_GOUT_G3D_SYSREG_PCLK, 21, 0, 0),
-+};
-+
-+static const struct samsung_cmu_info g3d_cmu_info __initconst = {
-+	.pll_clks		= g3d_pll_clks,
-+	.nr_pll_clks		= ARRAY_SIZE(g3d_pll_clks),
-+	.mux_clks		= g3d_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(g3d_mux_clks),
-+	.div_clks		= g3d_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(g3d_div_clks),
-+	.gate_clks		= g3d_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(g3d_gate_clks),
-+	.nr_clk_ids		= G3D_NR_CLK,
-+	.clk_regs		= g3d_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(g3d_clk_regs),
-+	.clk_name		= "dout_g3d_switch",
-+};
-+
- /* ---- CMU_HSI ------------------------------------------------------------- */
- 
- /* Register Offset definitions for CMU_HSI (0x13400000) */
-@@ -1700,6 +1818,9 @@ static const struct of_device_id exynos850_cmu_of_match[] = {
- 	}, {
- 		.compatible = "samsung,exynos850-cmu-cmgp",
- 		.data = &cmgp_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynos850-cmu-g3d",
-+		.data = &g3d_cmu_info,
- 	}, {
- 		.compatible = "samsung,exynos850-cmu-hsi",
- 		.data = &hsi_cmu_info,
+> FWIW, Acked-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+
+Thanks!
+
 -- 
-2.39.1
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
