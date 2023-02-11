@@ -2,130 +2,119 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E371C636D7
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Feb 2023 02:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A83B4C6379F
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Feb 2023 06:40:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229496AbjBKCAl (ORCPT
+        id S229498AbjBKGkA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 10 Feb 2023 21:00:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36706 "EHLO
+        Sat, 11 Feb 2023 01:40:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjBKCAk (ORCPT
+        with ESMTP id S229760AbjBKGjz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Feb 2023 21:00:40 -0500
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9533E6C7C3;
-        Fri, 10 Feb 2023 18:00:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1676080839; x=1707616839;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UNTQVZa9rFmKAuptNI32rM4R7o0DY7N5tapDS1Jes9s=;
-  b=WeB+nvrXKgxPJcKTwWXfE8mRGi/uF9Ltp6qTRorbB6f7RdK83DGPv5Wf
-   SMN/VQWEnkh9rj8x7l94JIyXbOMJWtvRKg5xwevogUjEJQ/PdML8k0QfP
-   91cTiXiZqlNWr1DEt7CHGrXq/cb0aP/Wvm8H+tV4ZrWKQ3Var6mlTmaU+
-   nYikcCzFKUs2MYPgNOKKdfKkviVxU+GF8sxzpIZzKJgyQSihhSpMtoXoL
-   IesNLx/wPmNLyF7q2z5/5T06VTiB0XNVCJPOO9VHiA1/91dPel7z5iwnK
-   /cDEOallPh9RxfgbWpNlMbROYIIQAOnrIastoTXM0JaVnQeRlr94ibqPF
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10617"; a="310202506"
-X-IronPort-AV: E=Sophos;i="5.97,287,1669104000"; 
-   d="scan'208";a="310202506"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2023 18:00:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10617"; a="792161170"
-X-IronPort-AV: E=Sophos;i="5.97,287,1669104000"; 
-   d="scan'208";a="792161170"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by orsmga004.jf.intel.com with ESMTP; 10 Feb 2023 18:00:37 -0800
-Date:   Fri, 10 Feb 2023 18:10:23 -0800
-From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sat, 11 Feb 2023 01:39:55 -0500
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DD9B35B1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Feb 2023 22:39:53 -0800 (PST)
+Received: by mail-ot1-x32f.google.com with SMTP id 38-20020a9d04a9000000b0068f24f576c5so1936732otm.11
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Feb 2023 22:39:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+MhuA4Hcp/lVQHlfxLRLLaWYCwZ7dT0qzyi0BQVRFws=;
+        b=zTCsyNP77wiVJv3iupkgRsZMAmonQDgktigW3x4DJrpXxijiGVEqAH0CPM0jF71wBl
+         mwLHF55QSkg4nPda0vDmo8Vio/CfD0pS+yZMrIPrfZbOXr4RwERaB888ZU6Ugj4b7G7e
+         SOz7Fjeo4ILbgu3xLu8xBl3vMNr/+MtzJ8cqZpI2yXZ3OY1cdm4f7LBEV8HL8KkoYR3T
+         sjgVSbnzY9HAhrJuFP9ho2/1ud61y4auk77tAuD1RFtr7/y/ADO0OlGdCwDKy3DXKS+s
+         HzcEf6xci1PO9f2y7+JHZKgXLdZBggYa1rXQCExpXiyUxOfW8jCikkVGhXJhbm1FQH3+
+         hYXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+MhuA4Hcp/lVQHlfxLRLLaWYCwZ7dT0qzyi0BQVRFws=;
+        b=7bS4agjP47XeX7ej+EB8yy4TDhB2n6hDztEEj6hh6PaLqkUzmlSGaFGBZFsfYoOoUM
+         Ss0VZO5FTs/eujt2yrvrF7uJ6fsD+9ZRP6lEPmm8yB0rkNfysNaHz2JRVfLrFNFGPDYx
+         MlFDwLpUAGQdTphbACOnMSuR3Ag+P+QY67cVzhenDrXbkkiBrYaRvJ8FPUxu00Nq0Vk2
+         e88q8KAtvUTuzzkCXT/TCMCFpIZdTDX2F5uibl8MJ7T7OihVdFfXrSVSsF3qqgglYcsa
+         bFL3Tzm2Sesk9HNYoK/3xHKThhikWMvfzYROL5wv5m/qTK0c0Nn3GrzImLHQk1aZ0lZe
+         DDkw==
+X-Gm-Message-State: AO0yUKWixB+qeGEfG6IeUcT6UvQaimK7HTR6+bxnyCS7nSe3D9mkr/Da
+        CRmuHW322YqtfRob2fl0/VYv+g==
+X-Google-Smtp-Source: AK7set8oP0z2amyZeEu8vK0HrPUNwIL+ou8GHPGpjd7EWl9Tg5BfdWHG2qtld2KBA5LK2H2enlzQXA==
+X-Received: by 2002:a05:6830:1449:b0:68b:d03b:5105 with SMTP id w9-20020a056830144900b0068bd03b5105mr9193605otp.8.1676097592473;
+        Fri, 10 Feb 2023 22:39:52 -0800 (PST)
+Received: from localhost ([136.49.140.41])
+        by smtp.gmail.com with ESMTPSA id d9-20020a056830044900b0068be372babfsm2948951otc.47.2023.02.10.22.39.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Feb 2023 22:39:52 -0800 (PST)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     David Virag <virag.david003@gmail.com>,
+        Chanho Park <chanho61.park@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Haowen Bai <baihaowen@meizu.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
-        <linux-amlogic@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:RENESAS R-CAR THERMAL DRIVERS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "open list:SAMSUNG THERMAL DRIVER" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/STM32 ARCHITECTURE" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
-Message-ID: <20230211021023.GA13306@ranerica-svr.sc.intel.com>
-References: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 3/6] clk: samsung: clk-pll: Implement pll0818x PLL type
+Date:   Sat, 11 Feb 2023 00:40:03 -0600
+Message-Id: <20230211064006.14981-4-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230211064006.14981-1-semen.protsenko@linaro.org>
+References: <20230211064006.14981-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Feb 06, 2023 at 04:34:29PM +0100, Daniel Lezcano wrote:
-> As the name states "thermal_core.h" is the header file for the core
-> components of the thermal framework.
-> 
-> Too many drivers are including it. Hopefully the recent cleanups
-> helped to self encapsulate the code a bit more and prevented the
-> drivers to need this header.
-> 
-> Remove this inclusion in every place where it is possible.
-> 
-> Some other drivers did a confusion with the core header and the one
-> exported in linux/thermal.h. They include the former instead of the
-> latter. The changes also fix this.
-> 
-> The tegra/soctherm driver still remains as it uses an internal
-> function which need to be replaced.
-> 
-> The Intel HFI driver uses the netlink internal framework core and
-> should be changed to prevent to deal with the internals.
+pll0818x PLL is used in Exynos850 SoC for CMU_G3D PLL. Operation-wise,
+pll0818x is the same as pll0822x. The only difference is:
+  - pl0822x is integer PLL with Middle FVCO (950 to 2400 MHz)
+  - pl0818x is integer PLL with Low FVCO (600 to 1200 MHz)
 
-I don't see any of the thermal netlink functionality exposed. Is
-there any work in progress?
+Add pll0818x type as an alias to pll0822x.
 
-FWIW, Acked-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ drivers/clk/samsung/clk-pll.c | 1 +
+ drivers/clk/samsung/clk-pll.h | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 5ceac4c25c1c..74934c6182ce 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -1314,6 +1314,7 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 			init.ops = &samsung_pll35xx_clk_ops;
+ 		break;
+ 	case pll_1417x:
++	case pll_0818x:
+ 	case pll_0822x:
+ 		pll->enable_offs = PLL0822X_ENABLE_SHIFT;
+ 		pll->lock_offs = PLL0822X_LOCK_STAT_SHIFT;
+diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+index 5d5a58d40e7e..0725d485c6ee 100644
+--- a/drivers/clk/samsung/clk-pll.h
++++ b/drivers/clk/samsung/clk-pll.h
+@@ -34,6 +34,7 @@ enum samsung_pll_type {
+ 	pll_1451x,
+ 	pll_1452x,
+ 	pll_1460x,
++	pll_0818x,
+ 	pll_0822x,
+ 	pll_0831x,
+ 	pll_142xx,
+-- 
+2.39.1
+
