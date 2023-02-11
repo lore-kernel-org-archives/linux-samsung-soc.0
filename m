@@ -2,160 +2,129 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A506EC636CC
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Feb 2023 07:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A530C61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Feb 2023 11:31:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229604AbjBKHx1 (ORCPT
+        id S229863AbjBKLbN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 11 Feb 2023 02:53:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50242 "EHLO
+        Sat, 11 Feb 2023 06:31:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229523AbjBKHx1 (ORCPT
+        with ESMTP id S229793AbjBKLbM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 11 Feb 2023 02:53:27 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA6526594
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Feb 2023 23:53:24 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id h16so7303996wrz.12
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Feb 2023 23:53:24 -0800 (PST)
+        Sat, 11 Feb 2023 06:31:12 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6BD5303EC
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Feb 2023 03:31:09 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id m16-20020a05600c3b1000b003dc4050c94aso5822975wms.4
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Feb 2023 03:31:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JdyJlJsLe7UYj3HkIh5IqELvu3xeVrpcZYgePszZnTM=;
-        b=GLB3/AzmYk9r6d1M8HG+Xa6zUYiLBVeTfksz30BKXtFLjMOZAJt3SBE6RyR0tbn5MS
-         DD4H3wi9V/SDQuDV3tGPPSl8qpypTSQsfCfK9egDFUGuj9TX5Bg/7M3aEj2dHPApTycE
-         iVMMPBpYzZd0VtnU+lA9CnOYU9IA+UskmGMUMP/allk6UxbMwLl0hBxkiWxnQmmDhNk0
-         Bz8WSmwAI5ueU77V8JEpyzEs5FhACjZuwfsvwtP+cMXV+L1AwI+vifHHRly2zvJG0jsk
-         5IC2zBZPyhqDHEfyrpQvPJ1em2+wFTVJbqpatXgKrf7ezzHV/rk2Pm3qw34jJSH51cPz
-         XCmA==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uSR8IXziBIMVhSmEufg1SN4JgfbW84fvRPnBN9WPavc=;
+        b=llZ1PmrXT6iaZ/VVXG773oV6lIt2qBbjISC1I5Hqo4JFLve1LrZd5wmE9fF9k2U8Ia
+         ChNmhncH9r6Sj76ZORUKPHTgWg8cc2EbFPUXXLfIGzH9LPp7hG7cyXIFj+Sq5O6pCte+
+         9qRFvftZQTJP6o3LU/NV93/SzEFMuFBs5h1cxuv3j8oL2IfLPEtjpEm8APB1JCYeqKdD
+         cD7jhTLBIAA5gASzXSm4uyl7kaegJaTvXACCS7J/0so1T63Gnap5P7nx3+nK3PRL0FNM
+         +md7PWH5FIhsKrTFdLENc+NzzvmqKOXhr5IvbuGP43VMnbx3dwJev7AORn1Vmsy68BCR
+         Jr1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JdyJlJsLe7UYj3HkIh5IqELvu3xeVrpcZYgePszZnTM=;
-        b=iZ9NbdfHRLr4hj4i7WIrggitZ0FtV5jx7WPFgqh39t5QNR/pGMxxkFTqy6zadBJfBu
-         bB0r4KyaG24ammEZ0yQZGRPIJL+b/2J8jyiA+xDrozaKyjjUnc4ku7H893SaRDCsHyLg
-         YCe6JEFNeL8E1D+CcWsPTUmxPr7BcjYiflJohuvCFE26RHkkE0iLHXpZxsM99vMbNDgN
-         Xolc9zjpDBPWj+EqViBh+vekuwjNl3VuK8CjyzI9fjfk4YeOb0NhbrNuBiLQzII9wQ2g
-         sN+nyl2X25LRtSiqHRCDrHNKfUEBaLq2HS6eMmgnmTnxARXmx/uIVVLz6yAN2bvmci8W
-         ytlA==
-X-Gm-Message-State: AO0yUKVGAc+6tkDGmO6wELKkDYwPP86vVIqAEMSimQizOC4OarbmMnAj
-        WMbQCANjpeyUCKGJAZm/EkUJKQ==
-X-Google-Smtp-Source: AK7set8ejeEopWyNZYhHew3TugHJmthNV0eduJzyC9rqBpPCVupmvHmzId1Mb4lViYTHg0iv3ePIXA==
-X-Received: by 2002:a05:6000:8:b0:2bf:b5e4:cd63 with SMTP id h8-20020a056000000800b002bfb5e4cd63mr15123447wrx.8.1676102003159;
-        Fri, 10 Feb 2023 23:53:23 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id q4-20020a05600000c400b002c54737e908sm3787502wrx.91.2023.02.10.23.53.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Feb 2023 23:53:22 -0800 (PST)
-Message-ID: <9a121d43-b6d9-fe99-1e4c-498dac2e6b17@linaro.org>
-Date:   Sat, 11 Feb 2023 08:53:19 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
-Content-Language: en-US
-To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc:     rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uSR8IXziBIMVhSmEufg1SN4JgfbW84fvRPnBN9WPavc=;
+        b=qypEvNWNezHqktZYXYI/0d6GLch2TpuBUgXULJ+38SU6Dg/qy9xvN5xqtvx3NeIBKx
+         L6eI84pA3WSNfJVGPf1P7sFGYDSBVlxX6fhkC8522klPNP2r3nl0IFxHr5cmM7kmHL8+
+         gN5Aj8uG5UPDfNqiCOV01uLRdiChK/6LOcBQsxhCr9oNxfnKzCAk2l6NHD8edmBRO/1G
+         asP5Rr+aivBM645OKeJjQRHzJmAv06c2AFDyMGD1ke75m1RTG/LF152vysPZWh6VfzYG
+         1XAq4/assafxoE4kP9S52vchNRN9ijIZQ0HSWv9yiX2DIVRp0F7Py9s/5MQ2j78WNCWz
+         znng==
+X-Gm-Message-State: AO0yUKUCbBHfvYIhYKbYIUj6eqmQUt+EK6v3J1N4kaID8HksKiRnTrPL
+        iM/uloMKsSKYZ4YMukRHt4sBEA==
+X-Google-Smtp-Source: AK7set/rJMtqF6GRUHR9/M1BvLLThNbbHt3y3RnWKuDtmYwLPRB6rtW0jKn4dtbyQJWbDbQnqPvl3Q==
+X-Received: by 2002:a05:600c:2b46:b0:3df:12ac:7cc9 with SMTP id e6-20020a05600c2b4600b003df12ac7cc9mr15122532wmf.15.1676115068397;
+        Sat, 11 Feb 2023 03:31:08 -0800 (PST)
+Received: from krzk-bin.. ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id l40-20020a05600c1d2800b003dd1b00bd9asm9033559wms.32.2023.02.11.03.31.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Feb 2023 03:31:08 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Haowen Bai <baihaowen@meizu.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
-        <linux-amlogic@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:RENESAS R-CAR THERMAL DRIVERS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "open list:SAMSUNG THERMAL DRIVER" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/STM32 ARCHITECTURE" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
-References: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
- <20230211021023.GA13306@ranerica-svr.sc.intel.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20230211021023.GA13306@ranerica-svr.sc.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] ARM: dts: samsung: Late DTS for v6.3
+Date:   Sat, 11 Feb 2023 12:31:03 +0100
+Message-Id: <20230211113103.58894-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/02/2023 03:10, Ricardo Neri wrote:
-> On Mon, Feb 06, 2023 at 04:34:29PM +0100, Daniel Lezcano wrote:
->> As the name states "thermal_core.h" is the header file for the core
->> components of the thermal framework.
->>
->> Too many drivers are including it. Hopefully the recent cleanups
->> helped to self encapsulate the code a bit more and prevented the
->> drivers to need this header.
->>
->> Remove this inclusion in every place where it is possible.
->>
->> Some other drivers did a confusion with the core header and the one
->> exported in linux/thermal.h. They include the former instead of the
->> latter. The changes also fix this.
->>
->> The tegra/soctherm driver still remains as it uses an internal
->> function which need to be replaced.
->>
->> The Intel HFI driver uses the netlink internal framework core and
->> should be changed to prevent to deal with the internals.
-> 
-> I don't see any of the thermal netlink functionality exposed. Is
-> there any work in progress?
+Hi,
 
-commit bd30cdfd9bd73b68e4977ce7c5540aa7b14c25cd
-Author: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Late pull with DTS cleanups and minor fixes for Exynos ARM boards.  I know it
+is late in the cycle but:
+1. I am really pushing recently towards full DTS compliance with `dtbs_check`
+   and I am almost there,
+2. All these should be low-risk cleanups or fixes, so I don't expect anything
+   broken (previous round of my cleanups affected devfreq/exynos-bus on
+   Exynos4412, but this is some weird driver problem which I am still
+   investigating).
 
-     thermal: intel: hfi: Notify user space for HFI events
+Best regards,
+Krzysztof
 
 
-> FWIW, Acked-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+The following changes since commit 27be20e3b9d125f2c1b066d1d238c67bf5b89dc3:
 
-Thanks!
+  ARM: dts: exynos: add unit address to DWC3 node wrapper in Exynos54xx (2023-01-29 11:34:12 +0100)
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+are available in the Git repository at:
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-6.3-2
 
+for you to fetch changes up to 301d3dd05525e3a046f6cfa6ee4dea6a3b7111ee:
+
+  ARM: dts: exynos: correct max98090 DAI argument in Snow (2023-02-09 12:58:30 +0100)
+
+----------------------------------------------------------------
+Samsung DTS ARM changes for v6.3, part two
+
+Several cleanups pointed out by `make dtbs_check`:
+1. Align LED status node name with bindings.
+2. Drop redundant properties.
+3. Move i2c-gpio node out of soc to top-level, as soc node is expected
+   to have only MMIO nodes.
+4. Correct SPI NOR flash compatible in SMDK5250 and SMDKv310.
+5. Align GPIO property names in WM1811-family codec nodes with bindings.
+6. Correct MAX98090 codec DAI cells in Snow.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (10):
+      ARM: dts: exynos: align status led name with bindings on Origen4210
+      ARM: dts: exynos: drop default status from I2C10 on Arndale
+      ARM: dts: exynos: drop redundant address/size cells from I2C10 on Arndale
+      ARM: dts: exynos: move I2C10 out of soc node on Arndale
+      ARM: dts: exynos: correct SPI nor compatible in SMDKv310
+      ARM: dts: exynos: correct SPI nor compatible in SMDK5250
+      ARM: dts: exynos: add "gpios" suffix to wlf,ldo1ena on Midas
+      ARM: dts: exynos: add "gpios" suffix to wlf,ldo1ena on Arndale
+      ARM: dts: s5pv210: add "gpios" suffix to wlf,ldo1ena on Aries
+      ARM: dts: exynos: correct max98090 DAI argument in Snow
+
+ arch/arm/boot/dts/exynos4210-origen.dts    |  2 +-
+ arch/arm/boot/dts/exynos4210-smdkv310.dts  |  2 +-
+ arch/arm/boot/dts/exynos4412-midas.dtsi    |  4 ++--
+ arch/arm/boot/dts/exynos5250-arndale.dts   | 35 +++++++++++++-----------------
+ arch/arm/boot/dts/exynos5250-smdk5250.dts  |  2 +-
+ arch/arm/boot/dts/exynos5250-snow-rev5.dts |  4 ++--
+ arch/arm/boot/dts/s5pv210-aries.dtsi       |  4 ++--
+ 7 files changed, 24 insertions(+), 29 deletions(-)
