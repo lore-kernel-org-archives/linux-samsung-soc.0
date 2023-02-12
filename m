@@ -2,160 +2,96 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4913C61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 12 Feb 2023 03:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA92C05027
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 12 Feb 2023 18:59:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229570AbjBLDOA (ORCPT
+        id S229599AbjBLS72 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 11 Feb 2023 22:14:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45018 "EHLO
+        Sun, 12 Feb 2023 13:59:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbjBLDN7 (ORCPT
+        with ESMTP id S229496AbjBLS71 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 11 Feb 2023 22:13:59 -0500
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80AC315C8A;
-        Sat, 11 Feb 2023 19:13:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1676171638; x=1707707638;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=8Ee53bw0HTAKCWMxXPAJRBW6Y+YE/qZmXr9sA0iMSzM=;
-  b=nTUw4M66NTXzklVY0e9u965pPREEaq4R/zwK1rf5gCpdWQMzG2HdsDCU
-   6GezG+wPjra26EHS2ckJRzBmsUG01clclvPGt8k5QmSkjaTTl+ogZv5m5
-   DOsvEPyT/9ACmmRVgCsBcyQxP6CZ3NpUnIlcg8TDy0iZrl8j1K0gTzMQ1
-   ryLp9c6bk2ocaWRISpjwU9ObhJcP0nUubtHSqK+d9+Qe7PAO+Ui4BMZsD
-   GS79gAnxVCskp1SjM3Axa+cMj8FZtL7m9fnuGAGHOIm6JcFVILidsI5/P
-   aujrpTvVA2wk4coiRefhAliRGQlr8uLrzP8II74Oyt8kpH3VzZytWHMfv
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10618"; a="332824343"
-X-IronPort-AV: E=Sophos;i="5.97,290,1669104000"; 
-   d="scan'208";a="332824343"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2023 19:13:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10618"; a="842406476"
-X-IronPort-AV: E=Sophos;i="5.97,290,1669104000"; 
-   d="scan'208";a="842406476"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by orsmga005.jf.intel.com with ESMTP; 11 Feb 2023 19:13:56 -0800
-Date:   Sat, 11 Feb 2023 19:23:45 -0800
-From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To:     srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sun, 12 Feb 2023 13:59:27 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 687E211141
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Feb 2023 10:59:25 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id az4-20020a05600c600400b003dff767a1f1so7529271wmb.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Feb 2023 10:59:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GmOvnEkaqrRpifwEMdH8ouHFrGB+gA1HRCLLbZbkxcE=;
+        b=A/A9bnKggSe4CtixJPIXg2+ocd3ky1Zf88YMRLyyctEVsVzTjAuGLCYwMqY+b1uXRF
+         1b6lKDkCcNyCryVa4tNBGBZMbr5UT5fBc+O7Gpsb/yGgxOOcg7NwQanPKAfrF6EH97mB
+         Y+Svm/g/09FFelQy+xYSR61uoGxlLE3WO4sRaSOGER9CqMFe5nKOl2PkVf4Z0lR53qGi
+         xV26sAos0E8gn0AnkE0zFPhlZnmu8Ng+UWYeKNKOVtKNzjJfE7uiSH/RkV0MQHRA7kks
+         WOVtB0PZyKUWJ5eAifKTNvF2DI6GCIC6O17Tv5daf3tVHfve7ziLPCMDxDEVzspZAcet
+         Do3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GmOvnEkaqrRpifwEMdH8ouHFrGB+gA1HRCLLbZbkxcE=;
+        b=J9mjad9/itpr+YWNWxIYGaMod3ufk0h1owzuiz51lpSPKl10Lk7QPjuK4BREP/JMqq
+         jEdLD6lW7TYsaARQiahoDWQ5kMJWt1PteJWLxdUepfJzsH/wT3NyZJV8Nk/f9y93BjRs
+         MAjBIWcmlcKIyTnJ1pOCHbO44+wqscj3KpT3gMIpFEAXn+2JRPW4DdAaZfUfni/VP43z
+         FLWCOX3Bdz1jQZbe6/X1+bb3NQWHzJZ0oKjpIoxrmLhRRJpMx9vS4sVQKonN8UwK+uVs
+         kvo61s+GnyEoiaHYI4BP4uX2xJb621SyWasQjMHZ9S0eUdxYyz9KExlpGNOJ0vALSWlw
+         H80w==
+X-Gm-Message-State: AO0yUKXPlbu9m8Gg4dvP5AhQWXFy/rd9Xxw+TZ0Ilq6FMbluon4F3mDT
+        c+FrIr4kTyW4yKdxY3dd5NDMYA==
+X-Google-Smtp-Source: AK7set+SpidB+O2lsrnojHpqhI3WV5OLqCeRA0fDizUjdBPfOefwNNQTUyaGj7CS1grOOenVKI5CEQ==
+X-Received: by 2002:a05:600c:30ca:b0:3df:c284:7e78 with SMTP id h10-20020a05600c30ca00b003dfc2847e78mr19176238wmn.38.1676228363627;
+        Sun, 12 Feb 2023 10:59:23 -0800 (PST)
+Received: from krzk-bin.. ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id bg1-20020a05600c3c8100b003e118684d56sm12391350wmb.45.2023.02.12.10.59.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Feb 2023 10:59:23 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Haowen Bai <baihaowen@meizu.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
-        <linux-amlogic@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:RENESAS R-CAR THERMAL DRIVERS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "open list:SAMSUNG THERMAL DRIVER" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/STM32 ARCHITECTURE" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
-Message-ID: <20230212032345.GA17062@ranerica-svr.sc.intel.com>
-References: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
- <20230211021023.GA13306@ranerica-svr.sc.intel.com>
- <9a121d43-b6d9-fe99-1e4c-498dac2e6b17@linaro.org>
- <258dedb542d4dcb73e9ec903d205ba64639c9f0a.camel@linux.intel.com>
+        Tomasz Figa <t.figa@samsung.com>,
+        Mateusz Krawczuk <m.krawczuk@partner.samsung.com>,
+        Kukjin Kim <kgene.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/2] ARM: dts: exynos: correct whitespace in Midas
+Date:   Sun, 12 Feb 2023 19:58:17 +0100
+Message-Id: <20230212185818.43503-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <258dedb542d4dcb73e9ec903d205ba64639c9f0a.camel@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Feb 11, 2023 at 08:32:48AM -0800, srinivas pandruvada wrote:
-> On Sat, 2023-02-11 at 08:53 +0100, Daniel Lezcano wrote:
-> > On 11/02/2023 03:10, Ricardo Neri wrote:
-> > > On Mon, Feb 06, 2023 at 04:34:29PM +0100, Daniel Lezcano wrote:
-> > > > As the name states "thermal_core.h" is the header file for the
-> > > > core
-> > > > components of the thermal framework.
-> > > > 
-> > > > Too many drivers are including it. Hopefully the recent cleanups
-> > > > helped to self encapsulate the code a bit more and prevented the
-> > > > drivers to need this header.
-> > > > 
-> > > > Remove this inclusion in every place where it is possible.
-> > > > 
-> > > > Some other drivers did a confusion with the core header and the
-> > > > one
-> > > > exported in linux/thermal.h. They include the former instead of
-> > > > the
-> > > > latter. The changes also fix this.
-> > > > 
-> > > > The tegra/soctherm driver still remains as it uses an internal
-> > > > function which need to be replaced.
-> > > > 
-> > > > The Intel HFI driver uses the netlink internal framework core and
-> > > > should be changed to prevent to deal with the internals.
-> > > 
-> > > I don't see any of the thermal netlink functionality exposed. Is
-> > > there any work in progress?
-> > 
-> > commit bd30cdfd9bd73b68e4977ce7c5540aa7b14c25cd
-> > Author: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> > 
-> >      thermal: intel: hfi: Notify user space for HFI events
-> > 
-> This is already exposed and we use it in user space.
-> thermal_genl_cpu_capability_event() is called from intel_hfi driver to
-> send the cpu capabilities.
-> 
-> Not sure what do you mean by  "don't see netlink functionality
-> exposed"?
-> 
-> thermal_genl_cpu_caps struct and thermal_genl_cpu_capability_event()
-> are defined in drivers/thermal/thermal_netlink.h.
+Correct indentation and whitespace in Exynos4412 Midas board.
 
-Yes, I mean exactly this. The HFI code uses this functionality, but it is
-declared in "../thermal_netlink.h". I just wondered if that is OK or also
-needs to be declared somewhere in include/linux/
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm/boot/dts/exynos4412-midas.dtsi | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks and BR,
-Ricardo
+diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
+index 763bd3441c5b..3be48de5c130 100644
+--- a/arch/arm/boot/dts/exynos4412-midas.dtsi
++++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
+@@ -497,8 +497,7 @@ &fimc_is {
+ 	pinctrl-0 = <&fimc_is_uart>;
+ 	pinctrl-names = "default";
+ 	status = "okay";
+-
+-	};
++};
+ 
+ &fimc_lite_0 {
+ 	status = "okay";
+-- 
+2.34.1
+
