@@ -2,57 +2,57 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DE8C6379F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Feb 2023 14:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD10C61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Feb 2023 14:10:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233272AbjBNOHK (ORCPT
+        id S233328AbjBNOKV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 09:07:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50952 "EHLO
+        Tue, 14 Feb 2023 09:10:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233216AbjBNOG5 (ORCPT
+        with ESMTP id S233299AbjBNOKT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Feb 2023 09:06:57 -0500
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83FF429155
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 06:06:27 -0800 (PST)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230214140623epoutp036c0e6f4fb332f330b72534188d10d316~Dtfyn3__t1701617016epoutp03c
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 14:06:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230214140623epoutp036c0e6f4fb332f330b72534188d10d316~Dtfyn3__t1701617016epoutp03c
+        Tue, 14 Feb 2023 09:10:19 -0500
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2942A17162
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 06:09:38 -0800 (PST)
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230214140840epoutp02e0155feaa7a0abfacc9592c65f5a976b~Dthy1Rt0n0874708747epoutp02a
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 14:08:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230214140840epoutp02e0155feaa7a0abfacc9592c65f5a976b~Dthy1Rt0n0874708747epoutp02a
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1676383583;
-        bh=SdNM4Tz3fLK6Ln86MZGGxK52Puw9N/dkEq+z+0rNYYs=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=rVpQ4dCyVQpQ1VGxOQ2VRgfvyfdjz/aMTYhbFv6XEHClKh0tVOFPEagnQASzkXQlN
-         CooupJPKCAtkeq1pRAQntceFH2J/7pMyyB/Pofzq+lmkaXKXyIiWeahodfvguEbeR5
-         BZ3SqJ+TP94pzBDMEU0Qwf7iY02eEKbnnnp9cg+c=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20230214140622epcas5p4f151af96adc5d416d4f57d74b9082c83~DtfyAKCzc3228232282epcas5p4B;
-        Tue, 14 Feb 2023 14:06:22 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.182]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4PGNKn1xpWz4x9Pp; Tue, 14 Feb
-        2023 14:06:21 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        39.EF.55678.D559BE36; Tue, 14 Feb 2023 23:06:21 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20230214121348epcas5p48a3b2b225f616d748cc20622d01edb97~Dr9gG5u4l0767707677epcas5p4b;
-        Tue, 14 Feb 2023 12:13:48 +0000 (GMT)
+        s=mail20170921; t=1676383720;
+        bh=P4o2RODWrzpC0VraKdmaU2+Wsu5NhyyDqSjcT9MD770=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=shPIJ6HfaiRYa62FMQH15a1LJXvKnpxUUElYD28PB2mXMcYRmQizTFdrdR5M3Rfi2
+         RuWQB1pJcAtKAY+9I7+zv4NNTwQSlgSDGFM/pRL47pXW/ilaLfnq1AAtzWABsxKgPr
+         x6w2tT9d80Ng/h2EBpngnCF4DEJH4a30dx+NvjnQ=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20230214140839epcas5p2a33f397fd00d4b08838b0012423c31f1~DthyBc6L72728027280epcas5p2-;
+        Tue, 14 Feb 2023 14:08:39 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4PGNNQ1VV0z4x9Pv; Tue, 14 Feb
+        2023 14:08:38 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        88.79.10528.6E59BE36; Tue, 14 Feb 2023 23:08:38 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20230214121424epcas5p38e74b52a2d94a32b82a093c7e0a12499~Dr_BbpmeK2572325723epcas5p3B;
+        Tue, 14 Feb 2023 12:14:24 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230214121348epsmtrp2dc813dcaf173070dfd350293e1cd2916~Dr9gF-WY01865118651epsmtrp2J;
-        Tue, 14 Feb 2023 12:13:48 +0000 (GMT)
-X-AuditID: b6c32a4a-909fc7000000d97e-d3-63eb955d2f17
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230214121424epsmtrp114f31489629691cd65e62d91d8f2a18d~Dr_Bas2u41843918439epsmtrp1E;
+        Tue, 14 Feb 2023 12:14:24 +0000 (GMT)
+X-AuditID: b6c32a49-e75fa70000012920-47-63eb95e62dff
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        2A.EA.17995.CFA7BE36; Tue, 14 Feb 2023 21:13:48 +0900 (KST)
+        98.FA.17995.02B7BE36; Tue, 14 Feb 2023 21:14:24 +0900 (KST)
 Received: from cheetah.sa.corp.samsungelectronics.net (unknown
         [107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230214121345epsmtip126bd4d57eb7bd902e5958cb92e11db8d~Dr9dRniJT2436024360epsmtip1d;
-        Tue, 14 Feb 2023 12:13:45 +0000 (GMT)
+        20230214121421epsmtip11cc3c41c0c08218d174e751e42f73cba~Dr9_oUh8v2436024360epsmtip1j;
+        Tue, 14 Feb 2023 12:14:21 +0000 (GMT)
 From:   Shradha Todi <shradha.t@samsung.com>
 To:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
         bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
@@ -64,94 +64,92 @@ Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Shradha Todi <shradha.t@samsung.com>
-Subject: [PATCH 00/16] Refactor Exynos PCIe driver to make it generic
-Date:   Tue, 14 Feb 2023 17:43:17 +0530
-Message-Id: <20230214121333.1837-1-shradha.t@samsung.com>
+Subject: [PATCH 05/16] dt-bindings: PCI: Rename the term elbi to appl
+Date:   Tue, 14 Feb 2023 17:43:22 +0530
+Message-Id: <20230214121333.1837-6-shradha.t@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEJsWRmVeSWpSXmKPExsWy7bCmpm7s1NfJBsdesFk8mLeNzWJJU4bF
-        /CPnWC1mbZvLaPHx9zkWixVfZrJb9L14yGzR0POb1WLT42usFpd3zWGzODvvOJvFjPP7mCxa
-        /rSwWLQcbWexWHvkLrvFoq1f2C3+79nBbvFn+gcWi97DtRabN01ldhDxeLPpO7vHzll32T0W
-        bCr12LSqk83jzrU9bB7vzp1j93hyZTqTx+Yl9R4b3+1g8ljU8JHNo2/LKkaPz5vkAniism0y
-        UhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgN5UUihLzCkF
-        CgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgYmQIVJmRndJ5d
-        xVwwib/i1+aiBsY2ni5GTg4JAROJLfNuMnYxcnEICexmlOjfOZcdwvnEKLH983RWCOczo8Ty
-        b6uZYFrmNn+BSuxilJi//AlUfyuTxK6j65lBqtgEtCQav3YxgyREBG4xSbz8/BBsMLPAKUaJ
-        Ay/2AjkcHMICrhL7lueDNLAIqEp8uLQELMwrYClxcjnUgfISqzccAJsjIbCHQ2Jhwy9mkBoJ
-        AReJpf8DIWqEJV4d38IOYUtJfH63lw3CTpdYuXkGM4SdI/Ft8xKoD+wlDlyZwwIyhllAU2L9
-        Ln2IsKzE1FPrwEqYBfgken8/gSrnldgxD8ZWlvjydw8LhC0pMe/YZVYI20Pi8/QjYHEhgViJ
-        prY3rBMYZWchbFjAyLiKUTK1oDg3PbXYtMAoL7UcHk/J+bmbGMGJV8trB+PDBx/0DjEycTAe
-        YpTgYFYS4RV++iJZiDclsbIqtSg/vqg0J7X4EKMpMMQmMkuJJucDU39eSbyhiaWBiZmZmYml
-        sZmhkjivuu3JZCGB9MSS1OzU1ILUIpg+Jg5OqQYmsae6CtzxKaohLKlCn441qXB4Wb/9Mtcq
-        fe8D2dvS2kvmLM77fl987l+lnKnO2w3ZpWOWbFmw8qMal13smmvib7fPVQ6Mmbm/qkSc5bfj
-        qSnz+05lNbBIaE/4/9ig+lZ3/W4XrV1bzzreZnE7xi12YWPl1BlNPP/MKu86rjv5I9JOInpi
-        9W7/Ds/D6pKCfGzP7zGez/gg9++HxfPcSV+be9I2Zk79p9kjZn1SdN2LdoElFR+C4kqfa0rI
-        P5+T8ran6FdW0ZLnOsoTLd1OFKzNXxd3Paioa9p7j4k9pYJ7GxLn+E7O/DgvrzZRLSiQzfju
-        AXd98xBXx4XKmz2Y0069Dp0VVG15Zs6jppeF/IZKLMUZiYZazEXFiQBuU2XPRQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHLMWRmVeSWpSXmKPExsWy7bCSnO6fqtfJBlMbZC0ezNvGZrGkKcNi
+In-Reply-To: <20230214121333.1837-1-shradha.t@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAJsWRmVeSWpSXmKPExsWy7bCmuu6zqa+TDf4cY7d4MG8bm8WSpgyL
+        +UfOsVrM2jaX0eLj73MsFiu+zGS36HvxkNmioec3q8Wmx9dYLS7vmsNmcXbecTaLGef3MVm0
+        /GlhsWg52s5isfbIXXaLRVu/sFv837OD3eLP9A8sFr2Hay02b5rK7CDi8WbTd3aPnbPusnss
+        2FTqsWlVJ5vHnWt72DzenTvH7vHkynQmj81L6j02vtvB5LGo4SObR9+WVYwenzfJBfBEZdtk
+        pCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXmAL2ppFCWmFMK
+        FApILC5W0rezKcovLUlVyMgvLrFVSi1IySkwKdArTswtLs1L18tLLbEyNDAwMgUqTMjOuNLf
+        yFywnbNiwwK7BsZj7F2MnBwSAiYS285cZu1i5OIQEtjNKHFmxQYmCOcTo0TjtYNsEM5nRomt
+        P6cwwbS0/J7BDpHYxShx+dEPZginlUni/6c5bCBVbAJaEo1fu8ASIgK3mCRefn4I1sIscIpR
+        4sCLvWDrhQVcJa7fXMEMYrMIqEqsP7EELM4rYCmxYud1qH3yEqs3HACr4RSwkmhp3cQMEb/A
+        IbG/KRvCdpG4Pmsh1EvCEq+Ob4GypSRe9rdB2ekSKzfPgOrNkfi2eQnUfHuJA1fmsHQxcgAd
+        pymxfpc+RFhWYuqpdWAlzAJ8Er2/n0CV80rsmAdjK0t8+buHBcKWlJh3DBSSILaHRMfHfrAa
+        IYFeRonW96ITGOVmIWxYwMi4ilEytaA4Nz212LTAMC+1HB5ryfm5mxjBSVnLcwfj3Qcf9A4x
+        MnEwHmKU4GBWEuEVfvoiWYg3JbGyKrUoP76oNCe1+BCjKTD4JjJLiSbnA/NCXkm8oYmlgYmZ
+        mZmJpbGZoZI4r7rtyWQhgfTEktTs1NSC1CKYPiYOTqkGJjGTL1u1s1mf2xzfvL1h17uwU4m7
+        k/9WnvYUjvqf832Nnd+ka63lsxZu6H5xLu3c/Ef1bt3b4qctl/2UYDvp6bKVF3vMjr01uVSZ
+        8EaQa04rxxXfWTbFi1S/eeef85+rqaGds0l10+JJ2zTbfzpX5V3w0Io6u5z/ekYsw+ns+d+D
+        uZeHOreq1Lsuf5/k8/mLiFQ3R6XXFKN+hYCJGYycsz+rL86Z9CDlyZLNlqdF97cc4A4t/iTR
+        u7Gon+VweFnMP6MT3DwZdw2r3plN8+dMLt2ZMH0eG9ezTtXWaWeq773z2CH7zNO375PvjCvr
+        sk+Z7f/2eMZlLavziV0hT/+X8O+5dbjHx9Rd8ePzzJUlykosxRmJhlrMRcWJABqBLptTBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSnK5C9etkg9mfhSwezNvGZrGkKcNi
         /pFzrBazts1ltPj4+xyLxYovM9kt+l48ZLZo6PnNarHp8TVWi8u75rBZnJ13nM1ixvl9TBYt
         f1pYLFqOtrNYrD1yl91i0dYv7Bb/9+xgt/gz/QOLRe/hWovNm6YyO4h4vNn0nd1j56y77B4L
         NpV6bFrVyeZx59oeNo93586xezy5Mp3JY/OSeo+N73YweSxq+Mjm0bdlFaPH501yATxRXDYp
-        qTmZZalF+nYJXBmdZ1cxF0zir/i1uaiBsY2ni5GTQ0LARGJu8xfWLkYuDiGBHYwSS5f9ZINI
-        SEp8vriOCcIWllj57zk7RFEzk8THJ5fBEmwCWhKNX7uYQRIiAq+YJA7vmQHmMAtcYJS4dbAb
-        qIWDQ1jAVWLf8nyQBhYBVYkPl5aAhXkFLCVOLoe6Ql5i9YYDzBMYeRYwMqxilEwtKM5Nzy02
-        LDDKSy3XK07MLS7NS9dLzs/dxAiOAi2tHYx7Vn3QO8TIxMF4iFGCg1lJhFf46YtkId6UxMqq
-        1KL8+KLSnNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGphKfniZiR5PSOo8k5og
-        Pffni6+TDpqrHjnh4CUif/1+0IQq2c19230EZLwuf+hduUb94ZuK3UvPLNqnrTPv9ouz+fm2
-        D/YrLhb4PPeE6r3zEyvnfFf0tPlXs8jnW7+sr+BuvUtL9eRbP/md7G/dM8F7aY+Zr/z0hV9u
-        Xvt77/+CSZXyPSKt6lzrGV+fZq2WtTjdfubo2hM+r1dYv/P18ey6dzgt+GqqnpLHo+RHx5/P
-        UL6X/TLwsLpP3i3228E61+9Hp2UqzU+c7LXgzYXmWyXKJ5yLmzprpb/v2FokJH5ndYZFbq+1
-        99+dUh/EN/29JcyVJ/hAuD0g4ZTVv1/SLnlXEvMfvzimmH3br/fuI/WzSizFGYmGWsxFxYkA
-        kfOhw/ECAAA=
-X-CMS-MailID: 20230214121348epcas5p48a3b2b225f616d748cc20622d01edb97
+        qTmZZalF+nYJXBlX+huZC7ZzVmxYYNfAeIy9i5GTQ0LARKLl9wwgm4tDSGAHo8SS1YfZIBKS
+        Ep8vrmOCsIUlVv57DlXUzCRx+dV1FpAEm4CWROPXLmaQhIjAKyaJw3tmgDnMAhcYJW4d7Abb
+        ISzgKnH95gpmEJtFQFVi/YklYHFeAUuJFTuvQ62Ql1i94QBYDaeAlURL6yYwWwioZtavVYwT
+        GPkWMDKsYpRMLSjOTc8tNiwwykst1ytOzC0uzUvXS87P3cQIjhwtrR2Me1Z90DvEyMTBeIhR
+        goNZSYRX+OmLZCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8F7pOxgsJpCeWpGanphakFsFkmTg4
+        pRqY6n94zPzw/Ifsr4+a5vcbnM/7cDs1feJy17x0+29d8w2JL8IVezR/NtctuCVUbyrsvW1m
+        fqH0DLkWwfji67+X3TtVvuSB96In/LzPZVo6ZYUmXSrquNqlbyRQZLd+9flVnvef29bpfbqf
+        b7b1sTvf7+1lHFy1t1ytsxZH9HkJHzluOHGeyL2F+p4aXypbg92WGDCwxf6Q3qI2Yz6Li/qH
+        BeJMW9WL3gaaPLa9uOffe8Mpgn+s+JY/VNsQ9+/2Z48bT0PbqiaUMG/LiDewST7d9W5riKR0
+        4to7a2f2szufu27EV7PjKnPVlR7JJb1LWx7vz+jjVjn7ed3a7s33WL3jt7rK/s6OzHsbKiyw
+        jM9ZiaU4I9FQi7moOBEAJbfJ/QsDAAA=
+X-CMS-MailID: 20230214121424epcas5p38e74b52a2d94a32b82a093c7e0a12499
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230214121348epcas5p48a3b2b225f616d748cc20622d01edb97
-References: <CGME20230214121348epcas5p48a3b2b225f616d748cc20622d01edb97@epcas5p4.samsung.com>
+X-CMS-RootMailID: 20230214121424epcas5p38e74b52a2d94a32b82a093c7e0a12499
+References: <20230214121333.1837-1-shradha.t@samsung.com>
+        <CGME20230214121424epcas5p38e74b52a2d94a32b82a093c7e0a12499@epcas5p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Currently pci-exynos is being used as a PCIe driver for Exynos5433
-only. This patch set refactors the driver to make it extensible to
-other Samsung manufactured SoCs having DWC PCIe controllers.
-The major change points are:
-- Renaming all common functions/structures to use "samsung" instead
-  of "exynos". Make common probe/remove/suspend/resume
-- Making clock/regulator get/enable/disable generic
-- Adding private struct to hold platform specific function ops
+DT uses the name elbi in reg-names for application logic
+registers which is a wrong nomenclature. This patch fixes
+the same.
 
-Shradha Todi (16):
-  dt-bindings: PCI: Rename Exynos PCIe binding to Samsung PCIe
-  PCI: exynos: Rename Exynos PCIe driver to Samsung PCIe
-  PCI: samsung: Change macro names to exynos specific
-  PCI: samsung: Use clock bulk API to get clocks
-  dt-bindings: PCI: Rename the term elbi to appl
-  arm64: dts: exynos: Rename the term elbi to appl
-  PCI: samsung: Rename the term elbi to appl
-  PCI: samsung: Rename exynos_pcie to samsung_pcie
-  PCI: samsung: Make common appl readl/writel functions
-  dt-bindings: PCI: Add phy-names as required property
-  arm64: dts: exynos: Add phy-names as DT property
-  PCI: samsung: Get PHY using non-DT version
-  PCI: samsung: Rename common functions to samsung
-  PCI: samsung: Add platform device private data
-  PCI: samsung: Add structure to hold resource operations
-  PCI: samsung: Make handling of regulators generic
+This commit shouldn't be applied without changes
+"arm64: dts: Rename the term elbi to appl" and
+"PCI: samsung: Rename the term elbi to appl"
 
- ...ung,exynos-pcie.yaml => samsung,pcie.yaml} |  15 +-
- MAINTAINERS                                   |   4 +-
- arch/arm64/boot/dts/exynos/exynos5433.dtsi    |   3 +-
- drivers/pci/controller/dwc/Kconfig            |   6 +-
- drivers/pci/controller/dwc/Makefile           |   2 +-
- drivers/pci/controller/dwc/pci-samsung.c      | 508 ++++++++++++++++++
- 6 files changed, 526 insertions(+), 12 deletions(-)
- rename Documentation/devicetree/bindings/pci/{samsung,exynos-pcie.yaml => samsung,pcie.yaml} (89%)
- create mode 100644 drivers/pci/controller/dwc/pci-samsung.c
+Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+---
+ Documentation/devicetree/bindings/pci/samsung,pcie.yaml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/pci/samsung,pcie.yaml b/Documentation/devicetree/bindings/pci/samsung,pcie.yaml
+index 6cd36d9ccba0..9c58c4d1f6a7 100644
+--- a/Documentation/devicetree/bindings/pci/samsung,pcie.yaml
++++ b/Documentation/devicetree/bindings/pci/samsung,pcie.yaml
+@@ -25,13 +25,13 @@ properties:
+   reg:
+     items:
+       - description: Data Bus Interface (DBI) registers.
+-      - description: External Local Bus interface (ELBI) registers.
++      - description: Controller's application logic registers.
+       - description: PCIe configuration space region.
+ 
+   reg-names:
+     items:
+       - const: dbi
+-      - const: elbi
++      - const: appl
+       - const: config
+ 
+   interrupts:
 -- 
 2.17.1
 
