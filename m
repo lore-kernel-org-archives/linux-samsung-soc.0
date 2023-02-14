@@ -2,151 +2,109 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94953C05027
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Feb 2023 14:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C35D5C61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Feb 2023 16:13:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229725AbjBNObR (ORCPT
+        id S231901AbjBNQNG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 09:31:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55930 "EHLO
+        Tue, 14 Feb 2023 11:13:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232568AbjBNObP (ORCPT
+        with ESMTP id S232064AbjBNQM5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Feb 2023 09:31:15 -0500
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93E44A8
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 06:31:14 -0800 (PST)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230214141132epoutp03ecc18dee7b0ae286e1416c5ad99ad8ab~DtkTDGJzm2112821128epoutp03N
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 14:11:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230214141132epoutp03ecc18dee7b0ae286e1416c5ad99ad8ab~DtkTDGJzm2112821128epoutp03N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1676383892;
-        bh=auUVRqKrczwr8dxcJj9iJlHqVS46IWR7h5f9bDyL/9o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CTG6IKLtVtvhnts0T73rG075LCpqsA+Gzc05aCz+pBrHlOZzwttk9baOsHwDqG+VF
-         HPgpX/n51K+mGvW1icT+AbdJFo30T4vH8joB/PvUCkUS7iBbSkCkF+pwFCtu8OI17R
-         Vn36HCBxO0xTeHVQNe5VIv3AkY7E5fzHDo0brqiE=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20230214141132epcas5p1b3b6a2f3148f5350fa0f0b6b928c3fd4~DtkSaTmol1928819288epcas5p13;
-        Tue, 14 Feb 2023 14:11:32 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.182]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4PGNRk2nzHz4x9Py; Tue, 14 Feb
-        2023 14:11:30 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        54.A9.10528.2969BE36; Tue, 14 Feb 2023 23:11:30 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230214121451epcas5p148118502c76299b2a6f389881fa296cc~Dr_a7gRUk1679116791epcas5p1y;
-        Tue, 14 Feb 2023 12:14:51 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230214121451epsmtrp1c9dcc1ace98f1c0abbdda39d4d22fc5c~Dr_a6oYg01843918439epsmtrp1Y;
-        Tue, 14 Feb 2023 12:14:51 +0000 (GMT)
-X-AuditID: b6c32a49-e75fa70000012920-71-63eb969239f3
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        42.9E.05839.B3B7BE36; Tue, 14 Feb 2023 21:14:51 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-        [107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230214121448epsmtip1e40e9843a96cbd637c69ac1b6b33fb8a~Dr_YP1vvE2380623806epsmtip1y;
-        Tue, 14 Feb 2023 12:14:48 +0000 (GMT)
-From:   Shradha Todi <shradha.t@samsung.com>
-To:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
-        alim.akhtar@samsung.com, jingoohan1@gmail.com,
-        Sergey.Semin@baikalelectronics.ru, lukas.bulwahn@gmail.com,
-        hongxing.zhu@nxp.com, tglx@linutronix.de, m.szyprowski@samsung.com,
-        jh80.chung@samsung.co, pankaj.dubey@samsung.com
-Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shradha Todi <shradha.t@samsung.com>
-Subject: [PATCH 12/16] PCI: samsung: Get PHY using non-DT version
-Date:   Tue, 14 Feb 2023 17:43:29 +0530
-Message-Id: <20230214121333.1837-13-shradha.t@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230214121333.1837-1-shradha.t@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEJsWRmVeSWpSXmKPExsWy7bCmlu6kaa+TDWa94Ld4MG8bm8WSpgyL
-        +UfOsVrM2jaX0eLj73MsFiu+zGS36HvxkNmioec3q8Wmx9dYLS7vmsNmcXbecTaLGef3MVm0
-        /GlhsWg52s5isfbIXXaLRVu/sFv837OD3eLP9A8sFr2Hay02b5rK7CDi8WbTd3aPnbPusnss
-        2FTqsWlVJ5vHnWt72DzenTvH7vHkynQmj81L6j02vtvB5LGo4SObR9+WVYwenzfJBfBEZdtk
-        pCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXmAL2ppFCWmFMK
-        FApILC5W0rezKcovLUlVyMgvLrFVSi1IySkwKdArTswtLs1L18tLLbEyNDAwMgUqTMjO2PP9
-        J3PBL/aK89M/MDUw3mTrYuTkkBAwkdg76yZTFyMXh5DAbkaJ97Pes0E4nxgl+r48gXK+MUrM
-        bT7ACNNy+cE0qMReRok5rz+wQjitTBJru8+BVbEJaEk0fu1iBkmICNxiknj5+SE7iMMscIpR
-        4sCLvewgVcICjhKPuq8ygdgsAqoS92bMAOvmFbCSePFnBTvEPnmJ1RsOMIPYnEDxltZNYFMl
-        BK5wSKz6uYIVoshF4vOGbmYIW1ji1fEtUM1SEi/726DsdImVm2dA1eRIfNu8hAnCtpc4cGUO
-        SxcjB9B1mhLrd+lDhGUlpp5aB1bCLMAn0fv7CVQ5r8SOeTC2ssSXv3tYIGxJiXnHLkOd4yHR
-        vvs52C9CAr2MEv0z6yYwys1C2LCAkXEVo2RqQXFuemqxaYFhXmo5PN6S83M3MYITs5bnDsa7
-        Dz7oHWJk4mA8xCjBwawkwiv89EWyEG9KYmVValF+fFFpTmrxIUZTYPhNZJYSTc4H5oa8knhD
-        E0sDEzMzMxNLYzNDJXFedduTyUIC6YklqdmpqQWpRTB9TBycUg1MORUp03gaf91rPHauJ0z+
-        W4rgRYGlTe02jbndm6KqDYL8fvRcZLnDvZtlim3M5Z2PWBN+XtIXkTCpSj/c1u6rPOWKxPOl
-        3FNmsr0umlCkYiynEDt7t+TK/RG+vmGHglfdiuOS6F3+zKWD7fe3Hwpy0sriwifXZCbO4Nwq
-        IWGuvXftqrj3bkatU5SjYh+/VjvDd3XbnywnAU7rr6EP2aKX9ultE785L00pUe3V5K9Wmf53
-        3njxea7YlcRiL+tokLDqo+tKrpNH70dmHr2dFnezf+ucHdPTRfmM+lmM1r430P8UqaHyZ2fw
-        ztD7T7ZtyHbbX2LnI/vB6unls+G/s+LnyPx51rjUtJwrkts9ZpUSS3FGoqEWc1FxIgDG2C4y
-        VQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJLMWRmVeSWpSXmKPExsWy7bCSnK519etkgx1TtCwezNvGZrGkKcNi
-        /pFzrBazts1ltPj4+xyLxYovM9kt+l48ZLZo6PnNarHp8TVWi8u75rBZnJ13nM1ixvl9TBYt
-        f1pYLFqOtrNYrD1yl91i0dYv7Bb/9+xgt/gz/QOLRe/hWovNm6YyO4h4vNn0nd1j56y77B4L
-        NpV6bFrVyeZx59oeNo93586xezy5Mp3JY/OSeo+N73YweSxq+Mjm0bdlFaPH501yATxRXDYp
-        qTmZZalF+nYJXBl7vv9kLvjFXnF++gemBsabbF2MnBwSAiYSlx9MA7K5OIQEdjNKfJt8kAUi
-        ISnx+eI6JghbWGLlv+fsEEXNTBKbn+9gBEmwCWhJNH7tYgZJiAi8YpI4vGcGmMMscIFR4tbB
-        bnaQKmEBR4lH3VfBRrEIqErcmzEDrJtXwErixZ8V7BAr5CVWbzjADGJzAsVbWjeB2UIClhKz
-        fq1inMDIt4CRYRWjZGpBcW56brFhgWFearlecWJucWleul5yfu4mRnDsaGnuYNy+6oPeIUYm
-        DsZDjBIczEoivMJPXyQL8aYkVlalFuXHF5XmpBYfYpTmYFES573QdTJeSCA9sSQ1OzW1ILUI
-        JsvEwSnVwNQpsXmt1c8bRct+ZZs6GjuyrHT57WlY/GnW6dfVF1+/rqyckZXH9WZnn5ipr9wl
-        uUNXv3Rc8jMP/a372WZNSq6Yz9yUnkMBvM67fvb9sT8RaFAbUTpv22LdK40L954TNb/Glqcr
-        fqufVWrfQqHjczVOVHnumf8vSv7kxifF9/nyLdhfnrLU2r7SpnT2wuAg6ZJQeW22fYayX9Ln
-        TtWIm2b0W/xB+PWvG05uyaopPMDfyxP1fbLm1vqAeRr9kxL9H7XOqvbwzFp6UMSP0XmXQSwb
-        50JB5ZPy/t47DH3Z+d1Epi7c8Uih5YV95T7LRUpp/uz3k23tOrUbnY50nytglbC6fU9dUOCZ
-        2cGM2mYBJZbijERDLeai4kQAjgOM/AwDAAA=
-X-CMS-MailID: 20230214121451epcas5p148118502c76299b2a6f389881fa296cc
-X-Msg-Generator: CA
+        Tue, 14 Feb 2023 11:12:57 -0500
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5085B252BD;
+        Tue, 14 Feb 2023 08:12:39 -0800 (PST)
+Received: by mail-io1-f47.google.com with SMTP id j17so6019950ioa.9;
+        Tue, 14 Feb 2023 08:12:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=sxGQh4DHINPPQJzpA71hCGf9LwnTAZIRU/+oLDvRlgk=;
+        b=dt3mx2Sm3ApPzYir4aK/MFBwDom804+1Bl/LJ9sPw+Q9KrYbxhdgjBp30DlwdzGutd
+         VpYfoZp2oYlxAY/BwWDtngQAe4ucBzWul1hYnuTZXd2mNnFDscFP/1saGzbbzSHeYaoJ
+         LIs61IZFMR6lPTBHxyI52LSs7KF/ZlrxgzOtgdV08XmfSe46pn/eX6UIBvjBUrj06OnW
+         5AU+YGbxfuUwbjyqCvlZf9BwXVRq7q8uRCI5SuF9UwjAmmD+ufYKGkZ/9Z5huvilJPy+
+         tXwAho7E9a+/AQWX2lwaLXYj53rtnEaTRTlXWUMqcqqButtBEmETkbDi4rn1xazu6B1q
+         jCsQ==
+X-Gm-Message-State: AO0yUKVyRQl7vFcwg+I3f8cADR+Vj97TmQ+bDfetxn6ypPT7eGgS/roK
+        fWQeDvmeiXk1uHBSAtoNCA==
+X-Google-Smtp-Source: AK7set8d05seqW+6Lpm2vtV7rgeGYkDNnRLFja2NokWcAe/KeKg1s2d/S8b8G5y3trFBOSommRRYsQ==
+X-Received: by 2002:a5e:c30a:0:b0:71a:1b72:5afc with SMTP id a10-20020a5ec30a000000b0071a1b725afcmr2256087iok.19.1676391158375;
+        Tue, 14 Feb 2023 08:12:38 -0800 (PST)
+Received: from robh_at_kernel.org (c-73-14-99-67.hsd1.co.comcast.net. [73.14.99.67])
+        by smtp.gmail.com with ESMTPSA id t66-20020a6bc345000000b00704878474c7sm5289961iof.53.2023.02.14.08.12.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Feb 2023 08:12:37 -0800 (PST)
+Received: (nullmailer pid 76712 invoked by uid 1000);
+        Tue, 14 Feb 2023 16:12:34 -0000
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230214121451epcas5p148118502c76299b2a6f389881fa296cc
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From:   Rob Herring <robh@kernel.org>
+To:     Shradha Todi <shradha.t@samsung.com>
+Cc:     alim.akhtar@samsung.com, Sergey.Semin@baikalelectronics.ru,
+        pankaj.dubey@samsung.com, jh80.chung@samsung.co,
+        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
+        lukas.bulwahn@gmail.com, hongxing.zhu@nxp.com, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        m.szyprowski@samsung.com, linux-kernel@vger.kernel.org,
+        lpieralisi@kernel.org, tglx@linutronix.de,
+        linux-samsung-soc@vger.kernel.org, kw@linux.com,
+        jingoohan1@gmail.com
+In-Reply-To: <20230214121333.1837-6-shradha.t@samsung.com>
 References: <20230214121333.1837-1-shradha.t@samsung.com>
-        <CGME20230214121451epcas5p148118502c76299b2a6f389881fa296cc@epcas5p1.samsung.com>
+ <CGME20230214121424epcas5p38e74b52a2d94a32b82a093c7e0a12499@epcas5p3.samsung.com>
+ <20230214121333.1837-6-shradha.t@samsung.com>
+Message-Id: <167638944926.3699.15638999253407034271.robh@kernel.org>
+Subject: Re: [PATCH 05/16] dt-bindings: PCI: Rename the term elbi to appl
+Date:   Tue, 14 Feb 2023 10:12:34 -0600
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Replace devm_of_phy_get with devm_phy_get to get the
-PHY pointer.
 
-Signed-off-by: Shradha Todi <shradha.t@samsung.com>
----
- drivers/pci/controller/dwc/pci-samsung.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On Tue, 14 Feb 2023 17:43:22 +0530, Shradha Todi wrote:
+> DT uses the name elbi in reg-names for application logic
+> registers which is a wrong nomenclature. This patch fixes
+> the same.
+> 
+> This commit shouldn't be applied without changes
+> "arm64: dts: Rename the term elbi to appl" and
+> "PCI: samsung: Rename the term elbi to appl"
+> 
+> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/pci/samsung,pcie.yaml | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
-diff --git a/drivers/pci/controller/dwc/pci-samsung.c b/drivers/pci/controller/dwc/pci-samsung.c
-index e6e2a8ab4403..719d284e1552 100644
---- a/drivers/pci/controller/dwc/pci-samsung.c
-+++ b/drivers/pci/controller/dwc/pci-samsung.c
-@@ -301,7 +301,6 @@ static int exynos_pcie_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct samsung_pcie *sp;
--	struct device_node *np = dev->of_node;
- 	int ret;
- 
- 	sp = devm_kzalloc(dev, sizeof(*sp), GFP_KERNEL);
-@@ -311,7 +310,7 @@ static int exynos_pcie_probe(struct platform_device *pdev)
- 	sp->pci.dev = dev;
- 	sp->pci.ops = &dw_pcie_ops;
- 
--	sp->phy = devm_of_phy_get(dev, np, NULL);
-+	sp->phy = devm_phy_get(dev, "pcie_phy");
- 	if (IS_ERR(sp->phy))
- 		return PTR_ERR(sp->phy);
- 
--- 
-2.17.1
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/samsung,pcie.example.dtb: pcie@15700000: reg-names:1: 'appl' was expected
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/samsung,pcie.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230214121333.1837-6-shradha.t@samsung.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
