@@ -2,156 +2,156 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E33C1C61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Feb 2023 11:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DE8C6379F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Feb 2023 14:07:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232807AbjBNLOt (ORCPT
+        id S233272AbjBNOHK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 06:14:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58468 "EHLO
+        Tue, 14 Feb 2023 09:07:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229514AbjBNLOl (ORCPT
+        with ESMTP id S233216AbjBNOG5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Feb 2023 06:14:41 -0500
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on20703.outbound.protection.outlook.com [IPv6:2a01:111:f400:7eaf::703])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2940A274BB
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 03:14:11 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=P+mjBzHHLZqmPuqJ2grI08bhKlI7ndDc0qVJs+aLlxMS8eS8TSvxjzUj6IsV3D2UZNLAGf1+wd1JvJ+ERPxWMflKAc1CX3yx4S1nC7hvBOiD+t0UL4jaCSxdPUI/f6TqGE2cWEaor0nOU3iK2uvnu9GHB4R22xsDW5WDTbH/+DfKuCPnprUM9NCxIsNWOeouQ5RDdsL7EKGu9PQbJGzxx6TNa25305cICsp/8Ea1jd/NePjVLDX041uy4PWeaNATmgXBIx2YfWhTBeOwECMlTqEELraYCjxYhPhJFnhj2Q3uBtu/12arAu4ZRVXGo54t2w6Pd22p4FXcfvMKNpfrmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=976QNozTn9DP6Y+eAmMRBdp5Cn4rp3K63F8bsuPxJMc=;
- b=NAPk15KxY9IzTjb0U/babcx0LUE4U/4Zlluul6rHYgyT+5V9Kq75TlsfaFog+nSMzkSiKjiCajVXud41+TsPIc+3thuu5eFqA3+OhR0AJormgoGtRiN9ivHBntHOh4/dhFEhKjk1EJmO+g77BapUgu2pGOuN61TXKcnsNrNSvPv0S0KwbFq+QpCUecsm3oJ3A2G62Ju3wqWxiOYrjZHayMzHrbel0bwOVzPjnzdtHObQNX+P3yeu5t5SR3H0uHYdx/DfC/sFVtpPnM8aPgn7QfrcBgJsBNKghN1CxY4n2Mb94ZDtLAzmqEngcFyOHSBMWqKYOBGD1s0MEukBJH3t6g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=prevas.dk; dmarc=pass action=none header.from=prevas.dk;
- dkim=pass header.d=prevas.dk; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.dk;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=976QNozTn9DP6Y+eAmMRBdp5Cn4rp3K63F8bsuPxJMc=;
- b=CBFH5ZDzRrZKG21FFX/QD4783y79kq93cShJlMZf6kOhPjI40Xmdyk8OwP4z8wH3gx+mouJL8TN6PN65G72hSkUDSqmiFCxQUZNCr2lAMCIr83VBsNEAph4CahTFuEeC5hGgHDLO7NihvCOwGrnkiOtGBoOgLfwTwJhH5GFwlfQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=prevas.dk;
-Received: from DU0PR10MB5266.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:34a::22)
- by PRAPR10MB5448.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:29b::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.24; Tue, 14 Feb
- 2023 11:08:25 +0000
-Received: from DU0PR10MB5266.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::d067:93ef:f184:668a]) by DU0PR10MB5266.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::d067:93ef:f184:668a%4]) with mapi id 15.20.6086.023; Tue, 14 Feb 2023
- 11:08:25 +0000
-Message-ID: <85ac61b6-1fff-0f16-a92a-af9eab81a099@prevas.dk>
-Date:   Tue, 14 Feb 2023 12:08:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v12 00/18] drm: Add Samsung MIPI DSIM bridge
-Content-Language: en-US, da
-From:   Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-To:     Marek Vasut <marex@denx.de>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Laurent.pinchart@ideasonboard.com, aford173@gmail.com,
-        andrzej.hajda@intel.com, dri-devel@lists.freedesktop.org,
-        inki.dae@samsung.com, kyungmin.park@samsung.com,
-        linux-amarula@amarulasolutions.com,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com,
-        matteo.lisi@engicam.com, sw0312.kim@samsung.com,
-        tharvey@gateworks.com
-References: <20230126144427.607098-1-jagan@amarulasolutions.com>
- <06e5423f-c022-7a1c-efe0-0f4fbab664c1@prevas.dk>
- <CAMty3ZBRDDnNdmgD5ji11SdCuOcmu3ZyBPyB28cF1aRTyxp+fg@mail.gmail.com>
- <be95e4f7-15a8-ba99-6b39-6f7f0ea71201@prevas.dk>
- <CAMty3ZBNLpV9orVRD897ZeR3Hj9RWOau07b1ZGDUoBRej=Cj-Q@mail.gmail.com>
- <31ccc974-4b01-ae47-9505-626617f07758@denx.de>
- <f6cea911-783c-f59d-503c-1576358ae7cb@prevas.dk>
- <dcc28c36-9b09-ea92-be21-665c6cbf35b3@denx.de>
- <c21ee1e2-b92e-0fad-40bf-91cae9e57f48@prevas.dk>
- <1745c43d-06b4-933b-5dbd-50add565828e@kontron.de>
- <c9dc0b2b-8850-6227-163b-85c53c5d72ef@prevas.dk>
- <12d5568f-c12c-970d-0f78-17d6dc7c0c1d@denx.de>
- <6ceb6866-f8a5-072f-3d86-895024fcec79@prevas.dk>
-In-Reply-To: <6ceb6866-f8a5-072f-3d86-895024fcec79@prevas.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: GV3P280CA0014.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:150:b::29) To DU0PR10MB5266.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:10:34a::22)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR10MB5266:EE_|PRAPR10MB5448:EE_
-X-MS-Office365-Filtering-Correlation-Id: 31f05baa-045b-4c15-9512-08db0e7bcb35
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: MzfpjA+HTOHwklFd2w6GqBuQkm9XRVZvGXiOGFCgj5w3Wl679k2qolEkhQneBOawetg2Ju/MJqxzPGO+T6EIHm9DaYsOus9I1yWbawLQDH09mc/769HveKWrNX37B0nWfFqZRDxSgH4OjymukOCuhceKDfEMDDoj2w2BjjxY5ZXseN1sAwn2uUsZZLKD42p/8jGxeWSVxEzACTIwce+LDBcQ5a+vD5cj0dDi4CqQ2sQQc+kkfOewlDyXpj3WU/Z+Iwlv9bcTs09PDAzFT12e0ewARQcIrP58HsySFbqNLrQFCCVRf2JxtO6oIXBHTXLlGo7IIpqSreqqdhwkpBQ/lQyK7r9RKqq2XbfHSVAh6yUMHwCBf9cXIW86VKgltJbcbPh2zRqk/0jt697JNACoLGPkUGqC3j25tYAUT8tqQRXvpcO2F41DF98QXGg2SNhAJ2FlNyV0jOwSowTlqPdEha7pFU1O67XytcbP2vMeMewivV1wVGIEav4n+TddQE8jyj/Wj3nkiF3iYe6xysVyz42K8dsNBRPLvPl+1yfWQ4nTk0t5sdiMBHJP9tzGrtlzpE6/ispugpyJ1yK78Fgv3QIZtdq4cOq6a7+k4ypSQwxsUCum+TZfEgZWnOgN5VaiI62ZW/yphJoeWgejdCst2jxHflff/qUpbPdC9IG+gma9FqM/cGYqGNGlP3EyVnKkt1ky+IwwezI232MaVd+54i1fVBn3ZACaX3EBRMYJExwpqxm+q4eBdS0YAGw65TQ1hwTKHqGOnSfiN4KxAzC9YA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR10MB5266.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230025)(366004)(39850400004)(136003)(346002)(396003)(376002)(451199018)(6666004)(52116002)(6486002)(6506007)(478600001)(83380400001)(86362001)(38350700002)(38100700002)(36756003)(186003)(6512007)(26005)(2616005)(31696002)(8976002)(31686004)(41300700001)(8936002)(4744005)(5660300002)(7416002)(2906002)(8676002)(66946007)(66476007)(66556008)(4326008)(44832011)(110136005)(316002)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VlJvL3MveWVmVUV4WitsUmZ2Y1RyMjA4VERQYzBnTXJ3eWk1NFFYWm5BZ0lW?=
- =?utf-8?B?REowUGs3R3VId21iRXVobFpFUW1xTm5KVW5ka3gzODBKRFRIN3JuWlVMVzBP?=
- =?utf-8?B?aEpuL0JqWmlBVVVrci9HVWJRTEZ1QkdrZEJNbUFSRkhkVitYcEg4Z1U1aS9v?=
- =?utf-8?B?aisxN2NRUWRPcEU5RzRVcEw3aVVUUndaNWtMTzc3cUd5YTdNQ3ltc1o0bHBn?=
- =?utf-8?B?bUtyWUxPUFcvc3NwL1E0UVU1V0NNUCtkVHBhU0xVZ3ZGa2hoMlVsSi96Mlpj?=
- =?utf-8?B?M25mUTdUOWEzZlBtMWZjUlFXVE9JTVJOY1Nwa08yYWlMWFV1M1pHbkdGSStP?=
- =?utf-8?B?ZTBHNmhsTTBVM2pseC93ZDlPVXlSOC81eklQOU5nYU9HQ3cyVFhtdmhtQ3Np?=
- =?utf-8?B?eWRDVnMzeVE1RXpEcWxmSDQ5L1lIWWpZVW1mV1JNS0crL2RVc3I1dTFyc0pn?=
- =?utf-8?B?UE56K1E5NDBlT3l4aS9CcFk1WlV1L21DMkJIM0tzWXdPLzN0ZXNFWTlEQkt6?=
- =?utf-8?B?Q1hIamswb09lS213Nkp5cUF2L3V6QnlGeTZHNUsyWmlNTHZwb1JSSkhNcnlB?=
- =?utf-8?B?UlVJQWNFOWVmc3pRRWozZGJVV0dDNXloYzNmZHFzUmVMVURIY3JBaElKbVJz?=
- =?utf-8?B?NTJpbzNwU3BwdGY3R2lwc3lwamU1b0lZUUJVcm40cUxFa1ZJZzNqZ01ENFdy?=
- =?utf-8?B?R2ZmWVdDSHBuRDFYL2dWMzJNVCtlK25QY25kR09Ub3RlcnNoUE9mREhQV0Jw?=
- =?utf-8?B?Z0pqYWVrRnorMEhpb3k2THZmSUsrSjFSckRiWktSOHFzakQ3VDlqVTFiYUY4?=
- =?utf-8?B?MTlFblBFNWVPZElSWlFYN2ZNd2oyRGNMdHJFTklsQ21jMUprWUtPOG5aMVZi?=
- =?utf-8?B?UnE4MFNRUDFjOWJ6SmNGVTZVbzZpbFJkb1VsbWRQdTRzOEhtMWJFNFRwUVJl?=
- =?utf-8?B?NklwWVd2VFQ5WGN1VzVuRUMwMkJJbGhJSHBPWFJwU3llVEpLMjBqOTZHWHcx?=
- =?utf-8?B?SDRnVlFEdDhyQzlrREVFYnY0dFdSajY3bDRQVlA5MGdRMkZLaC9Kc2cwcDBV?=
- =?utf-8?B?YUw5WGtLYzFwUXNNM1FCU1pUVWszU1ptMHZWcUg5cXBNaC9DbGlQWmgyS0E4?=
- =?utf-8?B?MiszcVg0QXRHRmxXZ1hWVlpXVElNSURMdDYwc0lFLzR1MmpNK2ZaWGlwUWVC?=
- =?utf-8?B?QjJVS1FpZjdDenFnemFXZUVRUGtsVXQzUmZaR1gvam1jamluZ3Q1U0RQMmJq?=
- =?utf-8?B?VThRSjFESldCaU1XWDRWbWJacDU3cVZKazZRSGk4b0plRTNwSXVFSWNadmhl?=
- =?utf-8?B?SDk0dDY0enlydEdBc0FrdmJhSUVFQnljZGFOQmF1eW44bmNmUHgrR3JVNEVI?=
- =?utf-8?B?Mk1XbmZGMjhQYmU2RnUzZlVlVTljRERMSXZ5anBDMjRaRlhKQ3QybkZvWVBa?=
- =?utf-8?B?cUMrR2FoMWlmdk9lcGcyTGhFek45TFcyQmlwcFNSV0RSQUt1bXdVWTNGN1lw?=
- =?utf-8?B?SVJzNWFjeDZCcEo3RDJselNTZDRzYk1zSk5rbyt2MStQTmhKMVVnSnhvQjQ3?=
- =?utf-8?B?S2l1N0t5Y3JiWTlMZmJRb3h5MDVBejRqc1MxUUxETnloZjJ0SjdCZWNwUlBW?=
- =?utf-8?B?UkZaZUhXOXVlLzU0Rm1GdnZ2bHJYZFBEUWVGUzRxK0RiTU9QbUIzYTdwQUI1?=
- =?utf-8?B?eGlTRTdjVUtyaXRuQlRQOEJZZW0wQ1pBNVZUbmkwUWJyUWcxaTU2S29WZW9p?=
- =?utf-8?B?RldTNnlNMEZVN1U2d1VGTENNRjlJNlhoWUc1cGpCNi9Mdm1jNTZqL3llUTc3?=
- =?utf-8?B?czlWOGxFSHVTM1h6N1EzQk0wUUZVeFIxZ0JBY3JPUXc4RElVbytUdGc4ZXQ4?=
- =?utf-8?B?OHE1WVpveGwzTVJmZEhBOUo5U1RHRm1uOGZYU0psUFJVVUdRcWIveWVDVnh2?=
- =?utf-8?B?dmpJZkIwQkFVdjU3WFVTaCsyM2RXV2p4RHUyMm5Ed0svWGRqbWdwMGtNdDFS?=
- =?utf-8?B?V0QvSHlUbkdFc3hxN09zNEJDbjJJM3BkUUpkaGlMVUFORjNlU2VqZFFBUytp?=
- =?utf-8?B?OHRQMCtXSkNBNVlMM3NiUDkwdFBOVCtUcGZhdzNIRHR2Z3NybmZZYyt1VldJ?=
- =?utf-8?B?MVBwaTJ4Z3JRYW5LRjBkRVZ4ZEZYMUZqQkZnRThYRzV0NWw5T2NlYzJoem4v?=
- =?utf-8?B?N1E9PQ==?=
-X-OriginatorOrg: prevas.dk
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31f05baa-045b-4c15-9512-08db0e7bcb35
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR10MB5266.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2023 11:08:25.7672
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: d350cf71-778d-4780-88f5-071a4cb1ed61
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DAS3WDoQcHbXnS2L3TTw36Q54r7ASliqnFGtrZIdABrnDsYrE0yxP4/7Iy1Fq2zE9Fp5ctb/a5gpAJajbYVc/otvSAQA8f1MSat/rSQixP4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PRAPR10MB5448
+        Tue, 14 Feb 2023 09:06:57 -0500
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83FF429155
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 06:06:27 -0800 (PST)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230214140623epoutp036c0e6f4fb332f330b72534188d10d316~Dtfyn3__t1701617016epoutp03c
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 14:06:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230214140623epoutp036c0e6f4fb332f330b72534188d10d316~Dtfyn3__t1701617016epoutp03c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1676383583;
+        bh=SdNM4Tz3fLK6Ln86MZGGxK52Puw9N/dkEq+z+0rNYYs=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=rVpQ4dCyVQpQ1VGxOQ2VRgfvyfdjz/aMTYhbFv6XEHClKh0tVOFPEagnQASzkXQlN
+         CooupJPKCAtkeq1pRAQntceFH2J/7pMyyB/Pofzq+lmkaXKXyIiWeahodfvguEbeR5
+         BZ3SqJ+TP94pzBDMEU0Qwf7iY02eEKbnnnp9cg+c=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20230214140622epcas5p4f151af96adc5d416d4f57d74b9082c83~DtfyAKCzc3228232282epcas5p4B;
+        Tue, 14 Feb 2023 14:06:22 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.182]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4PGNKn1xpWz4x9Pp; Tue, 14 Feb
+        2023 14:06:21 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        39.EF.55678.D559BE36; Tue, 14 Feb 2023 23:06:21 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20230214121348epcas5p48a3b2b225f616d748cc20622d01edb97~Dr9gG5u4l0767707677epcas5p4b;
+        Tue, 14 Feb 2023 12:13:48 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230214121348epsmtrp2dc813dcaf173070dfd350293e1cd2916~Dr9gF-WY01865118651epsmtrp2J;
+        Tue, 14 Feb 2023 12:13:48 +0000 (GMT)
+X-AuditID: b6c32a4a-909fc7000000d97e-d3-63eb955d2f17
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        2A.EA.17995.CFA7BE36; Tue, 14 Feb 2023 21:13:48 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+        [107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230214121345epsmtip126bd4d57eb7bd902e5958cb92e11db8d~Dr9dRniJT2436024360epsmtip1d;
+        Tue, 14 Feb 2023 12:13:45 +0000 (GMT)
+From:   Shradha Todi <shradha.t@samsung.com>
+To:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
+        alim.akhtar@samsung.com, jingoohan1@gmail.com,
+        Sergey.Semin@baikalelectronics.ru, lukas.bulwahn@gmail.com,
+        hongxing.zhu@nxp.com, tglx@linutronix.de, m.szyprowski@samsung.com,
+        jh80.chung@samsung.co, pankaj.dubey@samsung.com
+Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shradha Todi <shradha.t@samsung.com>
+Subject: [PATCH 00/16] Refactor Exynos PCIe driver to make it generic
+Date:   Tue, 14 Feb 2023 17:43:17 +0530
+Message-Id: <20230214121333.1837-1-shradha.t@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEJsWRmVeSWpSXmKPExsWy7bCmpm7s1NfJBsdesFk8mLeNzWJJU4bF
+        /CPnWC1mbZvLaPHx9zkWixVfZrJb9L14yGzR0POb1WLT42usFpd3zWGzODvvOJvFjPP7mCxa
+        /rSwWLQcbWexWHvkLrvFoq1f2C3+79nBbvFn+gcWi97DtRabN01ldhDxeLPpO7vHzll32T0W
+        bCr12LSqk83jzrU9bB7vzp1j93hyZTqTx+Yl9R4b3+1g8ljU8JHNo2/LKkaPz5vkAniism0y
+        UhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgN5UUihLzCkF
+        CgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgYmQIVJmRndJ5d
+        xVwwib/i1+aiBsY2ni5GTg4JAROJLfNuMnYxcnEICexmlOjfOZcdwvnEKLH983RWCOczo8Ty
+        b6uZYFrmNn+BSuxilJi//AlUfyuTxK6j65lBqtgEtCQav3YxgyREBG4xSbz8/BBsMLPAKUaJ
+        Ay/2AjkcHMICrhL7lueDNLAIqEp8uLQELMwrYClxcjnUgfISqzccAJsjIbCHQ2Jhwy9mkBoJ
+        AReJpf8DIWqEJV4d38IOYUtJfH63lw3CTpdYuXkGM4SdI/Ft8xKoD+wlDlyZwwIyhllAU2L9
+        Ln2IsKzE1FPrwEqYBfgken8/gSrnldgxD8ZWlvjydw8LhC0pMe/YZVYI20Pi8/QjYHEhgViJ
+        prY3rBMYZWchbFjAyLiKUTK1oDg3PbXYtMAoL7UcHk/J+bmbGMGJV8trB+PDBx/0DjEycTAe
+        YpTgYFYS4RV++iJZiDclsbIqtSg/vqg0J7X4EKMpMMQmMkuJJucDU39eSbyhiaWBiZmZmYml
+        sZmhkjivuu3JZCGB9MSS1OzU1ILUIpg+Jg5OqQYmsae6CtzxKaohLKlCn441qXB4Wb/9Mtcq
+        fe8D2dvS2kvmLM77fl987l+lnKnO2w3ZpWOWbFmw8qMal13smmvib7fPVQ6Mmbm/qkSc5bfj
+        qSnz+05lNbBIaE/4/9ig+lZ3/W4XrV1bzzreZnE7xi12YWPl1BlNPP/MKu86rjv5I9JOInpi
+        9W7/Ds/D6pKCfGzP7zGez/gg9++HxfPcSV+be9I2Zk79p9kjZn1SdN2LdoElFR+C4kqfa0rI
+        P5+T8ran6FdW0ZLnOsoTLd1OFKzNXxd3Paioa9p7j4k9pYJ7GxLn+E7O/DgvrzZRLSiQzfju
+        AXd98xBXx4XKmz2Y0069Dp0VVG15Zs6jppeF/IZKLMUZiYZazEXFiQBuU2XPRQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHLMWRmVeSWpSXmKPExsWy7bCSnO6fqtfJBlMbZC0ezNvGZrGkKcNi
+        /pFzrBazts1ltPj4+xyLxYovM9kt+l48ZLZo6PnNarHp8TVWi8u75rBZnJ13nM1ixvl9TBYt
+        f1pYLFqOtrNYrD1yl91i0dYv7Bb/9+xgt/gz/QOLRe/hWovNm6YyO4h4vNn0nd1j56y77B4L
+        NpV6bFrVyeZx59oeNo93586xezy5Mp3JY/OSeo+N73YweSxq+Mjm0bdlFaPH501yATxRXDYp
+        qTmZZalF+nYJXBmdZ1cxF0zir/i1uaiBsY2ni5GTQ0LARGJu8xfWLkYuDiGBHYwSS5f9ZINI
+        SEp8vriOCcIWllj57zk7RFEzk8THJ5fBEmwCWhKNX7uYQRIiAq+YJA7vmQHmMAtcYJS4dbAb
+        qIWDQ1jAVWLf8nyQBhYBVYkPl5aAhXkFLCVOLoe6Ql5i9YYDzBMYeRYwMqxilEwtKM5Nzy02
+        LDDKSy3XK07MLS7NS9dLzs/dxAiOAi2tHYx7Vn3QO8TIxMF4iFGCg1lJhFf46YtkId6UxMqq
+        1KL8+KLSnNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGphKfniZiR5PSOo8k5og
+        Pffni6+TDpqrHjnh4CUif/1+0IQq2c19230EZLwuf+hduUb94ZuK3UvPLNqnrTPv9ouz+fm2
+        D/YrLhb4PPeE6r3zEyvnfFf0tPlXs8jnW7+sr+BuvUtL9eRbP/md7G/dM8F7aY+Zr/z0hV9u
+        Xvt77/+CSZXyPSKt6lzrGV+fZq2WtTjdfubo2hM+r1dYv/P18ey6dzgt+GqqnpLHo+RHx5/P
+        UL6X/TLwsLpP3i3228E61+9Hp2UqzU+c7LXgzYXmWyXKJ5yLmzprpb/v2FokJH5ndYZFbq+1
+        99+dUh/EN/29JcyVJ/hAuD0g4ZTVv1/SLnlXEvMfvzimmH3br/fuI/WzSizFGYmGWsxFxYkA
+        kfOhw/ECAAA=
+X-CMS-MailID: 20230214121348epcas5p48a3b2b225f616d748cc20622d01edb97
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230214121348epcas5p48a3b2b225f616d748cc20622d01edb97
+References: <CGME20230214121348epcas5p48a3b2b225f616d748cc20622d01edb97@epcas5p4.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14/02/2023 11.55, Rasmus Villemoes wrote:
-> On 07/02/2023 10.23, Marek Vasut wrote:
-> 
-> Do any of you happen to have this working on the imx8mp-evk, and if so,
-> can you share the .dts updates you've done and how exactly you test the
-> graphics?
->
+Currently pci-exynos is being used as a PCIe driver for Exynos5433
+only. This patch set refactors the driver to make it extensible to
+other Samsung manufactured SoCs having DWC PCIe controllers.
+The major change points are:
+- Renaming all common functions/structures to use "samsung" instead
+  of "exynos". Make common probe/remove/suspend/resume
+- Making clock/regulator get/enable/disable generic
+- Adding private struct to hold platform specific function ops
 
-Oh, and could those of you who have some graphics working with the
-mainline kernel on imx8mp tell which U-Boot you're using (NXP or
-mainline, and which version). I'm using mainline U-Boot 2022.10.
+Shradha Todi (16):
+  dt-bindings: PCI: Rename Exynos PCIe binding to Samsung PCIe
+  PCI: exynos: Rename Exynos PCIe driver to Samsung PCIe
+  PCI: samsung: Change macro names to exynos specific
+  PCI: samsung: Use clock bulk API to get clocks
+  dt-bindings: PCI: Rename the term elbi to appl
+  arm64: dts: exynos: Rename the term elbi to appl
+  PCI: samsung: Rename the term elbi to appl
+  PCI: samsung: Rename exynos_pcie to samsung_pcie
+  PCI: samsung: Make common appl readl/writel functions
+  dt-bindings: PCI: Add phy-names as required property
+  arm64: dts: exynos: Add phy-names as DT property
+  PCI: samsung: Get PHY using non-DT version
+  PCI: samsung: Rename common functions to samsung
+  PCI: samsung: Add platform device private data
+  PCI: samsung: Add structure to hold resource operations
+  PCI: samsung: Make handling of regulators generic
 
-Rasmus
+ ...ung,exynos-pcie.yaml => samsung,pcie.yaml} |  15 +-
+ MAINTAINERS                                   |   4 +-
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi    |   3 +-
+ drivers/pci/controller/dwc/Kconfig            |   6 +-
+ drivers/pci/controller/dwc/Makefile           |   2 +-
+ drivers/pci/controller/dwc/pci-samsung.c      | 508 ++++++++++++++++++
+ 6 files changed, 526 insertions(+), 12 deletions(-)
+ rename Documentation/devicetree/bindings/pci/{samsung,exynos-pcie.yaml => samsung,pcie.yaml} (89%)
+ create mode 100644 drivers/pci/controller/dwc/pci-samsung.c
+
+-- 
+2.17.1
 
