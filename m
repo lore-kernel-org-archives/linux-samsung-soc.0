@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBF4C05027
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Feb 2023 10:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E934C61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Feb 2023 10:47:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232459AbjBNKrn (ORCPT
+        id S232489AbjBNKro (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 05:47:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54092 "EHLO
+        Tue, 14 Feb 2023 05:47:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232489AbjBNKrY (ORCPT
+        with ESMTP id S232684AbjBNKrZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Feb 2023 05:47:24 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 884B11EBDF
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 02:47:00 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id j32-20020a05600c1c2000b003dc4fd6e61dso13329868wms.5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 02:47:00 -0800 (PST)
+        Tue, 14 Feb 2023 05:47:25 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2694825BB0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 02:47:01 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id l37-20020a05600c1d2500b003dfe46a9801so11246020wms.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 02:47:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pnqWFP3S/mYpdJd7jNi0qKprTXE1O3AHQErMdEIJxhE=;
-        b=avOC9QTWD8RCAuWqkP5IuS9rGHaXHiQsbVXP9Nef+4+UVowge+lzXCJm4RFY/LF7f1
-         78u03dnYKdLJbu7mVEg6/P/DwPnILj6uo3hCyEZbKEU8g3WmVRSXwyEYixe3dymoG2TL
-         w8Dw8pOWk/bDpmYRrpq8yJt6SqeZW0eFDEWdIKX+ZFKvYSuuxNQAwVnLQhI4AiOteJzD
-         GxhKWw8PW0Agm1zxGBv0ZywL7ez2nJISExqhw5wGjBzriy7+5z5bSV2bZI6G1mLkOXQQ
-         WM6eBdCTGIoe7OJxXgUVq4JWUK8EzmX2cweo7N+g7N3S9i25je+46ygOyN5mtofJSutg
-         OFqA==
+        bh=NA2lyS7eoeU8K89PCY0N4KGZWIVcpPfW+gTL7oR3XSg=;
+        b=sDGRirgkro67tVM9MGzXF9R20zOmbuo6/bRDUUkaghZz31pJPfI+cxhwfcmNQep/HN
+         z8ItvoiHP6ta8vUJkmZFJojQljDk+1cUYOWwCh+65V9YRdYkjcy856I+fPDFaJ6/x5Zi
+         5EtRDIXWhC2grl68Tp69ce29t7LmYsxAyW0w/Wu6fdoAMOg9xHiXI1B4/pKZy6VK7QPP
+         t+VDKnOxiVN47fAfihVMo5MtxaISKkGaBhB6m0MZGFRzSuBiQZcZ7FDxYWLzFRjXYT30
+         GtGGjI7S+y7LKO3Bi1me1sWTrUwwwu9v9CP4J6GT7/pfNtBZ8/Lsz69C6bJ6F5eTKt4C
+         CK4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pnqWFP3S/mYpdJd7jNi0qKprTXE1O3AHQErMdEIJxhE=;
-        b=bua4AVGgt3S2Ae3bmZUX8JJ0Cg5jzWDFtDySy4qUiFVHWhBOA0njeXo4hiFq0aYiU3
-         Tj5RKdvq5iZGX37F0HY6xEjPDSIP/Xb/ZHO2jyDG8PBCVLfkRXQeb+nzEBuyN1qJ21vH
-         S5rPJow7ZUP/XavBkM2ahDId8P+3aUIeGixCfaU++EA+J1mbdYCiCSG2x/kGWOkAL+SU
-         sLflPsBxJCQizjGAh09yMHraNxXSzcGgCVRbU7wHD6T/hck2lod9yggHJtpnp30U0NBk
-         w0hSNIJ4bLGrTSSVBdhotCEblSCN9thLvsfqW0gUoqKONHI5aG4L9OaaL/ubFKQb+JW3
-         CPPA==
-X-Gm-Message-State: AO0yUKWS54NeczptuDJYgsEDG94DsnzTqW8FJQApmripZMyyyt0JRLOQ
-        j3Wo2kXnb3HmzaJZUp79XWKaEg==
-X-Google-Smtp-Source: AK7set9BkT2oW7eg6yytmGLcVa/22qTmI97q+YMv7gYEupY6JIWy48JUWnCsx94FGxn/cd5aOsPD9g==
-X-Received: by 2002:a05:600c:3412:b0:3dd:b0b3:811b with SMTP id y18-20020a05600c341200b003ddb0b3811bmr1565945wmp.31.1676371616865;
-        Tue, 14 Feb 2023 02:46:56 -0800 (PST)
+        bh=NA2lyS7eoeU8K89PCY0N4KGZWIVcpPfW+gTL7oR3XSg=;
+        b=EFpdsdl95PI8CF2ZqOE5GL0jE9mut+OqlWE2ZukUZZfwKckvxkh0vxDHT+819Q/Cj6
+         71nGC1mxTql1D+u1PW3u25k1uT86HiV2WW6uVsZPkWgBN8HYDvsC5xBFPPyzyrJTx8RS
+         6Rrbci4PkxQiymMu4fqcgWD+LvLm+VHw2YQU8/4MmxWygWHaCkCqshh+zkPwlJAFH/z8
+         GXkwPL3ai5XOXqU5f2Tw0iM9jOKjF3Dxr32hV0f1zDWDc49MIufMJ/NIzo3VuJBa2cTb
+         RvKCr2B7Rd10/81a4g7OUORYXt9WarFLRsgTZ7IykF79upouoOZP4dlJwK7RaBsWjNSq
+         pcdw==
+X-Gm-Message-State: AO0yUKUCOg+PZ8Oe67THwo2aJHzyijuzKtIdWW8m9K8UsRAex3oRuPl3
+        AwQEQpeULaPaDwpHYP2ChkQlfA==
+X-Google-Smtp-Source: AK7set+cSOK+RGq2KuN7bwv7WW+e1Ozd5w15gZ0Ve6Bc9Z2I0ej+cP/CrshReIUsMlNATEQ0rbpdOw==
+X-Received: by 2002:a05:600c:5252:b0:3d9:ebf9:7004 with SMTP id fc18-20020a05600c525200b003d9ebf97004mr1536894wmb.29.1676371618497;
+        Tue, 14 Feb 2023 02:46:58 -0800 (PST)
 Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id m20-20020a05600c4f5400b003e1f319b87bsm2623719wmq.24.2023.02.14.02.46.55
+        by smtp.gmail.com with ESMTPSA id m20-20020a05600c4f5400b003e1f319b87bsm2623719wmq.24.2023.02.14.02.46.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Feb 2023 02:46:56 -0800 (PST)
+        Tue, 14 Feb 2023 02:46:58 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -62,9 +62,9 @@ To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 4/7] media: dt-bindings: samsung,exynos4212-fimc-lite: convert to dtschema
-Date:   Tue, 14 Feb 2023 11:45:05 +0100
-Message-Id: <20230214104508.51955-5-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 5/7] media: dt-bindings: samsung,exynos4212-is: convert to dtschema
+Date:   Tue, 14 Feb 2023 11:45:06 +0100
+Message-Id: <20230214104508.51955-6-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230214104508.51955-1-krzysztof.kozlowski@linaro.org>
 References: <20230214104508.51955-1-krzysztof.kozlowski@linaro.org>
@@ -74,122 +74,314 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert the Samsung Exynos SoC series camera host interface (FIMC-LITE)
+Convert the Samsung Exynos4212/4412 SoC Imaging Subsystem (FIMC-IS)
 bindings to DT schema.  Changes during conversion - adjust to existing
 DTS and Linux driver: add iommus and power-domains.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../bindings/media/exynos-fimc-lite.txt       | 16 -----
- .../media/samsung,exynos4212-fimc-lite.yaml   | 63 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- 3 files changed, 64 insertions(+), 16 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/media/exynos-fimc-lite.txt
- create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-lite.yaml
+ .../bindings/media/exynos4-fimc-is.txt        |  50 ----
+ .../media/samsung,exynos4212-fimc-is.yaml     | 221 ++++++++++++++++++
+ MAINTAINERS                                   |   1 +
+ 3 files changed, 222 insertions(+), 50 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/exynos4-fimc-is.txt
+ create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-is.yaml
 
-diff --git a/Documentation/devicetree/bindings/media/exynos-fimc-lite.txt b/Documentation/devicetree/bindings/media/exynos-fimc-lite.txt
+diff --git a/Documentation/devicetree/bindings/media/exynos4-fimc-is.txt b/Documentation/devicetree/bindings/media/exynos4-fimc-is.txt
 deleted file mode 100644
-index 0bf6fb7fbeab..000000000000
---- a/Documentation/devicetree/bindings/media/exynos-fimc-lite.txt
+index 32ced99d4244..000000000000
+--- a/Documentation/devicetree/bindings/media/exynos4-fimc-is.txt
 +++ /dev/null
-@@ -1,16 +0,0 @@
--Exynos4x12/Exynos5 SoC series camera host interface (FIMC-LITE)
+@@ -1,50 +0,0 @@
+-Exynos4x12 SoC series Imaging Subsystem (FIMC-IS)
+-
+-The FIMC-IS is a subsystem for processing image signal from an image sensor.
+-The Exynos4x12 SoC series FIMC-IS V1.5 comprises of a dedicated ARM Cortex-A5
+-processor, ISP, DRC and FD IP blocks and peripheral devices such as UART, I2C
+-and SPI bus controllers, PWM and ADC.
+-
+-fimc-is node
+-------------
+-
+-Required properties:
+-- compatible	: should be "samsung,exynos4212-fimc-is" for Exynos4212 and
+-		  Exynos4412 SoCs;
+-- reg		: physical base address and length of the registers set;
+-- interrupts	: must contain two FIMC-IS interrupts, in order: ISP0, ISP1;
+-- clocks	: list of clock specifiers, corresponding to entries in
+-		  clock-names property;
+-- clock-names	: must contain "ppmuispx", "ppmuispx", "lite0", "lite1"
+-		  "mpll", "sysreg", "isp", "drc", "fd", "mcuisp", "gicisp",
+-		  "pwm_isp", "mcuctl_isp", "uart", "ispdiv0", "ispdiv1",
+-		  "mcuispdiv0", "mcuispdiv1", "aclk200", "div_aclk200",
+-		  "aclk400mcuisp", "div_aclk400mcuisp" entries,
+-		  matching entries in the clocks property.
+-pmu subnode
+------------
+-
+-Required properties:
+- - reg : must contain PMU physical base address and size of the register set.
+-
+-The following are the FIMC-IS peripheral device nodes and can be specified
+-either standalone or as the fimc-is node child nodes.
+-
+-i2c-isp (ISP I2C bus controller) nodes
+-------------------------------------------
 -
 -Required properties:
 -
--- compatible	: should be one of:
--		  "samsung,exynos4212-fimc-lite" for Exynos4212/4412 SoCs,
--		  "samsung,exynos5250-fimc-lite" for Exynos5250 compatible
--		   devices;
--- reg		: physical base address and size of the device memory mapped
--		  registers;
--- interrupts	: should contain FIMC-LITE interrupt;
--- clocks	: FIMC LITE gate clock should be specified in this property.
--- clock-names	: should contain "flite" entry.
+-- compatible	: should be "samsung,exynos4212-i2c-isp" for Exynos4212 and
+-		  Exynos4412 SoCs;
+-- reg		: physical base address and length of the registers set;
+-- clocks	: must contain gate clock specifier for this controller;
+-- clock-names	: must contain "i2c_isp" entry.
 -
--Each FIMC device should have an alias in the aliases node, in the form of
--fimc-lite<n>, where <n> is an integer specifying the IP block instance.
-diff --git a/Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-lite.yaml b/Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-lite.yaml
+-For the above nodes it is required to specify a pinctrl state named "default",
+-according to the pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt.
+-
+-Device tree nodes of the image sensors' controlled directly by the FIMC-IS
+-firmware must be child nodes of their corresponding ISP I2C bus controller node.
+-The data link of these image sensors must be specified using the common video
+-interfaces bindings, defined in video-interfaces.txt.
+diff --git a/Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-is.yaml b/Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-is.yaml
 new file mode 100644
-index 000000000000..f80eca0a4f41
+index 000000000000..288f4bf3d44d
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-lite.yaml
-@@ -0,0 +1,63 @@
++++ b/Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-is.yaml
+@@ -0,0 +1,221 @@
 +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/media/samsung,exynos4212-fimc-lite.yaml#
++$id: http://devicetree.org/schemas/media/samsung,exynos4212-fimc-is.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Samsung Exynos SoC series camera host interface (FIMC-LITE)
++title: Samsung Exynos4212/4412 SoC Imaging Subsystem (FIMC-IS)
 +
 +maintainers:
 +  - Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
 +
 +description:
-+  Each FIMC device should have an alias in the aliases node, in the form of
-+  fimc-lite<n>, where <n> is an integer specifying the IP block instance.
++  The FIMC-IS is a subsystem for processing image signal from an image sensor.
++  The Exynos4x12 SoC series FIMC-IS V1.5 comprises of a dedicated ARM Cortex-A5
++  processor, ISP, DRC and FD IP blocks and peripheral devices such as UART, I2C
++  and SPI bus controllers, PWM and ADC.
 +
 +properties:
 +  compatible:
 +    enum:
-+      - samsung,exynos4212-fimc-lite
-+      - samsung,exynos5250-fimc-lite
++      - samsung,exynos4212-fimc-is
 +
 +  reg:
 +    maxItems: 1
 +
++  '#address-cells':
++    const: 1
++
 +  clocks:
-+    maxItems: 1
++    maxItems: 21
 +
 +  clock-names:
 +    items:
-+      - const: flite
++      - const: lite0
++      - const: lite1
++      - const: ppmuispx
++      - const: ppmuispmx
++      - const: isp
++      - const: drc
++      - const: fd
++      - const: mcuisp
++      - const: gicisp
++      - const: mcuctl_isp
++      - const: pwm_isp
++      - const: ispdiv0
++      - const: ispdiv1
++      - const: mcuispdiv0
++      - const: mcuispdiv1
++      - const: mpll
++      - const: aclk200
++      - const: aclk400mcuisp
++      - const: div_aclk200
++      - const: div_aclk400mcuisp
++      - const: uart
 +
 +  interrupts:
-+    maxItems: 1
++    maxItems: 2
 +
 +  iommus:
-+    maxItems: 1
++    maxItems: 4
++
++  iommu-names:
++    items:
++      - const: isp
++      - const: drc
++      - const: fd
++      - const: mcuctl
 +
 +  power-domains:
 +    maxItems: 1
 +
++  ranges: true
++
++  '#size-cells':
++    const: 1
++
++patternProperties:
++  "^pmu@[0-9a-f]+$":
++    type: object
++    additionalProperties: false
++    description:
++      Node representing the SoC's Power Management Unit (duplicated with the
++      correct PMU node in the SoC).
++
++    properties:
++      reg:
++        maxItems: 1
++
++    required:
++      - reg
++
++  "^i2c-isp@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/i2c/i2c-controller.yaml#
++    unevaluatedProperties: false
++      #additionalProperties: false
++    description:
++      ISP I2C bus controller
++
++    properties:
++      compatible:
++        const: samsung,exynos4212-i2c-isp
++
++      reg:
++        maxItems: 1
++
++
++      clocks:
++        maxItems: 1
++
++      clock-names:
++        items:
++          - const: i2c_isp
++
++      pinctrl-0: true
++      pinctrl-names:
++        items:
++          - const: default
++
++    required:
++      - compatible
++      - reg
++      - clocks
++      - clock-names
++
 +required:
 +  - compatible
 +  - reg
++  - '#address-cells'
 +  - clocks
 +  - clock-names
 +  - interrupts
++  - ranges
++  - '#size-cells'
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
 +    #include <dt-bindings/clock/exynos4.h>
++    #include <dt-bindings/gpio/gpio.h>
 +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    fimc-lite@12390000 {
-+        compatible = "samsung,exynos4212-fimc-lite";
-+        reg = <0x12390000 0x1000>;
-+        clocks = <&isp_clock CLK_ISP_FIMC_LITE0>;
-+        clock-names = "flite";
-+        interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
++
++    fimc-is@12000000 {
++        compatible = "samsung,exynos4212-fimc-is";
++        reg = <0x12000000 0x260000>;
++        interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&isp_clock CLK_ISP_FIMC_LITE0>,
++                 <&isp_clock CLK_ISP_FIMC_LITE1>,
++                 <&isp_clock CLK_ISP_PPMUISPX>,
++                 <&isp_clock CLK_ISP_PPMUISPMX>,
++                 <&isp_clock CLK_ISP_FIMC_ISP>,
++                 <&isp_clock CLK_ISP_FIMC_DRC>,
++                 <&isp_clock CLK_ISP_FIMC_FD>,
++                 <&isp_clock CLK_ISP_MCUISP>,
++                 <&isp_clock CLK_ISP_GICISP>,
++                 <&isp_clock CLK_ISP_MCUCTL_ISP>,
++                 <&isp_clock CLK_ISP_PWM_ISP>,
++                 <&isp_clock CLK_ISP_DIV_ISP0>,
++                 <&isp_clock CLK_ISP_DIV_ISP1>,
++                 <&isp_clock CLK_ISP_DIV_MCUISP0>,
++                 <&isp_clock CLK_ISP_DIV_MCUISP1>,
++                 <&clock CLK_MOUT_MPLL_USER_T>,
++                 <&clock CLK_ACLK200>,
++                 <&clock CLK_ACLK400_MCUISP>,
++                 <&clock CLK_DIV_ACLK200>,
++                 <&clock CLK_DIV_ACLK400_MCUISP>,
++                 <&clock CLK_UART_ISP_SCLK>;
++        clock-names = "lite0", "lite1", "ppmuispx",
++                      "ppmuispmx", "isp",
++                      "drc", "fd", "mcuisp",
++                      "gicisp", "mcuctl_isp", "pwm_isp",
++                      "ispdiv0", "ispdiv1", "mcuispdiv0",
++                      "mcuispdiv1", "mpll", "aclk200",
++                      "aclk400mcuisp", "div_aclk200",
++                      "div_aclk400mcuisp", "uart";
++        iommus = <&sysmmu_fimc_isp>, <&sysmmu_fimc_drc>,
++                 <&sysmmu_fimc_fd>, <&sysmmu_fimc_mcuctl>;
++        iommu-names = "isp", "drc", "fd", "mcuctl";
 +        power-domains = <&pd_isp>;
-+        iommus = <&sysmmu_fimc_lite0>;
++
++        #address-cells = <1>;
++        #size-cells = <1>;
++        ranges;
++
++        pmu@10020000 {
++            reg = <0x10020000 0x3000>;
++        };
++
++        i2c-isp@12140000 {
++            compatible = "samsung,exynos4212-i2c-isp";
++            reg = <0x12140000 0x100>;
++            clocks = <&isp_clock CLK_ISP_I2C1_ISP>;
++            clock-names = "i2c_isp";
++            pinctrl-0 = <&fimc_is_i2c1>;
++            pinctrl-names = "default";
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            image-sensor@10 {
++                compatible = "samsung,s5k6a3";
++                reg = <0x10>;
++                svdda-supply = <&cam_io_reg>;
++                svddio-supply = <&ldo19_reg>;
++                afvdd-supply = <&ldo19_reg>;
++                clock-frequency = <24000000>;
++                clocks = <&camera 1>;
++                clock-names = "extclk";
++                gpios = <&gpm1 6 GPIO_ACTIVE_LOW>;
++
++                port {
++                    endpoint {
++                        remote-endpoint = <&csis1_ep>;
++                        data-lanes = <1>;
++                    };
++                };
++            };
++        };
 +    };
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 0882e304c8f9..2789c436c875 100644
+index 2789c436c875..0f22dc1c95ae 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
 @@ -18466,6 +18466,7 @@ L:	linux-media@vger.kernel.org
  S:	Supported
  Q:	https://patchwork.linuxtv.org/project/linux-media/list/
  F:	Documentation/devicetree/bindings/media/samsung,exynos4210-csis.yaml
-+F:	Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-lite.yaml
++F:	Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-is.yaml
+ F:	Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-lite.yaml
  F:	drivers/media/platform/samsung/exynos4-is/
  
- SAMSUNG SOC CLOCK DRIVERS
 -- 
 2.34.1
 
