@@ -2,57 +2,57 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81548C61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Feb 2023 14:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B787C05027
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Feb 2023 14:21:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231355AbjBNOVl (ORCPT
+        id S229502AbjBNOVm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 09:21:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43146 "EHLO
+        Tue, 14 Feb 2023 09:21:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231298AbjBNOVd (ORCPT
+        with ESMTP id S229501AbjBNOVe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Feb 2023 09:21:33 -0500
+        Tue, 14 Feb 2023 09:21:34 -0500
 Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 665332B086
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3B872B08C
         for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 06:21:13 -0800 (PST)
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230214141324epoutp01a9793442870ffdde093e8273bccf88d4~Dtl7Dd-pr1509115091epoutp01h
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 14:13:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230214141324epoutp01a9793442870ffdde093e8273bccf88d4~Dtl7Dd-pr1509115091epoutp01h
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230214141207epoutp0189b5492c12eea8d362b8c0d167693571~DtkzMklCG1584215842epoutp01G
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 14:12:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230214141207epoutp0189b5492c12eea8d362b8c0d167693571~DtkzMklCG1584215842epoutp01G
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1676384004;
-        bh=w6/lQyH1riSnz4KIsiIukyvKM2g4H0wS9IalebzqTIE=;
+        s=mail20170921; t=1676383927;
+        bh=kuxFDkZgnx1SPc8bSDimvFlfEON/qYA/DJ+OdV4F/YQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qPbuoe/4supWXXdpo9Nk2he5qZSt8yamhJWLXP90EUnLDRvptl9Ah8eUKs1aS03yo
-         0rKYRXr08BS4NwcyCf1/tWb+p30UqNEwQIl5WsQAe2X83VVFZ0Y7oknI3RcXsHgSCb
-         p19uNwdi7WDlgc9GqTNn2Se+D0LJDsCMvLX0NoI0=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20230214141322epcas5p13ea90f4b1263742a2a17cae6d28a6a18~Dtl5k3Wnt1812318123epcas5p1i;
-        Tue, 14 Feb 2023 14:13:22 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.174]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4PGNTs4fwLz4x9Pv; Tue, 14 Feb
-        2023 14:13:21 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DA.80.55678.1079BE36; Tue, 14 Feb 2023 23:13:21 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230214121507epcas5p1590024fc32dfcf562efce93cf5f07221~Dr_pcnVvC1679116791epcas5p1E;
-        Tue, 14 Feb 2023 12:15:07 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230214121507epsmtrp2fb579a6b53f403af3992c4ac7054a4fa~Dr_pbzxoG1865118651epsmtrp2R;
-        Tue, 14 Feb 2023 12:15:07 +0000 (GMT)
-X-AuditID: b6c32a4a-909fc7000000d97e-cd-63eb97019e9e
+        b=DDuRAcqb+5hyg832WJoKuUhqt6rKqIWP5KtENOp/+vXJd+K/aQk1gdqYF9KN2NSaB
+         EaUFU0RBplmSMrVgzkLLnsdX+S4bNPAh8LXQ1J+Ni09TTzJfo9oUf3AVCwF34ivqnq
+         xOLwsjaFUNuf+bkUjfgf205G7y8z8ekKZ/P6SSiA=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20230214141205epcas5p2d1a6f101ff50ff4839d6e38ac321f605~Dtkx45R8m2451524515epcas5p2p;
+        Tue, 14 Feb 2023 14:12:05 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.179]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4PGNSN4yFnz4x9Pv; Tue, 14 Feb
+        2023 14:12:04 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        4B.A8.06765.4B69BE36; Tue, 14 Feb 2023 23:12:04 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20230214121456epcas5p36603c8d717588699d1b5575229d19114~Dr_e7CiW40081100811epcas5p3B;
+        Tue, 14 Feb 2023 12:14:56 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230214121456epsmtrp1fda2db0719d5e8d922c54d556495a537~Dr_e04eqs1788717887epsmtrp1Q;
+        Tue, 14 Feb 2023 12:14:56 +0000 (GMT)
+X-AuditID: b6c32a4b-46dfa70000011a6d-f5-63eb96b4cc3b
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9A.9E.05839.B4B7BE36; Tue, 14 Feb 2023 21:15:07 +0900 (KST)
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E6.0B.17995.F3B7BE36; Tue, 14 Feb 2023 21:14:55 +0900 (KST)
 Received: from cheetah.sa.corp.samsungelectronics.net (unknown
         [107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230214121504epsmtip1bb62400f5fae28e9e805f82dd632a8ef~Dr_mvjZl72484124841epsmtip1V;
-        Tue, 14 Feb 2023 12:15:04 +0000 (GMT)
+        20230214121452epsmtip16085c3c7717daffba84e84cb8bf1ee37~Dr_bm37Mg2436024360epsmtip1q;
+        Tue, 14 Feb 2023 12:14:52 +0000 (GMT)
 From:   Shradha Todi <shradha.t@samsung.com>
 To:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
         bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
@@ -64,230 +64,186 @@ Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Shradha Todi <shradha.t@samsung.com>
-Subject: [PATCH 16/16] PCI: samsung: Make handling of regulators generic
-Date:   Tue, 14 Feb 2023 17:43:33 +0530
-Message-Id: <20230214121333.1837-17-shradha.t@samsung.com>
+Subject: [PATCH 13/16] PCI: samsung: Rename common functions to samsung
+Date:   Tue, 14 Feb 2023 17:43:30 +0530
+Message-Id: <20230214121333.1837-14-shradha.t@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230214121333.1837-1-shradha.t@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0WTf0wTZxjH896114OsywW67QUGNqcbQgK0QOvBYE7nzG3zD5I595PBpZyU
-        UK61105cooIrIzBAWUb4IWOIzSgs/LBlhCIgAhVHZvkDx48NFaZmgBuxFCURZSs92P77Ps/z
-        ed7nx/u+OBo0jIXiOZyJNXKMjsQCRd3DUbtjQPUDjcLdGkHNNXRjlPWMlvp+xC2m6rq/A5Rn
-        3S2ibKu1EqpiYR6lCsrWxZT97qSYmuitx6gbDaMYVTM+gFCWpxYRZXEVi6i2kVsSqumnVQn1
-        T1+PhHpa/VBElQ+fpBz2KvQNGf2XfU1CO+tuSehGu5m2t5Zg9OxkH0Yvu90S+t7NaoR2WE/T
-        l5Z7ELqpwIPRFV2tgPbaI9Ke+zg3RcsyWaxRznIafVYOl51KvvtexpsZKrVCGaNMovaQco7J
-        Y1PJA4fSYg7m6HxjkvLPGZ3Z50pjeJ6Mez3FqDebWLlWz5tSSdaQpTMkGmJ5Jo83c9mxHGtK
-        VioU8SofmJmrXXz0LWLoi8y3jQ+hBeCqvBQE4JBIhFNXasSlIBAPIi4D6J0p3TJWADzfVYUI
-        xmMAp6+fQbZTVi43i4RAP4DtHUsSwShC4MSGBWxSGBENCx+VopsBGfEbAhe9834KJcYAHFzo
-        l2xSwQQN/3QW+jNExCvw178voptaSiTDot9HRUK9HfDHzkG/P8DntxTZ/adCYhqHzvUpIEAH
-        YFPjGiroYLg02iURdCj0Lvdjgs6GLY6aLUYHHzusWwPthYM3633FcF93UbCjN05wh8OqsXY/
-        ghLPw/L1e1u4FPY0bOudcPVZ31afIbDh2oRY0DT0VJWgwlrKAVybuwbOgYi6/0s0AtAKQlgD
-        n5fN8ipDPMce/+/iNPo8O/C/5uh3esD83MPYIYDgYAhAHCVl0uD7C5ogaRZz4gvWqM8wmnUs
-        PwRUvgVWoqEvaPS+78CZMpSJSYpEtVqdmJSgVpIvSSNTf9YEEdmMic1lWQNr3M5D8IDQAoT8
-        NOCOFW1fTb6zPzdzp1XRVlER3rJyQnz0gIkPXC7OlwVaE2pk9PxibebYPufUjZHP4NGwFtY2
-        mdz8jW1X1bHK3pYxd+EwN3E27KMOc+DV20caap+EiXY/m83PW3+S3rpwNtXF5s8knHMXvZZs
-        CLvgOnzofnNU84Zn/ynxUkj88dvSF2Vzr/7yVrEqIOZK5ctaUwq+UejkLuwKMv4xvvd85MXO
-        8KRO1ycpZcUfGlSUOt1RT5yeOXLpYNiefR9cD/EOeE3pypE2U/P7rsMlCZayFWfkg5P5Eeld
-        A6eaIgbxWduKDRDyu19N4xlfH9vh6Xa9/YMDIys9zJfEZH3coCGeFPFaRhmNGnnmXyz/hfFW
-        BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSnK539etkg5+fBCwezNvGZrGkKcNi
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VTbUxTVxje6b3tLcyyO8DtQCKD65CAAi2WcjDiZzeuccmaEPcDSdhduaGV
+        0ja97YYm22ABmXWgiyIfQlUkU1kEKVA7YICAoCxUExgkBBJRdMUtfJXh5COutGX79zzP+7wf
+        5z3nCLHAXkGoUK01sgYto6EE/ritNzoqtuXSn0rx+nwEemKxCVDddyp0pc/BR1W2GoAWVh04
+        urlUSaBS5xSG8n9Y5SPrs1E+Gm6rFqAhy4AAVTzq5KHCtUIcFd4vxtHtvkkC1bYuEehNh51A
+        a+XzOCrp/Ro1W8uwA8H0X9ZXBP1L1SRBX7WaaGv9GQE9MdohoGcdDoKeHinn0c1139JNs3Ye
+        XZu/IKBLW+oB7bKGKbak5+xVsUwWawhntUpdllqbnUIdTcs8nJkoE0tiJckoiQrXMrlsCiX/
+        RBH7sVrjPiYV/iWjMbklBcNxVPy+vQadyciGq3ScMYVi9VkavVQfxzG5nEmbHadljXskYnFC
+        otv4eY7K9ngA07+m8vInS0A+mN5mBn5CSEphUbMLNwN/YSDZDmCX4zrmJYsAVk61+ogLwLN3
+        G8FmSp/tNd8baAPwWv8cz0uKeHB1zCzYcAnIGFjwt9mTHkyO8+CMa4rYIBg5CGC381diwxVE
+        psKJ36yeujgZCa8POrENLCL3wMXx0zxvvw/gz3e6PbqfWy8ssnqqQnJECNsb5vlekxy+eDhP
+        eHEQfDnQ4sOhcObcaR/OhreaKzAv1sDl5jpfg/2we6TavQOhe7po2NgW75W3wbLBBo8FIwNg
+        yeq0zy6Cdssm3g6X1jtwLw6Blv5h3zg0bFwpILxrKQFwYeAecR6EVf3f4ioA9SCE1XO52SyX
+        qN+tZb/67+KUulwr8LzmmKN28PTJfFwP4AlBD4BCjAoWBT13KgNFWczJU6xBl2kwaViuByS6
+        F/gjFrpVqXN/B60xUyJNFktlMpk0ebdMQr0vikp5qAwksxkjm8OyetawmccT+oXm87qqI3vU
+        Ud1Nl+9e4V7eCI0eH8sgB6dvzpzImDsoquq03Hj7C1FZ0Cku4ZuPGsxdQ8sZkYro/sX2f05s
+        DwmQHM+SG7Q10Xjq7Kv2x0StZvqPCwGHMna44o+tNRXfSkvfP7lz+P6Wd3b2K6Ic8SsKwLLl
+        4u/Ti7caHxz49Hj8EXuq7dkF2UTnGVPBQdGYfu5e2PNjBYnik/67iFHd5UXJ+YiEfbfPPvVz
+        7hCR3JAlr9h2eN28rFZePPLZhysSlV2u7nDyqYjhJFKqKql47y2b4nfXwrmEcmahaFfSu/LK
+        pbyf7pgyiNaL15L5BW8OPWi1XMJlkS+CSv2SYmbgcs2jACaNwjkVI4nBDBzzL0QRPRZWBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJLMWRmVeSWpSXmKPExsWy7bCSnK599etkg2UvzS0ezNvGZrGkKcNi
         /pFzrBazts1ltPj4+xyLxYovM9kt+l48ZLZo6PnNarHp8TVWi8u75rBZnJ13nM1ixvl9TBYt
         f1pYLFqOtrNYrD1yl91i0dYv7Bb/9+xgt/gz/QOLRe/hWovNm6YyO4h4vNn0nd1j56y77B4L
         NpV6bFrVyeZx59oeNo93586xezy5Mp3JY/OSeo+N73YweSxq+Mjm0bdlFaPH501yATxRXDYp
-        qTmZZalF+nYJXBkvv05hKtijXrHi/CHmBsaDCl2MnBwSAiYSn3YvZ+li5OIQEtjNKLFlw042
-        iISkxOeL65ggbGGJlf+es4PYQgLNTBLHrluB2GwCWhKNX7uYQZpFBF4xSRzeMwPMYRa4wChx
-        62A3WIewgIfE852NjCA2i4CqxNW3i5lBbF4BK4nW28dZIDbIS6zecAAszgkUb2ndxAyxzVJi
-        1q9VjBMY+RYwMqxilEwtKM5Nzy02LDDMSy3XK07MLS7NS9dLzs/dxAiOHC3NHYzbV33QO8TI
-        xMF4iFGCg1lJhFf46YtkId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQW
-        wWSZODilGpiY9YRf268QehjiveeSz+udJ+V7TRcxbLRdtoZtX3/0ugP77vCXHs87xigg6/32
-        nj7LBO07gkbfCmXmslkev/VNxfXoDC/nHq87ehn6N2YKbtS4oBkeufTejYef7F3W+fy9w/0v
-        dOKyZ0zSyV3KC8/bSG7Jnn2j9/1GVzN75oYnLP3XOCat4T186aHJ7Y+T3j3nCuQvvNAe2/fg
-        d8+EE2GrY5m49CVjJmeE+U536uP4oXPRacXnFWsZAyJ4PSvPenPIv93IzThl4rfbLkdt1Eol
-        fSecMvbcZ3C8+Hfh1FmXbrpHTbfif756Rmus+HMvN4VHfPtkXpvVF1+ccer4beNCwdiWX+pf
-        ouJ+LI73mrlSiaU4I9FQi7moOBEAjZev5QsDAAA=
-X-CMS-MailID: 20230214121507epcas5p1590024fc32dfcf562efce93cf5f07221
+        qTmZZalF+nYJXBnbLhxnLvipVNFwt5exgfGJbBcjJ4eEgInEkW0/WbsYuTiEBHYwSizYv4EN
+        IiEp8fniOiYIW1hi5b/n7BBFzUwS5/+fAUuwCWhJNH7tYgZJiAi8YpI4vGcGmMMscIFR4tbB
+        bnaQKmEBd4k7pzcxgtgsAqoSi0+9YAaxeQWsJD7daoNaIS+xesMBsDgnULyldROYLSRgKTHr
+        1yrGCYx8CxgZVjFKphYU56bnFhsWGOWllusVJ+YWl+al6yXn525iBMeOltYOxj2rPugdYmTi
+        YDzEKMHBrCTCK/z0RbIQb0piZVVqUX58UWlOavEhRmkOFiVx3gtdJ+OFBNITS1KzU1MLUotg
+        skwcnFINTOmxGU7e+vvvh0mZf8jQORV7S2zzqjz9LWq5UyfpcPprbVFcFnGdP+PLLpuadQkh
+        LZMCrT+9nH4mc8213Ir7Zd33Zk3a3JO/+/Kd9pmb1vvUyf/gOTmJi6vVkis5VPfYTvufAfMO
+        np2ceMyY98Ff2TnfhNla37EdYfi1spupU+VxmUFmfe+21kc35v480pRyaFOb8nI9cd5De4qP
+        PnGQ+vJzvsPakLcHlRN1rvxWLcl0Xbfhvn31mosnzVX0T75t2H0rzGe6l4TBrbaQjVqyFdfr
+        JsoKllzYErZDp8fyRuYtYYHzTVpKXI01WmG7Xtx7qyN68rGhmPqNCUz7W9nbHtUnaExcpb3q
+        7Aqu+SJP05RYijMSDbWYi4oTAcxvLLcMAwAA
+X-CMS-MailID: 20230214121456epcas5p36603c8d717588699d1b5575229d19114
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230214121507epcas5p1590024fc32dfcf562efce93cf5f07221
+X-CMS-RootMailID: 20230214121456epcas5p36603c8d717588699d1b5575229d19114
 References: <20230214121333.1837-1-shradha.t@samsung.com>
-        <CGME20230214121507epcas5p1590024fc32dfcf562efce93cf5f07221@epcas5p1.samsung.com>
+        <CGME20230214121456epcas5p36603c8d717588699d1b5575229d19114@epcas5p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use pointers instead of fixed size array to store
-regulator related information. Add common regulator
-initialization and de-initialization functions.
-For platform specific init, add a res_ops function
-pointer.
+Use samsung instead of exynos for all common functions
+like probe/remove/suspend/resume.
 
 Suggested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 Signed-off-by: Shradha Todi <shradha.t@samsung.com>
 ---
- drivers/pci/controller/dwc/pci-samsung.c | 79 +++++++++++++++++++-----
- 1 file changed, 64 insertions(+), 15 deletions(-)
+ drivers/pci/controller/dwc/pci-samsung.c | 42 ++++++++++++------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/pci/controller/dwc/pci-samsung.c b/drivers/pci/controller/dwc/pci-samsung.c
-index 01882f2d06c7..bf18020c14da 100644
+index 719d284e1552..dc8ec0b546fd 100644
 --- a/drivers/pci/controller/dwc/pci-samsung.c
 +++ b/drivers/pci/controller/dwc/pci-samsung.c
-@@ -66,7 +66,8 @@ struct samsung_pcie_pdata {
-  * @clks: list of clocks required for the controller
-  * @clk_cnt: count of clocks required for the controller
-  * @phy: PHY device associated with the controller
-- * @supplies: array of regulators required for the controller
-+ * @supplies: list of regulators required for the controller
-+ * @supplies_cnt: count of regulators required for the controller
-  */
- struct samsung_pcie {
- 	struct dw_pcie			pci;
-@@ -75,10 +76,12 @@ struct samsung_pcie {
- 	struct clk_bulk_data		*clks;
- 	int				clk_cnt;
- 	struct phy			*phy;
--	struct regulator_bulk_data	supplies[2];
-+	struct regulator_bulk_data	*supplies;
-+	int				supplies_cnt;
+@@ -60,7 +60,7 @@ struct samsung_pcie {
+ 	struct regulator_bulk_data	supplies[2];
  };
  
- struct samsung_res_ops {
-+	int (*init_regulator)(struct samsung_pcie *sp);
- 	int (*irq_init)(struct samsung_pcie *sp, struct platform_device *pdev);
- };
- 
-@@ -111,6 +114,34 @@ static unsigned int samsung_pcie_appl_readl(struct samsung_pcie *sp, u32 reg)
- 	return readl(sp->appl_base + reg);
+-static int exynos_pcie_init_clk_resources(struct samsung_pcie *sp)
++static int samsung_pcie_init_clk_resources(struct samsung_pcie *sp)
+ {
+ 	struct device *dev = sp->pci.dev;
+ 	int ret;
+@@ -74,7 +74,7 @@ static int exynos_pcie_init_clk_resources(struct samsung_pcie *sp)
+ 	return clk_bulk_prepare_enable(sp->clk_cnt, sp->clks);
  }
  
-+static int samsung_regulator_enable(struct samsung_pcie *sp)
-+{
-+	struct device *dev = sp->pci.dev;
-+	int ret;
-+
-+	if (sp->supplies_cnt == 0)
-+		return 0;
-+
-+	ret = devm_regulator_bulk_get(dev, sp->supplies_cnt,
-+				      sp->supplies);
-+	if (ret)
-+		return ret;
-+
-+	ret = regulator_bulk_enable(sp->supplies_cnt, sp->supplies);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static void samsung_regulator_disable(struct samsung_pcie *sp)
-+{
-+	if (sp->supplies_cnt == 0)
-+		return;
-+
-+	regulator_bulk_disable(sp->supplies_cnt, sp->supplies);
-+}
-+
- static void exynos_pcie_sideband_dbi_w_mode(struct samsung_pcie *sp, bool on)
+-static void exynos_pcie_deinit_clk_resources(struct samsung_pcie *sp)
++static void samsung_pcie_deinit_clk_resources(struct samsung_pcie *sp)
  {
- 	u32 val;
-@@ -281,6 +312,24 @@ static const struct dw_pcie_host_ops exynos_pcie_host_ops = {
- 	.host_init = exynos_pcie_host_init,
+ 	clk_bulk_disable_unprepare(sp->clk_cnt, sp->clks);
+ }
+@@ -297,7 +297,7 @@ static const struct dw_pcie_ops dw_pcie_ops = {
+ 	.start_link = exynos_pcie_start_link,
  };
  
-+static int exynos_init_regulator(struct samsung_pcie *sp)
-+{
-+	struct device *dev = sp->pci.dev;
-+
-+	sp->supplies_cnt = 2;
-+
-+	sp->supplies = devm_kcalloc(dev, sp->supplies_cnt,
-+			sizeof(*sp->supplies),
-+			GFP_KERNEL);
-+	if (!sp->supplies)
-+		return -ENOMEM;
-+
-+	sp->supplies[0].supply = "vdd18";
-+	sp->supplies[1].supply = "vdd10";
-+
-+	return 0;
-+}
-+
- static int exynos_irq_init(struct samsung_pcie *sp,
- 				       struct platform_device *pdev)
+-static int exynos_pcie_probe(struct platform_device *pdev)
++static int samsung_pcie_probe(struct platform_device *pdev)
  {
-@@ -313,6 +362,7 @@ static const struct dw_pcie_ops exynos_dw_pcie_ops = {
- };
+ 	struct device *dev = &pdev->dev;
+ 	struct samsung_pcie *sp;
+@@ -319,7 +319,7 @@ static int exynos_pcie_probe(struct platform_device *pdev)
+ 	if (IS_ERR(sp->appl_base))
+ 		return PTR_ERR(sp->appl_base);
  
- static const struct samsung_res_ops exynos_res_ops_data = {
-+	.init_regulator		= exynos_init_regulator,
- 	.irq_init		= exynos_irq_init,
- };
- 
-@@ -346,16 +396,15 @@ static int samsung_pcie_probe(struct platform_device *pdev)
+-	ret = exynos_pcie_init_clk_resources(sp);
++	ret = samsung_pcie_init_clk_resources(sp);
  	if (ret < 0)
  		return ret;
  
--	sp->supplies[0].supply = "vdd18";
--	sp->supplies[1].supply = "vdd10";
--	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(sp->supplies),
--				      sp->supplies);
--	if (ret)
--		return ret;
-+	if (pdata->res_ops && pdata->res_ops->init_regulator) {
-+		ret = sp->pdata->res_ops->init_regulator(sp);
-+		if (ret)
-+			goto fail_regulator;
-+	}
- 
--	ret = regulator_bulk_enable(ARRAY_SIZE(sp->supplies), sp->supplies);
-+	ret = samsung_regulator_enable(sp);
- 	if (ret)
--		return ret;
-+		goto fail_regulator;
- 
- 	platform_set_drvdata(pdev, sp);
- 
-@@ -372,7 +421,8 @@ static int samsung_pcie_probe(struct platform_device *pdev)
- 
+@@ -345,12 +345,12 @@ static int exynos_pcie_probe(struct platform_device *pdev)
  fail_probe:
  	phy_exit(sp->phy);
--	regulator_bulk_disable(ARRAY_SIZE(sp->supplies), sp->supplies);
-+	samsung_regulator_disable(sp);
-+fail_regulator:
- 	samsung_pcie_deinit_clk_resources(sp);
+ 	regulator_bulk_disable(ARRAY_SIZE(sp->supplies), sp->supplies);
+-	exynos_pcie_deinit_clk_resources(sp);
++	samsung_pcie_deinit_clk_resources(sp);
  
  	return ret;
-@@ -387,8 +437,7 @@ static int __exit samsung_pcie_remove(struct platform_device *pdev)
- 	phy_power_off(sp->phy);
- 	phy_exit(sp->phy);
- 	samsung_pcie_deinit_clk_resources(sp);
--	regulator_bulk_disable(ARRAY_SIZE(sp->supplies), sp->supplies);
--
-+	samsung_regulator_disable(sp);
- 	return 0;
  }
  
-@@ -399,7 +448,7 @@ static int samsung_pcie_suspend_noirq(struct device *dev)
+-static int __exit exynos_pcie_remove(struct platform_device *pdev)
++static int __exit samsung_pcie_remove(struct platform_device *pdev)
+ {
+ 	struct samsung_pcie *sp = platform_get_drvdata(pdev);
+ 
+@@ -358,13 +358,13 @@ static int __exit exynos_pcie_remove(struct platform_device *pdev)
  	exynos_pcie_assert_core_reset(sp);
  	phy_power_off(sp->phy);
  	phy_exit(sp->phy);
--	regulator_bulk_disable(ARRAY_SIZE(sp->supplies), sp->supplies);
-+	samsung_regulator_disable(sp);
+-	exynos_pcie_deinit_clk_resources(sp);
++	samsung_pcie_deinit_clk_resources(sp);
+ 	regulator_bulk_disable(ARRAY_SIZE(sp->supplies), sp->supplies);
  
  	return 0;
  }
-@@ -411,7 +460,7 @@ static int samsung_pcie_resume_noirq(struct device *dev)
- 	struct dw_pcie_rp *pp = &pci->pp;
- 	int ret;
  
--	ret = regulator_bulk_enable(ARRAY_SIZE(sp->supplies), sp->supplies);
-+	ret = samsung_regulator_enable(sp);
- 	if (ret)
- 		return ret;
+-static int exynos_pcie_suspend_noirq(struct device *dev)
++static int samsung_pcie_suspend_noirq(struct device *dev)
+ {
+ 	struct samsung_pcie *sp = dev_get_drvdata(dev);
  
+@@ -376,7 +376,7 @@ static int exynos_pcie_suspend_noirq(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int exynos_pcie_resume_noirq(struct device *dev)
++static int samsung_pcie_resume_noirq(struct device *dev)
+ {
+ 	struct samsung_pcie *sp = dev_get_drvdata(dev);
+ 	struct dw_pcie *pci = &sp->pci;
+@@ -394,25 +394,25 @@ static int exynos_pcie_resume_noirq(struct device *dev)
+ 	return dw_pcie_wait_for_link(pci);
+ }
+ 
+-static const struct dev_pm_ops exynos_pcie_pm_ops = {
+-	NOIRQ_SYSTEM_SLEEP_PM_OPS(exynos_pcie_suspend_noirq,
+-				  exynos_pcie_resume_noirq)
++static const struct dev_pm_ops samsung_pcie_pm_ops = {
++	NOIRQ_SYSTEM_SLEEP_PM_OPS(samsung_pcie_suspend_noirq,
++				  samsung_pcie_resume_noirq)
+ };
+ 
+-static const struct of_device_id exynos_pcie_of_match[] = {
++static const struct of_device_id samsung_pcie_of_match[] = {
+ 	{ .compatible = "samsung,exynos5433-pcie", },
+ 	{ },
+ };
+ 
+-static struct platform_driver exynos_pcie_driver = {
+-	.probe		= exynos_pcie_probe,
+-	.remove		= __exit_p(exynos_pcie_remove),
++static struct platform_driver samsung_pcie_driver = {
++	.probe		= samsung_pcie_probe,
++	.remove		= __exit_p(samsung_pcie_remove),
+ 	.driver = {
+-		.name	= "exynos-pcie",
+-		.of_match_table = exynos_pcie_of_match,
+-		.pm		= &exynos_pcie_pm_ops,
++		.name	= "samsung-pcie",
++		.of_match_table = samsung_pcie_of_match,
++		.pm		= &samsung_pcie_pm_ops,
+ 	},
+ };
+-module_platform_driver(exynos_pcie_driver);
++module_platform_driver(samsung_pcie_driver);
+ MODULE_LICENSE("GPL v2");
+-MODULE_DEVICE_TABLE(of, exynos_pcie_of_match);
++MODULE_DEVICE_TABLE(of, samsung_pcie_of_match);
 -- 
 2.17.1
 
