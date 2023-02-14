@@ -2,112 +2,129 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8649FC6379F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Feb 2023 10:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36BDBC61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Feb 2023 10:47:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229996AbjBNKA0 (ORCPT
+        id S232171AbjBNKrV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 05:00:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35344 "EHLO
+        Tue, 14 Feb 2023 05:47:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232591AbjBNJ7g (ORCPT
+        with ESMTP id S232543AbjBNKrR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Feb 2023 04:59:36 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7646C233D0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 01:59:00 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id o18so15037817wrj.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 01:59:00 -0800 (PST)
+        Tue, 14 Feb 2023 05:47:17 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 126E72658E
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 02:46:54 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id l37-20020a05600c1d2500b003dfe46a9801so11245736wms.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 02:46:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YigLVN232d2vsfHIJ26LQHhC5RhgoKV67mcKgoE/0Tg=;
-        b=Lgr+NZlmPJrB0+lMM0N6BMTZMMdFS1M0LlvQbZTmoCCJ+XDWFlO11xG2TfAbxMRfsr
-         xhoexczwRzeLZTFYbH4E1x7lxCxZZaU1vksAyPZzNH8Mn1OK2bMdGKp1dfXWPd85LXCw
-         mNMlyCsliv0YykzbR8m7THYVA3oPJRPVo4HUp540kYZCz0ZUo/HOSh8KXaFqm78k1wBV
-         R8BCl0M2UWauDKPbDUSfk4R8fLZ0IrquTqfWTgbBG1mTK9aAi/wxKDtADwZfFq3o3Ajw
-         aj3TH0Fbm9Eoc0kTgAmUToQ64QgVCGoHBmhwSau1tfYM6WYTGrFJ4vgb3lkMQNOS5Qv6
-         XhTg==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nl8VzIg0XTBtuUGCbgymYwhmqQdV9/S2Londk08mfDc=;
+        b=e4OnI8eRgdDV5nWzruUH+D85OEMv8id+GLyjj+enskPa21a+fZaDXRg0dRBEJcY7vp
+         tt75Mvl4GhZq9jBUx/VCfrS7GXlZ/ZT+RVOBDeW8xWfpZuOPzjhNM5qToPBdduxhwXDs
+         cnILBfofxI/putHCd7utWgel5cvJBN+4zBctVxRrXqUFW9xxaVLCxawhbFphaiM2s8UT
+         u/SV1AZwzjPB2LobLgVJpxBReU/cZEN34hLtDoJOD1RslNI5Ou5fRUZ4x+YTJai3KYTN
+         BdSd3PJCStDML0fe6YWWN1ors7nJ/Ol8CjWEg2ttS7STaIOhRu8Fy/p2kN7AG+c4WNUA
+         n9xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YigLVN232d2vsfHIJ26LQHhC5RhgoKV67mcKgoE/0Tg=;
-        b=kikIGFn9hczL7v5kEwqO5xHcdvhYlCijtwuTGk5MIlRnhQuRBUcuGKJi3+86DPwuE4
-         NdDsDDCcit8sNr+1Up/HN8fihSfAjnyBOxjkgGXvatB1VRLBXa6alfE9LNScknSOLvx9
-         o1oEF34tdSGlzV093CJdSBQ5G6UIqV042nu+T1dEWZPYqQ+0WF7yGcpyIXXPj2omL+OM
-         RMBUkricZcK1dLBA5tYNJeThm5k98Y/aNOWdcrQW7K+XukbojkleA5tKgN9lXYAsSLps
-         jUqFXXdTCekET+TfvVuQbOjPj173LODzzrTgUAK7VuqoW6jvu3uqFh1ic6QLjPuz8z8Z
-         tJQQ==
-X-Gm-Message-State: AO0yUKUhLMa6p/4hth1GsqjepONanIkThFs76gbRroMc1prcw3cpATD4
-        2DHQ4IMgbpNbQRd3YLSFNrGo3w==
-X-Google-Smtp-Source: AK7set/siP0mTRrExraFbFYMqjIdU9FDVpbw8X8TUHwWT+RaseP1odGp2QbV1Q7w7d7Vfc4ReqTENg==
-X-Received: by 2002:a5d:5704:0:b0:2bf:b68a:e122 with SMTP id a4-20020a5d5704000000b002bfb68ae122mr1542895wrv.33.1676368739088;
-        Tue, 14 Feb 2023 01:58:59 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id r3-20020a5d6943000000b002c551ae8cc1sm7505795wrw.67.2023.02.14.01.58.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Feb 2023 01:58:58 -0800 (PST)
-Message-ID: <765c9ce0-65e3-8681-7343-c57ba70da9df@linaro.org>
-Date:   Tue, 14 Feb 2023 10:58:56 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 3/4] media: dt-bindings: samsung,exynos4212-is: convert to
- dtschema
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-References: <20230212190222.44977-1-krzysztof.kozlowski@linaro.org>
- <20230212190222.44977-3-krzysztof.kozlowski@linaro.org>
- <167630051330.6283.15554895477756313707.robh@kernel.org>
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Nl8VzIg0XTBtuUGCbgymYwhmqQdV9/S2Londk08mfDc=;
+        b=k+zqySMydVIf+rA2kdkwPS/8e8u5O96agqc+EkvEQbTjyNH1gaOwUpu6ct0nHLLzU1
+         QzlhDhFawI1ltiVhnyxvXDny8UPo9KXs2JBYEEyQ5YxgNGtH6Hvz8lVCujRxPAcdCEBw
+         t6BeDb7RtSSCAjAeHxYQdC21/CK5taaGRBRB0nGwJPBcPKspJ4nOj5tUDWu17awp39Sx
+         JaU6qy3pBaascdCGNW4Dvpt7zo84ihggJHRndQwyOA8k2Xl9Hu7hdwxsTaasg3PsALEP
+         4efKLYJRQY/Pc5f9bkdNp9tY2cq6bdcE1P1F3d4hAL4WVS/pWlowkKKnVO91rofZKcX/
+         WjRw==
+X-Gm-Message-State: AO0yUKVdXjDlYi4p0px8c8VcXd2d2k3AnjOx9+YmupjTuf9K26GSE04n
+        Jj6TRuVyb1RKH7Mojdv1YXWFQcFmc+6zb+Af
+X-Google-Smtp-Source: AK7set8IWpV4gIam5FjkNJq193Kp8r7oGbJn7a6xJJYQ3amCGBylgRDvL4zzPX7AUA4xCzfoKuAwhg==
+X-Received: by 2002:a05:600c:a297:b0:3dc:5a9f:1c7a with SMTP id hu23-20020a05600ca29700b003dc5a9f1c7amr1660447wmb.30.1676371610511;
+        Tue, 14 Feb 2023 02:46:50 -0800 (PST)
+Received: from krzk-bin.. ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id m20-20020a05600c4f5400b003e1f319b87bsm2623719wmq.24.2023.02.14.02.46.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Feb 2023 02:46:50 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <167630051330.6283.15554895477756313707.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 0/7] media: dt-bindings: Convert Samsung SoC Camera to DT schema
+Date:   Tue, 14 Feb 2023 11:45:01 +0100
+Message-Id: <20230214104508.51955-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 13/02/2023 16:09, Rob Herring wrote:
-> 
-> On Sun, 12 Feb 2023 20:02:21 +0100, Krzysztof Kozlowski wrote:
->> Convert the Samsung Exynos4212/4412 SoC Imaging Subsystem (FIMC-IS)
->> bindings to DT schema.  Changes during conversion - adjust to existing
->> DTS and Linux driver: add iommus and power-domains.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->>  .../bindings/media/exynos4-fimc-is.txt        |  50 ----
->>  .../media/samsung,exynos4212-fimc-is.yaml     | 221 ++++++++++++++++++
->>  MAINTAINERS                                   |   1 +
->>  3 files changed, 222 insertions(+), 50 deletions(-)
->>  delete mode 100644 Documentation/devicetree/bindings/media/exynos4-fimc-is.txt
->>  create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-is.yaml
->>
-> 
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-is.example.dtb: /example-0/fimc-is@12000000/i2c-isp@12140000/image-sensor@10: failed to match any schema with compatible: ['samsung,s5k6a3']
-> 
+Hi,
 
-Eh, I missed the fact that this depends on my other (earlier) patch for
-samsung,s5k6a3. I will resend all of them in one patchset.
+Changes since v1
+================
+1. Collect few independent patches into one patchset.
+
+The patchset depends on:
+https://lore.kernel.org/all/20230207205834.673163-1-krzysztof.kozlowski@linaro.org/
 
 Best regards,
 Krzysztof
+
+Krzysztof Kozlowski (7):
+  media: dt-bindings: i2c: samsung,s5k6a3: convert to dtschema
+  media: dt-bindings: i2c: samsung,s5k5baf: convert to dtschema
+  media: dt-bindings: samsung,exynos4210-csis: convert to dtschema
+  media: dt-bindings: samsung,exynos4212-fimc-lite: convert to dtschema
+  media: dt-bindings: samsung,exynos4212-is: convert to dtschema
+  media: dt-bindings: samsung,fimc: convert to dtschema
+  media: dt-bindings: samsung,s5c73m3: convert to dtschema
+
+ .../bindings/media/exynos-fimc-lite.txt       |  16 -
+ .../bindings/media/exynos4-fimc-is.txt        |  50 ----
+ .../bindings/media/i2c/samsung,s5k5baf.yaml   | 101 +++++++
+ .../bindings/media/i2c/samsung,s5k6a3.yaml    |  98 ++++++
+ .../media/samsung,exynos4210-csis.yaml        | 170 +++++++++++
+ .../media/samsung,exynos4210-fimc.yaml        | 152 ++++++++++
+ .../media/samsung,exynos4212-fimc-is.yaml     | 221 ++++++++++++++
+ .../media/samsung,exynos4212-fimc-lite.yaml   |  63 ++++
+ .../bindings/media/samsung,fimc.yaml          | 279 ++++++++++++++++++
+ .../bindings/media/samsung,s5c73m3.yaml       | 165 +++++++++++
+ .../bindings/media/samsung-fimc.txt           | 210 -------------
+ .../bindings/media/samsung-mipi-csis.txt      |  81 -----
+ .../bindings/media/samsung-s5c73m3.txt        |  97 ------
+ .../bindings/media/samsung-s5k5baf.txt        |  58 ----
+ .../bindings/media/samsung-s5k6a3.txt         |  33 ---
+ MAINTAINERS                                   |   6 +
+ 16 files changed, 1255 insertions(+), 545 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/exynos-fimc-lite.txt
+ delete mode 100644 Documentation/devicetree/bindings/media/exynos4-fimc-is.txt
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/samsung,s5k5baf.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/samsung,s5k6a3.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos4210-csis.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos4210-fimc.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-is.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-lite.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/samsung,fimc.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/samsung,s5c73m3.yaml
+ delete mode 100644 Documentation/devicetree/bindings/media/samsung-fimc.txt
+ delete mode 100644 Documentation/devicetree/bindings/media/samsung-mipi-csis.txt
+ delete mode 100644 Documentation/devicetree/bindings/media/samsung-s5c73m3.txt
+ delete mode 100644 Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
+ delete mode 100644 Documentation/devicetree/bindings/media/samsung-s5k6a3.txt
+
+-- 
+2.34.1
 
