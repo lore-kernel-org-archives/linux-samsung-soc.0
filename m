@@ -2,45 +2,44 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A31C61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Feb 2023 02:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB29C6379F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Feb 2023 03:24:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229840AbjBOClC (ORCPT
+        id S229739AbjBODYQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 21:41:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33168 "EHLO
+        Tue, 14 Feb 2023 22:24:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232124AbjBOClB (ORCPT
+        with ESMTP id S229553AbjBODYO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Feb 2023 21:41:01 -0500
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD3F431E1B
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 18:40:59 -0800 (PST)
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230215024058epoutp01bd24ae7c5f957310734309614a63cdab~D3yoiu6-I1133711337epoutp01d
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Feb 2023 02:40:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230215024058epoutp01bd24ae7c5f957310734309614a63cdab~D3yoiu6-I1133711337epoutp01d
+        Tue, 14 Feb 2023 22:24:14 -0500
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 310682134
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 19:24:11 -0800 (PST)
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230215032407epoutp0312bad59c9ea39bb9f1a8891808d012b3~D4YTgP0fp1911019110epoutp03K
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Feb 2023 03:24:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230215032407epoutp0312bad59c9ea39bb9f1a8891808d012b3~D4YTgP0fp1911019110epoutp03K
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1676428858;
-        bh=dTVvHi0PSXlkaiJ8xKjPGGmEQywwSouz1POMk3kJ7r0=;
+        s=mail20170921; t=1676431447;
+        bh=CeJJHr1g6TM0kd+qg2F6GEyKVlKxUpGWmpbMLofy6qE=;
         h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=WcV7Iml3cQBk2xdmTt6DKzB3N0LqofAzcL9i439ju/04/YHetnE1C61dN9seGUcrw
-         /9whdyays8TxroKYRlVAwUDIp7skn99keWSJ8XaYRl9PkCRWlQYyWuICfew65E/fk3
-         lv3ShItg5ADep07USFNYOPxSjWR80w1pw0VrZzxQ=
+        b=mW6XZWIX8t+UuyYjsUuJxVes9to4uNhUoB5KCk4naY/tJJ/vFodkhXa0Ht2FchrgU
+         7Z2H1kg6nTxtEQPu7TmFL+/W625LzHqEXJAuEMg24mJpbcAYuFTExF+pZpM9e+BSa0
+         hw+wQ31iB4JSkL8H+HdcIDxnGQdqr41vfcGpmOvk=
 Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20230215024057epcas2p4cdedf47d18e6c9c14f9b2d02758c9e28~D3yoJfhBG1328813288epcas2p4-;
-        Wed, 15 Feb 2023 02:40:57 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.102]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4PGj4T2nY2z4x9Q2; Wed, 15 Feb
-        2023 02:40:57 +0000 (GMT)
-X-AuditID: b6c32a46-4e1ff70000007a4b-35-63ec4639b2d7
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A6.70.31307.9364CE36; Wed, 15 Feb 2023 11:40:57 +0900 (KST)
+        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+        20230215032406epcas2p322c2fe6d3498b6031458606aca1900f9~D4YS8b1FA1167411674epcas2p3l;
+        Wed, 15 Feb 2023 03:24:06 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.36.101]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4PGk2F6hdSz4x9Q2; Wed, 15 Feb
+        2023 03:24:05 +0000 (GMT)
+X-AuditID: b6c32a48-45bfc70000021624-79-63ec50555a07
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        53.5A.05668.5505CE36; Wed, 15 Feb 2023 12:24:05 +0900 (KST)
 Mime-Version: 1.0
-Subject: RE: [PATCH 5/6] clk: samsung: exynos850: Add AUD and HSI main gate
- clocks
+Subject: RE: [PATCH 4/6] clk: samsung: exynos850: Implement CMU_G3D domain
 Reply-To: chanho61.park@samsung.com
 Sender: CHANHO PARK <chanho61.park@samsung.com>
 From:   CHANHO PARK <chanho61.park@samsung.com>
@@ -64,44 +63,44 @@ CC:     David Virag <virag.david003@gmail.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 X-Priority: 3
 X-Content-Kind-Code: NORMAL
-In-Reply-To: <20230211064006.14981-6-semen.protsenko@linaro.org>
+In-Reply-To: <20230211064006.14981-5-semen.protsenko@linaro.org>
 X-CPGS-Detection: blocking_info_exchange
 X-Drm-Type: N,general
 X-Msg-Generator: Mail
 X-Msg-Type: PERSONAL
 X-Reply-Demand: N
-Message-ID: <20230215024056epcms2p28f04cf946f20343643faca944ea147ea@epcms2p2>
-Date:   Wed, 15 Feb 2023 11:40:56 +0900
-X-CMS-MailID: 20230215024056epcms2p28f04cf946f20343643faca944ea147ea
+Message-ID: <20230215032405epcms2p433e63daf766faff2635641cc856ab515@epcms2p4>
+Date:   Wed, 15 Feb 2023 12:24:05 +0900
+X-CMS-MailID: 20230215032405epcms2p433e63daf766faff2635641cc856ab515
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJJsWRmVeSWpSXmKPExsWy7bCmua6l25tkg9X/eSwezNvGZnH9y3NW
+X-Brightmail-Tracker: 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
-        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
+        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
+        Y26F26TC3yeUWIozEg21mIuKEwEXvQVhTAQAAA==
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230211063956epcas2p423cb99655dcfdb34c6847bb228aa7324
-References: <20230211064006.14981-6-semen.protsenko@linaro.org>
+X-CMS-RootMailID: 20230211063957epcas2p2302d93ee2aeb2c5e680b771aa8bbc785
+References: <20230211064006.14981-5-semen.protsenko@linaro.org>
         <20230211064006.14981-1-semen.protsenko@linaro.org>
-        <CGME20230211063956epcas2p423cb99655dcfdb34c6847bb228aa7324@epcms2p2>
+        <CGME20230211063957epcas2p2302d93ee2aeb2c5e680b771aa8bbc785@epcms2p4>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -119,119 +118,248 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 > <sboyd@kernel.org>; linux-samsung-soc@vger.kernel.org; linux-
 > clk@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
 > kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH 5/6] clk: samsung: exynos850: Add AUD and HSI main gate
-> clocks
+> Subject: [PATCH 4/6] clk: samsung: exynos850: Implement CMU_G3D domain
 > 
-> Add main gate clocks for controlling AUD and HSI CMUs:
->   - gout_aud_cmu_aud_pclk
->   - gout_hsi_cmu_hsi_pclk
+> CMU_G3D clock domain provides clocks for Mali-G52 GPU and bus clocks for
+> BLK_G3D.
 > 
-> Those clocks were marked as CLK_IGNORE_UNUSED, as system hangs on boot
+> This patch adds next clocks:
+>   - bus clocks in CMU_TOP for CMU_G3D
+>   - all internal CMU_G3D clocks
+>   - leaf clocks for GPU, TZPC (TrustZone Protection Controller) and
+>     SysReg
+> 
+> G3D_CMU_G3D clock was marked as CLK_IGNORE_UNUSED, as system hangs on boot
 > otherwise.
-> 
-> While at it, add missing PPMU (Performance Profiling Monitor Unit) clocks
-> for CMU_HSI.
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > ---
->  drivers/clk/samsung/clk-exynos850.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+>  drivers/clk/samsung/clk-exynos850.c | 121 ++++++++++++++++++++++++++++
+>  1 file changed, 121 insertions(+)
 > 
 > diff --git a/drivers/clk/samsung/clk-exynos850.c
 > b/drivers/clk/samsung/clk-exynos850.c
-> index a24eff42baae..3d776d57cc8f 100644
+> index 541761e96aeb..a24eff42baae 100644
 > --- a/drivers/clk/samsung/clk-exynos850.c
 > +++ b/drivers/clk/samsung/clk-exynos850.c
-> @@ -674,6 +674,7 @@ static const struct samsung_cmu_info apm_cmu_info
-> __initconst = {
->  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF4	0x2014
->  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF5	0x2018
->  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF6	0x201c
-> +#define CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK	0x2020
->  #define CLK_CON_GAT_GOUT_AUD_ABOX_ACLK		0x2048
->  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_SPDY	0x204c
->  #define CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_ASB	0x2050
-> @@ -729,6 +730,7 @@ static const unsigned long aud_clk_regs[] __initconst
+> @@ -36,6 +36,7 @@
+>  #define CLK_CON_MUX_MUX_CLKCMU_CORE_MMC_EMBD	0x101c
+>  #define CLK_CON_MUX_MUX_CLKCMU_CORE_SSS		0x1020
+>  #define CLK_CON_MUX_MUX_CLKCMU_DPU		0x1034
+> +#define CLK_CON_MUX_MUX_CLKCMU_G3D_SWITCH	0x1038
+>  #define CLK_CON_MUX_MUX_CLKCMU_HSI_BUS		0x103c
+>  #define CLK_CON_MUX_MUX_CLKCMU_HSI_MMC_CARD	0x1040
+>  #define CLK_CON_MUX_MUX_CLKCMU_HSI_USB20DRD	0x1044
+> @@ -57,6 +58,7 @@
+>  #define CLK_CON_DIV_CLKCMU_CORE_MMC_EMBD	0x1828
+>  #define CLK_CON_DIV_CLKCMU_CORE_SSS		0x182c
+>  #define CLK_CON_DIV_CLKCMU_DPU			0x1840
+> +#define CLK_CON_DIV_CLKCMU_G3D_SWITCH		0x1844
+>  #define CLK_CON_DIV_CLKCMU_HSI_BUS		0x1848
+>  #define CLK_CON_DIV_CLKCMU_HSI_MMC_CARD		0x184c
+>  #define CLK_CON_DIV_CLKCMU_HSI_USB20DRD		0x1850
+> @@ -84,6 +86,7 @@
+>  #define CLK_CON_GAT_GATE_CLKCMU_CORE_MMC_EMBD	0x2024
+>  #define CLK_CON_GAT_GATE_CLKCMU_CORE_SSS	0x2028
+>  #define CLK_CON_GAT_GATE_CLKCMU_DPU		0x203c
+> +#define CLK_CON_GAT_GATE_CLKCMU_G3D_SWITCH	0x2040
+>  #define CLK_CON_GAT_GATE_CLKCMU_HSI_BUS		0x2044
+>  #define CLK_CON_GAT_GATE_CLKCMU_HSI_MMC_CARD	0x2048
+>  #define CLK_CON_GAT_GATE_CLKCMU_HSI_USB20DRD	0x204c
+> @@ -116,6 +119,7 @@ static const unsigned long top_clk_regs[] __initconst
 > = {
->  	CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF4,
->  	CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF5,
->  	CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF6,
-> +	CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK,
->  	CLK_CON_GAT_GOUT_AUD_ABOX_ACLK,
->  	CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_SPDY,
->  	CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_ASB,
-> @@ -848,6 +850,9 @@ static const struct samsung_div_clock aud_div_clks[]
-> __initconst = {  };
-> 
->  static const struct samsung_gate_clock aud_gate_clks[] __initconst = {
-> +	GATE(CLK_GOUT_AUD_CMU_AUD_PCLK, "gout_aud_cmu_aud_pclk",
-> +	     "dout_aud_busd",
-> +	     CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK, 21, CLK_IGNORE_UNUSED, 0),
->  	GATE(CLK_GOUT_AUD_CA32_CCLK, "gout_aud_ca32_cclk",
-> "mout_aud_cpu_hch",
->  	     CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_CA32, 21, 0, 0),
->  	GATE(CLK_GOUT_AUD_ASB_CCLK, "gout_aud_asb_cclk",
-> "dout_aud_cpu_aclk", @@ -1117,12 +1122,15 @@ static const struct
-> samsung_cmu_info g3d_cmu_info __initconst = {
->  #define PLL_CON0_MUX_CLKCMU_HSI_MMC_CARD_USER			0x0610
->  #define PLL_CON0_MUX_CLKCMU_HSI_USB20DRD_USER			0x0620
->  #define CLK_CON_MUX_MUX_CLK_HSI_RTC				0x1000
-> +#define CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK			0x2000
->  #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV		0x2008
->  #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_REF_CLK_50		0x200c
->  #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_PHY_REFCLK_26		0x2010
->  #define CLK_CON_GAT_GOUT_HSI_GPIO_HSI_PCLK			0x2018
->  #define CLK_CON_GAT_GOUT_HSI_MMC_CARD_I_ACLK			0x2024
->  #define CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN			0x2028
-> +#define CLK_CON_GAT_GOUT_HSI_PPMU_ACLK				0x202c
-> +#define CLK_CON_GAT_GOUT_HSI_PPMU_PCLK				0x2030
->  #define CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK			0x2038
->  #define CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_ACLK_PHYCTRL_20	0x203c
->  #define CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_BUS_CLK_EARLY		0x2040
-> @@ -1132,12 +1140,15 @@ static const unsigned long hsi_clk_regs[]
+>  	CLK_CON_MUX_MUX_CLKCMU_CORE_MMC_EMBD,
+>  	CLK_CON_MUX_MUX_CLKCMU_CORE_SSS,
+>  	CLK_CON_MUX_MUX_CLKCMU_DPU,
+> +	CLK_CON_MUX_MUX_CLKCMU_G3D_SWITCH,
+>  	CLK_CON_MUX_MUX_CLKCMU_HSI_BUS,
+>  	CLK_CON_MUX_MUX_CLKCMU_HSI_MMC_CARD,
+>  	CLK_CON_MUX_MUX_CLKCMU_HSI_USB20DRD,
+> @@ -137,6 +141,7 @@ static const unsigned long top_clk_regs[] __initconst
+> = {
+>  	CLK_CON_DIV_CLKCMU_CORE_MMC_EMBD,
+>  	CLK_CON_DIV_CLKCMU_CORE_SSS,
+>  	CLK_CON_DIV_CLKCMU_DPU,
+> +	CLK_CON_DIV_CLKCMU_G3D_SWITCH,
+>  	CLK_CON_DIV_CLKCMU_HSI_BUS,
+>  	CLK_CON_DIV_CLKCMU_HSI_MMC_CARD,
+>  	CLK_CON_DIV_CLKCMU_HSI_USB20DRD,
+> @@ -164,6 +169,7 @@ static const unsigned long top_clk_regs[] __initconst
+> = {
+>  	CLK_CON_GAT_GATE_CLKCMU_CORE_MMC_EMBD,
+>  	CLK_CON_GAT_GATE_CLKCMU_CORE_SSS,
+>  	CLK_CON_GAT_GATE_CLKCMU_DPU,
+> +	CLK_CON_GAT_GATE_CLKCMU_G3D_SWITCH,
+>  	CLK_CON_GAT_GATE_CLKCMU_HSI_BUS,
+>  	CLK_CON_GAT_GATE_CLKCMU_HSI_MMC_CARD,
+>  	CLK_CON_GAT_GATE_CLKCMU_HSI_USB20DRD,
+> @@ -216,6 +222,9 @@ PNAME(mout_core_mmc_embd_p)	= { "oscclk",
+> "dout_shared0_div2",
+>  				    "oscclk", "oscclk" };
+>  PNAME(mout_core_sss_p)		= { "dout_shared0_div3",
+> "dout_shared1_div3",
+>  				    "dout_shared0_div4", "dout_shared1_div4" };
+> +/* List of parent clocks for Muxes in CMU_TOP: for CMU_G3D */
+> +PNAME(mout_g3d_switch_p)	= { "dout_shared0_div2", "dout_shared1_div2",
+> +				    "dout_shared0_div3", "dout_shared1_div3" };
+>  /* List of parent clocks for Muxes in CMU_TOP: for CMU_HSI */
+>  PNAME(mout_hsi_bus_p)		= { "dout_shared0_div2",
+> "dout_shared1_div2" };
+>  PNAME(mout_hsi_mmc_card_p)	= { "oscclk", "dout_shared0_div2",
+> @@ -283,6 +292,10 @@ static const struct samsung_mux_clock top_mux_clks[]
 > __initconst = {
->  	PLL_CON0_MUX_CLKCMU_HSI_MMC_CARD_USER,
->  	PLL_CON0_MUX_CLKCMU_HSI_USB20DRD_USER,
->  	CLK_CON_MUX_MUX_CLK_HSI_RTC,
-> +	CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK,
->  	CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV,
->  	CLK_CON_GAT_HSI_USB20DRD_TOP_I_REF_CLK_50,
->  	CLK_CON_GAT_HSI_USB20DRD_TOP_I_PHY_REFCLK_26,
->  	CLK_CON_GAT_GOUT_HSI_GPIO_HSI_PCLK,
->  	CLK_CON_GAT_GOUT_HSI_MMC_CARD_I_ACLK,
->  	CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN,
-> +	CLK_CON_GAT_GOUT_HSI_PPMU_ACLK,
-> +	CLK_CON_GAT_GOUT_HSI_PPMU_PCLK,
->  	CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK,
->  	CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_ACLK_PHYCTRL_20,
->  	CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_BUS_CLK_EARLY,
-> @@ -1163,6 +1174,9 @@ static const struct samsung_mux_clock hsi_mux_clks[]
-> __initconst = {  };
+>  	MUX(CLK_MOUT_DPU, "mout_dpu", mout_dpu_p,
+>  	    CLK_CON_MUX_MUX_CLKCMU_DPU, 0, 2),
 > 
->  static const struct samsung_gate_clock hsi_gate_clks[] __initconst = {
-> +	GATE(CLK_GOUT_HSI_CMU_HSI_PCLK, "gout_hsi_cmu_hsi_pclk",
-> +	     "mout_hsi_bus_user",
-> +	     CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK, 21, CLK_IGNORE_UNUSED, 0),
+> +	/* G3D */
+> +	MUX(CLK_MOUT_G3D_SWITCH, "mout_g3d_switch", mout_g3d_switch_p,
+> +	    CLK_CON_MUX_MUX_CLKCMU_G3D_SWITCH, 0, 2),
+> +
+>  	/* HSI */
+>  	MUX(CLK_MOUT_HSI_BUS, "mout_hsi_bus", mout_hsi_bus_p,
+>  	    CLK_CON_MUX_MUX_CLKCMU_HSI_BUS, 0, 1), @@ -357,6 +370,10 @@
+> static const struct samsung_div_clock top_div_clks[] __initconst = {
+>  	DIV(CLK_DOUT_DPU, "dout_dpu", "gout_dpu",
+>  	    CLK_CON_DIV_CLKCMU_DPU, 0, 4),
+> 
+> +	/* G3D */
+> +	DIV(CLK_DOUT_G3D_SWITCH, "dout_g3d_switch", "gout_g3d_switch",
+> +	    CLK_CON_DIV_CLKCMU_G3D_SWITCH, 0, 3),
+> +
+>  	/* HSI */
+>  	DIV(CLK_DOUT_HSI_BUS, "dout_hsi_bus", "gout_hsi_bus",
+>  	    CLK_CON_DIV_CLKCMU_HSI_BUS, 0, 4), @@ -417,6 +434,10 @@ static
+> const struct samsung_gate_clock top_gate_clks[] __initconst = {
+>  	GATE(CLK_GOUT_DPU, "gout_dpu", "mout_dpu",
+>  	     CLK_CON_GAT_GATE_CLKCMU_DPU, 21, 0, 0),
+> 
+> +	/* G3D */
+> +	GATE(CLK_GOUT_G3D_SWITCH, "gout_g3d_switch", "mout_g3d_switch",
+> +	     CLK_CON_GAT_GATE_CLKCMU_G3D_SWITCH, 21, 0, 0),
+> +
+>  	/* HSI */
+>  	GATE(CLK_GOUT_HSI_BUS, "gout_hsi_bus", "mout_hsi_bus",
+>  	     CLK_CON_GAT_GATE_CLKCMU_HSI_BUS, 21, 0, 0), @@ -992,6 +1013,103
+> @@ static const struct samsung_cmu_info cmgp_cmu_info __initconst = {
+>  	.clk_name		= "gout_clkcmu_cmgp_bus",
+>  };
+> 
+> +/* ---- CMU_G3D
+> +------------------------------------------------------------- */
+> +
+> +/* Register Offset definitions for CMU_G3D (0x11400000) */
+> +#define PLL_LOCKTIME_PLL_G3D			0x0000
+> +#define PLL_CON0_PLL_G3D			0x0100
+> +#define PLL_CON3_PLL_G3D			0x010c
+> +#define PLL_CON0_MUX_CLKCMU_G3D_SWITCH_USER	0x0600
+> +#define CLK_CON_MUX_MUX_CLK_G3D_BUSD		0x1000
+> +#define CLK_CON_DIV_DIV_CLK_G3D_BUSP		0x1804
+> +#define CLK_CON_GAT_CLK_G3D_CMU_G3D_PCLK	0x2000
+> +#define CLK_CON_GAT_CLK_G3D_GPU_CLK		0x2004
+> +#define CLK_CON_GAT_GOUT_G3D_TZPC_PCLK		0x200c
+> +#define CLK_CON_GAT_GOUT_G3D_GRAY2BIN_CLK	0x2010
+> +#define CLK_CON_GAT_GOUT_G3D_BUSD_CLK		0x2024
+> +#define CLK_CON_GAT_GOUT_G3D_BUSP_CLK		0x2028
+> +#define CLK_CON_GAT_GOUT_G3D_SYSREG_PCLK	0x202c
+> +
+> +
 
-You'll need to put /* TODO: */ tag or use CLK_IS_CRITICAL if you make sure it is the critical clock.
+Nit: double empty lines.
+Otherwise, looks good to me :)
 
->  	GATE(CLK_GOUT_USB_RTC_CLK, "gout_usb_rtc", "mout_hsi_rtc",
->  	     CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV, 21, 0, 0),
->  	GATE(CLK_GOUT_USB_REF_CLK, "gout_usb_ref", "mout_hsi_usb20drd_user",
-> @@ -1177,6 +1191,10 @@ static const struct samsung_gate_clock
-> hsi_gate_clks[] __initconst = {
->  	GATE(CLK_GOUT_MMC_CARD_SDCLKIN, "gout_mmc_card_sdclkin",
->  	     "mout_hsi_mmc_card_user",
->  	     CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN, 21, CLK_SET_RATE_PARENT,
-> 0),
-> +	GATE(CLK_GOUT_HSI_PPMU_ACLK, "gout_hsi_ppmu_aclk",
-> "mout_hsi_bus_user",
-> +	     CLK_CON_GAT_GOUT_HSI_PPMU_ACLK, 21, 0, 0),
-> +	GATE(CLK_GOUT_HSI_PPMU_PCLK, "gout_hsi_ppmu_pclk",
-> "mout_hsi_bus_user",
-> +	     CLK_CON_GAT_GOUT_HSI_PPMU_PCLK, 21, 0, 0),
->  	GATE(CLK_GOUT_SYSREG_HSI_PCLK, "gout_sysreg_hsi_pclk",
->  	     "mout_hsi_bus_user",
->  	     CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK, 21, 0, 0),
+Reviewed-by: Chanho Park <chanho61.park@samsung.com>
+
+> +static const unsigned long g3d_clk_regs[] __initconst = {
+> +	PLL_LOCKTIME_PLL_G3D,
+> +	PLL_CON0_PLL_G3D,
+> +	PLL_CON3_PLL_G3D,
+> +	PLL_CON0_MUX_CLKCMU_G3D_SWITCH_USER,
+> +	CLK_CON_MUX_MUX_CLK_G3D_BUSD,
+> +	CLK_CON_DIV_DIV_CLK_G3D_BUSP,
+> +	CLK_CON_GAT_CLK_G3D_CMU_G3D_PCLK,
+> +	CLK_CON_GAT_CLK_G3D_GPU_CLK,
+> +	CLK_CON_GAT_GOUT_G3D_TZPC_PCLK,
+> +	CLK_CON_GAT_GOUT_G3D_GRAY2BIN_CLK,
+> +	CLK_CON_GAT_GOUT_G3D_BUSD_CLK,
+> +	CLK_CON_GAT_GOUT_G3D_BUSP_CLK,
+> +	CLK_CON_GAT_GOUT_G3D_SYSREG_PCLK,
+> +};
+> +
+> +/* List of parent clocks for Muxes in CMU_G3D */
+> +PNAME(mout_g3d_pll_p)		= { "oscclk", "fout_g3d_pll" };
+> +PNAME(mout_g3d_switch_user_p)	= { "oscclk", "dout_g3d_switch" };
+> +PNAME(mout_g3d_busd_p)		= { "mout_g3d_pll",
+> "mout_g3d_switch_user" };
+> +
+> +/*
+> + * Do not provide PLL table to PLL_G3D, as MANUAL_PLL_CTRL bit is not
+> +set
+> + * for that PLL by default, so set_rate operation would fail.
+> + */
+> +static const struct samsung_pll_clock g3d_pll_clks[] __initconst = {
+> +	PLL(pll_0818x, CLK_FOUT_G3D_PLL, "fout_g3d_pll", "oscclk",
+> +	    PLL_LOCKTIME_PLL_G3D, PLL_CON3_PLL_G3D, NULL), };
+> +
+> +static const struct samsung_mux_clock g3d_mux_clks[] __initconst = {
+> +	MUX(CLK_MOUT_G3D_PLL, "mout_g3d_pll", mout_g3d_pll_p,
+> +	    PLL_CON0_PLL_G3D, 4, 1),
+> +	MUX(CLK_MOUT_G3D_SWITCH_USER, "mout_g3d_switch_user",
+> +	    mout_g3d_switch_user_p,
+> +	    PLL_CON0_MUX_CLKCMU_G3D_SWITCH_USER, 4, 1),
+> +	MUX(CLK_MOUT_G3D_BUSD, "mout_g3d_busd", mout_g3d_busd_p,
+> +	    CLK_CON_MUX_MUX_CLK_G3D_BUSD, 0, 1), };
+> +
+> +static const struct samsung_div_clock g3d_div_clks[] __initconst = {
+> +	DIV(CLK_DOUT_G3D_BUSP, "dout_g3d_busp", "mout_g3d_busd",
+> +	    CLK_CON_DIV_DIV_CLK_G3D_BUSP, 0, 3), };
+> +
+> +static const struct samsung_gate_clock g3d_gate_clks[] __initconst = {
+> +	GATE(CLK_GOUT_G3D_CMU_G3D_PCLK, "gout_g3d_cmu_g3d_pclk",
+> +	     "dout_g3d_busp",
+> +	     CLK_CON_GAT_CLK_G3D_CMU_G3D_PCLK, 21, CLK_IGNORE_UNUSED, 0),
+> +	GATE(CLK_GOUT_G3D_GPU_CLK, "gout_g3d_gpu_clk", "mout_g3d_busd",
+> +	     CLK_CON_GAT_CLK_G3D_GPU_CLK, 21, 0, 0),
+> +	GATE(CLK_GOUT_G3D_TZPC_PCLK, "gout_g3d_tzpc_pclk", "dout_g3d_busp",
+> +	     CLK_CON_GAT_GOUT_G3D_TZPC_PCLK, 21, 0, 0),
+> +	GATE(CLK_GOUT_G3D_GRAY2BIN_CLK, "gout_g3d_gray2bin_clk",
+> +	     "mout_g3d_busd",
+> +	     CLK_CON_GAT_GOUT_G3D_GRAY2BIN_CLK, 21, 0, 0),
+> +	GATE(CLK_GOUT_G3D_BUSD_CLK, "gout_g3d_busd_clk", "mout_g3d_busd",
+> +	     CLK_CON_GAT_GOUT_G3D_BUSD_CLK, 21, 0, 0),
+> +	GATE(CLK_GOUT_G3D_BUSP_CLK, "gout_g3d_busp_clk", "dout_g3d_busp",
+> +	     CLK_CON_GAT_GOUT_G3D_BUSP_CLK, 21, 0, 0),
+> +	GATE(CLK_GOUT_G3D_SYSREG_PCLK, "gout_g3d_sysreg_pclk",
+> "dout_g3d_busp",
+> +	     CLK_CON_GAT_GOUT_G3D_SYSREG_PCLK, 21, 0, 0), };
+> +
+> +static const struct samsung_cmu_info g3d_cmu_info __initconst = {
+> +	.pll_clks		= g3d_pll_clks,
+> +	.nr_pll_clks		= ARRAY_SIZE(g3d_pll_clks),
+> +	.mux_clks		= g3d_mux_clks,
+> +	.nr_mux_clks		= ARRAY_SIZE(g3d_mux_clks),
+> +	.div_clks		= g3d_div_clks,
+> +	.nr_div_clks		= ARRAY_SIZE(g3d_div_clks),
+> +	.gate_clks		= g3d_gate_clks,
+> +	.nr_gate_clks		= ARRAY_SIZE(g3d_gate_clks),
+> +	.nr_clk_ids		= G3D_NR_CLK,
+> +	.clk_regs		= g3d_clk_regs,
+> +	.nr_clk_regs		= ARRAY_SIZE(g3d_clk_regs),
+> +	.clk_name		= "dout_g3d_switch",
+> +};
+> +
+>  /* ---- CMU_HSI ---------------------------------------------------------
+> ---- */
+> 
+>  /* Register Offset definitions for CMU_HSI (0x13400000) */ @@ -1700,6
+> +1818,9 @@ static const struct of_device_id exynos850_cmu_of_match[] = {
+>  	}, {
+>  		.compatible = "samsung,exynos850-cmu-cmgp",
+>  		.data = &cmgp_cmu_info,
+> +	}, {
+> +		.compatible = "samsung,exynos850-cmu-g3d",
+> +		.data = &g3d_cmu_info,
+>  	}, {
+>  		.compatible = "samsung,exynos850-cmu-hsi",
+>  		.data = &hsi_cmu_info,
 > --
 > 2.39.1
