@@ -2,88 +2,151 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2ECDC678D4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Feb 2023 23:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F13EC61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Feb 2023 02:38:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233090AbjBNX6A (ORCPT
+        id S232926AbjBOCiT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 18:58:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41474 "EHLO
+        Tue, 14 Feb 2023 21:38:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232289AbjBNX5a (ORCPT
+        with ESMTP id S232235AbjBOCiT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Feb 2023 18:57:30 -0500
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BA625E2B;
-        Tue, 14 Feb 2023 15:57:30 -0800 (PST)
-Received: by mail-il1-f170.google.com with SMTP id i26so560181ila.11;
-        Tue, 14 Feb 2023 15:57:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gr6HZKX7pjiuziPVOneWNF06CjtvUt+mOQvGio5Mzq4=;
-        b=h+okRSBj7GE/h/jmgOGmrp6vpSlm6U/7kVSsm/0qxwx1bDwI8Bg0G6GPHVaNGFgy/8
-         Eg+tVHYaJMkikVPctNSg8qDYJemlHXuuN5Lsx9A/GT+LtAlU02Ff2Ej3hDYZ7zYAI9GX
-         6TGf/6FOFJV41+EMiqKsM+tEVBSNbi7mgaam1U222m0HpgmV2WwWYxywRA187e9QnJX0
-         uS+R8w/8wLDd0OZws9gZuAHOaf/9XLWMzRqNUOgAzPzChQ2VE9ECLzFsU1tx7CktT25h
-         4Qzk8mJyQ/4u0dD/zwgE7by0AZW+h9DLSpQEKv578LxxdDQhsu0qNOklyjDXdD+hCLsE
-         I7cQ==
-X-Gm-Message-State: AO0yUKX3wXE54AGaxyKLFLkvViGvQy3I/CcrpYHseYdsCYsRQqCvvyil
-        HDIThevJ5aaenjbOZlnXZQ==
-X-Google-Smtp-Source: AK7set9lck2hHxTIM5TfDtimi7UFcfyNl7Vv33Ckn5Za5ontwwdQnwe8lgIAVfz8/w29KcKEYxmHug==
-X-Received: by 2002:a05:6e02:b2f:b0:313:ee3f:2b2b with SMTP id e15-20020a056e020b2f00b00313ee3f2b2bmr529025ilu.8.1676419049253;
-        Tue, 14 Feb 2023 15:57:29 -0800 (PST)
-Received: from robh_at_kernel.org ([65.158.198.3])
-        by smtp.gmail.com with ESMTPSA id n1-20020a92d9c1000000b003139668e844sm5140215ilq.13.2023.02.14.15.57.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Feb 2023 15:57:28 -0800 (PST)
-Received: (nullmailer pid 55945 invoked by uid 1000);
-        Tue, 14 Feb 2023 23:57:26 -0000
-Date:   Tue, 14 Feb 2023 17:57:26 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org, David Virag <virag.david003@gmail.com>,
+        Tue, 14 Feb 2023 21:38:19 -0500
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0C7225E3D
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Feb 2023 18:38:14 -0800 (PST)
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230215023811epoutp0109ab97a8557dffa7c6c3381987832d50~D3wM5Tozp0726807268epoutp01N
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Feb 2023 02:38:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230215023811epoutp0109ab97a8557dffa7c6c3381987832d50~D3wM5Tozp0726807268epoutp01N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1676428691;
+        bh=MYrK5odi8ehuumCYTygtU8F4voyDIDpU6cypwIrWmZI=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=nM8vPXGvsvfzTY71W2OT/0CJhCGt8Gf50kGYxAOKw77EwrCqxtgedW7YSPOuejQ36
+         RCHIBBoNwmVqHB8LmuNq2mWpR1q8JGfE1oRAnuItmsFK/ftLprfh7hZR+twAKd+JXQ
+         +/pg5hxzXZv5POcKPeeKC8cBHrUupa4MP0gs30W0=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+        20230215023810epcas2p21582246aa3ce83804095ab293fe34ce6~D3wMVwthm2340523405epcas2p2F;
+        Wed, 15 Feb 2023 02:38:10 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.99]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4PGj1G26Bbz4x9Pv; Wed, 15 Feb
+        2023 02:38:10 +0000 (GMT)
+X-AuditID: b6c32a47-ab7ff7000000e044-63-63ec4592337d
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        06.AE.57412.2954CE36; Wed, 15 Feb 2023 11:38:10 +0900 (KST)
+Mime-Version: 1.0
+Subject: RE: [PATCH 3/6] clk: samsung: clk-pll: Implement pll0818x PLL type
+Reply-To: chanho61.park@samsung.com
+Sender: CHANHO PARK <chanho61.park@samsung.com>
+From:   CHANHO PARK <chanho61.park@samsung.com>
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Chanho Park <chanho61.park@samsung.com>
-Subject: Re: [PATCH 2/6] dt-bindings: clock: exynos850: Add AUD and HSI main
- gate clocks
-Message-ID: <167641902471.55444.5418510814778598189.robh@kernel.org>
-References: <20230211064006.14981-1-semen.protsenko@linaro.org>
- <20230211064006.14981-3-semen.protsenko@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230211064006.14981-3-semen.protsenko@linaro.org>
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     David Virag <virag.david003@gmail.com>,
+        ALIM AKHTAR <alim.akhtar@samsung.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20230211064006.14981-4-semen.protsenko@linaro.org>
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20230215023809epcms2p37b9e2cb4c9ca136849a1accf526aa7ad@epcms2p3>
+Date:   Wed, 15 Feb 2023 11:38:09 +0900
+X-CMS-MailID: 20230215023809epcms2p37b9e2cb4c9ca136849a1accf526aa7ad
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJJsWRmVeSWpSXmKPExsWy7bCmue4k1zfJBq0f+CwezNvGZnH9y3NW
+        i/lHzrFa7H29ld1i0+NrrBYfe+6xWlzeNYfNYsb5fUwWF0+5WrTuPcJucfhNO6vFv2sbWSye
+        9wHFT939zG6xatcfRovj7x8zOgh4vL/Ryu6xc9Zddo9NqzrZPO5c28PmsXlJvUffllWMHp83
+        yQWwR2XbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gDd
+        rqRQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpMC/QK07MLS7NS9fLSy2xMjQwMDIF
+        KkzIzli/yaagkafi/rN3bA2MLzm7GDk5JARMJG7Pn8XexcjFISSwg1Hi7t/PLF2MHBy8AoIS
+        f3cIg9QIC3hLrDw8ixUkLCSgLLFxWyxEWF/ie38TC4jNJqArMf/DJ1aQMSIC9xkldj/9ygji
+        MAscZ5GYdfM4I8QyXokZ7U9ZIGxpie3Lt4LFOQUcJC6tfwxVoyHxY1kvM4QtKnFz9Vt2GPv9
+        sflQNSISrffOQtUISjz4uZsR5DgJAUmJSW8iIMIBEk33QQ4CsXMkNhycxAZhm0t8fzofrJVX
+        wFdi4b4JTCA2i4CqxM0dS6FGukgs3rUIrJdZQF5i+9s5zCDjmQU0Jdbv0ofYpCxx5BYLRAWf
+        RMfhv+wwD+6Y94QJwlaXOLB9OtSzshLdcz5DXeMhsejOepYJjIqzEOE8C8muWQi7FjAyr2IU
+        Sy0ozk1PLTYqMIbHbHJ+7iZGcBrWct/BOOPtB71DjEwcjIcYJTiYlUR4hZ++SBbiTUmsrEot
+        yo8vKs1JLT7EaAr05URmKdHkfGAmyCuJNzSxNDAxMzM0NzI1MFcS55W2PZksJJCeWJKanZpa
+        kFoE08fEwSnVwFTe8SDct45FfdOPRYofT2WonLfQ/BjqXfti64uw20fKC37Pmv1dMvDezNAN
+        9cy11RWHdq+OKBSY+cJn3c5fF+26Kn7q3Fz1ZdXffaFZjpv/uve4NF8WsEsS/vDiq4v36lnf
+        Vz2aeeFD5MINATaSPxb17v295/B6rV82dq1lad95Dng6JZ8q2XVy8f1pM+fvikl8/F4j+fmf
+        CYlXc5fuKjvRIswf9+SO1u89DoHH5r8RenY+cErFcRf+53McNFfKnZi9YeUX1mNLrwZM51e0
+        rklIC/gVx9UxtclyzoPLIZJ7Xkp9EtzEPnlKdl7ojszdaXPi2w2teA82lBeIBgr+8VnLpPt+
+        8p6EKX2WYauqqo73KrEUZyQaajEXFScCAAtItWxMBAAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230211063955epcas2p177f52416ffb66cffa368fde02ee40411
+References: <20230211064006.14981-4-semen.protsenko@linaro.org>
+        <20230211064006.14981-1-semen.protsenko@linaro.org>
+        <CGME20230211063955epcas2p177f52416ffb66cffa368fde02ee40411@epcms2p3>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
-On Sat, 11 Feb 2023 00:40:02 -0600, Sam Protsenko wrote:
-> Add main gate clocks for controlling AUD and HSI CMUs:
->   - gout_aud_cmu_aud_pclk
->   - gout_hsi_cmu_hsi_pclk
+> Subject: [PATCH 3/6] clk: samsung: clk-pll: Implement pll0818x PLL type
 > 
-> While at it, add missing PPMU (Performance Profiling Monitor Unit)
-> clocks for CMU_HSI.
+> pll0818x PLL is used in Exynos850 SoC for CMU_G3D PLL. Operation-wise,
+> pll0818x is the same as pll0822x. The only difference is:
+>   - pl0822x is integer PLL with Middle FVCO (950 to 2400 MHz)
+>   - pl0818x is integer PLL with Low FVCO (600 to 1200 MHz)
+> 
+> Add pll0818x type as an alias to pll0822x.
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+Reviewed-by: Chanho Park <chanho61.park@samsung.com>
+
 > ---
->  include/dt-bindings/clock/exynos850.h | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+>  drivers/clk/samsung/clk-pll.c | 1 +
+>  drivers/clk/samsung/clk-pll.h | 1 +
+>  2 files changed, 2 insertions(+)
 > 
-
-Acked-by: Rob Herring <robh@kernel.org>
-
+> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+> index 5ceac4c25c1c..74934c6182ce 100644
+> --- a/drivers/clk/samsung/clk-pll.c
+> +++ b/drivers/clk/samsung/clk-pll.c
+> @@ -1314,6 +1314,7 @@ static void __init _samsung_clk_register_pll(struct
+> samsung_clk_provider *ctx,
+>  			init.ops = &samsung_pll35xx_clk_ops;
+>  		break;
+>  	case pll_1417x:
+> +	case pll_0818x:
+>  	case pll_0822x:
+>  		pll->enable_offs = PLL0822X_ENABLE_SHIFT;
+>  		pll->lock_offs = PLL0822X_LOCK_STAT_SHIFT; diff --git
+> a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h index
+> 5d5a58d40e7e..0725d485c6ee 100644
+> --- a/drivers/clk/samsung/clk-pll.h
+> +++ b/drivers/clk/samsung/clk-pll.h
+> @@ -34,6 +34,7 @@ enum samsung_pll_type {
+>  	pll_1451x,
+>  	pll_1452x,
+>  	pll_1460x,
+> +	pll_0818x,
+>  	pll_0822x,
+>  	pll_0831x,
+>  	pll_142xx,
+> --
+> 2.39.1
