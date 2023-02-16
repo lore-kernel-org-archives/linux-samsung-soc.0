@@ -2,382 +2,317 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F70C64ED8
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Feb 2023 14:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E6DC636D7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Feb 2023 20:12:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230214AbjBPOWw (ORCPT
+        id S229614AbjBPUL7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Feb 2023 09:22:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60178 "EHLO
+        Thu, 16 Feb 2023 15:11:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229980AbjBPOWj (ORCPT
+        with ESMTP id S229520AbjBPUL7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Feb 2023 09:22:39 -0500
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ABD75354C
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2023 06:22:20 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id c1so3422773edt.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2023 06:22:20 -0800 (PST)
+        Thu, 16 Feb 2023 15:11:59 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 936544BE83
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2023 12:11:56 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id r28so2493394wra.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2023 12:11:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LMSroA7NTqEfdgUOUGJc/loVGhG2ewqJeKTXz4Yo+Sk=;
-        b=Iy1hX2J4CDQ7crIeotIv6JEU5sfdu0+ODSWoveRg1dhhTyP4EErRzDUyg7HT3NQMa0
-         DcFOtejX0oHh7PLKj+xKi04ggiRj0gzryMUrm1DPdoVICJzLM4aQBtzif0qnZWxJx4Jq
-         5i1yvu1ci6dNgIaqqjzPRaA3RktrsPPHaDwUZhb2egH+8MmR6Ly5N2jebEU3izVBkraT
-         fCmPsllGNlOW9mVVMdUD8Z/GsXPsLawL9KAqacUAMYP0sxeJrjFfY+yqYQG2ckWevdAB
-         /W4tVb6pSVhtANMhPhms7quRXlF5iil514EErgHfba/Hx5/Zpmvh9XS2FmizB3iLGV1U
-         0ESw==
+        d=ffwll.ch; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KmsCXE1cc+kjYkXP7Av8+g/i6Xiae0+2FF4SyY/8c1Y=;
+        b=Z9/TpqTt2w1EyzDy+hgxyZZdv0XE+fU06DflDuxaxXsm04CxinixVlqeu8znsQttuk
+         GIO1OONphJIuGmb3iSZ7CEdUen26WffWPdu6dgO16g8fJa2l6FIn6aiVDuHrA9kpO/9o
+         P8y7zjNCb1eyevJNupis21d6YvG64TQOomKOQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LMSroA7NTqEfdgUOUGJc/loVGhG2ewqJeKTXz4Yo+Sk=;
-        b=DCwZkurmwkbkTuEBQ61UxfW98Zu1Ezr3Yov2Ci5726tfb5/R2Dr9p5XcVShgokC2tZ
-         +TtTQqH4O470L9WnKTpEeDn+wINeEfkDdlfzRWxFhDllAATRJK5qBt/EsmtrAmI4Pncr
-         a0Xugf7jQPTjeLN4rJHxnt1+2ijnkivGjBdlEIrIrcfz9gZXubDk6uDT7USAutxjOhSX
-         NXKTBktZbv+torpzBZ7PM0rPsed3CYD2Ec31+eEJnQXku180TII1O1N4GtKFwRc0ralr
-         pwo9P2vxOTNgaNhpCLy6DYKCUgARcevGwYDRCHCpB9x3HyEHApsqVSsBimQ4N8O9PMPR
-         wxaA==
-X-Gm-Message-State: AO0yUKWyAwBzqnD5rsJoYVCXn+EjQ5lUxCKqZArHKhpQ1BaDyErh5mN8
-        B9nk4Rmgaxeh6LB0Tg3w/mGzDg==
-X-Google-Smtp-Source: AK7set89N50W4mmaSqBwdPY6RgizZS1mmkpPyZ18OccfyKyNudJTBiM4mQ3gJe99ju8HHFdGy7a4+A==
-X-Received: by 2002:a17:906:e89:b0:8b1:7fa:6588 with SMTP id p9-20020a1709060e8900b008b107fa6588mr6007393ejf.12.1676557339909;
-        Thu, 16 Feb 2023 06:22:19 -0800 (PST)
-Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id ad24-20020a170907259800b0087bdac06a3bsm884757ejc.2.2023.02.16.06.22.18
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KmsCXE1cc+kjYkXP7Av8+g/i6Xiae0+2FF4SyY/8c1Y=;
+        b=ogxYrYx8EwD2PaXzSdQrzxsNqVglXRD1/4FvuU2ZiC7vYpFJ6Ixroq2STHvCAs4KcX
+         ovb0dluhaTpPltLQb1CeXtuqTZhwzsnm1KDFfgT/ErimJkxgCJsP380a8q2effpVeXZn
+         c4lAd6SpjLh+OFe5BChQe/5kUYcTsbvZ/3jo7769Ra8KnIYpuogEVP6F4bFd9ZqxmrJ8
+         xqULcDD83ZCGdf3Kq/dOeY++T6drirOxrz/0iF/FzxXewVA3kOBAHL5+QUD1Qa2dxpqF
+         geKWcp5koFSZGzM1PpxUVT75PJ4hWMAmb/yB7AYqVLsb63aBAYbwOWz0+81brfESwAzn
+         dgIQ==
+X-Gm-Message-State: AO0yUKVk5b2tK4ip3nKcCRRDxLFEhUy+/+x+1j7dNgJglH+1LQBPAEmx
+        HVazQ2AFfhYk5MzAx+8iVxr/Mg==
+X-Google-Smtp-Source: AK7set9SaGzBuaVjPNmI5K6tL/a+m6AYcw8bkZU23dWsn9A1+haGPZXOjfFCDUkIWccpGoPjBGtWGQ==
+X-Received: by 2002:adf:fd92:0:b0:2c5:60e2:ed68 with SMTP id d18-20020adffd92000000b002c560e2ed68mr4742497wrr.0.1676578314980;
+        Thu, 16 Feb 2023 12:11:54 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id h9-20020a5d6e09000000b002c56af32e8csm2365195wrz.35.2023.02.16.12.11.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Feb 2023 06:22:19 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        Thu, 16 Feb 2023 12:11:54 -0800 (PST)
+Date:   Thu, 16 Feb 2023 21:11:52 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     javierm@redhat.com, airlied@gmail.com, daniel@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 7/7] media: dt-bindings: samsung,s5c73m3: convert to dtschema
-Date:   Thu, 16 Feb 2023 15:22:04 +0100
-Message-Id: <20230216142204.48394-8-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230216142204.48394-1-krzysztof.kozlowski@linaro.org>
-References: <20230216142204.48394-1-krzysztof.kozlowski@linaro.org>
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] drm/fb-helper: Remove drm_fb_helper_unprepare() from
+ drm_fb_helper_fini()
+Message-ID: <Y+6OCAJ9wyE1PfAw@phenom.ffwll.local>
+References: <20230216140620.17699-1-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230216140620.17699-1-tzimmermann@suse.de>
+X-Operating-System: Linux phenom 5.19.0-2-amd64 
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert the Samsung S5C73M3 8Mp camera ISP bindings to DT schema.
+On Thu, Feb 16, 2023 at 03:06:20PM +0100, Thomas Zimmermann wrote:
+> Move drm_fb_helper_unprepare() from drm_fb_helper_fini() into the
+> calling fbdev implementation. Avoids a possible stale mutex with
+> generic fbdev code.
+> 
+> As indicated by its name, drm_fb_helper_prepare() prepares struct
+> drm_fb_helper before setting up the fbdev support with a call to
+> drm_fb_helper_init(). In legacy fbdev emulation, this happens next
+> to each other. If successful, drm_fb_helper_fini() later tear down
+> the fbdev device and also unprepare via drm_fb_helper_unprepare().
+> 
+> Generic fbdev emulation prepares struct drm_fb_helper immediately
+> after allocating the instance. It only calls drm_fb_helper_init()
+> as part of processing a hotplug event. If the hotplug-handling fails,
+> it runs drm_fb_helper_fini(). This unprepares the fb-helper instance
+> and the next hotplug event runs on stale data.
+> 
+> Solve this by moving drm_fb_helper_unprepare() from drm_fb_helper_fini()
+> into the fbdev implementations. Call it right before freeing the
+> fb-helper instance.
+> 
+> Fixes: 4825797c36da ("drm/fb-helper: Introduce drm_fb_helper_unprepare()")
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Javier Martinez Canillas <javierm@redhat.com>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: dri-devel@lists.freedesktop.org
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+This reminds me of an old patch I just recently stumbled over again:
 
----
+https://lore.kernel.org/dri-devel/Y3St2VHJ7jEmcNFw@phenom.ffwll.local/
 
-Changes since v2:
-1. Add Rb tag.
----
- .../bindings/media/samsung,s5c73m3.yaml       | 165 ++++++++++++++++++
- .../bindings/media/samsung-s5c73m3.txt        |  97 ----------
- MAINTAINERS                                   |   1 +
- 3 files changed, 166 insertions(+), 97 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/samsung,s5c73m3.yaml
- delete mode 100644 Documentation/devicetree/bindings/media/samsung-s5c73m3.txt
+Should I resurrect that one maybe and send it out? I think that also ties
+a bit into your story here.
 
-diff --git a/Documentation/devicetree/bindings/media/samsung,s5c73m3.yaml b/Documentation/devicetree/bindings/media/samsung,s5c73m3.yaml
-new file mode 100644
-index 000000000000..1b75390fdaac
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/samsung,s5c73m3.yaml
-@@ -0,0 +1,165 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/samsung,s5c73m3.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung S5C73M3 8Mp camera ISP
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+  - Sylwester Nawrocki <s.nawrocki@samsung.com>
-+
-+description:
-+  The S5C73M3 camera ISP supports MIPI CSI-2 and parallel (ITU-R BT.656)
-+  video data busses. The I2C bus is the main control bus and additionally the
-+  SPI bus is used, mostly for transferring the firmware to and from the
-+  device. Two slave device nodes corresponding to these control bus
-+  interfaces are required and should be placed under respective bus
-+  controller nodes.
-+
-+properties:
-+  compatible:
-+    const: samsung,s5c73m3
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: cis_extclk
-+
-+  clock-frequency:
-+    default: 24000000
-+    description: cis_extclk clock frequency.
-+
-+  standby-gpios:
-+    maxItems: 1
-+    description: STANDBY pin.
-+
-+  vdda-supply:
-+    description: Analog power supply (1.2V).
-+
-+  vdd-af-supply:
-+    description: lens power supply (2.8V).
-+
-+  vddio-cis-supply:
-+    description: CIS I/O power supply (1.2V to 1.8V).
-+
-+  vddio-host-supply:
-+    description: Host I/O power supply (1.8V to 2.8V).
-+
-+  vdd-int-supply:
-+    description: Digital power supply (1.2V).
-+
-+  vdd-reg-supply:
-+    description: Regulator input power supply (2.8V).
-+
-+  xshutdown-gpios:
-+    maxItems: 1
-+    description: XSHUTDOWN pin.
-+
-+  port:
-+    $ref: /schemas/graph.yaml#/$defs/port-base
-+    additionalProperties: false
-+
-+    properties:
-+      endpoint:
-+        $ref: /schemas/media/video-interfaces.yaml#
-+        unevaluatedProperties: false
-+
-+        properties:
-+          data-lanes:
-+            items:
-+              - const: 1
-+              - const: 2
-+              - const: 3
-+              - const: 4
-+
-+required:
-+  - compatible
-+  - reg
-+
-+allOf:
-+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-+  - if:
-+      required:
-+        - spi-max-frequency
-+    then:
-+      properties:
-+        # The SPI node is simplified firmware-transfer interface only
-+        clocks: false
-+        clock-names: false
-+        standby-gpios: false
-+        vdda-supply: false
-+        vdd-af-supply: false
-+        vddio-cis-supply: false
-+        vddio-host-supply: false
-+        vdd-int-supply: false
-+        vdd-reg-supply: false
-+        xshutdown-gpios: false
-+        port: false
-+    else:
-+      required:
-+        - clocks
-+        - clock-names
-+        - standby-gpios
-+        - vdda-supply
-+        - vdd-af-supply
-+        - vddio-cis-supply
-+        - vddio-host-supply
-+        - vdd-int-supply
-+        - vdd-reg-supply
-+        - xshutdown-gpios
-+        - port
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        image-sensor@3c {
-+            compatible = "samsung,s5c73m3";
-+            reg = <0x3c>;
-+            clock-frequency = <24000000>;
-+            clocks = <&camera 0>;
-+            clock-names = "cis_extclk";
-+            standby-gpios = <&gpm0 6 GPIO_ACTIVE_LOW>;
-+            vdda-supply = <&cam_vdda_reg>;
-+            vdd-af-supply = <&cam_af_reg>;
-+            vddio-cis-supply = <&ldo9_reg>;
-+            vddio-host-supply = <&ldo18_reg>;
-+            vdd-int-supply = <&buck9_reg>;
-+            vdd-reg-supply = <&cam_io_reg>;
-+            xshutdown-gpios = <&gpf1 3 GPIO_ACTIVE_LOW>; /* ISP_RESET */
-+
-+            port {
-+                s5c73m3_ep: endpoint {
-+                    remote-endpoint = <&csis0_ep>;
-+                    data-lanes = <1 2 3 4>;
-+                };
-+            };
-+        };
-+    };
-+
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        image-sensor@0 {
-+            compatible = "samsung,s5c73m3";
-+            reg = <0>;
-+            spi-max-frequency = <50000000>;
-+            controller-data {
-+                samsung,spi-feedback-delay = <2>;
-+            };
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/media/samsung-s5c73m3.txt b/Documentation/devicetree/bindings/media/samsung-s5c73m3.txt
-deleted file mode 100644
-index f0ea9adad442..000000000000
---- a/Documentation/devicetree/bindings/media/samsung-s5c73m3.txt
-+++ /dev/null
-@@ -1,97 +0,0 @@
--Samsung S5C73M3 8Mp camera ISP
--------------------------------
--
--The S5C73M3 camera ISP supports MIPI CSI-2 and parallel (ITU-R BT.656) video
--data busses. The I2C bus is the main control bus and additionally the SPI bus
--is used, mostly for transferring the firmware to and from the device. Two
--slave device nodes corresponding to these control bus interfaces are required
--and should be placed under respective bus controller nodes.
--
--I2C slave device node
-----------------------
--
--Required properties:
--
--- compatible	    : "samsung,s5c73m3";
--- reg		    : I2C slave address of the sensor;
--- vdd-int-supply    : digital power supply (1.2V);
--- vdda-supply	    : analog power supply (1.2V);
--- vdd-reg-supply    : regulator input power supply (2.8V);
--- vddio-host-supply : host I/O power supply (1.8V to 2.8V);
--- vddio-cis-supply  : CIS I/O power supply (1.2V to 1.8V);
--- vdd-af-supply     : lens power supply (2.8V);
--- xshutdown-gpios   : specifier of GPIO connected to the XSHUTDOWN pin;
--- standby-gpios     : specifier of GPIO connected to the STANDBY pin;
--- clocks	    : should contain list of phandle and clock specifier pairs
--		      according to common clock bindings for the clocks described
--		      in the clock-names property;
--- clock-names	    : should contain "cis_extclk" entry for the CIS_EXTCLK clock;
--
--Optional properties:
--
--- clock-frequency   : the frequency at which the "cis_extclk" clock should be
--		      configured to operate, in Hz; if this property is not
--		      specified default 24 MHz value will be used.
--
--The common video interfaces bindings (see video-interfaces.txt) should be used
--to specify link from the S5C73M3 to an external image data receiver. The S5C73M3
--device node should contain one 'port' child node with an 'endpoint' subnode for
--this purpose. The data link from a raw image sensor to the S5C73M3 can be
--similarly specified, but it is optional since the S5C73M3 ISP and a raw image
--sensor are usually inseparable and form a hybrid module.
--
--Following properties are valid for the endpoint node(s):
--
--endpoint subnode
------------------
--
--- data-lanes : (optional) specifies MIPI CSI-2 data lanes as covered in
--  video-interfaces.txt. This sensor doesn't support data lane remapping
--  and physical lane indexes in subsequent elements of the array should
--  be only consecutive ascending values.
--
--SPI device node
-----------------
--
--Required properties:
--
--- compatible	    : "samsung,s5c73m3";
--
--For more details see description of the SPI busses bindings
--(../spi/spi-bus.txt) and bindings of a specific bus controller.
--
--Example:
--
--i2c@138a000000 {
--	...
--	s5c73m3@3c {
--		compatible = "samsung,s5c73m3";
--		reg = <0x3c>;
--		vdd-int-supply = <&buck9_reg>;
--		vdda-supply = <&ldo17_reg>;
--		vdd-reg-supply = <&cam_io_reg>;
--		vddio-host-supply = <&ldo18_reg>;
--		vddio-cis-supply = <&ldo9_reg>;
--		vdd-af-supply = <&cam_af_reg>;
--		clock-frequency = <24000000>;
--		clocks = <&clk 0>;
--		clock-names = "cis_extclk";
--		xshutdown-gpios = <&gpf1 3 1>;
--		standby-gpios = <&gpm0 1 1>;
--		port {
--			s5c73m3_ep: endpoint {
--				remote-endpoint = <&csis0_ep>;
--				data-lanes = <1 2 3 4>;
--			};
--		};
--	};
--};
--
--spi@1392000 {
--	...
--	s5c73m3_spi: s5c73m3@0 {
--		compatible = "samsung,s5c73m3";
--		reg = <0>;
--		...
--	};
--};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 87140ebb9a40..9bb777760964 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18441,6 +18441,7 @@ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
- M:	Andrzej Hajda <andrzej.hajda@intel.com>
- L:	linux-media@vger.kernel.org
- S:	Supported
-+F:	Documentation/devicetree/bindings/media/samsung,s5c73m3.yaml
- F:	drivers/media/i2c/s5c73m3/*
- 
- SAMSUNG S5K5BAF CAMERA DRIVER
+> ---
+>  drivers/gpu/drm/armada/armada_fbdev.c      | 3 +++
+>  drivers/gpu/drm/drm_fb_helper.c            | 2 --
+>  drivers/gpu/drm/drm_fbdev_generic.c        | 2 ++
+>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c  | 3 ++-
+>  drivers/gpu/drm/gma500/framebuffer.c       | 2 ++
+>  drivers/gpu/drm/i915/display/intel_fbdev.c | 1 +
+>  drivers/gpu/drm/msm/msm_fbdev.c            | 2 ++
+>  drivers/gpu/drm/omapdrm/omap_fbdev.c       | 2 ++
+>  drivers/gpu/drm/radeon/radeon_fb.c         | 2 ++
+>  drivers/gpu/drm/tegra/fb.c                 | 1 +
+>  10 files changed, 17 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/armada/armada_fbdev.c b/drivers/gpu/drm/armada/armada_fbdev.c
+> index 07e410c62b7a..0e44f53e9fa4 100644
+> --- a/drivers/gpu/drm/armada/armada_fbdev.c
+> +++ b/drivers/gpu/drm/armada/armada_fbdev.c
+> @@ -147,6 +147,7 @@ int armada_fbdev_init(struct drm_device *dev)
+>   err_fb_setup:
+>  	drm_fb_helper_fini(fbh);
+>   err_fb_helper:
+> +	drm_fb_helper_unprepare(fbh);
+>  	priv->fbdev = NULL;
+>  	return ret;
+>  }
+> @@ -164,6 +165,8 @@ void armada_fbdev_fini(struct drm_device *dev)
+>  		if (fbh->fb)
+>  			fbh->fb->funcs->destroy(fbh->fb);
+>  
+> +		drm_fb_helper_unprepare(fbh);
+> +
+>  		priv->fbdev = NULL;
+>  	}
+>  }
+> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> index 28c428e9c530..a39998047f8a 100644
+> --- a/drivers/gpu/drm/drm_fb_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> @@ -590,8 +590,6 @@ void drm_fb_helper_fini(struct drm_fb_helper *fb_helper)
+
+I think it would be good to update the kerneldoc of _init() and _fini()
+here to mention each another like we usually do with these pairs. Same
+with prepare/unprepare() although the latter rerfences _prepare() already.
+
+>  	}
+>  	mutex_unlock(&kernel_fb_helper_lock);
+>  
+> -	drm_fb_helper_unprepare(fb_helper);
+> -
+>  	if (!fb_helper->client.funcs)
+>  		drm_client_release(&fb_helper->client);
+>  }
+> diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
+> index 365f80717fa1..4d6325e91565 100644
+> --- a/drivers/gpu/drm/drm_fbdev_generic.c
+> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
+> @@ -65,6 +65,8 @@ static void drm_fbdev_fb_destroy(struct fb_info *info)
+>  
+>  	drm_client_framebuffer_delete(fb_helper->buffer);
+>  	drm_client_release(&fb_helper->client);
+> +
+> +	drm_fb_helper_unprepare(fb_helper);
+>  	kfree(fb_helper);
+>  }
+>  
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> index b89e33af8da8..4929ffe5a09a 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> @@ -183,8 +183,8 @@ int exynos_drm_fbdev_init(struct drm_device *dev)
+>  
+>  err_setup:
+>  	drm_fb_helper_fini(helper);
+> -
+>  err_init:
+> +	drm_fb_helper_unprepare(helper);
+>  	private->fb_helper = NULL;
+>  	kfree(fbdev);
+>  
+> @@ -219,6 +219,7 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
+>  	fbdev = to_exynos_fbdev(private->fb_helper);
+>  
+>  	exynos_drm_fbdev_destroy(dev, private->fb_helper);
+> +	drm_fb_helper_unprepare(private->fb_helper);
+>  	kfree(fbdev);
+>  	private->fb_helper = NULL;
+>  }
+> diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
+> index 1f04c07ee180..f471e0cb7298 100644
+> --- a/drivers/gpu/drm/gma500/framebuffer.c
+> +++ b/drivers/gpu/drm/gma500/framebuffer.c
+> @@ -427,6 +427,7 @@ int psb_fbdev_init(struct drm_device *dev)
+>  fini:
+>  	drm_fb_helper_fini(fb_helper);
+>  free:
+> +	drm_fb_helper_unprepare(fb_helper);
+>  	kfree(fb_helper);
+>  	return ret;
+>  }
+> @@ -439,6 +440,7 @@ static void psb_fbdev_fini(struct drm_device *dev)
+>  		return;
+>  
+>  	psb_fbdev_destroy(dev, dev_priv->fb_helper);
+> +	drm_fb_helper_unprepare(dev_priv->fb_helper);
+>  	kfree(dev_priv->fb_helper);
+>  	dev_priv->fb_helper = NULL;
+>  }
+> diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
+> index 6113d7627d45..98029059f701 100644
+> --- a/drivers/gpu/drm/i915/display/intel_fbdev.c
+> +++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
+> @@ -352,6 +352,7 @@ static void intel_fbdev_destroy(struct intel_fbdev *ifbdev)
+>  	if (ifbdev->fb)
+>  		drm_framebuffer_remove(&ifbdev->fb->base);
+>  
+> +	drm_fb_helper_unprepare(&ifbdev->helper);
+>  	kfree(ifbdev);
+>  }
+>  
+> diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
+> index 915b213f3a5c..c804e5ba682a 100644
+> --- a/drivers/gpu/drm/msm/msm_fbdev.c
+> +++ b/drivers/gpu/drm/msm/msm_fbdev.c
+> @@ -170,6 +170,7 @@ struct drm_fb_helper *msm_fbdev_init(struct drm_device *dev)
+>  fini:
+>  	drm_fb_helper_fini(helper);
+>  fail:
+> +	drm_fb_helper_unprepare(helper);
+>  	kfree(fbdev);
+>  	return NULL;
+>  }
+> @@ -196,6 +197,7 @@ void msm_fbdev_free(struct drm_device *dev)
+>  		drm_framebuffer_remove(fbdev->fb);
+>  	}
+>  
+> +	drm_fb_helper_unprepare(helper);
+>  	kfree(fbdev);
+>  
+>  	priv->fbdev = NULL;
+> diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+> index fc5f52d567c6..84429728347f 100644
+> --- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
+> +++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+> @@ -256,6 +256,7 @@ void omap_fbdev_init(struct drm_device *dev)
+>  fini:
+>  	drm_fb_helper_fini(helper);
+>  fail:
+> +	drm_fb_helper_unprepare(helper);
+>  	kfree(fbdev);
+>  
+>  	dev_warn(dev->dev, "omap_fbdev_init failed\n");
+> @@ -286,6 +287,7 @@ void omap_fbdev_fini(struct drm_device *dev)
+>  	if (fbdev->fb)
+>  		drm_framebuffer_remove(fbdev->fb);
+>  
+> +	drm_fb_helper_unprepare(helper);
+>  	kfree(fbdev);
+>  
+>  	priv->fbdev = NULL;
+> diff --git a/drivers/gpu/drm/radeon/radeon_fb.c b/drivers/gpu/drm/radeon/radeon_fb.c
+> index 6e5eed0e157c..c4807f0c43bc 100644
+> --- a/drivers/gpu/drm/radeon/radeon_fb.c
+> +++ b/drivers/gpu/drm/radeon/radeon_fb.c
+> @@ -367,6 +367,7 @@ int radeon_fbdev_init(struct radeon_device *rdev)
+>  fini:
+>  	drm_fb_helper_fini(&rfbdev->helper);
+>  free:
+> +	drm_fb_helper_unprepare(&rfbdev->helper);
+>  	kfree(rfbdev);
+>  	return ret;
+>  }
+> @@ -377,6 +378,7 @@ void radeon_fbdev_fini(struct radeon_device *rdev)
+>  		return;
+>  
+>  	radeon_fbdev_destroy(rdev->ddev, rdev->mode_info.rfbdev);
+> +	drm_fb_helper_unprepare(&rdev->mode_info.rfbdev->helper);
+>  	kfree(rdev->mode_info.rfbdev);
+>  	rdev->mode_info.rfbdev = NULL;
+>  }
+> diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+> index 153c39c32c71..bfebe2786d61 100644
+> --- a/drivers/gpu/drm/tegra/fb.c
+> +++ b/drivers/gpu/drm/tegra/fb.c
+> @@ -315,6 +315,7 @@ static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm)
+>  
+>  static void tegra_fbdev_free(struct tegra_fbdev *fbdev)
+>  {
+> +	drm_fb_helper_unprepare(&fbdev->base);
+
+Ok this one tegra change was a bit tricky, drivers really should just use
+drmm_/devm_ for everything :-)
+
+With the kerneldoc augmented:
+
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+>  	kfree(fbdev);
+>  }
+>  
+> -- 
+> 2.39.1
+> 
+
 -- 
-2.34.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
