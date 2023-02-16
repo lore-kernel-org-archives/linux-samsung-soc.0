@@ -2,123 +2,109 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB725C636D7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Feb 2023 07:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4CA1C636CC
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Feb 2023 10:54:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229793AbjBPHn0 (ORCPT
+        id S229827AbjBPKyj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Feb 2023 02:43:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48368 "EHLO
+        Thu, 16 Feb 2023 05:54:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229780AbjBPHnZ (ORCPT
+        with ESMTP id S230033AbjBPKyX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Feb 2023 02:43:25 -0500
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA2C63B666
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Feb 2023 23:43:23 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id fi26so1556665edb.7
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Feb 2023 23:43:23 -0800 (PST)
+        Thu, 16 Feb 2023 05:54:23 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EB7F2D150
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2023 02:54:21 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id f21so4117228ejq.8
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2023 02:54:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QEv4RdIHEpDaWeBFegn1AIUItJy/VoOsMaUUrqvBXCU=;
-        b=k7aWom532xJ/30+zDgsqJJX76SQkXkZtbxr8YNDZmbHS+YnaT42ZbsOOIC7vVQBnv5
-         DMsra1lUcGPO8yrKJfyZDicLqz+lJ9lFUMRnbKvzLbHFz0EHAu2nHhoz8EFt9OlDQLCD
-         PQB460/2BpGHjycMyD8gUtHlaaiEm5xgRYl26uYcKW3pdfEuZ1VabVXxbYQu4dQRH3hk
-         mZPN9JNFpMpIfmLLaoMbQnzvND9pKi0zbFoLHKZsLFTUygC7tPJajCk1n/IJkj0yah+R
-         OqRv9JWCaI66jx+TXSP4OTzLlBREUGMV1jFU+eUfC0LAzK6pOVDEQrEi4QYYBTxwiMDn
-         kYFg==
+        bh=QI8K5VaPcZDVX01pTM1BIt9n+MIastinOXR0Yd0M3Ns=;
+        b=WXzPGozQEHAoWnI1lpMvXFw+Ugjikfz4UPisdi8HsJENaIY/CtxKjJSSaFTlLOzYwa
+         /bXY0OL8LwVTwXU5QGl0qKlcdpalrjCHdu8Cxj6SzGHdVjS2rmdPTq0dBjh67+rAVlIc
+         rJCQn/LShtJACkLjc8bC1Bv2N+foa3X1ZMNPL/ktu56OP+TBfiiVZ+m1rG9vi+/eeqUK
+         Gcai1yavx6l9abE5W7+NJz9ynC4jeSEfyaOTS0fSli6wzGl203iJHyO5V2rQRlEaPKoA
+         mdtM5ebNLfVmxT1X15Gdk2WEMmxPlh0fXkrqU6oS3HXZFUGHeNf9rYzIIVhEW87/beAN
+         6UUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QEv4RdIHEpDaWeBFegn1AIUItJy/VoOsMaUUrqvBXCU=;
-        b=qgT1hcWxP0Iuj+VKg5Q5FOwvrcRoVOFmaOfw8OPucuIQIfjXbc6NQ+zeg3dTWke7GK
-         64AhN1eFwVRdlaCz0DAOEm+3OHItykPSdFQIUv9ejmcFYrJ/hsd7eDaDDy7kvqyGQZ9F
-         oO2a3K6ytdz8Jkxgb/vFtjY3qMk1wzTNYw4N5WCxxK9pL1tU/V2qQtb4maJiRzJlybva
-         5crrpZJm6SKPSgRhOcm8BnL1N5Z2bh9VU95NuL1qGdWVGv1CL7QeoOkhrHDW+vJWhPhi
-         JazgAMf5w+6+cF3PxIqdS3K+JZlkHX/H7jqfyXwsbr2SWIoQxWZtmwpkrucZoSpNAaF4
-         yBzg==
-X-Gm-Message-State: AO0yUKVHjSGJ/T5rzd6Dm/Ky53x9TO8awNpGxTnHRwaTGWM1XLrA+VsZ
-        06sHZN2Jf0gqEMyRztXiBEegtkyaaF0hxuhI
-X-Google-Smtp-Source: AK7set8/RcSVp1Ks4xKsgRqCz0Cn6Io0l8WY0JgK7Ri1oa6rCnWQ76Zx+p6/KdCczrxk8uzSbkIcNA==
-X-Received: by 2002:aa7:ca51:0:b0:4ab:2423:e310 with SMTP id j17-20020aa7ca51000000b004ab2423e310mr4864653edt.28.1676533402212;
-        Wed, 15 Feb 2023 23:43:22 -0800 (PST)
+        bh=QI8K5VaPcZDVX01pTM1BIt9n+MIastinOXR0Yd0M3Ns=;
+        b=klRKKufeujEpU6YOBl1Ss4Yoz3Qk4BRhPBDSH59qYfg1EyP0jc76Fz0MvHSicCLmhp
+         GOgKOUAH+DXsZ3hCT3LDKB37CIdDnRSsp0zzFcdp+XYSVwHamZ4FC3rg8KdbSqQvDbm4
+         KS8g0yq1txE1/+cCcieTt215nqK7ieZ/aGWfA91qUvNaNz85d0otO+4iYu6OjeAFhndS
+         Oc+xZJ0Osh1MjshWId5bmnTUEyBlSEu607BnkwyRcUan+3jm4/f4/jCJnxboucIu62Lw
+         68ue8inBGuF9gNIfOYwIw8qesG5CPpxyP+gevjOXFHL+omvJbH3jRMahhGVUOqeA0/1V
+         q6EA==
+X-Gm-Message-State: AO0yUKV4oPVsNYn3KfL9+8i/T2ZMOywgLmjhO6JnhzAguxT5ei73rTks
+        gRLSEIhX9BnU5jO/LJ6Sg59SiQ==
+X-Google-Smtp-Source: AK7set+o2bzX5AwaFF5qCgbb5gZPGOApJ9Hy9hx2HWKBa/1QeqK05TbZr53k40utmIxOIunE7z7y2w==
+X-Received: by 2002:a17:906:8502:b0:88b:23bb:e61f with SMTP id i2-20020a170906850200b0088b23bbe61fmr5734558ejx.25.1676544859978;
+        Thu, 16 Feb 2023 02:54:19 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id y42-20020a50bb2d000000b004ab1f97ca2csm423318ede.60.2023.02.15.23.43.21
+        by smtp.gmail.com with ESMTPSA id kq16-20020a170906abd000b00889a77458dbsm657273ejb.21.2023.02.16.02.54.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Feb 2023 23:43:21 -0800 (PST)
-Message-ID: <d811956d-fcef-c196-3953-7ef7bd4dc372@linaro.org>
-Date:   Thu, 16 Feb 2023 08:43:20 +0100
+        Thu, 16 Feb 2023 02:54:19 -0800 (PST)
+Message-ID: <b40cafa1-396f-e6cd-3240-bc879d5f2c8b@linaro.org>
+Date:   Thu, 16 Feb 2023 11:54:17 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH v2 5/7] media: dt-bindings: samsung,exynos4212-is: convert
- to dtschema
-To:     Rob Herring <robh@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+Subject: Re: [PATCH 01/16] dt-bindings: PCI: Rename Exynos PCIe binding to
+ Samsung PCIe
+Content-Language: en-US
+To:     Shradha Todi <shradha.t@samsung.com>, lpieralisi@kernel.org,
+        kw@linux.com, robh@kernel.org, bhelgaas@google.com,
+        krzysztof.kozlowski+dt@linaro.org, alim.akhtar@samsung.com,
+        jingoohan1@gmail.com, Sergey.Semin@baikalelectronics.ru,
+        lukas.bulwahn@gmail.com, hongxing.zhu@nxp.com, tglx@linutronix.de,
+        m.szyprowski@samsung.com, jh80.chung@samsung.co,
+        pankaj.dubey@samsung.com
+Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230214104508.51955-1-krzysztof.kozlowski@linaro.org>
- <20230214104508.51955-6-krzysztof.kozlowski@linaro.org>
- <20230215205317.GA529822-robh@kernel.org>
-Content-Language: en-US
+References: <20230214121333.1837-1-shradha.t@samsung.com>
+ <CGME20230214121404epcas5p3bfa6af0151b7f319d418f7c0dbed7c5a@epcas5p3.samsung.com>
+ <20230214121333.1837-2-shradha.t@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230215205317.GA529822-robh@kernel.org>
+In-Reply-To: <20230214121333.1837-2-shradha.t@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 15/02/2023 21:53, Rob Herring wrote:
->> +  power-domains:
->> +    maxItems: 1
->> +
->> +  ranges: true
->> +
->> +  '#size-cells':
->> +    const: 1
-> 
-> Normally this is next to #address-cells.
+On 14/02/2023 13:13, Shradha Todi wrote:
+> The current DT bindings is being used for Exynos5433 SoC only.
+> In order to extend this binding for all SoCs manufactured by
+> Samsung using DWC PCIe controller, renaming this file to a more
+> generic name.
 
-I kept alphabetical sorting, but I can move this with ranges close to
-the reg/address-cells.
+Thank you for your patch. There is something to discuss/improve.
 
 > 
->> +
->> +patternProperties:
->> +  "^pmu@[0-9a-f]+$":
->> +    type: object
->> +    additionalProperties: false
->> +    description:
->> +      Node representing the SoC's Power Management Unit (duplicated with the
->> +      correct PMU node in the SoC).
->> +
->> +    properties:
->> +      reg:
->> +        maxItems: 1
->> +
->> +    required:
->> +      - reg
->> +
->> +  "^i2c-isp@[0-9a-f]+$":
->> +    type: object
->> +    $ref: /schemas/i2c/i2c-controller.yaml#
->> +    unevaluatedProperties: false
->> +      #additionalProperties: false
+> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> ---
+>  .../pci/{samsung,exynos-pcie.yaml => samsung,pcie.yaml}     | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>  rename Documentation/devicetree/bindings/pci/{samsung,exynos-pcie.yaml => samsung,pcie.yaml} (93%)
 > 
-> ??
+> diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml b/Documentation/devicetree/bindings/pci/samsung,pcie.yaml
+> similarity index 93%
+> rename from Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
+> rename to Documentation/devicetree/bindings/pci/samsung,pcie.yaml
+> index f20ed7e709f7..6cd36d9ccba0 100644
+> --- a/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/samsung,pcie.yaml
 
-Indeed, some debug code...
+We keep the name rather tied to compatible, not generic. There are no
+other compatibles here, so I don't think we should rename it.
 
 Best regards,
 Krzysztof
