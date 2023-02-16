@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 926C0C61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Feb 2023 14:22:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D10FC636D6
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Feb 2023 14:22:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230162AbjBPOWY (ORCPT
+        id S230102AbjBPOWf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Feb 2023 09:22:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59328 "EHLO
+        Thu, 16 Feb 2023 09:22:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230133AbjBPOWV (ORCPT
+        with ESMTP id S230142AbjBPOW2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Feb 2023 09:22:21 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C695857778
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2023 06:22:13 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id n20so3576214edy.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2023 06:22:13 -0800 (PST)
+        Thu, 16 Feb 2023 09:22:28 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1C6F4DE1D
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2023 06:22:15 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id fj20so3431882edb.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2023 06:22:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AeMDG43ws8TAI/4WkpIfoMwEEvVNKnkvz75Wq7h1UGI=;
-        b=ASbSqJ4gY67dQOzwzJ3iwucWSPH+tuzjqPWjZVrgIVJAssuJRQTBGQsc/JAFrhxW2k
-         q4FzMJLK4TaOxmhjHGz2TKQfiaxy1CTLn7neIsBh8bY9ycpty9CM3pNaIfWK9ar9NgAf
-         IXyxt0aNOID11/6P/aaT1gtAz0GAXDBpM700aYmU5w6uBYRMNHKuILfkJFpN1LcUM0Lp
-         SgzgFLDgAtDbKUCEfpPu1rkjUoTIgOkHC+G79vYj+0I/V/2kli4EYTI7pXpiSD03VbHw
-         43s8ETlcX4Y7ia0VwgsD4C3q+xBiu+t+y6s3sftLLWhq2GpW6E75RIf7m5XbPcMvKMpJ
-         7Spw==
+        bh=7DQF5KVG5EevX5bBo+bwgTJ+ckvV/pCVSvA1eWE2YXI=;
+        b=b0+skQWrrjMbgYnwkSk0SYAhiArmMQ68ZeUgESI6NchuIoyf8Ky1vPgP64jI9cqNV+
+         5GRlXmVokcrVpzlRwyfvNCIG0jNDhYUPlK+plJ/DyAQGL3YmPPDrWSXu52MlVz+pzyOw
+         Zzm9gauD1jzjmVNG9gARQ8shd2fGIcVlzFZUwBisuFzRHujMCARbOG18giadh99NcUaR
+         s0PZUZZnU1LTxUrNfuP9+am3u1tDwXl+u4AhkEBp6O6iLA4XdW8N6pp17sHf2Q0uoeht
+         l0L5PXWgBlOe0SI2Q8K2xf58E7A7McWZa3vnN+F8f8l3kWAAMrtuL2w0WywPLHpHJaGX
+         oNRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AeMDG43ws8TAI/4WkpIfoMwEEvVNKnkvz75Wq7h1UGI=;
-        b=8AmMQwWOlfA4JSpnZSpHTvgGc85aeTqCgrQWPxtRVIP2PF3eTfMpg0mJeeHFWmwJLA
-         N95TdXvUXDepNNpxTm+Rcdlchm7bVwi/yhuAy8wUSXx8XFea+gaPikyXExgTRqoVi6d9
-         rdBPv84iA1rKkut0Cj1yAej/lwUnu9psiXPK7sikvORht492I8zJw0TQbrsx+uV5IN4+
-         3Gcs38xN3WbDiCaIX+vWrQq9IiL64Wsk92YoyGJixQwTBKJ+vsBIA6CIMLleRG4iODCl
-         t/Hvxul/XFRPqhZwGzXfuTRQnEIoYIKT+oSTHtzlfUzOf9cvEfEwKxZ9zwNggwqMDhta
-         Pr2w==
-X-Gm-Message-State: AO0yUKV+7d2qH7O97JgizQychHvWZblJYVMXT1ykTAwaTkVy7EqNjnaX
-        TrXMiobZplKiRX455OZaRUu6ww==
-X-Google-Smtp-Source: AK7set+aIU1ZTsipwqYwHQfPn5G8amAssWrw4Q1TBUaZp8QcoEtr1EVpefq1ITzydwTF1xYEUkik5g==
-X-Received: by 2002:a17:906:4b0d:b0:8aa:11dc:ac6 with SMTP id y13-20020a1709064b0d00b008aa11dc0ac6mr6013726eju.57.1676557332082;
-        Thu, 16 Feb 2023 06:22:12 -0800 (PST)
+        bh=7DQF5KVG5EevX5bBo+bwgTJ+ckvV/pCVSvA1eWE2YXI=;
+        b=Iej4ab4f91gT56m7xIdCCTa5GEIDZi1NvP68GXiSrCdR1w0cKq+Mz9CDLlkcuv9ui6
+         0xx8Yu+FA17kXAMevAEhItJia/dMmUOEzKY+N8F0UGfsPx8QvPWqktQexbRcg/fFVxhN
+         XcODkKLWEGGXjjIpY2nYTZKJe1Msaz57FNJmpStO3FhcbI9Q8tab8VsBUOZpa/izNJgd
+         4s0EY1kHBfbIw0sE1R9gGSfPgrJrE+Mx6iac59z0AWTMF0QNrnj4fgBplhIsfuQ7cxzu
+         P9AhkxoctCeKqEBOkF7+grT+RsFrsp2NXj59Y3Uxi4faWNqyoSqNX5WWsuW8m9XIYvFc
+         YhPg==
+X-Gm-Message-State: AO0yUKXDmeX8D71HXrBJNrbZQanfVfTScVicTs4ZsDSzs5KbI+jFbFLP
+        HC2w57F56o4ZP/oN2dZnkQ8LwQ==
+X-Google-Smtp-Source: AK7set/QP6Y0fn7yoiCX9gqQxrhhgab0mf0S38v54Z4oqY5gmhYkFGJBgJcyS0NawB78u0LxXVci/g==
+X-Received: by 2002:a17:906:6c87:b0:7d3:c516:6ef4 with SMTP id s7-20020a1709066c8700b007d3c5166ef4mr7020883ejr.20.1676557335188;
+        Thu, 16 Feb 2023 06:22:15 -0800 (PST)
 Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id ad24-20020a170907259800b0087bdac06a3bsm884757ejc.2.2023.02.16.06.22.10
+        by smtp.gmail.com with ESMTPSA id ad24-20020a170907259800b0087bdac06a3bsm884757ejc.2.2023.02.16.06.22.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Feb 2023 06:22:11 -0800 (PST)
+        Thu, 16 Feb 2023 06:22:14 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -63,9 +63,9 @@ To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 2/7] media: dt-bindings: i2c: samsung,s5k5baf: convert to dtschema
-Date:   Thu, 16 Feb 2023 15:21:59 +0100
-Message-Id: <20230216142204.48394-3-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 4/7] media: dt-bindings: samsung,exynos4212-fimc-lite: convert to dtschema
+Date:   Thu, 16 Feb 2023 15:22:01 +0100
+Message-Id: <20230216142204.48394-5-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230216142204.48394-1-krzysztof.kozlowski@linaro.org>
 References: <20230216142204.48394-1-krzysztof.kozlowski@linaro.org>
@@ -75,7 +75,9 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert the Samsung S5K5BAF image sensor bindings to DT schema.
+Convert the Samsung Exynos SoC series camera host interface (FIMC-LITE)
+bindings to DT schema.  Changes during conversion - adjust to existing
+DTS and Linux driver: add iommus and power-domains.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Reviewed-by: Rob Herring <robh@kernel.org>
@@ -85,32 +87,62 @@ Reviewed-by: Rob Herring <robh@kernel.org>
 Changes since v2:
 1. Add Rb tag.
 ---
- .../bindings/media/i2c/samsung,s5k5baf.yaml   | 101 ++++++++++++++++++
- .../bindings/media/samsung-s5k5baf.txt        |  58 ----------
- 2 files changed, 101 insertions(+), 58 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/samsung,s5k5baf.yaml
- delete mode 100644 Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
+ .../bindings/media/exynos-fimc-lite.txt       | 16 -----
+ .../media/samsung,exynos4212-fimc-lite.yaml   | 63 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ 3 files changed, 64 insertions(+), 16 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/exynos-fimc-lite.txt
+ create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-lite.yaml
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/samsung,s5k5baf.yaml b/Documentation/devicetree/bindings/media/i2c/samsung,s5k5baf.yaml
+diff --git a/Documentation/devicetree/bindings/media/exynos-fimc-lite.txt b/Documentation/devicetree/bindings/media/exynos-fimc-lite.txt
+deleted file mode 100644
+index 0bf6fb7fbeab..000000000000
+--- a/Documentation/devicetree/bindings/media/exynos-fimc-lite.txt
++++ /dev/null
+@@ -1,16 +0,0 @@
+-Exynos4x12/Exynos5 SoC series camera host interface (FIMC-LITE)
+-
+-Required properties:
+-
+-- compatible	: should be one of:
+-		  "samsung,exynos4212-fimc-lite" for Exynos4212/4412 SoCs,
+-		  "samsung,exynos5250-fimc-lite" for Exynos5250 compatible
+-		   devices;
+-- reg		: physical base address and size of the device memory mapped
+-		  registers;
+-- interrupts	: should contain FIMC-LITE interrupt;
+-- clocks	: FIMC LITE gate clock should be specified in this property.
+-- clock-names	: should contain "flite" entry.
+-
+-Each FIMC device should have an alias in the aliases node, in the form of
+-fimc-lite<n>, where <n> is an integer specifying the IP block instance.
+diff --git a/Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-lite.yaml b/Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-lite.yaml
 new file mode 100644
-index 000000000000..c8f2955e0825
+index 000000000000..f80eca0a4f41
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/samsung,s5k5baf.yaml
-@@ -0,0 +1,101 @@
++++ b/Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-lite.yaml
+@@ -0,0 +1,63 @@
 +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/media/i2c/samsung,s5k5baf.yaml#
++$id: http://devicetree.org/schemas/media/samsung,exynos4212-fimc-lite.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor with embedded SoC ISP
++title: Samsung Exynos SoC series camera host interface (FIMC-LITE)
 +
 +maintainers:
 +  - Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
++  - Sylwester Nawrocki <s.nawrocki@samsung.com>
++
++description:
++  Each FIMC device should have an alias in the aliases node, in the form of
++  fimc-lite<n>, where <n> is an integer specifying the IP block instance.
 +
 +properties:
 +  compatible:
-+    const: samsung,s5k5baf
++    enum:
++      - samsung,exynos4212-fimc-lite
++      - samsung,exynos5250-fimc-lite
 +
 +  reg:
 +    maxItems: 1
@@ -120,148 +152,51 @@ index 000000000000..c8f2955e0825
 +
 +  clock-names:
 +    items:
-+      - const: mclk
++      - const: flite
 +
-+  clock-frequency:
-+    default: 24000000
-+    description: mclk clock frequency
-+
-+  rstn-gpios:
++  interrupts:
 +    maxItems: 1
-+    description: RSTN pin
 +
-+  stbyn-gpios:
++  iommus:
 +    maxItems: 1
-+    description: STDBYN pin
 +
-+  vdda-supply:
-+    description: Analog power supply 2.8V (2.6V to 3.0V)
-+
-+  vddio-supply:
-+    description: I/O power supply 1.8V (1.65V to 1.95V) or 2.8V (2.5V to 3.1V)
-+
-+  vddreg-supply:
-+    description:
-+      Regulator input power supply 1.8V (1.7V to 1.9V) or 2.8V (2.6V to 3.0)
-+
-+  port:
-+    $ref: /schemas/graph.yaml#/$defs/port-base
-+    additionalProperties: false
-+
-+    properties:
-+      endpoint:
-+        $ref: /schemas/media/video-interfaces.yaml#
-+        unevaluatedProperties: false
-+
-+        properties:
-+          data-lanes:
-+            items:
-+              - const: 1
++  power-domains:
++    maxItems: 1
 +
 +required:
 +  - compatible
++  - reg
 +  - clocks
 +  - clock-names
-+  - rstn-gpios
-+  - stbyn-gpios
-+  - vdda-supply
-+  - vddio-supply
-+  - vddreg-supply
++  - interrupts
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        sensor@2d {
-+            compatible = "samsung,s5k5baf";
-+            reg = <0x2d>;
-+            clocks = <&camera 0>;
-+            clock-names = "mclk";
-+            clock-frequency = <24000000>;
-+            rstn-gpios = <&gpl2 1 GPIO_ACTIVE_LOW>;
-+            stbyn-gpios = <&gpl2 0 GPIO_ACTIVE_LOW>;
-+            vdda-supply = <&cam_io_en_reg>;
-+            vddio-supply = <&vtcam_reg>;
-+            vddreg-supply = <&vt_core_15v_reg>;
-+
-+            port {
-+                endpoint {
-+                    remote-endpoint = <&csis1_ep>;
-+                    data-lanes = <1>;
-+                };
-+            };
-+        };
++    #include <dt-bindings/clock/exynos4.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    fimc-lite@12390000 {
++        compatible = "samsung,exynos4212-fimc-lite";
++        reg = <0x12390000 0x1000>;
++        clocks = <&isp_clock CLK_ISP_FIMC_LITE0>;
++        clock-names = "flite";
++        interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
++        power-domains = <&pd_isp>;
++        iommus = <&sysmmu_fimc_lite0>;
 +    };
-diff --git a/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt b/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
-deleted file mode 100644
-index 1f51e0439c96..000000000000
---- a/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
-+++ /dev/null
-@@ -1,58 +0,0 @@
--Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor with embedded SoC ISP
----------------------------------------------------------------------
--
--Required properties:
--
--- compatible	  : "samsung,s5k5baf";
--- reg		  : I2C slave address of the sensor;
--- vdda-supply	  : analog power supply 2.8V (2.6V to 3.0V);
--- vddreg-supply	  : regulator input power supply 1.8V (1.7V to 1.9V)
--		    or 2.8V (2.6V to 3.0);
--- vddio-supply	  : I/O power supply 1.8V (1.65V to 1.95V)
--		    or 2.8V (2.5V to 3.1V);
--- stbyn-gpios	  : GPIO connected to STDBYN pin;
--- rstn-gpios	  : GPIO connected to RSTN pin;
--- clocks	  : list of phandle and clock specifier pairs
--		    according to common clock bindings for the
--		    clocks described in clock-names;
--- clock-names	  : should include "mclk" for the sensor's master clock;
--
--Optional properties:
--
--- clock-frequency : the frequency at which the "mclk" clock should be
--		    configured to operate, in Hz; if this property is not
--		    specified default 24 MHz value will be used.
--
--The device node should contain one 'port' child node with one child 'endpoint'
--node, according to the bindings defined in Documentation/devicetree/bindings/
--media/video-interfaces.txt. The following are properties specific to those
--nodes.
--
--endpoint node
---------------
--
--- data-lanes : (optional) specifies MIPI CSI-2 data lanes as covered in
--	       video-interfaces.txt. If present it should be <1> - the device
--	       supports only one data lane without re-mapping.
--
--Example:
--
--s5k5bafx@2d {
--	compatible = "samsung,s5k5baf";
--	reg = <0x2d>;
--	vdda-supply = <&cam_io_en_reg>;
--	vddreg-supply = <&vt_core_15v_reg>;
--	vddio-supply = <&vtcam_reg>;
--	stbyn-gpios = <&gpl2 0 1>;
--	rstn-gpios = <&gpl2 1 1>;
--	clock-names = "mclk";
--	clocks = <&clock_cam 0>;
--	clock-frequency = <24000000>;
--
--	port {
--		s5k5bafx_ep: endpoint {
--			remote-endpoint = <&csis1_ep>;
--			data-lanes = <1>;
--		};
--	};
--};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0882e304c8f9..2789c436c875 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18466,6 +18466,7 @@ L:	linux-media@vger.kernel.org
+ S:	Supported
+ Q:	https://patchwork.linuxtv.org/project/linux-media/list/
+ F:	Documentation/devicetree/bindings/media/samsung,exynos4210-csis.yaml
++F:	Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-lite.yaml
+ F:	drivers/media/platform/samsung/exynos4-is/
+ 
+ SAMSUNG SOC CLOCK DRIVERS
 -- 
 2.34.1
 
