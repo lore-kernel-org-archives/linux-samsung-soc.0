@@ -2,203 +2,285 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F670C636D6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Feb 2023 11:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B69D0C636CC
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Feb 2023 14:06:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230006AbjBPLL4 (ORCPT
+        id S229719AbjBPOGZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Feb 2023 06:11:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36750 "EHLO
+        Thu, 16 Feb 2023 09:06:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229611AbjBPLLz (ORCPT
+        with ESMTP id S229485AbjBPOGZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Feb 2023 06:11:55 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7CC54ECB
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2023 03:11:53 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id he33so4196010ejc.11
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2023 03:11:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zNhqYGj1vLN2v1vRAyqF2Z1mw1XUvACBLxpmP0puvR8=;
-        b=AQKhMPfIpqNRBEQiQTqupLYJIPzl6FkSv6NQ3Fri9M5xBtaBlylJ5RwbTz0GLBArQN
-         kesQKiEVvQWNQ+/3oTPajBmOOPLknDGR7hJQMbw7wlmr3TZKEtiN+v/mrdQNkBqTQcO2
-         jgLwilgOpSwOLBFBUahZs427LfIoryXmcTJbd84L8CQW1Sc4R8vB3KroAEu5qFeKw6WO
-         Bj8x0dQiIkYQqm9KTSNyzWIsm3JYEVZ59iLo3sJB9eltLqMYVf693OxQFqSa7eHz2Zzk
-         o7LLWKp6stJ9VAzjoZoFanuJ+QMsEAwpyPvXi9T4Y1fmkNUtwnqB1DL8n47eRiwa0qFX
-         XFPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zNhqYGj1vLN2v1vRAyqF2Z1mw1XUvACBLxpmP0puvR8=;
-        b=TrK6KNvEYIpsWfoQmYipADS5DBUgwlkKkYuLgRQCYQGDv/f9LIgh+s6Y15YbfeLUZu
-         7dgFEtgTGhc3Sni/RwbPRB/GpKWQQ8WlqxscncGwoIgg5QMVgX3mOkdhm6mNQ7Ox0ss3
-         DdKRnQVice/9AG13RE6owH91mVLrHa7hb9zRRbEKlBGVuvoeufQGWfPIiH/HiSdhfq2u
-         w/Z1I80NKpziM2andIwiGaG3p2HFRZWfyjCzmazRDjFBiNBNVBli3X8QJxhXNDOkJMrW
-         b3FKK/0eID9gN99qpRMFm1L8goebWp5aPRIsrlOUB7l/apwfKUX0p16U/dYwF6PMn0+E
-         RLxw==
-X-Gm-Message-State: AO0yUKXl3Y2lp3eX2kMCebb2yJZjGpmveh/qP/FlSxx/qAsobrOspCpZ
-        uTmQMHv+28/CHiNrE5eZT+u8Ww==
-X-Google-Smtp-Source: AK7set/DH6Dn0+3n9f9oN7LRJsmOT12HOFk4osoy37duY3LEuxFLeBMCEwkXEDq4XLqQZe9Hchgqvw==
-X-Received: by 2002:a17:907:2ce4:b0:8b1:22af:b39f with SMTP id hz4-20020a1709072ce400b008b122afb39fmr7188453ejc.13.1676545912107;
-        Thu, 16 Feb 2023 03:11:52 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id t19-20020a1709066bd300b008b133f9a197sm656548ejs.198.2023.02.16.03.11.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Feb 2023 03:11:51 -0800 (PST)
-Message-ID: <a0c79665-adb9-a846-5a84-d85e0684c25f@linaro.org>
-Date:   Thu, 16 Feb 2023 12:11:49 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 15/16] PCI: samsung: Add structure to hold resource
- operations
-Content-Language: en-US
-To:     Shradha Todi <shradha.t@samsung.com>, lpieralisi@kernel.org,
-        kw@linux.com, robh@kernel.org, bhelgaas@google.com,
-        krzysztof.kozlowski+dt@linaro.org, alim.akhtar@samsung.com,
-        jingoohan1@gmail.com, Sergey.Semin@baikalelectronics.ru,
-        lukas.bulwahn@gmail.com, hongxing.zhu@nxp.com, tglx@linutronix.de,
-        m.szyprowski@samsung.com, jh80.chung@samsung.co,
-        pankaj.dubey@samsung.com
-Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        Thu, 16 Feb 2023 09:06:25 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82A80CDE9;
+        Thu, 16 Feb 2023 06:06:23 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 3670122365;
+        Thu, 16 Feb 2023 14:06:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1676556382; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=hS7qvXtpo1Ba5h/0QjOYVZ9usgy4SFdpWrd3thmWU3k=;
+        b=KshOud0Skj64WdBjDXfEMuJMKWxD7vsQCDmy5ZGfPoHNepAk6MR3RXeggbMmi/e8/PGno2
+        2iIIz3JyMT1juA8s3xIyRFqMSM+RkFmRzn0lQ5kw8/6N9A6rndGx0UajUrfcwy+8Mn+Vhh
+        4i50+MCwWPbLXDxWJ1GimsUaZQsIMOM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1676556382;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=hS7qvXtpo1Ba5h/0QjOYVZ9usgy4SFdpWrd3thmWU3k=;
+        b=Fy7nhs8Ft4rIvOcjGQgTOq/TIU5lZU+9eeaNgXWZURSuEj/Qjr6j5kvtJiTk46lqgYiFou
+        ZJ27DUX6IXXW73DQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E4C51131FD;
+        Thu, 16 Feb 2023 14:06:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 1aEYN1047mMGbQAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Thu, 16 Feb 2023 14:06:21 +0000
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     javierm@redhat.com, airlied@gmail.com, daniel@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org
+Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230214121333.1837-1-shradha.t@samsung.com>
- <CGME20230214121503epcas5p291dce2b37ec4cdabcfecbf8fbdfcca51@epcas5p2.samsung.com>
- <20230214121333.1837-16-shradha.t@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230214121333.1837-16-shradha.t@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH] drm/fb-helper: Remove drm_fb_helper_unprepare() from drm_fb_helper_fini()
+Date:   Thu, 16 Feb 2023 15:06:20 +0100
+Message-Id: <20230216140620.17699-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.39.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14/02/2023 13:13, Shradha Todi wrote:
-> Some resources might differ based on platforms and we
+Move drm_fb_helper_unprepare() from drm_fb_helper_fini() into the
+calling fbdev implementation. Avoids a possible stale mutex with
+generic fbdev code.
 
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v5.18-rc4/source/Documentation/process/submitting-patches.rst#L586
+As indicated by its name, drm_fb_helper_prepare() prepares struct
+drm_fb_helper before setting up the fbdev support with a call to
+drm_fb_helper_init(). In legacy fbdev emulation, this happens next
+to each other. If successful, drm_fb_helper_fini() later tear down
+the fbdev device and also unprepare via drm_fb_helper_unprepare().
 
-Wrapping looks a bit short...
+Generic fbdev emulation prepares struct drm_fb_helper immediately
+after allocating the instance. It only calls drm_fb_helper_init()
+as part of processing a hotplug event. If the hotplug-handling fails,
+it runs drm_fb_helper_fini(). This unprepares the fb-helper instance
+and the next hotplug event runs on stale data.
 
-> need platform specific functions to initialize or alter
-> them. For better code reusibility, making a separate
+Solve this by moving drm_fb_helper_unprepare() from drm_fb_helper_fini()
+into the fbdev implementations. Call it right before freeing the
+fb-helper instance.
 
-typo, I think it is: re-usability
+Fixes: 4825797c36da ("drm/fb-helper: Introduce drm_fb_helper_unprepare()")
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Javier Martinez Canillas <javierm@redhat.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org
 
-> res_ops which will hold all such function pointers or
-> other resource specific data.
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+---
+ drivers/gpu/drm/armada/armada_fbdev.c      | 3 +++
+ drivers/gpu/drm/drm_fb_helper.c            | 2 --
+ drivers/gpu/drm/drm_fbdev_generic.c        | 2 ++
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c  | 3 ++-
+ drivers/gpu/drm/gma500/framebuffer.c       | 2 ++
+ drivers/gpu/drm/i915/display/intel_fbdev.c | 1 +
+ drivers/gpu/drm/msm/msm_fbdev.c            | 2 ++
+ drivers/gpu/drm/omapdrm/omap_fbdev.c       | 2 ++
+ drivers/gpu/drm/radeon/radeon_fb.c         | 2 ++
+ drivers/gpu/drm/tegra/fb.c                 | 1 +
+ 10 files changed, 17 insertions(+), 3 deletions(-)
 
-Are you saying that interrupts differ in different devices?
-
-> 
-> This patch includes adding function pointer for IRQ
-
-Do not use "This commit/patch".
-https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
-
-> initialization which will help to move common operations for
-> host init into the probe sequence.
-> 
-> Suggested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-> ---
->  drivers/pci/controller/dwc/pci-samsung.c | 26 ++++++++++++++++--------
->  1 file changed, 17 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-samsung.c b/drivers/pci/controller/dwc/pci-samsung.c
-> index 47ca2a6a545d..01882f2d06c7 100644
-> --- a/drivers/pci/controller/dwc/pci-samsung.c
-> +++ b/drivers/pci/controller/dwc/pci-samsung.c
-> @@ -55,6 +55,7 @@ struct samsung_pcie_pdata {
->  	struct pci_ops				*pci_ops;
->  	const struct dw_pcie_ops		*dwc_ops;
->  	const struct dw_pcie_host_ops		*host_ops;
-> +	const struct samsung_res_ops		*res_ops;
->  };
->  
->  /*
-> @@ -77,6 +78,10 @@ struct samsung_pcie {
->  	struct regulator_bulk_data	supplies[2];
->  };
->  
-> +struct samsung_res_ops {
-> +	int (*irq_init)(struct samsung_pcie *sp, struct platform_device *pdev);
-> +};
-> +
->  static int samsung_pcie_init_clk_resources(struct samsung_pcie *sp)
->  {
->  	struct device *dev = sp->pci.dev;
-> @@ -276,7 +281,7 @@ static const struct dw_pcie_host_ops exynos_pcie_host_ops = {
->  	.host_init = exynos_pcie_host_init,
->  };
->  
-> -static int exynos_add_pcie_port(struct samsung_pcie *sp,
-> +static int exynos_irq_init(struct samsung_pcie *sp,
->  				       struct platform_device *pdev)
->  {
->  	struct dw_pcie *pci = &sp->pci;
-> @@ -295,15 +300,8 @@ static int exynos_add_pcie_port(struct samsung_pcie *sp,
->  		return ret;
->  	}
->  
-> -	pp->ops = &exynos_pcie_host_ops;
->  	pp->msi_irq[0] = -ENODEV;
->  
-> -	ret = dw_pcie_host_init(pp);
-> -	if (ret) {
-> -		dev_err(dev, "failed to initialize host\n");
-> -		return ret;
-> -	}
-> -
->  	return 0;
->  }
->  
-> @@ -314,6 +312,10 @@ static const struct dw_pcie_ops exynos_dw_pcie_ops = {
->  	.start_link = exynos_pcie_start_link,
->  };
->  
-> +static const struct samsung_res_ops exynos_res_ops_data = {
-> +	.irq_init		= exynos_irq_init,
-> +};
-> +
->  static int samsung_pcie_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -357,7 +359,12 @@ static int samsung_pcie_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, sp);
->  
-> -	ret = exynos_add_pcie_port(sp, pdev);
-> +	if (pdata->res_ops->irq_init)
-> +		pdata->res_ops->irq_init(sp, pdev);
-
-Check return value and handle errors.
-
-> +
-> +	sp->pci.pp.ops = pdata->host_ops;
-> +
-> +	ret = dw_pcie_host_init(&sp->pci.pp);
->  	if (ret < 0)
->  		goto fail_probe;
->  
-> @@ -428,6 +435,7 @@ static const struct samsung_pcie_pdata exynos_5433_pcie_rc_pdata = {
->  	.dwc_ops		= &exynos_dw_pcie_ops,
->  	.pci_ops		= &exynos_pci_ops,
->  	.host_ops		= &exynos_pcie_host_ops,
-> +	.res_ops		= &exynos_res_ops_data,
->  };
->  
->  static const struct of_device_id samsung_pcie_of_match[] = {
-
-Best regards,
-Krzysztof
+diff --git a/drivers/gpu/drm/armada/armada_fbdev.c b/drivers/gpu/drm/armada/armada_fbdev.c
+index 07e410c62b7a..0e44f53e9fa4 100644
+--- a/drivers/gpu/drm/armada/armada_fbdev.c
++++ b/drivers/gpu/drm/armada/armada_fbdev.c
+@@ -147,6 +147,7 @@ int armada_fbdev_init(struct drm_device *dev)
+  err_fb_setup:
+ 	drm_fb_helper_fini(fbh);
+  err_fb_helper:
++	drm_fb_helper_unprepare(fbh);
+ 	priv->fbdev = NULL;
+ 	return ret;
+ }
+@@ -164,6 +165,8 @@ void armada_fbdev_fini(struct drm_device *dev)
+ 		if (fbh->fb)
+ 			fbh->fb->funcs->destroy(fbh->fb);
+ 
++		drm_fb_helper_unprepare(fbh);
++
+ 		priv->fbdev = NULL;
+ 	}
+ }
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index 28c428e9c530..a39998047f8a 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -590,8 +590,6 @@ void drm_fb_helper_fini(struct drm_fb_helper *fb_helper)
+ 	}
+ 	mutex_unlock(&kernel_fb_helper_lock);
+ 
+-	drm_fb_helper_unprepare(fb_helper);
+-
+ 	if (!fb_helper->client.funcs)
+ 		drm_client_release(&fb_helper->client);
+ }
+diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
+index 365f80717fa1..4d6325e91565 100644
+--- a/drivers/gpu/drm/drm_fbdev_generic.c
++++ b/drivers/gpu/drm/drm_fbdev_generic.c
+@@ -65,6 +65,8 @@ static void drm_fbdev_fb_destroy(struct fb_info *info)
+ 
+ 	drm_client_framebuffer_delete(fb_helper->buffer);
+ 	drm_client_release(&fb_helper->client);
++
++	drm_fb_helper_unprepare(fb_helper);
+ 	kfree(fb_helper);
+ }
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+index b89e33af8da8..4929ffe5a09a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+@@ -183,8 +183,8 @@ int exynos_drm_fbdev_init(struct drm_device *dev)
+ 
+ err_setup:
+ 	drm_fb_helper_fini(helper);
+-
+ err_init:
++	drm_fb_helper_unprepare(helper);
+ 	private->fb_helper = NULL;
+ 	kfree(fbdev);
+ 
+@@ -219,6 +219,7 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
+ 	fbdev = to_exynos_fbdev(private->fb_helper);
+ 
+ 	exynos_drm_fbdev_destroy(dev, private->fb_helper);
++	drm_fb_helper_unprepare(private->fb_helper);
+ 	kfree(fbdev);
+ 	private->fb_helper = NULL;
+ }
+diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
+index 1f04c07ee180..f471e0cb7298 100644
+--- a/drivers/gpu/drm/gma500/framebuffer.c
++++ b/drivers/gpu/drm/gma500/framebuffer.c
+@@ -427,6 +427,7 @@ int psb_fbdev_init(struct drm_device *dev)
+ fini:
+ 	drm_fb_helper_fini(fb_helper);
+ free:
++	drm_fb_helper_unprepare(fb_helper);
+ 	kfree(fb_helper);
+ 	return ret;
+ }
+@@ -439,6 +440,7 @@ static void psb_fbdev_fini(struct drm_device *dev)
+ 		return;
+ 
+ 	psb_fbdev_destroy(dev, dev_priv->fb_helper);
++	drm_fb_helper_unprepare(dev_priv->fb_helper);
+ 	kfree(dev_priv->fb_helper);
+ 	dev_priv->fb_helper = NULL;
+ }
+diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
+index 6113d7627d45..98029059f701 100644
+--- a/drivers/gpu/drm/i915/display/intel_fbdev.c
++++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
+@@ -352,6 +352,7 @@ static void intel_fbdev_destroy(struct intel_fbdev *ifbdev)
+ 	if (ifbdev->fb)
+ 		drm_framebuffer_remove(&ifbdev->fb->base);
+ 
++	drm_fb_helper_unprepare(&ifbdev->helper);
+ 	kfree(ifbdev);
+ }
+ 
+diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
+index 915b213f3a5c..c804e5ba682a 100644
+--- a/drivers/gpu/drm/msm/msm_fbdev.c
++++ b/drivers/gpu/drm/msm/msm_fbdev.c
+@@ -170,6 +170,7 @@ struct drm_fb_helper *msm_fbdev_init(struct drm_device *dev)
+ fini:
+ 	drm_fb_helper_fini(helper);
+ fail:
++	drm_fb_helper_unprepare(helper);
+ 	kfree(fbdev);
+ 	return NULL;
+ }
+@@ -196,6 +197,7 @@ void msm_fbdev_free(struct drm_device *dev)
+ 		drm_framebuffer_remove(fbdev->fb);
+ 	}
+ 
++	drm_fb_helper_unprepare(helper);
+ 	kfree(fbdev);
+ 
+ 	priv->fbdev = NULL;
+diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+index fc5f52d567c6..84429728347f 100644
+--- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
++++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+@@ -256,6 +256,7 @@ void omap_fbdev_init(struct drm_device *dev)
+ fini:
+ 	drm_fb_helper_fini(helper);
+ fail:
++	drm_fb_helper_unprepare(helper);
+ 	kfree(fbdev);
+ 
+ 	dev_warn(dev->dev, "omap_fbdev_init failed\n");
+@@ -286,6 +287,7 @@ void omap_fbdev_fini(struct drm_device *dev)
+ 	if (fbdev->fb)
+ 		drm_framebuffer_remove(fbdev->fb);
+ 
++	drm_fb_helper_unprepare(helper);
+ 	kfree(fbdev);
+ 
+ 	priv->fbdev = NULL;
+diff --git a/drivers/gpu/drm/radeon/radeon_fb.c b/drivers/gpu/drm/radeon/radeon_fb.c
+index 6e5eed0e157c..c4807f0c43bc 100644
+--- a/drivers/gpu/drm/radeon/radeon_fb.c
++++ b/drivers/gpu/drm/radeon/radeon_fb.c
+@@ -367,6 +367,7 @@ int radeon_fbdev_init(struct radeon_device *rdev)
+ fini:
+ 	drm_fb_helper_fini(&rfbdev->helper);
+ free:
++	drm_fb_helper_unprepare(&rfbdev->helper);
+ 	kfree(rfbdev);
+ 	return ret;
+ }
+@@ -377,6 +378,7 @@ void radeon_fbdev_fini(struct radeon_device *rdev)
+ 		return;
+ 
+ 	radeon_fbdev_destroy(rdev->ddev, rdev->mode_info.rfbdev);
++	drm_fb_helper_unprepare(&rdev->mode_info.rfbdev->helper);
+ 	kfree(rdev->mode_info.rfbdev);
+ 	rdev->mode_info.rfbdev = NULL;
+ }
+diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+index 153c39c32c71..bfebe2786d61 100644
+--- a/drivers/gpu/drm/tegra/fb.c
++++ b/drivers/gpu/drm/tegra/fb.c
+@@ -315,6 +315,7 @@ static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm)
+ 
+ static void tegra_fbdev_free(struct tegra_fbdev *fbdev)
+ {
++	drm_fb_helper_unprepare(&fbdev->base);
+ 	kfree(fbdev);
+ }
+ 
+-- 
+2.39.1
 
