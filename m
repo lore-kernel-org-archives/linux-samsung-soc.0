@@ -2,285 +2,135 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B69D0C636CC
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Feb 2023 14:06:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E51CC636CC
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Feb 2023 14:22:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229719AbjBPOGZ (ORCPT
+        id S229926AbjBPOWP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Feb 2023 09:06:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41940 "EHLO
+        Thu, 16 Feb 2023 09:22:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229485AbjBPOGZ (ORCPT
+        with ESMTP id S230056AbjBPOWN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Feb 2023 09:06:25 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82A80CDE9;
-        Thu, 16 Feb 2023 06:06:23 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 3670122365;
-        Thu, 16 Feb 2023 14:06:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1676556382; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=hS7qvXtpo1Ba5h/0QjOYVZ9usgy4SFdpWrd3thmWU3k=;
-        b=KshOud0Skj64WdBjDXfEMuJMKWxD7vsQCDmy5ZGfPoHNepAk6MR3RXeggbMmi/e8/PGno2
-        2iIIz3JyMT1juA8s3xIyRFqMSM+RkFmRzn0lQ5kw8/6N9A6rndGx0UajUrfcwy+8Mn+Vhh
-        4i50+MCwWPbLXDxWJ1GimsUaZQsIMOM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1676556382;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=hS7qvXtpo1Ba5h/0QjOYVZ9usgy4SFdpWrd3thmWU3k=;
-        b=Fy7nhs8Ft4rIvOcjGQgTOq/TIU5lZU+9eeaNgXWZURSuEj/Qjr6j5kvtJiTk46lqgYiFou
-        ZJ27DUX6IXXW73DQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E4C51131FD;
-        Thu, 16 Feb 2023 14:06:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 1aEYN1047mMGbQAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Thu, 16 Feb 2023 14:06:21 +0000
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-To:     javierm@redhat.com, airlied@gmail.com, daniel@ffwll.ch,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org
-Cc:     dri-devel@lists.freedesktop.org,
+        Thu, 16 Feb 2023 09:22:13 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A81214DBFE
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2023 06:22:10 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id fj20so3430635edb.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2023 06:22:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FFSICMNCf+cnC1kdKQE45X4ohBcHV/EILTtWgDyR10c=;
+        b=q2Myj/NDoO39115jNuPbOnkUiu1Rxdj1nP6VhsWdKZVZ0eWx8nDhMlE/kR/H4Dpb7d
+         UDGNUq+PTVWqhRC26OBOirOoT8VgwhQ98xJlHoP1fwxvWEAGrbq9X9NVy7UM8z7L2KLW
+         MBE0R4IqEuFH/HUMI2D+kvstZQTtFyIPCRR60jITUSOgaC1MO4SFqla0rfabNZO8BZ0v
+         bsLgwWUaF4rFpBrqMtN0n8qhOsGAeVdFVIGB4CZwmSqOJo58tqa8Ub3yZEf6/P7BibyU
+         kcCWIuxJQxJRuXuXnORK5XOjQQCFvGcYIAnr/YCkiyCbNKAWeq3mc4d1bVT+XfJMACwm
+         gnzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FFSICMNCf+cnC1kdKQE45X4ohBcHV/EILTtWgDyR10c=;
+        b=B4Xwk6sxBjRjxv9/UwYEvgtOys/xb2udN9txkhEKOfPF+pzFM09ngqcDjrVECsK4qq
+         W9ImLPVUhHomvAOQqpkzVDZTocdyaPISr/SiBydu59AItHf8w8Zqjvqs6VVccQSIH3f8
+         u4DY6j17lvlkM94E/zh3UWv2QimviZ0S4GE/zp/198iQqCssX6GIR2J5a14LvKRqoX+z
+         nj6VSFYyGOF2FtRCk2oFbnTMcT33u2vlY5dLdglsY5hn7T/L+EaZudBw2RohwQ2+WLKp
+         5sn2E7/zj/K6z4NLHuJqLwzphq4jin1IZPUyjoJxiL4H84dd347TAtsT7CWWjs2iaoZC
+         FBpw==
+X-Gm-Message-State: AO0yUKV4WxVQgIzEF4IKInCVbKiAFXlOFtPafhiVw4DC3le6TXXH2aI9
+        mrynU22LSXBOjpTsXJyKnN/jbw==
+X-Google-Smtp-Source: AK7set+f/ZU/TyqK7kdIJ1GAMD4yEvJQNNz87t3Fj795iqRUsFImuZJRGgbzRu+OgVpXXaTn86EWzQ==
+X-Received: by 2002:a17:907:a42a:b0:8b1:730b:a296 with SMTP id sg42-20020a170907a42a00b008b1730ba296mr1503971ejc.15.1676557328883;
+        Thu, 16 Feb 2023 06:22:08 -0800 (PST)
+Received: from krzk-bin.. ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id ad24-20020a170907259800b0087bdac06a3bsm884757ejc.2.2023.02.16.06.22.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Feb 2023 06:22:08 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH] drm/fb-helper: Remove drm_fb_helper_unprepare() from drm_fb_helper_fini()
-Date:   Thu, 16 Feb 2023 15:06:20 +0100
-Message-Id: <20230216140620.17699-1-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.39.1
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 0/7] media: dt-bindings: Convert Samsung SoC Camera to DT schema
+Date:   Thu, 16 Feb 2023 15:21:57 +0100
+Message-Id: <20230216142204.48394-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Move drm_fb_helper_unprepare() from drm_fb_helper_fini() into the
-calling fbdev implementation. Avoids a possible stale mutex with
-generic fbdev code.
+Hi,
 
-As indicated by its name, drm_fb_helper_prepare() prepares struct
-drm_fb_helper before setting up the fbdev support with a call to
-drm_fb_helper_init(). In legacy fbdev emulation, this happens next
-to each other. If successful, drm_fb_helper_fini() later tear down
-the fbdev device and also unprepare via drm_fb_helper_unprepare().
+The patchset depends on:
+https://lore.kernel.org/all/20230207205834.673163-1-krzysztof.kozlowski@linaro.org/
 
-Generic fbdev emulation prepares struct drm_fb_helper immediately
-after allocating the instance. It only calls drm_fb_helper_init()
-as part of processing a hotplug event. If the hotplug-handling fails,
-it runs drm_fb_helper_fini(). This unprepares the fb-helper instance
-and the next hotplug event runs on stale data.
+Changes since v2
+================
+1. Move size-cells next to address-cells.
+2. Drop dead/debug code.
+3. Add Rb tags.
 
-Solve this by moving drm_fb_helper_unprepare() from drm_fb_helper_fini()
-into the fbdev implementations. Call it right before freeing the
-fb-helper instance.
+Changes since v1
+================
+1. Collect few independent patches into one patchset.
 
-Fixes: 4825797c36da ("drm/fb-helper: Introduce drm_fb_helper_unprepare()")
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Javier Martinez Canillas <javierm@redhat.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org
+Best regards,
+Krzysztof
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
----
- drivers/gpu/drm/armada/armada_fbdev.c      | 3 +++
- drivers/gpu/drm/drm_fb_helper.c            | 2 --
- drivers/gpu/drm/drm_fbdev_generic.c        | 2 ++
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c  | 3 ++-
- drivers/gpu/drm/gma500/framebuffer.c       | 2 ++
- drivers/gpu/drm/i915/display/intel_fbdev.c | 1 +
- drivers/gpu/drm/msm/msm_fbdev.c            | 2 ++
- drivers/gpu/drm/omapdrm/omap_fbdev.c       | 2 ++
- drivers/gpu/drm/radeon/radeon_fb.c         | 2 ++
- drivers/gpu/drm/tegra/fb.c                 | 1 +
- 10 files changed, 17 insertions(+), 3 deletions(-)
+Krzysztof Kozlowski (7):
+  media: dt-bindings: i2c: samsung,s5k6a3: convert to dtschema
+  media: dt-bindings: i2c: samsung,s5k5baf: convert to dtschema
+  media: dt-bindings: samsung,exynos4210-csis: convert to dtschema
+  media: dt-bindings: samsung,exynos4212-fimc-lite: convert to dtschema
+  media: dt-bindings: samsung,exynos4212-is: convert to dtschema
+  media: dt-bindings: samsung,fimc: convert to dtschema
+  media: dt-bindings: samsung,s5c73m3: convert to dtschema
 
-diff --git a/drivers/gpu/drm/armada/armada_fbdev.c b/drivers/gpu/drm/armada/armada_fbdev.c
-index 07e410c62b7a..0e44f53e9fa4 100644
---- a/drivers/gpu/drm/armada/armada_fbdev.c
-+++ b/drivers/gpu/drm/armada/armada_fbdev.c
-@@ -147,6 +147,7 @@ int armada_fbdev_init(struct drm_device *dev)
-  err_fb_setup:
- 	drm_fb_helper_fini(fbh);
-  err_fb_helper:
-+	drm_fb_helper_unprepare(fbh);
- 	priv->fbdev = NULL;
- 	return ret;
- }
-@@ -164,6 +165,8 @@ void armada_fbdev_fini(struct drm_device *dev)
- 		if (fbh->fb)
- 			fbh->fb->funcs->destroy(fbh->fb);
- 
-+		drm_fb_helper_unprepare(fbh);
-+
- 		priv->fbdev = NULL;
- 	}
- }
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index 28c428e9c530..a39998047f8a 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -590,8 +590,6 @@ void drm_fb_helper_fini(struct drm_fb_helper *fb_helper)
- 	}
- 	mutex_unlock(&kernel_fb_helper_lock);
- 
--	drm_fb_helper_unprepare(fb_helper);
--
- 	if (!fb_helper->client.funcs)
- 		drm_client_release(&fb_helper->client);
- }
-diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
-index 365f80717fa1..4d6325e91565 100644
---- a/drivers/gpu/drm/drm_fbdev_generic.c
-+++ b/drivers/gpu/drm/drm_fbdev_generic.c
-@@ -65,6 +65,8 @@ static void drm_fbdev_fb_destroy(struct fb_info *info)
- 
- 	drm_client_framebuffer_delete(fb_helper->buffer);
- 	drm_client_release(&fb_helper->client);
-+
-+	drm_fb_helper_unprepare(fb_helper);
- 	kfree(fb_helper);
- }
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index b89e33af8da8..4929ffe5a09a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -183,8 +183,8 @@ int exynos_drm_fbdev_init(struct drm_device *dev)
- 
- err_setup:
- 	drm_fb_helper_fini(helper);
--
- err_init:
-+	drm_fb_helper_unprepare(helper);
- 	private->fb_helper = NULL;
- 	kfree(fbdev);
- 
-@@ -219,6 +219,7 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
- 	fbdev = to_exynos_fbdev(private->fb_helper);
- 
- 	exynos_drm_fbdev_destroy(dev, private->fb_helper);
-+	drm_fb_helper_unprepare(private->fb_helper);
- 	kfree(fbdev);
- 	private->fb_helper = NULL;
- }
-diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
-index 1f04c07ee180..f471e0cb7298 100644
---- a/drivers/gpu/drm/gma500/framebuffer.c
-+++ b/drivers/gpu/drm/gma500/framebuffer.c
-@@ -427,6 +427,7 @@ int psb_fbdev_init(struct drm_device *dev)
- fini:
- 	drm_fb_helper_fini(fb_helper);
- free:
-+	drm_fb_helper_unprepare(fb_helper);
- 	kfree(fb_helper);
- 	return ret;
- }
-@@ -439,6 +440,7 @@ static void psb_fbdev_fini(struct drm_device *dev)
- 		return;
- 
- 	psb_fbdev_destroy(dev, dev_priv->fb_helper);
-+	drm_fb_helper_unprepare(dev_priv->fb_helper);
- 	kfree(dev_priv->fb_helper);
- 	dev_priv->fb_helper = NULL;
- }
-diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
-index 6113d7627d45..98029059f701 100644
---- a/drivers/gpu/drm/i915/display/intel_fbdev.c
-+++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
-@@ -352,6 +352,7 @@ static void intel_fbdev_destroy(struct intel_fbdev *ifbdev)
- 	if (ifbdev->fb)
- 		drm_framebuffer_remove(&ifbdev->fb->base);
- 
-+	drm_fb_helper_unprepare(&ifbdev->helper);
- 	kfree(ifbdev);
- }
- 
-diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
-index 915b213f3a5c..c804e5ba682a 100644
---- a/drivers/gpu/drm/msm/msm_fbdev.c
-+++ b/drivers/gpu/drm/msm/msm_fbdev.c
-@@ -170,6 +170,7 @@ struct drm_fb_helper *msm_fbdev_init(struct drm_device *dev)
- fini:
- 	drm_fb_helper_fini(helper);
- fail:
-+	drm_fb_helper_unprepare(helper);
- 	kfree(fbdev);
- 	return NULL;
- }
-@@ -196,6 +197,7 @@ void msm_fbdev_free(struct drm_device *dev)
- 		drm_framebuffer_remove(fbdev->fb);
- 	}
- 
-+	drm_fb_helper_unprepare(helper);
- 	kfree(fbdev);
- 
- 	priv->fbdev = NULL;
-diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-index fc5f52d567c6..84429728347f 100644
---- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
-+++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-@@ -256,6 +256,7 @@ void omap_fbdev_init(struct drm_device *dev)
- fini:
- 	drm_fb_helper_fini(helper);
- fail:
-+	drm_fb_helper_unprepare(helper);
- 	kfree(fbdev);
- 
- 	dev_warn(dev->dev, "omap_fbdev_init failed\n");
-@@ -286,6 +287,7 @@ void omap_fbdev_fini(struct drm_device *dev)
- 	if (fbdev->fb)
- 		drm_framebuffer_remove(fbdev->fb);
- 
-+	drm_fb_helper_unprepare(helper);
- 	kfree(fbdev);
- 
- 	priv->fbdev = NULL;
-diff --git a/drivers/gpu/drm/radeon/radeon_fb.c b/drivers/gpu/drm/radeon/radeon_fb.c
-index 6e5eed0e157c..c4807f0c43bc 100644
---- a/drivers/gpu/drm/radeon/radeon_fb.c
-+++ b/drivers/gpu/drm/radeon/radeon_fb.c
-@@ -367,6 +367,7 @@ int radeon_fbdev_init(struct radeon_device *rdev)
- fini:
- 	drm_fb_helper_fini(&rfbdev->helper);
- free:
-+	drm_fb_helper_unprepare(&rfbdev->helper);
- 	kfree(rfbdev);
- 	return ret;
- }
-@@ -377,6 +378,7 @@ void radeon_fbdev_fini(struct radeon_device *rdev)
- 		return;
- 
- 	radeon_fbdev_destroy(rdev->ddev, rdev->mode_info.rfbdev);
-+	drm_fb_helper_unprepare(&rdev->mode_info.rfbdev->helper);
- 	kfree(rdev->mode_info.rfbdev);
- 	rdev->mode_info.rfbdev = NULL;
- }
-diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-index 153c39c32c71..bfebe2786d61 100644
---- a/drivers/gpu/drm/tegra/fb.c
-+++ b/drivers/gpu/drm/tegra/fb.c
-@@ -315,6 +315,7 @@ static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm)
- 
- static void tegra_fbdev_free(struct tegra_fbdev *fbdev)
- {
-+	drm_fb_helper_unprepare(&fbdev->base);
- 	kfree(fbdev);
- }
- 
+ .../bindings/media/exynos-fimc-lite.txt       |  16 -
+ .../bindings/media/exynos4-fimc-is.txt        |  50 ----
+ .../bindings/media/i2c/samsung,s5k5baf.yaml   | 101 +++++++
+ .../bindings/media/i2c/samsung,s5k6a3.yaml    |  98 ++++++
+ .../media/samsung,exynos4210-csis.yaml        | 170 +++++++++++
+ .../media/samsung,exynos4210-fimc.yaml        | 152 ++++++++++
+ .../media/samsung,exynos4212-fimc-is.yaml     | 220 ++++++++++++++
+ .../media/samsung,exynos4212-fimc-lite.yaml   |  63 ++++
+ .../bindings/media/samsung,fimc.yaml          | 279 ++++++++++++++++++
+ .../bindings/media/samsung,s5c73m3.yaml       | 165 +++++++++++
+ .../bindings/media/samsung-fimc.txt           | 210 -------------
+ .../bindings/media/samsung-mipi-csis.txt      |  81 -----
+ .../bindings/media/samsung-s5c73m3.txt        |  97 ------
+ .../bindings/media/samsung-s5k5baf.txt        |  58 ----
+ .../bindings/media/samsung-s5k6a3.txt         |  33 ---
+ MAINTAINERS                                   |   6 +
+ 16 files changed, 1254 insertions(+), 545 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/exynos-fimc-lite.txt
+ delete mode 100644 Documentation/devicetree/bindings/media/exynos4-fimc-is.txt
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/samsung,s5k5baf.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/samsung,s5k6a3.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos4210-csis.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos4210-fimc.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-is.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-lite.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/samsung,fimc.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/samsung,s5c73m3.yaml
+ delete mode 100644 Documentation/devicetree/bindings/media/samsung-fimc.txt
+ delete mode 100644 Documentation/devicetree/bindings/media/samsung-mipi-csis.txt
+ delete mode 100644 Documentation/devicetree/bindings/media/samsung-s5c73m3.txt
+ delete mode 100644 Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
+ delete mode 100644 Documentation/devicetree/bindings/media/samsung-s5k6a3.txt
+
 -- 
-2.39.1
+2.34.1
 
