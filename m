@@ -2,259 +2,522 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A1CC61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 19 Feb 2023 17:07:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 020EAC64EC4
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 19 Feb 2023 17:36:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230090AbjBSRHt (ORCPT
+        id S230269AbjBSRgm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 19 Feb 2023 12:07:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43904 "EHLO
+        Sun, 19 Feb 2023 12:36:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231135AbjBSRHr (ORCPT
+        with ESMTP id S230090AbjBSRgl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 19 Feb 2023 12:07:47 -0500
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DFCD12844
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 19 Feb 2023 09:07:43 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id i5-20020a05600c354500b003e1f5f2a29cso713315wmq.4
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 19 Feb 2023 09:07:43 -0800 (PST)
+        Sun, 19 Feb 2023 12:36:41 -0500
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C6DE113E6
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 19 Feb 2023 09:36:39 -0800 (PST)
+Received: by mail-pl1-x62f.google.com with SMTP id e4so1453521plj.13
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 19 Feb 2023 09:36:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6KxNFzRgs/0vUNP2uZncHosd2KHSBPqfvZ7J555gKlI=;
-        b=TqDmxeCqgjX/SCT0zS+PF6AfR/9dCo1FpS5mnG9j01BFC1+VD4Q7ubhlQfXhrmE083
-         0WYN1f0bIbo21XRTWifbJwcYTr2X1HSPBzZM87/35szohbgwJWtwst3ZB/Uyku+BZ1GT
-         fdjOk5jg86fdGhZQivHhMX1dUtyEtd0zEYACMvag1QVVQXdQ7R5c7aIxveMhWwkz75hR
-         8chbsS6v67DndN4W12l84nsUdBhyOjwMW1hwOqBmE6eyqzuIM8WMLxP7V5DN4UAzCAZX
-         vqLCw8gjWfj/gz3br1kNLOjZCJGA+sAEn8LyDTAn692JW1B2MJS3YSi60TU4KXtLsjqR
-         Lx/g==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NdBrIt6R5uMO1SfvNUG+3fIw1tL6ak2dx0Lq34Hsv2w=;
+        b=kLic6JR7L28WDfMeBQC4/AXzwe6L8d49Womb0Txl4i+M/8GvaWUjRgdVi3kJIGeC9/
+         xQJZGt1AHAfRYsf+47bPYvRpPI3jSx7nTCUE2E+6vKqC8+dkxECUAtgeBM7Ys6j1PCr1
+         N/gBF+lLUT1CEcDPAgalbfqqEc+hz11zAoaEWOiAaCVsuZoyYZCJVMaNK84yBEp4m9i7
+         RIFE9E1OX2KiJ6K56V9NSlTnx622MgFmvKtWiRUdUXxLWXbN7WPPR6o0tLUKPt+VbbjK
+         qvEoSUqGEEoiq+UiHsVNY8Y2TtJObGXsDwT9Vh6RhNxmezZUUaGj+zNsp2CJsuStJSkp
+         5inQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6KxNFzRgs/0vUNP2uZncHosd2KHSBPqfvZ7J555gKlI=;
-        b=xQ/AagMRUzEuxbTMhST0IYGUX40Ig6jwbBawr6MQbmQFxms4P6gBqUAbsdi0gITrM0
-         BwvkbE74SU44NX2xnCrpKvxPPQg2pocgH5TBA/mhvx8Lw4tF21cmrwpcPAGm+Y70R8fg
-         OhbXLARrRv1aRHQ6ipANalc4qkNlvy3b7IoUfRsXcf2hx4TbA+/k5jJA2xBTt6DHVnEy
-         ArRQtQhjZJDh0Jsnf1v+7hsLOzYvwbYMQ/hEuw/bO9wo9FwjDcR86+b6Ex3IxxwYyOlT
-         bCMySIkEOJ3Hau0YgQwQNfHI34IK/5e2cKJWvNSsAm6/S09mqoJEhHD6/xvs8zyXvGVJ
-         yw+Q==
-X-Gm-Message-State: AO0yUKUlI4/trQKOABPpq/WXdvs3SUXQJLlgijNzLveSUGK2T08DzJh0
-        DrW+LSEDnfoHjlVLbn+X/9qCFg==
-X-Google-Smtp-Source: AK7set83h6bWbda4YvPCa+ZBjfPRZ/9UdfQCE1sEN23gN10rONUKibwH121WMa44Jr/M6QZ46vWaSg==
-X-Received: by 2002:a05:600c:198e:b0:3e2:1f00:bff7 with SMTP id t14-20020a05600c198e00b003e21f00bff7mr7646707wmq.12.1676826461464;
-        Sun, 19 Feb 2023 09:07:41 -0800 (PST)
-Received: from ?IPV6:2a05:6e02:1041:c10:6f43:b92:7670:463? ([2a05:6e02:1041:c10:6f43:b92:7670:463])
-        by smtp.googlemail.com with ESMTPSA id n27-20020a05600c3b9b00b003e206cc7237sm15155832wms.24.2023.02.19.09.07.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Feb 2023 09:07:40 -0800 (PST)
-Message-ID: <4d8f1e68-8d2c-b70f-69c7-a1137ac4b05f@linaro.org>
-Date:   Sun, 19 Feb 2023 18:07:36 +0100
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NdBrIt6R5uMO1SfvNUG+3fIw1tL6ak2dx0Lq34Hsv2w=;
+        b=eEA/bRo6QsKfzbg7X2zHDXijLq4ADUGyBZTuw8ihFKAMGnHmnXb5pKRhb2Ymmfax/S
+         Sr5hNLMrfuU8fOH4GlQqg8kSW7hX3EAfNM5+k9Edmi8YZY9CXNNHU1eXUHbc1AfEW4wj
+         RVFqdvjXPxsSa+mN0l0P1KXKFLZenM2Gh0LnVrAR4jSjNUJ/lL3dDGDvld2Y4tGkUDn0
+         Sa+NjmXqje2Wh//lbcI1BvnjJvpi8YMTKRtMLeYqotYhtsejHLPtksF52qBoOJfVvPxL
+         PS6i6lGp8vK9kgUKAYoBg/b7XMh/YdIt8yB53B+45b6Qt/ruJf9M+rhpX4YSdyvHcHrw
+         HW5A==
+X-Gm-Message-State: AO0yUKUcLxDy+8edvtg/HwxlXraBbO10e1+WjBLcGasqgQlx70eQB+0A
+        phAjIwC59rrPI2sOs6xR2olwbDLnms6ECCOtnD2lJA==
+X-Google-Smtp-Source: AK7set+QIzmCH+j8lNd5jfQKwDtfSkCC3bZg14mtrSwfqQgoJY+pTyXaVtJuoQCo1R9eQkZv8btgcn8gWK7VIGk1ftc=
+X-Received: by 2002:a17:90b:1d45:b0:236:7270:ddc6 with SMTP id
+ ok5-20020a17090b1d4500b002367270ddc6mr689729pjb.137.1676828198705; Sun, 19
+ Feb 2023 09:36:38 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH v1 01/17] thermal/core: Add a thermal zone 'devdata'
- accessor
-Content-Language: en-US
-To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
-Cc:     rafael@kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Raju Rangoju <rajur@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Ido Schimmel <idosch@nvidia.com>,
-        Petr Machata <petrm@nvidia.com>,
-        Gregory Greenman <gregory.greenman@intel.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Markus Mayer <mmayer@broadcom.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+References: <20230208234313.23863-1-semen.protsenko@linaro.org> <20230208234313.23863-7-semen.protsenko@linaro.org>
+In-Reply-To: <20230208234313.23863-7-semen.protsenko@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Sun, 19 Feb 2023 11:36:44 -0600
+Message-ID: <CAPLW+4=cOV8J+Ho1t8Tkg8X_3m4npyy3FUC2zcQAYywE12uEkw@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] clk: samsung: exynos5433: Extract PM support to
+ common ARM64 layer
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Talel Shenhar <talel@amazon.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Zheng Yongjun <zhengyongjun3@huawei.com>,
-        Tim Zimmermann <tim@linux4.de>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Jiang Jian <jiangjian@cdjrlc.com>,
-        Daniel Golle <daniel@makrotopia.org>,
-        Balsam CHIHI <bchihi@baylibre.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        "open list:ACPI THERMAL DRIVER" <linux-acpi@vger.kernel.org>,
-        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
-        <linux-ide@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-        "open list:ARM/Allwinner sunXi SoC support" 
-        <linux-sunxi@lists.linux.dev>,
-        "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." 
-        <linux-input@vger.kernel.org>,
-        "open list:CXGB4 ETHERNET DRIVER (CXGB4)" <netdev@vger.kernel.org>,
-        "open list:INTEL WIRELESS WIFI LINK (iwlwifi)" 
-        <linux-wireless@vger.kernel.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:RENESAS R-CAR THERMAL DRIVERS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC support" 
-        <linux-rockchip@lists.infradead.org>,
-        "open list:SAMSUNG THERMAL DRIVER" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        "open list:TI BANDGAP AND THERMAL DRIVER" 
-        <linux-omap@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>
-References: <20230219143657.241542-1-daniel.lezcano@linaro.org>
- <20230219143657.241542-2-daniel.lezcano@linaro.org>
- <Y/I7KA2Uqqk7ib6L@oden.dyn.berto.se>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <Y/I7KA2Uqqk7ib6L@oden.dyn.berto.se>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 19/02/2023 16:07, Niklas Söderlund wrote:
-> Hi Daniel,
-> 
-> Thanks for your work.
-> 
-> On 2023-02-19 15:36:41 +0100, Daniel Lezcano wrote:
->> The thermal zone device structure is exposed to the different drivers
->> and obviously they access the internals while that should be
->> restricted to the core thermal code.
->>
->> In order to self-encapsulate the thermal core code, we need to prevent
->> the drivers accessing directly the thermal zone structure and provide
->> accessor functions to deal with.
->>
->> Provide an accessor to the 'devdata' structure and make use of it in
->> the different drivers.
->>
->> No functional changes intended.
->>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> ---
-> 
-> ...
-> 
->>   drivers/thermal/rcar_gen3_thermal.c              |  4 ++--
->>   drivers/thermal/rcar_thermal.c                   |  3 +--
-> 
-> For R-Car,
-> 
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> 
-> ...
-> 
-> 
->> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
->> index 2bb4bf33f4f3..724b95662da9 100644
->> --- a/include/linux/thermal.h
->> +++ b/include/linux/thermal.h
->> @@ -365,6 +365,8 @@ thermal_zone_device_register_with_trips(const char *, struct thermal_trip *, int
->>   					void *, struct thermal_zone_device_ops *,
->>   					struct thermal_zone_params *, int, int);
->>   
->> +void *thermal_zone_device_get_data(struct thermal_zone_device *tzd);
->> +
-> 
-> bikeshedding:
-> 
-> Would it make sens to name this thermal_zone_device_get_priv_data(),
-> thermal_zone_device_get_priv() or something like that? To make it more
-> explicitly when reading the driver code this fetches the drivers private
-> data, and not some data belonging to the zone itself.
+On Wed, 8 Feb 2023 at 17:43, Sam Protsenko <semen.protsenko@linaro.org> wrote:
+>
+> Exynos5433 clock driver implements PM support internally, which might be
+> also useful for other Exynos clock drivers. Extract all PM related code
+> from clk-exynos5433 to common ARM64 functions.
+>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+> Changes in v2:
+>   - Rebased on top of latest soc/for-next tree
+>   - Included linux/slab.h for kfree (found by kernel test robot)
+>
+>  drivers/clk/samsung/clk-exynos-arm64.c | 171 ++++++++++++++++++++++++-
+>  drivers/clk/samsung/clk-exynos-arm64.h |   3 +
+>  drivers/clk/samsung/clk-exynos5433.c   | 157 +----------------------
+>  3 files changed, 175 insertions(+), 156 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
+> index 2aa3f0a5644e..7ad7fd353dda 100644
+> --- a/drivers/clk/samsung/clk-exynos-arm64.c
+> +++ b/drivers/clk/samsung/clk-exynos-arm64.c
+> @@ -10,6 +10,9 @@
+>   */
 
-In the headers files, there are more occurrences with _name_priv():
+Hi Marek,
 
-# _name_priv()
-git grep priv include/linux/ | grep "priv(" | grep -v get | wc -l
-52
+It just occurred to me that as I'm pulling your code from
+clk-exynos5433.c here, I should've probably added you to this file's
+author list in the header comment. Does that sound right to you? If
+so, I can re-send v3 with fixes.
 
-# _name_private()
-git grep priv include/linux/ | grep "private(" | grep -v get | wc -l
-33
+Also, could you please review this series, if possible? I'm working
+right now on PM_DOMAINS support for Exynos850, so along with this
+series that would bring the initial PM support for ARM64 Exynos chips.
 
-# _name_get_private()
-git grep priv include/linux/ | grep "private(" | grep get | wc -l
-12
+Thanks!
 
-# _name_get_priv()
-git grep priv include/linux/ | grep "priv(" | grep get | wc -l
-4
-
-
-What about thermal_zone_device_priv() ?
-
-
-
-
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+>  #include <linux/clk.h>
+>  #include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/slab.h>
+>
+>  #include "clk-exynos-arm64.h"
+>
+> @@ -21,6 +24,19 @@
+>  #define GATE_OFF_START         0x2000
+>  #define GATE_OFF_END           0x2fff
+>
+> +struct exynos_arm64_cmu_data {
+> +       struct samsung_clk_reg_dump *clk_save;
+> +       unsigned int nr_clk_save;
+> +       const struct samsung_clk_reg_dump *clk_suspend;
+> +       unsigned int nr_clk_suspend;
+> +
+> +       struct clk *clk;
+> +       struct clk **pclks;
+> +       int nr_pclks;
+> +
+> +       struct samsung_clk_provider *ctx;
+> +};
+> +
+>  /**
+>   * exynos_arm64_init_clocks - Set clocks initial configuration
+>   * @np:                        CMU device tree node with "reg" property (CMU addr)
+> @@ -76,10 +92,16 @@ static int __init exynos_arm64_enable_bus_clk(struct device *dev,
+>         if (!cmu->clk_name)
+>                 return 0;
+>
+> -       if (dev)
+> +       if (dev) {
+> +               struct exynos_arm64_cmu_data *data;
+> +
+>                 parent_clk = clk_get(dev, cmu->clk_name);
+> -       else
+> +               data = dev_get_drvdata(dev);
+> +               if (data)
+> +                       data->clk = parent_clk;
+> +       } else {
+>                 parent_clk = of_clk_get_by_name(np, cmu->clk_name);
+> +       }
+>
+>         if (IS_ERR(parent_clk))
+>                 return PTR_ERR(parent_clk);
+> @@ -87,6 +109,46 @@ static int __init exynos_arm64_enable_bus_clk(struct device *dev,
+>         return clk_prepare_enable(parent_clk);
+>  }
+>
+> +static int __init exynos_arm64_cmu_prepare_pm(struct device *dev,
+> +               const struct samsung_cmu_info *cmu)
+> +{
+> +       struct exynos_arm64_cmu_data *data = dev_get_drvdata(dev);
+> +       int i;
+> +
+> +       data->clk_save = samsung_clk_alloc_reg_dump(cmu->clk_regs,
+> +                                                   cmu->nr_clk_regs);
+> +       if (!data->clk_save)
+> +               return -ENOMEM;
+> +
+> +       data->nr_clk_save = cmu->nr_clk_regs;
+> +       data->clk_suspend = cmu->suspend_regs;
+> +       data->nr_clk_suspend = cmu->nr_suspend_regs;
+> +       data->nr_pclks = of_clk_get_parent_count(dev->of_node);
+> +       if (!data->nr_pclks)
+> +               return 0;
+> +
+> +       data->pclks = devm_kcalloc(dev, sizeof(struct clk *), data->nr_pclks,
+> +                                  GFP_KERNEL);
+> +       if (!data->pclks) {
+> +               kfree(data->clk_save);
+> +               return -ENOMEM;
+> +       }
+> +
+> +       for (i = 0; i < data->nr_pclks; i++) {
+> +               struct clk *clk = of_clk_get(dev->of_node, i);
+> +
+> +               if (IS_ERR(clk)) {
+> +                       kfree(data->clk_save);
+> +                       while (--i >= 0)
+> +                               clk_put(data->pclks[i]);
+> +                       return PTR_ERR(clk);
+> +               }
+> +               data->pclks[i] = clk;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  /**
+>   * exynos_arm64_register_cmu - Register specified Exynos CMU domain
+>   * @dev:       Device object; may be NULL if this function is not being
+> @@ -111,3 +173,108 @@ void __init exynos_arm64_register_cmu(struct device *dev,
+>         exynos_arm64_init_clocks(np, cmu->clk_regs, cmu->nr_clk_regs);
+>         samsung_cmu_register_one(np, cmu);
+>  }
+> +
+> +/**
+> + * exynos_arm64_register_cmu_pm - Register Exynos CMU domain with PM support
+> + *
+> + * @pdev:      Platform device object
+> + * @set_manual:        If true, set gate clocks to manual mode
+> + *
+> + * It's a version of exynos_arm64_register_cmu() with PM support. Should be
+> + * called from probe function of platform driver.
+> + *
+> + * Return: 0 on success, or negative error code on error.
+> + */
+> +int __init exynos_arm64_register_cmu_pm(struct platform_device *pdev,
+> +                                       bool set_manual)
+> +{
+> +       const struct samsung_cmu_info *cmu;
+> +       struct device *dev = &pdev->dev;
+> +       struct device_node *np = dev->of_node;
+> +       struct exynos_arm64_cmu_data *data;
+> +       void __iomem *reg_base;
+> +       int ret;
+> +
+> +       cmu = of_device_get_match_data(dev);
+> +
+> +       data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +       if (!data)
+> +               return -ENOMEM;
+> +
+> +       platform_set_drvdata(pdev, data);
+> +
+> +       ret = exynos_arm64_cmu_prepare_pm(dev, cmu);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = exynos_arm64_enable_bus_clk(dev, NULL, cmu);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (set_manual)
+> +               exynos_arm64_init_clocks(np, cmu->clk_regs, cmu->nr_clk_regs);
+> +
+> +       reg_base = devm_platform_ioremap_resource(pdev, 0);
+> +       if (IS_ERR(reg_base))
+> +               return PTR_ERR(reg_base);
+> +
+> +       data->ctx = samsung_clk_init(dev, reg_base, cmu->nr_clk_ids);
+> +
+> +       /*
+> +        * Enable runtime PM here to allow the clock core using runtime PM
+> +        * for the registered clocks. Additionally, we increase the runtime
+> +        * PM usage count before registering the clocks, to prevent the
+> +        * clock core from runtime suspending the device.
+> +        */
+> +       pm_runtime_get_noresume(dev);
+> +       pm_runtime_set_active(dev);
+> +       pm_runtime_enable(dev);
+> +
+> +       samsung_cmu_register_clocks(data->ctx, cmu);
+> +       samsung_clk_of_add_provider(dev->of_node, data->ctx);
+> +       pm_runtime_put_sync(dev);
+> +
+> +       return 0;
+> +}
+> +
+> +int exynos_arm64_cmu_suspend(struct device *dev)
+> +{
+> +       struct exynos_arm64_cmu_data *data = dev_get_drvdata(dev);
+> +       int i;
+> +
+> +       samsung_clk_save(data->ctx->reg_base, data->clk_save,
+> +                        data->nr_clk_save);
+> +
+> +       for (i = 0; i < data->nr_pclks; i++)
+> +               clk_prepare_enable(data->pclks[i]);
+> +
+> +       /* For suspend some registers have to be set to certain values */
+> +       samsung_clk_restore(data->ctx->reg_base, data->clk_suspend,
+> +                           data->nr_clk_suspend);
+> +
+> +       for (i = 0; i < data->nr_pclks; i++)
+> +               clk_disable_unprepare(data->pclks[i]);
+> +
+> +       clk_disable_unprepare(data->clk);
+> +
+> +       return 0;
+> +}
+> +
+> +int exynos_arm64_cmu_resume(struct device *dev)
+> +{
+> +       struct exynos_arm64_cmu_data *data = dev_get_drvdata(dev);
+> +       int i;
+> +
+> +       clk_prepare_enable(data->clk);
+> +
+> +       for (i = 0; i < data->nr_pclks; i++)
+> +               clk_prepare_enable(data->pclks[i]);
+> +
+> +       samsung_clk_restore(data->ctx->reg_base, data->clk_save,
+> +                           data->nr_clk_save);
+> +
+> +       for (i = 0; i < data->nr_pclks; i++)
+> +               clk_disable_unprepare(data->pclks[i]);
+> +
+> +       return 0;
+> +}
+> diff --git a/drivers/clk/samsung/clk-exynos-arm64.h b/drivers/clk/samsung/clk-exynos-arm64.h
+> index 0dd174693935..969979e714bc 100644
+> --- a/drivers/clk/samsung/clk-exynos-arm64.h
+> +++ b/drivers/clk/samsung/clk-exynos-arm64.h
+> @@ -16,5 +16,8 @@
+>
+>  void exynos_arm64_register_cmu(struct device *dev,
+>                 struct device_node *np, const struct samsung_cmu_info *cmu);
+> +int exynos_arm64_register_cmu_pm(struct platform_device *pdev, bool set_manual);
+> +int exynos_arm64_cmu_suspend(struct device *dev);
+> +int exynos_arm64_cmu_resume(struct device *dev);
+>
+>  #endif /* __CLK_EXYNOS_ARM64_H */
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index eb72bf2aaee8..ed43233649ae 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -10,7 +10,6 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> -#include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/slab.h>
+> @@ -19,6 +18,7 @@
+>
+>  #include "clk.h"
+>  #include "clk-cpu.h"
+> +#include "clk-exynos-arm64.h"
+>  #include "clk-pll.h"
+>
+>  /*
+> @@ -5478,160 +5478,9 @@ static const struct samsung_cmu_info imem_cmu_info __initconst = {
+>         .clk_name               = "aclk_imem_200",
+>  };
+>
+> -struct exynos5433_cmu_data {
+> -       struct samsung_clk_reg_dump *clk_save;
+> -       unsigned int nr_clk_save;
+> -       const struct samsung_clk_reg_dump *clk_suspend;
+> -       unsigned int nr_clk_suspend;
+> -
+> -       struct clk *clk;
+> -       struct clk **pclks;
+> -       int nr_pclks;
+> -
+> -       /* must be the last entry */
+> -       struct samsung_clk_provider ctx;
+> -};
+> -
+> -static int __maybe_unused exynos5433_cmu_suspend(struct device *dev)
+> -{
+> -       struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
+> -       int i;
+> -
+> -       samsung_clk_save(data->ctx.reg_base, data->clk_save,
+> -                        data->nr_clk_save);
+> -
+> -       for (i = 0; i < data->nr_pclks; i++)
+> -               clk_prepare_enable(data->pclks[i]);
+> -
+> -       /* for suspend some registers have to be set to certain values */
+> -       samsung_clk_restore(data->ctx.reg_base, data->clk_suspend,
+> -                           data->nr_clk_suspend);
+> -
+> -       for (i = 0; i < data->nr_pclks; i++)
+> -               clk_disable_unprepare(data->pclks[i]);
+> -
+> -       clk_disable_unprepare(data->clk);
+> -
+> -       return 0;
+> -}
+> -
+> -static int __maybe_unused exynos5433_cmu_resume(struct device *dev)
+> -{
+> -       struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
+> -       int i;
+> -
+> -       clk_prepare_enable(data->clk);
+> -
+> -       for (i = 0; i < data->nr_pclks; i++)
+> -               clk_prepare_enable(data->pclks[i]);
+> -
+> -       samsung_clk_restore(data->ctx.reg_base, data->clk_save,
+> -                           data->nr_clk_save);
+> -
+> -       for (i = 0; i < data->nr_pclks; i++)
+> -               clk_disable_unprepare(data->pclks[i]);
+> -
+> -       return 0;
+> -}
+> -
+>  static int __init exynos5433_cmu_probe(struct platform_device *pdev)
+>  {
+> -       const struct samsung_cmu_info *info;
+> -       struct exynos5433_cmu_data *data;
+> -       struct samsung_clk_provider *ctx;
+> -       struct device *dev = &pdev->dev;
+> -       void __iomem *reg_base;
+> -       int i;
+> -
+> -       info = of_device_get_match_data(dev);
+> -
+> -       data = devm_kzalloc(dev,
+> -                           struct_size(data, ctx.clk_data.hws, info->nr_clk_ids),
+> -                           GFP_KERNEL);
+> -       if (!data)
+> -               return -ENOMEM;
+> -       ctx = &data->ctx;
+> -
+> -       reg_base = devm_platform_ioremap_resource(pdev, 0);
+> -       if (IS_ERR(reg_base))
+> -               return PTR_ERR(reg_base);
+> -
+> -       for (i = 0; i < info->nr_clk_ids; ++i)
+> -               ctx->clk_data.hws[i] = ERR_PTR(-ENOENT);
+> -
+> -       ctx->clk_data.num = info->nr_clk_ids;
+> -       ctx->reg_base = reg_base;
+> -       ctx->dev = dev;
+> -       spin_lock_init(&ctx->lock);
+> -
+> -       data->clk_save = samsung_clk_alloc_reg_dump(info->clk_regs,
+> -                                                   info->nr_clk_regs);
+> -       if (!data->clk_save)
+> -               return -ENOMEM;
+> -       data->nr_clk_save = info->nr_clk_regs;
+> -       data->clk_suspend = info->suspend_regs;
+> -       data->nr_clk_suspend = info->nr_suspend_regs;
+> -       data->nr_pclks = of_clk_get_parent_count(dev->of_node);
+> -
+> -       if (data->nr_pclks > 0) {
+> -               data->pclks = devm_kcalloc(dev, sizeof(struct clk *),
+> -                                          data->nr_pclks, GFP_KERNEL);
+> -               if (!data->pclks) {
+> -                       kfree(data->clk_save);
+> -                       return -ENOMEM;
+> -               }
+> -               for (i = 0; i < data->nr_pclks; i++) {
+> -                       struct clk *clk = of_clk_get(dev->of_node, i);
+> -
+> -                       if (IS_ERR(clk)) {
+> -                               kfree(data->clk_save);
+> -                               while (--i >= 0)
+> -                                       clk_put(data->pclks[i]);
+> -                               return PTR_ERR(clk);
+> -                       }
+> -                       data->pclks[i] = clk;
+> -               }
+> -       }
+> -
+> -       if (info->clk_name)
+> -               data->clk = clk_get(dev, info->clk_name);
+> -       clk_prepare_enable(data->clk);
+> -
+> -       platform_set_drvdata(pdev, data);
+> -
+> -       /*
+> -        * Enable runtime PM here to allow the clock core using runtime PM
+> -        * for the registered clocks. Additionally, we increase the runtime
+> -        * PM usage count before registering the clocks, to prevent the
+> -        * clock core from runtime suspending the device.
+> -        */
+> -       pm_runtime_get_noresume(dev);
+> -       pm_runtime_set_active(dev);
+> -       pm_runtime_enable(dev);
+> -
+> -       if (info->pll_clks)
+> -               samsung_clk_register_pll(ctx, info->pll_clks,
+> -                                        info->nr_pll_clks);
+> -       if (info->mux_clks)
+> -               samsung_clk_register_mux(ctx, info->mux_clks,
+> -                                        info->nr_mux_clks);
+> -       if (info->div_clks)
+> -               samsung_clk_register_div(ctx, info->div_clks,
+> -                                        info->nr_div_clks);
+> -       if (info->gate_clks)
+> -               samsung_clk_register_gate(ctx, info->gate_clks,
+> -                                         info->nr_gate_clks);
+> -       if (info->fixed_clks)
+> -               samsung_clk_register_fixed_rate(ctx, info->fixed_clks,
+> -                                               info->nr_fixed_clks);
+> -       if (info->fixed_factor_clks)
+> -               samsung_clk_register_fixed_factor(ctx, info->fixed_factor_clks,
+> -                                                 info->nr_fixed_factor_clks);
+> -
+> -       samsung_clk_of_add_provider(dev->of_node, ctx);
+> -       pm_runtime_put_sync(dev);
+> -
+> -       return 0;
+> +       return exynos_arm64_register_cmu_pm(pdev, false);
+>  }
+>
+>  static const struct of_device_id exynos5433_cmu_of_match[] = {
+> @@ -5679,7 +5528,7 @@ static const struct of_device_id exynos5433_cmu_of_match[] = {
+>  };
+>
+>  static const struct dev_pm_ops exynos5433_cmu_pm_ops = {
+> -       SET_RUNTIME_PM_OPS(exynos5433_cmu_suspend, exynos5433_cmu_resume,
+> +       SET_RUNTIME_PM_OPS(exynos_arm64_cmu_suspend, exynos_arm64_cmu_resume,
+>                            NULL)
+>         SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+>                                      pm_runtime_force_resume)
+> --
+> 2.39.1
+>
