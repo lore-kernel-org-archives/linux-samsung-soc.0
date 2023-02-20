@@ -2,227 +2,109 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD7DC678DB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Feb 2023 13:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C5DBC64EC4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Feb 2023 13:59:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231950AbjBTNXj (ORCPT
+        id S232719AbjBTN7j (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Feb 2023 08:23:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35650 "EHLO
+        Mon, 20 Feb 2023 08:59:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230230AbjBTNXc (ORCPT
+        with ESMTP id S232717AbjBTN7V (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Feb 2023 08:23:32 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 230097EC6;
-        Mon, 20 Feb 2023 05:23:30 -0800 (PST)
-Received: from mercury (dyndsl-095-033-158-068.ewe-ip-backbone.de [95.33.158.68])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id DCA126602161;
-        Mon, 20 Feb 2023 13:23:27 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676899408;
-        bh=EpofNz6MD/mPoCdRuSgO8/RJyETCbQR5Uv8NTsFxb3M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iBi51yqn4jM/lciw1DbbnBma1n0Mje98qEA4nparqS0AovBX2Z312SVd0ATM8aMoK
-         NHcPWSIEJYTfa1uIldlewrSL01WfA0qFizBwyDJbW5zvgYjBMxZEKA2YQA0iMEx+nP
-         G7703Hja/yfjXuVbXFRvp9Q+F7MPRSQvMmCRyb8hZVUuSwYzyX/Ix9X5IiwvpBDzSi
-         vwyUvQ7OXQ2r3AxmokbSeSMxi18CQ+wb0CE+bvjXceTu82JgfAAEmxDh5eKE9tDNoP
-         mngHYZtCTl8JjVegYl8wsW5VvB40j1AYZAP6fYk5zYdf4CvfnaXOgpTXbf2f63JkZN
-         PPU+qn9bBJv6w==
-Received: by mercury (Postfix, from userid 1000)
-        id C04E310603FE; Mon, 20 Feb 2023 14:23:25 +0100 (CET)
-Date:   Mon, 20 Feb 2023 14:23:25 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rafael@kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Raju Rangoju <rajur@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Ido Schimmel <idosch@nvidia.com>,
-        Petr Machata <petrm@nvidia.com>,
-        Gregory Greenman <gregory.greenman@intel.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Markus Mayer <mmayer@broadcom.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Talel Shenhar <talel@amazon.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Zheng Yongjun <zhengyongjun3@huawei.com>,
-        Tim Zimmermann <tim@linux4.de>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Jiang Jian <jiangjian@cdjrlc.com>,
-        Daniel Golle <daniel@makrotopia.org>,
-        Balsam CHIHI <bchihi@baylibre.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        "open list:ACPI THERMAL DRIVER" <linux-acpi@vger.kernel.org>,
-        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
-        <linux-ide@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-        "open list:ARM/Allwinner sunXi SoC support" 
-        <linux-sunxi@lists.linux.dev>,
-        "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." 
-        <linux-input@vger.kernel.org>,
-        "open list:CXGB4 ETHERNET DRIVER (CXGB4)" <netdev@vger.kernel.org>,
-        "open list:INTEL WIRELESS WIFI LINK (iwlwifi)" 
-        <linux-wireless@vger.kernel.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:RENESAS R-CAR THERMAL DRIVERS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC support" 
-        <linux-rockchip@lists.infradead.org>,
-        "open list:SAMSUNG THERMAL DRIVER" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        "open list:TI BANDGAP AND THERMAL DRIVER" 
-        <linux-omap@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH v1 01/17] thermal/core: Add a thermal zone 'devdata'
- accessor
-Message-ID: <20230220132325.ksmho3p54zr2hm4a@mercury.elektranox.org>
-References: <20230219143657.241542-1-daniel.lezcano@linaro.org>
- <20230219143657.241542-2-daniel.lezcano@linaro.org>
+        Mon, 20 Feb 2023 08:59:21 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 34014A249
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Feb 2023 05:59:08 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 58026FEC;
+        Mon, 20 Feb 2023 05:59:28 -0800 (PST)
+Received: from [10.57.76.145] (unknown [10.57.76.145])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E73073F881;
+        Mon, 20 Feb 2023 05:58:43 -0800 (PST)
+Message-ID: <9a12fcac-c347-5d81-acef-1124c50d0c37@arm.com>
+Date:   Mon, 20 Feb 2023 13:58:40 +0000
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="amobsqjguregida6"
-Content-Disposition: inline
-In-Reply-To: <20230219143657.241542-2-daniel.lezcano@linaro.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH] iommu/exynos: add missing set_platform_dma_ops callback
+Content-Language: en-GB
+To:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     iommu@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        lim Akhtar <alim.akhtar@samsung.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>
+References: <CGME20230123093116eucas1p19b8fe8afc4b631debbdc5321c53009e9@eucas1p1.samsung.com>
+ <20230123093102.12392-1-m.szyprowski@samsung.com> <Y871a3elCP1gmPQi@ziepe.ca>
+ <e7aa3a5d-c8f9-ad7d-4c5c-08756c1ab2d3@samsung.com>
+ <Y+90rkPHe/+eSLs6@ziepe.ca>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <Y+90rkPHe/+eSLs6@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On 2023-02-17 12:35, Jason Gunthorpe wrote:
+> On Fri, Feb 17, 2023 at 12:08:42PM +0100, Marek Szyprowski wrote:
+>> Hi,
+>>
+>> I'm sorry for a delay in replying, but I was busy with other stuff.
+>>
+>> On 23.01.2023 22:00, Jason Gunthorpe wrote:
+>>> On Mon, Jan 23, 2023 at 10:31:01AM +0100, Marek Szyprowski wrote:
+>>>> Add set_platform_dma_ops() required for proper driver operation on ARM
+>>>> 32bit arch after recent changes in the IOMMU framework (detach ops
+>>>> removal).
+>>> Thanks for looking into this!
+>>>
+>>> Can you explain more about how this actually solves the problem in the
+>>> commit message? I don't get it.
+>>
+>> Exynos DRM driver calls arm_iommu_detach_device(), then
+>> arm_iommu_attach_device() with a difrent 'mapping', see
+>> drivers/gpu/drm/exynos/exynos_drm_dma.c Lack of set_platform_dma_ops
+>> leads to a warning in iommu_group_do_set_platform_dma(). The other case
+>> of calling arm_iommu_detach_device() is after unsuccessful probe of the
+>> platform device.
+> 
+> Why can't this just use the normal iommu path in all cases?
+> 
+> It looks like it is trying to copy the DMA API domain from a parent
+> device to a sub device.
+> 
+> Even when using arm_iommu an iommu_domain is still present, so the
+> copy code should work?
 
---amobsqjguregida6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The ARM DMA domain is a regular unmanaged domain owned by the ARM DMA 
+code - in order to use any *other* domain, a user has to detach from 
+that first (wrapped up in arm_iommu_detach_device() which also swizzles 
+the DMA ops at the same time). Without set_platform_dma, that detach is 
+now impossible (because no IOMMU API default domain exists either).
 
-Hi,
+> Though I'm still not really sure how this arm_iommu stuff works..
+> 
+> eg if a driver does iommu_device_claim_dma_owner() how does the
+> iommu_domain get set back to the arm_iommu's mapping's iommu_domain?
 
-On Sun, Feb 19, 2023 at 03:36:41PM +0100, Daniel Lezcano wrote:
-> The thermal zone device structure is exposed to the different drivers
-> and obviously they access the internals while that should be
-> restricted to the core thermal code.
->=20
-> In order to self-encapsulate the thermal core code, we need to prevent
-> the drivers accessing directly the thermal zone structure and provide
-> accessor functions to deal with.
->=20
-> Provide an accessor to the 'devdata' structure and make use of it in
-> the different drivers.
->=20
-> No functional changes intended.
->=20
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
+It doesn't. Fact is that VFIO has only ever worked on Arm with arm-smmu 
+and its old deprecated DT bindings which don't interact with any of the 
+DMA ops stuff. And ownership has always been inherently enforced here 
+since the DMA ops are just another external user from the IOMMU API's PoV.
 
-=2E..
+> According to the API that is what set_platform is supposed to do (eg
+> it is what s390 does), but I don't see any code like that in any of
+> the ARM32 drivers..
 
->  drivers/power/supply/power_supply_core.c         |  2 +-
+As above, it's in the relevant users, not the drivers. For what you're 
+thinking of, the "platform" state is only ever transient.
 
-=2E..
+(for the purposes of this discussion, ignore the MTK and Renesas drivers 
+bodging around to implement pseudo-default-domain support on *top* of 
+the user-centric arm_iommu_* APIs; that's a whole other mess to unravel)
 
-> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/sup=
-ply/power_supply_core.c
-> index 7c790c41e2fe..166f0aacc797 100644
-> --- a/drivers/power/supply/power_supply_core.c
-> +++ b/drivers/power/supply/power_supply_core.c
-> @@ -1142,7 +1142,7 @@ static int power_supply_read_temp(struct thermal_zo=
-ne_device *tzd,
->  	int ret;
-> =20
->  	WARN_ON(tzd =3D=3D NULL);
-> -	psy =3D tzd->devdata;
-> +	psy =3D thermal_zone_device_get_data(tzd);
->  	ret =3D power_supply_get_property(psy, POWER_SUPPLY_PROP_TEMP, &val);
->  	if (ret)
->  		return ret;
-
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-
--- Sebastian
-
---amobsqjguregida6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmPzdEUACgkQ2O7X88g7
-+pqrPhAAkn4PMww+rZzWWUIzn70JDaIM3pB6g/TwmnMJQSvxVt5bbeRkHs1Hr5p1
-wJGp1GJhv3odUIaoBVctwLzVrbnN6+o9V1WGAb73ZzZF86thow7pq49z46JaGsVU
-lmYF3cu7le+yv8hs1kdRFs8NQ8C3dJ5dodlCZMJIsIelJhyQciziF5Mkq395HKtm
-6xu/xCNssRmZhqy3yJYazBjGrqAneN9LelyMQQ4/MqeK64xdYgcz4tJ4kZ8WYrmz
-SC0Jc2aCHnm8YCTIgZHNdpRMeLAiMfQm/htrcXbwMzdfmu+K2eAb8TzI6cOS/4dF
-usYhuvr3S8YXKhyzxrZC/E1p0s0QdDQsZFBq9+2Dc84uKmAXfaGCr1IEWnXW2X39
-eqskyqWCteRO6EDM30xlV4joURLzlk5mb4f76dW9tfr7poEn+I99L+zkL/ghvStP
-sJ7cISSMIbfAHqBUaICaiZ0A51GyhTlfwdvVBxbZKRuDLYOhO4YKlI57Cl+qiMEp
-lVUJ1jcN0HiyOHfDkchkbPC1XYBfoPkxeQxAIJy5WCSg4vMs8Moa2PTuZHaovfUr
-Q8iJpfdk10e7gSUWSFPAogdiUi5gFlJs4ZiJ9Nim7l9FY7txWceX3pBzB3AbaVOn
-Sl1m3OJVy+tYn/RDEZa3Ofwu/HPOwxWEO/X0pZb/q/yk9/4c/Xs=
-=Z9fm
------END PGP SIGNATURE-----
-
---amobsqjguregida6--
+Thanks,
+Robin.
