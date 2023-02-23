@@ -2,221 +2,145 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BCBC636D6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Feb 2023 02:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACF3C61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Feb 2023 03:07:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232357AbjBWC1Q (ORCPT
+        id S233932AbjBWDHi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 22 Feb 2023 21:27:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47392 "EHLO
+        Wed, 22 Feb 2023 22:07:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbjBWC1P (ORCPT
+        with ESMTP id S233927AbjBWDHd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Feb 2023 21:27:15 -0500
-Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E41B11156
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2023 18:27:14 -0800 (PST)
-Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-17264e9b575so3448444fac.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2023 18:27:14 -0800 (PST)
+        Wed, 22 Feb 2023 22:07:33 -0500
+Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 026CD474F3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2023 19:07:05 -0800 (PST)
+Received: by mail-oi1-x235.google.com with SMTP id bl7so10294772oib.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2023 19:07:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IAoLiHZonQ9yzf6exsyPnPMjat+DcttMudRnM/cvohQ=;
-        b=kGKiOU9lZXUiSbBzfPeN1n7CSuyBK30Czjq4ei6DrXfsvFtKf14DPWNt+9PC9S3cHR
-         XR249GLTqFWyDoy0IkR/4uBqwV+Pmpw0FJ1S6oy2ZBYIWntYJ1Xd+yUDSNuhjzsIRzvj
-         psGjtU7aTul4IEQyhe1iljYAHM0PUt2hDwMPpDafq7IOL7swa7lrIAvfC4SbSzPOWawx
-         qsPNag+kePk4okC/uBc8CsDsRi0lo1MuDhM0MyVpVsq6ekew54r7WivAbOkSutPrmzoY
-         s15g+3NqJ/xGXjzh96MfZnYNeuky1vTc+PRQjXWYlJ24M4HNw6NwVi2VMd9ZlqUEcjnZ
-         qipQ==
+        bh=IsFwDXDFyAwgQgN7Ezx7sftsdxjHjlTMYKQ/wYMhb78=;
+        b=LYqxKMnouYu+dT0bW6p/08eh4jCaQkaoyhaFcxvkvtnTfzDxG1y2Z/9DRZX6i1GC7V
+         Cdo8AIq4N2MlbgqaTZ4cJj5JOtTyQ1fWn863StHyjchSiOPUFn/yONZHO8XPaatHM9sA
+         o7W0TFCDXXNN5gZ1QTuUh2Q+zuVH23qrK1ouMPYfCml5Y5DrhDrkr9nW+OBw71GHcsQu
+         OeEQmv1rKLoiknsFdQzFgJ59UZeqM8+7BfTfe1o8dYJl3mS0BZKD1+0K3weTVJ5YK0wF
+         X+E2lG5qS9EG8l09dAxn6SJd6b/piYWzZpBIPQ/Np0VY/oSY2Rin6QVLURQeSPAVKlmP
+         Pz7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IAoLiHZonQ9yzf6exsyPnPMjat+DcttMudRnM/cvohQ=;
-        b=Yy1ZCknCMYNH2YQ/K2XR1I4Zs5YshRTKLYA3ZMlhQeieI7Ntp/C8aZNE/Lu7WDfTcz
-         uHYRPYWUdRjuzPmnNmXskFG1kyLrqZ47cX3gsPlbIN2tpuMjvf/k48KYfQksTlMAQJ/h
-         sDiFKXFr5B9/EUSqFgQrhhSdFaeVR4sEL/EM9OPG3333Y98znixFxTIBVq6pRPM9T9iE
-         C66VEp8PdTmp6Q+3pMsESWpK47/5dPlXiJB+Ex6UnXgxvhgfKkgKrDi+Kh2CPGkpOkT4
-         5bCPOdHWVtC9tCRbWeTl8yozADuegtSrjTaK3EoIbWr0H7vhde8LxOpO3YjHsPV3bB7c
-         9XFQ==
-X-Gm-Message-State: AO0yUKX+7XvCVwSSN9/BbwxxmSxjwwKChV3YPTdyIMASZY+xCE4AOk87
-        QEh+4hUUmr2EibQPTOUqScO2GL2eDKbJ0pMcEtOmiQ==
-X-Google-Smtp-Source: AK7set+h6QdDAN1HHNJ/ETPJpkHPuqATk5ZydfyUit0/Gt7f4augVb/rP3yqBsBk8d5tAAmUk9MZwkuSjop5xXR7v8g=
-X-Received: by 2002:a05:6870:678a:b0:16e:19a8:31d8 with SMTP id
- gc10-20020a056870678a00b0016e19a831d8mr1457846oab.62.1677119233386; Wed, 22
- Feb 2023 18:27:13 -0800 (PST)
+        bh=IsFwDXDFyAwgQgN7Ezx7sftsdxjHjlTMYKQ/wYMhb78=;
+        b=RiGY9+jQxMNzri7H6XO7WN/VzOqDdGzvOU6EOAsJ0wSdRxp71/OeXZmDNT4RxVrFZP
+         117bywxJtFF9ohW2LwrKQ1ir+V3NIf7pJN9SikH8X0CpXSQUUXaphZKAYubV/2przw8P
+         lWAqV9mc7qTOAJ+uz8e2v9palAbZEY9UcSM+ak9iIJZghesb7np06EvJyN0xAJ5dVXtX
+         1UK+xMpMI/4V8P2YT5Hge//fRm3CgupqlvbgDFnWcRcPfEIEJuJTktOsCsvyTbruafEt
+         JnLnFox9fuXh3LDlzq1T7lyQUAmzfHO2Pib3gx82pKrUZfZdJnV7KvPKiSN2VoR7bRFB
+         AEUw==
+X-Gm-Message-State: AO0yUKXV7oYnB6ijDd/8ZQ0lBJ7bGQqgZC53pTsaFxeNaSSarrFy1ZcX
+        k0l6hGeZdjsBN2JAk/CqoJeHveSGodqqiXg6mRSFLw==
+X-Google-Smtp-Source: AK7set/bRL8ou0SIq3OLr/c87FxzRtrMmLfqzNaV86gtbWiVwJCusOZBWjZSfPj1zOwVal0nGhV9hZTSLlo+b09gssU=
+X-Received: by 2002:a05:6808:20a5:b0:37f:9ac7:826e with SMTP id
+ s37-20020a05680820a500b0037f9ac7826emr1361934oiw.62.1677121622447; Wed, 22
+ Feb 2023 19:07:02 -0800 (PST)
 MIME-Version: 1.0
-References: <20230211064006.14981-1-semen.protsenko@linaro.org>
- <CGME20230211063956epcas2p423cb99655dcfdb34c6847bb228aa7324@epcms2p2>
- <20230211064006.14981-6-semen.protsenko@linaro.org> <20230215024056epcms2p28f04cf946f20343643faca944ea147ea@epcms2p2>
-In-Reply-To: <20230215024056epcms2p28f04cf946f20343643faca944ea147ea@epcms2p2>
+References: <20230208234313.23863-1-semen.protsenko@linaro.org>
+ <20230208234313.23863-7-semen.protsenko@linaro.org> <CGME20230219173642eucas1p1ddff7399223df763ff9fb48c4f7fc5f9@eucas1p1.samsung.com>
+ <CAPLW+4=cOV8J+Ho1t8Tkg8X_3m4npyy3FUC2zcQAYywE12uEkw@mail.gmail.com> <ea0055c7-34d4-3da0-0d3a-52020a783922@samsung.com>
+In-Reply-To: <ea0055c7-34d4-3da0-0d3a-52020a783922@samsung.com>
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Wed, 22 Feb 2023 20:27:18 -0600
-Message-ID: <CAPLW+4=rsUKkX+pYEdfXst2LsOOdhTDhE9kB-DROZOfweTGB-A@mail.gmail.com>
-Subject: Re: [PATCH 5/6] clk: samsung: exynos850: Add AUD and HSI main gate clocks
-To:     chanho61.park@samsung.com
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
+Date:   Wed, 22 Feb 2023 21:07:06 -0600
+Message-ID: <CAPLW+4=pFb2HZ8bhAs9hfm_trXUUQCiS7zf8G+VBA-i0qpLJJQ@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] clk: samsung: exynos5433: Extract PM support to
+ common ARM64 layer
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
         David Virag <virag.david003@gmail.com>,
-        ALIM AKHTAR <alim.akhtar@samsung.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 14 Feb 2023 at 20:41, CHANHO PARK <chanho61.park@samsung.com> wrote:
+On Tue, 21 Feb 2023 at 01:22, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
 >
-> > -----Original Message-----
-> > From: Sam Protsenko <semen.protsenko@linaro.org>
-> > Sent: Saturday, February 11, 2023 3:40 PM
-> > To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>; Chanwoo Choi
-> > <cw00.choi@samsung.com>; Sylwester Nawrocki <s.nawrocki@samsung.com>; Rob
-> > Herring <robh+dt@kernel.org>
-> > Cc: David Virag <virag.david003@gmail.com>; Chanho Park
-> > <chanho61.park@samsung.com>; Alim Akhtar <alim.akhtar@samsung.com>; Sumit
-> > Semwal <sumit.semwal@linaro.org>; Tomasz Figa <tomasz.figa@gmail.com>;
-> > Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
-> > <sboyd@kernel.org>; linux-samsung-soc@vger.kernel.org; linux-
-> > clk@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
-> > kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> > Subject: [PATCH 5/6] clk: samsung: exynos850: Add AUD and HSI main gate
-> > clocks
+> On 19.02.2023 18:36, Sam Protsenko wrote:
+> > On Wed, 8 Feb 2023 at 17:43, Sam Protsenko <semen.protsenko@linaro.org> wrote:
+> >> Exynos5433 clock driver implements PM support internally, which might be
+> >> also useful for other Exynos clock drivers. Extract all PM related code
+> >> from clk-exynos5433 to common ARM64 functions.
+> >>
+> >> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> >> ---
+> >> Changes in v2:
+> >>    - Rebased on top of latest soc/for-next tree
+> >>    - Included linux/slab.h for kfree (found by kernel test robot)
+> >>
+> >>   drivers/clk/samsung/clk-exynos-arm64.c | 171 ++++++++++++++++++++++++-
+> >>   drivers/clk/samsung/clk-exynos-arm64.h |   3 +
+> >>   drivers/clk/samsung/clk-exynos5433.c   | 157 +----------------------
+> >>   3 files changed, 175 insertions(+), 156 deletions(-)
+> >>
+> >> diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
+> >> index 2aa3f0a5644e..7ad7fd353dda 100644
+> >> --- a/drivers/clk/samsung/clk-exynos-arm64.c
+> >> +++ b/drivers/clk/samsung/clk-exynos-arm64.c
+> >> @@ -10,6 +10,9 @@
+> >>    */
+> > Hi Marek,
 > >
-> > Add main gate clocks for controlling AUD and HSI CMUs:
-> >   - gout_aud_cmu_aud_pclk
-> >   - gout_hsi_cmu_hsi_pclk
-> >
-> > Those clocks were marked as CLK_IGNORE_UNUSED, as system hangs on boot
-> > otherwise.
-> >
-> > While at it, add missing PPMU (Performance Profiling Monitor Unit) clocks
-> > for CMU_HSI.
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > ---
-> >  drivers/clk/samsung/clk-exynos850.c | 18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
-> >
-> > diff --git a/drivers/clk/samsung/clk-exynos850.c
-> > b/drivers/clk/samsung/clk-exynos850.c
-> > index a24eff42baae..3d776d57cc8f 100644
-> > --- a/drivers/clk/samsung/clk-exynos850.c
-> > +++ b/drivers/clk/samsung/clk-exynos850.c
-> > @@ -674,6 +674,7 @@ static const struct samsung_cmu_info apm_cmu_info
-> > __initconst = {
-> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF4 0x2014
-> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF5 0x2018
-> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF6 0x201c
-> > +#define CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK     0x2020
-> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_ACLK               0x2048
-> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_SPDY  0x204c
-> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_ASB   0x2050
-> > @@ -729,6 +730,7 @@ static const unsigned long aud_clk_regs[] __initconst
-> > = {
-> >       CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF4,
-> >       CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF5,
-> >       CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF6,
-> > +     CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK,
-> >       CLK_CON_GAT_GOUT_AUD_ABOX_ACLK,
-> >       CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_SPDY,
-> >       CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_ASB,
-> > @@ -848,6 +850,9 @@ static const struct samsung_div_clock aud_div_clks[]
-> > __initconst = {  };
-> >
-> >  static const struct samsung_gate_clock aud_gate_clks[] __initconst = {
-> > +     GATE(CLK_GOUT_AUD_CMU_AUD_PCLK, "gout_aud_cmu_aud_pclk",
-> > +          "dout_aud_busd",
-> > +          CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK, 21, CLK_IGNORE_UNUSED, 0),
-> >       GATE(CLK_GOUT_AUD_CA32_CCLK, "gout_aud_ca32_cclk",
-> > "mout_aud_cpu_hch",
-> >            CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_CA32, 21, 0, 0),
-> >       GATE(CLK_GOUT_AUD_ASB_CCLK, "gout_aud_asb_cclk",
-> > "dout_aud_cpu_aclk", @@ -1117,12 +1122,15 @@ static const struct
-> > samsung_cmu_info g3d_cmu_info __initconst = {
-> >  #define PLL_CON0_MUX_CLKCMU_HSI_MMC_CARD_USER                        0x0610
-> >  #define PLL_CON0_MUX_CLKCMU_HSI_USB20DRD_USER                        0x0620
-> >  #define CLK_CON_MUX_MUX_CLK_HSI_RTC                          0x1000
-> > +#define CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK                     0x2000
-> >  #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV          0x2008
-> >  #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_REF_CLK_50            0x200c
-> >  #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_PHY_REFCLK_26         0x2010
-> >  #define CLK_CON_GAT_GOUT_HSI_GPIO_HSI_PCLK                   0x2018
-> >  #define CLK_CON_GAT_GOUT_HSI_MMC_CARD_I_ACLK                 0x2024
-> >  #define CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN                        0x2028
-> > +#define CLK_CON_GAT_GOUT_HSI_PPMU_ACLK                               0x202c
-> > +#define CLK_CON_GAT_GOUT_HSI_PPMU_PCLK                               0x2030
-> >  #define CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK                 0x2038
-> >  #define CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_ACLK_PHYCTRL_20    0x203c
-> >  #define CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_BUS_CLK_EARLY              0x2040
-> > @@ -1132,12 +1140,15 @@ static const unsigned long hsi_clk_regs[]
-> > __initconst = {
-> >       PLL_CON0_MUX_CLKCMU_HSI_MMC_CARD_USER,
-> >       PLL_CON0_MUX_CLKCMU_HSI_USB20DRD_USER,
-> >       CLK_CON_MUX_MUX_CLK_HSI_RTC,
-> > +     CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK,
-> >       CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV,
-> >       CLK_CON_GAT_HSI_USB20DRD_TOP_I_REF_CLK_50,
-> >       CLK_CON_GAT_HSI_USB20DRD_TOP_I_PHY_REFCLK_26,
-> >       CLK_CON_GAT_GOUT_HSI_GPIO_HSI_PCLK,
-> >       CLK_CON_GAT_GOUT_HSI_MMC_CARD_I_ACLK,
-> >       CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN,
-> > +     CLK_CON_GAT_GOUT_HSI_PPMU_ACLK,
-> > +     CLK_CON_GAT_GOUT_HSI_PPMU_PCLK,
-> >       CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK,
-> >       CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_ACLK_PHYCTRL_20,
-> >       CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_BUS_CLK_EARLY,
-> > @@ -1163,6 +1174,9 @@ static const struct samsung_mux_clock hsi_mux_clks[]
-> > __initconst = {  };
-> >
-> >  static const struct samsung_gate_clock hsi_gate_clks[] __initconst = {
-> > +     GATE(CLK_GOUT_HSI_CMU_HSI_PCLK, "gout_hsi_cmu_hsi_pclk",
-> > +          "mout_hsi_bus_user",
-> > +          CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK, 21, CLK_IGNORE_UNUSED, 0),
+> > It just occurred to me that as I'm pulling your code from
+> > clk-exynos5433.c here, I should've probably added you to this file's
+> > author list in the header comment. Does that sound right to you? If
+> > so, I can re-send v3 with fixes.
 >
-> You'll need to put /* TODO: */ tag or use CLK_IS_CRITICAL if you make sure it is the critical clock.
+> Fine for me.
+>
+> > Also, could you please review this series, if possible? I'm working
+> > right now on PM_DOMAINS support for Exynos850, so along with this
+> > series that would bring the initial PM support for ARM64 Exynos chips.
+>
+> Well, feel free to add:
+>
+> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> to v3 (the whole patchset).
 >
 
-Thanks for the review! I'll add the comment for now, as it's done in
-other CMUs for similar clocks. As for making it critical: maybe I'll
-do it as a part of PM enablement, which I'm working on right now (if
-it's needed). But in that case I'd like to provide a separate patch
-for making all similar clocks (XXX_CMU_XXX) critical, so not in this
-patch.
+Thanks, Marek!
 
-Will send v2 soon.
+> The only remark I have is not strictly related to this patchset, but the
+> code that is already in drivers/clk/samsung/clk-exynos-arm64.c. Playing
+> with GATE_ENABLE_HWACG/GATE_MANUAL is not strictly specific to all
+> Exynos ARM64 SoCs. GATE_OFF_START/GATE_OFF_END and the enable register
+> bits are something specific to recent Exynos SoCs (like 7885/850/auto9)
+> and don't fit well into the generic arm64 clk PM code, but I don't have
+> a good idea how to move it to the respective clk drivers and keep it simple.
+>
 
-> >       GATE(CLK_GOUT_USB_RTC_CLK, "gout_usb_rtc", "mout_hsi_rtc",
-> >            CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV, 21, 0, 0),
-> >       GATE(CLK_GOUT_USB_REF_CLK, "gout_usb_ref", "mout_hsi_usb20drd_user",
-> > @@ -1177,6 +1191,10 @@ static const struct samsung_gate_clock
-> > hsi_gate_clks[] __initconst = {
-> >       GATE(CLK_GOUT_MMC_CARD_SDCLKIN, "gout_mmc_card_sdclkin",
-> >            "mout_hsi_mmc_card_user",
-> >            CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN, 21, CLK_SET_RATE_PARENT,
-> > 0),
-> > +     GATE(CLK_GOUT_HSI_PPMU_ACLK, "gout_hsi_ppmu_aclk",
-> > "mout_hsi_bus_user",
-> > +          CLK_CON_GAT_GOUT_HSI_PPMU_ACLK, 21, 0, 0),
-> > +     GATE(CLK_GOUT_HSI_PPMU_PCLK, "gout_hsi_ppmu_pclk",
-> > "mout_hsi_bus_user",
-> > +          CLK_CON_GAT_GOUT_HSI_PPMU_PCLK, 21, 0, 0),
-> >       GATE(CLK_GOUT_SYSREG_HSI_PCLK, "gout_sysreg_hsi_pclk",
-> >            "mout_hsi_bus_user",
-> >            CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK, 21, 0, 0),
-> > --
-> > 2.39.1
+Yeah, maybe having some sort of HW variants would be a better choice.
+That can be implemented later. I suggest we wait a bit first (after
+applying this series) and see if there going be any new users for that
+PM code. Once we gather more knowledge about current platforms (or
+no), the desired design decisions should become more obvious.
+
+>
+> Best regards
+> --
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+>
