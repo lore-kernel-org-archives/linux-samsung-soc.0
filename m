@@ -2,62 +2,59 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACF3C61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Feb 2023 03:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A03D0C61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Feb 2023 04:19:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233932AbjBWDHi (ORCPT
+        id S233132AbjBWET3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 22 Feb 2023 22:07:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53672 "EHLO
+        Wed, 22 Feb 2023 23:19:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233927AbjBWDHd (ORCPT
+        with ESMTP id S233141AbjBWETY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Feb 2023 22:07:33 -0500
-Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 026CD474F3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2023 19:07:05 -0800 (PST)
-Received: by mail-oi1-x235.google.com with SMTP id bl7so10294772oib.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2023 19:07:04 -0800 (PST)
+        Wed, 22 Feb 2023 23:19:24 -0500
+Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C64AB20546
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2023 20:19:23 -0800 (PST)
+Received: by mail-oi1-x22a.google.com with SMTP id e21so10634404oie.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2023 20:19:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IsFwDXDFyAwgQgN7Ezx7sftsdxjHjlTMYKQ/wYMhb78=;
-        b=LYqxKMnouYu+dT0bW6p/08eh4jCaQkaoyhaFcxvkvtnTfzDxG1y2Z/9DRZX6i1GC7V
-         Cdo8AIq4N2MlbgqaTZ4cJj5JOtTyQ1fWn863StHyjchSiOPUFn/yONZHO8XPaatHM9sA
-         o7W0TFCDXXNN5gZ1QTuUh2Q+zuVH23qrK1ouMPYfCml5Y5DrhDrkr9nW+OBw71GHcsQu
-         OeEQmv1rKLoiknsFdQzFgJ59UZeqM8+7BfTfe1o8dYJl3mS0BZKD1+0K3weTVJ5YK0wF
-         X+E2lG5qS9EG8l09dAxn6SJd6b/piYWzZpBIPQ/Np0VY/oSY2Rin6QVLURQeSPAVKlmP
-         Pz7g==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5GdxaKoTsSLP7s69yzl5MFSFO0xh3sG9vl0I5PlfZgA=;
+        b=L060XF2JHZaQo/1P9bDtUd8szWmjr+L/uu10po6C3Ua07A2E7XF/eEXkrmN0dfZdOo
+         0FxisqRxwwIziSvejSkdpt9UkptXsd/Qd4N4ao7M//pLLYku0cmWc/ZcW+SGDgeTZWqb
+         AvjeS+TeIFADd355oAcF3IZSZjbHrOpJ93XquBrMxMNjbdsKldcsExLUNM3AxRutY/hf
+         dL0X6BBkARzjfqIvJMpK8W+T4/vMM0wRoEzwPrePDop5l0OEwbMMaRb3BvFC7RpwQqbE
+         LbNXcocFOCQeYawAXnpu3nF0gysdvp0ifnrIHWbww+D21oxHFj6QOeBlOnK/kXX2+4ZS
+         4WQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IsFwDXDFyAwgQgN7Ezx7sftsdxjHjlTMYKQ/wYMhb78=;
-        b=RiGY9+jQxMNzri7H6XO7WN/VzOqDdGzvOU6EOAsJ0wSdRxp71/OeXZmDNT4RxVrFZP
-         117bywxJtFF9ohW2LwrKQ1ir+V3NIf7pJN9SikH8X0CpXSQUUXaphZKAYubV/2przw8P
-         lWAqV9mc7qTOAJ+uz8e2v9palAbZEY9UcSM+ak9iIJZghesb7np06EvJyN0xAJ5dVXtX
-         1UK+xMpMI/4V8P2YT5Hge//fRm3CgupqlvbgDFnWcRcPfEIEJuJTktOsCsvyTbruafEt
-         JnLnFox9fuXh3LDlzq1T7lyQUAmzfHO2Pib3gx82pKrUZfZdJnV7KvPKiSN2VoR7bRFB
-         AEUw==
-X-Gm-Message-State: AO0yUKXV7oYnB6ijDd/8ZQ0lBJ7bGQqgZC53pTsaFxeNaSSarrFy1ZcX
-        k0l6hGeZdjsBN2JAk/CqoJeHveSGodqqiXg6mRSFLw==
-X-Google-Smtp-Source: AK7set/bRL8ou0SIq3OLr/c87FxzRtrMmLfqzNaV86gtbWiVwJCusOZBWjZSfPj1zOwVal0nGhV9hZTSLlo+b09gssU=
-X-Received: by 2002:a05:6808:20a5:b0:37f:9ac7:826e with SMTP id
- s37-20020a05680820a500b0037f9ac7826emr1361934oiw.62.1677121622447; Wed, 22
- Feb 2023 19:07:02 -0800 (PST)
-MIME-Version: 1.0
-References: <20230208234313.23863-1-semen.protsenko@linaro.org>
- <20230208234313.23863-7-semen.protsenko@linaro.org> <CGME20230219173642eucas1p1ddff7399223df763ff9fb48c4f7fc5f9@eucas1p1.samsung.com>
- <CAPLW+4=cOV8J+Ho1t8Tkg8X_3m4npyy3FUC2zcQAYywE12uEkw@mail.gmail.com> <ea0055c7-34d4-3da0-0d3a-52020a783922@samsung.com>
-In-Reply-To: <ea0055c7-34d4-3da0-0d3a-52020a783922@samsung.com>
+        bh=5GdxaKoTsSLP7s69yzl5MFSFO0xh3sG9vl0I5PlfZgA=;
+        b=GYj3Sa10in4T1c1mMWrBmdNC4/BjnPkTkJi2aK7RqlicOujHC4XkV4g+zsUTsHhg2T
+         Se9EJw+AFc8ABeHr35MUioc4Gh6HNan3tY7vXPCtq1VNSmIX6NHWc+lRlDMY0uwDmit1
+         l9eeCaXaqkp8eJQykqfdysniXK3t73/IL1301eO7YDk92bEgPFJqiaKATKQC2x1T2BoU
+         QAEKV20dEOgoA4W2m1GIv4csGZgtJREugw8pZh6g3GMzCQQ9oLjJ6D6CFI8wCy0dcanF
+         Kveh63P4QzyWcc0qSRby12bsUJ2Gu4W4k1BPrpeytq18idSJsriCl2uMoqXnblTPxgTb
+         1OVw==
+X-Gm-Message-State: AO0yUKXLG6QxJHKr+nxvTk9t12ReEps5N7q4YwUIQtbVdQ644vdYKlUh
+        d+cCwCWdDlv/IXUhva6fsOb54Q==
+X-Google-Smtp-Source: AK7set9p9xq+PeGY4ZcGiASMF4xWg2W2iFsNpHOOC0FeFFPXBpHnPphw3bmxQC/4XgnC2+KvvrxH9A==
+X-Received: by 2002:a05:6808:246:b0:383:ce81:c055 with SMTP id m6-20020a056808024600b00383ce81c055mr1645916oie.47.1677125963121;
+        Wed, 22 Feb 2023 20:19:23 -0800 (PST)
+Received: from localhost ([136.49.140.41])
+        by smtp.gmail.com with ESMTPSA id n4-20020acaef04000000b00383c7709f7esm1758178oih.21.2023.02.22.20.19.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Feb 2023 20:19:22 -0800 (PST)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Wed, 22 Feb 2023 21:07:06 -0600
-Message-ID: <CAPLW+4=pFb2HZ8bhAs9hfm_trXUUQCiS7zf8G+VBA-i0qpLJJQ@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] clk: samsung: exynos5433: Extract PM support to
- common ARM64 layer
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
 Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Chanho Park <chanho61.park@samsung.com>,
@@ -66,81 +63,94 @@ Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/6] clk: samsung: Add PM support for ARM64 Exynos chips
+Date:   Wed, 22 Feb 2023 22:19:32 -0600
+Message-Id: <20230223041938.22732-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 21 Feb 2023 at 01:22, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> On 19.02.2023 18:36, Sam Protsenko wrote:
-> > On Wed, 8 Feb 2023 at 17:43, Sam Protsenko <semen.protsenko@linaro.org> wrote:
-> >> Exynos5433 clock driver implements PM support internally, which might be
-> >> also useful for other Exynos clock drivers. Extract all PM related code
-> >> from clk-exynos5433 to common ARM64 functions.
-> >>
-> >> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> >> ---
-> >> Changes in v2:
-> >>    - Rebased on top of latest soc/for-next tree
-> >>    - Included linux/slab.h for kfree (found by kernel test robot)
-> >>
-> >>   drivers/clk/samsung/clk-exynos-arm64.c | 171 ++++++++++++++++++++++++-
-> >>   drivers/clk/samsung/clk-exynos-arm64.h |   3 +
-> >>   drivers/clk/samsung/clk-exynos5433.c   | 157 +----------------------
-> >>   3 files changed, 175 insertions(+), 156 deletions(-)
-> >>
-> >> diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
-> >> index 2aa3f0a5644e..7ad7fd353dda 100644
-> >> --- a/drivers/clk/samsung/clk-exynos-arm64.c
-> >> +++ b/drivers/clk/samsung/clk-exynos-arm64.c
-> >> @@ -10,6 +10,9 @@
-> >>    */
-> > Hi Marek,
-> >
-> > It just occurred to me that as I'm pulling your code from
-> > clk-exynos5433.c here, I should've probably added you to this file's
-> > author list in the header comment. Does that sound right to you? If
-> > so, I can re-send v3 with fixes.
->
-> Fine for me.
->
-> > Also, could you please review this series, if possible? I'm working
-> > right now on PM_DOMAINS support for Exynos850, so along with this
-> > series that would bring the initial PM support for ARM64 Exynos chips.
->
-> Well, feel free to add:
->
-> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
->
-> to v3 (the whole patchset).
->
+In order to prepare for PM enablement in clk-exynos850, common PM code
+was extracted from clk-exynos5433 to clk-exynos-arm64. Also some related
+cleanups were done prior to that. More specifically:
 
-Thanks, Marek!
+  - patches #1..5: cleanups
+  - patch #6: PM code extraction
 
-> The only remark I have is not strictly related to this patchset, but the
-> code that is already in drivers/clk/samsung/clk-exynos-arm64.c. Playing
-> with GATE_ENABLE_HWACG/GATE_MANUAL is not strictly specific to all
-> Exynos ARM64 SoCs. GATE_OFF_START/GATE_OFF_END and the enable register
-> bits are something specific to recent Exynos SoCs (like 7885/850/auto9)
-> and don't fit well into the generic arm64 clk PM code, but I don't have
-> a good idea how to move it to the respective clk drivers and keep it simple.
->
+During the extraction of the exynos5433_cmu_probe() content to
+exynos_arm64_register_cmu_pm() some code was reworked a bit, and also
+split into smaller functions. In particular:
 
-Yeah, maybe having some sort of HW variants would be a better choice.
-That can be implemented later. I suggest we wait a bit first (after
-applying this series) and see if there going be any new users for that
-PM code. Once we gather more knowledge about current platforms (or
-no), the desired design decisions should become more obvious.
+  - cmu_data structure now contains a pointer to ctx, which is now
+    allocated in samsung_clk_init()
+  - cmu_data structure initialization was moved into separate function
+  - code for configuring gate clocks was added (optional)
 
->
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
+Which in turn resulted in somehow modified code of probe function:
+
+  Original
+  --------
+
+    ...
+    devm_platform_ioremap_resource(...);
+    samsung_clk_init(...);
+    exynos_arm64_cmu_prepare_pm(...);
+    exynos_arm64_enable_bus_clk(...);
+    platform_set_drvdata(...);
+    ...
+
+  Modified
+  --------
+
+    ...
+    platform_set_drvdata(...);
+    exynos_arm64_cmu_prepare_pm(...);
+    exynos_arm64_enable_bus_clk(...);
+    exynos_arm64_init_clocks(...);
+    devm_platform_ioremap_resource(...);
+    samsung_clk_init(...);
+    ...
+
+That shouldn't really change the logic or mode of operation. It was
+preliminary tested on Exynos850 based board, with some extra patches on
+top of this series (will be submitted later).
+
+Changes in v3:
+  - Rebased on the most recent soc/for-next tree
+  - Added A-b tags from Marek
+  - Added Marek's authorship to clk-exynos-arm64.c
+
+Changes in v2:
+  - Rebased all patches on top of the latest soc/for-next tree
+  - Added Tested-by tag from Marek
+  - Addressed comments from the review
+
+Sam Protsenko (6):
+  clk: samsung: Don't pass reg_base to samsung_clk_register_pll()
+  clk: samsung: Remove np argument from samsung_clk_init()
+  clk: samsung: Set dev in samsung_clk_init()
+  clk: samsung: Extract clocks registration to common function
+  clk: samsung: Extract parent clock enabling to common function
+  clk: samsung: exynos5433: Extract PM support to common ARM64 layer
+
+ drivers/clk/samsung/clk-exynos-arm64.c   | 220 +++++++++++++++++++++--
+ drivers/clk/samsung/clk-exynos-arm64.h   |   3 +
+ drivers/clk/samsung/clk-exynos4.c        |   6 +-
+ drivers/clk/samsung/clk-exynos4412-isp.c |   3 +-
+ drivers/clk/samsung/clk-exynos5250.c     |   5 +-
+ drivers/clk/samsung/clk-exynos5420.c     |   5 +-
+ drivers/clk/samsung/clk-exynos5433.c     | 157 +---------------
+ drivers/clk/samsung/clk-pll.c            |  11 +-
+ drivers/clk/samsung/clk-s3c64xx.c        |   4 +-
+ drivers/clk/samsung/clk-s5pv210.c        |   6 +-
+ drivers/clk/samsung/clk.c                |  64 ++++---
+ drivers/clk/samsung/clk.h                |  10 +-
+ 12 files changed, 276 insertions(+), 218 deletions(-)
+
+-- 
+2.39.1
+
