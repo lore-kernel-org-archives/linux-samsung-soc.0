@@ -2,204 +2,221 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C8A7C678DB
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Feb 2023 19:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BCBC636D6
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Feb 2023 02:27:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232473AbjBVTVF (ORCPT
+        id S232357AbjBWC1Q (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 22 Feb 2023 14:21:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51934 "EHLO
+        Wed, 22 Feb 2023 21:27:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231571AbjBVTVC (ORCPT
+        with ESMTP id S229448AbjBWC1P (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Feb 2023 14:21:02 -0500
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 692243C7B7;
-        Wed, 22 Feb 2023 11:21:01 -0800 (PST)
-Received: by mail-pl1-x632.google.com with SMTP id bh1so10022109plb.11;
-        Wed, 22 Feb 2023 11:21:01 -0800 (PST)
+        Wed, 22 Feb 2023 21:27:15 -0500
+Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E41B11156
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2023 18:27:14 -0800 (PST)
+Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-17264e9b575so3448444fac.9
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2023 18:27:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PLcAztFgWUursA52wmlD2jf40Bmb4ZiQCGT0PizPSB4=;
-        b=fZyXLUPiE4kw6WQeRU6MY4prH3y67vM2b3mdvJAichVGcePn7mOzwSwqqZqsDnIi+B
-         oCI2VPjF6j3wnr3KmIi7Hjfxnq5GV6m5PRZ7UYE5Zl2Y7YOXFH4E3UO0GJpZGsL3orby
-         2GDy7jk+pDEO7a1C/nZ9uKBVSsnZZlZrch5T0UZyD5YiSCDssGWpr9P/VWgv2x43dTcs
-         YSM/86PLOypniQeF1qiHZGAmqbXwKc6E3NtmX3aD5oS69HMEFrwmeWsE1j4I5Bkf6LO2
-         +ps2XnIPJpvyaM97dv4bJ+y/bbuSRbspaNYNYLKoOGeflbKGftMte5xtnVY1ffNSgTKw
-         jSng==
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IAoLiHZonQ9yzf6exsyPnPMjat+DcttMudRnM/cvohQ=;
+        b=kGKiOU9lZXUiSbBzfPeN1n7CSuyBK30Czjq4ei6DrXfsvFtKf14DPWNt+9PC9S3cHR
+         XR249GLTqFWyDoy0IkR/4uBqwV+Pmpw0FJ1S6oy2ZBYIWntYJ1Xd+yUDSNuhjzsIRzvj
+         psGjtU7aTul4IEQyhe1iljYAHM0PUt2hDwMPpDafq7IOL7swa7lrIAvfC4SbSzPOWawx
+         qsPNag+kePk4okC/uBc8CsDsRi0lo1MuDhM0MyVpVsq6ekew54r7WivAbOkSutPrmzoY
+         s15g+3NqJ/xGXjzh96MfZnYNeuky1vTc+PRQjXWYlJ24M4HNw6NwVi2VMd9ZlqUEcjnZ
+         qipQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PLcAztFgWUursA52wmlD2jf40Bmb4ZiQCGT0PizPSB4=;
-        b=55v1wKN5DxvZrf22g4AmET7tCZZnYxuTEl+EQKBLsxwO4pxMBvIqyXunMrrV5igF/6
-         pK+qve/rxmUrocutQleNt5i5gkU2LRbZ36LyCQgh4Ve8x7wxbHy1XryuDQbd85Q/YreO
-         zj2OarXM8dQlGuYLLw6NA8TV9qBBz/BT/uj1B9Ca726NrvWXqqtYRFEM2UEKqRyTie5v
-         Klm5vUAhf3Ske3KgzhOmhB1K+bpg3fALF5LzcELZXoA5+BcsfIUaghTSqXoWoubcpG2X
-         VUiU9RHVfIE/qHdtoqnoXxpEOIKcSNdR0nfCwwsgnxeqANU9Efa8EDyZK/zkjovd8/tw
-         KTUg==
-X-Gm-Message-State: AO0yUKVr9hWUwJZ5Swv59GYs29Lhzx37Mh4iDz3ZW9tYwbxx8MJtspKD
-        6JxIeqlJJGaBReUFDBEBNsk=
-X-Google-Smtp-Source: AK7set8wAaTOtklU375O2ukRLvaDd0j7hswGqcDt2qm3lUDw62M6nbZXaAjlVk3zGZQQR2Svvz5L3A==
-X-Received: by 2002:a17:902:fa8c:b0:19b:dcfe:5f4 with SMTP id lc12-20020a170902fa8c00b0019bdcfe05f4mr6520296plb.20.1677093660760;
-        Wed, 22 Feb 2023 11:21:00 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id a7-20020a170902b58700b0019abd4ddbf2sm3579577pls.179.2023.02.22.11.20.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Feb 2023 11:20:59 -0800 (PST)
-Message-ID: <187c2741-7545-6480-2d00-fd93a6f8e07e@gmail.com>
-Date:   Wed, 22 Feb 2023 11:20:34 -0800
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IAoLiHZonQ9yzf6exsyPnPMjat+DcttMudRnM/cvohQ=;
+        b=Yy1ZCknCMYNH2YQ/K2XR1I4Zs5YshRTKLYA3ZMlhQeieI7Ntp/C8aZNE/Lu7WDfTcz
+         uHYRPYWUdRjuzPmnNmXskFG1kyLrqZ47cX3gsPlbIN2tpuMjvf/k48KYfQksTlMAQJ/h
+         sDiFKXFr5B9/EUSqFgQrhhSdFaeVR4sEL/EM9OPG3333Y98znixFxTIBVq6pRPM9T9iE
+         C66VEp8PdTmp6Q+3pMsESWpK47/5dPlXiJB+Ex6UnXgxvhgfKkgKrDi+Kh2CPGkpOkT4
+         5bCPOdHWVtC9tCRbWeTl8yozADuegtSrjTaK3EoIbWr0H7vhde8LxOpO3YjHsPV3bB7c
+         9XFQ==
+X-Gm-Message-State: AO0yUKX+7XvCVwSSN9/BbwxxmSxjwwKChV3YPTdyIMASZY+xCE4AOk87
+        QEh+4hUUmr2EibQPTOUqScO2GL2eDKbJ0pMcEtOmiQ==
+X-Google-Smtp-Source: AK7set+h6QdDAN1HHNJ/ETPJpkHPuqATk5ZydfyUit0/Gt7f4augVb/rP3yqBsBk8d5tAAmUk9MZwkuSjop5xXR7v8g=
+X-Received: by 2002:a05:6870:678a:b0:16e:19a8:31d8 with SMTP id
+ gc10-20020a056870678a00b0016e19a831d8mr1457846oab.62.1677119233386; Wed, 22
+ Feb 2023 18:27:13 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH v2 01/16] thermal/core: Add a thermal zone 'devdata'
- accessor
-Content-Language: en-US
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Mark Brown <broonie@kernel.org>,
-        Ido Schimmel <idosch@nvidia.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Balsam CHIHI <bchihi@baylibre.com>,
-        Gregory Greenman <gregory.greenman@intel.com>,
-        Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Raju Rangoju <rajur@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Petr Machata <petrm@nvidia.com>, Kalle Valo <kvalo@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Markus Mayer <mmayer@broadcom.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Talel Shenhar <talel@amazon.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Zheng Yongjun <zhengyongjun3@huawei.com>,
-        Tim Zimmermann <tim@linux4.de>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Jiang Jian <jiangjian@cdjrlc.com>,
-        Daniel Golle <daniel@makrotopia.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        "open list:ACPI THERMAL DRIVER" <linux-acpi@vger.kernel.org>,
-        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
-        <linux-ide@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-        "open list:ARM/Allwinner sunXi SoC support" 
-        <linux-sunxi@lists.linux.dev>,
-        "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." 
-        <linux-input@vger.kernel.org>,
-        "open list:CXGB4 ETHERNET DRIVER (CXGB4)" <netdev@vger.kernel.org>,
-        "open list:INTEL WIRELESS WIFI LINK (iwlwifi)" 
-        <linux-wireless@vger.kernel.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "open list:QUALCOMM TSENS THERMAL DRIVER" 
-        <linux-arm-msm@vger.kernel.org>,
-        "open list:RENESAS R-CAR THERMAL DRIVERS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC support" 
-        <linux-rockchip@lists.infradead.org>,
-        "open list:SAMSUNG THERMAL DRIVER" 
+References: <20230211064006.14981-1-semen.protsenko@linaro.org>
+ <CGME20230211063956epcas2p423cb99655dcfdb34c6847bb228aa7324@epcms2p2>
+ <20230211064006.14981-6-semen.protsenko@linaro.org> <20230215024056epcms2p28f04cf946f20343643faca944ea147ea@epcms2p2>
+In-Reply-To: <20230215024056epcms2p28f04cf946f20343643faca944ea147ea@epcms2p2>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Wed, 22 Feb 2023 20:27:18 -0600
+Message-ID: <CAPLW+4=rsUKkX+pYEdfXst2LsOOdhTDhE9kB-DROZOfweTGB-A@mail.gmail.com>
+Subject: Re: [PATCH 5/6] clk: samsung: exynos850: Add AUD and HSI main gate clocks
+To:     chanho61.park@samsung.com
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Virag <virag.david003@gmail.com>,
+        ALIM AKHTAR <alim.akhtar@samsung.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
         <linux-samsung-soc@vger.kernel.org>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        "open list:TI BANDGAP AND THERMAL DRIVER" 
-        <linux-omap@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>
-References: <20230221180710.2781027-1-daniel.lezcano@linaro.org>
- <20230221180710.2781027-2-daniel.lezcano@linaro.org>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20230221180710.2781027-2-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2/21/23 10:06, Daniel Lezcano wrote:
-> The thermal zone device structure is exposed to the different drivers
-> and obviously they access the internals while that should be
-> restricted to the core thermal code.
-> 
-> In order to self-encapsulate the thermal core code, we need to prevent
-> the drivers accessing directly the thermal zone structure and provide
-> accessor functions to deal with.
-> 
-> Provide an accessor to the 'devdata' structure and make use of it in
-> the different drivers.
-> 
-> No functional changes intended.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Acked-by: Guenter Roeck <linux@roeck-us.net> #hwmon
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se> #R-Car
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Reviewed-by: Ido Schimmel <idosch@nvidia.com> #mlxsw
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> #MediaTek auxadc and lvts
-> Reviewed-by: Balsam CHIHI <bchihi@baylibre.com> #Mediatek lvts
-> Acked-by: Gregory Greenman <gregory.greenman@intel.com> #iwlwifi
-> Reviewed-by: Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com> #da9062
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>  #spread
-> Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com> #power_supply
+On Tue, 14 Feb 2023 at 20:41, CHANHO PARK <chanho61.park@samsung.com> wrote:
+>
+> > -----Original Message-----
+> > From: Sam Protsenko <semen.protsenko@linaro.org>
+> > Sent: Saturday, February 11, 2023 3:40 PM
+> > To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>; Chanwoo Choi
+> > <cw00.choi@samsung.com>; Sylwester Nawrocki <s.nawrocki@samsung.com>; Rob
+> > Herring <robh+dt@kernel.org>
+> > Cc: David Virag <virag.david003@gmail.com>; Chanho Park
+> > <chanho61.park@samsung.com>; Alim Akhtar <alim.akhtar@samsung.com>; Sumit
+> > Semwal <sumit.semwal@linaro.org>; Tomasz Figa <tomasz.figa@gmail.com>;
+> > Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+> > <sboyd@kernel.org>; linux-samsung-soc@vger.kernel.org; linux-
+> > clk@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
+> > kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+> > Subject: [PATCH 5/6] clk: samsung: exynos850: Add AUD and HSI main gate
+> > clocks
+> >
+> > Add main gate clocks for controlling AUD and HSI CMUs:
+> >   - gout_aud_cmu_aud_pclk
+> >   - gout_hsi_cmu_hsi_pclk
+> >
+> > Those clocks were marked as CLK_IGNORE_UNUSED, as system hangs on boot
+> > otherwise.
+> >
+> > While at it, add missing PPMU (Performance Profiling Monitor Unit) clocks
+> > for CMU_HSI.
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> >  drivers/clk/samsung/clk-exynos850.c | 18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> >
+> > diff --git a/drivers/clk/samsung/clk-exynos850.c
+> > b/drivers/clk/samsung/clk-exynos850.c
+> > index a24eff42baae..3d776d57cc8f 100644
+> > --- a/drivers/clk/samsung/clk-exynos850.c
+> > +++ b/drivers/clk/samsung/clk-exynos850.c
+> > @@ -674,6 +674,7 @@ static const struct samsung_cmu_info apm_cmu_info
+> > __initconst = {
+> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF4 0x2014
+> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF5 0x2018
+> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF6 0x201c
+> > +#define CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK     0x2020
+> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_ACLK               0x2048
+> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_SPDY  0x204c
+> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_ASB   0x2050
+> > @@ -729,6 +730,7 @@ static const unsigned long aud_clk_regs[] __initconst
+> > = {
+> >       CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF4,
+> >       CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF5,
+> >       CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF6,
+> > +     CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK,
+> >       CLK_CON_GAT_GOUT_AUD_ABOX_ACLK,
+> >       CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_SPDY,
+> >       CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_ASB,
+> > @@ -848,6 +850,9 @@ static const struct samsung_div_clock aud_div_clks[]
+> > __initconst = {  };
+> >
+> >  static const struct samsung_gate_clock aud_gate_clks[] __initconst = {
+> > +     GATE(CLK_GOUT_AUD_CMU_AUD_PCLK, "gout_aud_cmu_aud_pclk",
+> > +          "dout_aud_busd",
+> > +          CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK, 21, CLK_IGNORE_UNUSED, 0),
+> >       GATE(CLK_GOUT_AUD_CA32_CCLK, "gout_aud_ca32_cclk",
+> > "mout_aud_cpu_hch",
+> >            CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_CA32, 21, 0, 0),
+> >       GATE(CLK_GOUT_AUD_ASB_CCLK, "gout_aud_asb_cclk",
+> > "dout_aud_cpu_aclk", @@ -1117,12 +1122,15 @@ static const struct
+> > samsung_cmu_info g3d_cmu_info __initconst = {
+> >  #define PLL_CON0_MUX_CLKCMU_HSI_MMC_CARD_USER                        0x0610
+> >  #define PLL_CON0_MUX_CLKCMU_HSI_USB20DRD_USER                        0x0620
+> >  #define CLK_CON_MUX_MUX_CLK_HSI_RTC                          0x1000
+> > +#define CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK                     0x2000
+> >  #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV          0x2008
+> >  #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_REF_CLK_50            0x200c
+> >  #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_PHY_REFCLK_26         0x2010
+> >  #define CLK_CON_GAT_GOUT_HSI_GPIO_HSI_PCLK                   0x2018
+> >  #define CLK_CON_GAT_GOUT_HSI_MMC_CARD_I_ACLK                 0x2024
+> >  #define CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN                        0x2028
+> > +#define CLK_CON_GAT_GOUT_HSI_PPMU_ACLK                               0x202c
+> > +#define CLK_CON_GAT_GOUT_HSI_PPMU_PCLK                               0x2030
+> >  #define CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK                 0x2038
+> >  #define CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_ACLK_PHYCTRL_20    0x203c
+> >  #define CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_BUS_CLK_EARLY              0x2040
+> > @@ -1132,12 +1140,15 @@ static const unsigned long hsi_clk_regs[]
+> > __initconst = {
+> >       PLL_CON0_MUX_CLKCMU_HSI_MMC_CARD_USER,
+> >       PLL_CON0_MUX_CLKCMU_HSI_USB20DRD_USER,
+> >       CLK_CON_MUX_MUX_CLK_HSI_RTC,
+> > +     CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK,
+> >       CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV,
+> >       CLK_CON_GAT_HSI_USB20DRD_TOP_I_REF_CLK_50,
+> >       CLK_CON_GAT_HSI_USB20DRD_TOP_I_PHY_REFCLK_26,
+> >       CLK_CON_GAT_GOUT_HSI_GPIO_HSI_PCLK,
+> >       CLK_CON_GAT_GOUT_HSI_MMC_CARD_I_ACLK,
+> >       CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN,
+> > +     CLK_CON_GAT_GOUT_HSI_PPMU_ACLK,
+> > +     CLK_CON_GAT_GOUT_HSI_PPMU_PCLK,
+> >       CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK,
+> >       CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_ACLK_PHYCTRL_20,
+> >       CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_BUS_CLK_EARLY,
+> > @@ -1163,6 +1174,9 @@ static const struct samsung_mux_clock hsi_mux_clks[]
+> > __initconst = {  };
+> >
+> >  static const struct samsung_gate_clock hsi_gate_clks[] __initconst = {
+> > +     GATE(CLK_GOUT_HSI_CMU_HSI_PCLK, "gout_hsi_cmu_hsi_pclk",
+> > +          "mout_hsi_bus_user",
+> > +          CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK, 21, CLK_IGNORE_UNUSED, 0),
+>
+> You'll need to put /* TODO: */ tag or use CLK_IS_CRITICAL if you make sure it is the critical clock.
+>
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com> #Broadcom
--- 
-Florian
+Thanks for the review! I'll add the comment for now, as it's done in
+other CMUs for similar clocks. As for making it critical: maybe I'll
+do it as a part of PM enablement, which I'm working on right now (if
+it's needed). But in that case I'd like to provide a separate patch
+for making all similar clocks (XXX_CMU_XXX) critical, so not in this
+patch.
 
+Will send v2 soon.
+
+> >       GATE(CLK_GOUT_USB_RTC_CLK, "gout_usb_rtc", "mout_hsi_rtc",
+> >            CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV, 21, 0, 0),
+> >       GATE(CLK_GOUT_USB_REF_CLK, "gout_usb_ref", "mout_hsi_usb20drd_user",
+> > @@ -1177,6 +1191,10 @@ static const struct samsung_gate_clock
+> > hsi_gate_clks[] __initconst = {
+> >       GATE(CLK_GOUT_MMC_CARD_SDCLKIN, "gout_mmc_card_sdclkin",
+> >            "mout_hsi_mmc_card_user",
+> >            CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN, 21, CLK_SET_RATE_PARENT,
+> > 0),
+> > +     GATE(CLK_GOUT_HSI_PPMU_ACLK, "gout_hsi_ppmu_aclk",
+> > "mout_hsi_bus_user",
+> > +          CLK_CON_GAT_GOUT_HSI_PPMU_ACLK, 21, 0, 0),
+> > +     GATE(CLK_GOUT_HSI_PPMU_PCLK, "gout_hsi_ppmu_pclk",
+> > "mout_hsi_bus_user",
+> > +          CLK_CON_GAT_GOUT_HSI_PPMU_PCLK, 21, 0, 0),
+> >       GATE(CLK_GOUT_SYSREG_HSI_PCLK, "gout_sysreg_hsi_pclk",
+> >            "mout_hsi_bus_user",
+> >            CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK, 21, 0, 0),
+> > --
+> > 2.39.1
