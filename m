@@ -2,366 +2,226 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97AB0C6FA8E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Feb 2023 21:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA41C64EC7
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 25 Feb 2023 16:03:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229889AbjBXVHW (ORCPT
+        id S229567AbjBYQDD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Feb 2023 16:07:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52530 "EHLO
+        Sat, 25 Feb 2023 11:03:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229637AbjBXVHV (ORCPT
+        with ESMTP id S229507AbjBYQDD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Feb 2023 16:07:21 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20FB16C8FC
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Feb 2023 13:07:12 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id m25-20020a7bcb99000000b003e7842b75f2so268572wmi.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Feb 2023 13:07:12 -0800 (PST)
+        Sat, 25 Feb 2023 11:03:03 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 162CB10AB5
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 25 Feb 2023 08:03:01 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id p26so1649753wmc.4
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 25 Feb 2023 08:03:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0e9wKai03am79CRSK5WLZ1F5ap0ezDnNlxcN7b+lDFE=;
-        b=gEQoDMGG85UUYLbhj+CszX25rKahJvE6EsHrpVCD19nrYJY2UMAttAzvRvcvFN3yTT
-         u318zaSVLJsM6I6JVHi80qrxGGMn+9MkpPU6e4HRDU69KMDKaHBdMIKp3F4xD6yMnLcZ
-         7uMOqyx/xHwTW0kE3kyCw06W1Cp5G/4vo7a3v3AWFtoa82b5rlUctdGN6bhxRxevyJV5
-         M07S1+eVOOQwONkafWtcKeIkmyh2reb5YG0DaTLhmCl7cUzt6qPOUSXEfuM5K/cPq58T
-         5lF8wUwuqCnMOeK3TbXzD4RL5HT7RVYJYcLsDUU0X3RBls0Hd9vLX47GLU28ul3h30PX
-         17zg==
+        bh=dY5QkGaNbdQhkrm/R09T7pM9MLXR4hJxvYcs/q4usnM=;
+        b=OXK61ifrJ2LDcTLhKwZwHS7GafV9cHK0ZEZm7BDGGqDpzCS9U1W0FiMFkQXeyYnZ1+
+         dRnzcj66RDyYJzO2ATVrkwA1filfnUL0cmGUy82O7S62NSskOK/N8/DjhZTQf6A3RGuq
+         4rZUyXepp6ef9PK3VkmNgMVyby+YEqV6EKGa2cFyz4FvW+4NevAlhvP7nESiU11U3B8m
+         DbBjC0yRXt/Js9m85MjI+IIezEW5PObxZni8lBXQDfxVYA3Rj4AuSk8Eqlb/zyP0cuvL
+         88316GnunEUxPwQa/Xzr28irhYyzzygOJojp74+Z4WgMovhZ8Lpyzty7/LjCRnrb8t2N
+         MS9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0e9wKai03am79CRSK5WLZ1F5ap0ezDnNlxcN7b+lDFE=;
-        b=VsagR+AnqMO3c27KngppFHfm9swPmHWNs8NblPMGi9yRx9ER3n4Tj4nCBmXJd6NWcq
-         3XJrKaAeL1/zHmiN+Hak1jYnoXnoHU57Gp4jrHgErB4mqEIwPPmfBbVkbrjXmKJfRkGV
-         45uzy96DYggaKXh8d43DNfp61jADCgSCq+HozBb6V3nVR6BuMN1eUwpP+aZeyFSUkKlI
-         EfPO2Edfb2C6kiFdMNZl84V8iZi/37uY3IfrUv2P83iskeSkgoIcZm1+n6PdrgI2sL6I
-         i9l07Qoo1CtJarHGeZSSsG/2f/S9xOjc3EiN/rfwnVWWNmpncJcyONMcc0zRLaXXlkVh
-         RbSg==
-X-Gm-Message-State: AO0yUKVv09T+udbvJ6LKmP9tW9fbma8HZl4Z1VUY+hbk5f5qW/QjdQJt
-        ZQqe9GZG+7JPD0Jn4KYfGA0njg==
-X-Google-Smtp-Source: AK7set/o5gusVY1R+OzmQQgCBRNYS3Y1I/Iq5pNaqgB60578gum3u5lnbg6rHhPkocyc7M2+2HFR2Q==
-X-Received: by 2002:a05:600c:1c28:b0:3e8:490b:e28b with SMTP id j40-20020a05600c1c2800b003e8490be28bmr10327809wms.25.1677272830367;
-        Fri, 24 Feb 2023 13:07:10 -0800 (PST)
-Received: from mai.box.freepro.com ([2a05:6e02:1041:c10:3e6f:e90a:1fc9:3708])
-        by smtp.gmail.com with ESMTPSA id b9-20020a5d4b89000000b002c794495f6fsm1947270wrt.117.2023.02.24.13.07.05
+        bh=dY5QkGaNbdQhkrm/R09T7pM9MLXR4hJxvYcs/q4usnM=;
+        b=c9yYa7WUXGnGjOaqAuoNP5r+tTAHn4ZSYxG4SMkvH8NSTAg3fCks3vZf1RtKQTo68k
+         bkc4m0eU/bKZI+E53fYXOI732O6vSSKjxsQTJ4W3Y4xpc+d2cCj0yG6EU2tlPNXU3vpy
+         ODWy8XIb9IFvsUb7MqNL2HXHYh7enwz4JIAekMlTiO0oLuiqw6VFZPsCGsw+GYaPI6MI
+         MJr3nHef6wsn3ZzS4HciGrubYU+iDM/B4w+/jRfCenaP+g8uhrjhdncyM50EmZJypW3/
+         f104C9Lki4wIMZUvEowlqFqK+AwutnjEANDfS1eP0OGksiKBl44aceHK34On2I2MJHrD
+         jezA==
+X-Gm-Message-State: AO0yUKWvtz9xamnrLR2fOEWFvgIOiFc33si9OlUUnnCmrE2QdGo6LFXk
+        dFfp3cpE/sRVJFUd4aYj4ZnU0g==
+X-Google-Smtp-Source: AK7set/ewIkpDOoWCTgaHZjfcxbX2NC+BMDb9ytrUWeSn1tmD5qUQXGcVFEqswzPcYIcahYCVcsH8A==
+X-Received: by 2002:a05:600c:331b:b0:3eb:2da4:f32d with SMTP id q27-20020a05600c331b00b003eb2da4f32dmr3609378wmp.26.1677340979559;
+        Sat, 25 Feb 2023 08:02:59 -0800 (PST)
+Received: from krzk-bin.. ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id fc19-20020a05600c525300b003e215a796fasm3266868wmb.34.2023.02.25.08.02.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Feb 2023 13:07:09 -0800 (PST)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     rafael@kernel.org, daniel.lezcano@linaro.org
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Chen-Yu Tsai <wens@csie.org>,
+        Sat, 25 Feb 2023 08:02:59 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Ido Schimmel <idosch@nvidia.com>,
-        Petr Machata <petrm@nvidia.com>,
-        Gregory Greenman <gregory.greenman@intel.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Markus Mayer <mmayer@broadcom.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Talel Shenhar <talel@amazon.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Zheng Yongjun <zhengyongjun3@huawei.com>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Daniel Golle <daniel@makrotopia.org>,
-        Balsam CHIHI <bchihi@baylibre.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-acpi@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-input@vger.kernel.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 00/17] Self-encapsulate the thermal zone device structure
-Date:   Fri, 24 Feb 2023 22:06:17 +0100
-Message-Id: <20230224210634.3994365-1-daniel.lezcano@linaro.org>
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/2] dt-bindings: display/bridge: toshiba,tc358764: convert to dtschema
+Date:   Sat, 25 Feb 2023 17:02:51 +0100
+Message-Id: <20230225160252.18737-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The exported thermal headers expose the thermal core structure while those
-should be private to the framework. The initial idea was the thermal sensor
-drivers use the thermal zone device structure pointer to pass it around from
-the ops to the thermal framework API like a handler.
+Convert the Toshiba TC358764 bridge bindings to DT schema.
 
-Unfortunately, different drivers are using and abusing the internals of this
-structure to hook the associated struct device, read the internals values, take
-the lock, etc ...
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../display/bridge/toshiba,tc358764.txt       | 35 --------
+ .../display/bridge/toshiba,tc358764.yaml      | 89 +++++++++++++++++++
+ 2 files changed, 89 insertions(+), 35 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.yaml
 
-rn order to fix this situation, let's encapsulate the structure leaking the
-more in the different drivers: the thermal_zone_device structure.
-
-This series revisit the existing drivers using the thermal zone private
-structure internals to change the access to something else. For instance, the
-get_temp() ops is using the tz->dev to write a debug trace. Despite the trace
-is not helpful, we can check the return value for the get_temp() ops in the
-call site and show the message in this place.
-
-With this set of changes, the thermal_zone_device is almost self-encapsulated.
-As usual, the acpi driver needs a more complex changes, so that will come in a
-separate series along with the structure moved the private core headers.
-
-Changelog:
-	- V3:
-	   - Collected more tags
-	   - Added missing changes for ->devdata in some drivers
-	   - Added a 'type' accessor
-	   - Replaced the 'type' to 'id' changes by the 'type' accessor
-	   - Used the 'type' accessor in the drivers
-	- V2:
-	   - Collected tags
-	   - Added missing changes for ->devdata for the tsens driver
-	   - Renamed thermal_zone_device_get_data() to thermal_zone_priv()
-	   - Added stubs when CONFIG_THERMAL is not set
-	   - Dropped hwmon change where we remove the tz->lock usage
-
-Thank you all for your comments
-
-
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Zhang Rui <rui.zhang@intel.com>
-Cc: Len Brown <lenb@kernel.org>
-Cc: Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: NXP Linux Team <linux-imx@nxp.com>
-Cc: Jean Delvare <jdelvare@suse.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: Samuel Holland <samuel@sholland.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Cc: Ido Schimmel <idosch@nvidia.com>
-Cc: Petr Machata <petrm@nvidia.com>
-Cc: Gregory Greenman <gregory.greenman@intel.com>
-Cc: Kalle Valo <kvalo@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Amit Kucheria <amitk@kernel.org>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: Ray Jui <rjui@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>
-Cc: Markus Mayer <mmayer@broadcom.com>
-Cc: Support Opensource <support.opensource@diasemi.com>
-Cc: Andy Gross <agross@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Thara Gopinath <thara.gopinath@gmail.com>
-Cc: "Niklas Söderlund" <niklas.soderlund@ragnatech.se>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Orson Zhai <orsonzhai@gmail.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Yangtao Li <tiny.windzz@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Talel Shenhar <talel@amazon.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Zheng Yongjun <zhengyongjun3@huawei.com>
-Cc: Yang Li <yang.lee@linux.alibaba.com>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Daniel Golle <daniel@makrotopia.org>
-Cc: Balsam CHIHI <bchihi@baylibre.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: linux-acpi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-ide@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-hwmon@vger.kernel.org
-Cc: linux-iio@vger.kernel.org
-Cc: linux-sunxi@lists.linux.dev
-Cc: linux-input@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: linux-wireless@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-rpi-kernel@lists.infradead.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-rockchip@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-omap@vger.kernel.org
-Cc: linux-mediatek@lists.infradead.org
-
-Daniel Lezcano (17):
-  thermal/core: Add a thermal zone 'devdata' accessor
-  thermal/core: Show a debug message when get_temp() fails
-  thermal: Remove debug or error messages in get_temp() ops
-  thermal/hwmon: Do not set no_hwmon before calling
-    thermal_add_hwmon_sysfs()
-  thermal/hwmon: Use the right device for devm_thermal_add_hwmon_sysfs()
-  thermal: Don't use 'device' internal thermal zone structure field
-  thermal/core: Add 'type' accessor
-  thermal/drivers/spear: Don't use tz->device but pdev->dev
-  thermal: Add a thermal zone id accessor
-  thermal: Use thermal_zone_device_type() accessor
-  thermal/drivers/da9062: Don't access the thermal zone device fields
-  thermal/hwmon: Use the thermal_core.h header
-  thermal/drivers/tegra: Remove unneeded lock when setting a trip point
-  thermal/tegra: Do not enable the thermal zone, it is already enabled
-  thermal/drivers/acerhdf: Make interval setting only at module load
-    time
-  thermal/drivers/acerhdf: Remove pointless governor test
-  thermal/traces: Replace the thermal zone structure parameter with the
-    field value
-
- drivers/acpi/thermal.c                        | 18 +++----
- drivers/ata/ahci_imx.c                        |  2 +-
- drivers/hwmon/hwmon.c                         |  4 +-
- drivers/hwmon/pmbus/pmbus_core.c              |  2 +-
- drivers/hwmon/scmi-hwmon.c                    |  4 +-
- drivers/hwmon/scpi-hwmon.c                    |  2 +-
- drivers/iio/adc/sun4i-gpadc-iio.c             |  2 +-
- drivers/input/touchscreen/sun4i-ts.c          |  2 +-
- .../ethernet/chelsio/cxgb4/cxgb4_thermal.c    |  2 +-
- .../ethernet/mellanox/mlxsw/core_thermal.c    | 16 +++----
- drivers/net/wireless/intel/iwlwifi/mvm/tt.c   |  4 +-
- drivers/platform/x86/acerhdf.c                | 19 ++------
- drivers/power/supply/power_supply_core.c      |  2 +-
- drivers/regulator/max8973-regulator.c         |  2 +-
- drivers/thermal/amlogic_thermal.c             |  4 +-
- drivers/thermal/armada_thermal.c              | 14 ++----
- drivers/thermal/broadcom/bcm2711_thermal.c    |  3 +-
- drivers/thermal/broadcom/bcm2835_thermal.c    |  3 +-
- drivers/thermal/broadcom/brcmstb_thermal.c    |  8 ++--
- drivers/thermal/broadcom/ns-thermal.c         |  2 +-
- drivers/thermal/broadcom/sr-thermal.c         |  2 +-
- drivers/thermal/da9062-thermal.c              | 13 +++--
- drivers/thermal/db8500_thermal.c              |  2 +-
- drivers/thermal/dove_thermal.c                |  7 +--
- drivers/thermal/gov_fair_share.c              |  4 +-
- drivers/thermal/gov_power_allocator.c         |  6 ++-
- drivers/thermal/gov_step_wise.c               |  4 +-
- drivers/thermal/hisi_thermal.c                |  5 +-
- drivers/thermal/imx8mm_thermal.c              |  4 +-
- drivers/thermal/imx_sc_thermal.c              |  9 ++--
- drivers/thermal/imx_thermal.c                 | 47 +++++--------------
- .../intel/int340x_thermal/int3400_thermal.c   |  2 +-
- .../int340x_thermal/int340x_thermal_zone.c    |  4 +-
- .../processor_thermal_device_pci.c            |  4 +-
- drivers/thermal/intel/intel_pch_thermal.c     |  2 +-
- .../thermal/intel/intel_quark_dts_thermal.c   |  6 +--
- drivers/thermal/intel/intel_soc_dts_iosf.c    | 13 ++---
- drivers/thermal/intel/x86_pkg_temp_thermal.c  |  4 +-
- drivers/thermal/k3_bandgap.c                  |  4 +-
- drivers/thermal/k3_j72xx_bandgap.c            |  2 +-
- drivers/thermal/kirkwood_thermal.c            |  7 +--
- drivers/thermal/max77620_thermal.c            |  6 +--
- drivers/thermal/mediatek/auxadc_thermal.c     |  4 +-
- drivers/thermal/mediatek/lvts_thermal.c       | 10 ++--
- drivers/thermal/qcom/qcom-spmi-adc-tm5.c      |  6 +--
- drivers/thermal/qcom/qcom-spmi-temp-alarm.c   |  6 +--
- drivers/thermal/qcom/tsens.c                  |  6 +--
- drivers/thermal/qoriq_thermal.c               |  4 +-
- drivers/thermal/rcar_gen3_thermal.c           |  5 +-
- drivers/thermal/rcar_thermal.c                |  8 +---
- drivers/thermal/rockchip_thermal.c            |  8 +---
- drivers/thermal/rzg2l_thermal.c               |  3 +-
- drivers/thermal/samsung/exynos_tmu.c          |  4 +-
- drivers/thermal/spear_thermal.c               | 10 ++--
- drivers/thermal/sprd_thermal.c                |  2 +-
- drivers/thermal/st/st_thermal.c               |  4 +-
- drivers/thermal/st/stm_thermal.c              |  4 +-
- drivers/thermal/sun8i_thermal.c               |  4 +-
- drivers/thermal/tegra/soctherm.c              |  6 +--
- drivers/thermal/tegra/tegra-bpmp-thermal.c    |  6 ++-
- drivers/thermal/tegra/tegra30-tsensor.c       | 31 ++++++------
- drivers/thermal/thermal-generic-adc.c         |  7 ++-
- drivers/thermal/thermal_core.c                | 26 +++++++++-
- drivers/thermal/thermal_helpers.c             |  3 ++
- drivers/thermal/thermal_hwmon.c               |  9 ++--
- drivers/thermal/thermal_hwmon.h               |  4 +-
- drivers/thermal/thermal_mmio.c                |  2 +-
- .../ti-soc-thermal/ti-thermal-common.c        | 10 ++--
- drivers/thermal/uniphier_thermal.c            |  2 +-
- include/linux/thermal.h                       | 19 ++++++++
- include/trace/events/thermal.h                | 24 +++++-----
- .../trace/events/thermal_power_allocator.h    | 12 ++---
- 72 files changed, 251 insertions(+), 270 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+deleted file mode 100644
+index 8f9abf28a8fa..000000000000
+--- a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
++++ /dev/null
+@@ -1,35 +0,0 @@
+-TC358764 MIPI-DSI to LVDS panel bridge
+-
+-Required properties:
+-  - compatible: "toshiba,tc358764"
+-  - reg: the virtual channel number of a DSI peripheral
+-  - vddc-supply: core voltage supply, 1.2V
+-  - vddio-supply: I/O voltage supply, 1.8V or 3.3V
+-  - vddlvds-supply: LVDS1/2 voltage supply, 3.3V
+-  - reset-gpios: a GPIO spec for the reset pin
+-
+-The device node can contain following 'port' child nodes,
+-according to the OF graph bindings defined in [1]:
+-  0: DSI Input, not required, if the bridge is DSI controlled
+-  1: LVDS Output, mandatory
+-
+-[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
+-
+-Example:
+-
+-	bridge@0 {
+-		reg = <0>;
+-		compatible = "toshiba,tc358764";
+-		vddc-supply = <&vcc_1v2_reg>;
+-		vddio-supply = <&vcc_1v8_reg>;
+-		vddlvds-supply = <&vcc_3v3_reg>;
+-		reset-gpios = <&gpd1 6 GPIO_ACTIVE_LOW>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		port@1 {
+-			reg = <1>;
+-			lvds_ep: endpoint {
+-				remote-endpoint = <&panel_ep>;
+-			};
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.yaml b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.yaml
+new file mode 100644
+index 000000000000..866607400514
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.yaml
+@@ -0,0 +1,89 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/bridge/toshiba,tc358764.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Toshiba TC358764 MIPI-DSI to LVDS bridge
++
++maintainers:
++  - Andrzej Hajda <andrzej.hajda@intel.com>
++
++properties:
++  compatible:
++    const: toshiba,tc358764
++
++  reg:
++    description: Virtual channel number of a DSI peripheral
++    maxItems: 1
++
++  reset-gpios:
++    maxItems: 1
++
++  vddc-supply:
++    description: Core voltage supply, 1.2V
++
++  vddio-supply:
++    description: I/O voltage supply, 1.8V or 3.3V
++
++  vddlvds-supply:
++    description: LVDS1/2 voltage supply, 3.3V
++
++  ports:
++    $ref: /schemas/graph.yaml#/properties/ports
++
++    properties:
++      port@0:
++        $ref: /schemas/graph.yaml#/properties/port
++        description:
++          Video port for MIPI DSI input, if the bridge DSI controlled
++
++      port@1:
++        $ref: /schemas/graph.yaml#/properties/port
++        description:
++          Video port for LVDS output (panel or connector).
++
++    required:
++      - port@1
++
++required:
++  - compatible
++  - reg
++  - reset-gpios
++  - vddc-supply
++  - vddio-supply
++  - vddlvds-supply
++  - ports
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        bridge@0 {
++            compatible = "toshiba,tc358764";
++            reg = <0>;
++
++            reset-gpios = <&gpd1 6 GPIO_ACTIVE_LOW>;
++            vddc-supply = <&vcc_1v2_reg>;
++            vddio-supply = <&vcc_1v8_reg>;
++            vddlvds-supply = <&vcc_3v3_reg>;
++
++            ports {
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                port@1 {
++                    reg = <1>;
++                    lvds_ep: endpoint {
++                      remote-endpoint = <&panel_ep>;
++                    };
++                };
++            };
++        };
++    };
 -- 
 2.34.1
 
