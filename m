@@ -2,96 +2,88 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44DEFC7EE2F
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 25 Feb 2023 16:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45450C7EE30
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Feb 2023 03:42:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229504AbjBYQlA (ORCPT
+        id S229681AbjBZDmN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 25 Feb 2023 11:41:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55210 "EHLO
+        Sat, 25 Feb 2023 22:42:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229674AbjBYQk7 (ORCPT
+        with ESMTP id S229697AbjBZDmJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 25 Feb 2023 11:40:59 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CB8712059
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 25 Feb 2023 08:40:58 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id p26so1687956wmc.4
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 25 Feb 2023 08:40:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=93hyDfec2pzQ0OqfcBQZLUSCJi6w4Dee8fakzIJF/Lo=;
-        b=u55skNVbzNAMNmMY57wS15v5LY2y/uvjqRS0ScvrbuTcue7SPHChCEjtW/lpMlNIni
-         b1HtB+6f/u/7SrfnLIYe3khjq1W7dtBGIklB1b14+PCQKpp7zsbTBZ6mbwq6uRMh4oX1
-         Ya0To1Bap76JVUSv0vKa3cMRE/v12Nt6QsEllzwjhlCO2CpsxoFUV45oEj16dVVwSICd
-         6EKmeAI85gX7ju+3gKTr7MxWngmxie0G9cYuoprd2Z6swoEfQVBOrCh285MAByeg499z
-         hlsrftMjTISK1NKTLj2ByjOlMD0vn/EG6bMnKPiDhnCSizJZ9JyLtSPwI5knGdmtiGxs
-         h5Jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=93hyDfec2pzQ0OqfcBQZLUSCJi6w4Dee8fakzIJF/Lo=;
-        b=Sz96OK5JLFzZmncPJCOijpIKh3bsnZRlxB472FgAzVj5fFpfVEwvI1XFjxcufXumqO
-         hFLhlK5B76dGEbc5EeBZc/ebSqtpe/Y5x+x1Q5uiHxDeiuhM2+unoEEj6ZIG28IoVQl8
-         YEoaV0Wa73hrzIy6x4NI6lwnEeBc3DYRBr+YngscX1c0AWpJnTuR6zbNuT10KUjgLPI7
-         FwV/vBGxMLbVNTw78tKEio4FTLImdiYBEwlYpIBH8MjUAjs6WWYJd2PxUdpaKIMXDO2F
-         axuFczoBSkx7k1FLf/AK841vPu5fopFW8dy5uovlt7k4UDHRpIe7BeUteGpUy3v9Et/Y
-         dSGg==
-X-Gm-Message-State: AO0yUKWfhkizq8ImApJy+QXjwbFESTtAqz4BZee8Dw82iYx4fNk02gKB
-        mxECrG+MGbJ8cdfoR7BxLHj8TA==
-X-Google-Smtp-Source: AK7set8H0d/6CvKxwPN/EpPWiObC3wRIWcGhIYxYauaZ312Cp0qfxdmTTylXsTgpAxOt5ju6iVhGxg==
-X-Received: by 2002:a05:600c:994:b0:3eb:3104:efec with SMTP id w20-20020a05600c099400b003eb3104efecmr1816212wmp.16.1677343256966;
-        Sat, 25 Feb 2023 08:40:56 -0800 (PST)
-Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id s17-20020adff811000000b002c758fe9689sm2189163wrp.52.2023.02.25.08.40.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Feb 2023 08:40:56 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] ARM: dts: exynos: drop fake align STMPE properties in P4 Note
-Date:   Sat, 25 Feb 2023 17:40:50 +0100
-Message-Id: <20230225164050.42522-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230225164050.42522-1-krzysztof.kozlowski@linaro.org>
-References: <20230225164050.42522-1-krzysztof.kozlowski@linaro.org>
+        Sat, 25 Feb 2023 22:42:09 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2A2614EA5;
+        Sat, 25 Feb 2023 19:42:04 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 56AC4B80B7F;
+        Sun, 26 Feb 2023 03:42:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E524C433A4;
+        Sun, 26 Feb 2023 03:42:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677382922;
+        bh=Swp9cal23T3bRtttDRGQ8Yv4EpqIDlMRm6uqrJbkTY4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ifbdSRsi9cvrn/daynrra6hk+vUAgki3709cE6FZguzM5yEsomA3oEVmyqWKnyxZX
+         gcNTK3gakJ/ZXLw725DZYxyi0VgnwwG7myVq2rW+6a2XtirQWxkcC/Wc33T65Z+VV6
+         CraYUtbqOytuHQb/ZjXfbsmc3uSt6MDkjSn0PUbTKDsEUm5/uRB8keb7x0jFGOKFnv
+         jlOYi4h0JICUZw5VeFjhHP6b97YXMEX+/gO1QsyApENK1Ru/I7o1olyoI/mKyN1Cf4
+         5Uu8xaOslvofuMdLBduTK3ariK6BIYnKyOJFwm9cZSvIUl0czJinWKfx13uHf4eBlg
+         zFjtIo1CK06FQ==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Markuss Broks <markuss.broks@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.2 06/21] ARM: dts: exynos: Use Exynos5420 compatible for the MIPI video phy
+Date:   Sat, 25 Feb 2023 22:41:35 -0500
+Message-Id: <20230226034150.771411-6-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230226034150.771411-1-sashal@kernel.org>
+References: <20230226034150.771411-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From STMPE device node in P4 Note remove unused irq-trigger property and
-incorrectly placed interrupt-controller (which would be a property of
-GPIO child).
+From: Markuss Broks <markuss.broks@gmail.com>
 
+[ Upstream commit 5d5aa219a790d61cad2c38e1aa32058f16ad2f0b ]
+
+For some reason, the driver adding support for Exynos5420 MIPI phy
+back in 2016 wasn't used on Exynos5420, which caused a kernel panic.
+Add the proper compatible for it.
+
+Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+Link: https://lore.kernel.org/r/20230121201844.46872-2-markuss.broks@gmail.com
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/exynos4412-p4note.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+ arch/arm/boot/dts/exynos5420.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412-p4note.dtsi b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-index 84db696d543a..317e248f354b 100644
---- a/arch/arm/boot/dts/exynos4412-p4note.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-@@ -188,8 +188,6 @@ adc@41 {
- 			pinctrl-names = "default";
- 			interrupt-parent = <&gpx0>;
- 			interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
--			interrupt-controller;
--			irq-trigger = <0x1>;
- 			st,adc-freq = <3>;
- 			st,mod-12b = <1>;
- 			st,ref-sel = <0>;
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 9f2523a873d9d..62263eb91b3cc 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -592,7 +592,7 @@ dp_phy: dp-video-phy {
+ 		};
+ 
+ 		mipi_phy: mipi-video-phy {
+-			compatible = "samsung,s5pv210-mipi-video-phy";
++			compatible = "samsung,exynos5420-mipi-video-phy";
+ 			syscon = <&pmu_system_controller>;
+ 			#phy-cells = <1>;
+ 		};
 -- 
-2.34.1
+2.39.0
 
