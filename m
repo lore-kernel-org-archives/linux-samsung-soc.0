@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3419FC64ED6
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Feb 2023 12:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 905A8C64ED6
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Feb 2023 13:40:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbjB0M2V (ORCPT
+        id S229486AbjB0NkD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Feb 2023 07:28:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46584 "EHLO
+        Mon, 27 Feb 2023 08:40:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229535AbjB0M2T (ORCPT
+        with ESMTP id S229512AbjB0NkD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Feb 2023 07:28:19 -0500
-Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02F77EC6C
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 04:28:16 -0800 (PST)
-Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-536c02eea4dso171119477b3.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 04:28:15 -0800 (PST)
+        Mon, 27 Feb 2023 08:40:03 -0500
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A42E7212AE
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 05:39:33 -0800 (PST)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-536af432ee5so177874947b3.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 05:39:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WwR6ZSekWbBuT7yj7OTRMClZyQccVnFXtI1dVPMFqqU=;
-        b=Emc8xQxFSXMvSrm+i70nSvGeFZesVg4lDXPcqr+1kCyqci31jAiQYw/aHaeWi8Vh8f
-         kVjiEWCuWvT2FYubxbZLPn6BSb5MnpuCwwn7cERSb7IActXOShQ0Ge9DBO2IPsFXEyRa
-         Ir8VVHVN3q9oSupSQe0W1W4HNo1pKt2k2NHW4=
+        bh=GmDvuWeWwR1NfTB5MwjhYnmbSux+pOX0H7za+hpaPLg=;
+        b=NYLFE9QpI+0UnHrnmum3H+Z7MQOatraF7RCS4fwhXBrS6vpY43tQsG2CNLmYnJv7JN
+         ve3bYddDFBod3aRtKXLyVr0TJtKrOqqhLcF7LrHqWG0DxYVIq6WDVS3f3z2zxESU0A08
+         vYhTQk46TdqUV9UVl1a+6XwF0XIIIL9OaBziU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WwR6ZSekWbBuT7yj7OTRMClZyQccVnFXtI1dVPMFqqU=;
-        b=Ou0H+3nICj2JZS2kIz7ZFh05uW3ZuptD2B25O+qrZQ2IrGMBFLoAmXP9Db8m2+iVwf
-         YXRLTO/MxVk6XGDY1lNxgTf/7/uLwWSKs6lqOdZ3LDa5OHN+kL73R5TP3jDBD+HQ19iH
-         lOk5RzTNyycvUUdxgflGqZxe8nIGKQQbqyOXjJl8KWrt2E5ekynzlfDxnORoz14AG4+Z
-         VTt7+BYbR8fH1jbB3bULnmHhET763rMZG77O2M3B69j5tiwcYvdrsTmTO4xsKBaRaFeT
-         M4t/qQdyVXguvlZ+hLYH0XelnxfxQZnswv2faR1LnG58kdpsZjMcPGg7J/9BEjRkA+ow
-         FE3A==
-X-Gm-Message-State: AO0yUKVKEZOcs7ELI4vf6YVVUmnCtogFJbCYi2tRAYuhKvlhZX7qtEVL
-        +KX8hQ8KlldG/s4POIhsHG6/8rVTUo7pcJWGb7LpSA==
-X-Google-Smtp-Source: AK7set/J1/v6xMiecz4aEizWMrNP2r+5Uo6EjVIK1FJeWxI5ysPY4sPzBtm5HepMje66xHgnhJKxP8ZzBK4nloEmtfE=
-X-Received: by 2002:a81:ac60:0:b0:52a:92e9:27c1 with SMTP id
- z32-20020a81ac60000000b0052a92e927c1mr10155528ywj.10.1677500895190; Mon, 27
- Feb 2023 04:28:15 -0800 (PST)
+        bh=GmDvuWeWwR1NfTB5MwjhYnmbSux+pOX0H7za+hpaPLg=;
+        b=0OCqpelJeYvCR2spHkDOAIuMvzTo3Z8alQWOc89i/O0wFB4iiiw7Px2SDiozfKS6S3
+         bVOo591bokibjxyapFSuIEt6jJvhzk8/MRGM7tQtsf7mpmToXted3SFO9vTdn+pTKODJ
+         wlBPAnMfuXvbJDhwwxqht65BF8abB7hVXE3/W+LsyJONupdvIdPEptLZarwQKHdHrHG6
+         gpQdk+y1P0+0VOHOpeVNaagDgfRkDGD9Gdvk6WCM8xdJEYCnzANdXPLeRQNFNXz0lqoN
+         vNrcOA7Vu3iRZA+ShJDSzy7o5SWAs0tFiHW6ekVWxct3motzb6DkoSMYk1qDCzVt6Sg2
+         f0tg==
+X-Gm-Message-State: AO0yUKUlLo5kbSx6hdvNEXAjp/L27ht6u07GgwQ+j3Rz4gWtIdMfU1im
+        6kR57KShb4kSWTcId0FSDGgbT5CsckuuWQ4H+NPOSw==
+X-Google-Smtp-Source: AK7set8kFQgyTHGcP27mh+pe13xESHXkPJJaZW2zuDBhNZwK1lNafr9AeRkeW2rudQd4w7lKwVWCT8HMCW4XhjocZsQ=
+X-Received: by 2002:a81:ac5c:0:b0:533:9b80:a30e with SMTP id
+ z28-20020a81ac5c000000b005339b80a30emr10095336ywj.10.1677505158600; Mon, 27
+ Feb 2023 05:39:18 -0800 (PST)
 MIME-Version: 1.0
 References: <20230227113925.875425-1-jagan@amarulasolutions.com>
  <20230227113925.875425-3-jagan@amarulasolutions.com> <20230227121149.c3ibajgog3i2s2ek@houat>
 In-Reply-To: <20230227121149.c3ibajgog3i2s2ek@houat>
 From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 27 Feb 2023 17:58:03 +0530
-Message-ID: <CAMty3ZDt64C0dv2=wVcaCLdZVFU2u6D4EKswuoqEjvByKyMseg@mail.gmail.com>
+Date:   Mon, 27 Feb 2023 19:09:07 +0530
+Message-ID: <CAMty3ZAnJHabRrdV+ndzYhLaMPXBTYvhC=XP5=Gv2KvwTxxQNQ@mail.gmail.com>
 Subject: Re: [PATCH v13 02/18] drm: bridge: panel: Support nodrm case for drmm_panel_bridge_add
 To:     Maxime Ripard <maxime@cerno.tech>
 Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
@@ -121,23 +121,14 @@ On Mon, Feb 27, 2023 at 5:41 PM Maxime Ripard <maxime@cerno.tech> wrote:
 > > +
 >
 > Why can't the caller use bridge->dev?
-
-The first step of drmm_panel_bridge_add is to find the panel-bridge,
-so we can only get bridge->dev after this step. The caller doesn't
-know anything about the panel bridge it just sends a panel pointer to
-find the panel-bridge and then assigns bridge->dev to drm for DRM
-action.
-
-Please check this patch about the caller,
-https://patchwork.kernel.org/project/dri-devel/patch/20230227113925.875425-5-jagan@amarulasolutions.com/
-
 >
 > Also, where did the devm_drm_of_dsi_get_bridge go? I thought you were
 > going to convert it to a drm-managed version?
 
-Look like your suggestion to can't use devm_drm_of_dsi_get_bridge and
-call the DRM-action from the driver, that is the reason I have removed
-this and done the same as your previous inputs.
-https://lore.kernel.org/all/20230203110437.otzl2azscbujigv6@houat/
+I found another solution that supports DRM-managed action common
+across dsi and normal bridges, can I send those patches alone by
+excluding them from this series?
+
+Please let me know.
 
 Jagan.
