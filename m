@@ -2,52 +2,52 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F640C64ED8
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Feb 2023 11:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9EB7C64ED8
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Feb 2023 11:40:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229657AbjB0LkI (ORCPT
+        id S229566AbjB0LkP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Feb 2023 06:40:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37982 "EHLO
+        Mon, 27 Feb 2023 06:40:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229639AbjB0LkH (ORCPT
+        with ESMTP id S229562AbjB0LkO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Feb 2023 06:40:07 -0500
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D02F21284A
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 03:40:06 -0800 (PST)
-Received: by mail-pl1-x635.google.com with SMTP id ky4so6394241plb.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 03:40:06 -0800 (PST)
+        Mon, 27 Feb 2023 06:40:14 -0500
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5239F14209
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 03:40:13 -0800 (PST)
+Received: by mail-pl1-x633.google.com with SMTP id y11so2228359plg.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 03:40:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=N1ZnzcX6mJcklgIlxO4H+jhNQQoX1Q7wrMHIRpiIlXQ=;
-        b=gPmtRl7o/gvgryv9Forg6QUIlY4pxym14sRc75prF3j8+RJzmSIINSVdMaENOs1e5g
-         KAk0UL5oiDxhVixkLGLKLcd6AlhoblZ5QY6ZfyC4+V4Ng4Si2AKgM+TidR/HX1MA2Ih5
-         n+85lVvWCrrKoSvHcORCVU88KrfneKq/Wy1os=
+        bh=OIgviWBqKUtGyYA8pNcGlHAIxKkXaoAhqP3nf0sw740=;
+        b=rOiJ8pyf9kmHJjVRYdsBFOn86aOpsqmNLaPTTXPNvp/OLocQQiYgOkP3MYLb5ubNtC
+         kqRDW1tyqgXGYUoFC31gGKSyHB8WJGsueLh17oUzeuQxZx5t/zuUmT9wF+XnmFVRdPTq
+         SOg3NlHis5PfCNdG5YsiPd5j3d+bhWaAF6RdA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=N1ZnzcX6mJcklgIlxO4H+jhNQQoX1Q7wrMHIRpiIlXQ=;
-        b=DGdjvCQGIo+93WaJlMW/Z+sv26a32XN6rnkA5vZh6PpJaz/1v33lCbYqmWOq1UAv/P
-         NWPc8MXFHEfGCmFpE1IXh+RMDUXm7cL6m/2pdlVQgsLtolaTxRdkbOMvsb1uvjmcVpmY
-         mEfexD7IwFiAzhSl8EbxWfDT0JChqYdFAvUvSfb8WcWjeKB0Cu//aokVgs3PaTu2mUuE
-         ToENUIL993lIxluPZv/pC++wCzxa6NFfHY9xAkvubGOggV2ZD35FLpikQZIIKVncnLxG
-         7vdTDNmlVDMbfnXpIX2i8F+gaGw/pwEYv2Q5yjJo0dWRuecCN7L3du9jsG6NEOuOuZFW
-         JOLA==
-X-Gm-Message-State: AO0yUKW7zFMNvNzqTi2fEoWJBZYDJlBIGjIzNNcK/QKDh0/+M2t3Ci8r
-        g70AoJ5uqNsVFKMq36SvEid9S3G98EAOEngBECs=
-X-Google-Smtp-Source: AK7set/sHrlW+bT0OuPrRs9R8JYcXfvDbAW5REUG+10aoyqgeKq6Zk8Q/5QxU9HPeAUD+xb8ZkTZxQ==
-X-Received: by 2002:a17:902:d48b:b0:19d:20d7:d51 with SMTP id c11-20020a170902d48b00b0019d20d70d51mr1628482plg.29.1677498006324;
-        Mon, 27 Feb 2023 03:40:06 -0800 (PST)
+        bh=OIgviWBqKUtGyYA8pNcGlHAIxKkXaoAhqP3nf0sw740=;
+        b=ABjGimnD9ptxAuAnZ2vqWLuhIotusD/3AH1ISNg1SqNEr8X4rr6etQF7wY1NITUQQD
+         qsXyISkeuoCb0qT9CbjXFBR6XJnn/OePTpw3wE+0ADkoUpsIKDnGCRJJoc8oGEf92kF5
+         2BIzsfiEAjgQpGTGjy7zCZSvCzwplUi48np179xkLlmzRiLQJXih3ASf8rXATxPTcsqO
+         m/Xf95PEcWjvya9EflKcT3IZDIlkfEPvC3CegkNd2jH5kZvtrZjtfWkt66y2XLz9wHP3
+         gwnnw7JGtokmeVM8TNOvEq16888YJ+FNSfRiYBALl4Xg1xaGLJP79eDVJi5Bo8mUmzhY
+         asnw==
+X-Gm-Message-State: AO0yUKWnRaxgekSn7un2B6sYqtd3b0QgyYYFw1q8HW6qBLev1Pue8mLp
+        cddBBGrjoMV0hGSXt6bh9dZYdg==
+X-Google-Smtp-Source: AK7set8IpvK1WwFCHMF+/wUkuolgkNdF5M5D/xwxylDkjMmreSt7PbWPqSfF/mjoXnRcQURBcC+wCg==
+X-Received: by 2002:a17:903:18d:b0:19c:f232:4604 with SMTP id z13-20020a170903018d00b0019cf2324604mr7364687plg.10.1677498012743;
+        Mon, 27 Feb 2023 03:40:12 -0800 (PST)
 Received: from localhost.localdomain ([94.140.8.120])
-        by smtp.gmail.com with ESMTPSA id k10-20020a170902ba8a00b0019c919bccf8sm4395277pls.86.2023.02.27.03.39.59
+        by smtp.gmail.com with ESMTPSA id k10-20020a170902ba8a00b0019c919bccf8sm4395277pls.86.2023.02.27.03.40.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Feb 2023 03:40:05 -0800 (PST)
+        Mon, 27 Feb 2023 03:40:12 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
@@ -65,9 +65,9 @@ Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v13 04/18] drm: exynos: dsi: Switch to DSI panel or bridge find helper
-Date:   Mon, 27 Feb 2023 17:09:11 +0530
-Message-Id: <20230227113925.875425-5-jagan@amarulasolutions.com>
+Subject: [PATCH v13 05/18] drm: exynos: dsi: Mark PHY as optional
+Date:   Mon, 27 Feb 2023 17:09:12 +0530
+Message-Id: <20230227113925.875425-6-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230227113925.875425-1-jagan@amarulasolutions.com>
 References: <20230227113925.875425-1-jagan@amarulasolutions.com>
@@ -77,81 +77,47 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-drm_of_dsi_find_panel_or_bridge is capable of looking up the
-downstream DSI bridge and panel and trying to add a panel bridge
-if the panel is found.
+The same Samsung MIPI DSIM master can also be used in NXP's
+i.MX8M Mini/Nano/Plus SoC.
 
-Replace explicit finding calls with drm_of_dsi_find_panel_or_bridge
-followed with drmm_panel_bridge_add.
+In i.MX8M Mini/Nano/Plus SoC the DSI Phy requires a MIPI DPHY
+bit to reset in order to activate the PHY and that can be done
+via upstream i.MX8M blk-ctrl driver.
 
+So, mark the phy get as optional.
+
+Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+Reviewed-by: Marek Vasut <marex@denx.de>
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
-Changes for v13, v12, v11:
+Changes for v13, v12:
 - none
+Changes for v11:
+- collect Frieder RB
 Changes for v10:
+- add Plus in commit message
+- collect Marek RB
+Changes for v9, v8, v7, v6, v5, v4, v3, v2:
+- none
+Changes for v1:
 - new patch
 
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index df15501b1075..12a6dd987e8f 100644
+index 12a6dd987e8f..529e010291c8 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -25,6 +25,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_bridge.h>
- #include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_of.h>
- #include <drm/drm_panel.h>
- #include <drm/drm_print.h>
- #include <drm/drm_probe_helper.h>
-@@ -1470,24 +1471,26 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
- 	struct device *dev = dsi->dev;
- 	struct drm_encoder *encoder = &dsi->encoder;
- 	struct drm_device *drm = encoder->dev;
-+	struct drm_bridge *bridge;
- 	struct drm_panel *panel;
- 	int ret;
+@@ -1699,7 +1699,7 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	if (IS_ERR(dsi->reg_base))
+ 		return PTR_ERR(dsi->reg_base);
  
--	panel = of_drm_find_panel(device->dev.of_node);
--	if (!IS_ERR(panel)) {
--		dsi->out_bridge = devm_drm_panel_bridge_add(dev, panel);
--	} else {
--		dsi->out_bridge = of_drm_find_bridge(device->dev.of_node);
--		if (!dsi->out_bridge)
--			dsi->out_bridge = ERR_PTR(-EINVAL);
--	}
-+	ret = drm_of_dsi_find_panel_or_bridge(dev->of_node, 1, 0,
-+					      &panel, &bridge);
-+	if (ret)
-+		return ret;
- 
--	if (IS_ERR(dsi->out_bridge)) {
--		ret = PTR_ERR(dsi->out_bridge);
-+	if (panel)
-+		bridge = drmm_panel_bridge_add(NULL, panel);
-+
-+	if (IS_ERR(bridge)) {
-+		ret = PTR_ERR(bridge);
- 		DRM_DEV_ERROR(dev, "failed to find the bridge: %d\n", ret);
- 		return ret;
- 	}
- 
-+	dsi->out_bridge = bridge;
-+
- 	DRM_DEV_INFO(dev, "Attached %s device\n", device->name);
- 
- 	drm_bridge_add(&dsi->bridge);
-@@ -1531,8 +1534,6 @@ static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
- 	struct exynos_dsi *dsi = host_to_dsi(host);
- 	struct drm_device *drm = dsi->encoder.dev;
- 
--	dsi->out_bridge = NULL;
--
- 	if (drm->mode_config.poll_enabled)
- 		drm_kms_helper_hotplug_event(drm);
- 
+-	dsi->phy = devm_phy_get(dev, "dsim");
++	dsi->phy = devm_phy_optional_get(dev, "dsim");
+ 	if (IS_ERR(dsi->phy)) {
+ 		dev_info(dev, "failed to get dsim phy\n");
+ 		return PTR_ERR(dsi->phy);
 -- 
 2.25.1
 
