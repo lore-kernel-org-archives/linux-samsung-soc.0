@@ -2,540 +2,211 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E504C7EE2D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Feb 2023 19:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93FB4C64ED8
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Feb 2023 19:49:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230269AbjB0ToI (ORCPT
+        id S229978AbjB0Tti (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Feb 2023 14:44:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53834 "EHLO
+        Mon, 27 Feb 2023 14:49:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230228AbjB0Tn7 (ORCPT
+        with ESMTP id S229542AbjB0Tth (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Feb 2023 14:43:59 -0500
-Received: from out-30.mta1.migadu.com (out-30.mta1.migadu.com [IPv6:2001:41d0:203:375::1e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B10926591
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 11:43:54 -0800 (PST)
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-        t=1677527032;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DFNXv49Gr4458wUoorl9fh1TIeOHEc9EHno2oprZQpY=;
-        b=hFonr6R4dEWocYvjd5TYLtP/DyMOekuJW5ky8S1b7bjvRNFElKJxiUEgO2YDPTDLDMlK2A
-        wmSHhH4rgAy50MkWh0np8kaNOTcH1whJGlHpfStaUMiNehIzwn09yriEb+jPUiqny5Mc0k
-        0vSb6uIJAmcdW1mupquN5XblBqFyfBg=
-From:   Henrik Grimler <henrik@grimler.se>
-To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        alim.akhtar@samsung.com, m.szyprowski@samsung.com,
-        jenneron@protonmail.com, markuss.broks@gmail.com,
-        martin.juecker@gmail.com, virag.david003@gmail.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Cc:     Henrik Grimler <henrik@grimler.se>,
-        Valentine Iourine <iourine@iourine.msk.su>
-Subject: [PATCH v3 2/2] ARM: dts: exynos: add mmc aliases
-Date:   Mon, 27 Feb 2023 20:38:19 +0100
-Message-Id: <20230227193819.30133-3-henrik@grimler.se>
-In-Reply-To: <20230227193819.30133-1-henrik@grimler.se>
-References: <20230227193819.30133-1-henrik@grimler.se>
+        Mon, 27 Feb 2023 14:49:37 -0500
+Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 824E0199D7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 11:49:36 -0800 (PST)
+Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-5384ff97993so208199997b3.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 11:49:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cfgMa6MI3iWpbT/swEza+T2yjOIbdOUut5Vc7UuIZtg=;
+        b=nHC+E8z7U05lspS2iBYiDEmfrklJdr3yYOG1D5WdDTkzPqFpRD901mkkxd3fMhMWZo
+         3HkJyEiSKO/XgzrWnGs+2/9tdhe6P0eu2M0US0wPAGgQPwUd6aUutTLABr3+RqZTHG2e
+         vDkRIkIVUBHPd7YGa/i9U7mwTnn1JWtetIbNI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cfgMa6MI3iWpbT/swEza+T2yjOIbdOUut5Vc7UuIZtg=;
+        b=LGYNLdNJC+4TRBV4gKKRaVjgBHPa+17PnF2yrDQo72jgDm99xpRP9u4xUc9n3syy4p
+         tO2jb6L/eTI75jao8FmvN5LxO1+IiMwq/hro0j9hUsoadoRjc0vRbFfHbd3+M2Gx1dKk
+         0cTLWXHiY+3bAQOeOIVCnpRiLnXDZwR/iDfs4gFU7tOGHnBrqWQHuUtSUjv3ueSfusvL
+         OLXSuLAQd5FSJYW+G5l9bcjegMWhXH42sTM+kKMBZyRZ44qqVfcbjtBQQNm6xagJm3yE
+         naP8LPtRlCYu90fCu69Xg0fmCsPjG5tUQSXK05r/DptqGZ3hePgUCG3fF/Iqt7Y+eMEi
+         yrSw==
+X-Gm-Message-State: AO0yUKXsJjII9XqJF9XAm7bE/vCh8uBhcJAM//5C0bdNJtELtWhrtvKP
+        PIdjxsk9VQy2fvdtT5CXT6eY6c0oxHFeHauYbPOzSQ==
+X-Google-Smtp-Source: AK7set9dWGptuEVM4B3PEI8tKK6q5bsBta7RCgcJRboIZHkg6FZQJa+imOgfrwrT3RG3+bxt4u/KvdtdJ8h9Rncy7u8=
+X-Received: by 2002:a05:6902:305:b0:98e:6280:74ca with SMTP id
+ b5-20020a056902030500b0098e628074camr9757466ybs.1.1677527375542; Mon, 27 Feb
+ 2023 11:49:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20230227113925.875425-1-jagan@amarulasolutions.com>
+ <20230227113925.875425-5-jagan@amarulasolutions.com> <3c2f91d3-0406-7730-d4e4-c94868f23c91@denx.de>
+ <CAMty3ZA6_pKiOK6gWq4iQFtKsoxfUgnSFBqkgDBzEp1DcBEt3A@mail.gmail.com>
+ <7b59aaf9-1f72-fd9f-29ac-1857ec3f91f3@denx.de> <CAMty3ZC6vqpFfdh2F=KUsAgm_KCksVXBV9ON1csjJd1m+gJpVQ@mail.gmail.com>
+ <6066dff9-5a66-0da5-14d9-66162a2fbb39@denx.de> <CAMty3ZDjwD+3SKJiOgZLbYYTtq=udWkXbqnsyYaM73rsYxDumQ@mail.gmail.com>
+ <47b8ad7d-cfc1-112c-2117-cb3612c1bba5@denx.de>
+In-Reply-To: <47b8ad7d-cfc1-112c-2117-cb3612c1bba5@denx.de>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Tue, 28 Feb 2023 01:19:23 +0530
+Message-ID: <CAMty3ZDMJFW36g5=A1=_08VT1dZUMemEg3YcQMh08iZNRa+cTw@mail.gmail.com>
+Subject: Re: [PATCH v13 04/18] drm: exynos: dsi: Switch to DSI panel or bridge
+ find helper
+To:     Marek Vasut <marex@denx.de>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Adam Ford <aford173@gmail.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add aliases for eMMC, SD card and WiFi where applicable, so that
-assigned mmc indeces are always the same.
+On Tue, Feb 28, 2023 at 1:11 AM Marek Vasut <marex@denx.de> wrote:
+>
+> On 2/27/23 20:34, Jagan Teki wrote:
+> > On Tue, Feb 28, 2023 at 12:54 AM Marek Vasut <marex@denx.de> wrote:
+> >>
+> >> On 2/27/23 20:15, Jagan Teki wrote:
+> >>> On Tue, Feb 28, 2023 at 12:38 AM Marek Vasut <marex@denx.de> wrote:
+> >>>>
+> >>>> On 2/27/23 20:01, Jagan Teki wrote:
+> >>>>> On Tue, Feb 28, 2023 at 12:25 AM Marek Vasut <marex@denx.de> wrote:
+> >>>>>>
+> >>>>>> On 2/27/23 12:39, Jagan Teki wrote:
+> >>>>>>> drm_of_dsi_find_panel_or_bridge is capable of looking up the
+> >>>>>>> downstream DSI bridge and panel and trying to add a panel bridge
+> >>>>>>> if the panel is found.
+> >>>>>>>
+> >>>>>>> Replace explicit finding calls with drm_of_dsi_find_panel_or_bridge
+> >>>>>>> followed with drmm_panel_bridge_add.
+> >>>>>>>
+> >>>>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> >>>>>>> ---
+> >>>>>>> Changes for v13, v12, v11:
+> >>>>>>> - none
+> >>>>>>> Changes for v10:
+> >>>>>>> - new patch
+> >>>>>>>
+> >>>>>>>      drivers/gpu/drm/exynos/exynos_drm_dsi.c | 25 +++++++++++++------------
+> >>>>>>>      1 file changed, 13 insertions(+), 12 deletions(-)
+> >>>>>>>
+> >>>>>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> >>>>>>> index df15501b1075..12a6dd987e8f 100644
+> >>>>>>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> >>>>>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> >>>>>>> @@ -25,6 +25,7 @@
+> >>>>>>>      #include <drm/drm_atomic_helper.h>
+> >>>>>>>      #include <drm/drm_bridge.h>
+> >>>>>>>      #include <drm/drm_mipi_dsi.h>
+> >>>>>>> +#include <drm/drm_of.h>
+> >>>>>>>      #include <drm/drm_panel.h>
+> >>>>>>>      #include <drm/drm_print.h>
+> >>>>>>>      #include <drm/drm_probe_helper.h>
+> >>>>>>> @@ -1470,24 +1471,26 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+> >>>>>>>          struct device *dev = dsi->dev;
+> >>>>>>>          struct drm_encoder *encoder = &dsi->encoder;
+> >>>>>>>          struct drm_device *drm = encoder->dev;
+> >>>>>>> +     struct drm_bridge *bridge;
+> >>>>>>>          struct drm_panel *panel;
+> >>>>>>>          int ret;
+> >>>>>>>
+> >>>>>>> -     panel = of_drm_find_panel(device->dev.of_node);
+> >>>>>>> -     if (!IS_ERR(panel)) {
+> >>>>>>> -             dsi->out_bridge = devm_drm_panel_bridge_add(dev, panel);
+> >>>>>>> -     } else {
+> >>>>>>> -             dsi->out_bridge = of_drm_find_bridge(device->dev.of_node);
+> >>>>>>> -             if (!dsi->out_bridge)
+> >>>>>>> -                     dsi->out_bridge = ERR_PTR(-EINVAL);
+> >>>>>>> -     }
+> >>>>>>
+> >>>>>> As far as I understand this from my conversation with Maxime (please put
+> >>>>>> him on CC of V15), the change here should instead perform the panel look
+> >>>>>> up NOT in exynos_dsi_host_attach() , but in exynos_dsi_bind() , i.e. in
+> >>>>>> the component_ops .bind callback . Here is an example of correct
+> >>>>>> implementation:
+> >>>>>>
+> >>>>>> https://cgit.freedesktop.org/drm-misc/tree/drivers/gpu/drm/vc4/vc4_dsi.c#n1805
+> >>>>>
+> >>>>> But, we don't have component_ops.bind for imx8m case, so where do we
+> >>>>> want to place the panel hook?
+> >>>>>
+> >>>>> Exynos drm drivers are component-based but, imx8mm is not.
+> >>>>
+> >>>> In 14/18 patch, the same should be added to generic_dsim_register_host()
+> >>>> , which is called from the driver .probe() callback, but that is OK.
+> >>>>
+> >>>> That's ^ is the iMX part.
+> >>>
+> >>> Ohh. You mean, we need to find the panel hook separately in two places like
+> >>> - bind for exynos
+> >>> - probe for imx8mm
+> >>
+> >> Yes
+> >>
+> >>> If so? how can I find the drm_device pointer in the probe?
+> >>
+> >> What for ? The panel lookup uses OF graph . Where do you need the
+> >> drm_device in it ?
+> >
+> > May I can summarize the whole setback here so that everybody is on the
+> > same page and find the proper solution?
+> >
+> > The key blocker is accessing the DRM pointer in order to use the
+> > DRM-managed action helper.
+> >
+> > 1. If we find the panel hook in Exynos component_ops.bind then we can
+> > use the DRM pointer directly as VC4 does.
+> > 2. if we find the panel hook in Samsung drm_bridge_funcs.attach (for
+> > imx8mm) then we can use the DRM pointer directly via bridge->dev.
+> >
+> > If we make 2) has common across like finding the panel hook in
+> > drm_bridge_funcs.attach the Exynos drm pipeline cannot find the
+> > panels.
+> >
+> > The common solution for both exynos and imx8m is host.attach but if we
+> > do so we cannot get find the DRM pointer.
+>
+> There isn't going to be common solution, you would really have to do the
+> look up in component_ops .bind callback for exynos , and
+> generic_dsim_register_host() for i.MX .
+>
+> > If we go ahead with no need for DRM-managed helper at the moment, then
+> > find the panel hook in host.attach and then drop 2/18.
+>
+> The panel lookup must happen in .bind/.probe for exynos/imx respectively
+> , that's really all that is required here. Then you can drop 1,2,3/18
+> and get this series applied (I hope) .
 
-Co-developed-by: Anton Bambura <jenneron@protonmail.com>
-Signed-off-by: Anton Bambura <jenneron@protonmail.com>
-[ Tested on exynos5800-peach-pi ]
-Tested-by: Valentine Iourine <iourine@iourine.msk.su>
-Signed-off-by: Henrik Grimler <henrik@grimler.se>
----
+I'm not quite sure, if the panel hook in .bind work for exynos or not?
+the host. attach has KMS hotplug code after the panel hook and
+bridge_attach as before. I believe that is a working scenario for
+Exynos to be the panel hook in the host. attach.
 
-Changes since v2:
-* Reword commit message
-* Fix whitespace issues
+>
+> Can you implement just this one change ?
+>
+> There is no need to use drmm_* helper for now, that can be improved
+> later if possible.
 
- arch/arm/boot/dts/exynos3250-artik5-eval.dts        | 5 +++++
- arch/arm/boot/dts/exynos3250-artik5.dtsi            | 5 +++++
- arch/arm/boot/dts/exynos3250-monk.dts               | 1 +
- arch/arm/boot/dts/exynos3250-rinato.dts             | 2 ++
- arch/arm/boot/dts/exynos4210-i9100.dts              | 6 ++++++
- arch/arm/boot/dts/exynos4210-origen.dts             | 5 +++++
- arch/arm/boot/dts/exynos4210-smdkv310.dts           | 4 ++++
- arch/arm/boot/dts/exynos4210-trats.dts              | 6 ++++++
- arch/arm/boot/dts/exynos4210-universal_c210.dts     | 6 ++++++
- arch/arm/boot/dts/exynos4412-midas.dtsi             | 3 +++
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi     | 5 +++++
- arch/arm/boot/dts/exynos4412-origen.dts             | 5 +++++
- arch/arm/boot/dts/exynos4412-p4note.dtsi            | 6 ++++++
- arch/arm/boot/dts/exynos4412-smdk4412.dts           | 4 ++++
- arch/arm/boot/dts/exynos4412-tiny4412.dts           | 4 ++++
- arch/arm/boot/dts/exynos5250-arndale.dts            | 5 +++++
- arch/arm/boot/dts/exynos5250-smdk5250.dts           | 2 ++
- arch/arm/boot/dts/exynos5250-snow-common.dtsi       | 3 +++
- arch/arm/boot/dts/exynos5250-spring.dts             | 5 +++++
- arch/arm/boot/dts/exynos5260-xyref5260.dts          | 5 +++++
- arch/arm/boot/dts/exynos5410-odroidxu.dts           | 2 ++
- arch/arm/boot/dts/exynos5410-smdk5410.dts           | 5 +++++
- arch/arm/boot/dts/exynos5420-arndale-octa.dts       | 5 +++++
- arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi | 5 +++++
- arch/arm/boot/dts/exynos5420-peach-pit.dts          | 3 +++
- arch/arm/boot/dts/exynos5420-smdk5420.dts           | 5 +++++
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi       | 4 ++++
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi  | 4 ++++
- arch/arm/boot/dts/exynos5800-peach-pi.dts           | 3 +++
- 29 files changed, 123 insertions(+)
+If this is the case then 1/18 will need otherwise we can drop 1,2,3/18
+by doing the panel hook we did in v7
+https://patchwork.kernel.org/project/dri-devel/patch/20221005151309.7278-3-jagan@amarulasolutions.com/
 
-diff --git a/arch/arm/boot/dts/exynos3250-artik5-eval.dts b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-index a1e22f630638..83266a66124b 100644
---- a/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-+++ b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-@@ -16,6 +16,11 @@ / {
- 	model = "Samsung ARTIK5 evaluation board";
- 	compatible = "samsung,artik5-eval", "samsung,artik5",
- 			"samsung,exynos3250", "samsung,exynos3";
-+
-+	aliases {
-+		mmc2 = &mshc_2;
-+	};
-+
- };
- 
- &mshc_2 {
-diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-index 794cbf579316..9cdcd8bf15ac 100644
---- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-@@ -17,6 +17,11 @@
- / {
- 	compatible = "samsung,artik5", "samsung,exynos3250", "samsung,exynos3";
- 
-+	aliases {
-+		mmc0 = &mshc_0;
-+		mmc1 = &mshc_1;
-+	};
-+
- 	chosen {
- 		stdout-path = &serial_2;
- 	};
-diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-index 2aaeb6f8140b..9b71ba4e44d9 100644
---- a/arch/arm/boot/dts/exynos3250-monk.dts
-+++ b/arch/arm/boot/dts/exynos3250-monk.dts
-@@ -22,6 +22,7 @@ / {
- 
- 	aliases {
- 		i2c7 = &i2c_max77836;
-+		mmc0 = &mshc_0;
- 	};
- 
- 	memory@40000000 {
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index 199c9bffa84e..b392c32252bd 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -23,6 +23,8 @@ / {
- 
- 	aliases {
- 		i2c7 = &i2c_max77836;
-+		mmc0 = &mshc_0;
-+		mmc1 = &mshc_1;
- 	};
- 
- 	chosen {
-diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
-index 69f538f79c65..86512e81dafe 100644
---- a/arch/arm/boot/dts/exynos4210-i9100.dts
-+++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-@@ -25,6 +25,12 @@ memory@40000000 {
- 		reg = <0x40000000 0x40000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &sdhci_0;
-+		mmc2 = &sdhci_2;
-+		mmc3 = &sdhci_3;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index 8ce648e1a7f1..044a8f279b3b 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -30,6 +30,11 @@ memory@40000000 {
- 		       0x70000000 0x10000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &sdhci_0;
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M init=/linuxrc";
- 		stdout-path = "serial2:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index 181c99eca675..cb74af41e17c 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -25,6 +25,10 @@ memory@40000000 {
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M init=/linuxrc";
- 		stdout-path = "serial1:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index 88ca2ae405d6..73cb47e4474b 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -26,6 +26,12 @@ memory@40000000 {
- 			0x70000000 0x10000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &sdhci_0;
-+		mmc2 = &sdhci_2;
-+		mmc3 = &sdhci_3;
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/mmcblk0p5 rootwait earlyprintk panic=5";
- 		stdout-path = "serial2:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index 2b8c4d6e77ca..b4ca08a0f700 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -24,6 +24,12 @@ memory@40000000 {
- 			0x50000000 0x10000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &sdhci_0;
-+		mmc2 = &sdhci_2;
-+		mmc3 = &sdhci_3;
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/mmcblk0p5 rw rootwait earlyprintk panic=5 maxcpus=1";
- 		stdout-path = "serial2:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
-index 6ea44e57f216..eef8a2ea7bab 100644
---- a/arch/arm/boot/dts/exynos4412-midas.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
-@@ -25,6 +25,9 @@ / {
- 	aliases {
- 		i2c11 = &i2c_max77693;
- 		i2c12 = &i2c_max77693_fuel;
-+		mmc0 = &mshc_0;
-+		mmc2 = &sdhci_2;
-+		mmc3 = &sdhci_3;
- 	};
- 
- 	chosen {
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 1a8502d81274..8fac28c3943a 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -13,6 +13,11 @@
- #include "exynos-mfc-reserved-memory.dtsi"
- 
- / {
-+	aliases {
-+		mmc0 = &mshc_0;
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		stdout-path = &serial_1;
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index 878d7cf85f9d..fd3d02761cd2 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -25,6 +25,11 @@ memory@40000000 {
- 		reg = <0x40000000 0x40000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mshc_0;
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-p4note.dtsi b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-index e598f48b091a..a754c132e566 100644
---- a/arch/arm/boot/dts/exynos4412-p4note.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-@@ -26,6 +26,12 @@ memory@40000000 {
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mshc_0;
-+		mmc2 = &sdhci_2;
-+		mmc3 = &sdhci_3;
-+	};
-+
- 	chosen {
- 		stdout-path = &serial_2;
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-index a40ff394977c..2d27bfab8ecd 100644
---- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-@@ -22,6 +22,10 @@ memory@40000000 {
- 		reg = <0x40000000 0x40000000>;
- 	};
- 
-+	aliases {
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M init=/linuxrc";
- 		stdout-path = "serial1:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-index e0b6162d2e2a..3dac7fed96d7 100644
---- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-@@ -17,6 +17,10 @@ / {
- 	model = "FriendlyARM TINY4412 board based on Exynos4412";
- 	compatible = "friendlyarm,tiny4412", "samsung,exynos4412", "samsung,exynos4";
- 
-+	aliases {
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		stdout-path = &serial_0;
- 	};
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index 6f010e439141..d6139c8d43d8 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -23,6 +23,11 @@ memory@40000000 {
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index f7d4017e1ede..fea3959e5ed3 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -17,6 +17,8 @@ / {
- 	compatible = "samsung,smdk5250", "samsung,exynos5250", "samsung,exynos5";
- 
- 	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
- 	};
- 
- 	memory@40000000 {
-diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-index dea2dc818578..59b2cc35c37b 100644
---- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-@@ -15,6 +15,9 @@
- / {
- 	aliases {
- 		i2c104 = &i2c_104;
-+		mmc0 = &mmc_0; /* eMMC */
-+		mmc1 = &mmc_2; /* SD */
-+		mmc2 = &mmc_3; /* WiFi */
- 	};
- 
- 	memory@40000000 {
-diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
-index 8980cdbdcb3b..c12bb17631b7 100644
---- a/arch/arm/boot/dts/exynos5250-spring.dts
-+++ b/arch/arm/boot/dts/exynos5250-spring.dts
-@@ -23,6 +23,11 @@ memory@40000000 {
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc1 = &mmc_1;
-+	};
-+
- 	chosen {
- 		bootargs = "console=tty1";
- 		stdout-path = "serial3:115200n8";
-diff --git a/arch/arm/boot/dts/exynos5260-xyref5260.dts b/arch/arm/boot/dts/exynos5260-xyref5260.dts
-index 7b1e414fb2a6..e092f406d99c 100644
---- a/arch/arm/boot/dts/exynos5260-xyref5260.dts
-+++ b/arch/arm/boot/dts/exynos5260-xyref5260.dts
-@@ -18,6 +18,11 @@ memory@20000000 {
- 		reg = <0x20000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-index 0e14ce5c6ce3..05e9fbcd41d0 100644
---- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
-+++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-@@ -21,6 +21,8 @@ / {
- 
- 	aliases {
- 		ethernet = &ethernet;
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
- 	};
- 
- 	memory@40000000 {
-diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-index b4a74f9cf319..0f2a6a6be1d0 100644
---- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
-+++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-@@ -18,6 +18,11 @@ memory@40000000 {
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-index 5ed55a5b0c67..4b4c56ce3a5c 100644
---- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-+++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -23,6 +23,11 @@ memory@20000000 {
- 		reg = <0x20000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial3:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi b/arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi
-index 6a51cb14b58a..f525b2f5e4e0 100644
---- a/arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi
-@@ -28,6 +28,11 @@ / {
- 	 * for more details.
- 	 */
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index df863b909ff7..7a48f2b32819 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -31,6 +31,9 @@ / {
- 	aliases {
- 		/* Assign 20 so we don't get confused w/ builtin ones */
- 		i2c20 = &i2c_tunnel;
-+		mmc0 = &mmc_0; /* eMMC */
-+		mmc1 = &mmc_2; /* uSD */
-+		mmc2 = &mmc_1; /* WiFi */
- 	};
- 
- 	backlight: backlight {
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index 0a9371bec3e0..e2493014cf8a 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -21,6 +21,11 @@ memory@20000000 {
- 		reg = <0x20000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		bootargs = "init=/linuxrc";
- 		stdout-path = "serial2:115200n8";
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index 30fc677d8bac..2f5b8602e020 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -19,6 +19,10 @@ memory@40000000 {
- 		reg = <0x40000000 0x7ea00000>;
- 	};
- 
-+	aliases {
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 725c315d70cb..c583f232fae0 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -13,6 +13,10 @@
- #include "exynos5422-odroid-core.dtsi"
- 
- / {
-+	aliases {
-+		mmc0 = &mmc_0;
-+	};
-+
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 		pinctrl-names = "default";
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 37af8fbd215c..1f544f12da6c 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -29,6 +29,9 @@ / {
- 	aliases {
- 		/* Assign 20 so we don't get confused w/ builtin ones */
- 		i2c20 = &i2c_tunnel;
-+		mmc0 = &mmc_0; /* eMMC */
-+		mmc1 = &mmc_2; /* SD */
-+		mmc2 = &mmc_1; /* WiFi */
- 	};
- 
- 	backlight: backlight {
--- 
-2.30.2
-
+Jagan
