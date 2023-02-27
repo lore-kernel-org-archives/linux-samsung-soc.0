@@ -2,52 +2,52 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85084C64ED6
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Feb 2023 11:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F2CC64ED6
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Feb 2023 11:40:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229630AbjB0Lk3 (ORCPT
+        id S229640AbjB0Lkf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Feb 2023 06:40:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38172 "EHLO
+        Mon, 27 Feb 2023 06:40:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbjB0Lk2 (ORCPT
+        with ESMTP id S229608AbjB0Lke (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Feb 2023 06:40:28 -0500
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8AA212878
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 03:40:26 -0800 (PST)
-Received: by mail-pl1-x629.google.com with SMTP id bh1so6345179plb.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 03:40:26 -0800 (PST)
+        Mon, 27 Feb 2023 06:40:34 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F73A14237
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 03:40:33 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id me6-20020a17090b17c600b0023816b0c7ceso1857172pjb.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 03:40:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=42ThMJ2/t+fXcxS7gPtZrrUkoIWrhAnkLbSBJwEbg+c=;
-        b=jpNudG2OQ6E8qHIOSNBXeLVeoUnBmFTluGweUX5kQA19cf7kKcKZbkOq7rBL0m/2vq
-         ZIkhC6e17aLTVFfDYrcaMYK+q8Vv2zGPi5RNntSi+WCz47r5ql/t4N9bitRgRXQtkFEJ
-         BEAQNecGEGqAyqR4tIjLvttxnkB82ej5Y0484=
+        bh=aXzlQcM2+q3cNKX9yDd3QRgxQ4bSUjE8wzTk4MHaeas=;
+        b=oMN7np5Ywb1j618P5mP6I8CA1pdx3IRvrz+Z0UnRWJzF6u0sG4KAohlDku81tM/ofw
+         +vBRJcuVKdoakK6YnXAnTAXf3fUBHV99jvTjWw6/i7SW/eSIXVxzlMtjX9pOBYx2/Cet
+         LIGHiEa0wjSTyrN4bc1xTIHsLdyqOZ/yL8i5w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=42ThMJ2/t+fXcxS7gPtZrrUkoIWrhAnkLbSBJwEbg+c=;
-        b=R7LNfFMUTb2uvMnjf/suFbR9gMifLXR87Pm/qCeIra2PCtgQ5hq5HgC1mNOh+RRNfd
-         WQxXfsqWWhGlm4/3zsb20jBPzOCW0kUHX4ZVbEH44E6/TCaKEtjuCm/9z/s6YnWi54rC
-         D3I83pBsnYoc0MTns2JDID/Tfr++IwHQuqNS46jnWEkdQNj7C9OF1lmYSBG5UJm/9wQs
-         vdaxwAbUztST4jAwv3rM9GaIRnlMH6ecKqyUsXF3Fu3D7/JiiSsb9BFZmB5BJL83zfkj
-         0QjBJQisx5xjISwHsa7nRZR6r8f8ZWfJ0TR8fgCqStt9Za9MYM75VRwR07LUXtGBPdTr
-         d4NA==
-X-Gm-Message-State: AO0yUKUh3sXkq1U5+2X613oY4TBGf/+UCJXK9i1a2gV4epSKtQinzWJC
-        d+2T/cEgGFpnA7W0lhQvClWd+g==
-X-Google-Smtp-Source: AK7set92IbAOAF4NZv70VtlbSDnFW9oqE+zXn/fAdfbTfW2QiKivZ9R73aFlrUuIXEs/2kPYzA/T2A==
-X-Received: by 2002:a17:903:22c8:b0:19b:64bb:d547 with SMTP id y8-20020a17090322c800b0019b64bbd547mr26874568plg.62.1677498026250;
-        Mon, 27 Feb 2023 03:40:26 -0800 (PST)
+        bh=aXzlQcM2+q3cNKX9yDd3QRgxQ4bSUjE8wzTk4MHaeas=;
+        b=KYMN/F9bIJqyLgGKOYMVbXwNuVjXXItQpGNQB1IlhmE2lEtDvfR8HeaxgRMfewIGy+
+         fpiLP/Drc/0ffAph+bSgFzc2O2WyAd+g37nEtejJ8HV6udM/DqB0qwlNAnvDCM8f/kBY
+         1gILMx4lVYXDBeO39Q7rRtCjZUARhQ0Qb4x/UtDVOL0dZga4KbhJyfHnKe0bz3z1fd7A
+         jEyRLoI7qSvVVrIGn5RnwUTHhcLVO1CWTn4NIYKZvi+s1nC471bsYF7d3D8kWx/ZTtNx
+         /oEBJNqLcNQiOr88lgtTzeAqPzqQOLYbSphauKJRUj7EKHuzoSdU+F9jGAKaenBitx4T
+         OuOA==
+X-Gm-Message-State: AO0yUKXPT5OHY75H1iM1U402Bu11P0fpEUzva7a5suuQlEaPrsoLSfda
+        yAHHsNkD4nSs3V4LOltDQsPN0Q==
+X-Google-Smtp-Source: AK7set8nVCUoZ2kKVilS7IRsDEIA0PAZPWIW+2HrEvpd1P2d2JhIqlSDjvd1UwEHZ0H+jF8ozv6LpA==
+X-Received: by 2002:a17:902:c946:b0:19d:74c:78e5 with SMTP id i6-20020a170902c94600b0019d074c78e5mr5079561pla.50.1677498032954;
+        Mon, 27 Feb 2023 03:40:32 -0800 (PST)
 Received: from localhost.localdomain ([94.140.8.120])
-        by smtp.gmail.com with ESMTPSA id k10-20020a170902ba8a00b0019c919bccf8sm4395277pls.86.2023.02.27.03.40.20
+        by smtp.gmail.com with ESMTPSA id k10-20020a170902ba8a00b0019c919bccf8sm4395277pls.86.2023.02.27.03.40.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Feb 2023 03:40:25 -0800 (PST)
+        Mon, 27 Feb 2023 03:40:32 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
@@ -65,9 +65,9 @@ Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v13 07/18] drm: exynos: dsi: Introduce hw_type platform data
-Date:   Mon, 27 Feb 2023 17:09:14 +0530
-Message-Id: <20230227113925.875425-8-jagan@amarulasolutions.com>
+Subject: [PATCH v13 08/18] drm: exynos: dsi: Handle proper host initialization
+Date:   Mon, 27 Feb 2023 17:09:15 +0530
+Message-Id: <20230227113925.875425-9-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230227113925.875425-1-jagan@amarulasolutions.com>
 References: <20230227113925.875425-1-jagan@amarulasolutions.com>
@@ -77,168 +77,112 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Samsung MIPI DSIM controller is common DSI IP that can be used
-in various SoCs like Exynos, i.MX8M Mini/Nano/Plus.
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Add hw_type enum via platform_data so that accessing the different
-controller data between various platforms becomes easy and meaningful.
+Host transfer() in the DSI master will invoke only when the DSI commands
+are sent from DSI devices like DSI Panel or DSI bridges and this host
+the transfer wouldn't invoke for I2C-based-DSI bridge drivers.
+
+Handling DSI host initialization in transfer calls misses the controller
+setup for I2C configured DSI bridges.
+
+This patch updates the DSI host initialization by calling host to init
+from bridge pre_enable as the bridge pre_enable API is invoked by core
+as it is common across all classes of DSI device drivers.
+
+The host init during pre_enable is conditional and not invoked for Exynos
+as existing downstream drm panels and bridges in Exynos are expecting
+the host initialization during DSI transfer.
 
 Reviewed-by: Marek Vasut <marex@denx.de>
 Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
 Changes for v13:
-- none
+- none 
 Changes for v12:
 - collect RB from Marek
 Changes for v11:
 - collect RB from Frieder
-- drop extra line
 Changes for v10:
-- split from previous series patch
-"drm: bridge: Generalize Exynos-DSI driver into a Samsung DSIM bridge"
-- update enum type names
+- update the to simple logic to handle all platforms
+Changs for v9 - v8:
+- none
+Changes for v2:
+- check initialized state in samsung_dsim_init
+Changes for v1:
+- keep DSI init in host transfer
 
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 83 ++++++++++++++++++++-----
- 1 file changed, 68 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 27 +++++++++++++++++++------
+ 1 file changed, 21 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 8eac1c6e35c2..9217b362224a 100644
+index 9217b362224a..5723d91ff686 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -255,6 +255,15 @@ struct exynos_dsi_transfer {
+@@ -255,6 +255,9 @@ struct exynos_dsi_transfer {
  #define DSIM_STATE_CMD_LPM		BIT(2)
  #define DSIM_STATE_VIDOUT_AVAILABLE	BIT(3)
  
-+enum exynos_dsi_type {
-+	DSIM_TYPE_EXYNOS3250,
-+	DSIM_TYPE_EXYNOS4210,
-+	DSIM_TYPE_EXYNOS5410,
-+	DSIM_TYPE_EXYNOS5422,
-+	DSIM_TYPE_EXYNOS5433,
-+	DSIM_TYPE_COUNT,
-+};
++#define exynos_dsi_hw_is_exynos(hw) \
++	((hw) >= DSIM_TYPE_EXYNOS3250 && (hw) <= DSIM_TYPE_EXYNOS5433)
 +
- struct exynos_dsi_driver_data {
- 	const unsigned int *reg_ofs;
- 	unsigned int plltmr_reg;
-@@ -268,6 +277,10 @@ struct exynos_dsi_driver_data {
- 	const unsigned int *reg_values;
- };
- 
-+struct exynos_dsi_plat_data {
-+	enum exynos_dsi_type hw_type;
-+};
-+
- struct exynos_dsi {
- 	struct drm_encoder encoder;
- 	struct mipi_dsi_host dsi_host;
-@@ -298,6 +311,7 @@ struct exynos_dsi {
- 	struct list_head transfer_list;
- 
- 	const struct exynos_dsi_driver_data *driver_data;
-+	const struct exynos_dsi_plat_data *plat_data;
- };
- 
- #define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
-@@ -525,18 +539,13 @@ static const struct exynos_dsi_driver_data exynos5422_dsi_driver_data = {
- 	.reg_values = exynos5422_reg_values,
- };
- 
--static const struct of_device_id exynos_dsi_of_match[] = {
--	{ .compatible = "samsung,exynos3250-mipi-dsi",
--	  .data = &exynos3_dsi_driver_data },
--	{ .compatible = "samsung,exynos4210-mipi-dsi",
--	  .data = &exynos4_dsi_driver_data },
--	{ .compatible = "samsung,exynos5410-mipi-dsi",
--	  .data = &exynos5_dsi_driver_data },
--	{ .compatible = "samsung,exynos5422-mipi-dsi",
--	  .data = &exynos5422_dsi_driver_data },
--	{ .compatible = "samsung,exynos5433-mipi-dsi",
--	  .data = &exynos5433_dsi_driver_data },
--	{ }
-+static const struct exynos_dsi_driver_data *
-+exynos_dsi_types[DSIM_TYPE_COUNT] = {
-+	[DSIM_TYPE_EXYNOS3250] = &exynos3_dsi_driver_data,
-+	[DSIM_TYPE_EXYNOS4210] = &exynos4_dsi_driver_data,
-+	[DSIM_TYPE_EXYNOS5410] = &exynos5_dsi_driver_data,
-+	[DSIM_TYPE_EXYNOS5422] = &exynos5422_dsi_driver_data,
-+	[DSIM_TYPE_EXYNOS5433] = &exynos5433_dsi_driver_data,
- };
- 
- static void exynos_dsi_wait_for_reset(struct exynos_dsi *dsi)
-@@ -1469,8 +1478,6 @@ static const struct drm_bridge_funcs exynos_dsi_bridge_funcs = {
- 	.attach				= exynos_dsi_attach,
- };
- 
--MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
--
- static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
- 				  struct mipi_dsi_device *device)
+ enum exynos_dsi_type {
+ 	DSIM_TYPE_EXYNOS3250,
+ 	DSIM_TYPE_EXYNOS4210,
+@@ -1344,6 +1347,9 @@ static int exynos_dsi_init(struct exynos_dsi *dsi)
  {
-@@ -1671,7 +1678,8 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 	dsi->dsi_host.dev = dev;
+ 	const struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
  
- 	dsi->dev = dev;
--	dsi->driver_data = of_device_get_match_data(dev);
-+	dsi->plat_data = of_device_get_match_data(dev);
-+	dsi->driver_data = exynos_dsi_types[dsi->plat_data->hw_type];
++	if (dsi->state & DSIM_STATE_INITIALIZED)
++		return 0;
++
+ 	exynos_dsi_reset(dsi);
+ 	exynos_dsi_enable_irq(dsi);
  
- 	dsi->supplies[0].supply = "vddcore";
- 	dsi->supplies[1].supply = "vddio";
-@@ -1829,6 +1837,51 @@ static const struct dev_pm_ops exynos_dsi_pm_ops = {
- 				pm_runtime_force_resume)
- };
+@@ -1356,6 +1362,8 @@ static int exynos_dsi_init(struct exynos_dsi *dsi)
+ 	exynos_dsi_set_phy_ctrl(dsi);
+ 	exynos_dsi_init_link(dsi);
  
-+static const struct exynos_dsi_plat_data exynos3250_dsi_pdata = {
-+	.hw_type = DSIM_TYPE_EXYNOS3250,
-+};
++	dsi->state |= DSIM_STATE_INITIALIZED;
 +
-+static const struct exynos_dsi_plat_data exynos4210_dsi_pdata = {
-+	.hw_type = DSIM_TYPE_EXYNOS4210,
-+};
+ 	return 0;
+ }
+ 
+@@ -1411,6 +1419,16 @@ static void exynos_dsi_atomic_pre_enable(struct drm_bridge *bridge,
+ 	}
+ 
+ 	dsi->state |= DSIM_STATE_ENABLED;
 +
-+static const struct exynos_dsi_plat_data exynos5410_dsi_pdata = {
-+	.hw_type = DSIM_TYPE_EXYNOS5410,
-+};
-+
-+static const struct exynos_dsi_plat_data exynos5422_dsi_pdata = {
-+	.hw_type = DSIM_TYPE_EXYNOS5422,
-+};
-+
-+static const struct exynos_dsi_plat_data exynos5433_dsi_pdata = {
-+	.hw_type = DSIM_TYPE_EXYNOS5433,
-+};
-+
-+static const struct of_device_id exynos_dsi_of_match[] = {
-+	{
-+		.compatible = "samsung,exynos3250-mipi-dsi",
-+		.data = &exynos3250_dsi_pdata,
-+	},
-+	{
-+		.compatible = "samsung,exynos4210-mipi-dsi",
-+		.data = &exynos4210_dsi_pdata,
-+	},
-+	{
-+		.compatible = "samsung,exynos5410-mipi-dsi",
-+		.data = &exynos5410_dsi_pdata,
-+	},
-+	{
-+		.compatible = "samsung,exynos5422-mipi-dsi",
-+		.data = &exynos5422_dsi_pdata,
-+	},
-+	{
-+		.compatible = "samsung,exynos5433-mipi-dsi",
-+		.data = &exynos5433_dsi_pdata,
-+	},
-+	{ /* sentinel. */ }
-+};
-+MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
-+
- struct platform_driver dsi_driver = {
- 	.probe = exynos_dsi_probe,
- 	.remove = exynos_dsi_remove,
++	/*
++	 * For Exynos-DSIM the downstream bridge, or panel are expecting
++	 * the host initialization during DSI transfer.
++	 */
++	if (!exynos_dsi_hw_is_exynos(dsi->plat_data->hw_type)) {
++		ret = exynos_dsi_init(dsi);
++		if (ret)
++			return;
++	}
+ }
+ 
+ static void exynos_dsi_atomic_enable(struct drm_bridge *bridge,
+@@ -1568,12 +1586,9 @@ static ssize_t exynos_dsi_host_transfer(struct mipi_dsi_host *host,
+ 	if (!(dsi->state & DSIM_STATE_ENABLED))
+ 		return -EINVAL;
+ 
+-	if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
+-		ret = exynos_dsi_init(dsi);
+-		if (ret)
+-			return ret;
+-		dsi->state |= DSIM_STATE_INITIALIZED;
+-	}
++	ret = exynos_dsi_init(dsi);
++	if (ret)
++		return ret;
+ 
+ 	ret = mipi_dsi_create_packet(&xfer.packet, msg);
+ 	if (ret < 0)
 -- 
 2.25.1
 
