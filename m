@@ -2,37 +2,37 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 021C3C7EE2F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Feb 2023 02:11:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BBE2C7EE23
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Feb 2023 02:14:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230480AbjB0CLZ (ORCPT
+        id S231267AbjB0COh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 26 Feb 2023 21:11:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60314 "EHLO
+        Sun, 26 Feb 2023 21:14:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230273AbjB0CKZ (ORCPT
+        with ESMTP id S230430AbjB0CN6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 26 Feb 2023 21:10:25 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45B791ACD6;
-        Sun, 26 Feb 2023 18:09:29 -0800 (PST)
+        Sun, 26 Feb 2023 21:13:58 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C03AD1DB86;
+        Sun, 26 Feb 2023 18:11:54 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AAFE960CF9;
-        Mon, 27 Feb 2023 02:03:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BB19C4339E;
-        Mon, 27 Feb 2023 02:03:02 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5C6A860DDE;
+        Mon, 27 Feb 2023 02:11:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 033D4C433D2;
+        Mon, 27 Feb 2023 02:11:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677463383;
-        bh=rwWXx6jHu9ylwz22lCxyEK8t1Ny7aUK9qcAcQ/C9Et8=;
+        s=k20201202; t=1677463905;
+        bh=2dXfHrzW+qRS9hdPRKGnMtJb8nERCtQhp/UqgcquvrI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D/0eo7lPd/PVXcD0YYMo4aWyWlmQa9EzzQ7UUyvc0EbiXkLvrihIjQvf0GYX0dcxu
-         2G5ufZv4vXO12/Pf+DiTTwv6dKA8vMbZUDOxcycs+oAq03SqnWYXBFJyWHas/rbtxz
-         yO0hblaXnvtuQE0Xo/REBK6ayUg3YnLbyBy8xMQ5xBDtSVjSyV7GY+8Gk0FChrNX2q
-         upCYxiPasAbrs8cb5ukea/Q/EQo845S83OFiDT3r74Umam6XRrilHmdeISYaS0RO4n
-         oRQiq60d5FfDh3hZXFyYzXstHGyBfhEIIyti0vmN9V4PqEEotOmP5B79oFeM+A7efo
-         9nKhxyXed3kSw==
+        b=gKGMXXKyoV0CldEQBDDmm53SeWPy+M9qQX2KzaImQ7uqRQQXkYeaQ6F6uAWjITCBZ
+         Bg6UmnvhRqvhOrTAWA/oScy+otQTm4KZFu913KFjsC06+ly7IthxgyNTYFORKW57T3
+         bioZSvrr6jozG11yQ1xJjLHDTt/tS9QjkLMctXR5UY9znd+qWiaNshpGbf6PYdwsPn
+         uqHgOMGPHY3OZcRcrQTeLmSt0AhICYWpfZ+r5YAptTs2M/rivq+ecxdULTi4e64wxQ
+         kBJDCBCf1jZgr5ybXyyRsruzN4KHan1C8pw9IBmVsEgUFYSSH9xIQ4tUunotvNa0AK
+         pdWHU/SX5XA0g==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -40,12 +40,12 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         linux-samsung-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 6.2 37/60] regulator: s5m8767: Bounds check id indexing into arrays
-Date:   Sun, 26 Feb 2023 21:00:22 -0500
-Message-Id: <20230227020045.1045105-37-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 6/9] regulator: s5m8767: Bounds check id indexing into arrays
+Date:   Sun, 26 Feb 2023 21:11:28 -0500
+Message-Id: <20230227021131.1053662-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230227020045.1045105-1-sashal@kernel.org>
-References: <20230227020045.1045105-1-sashal@kernel.org>
+In-Reply-To: <20230227021131.1053662-1-sashal@kernel.org>
+References: <20230227021131.1053662-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -82,10 +82,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index 35269f9982105..754c6fcc6e642 100644
+index d558f806a4705..80e751759b706 100644
 --- a/drivers/regulator/s5m8767.c
 +++ b/drivers/regulator/s5m8767.c
-@@ -923,10 +923,14 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
+@@ -918,10 +918,14 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
  
  	for (i = 0; i < pdata->num_regulators; i++) {
  		const struct sec_voltage_desc *desc;
