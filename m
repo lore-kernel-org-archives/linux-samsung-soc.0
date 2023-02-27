@@ -2,69 +2,57 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B02C64ED8
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Feb 2023 12:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3419FC64ED6
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Feb 2023 12:28:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229780AbjB0ML6 (ORCPT
+        id S229697AbjB0M2V (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Feb 2023 07:11:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34088 "EHLO
+        Mon, 27 Feb 2023 07:28:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229535AbjB0ML6 (ORCPT
+        with ESMTP id S229535AbjB0M2T (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Feb 2023 07:11:58 -0500
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3F7F1F5DA
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 04:11:56 -0800 (PST)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 828285C0062;
-        Mon, 27 Feb 2023 07:11:53 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 27 Feb 2023 07:11:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; t=1677499913; x=1677586313; bh=p4dKxgXD9a
-        z25l8x9BnyJkoKpJl5puXIKepVLfJGKGY=; b=sgODnMnrjGbSdSkkdQixXMTtxS
-        1offZ+r8DRw6rn2YGEqK8RYe2YJkdTSaM7atXfQ2KtdnLCBUXuxDxQTUbA/Jmfsr
-        aCUOCIw1lF8mq3f8elAEqg6LvqpWWyK42rlfdnXn+cHgLJMblhk1GI6fweIk0Orm
-        JPjGn79dCnxsJjnPK1Qb1vyjK3NBVHiIjbL+WbI/uUD4+zC8QY6gjoL7KH52e9r8
-        rh2jOIyld/y59L6ekCPa6+5vuHHjxRzh2JTST8hRIdHCZc6ZwY+pL5ceXfIy+kp1
-        r53AbI7X4VqY9VWF6z5sqaa6i2wcZl1zYD2KeNTwVguzLvzFGjLXICpuGVGw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; t=1677499913; x=1677586313; bh=p4dKxgXD9az25l8x9BnyJkoKpJl5
-        puXIKepVLfJGKGY=; b=F+n3ziSSpm+7P2AJGwBWGnoG9jF+sodTHR7P++L3q3Om
-        0yYa93pd6Vve5a0XZSXtOdfRWBU8ugB198hawjNHRZ4hBGli6V0yYo6JBcWQlQGL
-        Acf7udgyIT9RJnfzS+3g7ac0wiH9dnd3xQWHazc6ooaYJtIea01uzPYTvHEdkBQW
-        nW/gcFaSv4Vf5feHSGLFqpqXULO55eLlBh3toAPxCGZ09c5GlM/9FBrZTbKT3JR+
-        RQhww4d0aj+bYu7sgfs++OfRJNG91+Vl+IHkNPzq3NXUwup/vMsNhRUc5h0s8edL
-        fjYzLn/pGt3VSSBSWg89uMlydLofrTkDIofX7aHGXg==
-X-ME-Sender: <xms:CJ78Y265SawPnopayCLd-sl3M5d_gzeQO7hbml3R9Qlfwf-_9J7CtQ>
-    <xme:CJ78Y_7jWjXUjiMxWlQlMVe_QxoCNb-8zUxfWNgep4Rg-_6tQVmdGq1qOaf5UjXt8
-    vX2C2oT3poQ_GKwaVw>
-X-ME-Received: <xmr:CJ78Y1efEcoKI0CYGRGtm5d1mOSB18gA9HBo23m2yTFkR9itGpdF2GAtGbIYWdkVodqa4ZLUvaQoO4uBYlBaO0uat6a7Jto>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudeltddgfeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtudenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeejveefheefkeeiffegveelveetgffffeektdefuefhtedtgeejhefggedu
-    ffffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:CJ78YzJuwHmQbjSEbVVXqsaOAVA_CHwfIahZoJoMwA94DWXZZEAp_Q>
-    <xmx:CJ78Y6KbS-heC-ccw-hmY7KT7bTnJVv6KdHqN0vOtgy4mbysJ1hnpA>
-    <xmx:CJ78Y0xsQ0z5T1peUz9QSIy6RMgFzV9J5iY2mAU2qh2EIXbtZCvAjA>
-    <xmx:CZ78YxrnaJNQWoG0HtDqFau7iyNkG8wGLqfRTkql3kI9LD6FnCPyjg>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 27 Feb 2023 07:11:51 -0500 (EST)
-Date:   Mon, 27 Feb 2023 13:11:49 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Jagan Teki <jagan@amarulasolutions.com>
+        Mon, 27 Feb 2023 07:28:19 -0500
+Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02F77EC6C
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 04:28:16 -0800 (PST)
+Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-536c02eea4dso171119477b3.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Feb 2023 04:28:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WwR6ZSekWbBuT7yj7OTRMClZyQccVnFXtI1dVPMFqqU=;
+        b=Emc8xQxFSXMvSrm+i70nSvGeFZesVg4lDXPcqr+1kCyqci31jAiQYw/aHaeWi8Vh8f
+         kVjiEWCuWvT2FYubxbZLPn6BSb5MnpuCwwn7cERSb7IActXOShQ0Ge9DBO2IPsFXEyRa
+         Ir8VVHVN3q9oSupSQe0W1W4HNo1pKt2k2NHW4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WwR6ZSekWbBuT7yj7OTRMClZyQccVnFXtI1dVPMFqqU=;
+        b=Ou0H+3nICj2JZS2kIz7ZFh05uW3ZuptD2B25O+qrZQ2IrGMBFLoAmXP9Db8m2+iVwf
+         YXRLTO/MxVk6XGDY1lNxgTf/7/uLwWSKs6lqOdZ3LDa5OHN+kL73R5TP3jDBD+HQ19iH
+         lOk5RzTNyycvUUdxgflGqZxe8nIGKQQbqyOXjJl8KWrt2E5ekynzlfDxnORoz14AG4+Z
+         VTt7+BYbR8fH1jbB3bULnmHhET763rMZG77O2M3B69j5tiwcYvdrsTmTO4xsKBaRaFeT
+         M4t/qQdyVXguvlZ+hLYH0XelnxfxQZnswv2faR1LnG58kdpsZjMcPGg7J/9BEjRkA+ow
+         FE3A==
+X-Gm-Message-State: AO0yUKVKEZOcs7ELI4vf6YVVUmnCtogFJbCYi2tRAYuhKvlhZX7qtEVL
+        +KX8hQ8KlldG/s4POIhsHG6/8rVTUo7pcJWGb7LpSA==
+X-Google-Smtp-Source: AK7set/J1/v6xMiecz4aEizWMrNP2r+5Uo6EjVIK1FJeWxI5ysPY4sPzBtm5HepMje66xHgnhJKxP8ZzBK4nloEmtfE=
+X-Received: by 2002:a81:ac60:0:b0:52a:92e9:27c1 with SMTP id
+ z32-20020a81ac60000000b0052a92e927c1mr10155528ywj.10.1677500895190; Mon, 27
+ Feb 2023 04:28:15 -0800 (PST)
+MIME-Version: 1.0
+References: <20230227113925.875425-1-jagan@amarulasolutions.com>
+ <20230227113925.875425-3-jagan@amarulasolutions.com> <20230227121149.c3ibajgog3i2s2ek@houat>
+In-Reply-To: <20230227121149.c3ibajgog3i2s2ek@houat>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 27 Feb 2023 17:58:03 +0530
+Message-ID: <CAMty3ZDt64C0dv2=wVcaCLdZVFU2u6D4EKswuoqEjvByKyMseg@mail.gmail.com>
+Subject: Re: [PATCH v13 02/18] drm: bridge: panel: Support nodrm case for drmm_panel_bridge_add
+To:     Maxime Ripard <maxime@cerno.tech>
 Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -82,89 +70,74 @@ Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Subject: Re: [PATCH v13 02/18] drm: bridge: panel: Support nodrm case for
- drmm_panel_bridge_add
-Message-ID: <20230227121149.c3ibajgog3i2s2ek@houat>
-References: <20230227113925.875425-1-jagan@amarulasolutions.com>
- <20230227113925.875425-3-jagan@amarulasolutions.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="57cleiwqo4cuwpi6"
-Content-Disposition: inline
-In-Reply-To: <20230227113925.875425-3-jagan@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Mon, Feb 27, 2023 at 5:41 PM Maxime Ripard <maxime@cerno.tech> wrote:
+>
+> On Mon, Feb 27, 2023 at 05:09:09PM +0530, Jagan Teki wrote:
+> > drmm_panel_bridge_add DRM-managed action helper is useful for the bridge
+> > which automatically removes the bridge when drm pointer is cleaned.
+> >
+> > Supporting the same on non-component bridges like host DSI bridge requires
+> > a drm pointer which is indeed available only when a panel-bridge is found.
+> >
+> > For these use cases, the caller would call the drmm_panel_bridge_add by
+> > passing NULL to drm pointer.
+> >
+> > So, assign the bridge->dev to drm pointer for those cases.
+> >
+> > Cc: Maxime Ripard <mripard@kernel.org>
+> > Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> > Changes for v13:
+> > - new patch
+> >
+> > Note: use case on
+> > "[PATCH v13 04/18] drm: exynos: dsi: Switch to DSI panel or bridge find helper"
+> >
+> >  drivers/gpu/drm/bridge/panel.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/bridge/panel.c b/drivers/gpu/drm/bridge/panel.c
+> > index d4b112911a99..45a0c6671000 100644
+> > --- a/drivers/gpu/drm/bridge/panel.c
+> > +++ b/drivers/gpu/drm/bridge/panel.c
+> > @@ -402,6 +402,13 @@ struct drm_bridge *drmm_panel_bridge_add(struct drm_device *drm,
+> >       if (IS_ERR(bridge))
+> >               return bridge;
+> >
+> > +     /*
+> > +      * For non-component bridges, like host DSI bridge the DRM pointer
+> > +      * can be available only when a panel-bridge is found.
+> > +      */
+> > +     if (!drm)
+> > +             drm = bridge->dev;
+> > +
+>
+> Why can't the caller use bridge->dev?
 
---57cleiwqo4cuwpi6
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The first step of drmm_panel_bridge_add is to find the panel-bridge,
+so we can only get bridge->dev after this step. The caller doesn't
+know anything about the panel bridge it just sends a panel pointer to
+find the panel-bridge and then assigns bridge->dev to drm for DRM
+action.
 
-On Mon, Feb 27, 2023 at 05:09:09PM +0530, Jagan Teki wrote:
-> drmm_panel_bridge_add DRM-managed action helper is useful for the bridge
-> which automatically removes the bridge when drm pointer is cleaned.
->=20
-> Supporting the same on non-component bridges like host DSI bridge requires
-> a drm pointer which is indeed available only when a=A0panel-bridge is fou=
-nd.
->=20
-> For these use cases, the caller would call the drmm_panel_bridge_add by
-> passing NULL to drm pointer.
->=20
-> So, assign the bridge->dev to drm pointer for those cases.
->=20
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
-> Changes for v13:
-> - new patch
->=20
-> Note: use case on=20
-> "[PATCH v13 04/18] drm: exynos: dsi: Switch to DSI panel or bridge find h=
-elper"
->=20
->  drivers/gpu/drm/bridge/panel.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/bridge/panel.c b/drivers/gpu/drm/bridge/pane=
-l.c
-> index d4b112911a99..45a0c6671000 100644
-> --- a/drivers/gpu/drm/bridge/panel.c
-> +++ b/drivers/gpu/drm/bridge/panel.c
-> @@ -402,6 +402,13 @@ struct drm_bridge *drmm_panel_bridge_add(struct drm_=
-device *drm,
->  	if (IS_ERR(bridge))
->  		return bridge;
-> =20
-> +	/*
-> +	 * For non-component bridges, like host DSI bridge the DRM pointer
-> +	 * can be available only when a panel-bridge is found.
-> +	 */
-> +	if (!drm)
-> +		drm =3D bridge->dev;
-> +
+Please check this patch about the caller,
+https://patchwork.kernel.org/project/dri-devel/patch/20230227113925.875425-5-jagan@amarulasolutions.com/
 
-Why can't the caller use bridge->dev?
+>
+> Also, where did the devm_drm_of_dsi_get_bridge go? I thought you were
+> going to convert it to a drm-managed version?
 
-Also, where did the devm_drm_of_dsi_get_bridge go? I thought you were
-going to convert it to a drm-managed version?
+Look like your suggestion to can't use devm_drm_of_dsi_get_bridge and
+call the DRM-action from the driver, that is the reason I have removed
+this and done the same as your previous inputs.
+https://lore.kernel.org/all/20230203110437.otzl2azscbujigv6@houat/
 
-Maxime
-
---57cleiwqo4cuwpi6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHQEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCY/yeBQAKCRDj7w1vZxhR
-xUqCAP9CCAOgIorqAmGMZe9rVDg4/Sb49NR/hR/ajVjwfLJDXAD3VAPHQ5pJt+Nw
-bvu2RnyrkN/NtW+g7i0y9cmRWCBQCw==
-=M4Xm
------END PGP SIGNATURE-----
-
---57cleiwqo4cuwpi6--
+Jagan.
