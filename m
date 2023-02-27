@@ -2,37 +2,37 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1799C7EE2F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Feb 2023 02:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 021C3C7EE2F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Feb 2023 02:11:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230028AbjB0CKS (ORCPT
+        id S230480AbjB0CLZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 26 Feb 2023 21:10:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59976 "EHLO
+        Sun, 26 Feb 2023 21:11:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230220AbjB0CJm (ORCPT
+        with ESMTP id S230273AbjB0CKZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 26 Feb 2023 21:09:42 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 025AA15142;
-        Sun, 26 Feb 2023 18:08:32 -0800 (PST)
+        Sun, 26 Feb 2023 21:10:25 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45B791ACD6;
+        Sun, 26 Feb 2023 18:09:29 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8B450B80CAB;
-        Mon, 27 Feb 2023 02:07:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BD3FC433A7;
-        Mon, 27 Feb 2023 02:07:10 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AAFE960CF9;
+        Mon, 27 Feb 2023 02:03:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BB19C4339E;
+        Mon, 27 Feb 2023 02:03:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677463631;
+        s=k20201202; t=1677463383;
         bh=rwWXx6jHu9ylwz22lCxyEK8t1Ny7aUK9qcAcQ/C9Et8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eHr8te1LIznKeET/V6H7NNkN8yFLg3TyXq67lvX2yS801RByxdew8B02nwYOfAtzf
-         ALrDle6t+L/VFp5niO2KLrW6xmyx/ulUKAQpWqq03mpJcvolIJO8XfNqzYC9dBwTvv
-         hOcYoto2zCIYTeJjrHQpqDWgyu28D0fPoDi2uVCsMPKBZ/R31PxAz5RBNf+KRR6DHe
-         nN9BlLRzo455FzMVViJIUxeP02lbL+dyGrKwYAcnzLKrbL8hpSCunWLeHNDKJEO4Xc
-         EbAwpF7Pc8G+dXEH+V2g5j43XjmwCAR0/N6REMwM5e7WsKEY7u2rFZXKA6hIRfPwb6
-         mSfP+/sUVBSGw==
+        b=D/0eo7lPd/PVXcD0YYMo4aWyWlmQa9EzzQ7UUyvc0EbiXkLvrihIjQvf0GYX0dcxu
+         2G5ufZv4vXO12/Pf+DiTTwv6dKA8vMbZUDOxcycs+oAq03SqnWYXBFJyWHas/rbtxz
+         yO0hblaXnvtuQE0Xo/REBK6ayUg3YnLbyBy8xMQ5xBDtSVjSyV7GY+8Gk0FChrNX2q
+         upCYxiPasAbrs8cb5ukea/Q/EQo845S83OFiDT3r74Umam6XRrilHmdeISYaS0RO4n
+         oRQiq60d5FfDh3hZXFyYzXstHGyBfhEIIyti0vmN9V4PqEEotOmP5B79oFeM+A7efo
+         9nKhxyXed3kSw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -40,12 +40,12 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         linux-samsung-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 6.1 36/58] regulator: s5m8767: Bounds check id indexing into arrays
-Date:   Sun, 26 Feb 2023 21:04:34 -0500
-Message-Id: <20230227020457.1048737-36-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.2 37/60] regulator: s5m8767: Bounds check id indexing into arrays
+Date:   Sun, 26 Feb 2023 21:00:22 -0500
+Message-Id: <20230227020045.1045105-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230227020457.1048737-1-sashal@kernel.org>
-References: <20230227020457.1048737-1-sashal@kernel.org>
+In-Reply-To: <20230227020045.1045105-1-sashal@kernel.org>
+References: <20230227020045.1045105-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
