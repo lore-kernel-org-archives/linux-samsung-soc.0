@@ -2,70 +2,63 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2F6C64ED6
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Feb 2023 14:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD77C64ED6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Feb 2023 15:10:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229713AbjB1O5D (ORCPT
+        id S229534AbjB1PKL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Feb 2023 09:57:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44078 "EHLO
+        Tue, 28 Feb 2023 10:10:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229703AbjB1O5C (ORCPT
+        with ESMTP id S229530AbjB1PKK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Feb 2023 09:57:02 -0500
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E67D4AD16
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Feb 2023 06:56:47 -0800 (PST)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 4BF385C0040;
-        Tue, 28 Feb 2023 09:56:47 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Tue, 28 Feb 2023 09:56:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; t=1677596207; x=1677682607; bh=//kyISGwnS
-        d2/XENSU0w/aoJBqe774J5Px7PyluB3vQ=; b=CKO6M0/dbNEEQnbjeLFpx1Bbcw
-        XJ/1jdmtJs4dFt0wq+lhWurNqsXAYXzYOdYF1xTe0DBRhptRmpmjG2WPX4aoseee
-        AIkh9ts+i/cNnZylGeFqewuIiTJoKjX+tluwOtYT7YP9qvN1/91iNBi4306G+igT
-        MnTm9lc9mdFEEwSM7rSpyeBTXV75hwGWX913iP1rfg385sWw57sCutEDEGNdTtFT
-        HQR/TH7UpEUZOy5XHY5AUOHK87RlkvzRPYr0hSpS9QFGhl3Dw0WAFBodWF4MceuV
-        eAO4e+uZHe9o2ZHspHBAd2R9qykhTexV/POE7bJLxQoEIsR6Q20Wqxs0B77w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; t=1677596207; x=1677682607; bh=//kyISGwnSd2/XENSU0w/aoJBqe7
-        74J5Px7PyluB3vQ=; b=qW6FgtkvnUiaLk5jip160ezTp5GGtdXRH3GGgNrjpIzE
-        3GLTjFf4hP5PJXa+os5zVhJgXmqAHXLSLPXNLTj09f7acavcuP39qOW5O19rpf4j
-        l/aPT4x3HaQHzy+XpJbn6aW9MtWenvG5Ghl7DzYTsiXpGJiOvMC3Q6xcWSMcmoeV
-        0tUqs6pHHlFBpoTnvJt4zJwogBpHtHTIBNUilzmbFqUY10D2sQRcqLP1ffyytyt7
-        EU2jsy2z4xf1xYHAyxmFbjZ0R0kCm+yZ3VrS47bLUpkIFqnJWXvm2jfnMHbqm6GW
-        u+SqjFJ4utqHCp0tvgQTTTHwU5P7iZz+0L01oVImvQ==
-X-ME-Sender: <xms:Lhb-YygKo9zePq_GPyb1eoZF83K2X81BLIrQ7dYFvg-zrIkhN7jrHQ>
-    <xme:Lhb-YzBfYcEZjLFEQwbftCLzOEDxLDLei7FnISaukpB0BuSTxS8uoKKxQwkdNBeHJ
-    KHDIMhsos7sz7FNQ5Q>
-X-ME-Received: <xmr:Lhb-Y6H_milBrUmqjWu2iFns1GfyXpUYv4xO0PKSRfEFccij2Jjxbv9Ni8I8DDGsj0HNJIgmjbmOe8CWf6IiqKDBoMaso7U>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudelfedgtdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtjeenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpefhjeehgedvfeeggeeiledvheduueefleduhefgudeuffefheejtddvveej
-    udehffenucffohhmrghinhepfhhrvggvuggvshhkthhophdrohhrghenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhn
-    ohdrthgvtghh
-X-ME-Proxy: <xmx:Lhb-Y7Tp-IOd_cYPxbHMLZmF9f1nklHUpJjWxXKY0kmd82IJNYIeEg>
-    <xmx:Lhb-Y_z9Jpm-_aPhblBqiIbHXulG7UYgz1Ljgefa9M8brsqS2adEEg>
-    <xmx:Lhb-Y54oAWuDs5DtiVdys_m0ObhDplHr6EPa0BsLiygB_Uap-IRaWQ>
-    <xmx:Lxb-Y6KY8jMNE4VlOSzx0h9CEMIPQjec8Vmiq23cEJrFmdunFYO1VQ>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 28 Feb 2023 09:56:45 -0500 (EST)
-Date:   Tue, 28 Feb 2023 15:56:43 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Jagan Teki <jagan@amarulasolutions.com>
+        Tue, 28 Feb 2023 10:10:10 -0500
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92C6E1C7EF
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Feb 2023 07:10:08 -0800 (PST)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-536c02c9dfbso280527827b3.11
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Feb 2023 07:10:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ul8Ozd8UFTebNc6cj/DNYpyGqRAWtFXadOEA1glf6w8=;
+        b=IsxOC/IxpilBfzVS0mILeYiAp5NRIfhPpwWtK2A88xcbe5ZMVaVrbKWjE15iDDsSxJ
+         nP/0BfuUhiFpyoe4ut8Tiwd2P5wuHV5N6NlxYY5aZtAqbIZ7Q4PR8XoVzMF/qx4ZSjdV
+         r59DedOoGqQGWyr3TN9h6qxn4EtlZkTm20mzo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ul8Ozd8UFTebNc6cj/DNYpyGqRAWtFXadOEA1glf6w8=;
+        b=EbS3tLJ69tm2RKgPUo8r0seSEzcfmb3AKJc7D4CK7dohXO/mW0neLrVKWlfYd84m4U
+         p8u79AJ1kd4Rd9qShsBuQy49XbE/PNq7rED7HvoQzGCqLvSTq0yU3dhK6wEo/eTlWJrI
+         TpPlO8mOtnLoUjjJWZDC0WR0k+70vLA/5Kvl6oNoldJzsRqx87r+k1fOr4jS/O1ldACv
+         OvwuDrY9SEzuNle8/aTe6Da+02GUggqAH+XxOfK64HQ0TLxAh++qVUfwjUPrEH8aQQ4W
+         WESsxYS1sQ5L7+8rU4E0Gv/mTu5Z/Hk7Vjqq/BRUArfT06Bvznh4iyUZ8LTfKj4IuTck
+         990g==
+X-Gm-Message-State: AO0yUKUpTfP675V6L/sQgQ88JXCvbfVQbQCqLwuiqEPfn0GyXnc/i6hH
+        eEh/kLI3sQgaYVZT0Nb3lTXhLDoFJ1DRt93jSmgWAg==
+X-Google-Smtp-Source: AK7set+CcGU79o8oyPBRmTOSY6bh4PMWBO83d0ITuE9LZBiFgdsZ3StCl7ZhKmcAnACLpdb24Tqa2V4MDqndjgnurNQ=
+X-Received: by 2002:a81:b664:0:b0:52e:bb2d:2841 with SMTP id
+ h36-20020a81b664000000b0052ebb2d2841mr1825981ywk.10.1677597006510; Tue, 28
+ Feb 2023 07:10:06 -0800 (PST)
+MIME-Version: 1.0
+References: <7b59aaf9-1f72-fd9f-29ac-1857ec3f91f3@denx.de> <CAMty3ZC6vqpFfdh2F=KUsAgm_KCksVXBV9ON1csjJd1m+gJpVQ@mail.gmail.com>
+ <6066dff9-5a66-0da5-14d9-66162a2fbb39@denx.de> <CAMty3ZDjwD+3SKJiOgZLbYYTtq=udWkXbqnsyYaM73rsYxDumQ@mail.gmail.com>
+ <47b8ad7d-cfc1-112c-2117-cb3612c1bba5@denx.de> <CAMty3ZDMJFW36g5=A1=_08VT1dZUMemEg3YcQMh08iZNRa+cTw@mail.gmail.com>
+ <5c10d1e6-75ce-d926-fba9-a9bf5e240895@denx.de> <CAMty3ZBpWd817b5Ye_AQse1zruUtWOm2E4WUz0b7a4k9mVEzEQ@mail.gmail.com>
+ <20230228120447.q7k5xup6hbvagg33@houat> <CAMty3ZAG_zONg181mmEzx=7y7kk=kX1pObQ379d3m8_TsPzHaA@mail.gmail.com>
+ <20230228145643.b537y4uuc4ep3epc@houat>
+In-Reply-To: <20230228145643.b537y4uuc4ep3epc@houat>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Tue, 28 Feb 2023 20:39:54 +0530
+Message-ID: <CAMty3ZC-YfNLCy-Sx9UdG6W=cHzoEid-NdRFZqGxRgtLeMDy+A@mail.gmail.com>
+Subject: Re: [PATCH v13 04/18] drm: exynos: dsi: Switch to DSI panel or bridge
+ find helper
+To:     Maxime Ripard <maxime@cerno.tech>
 Cc:     Marek Vasut <marex@denx.de>,
         Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
@@ -81,285 +74,255 @@ Cc:     Marek Vasut <marex@denx.de>,
         linux-arm-kernel@lists.infradead.org,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>
-Subject: Re: [PATCH v13 04/18] drm: exynos: dsi: Switch to DSI panel or
- bridge find helper
-Message-ID: <20230228145643.b537y4uuc4ep3epc@houat>
-References: <7b59aaf9-1f72-fd9f-29ac-1857ec3f91f3@denx.de>
- <CAMty3ZC6vqpFfdh2F=KUsAgm_KCksVXBV9ON1csjJd1m+gJpVQ@mail.gmail.com>
- <6066dff9-5a66-0da5-14d9-66162a2fbb39@denx.de>
- <CAMty3ZDjwD+3SKJiOgZLbYYTtq=udWkXbqnsyYaM73rsYxDumQ@mail.gmail.com>
- <47b8ad7d-cfc1-112c-2117-cb3612c1bba5@denx.de>
- <CAMty3ZDMJFW36g5=A1=_08VT1dZUMemEg3YcQMh08iZNRa+cTw@mail.gmail.com>
- <5c10d1e6-75ce-d926-fba9-a9bf5e240895@denx.de>
- <CAMty3ZBpWd817b5Ye_AQse1zruUtWOm2E4WUz0b7a4k9mVEzEQ@mail.gmail.com>
- <20230228120447.q7k5xup6hbvagg33@houat>
- <CAMty3ZAG_zONg181mmEzx=7y7kk=kX1pObQ379d3m8_TsPzHaA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zzb427pzpp6ztjxj"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZAG_zONg181mmEzx=7y7kk=kX1pObQ379d3m8_TsPzHaA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
---zzb427pzpp6ztjxj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Feb 28, 2023 at 08:09:26PM +0530, Jagan Teki wrote:
-> On Tue, Feb 28, 2023 at 5:34 PM Maxime Ripard <maxime@cerno.tech> wrote:
-> >
-> > On Tue, Feb 28, 2023 at 02:08:53AM +0530, Jagan Teki wrote:
-> > > On Tue, Feb 28, 2023 at 1:40 AM Marek Vasut <marex@denx.de> wrote:
-> > > >
-> > > > On 2/27/23 20:49, Jagan Teki wrote:
-> > > > > On Tue, Feb 28, 2023 at 1:11 AM Marek Vasut <marex@denx.de> wrote:
-> > > > >>
-> > > > >> On 2/27/23 20:34, Jagan Teki wrote:
-> > > > >>> On Tue, Feb 28, 2023 at 12:54 AM Marek Vasut <marex@denx.de> wr=
-ote:
-> > > > >>>>
-> > > > >>>> On 2/27/23 20:15, Jagan Teki wrote:
-> > > > >>>>> On Tue, Feb 28, 2023 at 12:38 AM Marek Vasut <marex@denx.de> =
+On Tue, Feb 28, 2023 at 8:26 PM Maxime Ripard <maxime@cerno.tech> wrote:
+>
+> On Tue, Feb 28, 2023 at 08:09:26PM +0530, Jagan Teki wrote:
+> > On Tue, Feb 28, 2023 at 5:34 PM Maxime Ripard <maxime@cerno.tech> wrote=
+:
+> > >
+> > > On Tue, Feb 28, 2023 at 02:08:53AM +0530, Jagan Teki wrote:
+> > > > On Tue, Feb 28, 2023 at 1:40 AM Marek Vasut <marex@denx.de> wrote:
+> > > > >
+> > > > > On 2/27/23 20:49, Jagan Teki wrote:
+> > > > > > On Tue, Feb 28, 2023 at 1:11 AM Marek Vasut <marex@denx.de> wro=
+te:
+> > > > > >>
+> > > > > >> On 2/27/23 20:34, Jagan Teki wrote:
+> > > > > >>> On Tue, Feb 28, 2023 at 12:54 AM Marek Vasut <marex@denx.de> =
 wrote:
-> > > > >>>>>>
-> > > > >>>>>> On 2/27/23 20:01, Jagan Teki wrote:
-> > > > >>>>>>> On Tue, Feb 28, 2023 at 12:25 AM Marek Vasut <marex@denx.de=
+> > > > > >>>>
+> > > > > >>>> On 2/27/23 20:15, Jagan Teki wrote:
+> > > > > >>>>> On Tue, Feb 28, 2023 at 12:38 AM Marek Vasut <marex@denx.de=
 > wrote:
-> > > > >>>>>>>>
-> > > > >>>>>>>> On 2/27/23 12:39, Jagan Teki wrote:
-> > > > >>>>>>>>> drm_of_dsi_find_panel_or_bridge is capable of looking up =
+> > > > > >>>>>>
+> > > > > >>>>>> On 2/27/23 20:01, Jagan Teki wrote:
+> > > > > >>>>>>> On Tue, Feb 28, 2023 at 12:25 AM Marek Vasut <marex@denx.=
+de> wrote:
+> > > > > >>>>>>>>
+> > > > > >>>>>>>> On 2/27/23 12:39, Jagan Teki wrote:
+> > > > > >>>>>>>>> drm_of_dsi_find_panel_or_bridge is capable of looking u=
+p the
+> > > > > >>>>>>>>> downstream DSI bridge and panel and trying to add a pan=
+el bridge
+> > > > > >>>>>>>>> if the panel is found.
+> > > > > >>>>>>>>>
+> > > > > >>>>>>>>> Replace explicit finding calls with drm_of_dsi_find_pan=
+el_or_bridge
+> > > > > >>>>>>>>> followed with drmm_panel_bridge_add.
+> > > > > >>>>>>>>>
+> > > > > >>>>>>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > >>>>>>>>> ---
+> > > > > >>>>>>>>> Changes for v13, v12, v11:
+> > > > > >>>>>>>>> - none
+> > > > > >>>>>>>>> Changes for v10:
+> > > > > >>>>>>>>> - new patch
+> > > > > >>>>>>>>>
+> > > > > >>>>>>>>>       drivers/gpu/drm/exynos/exynos_drm_dsi.c | 25 ++++=
++++++++++------------
+> > > > > >>>>>>>>>       1 file changed, 13 insertions(+), 12 deletions(-)
+> > > > > >>>>>>>>>
+> > > > > >>>>>>>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/=
+drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > > > > >>>>>>>>> index df15501b1075..12a6dd987e8f 100644
+> > > > > >>>>>>>>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > > > > >>>>>>>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > > > > >>>>>>>>> @@ -25,6 +25,7 @@
+> > > > > >>>>>>>>>       #include <drm/drm_atomic_helper.h>
+> > > > > >>>>>>>>>       #include <drm/drm_bridge.h>
+> > > > > >>>>>>>>>       #include <drm/drm_mipi_dsi.h>
+> > > > > >>>>>>>>> +#include <drm/drm_of.h>
+> > > > > >>>>>>>>>       #include <drm/drm_panel.h>
+> > > > > >>>>>>>>>       #include <drm/drm_print.h>
+> > > > > >>>>>>>>>       #include <drm/drm_probe_helper.h>
+> > > > > >>>>>>>>> @@ -1470,24 +1471,26 @@ static int exynos_dsi_host_atta=
+ch(struct mipi_dsi_host *host,
+> > > > > >>>>>>>>>           struct device *dev =3D dsi->dev;
+> > > > > >>>>>>>>>           struct drm_encoder *encoder =3D &dsi->encoder=
+;
+> > > > > >>>>>>>>>           struct drm_device *drm =3D encoder->dev;
+> > > > > >>>>>>>>> +     struct drm_bridge *bridge;
+> > > > > >>>>>>>>>           struct drm_panel *panel;
+> > > > > >>>>>>>>>           int ret;
+> > > > > >>>>>>>>>
+> > > > > >>>>>>>>> -     panel =3D of_drm_find_panel(device->dev.of_node);
+> > > > > >>>>>>>>> -     if (!IS_ERR(panel)) {
+> > > > > >>>>>>>>> -             dsi->out_bridge =3D devm_drm_panel_bridge=
+_add(dev, panel);
+> > > > > >>>>>>>>> -     } else {
+> > > > > >>>>>>>>> -             dsi->out_bridge =3D of_drm_find_bridge(de=
+vice->dev.of_node);
+> > > > > >>>>>>>>> -             if (!dsi->out_bridge)
+> > > > > >>>>>>>>> -                     dsi->out_bridge =3D ERR_PTR(-EINV=
+AL);
+> > > > > >>>>>>>>> -     }
+> > > > > >>>>>>>>
+> > > > > >>>>>>>> As far as I understand this from my conversation with Ma=
+xime (please put
+> > > > > >>>>>>>> him on CC of V15), the change here should instead perfor=
+m the panel look
+> > > > > >>>>>>>> up NOT in exynos_dsi_host_attach() , but in exynos_dsi_b=
+ind() , i.e. in
+> > > > > >>>>>>>> the component_ops .bind callback . Here is an example of=
+ correct
+> > > > > >>>>>>>> implementation:
+> > > > > >>>>>>>>
+> > > > > >>>>>>>> https://cgit.freedesktop.org/drm-misc/tree/drivers/gpu/d=
+rm/vc4/vc4_dsi.c#n1805
+> > > > > >>>>>>>
+> > > > > >>>>>>> But, we don't have component_ops.bind for imx8m case, so =
+where do we
+> > > > > >>>>>>> want to place the panel hook?
+> > > > > >>>>>>>
+> > > > > >>>>>>> Exynos drm drivers are component-based but, imx8mm is not=
+.
+> > > > > >>>>>>
+> > > > > >>>>>> In 14/18 patch, the same should be added to generic_dsim_r=
+egister_host()
+> > > > > >>>>>> , which is called from the driver .probe() callback, but t=
+hat is OK.
+> > > > > >>>>>>
+> > > > > >>>>>> That's ^ is the iMX part.
+> > > > > >>>>>
+> > > > > >>>>> Ohh. You mean, we need to find the panel hook separately in=
+ two places like
+> > > > > >>>>> - bind for exynos
+> > > > > >>>>> - probe for imx8mm
+> > > > > >>>>
+> > > > > >>>> Yes
+> > > > > >>>>
+> > > > > >>>>> If so? how can I find the drm_device pointer in the probe?
+> > > > > >>>>
+> > > > > >>>> What for ? The panel lookup uses OF graph . Where do you nee=
+d the
+> > > > > >>>> drm_device in it ?
+> > > > > >>>
+> > > > > >>> May I can summarize the whole setback here so that everybody =
+is on the
+> > > > > >>> same page and find the proper solution?
+> > > > > >>>
+> > > > > >>> The key blocker is accessing the DRM pointer in order to use =
 the
-> > > > >>>>>>>>> downstream DSI bridge and panel and trying to add a panel=
- bridge
-> > > > >>>>>>>>> if the panel is found.
-> > > > >>>>>>>>>
-> > > > >>>>>>>>> Replace explicit finding calls with drm_of_dsi_find_panel=
-_or_bridge
-> > > > >>>>>>>>> followed with drmm_panel_bridge_add.
-> > > > >>>>>>>>>
-> > > > >>>>>>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > >>>>>>>>> ---
-> > > > >>>>>>>>> Changes for v13, v12, v11:
-> > > > >>>>>>>>> - none
-> > > > >>>>>>>>> Changes for v10:
-> > > > >>>>>>>>> - new patch
-> > > > >>>>>>>>>
-> > > > >>>>>>>>>       drivers/gpu/drm/exynos/exynos_drm_dsi.c | 25 ++++++=
-+++++++------------
-> > > > >>>>>>>>>       1 file changed, 13 insertions(+), 12 deletions(-)
-> > > > >>>>>>>>>
-> > > > >>>>>>>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/dr=
-ivers/gpu/drm/exynos/exynos_drm_dsi.c
-> > > > >>>>>>>>> index df15501b1075..12a6dd987e8f 100644
-> > > > >>>>>>>>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> > > > >>>>>>>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> > > > >>>>>>>>> @@ -25,6 +25,7 @@
-> > > > >>>>>>>>>       #include <drm/drm_atomic_helper.h>
-> > > > >>>>>>>>>       #include <drm/drm_bridge.h>
-> > > > >>>>>>>>>       #include <drm/drm_mipi_dsi.h>
-> > > > >>>>>>>>> +#include <drm/drm_of.h>
-> > > > >>>>>>>>>       #include <drm/drm_panel.h>
-> > > > >>>>>>>>>       #include <drm/drm_print.h>
-> > > > >>>>>>>>>       #include <drm/drm_probe_helper.h>
-> > > > >>>>>>>>> @@ -1470,24 +1471,26 @@ static int exynos_dsi_host_attach=
-(struct mipi_dsi_host *host,
-> > > > >>>>>>>>>           struct device *dev =3D dsi->dev;
-> > > > >>>>>>>>>           struct drm_encoder *encoder =3D &dsi->encoder;
-> > > > >>>>>>>>>           struct drm_device *drm =3D encoder->dev;
-> > > > >>>>>>>>> +     struct drm_bridge *bridge;
-> > > > >>>>>>>>>           struct drm_panel *panel;
-> > > > >>>>>>>>>           int ret;
-> > > > >>>>>>>>>
-> > > > >>>>>>>>> -     panel =3D of_drm_find_panel(device->dev.of_node);
-> > > > >>>>>>>>> -     if (!IS_ERR(panel)) {
-> > > > >>>>>>>>> -             dsi->out_bridge =3D devm_drm_panel_bridge_a=
-dd(dev, panel);
-> > > > >>>>>>>>> -     } else {
-> > > > >>>>>>>>> -             dsi->out_bridge =3D of_drm_find_bridge(devi=
-ce->dev.of_node);
-> > > > >>>>>>>>> -             if (!dsi->out_bridge)
-> > > > >>>>>>>>> -                     dsi->out_bridge =3D ERR_PTR(-EINVAL=
-);
-> > > > >>>>>>>>> -     }
-> > > > >>>>>>>>
-> > > > >>>>>>>> As far as I understand this from my conversation with Maxi=
-me (please put
-> > > > >>>>>>>> him on CC of V15), the change here should instead perform =
-the panel look
-> > > > >>>>>>>> up NOT in exynos_dsi_host_attach() , but in exynos_dsi_bin=
-d() , i.e. in
-> > > > >>>>>>>> the component_ops .bind callback . Here is an example of c=
-orrect
-> > > > >>>>>>>> implementation:
-> > > > >>>>>>>>
-> > > > >>>>>>>> https://cgit.freedesktop.org/drm-misc/tree/drivers/gpu/drm=
-/vc4/vc4_dsi.c#n1805
-> > > > >>>>>>>
-> > > > >>>>>>> But, we don't have component_ops.bind for imx8m case, so wh=
-ere do we
-> > > > >>>>>>> want to place the panel hook?
-> > > > >>>>>>>
-> > > > >>>>>>> Exynos drm drivers are component-based but, imx8mm is not.
-> > > > >>>>>>
-> > > > >>>>>> In 14/18 patch, the same should be added to generic_dsim_reg=
-ister_host()
-> > > > >>>>>> , which is called from the driver .probe() callback, but tha=
-t is OK.
-> > > > >>>>>>
-> > > > >>>>>> That's ^ is the iMX part.
-> > > > >>>>>
-> > > > >>>>> Ohh. You mean, we need to find the panel hook separately in t=
-wo places like
-> > > > >>>>> - bind for exynos
-> > > > >>>>> - probe for imx8mm
-> > > > >>>>
-> > > > >>>> Yes
-> > > > >>>>
-> > > > >>>>> If so? how can I find the drm_device pointer in the probe?
-> > > > >>>>
-> > > > >>>> What for ? The panel lookup uses OF graph . Where do you need =
-the
-> > > > >>>> drm_device in it ?
-> > > > >>>
-> > > > >>> May I can summarize the whole setback here so that everybody is=
- on the
-> > > > >>> same page and find the proper solution?
-> > > > >>>
-> > > > >>> The key blocker is accessing the DRM pointer in order to use the
-> > > > >>> DRM-managed action helper.
-> > > > >>>
-> > > > >>> 1. If we find the panel hook in Exynos component_ops.bind then =
-we can
-> > > > >>> use the DRM pointer directly as VC4 does.
-> > > > >>> 2. if we find the panel hook in Samsung drm_bridge_funcs.attach=
- (for
-> > > > >>> imx8mm) then we can use the DRM pointer directly via bridge->de=
-v.
-> > > > >>>
-> > > > >>> If we make 2) has common across like finding the panel hook in
-> > > > >>> drm_bridge_funcs.attach the Exynos drm pipeline cannot find the
-> > > > >>> panels.
-> > > > >>>
-> > > > >>> The common solution for both exynos and imx8m is host.attach bu=
-t if we
-> > > > >>> do so we cannot get find the DRM pointer.
-> > > > >>
-> > > > >> There isn't going to be common solution, you would really have t=
-o do the
-> > > > >> look up in component_ops .bind callback for exynos , and
-> > > > >> generic_dsim_register_host() for i.MX .
-> > > > >>
-> > > > >>> If we go ahead with no need for DRM-managed helper at the momen=
-t, then
-> > > > >>> find the panel hook in host.attach and then drop 2/18.
-> > > > >>
-> > > > >> The panel lookup must happen in .bind/.probe for exynos/imx resp=
-ectively
-> > > > >> , that's really all that is required here. Then you can drop 1,2=
-,3/18
-> > > > >> and get this series applied (I hope) .
+> > > > > >>> DRM-managed action helper.
+> > > > > >>>
+> > > > > >>> 1. If we find the panel hook in Exynos component_ops.bind the=
+n we can
+> > > > > >>> use the DRM pointer directly as VC4 does.
+> > > > > >>> 2. if we find the panel hook in Samsung drm_bridge_funcs.atta=
+ch (for
+> > > > > >>> imx8mm) then we can use the DRM pointer directly via bridge->=
+dev.
+> > > > > >>>
+> > > > > >>> If we make 2) has common across like finding the panel hook i=
+n
+> > > > > >>> drm_bridge_funcs.attach the Exynos drm pipeline cannot find t=
+he
+> > > > > >>> panels.
+> > > > > >>>
+> > > > > >>> The common solution for both exynos and imx8m is host.attach =
+but if we
+> > > > > >>> do so we cannot get find the DRM pointer.
+> > > > > >>
+> > > > > >> There isn't going to be common solution, you would really have=
+ to do the
+> > > > > >> look up in component_ops .bind callback for exynos , and
+> > > > > >> generic_dsim_register_host() for i.MX .
+> > > > > >>
+> > > > > >>> If we go ahead with no need for DRM-managed helper at the mom=
+ent, then
+> > > > > >>> find the panel hook in host.attach and then drop 2/18.
+> > > > > >>
+> > > > > >> The panel lookup must happen in .bind/.probe for exynos/imx re=
+spectively
+> > > > > >> , that's really all that is required here. Then you can drop 1=
+,2,3/18
+> > > > > >> and get this series applied (I hope) .
+> > > > > >
+> > > > > > I'm not quite sure, if the panel hook in .bind work for exynos =
+or not?
 > > > > >
-> > > > > I'm not quite sure, if the panel hook in .bind work for exynos or=
- not?
-> > > >
-> > > > Marek should be able to test exynos for you one more time I hope.
-> > > >
-> > > > > the host. attach has KMS hotplug code after the panel hook and
-> > > > > bridge_attach as before. I believe that is a working scenario for
-> > > > > Exynos to be the panel hook in the host. attach.
-> > > >
-> > > > As far as I understand it, the look up has to be in .bind callback =
-(and
-> > > > generic_dsim_register_host() for imx). Can you try if/how that work=
-s ?
-> > > >
-> > > > >> Can you implement just this one change ?
-> > > > >>
-> > > > >> There is no need to use drmm_* helper for now, that can be impro=
-ved
-> > > > >> later if possible.
+> > > > > Marek should be able to test exynos for you one more time I hope.
 > > > > >
-> > > > > If this is the case then 1/18 will need otherwise
+> > > > > > the host. attach has KMS hotplug code after the panel hook and
+> > > > > > bridge_attach as before. I believe that is a working scenario f=
+or
+> > > > > > Exynos to be the panel hook in the host. attach.
+> > > > >
+> > > > > As far as I understand it, the look up has to be in .bind callbac=
+k (and
+> > > > > generic_dsim_register_host() for imx). Can you try if/how that wo=
+rks ?
+> > > > >
+> > > > > >> Can you implement just this one change ?
+> > > > > >>
+> > > > > >> There is no need to use drmm_* helper for now, that can be imp=
+roved
+> > > > > >> later if possible.
+> > > > > >
+> > > > > > If this is the case then 1/18 will need otherwise
+> > > > >
+> > > > > Ah yes, 1/18 will be needed indeed. It should just be called from=
+ .bind
+> > > > > callback or generic_dsim_register_host() (i.e. probe callback).
 > > > >
-> > > > Ah yes, 1/18 will be needed indeed. It should just be called from .=
-bind
-> > > > callback or generic_dsim_register_host() (i.e. probe callback).
+> > > > panel hook at the probe call would be wrong.
 > > >
-> > > panel hook at the probe call would be wrong.
-> >
-> > Why?
-> >
-> > > the downstream bridge will call mipi_dsi_attach for finding the
-> > > connected upstream, so it indeed calls host.attach. If we move the
-> > > panel hook at the probe, then probing will defer.
+> > > Why?
 > > >
-> > > [   12.046862] platform 32e10000.dsi: deferred probe pending
-> > > [   12.052309] platform 32e00000.lcdif: deferred probe pending
+> > > > the downstream bridge will call mipi_dsi_attach for finding the
+> > > > connected upstream, so it indeed calls host.attach. If we move the
+> > > > panel hook at the probe, then probing will defer.
+> > > >
+> > > > [   12.046862] platform 32e10000.dsi: deferred probe pending
+> > > > [   12.052309] platform 32e00000.lcdif: deferred probe pending
+> > >
+> > > What is the dependency chain there, and why doesn't it probe?
 > >
-> > What is the dependency chain there, and why doesn't it probe?
->=20
-> Let me answer here for the above 2 queries.
->=20
-> This is clearly a point 2 scenario from the documentation.
->=20
-> "
-> The upstream driver doesn=E2=80=99t use the component framework, but is a
-> MIPI-DSI host. The bridge device uses the MIPI-DCS commands to be
-> controlled. In this case, the bridge device is a child of the display
-> device and when it will probe it=E2=80=99s assured that the display device
-> (and MIPI-DSI host) is present. The upstream driver will be assured
-> that the bridge driver is connected between the
-> mipi_dsi_host_ops.attach and mipi_dsi_host_ops.detach operations.
-> Therefore, it must run mipi_dsi_host_register() in its probe function,
-> and then run drm_bridge_attach() in its mipi_dsi_host_ops.attach hook.
-> "
->=20
-> So, the samsung-dsim follows the same rule, mipi_dsi_host_register()
-> in the probe and drm_bridge_attach() in mipi_dsi_host_ops.attach hook.
+> > Let me answer here for the above 2 queries.
+> >
+> > This is clearly a point 2 scenario from the documentation.
+> >
+> > "
+> > The upstream driver doesn=E2=80=99t use the component framework, but is=
+ a
+> > MIPI-DSI host. The bridge device uses the MIPI-DCS commands to be
+> > controlled. In this case, the bridge device is a child of the display
+> > device and when it will probe it=E2=80=99s assured that the display dev=
+ice
+> > (and MIPI-DSI host) is present. The upstream driver will be assured
+> > that the bridge driver is connected between the
+> > mipi_dsi_host_ops.attach and mipi_dsi_host_ops.detach operations.
+> > Therefore, it must run mipi_dsi_host_register() in its probe function,
+> > and then run drm_bridge_attach() in its mipi_dsi_host_ops.attach hook.
+> > "
+> >
+> > So, the samsung-dsim follows the same rule, mipi_dsi_host_register()
+> > in the probe and drm_bridge_attach() in mipi_dsi_host_ops.attach hook.
+>
+> But samsung-dsim is used together with the component framework, so this
+> doesn't work.
+>
+> Seriously, I've been telling you that it doesn't work. We spent an hour
+> discussing this with Marek yesterday who also explained this to you.
+> Stop trying to make that happen, it just doesn't work.
+>
+> Can we leave that solution behind and move forward?
 
-But samsung-dsim is used together with the component framework, so this
-doesn't work.
+I have given the logs of why it's not working. I did my best to
+explain. Samsung-dsim is not component-based it is a non-component DSI
+host bridge exclusively for imx8mm and Exynos DSI is component-based.
+Samsung-dsim we have a platform calls to call Exynos which will
+operate component binding. This means that imx8mm stuff cannot use the
+component framework at all.
 
-Seriously, I've been telling you that it doesn't work. We spent an hour
-discussing this with Marek yesterday who also explained this to you.
-Stop trying to make that happen, it just doesn't work.
+This is all I can explain. and adding panel or bridge finding code in
+the probe simply not working on imx8mm as it is non-component based.
 
-Can we leave that solution behind and move forward?
+Thanks for your patience in answering queries.
 
-> Above also mentioned "The upstream driver will be assured that the
-> bridge driver is connected between the mipi_dsi_host_ops.attach and
-> mipi_dsi_host_ops.detach operations" that means we need to find the
-> panel or bridge in mipi_dsi_host_ops.attach am I correct? not in the
-> probe.
-
-No, you're not correct. Just like the documentation, Marek and I have
-repeatedly told you.
-
-> lcdif =3D> samsung-ti =3D> dsim-sn65dsi (I2C) =3D> panel this is the brid=
-ge
-> chain. ti-sn65dsi is registered the MIPI Device and attaches the
-> upstream driver via mipi_dsi_attach that indeed calls upstream driver
-> mipi_dsi_host_ops.attach so if we move finding panel or bridge from
-> mipi_dsi_host_ops.attach to the probe then dev->of_node cannot be
-> valid so it will not find the bridge driver.
-
-Why not, dev->of_node is very much valid at probe time.
-
-Maxime
-
---zzb427pzpp6ztjxj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCY/4WKwAKCRDj7w1vZxhR
-xYB1AP98XI291kpJn1Taa/xAMYXr0/AQSM6V08qqph63xpN4JwEA1WPCd5OKdy2b
-XTw0bb88/uiklWLtHMe/r1XWI6OuNgY=
-=TPi9
------END PGP SIGNATURE-----
-
---zzb427pzpp6ztjxj--
+Jagan.
