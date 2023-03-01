@@ -2,327 +2,253 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD77C64ED6
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Feb 2023 15:10:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1CAC7EE33
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Mar 2023 16:22:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229534AbjB1PKL (ORCPT
+        id S229677AbjCAQWf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Feb 2023 10:10:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54400 "EHLO
+        Wed, 1 Mar 2023 11:22:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbjB1PKK (ORCPT
+        with ESMTP id S229463AbjCAQWd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Feb 2023 10:10:10 -0500
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92C6E1C7EF
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Feb 2023 07:10:08 -0800 (PST)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-536c02c9dfbso280527827b3.11
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Feb 2023 07:10:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ul8Ozd8UFTebNc6cj/DNYpyGqRAWtFXadOEA1glf6w8=;
-        b=IsxOC/IxpilBfzVS0mILeYiAp5NRIfhPpwWtK2A88xcbe5ZMVaVrbKWjE15iDDsSxJ
-         nP/0BfuUhiFpyoe4ut8Tiwd2P5wuHV5N6NlxYY5aZtAqbIZ7Q4PR8XoVzMF/qx4ZSjdV
-         r59DedOoGqQGWyr3TN9h6qxn4EtlZkTm20mzo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ul8Ozd8UFTebNc6cj/DNYpyGqRAWtFXadOEA1glf6w8=;
-        b=EbS3tLJ69tm2RKgPUo8r0seSEzcfmb3AKJc7D4CK7dohXO/mW0neLrVKWlfYd84m4U
-         p8u79AJ1kd4Rd9qShsBuQy49XbE/PNq7rED7HvoQzGCqLvSTq0yU3dhK6wEo/eTlWJrI
-         TpPlO8mOtnLoUjjJWZDC0WR0k+70vLA/5Kvl6oNoldJzsRqx87r+k1fOr4jS/O1ldACv
-         OvwuDrY9SEzuNle8/aTe6Da+02GUggqAH+XxOfK64HQ0TLxAh++qVUfwjUPrEH8aQQ4W
-         WESsxYS1sQ5L7+8rU4E0Gv/mTu5Z/Hk7Vjqq/BRUArfT06Bvznh4iyUZ8LTfKj4IuTck
-         990g==
-X-Gm-Message-State: AO0yUKUpTfP675V6L/sQgQ88JXCvbfVQbQCqLwuiqEPfn0GyXnc/i6hH
-        eEh/kLI3sQgaYVZT0Nb3lTXhLDoFJ1DRt93jSmgWAg==
-X-Google-Smtp-Source: AK7set+CcGU79o8oyPBRmTOSY6bh4PMWBO83d0ITuE9LZBiFgdsZ3StCl7ZhKmcAnACLpdb24Tqa2V4MDqndjgnurNQ=
-X-Received: by 2002:a81:b664:0:b0:52e:bb2d:2841 with SMTP id
- h36-20020a81b664000000b0052ebb2d2841mr1825981ywk.10.1677597006510; Tue, 28
- Feb 2023 07:10:06 -0800 (PST)
+        Wed, 1 Mar 2023 11:22:33 -0500
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15C28302BE;
+        Wed,  1 Mar 2023 08:22:32 -0800 (PST)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 321GKeV8065246;
+        Wed, 1 Mar 2023 10:20:40 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1677687640;
+        bh=eJOulfBTO406+XJwSAbUrw3TOVKL7z76SdXOdRRvd8g=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=oITlJuKJL0Igo+Zp8Mw3to8q1ph1GEIt/d3yESZ3cer2ebuhWbdbMI3A5SmJvB3FN
+         V+iCTjreym1r6VJb2vPdvJYz95D6QkQDjk525lQPej2NRTUvuqozcO2ayatgFg+2/r
+         1bTPhJR/a6fqQcqeL9vlm4O3gnX/VFyNSv0aWTr0=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 321GKeZv003448
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 1 Mar 2023 10:20:40 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Wed, 1
+ Mar 2023 10:20:40 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Wed, 1 Mar 2023 10:20:40 -0600
+Received: from [10.250.235.39] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 321GKE84054644;
+        Wed, 1 Mar 2023 10:20:15 -0600
+Message-ID: <2493cf75-f78c-993a-01e6-8f89556973f0@ti.com>
+Date:   Wed, 1 Mar 2023 21:50:14 +0530
 MIME-Version: 1.0
-References: <7b59aaf9-1f72-fd9f-29ac-1857ec3f91f3@denx.de> <CAMty3ZC6vqpFfdh2F=KUsAgm_KCksVXBV9ON1csjJd1m+gJpVQ@mail.gmail.com>
- <6066dff9-5a66-0da5-14d9-66162a2fbb39@denx.de> <CAMty3ZDjwD+3SKJiOgZLbYYTtq=udWkXbqnsyYaM73rsYxDumQ@mail.gmail.com>
- <47b8ad7d-cfc1-112c-2117-cb3612c1bba5@denx.de> <CAMty3ZDMJFW36g5=A1=_08VT1dZUMemEg3YcQMh08iZNRa+cTw@mail.gmail.com>
- <5c10d1e6-75ce-d926-fba9-a9bf5e240895@denx.de> <CAMty3ZBpWd817b5Ye_AQse1zruUtWOm2E4WUz0b7a4k9mVEzEQ@mail.gmail.com>
- <20230228120447.q7k5xup6hbvagg33@houat> <CAMty3ZAG_zONg181mmEzx=7y7kk=kX1pObQ379d3m8_TsPzHaA@mail.gmail.com>
- <20230228145643.b537y4uuc4ep3epc@houat>
-In-Reply-To: <20230228145643.b537y4uuc4ep3epc@houat>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 28 Feb 2023 20:39:54 +0530
-Message-ID: <CAMty3ZC-YfNLCy-Sx9UdG6W=cHzoEid-NdRFZqGxRgtLeMDy+A@mail.gmail.com>
-Subject: Re: [PATCH v13 04/18] drm: exynos: dsi: Switch to DSI panel or bridge
- find helper
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Marek Vasut <marex@denx.de>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Adam Ford <aford173@gmail.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v4 02/19] thermal/core: Use the thermal zone 'devdata'
+ accessor in thermal located drivers
+Content-Language: en-US
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>, <rafael@kernel.org>
+CC:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Mark Brown <broonie@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Balsam CHIHI <bchihi@baylibre.com>,
+        Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Talel Shenhar <talel@amazon.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        Zheng Yongjun <zhengyongjun3@huawei.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Shang XiaoJing <shangxiaojing@huawei.com>,
+        Tim Zimmermann <tim@linux4.de>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        Jiang Jian <jiangjian@cdjrlc.com>,
+        Daniel Golle <daniel@makrotopia.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Minghao Chi <chi.minghao@zte.com.cn>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
+        <linux-amlogic@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:QUALCOMM TSENS THERMAL DRIVER" 
+        <linux-arm-msm@vger.kernel.org>,
+        "open list:RENESAS R-CAR THERMAL DRIVERS" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC support" 
+        <linux-rockchip@lists.infradead.org>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/STM32 ARCHITECTURE" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "open list:ARM/Allwinner sunXi SoC support" 
+        <linux-sunxi@lists.linux.dev>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+        "open list:TI BANDGAP AND THERMAL DRIVER" 
+        <linux-omap@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+References: <20230228112238.2312273-1-daniel.lezcano@linaro.org>
+ <20230228112238.2312273-3-daniel.lezcano@linaro.org>
+From:   "Gole, Dhruva" <d-gole@ti.com>
+Organization: Texas Instruments Incorporated
+In-Reply-To: <20230228112238.2312273-3-daniel.lezcano@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Feb 28, 2023 at 8:26 PM Maxime Ripard <maxime@cerno.tech> wrote:
->
-> On Tue, Feb 28, 2023 at 08:09:26PM +0530, Jagan Teki wrote:
-> > On Tue, Feb 28, 2023 at 5:34 PM Maxime Ripard <maxime@cerno.tech> wrote=
-:
-> > >
-> > > On Tue, Feb 28, 2023 at 02:08:53AM +0530, Jagan Teki wrote:
-> > > > On Tue, Feb 28, 2023 at 1:40 AM Marek Vasut <marex@denx.de> wrote:
-> > > > >
-> > > > > On 2/27/23 20:49, Jagan Teki wrote:
-> > > > > > On Tue, Feb 28, 2023 at 1:11 AM Marek Vasut <marex@denx.de> wro=
-te:
-> > > > > >>
-> > > > > >> On 2/27/23 20:34, Jagan Teki wrote:
-> > > > > >>> On Tue, Feb 28, 2023 at 12:54 AM Marek Vasut <marex@denx.de> =
-wrote:
-> > > > > >>>>
-> > > > > >>>> On 2/27/23 20:15, Jagan Teki wrote:
-> > > > > >>>>> On Tue, Feb 28, 2023 at 12:38 AM Marek Vasut <marex@denx.de=
-> wrote:
-> > > > > >>>>>>
-> > > > > >>>>>> On 2/27/23 20:01, Jagan Teki wrote:
-> > > > > >>>>>>> On Tue, Feb 28, 2023 at 12:25 AM Marek Vasut <marex@denx.=
-de> wrote:
-> > > > > >>>>>>>>
-> > > > > >>>>>>>> On 2/27/23 12:39, Jagan Teki wrote:
-> > > > > >>>>>>>>> drm_of_dsi_find_panel_or_bridge is capable of looking u=
-p the
-> > > > > >>>>>>>>> downstream DSI bridge and panel and trying to add a pan=
-el bridge
-> > > > > >>>>>>>>> if the panel is found.
-> > > > > >>>>>>>>>
-> > > > > >>>>>>>>> Replace explicit finding calls with drm_of_dsi_find_pan=
-el_or_bridge
-> > > > > >>>>>>>>> followed with drmm_panel_bridge_add.
-> > > > > >>>>>>>>>
-> > > > > >>>>>>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > > >>>>>>>>> ---
-> > > > > >>>>>>>>> Changes for v13, v12, v11:
-> > > > > >>>>>>>>> - none
-> > > > > >>>>>>>>> Changes for v10:
-> > > > > >>>>>>>>> - new patch
-> > > > > >>>>>>>>>
-> > > > > >>>>>>>>>       drivers/gpu/drm/exynos/exynos_drm_dsi.c | 25 ++++=
-+++++++++------------
-> > > > > >>>>>>>>>       1 file changed, 13 insertions(+), 12 deletions(-)
-> > > > > >>>>>>>>>
-> > > > > >>>>>>>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/=
-drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> > > > > >>>>>>>>> index df15501b1075..12a6dd987e8f 100644
-> > > > > >>>>>>>>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> > > > > >>>>>>>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> > > > > >>>>>>>>> @@ -25,6 +25,7 @@
-> > > > > >>>>>>>>>       #include <drm/drm_atomic_helper.h>
-> > > > > >>>>>>>>>       #include <drm/drm_bridge.h>
-> > > > > >>>>>>>>>       #include <drm/drm_mipi_dsi.h>
-> > > > > >>>>>>>>> +#include <drm/drm_of.h>
-> > > > > >>>>>>>>>       #include <drm/drm_panel.h>
-> > > > > >>>>>>>>>       #include <drm/drm_print.h>
-> > > > > >>>>>>>>>       #include <drm/drm_probe_helper.h>
-> > > > > >>>>>>>>> @@ -1470,24 +1471,26 @@ static int exynos_dsi_host_atta=
-ch(struct mipi_dsi_host *host,
-> > > > > >>>>>>>>>           struct device *dev =3D dsi->dev;
-> > > > > >>>>>>>>>           struct drm_encoder *encoder =3D &dsi->encoder=
-;
-> > > > > >>>>>>>>>           struct drm_device *drm =3D encoder->dev;
-> > > > > >>>>>>>>> +     struct drm_bridge *bridge;
-> > > > > >>>>>>>>>           struct drm_panel *panel;
-> > > > > >>>>>>>>>           int ret;
-> > > > > >>>>>>>>>
-> > > > > >>>>>>>>> -     panel =3D of_drm_find_panel(device->dev.of_node);
-> > > > > >>>>>>>>> -     if (!IS_ERR(panel)) {
-> > > > > >>>>>>>>> -             dsi->out_bridge =3D devm_drm_panel_bridge=
-_add(dev, panel);
-> > > > > >>>>>>>>> -     } else {
-> > > > > >>>>>>>>> -             dsi->out_bridge =3D of_drm_find_bridge(de=
-vice->dev.of_node);
-> > > > > >>>>>>>>> -             if (!dsi->out_bridge)
-> > > > > >>>>>>>>> -                     dsi->out_bridge =3D ERR_PTR(-EINV=
-AL);
-> > > > > >>>>>>>>> -     }
-> > > > > >>>>>>>>
-> > > > > >>>>>>>> As far as I understand this from my conversation with Ma=
-xime (please put
-> > > > > >>>>>>>> him on CC of V15), the change here should instead perfor=
-m the panel look
-> > > > > >>>>>>>> up NOT in exynos_dsi_host_attach() , but in exynos_dsi_b=
-ind() , i.e. in
-> > > > > >>>>>>>> the component_ops .bind callback . Here is an example of=
- correct
-> > > > > >>>>>>>> implementation:
-> > > > > >>>>>>>>
-> > > > > >>>>>>>> https://cgit.freedesktop.org/drm-misc/tree/drivers/gpu/d=
-rm/vc4/vc4_dsi.c#n1805
-> > > > > >>>>>>>
-> > > > > >>>>>>> But, we don't have component_ops.bind for imx8m case, so =
-where do we
-> > > > > >>>>>>> want to place the panel hook?
-> > > > > >>>>>>>
-> > > > > >>>>>>> Exynos drm drivers are component-based but, imx8mm is not=
-.
-> > > > > >>>>>>
-> > > > > >>>>>> In 14/18 patch, the same should be added to generic_dsim_r=
-egister_host()
-> > > > > >>>>>> , which is called from the driver .probe() callback, but t=
-hat is OK.
-> > > > > >>>>>>
-> > > > > >>>>>> That's ^ is the iMX part.
-> > > > > >>>>>
-> > > > > >>>>> Ohh. You mean, we need to find the panel hook separately in=
- two places like
-> > > > > >>>>> - bind for exynos
-> > > > > >>>>> - probe for imx8mm
-> > > > > >>>>
-> > > > > >>>> Yes
-> > > > > >>>>
-> > > > > >>>>> If so? how can I find the drm_device pointer in the probe?
-> > > > > >>>>
-> > > > > >>>> What for ? The panel lookup uses OF graph . Where do you nee=
-d the
-> > > > > >>>> drm_device in it ?
-> > > > > >>>
-> > > > > >>> May I can summarize the whole setback here so that everybody =
-is on the
-> > > > > >>> same page and find the proper solution?
-> > > > > >>>
-> > > > > >>> The key blocker is accessing the DRM pointer in order to use =
-the
-> > > > > >>> DRM-managed action helper.
-> > > > > >>>
-> > > > > >>> 1. If we find the panel hook in Exynos component_ops.bind the=
-n we can
-> > > > > >>> use the DRM pointer directly as VC4 does.
-> > > > > >>> 2. if we find the panel hook in Samsung drm_bridge_funcs.atta=
-ch (for
-> > > > > >>> imx8mm) then we can use the DRM pointer directly via bridge->=
-dev.
-> > > > > >>>
-> > > > > >>> If we make 2) has common across like finding the panel hook i=
-n
-> > > > > >>> drm_bridge_funcs.attach the Exynos drm pipeline cannot find t=
-he
-> > > > > >>> panels.
-> > > > > >>>
-> > > > > >>> The common solution for both exynos and imx8m is host.attach =
-but if we
-> > > > > >>> do so we cannot get find the DRM pointer.
-> > > > > >>
-> > > > > >> There isn't going to be common solution, you would really have=
- to do the
-> > > > > >> look up in component_ops .bind callback for exynos , and
-> > > > > >> generic_dsim_register_host() for i.MX .
-> > > > > >>
-> > > > > >>> If we go ahead with no need for DRM-managed helper at the mom=
-ent, then
-> > > > > >>> find the panel hook in host.attach and then drop 2/18.
-> > > > > >>
-> > > > > >> The panel lookup must happen in .bind/.probe for exynos/imx re=
-spectively
-> > > > > >> , that's really all that is required here. Then you can drop 1=
-,2,3/18
-> > > > > >> and get this series applied (I hope) .
-> > > > > >
-> > > > > > I'm not quite sure, if the panel hook in .bind work for exynos =
-or not?
-> > > > >
-> > > > > Marek should be able to test exynos for you one more time I hope.
-> > > > >
-> > > > > > the host. attach has KMS hotplug code after the panel hook and
-> > > > > > bridge_attach as before. I believe that is a working scenario f=
-or
-> > > > > > Exynos to be the panel hook in the host. attach.
-> > > > >
-> > > > > As far as I understand it, the look up has to be in .bind callbac=
-k (and
-> > > > > generic_dsim_register_host() for imx). Can you try if/how that wo=
-rks ?
-> > > > >
-> > > > > >> Can you implement just this one change ?
-> > > > > >>
-> > > > > >> There is no need to use drmm_* helper for now, that can be imp=
-roved
-> > > > > >> later if possible.
-> > > > > >
-> > > > > > If this is the case then 1/18 will need otherwise
-> > > > >
-> > > > > Ah yes, 1/18 will be needed indeed. It should just be called from=
- .bind
-> > > > > callback or generic_dsim_register_host() (i.e. probe callback).
-> > > >
-> > > > panel hook at the probe call would be wrong.
-> > >
-> > > Why?
-> > >
-> > > > the downstream bridge will call mipi_dsi_attach for finding the
-> > > > connected upstream, so it indeed calls host.attach. If we move the
-> > > > panel hook at the probe, then probing will defer.
-> > > >
-> > > > [   12.046862] platform 32e10000.dsi: deferred probe pending
-> > > > [   12.052309] platform 32e00000.lcdif: deferred probe pending
-> > >
-> > > What is the dependency chain there, and why doesn't it probe?
-> >
-> > Let me answer here for the above 2 queries.
-> >
-> > This is clearly a point 2 scenario from the documentation.
-> >
-> > "
-> > The upstream driver doesn=E2=80=99t use the component framework, but is=
- a
-> > MIPI-DSI host. The bridge device uses the MIPI-DCS commands to be
-> > controlled. In this case, the bridge device is a child of the display
-> > device and when it will probe it=E2=80=99s assured that the display dev=
-ice
-> > (and MIPI-DSI host) is present. The upstream driver will be assured
-> > that the bridge driver is connected between the
-> > mipi_dsi_host_ops.attach and mipi_dsi_host_ops.detach operations.
-> > Therefore, it must run mipi_dsi_host_register() in its probe function,
-> > and then run drm_bridge_attach() in its mipi_dsi_host_ops.attach hook.
-> > "
-> >
-> > So, the samsung-dsim follows the same rule, mipi_dsi_host_register()
-> > in the probe and drm_bridge_attach() in mipi_dsi_host_ops.attach hook.
->
-> But samsung-dsim is used together with the component framework, so this
-> doesn't work.
->
-> Seriously, I've been telling you that it doesn't work. We spent an hour
-> discussing this with Marek yesterday who also explained this to you.
-> Stop trying to make that happen, it just doesn't work.
->
-> Can we leave that solution behind and move forward?
 
-I have given the logs of why it's not working. I did my best to
-explain. Samsung-dsim is not component-based it is a non-component DSI
-host bridge exclusively for imx8mm and Exynos DSI is component-based.
-Samsung-dsim we have a platform calls to call Exynos which will
-operate component binding. This means that imx8mm stuff cannot use the
-component framework at all.
+On 2/28/2023 4:52 PM, Daniel Lezcano wrote:
+> The thermal zone device structure is exposed to the different drivers
+> and obviously they access the internals while that should be
+> restricted to the core thermal code.
+>
+> In order to self-encapsulate the thermal core code, we need to prevent
+> the drivers accessing directly the thermal zone structure and provide
+> accessor functions to deal with.
+>
+> Use the devdata accessor introduced in the previous patch.
+>
+> No functional changes intended.
+>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se> #R-Car
+> Acked-by: Mark Brown <broonie@kernel.org>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> #MediaTek auxadc and lvts
+> Reviewed-by: Balsam CHIHI <bchihi@baylibre.com> #Mediatek lvts
+> Reviewed-by: Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com> #da9062
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>  #spread
+> Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com> #sun8i_thermal
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Acked-by: Florian Fainelli <f.fainelli@gmail.com> #Broadcom
+> ---
+>  drivers/thermal/amlogic_thermal.c                   |  2 +-
+>  drivers/thermal/armada_thermal.c                    |  4 ++--
+>  drivers/thermal/broadcom/bcm2711_thermal.c          |  2 +-
+>  drivers/thermal/broadcom/bcm2835_thermal.c          |  2 +-
+>  drivers/thermal/broadcom/brcmstb_thermal.c          |  4 ++--
+>  drivers/thermal/broadcom/ns-thermal.c               |  2 +-
+>  drivers/thermal/broadcom/sr-thermal.c               |  2 +-
+>  drivers/thermal/da9062-thermal.c                    |  2 +-
+>  drivers/thermal/db8500_thermal.c                    |  2 +-
+>  drivers/thermal/dove_thermal.c                      |  2 +-
+>  drivers/thermal/hisi_thermal.c                      |  2 +-
+>  drivers/thermal/imx8mm_thermal.c                    |  2 +-
+>  drivers/thermal/imx_sc_thermal.c                    |  2 +-
+>  drivers/thermal/imx_thermal.c                       |  6 +++---
+>  .../thermal/intel/int340x_thermal/int3400_thermal.c |  2 +-
+>  .../intel/int340x_thermal/int340x_thermal_zone.c    |  4 ++--
+>  .../int340x_thermal/processor_thermal_device_pci.c  |  4 ++--
+>  drivers/thermal/intel/intel_pch_thermal.c           |  2 +-
+>  drivers/thermal/intel/intel_quark_dts_thermal.c     |  6 +++---
+>  drivers/thermal/intel/intel_soc_dts_iosf.c          | 13 +++++--------
+>  drivers/thermal/intel/x86_pkg_temp_thermal.c        |  4 ++--
+>  drivers/thermal/k3_bandgap.c                        |  2 +-
+>  drivers/thermal/k3_j72xx_bandgap.c                  |  2 +-
+> [...]
+>  
+> diff --git a/drivers/thermal/k3_bandgap.c b/drivers/thermal/k3_bandgap.c
+> index 22c9bcb899c3..b5cd2c85e0c3 100644
+> --- a/drivers/thermal/k3_bandgap.c
+> +++ b/drivers/thermal/k3_bandgap.c
+> @@ -141,7 +141,7 @@ static int k3_bgp_read_temp(struct k3_thermal_data *devdata,
+>  
+>  static int k3_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
+>  {
+> -	struct k3_thermal_data *data = tz->devdata;
+> +	struct k3_thermal_data *data = thermal_zone_device_priv(tz);
 
-This is all I can explain. and adding panel or bridge finding code in
-the probe simply not working on imx8mm as it is non-component based.
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
 
-Thanks for your patience in answering queries.
 
-Jagan.
+>  	int ret = 0;
+>  
+>  	ret = k3_bgp_read_temp(data, temp);
+> diff --git a/drivers/thermal/k3_j72xx_bandgap.c b/drivers/thermal/k3_j72xx_bandgap.c
+> index 031ea1091909..5be1f09eeb2c 100644
+> --- a/drivers/thermal/k3_j72xx_bandgap.c
+> +++ b/drivers/thermal/k3_j72xx_bandgap.c
+> @@ -248,7 +248,7 @@ static inline int k3_bgp_read_temp(struct k3_thermal_data *devdata,
+>  /* Get temperature callback function for thermal zone */
+>  static int k3_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
+>  {
+> -	return k3_bgp_read_temp(tz->devdata, temp);
+> +	return k3_bgp_read_temp(thermal_zone_device_priv(tz), temp);
+>  }
+>  
+>  static const struct thermal_zone_device_ops k3_of_thermal_ops = {
+> diff --git a/drivers/thermal/kirkwood_thermal.c b/drivers/thermal/kirkwood_thermal.c
+> index bec7ec20e79d..92b3ce426b9d 100644
+> --- a/drivers/thermal/kirkwood_thermal.c
+> +++ b/drivers/thermal/kirkwood_thermal.c
+> @@ -27,7 +27,7 @@ static int kirkwood_get_temp(struct thermal_zone_device *thermal,
+>  			  int *temp)
+>  {
+>  	unsigned long reg;
+> -	struct kirkwood_thermal_priv *priv = thermal->devdata;
+> +	struct kirkwood_thermal_priv *priv = thermal_zone_device_priv(thermal);
+>  
+>  	reg = readl_relaxed(priv->sensor);
+>  
+> [...]
+
+-- 
+Regards,
+Dhruva Gole <d-gole@ti.com>
+
