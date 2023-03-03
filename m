@@ -2,95 +2,105 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13073C7EE2D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Mar 2023 16:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F50C7EE37
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Mar 2023 17:21:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231150AbjCCQli (ORCPT
+        id S231611AbjCCRVY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Mar 2023 11:41:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47748 "EHLO
+        Fri, 3 Mar 2023 12:21:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230189AbjCCQle (ORCPT
+        with ESMTP id S231584AbjCCRVX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Mar 2023 11:41:34 -0500
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F29EC3B64E
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Mar 2023 08:41:05 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 3D97D85D4B;
-        Fri,  3 Mar 2023 17:41:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1677861664;
-        bh=E9n5AANJnBD/8EduVr3DBqrLlSpvSrK14qs8o7r/DDQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=c+dgAlVX2NOdyO20/JbnDWQ/HFjGoxn9wnR1Vt65UVe6QgM3R+Nj8QUtwnEDuR29l
-         UnLnJ8OgEwqkfMouOgw7NLQE6ToN+tSlFjDDPS1h13qA64pPbizw4hLouSW1ueMfvp
-         5X/6WxaJRI49Nx3DEcRt58C2mc+kPloMv0RB/NCHgzALjc6OsBgOGdoh3bFCVEGG6v
-         jz/DFEiWY9ZdLIg67P1mrEZKsVieYf4rgZMPH/uZNF2bcxYAM4afe+WieG7++mwkJL
-         x2NmQVDkjUgBLJmyrHlFjGyZdUEoX4OjTZi+Ji+ubjXOgF96wOcT+542YbirUP1/0V
-         Z3rhLwjfACx+w==
-Message-ID: <1686f1fd-a2db-dc82-a2a7-740a68c09938@denx.de>
-Date:   Fri, 3 Mar 2023 17:41:02 +0100
+        Fri, 3 Mar 2023 12:21:23 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A156E515C1
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Mar 2023 09:21:14 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pY95d-00070f-P8; Fri, 03 Mar 2023 18:21:05 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pY95c-001bnZ-IR; Fri, 03 Mar 2023 18:21:04 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pY95b-001tlo-Fg; Fri, 03 Mar 2023 18:21:03 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>, linux-spi@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+Subject: [PATCH 62/87] spi: s3c64xx: Convert to platform remove callback returning void
+Date:   Fri,  3 Mar 2023 18:20:16 +0100
+Message-Id: <20230303172041.2103336-63-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230303172041.2103336-1-u.kleine-koenig@pengutronix.de>
+References: <20230303172041.2103336-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v15 02/16] drm: exynos: dsi: Lookup OF-graph or Child node
- devices
-Content-Language: en-US
-To:     Jagan Teki <jagan@amarulasolutions.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Maxime Ripard <mripard@kernel.org>
-Cc:     Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Adam Ford <aford173@gmail.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-References: <20230303145138.29233-1-jagan@amarulasolutions.com>
- <20230303145138.29233-3-jagan@amarulasolutions.com>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <20230303145138.29233-3-jagan@amarulasolutions.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1850; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=tucUXDHezSL3KgDgyX7M+EMeQDm52S5dcccBPtuX9G8=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkAiv8G7s4yrvtMZ2jtX0+0GrsGDwhg5kg2JsD7 EanMm1iNlyJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZAIr/AAKCRDB/BR4rcrs CVFXB/9AS05Yfcdqg1mk7NDEhTtmbC1DI7frMVT1vbQHnhFluWOC1/G8GPjPWARX8kz+fC0Dypg Hfg/cBSuI7DZhPEGlkV/hozukhGKYpOZ1eBvkF7bM4uIK8sKMDjKHa02lQlcocWST9GesotY3xC mTsdonIZfnAh8aCZpnjh3lQ0Pj6nxzq1SHFR9J13S/rSbgpJzsvcYwT8VUOlltHHqvMoZa13zBY GGRU7pnEyTEXq/S0DAplMNUcu9HNfTbE/ex00TN8LQJv4+TOEcZK4la9wK6ofsCsXLV992fTSBQ rVpgonO2PlOZ7QyBXi1nydljWwywq3jsPepnbnB1rtMP8pYy
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 3/3/23 15:51, Jagan Teki wrote:
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
 
-[...]
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -1470,18 +1470,52 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
->   	struct device *dev = dsi->dev;
->   	struct drm_encoder *encoder = &dsi->encoder;
->   	struct drm_device *drm = encoder->dev;
-> +	struct device_node *np = dev->of_node;
-> +	struct device_node *remote;
->   	struct drm_panel *panel;
->   	int ret;
->   
-> -	panel = of_drm_find_panel(device->dev.of_node);
-> +	/**
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/spi/spi-s3c64xx.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-This shouldn't be kerneldoc style comment, drop that extra asterisk (*).
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 71d324ec9a70..cc69f8ffdbdc 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1286,7 +1286,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int s3c64xx_spi_remove(struct platform_device *pdev)
++static void s3c64xx_spi_remove(struct platform_device *pdev)
+ {
+ 	struct spi_master *master = platform_get_drvdata(pdev);
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+@@ -1309,8 +1309,6 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
+ 	pm_runtime_put_noidle(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+-
+-	return 0;
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
+@@ -1531,7 +1529,7 @@ static struct platform_driver s3c64xx_spi_driver = {
+ 		.of_match_table = of_match_ptr(s3c64xx_spi_dt_match),
+ 	},
+ 	.probe = s3c64xx_spi_probe,
+-	.remove = s3c64xx_spi_remove,
++	.remove_new = s3c64xx_spi_remove,
+ 	.id_table = s3c64xx_spi_driver_ids,
+ };
+ MODULE_ALIAS("platform:s3c64xx-spi");
+-- 
+2.39.1
 
-> +	 * Devices can also be child nodes when we also control that device
-> +	 * through the upstream device (ie, MIPI-DCS for a MIPI-DSI device).
-
-[...]
-
-With that fixed:
-
-Reviewed-by: Marek Vasut <marex@denx.de>
