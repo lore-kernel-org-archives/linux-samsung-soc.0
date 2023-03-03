@@ -2,95 +2,161 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D729AC7EE2D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Mar 2023 15:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D82C7EE39
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Mar 2023 15:48:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231199AbjCCPMI (ORCPT
+        id S231476AbjCCPsT convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Mar 2023 10:12:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55280 "EHLO
+        Fri, 3 Mar 2023 10:48:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229803AbjCCPMH (ORCPT
+        with ESMTP id S230436AbjCCPsR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Mar 2023 10:12:07 -0500
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37B832367E
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Mar 2023 07:12:06 -0800 (PST)
-Received: by mail-yb1-xb31.google.com with SMTP id v101so2249983ybi.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Mar 2023 07:12:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G+YNWt3/2mwhQtToJ+WhtS+kWhy5QJtkAQP5ui8Wpx0=;
-        b=E7qyvwtQl97lZ/Sq/Xto3u4q+xBQgdgGeuODz5MPGhUkyuH4o4Qt0gmB84bdIh3zw/
-         0Jk5yjUzGhUVNlsCA77YwtHod3OWwPnfxFCWCK1/t+L9cOJmt2P1Lw9o5pxFgvaMrRNY
-         JvVyNKPgWpA0A7bpZNVRQ46O3AlJyvBXvj50M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G+YNWt3/2mwhQtToJ+WhtS+kWhy5QJtkAQP5ui8Wpx0=;
-        b=WI97vynTLjOeWZBmB0t+bjsDY5ZJN/1JlUVZSwiYGcsDk/hC9XIJhWm0qukxcQa5wP
-         J237EqDChzJxjaYY7dIgrQVitt62A4nN3R3InHJllZDZVSgHFznFnyKOzzW+Cz5XeZJR
-         vXV1qLGC4z0BubAgVfKGcPKcKJaaq2f/sds0R2JXHCCcB/VlllHQi8H7mBjnWxGJ+ohe
-         6jw0N5Hnl8ts6X1lMfGvpOel/J6+C5l7QcbC/a9UDRik6jhn8u/OispRT5WAGnp5Dy4V
-         o+dEVGBVa4XkrNg3PqVKx60zEA/T7YuEwNw2dkGXv5h1d8Dsg1lzj9eVvcftLYAyuKQZ
-         wuWw==
-X-Gm-Message-State: AO0yUKXiW8FNtlRyznh8oRUJWdqJh8dSW2I0L9UpUq0c7XN2YvplvxBz
-        weum/6jFgpEC66D4JEMHQzk0EtmdED9JjGa7TaFsHA==
-X-Google-Smtp-Source: AK7set/uu7+i7lmLzXdvVBwrBo2YxMppu1kabgxL75/dmMInh7Y50+ilXQzz4J7CEdbV4A3U6bNnY3M0naC/gJ2u3mE=
-X-Received: by 2002:a05:6902:4c3:b0:a6a:3356:6561 with SMTP id
- v3-20020a05690204c300b00a6a33566561mr1035058ybs.1.1677856325423; Fri, 03 Mar
- 2023 07:12:05 -0800 (PST)
-MIME-Version: 1.0
-References: <20230303145138.29233-1-jagan@amarulasolutions.com>
- <20230303145138.29233-13-jagan@amarulasolutions.com> <20230303150807.4hhpjinuac6uyj3p@houat>
-In-Reply-To: <20230303150807.4hhpjinuac6uyj3p@houat>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Fri, 3 Mar 2023 20:41:54 +0530
-Message-ID: <CAMty3ZDCVQyR-Az4Nd+iNUww5ddvtEPRR2Dt0M-=0Nt+who4ow@mail.gmail.com>
-Subject: Re: [PATCH v15 12/16] drm: bridge: Generalize Exynos-DSI driver into
- a Samsung DSIM bridge
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Fri, 3 Mar 2023 10:48:17 -0500
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D83ACA0C;
+        Fri,  3 Mar 2023 07:48:14 -0800 (PST)
+Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1pY7cn-0005si-GH; Fri, 03 Mar 2023 16:47:13 +0100
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     rafael@kernel.org, daniel.lezcano@linaro.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Mark Brown <broonie@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Balsam CHIHI <bchihi@baylibre.com>,
+        Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Dhruva Gole <d-gole@ti.com>,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Talel Shenhar <talel@amazon.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
         Neil Armstrong <neil.armstrong@linaro.org>,
-        Marek Vasut <marex@denx.de>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Adam Ford <aford173@gmail.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        Zheng Yongjun <zhengyongjun3@huawei.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        Shang XiaoJing <shangxiaojing@huawei.com>,
+        Tim Zimmermann <tim@linux4.de>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        Jiang Jian <jiangjian@cdjrlc.com>,
+        Daniel Golle <daniel@makrotopia.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ido Schimmel <idosch@nvidia.com>,
+        Minghao Chi <chi.minghao@zte.com.cn>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
+        <linux-amlogic@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:QUALCOMM TSENS THERMAL DRIVER" 
+        <linux-arm-msm@vger.kernel.org>,
+        "open list:RENESAS R-CAR THERMAL DRIVERS" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC support" 
+        <linux-rockchip@lists.infradead.org>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/STM32 ARCHITECTURE" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "open list:ARM/Allwinner sunXi SoC support" 
+        <linux-sunxi@lists.linux.dev>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+        "open list:TI BANDGAP AND THERMAL DRIVER" 
+        <linux-omap@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH v5 02/18] thermal/core: Use the thermal zone 'devdata' accessor in
+ thermal located drivers
+Date:   Fri, 03 Mar 2023 16:47:15 +0100
+Message-ID: <3152081.5fSG56mABF@diego>
+In-Reply-To: <20230301201446.3713334-3-daniel.lezcano@linaro.org>
+References: <20230301201446.3713334-1-daniel.lezcano@linaro.org>
+ <20230301201446.3713334-3-daniel.lezcano@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Mar 3, 2023 at 8:38=E2=80=AFPM Maxime Ripard <maxime@cerno.tech> wr=
-ote:
->
-> On Fri, Mar 03, 2023 at 08:21:34PM +0530, Jagan Teki wrote:
-> > +static int samsung_dsim_host_detach(struct mipi_dsi_host *host,
-> > +                                 struct mipi_dsi_device *device)
-> > +{
-> > +     struct samsung_dsim *dsi =3D host_to_dsi(host);
-> > +     const struct samsung_dsim_plat_data *pdata =3D dsi->plat_data;
-> > +
-> > +     if (dsi->out_bridge->funcs->detach)
-> > +             dsi->out_bridge->funcs->detach(dsi->out_bridge);
->
-> You should never call into the bridge ops directly. If there's an issue
-> in the helpers somewhere else, fix that instead.
+Am Mittwoch, 1. März 2023, 21:14:30 CET schrieb Daniel Lezcano:
+> The thermal zone device structure is exposed to the different drivers
+> and obviously they access the internals while that should be
+> restricted to the core thermal code.
+> 
+> In order to self-encapsulate the thermal core code, we need to prevent
+> the drivers accessing directly the thermal zone structure and provide
+> accessor functions to deal with.
+> 
+> Use the devdata accessor introduced in the previous patch.
+> 
+> No functional changes intended.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se> #R-Car
+> Acked-by: Mark Brown <broonie@kernel.org>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> #MediaTek auxadc and lvts
+> Reviewed-by: Balsam CHIHI <bchihi@baylibre.com> #Mediatek lvts
+> Reviewed-by: Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com> #da9062
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>  #spread
+> Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com> #sun8i_thermal
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Acked-by: Florian Fainelli <f.fainelli@gmail.com> #Broadcom
+> Reviewed-by: Dhruva Gole <d-gole@ti.com> # K3 bandgap
 
-Agreed, it was added by mistake and it was removed in Exynos. I will fix it=
-.
+Acked-by: Heiko Stuebner <heiko@sntech.de> #rockchip
 
-Jagan.
+
