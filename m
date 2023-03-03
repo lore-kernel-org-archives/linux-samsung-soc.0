@@ -2,91 +2,92 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD84C7EE2F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Mar 2023 10:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8375DC678D4
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Mar 2023 10:12:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbjCCKGW (ORCPT
+        id S229698AbjCCKMr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Mar 2023 05:06:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52520 "EHLO
+        Fri, 3 Mar 2023 05:12:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229816AbjCCKGV (ORCPT
+        with ESMTP id S229728AbjCCKMp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Mar 2023 05:06:21 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 485E3E053
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Mar 2023 02:06:19 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id x3so7998567edb.10
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Mar 2023 02:06:19 -0800 (PST)
+        Fri, 3 Mar 2023 05:12:45 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40F755D8BA
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Mar 2023 02:12:42 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id o15so8020863edr.13
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Mar 2023 02:12:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1677837978;
+        d=linaro.org; s=google; t=1677838361;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=A52iRvnx5c7MGijeXJmmv5mrghysldEPBrnjdkAkJZ4=;
-        b=yr1lGj5AdVK9kPgEvrtJdc3zZz5bDs0BSUoUjg+sHzLPIMJTsPXA3OQ9nUqXxlNLZ+
-         ZmLGPmzovNOCnWNSKxurap8WIvGeWrYRu80UjGAyRj8vm7cBTLTgMBajvllO4gZItrnQ
-         XPfoX8g7C0Hp0ZZQ1dJQUG0uZXCHumzAVxP+yqxR5oWNsrDatY0vYddtrdgUSGV9PdMm
-         4EGZnFcJJ7WNoEGWhA5TE2hgwKollJcggbKcpjnWUHpOs1Mcjtz/9AvkcIE0byxowqAo
-         0LgC7WvNUc9Omqt0Nk9AZ7VOjPQlO2n555IuBNXFRTIvxJ/Z+q6BvNFEojv5DTF9Tz/1
-         P8QQ==
+        bh=wIXpkJrhXTPwGpv7CslgbXTP5NsG/65llnuvwiJ94Xo=;
+        b=F+wT+WYF1s8KiGpaCpHuq6j21Oy+hkULUoUT1oL/0G67XEYLxp+nuJvTYtIySgnnE7
+         BLg9JlCla+mhai9qMEvjnpojEWFK+pk3E2ojrqYhMFLBiNuLBN5SwlFsMIIbCBeZDFpK
+         9AChHRuU4rKc/fq6mGithDketvTbQ0K1VRBO9Msw/zgsXOPBdPkQg0IdaneD7ShSU4od
+         t3nhFiZRTAz8O6B3hWHBNzxUFNUc4GR6BgTBOP3Ny5PNYj0dR8Aoo4kYP2e6gnFF5rTJ
+         TENBctVZF6N4e3Rx4vcK4qbZRxGe56Ld0OHuKWisHGK04TEuwOUGTvitswVfvqg0dLPJ
+         SdHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677837978;
+        d=1e100.net; s=20210112; t=1677838361;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A52iRvnx5c7MGijeXJmmv5mrghysldEPBrnjdkAkJZ4=;
-        b=3YwUr4N75xSWwIp28TsSbf9aSSKSl9+vzCvcNlPdaXmIpKNOnCQuz0ufS/7tkjbxBn
-         2Kh0CfP7opfDdTYG7vjDPr5ANdr69yWWXumMhZitvrl0NAM8tjWwGlq2hITh4W/NT0oe
-         dw846KfmJXEiAdH8IQSPWgYsf4ZZNGFvmYMYuqGZvv+Z61Y8XUJoNQG0PmoQkrA49HXM
-         TagfsUWjrwC2jIkmATFz/JVGOjjfeu2HRv8ZrQputU+8i5FSntIpMQiFd5bQ6p6ASm2G
-         R9zeHrT6Z7kE/hJ9zUUh6YCiHVv63zh9PkuRADY66Iuz3nUa+7ch7DPM1/JrQ6quRv6i
-         dTkw==
-X-Gm-Message-State: AO0yUKXawJiOZRBAMaKt7Q+/vbzF5rtc7TjWSLugzlUCHgs1reb7bPIc
-        zxDmxS1Q5cIMQJLUEwCHGnXCBw==
-X-Google-Smtp-Source: AK7set+ehJpZq1NePXVYHcpcgCL/tQBG+1grBrCeNQPJL4QzQpW6BkSTT9hiFKaiWt2LgNJT6dtWTA==
-X-Received: by 2002:aa7:c392:0:b0:4ac:d2b4:5e37 with SMTP id k18-20020aa7c392000000b004acd2b45e37mr1173029edq.39.1677837977750;
-        Fri, 03 Mar 2023 02:06:17 -0800 (PST)
+        bh=wIXpkJrhXTPwGpv7CslgbXTP5NsG/65llnuvwiJ94Xo=;
+        b=FPbtOGQahG/eebfSVyubuMHhYjRL0ijNQzR+xdXcDR96u8oGnZs9CsxJwKxlT1zp9+
+         UJi9A1Y0myiWmpgq8jLeYWm+a+4TyTBAnRj19z0tW6e/WdhBSbgX06qQuNPItMwjOek3
+         svgzbsbRl0eCp91KJYX5j/SKU/oANZUNWlJm78WYlxN8mmJUqEHyImv7mcovI/plhRoe
+         d0vY0WefUMiMjyOITDfZb3UU4FeM8+gIYekF7mh0mRK7MyCnHWw4T92vGokI3qXCFJxq
+         fbyrXm4kxa4FCWwL7n0zOE3av30Y22UFUfagt2XooXkUyIwg9PyRqymkYKKauxSho2DI
+         QT/g==
+X-Gm-Message-State: AO0yUKUMWHum1f90kwTbWuXLch1t65HzZSZZ0NpuMrBmuFLQTALkLkOF
+        3iTF7q9FY8/ySwHKzC2X8DVd8A==
+X-Google-Smtp-Source: AK7set9InJ7ZobX7OkawZpjXpE9ZuWZ2mzMhO1nV58gYpmXHx6LmAwUTVwzlW/aazm++QwUmDo3hrQ==
+X-Received: by 2002:a17:906:3106:b0:8b1:7eb4:6bea with SMTP id 6-20020a170906310600b008b17eb46beamr1000101ejx.38.1677838360754;
+        Fri, 03 Mar 2023 02:12:40 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id v5-20020a50d085000000b004af5968cb3bsm969650edd.17.2023.03.03.02.06.16
+        by smtp.gmail.com with ESMTPSA id h3-20020a170906590300b008ddf3476c75sm789818ejq.92.2023.03.03.02.12.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Mar 2023 02:06:17 -0800 (PST)
-Message-ID: <f175dcae-2729-2bac-d2e8-088537354160@linaro.org>
-Date:   Fri, 3 Mar 2023 11:06:15 +0100
+        Fri, 03 Mar 2023 02:12:40 -0800 (PST)
+Message-ID: <690dec31-6de6-efe4-c1b1-f434ff1a771f@linaro.org>
+Date:   Fri, 3 Mar 2023 11:12:38 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: [PATCH 08/16] PCI: samsung: Rename exynos_pcie to samsung_pcie
+Subject: Re: [PATCH 01/16] dt-bindings: PCI: Rename Exynos PCIe binding to
+ Samsung PCIe
 Content-Language: en-US
-To:     Pankaj Dubey <pankaj.dubey@samsung.com>,
-        'Shradha Todi' <shradha.t@samsung.com>, lpieralisi@kernel.org,
+To:     Shradha Todi <shradha.t@samsung.com>, lpieralisi@kernel.org,
         kw@linux.com, robh@kernel.org, bhelgaas@google.com,
         krzysztof.kozlowski+dt@linaro.org, alim.akhtar@samsung.com,
         jingoohan1@gmail.com, Sergey.Semin@baikalelectronics.ru,
         lukas.bulwahn@gmail.com, hongxing.zhu@nxp.com, tglx@linutronix.de,
-        m.szyprowski@samsung.com, jh80.chung@samsung.co
+        m.szyprowski@samsung.com, jh80.chung@samsung.co,
+        pankaj.dubey@samsung.com
 Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230214121333.1837-1-shradha.t@samsung.com>
- <CGME20230214121436epcas5p1641de02220bea5edb23bc875b6311270@epcas5p1.samsung.com>
- <20230214121333.1837-9-shradha.t@samsung.com>
- <a4bfad9d-b9df-28a5-6bee-5cbbca4dd23f@linaro.org>
- <146301d94d03$002ba040$0082e0c0$@samsung.com>
+ <CGME20230214121404epcas5p3bfa6af0151b7f319d418f7c0dbed7c5a@epcas5p3.samsung.com>
+ <20230214121333.1837-2-shradha.t@samsung.com>
+ <b40cafa1-396f-e6cd-3240-bc879d5f2c8b@linaro.org>
+ <139501d94d06$2e159850$8a40c8f0$@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <146301d94d03$002ba040$0082e0c0$@samsung.com>
+In-Reply-To: <139501d94d06$2e159850$8a40c8f0$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 02/03/2023 13:32, Pankaj Dubey wrote:
+On 02/03/2023 13:54, Shradha Todi wrote:
 > 
 > 
 >> -----Original Message-----
->> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Sent: Thursday, February 16, 2023 4:37 PM
+>> From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@linaro.org]
+>> Sent: 16 February 2023 16:24
 >> To: Shradha Todi <shradha.t@samsung.com>; lpieralisi@kernel.org;
 >> kw@linux.com; robh@kernel.org; bhelgaas@google.com;
 >> krzysztof.kozlowski+dt@linaro.org; alim.akhtar@samsung.com;
@@ -97,55 +98,48 @@ On 02/03/2023 13:32, Pankaj Dubey wrote:
 >> Cc: linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
 >> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
 >> kernel@vger.kernel.org
->> Subject: Re: [PATCH 08/16] PCI: samsung: Rename exynos_pcie to
->> samsung_pcie
+>> Subject: Re: [PATCH 01/16] dt-bindings: PCI: Rename Exynos PCIe binding to
+>> Samsung PCIe
 >>
 >> On 14/02/2023 13:13, Shradha Todi wrote:
->>> The platform specific structure being used is named exynos_pcie.
->>> Changing it to samsung_pcie for making it generic.
+>>> The current DT bindings is being used for Exynos5433 SoC only.
+>>> In order to extend this binding for all SoCs manufactured by Samsung
+>>> using DWC PCIe controller, renaming this file to a more generic name.
+>>
+>> Thank you for your patch. There is something to discuss/improve.
+>>
 >>>
->>> Suggested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 >>> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
 >>> ---
->>>  drivers/pci/controller/dwc/pci-samsung.c | 190
->>> +++++++++++------------
->>>  1 file changed, 95 insertions(+), 95 deletions(-)
+>>>  .../pci/{samsung,exynos-pcie.yaml => samsung,pcie.yaml}     | 6 +++---
+>>>  1 file changed, 3 insertions(+), 3 deletions(-)  rename
+>>> Documentation/devicetree/bindings/pci/{samsung,exynos-pcie.yaml =>
+>>> samsung,pcie.yaml} (93%)
 >>>
->>> diff --git a/drivers/pci/controller/dwc/pci-samsung.c
->>> b/drivers/pci/controller/dwc/pci-samsung.c
->>> index d5adf1017a05..be0177fcd763 100644
->>> --- a/drivers/pci/controller/dwc/pci-samsung.c
->>> +++ b/drivers/pci/controller/dwc/pci-samsung.c
->>> @@ -23,7 +23,7 @@
->>>
->>>  #include "pcie-designware.h"
->>>
->>> -#define to_exynos_pcie(x)	dev_get_drvdata((x)->dev)
->>> +#define to_samsung_pcie(x)	dev_get_drvdata((x)->dev)
->>>
->>>  /* PCIe APPL registers */
->>>  #define EXYNOS_PCIE_IRQ_PULSE			0x000
->>> @@ -51,7 +51,7 @@
->>>  #define EXYNOS_PCIE_APPL_SLV_ARMISC		0x120
->>>  #define EXYNOS_PCIE_APPL_SLV_DBI_ENABLE	BIT(21)
->>>
->>> -struct exynos_pcie {
->>> +struct samsung_pcie {
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
+>>> b/Documentation/devicetree/bindings/pci/samsung,pcie.yaml
+>>> similarity index 93%
+>>> rename from
+>>> Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
+>>> rename to Documentation/devicetree/bindings/pci/samsung,pcie.yaml
+>>> index f20ed7e709f7..6cd36d9ccba0 100644
+>>> --- a/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
+>>> +++ b/Documentation/devicetree/bindings/pci/samsung,pcie.yaml
 >>
->> No, I don't see benefit of this at all. How we call stuff inside driver is not related
->> whether this is for Tesla or Exynos. We could even call it "pony". :) Thus
->> renamings just to support new variant of Samsung device is not a good reason.
+>> We keep the name rather tied to compatible, not generic. There are no other
+>> compatibles here, so I don't think we should rename it.
 >>
-> Whole intention of this whole series was to make exynos-pcie driver to support for all Samsung manufactured SoCs be it Exynos series or custom ASIC such as fsd, artpect-v8. 
-
-But the patches does not do it, at least mostly. It only renames which
-does not bring any support... what's more, such renames without actual
-context - support for the new devices - is a bit pointless.
-
 > 
-> While doing so, we feel for better readability and conveying better names for files, structs, internal APIs will help developers for understanding and reusing it. For example we know that clock initialization will remain common (thanks for bulk_clk_xxx APIs) so we kept APIs for handling clocks starting with samsung_clk_xxxx, but if we have to implement two variant of APIs, or struct targeting different platforms it would be good if they have platform specific prefixes. This will help in grep or future code maintenance.
+> Our intention to rename was to have a common name for Samsung manufactured SoCs having PCIe controller.
+> Though this change may not be a blocker for us but we feel it will be good to have a common name as this file will
+> not have bindings only for Exynos series of SoC (Samsung Sys. LSI designed) but also custom ASICs such as FSD / ARTPEC SoC (Samsung Foundry designed). 
+> We hope we are not breaking any ABI as such in this patch.
 
-Without context it's impossible to judge whether this makes any sense.
+There is no FSD/Artpec added here, so renaming just for "rename" is a
+no. If you add new hardware here, this could have sense, depending on
+the hardware. But since we pretty often expect the first compatible to
+be the name of the file, why renaming at all?
 
 Best regards,
 Krzysztof
