@@ -2,297 +2,396 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6476AC678D4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Mar 2023 06:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E66C64EC4
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Mar 2023 09:25:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229656AbjCCGZx (ORCPT
+        id S230153AbjCCJZP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Mar 2023 01:25:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37100 "EHLO
+        Fri, 3 Mar 2023 04:25:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229541AbjCCGZt (ORCPT
+        with ESMTP id S229929AbjCCJZA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Mar 2023 01:25:49 -0500
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6818313DD3
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Mar 2023 22:25:18 -0800 (PST)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230303062459epoutp0222884e08ee6ecddf4e7b6350126b9ea1~I1KzO4XCW2969929699epoutp02q
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Mar 2023 06:24:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230303062459epoutp0222884e08ee6ecddf4e7b6350126b9ea1~I1KzO4XCW2969929699epoutp02q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1677824699;
-        bh=sv2hnfV+RZAA1n52R0aeU8NHCNtbzK89lktgJrilOZc=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=BzFyFbiwX01CjwL/2H7ZuK9vLk+lQX21u6bR1qYyNkL+a2u8VfsVB6kYdbthjBkze
-         w2TPFz50V9213DDCHY/4VmthTzx+RcrSbDyOviPFGxOY6+rKsVYDCLJrd6qMGUwR8t
-         0Z+WpKZCIRP+uZKMuiQWixtnzFmIO728RkqDgA2M=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20230303062459epcas5p3ea6871064e48c6efd24ff13ca3bc0dcf~I1Kypaotc0229702297epcas5p3B;
-        Fri,  3 Mar 2023 06:24:59 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.181]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4PSdHY23n6z4x9QF; Fri,  3 Mar
-        2023 06:24:57 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B4.86.06765.9B291046; Fri,  3 Mar 2023 15:24:57 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20230302131016epcas5p3084bc8d556da7316c3ca50cba044a836~InDXxiSmB1466014660epcas5p3R;
-        Thu,  2 Mar 2023 13:10:16 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230302131016epsmtrp19162c5513b2eff120490acdd5e7d7d3b~InDXwiMBR0832508325epsmtrp1P;
-        Thu,  2 Mar 2023 13:10:16 +0000 (GMT)
-X-AuditID: b6c32a4b-46dfa70000011a6d-3d-640192b92341
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        05.84.18071.830A0046; Thu,  2 Mar 2023 22:10:16 +0900 (KST)
-Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230302131013epsmtip20cb8ea82f30448f73cc63032ab2e84dd~InDVC3y-i2302723027epsmtip2r;
-        Thu,  2 Mar 2023 13:10:13 +0000 (GMT)
-From:   "Shradha Todi" <shradha.t@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzysztof.kozlowski+dt@linaro.org>,
-        <alim.akhtar@samsung.com>, <jingoohan1@gmail.com>,
-        <Sergey.Semin@baikalelectronics.ru>, <lukas.bulwahn@gmail.com>,
-        <hongxing.zhu@nxp.com>, <tglx@linutronix.de>,
-        <m.szyprowski@samsung.com>, <jh80.chung@samsung.co>,
-        <pankaj.dubey@samsung.com>
-Cc:     <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <a0c79665-adb9-a846-5a84-d85e0684c25f@linaro.org>
-Subject: RE: [PATCH 15/16] PCI: samsung: Add structure to hold resource
- operations
-Date:   Thu, 2 Mar 2023 18:40:12 +0530
-Message-ID: <139901d94d08$54fb9030$fef2b090$@samsung.com>
+        Fri, 3 Mar 2023 04:25:00 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 311B55C111
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Mar 2023 01:24:44 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id f11so1577548wrv.8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Mar 2023 01:24:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1677835482;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qZW13a6M4CbKDv+/tbaLjH07R3EIPpeX9wuis9iCl0M=;
+        b=RfgXVuHmkLq5H7QR1aoNvvv2IALanaH0P/POcAYoDGfK0laJjSXiUXMG2kCc40DmBV
+         5ao/QP6HdIAaN6hNk1zsTzmBzkjlvVSzfFS32NfO47ganlGU74uAoAc1ONN+fKkDAW9x
+         PX+j4q4yKvu2RAejYMPqtDX+48X9mtQ1/g9Vf3iteKlk+hgIhFTUB5g2QFY/UIh+osJ0
+         fL6DK+KImynrpdP8OB9rryz08dmc6/+BcNgfGSBVfXMAbbsUaNG2kjFjD85Q95edAEuw
+         Uzo33thMuESwFCv9ZVOxFgln7WLK59Zrhky23WQocCu9bvPQsGwITh3daE7wri7PgkXk
+         2ABg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677835482;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qZW13a6M4CbKDv+/tbaLjH07R3EIPpeX9wuis9iCl0M=;
+        b=n7ie0BGAs3QhCz8cnxiE2rWfIt8Se081voxiWxSF2s4U7+6gO6Y6siYjEUvqQr3Nw5
+         6Jd0uNeejODAGFEvJ4+mX2tQPbENvTnhR8w0pd2d9O/7NPRHBekwYBB5BfascfAUB7sl
+         efLypE9+t5HPxULlPzrO/ihX0URSduFmmVwzbcKV/prBp8vQdP8ajOXI/7olbrR/xGmt
+         gFK+HNjD/u2OMV0R2t/DxHsvEr5DQYIqsHlBJA0x6uMVaUcAce8/l1/OwTj5vxLSkME+
+         gDLN/PDzYZMmr13LptUPfcxAKQKIDIfTsYW9YPYL2XKbbO4yqvDn+TIFxXdak1KrBA1b
+         ZTbQ==
+X-Gm-Message-State: AO0yUKXf6Av6pCWcumcK1WXgFMIboSxcE78FIvQ9mgeIwJMVSrFwoY8r
+        sVlCKTgssWUXDA2is04mSTKN9g==
+X-Google-Smtp-Source: AK7set/TivsVLpZgfVwr7zBuzY0idsigW/sKtrB0Gs+T0bp+j2ltmNPJktyEla4UqtSRdklCLprlWw==
+X-Received: by 2002:adf:e60b:0:b0:2ca:9950:718 with SMTP id p11-20020adfe60b000000b002ca99500718mr890693wrm.52.1677835482554;
+        Fri, 03 Mar 2023 01:24:42 -0800 (PST)
+Received: from ?IPV6:2a05:6e02:1041:c10:e474:bda6:c260:d90b? ([2a05:6e02:1041:c10:e474:bda6:c260:d90b])
+        by smtp.googlemail.com with ESMTPSA id p7-20020a5d48c7000000b002c71d206329sm1631219wrs.55.2023.03.03.01.24.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Mar 2023 01:24:41 -0800 (PST)
+Message-ID: <1d3da42e-2499-7ff6-50fa-048a720e855f@linaro.org>
+Date:   Fri, 3 Mar 2023 10:24:39 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHB3D0FgV9/Br8Y35oSVRdB1anKHwH9qfdGAn+u9fwBvPnmbq7khR1w
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TfUxTZxTGfXtve1sEdwU2XzGy7sq2gOOjUroXQ90yK7tTl5FowmKY0NAb
-        ipS26W0FxxLLAsII4HeAWr4RRjdQi2DLx6YF5tgmc4PJxjBTVzOciMIaNkPdRrl147/nnPye
-        POe8b44QC/YKwoTZWiNj0Co1lCAA7xmMjIp2ngCquJP2QHSrrkeAWj5Uo/qhUT6y9NQCNLc4
-        iqOPPTUEqpy+jaGB+90EMpcv8pH91xt8NNZrFaBrdVcFqPrbz3ioyFuEo6LhEhx1DN0kUFO3
-        h0D/9DsI5K16hKMu+2ns9VB6xv4nQTstNwm6wW6i7baPBPTUjX4BPTs6StDu8Soe3dVymL4w
-        6+DRTeY5AV150QboP+zhKYH7cpLUjFLFGMSMNlOnytZmyalde9K3pyfI4iTRkkT0KiXWKnMZ
-        OaXYnRKdnK1Z2pMSH1RqTEutFCXLUrHbkgw6k5ERq3WsUU4xepVGL9XHsMpc1qTNitEyxq2S
-        uLgtCUtgRo664YyHr5/fnG+dayPMoCmiDAiFkJRCpy2vDAQIg8k+AO19dwmumAdwZqpKwBUL
-        AF564OGXAdGyw1Ey7qcGACzx9gKumAaww/IE91EC8hXoHvdiPh1K2jHoKqF9EEZ2AuhurOD5
-        wkXkNui25fuYEHIvPO78btmLkxGw9pvhZW8QmQi9lRUEp9fCkRr3MoORm2Fr432Mm0gMH99t
-        5XNZyfD24EWCY9bB4cflmC8Xkm0iWFxq43EGBVyccfh1CPz9KmeAZBi8d/SIX2fB9q5qf4AG
-        LnS1+PnX4OVxK+6bHyMj4bneWK69EZ7+qpPH5a6BFYtuPx4EHXVP9SboedKPc3o9rPtijH8M
-        UJYVq1lWrGZZsYLl/7QGgNvAekbP5mYxbII+Xsvk/ffhmbpcO1g+g6hdDnDn1qMYF+AJgQtA
-        IUaFBhWYV6mCg1TKQ+8zBl26waRhWBdIWHrv41jYs5m6pTvSGtMl0sQ4qUwmkybGyyTUuqCX
-        5SOZwWSW0sjkMIyeMTz18YSiMDNP8eBU/Wrr/raeubVvpxn2Xi+9ol0tSqsttJq/NO3ccfjo
-        ZAHa8H16Zttv3UP4OTR26EzEbOOx6YLOhxMj2Eup7/24+0D4xCL7ibNaMPWGvJkojhTrQR6W
-        NP2QuDBv/fx64NfJRz6YM7dviG1tVxRe217evF8h7+OfH87f+rcu46cdGy/h3uyDZ80hxGSu
-        p1zxTs3AllWyPeoX8QxXaeyV9s41+zJ0MvepH9wnPvW6XJeFg6JnAg7UFdcn/xX6wqa08DvG
-        5z2ixPHGnyeJMGnKcxMnU22S1IU3zRqyvZ7ZeS9KLOah0V86nFHl4oiZ5taz+RPvDp03xhve
-        ogoD80C4zjpJ4axaKYnCDKzyX7OLPGePBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa2xLYRzGveec9pyVJkdX9pq41WUMo8K8EoYQOcaHbSEucSs91sVuThVT
-        rJPK0rFlcdtWNrNUN41ZVmvXUUq7mrmUMUNqsVImNssYmbGUVCPZt1/yPM8v/w9/Che9IyKp
-        lPR9LJcuS5XwBYTVJZkwG5UPk8/NKZyIOsqsfGQ4pkAXGz08pLeWAvT1t4dAVd9LSFTwyYej
-        W10WEmlO/uYh8/s2Hnp+4wIfPS5r4qPiJ7cxpB3UEkjrziVQdWM7iSos30n0x24j0WBRL4Gu
-        m8/iy8RMt7mfZBr07SRTblYxZpOOz7xps/OZHo+HZPytRRhz3ZDN1PbYMKZC85XPFNSZANNn
-        Hp8wYrNgsZxNTdnPcnPidggUA4ZJmfeiD/aeqAMa8E2SB8IoSM+HttxWMg8IKBF9E8CuygIQ
-        CsbAvpZrWIjD4ZVAJxlkEf0RwAe2uCDz6VnQ3zqI5wGKEtNOHOZmBT04bQawz1iNh6TdAPY2
-        f8SCpTA6DvpNB4PbcDoJGl74iCAT9BRY+siNB1lIL4KDBflkiEfC5hL/vw5Oz4T5vuPgPxsv
-        deGh2ybCgQ9GXpDF9Croc9WRoU4EdA+cxAtBuH6ISj9EpR+i0g+ZlAPCBMawmcq05DSlNFOa
-        zh6IUcrSlKr05JhdGWlm8O8NomfYQL2pN8YJMAo4AaRwiVio1gyTi4RyWdYhlsvYzqlSWaUT
-        jKUISYTwaV7zdhGdLNvH7mHZTJb7n2JUWKQGW+G5XXKkxJftuBrb5InurHRZ2pcGGhyWw8VJ
-        EW3qlJfD4xOKuV/rc4SeFyI0Lk5b+/61O7to4aptUdOO+s+4CcupUd84a/fkA2t2vuq526Cz
-        lwaOxBq3rJdrHLU1d1X9NabGTi1vb/2KJK93g2JghOH03KlbcmqeOLxkVUtipLiiDGNd2qyo
-        TfVi5wxy05L40T9malz2y1sPP6zWzY9N6G45oQhf95jnlb4K3FdnHFrTAZsCup+lK5PCVr+8
-        Uba8/3yxQP2UkwTUC9p1bzr6vhi1iflry99eszbZZ+k23pHOTs2f3vn5g+Oc85Nq67rd3qWF
-        z/x7EpdFZf24uWHe/RwJoVTIpNE4p5T9BTLGqm11AwAA
-X-CMS-MailID: 20230302131016epcas5p3084bc8d556da7316c3ca50cba044a836
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230214121503epcas5p291dce2b37ec4cdabcfecbf8fbdfcca51
-References: <20230214121333.1837-1-shradha.t@samsung.com>
-        <CGME20230214121503epcas5p291dce2b37ec4cdabcfecbf8fbdfcca51@epcas5p2.samsung.com>
-        <20230214121333.1837-16-shradha.t@samsung.com>
-        <a0c79665-adb9-a846-5a84-d85e0684c25f@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH v5 00/18] Self-encapsulate the thermal zone device
+ structure
+Content-Language: en-US
+To:     rafael@kernel.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Ido Schimmel <idosch@nvidia.com>,
+        Petr Machata <petrm@nvidia.com>,
+        Gregory Greenman <gregory.greenman@intel.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Talel Shenhar <talel@amazon.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Zheng Yongjun <zhengyongjun3@huawei.com>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Daniel Golle <daniel@makrotopia.org>,
+        Balsam CHIHI <bchihi@baylibre.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-acpi@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-input@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20230301201446.3713334-1-daniel.lezcano@linaro.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20230301201446.3713334-1-daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
+Hi Rafael,
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski =5Bmailto:krzysztof.kozlowski=40linaro.org=5D
-> Sent: 16 February 2023 16:42
-> To: Shradha Todi <shradha.t=40samsung.com>; lpieralisi=40kernel.org;
-> kw=40linux.com; robh=40kernel.org; bhelgaas=40google.com;
-> krzysztof.kozlowski+dt=40linaro.org; alim.akhtar=40samsung.com;
-> jingoohan1=40gmail.com; Sergey.Semin=40baikalelectronics.ru;
-> lukas.bulwahn=40gmail.com; hongxing.zhu=40nxp.com; tglx=40linutronix.de;
-> m.szyprowski=40samsung.com; jh80.chung=40samsung.co;
-> pankaj.dubey=40samsung.com
-> Cc: linux-pci=40vger.kernel.org; devicetree=40vger.kernel.org; linux-arm-
-> kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.org; linux-
-> kernel=40vger.kernel.org
-> Subject: Re: =5BPATCH 15/16=5D PCI: samsung: Add structure to hold resour=
-ce
-> operations
->=20
-> On 14/02/2023 13:13, Shradha Todi wrote:
-> > Some resources might differ based on platforms and we
->=20
-> Please wrap commit message according to Linux coding style / submission
-> process (neither too early nor over the limit):
-> https://protect2.fireeye.com/v1/url?k=3D66656d8a-07ee78a5-6664e6c5-
-> 74fe485cbfe7-a61191c61bcf38f7&q=3D1&e=3D80994c2d-d0ca-4b83-a7ca-
-> 5242c4bb701f&u=3Dhttps%3A%2F%2Felixir.bootlin.com%2Flinux%2Fv5.18-
-> rc4%2Fsource%2FDocumentation%2Fprocess%2Fsubmitting-
-> patches.rst%23L586
->=20
-> Wrapping looks a bit short...
+Do we have enough ack to apply this series, is it for you ?
 
-Ack
+Thanks
 
->=20
-> > need platform specific functions to initialize or alter them. For
-> > better code reusibility, making a separate
->=20
-> typo, I think it is: re-usability
+   -- Daniel
 
-Ack
 
->=20
-> > res_ops which will hold all such function pointers or other resource
-> > specific data.
->=20
-> Are you saying that interrupts differ in different devices?
->=20
+On 01/03/2023 21:14, Daniel Lezcano wrote:
+> The exported thermal headers expose the thermal core structure while those
+> should be private to the framework. The initial idea was the thermal sensor
+> drivers use the thermal zone device structure pointer to pass it around from
+> the ops to the thermal framework API like a handler.
+> 
+> Unfortunately, different drivers are using and abusing the internals of this
+> structure to hook the associated struct device, read the internals values, take
+> the lock, etc ...
+> 
+> In order to fix this situation, let's encapsulate the structure leaking the
+> more in the different drivers: the thermal_zone_device structure.
+> 
+> This series revisit the existing drivers using the thermal zone private
+> structure internals to change the access to something else. For instance, the
+> get_temp() ops is using the tz->dev to write a debug trace. Despite the trace
+> is not helpful, we can check the return value for the get_temp() ops in the
+> call site and show the message in this place.
+> 
+> With this set of changes, the thermal_zone_device is almost self-encapsulated.
+> As usual, the acpi driver needs a more complex changes, so that will come in a
+> separate series along with the structure moved the private core headers.
+> 
+> Changelog:
+> 	- V5:
+> 	   - Dropped patch 19 : "thermal/tegra: Do not enable ... is already enabled"
+> 	   - Changed the init sequence of the hw channels on tegra3 to close
+> 	     the race window
+> 	   - Collected more tags
+> 	- V4:
+> 	   - Collected more tags
+> 	   - Fixed a typo therma_zone_device_priv() for db8500
+> 	   - Remove traces patch [20/20] to be submitted separetely
+> 	- V3:
+> 	   - Split the first patch into three to reduce the number of
+> 	     recipients per change
+> 	   - Collected more tags
+> 	   - Added missing changes for ->devdata in some drivers
+> 	   - Added a 'type' accessor
+> 	   - Replaced the 'type' to 'id' changes by the 'type' accessor
+> 	   - Used the 'type' accessor in the drivers
+> 	- V2:
+> 	   - Collected tags
+> 	   - Added missing changes for ->devdata for the tsens driver
+> 	   - Renamed thermal_zone_device_get_data() to thermal_zone_priv()
+> 	   - Added stubs when CONFIG_THERMAL is not set
+> 	   - Dropped hwmon change where we remove the tz->lock usage
+> 
+> Thank you all for your comments
+> 
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> Cc: Len Brown <lenb@kernel.org>
+> Cc: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: NXP Linux Team <linux-imx@nxp.com>
+> Cc: Jean Delvare <jdelvare@suse.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+> Cc: Samuel Holland <samuel@sholland.org>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: Ido Schimmel <idosch@nvidia.com>
+> Cc: Petr Machata <petrm@nvidia.com>
+> Cc: Gregory Greenman <gregory.greenman@intel.com>
+> Cc: Kalle Valo <kvalo@kernel.org>
+> Cc: Sebastian Reichel <sre@kernel.org>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Amit Kucheria <amitk@kernel.org>
+> Cc: Florian Fainelli <f.fainelli@gmail.com>
+> Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+> Cc: Ray Jui <rjui@broadcom.com>
+> Cc: Scott Branden <sbranden@broadcom.com>
+> Cc: Markus Mayer <mmayer@broadcom.com>
+> Cc: Support Opensource <support.opensource@diasemi.com>
+> Cc: Andy Gross <agross@kernel.org>
+> Cc: Bjorn Andersson <andersson@kernel.org>
+> Cc: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Cc: Thara Gopinath <thara.gopinath@gmail.com>
+> Cc: "Niklas Söderlund" <niklas.soderlund@ragnatech.se>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Cc: Alim Akhtar <alim.akhtar@samsung.com>
+> Cc: Orson Zhai <orsonzhai@gmail.com>
+> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Cc: Chunyan Zhang <zhang.lyra@gmail.com>
+> Cc: Vasily Khoruzhick <anarsoul@gmail.com>
+> Cc: Yangtao Li <tiny.windzz@gmail.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Talel Shenhar <talel@amazon.com>
+> Cc: Eduardo Valentin <edubezval@gmail.com>
+> Cc: Keerthy <j-keerthy@ti.com>
+> Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Cc: Stefan Wahren <stefan.wahren@i2se.com>
+> Cc: Zheng Yongjun <zhengyongjun3@huawei.com>
+> Cc: Yang Li <yang.lee@linux.alibaba.com>
+> Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> Cc: Daniel Golle <daniel@makrotopia.org>
+> Cc: Balsam CHIHI <bchihi@baylibre.com>
+> Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> Cc: linux-acpi@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-ide@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-hwmon@vger.kernel.org
+> Cc: linux-iio@vger.kernel.org
+> Cc: linux-sunxi@lists.linux.dev
+> Cc: linux-input@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: linux-wireless@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-rpi-kernel@lists.infradead.org
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-rockchip@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-mediatek@lists.infradead.org
+> 
+> Daniel Lezcano (18):
+>    thermal/core: Add a thermal zone 'devdata' accessor
+>    thermal/core: Use the thermal zone 'devdata' accessor in thermal
+>      located drivers
+>    thermal/core: Use the thermal zone 'devdata' accessor in hwmon located
+>      drivers
+>    thermal/core: Use the thermal zone 'devdata' accessor in remaining
+>      drivers
+>    thermal/core: Show a debug message when get_temp() fails
+>    thermal: Remove debug or error messages in get_temp() ops
+>    thermal/hwmon: Do not set no_hwmon before calling
+>      thermal_add_hwmon_sysfs()
+>    thermal/hwmon: Use the right device for devm_thermal_add_hwmon_sysfs()
+>    thermal: Don't use 'device' internal thermal zone structure field
+>    thermal/core: Add thermal_zone_device structure 'type' accessor
+>    thermal/drivers/spear: Don't use tz->device but pdev->dev
+>    thermal: Add a thermal zone id accessor
+>    thermal: Use thermal_zone_device_type() accessor
+>    thermal/drivers/da9062: Don't access the thermal zone device fields
+>    thermal/hwmon: Use the thermal_core.h header
+>    thermal/drivers/tegra: Remove unneeded lock when setting a trip point
+>    thermal/drivers/acerhdf: Make interval setting only at module load
+>      time
+>    thermal/drivers/acerhdf: Remove pointless governor test
+> 
+>   drivers/acpi/thermal.c                        | 18 +++----
+>   drivers/ata/ahci_imx.c                        |  2 +-
+>   drivers/hwmon/hwmon.c                         |  4 +-
+>   drivers/hwmon/pmbus/pmbus_core.c              |  2 +-
+>   drivers/hwmon/scmi-hwmon.c                    |  4 +-
+>   drivers/hwmon/scpi-hwmon.c                    |  2 +-
+>   drivers/iio/adc/sun4i-gpadc-iio.c             |  2 +-
+>   drivers/input/touchscreen/sun4i-ts.c          |  2 +-
+>   .../ethernet/chelsio/cxgb4/cxgb4_thermal.c    |  2 +-
+>   .../ethernet/mellanox/mlxsw/core_thermal.c    | 16 +++----
+>   drivers/net/wireless/intel/iwlwifi/mvm/tt.c   |  4 +-
+>   drivers/platform/x86/acerhdf.c                | 19 ++------
+>   drivers/power/supply/power_supply_core.c      |  2 +-
+>   drivers/regulator/max8973-regulator.c         |  2 +-
+>   drivers/thermal/amlogic_thermal.c             |  4 +-
+>   drivers/thermal/armada_thermal.c              | 14 ++----
+>   drivers/thermal/broadcom/bcm2711_thermal.c    |  3 +-
+>   drivers/thermal/broadcom/bcm2835_thermal.c    |  3 +-
+>   drivers/thermal/broadcom/brcmstb_thermal.c    |  8 ++--
+>   drivers/thermal/broadcom/ns-thermal.c         |  2 +-
+>   drivers/thermal/broadcom/sr-thermal.c         |  2 +-
+>   drivers/thermal/da9062-thermal.c              | 13 +++--
+>   drivers/thermal/db8500_thermal.c              |  2 +-
+>   drivers/thermal/dove_thermal.c                |  7 +--
+>   drivers/thermal/hisi_thermal.c                |  5 +-
+>   drivers/thermal/imx8mm_thermal.c              |  4 +-
+>   drivers/thermal/imx_sc_thermal.c              |  9 ++--
+>   drivers/thermal/imx_thermal.c                 | 47 +++++--------------
+>   .../intel/int340x_thermal/int3400_thermal.c   |  2 +-
+>   .../int340x_thermal/int340x_thermal_zone.c    |  4 +-
+>   .../processor_thermal_device_pci.c            |  4 +-
+>   drivers/thermal/intel/intel_pch_thermal.c     |  2 +-
+>   .../thermal/intel/intel_quark_dts_thermal.c   |  6 +--
+>   drivers/thermal/intel/intel_soc_dts_iosf.c    | 13 ++---
+>   drivers/thermal/intel/x86_pkg_temp_thermal.c  |  4 +-
+>   drivers/thermal/k3_bandgap.c                  |  4 +-
+>   drivers/thermal/k3_j72xx_bandgap.c            |  2 +-
+>   drivers/thermal/kirkwood_thermal.c            |  7 +--
+>   drivers/thermal/max77620_thermal.c            |  6 +--
+>   drivers/thermal/mediatek/auxadc_thermal.c     |  4 +-
+>   drivers/thermal/mediatek/lvts_thermal.c       | 10 ++--
+>   drivers/thermal/qcom/qcom-spmi-adc-tm5.c      |  6 +--
+>   drivers/thermal/qcom/qcom-spmi-temp-alarm.c   |  6 +--
+>   drivers/thermal/qcom/tsens.c                  |  6 +--
+>   drivers/thermal/qoriq_thermal.c               |  4 +-
+>   drivers/thermal/rcar_gen3_thermal.c           |  5 +-
+>   drivers/thermal/rcar_thermal.c                |  8 +---
+>   drivers/thermal/rockchip_thermal.c            |  8 +---
+>   drivers/thermal/rzg2l_thermal.c               |  3 +-
+>   drivers/thermal/samsung/exynos_tmu.c          |  4 +-
+>   drivers/thermal/spear_thermal.c               | 10 ++--
+>   drivers/thermal/sprd_thermal.c                |  2 +-
+>   drivers/thermal/st/st_thermal.c               |  5 +-
+>   drivers/thermal/st/stm_thermal.c              |  4 +-
+>   drivers/thermal/sun8i_thermal.c               |  4 +-
+>   drivers/thermal/tegra/soctherm.c              |  6 +--
+>   drivers/thermal/tegra/tegra-bpmp-thermal.c    |  6 ++-
+>   drivers/thermal/tegra/tegra30-tsensor.c       | 31 ++++++------
+>   drivers/thermal/thermal-generic-adc.c         |  7 ++-
+>   drivers/thermal/thermal_core.c                | 18 +++++++
+>   drivers/thermal/thermal_helpers.c             |  3 ++
+>   drivers/thermal/thermal_hwmon.c               |  9 ++--
+>   drivers/thermal/thermal_hwmon.h               |  4 +-
+>   drivers/thermal/thermal_mmio.c                |  2 +-
+>   .../ti-soc-thermal/ti-thermal-common.c        | 10 ++--
+>   drivers/thermal/uniphier_thermal.c            |  2 +-
+>   include/linux/thermal.h                       | 19 ++++++++
+>   67 files changed, 218 insertions(+), 246 deletions(-)
+> 
 
-Yes, the interrupts are routed and integrated differently for the different=
- platforms
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-> >
-> > This patch includes adding function pointer for IRQ
->=20
-> Do not use =22This commit/patch=22.
-> https://protect2.fireeye.com/v1/url?k=3Dffdc2502-9e57302d-ffddae4d-
-> 74fe485cbfe7-49aeaacd1141660f&q=3D1&e=3D80994c2d-d0ca-4b83-a7ca-
-> 5242c4bb701f&u=3Dhttps%3A%2F%2Felixir.bootlin.com%2Flinux%2Fv5.17.1%2
-> Fsource%2FDocumentation%2Fprocess%2Fsubmitting-patches.rst%23L95
->=20
-
-Ack
-
-> > initialization which will help to move common operations for host init
-> > into the probe sequence.
-> >
-> > Suggested-by: Pankaj Dubey <pankaj.dubey=40samsung.com>
-> > Signed-off-by: Shradha Todi <shradha.t=40samsung.com>
-> > ---
-> >  drivers/pci/controller/dwc/pci-samsung.c =7C 26
-> > ++++++++++++++++--------
-> >  1 file changed, 17 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/dwc/pci-samsung.c
-> > b/drivers/pci/controller/dwc/pci-samsung.c
-> > index 47ca2a6a545d..01882f2d06c7 100644
-> > --- a/drivers/pci/controller/dwc/pci-samsung.c
-> > +++ b/drivers/pci/controller/dwc/pci-samsung.c
-> > =40=40 -55,6 +55,7 =40=40 struct samsung_pcie_pdata =7B
-> >  	struct pci_ops				*pci_ops;
-> >  	const struct dw_pcie_ops		*dwc_ops;
-> >  	const struct dw_pcie_host_ops		*host_ops;
-> > +	const struct samsung_res_ops		*res_ops;
-> >  =7D;
-> >
-> >  /*
-> > =40=40 -77,6 +78,10 =40=40 struct samsung_pcie =7B
-> >  	struct regulator_bulk_data	supplies=5B2=5D;
-> >  =7D;
-> >
-> > +struct samsung_res_ops =7B
-> > +	int (*irq_init)(struct samsung_pcie *sp, struct platform_device
-> > +*pdev); =7D;
-> > +
-> >  static int samsung_pcie_init_clk_resources(struct samsung_pcie *sp)
-> > =7B
-> >  	struct device *dev =3D sp->pci.dev;
-> > =40=40 -276,7 +281,7 =40=40 static const struct dw_pcie_host_ops
-> exynos_pcie_host_ops =3D =7B
-> >  	.host_init =3D exynos_pcie_host_init,
-> >  =7D;
-> >
-> > -static int exynos_add_pcie_port(struct samsung_pcie *sp,
-> > +static int exynos_irq_init(struct samsung_pcie *sp,
-> >  				       struct platform_device *pdev)  =7B
-> >  	struct dw_pcie *pci =3D &sp->pci;
-> > =40=40 -295,15 +300,8 =40=40 static int exynos_add_pcie_port(struct
-> samsung_pcie *sp,
-> >  		return ret;
-> >  	=7D
-> >
-> > -	pp->ops =3D &exynos_pcie_host_ops;
-> >  	pp->msi_irq=5B0=5D =3D -ENODEV;
-> >
-> > -	ret =3D dw_pcie_host_init(pp);
-> > -	if (ret) =7B
-> > -		dev_err(dev, =22failed to initialize host=5Cn=22);
-> > -		return ret;
-> > -	=7D
-> > -
-> >  	return 0;
-> >  =7D
-> >
-> > =40=40 -314,6 +312,10 =40=40 static const struct dw_pcie_ops
-> exynos_dw_pcie_ops =3D =7B
-> >  	.start_link =3D exynos_pcie_start_link,  =7D;
-> >
-> > +static const struct samsung_res_ops exynos_res_ops_data =3D =7B
-> > +	.irq_init		=3D exynos_irq_init,
-> > +=7D;
-> > +
-> >  static int samsung_pcie_probe(struct platform_device *pdev)  =7B
-> >  	struct device *dev =3D &pdev->dev;
-> > =40=40 -357,7 +359,12 =40=40 static int samsung_pcie_probe(struct
-> > platform_device *pdev)
-> >
-> >  	platform_set_drvdata(pdev, sp);
-> >
-> > -	ret =3D exynos_add_pcie_port(sp, pdev);
-> > +	if (pdata->res_ops->irq_init)
-> > +		pdata->res_ops->irq_init(sp, pdev);
->=20
-> Check return value and handle errors.
->=20
-
-Ack
-
-> > +
-> > +	sp->pci.pp.ops =3D pdata->host_ops;
-> > +
-> > +	ret =3D dw_pcie_host_init(&sp->pci.pp);
-> >  	if (ret < 0)
-> >  		goto fail_probe;
-> >
-> > =40=40 -428,6 +435,7 =40=40 static const struct samsung_pcie_pdata
-> exynos_5433_pcie_rc_pdata =3D =7B
-> >  	.dwc_ops		=3D &exynos_dw_pcie_ops,
-> >  	.pci_ops		=3D &exynos_pci_ops,
-> >  	.host_ops		=3D &exynos_pcie_host_ops,
-> > +	.res_ops		=3D &exynos_res_ops_data,
-> >  =7D;
-> >
-> >  static const struct of_device_id samsung_pcie_of_match=5B=5D =3D =7B
->=20
-> Best regards,
-> Krzysztof
-
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
