@@ -2,141 +2,174 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A8F0C64EC4
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Mar 2023 19:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C45C678DB
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Mar 2023 21:54:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229518AbjCDTAA (ORCPT
+        id S229520AbjCDVyN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 4 Mar 2023 14:00:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60292 "EHLO
+        Sat, 4 Mar 2023 16:54:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjCDTAA (ORCPT
+        with ESMTP id S229484AbjCDVyM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 4 Mar 2023 14:00:00 -0500
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01AC511E85
-        for <linux-samsung-soc@vger.kernel.org>; Sat,  4 Mar 2023 10:59:59 -0800 (PST)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-536c02eea4dso106484477b3.4
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 04 Mar 2023 10:59:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iciU42MsjzRLLBgcoDIhCRCJz7raKvgN999jry5uumc=;
-        b=EPE/cdNdWIkA3bAMqx9YTT2+yiGIuO0CeTCoDI4u9igT/0173Ts5aMMamePXvCumgY
-         dOcpAtU3b4jDZpdXJuPm/SagrTmiurHV9N24b57FOqXVWeT4fll9yOhYs3/GqyNgs6Ni
-         uAujZW05rmELnWmVTmzIyCduuCWMIXA+lyYGQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iciU42MsjzRLLBgcoDIhCRCJz7raKvgN999jry5uumc=;
-        b=7xGnj7LdOjlket3CnxkZvo7qf2TNc3zp2exoLObCmRJ+bXEUKjxrxr1LkAV9ElW+/X
-         kSdV/xxBJfAlsq+5vwVZ8SiTK9yGZPwZ4OBIfb5zolk/wzVl9TA6Aq3i/1kSzU2Ax9In
-         seB3FBh8vDaoBOAtzUC63m83+lKEaHsyR4omYLfPjAeAe03JcqNfUA2WTCEecHFP6g15
-         +zr+ssmMeD54HbCZX6oJoGdj33KupBDeBCizym/w28VDBo5cP4VQMZHSAnhfckt0c+mn
-         fIf7G2SVOL75ZRkU7zT0IS0b2JEN9ox4ttGM+40wm1+tlUEE+zB1mu5pu8BWThtc2xEt
-         ZlsQ==
-X-Gm-Message-State: AO0yUKWKa4FNCcshvgYS96AatJhj0iHMrSELpAwoYJ78eqGbfJEflYfP
-        7UyUT05oLF8KBN9m9j/r9FsVOr+Q3ax09Jp0F+FPiw==
-X-Google-Smtp-Source: AK7set+p1y290rRoo9CZP+K1Band+15T00kDGqTFxdbQ+doUjGOn8ofNfRdmcfqGuna0jxaPwRMFFCA00KQxf3j2j2I=
-X-Received: by 2002:a81:ad44:0:b0:52a:92e9:27c1 with SMTP id
- l4-20020a81ad44000000b0052a92e927c1mr3560103ywk.10.1677956398135; Sat, 04 Mar
- 2023 10:59:58 -0800 (PST)
+        Sat, 4 Mar 2023 16:54:12 -0500
+X-Greylist: delayed 450 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 04 Mar 2023 13:54:11 PST
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 90630CC2F
+        for <linux-samsung-soc@vger.kernel.org>; Sat,  4 Mar 2023 13:54:11 -0800 (PST)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id YZi6peXMSbVeoYZi6pIK01; Sat, 04 Mar 2023 22:46:39 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 04 Mar 2023 22:46:39 +0100
+X-ME-IP: 86.243.2.178
+Message-ID: <93d115a2-702d-7d68-cd88-98f1c9f03f95@wanadoo.fr>
+Date:   Sat, 4 Mar 2023 22:46:34 +0100
 MIME-Version: 1.0
-References: <CGME20230303145219eucas1p218c2e302e41464432627c8ac074302f8@eucas1p2.samsung.com>
- <20230303145138.29233-1-jagan@amarulasolutions.com> <79c2e5cc-a488-09ae-dc68-18dbc47d963a@samsung.com>
-In-Reply-To: <79c2e5cc-a488-09ae-dc68-18dbc47d963a@samsung.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Sun, 5 Mar 2023 00:29:46 +0530
-Message-ID: <CAMty3ZC1U3eDmtWa_sx0Sop_V1vU3fSM=r21U9qPf0UmCYTOkA@mail.gmail.com>
-Subject: Re: [PATCH v15 00/16] drm: Add Samsung MIPI DSIM bridge
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Marek Vasut <marex@denx.de>,
-        Maxime Ripard <mripard@kernel.org>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Adam Ford <aford173@gmail.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 1/2] watchdog: s3c2410_wdt: Use Use
+ devm_clk_get[_optional]_enabled() helpers
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+References: <20230304165653.2179835-1-linux@roeck-us.net>
+Content-Language: fr
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20230304165653.2179835-1-linux@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Le 04/03/2023 à 17:56, Guenter Roeck a écrit :
+> The devm_clk_get[_optional]_enabled() helpers:
+>      - call devm_clk_get[_optional]()
+>      - call clk_prepare_enable() and register what is needed in order to
+>        call clk_disable_unprepare() when needed, as a managed resource.
+> 
+> This simplifies the code and avoids the calls to clk_disable_unprepare().
+> 
+> While at it, use dev_err_probe consistently, and use its return value
+> to return the error code.
+> 
+> Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>   drivers/watchdog/s3c2410_wdt.c | 45 +++++++---------------------------
+>   1 file changed, 9 insertions(+), 36 deletions(-)
+> 
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+> index 200ba236a72e..a1fcb79b0b7c 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -661,35 +661,17 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+>   	if (IS_ERR(wdt->reg_base))
+>   		return PTR_ERR(wdt->reg_base);
+>   
+> -	wdt->bus_clk = devm_clk_get(dev, "watchdog");
+> -	if (IS_ERR(wdt->bus_clk)) {
+> -		dev_err(dev, "failed to find bus clock\n");
+> -		return PTR_ERR(wdt->bus_clk);
+> -	}
+> -
+> -	ret = clk_prepare_enable(wdt->bus_clk);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to enable bus clock\n");
+> -		return ret;
+> -	}
+> +	wdt->bus_clk = devm_clk_get_enabled(dev, "watchdog");
+> +	if (IS_ERR(wdt->bus_clk))
+> +		return dev_err_probe(dev, PTR_ERR(wdt->bus_clk), "failed to get bus clock\n");
+>   
+>   	/*
+>   	 * "watchdog_src" clock is optional; if it's not present -- just skip it
+>   	 * and use "watchdog" clock as both bus and source clock.
+>   	 */
+> -	wdt->src_clk = devm_clk_get_optional(dev, "watchdog_src");
+> -	if (IS_ERR(wdt->src_clk)) {
+> -		dev_err_probe(dev, PTR_ERR(wdt->src_clk),
+> -			      "failed to get source clock\n");
+> -		ret = PTR_ERR(wdt->src_clk);
+> -		goto err_bus_clk;
+> -	}
+> -
+> -	ret = clk_prepare_enable(wdt->src_clk);
+> -	if (ret) {
+> -		dev_err(dev, "failed to enable source clock\n");
+> -		goto err_bus_clk;
+> -	}
+> +	wdt->src_clk = devm_clk_get_optional_enabled(dev, "watchdog_src");
+> +	if (IS_ERR(wdt->src_clk))
+> +		return dev_err_probe(dev, PTR_ERR(wdt->src_clk), "failed to get source clock\n");
+>   
+>   	wdt->wdt_device.min_timeout = 1;
+>   	wdt->wdt_device.max_timeout = s3c2410wdt_max_timeout(wdt);
+> @@ -710,7 +692,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+>   				 S3C2410_WATCHDOG_DEFAULT_TIME);
+>   		} else {
+>   			dev_err(dev, "failed to use default timeout\n");
+> -			goto err_src_clk;
+> +			return ret;
 
-On Sat, Mar 4, 2023 at 3:56=E2=80=AFAM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> Hi Jagan,
->
-> On 03.03.2023 15:51, Jagan Teki wrote:
-> > This series supports common bridge support for Samsung MIPI DSIM
-> > which is used in Exynos and i.MX8MM SoC's.
-> >
-> > The final bridge supports both the Exynos and i.MX8M Mini/Nano/Plus.
-> >
-> > Inki Dae: please note that this series added on top of exynos-drm-next
-> > since few exynos dsi changes are not been part of drm-misc-next.
-> > Request you to pick these via exynos-drm-next, or let me know if you
-> > have any comments?
->
-> I gave it a try on Exynos TM2e and unfortunately it nukes again:
->
-> exynos-drm exynos-drm: bound 13970000.hdmi (ops hdmi_component_ops)
-> Unable to handle kernel paging request at virtual address 003d454d414e567=
-5
-> ...
-> [003d454d414e5675] address between user and kernel address ranges
-> Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> Modules linked in:
-> CPU: 4 PID: 9 Comm: kworker/u16:0 Not tainted 6.2.0-next-20230303+ #13341
-> Hardware name: Samsung TM2E board (DT)
-> Workqueue: events_unbound deferred_probe_work_func
-> pstate: 000000c5 (nzcv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
-> pc : drm_connector_list_iter_next+0x58/0x100
-> lr : drm_connector_list_iter_next+0x2c/0x100
-> sp : ffff80000bbab910
-> ...
-> Call trace:
->   drm_connector_list_iter_next+0x58/0x100
->   drm_mode_config_reset+0xfc/0x144
->   exynos_drm_bind+0x160/0x1b8
->   try_to_bring_up_aggregate_device+0x168/0x1d4
->   __component_add+0xa8/0x170
->   component_add+0x14/0x20
->   hdmi_probe+0x3fc/0x6d4
->   platform_probe+0x68/0xd8
->   really_probe+0x148/0x2b4
->   __driver_probe_device+0x78/0xe0
->   driver_probe_device+0xd8/0x160
->   __device_attach_driver+0xb8/0x138
->   bus_for_each_drv+0x84/0xe0
->   __device_attach+0xa8/0x1b0
->   device_initial_probe+0x14/0x20
->   bus_probe_device+0xb0/0xb4
->   deferred_probe_work_func+0x8c/0xc8
->   process_one_work+0x288/0x6c8
->   worker_thread+0x24c/0x450
->   kthread+0x118/0x11c
->   ret_from_fork+0x10/0x20
+Hi,
 
-This looks not related to dsi to me since there is no exynos_drm_dsi
-call in the trace. look hdmi related. Moreover, I think the exynos dsi
-worked well on v10 and I couldn't find any potential differences in
-terms of call flow change.
-https://gitlab.com/openedev/kernel/-/commits/imx8mm-dsi-v10
+Nit: this also could be "return dev_err_probe()"
 
-Please let me know, thanks!
+>   		}
+>   	}
+>   
+> @@ -718,7 +700,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+>   			       pdev->name, pdev);
+>   	if (ret != 0) {
+>   		dev_err(dev, "failed to install irq (%d)\n", ret);
+> -		goto err_src_clk;
+> +		return ret;
 
-Jagan.
+Nit: this also could be "return dev_err_probe()"
+
+CJ
+
+>   	}
+>   
+>   	watchdog_set_nowayout(&wdt->wdt_device, nowayout);
+> @@ -744,7 +726,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+>   
+>   	ret = watchdog_register_device(&wdt->wdt_device);
+>   	if (ret)
+> -		goto err_src_clk;
+> +		return ret;
+>   
+>   	ret = s3c2410wdt_enable(wdt, true);
+>   	if (ret < 0)
+> @@ -766,12 +748,6 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+>    err_unregister:
+>   	watchdog_unregister_device(&wdt->wdt_device);
+>   
+> - err_src_clk:
+> -	clk_disable_unprepare(wdt->src_clk);
+> -
+> - err_bus_clk:
+> -	clk_disable_unprepare(wdt->bus_clk);
+> -
+>   	return ret;
+>   }
+>   
+> @@ -786,9 +762,6 @@ static int s3c2410wdt_remove(struct platform_device *dev)
+>   
+>   	watchdog_unregister_device(&wdt->wdt_device);
+>   
+> -	clk_disable_unprepare(wdt->src_clk);
+> -	clk_disable_unprepare(wdt->bus_clk);
+> -
+>   	return 0;
+>   }
+>   
+
