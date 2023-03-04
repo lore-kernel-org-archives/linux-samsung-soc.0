@@ -2,119 +2,134 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5907C678D5
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Mar 2023 16:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 910A6C678DB
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Mar 2023 17:12:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229509AbjCDQ6e (ORCPT
+        id S229628AbjCDRMz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 4 Mar 2023 11:58:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50596 "EHLO
+        Sat, 4 Mar 2023 12:12:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbjCDQ6d (ORCPT
+        with ESMTP id S229557AbjCDRMy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 4 Mar 2023 11:58:33 -0500
-Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD4B6F949;
-        Sat,  4 Mar 2023 08:58:32 -0800 (PST)
-Received: by mail-il1-x136.google.com with SMTP id y9so2779428ill.3;
-        Sat, 04 Mar 2023 08:58:32 -0800 (PST)
+        Sat, 4 Mar 2023 12:12:54 -0500
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8A9813510;
+        Sat,  4 Mar 2023 09:12:51 -0800 (PST)
+Received: by mail-io1-xd2f.google.com with SMTP id q6so2320927iot.2;
+        Sat, 04 Mar 2023 09:12:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1677949112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=mXHMxKiQpdEvBUwTK84G4qisqUbRdyy0vBr1OD0jAO8=;
-        b=DCbyVZFRxYhq0P/1hugd/seYAeM309dEZ44jzhtCo/17mmbgeyGLtiHikjq/bz4Uaz
-         ShiDqzyioZI3nKijZSW4xg4bTZ3ruqEOFeSZvXPBrlfsg2k0BcRV+pRVzeGYJNXjWP0E
-         mYu9OBZfyRqdPa4gse8KZmpM+rjjCh6YYAEBjbvRR7G6AnBxxGz5R2LvQwL2UN3Y1ZCn
-         NkAYnh7bmTQn7VDBMPBAM+RpwgCNFbqh71SL6Dej4VBXUzqT8zrGFxD+f5pzhbCyqD2P
-         8WknMdXYVjdc45T/mS9wCzeQmV2j1sGerlaIUdt4tZeLIUDUKgzMlVcUX9rKSHmLuxCp
-         oN6A==
+        d=gmail.com; s=20210112; t=1677949971;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UryvMwiYfarXTxD7q5J/j1SGEKtkERnpleJCFf4cbUM=;
+        b=MsqEIDgv6MRLJ8bkdeVVfSLYhzSizuNGvIkZNGtQom4nKnZUiBiyypvAOHUOHQ8OHw
+         yLxenG4tqjfqo2nHIxIbx8hn8diwFitKQdrd2Llr7Umhc4VYeI4DDilbt+m25mxsOFjJ
+         QD9wijHwAJwyYyYF437w+FFuwbASGWipaoLp6JdPAGsleV8JF0he8Nm1K9ON2xoFayOE
+         ytuo7HRkSinf7W7iUMaMD1k8Jdkui4tPc/MZkX0M5l2dQooSBKf2gvUw2LwnZRAGbIDB
+         Vm+G6L2fefVOsRCTf5JzD5sGFsrraPprxBxYJ2S5QlOV0rm7PhK3wKejfLPY9EQEvYSm
+         7yyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677949112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mXHMxKiQpdEvBUwTK84G4qisqUbRdyy0vBr1OD0jAO8=;
-        b=xYoiHjtaGCPKCNmniQoLwq2D6cBRuZS+BA67BOBBuHc5uowhE/JlqUOo37LRmboE5C
-         J6w6CJRSh1/KCZUw2jvZvbUlVZtpbz0FSe0O9V8bM/kdZn2vaUfYTcPyLQ4cVg2hB8Pj
-         GsnH2z2CcTLz9J82IKqNGgSBektp8HsCGa1IVGYrrhNW0pCci7gMf+I9mL5B3war476e
-         UaiQESnxUJMllHIdblkJhm0z7NYOfJZkJF1fXSXjfH0gy+8zip1Y0oZ9S9dM9FetTCxg
-         AbzvGqyHjarkrWN9RgL8MLL5Mf5zxY6ozsqLvk5/kkVISFHun6SuYXZhvLEPhoGUEcwa
-         1ZKw==
-X-Gm-Message-State: AO0yUKXqEFna2cZTAvzfyLBZDJnuEoBo+WiqxLAvlugObqrdXXmT6cyS
-        QDWAn5d7kEZv7H+bPdp+QNP7LXIdxC8=
-X-Google-Smtp-Source: AK7set/SStAzUz+j2lIMM7yJ9JxoIUo2sZueKu/5sxIAlTxQrCRv0IKdJxRjrPfG/HluOCL3h8hV3A==
-X-Received: by 2002:a05:6e02:16ca:b0:316:ecbf:5573 with SMTP id 10-20020a056e0216ca00b00316ecbf5573mr5737636ilx.12.1677949112150;
-        Sat, 04 Mar 2023 08:58:32 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id j17-20020a02a691000000b0039deb26853csm1737823jam.10.2023.03.04.08.58.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 04 Mar 2023 08:58:31 -0800 (PST)
+        d=1e100.net; s=20210112; t=1677949971;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UryvMwiYfarXTxD7q5J/j1SGEKtkERnpleJCFf4cbUM=;
+        b=kvSU9o+OkwBMBV0wT8b2AFd2uJOPCyR1nZiNMMSTpkCh21Ary7JYfJ/xMHPshQOY66
+         C0zZfEVi4xJfqDuZbXrvGwC4/czz0FjA+1qmaEE0UleI3zZ6OVFgNgyB+coqZsXpmxBc
+         YXa9KqngdyEhqe3+z0TlNogpleIBdmQ5bUnsQ4mMCWgC06LuEl0gYjVfu5VO5iYEWm56
+         xtEHGmzzcciCQxjHw5OjyfjSajteIrbFkuVuJNQtzXReySPsbVqWZpR60UrZzqGZmerz
+         3VfdV1OmX2QpQrSh4TW3WIKbMaoNpn0MWkbjhov+n0yaFEYfhy3krcwp16C5ZVKBQ0ia
+         cEeg==
+X-Gm-Message-State: AO0yUKXsa4wQP1+ho3GloJUJX+sGirPuvDGgsGTjWPxZNZZfyN1jlKis
+        cZei4EaIP/DmwhyRB2kcpq44BDBMQb4=
+X-Google-Smtp-Source: AK7set/xDy/AuYp6zyGYVReYoQ6yCkfrFMKdlA5DJkWiF0II8VEQtqcmvjzN/Z1wIR7jlJwSQakI9w==
+X-Received: by 2002:a5e:860a:0:b0:744:cd00:854f with SMTP id z10-20020a5e860a000000b00744cd00854fmr4018721ioj.17.1677949971079;
+        Sat, 04 Mar 2023 09:12:51 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f5-20020a056e020c6500b0031593c8861asm1510914ilj.50.2023.03.04.09.12.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 Mar 2023 09:12:50 -0800 (PST)
 Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <8a618518-ce20-9244-19ab-6badcd3cdf12@roeck-us.net>
-Date:   Sat, 4 Mar 2023 08:58:29 -0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 01/34] watchdog: s3c2410: Don't skip cleanup in remove's
- error path
-Content-Language: en-US
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+Date:   Sat, 4 Mar 2023 09:12:49 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Leela Krishna Amudala <leela.krishna@linaro.org>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
         kernel@pengutronix.de
+Subject: Re: [PATCH 28/34] watchdog: s3c2410: Convert to platform remove
+ callback returning void
+Message-ID: <3b0b717b-9509-491f-aa83-bf57e868c2dd@roeck-us.net>
 References: <20230303213716.2123717-1-u.kleine-koenig@pengutronix.de>
- <20230303213716.2123717-2-u.kleine-koenig@pengutronix.de>
-From:   Guenter Roeck <linux@roeck-us.net>
-In-Reply-To: <20230303213716.2123717-2-u.kleine-koenig@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <20230303213716.2123717-29-u.kleine-koenig@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230303213716.2123717-29-u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Uwe,
+On Fri, Mar 03, 2023 at 10:37:10PM +0100, Uwe Kleine-König wrote:
+> The .remove() callback for a platform driver returns an int which makes
+> many driver authors wrongly assume it's possible to do error handling by
+> returning an error code. However the value returned is (mostly) ignored
+> and this typically results in resource leaks. To improve here there is a
+> quest to make the remove callback return void. In the first step of this
+> quest all drivers are converted to .remove_new() which already returns
+> void.
+> 
+> Trivially convert this driver from always returning zero in the remove
+> callback to the void returning variant.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-On 3/3/23 13:36, Uwe Kleine-KÃ¶nig wrote:
-> Returning early in a platform driver's remove callback is wrong. In this
-> case the watchdog device is never removed although it's parent is gone
-> which likely can trigger a use-after-free in sysfs. Also the two used
-> clocks will never be disabled.
-> 
-> Instead only warn if s3c2410wdt_enable() fails and cleanup. Note that
-> returning 0 is the right thing to do then to suppress another warning
-> message by the driver core.
-> 
-> Fixes: 4f1f653a68d6 ("watchdog: s3c2410_wdt: use syscon regmap interface to configure pmu register")
-> Signed-off-by: Uwe Kleine-KÃ¶nig <u.kleine-koenig@pengutronix.de>
-> ---
->   drivers/watchdog/s3c2410_wdt.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index 200ba236a72e..cf104a844a43 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -782,7 +782,8 @@ static int s3c2410wdt_remove(struct platform_device *dev)
->   
->   	ret = s3c2410wdt_enable(wdt, false);
->   	if (ret < 0)
-> -		return ret;
-> +		dev_warn(&dev->dev,
-> +			 "Failed to disable watchdog (%pe)\n", ERR_PTR(ret));
->   
->   	watchdog_unregister_device(&wdt->wdt_device);
->   
-
-I sent out two patches a minute ago which should make this patch
-as well as the use of the remove_new callback unnecessary.
+Should no longer be necessary with the two patches I sent a short
+time ago.
 
 Guenter
 
+> ---
+>  drivers/watchdog/s3c2410_wdt.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+> index cf104a844a43..d1f408913843 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -775,7 +775,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+>  	return ret;
+>  }
+>  
+> -static int s3c2410wdt_remove(struct platform_device *dev)
+> +static void s3c2410wdt_remove(struct platform_device *dev)
+>  {
+>  	int ret;
+>  	struct s3c2410_wdt *wdt = platform_get_drvdata(dev);
+> @@ -789,8 +789,6 @@ static int s3c2410wdt_remove(struct platform_device *dev)
+>  
+>  	clk_disable_unprepare(wdt->src_clk);
+>  	clk_disable_unprepare(wdt->bus_clk);
+> -
+> -	return 0;
+>  }
+>  
+>  static void s3c2410wdt_shutdown(struct platform_device *dev)
+> @@ -845,7 +843,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(s3c2410wdt_pm_ops,
+>  
+>  static struct platform_driver s3c2410wdt_driver = {
+>  	.probe		= s3c2410wdt_probe,
+> -	.remove		= s3c2410wdt_remove,
+> +	.remove_new	= s3c2410wdt_remove,
+>  	.shutdown	= s3c2410wdt_shutdown,
+>  	.id_table	= s3c2410_wdt_ids,
+>  	.driver		= {
+> -- 
+> 2.39.1
+> 
