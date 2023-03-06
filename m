@@ -2,40 +2,40 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E918AC77B60
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 07:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BCFC6FD20
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 07:58:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229910AbjCFH5u (ORCPT
+        id S229995AbjCFH6I (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Mar 2023 02:57:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53466 "EHLO
+        Mon, 6 Mar 2023 02:58:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229832AbjCFH5n (ORCPT
+        with ESMTP id S229812AbjCFH5l (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2023 02:57:43 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D871D1A97F;
-        Sun,  5 Mar 2023 23:57:41 -0800 (PST)
+        Mon, 6 Mar 2023 02:57:41 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D77421F900;
+        Sun,  5 Mar 2023 23:57:39 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id F2164B80CB6;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6C5DBB80CB3;
         Mon,  6 Mar 2023 07:57:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 105BFC433AC;
-        Mon,  6 Mar 2023 07:57:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47FA3C433A0;
+        Mon,  6 Mar 2023 07:57:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678089457;
-        bh=48FoW8OSDpsHuQ/0wyhq7l25XV/6Z+uv3wlmnHs+SqY=;
+        s=k20201202; t=1678089456;
+        bh=7TZ6Ryi4qLzh/gGEJ5o6OzQmE+K2CCuNbOYeK44Wt5Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UCJVSfmWTBOzT41dAs/tVH8H3VvdasvSRBCxDjM9qUFAWHAPIwOGeieIjwNoIUT6X
-         WcQq29x8BIPxXtaTfCbsZLf4yrQoSo9hPoA1k3GcL1ara1WHrrBxU3Xp7ALqM159CS
-         xz418JGMPiybro0HTDAQrwCuDAaDN5YM1hcQCUwMj+NrO9tZ+/9YmWmc71pBCjz5JT
-         VyC+IK21rN0gzT2wLoWQa4zBUpRbbTPHpawr47v9N4U5pHGcjfO8KSSNpmBwrApt/I
-         kapqf4HjqCXeM16L9zbdnr28sm2MsGcBmCbFc46V9wMxYazQwu6G7QFomqUPzDQcyr
-         YT8qc0RobDD8w==
+        b=qHmzb4qknAa+64diW25JB7LUpUeFbjfyStzO548TnaOmwXOOmWx9iH4XyZWuite89
+         zFYdzbIB3uwbZ6ohEvzVP69suMk9Z4HzzV7QDBlgzeefeQ65IvB3Ie4F84+IKUG4oh
+         1D2jOS2OHRaMuoASYjHGN8H3/8XO+/JSKErf0xJvVod6Rmnw7X5uXSQO3/7/z47HGD
+         XoSOf14CMXssE2RQxUqTxJV0u1DUOEPS6rDhbenMWUeA6G0ulFpISXFEX8vVCB3ffa
+         XPshPnw8IQ0vG5rmZqUJ6+7vHw+iAthhIJbPFP4vkGGY8c0o9FxQ5BdB9uBKTg7Una
+         nLCjvLlQZlozA==
 Received: from johan by xi.lan with local (Exim 4.94.2)
         (envelope-from <johan+linaro@kernel.org>)
-        id 1pZ5jd-0000if-8M; Mon, 06 Mar 2023 08:58:17 +0100
+        id 1pZ5jb-0000ht-PN; Mon, 06 Mar 2023 08:58:15 +0100
 From:   Johan Hovold <johan+linaro@kernel.org>
 To:     Georgi Djakov <djakov@kernel.org>
 Cc:     "Shawn Guo" <shawnguo@kernel.org>,
@@ -55,11 +55,10 @@ Cc:     "Shawn Guo" <shawnguo@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org,
-        Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 17/23] memory: tegra: fix interconnect registration race
-Date:   Mon,  6 Mar 2023 08:56:45 +0100
-Message-Id: <20230306075651.2449-18-johan+linaro@kernel.org>
+        Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org
+Subject: [PATCH v2 01/23] interconnect: fix mem leak when freeing nodes
+Date:   Mon,  6 Mar 2023 08:56:29 +0100
+Message-Id: <20230306075651.2449-2-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230306075651.2449-1-johan+linaro@kernel.org>
 References: <20230306075651.2449-1-johan+linaro@kernel.org>
@@ -69,63 +68,32 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The current interconnect provider registration interface is inherently
-racy as nodes are not added until the after adding the provider. This
-can specifically cause racing DT lookups to fail.
+The node link array is allocated when adding links to a node but is not
+deallocated when nodes are destroyed.
 
-Switch to using the new API where the provider is not registered until
-after it has been fully initialised.
-
-Fixes: 06f079816d4c ("memory: tegra-mc: Add interconnect framework")
-Cc: stable@vger.kernel.org      # 5.11
-Cc: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fixes: 11f1ceca7031 ("interconnect: Add generic on-chip interconnect API")
+Cc: stable@vger.kernel.org      # 5.1
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/memory/tegra/mc.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ drivers/interconnect/core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index 592907546ee6..5cd28619ea9f 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -794,16 +794,12 @@ static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
- 	mc->provider.aggregate = mc->soc->icc_ops->aggregate;
- 	mc->provider.xlate_extended = mc->soc->icc_ops->xlate_extended;
+diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+index 0f392f59b135..5217f449eeec 100644
+--- a/drivers/interconnect/core.c
++++ b/drivers/interconnect/core.c
+@@ -850,6 +850,10 @@ void icc_node_destroy(int id)
  
--	err = icc_provider_add(&mc->provider);
--	if (err)
--		return err;
-+	icc_provider_init(&mc->provider);
+ 	mutex_unlock(&icc_lock);
  
- 	/* create Memory Controller node */
- 	node = icc_node_create(TEGRA_ICC_MC);
--	if (IS_ERR(node)) {
--		err = PTR_ERR(node);
--		goto del_provider;
--	}
-+	if (IS_ERR(node))
-+		return PTR_ERR(node);
- 
- 	node->name = "Memory Controller";
- 	icc_node_add(node, &mc->provider);
-@@ -830,12 +826,14 @@ static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
- 			goto remove_nodes;
- 	}
- 
-+	err = icc_provider_register(&mc->provider);
-+	if (err)
-+		goto remove_nodes;
++	if (!node)
++		return;
 +
- 	return 0;
- 
- remove_nodes:
- 	icc_nodes_remove(&mc->provider);
--del_provider:
--	icc_provider_del(&mc->provider);
- 
- 	return err;
++	kfree(node->links);
+ 	kfree(node);
  }
+ EXPORT_SYMBOL_GPL(icc_node_destroy);
 -- 
 2.39.2
 
