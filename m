@@ -2,184 +2,124 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9369BC6FA99
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 18:13:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA433C6FD1A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 18:57:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230030AbjCFSNT (ORCPT
+        id S230058AbjCFS5E (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Mar 2023 13:13:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53088 "EHLO
+        Mon, 6 Mar 2023 13:57:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230482AbjCFSNJ (ORCPT
+        with ESMTP id S230051AbjCFS4t (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2023 13:13:09 -0500
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD53872004;
-        Mon,  6 Mar 2023 10:12:27 -0800 (PST)
-Received: by mail-ot1-x332.google.com with SMTP id q11-20020a056830440b00b00693c1a62101so5853883otv.0;
-        Mon, 06 Mar 2023 10:12:27 -0800 (PST)
+        Mon, 6 Mar 2023 13:56:49 -0500
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78E322FCD3
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Mar 2023 10:55:25 -0800 (PST)
+Received: by mail-pf1-x42f.google.com with SMTP id a7so6476959pfx.10
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Mar 2023 10:55:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678126345;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=o7Km6hVvpMwQf3BH6QKV5d3OIkWTdrcEhgUdK5/6J5o=;
-        b=okzJ5YZnheB7snQPTqYQW0cPiclZFjBXoKgKvNTuBPRZbt12uAUdPDgGSKkjiax/18
-         fjQ6J45Eg2X5HgN2Pai2Z6DLdheGzMTzyZRdQDXoitag0vGvQEss/1zuL3GjFbUo45IW
-         Rdf7Qzd3G8iTfXYvN0Ihh/poCwYHE6UpB9bWmZVzjJouF9YHGEw+LX76P88NELY1e1dl
-         mvlRBMu6TdjiCzclsua6rrgjk+519lADGPdNuzNMM2ZTnQZEBy5gYgkrqCBerHvbeRrk
-         HooiWDTkRIT9qQSnr3GxqZlA+cuMnil1PYEJuO5wf5hdRXLGpw0RIboGY3a+tKpjvNY9
-         7Fug==
+        d=linaro.org; s=google; t=1678128916;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=R/SLFvJsUujuShQfZT5sk4tBl30biEXQxhjzUcMVQlY=;
+        b=actdtHBwAm2I4J/E5BvEwKoX3Pq87A+DLbO8chSzsJcKmsM238DQPiy1QauwFtHpJP
+         TQN+8jDKlP0M+FSbw1VvIL6kBkQoRLEByOHFG9ISAb7g529gCiSHkyEzcdtd0uLzVFBi
+         LV7+UFwuDsYtTrU5m9KxutxLZCZfBZB+T2HJcr2HRL5w3j2wD4tGOtWvG3Oi+VTD9XxE
+         AcSO2kGX6hwQ5H2bXXYFe3MEqLe66QtzoN8XQkPYnoAvXmfH3MDQ7rYx+iApoCwgRICz
+         p6YoJ5SMu57B7I+Bd2svL6GfnFkyxTQDIIWkjcumMS7fT9vkl5E9SaTXdzh1Td5B/W4T
+         s0Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678126345;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20210112; t=1678128916;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=o7Km6hVvpMwQf3BH6QKV5d3OIkWTdrcEhgUdK5/6J5o=;
-        b=Ut69X31021GGkNHx3ZnazxfGcofPEbheVNZs6YI6qQo31JiwfMvOy8PMOFOrz2Gn5B
-         4n26GOC/Pw4Xfp0lWsJG4+HM4nNWehyR726qjph/WaFEzQdPcL66nfoFdtcGjOf5Mct3
-         Izy1gptkhb4LyBpBWk0/Rd6X04oo5SabsaIN1so+A8MCzIFETLnzzjCSmi9UGS6GIEUx
-         t1XBR7DpKXcAYFxvxMEHN0taEZddQj0uHj01Re0jVzZPugGhAx/Sghp0fd2DAHNJjHQH
-         YEgpsMLjzbfSnCJJGbvoNjNoGxuuVokVWPNiAULV9onuNHx+qovTmOuWb/CjdGKnonvh
-         uXeQ==
-X-Gm-Message-State: AO0yUKVaK3YEGN9IL2AIY+HOuNfqxeWHYFaRR7T+rJrujuChit5pYgDs
-        gH7RrRuYTHAFjdGdu4RMAhFDlvmSvYY=
-X-Google-Smtp-Source: AK7set8e/m9EnPl8NU14A3zQ+BZVcmdRM6XsDa6I9Gzu56p0s1AGJrkOm52a1riMYorovfX7dt8ULA==
-X-Received: by 2002:a9d:1b6e:0:b0:684:e788:eca9 with SMTP id l101-20020a9d1b6e000000b00684e788eca9mr5163671otl.17.1678126344814;
-        Mon, 06 Mar 2023 10:12:24 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id w10-20020a056830078a00b00670461b8be4sm4373867ots.33.2023.03.06.10.12.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Mar 2023 10:12:24 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <eef4ad5a-17d5-c118-7807-f1054ed78c2d@roeck-us.net>
-Date:   Mon, 6 Mar 2023 10:12:21 -0800
+        bh=R/SLFvJsUujuShQfZT5sk4tBl30biEXQxhjzUcMVQlY=;
+        b=Fi+ASNtF4mRU/Z6pie7BpXMbz0ewxmiOPyZD/PLmXBctX8XxXsfxt5sQiUkTY+2+39
+         6DHBT4PlZLOgy69UHKwUiV1Egibx1TK+2FFOuzSSDFAdZw76dO+F2DfVUipaSYhu5zlH
+         vzM4M0p03v+Pb4kq5e0pSCKf1H2O7+OAGP4ZO4z/gi0ThnmALCHY7Y7MEZ1S1ccXbh78
+         FG/FrsZItRq1RLXfj7QE0Wvkny8Xx+BytQVkkGhVARKL9JCmxVToCxC7sluqpadCqY60
+         tnm9mhkIZ26ARzeTQiKmpIJwq18Hms/q54oHONEI6bTE/4yQwIc8UwpUtoySZd3Ot+91
+         5eiA==
+X-Gm-Message-State: AO0yUKW/urQFz9//tR66Hl2JPyjBgAg9WUT1hvcBbQIkDDBskzhFQC6A
+        4+mRg/WJ8iTE0HWpliJymX7Aql+y4d7gh2TlArXgrA==
+X-Google-Smtp-Source: AK7set9lhwqpVKZ4u2/ZN//+vl67fX5+f/0VMJrj/dzV8JrVkGMm8tkBCY24bEdB6+ZBXCEejqEt4MqRYNiG5s7KOIk=
+X-Received: by 2002:a65:6a85:0:b0:503:25af:f50d with SMTP id
+ q5-20020a656a85000000b0050325aff50dmr4143071pgu.4.1678128916514; Mon, 06 Mar
+ 2023 10:55:16 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 1/3] watchdog: s3c2410_wdt: Fold
- s3c2410_get_wdt_drv_data() into only caller
-Content-Language: en-US
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-kernel@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        kernel@pengutronix.de, Wim Van Sebroeck <wim@linux-watchdog.org>,
+References: <20230223042133.26551-1-semen.protsenko@linaro.org>
+ <167811290503.11716.15730246749418548221.b4-ty@linaro.org> <48c8a0cf-08dc-a831-33ef-3b8e32eef2d3@linaro.org>
+In-Reply-To: <48c8a0cf-08dc-a831-33ef-3b8e32eef2d3@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Mon, 6 Mar 2023 12:55:05 -0600
+Message-ID: <CAPLW+4=9Vwxd4upa3j_cKtRrNyyx_XCz+TgOOziMguEonbHb0g@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] clk: samsung: exynos850: Add missing clocks for PM
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Chanho Park <chanho61.park@samsung.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tomasz Figa <tomasz.figa@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-watchdog@vger.kernel.org
-References: <891023d7-9510-445e-9053-ad5c0398d350@roeck-us.net>
- <20230306090919.2206871-1-u.kleine-koenig@pengutronix.de>
- <20230306090919.2206871-2-u.kleine-koenig@pengutronix.de>
- <312e57b8-d47f-1269-a463-d2a4ef19b212@roeck-us.net>
- <20230306174722.rl2fws2p7pseo465@pengutronix.de>
-From:   Guenter Roeck <linux@roeck-us.net>
-In-Reply-To: <20230306174722.rl2fws2p7pseo465@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 3/6/23 09:47, Uwe Kleine-König wrote:
-> On Mon, Mar 06, 2023 at 09:17:23AM -0800, Guenter Roeck wrote:
->> On 3/6/23 01:09, Uwe Kleine-König wrote:
->>> s3c2410_get_wdt_drv_data() is only called by s3c2410wdt_probe(), so the
->>> implementation of the former can move to the latter.
->>>
->>> scripts/bloat-o-meter reports for this change (on an ARCH=arm
->>> allmodconfig build):
->>>
->>> 	add/remove: 1/1 grow/shrink: 0/2 up/down: 4/-129 (-125)
->>>
->>
->> The reason for separating functions in this case wasn't that the separate function
->> would be called several times. It was to improve code readability. If anything,
->> I would argue that it might sense to split the already lengthy probe function
->> further instead of combining it.
-> 
-> Agreed. For dev_err_probe() to work the following would be alternatively
-> possible:
-> 
+On Mon, 6 Mar 2023 at 09:51, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 06/03/2023 15:28, Krzysztof Kozlowski wrote:
+> > On Wed, 22 Feb 2023 22:21:27 -0600, Sam Protsenko wrote:
+> >> As a part of preparation for PM enablement in Exynos850 clock driver,
+> >> this patch series implements CMU_G3D, and also main gate clocks for AUD
+> >> and HSI CMUs. The series brings corresponding changes to bindings, the
+> >> driver and SoC dts file.
+> >>
+> >> Changes in v2:
+> >>   - Rebased all patches on top of the most recent soc/for-next tree
+> >>   - Added A-b and R-b tags
+> >>   - Minor fixes
+> >>
+> >> [...]
+> >
+> > Applied, thanks!
+> >
+> > [1/6] dt-bindings: clock: exynos850: Add Exynos850 CMU_G3D
+> >       https://git.kernel.org/krzk/linux/c/067ba1605806e52118bb598afb357718df9f0e19
+> > [2/6] dt-bindings: clock: exynos850: Add AUD and HSI main gate clocks
+> >       https://git.kernel.org/krzk/linux/c/e289665ed0d6df9fca3ebc128f1232d305e4600b
+> > [3/6] clk: samsung: clk-pll: Implement pll0818x PLL type
+> >       https://git.kernel.org/krzk/linux/c/a6feedab8ab9a9e4483deb0bcc87919d92c88b7e
+> > [4/6] clk: samsung: exynos850: Implement CMU_G3D domain
+> >       https://git.kernel.org/krzk/linux/c/c5704a56893b4e77e434597c7c53d878bb3073b0
+> > [5/6] clk: samsung: exynos850: Add AUD and HSI main gate clocks
+> >       https://git.kernel.org/krzk/linux/c/d8d12e0d079aff4b1d8079a0a55944c0596f1d67
+> > [6/6] arm64: dts: exynos: Add CMU_G3D node for Exynos850 SoC
+> >       https://git.kernel.org/krzk/linux/c/ad8f6ad9a4f219950df65731a8ff91baa022c4b0
+>
+> And builds are broken. Please mention in cover letter or commit
+> dependencies and ordering...
+>
 
-That looks ok to me.
+Just checked all most recent commits on your for-next and next/clk
+branches. Seem to build fine for me. AFAIR I checked all patches in
+that series, and I guess there shouldn't be any issues if you apply
+those in the same order they are numbered inside the series. Or you
+mean you have some clash between different series? Anyways, I'm glad
+to help, but I'd need more details on where exactly the problem is (or
+maybe you already fixed it?).
 
-Thanks,
-Guenter
+Thanks!
 
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index 58b262ca4e88..564919717761 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -579,8 +579,8 @@ static inline unsigned int s3c2410wdt_get_bootstatus(struct s3c2410_wdt *wdt)
->   	return 0;
->   }
->   
-> -static inline const struct s3c2410_wdt_variant *
-> -s3c2410_get_wdt_drv_data(struct platform_device *pdev)
-> +static inline int
-> +s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
->   {
->   	const struct s3c2410_wdt_variant *variant;
->   	struct device *dev = &pdev->dev;
-> @@ -603,24 +603,26 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev)
->   					   "samsung,cluster-index", &index);
->   		if (err) {
->   			dev_err(dev, "failed to get cluster index\n");
-> -			return NULL;
-> +			return -EINVAL;
->   		}
->   
->   		switch (index) {
->   		case 0:
-> -			return variant;
-> +			break;
->   		case 1:
-> -			return (variant == &drv_data_exynos850_cl0) ?
-> +			variant = (variant == &drv_data_exynos850_cl0) ?
->   				&drv_data_exynos850_cl1 :
->   				&drv_data_exynosautov9_cl1;
-> +			break;
->   		default:
->   			dev_err(dev, "wrong cluster index: %u\n", index);
-> -			return NULL;
-> +			return -EINVAL;
->   		}
->   	}
->   #endif
-> +	wdt->drv_data = variant;
->   
-> -	return variant;
-> +	return 0;
->   }
->   
->   static void s3c2410wdt_wdt_disable_action(void *data)
-> @@ -644,9 +646,9 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->   	spin_lock_init(&wdt->lock);
->   	wdt->wdt_device = s3c2410_wdd;
->   
-> -	wdt->drv_data = s3c2410_get_wdt_drv_data(pdev);
-> -	if (!wdt->drv_data)
-> -		return -EINVAL;
-> +	ret = s3c2410_get_wdt_drv_data(pdev, wdt);
-> +	if (ret)
-> +		return ret;
->   
->   	if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
->   		wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
-> 
-> I didn't check if it's the same as for my initial patch #1, but for an
-> allmodconfig ARCH=arm build this also has a nice bloatometer output:
-> 
-> 	add/remove: 1/1 grow/shrink: 0/1 up/down: 4/-104 (-100)
-> 
-> This would allow to make use of dev_err_probe() in
-> s3c2410_get_wdt_drv_data() and still maintain the split into two
-> functions.
-> 
-> Best regards
-> Uwe
-> 
-
+> Best regards,
+> Krzysztof
+>
