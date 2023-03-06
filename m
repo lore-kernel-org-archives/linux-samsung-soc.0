@@ -2,120 +2,174 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD720C678D4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 08:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45490C61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 09:03:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229486AbjCFItL (ORCPT
+        id S229641AbjCFJDZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Mar 2023 03:49:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53192 "EHLO
+        Mon, 6 Mar 2023 04:03:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229681AbjCFItK (ORCPT
+        with ESMTP id S229490AbjCFJDV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2023 03:49:10 -0500
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7403CCC22
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Mar 2023 00:49:09 -0800 (PST)
-Received: by mail-yb1-xb36.google.com with SMTP id t4so7285988ybg.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Mar 2023 00:49:09 -0800 (PST)
+        Mon, 6 Mar 2023 04:03:21 -0500
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9844BB442
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Mar 2023 01:03:19 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id o11-20020a05600c4fcb00b003eb33ea29a8so4717796wmq.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Mar 2023 01:03:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3GtbYZNGHC9OG/em8LL7OjKhJVuS4kO26d62qIDYXYI=;
-        b=NnsoZeNTHmUEHQhNevMja7R9F15XSmY4P2l9hG+U62xDY9b0hNtQzCUYSjzqlF59xg
-         vPGWYPeyVtLlOpOw+zbtVNh1En+npDGonQ35A/V66prlNZEFMVTDgLS5NC/XtAgOnthK
-         dSi11XgdRVhsK/30F18fP8e+oxJWv9Bmf8n0Y=
+        d=linaro.org; s=google; t=1678093398;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AJHpGiNNnS/iHuhCrLJC3kyZETQwy2cp7ry6pPyZxIQ=;
+        b=hzrwwOjdSHOzylUPLi1JyT0tk4upCyVExNtQamh0nS/rBJwh4KYQ/1Uvs7SCa7hm7d
+         YJ6OzeVIGuCpOxuY0QCGh3tgHIkJ67xL5qp37sVCVoKqQ7K6jLxzWurAmpI4z8jsxT1N
+         lKvRHne/mKFVmokyMoXSMBRmDoOIPHw5UqpNTRkpG/dCZ1BLzyptBqAYLVjSnWICedhE
+         rr+PzCy2PTxMdpb1ZpKr0Xgm0wC3ShJ4U5hRqV6RzF3zGufARNtQlHJsu4wDhR/DddmK
+         KKvo08qYT4lRD69xYqiIzG77MlihQHVIxUPdBa+XJkkX9teUea1H5h3SZZz3B6QFaIz/
+         2bNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3GtbYZNGHC9OG/em8LL7OjKhJVuS4kO26d62qIDYXYI=;
-        b=B7kMCz9d+ZJukuPgLNmt8RtxJ6KOY4jVNIMbth4Ex7rujapL5nRCqEHInIo1tj+/oi
-         noujrWjYmiK4X/z5483zXu8c3NzfrXDXYVA+t69lMVRWxh6ptzA3xV5xTLw59RXgBNf0
-         0hKBUODplt1H0WjJLoExJVYNDFUm/GfXMHshBgPir7o6piy/pTC95Kt+pU5G2W0h5h1m
-         Nmb/mn2R669NvvmM6zEol3RUn2/hyMS3SEpjtAugf959SOZW8cvDvPpbKlUSUszSj+Yl
-         adXkAJCetf2pXADb6heFti7MBGgko4BGMfzM9vs+5oOSGba4K7f86M60GZKLG6nuLi5D
-         qR+g==
-X-Gm-Message-State: AO0yUKVWTKkPT/jGwxSrv1U42TWTEmpjsKCreXAVL7XKJ5L2zMtDVWGa
-        D1onZkOZ8+cfKZwTSIqaWp4GNyc2sO7ogUICfJT79g==
-X-Google-Smtp-Source: AK7set9rICjWfZoA7wXooedrv/zZHgvLYiJ04JIwAbDgtQsowOKoLuFK98s0pP3K9IfwxVDppUW8fJm5nKBNyqCr+e0=
-X-Received: by 2002:a25:938c:0:b0:91d:d6ed:6bd2 with SMTP id
- a12-20020a25938c000000b0091dd6ed6bd2mr6093105ybm.1.1678092548604; Mon, 06 Mar
- 2023 00:49:08 -0800 (PST)
+        d=1e100.net; s=20210112; t=1678093398;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AJHpGiNNnS/iHuhCrLJC3kyZETQwy2cp7ry6pPyZxIQ=;
+        b=HsYlCtKzNWEbEYavj0o7Id6keS22OjiBcH+cTHDSFYT/IM2Prm3RWIZ/sjP4TGR86j
+         3NZsbnRXtoCaBPXEmObFtWde/nRCVf7U5pNAwbYayzR4lBt1iPElPOXNy4kPUS1QdAlT
+         pW9leEfbHYm2hRKOcuHQODYGlVWkLaHvsMct70hmtZD2/p1slcwU04ZFZk1hvuppwXSD
+         x0NHrIULnJEfn5cW2KuZSURQ3Jj9Qt+Lsw9FgslEYqsdTR2Bk12LGRv/mbZP/lWQXgn3
+         2nDzb95q9kw2eAULld5GupkEpRm3IumMVNPXV11IkhtYF6yfUbo16NKvFyhrs+X/jL4O
+         2esg==
+X-Gm-Message-State: AO0yUKVm0nWLRpRnMqI1MtQ984nYUAppN7FS5dJzRQlhnR0kLVkEkESx
+        Z3kzVabawKcY5psHPfFO2R7IRQ==
+X-Google-Smtp-Source: AK7set87B67sTGmugB4xDggZWu9Lud32vEXYunKTICLonbRHmTLO7JqmrVgjWob32QN9cC5Jy5Nulw==
+X-Received: by 2002:a05:600c:1d24:b0:3da:1f6a:7b36 with SMTP id l36-20020a05600c1d2400b003da1f6a7b36mr8498979wms.0.1678093397987;
+        Mon, 06 Mar 2023 01:03:17 -0800 (PST)
+Received: from linaro.org ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id p20-20020a05600c205400b003e8dcc67bdesm12966260wmg.30.2023.03.06.01.03.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Mar 2023 01:03:17 -0800 (PST)
+Date:   Mon, 6 Mar 2023 11:03:14 +0200
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Johan Hovold <johan+linaro@kernel.org>
+Cc:     Georgi Djakov <djakov@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 13/23] interconnect: qcom: sm8550: fix registration
+ race
+Message-ID: <ZAWsUrlrOfmmNBy3@linaro.org>
+References: <20230306075651.2449-1-johan+linaro@kernel.org>
+ <20230306075651.2449-14-johan+linaro@kernel.org>
 MIME-Version: 1.0
-References: <CGME20230303145218epcas1p2e77bc610f57337830924e3c6c02ca291@epcas1p2.samsung.com>
- <20230303145138.29233-1-jagan@amarulasolutions.com> <000001d94feb$ef651bb0$ce2f5310$@samsung.com>
-In-Reply-To: <000001d94feb$ef651bb0$ce2f5310$@samsung.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 6 Mar 2023 14:18:57 +0530
-Message-ID: <CAMty3ZA3y4UgVSY5cYfAjksyp6zJaRWgEfkmc70K5qtWxBOMHQ@mail.gmail.com>
-Subject: Re: [PATCH v15 00/16] drm: Add Samsung MIPI DSIM bridge
-To:     =?UTF-8?B?64yA7J246riwL1RpemVuIFBsYXRmb3JtIExhYihTUikv7IK87ISx7KCE7J6Q?= 
-        <inki.dae@samsung.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Marek Vasut <marex@denx.de>,
-        Maxime Ripard <mripard@kernel.org>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Adam Ford <aford173@gmail.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230306075651.2449-14-johan+linaro@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Inki Dae,
+On 23-03-06 08:56:41, Johan Hovold wrote:
+> The current interconnect provider registration interface is inherently
+> racy as nodes are not added until the after adding the provider. This
+> can specifically cause racing DT lookups to fail.
+> 
+> Switch to using the new API where the provider is not registered until
+> after it has been fully initialised.
+> 
+> Fixes: e6f0d6a30f73 ("interconnect: qcom: Add SM8550 interconnect provider driver")
+> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
 
-On Mon, Mar 6, 2023 at 10:54=E2=80=AFAM =EB=8C=80=EC=9D=B8=EA=B8=B0/Tizen P=
-latform Lab(SR)/=EC=82=BC=EC=84=B1=EC=A0=84=EC=9E=90
-<inki.dae@samsung.com> wrote:
->
-> Hi Jagan,
->
-> > -----Original Message-----
-> > From: Jagan Teki <jagan@amarulasolutions.com>
-> > Sent: Friday, March 3, 2023 11:51 PM
-> > To: Andrzej Hajda <andrzej.hajda@intel.com>; Inki Dae <inki.dae@samsung=
-.com>;
-> > Marek Szyprowski <m.szyprowski@samsung.com>; Neil Armstrong
-> > <neil.armstrong@linaro.org>; Marek Vasut <marex@denx.de>; Maxime Ripard
-> > <mripard@kernel.org>
-> > Cc: Seung-Woo Kim <sw0312.kim@samsung.com>; Kyungmin Park
-> > <kyungmin.park@samsung.com>; Frieder Schrempf <frieder.schrempf@kontron=
-.de>;
-> > Tim Harvey <tharvey@gateworks.com>; Adam Ford <aford173@gmail.com>; Mat=
-teo
-> > Lisi <matteo.lisi@engicam.com>; dri-devel@lists.freedesktop.org; linux-
-> > samsung-soc@vger.kernel.org; linux-amarula <linux-
-> > amarula@amarulasolutions.com>; Jagan Teki <jagan@amarulasolutions.com>
-> > Subject: [PATCH v15 00/16] drm: Add Samsung MIPI DSIM bridge
-> >
-> > This series supports common bridge support for Samsung MIPI DSIM
-> > which is used in Exynos and i.MX8MM SoC's.
-> >
-> > The final bridge supports both the Exynos and i.MX8M Mini/Nano/Plus.
-> >
-> > Inki Dae: please note that this series added on top of exynos-drm-next
-> > since few exynos dsi changes are not been part of drm-misc-next.
-> > Request you to pick these via exynos-drm-next, or let me know if you
-> > have any comments?
->
-> Seems some issue Marek found on testing. If fixed then I will try to pick=
- this
-> patch series up.
+Any changes since v1 or is it just a resend? 
 
-Okay, I have a few comments from Maxime and Marek V pointed out. I
-will send v16 now if you are okay with it?
-
-Thanks,
-Jagan.
+>  drivers/interconnect/qcom/sm8550.c | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/interconnect/qcom/sm8550.c b/drivers/interconnect/qcom/sm8550.c
+> index 54fa027ab961..7ab492ca8fe0 100644
+> --- a/drivers/interconnect/qcom/sm8550.c
+> +++ b/drivers/interconnect/qcom/sm8550.c
+> @@ -2197,9 +2197,10 @@ static int qnoc_probe(struct platform_device *pdev)
+>  	provider->pre_aggregate = qcom_icc_pre_aggregate;
+>  	provider->aggregate = qcom_icc_aggregate;
+>  	provider->xlate_extended = qcom_icc_xlate_extended;
+> -	INIT_LIST_HEAD(&provider->nodes);
+>  	provider->data = data;
+>  
+> +	icc_provider_init(provider);
+> +
+>  	qp->dev = &pdev->dev;
+>  	qp->bcms = desc->bcms;
+>  	qp->num_bcms = desc->num_bcms;
+> @@ -2208,12 +2209,6 @@ static int qnoc_probe(struct platform_device *pdev)
+>  	if (IS_ERR(qp->voter))
+>  		return PTR_ERR(qp->voter);
+>  
+> -	ret = icc_provider_add(provider);
+> -	if (ret) {
+> -		dev_err_probe(&pdev->dev, ret,
+> -			      "error adding interconnect provider\n");
+> -		return ret;
+> -	}
+>  
+>  	for (i = 0; i < qp->num_bcms; i++)
+>  		qcom_icc_bcm_init(qp->bcms[i], &pdev->dev);
+> @@ -2227,7 +2222,7 @@ static int qnoc_probe(struct platform_device *pdev)
+>  		node = icc_node_create(qnodes[i]->id);
+>  		if (IS_ERR(node)) {
+>  			ret = PTR_ERR(node);
+> -			goto err;
+> +			goto err_remove_nodes;
+>  		}
+>  
+>  		node->name = qnodes[i]->name;
+> @@ -2241,12 +2236,17 @@ static int qnoc_probe(struct platform_device *pdev)
+>  	}
+>  	data->num_nodes = num_nodes;
+>  
+> +	ret = icc_provider_register(provider);
+> +	if (ret)
+> +		goto err_remove_nodes;
+> +
+>  	platform_set_drvdata(pdev, qp);
+>  
+>  	return 0;
+> -err:
+> +
+> +err_remove_nodes:
+>  	icc_nodes_remove(provider);
+> -	icc_provider_del(provider);
+> +
+>  	return ret;
+>  }
+>  
+> @@ -2254,8 +2254,8 @@ static int qnoc_remove(struct platform_device *pdev)
+>  {
+>  	struct qcom_icc_provider *qp = platform_get_drvdata(pdev);
+>  
+> +	icc_provider_deregister(&qp->provider);
+>  	icc_nodes_remove(&qp->provider);
+> -	icc_provider_del(&qp->provider);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.39.2
+> 
