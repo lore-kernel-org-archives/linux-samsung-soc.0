@@ -2,189 +2,131 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F41FC6FA8E
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Mar 2023 14:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC6D0C678DB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 01:54:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229676AbjCEObO (ORCPT
+        id S229579AbjCFByX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 5 Mar 2023 09:31:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56078 "EHLO
+        Sun, 5 Mar 2023 20:54:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229604AbjCEObN (ORCPT
+        with ESMTP id S229457AbjCFByV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 5 Mar 2023 09:31:13 -0500
-Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C340510271;
-        Sun,  5 Mar 2023 06:31:11 -0800 (PST)
-Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-172afa7bee2so8716484fac.6;
-        Sun, 05 Mar 2023 06:31:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678026671;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iLNqvkQlPnIR/APHKTv2kM9g4sr2SoXTzXR+UI/Z6gI=;
-        b=FmdRV5PKZ//h/svqkuQi4Z3pnEO4T8hnizDPFcF1nb0jbtc1uxvEIGlX6+SDpLCx9N
-         gFRhfv1WRdUx02lj7vH5YNdjYSqRuhnV5FclN+0K00i4Kxg6SXtepLQu6GrUY50C832i
-         EiF4S+jA1g6KRw6wi3OpA93p9ceu1l+M93NgJBCsrcWAl567xgC9/s0Ff+aCOmdfRuwi
-         XzC+LXGQigsKbQZKxgJaYUwS3OnDP9Zr2NEWF57dSY3fSmHX9imWNuhsp6ZOjPIVq5X/
-         B0uRWQGZQHP+nUkujCJGH6y/clIR0QpNXqztzMXa184g+LrjlNF5louIAnNGQi3DO8IV
-         3YGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678026671;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iLNqvkQlPnIR/APHKTv2kM9g4sr2SoXTzXR+UI/Z6gI=;
-        b=wHSrLtxI5mLsZu3P419vHyVGLCDPgQ+KmXtCIzh+RePc3SviOInCjvRiPvQtRUUqM2
-         uQ7X/a5gxhRH3ZfwCEjYdfJG+Wc7a7FUWb4hHK6U3z5F0wuD2o9zUxMu6YA/hW0f+Hnp
-         Tn9WFsptYL7PPBFTptBE1JlcOmNU3k4Yq8KQT6RIlT+YHY4HzfPu6inwv7FFpXT8eBoE
-         l2FjgvwBB6ljE0WT9jyTK6QBQoNWF2ITpq+QeFHczjfxmWOM7w23O3p12B0ZiN0CJJ5K
-         m8veODXL15Wi3jpFBglS39yiWxguGnPXDuixCnCKPEc74kVwgiTGckX0nmi92hmyuovi
-         G4hw==
-X-Gm-Message-State: AO0yUKVb+JMt9xHoP5H0+6yCXRe4d0u+mWFqUsBktm+ftX+jNb17MQpY
-        OzrmDpb9HW1LysvUP42jPsU=
-X-Google-Smtp-Source: AK7set/T3JLL8ZmcIt8S0a9GBjZH2KGWRQJeefAPX/9NhUh+844MYFCz8o3Zd4hCx0UMawdbkx79CA==
-X-Received: by 2002:a05:6870:14d5:b0:172:5a8b:b43c with SMTP id l21-20020a05687014d500b001725a8bb43cmr4834291oab.49.1678026670996;
-        Sun, 05 Mar 2023 06:31:10 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id u10-20020a4ae68a000000b00524f47b4682sm2915395oot.10.2023.03.05.06.31.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Mar 2023 06:31:10 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Sun, 5 Mar 2023 06:31:08 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] watchdog: s3c2410_wdt: Use Use
- devm_clk_get[_optional]_enabled() helpers
-Message-ID: <891023d7-9510-445e-9053-ad5c0398d350@roeck-us.net>
-References: <20230304165653.2179835-1-linux@roeck-us.net>
- <93d115a2-702d-7d68-cd88-98f1c9f03f95@wanadoo.fr>
- <431a8ae1-54a7-e71a-484d-cab618a2a1c4@roeck-us.net>
- <20230305111500.jvass6ymkity4nnd@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230305111500.jvass6ymkity4nnd@pengutronix.de>
+        Sun, 5 Mar 2023 20:54:21 -0500
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55FA2B750
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  5 Mar 2023 17:54:19 -0800 (PST)
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230306015415epoutp034ad025e3f8a0b5137b68ef53f69e3969~JsaRWKhwt2421624216epoutp03X
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Mar 2023 01:54:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230306015415epoutp034ad025e3f8a0b5137b68ef53f69e3969~JsaRWKhwt2421624216epoutp03X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1678067655;
+        bh=mJxdAUSREaShX8DFcolRF1CTxDCXGUzkG0FBk9MUzLE=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=MZwREKSRLcFG+3oQhZ18wXAOQXGqnDOZOpeaQdN+VFp1rr9OvAE+B0ATtRvRUFps+
+         aS9auZMwuRgLuULjKvC9R5uxqpLGIEsq99gOHdRIXz2h2OyY/rXdVWvMagY6tFHaem
+         aNnFOLQs3KnGSTB0L7IXB0g5pPZxZ4aFopH47Wms=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20230306015415epcas2p48b5dd3cb926655134760454c32937ce2~JsaQ2RIOG2100121001epcas2p4R;
+        Mon,  6 Mar 2023 01:54:15 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.100]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4PVM7p4Mtwz4x9QD; Mon,  6 Mar
+        2023 01:54:14 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        AB.51.61927.5C745046; Mon,  6 Mar 2023 10:54:13 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+        20230306015413epcas2p371356e4008af6978cdadb5b859d8be2a~JsaPPhEka0846908469epcas2p3J;
+        Mon,  6 Mar 2023 01:54:13 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230306015413epsmtrp21fa4b2a6f718957f6c580df5ccd5995f~JsaPOxz9c2845028450epsmtrp2d;
+        Mon,  6 Mar 2023 01:54:13 +0000 (GMT)
+X-AuditID: b6c32a45-e942ca800001f1e7-74-640547c56c07
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        93.08.18071.5C745046; Mon,  6 Mar 2023 10:54:13 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.51]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230306015413epsmtip28258ff89ad99ffc419c1afbac00231c5~JsaO-NCCp0452104521epsmtip23;
+        Mon,  6 Mar 2023 01:54:13 +0000 (GMT)
+From:   Jaewon Kim <jaewon02.kim@samsung.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andi Shyti <andi@etezian.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jaewon Kim <jaewon02.kim@samsung.com>
+Subject: [PATCH] spi: s3c64xx: add no_cs description
+Date:   Mon,  6 Mar 2023 10:42:39 +0900
+Message-Id: <20230306014239.80570-1-jaewon02.kim@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEKsWRmVeSWpSXmKPExsWy7bCmue5Rd9YUg4NXlS0ezNvGZrH4x3Mm
+        ix0NR1gt9r7eym6x6fE1VovLu+awWcw4v4/JovHjTXYHDo/rSz4xe9y5tofNY/OSeo++LasY
+        PT5vkgtgjcq2yUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXL
+        zAE6RUmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYF6gV5yYW1yal66Xl1piZWhg
+        YGQKVJiQnbHvZBNrwT62ioNnwhsY97N2MXJySAiYSPy50MbSxcjFISSwg1Gib+05RpCEkMAn
+        RokTnVkQiW+MEp/XnGaE6VjfcI4dIrGXUeL+JpAOEOcjo8TidzPZQKrYBLQlvq9fzAqSEBFo
+        YJRovjyVDcRhFljPKLHuwhcmkCphoFknVx5hAbFZBFQl/m/aygxi8wrYSlzu38ECsU9eYvWG
+        A8wgzRICm9gl7rTuYYJIuEhMfPcU6ihhiVfHt7BD2FISn9/tZYOwsyXap/+BerVC4uKG2VBx
+        Y4lZz9qBejmALtKUWL9LH8SUEFCWOHILbC2zAJ9Ex+G/7BBhXomONiGIRjWJ+1PPQQ2RkZh0
+        ZCXUMR4Sp/53sYGUCwnESmzZnzCBUXYWwvgFjIyrGMVSC4pz01OLjQoM4XGUnJ+7iRGcuLRc
+        dzBOfvtB7xAjEwfjIUYJDmYlEV6eUpYUId6UxMqq1KL8+KLSnNTiQ4ymwNCayCwlmpwPTJ15
+        JfGGJpYGJmZmhuZGpgbmSuK80rYnk4UE0hNLUrNTUwtSi2D6mDg4pRqYXJv0DDv3akga7hHV
+        q76y5L7YD+8daZYHzi4W/VRq9nHWFlPPS2n9ch0GnWsnSbzfeHDxQmODKYabdgipW//q+Sr+
+        cmayTa47X/l615NPNkla1TyxuPZtd2TqJXd/p99LD/A8meL4Z3Pb2Z1Tr9mF/o2Xuh5gZXXJ
+        bKmOwubJGmWxoX+3fbOf0b7wq/PLl2HK3maMRyMO94sX7RBUPJWS+LbU4crzafbNpdpNcmVm
+        wXe5pj8MqnVcnnq/LZArO6Yq++HS5S4hORvtZsvrV1hph3Xl7vquxpOb1HAj87OOfFLkOt4k
+        t2lHHL96f2lin9t/ReydlO2maY+sOTguvqheuVBSOv2PccplHUsfhSdKLMUZiYZazEXFiQC/
+        VJ3T5QMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphluLIzCtJLcpLzFFi42LZdlhJXveoO2uKwcXXnBYP5m1js1j84zmT
+        xY6GI6wWe19vZbfY9Pgaq8XlXXPYLGac38dk0fjxJrsDh8f1JZ+YPe5c28PmsXlJvUffllWM
+        Hp83yQWwRnHZpKTmZJalFunbJXBl7DvZxFqwj63i4JnwBsb9rF2MnBwSAiYS6xvOsXcxcnEI
+        CexmlDiy/BQLREJGYvmzPjYIW1jifssRVoii94wSuxY/YwRJsAloS3xfvxgsISLQxChx41wv
+        M4jDLLCZUaL9/DmwHcJAO06uPAI2lkVAVeL/pq3MIDavgK3E5f4dUOvkJVZvOMA8gZFnASPD
+        KkbJ1ILi3PTcYsMCw7zUcr3ixNzi0rx0veT83E2M4IDS0tzBuH3VB71DjEwcjIcYJTiYlUR4
+        eUpZUoR4UxIrq1KL8uOLSnNSiw8xSnOwKInzXug6GS8kkJ5YkpqdmlqQWgSTZeLglGpgSr11
+        +800OR2Xfsl39q3Nzh3ul3gT9U63Md5/slVMZ7naqeO3woUS5H49Yms3Dv8c2W++t1Tb7827
+        dZt4uRMy+ip2rLbM8pS+FzivqYy19GGOFWPxvfPKTr+vfjpY9/3Wye1nEha+ebkw7WvHBPVL
+        WxeEmucrcW0P/7U9bvJcyyVz8lXeSnqG358sN+fT1D9/NyR3zr3MsZd7+4NfQq6yp+y7ypoM
+        2HoXKXR+Y0qxPPxnZ0oP66xH05cfnfpPa94C71WyEfynrnhlf5JW9jOdckxza9DligRR3fa/
+        jy51yn2t9l/FGFJ2OVIja8915SXyMxSYfy+MEbG1X5byclmb39ewWNkfUgunufebWcxKV2Ip
+        zkg01GIuKk4EAL3mhwWXAgAA
+X-CMS-MailID: 20230306015413epcas2p371356e4008af6978cdadb5b859d8be2a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230306015413epcas2p371356e4008af6978cdadb5b859d8be2a
+References: <CGME20230306015413epcas2p371356e4008af6978cdadb5b859d8be2a@epcas2p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Mar 05, 2023 at 12:15:00PM +0100, Uwe Kleine-König wrote:
-> Hello Guenter,
-> 
-> On Sat, Mar 04, 2023 at 02:10:47PM -0800, Guenter Roeck wrote:
-> > On 3/4/23 13:46, Christophe JAILLET wrote:
-> > > Le 04/03/2023 à 17:56, Guenter Roeck a écrit :
-> > > > The devm_clk_get[_optional]_enabled() helpers:
-> > > >      - call devm_clk_get[_optional]()
-> > > >      - call clk_prepare_enable() and register what is needed in order to
-> > > >        call clk_disable_unprepare() when needed, as a managed resource.
-> > > > 
-> > > > This simplifies the code and avoids the calls to clk_disable_unprepare().
-> > > > 
-> > > > While at it, use dev_err_probe consistently, and use its return value
-> > > > to return the error code.
-> > > > 
-> > > > Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> > > > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> > > > ---
-> > > >   drivers/watchdog/s3c2410_wdt.c | 45 +++++++---------------------------
-> > > >   1 file changed, 9 insertions(+), 36 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> > > > index 200ba236a72e..a1fcb79b0b7c 100644
-> > > > --- a/drivers/watchdog/s3c2410_wdt.c
-> > > > +++ b/drivers/watchdog/s3c2410_wdt.c
-> > > > @@ -661,35 +661,17 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
-> > > >       if (IS_ERR(wdt->reg_base))
-> > > >           return PTR_ERR(wdt->reg_base);
-> > > > -    wdt->bus_clk = devm_clk_get(dev, "watchdog");
-> > > > -    if (IS_ERR(wdt->bus_clk)) {
-> > > > -        dev_err(dev, "failed to find bus clock\n");
-> > > > -        return PTR_ERR(wdt->bus_clk);
-> > > > -    }
-> > > > -
-> > > > -    ret = clk_prepare_enable(wdt->bus_clk);
-> > > > -    if (ret < 0) {
-> > > > -        dev_err(dev, "failed to enable bus clock\n");
-> > > > -        return ret;
-> > > > -    }
-> > > > +    wdt->bus_clk = devm_clk_get_enabled(dev, "watchdog");
-> > > > +    if (IS_ERR(wdt->bus_clk))
-> > > > +        return dev_err_probe(dev, PTR_ERR(wdt->bus_clk), "failed to get bus clock\n");
-> > > >       /*
-> > > >        * "watchdog_src" clock is optional; if it's not present -- just skip it
-> > > >        * and use "watchdog" clock as both bus and source clock.
-> > > >        */
-> > > > -    wdt->src_clk = devm_clk_get_optional(dev, "watchdog_src");
-> > > > -    if (IS_ERR(wdt->src_clk)) {
-> > > > -        dev_err_probe(dev, PTR_ERR(wdt->src_clk),
-> > > > -                  "failed to get source clock\n");
-> > > > -        ret = PTR_ERR(wdt->src_clk);
-> > > > -        goto err_bus_clk;
-> > > > -    }
-> > > > -
-> > > > -    ret = clk_prepare_enable(wdt->src_clk);
-> > > > -    if (ret) {
-> > > > -        dev_err(dev, "failed to enable source clock\n");
-> > > > -        goto err_bus_clk;
-> > > > -    }
-> > > > +    wdt->src_clk = devm_clk_get_optional_enabled(dev, "watchdog_src");
-> > > > +    if (IS_ERR(wdt->src_clk))
-> > > > +        return dev_err_probe(dev, PTR_ERR(wdt->src_clk), "failed to get source clock\n");
-> > > >       wdt->wdt_device.min_timeout = 1;
-> > > >       wdt->wdt_device.max_timeout = s3c2410wdt_max_timeout(wdt);
-> > > > @@ -710,7 +692,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
-> > > >                    S3C2410_WATCHDOG_DEFAULT_TIME);
-> > > >           } else {
-> > > >               dev_err(dev, "failed to use default timeout\n");
-> > > > -            goto err_src_clk;
-> > > > +            return ret;
-> > > 
-> > > Hi,
-> > > 
-> > > Nit: this also could be "return dev_err_probe()"
-> > > 
-> > > >           }
-> > > >       }
-> > > > @@ -718,7 +700,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
-> > > >                      pdev->name, pdev);
-> > > >       if (ret != 0) {
-> > > >           dev_err(dev, "failed to install irq (%d)\n", ret);
-> > > > -        goto err_src_clk;
-> > > > +        return ret;
-> > > 
-> > > Nit: this also could be "return dev_err_probe()"
-> > > 
-> > 
-> > The primary reason to call dev_err_probe() is that the error may be
-> > -EPROBE_DEFER, in which case the error message is suppressed.
-> > That is not the case for those two functions; they never return
-> > -EPROBE_DEFER. Calling dev_err_probe() would give the false impression
-> > that the functions _might_ return -EPROBE_DEFER.
-> 
-> That is subjective. In my book dev_err_probe() handling -EPROBE_DEFER is
-> only one aspect. Another is that using it allows to have return and error
-> message in a single line and also that if already other exit paths use
-> it to get a consistent style for the emitted messages. Having said that
-> *I* wouldn't assume that the previous call might return -EPROBE_DEFER
-> just because dev_err_probe() is used.
-> 
-> Having said that, I also don't think there is much harm if someone
-> thinks that a given function (here devm_request_irq()) might return
-> -EPROBE_DEFER.
-> 
+This patch adds missing variable no_cs descriptions.
 
-I guess we'll have to agree to disagree.
+Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+---
+ include/linux/platform_data/spi-s3c64xx.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Guenter
+diff --git a/include/linux/platform_data/spi-s3c64xx.h b/include/linux/platform_data/spi-s3c64xx.h
+index 5df1ace6d2c9..3101152ce449 100644
+--- a/include/linux/platform_data/spi-s3c64xx.h
++++ b/include/linux/platform_data/spi-s3c64xx.h
+@@ -29,6 +29,7 @@ struct s3c64xx_spi_csinfo {
+  * struct s3c64xx_spi_info - SPI Controller defining structure
+  * @src_clk_nr: Clock source index for the CLK_CFG[SPI_CLKSEL] field.
+  * @num_cs: Number of CS this controller emulates.
++ * @no_cs: Used when CS line is not connected.
+  * @cfg_gpio: Configure pins for this SPI controller.
+  */
+ struct s3c64xx_spi_info {
+-- 
+2.17.1
+
