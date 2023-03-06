@@ -2,85 +2,120 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8ACAC6FA8E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 06:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 846DDC6FD19
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 07:57:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229624AbjCFG0m (ORCPT
+        id S229702AbjCFH5j (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Mar 2023 01:26:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42694 "EHLO
+        Mon, 6 Mar 2023 02:57:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229554AbjCFG0l (ORCPT
+        with ESMTP id S229535AbjCFH5i (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2023 01:26:41 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D5A1EB78
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  5 Mar 2023 22:26:40 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id u9so34092502edd.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Mar 2023 22:26:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678083999;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h2EVWs3pTg/fWY1PZtABlXR6f2sNu/d27mccEdhWh7U=;
-        b=c2B/lU6CRWGnrc5QdLUOzoB5rfafH2gCgrW5YIvUTBtsNX+/RsnYuGL/hOKA/oONey
-         xORE5C+oDdsUeHmt847wbHn51SnBdX0iOX6t3dGOSeZi9cjmGJMKKGMvKXKqFnnyLqgl
-         w4/rygv7dmvuUfGaQZd84YvLI9zRQ7Mcp3gKJAPHa+441ISzHQAT2rVhS43PHwIqWDRK
-         hFuXIhyGO8iBJxJUng8GxFFpqLJk3ZUE3FNLvHKYgbBSx1UokpPhzhKL4hl3Q1TjBtPs
-         Z03ycgEiOVyEnxzlSjOgVDEnjcFYqRWxXfRsxUky5ESdJDfQJ8Gts1UxdV5eciZ94fdQ
-         pBEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678083999;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h2EVWs3pTg/fWY1PZtABlXR6f2sNu/d27mccEdhWh7U=;
-        b=o1PYTj+u/gs6loZ43+Fp5z87Muf5SnIqqOkqmffUhVd5gxiuEEcrXMSmZ+kDAmbl5o
-         9GcxUdZ6LNNF45s9ZC8emrrHbPH1j/9vYxz9cUm180KwCUMl96gNO4vlps0iTLzK8Zct
-         W635KCGytXgR2tx5CFp53bus/KuMNtOUSWBgHxKX45qj7EDJ383N9V0uJh6H5Fm8wUt4
-         GTpOwFcb47Q/x79NwwIDctb2tZJkBZMxMpGnSbV75W2Vx5Sqye6N6wsZIZUb1k1WAnE1
-         BfZTnhyGu92VeQStDmDfQmCO3A55/fyMFOA0Ny0694HRpIXanphXrRohXF03yx2/fb6l
-         MXoA==
-X-Gm-Message-State: AO0yUKWAThcJkYH7M6Le5KXvuFRh7LUyyP0WuRn0gJvxQGYZzHBbp/ZO
-        OqWYZgQGPu2Ek52+L3jAx2T3+w==
-X-Google-Smtp-Source: AK7set8n0rli9ksDBadVCoR2Qgpw1GH9WCld0Ejgjbj5d0mwffklxq/8uct/NXu8bhNw4ZCqxqvpUw==
-X-Received: by 2002:a17:907:7da6:b0:888:b764:54e5 with SMTP id oz38-20020a1709077da600b00888b76454e5mr12048360ejc.71.1678083998999;
-        Sun, 05 Mar 2023 22:26:38 -0800 (PST)
-Received: from ?IPV6:2a02:810d:15c0:828:d85d:5a4b:9830:fcfe? ([2a02:810d:15c0:828:d85d:5a4b:9830:fcfe])
-        by smtp.gmail.com with ESMTPSA id t30-20020a50ab5e000000b004ad601533a3sm4629001edc.55.2023.03.05.22.26.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Mar 2023 22:26:38 -0800 (PST)
-Message-ID: <422b00ec-1ef4-95e3-db49-672da29e6e24@linaro.org>
-Date:   Mon, 6 Mar 2023 07:26:37 +0100
+        Mon, 6 Mar 2023 02:57:38 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E0E9193E6;
+        Sun,  5 Mar 2023 23:57:37 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ED4F960C24;
+        Mon,  6 Mar 2023 07:57:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 431BFC4339C;
+        Mon,  6 Mar 2023 07:57:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678089456;
+        bh=x7c24nw5EsIIq8C+xhEW9SJzZNdBgRpXVyxPgn2uGaQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RVoRdwHGmeMtMPQ5TjivD9CJFhUo4FyjgJ2AVZn2Q7Ow2PgektAAVOa68GROZsOFy
+         KD2PyEtCXnorEv56biJX1Cbb5swuj6QHkmSatqlDTnz7Cd2lQXOuDDVKCbzZrhTd+F
+         vMx+MP3RAFT4MfHY+ZogmNvwakF4yI7kH3TgKAuMpyM1cbWYPZDIIDij/gAxxvA70E
+         Ed5OMQ5MfyVvBxNzB1VG58DODM9OEd7wNQpY2vOJll6d+3piWYQP8P2Ew+cn6YKlnG
+         aZ45BA9wOVOTCyxa0S89b3ZbXsqTzL+7JDSaPJAS+NLvsnII/Tt+a+gM22cjeHF8W5
+         6PLmvYqBb8w4w==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan+linaro@kernel.org>)
+        id 1pZ5jc-0000i5-9y; Mon, 06 Mar 2023 08:58:16 +0100
+From:   Johan Hovold <johan+linaro@kernel.org>
+To:     Georgi Djakov <djakov@kernel.org>
+Cc:     "Shawn Guo" <shawnguo@kernel.org>,
+        "Sascha Hauer" <s.hauer@pengutronix.de>,
+        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+        "Fabio Estevam" <festevam@gmail.com>,
+        "NXP Linux Team" <linux-imx@nxp.com>,
+        "Andy Gross" <agross@kernel.org>,
+        "Bjorn Andersson" <andersson@kernel.org>,
+        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
+        "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+        =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+        "Alim Akhtar" <alim.akhtar@samsung.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        "Jonathan Hunter" <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org,
+        Yassine Oudjana <y.oudjana@protonmail.com>
+Subject: [PATCH v2 07/23] interconnect: qcom: rpm: fix probe PM domain error handling
+Date:   Mon,  6 Mar 2023 08:56:35 +0100
+Message-Id: <20230306075651.2449-8-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230306075651.2449-1-johan+linaro@kernel.org>
+References: <20230306075651.2449-1-johan+linaro@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] spi: s3c64xx: add no_cs description
-To:     Jaewon Kim <jaewon02.kim@samsung.com>,
-        Andi Shyti <andi@etezian.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <CGME20230306015413epcas2p371356e4008af6978cdadb5b859d8be2a@epcas2p3.samsung.com>
- <20230306014239.80570-1-jaewon02.kim@samsung.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230306014239.80570-1-jaewon02.kim@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/03/2023 02:42, Jaewon Kim wrote:
-> This patch adds missing variable no_cs descriptions.
-> 
-> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+Make sure to disable clocks also in case attaching the power domain
+fails.
 
+Fixes: 7de109c0abe9 ("interconnect: icc-rpm: Add support for bus power domain")
+Cc: stable@vger.kernel.org      # 5.17
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+---
+ drivers/interconnect/qcom/icc-rpm.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
+index 91778cfcbc65..da595059cafd 100644
+--- a/drivers/interconnect/qcom/icc-rpm.c
++++ b/drivers/interconnect/qcom/icc-rpm.c
+@@ -498,8 +498,7 @@ int qnoc_probe(struct platform_device *pdev)
+ 
+ 	if (desc->has_bus_pd) {
+ 		ret = dev_pm_domain_attach(dev, true);
+-		if (ret)
+-			return ret;
++		goto err_disable_clks;
+ 	}
+ 
+ 	provider = &qp->provider;
+@@ -514,8 +513,7 @@ int qnoc_probe(struct platform_device *pdev)
+ 	ret = icc_provider_add(provider);
+ 	if (ret) {
+ 		dev_err(dev, "error adding interconnect provider: %d\n", ret);
+-		clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
+-		return ret;
++		goto err_disable_clks;
+ 	}
+ 
+ 	for (i = 0; i < num_nodes; i++) {
+@@ -550,8 +548,9 @@ int qnoc_probe(struct platform_device *pdev)
+ 	return 0;
+ err:
+ 	icc_nodes_remove(provider);
+-	clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
+ 	icc_provider_del(provider);
++err_disable_clks:
++	clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
+ 
+ 	return ret;
+ }
+-- 
+2.39.2
 
