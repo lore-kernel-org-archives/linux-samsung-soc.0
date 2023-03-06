@@ -2,172 +2,337 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F5FCC61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 20:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71739C6FD1A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 20:58:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230006AbjCFUBU (ORCPT
+        id S229638AbjCFU6R (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Mar 2023 15:01:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40102 "EHLO
+        Mon, 6 Mar 2023 15:58:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230144AbjCFUBO (ORCPT
+        with ESMTP id S229484AbjCFU6Q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2023 15:01:14 -0500
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC3EC67024;
-        Mon,  6 Mar 2023 12:00:56 -0800 (PST)
-Received: by mail-pj1-x102b.google.com with SMTP id qa18-20020a17090b4fd200b0023750b675f5so14280355pjb.3;
-        Mon, 06 Mar 2023 12:00:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678132856;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uXR1hBuNmG/TwC91AeVvsW1UVH/MwkAfhUSEnuvNaoY=;
-        b=o6hZefnQYEnFw3COvoTdyyoXo9Zv4P0LTShB301lkw0/gGr+x1ou0XeYCSdcXXLXoz
-         Ie/lwSIsRhh9vBh4c56fFPeCbh1Mg/u0f+SLHuOsNnA01L3iQxuD6tKvCodPDyUeqcUA
-         ipzyAtvRXWR1nR5U0W8m7xh6fPIYtpAYIZVYRkCJb0GTxixFtDSEeec8W6O4TIR9SFvb
-         8TyLwk+heXtYmzhntJcZ54SphmylZPrikYFa1PRdJ8V5j+VefclzJKcG1hcN/EBRiJ2z
-         A5LjdstbOHhVHAVRXA7o2dTcBNuVBc27QoVtU1tjX+Yepbtmilj428R4Os2Xd6WiLWnA
-         Of4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678132856;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uXR1hBuNmG/TwC91AeVvsW1UVH/MwkAfhUSEnuvNaoY=;
-        b=aXlIsS33Jjsuul+qMNL2sbI/Xqukq2wbEWP7Zdwtlj7bv64XyL7zxFEoY23RZ0YQor
-         Bqbh5zVr8LntGonP2exW1FvIEe3AwE9XlYZmNS8BKWTAWJs46K5D88Cz1tVysYW6l+vP
-         FlMoMohxRfMxV4J+TUf+f7Bz1HpG6jA9mHubAYpMaJGTADnDWXZk6nHVD+RgpSfy8wnl
-         /+/YGrN5IjCieKDYZ32gkewHxI34PwOi60E7Fm7h+ZsDbXdaNQooMMjB7VEGiEr6rL0+
-         lQojxCgDm1YNLkaokb9PWqj3WmVVVML7lZp7/PlVkSmU5avaYieldMHSE8tJs0W+SvaY
-         B+Qw==
-X-Gm-Message-State: AO0yUKXAbIFP23mAPtL3C28xLpxvoISrBRzI+Kq+PG803rUuLclFekw1
-        m8OB/pmYca24tx4TYBNZYeUG77vaa6Wk3reLCVE=
-X-Google-Smtp-Source: AK7set/DxZtiZhO+z+A0Is7yokDniYYkETavBEcleYa7IPSvIEQBIV7zty9Y+UWe1CWFM73JZ5CBgh34wQSFC4iK+eg=
-X-Received: by 2002:a17:90a:5993:b0:233:b520:1544 with SMTP id
- l19-20020a17090a599300b00233b5201544mr6625621pji.0.1678132856231; Mon, 06 Mar
- 2023 12:00:56 -0800 (PST)
+        Mon, 6 Mar 2023 15:58:16 -0500
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BB022E0C8;
+        Mon,  6 Mar 2023 12:58:12 -0800 (PST)
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id C763420002;
+        Mon,  6 Mar 2023 20:58:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1678136290;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=J7iOrrbnKknsQK3+iHzV3crUECy6Wxv188OlEZYveIs=;
+        b=L90XSfIkg4yNqQhiED3gPSq2rKmfKVUb4VObFHsQCtTq7EpThDERcxwnrCK5cumzvn7tXZ
+        8tvfn1Q0AS71Auu1tRSlwW3N2uenFUi4iQB1s0lYt3iuMdYfzHxnwP/SmSYIhGQAsnI0NX
+        /peUhlOQgvKU9UMn+aRFFIMmFbywfZEhbCM8pAoylKigIxny9D7MvySTtYM9TH0ivx0nzs
+        lrKDtjYjw7f/XfOCioQ+7mKq/WPFB3ewf0dIBd2kOmYNOjT4CPwQOVNajv4BUZVafXhcH7
+        aCx4BJHmRMScWe6KFJuJ8Nuh3arDpcqJCTrN2RnGGeUKWm6nouDoh24vtV1kiQ==
+Date:   Mon, 6 Mar 2023 21:58:09 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     David Virag <virag.david003@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Lee Jones <lee@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH 2/2] rtc: s5m: Drop S5M8763 support
+Message-ID: <ZAZT4Q7I2l2gPpMX@mail.local>
+References: <20230131183008.4451-1-virag.david003@gmail.com>
+ <20230131183008.4451-3-virag.david003@gmail.com>
 MIME-Version: 1.0
-References: <20230306172109.595464-1-amit.kumar-mahapatra@amd.com> <20230306172109.595464-10-amit.kumar-mahapatra@amd.com>
-In-Reply-To: <20230306172109.595464-10-amit.kumar-mahapatra@amd.com>
-From:   Jonas Gorski <jonas.gorski@gmail.com>
-Date:   Mon, 6 Mar 2023 21:00:44 +0100
-Message-ID: <CAOiHx=nmsAh3ADL3s0eZKpEZJqCB_POi=8YjfxrHYLEbjRfwHg@mail.gmail.com>
-Subject: Re: [PATCH V5 09/15] spi: Add stacked and parallel memories support
- in SPI core
-To:     Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-Cc:     broonie@kernel.org, miquel.raynal@bootlin.com, richard@nod.at,
-        vigneshr@ti.com, jic23@kernel.org, tudor.ambarus@microchip.com,
-        pratyush@kernel.org, Sanju.Mehta@amd.com,
-        chin-ting_kuo@aspeedtech.com, clg@kaod.org, kdasu.kdev@gmail.com,
-        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
-        eajames@linux.ibm.com, olteanv@gmail.com, han.xu@nxp.com,
-        john.garry@huawei.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        narmstrong@baylibre.com, khilman@baylibre.com,
-        matthias.bgg@gmail.com, haibo.chen@nxp.com,
-        linus.walleij@linaro.org, daniel@zonque.org,
-        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
-        agross@kernel.org, bjorn.andersson@linaro.org, heiko@sntech.de,
-        krzysztof.kozlowski@linaro.org, andi@etezian.org,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
-        masahisa.kojima@linaro.org, jaswinder.singh@linaro.org,
-        rostedt@goodmis.org, mingo@redhat.com, l.stelmach@samsung.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, alex.aring@gmail.com, stefan@datenfreihafen.org,
-        kvalo@kernel.org, james.schulman@cirrus.com,
-        david.rhodes@cirrus.com, tanureal@opensource.cirrus.com,
-        rf@opensource.cirrus.com, perex@perex.cz, tiwai@suse.com,
-        npiggin@gmail.com, christophe.leroy@csgroup.eu, mpe@ellerman.id.au,
-        oss@buserror.net, windhl@126.com, yangyingliang@huawei.com,
-        william.zhang@broadcom.com, kursad.oney@broadcom.com,
-        anand.gore@broadcom.com, rafal@milecki.pl, git@amd.com,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        joel@jms.id.au, andrew@aj.id.au, radu_nicolae.pirea@upb.ro,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        claudiu.beznea@microchip.com,
-        bcm-kernel-feedback-list@broadcom.com, fancer.lancer@gmail.com,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
-        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-        venture@google.com, yuenn@google.com, benjaminfair@google.com,
-        yogeshgaur.83@gmail.com, konrad.dybcio@somainline.org,
-        alim.akhtar@samsung.com, ldewangan@nvidia.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        michal.simek@amd.com, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wpan@vger.kernel.org,
-        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-mtd@lists.infradead.org, lars@metafoo.de,
-        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
-        michael@walle.cc, palmer@dabbelt.com,
-        linux-riscv@lists.infradead.org, alsa-devel@alsa-project.org,
-        patches@opensource.cirrus.com, linuxppc-dev@lists.ozlabs.org,
-        amitrkcian2002@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230131183008.4451-3-virag.david003@gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On 31/01/2023 19:30:07+0100, David Virag wrote:
+> The S5M8763 MFD has no device tree compatible, and since board file
+> support for it was removed, there's no way to use this MFD. After
+> removing the remaining code for it from the MFD driver, also remove
+> support for it in the s5m RTC driver, and all remaining references to
+> it.
+> 
+> Signed-off-by: David Virag <virag.david003@gmail.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-On Mon, 6 Mar 2023 at 18:26, Amit Kumar Mahapatra
-<amit.kumar-mahapatra@amd.com> wrote:
->
-> For supporting multiple CS the SPI device need to be aware of all the CS
-> values. So, the "chip_select" member in the spi_device structure is now an
-> array that holds all the CS values.
->
-> spi_device structure now has a "cs_index_mask" member. This acts as an
-> index to the chip_select array. If nth bit of spi->cs_index_mask is set
-> then the driver would assert spi->chip_select[n].
->
-> In parallel mode all the chip selects are asserted/de-asserted
-> simultaneously and each byte of data is stored in both devices, the even
-> bits in one, the odd bits in the other. The split is automatically handled
-> by the GQSPI controller. The GQSPI controller supports a maximum of two
-> flashes connected in parallel mode. A "multi-cs-cap" flag is added in the
-> spi controntroller data, through ctlr->multi-cs-cap the spi core will make
-> sure that the controller is capable of handling multiple chip selects at
-> once.
->
-> For supporting multiple CS via GPIO the cs_gpiod member of the spi_device
-> structure is now an array that holds the gpio descriptor for each
-> chipselect.
->
-> Multi CS support using GPIO is not tested due to unavailability of
-> necessary hardware setup.
->
-> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
 > ---
->  drivers/spi/spi.c       | 213 +++++++++++++++++++++++++++-------------
->  include/linux/spi/spi.h |  34 +++++--
->  2 files changed, 173 insertions(+), 74 deletions(-)
->
-> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-> index 5866bf5813a4..8ec7f58fa111 100644
-> --- a/drivers/spi/spi.c
-> +++ b/drivers/spi/spi.c
-> @@ -613,7 +613,8 @@ static int spi_dev_check(struct device *dev, void *data)
->         struct spi_device *new_spi = data;
->
->         if (spi->controller == new_spi->controller &&
-> -           spi_get_chipselect(spi, 0) == spi_get_chipselect(new_spi, 0))
-> +           spi_get_chipselect(spi, 0) == spi_get_chipselect(new_spi, 0) &&
-> +           spi_get_chipselect(spi, 1) == spi_get_chipselect(new_spi, 1))
->                 return -EBUSY;
+>  drivers/rtc/rtc-s5m.c            | 82 ++------------------------------
+>  include/linux/mfd/samsung/core.h |  1 -
+>  include/linux/mfd/samsung/irq.h  | 50 -------------------
+>  3 files changed, 3 insertions(+), 130 deletions(-)
+> 
+> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+> index 4243fe6d3842..dad294a0ce2a 100644
+> --- a/drivers/rtc/rtc-s5m.c
+> +++ b/drivers/rtc/rtc-s5m.c
+> @@ -85,7 +85,7 @@ struct s5m_rtc_reg_config {
+>  	unsigned int write_alarm_udr_mask;
+>  };
+>  
+> -/* Register map for S5M8763 and S5M8767 */
+> +/* Register map for S5M8767 */
+>  static const struct s5m_rtc_reg_config s5m_rtc_regs = {
+>  	.regs_count		= 8,
+>  	.time			= S5M_RTC_SEC,
+> @@ -236,7 +236,6 @@ static int s5m_check_peding_alarm_interrupt(struct s5m_rtc_info *info,
+>  
+>  	switch (info->device_type) {
+>  	case S5M8767X:
+> -	case S5M8763X:
+>  		ret = regmap_read(info->regmap, S5M_RTC_STATUS, &val);
+>  		val &= S5M_ALARM0_STATUS;
+>  		break;
+> @@ -299,7 +298,6 @@ static int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
+>  
+>  	data |= info->regs->write_alarm_udr_mask;
+>  	switch (info->device_type) {
+> -	case S5M8763X:
+>  	case S5M8767X:
+>  		data &= ~S5M_RTC_TIME_EN_MASK;
+>  		break;
+> @@ -329,38 +327,6 @@ static int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
+>  	return ret;
+>  }
+>  
+> -static void s5m8763_data_to_tm(u8 *data, struct rtc_time *tm)
+> -{
+> -	tm->tm_sec = bcd2bin(data[RTC_SEC]);
+> -	tm->tm_min = bcd2bin(data[RTC_MIN]);
+> -
+> -	if (data[RTC_HOUR] & HOUR_12) {
+> -		tm->tm_hour = bcd2bin(data[RTC_HOUR] & 0x1f);
+> -		if (data[RTC_HOUR] & HOUR_PM)
+> -			tm->tm_hour += 12;
+> -	} else {
+> -		tm->tm_hour = bcd2bin(data[RTC_HOUR] & 0x3f);
+> -	}
+> -
+> -	tm->tm_wday = data[RTC_WEEKDAY] & 0x07;
+> -	tm->tm_mday = bcd2bin(data[RTC_DATE]);
+> -	tm->tm_mon = bcd2bin(data[RTC_MONTH]);
+> -	tm->tm_year = bcd2bin(data[RTC_YEAR1]) + bcd2bin(data[RTC_YEAR2]) * 100;
+> -	tm->tm_year -= 1900;
+> -}
+> -
+> -static void s5m8763_tm_to_data(struct rtc_time *tm, u8 *data)
+> -{
+> -	data[RTC_SEC] = bin2bcd(tm->tm_sec);
+> -	data[RTC_MIN] = bin2bcd(tm->tm_min);
+> -	data[RTC_HOUR] = bin2bcd(tm->tm_hour);
+> -	data[RTC_WEEKDAY] = tm->tm_wday;
+> -	data[RTC_DATE] = bin2bcd(tm->tm_mday);
+> -	data[RTC_MONTH] = bin2bcd(tm->tm_mon);
+> -	data[RTC_YEAR1] = bin2bcd(tm->tm_year % 100);
+> -	data[RTC_YEAR2] = bin2bcd((tm->tm_year + 1900) / 100);
+> -}
+> -
+>  static int s5m_rtc_read_time(struct device *dev, struct rtc_time *tm)
+>  {
+>  	struct s5m_rtc_info *info = dev_get_drvdata(dev);
+> @@ -385,10 +351,6 @@ static int s5m_rtc_read_time(struct device *dev, struct rtc_time *tm)
+>  		return ret;
+>  
+>  	switch (info->device_type) {
+> -	case S5M8763X:
+> -		s5m8763_data_to_tm(data, tm);
+> -		break;
+> -
+>  	case S5M8767X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+> @@ -412,9 +374,6 @@ static int s5m_rtc_set_time(struct device *dev, struct rtc_time *tm)
+>  	int ret = 0;
+>  
+>  	switch (info->device_type) {
+> -	case S5M8763X:
+> -		s5m8763_tm_to_data(tm, data);
+> -		break;
+>  	case S5M8767X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+> @@ -444,7 +403,6 @@ static int s5m_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  {
+>  	struct s5m_rtc_info *info = dev_get_drvdata(dev);
+>  	u8 data[RTC_MAX_NUM_TIME_REGS];
+> -	unsigned int val;
+>  	int ret, i;
+>  
+>  	ret = regmap_bulk_read(info->regmap, info->regs->alarm0, data,
+> @@ -453,15 +411,6 @@ static int s5m_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  		return ret;
+>  
+>  	switch (info->device_type) {
+> -	case S5M8763X:
+> -		s5m8763_data_to_tm(data, &alrm->time);
+> -		ret = regmap_read(info->regmap, S5M_ALARM0_CONF, &val);
+> -		if (ret < 0)
+> -			return ret;
+> -
+> -		alrm->enabled = !!val;
+> -		break;
+> -
+>  	case S5M8767X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+> @@ -500,10 +449,6 @@ static int s5m_rtc_stop_alarm(struct s5m_rtc_info *info)
+>  	dev_dbg(info->dev, "%s: %ptR(%d)\n", __func__, &tm, tm.tm_wday);
+>  
+>  	switch (info->device_type) {
+> -	case S5M8763X:
+> -		ret = regmap_write(info->regmap, S5M_ALARM0_CONF, 0);
+> -		break;
+> -
+>  	case S5M8767X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+> @@ -531,7 +476,6 @@ static int s5m_rtc_start_alarm(struct s5m_rtc_info *info)
+>  {
+>  	int ret;
+>  	u8 data[RTC_MAX_NUM_TIME_REGS];
+> -	u8 alarm0_conf;
+>  	struct rtc_time tm;
+>  
+>  	ret = regmap_bulk_read(info->regmap, info->regs->alarm0, data,
+> @@ -543,11 +487,6 @@ static int s5m_rtc_start_alarm(struct s5m_rtc_info *info)
+>  	dev_dbg(info->dev, "%s: %ptR(%d)\n", __func__, &tm, tm.tm_wday);
+>  
+>  	switch (info->device_type) {
+> -	case S5M8763X:
+> -		alarm0_conf = 0x77;
+> -		ret = regmap_write(info->regmap, S5M_ALARM0_CONF, alarm0_conf);
+> -		break;
+> -
+>  	case S5M8767X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+> @@ -585,10 +524,6 @@ static int s5m_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  	int ret;
+>  
+>  	switch (info->device_type) {
+> -	case S5M8763X:
+> -		s5m8763_tm_to_data(&alrm->time, data);
+> -		break;
+> -
+>  	case S5M8767X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+> @@ -655,7 +590,6 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+>  	int ret;
+>  
+>  	switch (info->device_type) {
+> -	case S5M8763X:
+>  	case S5M8767X:
+>  		/* UDR update time. Default of 7.32 ms is too long. */
+>  		ret = regmap_update_bits(info->regmap, S5M_RTC_UDR_CON,
+> @@ -729,11 +663,6 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+>  		info->regs = &s2mps13_rtc_regs;
+>  		alarm_irq = S2MPS14_IRQ_RTCA0;
+>  		break;
+> -	case S5M8763X:
+> -		regmap_cfg = &s5m_rtc_regmap_config;
+> -		info->regs = &s5m_rtc_regs;
+> -		alarm_irq = S5M8763_IRQ_ALARM0;
+> -		break;
+>  	case S5M8767X:
+>  		regmap_cfg = &s5m_rtc_regmap_config;
+>  		info->regs = &s5m_rtc_regs;
+> @@ -786,13 +715,8 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+>  
+>  	info->rtc_dev->ops = &s5m_rtc_ops;
+>  
+> -	if (info->device_type == S5M8763X) {
+> -		info->rtc_dev->range_min = RTC_TIMESTAMP_BEGIN_0000;
+> -		info->rtc_dev->range_max = RTC_TIMESTAMP_END_9999;
+> -	} else {
+> -		info->rtc_dev->range_min = RTC_TIMESTAMP_BEGIN_2000;
+> -		info->rtc_dev->range_max = RTC_TIMESTAMP_END_2099;
+> -	}
+> +	info->rtc_dev->range_min = RTC_TIMESTAMP_BEGIN_2000;
+> +	info->rtc_dev->range_max = RTC_TIMESTAMP_END_2099;
+>  
+>  	if (!info->irq) {
+>  		clear_bit(RTC_FEATURE_ALARM, info->rtc_dev->features);
+> diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+> index 07aae649a86f..a212b9f72bc9 100644
+> --- a/include/linux/mfd/samsung/core.h
+> +++ b/include/linux/mfd/samsung/core.h
+> @@ -36,7 +36,6 @@
+>  struct gpio_desc;
+>  
+>  enum sec_device_type {
+> -	S5M8763X,
+>  	S5M8767X,
+>  	S2MPA01,
+>  	S2MPS11X,
+> diff --git a/include/linux/mfd/samsung/irq.h b/include/linux/mfd/samsung/irq.h
+> index 6cfe4201a106..3fd2775eb9bb 100644
+> --- a/include/linux/mfd/samsung/irq.h
+> +++ b/include/linux/mfd/samsung/irq.h
+> @@ -194,54 +194,4 @@ enum s5m8767_irq {
+>  #define S5M8767_IRQ_RTC1S_MASK		(1 << 4)
+>  #define S5M8767_IRQ_WTSR_MASK		(1 << 5)
+>  
+> -enum s5m8763_irq {
+> -	S5M8763_IRQ_DCINF,
+> -	S5M8763_IRQ_DCINR,
+> -	S5M8763_IRQ_JIGF,
+> -	S5M8763_IRQ_JIGR,
+> -	S5M8763_IRQ_PWRONF,
+> -	S5M8763_IRQ_PWRONR,
+> -
+> -	S5M8763_IRQ_WTSREVNT,
+> -	S5M8763_IRQ_SMPLEVNT,
+> -	S5M8763_IRQ_ALARM1,
+> -	S5M8763_IRQ_ALARM0,
+> -
+> -	S5M8763_IRQ_ONKEY1S,
+> -	S5M8763_IRQ_TOPOFFR,
+> -	S5M8763_IRQ_DCINOVPR,
+> -	S5M8763_IRQ_CHGRSTF,
+> -	S5M8763_IRQ_DONER,
+> -	S5M8763_IRQ_CHGFAULT,
+> -
+> -	S5M8763_IRQ_LOBAT1,
+> -	S5M8763_IRQ_LOBAT2,
+> -
+> -	S5M8763_IRQ_NR,
+> -};
+> -
+> -#define S5M8763_IRQ_DCINF_MASK		(1 << 2)
+> -#define S5M8763_IRQ_DCINR_MASK		(1 << 3)
+> -#define S5M8763_IRQ_JIGF_MASK		(1 << 4)
+> -#define S5M8763_IRQ_JIGR_MASK		(1 << 5)
+> -#define S5M8763_IRQ_PWRONF_MASK		(1 << 6)
+> -#define S5M8763_IRQ_PWRONR_MASK		(1 << 7)
+> -
+> -#define S5M8763_IRQ_WTSREVNT_MASK	(1 << 0)
+> -#define S5M8763_IRQ_SMPLEVNT_MASK	(1 << 1)
+> -#define S5M8763_IRQ_ALARM1_MASK		(1 << 2)
+> -#define S5M8763_IRQ_ALARM0_MASK		(1 << 3)
+> -
+> -#define S5M8763_IRQ_ONKEY1S_MASK	(1 << 0)
+> -#define S5M8763_IRQ_TOPOFFR_MASK	(1 << 2)
+> -#define S5M8763_IRQ_DCINOVPR_MASK	(1 << 3)
+> -#define S5M8763_IRQ_CHGRSTF_MASK	(1 << 4)
+> -#define S5M8763_IRQ_DONER_MASK		(1 << 5)
+> -#define S5M8763_IRQ_CHGFAULT_MASK	(1 << 7)
+> -
+> -#define S5M8763_IRQ_LOBAT1_MASK		(1 << 0)
+> -#define S5M8763_IRQ_LOBAT2_MASK		(1 << 1)
+> -
+> -#define S5M8763_ENRAMP                  (1 << 4)
+> -
+>  #endif /*  __LINUX_MFD_SEC_IRQ_H */
+> -- 
+> 2.39.0
+> 
 
-This will only reject new devices if both chip selects are identical,
-but not if they only share one, e.g. CS 1 + 2 vs 1 + 3, or 1 + 2 vs
-only 2, or if the order is different (1 + 2 vs 2 + 1 - haven't read
-the code too close to know if this is allowed/possible).
-
-Regards,
-Jonas
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
