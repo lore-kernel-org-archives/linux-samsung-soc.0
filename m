@@ -2,40 +2,40 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BCFC6FD20
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 07:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF3BC6FD1A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 07:58:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229995AbjCFH6I (ORCPT
+        id S230007AbjCFH6L (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Mar 2023 02:58:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53410 "EHLO
+        Mon, 6 Mar 2023 02:58:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229812AbjCFH5l (ORCPT
+        with ESMTP id S229752AbjCFH5k (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2023 02:57:41 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D77421F900;
-        Sun,  5 Mar 2023 23:57:39 -0800 (PST)
+        Mon, 6 Mar 2023 02:57:40 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA7211F5CD;
+        Sun,  5 Mar 2023 23:57:38 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6C5DBB80CB3;
-        Mon,  6 Mar 2023 07:57:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47FA3C433A0;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DDE4560C48;
+        Mon,  6 Mar 2023 07:57:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E79BFC43143;
         Mon,  6 Mar 2023 07:57:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678089456;
-        bh=7TZ6Ryi4qLzh/gGEJ5o6OzQmE+K2CCuNbOYeK44Wt5Q=;
+        s=k20201202; t=1678089457;
+        bh=7x5hKjU6NkCK2RH7/GPqPhr++Nr1GDv6lKb2dVUnLKM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qHmzb4qknAa+64diW25JB7LUpUeFbjfyStzO548TnaOmwXOOmWx9iH4XyZWuite89
-         zFYdzbIB3uwbZ6ohEvzVP69suMk9Z4HzzV7QDBlgzeefeQ65IvB3Ie4F84+IKUG4oh
-         1D2jOS2OHRaMuoASYjHGN8H3/8XO+/JSKErf0xJvVod6Rmnw7X5uXSQO3/7/z47HGD
-         XoSOf14CMXssE2RQxUqTxJV0u1DUOEPS6rDhbenMWUeA6G0ulFpISXFEX8vVCB3ffa
-         XPshPnw8IQ0vG5rmZqUJ6+7vHw+iAthhIJbPFP4vkGGY8c0o9FxQ5BdB9uBKTg7Una
-         nLCjvLlQZlozA==
+        b=gEoOiMqnPzohh3nJVCPrdDc1MYmWA4bxnGQhSD9eKcw9xF0Sw1hZb1rvIpm4qSDC4
+         M5xdeEi8K860PtK58c1eksf3G8lC0CRo8TCRU93hNwk9MtW/gNB12iJAdO+UBCLJtt
+         S1BaaFt5HMzmC1MyMO94ZgVmywnkEWpJEL8n460n8sOZbDJcRDL24clvv1StCBHptb
+         WWfOVC4FIAS361iRSndzx1yrQd7d11GUE2STLFheD6Yl6F9auY0MU3PRF5cqObUF2X
+         tRGbMnLABKI9uTeqNYlS2wMCd2BIIT4bXFQPnWh2mWw8ratxWvOS5TA721Yg2W+7yP
+         HtL/KUwVi+z6w==
 Received: from johan by xi.lan with local (Exim 4.94.2)
         (envelope-from <johan+linaro@kernel.org>)
-        id 1pZ5jb-0000ht-PN; Mon, 06 Mar 2023 08:58:15 +0100
+        id 1pZ5jd-0000ic-5o; Mon, 06 Mar 2023 08:58:17 +0100
 From:   Johan Hovold <johan+linaro@kernel.org>
 To:     Georgi Djakov <djakov@kernel.org>
 Cc:     "Shawn Guo" <shawnguo@kernel.org>,
@@ -55,10 +55,10 @@ Cc:     "Shawn Guo" <shawnguo@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org
-Subject: [PATCH v2 01/23] interconnect: fix mem leak when freeing nodes
-Date:   Mon,  6 Mar 2023 08:56:29 +0100
-Message-Id: <20230306075651.2449-2-johan+linaro@kernel.org>
+        Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH v2 16/23] interconnect: exynos: drop redundant link destroy
+Date:   Mon,  6 Mar 2023 08:56:44 +0100
+Message-Id: <20230306075651.2449-17-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230306075651.2449-1-johan+linaro@kernel.org>
 References: <20230306075651.2449-1-johan+linaro@kernel.org>
@@ -68,32 +68,34 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The node link array is allocated when adding links to a node but is not
-deallocated when nodes are destroyed.
+There is no longer any need to explicitly destroy node links as this is
+now done when the node is destroyed as part of icc_nodes_remove().
 
-Fixes: 11f1ceca7031 ("interconnect: Add generic on-chip interconnect API")
-Cc: stable@vger.kernel.org      # 5.1
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/interconnect/core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/interconnect/samsung/exynos.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index 0f392f59b135..5217f449eeec 100644
---- a/drivers/interconnect/core.c
-+++ b/drivers/interconnect/core.c
-@@ -850,6 +850,10 @@ void icc_node_destroy(int id)
+diff --git a/drivers/interconnect/samsung/exynos.c b/drivers/interconnect/samsung/exynos.c
+index 72e42603823b..ebf09bbf725b 100644
+--- a/drivers/interconnect/samsung/exynos.c
++++ b/drivers/interconnect/samsung/exynos.c
+@@ -96,14 +96,8 @@ static struct icc_node *exynos_generic_icc_xlate(struct of_phandle_args *spec,
+ static int exynos_generic_icc_remove(struct platform_device *pdev)
+ {
+ 	struct exynos_icc_priv *priv = platform_get_drvdata(pdev);
+-	struct icc_node *parent_node, *node = priv->node;
  
- 	mutex_unlock(&icc_lock);
+ 	icc_provider_deregister(&priv->provider);
+-
+-	parent_node = exynos_icc_get_parent(priv->dev->parent->of_node);
+-	if (parent_node && !IS_ERR(parent_node))
+-		icc_link_destroy(node, parent_node);
+-
+ 	icc_nodes_remove(&priv->provider);
  
-+	if (!node)
-+		return;
-+
-+	kfree(node->links);
- 	kfree(node);
- }
- EXPORT_SYMBOL_GPL(icc_node_destroy);
+ 	return 0;
 -- 
 2.39.2
 
