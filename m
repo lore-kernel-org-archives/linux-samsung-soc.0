@@ -2,104 +2,118 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C38C64EC4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 15:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB796C678D4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 15:51:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230499AbjCFPXk (ORCPT
+        id S230023AbjCFPvk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Mar 2023 10:23:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43984 "EHLO
+        Mon, 6 Mar 2023 10:51:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230074AbjCFPXd (ORCPT
+        with ESMTP id S230185AbjCFPvk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2023 10:23:33 -0500
-Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78E6125298;
-        Mon,  6 Mar 2023 07:23:32 -0800 (PST)
-Received: by mail-ot1-x32c.google.com with SMTP id m25-20020a05683026d900b006941a2838caso5503270otu.7;
-        Mon, 06 Mar 2023 07:23:32 -0800 (PST)
+        Mon, 6 Mar 2023 10:51:40 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CF7736681
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Mar 2023 07:51:37 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id j11so20986030edq.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Mar 2023 07:51:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678116212;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id:sender
+        d=linaro.org; s=google; t=1678117896;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wIo7law34HfY6O9bjn8QcvJtNO/No3tVP5fg4B1s6Ic=;
-        b=YQmhAjarE1n39m9RLGR1qCPGNlFTubp3RDMD2WXFzrFxdm5OnAbVjBAjB8G4BDvvCj
-         GAk4XPTs/FGFuXAlELj+6VPk3m4846f0SkiKHksvnZx/f7XhrftT6lO1ZFKQnh4aWmMV
-         wpfezGIKC/kaQqMEYzXaeJQci65RtQ62P+SzruZVy430beB5Egn9uSKI2Qb865ztZ8B1
-         eGJnCB4Uv8StXiFydLXi/ystl3Use26a8c7y5GSu1KfWP7RMwoiTskGhCn7cRVlYsBTC
-         v5Hlf6dBej/Sju59miWC5Go1uL9nHarR75G4inNGatK1kqWVCVACdMNnXUjIOvwTkw3R
-         qLVA==
+        bh=t5WKaU91nJ+P694TRYOMgx3cq+DGCFPwL6ikgUxC3C8=;
+        b=ESjcJLj063dMnQZWJplGSMwup2iaf+HjpoquiqJhkDgqe+Bwe6KLmnVVMs75iGiqRx
+         Vr7OqpYnid1HjGlasFK+9AhAlB5S4IHdRaeE/MWdSmSHDascJfwiIIieyVNjC3qXv56F
+         cbaFPprTTejA/Ub9UwI0JUHkt+6AktbMoISxFB9Dm4DzWvxl/s9nj4l1nVolAUlQNaeq
+         NRcq0O1+qSCYXKjQcUioybt/B+ExBG9Qdq+9ayEOYY0NnfidFsmtP6dFJ6uZ7ch/mSL7
+         W5subhoHbAsx1NXexaN2YeqvF7Fv6QOC7RFeQQlenvKCZcVsvUJCf9r/K/FrhKb2+BS0
+         yyFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678116212;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id:sender
+        d=1e100.net; s=20210112; t=1678117896;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wIo7law34HfY6O9bjn8QcvJtNO/No3tVP5fg4B1s6Ic=;
-        b=ItKWs/KP40JuOl9TAFot5x1Mx+0PBc2QbDlOLENCA4ATwBUSaYtzu2cqkclnwoSQq8
-         D+Xnq0G1KBz9Zr+HU6SDOBrO1xh8Wik7U+3KFFzR2wQgrXwdUWq1W/2L7lZdGCqz+0iY
-         n0QyRs/gWtJBsoJDqnSRC3p4yMjpKL4dpLJXL3pDwzns4jeIsAJBM1wU1IWUFjLngdus
-         MOwoqJpAdHZn4jDcZ608aANrttxQaHaJWb0tZsEoNpbJScMBNyDOIaf0s6oRTE3XuWW5
-         Syp2/Rb6d1ye2MqF2Zk1G56F23UNU15Q6BiLI0MZ2U2Zi9qOmyMxQOOO4kaiAwRn8fs4
-         t0wA==
-X-Gm-Message-State: AO0yUKUlRtxcTUwaOfS9cANvj7MdekI5LseKmheCErmk7wMlZ6Xc40ci
-        gSzssvz/+gqDW+KeNLquzE4=
-X-Google-Smtp-Source: AK7set9HWeC/FhWEiCysPFIXgx4Hg9gRTKDSKv1cX9GnP3Wsf5j3hr6K9084pka/TwFpRJV9fcn8VQ==
-X-Received: by 2002:a9d:6294:0:b0:68d:5a31:af3b with SMTP id x20-20020a9d6294000000b0068d5a31af3bmr8566721otk.14.1678116211788;
-        Mon, 06 Mar 2023 07:23:31 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id w4-20020a4ad024000000b0051fdb2cba97sm3972560oor.7.2023.03.06.07.23.30
+        bh=t5WKaU91nJ+P694TRYOMgx3cq+DGCFPwL6ikgUxC3C8=;
+        b=aECNBDoWP0fGwKQ1s+ouOOWxtleEuE74ra13NFV5DFb6yR/CuFn6DAtihnuVRUjhH+
+         R0v36/J2wXAz/6Zr7X341FLySwtOM2eRVGD0SURQuY2jh7Qckr7QgsmEI37AYfr6mfXJ
+         G6uxlMu3ZqqCo81lDQpuBMho1/9R6PsC+uOoK5POdTUKdphC/UqDxtw1Y4oaS4IlelDX
+         /+yS0zbj5m2y5kqGJrusTwlz2n690KblcQfLq6r5yV8va6aCIf24Epo+5LosiTuWjSgj
+         iGU+sPJuGkfgTDXZ1tJFItRrSFjETGFvuFKPkvhGaINAwzRrUztoEE5TiXC61rXD7okN
+         JiRg==
+X-Gm-Message-State: AO0yUKVhAaeCL3ygjO/v7pj8BqFkgttdUbK6g5X0d4Zge9rEFKi2orjv
+        Bv+g+mOMgWuuKTBcJ33qxWzZ8g==
+X-Google-Smtp-Source: AK7set9lwg+x+76RsWJ6nVbbLxkGydKTP4r6kdOcHarLbeeJ9W9GJHfsJJMd5ctUdgw3OxunMd+uEA==
+X-Received: by 2002:aa7:c2d4:0:b0:4ae:eab6:9ff8 with SMTP id m20-20020aa7c2d4000000b004aeeab69ff8mr11998310edp.13.1678117896054;
+        Mon, 06 Mar 2023 07:51:36 -0800 (PST)
+Received: from ?IPV6:2a02:810d:15c0:828:c1e7:5006:98ac:f57? ([2a02:810d:15c0:828:c1e7:5006:98ac:f57])
+        by smtp.gmail.com with ESMTPSA id n26-20020a50c21a000000b004a27046b7a7sm5320836edf.73.2023.03.06.07.51.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Mar 2023 07:23:31 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <2bbabc8c-415e-1fc9-3551-00fedc8bc78a@roeck-us.net>
-Date:   Mon, 6 Mar 2023 07:23:29 -0800
+        Mon, 06 Mar 2023 07:51:35 -0800 (PST)
+Message-ID: <48c8a0cf-08dc-a831-33ef-3b8e32eef2d3@linaro.org>
+Date:   Mon, 6 Mar 2023 16:51:34 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v2 0/6] clk: samsung: exynos850: Add missing clocks for PM
 Content-Language: en-US
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Chanho Park <chanho61.park@samsung.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tomasz Figa <tomasz.figa@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230304165653.2179835-1-linux@roeck-us.net>
- <20230304165653.2179835-2-linux@roeck-us.net>
- <20230306091502.3zlodw6vkqqwgozj@pengutronix.de>
-From:   Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 2/2] watchdog: s3c2410_wdt: Use devm_add_action_or_reset()
- to disable watchdog
-In-Reply-To: <20230306091502.3zlodw6vkqqwgozj@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>
+References: <20230223042133.26551-1-semen.protsenko@linaro.org>
+ <167811290503.11716.15730246749418548221.b4-ty@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <167811290503.11716.15730246749418548221.b4-ty@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 3/6/23 01:15, Uwe Kleine-König wrote:
-> On Sat, Mar 04, 2023 at 08:56:53AM -0800, Guenter Roeck wrote:
->> Use devm_add_action_or_reset() to disable the watchdog when the driver
->> is removed to simplify the code. With this in place, we can use
->> devm_watchdog_register_device() to register the watchdog, and the removal
->> function is no longer necessary.
+On 06/03/2023 15:28, Krzysztof Kozlowski wrote:
+> On Wed, 22 Feb 2023 22:21:27 -0600, Sam Protsenko wrote:
+>> As a part of preparation for PM enablement in Exynos850 clock driver,
+>> this patch series implements CMU_G3D, and also main gate clocks for AUD
+>> and HSI CMUs. The series brings corresponding changes to bindings, the
+>> driver and SoC dts file.
+>>
+>> Changes in v2:
+>>   - Rebased all patches on top of the most recent soc/for-next tree
+>>   - Added A-b and R-b tags
+>>   - Minor fixes
+>>
+>> [...]
 > 
-> While the cleanup in this driver is good (
-> Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> ) I wonder if disabling the watchdog at .remove() is right.
+> Applied, thanks!
 > 
-> At least there is an inconsistency among watchdog drivers if the
-> hardware is supposed to stop or not.
-> 
+> [1/6] dt-bindings: clock: exynos850: Add Exynos850 CMU_G3D
+>       https://git.kernel.org/krzk/linux/c/067ba1605806e52118bb598afb357718df9f0e19
+> [2/6] dt-bindings: clock: exynos850: Add AUD and HSI main gate clocks
+>       https://git.kernel.org/krzk/linux/c/e289665ed0d6df9fca3ebc128f1232d305e4600b
+> [3/6] clk: samsung: clk-pll: Implement pll0818x PLL type
+>       https://git.kernel.org/krzk/linux/c/a6feedab8ab9a9e4483deb0bcc87919d92c88b7e
+> [4/6] clk: samsung: exynos850: Implement CMU_G3D domain
+>       https://git.kernel.org/krzk/linux/c/c5704a56893b4e77e434597c7c53d878bb3073b0
+> [5/6] clk: samsung: exynos850: Add AUD and HSI main gate clocks
+>       https://git.kernel.org/krzk/linux/c/d8d12e0d079aff4b1d8079a0a55944c0596f1d67
+> [6/6] arm64: dts: exynos: Add CMU_G3D node for Exynos850 SoC
+>       https://git.kernel.org/krzk/linux/c/ad8f6ad9a4f219950df65731a8ff91baa022c4b0
 
-Yes, it is, and it is one of those endless-argument things. Some driver
-authors insist that the watchdog be stopped, some insist that it isn't.
-That is why we have watchdog_stop_on_unregister().
+And builds are broken. Please mention in cover letter or commit
+dependencies and ordering...
 
-Note I didn't use that here because the watchdog isn't stopped on unregister
-but just disabled. That is slightly different, and I didn't want to change
-functionality.
-
-Guenter
+Best regards,
+Krzysztof
 
