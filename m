@@ -2,212 +2,120 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B6DC76196
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 07:58:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD720C678D4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 08:49:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229908AbjCFH6T (ORCPT
+        id S229486AbjCFItL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Mar 2023 02:58:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53324 "EHLO
+        Mon, 6 Mar 2023 03:49:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229744AbjCFH5j (ORCPT
+        with ESMTP id S229681AbjCFItK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2023 02:57:39 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 122D61CACA;
-        Sun,  5 Mar 2023 23:57:38 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9E51B60C20;
-        Mon,  6 Mar 2023 07:57:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5638FC433A7;
-        Mon,  6 Mar 2023 07:57:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678089456;
-        bh=c1W/TkN9vDAtIN9NXAe0tdm9B9W8KbajL+RP2x8pc+A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eCaEM2VLx2XY83l08L7XDRRuZ7u94AqS2q2qlBBsoAdhi8pxZGgTC274s4FympNSG
-         RFctAR2TV1Y/o8GwG5h/k+KJNTPjIPY1GOZsffOJQe+Hm/UtsKGOhnoCCrwQGsdKMc
-         vl0WfelGIfvBT5MCZS2V7DP2+ffv0l2Ig9ZW/WMkp1Y8Ai/rpoQBbzNz4coQceScTn
-         IMFEQA5ffWcANiHIJzAeAzI0PcQrGLM1bXRk9300YLNa52rFG0ZQ5mEzzMQ7V3F9T1
-         1eW2Xzx2yxIJDDrUyShgxqdzUm2GYkrgfWXgzFTpxTsrY1zFUaRZyga8/lhBikINKQ
-         gS8TRjVbHLbSQ==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan+linaro@kernel.org>)
-        id 1pZ5jb-0000hx-UP; Mon, 06 Mar 2023 08:58:15 +0100
-From:   Johan Hovold <johan+linaro@kernel.org>
-To:     Georgi Djakov <djakov@kernel.org>
-Cc:     "Shawn Guo" <shawnguo@kernel.org>,
-        "Sascha Hauer" <s.hauer@pengutronix.de>,
-        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
-        "Fabio Estevam" <festevam@gmail.com>,
-        "NXP Linux Team" <linux-imx@nxp.com>,
-        "Andy Gross" <agross@kernel.org>,
-        "Bjorn Andersson" <andersson@kernel.org>,
-        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
-        "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
-        =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
-        "Alim Akhtar" <alim.akhtar@samsung.com>,
-        "Thierry Reding" <thierry.reding@gmail.com>,
-        "Jonathan Hunter" <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org
-Subject: [PATCH v2 03/23] interconnect: fix provider registration API
-Date:   Mon,  6 Mar 2023 08:56:31 +0100
-Message-Id: <20230306075651.2449-4-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230306075651.2449-1-johan+linaro@kernel.org>
-References: <20230306075651.2449-1-johan+linaro@kernel.org>
+        Mon, 6 Mar 2023 03:49:10 -0500
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7403CCC22
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Mar 2023 00:49:09 -0800 (PST)
+Received: by mail-yb1-xb36.google.com with SMTP id t4so7285988ybg.11
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Mar 2023 00:49:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3GtbYZNGHC9OG/em8LL7OjKhJVuS4kO26d62qIDYXYI=;
+        b=NnsoZeNTHmUEHQhNevMja7R9F15XSmY4P2l9hG+U62xDY9b0hNtQzCUYSjzqlF59xg
+         vPGWYPeyVtLlOpOw+zbtVNh1En+npDGonQ35A/V66prlNZEFMVTDgLS5NC/XtAgOnthK
+         dSi11XgdRVhsK/30F18fP8e+oxJWv9Bmf8n0Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3GtbYZNGHC9OG/em8LL7OjKhJVuS4kO26d62qIDYXYI=;
+        b=B7kMCz9d+ZJukuPgLNmt8RtxJ6KOY4jVNIMbth4Ex7rujapL5nRCqEHInIo1tj+/oi
+         noujrWjYmiK4X/z5483zXu8c3NzfrXDXYVA+t69lMVRWxh6ptzA3xV5xTLw59RXgBNf0
+         0hKBUODplt1H0WjJLoExJVYNDFUm/GfXMHshBgPir7o6piy/pTC95Kt+pU5G2W0h5h1m
+         Nmb/mn2R669NvvmM6zEol3RUn2/hyMS3SEpjtAugf959SOZW8cvDvPpbKlUSUszSj+Yl
+         adXkAJCetf2pXADb6heFti7MBGgko4BGMfzM9vs+5oOSGba4K7f86M60GZKLG6nuLi5D
+         qR+g==
+X-Gm-Message-State: AO0yUKVWTKkPT/jGwxSrv1U42TWTEmpjsKCreXAVL7XKJ5L2zMtDVWGa
+        D1onZkOZ8+cfKZwTSIqaWp4GNyc2sO7ogUICfJT79g==
+X-Google-Smtp-Source: AK7set9rICjWfZoA7wXooedrv/zZHgvLYiJ04JIwAbDgtQsowOKoLuFK98s0pP3K9IfwxVDppUW8fJm5nKBNyqCr+e0=
+X-Received: by 2002:a25:938c:0:b0:91d:d6ed:6bd2 with SMTP id
+ a12-20020a25938c000000b0091dd6ed6bd2mr6093105ybm.1.1678092548604; Mon, 06 Mar
+ 2023 00:49:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CGME20230303145218epcas1p2e77bc610f57337830924e3c6c02ca291@epcas1p2.samsung.com>
+ <20230303145138.29233-1-jagan@amarulasolutions.com> <000001d94feb$ef651bb0$ce2f5310$@samsung.com>
+In-Reply-To: <000001d94feb$ef651bb0$ce2f5310$@samsung.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 6 Mar 2023 14:18:57 +0530
+Message-ID: <CAMty3ZA3y4UgVSY5cYfAjksyp6zJaRWgEfkmc70K5qtWxBOMHQ@mail.gmail.com>
+Subject: Re: [PATCH v15 00/16] drm: Add Samsung MIPI DSIM bridge
+To:     =?UTF-8?B?64yA7J246riwL1RpemVuIFBsYXRmb3JtIExhYihTUikv7IK87ISx7KCE7J6Q?= 
+        <inki.dae@samsung.com>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Marek Vasut <marex@denx.de>,
+        Maxime Ripard <mripard@kernel.org>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Adam Ford <aford173@gmail.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The current interconnect provider interface is inherently racy as
-providers are expected to be added before being fully initialised.
+Hi Inki Dae,
 
-Specifically, nodes are currently not added and the provider data is not
-initialised until after registering the provider which can cause racing
-DT lookups to fail.
+On Mon, Mar 6, 2023 at 10:54=E2=80=AFAM =EB=8C=80=EC=9D=B8=EA=B8=B0/Tizen P=
+latform Lab(SR)/=EC=82=BC=EC=84=B1=EC=A0=84=EC=9E=90
+<inki.dae@samsung.com> wrote:
+>
+> Hi Jagan,
+>
+> > -----Original Message-----
+> > From: Jagan Teki <jagan@amarulasolutions.com>
+> > Sent: Friday, March 3, 2023 11:51 PM
+> > To: Andrzej Hajda <andrzej.hajda@intel.com>; Inki Dae <inki.dae@samsung=
+.com>;
+> > Marek Szyprowski <m.szyprowski@samsung.com>; Neil Armstrong
+> > <neil.armstrong@linaro.org>; Marek Vasut <marex@denx.de>; Maxime Ripard
+> > <mripard@kernel.org>
+> > Cc: Seung-Woo Kim <sw0312.kim@samsung.com>; Kyungmin Park
+> > <kyungmin.park@samsung.com>; Frieder Schrempf <frieder.schrempf@kontron=
+.de>;
+> > Tim Harvey <tharvey@gateworks.com>; Adam Ford <aford173@gmail.com>; Mat=
+teo
+> > Lisi <matteo.lisi@engicam.com>; dri-devel@lists.freedesktop.org; linux-
+> > samsung-soc@vger.kernel.org; linux-amarula <linux-
+> > amarula@amarulasolutions.com>; Jagan Teki <jagan@amarulasolutions.com>
+> > Subject: [PATCH v15 00/16] drm: Add Samsung MIPI DSIM bridge
+> >
+> > This series supports common bridge support for Samsung MIPI DSIM
+> > which is used in Exynos and i.MX8MM SoC's.
+> >
+> > The final bridge supports both the Exynos and i.MX8M Mini/Nano/Plus.
+> >
+> > Inki Dae: please note that this series added on top of exynos-drm-next
+> > since few exynos dsi changes are not been part of drm-misc-next.
+> > Request you to pick these via exynos-drm-next, or let me know if you
+> > have any comments?
+>
+> Seems some issue Marek found on testing. If fixed then I will try to pick=
+ this
+> patch series up.
 
-Add a new provider API which will be used to fix up the interconnect
-drivers.
+Okay, I have a few comments from Maxime and Marek V pointed out. I
+will send v16 now if you are okay with it?
 
-The old API is reimplemented using the new interface and will be removed
-once all drivers have been fixed.
-
-Fixes: 11f1ceca7031 ("interconnect: Add generic on-chip interconnect API")
-Fixes: 87e3031b6fbd ("interconnect: Allow endpoints translation via DT")
-Cc: stable@vger.kernel.org      # 5.1
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- drivers/interconnect/core.c           | 52 +++++++++++++++++++--------
- include/linux/interconnect-provider.h | 12 +++++++
- 2 files changed, 50 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index cabb6f5df83e..7a24c1444ace 100644
---- a/drivers/interconnect/core.c
-+++ b/drivers/interconnect/core.c
-@@ -1033,44 +1033,68 @@ int icc_nodes_remove(struct icc_provider *provider)
- EXPORT_SYMBOL_GPL(icc_nodes_remove);
- 
- /**
-- * icc_provider_add() - add a new interconnect provider
-- * @provider: the interconnect provider that will be added into topology
-+ * icc_provider_init() - initialize a new interconnect provider
-+ * @provider: the interconnect provider to initialize
-+ *
-+ * Must be called before adding nodes to the provider.
-+ */
-+void icc_provider_init(struct icc_provider *provider)
-+{
-+	WARN_ON(!provider->set);
-+
-+	INIT_LIST_HEAD(&provider->nodes);
-+}
-+EXPORT_SYMBOL_GPL(icc_provider_init);
-+
-+/**
-+ * icc_provider_register() - register a new interconnect provider
-+ * @provider: the interconnect provider to register
-  *
-  * Return: 0 on success, or an error code otherwise
-  */
--int icc_provider_add(struct icc_provider *provider)
-+int icc_provider_register(struct icc_provider *provider)
- {
--	if (WARN_ON(!provider->set))
--		return -EINVAL;
- 	if (WARN_ON(!provider->xlate && !provider->xlate_extended))
- 		return -EINVAL;
- 
- 	mutex_lock(&icc_lock);
--
--	INIT_LIST_HEAD(&provider->nodes);
- 	list_add_tail(&provider->provider_list, &icc_providers);
--
- 	mutex_unlock(&icc_lock);
- 
--	dev_dbg(provider->dev, "interconnect provider added to topology\n");
-+	dev_dbg(provider->dev, "interconnect provider registered\n");
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(icc_provider_add);
-+EXPORT_SYMBOL_GPL(icc_provider_register);
- 
- /**
-- * icc_provider_del() - delete previously added interconnect provider
-- * @provider: the interconnect provider that will be removed from topology
-+ * icc_provider_deregister() - deregister an interconnect provider
-+ * @provider: the interconnect provider to deregister
-  */
--void icc_provider_del(struct icc_provider *provider)
-+void icc_provider_deregister(struct icc_provider *provider)
- {
- 	mutex_lock(&icc_lock);
- 	WARN_ON(provider->users);
--	WARN_ON(!list_empty(&provider->nodes));
- 
- 	list_del(&provider->provider_list);
- 	mutex_unlock(&icc_lock);
- }
-+EXPORT_SYMBOL_GPL(icc_provider_deregister);
-+
-+int icc_provider_add(struct icc_provider *provider)
-+{
-+	icc_provider_init(provider);
-+
-+	return icc_provider_register(provider);
-+}
-+EXPORT_SYMBOL_GPL(icc_provider_add);
-+
-+void icc_provider_del(struct icc_provider *provider)
-+{
-+	WARN_ON(!list_empty(&provider->nodes));
-+
-+	icc_provider_deregister(provider);
-+}
- EXPORT_SYMBOL_GPL(icc_provider_del);
- 
- static const struct of_device_id __maybe_unused ignore_list[] = {
-diff --git a/include/linux/interconnect-provider.h b/include/linux/interconnect-provider.h
-index cd5c5a27557f..d12cd18aab3f 100644
---- a/include/linux/interconnect-provider.h
-+++ b/include/linux/interconnect-provider.h
-@@ -122,6 +122,9 @@ int icc_link_destroy(struct icc_node *src, struct icc_node *dst);
- void icc_node_add(struct icc_node *node, struct icc_provider *provider);
- void icc_node_del(struct icc_node *node);
- int icc_nodes_remove(struct icc_provider *provider);
-+void icc_provider_init(struct icc_provider *provider);
-+int icc_provider_register(struct icc_provider *provider);
-+void icc_provider_deregister(struct icc_provider *provider);
- int icc_provider_add(struct icc_provider *provider);
- void icc_provider_del(struct icc_provider *provider);
- struct icc_node_data *of_icc_get_from_provider(struct of_phandle_args *spec);
-@@ -167,6 +170,15 @@ static inline int icc_nodes_remove(struct icc_provider *provider)
- 	return -ENOTSUPP;
- }
- 
-+static inline void icc_provider_init(struct icc_provider *provider) { }
-+
-+static inline int icc_provider_register(struct icc_provider *provider)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline void icc_provider_deregister(struct icc_provider *provider) { }
-+
- static inline int icc_provider_add(struct icc_provider *provider)
- {
- 	return -ENOTSUPP;
--- 
-2.39.2
-
+Thanks,
+Jagan.
