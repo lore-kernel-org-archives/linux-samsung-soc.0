@@ -2,77 +2,77 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6744FC678D4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 11:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D075EC678D4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 11:39:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230348AbjCFLj1 (ORCPT
+        id S230126AbjCFLjd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Mar 2023 06:39:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58494 "EHLO
+        Mon, 6 Mar 2023 06:39:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230310AbjCFLjW (ORCPT
+        with ESMTP id S230372AbjCFLj2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2023 06:39:22 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35CEC26864
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Mar 2023 03:39:20 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id k10so13306757edk.13
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Mar 2023 03:39:20 -0800 (PST)
+        Mon, 6 Mar 2023 06:39:28 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F06F2941B
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Mar 2023 03:39:24 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id x3so37091794edb.10
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Mar 2023 03:39:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678102758;
+        d=linaro.org; s=google; t=1678102763;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D/m6Ruj5hwUPG+o/57fmQhrv2GpXodkCIwXsrbUI0kM=;
-        b=q/jNnL2jyM+fGwElQZktU4ww9F29epcqZKgT81lva0Ba7/jCWVDIY+BWBk4ve++g8U
-         H7S3TeJ+cPysZrLwbXlw+WV4uzHTxrSGZAEHTr/PGz/4n5qZN9/4o+pj5P80nsL0Z32f
-         az2PVGndI7lavnJ6wEK9lpOhj95750FuuidsraV1nEw5JlyX20dvrOC4NuoeuKUrYLQw
-         2ico8k9t8io8JdcqEQZEU3IAB9bdXRTyXs7EbgAKSjrQAxL5QByPXgq34z5Yx1/slGUQ
-         9fGNKWeByy/70zp3Cu8+o4fGM+zAlyimqLWW0by77lMn+8TSSpEHCoK4FexjXHxX0OG2
-         ZD9A==
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HzWGqAjLpHlD5u9jCAHG+a2PbEWqmZpag0JMmVH0IbQ=;
+        b=i8hXqbKI/U0F9gdOtmUtiK/N5On7BfXK0q3TX/+n0ooQTDCLoftkzAu+ZYJIlGWAXZ
+         LA3DhgOeIkx/4Ne0fDXzrCk3MsXepbwqhyB0Y3ZIqkZa6BBKZUvY5fqTna0G99v8YYYL
+         Xr/Tb22i5suo7j8jSYlfSRzxZoqDQtO1Y2I9JlG696MYLI2H0fWjthTNAcoKMlJRZn85
+         y0chlJ2hRuT+ytvlxtIPb5xH8R29AzUW+xYYtlkjELG4RarfpzqxH0pLlRN9IFGHcW5h
+         iK/6bEv/oKK3se0hGd7eJQivdgZSuqwrE6ndvg+/y4Cw6t+dPgEPRbNpmwSJmvi6+YQC
+         dGgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678102758;
+        d=1e100.net; s=20210112; t=1678102763;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=D/m6Ruj5hwUPG+o/57fmQhrv2GpXodkCIwXsrbUI0kM=;
-        b=wzniFXHvuI4F+Tmd1ckrY1ZEQ5n4UF1saD9c0F7uen4zIRnLLlWWq8nuhay8F1j8eK
-         98xqgUZ/FD+oYH6o4ZlJCabZFMw4+NkrEsjQmgHIA9GA3YcjnzP5v8W2KyC/Wl3qPvBc
-         w+qU3DQdExGqggOA0pL3ijN0MtlrMxcLhk5lcww3i959MTQxdMPsOQg8V5UvVjeUF0Qe
-         7LyXcKw8d5Lq+ECPLcsSaJ5yfJl6fBzF3zsLPLuojUfHfGFTxcFHwBkKTIJmuoQEhXzj
-         Gp+OEG+pRRd1GV5l0WuG2Moe8SEsMDUui74DP9n4LgFkVP8GpHQf3tMAq7En7T2wGyeg
-         ZJGw==
-X-Gm-Message-State: AO0yUKVUaUBVvQuDZbad32W7+BkTbuSSXaY/jIAG0hOlIF5msLHhd6EZ
-        Y4GZhHedB1uaSgRYH4KRoR29vZxttM+MY9+xdkg=
-X-Google-Smtp-Source: AK7set8lE7hoo/hOoLv2+iQyvRNs96nlUXnjY5BwmMBCd8+xRARJXE38bFoIaQCj6K1WtZ1UgAEsvg==
-X-Received: by 2002:a17:907:742:b0:914:3b00:43ec with SMTP id xc2-20020a170907074200b009143b0043ecmr572939ejb.10.1678102758650;
-        Mon, 06 Mar 2023 03:39:18 -0800 (PST)
+        bh=HzWGqAjLpHlD5u9jCAHG+a2PbEWqmZpag0JMmVH0IbQ=;
+        b=tGf1nUoTUEJ0nSDjA3m6ERMGFNws283LcCpFLdOJOtUwiDx/WFAciFxp4R767VdKfU
+         6Uw3PzIB8AeXmZVL32anTA60g2E+2KSRdspMabCOKBrrDTNvWEGxKR/wYhtbwg+fzceh
+         RYGrklKEtODYpGOzXoRVPgNr7gaxDqwE9p7N5ryco32pXKggh29RpsHdFA6BtZzbvs1d
+         RMaLRGXQS/WLlHGFEsDxGrMx2dA/bdDtBhKQeZ/1t67jm3Z+69PfpTOCFaSj+ytH1qDB
+         qQ4xc0wSdiwy+lmrjE2Pgx/Rj0GyyphorYeYaD2rOGvxLPJa0uJvPIgURh9IZT743BV1
+         Xqyw==
+X-Gm-Message-State: AO0yUKVEOeF2rX5rvgrn8Rcm9oLHggHI3ubjpMYT+Bje+FIShgKy8Q60
+        ll8CzZidMWthvSnB9BKD5VwypuCacBTi2OUdqGM=
+X-Google-Smtp-Source: AK7set/fIAy5r7sbONvLExQKUO7U8NmLEBitXQ6a20ZCy6KaPV7F32QpdGzQxjxOW3bBkjExKFtH6Q==
+X-Received: by 2002:a17:906:dac9:b0:8aa:c090:a9ef with SMTP id xi9-20020a170906dac900b008aac090a9efmr13185992ejb.55.1678102762984;
+        Mon, 06 Mar 2023 03:39:22 -0800 (PST)
 Received: from krzk-bin.. ([2a02:810d:15c0:828:d85d:5a4b:9830:fcfe])
-        by smtp.gmail.com with ESMTPSA id ch10-20020a170906c2ca00b008cf8c6f5c43sm4411936ejb.83.2023.03.06.03.39.17
+        by smtp.gmail.com with ESMTPSA id ch10-20020a170906c2ca00b008cf8c6f5c43sm4411936ejb.83.2023.03.06.03.39.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Mar 2023 03:39:18 -0800 (PST)
+        Mon, 06 Mar 2023 03:39:22 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
+        linux-phy@lists.infradead.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        dri-devel@lists.freedesktop.org,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@gmail.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: (subset) [PATCH 2/2] ARM: dts: exynos: add ports to TC358764 bridge on Arndale
-Date:   Mon,  6 Mar 2023 12:39:07 +0100
-Message-Id: <167810274094.82312.13543141865904847311.b4-ty@linaro.org>
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Henrik Grimler <henrik@grimler.se>, phone-devel@vger.kernel.org,
+        replicant@osuosl.org, ~postmarketos/upstreaming@lists.sr.ht,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>
+Subject: Re: (subset) [PATCH 6/8] ARM: dts: exynos: move DP and MIPI phys to PMU node in Exynos5420
+Date:   Mon,  6 Mar 2023 12:39:10 +0100
+Message-Id: <167810274096.82312.8759303246779473962.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230225160252.18737-2-krzysztof.kozlowski@linaro.org>
-References: <20230225160252.18737-1-krzysztof.kozlowski@linaro.org> <20230225160252.18737-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230127194057.186458-7-krzysztof.kozlowski@linaro.org>
+References: <20230127194057.186458-1-krzysztof.kozlowski@linaro.org> <20230127194057.186458-7-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -80,16 +80,20 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, 25 Feb 2023 17:02:52 +0100, Krzysztof Kozlowski wrote:
-> The Toshiba TC358764 bridge binding expect up two ports as it is a
-> bridge, thus add ports property to encapsulate them.
+On Fri, 27 Jan 2023 20:40:55 +0100, Krzysztof Kozlowski wrote:
+> The DisplayPort and MIPI phys are actually part of the Power Management
+> Unit system controller.  They do not have their own address space, thus
+> keeping the nodes under soc causes warnings:
 > 
+>   exynos5420-smdk5420.dtb: soc: dp-video-phy: {'compatible': ['samsung,exynos5420-dp-video-phy'],
+>     'samsung,pmu-syscon': [[11]], '#phy-cells': [[0]], 'phandle': [[16]]} should not be valid under {'type': 'object'}
 > 
+> [...]
 
 Applied, thanks!
 
-[2/2] ARM: dts: exynos: add ports to TC358764 bridge on Arndale
-      https://git.kernel.org/krzk/linux/c/704121ff1f6e05bd00ecb1ef2918ac309c18eb45
+[6/8] ARM: dts: exynos: move DP and MIPI phys to PMU node in Exynos5420
+      https://git.kernel.org/krzk/linux/c/972b567075845a55d525f1ed5d7cd7b6d524afdc
 
 Best regards,
 -- 
