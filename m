@@ -2,40 +2,40 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33218C77B72
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 07:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B75C77B78
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 07:57:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229896AbjCFH5u (ORCPT
+        id S229917AbjCFH5w (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Mar 2023 02:57:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53350 "EHLO
+        Mon, 6 Mar 2023 02:57:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229823AbjCFH5m (ORCPT
+        with ESMTP id S229825AbjCFH5m (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Mon, 6 Mar 2023 02:57:42 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BBA01F906;
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E6861F915;
         Sun,  5 Mar 2023 23:57:40 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5139C60C5F;
+        by ams.source.kernel.org (Postfix) with ESMTPS id E046CB80CAE;
         Mon,  6 Mar 2023 07:57:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14B50C43171;
-        Mon,  6 Mar 2023 07:57:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF842C43613;
+        Mon,  6 Mar 2023 07:57:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678089457;
-        bh=hBUdifa7+pnr/sHWJAmdxMSvzTM7t1JrzJMWGFd1KkM=;
+        s=k20201202; t=1678089456;
+        bh=FWxTZ1RqwVoujtqnJ/DHFooDHNoVoslTBxHPXwHinZ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i21cVcncrcjzg9hLcrlRSGEh7r43IvPgLh1BSphm2AYcNs0f+bHEcWf7gnFMoyKZn
-         JnqiP0lE86efUdMEDSEDsNvojEDmRxyw+tz6cP/2C0SH4ltppTQR4Pss1ROpg1/7vE
-         +hKdxPWYexzI7hljm1T/eo/fmuo0/3rv86ct0RyAzIFs4eR3QKw1iKskUQYQori2tU
-         L7Hj8BFAVbQSqgH9I8KqOOOdiscuZkRmPivBAqmRY6y64Iw5EXJL+rmfBeTiw/RuIz
-         eFMPbNSkrbLPZDHNvhJQM/WMWSoB4muxbqBqQpa/PDyVm95sUbG1rphT4F6le6C4tE
-         6X+yFVRwTAOOQ==
+        b=Rb98aC/USRF/Y/JkuE/QfcURA1eAUgT93VlR7oRB9fIW6LTsoJZ+ysppaHYnfnWFS
+         JUo4ip+MDmAGqm3Qi4xS5sZfVPh6TGaKNm5t4uUpZWZiqRM7WGIsLJoeIMLEvFVYGN
+         1ex8LZf6yrBHihzSG0DXn4MyCQJi+y8DfSlN4EfsS72rhpRhDtBWg8MY0FdjoRpcs4
+         +sfTFxLHx9gl/KqyX2TA8o28BTrBEV067U0ulefeRLls36NP27QnimPaXNaXbbhpFA
+         T/s+QbTaKD6kThWnDslBBc+Cm+V+i3jkHNX0TTvEFBnV3bcyahpekDhSkdmOlM1/HM
+         1UEeB1kxc2Xbw==
 Received: from johan by xi.lan with local (Exim 4.94.2)
         (envelope-from <johan+linaro@kernel.org>)
-        id 1pZ5jd-0000ii-BO; Mon, 06 Mar 2023 08:58:17 +0100
+        id 1pZ5jd-0000iZ-2h; Mon, 06 Mar 2023 08:58:17 +0100
 From:   Johan Hovold <johan+linaro@kernel.org>
 To:     Georgi Djakov <djakov@kernel.org>
 Cc:     "Shawn Guo" <shawnguo@kernel.org>,
@@ -55,11 +55,10 @@ Cc:     "Shawn Guo" <shawnguo@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org,
-        Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 18/23] memory: tegra124-emc: fix interconnect registration race
-Date:   Mon,  6 Mar 2023 08:56:46 +0100
-Message-Id: <20230306075651.2449-19-johan+linaro@kernel.org>
+        Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org
+Subject: [PATCH v2 15/23] interconnect: exynos: fix registration race
+Date:   Mon,  6 Mar 2023 08:56:43 +0100
+Message-Id: <20230306075651.2449-16-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230306075651.2449-1-johan+linaro@kernel.org>
 References: <20230306075651.2449-1-johan+linaro@kernel.org>
@@ -71,58 +70,79 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 The current interconnect provider registration interface is inherently
 racy as nodes are not added until the after adding the provider. This
-can specifically cause racing DT lookups to fail.
+can specifically cause racing DT lookups to trigger a NULL-pointer
+deference when either a NULL pointer or not fully initialised node is
+returned from exynos_generic_icc_xlate().
 
 Switch to using the new API where the provider is not registered until
 after it has been fully initialised.
 
-Fixes: 380def2d4cf2 ("memory: tegra124: Support interconnect framework")
-Cc: stable@vger.kernel.org      # 5.12
-Cc: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fixes: 2f95b9d5cf0b ("interconnect: Add generic interconnect driver for Exynos SoCs")
+Cc: stable@vger.kernel.org      # 5.11
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/memory/tegra/tegra124-emc.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/interconnect/samsung/exynos.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index 85bc936c02f9..00ed2b6a0d1b 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -1351,15 +1351,13 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
- 	emc->provider.aggregate = soc->icc_ops->aggregate;
- 	emc->provider.xlate_extended = emc_of_icc_xlate_extended;
+diff --git a/drivers/interconnect/samsung/exynos.c b/drivers/interconnect/samsung/exynos.c
+index e70665899482..72e42603823b 100644
+--- a/drivers/interconnect/samsung/exynos.c
++++ b/drivers/interconnect/samsung/exynos.c
+@@ -98,12 +98,13 @@ static int exynos_generic_icc_remove(struct platform_device *pdev)
+ 	struct exynos_icc_priv *priv = platform_get_drvdata(pdev);
+ 	struct icc_node *parent_node, *node = priv->node;
  
--	err = icc_provider_add(&emc->provider);
--	if (err)
--		goto err_msg;
-+	icc_provider_init(&emc->provider);
++	icc_provider_deregister(&priv->provider);
++
+ 	parent_node = exynos_icc_get_parent(priv->dev->parent->of_node);
+ 	if (parent_node && !IS_ERR(parent_node))
+ 		icc_link_destroy(node, parent_node);
  
- 	/* create External Memory Controller node */
- 	node = icc_node_create(TEGRA_ICC_EMC);
- 	if (IS_ERR(node)) {
- 		err = PTR_ERR(node);
--		goto del_provider;
-+		goto err_msg;
+ 	icc_nodes_remove(&priv->provider);
+-	icc_provider_del(&priv->provider);
+ 
+ 	return 0;
+ }
+@@ -132,15 +133,11 @@ static int exynos_generic_icc_probe(struct platform_device *pdev)
+ 	provider->inter_set = true;
+ 	provider->data = priv;
+ 
+-	ret = icc_provider_add(provider);
+-	if (ret < 0)
+-		return ret;
++	icc_provider_init(provider);
+ 
+ 	icc_node = icc_node_create(pdev->id);
+-	if (IS_ERR(icc_node)) {
+-		ret = PTR_ERR(icc_node);
+-		goto err_prov_del;
+-	}
++	if (IS_ERR(icc_node))
++		return PTR_ERR(icc_node);
+ 
+ 	priv->node = icc_node;
+ 	icc_node->name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "%pOFn",
+@@ -171,14 +168,17 @@ static int exynos_generic_icc_probe(struct platform_device *pdev)
+ 			goto err_pmqos_del;
  	}
  
- 	node->name = "External Memory Controller";
-@@ -1380,12 +1378,14 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
- 	node->name = "External Memory (DRAM)";
- 	icc_node_add(node, &emc->provider);
- 
-+	err = icc_provider_register(&emc->provider);
-+	if (err)
-+		goto remove_nodes;
++	ret = icc_provider_register(provider);
++	if (ret < 0)
++		goto err_pmqos_del;
 +
  	return 0;
  
- remove_nodes:
- 	icc_nodes_remove(&emc->provider);
--del_provider:
--	icc_provider_del(&emc->provider);
- err_msg:
- 	dev_err(emc->dev, "failed to initialize ICC: %d\n", err);
+ err_pmqos_del:
+ 	dev_pm_qos_remove_request(&priv->qos_req);
+ err_node_del:
+ 	icc_nodes_remove(provider);
+-err_prov_del:
+-	icc_provider_del(provider);
++
+ 	return ret;
+ }
  
 -- 
 2.39.2
