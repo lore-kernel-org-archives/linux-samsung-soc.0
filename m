@@ -2,118 +2,140 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB796C678D4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 15:51:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9FAFC64EC4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 17:06:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230023AbjCFPvk (ORCPT
+        id S229907AbjCFRGx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Mar 2023 10:51:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60396 "EHLO
+        Mon, 6 Mar 2023 12:06:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230185AbjCFPvk (ORCPT
+        with ESMTP id S230114AbjCFRGZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2023 10:51:40 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CF7736681
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Mar 2023 07:51:37 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id j11so20986030edq.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Mar 2023 07:51:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678117896;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=t5WKaU91nJ+P694TRYOMgx3cq+DGCFPwL6ikgUxC3C8=;
-        b=ESjcJLj063dMnQZWJplGSMwup2iaf+HjpoquiqJhkDgqe+Bwe6KLmnVVMs75iGiqRx
-         Vr7OqpYnid1HjGlasFK+9AhAlB5S4IHdRaeE/MWdSmSHDascJfwiIIieyVNjC3qXv56F
-         cbaFPprTTejA/Ub9UwI0JUHkt+6AktbMoISxFB9Dm4DzWvxl/s9nj4l1nVolAUlQNaeq
-         NRcq0O1+qSCYXKjQcUioybt/B+ExBG9Qdq+9ayEOYY0NnfidFsmtP6dFJ6uZ7ch/mSL7
-         W5subhoHbAsx1NXexaN2YeqvF7Fv6QOC7RFeQQlenvKCZcVsvUJCf9r/K/FrhKb2+BS0
-         yyFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678117896;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t5WKaU91nJ+P694TRYOMgx3cq+DGCFPwL6ikgUxC3C8=;
-        b=aECNBDoWP0fGwKQ1s+ouOOWxtleEuE74ra13NFV5DFb6yR/CuFn6DAtihnuVRUjhH+
-         R0v36/J2wXAz/6Zr7X341FLySwtOM2eRVGD0SURQuY2jh7Qckr7QgsmEI37AYfr6mfXJ
-         G6uxlMu3ZqqCo81lDQpuBMho1/9R6PsC+uOoK5POdTUKdphC/UqDxtw1Y4oaS4IlelDX
-         /+yS0zbj5m2y5kqGJrusTwlz2n690KblcQfLq6r5yV8va6aCIf24Epo+5LosiTuWjSgj
-         iGU+sPJuGkfgTDXZ1tJFItRrSFjETGFvuFKPkvhGaINAwzRrUztoEE5TiXC61rXD7okN
-         JiRg==
-X-Gm-Message-State: AO0yUKVhAaeCL3ygjO/v7pj8BqFkgttdUbK6g5X0d4Zge9rEFKi2orjv
-        Bv+g+mOMgWuuKTBcJ33qxWzZ8g==
-X-Google-Smtp-Source: AK7set9lwg+x+76RsWJ6nVbbLxkGydKTP4r6kdOcHarLbeeJ9W9GJHfsJJMd5ctUdgw3OxunMd+uEA==
-X-Received: by 2002:aa7:c2d4:0:b0:4ae:eab6:9ff8 with SMTP id m20-20020aa7c2d4000000b004aeeab69ff8mr11998310edp.13.1678117896054;
-        Mon, 06 Mar 2023 07:51:36 -0800 (PST)
-Received: from ?IPV6:2a02:810d:15c0:828:c1e7:5006:98ac:f57? ([2a02:810d:15c0:828:c1e7:5006:98ac:f57])
-        by smtp.gmail.com with ESMTPSA id n26-20020a50c21a000000b004a27046b7a7sm5320836edf.73.2023.03.06.07.51.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Mar 2023 07:51:35 -0800 (PST)
-Message-ID: <48c8a0cf-08dc-a831-33ef-3b8e32eef2d3@linaro.org>
-Date:   Mon, 6 Mar 2023 16:51:34 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v2 0/6] clk: samsung: exynos850: Add missing clocks for PM
-Content-Language: en-US
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Chanho Park <chanho61.park@samsung.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>,
+        Mon, 6 Mar 2023 12:06:25 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6080D64849
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Mar 2023 09:05:58 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pZEHO-0003z0-4j; Mon, 06 Mar 2023 18:05:42 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pZEHH-002If9-91; Mon, 06 Mar 2023 18:05:35 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pZEHG-002kzA-Js; Mon, 06 Mar 2023 18:05:34 +0100
+Date:   Mon, 6 Mar 2023 18:05:34 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Doug Anderson <dianders@chromium.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc:     kernel@pengutronix.de, linux-samsung-soc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, patches@opensource.cirrus.com,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        linux-rpi-kernel@lists.infradead.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        David Virag <virag.david003@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>
-References: <20230223042133.26551-1-semen.protsenko@linaro.org>
- <167811290503.11716.15730246749418548221.b4-ty@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <167811290503.11716.15730246749418548221.b4-ty@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 00/34] watchdog: Convert to platform remove callback
+ returning void
+Message-ID: <20230306170534.vap4z24rbexbjj76@pengutronix.de>
+References: <20230303213716.2123717-1-u.kleine-koenig@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6lk6n3hldynfzkpt"
+Content-Disposition: inline
+In-Reply-To: <20230303213716.2123717-1-u.kleine-koenig@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/03/2023 15:28, Krzysztof Kozlowski wrote:
-> On Wed, 22 Feb 2023 22:21:27 -0600, Sam Protsenko wrote:
->> As a part of preparation for PM enablement in Exynos850 clock driver,
->> this patch series implements CMU_G3D, and also main gate clocks for AUD
->> and HSI CMUs. The series brings corresponding changes to bindings, the
->> driver and SoC dts file.
->>
->> Changes in v2:
->>   - Rebased all patches on top of the most recent soc/for-next tree
->>   - Added A-b and R-b tags
->>   - Minor fixes
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [1/6] dt-bindings: clock: exynos850: Add Exynos850 CMU_G3D
->       https://git.kernel.org/krzk/linux/c/067ba1605806e52118bb598afb357718df9f0e19
-> [2/6] dt-bindings: clock: exynos850: Add AUD and HSI main gate clocks
->       https://git.kernel.org/krzk/linux/c/e289665ed0d6df9fca3ebc128f1232d305e4600b
-> [3/6] clk: samsung: clk-pll: Implement pll0818x PLL type
->       https://git.kernel.org/krzk/linux/c/a6feedab8ab9a9e4483deb0bcc87919d92c88b7e
-> [4/6] clk: samsung: exynos850: Implement CMU_G3D domain
->       https://git.kernel.org/krzk/linux/c/c5704a56893b4e77e434597c7c53d878bb3073b0
-> [5/6] clk: samsung: exynos850: Add AUD and HSI main gate clocks
->       https://git.kernel.org/krzk/linux/c/d8d12e0d079aff4b1d8079a0a55944c0596f1d67
-> [6/6] arm64: dts: exynos: Add CMU_G3D node for Exynos850 SoC
->       https://git.kernel.org/krzk/linux/c/ad8f6ad9a4f219950df65731a8ff91baa022c4b0
 
-And builds are broken. Please mention in cover letter or commit
-dependencies and ordering...
+--6lk6n3hldynfzkpt
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+Hello,
 
+[dropping Leela Krishna Amudala from the list of recipents as their
+email address bounces]
+
+On Fri, Mar 03, 2023 at 10:36:42PM +0100, Uwe Kleine-K=F6nig wrote:
+> this patch series adapts the platform drivers below drivers/watchdog to
+> use the .remove_new() callback. Compared to the traditional .remove()
+> callback .remove_new() returns no value. This is a good thing because
+> the driver core doesn't (and cannot) cope for errors during remove. The
+> only effect of a non-zero return value in .remove() is that the driver
+> core emits a warning. The device is removed anyhow and an early return
+> from .remove() usually yields a resource leak. One driver suffering from
+> this problem (s3c2410) is fixed by the first patch.
+>=20
+> By changing the remove callback to return void driver authors cannot
+> reasonably (but wrongly) assume any more that there happens some kind of
+> cleanup later.
+>=20
+> All watchdog drivers but the above mentioned one returned zero
+> unconditionally in their remove callback, so they could all be converted
+> trivially to .remove_new().
+>=20
+> Note that this series depends on commit 5c5a7680e67b ("platform: Provide
+> a remove callback that returns no value") that is already in Linus' tree
+> but not yet included in a tagged version.
+
+This is fixed now, v6.3-rc1 is suitable as a base for this series.
+
+Guenter pointed out that for some drivers it is possible to make use of
+devm_watchdog_register_device() and drop the remove callback completely.
+Also there is an alternative series that gets rid of s3c2410's remove
+callback.
+
+I'll send out a series converting the three drivers to
+devm_watchdog_register_device() as Guenter suggested. To apply the
+remainder of this series you might want to do:
+
+	b4 am -l -P 2-7,9-25,27,29-33 20230303213716.2123717-1-u.kleine-koenig@pen=
+gutronix.de
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--6lk6n3hldynfzkpt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmQGHVsACgkQwfwUeK3K
+7AkjxAf/ay58zUveg62ekFfp2EWzQLcZ/rgoftXI9IlMaCupCSIn7RrN1sCI2ujw
+TDxuC3JhS4wWOpkmRc0b0cRTdYXZdMxY5YSCbDJ63J94pr5mJmh0fXstr9pEfhmP
+gLtcIM3I5Dv18X6tMBAu6KxEOgBq2ABiOpkLatLDNFsAsES2hDN1RSmFsozuIBsS
+XlP4wsQvCAxsa0zpQx+lZ58NR0ySwwaWTRNlpm0vR6aOJworSQu0PuPizK2z6dET
+L7OFiZJG82Og1Jq+nv8MZ3Wmw+6V4XupfkeCNetqQSJz1cq6fOTJmWCfBzWZPkjj
+3v78LA8gRjJblfMeJ1VBaFfkIwMuEA==
+=qlX8
+-----END PGP SIGNATURE-----
+
+--6lk6n3hldynfzkpt--
