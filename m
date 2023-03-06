@@ -2,107 +2,172 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A05DC6FD1A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 18:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F5FCC61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 20:01:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230315AbjCFS6F (ORCPT
+        id S230006AbjCFUBU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Mar 2023 13:58:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34680 "EHLO
+        Mon, 6 Mar 2023 15:01:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230106AbjCFS5p (ORCPT
+        with ESMTP id S230144AbjCFUBO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2023 13:57:45 -0500
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9297A2FCD3
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Mar 2023 10:57:03 -0800 (PST)
-Received: by mail-pf1-x433.google.com with SMTP id z11so6511380pfh.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Mar 2023 10:57:03 -0800 (PST)
+        Mon, 6 Mar 2023 15:01:14 -0500
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC3EC67024;
+        Mon,  6 Mar 2023 12:00:56 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id qa18-20020a17090b4fd200b0023750b675f5so14280355pjb.3;
+        Mon, 06 Mar 2023 12:00:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678129023;
+        d=gmail.com; s=20210112; t=1678132856;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=q4VNX9AKs6J487z5M02xyDbugGpu1Iv9Ot4zxZx+KQg=;
-        b=CsVOEvXR/4BB4ezbcg6KH410DS2OUmgWsXSl/XP5bdveHBaVCSle3aeixNKG96Ae2u
-         66UlYlU26O1fF7l8y4oSxzpmzgg6mys5IZJa+Sofvba49h1iSYTiGHVJ40Pe1z/qCSfB
-         i1sBK7p6wxoZe6Ep1rtVVz9iksTmobtXaKNQz7drLLHmySUsExrfucyhWamZT2gRKL66
-         wbWvVONlCIEz9AlzzVpAAn6zyBcYZs12ROk7XeYDZuGrSR4Y/KxtXdUkx40TwIzD52Y+
-         z5uFu3O+y2HCdDXU8NlSUVjNVrygS1QogcHRtDjU8KvWwvqftN7pmIBMv5lQp8lccSuv
-         eNUw==
+        bh=uXR1hBuNmG/TwC91AeVvsW1UVH/MwkAfhUSEnuvNaoY=;
+        b=o6hZefnQYEnFw3COvoTdyyoXo9Zv4P0LTShB301lkw0/gGr+x1ou0XeYCSdcXXLXoz
+         Ie/lwSIsRhh9vBh4c56fFPeCbh1Mg/u0f+SLHuOsNnA01L3iQxuD6tKvCodPDyUeqcUA
+         ipzyAtvRXWR1nR5U0W8m7xh6fPIYtpAYIZVYRkCJb0GTxixFtDSEeec8W6O4TIR9SFvb
+         8TyLwk+heXtYmzhntJcZ54SphmylZPrikYFa1PRdJ8V5j+VefclzJKcG1hcN/EBRiJ2z
+         A5LjdstbOHhVHAVRXA7o2dTcBNuVBc27QoVtU1tjX+Yepbtmilj428R4Os2Xd6WiLWnA
+         Of4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678129023;
+        d=1e100.net; s=20210112; t=1678132856;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=q4VNX9AKs6J487z5M02xyDbugGpu1Iv9Ot4zxZx+KQg=;
-        b=Li6hIsQgUTev573bV1u9KsSUXmMeV3LEdSlc1h0jG45ndAFYeMtwOPf2f8qjHgHeFA
-         SRB7+S9Zx9fU8pvNzJmpjRKpVxzIPzE/H0QaSQ9S9/1Z9e0axmdfXf9C0jDPArDlP3eF
-         Bo6QFkirbwcxncFyRugu3U11CvvoKFl6G7Ykc++oNO3d4J7qLaAWfv1IS/Xon6HxSEwI
-         +eUG59VLfKspQyT+QCRaZtjB8EcPjX6IRaDgammgGynu7xXZG9o0Bw25BQtsvRnyBcKq
-         A8acYfnbmcOs8oNkTOPxKouVQXCg3hq/R68OfQPzY689SvtZV8L7c1oAk1z+oRSFwDoQ
-         RWxg==
-X-Gm-Message-State: AO0yUKXgTS1e56MS++akcxtlBF3Dbb5oOKzyT1BediXekTTRw4iTWkTg
-        FXBKexqeSDg351V1wTb8bQP2N0y8mrb6JE5rkvozIw==
-X-Google-Smtp-Source: AK7set/Lhx/WbXb2E0mYnBRxlPdYP05f5ap5IZriOV5UB84a2xl+6qQ8xbvpHHLekk0GSzD6e5RyV9FeaDhYecL2E0Y=
-X-Received: by 2002:a62:f807:0:b0:5a9:d579:6902 with SMTP id
- d7-20020a62f807000000b005a9d5796902mr5019575pfh.0.1678129022821; Mon, 06 Mar
- 2023 10:57:02 -0800 (PST)
+        bh=uXR1hBuNmG/TwC91AeVvsW1UVH/MwkAfhUSEnuvNaoY=;
+        b=aXlIsS33Jjsuul+qMNL2sbI/Xqukq2wbEWP7Zdwtlj7bv64XyL7zxFEoY23RZ0YQor
+         Bqbh5zVr8LntGonP2exW1FvIEe3AwE9XlYZmNS8BKWTAWJs46K5D88Cz1tVysYW6l+vP
+         FlMoMohxRfMxV4J+TUf+f7Bz1HpG6jA9mHubAYpMaJGTADnDWXZk6nHVD+RgpSfy8wnl
+         /+/YGrN5IjCieKDYZ32gkewHxI34PwOi60E7Fm7h+ZsDbXdaNQooMMjB7VEGiEr6rL0+
+         lQojxCgDm1YNLkaokb9PWqj3WmVVVML7lZp7/PlVkSmU5avaYieldMHSE8tJs0W+SvaY
+         B+Qw==
+X-Gm-Message-State: AO0yUKXAbIFP23mAPtL3C28xLpxvoISrBRzI+Kq+PG803rUuLclFekw1
+        m8OB/pmYca24tx4TYBNZYeUG77vaa6Wk3reLCVE=
+X-Google-Smtp-Source: AK7set/DxZtiZhO+z+A0Is7yokDniYYkETavBEcleYa7IPSvIEQBIV7zty9Y+UWe1CWFM73JZ5CBgh34wQSFC4iK+eg=
+X-Received: by 2002:a17:90a:5993:b0:233:b520:1544 with SMTP id
+ l19-20020a17090a599300b00233b5201544mr6625621pji.0.1678132856231; Mon, 06 Mar
+ 2023 12:00:56 -0800 (PST)
 MIME-Version: 1.0
-References: <20230223041938.22732-1-semen.protsenko@linaro.org>
- <20230223041938.22732-3-semen.protsenko@linaro.org> <f26c7ad2-a000-901e-d6d4-74c9ce1032cd@linaro.org>
-In-Reply-To: <f26c7ad2-a000-901e-d6d4-74c9ce1032cd@linaro.org>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Mon, 6 Mar 2023 12:56:51 -0600
-Message-ID: <CAPLW+4m=qpv4OnVuUTFOvFgeR60b40ChYRfPaxdd3fBm4dND6A@mail.gmail.com>
-Subject: Re: [PATCH v3 2/6] clk: samsung: Remove np argument from samsung_clk_init()
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20230306172109.595464-1-amit.kumar-mahapatra@amd.com> <20230306172109.595464-10-amit.kumar-mahapatra@amd.com>
+In-Reply-To: <20230306172109.595464-10-amit.kumar-mahapatra@amd.com>
+From:   Jonas Gorski <jonas.gorski@gmail.com>
+Date:   Mon, 6 Mar 2023 21:00:44 +0100
+Message-ID: <CAOiHx=nmsAh3ADL3s0eZKpEZJqCB_POi=8YjfxrHYLEbjRfwHg@mail.gmail.com>
+Subject: Re: [PATCH V5 09/15] spi: Add stacked and parallel memories support
+ in SPI core
+To:     Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+Cc:     broonie@kernel.org, miquel.raynal@bootlin.com, richard@nod.at,
+        vigneshr@ti.com, jic23@kernel.org, tudor.ambarus@microchip.com,
+        pratyush@kernel.org, Sanju.Mehta@amd.com,
+        chin-ting_kuo@aspeedtech.com, clg@kaod.org, kdasu.kdev@gmail.com,
+        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
+        eajames@linux.ibm.com, olteanv@gmail.com, han.xu@nxp.com,
+        john.garry@huawei.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        narmstrong@baylibre.com, khilman@baylibre.com,
+        matthias.bgg@gmail.com, haibo.chen@nxp.com,
+        linus.walleij@linaro.org, daniel@zonque.org,
+        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
+        agross@kernel.org, bjorn.andersson@linaro.org, heiko@sntech.de,
+        krzysztof.kozlowski@linaro.org, andi@etezian.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
+        masahisa.kojima@linaro.org, jaswinder.singh@linaro.org,
+        rostedt@goodmis.org, mingo@redhat.com, l.stelmach@samsung.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, alex.aring@gmail.com, stefan@datenfreihafen.org,
+        kvalo@kernel.org, james.schulman@cirrus.com,
+        david.rhodes@cirrus.com, tanureal@opensource.cirrus.com,
+        rf@opensource.cirrus.com, perex@perex.cz, tiwai@suse.com,
+        npiggin@gmail.com, christophe.leroy@csgroup.eu, mpe@ellerman.id.au,
+        oss@buserror.net, windhl@126.com, yangyingliang@huawei.com,
+        william.zhang@broadcom.com, kursad.oney@broadcom.com,
+        anand.gore@broadcom.com, rafal@milecki.pl, git@amd.com,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        joel@jms.id.au, andrew@aj.id.au, radu_nicolae.pirea@upb.ro,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        claudiu.beznea@microchip.com,
+        bcm-kernel-feedback-list@broadcom.com, fancer.lancer@gmail.com,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
+        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+        venture@google.com, yuenn@google.com, benjaminfair@google.com,
+        yogeshgaur.83@gmail.com, konrad.dybcio@somainline.org,
+        alim.akhtar@samsung.com, ldewangan@nvidia.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        michal.simek@amd.com, linux-aspeed@lists.ozlabs.org,
+        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        netdev@vger.kernel.org, linux-wpan@vger.kernel.org,
+        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-mtd@lists.infradead.org, lars@metafoo.de,
+        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
+        michael@walle.cc, palmer@dabbelt.com,
+        linux-riscv@lists.infradead.org, alsa-devel@alsa-project.org,
+        patches@opensource.cirrus.com, linuxppc-dev@lists.ozlabs.org,
+        amitrkcian2002@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 6 Mar 2023 at 08:40, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 23/02/2023 05:19, Sam Protsenko wrote:
-> > The code using `np' argument was removed from samsung_clk_init(). Remove
-> > that leftover parameter as well.
-> >
-> > No functional change.
-> >
-> > Fixes: d5e136a21b20 ("clk: samsung: Register clk provider only after registering its all clocks")
->
-> Fixes should come before any other patches, so backporting is
-> easier/possible.
->
+Hi,
 
-Noted, thanks.
+On Mon, 6 Mar 2023 at 18:26, Amit Kumar Mahapatra
+<amit.kumar-mahapatra@amd.com> wrote:
+>
+> For supporting multiple CS the SPI device need to be aware of all the CS
+> values. So, the "chip_select" member in the spi_device structure is now an
+> array that holds all the CS values.
+>
+> spi_device structure now has a "cs_index_mask" member. This acts as an
+> index to the chip_select array. If nth bit of spi->cs_index_mask is set
+> then the driver would assert spi->chip_select[n].
+>
+> In parallel mode all the chip selects are asserted/de-asserted
+> simultaneously and each byte of data is stored in both devices, the even
+> bits in one, the odd bits in the other. The split is automatically handled
+> by the GQSPI controller. The GQSPI controller supports a maximum of two
+> flashes connected in parallel mode. A "multi-cs-cap" flag is added in the
+> spi controntroller data, through ctlr->multi-cs-cap the spi core will make
+> sure that the controller is capable of handling multiple chip selects at
+> once.
+>
+> For supporting multiple CS via GPIO the cs_gpiod member of the spi_device
+> structure is now an array that holds the gpio descriptor for each
+> chipselect.
+>
+> Multi CS support using GPIO is not tested due to unavailability of
+> necessary hardware setup.
+>
+> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+> ---
+>  drivers/spi/spi.c       | 213 +++++++++++++++++++++++++++-------------
+>  include/linux/spi/spi.h |  34 +++++--
+>  2 files changed, 173 insertions(+), 74 deletions(-)
+>
+> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+> index 5866bf5813a4..8ec7f58fa111 100644
+> --- a/drivers/spi/spi.c
+> +++ b/drivers/spi/spi.c
+> @@ -613,7 +613,8 @@ static int spi_dev_check(struct device *dev, void *data)
+>         struct spi_device *new_spi = data;
+>
+>         if (spi->controller == new_spi->controller &&
+> -           spi_get_chipselect(spi, 0) == spi_get_chipselect(new_spi, 0))
+> +           spi_get_chipselect(spi, 0) == spi_get_chipselect(new_spi, 0) &&
+> +           spi_get_chipselect(spi, 1) == spi_get_chipselect(new_spi, 1))
+>                 return -EBUSY;
 
-> I assume there is no dependency here with patch 1/6, so I just reversed
-> their order and applied.
->
+This will only reject new devices if both chip selects are identical,
+but not if they only share one, e.g. CS 1 + 2 vs 1 + 3, or 1 + 2 vs
+only 2, or if the order is different (1 + 2 vs 2 + 1 - haven't read
+the code too close to know if this is allowed/possible).
 
-Thanks, Krzysztof! Yeah, should be no dependency, everything looks clean to me.
-
-
->
-> > Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->
->
-> Best regards,
-> Krzysztof
->
+Regards,
+Jonas
