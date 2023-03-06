@@ -2,106 +2,85 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C7B9C6FD1D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 10:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E53C6FD1A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 10:23:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230180AbjCFKEF (ORCPT
+        id S230003AbjCFKXm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Mar 2023 05:04:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53134 "EHLO
+        Mon, 6 Mar 2023 05:23:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230191AbjCFKEC (ORCPT
+        with ESMTP id S230300AbjCFKXi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2023 05:04:02 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8527412844;
-        Mon,  6 Mar 2023 02:04:00 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2BA6560D36;
-        Mon,  6 Mar 2023 10:04:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77831C433EF;
-        Mon,  6 Mar 2023 10:03:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678097039;
-        bh=NqMbYyvssKAx59ycEdKMFhaWpef5XSN1pFTGQ0DPAQ0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KDfIzHRqSbIPRxQ5kEQXWQNFgsmQ/3ugZts1z8YigEBSh4faCn+rLeqBU6w2tFriP
-         BNIu+8YydqPo4riorBbgxOS7CtqVCqLa6wD9kBbSsh10BujzmsaKnO9x5rtfEEB5ZP
-         CrjBgY61IiuUQIyOL7tTJ8wwjay4MuazLBK/8lIjUw1v5rTby3vl6CMMhl9CV315FM
-         ugCoVWCZAf3kgg1y9ZrCdpSVrR/yFzmlRd4GGXoezELkFnR8jeZcGIeQBDMoxgdlTo
-         hc4aTM3O+wUqG2rTJguyh0O/y219zleqkiBzP4gP+USDs8yUueXwlNh2AzJzEVyu+M
-         yG3K63UQfyD7Q==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1pZ7hv-0007OS-4q; Mon, 06 Mar 2023 11:04:39 +0100
-Date:   Mon, 6 Mar 2023 11:04:39 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Abel Vesa <abel.vesa@linaro.org>
-Cc:     Johan Hovold <johan+linaro@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Mon, 6 Mar 2023 05:23:38 -0500
+X-Greylist: delayed 4587 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 06 Mar 2023 02:23:28 PST
+Received: from 18.mo581.mail-out.ovh.net (18.mo581.mail-out.ovh.net [188.165.56.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17647211CA
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Mar 2023 02:23:27 -0800 (PST)
+Received: from director11.ghost.mail-out.ovh.net (unknown [10.109.146.53])
+        by mo581.mail-out.ovh.net (Postfix) with ESMTP id 142E726247
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Mar 2023 09:06:59 +0000 (UTC)
+Received: from ghost-submission-6684bf9d7b-jbrfz (unknown [10.110.103.233])
+        by director11.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 127281FE8C;
+        Mon,  6 Mar 2023 09:06:56 +0000 (UTC)
+Received: from etezian.org ([37.59.142.101])
+        by ghost-submission-6684bf9d7b-jbrfz with ESMTPSA
+        id 8aX6LTCtBWR9AgAA58LVJg
+        (envelope-from <andi@etezian.org>); Mon, 06 Mar 2023 09:06:56 +0000
+Authentication-Results: garm.ovh; auth=pass (GARM-101G004ac770ce1-db47-4670-b400-4d32ddd5c3e6,
+                    E6EC2E320FFEB7B5CA07697FBFAF7FF511F3A6BF) smtp.auth=andi@etezian.org
+X-OVh-ClientIp: 178.238.173.28
+Date:   Mon, 6 Mar 2023 10:06:56 +0100
+From:   Andi Shyti <andi@etezian.org>
+To:     Jaewon Kim <jaewon02.kim@samsung.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andi Shyti <andi@etezian.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 13/23] interconnect: qcom: sm8550: fix registration
- race
-Message-ID: <ZAW6t7LKCBubfnx/@hovoldconsulting.com>
-References: <20230306075651.2449-1-johan+linaro@kernel.org>
- <20230306075651.2449-14-johan+linaro@kernel.org>
- <ZAWsUrlrOfmmNBy3@linaro.org>
- <ZAWzqtWt5yBlYpQU@hovoldconsulting.com>
- <ZAW01RH/gLwlueoT@linaro.org>
+        linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: s3c64xx: add no_cs description
+Message-ID: <ZAWtMIDHGd+nBTA1@intel.intel>
+References: <CGME20230306015413epcas2p371356e4008af6978cdadb5b859d8be2a@epcas2p3.samsung.com>
+ <20230306014239.80570-1-jaewon02.kim@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZAW01RH/gLwlueoT@linaro.org>
+In-Reply-To: <20230306014239.80570-1-jaewon02.kim@samsung.com>
+X-Ovh-Tracer-Id: 12480037520701262555
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrvddthedguddvjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhguihcuufhhhihtihcuoegrnhguihesvghtvgiiihgrnhdrohhrgheqnecuggftrfgrthhtvghrnhepjefgleegkeeiffejgeevuedvheegleevteevjeduffevvdelhedvfeelheduleeunecukfhppeduvdejrddtrddtrddupdefjedrheelrddugedvrddutddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpeeorghnughisegvthgviihirghnrdhorhhgqedpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhsrghmshhunhhgqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehkedupdhmohguvgepshhmthhpohhuth
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Mar 06, 2023 at 11:39:33AM +0200, Abel Vesa wrote:
-> On 23-03-06 10:34:34, Johan Hovold wrote:
-> > On Mon, Mar 06, 2023 at 11:03:14AM +0200, Abel Vesa wrote:
-> > > On 23-03-06 08:56:41, Johan Hovold wrote:
-> > > > The current interconnect provider registration interface is inherently
-> > > > racy as nodes are not added until the after adding the provider. This
-> > > > can specifically cause racing DT lookups to fail.
-> > > > 
-> > > > Switch to using the new API where the provider is not registered until
-> > > > after it has been fully initialised.
-> > > > 
-> > > > Fixes: e6f0d6a30f73 ("interconnect: qcom: Add SM8550 interconnect provider driver")
-> > > > Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-> > > > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > > > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> > > > ---
-> > > 
-> > > Any changes since v1 or is it just a resend? 
-> > 
-> > Please see the cover letter:
-> > 
-> > 	https://lore.kernel.org/lkml/20230306075651.2449-1-johan+linaro@kernel.org/
-> > 
-> > Only the first patch of the series was updated in v2.
+Hi Jaewon,
+
+On Mon, Mar 06, 2023 at 10:42:39AM +0900, Jaewon Kim wrote:
+> This patch adds missing variable no_cs descriptions.
 > 
-> Right, my bad. Though I wasn't CC'ed on that as well.
+> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
 
-Yeah, sorry about that. I copied the CC list from v1 and forgot to make
-sure that all reviewers were copied on the cover letter.
+Reviewed-by: Andi Shyti <andi@etezian.org>
 
-Johan
+Thanks,
+Andi
+
+> ---
+>  include/linux/platform_data/spi-s3c64xx.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/linux/platform_data/spi-s3c64xx.h b/include/linux/platform_data/spi-s3c64xx.h
+> index 5df1ace6d2c9..3101152ce449 100644
+> --- a/include/linux/platform_data/spi-s3c64xx.h
+> +++ b/include/linux/platform_data/spi-s3c64xx.h
+> @@ -29,6 +29,7 @@ struct s3c64xx_spi_csinfo {
+>   * struct s3c64xx_spi_info - SPI Controller defining structure
+>   * @src_clk_nr: Clock source index for the CLK_CFG[SPI_CLKSEL] field.
+>   * @num_cs: Number of CS this controller emulates.
+> + * @no_cs: Used when CS line is not connected.
+>   * @cfg_gpio: Configure pins for this SPI controller.
+>   */
+>  struct s3c64xx_spi_info {
+> -- 
+> 2.17.1
