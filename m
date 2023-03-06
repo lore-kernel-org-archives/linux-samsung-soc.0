@@ -2,98 +2,97 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C60C678D4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 09:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89331C6FD19
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 09:34:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229807AbjCFJPP (ORCPT
+        id S230030AbjCFJeA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Mar 2023 04:15:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51700 "EHLO
+        Mon, 6 Mar 2023 04:34:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229792AbjCFJPO (ORCPT
+        with ESMTP id S230022AbjCFJd7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2023 04:15:14 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6B7CC175
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Mar 2023 01:15:13 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZ6vx-0007rn-3O; Mon, 06 Mar 2023 10:15:05 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZ6vv-002D8q-Cn; Mon, 06 Mar 2023 10:15:03 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZ6vu-002cpx-C9; Mon, 06 Mar 2023 10:15:02 +0100
-Date:   Mon, 6 Mar 2023 10:15:02 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Mon, 6 Mar 2023 04:33:59 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF46AB44F;
+        Mon,  6 Mar 2023 01:33:55 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8BBF360C24;
+        Mon,  6 Mar 2023 09:33:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7037C433EF;
+        Mon,  6 Mar 2023 09:33:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678095234;
+        bh=rSbVlDvA0jl2+1DdaAOATpB+OkCH45l4wsx5jB/wzTY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fAi/3R+QQgtVZ8tI+kiUfYNfcLV+HA9q6LUDYpqvhhMtP8mbasNUF0eKSDF8AmiUy
+         DOKGbmAoESXz7sYqeVmrbpa6o/fP3ziYt29zZFt4xXPJp/bD+Sbi1emB64/U48nGKp
+         i1BDPW6iZHlIpnHry6dVwpp9VjCr3ixaezuIs+pmf5fSCgsB/7aci5dKRoO2rKxwVN
+         AxsbTCfPDmNeCACZpQ/xmsm6A7Wx7f8OoV5DIPtqrmXOEhdlSe9E9p7wHlh/J2lv6d
+         yUr9laRp93UNN3PGd/cLp40htMU55q20PUw/pjAs6clh0Xc/pVY90pC+iElgCVGxNs
+         cjC8SyuqRN/tA==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1pZ7Eo-0003jw-Bk; Mon, 06 Mar 2023 10:34:34 +0100
+Date:   Mon, 6 Mar 2023 10:34:34 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Abel Vesa <abel.vesa@linaro.org>
+Cc:     Johan Hovold <johan+linaro@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] watchdog: s3c2410_wdt: Use
- devm_add_action_or_reset() to disable watchdog
-Message-ID: <20230306091502.3zlodw6vkqqwgozj@pengutronix.de>
-References: <20230304165653.2179835-1-linux@roeck-us.net>
- <20230304165653.2179835-2-linux@roeck-us.net>
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 13/23] interconnect: qcom: sm8550: fix registration
+ race
+Message-ID: <ZAWzqtWt5yBlYpQU@hovoldconsulting.com>
+References: <20230306075651.2449-1-johan+linaro@kernel.org>
+ <20230306075651.2449-14-johan+linaro@kernel.org>
+ <ZAWsUrlrOfmmNBy3@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mfc65ih3brexj23r"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230304165653.2179835-2-linux@roeck-us.net>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <ZAWsUrlrOfmmNBy3@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Mon, Mar 06, 2023 at 11:03:14AM +0200, Abel Vesa wrote:
+> On 23-03-06 08:56:41, Johan Hovold wrote:
+> > The current interconnect provider registration interface is inherently
+> > racy as nodes are not added until the after adding the provider. This
+> > can specifically cause racing DT lookups to fail.
+> > 
+> > Switch to using the new API where the provider is not registered until
+> > after it has been fully initialised.
+> > 
+> > Fixes: e6f0d6a30f73 ("interconnect: qcom: Add SM8550 interconnect provider driver")
+> > Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+> > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> > ---
+> 
+> Any changes since v1 or is it just a resend? 
 
---mfc65ih3brexj23r
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please see the cover letter:
 
-On Sat, Mar 04, 2023 at 08:56:53AM -0800, Guenter Roeck wrote:
-> Use devm_add_action_or_reset() to disable the watchdog when the driver
-> is removed to simplify the code. With this in place, we can use
-> devm_watchdog_register_device() to register the watchdog, and the removal
-> function is no longer necessary.
+	https://lore.kernel.org/lkml/20230306075651.2449-1-johan+linaro@kernel.org/
 
-While the cleanup in this driver is good (
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-) I wonder if disabling the watchdog at .remove() is right.
+Only the first patch of the series was updated in v2.
 
-At least there is an inconsistency among watchdog drivers if the
-hardware is supposed to stop or not.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---mfc65ih3brexj23r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmQFrxMACgkQwfwUeK3K
-7AmSNQgAjGAtvM1eh0nKDC870DA5F533NBiieDzs8Xd3+JEAmkPdFXu0MLd8EjKy
-sSMxPj3wiqRY+amhAgphGVZnonT+mjnaB1KWVoBSE1PBQcpkkHrBht5tZB+IMxb/
-t8OpkA1M1mHlW5kWTYZ/EOB9LxCheEsWhU4fZ6KXq6lufAu7V9xNbOaLYbBGnLYU
-/097Drvf2CRIE5ZkEW7RXa1NnVl8CCcnJqArvXcViOnwQYp0dJXO3lUgHd7dD7ab
-lEcYm3MfBhicgdaudrKvIffBxbMZkeiGCIUqVDwFcSaDirjUR1R3BMI98UoL1J9U
-HumzWTJD12ZkTqK0I8xGsjzrp4FiIw==
-=VJRh
------END PGP SIGNATURE-----
-
---mfc65ih3brexj23r--
+Johan
