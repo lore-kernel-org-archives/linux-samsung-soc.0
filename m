@@ -2,224 +2,193 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1284FC6FA99
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 17:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB11C64EC4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 17:26:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229520AbjCFRZK (ORCPT
+        id S229707AbjCFR0R (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Mar 2023 12:25:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53902 "EHLO
+        Mon, 6 Mar 2023 12:26:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229999AbjCFRZG (ORCPT
+        with ESMTP id S229618AbjCFR0Q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2023 12:25:06 -0500
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 272031BDF
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Mar 2023 09:24:29 -0800 (PST)
-Received: by mail-yb1-xb2f.google.com with SMTP id x12so8909074ybt.7
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Mar 2023 09:24:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1678123465;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VLf0GM/zB1BCP+zFJSVCu7zgZJrdW9kyzCRHpCeB9cc=;
-        b=Crw/174Qdb+vOS7V4/S0vHSfUGwwcMWip7NU22oi8WQKwKtPjhBrZH9RIf4+RX/8ib
-         q4rdXXshtLlFEiTR+1Zv82cZTGW+EtYRyJoE85nZ3wy5Mn55xfgNc8TgW350FylSosS2
-         9H0UwLBCD+tu1izzsu+4rvkjcMrAO/PG1xPus=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678123465;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VLf0GM/zB1BCP+zFJSVCu7zgZJrdW9kyzCRHpCeB9cc=;
-        b=6wk6Sg3s49O1CQnko7py0K9dA9izLYAyJeSl68YktAFjDykQe+/jsfiB+GdLHyq9sY
-         t6+yV1jJUpfPZ4BE4/kWRdfDwsa9znvEGS43qpii8TV7V1omlLqrbn2NSRcPZa9LDyk0
-         zGdEgJqwQ6ddgqQ7qxGMt0y1mKPmKitDayl0WL7tMIBM7fhHKzbbLnx6LPpv0gNh7l9s
-         e8zQipGsdOZqN4i22zRUwK1+fkyThFUxy/VfXhN5kC84ce2MtukZGSE2FNJS79xKw+qn
-         XjsUwxZVjOV8qllcmTtRLHksK6gOXw08RuNkSKZSEOawnXbD1Evz2J90DZShpcBoLxgs
-         IY8A==
-X-Gm-Message-State: AO0yUKVRHaysFwnQN81bRAbeyksi2vaRJvewTWLQHRHeHNaEd1fb8yZO
-        Qy9pH1QKxihcGtf0Z7k29I3eBl/+8TWhfPnIFt2qkQ==
-X-Google-Smtp-Source: AK7set8TsU9xvfr6PQsCevTseZydSOkH/AgeTwrsBLD7Q6/7WzAw6UaZp6GL1E1/ZyxaWECiNOWpuWv2JW3g3jNhlLE=
-X-Received: by 2002:a05:6902:cf:b0:a02:a44e:585c with SMTP id
- i15-20020a05690200cf00b00a02a44e585cmr6999792ybs.1.1678123464769; Mon, 06 Mar
- 2023 09:24:24 -0800 (PST)
+        Mon, 6 Mar 2023 12:26:16 -0500
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2062f.outbound.protection.outlook.com [IPv6:2a01:111:f400:7eb2::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22FB967836;
+        Mon,  6 Mar 2023 09:25:34 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NbkIQmHMlenYVDylNHa9tky1MAScGo8S4D9ijGji6DghHAn+OpUBfeoA2vc1oeUEu8KdCxpqnlSg5H5E411AfyMa4Djb9HncGMrt7/odOlFemHUl5hHw3OCVoB1dPXBcMc12KasZ/WlF8kmEwmbkvguTD3CaRAyRQSFYy9ZKa86MXyYJL5mIyXxwNcNeiJ/xtm/3JnonClIefj+rz92BYbDVB5i0cv2IUlaLq2DwX5cy5MtyHKmqr25gI16M1XYtINuWZLls255CI8Qjv/L1pF3ocdZKESMf63GS+DkwCa37hQp6a3X7C8YpSN59IwW4102+EI5scEtGjzHzHF2iug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XxTTaX0RvNIuGzXe79JJPMl4YfA6n1vchK0hnLsPc6A=;
+ b=naPIQEFxrNPys9YdoIfl+H7zsQYlL7TUOZs/XXcgRrksOdKqOXiKyJqwSOCDxv1/TLz/sS/mCLvD6njgl302wWeJTCbjJCnNnwHK8biBSPivzTKzwGl0YQE9pda/S+HR0qzm8ahW+5vdBCRgf9lm7do1ViFDm9qpNkHBCicH8pGMkvg5Oj9x7xIhsyo9uFMI7UGQ7zQqE8n6RCbVi20rp7yXnJ3bEqGLiy4JkQhBVWYr2R+ait41g1zI85TpEiovzkhtPNMu0nM56EHBcJmvc4ToyMEuW9vZlC9Rdw2XgEfmnahfJ2ZigF4NkufgfuBOZgXfWgU1PNTi9JU90ROmOg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XxTTaX0RvNIuGzXe79JJPMl4YfA6n1vchK0hnLsPc6A=;
+ b=nEGTy0kPmXAoPmOXA6Rc8k8XsTJeV1NoQcbyyWC6BfEG1ix3R4dqNtoKDyNm0wVuocmc+xF0HGCIuaF+UUSutHL4o5D/hcw0B1YoSBiaoEmvl0AcvDfQa/YMCtkswzV4kMEAfwKJ5HAyCWM/ksx2/P/GF3seTJzRj1ZYnHn4v7E=
+Received: from DS7PR03CA0059.namprd03.prod.outlook.com (2603:10b6:5:3b5::34)
+ by BY5PR12MB4147.namprd12.prod.outlook.com (2603:10b6:a03:205::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.28; Mon, 6 Mar
+ 2023 17:25:08 +0000
+Received: from DM6NAM11FT006.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3b5:cafe::d5) by DS7PR03CA0059.outlook.office365.com
+ (2603:10b6:5:3b5::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.28 via Frontend
+ Transport; Mon, 6 Mar 2023 17:25:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DM6NAM11FT006.mail.protection.outlook.com (10.13.173.104) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.6178.15 via Frontend Transport; Mon, 6 Mar 2023 17:25:08 +0000
+Received: from SATLEXMB08.amd.com (10.181.40.132) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 6 Mar
+ 2023 11:25:05 -0600
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB08.amd.com
+ (10.181.40.132) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 6 Mar
+ 2023 09:24:45 -0800
+Received: from xhdsneeli40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
+ Transport; Mon, 6 Mar 2023 11:24:17 -0600
+From:   Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+To:     <broonie@kernel.org>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <vigneshr@ti.com>, <jic23@kernel.org>,
+        <tudor.ambarus@microchip.com>, <pratyush@kernel.org>,
+        <Sanju.Mehta@amd.com>, <chin-ting_kuo@aspeedtech.com>,
+        <clg@kaod.org>, <kdasu.kdev@gmail.com>, <f.fainelli@gmail.com>,
+        <rjui@broadcom.com>, <sbranden@broadcom.com>,
+        <eajames@linux.ibm.com>, <olteanv@gmail.com>, <han.xu@nxp.com>,
+        <john.garry@huawei.com>, <shawnguo@kernel.org>,
+        <s.hauer@pengutronix.de>, <narmstrong@baylibre.com>,
+        <khilman@baylibre.com>, <matthias.bgg@gmail.com>,
+        <haibo.chen@nxp.com>, <linus.walleij@linaro.org>,
+        <daniel@zonque.org>, <haojian.zhuang@gmail.com>,
+        <robert.jarzmik@free.fr>, <agross@kernel.org>,
+        <bjorn.andersson@linaro.org>, <heiko@sntech.de>,
+        <krzysztof.kozlowski@linaro.org>, <andi@etezian.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <wens@csie.org>, <jernej.skrabec@gmail.com>, <samuel@sholland.org>,
+        <masahisa.kojima@linaro.org>, <jaswinder.singh@linaro.org>,
+        <rostedt@goodmis.org>, <mingo@redhat.com>,
+        <l.stelmach@samsung.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <alex.aring@gmail.com>, <stefan@datenfreihafen.org>,
+        <kvalo@kernel.org>, <james.schulman@cirrus.com>,
+        <david.rhodes@cirrus.com>, <tanureal@opensource.cirrus.com>,
+        <rf@opensource.cirrus.com>, <perex@perex.cz>, <tiwai@suse.com>,
+        <npiggin@gmail.com>, <christophe.leroy@csgroup.eu>,
+        <mpe@ellerman.id.au>, <oss@buserror.net>, <windhl@126.com>,
+        <yangyingliang@huawei.com>, <william.zhang@broadcom.com>,
+        <kursad.oney@broadcom.com>, <jonas.gorski@gmail.com>,
+        <anand.gore@broadcom.com>, <rafal@milecki.pl>
+CC:     <git@amd.com>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <joel@jms.id.au>,
+        <andrew@aj.id.au>, <radu_nicolae.pirea@upb.ro>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <claudiu.beznea@microchip.com>,
+        <bcm-kernel-feedback-list@broadcom.com>, <fancer.lancer@gmail.com>,
+        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>,
+        <jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
+        <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
+        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
+        <benjaminfair@google.com>, <yogeshgaur.83@gmail.com>,
+        <konrad.dybcio@somainline.org>, <alim.akhtar@samsung.com>,
+        <ldewangan@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <michal.simek@amd.com>,
+        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-wpan@vger.kernel.org>,
+        <libertas-dev@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <linux-iio@vger.kernel.org>, <michael@walle.cc>,
+        <palmer@dabbelt.com>, <linux-riscv@lists.infradead.org>,
+        <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <amitrkcian2002@gmail.com>,
+        <amit.kumar-mahapatra@amd.com>
+Subject: [PATCH V5 06/15] platform/x86: serial-multi-instantiate: Replace all spi->chip_select and spi->cs_gpiod references with function call
+Date:   Mon, 6 Mar 2023 22:51:00 +0530
+Message-ID: <20230306172109.595464-7-amit.kumar-mahapatra@amd.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230306172109.595464-1-amit.kumar-mahapatra@amd.com>
+References: <20230306172109.595464-1-amit.kumar-mahapatra@amd.com>
 MIME-Version: 1.0
-References: <CGME20230303145219eucas1p218c2e302e41464432627c8ac074302f8@eucas1p2.samsung.com>
- <20230303145138.29233-1-jagan@amarulasolutions.com> <79c2e5cc-a488-09ae-dc68-18dbc47d963a@samsung.com>
- <CAMty3ZC1U3eDmtWa_sx0Sop_V1vU3fSM=r21U9qPf0UmCYTOkA@mail.gmail.com> <4b2624f6-b904-4daa-29ca-380cc7dbfc45@samsung.com>
-In-Reply-To: <4b2624f6-b904-4daa-29ca-380cc7dbfc45@samsung.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 6 Mar 2023 22:54:13 +0530
-Message-ID: <CAMty3ZDiBERymX=jgM_dtDBbd_rvw9E4Q05ECy+dtpnZa2nkJw@mail.gmail.com>
-Subject: Re: [PATCH v15 00/16] drm: Add Samsung MIPI DSIM bridge
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Marek Vasut <marex@denx.de>,
-        Maxime Ripard <mripard@kernel.org>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Adam Ford <aford173@gmail.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT006:EE_|BY5PR12MB4147:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1422a481-6afc-4b20-fdb4-08db1e67bbf1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: AzzSJUjobRyMuwK7pspBvT8itA3MpfoIsUnk6QlJ+jW6NaqPAv9xdxXpXr0Foe4qaWvX4J6+01u1XrVYGultnpZNyYePaDI2KxaedeepviAeTRUGX2rshWu68hdS7d7/u/morW4/WVgFBMwB84eyNqKznARBpSA2SACs99Kr9tsHnG/TFmUTpFFZ7vV6VGYlthkKFLd88He+gFA1O8cQsmF91HqZVeE8oBVxeITAWxuItQ452sLqy+9uJX0jCa5gmFuB3rPoqPsZr5IcDjAANZ8EbvofKaTLXCbqXWjoWyR4X/3uJ0U/Gt/pFweaPCH30XfzG6jY7TNfwetiQFHoZlieO7eH0G5F7qqT0AEAgsT7kqWe88sEROr+qzcR9wr7NZs1Is11qSRuU1mJErtwp46QQygpz0DM5qeoRkzbjXgS7I29m/nYu9nAV0ilSJhXUlGB1b75t4XSD9+3WhnCNxuQq6wWaAtivqI6VuxM8MkquyZy0o1K93+ux7kqkRpUAPode0ryFB0bzx9M44ZzruKKHSDa1O3rbYIVQqlOQC4t7F2fBd6RF8tE4+zx9qjkyzNxkdnTEcllXAhpLzWXfuESzsVcZ+IXzrFumwoQIy0djF1abnlev6tmQXDwbVpg0PuSHpwIMdD7u4YnNDQhc7xSbPd6eElzlwQhO6GmZ36W7DQ58Dzj4cJjVcGwvU5364yZYDbiDd/ejwN2b7wqVWGXyB9yeGKH+9BZdn/vPvi/KrYJugYRQ1vbqkez6T1F4JZccnCWFAZVnSMP9GQjvdQ5a1TVgRz5jQ21xBgrXxPvzAh2kjO+ScQ0GyQaX6B0ygIB1GKPNIp8buJiWN63rPHBZpZiHBzQxvqEj7NBHJg=
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(396003)(376002)(346002)(136003)(451199018)(36840700001)(46966006)(40470700004)(36860700001)(921005)(86362001)(82740400003)(81166007)(356005)(5660300002)(36756003)(7416002)(7276002)(7336002)(7366002)(2906002)(7406005)(4326008)(70586007)(70206006)(40480700001)(8676002)(8936002)(41300700001)(1191002)(82310400005)(2616005)(336012)(26005)(40460700003)(186003)(83380400001)(47076005)(426003)(54906003)(110136005)(478600001)(316002)(1076003)(6666004)(41080700001)(2101003)(36900700001)(83996005)(84006005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2023 17:25:08.3283
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1422a481-6afc-4b20-fdb4-08db1e67bbf1
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT006.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4147
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Supporting multi-cs in spi drivers would require the chip_select & cs_gpiod
+members of struct spi_device to be an array. But changing the type of these
+members to array would break the spi driver functionality. To make the
+transition smoother introduced four new APIs to get/set the
+spi->chip_select & spi->cs_gpiod and replaced all spi->chip_select and
+spi->cs_gpiod references with get or set API calls.
+While adding multi-cs support in further patches the chip_select & cs_gpiod
+members of the spi_device structure would be converted to arrays & the
+"idx" parameter of the APIs would be used as array index i.e.,
+spi->chip_select[idx] & spi->cs_gpiod[idx] respectively.
 
-On Mon, Mar 6, 2023 at 4:32=E2=80=AFPM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> Hi Jagan,
->
-> On 04.03.2023 19:59, Jagan Teki wrote:
-> > On Sat, Mar 4, 2023 at 3:56=E2=80=AFAM Marek Szyprowski
-> > <m.szyprowski@samsung.com> wrote:
-> >> On 03.03.2023 15:51, Jagan Teki wrote:
-> >>> This series supports common bridge support for Samsung MIPI DSIM
-> >>> which is used in Exynos and i.MX8MM SoC's.
-> >>>
-> >>> The final bridge supports both the Exynos and i.MX8M Mini/Nano/Plus.
-> >>>
-> >>> Inki Dae: please note that this series added on top of exynos-drm-nex=
-t
-> >>> since few exynos dsi changes are not been part of drm-misc-next.
-> >>> Request you to pick these via exynos-drm-next, or let me know if you
-> >>> have any comments?
-> >> I gave it a try on Exynos TM2e and unfortunately it nukes again:
-> >>
-> >> exynos-drm exynos-drm: bound 13970000.hdmi (ops hdmi_component_ops)
-> >> Unable to handle kernel paging request at virtual address 003d454d414e=
-5675
-> >> ...
-> >> [003d454d414e5675] address between user and kernel address ranges
-> >> Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> >> Modules linked in:
-> >> CPU: 4 PID: 9 Comm: kworker/u16:0 Not tainted 6.2.0-next-20230303+ #13=
-341
-> >> Hardware name: Samsung TM2E board (DT)
-> >> Workqueue: events_unbound deferred_probe_work_func
-> >> pstate: 000000c5 (nzcv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
-> >> pc : drm_connector_list_iter_next+0x58/0x100
-> >> lr : drm_connector_list_iter_next+0x2c/0x100
-> >> sp : ffff80000bbab910
-> >> ...
-> >> Call trace:
-> >>    drm_connector_list_iter_next+0x58/0x100
-> >>    drm_mode_config_reset+0xfc/0x144
-> >>    exynos_drm_bind+0x160/0x1b8
-> >>    try_to_bring_up_aggregate_device+0x168/0x1d4
-> >>    __component_add+0xa8/0x170
-> >>    component_add+0x14/0x20
-> >>    hdmi_probe+0x3fc/0x6d4
-> >>    platform_probe+0x68/0xd8
-> >>    really_probe+0x148/0x2b4
-> >>    __driver_probe_device+0x78/0xe0
-> >>    driver_probe_device+0xd8/0x160
-> >>    __device_attach_driver+0xb8/0x138
-> >>    bus_for_each_drv+0x84/0xe0
-> >>    __device_attach+0xa8/0x1b0
-> >>    device_initial_probe+0x14/0x20
-> >>    bus_probe_device+0xb0/0xb4
-> >>    deferred_probe_work_func+0x8c/0xc8
-> >>    process_one_work+0x288/0x6c8
-> >>    worker_thread+0x24c/0x450
-> >>    kthread+0x118/0x11c
-> >>    ret_from_fork+0x10/0x20
-> > This looks not related to dsi to me since there is no exynos_drm_dsi
-> > call in the trace. look hdmi related. Moreover, I think the exynos dsi
-> > worked well on v10 and I couldn't find any potential differences in
-> > terms of call flow change.
-> > https://gitlab.com/openedev/kernel/-/commits/imx8mm-dsi-v10
->
-> Well, the issue is definitely related to this patchset. On Friday, due
-> to other kernel messages, I missed the most important part of the log:
->
-> [drm] Exynos DRM: using 13800000.decon device for DMA mapping operations
-> exynos-drm exynos-drm: bound 13800000.decon (ops decon_component_ops)
-> exynos-drm exynos-drm: bound 13880000.decon (ops decon_component_ops)
-> exynos-dsi 13900000.dsi: [drm:samsung_dsim_host_attach] Attached s6e3hf2
-> device
-> exynos-dsi 13900000.dsi: request interrupt failed with -22
-> panel-samsung-s6e3ha2: probe of 13900000.dsi.0 failed with error -22
-> exynos-drm exynos-drm: bound 13900000.dsi (ops exynos_dsi_component_ops)
-> exynos-drm exynos-drm: bound 13930000.mic (ops exynos_mic_component_ops)
->
-> It looks that the are at least 2 issues. The first one related to TE
-> interrupt registration, the second is broken error path, which should
-> free allocated resources and stop DRM from binding/initialization.
->
-> This patch fixes the issue (TE gpio/interrupt is optional!):
->
-> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c
-> b/drivers/gpu/drm/bridge/samsung-dsim.c
-> index b4a5348b763c..ed83495fe105 100644
-> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
-> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-> @@ -1518,7 +1518,9 @@ static int samsung_dsim_register_te_irq(struct
-> samsung_dsim *dsi, struct device
->          int ret;
->
->          dsi->te_gpio =3D devm_gpiod_get_optional(dev, "te", GPIOD_IN);
-> -       if (IS_ERR(dsi->te_gpio))
-> +       if (!dsi->te_gpio)
-> +               return 0;
-> +       else if (IS_ERR(dsi->te_gpio))
+Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+Reviewed-by: Michal Simek <michal.simek@amd.com>
+---
+ drivers/platform/x86/serial-multi-instantiate.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I think I missed this change from v10 where Marek V commented to move
-this in dsim instead of in Exynos. anyway, I will correct this.
+diff --git a/drivers/platform/x86/serial-multi-instantiate.c b/drivers/platform/x86/serial-multi-instantiate.c
+index 5362f1a7b77c..270a4700d25d 100644
+--- a/drivers/platform/x86/serial-multi-instantiate.c
++++ b/drivers/platform/x86/serial-multi-instantiate.c
+@@ -139,7 +139,8 @@ static int smi_spi_probe(struct platform_device *pdev, struct smi *smi,
+ 			goto error;
+ 		}
+ 
+-		dev_dbg(dev, "SPI device %s using chip select %u", name, spi_dev->chip_select);
++		dev_dbg(dev, "SPI device %s using chip select %u", name,
++			spi_get_chipselect(spi_dev, 0));
+ 
+ 		smi->spi_devs[i] = spi_dev;
+ 		smi->spi_num++;
+-- 
+2.25.1
 
->                  return dev_err_probe(dev, PTR_ERR(dsi->te_gpio),
-> "failed to get te GPIO\n");
->
->          te_gpio_irq =3D gpiod_to_irq(dsi->te_gpio);
->
->
-> The error path in samsung_dsim_host_attach() after
-> samsung_dsim_register_te_irq() failure is wrong. It lacks cleaning up
-> the allocated resources (removing the bridge, detaing the dsi device).
-
-This is because of the same discussion of moving TE GPIO in dsim instead ex=
-ynos.
-
-How about register TE GPIO before calling host attach like this,
-
---- a/drivers/gpu/drm/bridge/samsung-dsim.c
-+++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -1598,9 +1598,6 @@ static int samsung_dsim_host_attach(struct
-mipi_dsi_host *host,
-
-        drm_bridge_add(&dsi->bridge);
-
--       if (pdata->host_ops && pdata->host_ops->attach)
--               pdata->host_ops->attach(dsi, device);
--
-        /*
-         * This is a temporary solution and should be made by more generic =
-way.
-         *
-@@ -1613,6 +1610,9 @@ static int samsung_dsim_host_attach(struct
-mipi_dsi_host *host,
-                        return ret;
-        }
-
-+       if (pdata->host_ops && pdata->host_ops->attach)
-+               pdata->host_ops->attach(dsi, device);
-+
-        dsi->lanes =3D device->lanes;
-        dsi->format =3D device->format;
-        dsi->mode_flags =3D device->mode_flags;
-
-Would you please check this?
-
-Thanks,
-Jagan.
