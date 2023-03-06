@@ -2,211 +2,184 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91DD6C61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 17:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD05C64EC4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Mar 2023 17:48:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230435AbjCFRgK (ORCPT
+        id S229534AbjCFRsx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Mar 2023 12:36:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44236 "EHLO
+        Mon, 6 Mar 2023 12:48:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230496AbjCFRgC (ORCPT
+        with ESMTP id S229826AbjCFRsu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2023 12:36:02 -0500
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on20611.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e89::611])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E4B937569;
-        Mon,  6 Mar 2023 09:35:34 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AIN69o9oBiVAT3VNV3ZHy8Sx8JTGTGBWrhhUUbatp0K+QWxGmn1imFd5PRFQvubiZhDlDwzhfK5Hsn6xut34uiX9EvTkc4XhbzmlHRZ+oi+N5nVMDIooXTCiSE8jOBCtDORhE93re7FX2GfsdwX0JfftfjaPoVIIi0uOwtLMy+iX3KkULg7LaM3fKCRJAJ6xHpeZZuRXKom3z3p0t7luRCPZuZvseYAaJdUe6F9PbrVPG/PXszdd4SJKHlmyemw7u0WbDwdOL4BiQ56MhKXLsbUBuyKbAEdUX2GjAomLrGTIl+f/wTDzvI1N7LBvGwFcOAb3KtV66cnfKEs/oynHFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SAhIOHKu4HJGlav21Dv/GMi46fbF1Mnp5ITBekjHuvY=;
- b=Tfk95eLD00TMfzdxkjXbbuGX97NZUQ/qVp9F4flB9JBQ0YawHkcUlXMTxeQ0o1/ViiZKX31iSiF8YYGYN4GEfNXQai/WhaK34GCAb76OAeoubwGt7EVbO1xx4jsSx3HwNvqo2UBhcl6VeLx67A2kfvFvKjHxl3Z+vo0hwIxDV9xqn9u55A7YzB8PfhlqXommTK7CY7Y4sAfQOG0XkkJJDPyuDZhh6RZjDjMSi76RaUrVls1kwt/DOj7eJcyVcWSxJkP+B9+XD1HylAcFWwFIx/eFyD2ddHjKTrFwiBLFFFh7IF///TfB7wV0A6VQmUKq6AgsZcIgKVorJq+pg3xXzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SAhIOHKu4HJGlav21Dv/GMi46fbF1Mnp5ITBekjHuvY=;
- b=FF+PhqyQct0vzVRiLc7t9NZ/76RfrsygXf9klSr1SWz62z3pEYTfaSWwCB4oBNA1I9nHwzA/EtIPrqPbP5YJU6JeaKDJ8jEQyum0kXZMDyhxrVauyI7z6QZNMv7vXcxrH2lUt/95IiC8JGXpfhkS9vrLKGR7ZMJSW2Afzjwjs94=
-Received: from BN1PR13CA0012.namprd13.prod.outlook.com (2603:10b6:408:e2::17)
- by DM6PR12MB4529.namprd12.prod.outlook.com (2603:10b6:5:2ab::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.28; Mon, 6 Mar
- 2023 17:28:48 +0000
-Received: from BN8NAM11FT098.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e2:cafe::ca) by BN1PR13CA0012.outlook.office365.com
- (2603:10b6:408:e2::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.15 via Frontend
- Transport; Mon, 6 Mar 2023 17:28:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BN8NAM11FT098.mail.protection.outlook.com (10.13.177.196) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6178.15 via Frontend Transport; Mon, 6 Mar 2023 17:28:47 +0000
-Received: from SATLEXMB08.amd.com (10.181.40.132) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 6 Mar
- 2023 11:28:45 -0600
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB08.amd.com
- (10.181.40.132) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 6 Mar
- 2023 09:28:44 -0800
-Received: from xhdsneeli40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
- Transport; Mon, 6 Mar 2023 11:28:17 -0600
-From:   Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-To:     <broonie@kernel.org>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>, <vigneshr@ti.com>, <jic23@kernel.org>,
-        <tudor.ambarus@microchip.com>, <pratyush@kernel.org>,
-        <Sanju.Mehta@amd.com>, <chin-ting_kuo@aspeedtech.com>,
-        <clg@kaod.org>, <kdasu.kdev@gmail.com>, <f.fainelli@gmail.com>,
-        <rjui@broadcom.com>, <sbranden@broadcom.com>,
-        <eajames@linux.ibm.com>, <olteanv@gmail.com>, <han.xu@nxp.com>,
-        <john.garry@huawei.com>, <shawnguo@kernel.org>,
-        <s.hauer@pengutronix.de>, <narmstrong@baylibre.com>,
-        <khilman@baylibre.com>, <matthias.bgg@gmail.com>,
-        <haibo.chen@nxp.com>, <linus.walleij@linaro.org>,
-        <daniel@zonque.org>, <haojian.zhuang@gmail.com>,
-        <robert.jarzmik@free.fr>, <agross@kernel.org>,
-        <bjorn.andersson@linaro.org>, <heiko@sntech.de>,
-        <krzysztof.kozlowski@linaro.org>, <andi@etezian.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <wens@csie.org>, <jernej.skrabec@gmail.com>, <samuel@sholland.org>,
-        <masahisa.kojima@linaro.org>, <jaswinder.singh@linaro.org>,
-        <rostedt@goodmis.org>, <mingo@redhat.com>,
-        <l.stelmach@samsung.com>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <alex.aring@gmail.com>, <stefan@datenfreihafen.org>,
-        <kvalo@kernel.org>, <james.schulman@cirrus.com>,
-        <david.rhodes@cirrus.com>, <tanureal@opensource.cirrus.com>,
-        <rf@opensource.cirrus.com>, <perex@perex.cz>, <tiwai@suse.com>,
-        <npiggin@gmail.com>, <christophe.leroy@csgroup.eu>,
-        <mpe@ellerman.id.au>, <oss@buserror.net>, <windhl@126.com>,
-        <yangyingliang@huawei.com>, <william.zhang@broadcom.com>,
-        <kursad.oney@broadcom.com>, <jonas.gorski@gmail.com>,
-        <anand.gore@broadcom.com>, <rafal@milecki.pl>
-CC:     <git@amd.com>, <linux-spi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <joel@jms.id.au>,
-        <andrew@aj.id.au>, <radu_nicolae.pirea@upb.ro>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <claudiu.beznea@microchip.com>,
-        <bcm-kernel-feedback-list@broadcom.com>, <fancer.lancer@gmail.com>,
-        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>,
-        <jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
-        <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
-        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
-        <benjaminfair@google.com>, <yogeshgaur.83@gmail.com>,
-        <konrad.dybcio@somainline.org>, <alim.akhtar@samsung.com>,
-        <ldewangan@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <michal.simek@amd.com>,
-        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-wpan@vger.kernel.org>,
-        <libertas-dev@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <linux-iio@vger.kernel.org>, <michael@walle.cc>,
-        <palmer@dabbelt.com>, <linux-riscv@lists.infradead.org>,
-        <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
-        <linuxppc-dev@lists.ozlabs.org>, <amitrkcian2002@gmail.com>,
-        <amit.kumar-mahapatra@amd.com>
-Subject: [PATCH V5 13/15] spi: spi-zynqmp-gqspi: Add stacked memories support in GQSPI driver
-Date:   Mon, 6 Mar 2023 22:51:07 +0530
-Message-ID: <20230306172109.595464-14-amit.kumar-mahapatra@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230306172109.595464-1-amit.kumar-mahapatra@amd.com>
-References: <20230306172109.595464-1-amit.kumar-mahapatra@amd.com>
+        Mon, 6 Mar 2023 12:48:50 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1A1D3A86E
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Mar 2023 09:48:10 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pZEvl-0003LN-91; Mon, 06 Mar 2023 18:47:25 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pZEvj-002IlX-L7; Mon, 06 Mar 2023 18:47:23 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pZEvi-002lWe-SK; Mon, 06 Mar 2023 18:47:22 +0100
+Date:   Mon, 6 Mar 2023 18:47:22 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-kernel@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        kernel@pengutronix.de, Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH 1/3] watchdog: s3c2410_wdt: Fold
+ s3c2410_get_wdt_drv_data() into only caller
+Message-ID: <20230306174722.rl2fws2p7pseo465@pengutronix.de>
+References: <891023d7-9510-445e-9053-ad5c0398d350@roeck-us.net>
+ <20230306090919.2206871-1-u.kleine-koenig@pengutronix.de>
+ <20230306090919.2206871-2-u.kleine-koenig@pengutronix.de>
+ <312e57b8-d47f-1269-a463-d2a4ef19b212@roeck-us.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT098:EE_|DM6PR12MB4529:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3e543323-77a1-40d0-fe52-08db1e683e99
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: wNN0f5aBHSJGYW/4EONAHS2DiM1o/bERWIV1enovAdVhAjbae1kdi6cjrWFS7OoCNEJryfmS+5M3XWOgyRrqX1IdVb3zeHXZIUqLiS6B86hV1K2chC0ViKQrhM9fTPb9DHoR1PXz6rZfFX+jq07oC/lF7FKiXPLtG1UtuQg3YRYKNiK/H3oaOIzBNskUUQuTc5p8iIjoSEwMxFzIhWm2TtXjXOr8zuGAG53jhZNQ6AnjDlY72hRbBBhCnYrRU+FIVZ+xDQtyo93Rn/ECCSf/jbFFtLR3uI/obIpcRWvpSLMZu0zMoNqxRpaoPfhYy08ROrWQ+1FjOhfcfHm/bocuq61pozOIjAmO6R85Zhd3xHxLNJrX2CUB0zDB04mWCiOocFxOurk7bk7ZpyNqgBCKDfdiLoYOd/HtE4HAgujsmTQqHy8q82Y84Gp4SdNVQIzrQOCg9yIB5/Tkpj56cjyOW9g6WwZKHnR9GGC3o/4xO/mPuwsI/ywAWdg3OntATl34XMr0TWRsN95p/OHN0a+rXfjSA6Bn8TmEgWAgY1F6dofX94uxI9uMuZW5rVQxAeroQefZIx4OnlUcCY7TR0AL+fO9G+CK4ARdzkUxMONDAS/OdKm2ac4tDyo25U+J9mz6+hBvBwyfJ1C4NqG+mUh88NmPmF6NyFqYRMkYrcrheNfMIYTRq1SDSDVEVC/oAyphefcvdXJK2fQ0XV0mtqP5vg1lXSASSUz5/9UBosLBd3+Jf23Ruj4dzxWGPDx9MzoSzM4TAoKODIPaIGg40B0yc60mb8uLPHE8AVxBEo6p4bGrb8LT1yKaTAggyzaziUuvIRy4ng7ddqMOSN5YFt4LLuH4rKCxvfEe4F4WmkvLu6c=
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230025)(4636009)(396003)(376002)(136003)(346002)(39860400002)(451199018)(36840700001)(46966006)(40470700004)(36860700001)(86362001)(356005)(82740400003)(81166007)(921005)(36756003)(7336002)(7276002)(5660300002)(7366002)(7406005)(2906002)(70206006)(40480700001)(4326008)(70586007)(8936002)(8676002)(7416002)(41300700001)(82310400005)(1191002)(336012)(2616005)(186003)(26005)(83380400001)(47076005)(426003)(40460700003)(110136005)(54906003)(478600001)(316002)(1076003)(6666004)(84006005)(41080700001)(2101003)(83996005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2023 17:28:47.7362
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e543323-77a1-40d0-fe52-08db1e683e99
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT098.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4529
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="p2tswwbb25t54ljm"
+Content-Disposition: inline
+In-Reply-To: <312e57b8-d47f-1269-a463-d2a4ef19b212@roeck-us.net>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-GQSPI supports two chip select CS0 & CS1. Update the driver to
-assert/de-assert the appropriate chip select as per the bits set in
-qspi->cs_index_mask.
 
-Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
----
- drivers/spi/spi-zynqmp-gqspi.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+--p2tswwbb25t54ljm
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
-index 319cdd5a0bdc..4759f704bf5c 100644
---- a/drivers/spi/spi-zynqmp-gqspi.c
-+++ b/drivers/spi/spi-zynqmp-gqspi.c
-@@ -156,6 +156,9 @@
- #define GQSPI_FREQ_100MHZ	100000000
- #define GQSPI_FREQ_150MHZ	150000000
- 
-+#define GQSPI_SELECT_LOWER_CS  BIT(0)
-+#define GQSPI_SELECT_UPPER_CS  BIT(1)
-+
- #define SPI_AUTOSUSPEND_TIMEOUT		3000
- enum mode_type {GQSPI_MODE_IO, GQSPI_MODE_DMA};
- 
-@@ -467,15 +470,17 @@ static void zynqmp_qspi_chipselect(struct spi_device *qspi, bool is_high)
- 
- 	genfifoentry |= GQSPI_GENFIFO_MODE_SPI;
- 
-+	if (qspi->cs_index_mask & GQSPI_SELECT_UPPER_CS) {
-+		zynqmp_gqspi_selectslave(xqspi,
-+					 GQSPI_SELECT_FLASH_CS_UPPER,
-+					 GQSPI_SELECT_FLASH_BUS_LOWER);
-+	} else if (qspi->cs_index_mask & GQSPI_SELECT_LOWER_CS) {
-+		zynqmp_gqspi_selectslave(xqspi,
-+					 GQSPI_SELECT_FLASH_CS_LOWER,
-+					 GQSPI_SELECT_FLASH_BUS_LOWER);
-+	}
-+	genfifoentry |= xqspi->genfifobus;
- 	if (!is_high) {
--		if (!spi_get_chipselect(qspi, 0)) {
--			xqspi->genfifobus = GQSPI_GENFIFO_BUS_LOWER;
--			xqspi->genfifocs = GQSPI_GENFIFO_CS_LOWER;
--		} else {
--			xqspi->genfifobus = GQSPI_GENFIFO_BUS_UPPER;
--			xqspi->genfifocs = GQSPI_GENFIFO_CS_UPPER;
--		}
--		genfifoentry |= xqspi->genfifobus;
- 		genfifoentry |= xqspi->genfifocs;
- 		genfifoentry |= GQSPI_GENFIFO_CS_SETUP;
- 	} else {
--- 
-2.25.1
+On Mon, Mar 06, 2023 at 09:17:23AM -0800, Guenter Roeck wrote:
+> On 3/6/23 01:09, Uwe Kleine-K=F6nig wrote:
+> > s3c2410_get_wdt_drv_data() is only called by s3c2410wdt_probe(), so the
+> > implementation of the former can move to the latter.
+> >=20
+> > scripts/bloat-o-meter reports for this change (on an ARCH=3Darm
+> > allmodconfig build):
+> >=20
+> > 	add/remove: 1/1 grow/shrink: 0/2 up/down: 4/-129 (-125)
+> >=20
+>=20
+> The reason for separating functions in this case wasn't that the separate=
+ function
+> would be called several times. It was to improve code readability. If any=
+thing,
+> I would argue that it might sense to split the already lengthy probe func=
+tion
+> further instead of combining it.
 
+Agreed. For dev_err_probe() to work the following would be alternatively
+possible:
+
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 58b262ca4e88..564919717761 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -579,8 +579,8 @@ static inline unsigned int s3c2410wdt_get_bootstatus(st=
+ruct s3c2410_wdt *wdt)
+ 	return 0;
+ }
+=20
+-static inline const struct s3c2410_wdt_variant *
+-s3c2410_get_wdt_drv_data(struct platform_device *pdev)
++static inline int
++s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt =
+*wdt)
+ {
+ 	const struct s3c2410_wdt_variant *variant;
+ 	struct device *dev =3D &pdev->dev;
+@@ -603,24 +603,26 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev)
+ 					   "samsung,cluster-index", &index);
+ 		if (err) {
+ 			dev_err(dev, "failed to get cluster index\n");
+-			return NULL;
++			return -EINVAL;
+ 		}
+=20
+ 		switch (index) {
+ 		case 0:
+-			return variant;
++			break;
+ 		case 1:
+-			return (variant =3D=3D &drv_data_exynos850_cl0) ?
++			variant =3D (variant =3D=3D &drv_data_exynos850_cl0) ?
+ 				&drv_data_exynos850_cl1 :
+ 				&drv_data_exynosautov9_cl1;
++			break;
+ 		default:
+ 			dev_err(dev, "wrong cluster index: %u\n", index);
+-			return NULL;
++			return -EINVAL;
+ 		}
+ 	}
+ #endif
++	wdt->drv_data =3D variant;
+=20
+-	return variant;
++	return 0;
+ }
+=20
+ static void s3c2410wdt_wdt_disable_action(void *data)
+@@ -644,9 +646,9 @@ static int s3c2410wdt_probe(struct platform_device *pde=
+v)
+ 	spin_lock_init(&wdt->lock);
+ 	wdt->wdt_device =3D s3c2410_wdd;
+=20
+-	wdt->drv_data =3D s3c2410_get_wdt_drv_data(pdev);
+-	if (!wdt->drv_data)
+-		return -EINVAL;
++	ret =3D s3c2410_get_wdt_drv_data(pdev, wdt);
++	if (ret)
++		return ret;
+=20
+ 	if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
+ 		wdt->pmureg =3D syscon_regmap_lookup_by_phandle(dev->of_node,
+
+I didn't check if it's the same as for my initial patch #1, but for an
+allmodconfig ARCH=3Darm build this also has a nice bloatometer output:
+
+	add/remove: 1/1 grow/shrink: 0/1 up/down: 4/-104 (-100)
+
+This would allow to make use of dev_err_probe() in
+s3c2410_get_wdt_drv_data() and still maintain the split into two
+functions.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--p2tswwbb25t54ljm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmQGJycACgkQwfwUeK3K
+7Alr9gf/TQZveDmZyuBBis7A0wGdjBGMgJFriU0A0pmrcViPf5mABkH/xvhJNC+f
+tvAj/fZu4qibRDYRV7tCXf0JpDOY8kYHRyMhcWGkb2rnSKNBTgCXDqHHzPCCmuMb
+n0VmhTvaJ7ju7HY6s6CO4sBmffEeqp2dhC+UIoPudAzNLNRWb9p4b/Daf7EXDs3P
+7trtsKYa1y35Cle92KMPwq+i/ap0SdvimXFqHtZR4SzNYkPL2WGfYYE1tmJk+FmT
+47rDzkDHg6FObcdhVtdGSHxPND9mBdZ9aDh9zoXr4fKNROUYPn8K57Bq4fHwZt1W
+HwYZSmx/1jXZhkgYwdIKGYaJ17RLww==
+=9P0q
+-----END PGP SIGNATURE-----
+
+--p2tswwbb25t54ljm--
