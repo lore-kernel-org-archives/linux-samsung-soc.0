@@ -2,107 +2,120 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C487C678D5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Mar 2023 19:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C83C8C6FA99
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Mar 2023 21:01:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234046AbjCGTVc (ORCPT
+        id S231205AbjCGVBK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Mar 2023 14:21:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54632 "EHLO
+        Tue, 7 Mar 2023 16:01:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233866AbjCGTVO (ORCPT
+        with ESMTP id S230518AbjCGVBE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Mar 2023 14:21:14 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26FAE1ACC7;
-        Tue,  7 Mar 2023 11:05:25 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D11CDB818C4;
-        Tue,  7 Mar 2023 19:05:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BA2BC433EF;
-        Tue,  7 Mar 2023 19:05:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1678215922;
-        bh=+9OuRYwPI54o/Fm7g7hAoBFrQ8pYFyaSyAT3RvzsrqY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rdRKQVGOGYyqp+2qQJHZ8S8eb2gg5r83vTL2X93mxfeFbY5gFwmI9SuPq7PdTkist
-         udeW7BllMrlX8HE5RKKhSuKxv+gDOTDgg/1tKEYhQGS8AQFZ6ToGQRs7NHbB1CcSq5
-         SF5fvOT4siC/C3m0cFOnrDIdqR1NoWl9qxqzpWVE=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     stable@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        patches@lists.linux.dev,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.15 417/567] regulator: s5m8767: Bounds check id indexing into arrays
-Date:   Tue,  7 Mar 2023 18:02:33 +0100
-Message-Id: <20230307165923.953252495@linuxfoundation.org>
+        Tue, 7 Mar 2023 16:01:04 -0500
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBC559E521;
+        Tue,  7 Mar 2023 13:00:56 -0800 (PST)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 610075FD31;
+        Wed,  8 Mar 2023 00:00:53 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1678222853;
+        bh=n7uelarKUUaeZ2SnEaQ3vwbd0u3Zv00FrAdmQ5cpVvY=;
+        h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+        b=i1v+rF0zh/wcscwgQJcUwBai8ousVafggtpd/rfB9noAmOTM9VfTk0Hxh06bHWz9w
+         ZoRS8vKwLXINCde2jFPiXtCdxBTbrMUpAWuIwrr3lFjy5/0pK7RiCzRAsYa5+Rvpe4
+         472JEhHDOpQ/81/lyMZGtw3UKcXOX9Ehynf4TuTBGDfhenbtNw3vpfIiWdzOnUsoFO
+         419KseiiJqsuD6u9VcdL6OFrCECbYBBJCI6xuy0TwbwSzvLiw94eZEbIGlHDZgObN7
+         HY0kZLf8SpVogbj+WouX20gOPZAkeAa4Af00HDhqVPFkzhfONTw0uqFXfwiBKi4l4z
+         0Y+m4Wbs5X2Vg==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Wed,  8 Mar 2023 00:00:51 +0300 (MSK)
+From:   George Stark <gnstark@sberdevices.ru>
+To:     <thierry.reding@gmail.com>, <u.kleine-koenig@pengutronix.de>,
+        <krzysztof.kozlowski@linaro.org>, <alim.akhtar@samsung.com>
+CC:     <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@sberdevices.ru>,
+        <gnstark@sberdevices.ru>, George Stark <GNStark@sberdevices.ru>
+Subject: [RFC PATCH v1] Revert "pwm: Clear chip_data in pwm_put()"
+Date:   Wed, 8 Mar 2023 00:00:14 +0300
+Message-ID: <20230307210014.1380102-1-gnstark@sberdevices.ru>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230307165905.838066027@linuxfoundation.org>
-References: <20230307165905.838066027@linuxfoundation.org>
-User-Agent: quilt/0.67
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/03/07 18:59:00 #20923273
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
+From: George Stark <GNStark@sberdevices.ru>
 
-[ Upstream commit e314e15a0b58f9d051c00b25951073bcdae61953 ]
+This reverts commit e926b12c611c2095c7976e2ed31753ad6eb5ff1a.
 
-The compiler has no way to know if "id" is within the array bounds of
-the regulators array. Add a check for this and a build-time check that
-the regulators and reg_voltage_map arrays are sized the same. Seen with
-GCC 13:
+There're several issues with the original change:
 
-../drivers/regulator/s5m8767.c: In function 's5m8767_pmic_probe':
-../drivers/regulator/s5m8767.c:936:35: warning: array subscript [0, 36] is outside array bounds of 'struct regulator_desc[37]' [-Warray-bounds=]
-  936 |                         regulators[id].vsel_reg =
-      |                         ~~~~~~~~~~^~~~
+- it breaks generic semantics of set_driver_data-like routines that
+only client code controls lifetime of it's own data.
 
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Link: https://lore.kernel.org/r/20230128005358.never.313-kees@kernel.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+- it breaks pwm-sti.c driver: pwm_set_chip_data is used only in probe stage
+then pwm_get_chip_data used in capture callback
+
+Change-Id: I5787c6b4c520d4a0997567c416b26fa4e0806b94
+Signed-off-by: George Stark <GNStark@sberdevices.ru>
 ---
- drivers/regulator/s5m8767.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/pwm/core.c        | 1 -
+ drivers/pwm/pwm-berlin.c  | 1 +
+ drivers/pwm/pwm-samsung.c | 1 +
+ 3 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index 35269f9982105..754c6fcc6e642 100644
---- a/drivers/regulator/s5m8767.c
-+++ b/drivers/regulator/s5m8767.c
-@@ -923,10 +923,14 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index e01147f66e15..3bc644cc16fe 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -1036,7 +1036,6 @@ void pwm_put(struct pwm_device *pwm)
+ 	if (pwm->chip->ops->free)
+ 		pwm->chip->ops->free(pwm->chip, pwm);
  
- 	for (i = 0; i < pdata->num_regulators; i++) {
- 		const struct sec_voltage_desc *desc;
--		int id = pdata->regulators[i].id;
-+		unsigned int id = pdata->regulators[i].id;
- 		int enable_reg, enable_val;
- 		struct regulator_dev *rdev;
+-	pwm_set_chip_data(pwm, NULL);
+ 	pwm->label = NULL;
  
-+		BUILD_BUG_ON(ARRAY_SIZE(regulators) != ARRAY_SIZE(reg_voltage_map));
-+		if (WARN_ON_ONCE(id >= ARRAY_SIZE(regulators)))
-+			continue;
-+
- 		desc = reg_voltage_map[id];
- 		if (desc) {
- 			regulators[id].n_voltages =
+ 	module_put(pwm->chip->ops->owner);
+diff --git a/drivers/pwm/pwm-berlin.c b/drivers/pwm/pwm-berlin.c
+index e157273fd2f7..953cc2bba314 100644
+--- a/drivers/pwm/pwm-berlin.c
++++ b/drivers/pwm/pwm-berlin.c
+@@ -84,6 +84,7 @@ static void berlin_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+ 	struct berlin_pwm_channel *channel = pwm_get_chip_data(pwm);
+ 
++	pwm_set_chip_data(pwm, NULL);
+ 	kfree(channel);
+ }
+ 
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index 9c5b4f515641..7e5dbdd6fc64 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -249,6 +249,7 @@ static int pwm_samsung_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ static void pwm_samsung_free(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+ 	kfree(pwm_get_chip_data(pwm));
++	pwm_set_chip_data(pwm, NULL);
+ }
+ 
+ static int pwm_samsung_enable(struct pwm_chip *chip, struct pwm_device *pwm)
 -- 
-2.39.2
-
-
+2.38.4
 
