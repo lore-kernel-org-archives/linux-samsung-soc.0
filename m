@@ -2,163 +2,218 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADFD9C6FD1A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Mar 2023 16:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AADDBC6FD1E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Mar 2023 16:43:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230180AbjCGQkR (ORCPT
+        id S230368AbjCGQnd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Mar 2023 11:40:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50886 "EHLO
+        Tue, 7 Mar 2023 11:43:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231444AbjCGQj7 (ORCPT
+        with ESMTP id S229886AbjCGQnG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Mar 2023 11:39:59 -0500
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5023C900A6;
-        Tue,  7 Mar 2023 08:37:22 -0800 (PST)
-Received: by mail-ot1-x32a.google.com with SMTP id g6-20020a056830308600b0068d4b30536aso7451670ots.9;
-        Tue, 07 Mar 2023 08:37:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678207041;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PlN3Hd9NH7mOlX+BzcqMzXEQ9etvjS+ej/djzDPYTH0=;
-        b=pIOAmon3FzAc1jTqL2gC7i7uFbHIKda/mDrD6Fsn1huzX0iwJV1EBtbmy8oakKtxEa
-         8LYRtqBpCCTjdQdoxbei5AM2TSUvQ7I8JsMcJj1G85Zlz09ykBw1JH/j0OAlIe+706kR
-         C7IOUwcxyoRm5LnByCSNUSww/rlTKoaUPovFW2UWPPxTAlAj4R8n264XxGx0VJaTgu5P
-         KxaDWboOEfnUZ3eZHyYkfJXZFz+hrk6P5aJj+vy4/X6N8T3a+orcnHZAaNpv6KH5OduB
-         jP/vhbd6PyGjrBAilyCz1lQEbv9s1CxWSdb8oZ4uJMDWcBwYzXCIgRdzfx4N/wu4AnTN
-         klCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678207041;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PlN3Hd9NH7mOlX+BzcqMzXEQ9etvjS+ej/djzDPYTH0=;
-        b=HsfquIVJFYp9W1niIl1MbWro3LRH8u0KOz0kimE8oZDPCh6NXB57j0B3mzcGWrkHrf
-         VTCIstnY0WsIoKO3GIAamZjYo0QohgZehiGVhadPlSE6xauY/JmQgC5EP/zM8Cf4hmaf
-         xJxcy9sj7Rl1QJNtGxIspErwrXfhQKLmwEzTPpq8JMjBcL7fwKRwG7C4gsXwqNhj4xkq
-         e9dhxui5udaLvbHxOM4C3Hd2ACLiDzJC4m4fD9g663ooGhHXT3huO7L2KVsbgQDuEQhE
-         4x4Fi6YO+XNsdejFQm4ecpBsvn0ij8l70o7sX0o8VOWHykBCAmsjyA8XC30IKmiCrBzK
-         YkkA==
-X-Gm-Message-State: AO0yUKVu2ppuQwzp6WmBFzUQdlar/Z6WfabuPjt3z0BQJQwXSgxC8ChN
-        AwG82PtBhvlN3T6+46jOxe8=
-X-Google-Smtp-Source: AK7set/E9/ktmklL4iauj78AQ96RtIYiXnFYZ7eAH4rFLQaLOoKVHBLTpnZkyp+fXYwDEoY5/610xQ==
-X-Received: by 2002:a9d:705c:0:b0:68b:bf5e:492c with SMTP id x28-20020a9d705c000000b0068bbf5e492cmr7547022otj.28.1678207040889;
-        Tue, 07 Mar 2023 08:37:20 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id s27-20020a05683004db00b00684c5211c58sm5452754otd.60.2023.03.07.08.37.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Mar 2023 08:37:20 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Tue, 7 Mar 2023 08:37:19 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH v2 2/2] watchdog: s3c2410_wdt: Simplify using
- dev_err_probe()
-Message-ID: <51057d03-f421-4e76-b293-d186ba0f78a2@roeck-us.net>
-References: <20230307065603.2253054-1-u.kleine-koenig@pengutronix.de>
- <20230307065603.2253054-3-u.kleine-koenig@pengutronix.de>
+        Tue, 7 Mar 2023 11:43:06 -0500
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81B9D9474B
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Mar 2023 08:40:39 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:614d:21b0:703:d0f9])
+        by albert.telenet-ops.be with bizsmtp
+        id VUg82900A3mNwr406Ug80J; Tue, 07 Mar 2023 17:40:24 +0100
+Received: from geert (helo=localhost)
+        by ramsan.of.borg with local-esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pZaMC-00BCRZ-9r;
+        Tue, 07 Mar 2023 17:40:08 +0100
+Date:   Tue, 7 Mar 2023 17:40:08 +0100 (CET)
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     Frederic Weisbecker <frederic@kernel.org>,
+        Guo Ren <guoren@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Kajetan Puchalski <kajetan.puchalski@arm.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>, linux@armlinux.org.uk,
+        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+        kasan-dev@googlegroups.com, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 07/51] cpuidle,psci: Push RCU-idle into driver
+In-Reply-To: <20230112195539.760296658@infradead.org>
+Message-ID: <ff338b9f-4ab0-741b-26ea-7b7351da156@linux-m68k.org>
+References: <20230112194314.845371875@infradead.org> <20230112195539.760296658@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230307065603.2253054-3-u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Mar 07, 2023 at 07:56:03AM +0100, Uwe Kleine-König wrote:
-> Make use of dev_err_probe() also for error paths that don't have to
-> handle -EPROBE_DEFER. While the code handing -EPROBE_DEFER isn't used
-> for these error paths, it still simpler as it cares for pretty printing
-> the error code and usually needs one code line less as it combines
-> message emitting and error returning. This also unifies the format of
-> the error messages.
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+ 	Hoi Peter,
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+(reduced the insane CC list)
+
+On Thu, 12 Jan 2023, Peter Zijlstra wrote:
+> Doing RCU-idle outside the driver, only to then temporarily enable it
+> again, at least twice, before going idle is daft.
+>
+> Notably once implicitly through the cpu_pm_*() calls and once
+> explicitly doing ct_irq_*_irqon().
+>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+> Reviewed-by: Guo Ren <guoren@kernel.org>
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Tested-by: Kajetan Puchalski <kajetan.puchalski@arm.com>
+> Tested-by: Tony Lindgren <tony@atomide.com>
+> Tested-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Thanks for your patch, which is now commit e038f7b8028a1d1b ("cpuidle,
+psci: Push RCU-idle into driver") in v6.3-rc1.
+
+I have bisected a PSCI checker regression on Renesas R-Car Gen3/4 SoCs
+to commit a01353cf1896ea5b ("cpuidle: Fix ct_idle_*() usage") (the 7
+commits before that do not compile):
+
+psci_checker: PSCI checker started using 2 CPUs
+psci_checker: Starting hotplug tests
+psci_checker: Trying to turn off and on again all CPUs
+psci: CPU0 killed (polled 0 ms)
+Detected PIPT I-cache on CPU0
+CPU0: Booted secondary processor 0x0000000000 [0x411fd073]
+psci_checker: Trying to turn off and on again group 0 (CPUs 0-1)
+psci: CPU0 killed (polled 0 ms)
+Detected PIPT I-cache on CPU0
+CPU0: Booted secondary processor 0x0000000000 [0x411fd073]
+psci_checker: Hotplug tests passed OK
+psci_checker: Starting suspend tests (10 cycles per state)
+psci_checker: CPU 0 entering suspend cycles, states 1 through 1
+psci_checker: CPU 1 entering suspend cycles, states 1 through 1
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 177 at kernel/context_tracking.c:141 ct_kernel_exit.constprop.0+0xd8/0xf4
+Modules linked in:
+CPU: 1 PID: 177 Comm: psci_suspend_te Not tainted 6.2.0-rc1-salvator-x-00052-ga01353cf1896 #1415
+Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
+pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : ct_kernel_exit.constprop.0+0xd8/0xf4
+lr : ct_kernel_exit.constprop.0+0xc8/0xf4
+sp : ffffffc00b73bd30
+x29: ffffffc00b73bd30 x28: ffffff807fbadc90 x27: 0000000000000000
+x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+x23: ffffff800981e140 x22: 0000000000000001 x21: 0000000000010000
+x20: ffffffc0086be1d8 x19: ffffff807fbac070 x18: 0000000000000000
+x17: ffffff80083d1000 x16: ffffffc00841fff8 x15: ffffffc00b73b990
+x14: ffffffc00895be78 x13: 0000000000000001 x12: 0000000000000000
+x11: 00000000000001aa x10: 00000000ffffffea x9 : 000000000000000f
+x8 : ffffffc00b73bb68 x7 : ffffffc00b73be18 x6 : ffffffc00815ff34
+x5 : ffffffc00a6a0c30 x4 : ffffffc00801ce00 x3 : 0000000000000000
+x2 : ffffffc008dc3070 x1 : ffffffc008dc3078 x0 : 0000000004208040
+Call trace:
+  ct_kernel_exit.constprop.0+0xd8/0xf4
+  ct_idle_enter+0x18/0x20
+  psci_enter_idle_state+0xa4/0xfc
+  suspend_test_thread+0x238/0x2f0
+  kthread+0xd8/0xe8
+  ret_from_fork+0x10/0x20
+irq event stamp: 0
+hardirqs last  enabled at (0): [<0000000000000000>] 0x0
+hardirqs last disabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
+softirqs last  enabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
+softirqs last disabled at (0): [<0000000000000000>] 0x0
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 177 at kernel/context_tracking.c:186 ct_kernel_enter.constprop.0+0x78/0xa4
+Modules linked in:
+CPU: 1 PID: 177 Comm: psci_suspend_te Tainted: G        W          6.2.0-rc1-salvator-x-00052-ga01353cf1896 #1415
+Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
+pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : ct_kernel_enter.constprop.0+0x78/0xa4
+lr : ct_kernel_enter.constprop.0+0x68/0xa4
+sp : ffffffc00b73bd30
+x29: ffffffc00b73bd30 x28: ffffff807fbadc90 x27: 0000000000000000
+x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+x23: ffffff800981e140 x22: 0000000000000001 x21: 00000000ffffffa1
+x20: ffffffc0086be1d8 x19: 00000000000000c0 x18: 0000000000000000
+x17: ffffff80083d1000 x16: ffffffc00841fff8 x15: ffffffc00b73b990
+x14: ffffffc00895be78 x13: ffffff800e325180 x12: ffffffc076de9000
+x11: 0000000034d4d91d x10: 0000000000000008 x9 : 0000000000001000
+x8 : ffffffc008012800 x7 : 0000000000000000 x6 : ffffff807fbac070
+x5 : ffffffc008dc3070 x4 : 0000000000000000 x3 : 000000000001a9fc
+x2 : 0000000000000003 x1 : ffffffc008dc3070 x0 : 0000000004208040
+Call trace:
+  ct_kernel_enter.constprop.0+0x78/0xa4
+  ct_idle_exit+0x18/0x38
+  psci_enter_idle_state+0xdc/0xfc
+  suspend_test_thread+0x238/0x2f0
+  kthread+0xd8/0xe8
+  ret_from_fork+0x10/0x20
+irq event stamp: 0
+hardirqs last  enabled at (0): [<0000000000000000>] 0x0
+hardirqs last disabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
+softirqs last  enabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
+softirqs last disabled at (0): [<0000000000000000>] 0x0
+---[ end trace 0000000000000000 ]---
+psci_checker: Failed to suspend CPU 1: error -1 (requested state 1, cycle 0)
+psci_checker: CPU 0 suspend test results: success 0, shallow states 10, errors 0
+mmcblk0rpmb: mmc0:0001 BGSD3R 4.00 MiB, chardev (243:0)
+psci_checker: CPU 1 suspend test results: success 0, shallow states 9, errors 1
+psci_checker: 1 error(s) encountered in suspend tests
+psci_checker: PSCI checker completed
 
 > ---
->  drivers/watchdog/s3c2410_wdt.c | 29 ++++++++++-------------------
->  1 file changed, 10 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index f3de8ef499c3..e14d6d9050ce 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -601,10 +601,8 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
->  
->  		err = of_property_read_u32(dev->of_node,
->  					   "samsung,cluster-index", &index);
-> -		if (err) {
-> -			dev_err(dev, "failed to get cluster index\n");
-> -			return -EINVAL;
-> -		}
-> +		if (err)
-> +			return dev_err_probe(dev, -EINVAL, "failed to get cluster index\n");
->  
->  		switch (index) {
->  		case 0:
-> @@ -615,8 +613,7 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
->  				&drv_data_exynosautov9_cl1;
->  			break;
->  		default:
-> -			dev_err(dev, "wrong cluster index: %u\n", index);
-> -			return -EINVAL;
-> +			return dev_err_probe(dev, -EINVAL, "wrong cluster index: %u\n", index);
->  		}
->  	}
->  #endif
-> @@ -653,10 +650,8 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->  	if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
->  		wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
->  						"samsung,syscon-phandle");
-> -		if (IS_ERR(wdt->pmureg)) {
-> -			dev_err(dev, "syscon regmap lookup failed.\n");
-> -			return PTR_ERR(wdt->pmureg);
-> -		}
-> +		if (IS_ERR(wdt->pmureg))
-> +			return dev_err_probe(dev, PTR_ERR(wdt->pmureg), "syscon regmap lookup failed.\n");
->  	}
->  
->  	wdt_irq = platform_get_irq(pdev, 0);
-> @@ -694,21 +689,17 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->  	if (ret) {
->  		ret = s3c2410wdt_set_heartbeat(&wdt->wdt_device,
->  					       S3C2410_WATCHDOG_DEFAULT_TIME);
-> -		if (ret == 0) {
-> +		if (ret == 0)
->  			dev_warn(dev, "tmr_margin value out of range, default %d used\n",
->  				 S3C2410_WATCHDOG_DEFAULT_TIME);
-> -		} else {
-> -			dev_err(dev, "failed to use default timeout\n");
-> -			return ret;
-> -		}
-> +		else
-> +			return dev_err_probe(dev, ret, "failed to use default timeout\n");
->  	}
->  
->  	ret = devm_request_irq(dev, wdt_irq, s3c2410wdt_irq, 0,
->  			       pdev->name, pdev);
-> -	if (ret != 0) {
-> -		dev_err(dev, "failed to install irq (%d)\n", ret);
-> -		return ret;
-> -	}
-> +	if (ret != 0)
-> +		return dev_err_probe(dev, ret, "failed to install irq (%d)\n", ret);
->  
->  	watchdog_set_nowayout(&wdt->wdt_device, nowayout);
->  	watchdog_set_restart_priority(&wdt->wdt_device, 128);
-> -- 
-> 2.39.1
-> 
+> drivers/cpuidle/cpuidle-psci.c |    9 +++++----
+> 1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> --- a/drivers/cpuidle/cpuidle-psci.c
+> +++ b/drivers/cpuidle/cpuidle-psci.c
+> @@ -69,12 +69,12 @@ static int __psci_enter_domain_idle_stat
+> 		return -1;
+>
+> 	/* Do runtime PM to manage a hierarchical CPU toplogy. */
+> -	ct_irq_enter_irqson();
+> 	if (s2idle)
+> 		dev_pm_genpd_suspend(pd_dev);
+> 	else
+> 		pm_runtime_put_sync_suspend(pd_dev);
+> -	ct_irq_exit_irqson();
+> +
+> +	ct_idle_enter();
+>
+> 	state = psci_get_domain_state();
+> 	if (!state)
+> @@ -82,12 +82,12 @@ static int __psci_enter_domain_idle_stat
+>
+> 	ret = psci_cpu_suspend_enter(state) ? -1 : idx;
+>
+> -	ct_irq_enter_irqson();
+> +	ct_idle_exit();
+> +
+> 	if (s2idle)
+> 		dev_pm_genpd_resume(pd_dev);
+> 	else
+> 		pm_runtime_get_sync(pd_dev);
+> -	ct_irq_exit_irqson();
+>
+> 	cpu_pm_exit();
+>
+> @@ -240,6 +240,7 @@ static int psci_dt_cpu_init_topology(str
+> 	 * of a shared state for the domain, assumes the domain states are all
+> 	 * deeper states.
+> 	 */
+> +	drv->states[state_count - 1].flags |= CPUIDLE_FLAG_RCU_IDLE;
+> 	drv->states[state_count - 1].enter = psci_enter_domain_idle_state;
+> 	drv->states[state_count - 1].enter_s2idle = psci_enter_s2idle_domain_idle_state;
+> 	psci_cpuidle_use_cpuhp = true;
+
+Gr{oetje,eeting}s,
+
+ 						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+ 							    -- Linus Torvalds
