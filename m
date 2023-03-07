@@ -2,34 +2,34 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC03CC678D4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Mar 2023 18:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C487C678D5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Mar 2023 19:21:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231143AbjCGSju (ORCPT
+        id S234046AbjCGTVc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Mar 2023 13:39:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55174 "EHLO
+        Tue, 7 Mar 2023 14:21:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229978AbjCGSjQ (ORCPT
+        with ESMTP id S233866AbjCGTVO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Mar 2023 13:39:16 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02552BDD37;
-        Tue,  7 Mar 2023 10:30:37 -0800 (PST)
+        Tue, 7 Mar 2023 14:21:14 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26FAE1ACC7;
+        Tue,  7 Mar 2023 11:05:25 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3847361522;
-        Tue,  7 Mar 2023 18:30:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A430C433AA;
-        Tue,  7 Mar 2023 18:30:07 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D11CDB818C4;
+        Tue,  7 Mar 2023 19:05:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BA2BC433EF;
+        Tue,  7 Mar 2023 19:05:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1678213808;
+        s=korg; t=1678215922;
         bh=+9OuRYwPI54o/Fm7g7hAoBFrQ8pYFyaSyAT3RvzsrqY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VN2ACagJW0SYf3WEMvR5zoYTTyIMTjrPw7gdHNOCrCs2g4DWD+mnxh1Y/5nWVF1Ft
-         wCzeC+S0WCSKo4kTUqLHoULwH4X2ot2qLDVJlGQnehezJJtDq8bmV1ui9jKgFs0R+i
-         RG3nfeq18qTv0pkVoqiRigquD2Tb5qxjc/3dMMQw=
+        b=rdRKQVGOGYyqp+2qQJHZ8S8eb2gg5r83vTL2X93mxfeFbY5gFwmI9SuPq7PdTkist
+         udeW7BllMrlX8HE5RKKhSuKxv+gDOTDgg/1tKEYhQGS8AQFZ6ToGQRs7NHbB1CcSq5
+         SF5fvOT4siC/C3m0cFOnrDIdqR1NoWl9qxqzpWVE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -40,12 +40,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-samsung-soc@vger.kernel.org,
         Kees Cook <keescook@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.1 625/885] regulator: s5m8767: Bounds check id indexing into arrays
-Date:   Tue,  7 Mar 2023 17:59:19 +0100
-Message-Id: <20230307170029.385133209@linuxfoundation.org>
+Subject: [PATCH 5.15 417/567] regulator: s5m8767: Bounds check id indexing into arrays
+Date:   Tue,  7 Mar 2023 18:02:33 +0100
+Message-Id: <20230307165923.953252495@linuxfoundation.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230307170001.594919529@linuxfoundation.org>
-References: <20230307170001.594919529@linuxfoundation.org>
+In-Reply-To: <20230307165905.838066027@linuxfoundation.org>
+References: <20230307165905.838066027@linuxfoundation.org>
 User-Agent: quilt/0.67
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
