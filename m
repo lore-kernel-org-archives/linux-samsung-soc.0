@@ -2,172 +2,140 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 274BCC6FD1E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Mar 2023 17:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF94C6FD1A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Mar 2023 17:41:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230479AbjCGRIC (ORCPT
+        id S232062AbjCGRls (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Mar 2023 12:08:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40548 "EHLO
+        Tue, 7 Mar 2023 12:41:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230464AbjCGRHn (ORCPT
+        with ESMTP id S232047AbjCGRla (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Mar 2023 12:07:43 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C4DA59FA;
-        Tue,  7 Mar 2023 09:02:31 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E1E826147F;
-        Tue,  7 Mar 2023 17:01:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F7A4C433B0;
-        Tue,  7 Mar 2023 17:00:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678208468;
-        bh=tKFTmiEx5lWVMe9kc/4siOWPAS1vRgintq9BdapPuw4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gqt5/BmZ7eO+af/HjVRQiU3sw8JOtHGp6EMO4dWuOwrg2LueVE87FwMwbJmSMbDw3
-         ws29jqaUjUDjYiikTtt7/iKYg+2yrYf4T2JYLdR/uOCpmU1RmrY5zY6A63gtW5rM+x
-         DmiW0/1nByleyTnwwYj1Q66go/nxAjY8OGVSo4KWOto0Z75wa5ysvNT77Nh88lPcIm
-         kdDMXsZCBZ0GbSeik/wu87szoip24bAwSGhB4IwTpJH8yCVAVCuT2KqcDQtesriupl
-         JAFNPocJHQredNufuxvTfWTr5qcifQwWUjloMf3yohaiWo14eqm5mjyT1XK3IaJ4T9
-         RGF37doTHhI7Q==
-Date:   Tue, 7 Mar 2023 17:00:47 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
-        =?iso-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Radu Pirea <radu_nicolae.pirea@upb.ro>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        William Zhang <william.zhang@broadcom.com>,
-        Kursad Oney <kursad.oney@broadcom.com>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Anand Gore <anand.gore@broadcom.com>,
-        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>, Han Xu <han.xu@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Jay Fang <f.fangjian@huawei.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Haibo Chen <haibo.chen@nxp.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andi Shyti <andi@etezian.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Li-hao Kuo <lhjeff911@gmail.com>,
-        Masahisa Kojima <masahisa.kojima@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Max Filippov <jcmvbkbc@gmail.com>, linux-spi@vger.kernel.org,
-        Andrew Jeffery <andrew@aj.id.au>,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-mediatek@lists.infradead.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Yogesh Gaur <yogeshgaur.83@gmail.com>,
-        linux-rockchip@lists.infradead.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org
-Subject: Re: [PATCH 00/87] spi: Convert to platform remove callback returning
- void
-Message-ID: <ddcda593-f8e9-43a4-bba6-dae31e8d6b39@sirena.org.uk>
-References: <20230303172041.2103336-1-u.kleine-koenig@pengutronix.de>
+        Tue, 7 Mar 2023 12:41:30 -0500
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86F03A6BE8
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Mar 2023 09:37:29 -0800 (PST)
+Received: by mail-pl1-x632.google.com with SMTP id i3so14930999plg.6
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Mar 2023 09:37:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678210648;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=o3zPHvN5mm4IalrCf6zpCmyS4kHEJ7HoGLzRUhQSOoA=;
+        b=o2ytZ6qS0PtfXoLYe5TafISzM6/h2NxL3pqfUqiGJeoJyjjcLmWruuJ3X0G/cQZI/Y
+         GA8IYvcfCRsdkKAPInrw3325Sv6gVIjQvQZMQxeDW96heslTnIO2xfDZjDmjHC8W6S8x
+         8Z/2W26QDYD+sh27LwKdicEwMxzzwNiKSCkfYYiyxDmhqDTlfyv/GgQVFNeN9y63ynUc
+         FJWQqXZIYzZfNoOQhPSUGyELPnY1YZET2qLKlry8+WtVnxDK6ZPqoUCsVZmIiYTHYfmu
+         AdbkopUuQy/vh3LicKLoQLp/1cN+bszEMZwG8pn13IbJ1xhfs2KAVC1bJolPRpetFKGQ
+         3vcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678210648;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o3zPHvN5mm4IalrCf6zpCmyS4kHEJ7HoGLzRUhQSOoA=;
+        b=i8zhYy+6Jpz8CkReEeVbiM2tjWRCirU7I9UCJ3bzq3ZK2wgxPWRHQ9vBKWUaJxlA6O
+         LJsNNKiQWwcBiq37bWNmcqtcjsUB3Zbr55iSZvfvzLFaaAb+m3dMc6F8KW9u8xXuGWFu
+         Kvo43f55GCegSkeEQxKs6+/Hc1ykUMRwR0PzSJAj4CUKRwJ5MKaEMUtTubW4z5NQOTUt
+         22dX6Kv4TtFg0vn9Db5Au2iCV+wCP1bzbWJcstovL1sC9sN6vHsm8CGVj5YVpqZk1YHO
+         zn+RJXPrQ0woxbk6LJRTOd5bjPZPaAXZfd/TDz8T+UKzKaVz+pwHoWXxYS04b9QHNc8v
+         DJKA==
+X-Gm-Message-State: AO0yUKX5tiVwmWwpSuoSJkgEaPMzQO4v7htyFm3prkqLXwmo2aDnkw8K
+        KhFT/uHnc4oFvOK+3Mzu9Dp3fNQzzMKWvu1izov6BA==
+X-Google-Smtp-Source: AK7set+Kh/juOXVGFGBZq6ZQe/2ECYCsr+2HZ6cR5iMeJ5OSD5b0x9Znktqaib7dBWyXbAGUvwFiALZMirOESQVRZNg=
+X-Received: by 2002:a17:90a:9295:b0:233:fa52:828e with SMTP id
+ n21-20020a17090a929500b00233fa52828emr5658345pjo.1.1678210648212; Tue, 07 Mar
+ 2023 09:37:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Wo9frzy+aFktTPxK"
-Content-Disposition: inline
-In-Reply-To: <20230303172041.2103336-1-u.kleine-koenig@pengutronix.de>
-X-Cookie: A rolling stone gathers momentum.
+References: <20230223042133.26551-1-semen.protsenko@linaro.org>
+ <167811290503.11716.15730246749418548221.b4-ty@linaro.org>
+ <48c8a0cf-08dc-a831-33ef-3b8e32eef2d3@linaro.org> <CAPLW+4=9Vwxd4upa3j_cKtRrNyyx_XCz+TgOOziMguEonbHb0g@mail.gmail.com>
+ <3a27febc-4d4e-1cfd-45dc-6ade4f25ca13@linaro.org>
+In-Reply-To: <3a27febc-4d4e-1cfd-45dc-6ade4f25ca13@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Tue, 7 Mar 2023 11:37:17 -0600
+Message-ID: <CAPLW+4nZF2POmD1kRUDktn2_gUWH_e84Lnqx=8qhuqbSnrdJ2A@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] clk: samsung: exynos850: Add missing clocks for PM
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Chanho Park <chanho61.park@samsung.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Tue, 7 Mar 2023 at 01:47, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 06/03/2023 19:55, Sam Protsenko wrote:
+> > On Mon, 6 Mar 2023 at 09:51, Krzysztof Kozlowski
+> > <krzysztof.kozlowski@linaro.org> wrote:
+> >>
+> >> On 06/03/2023 15:28, Krzysztof Kozlowski wrote:
+> >>> On Wed, 22 Feb 2023 22:21:27 -0600, Sam Protsenko wrote:
+> >>>> As a part of preparation for PM enablement in Exynos850 clock driver,
+> >>>> this patch series implements CMU_G3D, and also main gate clocks for AUD
+> >>>> and HSI CMUs. The series brings corresponding changes to bindings, the
+> >>>> driver and SoC dts file.
+> >>>>
+> >>>> Changes in v2:
+> >>>>   - Rebased all patches on top of the most recent soc/for-next tree
+> >>>>   - Added A-b and R-b tags
+> >>>>   - Minor fixes
+> >>>>
+> >>>> [...]
+> >>>
+> >>> Applied, thanks!
+> >>>
+> >>> [1/6] dt-bindings: clock: exynos850: Add Exynos850 CMU_G3D
+> >>>       https://git.kernel.org/krzk/linux/c/067ba1605806e52118bb598afb357718df9f0e19
+> >>> [2/6] dt-bindings: clock: exynos850: Add AUD and HSI main gate clocks
+> >>>       https://git.kernel.org/krzk/linux/c/e289665ed0d6df9fca3ebc128f1232d305e4600b
+> >>> [3/6] clk: samsung: clk-pll: Implement pll0818x PLL type
+> >>>       https://git.kernel.org/krzk/linux/c/a6feedab8ab9a9e4483deb0bcc87919d92c88b7e
+> >>> [4/6] clk: samsung: exynos850: Implement CMU_G3D domain
+> >>>       https://git.kernel.org/krzk/linux/c/c5704a56893b4e77e434597c7c53d878bb3073b0
+> >>> [5/6] clk: samsung: exynos850: Add AUD and HSI main gate clocks
+> >>>       https://git.kernel.org/krzk/linux/c/d8d12e0d079aff4b1d8079a0a55944c0596f1d67
+> >>> [6/6] arm64: dts: exynos: Add CMU_G3D node for Exynos850 SoC
+> >>>       https://git.kernel.org/krzk/linux/c/ad8f6ad9a4f219950df65731a8ff91baa022c4b0
+> >>
+> >> And builds are broken. Please mention in cover letter or commit
+> >> dependencies and ordering...
+> >>
+> >
+> > Just checked all most recent commits on your for-next and next/clk
+> > branches. Seem to build fine for me. AFAIR I checked all patches in
+> > that series, and I guess there shouldn't be any issues if you apply
+> > those in the same order they are numbered inside the series. Or you
+> > mean you have some clash between different series? Anyways, I'm glad
+> > to help, but I'd need more details on where exactly the problem is (or
+> > maybe you already fixed it?).
+>
+> The builds were failing after I applied everything to respective
+> branches (so DTS separate). I did not notice that your DTS and driver
+> (both) depend on bindings header constant. This requires special
+> handling. It actually always required, because it was going through
+> different trees. Now it goes through my tree, but I still need to handle
+> it. I reworked the branches and force-pushed, thus you did not see the
+> exact issue.
+>
 
---Wo9frzy+aFktTPxK
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for explaining this. Next time I'll provide the dependencies
+info in my patch #0.
 
-On Fri, Mar 03, 2023 at 06:19:14PM +0100, Uwe Kleine-K=F6nig wrote:
-
->   spi: mpc512x-psc: Convert to platform remove callback returning void
->   spi: mpc52xx-psc: Convert to platform remove callback returning void
-
-As well as the Raspberry Pi patch dropped due to build failures I also
-dropped these two as they conflicted with Rob's refactoring of that
-driver, nothing especially complex but since there's stuff to resend
-anyway...
-
---Wo9frzy+aFktTPxK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmQHbb4ACgkQJNaLcl1U
-h9DDDQf/eo3lXns3dzYdzJYf8MxUxafb8rgDkge5kzhM/iS9lEnDcJX8Vno7IHOa
-iZ7/NuWC1p4ofFyl04/WPa94f4hEYWTNqXgQ4TuEq9SRTyOTwZsqpS33uEc9v0zm
-3/ja2SHHOw97vKeI+1IjK8fycKlOze/YwzP38U0UTECpJou6+41HYgRgx8L+J3Js
-zILjs+qw1DhbaslGny+CEV6juxQO2LcIoNjdQYfWSbN4leZdcg8cW1+Obbr8KLen
-nbcN3szhArY3SvbxgXR5muD5yNFtETWVBmVtjlT0mBXX4Lzgj7Pf0SgN1haH9bq/
-jlQbNnEEvvkvGVicjB7wmDlS6gOoKw==
-=fVjM
------END PGP SIGNATURE-----
-
---Wo9frzy+aFktTPxK--
+> Best regards,
+> Krzysztof
+>
