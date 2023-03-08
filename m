@@ -2,117 +2,86 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5834FC6FA99
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Mar 2023 21:28:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0569EC678D5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Mar 2023 00:31:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231455AbjCGV2K (ORCPT
+        id S229873AbjCHAb1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Mar 2023 16:28:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34614 "EHLO
+        Tue, 7 Mar 2023 19:31:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229984AbjCGV2G (ORCPT
+        with ESMTP id S229801AbjCHAbZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Mar 2023 16:28:06 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A56972DE56
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Mar 2023 13:28:03 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZeqe-0003kp-Pb; Tue, 07 Mar 2023 22:27:52 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZeqa-002ZcN-MU; Tue, 07 Mar 2023 22:27:48 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZeqZ-0037IA-Tf; Tue, 07 Mar 2023 22:27:47 +0100
-Date:   Tue, 7 Mar 2023 22:27:44 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     George Stark <gnstark@sberdevices.ru>
-Cc:     thierry.reding@gmail.com, krzysztof.kozlowski@linaro.org,
-        alim.akhtar@samsung.com, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel@sberdevices.ru
-Subject: Re: [RFC PATCH v1] Revert "pwm: Clear chip_data in pwm_put()"
-Message-ID: <20230307212744.rx2julmzxe7nvhvr@pengutronix.de>
-References: <20230307210014.1380102-1-gnstark@sberdevices.ru>
+        Tue, 7 Mar 2023 19:31:25 -0500
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D9CEA2C2B;
+        Tue,  7 Mar 2023 16:31:24 -0800 (PST)
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-176b48a9a05so9678212fac.0;
+        Tue, 07 Mar 2023 16:31:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678235484;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p0N0vVa1h3Mrpxxp+FacYSNAxWlsrmv0a+CI104Imq8=;
+        b=ZngcIuYwB7zC5vIRio8ty61B9QcuB/ocG3K0j4m5brWqNnhlHwKlNmqNdpeeJISqw2
+         rvbi7r5IpA8Cs7wm1rqvclLT8FVZvuizse3eRaexise9kjdoQjcWF9uNUIaJeAHHm3KN
+         pMlKhePorVCd6nTYuADbTSCZRIkQ8NCGAJrJ1chhO+4Iu6SiJvzM9+ntxRTI3Yc8usnv
+         i98CN6FQXWg/Ll3f3nj9PDQmRqsRz5lnP6fu5XYYJUYYB0oIIFVZZBvwpzt0t0BaRWyg
+         7G6j49s3JPJSkT+FoxmnQAMu+SXf3OFgqLc9VwbCfjiD2ivtCjklMp+hFND7rJh0idoY
+         zKyg==
+X-Gm-Message-State: AO0yUKUnfuWyDwkojjG8CLvh08G0TWwnOY4DD54GOm2h3EQF6xVlJWCj
+        NAgKHwNn4BS1GKR/2M0m6g==
+X-Google-Smtp-Source: AK7set8urRj86KjT6p6ca6TH+1d7WiTNHwu7LwngJMmJXYNx4lNvyYL4MUVFcNoMxtMf6owAX0HfHw==
+X-Received: by 2002:a05:6870:14cc:b0:172:5b7b:19d6 with SMTP id l12-20020a05687014cc00b001725b7b19d6mr10893062oab.9.1678235483937;
+        Tue, 07 Mar 2023 16:31:23 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id x38-20020a4a97e9000000b005251f71250dsm5587810ooi.37.2023.03.07.16.31.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Mar 2023 16:31:23 -0800 (PST)
+Received: (nullmailer pid 538253 invoked by uid 1000);
+        Wed, 08 Mar 2023 00:31:22 -0000
+Date:   Tue, 7 Mar 2023 18:31:22 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Neil Armstrong <neil.armstrong@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Airlie <airlied@gmail.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Robert Foss <rfoss@kernel.org>,
+        Andrzej Hajda <andrzej.hajda@intel.com>
+Subject: Re: [PATCH 1/2] dt-bindings: display/bridge: toshiba,tc358764:
+ convert to dtschema
+Message-ID: <167823547806.538132.10458902840268879408.robh@kernel.org>
+References: <20230225160252.18737-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ipjr5sesxsxhrren"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230307210014.1380102-1-gnstark@sberdevices.ru>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20230225160252.18737-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
---ipjr5sesxsxhrren
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sat, 25 Feb 2023 17:02:51 +0100, Krzysztof Kozlowski wrote:
+> Convert the Toshiba TC358764 bridge bindings to DT schema.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../display/bridge/toshiba,tc358764.txt       | 35 --------
+>  .../display/bridge/toshiba,tc358764.yaml      | 89 +++++++++++++++++++
+>  2 files changed, 89 insertions(+), 35 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.yaml
+> 
 
-Hello George,
+Applied, thanks!
 
-On Wed, Mar 08, 2023 at 12:00:14AM +0300, George Stark wrote:
-> From: George Stark <GNStark@sberdevices.ru>
->=20
-> This reverts commit e926b12c611c2095c7976e2ed31753ad6eb5ff1a.
->=20
-> There're several issues with the original change:
->=20
-> - it breaks generic semantics of set_driver_data-like routines that
-> only client code controls lifetime of it's own data.
->=20
-> - it breaks pwm-sti.c driver: pwm_set_chip_data is used only in probe sta=
-ge
-> then pwm_get_chip_data used in capture callback
-
-pwm-sti is also broken in other regards. pwm_set_chip_data() is only
-called after pwmchip_add(). But as soon as pwmchip_add() is called, the
-callbacks (e.g. capture) might be called. Then the call to
-pwm_set_chip_data() might be too late.
-
-> Change-Id: I5787c6b4c520d4a0997567c416b26fa4e0806b94
-
-Please don't add a Change-Id footer for Linux submissions.
-
-If you ask me, better drop pwm_set_chip_data() completely. It adds no
-useful value. It's just a variant of driver data and using both
-complicates the driver and probably fragments memory allocations. Also
-the sematic of driver data is better known as it's the same for all
-subsystems.
-
-Do you use the capture functionality? In my eyes the capture part of the
-pwm subsystem is very alien. Only a small subset of the hardware
-supports this and the counter framework should be better suited for such
-tasks.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---ipjr5sesxsxhrren
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmQHrE0ACgkQwfwUeK3K
-7An0VQf/Q8drCNWe2yFtZ7b5zIZL0ubg//PbtqdKFDUY0zikTrKiIHUMHhKuUjNt
-pC+Ah0mQPePQa5bNstPwfdTjx4sOhQfIjIKgnxJWoDbgqQZX9AUcoZt6qhMm/uqA
-SKA5wYQ98b2sjrIsE09WM8hBzIXEaY4YAsOM83TL2c0Fz0qMJaTtFz00QJgkZXFD
-lbZxvH5ArBqUxKzMmkooWPxgY2XlZxcCQmlCSBz/DYymz9HyViNl8da9J8qjQY00
-TJz64OVL4L2Bs9LthmjNXimxI26DtO595EWyYKzPPaxvVanqPMjxdW1n7fNDAffJ
-OlhSpm5uqfjEPzlx9uK+opLtY/2SAQ==
-=6gx+
------END PGP SIGNATURE-----
-
---ipjr5sesxsxhrren--
