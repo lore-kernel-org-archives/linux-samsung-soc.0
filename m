@@ -2,193 +2,122 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8152C64EC4
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Mar 2023 16:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7289DC678D5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Mar 2023 16:52:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229737AbjCHQmT (ORCPT
+        id S229886AbjCHQwS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Mar 2023 11:42:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60464 "EHLO
+        Wed, 8 Mar 2023 11:52:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbjCHQmI (ORCPT
+        with ESMTP id S229846AbjCHQwR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Mar 2023 11:42:08 -0500
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69F72C85B6
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Mar 2023 08:41:50 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id h8so18173183plf.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Mar 2023 08:41:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1678293710;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hYvhZHnutxJc+BwzWDIA1fNyzBOwD/h+GHvNeO50plM=;
-        b=YSwAWpML+gCIO5iyBYRNdSI+ff6WUIAVhCJDfk4N8lQOuFT3NKd/FO0GGE5VNGUPhD
-         ZE/e/gvELu0tklLh4VEVZB9Qze7Bn6NXNA8LZi331pGC5lgsQprJl3SELyFpiP9rOohQ
-         +Y9C7plG3E7VT1SQ9VNfHbLKRUa6ICZJGLpW8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678293710;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hYvhZHnutxJc+BwzWDIA1fNyzBOwD/h+GHvNeO50plM=;
-        b=u+xpUnXC+yUjBCcx88CRnPDZz2QVLPQO1h+bmMLUt3q1RsRQ1dk9C/tsR+mO/ZqGrS
-         pF8CMZzCI8dUI/xETKaKaS6GPWVJG8A15ZknqAbwOxhrEnu49sZie4qsyqQufFMrTvsh
-         pE8NIOjmuwCkpljg0JExIJY6PqwWUSM/0N5BSc98CCjclQPOxs/VOYejP+V5XNrClGno
-         Wd+UdUSge/Tv6az3Cn+76iE2CSsU1UwpnYNRqMw0A9b/zbi8JJY6wkn/xxzD8mmwKlWb
-         yd+wboWSVWmTdD7j6Dqy/UiJE58wrRZOByJbtLvk9aipGoMUhCb5DCACRQnXxTSTBoew
-         gy/w==
-X-Gm-Message-State: AO0yUKULrJothONGu6LMlgqX/OE/2cLMBw6GB04McIeggQOPKaSxpYD6
-        P+MW6u87XF6w/gHzO6wiwYPnVg==
-X-Google-Smtp-Source: AK7set80KEX5GKzRB3JsxZzIjkRz46eVq3aT78m2GCReoB8qDXnLsuWn09uGpycFTF8Bf4urEoztPg==
-X-Received: by 2002:a17:902:720b:b0:19e:674a:1fb9 with SMTP id ba11-20020a170902720b00b0019e674a1fb9mr16682243plb.69.1678293709811;
-        Wed, 08 Mar 2023 08:41:49 -0800 (PST)
-Received: from localhost.localdomain ([2405:201:c00a:a8a1:b545:91cc:80b2:f9fe])
-        by smtp.gmail.com with ESMTPSA id kq3-20020a170903284300b0019b9a075f1fsm10046540plb.80.2023.03.08.08.41.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Mar 2023 08:41:49 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Marek Vasut <marex@denx.de>, Maxime Ripard <mripard@kernel.org>
-Cc:     Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Adam Ford <aford173@gmail.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v16 16/16] drm: bridge: samsung-dsim: Add i.MX8M Plus support
-Date:   Wed,  8 Mar 2023 22:09:53 +0530
-Message-Id: <20230308163953.28506-17-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230308163953.28506-1-jagan@amarulasolutions.com>
-References: <20230308163953.28506-1-jagan@amarulasolutions.com>
+        Wed, 8 Mar 2023 11:52:17 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99EEFCB046
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Mar 2023 08:52:16 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pZx1J-0000QS-Km; Wed, 08 Mar 2023 17:52:05 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pZx1G-002l4f-Vd; Wed, 08 Mar 2023 17:52:02 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pZx1G-003Kw8-8O; Wed, 08 Mar 2023 17:52:02 +0100
+Date:   Wed, 8 Mar 2023 17:52:02 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     George Stark <GNStark@sberdevices.ru>
+Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>,
+        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, kernel <kernel@sberdevices.ru>
+Subject: Re: [RFC PATCH v1] Revert "pwm: Clear chip_data in pwm_put()"
+Message-ID: <20230308165202.gaeziqdncbkeo5l6@pengutronix.de>
+References: <20230307210014.1380102-1-gnstark@sberdevices.ru>
+ <20230307212744.rx2julmzxe7nvhvr@pengutronix.de>
+ <cc73a82d-89fa-1edf-650a-a1a3824cc791@sberdevices.ru>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ugs5p22gnvewe6b7"
+Content-Disposition: inline
+In-Reply-To: <cc73a82d-89fa-1edf-650a-a1a3824cc791@sberdevices.ru>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Marek Vasut <marex@denx.de>
 
-Add extras to support i.MX8M Plus. The main change is the removal of
-HS/VS/DE signal inversion in the LCDIFv3-DSIM glue logic, otherwise
-the implementation of this IP in i.MX8M Plus is very much compatible
-with the i.MX8M Mini/Nano one.
+--ugs5p22gnvewe6b7
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Marek Vasut <marex@denx.de>
-Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-Acked-by: Robert Foss <robert.foss@linaro.org>
-Signed-off-by: Marek Vasut <marex@denx.de>
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v16, v15, v13:
-- none
-Changes for v12:
-- collect RB from Marek
-Changes for v11:
-- collect RB from Frieder
-- collect ACK from Robert
-Changes for v10:
-- none
-Changes for v9:
-- added im8mp in DSIM_STATE_REINITIALIZED check
-- drop previous = NULL check
+Hello George,
 
- drivers/gpu/drm/bridge/samsung-dsim.c | 23 +++++++++++++++++++++++
- include/drm/bridge/samsung-dsim.h     |  1 +
- 2 files changed, 24 insertions(+)
+On Wed, Mar 08, 2023 at 12:16:00PM +0000, George Stark wrote:
+> On 3/8/23 00:28, Uwe Kleine-K=F6nig wrote:
+> > If you ask me, better drop pwm_set_chip_data() completely. It adds no
+> > useful value. It's just a variant of driver data and using both
+> > complicates the driver and probably fragments memory allocations. Also
+> > the sematic of driver data is better known as it's the same for all
+> > subsystems.
+> >
+> > Do you use the capture functionality? In my eyes the capture part of the
+> > pwm subsystem is very alien. Only a small subset of the hardware
+> > supports this and the counter framework should be better suited for such
+> > tasks.
+> I don't use pwm-sti driver. I update meson pwm driver for new chips
+> and when started using pwm_set_chip_data in probe I was very surprised th=
+at
+> my data is lost after sysfs export/unexport calls. Then I found the=20
+> patch and
+> checked other drivers for similar usecases.
 
-diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-index f3bd06489a39..e0a402a85787 100644
---- a/drivers/gpu/drm/bridge/samsung-dsim.c
-+++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -479,6 +479,7 @@ samsung_dsim_types[DSIM_TYPE_COUNT] = {
- 	[DSIM_TYPE_EXYNOS5422] = &exynos5422_dsi_driver_data,
- 	[DSIM_TYPE_EXYNOS5433] = &exynos5433_dsi_driver_data,
- 	[DSIM_TYPE_IMX8MM] = &imx8mm_dsi_driver_data,
-+	[DSIM_TYPE_IMX8MP] = &imx8mm_dsi_driver_data,
- };
- 
- static inline struct samsung_dsim *host_to_dsi(struct mipi_dsi_host *h)
-@@ -1452,10 +1453,17 @@ static int samsung_dsim_atomic_check(struct drm_bridge *bridge,
- 	 * 13.6.2.7.2 RGB interface
- 	 * both claim "Vsync, Hsync, and VDEN are active high signals.", the
- 	 * LCDIF must generate inverted HS/VS/DE signals, i.e. active LOW.
-+	 *
-+	 * The i.MX8M Plus glue logic between LCDIFv3 and DSIM does not
-+	 * implement the same behavior, therefore LCDIFv3 must generate
-+	 * HS/VS/DE signals active HIGH.
- 	 */
- 	if (dsi->plat_data->hw_type == DSIM_TYPE_IMX8MM) {
- 		adjusted_mode->flags |= (DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC);
- 		adjusted_mode->flags &= ~(DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC);
-+	} else if (dsi->plat_data->hw_type == DSIM_TYPE_IMX8MP) {
-+		adjusted_mode->flags &= ~(DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC);
-+		adjusted_mode->flags |= (DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC);
- 	}
- 
- 	return 0;
-@@ -1723,6 +1731,10 @@ static const struct samsung_dsim_host_ops generic_dsim_host_ops = {
- 	.unregister_host = generic_dsim_unregister_host,
- };
- 
-+static const struct drm_bridge_timings samsung_dsim_bridge_timings_de_high = {
-+	.input_bus_flags = DRM_BUS_FLAG_DE_HIGH,
-+};
-+
- static const struct drm_bridge_timings samsung_dsim_bridge_timings_de_low = {
- 	.input_bus_flags = DRM_BUS_FLAG_DE_LOW,
- };
-@@ -1812,6 +1824,8 @@ int samsung_dsim_probe(struct platform_device *pdev)
- 	/* DE_LOW: i.MX8M Mini/Nano LCDIF-DSIM glue logic inverts HS/VS/DE */
- 	if (dsi->plat_data->hw_type == DSIM_TYPE_IMX8MM)
- 		dsi->bridge.timings = &samsung_dsim_bridge_timings_de_low;
-+	else
-+		dsi->bridge.timings = &samsung_dsim_bridge_timings_de_high;
- 
- 	if (dsi->plat_data->host_ops && dsi->plat_data->host_ops->register_host)
- 		ret = dsi->plat_data->host_ops->register_host(dsi);
-@@ -1917,11 +1931,20 @@ static const struct samsung_dsim_plat_data samsung_dsim_imx8mm_pdata = {
- 	.host_ops = &generic_dsim_host_ops,
- };
- 
-+static const struct samsung_dsim_plat_data samsung_dsim_imx8mp_pdata = {
-+	.hw_type = DSIM_TYPE_IMX8MP,
-+	.host_ops = &generic_dsim_host_ops,
-+};
-+
- static const struct of_device_id samsung_dsim_of_match[] = {
- 	{
- 		.compatible = "fsl,imx8mm-mipi-dsim",
- 		.data = &samsung_dsim_imx8mm_pdata,
- 	},
-+	{
-+		.compatible = "fsl,imx8mp-mipi-dsim",
-+		.data = &samsung_dsim_imx8mp_pdata,
-+	},
- 	{ /* sentinel. */ }
- };
- MODULE_DEVICE_TABLE(of, samsung_dsim_of_match);
-diff --git a/include/drm/bridge/samsung-dsim.h b/include/drm/bridge/samsung-dsim.h
-index 3e395d38e1df..ba5484de2b30 100644
---- a/include/drm/bridge/samsung-dsim.h
-+++ b/include/drm/bridge/samsung-dsim.h
-@@ -28,6 +28,7 @@ enum samsung_dsim_type {
- 	DSIM_TYPE_EXYNOS5422,
- 	DSIM_TYPE_EXYNOS5433,
- 	DSIM_TYPE_IMX8MM,
-+	DSIM_TYPE_IMX8MP,
- 	DSIM_TYPE_COUNT,
- };
- 
--- 
-2.25.1
+OK.
 
+> Probably you're right about dropping pwm_set_chip_data.
+
+If you want to tackle that, you might want to take
+
+	https://lore.kernel.org/all/20210504132537.62072-2-u.kleine-koenig@pengutr=
+onix.de/
+
+into account. (Both to reuse this patch to prepare pwm-berlin for
+dropping pwm_set_chip_data and to be prepared that back then Thierry
+opposed to the idea.)
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--ugs5p22gnvewe6b7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmQIvS4ACgkQwfwUeK3K
+7Aku+Qf/QHg35UuTpxFLWrJ9E9/Y+2/XcUMIrE+hHqf7QGTjIgx1KbQskTjF189q
+CkGAUPB4gCjavW+Zcx62RkN/lFHVQVsf38k9u3uanNzxLZcuxGD/spjC7zcKFYTw
+3Noh5AwTGPR5QESVxMSFEqSJ18xO53oKdd4T3WErrPKVZgpzlvR+4TZA8AfODRcj
+etfnLH8oBGJZDsIO2fEHTiYUgWdNEANL8xSRwzArIsIRGx+YTo/mEYHjUFd/wldS
+zMxY+kzDJ0+u1foQ8RrFT2CLGIA0q2IbfvRyh/Jd+1ETei+KXtwxkfpIpW/Ugw4x
+0wllBAFxf1eaocGP0cnlTBbUj+DblQ==
+=d7MT
+-----END PGP SIGNATURE-----
+
+--ugs5p22gnvewe6b7--
