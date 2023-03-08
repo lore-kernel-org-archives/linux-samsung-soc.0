@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 550C1C74A4B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Mar 2023 23:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA7EC6FD19
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Mar 2023 23:38:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230219AbjCHXie (ORCPT
+        id S230267AbjCHXij (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Mar 2023 18:38:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37286 "EHLO
+        Wed, 8 Mar 2023 18:38:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229751AbjCHXic (ORCPT
+        with ESMTP id S230159AbjCHXid (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Mar 2023 18:38:32 -0500
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88C3B5BD9B
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Mar 2023 15:38:28 -0800 (PST)
-Received: by mail-ot1-x332.google.com with SMTP id l15-20020a9d7a8f000000b0069447f0db6fso141089otn.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Mar 2023 15:38:28 -0800 (PST)
+        Wed, 8 Mar 2023 18:38:33 -0500
+Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44A215F228
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Mar 2023 15:38:31 -0800 (PST)
+Received: by mail-oi1-x22f.google.com with SMTP id q15so346145oiw.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Mar 2023 15:38:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678318708;
+        d=linaro.org; s=google; t=1678318710;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=woOYONkToPVHYWga31WFD9txV73HBu+FiarlM+DWulI=;
-        b=lRsJ3IRNiUqFgrEUYgPttSw5MR8Z9Yh9RHQ9H58mztAYJYPUN5XZ/t1Gl2eOU02Dkp
-         LytKW3GxqUFuDM4Hh3yKiGDtDsUEavCb5iIJD8/eOHWJB9G/G9spgqsfLbNfO6n0uAfW
-         nveUzUqxgvsRb4KEU+Ty/ovknkLWziy0xmkick+JMXWmd5AWRPVZP9IT8XeYd/iyW7n+
-         sKhnlMom+Py8EVkMaE9B1ZhUGQoxL6N508ImCb5NGuhwcIUB02YFijIpsmVjxhDWbRca
-         IdU0ZHAjfaRx92tPGYUzOcterNKUIkIbS8DPVhp3IBtHjvZBsSEf7NTTVNEq8eorD68U
-         OBlA==
+        bh=OhdSRqJaGfztHCYkWeNpp02lhvYbsG6+3kQCkkXc7Pc=;
+        b=myK0jC+/mCPv7bj4QZjfKujIW7s5qz4C4CX+hrTsKV0Ed2EcuIjpHKLR2ZVa2Q0lKT
+         1WDrcUgQmd+9rr7lZg1UzoTZmzQcwMIxwVhjJBlWSkAz5YDruoqRks2ox9oJfMkZ2AR/
+         x0xYrt0Al4un/UhGeMGmiYZsHgSW9N1rCq75w7c6ENYcw4ldbAfM2HQCHzp7aSGKKiST
+         jXDhQF+NMIxHO7JbBkl48Q42o5abcxJd6C2TGlUPdirgIJTZgQw5RxmdwLR+pv9TkQah
+         3O/NFu1H/IH2BpSFtvvc2RLQfV7gXiE0mHh3nlgSFKVEgTqPul36zZvyYEBsPEX+uvKX
+         XQFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678318708;
+        d=1e100.net; s=20210112; t=1678318710;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=woOYONkToPVHYWga31WFD9txV73HBu+FiarlM+DWulI=;
-        b=YDEBp4gbVlZGYiGDtUVgNe0Lau6aJgq5AGalZcktfJQRPLePk09TdvPQHm41Io+KtI
-         kZv+7vRwW/fbuPh0eaTfPz4Ww75Au9B7er9gAZAEo0nNDfegLePz0G+M3urSDnWhlzKQ
-         MXUeeK75gqFi7BHKCITpjlCN0AvqxD7tcoAdW7xqYSjwRlBqEADZ9h0GvlMO1a9f1Vgc
-         6EvBQMCMWYHkmCMEFwe2o9dQk5zqzERmuaSrUQJ/tGP7rGDuijS8SGHcioxjxT1lff42
-         zIj6vMrWPedTSVDLSnJI6MdXNsS2466uG/RSdGz+iJMwlJ5wjUZC4j4qzbDptjIRd3Qb
-         /FlA==
-X-Gm-Message-State: AO0yUKWGnR3/KY0jVzSLDqgkC5Yrf7oumEC/zWmj+NQJDTQKyVNSGA65
-        0H2FPMSkNvmrOJoGqBh90ZutEA==
-X-Google-Smtp-Source: AK7set/sBQMg+Sa7FJqtY3KmdnHRg0UVZJhWENSlY8qIYW07sgauEXFUt9pV/Pb7xM+ywbZPG/xINQ==
-X-Received: by 2002:a05:6830:1614:b0:693:c9f9:64ab with SMTP id g20-20020a056830161400b00693c9f964abmr9781546otr.3.1678318707846;
-        Wed, 08 Mar 2023 15:38:27 -0800 (PST)
+        bh=OhdSRqJaGfztHCYkWeNpp02lhvYbsG6+3kQCkkXc7Pc=;
+        b=m872/fJkSImeyAZTwkcrAiNLtRjY15O7NEQ1dsi/aXOwYZzbaoCpPpx3slsXdtZWkA
+         4LvRyL6dHrAeQJKbhCtbU2sNlI4O0J2leojre7lp/k70NykjZmWI5vwv43x7SS8L15wL
+         1Le4aRi/m/ngWCAkRwJPvBDywX7Gj6fqNWkA4aJH9ugL812DDxEJbYLkJGaPqiM3A9mq
+         M9vJgbp6jOmqt+fblO7yr3pRnxb35Ucp6ey4vba2mYEvqvZs6BzkRkKI+5zRpYXp9vnF
+         mupSGAfY7ui/xKVQM7axb227Sn+yJEdo5gEZnxDsaPdi4h7VvohGD01tVNESPZESj+Ev
+         CP0Q==
+X-Gm-Message-State: AO0yUKXmctLS68FdNzYDjAwGD0np02mU59dp9aaQfFdD5HvMuVkdAFXd
+        E8T2Z34/kcPjMzhxL9zLBxSj4A==
+X-Google-Smtp-Source: AK7set/5z392BFVptFZBGokctJdIkZ9WCLRF4yHopeCLA19ESHC4RJaazlSVqK2iAy92qLm8tsbZXA==
+X-Received: by 2002:a05:6808:188:b0:384:232:2a4f with SMTP id w8-20020a056808018800b0038402322a4fmr7731504oic.4.1678318710527;
+        Wed, 08 Mar 2023 15:38:30 -0800 (PST)
 Received: from localhost ([136.49.140.41])
-        by smtp.gmail.com with ESMTPSA id x2-20020a9d6282000000b00690eeb8b436sm6899431otk.65.2023.03.08.15.38.27
+        by smtp.gmail.com with ESMTPSA id f8-20020a9d2c08000000b00690dc5d9b9esm7021525otb.6.2023.03.08.15.38.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Mar 2023 15:38:27 -0800 (PST)
+        Wed, 08 Mar 2023 15:38:30 -0800 (PST)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -66,9 +66,9 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/7] clk: samsung: Implement PM SMC calls for ARM64 Exynos SoCs
-Date:   Wed,  8 Mar 2023 17:38:18 -0600
-Message-Id: <20230308233822.31180-4-semen.protsenko@linaro.org>
+Subject: [PATCH 5/7] clk: samsung: exynos850: Add suspend state for all CMUs
+Date:   Wed,  8 Mar 2023 17:38:20 -0600
+Message-Id: <20230308233822.31180-6-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230308233822.31180-1-semen.protsenko@linaro.org>
 References: <20230308233822.31180-1-semen.protsenko@linaro.org>
@@ -78,125 +78,269 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Exynos850 requires extra TZPC handling to keep CMU registers non-secure
-(accessible from the kernel) after PM resume. It's done using a specific
-SMC call to the EL3 monitor. Implement corresponding SMC calls in
-suspend and resume functions. Perform those calls when the parent (bus)
-clock is running to avoid SMC freezes. The "samsung,tzpc" property is
-used to specify the TZPC register address for those calls (for each
-particular domain). If that property is not provided, SMC calls won't be
-performed, thus keeping the compatibility with CMUs and platforms where
-that SMC functionality is not needed.
+Before entering suspend, some clocks must be set to some specific
+configuration. For example, top-level MUX clocks in each CMU should be
+switched to OSCCLK input, etc. This is needed by the firmware to
+properly perform system suspend operation. Provide the suspend state for
+mentioned clocks using 'suspend_regs' feature.
+
+This patch was inspired by commit a766065279e2 ("clk: samsung:
+exynos5433: Add suspend state for TOP, CPIF & PERIC CMUs").
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
- drivers/clk/samsung/clk-exynos-arm64.c | 39 ++++++++++++++++++++++++--
- 1 file changed, 37 insertions(+), 2 deletions(-)
+ drivers/clk/samsung/clk-exynos850.c | 92 +++++++++++++++++++++++++++++
+ 1 file changed, 92 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
-index 7d8937caf22a..57e9bee7ec4d 100644
---- a/drivers/clk/samsung/clk-exynos-arm64.c
-+++ b/drivers/clk/samsung/clk-exynos-arm64.c
-@@ -8,6 +8,8 @@
-  * This file contains shared functions used by some arm64 Exynos SoCs,
-  * such as Exynos7885 or Exynos850 to register and init CMUs.
-  */
-+
-+#include <linux/arm-smccc.h>
- #include <linux/clk.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-@@ -24,6 +26,12 @@
- #define GATE_OFF_START		0x2000
- #define GATE_OFF_END		0x2fff
- 
-+/* Power control SMC command and its parameters */
-+#define SMC_CMD_PREPARE_PD_ONOFF		0x82000410
-+#define EXYNOS_PD_RUNTIME_PM			2
-+#define EXYNOS_GET_IN_PD_DOWN			0
-+#define EXYNOS_WAKEUP_PD_DOWN			1
-+
- struct exynos_arm64_cmu_data {
- 	struct samsung_clk_reg_dump *clk_save;
- 	unsigned int nr_clk_save;
-@@ -34,6 +42,7 @@ struct exynos_arm64_cmu_data {
- 	struct clk **pclks;
- 	int nr_pclks;
- 
-+	unsigned int tzpc_addr;			/* address for PM SMC calls */
- 	struct samsung_clk_provider *ctx;
+diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
+index 98b23af7324d..5664d17bae83 100644
+--- a/drivers/clk/samsung/clk-exynos850.c
++++ b/drivers/clk/samsung/clk-exynos850.c
+@@ -186,6 +186,12 @@ static const unsigned long top_clk_regs[] __initconst = {
+ 	CLK_CON_GAT_GATE_CLKCMU_PERI_UART,
  };
  
-@@ -149,6 +158,22 @@ static int __init exynos_arm64_cmu_prepare_pm(struct device *dev,
- 	return 0;
- }
- 
-+static int exynos_arm64_pm_smc(struct device *dev, bool on)
-+{
-+	struct exynos_arm64_cmu_data *data = dev_get_drvdata(dev);
-+	struct arm_smccc_res res;
-+	unsigned int pm_arg;
++static const struct samsung_clk_reg_dump top_suspend_regs[] = {
++	{ PLL_CON0_PLL_MMC, 0 },
++	{ PLL_CON0_PLL_SHARED0, 0 },
++	{ PLL_CON0_PLL_SHARED1, 0 },
++};
 +
-+	if (!data->tzpc_addr)
-+		return 0;
+ /*
+  * Do not provide PLL tables to core PLLs, as MANUAL_PLL_CTRL bit is not set
+  * for those PLLs by default, so set_rate operation would fail.
+@@ -489,6 +495,8 @@ static const struct samsung_cmu_info top_cmu_info __initconst = {
+ 	.nr_clk_ids		= TOP_NR_CLK,
+ 	.clk_regs		= top_clk_regs,
+ 	.nr_clk_regs		= ARRAY_SIZE(top_clk_regs),
++	.suspend_regs		= top_suspend_regs,
++	.nr_suspend_regs	= ARRAY_SIZE(top_suspend_regs),
+ };
+ 
+ static void __init exynos850_cmu_top_init(struct device_node *np)
+@@ -547,6 +555,13 @@ static const unsigned long apm_clk_regs[] __initconst = {
+ 	CLK_CON_GAT_GOUT_APM_SYSREG_APM_PCLK,
+ };
+ 
++static const struct samsung_clk_reg_dump apm_suspend_regs[] = {
++	{ PLL_CON0_MUX_CLKCMU_APM_BUS_USER, 0 },
++	{ PLL_CON0_MUX_CLK_RCO_APM_I3C_USER, 0 },
++	{ PLL_CON0_MUX_CLK_RCO_APM_USER, 0 },
++	{ PLL_CON0_MUX_DLL_USER, 0 },
++};
 +
-+	pm_arg = on ? EXYNOS_WAKEUP_PD_DOWN : EXYNOS_GET_IN_PD_DOWN;
-+	arm_smccc_smc(SMC_CMD_PREPARE_PD_ONOFF, pm_arg, data->tzpc_addr,
-+		      EXYNOS_PD_RUNTIME_PM, 0, 0, 0, 0, &res);
+ /* List of parent clocks for Muxes in CMU_APM */
+ PNAME(mout_apm_bus_user_p)	= { "oscclk_rco_apm", "dout_clkcmu_apm_bus" };
+ PNAME(mout_rco_apm_i3c_user_p)	= { "oscclk_rco_apm", "clk_rco_i3c_pmic" };
+@@ -629,6 +644,8 @@ static const struct samsung_cmu_info apm_cmu_info __initconst = {
+ 	.nr_clk_ids		= APM_NR_CLK,
+ 	.clk_regs		= apm_clk_regs,
+ 	.nr_clk_regs		= ARRAY_SIZE(apm_clk_regs),
++	.suspend_regs		= apm_suspend_regs,
++	.nr_suspend_regs	= ARRAY_SIZE(apm_suspend_regs),
+ 	.clk_name		= "dout_clkcmu_apm_bus",
+ };
+ 
+@@ -746,6 +763,12 @@ static const unsigned long aud_clk_regs[] __initconst = {
+ 	CLK_CON_GAT_GOUT_AUD_WDT_PCLK,
+ };
+ 
++static const struct samsung_clk_reg_dump aud_suspend_regs[] = {
++	{ PLL_CON0_PLL_AUD, 0 },
++	{ PLL_CON0_MUX_CLKCMU_AUD_CPU_USER, 0 },
++	{ PLL_CON0_MUX_TICK_USB_USER, 0 },
++};
 +
-+	return res.a0;
-+}
+ /* List of parent clocks for Muxes in CMU_AUD */
+ PNAME(mout_aud_pll_p)		= { "oscclk", "fout_aud_pll" };
+ PNAME(mout_aud_cpu_user_p)	= { "oscclk", "dout_aud" };
+@@ -912,6 +935,8 @@ static const struct samsung_cmu_info aud_cmu_info __initconst = {
+ 	.nr_clk_ids		= AUD_NR_CLK,
+ 	.clk_regs		= aud_clk_regs,
+ 	.nr_clk_regs		= ARRAY_SIZE(aud_clk_regs),
++	.suspend_regs		= aud_suspend_regs,
++	.nr_suspend_regs	= ARRAY_SIZE(aud_suspend_regs),
+ 	.clk_name		= "dout_aud",
+ };
+ 
+@@ -950,6 +975,12 @@ static const unsigned long cmgp_clk_regs[] __initconst = {
+ 	CLK_CON_GAT_GOUT_CMGP_USI_CMGP1_PCLK,
+ };
+ 
++static const struct samsung_clk_reg_dump cmgp_suspend_regs[] = {
++	{ CLK_CON_MUX_CLK_CMGP_ADC, 0 },
++	{ CLK_CON_MUX_MUX_CLK_CMGP_USI_CMGP0, 0 },
++	{ CLK_CON_MUX_MUX_CLK_CMGP_USI_CMGP1, 0 },
++};
 +
- /**
-  * exynos_arm64_register_cmu - Register specified Exynos CMU domain
-  * @dev:	Device object; may be NULL if this function is not being
-@@ -207,6 +232,8 @@ int __init exynos_arm64_register_cmu_pm(struct platform_device *pdev,
- 	if (!data)
- 		return -ENOMEM;
+ /* List of parent clocks for Muxes in CMU_CMGP */
+ PNAME(mout_cmgp_usi0_p)	= { "clk_rco_cmgp", "gout_clkcmu_cmgp_bus" };
+ PNAME(mout_cmgp_usi1_p)	= { "clk_rco_cmgp", "gout_clkcmu_cmgp_bus" };
+@@ -1015,6 +1046,8 @@ static const struct samsung_cmu_info cmgp_cmu_info __initconst = {
+ 	.nr_clk_ids		= CMGP_NR_CLK,
+ 	.clk_regs		= cmgp_clk_regs,
+ 	.nr_clk_regs		= ARRAY_SIZE(cmgp_clk_regs),
++	.suspend_regs		= cmgp_suspend_regs,
++	.nr_suspend_regs	= ARRAY_SIZE(cmgp_suspend_regs),
+ 	.clk_name		= "gout_clkcmu_cmgp_bus",
+ };
  
-+	of_property_read_u32(np, "samsung,tzpc", (u32 *)&data->tzpc_addr);
+@@ -1051,6 +1084,11 @@ static const unsigned long g3d_clk_regs[] __initconst = {
+ 	CLK_CON_GAT_GOUT_G3D_SYSREG_PCLK,
+ };
+ 
++static const struct samsung_clk_reg_dump g3d_suspend_regs[] = {
++	{ PLL_CON0_PLL_G3D, 0 },
++	{ PLL_CON0_MUX_CLKCMU_G3D_SWITCH_USER, 0 },
++};
 +
- 	platform_set_drvdata(pdev, data);
+ /* List of parent clocks for Muxes in CMU_G3D */
+ PNAME(mout_g3d_pll_p)		= { "oscclk", "fout_g3d_pll" };
+ PNAME(mout_g3d_switch_user_p)	= { "oscclk", "dout_g3d_switch" };
+@@ -1111,6 +1149,8 @@ static const struct samsung_cmu_info g3d_cmu_info __initconst = {
+ 	.nr_clk_ids		= G3D_NR_CLK,
+ 	.clk_regs		= g3d_clk_regs,
+ 	.nr_clk_regs		= ARRAY_SIZE(g3d_clk_regs),
++	.suspend_regs		= g3d_suspend_regs,
++	.nr_suspend_regs	= ARRAY_SIZE(g3d_suspend_regs),
+ 	.clk_name		= "dout_g3d_switch",
+ };
  
- 	ret = exynos_arm64_cmu_prepare_pm(dev, cmu);
-@@ -251,7 +278,7 @@ int __init exynos_arm64_register_cmu_pm(struct platform_device *pdev,
- int exynos_arm64_cmu_suspend(struct device *dev)
- {
- 	struct exynos_arm64_cmu_data *data = dev_get_drvdata(dev);
--	int i;
-+	int i, ret;
+@@ -1153,6 +1193,13 @@ static const unsigned long hsi_clk_regs[] __initconst = {
+ 	CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_BUS_CLK_EARLY,
+ };
  
- 	samsung_clk_save(data->ctx->reg_base, data->clk_save,
- 			 data->nr_clk_save);
-@@ -263,6 +290,10 @@ int exynos_arm64_cmu_suspend(struct device *dev)
- 	samsung_clk_restore(data->ctx->reg_base, data->clk_suspend,
- 			    data->nr_clk_suspend);
- 
-+	ret = exynos_arm64_pm_smc(dev, false);
-+	if (ret)
-+		return ret;
++static const struct samsung_clk_reg_dump hsi_suspend_regs[] = {
++	{ PLL_CON0_MUX_CLKCMU_HSI_BUS_USER, 0 },
++	{ PLL_CON0_MUX_CLKCMU_HSI_MMC_CARD_USER, 0 },
++	{ PLL_CON0_MUX_CLKCMU_HSI_USB20DRD_USER, 0 },
++	{ CLK_CON_MUX_MUX_CLK_HSI_RTC, 0 },
++};
 +
- 	for (i = 0; i < data->nr_pclks; i++)
- 		clk_disable_unprepare(data->pclks[i]);
+ /* List of parent clocks for Muxes in CMU_HSI */
+ PNAME(mout_hsi_bus_user_p)	= { "oscclk", "dout_hsi_bus" };
+ PNAME(mout_hsi_mmc_card_user_p)	= { "oscclk", "dout_hsi_mmc_card" };
+@@ -1213,6 +1260,8 @@ static const struct samsung_cmu_info hsi_cmu_info __initconst = {
+ 	.nr_clk_ids		= HSI_NR_CLK,
+ 	.clk_regs		= hsi_clk_regs,
+ 	.nr_clk_regs		= ARRAY_SIZE(hsi_clk_regs),
++	.suspend_regs		= hsi_suspend_regs,
++	.nr_suspend_regs	= ARRAY_SIZE(hsi_suspend_regs),
+ 	.clk_name		= "dout_hsi_bus",
+ };
  
-@@ -274,13 +305,17 @@ int exynos_arm64_cmu_suspend(struct device *dev)
- int exynos_arm64_cmu_resume(struct device *dev)
- {
- 	struct exynos_arm64_cmu_data *data = dev_get_drvdata(dev);
--	int i;
-+	int i, ret;
+@@ -1268,6 +1317,13 @@ static const unsigned long is_clk_regs[] __initconst = {
+ 	CLK_CON_GAT_GOUT_IS_SYSREG_PCLK,
+ };
  
- 	clk_prepare_enable(data->clk);
- 
- 	for (i = 0; i < data->nr_pclks; i++)
- 		clk_prepare_enable(data->pclks[i]);
- 
-+	ret = exynos_arm64_pm_smc(dev, true);
-+	if (ret)
-+		return ret;
++static const struct samsung_clk_reg_dump is_suspend_regs[] = {
++	{ PLL_CON0_MUX_CLKCMU_IS_BUS_USER, 0 },
++	{ PLL_CON0_MUX_CLKCMU_IS_GDC_USER, 0 },
++	{ PLL_CON0_MUX_CLKCMU_IS_ITP_USER, 0 },
++	{ PLL_CON0_MUX_CLKCMU_IS_VRA_USER, 0 },
++};
 +
- 	samsung_clk_restore(data->ctx->reg_base, data->clk_save,
- 			    data->nr_clk_save);
+ /* List of parent clocks for Muxes in CMU_IS */
+ PNAME(mout_is_bus_user_p)	= { "oscclk", "dout_is_bus" };
+ PNAME(mout_is_itp_user_p)	= { "oscclk", "dout_is_itp" };
+@@ -1345,6 +1401,8 @@ static const struct samsung_cmu_info is_cmu_info __initconst = {
+ 	.nr_clk_ids		= IS_NR_CLK,
+ 	.clk_regs		= is_clk_regs,
+ 	.nr_clk_regs		= ARRAY_SIZE(is_clk_regs),
++	.suspend_regs		= is_suspend_regs,
++	.nr_suspend_regs	= ARRAY_SIZE(is_suspend_regs),
+ 	.clk_name		= "dout_is_bus",
+ };
+ 
+@@ -1384,6 +1442,13 @@ static const unsigned long mfcmscl_clk_regs[] __initconst = {
+ 	CLK_CON_GAT_GOUT_MFCMSCL_SYSREG_PCLK,
+ };
+ 
++static const struct samsung_clk_reg_dump mfcmscl_suspend_regs[] = {
++	{ PLL_CON0_MUX_CLKCMU_MFCMSCL_JPEG_USER, 0 },
++	{ PLL_CON0_MUX_CLKCMU_MFCMSCL_M2M_USER, 0 },
++	{ PLL_CON0_MUX_CLKCMU_MFCMSCL_MCSC_USER, 0 },
++	{ PLL_CON0_MUX_CLKCMU_MFCMSCL_MFC_USER, 0 },
++};
++
+ /* List of parent clocks for Muxes in CMU_MFCMSCL */
+ PNAME(mout_mfcmscl_mfc_user_p)	= { "oscclk", "dout_mfcmscl_mfc" };
+ PNAME(mout_mfcmscl_m2m_user_p)	= { "oscclk", "dout_mfcmscl_m2m" };
+@@ -1454,6 +1519,8 @@ static const struct samsung_cmu_info mfcmscl_cmu_info __initconst = {
+ 	.nr_clk_ids		= MFCMSCL_NR_CLK,
+ 	.clk_regs		= mfcmscl_clk_regs,
+ 	.nr_clk_regs		= ARRAY_SIZE(mfcmscl_clk_regs),
++	.suspend_regs		= mfcmscl_suspend_regs,
++	.nr_suspend_regs	= ARRAY_SIZE(mfcmscl_suspend_regs),
+ 	.clk_name		= "dout_mfcmscl_mfc",
+ };
+ 
+@@ -1532,6 +1599,13 @@ static const unsigned long peri_clk_regs[] __initconst = {
+ 	CLK_CON_GAT_GOUT_PERI_WDT_1_PCLK,
+ };
+ 
++static const struct samsung_clk_reg_dump peri_suspend_regs[] = {
++	{ PLL_CON0_MUX_CLKCMU_PERI_BUS_USER, 0 },
++	{ PLL_CON0_MUX_CLKCMU_PERI_HSI2C_USER, 0 },
++	{ PLL_CON0_MUX_CLKCMU_PERI_SPI_USER, 0 },
++	{ PLL_CON0_MUX_CLKCMU_PERI_UART_USER, 0 },
++};
++
+ /* List of parent clocks for Muxes in CMU_PERI */
+ PNAME(mout_peri_bus_user_p)	= { "oscclk", "dout_peri_bus" };
+ PNAME(mout_peri_uart_user_p)	= { "oscclk", "dout_peri_uart" };
+@@ -1629,6 +1703,8 @@ static const struct samsung_cmu_info peri_cmu_info __initconst = {
+ 	.nr_clk_ids		= PERI_NR_CLK,
+ 	.clk_regs		= peri_clk_regs,
+ 	.nr_clk_regs		= ARRAY_SIZE(peri_clk_regs),
++	.suspend_regs		= peri_suspend_regs,
++	.nr_suspend_regs	= ARRAY_SIZE(peri_suspend_regs),
+ 	.clk_name		= "dout_peri_bus",
+ };
+ 
+@@ -1676,6 +1752,14 @@ static const unsigned long core_clk_regs[] __initconst = {
+ 	CLK_CON_GAT_GOUT_CORE_SYSREG_CORE_PCLK,
+ };
+ 
++static const struct samsung_clk_reg_dump core_suspend_regs[] = {
++	{ PLL_CON0_MUX_CLKCMU_CORE_BUS_USER, 0 },
++	{ PLL_CON0_MUX_CLKCMU_CORE_CCI_USER, 0 },
++	{ PLL_CON0_MUX_CLKCMU_CORE_MMC_EMBD_USER, 0 },
++	{ PLL_CON0_MUX_CLKCMU_CORE_SSS_USER, 0 },
++	{ CLK_CON_MUX_MUX_CLK_CORE_GIC, 0x1 },
++};
++
+ /* List of parent clocks for Muxes in CMU_CORE */
+ PNAME(mout_core_bus_user_p)		= { "oscclk", "dout_core_bus" };
+ PNAME(mout_core_cci_user_p)		= { "oscclk", "dout_core_cci" };
+@@ -1736,6 +1820,8 @@ static const struct samsung_cmu_info core_cmu_info __initconst = {
+ 	.nr_clk_ids		= CORE_NR_CLK,
+ 	.clk_regs		= core_clk_regs,
+ 	.nr_clk_regs		= ARRAY_SIZE(core_clk_regs),
++	.suspend_regs		= core_suspend_regs,
++	.nr_suspend_regs	= ARRAY_SIZE(core_suspend_regs),
+ 	.clk_name		= "dout_core_bus",
+ };
+ 
+@@ -1766,6 +1852,10 @@ static const unsigned long dpu_clk_regs[] __initconst = {
+ 	CLK_CON_GAT_GOUT_DPU_SYSREG_PCLK,
+ };
+ 
++static const struct samsung_clk_reg_dump dpu_suspend_regs[] = {
++	{ PLL_CON0_MUX_CLKCMU_DPU_USER, 0 },
++};
++
+ /* List of parent clocks for Muxes in CMU_DPU */
+ PNAME(mout_dpu_user_p)		= { "oscclk", "dout_dpu" };
+ 
+@@ -1810,6 +1900,8 @@ static const struct samsung_cmu_info dpu_cmu_info __initconst = {
+ 	.nr_clk_ids		= DPU_NR_CLK,
+ 	.clk_regs		= dpu_clk_regs,
+ 	.nr_clk_regs		= ARRAY_SIZE(dpu_clk_regs),
++	.suspend_regs		= dpu_suspend_regs,
++	.nr_suspend_regs	= ARRAY_SIZE(dpu_suspend_regs),
+ 	.clk_name		= "dout_dpu",
+ };
  
 -- 
 2.39.2
