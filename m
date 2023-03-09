@@ -2,55 +2,65 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B347C742A7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Mar 2023 00:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8196C64EC4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Mar 2023 09:15:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229945AbjCIAqN (ORCPT
+        id S230481AbjCIJP1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Mar 2023 19:46:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41632 "EHLO
+        Thu, 9 Mar 2023 04:15:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229923AbjCIAqN (ORCPT
+        with ESMTP id S231289AbjCIJPV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Mar 2023 19:46:13 -0500
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3C4A82ABC;
-        Wed,  8 Mar 2023 16:46:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1678322771; x=1709858771;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rr/6zGAp8aqUfWklu+wtdJX92oC9y+5AlYk2V2xbAog=;
-  b=gL60WHvd5aQf7/jcjgB5zxEV7cOOxqpHqpIf448JRcX+MU//iMnpwdJc
-   YNuuSnqHvZU+GhSpupafJjLLd8CzuLJpAJ6bJ2bkKhvjP2dkSJEWk9WO8
-   /ImRqZTNnBdP4RVRWT56ZIZB3TfaxKBN1tSYch3TxArPG1tDLKfvZqdnt
-   eIBe/1zoCEtSE6r0uL5X1KQM0bYDamAwSnym1XPBnnDxRfV+Pp6JvFPRZ
-   PUt3iKYHNtg5Y6iuKi/+i0o6gIskuvSenqZHyzpONrheP2bgWB7a3+IZL
-   f/C2ESeFgKxUQkY9Ln4Q8TCMSFHDP+VtuZKCsi2R/cFhb4MolU7tAgdht
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10643"; a="315976034"
-X-IronPort-AV: E=Sophos;i="5.98,244,1673942400"; 
-   d="scan'208";a="315976034"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2023 16:46:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10643"; a="707398933"
-X-IronPort-AV: E=Sophos;i="5.98,244,1673942400"; 
-   d="scan'208";a="707398933"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga008.jf.intel.com with ESMTP; 08 Mar 2023 16:46:04 -0800
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pa4Q0-0002Wr-18;
-        Thu, 09 Mar 2023 00:46:04 +0000
-Date:   Thu, 9 Mar 2023 08:45:20 +0800
-From:   kernel test robot <lkp@intel.com>
+        Thu, 9 Mar 2023 04:15:21 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E24FD6B950
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Mar 2023 01:15:17 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id s11so4229423edy.8
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Mar 2023 01:15:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678353316;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s5q8KQOzCQWOJTqdyqK3y1vIAkUs5tdLsy8yXKdX+F0=;
+        b=eC7LBTnawutc5RwLnhfn1YG+rYbLKnbNiN6fETTvSSKIKTS/O5JKglmmvBAgljM08A
+         VyGMlZ1xNFFZJBjOxZ+G0gCB317iz7438XRa6b5UmZ9+8q8DMb9bJTGL/UJbi7/HUhM/
+         eBRCR3YjBJwmtUoqt/xNlgTFd3JiaKB/3z1Icqlzio0HpxNlEabmVXYTiuPci+saCbpG
+         ri5ZXW+fh8WSJpt/TZsUwg59NnAf64hG+CPZ381dy1cBVTeyaTLaSKont+6nkNspJhUm
+         RLal67hr1/wYty1IZ5mNocVAR/zoyKocQqvBX8WXdfl8MSmEWxkO2s+VO/3dEXme81hC
+         JCwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678353316;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s5q8KQOzCQWOJTqdyqK3y1vIAkUs5tdLsy8yXKdX+F0=;
+        b=nRzbhDYVnmR7nAp/w7oucY6j4cXJwfVEPfc2JvcKcrY1IA6nXCkkVFdFH5neM2sQNO
+         snmSYPSIbL0o4UPaV2SIWpxc0kV41yjQwJx8kxiROyjYwAxrh5ASMUrgmeEVcjQhl4V8
+         22PJmtMBDFjDgficz/cll6zpTUgwzEZ15HXS0F40wTF4lgW9cM6AwZ3MvVpPklcCVGeG
+         4JILL2DlxAW9jnTIiCVQouaW1dHN7ImONxIaMP3ncWg1LgSjtDSkN4agsNZV4KyUPqZj
+         XCkLr7Zhl7XCN1U95YjFze5wlhRJz2t2UsE3BpvMePqygHc9U2bzuoD7GyQyjiGYW2jA
+         i9aQ==
+X-Gm-Message-State: AO0yUKW+x3Wu2kBDpCP0KujTDNThoAdZ0HILTmqkxG6aKpAtCZRvfI2v
+        ZI5QbOC8B0KIi0OVIpzkO4fqDA==
+X-Google-Smtp-Source: AK7set8xwtxCT7nFJQpgOv90l8MyYk/13E3cgWr+yoj7OFzq7eSsX4qzkbHVVhC0/n/vMJqEyTKK7A==
+X-Received: by 2002:a17:906:304a:b0:8b1:4051:6d2c with SMTP id d10-20020a170906304a00b008b140516d2cmr19889796ejd.19.1678353316452;
+        Thu, 09 Mar 2023 01:15:16 -0800 (PST)
+Received: from ?IPV6:2a02:810d:15c0:828:7ee2:e73e:802e:45c1? ([2a02:810d:15c0:828:7ee2:e73e:802e:45c1])
+        by smtp.gmail.com with ESMTPSA id uo17-20020a170907cc1100b008b17ed98d05sm8531971ejc.120.2023.03.09.01.15.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Mar 2023 01:15:15 -0800 (PST)
+Message-ID: <1b8bce82-a59d-f655-1277-3cc1110b818f@linaro.org>
+Date:   Thu, 9 Mar 2023 10:15:14 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 1/6] dt-bindings: power: pd-samsung: Add Exynos850 support
+Content-Language: en-US
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
         Rob Herring <robh+dt@kernel.org>
-Cc:     oe-kbuild-all@lists.linux.dev,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Chanho Park <chanho61.park@samsung.com>,
@@ -58,92 +68,66 @@ Cc:     oe-kbuild-all@lists.linux.dev,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] soc: samsung: pm_domains: Implement proper I/O
- operations
-Message-ID: <202303090824.TjEOnQJ8-lkp@intel.com>
-References: <20230308230931.27261-5-semen.protsenko@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230308230931.27261-5-semen.protsenko@linaro.org>
+References: <20230308230931.27261-1-semen.protsenko@linaro.org>
+ <20230308230931.27261-2-semen.protsenko@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230308230931.27261-2-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Sam,
+On 09/03/2023 00:09, Sam Protsenko wrote:
+> Document the compatible string for Exynos850 power domains controller.
+> Also add power domain indices which can be used in "samsung,pd-index"
 
-Thank you for the patch! Perhaps something to improve:
+There is no such property...
 
-[auto build test WARNING on krzk/for-next]
-[also build test WARNING on robh/for-next krzk-dt/for-next linus/master v6.3-rc1 next-20230308]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> property to specify a particular power domain in the device tree.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  .../devicetree/bindings/power/pd-samsung.yaml   |  1 +
+>  MAINTAINERS                                     |  1 +
+>  .../dt-bindings/power/samsung,exynos850-power.h | 17 +++++++++++++++++
+>  3 files changed, 19 insertions(+)
+>  create mode 100644 include/dt-bindings/power/samsung,exynos850-power.h
+> 
+> diff --git a/Documentation/devicetree/bindings/power/pd-samsung.yaml b/Documentation/devicetree/bindings/power/pd-samsung.yaml
+> index 9c2c51133457..a353a705292c 100644
+> --- a/Documentation/devicetree/bindings/power/pd-samsung.yaml
+> +++ b/Documentation/devicetree/bindings/power/pd-samsung.yaml
+> @@ -21,6 +21,7 @@ properties:
+>      enum:
+>        - samsung,exynos4210-pd
+>        - samsung,exynos5433-pd
+> +      - samsung,exynos850-pd
+>  
+>    reg:
+>      maxItems: 1
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8d5bc223f305..53e11e48639c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2720,6 +2720,7 @@ F:	drivers/pwm/pwm-samsung.c
+>  F:	drivers/soc/samsung/
+>  F:	drivers/tty/serial/samsung*
+>  F:	include/clocksource/samsung_pwm.h
+> +F:	include/dt-bindings/power/samsung,*
+>  F:	include/linux/platform_data/*s3c*
+>  F:	include/linux/serial_s3c.h
+>  F:	include/linux/soc/samsung/
+> diff --git a/include/dt-bindings/power/samsung,exynos850-power.h b/include/dt-bindings/power/samsung,exynos850-power.h
+> new file mode 100644
+> index 000000000000..a8d877b5515a
+> --- /dev/null
+> +++ b/include/dt-bindings/power/samsung,exynos850-power.h
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sam-Protsenko/dt-bindings-power-pd-samsung-Add-Exynos850-support/20230309-071202
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
-patch link:    https://lore.kernel.org/r/20230308230931.27261-5-semen.protsenko%40linaro.org
-patch subject: [PATCH 4/6] soc: samsung: pm_domains: Implement proper I/O operations
-config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20230309/202303090824.TjEOnQJ8-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/2dabd70f9264ef6cd044de6c3cbd3d83bfef8442
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Sam-Protsenko/dt-bindings-power-pd-samsung-Add-Exynos850-support/20230309-071202
-        git checkout 2dabd70f9264ef6cd044de6c3cbd3d83bfef8442
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash drivers/soc/samsung/
+Filename matching compatible, so samsung,exynos850-pd.h... but I
+actually wonder why do we need it. How power domains are organized in
+Exynos850?
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303090824.TjEOnQJ8-lkp@intel.com/
+Best regards,
+Krzysztof
 
-All warnings (new ones prefixed by >>):
-
-   drivers/soc/samsung/pm_domains.c: In function 'exynos_pd_power':
->> drivers/soc/samsung/pm_domains.c:74:23: warning: variable 'base' set but not used [-Wunused-but-set-variable]
-      74 |         void __iomem *base;
-         |                       ^~~~
-
-
-vim +/base +74 drivers/soc/samsung/pm_domains.c
-
-2dabd70f9264ef drivers/soc/samsung/pm_domains.c  Sam Protsenko       2023-03-08   70  
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   71  static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   72  {
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   73  	struct exynos_pm_domain *pd;
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27  @74  	void __iomem *base;
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   75  	u32 timeout, pwr;
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   76  	char *op;
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   77  
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   78  	pd = container_of(domain, struct exynos_pm_domain, pd);
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   79  	base = pd->base;
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   80  
-c028e175713698 drivers/soc/samsung/pm_domains.c  Krzysztof Kozlowski 2016-05-10   81  	pwr = power_on ? pd->local_pwr_cfg : 0;
-2dabd70f9264ef drivers/soc/samsung/pm_domains.c  Sam Protsenko       2023-03-08   82  	exynos_pd_write_conf(pd, pwr);
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   83  
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   84  	/* Wait max 1ms */
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   85  	timeout = 10;
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   86  
-2dabd70f9264ef drivers/soc/samsung/pm_domains.c  Sam Protsenko       2023-03-08   87  	while (exynos_pd_read_status(pd) != pwr) {
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   88  		if (!timeout) {
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   89  			op = (power_on) ? "enable" : "disable";
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   90  			pr_err("Power domain %s %s failed\n", domain->name, op);
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   91  			return -ETIMEDOUT;
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   92  		}
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   93  		timeout--;
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   94  		cpu_relax();
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   95  		usleep_range(80, 100);
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   96  	}
-c760569d0e9c06 arch/arm/mach-exynos/pm_domains.c Prathyush K         2014-07-11   97  
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   98  	return 0;
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27   99  }
-91cfbd4ee0875f arch/arm/mach-exynos/pm_domains.c Thomas Abraham      2012-01-27  100  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
