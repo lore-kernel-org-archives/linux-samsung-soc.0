@@ -2,125 +2,114 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 716F7C6FA99
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Mar 2023 14:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C132C6FA99
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Mar 2023 14:43:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232848AbjCJOmR (ORCPT
+        id S232814AbjCJOnt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 10 Mar 2023 09:42:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59086 "EHLO
+        Fri, 10 Mar 2023 09:43:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232802AbjCJOmE (ORCPT
+        with ESMTP id S232875AbjCJOnb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Mar 2023 09:42:04 -0500
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 063C5120E97
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Mar 2023 06:41:56 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id j11so21352201edq.4
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Mar 2023 06:41:56 -0800 (PST)
+        Fri, 10 Mar 2023 09:43:31 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2953E5BCBA
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Mar 2023 06:43:23 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id u9so21423890edd.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Mar 2023 06:43:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678459315;
+        d=linaro.org; s=google; t=1678459402;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=DfLyxnaSR94pRL9TKD2BzlkjQb2HIbbl30lK64GdSjI=;
-        b=RCbQUF5DKIQdWfTbUqY2lMMufmjE+7vG3iOjfwJyL1RSjQh33i5E/qnC73DCjNEGDw
-         6VB6yQ0/8vFiYejGUeChkhs6ypP1oOmVu99uZVGcGaqtJ99ok+YJXvpJ+lBWwkksDPBi
-         m/rVcIcE78rueSGRqQn2OSePh4OWNL1p2k7IhsYVNKbanSQBPHOCyjU8MBOA4f0+DRTI
-         RAD/Ejkf3K6HrVdJuWoiGxBTuZbA63YVV/dB7slKo+SnvYqSoHJkNy7VJqnS20WiDksF
-         WVySvpW1EUdhB51ooU+NmGFETvCz13w270wcLOkpit9zjo9oEs4VOoKJb3TL61uwO1xU
-         VyXQ==
+        bh=JYMEdjeleSWWpXin+nV8OWvud5LsPZ8G/6AgyZ+yAwQ=;
+        b=dyVAJ7eu/3a4Va5UtYhwVcbyFbDZz+mUrkWue+/ZeULTxrL+HQcyDqTd5cix+XtfxF
+         SzBBDrIXZoFe/dqF/muPu05TUeNINPBMDlb1C7U/oQO2fB4cvy39qIkiYaiwMKiVxtlX
+         KFzS5UmjoQ0zAnBXuHyv083PXHcK3mno2vK9ZXLB1ekJuB90bnrXP1XYfbCRD3cB3aEG
+         eYSZqopzPKNIol8R4lp2C6fVDVjQloFSowH+Y+vum1zXMTECctTspaEABEl/fxcXYf/u
+         4OhR61yzeBveMA6G30JseUSfNyQubIrtmsUdHfG0XbC90zhJf9z+fWZ3tcSGrHzrfdYU
+         wxeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678459315;
+        d=1e100.net; s=20210112; t=1678459402;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DfLyxnaSR94pRL9TKD2BzlkjQb2HIbbl30lK64GdSjI=;
-        b=x9KQAJ7ot0cn1fcmmw3Iia651AJKoBYB6UOn0o5L9lfZDMvEIfOhEwijNAxXO9uOye
-         xHsxjZjaRzEiS+tSC9/eAGQFwr9vo4F5uK5gkYQoyXcTeXY3Dd9zCvLsCzZBawG2COeC
-         QQEErlWlMEIi7+aAEmUyyWOxH2sPLKX4ZRMrYAVhKMzPNnvILJ7fOUZ1aOoJ9d9MEEVc
-         VQMUmipt3Wg3Zx1lVgF2blS5vpvfyDAe0h1U+PHgbjDD8P1/lJBdxvfWpIegu4us0b1C
-         JpUg2qSECt69ms+7Bcz7K1plIIGQ6cTZxsFE60Obeoc+gH/ytunTHHDjDMpnzSEomDRd
-         ZI9g==
-X-Gm-Message-State: AO0yUKU5i5fVSRRLp52T3RwHJdhZ+d4vDgsPa1N95uH7fNxnuGXzt4BV
-        uqZWLVtr/IGKTndxQmLjK7G5qw==
-X-Google-Smtp-Source: AK7set8Wf3zmf0nbesz2jk8FT2yV747LT6wim8lRGLN6pWxH1L7cptJwa2HjW0pAV2OI/Ul/jQmWgQ==
-X-Received: by 2002:a17:907:d308:b0:8b1:3a1c:3174 with SMTP id vg8-20020a170907d30800b008b13a1c3174mr26770048ejc.77.1678459315216;
-        Fri, 10 Mar 2023 06:41:55 -0800 (PST)
+        bh=JYMEdjeleSWWpXin+nV8OWvud5LsPZ8G/6AgyZ+yAwQ=;
+        b=fAREvden1R1tLKQFVidyZMdyfxYFy6EA2NQasp+2c82AFxRk9YEmjLq5xJZbBNuFGs
+         GZx+2JwIVbgOoNj3KTjq23mJXOwsCeuMny9rfpMXXzTAcxP0s3me/evlQHIaPSoiK29F
+         PetCTboXoqZ5bogjKZasl+M7PZAFvYZoAeRqWKS/0dcTPdvewz7zaWn7BUyAO8l2kf3j
+         I5C6aXba/zY50CxGU9xQARYzeVEjSYcxDPLIFCn+Mo+pTQgYa4HsHUL9bAOfB23aX/eZ
+         qy0/G7zmp9q1roozrtJTzj1VYyOkFHQzMMWpSJphrdsQi5r98kYaXDBk8WvY27nuax7V
+         aJ9Q==
+X-Gm-Message-State: AO0yUKUrzWTmOejLk+eXKugHC3a5kW/jUhmfOD/jwt8tIuvtXhy4JsvH
+        9AOsU/q7T8snRBtIOmohMRIsgA==
+X-Google-Smtp-Source: AK7set845QJSc/SjAXM6QM3dwBDS1eo1cerd3I4zY5AKmphjSWiUT+Tw3zhF0l6YLSy+ywhLwM2bfQ==
+X-Received: by 2002:aa7:d952:0:b0:4c6:f2cd:9d72 with SMTP id l18-20020aa7d952000000b004c6f2cd9d72mr24748846eds.5.1678459402436;
+        Fri, 10 Mar 2023 06:43:22 -0800 (PST)
 Received: from ?IPV6:2a02:810d:15c0:828:45c4:46be:ec71:4a51? ([2a02:810d:15c0:828:45c4:46be:ec71:4a51])
-        by smtp.gmail.com with ESMTPSA id z11-20020a509e0b000000b004aee4e2a56esm127121ede.0.2023.03.10.06.41.54
+        by smtp.gmail.com with ESMTPSA id 23-20020a170906319700b008c06de45e75sm1034415ejy.107.2023.03.10.06.43.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Mar 2023 06:41:54 -0800 (PST)
-Message-ID: <f3d94e68-5f5b-c385-2190-5be10f25198b@linaro.org>
-Date:   Fri, 10 Mar 2023 15:41:53 +0100
+        Fri, 10 Mar 2023 06:43:22 -0800 (PST)
+Message-ID: <8caa7218-41c2-04b4-e7b3-ee0fb43079a3@linaro.org>
+Date:   Fri, 10 Mar 2023 15:43:20 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: [PATCH 2/6] dt-bindings: power: pd-samsung: Allow pd nodes to be
- children of PMU
+Subject: Re: [PATCH 1/7] dt-bindings: clock: exynos850: Add power-domains
+ property
 Content-Language: en-US
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Chanho Park <chanho61.park@samsung.com>,
         David Virag <virag.david003@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-References: <20230308230931.27261-1-semen.protsenko@linaro.org>
- <20230308230931.27261-3-semen.protsenko@linaro.org>
+References: <20230308233822.31180-1-semen.protsenko@linaro.org>
+ <20230308233822.31180-2-semen.protsenko@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230308230931.27261-3-semen.protsenko@linaro.org>
+In-Reply-To: <20230308233822.31180-2-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 09/03/2023 00:09, Sam Protsenko wrote:
-> Introduce a new "samsung,pd-index" property to choose a specific power
-> domain. This way it would be possible to avoid specifying any addresses
-> in power domain nodes, relying solely on syscon regmap from the parent
-> node (which should be a PMU system controller). Therefore the "reg"
-> property is deprecated now, as it's more logical to describe power
-> domains as children of PMU node, because PD registers reside in the PMU
-> area.
+On 09/03/2023 00:38, Sam Protsenko wrote:
+> Document power-domains property in Exynos850 clock controller.
+
+This we see from the diff. You need to say why, e.g. "several clock
+controllers are part of their power domain and require domain to be on
+for operation."
+
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > ---
->  .../devicetree/bindings/power/pd-samsung.yaml         | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
+>  .../devicetree/bindings/clock/samsung,exynos850-clock.yaml     | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/power/pd-samsung.yaml b/Documentation/devicetree/bindings/power/pd-samsung.yaml
-> index a353a705292c..73178b1a56ea 100644
-> --- a/Documentation/devicetree/bindings/power/pd-samsung.yaml
-> +++ b/Documentation/devicetree/bindings/power/pd-samsung.yaml
-> @@ -25,6 +25,10 @@ properties:
+> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+> index 8aa87b8c1b33..cc1e9173b272 100644
+> --- a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+> +++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+> @@ -54,6 +54,9 @@ properties:
+>    "#clock-cells":
+>      const: 1
 >  
+> +  power-domains:
+> +    maxItems: 1
+> +
 >    reg:
 >      maxItems: 1
-> +    deprecated: true
-> +    description:
-> +      Physical base address and length of Power Domains area (if not a child of
-> +      PMU).
 >  
->    clocks:
->      deprecated: true
-> @@ -45,10 +49,15 @@ properties:
->    power-domains:
->      maxItems: 1
->  
-> +  samsung,pd-index:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      Power domain index (if a child of PMU). Valid values are defined in::
-> +        "include/dt-bindings/power/samsung,exynos850-power.h" - for Exynos850
-
-DT nodes should not have any IDs, except what is in 'reg'. Thus please
-go with Marek's proposal of merging power domains into PMU driver and
-using proper xlate.
 
 Best regards,
 Krzysztof
