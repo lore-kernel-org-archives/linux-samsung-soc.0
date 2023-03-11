@@ -2,72 +2,72 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC7AAC61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Mar 2023 12:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B9BC61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Mar 2023 17:05:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230416AbjCKM5D convert rfc822-to-8bit (ORCPT
+        id S229567AbjCKRFi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 11 Mar 2023 07:57:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54136 "EHLO
+        Sat, 11 Mar 2023 12:05:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229703AbjCKM5C (ORCPT
+        with ESMTP id S229469AbjCKRFh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 11 Mar 2023 07:57:02 -0500
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F6B10113C;
-        Sat, 11 Mar 2023 04:56:58 -0800 (PST)
-Received: from tuc-211-071.hrz.tu-chemnitz.de ([134.109.211.71] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1paym9-0001uK-KX; Sat, 11 Mar 2023 13:56:41 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Mark Brown <broonie@kernel.org>, Kamal Dasu <kdasu.kdev@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Sat, 11 Mar 2023 12:05:37 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8058B763F1;
+        Sat, 11 Mar 2023 09:05:35 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0F2FB60D29;
+        Sat, 11 Mar 2023 17:05:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F196C433D2;
+        Sat, 11 Mar 2023 17:05:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678554334;
+        bh=XwB/GrtD4QgsUuzr8rRrhVy0wwdqbWVx5IYtLaykaI4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CMKvwDarrN0Q+uUYRkqLiVku1aIdmmGLO1Z+d7R6Fy3zYtD0KIlkkrJRaduaOq1HV
+         iSZ5LAbBuntSp7GdoKNCDX6FMvR14cKslRh5qQmUnfKFmaeFvmI5728Y8I/5Akesi6
+         JJnwDr/Uqpw2f1JyMn2u6GOOVqBCOYsr3DC1/TcWJGhlux7YwvpcXlvoy6kIr+NTfH
+         9yziGSWQSr163N7JA+Rx61KReni0dVYWj+/dRccWueoazXpaoDHIq81wXe8/JvxRCm
+         SCTPxbG1YWfD0gzMQOIwjxKB6vz8dk0cpR2NqnSJDhgKz7AcaaY1h2KCeKszw3N00i
+         SaVe3DP7KUNLg==
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Mark Brown <broonie@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andi Shyti <andi@etezian.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 06/16] spi: rockchip: Drop of_match_ptr for ID table
-Date:   Sat, 11 Mar 2023 13:56:40 +0100
-Message-ID: <11086237.nUPlyArG6x@phil>
-In-Reply-To: <20230310222857.315629-6-krzysztof.kozlowski@linaro.org>
-References: <20230310222857.315629-1-krzysztof.kozlowski@linaro.org>
- <20230310222857.315629-6-krzysztof.kozlowski@linaro.org>
+        Andi Shyti <andi.shyti@kernel.org>
+Subject: [PATCH] MAINTAINERS: update Andi's e-mail to @kernel.org
+Date:   Sat, 11 Mar 2023 18:05:16 +0100
+Message-Id: <20230311170516.178913-1-andi.shyti@kernel.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Am Freitag, 10. März 2023, 23:28:47 CET schrieb Krzysztof Kozlowski:
-> The driver can match only via the DT table so the table should be always
-> used and the of_match_ptr does not have any sense (this also allows ACPI
-> matching via PRP0001, even though it is not relevant here).
-> 
->   drivers/spi/spi-rockchip.c:1051:34: error: ‘rockchip_spi_dt_match’ defined but not used [-Werror=unused-const-variable=]
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Use the kernel.org e-mail for the maintainer entry
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Andi Shyti <andi.shyti@kernel.org>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 150ff03b42eb..fe6ef7be49a0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18543,7 +18543,7 @@ F:	include/linux/clk/samsung.h
+ 
+ SAMSUNG SPI DRIVERS
+ M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+-M:	Andi Shyti <andi@etezian.org>
++M:	Andi Shyti <andi.shyti@kernel.org>
+ L:	linux-spi@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+-- 
+2.39.2
 
