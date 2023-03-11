@@ -2,90 +2,97 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D86C74A5B
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Mar 2023 18:57:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 896FAC61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Mar 2023 21:03:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229839AbjCKS5x (ORCPT
+        id S229604AbjCKVDO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 11 Mar 2023 13:57:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59676 "EHLO
+        Sat, 11 Mar 2023 16:03:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbjCKS5w (ORCPT
+        with ESMTP id S229473AbjCKVDN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 11 Mar 2023 13:57:52 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BC0F32CC5;
-        Sat, 11 Mar 2023 10:57:51 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DE07F60D30;
-        Sat, 11 Mar 2023 18:57:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A1FAC4339C;
-        Sat, 11 Mar 2023 18:57:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678561070;
-        bh=xaHRhiudUrbS+WkqUe8mCCCOPn8t0yaOAzuTsE+qPwk=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=Pmhq+ipUicTMrtC7sWL3GgvGORYYsnb9be/+5LuGSHPh6uP36Fzlntpm58qIPpyQF
-         xbxhc9UR6QsFRd1Db/SUcbfC1FhffD21PYNk3QaHaPKeHaPjMJxXKLC2XaIZAEHRy/
-         fHSSdJJ8N3rrqH0b2wK7F/GlizK0DfAqGyNbjpuMeJ4dw6Iakh41v0cy0l78W9e0FX
-         6D7bC5df2Aae9CIVxqbSXx9ZI5zsznL1tDoD5ZhSZ3sg/LF8pPT15oIe6wV7jYJ68y
-         /AIEDxqIWsiq70c6ijs7ZhnajNgPgHfYKFo0rmihbdoQcK1o4jAZWkGunPP0eIJJTt
-         ixLqtdSBHqSlg==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
-In-Reply-To: <20230310144722.1544843-1-robh@kernel.org>
-References: <20230310144722.1544843-1-robh@kernel.org>
-Subject: Re: [PATCH] regulator: Use of_property_read_bool() for boolean
- properties
-Message-Id: <167856106679.960737.10591965547383927223.b4-ty@kernel.org>
-Date:   Sat, 11 Mar 2023 18:57:46 +0000
+        Sat, 11 Mar 2023 16:03:13 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C9F9222E4;
+        Sat, 11 Mar 2023 13:03:12 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id ek18so3075020edb.6;
+        Sat, 11 Mar 2023 13:03:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112; t=1678568590;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iJFf8GLtxWXihMug6P0OGoX7CTL7k0wwiBVKeyB4Rpo=;
+        b=pT9GDSN4DyEtHNbHsKZm+0xijlTsTvbU5bIPzBadlF8tLIGLblNyzLF4VXQ5dN+1oa
+         02KI9Pn8XbTyDnI8AiRekzeA6P7tcsqysl4FxqJI5Jgtv/j8ItblEFdxVnlu54pNyDzI
+         83gLA8eoM0Sq8GzdHd/ogzYcPvjE2IMcJ+H1qt91TXwL6K8oAQEoluoIpDI3rSd8PyOc
+         WG236kfMedjpEUs/ovKGbEJZVCyuXzPNUisPfHjJShXO3TgDDTdiy+uRcM3QGSdMvD+4
+         VKmda1fshPzwDmkAkuA3fGsMg3b/1zrwzvnoc/Wpk0Ha3L8ybVW7WxZGOaYnrLQUu/al
+         5JNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678568590;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iJFf8GLtxWXihMug6P0OGoX7CTL7k0wwiBVKeyB4Rpo=;
+        b=feI05ue4Z2HoPhbLGoVZrUMDRufrxr5/TA/1UXz84RrCzXBWIWj4GJwdglKBEALBHB
+         1NLiFeXc1AFIIrYTZ8BnVM9inddeV20tLZ5bPJjGQfzvSuB1kE+eTDjjXVCdH/ZYNIzj
+         Q5S2A3rXVv33KMgUHnXuU7WZH3WcWTStoLrR6dihaGQOEX0vNDjmhCctyC7ZVlrWZyOp
+         LFPUigJ2nIYN+wjr+IpZY4Jb+zOGf/6UQ1caXO4qqB75zBeK2NckveMXM/V+rwT21sAI
+         0aCIVu2J0q31Q4UOhdD+9Xlk++cPVDM4APf6dtEG1yCQhE4LNkUqgkl+O9mGz3z2ILB9
+         SXag==
+X-Gm-Message-State: AO0yUKUsZdm9QXBOa3kvoz0COpC3TWIAkycyjYE2mf/W3VP4tCNz3Q0c
+        20v7YeoVyV+KaWq6TK/+n0h3kNOUvdB7AImfFFk=
+X-Google-Smtp-Source: AK7set+nsdI6U8Akb2Epvh5TLqA4QBXyUOxE40/FSbMxrjd9iHwvD/RJEhXoH5zYK9ZKzGCHNnhGvBPHX4D8aOQhPFs=
+X-Received: by 2002:a17:906:a1c5:b0:8f0:147b:be2 with SMTP id
+ bx5-20020a170906a1c500b008f0147b0be2mr14063306ejb.4.1678568590629; Sat, 11
+ Mar 2023 13:03:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-2eb1a
+References: <20230310222857.315629-1-krzysztof.kozlowski@linaro.org> <20230310222857.315629-3-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230310222857.315629-3-krzysztof.kozlowski@linaro.org>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sat, 11 Mar 2023 22:02:59 +0100
+Message-ID: <CAFBinCCZAjbuE-1hgJSUoW=GNT80Y7xReNW2D84H7YJ=yHVPxw@mail.gmail.com>
+Subject: Re: [PATCH 03/16] spi: meson-spicc: Drop of_match_ptr for ID table
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Mark Brown <broonie@kernel.org>, Kamal Dasu <kdasu.kdev@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Andi Shyti <andi@etezian.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 10 Mar 2023 08:47:22 -0600, Rob Herring wrote:
-> It is preferred to use typed property access functions (i.e.
-> of_property_read_<type> functions) rather than low-level
-> of_get_property/of_find_property functions for reading properties.
-> Convert reading boolean properties to to of_property_read_bool().
-> 
-> 
-
-Applied to
-
-   broonie/regulator.git for-next
-
-Thanks!
-
-[1/1] regulator: Use of_property_read_bool() for boolean properties
-      commit: 5bd73a162bc881dbb98ff9909dd865286852ee2b
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+On Fri, Mar 10, 2023 at 11:29=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> The driver can match only via the DT table so the table should be always
+> used and the of_match_ptr does not have any sense (this also allows ACPI
+> matching via PRP0001, even though it is not relevant here).
+>
+>   drivers/spi/spi-meson-spicc.c:949:34: error: =E2=80=98meson_spicc_of_ma=
+tch=E2=80=99 defined but not used [-Werror=3Dunused-const-variable=3D]
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
