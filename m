@@ -2,96 +2,87 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACDC1C74A4B
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Mar 2023 17:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04863C6FD1C
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Mar 2023 18:06:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230488AbjCKRje (ORCPT
+        id S230261AbjCKSGf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 11 Mar 2023 12:39:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40652 "EHLO
+        Sat, 11 Mar 2023 13:06:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230165AbjCKRjN (ORCPT
+        with ESMTP id S230305AbjCKSGe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 11 Mar 2023 12:39:13 -0500
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70D3026C2D
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Mar 2023 09:38:41 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id g10so4184171eda.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Mar 2023 09:38:41 -0800 (PST)
+        Sat, 11 Mar 2023 13:06:34 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DA9C532AF
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Mar 2023 10:06:26 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id cn21so3026995edb.0
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Mar 2023 10:06:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678556275;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=M5xwpl4H01ebuofJIsmyDXhZifNKbULLaWH0tgMeLQs=;
-        b=uHRXvcl4aQRMKSbMkJJVDHQLeJeor/p2qFQVGFmp4HbBcIjyvzBQXOOEOuHg5McWei
-         YkEPMsW0vdZEVtKDleHnOWn0qxL8bUYhMoWrRanE2Q2WOI6Ym1g3EC3UmWNyUUjGyR7y
-         V1CQmCVvmgjhZNEAg9xJW1pzDAlsnROIIVkXlqZ9BOSVhlPHNFzQPaCiSM4la7NDl4ZN
-         LuGw47EWnCQsi7sVTaNLg123uR3NHmj731YlMoLQDWIYnzcOBnmYYzHnWYGAk3vdYvkz
-         GAaeaSOr4LaUH1Fj4WcphjEjgnK3vmLSV+Dt51eeykqpi1RCcbC/3ro+zK/leUzQWe2f
-         42dg==
+        d=linaro.org; s=google; t=1678557985;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fMcft7wNHp8AV8X5G2NHBZb+ziZBPuC7uUWTZGa3pOs=;
+        b=HwSnmFkaLVcW4+BGIpV2BDzJDMm1EfGpX6Vdf1PcKMqXUXmgAJlmP++EBhgHwfPBF+
+         KWcq58bR+HSjEYGGO8ZxI+G3YZj1dDUjy7rN778ZTX8akugwBLXfu5YEjbyDJBiXwCw2
+         aJswcmg8jevxLsfrv1jyoK/M27Exj3bXYz+eJK7LtyWe9Q4aq7+9h6z6kWFPY8PtLWNX
+         U6KyE/V7YpO6dvsh6bBrUj82F4jtvoroYQk2pcmtuDludD+aeDvan7U2wXwJ3hit15D9
+         +QQsjUhea5WqRvLfo/BZrehQEyrGCXzLJw/cRLZZYQ3MpvKtBJsiIbamTaI1dydukT5O
+         nxBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678556275;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M5xwpl4H01ebuofJIsmyDXhZifNKbULLaWH0tgMeLQs=;
-        b=5IhvNW1u0axrF0AUqZb4LmLClTc4aOtKNYr7qEUF0CcUrY2tzQj9XvACV5jehaw4SM
-         HKw4IQ+quQ3CfyZmi0jus6Sl9aSvb7f2cQTnxiNEO8ufz1Hdlo3ihwkz8Uh/Ohs65p23
-         Z9lsSUkQCsn0TZwxFTWRP/4g2hYn/Y8ZZqd4UXBKqsXJjTqMcs26RYJUuvvPOK1t/yzs
-         M27jTZr2dpMvdLcdbftafctjA3cYpAnxK9o+Qe51QqOws4nSuX5K6BYmaOLNXQBT5ga2
-         +0jwa865FrjFqCwYPwuyTshQSEdFVvJCA1A5dIeHGGTzy56NnxkFuD3yGxVuxHcq6fbw
-         8neA==
-X-Gm-Message-State: AO0yUKVwzYHUm/DJl7ZBSp4l2bAPTnXUIe1E5dsCBJ8GT7b/BLXAtgK5
-        vC/+9uSALgZhk6JFD6zvkmoAxO+qxFOygRlc5e0=
-X-Google-Smtp-Source: AK7set9jGiGyUzTtS/mgdFjFwFwViy1GgJ823I/8lO8D9gRcovvMXzCapYxYjktiKP9R3ILihDBvIg==
-X-Received: by 2002:aa7:d58b:0:b0:4ad:7ad3:de18 with SMTP id r11-20020aa7d58b000000b004ad7ad3de18mr26993394edq.28.1678556275117;
-        Sat, 11 Mar 2023 09:37:55 -0800 (PST)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:6927:e94d:fc63:9d6e])
-        by smtp.gmail.com with ESMTPSA id q4-20020a50cc84000000b004bc15a440f1sm1421975edi.78.2023.03.11.09.37.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Mar 2023 09:37:54 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] devfreq: exyos-bus: drop of_match_ptr for ID table
-Date:   Sat, 11 Mar 2023 18:37:53 +0100
-Message-Id: <20230311173753.263390-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20210112; t=1678557985;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fMcft7wNHp8AV8X5G2NHBZb+ziZBPuC7uUWTZGa3pOs=;
+        b=c5QZz5FmFqXNjBb0vAJ9rLewn9vGz+ngdzuP4ofmJOHHIipEsvK10aQXinJ+Q8S92L
+         8ZdOQ0230MVG2R+qh3ggTp+hCgXNkzptWthDqpPo6/V3sMHickgj7zIW6JTAvp9vUxhN
+         arb48JMTTXceaEtezGX+B8zpNKLiwQb6erk0iwsYG9LjlN/1IYulwe1ebIpldbgSl/7W
+         FKL1pbxdr4spsu+Y/yUi/xASfzDJeXTvfRCBvGJk+0x8fDdxs1u6en2NkX+WaERZuYsf
+         YlUOk27KkbU9Nu6P788Q7bagmhJjw3pjE5hgXDjvwXpaKKnVozizk2xhllpF5ZbTy+8E
+         uLMQ==
+X-Gm-Message-State: AO0yUKVMOS2Siynp/qpcxATndouF2AT/OrMSeHIghzn6FMlb4fYemmXA
+        d1dtJH0Y01FryBHXbKn9btuNOaZfTDRq3e4aGxY=
+X-Google-Smtp-Source: AK7set/UUWVgapWVVwtEI5mFGQ2d0YYnSGqO6TLQZA6F1qQqIPCVESi/Juksfq33lwnkSCVqj2IduA==
+X-Received: by 2002:a17:906:3f5d:b0:871:178d:fc1e with SMTP id f29-20020a1709063f5d00b00871178dfc1emr28949632ejj.77.1678557984934;
+        Sat, 11 Mar 2023 10:06:24 -0800 (PST)
+Received: from ?IPV6:2a02:810d:15c0:828:6927:e94d:fc63:9d6e? ([2a02:810d:15c0:828:6927:e94d:fc63:9d6e])
+        by smtp.gmail.com with ESMTPSA id e23-20020a170906081700b009234539864asm441526ejd.40.2023.03.11.10.06.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 11 Mar 2023 10:06:24 -0800 (PST)
+Message-ID: <69d21d6e-decc-4060-9aa7-06a5d1cea029@linaro.org>
+Date:   Sat, 11 Mar 2023 19:06:23 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH] MAINTAINERS: update Andi's e-mail to @kernel.org
+Content-Language: en-US
+To:     Andi Shyti <andi.shyti@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Mark Brown <broonie@kernel.org>
+References: <20230311170516.178913-1-andi.shyti@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230311170516.178913-1-andi.shyti@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The driver can match only via the DT table so the table should be always
-used and the of_match_ptr does not have any sense (this also allows ACPI
-matching via PRP0001, even though it might not be relevant here).
+On 11/03/2023 18:05, Andi Shyti wrote:
+> Use the kernel.org e-mail for the maintainer entry
+> 
+> Signed-off-by: Andi Shyti <andi.shyti@kernel.org>
+> ---
+>  MAINTAINERS | 2 +-
 
-  drivers/devfreq/exynos-bus.c:504:34: error: ‘exynos_bus_of_match’ defined but not used [-Werror=unused-const-variable=]
+FWIW:
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/devfreq/exynos-bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+(should probably also go to linux-spi as you target it to Mark to pick
+it up, not to me)
 
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index 027e8f336acc..f7c554051232 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -513,7 +513,7 @@ static struct platform_driver exynos_bus_platdrv = {
- 	.driver = {
- 		.name	= "exynos-bus",
- 		.pm	= &exynos_bus_pm,
--		.of_match_table = of_match_ptr(exynos_bus_of_match),
-+		.of_match_table = exynos_bus_of_match,
- 	},
- };
- module_platform_driver(exynos_bus_platdrv);
--- 
-2.34.1
+Best regards,
+Krzysztof
 
