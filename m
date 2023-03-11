@@ -2,87 +2,115 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04863C6FD1C
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Mar 2023 18:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C232C61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Mar 2023 18:18:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230261AbjCKSGf (ORCPT
+        id S230261AbjCKSSA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 11 Mar 2023 13:06:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37594 "EHLO
+        Sat, 11 Mar 2023 13:18:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230305AbjCKSGe (ORCPT
+        with ESMTP id S230089AbjCKSR7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 11 Mar 2023 13:06:34 -0500
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DA9C532AF
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Mar 2023 10:06:26 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id cn21so3026995edb.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Mar 2023 10:06:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678557985;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fMcft7wNHp8AV8X5G2NHBZb+ziZBPuC7uUWTZGa3pOs=;
-        b=HwSnmFkaLVcW4+BGIpV2BDzJDMm1EfGpX6Vdf1PcKMqXUXmgAJlmP++EBhgHwfPBF+
-         KWcq58bR+HSjEYGGO8ZxI+G3YZj1dDUjy7rN778ZTX8akugwBLXfu5YEjbyDJBiXwCw2
-         aJswcmg8jevxLsfrv1jyoK/M27Exj3bXYz+eJK7LtyWe9Q4aq7+9h6z6kWFPY8PtLWNX
-         U6KyE/V7YpO6dvsh6bBrUj82F4jtvoroYQk2pcmtuDludD+aeDvan7U2wXwJ3hit15D9
-         +QQsjUhea5WqRvLfo/BZrehQEyrGCXzLJw/cRLZZYQ3MpvKtBJsiIbamTaI1dydukT5O
-         nxBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678557985;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fMcft7wNHp8AV8X5G2NHBZb+ziZBPuC7uUWTZGa3pOs=;
-        b=c5QZz5FmFqXNjBb0vAJ9rLewn9vGz+ngdzuP4ofmJOHHIipEsvK10aQXinJ+Q8S92L
-         8ZdOQ0230MVG2R+qh3ggTp+hCgXNkzptWthDqpPo6/V3sMHickgj7zIW6JTAvp9vUxhN
-         arb48JMTTXceaEtezGX+B8zpNKLiwQb6erk0iwsYG9LjlN/1IYulwe1ebIpldbgSl/7W
-         FKL1pbxdr4spsu+Y/yUi/xASfzDJeXTvfRCBvGJk+0x8fDdxs1u6en2NkX+WaERZuYsf
-         YlUOk27KkbU9Nu6P788Q7bagmhJjw3pjE5hgXDjvwXpaKKnVozizk2xhllpF5ZbTy+8E
-         uLMQ==
-X-Gm-Message-State: AO0yUKVMOS2Siynp/qpcxATndouF2AT/OrMSeHIghzn6FMlb4fYemmXA
-        d1dtJH0Y01FryBHXbKn9btuNOaZfTDRq3e4aGxY=
-X-Google-Smtp-Source: AK7set/UUWVgapWVVwtEI5mFGQ2d0YYnSGqO6TLQZA6F1qQqIPCVESi/Juksfq33lwnkSCVqj2IduA==
-X-Received: by 2002:a17:906:3f5d:b0:871:178d:fc1e with SMTP id f29-20020a1709063f5d00b00871178dfc1emr28949632ejj.77.1678557984934;
-        Sat, 11 Mar 2023 10:06:24 -0800 (PST)
-Received: from ?IPV6:2a02:810d:15c0:828:6927:e94d:fc63:9d6e? ([2a02:810d:15c0:828:6927:e94d:fc63:9d6e])
-        by smtp.gmail.com with ESMTPSA id e23-20020a170906081700b009234539864asm441526ejd.40.2023.03.11.10.06.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Mar 2023 10:06:24 -0800 (PST)
-Message-ID: <69d21d6e-decc-4060-9aa7-06a5d1cea029@linaro.org>
-Date:   Sat, 11 Mar 2023 19:06:23 +0100
+        Sat, 11 Mar 2023 13:17:59 -0500
+Received: from smtp.smtpout.orange.fr (smtp-12.smtpout.orange.fr [80.12.242.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5D787A8C
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Mar 2023 10:17:56 -0800 (PST)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id b3mwpUM6K9PB3b3mwp6Jgv; Sat, 11 Mar 2023 19:17:54 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 11 Mar 2023 19:17:54 +0100
+X-ME-IP: 86.243.2.178
+Message-ID: <641d04a3-9236-fe76-a20f-11466a01460e@wanadoo.fr>
+Date:   Sat, 11 Mar 2023 19:17:50 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] MAINTAINERS: update Andi's e-mail to @kernel.org
-Content-Language: en-US
-To:     Andi Shyti <andi.shyti@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Mark Brown <broonie@kernel.org>
-References: <20230311170516.178913-1-andi.shyti@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230311170516.178913-1-andi.shyti@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 07/23] interconnect: qcom: rpm: fix probe PM domain error
+ handling
+To:     johan+linaro@kernel.org
+Cc:     a.swigon@samsung.com, agross@kernel.org, alim.akhtar@samsung.com,
+        andersson@kernel.org, djakov@kernel.org, festevam@gmail.com,
+        jonathanh@nvidia.com, kernel@pengutronix.de,
+        konrad.dybcio@linaro.org, krzysztof.kozlowski@linaro.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        s.hauer@pengutronix.de, s.nawrocki@samsung.com,
+        shawnguo@kernel.org, stable@vger.kernel.org,
+        thierry.reding@gmail.com, y.oudjana@protonmail.com
+References: <20230201101559.15529-1-johan+linaro@kernel.org>
+ <20230201101559.15529-8-johan+linaro@kernel.org>
+Content-Language: fr, en-US
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20230201101559.15529-8-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/03/2023 18:05, Andi Shyti wrote:
-> Use the kernel.org e-mail for the maintainer entry
+Le 01/02/2023 à 11:15, Johan Hovold a écrit :
+> Make sure to disable clocks also in case attaching the power domain
+> fails.
 > 
-> Signed-off-by: Andi Shyti <andi.shyti@kernel.org>
+> Fixes: 7de109c0abe9 ("interconnect: icc-rpm: Add support for bus power domain")
+> Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org      # 5.17
+> Cc: Yassine Oudjana <y.oudjana-g/b1ySJe57IN+BqQ9rBEUg@public.gmane.org>
+> Signed-off-by: Johan Hovold <johan+linaro-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 > ---
->  MAINTAINERS | 2 +-
+>   drivers/interconnect/qcom/icc-rpm.c | 9 ++++-----
+>   1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
+> index 91778cfcbc65..da595059cafd 100644
+> --- a/drivers/interconnect/qcom/icc-rpm.c
+> +++ b/drivers/interconnect/qcom/icc-rpm.c
+> @@ -498,8 +498,7 @@ int qnoc_probe(struct platform_device *pdev)
+>   
+>   	if (desc->has_bus_pd) {
+>   		ret = dev_pm_domain_attach(dev, true);
+> -		if (ret)
+> -			return ret;
+> +		goto err_disable_clks;
 
-FWIW:
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hi,
+this change looks strange because we now skip the rest of the function.
 
-(should probably also go to linux-spi as you target it to Mark to pick
-it up, not to me)
+Is it really intended?
 
-Best regards,
-Krzysztof
+
+Also, should dev_pm_domain_detach() be called somewhere in the error 
+handling path and remove function ?
+
+CJ
+
+
+>   	}
+>   
+>   	provider = &qp->provider;
+> @@ -514,8 +513,7 @@ int qnoc_probe(struct platform_device *pdev)
+>   	ret = icc_provider_add(provider);
+>   	if (ret) {
+>   		dev_err(dev, "error adding interconnect provider: %d\n", ret);
+> -		clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
+> -		return ret;
+> +		goto err_disable_clks;
+>   	}
+>   
+>   	for (i = 0; i < num_nodes; i++) {
+> @@ -550,8 +548,9 @@ int qnoc_probe(struct platform_device *pdev)
+>   	return 0;
+>   err:
+>   	icc_nodes_remove(provider);
+> -	clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
+>   	icc_provider_del(provider);
+> +err_disable_clks:
+> +	clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
+>   
+>   	return ret;
+>   }
 
