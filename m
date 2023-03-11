@@ -2,115 +2,90 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C232C61DA4
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Mar 2023 18:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D86C74A5B
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Mar 2023 18:57:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230261AbjCKSSA (ORCPT
+        id S229839AbjCKS5x (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 11 Mar 2023 13:18:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55314 "EHLO
+        Sat, 11 Mar 2023 13:57:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230089AbjCKSR7 (ORCPT
+        with ESMTP id S229450AbjCKS5w (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 11 Mar 2023 13:17:59 -0500
-Received: from smtp.smtpout.orange.fr (smtp-12.smtpout.orange.fr [80.12.242.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5D787A8C
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Mar 2023 10:17:56 -0800 (PST)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id b3mwpUM6K9PB3b3mwp6Jgv; Sat, 11 Mar 2023 19:17:54 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 11 Mar 2023 19:17:54 +0100
-X-ME-IP: 86.243.2.178
-Message-ID: <641d04a3-9236-fe76-a20f-11466a01460e@wanadoo.fr>
-Date:   Sat, 11 Mar 2023 19:17:50 +0100
+        Sat, 11 Mar 2023 13:57:52 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BC0F32CC5;
+        Sat, 11 Mar 2023 10:57:51 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DE07F60D30;
+        Sat, 11 Mar 2023 18:57:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A1FAC4339C;
+        Sat, 11 Mar 2023 18:57:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678561070;
+        bh=xaHRhiudUrbS+WkqUe8mCCCOPn8t0yaOAzuTsE+qPwk=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=Pmhq+ipUicTMrtC7sWL3GgvGORYYsnb9be/+5LuGSHPh6uP36Fzlntpm58qIPpyQF
+         xbxhc9UR6QsFRd1Db/SUcbfC1FhffD21PYNk3QaHaPKeHaPjMJxXKLC2XaIZAEHRy/
+         fHSSdJJ8N3rrqH0b2wK7F/GlizK0DfAqGyNbjpuMeJ4dw6Iakh41v0cy0l78W9e0FX
+         6D7bC5df2Aae9CIVxqbSXx9ZI5zsznL1tDoD5ZhSZ3sg/LF8pPT15oIe6wV7jYJ68y
+         /AIEDxqIWsiq70c6ijs7ZhnajNgPgHfYKFo0rmihbdoQcK1o4jAZWkGunPP0eIJJTt
+         ixLqtdSBHqSlg==
+From:   Mark Brown <broonie@kernel.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
+In-Reply-To: <20230310144722.1544843-1-robh@kernel.org>
+References: <20230310144722.1544843-1-robh@kernel.org>
+Subject: Re: [PATCH] regulator: Use of_property_read_bool() for boolean
+ properties
+Message-Id: <167856106679.960737.10591965547383927223.b4-ty@kernel.org>
+Date:   Sat, 11 Mar 2023 18:57:46 +0000
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 07/23] interconnect: qcom: rpm: fix probe PM domain error
- handling
-To:     johan+linaro@kernel.org
-Cc:     a.swigon@samsung.com, agross@kernel.org, alim.akhtar@samsung.com,
-        andersson@kernel.org, djakov@kernel.org, festevam@gmail.com,
-        jonathanh@nvidia.com, kernel@pengutronix.de,
-        konrad.dybcio@linaro.org, krzysztof.kozlowski@linaro.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        s.hauer@pengutronix.de, s.nawrocki@samsung.com,
-        shawnguo@kernel.org, stable@vger.kernel.org,
-        thierry.reding@gmail.com, y.oudjana@protonmail.com
-References: <20230201101559.15529-1-johan+linaro@kernel.org>
- <20230201101559.15529-8-johan+linaro@kernel.org>
-Content-Language: fr, en-US
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20230201101559.15529-8-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-2eb1a
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Le 01/02/2023 à 11:15, Johan Hovold a écrit :
-> Make sure to disable clocks also in case attaching the power domain
-> fails.
+On Fri, 10 Mar 2023 08:47:22 -0600, Rob Herring wrote:
+> It is preferred to use typed property access functions (i.e.
+> of_property_read_<type> functions) rather than low-level
+> of_get_property/of_find_property functions for reading properties.
+> Convert reading boolean properties to to of_property_read_bool().
 > 
-> Fixes: 7de109c0abe9 ("interconnect: icc-rpm: Add support for bus power domain")
-> Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org      # 5.17
-> Cc: Yassine Oudjana <y.oudjana-g/b1ySJe57IN+BqQ9rBEUg@public.gmane.org>
-> Signed-off-by: Johan Hovold <johan+linaro-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> ---
->   drivers/interconnect/qcom/icc-rpm.c | 9 ++++-----
->   1 file changed, 4 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
-> index 91778cfcbc65..da595059cafd 100644
-> --- a/drivers/interconnect/qcom/icc-rpm.c
-> +++ b/drivers/interconnect/qcom/icc-rpm.c
-> @@ -498,8 +498,7 @@ int qnoc_probe(struct platform_device *pdev)
->   
->   	if (desc->has_bus_pd) {
->   		ret = dev_pm_domain_attach(dev, true);
-> -		if (ret)
-> -			return ret;
-> +		goto err_disable_clks;
 
-Hi,
-this change looks strange because we now skip the rest of the function.
+Applied to
 
-Is it really intended?
+   broonie/regulator.git for-next
 
+Thanks!
 
-Also, should dev_pm_domain_detach() be called somewhere in the error 
-handling path and remove function ?
+[1/1] regulator: Use of_property_read_bool() for boolean properties
+      commit: 5bd73a162bc881dbb98ff9909dd865286852ee2b
 
-CJ
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
->   	}
->   
->   	provider = &qp->provider;
-> @@ -514,8 +513,7 @@ int qnoc_probe(struct platform_device *pdev)
->   	ret = icc_provider_add(provider);
->   	if (ret) {
->   		dev_err(dev, "error adding interconnect provider: %d\n", ret);
-> -		clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
-> -		return ret;
-> +		goto err_disable_clks;
->   	}
->   
->   	for (i = 0; i < num_nodes; i++) {
-> @@ -550,8 +548,9 @@ int qnoc_probe(struct platform_device *pdev)
->   	return 0;
->   err:
->   	icc_nodes_remove(provider);
-> -	clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
->   	icc_provider_del(provider);
-> +err_disable_clks:
-> +	clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
->   
->   	return ret;
->   }
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
