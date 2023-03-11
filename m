@@ -2,106 +2,105 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C712C6FA99
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Mar 2023 22:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A059C6FD19
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Mar 2023 00:06:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231987AbjCJWhJ (ORCPT
+        id S229923AbjCKAG2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 10 Mar 2023 17:37:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56656 "EHLO
+        Fri, 10 Mar 2023 19:06:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232086AbjCJWgq (ORCPT
+        with ESMTP id S230016AbjCKAGW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Mar 2023 17:36:46 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E35F123DDD;
-        Fri, 10 Mar 2023 14:36:17 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id nn12so6673887pjb.5;
-        Fri, 10 Mar 2023 14:36:17 -0800 (PST)
+        Fri, 10 Mar 2023 19:06:22 -0500
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C51A13E536
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Mar 2023 16:06:07 -0800 (PST)
+Received: by mail-lj1-x236.google.com with SMTP id a32so7075317ljq.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Mar 2023 16:06:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678487776;
+        d=linaro.org; s=google; t=1678493165;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=fdktugCeDYX7Xr0TGxaeM93AvHbyY1/wFRGjyxUuajs=;
-        b=M1ZMRujq71QwNYOMXmSJfUAnJ1DSMCIGcvzxhEOotk682w9u9GEHysFIMuExQ7ZRAA
-         +/D7VhQJAQM9USbfZQmmO9kgulOmmwjifP2lqS1qe/UgjP+H5pUWcJ4p+zq/k3eX26M5
-         nE6IuGepTTXbHdzhNu/8PpHzHnRMxu7hsx4bql1bRc1kXMp/5jOGKGL2AzkIjr2YlnEn
-         7XBIhyBxAuu/IVU0elGOSz0lLVKyr/Y3ohuxBqc9k9zJQTJFJM1crBoz3e52T5Hembkg
-         2yS4GGCW3Isgcqyyp1vp3e1re3Bor6nDZam2Jv2enrKjHXS+wZfFMcjCnSfzOoMS+XNs
-         YLaQ==
+        bh=nvWd6RnRtPsl4syozMKjmZ8lJWkYg+/DrGeZ1RVg3jg=;
+        b=m9oP/nOWxDKYfkbYYH6incjMnwiXyGPjUkjfMHEQS36/WFVBYT5Hnbr47iAQ/Jhn78
+         mkZil2n4ckEpjDFr8OaCad28O332YGrB7MWsbnIAe2fJCMBkiwhwJ6uGXtywhdM7piMv
+         eqSDzVnPm79KE0scs6ON3AO/sJ26Lsan5neIp+OCG7Ynu8fDeBx1imbLSc2sIVvhTHvU
+         NyCeAgUtOwpJnE/mT9lYD4y2TvkOpTfPAZRBf0VS7hDADGzIu86KEwXr1huV8eVOR3Au
+         E1SljP/x16mk2BE/2B8b88BQXwdOICJ7/pYyNJmy6qQUVK5ZQ3ykCObPbTYCsCtRE0Or
+         Mrgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678487776;
+        d=1e100.net; s=20210112; t=1678493165;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fdktugCeDYX7Xr0TGxaeM93AvHbyY1/wFRGjyxUuajs=;
-        b=cSB788KpbBEr8H9JUcv9bKlqs0kpnm0YrfBGf4ZrRq8k8/wFpbULBrkKOF2SxqssN0
-         7wO1QtDeVXrxhUiqefWGIhc1NewFiCBV9P9pSKGzSmg/ri6b0CuCXPYVcts5qEUI50Nn
-         49y6GRSMIbDc150IcC+1yz6Obi+K7NzZ5X716n0YQZm67lya5sjvN4W4vqEIanu7GHn8
-         o71ojF8ibq+QmqKsoxBt2TWMylwHkxlhgRm22CDgi4fCgb28fKqPlEqWxeI1UcbB2wYf
-         74Xsw846pzcSPfuvkTAE9BlY60CycX74LzqK42P+QRpbYh6g8Il+or30CuPTPm8TykKN
-         JP0A==
-X-Gm-Message-State: AO0yUKU0zLklR40lSjPu/Q3qlK9NzJWtYxjn+n8lsFX56vZYlXOpS2E9
-        tstGPkxkwfw5VUd7//Z5+so=
-X-Google-Smtp-Source: AK7set9K8J5zoNaziqXtI5ePAA7X83vRqfUPykoAs++3T/PClevhmaBdF8gk1RK17qwYtdSNKjM8Pg==
-X-Received: by 2002:a17:90b:4f49:b0:234:190d:e655 with SMTP id pj9-20020a17090b4f4900b00234190de655mr28911929pjb.44.1678487776377;
-        Fri, 10 Mar 2023 14:36:16 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id y15-20020a17090a390f00b002339195a47bsm365387pjb.53.2023.03.10.14.36.13
+        bh=nvWd6RnRtPsl4syozMKjmZ8lJWkYg+/DrGeZ1RVg3jg=;
+        b=Rx5pfJ1+5Np8NnAIQ7Rs3ozKqAQhXrBsd7fLyHUmNwWf1XtY1hhmglVebZURl9AWNa
+         5acoB5vfIpxmcjaUYiIdhyQ9B8HXiadtAsxkKF/4SNw3LH9HQXWDgTFZGecIwPTA8/jG
+         mPs2AlOtQc5jbGsxfN655WfhqzlA4OudZoV3OaPo3lXdteHYUnkmtNl/BHp6FlBJhkOQ
+         +2QCoJGjmNIhPH9cgskdf/cVTfKFY15htItTdXOOVLCiAbIv8sFZwQV4y2Bl8Hdq2/7V
+         0MoSFYquDgqSXXtLWTP/RbuBH67YGV7ElaIWHZHlolUONWEwlUI3TmrjGOydwlDtaPKK
+         KZrQ==
+X-Gm-Message-State: AO0yUKVPFCLqeY1Sd1h9c02KzSWhwjWjz5SGWN0sg6zTHCaBB7dO8G7g
+        U4JJtJPuN6ykakmFZcn2Bg9yPQ==
+X-Google-Smtp-Source: AK7set9/2QfL4loiubmYv5vdmt0lQ9s1Km9YMcKFQl/SUMpIYys4kYlQEHTjc8qKGK4W2556vpzckA==
+X-Received: by 2002:a2e:b173:0:b0:295:b054:6809 with SMTP id a19-20020a2eb173000000b00295b0546809mr8729234ljm.8.1678493165492;
+        Fri, 10 Mar 2023 16:06:05 -0800 (PST)
+Received: from [192.168.1.101] (abyj16.neoplus.adsl.tpnet.pl. [83.9.29.16])
+        by smtp.gmail.com with ESMTPSA id y20-20020a2e5454000000b00295a33eda65sm155824ljd.137.2023.03.10.16.06.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Mar 2023 14:36:15 -0800 (PST)
-Message-ID: <35216994-c834-73aa-a702-d4d75bb87897@gmail.com>
-Date:   Fri, 10 Mar 2023 14:36:13 -0800
+        Fri, 10 Mar 2023 16:06:05 -0800 (PST)
+Message-ID: <128a4831-a094-3e5a-282b-8e40b2cfd960@linaro.org>
+Date:   Sat, 11 Mar 2023 01:06:03 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 13/16] spi: bcm-qspi: Mark OF related data as maybe unused
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 1/3] ufs: qcom: add __maybe_unused to OF ID table
 Content-Language: en-US
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Andi Shyti <andi@etezian.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-References: <20230310222857.315629-1-krzysztof.kozlowski@linaro.org>
- <20230310222857.315629-13-krzysztof.kozlowski@linaro.org>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20230310222857.315629-13-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20230310214435.275127-1-krzysztof.kozlowski@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230310214435.275127-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 3/10/23 14:28, Krzysztof Kozlowski wrote:
-> The driver can be compile tested with !CONFIG_OF making certain data
-> unused:
-> 
->    drivers/spi/spi-bcm-qspi.c:1460:34: error: ‘bcm_qspi_of_match’ defined but not used [-Werror=unused-const-variable=]
+
+
+On 10.03.2023 22:44, Krzysztof Kozlowski wrote:
+> The driver can be built on ACPI and its .of_match_table uses
+> of_match_ptr(), thus annotate the actual table as maybe unused.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
-
+Konrad
+>  drivers/ufs/host/ufs-qcom.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index a02cd866e2f8..82d02e7f3b4f 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -1693,7 +1693,7 @@ static int ufs_qcom_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> -static const struct of_device_id ufs_qcom_of_match[] = {
+> +static const struct of_device_id ufs_qcom_of_match[] __maybe_unused = {
+>  	{ .compatible = "qcom,ufshc"},
+>  	{},
+>  };
