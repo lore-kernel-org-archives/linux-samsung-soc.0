@@ -2,52 +2,80 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F42C6FA99
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 12 Mar 2023 16:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6E6C6FD1F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 12 Mar 2023 16:19:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229872AbjCLQQA (ORCPT
+        id S229875AbjCLQTG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 12 Mar 2023 12:16:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39704 "EHLO
+        Sun, 12 Mar 2023 12:19:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230209AbjCLQPr (ORCPT
+        with ESMTP id S230419AbjCLQSb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 12 Mar 2023 12:15:47 -0400
+        Sun, 12 Mar 2023 12:18:31 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CE6A4D2A5
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Mar 2023 09:15:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5742D4D2A7
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Mar 2023 09:17:43 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOM1-0007sF-MD; Sun, 12 Mar 2023 17:15:25 +0100
+        id 1pbOLz-0007ne-Qq; Sun, 12 Mar 2023 17:15:23 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOM1-003f3V-1m; Sun, 12 Mar 2023 17:15:25 +0100
+        id 1pbOLu-003f1Q-OX; Sun, 12 Mar 2023 17:15:18 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLz-004K9X-FH; Sun, 12 Mar 2023 17:15:23 +0100
+        id 1pbOLt-004K82-SG; Sun, 12 Mar 2023 17:15:17 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 24/30] clk: samsung: Convert to platform remove callback returning void
-Date:   Sun, 12 Mar 2023 17:15:06 +0100
-Message-Id: <20230312161512.2715500-25-u.kleine-koenig@pengutronix.de>
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-omap@vger.kernel.org
+Subject: [PATCH 00/30] clk: Convert to platform remove callback returning void
+Date:   Sun, 12 Mar 2023 17:14:42 +0100
+Message-Id: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
-References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2861; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=0bilTxa4+zSBLpmHRbO43HSFtmhsJJR54/nSVpjT6CU=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfp33a+QojCuZuGcyKQe/zyREOQcQiZLkaYkO 1zTaalvIpWJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36dwAKCRDB/BR4rcrs CWa3B/9uCDZNpKz0bWJK4NR6fMbLQuKSkByFGwyKd5FLjS7hubG1x0d4xFK/UxgwKaOIHbjSOMA PAjyC658mFqfbJ1htuQzO6XzlVOJETd6oeFufpHoF6Pc/BLWd6FMamZsHk7azYci6b6epvQU04r 1wdc9R84iIYNEZHpnkzK5TvU1JzYEnVH5m/LdjO4tK1jpGV8hFlapZ+uJEn6Ftzuy4XT9umon+l DSu8sTfjUpoiMIBDYwYktF2VYdZc0ofcCCZzjmVrEneNVkqp+H2rgSqYA46/vQrRQogEVLAI72G X3noRP6MSJU7os/yUVHmcmIIek0/tDSrj/hrdhhuPm3ViAzz
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12722; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=jEZJnYWtfk7vegzrpMfq7GOJ196G8jvqX57CAPZ3iLs=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfoRCG0Wyura3TxaQuw3cux0jAyL9llKLY77P 7TVq8P1y0uJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36EQAKCRDB/BR4rcrs CSrbB/0eTnnVnWWyRB+p1/djaWfBVCMXK5yG1M9edyo+3DajyEVRFBHCH7ZUu83CV2dgxo7UJIX E8j559eX1I4Xs7CdWM9g3txmTi89gR8mxPpItCyvzeKDeWNpfH6erYcPHetwR5J4VWYNcUaWJ0p guxIAwoDLonXH9LYLTC44CGLsV9wADqd5cml++KFj/Ni1gEDhM6G/lZzSFby2cBPgN+CjT5p/nP 4gAmE8S5gn4UAI78Nej7/lg/7IaUXBaAP1F4+eAxzRSmWDNilyzosmJlF9qcslx8qrHPp/n49b2 1O6n4b7iRwP+oZOCuNqzV27cseb7a/H3t2oDUeBeFjdz4z8o
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -58,84 +86,226 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is (mostly) ignored
-and this typically results in resource leaks. To improve here there is a
-quest to make the remove callback return void. In the first step of this
-quest all drivers are converted to .remove_new() which already returns
-void.
+Hello,
 
-Trivially convert this driver from always returning zero in the remove
-callback to the void returning variant.
+this patch series adapts the platform drivers below drivers/clk
+to use the .remove_new() callback. Compared to the traditional .remove()
+callback .remove_new() returns no value. This is a good thing because
+the driver core doesn't (and cannot) cope for errors during remove. The
+only effect of a non-zero return value in .remove() is that the driver
+core emits a warning. The device is removed anyhow and an early return
+from .remove() usually yields a resource leak.
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/clk/samsung/clk-exynos-audss.c  | 6 ++----
- drivers/clk/samsung/clk-exynos-clkout.c | 6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
+There were three drivers that did such an early error return in their
+remove callback. Two of them are fixed, the tegra one is more
+complicated. I only converted it to return zero (which only suppresses
+the duplicated warning by the driver core, but doesn't make the resource
+leak better or worse.) This needs some more attention by someone who
+understands the driver in question.
 
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 9cc127a162ad..7626dff41f6f 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -268,7 +268,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
--static int exynos_audss_clk_remove(struct platform_device *pdev)
-+static void exynos_audss_clk_remove(struct platform_device *pdev)
- {
- 	of_clk_del_provider(pdev->dev.of_node);
- 
-@@ -277,8 +277,6 @@ static int exynos_audss_clk_remove(struct platform_device *pdev)
- 
- 	if (!IS_ERR(epll))
- 		clk_disable_unprepare(epll);
--
--	return 0;
- }
- 
- static const struct dev_pm_ops exynos_audss_clk_pm_ops = {
-@@ -295,7 +293,7 @@ static struct platform_driver exynos_audss_clk_driver = {
- 		.pm = &exynos_audss_clk_pm_ops,
- 	},
- 	.probe = exynos_audss_clk_probe,
--	.remove = exynos_audss_clk_remove,
-+	.remove_new = exynos_audss_clk_remove,
- };
- 
- module_platform_driver(exynos_audss_clk_driver);
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index e6d6cbf8c4e6..0cff1c94c35e 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -196,15 +196,13 @@ static int exynos_clkout_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
--static int exynos_clkout_remove(struct platform_device *pdev)
-+static void exynos_clkout_remove(struct platform_device *pdev)
- {
- 	struct exynos_clkout *clkout = platform_get_drvdata(pdev);
- 
- 	of_clk_del_provider(clkout->np);
- 	clk_hw_unregister(clkout->data.hws[0]);
- 	iounmap(clkout->reg);
--
--	return 0;
- }
- 
- static int __maybe_unused exynos_clkout_suspend(struct device *dev)
-@@ -235,7 +233,7 @@ static struct platform_driver exynos_clkout_driver = {
- 		.pm = &exynos_clkout_pm_ops,
- 	},
- 	.probe = exynos_clkout_probe,
--	.remove = exynos_clkout_remove,
-+	.remove_new = exynos_clkout_remove,
- };
- module_platform_driver(exynos_clkout_driver);
- 
+By changing the remove callback to return void driver authors cannot
+reasonably assume any more that there is some kind of cleanup later
+which prevents that such programming errors are introduced in the first
+place.
+
+Note that this series depends on commit 5c5a7680e67b ("platform: Provide
+a remove callback that returns no value") which is included in v6.3-rc1.
+
+Uwe Kleine-König (30):
+  clk: mediatek: Make mtk_clk_simple_remove() return void
+  clk: tegra: Don't warn three times about failure to unregister
+  clk: xilinx: Drop if block with always false condition
+  clk: axs10x: Convert to platform remove callback returning void
+  clk: bcm: Convert to platform remove callback returning void
+  clk: axi-clkgen: Convert to platform remove callback returning void
+  clk: axm5516: Convert to platform remove callback returning void
+  clk: fixed-factor: Convert to platform remove callback returning void
+  clk: fixed-mmio: Convert to platform remove callback returning void
+  clk: fixed-rate: Convert to platform remove callback returning void
+  clk: hsdk-pll: Convert to platform remove callback returning void
+  clk: palmas: Convert to platform remove callback returning void
+  clk: pwm: Convert to platform remove callback returning void
+  clk: s2mps11: Convert to platform remove callback returning void
+  clk: scpi: Convert to platform remove callback returning void
+  clk: stm32mp1: Convert to platform remove callback returning void
+  clk: hisilicon: Convert to platform remove callback returning void
+  clk: keystone: Convert to platform remove callback returning void
+  clk: mediatek: Convert to platform remove callback returning void
+  clk: mmp: Convert to platform remove callback returning void
+  clk: mvebu: Convert to platform remove callback returning void
+  clk: qcom: Convert to platform remove callback returning void
+  clk: renesas: Convert to platform remove callback returning void
+  clk: samsung: Convert to platform remove callback returning void
+  clk: stm32: Convert to platform remove callback returning void
+  clk: tegra: Convert to platform remove callback returning void
+  clk: ti: Convert to platform remove callback returning void
+  clk: uniphier: Convert to platform remove callback returning void
+  clk: x86: Convert to platform remove callback returning void
+  clk: xilinx: Convert to platform remove callback returning void
+
+ drivers/clk/axs10x/i2s_pll_clock.c             |  5 ++---
+ drivers/clk/axs10x/pll_clock.c                 |  5 ++---
+ drivers/clk/bcm/clk-bcm2711-dvp.c              |  6 ++----
+ drivers/clk/bcm/clk-bcm63xx-gate.c             |  6 ++----
+ drivers/clk/bcm/clk-raspberrypi.c              |  6 ++----
+ drivers/clk/clk-axi-clkgen.c                   |  6 ++----
+ drivers/clk/clk-axm5516.c                      |  5 ++---
+ drivers/clk/clk-fixed-factor.c                 |  6 ++----
+ drivers/clk/clk-fixed-mmio.c                   |  6 ++----
+ drivers/clk/clk-fixed-rate.c                   |  6 ++----
+ drivers/clk/clk-hsdk-pll.c                     |  5 ++---
+ drivers/clk/clk-palmas.c                       |  5 ++---
+ drivers/clk/clk-pwm.c                          |  6 ++----
+ drivers/clk/clk-s2mps11.c                      |  6 ++----
+ drivers/clk/clk-scpi.c                         |  5 ++---
+ drivers/clk/clk-stm32mp1.c                     |  6 ++----
+ drivers/clk/hisilicon/clk-hi3519.c             |  5 ++---
+ drivers/clk/hisilicon/clk-hi3559a.c            |  5 ++---
+ drivers/clk/hisilicon/crg-hi3516cv300.c        |  5 ++---
+ drivers/clk/hisilicon/crg-hi3798cv200.c        |  5 ++---
+ drivers/clk/keystone/sci-clk.c                 |  6 ++----
+ drivers/clk/mediatek/clk-mt2701-aud.c          |  6 +++---
+ drivers/clk/mediatek/clk-mt2701-bdp.c          |  2 +-
+ drivers/clk/mediatek/clk-mt2701-eth.c          |  2 +-
+ drivers/clk/mediatek/clk-mt2701-g3d.c          |  2 +-
+ drivers/clk/mediatek/clk-mt2701-hif.c          |  2 +-
+ drivers/clk/mediatek/clk-mt2701-img.c          |  2 +-
+ drivers/clk/mediatek/clk-mt2701-vdec.c         |  2 +-
+ drivers/clk/mediatek/clk-mt2712-bdp.c          |  2 +-
+ drivers/clk/mediatek/clk-mt2712-img.c          |  2 +-
+ drivers/clk/mediatek/clk-mt2712-jpgdec.c       |  2 +-
+ drivers/clk/mediatek/clk-mt2712-mfg.c          |  2 +-
+ drivers/clk/mediatek/clk-mt2712-vdec.c         |  2 +-
+ drivers/clk/mediatek/clk-mt2712-venc.c         |  2 +-
+ drivers/clk/mediatek/clk-mt2712.c              |  2 +-
+ drivers/clk/mediatek/clk-mt6765-audio.c        |  2 +-
+ drivers/clk/mediatek/clk-mt6765-cam.c          |  2 +-
+ drivers/clk/mediatek/clk-mt6765-img.c          |  2 +-
+ drivers/clk/mediatek/clk-mt6765-mipi0a.c       |  2 +-
+ drivers/clk/mediatek/clk-mt6765-mm.c           |  2 +-
+ drivers/clk/mediatek/clk-mt6765-vcodec.c       |  2 +-
+ drivers/clk/mediatek/clk-mt6779-aud.c          |  2 +-
+ drivers/clk/mediatek/clk-mt6779-cam.c          |  2 +-
+ drivers/clk/mediatek/clk-mt6779-img.c          |  2 +-
+ drivers/clk/mediatek/clk-mt6779-ipe.c          |  2 +-
+ drivers/clk/mediatek/clk-mt6779-mfg.c          |  2 +-
+ drivers/clk/mediatek/clk-mt6779-vdec.c         |  2 +-
+ drivers/clk/mediatek/clk-mt6779-venc.c         |  2 +-
+ drivers/clk/mediatek/clk-mt6779.c              |  2 +-
+ drivers/clk/mediatek/clk-mt6795-apmixedsys.c   |  6 ++----
+ drivers/clk/mediatek/clk-mt6795-infracfg.c     |  6 ++----
+ drivers/clk/mediatek/clk-mt6795-mfg.c          |  2 +-
+ drivers/clk/mediatek/clk-mt6795-mm.c           |  6 ++----
+ drivers/clk/mediatek/clk-mt6795-pericfg.c      |  6 ++----
+ drivers/clk/mediatek/clk-mt6795-topckgen.c     |  2 +-
+ drivers/clk/mediatek/clk-mt6795-vdecsys.c      |  2 +-
+ drivers/clk/mediatek/clk-mt6795-vencsys.c      |  2 +-
+ drivers/clk/mediatek/clk-mt6797-img.c          |  2 +-
+ drivers/clk/mediatek/clk-mt6797-vdec.c         |  2 +-
+ drivers/clk/mediatek/clk-mt6797-venc.c         |  2 +-
+ drivers/clk/mediatek/clk-mt7622-aud.c          |  6 +++---
+ drivers/clk/mediatek/clk-mt7622-eth.c          |  2 +-
+ drivers/clk/mediatek/clk-mt7622-hif.c          |  2 +-
+ drivers/clk/mediatek/clk-mt7629-hif.c          |  2 +-
+ drivers/clk/mediatek/clk-mt7981-eth.c          |  2 +-
+ drivers/clk/mediatek/clk-mt7981-infracfg.c     |  2 +-
+ drivers/clk/mediatek/clk-mt7981-topckgen.c     |  2 +-
+ drivers/clk/mediatek/clk-mt7986-topckgen.c     |  2 +-
+ drivers/clk/mediatek/clk-mt8173-apmixedsys.c   |  6 ++----
+ drivers/clk/mediatek/clk-mt8173-img.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8173-infracfg.c     |  6 ++----
+ drivers/clk/mediatek/clk-mt8173-mm.c           |  6 ++----
+ drivers/clk/mediatek/clk-mt8173-pericfg.c      |  2 +-
+ drivers/clk/mediatek/clk-mt8173-topckgen.c     |  2 +-
+ drivers/clk/mediatek/clk-mt8173-vdecsys.c      |  2 +-
+ drivers/clk/mediatek/clk-mt8173-vencsys.c      |  2 +-
+ drivers/clk/mediatek/clk-mt8183-audio.c        |  6 +++---
+ drivers/clk/mediatek/clk-mt8183-cam.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8183-img.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8183-ipu0.c         |  2 +-
+ drivers/clk/mediatek/clk-mt8183-ipu1.c         |  2 +-
+ drivers/clk/mediatek/clk-mt8183-ipu_adl.c      |  2 +-
+ drivers/clk/mediatek/clk-mt8183-ipu_conn.c     |  2 +-
+ drivers/clk/mediatek/clk-mt8183-mfgcfg.c       |  2 +-
+ drivers/clk/mediatek/clk-mt8183-vdec.c         |  2 +-
+ drivers/clk/mediatek/clk-mt8183-venc.c         |  2 +-
+ drivers/clk/mediatek/clk-mt8183.c              |  2 +-
+ drivers/clk/mediatek/clk-mt8186-apmixedsys.c   |  6 ++----
+ drivers/clk/mediatek/clk-mt8186-cam.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8186-img.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c |  2 +-
+ drivers/clk/mediatek/clk-mt8186-infra_ao.c     |  2 +-
+ drivers/clk/mediatek/clk-mt8186-ipe.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8186-mcu.c          |  6 ++----
+ drivers/clk/mediatek/clk-mt8186-mdp.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8186-mfg.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8186-mm.c           |  6 ++----
+ drivers/clk/mediatek/clk-mt8186-topckgen.c     |  2 +-
+ drivers/clk/mediatek/clk-mt8186-vdec.c         |  2 +-
+ drivers/clk/mediatek/clk-mt8186-venc.c         |  2 +-
+ drivers/clk/mediatek/clk-mt8186-wpe.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8192-aud.c          |  6 +++---
+ drivers/clk/mediatek/clk-mt8192-cam.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8192-img.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c |  2 +-
+ drivers/clk/mediatek/clk-mt8192-ipe.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8192-mdp.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8192-mfg.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8192-msdc.c         |  2 +-
+ drivers/clk/mediatek/clk-mt8192-scp_adsp.c     |  2 +-
+ drivers/clk/mediatek/clk-mt8192-vdec.c         |  2 +-
+ drivers/clk/mediatek/clk-mt8192-venc.c         |  2 +-
+ drivers/clk/mediatek/clk-mt8192.c              |  2 +-
+ drivers/clk/mediatek/clk-mt8195-apmixedsys.c   |  6 ++----
+ drivers/clk/mediatek/clk-mt8195-apusys_pll.c   |  6 ++----
+ drivers/clk/mediatek/clk-mt8195-cam.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8195-ccu.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8195-img.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c |  2 +-
+ drivers/clk/mediatek/clk-mt8195-infra_ao.c     |  2 +-
+ drivers/clk/mediatek/clk-mt8195-ipe.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8195-mfg.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8195-peri_ao.c      |  2 +-
+ drivers/clk/mediatek/clk-mt8195-scp_adsp.c     |  2 +-
+ drivers/clk/mediatek/clk-mt8195-topckgen.c     |  6 ++----
+ drivers/clk/mediatek/clk-mt8195-vdec.c         |  2 +-
+ drivers/clk/mediatek/clk-mt8195-vdo0.c         |  6 ++----
+ drivers/clk/mediatek/clk-mt8195-vdo1.c         |  6 ++----
+ drivers/clk/mediatek/clk-mt8195-venc.c         |  2 +-
+ drivers/clk/mediatek/clk-mt8195-vpp0.c         |  6 ++----
+ drivers/clk/mediatek/clk-mt8195-vpp1.c         |  6 ++----
+ drivers/clk/mediatek/clk-mt8195-wpe.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8365-apu.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8365-cam.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8365-mfg.c          |  2 +-
+ drivers/clk/mediatek/clk-mt8365-vdec.c         |  2 +-
+ drivers/clk/mediatek/clk-mt8365-venc.c         |  2 +-
+ drivers/clk/mediatek/clk-mtk.c                 |  4 +---
+ drivers/clk/mediatek/clk-mtk.h                 |  2 +-
+ drivers/clk/mmp/clk-audio.c                    |  6 ++----
+ drivers/clk/mvebu/armada-37xx-periph.c         |  6 ++----
+ drivers/clk/mvebu/armada-37xx-tbg.c            |  6 ++----
+ drivers/clk/mvebu/armada-37xx-xtal.c           |  6 ++----
+ drivers/clk/qcom/apcs-msm8916.c                |  6 ++----
+ drivers/clk/qcom/apcs-sdx55.c                  |  6 ++----
+ drivers/clk/qcom/clk-rpm.c                     |  5 ++---
+ drivers/clk/qcom/gcc-msm8960.c                 |  6 ++----
+ drivers/clk/renesas/rcar-usb2-clock-sel.c      |  6 ++----
+ drivers/clk/samsung/clk-exynos-audss.c         |  6 ++----
+ drivers/clk/samsung/clk-exynos-clkout.c        |  6 ++----
+ drivers/clk/stm32/clk-stm32mp13.c              |  6 ++----
+ drivers/clk/tegra/clk-dfll.c                   |  5 ++++-
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c     | 17 ++++++++---------
+ drivers/clk/ti/adpll.c                         |  6 ++----
+ drivers/clk/uniphier/clk-uniphier-core.c       |  6 ++----
+ drivers/clk/x86/clk-fch.c                      |  7 +++----
+ drivers/clk/x86/clk-pmc-atom.c                 |  5 ++---
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c     |  6 ++----
+ drivers/clk/xilinx/xlnx_vcu.c                  |  8 ++------
+ 159 files changed, 234 insertions(+), 335 deletions(-)
+
+
+base-commit: fe15c26ee26efa11741a7b632e9f23b01aca4cc6
 -- 
 2.39.1
 
