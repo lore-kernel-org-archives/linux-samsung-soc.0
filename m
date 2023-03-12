@@ -2,95 +2,168 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B669C6FD1F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 12 Mar 2023 16:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E71BFC6FD19
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 12 Mar 2023 16:31:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230474AbjCLQYG (ORCPT
+        id S230268AbjCLQbz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 12 Mar 2023 12:24:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56508 "EHLO
+        Sun, 12 Mar 2023 12:31:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230481AbjCLQX5 (ORCPT
+        with ESMTP id S229754AbjCLQby (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 12 Mar 2023 12:23:57 -0400
+        Sun, 12 Mar 2023 12:31:54 -0400
 Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE43223D9A
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Mar 2023 09:23:30 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id er25so11390032edb.5
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Mar 2023 09:23:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AEB7311E1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Mar 2023 09:31:52 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id g10so10692046eda.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Mar 2023 09:31:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678638176;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1678638710;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+xZrChxZkc6JrPh0xGVIIzxchyzDK5KbwG2kHyM3LRc=;
-        b=ZUz15jVisj5kNtfOH06lkDcSBNDfdT/lXA3aHmV2d9hVxP4hpGbWRZY80T8hKeuYTD
-         6T2mXF+W668+h5NOvc2BjXtMjGwP4Tkr4opimWqMwVUHsQk3EtNJytvTFra7ZlubBAxa
-         2FUGNDqPfb/moKaebAGIe4WPqkoeDPLwhhgCP6hqvpYtyTDlf4ksjy6U6erxbFY6HWkH
-         mWorRKDMUnDRe12oCoYmapaWaYEo3W/8ykacUjkQgJMA1dpQFIzPp5lE2Q0PJVmyXsJ0
-         bs0dJVlW2s8fhcVTf7uppd8qamV2TN1FAi+UdFgPfverbv/krFdy94liEf3leBTLaynq
-         0dJA==
+        bh=0c2vyiavGu+PFiZ1nxZZLywcq02QXmGEQE36m/eJ9e0=;
+        b=eOJqNpXJkVYYd1RHUCsu2kUHwwLBewQTA0ANS/jXRJCbx+QT84RiA5BPAn/+gtXCfT
+         HzRihBIEt2BkSU9MuoRM14kmTuWUs/SHRGNmH7In4wKKkbp/NQ6krRDTRef9/miSbHLK
+         kqNzwEtkAT+oyqry5yTZb4Z0XXsTEEQPEwGhmtsx4QYOgSJzwn5RWwTDGbty+vzRzM6E
+         qDxODbq7rvMwvjHRPbi4iTWE9xklb4VL/UhWP/68v2dtwxnSj3eWdEwHzE6/ZLp0YfcP
+         h5rt2ctK00ECtEoG/iIrsT9P7FDW1j7pl0mYxGFUvGkm3XaO5jV1uKTayMnV8OJek1FC
+         SUpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678638176;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20210112; t=1678638710;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+xZrChxZkc6JrPh0xGVIIzxchyzDK5KbwG2kHyM3LRc=;
-        b=AtywJdfs0pE83t+UejMKETQAaaRv02IhI97BrV3M9ixCMUId07oATWdSCgnzsbUJzs
-         w/ZrWg4Wu1HPRRtra9ylesJOTDiVoXWTtCEKU7fduclO9XDDmFSJnPl3Rsdox8yTCbNg
-         05R5FyRjgkZSsdpwIyRYoVqepGzmcKHpZPo1fRzC3n+fqAplja1TrNX5mXBXruUiQL9F
-         xHH5h51+UMmMLoxbLhamWeH6W4FYTq9hjKNQlgj5nzkSJ6fXgLzysJLxn4Ovqj8Yqxd9
-         Iqfap3wq90RgOkEd/WIu3AVZXZuuEzMWIHHbkwqGyZ6JqF6ilFW8Z6wHl1xQ7o3ifcRk
-         wN4A==
-X-Gm-Message-State: AO0yUKU5D4Le05+wxVfkQ0tbjGg3BR5vpRsG0FKHJxSNCiA9kabZ2wsn
-        Fxim0ggExH0Bv92lRAvlEX0ThQ==
-X-Google-Smtp-Source: AK7set/A+que5qx2g6k/Nv3GDCYZJPcex1mjy+LxdlaNFrRsLCAOGWDOJ+k50aSzL3tfDGryksGYTg==
-X-Received: by 2002:a17:906:2756:b0:878:79e6:4672 with SMTP id a22-20020a170906275600b0087879e64672mr27703036ejd.42.1678638176627;
-        Sun, 12 Mar 2023 09:22:56 -0700 (PDT)
+        bh=0c2vyiavGu+PFiZ1nxZZLywcq02QXmGEQE36m/eJ9e0=;
+        b=1h1H7bzJQql16OMDYT2hLk2Xv32FsWLuWetlPfIUpJ0E9x/GdnfmybsqvQ68WZT47U
+         FTeEjC4cLux43Z/mQ0H7vnKgm3qjuKDfwt9ZQ8qde/UVpR0IgbcWMb9kGIjum3M2/+rV
+         3rk599bwhuMt97Y6cBG4kyR+cWY88cF10Gi7GDp8Rwqp9JHVfjYHycG6Euqk4TZMXeCk
+         6+eBxFawD2p1ew/HSGPGz485DMkUpdBsYCWIuyo8JkbiT+FTtb6CQSoaPR1O/VSlmy6w
+         6OfFvJqtGg8eURMXw0nQxFQYnmPVcPCLdvjhAX58gJcdY/OfQkcshZkpbsCReNHUDuGJ
+         szfQ==
+X-Gm-Message-State: AO0yUKUx69AmygoZiCfrRQM0l4g72D21psYj+J0kehDXynKHwB4eZ2TN
+        uU9Rn1Ftoz/Pp6dzcd4YOsRg0Q==
+X-Google-Smtp-Source: AK7set8nHirJkCw98wM45z7VWuEwhJRUOixhk5nNM6BUxIE1e/TOUiXoI3sI/AiZmkFqCX9Aw0qN5w==
+X-Received: by 2002:a17:907:a706:b0:878:78bc:975c with SMTP id vw6-20020a170907a70600b0087878bc975cmr33969418ejc.36.1678638710296;
+        Sun, 12 Mar 2023 09:31:50 -0700 (PDT)
 Received: from ?IPV6:2a02:810d:15c0:828:d9f6:3e61:beeb:295a? ([2a02:810d:15c0:828:d9f6:3e61:beeb:295a])
-        by smtp.gmail.com with ESMTPSA id ks14-20020a170906f84e00b008ec43ae626csm2359153ejb.167.2023.03.12.09.22.55
+        by smtp.gmail.com with ESMTPSA id eg56-20020a05640228b800b004fb556e905fsm1061434edb.49.2023.03.12.09.31.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 Mar 2023 09:22:56 -0700 (PDT)
-Message-ID: <1f39c602-20ea-94a0-caee-54ae3dd10bfc@linaro.org>
-Date:   Sun, 12 Mar 2023 17:22:55 +0100
+        Sun, 12 Mar 2023 09:31:49 -0700 (PDT)
+Message-ID: <08baf8d8-d93d-780e-6b17-9485ccb5350a@linaro.org>
+Date:   Sun, 12 Mar 2023 17:31:48 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: [PATCH 14/30] clk: s2mps11: Convert to platform remove callback
- returning void
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
- <20230312161512.2715500-15-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v3 1/2] ARM: dts: exynos: replace mshc0 alias with
+ mmc-ddr-1_8v property
 Content-Language: en-US
+To:     Henrik Grimler <henrik@grimler.se>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, alim.akhtar@samsung.com,
+        m.szyprowski@samsung.com, jenneron@protonmail.com,
+        markuss.broks@gmail.com, martin.juecker@gmail.com,
+        virag.david003@gmail.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20230227193819.30133-1-henrik@grimler.se>
+ <20230227193819.30133-2-henrik@grimler.se>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230312161512.2715500-15-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20230227193819.30133-2-henrik@grimler.se>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 12/03/2023 17:14, Uwe Kleine-König wrote:
-> The .remove() callback for a platform driver returns an int which makes
-> many driver authors wrongly assume it's possible to do error handling by
-> returning an error code. However the value returned is (mostly) ignored
-> and this typically results in resource leaks. To improve here there is a
-> quest to make the remove callback return void. In the first step of this
-> quest all drivers are converted to .remove_new() which already returns
-> void.
+On 27/02/2023 20:38, Henrik Grimler wrote:
+> Previously, the mshc0 alias has been necessary so that
+> MMC_CAP_1_8V_DDR | MMC_CAP_8_BIT_DATA are set for mshc_0/mmc_0.
+> However, these capabilities should be described in the device tree so
+> that we do not have to rely on the alias.
 > 
-> Trivially convert this driver from always returning zero in the remove
-> callback to the void returning variant.
+> The property mmc-ddr-1_8v replaces MMC_CAP_1_8V_DDR, while bus_width =
+> <8>, which is already set for all the mshc0/mmc0 nodes, replaces
+> MMC_CAP_8_BIT_DATA.
 > 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> Also cleanup and sort (but keep status property at top) some of the
 
-FWIW:
+status is rather the last property
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> nodes while we are modifying them.
+
+Don't mix cleanups with any other changes.
+
+> 
+> Signed-off-by: Henrik Grimler <henrik@grimler.se>
+> ---
+> Changes since v2:
+> * Set mmc-ddr-1_8v in device trees for mshc_0/mmc_0
+> 
+>  arch/arm/boot/dts/exynos3250-artik5.dtsi      | 15 ++++++-------
+>  arch/arm/boot/dts/exynos3250-monk.dts         | 19 ++++++++---------
+>  arch/arm/boot/dts/exynos3250-rinato.dts       | 21 ++++++++-----------
+>  arch/arm/boot/dts/exynos3250.dtsi             |  3 ---
+>  arch/arm/boot/dts/exynos4210-i9100.dts        |  5 ++---
+>  arch/arm/boot/dts/exynos4210-origen.dts       |  3 ++-
+>  arch/arm/boot/dts/exynos4210-trats.dts        |  3 ++-
+>  .../boot/dts/exynos4210-universal_c210.dts    |  3 ++-
+>  arch/arm/boot/dts/exynos4412-itop-elite.dts   |  4 ++++
+>  .../boot/dts/exynos4412-itop-scp-core.dtsi    | 17 +++++++++------
+>  arch/arm/boot/dts/exynos4412-midas.dtsi       | 17 ++++++++-------
+>  .../boot/dts/exynos4412-odroid-common.dtsi    | 16 +++++++-------
+>  arch/arm/boot/dts/exynos4412-origen.dts       | 12 +++++------
+>  arch/arm/boot/dts/exynos4412-p4note.dtsi      | 17 ++++++++-------
+>  arch/arm/boot/dts/exynos4412.dtsi             |  1 -
+>  arch/arm/boot/dts/exynos5250-arndale.dts      |  1 +
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts     |  1 +
+>  arch/arm/boot/dts/exynos5250-snow-common.dtsi |  1 +
+>  arch/arm/boot/dts/exynos5250-spring.dts       |  1 +
+>  arch/arm/boot/dts/exynos5250.dtsi             |  4 ----
+>  arch/arm/boot/dts/exynos5260-xyref5260.dts    | 11 +++++-----
+>  arch/arm/boot/dts/exynos5410-odroidxu.dts     |  1 +
+>  arch/arm/boot/dts/exynos5410-smdk5410.dts     |  1 +
+>  arch/arm/boot/dts/exynos5420-arndale-octa.dts |  1 +
+>  .../dts/exynos5420-galaxy-tab-common.dtsi     |  1 +
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts    |  1 +
+>  arch/arm/boot/dts/exynos5420-smdk5420.dts     |  1 +
+>  arch/arm/boot/dts/exynos5420.dtsi             |  3 ---
+>  .../boot/dts/exynos5422-odroidxu3-common.dtsi |  1 +
+>  arch/arm/boot/dts/exynos5422-samsung-k3g.dts  |  1 +
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts     |  1 +
+>  31 files changed, 100 insertions(+), 87 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+> index 0ac3f284fbb8..794cbf579316 100644
+> --- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+> @@ -315,19 +315,20 @@ buck5_reg: BUCK5 {
+>  };
+>  
+>  &mshc_0 {
+> -	non-removable;
+> +	status = "okay";> +	bus-width = <8>;
+>  	cap-mmc-highspeed;
+>  	card-detect-delay = <200>;
+> -	vmmc-supply = <&ldo12_reg>;
+>  	clock-frequency = <100000000>;
+>  	max-frequency = <100000000>;
+> +	mmc-ddr-1_8v;
+> +	non-removable;
+> +	pinctrl-0 = <&sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
+> +	pinctrl-names = "default";
+>  	samsung,dw-mshc-ciu-div = <1>;
+> -	samsung,dw-mshc-sdr-timing = <0 1>;
+>  	samsung,dw-mshc-ddr-timing = <1 2>;
+> -	pinctrl-names = "default";
+> -	pinctrl-0 = <&sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
+> -	bus-width = <8>;
+> -	status = "okay";
+> +	samsung,dw-mshc-sdr-timing = <0 1>;
+> +	vmmc-supply = <&ldo12_reg>;
+
+It is impossible to review what happenned here.
 
 Best regards,
 Krzysztof
