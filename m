@@ -2,159 +2,110 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CDC9C7618E
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 12 Mar 2023 12:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A9BCC6FD1F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 12 Mar 2023 13:10:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229777AbjCLMOc (ORCPT
+        id S229437AbjCLNKX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 12 Mar 2023 08:14:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52284 "EHLO
+        Sun, 12 Mar 2023 09:10:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229516AbjCLMOa (ORCPT
+        with ESMTP id S229671AbjCLNKX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 12 Mar 2023 08:14:30 -0400
-Received: from wnew4-smtp.messagingengine.com (wnew4-smtp.messagingengine.com [64.147.123.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C642D36FE1;
-        Sun, 12 Mar 2023 05:14:25 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailnew.west.internal (Postfix) with ESMTP id 2E8A02B066CB;
-        Sun, 12 Mar 2023 08:14:19 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Sun, 12 Mar 2023 08:14:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1678623258; x=1678630458; bh=uOiTi6/NTNM3M
-        UGJcuvZvSM01KsroDdW5S+kXTtbd8w=; b=eHYyrL4NaW+yMUjCNptl5jYYtoi8E
-        hLBKzStAuQkG4v/z4hhP3kqHJQ2dwsRiMM/zQZmYQuybV3ns2BtF/u+8yL8z2Lpx
-        Fmm8zqjgnyTXuowli2+dSb8yfzjw4fhctK9VDp59jUGkHPWADWbTNq/qwMcS4V2D
-        nJzvwzXB3DZqQONKCTj7Ai1tlKWl3EuFudxD2O4eOA/UZCCneHrJ2UESteRQ80wa
-        DIqa4yLbBJCwUjKYoouq9gT2uFNwoaBp54W+m/0tweudxnh2fvhCVWnaKIgSmJRU
-        6fTwksJ6D/49vNcKmO24kfNVAM+PfU+O0BFXGq6gmpmocg7/R3c1RWetw==
-X-ME-Sender: <xms:GMINZGTf74JeblrjlpCh3YB4_QRRq8vjzK0oAN37uf84Wq2fmxR25A>
-    <xme:GMINZLwR_DLRm0xvpbHAjBj56JOUxatnZe2vfFGNpmMYMmk-Rc5duszkyCP3ccJqd
-    CMMbOhtJaOGzHw>
-X-ME-Received: <xmr:GMINZD3N8oWjeD-ZblmcgytVfWOgbjI-9Urb4YeJ1SDeIiaSlgllXVS72rYf>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvddvvddgfeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepkfguohcu
-    ufgthhhimhhmvghluceoihguohhstghhsehiughoshgthhdrohhrgheqnecuggftrfgrth
-    htvghrnhepvddufeevkeehueegfedtvdevfefgudeifeduieefgfelkeehgeelgeejjeeg
-    gefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepih
-    guohhstghhsehiughoshgthhdrohhrgh
-X-ME-Proxy: <xmx:GMINZCCd5Yv4ayURM5DOEpHnfT7iGftOXamBF3b0R3zWoNndjgvtew>
-    <xmx:GMINZPhqsrHiMYhX0eZcE-3b2KPOlLyZft3GgY2KvKmPR4znhEQTFQ>
-    <xmx:GMINZOr3mCJj8kq-QN1JeGycDSOV_iFTbuNK_uDCf3DOYZ8phjakwA>
-    <xmx:GsINZCMz0m5ZZart7AcvGICSsoelDhvqQ3z5GzBg10_jUUYuoBThpmdI-JU>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 12 Mar 2023 08:14:15 -0400 (EDT)
-Date:   Sun, 12 Mar 2023 14:14:12 +0200
-From:   Ido Schimmel <idosch@idosch.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, rui.zhang@intel.com,
-        Raju Rangoju <rajur@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Peter Kaestle <peter@piie.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sun, 12 Mar 2023 09:10:23 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6941246097
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Mar 2023 06:10:21 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id bp27so2139112lfb.6
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Mar 2023 06:10:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678626619;
+        h=cc:to:subject:date:from:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l2tChENWyDZGQKa5Zk1lhzLBop14+1J962hBMY2G3xM=;
+        b=qzCPJCkkwzh2IRULikZr4rmRYGRrc/+B6CNsHIfSQ3nG4O2iV3XJbEKw9rgl6tvGsV
+         3+9xiHx4QOK/QsE63CMmYXis300wzxjJ1Cp7U0F/54CNAvyOPw17DRQOOtZZJ1Q/Lad0
+         QeVjDJ+vGK8WiIj9vY298P5z1nMZOtBHkzC37ZViQD8nTRRlvsTkFzs52GdFMx9MWytk
+         1ZjQh7k1K1V+84l5kFSAK7AiRqXM+VoKgsJIXPnJV530b/7d3Y/3vw3q6Cfbbf7kbsHl
+         xLpH9K0QC4yuS4ri7/7yCgxWZctYZwzsalnyXfBaJQdFVJNUK8Etls+zeExBYNjJiAug
+         XDog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678626619;
+        h=cc:to:subject:date:from:message-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l2tChENWyDZGQKa5Zk1lhzLBop14+1J962hBMY2G3xM=;
+        b=j8SBF4DvkyeCsDojH74R+3sdwnwshgNmJpd8ZO2Lg7T6fuPLQg9o7KCSVR+iFSGxHl
+         utbtKeevq0cQMLZchhRO1Ot9LqoE+C3VX304o42OTpi0YALDQIYGzCxjwstZCa1FEbqp
+         Uml7CQ98N2TLMCbav1KEfnZ/AdllUUIZ/U2pU8Tu9B38ICWFdYqaekMPlJ2HBv9TVp67
+         tu/dVUCY96hoLLuEqKFQF4hvlX54D2uq1PH315xoVTYGXg4CxkDPX8DfDFkOwDn5mIpg
+         +KaoqZcM09VXXxcrSmpp07fADkRl8AEw1JstOA9zkEoA2OVrWNbPNdzfJblkXsQiXrSX
+         5TRg==
+X-Gm-Message-State: AO0yUKUmUyBnn/nPfsTLZ2yDyVw1xlbkbY0bTUMPuoJN+6fm2dHGPU0Q
+        y08WW8+aU5KjvYuXT24MmXY66P63SIf3/ERx
+X-Google-Smtp-Source: AK7set/VykAie+xm20IVxmw1mytKAPgDNZPrJtZWqRw1jOfABHdU/wQaqGJdtParsk9Txy8kpI5wxw==
+X-Received: by 2002:a19:c216:0:b0:4b4:8f01:f8b1 with SMTP id l22-20020a19c216000000b004b48f01f8b1mr8437489lfc.31.1678626619537;
+        Sun, 12 Mar 2023 06:10:19 -0700 (PDT)
+Received: from 0000-cover-letter.patch (46-138-144-249.dynamic.spd-mgts.ru. [46.138.144.249])
+        by smtp.gmail.com with ESMTPSA id s4-20020a19ad44000000b004d863fa8681sm651069lfd.173.2023.03.12.06.10.19
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Mar 2023 06:10:19 -0700 (PDT)
+Message-Id: <1678626510.1783316-0-sleirsgoevy@gmail.com>
+From:   Sergey Lisov <sleirsgoevy@gmail.com>
+Date:   Sun, 12 Mar 2023 16:03:15 +0300
+Subject: [PATCH v3 0/2] mmc: dw_mmc: fix DW MMC cores with 32-bit bus on 64-bit Linux systems 
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Antoine Tenart <atenart@kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
+        Jaehoon Chung <jh80.chung@samsung.com>
+Cc:     linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        danieller@nvidia.com, vadimp@nvidia.com, petrm@nvidia.com
-Subject: Re: [PATCH v8 01/29] thermal/core: Add a generic
- thermal_zone_get_trip() function
-Message-ID: <ZA3CFNhU4AbtsP4G@shredder>
-References: <20221003092602.1323944-1-daniel.lezcano@linaro.org>
- <20221003092602.1323944-2-daniel.lezcano@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221003092602.1323944-2-daniel.lezcano@linaro.org>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 03, 2022 at 11:25:34AM +0200, Daniel Lezcano wrote:
-> @@ -1252,9 +1319,10 @@ thermal_zone_device_register_with_trips(const char *type, struct thermal_trip *t
->  		goto release_device;
->  
->  	for (count = 0; count < num_trips; count++) {
-> -		if (tz->ops->get_trip_type(tz, count, &trip_type) ||
-> -		    tz->ops->get_trip_temp(tz, count, &trip_temp) ||
-> -		    !trip_temp)
-> +		struct thermal_trip trip;
-> +
-> +		result = thermal_zone_get_trip(tz, count, &trip);
-> +		if (result)
->  			set_bit(count, &tz->trips_disabled);
->  	}
+DesignWare MMC cores have a configurable data bus width of either 16, 32, or 64
+bytes. It is possible, and some vendors actually do it, to ship a DW MMC core
+configured for 32-bit data bus within a 64-bit SoC. In this case the kernel
+will attempt 64-bit (readq) accesses to certain 64-bit MMIO registers, while
+the core will expect pairs of 32-bit accesses.
 
-Daniel, this change makes it so that trip points with a temperature of
-zero are no longer disabled. This behavior was originally added in
-commit 81ad4276b505 ("Thermal: Ignore invalid trip points"). The mlxsw
-driver relies on this behavior - see mlxsw_thermal_module_trips_reset()
-- and with this change I see that the thermal subsystem tries to
-repeatedly set the state of the associated cooling devices to the
-maximum state. Other drivers might also be affected by this.
+It seems that currently the only register for which the kernel performs 64-bit
+accesses is the FIFO. The symptom is that the DW MMC core never receives a read
+on the second half of the register, does not register the datum as being read,
+and thus not advancing its internal FIFO pointer, breaking further reads. It
+also seems that this FIFO is only used for small (less than 16 bytes)
+transfers, which probably means that only some SDIO cards are affected.
 
-Following patch solves the problem for me:
+Changelog:
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 55679fd86505..b50931f84aaa 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -1309,7 +1309,7 @@ thermal_zone_device_register_with_trips(const char *type, struct thermal_trip *t
-                struct thermal_trip trip;
- 
-                result = thermal_zone_get_trip(tz, count, &trip);
--               if (result)
-+               if (result || !trip.temperature)
-                        set_bit(count, &tz->trips_disabled);
-        }
+v3:
+- removed "fifo-access-32bit" devicetree property
+- added "samsung,exynos78xx-dw-mshc" compatible string
+- added "samsung,exynos78xx-dw-mshc-smu" compatible string
 
-Should I submit it or do you have a better idea?
+v2:
+- added commit messages
 
-Thanks
+v1:
+- added "fifo-access-32bit" devicetree property
+- added DW_MMC_QUIRK_FIFO64_32
+- added new dw_mci_{pull,push}_data* variants (...-data64_32)
+
+Sergey Lisov (2):
+  dt-bindings: exynos-dw-mshc-common: add exynos78xx variants
+  mmc: dw_mmc: add an option to force 32-bit access to 64-bit FIFO
+
+ .../bindings/mmc/samsung,exynos-dw-mshc.yaml  |   2 +
+ arch/arm64/boot/dts/exynos/exynos7885.dtsi    |   2 +-
+ drivers/mmc/host/dw_mmc-exynos.c              |  41 +++++-
+ drivers/mmc/host/dw_mmc.c                     | 122 +++++++++++++++++-
+ drivers/mmc/host/dw_mmc.h                     |   2 +
+ 5 files changed, 165 insertions(+), 4 deletions(-)
+
+-- 
+2.38.3
+
+
