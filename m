@@ -2,124 +2,111 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA83C74A4B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Mar 2023 19:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 270BAC6FD19
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Mar 2023 20:29:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231138AbjCMTWk (ORCPT
+        id S229735AbjCMU3A (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 13 Mar 2023 15:22:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54650 "EHLO
+        Mon, 13 Mar 2023 16:29:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230448AbjCMTWi (ORCPT
+        with ESMTP id S229956AbjCMU2y (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Mar 2023 15:22:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C07C769FA;
-        Mon, 13 Mar 2023 12:22:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E3DB46148B;
-        Mon, 13 Mar 2023 19:22:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF695C433A0;
-        Mon, 13 Mar 2023 19:22:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678735338;
-        bh=ZkbNkZ34NZMdf0rITcJevdNA8xkyXVHk3RQ3QHQCPo8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FYRY/VOEfWWIWUGkUCEd2cUc6VwsJNb9sQK7C/5po95pQcevLD7l0xgF0y6QmJ/Tm
-         eNj5ZgbZf07KGpnlv0sHLqA1u5wZT0twxjYVECSoYCaXO76bNQS4iFXDW7j1ubbi5l
-         JYEPa6C9b/XNYnXmhBYcWPZ3g07cMVQbfCzCd+0tIpcdMnYqk51NEXVVLMbLpTrRFf
-         MRw1pjkhKY72BsZ57jxfMu5FlyeusoXdjuIffEqvxR3MJIOP+hy8V2KMXtYLDpgvZl
-         pnIRq8MjquCtUDVkmqock3S5sWKiNTiW32jKwkGSc5Rfjphd83d35JcoL8yK/iB0QT
-         HV2ZFtRbGLYCA==
-Date:   Mon, 13 Mar 2023 19:22:10 +0000
-From:   Mark Brown <broonie@kernel.org>
+        Mon, 13 Mar 2023 16:28:54 -0400
+Received: from out-42.mta1.migadu.com (out-42.mta1.migadu.com [IPv6:2001:41d0:203:375::2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D95FF25E31
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Mar 2023 13:28:16 -0700 (PDT)
+Date:   Mon, 13 Mar 2023 21:28:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+        t=1678739291;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0wf+Vp/ygCIY+3+XGg+nQBvGdHXJe5C3XUMAiqj5pNU=;
+        b=egflwHISZeEFwj30KD5DUbmDtT4EZkkNQCAco/2OjzHZtMzO2xpVT//OT8qQrk5Ao6Do/b
+        7Lpsv2ytSIDiBXGerrzxZjfDlDtUbSuzCmYygNQ/XP/QoR1l+zjMWgHiVdtmAZZ4LPwn+M
+        lXlqWkzqDa15wH63Fc/+lFk/0WAqy1I=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Henrik Grimler <henrik@grimler.se>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Kamal Dasu <kdasu.kdev@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Andi Shyti <andi@etezian.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 01/16] spi: armada-3700: Drop of_match_ptr for ID table
-Message-ID: <9bf3dd37-71c2-4118-a8da-40e656b42d10@sirena.org.uk>
-References: <20230310222857.315629-1-krzysztof.kozlowski@linaro.org>
- <7a65d775-cf07-4393-8b10-2cef4d5266ab@sirena.org.uk>
- <08e98d1d-e79b-fe7e-0d59-827f72277fc5@linaro.org>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        alim.akhtar@samsung.com, m.szyprowski@samsung.com,
+        jenneron@protonmail.com, markuss.broks@gmail.com,
+        martin.juecker@gmail.com, virag.david003@gmail.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v3 1/2] ARM: dts: exynos: replace mshc0 alias with
+ mmc-ddr-1_8v property
+Message-ID: <ZA+HWF9Lwu9q4yKA@L14.lan>
+References: <20230227193819.30133-1-henrik@grimler.se>
+ <20230227193819.30133-2-henrik@grimler.se>
+ <08baf8d8-d93d-780e-6b17-9485ccb5350a@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="w3ox4e/H/VGMGGHy"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <08e98d1d-e79b-fe7e-0d59-827f72277fc5@linaro.org>
-X-Cookie: Type louder, please.
+In-Reply-To: <08baf8d8-d93d-780e-6b17-9485ccb5350a@linaro.org>
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi Krzysztof,
 
---w3ox4e/H/VGMGGHy
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, Mar 12, 2023 at 05:31:48PM +0100, Krzysztof Kozlowski wrote:
+> On 27/02/2023 20:38, Henrik Grimler wrote:
+> > Previously, the mshc0 alias has been necessary so that
+> > MMC_CAP_1_8V_DDR | MMC_CAP_8_BIT_DATA are set for mshc_0/mmc_0.
+> > However, these capabilities should be described in the device tree so
+> > that we do not have to rely on the alias.
+> > 
+> > The property mmc-ddr-1_8v replaces MMC_CAP_1_8V_DDR, while bus_width =
+> > <8>, which is already set for all the mshc0/mmc0 nodes, replaces
+> > MMC_CAP_8_BIT_DATA.
+> > 
+> > Also cleanup and sort (but keep status property at top) some of the
+> 
+> status is rather the last property
 
-On Mon, Mar 13, 2023 at 07:39:45PM +0100, Krzysztof Kozlowski wrote:
-> On 13/03/2023 14:55, Mark Brown wrote:
-> > On Fri, Mar 10, 2023 at 11:28:42PM +0100, Krzysztof Kozlowski wrote:
+Thanks for the info! Is this documented somewhere? There seem to be
+more nodes with status property first than nodes with status property
+last for Exynos devices, so I mistakenly assumed that was the
+preferred style.
 
-> >>   drivers/spi/spi-armada-3700.c:807:34: error: =E2=80=98a3700_spi_dt_i=
-ds=E2=80=99 defined but not used [-Werror=3Dunused-const-variable=3D]
+> > nodes while we are modifying them.
+> 
+> Don't mix cleanups with any other changes.
 
-> > It would be much better to fix of_match_ptr() and/or the module stuff
-> > that also references the match table here.
+[ ... ]
 
-> Why? The recommendation is in general not to use of_match_ptr, because
-> there are little benefits but it disables matching via PRP0001. Jonathan
-> in parallel thread explicitly said of_match_ptr should disappear and he
-> is not accepting any new code with it. And in general he is right.
+> >  &mshc_0 {
+> > -	non-removable;
+> > +	status = "okay";> +	bus-width = <8>;
+> >  	cap-mmc-highspeed;
+> >  	card-detect-delay = <200>;
+> > -	vmmc-supply = <&ldo12_reg>;
+> >  	clock-frequency = <100000000>;
+> >  	max-frequency = <100000000>;
+> > +	mmc-ddr-1_8v;
+> > +	non-removable;
+> > +	pinctrl-0 = <&sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
+> > +	pinctrl-names = "default";
+> >  	samsung,dw-mshc-ciu-div = <1>;
+> > -	samsung,dw-mshc-sdr-timing = <0 1>;
+> >  	samsung,dw-mshc-ddr-timing = <1 2>;
+> > -	pinctrl-names = "default";
+> > -	pinctrl-0 = <&sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
+> > -	bus-width = <8>;
+> > -	status = "okay";
+> > +	samsung,dw-mshc-sdr-timing = <0 1>;
+> > +	vmmc-supply = <&ldo12_reg>;
+> 
+> It is impossible to review what happenned here.
 
-If that's the case then why are you adding maybe unused annotations for
-half the drivers rather than removing their of_match_ptr() usages?
-There doesn't seem to be any logic here, it's just randomly making
-changes as far as I can tell.
+Will leave cleanup out of next version, thanks for the feedback!
 
-The PRP0001 stuff isn't an issue, of_match_ptr() can just be changed to
-do the right thing for CONFIG_ACPI.  It doesn't buy us huge amounts but
-it also costs us very little and may be useful in future.  When there's
-missing annotations it's not causing issues for practical configurations
-as far as I can tell, and if the macro were updated for CONFIG_ACPI it'd
-be even less of an issue.
+> Best regards,
+> Krzysztof
 
---w3ox4e/H/VGMGGHy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmQPd+EACgkQJNaLcl1U
-h9DNrwf/S3t3cwLWoA+nkWX0VuXmOpSbOw7CSZL7nvCqVHn162nrIu6LmmcfJG/5
-TvxaEb4hrOmkhboKNrvX8JYqykzRJE12GtrxlveQhR45dqP5F9pFGMDpR62fk0LL
-NChJLRUKXP9asPzr3MxBXKfZ1PdpCctyZTIQb2hF6+u4FDHA7v0jinpxpyKXiJjI
-PyAjXx4BUFspLxkUdkJE8coTxx1IeckxcmbEtpSj3iSDUzmIM0mfzc2ZpvoKPCBo
-PNjLoEXpL1MRbe7LyijpEe66LxerpAYjUKtav8A4iJERLpIB4o1QY8wqNwZ3+P5+
-NdQrFLt5aqs/+fwE4YQl+4Q6BNUkWQ==
-=fkKm
------END PGP SIGNATURE-----
-
---w3ox4e/H/VGMGGHy--
+Best regards,
+Henrik Grimler
