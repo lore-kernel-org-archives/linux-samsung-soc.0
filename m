@@ -2,96 +2,113 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9D5C6FD19
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Mar 2023 07:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9634CC6FD19
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Mar 2023 08:17:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229807AbjCMH1c (ORCPT
+        id S229637AbjCMIRs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 13 Mar 2023 03:27:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45584 "EHLO
+        Mon, 13 Mar 2023 04:17:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbjCMH1b (ORCPT
+        with ESMTP id S229591AbjCMIRr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Mar 2023 03:27:31 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 089AB42BDD
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Mar 2023 00:27:30 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id y4so15215524edo.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Mar 2023 00:27:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678692448;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YqXrSEYEnOGs+7zjB19U4pVgASpkaJmTga+BJT3kdYw=;
-        b=J/zN/dlv6cASiruI728zbuCboF3BEauY0zD5g1ksjTxLowdHiUVQaAG8w603onN1W0
-         Ns3WKOq43o1KhTdX/PLOgd7lupAnwFf40a42TRfWF0wtxIAhvFM1t8Ml69ssajygSvaf
-         EhqM5f9m2CL9Ana5ME+MBNFxyDbb+LgOqmAN+5LPX1M4M+HCOOOZ1PzSOj0DkjWU4DGP
-         Ew1sG0SoHYfe0x4wqlfAXTEHVGxHVQDYuts515CpmLDsm0QfX11KWlvnCNiyajPN85N5
-         HcLrPxzGGB8lEJjA74cWXbFsPhYyF/ebk6OsNSfo7eBNBN2QwMkePWZ5pE7kZKdvh9Ym
-         1ttA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678692448;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YqXrSEYEnOGs+7zjB19U4pVgASpkaJmTga+BJT3kdYw=;
-        b=siU6vvMZHYHNwgOqADkcEMnGh+lJ0o0MiQN0lFjvjzaXDtD+/4Bg3a97JGgzIb5Bgy
-         B6AJE1T8yA2xK9a5rRo+uiY+Zai+dOLvA2cTG0ekHdHzRHaiEzrPlF/3ZEcHlJ5ctCPI
-         P78MxNXK/u1w1Hl4we/UmqXICoLq66QB8E15WQAWNCFajqWoGpjmKPqTUmc5zZdoXK7O
-         LQGWl8/s+/HQCjka4VNn5qkwimbeo2MzS/XSHRBkjpk9Ex6gD1IH7LEAU5w2c/rp8Fpm
-         A30gn/JSV/0UzweRgon2vItlSybLhrXgREbAiCi+Oj6hRlocIN/GgjKJENNWCL/HPbF3
-         buAQ==
-X-Gm-Message-State: AO0yUKWNP+UsKXwO1PYrf1pOPlDUcIaih8O16Y+UwrxCI6vvU2HLOeOU
-        WM+RKfEFQsuj7K+rxgp7WG2RaA==
-X-Google-Smtp-Source: AK7set+mILk3GDAjNqNzhNgHCuP2FV50D2pZG5Nd5tpVt7Pp744ywc67cAjVNeGP4uZfkFw/oEjv3A==
-X-Received: by 2002:a05:6402:1295:b0:4bc:edde:150d with SMTP id w21-20020a056402129500b004bcedde150dmr9545646edv.0.1678692448562;
-        Mon, 13 Mar 2023 00:27:28 -0700 (PDT)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:f052:f15:3f90:fcb3])
-        by smtp.gmail.com with ESMTPSA id i19-20020a50d753000000b004af6e957b22sm2503373edj.6.2023.03.13.00.27.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Mar 2023 00:27:28 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        David Virag <virag.david003@gmail.com>
-Subject: Re: (subset) [PATCH 4/7] clk: samsung: exynos850: Make PMU_ALIVE_PCLK critical
-Date:   Mon, 13 Mar 2023 08:27:25 +0100
-Message-Id: <167869244317.12007.11459097567814063144.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230308233822.31180-5-semen.protsenko@linaro.org>
-References: <20230308233822.31180-1-semen.protsenko@linaro.org> <20230308233822.31180-5-semen.protsenko@linaro.org>
+        Mon, 13 Mar 2023 04:17:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDB2E2B9F3;
+        Mon, 13 Mar 2023 01:17:46 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8602F6114C;
+        Mon, 13 Mar 2023 08:17:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0AA9C433EF;
+        Mon, 13 Mar 2023 08:17:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678695465;
+        bh=jzyrPeuPJwvGuYEX291gbAHZu85wfusV8HgesMnJlyI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nSK0sRt5aC3BDLSctPPKTY+COy70tLVrdKzFQnlo0qamNPCLzvZc8oRmkJDEwYPSl
+         6BgGS0bRyj3gcESUSnsOG5FUTc2rU+xJCo9rnqg3SxO7Zarcz8DVINr3xtUCO9Sqdi
+         SVPgfbGNXm8VYVNfIBEgimi/MdKvuwdFVz7pBI2aRf2JLV7OUvd9Ds3xxNj0y2kj6s
+         B0nE4D79AivGr9tqx4NEQAOaCn249kmw3hG4gDjOpHfCyakL6zjx4As2g6VIRit6EW
+         ioL4/eMZsyuxoeSwv0Bb1BoyPPliaahIAlY+pKqIVb946pbW1SVYix7k770NJXXkGJ
+         otKhSHWLmb+aQ==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1pbdOG-0004Yv-VH; Mon, 13 Mar 2023 09:18:45 +0100
+Date:   Mon, 13 Mar 2023 09:18:44 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     johan+linaro@kernel.org, a.swigon@samsung.com, agross@kernel.org,
+        alim.akhtar@samsung.com, andersson@kernel.org, djakov@kernel.org,
+        festevam@gmail.com, jonathanh@nvidia.com, kernel@pengutronix.de,
+        konrad.dybcio@linaro.org, krzysztof.kozlowski@linaro.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        s.hauer@pengutronix.de, s.nawrocki@samsung.com,
+        shawnguo@kernel.org, stable@vger.kernel.org,
+        thierry.reding@gmail.com, y.oudjana@protonmail.com
+Subject: Re: [PATCH 07/23] interconnect: qcom: rpm: fix probe PM domain error
+ handling
+Message-ID: <ZA7cZBF58yMSjG/+@hovoldconsulting.com>
+References: <20230201101559.15529-1-johan+linaro@kernel.org>
+ <20230201101559.15529-8-johan+linaro@kernel.org>
+ <641d04a3-9236-fe76-a20f-11466a01460e@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <641d04a3-9236-fe76-a20f-11466a01460e@wanadoo.fr>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 8 Mar 2023 17:38:19 -0600, Sam Protsenko wrote:
-> PMU_ALIVE_PCLK is needed for PMU registers access, and it must be always
-> running, as not only the kernel accesses PMU registers. Make it critical
-> to ensure that.
+On Sat, Mar 11, 2023 at 07:17:50PM +0100, Christophe JAILLET wrote:
+> Le 01/02/2023 à 11:15, Johan Hovold a écrit :
+> > Make sure to disable clocks also in case attaching the power domain
+> > fails.
+> > 
+> > Fixes: 7de109c0abe9 ("interconnect: icc-rpm: Add support for bus power domain")
+> > Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org      # 5.17
+> > Cc: Yassine Oudjana <y.oudjana-g/b1ySJe57IN+BqQ9rBEUg@public.gmane.org>
+> > Signed-off-by: Johan Hovold <johan+linaro-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> > ---
+> >   drivers/interconnect/qcom/icc-rpm.c | 9 ++++-----
+> >   1 file changed, 4 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
+> > index 91778cfcbc65..da595059cafd 100644
+> > --- a/drivers/interconnect/qcom/icc-rpm.c
+> > +++ b/drivers/interconnect/qcom/icc-rpm.c
+> > @@ -498,8 +498,7 @@ int qnoc_probe(struct platform_device *pdev)
+> >   
+> >   	if (desc->has_bus_pd) {
+> >   		ret = dev_pm_domain_attach(dev, true);
+> > -		if (ret)
+> > -			return ret;
+> > +		goto err_disable_clks;
 > 
+> Hi,
+> this change looks strange because we now skip the rest of the function.
 > 
+> Is it really intended?
 
-Applied, thanks!
+No, this was definitely not intentional. Thanks for catching this. I'll
+send a follow up fix for Georgi to fold in or apply on top.
 
-[4/7] clk: samsung: exynos850: Make PMU_ALIVE_PCLK critical
-      https://git.kernel.org/krzk/linux/c/babb3e6a8a8e5a61a65d4463610108808139b23e
+> Also, should dev_pm_domain_detach() be called somewhere in the error 
+> handling path and remove function ?
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In principle, yes. (I think read the above as being another device
+managed resource.)
+
+It turns out, however, that this code is totally bogus as any power
+domain would already have been attached by the platform bus code and the
+above call would always just succeed. The platform code would also
+handle detach on errors. 
+
+I'll send a patch to remove this.
+
+Johan
