@@ -2,129 +2,126 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 092F2C74A5B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Mar 2023 13:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A16C6FD1F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Mar 2023 16:06:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230131AbjCNNaC (ORCPT
+        id S229722AbjCNQGU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Mar 2023 09:30:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47912 "EHLO
+        Tue, 14 Mar 2023 12:06:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231493AbjCNN3R (ORCPT
+        with ESMTP id S229690AbjCNQGS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Mar 2023 09:29:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2A7A99251;
-        Tue, 14 Mar 2023 06:26:43 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1A68A6177D;
-        Tue, 14 Mar 2023 13:26:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E68B5C433EF;
-        Tue, 14 Mar 2023 13:26:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678800402;
-        bh=rfEnNx/AtmKQ6+j2cB2Tu1ghvgv+nXYlVjsWMHYFeWs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HQdvzfIbZzXtrHVHeJg8joac91CkFNUhUzka7UIgOQ3I0FVOwkfTcWeroLJ31/N7O
-         01OIfdO5oayYpm8+UDO0/KWpqhZlwRH++bOxN+0CTXQ6T/vAaAhHIWq3PWORYgNdu+
-         z8HPP+L3vWZpC3QqInApRRu4W0ND12eVv9xd3zqw9nh3ErFL+dJoUC2MTlBkeIT8mz
-         yRgg+BoDNQO8M885SHiRpZ4NlCsM74IxZcOG+swSKa0mEd8MzUkgN3Wh2np3OsVUhq
-         wKWf8t4NW/4d/W9C03p5tiQl8tBdkxFnmud7ENuSVhpviYrfKxe4rpki0XfhGzz31+
-         O0suXgkmHMBgg==
-Date:   Tue, 14 Mar 2023 13:26:34 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Kamal Dasu <kdasu.kdev@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Andi Shyti <andi@etezian.org>,
+        Tue, 14 Mar 2023 12:06:18 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E65FF9544E
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Mar 2023 09:05:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678809913;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=dGR7rnzQU4+OplsWaATHZ55m61w54EhaATkQ2WBXuU8=;
+        b=e4I8Stp6kv6kcYNN4iejf/hOkk3tY+d9S5WxGJfbJYoN+3/53asKNeXMXXJRzzdkMjAioM
+        VZzDnqWIGgO8iSfQ4u2JhVi52h0mZLOyQyrl+iJs2WhK+Haq8y/yeD4lIbrgWvLI+ziP4U
+        fuBBNlLNU0jGZKa34cuby8D0k/obQoQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-611-nodZcTfMNRmHqkqXiYlyOQ-1; Tue, 14 Mar 2023 12:05:09 -0400
+X-MC-Unique: nodZcTfMNRmHqkqXiYlyOQ-1
+Received: by mail-wm1-f69.google.com with SMTP id n18-20020a05600c501200b003ed24740ea4so3166024wmr.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Mar 2023 09:05:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678809907;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dGR7rnzQU4+OplsWaATHZ55m61w54EhaATkQ2WBXuU8=;
+        b=DaAC2JfVyQRIKqYD0AxssI1cjQHVmWHG2mbK5jBeQQjbPOBsoOlPvsV0Tl9Qr00xfF
+         ho3dZD09BSN0W3MXKxhOPYldU+o0z1vNpf9+hoVd2z0QeDosJ2bwrDwsu9eUSphe3cbj
+         gr7sQHIXopITnbYSghS817vA775ploMXC89MXQ/Di6dNIapaVZRtXyWVgiNkmXKH34mK
+         mv1RUlxNPD5VFIBi08qlrDOjmM879UVGewi0yW6otDZsCfPg31TbN19m1Bo8Fw3OC2GL
+         4o7hl2oZXjVLjZzUSU98ISLOQJr13kjmuQdCdKuUrKGjttHSLN/IoJTo4BEefVMi8Xzy
+         oNbA==
+X-Gm-Message-State: AO0yUKU034jp3v9VGldsDcL/qRNzeZ5cEz18/rbQTuNwraI0ANhkV5ok
+        2dLxGCUEMlsX+zBQrYpVwVFSWxEnQFl3flLUNTl5WsaezhNsb9i4qOaNccKxyQkJGmiYVxU2sYD
+        90oLrYkg8bbuAsorH9pAIz1sx0UppxyA=
+X-Received: by 2002:a05:600c:4f91:b0:3ed:2c92:9f4f with SMTP id n17-20020a05600c4f9100b003ed2c929f4fmr2497187wmq.10.1678809907238;
+        Tue, 14 Mar 2023 09:05:07 -0700 (PDT)
+X-Google-Smtp-Source: AK7set9xSEo7gCICSkLAf2zsB02OWfCkjdy+yaejHZtyJwi5t5dZZAehVmN38jPmBozEi8lyKugTiQ==
+X-Received: by 2002:a05:600c:4f91:b0:3ed:2c92:9f4f with SMTP id n17-20020a05600c4f9100b003ed2c929f4fmr2497152wmq.10.1678809906889;
+        Tue, 14 Mar 2023 09:05:06 -0700 (PDT)
+Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id t18-20020a1c7712000000b003ed2987690dsm3148966wmi.26.2023.03.14.09.05.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Mar 2023 09:05:06 -0700 (PDT)
+From:   Javier Martinez Canillas <javierm@redhat.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6ni?= =?utf-8?Q?g?= 
+        <u.kleine-koenig@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+        Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Alain Volmat <alain.volmat@foss.st.com>,
+        Yannick Fertre <yannick.fertre@foss.st.com>,
+        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+        Philippe Cornu <philippe.cornu@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc:     linux-samsung-soc@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 01/16] spi: armada-3700: Drop of_match_ptr for ID table
-Message-ID: <5782b7a2-3942-4bed-9a70-55a43833f69c@sirena.org.uk>
-References: <20230310222857.315629-1-krzysztof.kozlowski@linaro.org>
- <7a65d775-cf07-4393-8b10-2cef4d5266ab@sirena.org.uk>
- <08e98d1d-e79b-fe7e-0d59-827f72277fc5@linaro.org>
- <9bf3dd37-71c2-4118-a8da-40e656b42d10@sirena.org.uk>
- <ed293caf-e787-a29e-f1c5-bdcaf1aa483a@linaro.org>
+        dri-devel@lists.freedesktop.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] drm: Drop ARCH_MULTIPLATFORM from dependencies
+In-Reply-To: <bbd54405501ec660ac941971e2203855fd79a90f.camel@pengutronix.de>
+References: <20221209220555.3631364-1-u.kleine-koenig@pengutronix.de>
+ <bbd54405501ec660ac941971e2203855fd79a90f.camel@pengutronix.de>
+Date:   Tue, 14 Mar 2023 17:05:04 +0100
+Message-ID: <87ilf3l3nz.fsf@minerva.mail-host-address-is-not-set>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="elD8KD6t7+wRv3Op"
-Content-Disposition: inline
-In-Reply-To: <ed293caf-e787-a29e-f1c5-bdcaf1aa483a@linaro.org>
-X-Cookie: For office use only.
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Philipp Zabel <p.zabel@pengutronix.de> writes:
 
---elD8KD6t7+wRv3Op
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Fr, 2022-12-09 at 23:05 +0100, Uwe Kleine-K=C3=B6nig wrote:
+>> Some of these dependencies used to be sensible when only a small part of
+>> the platforms supported by ARCH=3Darm could be compiled together in a
+>> single kernel image. Nowadays ARCH_MULTIPLATFORM is only used as a guard
+>> for kernel options incompatible with a multiplatform image. See commit
+>> 84fc86360623 ("ARM: make ARCH_MULTIPLATFORM user-visible") for some more
+>> details.
+>>=20
+>> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+>> ---
+>> =C2=A0drivers/gpu/drm/imx/Kconfig     | 2 +-
+>> =C2=A0drivers/gpu/ipu-v3/Kconfig      | 2 +-
+>
+> For i.MX / IPUv3,
+>
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+>
 
-On Tue, Mar 14, 2023 at 07:44:04AM +0100, Krzysztof Kozlowski wrote:
-> On 13/03/2023 20:22, Mark Brown wrote:
+Pushed to drm-misc (drm-misc-next). Thanks!
 
-> > If that's the case then why are you adding maybe unused annotations for
-> > half the drivers rather than removing their of_match_ptr() usages?
-> > There doesn't seem to be any logic here, it's just randomly making
-> > changes as far as I can tell.
+--=20
+Best regards,
 
-> These are not random but depend on whether OF is the only matching
-> method or one of few. Although for IIO all of my patches would be
-> dropping the of_match_ptr... For some cases in other patchsets I added
-> __maybe_unused also because of_match_node(), when the table is not used
-> in driver of_match_table.
+Javier Martinez Canillas
+Core Platforms
+Red Hat
 
-This logic is both not apparent when looking at the patches and doesn't
-move us in any particular direction - I'd expect this stuff to be
-written the same way for all drivers, there's no reason for it to vary.
-That just adds complication, it's more random obscure rules people have
-to learn.
-
-> > The PRP0001 stuff isn't an issue, of_match_ptr() can just be changed to
-> > do the right thing for CONFIG_ACPI.
-
-> That's actually interesting idea, kind of obvious so I wonder why it
-> wasn't done like this in the first place in 886ca88be6b3 ("ACPI / bus:
-> Respect PRP0001 when retrieving device match data"). Maybe not to
-> populate OF device ID tables for the ACPI systems which do not care
-> about PRP0001?
-
-Or just it didn't occur to anyone at the time.
-
---elD8KD6t7+wRv3Op
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmQQdgoACgkQJNaLcl1U
-h9Anagf/THfRG/RbMsHxaqKJsYsu8z++5R15gbuBbWAl1XHrOE03sdWawbw9nx6/
-7FjyWP0YguU7o9glL92CdGxV9CSl2mMJw06/Mvasde/AqKVs1hIrTEBLc8esfnmK
-y/l3de8OGXwYRz7UontPhCtwqNjdwza95hPCqQNLi1LhQ8DwEK9TIRvpfsD15NfI
-p+M8l80hFu85Hz+2LrWrmgcbQwuvowzOGYminHMypypU2qkEka6P8Avhuz9sB6Jj
-H1qukPGKGE02cXrtNfCG6DPdWzp2vPcIzeyFSendbDtHhlOets4W06I02bN3bFD8
-VlVyWgaICjPC/DjVXOuTe1yovomvig==
-=lrkL
------END PGP SIGNATURE-----
-
---elD8KD6t7+wRv3Op--
