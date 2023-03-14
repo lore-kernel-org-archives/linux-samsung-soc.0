@@ -2,91 +2,129 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D3CC6FD1C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Mar 2023 09:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 092F2C74A5B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Mar 2023 13:30:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229897AbjCNJXY convert rfc822-to-8bit (ORCPT
+        id S230131AbjCNNaC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Mar 2023 05:23:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37386 "EHLO
+        Tue, 14 Mar 2023 09:30:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230498AbjCNJXW (ORCPT
+        with ESMTP id S231493AbjCNN3R (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Mar 2023 05:23:22 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E746898E8D
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Mar 2023 02:22:54 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1pc0ri-0004VU-7h; Tue, 14 Mar 2023 10:22:42 +0100
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1pc0rc-0042uO-J6; Tue, 14 Mar 2023 10:22:36 +0100
-Received: from pza by lupine with local (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1pc0rb-0002Dp-TC; Tue, 14 Mar 2023 10:22:35 +0100
-Message-ID: <bbd54405501ec660ac941971e2203855fd79a90f.camel@pengutronix.de>
-Subject: Re: [PATCH] drm: Drop ARCH_MULTIPLATFORM from dependencies
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc:     linux-samsung-soc@vger.kernel.org,
+        Tue, 14 Mar 2023 09:29:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2A7A99251;
+        Tue, 14 Mar 2023 06:26:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1A68A6177D;
+        Tue, 14 Mar 2023 13:26:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E68B5C433EF;
+        Tue, 14 Mar 2023 13:26:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678800402;
+        bh=rfEnNx/AtmKQ6+j2cB2Tu1ghvgv+nXYlVjsWMHYFeWs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HQdvzfIbZzXtrHVHeJg8joac91CkFNUhUzka7UIgOQ3I0FVOwkfTcWeroLJ31/N7O
+         01OIfdO5oayYpm8+UDO0/KWpqhZlwRH++bOxN+0CTXQ6T/vAaAhHIWq3PWORYgNdu+
+         z8HPP+L3vWZpC3QqInApRRu4W0ND12eVv9xd3zqw9nh3ErFL+dJoUC2MTlBkeIT8mz
+         yRgg+BoDNQO8M885SHiRpZ4NlCsM74IxZcOG+swSKa0mEd8MzUkgN3Wh2np3OsVUhq
+         wKWf8t4NW/4d/W9C03p5tiQl8tBdkxFnmud7ENuSVhpviYrfKxe4rpki0XfhGzz31+
+         O0suXgkmHMBgg==
+Date:   Tue, 14 Mar 2023 13:26:34 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Kamal Dasu <kdasu.kdev@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Andi Shyti <andi@etezian.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        dri-devel@lists.freedesktop.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Date:   Tue, 14 Mar 2023 10:22:35 +0100
-In-Reply-To: <20221209220555.3631364-1-u.kleine-koenig@pengutronix.de>
-References: <20221209220555.3631364-1-u.kleine-koenig@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.38.3-1+deb11u1 
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 01/16] spi: armada-3700: Drop of_match_ptr for ID table
+Message-ID: <5782b7a2-3942-4bed-9a70-55a43833f69c@sirena.org.uk>
+References: <20230310222857.315629-1-krzysztof.kozlowski@linaro.org>
+ <7a65d775-cf07-4393-8b10-2cef4d5266ab@sirena.org.uk>
+ <08e98d1d-e79b-fe7e-0d59-827f72277fc5@linaro.org>
+ <9bf3dd37-71c2-4118-a8da-40e656b42d10@sirena.org.uk>
+ <ed293caf-e787-a29e-f1c5-bdcaf1aa483a@linaro.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="elD8KD6t7+wRv3Op"
+Content-Disposition: inline
+In-Reply-To: <ed293caf-e787-a29e-f1c5-bdcaf1aa483a@linaro.org>
+X-Cookie: For office use only.
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fr, 2022-12-09 at 23:05 +0100, Uwe Kleine-König wrote:
-> Some of these dependencies used to be sensible when only a small part of
-> the platforms supported by ARCH=arm could be compiled together in a
-> single kernel image. Nowadays ARCH_MULTIPLATFORM is only used as a guard
-> for kernel options incompatible with a multiplatform image. See commit
-> 84fc86360623 ("ARM: make ARCH_MULTIPLATFORM user-visible") for some more
-> details.
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> ---
->  drivers/gpu/drm/imx/Kconfig     | 2 +-
->  drivers/gpu/ipu-v3/Kconfig      | 2 +-
 
-For i.MX / IPUv3,
+--elD8KD6t7+wRv3Op
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+On Tue, Mar 14, 2023 at 07:44:04AM +0100, Krzysztof Kozlowski wrote:
+> On 13/03/2023 20:22, Mark Brown wrote:
 
-regards
-Philipp
+> > If that's the case then why are you adding maybe unused annotations for
+> > half the drivers rather than removing their of_match_ptr() usages?
+> > There doesn't seem to be any logic here, it's just randomly making
+> > changes as far as I can tell.
+
+> These are not random but depend on whether OF is the only matching
+> method or one of few. Although for IIO all of my patches would be
+> dropping the of_match_ptr... For some cases in other patchsets I added
+> __maybe_unused also because of_match_node(), when the table is not used
+> in driver of_match_table.
+
+This logic is both not apparent when looking at the patches and doesn't
+move us in any particular direction - I'd expect this stuff to be
+written the same way for all drivers, there's no reason for it to vary.
+That just adds complication, it's more random obscure rules people have
+to learn.
+
+> > The PRP0001 stuff isn't an issue, of_match_ptr() can just be changed to
+> > do the right thing for CONFIG_ACPI.
+
+> That's actually interesting idea, kind of obvious so I wonder why it
+> wasn't done like this in the first place in 886ca88be6b3 ("ACPI / bus:
+> Respect PRP0001 when retrieving device match data"). Maybe not to
+> populate OF device ID tables for the ACPI systems which do not care
+> about PRP0001?
+
+Or just it didn't occur to anyone at the time.
+
+--elD8KD6t7+wRv3Op
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmQQdgoACgkQJNaLcl1U
+h9Anagf/THfRG/RbMsHxaqKJsYsu8z++5R15gbuBbWAl1XHrOE03sdWawbw9nx6/
+7FjyWP0YguU7o9glL92CdGxV9CSl2mMJw06/Mvasde/AqKVs1hIrTEBLc8esfnmK
+y/l3de8OGXwYRz7UontPhCtwqNjdwza95hPCqQNLi1LhQ8DwEK9TIRvpfsD15NfI
+p+M8l80hFu85Hz+2LrWrmgcbQwuvowzOGYminHMypypU2qkEka6P8Avhuz9sB6Jj
+H1qukPGKGE02cXrtNfCG6DPdWzp2vPcIzeyFSendbDtHhlOets4W06I02bN3bFD8
+VlVyWgaICjPC/DjVXOuTe1yovomvig==
+=lrkL
+-----END PGP SIGNATURE-----
+
+--elD8KD6t7+wRv3Op--
