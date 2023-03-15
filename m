@@ -2,108 +2,72 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE4DFC74A44
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Mar 2023 19:49:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 969C1C7618B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Mar 2023 08:40:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229621AbjCNTth (ORCPT
+        id S231191AbjCOIk5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Mar 2023 15:49:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44788 "EHLO
+        Wed, 15 Mar 2023 04:40:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjCNTtf (ORCPT
+        with ESMTP id S231679AbjCOIk4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Mar 2023 15:49:35 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32AB86185
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Mar 2023 12:49:34 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id fd5so32810569edb.7
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Mar 2023 12:49:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678823372;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4KSUmznh2ok6aa4Ci09Di7Dv3MtowRhPOcy1yLcL7PA=;
-        b=jhzyPJPIDbGYuM0hUKTd+D6vgjFyeu7ZpRP1qaZS5jT+kvx/4fm6sGjaYRIu1q3Y1A
-         PP8VoUGZCDyrTklBaz6k6rwXl9FmVyHyE0vBIPUKe/GrtFFM3RhoS0txQ8iIcUKfzcNA
-         6eUzXD0Hju2BVJdAhA/9e7Z3kwgFXE93ZnoU599CdSJeHd8sjxOhdsNwqoZaVQHt4Q2y
-         eqPIr1hpvpwgfMp87Q3z7ZrzFnub1rccXEvY6/s8Qf+yg0fCQlW4A8hyRStmfH0zXE5r
-         m39vnFOp9KaMCfXrQg2P7jSA8J2UdCsJkhTdBW5nhlJr5Y+RGb5lbcf8uhJb4Dk3zmVm
-         NqWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678823372;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4KSUmznh2ok6aa4Ci09Di7Dv3MtowRhPOcy1yLcL7PA=;
-        b=0DKs8LJsoAPU0vGFMwsNQanM1kVIOnqU76r89CUoge/HNUk5pXF2NRMDRYh6P+/kCb
-         1csX4jsdOOZhnrFWkQfY5/TsjsnSAMJNuKlLd5j0o12xo53qGRnF5n0oGE5tVG0aL6tb
-         wSzV45Rm/HW1z0xRLR8KRDXK8T0eluyK07xb3ZbnSc0UhNT2RQ3s5sp8SYMpNQWaM3Q3
-         UwsWNXjmnMaHcbqwsOXsNqXR/JxprCsx+P5J4msNP6VkLR/S6f9CFlwCUm4VHNdwpBu5
-         Y+ILO1QvyT30ODVpWRnL/P6GmGxVIMHND3KPfAGvaFacMj7YDFosEM5TEPbfQq1nohtR
-         tapA==
-X-Gm-Message-State: AO0yUKUwpl6EIWFXd75pF5eVZ+Cj8g7mlpehj0P5emCAC8gdUd3Io6og
-        gVeEVujj0mcHYQNTaPnfPjnEQw==
-X-Google-Smtp-Source: AK7set+Be2eJplmpdWbWUybqVGKj1gD5EKFPFiDQCyOXzQdcw5BoHDAXe4gUNBkyWtrujDRp581wow==
-X-Received: by 2002:a17:906:cc54:b0:884:37fd:bf4c with SMTP id mm20-20020a170906cc5400b0088437fdbf4cmr3904484ejb.19.1678823372716;
-        Tue, 14 Mar 2023 12:49:32 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:642b:87c2:1efc:c8af? ([2a02:810d:15c0:828:642b:87c2:1efc:c8af])
-        by smtp.gmail.com with ESMTPSA id g11-20020a170906348b00b0092b4602f506sm1522869ejb.73.2023.03.14.12.49.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Mar 2023 12:49:32 -0700 (PDT)
-Message-ID: <1bd962b1-2fbc-9bdb-8b7a-9f2c70c316e2@linaro.org>
-Date:   Tue, 14 Mar 2023 20:49:31 +0100
+        Wed, 15 Mar 2023 04:40:56 -0400
+Received: from mail.amblevebiz.com (mail.amblevebiz.com [80.211.239.97])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 937A26B96B
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Mar 2023 01:40:54 -0700 (PDT)
+Received: by mail.amblevebiz.com (Postfix, from userid 1002)
+        id 4FC8A829CB; Wed, 15 Mar 2023 09:40:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=amblevebiz.com;
+        s=mail; t=1678869653;
+        bh=mG5KF9rXIT2hCcIXZaMY449X9Ndwb1czFhgZLlqDg7A=;
+        h=Date:From:To:Subject:From;
+        b=VDmfI4ECastp8o31ohOYTckTExgjOHOYX2CIjnT+9vJ1pk81EoC9zzLkQAGfQHank
+         A3XRuIkpJYCr9pxAONUoJgRz6+VnFyQvSpDDgxbxWrlZIoZYN/O1gpmo8lbeyjJVxX
+         DmvnIuraH6+hFo6trNvBxJm2g8LHytU60s20jDW5aOx6yeyo/iG79KK8fd6ttC7VH8
+         Yoq+6AjOsBaY6H1Bh4vx6UJ9zujXnR5FFHU64tP/F+hRFqjfKxgdlm8Lksnb3LHnAH
+         d8s+KHxL96XdoZtkZWD56mzNMxq1YXOnG4f195M777qsKdOyeSU+Hutak/IyTDW6lH
+         GQU6L94W3SoOw==
+Received: by mail.amblevebiz.com for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Mar 2023 08:40:36 GMT
+Message-ID: <20230315084500-0.1.p.1gus.0.6if7ozxhg2@amblevebiz.com>
+Date:   Wed, 15 Mar 2023 08:40:36 GMT
+From:   =?UTF-8?Q? "Luk=C3=A1=C5=A1_Horv=C3=A1th" ?= 
+        <lukas.horvath@amblevebiz.com>
+To:     <linux-samsung-soc@vger.kernel.org>
+Subject: =?UTF-8?Q?Technick=C3=BD_audit_podlah?=
+X-Mailer: mail.amblevebiz.com
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v5 1/3] dt-bindings: exynos-dw-mshc-common: add exynos7885
- variants
-Content-Language: en-US
-To:     Sergey Lisov <sleirsgoevy@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>
-Cc:     linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1678644516.665314-1-sleirsgoevy@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1678644516.665314-1-sleirsgoevy@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 12/03/2023 18:58, Sergey Lisov wrote:
-> Some Samsung Exynos boards using the arm64 architecture have DW MMC
-> controllers configured for a 32-bit data bus but a 64-bit FIFO. On these
-> systems the 64-bit FIFO registers must be accessed in two 32-bit halves.
-> 
-> Add two new compatible strings, "samsung,exynos7885-dw-mshc" and
-> "samsung,exynos7885-dw-mshc-smu" respectively, to denote exynos7885
-> boards that need this quirk. But it's very possible that all
-> "samsung,exynos7-dw-mshc" boards are actually affected.
-> ---
->  .../devicetree/bindings/mmc/samsung,exynos-dw-mshc.yaml         | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/samsung,exynos-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/samsung,exynos-dw-mshc.yaml
-> index fdaa18481..3eebaed2c 100644
-> --- a/Documentation/devicetree/bindings/mmc/samsung,exynos-dw-mshc.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/samsung,exynos-dw-mshc.yaml
-> @@ -22,6 +22,8 @@ properties:
->        - samsung,exynos5420-dw-mshc-smu
->        - samsung,exynos7-dw-mshc
->        - samsung,exynos7-dw-mshc-smu
-> +      - samsung,exynos7885-dw-mshc
-> +      - samsung,exynos7885-dw-mshc-smu
+Dobr=C3=A9 r=C3=A1no,
 
-What about the if-then at the end? Since this is pretty compatible with
-exynos7, then I would expect being added also there.
+uva=C5=BEujete o bezesp=C3=A1rov=C3=A9 podlaze pro v=C3=BDrobn=C3=AD prov=
+oz?
 
-Best regards,
-Krzysztof
+Jako sv=C4=9Btov=C3=BD l=C3=ADdr ve v=C3=BDrob=C4=9B a pokl=C3=A1dce podl=
+ah =C5=99e=C5=A1=C3=ADme probl=C3=A9my vypl=C3=BDvaj=C3=ADc=C3=AD z vlivu=
+ chemick=C3=BDch slou=C4=8Denin, ot=C4=9Bru, n=C3=A1raz=C5=AF, vlhkosti n=
+ebo n=C3=A1hl=C3=BDch zm=C4=9Bn teplot - na=C5=A1e podlahov=C3=A9 syst=C3=
+=A9my jsou p=C5=99izp=C5=AFsobeny nejt=C4=9B=C5=BE=C5=A1=C3=ADm podm=C3=AD=
+nk=C3=A1m prost=C5=99ed=C3=AD.
 
+Garantujeme v=C3=A1m =C5=99e=C5=A1en=C3=AD, kter=C3=A1 jsou =C5=A1etrn=C3=
+=A1 k =C5=BEivotn=C3=ADmu prost=C5=99ed=C3=AD, odoln=C3=A1 a snadno se =C4=
+=8Dist=C3=AD, hygienick=C3=A1, protiskluzov=C3=A1 a bezpe=C4=8Dn=C3=A1 pr=
+o zam=C4=9Bstnance.
+
+Poskytujeme kr=C3=A1tkou dobu instalace a nep=C5=99etr=C5=BEit=C3=BD prov=
+oz i o v=C3=ADkendech a sv=C3=A1tc=C3=ADch, =C4=8D=C3=ADm=C5=BE eliminuje=
+me riziko prostoj=C5=AF.
+
+Mohu V=C3=A1m zdarma nab=C3=ADdnout technick=C3=BD audit podlah s komplex=
+n=C3=ADm rozborem podkladu.
+
+M=C5=AF=C5=BEeme pro v=C3=A1s mluvit o =C5=99e=C5=A1en=C3=ADch?
+
+
+Luk=C3=A1=C5=A1 Horv=C3=A1th
