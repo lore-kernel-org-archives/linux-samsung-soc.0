@@ -2,103 +2,180 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE9CC7619A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Mar 2023 21:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C86B3C61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Mar 2023 23:25:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231246AbjCOV2r (ORCPT
+        id S232820AbjCOXZn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Mar 2023 17:28:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55154 "EHLO
+        Wed, 15 Mar 2023 19:25:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231180AbjCOV2p (ORCPT
+        with ESMTP id S232964AbjCOXZf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Mar 2023 17:28:45 -0400
-Received: from out-17.mta0.migadu.com (out-17.mta0.migadu.com [IPv6:2001:41d0:1004:224b::11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14DF019C60
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Mar 2023 14:28:37 -0700 (PDT)
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-        t=1678915715;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vAKBsvws71kJTHTxaksOf1+WTTkfvDgnY5I/sW6xXf0=;
-        b=RRpZJfxnUBdMfHaEsrfKDDKh87jLgL6H26X87WRndkHucVOt3LI20ooqentwY1tPj6KdI2
-        5ZxnF7gW2K39pmSB3uxRU6i3JmhonP6jVgoTF7G6lAyQoo4Mi6yO+rPWCGNsNAxTbbO8k1
-        hvWBUgIxqXHuB20x6AiqwY4iY1bFnts=
-From:   Henrik Grimler <henrik@grimler.se>
-To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        alim.akhtar@samsung.com, m.szyprowski@samsung.com,
-        virag.david003@gmail.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Cc:     Henrik Grimler <henrik@grimler.se>
-Subject: [PATCH v2 2/2] arm64: dts: exynos: add mmc aliases
-Date:   Wed, 15 Mar 2023 22:28:14 +0100
-Message-Id: <20230315212814.15908-3-henrik@grimler.se>
-In-Reply-To: <20230315212814.15908-1-henrik@grimler.se>
-References: <20230315212814.15908-1-henrik@grimler.se>
+        Wed, 15 Mar 2023 19:25:35 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 346B48FBF9
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Mar 2023 16:25:28 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230315232525euoutp0176cf95c2137366dbb754008d523d3354~Mu1LL5jfL2873128731euoutp01g
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Mar 2023 23:25:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230315232525euoutp0176cf95c2137366dbb754008d523d3354~Mu1LL5jfL2873128731euoutp01g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1678922725;
+        bh=T1x/vbizTXsn7v+sBg+aNVgDBKdvx4HpQtbkrHHKzZs=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=vF+FssT7S9QdmtmQFYovWWV/uq0MICmhUqX4qNva8/TBcDdFVAd9sTaJiglqR4WnB
+         IeJnflUjdQJi0NAY2mx8JyJxs7dLYuciQvxBgGIhSrcrNlGlpND6CYdn6eqphlNe65
+         zAyclF67avBTWG6WjZqhAtLmAUNi3rvg+14mSGls=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20230315232524eucas1p1ed87807b4c2f331e26d0b53aa72d1b94~Mu1Ko0L651779617796eucas1p1-;
+        Wed, 15 Mar 2023 23:25:24 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id E8.55.09503.4E352146; Wed, 15
+        Mar 2023 23:25:24 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230315232523eucas1p2565ef5954e3b5b451803c6200c8bce32~Mu1J1Xcmx1580315803eucas1p23;
+        Wed, 15 Mar 2023 23:25:23 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230315232523eusmtrp254b74c25d8f1dcc4e5da2bbe40fa3d56~Mu1J0zzFd2520825208eusmtrp29;
+        Wed, 15 Mar 2023 23:25:23 +0000 (GMT)
+X-AuditID: cbfec7f2-ea5ff7000000251f-96-641253e4b806
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 21.FE.09583.3E352146; Wed, 15
+        Mar 2023 23:25:23 +0000 (GMT)
+Received: from AMDC2765.eu.corp.samsungelectronics.net (unknown
+        [106.120.51.73]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230315232523eusmtip213ae8966c7a1a4f150e7df344b4feef2~Mu1JQtIvH0814208142eusmtip2G;
+        Wed, 15 Mar 2023 23:25:23 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     iommu@lists.linux.dev, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Subject: [PATCH v2] iommu/exynos: Fix set_platform_dma_ops() callback
+Date:   Thu, 16 Mar 2023 00:25:14 +0100
+Message-Id: <20230315232514.1046589-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAKsWRmVeSWpSXmKPExsWy7djP87pPgoVSDM52alk8mLeNzWLzxK1s
+        Fr++WFjMnHGC0aJz9gZ2i72vt7JbzDi/j8li7ZG77BYHPzxhtWi5Y+rA5fHk4DwmjzXz1jB6
+        bFrVyeZx59oeNo95JwM9XmyeyejRt2UVo8fnTXIeWz/fZgngjOKySUnNySxLLdK3S+DKOPzl
+        C3vBMuGKX9PnMTYw7hToYuTkkBAwkbi4ZC0ziC0ksIJRonumTRcjF5D9hVFi9oGfrBDOZ0aJ
+        c/8eMMF0dG64ygaRWM4osbZ1OiNEeyuTxPWXEiA2m4ChRNfbLjYQW0TARuLKqSVgNrPAXiaJ
+        3od6ILawgKvEzwsLwVazCKhKfD2/F8zmFbCXuPH2JivEMnmJ/QfPQsUFJU7OfMICMUdeonnr
+        bGaImjMcEndvhkHYLhLXm04xQtjCEq+Ob2GHsGUk/u+czwRytIRAO6PEgt/3oZwJjBINz29B
+        dVhL3Dn3C+hSDqANmhLrd+lDhB0lbj98zwwSlhDgAzpOEOIGPolJ26ZDhXklOtqEIKrVJGYd
+        Xwe39uCFS1Bnekis/f4MGlSxEtNfH2WewKgwC8lns5B8NgvhhgWMzKsYxVNLi3PTU4sN81LL
+        9YoTc4tL89L1kvNzNzECE9Xpf8c/7WCc++qj3iFGJg7GQ4wSHMxKIrzhLAIpQrwpiZVVqUX5
+        8UWlOanFhxilOViUxHm1bU8mCwmkJ5akZqemFqQWwWSZODilGphYlqzunLSRuSw9Y+az4H1V
+        p4tqHC1jZ7/tTmgL6pgif9Z7euOP08mivW4Mz1v6Xr8JzM3pecqz0VFy4+6of0Hai2P6y1pm
+        fW95sObvqnK3E+0XfliVHE/RnLTXVlnumUikcp2Pt9CHzolnHb/ckxM5cbI4elmm36ut61sr
+        fld/55tzOmuS2pJakeVPc85vl+jYnu1RfPnVkmtVZg8vsifu9y060/Ht/S2vVU4bJbmWl698
+        rzY5afXs1YFXv4n0yfY5TWhgmrupRvjKgqdaT1yNUxawn/exv38kb22klUTJ1KnHk+/0nWh8
+        y8i8gnfTfPmN8zSZteyy507oPT9FcVv6xdBZb2Jj3tQqbBVkF+RUYinOSDTUYi4qTgQAW2Jg
+        UcMDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42I5/e/4Pd3HwUIpBjeWGls8mLeNzWLzxK1s
+        Fr++WFjMnHGC0aJz9gZ2i72vt7JbzDi/j8li7ZG77BYHPzxhtWi5Y+rA5fHk4DwmjzXz1jB6
+        bFrVyeZx59oeNo95JwM9XmyeyejRt2UVo8fnTXIeWz/fZgngjNKzKcovLUlVyMgvLrFVija0
+        MNIztLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3S9DLOPzlC3vBMuGKX9PnMTYw7hToYuTk
+        kBAwkejccJUNxBYSWMoo8f4/O0RcRuLktAZWCFtY4s+1LqAaLqCaZiaJVX/WMoIk2AQMJbre
+        doE1iwjYSVz7vJgZpIhZ4DCTxKPlS1hAEsICrhI/LyxkBrFZBFQlvp7fC2bzCthL3Hh7E2qD
+        vMT+g2eh4oISJ2c+AetlBoo3b53NPIGRbxaS1CwkqQWMTKsYRVJLi3PTc4uN9IoTc4tL89L1
+        kvNzNzECo2TbsZ9bdjCufPVR7xAjEwfjIUYJDmYlEd5wFoEUId6UxMqq1KL8+KLSnNTiQ4ym
+        QPdNZJYSTc4HxmleSbyhmYGpoYmZpYGppZmxkjivZ0FHopBAemJJanZqakFqEUwfEwenVAOT
+        7m7f8mOb257dfx2cKpf24qnWnTrLH+eNu4sfcpkEnT7SfDOpKnDGXy5/Zu1fSyVYV+b2HP8U
+        +Weu2KEFTYz1CyPku25YJEfUfdl/ZlV2QMKL4zte3JrUzKSw9dgeb1X5VbuahVr2p+jwJoVY
+        8wXe+7Az9pORk9EqSX4mLbWINREsp/zm75U9Y1psGCC6UH3X4sDf6omn3622dfPPndjEePhR
+        i437WskpRg9qpa9aRXReX7esKWPjPbEgE4Vl6m997pn/zo773fXD2u17oeD1+Zs8X67Knizo
+        NpnRp2PHgvtTTAtyJt9a2KETOTNyt06NdPW7R19ezT58UXDLZ67AM5OWbQks3//Axe5OalOA
+        EktxRqKhFnNRcSIA13ZZfxsDAAA=
+X-CMS-MailID: 20230315232523eucas1p2565ef5954e3b5b451803c6200c8bce32
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20230315232523eucas1p2565ef5954e3b5b451803c6200c8bce32
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230315232523eucas1p2565ef5954e3b5b451803c6200c8bce32
+References: <CGME20230315232523eucas1p2565ef5954e3b5b451803c6200c8bce32@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add aliases for eMMC and SD card where applicable, so that
-assigned mmc indeces are always the same.
+There are some subtle differences between release_device() and
+set_platform_dma_ops() callbacks, so separate those two callbacks. Device
+links should be removed only in release_device(), because they were
+created in probe_device() on purpose and they are needed for proper
+Exynos IOMMU driver operation. While fixing this, remove the conditional
+code as it is not really needed.
 
-Signed-off-by: Henrik Grimler <henrik@grimler.se>
+Reported-by: Jason Gunthorpe <jgg@ziepe.ca>
+Fixes: 189d496b48b1 ("iommu/exynos: Add missing set_platform_dma_ops callback")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
+v2:
+- keep set_platform_dma_ops only on ARM 32bit
 
-Changes since v1:
-* None
+Some more background why set_platform_dma_ops is needed on ARM 32bit is
+available here:
+https://lore.kernel.org/all/9a12fcac-c347-5d81-acef-1124c50d0c37@arm.com/
+---
+ drivers/iommu/exynos-iommu.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
- arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 2 ++
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts       | 2 ++
- arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts  | 1 +
- 3 files changed, 5 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index 868f7b98a637..e4ed788413fe 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -21,6 +21,8 @@ aliases {
- 		gsc0 = &gsc_0;
- 		gsc1 = &gsc_1;
- 		gsc2 = &gsc_2;
-+		mmc0 = &mshc_0;
-+		mmc2 = &mshc_2;
- 		pinctrl0 = &pinctrl_alive;
- 		pinctrl1 = &pinctrl_aud;
- 		pinctrl2 = &pinctrl_cpif;
-diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-index 35d949099166..1f2eddcebdd9 100644
---- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-@@ -17,6 +17,8 @@ / {
- 	compatible = "samsung,exynos7-espresso", "samsung,exynos7";
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 483aaaeb6dae..1abd187c6075 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -1415,23 +1415,26 @@ static struct iommu_device *exynos_iommu_probe_device(struct device *dev)
+ 	return &data->iommu;
+ }
  
- 	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
- 		serial0 = &serial_2;
- 	};
+-static void exynos_iommu_release_device(struct device *dev)
++static void exynos_iommu_set_platform_dma(struct device *dev)
+ {
+ 	struct exynos_iommu_owner *owner = dev_iommu_priv_get(dev);
+-	struct sysmmu_drvdata *data;
  
-diff --git a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-index 5db9a81ac7bb..47a389d9ff7d 100644
---- a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-@@ -18,6 +18,7 @@ / {
- 	chassis-type = "handset";
+ 	if (owner->domain) {
+ 		struct iommu_group *group = iommu_group_get(dev);
  
- 	aliases {
-+		mmc0 = &mmc_0;
- 		serial0 = &serial_0;
- 		serial1 = &serial_1;
- 		serial2 = &serial_2;
+ 		if (group) {
+-#ifndef CONFIG_ARM
+-			WARN_ON(owner->domain !=
+-				iommu_group_default_domain(group));
+-#endif
+ 			exynos_iommu_detach_device(owner->domain, dev);
+ 			iommu_group_put(group);
+ 		}
+ 	}
++}
++
++static void exynos_iommu_release_device(struct device *dev)
++{
++	struct exynos_iommu_owner *owner = dev_iommu_priv_get(dev);
++	struct sysmmu_drvdata *data;
++
++	exynos_iommu_set_platform_dma(dev);
+ 
+ 	list_for_each_entry(data, &owner->controllers, owner_node)
+ 		device_link_del(data->link);
+@@ -1479,7 +1482,7 @@ static const struct iommu_ops exynos_iommu_ops = {
+ 	.domain_alloc = exynos_iommu_domain_alloc,
+ 	.device_group = generic_device_group,
+ #ifdef CONFIG_ARM
+-	.set_platform_dma_ops = exynos_iommu_release_device,
++	.set_platform_dma_ops = exynos_iommu_set_platform_dma,
+ #endif
+ 	.probe_device = exynos_iommu_probe_device,
+ 	.release_device = exynos_iommu_release_device,
 -- 
-2.30.2
+2.34.1
 
