@@ -2,59 +2,79 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59E87C6FD1D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Mar 2023 09:39:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 723B7C61DA4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Mar 2023 18:57:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232031AbjCOJjl (ORCPT
+        id S232625AbjCOS5l (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Mar 2023 05:39:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49324 "EHLO
+        Wed, 15 Mar 2023 14:57:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230393AbjCOJjj (ORCPT
+        with ESMTP id S232623AbjCOS5k (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Mar 2023 05:39:39 -0400
-X-Greylist: delayed 1313 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 15 Mar 2023 02:39:37 PDT
-Received: from mail.docworker.pl (mail.docworker.pl [94.177.230.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 384D240E8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Mar 2023 02:39:37 -0700 (PDT)
-Received: by mail.docworker.pl (Postfix, from userid 1002)
-        id 8172084E5D; Wed, 15 Mar 2023 10:16:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=docworker.pl; s=mail;
-        t=1678871773; bh=F9Uuk9o83BVy7SpscM/nJos6FHfnp2pKrNUqPErj3yg=;
-        h=Date:From:To:Subject:From;
-        b=gBPDZ76xnI/8lGCUICwKzX09kdfPso5VRBfo9nJ7SFXivf0RfngxEYKJWfblpARDD
-         qP5dWbiQ8WNOvmsV7vs1U837u8KJq38rn4QGcqHx+pRRNAjnyCUV5zXfbgSbvqvm+R
-         jWzxZkTfhOiuDIa4kiPMt4RLleJdEcQabcalFDi3r3tJFNxp04QDvlKbAcNsMHINrd
-         /ak0rZ6Nsu9SRPn8uyt6MRbrEhze9M4yHw9y40nenDxF1KjErlMgv8AoRPMVQnAoH6
-         HhsnSWIkt0kUXkeow91hkZcpxBqn7v+FQ/EqNOgrGWuyYDKMYy0m/ViIwyBdBqzxum
-         vHxAl5f2cld+Q==
-Received: by mail.docworker.pl for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Mar 2023 09:16:08 GMT
-Message-ID: <20230315084500-0.1.g.1lqz.0.erlna2on50@docworker.pl>
-Date:   Wed, 15 Mar 2023 09:16:08 GMT
-From:   =?UTF-8?Q? "Mi=C5=82osz_G=C3=B3recki" ?= 
-        <milosz.gorecki@docworker.pl>
-To:     <linux-samsung-soc@vger.kernel.org>
-Subject: Zapytanie ofertowe 
-X-Mailer: mail.docworker.pl
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 15 Mar 2023 14:57:40 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D974967035
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Mar 2023 11:57:38 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id s22so25532709lfi.9
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Mar 2023 11:57:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678906657;
+        h=subject:in-reply-to:cc:to:from:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=g+Z6yMufViGivHBpi3ybAlT526oTlR6qrL1yn4estsw=;
+        b=TbvS11P0xtuzQgbgQCqOohztcpoFJths5zdmiB8U1YiaqalvTn8Kg837uvxLKqhmmu
+         Z6pr0HA8pY50Okdo77gCa6IS3qO1k1eiqbqVfBPriRIGpjBbYMWnld98OAJK+aa8Cuv0
+         yoZegs5NlIJN9iyxy0kt8A2eRkIcSlVCI7Z9ud1qX3P9ZDYcTGIawqj2L+OINfxDYoju
+         AWoDgcFNJPyk93BG3mSIafnnbDkwWhacynrJmJ+Hbjnfdwl2IRXUZFKAfhYlvq5dlBXD
+         wRC90U1pcM3lXBXMtaUx2GSm5bsNL5xN+8sYciRNHaVUDrtfe3kTdYgKYU+8Gu8DL4vJ
+         Gb5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678906657;
+        h=subject:in-reply-to:cc:to:from:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=g+Z6yMufViGivHBpi3ybAlT526oTlR6qrL1yn4estsw=;
+        b=wsOjr1Nbat2SnGweWTjl+adsgdPBtsya5OTpYB56CnLm/THbNoyobnjW9wokwhmRn0
+         Fu9g16nmNmYYX43w9BXM+hk6K6crrZjcx9ybFGjzf+Vii23qb9iw4A2vv3F7/uZ3ja+r
+         o37aYENkpQVPm7nISkVHo4ZaHz5rq9GZg81two8CYWhaovU7nARACkYFaIah0jyRhKAM
+         otiXm/S8jIIGpGxb/7bhDyhiJntf+l+chrIpeot+VmlLSGsec7FqyQUNMLA0LPFTulJv
+         3JqjdBT3KZzJLuxKLSqsihcTGUTNGRskmiiNVAPKOs7lphJVoJ/gfUbBjPW0+3nLdFum
+         xqYg==
+X-Gm-Message-State: AO0yUKWYTut9tn13ndN/NqoSBFCsltsn3WoXzA9Iqm20ADcPuztnPqbp
+        +w1/SBzci+K1HdqNUR6GGt4h29nPgXiKRFL0
+X-Google-Smtp-Source: AK7set8mNeiKJhSjVIOOafNG41yerQyNAEcc+yZx2RFaV0HduijUIfLTrNsJ7Tk5cYJlCdCx3ktqYA==
+X-Received: by 2002:ac2:55a4:0:b0:4de:7b5b:f16f with SMTP id y4-20020ac255a4000000b004de7b5bf16fmr2486151lfg.7.1678906656901;
+        Wed, 15 Mar 2023 11:57:36 -0700 (PDT)
+Received: from letter.txt (46-138-144-249.dynamic.spd-mgts.ru. [46.138.144.249])
+        by smtp.gmail.com with ESMTPSA id h5-20020ac250c5000000b004dc4e3f02aasm918127lfm.53.2023.03.15.11.57.36
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Mar 2023 11:57:36 -0700 (PDT)
+Message-ID: <64121520.c20a0220.dd80e.3259@mx.google.com>
+Date:   Wed, 15 Mar 2023 11:57:36 -0700 (PDT)
+From:   Sergey Lisov <sleirsgoevy@gmail.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>
+Cc:     linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1bd962b1-2fbc-9bdb-8b7a-9f2c70c316e2@linaro.org>
+Subject: Re: [PATCH v5 1/3] dt-bindings: exynos-dw-mshc-common: add exynos7885
+ variants
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Szanowni Pa=C5=84stwo,
+>> +      - samsung,exynos7885-dw-mshc
+>> +      - samsung,exynos7885-dw-mshc-smu
+> 
+> What about the if-then at the end? Since this is pretty compatible with
+> exynos7, then I would expect being added also there.
 
-Od blisko 8 lat skutecznie wspieramy naszych partner=C3=B3w w pozyskiwani=
-u klient=C3=B3w. =C5=9Awiadczymy us=C5=82ug=C4=99 generowania lead=C3=B3w=
- z kilkoma unikalnymi cechami jak gwarancja realnego uruchomienia rozm=C3=
-=B3w lub wymiana kontaktu. Nadmieni=C4=99 tak=C5=BCe, i=C5=BC kontakty pr=
-zekazywane s=C4=85 na wy=C5=82=C4=85czno=C5=9B=C4=87.
+Makes sense. Also it probably makes sense to add "samsung,exynos7-dw-mshc"
+as a fallback compatible to the jackpotlte.dts, because it probably
+somewhat worked for whoever contributed that.
 
-Je=C5=9Bli w chwili obecnej poszukujecie Pa=C5=84stwo nowych zapyta=C5=84=
- i lead=C3=B3w sprzeda=C5=BCowych prosz=C4=99 o kontakt lub wskazanie ter=
-minu rozmowy.
-
-
-Pozdrawiam serdecznie
-Mi=C5=82osz G=C3=B3recki
