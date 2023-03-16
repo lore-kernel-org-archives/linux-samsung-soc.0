@@ -2,89 +2,75 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87DCDC6FD19
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Mar 2023 13:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50AAAC6FD1F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Mar 2023 15:12:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230239AbjCPN2j (ORCPT
+        id S230405AbjCPPML (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Mar 2023 09:28:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49820 "EHLO
+        Thu, 16 Mar 2023 11:12:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230260AbjCPN2i (ORCPT
+        with ESMTP id S231402AbjCPPMG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Mar 2023 09:28:38 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6CF35FDE;
-        Thu, 16 Mar 2023 06:28:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1678973317; x=1710509317;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=UztYh2WnICxCRygj0nifIN2s9JGrwBz2pdL6lKlal9Q=;
-  b=h5Q8As6cZZx0DNM7R9LmqCvbkv4K7mWKVCREuzPs0/ZIXV1e8uvCQPJt
-   47R5gnpO1pF300nVZinGKY3dG8o1ZoyXz7jIupRiaUQAGLhKqx1dyu1zp
-   o//gN8K9GeR5kplcTKMluVGlxytpZF1mrELPDHTQOgejFOR1EvSzIdZrV
-   KnFHGHLuAh8FcmO/4h3N0YSwlDZqfreI85ZXTcMmB+jw/E4oyezYf3V8q
-   b+wGLgCuZf+aodSLZPQGDZb1TGfWki0FNHtcgdKL7ZqsnInoqB6xlQTNV
-   65qOswNvKy1gue8o67DneCRw370Jr7+woNOnj3OYvjlvyigm7fOREeJ2q
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10650"; a="365676918"
-X-IronPort-AV: E=Sophos;i="5.98,265,1673942400"; 
-   d="scan'208";a="365676918"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2023 06:28:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10651"; a="823247493"
-X-IronPort-AV: E=Sophos;i="5.98,265,1673942400"; 
-   d="scan'208";a="823247493"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga001.fm.intel.com with ESMTP; 16 Mar 2023 06:28:35 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1pcnek-004TNd-0H;
-        Thu, 16 Mar 2023 15:28:34 +0200
-Date:   Thu, 16 Mar 2023 15:28:33 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Subject: Re: [PATCH v1 1/1] regulator: s5m8767: Replace of_gpio.h with what
- indeed is used
-Message-ID: <ZBMZgSb0FXt7OIJz@smile.fi.intel.com>
-References: <20230316120113.86421-1-andriy.shevchenko@linux.intel.com>
- <306b94ce-1f45-43a2-ad27-567fa5c235ce@sirena.org.uk>
+        Thu, 16 Mar 2023 11:12:06 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94DB4C2D8C;
+        Thu, 16 Mar 2023 08:11:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E72E9B82251;
+        Thu, 16 Mar 2023 15:11:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CBDDC433EF;
+        Thu, 16 Mar 2023 15:11:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678979509;
+        bh=0SDwYMX634vKGtqAdMiwGc8QbGD5xDHPBVFQJhj/VZ4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LDic6cUT/JPp7QSGD9hYXpWnc4H69vtjkvl3y8dCxMiwjsgFUs0qjOtQktWLO0mIu
+         IMtvPiCGr7WjHUcnoiactxObpGoaM3XVm/AZWbKcNyTrfsj6vOUmrU4mX7jg7q+G6a
+         2Wpz42Mtz14DR0m/uwJg2MpdhwKPNluewJ4pG4CdKa55CjASM+judLAiSP3MvgfGB8
+         XLHgy5CupuNtHe7Z6avs7qvwUGreUB9iqapuRrXac/26YDTR2q+PWech8vzzjQr9xS
+         iANHbC4nuFUxhGcXslHvF5BZ3mzi4Kg0Wps/0DAcnSNilBvVtAoJmrOxBBqDGleMOt
+         WkWRoWV53BMNw==
+Date:   Thu, 16 Mar 2023 15:11:45 +0000
+From:   Lee Jones <lee@kernel.org>
+To:     David Virag <virag.david003@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH 1/2] mfd: sec: Remove PMICs without compatibles
+Message-ID: <20230316151145.GF9667@google.com>
+References: <20230131183008.4451-1-virag.david003@gmail.com>
+ <20230131183008.4451-2-virag.david003@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <306b94ce-1f45-43a2-ad27-567fa5c235ce@sirena.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20230131183008.4451-2-virag.david003@gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Mar 16, 2023 at 01:10:46PM +0000, Mark Brown wrote:
-> On Thu, Mar 16, 2023 at 02:01:13PM +0200, Andy Shevchenko wrote:
-> > of_gpio.h in this driver is solely used as a proxy to other headers.
-> > This is incorrect usage of the of_gpio.h. Replace it .h with what
-> > indeed is used in the code.
-> 
-> This breaks an x86 allmodconfig build:
-> 
-> /build/stage/linux/drivers/regulator/s5m8767.c: In function ‘s5m8767_pmic_dt_parse_dvs_gpio’:
-> /build/stage/linux/drivers/regulator/s5m8767.c:492:24: error: implicit declaration of function ‘of_get_named_gpio’ [-Werror=implicit-function-declaration]
->   492 |                 gpio = of_get_named_gpio(pmic_np,
->       |                        ^~~~~~~~~~~~~~~~~
-> cc1: all warnings being treated as errors
+On Tue, 31 Jan 2023, David Virag wrote:
 
-Oh, sorry for that. I missed something.
-Please, ignore this one, it should be different one.
+> The S5M8751 and S5M8763 PMIC chips have no corresponding compatible
+> values, so since board file support was removed for this driver, there
+> is no way to specify these PMICs as present in boards anymore.
+> Remove leftovers of these chips since it's dead code.
+>
+> Signed-off-by: David Virag <virag.david003@gmail.com>
+> ---
+>  drivers/mfd/sec-core.c              | 46 ---------------
+>  drivers/mfd/sec-irq.c               | 89 ----------------------------
+>  include/linux/mfd/samsung/core.h    |  1 -
+>  include/linux/mfd/samsung/s5m8763.h | 90 -----------------------------
+>  4 files changed, 226 deletions(-)
+>  delete mode 100644 include/linux/mfd/samsung/s5m8763.h
 
--- 
-With Best Regards,
-Andy Shevchenko
+Applied, thanks
 
-
+--
+Lee Jones [李琼斯]
