@@ -2,87 +2,117 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B78C7618A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Mar 2023 08:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A3CC74A5B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Mar 2023 11:55:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231193AbjCQII1 (ORCPT
+        id S229621AbjCQLzz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 17 Mar 2023 04:08:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54264 "EHLO
+        Fri, 17 Mar 2023 07:55:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231228AbjCQIIY (ORCPT
+        with ESMTP id S229599AbjCQLzy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 17 Mar 2023 04:08:24 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2293B8560;
-        Fri, 17 Mar 2023 01:07:29 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A75C6B824D6;
-        Fri, 17 Mar 2023 08:06:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5197C433EF;
-        Fri, 17 Mar 2023 08:06:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679040396;
-        bh=F1RVNnHTQi58MsXnXoc63veIjmnP9O89ul6v9KyMj6M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tR4kvm2MIfrnGvl7LkoyCp0mYK8FJJb7NVrhsClSwcA77seW4Xe5vLPvKK/XpCseS
-         bRfX/vyfS5QMQ/YY7dyTOFpXHJ46Z5mM/OjOodgWTekY0HebmebUM585YdOcexb7p7
-         0YWvj9Cvf7KPSQSfuPmdPgVOjiGJRpQJtkaXyVFsipy5Cr/NmDM4JhO+uJew2miMsE
-         wxaa6qOSj/4mT+mY48gyMX+h038IAz6BDQeEIqd5K0FYdBivtjBfutpuqjT88+6Bvv
-         FINK/LZFP3gVPJaFx9002enF1cBslhbQc3TUf/yO/VXFxH6P3YhIr5TK/f4dT55i/0
-         7HcuJD9RRerCw==
-Date:   Fri, 17 Mar 2023 08:06:31 +0000
-From:   Lee Jones <lee@kernel.org>
-To:     David Virag <virag.david003@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Subject: Immutable branch between MFD and RTC due for the v6.4 merge window
-Message-ID: <20230317080631.GE9667@google.com>
-References: <20230131183008.4451-1-virag.david003@gmail.com>
+        Fri, 17 Mar 2023 07:55:54 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FC4CB5B6A
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Mar 2023 04:55:45 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id cy23so19223932edb.12
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Mar 2023 04:55:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679054144;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QCfN6F0y+kXWsG65TzOeSOHJ6drfqPHeFbLKw0Y/4s8=;
+        b=VIUUaZkpbCR3AYJSEO8c6EiLnQNmeAC8tRTMe2yPr30khWpYlUywqm6yH7DGRJCHZY
+         vka+VfTLn5D64BZl0Vpt+myHQf6eFZDfsqFyrkc5zbr14RN5w8APrAjLKndrv+LFFnuX
+         fcxzFVVrUPsGYLYsNRi+GBwR7BCZYTKJzpoKK8ZA2blmbLBQ9lX38Ttj410by/rnFvBn
+         DMfu/IXaho0ZAsFaQ/nzWog0lhO6I+Q7y+3i9xKSFg6oxaFw4tXa9cBqYKjKQl4rVPG+
+         VZcmVr9eohRDQXOPLmAhdxhktnB+PyNHiL0cDRAt3Nclx75CSn3LA1uktPS4MnKTAnKv
+         2lEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679054144;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QCfN6F0y+kXWsG65TzOeSOHJ6drfqPHeFbLKw0Y/4s8=;
+        b=l1oGso0GhpRzHotnEp3XdKYwsudZz/VBqK/7v7JlYEDW5M7k9Aax9vLYNlVkAUzKKB
+         C6VhBWSA7S8j//d7Wnqz+kCarOgHbLBJa+JrmCEWJBTJJ5xZ5XB83JtPd8l5twmW/ot8
+         DRWtctn2AJiU1oTYXY4PZjS19jh279J/zLk3z2ZanFXnhBNzrWN4X6aTY6Uaoa6Bdw37
+         njUYAJnACM9SQ29sGhZpdpz1douW+/SAlI7BneBq2kv2EqTILRbLrinGwUsdIwp7r5YE
+         kPbSnQxyrGdhM2wdKg2BWEDSanXZCXeNVzIuyt1pU85KNAa4oBIRD9l1tnjFmtiaZXs7
+         LmUg==
+X-Gm-Message-State: AO0yUKU8vptmsdP8JmUHLO/ImKq1vLZ/gHlFzu9qYKGnnXlzbbigJY7w
+        3D/uaVnB6EJqsTQiRoFT7xxrgQ==
+X-Google-Smtp-Source: AK7set+Ko5FIjm3ObaskmXZ0dZBIDnZsLVXTEbaqMpCzXJHlY/hAwcXTRKxymUkWCqYoFZOlhjr2Gw==
+X-Received: by 2002:aa7:d056:0:b0:4fb:6d55:7e7 with SMTP id n22-20020aa7d056000000b004fb6d5507e7mr3074656edo.21.1679054143738;
+        Fri, 17 Mar 2023 04:55:43 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:d013:3eeb:7658:cec? ([2a02:810d:15c0:828:d013:3eeb:7658:cec])
+        by smtp.gmail.com with ESMTPSA id m23-20020a509317000000b004fb95f51f54sm981748eda.12.2023.03.17.04.55.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Mar 2023 04:55:43 -0700 (PDT)
+Message-ID: <20db729f-e8fb-3d16-54a2-b9a54b9a1b55@linaro.org>
+Date:   Fri, 17 Mar 2023 12:55:40 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230131183008.4451-1-virag.david003@gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v5 1/2] ARM: dts: exynos: replace mshc0 alias with
+ mmc-ddr-1_8v property
+Content-Language: en-US
+To:     Henrik Grimler <henrik@grimler.se>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, alim.akhtar@samsung.com,
+        m.szyprowski@samsung.com, jenneron@protonmail.com,
+        markuss.broks@gmail.com, martin.juecker@gmail.com,
+        virag.david003@gmail.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20230316211558.8526-1-henrik@grimler.se>
+ <20230316211558.8526-2-henrik@grimler.se>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230316211558.8526-2-henrik@grimler.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Enjoy!
+On 16/03/2023 22:15, Henrik Grimler wrote:
+> Previously, the mshc0 alias has been necessary so that
+> MMC_CAP_1_8V_DDR | MMC_CAP_8_BIT_DATA are set for mshc_0/mmc_0.
+> However, these capabilities should be described in the device tree so
+> that we do not have to rely on the alias.
+> 
+> The property mmc-ddr-1_8v replaces MMC_CAP_1_8V_DDR, while bus_width =
+> <8>, which is already set for all the mshc0/mmc0 nodes, replaces
+> MMC_CAP_8_BIT_DATA.
+> 
+> Also drop other mshc aliases as they are not needed.
+> 
+> Signed-off-by: Henrik Grimler <henrik@grimler.se>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
+> ---
+> 
+> Changes since v4:
+> * Do not set mmc-ddr-1_8v for sdhci_0 on Exynos 4210,
+>   following Marek's tests
+> 
+> Changes since v3:
+> * Drop attempt at node sorting/cleaning
+> * Move two mmc alias additions to the other patch
+> * Update commit message
+> 
+> Changes since v2:
+> * Set mmc-ddr-1_8v in device trees for mshc_0/mmc_0
+> 
+> 
+>  arch/arm/boot/dts/exynos3250-artik5.dtsi            | 1 +
+>  arch/arm/boot/dts/exynos3250-monk.dts               | 1 +
+>  arch/arm/boot/dts/exynos3250-rinato.dts             | 1 +
 
-The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4cc6:
+Why you do not remove Exynos3250 aliases?
 
-  Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
+Best regards,
+Krzysztof
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-rtc-v6.4
-
-for you to fetch changes up to bb7929626c4f57f590b6028540a4bbd2a73809cb:
-
-  rtc: s5m: Drop S5M8763 support (2023-03-16 15:12:03 +0000)
-
-----------------------------------------------------------------
-Immutable branch between MFD and RTC due for the v6.4 merge window
-
-----------------------------------------------------------------
-David Virag (2):
-      mfd: sec: Remove PMICs without compatibles
-      rtc: s5m: Drop S5M8763 support
-
- drivers/mfd/sec-core.c              | 46 -------------------
- drivers/mfd/sec-irq.c               | 89 ------------------------------------
- drivers/rtc/rtc-s5m.c               | 82 ++-------------------------------
- include/linux/mfd/samsung/core.h    |  2 -
- include/linux/mfd/samsung/irq.h     | 50 ---------------------
- include/linux/mfd/samsung/s5m8763.h | 90 -------------------------------------
- 6 files changed, 3 insertions(+), 356 deletions(-)
- delete mode 100644 include/linux/mfd/samsung/s5m8763.h
-
---
-Lee Jones [李琼斯]
