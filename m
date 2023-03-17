@@ -2,62 +2,61 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A3CC74A5B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Mar 2023 11:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4FBAC74A5B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Mar 2023 12:28:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229621AbjCQLzz (ORCPT
+        id S229936AbjCQM2J (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 17 Mar 2023 07:55:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34360 "EHLO
+        Fri, 17 Mar 2023 08:28:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229599AbjCQLzy (ORCPT
+        with ESMTP id S229778AbjCQM2I (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 17 Mar 2023 07:55:54 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FC4CB5B6A
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Mar 2023 04:55:45 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id cy23so19223932edb.12
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Mar 2023 04:55:45 -0700 (PDT)
+        Fri, 17 Mar 2023 08:28:08 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA7D43E0B6
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Mar 2023 05:28:05 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id cy23so19584500edb.12
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Mar 2023 05:28:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679054144;
-        h=content-transfer-encoding:in-reply-to:from:references:to
+        d=linaro.org; s=google; t=1679056084;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QCfN6F0y+kXWsG65TzOeSOHJ6drfqPHeFbLKw0Y/4s8=;
-        b=VIUUaZkpbCR3AYJSEO8c6EiLnQNmeAC8tRTMe2yPr30khWpYlUywqm6yH7DGRJCHZY
-         vka+VfTLn5D64BZl0Vpt+myHQf6eFZDfsqFyrkc5zbr14RN5w8APrAjLKndrv+LFFnuX
-         fcxzFVVrUPsGYLYsNRi+GBwR7BCZYTKJzpoKK8ZA2blmbLBQ9lX38Ttj410by/rnFvBn
-         DMfu/IXaho0ZAsFaQ/nzWog0lhO6I+Q7y+3i9xKSFg6oxaFw4tXa9cBqYKjKQl4rVPG+
-         VZcmVr9eohRDQXOPLmAhdxhktnB+PyNHiL0cDRAt3Nclx75CSn3LA1uktPS4MnKTAnKv
-         2lEw==
+        bh=c4NJZTZucxQIhmv+yhQCHkUP4VMj8aSUUr6DI8AUneE=;
+        b=l3HbbDmGhWJkfrjdeVRql3v6S18wD3xSANEHfyxftEs99S0h1gdT4hA2xMdVFe04f0
+         GdpH+F77m2VruQr7DBdj9iphFo/oK3n3KN/tpIHMXOEdIs21miF+chuVuGQBqj32B7ym
+         mcQk7e9I44HH9wgpZyV4R1bjc57w1HCnYtK38NQAldVN2NjPvGMzRNm/m5PLnlYMysHu
+         VOhb34OheGo7T3hFViX3Dl6be3FSj0HLF539spYWEQU0KihI5Xje3+iBjO32mLXTtaoq
+         FICKqui1l3X2IOOslxWckIWWKfCFFIPoQIYPyvG507Ir6hx20nDUS8OrZp/fAEeLflmq
+         8JoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679054144;
-        h=content-transfer-encoding:in-reply-to:from:references:to
+        d=1e100.net; s=20210112; t=1679056084;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QCfN6F0y+kXWsG65TzOeSOHJ6drfqPHeFbLKw0Y/4s8=;
-        b=l1oGso0GhpRzHotnEp3XdKYwsudZz/VBqK/7v7JlYEDW5M7k9Aax9vLYNlVkAUzKKB
-         C6VhBWSA7S8j//d7Wnqz+kCarOgHbLBJa+JrmCEWJBTJJ5xZ5XB83JtPd8l5twmW/ot8
-         DRWtctn2AJiU1oTYXY4PZjS19jh279J/zLk3z2ZanFXnhBNzrWN4X6aTY6Uaoa6Bdw37
-         njUYAJnACM9SQ29sGhZpdpz1douW+/SAlI7BneBq2kv2EqTILRbLrinGwUsdIwp7r5YE
-         kPbSnQxyrGdhM2wdKg2BWEDSanXZCXeNVzIuyt1pU85KNAa4oBIRD9l1tnjFmtiaZXs7
-         LmUg==
-X-Gm-Message-State: AO0yUKU8vptmsdP8JmUHLO/ImKq1vLZ/gHlFzu9qYKGnnXlzbbigJY7w
-        3D/uaVnB6EJqsTQiRoFT7xxrgQ==
-X-Google-Smtp-Source: AK7set+Ko5FIjm3ObaskmXZ0dZBIDnZsLVXTEbaqMpCzXJHlY/hAwcXTRKxymUkWCqYoFZOlhjr2Gw==
-X-Received: by 2002:aa7:d056:0:b0:4fb:6d55:7e7 with SMTP id n22-20020aa7d056000000b004fb6d5507e7mr3074656edo.21.1679054143738;
-        Fri, 17 Mar 2023 04:55:43 -0700 (PDT)
+        bh=c4NJZTZucxQIhmv+yhQCHkUP4VMj8aSUUr6DI8AUneE=;
+        b=DOo0p+n9ON2c0WCfK6kB+WeEeIBY+hp9Vr/sFywJet0lRoGhUxNWcOw17WO2A4U0ym
+         luHNp+gSCLh+69kSN/EOTHRBRSZcND/kcnbUNnYr9/5zFpaz6VgtNUQH/dcs47SoV5lu
+         O8mUMjsYBGS0cjOf7GIydJVvXsKEwvh9lAzi9S704+1Gd7CbIlBTgjff0iACSCeQYJZM
+         xK4BdksRf3fHVq2k20JLIT1kgXBIr50DV1sTase2DTnj3VKj6eSlIa35Gbr9J1GYX8cK
+         l5+DcfibfFKF1Aqr59zJGo/ZwfGZ/e8Szp1m7Ibue5K2PRVB3lqP/dOGmAO42JzhKIDf
+         RgKA==
+X-Gm-Message-State: AO0yUKUqeY7Smpgqwxy0KwetIUbtfWHuqOkMGtSaX2LbJf4cg2PFJTfn
+        YhImtlkAOj58TSxihafgztg7kA==
+X-Google-Smtp-Source: AK7set9t/UoX9hFHOcngKEhZnhSWZjQqE2c9vms2p3PISVzTQWVOpgxYc5pqcHwBaTzITEMiLULNzw==
+X-Received: by 2002:aa7:dbd8:0:b0:4ae:e5ab:46d7 with SMTP id v24-20020aa7dbd8000000b004aee5ab46d7mr2667687edt.8.1679056084346;
+        Fri, 17 Mar 2023 05:28:04 -0700 (PDT)
 Received: from ?IPV6:2a02:810d:15c0:828:d013:3eeb:7658:cec? ([2a02:810d:15c0:828:d013:3eeb:7658:cec])
-        by smtp.gmail.com with ESMTPSA id m23-20020a509317000000b004fb95f51f54sm981748eda.12.2023.03.17.04.55.42
+        by smtp.gmail.com with ESMTPSA id u20-20020a50a414000000b004fd1ee3f723sm1002701edb.67.2023.03.17.05.28.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Mar 2023 04:55:43 -0700 (PDT)
-Message-ID: <20db729f-e8fb-3d16-54a2-b9a54b9a1b55@linaro.org>
-Date:   Fri, 17 Mar 2023 12:55:40 +0100
+        Fri, 17 Mar 2023 05:28:03 -0700 (PDT)
+Message-ID: <216262b8-fe48-6696-17a4-eaa82e776db7@linaro.org>
+Date:   Fri, 17 Mar 2023 13:28:02 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH v5 1/2] ARM: dts: exynos: replace mshc0 alias with
- mmc-ddr-1_8v property
+Subject: Re: [PATCH v5 2/2] ARM: dts: exynos: add mmc aliases
 Content-Language: en-US
 To:     Henrik Grimler <henrik@grimler.se>, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, alim.akhtar@samsung.com,
@@ -67,10 +66,11 @@ To:     Henrik Grimler <henrik@grimler.se>, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Cc:     Valentine Iourine <iourine@iourine.msk.su>
 References: <20230316211558.8526-1-henrik@grimler.se>
- <20230316211558.8526-2-henrik@grimler.se>
+ <20230316211558.8526-3-henrik@grimler.se>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230316211558.8526-2-henrik@grimler.se>
+In-Reply-To: <20230316211558.8526-3-henrik@grimler.se>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -78,41 +78,182 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 16/03/2023 22:15, Henrik Grimler wrote:
-> Previously, the mshc0 alias has been necessary so that
-> MMC_CAP_1_8V_DDR | MMC_CAP_8_BIT_DATA are set for mshc_0/mmc_0.
-> However, these capabilities should be described in the device tree so
-> that we do not have to rely on the alias.
+> Add aliases for eMMC, SD card and WiFi where applicable, so that
+> assigned mmc indeces are always the same.
 > 
-> The property mmc-ddr-1_8v replaces MMC_CAP_1_8V_DDR, while bus_width =
-> <8>, which is already set for all the mshc0/mmc0 nodes, replaces
-> MMC_CAP_8_BIT_DATA.
-> 
-> Also drop other mshc aliases as they are not needed.
-> 
+> Co-developed-by: Anton Bambura <jenneron@protonmail.com>
+> Signed-off-by: Anton Bambura <jenneron@protonmail.com>
+> [ Tested on exynos5800-peach-pi ]
+> Tested-by: Valentine Iourine <iourine@iourine.msk.su>
 > Signed-off-by: Henrik Grimler <henrik@grimler.se>
 > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > 
-> ---
-> 
-> Changes since v4:
-> * Do not set mmc-ddr-1_8v for sdhci_0 on Exynos 4210,
->   following Marek's tests
-> 
-> Changes since v3:
-> * Drop attempt at node sorting/cleaning
-> * Move two mmc alias additions to the other patch
-> * Update commit message
-> 
-> Changes since v2:
-> * Set mmc-ddr-1_8v in device trees for mshc_0/mmc_0
-> 
-> 
->  arch/arm/boot/dts/exynos3250-artik5.dtsi            | 1 +
->  arch/arm/boot/dts/exynos3250-monk.dts               | 1 +
->  arch/arm/boot/dts/exynos3250-rinato.dts             | 1 +
 
-Why you do not remove Exynos3250 aliases?
 
-Best regards,
+
+>  	chosen {
+> diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
+> index bba85011ecc9..7051e2c4b391 100644
+> --- a/arch/arm/boot/dts/exynos4210-i9100.dts
+> +++ b/arch/arm/boot/dts/exynos4210-i9100.dts
+> @@ -25,6 +25,12 @@ memory@40000000 {
+>  		reg = <0x40000000 0x40000000>;
+>  	};
+>  
+> +	aliases {
+> +		mmc0 = &sdhci_0;
+> +		mmc2 = &sdhci_2;
+> +		mmc3 = &sdhci_3;
+
+Here...
+
+> +	};
+> +
+>  	chosen {
+>  		stdout-path = "serial2:115200n8";
+>  	};
+> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+> index 1103e7f92b57..1970c31410e5 100644
+> --- a/arch/arm/boot/dts/exynos4210-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+> @@ -30,6 +30,11 @@ memory@40000000 {
+>  		       0x70000000 0x10000000>;
+>  	};
+>  
+> +	aliases {
+> +		mmc0 = &sdhci_0;
+
+here ....
+
+> +		mmc2 = &sdhci_2;
+> +	};
+> +
+>  	chosen {
+>  		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M init=/linuxrc";
+>  		stdout-path = "serial2:115200n8";
+> diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
+> index 181c99eca675..cb74af41e17c 100644
+> --- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
+> +++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
+> @@ -25,6 +25,10 @@ memory@40000000 {
+>  		reg = <0x40000000 0x80000000>;
+>  	};
+>  
+> +	aliases {
+> +		mmc2 = &sdhci_2;
+> +	};
+> +
+>  	chosen {
+>  		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M init=/linuxrc";
+>  		stdout-path = "serial1:115200n8";
+> diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+> index b8e9dd23fc51..b6b0c116016c 100644
+> --- a/arch/arm/boot/dts/exynos4210-trats.dts
+> +++ b/arch/arm/boot/dts/exynos4210-trats.dts
+> @@ -26,6 +26,12 @@ memory@40000000 {
+>  			0x70000000 0x10000000>;
+>  	};
+>  
+> +	aliases {
+> +		mmc0 = &sdhci_0;
+> +		mmc2 = &sdhci_2;
+> +		mmc3 = &sdhci_3;
+> +	};
+> +
+>  	chosen {
+>  		bootargs = "root=/dev/mmcblk0p5 rootwait earlyprintk panic=5";
+>  		stdout-path = "serial2:115200n8";
+> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> index 140abfb38e1d..f42cfcbcdcfa 100644
+> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> @@ -24,6 +24,12 @@ memory@40000000 {
+>  			0x50000000 0x10000000>;
+>  	};
+>  
+> +	aliases {
+> +		mmc0 = &sdhci_0;
+> +		mmc2 = &sdhci_2;
+
+
+Why this is 2? Aliases are continues and match the board. For example
+Universal calls this mmc1 and the next mmc2, not 3.
+
+I bet it is the same on Trats and all other boards.
+
+> +		mmc3 = &sdhci_3;
+> +	};
+> +
+>  	chosen {
+>  		bootargs = "root=/dev/mmcblk0p5 rw rootwait earlyprintk panic=5 maxcpus=1";
+>  		stdout-path = "serial2:115200n8";
+> diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
+> index 6260da187e92..0e5419c0eaff 100644
+> --- a/arch/arm/boot/dts/exynos4412-itop-elite.dts
+> +++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
+> @@ -20,6 +20,10 @@ / {
+>  	model = "TOPEET iTop 4412 Elite board based on Exynos4412";
+>  	compatible = "topeet,itop4412-elite", "samsung,exynos4412", "samsung,exynos4";
+>  
+> +	aliases {
+> +		mmc2 = &sdhci_2;
+
+mmc1
+
+> +	};
+> +
+>  	chosen {
+>  		bootargs = "root=/dev/mmcblk0p2 rw rootfstype=ext4 rootdelay=1 rootwait";
+>  		stdout-path = "serial2:115200n8";
+> diff --git a/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi b/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
+> index ca8d42b2ce3b..7bc6968af9c3 100644
+> --- a/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
+> @@ -23,6 +23,10 @@ memory@40000000 {
+>  		reg = <0x40000000 0x40000000>;
+>  	};
+>  
+> +	aliases {
+> +		mmc0 = &mshc_0;
+> +	};
+> +
+>  	firmware@203f000 {
+>  		compatible = "samsung,secure-firmware";
+>  		reg = <0x0203f000 0x1000>;
+> diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
+> index 82aed59cba7c..e6b949c1a00f 100644
+> --- a/arch/arm/boot/dts/exynos4412-midas.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
+> @@ -25,6 +25,9 @@ / {
+>  	aliases {
+>  		i2c11 = &i2c_max77693;
+>  		i2c12 = &i2c_max77693_fuel;
+> +		mmc0 = &mshc_0;
+> +		mmc2 = &sdhci_2;
+> +		mmc3 = &sdhci_3;
+
+This is actually correct.
+
+>  	};
+>  
+>  	chosen {
+> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> index 25e082fda955..45ef7b7ba7e0 100644
+> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> @@ -13,6 +13,11 @@
+>  #include "exynos-mfc-reserved-memory.dtsi"
+>  
+>  / {
+> +	aliases {
+> +		mmc0 = &mshc_0;
+> +		mmc2 = &sdhci_2;
+
+This is also correct.
+
+> +	};
+
+For all other cases, where schematics are missing, just make them linear.
+
 Krzysztof
 
