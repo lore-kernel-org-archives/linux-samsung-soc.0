@@ -2,582 +2,176 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC40C76196
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Mar 2023 21:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A2CC7618E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Mar 2023 03:46:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230080AbjCPVQ2 (ORCPT
+        id S229654AbjCQDqz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Mar 2023 17:16:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35524 "EHLO
+        Thu, 16 Mar 2023 23:46:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229926AbjCPVQV (ORCPT
+        with ESMTP id S229539AbjCQDqx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Mar 2023 17:16:21 -0400
-Received: from out-45.mta0.migadu.com (out-45.mta0.migadu.com [91.218.175.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 610ACCC33E
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Mar 2023 14:16:18 -0700 (PDT)
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-        t=1679001376;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0qFui07cADOEAeUIAtk1803+pG/CQybsTKWEW+4ihFY=;
-        b=NOnEk9bw8cCxi8bW024H8RktQawTD6tSGh8v+iys2Cm8H/AR8YkYuq/sSfziYN7hQFs8zt
-        hcw4QQGHxGfWWqH9Vmz7Xlzzl/icrD9wo9LBZJqUPR486GLNtzA8k/Is42NRydacyWCAi2
-        P6YuSm/mpk7EZHdEdskdDZMTJxjaQJw=
-From:   Henrik Grimler <henrik@grimler.se>
-To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        alim.akhtar@samsung.com, m.szyprowski@samsung.com,
-        jenneron@protonmail.com, markuss.broks@gmail.com,
-        martin.juecker@gmail.com, virag.david003@gmail.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Thu, 16 Mar 2023 23:46:53 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC539977C;
+        Thu, 16 Mar 2023 20:46:52 -0700 (PDT)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32H0dZRX026768;
+        Fri, 17 Mar 2023 03:46:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : message-id : references : date : in-reply-to : content-type :
+ mime-version; s=corp-2022-7-12;
+ bh=l+Y3mhyQ06UTosIAyAV/ib06/m/74b1OX6NpDp0MuaQ=;
+ b=XXflz/FvB/KmzgbbOwxmfOIA1NZAWjNzbw7ZQbYa6tXtNmi+kVFznKuzLdHIAILxw9i5
+ //jmPbpIijb6AqwPHb632cgEdOc5A3hssPxcu1BN9jlN69KLdE+XXe6ky5L+KB8j5hZh
+ G6vQM6Bx8zY7z0DbGrksMNGourojGRHuZmk5wnLyPozD/Bf57bLRoRb8EYuWdEBH4r8/
+ Exckeg8Y+Vv7kxlND3qbIUOTaklcBxyZMEkzW+ay+DjQkZ/WhJcUO3nzcl0Bs1D4bhOP
+ CbDSngCA346snjNr7w6Sw6tkq7AK5Wux9fZu8AfhzncsAo47NS/ii552aYEhBM8Watuc AQ== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3pbs29jyeu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Mar 2023 03:46:35 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 32H0V75n029728;
+        Fri, 17 Mar 2023 03:46:34 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2168.outbound.protection.outlook.com [104.47.56.168])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3pbqq665ec-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Mar 2023 03:46:34 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=g257m2OHhIbU3/LXhawW9u37RFln/133CpMjs5lJl95fB0QcX3Au2YyCgPX9rPk33jHVx8+LJvks6yopf8BhvE1dT0S3XGlzqCqBSYE2pw8c0wRU9aw3wvADdOyyvHK0uAS75IbFHvatwIuNclNqbEXMEsoCQn0Z2WBwVTpe7Pq8ZS0eurh0ywyloymX8l2p0UaWXemsr2pEC2GHj2BMeYKG6crNUmyT5c+i3cmxfrgk4siFaFhr82A7bt/8eV+DWtoKsHbVrw5DPdCNFEEgkeQsqhvfGBUGzteiOTBIUbHfxdJGm65GPicG0+OWZUezqws/s2rFjtMMHXCdVmgaWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=l+Y3mhyQ06UTosIAyAV/ib06/m/74b1OX6NpDp0MuaQ=;
+ b=MHIZifYJTN5HBxaaIAW3RJOxZCHJBM9D4uE6B3QTE7pw9ktVGz6N3VYHxRvnRghlQ3MwE8njwPlBu9anzr8BrYS+o5GoYyqdO4OTGksbGsv+5A16bXbNNy1aYkecWiXL0eaPJKIQhadEthu30lJp8TrXe3T5bJS3vmJSUt1j6cMGHK6+NwOsH7GFqSjoC/ROD3wUrwgdtX0Vc23U6JbunfKr28an9jtzJbkUS4X10+wM2RX0Mv1MFqNi3TKlr3Xrnc4mdyOoXck+2MMv6TdnS9M3rGigQRTkdB6m85/Xu6giCzsdeXkVZgarXBUNM13tEkcBQyKBAmcFIHKeA5OaYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l+Y3mhyQ06UTosIAyAV/ib06/m/74b1OX6NpDp0MuaQ=;
+ b=WGUxJkujF43Gl+n9Xn0gIzp6oJnt1KeYtlJxNif8KnGX0Yrg0B4036Dq8OafJQzz3Nx57ZRjCGjG30jr2+GlrMOf4Vf+T8AgGCK5eiAN0XIHGUk9+M/peuK30/8AvekDz201LstXewSAzGfpVgtYCOIBkdZdetRuV7QfwJLqnRI=
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
+ by MN2PR10MB4269.namprd10.prod.outlook.com (2603:10b6:208:1d1::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.35; Fri, 17 Mar
+ 2023 03:46:32 +0000
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::8ef9:5939:13aa:d6a2]) by PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::8ef9:5939:13aa:d6a2%8]) with mapi id 15.20.6178.031; Fri, 17 Mar 2023
+ 03:46:32 +0000
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Cc:     Henrik Grimler <henrik@grimler.se>,
-        Valentine Iourine <iourine@iourine.msk.su>
-Subject: [PATCH v5 2/2] ARM: dts: exynos: add mmc aliases
-Date:   Thu, 16 Mar 2023 22:15:58 +0100
-Message-Id: <20230316211558.8526-3-henrik@grimler.se>
-In-Reply-To: <20230316211558.8526-1-henrik@grimler.se>
-References: <20230316211558.8526-1-henrik@grimler.se>
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 1/3] ufs: qcom: add __maybe_unused to OF ID table
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <yq1zg8cvy46.fsf@ca-mkp.ca.oracle.com>
+References: <20230310214435.275127-1-krzysztof.kozlowski@linaro.org>
+Date:   Thu, 16 Mar 2023 23:46:29 -0400
+In-Reply-To: <20230310214435.275127-1-krzysztof.kozlowski@linaro.org>
+        (Krzysztof Kozlowski's message of "Fri, 10 Mar 2023 22:44:33 +0100")
+Content-Type: text/plain
+X-ClientProxiedBy: SA0PR11CA0116.namprd11.prod.outlook.com
+ (2603:10b6:806:d1::31) To PH0PR10MB4759.namprd10.prod.outlook.com
+ (2603:10b6:510:3d::12)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|MN2PR10MB4269:EE_
+X-MS-Office365-Filtering-Correlation-Id: 52956a8b-e53c-484c-d89f-08db269a3277
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: wmW/0GkfaESRjdqJdiELW8CA3wI5SALkd6kQgMZz7kxW+FmAsLHXuIvMLnoKJBjc6UDhQaaa0wrkbrZcGTWWBQbA1az6h997dI9jk6gzSNvduQhGJ1GtLbAmKids8m2CPCSG/fBEiWYpHP9gna9Cs1/8hJbCqMoOYeYb1bpdIF4+HPQzl0897VFytT14o3KInxbPRgswavQBbNzd2+u7o4S+Iapr0gwHieXiUrxffhIxC8dTX1O9Wh9VLtrJbp1zYbxbXUH2i7tT4+d69YOJz00kRtMnaITzhGGUEkMNDVJzL9WV8tZ8x/Yph060Ufyd7stvHi0CCftz5vRycv4SFpIYm43aPtKXm35gRyXWmseSL9BWcpcWZH/WkeW4t2W8gDSnNCL/FhNyzlCLO16NbSRoztrUz3yo1RK80Gnj1n/CEUc+S9ShnRb/T3Zd2+RuJVI63n/JjZ/bDVr/0VAR/kVCdmh8C1ZboijtQggdv/NFNXO1BrrGAuZQ3vFUdyq/Y6oSFz3mdGAzXaDzeBKhr9Sn60lNz73OBQtSuXPrNBpC5Vgjmu6AqBY1PnbcXTYZCoGjs2H8zbYPy7JaiKrDmw8tPUPQDOYN2/kIyZ7YZdVdckoNWmkXmjNltHMXo9mtt/JKfmjbS/vaEv3notN3aEs5fMLqeAKPs8oXD10oeuVVpuCPCzcl9RPBZFC+i8tg
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(376002)(136003)(346002)(396003)(39860400002)(366004)(451199018)(41300700001)(8936002)(5660300002)(7416002)(2906002)(38100700002)(558084003)(86362001)(36916002)(478600001)(66946007)(66556008)(66476007)(8676002)(6916009)(4326008)(6486002)(54906003)(6666004)(316002)(186003)(6512007)(6506007)(26005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?HB09Ek5tEeqlc9CqnjGAT3Vr41zPsAmWr14CaW96vnupCy8scqTrYkHWXgCJ?=
+ =?us-ascii?Q?HzmxSCyBitOel/pVYTWEZgbaJcmk8LMWXzgj6P5e2XY8A94ouEwsZ7OTrA8g?=
+ =?us-ascii?Q?yLXoGImUKBcfqB3OPu0iVXq2ZorXcBo813++++DPvlLZxGhdfrTF9yl6Bmc2?=
+ =?us-ascii?Q?QifsWyu5dBfCez873AOPgWXndYoxf3oBWAeRToqJGclfUQHisbDT+TRGEjPr?=
+ =?us-ascii?Q?d5SaAn/7b6T7QiegNIK8zEfC9BTGA9G1YFmNHqkfG++bJ51Eo3Csb/3l4zzw?=
+ =?us-ascii?Q?mw+SawPVpent0QYiG4AmS6+/3cWW3gT73ekwfvuH4++TB9CMb4VTlrMhqMYF?=
+ =?us-ascii?Q?reRj5yjiamynAAPe4CR0OVZpfOiECv/9FUApMW89vy3OvhhKEsEWbUaoKtP7?=
+ =?us-ascii?Q?lT8c21Jy9KAxaj4cw3icys7ebmgpbky4+eC5aVNBMMdHl6cgKP2nDISJE+RM?=
+ =?us-ascii?Q?WqSp0Tkjn8oUC5kMemzVQuMGAhrQOhnUqXHCBstsRfz3FaYA+nlp/DhkHSUy?=
+ =?us-ascii?Q?MTS950Lme/tQVj36AlUxY4xAL0QwxtcmZGuX4fnLawcrbmOuzWlkK+geiVDa?=
+ =?us-ascii?Q?DjFhxYPAgexBC7tEAiDEqGHBHT/i+XY73F//Ya8YZB1kGBCrlZD5bQhFvEBe?=
+ =?us-ascii?Q?tiOPqdgi//yuOVWOYVQGQ09PoBr2vQYY+haF6pdsF8O64pkCUbPMHVss5cS3?=
+ =?us-ascii?Q?gRc6Ky4j2JHpSmcP0+xUb3AQmGurqsHT/drRNXQ7j6d6L3FNU63svKaolMrV?=
+ =?us-ascii?Q?JMfOxDsVc7q+Got4zIxEhSKMiEB73dC3HnjHvm0/oX6OwegXGyoFcxYR9TRA?=
+ =?us-ascii?Q?kFxko6edPmCS90kwQ05tfy7k3S7FEUz0UbcHiVtQFC5UpMTxszsXr/I9U/s5?=
+ =?us-ascii?Q?e1gtkA+jlNabM+LeDnYMvs5mI20QiVTF9Z4NS5v0abebUOKjHcAQabMaZpyd?=
+ =?us-ascii?Q?+id1kSwhZKFML5f3lDCYpuFc416vNP4TTf4h86EqTQuNXua2eDLKXc1XV76M?=
+ =?us-ascii?Q?g+0JiALZN6OIPAI/5kUTHtQ+KL4ZreH+LzQWuwWdPrPmO96aLhVsL9FECSdV?=
+ =?us-ascii?Q?GwPZFDDYFkbJkRIVATqZi7Vx2dEhQoV8j7cydt45XAejVmMtRsoaN6srgEo6?=
+ =?us-ascii?Q?51PgS6/fChdFcujzEM12A3sADTw9tF385P8GOLDPdrMgWzZyi7O1JEHAw4nG?=
+ =?us-ascii?Q?7dqgtX2QvQlpTnPlzcoplhScvU2+IROm8rkJRwT/o9FPOTlRUxyKwJrMXOG6?=
+ =?us-ascii?Q?9sED0cYIvtbouHcEv19iXtNgPpzHPC2y6NqAA+Bvoe7UAH296GDNc/mgqKBE?=
+ =?us-ascii?Q?oK8umzKLq30HnB4pUsOWqMT4/deWCm1CBuechWp702pFqfPxCsQZWZVP73if?=
+ =?us-ascii?Q?Xw9WjzLnBka3EeecVPpswqpieN4bRIGKAriM83jy20OFW2P+9Y3ppn8trSPP?=
+ =?us-ascii?Q?AfwZKp0+yC7Z8/5for83N3EqmsEARkqCf7hqiY7DYiXDIY1ilzOBOsWyi0B0?=
+ =?us-ascii?Q?YrUf8DkvYCsWrsRhwubag8HQPqCafQKi4Rtv8GYCHL3Wzwgo8DyAxAGdV4TN?=
+ =?us-ascii?Q?z+WrQX699I7CekT94YfwcdZ0rlUOppP0+xjGHOWlXukbLG5twUry/u/0sugC?=
+ =?us-ascii?Q?JA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?KdffqjOSYE1cUUUmCYBwcKOSXkhzR5fXSoC/k020GKbcuz3rHr3XLA6jF6dX?=
+ =?us-ascii?Q?X+OM/rhgTUqLmCv5Mzk1qsE0v+/dnzfCcHT3tmZ0WvPh8fbfEajNuIQDV2UD?=
+ =?us-ascii?Q?63PC1URCwIvyje8jxCmsfUbxIpk48FvcNJGsIBV+k0xwcW301tTlgJwkrsDB?=
+ =?us-ascii?Q?DDRNpKt5jRh4EdfnBrQldCjhIgxJLOynCAuiO5CnHTJthMhtwSanVmVk7nHo?=
+ =?us-ascii?Q?b6nPG2DwtCcX6JL5TKOAnhZLbIbG0FsDNwc0x5rkYwpZ4CVGwcPWcfi0qcEu?=
+ =?us-ascii?Q?PsuvS/dlhG4NApwqsB7qVyuuNV1Tp3D8Liv7gBNofZSevNRPN5zC65DcNZp0?=
+ =?us-ascii?Q?s0loI4XHGUakCUmEq0fT5Stvf6OseQpJLB4JmhacXw88TAtiT6oeh+Xq+P2B?=
+ =?us-ascii?Q?v4UMsPtX/V0eyBV2HlyoQIINm9g3rYfYBzDrFPa9eDoMx2+HpEPk9UZqI+Sf?=
+ =?us-ascii?Q?g5ChrqQO+jAGtTv0gRsiwpttVknKGKFdSGgfxDPpOtRmWA6RHLNQX+vvDPzj?=
+ =?us-ascii?Q?QZHDDwmWvIiTVJpuLAPleH4/T/a1PNaWyUYa7iV2+Nb0Cspj59XpWF7zXrcv?=
+ =?us-ascii?Q?bHJ+vkdkRzQTq1RwykgdT86eMVWUO7fkloE/1trCgbxZnNPpoqEIcJ5HmFv/?=
+ =?us-ascii?Q?IUgYQDpX+wFaYQw/5aokqSjNTQDX01nR9L319lNlRGzgF+Aha6Ad6T2OGhbm?=
+ =?us-ascii?Q?+Xxd1RLBfw3VFft48XLJ4JdaXLBJJBqT/KDir6CcoKe3sQo4x5un+ErLrseM?=
+ =?us-ascii?Q?g6BRvwrzsJkiIWzX8gfJjNx6/JyEv2TpWwxWi/AkSlloG3zMxzUv1DL86WW0?=
+ =?us-ascii?Q?wpoy4Y+B4EUpADH7pBPpFzgZYj6yt9IJbofa/LHhpuZD2i/z22AKYsefBboY?=
+ =?us-ascii?Q?NS+9sKTuO84nHIlh1yvBK4RnaVdSjKLpSjyUa0pseaSB1PVIV4dW8XPTnVXX?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52956a8b-e53c-484c-d89f-08db269a3277
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2023 03:46:31.8622
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XZhMxHCiQpk4ao9XaDz+Q2KOjvU5BPbe+lteGPONKT+tPAEukDZtT4U84sl7DYk1epLEaQ5eRoAcrRWzvmJHWdnomdK+UDGH8WwWCptfSE4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB4269
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-16_16,2023-03-16_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=977
+ bulkscore=0 mlxscore=0 adultscore=0 suspectscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303150002 definitions=main-2303170020
+X-Proofpoint-ORIG-GUID: WhvCwsb3FRHwyxYXFDP_JrfNgwT-K4G7
+X-Proofpoint-GUID: WhvCwsb3FRHwyxYXFDP_JrfNgwT-K4G7
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add aliases for eMMC, SD card and WiFi where applicable, so that
-assigned mmc indeces are always the same.
 
-Co-developed-by: Anton Bambura <jenneron@protonmail.com>
-Signed-off-by: Anton Bambura <jenneron@protonmail.com>
-[ Tested on exynos5800-peach-pi ]
-Tested-by: Valentine Iourine <iourine@iourine.msk.su>
-Signed-off-by: Henrik Grimler <henrik@grimler.se>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Krzysztof,
 
----
+> The driver can be built on ACPI and its .of_match_table uses
+> of_match_ptr(), thus annotate the actual table as maybe unused.
 
-Changes since v4:
-* None
+Applied #1-#3 to 6.4/scsi-staging, thanks!
 
-Changes since v3:
-* Set aliases for two more devices (were previously part of the
-  other patch)
-
-Changes since v2:
-* Reword commit message
-* Fix whitespace issues
-
-
- arch/arm/boot/dts/exynos3250-artik5-eval.dts        | 5 +++++
- arch/arm/boot/dts/exynos3250-artik5.dtsi            | 5 +++++
- arch/arm/boot/dts/exynos3250-monk.dts               | 1 +
- arch/arm/boot/dts/exynos3250-rinato.dts             | 2 ++
- arch/arm/boot/dts/exynos4210-i9100.dts              | 6 ++++++
- arch/arm/boot/dts/exynos4210-origen.dts             | 5 +++++
- arch/arm/boot/dts/exynos4210-smdkv310.dts           | 4 ++++
- arch/arm/boot/dts/exynos4210-trats.dts              | 6 ++++++
- arch/arm/boot/dts/exynos4210-universal_c210.dts     | 6 ++++++
- arch/arm/boot/dts/exynos4412-itop-elite.dts         | 4 ++++
- arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi     | 4 ++++
- arch/arm/boot/dts/exynos4412-midas.dtsi             | 3 +++
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi     | 5 +++++
- arch/arm/boot/dts/exynos4412-origen.dts             | 5 +++++
- arch/arm/boot/dts/exynos4412-p4note.dtsi            | 6 ++++++
- arch/arm/boot/dts/exynos4412-smdk4412.dts           | 4 ++++
- arch/arm/boot/dts/exynos4412-tiny4412.dts           | 4 ++++
- arch/arm/boot/dts/exynos5250-arndale.dts            | 5 +++++
- arch/arm/boot/dts/exynos5250-smdk5250.dts           | 2 ++
- arch/arm/boot/dts/exynos5250-snow-common.dtsi       | 3 +++
- arch/arm/boot/dts/exynos5250-spring.dts             | 5 +++++
- arch/arm/boot/dts/exynos5260-xyref5260.dts          | 5 +++++
- arch/arm/boot/dts/exynos5410-odroidxu.dts           | 2 ++
- arch/arm/boot/dts/exynos5410-smdk5410.dts           | 5 +++++
- arch/arm/boot/dts/exynos5420-arndale-octa.dts       | 5 +++++
- arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi | 5 +++++
- arch/arm/boot/dts/exynos5420-peach-pit.dts          | 3 +++
- arch/arm/boot/dts/exynos5420-smdk5420.dts           | 5 +++++
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi       | 4 ++++
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi  | 4 ++++
- arch/arm/boot/dts/exynos5800-peach-pi.dts           | 3 +++
- 31 files changed, 131 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos3250-artik5-eval.dts b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-index a1e22f630638..83266a66124b 100644
---- a/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-+++ b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-@@ -16,6 +16,11 @@ / {
- 	model = "Samsung ARTIK5 evaluation board";
- 	compatible = "samsung,artik5-eval", "samsung,artik5",
- 			"samsung,exynos3250", "samsung,exynos3";
-+
-+	aliases {
-+		mmc2 = &mshc_2;
-+	};
-+
- };
- 
- &mshc_2 {
-diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-index b81e1a9df126..3fdd922e635c 100644
---- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-@@ -17,6 +17,11 @@
- / {
- 	compatible = "samsung,artik5", "samsung,exynos3250", "samsung,exynos3";
- 
-+	aliases {
-+		mmc0 = &mshc_0;
-+		mmc1 = &mshc_1;
-+	};
-+
- 	chosen {
- 		stdout-path = &serial_2;
- 	};
-diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-index 861c26824d4f..2de877d4ccc5 100644
---- a/arch/arm/boot/dts/exynos3250-monk.dts
-+++ b/arch/arm/boot/dts/exynos3250-monk.dts
-@@ -22,6 +22,7 @@ / {
- 
- 	aliases {
- 		i2c7 = &i2c_max77836;
-+		mmc0 = &mshc_0;
- 	};
- 
- 	memory@40000000 {
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index a252a5f667eb..88fb3e68ff02 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -23,6 +23,8 @@ / {
- 
- 	aliases {
- 		i2c7 = &i2c_max77836;
-+		mmc0 = &mshc_0;
-+		mmc1 = &mshc_1;
- 	};
- 
- 	chosen {
-diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
-index bba85011ecc9..7051e2c4b391 100644
---- a/arch/arm/boot/dts/exynos4210-i9100.dts
-+++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-@@ -25,6 +25,12 @@ memory@40000000 {
- 		reg = <0x40000000 0x40000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &sdhci_0;
-+		mmc2 = &sdhci_2;
-+		mmc3 = &sdhci_3;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index 1103e7f92b57..1970c31410e5 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -30,6 +30,11 @@ memory@40000000 {
- 		       0x70000000 0x10000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &sdhci_0;
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M init=/linuxrc";
- 		stdout-path = "serial2:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index 181c99eca675..cb74af41e17c 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -25,6 +25,10 @@ memory@40000000 {
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M init=/linuxrc";
- 		stdout-path = "serial1:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index b8e9dd23fc51..b6b0c116016c 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -26,6 +26,12 @@ memory@40000000 {
- 			0x70000000 0x10000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &sdhci_0;
-+		mmc2 = &sdhci_2;
-+		mmc3 = &sdhci_3;
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/mmcblk0p5 rootwait earlyprintk panic=5";
- 		stdout-path = "serial2:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index 140abfb38e1d..f42cfcbcdcfa 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -24,6 +24,12 @@ memory@40000000 {
- 			0x50000000 0x10000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &sdhci_0;
-+		mmc2 = &sdhci_2;
-+		mmc3 = &sdhci_3;
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/mmcblk0p5 rw rootwait earlyprintk panic=5 maxcpus=1";
- 		stdout-path = "serial2:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-index 6260da187e92..0e5419c0eaff 100644
---- a/arch/arm/boot/dts/exynos4412-itop-elite.dts
-+++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-@@ -20,6 +20,10 @@ / {
- 	model = "TOPEET iTop 4412 Elite board based on Exynos4412";
- 	compatible = "topeet,itop4412-elite", "samsung,exynos4412", "samsung,exynos4";
- 
-+	aliases {
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/mmcblk0p2 rw rootfstype=ext4 rootdelay=1 rootwait";
- 		stdout-path = "serial2:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi b/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-index ca8d42b2ce3b..7bc6968af9c3 100644
---- a/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-@@ -23,6 +23,10 @@ memory@40000000 {
- 		reg = <0x40000000 0x40000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mshc_0;
-+	};
-+
- 	firmware@203f000 {
- 		compatible = "samsung,secure-firmware";
- 		reg = <0x0203f000 0x1000>;
-diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
-index 82aed59cba7c..e6b949c1a00f 100644
---- a/arch/arm/boot/dts/exynos4412-midas.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
-@@ -25,6 +25,9 @@ / {
- 	aliases {
- 		i2c11 = &i2c_max77693;
- 		i2c12 = &i2c_max77693_fuel;
-+		mmc0 = &mshc_0;
-+		mmc2 = &sdhci_2;
-+		mmc3 = &sdhci_3;
- 	};
- 
- 	chosen {
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 25e082fda955..45ef7b7ba7e0 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -13,6 +13,11 @@
- #include "exynos-mfc-reserved-memory.dtsi"
- 
- / {
-+	aliases {
-+		mmc0 = &mshc_0;
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		stdout-path = &serial_1;
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index f6cebf73b839..aaf3a405b6bf 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -25,6 +25,11 @@ memory@40000000 {
- 		reg = <0x40000000 0x40000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mshc_0;
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-p4note.dtsi b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-index 9052b3ebb3e8..0b89d5682f85 100644
---- a/arch/arm/boot/dts/exynos4412-p4note.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-@@ -26,6 +26,12 @@ memory@40000000 {
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mshc_0;
-+		mmc2 = &sdhci_2;
-+		mmc3 = &sdhci_3;
-+	};
-+
- 	chosen {
- 		stdout-path = &serial_2;
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-index a40ff394977c..2d27bfab8ecd 100644
---- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-@@ -22,6 +22,10 @@ memory@40000000 {
- 		reg = <0x40000000 0x40000000>;
- 	};
- 
-+	aliases {
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M init=/linuxrc";
- 		stdout-path = "serial1:115200n8";
-diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-index e0b6162d2e2a..3dac7fed96d7 100644
---- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-@@ -17,6 +17,10 @@ / {
- 	model = "FriendlyARM TINY4412 board based on Exynos4412";
- 	compatible = "friendlyarm,tiny4412", "samsung,exynos4412", "samsung,exynos4";
- 
-+	aliases {
-+		mmc2 = &sdhci_2;
-+	};
-+
- 	chosen {
- 		stdout-path = &serial_0;
- 	};
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index 8f01337bb291..1c997cc242da 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -23,6 +23,11 @@ memory@40000000 {
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index f7d4017e1ede..fea3959e5ed3 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -17,6 +17,8 @@ / {
- 	compatible = "samsung,smdk5250", "samsung,exynos5250", "samsung,exynos5";
- 
- 	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
- 	};
- 
- 	memory@40000000 {
-diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-index dea2dc818578..59b2cc35c37b 100644
---- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-@@ -15,6 +15,9 @@
- / {
- 	aliases {
- 		i2c104 = &i2c_104;
-+		mmc0 = &mmc_0; /* eMMC */
-+		mmc1 = &mmc_2; /* SD */
-+		mmc2 = &mmc_3; /* WiFi */
- 	};
- 
- 	memory@40000000 {
-diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
-index 8980cdbdcb3b..c12bb17631b7 100644
---- a/arch/arm/boot/dts/exynos5250-spring.dts
-+++ b/arch/arm/boot/dts/exynos5250-spring.dts
-@@ -23,6 +23,11 @@ memory@40000000 {
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc1 = &mmc_1;
-+	};
-+
- 	chosen {
- 		bootargs = "console=tty1";
- 		stdout-path = "serial3:115200n8";
-diff --git a/arch/arm/boot/dts/exynos5260-xyref5260.dts b/arch/arm/boot/dts/exynos5260-xyref5260.dts
-index 0fd728bc0b75..85889bfd6ae9 100644
---- a/arch/arm/boot/dts/exynos5260-xyref5260.dts
-+++ b/arch/arm/boot/dts/exynos5260-xyref5260.dts
-@@ -18,6 +18,11 @@ memory@20000000 {
- 		reg = <0x20000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-index 1ed73f3b4ac0..9d94a0776cb8 100644
---- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
-+++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-@@ -21,6 +21,8 @@ / {
- 
- 	aliases {
- 		ethernet = &ethernet;
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
- 	};
- 
- 	memory@40000000 {
-diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-index b4a74f9cf319..0f2a6a6be1d0 100644
---- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
-+++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-@@ -18,6 +18,11 @@ memory@40000000 {
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-index 5ed55a5b0c67..4b4c56ce3a5c 100644
---- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-+++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -23,6 +23,11 @@ memory@20000000 {
- 		reg = <0x20000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial3:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi b/arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi
-index 6a51cb14b58a..f525b2f5e4e0 100644
---- a/arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi
-@@ -28,6 +28,11 @@ / {
- 	 * for more details.
- 	 */
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index df863b909ff7..7a48f2b32819 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -31,6 +31,9 @@ / {
- 	aliases {
- 		/* Assign 20 so we don't get confused w/ builtin ones */
- 		i2c20 = &i2c_tunnel;
-+		mmc0 = &mmc_0; /* eMMC */
-+		mmc1 = &mmc_2; /* uSD */
-+		mmc2 = &mmc_1; /* WiFi */
- 	};
- 
- 	backlight: backlight {
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index 0a9371bec3e0..e2493014cf8a 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -21,6 +21,11 @@ memory@20000000 {
- 		reg = <0x20000000 0x80000000>;
- 	};
- 
-+	aliases {
-+		mmc0 = &mmc_0;
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		bootargs = "init=/linuxrc";
- 		stdout-path = "serial2:115200n8";
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index 30fc677d8bac..2f5b8602e020 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -19,6 +19,10 @@ memory@40000000 {
- 		reg = <0x40000000 0x7ea00000>;
- 	};
- 
-+	aliases {
-+		mmc2 = &mmc_2;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index d1b8e59e2daf..b4a851aa8881 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -13,6 +13,10 @@
- #include "exynos5422-odroid-core.dtsi"
- 
- / {
-+	aliases {
-+		mmc0 = &mmc_0;
-+	};
-+
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 		pinctrl-names = "default";
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 37af8fbd215c..1f544f12da6c 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -29,6 +29,9 @@ / {
- 	aliases {
- 		/* Assign 20 so we don't get confused w/ builtin ones */
- 		i2c20 = &i2c_tunnel;
-+		mmc0 = &mmc_0; /* eMMC */
-+		mmc1 = &mmc_2; /* SD */
-+		mmc2 = &mmc_1; /* WiFi */
- 	};
- 
- 	backlight: backlight {
 -- 
-2.30.2
-
+Martin K. Petersen	Oracle Linux Engineering
