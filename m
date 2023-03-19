@@ -2,136 +2,109 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 612DAC6FD1F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 19 Mar 2023 10:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A47DCC7619A
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 19 Mar 2023 15:27:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229959AbjCSK4T (ORCPT
+        id S230469AbjCSP1s (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 19 Mar 2023 06:56:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58316 "EHLO
+        Sun, 19 Mar 2023 11:27:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229541AbjCSK4Q (ORCPT
+        with ESMTP id S229548AbjCSP1q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 19 Mar 2023 06:56:16 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBEEB22132
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 19 Mar 2023 03:56:10 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id r11so36427771edd.5
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 19 Mar 2023 03:56:10 -0700 (PDT)
+        Sun, 19 Mar 2023 11:27:46 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B9A31E9FC
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 19 Mar 2023 08:27:44 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id w9so37888298edc.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 19 Mar 2023 08:27:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679223369;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zjQK98wMTvC2q3E7fdiQTGy4CfE9nib0P1aeqr32BDM=;
-        b=LoyXTmuTmKGgTLGBo0qYnX6Jp8bEDf17eVvP7XGO2qhfRemxtwJtrRH9Ep1JHhGnQk
-         DM7G/ianKOJTy+onrcx5K+rasN1+P/5phdjTikcBfSCvls5VoUEtU19R0HbCgCF7aobg
-         40WRU2UHhFcDZODehVDDkwN/snWgAt/4QDmupCFnR47uQEZePsVew0+rLxSDOdDvvAwp
-         3JMq8P2tanxmPYuvLeuCmLNfn9yRr7Dfe9NF+r536JdXbCdxebQX1OVjBpyJ7mUDvRMU
-         iVtQ2+uN79keOw++o+t+UG4w2ddZnZ5CBm+iLIx5uFLx+Pf3+PRu53Jz68pAER7B1gdw
-         MxHg==
+        d=linaro.org; s=google; t=1679239663;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g3viO/SVS1mAUPDADBNw/95UMMSdd5bvS68WvAIfgKs=;
+        b=cndUSDcLJ1g+lnvV7RtVfaGzOd2gedLDsXsY9euB+Vuyr2n5qmyK5XyzpEEEMl4eOq
+         CcgtWk8HQtNxZF3m1uVTD2rJqvpjtuvmQDB91D2aGX7qD4DHMh/rdnmHqh/NyObKb+fT
+         JqXq8/YYeyyDPAR1uq2gKKN+e213lVeSbVx35UqIgvnqV3EsOuhpM7OyNwrf1EBn7C0N
+         9fqaA+7/+UBsh/VSd2kU7suBwTvjGpTQ5Y58iwy0AfxKvX0dAGVeuqkSFCjsWO0krrni
+         RiLEKLufNQSO62aoTrNDCcqT+0KAnoUs708s9LcZPp2u7AY3xomlkcdr03eBsXnEhyhd
+         ig+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679223369;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zjQK98wMTvC2q3E7fdiQTGy4CfE9nib0P1aeqr32BDM=;
-        b=QCdya2F0/GeIoU1W+UUNR8Sddwe4aJUzILlt9BJXqeg7w/u0cOhEznL9YL6iy51szK
-         SvdWNJPuhgYt60Y69KuPgbiOnMlQStyoDzHAP2brLiMHj85N8Qd1nnizjWSH9/osJrhH
-         4XxvVD5ei2ao0RlxI4wDUp3EJ/tmr2jcmmx+bZ1L4fpwKZbGK7M+grZTfIiwlnYs8ERW
-         YQ6OIQrPM4zmUW/+n/0h5u5YWWM+Ue0+WN4GSWCWrBO8MhgzZ1jqKgsVNEaNEk7C8HuQ
-         KoWjfqXcHMm2gKh/yyX8pzZWSx937nEXdgVQwgTJOp6gt/8YyWgCRUTsQWTP0poBmxJr
-         knvg==
-X-Gm-Message-State: AO0yUKWdF4ZVjwPevKQ63yp11aBFk1uFQ7QhtvTGmEGkW6y3kiAjlAAc
-        iVHxqpNLLasH370RpSZ8LFHuVA==
-X-Google-Smtp-Source: AK7set8aBKLZuOSLuGkgBgWSIN+Nyo0cQB4QbrQUYK+fT1WnG6tZns0BtbZAKs7jswp9C0GRLAkphg==
-X-Received: by 2002:a17:906:7fc6:b0:923:812c:a5d3 with SMTP id r6-20020a1709067fc600b00923812ca5d3mr5250858ejs.25.1679223369254;
-        Sun, 19 Mar 2023 03:56:09 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:5b5f:f22b:a0b:559d? ([2a02:810d:15c0:828:5b5f:f22b:a0b:559d])
-        by smtp.gmail.com with ESMTPSA id 21-20020a170906319500b008d68d018153sm3115271ejy.23.2023.03.19.03.56.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Mar 2023 03:56:08 -0700 (PDT)
-Message-ID: <23036bfc-cceb-2ac5-85fb-5e2d0bc0cbb5@linaro.org>
-Date:   Sun, 19 Mar 2023 11:56:05 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH] dt-bindings: pinctrl: Drop unneeded quotes
-To:     Rob Herring <robh@kernel.org>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Jianlong Huang <jianlong.huang@starfivetech.com>,
-        Dvorkin Dmitry <dvorkin@tibbo.com>,
-        Wells Lu <wellslutw@gmail.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Michal Simek <michal.simek@xilinx.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, asahi@lists.linux.dev,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, patches@opensource.cirrus.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-References: <20230317233623.3968172-1-robh@kernel.org>
-Content-Language: en-US
+        d=1e100.net; s=20210112; t=1679239663;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g3viO/SVS1mAUPDADBNw/95UMMSdd5bvS68WvAIfgKs=;
+        b=vAwaAoE5loDQledUzGl1cPZMztHOsM+eaUbUEqg2sxa+JtsXcTnzNWnXodWZfPxmYu
+         MPhn7niJuwx45d0KjQr9dFZJFv68T9c68BP2Vw46Jxuzvr6h9JIfSMoujD/g4aB+sNBm
+         bZGSaZHGGfh9CxtPqzoAbzayXZdLXGw0Q8h3KVLL/D/7lwoXjkz8TIfI6XGm9HvcR3+e
+         k0ejX/GmhoML/W+cyrNS8VNcWq3A8WbJ7cytxvbBwuWEgZ6gyRoLE9RAiiG9ZVLBOJYY
+         GPD8WqyPCEc0WOkUaCHmEll5aCQdVNfUK6cMDJM4adqtNdSgpyThYX9Sd2QuSp2byD2y
+         zeDQ==
+X-Gm-Message-State: AO0yUKU9EYBCmuxWyAR7PvVLOPb4WmElSPjuY2VRNCeSHY1PFvBfOBWl
+        CVQcryAbNubozZGwVftqid0fBw==
+X-Google-Smtp-Source: AK7set/47vNe/VBA1m9BQdyDxM2teNI19eB4W2tllqt6sHMM97qWkxhef7FVbfq+zHUFlQQ1+y73Bw==
+X-Received: by 2002:a17:906:7394:b0:92b:ae6c:23e7 with SMTP id f20-20020a170906739400b0092bae6c23e7mr5985333ejl.56.1679239663137;
+        Sun, 19 Mar 2023 08:27:43 -0700 (PDT)
+Received: from krzk-bin.. ([2a02:810d:15c0:828:5b5f:f22b:a0b:559d])
+        by smtp.gmail.com with ESMTPSA id t7-20020a1709064f0700b008cda6560404sm3340857eju.193.2023.03.19.08.27.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Mar 2023 08:27:42 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230317233623.3968172-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Rob Herring <robh@kernel.org>
+Subject: [GIT PULL 1/2] arm64: dts: few cleanups for v6.4
+Date:   Sun, 19 Mar 2023 16:27:39 +0100
+Message-Id: <20230319152740.34551-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 18/03/2023 00:36, Rob Herring wrote:
-> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
-> checking for this can be enabled in yamllint.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+Hi Arnd and Olof,
 
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Few cleanups where maintainers did not pick them up for some time, maybe
+expecting me to send or maybe because they missed these.
 
 Best regards,
 Krzysztof
 
+
+The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4cc6:
+
+  Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git tags/dt64-cleanup-6.4
+
+for you to fetch changes up to d2e5c16f6c86901040f3bb6b40d1a01ccf1a21b0:
+
+  arm64: dts: cavium: Fix GICv3 ITS nodes (2023-03-17 13:39:00 +0100)
+
+----------------------------------------------------------------
+Minor improvements in ARM64 DTS for v6.4
+
+1. Toshiba: white-space fixes.
+2. Cavium, Marvell: fix GICv3 ITS node name.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      arm64: dts: toshiba: adjust whitespace around '='
+
+Rob Herring (2):
+      arm64: dts: marvell: armada-ap810: Fix GICv3 ITS node name
+      arm64: dts: cavium: Fix GICv3 ITS nodes
+
+ arch/arm64/boot/dts/cavium/thunder-88xx.dtsi      | 3 ++-
+ arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi     | 4 ++--
+ arch/arm64/boot/dts/marvell/armada-ap810-ap0.dtsi | 2 +-
+ arch/arm64/boot/dts/toshiba/tmpv7708.dtsi         | 2 +-
+ 4 files changed, 6 insertions(+), 5 deletions(-)
