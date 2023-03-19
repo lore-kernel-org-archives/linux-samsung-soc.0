@@ -2,91 +2,101 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E94C0C7618A
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 19 Mar 2023 16:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25221C6FD1F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 19 Mar 2023 20:13:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230417AbjCSQb7 (ORCPT
+        id S229663AbjCSUNU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 19 Mar 2023 12:31:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36084 "EHLO
+        Sun, 19 Mar 2023 16:13:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230407AbjCSQb6 (ORCPT
+        with ESMTP id S229652AbjCSUNT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 19 Mar 2023 12:31:58 -0400
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ACDB1DBBD;
-        Sun, 19 Mar 2023 09:31:52 -0700 (PDT)
-Received: by mail-il1-f172.google.com with SMTP id 4so5404847ilz.6;
-        Sun, 19 Mar 2023 09:31:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679243511;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8EQSyzI7MgV/qlvM+G7O4ieYCis2QmU8ihYTAlTrHxY=;
-        b=FuI1RKnkyYiSEwyzLUnhJC+2ZFOf/O/cFgO2iz0T+caS6hLiJiJOa4T4BIuWnwfD7B
-         zG2mMreGBeOu/e3fHteFKUjXf7Tu8juy3F27qalz0ykwFJRNxWvFE1VdPuS+kb85v5ra
-         ly8gE4M122ufASyY5PM6dg1ENWhGIkT5/gu89dCYOdzt8uh1QaIOHMgF5n796rJ2SEO6
-         xMishxQb0aYfWHq5o4spSenrI8iT5MRuNQb7lA3HbQCCPICuZJHXvi3pfLMm1XZm2Vxi
-         pYAi3ICVu9rJPbnKmnLK11AwTbz4M1r3XppPNIpx+oHV0t74RSugEPzp70PjClaUL7vr
-         aAtw==
-X-Gm-Message-State: AO0yUKWHFxs5eYIDl8WjjdResK1ry32Xu8UoKn8b3gIUYbd45pRsxZZW
-        +exSYOKStHgAI0TcSIPLXw==
-X-Google-Smtp-Source: AK7set/+yuOD3dKYXirTdLdiJjU8SCoUSacR/p2E9DZyzb5uV3QIZUpRLRHEtHvv+Jmu6PjInoUWeQ==
-X-Received: by 2002:a92:d944:0:b0:324:5861:afd8 with SMTP id l4-20020a92d944000000b003245861afd8mr3623634ilq.11.1679243511083;
-        Sun, 19 Mar 2023 09:31:51 -0700 (PDT)
-Received: from robh_at_kernel.org ([2605:ef80:80c7:2689:137d:d795:47e4:3de1])
-        by smtp.gmail.com with ESMTPSA id w188-20020a025dc5000000b003a951542b10sm2527702jaa.60.2023.03.19.09.31.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Mar 2023 09:31:50 -0700 (PDT)
-Received: (nullmailer pid 225400 invoked by uid 1000);
-        Sun, 19 Mar 2023 16:31:48 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Russell King <linux@armlinux.org.uk>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: EXYNOS: Use of_address_to_resource()
-Date:   Sun, 19 Mar 2023 11:31:44 -0500
-Message-Id: <20230319163145.225323-1-robh@kernel.org>
-X-Mailer: git-send-email 2.39.2
+        Sun, 19 Mar 2023 16:13:19 -0400
+Received: from out-4.mta1.migadu.com (out-4.mta1.migadu.com [IPv6:2001:41d0:203:375::4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52046D511
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 19 Mar 2023 13:13:15 -0700 (PDT)
+Date:   Sun, 19 Mar 2023 21:13:07 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+        t=1679256793;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=mTE64vwbAiJ3iSCPE0mCVdkuhQq+1D7PyTGu9lckQYI=;
+        b=T+0WP5CjO/Pt/Uz6LnIvqttZwtmN3Nynvp8c8jZvNzh+Xj6P3++1Ot67P1nfPNLLbd36CW
+        cj4O3//b0tgoWk3iOqR1k2S65SyIk3mQHAvZz95FF2Q92Xu/zvgzDEPj8Ap3da2BeH+RSf
+        3AcabFDFWZE9g+bBUqVP30rysNuS6g4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Henrik Grimler <henrik@grimler.se>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        alim.akhtar@samsung.com, m.szyprowski@samsung.com,
+        jenneron@protonmail.com, markuss.broks@gmail.com,
+        martin.juecker@gmail.com, virag.david003@gmail.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v5 1/2] ARM: dts: exynos: replace mshc0 alias with
+ mmc-ddr-1_8v property
+Message-ID: <ZBds0zxxRYHEJKP+@L14.lan>
+References: <20230316211558.8526-1-henrik@grimler.se>
+ <20230316211558.8526-2-henrik@grimler.se>
+ <20db729f-e8fb-3d16-54a2-b9a54b9a1b55@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20db729f-e8fb-3d16-54a2-b9a54b9a1b55@linaro.org>
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Replace of_get_address() and of_translate_address() with single call
-to of_address_to_resource(). With this, use ioremap() instead of
-of_iomap() which would parse "reg" a second time.
+Hi Krzysztof,
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- arch/arm/mach-exynos/exynos.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+On Fri, Mar 17, 2023 at 12:55:40PM +0100, Krzysztof Kozlowski wrote:
+> On 16/03/2023 22:15, Henrik Grimler wrote:
+> > Previously, the mshc0 alias has been necessary so that
+> > MMC_CAP_1_8V_DDR | MMC_CAP_8_BIT_DATA are set for mshc_0/mmc_0.
+> > However, these capabilities should be described in the device tree so
+> > that we do not have to rely on the alias.
+> > 
+> > The property mmc-ddr-1_8v replaces MMC_CAP_1_8V_DDR, while bus_width =
+> > <8>, which is already set for all the mshc0/mmc0 nodes, replaces
+> > MMC_CAP_8_BIT_DATA.
+> > 
+> > Also drop other mshc aliases as they are not needed.
+> > 
+> > Signed-off-by: Henrik Grimler <henrik@grimler.se>
+> > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > 
+> > ---
+> > 
+> > Changes since v4:
+> > * Do not set mmc-ddr-1_8v for sdhci_0 on Exynos 4210,
+> >   following Marek's tests
+> > 
+> > Changes since v3:
+> > * Drop attempt at node sorting/cleaning
+> > * Move two mmc alias additions to the other patch
+> > * Update commit message
+> > 
+> > Changes since v2:
+> > * Set mmc-ddr-1_8v in device trees for mshc_0/mmc_0
+> > 
+> > 
+> >  arch/arm/boot/dts/exynos3250-artik5.dtsi            | 1 +
+> >  arch/arm/boot/dts/exynos3250-monk.dts               | 1 +
+> >  arch/arm/boot/dts/exynos3250-rinato.dts             | 1 +
+> 
+> Why you do not remove Exynos3250 aliases?
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 51a247ca4da8..966a0995e047 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -50,11 +50,13 @@ void __init exynos_sysram_init(void)
- 	struct device_node *node;
- 
- 	for_each_compatible_node(node, NULL, "samsung,exynos4210-sysram") {
-+		struct resource res;
- 		if (!of_device_is_available(node))
- 			continue;
--		sysram_base_addr = of_iomap(node, 0);
--		sysram_base_phys = of_translate_address(node,
--					   of_get_address(node, 0, NULL, NULL));
-+
-+		of_address_to_resource(node, 0, &res);
-+		sysram_base_addr = ioremap(res.start, resource_size(&res));
-+		sysram_base_phys = res.start;
- 		of_node_put(node);
- 		break;
- 	}
--- 
-2.39.2
+Thanks for spotting that, seems I accidentally dropped removal when
+going from v3 to v4.  Will remove them again in next version, and drop
+Marek's test tag since rinato is one of the devices he tests (or used
+to test).
 
+> Best regards,
+> Krzysztof
+
+Best regards,
+Henrik Grimler
