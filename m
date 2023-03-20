@@ -2,245 +2,161 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C78C77B6C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Mar 2023 14:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C626BC6FD1D
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Mar 2023 18:04:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232129AbjCTO6w (ORCPT
+        id S230129AbjCTSD7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Mar 2023 10:58:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41880 "EHLO
+        Mon, 20 Mar 2023 14:03:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231893AbjCTO6K (ORCPT
+        with ESMTP id S230054AbjCTSDj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Mar 2023 10:58:10 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D3561125A7;
-        Mon, 20 Mar 2023 07:56:30 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8FD62AD7;
-        Mon, 20 Mar 2023 07:57:13 -0700 (PDT)
-Received: from FVFF77S0Q05N.cambridge.arm.com (FVFF77S0Q05N.cambridge.arm.com [10.1.35.35])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAA413F71E;
-        Mon, 20 Mar 2023 07:56:26 -0700 (PDT)
-Date:   Mon, 20 Mar 2023 14:56:20 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Guo Ren <guoren@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Kajetan Puchalski <kajetan.puchalski@arm.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>, linux@armlinux.org.uk,
-        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-        kasan-dev@googlegroups.com, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 07/51] cpuidle,psci: Push RCU-idle into driver
-Message-ID: <ZBh0FPlF1oeqHftc@FVFF77S0Q05N.cambridge.arm.com>
-References: <20230112194314.845371875@infradead.org>
- <20230112195539.760296658@infradead.org>
- <ff338b9f-4ab0-741b-26ea-7b7351da156@linux-m68k.org>
+        Mon, 20 Mar 2023 14:03:39 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AB9CD30B
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Mar 2023 10:57:41 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id e15-20020a17090ac20f00b0023d1b009f52so17426488pjt.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Mar 2023 10:57:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679335045;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TTLqYdGFZkGom4FYP+0l2YM3DyL4CPb+gNvcjA2sta8=;
+        b=GGRc6NHuQPNvdJDi95tsj9Fdk98zaHEOdlFFVHCPwB77yfj5hO5wyG0vtfUn/RUfLn
+         sv6LnNalBQnWQQZ8kgahN6tTrF0kCh2uHkmat5sxdpRSNyh5y9oT72mvSbEbSANW3XsO
+         BcUSqICRFrhMxN/VNdP78YVQUJ1RIfHBdLJhRHPOMAB/PLH/+dzINbZRSPXqR4zJ9RXg
+         TGy8odYm98NW+d8uMAd61KqopiHA8Uee8b9oN0TdfT7V0zUteKJzjWgdjjhnOGBW+8bN
+         n3qQyFpUCn3FWIU8Zt/r6W3FNmiPWihhZWFHgiuzl9VmGTY0fuGoQ+OC8St99GJYn3ro
+         MiAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679335045;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TTLqYdGFZkGom4FYP+0l2YM3DyL4CPb+gNvcjA2sta8=;
+        b=vB5NpsVd6RZ9+T5cRbU5VYCiqWCRBm6abT0ohNQ4nZsauzR8OKWJVc8yCmhpOO38JY
+         phSnQtfpkaFNMEEB/9K4gaDTG4YUPE8zt4vusIuMOO6dN/TbvNTH/NQFePXwG5eQN64X
+         Vq1lDQ7bjOMGt/D7GFx2b0N+kMwAu3Fw8PH8dczL1upu6wOqHHxVkXG0QLF1JymFIzz/
+         r8NhAg0jBkOdObnYke1h562b2G/+rA79igSuA//H2uxsvFNnd98eNJyNMTgQ2JLi7AYr
+         lDqq4VoTOVvWwC9Dvf13G9IvwxjrfO8BXU50R4jnGpEd7I1J6PdTKByZY16/Y1uJwH0S
+         SbPg==
+X-Gm-Message-State: AO0yUKXb9QOdIga+Xr6w2fv38GyGjNbqEUbqWEy4+i2GPAidEORLfZ0n
+        gdEoWFOUhZYT4mtLb+e3VEIx3JPzxYU5o+pVfUNQtA==
+X-Google-Smtp-Source: AK7set8/YwBWDFBpyHo0/hfquyhBJpFJp9n/0UHpqT5eybpBB6edSz10AhON/8lghXTurJ3D2NDuSZ4yQF7ho2AvGmA=
+X-Received: by 2002:a17:90a:7ac8:b0:23d:4ab8:b1a3 with SMTP id
+ b8-20020a17090a7ac800b0023d4ab8b1a3mr33238pjl.1.1679335045509; Mon, 20 Mar
+ 2023 10:57:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ff338b9f-4ab0-741b-26ea-7b7351da156@linux-m68k.org>
+References: <CGME20230308230935eucas1p1e919f4d4b020e3386ce0eac8b4c8d299@eucas1p1.samsung.com>
+ <20230308230931.27261-1-semen.protsenko@linaro.org> <d1175c3e-301d-1cbc-607c-e94051780806@samsung.com>
+ <611fe922-1937-d37d-a2ce-cc0a13aed9e0@linaro.org>
+In-Reply-To: <611fe922-1937-d37d-a2ce-cc0a13aed9e0@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Mon, 20 Mar 2023 12:57:14 -0500
+Message-ID: <CAPLW+4=Yd0KfaMp+oSA=rOrqJfUotHjB=QOKpaPitMh3V2fMrA@mail.gmail.com>
+Subject: Re: [PATCH 0/6] soc: samsung: pm_domains: Add Exynos850 support
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Geert,
-
-On Tue, Mar 07, 2023 at 05:40:08PM +0100, Geert Uytterhoeven wrote:
-> 	Hoi Peter,
-> 
-> (reduced the insane CC list)
-
-Helpfully you dropped me from Cc, so I missed this until just now...
-
-> On Thu, 12 Jan 2023, Peter Zijlstra wrote:
-> > Doing RCU-idle outside the driver, only to then temporarily enable it
-> > again, at least twice, before going idle is daft.
-> > 
-> > Notably once implicitly through the cpu_pm_*() calls and once
-> > explicitly doing ct_irq_*_irqon().
-> > 
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-> > Reviewed-by: Guo Ren <guoren@kernel.org>
-> > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Tested-by: Kajetan Puchalski <kajetan.puchalski@arm.com>
-> > Tested-by: Tony Lindgren <tony@atomide.com>
-> > Tested-by: Ulf Hansson <ulf.hansson@linaro.org>
-> 
-> Thanks for your patch, which is now commit e038f7b8028a1d1b ("cpuidle,
-> psci: Push RCU-idle into driver") in v6.3-rc1.
-> 
-> I have bisected a PSCI checker regression on Renesas R-Car Gen3/4 SoCs
-> to commit a01353cf1896ea5b ("cpuidle: Fix ct_idle_*() usage") (the 7
-> commits before that do not compile):
+On Fri, 10 Mar 2023 at 08:41, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> psci_checker: PSCI checker started using 2 CPUs
-> psci_checker: Starting hotplug tests
-> psci_checker: Trying to turn off and on again all CPUs
-> psci: CPU0 killed (polled 0 ms)
-> Detected PIPT I-cache on CPU0
-> CPU0: Booted secondary processor 0x0000000000 [0x411fd073]
-> psci_checker: Trying to turn off and on again group 0 (CPUs 0-1)
-> psci: CPU0 killed (polled 0 ms)
-> Detected PIPT I-cache on CPU0
-> CPU0: Booted secondary processor 0x0000000000 [0x411fd073]
-> psci_checker: Hotplug tests passed OK
-> psci_checker: Starting suspend tests (10 cycles per state)
-> psci_checker: CPU 0 entering suspend cycles, states 1 through 1
-> psci_checker: CPU 1 entering suspend cycles, states 1 through 1
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 177 at kernel/context_tracking.c:141 ct_kernel_exit.constprop.0+0xd8/0xf4
+> On 09/03/2023 11:12, Marek Szyprowski wrote:
+> > Hi Sam,
+> >
+> > On 09.03.2023 00:09, Sam Protsenko wrote:
+> >> Power Domains in Exynos850 are not really different from other Exynos
+> >> platforms. Enabling Exynos850 support in the PD driver is really just a
+> >> matter of adding:
+> >>
+> >>      static const struct exynos_pm_domain_config exynos850_cfg = {
+> >>          .local_pwr_cfg = 0x1,
+> >>      };
+> >>
+> >> to the driver. But in the face of recent developments, e.g. this patch:
+> >>
+> >>      arm64: dts: exynos: move MIPI phy to PMU node in Exynos5433
+> >>
+> >> it looked logical to rework the PD driver a bit to support its nesting
+> >> under the PMU node, while adding Exynos850 support to it. Initially I
+> >> only wanted to add syscon regmap support via some dedicated property,
+> >> but pulling PD nodes under the PMU syscon looks like more correct way.
+> >
+> > Frankly speaking if you are changing this, you can go even further.
+> > Simply make PMU node a PM domain provider and specify the power domain
+> > as a phandle parameter. This is how it should have been done from the
+> > beginning, but for some unknown reasons wasn't. There is really no need
+> > to have a separate node for each power domain. This will also move
+> > implementation details to the PMU / power domain drivers and it will
+> > make it much easier to extend/modify it in the future. IMHO same applies
+> > for PHY nodes.
+>
+> I agree. The "samsung,pd-index" property is not a correct approach.
+> Either you use address space or not. If not, then this should be part of
+> power domain provider, which is also matching most of other SoC
+> architectures.
+>
 
-So that's:
+Did a bit of research, looked at how it's implemented on other
+platforms. Before I start reworking it, want to check with you on a
+couple of decisions, to avoid unnecessary resubmissions later, if it's
+ok:
 
-  WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !user && !is_idle_task(current));
+1. Instead of actually merging PD driver into PMU driver, guess it
+might be better to create a new power-controller driver (e.g.
+drivers/soc/samsung/exynos-power.c). This is how it's implemented for
+the most of platforms, and this way we can neatly separate it from
+what we already have in the PMU driver (not really power controller
+related things). This way, in device tree we'll have a
+power-controller node under PMU node, and this node can be referenced
+further as a phandle in power-domains properties of users.
 
-... and the PSCI checker doens't run in the context of the idle thread, so the
-warning is correct, and we're violating the expectation of the context tracking
-code.
+2. After moving PD implementation into a new power-controller driver
+(with new compatibility string), the old one (pm_domains.c) should be
+probably removed. Is it reasonable, e.g. from point of view of
+compatibility with out-of-tree (downstream) dts's? Also, if I remove
+the PD driver, probably all existing (upstream) Exynos dts's should be
+reworked to use the new power-controller compatibility string?
 
-The PSCI checker is very much a special case, and I'm not sure how we can fix
-this without removing the warning in the cases we want it. It'd be nicer if we
-could "queue" the idle into the relevant idle thread. :/
+3. Where to keep offsets for each power domain (inside of PMU register
+area). Can be done in dts (a separate child node of power-controller
+for each power domain), or in the power-controller driver. I saw both
+of those ways for different platforms actually. But I guess offsets
+are more like internal details, and should be kept inside the driver,
+for each supported SoC.
 
-I'm very tempted to say we should just rip the checker code out, rather than
-contorting the rest of the code to make that work.
+4. Specifying particular power domain in power-domains property. Guess
+the best way would be to have some indexes defined in dt-bindings
+header, and use those like this:
 
-Thanks,
-Mark.
+        power-domains = <&power_controller EXYNOS850_PD_G3D>;
 
-> Modules linked in:
-> CPU: 1 PID: 177 Comm: psci_suspend_te Not tainted 6.2.0-rc1-salvator-x-00052-ga01353cf1896 #1415
-> Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
-> pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : ct_kernel_exit.constprop.0+0xd8/0xf4
-> lr : ct_kernel_exit.constprop.0+0xc8/0xf4
-> sp : ffffffc00b73bd30
-> x29: ffffffc00b73bd30 x28: ffffff807fbadc90 x27: 0000000000000000
-> x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-> x23: ffffff800981e140 x22: 0000000000000001 x21: 0000000000010000
-> x20: ffffffc0086be1d8 x19: ffffff807fbac070 x18: 0000000000000000
-> x17: ffffff80083d1000 x16: ffffffc00841fff8 x15: ffffffc00b73b990
-> x14: ffffffc00895be78 x13: 0000000000000001 x12: 0000000000000000
-> x11: 00000000000001aa x10: 00000000ffffffea x9 : 000000000000000f
-> x8 : ffffffc00b73bb68 x7 : ffffffc00b73be18 x6 : ffffffc00815ff34
-> x5 : ffffffc00a6a0c30 x4 : ffffffc00801ce00 x3 : 0000000000000000
-> x2 : ffffffc008dc3070 x1 : ffffffc008dc3078 x0 : 0000000004208040
-> Call trace:
->  ct_kernel_exit.constprop.0+0xd8/0xf4
->  ct_idle_enter+0x18/0x20
->  psci_enter_idle_state+0xa4/0xfc
->  suspend_test_thread+0x238/0x2f0
->  kthread+0xd8/0xe8
->  ret_from_fork+0x10/0x20
-> irq event stamp: 0
-> hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-> hardirqs last disabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
-> softirqs last  enabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
-> softirqs last disabled at (0): [<0000000000000000>] 0x0
-> ---[ end trace 0000000000000000 ]---
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 177 at kernel/context_tracking.c:186 ct_kernel_enter.constprop.0+0x78/0xa4
-> Modules linked in:
-> CPU: 1 PID: 177 Comm: psci_suspend_te Tainted: G        W          6.2.0-rc1-salvator-x-00052-ga01353cf1896 #1415
-> Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
-> pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : ct_kernel_enter.constprop.0+0x78/0xa4
-> lr : ct_kernel_enter.constprop.0+0x68/0xa4
-> sp : ffffffc00b73bd30
-> x29: ffffffc00b73bd30 x28: ffffff807fbadc90 x27: 0000000000000000
-> x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-> x23: ffffff800981e140 x22: 0000000000000001 x21: 00000000ffffffa1
-> x20: ffffffc0086be1d8 x19: 00000000000000c0 x18: 0000000000000000
-> x17: ffffff80083d1000 x16: ffffffc00841fff8 x15: ffffffc00b73b990
-> x14: ffffffc00895be78 x13: ffffff800e325180 x12: ffffffc076de9000
-> x11: 0000000034d4d91d x10: 0000000000000008 x9 : 0000000000001000
-> x8 : ffffffc008012800 x7 : 0000000000000000 x6 : ffffff807fbac070
-> x5 : ffffffc008dc3070 x4 : 0000000000000000 x3 : 000000000001a9fc
-> x2 : 0000000000000003 x1 : ffffffc008dc3070 x0 : 0000000004208040
-> Call trace:
->  ct_kernel_enter.constprop.0+0x78/0xa4
->  ct_idle_exit+0x18/0x38
->  psci_enter_idle_state+0xdc/0xfc
->  suspend_test_thread+0x238/0x2f0
->  kthread+0xd8/0xe8
->  ret_from_fork+0x10/0x20
-> irq event stamp: 0
-> hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-> hardirqs last disabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
-> softirqs last  enabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
-> softirqs last disabled at (0): [<0000000000000000>] 0x0
-> ---[ end trace 0000000000000000 ]---
-> psci_checker: Failed to suspend CPU 1: error -1 (requested state 1, cycle 0)
-> psci_checker: CPU 0 suspend test results: success 0, shallow states 10, errors 0
-> mmcblk0rpmb: mmc0:0001 BGSD3R 4.00 MiB, chardev (243:0)
-> psci_checker: CPU 1 suspend test results: success 0, shallow states 9, errors 1
-> psci_checker: 1 error(s) encountered in suspend tests
-> psci_checker: PSCI checker completed
-> 
-> > ---
-> > drivers/cpuidle/cpuidle-psci.c |    9 +++++----
-> > 1 file changed, 5 insertions(+), 4 deletions(-)
-> > 
-> > --- a/drivers/cpuidle/cpuidle-psci.c
-> > +++ b/drivers/cpuidle/cpuidle-psci.c
-> > @@ -69,12 +69,12 @@ static int __psci_enter_domain_idle_stat
-> > 		return -1;
-> > 
-> > 	/* Do runtime PM to manage a hierarchical CPU toplogy. */
-> > -	ct_irq_enter_irqson();
-> > 	if (s2idle)
-> > 		dev_pm_genpd_suspend(pd_dev);
-> > 	else
-> > 		pm_runtime_put_sync_suspend(pd_dev);
-> > -	ct_irq_exit_irqson();
-> > +
-> > +	ct_idle_enter();
-> > 
-> > 	state = psci_get_domain_state();
-> > 	if (!state)
-> > @@ -82,12 +82,12 @@ static int __psci_enter_domain_idle_stat
-> > 
-> > 	ret = psci_cpu_suspend_enter(state) ? -1 : idx;
-> > 
-> > -	ct_irq_enter_irqson();
-> > +	ct_idle_exit();
-> > +
-> > 	if (s2idle)
-> > 		dev_pm_genpd_resume(pd_dev);
-> > 	else
-> > 		pm_runtime_get_sync(pd_dev);
-> > -	ct_irq_exit_irqson();
-> > 
-> > 	cpu_pm_exit();
-> > 
-> > @@ -240,6 +240,7 @@ static int psci_dt_cpu_init_topology(str
-> > 	 * of a shared state for the domain, assumes the domain states are all
-> > 	 * deeper states.
-> > 	 */
-> > +	drv->states[state_count - 1].flags |= CPUIDLE_FLAG_RCU_IDLE;
-> > 	drv->states[state_count - 1].enter = psci_enter_domain_idle_state;
-> > 	drv->states[state_count - 1].enter_s2idle = psci_enter_s2idle_domain_idle_state;
-> > 	psci_cpuidle_use_cpuhp = true;
-> 
-> Gr{oetje,eeting}s,
-> 
-> 						Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
-> 							    -- Linus Torvalds
-> 
+   Those constants can be also used then in the driver, to keep PD
+offsets in the array, etc. Another way would be to use reg offsets,
+but indices look better: can provide more flexibility in the driver in
+future, e.g. if we'd need to add some more details other that offsets
+later.
+
+Please let me know what you think. At the moment I have to switch to
+another task temporarily. When I get back to this one, discussing the
+above items would help me a great deal.
+
+Thanks!
+
+>
+> Best regards,
+> Krzysztof
+>
