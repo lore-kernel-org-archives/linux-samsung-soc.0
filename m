@@ -2,250 +2,122 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A345C6FD1D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Mar 2023 16:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08642C6FD20
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Mar 2023 18:35:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230172AbjCUQnD (ORCPT
+        id S230234AbjCUSff (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 21 Mar 2023 12:43:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53836 "EHLO
+        Tue, 21 Mar 2023 14:35:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229995AbjCUQm5 (ORCPT
+        with ESMTP id S230124AbjCUSfd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 21 Mar 2023 12:42:57 -0400
-Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 485A351CBA
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Mar 2023 09:42:41 -0700 (PDT)
-Received: by mail-qt1-x82c.google.com with SMTP id c19so18594991qtn.13
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Mar 2023 09:42:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1679416960;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rb42vCh7RpIAPrMfKGolIi8asoewLYT0tnuNjcsvrzg=;
-        b=g3RnPwpbIZKVEn2/ilr3S+1yKBuJWUoIWO3dgCVMG0ODqFGiK9otW2HxIXizx2U+Sx
-         F804yICSfPs7TXlf1FnORwMjHI+mj0Rq8bHM/FqzhSZ6VsQb/GpHStaDtMoli+HQOVN9
-         v/VPO1mFF2P5SgYrmgdIV2hYXN/WVxMeFBnxc52/UR0wdhBayKFsT67WaZ/cGFnmFjg7
-         VT6OtJGYjl6RFVHVqDc9vxX3XdPhcFiB8QBTjV5TebBNv214GTgYBdXb/n1K9+YhkQ8l
-         w332m7cs7Za3nFHDbDBJbTBkXJ0N7Ofgz+Kehpu0xD/vpNYEwNmU1l3iWtaIV4UjsKIx
-         FgHg==
+        Tue, 21 Mar 2023 14:35:33 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1C18241C8
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Mar 2023 11:34:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1679423684;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=sPS9ll6drXSpZudk7wgwyOxcgefAuYnobo/FFgs8jpQ=;
+        b=jKOuX4H7KKrZHvL4QoJfSrsCEU4cE+O4j0K6ZpbFLZatVoKKp9wfJKdXPcDix//iYzqaW0
+        BFBf1gzJVbkTMryBZ6DSDHo/RgHpWdelvh90WCiDH6ConTcvu8WCTy6zpejaZHcUtzMEyD
+        p48Qxa0irnrCDG6vpE4suM/Y+j6ZoTA=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-505-sIkACYWEPk2Mq_bH2hvf8w-1; Tue, 21 Mar 2023 14:34:43 -0400
+X-MC-Unique: sIkACYWEPk2Mq_bH2hvf8w-1
+Received: by mail-qv1-f72.google.com with SMTP id s3-20020a05621412c300b005cc75c78efcso2624833qvv.21
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Mar 2023 11:34:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679416960;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rb42vCh7RpIAPrMfKGolIi8asoewLYT0tnuNjcsvrzg=;
-        b=vc+ecYx/BirMu86nVC+qElvwMKMqD2T4df3UrGaED7PcBQNHRmipnqt2LoHQ02GvDf
-         YKsE6Z5DUueqccgVssE1F+qctaSMivToA7SwndkjsxhI955Ja42CnvpAeLlvMe7AvMhE
-         +ppYjWyR1ppVt+qWpq2TsGB0iVr/DEBLvfBge4I5oT25D948GTyKcWejWfEXTRArxcaQ
-         FfWv+QTgxQQVPBkSPkCiyJmSu1WkdcBmwsNKy8YPrtU3y1Ajiauaf4XQPZvO9U+/Dyhl
-         uYUilq4UVNhWYRCBLz0uAr+zhfdJVi7TV1t1PScwGPDGDmMCqJZRgEiHMSWGCW4yh4aU
-         uPnQ==
-X-Gm-Message-State: AO0yUKUexrXw7zTrC5YubydrP46BaVNJ0CEDqsgFPAtst6FVIJdSAZMZ
-        bL4HR5KqrYkwnjUQZ3vFRoK4AQ==
-X-Google-Smtp-Source: AK7set8crOJa5IWGeCPL3+bnh8XKxjSxESKf5g4hwK4Y2fX+O5FJMxMjux8dju0EAE6auovMbajQog==
-X-Received: by 2002:ac8:5e07:0:b0:3bf:be4b:808c with SMTP id h7-20020ac85e07000000b003bfbe4b808cmr603255qtx.55.1679416960376;
-        Tue, 21 Mar 2023 09:42:40 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-25-194.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.25.194])
-        by smtp.gmail.com with ESMTPSA id s127-20020a37a985000000b007469b5bc2c4sm1795267qke.13.2023.03.21.09.42.39
+        d=1e100.net; s=20210112; t=1679423683;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sPS9ll6drXSpZudk7wgwyOxcgefAuYnobo/FFgs8jpQ=;
+        b=1G6wze9JlKsmVn4L2v6DTP2FBlYr3qJpBipCzdJyU7hb2fxt4oDzDNRuVAkeplgLMM
+         9xqvDKs/2z20aMf31IuLhaeqE2MtYs44Uvmg5Zcfb3x+cDiMhJbGyS2p9/muhPFOEkBb
+         nnED2PFkPrKM2I4XFgaY45MxunPXsn5czWsEbudaspoSJCMHiHKDvvlzOalJAViFbOWh
+         Tl6/YHGKQ3ZWo5Kpf8ouwjvSrssMZoB+j7YNcaxWB0ihueNAgDOzjXfXKNi7Ers4cVaZ
+         TS5rp4TfxiiE5WTDfMinNslUKPuipy+9ILLJwWLI38bpFnN3d4lJAdXELWyuJjHCJVr0
+         JdyQ==
+X-Gm-Message-State: AO0yUKUpKgqFirmgym+XoLRW0l8/CXDDE5m/PZc9xXHkKyvAUESA9QiO
+        ox/S56VArrILPXswtSqZPyryY6Tn0azId2uEdAm5IhAl/Yf6/ktAbjV8KCy5WVE/Bu65/EPzihK
+        ZPMinL1lu1eLo6P7/c8snD/9/oRrDUQ4=
+X-Received: by 2002:a05:622a:c:b0:3b9:bc8c:c212 with SMTP id x12-20020a05622a000c00b003b9bc8cc212mr1130917qtw.29.1679423683056;
+        Tue, 21 Mar 2023 11:34:43 -0700 (PDT)
+X-Google-Smtp-Source: AK7set8Nu0137AV03cS5KH42Ha1QHglBsq3KR/srTrXB0d2sDKNVBqq1BOANC35xWCA7cmroLW7GGw==
+X-Received: by 2002:a05:622a:c:b0:3b9:bc8c:c212 with SMTP id x12-20020a05622a000c00b003b9bc8cc212mr1130898qtw.29.1679423682803;
+        Tue, 21 Mar 2023 11:34:42 -0700 (PDT)
+Received: from dell-per740-01.7a2m.lab.eng.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id i16-20020ac871d0000000b003d9a69b4876sm8778906qtp.11.2023.03.21.11.34.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Mar 2023 09:42:39 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1pef4J-000YCG-Ao;
-        Tue, 21 Mar 2023 13:42:39 -0300
-Date:   Tue, 21 Mar 2023 13:42:39 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     iommu@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [PATCH v2] iommu/exynos: Fix set_platform_dma_ops() callback
-Message-ID: <ZBnef7g7GCxogPNz@ziepe.ca>
-References: <CGME20230315232523eucas1p2565ef5954e3b5b451803c6200c8bce32@eucas1p2.samsung.com>
- <20230315232514.1046589-1-m.szyprowski@samsung.com>
- <ZBnCD7Xc9WCM55ub@ziepe.ca>
- <da174ce4-b922-21d0-62da-b69798a51371@samsung.com>
+        Tue, 21 Mar 2023 11:34:42 -0700 (PDT)
+From:   Tom Rix <trix@redhat.com>
+To:     krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+        wim@linux-watchdog.org, linux@roeck-us.net, nathan@kernel.org,
+        ndesaulniers@google.com
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+        Tom Rix <trix@redhat.com>
+Subject: [PATCH] watchdog: s3c2410: remove unused freq_to_wdt and s3c2410wdt_is_running functions
+Date:   Tue, 21 Mar 2023 14:34:39 -0400
+Message-Id: <20230321183439.1826823-1-trix@redhat.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <da174ce4-b922-21d0-62da-b69798a51371@samsung.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Mar 21, 2023 at 04:43:42PM +0100, Marek Szyprowski wrote:
-> 
-> On 21.03.2023 15:41, Jason Gunthorpe wrote:
-> > On Thu, Mar 16, 2023 at 12:25:14AM +0100, Marek Szyprowski wrote:
-> >> There are some subtle differences between release_device() and
-> >> set_platform_dma_ops() callbacks, so separate those two callbacks. Device
-> >> links should be removed only in release_device(), because they were
-> >> created in probe_device() on purpose and they are needed for proper
-> >> Exynos IOMMU driver operation. While fixing this, remove the conditional
-> >> code as it is not really needed.
-> >>
-> >> Reported-by: Jason Gunthorpe <jgg@ziepe.ca>
-> >> Fixes: 189d496b48b1 ("iommu/exynos: Add missing set_platform_dma_ops callback")
-> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >> ---
-> >> v2:
-> >> - keep set_platform_dma_ops only on ARM 32bit
-> >>
-> >> Some more background why set_platform_dma_ops is needed on ARM 32bit is
-> >> available here:
-> >> https://lore.kernel.org/all/9a12fcac-c347-5d81-acef-1124c50d0c37@arm.com/
-> >> ---
-> >>   drivers/iommu/exynos-iommu.c | 17 ++++++++++-------
-> >>   1 file changed, 10 insertions(+), 7 deletions(-)
-> > It seems OK, but do you know what state the device is left in after
-> > exynos_iommu_detach_device ? Ie is it blocking or identity?
-> 
-> identity
+clang with W=1 reports
+drivers/watchdog/s3c2410_wdt.c:311:35: error: unused function
+  'freq_to_wdt' [-Werror,-Wunused-function]
+static inline struct s3c2410_wdt *freq_to_wdt(struct notifier_block *nb)
+                                  ^
+drivers/watchdog/s3c2410_wdt.c:446:19: error: unused function
+  's3c2410wdt_is_running' [-Werror,-Wunused-function]
+static inline int s3c2410wdt_is_running(struct s3c2410_wdt *wdt)
+                  ^
+These functions are not used, so remove them.
 
-Can you do this cleanup like this instead?
+Signed-off-by: Tom Rix <trix@redhat.com>
+---
+ drivers/watchdog/s3c2410_wdt.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-Jason
-
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 483aaaeb6daeac..2c2b5cba191459 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -24,6 +24,7 @@
- 
- typedef u32 sysmmu_iova_t;
- typedef u32 sysmmu_pte_t;
-+static struct iommu_domain exynos_identity_domain;
- 
- /* We do not consider super section mapping (16MB) */
- #define SECT_ORDER 20
-@@ -900,6 +901,9 @@ static struct iommu_domain *exynos_iommu_domain_alloc(unsigned type)
- 	dma_addr_t handle;
- 	int i;
- 
-+	if (type == IOMMU_DOMAIN_IDENTITY)
-+		return &exynos_identity_domain;
-+
- 	/* Check if correct PTE offsets are initialized */
- 	BUG_ON(PG_ENT_SHIFT < 0 || !dma_dev);
- 
-@@ -988,17 +992,22 @@ static void exynos_iommu_domain_free(struct iommu_domain *iommu_domain)
- 	kfree(domain);
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 200ba236a72e..6394dda7a5dc 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -308,11 +308,6 @@ static inline unsigned int s3c2410wdt_max_timeout(struct s3c2410_wdt *wdt)
+ 				       / S3C2410_WTCON_MAXDIV);
  }
  
--static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
--				    struct device *dev)
-+static int exynos_iommu_identity_attach(struct iommu_domain *identity_domain,
-+					struct device *dev)
+-static inline struct s3c2410_wdt *freq_to_wdt(struct notifier_block *nb)
+-{
+-	return container_of(nb, struct s3c2410_wdt, freq_transition);
+-}
+-
+ static int s3c2410wdt_disable_wdt_reset(struct s3c2410_wdt *wdt, bool mask)
  {
--	struct exynos_iommu_domain *domain = to_exynos_domain(iommu_domain);
- 	struct exynos_iommu_owner *owner = dev_iommu_priv_get(dev);
--	phys_addr_t pagetable = virt_to_phys(domain->pgtable);
-+	struct exynos_iommu_domain *domain;
-+	phys_addr_t pagetable;
- 	struct sysmmu_drvdata *data, *next;
- 	unsigned long flags;
- 
--	if (!has_sysmmu(dev) || owner->domain != iommu_domain)
--		return;
-+	if (!owner)
-+		return -ENODEV;
-+	if (owner->domain == identity_domain)
-+		return 0;
-+
-+	domain = to_exynos_domain(owner->domain);
-+	pagetable = virt_to_phys(domain->pgtable);
- 
- 	mutex_lock(&owner->rpm_lock);
- 
-@@ -1017,15 +1026,32 @@ static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
- 		list_del_init(&data->domain_node);
- 		spin_unlock(&data->lock);
- 	}
--	owner->domain = NULL;
-+	owner->domain = identity_domain;
- 	spin_unlock_irqrestore(&domain->lock, flags);
- 
- 	mutex_unlock(&owner->rpm_lock);
- 
- 	dev_dbg(dev, "%s: Detached IOMMU with pgtable %pa\n", __func__,
- 		&pagetable);
-+	return 0;
+ 	const u32 mask_val = BIT(wdt->drv_data->mask_bit);
+@@ -443,11 +438,6 @@ static int s3c2410wdt_start(struct watchdog_device *wdd)
+ 	return 0;
  }
  
-+static struct iommu_domain_ops exynos_identity_ops = {
-+	.attach_dev = exynos_iommu_identity_attach,
-+};
-+
-+static struct iommu_domain exynos_identity_domain = {
-+	.type = IOMMU_DOMAIN_IDENTITY,
-+	.ops = &exynos_identity_ops,
-+};
-+
-+#ifdef CONFIG_ARM
-+static void exynos_iommu_set_platform_dma(struct device *dev)
-+{
-+	WARN_ON(exynos_iommu_identity_attach(&exynos_identity_domain, dev));
-+}
-+#endif
-+
- static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
- 				   struct device *dev)
+-static inline int s3c2410wdt_is_running(struct s3c2410_wdt *wdt)
+-{
+-	return readl(wdt->reg_base + S3C2410_WTCON) & S3C2410_WTCON_ENABLE;
+-}
+-
+ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd,
+ 				    unsigned int timeout)
  {
-@@ -1034,12 +1060,11 @@ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
- 	struct sysmmu_drvdata *data;
- 	phys_addr_t pagetable = virt_to_phys(domain->pgtable);
- 	unsigned long flags;
-+	int err;
- 
--	if (!has_sysmmu(dev))
--		return -ENODEV;
--
--	if (owner->domain)
--		exynos_iommu_detach_device(owner->domain, dev);
-+	err = exynos_iommu_identity_attach(&exynos_identity_domain, dev);
-+	if (err)
-+		return err;
- 
- 	mutex_lock(&owner->rpm_lock);
- 
-@@ -1420,18 +1445,7 @@ static void exynos_iommu_release_device(struct device *dev)
- 	struct exynos_iommu_owner *owner = dev_iommu_priv_get(dev);
- 	struct sysmmu_drvdata *data;
- 
--	if (owner->domain) {
--		struct iommu_group *group = iommu_group_get(dev);
--
--		if (group) {
--#ifndef CONFIG_ARM
--			WARN_ON(owner->domain !=
--				iommu_group_default_domain(group));
--#endif
--			exynos_iommu_detach_device(owner->domain, dev);
--			iommu_group_put(group);
--		}
--	}
-+	WARN_ON(exynos_iommu_identity_attach(&exynos_identity_domain, dev));
- 
- 	list_for_each_entry(data, &owner->controllers, owner_node)
- 		device_link_del(data->link);
-@@ -1462,6 +1476,7 @@ static int exynos_iommu_of_xlate(struct device *dev,
- 
- 		INIT_LIST_HEAD(&owner->controllers);
- 		mutex_init(&owner->rpm_lock);
-+		owner->domain = &exynos_identity_domain;
- 		dev_iommu_priv_set(dev, owner);
- 	}
- 
-@@ -1479,7 +1494,7 @@ static const struct iommu_ops exynos_iommu_ops = {
- 	.domain_alloc = exynos_iommu_domain_alloc,
- 	.device_group = generic_device_group,
- #ifdef CONFIG_ARM
--	.set_platform_dma_ops = exynos_iommu_release_device,
-+	.set_platform_dma_ops = exynos_iommu_set_platform_dma,
- #endif
- 	.probe_device = exynos_iommu_probe_device,
- 	.release_device = exynos_iommu_release_device,
+-- 
+2.27.0
+
