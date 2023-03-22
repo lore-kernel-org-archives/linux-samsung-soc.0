@@ -2,85 +2,76 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CB9C6FD1C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Mar 2023 23:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC615C74A5B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Mar 2023 23:49:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230403AbjCVXnd (ORCPT
+        id S229727AbjCVXtW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 22 Mar 2023 19:43:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36646 "EHLO
+        Wed, 22 Mar 2023 19:49:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230307AbjCVXnW (ORCPT
+        with ESMTP id S229487AbjCVXtV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Mar 2023 19:43:22 -0400
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2825D31BD8;
-        Wed, 22 Mar 2023 16:42:55 -0700 (PDT)
-Received: from p508fd58e.dip0.t-ipconnect.de ([80.143.213.142] helo=phil.fritz.box)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1pf84R-0005ZV-Td; Thu, 23 Mar 2023 00:40:43 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>, dri-devel@lists.freedesktop.org,
-        Robert Foss <rfoss@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, jonas@kwiboo.se,
-        neil.armstrong@linaro.org, alim.akhtar@samsung.com,
-        gregkh@linuxfoundation.org, devicetree@vger.kernel.org,
-        sw0312.kim@samsung.com, philippe.cornu@foss.st.com,
-        linux-rockchip@lists.infradead.org,
-        krzysztof.kozlowski+dt@linaro.org, kyungmin.park@samsung.com,
-        hjc@rock-chips.com, jernej.skrabec@gmail.com,
-        linus.walleij@linaro.org, inki.dae@samsung.com, robh+dt@kernel.org,
-        Laurent.pinchart@ideasonboard.com, daniel@ffwll.ch,
-        linux-usb@vger.kernel.org, airlied@gmail.com,
-        andrzej.hajda@intel.com
-Subject: Re: (subset) [PATCH v6 01/17] dt-bindings: display: rockchip: convert rockchip-lvds.txt to YAML
-Date:   Thu, 23 Mar 2023 00:40:40 +0100
-Message-Id: <167952842636.1588125.15379043637737791314.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <67771143-fd83-383d-41b2-68e8707134e8@gmail.com>
-References: <67771143-fd83-383d-41b2-68e8707134e8@gmail.com>
-MIME-Version: 1.0
+        Wed, 22 Mar 2023 19:49:21 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D712F2386A;
+        Wed, 22 Mar 2023 16:49:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 02726B81E98;
+        Wed, 22 Mar 2023 23:49:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE6C2C433EF;
+        Wed, 22 Mar 2023 23:49:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679528957;
+        bh=4e2XnzVD64xxw0K3LkJydIgTL5u8SOHIr+8q/XXU+cY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=SQHWi+M9SksMIcwSwW7vQk2ilND7txWs1TQERx+M9MLFfOxkbkRwcYMY1Quf3fszz
+         A9VzaLlXafrRLkseMo5Enbic1gJ4NIg16mxt6OINxPaLzLTvJcb03OgwL0EcKSpY+y
+         xFWE73Yv65DknBcyHr+7+seStGRE0erx5o7HZDkoW4AcAle7CBOQ/nkUjfMiqCHbI1
+         wSC4swco5gKd2WaMoA3KZ7dYaTj4vQNi4IzCndBKtW8d6h3zd3ws9T8cazIcKs5tym
+         6A3Zif8XPxBSbAyIS7igO1XqC++zSWZpmZbYPO6yXENKVYtGj72zR7rqdmQWdLFCYP
+         K4Luha7MPrWnA==
+Message-ID: <003f436e96aa480f02ee5147f428f389.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230322173549.3972106-1-robh@kernel.org>
+References: <20230322173549.3972106-1-robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: clock: Drop unneeded quotes
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Date:   Wed, 22 Mar 2023 16:49:15 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 22 Dec 2022 15:22:14 +0100, Johan Jonker wrote:
-> Convert rockchip-lvds.txt to YAML.
-> 
-> Changed:
->   Add power-domains property.
->   Requirements between PX30 and RK3288
-> 
-> 
-> [...]
+Quoting Rob Herring (2023-03-22 10:35:48)
+> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
+> checking for this can be enabled in yamllint.
+>=20
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
 
-Applied, thanks!
-
-[09/17] ARM: dts: rockchip: rk3288: fix dsi node
-        commit: ea2d16f90629e3158307d0183cad5c40aa55c995
-[10/17] ARM: dts: rockchip: rk3288: fix lvds node
-        commit: 8a19e4c74d17ed8d1e6bc06b32c5b7b7c3b9fcfb
-[11/17] ARM: dts: rockchip: rk3288: fix dp node
-        commit: 95e2ac6ae9f2330557a6aef70bf15173e1dd9714
-[12/17] arm64: dts: rockchip: px30: fix lvds node
-        commit: 0d5e24918976edffffee006e07730434a36d264a
-[13/17] arm64: dts: rockchip: px30: fix dsi node
-        commit: 30322f812d4e0e75e2488c1d45aba94e51dd19bb
-[14/17] arm64: dts: rockchip: rk3399: fix dsi node
-        commit: f82fe7ad31530b38d2f61aa6ae68bd35c33f4ad0
-[15/17] arm64: dts: rockchip: rk3399: fix dp node
-        commit: d94024bd6342c6f3e88c5fac785a685c1974d48e
-[16/17] arm64: dts: rockchip: rename vbus-supply to phy-supply in rk3566-box-demo.dts
-        commit: fc440ea1732abb714150bb8f3d90672ccc679e2d
-[17/17] arm64: dts: rockchip: rk356x: remove hclk from dsi node
-        commit: cadda005961cd6a202ae6f8ff99f2bba35a31dc8
-
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
