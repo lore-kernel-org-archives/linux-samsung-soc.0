@@ -2,87 +2,100 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4436C6FD1C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Mar 2023 17:48:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63978C6FD1C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Mar 2023 17:52:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229477AbjCVRsI (ORCPT
+        id S230181AbjCVRwW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 22 Mar 2023 13:48:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44940 "EHLO
+        Wed, 22 Mar 2023 13:52:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbjCVRsI (ORCPT
+        with ESMTP id S230295AbjCVRwV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Mar 2023 13:48:08 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBCF135273
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Mar 2023 10:48:06 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id x3so76172712edb.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Mar 2023 10:48:06 -0700 (PDT)
+        Wed, 22 Mar 2023 13:52:21 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1774D6702D
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Mar 2023 10:52:16 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id ek18so76305216edb.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Mar 2023 10:52:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679507285;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qr6TeKOzsge+FFicPSnu2Sq+O0zv/SoC08/DpMmMHaE=;
-        b=Q4T2XCaOfbJbsZAlVZtoSvsLC8ZbgLbU3no4b8QA+ypbFvYTOXeDddpLcrdQYRumsa
-         M1WYQ5GZxmCd0EXCKV4QJRW9NsTApwhrVLMQd2qYRw8qD4I6WlCkBxS9zEWoQKN6qV5G
-         P0DxyD8O+c/QFHAPnShd1uy6dCt3Tn7WhXw/xjDm/GDwcc5l0E1015keX8KYbdLQ7c59
-         ImKJbPkfkb/4H/1Q8j92Z8mK5v8EtuZ5LwL6jELS7oEbHcn8El8YO+D7RpcvGZv3CD8n
-         czUGy48AScGmIiz0GeF5KwSC/o8AC7e3FubVBnxmzFXAxcKJX2p3gUuOOms0tDrHmTxC
-         gEBA==
+        d=linaro.org; s=google; t=1679507534;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wh4Z1xlqDztZUH1w7IbXNlkUYB0pflLL3OVprobSnZc=;
+        b=WcgQoZMSV/a0eQ9pzfFJS6PJOkUq4BOxRnUsYi1tODvQhCM6XAVIzZ656d7dRAo45m
+         jkaqVR41zmD3Evi/JdVzZeSvpsycq/g8HfPdXGdmzr9IHdZ4ZYUYgWDA35WIKSb8qs3K
+         4GBwCIqYJvd3cfwJ5x7LEfjiVp+qyWH9wtr6wChbhNsNKvXjgYhh4zcK+vRgLQR26xTM
+         vlUm34N7H5q/KUnatolWI/y9cmvYTiN/H/0GTnQrgx0ot2jx13y5wzrOogaDdd4VVVD4
+         g0zGgYhpbxRwUZOUoELIh4LuhRgOf63m18hB+Av+4hLt4x54//xRNZQqSjygqbRAADne
+         KPpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679507285;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qr6TeKOzsge+FFicPSnu2Sq+O0zv/SoC08/DpMmMHaE=;
-        b=cvzEsm0n9SSXLgyAX6EIcN652ACS6YdYeBVDNNfOpFFrW2S/KXAREZ4UzZS2V+D/oy
-         BrJvEKyMdOD/GrYaVJTDCYlh7gNStsFLP66pD1yH5PowRWivUYllnFm/XMmVuHkuZcQz
-         bAYO4e34bpTd89Sjwk4VcxtAJMWJcdndqh0754D+tDipQ/G7l+RGKCebVEkrmxhoY+Lq
-         mXw8hDIw5F2Pd+/6zf+OmHOvwNmj8WAxRA6ludDxhaqLow6SGgjuTO9sLrKH3fUZ4Boo
-         blk1n2eIMI01+lGMWbZzT4wyZFXz06A33A29s04zPZMEearhlrcotl4MZKNaF8FhKcGs
-         SUMA==
-X-Gm-Message-State: AO0yUKWmRQrqW9K2wJr5kokLnALVuHZojnzhLss2LO3nicWlRohJllek
-        jOFPo5PFG64iYj3cf6G2R3T7LQ==
-X-Google-Smtp-Source: AK7set9kbuZpghXxHJT6c08wz2KY1zmFVsr1oRZl6hQ+iQKsD8J3Q/YQAeWyADmeJizgjuY5CWSc2w==
-X-Received: by 2002:a17:906:e0c1:b0:920:388c:5c60 with SMTP id gl1-20020a170906e0c100b00920388c5c60mr7757836ejb.41.1679507285210;
-        Wed, 22 Mar 2023 10:48:05 -0700 (PDT)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:5050:151b:e755:1c6])
-        by smtp.gmail.com with ESMTPSA id t7-20020a1709064f0700b008cda6560404sm7495732eju.193.2023.03.22.10.48.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Mar 2023 10:48:04 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: EXYNOS: Use of_address_to_resource()
-Date:   Wed, 22 Mar 2023 18:48:02 +0100
-Message-Id: <167950727877.811583.5299126381937296479.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230319163145.225323-1-robh@kernel.org>
-References: <20230319163145.225323-1-robh@kernel.org>
+        d=1e100.net; s=20210112; t=1679507534;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wh4Z1xlqDztZUH1w7IbXNlkUYB0pflLL3OVprobSnZc=;
+        b=cmsfs1nL8rQzsZLftxVxu7SyP9yzR51QiEnb8ic+5MTG9CMb2atZDfW3GHdcUTmnSB
+         resmg01lvlZApM/T5pS3g491+8HvFq9R+G4JVEt9EunuxpLPFAlJDcJUglxPWu3zfSyt
+         mk6pGnGpA3sGThzvC9yWTBG0gsitN15bO8A0nmtTUN6DbBw+oTSN33fn9ucGGaeaRga+
+         DcxTJgvh0ichN0gsRM2F+39JU03yspAsxoi6cuR7OQVZONC5/P0JqHnV+GQPyRflCfPR
+         sSowAqgpzHai0ihlCWCqbzBUHlB0mvSzkHbQbTdBhqcX0Tr0Xu6Mn8rcP3f4Bb1xId9N
+         Oigg==
+X-Gm-Message-State: AO0yUKXJLJu3xN9cHucIG6O1+cFNGPIAwBRvR1qOCNilYbKNh28D+NEK
+        ezNk7Hxi/s9FHUr7f8Ys3irJ9V/30XL98BzPcZ0=
+X-Google-Smtp-Source: AK7set/w/Af4r7ZkWY5/EYuLO7gRu4DNAGQ4mEA4NNMEcc/QIJ5nDOUWk6vdiJaM+ZJYjQJK7+8P1Q==
+X-Received: by 2002:aa7:c053:0:b0:4fc:6475:d249 with SMTP id k19-20020aa7c053000000b004fc6475d249mr6466295edo.3.1679507534645;
+        Wed, 22 Mar 2023 10:52:14 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:5050:151b:e755:1c6? ([2a02:810d:15c0:828:5050:151b:e755:1c6])
+        by smtp.gmail.com with ESMTPSA id t22-20020a50d716000000b004af6163f845sm8115519edi.28.2023.03.22.10.52.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Mar 2023 10:52:14 -0700 (PDT)
+Message-ID: <2087e394-afa6-f1c0-cfc1-df382b2d13d3@linaro.org>
+Date:   Wed, 22 Mar 2023 18:52:12 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH] dt-bindings: clock: Drop unneeded quotes
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+References: <20230322173549.3972106-1-robh@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230322173549.3972106-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 19 Mar 2023 11:31:44 -0500, Rob Herring wrote:
-> Replace of_get_address() and of_translate_address() with single call
-> to of_address_to_resource(). With this, use ioremap() instead of
-> of_iomap() which would parse "reg" a second time.
+On 22/03/2023 18:35, Rob Herring wrote:
+> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
+> checking for this can be enabled in yamllint.
 > 
-> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Applied, thanks!
-
-[1/1] ARM: EXYNOS: Use of_address_to_resource()
-      https://git.kernel.org/krzk/linux/c/cb56f508e541036ad41cb9a5afb46339b2f83b9f
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Krzysztof
+
