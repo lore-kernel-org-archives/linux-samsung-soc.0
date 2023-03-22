@@ -2,171 +2,100 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC1EC6FD1F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Mar 2023 18:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C05C7619A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Mar 2023 20:40:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230353AbjCVSwI (ORCPT
+        id S230226AbjCVUkl convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 22 Mar 2023 14:52:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48974 "EHLO
+        Wed, 22 Mar 2023 16:40:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229658AbjCVSwH (ORCPT
+        with ESMTP id S230211AbjCVUk2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Mar 2023 14:52:07 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 825BC5CED3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Mar 2023 11:52:04 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id eh3so76936979edb.11
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Mar 2023 11:52:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679511123;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GnjO6rB3SMaI0uKBlHaw5KyPPgQbtexYN9gxy05p5aY=;
-        b=LwmKdT33gNG+cHesYJ8XPo4wg5n/IVM8caN4Q2w/p2FNVUPZxfFRE5CQuJTwySkaPC
-         K5FYrGfNcF/eIvWJqbuDGszEAO26zdOZz1rC+f9/AIeXm9HwdW80VDB6rbGZmzHV0oU7
-         1akxISTeiF7IHocsleSChlGq0OOcpTaYRGBjREJYCu/raYF+FAaEF2LdaXWevAKNw/iv
-         SDCx14/bbarRXMhWHaecA/dH/AC8ssKfGJaqMfNRz+E8hbnddid7K6p07H5/0DFJzymI
-         PykG3eAJZ+gHGSwNG0CTs4Gpb0lwFt4guN1JZdtS272wV/NPXvjYimfZg+q3/mJrGAUw
-         b4/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679511123;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GnjO6rB3SMaI0uKBlHaw5KyPPgQbtexYN9gxy05p5aY=;
-        b=G+HLEl4kffCCYBNzmOGAyJDtU+mYHawY0VcUFjiRSz0CCuQerMvdvHL/YTX8486FCl
-         DLXtCZOMrf4omk8FKBVEo9cTRliK1H+15Qo4zm4fhSHvLUe5xFpQpO2ASBPof8NCf2mO
-         bamcO9ll7CjO2eeIHa4tygvbPC1fV83YaP+W6XCmma/mpqoGWmQUbDYDXq+8XIdotSf7
-         +ejK0yXZAMuZLLwR4uaJgmeBJJDz8HdwvvDtEZvNzi+SHf2xkRS2aJN25u0z6gyYN0cP
-         OAp6Zd1O52XnWyvy7wDE29u2hTJxBmYGPMRIAgT93ZsxrFft14IeDnKpWRR6BwGCP+zI
-         7TuA==
-X-Gm-Message-State: AO0yUKU14qVk/P7tcoKMTPkOHLw87R4JrGhxW3ArBTDnGqS0vxQiOL+O
-        ob0bXd6ubLpQ7xQJhz/duSaOgA+EvKJIl4uqmY0=
-X-Google-Smtp-Source: AK7set8npBgIvh/DrCLdGVF950rfc9GOaTWVRjawslYNv08Gyvwt5UjbPR/x7DDmPnXT85CMyaoo/A==
-X-Received: by 2002:a17:906:fa16:b0:933:3fda:94fb with SMTP id lo22-20020a170906fa1600b009333fda94fbmr8029802ejb.10.1679511123002;
-        Wed, 22 Mar 2023 11:52:03 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:5050:151b:e755:1c6? ([2a02:810d:15c0:828:5050:151b:e755:1c6])
-        by smtp.gmail.com with ESMTPSA id e7-20020a170906248700b0093408d33875sm4784451ejb.49.2023.03.22.11.52.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Mar 2023 11:52:02 -0700 (PDT)
-Message-ID: <3d4b66b7-b86b-3ff2-1076-33a16a8014f8@linaro.org>
-Date:   Wed, 22 Mar 2023 19:52:01 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 0/6] soc: samsung: pm_domains: Add Exynos850 support
-Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        Wed, 22 Mar 2023 16:40:28 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8918019F18;
+        Wed, 22 Mar 2023 13:32:39 -0700 (PDT)
+Received: from p508fd58e.dip0.t-ipconnect.de ([80.143.213.142] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1pf56y-0004XT-Oa; Wed, 22 Mar 2023 21:31:08 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Joel Stanley <joel@jms.id.au>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <CGME20230308230935eucas1p1e919f4d4b020e3386ce0eac8b4c8d299@eucas1p1.samsung.com>
- <20230308230931.27261-1-semen.protsenko@linaro.org>
- <d1175c3e-301d-1cbc-607c-e94051780806@samsung.com>
- <611fe922-1937-d37d-a2ce-cc0a13aed9e0@linaro.org>
- <CAPLW+4=Yd0KfaMp+oSA=rOrqJfUotHjB=QOKpaPitMh3V2fMrA@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CAPLW+4=Yd0KfaMp+oSA=rOrqJfUotHjB=QOKpaPitMh3V2fMrA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Jianlong Huang <jianlong.huang@starfivetech.com>,
+        Dvorkin Dmitry <dvorkin@tibbo.com>,
+        Wells Lu <wellslutw@gmail.com>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rob Herring <robh@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, asahi@lists.linux.dev,
+        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, patches@opensource.cirrus.com,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH] dt-bindings: pinctrl: Drop unneeded quotes
+Date:   Wed, 22 Mar 2023 21:31:06 +0100
+Message-ID: <14697371.uLZWGnKmhe@phil>
+In-Reply-To: <20230317233623.3968172-1-robh@kernel.org>
+References: <20230317233623.3968172-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 20/03/2023 18:57, Sam Protsenko wrote:
+Am Samstag, 18. März 2023, 00:36:18 CET schrieb Rob Herring:
+> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
+> checking for this can be enabled in yamllint.
 > 
-> Did a bit of research, looked at how it's implemented on other
-> platforms. Before I start reworking it, want to check with you on a
-> couple of decisions, to avoid unnecessary resubmissions later, if it's
-> ok:
-> 
-> 1. Instead of actually merging PD driver into PMU driver, guess it
-> might be better to create a new power-controller driver (e.g.
-> drivers/soc/samsung/exynos-power.c). This is how it's implemented for
-> the most of platforms, and this way we can neatly separate it from
-> what we already have in the PMU driver (not really power controller
-> related things). This way, in device tree we'll have a
-> power-controller node under PMU node, and this node can be referenced
-> further as a phandle in power-domains properties of users.
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Whether you want separate driver is different from wanting separate
-device node in DT. About the Devicetree, the PMU node is the power
-management unit responsible for:
-1. power domains,
-2. system power.
+>  .../devicetree/bindings/pinctrl/rockchip,pinctrl.yaml  | 10 +++++-----
 
-Thus separate device node rather does not fit here. This is one bigger
-device which can have sub-blocks (e.g. system-reboot), but power domain
-handling does not look like separate from it. It is its core.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de> #rockchip
 
-Now about driver - whatever creates readable and maintainable code :)
-
-> 
-> 2. After moving PD implementation into a new power-controller driver
-> (with new compatibility string), 
-> the old one (pm_domains.c) should be
-> probably removed. Is it reasonable, e.g. from point of view of
-> compatibility with out-of-tree (downstream) dts's? 
-
-You must not break the ABI, so existing bindings and driver must stay.
-The power domain cells in PMU node will be the trigger for using new code.
-
-> Also, if I remove
-> the PD driver, probably all existing (upstream) Exynos dts's should be
-> reworked to use the new power-controller compatibility string?
-> 
-> 3. Where to keep offsets for each power domain (inside of PMU register
-> area). Can be done in dts (a separate child node of power-controller
-> for each power domain), or in the power-controller driver. 
-
-Just like in clock or reset drivers, this should be in the driver.
-
-> I saw both
-> of those ways for different platforms actually. 
-
-Then share examples, because maybe I think about something else...
-
-> But I guess offsets
-> are more like internal details, and should be kept inside the driver,
-> for each supported SoC.
-> 
-> 4. Specifying particular power domain in power-domains property. Guess
-> the best way would be to have some indexes defined in dt-bindings
-> header, and use those like this:
-> 
->         power-domains = <&power_controller EXYNOS850_PD_G3D>;
-
-Yes.
-
-> 
->    Those constants can be also used then in the driver, to keep PD
-> offsets in the array, etc.
-
-Yes.
-
-> Another way would be to use reg offsets,
-> but indices look better: can provide more flexibility in the driver in
-> future, e.g. if we'd need to add some more details other that offsets
-> later.
-
-Right, use logical IDs and driver will do the translation.
-
-> 
-> Please let me know what you think. At the moment I have to switch to
-> another task temporarily. When I get back to this one, discussing the
-> above items would help me a great deal.
-
-
-Sure, thanks for the work, keep safe and strong!
-
-Best regards,
-Krzysztof
 
