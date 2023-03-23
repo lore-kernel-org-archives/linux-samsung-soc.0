@@ -2,76 +2,94 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC615C74A5B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Mar 2023 23:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46310C6FD1C
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Mar 2023 08:33:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229727AbjCVXtW (ORCPT
+        id S231474AbjCWIdR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 22 Mar 2023 19:49:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48228 "EHLO
+        Thu, 23 Mar 2023 04:33:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjCVXtV (ORCPT
+        with ESMTP id S231454AbjCWIdK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Mar 2023 19:49:21 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D712F2386A;
-        Wed, 22 Mar 2023 16:49:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 02726B81E98;
-        Wed, 22 Mar 2023 23:49:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE6C2C433EF;
-        Wed, 22 Mar 2023 23:49:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679528957;
-        bh=4e2XnzVD64xxw0K3LkJydIgTL5u8SOHIr+8q/XXU+cY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=SQHWi+M9SksMIcwSwW7vQk2ilND7txWs1TQERx+M9MLFfOxkbkRwcYMY1Quf3fszz
-         A9VzaLlXafrRLkseMo5Enbic1gJ4NIg16mxt6OINxPaLzLTvJcb03OgwL0EcKSpY+y
-         xFWE73Yv65DknBcyHr+7+seStGRE0erx5o7HZDkoW4AcAle7CBOQ/nkUjfMiqCHbI1
-         wSC4swco5gKd2WaMoA3KZ7dYaTj4vQNi4IzCndBKtW8d6h3zd3ws9T8cazIcKs5tym
-         6A3Zif8XPxBSbAyIS7igO1XqC++zSWZpmZbYPO6yXENKVYtGj72zR7rqdmQWdLFCYP
-         K4Luha7MPrWnA==
-Message-ID: <003f436e96aa480f02ee5147f428f389.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        Thu, 23 Mar 2023 04:33:10 -0400
+Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FFAF5BBD
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Mar 2023 01:33:07 -0700 (PDT)
+Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-5456249756bso87225357b3.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Mar 2023 01:33:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679560387;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cxxADGM7ougpcYQ83aeznKVeHn9174ZSNJoBCrMRZW4=;
+        b=BTbo8CJVXRcdmDMOM4UfP124qgFd+Dy8GJUF6z0c3o+Y+FsK72/6RlC3M/w1pIQDbw
+         GOY8S+I+6J0LGanKOboWWqcovlIQQS8iN/HozNnyX3v3CItJW7atXtnUQwr15/DLiuAH
+         0OQ5HGlVelykx478Yy98SmI3GhHbB3/Gc0hTt+1aUfJyKuZTP0gTDwChy29fpSpMZJPK
+         /ttN/GdglwV3yLoS/q2TOwUwVFd6kczeZQZYr6LD5uyerO40xK+zmw+YyxY7LaWGPidO
+         2WMcTauKGs3pReavYjS1Roat157c8dqXUdRR8/3M+780QB+JvBjGJuVYLd/aq9/LfUow
+         2O2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679560387;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cxxADGM7ougpcYQ83aeznKVeHn9174ZSNJoBCrMRZW4=;
+        b=53LQvS4GEms3S01wtEqBA/nWSPNAAq2fRNQN06I0Winv+fqDBIqLbQn5o9Oc7gfEHT
+         GAsaAamP0YWGLIyZcvUuEVUtmgOsmKBPwXRlwIWtDRsczAdUgy7dVmyhp1l4SpK8Kbx1
+         Num/TrWERb4EJlikGRxOqUGVoKI8oFBlA3FHDrx0dAOP5P3Q8IfcmnRRpPq7z0IDm33K
+         Ucag04AOntDPJF9aRiLHh0IrWmh+IxlagRuwYc9aCTwKdbt3+si98DRi83b2fZUQr3ry
+         lCyFM9thIZSQZL2c97xIcbJMlJgnd62TLAzApt/ckJAEqczIoF+YzUKbV+7t7NcPktFk
+         /r6Q==
+X-Gm-Message-State: AAQBX9dab1kYlto4Go8RuvPKBcfpGyQbdGm5Sn7iYXM4/p4NGL4hKH0c
+        s6yfqtqHiWsHzaolcjN28mG/Epu67xwAtOLYYOI5NA==
+X-Google-Smtp-Source: AKy350beNfKqYmxZD6Py6G2/x4UomJShnG3A20iBsq0qiIUpVjYvYk7dcPiC73v8tqDiLG/XhlxCs6p4eoqkD5syZ9E=
+X-Received: by 2002:a81:ed09:0:b0:545:8202:bbcf with SMTP id
+ k9-20020a81ed09000000b005458202bbcfmr1373175ywm.9.1679560386843; Thu, 23 Mar
+ 2023 01:33:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230322173549.3972106-1-robh@kernel.org>
 References: <20230322173549.3972106-1-robh@kernel.org>
+In-Reply-To: <20230322173549.3972106-1-robh@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 23 Mar 2023 09:32:55 +0100
+Message-ID: <CACRpkdaWJX6Dgk5DeVS2uyFuL863jdAgBj2_+dhriiek0zPkKw@mail.gmail.com>
 Subject: Re: [PATCH] dt-bindings: clock: Drop unneeded quotes
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+To:     Rob Herring <robh@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
         linux-mediatek@lists.infradead.org
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>
-Date:   Wed, 22 Mar 2023 16:49:15 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Quoting Rob Herring (2023-03-22 10:35:48)
+On Wed, Mar 22, 2023 at 6:35=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
+:
+
 > Cleanup bindings dropping unneeded quotes. Once all these are fixed,
 > checking for this can be enabled in yamllint.
->=20
+>
 > Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
