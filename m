@@ -2,131 +2,102 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD579C6FD1C
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Mar 2023 08:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BBBC77B61
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Mar 2023 08:39:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231444AbjCWId7 (ORCPT
+        id S231302AbjCWIj6 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 23 Mar 2023 04:33:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38514 "EHLO
+        Thu, 23 Mar 2023 04:39:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231460AbjCWIdk (ORCPT
+        with ESMTP id S231473AbjCWIje (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Mar 2023 04:33:40 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 571AF86BB
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Mar 2023 01:33:33 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230323083330euoutp0177c8ea608800468dea95905df92932ef~O-0uD2u7m1349713497euoutp014
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Mar 2023 08:33:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230323083330euoutp0177c8ea608800468dea95905df92932ef~O-0uD2u7m1349713497euoutp014
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1679560410;
-        bh=YudGPA60bFxRDbJj3Qc3E+Wrq3F9hpMuQjBdPXmpKAo=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=PRhlmaiynunD/Lf64BFyTvlQ2rjTylZ2cuCD9xdli1z9wny5OOeVCn3sTS4CGk5ZU
-         rAmn1sJyHuBzQ4FQoZy0zfSb4+8jkCb7bEWItJhY7BiW2cMeI5UWvsiJ21LWBZNQGQ
-         DwAq0tekHwGFLHVqn8ep61VTLrVeDnzcOW7AqSt8=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230323083330eucas1p19a97dfc0ce93df9ef18fa48df58faa23~O-0t2oqWn0376103761eucas1p1P;
-        Thu, 23 Mar 2023 08:33:30 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id BF.96.10014.ADE0C146; Thu, 23
-        Mar 2023 08:33:30 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230323083330eucas1p1f7e3f9beb5ba168c6b13374d74c158f0~O-0taGy_-0377303773eucas1p1M;
-        Thu, 23 Mar 2023 08:33:30 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230323083330eusmtrp1fd0d0ddebb0ed10535121ce630db59bf~O-0tZfgZI1498714987eusmtrp1Y;
-        Thu, 23 Mar 2023 08:33:30 +0000 (GMT)
-X-AuditID: cbfec7f5-b8bff7000000271e-1c-641c0eda28c8
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 08.8B.08862.ADE0C146; Thu, 23
-        Mar 2023 08:33:30 +0000 (GMT)
-Received: from AMDC2765.eu.corp.samsungelectronics.net (unknown
-        [106.120.51.73]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230323083329eusmtip190f52998ff08829aa6a9ccae7d7e7f53~O-0s8uj8e1892518925eusmtip1O;
-        Thu, 23 Mar 2023 08:33:29 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        patches@opensource.cirrus.com
-Subject: [PATCH] regulator: wm8994: Use PROBE_FORCE_SYNCHRONOUS
-Date:   Thu, 23 Mar 2023 09:33:12 +0100
-Message-Id: <20230323083312.199189-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 23 Mar 2023 04:39:34 -0400
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 974FE18B30;
+        Thu, 23 Mar 2023 01:38:11 -0700 (PDT)
+Received: by mail-qv1-f52.google.com with SMTP id q88so7440049qvq.13;
+        Thu, 23 Mar 2023 01:38:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679560690;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ts6l4q35PJyZVvbtUPUcE0vDkunILKSFRvvJ+IL6obs=;
+        b=g8bpv/jsdh05yaEiapsXJJWClDSFO83bVAezP9P7XZ9vpaAaX7bMcbznm02VRa1332
+         4HXloZRSUr16LN3Q9D3Z3fXYUPGR20IBSdhoKXDLyjwlPBt2H368j/R1c2enS3s5Fi/x
+         U+El+e2+VLToKgu2qpp7ILhULLJYx2NwbY21MDwUgjDv/p5/zvYjOPEW71x6uJyy9Pcs
+         3OiEoDYVPBXOmNPhf8dQA8XGo6UinXsfnc9DwnoYjJPEPncCzEwJiJnMzV6oVVBs/Gjv
+         BtH90JcsBp/BOz4BzsDOIiT0+gP5cL7prbKnj+ejzg++3+IgOtNku+w+3GT5LrBtjUL7
+         qGYA==
+X-Gm-Message-State: AO0yUKW9zKmGBgUGEkrc8vaTvdyK9Bu8zChIrQPCiw7FaV1VzMooGL/3
+        sU1ZUcjNePvlZFYs/4ypj9P8Paf8niKwFg==
+X-Google-Smtp-Source: AK7set90nJyJOqYatqHO3HFdFDeNvleNWHaNnVTj7wLVKS/DheMGSAlW2icGSGPQickvF4b6fSgnwQ==
+X-Received: by 2002:a05:6214:29e1:b0:5ab:3328:d6e7 with SMTP id jv1-20020a05621429e100b005ab3328d6e7mr9960177qvb.10.1679560690467;
+        Thu, 23 Mar 2023 01:38:10 -0700 (PDT)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
+        by smtp.gmail.com with ESMTPSA id v127-20020a379385000000b007456c75edbbsm12854228qkd.129.2023.03.23.01.38.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Mar 2023 01:38:09 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-541a05e4124so383422227b3.1;
+        Thu, 23 Mar 2023 01:38:09 -0700 (PDT)
+X-Received: by 2002:a81:af02:0:b0:544:8bc1:a179 with SMTP id
+ n2-20020a81af02000000b005448bc1a179mr1425037ywh.4.1679560688960; Thu, 23 Mar
+ 2023 01:38:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOKsWRmVeSWpSXmKPExsWy7djPc7q3+GRSDPa+lLOY+vAJm8XZZQfZ
-        LL5d6WCyuLxrDpvFjPP7mCzWHrnLbvH5/X5WB3aP2Q0XWTx2zrrL7rFpVSebx/Q5/xk9+ras
-        YvT4vEkugC2KyyYlNSezLLVI3y6BK+PxhI0sBd/YKk5tbGBpYPzI2sXIySEhYCJxr+klI4gt
-        JLCCUWLdNI0uRi4g+wujxJurH9ghnM+MEue2zoHr6LpyAyqxnFFiybLXTBBOK5PEhI8/WECq
-        2AQMJbredrGB2CICzhK3P3xjASliFjjEKLFtx012kISwgL3E3f42sAYWAVWJvg8/wQ7hFbCT
-        +DHvHzPEOnmJ/QfPMkPEBSVOznwCVs8MFG/eOpsZZKiEwFIOiffnvgBt4wByXCROfBOE6BWW
-        eHV8CzuELSNxenIPC0R9O6PEgt/3mSCcCYwSDc9vMUJUWUvcOfcLbBCzgKbE+l36EGFHicNd
-        i5gh5vNJ3HgrCHEDn8SkbdOhwrwSHW1CENVqErOOr4Nbe/DCJahXPCSePZzKAgnrWInHu9vZ
-        JjAqzELy2Swkn81CuGEBI/MqRvHU0uLc9NRi47zUcr3ixNzi0rx0veT83E2MwLRz+t/xrzsY
-        V7z6qHeIkYmDERjIHMxKIrxuzBIpQrwpiZVVqUX58UWlOanFhxilOViUxHm1bU8mCwmkJ5ak
-        ZqemFqQWwWSZODilGpiW+MzSO/RYSiVpwqPpB9de9Hno/PSh1cK3QR+v8m23Dlf4EvBHNOoh
-        9+Lj2z/e5LoeOzOkK1Gs+a/vXT1Gycxfpy9ph+mEv9JjKlZeesjqAe/GWQ5qHOt7xZe5iP4I
-        8or8tlJ6u4jrstkW26z0azdraOk93+b2/vrz/5NUwrcFmydnfwxbqrHTfqrT5NpdcYcvRxuV
-        fVDU8lfON70ceLCIi+NoYrt02Otzuyf+y67kCbh8QdfeJSIiZQVfeU9JfbCAWnGE08VS1vaO
-        iGansg1isxjZDgRNUjbPdwlas0LG1y3n1zddE/tkLZ39sTcWpd7K3BOffaUqtd197Q3HxXyx
-        wR8/c70/+3jKnm3OvEosxRmJhlrMRcWJANuPX5WqAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHLMWRmVeSWpSXmKPExsVy+t/xu7q3+GRSDPoeMVtMffiEzeLssoNs
-        Ft+udDBZXN41h81ixvl9TBZrj9xlt/j8fj+rA7vH7IaLLB47Z91l99i0qpPNY/qc/4wefVtW
-        MXp83iQXwBalZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqk
-        b5egl/F4wkaWgm9sFac2NrA0MH5k7WLk5JAQMJHounKDvYuRi0NIYCmjxM7OG0wQCRmJk9Ma
-        oIqEJf5c62KDKGpmknhy8BMjSIJNwFCi6y1IgpNDRMBVovXLDxaQImaBY4wSt5e9AOsWFrCX
-        uNvfxgJiswioSvR9+AnWzCtgJ/Fj3j9miA3yEvsPnmWGiAtKnJz5BKyeGSjevHU28wRGvllI
-        UrOQpBYwMq1iFEktLc5Nzy021CtOzC0uzUvXS87P3cQIDPhtx35u3sE479VHvUOMTByMhxgl
-        OJiVRHjdmCVShHhTEiurUovy44tKc1KLDzGaAt03kVlKNDkfGHN5JfGGZgamhiZmlgamlmbG
-        SuK8ngUdiUIC6YklqdmpqQWpRTB9TBycUg1M8vv4s1ZXCd9nYTPbb28Uu+fwDKXc3EWhy0J2
-        G0Y9W9j9hu/1e6sooZm96YIz+OZuubJf4/D9QqOS6acFs52enPRX6fr2Ref4qq4Z85hCzRmt
-        Uidus99jFPW5XKO3STCUeZ1Jws0pswNkawJVb4nXvZhi8+zjHp51F9s2aswIT9Ge9NK98op3
-        V2Rx342c0gWP29k3fn5w1kI/w3bat/R3V1O2NpjcPrxAc82bzRxzmT8nZPA3zU6791fuU8jM
-        6XuWPFUy317RVlf16Z7YbeMd1ta1p3KyGTYkum35d/m1Q93lcobP0y9sV9ZamZsaeeram07J
-        ij9v/theeeAwfdODl+mMKROW77zGrjpVlakqQYmlOCPRUIu5qDgRAICrdyIBAwAA
-X-CMS-MailID: 20230323083330eucas1p1f7e3f9beb5ba168c6b13374d74c158f0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230323083330eucas1p1f7e3f9beb5ba168c6b13374d74c158f0
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230323083330eucas1p1f7e3f9beb5ba168c6b13374d74c158f0
-References: <CGME20230323083330eucas1p1f7e3f9beb5ba168c6b13374d74c158f0@eucas1p1.samsung.com>
+References: <20230322173549.3972106-1-robh@kernel.org>
+In-Reply-To: <20230322173549.3972106-1-robh@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 23 Mar 2023 09:37:57 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXUtnngE4Jk6P0iLF7MXnp+7jw9XXOZsbSutDtbO77d=Q@mail.gmail.com>
+Message-ID: <CAMuHMdXUtnngE4Jk6P0iLF7MXnp+7jw9XXOZsbSutDtbO77d=Q@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: Drop unneeded quotes
+To:     Rob Herring <robh@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Restore synchronous probing for wm8994 regulators because otherwise the
-sound device is never initialized on Exynos5250-based Arndale board.
+On Wed, Mar 22, 2023 at 6:35 PM Rob Herring <robh@kernel.org> wrote:
+> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
+> checking for this can be enabled in yamllint.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Fixes: 259b93b21a9f ("regulator: Set PROBE_PREFER_ASYNCHRONOUS for drivers that existed in 4.14")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/regulator/wm8994-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml | 4 ++--
+>  .../bindings/clock/renesas,rcar-usb2-clock-sel.yaml           | 4 ++--
+>  .../devicetree/bindings/clock/renesas,rzg2l-cpg.yaml          | 4 ++--
 
-diff --git a/drivers/regulator/wm8994-regulator.c b/drivers/regulator/wm8994-regulator.c
-index 8921051a00e9..2946db448aec 100644
---- a/drivers/regulator/wm8994-regulator.c
-+++ b/drivers/regulator/wm8994-regulator.c
-@@ -227,7 +227,7 @@ static struct platform_driver wm8994_ldo_driver = {
- 	.probe = wm8994_ldo_probe,
- 	.driver		= {
- 		.name	= "wm8994-ldo",
--		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-+		.probe_type = PROBE_FORCE_SYNCHRONOUS,
- 	},
- };
- 
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.34.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
