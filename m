@@ -2,129 +2,104 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57912C761AF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Mar 2023 08:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AEEC6FD1C
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Mar 2023 11:40:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231495AbjCWIlh (ORCPT
+        id S230382AbjCWLkr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 23 Mar 2023 04:41:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60360 "EHLO
+        Thu, 23 Mar 2023 07:40:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231597AbjCWIlW (ORCPT
+        with ESMTP id S229532AbjCWLkq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Mar 2023 04:41:22 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F07837B54
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Mar 2023 01:40:09 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id x198so14189850ybe.9
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Mar 2023 01:40:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679560808;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LVdvufZV56apmT3wmD9ncMcsijkg1/WCzRLjEqhYbYk=;
-        b=jt0T1kyTzkSVHHCl6C3RepTUHJHJMJwp3E7PBrhT2/xYa5EtksiTTG/c8wwIzIU4Z/
-         SP6qSrUD+NxMXZX1bTG8PCQpgfuHP59u0Np8wiu0KUJPXSqAJzXQDAgAhdBdm4ERqTZu
-         W1iU/UXMn4o+x12ZfA1TbzzlGle1mhqc6+pCFoTYeSycXLH0chaeh9w1eBTkD2vOP8sA
-         vAdlNnAtJbu1a1BYoccU9GKqHc2Cvh+aARoS6g2QyjguTZ3KI+BylBNheh9Xg9t4NtTd
-         2k3OHgvwLC4ljAJqFRZ+gv0eOvpjcGObjDM/uBGal3iyuErBjVTwBqdgO9KbDxL+mVt4
-         VMjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679560808;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LVdvufZV56apmT3wmD9ncMcsijkg1/WCzRLjEqhYbYk=;
-        b=zvs84FQw/vQl/nCmBy+0T51dFulsVoZCW+BeKdDfG5GV9LS1l8oHJp5+YPHZhE398K
-         X9Hxg6hSaqFWRtmxQ/8lG4Ivv69d+PjiEC9xvAhttTYifqUiycNEL7dSHNvtdcqR+iSs
-         K0ZHkfq6hfjl4rCcsTs2pigO1Qq1kX/Zp1ztdCgDoy+pGBA5fSOdZ60Cr2AsP4xPonqe
-         /Te9q3mPKpQg1dIMi1z+YiKAnMAgD7onyvbrVBqaO7XEJjhc4gMru5S6JLqiT62o1ELK
-         G7qvVgEeZylmEQbG/ZHO+b/dBsSvN9HFlyFtYJjIfA6AProW87XK5xln4VxH9QMZ7m5L
-         HVig==
-X-Gm-Message-State: AAQBX9dKhfdxtISmu0uRxFqdMatQ1XdSJajMz+XBO8AL/I3S5WgxoV0e
-        lRag4Q8VhgrCdcupBegW/RyM0azlKjUHk3tTp2eL9w==
-X-Google-Smtp-Source: AKy350aSyoiWihVzfFCCUghPO+0y8OTXazqo59ZooJtguYITdbyYyykALVgXcFtgTaOhhPAE83rDbJuRGMjWP7pJT3I=
-X-Received: by 2002:a25:8712:0:b0:b26:47f3:6cb with SMTP id
- a18-20020a258712000000b00b2647f306cbmr1346675ybl.4.1679560808264; Thu, 23 Mar
- 2023 01:40:08 -0700 (PDT)
+        Thu, 23 Mar 2023 07:40:46 -0400
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C0881B2FA;
+        Thu, 23 Mar 2023 04:40:44 -0700 (PDT)
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32N4wNTc023252;
+        Thu, 23 Mar 2023 06:40:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=9TGqX4W62K3tpa0XL956cK3xYTZlgHcISQmo6QNyIEg=;
+ b=KAM6BjHcS+RkSRgbnBgwl5iQMgX20ve6Mx1LhrNTa77J4aol9bagGU22Z9Sbr+LD5pmQ
+ UTZ1Z0In2MJRmS5XUZQWvgOhzXlA6QuxvyajUG0ayx2FwyTfyrtLW6fAbcH9TiUKnbjz
+ CuJ8uOxK7cWxcbnneE+MsfuAdIVvBSe1CxXsGiFA6PN4NC7jduSydaKW2GXjzj8seYQG
+ 7SDZWctb/91M1OT1auWWD602PH3MFJiSiYf0pT2k0TG+MVUwFz6V3LR9Qj4zqpMRvvcT
+ I7555cDAxVWYX15lmcEEI7GfW+lF8at0onsv6bRj7XGgLao718m5sHb6Vxg9qtXe+FLc DA== 
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3pf7tj4m2b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 23 Mar 2023 06:40:37 -0500
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.25; Thu, 23 Mar
+ 2023 06:40:35 -0500
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1118.25 via Frontend Transport; Thu, 23 Mar 2023 06:40:35 -0500
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id D189E11D4;
+        Thu, 23 Mar 2023 11:40:35 +0000 (UTC)
+Date:   Thu, 23 Mar 2023 11:40:35 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH] regulator: wm8994: Use PROBE_FORCE_SYNCHRONOUS
+Message-ID: <20230323114035.GL68926@ediswmail.ad.cirrus.com>
+References: <CGME20230323083330eucas1p1f7e3f9beb5ba168c6b13374d74c158f0@eucas1p1.samsung.com>
+ <20230323083312.199189-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-References: <20230317233623.3968172-1-robh@kernel.org>
-In-Reply-To: <20230317233623.3968172-1-robh@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 23 Mar 2023 09:39:57 +0100
-Message-ID: <CACRpkdYq4jE7Qn1w8iPeGz7vxj_CeZ+H48B0TVYmeF4Tt=kHgA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: Drop unneeded quotes
-To:     Rob Herring <robh@kernel.org>
-Cc:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Jianlong Huang <jianlong.huang@starfivetech.com>,
-        Dvorkin Dmitry <dvorkin@tibbo.com>,
-        Wells Lu <wellslutw@gmail.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, asahi@lists.linux.dev,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, patches@opensource.cirrus.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20230323083312.199189-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-ORIG-GUID: -_tg5mKvL2lfs_8H1VsbxGuyuLJnQxI7
+X-Proofpoint-GUID: -_tg5mKvL2lfs_8H1VsbxGuyuLJnQxI7
+X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Mar 18, 2023 at 12:36=E2=80=AFAM Rob Herring <robh@kernel.org> wrot=
-e:
+On Thu, Mar 23, 2023 at 09:33:12AM +0100, Marek Szyprowski wrote:
+> Restore synchronous probing for wm8994 regulators because otherwise the
+> sound device is never initialized on Exynos5250-based Arndale board.
+> 
+> Fixes: 259b93b21a9f ("regulator: Set PROBE_PREFER_ASYNCHRONOUS for drivers that existed in 4.14")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/regulator/wm8994-regulator.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/regulator/wm8994-regulator.c b/drivers/regulator/wm8994-regulator.c
+> index 8921051a00e9..2946db448aec 100644
+> --- a/drivers/regulator/wm8994-regulator.c
+> +++ b/drivers/regulator/wm8994-regulator.c
+> @@ -227,7 +227,7 @@ static struct platform_driver wm8994_ldo_driver = {
+>  	.probe = wm8994_ldo_probe,
+>  	.driver		= {
+>  		.name	= "wm8994-ldo",
+> -		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+> +		.probe_type = PROBE_FORCE_SYNCHRONOUS,
+>  	},
+>  };
 
-> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
-> checking for this can be enabled in yamllint.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Should I queue this patch by the way, or do you need it to go into some
-DT-related tree?
+Yes, these seems to be a wider problem with these complex CODECs
+that have an internal LDO. Changing to async probe, means the
+internal LDO driver doesn't probe before the code in the main MFD
+carries on, which means the regulator framework finds no driver
+and swaps in the dummy. Which means the CODEC never powers up.
 
-Yours,
-Linus Walleij
+I think these basically have to be forced sync, I will do a patch
+to update the other devices working like this.
+
+Thanks,
+Charles
