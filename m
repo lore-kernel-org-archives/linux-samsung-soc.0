@@ -2,153 +2,94 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2805FC74A5B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Mar 2023 19:01:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D99B7C6FD20
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Mar 2023 09:22:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231308AbjCWTBo (ORCPT
+        id S231949AbjCXJWS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 23 Mar 2023 15:01:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34808 "EHLO
+        Fri, 24 Mar 2023 05:22:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230217AbjCWTBn (ORCPT
+        with ESMTP id S232078AbjCXJWN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Mar 2023 15:01:43 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7870F32CE4;
-        Thu, 23 Mar 2023 12:01:39 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id s13so1978194wmr.4;
-        Thu, 23 Mar 2023 12:01:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679598098;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eLv+OdWP2/q4icqUygxqdKy5WVqm1CK1qz/X+1uMQ6s=;
-        b=cu5m+OlbboTOC7NIqSEcp8iW3kmX+jLP0i9ZshSDb0YwwsjhG1UnGQihGdnCsHvzxT
-         E5fzMruGiyGXORVsaVQVBbyi7036u7U5L4qTaq5l56LuyOE9nazVT64HJCGkSLuVN93r
-         1B4AKbmo7E/IH5irUJwFpldHtDZ0+Orn/pNa9BAq9838vXVb3y7SkxG89vediufY01gv
-         iT/xH+JDL/vm8bbKhZUAcxrvBAsVgYJLNDWRSp5CWvQ6mQIAPqudwQWWgSduywYWAvd6
-         ICah9KqPXqaujDhUvMUhzr0TOCO/Cv+vmxBx11QIL752t6GbzmIoKJBQf+QxYLTe/Kgd
-         cVoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679598098;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eLv+OdWP2/q4icqUygxqdKy5WVqm1CK1qz/X+1uMQ6s=;
-        b=C6Hsij6utfA9CyJc46hfE7y/t5sMaQZCIkKIKHk1/bFyVl6wgRW1hVJJI0NTciOwyh
-         lLEbJci/8xIWLT8N2PluipkbxjECeH2S10PhFYG+e9iiZbuNtngqOT0jr4dy/tJRTeN7
-         +e3NS/2va/OvnKiW+Q64UoE6LavQ/Ym8mbQd+sT1XLJpxfJCtJDhCEUaHw4Ba6oqfwWj
-         sigV0rPS+37Q8HW8gz6WC7BN6qjkUifdxrlysrc8qJBRedO4NJnGTYXt4fKaAahDYAXE
-         FvqnkXCBV/wQrH/db5DupseVbjapukblrtrXuL2ZE0Q1NpMaCXKgDvJns8DjhMmIY55W
-         YZ5w==
-X-Gm-Message-State: AO0yUKW+l5licVpScYAPpG4bpB4txIuktVJuR1EXI1bIKmhILeUVJ16y
-        24PkFNW6DnAi9XOg0kDPC5M=
-X-Google-Smtp-Source: AK7set+rYnmeyHLDI8kRSWajUorF8AQNiBslvOhL1B8d1ZJbljrj8VFTESbYvCOCBRF9m/MSyyRPaw==
-X-Received: by 2002:a05:600c:22d4:b0:3ed:b56c:9496 with SMTP id 20-20020a05600c22d400b003edb56c9496mr523314wmg.31.1679598097756;
-        Thu, 23 Mar 2023 12:01:37 -0700 (PDT)
-Received: from jernej-laptop.localnet (82-149-1-233.dynamic.telemach.net. [82.149.1.233])
-        by smtp.gmail.com with ESMTPSA id x11-20020a05600c21cb00b003ede3e54ed7sm2724420wmj.6.2023.03.23.12.01.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Mar 2023 12:01:37 -0700 (PDT)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Yu Chen <chenyu56@huawei.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Robert Marko <robert.marko@sartura.hr>,
-        Luka Perkov <luka.perkov@sartura.hr>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Vincent Shih <vincent.sunplus@gmail.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh@kernel.org>
-Cc:     linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-usb@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-can@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: phy: Drop unneeded quotes
-Date:   Thu, 23 Mar 2023 20:01:34 +0100
-Message-ID: <4814446.31r3eYUQgx@jernej-laptop>
-In-Reply-To: <20230320233955.2921179-1-robh@kernel.org>
-References: <20230320233955.2921179-1-robh@kernel.org>
+        Fri, 24 Mar 2023 05:22:13 -0400
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07FC3233C6;
+        Fri, 24 Mar 2023 02:21:51 -0700 (PDT)
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32O737JW001266;
+        Fri, 24 Mar 2023 04:21:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=PjojhDR+j8OZSSeQ3YV5sggRek06OGFFYeqFFzU5slg=;
+ b=KT9Ed3WONEmFg0DvcMihUxIoW8cXUx9QddLgqk1QveYSM+I94fkw2kYmzzAM0ZqsInrC
+ Y6eisyyALiteRfRLls2TpDAcQDb1Px+r0T8N6e4s3K/bHg1EfCXJUzwk3rKVSUfxN/nm
+ EZtX+ppSZq7Ib082ZXsYinc9le0WWTNjhLNX7+jKH+jf+FpG20mw/wTjX7YP4d4h3HgS
+ 3Ms9HkBOFRWbIinxgmUfB5qwYGumSEMfiLXwa9+WNxK0ZUds+b2Ln7zP8pg9iSl4lSvp
+ YNRwSR/0oSK/EIvRPlwZRxv/BSjKU95S9ribeQ+oQyn8HSUMKFMweBogNiLd3Uj2IGrz OA== 
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3pgy7drqyk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 24 Mar 2023 04:21:43 -0500
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.25; Fri, 24 Mar
+ 2023 04:21:41 -0500
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.2.1118.25 via Frontend
+ Transport; Fri, 24 Mar 2023 04:21:41 -0500
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id BC8C545;
+        Fri, 24 Mar 2023 09:21:41 +0000 (UTC)
+Date:   Fri, 24 Mar 2023 09:21:41 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     Doug Anderson <dianders@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH] regulator: wm8994: Use PROBE_FORCE_SYNCHRONOUS
+Message-ID: <20230324092141.GN68926@ediswmail.ad.cirrus.com>
+References: <CGME20230323083330eucas1p1f7e3f9beb5ba168c6b13374d74c158f0@eucas1p1.samsung.com>
+ <20230323083312.199189-1-m.szyprowski@samsung.com>
+ <20230323114035.GL68926@ediswmail.ad.cirrus.com>
+ <CAD=FV=UYO1KaoAZ7o5cA83SC1VHRomvJfaXVWyYPKrEZHyNNjg@mail.gmail.com>
+ <20230323174531.GM68926@ediswmail.ad.cirrus.com>
+ <beeef631-943a-40db-af09-753c96b5b140@sirena.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <beeef631-943a-40db-af09-753c96b5b140@sirena.org.uk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-ORIG-GUID: 3-rM4yn8D5wWzFtoApgRb1-j2A2GC718
+X-Proofpoint-GUID: 3-rM4yn8D5wWzFtoApgRb1-j2A2GC718
+X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Dne torek, 21. marec 2023 ob 00:39:52 CET je Rob Herring napisal(a):
-> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
-> checking for this can be enabled in yamllint.
+On Thu, Mar 23, 2023 at 05:49:28PM +0000, Mark Brown wrote:
+> On Thu, Mar 23, 2023 at 05:45:31PM +0000, Charles Keepax wrote:
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../bindings/phy/allwinner,sun50i-h6-usb3-phy.yaml          | 4 ++--
->  .../bindings/phy/allwinner,sun6i-a31-mipi-dphy.yaml         | 2 +-
+> > I think really the best place to look at this would be at the
+> > regulator level. It is fine if mfd_add_devices passes, the problem
+> > really is that the regulator core doesn't realise the regulator is
+> > going to be arriving, and thus returns a dummy regulator, rather
+> > than returning EPROBE_DEFER. If it did the MFD driver would probe
+> > defer at the point of requesting the regulator, which would all
+> > make sense.
+> 
+> You need the MFD to tell the regulator subsystem that there's a
+> regulator bound there, or to force all the users to explicitly do the
+> mapping of the regulator in their firmwares (which isn't really a
+> viable approach).
 
-For Allwinner:
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+Yeah changing the firmware situation is definitely not a goer. I
+need to just clarify in my head exactly what is missing, with
+respect to the know the regulator exists.
 
-Best regards,
-Jernej
-
->  .../devicetree/bindings/phy/amlogic,axg-mipi-dphy.yaml      | 4 ++--
->  .../bindings/phy/amlogic,g12a-mipi-dphy-analog.yaml         | 4 ++--
->  .../devicetree/bindings/phy/amlogic,g12a-usb2-phy.yaml      | 4 ++--
->  .../devicetree/bindings/phy/amlogic,g12a-usb3-pcie-phy.yaml | 4 ++--
->  .../bindings/phy/amlogic,meson-axg-mipi-pcie-analog.yaml    | 4 ++--
->  .../devicetree/bindings/phy/amlogic,meson-axg-pcie.yaml     | 4 ++--
->  .../devicetree/bindings/phy/amlogic,meson8-hdmi-tx-phy.yaml | 4 ++--
->  .../devicetree/bindings/phy/amlogic,meson8b-usb2-phy.yaml   | 4 ++--
->  .../devicetree/bindings/phy/brcm,bcm63xx-usbh-phy.yaml      | 4 ++--
->  Documentation/devicetree/bindings/phy/brcm,sata-phy.yaml    | 4 ++--
->  Documentation/devicetree/bindings/phy/cdns,salvo-phy.yaml   | 4 ++--
->  .../devicetree/bindings/phy/hisilicon,hi3660-usb3.yaml      | 4 ++--
->  .../devicetree/bindings/phy/hisilicon,hi3670-usb3.yaml      | 6 +++---
->  .../bindings/phy/marvell,armada-3700-utmi-phy.yaml          | 4 ++--
->  .../bindings/phy/marvell,armada-cp110-utmi-phy.yaml         | 4 ++--
->  .../devicetree/bindings/phy/marvell,mmp3-hsic-phy.yaml      | 4 ++--
->  .../devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml    | 4 ++--
->  .../devicetree/bindings/phy/phy-cadence-sierra.yaml         | 4 ++--
->  .../devicetree/bindings/phy/phy-cadence-torrent.yaml        | 4 ++--
->  Documentation/devicetree/bindings/phy/phy-tegra194-p2u.yaml | 4 ++--
->  Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml     | 4 ++--
->  Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml   | 4 ++--
->  Documentation/devicetree/bindings/phy/qcom,usb-hs-28nm.yaml | 4 ++--
->  .../devicetree/bindings/phy/qcom,usb-snps-femto-v2.yaml     | 4 ++--
->  Documentation/devicetree/bindings/phy/qcom,usb-ss.yaml      | 4 ++--
->  .../devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml       | 4 ++--
->  .../devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml    | 4 ++--
->  Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml  | 2 +-
->  .../devicetree/bindings/phy/sunplus,sp7021-usb2-phy.yaml    | 4 ++--
->  .../devicetree/bindings/phy/ti,phy-am654-serdes.yaml        | 4 ++--
->  Documentation/devicetree/bindings/phy/ti,phy-gmii-sel.yaml  | 4 ++--
->  Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml | 4 ++--
->  Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml  | 4 ++--
->  35 files changed, 69 insertions(+), 69 deletions(-)
-
-
-
+Thanks,
+Charles
