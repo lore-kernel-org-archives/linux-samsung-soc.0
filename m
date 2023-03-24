@@ -2,127 +2,152 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D82F4C77B61
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Mar 2023 14:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D12A2C6FD1C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Mar 2023 15:06:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231761AbjCXOeS (ORCPT
+        id S232342AbjCXPGf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Mar 2023 10:34:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44318 "EHLO
+        Fri, 24 Mar 2023 11:06:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229551AbjCXOeQ (ORCPT
+        with ESMTP id S232341AbjCXPGf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Mar 2023 10:34:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0654B10EB;
-        Fri, 24 Mar 2023 07:34:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9EA5862B31;
-        Fri, 24 Mar 2023 14:34:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED42C433A4;
-        Fri, 24 Mar 2023 14:34:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679668455;
-        bh=ozq+vH75mAjNkKi3jfaobvjryF3L2Ni1S1Tn6tmagvQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZnhWOCjRHBVl6jMFyTdz2uJBPpSM2kij2cHeCYfnvMal7mOe3nevgli12nKSVyo1+
-         rZlC/eiRp+q6eYz1wuvLbURRo4cOa1ihg2sXmqlhxeiwE/5uyDJZb5KiFkbR81W5wr
-         Mihu8blBLIIPZzPzXG+mtcNvBqAxymxPA4pqExAf5yA8RL9wTslmj93FUvsxYqap4Q
-         U4sDe3114VPd8xkzxxSl3wiRrlADe7/VvdzGpRwnCFQhUCrAMQiONqvicHZNOAzuqU
-         qvkUUlLWORUAOjqfuxV3S76W62ttb0Hz0+kSU2MB9UaOHxxmARqzQALHu2NEdEOapF
-         9LgGCEDTVE4Ew==
-Received: by mail-pl1-f173.google.com with SMTP id ix20so1978358plb.3;
-        Fri, 24 Mar 2023 07:34:15 -0700 (PDT)
-X-Gm-Message-State: AAQBX9fyxFGJ2Q7V/4XTxyFgsG+S3SoSPtgcDKoRmveKbIlYoNbAyKn/
-        oGawmAEbx0daUxX9Zpt4COpTTvA0lLKbTPlqTQ==
-X-Google-Smtp-Source: AKy350Y57cQ3/TzcctMtJeBkZVGy3RaGVnEiqyzqBxcgVPo3gFc72P+HHXJ3tIgI+qnw4mjDX3xPaiNQsV4yB10ee/Y=
-X-Received: by 2002:a81:b149:0:b0:543:9065:b225 with SMTP id
- p70-20020a81b149000000b005439065b225mr1122523ywh.5.1679668433642; Fri, 24 Mar
- 2023 07:33:53 -0700 (PDT)
+        Fri, 24 Mar 2023 11:06:35 -0400
+Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EBC812CEE
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Mar 2023 08:06:31 -0700 (PDT)
+Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-54184571389so38123607b3.4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Mar 2023 08:06:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1679670388;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pO9JO1Nl3vWVaBBZbGNy96ElA1aYviPDI6HLdepDIuA=;
+        b=Sdr1nZK4AmDw66Jdr6BgRFNzOYYahTtPW1new4Fjey+FIqkxE2y5N5oy0ZLnd+fYsX
+         wVB1BDCHD93TFQBsQdAExKCsn/91GVJ7Astm7SK/ysY0r+KX/6ZjxCo2YnAdvbxcZxvj
+         Om3Bby0CSDarLB1G30I/b6LUqzEIJItkt8IyY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679670388;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pO9JO1Nl3vWVaBBZbGNy96ElA1aYviPDI6HLdepDIuA=;
+        b=1KQEAUG87ivpCKKSy3NnIoZZHjd8x+ITTsYOEtz6xQPFFHtkQO9JL1uK3mSIP4OW8H
+         U9Fq8hAShomvW73jVBfJulvvrm6J2Hot9BZ2w+dXceXcw+jQbi28APuNAnEPtJWfvwtT
+         R8RyKTUHEpbJGZsLZsn6jmmyWoLtwvu1X1zmX5vcPTIIHrdLQsb3qcdNmfUWi0PQiCmw
+         P6rkGFN50Y2QG8oMif7OzqamM228eYfYWSm8AVkFpsYd1ngcaVXM6gJXSi6N8qbt8Hwn
+         Uaf82O2OEvpmur3xn/OqXUBUMh0HnPYQkUp4Z8B3M8yTG4TKeu7zTawW7LQlr0qOQJop
+         O7ow==
+X-Gm-Message-State: AAQBX9foQHWOgNNo+8wM6jso+AuAz9exBNYRfBxSA4hLNYpYHO9dAqDY
+        bjWdYHekZow3QdgsaX2VyHentn7fd78wkz5xYWQ=
+X-Google-Smtp-Source: AKy350bFtESsByxgLyNhV6glj+04LJ6I8Qp6Bbyz1kmWlFE0T6rv5AYsKuf/UeM/hyXicKeBpH/Xpg==
+X-Received: by 2002:a81:1902:0:b0:538:6e64:8f71 with SMTP id 2-20020a811902000000b005386e648f71mr7669854ywz.23.1679670388550;
+        Fri, 24 Mar 2023 08:06:28 -0700 (PDT)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
+        by smtp.gmail.com with ESMTPSA id v22-20020a814816000000b00545a08184e6sm453780ywa.118.2023.03.24.08.06.27
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Mar 2023 08:06:27 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id k17so2498920ybm.11
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Mar 2023 08:06:27 -0700 (PDT)
+X-Received: by 2002:a05:6902:1881:b0:b69:83b2:5124 with SMTP id
+ cj1-20020a056902188100b00b6983b25124mr1212852ybb.0.1679670387329; Fri, 24 Mar
+ 2023 08:06:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230317233623.3968172-1-robh@kernel.org> <CACRpkdYq4jE7Qn1w8iPeGz7vxj_CeZ+H48B0TVYmeF4Tt=kHgA@mail.gmail.com>
-In-Reply-To: <CACRpkdYq4jE7Qn1w8iPeGz7vxj_CeZ+H48B0TVYmeF4Tt=kHgA@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 24 Mar 2023 09:33:42 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqL+nF_WwZ-EDpUSD2yrxPLZWxaeb=WpTtPnnbpgcXT7qA@mail.gmail.com>
-Message-ID: <CAL_JsqL+nF_WwZ-EDpUSD2yrxPLZWxaeb=WpTtPnnbpgcXT7qA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: Drop unneeded quotes
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Jianlong Huang <jianlong.huang@starfivetech.com>,
-        Dvorkin Dmitry <dvorkin@tibbo.com>,
-        Wells Lu <wellslutw@gmail.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, asahi@lists.linux.dev,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, patches@opensource.cirrus.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
+References: <CGME20230323083330eucas1p1f7e3f9beb5ba168c6b13374d74c158f0@eucas1p1.samsung.com>
+ <20230323083312.199189-1-m.szyprowski@samsung.com> <20230323114035.GL68926@ediswmail.ad.cirrus.com>
+ <CAD=FV=UYO1KaoAZ7o5cA83SC1VHRomvJfaXVWyYPKrEZHyNNjg@mail.gmail.com>
+ <20230323174531.GM68926@ediswmail.ad.cirrus.com> <CAD=FV=X0SAEk_iUGQ=J-PWk_MzVc7ZikBM3N8rrnhGFzcdBNpw@mail.gmail.com>
+ <20230324092353.GO68926@ediswmail.ad.cirrus.com>
+In-Reply-To: <20230324092353.GO68926@ediswmail.ad.cirrus.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 24 Mar 2023 08:06:15 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WUCqhq-wCoiir-1sNQpTNJfr-c2vAYvyJc6hKi8U4u_w@mail.gmail.com>
+Message-ID: <CAD=FV=WUCqhq-wCoiir-1sNQpTNJfr-c2vAYvyJc6hKi8U4u_w@mail.gmail.com>
+Subject: Re: [PATCH] regulator: wm8994: Use PROBE_FORCE_SYNCHRONOUS
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, patches@opensource.cirrus.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Mar 23, 2023 at 3:40=E2=80=AFAM Linus Walleij <linus.walleij@linaro=
-.org> wrote:
+Hi,
+
+On Fri, Mar 24, 2023 at 2:23=E2=80=AFAM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
 >
-> On Sat, Mar 18, 2023 at 12:36=E2=80=AFAM Rob Herring <robh@kernel.org> wr=
-ote:
->
-> > Cleanup bindings dropping unneeded quotes. Once all these are fixed,
-> > checking for this can be enabled in yamllint.
+> On Thu, Mar 23, 2023 at 11:00:32AM -0700, Doug Anderson wrote:
+> > Hi,
 > >
-> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > On Thu, Mar 23, 2023 at 10:45=E2=80=AFAM Charles Keepax
+> > <ckeepax@opensource.cirrus.com> wrote:
+> > >
+> > > I think really the best place to look at this would be at the
+> > > regulator level. It is fine if mfd_add_devices passes, the problem
+> > > really is that the regulator core doesn't realise the regulator is
+> > > going to be arriving, and thus returns a dummy regulator, rather
+> > > than returning EPROBE_DEFER. If it did the MFD driver would probe
+> > > defer at the point of requesting the regulator, which would all
+> > > make sense.
+> >
+> > I think something like your suggestion could be made to work for the
+> > "microphone" supply in the arizona MFD, but not for the others looked
+> > at here.
+> >
+> > The problem is that if the MFD driver gets -EPROBE_DEFER then it will
+> > go through its error handling path and call mfd_remove_devices().
+> > That'll remove the sub-device providing the regulator. If you try
+> > again, you'll just do the same. :-)
+> >
+> > Specifically in wm8994 after we've populated the regulator sub-devices
+> > then we turn them on and start talking to the device.
+> >
+> > I think the two options I have could both work for wm8994's case:
+> > either add some type of "my children have done probing" to MFD and
+> > move the turning on of regulators / talking to devices there, or add
+> > another stub-device and add it there. ;-)
 >
-> Should I queue this patch by the way, or do you need it to go into some
-> DT-related tree?
+> Is this true if we keep the regulator as sync though? Yes it will
+> remove the children but when it re-adds them the reason that the
+> regulator probe deferred in the first place will hopefully be
+> removed. So it will now fully probe in path.
 
-Stands on its own. You can take it.
+Ah, I see. So you keep it as synchronous _and_ make it so that it
+won't get a dummy. Yeah, I was trying to brainstorm ways we could fix
+it if we kept the regulator async. If we keep it as sync and fix the
+dummy problem then, indeed, it should work as you say.
 
-Rob
+I've spent a whole lot of time dealing with similar issues, though,
+and I think there is actually another related concern with that design
+(where the regulator is synchronous). ;-) If the child device ends up
+depending on a resource that _never_ shows up then you can get into an
+infinite probe deferral loop at bootup. If it works the way it did
+last time I analyzed similar code:
+
+1. Your MFD starts to probe and kicks off probing of its children
+(including the regulator).
+
+2. Your regulator tries to probe and tries to get a resource that will
+never exist, maybe because of a bug in dts or maybe because it won't
+show up until userspace loads a module. It returns -EPROBE_DEFER.
+
+3. The MFD realizes that the regulator didn't come up and it also
+returns -EPROBE_DEFER after removing all its children.
+
+4. That fact that we added/removed devices in the above means that the
+kernel thinks it should retry probes of previously deferred devices
+because, maybe, the device showed up that everyone was waiting for.
+Thus, we go back to step #1.
+
+...the system can actually loop forever in steps #1 - #4 and we ended
+up in that situation several times during development with similar
+architected systems.
+
+
+-Doug
