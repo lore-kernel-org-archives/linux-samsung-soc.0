@@ -2,32 +2,32 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4F6C761AF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Mar 2023 14:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6483FC77B62
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Mar 2023 14:33:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232520AbjCZOdJ (ORCPT
+        id S232410AbjCZOdK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 26 Mar 2023 10:33:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33402 "EHLO
+        Sun, 26 Mar 2023 10:33:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232523AbjCZOdE (ORCPT
+        with ESMTP id S232547AbjCZOdF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 26 Mar 2023 10:33:04 -0400
+        Sun, 26 Mar 2023 10:33:05 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78E9F61B5
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78CEE4EF7
         for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Mar 2023 07:32:57 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pgRQJ-0008TA-7P; Sun, 26 Mar 2023 16:32:43 +0200
+        id 1pgRQJ-0008TS-2D; Sun, 26 Mar 2023 16:32:43 +0200
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pgRQG-006rdf-Bt; Sun, 26 Mar 2023 16:32:40 +0200
+        id 1pgRQG-006rdm-H0; Sun, 26 Mar 2023 16:32:40 +0200
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pgRQF-0088Xq-C4; Sun, 26 Mar 2023 16:32:39 +0200
+        id 1pgRQE-0088Xj-TH; Sun, 26 Mar 2023 16:32:38 +0200
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -36,15 +36,15 @@ To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
 Cc:     Alim Akhtar <alim.akhtar@samsung.com>, linux-media@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de
-Subject: [PATCH 064/117] media: fimc-is: Convert to platform remove callback returning void
-Date:   Sun, 26 Mar 2023 16:31:31 +0200
-Message-Id: <20230326143224.572654-67-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 062/117] media: fimc-core: Convert to platform remove callback returning void
+Date:   Sun, 26 Mar 2023 16:31:29 +0200
+Message-Id: <20230326143224.572654-65-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230326143224.572654-1-u.kleine-koenig@pengutronix.de>
 References: <20230326143224.572654-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1910; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=YoQhZHlKBWG3AsLKqLOSSczqOknOqCR/k6LMBg0SGGA=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkIFbT3jVoeYt9UEn3O4P1tY69DK+FCDa5okK2Y KCo1VaGbd6JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZCBW0wAKCRCPgPtYfRL+ TlfEB/0RmiaPfSi7/Id07Mc3czBQtlK/Ppgyf/m2bHrpHFeCvm6YnFfiCH807E42bCxgYJAaqBE zMAIn+Olsji48KVxXrPLUAZik93EOLufRPEesy7zhf60FT44zKoT0OhFqXaNX+ZDBIYV/ou5CRu OrWCW9DJPYBx50iEGp9u3u+e1LYVT//iGJdARFaxLuF7nD+8WqRmH6LuGgg0CvyNhOyAGZdIntZ Rd4rxs4uDopXdAVbEbWLoGF1KkzQ1pzpuHsMwTe21gL9V+06ueWMtprTHzUMiHxFocHCtnXaqJR eucJHGeDhYKlEImTTlyUkKXoaSOZPOQs2SPOVSuijEeCrRF5
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1811; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=/gDAR1WFxT/u1905dx4UD+u34Zk0RMlD2WklQfEDbLo=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkIFbQBClHyYs1RkuSAjmGh5nHyF+BlFnLftIh5 Bfb9lq1o9WJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZCBW0AAKCRCPgPtYfRL+ ToYzB/9PhprinAEP2a6NE/p3ZLk9AKr1ROKjrPbWJ5s84Fyn8wsyV06m5YRYexA+pfPDdpIiyKU ayWr1KTlQcJrjoVp0SL2Edu4Jm7mPWjPImNWH7diNSt4OJxsCyj8YWUbjFfGU143vAOR5qoGqY0 dWCUU1LfW03fhfJW3ZCoGucwhNc1St54axxmgB4llWoigbe3YqkTpl/nuXeAMD6IMoskYWd4oJh C79rA6cyXWx9+98FRvwllEHi9oHZdmRnpfWdQIOt3NTyfU9UuQuz6kh7lGrUP2Z8JQDXwkwVL4j 13nQfHiQehjA2NOyDa6AD3llDlW1OcoYfKzdYciQyPRi+SCr
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -68,40 +68,39 @@ callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/media/platform/samsung/exynos4-is/fimc-is.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/media/platform/samsung/exynos4-is/fimc-core.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is.c b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
-index a7704ff069d6..530a148fe4d3 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
-@@ -915,7 +915,7 @@ static int fimc_is_suspend(struct device *dev)
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-core.c b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
+index 1791100b6935..a2034ade8b9e 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-core.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
+@@ -1092,7 +1092,7 @@ static int fimc_suspend(struct device *dev)
  }
  #endif /* CONFIG_PM_SLEEP */
  
--static int fimc_is_remove(struct platform_device *pdev)
-+static void fimc_is_remove(struct platform_device *pdev)
+-static int fimc_remove(struct platform_device *pdev)
++static void fimc_remove(struct platform_device *pdev)
  {
- 	struct device *dev = &pdev->dev;
- 	struct fimc_is *is = dev_get_drvdata(dev);
-@@ -932,8 +932,6 @@ static int fimc_is_remove(struct platform_device *pdev)
- 	fimc_is_debugfs_remove(is);
- 	release_firmware(is->fw.f_w);
- 	fimc_is_free_cpu_memory(is);
--
+ 	struct fimc_dev *fimc = platform_get_drvdata(pdev);
+ 
+@@ -1108,7 +1108,6 @@ static int fimc_remove(struct platform_device *pdev)
+ 	fimc_clk_put(fimc);
+ 
+ 	dev_info(&pdev->dev, "driver unloaded\n");
 -	return 0;
  }
  
- static const struct of_device_id fimc_is_of_match[] = {
-@@ -950,7 +948,7 @@ static const struct dev_pm_ops fimc_is_pm_ops = {
+ /* S5PV210, S5PC110 */
+@@ -1160,7 +1159,7 @@ static const struct dev_pm_ops fimc_pm_ops = {
  
- static struct platform_driver fimc_is_driver = {
- 	.probe		= fimc_is_probe,
--	.remove		= fimc_is_remove,
-+	.remove_new	= fimc_is_remove,
+ static struct platform_driver fimc_driver = {
+ 	.probe		= fimc_probe,
+-	.remove		= fimc_remove,
++	.remove_new	= fimc_remove,
  	.driver = {
- 		.of_match_table	= fimc_is_of_match,
- 		.name		= FIMC_IS_DRV_NAME,
+ 		.of_match_table = fimc_of_match,
+ 		.name		= FIMC_DRIVER_NAME,
 -- 
 2.39.2
 
