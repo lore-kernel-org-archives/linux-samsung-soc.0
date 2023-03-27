@@ -2,107 +2,109 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8422C77B6D
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Mar 2023 14:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66ADBC76195
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Mar 2023 14:08:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232101AbjCZOdN (ORCPT
+        id S231287AbjC0OIv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 26 Mar 2023 10:33:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32768 "EHLO
+        Mon, 27 Mar 2023 10:08:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232557AbjCZOdK (ORCPT
+        with ESMTP id S230273AbjC0OIu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 26 Mar 2023 10:33:10 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C559A2D5F
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Mar 2023 07:32:59 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pgRQJ-0008TG-FG; Sun, 26 Mar 2023 16:32:43 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pgRQG-006rdi-EY; Sun, 26 Mar 2023 16:32:40 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pgRQE-0088Xf-LM; Sun, 26 Mar 2023 16:32:38 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de
-Subject: [PATCH 061/117] media: gsc-core: Convert to platform remove callback returning void
-Date:   Sun, 26 Mar 2023 16:31:28 +0200
-Message-Id: <20230326143224.572654-64-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230326143224.572654-1-u.kleine-koenig@pengutronix.de>
-References: <20230326143224.572654-1-u.kleine-koenig@pengutronix.de>
+        Mon, 27 Mar 2023 10:08:50 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73DEF1730
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Mar 2023 07:08:17 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id j18-20020a05600c1c1200b003ee5157346cso7471497wms.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Mar 2023 07:08:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679926096;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=21y/evTkpjPKQEeFY9kdZ69EKgiGSSUmP8nCU331B88=;
+        b=gpGy6wspGty+JLkAAdj2ah9OL5xcG5BQC953fC9nzu9Z6f4dGGO5uciz+ETR9/Kx9N
+         PGBCL5R2S8kMkp72aMdyFPAEpm5L7qlukeEmmXTIopLnvlkwj3SowVzkkYF2lIVlINOT
+         L5xOLGEE26x5g3pHfaETm+BtTsvZEcSgZ1AO+vHLYwnNPlJZMY9SUBJ+CmfFV7/k9nbq
+         oMyW0MtwtOHnHBnUAJjCTgscsEXytgqbtbEmlmVFIWebmFmL7wDQNWJ+7F8XZTX5VeRY
+         lypiJsCmOn3760Qq7HNh3MBEd7ppHpu3lGX48c3mD57WQe9aQbfSrbtrBadZHbnvfLwV
+         O0aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679926096;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=21y/evTkpjPKQEeFY9kdZ69EKgiGSSUmP8nCU331B88=;
+        b=iayN57VGdTbap9Ia+fTWK8JG6P2k55orUgsxqroFjLRkb/Y1FaxcQ8064CaWZ8qclg
+         d8Kctahjn4DUMWmT0WCTAx75WZseYPi0WgasEZUnzdACyu/XDt9l+O08BAn0wcZ5+ZwU
+         wavgSjPeuqBgRJTFj+PZyoXtQK4oXrmSons0c6WCwuQumgNMOAyp7A8BkGxJorpMu6d7
+         7I7VhKAeePVwlqV7EgrUxEWKTF5g+PSLz9z/65fIzI157qwnFKpLKpgtO762s7jCjfcD
+         DTIAvVCNqPvsQbOL5ExOktzo43TKk+1xTd9Jw8zMuE4fEFjaKs4FnlNtfF1utJB0hBeT
+         W9FQ==
+X-Gm-Message-State: AO0yUKUphEqNQjKuO4mauHvtKea1e8gdHwE8BSWqh6yRWbIGEP2EnVfc
+        dxyMd+G2W8wg6L6OpPk1kLI3XQ==
+X-Google-Smtp-Source: AK7set/LNLPuOD5QZbI7JnDWHLz5OL9solWh9xxsmAwklo2TB52apWlF0KO6JOGgXR2G0gIWfSsV5A==
+X-Received: by 2002:a1c:6a04:0:b0:3e2:662:ade6 with SMTP id f4-20020a1c6a04000000b003e20662ade6mr10054762wmc.26.1679926095951;
+        Mon, 27 Mar 2023 07:08:15 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:ef3b:2a41:93d:75f2? ([2a01:e0a:982:cbb0:ef3b:2a41:93d:75f2])
+        by smtp.gmail.com with ESMTPSA id j6-20020a05600c190600b003ef6bc71cccsm5086219wmq.27.2023.03.27.07.08.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Mar 2023 07:08:15 -0700 (PDT)
+Message-ID: <794538dd-f29a-571b-601a-f61c60d00382@linaro.org>
+Date:   Mon, 27 Mar 2023 16:08:13 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1804; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=eCSifVDAXW1X9cqwaaO+CIz3Ffo9A6DmGqCvAijEceE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkIFbPr3FL7OeCsFMG8fuH3lucwcXA/JAft3Z+O qnuaKUrJFKJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZCBWzwAKCRCPgPtYfRL+ To6mB/0b1uRTMan64x+JAXAbjBLCzuNlTD0aJ1JMcGvaw+HooBDUHxkZcBGqZjOXYNh9JX7fzl/ +2rowxWYNLnHCr8MUHenj1HqA1ZncCV5VbOp7yfbxP5ZZocsRrD/w8bkWFiFfpRq5PhwLmGes0P rSdZZwLEfSto6Hn9dC2D9gE3zfVEydSwcAstdD7aSp3Hcgcsn9Jfot61Qx3xWnKHXA29W5t2BuA UnhBg2/5zUbbgTUPFSGkDsEVcGOWzchrapyd77nC+/pXrOfbIeW9yTXtY0xWrZV8H/6pwmWRgj4 yWzbKvRkT6iE7TEPef8MsoFq7j0VyZKUqw5Zrg0mP5ej8ogf
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v15 00/16] drm: Add Samsung MIPI DSIM bridge
+Content-Language: en-US
+To:     Fabio Estevam <festevam@gmail.com>, Inki Dae <daeinki@gmail.com>
+Cc:     Marek Vasut <marex@denx.de>, linux-samsung-soc@vger.kernel.org,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        Adam Ford <aford173@gmail.com>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+References: <CGME20230303145218epcas1p2e77bc610f57337830924e3c6c02ca291@epcas1p2.samsung.com>
+ <20230303145138.29233-1-jagan@amarulasolutions.com>
+ <000001d94feb$ef651bb0$ce2f5310$@samsung.com>
+ <CAOMZO5DFhFTh9kd2NdEe1m2AEs7Se0PNeWZ+5q-cSAz-QVoPDg@mail.gmail.com>
+ <CAAQKjZM66M6wgtoBmAcQifq8LgBUos0bZfbTkRBqnOb7E-05tQ@mail.gmail.com>
+ <CAOMZO5ArYAf72oSY-WMSdfH6w5HAvvrLz24eR+4YBzOASp7U-Q@mail.gmail.com>
+Organization: Linaro Developer Services
+In-Reply-To: <CAOMZO5ArYAf72oSY-WMSdfH6w5HAvvrLz24eR+4YBzOASp7U-Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is (mostly) ignored
-and this typically results in resource leaks. To improve here there is a
-quest to make the remove callback return void. In the first step of this
-quest all drivers are converted to .remove_new() which already returns
-void.
+On 23/03/2023 16:34, Fabio Estevam wrote:
+> Hi Inki,
+> 
+> On Mon, Mar 13, 2023 at 9:51 PM Inki Dae <daeinki@gmail.com> wrote:
+> 
+>>> Could you please apply v16?
+>>
+>>
+>> I am planning to merge this patch series soon, but I will be proceeding with the pull-request next week. As the DSIM driver is being moved to the bridge folder, I would like to wait for acknowledgment from the bridge maintainers. However, if there are no further comments until next week, I will proceed with the pull-request.
+> 
+> A friendly reminder: do you think you can proceed with the pull-request now?
 
-Trivially convert this driver from always returning zero in the remove
-callback to the void returning variant.
+I can apply the entire patchset to drm-misc-needed if needed.
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/media/platform/samsung/exynos-gsc/gsc-core.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Inki, is it ok for you or you still want to take it in the exynos tree ?
 
-diff --git a/drivers/media/platform/samsung/exynos-gsc/gsc-core.c b/drivers/media/platform/samsung/exynos-gsc/gsc-core.c
-index b147c645ae0b..1fb34de70649 100644
---- a/drivers/media/platform/samsung/exynos-gsc/gsc-core.c
-+++ b/drivers/media/platform/samsung/exynos-gsc/gsc-core.c
-@@ -1201,7 +1201,7 @@ static int gsc_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
--static int gsc_remove(struct platform_device *pdev)
-+static void gsc_remove(struct platform_device *pdev)
- {
- 	struct gsc_dev *gsc = platform_get_drvdata(pdev);
- 	int i;
-@@ -1220,7 +1220,6 @@ static int gsc_remove(struct platform_device *pdev)
- 	pm_runtime_set_suspended(&pdev->dev);
- 
- 	dev_dbg(&pdev->dev, "%s driver unloaded\n", pdev->name);
--	return 0;
- }
- 
- #ifdef CONFIG_PM
-@@ -1311,7 +1310,7 @@ static const struct dev_pm_ops gsc_pm_ops = {
- 
- static struct platform_driver gsc_driver = {
- 	.probe		= gsc_probe,
--	.remove		= gsc_remove,
-+	.remove_new	= gsc_remove,
- 	.driver = {
- 		.name	= GSC_MODULE_NAME,
- 		.pm	= &gsc_pm_ops,
--- 
-2.39.2
+Neil
+
+> 
+> Thanks
 
