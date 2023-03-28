@@ -2,114 +2,71 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 732C7C761A6
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Mar 2023 10:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A597C6FD18
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Mar 2023 13:11:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232624AbjC1KH1 (ORCPT
+        id S232825AbjC1NLt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Mar 2023 06:07:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60598 "EHLO
+        Tue, 28 Mar 2023 09:11:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233060AbjC1KHR (ORCPT
+        with ESMTP id S232822AbjC1NLm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Mar 2023 06:07:17 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 838C66E89
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Mar 2023 03:07:01 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id er13so6322287edb.9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Mar 2023 03:07:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679998020;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0ZPljhKeSnuSGlSWfKaLNDMSdJrVY6lMlRIxToWIHSE=;
-        b=vgTGHg8fA3BZsk9LUPzWlrSQZGnASPGPFuZqfImemSFhHCJj5lrtNpJl1qhJaeaYPE
-         leDREJVTlbajzM8RI1c/JJjEonQftsvxksAxwpBnCXhjUjMQyZCY4O7SkHN3OBwzks9Q
-         bSr5gSOwPFoaT1eeMkd5r80jXAD5DRr7hRbPRW9rD8V9QLlHdLS6qaVN7LXketIv2oGr
-         aUCy2skJ6KxoLOyx9EuzZc6uSN/bxCuCJjKG7VExpH/QuwU/f09lG+YfT/ojSHZl4qh5
-         XyE2kG1yPMFqjfQgNc0IQHuEDp6GG1mNDOzZOWLy0yK0OsdVuG6AogQkCxaEJ5VYdtiH
-         4Rxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679998020;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ZPljhKeSnuSGlSWfKaLNDMSdJrVY6lMlRIxToWIHSE=;
-        b=e4H/ArRpW1wHiBjuOF1u7PiDk6CzqnDi2jp+/3ihLylkzyYINgQZLSCCy4FunfTeBi
-         b3hi1tA7MQAW07gSubywsmW4keMpO9AEBv0AjraT8sFna0zacwf8CYCJvnyjwiNN7/7A
-         J000vZCgnbmyLsOaiDQ0V1+dPN5JYs/z7wf9bTnxB1Lgl510Nrn3P0EBFk6N7UUJvUAy
-         dsVk66AyYnJwV1wpmECKqvOzlDY1C44GR8YW0pN1ieU1IYA19CkEw7/1pHuuqm8jqBVI
-         KDqNJMlqyJGM204DDFoT0szu9apMEA2+D7pxsToJNo0FGArQ58GhC2ffvfKlz3rMQkQc
-         vEng==
-X-Gm-Message-State: AAQBX9czJCnlWd9zoJcSG9kz84L7h4DhSaQtk1xAaHmpgSwPXMy9kt4W
-        13ltEJbYHxvuLw5w0ESOgEikzQ==
-X-Google-Smtp-Source: AKy350ZFYyOvQbIZ2wc5ylrWhyV44C9OKuB3cjIa2tHpjn0Dm3C5pFk/kZSkKlTmHvKCSly/UXuydw==
-X-Received: by 2002:a17:906:9244:b0:939:4c86:d492 with SMTP id c4-20020a170906924400b009394c86d492mr14400048ejx.5.1679998019965;
-        Tue, 28 Mar 2023 03:06:59 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:9e92:dca6:241d:71b6? ([2a02:810d:15c0:828:9e92:dca6:241d:71b6])
-        by smtp.gmail.com with ESMTPSA id u7-20020a170906b10700b0092f38a6d082sm15071729ejy.209.2023.03.28.03.06.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Mar 2023 03:06:59 -0700 (PDT)
-Message-ID: <81fad553-e8c1-f387-4df2-70c91a6ebc33@linaro.org>
-Date:   Tue, 28 Mar 2023 12:06:58 +0200
+        Tue, 28 Mar 2023 09:11:42 -0400
+Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 22714AF21
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Mar 2023 06:11:29 -0700 (PDT)
+Received: from 8bytes.org (p200300c27714bc0086ad4f9d2505dd0d.dip0.t-ipconnect.de [IPv6:2003:c2:7714:bc00:86ad:4f9d:2505:dd0d])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.8bytes.org (Postfix) with ESMTPSA id 9473F243A8A;
+        Tue, 28 Mar 2023 15:11:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+        s=default; t=1680009087;
+        bh=13IoeeKBxX5OphHp1aBskczjEEJjaf6OphClbTl0qEM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kJ/0hol8mFQYexq6WrOXJ5SIL0aWzORVumsRQ8uO3umtxUd1ksihzgAkl6iw2ehP6
+         Vte+ZXHAs8BdhFTzKTZzkXZJoahQx2hfUCauGOIk6L09Ua1HH5h1o2xHp4+u2tgKMe
+         eBWtBIpsuJn2S+sW0D5gVODVlzl+prBXX+umGJqR9p6/bY8N7gTu7A9tjS4iPMsKpG
+         NZGyx9pi4KXPiJMcM26Z3s7+AD/jLBeViGc0GV37mXBUMTtLsnVzNKR+5GAo2mJtUW
+         CgHKcqZTUl13J4EJIGeGkImMMvrgisrN1bHrVCX2N9D6E9XozC3xQOxAs9uYp8dGlk
+         5m1Qlem2jQ0wg==
+Date:   Tue, 28 Mar 2023 15:11:26 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, iommu@lists.linux.dev,
+        linux-samsung-soc@vger.kernel.org, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: Re: [PATCH v2] iommu/exynos: Fix set_platform_dma_ops() callback
+Message-ID: <ZCLnfrGdyUEuEfO1@8bytes.org>
+References: <CGME20230315232523eucas1p2565ef5954e3b5b451803c6200c8bce32@eucas1p2.samsung.com>
+ <20230315232514.1046589-1-m.szyprowski@samsung.com>
+ <ZBnCD7Xc9WCM55ub@ziepe.ca>
+ <da174ce4-b922-21d0-62da-b69798a51371@samsung.com>
+ <ZBnef7g7GCxogPNz@ziepe.ca>
+ <3ca0c680-d651-a2af-978e-fcb4a2057dd0@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH -next] devfreq: exynos-ppmu: Use
- devm_platform_get_and_ioremap_resource()
-To:     Andi Shyti <andi.shyti@kernel.org>
-Cc:     Yang Li <yang.lee@linux.alibaba.com>, kyungmin.park@samsung.com,
-        myungjoo.ham@samsung.com, cw00.choi@samsung.com,
-        alim.akhtar@samsung.com, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230328053853.23159-1-yang.lee@linux.alibaba.com>
- <8779217b-bd70-37a4-c779-139690048d4d@linaro.org>
- <20230328095337.sr6s3klmhiyz63pr@intel.intel>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230328095337.sr6s3klmhiyz63pr@intel.intel>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3ca0c680-d651-a2af-978e-fcb4a2057dd0@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 28/03/2023 11:53, Andi Shyti wrote:
-> Hi,
+On Fri, Mar 24, 2023 at 09:59:27PM +0100, Marek Szyprowski wrote:
+> Frankly speaking I would like to have a minimal fix (like my $subject 
+> patch) applied to v6.3-rcX ASAP and then apply this identity domain 
+> support on top of than for -next (6.4). I've checked and your proposed 
+> patch works fine in my case, so You can send it as formal patch.
 > 
-> On Tue, Mar 28, 2023 at 09:19:01AM +0200, Krzysztof Kozlowski wrote:
->> On 28/03/2023 07:38, Yang Li wrote:
->>> According to commit 890cc39a8799 ("drivers: provide
->>> devm_platform_get_and_ioremap_resource()"), convert
->>
->> I don't understand why do you reference this commit. There is no bug
->> introduced there, there is nothing related to this driver.
->>
->>> platform_get_resource(), devm_ioremap_resource() to a single
->>> call to devm_platform_get_and_ioremap_resource(), as this is exactly
->>> what this function does.
-> 
-> I've seen Yang has sent many of these cleanups, perhaps he can
-> write something like:
-> 
-> "
-> Commit 890cc39a8799 ("drivers: provide
-> devm_platform_get_and_ioremap_resource()") introduces the
-> devm_platform_get_and_ioremap_resource() function which combines
-> both platform_get_resource() and devm_ioremap_resource() into a
-> single call.
+> Joerg: is that okay for you?
 
-I don't think we need to reference that commit at all. It does not
-matter when the API was introduced and just makes commit msg unnecessary
-long. Instead the commit msg should shortly say why this change is
-needed or even worth accepting.
+Agreed, a minimal fix for 6.3 would be great.
 
-> 
-> Update the code to use the new combined function instead of the
-> separate calls.
+Regards,
 
-Best regards,
-Krzysztof
-
+	Joerg
