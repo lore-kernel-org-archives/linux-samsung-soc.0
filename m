@@ -2,70 +2,85 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE52C6FD18
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Mar 2023 02:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC989C77B61
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Mar 2023 04:15:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229603AbjC2CiK (ORCPT
+        id S229529AbjC2EPJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Mar 2023 22:38:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50330 "EHLO
+        Wed, 29 Mar 2023 00:15:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229524AbjC2CiJ (ORCPT
+        with ESMTP id S229793AbjC2EPG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Mar 2023 22:38:09 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C29103AA6;
-        Tue, 28 Mar 2023 19:37:51 -0700 (PDT)
+        Wed, 29 Mar 2023 00:15:06 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ACBD35B5;
+        Tue, 28 Mar 2023 21:15:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id ECF1661A3F;
-        Wed, 29 Mar 2023 02:37:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50CD7C433D2;
-        Wed, 29 Mar 2023 02:37:50 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3D4F5B81EA9;
+        Wed, 29 Mar 2023 04:15:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8988C433EF;
+        Wed, 29 Mar 2023 04:15:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680057470;
-        bh=1RFsG6x8eZ36wYfC6N47RWuv4Mkbp0c4c/ba7d+2ep4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=lnnk8/YZYqFEFWLi0lWET0x+O6KjLcQHhoqrLiA/WNJ7Y8EGyc7Mf77RLxJtztXeH
-         g6ErWEg4iZcwKX5rsT+6IgEGi6DqZ8WZJsrFh0VPAznmI3Jm9mofOxQSqehEzIVnaO
-         3ZlaASYCDIAaoJO5zANHTDyfwlIVDIXeteEQwr0+FuvqnE+ddrMLXAamPRnIKBCHdy
-         VI6z6OEly7oWSCcjg01O0WSEOit2vf8CUubIC0fmojJi3z60rblKMpBWGE9s04EogD
-         94YpbL4Dma/SUyzyQl5VdWUg17iv0+HLxtU1I97muYHP000rf0ccKNmy/Jr7wdPRf1
-         vFG29d7AWfLGQ==
-Message-ID: <3e542c589fbd57848205a15139457a98.sboyd@kernel.org>
+        s=k20201202; t=1680063302;
+        bh=OeZwGhdh1OhMyiKBDhpSCIDowglcrCZD9EdOvHs4euc=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=uSzeR7sCDnhf4k0KFCoVmxreYmsgU7LkeN3MdANZ3Z++Yrl4lZBXqmcOq0/1qGoYH
+         dnNJw5YysLkr92ae2gs7oc+qqCVBI7dZ03PvQfLpXFyPsZwuYs1JLL3SiOZ6GOeJhX
+         ZoO9kowVg5lYCoZTWxf/Y5eLVNILED0DxVSjJlDaWC7maen+Hzg9hvnqEZWg50Mx3H
+         6LNpwwB8CLkazqcf8BWE4jr+qMJvW/9GWd0ts91LOffixfAdwcx6V08sZbYShdgcr1
+         R4qxJh6W2zkAWr5qcMxYqWFHHNmzoJWO1NriwSQOA5If3XIuJZ75AWYdljD6Qu3Evd
+         NN9XT5jI8U1JQ==
+Message-ID: <7cf9452c60f2b1c764b01a15a4d5c2f0.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230312161512.2715500-15-u.kleine-koenig@pengutronix.de>
-References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de> <20230312161512.2715500-15-u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 14/30] clk: s2mps11: Convert to platform remove callback returning void
+In-Reply-To: <20230310222857.315629-2-krzysztof.kozlowski@linaro.org>
+References: <20230310222857.315629-1-krzysztof.kozlowski@linaro.org> <20230310222857.315629-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 02/16] spi: mtk-pmif: Drop of_match_ptr for ID table
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Uwe =?utf-8?q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Date:   Tue, 28 Mar 2023 19:37:48 -0700
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Andi Shyti <andi@etezian.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
+Date:   Tue, 28 Mar 2023 21:15:00 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Quoting Uwe Kleine-K=C3=B6nig (2023-03-12 09:14:56)
-> The .remove() callback for a platform driver returns an int which makes
-> many driver authors wrongly assume it's possible to do error handling by
-> returning an error code. However the value returned is (mostly) ignored
-> and this typically results in resource leaks. To improve here there is a
-> quest to make the remove callback return void. In the first step of this
-> quest all drivers are converted to .remove_new() which already returns
-> void.
+The subject says 'spi' but it's actually 'spmi'.
+
+Quoting Krzysztof Kozlowski (2023-03-10 14:28:43)
+> The driver can match only via the DT table so the table should be always
+> used and the of_match_ptr does not have any sense (this also allows ACPI
+> matching via PRP0001, even though it is not relevant here).
 >=20
-> Trivially convert this driver from always returning zero in the remove
-> callback to the void returning variant.
+>   drivers/spmi/spmi-mtk-pmif.c:517:34: error: =E2=80=98mtk_spmi_match_tab=
+le=E2=80=99 defined but not used [-Werror=3Dunused-const-variable=3D]
 >=20
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
 
-Applied to clk-next
+Acked-by: Stephen Boyd <sboyd@kernel.org>
