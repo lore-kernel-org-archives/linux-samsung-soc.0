@@ -2,113 +2,96 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B679FC74A5B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Mar 2023 07:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50252C761AF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Mar 2023 07:36:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229836AbjC2HNV (ORCPT
+        id S229948AbjC3Hgv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Mar 2023 03:13:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46838 "EHLO
+        Thu, 30 Mar 2023 03:36:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229891AbjC2HNV (ORCPT
+        with ESMTP id S230422AbjC3Hgl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Mar 2023 03:13:21 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A56B912E
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Mar 2023 00:13:18 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id a21so7880166ljq.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Mar 2023 00:13:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680073997;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=tjz4YY6475MDr5O8cC77sTPGv7vBqMb5/BBOLn/SVfo=;
-        b=MRtmY6Sh0Urs9hIQEFX25PAVvlSXcMe+uCuWyT0FSHfRII2WE6jEemrt3H/G97TI8g
-         UaO0l6ZMoo4Dw0W8Bu2wDUhT68ebAGzQn5ud84/RJC26Q5aHkW443xy9ifd/mJ22N7Ex
-         vkRgCmSLtUp+BKq/Jo78BLRkrH2a77RS4aD/NOWUkBeAQ6RXWQTWqxIoJewmPI8+mjuo
-         B07ke0nHNqkz99Lw+Z5uVD2NkIxAH8CgjxW21q3pDMuXgofb9yox5n5IkvSHPTUvqdzO
-         T4ypTATDANkBPDFLxe0SzFMnsOOrl/ZEp0Ud0aiJGqas5o3aHapXgjglf5kpIn2/Ex+o
-         YI7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680073997;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tjz4YY6475MDr5O8cC77sTPGv7vBqMb5/BBOLn/SVfo=;
-        b=XuazGUx4Ulq53tAfR/eOEEws+wJGxPRSDk4Ryhyfk4v2ajq/vCZyVku6ZroV9U7flR
-         9MDlrbylsxDEaIUhNDqKuUc/CGQca1L+tMU56O1RY0xjihGfugJczV4JKl9zUsCiTBm2
-         vPNLbuIgECMVbJlPla6ZT5PE06YpSlFlTzvDGAAZ4UUlkxf3Zw/nGAcgvcitKCtZvzZ+
-         gCUPSWKTXEyUUG4585OcEmHD/0oAGKLArJCZarorqMVqvwi1k/ULj+s+IV/Oz4cmTD4L
-         RMqIaQJKlSXSHX9Xnd7Hl8KFKauGVJrG6dxk2C06zaEzTJTYKK03tsiqQ2YqVDHWC+Pf
-         Dl3g==
-X-Gm-Message-State: AAQBX9d8a7d8GGpsAUnpCOZFH03yLjlHt22vWUTw0/OpeT6sHq20SlBe
-        w8gFPZXOAOLPET8/WhM0LDMrRQ==
-X-Google-Smtp-Source: AKy350Z3U5ebYnTlRO47AoMVt8i3K/fuetG/Bfiu2U0Js/vspmuVMfQmnKLBM1VvfiYcYbjVFKhcKw==
-X-Received: by 2002:a2e:9d0c:0:b0:29e:4fa5:1708 with SMTP id t12-20020a2e9d0c000000b0029e4fa51708mr5731177lji.3.1680073996921;
-        Wed, 29 Mar 2023 00:13:16 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id x26-20020a2e9dda000000b0029bd4365c95sm4697519ljj.87.2023.03.29.00.13.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Mar 2023 00:13:16 -0700 (PDT)
-Message-ID: <6e1f4885-e8b9-8031-c25f-a9b18c187e56@linaro.org>
-Date:   Wed, 29 Mar 2023 09:13:15 +0200
+        Thu, 30 Mar 2023 03:36:41 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EC4D171E
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Mar 2023 00:36:40 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 181151FE89;
+        Thu, 30 Mar 2023 07:36:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1680161799; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=ySFeAxMChdgqaB3/9bDz46byvGcT0yeTQSoZkBui9wU=;
+        b=FvrvL5z0mnIjpgArU4BFEdsFV4jbyS/TK8ZGDY4KcpI4aLRYBN4c+XeOGE6gO/q5z8y3oo
+        jljMrR3Q++VJ0s9Fytjt3YPFXwd6JRcM7TK60lUqdPbcenLZDBcFoBSeyedpFfD84YeEUS
+        WolmAjn4ViOmUSfuPL5No63UfoWcOK4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1680161799;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=ySFeAxMChdgqaB3/9bDz46byvGcT0yeTQSoZkBui9wU=;
+        b=1lBGykyg02W1gFkoLQxWY2NnSgr1STiliDM2I1QtcX7A0rvi9E6r0e8EVjk9fT9Jr6F20x
+        30VzUzu2yDf8e8AA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CE09E1348E;
+        Thu, 30 Mar 2023 07:36:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id hitaMQY8JWQJewAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Thu, 30 Mar 2023 07:36:38 +0000
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     inki.dae@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, javierm@redhat.com, airlied@gmail.com,
+        daniel@ffwll.ch, krzysztof.kozlowski@linaro.org,
+        alim.akhtar@samsung.com
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH 0/5] drm/exynos: Convert fbdev to DRM client
+Date:   Thu, 30 Mar 2023 09:36:30 +0200
+Message-Id: <20230330073635.7409-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 02/16] spi: mtk-pmif: Drop of_match_ptr for ID table
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Andi Shyti <andi@etezian.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Mark Brown <broonie@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
-References: <20230310222857.315629-1-krzysztof.kozlowski@linaro.org>
- <20230310222857.315629-2-krzysztof.kozlowski@linaro.org>
- <7e58e5c86bd602932b762f9364209e31.sboyd@kernel.org>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <7e58e5c86bd602932b762f9364209e31.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 29/03/2023 06:17, Stephen Boyd wrote:
-> Quoting Krzysztof Kozlowski (2023-03-10 14:28:43)
->> The driver can match only via the DT table so the table should be always
->> used and the of_match_ptr does not have any sense (this also allows ACPI
->> matching via PRP0001, even though it is not relevant here).
->>
->>   drivers/spmi/spmi-mtk-pmif.c:517:34: error: ‘mtk_spmi_match_table’ defined but not used [-Werror=unused-const-variable=]
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
-> 
-> I'll fix the subject.
-> 
-> Applied to spmi-next
+Convert exynos' fbdev code to struct drm_client. Replaces the current
+ad-hoc integration. The conversion includes a number of cleanups. As
+with most other drivers' fbdev emulation, fbdev in exynos is now just
+another DRM client that runs after the DRM device has been registered.
 
-Thanks. Apologies for the typo in the subject.
+Once all drivers' fbdev emulation has been converted to struct drm_client,
+we can attempt to add additional in-kernel clients. A DRM-based dmesg
+log or a bootsplash are commonly mentioned. DRM can then switch easily
+among the existing clients if/when required.
 
-Best regards,
-Krzysztof
+I did the conversion from similar experience with other drivers. But I
+don't have the hardware to test this. Any testing is welcome.
+
+Thomas Zimmermann (5):
+  drm/exynos: Remove exynos_gem from struct exynos_drm_fbdev
+  drm/exynos: Remove struct exynos_drm_fbdev
+  drm/exynos: Remove fb_helper from struct exynos_drm_private
+  drm/exynos: Initialize fbdev DRM client
+  drm/exynos: Implement fbdev emulation as in-kernel client
+
+ drivers/gpu/drm/exynos/exynos_drm_drv.c   |  13 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.h   |   2 -
+ drivers/gpu/drm/exynos/exynos_drm_fb.c    |   2 -
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 174 +++++++++++-----------
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.h |  20 +--
+ 5 files changed, 94 insertions(+), 117 deletions(-)
+
+-- 
+2.40.0
 
