@@ -2,91 +2,131 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 857B2C6FD18
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 31 Mar 2023 13:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F75C76196
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 31 Mar 2023 18:21:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232201AbjCaNrY (ORCPT
+        id S232467AbjCaSVk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 31 Mar 2023 09:47:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44008 "EHLO
+        Fri, 31 Mar 2023 14:21:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232198AbjCaNrX (ORCPT
+        with ESMTP id S229675AbjCaSVj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 31 Mar 2023 09:47:23 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 976CEC5;
-        Fri, 31 Mar 2023 06:47:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 43B38B82FCD;
-        Fri, 31 Mar 2023 13:47:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26BE9C4339B;
-        Fri, 31 Mar 2023 13:47:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680270439;
-        bh=orPaOgx6J/LUi114f9kSqd4A7XlXiiksN/BvFn+cS3U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IYHAqMf3Z9huvpJapTAR+uF4zpKFsOVOqB7p8GER0qI2ESstHl5N5glcyPZhHRf0S
-         47MaoxN3r7v8jQN7CRY5zf2YkHGchK2S6qkXgmxn5jJLwaxm7swEweFwgvJMcgLGLz
-         4iUSnuOLpwV+QPmNR7TCTJBqDjyXW/fnjVGfi3/xr6v4mLxCgVSQrhHulyySzlbPxC
-         dI4gx+dSvi+zF3IEljngIukwhS5dz9OhZ8QonfmJteoKoXjyYw1cwGqsdpD5AU0rWN
-         4mx2vBSal6nd8k1WmEeN90I6rYVvjnYr7/48oeBD/6gYI8q4FTF9uf65aJpvmlGpcH
-         6d4OgZjU0etTQ==
-Date:   Fri, 31 Mar 2023 19:17:15 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Kishon Vijay Abraham I <kishon@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Yu Chen <chenyu56@huawei.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Robert Marko <robert.marko@sartura.hr>,
-        Luka Perkov <luka.perkov@sartura.hr>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Vincent Shih <vincent.sunplus@gmail.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-usb@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-can@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: phy: Drop unneeded quotes
-Message-ID: <ZCbkY3z9Lquad41t@matsya>
-References: <20230320233955.2921179-1-robh@kernel.org>
+        Fri, 31 Mar 2023 14:21:39 -0400
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2B4B1C1E7;
+        Fri, 31 Mar 2023 11:21:38 -0700 (PDT)
+Received: by mail-ot1-f48.google.com with SMTP id r40-20020a05683044a800b006a14270bc7eso8962282otv.6;
+        Fri, 31 Mar 2023 11:21:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680286898;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3t5CKl6Ye7wvWfdL46PtBvqDLWnMxYGWKH3UaAAkiUk=;
+        b=fPh/iFOrWzvUgMPurkxKXHYyp2NqdvI172JHtMUVWwBp7xqc0Jh7yB1wDHXDMQsddS
+         FPjMz5mc9MYunc7EZ71/u61OcmC3qOmrzg8XZES54tRtp2u1XurmfS4Y7edi/YDs1R79
+         /5Lp/ujZL1JkO4MUhW7C5jrv+qHx/MqouKJElZBrNlZ89aC1FTF2NCuTKgfd0/T1ICH2
+         KZKc1biKB+hy0Udp+M/47wY3rXEuG4sdgHhiRMO7gvwB0a+zS3tZHzuEUxHTE9RdAx9E
+         vhRmcdZiLOE4I/g+dazVm8fSOtEgPbRK9EpBRgVfTe2Ki90TVFfwusRZiwB8WAPhGar7
+         DV3Q==
+X-Gm-Message-State: AAQBX9f/cSbW/R5ZoTDbchkOjnyOANXvu4cYap+Qh0UjZfbB52BW90Ww
+        jmyHecBhkv6cMzHuNDy7Ng==
+X-Google-Smtp-Source: AKy350am+Rs5fsysUO/Ou+XiPYyX5AqcPtC+SBfe66RPqx+fy71Nv5pVkD5gs3QV9tnB8HWcypjqAw==
+X-Received: by 2002:a9d:7ac9:0:b0:693:d9a5:c5d with SMTP id m9-20020a9d7ac9000000b00693d9a50c5dmr13024037otn.3.1680286897866;
+        Fri, 31 Mar 2023 11:21:37 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id b22-20020a9d7556000000b006a305c68617sm56551otl.53.2023.03.31.11.21.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Mar 2023 11:21:37 -0700 (PDT)
+Received: (nullmailer pid 1900261 invoked by uid 1000);
+        Fri, 31 Mar 2023 18:21:36 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] dt-bindings: memory-controller: Drop unneeded quotes
+Date:   Fri, 31 Mar 2023 13:21:18 -0500
+Message-Id: <20230331182119.1899919-1-robh@kernel.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230320233955.2921179-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 20-03-23, 18:39, Rob Herring wrote:
-> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
-> checking for this can be enabled in yamllint.
+Cleanup bindings dropping unneeded quotes. Once all these are fixed,
+checking for this can be enabled in yamllint.
 
-Applied, thanks
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/memory-controllers/renesas,dbsc.yaml           | 4 ++--
+ .../bindings/memory-controllers/renesas,rpc-if.yaml         | 2 +-
+ .../bindings/memory-controllers/samsung,exynos5422-dmc.yaml | 6 +++---
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/memory-controllers/renesas,dbsc.yaml b/Documentation/devicetree/bindings/memory-controllers/renesas,dbsc.yaml
+index 7056ccb7eb30..8e3822314b25 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/renesas,dbsc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/renesas,dbsc.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/memory-controllers/renesas,dbsc.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/memory-controllers/renesas,dbsc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Renesas DDR Bus Controllers
+ 
+diff --git a/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml b/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
+index 30a403b1b79a..56e62cd0b36a 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
+@@ -20,7 +20,7 @@ description: |
+   - if it contains "cfi-flash", then HyperFlash is used.
+ 
+ allOf:
+-  - $ref: "/schemas/spi/spi-controller.yaml#"
++  - $ref: /schemas/spi/spi-controller.yaml#
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml b/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
+index 098348b2b815..783ac984d898 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
+@@ -42,7 +42,7 @@ properties:
+     maxItems: 8
+ 
+   devfreq-events:
+-    $ref: '/schemas/types.yaml#/definitions/phandle-array'
++    $ref: /schemas/types.yaml#/definitions/phandle-array
+     minItems: 1
+     maxItems: 16
+     items:
+@@ -50,7 +50,7 @@ properties:
+     description: phandles of the PPMU events used by the controller.
+ 
+   device-handle:
+-    $ref: '/schemas/types.yaml#/definitions/phandle'
++    $ref: /schemas/types.yaml#/definitions/phandle
+     description: |
+       phandle of the connected DRAM memory device. For more information please
+       refer to jedec,lpddr3.yaml.
+@@ -73,7 +73,7 @@ properties:
+       - description: registers of DREX1
+ 
+   samsung,syscon-clk:
+-    $ref: '/schemas/types.yaml#/definitions/phandle'
++    $ref: /schemas/types.yaml#/definitions/phandle
+     description: |
+       Phandle of the clock register set used by the controller, these registers
+       are used for enabling a 'pause' feature and are not exposed by clock
 -- 
-~Vinod
+2.39.2
+
