@@ -2,113 +2,159 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C86C77B62
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Apr 2023 09:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD461C761A6
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Apr 2023 10:42:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232079AbjDCJlG (ORCPT
+        id S231837AbjDCKmM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 Apr 2023 05:41:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43060 "EHLO
+        Mon, 3 Apr 2023 06:42:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232089AbjDCJkp (ORCPT
+        with ESMTP id S231564AbjDCKlf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Apr 2023 05:40:45 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E73C6F76E
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Apr 2023 02:40:20 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id x3so114675307edb.10
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Apr 2023 02:40:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680514819;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FSiRdzM/Hcoj6ys0IYZsAKkIeh1yNctbREvv/DtXe/Q=;
-        b=ZkP/A1aIjm21E8JZo1mu1+sp7Ulo4zuCCCic25C+tfwXK4nhe8HvwFY8AdF7OFv6qv
-         HZGBrI1kL03OdoBRRa0Ow7Mkbm6dbZwpcV7cgrd/xhgl5xGQEw+Iggd0OVcSqPABZyvo
-         +2Rlm7RZwYfFDhsYdCnb716yXk2iAcNWo324ioXxcAa6nOux98c45dq5uGz/6lJMzG9e
-         fJ0/iPiZUhMBVcrjG4quz71pwtXUZFc3SGkr/g3yXwzhIXrBlz8xHIvM7KUNDvUiEFwj
-         3a2vVV0i97CA++/FsNr6FGWpeNZZ0MJ70pglo5If1HEI1QUAmccUaq9VKAqdFUO8Yx33
-         cTQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680514819;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FSiRdzM/Hcoj6ys0IYZsAKkIeh1yNctbREvv/DtXe/Q=;
-        b=v+o3ERk3/LTdthDPWkfy2svarXfSEXgvAaq0HZjhwrmKlhA4QYgAsi/E7//tqccJeD
-         upkeVGBFrjdcZFueBgbijN5MHN5jykaNEz0r1vNXGJiOTVdTBtKkLfmH5Gl1aH5XNvTC
-         euXyjVHDxbXs0LhAhw0Gmj2RoTzCWuvdVmlC2PJjI9E0RjNKS8uFl8h0IGz2IS88PNJs
-         sYJ/3P27C3obijlIhJtTbG65g1QuNenOaRkJ0sctboFr8MVJjObEvIl52+iUIhyiPCk/
-         XUDteZAWBTRgS4jL5NIhDPAaBBLptoo+dOi/M7/zfCQsYQQz6QJhKY5Z1abNrxu5/t9C
-         lcEg==
-X-Gm-Message-State: AAQBX9eqvlYdbI1PxuGf8pq+MgM13AaPSsjScMKIrbeUr8MZ1eOvQQjS
-        xUC/S+7xSnLnNwtVYGlALbz4Dg==
-X-Google-Smtp-Source: AKy350bnFDoaDvJBvx9QtkqlucDG4g1KZb+aUGo2QU0ZaPEWeT85ScjK+bX/MK6H7RqwWFElVS4TTg==
-X-Received: by 2002:a17:907:7788:b0:932:c1e2:9984 with SMTP id ky8-20020a170907778800b00932c1e29984mr33858694ejc.58.1680514819387;
-        Mon, 03 Apr 2023 02:40:19 -0700 (PDT)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:ae90:d80:1069:4805])
-        by smtp.gmail.com with ESMTPSA id l24-20020a170906079800b00930d22474dbsm4311244ejc.97.2023.04.03.02.40.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Apr 2023 02:40:19 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        kernel test robot <lkp@intel.com>,
-        Dan Carpenter <error27@gmail.com>
-Subject: [PATCH] clocksource/drivers/exynos_mct: explicitly return 0 for shared timer
-Date:   Mon,  3 Apr 2023 11:40:17 +0200
-Message-Id: <20230403094017.9556-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Mon, 3 Apr 2023 06:41:35 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81EE083C1
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Apr 2023 03:41:24 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 0A1351FDD9;
+        Mon,  3 Apr 2023 10:41:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1680518483; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wQIR61yAWGcWO9b4ZCc2ThYgy4SqxvwsfZqCj9g+n0I=;
+        b=VSWtuO+15Exy6VXmAzHqsZCxsAE4IPaJu+79fRZ/pE+tRV2XVP1MDV/iwh1CZrdU4j1BjE
+        mfiowUoN1taL1kwkN3ZXM7lKUOIVv1uN2SzLXFfdEAMpU73Zx0ybh/HOuoVwdf4tn6LkOB
+        Bj4IANX+VcF+mci6ZBxSn/l8kP7M7gQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1680518483;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wQIR61yAWGcWO9b4ZCc2ThYgy4SqxvwsfZqCj9g+n0I=;
+        b=fMXBzJ/pgXQnKj3xYCYhgLW1S1azd5neZN3BoCPmSL5Mwscfz2gmJotrdf5bb1GztVKmrV
+        qsaerLknnKhnXUBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C0D591331A;
+        Mon,  3 Apr 2023 10:41:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 7wsVLlKtKmSGDgAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Mon, 03 Apr 2023 10:41:22 +0000
+Message-ID: <93b82d93-39d9-7e2f-2ac9-dad048e6851f@suse.de>
+Date:   Mon, 3 Apr 2023 12:41:22 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 0/5] drm/exynos: Convert fbdev to DRM client
+Content-Language: en-US
+To:     Marek Szyprowski <m.szyprowski@samsung.com>, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        javierm@redhat.com, airlied@gmail.com, daniel@ffwll.ch,
+        krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com
+Cc:     linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org
+References: <CGME20230330073654eucas1p26d62d618ad8792ec4f2adcce8cfc2414@eucas1p2.samsung.com>
+ <20230330073635.7409-1-tzimmermann@suse.de>
+ <0d1e8fd9-e2a8-1ddf-943d-58fb3be3a0cf@samsung.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <0d1e8fd9-e2a8-1ddf-943d-58fb3be3a0cf@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------hrzpZm0yAcHq0hHuX02m3RmK"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-For a shared timers, the mct_init_dt() should not initialize the clock
-even with global comparator.  This is not an error, thus the function
-should simply return 0, not 'ret'.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------hrzpZm0yAcHq0hHuX02m3RmK
+Content-Type: multipart/mixed; boundary="------------srua5kjIPGL4v32Z0oAeEBq0";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, inki.dae@samsung.com,
+ sw0312.kim@samsung.com, kyungmin.park@samsung.com, javierm@redhat.com,
+ airlied@gmail.com, daniel@ffwll.ch, krzysztof.kozlowski@linaro.org,
+ alim.akhtar@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ dri-devel@lists.freedesktop.org
+Message-ID: <93b82d93-39d9-7e2f-2ac9-dad048e6851f@suse.de>
+Subject: Re: [PATCH 0/5] drm/exynos: Convert fbdev to DRM client
+References: <CGME20230330073654eucas1p26d62d618ad8792ec4f2adcce8cfc2414@eucas1p2.samsung.com>
+ <20230330073635.7409-1-tzimmermann@suse.de>
+ <0d1e8fd9-e2a8-1ddf-943d-58fb3be3a0cf@samsung.com>
+In-Reply-To: <0d1e8fd9-e2a8-1ddf-943d-58fb3be3a0cf@samsung.com>
 
-This also fixes smatch warning:
+--------------srua5kjIPGL4v32Z0oAeEBq0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-  drivers/clocksource/exynos_mct.c:635 mct_init_dt() warn: missing error code? 'ret'
+DQoNCkFtIDMxLjAzLjIzIHVtIDEyOjM2IHNjaHJpZWIgTWFyZWsgU3p5cHJvd3NraToNCj4g
+T24gMzAuMDMuMjAyMyAwOTozNiwgVGhvbWFzIFppbW1lcm1hbm4gd3JvdGU6DQo+PiBDb252
+ZXJ0IGV4eW5vcycgZmJkZXYgY29kZSB0byBzdHJ1Y3QgZHJtX2NsaWVudC4gUmVwbGFjZXMg
+dGhlIGN1cnJlbnQNCj4+IGFkLWhvYyBpbnRlZ3JhdGlvbi4gVGhlIGNvbnZlcnNpb24gaW5j
+bHVkZXMgYSBudW1iZXIgb2YgY2xlYW51cHMuIEFzDQo+PiB3aXRoIG1vc3Qgb3RoZXIgZHJp
+dmVycycgZmJkZXYgZW11bGF0aW9uLCBmYmRldiBpbiBleHlub3MgaXMgbm93IGp1c3QNCj4+
+IGFub3RoZXIgRFJNIGNsaWVudCB0aGF0IHJ1bnMgYWZ0ZXIgdGhlIERSTSBkZXZpY2UgaGFz
+IGJlZW4gcmVnaXN0ZXJlZC4NCj4+DQo+PiBPbmNlIGFsbCBkcml2ZXJzJyBmYmRldiBlbXVs
+YXRpb24gaGFzIGJlZW4gY29udmVydGVkIHRvIHN0cnVjdCBkcm1fY2xpZW50LA0KPj4gd2Ug
+Y2FuIGF0dGVtcHQgdG8gYWRkIGFkZGl0aW9uYWwgaW4ta2VybmVsIGNsaWVudHMuIEEgRFJN
+LWJhc2VkIGRtZXNnDQo+PiBsb2cgb3IgYSBib290c3BsYXNoIGFyZSBjb21tb25seSBtZW50
+aW9uZWQuIERSTSBjYW4gdGhlbiBzd2l0Y2ggZWFzaWx5DQo+PiBhbW9uZyB0aGUgZXhpc3Rp
+bmcgY2xpZW50cyBpZi93aGVuIHJlcXVpcmVkLg0KPj4NCj4+IEkgZGlkIHRoZSBjb252ZXJz
+aW9uIGZyb20gc2ltaWxhciBleHBlcmllbmNlIHdpdGggb3RoZXIgZHJpdmVycy4gQnV0IEkN
+Cj4+IGRvbid0IGhhdmUgdGhlIGhhcmR3YXJlIHRvIHRlc3QgdGhpcy4gQW55IHRlc3Rpbmcg
+aXMgd2VsY29tZS4NCj4gDQo+IFNlZW1zIHRvIGJlIHdvcmtpbmcgZmluZS4gVGVzdGVkIHdp
+dGggZGVmYXVsdCBmcmFtZWJ1ZmZlciBiYXNlZCBjb25zb2xlDQo+IGFuZCBzaW1wbGUgdG9v
+bCB0aGF0IHdyaXRlcyBSR0IgZGF0YSB0byAvZGV2L2ZiMC4NCj4gDQo+IFRlc3RlZC1ieTog
+TWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPg0KDQpUaGFua3Mg
+YSBsb3QgZm9yIHRlc3RpbmcuDQoNCj4gDQo+IA0KPj4gVGhvbWFzIFppbW1lcm1hbm4gKDUp
+Og0KPj4gICAgIGRybS9leHlub3M6IFJlbW92ZSBleHlub3NfZ2VtIGZyb20gc3RydWN0IGV4
+eW5vc19kcm1fZmJkZXYNCj4+ICAgICBkcm0vZXh5bm9zOiBSZW1vdmUgc3RydWN0IGV4eW5v
+c19kcm1fZmJkZXYNCj4+ICAgICBkcm0vZXh5bm9zOiBSZW1vdmUgZmJfaGVscGVyIGZyb20g
+c3RydWN0IGV4eW5vc19kcm1fcHJpdmF0ZQ0KPj4gICAgIGRybS9leHlub3M6IEluaXRpYWxp
+emUgZmJkZXYgRFJNIGNsaWVudA0KPj4gICAgIGRybS9leHlub3M6IEltcGxlbWVudCBmYmRl
+diBlbXVsYXRpb24gYXMgaW4ta2VybmVsIGNsaWVudA0KPj4NCj4+ICAgIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyAgIHwgIDEzICstDQo+PiAgICBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICB8ICAgMiAtDQo+PiAgICBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyAgICB8ICAgMiAtDQo+PiAgICBk
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmJkZXYuYyB8IDE3NCArKysrKysr
+KysrKy0tLS0tLS0tLS0tDQo+PiAgICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZmJkZXYuaCB8ICAyMCArLS0NCj4+ICAgIDUgZmlsZXMgY2hhbmdlZCwgOTQgaW5zZXJ0
+aW9ucygrKSwgMTE3IGRlbGV0aW9ucygtKQ0KPj4NCj4gQmVzdCByZWdhcmRzDQoNCi0tIA0K
+VGhvbWFzIFppbW1lcm1hbm4NCkdyYXBoaWNzIERyaXZlciBEZXZlbG9wZXINClNVU0UgU29m
+dHdhcmUgU29sdXRpb25zIEdlcm1hbnkgR21iSA0KTWF4ZmVsZHN0ci4gNSwgOTA0MDkgTsO8
+cm5iZXJnLCBHZXJtYW55DQooSFJCIDM2ODA5LCBBRyBOw7xybmJlcmcpDQpHZXNjaMOkZnRz
+ZsO8aHJlcjogSXZvIFRvdGV2DQo=
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <error27@gmail.com>
-Link: https://lore.kernel.org/r/202304021446.46XVKag0-lkp@intel.com/
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/clocksource/exynos_mct.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--------------srua5kjIPGL4v32Z0oAeEBq0--
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index bfd60093ee1c..ef8cb1b71be4 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -677,17 +677,17 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
- 	if (ret)
- 		return ret;
- 
- 	/*
- 	 * When the FRC is shared with a main processor, this secondary
- 	 * processor cannot use the global comparator.
- 	 */
- 	if (frc_shared)
--		return ret;
-+		return 0;
- 
- 	return exynos4_clockevent_init();
- }
- 
- 
- static int __init mct_init_spi(struct device_node *np)
- {
- 	return mct_init_dt(np, MCT_INT_SPI);
--- 
-2.34.1
+--------------hrzpZm0yAcHq0hHuX02m3RmK
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
 
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmQqrVIFAwAAAAAACgkQlh/E3EQov+Da
+FA//eDj4h6JDxQI17llLZsangcQvgSnHdXyfhsTalkniW0f8gmiwfx2XGLT+eBvTff3EM8EIAliH
+Hqe5Cj95qIss3T5O42I+D160O5Jy8DLj8QFJljiDL3rwX3VycJN9Tt5uV9XKxRlWQt+RgI0D9O9b
+jkLIFEWVCAds0Oy9qfuxyujCMBScWzrvKADp0yyHn14wn+ZYm6QTvTBBq4xJgUx1bhpyf7z2xxxm
+axtOe2v5iuh2bRJ39IsfRtKhe60oSfcZeJf4VIVtqEsRi+OZnNQGq564Ff06pYslvELG7tRzoxqo
+Jqzd/9vuChSl9N0PHkZO2FUjDQP4kzPej++0ZL1nSH0JLxOpa3JvXQp9OuyewvEpHHECEBYDptH/
+6B/OQhbsodnvE6Gq4QT0ljeOIu1tWJ/jAUSPQM9ToNLCPuAaKjy89M1U6tcoAp5A1RJaEPnt5xOL
+jkvwCCkX5VtHldbxsNfPylbMoKbbEaqhEB/MSrqJLN6IUmezJICtDFKPRciUZ9zPqSAq3PTvbfFi
+/il0jxnG4eIr8JiEuqYsR/nSp4s3o152RbgBTOHAigIDmmMBlm7ih4mlEU1g04uotnEfmmuylvaN
+ZBmAmGdkLCBSULX3f/Nj91GJhaWKWGb3f5+6iHAFngBYQdKfHcwAtMcH/D/lUxwGtN30MpVNfHgd
+CyE=
+=ml1b
+-----END PGP SIGNATURE-----
+
+--------------hrzpZm0yAcHq0hHuX02m3RmK--
