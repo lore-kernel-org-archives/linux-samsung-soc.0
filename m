@@ -2,145 +2,184 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EDDEC761A6
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Apr 2023 16:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C860C76196
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Apr 2023 16:50:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232849AbjDCQcC (ORCPT
+        id S232586AbjDCQuD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 Apr 2023 12:32:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38376 "EHLO
+        Mon, 3 Apr 2023 12:50:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232202AbjDCQcA (ORCPT
+        with ESMTP id S232495AbjDCQuB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Apr 2023 12:32:00 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AD8B2710
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Apr 2023 09:31:31 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id b20so119691670edd.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Apr 2023 09:31:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680539484;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=do5D8PA2Ob021tcdMPdX8DXoHHob1pEJ74k2NUfYoOw=;
-        b=gvcObH+GeWNztUvTPEolF4QBTe8UBkuEhmEzaDz+0v1RlevYxGTkVez9vOJDJeO0Am
-         KHj40v8o36pKjV8INTNUVi1oPRc1hYy1cRaFvexNAMox4fJokjSZi2o0kkXk15k00YO5
-         3imybZCeo47YY+phMyZa3N44ep8RYqTAJL3oySNMJSDoAevdz6FKcncx1zoZXk3y1vZJ
-         anvB2QLdYe/NjbdBKUZY6QPBDSg5Q9tMEudCVjpv2yLPCBxqURC1S3oeq8p5UaooSy/U
-         jxMOaQ7pSU8YG4/m0pdWxtvZdeFCrE4cj+7Ramr1kJCGNlNzUGrcjuC1VkyhBB20Xx+d
-         vI5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680539484;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=do5D8PA2Ob021tcdMPdX8DXoHHob1pEJ74k2NUfYoOw=;
-        b=h/2esbUYf+TYOojMNCg5s7vH8yE/ocVYKk163ovioyXgdC9+VQV88t7PW1XdO2VH9r
-         DMairNswF/apgfKlXY9x9AUnxLpb9JQIwIONQLHoosE3PU2ifjjyaw4x/1d2XzM3UzxG
-         aO9/G/v0exRs1I41RWHG/t2oxYd8mVd4wYjihHug6PCU2JJClvMeQYkZ85qUFG4FEFFL
-         QnEQSOsXpoC5lI6XR18KP+bJsEvJVy8jHptyi8qt0Q0K/UdWrwOjy6oj/BB1O+SRfk/5
-         t6uP3wT2pmfug+dC7wEpt79NZBZR+zkOvVDVSsJvnS9EPfT+HjX3Bu5PlkgSNAz2aHsS
-         SFwg==
-X-Gm-Message-State: AAQBX9fRQNmlSPOe++l/m8gyt6Po/5quzvowl6DOP4KVEpwT6kbrFm3k
-        +GRrqKi49IGnLCWph14MAQo/RUE5lgSkNInitAs=
-X-Google-Smtp-Source: AKy350bvrGXVzVDbeYDPijEMx72wVfks2dCFgyV4cScGu2NL13KvmMYqiVyTa6DX5gDdX/uUh/KHwQ==
-X-Received: by 2002:a17:906:5856:b0:930:1391:da7c with SMTP id h22-20020a170906585600b009301391da7cmr32345440ejs.60.1680539484409;
-        Mon, 03 Apr 2023 09:31:24 -0700 (PDT)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:ae90:d80:1069:4805])
-        by smtp.gmail.com with ESMTPSA id u2-20020a17090617c200b00930c7b642d0sm4755010eje.166.2023.04.03.09.31.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Apr 2023 09:31:23 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] clk: samsung: drivers for v6.4
-Date:   Mon,  3 Apr 2023 18:31:05 +0200
-Message-Id: <20230403163106.331712-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Mon, 3 Apr 2023 12:50:01 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF819EC
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Apr 2023 09:49:59 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230403164956epoutp02bf33aa4d0960a83956cc4037e7ff47f6~SesSv_K7S2307223072epoutp02r
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Apr 2023 16:49:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230403164956epoutp02bf33aa4d0960a83956cc4037e7ff47f6~SesSv_K7S2307223072epoutp02r
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1680540596;
+        bh=4vl4MneEdX/I/cATp5aqPnhcg1IjYaveQ7Hh5V32xLY=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=s2MK158LH4aGvXXiEpRZQh4wmh5VIS8dOYoSnxIGNzDl3zH4m6OqLLQE6nH0mjdiG
+         q9Mp04n/75Qu+mmR2/dv+e3MrqKa+5HbzCilWiMccjtRYJ5h8x06VYXP8sBeqrXBC2
+         18uZ+uVgSk5xemsJjT4RW4rxV3fUPG+afU4iu2/o=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20230403164955epcas5p195f1750d7cd4bfb53d694e573d1f1154~SesSN2lva2280422804epcas5p1X;
+        Mon,  3 Apr 2023 16:49:55 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4PqxhL32snz4x9Pt; Mon,  3 Apr
+        2023 16:49:54 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        58.80.55678.2B30B246; Tue,  4 Apr 2023 01:49:54 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20230403164954epcas5p479e24f0be726ba8ae0b4439d5c9aec04~SesQ0kobc1090310903epcas5p4d;
+        Mon,  3 Apr 2023 16:49:54 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230403164954epsmtrp140b039c58fcf608a0c59c4322aeaaa0e~SesQz3mWj0733307333epsmtrp1F;
+        Mon,  3 Apr 2023 16:49:54 +0000 (GMT)
+X-AuditID: b6c32a4a-909fc7000000d97e-6f-642b03b2e5b1
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        FB.03.18071.1B30B246; Tue,  4 Apr 2023 01:49:53 +0900 (KST)
+Received: from alimakhtar04 (unknown [107.122.12.5]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20230403164951epsmtip11f29f0837703acfdf7a3090bdfe5a4cc~SesOSXQk72305723057epsmtip1-;
+        Mon,  3 Apr 2023 16:49:50 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+        "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
+        "'Thomas Gleixner'" <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>
+Cc:     "'Vincent Whitchurch'" <vincent.whitchurch@axis.com>,
+        "'kernel test robot'" <lkp@intel.com>,
+        "'Dan Carpenter'" <error27@gmail.com>
+In-Reply-To: <20230403094017.9556-1-krzysztof.kozlowski@linaro.org>
+Subject: RE: [PATCH] clocksource/drivers/exynos_mct: explicitly return 0 for
+ shared timer
+Date:   Mon, 3 Apr 2023 22:19:48 +0530
+Message-ID: <039c01d9664c$5070aed0$f1520c70$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQLFTgOcK4F+54gjrrz1BLD8nfdf7gIYFz+/rTE62hA=
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmlu4mZu0Ug1UnRCzmfZa1eLTMz2Lv
+        663sFpseX2O1uLxrDpvFjPP7mCxeNT9is9i8aSqzxflt/g6cHtfXBXjsnHWX3WPxnpdMHneu
+        7WHzeHfuHLvH5iX1Hp83yQWwR2XbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp
+        5CXmptoqufgE6Lpl5gBdpaRQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpMCnQK07M
+        LS7NS9fLSy2xMjQwMDIFKkzIzuhu2MJecE6gouHJbdYGxme8XYycHBICJhJd53ezdzFycQgJ
+        7GaUOHHuO5TziVHiwNdFzBDON0aJdzPeM8G0TPh6lwkisZdRovlHDyOE85JRYsL5vWBVbAK6
+        EjsWt7GBJEQEOpkktjd+A6tiFuhglLhx+z8jSBWngLPEocsrWEFsYYFoiZ7Xv8C6WQRUJD5u
+        nQZWwytgKdHQ95MFwhaUODnzCZjNLCAvsf3tHGaImxQkfj5dBjZHRMBKYntrByNEjbjEy6NH
+        wD6SEFjLIdH65x8jRIOLxL7dv1khbGGJV8e3sEPYUhIv+9uAbA4g20Ni0R8piHCGxNvl66Fa
+        7SUOXJnDAlLCLKApsX6XPsQqPone30+YIDp5JTrahCCqVSWa311lgbClJSZ2d7PCDO+8nTKB
+        UXEWkr9mIflrFpL7ZyHsWsDIsopRMrWgODc9tdi0wCgvtRwe4cn5uZsYwYlWy2sH48MHH/QO
+        MTJxMB5ilOBgVhLhVe3SShHiTUmsrEotyo8vKs1JLT7EaAoM7InMUqLJ+cBUn1cSb2hiaWBi
+        ZmZmYmlsZqgkzqtuezJZSCA9sSQ1OzW1ILUIpo+Jg1OqgSlCwcz57/Zgo/KwjNupp9n/eBmW
+        9h/v28jy4txUNudjuo57fCRmXvkhdXDmPLXNq5PV9uqb5f+25/kTOs88dtnUS7termXdxyc8
+        y2uvptyyylcsbsz/rq7j0urT3La08dklv017Qyu3JSuqLtocJKGtt5lfP9w6M/pTitAXYeEC
+        pd7c4wHrH55m05eOO2v+ac3DRG7VrfP55Ks1aqfe8rznuObl1lNzhTfdTM069Fc77EVsa+30
+        +wLHu29KrOQ5OW2X07KOShHRuMWXgg9+WLF//a3zNdd28YcXTd+3xHPrMjnGqN4jJ74oyuWz
+        C6WtY7A+uF9zXcq311+TowOPaMhfLv5dtML8+ptXpzTPiT9WYinOSDTUYi4qTgQAIlTXVT0E
+        AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsWy7bCSnO5GZu0UgyfTLC3mfZa1eLTMz2Lv
+        663sFpseX2O1uLxrDpvFjPP7mCxeNT9is9i8aSqzxflt/g6cHtfXBXjsnHWX3WPxnpdMHneu
+        7WHzeHfuHLvH5iX1Hp83yQWwR3HZpKTmZJalFunbJXBldDdsYS84J1DR8OQ2awPjM94uRk4O
+        CQETiQlf7zJ1MXJxCAnsZpR41n2GBSIhLXF94wR2CFtYYuW/52C2kMBzRoll5yNBbDYBXYkd
+        i9vYQJpFBHqZJFYvuAbmMAt0MUqcvtfDCDF2ClDH6pesIC2cAs4Shy6vALOFBSIlds09yghi
+        swioSHzcOg3M5hWwlGjo+8kCYQtKnJz5BMjmAJqqJ9G2EayEWUBeYvvbOcwQ1ylI/Hy6DGyk
+        iICVxPbWDqgacYmXR4+wT2AUnoVk0iyESbOQTJqFpGMBI8sqRsnUguLc9NxiwwLDvNRyveLE
+        3OLSvHS95PzcTYzgaNPS3MG4fdUHvUOMTByMhxglOJiVRHhVu7RShHhTEiurUovy44tKc1KL
+        DzFKc7AoifNe6DoZLySQnliSmp2aWpBaBJNl4uCUamBqvSrrmsG4f/fUrt/2/jk6AZJb/HW2
+        Lom8XLNv+uSAVx3yU1NOW4kd2fKj2mPL/SlpWkW95ocnX3rnv+zIn2/7jeVX77VX3NL3VDRl
+        eYsgexsTX5yhwm4eu8snRZ4t+KI/PauZJ8nOrcvCb5fj1WONn9xep7otvlbweas1w4mW4x/Z
+        FymVOTPeMzh5cc7qNSu9NPavrIz91MBycfZiC4bsaXzsQv+ai1o+31B31Lis7FnWqfeg/sWV
+        xo4a/qzH2dM0hN461e6cuyziYv7VqY92RnQZaro41UWdfuI9XbYn8OBC7bQPPHpa3e94n96V
+        Wc1ufjxuzrPv5mKqgf2x1X9+c9vo3HyxQ8biLV/fhpVKLMUZiYZazEXFiQAm5kN7JQMAAA==
+X-CMS-MailID: 20230403164954epcas5p479e24f0be726ba8ae0b4439d5c9aec04
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230403094023epcas5p3cb0690c9984ce4d80ede8483a312be4d
+References: <CGME20230403094023epcas5p3cb0690c9984ce4d80ede8483a312be4d@epcas5p3.samsung.com>
+        <20230403094017.9556-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4cc6:
+Hello Krzysztof
 
-  Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Sent: Monday, April 3, 2023 3:10 PM
+> To: Daniel Lezcano <daniel.lezcano@linaro.org>; Thomas Gleixner
+> <tglx@linutronix.de>; Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org>;
+> Alim Akhtar <alim.akhtar@samsung.com>; linux-kernel@vger.kernel.org;
+> linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org
+> Cc: Vincent Whitchurch <vincent.whitchurch@axis.com>; kernel test robot
+> <lkp@intel.com>; Dan Carpenter <error27@gmail.com>
+> Subject: [PATCH] clocksource/drivers/exynos_mct: explicitly return 0 for
+> shared timer
+> 
+> For a shared timers, the mct_init_dt() should not initialize the clock
+even with
+> global comparator.  This is not an error, thus the function should simply
+> return 0, not 'ret'.
+> 
+> This also fixes smatch warning:
+> 
+>   drivers/clocksource/exynos_mct.c:635 mct_init_dt() warn: missing error
+> code? 'ret'
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <error27@gmail.com>
+> Link: https://lore.kernel.org/r/202304021446.46XVKag0-lkp@intel.com/
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-are available in the Git repository at:
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.4
+>  drivers/clocksource/exynos_mct.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clocksource/exynos_mct.c
+> b/drivers/clocksource/exynos_mct.c
+> index bfd60093ee1c..ef8cb1b71be4 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -677,17 +677,17 @@ static int __init mct_init_dt(struct device_node
+> *np, unsigned int int_type)
+>  	if (ret)
+>  		return ret;
+> 
+>  	/*
+>  	 * When the FRC is shared with a main processor, this secondary
+>  	 * processor cannot use the global comparator.
+>  	 */
+>  	if (frc_shared)
+> -		return ret;
+> +		return 0;
+> 
+>  	return exynos4_clockevent_init();
+>  }
+> 
+> 
+>  static int __init mct_init_spi(struct device_node *np)  {
+>  	return mct_init_dt(np, MCT_INT_SPI);
+> --
+> 2.34.1
 
-for you to fetch changes up to babb3e6a8a8e5a61a65d4463610108808139b23e:
 
-  clk: samsung: exynos850: Make PMU_ALIVE_PCLK critical (2023-03-13 08:24:57 +0100)
-
-----------------------------------------------------------------
-Samsung SoC clock drivers changes for 6.4
-
-1. Exynos850: Add CMU_G3D clock controller for the Mali GPU.  This
-   brings new PLLs and few cleanups/simplifications in core Exynos clock
-   controller code, so they can be easier re-used in Exynos850 clock
-   controller driver.
-   New CMU_G3D clock controller needs Devicetree bindings header changes
-   with clock indices which are pulled from Samsung SoC repository.
-
-2. Extract Exynos5433 (ARM64) clock controller power management code to
-   common driver parts, so later it can be re-used by other Exynos clock
-   controller drivers.  This only prepares for such re-usage, which is
-   expected to come later for Exynos850.
-
-3. Exynos850: make PMU_ALIVE_PCLK clock critical, because it is needed
-   for core block - Power Management Unit.
-
-4. Cleanup: remove() callback returns void.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      Merge branch 'for-v6.4/clk-exynos850-dt-binding' into next/clk
-
-Sam Protsenko (12):
-      dt-bindings: clock: exynos850: Add Exynos850 CMU_G3D
-      dt-bindings: clock: exynos850: Add AUD and HSI main gate clocks
-      clk: samsung: Remove np argument from samsung_clk_init()
-      clk: samsung: Don't pass reg_base to samsung_clk_register_pll()
-      clk: samsung: Set dev in samsung_clk_init()
-      clk: samsung: clk-pll: Implement pll0818x PLL type
-      clk: samsung: exynos850: Implement CMU_G3D domain
-      clk: samsung: exynos850: Add AUD and HSI main gate clocks
-      clk: samsung: Extract clocks registration to common function
-      clk: samsung: Extract parent clock enabling to common function
-      clk: samsung: exynos5433: Extract PM support to common ARM64 layer
-      clk: samsung: exynos850: Make PMU_ALIVE_PCLK critical
-
-Uwe Kleine-König (1):
-      clk: samsung: Convert to platform remove callback returning void
-
- .../bindings/clock/samsung,exynos850-clock.yaml    |  19 ++
- drivers/clk/samsung/clk-exynos-arm64.c             | 229 +++++++++++++++++++--
- drivers/clk/samsung/clk-exynos-arm64.h             |   3 +
- drivers/clk/samsung/clk-exynos-audss.c             |   6 +-
- drivers/clk/samsung/clk-exynos-clkout.c            |   6 +-
- drivers/clk/samsung/clk-exynos4.c                  |   6 +-
- drivers/clk/samsung/clk-exynos4412-isp.c           |   3 +-
- drivers/clk/samsung/clk-exynos5250.c               |   5 +-
- drivers/clk/samsung/clk-exynos5420.c               |   5 +-
- drivers/clk/samsung/clk-exynos5433.c               | 157 +-------------
- drivers/clk/samsung/clk-exynos850.c                | 141 ++++++++++++-
- drivers/clk/samsung/clk-pll.c                      |  12 +-
- drivers/clk/samsung/clk-pll.h                      |   1 +
- drivers/clk/samsung/clk-s3c64xx.c                  |   4 +-
- drivers/clk/samsung/clk-s5pv210.c                  |   6 +-
- drivers/clk/samsung/clk.c                          |  64 ++++--
- drivers/clk/samsung/clk.h                          |  10 +-
- include/dt-bindings/clock/exynos850.h              |  28 ++-
- 18 files changed, 475 insertions(+), 230 deletions(-)
