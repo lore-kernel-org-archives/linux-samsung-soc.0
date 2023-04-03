@@ -2,177 +2,113 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5772DC76196
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Apr 2023 07:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C86C77B62
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Apr 2023 09:41:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231150AbjDCHE5 (ORCPT
+        id S232079AbjDCJlG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 Apr 2023 03:04:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58476 "EHLO
+        Mon, 3 Apr 2023 05:41:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231626AbjDCHEe (ORCPT
+        with ESMTP id S232089AbjDCJkp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Apr 2023 03:04:34 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18C4FF769
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Apr 2023 00:04:01 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230403070356euoutp02a1b17c65ff3b25c0e7c9f8187ebf7e9f~SWspziNiX1330113301euoutp02M
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Apr 2023 07:03:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230403070356euoutp02a1b17c65ff3b25c0e7c9f8187ebf7e9f~SWspziNiX1330113301euoutp02M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1680505436;
-        bh=GqYSXkFFwqBFzhMRUvQBL+nFf4rkIeNW0LsEK9MUwI4=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=AQBNW8VL2TIfqp+8gAkFNmNTF41TI/csM1nVWiocYHZTOiOrkXMXgWHo+lgi427go
-         WIxC7UcJl6b7d6UR14Cr21HXNzARzZs1BqYu8BeBQrorTq+Cey1//SX+wM2FkqO97M
-         AzWY0wzJ9uwTOWZ7HzfOwXREU8T3+aKiG+JinRPo=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230403070356eucas1p25d23cdfe4080655555d0c77e27aa9fa0~SWspiwfwP2363523635eucas1p2Z;
-        Mon,  3 Apr 2023 07:03:56 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 6D.EA.10014.C5A7A246; Mon,  3
-        Apr 2023 08:03:56 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230403070355eucas1p1d33a597fcef51a9889611a7c19fa6284~SWspPJmIj2947229472eucas1p1K;
-        Mon,  3 Apr 2023 07:03:55 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230403070355eusmtrp1cb77d3daf94d8f2f8e9a12806f23a9a8~SWspOkd_Y0449404494eusmtrp1u;
-        Mon,  3 Apr 2023 07:03:55 +0000 (GMT)
-X-AuditID: cbfec7f5-ba1ff7000000271e-37-642a7a5cebff
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 30.60.08862.B5A7A246; Mon,  3
-        Apr 2023 08:03:55 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230403070355eusmtip2c575d7b70c6251460ee28c1ca4416b1b~SWsorV-zD1953919539eusmtip21;
-        Mon,  3 Apr 2023 07:03:55 +0000 (GMT)
-Message-ID: <5f324b20-6710-4612-d78a-ea294ad283aa@samsung.com>
-Date:   Mon, 3 Apr 2023 09:03:54 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
-        Gecko/20100101 Thunderbird/102.9.1
-Subject: Re: [PATCH] iommu/exynos: Use the devm_clk_get_optional() helper
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
+        Mon, 3 Apr 2023 05:40:45 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E73C6F76E
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Apr 2023 02:40:20 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id x3so114675307edb.10
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Apr 2023 02:40:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680514819;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FSiRdzM/Hcoj6ys0IYZsAKkIeh1yNctbREvv/DtXe/Q=;
+        b=ZkP/A1aIjm21E8JZo1mu1+sp7Ulo4zuCCCic25C+tfwXK4nhe8HvwFY8AdF7OFv6qv
+         HZGBrI1kL03OdoBRRa0Ow7Mkbm6dbZwpcV7cgrd/xhgl5xGQEw+Iggd0OVcSqPABZyvo
+         +2Rlm7RZwYfFDhsYdCnb716yXk2iAcNWo324ioXxcAa6nOux98c45dq5uGz/6lJMzG9e
+         fJ0/iPiZUhMBVcrjG4quz71pwtXUZFc3SGkr/g3yXwzhIXrBlz8xHIvM7KUNDvUiEFwj
+         3a2vVV0i97CA++/FsNr6FGWpeNZZ0MJ70pglo5If1HEI1QUAmccUaq9VKAqdFUO8Yx33
+         cTQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680514819;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FSiRdzM/Hcoj6ys0IYZsAKkIeh1yNctbREvv/DtXe/Q=;
+        b=v+o3ERk3/LTdthDPWkfy2svarXfSEXgvAaq0HZjhwrmKlhA4QYgAsi/E7//tqccJeD
+         upkeVGBFrjdcZFueBgbijN5MHN5jykaNEz0r1vNXGJiOTVdTBtKkLfmH5Gl1aH5XNvTC
+         euXyjVHDxbXs0LhAhw0Gmj2RoTzCWuvdVmlC2PJjI9E0RjNKS8uFl8h0IGz2IS88PNJs
+         sYJ/3P27C3obijlIhJtTbG65g1QuNenOaRkJ0sctboFr8MVJjObEvIl52+iUIhyiPCk/
+         XUDteZAWBTRgS4jL5NIhDPAaBBLptoo+dOi/M7/zfCQsYQQz6QJhKY5Z1abNrxu5/t9C
+         lcEg==
+X-Gm-Message-State: AAQBX9eqvlYdbI1PxuGf8pq+MgM13AaPSsjScMKIrbeUr8MZ1eOvQQjS
+        xUC/S+7xSnLnNwtVYGlALbz4Dg==
+X-Google-Smtp-Source: AKy350bnFDoaDvJBvx9QtkqlucDG4g1KZb+aUGo2QU0ZaPEWeT85ScjK+bX/MK6H7RqwWFElVS4TTg==
+X-Received: by 2002:a17:907:7788:b0:932:c1e2:9984 with SMTP id ky8-20020a170907778800b00932c1e29984mr33858694ejc.58.1680514819387;
+        Mon, 03 Apr 2023 02:40:19 -0700 (PDT)
+Received: from krzk-bin.. ([2a02:810d:15c0:828:ae90:d80:1069:4805])
+        by smtp.gmail.com with ESMTPSA id l24-20020a170906079800b00930d22474dbsm4311244ejc.97.2023.04.03.02.40.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Apr 2023 02:40:19 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <99c0d5ce643737ee0952df41fd60433a0bbeb447.1679834256.git.christophe.jaillet@wanadoo.fr>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEKsWRmVeSWpSXmKPExsWy7djPc7oxVVopBl3fuS0ezNvGZrH14FxW
-        i19fLCw6Z29gt9h6S9pi7+ut7BabHl9jtbi8aw6bxYzz+5gsDn54wmrRcsfUgdvjycF5TB5r
-        5q1h9Ni0qpPN4861PWwem5fUe7zYPJPRo2/LKkaPz5vkPD7fXc8awBnFZZOSmpNZllqkb5fA
-        lbF30yGWgrMCFRseTGFsYDzB28XIySEhYCLx8ttu1i5GLg4hgRWMEk+n7meBcL4wSsy6MJcd
-        pEpI4DOjxPbPeTAdzV3tUB3LGSWWPloA1fGRUeLi2jPMIFW8AnYSJ37MZQGxWQRUJJqXLYOK
-        C0qcnPkELC4qkCKx++RTsA3CAp4SbxfvYgWxmQXEJW49mc8EMlRE4C+jxLoL69ggEksZJR5s
-        jgCx2QQMJbredoHFOYEG3W87wAxRIy+x/e0cZpBmCYF+TomHDRcZuxg5gBwXiYunhCFeEJZ4
-        dXwLO4QtI3F6cg8LRH07o8SC3/eZIJwJjBINz28xQlRZS9w594sNZBCzgKbE+l36EGFHiR+/
-        VzFDzOeTuPFWEOIGPolJ26ZDhXklOtqEIKrVJGYdXwe39uCFS8wTGJVmIQXLLCTvz0LyzSyE
-        vQsYWVYxiqeWFuempxYb56WW6xUn5haX5qXrJefnbmIEJrPT/45/3cG44tVHvUOMTByMhxgl
-        OJiVRHjtNTRThHhTEiurUovy44tKc1KLDzFKc7AoifNq255MFhJITyxJzU5NLUgtgskycXBK
-        NTBN/xAQzH/cqfNfqgVXgcoazS8RHw5c/6C5+f0/J273oGDmczYPnaxbxIQnddhdmmB5s+rJ
-        gmeW787p7tdc5DNvdv1v219Bi091vLvylUP5XtrDXal2q3X21FYwiK29dydI68KSf1zqH7g+
-        7vvH4t1qwPRX/+1MYaNDJx9Grv7xU8LPeHKzqOQ/JsGKzd+6wjMTag34c/g3RzDrXFuqFf2t
-        PqJacdqrsgCJ8pV7PrZK9nNOec3cqHl3xuSl2Zcdt07JC222zwuf2WGxIP2ivJ/03WlnS5Ky
-        Xl/k1255KPFumanyU21fw885kdUKua+fHznBlHf94sQJhyLTPNe67Ctaw9e6dLlLQZKy8CGf
-        tkNKLMUZiYZazEXFiQBp3dPL1QMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsVy+t/xe7rRVVopBlc3mVg8mLeNzWLrwbms
-        Fr++WFh0zt7AbrH1lrTF3tdb2S02Pb7GanF51xw2ixnn9zFZHPzwhNWi5Y6pA7fHk4PzmDzW
-        zFvD6LFpVSebx51re9g8Ni+p93ixeSajR9+WVYwenzfJeXy+u541gDNKz6Yov7QkVSEjv7jE
-        Vina0MJIz9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL2PvpkMsBWcFKjY8mMLYwHiC
-        t4uRk0NCwESiuaudtYuRi0NIYCmjRNfxycwQCRmJk9MaWCFsYYk/17rYIIreM0osfbWXDSTB
-        K2AnceLHXBYQm0VARaJ52TJmiLigxMmZT8DiogIpErsmLGUCsYUFPCXeLt4FNpRZQFzi1pP5
-        TCBDRQT+M0rsXHWaESIBdMblX/EQ27YzSjz//RtsEpuAoUTX2y6wzZxAU++3HWCGaDCT6Nra
-        BdUsL7H97RzmCYxCs5AcMgvJwllIWmYhaVnAyLKKUSS1tDg3PbfYUK84Mbe4NC9dLzk/dxMj
-        MIK3Hfu5eQfjvFcf9Q4xMnEwHmKU4GBWEuG119BMEeJNSaysSi3Kjy8qzUktPsRoCgyNicxS
-        osn5wBSSVxJvaGZgamhiZmlgamlmrCTO61nQkSgkkJ5YkpqdmlqQWgTTx8TBKdXApM8t41Kv
-        z3jTff/2k5Yauxab5vTXVCd1GOysf19ToPhf6vIfleIUt01vE6Ky6w9k67z3T1+efXARo97c
-        wJZdizdkbXr2fePW1u2/L3tIpsUYHffV6NP8Pf2pW3jDtOPcR+8dM1qqM8do08mWB7nL+Op2
-        XPiunp9y0rFJSEv948Q8u9ebVVql54t+Oz2FN8Qljv/m2pl2ywSmTwrbqTFX7VXEx80eTPty
-        NTZdXL/3wqTN1fcjVOwXpD2UvpFkM31t8sMVrPcNbjy5PLWGy2TjYTnuDSXMLiui9py4prBS
-        Yzaj1N3W2Zvvxks6PC5OO6axy8AxKuNhww9F9TvCvz7ENAp9eF66fKFSMH+Dzud/k5RYijMS
-        DbWYi4oTAWLaIqRpAwAA
-X-CMS-MailID: 20230403070355eucas1p1d33a597fcef51a9889611a7c19fa6284
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230326123802eucas1p2f9e22c91fe4134d086d9dfe1d6bfd029
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230326123802eucas1p2f9e22c91fe4134d086d9dfe1d6bfd029
-References: <CGME20230326123802eucas1p2f9e22c91fe4134d086d9dfe1d6bfd029@eucas1p2.samsung.com>
-        <99c0d5ce643737ee0952df41fd60433a0bbeb447.1679834256.git.christophe.jaillet@wanadoo.fr>
+Cc:     Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        kernel test robot <lkp@intel.com>,
+        Dan Carpenter <error27@gmail.com>
+Subject: [PATCH] clocksource/drivers/exynos_mct: explicitly return 0 for shared timer
+Date:   Mon,  3 Apr 2023 11:40:17 +0200
+Message-Id: <20230403094017.9556-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 26.03.2023 14:37, Christophe JAILLET wrote:
-> Use devm_clk_get_optional() instead of hand writing it.
-> This saves some loC and improves the semantic.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->   drivers/iommu/exynos-iommu.c | 24 ++++++++----------------
->   1 file changed, 8 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index 483aaaeb6dae..867f409e0325 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -747,22 +747,16 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
->   		return ret;
->   	}
->   
-> -	data->clk = devm_clk_get(dev, "sysmmu");
-> -	if (PTR_ERR(data->clk) == -ENOENT)
-> -		data->clk = NULL;
-> -	else if (IS_ERR(data->clk))
-> +	data->clk = devm_clk_get_optional(dev, "sysmmu");
-> +	if (IS_ERR(data->clk))
->   		return PTR_ERR(data->clk);
->   
-> -	data->aclk = devm_clk_get(dev, "aclk");
-> -	if (PTR_ERR(data->aclk) == -ENOENT)
-> -		data->aclk = NULL;
-> -	else if (IS_ERR(data->aclk))
-> +	data->aclk = devm_clk_get_optional(dev, "aclk");
-> +	if (IS_ERR(data->aclk))
->   		return PTR_ERR(data->aclk);
->   
-> -	data->pclk = devm_clk_get(dev, "pclk");
-> -	if (PTR_ERR(data->pclk) == -ENOENT)
-> -		data->pclk = NULL;
-> -	else if (IS_ERR(data->pclk))
-> +	data->pclk = devm_clk_get_optional(dev, "pclk");
-> +	if (IS_ERR(data->pclk))
->   		return PTR_ERR(data->pclk);
->   
->   	if (!data->clk && (!data->aclk || !data->pclk)) {
-> @@ -770,10 +764,8 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
->   		return -ENOSYS;
->   	}
->   
-> -	data->clk_master = devm_clk_get(dev, "master");
-> -	if (PTR_ERR(data->clk_master) == -ENOENT)
-> -		data->clk_master = NULL;
-> -	else if (IS_ERR(data->clk_master))
-> +	data->clk_master = devm_clk_get_optional(dev, "master");
-> +	if (IS_ERR(data->clk_master))
->   		return PTR_ERR(data->clk_master);
->   
->   	data->sysmmu = dev;
+For a shared timers, the mct_init_dt() should not initialize the clock
+even with global comparator.  This is not an error, thus the function
+should simply return 0, not 'ret'.
 
-Best regards
+This also fixes smatch warning:
+
+  drivers/clocksource/exynos_mct.c:635 mct_init_dt() warn: missing error code? 'ret'
+
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <error27@gmail.com>
+Link: https://lore.kernel.org/r/202304021446.46XVKag0-lkp@intel.com/
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/clocksource/exynos_mct.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index bfd60093ee1c..ef8cb1b71be4 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -677,17 +677,17 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+ 	if (ret)
+ 		return ret;
+ 
+ 	/*
+ 	 * When the FRC is shared with a main processor, this secondary
+ 	 * processor cannot use the global comparator.
+ 	 */
+ 	if (frc_shared)
+-		return ret;
++		return 0;
+ 
+ 	return exynos4_clockevent_init();
+ }
+ 
+ 
+ static int __init mct_init_spi(struct device_node *np)
+ {
+ 	return mct_init_dt(np, MCT_INT_SPI);
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.34.1
 
