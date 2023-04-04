@@ -2,106 +2,64 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D812C6FD1D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Apr 2023 13:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9722C761A6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Apr 2023 16:07:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234834AbjDDNdq (ORCPT
+        id S235714AbjDDQHo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 4 Apr 2023 09:33:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43466 "EHLO
+        Tue, 4 Apr 2023 12:07:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234481AbjDDNdm (ORCPT
+        with ESMTP id S235710AbjDDQHn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 Apr 2023 09:33:42 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FECB1710;
-        Tue,  4 Apr 2023 06:33:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 760C8632ED;
-        Tue,  4 Apr 2023 13:33:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ACFAC433D2;
-        Tue,  4 Apr 2023 13:33:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680615192;
-        bh=mNbOU7xuGoBEYIuAeOXwalRr9mQiImjiyHioFrwCpbY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PYad8Y09zS90YAGfHjTQhF8eKoJ0nHdxAH3WsOrzCCyE0reSxAqiChIAxmT6Qa7kB
-         D5Hj0M42gAqibHziun3b7XW5k6nQFMosRsp6ZVPWTC7QSLMuyAZB2wu0deFLUyqRBD
-         NOrlJPP8ZYYu6n9dfkMDI6trZzD8GzTeJ8GVYe+zqZl8tnmU0MYUuXFwWHF+TqJPno
-         Q5ASqbtdl5EM8d+xHCxLjGxf9njmPQLNbTCcF35sx+VBNANzezQltrP/Yh5BT0wl27
-         v4y8r19N+ll9xxR6fACn9kR70+Pgm3n690sOC0iHTw/VXytC5zsAIxwl5tduShLyks
-         145M24X0DJCaA==
-Date:   Tue, 4 Apr 2023 14:33:06 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Jaewon Kim <jaewon02.kim@samsung.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andi Shyti <andi@etezian.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-spi@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Chanho Park <chanho61.park@samsung.com>
-Subject: Re: [PATCH 3/3] spi: s3c64xx: support interrupt based pio mode
-Message-ID: <49b335e6-78a7-4f80-a844-bacef804849e@sirena.org.uk>
-References: <20230404060011.108561-1-jaewon02.kim@samsung.com>
- <CGME20230404061409epcas2p2b12a9cac014907e3930795cb67cb6040@epcas2p2.samsung.com>
- <20230404060011.108561-4-jaewon02.kim@samsung.com>
- <61a67466-3467-4f71-bc27-d660e37c08ac@sirena.org.uk>
- <e01900f0-e5ac-d2f9-9e1b-c5cc35d21713@samsung.com>
+        Tue, 4 Apr 2023 12:07:43 -0400
+X-Greylist: delayed 4190 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 04 Apr 2023 09:07:42 PDT
+Received: from mail.feshiecree.pl (mail.feshiecree.pl [89.40.114.103])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9E953AB9
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  4 Apr 2023 09:07:42 -0700 (PDT)
+Received: by mail.feshiecree.pl (Postfix, from userid 1001)
+        id A2C9E88A46; Tue,  4 Apr 2023 08:50:36 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=feshiecree.pl;
+        s=mail; t=1680594657;
+        bh=hFxZwVw4rIL+JwfEOGI47p+fdoVOAeqVswP6NWoHSHQ=;
+        h=Date:From:To:Subject:From;
+        b=w2kTUV/pru7RB8u47sgTI5mhZDgtIl+593LBah52NEOez+xvCh1L6Ql64C35UgDNs
+         GM66EeVg9oyMqA9Bjhmfo5Pe6kYKu1q3gBthnKH9OB6uxwvbh6E0CeQt1VJ4wY//qQ
+         b7LxsBqQQOQKpDMfQjuCzfcGoEpk4TT0lucIjStvckFR9Ns5I76Xue1/ZnEQT2Emck
+         JDZKTtZyiTWWtuf9StnOFNOZ6Uah9hTCM5UDFjCqhST3SZr0fnGAr2m5hhquAbCQNN
+         l3qqh4VMHDBiIeFGssmYHsseNDWfGzovJ1dG0hs4FcSgqdSe01Xgj/Pmql97BBreN5
+         elYiOJwSP2fSg==
+Received: by feshiecree.pl for <linux-samsung-soc@vger.kernel.org>; Tue,  4 Apr 2023 07:50:27 GMT
+Message-ID: <20230404074504-0.1.1t.5n5h.0.1o72g6geze@feshiecree.pl>
+Date:   Tue,  4 Apr 2023 07:50:27 GMT
+From:   "Krystian Wieczorek" <krystian.wieczorek@feshiecree.pl>
+To:     <linux-samsung-soc@vger.kernel.org>
+Subject: W sprawie samochodu
+X-Mailer: mail.feshiecree.pl
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="8I2SOfqEj79ZOI8K"
-Content-Disposition: inline
-In-Reply-To: <e01900f0-e5ac-d2f9-9e1b-c5cc35d21713@samsung.com>
-X-Cookie: Being ugly isn't illegal.  Yet.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Dzie=C5=84 dobry,
 
---8I2SOfqEj79ZOI8K
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+chcieliby=C5=9Bmy zapewni=C4=87 Pa=C5=84stwu kompleksowe rozwi=C4=85zania=
+, je=C5=9Bli chodzi o system monitoringu GPS.
 
-On Tue, Apr 04, 2023 at 10:15:05PM +0900, Jaewon Kim wrote:
-> On 23. 4. 4. 21:58, Mark Brown wrote:
+Precyzyjne monitorowanie pojazd=C3=B3w na mapach cyfrowych, =C5=9Bledzeni=
+e ich parametr=C3=B3w eksploatacyjnych w czasie rzeczywistym oraz kontrol=
+a paliwa to kluczowe funkcjonalno=C5=9Bci naszego systemu.=20
 
-> > Is there some lower limit where it's still worth using polling, for
-> > example for just one or two bytes like a register address?  Taking an
-> > interrupt isn't free...
+Organizowanie pracy pracownik=C3=B3w jest dzi=C4=99ki temu prostsze i bar=
+dziej efektywne, a oszcz=C4=99dno=C5=9Bci i optymalizacja w zakresie pono=
+szonych koszt=C3=B3w, maj=C4=85 dla ka=C5=BCdego przedsi=C4=99biorcy ogro=
+mne znaczenie.
 
-> I did not considers lower limit.
-> According to your review, interrupt seems to be called too often.
-> However, It can't prevent the CPU utilization going to 100% during spi=20
-> transmission.
+Dopasujemy nasz=C4=85 ofert=C4=99 do Pa=C5=84stwa oczekiwa=C5=84 i potrze=
+b organizacji. Czy mogliby=C5=9Bmy porozmawia=C4=87 o naszej propozycji?
 
-It's not so much that the interrupt could be called too often as that
-the time taken to take the interrupt (including all the overhead the CPU
-has) might be large compared to what busy waiting would take if the
-transfer is very small.  If the FIFO is deep enough and the transfer is
-long enough to use that then you start to see a win from interrupts.
 
-> We will give more consideration and deliver a better solution to the=20
-> next patch version.
-
-Great.
-
---8I2SOfqEj79ZOI8K
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmQsJxEACgkQJNaLcl1U
-h9Bicwf+IGoOzSXyZBgGXE8HPLU++uPBbikKvcSeB0Q/xa38kvp7mbL/FPKQv6Ih
-r1ci/kFUzUZZEHxjZfJOe7uVaV2bZMCo1UZphoP22Zb+zH6yomfVlDZT65Lo0NeL
-eW3D1MEa+ZbJObdsFYBzMMni1PENOTNQIhhqXJdWjBvt+4gGd3j71oDO33RChyw2
-0jqVlVnLHDtXM1YLFS8pod3jlNJv1M1UtqdJ8IzFWSenjVBMIfpRm+OIYNsMS2bu
-MrEyykoqB9OJVuIlb27pCv9I4z+9yznCSw2WvCAYB8pVSuXxdlA7DIv2DiHUUFKy
-iLrdAfhscaa/x+nc1bVr7MAL++68Kw==
-=OzOm
------END PGP SIGNATURE-----
-
---8I2SOfqEj79ZOI8K--
+Pozdrawiam
+Krystian Wieczorek
