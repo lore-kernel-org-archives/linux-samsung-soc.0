@@ -2,98 +2,167 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD6DBC77B62
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Apr 2023 08:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1684C7619A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Apr 2023 11:45:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237290AbjDEIFD (ORCPT
+        id S237997AbjDELpi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Apr 2023 04:05:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45494 "EHLO
+        Wed, 5 Apr 2023 07:45:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237332AbjDEIEs (ORCPT
+        with ESMTP id S237923AbjDELpd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Apr 2023 04:04:48 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEAFF46AC
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Apr 2023 01:04:43 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-4fa3c1a7a41so202881a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Apr 2023 01:04:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680681882;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=knNBWU1tEPnpVgHr0NHSaq41CVWca8alYZPbI02km30=;
-        b=UVfLyJ4U1LTTsw9/l2Ezvobf38cBIinJ6k1Wn4FHs5A3VFvzepgpOTTipJ0mhKt9hy
-         04xhVwg5jn/MCno6zaKR2LEZR2MPT7jh77ipxI9CTKy8vyzax6saAN0iASPnRcHvz0/5
-         VO+QDjmssHzCOHccG3SHDVEgcNrTHc3CPRJ6PyV7XAd31otafioMGfdCn/nhZp26xGWS
-         4tCpHmaFlK2XwywMhmtoMQvP8cUPNoA54gCjNZel/0bCPAoMB8rpB2hStnNFZCScSHvj
-         7/sQLhYpujqe4RydsR2eIB7JxXDh0H7gnhFMXBsXwpAfSWMOBmkJGh7Naivou/PW+6hS
-         nDbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680681882;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=knNBWU1tEPnpVgHr0NHSaq41CVWca8alYZPbI02km30=;
-        b=3cvgVu4O8wbJWg2oES+QD3yqQ4NyZyBQP3wEnOwKfBUzSkdZolHITCVd24o4j/dxfV
-         UsofcbfIFtsemeKlms2STJ+bkiCivGzmj+QEDExmNTnUqBI3NO3+fOmPjce3nYvnJ1Cv
-         CSF8v+ElJMnq1qF+vtrwbrIPbpW+p9Ezz7oeonrS37dqPTZwWuvpgUdMMXrp/JkVSIiU
-         A99y6VTwvRVJhDtsp5At14/vbIsEHOjZeId5xhYwLpJ9aC+ioQ1aqcApEKEob2JSdNlJ
-         +NO5ylwESVvMUAeqsjLaFWxe/ydrF5daSVcb/+gZ1hq+kln5+z9DpGfnzBSfSMboLpAs
-         c6UA==
-X-Gm-Message-State: AAQBX9eZKNPyPbm5BxXBFv5cuRpaRM+WkBq1315su+Y1vn0qCduWIraZ
-        CXTx6q2vyvyX26wyOgGJVsx/eg==
-X-Google-Smtp-Source: AKy350bgJJjBqVOKkAvuIHFoVn9ZmTBnPLaEXXwVS1XU/9ZvvW5IptbzaN4hC9/iTQUPBMsKyVCmDQ==
-X-Received: by 2002:a05:6402:202a:b0:4c6:10a7:c422 with SMTP id ay10-20020a056402202a00b004c610a7c422mr1122764edb.18.1680681882390;
-        Wed, 05 Apr 2023 01:04:42 -0700 (PDT)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:3f:6b2:54cd:498e])
-        by smtp.gmail.com with ESMTPSA id z21-20020a056402275500b00501d73cfc86sm6845839edd.9.2023.04.05.01.04.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Apr 2023 01:04:42 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 3/3] ARM: samsung: soc for v6.4
-Date:   Wed,  5 Apr 2023 10:04:38 +0200
-Message-Id: <20230405080438.156805-3-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230405080438.156805-1-krzysztof.kozlowski@linaro.org>
-References: <20230405080438.156805-1-krzysztof.kozlowski@linaro.org>
+        Wed, 5 Apr 2023 07:45:33 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C31C658B
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Apr 2023 04:45:12 -0700 (PDT)
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230405114448epoutp042d79232802fe7e943ab6da883679c1db~TB0c_ildC2278522785epoutp04W
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Apr 2023 11:44:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230405114448epoutp042d79232802fe7e943ab6da883679c1db~TB0c_ildC2278522785epoutp04W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1680695088;
+        bh=rVfuadgpm2r+fbODJBwW7FHg9iGMIKszhoNLes3w9/k=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=FA3CfjNuiS/4p0NaMWX8nDkK02qQZsd53jXmnWoskvT9M2wac9xwWn9Q3cJ/6Clh+
+         7a9zYg9b4x/1zKkCNqZlsahuWDxDKWehGi1YyppF0tNugU21Hm4MX6k1pAtOp547ZK
+         Z/cgRWMX2ZKpGZaBMYS079RsreUwSzcMS4zw5sCg=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20230405114447epcas2p437f613334472a210992fd02a52044d07~TB0cNqgjI1493614936epcas2p4L;
+        Wed,  5 Apr 2023 11:44:47 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.101]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4Ps2qM12Npz4x9Pt; Wed,  5 Apr
+        2023 11:44:47 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5A.36.08750.F2F5D246; Wed,  5 Apr 2023 20:44:47 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+        20230405114446epcas2p407c9cec3d428fd5108df91645a1088dc~TB0a3BlRE1493614936epcas2p4K;
+        Wed,  5 Apr 2023 11:44:46 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230405114446epsmtrp10124bd5287285a01281511652f9c15c1~TB0a2RhRK2604326043epsmtrp1c;
+        Wed,  5 Apr 2023 11:44:46 +0000 (GMT)
+X-AuditID: b6c32a47-9f5fe7000000222e-59-642d5f2fdbc5
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        7C.D7.18071.E2F5D246; Wed,  5 Apr 2023 20:44:46 +0900 (KST)
+Received: from [10.229.8.168] (unknown [10.229.8.168]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230405114445epsmtip1c6f71047a0f6d677803115fad54d4f5b~TB0alHfz_1454714547epsmtip1T;
+        Wed,  5 Apr 2023 11:44:45 +0000 (GMT)
+Message-ID: <d5627bf6-8cae-f260-f18e-6259a40237c3@samsung.com>
+Date:   Wed, 5 Apr 2023 20:42:22 +0900
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+        Thunderbird/102.9.0
+Subject: Re: [PATCH 1/3] spi: s3c64xx: support spi polling mode using
+ devicetree
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andi Shyti <andi@etezian.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Chanho Park <chanho61.park@samsung.com>
+From:   Jaewon Kim <jaewon02.kim@samsung.com>
+In-Reply-To: <c1163417-16ea-63ee-5b8d-47cdff8069b1@linaro.org>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPJsWRmVeSWpSXmKPExsWy7bCmua5+vG6KwdIJLBYP5m1js1j84zmT
+        xdSHT9gsLu/Xtph/5Byrxd7XW9ktNj2+xmpxedccNosZ5/cxWTR+vMlu0br3CLsDt8f1JZ+Y
+        PTat6mTzuHNtD5vH5iX1Hn1bVjF6fN4kF8AWlW2TkZqYklqkkJqXnJ+SmZduq+QdHO8cb2pm
+        YKhraGlhrqSQl5ibaqvk4hOg65aZA3SdkkJZYk4pUCggsbhYSd/Opii/tCRVISO/uMRWKbUg
+        JafAvECvODG3uDQvXS8vtcTK0MDAyBSoMCE748j1D4wF67kqJq5+w9jAuI+ji5GDQ0LARGLz
+        lcQuRi4OIYEdjBKzL51mg3A+MUrsnnGeEcL5xiixePI9pi5GTrCOSZ/fQiX2MkqcvbeCHcJ5
+        zShxd9pzFpAqXgE7ifa2a4wgNouAisTbn3OZIOKCEidnPgGrERWIkui7vYkVxBYWCJJYefA+
+        mM0sIC5x68l8JpChIgJHGSW273zLCuIwC5xnlLj8+T9YN5uAtsT39YvBOjiBtr298o4Rolte
+        YvvbOcwgDRICazkkzrd+YIM43EWib/JmqCeEJV4d38IOYUtJvOxvg7KzJdqn/2GFsCskLm6Y
+        DdVrLDHrWTsjKMiYBTQl1u/Sh4SessSRWywQa/kkOg7/ZYcI80p0tAlBNKpJ3J96DmqIjMSk
+        IyuhDvCQOPpzG9MERsVZSMEyC8n7s5A8Mwth7wJGllWMYqkFxbnpqcVGBcbw2E7Oz93ECE65
+        Wu47GGe8/aB3iJGJg/EQowQHs5IIr2qXVooQb0piZVVqUX58UWlOavEhRlNg5ExklhJNzgcm
+        /bySeEMTSwMTMzNDcyNTA3MlcV5p25PJQgLpiSWp2ampBalFMH1MHJxSDUy17sv0U5dv+D9r
+        fqX76/QlV2T0L/1vDJi8wYyt6LRprJ8zm3DNnyK+pqedrYdPMqzYd5g7PDJRavv+lxN50vce
+        j5RfrJe0yXmm88qb5158juuevznxzOQDJfk8mYWr3d8/nxZRdFeqROyc5JRd29hmFR/MapW/
+        +77gqbMEZ/Hd2TFfNlbO3KOn7Hel7H/qqU/dz5Zye72/I3ZubUxNv+7DvRcOLLrwY5v93uhZ
+        r86WZfyYubY5Y9FJvcYJ9mZ/CkKXL+y7mpF/qST1AsNa9R9XSr4dZNdkUvaUrlunNk3knUSZ
+        7ObNQnc4Fj/5kH315qfFixfXr8qcyhF/tf8m08TTC5ITV+neYjV4z+riPWPqYSWW4oxEQy3m
+        ouJEAMYDeDhCBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsWy7bCSnK5evG6KwZynrBYP5m1js1j84zmT
+        xdSHT9gsLu/Xtph/5Byrxd7XW9ktNj2+xmpxedccNosZ5/cxWTR+vMlu0br3CLsDt8f1JZ+Y
+        PTat6mTzuHNtD5vH5iX1Hn1bVjF6fN4kF8AWxWWTkpqTWZZapG+XwJVx5PoHxoL1XBUTV79h
+        bGDcx9HFyMkhIWAiMenzW8YuRi4OIYHdjBI7v/UxQSRkJJY/62ODsIUl7rccYYUoeskosW7W
+        W3aQBK+AnUR72zVGEJtFQEXi7c+5TBBxQYmTM5+wgNiiAlESnw+0gNULCwRJrDx4nxXEZhYQ
+        l7j1ZD5YvYjAUUaJ5UdqQRYwC5xllDh+bALUtt+MEtN3zQTrZhPQlvi+fjFYNyfQ5rdX3jFC
+        TDKT6NraBWXLS2x/O4d5AqPQLCSHzEKycBaSlllIWhYwsqxilEwtKM5Nzy02LDDMSy3XK07M
+        LS7NS9dLzs/dxAiONC3NHYzbV33QO8TIxMF4iFGCg1lJhFe1SytFiDclsbIqtSg/vqg0J7X4
+        EKM0B4uSOO+FrpPxQgLpiSWp2ampBalFMFkmDk6pBqY+E8mw7SqW/KxqpXOPWQXW2C5gXVge
+        revNsYd5z+RTvwvOJk3JPHO68uJj7bd/lM8eODh/7mUtX+c+v7zg8hVi5d8YzzRurtUJlv9S
+        9MvcTSDoQbm47YPLBZs/c6ecmHNnQdA9v3/yhTMWhcRoGdfyrFCo+HKCU3v+z8tvPs5t6avl
+        m3rUV0tL2O79+Zv+RdsZZO9wqe/idLr84JzzUeNUprrlzXvWnak53jDlyf40lUdmiwKTFfS8
+        Cg1vdG/ivffS+WzE3IIyjg3LcqZmvRWdoaNUxtFVv3D9s6L1DlnZW+M1JJiepCu3Ku+9zpS9
+        VHbV7fiHqcf/mD3czFP0JfkHg27p9PlbFwhwRObekFNiKc5INNRiLipOBABc8m3NIwMAAA==
+X-CMS-MailID: 20230405114446epcas2p407c9cec3d428fd5108df91645a1088dc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230404061409epcas2p15750d5844aa8d3655d1bfd094fac14a9
+References: <20230404060011.108561-1-jaewon02.kim@samsung.com>
+        <CGME20230404061409epcas2p15750d5844aa8d3655d1bfd094fac14a9@epcas2p1.samsung.com>
+        <20230404060011.108561-2-jaewon02.kim@samsung.com>
+        <c1163417-16ea-63ee-5b8d-47cdff8069b1@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4cc6:
 
-  Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
+On 23. 4. 5. 14:42, Krzysztof Kozlowski wrote:
+> On 04/04/2023 08:00, Jaewon Kim wrote:
+>> This patch adds new 'samsung,spi-polling' property to support polling mode.
+> Do not use "This commit/patch", but imperative mood. See:
+> https://protect2.fireeye.com/v1/url?k=3cb451b1-5d3f4488-3cb5dafe-000babffae10-4326e9d41dfad262&q=1&e=1125b69d-6d9e-4c91-a8fd-3470cd2278e4&u=https%3A%2F%2Felixir.bootlin.com%2Flinux%2Fv5.17.1%2Fsource%2FDocumentation%2Fprocess%2Fsubmitting-patches.rst%23L95
+>
+> Also, binding should be before its usage.
 
-are available in the Git repository at:
+thanks.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-6.4
+I will refer to it in next version.
 
-for you to fetch changes up to cb56f508e541036ad41cb9a5afb46339b2f83b9f:
+>> In some environments, polling mode is required even if DMA is supported.
+> Why? What are these environments? You need to explain all this in commit
+> msg.
+>
 
-  ARM: EXYNOS: Use of_address_to_resource() (2023-03-22 18:47:01 +0100)
+We are providing a VM environment in which several Guest OSs are running.
 
-----------------------------------------------------------------
-Samsung mach/soc changes for v6.4
+There are cases where DMA exist only in HostOS and not exist in GuestOS.
+In this case, SPI in GuestOS runs with polling mode.
 
-Cleanup of OF-related functions: use of_property_read_bool() for reading
-bool and of_address_to_resource() for mapping MMIO.
+I thought it was correct that the polling mode was supported optional, 
+not quirk.
+I have plan to change the polling mode if there is no 'dmas' property.
 
-----------------------------------------------------------------
-Rob Herring (2):
-      ARM: exynos: Use of_property_read_bool() for boolean properties
-      ARM: EXYNOS: Use of_address_to_resource()
+How about your opinion?
 
- arch/arm/mach-exynos/exynos.c  | 8 +++++---
- arch/arm/mach-exynos/suspend.c | 2 +-
- 2 files changed, 6 insertions(+), 4 deletions(-)
+
+>> Changed it to support not only with quick but also optinally with
+> typo: optionally
+>
+>> devicetree.
+>>
+> Best regards,
+> Krzysztof
+>
+>
+
+Thanks
+
+Jaewon Kim
+
