@@ -2,103 +2,113 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A61C7619A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Apr 2023 05:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 673C8C7619A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Apr 2023 08:05:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236827AbjDEFm6 (ORCPT
+        id S237288AbjDEIFC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Apr 2023 01:42:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37554 "EHLO
+        Wed, 5 Apr 2023 04:05:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232101AbjDEFm5 (ORCPT
+        with ESMTP id S237317AbjDEIEo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Apr 2023 01:42:57 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 570CF3C3F
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  4 Apr 2023 22:42:56 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id h8so138294752ede.8
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Apr 2023 22:42:56 -0700 (PDT)
+        Wed, 5 Apr 2023 04:04:44 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4036B4C10
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Apr 2023 01:04:42 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-501df529967so270812a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Apr 2023 01:04:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680673375;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2K0AK0sGSq/zsYIcb4gwqrtW+FVk7SlY1SeSzCW9Y78=;
-        b=CDig9UWn2FHcGl7WX8sn9pQBAjqV9zNTwmXcjp3HMFYakZlP5xUex1pjuZnJgFeM+w
-         2AXOwWXxbuRBJdgMMu+iFMW3z4alMw5B8mcF3XQAxIJa0vMuBKV89IKrUVAhmdjLp0lE
-         7qXG6m+9oBn+H5By2QSaCzQqlsggbIrhmrsms9tJeCj0HLz2HtSGaev/GtwMZ90suWNO
-         yqy0GuWoS2QpbSSI9TFi14BLadCr1IBcSmRNQeHWRwtSlC0X0JGURCg9hc9xNK8BOQfX
-         BVci0ZTHFu20BOgUa0DV2VWd6VZpfveSRhtxtkswRI5wBq/bl5tBUFvDj64CgH0fyV7d
-         Y5Aw==
+        d=linaro.org; s=google; t=1680681880;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wi5FMUcuNcmNWMrhurZ3bybGg/p7Cg429nUa1gNhErw=;
+        b=zEOqPfjaaL2uWzxMd+MxD7UmgoolMd3GIiKxj1lKrzUPpeLR98UNKKTPj6QVyYlwgd
+         2oco99MNtndOMABSvfzFa+hkfzI6+Iinva90oq35eGWDEqQKAOzRSqd3Zggdb7qeNQb2
+         Y8NPBYS5jxtEvqqf6imr1f+6EmlnHdSHlGE7Tp7a1hF8cHnFsNIummg57ga3I9kL5GNf
+         4KgwiNfUjPeIc/J5nWDifRjFWiCu0/oL6rHrFgipybSNBdeWmkQkfnOgLKFoG5NhxFlf
+         ho2Yx4VI4FuwTCnPwXvyVWJTXzy2U8oZWNx6waFmTKx9SdQMsOJAyFHoSKgusLOh5e+S
+         qPTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680673375;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2K0AK0sGSq/zsYIcb4gwqrtW+FVk7SlY1SeSzCW9Y78=;
-        b=e3q5qohO4WeMToAXeepEeG3OPJOcV6MSPPKVespyD13FlwlhF9tpTidtfmzHKs0xfT
-         se7zXm7Wk9iTuqVg1FvyplrXNJSl0+EnS2gQEcEGVESWZULkqkWIM+OqeAJ3NzPpoYDk
-         uG4qWJGayU37lwKbLN58RFo5VWznZBwyMYxNiUK6E6uph6m930aSx5z9N8D61uYxuhAt
-         3xtbs1l0J96y3r4x5qqOyV0TCIo4suw8SxvPOeMCjfZeS/WhNXvEglPDWXv5ry9J4kGM
-         bXaeTl6mvPUEyb4E8FdDg/ktc/LUgm75ik8SBfPDYP/FHlWbKj5QWyJyBvDlqjXjRYSm
-         5LAQ==
-X-Gm-Message-State: AAQBX9doO0sYOoFBlNKLsBjCjeUcr7fDASqT6uRtOpn//P2MuYj3n5DX
-        x1yhqEQgVTE7dCf458qkxmNiA058wyubCsYtmG4=
-X-Google-Smtp-Source: AKy350bNv83HafLK+q09N2ueHnZ3s8USo8+70Ki/AAqyULFwQ6xhlGO2nm29uF0SpDrJYH3DJ8FuEg==
-X-Received: by 2002:a17:906:f853:b0:931:8e8c:2db5 with SMTP id ks19-20020a170906f85300b009318e8c2db5mr1846024ejb.69.1680673374874;
-        Tue, 04 Apr 2023 22:42:54 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:3f:6b2:54cd:498e? ([2a02:810d:15c0:828:3f:6b2:54cd:498e])
-        by smtp.gmail.com with ESMTPSA id jg9-20020a170907970900b00947ae870e78sm6489740ejc.203.2023.04.04.22.42.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Apr 2023 22:42:54 -0700 (PDT)
-Message-ID: <c1163417-16ea-63ee-5b8d-47cdff8069b1@linaro.org>
-Date:   Wed, 5 Apr 2023 07:42:53 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 1/3] spi: s3c64xx: support spi polling mode using
- devicetree
-Content-Language: en-US
-To:     Jaewon Kim <jaewon02.kim@samsung.com>,
-        Andi Shyti <andi@etezian.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chanho Park <chanho61.park@samsung.com>
-References: <20230404060011.108561-1-jaewon02.kim@samsung.com>
- <CGME20230404061409epcas2p15750d5844aa8d3655d1bfd094fac14a9@epcas2p1.samsung.com>
- <20230404060011.108561-2-jaewon02.kim@samsung.com>
+        d=1e100.net; s=20210112; t=1680681880;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wi5FMUcuNcmNWMrhurZ3bybGg/p7Cg429nUa1gNhErw=;
+        b=5oDrckiOd3Uk65KV9U2KjdVQCXW/5PgSRGv3A8Mg0E64NBpqBqsYW72BaNYR6dL+tW
+         gWR5Fn7Rntvun5ZdMAnsDodHcjrarpx395Gcsc9dYKak57ndB7NwHQAwQrcVKABv3/i1
+         9UVFOQ7+kc1SMoXrUDauYvecqWZY2afCch/ucGhe0MJnl/U/FcDsQxH3KXH7T1hX3BNh
+         DACSHTkXk7vkbo6CGFMY0rTM56klT6MX4TP6eS/H8mGWkU0kLuTK3puDRfT8EIfLzU6d
+         9sNlzRIBs89bLGM5nEueAsElg2Vn4YWGicSDu9CKq2K0wLYJruVToS9KOHnuMptS0iXF
+         wnyQ==
+X-Gm-Message-State: AAQBX9cKL1NLrz2SPiB5MdelGV0bOXWL2aabiyJrHdSuMW0E0qu1/r1T
+        aae2+xDl7gpApRG4qs4j7EE3rQ==
+X-Google-Smtp-Source: AKy350Ypl3SjcaA4rvPosLM+UbI2XKDgKUe1Kw/yQlqS1oKhDE7dlDYsvmIvMQG1dCeDpE7XboeEcA==
+X-Received: by 2002:aa7:c40c:0:b0:500:50f6:dd30 with SMTP id j12-20020aa7c40c000000b0050050f6dd30mr1231622edq.15.1680681880521;
+        Wed, 05 Apr 2023 01:04:40 -0700 (PDT)
+Received: from krzk-bin.. ([2a02:810d:15c0:828:3f:6b2:54cd:498e])
+        by smtp.gmail.com with ESMTPSA id z21-20020a056402275500b00501d73cfc86sm6845839edd.9.2023.04.05.01.04.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Apr 2023 01:04:40 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230404060011.108561-2-jaewon02.kim@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 1/3] arm64: dts: samsung: dts64 for v6.4
+Date:   Wed,  5 Apr 2023 10:04:36 +0200
+Message-Id: <20230405080438.156805-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 04/04/2023 08:00, Jaewon Kim wrote:
-> This patch adds new 'samsung,spi-polling' property to support polling mode.
+The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4cc6:
 
-Do not use "This commit/patch", but imperative mood. See:
-https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+  Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
 
-Also, binding should be before its usage.
+are available in the Git repository at:
 
-> In some environments, polling mode is required even if DMA is supported.
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-6.4
 
-Why? What are these environments? You need to explain all this in commit
-msg.
+for you to fetch changes up to 5f67124757464d632f0e5288e0ba48e3ff5531a9:
 
-> Changed it to support not only with quick but also optinally with
+  arm64: dts: exynos: add mmc aliases (2023-03-17 13:45:02 +0100)
 
-typo: optionally
+----------------------------------------------------------------
+Samsung DTS ARM64 changes for v6.4
 
-> devicetree.
-> 
+1. Exynos850: add headers with AUD, G3D and HSI clock controller clock
+   IDs. Add G3D (GPU) clock controller node.
+2. Exynos5433: fixes for dtbs_check: move MIPI phy to PMU node.
+3. Drop old MSHC aliases (while adding proper mmc-ddr-1_8v which was
+   selected by the driver based on the MSHC alias) and add generic MMC
+   aliases in each board.  The aliases match known numbering in
+   the schematics.
 
-Best regards,
-Krzysztof
+----------------------------------------------------------------
+Henrik Grimler (2):
+      arm64: dts: exynos: drop mshc aliases
+      arm64: dts: exynos: add mmc aliases
 
+Krzysztof Kozlowski (1):
+      arm64: dts: exynos: move MIPI phy to PMU node in Exynos5433
+
+Sam Protsenko (3):
+      dt-bindings: clock: exynos850: Add Exynos850 CMU_G3D
+      dt-bindings: clock: exynos850: Add AUD and HSI main gate clocks
+      arm64: dts: exynos: Add CMU_G3D node for Exynos850 SoC
+
+ .../bindings/clock/samsung,exynos850-clock.yaml    | 19 +++++++++++++++
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     |  5 ++--
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 19 +++++++--------
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |  5 ++--
+ .../boot/dts/exynos/exynos7885-jackpotlte.dts      |  1 +
+ arch/arm64/boot/dts/exynos/exynos850.dtsi          |  9 +++++++
+ include/dt-bindings/clock/exynos850.h              | 28 +++++++++++++++++++---
+ 7 files changed, 69 insertions(+), 17 deletions(-)
