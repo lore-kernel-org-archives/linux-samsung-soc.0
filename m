@@ -2,122 +2,120 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A03A8C7619A
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Apr 2023 21:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2317BC77B61
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Apr 2023 12:50:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229445AbjDHVpl (ORCPT
+        id S229698AbjDJMuF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 8 Apr 2023 17:45:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44764 "EHLO
+        Mon, 10 Apr 2023 08:50:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbjDHVpk (ORCPT
+        with ESMTP id S229603AbjDJMuE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 8 Apr 2023 17:45:40 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B3756590;
-        Sat,  8 Apr 2023 14:45:39 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id bp17-20020a17090b0c1100b0023f187954acso1479089pjb.2;
-        Sat, 08 Apr 2023 14:45:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680990338; x=1683582338;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zqgSPZYBsDtVwiEZJVoDEmESaLU5H7DMz1BSoSn2S1Y=;
-        b=mSJ/X1rr3c3vVPHxFoGeOmsi6zaCi+/+edXfzwes87BlIz/bdb4KVwCpsAogLkEECe
-         H6FQLGTn8KB+93PdqO6eDEMypOPMpiVhXpRRuSCABL+waC1lujqqI8kO7eC+mqqDXbOf
-         VkrdcDUSM/E758jYGxcj+lFncSdPQmn9mShx0nPK6hZTgsEzv8SY5ngjuqGyh5iaHbMg
-         sDH/6uTCb8YCLZKmpujxpog07gJAhEeHLDUW99I6XiP6icQSyI0sY8u6cbjbdbPs9H3U
-         OUUDM2C3G0I+H8BXAav2HpVuaS/92Ay35V+8b825chzgZfM3iGRm5tBSUFdh4G6p2jNC
-         xgLw==
+        Mon, 10 Apr 2023 08:50:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FA0E30DD
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Apr 2023 05:49:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1681130955;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=gfI+8pNpKHzSRSbn60p2xLlTui4koSe7i9/TyNPKMTg=;
+        b=LGOLGi8BlZUC4cOu9PxeFdCytnc4b0EPexxIfHs2SlVqiDU3uWz5siBXNY3vMOC2k4tOG9
+        TNJoeg3uj0EotnY1Pc8Nm+S25h4kK4uJCmwdPgzfbETF1BVnngKyTM+1SvyLsm1jOYrEhv
+        CF1bn+klc7dkGipl7f7FibA7uxXM/ng=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-647-0MuLXxGdM_26hR8U9GpOAw-1; Mon, 10 Apr 2023 08:49:14 -0400
+X-MC-Unique: 0MuLXxGdM_26hR8U9GpOAw-1
+Received: by mail-wr1-f70.google.com with SMTP id d25-20020adf9b99000000b002ef2d0e2d1eso1331918wrc.11
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Apr 2023 05:49:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680990338; x=1683582338;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zqgSPZYBsDtVwiEZJVoDEmESaLU5H7DMz1BSoSn2S1Y=;
-        b=ZCnnq352EryaCngXCc1cqhW8dwbLIeeTF9RZ9BdTKcFHfTKvF2+3NZFh0kxZruOJcn
-         s6MR9mhTcwi8xzH+WNMAKso1Ml/i5w9QRVdQdp5KYhk330b/6u9GcORE+Q6Z3vkGwodE
-         1MbKvESkrf9vr8aeouog/d1ufKMZDg2GfiV0AqeE3JJtDGIZ/6raeTzsGsVC8vEqxkgC
-         vquLrtwq6EP8v14k1hk29aUbCffAU1BttPXUKbc5mJgoOMwqpRs/FmmrAltJiGUt58Js
-         UweOf03t0nrt01x6tOQBAJoZHXR0RUAUpGckJS1ECiMGVybLnXcHiSKA5EAuVRzP6LbC
-         rZUQ==
-X-Gm-Message-State: AAQBX9cPOifPo7CTdmbnyqvfbzw4R69yYjOloJQsKZlVVTLtc31Uf7eR
-        iqH9ta6bnDGxnUIT0RNhrrQ=
-X-Google-Smtp-Source: AKy350YeQ+EjOvH0//H82sraUYKe/H1jY2NGbOgELoyt7GUy4+kORmVMIBbchbzc/x3LIarUd4YXuA==
-X-Received: by 2002:a17:90b:1e0f:b0:23f:ebf2:d3e9 with SMTP id pg15-20020a17090b1e0f00b0023febf2d3e9mr7851623pjb.6.1680990338393;
-        Sat, 08 Apr 2023 14:45:38 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id g15-20020a17090a7d0f00b002309279baf8sm6586668pjl.43.2023.04.08.14.45.36
+        d=1e100.net; s=20210112; t=1681130953;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gfI+8pNpKHzSRSbn60p2xLlTui4koSe7i9/TyNPKMTg=;
+        b=255EJUs87affE5AnJQaUiTWTtjPmggbulqoreDreJWU7Nz2miHlMZMErNQC/CGBFHF
+         C0A4/X+kur2y7TNFtxJqHSXgx4PskHfbzV7kJBBXKnwr4a52aWN1GHighamKmLzaUKHY
+         TdPPHr6K1YBU+1Qm7xVvUWCnthZxr8LrgLsPM7pcoVlnEHv//pPYbwZj3+Mpv8xyDh/Y
+         I6GzNE/1FK7zaYlGVPiQ+iWYhAiUCXR0ujaVThdW34f1Cv7nBmpkuQrRsgWUL7+x2OZX
+         h4OvDvpivNPa3ii1btZTTk/NvmGy+D6+aB52eQM+zfjskTqHmEOjxJze+ttMAYUYTv46
+         QTDg==
+X-Gm-Message-State: AAQBX9fBku3AzgCN4+Kh2WBbaDm+DbWG9Rtad9C83Sr0G/fBiA2yKHLk
+        E6J8BHZ2jar78gw1QecRlA+PIwEe2+RWXE6VdL6rviBibwiKNplYYe1vn7tjrIxkK8233E7lgiB
+        MU4+YVbkFI0FC9nARSebnzEWL/8nl0fI=
+X-Received: by 2002:a5d:5349:0:b0:2c7:1b4c:da75 with SMTP id t9-20020a5d5349000000b002c71b4cda75mr7297850wrv.69.1681130952865;
+        Mon, 10 Apr 2023 05:49:12 -0700 (PDT)
+X-Google-Smtp-Source: AKy350Zf/wmB9Myl3vBu+oEHUuKmq0XEAyi0iCtTxsDkx/dzU4MaidTOs+oWSxrEoWjjViR0eA5pqQ==
+X-Received: by 2002:a5d:5349:0:b0:2c7:1b4c:da75 with SMTP id t9-20020a5d5349000000b002c71b4cda75mr7297834wrv.69.1681130952548;
+        Mon, 10 Apr 2023 05:49:12 -0700 (PDT)
+Received: from minerva.home (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id m8-20020adfe0c8000000b002cff0e213ddsm11791320wri.14.2023.04.10.05.49.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Apr 2023 14:45:37 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Sat, 8 Apr 2023 14:45:36 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Tom Rix <trix@redhat.com>
-Cc:     krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
-        wim@linux-watchdog.org, nathan@kernel.org, ndesaulniers@google.com,
+        Mon, 10 Apr 2023 05:49:12 -0700 (PDT)
+From:   Javier Martinez Canillas <javierm@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Javier Martinez Canillas <javierm@redhat.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Robert Elliott <elliott@hpe.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Stefan Hansson <newbie13xd@gmail.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] watchdog: s3c2410: remove unused freq_to_wdt and
- s3c2410wdt_is_running functions
-Message-ID: <72a085ff-172f-4378-8ee2-5bf1e47958bf@roeck-us.net>
-References: <20230321183439.1826823-1-trix@redhat.com>
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] ARM: exynos_defconfig: Enable zram as loadable modules
+Date:   Mon, 10 Apr 2023 14:49:07 +0200
+Message-Id: <20230410124907.3293869-1-javierm@redhat.com>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230321183439.1826823-1-trix@redhat.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Mar 21, 2023 at 02:34:39PM -0400, Tom Rix wrote:
-> clang with W=1 reports
-> drivers/watchdog/s3c2410_wdt.c:311:35: error: unused function
->   'freq_to_wdt' [-Werror,-Wunused-function]
-> static inline struct s3c2410_wdt *freq_to_wdt(struct notifier_block *nb)
->                                   ^
-> drivers/watchdog/s3c2410_wdt.c:446:19: error: unused function
->   's3c2410wdt_is_running' [-Werror,-Wunused-function]
-> static inline int s3c2410wdt_is_running(struct s3c2410_wdt *wdt)
->                   ^
-> These functions are not used, so remove them.
-> 
-> Signed-off-by: Tom Rix <trix@redhat.com>
-> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+Enable zram and dependencies as loadable modules. This allows to use the
+/dev/zramX virtual block devices as swap stored in system memory.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Options were taken from commit 5c824e8be64d ("ARM: omap2plus_defconfig:
+Enable zram as loadable modules") that does the same for OMAP2+ platforms.
 
-> ---
->  drivers/watchdog/s3c2410_wdt.c | 10 ----------
->  1 file changed, 10 deletions(-)
-> 
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index 200ba236a72e..6394dda7a5dc 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -308,11 +308,6 @@ static inline unsigned int s3c2410wdt_max_timeout(struct s3c2410_wdt *wdt)
->  				       / S3C2410_WTCON_MAXDIV);
->  }
->  
-> -static inline struct s3c2410_wdt *freq_to_wdt(struct notifier_block *nb)
-> -{
-> -	return container_of(nb, struct s3c2410_wdt, freq_transition);
-> -}
-> -
->  static int s3c2410wdt_disable_wdt_reset(struct s3c2410_wdt *wdt, bool mask)
->  {
->  	const u32 mask_val = BIT(wdt->drv_data->mask_bit);
-> @@ -443,11 +438,6 @@ static int s3c2410wdt_start(struct watchdog_device *wdd)
->  	return 0;
->  }
->  
-> -static inline int s3c2410wdt_is_running(struct s3c2410_wdt *wdt)
-> -{
-> -	return readl(wdt->reg_base + S3C2410_WTCON) & S3C2410_WTCON_ENABLE;
-> -}
-> -
->  static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd,
->  				    unsigned int timeout)
->  {
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+---
+
+ arch/arm/configs/exynos_defconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index b0f0baa3a6c4..2d5be864b4ca 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -37,6 +37,8 @@ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+ CONFIG_CMA=y
++CONFIG_ZSMALLOC=m
++CONFIG_PGTABLE_MAPPING=y
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_UNIX=y
+@@ -84,6 +86,8 @@ CONFIG_NFC_SHDLC=y
+ CONFIG_NFC_S3FWRN5_I2C=y
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
++CONFIG_ZRAM=m
++CONFIG_ZRAM_WRITEBACK=y
+ CONFIG_BLK_DEV_LOOP=y
+ CONFIG_BLK_DEV_CRYPTOLOOP=y
+ CONFIG_BLK_DEV_RAM=y
+
+base-commit: e3adc46da349d4a4cda1c58d8186c5bce0b011fd
+-- 
+2.40.0
+
