@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0972C77B7A
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Apr 2023 13:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 862F4C77B73
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Apr 2023 13:37:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229753AbjDPNhj (ORCPT
+        id S229695AbjDPNhk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 16 Apr 2023 09:37:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51688 "EHLO
+        Sun, 16 Apr 2023 09:37:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230479AbjDPNfx (ORCPT
+        with ESMTP id S230338AbjDPNfk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 16 Apr 2023 09:35:53 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5FBC49EA;
-        Sun, 16 Apr 2023 06:35:45 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id u3so5468525ejj.12;
-        Sun, 16 Apr 2023 06:35:45 -0700 (PDT)
+        Sun, 16 Apr 2023 09:35:40 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 652BC1BD4;
+        Sun, 16 Apr 2023 06:35:38 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id fy21so14507088ejb.9;
+        Sun, 16 Apr 2023 06:35:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681652144; x=1684244144;
+        d=gmail.com; s=20221208; t=1681652137; x=1684244137;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AjXGUzPKMMr8ygNmvKTs+ca+O+QBcfL+qA6w2J0vS7w=;
-        b=UgUKRtwE4oogpbBNh8fzZ3FqYbVAAOAtKTi1c6uAgDKatTn7KPuM6DbVmUVkVTtmuR
-         FSp52Dzw63N5O+/AzrgnCXSoYK2oSQ6Pk1xUfJ6Wa5OU0++bSc+N3LQgK0GOHmzJX46e
-         hadyNfBXqpFptAYcDI0LULtH95r/hbrEvaAYEQZLVdnIUXIkK+ilqyKez5dYbcmosIGt
-         gGm7HCaPN82U9qgXychN+Bc+WPuHmKEeO6r2sWVdFeSPesYbW6EUQH9UPMjaKL2MVwhG
-         rCQY7wNkclVIuhCpcbx1T8+HQsk4OCgOYiYT6yMiQJnQIN4Di8RJkRrOYlyZ2ZTldpSH
-         kitw==
+        bh=lcsub8KhIgRh8+LjsAALX2kQhfzLuSTeBZW6A1vW2A0=;
+        b=iwMbVHa2MlgG+jx7mloofP6Nhzg6eDc/daviEdAbzrJm8snqyK4r5K/LnDuGCaHplN
+         ux+3e6SEg7bmLl68gyyylkkkc6rLq2fFEmXiRkrdalZUEHrdlB31AYnZsceJw8Fl7mNZ
+         mCvXrGL20X921acbXCWbvcPEhzWQyG2zfcJPJpnT41ZIFpDoyNYtmGi++8qjAAGiPzSs
+         X0TUE/6/+8998N2H5pjWRVr2lLuo7pMNW/ES/2BThl+wol5rBLzECPqcWewNU8ImVjVK
+         a9JzopBdhbPXQgoJOBKvvA2PcVrJjf319Ie4UI/yrHgFnE8rEBclRJkEYHBKNrk9kF4n
+         iEfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681652144; x=1684244144;
+        d=1e100.net; s=20221208; t=1681652137; x=1684244137;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AjXGUzPKMMr8ygNmvKTs+ca+O+QBcfL+qA6w2J0vS7w=;
-        b=gFXGipWqgfAVaSc/XXKvm/DkdEgPluve8vdeT3RbK9okkKeNLb3yYVswDzZ43TWpjD
-         5WRtYwB/4degUXNuaGoK9BQ25MKEEPezE5zzmEz+ZLwDxLRsm31vPccVsCtkZDfloG02
-         Wa3Sn5VaqHkGwgv8MznKQaPXDTDYdofswfAIvl16Ml7hMBve4sLp6AjoD4lzHhjNhfwz
-         5YgZ5dSatBF35y9J90Ax83vU3duThbHvD+v/Slkh6nn9sd4aqOF1oBtPsBSMzmO28sFV
-         NHHzuECm7Qa5tNXfuxDTYomZR6edvdbD1FZ1JwcswAfrfdJOaAnb0oePOGWJIJqabEIB
-         60jA==
-X-Gm-Message-State: AAQBX9fWLQ5ExiyYu9G8vrj4o2WZddPaIMmnaU7vdvXxnASOXIEuT1VD
-        rm2KGfpJZBndIfNPtWzkeBo=
-X-Google-Smtp-Source: AKy350aB997CQTiblOPPq0SvVcmrg3sVPcAu4d+kAnkGtuMsIWRj3quw4TlqSzUjasl+SrIb1dRo3Q==
-X-Received: by 2002:a17:906:8805:b0:933:130e:e81a with SMTP id zh5-20020a170906880500b00933130ee81amr4134021ejb.32.1681652144115;
-        Sun, 16 Apr 2023 06:35:44 -0700 (PDT)
+        bh=lcsub8KhIgRh8+LjsAALX2kQhfzLuSTeBZW6A1vW2A0=;
+        b=Xe1nAU4nLWEB0yVqU/fIPb7nG8NEKl2nWYTK7BrEGw9ccC0VE100cHliu7bWAupS+a
+         D6uFt1LaPi8YfZIlAYksUUG4bDpxJFTCJabGmXgugRZS6yiglOzqGCaOawIZawUASVPa
+         eVtuWyCjUtVpBNOY3yTAUhHBdQO+zuY8z+Xhgju6ExOhhOFY2b1QDIt5G/Mi8wjcAzZn
+         OvjUdgKv62A0HfIe4xD1Btsp9auCT2odRZdnBC/QABVOM/113Ptmwj8Mw3NN2jJfCtQm
+         meha2uu+IxhDOABJk64oPjzS3abFAH10HN3U747XcJmPQeVb8N/RFJjEj/Q4YK275sP3
+         gMzw==
+X-Gm-Message-State: AAQBX9cx31XB0hh5b5vbsPx+rB1z1kXyRbCiO4lEHapnSTE40I37GVgS
+        y+a4UxW0JupKykJvh04sXvo=
+X-Google-Smtp-Source: AKy350bGaVuX5pzurnhlXfdKfoZIS5zhuQjlj1IZXMX185GoOm0fxbH3sL4jtNmKj8vjEVK4oORE4Q==
+X-Received: by 2002:a17:906:254:b0:93b:5f2:36c with SMTP id 20-20020a170906025400b0093b05f2036cmr4220124ejl.61.1681652136807;
+        Sun, 16 Apr 2023 06:35:36 -0700 (PDT)
 Received: from localhost.my.domain (83.8.121.70.ipv4.supernova.orange.pl. [83.8.121.70])
-        by smtp.gmail.com with ESMTPSA id gn23-20020a1709070d1700b009373f1b5c4esm5122958ejc.161.2023.04.16.06.35.41
+        by smtp.gmail.com with ESMTPSA id gn23-20020a1709070d1700b009373f1b5c4esm5122958ejc.161.2023.04.16.06.35.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Apr 2023 06:35:43 -0700 (PDT)
+        Sun, 16 Apr 2023 06:35:36 -0700 (PDT)
 From:   Artur Weber <aweber.kernel@gmail.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
@@ -74,9 +74,9 @@ Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         linux-phy@lists.infradead.org,
         ~postmarketos/upstreaming@lists.sr.ht,
         Artur Weber <aweber.kernel@gmail.com>
-Subject: [PATCH v2 05/12] clk: samsung: Add Exynos4212 compatible to CLKOUT driver
-Date:   Sun, 16 Apr 2023 15:34:15 +0200
-Message-Id: <20230416133422.1949-6-aweber.kernel@gmail.com>
+Subject: [PATCH v2 02/12] dt-bindings: clock: add Exynos4212 clock compatible
+Date:   Sun, 16 Apr 2023 15:34:12 +0200
+Message-Id: <20230416133422.1949-3-aweber.kernel@gmail.com>
 X-Mailer: git-send-email 2.40.0
 In-Reply-To: <20230416133422.1949-1-aweber.kernel@gmail.com>
 References: <20230416133422.1949-1-aweber.kernel@gmail.com>
@@ -92,29 +92,23 @@ no boards using it.
 
 We will be adding a device that uses it, so add it back.
 
-This is effectively a revert of commit d5cd103b06f9 ("clk: samsung:
-Remove support for Exynos4212 SoCs in Exynos CLKOUT driver"); the
-driver has changed significantly since then, prompting this re-make.
-
 Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 ---
- drivers/clk/samsung/clk-exynos-clkout.c | 3 +++
- 1 file changed, 3 insertions(+)
+ .../devicetree/bindings/clock/samsung,exynos-clock.yaml          | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index e6d6cbf8c4e6..326d5fc58727 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -55,6 +55,9 @@ static const struct of_device_id exynos_clkout_ids[] = {
- 	}, {
- 		.compatible = "samsung,exynos4210-pmu",
- 		.data = &exynos_clkout_exynos4,
-+	}, {
-+		.compatible = "samsung,exynos4212-pmu",
-+		.data = &exynos_clkout_exynos4,
- 	}, {
- 		.compatible = "samsung,exynos4412-pmu",
- 		.data = &exynos_clkout_exynos4,
+diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml
+index 0589a63e273a..a36781a455b6 100644
+--- a/Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml
+@@ -24,6 +24,7 @@ properties:
+           - samsung,exynos3250-cmu-dmc
+           - samsung,exynos3250-cmu-isp
+           - samsung,exynos4210-clock
++          - samsung,exynos4212-clock
+           - samsung,exynos4412-clock
+           - samsung,exynos5250-clock
+       - items:
 -- 
 2.40.0
 
