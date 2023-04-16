@@ -2,65 +2,156 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD425C77B6E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Apr 2023 09:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC25C77B78
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Apr 2023 10:18:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbjDMJuZ (ORCPT
+        id S230046AbjDPKSR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 13 Apr 2023 05:50:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39770 "EHLO
+        Sun, 16 Apr 2023 06:18:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229766AbjDMJuY (ORCPT
+        with ESMTP id S229975AbjDPKSL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 13 Apr 2023 05:50:24 -0400
-Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2146155AB;
-        Thu, 13 Apr 2023 02:50:21 -0700 (PDT)
-Received: from 8bytes.org (p200300c27714bc0086ad4f9d2505dd0d.dip0.t-ipconnect.de [IPv6:2003:c2:7714:bc00:86ad:4f9d:2505:dd0d])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.8bytes.org (Postfix) with ESMTPSA id 08FAA242A7C;
-        Thu, 13 Apr 2023 11:50:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-        s=default; t=1681379419;
-        bh=khKX1Kt8U0Nb+s4cjAnuHj6Kz00rGwbDEtCwE44xwB4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VAoH/0AhRaB1YmsjIYUgU1WtUxL7vKegIm2zyUKEp3pJe93JO4iM2A9ZE2xMxfz1V
-         NDGSb2hthiXRMuJhLEPiH7FtsPYCLkSKol/dEx9B0evxW+VmVr/rsqEh6ssGmdvh9W
-         S6ZrTgAg8yC/FzSOMzgA/lbc1DsfbttFOYQgf5p6lT0LsAiUNsvP53y+tfOs5SR29S
-         /1YUcmPcOtFT0xrbgdPYOVDkg5UYcIhL48IDpzBc3UAMiovcMlQwj2gkrgshYD25uI
-         XGt4y1j7nHdkuuqewckE5rukVRcRw3w29UNEq22xlJRUtuoWIjvqLu7vSQn6DmU8HF
-         kH7RXlCDGu2vg==
-Date:   Thu, 13 Apr 2023 11:50:15 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] iommu/exynos: Use the devm_clk_get_optional() helper
-Message-ID: <ZDfQV2Vbbaa4fRI4@8bytes.org>
-References: <99c0d5ce643737ee0952df41fd60433a0bbeb447.1679834256.git.christophe.jaillet@wanadoo.fr>
+        Sun, 16 Apr 2023 06:18:11 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E31B01991;
+        Sun, 16 Apr 2023 03:18:07 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id xi5so56795845ejb.13;
+        Sun, 16 Apr 2023 03:18:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681640286; x=1684232286;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lMKv1eC7oXKgQg7kmPBpEEYkcLgFu/zreUxyQ3hjVRU=;
+        b=XY2jm6IUO7nOh7iJmLWXmOyrQaQ2zXMn6pKvFRann89LpKvUgmwOJ4vPQxCYYtgl/r
+         VHL5qEdKbz4cEa32T3mijCoxrubeICJTC1oz9/SCZMyviJQLMi2owVoreb9Buhr4/On6
+         +o2yhR4LpvZkgSUrbVIEN6JQCj+xh2qQYpvQOaE/rBhfkuXWUlon8FcmuFiI9DUUPlfq
+         GSxXv2IZ3AKkBNmIGQ1qMt92cC07eFOt0Ask8D23d61JCAwY7jtB1ylHQUY+4l+MsSZ6
+         xPDpywU+Y4gJRduqySkVW4gkcY+GLnvnZArfwxLArMPu+F8KS2LsXiVjNmbrJDBY73Id
+         5njQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681640286; x=1684232286;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lMKv1eC7oXKgQg7kmPBpEEYkcLgFu/zreUxyQ3hjVRU=;
+        b=DvNs5F6KnRBflBSlj7p/58V+YA30RZ5muGwdj1rgHBUPjyhNLhGC7XqArpG8hxdydU
+         8BMElQ5bBr2RCu66Bawy/Smd2Pignf9fYXBzAgyhcil4AjFcb6CmJ42zeq71kKA0Bzp0
+         oBPtsp5dNaAq+3OWk0kuSAIZYgUozNaA7Uu0en8jxMiCyIRabikIT/YDeapVdaVPiEWk
+         Hj5+G2ANr531ixN0+UKl4s5g93OBO/F0TuLLVlZnjq24Njavc05Epi/0IS3oTG2h5Bm7
+         9w57w0H+WAUr4hARobmduIbOJk+D0SOScK2bplPjMSJ4/xsrd5qC9usEdmDjQ6mJgArU
+         Hf/g==
+X-Gm-Message-State: AAQBX9fBX2YyNbk263WN+xArFaJoMhP3GBCfWH+9RJKKO8RrFy9+A6+E
+        2RWce2J3dKpxO9o9I+qLpss=
+X-Google-Smtp-Source: AKy350aFxJm7/QXCtBcZGPfDmRrIsMdjN4hcBIIu5aXI7tPRyjlAly8QSDd0d6aOaUWrFr4Ex5a1Pg==
+X-Received: by 2002:a17:906:3454:b0:94e:8431:4767 with SMTP id d20-20020a170906345400b0094e84314767mr4666485ejb.38.1681640286211;
+        Sun, 16 Apr 2023 03:18:06 -0700 (PDT)
+Received: from localhost.my.domain (83.8.121.70.ipv4.supernova.orange.pl. [83.8.121.70])
+        by smtp.gmail.com with ESMTPSA id r20-20020a056402019400b0050476da5160sm4427443edv.45.2023.04.16.03.18.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Apr 2023 03:18:05 -0700 (PDT)
+From:   Artur Weber <aweber.kernel@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>, soc@kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-phy@lists.infradead.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH 00/12] Re-introduce Exynos4212 support and add Samsung Galaxy Tab 3 8.0 boards
+Date:   Sun, 16 Apr 2023 12:16:12 +0200
+Message-Id: <20230416101624.15866-1-aweber.kernel@gmail.com>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <99c0d5ce643737ee0952df41fd60433a0bbeb447.1679834256.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Mar 26, 2023 at 02:37:50PM +0200, Christophe JAILLET wrote:
-> Use devm_clk_get_optional() instead of hand writing it.
-> This saves some loC and improves the semantic.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/iommu/exynos-iommu.c | 24 ++++++++----------------
->  1 file changed, 8 insertions(+), 16 deletions(-)
+This patches re-introduces the Exynos4212 platform and adds support
+for the Samsung Galaxy Tab 3 8.0 series of tablets that uses it:
 
-Applied, thanks.
+ - Samsung Galaxy Tab 3 8.0 WiFi (SM-T310/lt01wifi)
+ - Samsung Galaxy Tab 3 8.0 3G (SM-T311/lt013g)
+ - Samsung Galaxy Tab 3 8.0 LTE (SM-T315/lt01lte)
+
+What works:
+
+ - Display and backlight
+ - Touchscreen (without touchkeys)
+ - GPIO buttons, hall sensor
+ - WiFi and Bluetooth
+ - USB, fuel gauge, charging (partial)
+ - Accelerometer and magnetometer
+ - WiFi model only: light sensor
+
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+
+Artur Weber (12):
+  dt-bindings: soc: samsung: add Exynos4212 PMU compatible
+  dt-bindings: clock: add Exynos4212 clock compatible
+  ARM: exynos: Re-introduce Exynos4212 support
+  soc: samsung: Re-introduce Exynos4212 support
+  clk: samsung: Add Exynos4212 compatible to CLKOUT driver
+  clk: samsung: Re-add support for Exynos4212 CPU clock
+  Revert "media: exynos4-is: Remove dependency on obsolete SoC support"
+  Revert "phy: Remove SOC_EXYNOS4212 dep. from PHY_EXYNOS4X12_USB"
+  ARM: dts: Move common Exynos4x12 definitions to exynos4x12.dtsi
+  ARM: dts: Re-introduce Exynos4212 DTSI
+  dt-bindings: arm: samsung: Add Samsung Galaxy Tab3 family boards
+  ARM: dts: exynos: Add Samsung Galaxy Tab 3 8.0 boards
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |   10 +
+ .../bindings/clock/samsung,exynos-clock.yaml  |    1 +
+ .../bindings/soc/samsung/exynos-pmu.yaml      |    3 +
+ arch/arm/boot/dts/Makefile                    |    3 +
+ arch/arm/boot/dts/exynos4212-tab3-3g8.dts     |   30 +
+ arch/arm/boot/dts/exynos4212-tab3-lte8.dts    |   43 +
+ arch/arm/boot/dts/exynos4212-tab3-wifi8.dts   |   25 +
+ arch/arm/boot/dts/exynos4212-tab3.dtsi        | 1175 +++++++++++++++++
+ arch/arm/boot/dts/exynos4212.dtsi             |  157 +++
+ arch/arm/boot/dts/exynos4412.dtsi             |  645 +--------
+ ...2-pinctrl.dtsi => exynos4x12-pinctrl.dtsi} |    4 +-
+ arch/arm/boot/dts/exynos4x12.dtsi             |  665 ++++++++++
+ arch/arm/mach-exynos/Kconfig                  |    5 +
+ arch/arm/mach-exynos/common.h                 |    8 +
+ arch/arm/mach-exynos/exynos.c                 |    2 +
+ arch/arm/mach-exynos/firmware.c               |    8 +-
+ arch/arm/mach-exynos/pm.c                     |    2 +-
+ arch/arm/mach-exynos/suspend.c                |    4 +
+ drivers/clk/samsung/clk-exynos-clkout.c       |    3 +
+ drivers/clk/samsung/clk-exynos4.c             |   44 +-
+ .../media/platform/samsung/exynos4-is/Kconfig |    2 +-
+ .../platform/samsung/exynos4-is/fimc-core.c   |    2 +-
+ .../platform/samsung/exynos4-is/fimc-lite.c   |    2 +-
+ drivers/phy/samsung/Kconfig                   |    2 +-
+ drivers/soc/samsung/exynos-pmu.c              |    9 +
+ drivers/soc/samsung/exynos-pmu.h              |    2 +
+ drivers/soc/samsung/exynos4-pmu.c             |   13 +-
+ 27 files changed, 2213 insertions(+), 656 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos4212-tab3-3g8.dts
+ create mode 100644 arch/arm/boot/dts/exynos4212-tab3-lte8.dts
+ create mode 100644 arch/arm/boot/dts/exynos4212-tab3-wifi8.dts
+ create mode 100644 arch/arm/boot/dts/exynos4212-tab3.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos4212.dtsi
+ rename arch/arm/boot/dts/{exynos4412-pinctrl.dtsi => exynos4x12-pinctrl.dtsi} (99%)
+ create mode 100644 arch/arm/boot/dts/exynos4x12.dtsi
+
+-- 
+2.40.0
+
