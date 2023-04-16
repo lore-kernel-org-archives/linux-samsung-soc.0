@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BC8C77B77
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Apr 2023 13:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D6D6C77B79
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Apr 2023 13:37:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229458AbjDPNhg (ORCPT
+        id S230152AbjDPNhi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 16 Apr 2023 09:37:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52446 "EHLO
+        Sun, 16 Apr 2023 09:37:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230339AbjDPNgR (ORCPT
+        with ESMTP id S231140AbjDPNfz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 16 Apr 2023 09:36:17 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 000C54C3E;
-        Sun, 16 Apr 2023 06:35:57 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id fy21so14508405ejb.9;
-        Sun, 16 Apr 2023 06:35:57 -0700 (PDT)
+        Sun, 16 Apr 2023 09:35:55 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 889DC2D60;
+        Sun, 16 Apr 2023 06:35:48 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a5so927053ejb.6;
+        Sun, 16 Apr 2023 06:35:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681652156; x=1684244156;
+        d=gmail.com; s=20221208; t=1681652146; x=1684244146;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Daq90p6qrczMZk89cBam/kQAHCGL98Y3xxZQBJA/2hY=;
-        b=JdyJtzg1mPJKZLWloB4AdzyfRPZqN+bEpQ12NixoS+Me97tKAttDlyqq7HUCxRQ+1v
-         v9Z5HBoG7mOB9bVkThpXHzl+2yV5KsrEAiy0qpoX0bqPYieRYuiJEkvnDgbcQjNed8X6
-         ucBkXUDv75ePKNA8z27uxkJLe1bxLilzQ5SPMNdXYTVweWk5b7bCqEWtyd+XPQJToa39
-         m/pG8wvjAD1ritFEKoFkWrjYcj1zbZlg3jOts3BYthPdQghXtVbV/d1HiWd/07yqilm2
-         dkPOAL+TFuG+WZGJJtifZiEeD5eyKQAwrFoSp6y+gp8acVeKeT75CHskrmmPpb9bl52s
-         xBhg==
+        bh=rsVMP+nc4oNcZ87McW4OVdy6DpQdiSat54tBtHLhBBY=;
+        b=BK9ciytjH5O2apYl911PFKkIxjD0zuyUTnHnkFvow0HPrFXNgXRS+bCDhdVp/D36t6
+         2P+yZB0Cqdr/gCuTRs5bqhMWolKAffqrQgg9iAQve6wBRsD6NVOxaeGXviUDLeV3rJuR
+         xLdhNHynxxhPQGqFxrD6NL5AK92/CrwjBjCH+NRPxkfCyXCUTnTwKgi5E73R0eV7jBwZ
+         HznmnxwUraE0gCIW5shq36yHLszhwO9+ho7QeR+RTJKYESs+Q3YqnnBWCavzVTrwfVvh
+         9ov5d3uIsJZKmu/pF0PG+eTcUExVaN7r7ETQ1ENn984AqaKihGNVEDbOeyz6yR/EZfad
+         w00Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681652156; x=1684244156;
+        d=1e100.net; s=20221208; t=1681652146; x=1684244146;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Daq90p6qrczMZk89cBam/kQAHCGL98Y3xxZQBJA/2hY=;
-        b=O4gvkBG3qphhl3fkfH7pE5SpaCzGotTonqp9cVIALWaWTrwKkNySWaApU73XryV/W/
-         eD3nKWFSgaX7YXjdoPN7+0K3LmLeKXlnCHUM0HMj4L7WQTKVUFbpZHzS7SZ/hjriScRA
-         YId7OQd5k49i5bKLdFmowH5iYEyi+6HoN/CuzzqLb1bjprnYTYDoRRpXMLY1YnaS0xEM
-         VN+JBROBjnIhbCJBKc7Fr95Sx4NG61ozuWQelxRZx+6skiRVBESxLyyQoOaTtnOPJ2HL
-         Q6HKdtIcKTF5Lnn7ixdCq04J0NEIPNmdHjoD/Jst3JaLDtDqXjSICScnbaoAcloWaO6L
-         RtGg==
-X-Gm-Message-State: AAQBX9d3JaoJ5JOadAmm/KsSoAUVEqe3qKtD+7irxohzGQc9xJ1Lxiej
-        UXVvqckF7VOc/RPfPrybIpc=
-X-Google-Smtp-Source: AKy350YvqfmFSWkKt+Nc/8zQRr1Skw46RS13uJ3HUwVg0TMXAaJsvx1W6TU9yGC+D1uSawH51zHTDA==
-X-Received: by 2002:a17:906:d047:b0:94e:116:8581 with SMTP id bo7-20020a170906d04700b0094e01168581mr4758908ejb.5.1681652156503;
-        Sun, 16 Apr 2023 06:35:56 -0700 (PDT)
+        bh=rsVMP+nc4oNcZ87McW4OVdy6DpQdiSat54tBtHLhBBY=;
+        b=f6YLtA2u3mGdNoYwvvlwmQtUezm+InRNoKf73X1QtNM6Im6Zzfi0JIDBtIe/nglUB/
+         vw8pJSknZVlJ4tcRNK5VmMsDQB9tZBl92sO29YrUMqzWkRWjP2rY2MvA7XMkTIqkCmT8
+         JL7TmjJEuDYUU2etP6oDvSgeIhdp/NSABAMYIkJd/7dPDN5JQbhNiwhVeXbFKIAoky0b
+         VcPDAu935wt57sRGQgfnuU/+cu395v96h4tMnoVskjnx0y55cb4aVKahTxOBe8Vn+3P1
+         o7r2zPdWzaOb8koqjRSJKBhp5SuETFsow36OOTPWicXx1mpVWEVIM1qCgZA7eenxsGa8
+         Au5Q==
+X-Gm-Message-State: AAQBX9dPdlfK2o/kfNrME9U2g/NdPkhiHhrd5y2v7tBI1vgrxdK538hA
+        mykV53oCqcbDGziVWZN872g=
+X-Google-Smtp-Source: AKy350aOQZtUDJ6HCtW/XeHcJyZm9y8dSlT6kREJgZmf3EgNgVfgfeFUalYfzshLE7tAJJsTQfMIqQ==
+X-Received: by 2002:a17:906:4a0f:b0:94e:d664:c2d5 with SMTP id w15-20020a1709064a0f00b0094ed664c2d5mr4822386eju.21.1681652146503;
+        Sun, 16 Apr 2023 06:35:46 -0700 (PDT)
 Received: from localhost.my.domain (83.8.121.70.ipv4.supernova.orange.pl. [83.8.121.70])
-        by smtp.gmail.com with ESMTPSA id gn23-20020a1709070d1700b009373f1b5c4esm5122958ejc.161.2023.04.16.06.35.54
+        by smtp.gmail.com with ESMTPSA id gn23-20020a1709070d1700b009373f1b5c4esm5122958ejc.161.2023.04.16.06.35.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Apr 2023 06:35:56 -0700 (PDT)
+        Sun, 16 Apr 2023 06:35:46 -0700 (PDT)
 From:   Artur Weber <aweber.kernel@gmail.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
@@ -74,9 +74,9 @@ Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         linux-phy@lists.infradead.org,
         ~postmarketos/upstreaming@lists.sr.ht,
         Artur Weber <aweber.kernel@gmail.com>
-Subject: [PATCH v2 10/12] ARM: dts: Re-introduce Exynos4212 DTSI
-Date:   Sun, 16 Apr 2023 15:34:20 +0200
-Message-Id: <20230416133422.1949-11-aweber.kernel@gmail.com>
+Subject: [PATCH v2 06/12] clk: samsung: Re-add support for Exynos4212 CPU clock
+Date:   Sun, 16 Apr 2023 15:34:16 +0200
+Message-Id: <20230416133422.1949-7-aweber.kernel@gmail.com>
 X-Mailer: git-send-email 2.40.0
 In-Reply-To: <20230416133422.1949-1-aweber.kernel@gmail.com>
 References: <20230416133422.1949-1-aweber.kernel@gmail.com>
@@ -86,181 +86,107 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The DTSI file was originally dropped in commit bca9085e0ae9 ("ARM:
+The platform was originally dropped in commit bca9085e0ae9 ("ARM:
 dts: exynos: remove Exynos4212 support (dead code)"), as there were
 no boards using it.
 
 We will be adding a device that uses it, so add it back.
 
+This is effectively a revert of commit c9194fb623b0 ("clk: samsung:
+Remove support for obsolete Exynos4212 CPU clock"); the driver
+has changed significantly since then, prompting this re-make.
+
 Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 ---
- arch/arm/boot/dts/exynos4212.dtsi | 157 ++++++++++++++++++++++++++++++
- 1 file changed, 157 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos4212.dtsi
+ drivers/clk/samsung/clk-exynos4.c | 44 +++++++++++++++++++++++++++----
+ 1 file changed, 39 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
-new file mode 100644
-index 000000000000..9261c14a4489
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos4212.dtsi
-@@ -0,0 +1,157 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Samsung's Exynos4212 SoC device tree source
-+ *
-+ * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * Samsung's Exynos4212 SoC device nodes are listed in this file. Exynos4212
-+ * based board files can include this file and provide values for board specfic
-+ * bindings.
-+ *
-+ * Note: This file does not include device nodes for all the controllers in
-+ * Exynos4212 SoC. As device tree coverage for Exynos4212 increases, additional
-+ * nodes can be added to this file.
-+ */
-+
-+#include "exynos4x12.dtsi"
-+
-+/ {
-+	compatible = "samsung,exynos4212", "samsung,exynos4";
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&cpu0>;
-+				};
-+				core1 {
-+					cpu = <&cpu1>;
-+				};
-+			};
-+		};
-+
-+		cpu0: cpu@a00 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0xa00>;
-+			clocks = <&clock CLK_ARM_CLK>;
-+			clock-names = "cpu";
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <2>; /* min followed by max */
-+		};
-+
-+		cpu1: cpu@a01 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0xa01>;
-+			clocks = <&clock CLK_ARM_CLK>;
-+			clock-names = "cpu";
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <2>; /* min followed by max */
-+		};
-+	};
-+
-+	cpu0_opp_table: opp-table-0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-200000000 {
-+			opp-hz = /bits/ 64 <200000000>;
-+			opp-microvolt = <900000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-300000000 {
-+			opp-hz = /bits/ 64 <300000000>;
-+			opp-microvolt = <900000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-400000000 {
-+			opp-hz = /bits/ 64 <400000000>;
-+			opp-microvolt = <925000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-500000000 {
-+			opp-hz = /bits/ 64 <500000000>;
-+			opp-microvolt = <950000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-600000000 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <975000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-700000000 {
-+			opp-hz = /bits/ 64 <700000000>;
-+			opp-microvolt = <987500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <1000000>;
-+			clock-latency-ns = <200000>;
-+			opp-suspend;
-+		};
-+		opp-900000000 {
-+			opp-hz = /bits/ 64 <900000000>;
-+			opp-microvolt = <1037500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <1087500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1100000000 {
-+			opp-hz = /bits/ 64 <1100000000>;
-+			opp-microvolt = <1137500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <1187500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1300000000 {
-+			opp-hz = /bits/ 64 <1300000000>;
-+			opp-microvolt = <1250000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1400000000 {
-+			opp-hz = /bits/ 64 <1400000000>;
-+			opp-microvolt = <1287500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		cpu0_opp_1500: opp-1500000000 {
-+			opp-hz = /bits/ 64 <1500000000>;
-+			opp-microvolt = <1350000>;
-+			clock-latency-ns = <200000>;
-+			turbo-mode;
-+		};
-+	};
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 22009cb53428..9655f46db95c 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -138,7 +138,8 @@
+ /* the exynos4 soc type */
+ enum exynos4_soc {
+ 	EXYNOS4210,
+-	EXYNOS4X12,
++	EXYNOS4412,
++	EXYNOS4212,
+ };
+ 
+ /* list of PLLs to be registered */
+@@ -1205,6 +1206,24 @@ static const struct exynos_cpuclk_cfg_data e4210_armclk_d[] __initconst = {
+ 	{  0 },
+ };
+ 
++static const struct exynos_cpuclk_cfg_data e4212_armclk_d[] __initconst = {
++	{ 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
++	{ 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
++	{ 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
++	{ 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
++	{ 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4210_CPU_DIV1(2, 4), },
++	{ 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4210_CPU_DIV1(2, 4), },
++	{  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
++	{  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
++	{  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
++	{  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
++	{  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
++	{  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
++	{  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
++	{  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4210_CPU_DIV1(2, 3), },
++	{  0 },
 +};
 +
-+&clock {
-+	compatible = "samsung,exynos4212-clock";
+ #define E4412_CPU_DIV1(cores, hpm, copy)				\
+ 		(((cores) << 8) | ((hpm) << 4) | ((copy) << 0))
+ 
+@@ -1233,6 +1252,11 @@ static const struct samsung_cpu_clock exynos4210_cpu_clks[] __initconst = {
+ 			CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1, 0x14200, e4210_armclk_d),
+ };
+ 
++static const struct samsung_cpu_clock exynos4212_cpu_clks[] __initconst = {
++	CPU_CLK(CLK_ARM_CLK, "armclk", CLK_MOUT_APLL, CLK_MOUT_MPLL_USER_C,
++			CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1, 0x14200, e4212_armclk_d),
 +};
 +
-+&combiner {
-+	samsung,combiner-nr = <18>;
-+};
+ static const struct samsung_cpu_clock exynos4412_cpu_clks[] __initconst = {
+ 	CPU_CLK(CLK_ARM_CLK, "armclk", CLK_MOUT_APLL, CLK_MOUT_MPLL_USER_C,
+ 			CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1, 0x14200, e4412_armclk_d),
+@@ -1326,11 +1350,15 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 		samsung_clk_register_fixed_factor(ctx,
+ 			exynos4x12_fixed_factor_clks,
+ 			ARRAY_SIZE(exynos4x12_fixed_factor_clks));
+-		samsung_clk_register_cpu(ctx, exynos4412_cpu_clks,
+-				ARRAY_SIZE(exynos4412_cpu_clks));
++		if (soc == EXYNOS4412)
++			samsung_clk_register_cpu(ctx, exynos4412_cpu_clks,
++					ARRAY_SIZE(exynos4412_cpu_clks));
++		else
++			samsung_clk_register_cpu(ctx, exynos4212_cpu_clks,
++					ARRAY_SIZE(exynos4212_cpu_clks));
+ 	}
+ 
+-	if (soc == EXYNOS4X12)
++	if (soc == EXYNOS4412 || soc == EXYNOS4212)
+ 		exynos4x12_core_down_clock();
+ 
+ 	samsung_clk_extended_sleep_init(reg_base,
+@@ -1363,8 +1391,14 @@ static void __init exynos4210_clk_init(struct device_node *np)
+ }
+ CLK_OF_DECLARE(exynos4210_clk, "samsung,exynos4210-clock", exynos4210_clk_init);
+ 
++static void __init exynos4212_clk_init(struct device_node *np)
++{
++	exynos4_clk_init(np, EXYNOS4212);
++}
++CLK_OF_DECLARE(exynos4212_clk, "samsung,exynos4212-clock", exynos4212_clk_init);
 +
-+&gic {
-+	cpu-offset = <0x8000>;
-+};
-+
-+&pmu {
-+	interrupts = <2 2>, <3 2>;
-+	interrupt-affinity = <&cpu0>, <&cpu1>;
-+	status = "okay";
-+};
-+
-+&pmu_system_controller {
-+	compatible = "samsung,exynos4212-pmu", "syscon";
-+};
+ static void __init exynos4412_clk_init(struct device_node *np)
+ {
+-	exynos4_clk_init(np, EXYNOS4X12);
++	exynos4_clk_init(np, EXYNOS4412);
+ }
+ CLK_OF_DECLARE(exynos4412_clk, "samsung,exynos4412-clock", exynos4412_clk_init);
 -- 
 2.40.0
 
