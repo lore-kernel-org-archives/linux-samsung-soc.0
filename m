@@ -2,61 +2,61 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B03AC77B79
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Apr 2023 17:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 173CEC77B77
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Apr 2023 17:55:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229501AbjDPRyl (ORCPT
+        id S229782AbjDPRz2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 16 Apr 2023 13:54:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57094 "EHLO
+        Sun, 16 Apr 2023 13:55:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229664AbjDPRyk (ORCPT
+        with ESMTP id S229602AbjDPRz1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 16 Apr 2023 13:54:40 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA5121FEA
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Apr 2023 10:54:38 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-5052caa1e32so3541825a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Apr 2023 10:54:38 -0700 (PDT)
+        Sun, 16 Apr 2023 13:55:27 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D3921FCE
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Apr 2023 10:55:26 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-506767f97f8so2616390a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Apr 2023 10:55:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681667677; x=1684259677;
+        d=linaro.org; s=google; t=1681667724; x=1684259724;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JS6gaHiphUmSOWpn+pmyiSugcXzg+J545dx/xJnnaxk=;
-        b=WuWEb3nQKRcBC4aQq5LCsl/QIdpbFKoJvTV/SSvo7+KcXslPZLEolPou2WpIPh9FCF
-         srBTN+NGP3wj8rwbrUDV8VW47d+Ia+cdOt36cVwkpPie84WhNTiO/G08tM6139DnVgOd
-         Dy8L6Fa6tgCAG04ZtOxo+uyGTfV4VjAkykB/5otTlNrA2UVIuusuAX/F56nUUuVtwxWD
-         96eYsH0axlMBFn6uCuZh8OTkFdS2nLbwtuzoUk7tVDlq+GxwnO2hQIDEnvwl1J3GmSt1
-         ugYCUXZV3Sj18cLHhJWSKF3gciUab1+yK2RmZV3x+B4zT8k8zJmTdCetNRpPXt6ybdBk
-         ZCWA==
+        bh=x7wT7n+DJMWXCwF/JmEqtyfQLfvwMTp3PMeKPlacVvI=;
+        b=N50SBxfRyEvNTrmfJYbWrp3K5WfAffRN7269lKy7ZahDLbF6YzyDwCeQmn5st8ZNVU
+         TiWP59+AIx+c+ZAGcexmwq8zozFdGU5WSKa0UB25+PDCSc4DR2aFOxSshDG+yG6lZTtE
+         VMUmyj7xEqwhgDxlwjVLbKZKrUgLZnSKjeZhv+bN3aVy2SnxHo3wD+ssFpSxvT0fw9Ji
+         nJvfEOqJZiPies9FMmCiYIx+QgQtaXzqnJjIOFIiaOXhUbVZsKOGnjX81ore0i2FBzsQ
+         emUEEbZhA3wQAmVg2rwJObOsNrFJMsE1DgyeFgvnwHPLIUuX6x4NX+GzS89nY5R8k+q6
+         g9Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681667677; x=1684259677;
+        d=1e100.net; s=20221208; t=1681667724; x=1684259724;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JS6gaHiphUmSOWpn+pmyiSugcXzg+J545dx/xJnnaxk=;
-        b=MsYoDUmriQzLS6VljXoj1OSEMzwHZijKXdJbBbRMr58SZHrk4UwGy8qR5Yz2ii/WSh
-         LFtBeaNIFA76oMZHELgbIyINe0pEUkmVYCvT/10yL0dbYA7hlDG4lKqS+1lJV74vsR4Z
-         c7rTb1SeIVxq8IknFHIwwCm1RiRpUgb6s35Bhk0Hx7uKiyH2W+RJUQ5m/IGk7t3G8tI7
-         8wGm+lvDHMFAHdJbYr0py6P/Zz0QTm69ypGHkWqqHKvUR7RkDBJZn2iJXjnuns9YuXe0
-         yEJ0XXAbIP2fQIAkyE5ph8ABAWW/oGLHwY9tHFafFo7ocxtwxiPxqF1YOlXP5Bwp/P4v
-         8Jpg==
-X-Gm-Message-State: AAQBX9eC2lGujIHqKpaEuVPKZCaicNIxTRjjDomKXzngcGmejZJ5WoHJ
-        22yAcR8XHUtGprQN8GHErGRKhw==
-X-Google-Smtp-Source: AKy350Y5iFghGHPVY/+36B4z9G0r8ayC/uD7aU0dvjOxkfyBYGegI5B/Jo7ShhZXPQ/Ssg96Hx350Q==
-X-Received: by 2002:a05:6402:1486:b0:4fd:29a1:6a58 with SMTP id e6-20020a056402148600b004fd29a16a58mr13688436edv.19.1681667677169;
-        Sun, 16 Apr 2023 10:54:37 -0700 (PDT)
+        bh=x7wT7n+DJMWXCwF/JmEqtyfQLfvwMTp3PMeKPlacVvI=;
+        b=Anv1IUh/FidC3KJPm9rbF4363syxJb1F21fHgEI/bBGICMd0v9NZdGRaK/WZt7tJEZ
+         61x8XAt5kbCUP7jSWilKJZe5RDDBdzV0egPi8Njg3RAS/AoSxVx/Dn4BNhT76k4VE2Pt
+         ZP7SAXquxjXVDETiuH40vmo+zy+hSd8p+R9IvlOEeh/p+ZDA0PS5FE1DXz4W4xfl+yr8
+         bO5w6rpP38Rr1leL4cIiKDE5vsDWW5yLuXKTwhVtLu47GbM4VfZbuh/Jdbb+REylb8xB
+         csuakB1SrKcw3yJFLogry9D1GMF6EbvipVDJb7R9MLkl8/8+zO1Vi1t9ZdyL8rZKyDNl
+         AHZw==
+X-Gm-Message-State: AAQBX9dZOtqIa0Zqun4AWpoGvLEt3Is1W0sRGaOdgJactwmd6ADzvNg6
+        updk3zJ4DjkSaB9mAb2nxOacuQ==
+X-Google-Smtp-Source: AKy350avKh9PmUHvsOygNn3GPct8a9xHAE66Mg83Bz+YU/JqH0f5dabMl/mfcrMIbTTp5Lai6EdXjw==
+X-Received: by 2002:aa7:d352:0:b0:505:394:157b with SMTP id m18-20020aa7d352000000b005050394157bmr12230901edr.17.1681667724514;
+        Sun, 16 Apr 2023 10:55:24 -0700 (PDT)
 Received: from ?IPV6:2a02:810d:15c0:828:f9e3:1d38:66a7:ae92? ([2a02:810d:15c0:828:f9e3:1d38:66a7:ae92])
-        by smtp.gmail.com with ESMTPSA id h23-20020aa7c957000000b005066ca60b2csm4695188edt.63.2023.04.16.10.54.35
+        by smtp.gmail.com with ESMTPSA id b11-20020a056402138b00b0050690bc07a3sm2240983edv.18.2023.04.16.10.55.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Apr 2023 10:54:36 -0700 (PDT)
-Message-ID: <00bd1ec1-0745-c521-4df9-e31e1057a6ff@linaro.org>
-Date:   Sun, 16 Apr 2023 19:54:35 +0200
+        Sun, 16 Apr 2023 10:55:24 -0700 (PDT)
+Message-ID: <99b7f216-114b-c01a-cb27-7dbcfc0c3b5c@linaro.org>
+Date:   Sun, 16 Apr 2023 19:55:22 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH v2 01/12] dt-bindings: soc: samsung: add Exynos4212 PMU
+Subject: Re: [PATCH v2 02/12] dt-bindings: clock: add Exynos4212 clock
  compatible
 Content-Language: en-US
 To:     Artur Weber <aweber.kernel@gmail.com>
@@ -81,9 +81,9 @@ Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         linux-phy@lists.infradead.org,
         ~postmarketos/upstreaming@lists.sr.ht
 References: <20230416133422.1949-1-aweber.kernel@gmail.com>
- <20230416133422.1949-2-aweber.kernel@gmail.com>
+ <20230416133422.1949-3-aweber.kernel@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230416133422.1949-2-aweber.kernel@gmail.com>
+In-Reply-To: <20230416133422.1949-3-aweber.kernel@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -95,16 +95,13 @@ On 16/04/2023 15:34, Artur Weber wrote:
 > dts: exynos: remove Exynos4212 support (dead code)"), as there were
 > no boards using it.
 
-You meant commit c40610198f35e? This is the one which you partially revert.
+Also wrong commit. Reference the one which dropped compatible from bindings.
 
 > 
 > We will be adding a device that uses it, so add it back.
 > 
 > Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
->  Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+
 
 Best regards,
 Krzysztof
