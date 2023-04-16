@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3575C77B61
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Apr 2023 13:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BC8C77B77
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Apr 2023 13:37:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230071AbjDPNhf (ORCPT
+        id S229458AbjDPNhg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 16 Apr 2023 09:37:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52004 "EHLO
+        Sun, 16 Apr 2023 09:37:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230403AbjDPNgA (ORCPT
+        with ESMTP id S230339AbjDPNgR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 16 Apr 2023 09:36:00 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D428E3A81;
-        Sun, 16 Apr 2023 06:35:50 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id sz19so394352ejc.2;
-        Sun, 16 Apr 2023 06:35:50 -0700 (PDT)
+        Sun, 16 Apr 2023 09:36:17 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 000C54C3E;
+        Sun, 16 Apr 2023 06:35:57 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id fy21so14508405ejb.9;
+        Sun, 16 Apr 2023 06:35:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681652149; x=1684244149;
+        d=gmail.com; s=20221208; t=1681652156; x=1684244156;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MKVIgiz58zIFJgX8elDwMTDtG02bu6kIfybVoLMLnnE=;
-        b=jpx0NRbyMusb0ecSr5/iGMxYz0JwUDJN886OD/9YfiIzcVKnJXLY1BYn+1t78nwV/y
-         9nqeIod/pXUqjApOqH5PHrxNljX+93tczHKOM9pYDHpgALFBPRH2cgBNjKuGHFbW/BSh
-         zXwzu+r8BKDFt/NS4dgd9QHVM4vSwtgzMt3N06YoEi35nns7MZdzSQg1qy1c4v0pXPbw
-         sldLFMjV93K8as7gmDeIcBrtXMy6fWb+Zo8ctWts38oyC+of47DRGUVY/13hsB/y/5n6
-         pWQaJO0+RH+PoMjECv/s/3drmcniEaMqsCurZ1l5/zrpHramZCQWCzqqCHiqkMvK87O6
-         5Q7g==
+        bh=Daq90p6qrczMZk89cBam/kQAHCGL98Y3xxZQBJA/2hY=;
+        b=JdyJtzg1mPJKZLWloB4AdzyfRPZqN+bEpQ12NixoS+Me97tKAttDlyqq7HUCxRQ+1v
+         v9Z5HBoG7mOB9bVkThpXHzl+2yV5KsrEAiy0qpoX0bqPYieRYuiJEkvnDgbcQjNed8X6
+         ucBkXUDv75ePKNA8z27uxkJLe1bxLilzQ5SPMNdXYTVweWk5b7bCqEWtyd+XPQJToa39
+         m/pG8wvjAD1ritFEKoFkWrjYcj1zbZlg3jOts3BYthPdQghXtVbV/d1HiWd/07yqilm2
+         dkPOAL+TFuG+WZGJJtifZiEeD5eyKQAwrFoSp6y+gp8acVeKeT75CHskrmmPpb9bl52s
+         xBhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681652149; x=1684244149;
+        d=1e100.net; s=20221208; t=1681652156; x=1684244156;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MKVIgiz58zIFJgX8elDwMTDtG02bu6kIfybVoLMLnnE=;
-        b=HQ68Fh+RMFH30hbJUKjs5ViYj8UNGSA3krfwnDI18CCHnIAiIjdNuRUQhuwfkIEECK
-         8hZPENAIocnIbKqVzK/EZL2cn8sl2rwwxM1xGMYnBy5wVl+2v5+zOHa2FntPWrmB/t5n
-         fGKk7WZyWXGr2om+VX3VSRfQwrk7a0bm1zXxUK5l1KB/x+3a9mZV2tpf1jnTBk7yQraH
-         qJeWCJYfOM/ozIAE+tk4QvKYfdP07QESwgYSK6xyLz5yJpqy4LzuN7ZtLp4eANTNMgqR
-         ihNh6mcPkzvBimbY4IsTLRsvsEDm8vevJzJ6EEpotevf7Yki0vPP5K0YZrXl4uYGraEc
-         zb8Q==
-X-Gm-Message-State: AAQBX9dzlryuqGfGtnhfwtZeqSQjeIu3jMzYD4h8u4RP/VuLeYpUWb+7
-        dB3qm2sURxcRTv1HnpuFbU3FQPV/3Gw/FQ==
-X-Google-Smtp-Source: AKy350YPmstbPVajjknyXiRkvg9C+KqbRwgdFKT785sk0SCoKCnq3TzeyY7LVWJnakbCk4/HQ+J22w==
-X-Received: by 2002:a17:907:2ccc:b0:94f:3cb2:9351 with SMTP id hg12-20020a1709072ccc00b0094f3cb29351mr2253935ejc.40.1681652148930;
-        Sun, 16 Apr 2023 06:35:48 -0700 (PDT)
+        bh=Daq90p6qrczMZk89cBam/kQAHCGL98Y3xxZQBJA/2hY=;
+        b=O4gvkBG3qphhl3fkfH7pE5SpaCzGotTonqp9cVIALWaWTrwKkNySWaApU73XryV/W/
+         eD3nKWFSgaX7YXjdoPN7+0K3LmLeKXlnCHUM0HMj4L7WQTKVUFbpZHzS7SZ/hjriScRA
+         YId7OQd5k49i5bKLdFmowH5iYEyi+6HoN/CuzzqLb1bjprnYTYDoRRpXMLY1YnaS0xEM
+         VN+JBROBjnIhbCJBKc7Fr95Sx4NG61ozuWQelxRZx+6skiRVBESxLyyQoOaTtnOPJ2HL
+         Q6HKdtIcKTF5Lnn7ixdCq04J0NEIPNmdHjoD/Jst3JaLDtDqXjSICScnbaoAcloWaO6L
+         RtGg==
+X-Gm-Message-State: AAQBX9d3JaoJ5JOadAmm/KsSoAUVEqe3qKtD+7irxohzGQc9xJ1Lxiej
+        UXVvqckF7VOc/RPfPrybIpc=
+X-Google-Smtp-Source: AKy350YvqfmFSWkKt+Nc/8zQRr1Skw46RS13uJ3HUwVg0TMXAaJsvx1W6TU9yGC+D1uSawH51zHTDA==
+X-Received: by 2002:a17:906:d047:b0:94e:116:8581 with SMTP id bo7-20020a170906d04700b0094e01168581mr4758908ejb.5.1681652156503;
+        Sun, 16 Apr 2023 06:35:56 -0700 (PDT)
 Received: from localhost.my.domain (83.8.121.70.ipv4.supernova.orange.pl. [83.8.121.70])
-        by smtp.gmail.com with ESMTPSA id gn23-20020a1709070d1700b009373f1b5c4esm5122958ejc.161.2023.04.16.06.35.46
+        by smtp.gmail.com with ESMTPSA id gn23-20020a1709070d1700b009373f1b5c4esm5122958ejc.161.2023.04.16.06.35.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Apr 2023 06:35:48 -0700 (PDT)
+        Sun, 16 Apr 2023 06:35:56 -0700 (PDT)
 From:   Artur Weber <aweber.kernel@gmail.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
@@ -74,9 +74,9 @@ Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         linux-phy@lists.infradead.org,
         ~postmarketos/upstreaming@lists.sr.ht,
         Artur Weber <aweber.kernel@gmail.com>
-Subject: [PATCH v2 07/12] Revert "media: exynos4-is: Remove dependency on obsolete SoC support"
-Date:   Sun, 16 Apr 2023 15:34:17 +0200
-Message-Id: <20230416133422.1949-8-aweber.kernel@gmail.com>
+Subject: [PATCH v2 10/12] ARM: dts: Re-introduce Exynos4212 DTSI
+Date:   Sun, 16 Apr 2023 15:34:20 +0200
+Message-Id: <20230416133422.1949-11-aweber.kernel@gmail.com>
 X-Mailer: git-send-email 2.40.0
 In-Reply-To: <20230416133422.1949-1-aweber.kernel@gmail.com>
 References: <20230416133422.1949-1-aweber.kernel@gmail.com>
@@ -86,60 +86,181 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The platform was originally dropped in commit bca9085e0ae9 ("ARM:
+The DTSI file was originally dropped in commit bca9085e0ae9 ("ARM:
 dts: exynos: remove Exynos4212 support (dead code)"), as there were
 no boards using it.
 
 We will be adding a device that uses it, so add it back.
 
-This reverts commit 2d41a0c9ae51ac363d107f2510022106e7234b33.
-
 Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 ---
- drivers/media/platform/samsung/exynos4-is/Kconfig     | 2 +-
- drivers/media/platform/samsung/exynos4-is/fimc-core.c | 2 +-
- drivers/media/platform/samsung/exynos4-is/fimc-lite.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/exynos4212.dtsi | 157 ++++++++++++++++++++++++++++++
+ 1 file changed, 157 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos4212.dtsi
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/Kconfig b/drivers/media/platform/samsung/exynos4-is/Kconfig
-index da33faa7132e..7f9ba053dd8e 100644
---- a/drivers/media/platform/samsung/exynos4-is/Kconfig
-+++ b/drivers/media/platform/samsung/exynos4-is/Kconfig
-@@ -47,7 +47,7 @@ config VIDEO_S5P_MIPI_CSIS
- config VIDEO_EXYNOS_FIMC_LITE
- 	tristate "EXYNOS FIMC-LITE camera interface driver"
- 	depends on I2C
--	depends on SOC_EXYNOS4412 || SOC_EXYNOS5250 || COMPILE_TEST
-+	depends on SOC_EXYNOS4212 || SOC_EXYNOS4412 || SOC_EXYNOS5250 || COMPILE_TEST
- 	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select VIDEO_EXYNOS4_IS_COMMON
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-core.c b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-index 1791100b6935..e2f394e60dee 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-@@ -1129,7 +1129,7 @@ static const struct fimc_drvdata fimc_drvdata_exynos4210 = {
- 	.out_buf_count	= 32,
- };
- 
--/* EXYNOS4412 */
-+/* EXYNOS4212, EXYNOS4412 */
- static const struct fimc_drvdata fimc_drvdata_exynos4x12 = {
- 	.num_entities	= 4,
- 	.lclk_frequency	= 166000000UL,
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-lite.c b/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
-index e185a40305a8..f80047095f30 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
-@@ -1619,7 +1619,7 @@ static const struct dev_pm_ops fimc_lite_pm_ops = {
- 			   NULL)
- };
- 
--/* EXYNOS4412 */
-+/* EXYNOS4212, EXYNOS4412 */
- static struct flite_drvdata fimc_lite_drvdata_exynos4 = {
- 	.max_width		= 8192,
- 	.max_height		= 8192,
+diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
+new file mode 100644
+index 000000000000..9261c14a4489
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos4212.dtsi
+@@ -0,0 +1,157 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Samsung's Exynos4212 SoC device tree source
++ *
++ * Copyright (c) 2012 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Samsung's Exynos4212 SoC device nodes are listed in this file. Exynos4212
++ * based board files can include this file and provide values for board specfic
++ * bindings.
++ *
++ * Note: This file does not include device nodes for all the controllers in
++ * Exynos4212 SoC. As device tree coverage for Exynos4212 increases, additional
++ * nodes can be added to this file.
++ */
++
++#include "exynos4x12.dtsi"
++
++/ {
++	compatible = "samsung,exynos4212", "samsung,exynos4";
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu-map {
++			cluster0 {
++				core0 {
++					cpu = <&cpu0>;
++				};
++				core1 {
++					cpu = <&cpu1>;
++				};
++			};
++		};
++
++		cpu0: cpu@a00 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a9";
++			reg = <0xa00>;
++			clocks = <&clock CLK_ARM_CLK>;
++			clock-names = "cpu";
++			operating-points-v2 = <&cpu0_opp_table>;
++			#cooling-cells = <2>; /* min followed by max */
++		};
++
++		cpu1: cpu@a01 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a9";
++			reg = <0xa01>;
++			clocks = <&clock CLK_ARM_CLK>;
++			clock-names = "cpu";
++			operating-points-v2 = <&cpu0_opp_table>;
++			#cooling-cells = <2>; /* min followed by max */
++		};
++	};
++
++	cpu0_opp_table: opp-table-0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-200000000 {
++			opp-hz = /bits/ 64 <200000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-300000000 {
++			opp-hz = /bits/ 64 <300000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-400000000 {
++			opp-hz = /bits/ 64 <400000000>;
++			opp-microvolt = <925000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <950000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-600000000 {
++			opp-hz = /bits/ 64 <600000000>;
++			opp-microvolt = <975000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-700000000 {
++			opp-hz = /bits/ 64 <700000000>;
++			opp-microvolt = <987500>;
++			clock-latency-ns = <200000>;
++		};
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <1000000>;
++			clock-latency-ns = <200000>;
++			opp-suspend;
++		};
++		opp-900000000 {
++			opp-hz = /bits/ 64 <900000000>;
++			opp-microvolt = <1037500>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <1087500>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1100000000 {
++			opp-hz = /bits/ 64 <1100000000>;
++			opp-microvolt = <1137500>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <1187500>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1300000000 {
++			opp-hz = /bits/ 64 <1300000000>;
++			opp-microvolt = <1250000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1400000000 {
++			opp-hz = /bits/ 64 <1400000000>;
++			opp-microvolt = <1287500>;
++			clock-latency-ns = <200000>;
++		};
++		cpu0_opp_1500: opp-1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <1350000>;
++			clock-latency-ns = <200000>;
++			turbo-mode;
++		};
++	};
++};
++
++&clock {
++	compatible = "samsung,exynos4212-clock";
++};
++
++&combiner {
++	samsung,combiner-nr = <18>;
++};
++
++&gic {
++	cpu-offset = <0x8000>;
++};
++
++&pmu {
++	interrupts = <2 2>, <3 2>;
++	interrupt-affinity = <&cpu0>, <&cpu1>;
++	status = "okay";
++};
++
++&pmu_system_controller {
++	compatible = "samsung,exynos4212-pmu", "syscon";
++};
 -- 
 2.40.0
 
