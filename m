@@ -2,923 +2,231 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD54C77B73
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Apr 2023 18:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7632C77B73
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Apr 2023 01:18:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbjDPS0S (ORCPT
+        id S229518AbjDQBSU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 16 Apr 2023 14:26:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39268 "EHLO
+        Sun, 16 Apr 2023 21:18:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229674AbjDPS0R (ORCPT
+        with ESMTP id S229461AbjDQBSU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 16 Apr 2023 14:26:17 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1B282133
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Apr 2023 11:26:13 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id c9so19743390ejz.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Apr 2023 11:26:13 -0700 (PDT)
+        Sun, 16 Apr 2023 21:18:20 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 594B41BDB
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Apr 2023 18:18:18 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-94ef0a8546fso130473966b.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Apr 2023 18:18:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681669572; x=1684261572;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EABqg+N3YCRIaC4Hgz/ePg3oPQWOwoXWHt3u9z1fv84=;
-        b=kh61Pan4dkwIdwo1ggUaWBF8xeQ6pDOWeweqxw0cCjeeFiYbvISRa5poKvjEpNxrkR
-         DygIZVvCm/Lj9piAuY9Kdr/dYJYBNjIwLWifantmS+zdudDNgzTtAjWdy/01C9BUItHh
-         xxDf/LkrJJ3LoiMJcniaQDyFmNWC4llNLNjFc41QkymsmiKfrG6FnS/qjniByUD7H4Q/
-         2fBxF47XnzlLOY18EdSVcJi+S5x1kbAnrwXNb5hD7WIdv/wljKvyrkUx3hWzZ2BGLurV
-         KdNTCp2iNh2eNDnh2XuGUAcPvRT8RG21K8RuqSQ1ebqWEiWCO+06Dm3kCQ6sgP+KfIZr
-         Swxg==
+        d=gmail.com; s=20221208; t=1681694297; x=1684286297;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vukoh+Tup8ynWs7RiNuRL+4E7Xm5EcD+FBfZKi8qbHo=;
+        b=moIibPJVhxKW3e7HCpTJGpxXVdrWSfN7lyM1dbeK1Shp+ORSXPpLWxaRHYQDQnmrn7
+         +/AYlAr8NPYh6oTkvwzfKH9jSpDq+JrpsNyfu/iU8RxO/3jsDd8VFIdx9L8s8jqidUtf
+         wR3Mx8fylR8/AA50PWiF+EG3g2+lXkY2GB7NKOqubjV6S369ageNvinlppOIYuhQzCqK
+         Jb6d7DZU3I3FsKtsxYi+5tgjgt5eCSM2E2z4ukQyXdLItemekW8tgunh3JvIvQ38ex8A
+         cYGw1ST2WcNVHmbWmH1wio5+zwCwEnfaDVa4vKNHOw0zQMWiMzUYBKOiUR6GCngajqfd
+         FASQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681669572; x=1684261572;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EABqg+N3YCRIaC4Hgz/ePg3oPQWOwoXWHt3u9z1fv84=;
-        b=d9OgmZjwmgWvg8lUxj4Vs4r96ELUg5BE2XsN+EVqv/y8APwrLMtL/4EW/bF8OrScpZ
-         4xvH41bCpLrA0PGiShaWkKMKZitKIf3h4m5rx2SbADoKie3WiLNNB96T2PKSBzhfY5Bi
-         9RNXkD9qKNwgBRvHYTncefU3fGbDeHvrp/K5eCp1EK4h+1jR30ARCycUnmqb8pUsbuKW
-         vd3NTKtS9ZsEaVJiKQ2txRpqv/a/8qey4JojNFdTpKdOF65s0SKuKPWZmiEJXRswYTFC
-         M9ZSslryw+0sLzssTWBGNXeDxtMXGxX39PDb8KloFC2oQljank9rVvuaHCc5jDePIWo/
-         NN2Q==
-X-Gm-Message-State: AAQBX9csDVvKDhrpSPtKbpXr9+5LBBv005C5eKPlzNWRezNjBTJ7Oz+z
-        QU+54Om9M739l0nA18DaBPcoKg==
-X-Google-Smtp-Source: AKy350ZDzXmAdVpxqF4w1PQjYIl3R0H+Bo/7oND9CmlewaIX8O5g/Qr+M775YNmzF/IWJuiUEyBVjA==
-X-Received: by 2002:a17:906:5384:b0:94e:c306:f42f with SMTP id g4-20020a170906538400b0094ec306f42fmr4388589ejo.16.1681669572281;
-        Sun, 16 Apr 2023 11:26:12 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:f9e3:1d38:66a7:ae92? ([2a02:810d:15c0:828:f9e3:1d38:66a7:ae92])
-        by smtp.gmail.com with ESMTPSA id d18-20020a170906041200b0094f0237c32bsm2990454eja.208.2023.04.16.11.26.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Apr 2023 11:26:11 -0700 (PDT)
-Message-ID: <9aba4c1d-93f3-7613-6fb5-0591a281ec0a@linaro.org>
-Date:   Sun, 16 Apr 2023 20:26:10 +0200
+        d=1e100.net; s=20221208; t=1681694297; x=1684286297;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vukoh+Tup8ynWs7RiNuRL+4E7Xm5EcD+FBfZKi8qbHo=;
+        b=CetYRuyZXo417ltVubuGvyTD+cxIyoPx6drbrVHiSWTwn9q9DOPkwbDEqr5uJiB04v
+         s156sZwnQfPjK3cFXyYvSPbVaIQ3n2ub+koB12ep4IjK9QVoJ72RtQxQu2BcL+2NlgIw
+         6SrF+MQjfv/YLinivj+HJ93p3Pll0iQLkhVDAouqgCw7IDejPKwIZAuZYlXWEYoEAXi7
+         jHi5hLeszL3BKKKMFZuhRebB1DcZie7J43JFcd0cHGHr1sxt51W3QWdFv3hsQLjLX8i3
+         3rxtymj+Bo+IA0GSAVUXSH0Kysl8r/pJZHLs+yh/4wAakzAt5xbPiUofctWvxH7vqhyo
+         IIQA==
+X-Gm-Message-State: AAQBX9fIUbaI1Mz23n9khr+DBEzpwG7e0YoBwDRd/buyYQ1FHrtekcUv
+        ZlqPa4FD5OXx5q7oxlBy6UCxdQRYe/wNHE9Z53s=
+X-Google-Smtp-Source: AKy350ZHUVbJHbl8xoe1HgtY4IEt6uIXEVkpHUp24lCrmjfGEESKe7vedu4oClCc/l2dZXgnIfK9QCrT8guzX/35BCE=
+X-Received: by 2002:a50:9fe1:0:b0:504:8548:ab4d with SMTP id
+ c88-20020a509fe1000000b005048548ab4dmr6483583edf.5.1681694296652; Sun, 16 Apr
+ 2023 18:18:16 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v2 12/12] ARM: dts: exynos: Add Samsung Galaxy Tab 3 8.0
- boards
-Content-Language: en-US
-To:     Artur Weber <aweber.kernel@gmail.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>, soc@kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-phy@lists.infradead.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-References: <20230416133422.1949-1-aweber.kernel@gmail.com>
- <20230416133422.1949-13-aweber.kernel@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230416133422.1949-13-aweber.kernel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CGME20230328040524epcas1p270b050efedfe53d8e59c7e9103d5b84c@epcas1p2.samsung.com>
+ <20230328040524.49278-1-inki.dae@samsung.com> <ZCMkXPW5vdps3xQE@phenom.ffwll.local>
+ <011101d96200$d8aa45e0$89fed1a0$@samsung.com>
+In-Reply-To: <011101d96200$d8aa45e0$89fed1a0$@samsung.com>
+From:   Inki Dae <daeinki@gmail.com>
+Date:   Mon, 17 Apr 2023 10:17:41 +0900
+Message-ID: <CAAQKjZPdv0X=HhuvA2VBP2=EQXno_MB_zDkePerdA-D_J_bqiQ@mail.gmail.com>
+Subject: Re: [GIT PULL] exynos-drm-next
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     airlied@linux.ie, linux-samsung-soc@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 16/04/2023 15:34, Artur Weber wrote:
-> Introduce support for the Galaxy Tab 3 8.0 series of boards:
-> 
->  - Samsung Galaxy Tab 3 8.0 WiFi (SM-T310/lt01wifi)
->  - Samsung Galaxy Tab 3 8.0 3G (SM-T311/lt013g)
->  - Samsung Galaxy Tab 3 8.0 LTE (SM-T315/lt01lte)
-> 
-> What works:
-> 
->  - Display and backlight
->  - Touchscreen (without touchkeys)
->  - GPIO buttons, hall sensor
->  - WiFi and Bluetooth
->  - USB, fuel gauge, charging (partial)
->  - Accelerometer and magnetometer
->  - WiFi model only: light sensor
-> 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
-> Display panel bindings are added by a separate patchset:
-> "[PATCH 0/3] Add Samsung S6D7AA0 panel controller driver"[1]
-> 
-> [1] https://lore.kernel.org/all/20230416131632.31673-1-aweber.kernel@gmail.com/
-> ---
->  arch/arm/boot/dts/Makefile                  |    3 +
->  arch/arm/boot/dts/exynos4212-tab3-3g8.dts   |   30 +
->  arch/arm/boot/dts/exynos4212-tab3-lte8.dts  |   43 +
->  arch/arm/boot/dts/exynos4212-tab3-wifi8.dts |   25 +
->  arch/arm/boot/dts/exynos4212-tab3.dtsi      | 1175 +++++++++++++++++++
+Hi Daniel,
 
-Your patches do not apply, so I cannot test them. Be sure you do not
-bring any new dtbs_check warnings. Currently on my pending branch we are
-down to four - few missing schemas.
+2023=EB=85=84 3=EC=9B=94 29=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 2:39, =
+=EB=8C=80=EC=9D=B8=EA=B8=B0 <inki.dae@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=
+=91=EC=84=B1:
+>
+>
+>
+> > -----Original Message-----
+> > From: Daniel Vetter <daniel@ffwll.ch>
+> > Sent: Wednesday, March 29, 2023 2:31 AM
+> > To: Inki Dae <inki.dae@samsung.com>
+> > Cc: airlied@linux.ie; daniel@ffwll.ch; dri-devel@lists.freedesktop.org;
+> > linux-samsung-soc@vger.kernel.org
+> > Subject: Re: [GIT PULL] exynos-drm-next
+> >
+> > On Tue, Mar 28, 2023 at 01:05:24PM +0900, Inki Dae wrote:
+> > > Hi Dave and Daniel,
+> > >
+> > >    Just one patch series that moves the existing Exynos DSI driver
+> > >    to drm/bridge directory to support both SoCs family - Exynos
+> > >    and I.MX - because same Exynos MIPI DSI ip can be used by the two
+> > >    different SoC family.
+> > >
+> > >    Of course, there are some concerns about this patch series because
+> > Exynos
+> > >    and I.MX SoCs have different HW characteristic but use the same HW
+> > driver.
+> > >    However, I believe that there should be no problem as Exynos and I=
+.MX
+> > >    developers have conducted tests and reviews enough for about a yea=
+r
+> > >    since last April.
+> > >
+> > >    This would be the first case that we allow different vendor SoCs t=
+o use
+> > >    same device driver at least in DRM world so we anticipate experien=
+cing
+> > >    and resolving new issues through ongoing maintenance, and ultimate=
+ly,
+> > >    the experiences gained here will undoubtedly be able to contribute
+> > >    the development of the community as well.
+> > >
+> > >    Please kindly let me know if there is any problem.
+> > >
+> > > Thanks,
+> > > Inki Dae
 
+Could you kindly help me understand if there are any missed steps on
+my part? I applied for commit access to the drm and drm-misc
+repositories through the link provided below two weeks ago, but
+haven't received any updates on my request.
+https://gitlab.freedesktop.org/freedesktop/freedesktop/-/issues/569
 
->  5 files changed, 1276 insertions(+)
->  create mode 100644 arch/arm/boot/dts/exynos4212-tab3-3g8.dts
->  create mode 100644 arch/arm/boot/dts/exynos4212-tab3-lte8.dts
->  create mode 100644 arch/arm/boot/dts/exynos4212-tab3-wifi8.dts
->  create mode 100644 arch/arm/boot/dts/exynos4212-tab3.dtsi
-> 
+Thanks,
+Inki Dae
 
-(...)
-
-> +++ b/arch/arm/boot/dts/exynos4212-tab3-wifi8.dts
-> @@ -0,0 +1,25 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung's Exynos4212 based Galaxy Tab 3 8.0 WiFi board device tree
-> + * source
-> + *
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynos4212-tab3.dtsi"
-> +
-> +/ {
-> +	model = "Samsung Galaxy Tab 3 8.0 WiFi (SM-T310) based on Exynos4212";
-> +	compatible = "samsung,t310", "samsung,tab3", "samsung,exynos4212", "samsung,exynos4";
-> +	chassis-type = "tablet";
-> +};
-> +
-> +&i2c_lightsensor {
-> +	/* Capella Micro CM3323 color light sensor */
-> +	colorsensor@10 {
-
-light-sensor
-
-> +		compatible = "capella,cm3323";
-> +		reg = <0x10>;
-> +	};
-> +};
-> diff --git a/arch/arm/boot/dts/exynos4212-tab3.dtsi b/arch/arm/boot/dts/exynos4212-tab3.dtsi
-> new file mode 100644
-> index 000000000000..b8ad5497506c
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos4212-tab3.dtsi
-> @@ -0,0 +1,1175 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung's Exynos4212 based Galaxy Tab 3 board common source
-> + *
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynos4212.dtsi"
-> +#include "exynos4412-ppmu-common.dtsi"
-> +#include "exynos-mfc-reserved-memory.dtsi"
-> +#include <dt-bindings/clock/samsung,s2mps11.h>
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/gpio-keys.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include "exynos-pinctrl.h"
-> +
-> +/ {
-> +	compatible = "samsung,tab3", "samsung,exynos4212", "samsung,exynos4";
-> +
-> +	memory@40000000 {
-> +		device_type = "memory";
-> +
-> +		/* Technically 2GB, but last 1GB is flaky, so we ignore it for now */
-> +		reg = <0x40000000 0x3FC00000>;
-
-lowercase hex, everywhere.
-
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = &serial_2;
-> +
-> +		/* Default S-BOOT bootloader loads initramfs here */
-> +		linux,initrd-start = <0x42000000>;
-> +		linux,initrd-end = <0x42800000>;
-> +	};
-> +
-> +	firmware@204f000 {
-> +		compatible = "samsung,secure-firmware";
-> +		reg = <0x0204F000 0x1000>;
-> +	};
-> +
-> +	fixed-rate-clocks {
-> +		xxti {
-> +			compatible = "samsung,clock-xxti";
-> +			clock-frequency = <0>;
-> +		};
-> +
-> +		xusbxti {
-> +			compatible = "samsung,clock-xusbxti";
-> +			clock-frequency = <24000000>;
-> +		};
-> +	};
-> +
-> +	gpio-keys {
-> +		compatible = "gpio-keys";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&gpio_keys>;
-> +
-> +		key-power {
-> +			gpios = <&gpx2 7 GPIO_ACTIVE_LOW>;
-> +			linux,code = <KEY_POWER>;
-> +			label = "power";
-> +			debounce-interval = <10>;
-> +			wakeup-source;
-> +		};
-> +
-> +		key-up {
-> +			gpios = <&gpx2 2 GPIO_ACTIVE_LOW>;
-> +			linux,code = <KEY_VOLUMEUP>;
-> +			label = "volume down";
-> +			debounce-interval = <10>;
-> +		};
-> +
-> +		key-down {
-> +			gpios = <&gpx3 3 GPIO_ACTIVE_LOW>;
-> +			linux,code = <KEY_VOLUMEDOWN>;
-> +			label = "volume up";
-> +			debounce-interval = <10>;
-> +		};
-> +
-> +		key-home {
-> +			gpios = <&gpx1 2 GPIO_ACTIVE_LOW>;
-> +			linux,code = <KEY_HOME>;
-> +			label = "home";
-> +			debounce-interval = <10>;
-> +		};
-> +
-> +		switch-hall-sensor {
-> +			gpios = <&gpx2 4 GPIO_ACTIVE_LOW>;
-> +			linux,input-type = <EV_SW>;
-> +			linux,code = <SW_LID>;
-> +			linux,can-disable;
-> +			label = "hall effect sensor";
-> +			debounce-interval = <10>;
-> +			wakeup-source;
-> +		};
-> +	};
-> +
-> +	vbatt_reg: voltage-regulator-1 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "VBATT";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		regulator-always-on;
-> +	};
-> +
-> +	backlight_reset_supply: voltage-regulator-2 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "BACKLIGHT_ENVDDIO";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&backlight_reset>;
-> +		gpio = <&gpm0 1 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +	};
-> +
-> +	lcd_enable_supply: voltage-regulator-3 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "LCD_VDD_2.2V";
-> +		regulator-min-microvolt = <2200000>;
-> +		regulator-max-microvolt = <2200000>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&lcd_en>;
-> +		gpio = <&gpc0 1 GPIO_ACTIVE_HIGH>; /* LCD_EN */
-> +		enable-active-high;
-> +	};
-> +
-> +	i2c_max77693: i2c-gpio-1 {
-> +		compatible = "i2c-gpio";
-> +		sda-gpios = <&gpm2 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		scl-gpios = <&gpm2 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		i2c-gpio,delay-us = <2>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		status = "okay";
-
-No need for status.
-
-> +
-> +		pmic@66 {
-> +			compatible = "maxim,max77693";
-> +			interrupt-parent = <&gpx1>;
-> +			interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&max77693_irq>;
-> +			reg = <0x66>;
-
-Put reg as after compatible.
-
-> +
-> +			regulators {
-> +				esafeout1_reg: ESAFEOUT1 {
-> +					regulator-name = "ESAFEOUT1";
-> +					regulator-boot-on;
-> +				};
-> +
-> +				esafeout2_reg: ESAFEOUT2 {
-> +					regulator-name = "ESAFEOUT2";
-> +				};
-> +
-> +				charger_reg: CHARGER {
-> +					regulator-name = "CHARGER";
-> +					regulator-min-microamp = <60000>;
-> +					regulator-max-microamp = <2580000>;
-> +					regulator-boot-on;
-> +				};
-> +			};
-> +
-> +			charger {
-> +				compatible = "maxim,max77693-charger";
-> +
-> +				maxim,constant-microvolt = <4350000>;
-> +				maxim,min-system-microvolt = <3600000>;
-> +				maxim,thermal-regulation-celsius = <100>;
-> +				maxim,battery-overcurrent-microamp = <3500000>;
-> +				maxim,charge-input-threshold-microvolt = <4300000>;
-> +			};
-> +		};
-> +	};
-> +
-> +	i2c_max77693_fuel: i2c-gpio-2 {
-> +		compatible = "i2c-gpio";
-> +		sda-gpios = <&gpy0 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		scl-gpios = <&gpy0 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		i2c-gpio,delay-us = <2>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		status = "okay";
-
-Drop
-
-> +
-> +		fuel-gauge@36 {
-> +			compatible = "maxim,max17050";
-> +			interrupt-parent = <&gpx2>;
-> +			interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&max77693_fuel_irq>;
-> +			reg = <0x36>;
-
-Put reg as after compatible.
-
-> +
-> +			maxim,over-heat-temp = <500>;
-> +			maxim,over-volt = <4500>;
-> +		};
-> +	};
-> +
-> +	i2c_yas532_magnetometer: i2c-gpio-3 {
-
-Shorter labels.
-
-> +		compatible = "i2c-gpio";
-> +		sda-gpios = <&gpy2 4 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		scl-gpios = <&gpy2 5 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		i2c-gpio,delay-us = <2>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		status = "okay";
-> +
-> +		/* Magnetometer: Yamaha YAS532 */
-> +		magnetometer@2e {
-> +			compatible = "yamaha,yas532";
-> +			reg = <0x2e>;
-> +			iovdd-supply = <&ldo3_reg>; /* VCC_1.8V_AP */
-> +			mount-matrix = "-1", "0", "0",
-> +					  "0", "1", "0",
-> +					  "0", "0", "-1";
-> +		};
-> +	};
-> +
-> +	i2c_lightsensor: i2c-gpio-4 {
-> +		compatible = "i2c-gpio";
-> +		sda-gpios = <&gpl0 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		scl-gpios = <&gpl0 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		i2c-gpio,delay-us = <2>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		status = "okay";
-
-Should be disabled and enabled on when users are given.
-
-> +
-> +		/* WiFi model uses CM3323, 3G/LTE use CM36653 */
-> +	};
-> +
-> +	i2c_bl: i2c-gpio-24 {
-
-Why 24?
-
-> +		compatible = "i2c-gpio";
-> +		sda-gpios = <&gpm4 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		scl-gpios = <&gpm4 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		status = "okay";
-
-Come on...
-
-> +
-> +		backlight: backlight@2c {
-> +			compatible = "ti,lp8556";
-
-You need to convert bindings to DT schema first. I don't accept any new
-usages of TXT bindings anymore, sorry.
-
-> +			reg = <0x2c>;
-> +			status = "okay";
-> +
-> +			bl-name = "lcd-bl";
-> +			dev-ctrl = /bits/ 8 <0x80>;
-> +			init-brt = /bits/ 8 <0x78>; /* 120 */
-> +
-> +			power-supply = <&vbatt_reg>;
-> +			enable-supply = <&backlight_reset_supply>;
-> +
-> +			pwms = <&pwm 1 78770 0>;
-> +			pwm-names = "lp8556";
-> +			pwm-period = <78770>;
-> +
-> +			rom_a3h {
-
-No underscores in node names.
-> +				rom-addr = /bits/ 8 <0xa3>;
-> +				rom-val = /bits/ 8 <0x5e>;
-> +			};
-> +
-> +			rom_a5h {
-> +				rom-addr = /bits/ 8 <0xa5>;
-> +				rom-val = /bits/ 8 <0x34>;
-> +			};
-> +
-> +			rom_a7h {
-> +				rom-addr = /bits/ 8 <0xa7>;
-> +				rom-val = /bits/ 8 <0xfa>;
-> +			};
-> +		};
-> +	};
-> +
-> +	wlan_pwrseq: sdhci3-pwrseq {
-> +		compatible = "mmc-pwrseq-simple";
-> +		reset-gpios = <&gpm3 5 GPIO_ACTIVE_LOW>;
-> +	};
-> +};
-> +
-> +&bus_dmc {
-> +	devfreq-events = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
-> +	vdd-supply = <&buck1_reg>;
-> +	status = "okay";
-> +};
-> +
-> +&bus_acp {
-
-Order label/phandle overrides by name, so acp before dmc.
-
-> +	devfreq = <&bus_dmc>;
-> +	status = "okay";
-> +};
-> +
-> +&bus_c2c {
-> +	devfreq = <&bus_dmc>;
-> +	status = "okay";
-> +};
-> +
-> +&bus_leftbus {
-> +	devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
-> +	vdd-supply = <&buck3_reg>;
-> +	status = "okay";
-> +};
-> +
-> +&bus_rightbus {
-> +	devfreq = <&bus_leftbus>;
-> +	status = "okay";
-> +};
-> +
-> +&bus_display {
-> +	devfreq = <&bus_leftbus>;
-> +	status = "okay";
-> +};
-> +
-> +&bus_fsys {
-> +	devfreq = <&bus_leftbus>;
-> +	status = "okay";
-> +};
-> +
-> +&bus_peri {
-> +	devfreq = <&bus_leftbus>;
-> +	status = "okay";
-> +};
-> +
-> +&bus_mfc {
-> +	devfreq = <&bus_leftbus>;
-> +	status = "okay";
-> +};
-> +
-> +&cpu0 {
-> +	cpu0-supply = <&buck2_reg>;
-> +};
-> +
-> +&dsi_0 {
-> +	vddcore-supply = <&ldo8_reg>;
-> +	vddio-supply = <&ldo10_reg>;
-> +	samsung,burst-clock-frequency = <500000000>;
-> +	samsung,esc-clock-frequency = <20000000>;
-> +	samsung,pll-clock-frequency = <24000000>;
-> +	status = "okay";
-> +
-> +	panel@0 {
-> +		compatible = "samsung,s6d7aa0-lsl080al02";
-> +		reg = <0>;
-> +		enable-supply = <&lcd_enable_supply>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&lcd_nrst>;
-> +		reset-gpios = <&gpf0 4 GPIO_ACTIVE_LOW>;
-> +		backlight = <&backlight>;
-> +	};
-> +};
-> +
-> +&exynos_usbphy {
-> +	vbus-supply = <&esafeout1_reg>;
-> +	status = "okay";
-> +};
-> +
-> +&fimd {
-> +	status = "okay";
-> +};
-> +
-> +&gpu {
-> +	mali-supply = <&buck4_reg>;
-> +	status = "okay";
-> +};
-> +
-> +&hsotg {
-> +	vusb_d-supply = <&ldo15_reg>;
-> +	vusb_a-supply = <&ldo12_reg>;
-> +	dr_mode = "peripheral";
-> +	status = "okay";
-> +};
-> +
-> +/* Accelerometer: K2DH/K3DH */
-> +&i2c_1 {
-> +	pinctrl-0 = <&i2c1_bus>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	lis3dh: accelerometer@19 {
-> +		/* K2DH seems to be the same as lis2dh12 in terms of registers */
-> +		compatible = "st,lis2dh12-accel";
-> +		reg = <0x19>;
-> +
-> +		interrupt-parent = <&gpx0>;
-> +		interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
-> +
-> +		vdd-supply = <&ldo17_reg>; /* VCC_2.8V_AP */
-> +		vddio-supply = <&ldo3_reg>; /* VCC_1.8V_AP */
-> +
-> +		mount-matrix = "-1", "0", "0",
-> +				  "0", "1", "0",
-> +				  "0", "0", "-1";
-> +	};
-> +};
-> +
-> +/* Touchscreen: MMS252 */
-> +&i2c_3 {
-> +	samsung,i2c-sda-delay = <100>;
-> +	samsung,i2c-slave-addr = <0x10>;
-> +	samsung,i2c-max-bus-freq = <400000>;
-> +	pinctrl-0 = <&i2c3_bus>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	touchscreen@48 {
-> +		/* Using mms114 compatible for now */
-> +		compatible = "melfas,mms114";
-> +		reg = <0x48>;
-> +		interrupt-parent = <&gpb>;
-> +		interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
-> +		touchscreen-size-x = <800>;
-> +		touchscreen-size-y = <1280>;
-> +		avdd-supply = <&ldo21_reg>;
-> +		vdd-supply = <&ldo25_reg>;
-> +	};
-> +};
-> +
-> +/* PMIC: s5m8767 */
-
-Drop comment, it's obvious from the child.
-
-> +&i2c_7 {
-> +	samsung,i2c-sda-delay = <100>;
-> +	samsung,i2c-slave-addr = <0x10>;
-> +	samsung,i2c-max-bus-freq = <100000>;
-> +	pinctrl-0 = <&i2c7_bus>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	s5m8767: pmic@66 {
-> +		compatible = "samsung,s5m8767-pmic";
-> +		reg = <0x66>;
-> +		interrupt-parent = <&gpx0>;
-> +		interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&s5m8767_irq &s5m8767_dvs &s5m8767_ds>;
-> +		wakeup-source;
-> +
-> +		s5m8767,pmic-buck2-ramp-enable;
-> +		s5m8767,pmic-buck3-ramp-enable;
-> +		s5m8767,pmic-buck4-ramp-enable;
-> +
-> +		s5m8767,pmic-buck-ramp-delay = <25>;
-> +		s5m8767,pmic-buck-default-dvs-idx = <1>;
-> +
-> +		s5m8767,pmic-buck-dvs-gpios = <&gpm3 0 GPIO_ACTIVE_HIGH>,
-> +						 <&gpm3 1 GPIO_ACTIVE_HIGH>,
-> +						 <&gpm3 2 GPIO_ACTIVE_HIGH>;
-> +
-> +		s5m8767,pmic-buck-ds-gpios = <&gpf3 1 GPIO_ACTIVE_HIGH>,
-> +						 <&gpf3 2 GPIO_ACTIVE_HIGH>,
-> +						 <&gpf3 3 GPIO_ACTIVE_HIGH>;
-> +
-> +		s5m8767,pmic-buck2-dvs-voltage = <1100000>, <1100000>,
-> +						<1100000>, <1100000>,
-> +						<1100000>, <1100000>,
-> +						<1100000>, <1100000>;
-> +
-> +		s5m8767,pmic-buck3-dvs-voltage = <1100000>, <1100000>,
-> +						<1100000>, <1100000>,
-> +						<1100000>, <1100000>,
-> +						<1100000>, <1100000>;
-> +
-> +		s5m8767,pmic-buck4-dvs-voltage = <1100000>, <1100000>,
-> +						<1100000>, <1100000>,
-> +						<1100000>, <1100000>,
-> +						<1100000>, <1100000>;
-> +
-> +		regulators {
-> +			ldo1_reg: LDO1 {
-> +				regulator-name = "VALIVE_1.0V_AP";
-> +				regulator-min-microvolt = <1000000>;
-> +				regulator-max-microvolt = <1000000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo2_reg: LDO2 {
-> +				regulator-name = "VM1M2_1.2V_AP";
-> +				regulator-min-microvolt = <1200000>;
-> +				regulator-max-microvolt = <1200000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo3_reg: LDO3 {
-> +				regulator-name = "VCC_1.8V_AP";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				regulator-always-on;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo5_reg: LDO5 {
-> +				regulator-name = "VCC_3.3V_MHL";
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo8_reg: LDO8 {
-> +				regulator-name = "VMIPI_1.0V";
-> +				regulator-min-microvolt = <1000000>;
-> +				regulator-max-microvolt = <1000000>;
-> +				op_mode = <3>;
-> +			};
-> +
-> +			ldo9_reg: LDO9 {
-> +				regulator-name = "VSIL_1.2V";
-> +				regulator-min-microvolt = <1200000>;
-> +				regulator-max-microvolt = <1200000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo10_reg: LDO10 {
-> +				regulator-name = "VMIPI_1.8V";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				op_mode = <3>;
-> +			};
-> +
-> +			ldo12_reg: LDO12 {
-> +				regulator-name = "VUOTG_3.0V";
-> +				regulator-min-microvolt = <3000000>;
-> +				regulator-max-microvolt = <3000000>;
-> +				op_mode = <1>;
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			ldo13_reg: LDO13 {
-> +				regulator-name = "VCC_1.8V_MHL";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo15_reg: LDO15 {
-> +				regulator-name = "VHSIC_1.0V";
-> +				regulator-min-microvolt = <1000000>;
-> +				regulator-max-microvolt = <1000000>;
-> +				op_mode = <1>;
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +				};
-> +			};
-> +
-> +			ldo17_reg: LDO17 {
-> +				regulator-name = "VCC_2.8V_AP";
-> +				regulator-min-microvolt = <2800000>;
-> +				regulator-max-microvolt = <2800000>;
-> +				op_mode = <1>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			ldo19_reg: LDO19 {
-> +				regulator-name = "VLED_IC_1.9V";
-> +				regulator-min-microvolt = <1900000>;
-> +				regulator-max-microvolt = <1900000>;
-> +				op_mode = <1>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			ldo20_reg: LDO20 {
-> +				regulator-name = "VTOUCH_3.3V";
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo21_reg: LDO21 {
-> +				regulator-name = "TSP_VDD_3.3V";
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo22_reg: LDO22 {
-> +				regulator-name = "5M_AF_2.8V";
-> +				regulator-min-microvolt = <2800000>;
-> +				regulator-max-microvolt = <2800000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo23_reg: LDO23 {
-> +				regulator-name = "VTF_2.8V";
-> +				regulator-min-microvolt = <2800000>;
-> +				regulator-max-microvolt = <2800000>;
-> +				op_mode = <3>;
-> +			};
-> +
-> +			ldo24_reg: LDO24 {
-> +				regulator-name = "LEDA_2.8V";
-> +				regulator-min-microvolt = <2800000>;
-> +				regulator-max-microvolt = <2800000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo25_reg: LDO25 {
-> +				regulator-name = "TSP_VDD_1.8V";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo26_reg: LDO26 {
-> +				regulator-name = "CAM_IO_1.8V";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo27_reg: LDO27 {
-> +				regulator-name = "VTCAM_1.8V";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			buck1_reg: BUCK1 {
-> +				regulator-name = "VDD_MIF";
-> +				regulator-min-microvolt = <850000>;
-> +				regulator-max-microvolt = <1100000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				op_mode = <3>;
-> +			};
-> +
-> +			buck2_reg: BUCK2 {
-> +				regulator-name = "VDD_ARM";
-> +				regulator-min-microvolt = <850000>;
-> +				regulator-max-microvolt = <1500000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				op_mode = <3>;
-> +			};
-> +
-> +			buck3_reg: BUCK3 {
-> +				regulator-name = "VDD_INT";
-> +				regulator-min-microvolt = <850000>;
-> +				regulator-max-microvolt = <1300000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				op_mode = <3>;
-> +			};
-> +
-> +			buck4_reg: BUCK4 {
-> +				regulator-name = "VDD_G3D";
-> +				regulator-min-microvolt = <850000>;
-> +				regulator-max-microvolt = <1150000>;
-> +				regulator-boot-on;
-> +				op_mode = <3>;
-> +			};
-> +
-> +			buck5_reg: BUCK5 {
-> +				regulator-name = "VMEM_1.2V_AP";
-> +				regulator-min-microvolt = <1200000>;
-> +				regulator-max-microvolt	= <1200000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			buck6_reg: BUCK6 {
-> +				regulator-name = "CAM_ISP_CORE_1.2V";
-> +				regulator-min-microvolt = <1200000>;
-> +				regulator-max-microvolt = <1200000>;
-> +				op_mode = <1>;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +		};
-> +
-> +		s5m8767_osc: clocks {
-> +			compatible = "samsung,s5m8767-clk";
-> +			#clock-cells = <1>;
-> +			clock-output-names = "en32khz_ap",
-> +						 "en32khz_cp",
-> +						 "en32khz_bt";
-> +		};
-> +	};
-> +};
-> +
-> +&mshc_0 {
-> +	broken-cd;
-> +	non-removable;
-> +	card-detect-delay = <200>;
-> +	vmmc-supply = <&ldo22_reg>;
-> +	clock-frequency = <400000000>;
-> +	samsung,dw-mshc-ciu-div = <0>;
-> +	samsung,dw-mshc-sdr-timing = <2 3>;
-> +	samsung,dw-mshc-ddr-timing = <1 2>;
-> +	pinctrl-0 = <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-
-Put the status last.
-
-> +	bus-width = <8>;
-> +	cap-mmc-highspeed;
-> +};
-> +
-> +&pinctrl_0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sleep0>;
-> +
-> +	s5m8767_ds: s5m8767-ds {
-
-Does not look like you tested the DTS against bindings. Please run `make
-dtbs_check` (see Documentation/devicetree/bindings/writing-schema.rst
-for instructions).
-
-I stop review as for sure this was not tested against bindings.
-
-Best regards,
-Krzysztof
-
+> > >
+> > > The following changes since commit
+> > 46f28427f6f824b6cff06fa025a55350b7de454a:
+> > >
+> > >   Merge tag 'drm-rcar-next-20230325' of
+> > git://git.kernel.org/pub/scm/linux/kernel/git/pinchartl/linux into drm-=
+next
+> > (2023-03-27 18:20:20 +0200)
+> > >
+> > > are available in the Git repository at:
+> > >
+> > >   git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos
+> > tags/exynos-drm-next-for-v6.4
+> >
+> > Merged, but usually all drm bridge stuff goes through drm-misc, least s=
+o
+> > that there's some amount of collaboration and not so much inter-tree
+> > syncing.
+> >
+> > Please apply for drm-misc commit rights (at least a quick check shows n=
+o
+> > one from samsung) and land future bridge patches through that tree.
+> >
+> > Cheers, Daniel
+>
+> I will apply for drm-misc commit rights. :)
+>
+> Thanks,
+> Inki Dae
+>
+> >
+> > >
+> > > for you to fetch changes up to b2cfec52feb3bb737c4b65018ef4bfe9789e4b=
+e8:
+> > >
+> > >   drm: bridge: samsung-dsim: Add i.MX8M Plus support (2023-03-28 09:0=
+5:41
+> > +0900)
+> > >
+> > > ----------------------------------------------------------------
+> > > A patch series for moving MIPI-DSI driver for Exynos DRM to drm/bridg=
+e
+> > > directory so that I.MX SoC family can also share the same device driv=
+er.
+> > > Samsung MIPI DSIM device is a common IP that can be used by Exynos an=
+d
+> > I.MX8M
+> > > Mini/Nano/Plus SoC. Regarding this, this patch series has added sever=
+al
+> > > things below to existing MIPI DSI driver,
+> > >     - Add exynos_dsi_type enum type to provide controller data from
+> > different
+> > >       platforms.
+> > >     - Add two pipeline detection ways support - existing Exynos DSI c=
+hild
+> > node
+> > >       and I.MX family of-graph port or ports.
+> > >     - Consider component and bridged based DRM drivers.
+> > >     - Add device tree binding support of I.MX family.
+> > >
+> > > ----------------------------------------------------------------
+> > > Jagan Teki (14):
+> > >       drm: exynos: dsi: Drop explicit call to bridge detach
+> > >       drm: exynos: dsi: Lookup OF-graph or Child node devices
+> > >       drm: exynos: dsi: Mark PHY as optional
+> > >       drm: exynos: dsi: Add platform PLL_P (PMS_P) offset
+> > >       drm: exynos: dsi: Introduce hw_type platform data
+> > >       drm: exynos: dsi: Add atomic check
+> > >       drm: exynos: dsi: Add input_bus_flags
+> > >       drm: exynos: dsi: Add atomic_get_input_bus_fmts
+> > >       drm: exynos: dsi: Consolidate component and bridge
+> > >       drm: exynos: dsi: Add host helper for te_irq_handler
+> > >       drm: bridge: Generalize Exynos-DSI driver into a Samsung DSIM b=
+ridge
+> > >       dt-bindings: display: exynos: dsim: Add NXP i.MX8M Mini/Nano su=
+pport
+> > >       drm: bridge: samsung-dsim: Add i.MX8M Mini/Nano support
+> > >       dt-bindings: display: exynos: dsim: Add NXP i.MX8M Plus support
+> > >
+> > > Marek Szyprowski (1):
+> > >       drm: exynos: dsi: Handle proper host initialization
+> > >
+> > > Marek Vasut (1):
+> > >       drm: bridge: samsung-dsim: Add i.MX8M Plus support
+> > >
+> > >  .../bindings/display/exynos/exynos_dsim.txt        |    2 +
+> > >  MAINTAINERS                                        |    9 +
+> > >  drivers/gpu/drm/bridge/Kconfig                     |   12 +
+> > >  drivers/gpu/drm/bridge/Makefile                    |    1 +
+> > >  drivers/gpu/drm/bridge/samsung-dsim.c              | 1967
+> > ++++++++++++++++++++
+> > >  drivers/gpu/drm/exynos/Kconfig                     |    1 +
+> > >  drivers/gpu/drm/exynos/exynos_drm_dsi.c            | 1813 +---------=
+-------
+> -
+> > >  include/drm/bridge/samsung-dsim.h                  |  115 ++
+> > >  8 files changed, 2191 insertions(+), 1729 deletions(-)
+> > >  create mode 100644 drivers/gpu/drm/bridge/samsung-dsim.c
+> > >  create mode 100644 include/drm/bridge/samsung-dsim.h
+> >
+> > --
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > https://protect2.fireeye.com/v1/url?k=3D7fdd2b55-1e563e63-7fdca01a-
+> > 74fe485cbff1-6c2178cc05019313&q=3D1&e=3De4f34328-cc9e-48f9-80e0-
+> > ec8c0c4246f2&u=3Dhttp%3A%2F%2Fblog.ffwll.ch%2F
+>
