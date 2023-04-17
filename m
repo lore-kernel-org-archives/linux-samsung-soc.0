@@ -2,235 +2,150 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 851BFC77B77
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Apr 2023 09:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F8BC77B72
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Apr 2023 11:28:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229883AbjDQJCH (ORCPT
+        id S229682AbjDQL2Q (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Apr 2023 05:02:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33864 "EHLO
+        Mon, 17 Apr 2023 07:28:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbjDQJCG (ORCPT
+        with ESMTP id S229980AbjDQL2P (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Apr 2023 05:02:06 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E33B1FC3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Apr 2023 02:02:05 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1poKd9-0004W9-9f; Mon, 17 Apr 2023 10:54:35 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1poKce-00Bpk9-B4; Mon, 17 Apr 2023 10:54:04 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1poKcd-00DrOr-K2; Mon, 17 Apr 2023 10:54:03 +0200
-Date:   Mon, 17 Apr 2023 10:54:03 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Eddie James <eajames@linux.ibm.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Robert Foss <rfoss@kernel.org>, Sean Young <sean@mess.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Antti Palosaari <crope@iki.fi>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-sunxi@lists.linux.dev" <linux-sunxi@lists.linux.dev>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
-        Eugen Hristev <eugen.hristev@collabora.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Michael Tretter <m.tretter@pengutronix.de>,
-        Benoit Parrot <bparrot@ti.com>,
-        Moudy Ho <moudy.ho@mediatek.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Ming Qian <ming.qian@nxp.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        Yunfei Dong <yunfei.dong@mediatek.com>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        "chrome-platform@lists.linux.dev" <chrome-platform@lists.linux.dev>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Rory Liu <hellojacky0226@hotmail.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        "linux-amlogic@lists.infradead.org" 
-        <linux-amlogic@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Zhou Peng <eagle.zhou@nxp.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Carpenter <error27@gmail.com>,
-        Dafna Hirschfeld <dafna@fastmail.com>,
-        Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
-        Ettore Chimenti <ek5.chimenti@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Bin Liu <bin.liu@mediatek.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        Qiheng Lin <linqiheng@huawei.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Ricardo Ribalda <ribalda@chromium.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Daniel Almeida <daniel.almeida@collabora.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Todor Tomov <todor.too@gmail.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Ajye Huang <ajye_huang@compal.corp-partner.google.com>,
-        Scott Chao <scott_chao@wistron.corp-partner.google.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Hugues Fruchet <hugues.fruchet@foss.st.com>,
-        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
-        Andy Gross <agross@kernel.org>,
-        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Yong Deng <yong.deng@magewell.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Subject: Re: [PATCH 000/117] media: Convert to platform remove callback
- returning void
-Message-ID: <20230417085403.sbk3k4qlpljbfqld@pengutronix.de>
-References: <20230326143224.572654-1-u.kleine-koenig@pengutronix.de>
- <20230417060203.le3izz56wt73si6k@pengutronix.de>
- <20230417061928.GD28551@pendragon.ideasonboard.com>
- <20230417073049.2b5b35hpjrjcrlge@pengutronix.de>
- <OS0PR01MB59221153A63F64BBAD3ED20D869C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+        Mon, 17 Apr 2023 07:28:15 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B93712F
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Apr 2023 04:27:29 -0700 (PDT)
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230417100626epoutp0314fafdde8dafefba93e66b645223517d~WsOAAfpa72992929929epoutp03I
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Apr 2023 10:06:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230417100626epoutp0314fafdde8dafefba93e66b645223517d~WsOAAfpa72992929929epoutp03I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1681725987;
+        bh=N4bRYS978WWbvi4Td8kqC5I4IZs8S6hpZPe0OT27u+0=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=oJMJOplxahL1cnTGyUk4qLrhfktE9TotMNB+v+rhDkva6SXQuYhYy3DcMVLtJ1b+b
+         VwNIIUc7kDC34DPOwY+w2MSw9zBvXpSSX2D4U2vBcNHq7mvTNCn+YYwjAyli8/ldF2
+         0rn7DxIOxiUE2Hu66SAelMGCccpkN6ZyCb/3ElOc=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20230417100626epcas1p4e1da91fdfdff6990b7c7b43717765a1c~WsN-lGpk80682806828epcas1p4W;
+        Mon, 17 Apr 2023 10:06:26 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.36.132]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4Q0N4K1N7mz4x9Py; Mon, 17 Apr
+        2023 10:06:25 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F8.95.09668.12A1D346; Mon, 17 Apr 2023 19:06:25 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20230417100624epcas1p3d39ab3b88da18da0b365d67ad1062086~WsN_EEzZ31051010510epcas1p3b;
+        Mon, 17 Apr 2023 10:06:24 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230417100624epsmtrp28ad4a60101cc3657a563b183df403a94~WsN_DVVjo1396513965epsmtrp2d;
+        Mon, 17 Apr 2023 10:06:24 +0000 (GMT)
+X-AuditID: b6c32a36-8cbff700000025c4-6a-643d1a21c493
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A8.E5.08279.02A1D346; Mon, 17 Apr 2023 19:06:24 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.211]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230417100624epsmtip204cb14f9eac1089e33da00535a2e9041~WsN96j7Ep1489214892epsmtip2e;
+        Mon, 17 Apr 2023 10:06:24 +0000 (GMT)
+From:   Inki Dae <inki.dae@samsung.com>
+To:     airlied@linux.ie, daniel@ffwll.ch
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL v2] exynos-drm-next
+Date:   Mon, 17 Apr 2023 19:06:24 +0900
+Message-Id: <20230417100624.35229-1-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fbine4cndaaohubi"
-Content-Disposition: inline
-In-Reply-To: <OS0PR01MB59221153A63F64BBAD3ED20D869C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHKsWRmVeSWpSXmKPExsWy7bCmnq6ilG2KwelzHBa9504yWfzfNpHZ
+        4srX92wWM87vY3Jg8dj7bQGLx/ZvD1g97ncfZ/L4vEkugCUq2yYjNTEltUghNS85PyUzL91W
+        yTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMHaKWSQlliTilQKCCxuFhJ386mKL+0JFUh
+        I7+4xFYptSAlp8C0QK84Mbe4NC9dLy+1xMrQwMDIFKgwITvjwMIG9oIZfBWn3naxNzB+4O5i
+        5OSQEDCR+Lh6H3sXIxeHkMAORokVTT+hnE+MEj3bW5ggnG+MEpt23GKEaTm7+gNU1V5GiT2n
+        70M5Xxgl+mZNZgapYhNQlZi44j4biC0CZL+d9BgszizgJvFn6VkWEFtYQE1i06X7TCA2C1DN
+        33ONYHFeAUuJyfveM0Fsk5eYeek7O0RcUOLkzCcsEHPkJZq3zmYGWSwhsIldorvlF9R5LhIL
+        z+yDsoUlXh3fwg5hS0l8freXDaJhMqPEnesrWCCcGYwSh39eh+owlti/dDLQag6gFZoS63fp
+        Q4QVJXb+nssIsZlP4t3XHlaQEgkBXomONiGIEiWJYxdvQE2RkLiwZCIbhO0hseNVK9gzQgKx
+        EsvWfWGfwCg/C8k/s5D8Mwth8QJG5lWMYqkFxbnpqcWGBUbweE3Oz93ECE54WmY7GCe9/aB3
+        iJGJg/EQowQHs5II7xlXqxQh3pTEyqrUovz4otKc1OJDjKbAEJ7ILCWanA9MuXkl8YYmlgYm
+        ZkbGJhaGZoZK4rxfnmqnCAmkJ5akZqemFqQWwfQxcXBKNTC1/zH/JjInuLh3Rpru6ja2HXM+
+        mMboN4QWnj2zssrU3eDwHYnS3ey7ol5dKvEQ3/dnMu+vCSKPd/gs9issMV5zMXvFyUlCizY+
+        m56yZ9fxoKbHywqvrrZyKl1x4q1BVcUx4ytNfus937Z8uJ+hcGOZ6kp3+Vy/rZ93CnffZN9i
+        cMYpcMW/V18uX1keML2iy3fhPE1dGelbh/iu2N7L141M+OLq59tb8OLBb43E+6bW/hxcN8y9
+        M2XNDyqeYHio/f2HzoGMmsM9N+8mWcj/jUyKmzNX+Z9jd9yx61kflwc5H5l+VvWk4eKnIke0
+        wsz431WLsplGHvvzv53FoW0FB3v9KdXvi5XzWg57dU2dv0JEiaU4I9FQi7moOBEAyy+8rgEE
+        AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJLMWRmVeSWpSXmKPExsWy7bCSvK6ClG2Kwf1dJha9504yWfzfNpHZ
+        4srX92wWM87vY3Jg8dj7bQGLx/ZvD1g97ncfZ/L4vEkugCWKyyYlNSezLLVI3y6BK+PAwgb2
+        ghl8FafedrE3MH7g7mLk5JAQMJE4u/oDexcjF4eQwG5GiQV9/YxdjBxACQmJLVs5IExhicOH
+        iyFKPjFK/Pm8ngWkl01AVWLiivtsILaIgLrEg8sLGUFsZgEPifd7VrOD2MICahKbLt1nArFZ
+        gOr/nmsE6+UVsJSYvO89E8QN8hIzL31nh4gLSpyc+YQFYo68RPPW2cwTGPlmIUnNQpJawMi0
+        ilEytaA4Nz232LDAMC+1XK84Mbe4NC9dLzk/dxMjOPS0NHcwbl/1Qe8QIxMH4yFGCQ5mJRHe
+        M65WKUK8KYmVValF+fFFpTmpxYcYpTlYlMR5L3SdjBcSSE8sSc1OTS1ILYLJMnFwSjUwTd2o
+        M8dXTeyKlv7uu4+2MJba+yYZPPtwXK3b+thptZfznthstP9Vm/JyQVuc4d3CtU5pfNXG06at
+        LDAr2iDscSAvKYA9uDiuaCW/8+l1/xqzN56o+bXA7YzT+uDwVenmwizvS9okztR8Tot9d+Kt
+        ZVb3h/Bbh+MNts+JjFW8ZPrXgK1DI0F4ieq+G30cGswbJsqV7J2+fGLsLfErsy78eez9+PBV
+        5aN2geLbJD0bmHo//jW8VHKvuXUvm/p1iz1qBt/c1+9P8zMLnHb1fvWvU8GnNzPOmfdluui5
+        /NP7LF7KWkYsfTzD9retMgtH1s+L+qxKyg/rb8do32CU4zm9+OuRoosVM6uldBfG+2z+ocRS
+        nJFoqMVcVJwIAMJ3j0GsAgAA
+X-CMS-MailID: 20230417100624epcas1p3d39ab3b88da18da0b365d67ad1062086
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230417100624epcas1p3d39ab3b88da18da0b365d67ad1062086
+References: <CGME20230417100624epcas1p3d39ab3b88da18da0b365d67ad1062086@epcas1p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi Dave and Daniel,
 
---fbine4cndaaohubi
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   Sorry for late. Just one patch series which converts Exynos's fbdev code
+   to struct drm_client.
 
-On Mon, Apr 17, 2023 at 07:57:57AM +0000, Biju Das wrote:
-> Hi Uwe,
-> > > I think the series got applied to the master branch of
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git.
-> > > It should thus appear in v6.4.
-> >=20
-> > I guess that linux-stable.git is a copy&paste failure (and it's not the=
-re).
-> > I don't see the series in the master branch of
-> > git://linuxtv.org/media_tree.git either.
-> >=20
-> > .. a bit later ...
-> >=20
-> > ah, it's in git://linuxtv.org/mchehab/media-next.git
-> >=20
-> > I guess I was just to quick and probably the series will be included in
-> > today's next.
->=20
-> I believe patchwork <patchwork@linuxtv.org> will send notification to
-> author and along with people who applied tags for that patch.
+Please let me know if there is any problem.
 
-Indeed, I got such a notification on Apr 11. But even if I had that on
-my radar when asking and considered such notifications reliable in
-general, I would have asked, as the patches didn't apprear in next up to
-now.
+Thanks,
+Inki Dae
 
-Thanks
-Uwe
+The following changes since commit e82c98f2ca439356d5595ba8c9cd782f993f6f8c:
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+  Merge tag 'amd-drm-next-6.4-2023-04-14' of https://gitlab.freedesktop.org/agd5f/linux into drm-next (2023-04-17 10:54:59 +1000)
 
---fbine4cndaaohubi
-Content-Type: application/pgp-signature; name="signature.asc"
+are available in the Git repository at:
 
------BEGIN PGP SIGNATURE-----
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v6.4-2
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmQ9CSoACgkQj4D7WH0S
-/k6ShQgAkiGsAbqnu5CIYl6vVltmySdbzFphOT5lae+k2iaPjP4KBQyey9E309bA
-T8cWAHGmSzTAr3+xiHj0Vl3KS3KltR2ike2TLIupFKTW6gJIpAyseCA8SLtj625z
-DYRY5/9pDFLtNe4MD6tpVn7ZPAzEb/DdC/F12elKbSP+3RLwwRhyo/EtmAbFc6f9
-e/G2EuuAPaBs+wywWC9piaSjYWk57nSelhyJqSoWAJbpZM2hOiGsIeaiI2OI6l9X
-sye5ayrw1sdGUVa70KExUaG9L0d1hFmhkfZz3m7I2ZosIc5Q3k5RCBDj41MxyvTC
-7hFi24KnDnjHVL2gEWrM+oBRJZju9Q==
-=h+pR
------END PGP SIGNATURE-----
+for you to fetch changes up to 49953b70e7d38dd714f4cf22224e8a7ce14f3c48:
 
---fbine4cndaaohubi--
+  drm/exynos: Implement fbdev emulation as in-kernel client (2023-04-17 16:47:55 +0900)
+
+----------------------------------------------------------------
+A patch series for implementing fbdev emulation as in-kernel client.
+
+- This patch series refactors fbdev callbacks to DRM client functions and
+  simplifies fbdev emulation initialization including some code cleanups.
+  The changes make fbdev emulation behave like a regular DRM client.
+
+----------------------------------------------------------------
+Thomas Zimmermann (5):
+      drm/exynos: Remove exynos_gem from struct exynos_drm_fbdev
+      drm/exynos: Remove struct exynos_drm_fbdev
+      drm/exynos: Remove fb_helper from struct exynos_drm_private
+      drm/exynos: Initialize fbdev DRM client
+      drm/exynos: Implement fbdev emulation as in-kernel client
+
+ drivers/gpu/drm/exynos/exynos_drm_drv.c   |  13 +--
+ drivers/gpu/drm/exynos/exynos_drm_drv.h   |   2 -
+ drivers/gpu/drm/exynos/exynos_drm_fb.c    |   2 -
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 174 +++++++++++++++---------------
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.h |  20 +---
+ 5 files changed, 94 insertions(+), 117 deletions(-)
