@@ -2,173 +2,144 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4674C77B73
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Apr 2023 11:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27584C77B73
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Apr 2023 15:48:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232040AbjDSLRb (ORCPT
+        id S230136AbjDSPs3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 19 Apr 2023 07:17:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46640 "EHLO
+        Wed, 19 Apr 2023 11:48:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232698AbjDSLRa (ORCPT
+        with ESMTP id S233677AbjDSPs0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 19 Apr 2023 07:17:30 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90F244C15
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Apr 2023 04:16:59 -0700 (PDT)
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230419111554epoutp03fefc1645b5b3d2bb92134cb1f000eb73~XUdOSEy0o1443014430epoutp03Y
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Apr 2023 11:15:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230419111554epoutp03fefc1645b5b3d2bb92134cb1f000eb73~XUdOSEy0o1443014430epoutp03Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1681902955;
-        bh=yaloNG5EirXhW5Hu5Qw6THKFTACwagq13j1G743WQ+0=;
-        h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
-        b=hDcloUDcjEF2GNJXNktmSwNLnMb6nh8vhhyrWYlQ8oT3uQGBXyqrbyBCSkPp2w4b2
-         UIT99qSHEys3LdfBNv7IP09Df7+/j7zm1MJ/dV00MvXTDbDD2vcW2slcJ85ZWc14ye
-         pt6RVGRRc4izTKNp5vKBxR/Afq5R9vypn3RY4D/U=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20230419111554epcas2p21b8a661f77e9db1d6fef0a3617c42d1f~XUdNnaE811393013930epcas2p21;
-        Wed, 19 Apr 2023 11:15:54 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.98]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4Q1dWY6ljxz4x9Q1; Wed, 19 Apr
-        2023 11:15:53 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        36.77.09938.96DCF346; Wed, 19 Apr 2023 20:15:53 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-        20230419111553epcas2p34439437568e4ab428e9464f41889eb33~XUdMz0ss02936829368epcas2p3d;
-        Wed, 19 Apr 2023 11:15:53 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230419111553epsmtrp134875555abe7eeebf81de1d54e9cd651~XUdMzJlL63115831158epsmtrp1X;
-        Wed, 19 Apr 2023 11:15:53 +0000 (GMT)
-X-AuditID: b6c32a47-ca5fd700000026d2-7d-643fcd695001
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A2.C5.08279.96DCF346; Wed, 19 Apr 2023 20:15:53 +0900 (KST)
-Received: from [10.229.8.168] (unknown [10.229.8.168]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230419111553epsmtip1eafc761df29a0f7540b6ae4a01dd22d0~XUdMh6wFx0303903039epsmtip13;
-        Wed, 19 Apr 2023 11:15:53 +0000 (GMT)
-Message-ID: <abbf5608-dbe7-af39-e555-d76ffe65dea4@samsung.com>
-Date:   Wed, 19 Apr 2023 20:13:28 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
-        Thunderbird/102.10.0
-From:   Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: Re: [PATCH v2 2/4] spi: s3c64xx: add cpu_relax in polling loop
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Mark Brown <broonie@kernel.org>, Andi Shyti <andi@etezian.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Wed, 19 Apr 2023 11:48:26 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 633D1A5CD;
+        Wed, 19 Apr 2023 08:47:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7D2FC63CB5;
+        Wed, 19 Apr 2023 15:47:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B5E8C433EF;
+        Wed, 19 Apr 2023 15:47:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681919221;
+        bh=wr7CnKmrpEbT4OAdlGdrtt1dX2ep3MIz5NvcC74tElk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OJAd3I0DLoZLoH1POP9v7XG5IlW2WgDl6mSe1m69HJTOd59MF9OJu8OrzUqDbmN4j
+         w/4GSfr55HUUap7woocdXuAZZsRfhzRmZIXcG/zaqU168is0zE4H8npE7oZ0S//w7d
+         RngzbEvxCcr1rDnTVp05+xvAKuq3aeqmf4EE43F4aYkSNwO5imiFC0x/JsCX3JCdjy
+         wUOsEvoAvq/zFE0ZxogTfphX+7ddXKXhHtlQAA1LlL5Anok68/hvyLl1SPU8oNqhze
+         QarlSV9ioerltHUA4Bw6B77czgyvgZmvfHkzKXXV+p+AHCu3fdmb+n0jIwC/IaPLxr
+         xXmjEEQf0Rbdg==
+Date:   Wed, 19 Apr 2023 17:46:57 +0200
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Jaewon Kim <jaewon02.kim@samsung.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andi Shyti <andi@etezian.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Chanho Park <chanho61.park@samsung.com>
-Content-Language: en-US
-In-Reply-To: <36f37a18-0022-0368-bf7c-ebdd724b1558@linaro.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKJsWRmVeSWpSXmKPExsWy7bCmqW7mWfsUgwWtJhYP5m1js1j84zmT
-        xdSHT9gsLu/Xttj7eiu7xabH11gtLu+aw2Yx4/w+JovGjzfZHTg9ri/5xOyxaVUnm8eda3vY
-        PDYvqffo27KK0ePzJrkAtqhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE
-        3FRbJRefAF23zBygm5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BeYFesWJucWl
-        eel6eaklVoYGBkamQIUJ2RkLX91mL/jLXXFj/iHWBsaznF2MnBwSAiYSL149Z+ti5OIQEtjB
-        KLF+zQlWCOcTo0TTn31MEM43RomeW6dYYFq2nnnJApHYyyixZeUWRgjnNaPEnlkn2LsYOTh4
-        BewkLixgBmlgEVCVuDp/PTuIzSsgKHFy5hOwQaIC0RKL900Bs9kEtCW+r1/MCmILC7hL7Lj6
-        D2ymiMBiRom+x5/ADmQW2MgosblpKtgkZgFxiVtP5jOB2JxAyzrWXGGCiMtLbH87hxmkQUJg
-        KYfE9KdrGCHudpG4sPopG4QtLPHq+BZ2CFtK4mV/G5SdLdE+/Q8rhF0hcXHDbKh6Y4lZz9oZ
-        QT5jFtCUWL9LH8SUEFCWOHKLBWItn0TH4b/sEGFeiY42IYhGNYn7U89BDZGRmHRkJROE7SFx
-        ZOYutgmMirOQgmUWksdmIXlmFsLeBYwsqxjFUguKc9NTi40KjOGxnZyfu4kRnF613Hcwznj7
-        Qe8QIxMH4yFGCQ5mJRHeM65WKUK8KYmVValF+fFFpTmpxYcYTYGRM5FZSjQ5H5jg80riDU0s
-        DUzMzAzNjUwNzJXEeaVtTyYLCaQnlqRmp6YWpBbB9DFxcEo1MCU+FZ2pce9McuOBsMQvL+y0
-        y0TiD76eoftjU/9MS/6AQq8+58vNgmG7vloeLQps33fZ6ePRJblTeGepTHeOeCvvsHbB5DiB
-        N9lr3HKnp7i2n2Atkpiy5VDBwlVbsittuG5M28q44Bfb69YPOvrHig7Znfr9hn3tEeWP5mvn
-        7TBmZk5RfdG6v6LXM3YNY56u3N05SmF8Ub4xCU1r150RP/W76/d3DpuQv7+utfMtWsVye0Fq
-        qPbrd/UcKv8lLhR8+xPiLiPRVbPsQOGzJPX1rnGWlimq+4SiZ3HpvpU9l3LgZv42/baCN+tf
-        Luiwv1F7edkrhq1sazJXh5splre9S9vxq2aVGNurssehU5gyNiixFGckGmoxFxUnAgCRebcX
-        OAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplkeLIzCtJLcpLzFFi42LZdlhJTjfzrH2Kwc1N/BYP5m1js1j84zmT
-        xdSHT9gsLu/Xttj7eiu7xabH11gtLu+aw2Yx4/w+JovGjzfZHTg9ri/5xOyxaVUnm8eda3vY
-        PDYvqffo27KK0ePzJrkAtigum5TUnMyy1CJ9uwSujIWvbrMX/OWuuDH/EGsD41nOLkZODgkB
-        E4mtZ16ydDFycQgJ7GaU+NU6gQUiISOx/FkfG4QtLHG/5QgrRNFLRon/B78CFXFw8ArYSVxY
-        wAxSwyKgKnF1/np2EJtXQFDi5MwnYHNEBaIlbiz/xgRiswloS3xfv5gVxBYWcJfYcfUfI8hM
-        EYHFjBIdl96ygzjMAhsZJVZeXw82VUjgJ6PEpslSIDazgLjErSfzwSZxAi3uWHOFCSJuJtG1
-        tYsRwpaX2P52DvMERqFZSA6ZhaR9FpKWWUhaFjCyrGKUTC0ozk3PLTYsMMxLLdcrTswtLs1L
-        10vOz93ECI4pLc0djNtXfdA7xMjEwXiIUYKDWUmE193GLkWINyWxsiq1KD++qDQntfgQozQH
-        i5I474Wuk/FCAumJJanZqakFqUUwWSYOTqkGJlvPZZfns54M2qPw+1X19ZcevRUc0qKTBOwN
-        pvSf3PPMcl4ZC4Ppultf/+43slPNuv3i/ry1i4TT9PwLnDWzpe7fPC1xqWFG9LIjL08FP0zZ
-        Y6FxY+FK84w3/8ydMtv8Z0aILRNz8tOZmPboSe/vzkd72EuMizsuSkx3Y647nPeoL2Tq9SMr
-        3fOrrNO8D157syR38stX8tObs1qW7uzKFalfscPn/Vm/JzKVLB3/zhkf2F5+YMbL25lWzYfr
-        li1RSbFfJqSqZCn+7VmIXf02dj++efmabd5H0yR5xRfkij5RFT6yVyWeL+zK12eZlpsZfnSw
-        zpCfeet5VAPj9eq55xequH0L1ZpRf9xns9GpCCWW4oxEQy3mouJEADgrUgIYAwAA
-X-CMS-MailID: 20230419111553epcas2p34439437568e4ab428e9464f41889eb33
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230419062755epcas2p43a646bbae5f01e3120331407ad873318
+Subject: Re: [PATCH v2 1/4] spi: s3c64xx: changed to PIO mode if there is no
+ DMA
+Message-ID: <20230419154657.h2kp7ouddy6m7l4r@intel.intel>
 References: <20230419060639.38853-1-jaewon02.kim@samsung.com>
-        <CGME20230419062755epcas2p43a646bbae5f01e3120331407ad873318@epcas2p4.samsung.com>
-        <20230419060639.38853-3-jaewon02.kim@samsung.com>
-        <36f37a18-0022-0368-bf7c-ebdd724b1558@linaro.org>
+ <CGME20230419062755epcas2p1370c1ca60d88d6b114a7c7c1de3f15c0@epcas2p1.samsung.com>
+ <20230419060639.38853-2-jaewon02.kim@samsung.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cckin4xh754itsjt"
+Content-Disposition: inline
+In-Reply-To: <20230419060639.38853-2-jaewon02.kim@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
-On 23. 4. 19. 17:14, Krzysztof Kozlowski wrote:
-> On 19/04/2023 08:06, Jaewon Kim wrote:
->> Adds cpu_relax() to prevent long busy-wait.
-> How cpu_relax prevents long waiting?
+--cckin4xh754itsjt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As I know, cpu_relax() can be converted to yield. This can prevent 
-excessive use of the CPU in busy-loop.
+Hi Jaewon,
 
-I'll replace poor sentence like below in v3.
+On Wed, Apr 19, 2023 at 03:06:36PM +0900, Jaewon Kim wrote:
+> Polling mode supported with qurik if there was no DMA in the SOC.
 
-("Adds cpu_relax() to allow CPU relaxation in busy-loop")
+I think you want to say here that "Through quirks we choose to
+use polling mode whenever there is no DMA in the SoC".
 
->> There is busy-wait loop to check data transfer completion in polling mode.
->>
->> Signed-off-by: Jaewon Kim<jaewon02.kim@samsung.com>
->> ---
->>   drivers/spi/spi-s3c64xx.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
->> index 273aa02322d9..886722fb40ea 100644
->> --- a/drivers/spi/spi-s3c64xx.c
->> +++ b/drivers/spi/spi-s3c64xx.c
->> @@ -568,6 +568,7 @@ static int s3c64xx_wait_for_pio(struct s3c64xx_spi_driver_data *sdd,
->>   
->>   	val = msecs_to_loops(ms);
->>   	do {
->> +		cpu_relax();
-> Shouldn't this be just readl_poll_timeout()? Or the syntax would be too
-> complicated?
+> However, there are cased where we cannot or do not want to use DMA.
 
-I think we can replace this while() loop to readl_poll_timeout().
+/cased/cases/
 
-However, we should use 0 value as 'delay_us' parameter. Because delay 
-can affect throughput.
+> To support this case, if DMA is not set, it is switched to polling mode.
 
+You haven't really described what you are doing here... you could
+just write something like: "Use DTS properties to select wether
+to use polling or DMA mode."
 
-My purpose is add relax to this busy-loop.
+Side note, please use the imperative form when you want to
+describe what you have done to fix the issue.
 
-we cannot give relax if we change to readl_poll_timeout().
+> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+> ---
+>  drivers/spi/spi-s3c64xx.c                 | 8 ++++++--
+>  include/linux/platform_data/spi-s3c64xx.h | 1 +
+>  2 files changed, 7 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 71d324ec9a70..273aa02322d9 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -19,7 +19,6 @@
+>  #include <linux/platform_data/spi-s3c64xx.h>
+> =20
+>  #define MAX_SPI_PORTS		12
+> -#define S3C64XX_SPI_QUIRK_POLL		(1 << 0)
+>  #define S3C64XX_SPI_QUIRK_CS_AUTO	(1 << 1)
+>  #define AUTOSUSPEND_TIMEOUT	2000
+> =20
+> @@ -116,7 +115,7 @@
+>  #define S3C64XX_SPI_TRAILCNT		S3C64XX_SPI_MAX_TRAILCNT
+> =20
+>  #define msecs_to_loops(t) (loops_per_jiffy / 1000 * HZ * t)
+> -#define is_polling(x)	(x->port_conf->quirks & S3C64XX_SPI_QUIRK_POLL)
+> +#define is_polling(x)	(x->cntrlr_info->polling)
+> =20
+>  #define RXBUSY    (1<<2)
+>  #define TXBUSY    (1<<3)
+> @@ -1067,6 +1066,11 @@ static struct s3c64xx_spi_info *s3c64xx_spi_parse_=
+dt(struct device *dev)
+>  		sci->num_cs =3D temp;
+>  	}
+> =20
+> +	if (!of_find_property(dev->of_node, "dmas", NULL)) {
+> +		dev_warn(dev, "cannot find DMA, changed to PIO mode\n");
+> +		sci->polling =3D 1;
 
+	sci->polling =3D true;
 
->>   		status = readl(regs + S3C64XX_SPI_STATUS);
->>   	} while (RX_FIFO_LVL(status, sdd) < xfer->len && --val);
->>   
-> Best regards,
-> Krzysztof
->
->
-Thanks
+But it could be even better:
 
-Jaewon Kim
+	sci->polling =3D !of_find_property(dev->of_node, "dmas", NULL));
 
+and you get rid of the dev_warn() that is not required.
+
+Andi
+
+--cckin4xh754itsjt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQScDfrjQa34uOld1VLaeAVmJtMtbgUCZEAM8AAKCRDaeAVmJtMt
+brz+AP9FdshhlbJoiOlwJlMu/QXvgAitd0xQA1alj6GOQtyK7gD/XNPMbYrf1gEO
+fI5feLcKerXaFWVZVDkntoCe8eGsLA0=
+=UwH6
+-----END PGP SIGNATURE-----
+
+--cckin4xh754itsjt--
