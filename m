@@ -2,57 +2,57 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F29C5C77B73
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Apr 2023 06:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B80C6FD18
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Apr 2023 06:28:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231214AbjDSG2Q (ORCPT
+        id S231516AbjDSG2S (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 19 Apr 2023 02:28:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44346 "EHLO
+        Wed, 19 Apr 2023 02:28:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231516AbjDSG2P (ORCPT
+        with ESMTP id S231560AbjDSG2Q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 19 Apr 2023 02:28:15 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFF7F5FD5
+        Wed, 19 Apr 2023 02:28:16 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4EFC7D9A
         for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Apr 2023 23:27:58 -0700 (PDT)
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230419062756epoutp034f769beb820075acb8b8acce816b11da~XQhyaquhC1184111841epoutp03d
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Apr 2023 06:27:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230419062756epoutp034f769beb820075acb8b8acce816b11da~XQhyaquhC1184111841epoutp03d
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230419062757epoutp029edb89dd19c95fcf7d1b734f6647b5d4~XQhzP8iZD2609926099epoutp02k
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Apr 2023 06:27:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230419062757epoutp029edb89dd19c95fcf7d1b734f6647b5d4~XQhzP8iZD2609926099epoutp02k
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1681885676;
-        bh=Zz2fXoPYH2Rn3Zva7blHYTNJEnyfvGkirJElZNBYSb4=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=cgD9XolMXBpcltEkDUehQOgW95hGrQdBpftoAL4UUtuIPOhIo9JWbruCo/x5cmzvZ
-         4xlSNUX7DflEXUASdZ5WQaFbAdHWpc7GoW7BL2GlTBWmK7LIaaEYrKzM1wWwvpkkKO
-         yMGKusYs9MRV0NSM7LXrkyjBNU5RlZ/538Ikb+jc=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20230419062755epcas2p22790a323aac8b3409c357121bbd8d5b4~XQhx7kcrp0810808108epcas2p2w;
-        Wed, 19 Apr 2023 06:27:55 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.91]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4Q1W7H47Gkz4x9QC; Wed, 19 Apr
+        s=mail20170921; t=1681885677;
+        bh=zBQii4SsEZtzNvLXFRd+FOyaA7s8PZ1eCZ95L8Nnpsw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MqxrFC4mu3D8OUVkVolOuf3EfE+y3ZRqSm0dZWJYMDqrKUDFkXwoovSAhqX6NxG0A
+         Fp0SVIx5IiaBVuXaLSECffSK2LSb4JwTpyj/Rpschu0zB3cQqgXzdPhV1WsMochntm
+         05wqvKGYiNmoMvSbPdi8q35A3vv2l4MHFXpCxty0=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20230419062756epcas2p4d4a9d2b4a40b21f122c508e269bc07d0~XQhySo0Hg2825128251epcas2p4R;
+        Wed, 19 Apr 2023 06:27:56 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.36.68]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4Q1W7H6ncRz4x9Pt; Wed, 19 Apr
         2023 06:27:55 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6D.89.09938.BE98F346; Wed, 19 Apr 2023 15:27:55 +0900 (KST)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        59.79.10686.BE98F346; Wed, 19 Apr 2023 15:27:55 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-        20230419062755epcas2p4c3c7c1e0d58e964f6e884f75ae120d91~XQhxHFb6Z2825128251epcas2p4O;
+        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230419062755epcas2p1bca14bbd5200ebe5241780d2d7ec1596~XQhxU57Zo1254712547epcas2p1E;
         Wed, 19 Apr 2023 06:27:55 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230419062755epsmtrp23e5beae0425cbd39d45e5c172491eff2~XQhxFuotX0106901069epsmtrp2P;
+        20230419062755epsmtrp237eeea82f6a9201bccaf60ff17503d48~XQhxUF1lW0106901069epsmtrp2R;
         Wed, 19 Apr 2023 06:27:55 +0000 (GMT)
-X-AuditID: b6c32a47-ca5fd700000026d2-80-643f89eb3ca7
+X-AuditID: b6c32a46-ed1f8700000029be-0e-643f89eb7f4f
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        90.71.08609.AE98F346; Wed, 19 Apr 2023 15:27:54 +0900 (KST)
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        CC.65.08279.BE98F346; Wed, 19 Apr 2023 15:27:55 +0900 (KST)
 Received: from localhost.localdomain (unknown [10.229.9.55]) by
         epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230419062754epsmtip28c0708de49b9264767aff73757c29aa1~XQhw5KhSs0529605296epsmtip2T;
-        Wed, 19 Apr 2023 06:27:54 +0000 (GMT)
+        20230419062755epsmtip23d3becbdee94c2272c6b2fb646350df1~XQhxJWMMz0489404894epsmtip2s;
+        Wed, 19 Apr 2023 06:27:55 +0000 (GMT)
 From:   Jaewon Kim <jaewon02.kim@samsung.com>
 To:     Mark Brown <broonie@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
@@ -62,76 +62,84 @@ Cc:     linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Chanho Park <chanho61.park@samsung.com>,
         Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH v2 0/4] Improves polling mode of s3c64xx driver
-Date:   Wed, 19 Apr 2023 15:06:35 +0900
-Message-Id: <20230419060639.38853-1-jaewon02.kim@samsung.com>
+Subject: [PATCH v2 3/4] spi: s3c64xx: add sleep during transfer
+Date:   Wed, 19 Apr 2023 15:06:38 +0900
+Message-Id: <20230419060639.38853-4-jaewon02.kim@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEKsWRmVeSWpSXmKPExsWy7bCmhe7rTvsUg5MT5C0ezNvGZrH4x3Mm
+In-Reply-To: <20230419060639.38853-1-jaewon02.kim@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHKsWRmVeSWpSXmKPExsWy7bCmqe7rTvsUg4dzDSwezNvGZrH4x3Mm
         i6kPn7BZXN6vbbGj4Qirxd7XW9ktNj2+xmpxedccNosZ5/cxWTR+vMnuwOVxfcknZo9NqzrZ
         PO5c28PmsXlJvUffllWMHp83yQWwRWXbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpa
         mCsp5CXmptoqufgE6Lpl5gAdpqRQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpMC/Q
-        K07MLS7NS9fLSy2xMjQwMDIFKkzIzth9/ARzQR9bxYIF19gaGG+xdDFyckgImEj83vKWtYuR
-        i0NIYAejxILH01kgnE+MEt/PnWOCcD4zSpz4+YoVpmXT3olQLbsYJR4d2MoM4XxklDi28zFY
-        FZuAtsT39YvBqkQEFjNK7P37BayKWeAGo0T3m81g64UF7CW+TtvBDmKzCKhKLPi9HSzOK2Ar
-        sej4Zah98hKrNxwAa5YQOMYucW0RzCEuEu2XzrJD2MISr45vgbKlJD6/28sGYWdLtE//A1Vf
-        IXFxw2youLHErGftjF2MHEAXaUqs36UPYkoIKEscgYQMswCfRMfhv+wQYV6JjjYhiEY1iftT
-        z0ENkZGYdGQlE0SJh8SrzVUgYSGBWIn1d/qZJjDKzkIYv4CRcRWjWGpBcW56arFRgTE8lpLz
-        czcxghOblvsOxhlvP+gdYmTiYDzEKMHBrCTCe8bVKkWINyWxsiq1KD++qDQntfgQoykwtCYy
-        S4km5wNTa15JvKGJpYGJmZmhuZGpgbmSOK+07clkIYH0xJLU7NTUgtQimD4mDk6pBiaVdSJ7
-        gluu/lznM/mEnm+I1iaDKJNaWauAtSv4wriLPDU2b6l4eeJI94pfcxzNtW46Max6JFtxxtm1
-        7XfWt6yiZZs43+j7nD2w6PjqQsn+N2LPl660qS6+day8aH3UmfJFb68GWjjbCuYGStwS/BBw
-        nmmah8hP98TDgmElMWdiw4WmX+Vxu5/0Z++9NZ0WnIEqAbb3xHWSj11/I/hhj8UFLhdJkaNx
-        OZtVG3jnWfR8Mdu5VvHeG71Dl4J+xNwQ4q37mvJGR82jxszMXGDNq5mq/PM5vh1pSjnrKrKi
-        vZX9+lzGSUndt8KM1BYH8qy5zHf8RMOdeYEpSvqbnuZWXbi3irdkb21V3uaWLlUOQSWW4oxE
-        Qy3mouJEAI0rf6f1AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprELMWRmVeSWpSXmKPExsWy7bCSvO6rTvsUg3OvrS0ezNvGZrH4x3Mm
+        K07MLS7NS9fLSy2xMjQwMDIFKkzIzljfs4ix4CV7RdvTyWwNjBvZuhg5OSQETCSWrGpi7mLk
+        4hAS2MEoMW3TT0YI5xOjxN0NR5kgnG+MEic2fGOGaXn49xQLRGIvo8TCpwvZIJyPjBI3Tjex
+        g1SxCWhLfF+/mBUkISKwmFFi798vYFuYBW4wSnS/2cwCUiUsYC/xZOdUoA4ODhYBVYmmPnmQ
+        MK+ArcSuL7+h1slLrN5wAMzmFLCTWPjpGtg2CYF77BK3N65lAemVEHCRaFzhAFEvLPHq+BZ2
+        CFtK4vO7vVCfZku0T//DCmFXSFzcMBsqbiwx61k7I8gYZgFNifW79CEmKkscuQV2JLMAn0TH
+        4b/sEGFeiY42IYhGNYn7U89BDZGRmHRkJROE7SHxf9Y8aPhMZJT49m4ZywRGuVkICxYwMq5i
+        FEstKM5NTy02KjCCx1hyfu4mRnDC03LbwTjl7Qe9Q4xMHIyHGCU4mJVEeM+4WqUI8aYkVlal
+        FuXHF5XmpBYfYjQFhtxEZinR5Hxgys0riTc0sTQwMTMzNDcyNTBXEueVtj2ZLCSQnliSmp2a
+        WpBaBNPHxMEp1cC03/piV3FrcFP3zZR7s+pW+Hrx8Kmve7Tvztv+3CcMT6Mqz5+84tj49dmO
+        j4FPCu/wWTvsjGS7v+rHn89SO9wSNvhr3i9fc961JHr7I4fjP5mvXHp2gV3ltc4C0z/Mek5X
+        Ar/sm1vI71JUHTtdX69XNun6W+O3bId9f1ZU3lSdu2T/5ikxizY76b49++Sp2qUoD+Xqn3te
+        lUU0cO1Zasp3ZcIr6Ut8uyY/65epubZjccf7BZHHeBuWrvmkMzFNXOmZ4vsVW+umWgVfKM/2
+        Ntm66cE8ySvS0gLnrWtSGDj/KibMW7NS1owhfmmGjewD+6kL/cu3Bp+4KmRzsL/H69kC7TeL
+        9pgeT1yek6nPdWE+kxJLcUaioRZzUXEiAO8u0ucBBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJLMWRmVeSWpSXmKPExsWy7bCSvO7rTvsUg7sX+SwezNvGZrH4x3Mm
         i6kPn7BZXN6vbbGj4Qirxd7XW9ktNj2+xmpxedccNosZ5/cxWTR+vMnuwOVxfcknZo9NqzrZ
-        PO5c28PmsXlJvUffllWMHp83yQWwRXHZpKTmZJalFunbJXBl7D5+grmgj61iwYJrbA2Mt1i6
-        GDk5JARMJDbtncjaxcjFISSwg1Fi+63trBAJGYnlz/rYIGxhifstR6CK3jNKrHo/iRkkwSag
-        LfF9/WKwBhGBpYwSN7ulQIqYBe4xSryc9I0JJCEsYC/xddoOdhCbRUBVYsHv7WCreQVsJRYd
-        vwy1TV5i9YYDzBMYeRYwMqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAgONi2tHYx7
-        Vn3QO8TIxMF4iFGCg1lJhPeMq1WKEG9KYmVValF+fFFpTmrxIUZpDhYlcd4LXSfjhQTSE0tS
-        s1NTC1KLYLJMHJxSDUxS7Z+fP+bIexUkdGzr5KpHQh2ZL/KP9aW/dl+i0us8bVJW+n/feRva
-        oy5N2XmTtfrAFzGN1+rVcxcYrJ+aWDHV4l7D0/eRbBIPFA+59/3T6dx5L+pTkufEIzPOd77m
-        PDbtBHf/HuXQppzgj8bGRm4cvIkbfOtj5WVVZLLerNVMrNB+nfBgh3H1B7+MrscyOcJh+n8L
-        mlJOT5hltkH97V4Hlr0/2VsqebgV2Q++Nr27X0iyNFXYRrt74+Jw/o/F/RZrTm5y/elysum5
-        152sjeUpJvbCIqffaG7vceV9f38uc+TXSb/jXgS8OpBuLSPzqkbJXvtukabkxxV/6x7/Ku/Q
-        2Kfp8+H3Gwlv5mXJyUosxRmJhlrMRcWJANNi3FylAgAA
-X-CMS-MailID: 20230419062755epcas2p4c3c7c1e0d58e964f6e884f75ae120d91
+        PO5c28PmsXlJvUffllWMHp83yQWwRXHZpKTmZJalFunbJXBlrO9ZxFjwkr2i7elktgbGjWxd
+        jJwcEgImEg//nmLpYuTiEBLYzShxqq+NGSIhI7H8WR9UkbDE/ZYjrBBF7xkllrW1gSXYBLQl
+        vq9fzApiiwgsZZS42S0FUsQscI9R4uWkb0wgCWEBe4knO6eydzFycLAIqEo09cmDhHkFbCV2
+        ffkNtUxeYvWGA2A2p4CdxMJP18DmCwHV7J73ln0CI98CRoZVjJKpBcW56bnFhgWGeanlesWJ
+        ucWleel6yfm5mxjBoamluYNx+6oPeocYmTgYDzFKcDArifCecbVKEeJNSaysSi3Kjy8qzUkt
+        PsQozcGiJM57oetkvJBAemJJanZqakFqEUyWiYNTqoGJgUEssVXkV3vc98t8xsIWQl4nufnf
+        MXdqd99qdEusj/zE95jzDk/DtsliKcFnTNasOdqgPivhUfrTc6K7Xukaq07cP1laOUVJf7/p
+        4XMxN+pT2wwsdwTXemyrSZJMnF6lxL5konNkyP0zD/c7pwVP+5v15/4L2Wfd3tdLHzVFm7y9
+        pbbXJ5hX07+kaZvLqegW7sK2AEUN24tHQ5lE1rx6KvK7uuVrU0z14UMxz/KYJ+zTe/bv7LTm
+        Stuu5YnnDwTe6f9/f5Z/peRqWZ6YlQcMOIu/Hl356pp0t64V19dD6joPHPm9l54T234yUf/E
+        OvtnNcHJXrOset6Ltzq/l13L+fiGxfsyZ0P/uLnGs5RYijMSDbWYi4oTAVVTr968AgAA
+X-CMS-MailID: 20230419062755epcas2p1bca14bbd5200ebe5241780d2d7ec1596
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230419062755epcas2p4c3c7c1e0d58e964f6e884f75ae120d91
-References: <CGME20230419062755epcas2p4c3c7c1e0d58e964f6e884f75ae120d91@epcas2p4.samsung.com>
+X-CMS-RootMailID: 20230419062755epcas2p1bca14bbd5200ebe5241780d2d7ec1596
+References: <20230419060639.38853-1-jaewon02.kim@samsung.com>
+        <CGME20230419062755epcas2p1bca14bbd5200ebe5241780d2d7ec1596@epcas2p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-1.
-s3cx64xx driver was supporting polling mode using quirk for SOC without DMA.
-However, in order to use PIO mode as an optional rather than a quirk, when DMA
-is not described, spi operates with pio mode rather than probe fail.
+In polling mode, the status register is constantly read to check transfer
+completion. It cause excessive CPU usage.
+So, it calculates the SPI transfer time and made it sleep.
 
-2.
-Fixed the problem of high CPU usage in PIO mode.
+Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+---
+ drivers/spi/spi-s3c64xx.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-3. 
-If the transfer data size is larger than 32-bit, IRQ base PIO mode used.
-
-
-Jaewon Kim (4):
-  spi: s3c64xx: changed to PIO mode if there is no DMA
-  spi: s3c64xx: add cpu_relax in polling loop
-  spi: s3c64xx: add sleep during transfer
-  spi: s3c64xx: support interrupt based pio mode
-
- drivers/spi/spi-s3c64xx.c                 | 85 ++++++++++++++++++++---
- include/linux/platform_data/spi-s3c64xx.h |  1 +
- 2 files changed, 76 insertions(+), 10 deletions(-)
-
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 886722fb40ea..cf3060b2639b 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -561,6 +561,14 @@ static int s3c64xx_wait_for_pio(struct s3c64xx_spi_driver_data *sdd,
+ 	u32 cpy_len;
+ 	u8 *buf;
+ 	int ms;
++	u32 tx_time;
++
++	/* sleep during signal transfer time */
++	status = readl(regs + S3C64XX_SPI_STATUS);
++	if (RX_FIFO_LVL(status, sdd) < xfer->len) {
++		tx_time = (xfer->len * 8 * 1000 * 1000) / sdd->cur_speed;
++		usleep_range(tx_time / 2, tx_time);
++	}
+ 
+ 	/* millisecs to xfer 'len' bytes @ 'cur_speed' */
+ 	ms = xfer->len * 8 * 1000 / sdd->cur_speed;
 -- 
 2.17.1
 
