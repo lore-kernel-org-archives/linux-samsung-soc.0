@@ -2,103 +2,130 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C76C6FD18
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Apr 2023 08:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E164BC6FD18
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Apr 2023 08:38:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232448AbjDSIgm (ORCPT
+        id S231710AbjDSIi1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 19 Apr 2023 04:36:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47250 "EHLO
+        Wed, 19 Apr 2023 04:38:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231612AbjDSIgl (ORCPT
+        with ESMTP id S231308AbjDSIi0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 19 Apr 2023 04:36:41 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BBEB7280
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Apr 2023 01:36:37 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id xi5so79553261ejb.13
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Apr 2023 01:36:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681893396; x=1684485396;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=edUAJMsfug4ERHT62YNJ2g3PSl5FoBF2DLnU/gsW8yw=;
-        b=x+6lq8VA6Wh3N4QZXH/MAaqL4b8LGhILplBuW0D9MUaJMldCLatHlIh33DUgHIMXIm
-         EgJwWiISpSiT3XUnBPOEdG8qBeY+RfFrJ20AprkWP6zjbxclOBALbWDb8Y/x4lfPqxCs
-         SdsoBjsbXkFL+bZr3jIMtti/fPOIGENhd2Od068KCL7mqJCTjmcc1CMYuLB+XuEa1vts
-         5Z/yFH9uFWDyaf4R+jhj3wCIk9TY49R3RRu/PT8SAmhohZwz/OYio+Qx7rvmu7Ke2/qP
-         ScDxSWer+RxI54geRxExP/+siXUaAdkyVsJf03Zb9W1gIBGu3YghwGl/Eu5KuMqAnVV1
-         L7bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681893396; x=1684485396;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=edUAJMsfug4ERHT62YNJ2g3PSl5FoBF2DLnU/gsW8yw=;
-        b=JpjTsRDFqa7JOJ6LcIsra+G+tom8ey/fj+0xau9B+IAPDmIyqweWLTl4we/q0Cfyb+
-         mKTlzzELdCSRGaJfST1EFyhGuBFiFR3rqc1hvCpi0fOKw9C+L9GdLIDah0GpBQUoXcqv
-         R3GRk51Ct3Bbyzrb8XAMYgg5jVjmKP46NlKRM0RWSY0sUzJ5fBcT0j4LGGYSgetmuVYP
-         pp117l9guHljeXbYH/cNrzHV2S+SZMY3WjJHqlP60w73nSoxz+dL3Qo3FF/X5w9LdlbG
-         OrHnqzwBMxLclvpx8FP5JwulDhnQjz9n5pNswRrnDWo8mGinpcSj6bV9D1C0HccIwUri
-         4g1g==
-X-Gm-Message-State: AAQBX9dsFm5XfCTpdoEICGOHBB6tu22WPPRzPysap0TxJ0cveY4hdORG
-        d+Jh2AxZGnrtkwolCBabVANLVA==
-X-Google-Smtp-Source: AKy350Zjdh/Ctd+CjJNcauM9g46sPlL9BLUYK2qJYJ5AxUNa/z27E/WeOP+dvPY7hvDJx8fS0txvIg==
-X-Received: by 2002:a17:906:4c4a:b0:94e:4735:92f8 with SMTP id d10-20020a1709064c4a00b0094e473592f8mr12841404ejw.27.1681893395938;
-        Wed, 19 Apr 2023 01:36:35 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:62f5:eb43:f726:5fee? ([2a02:810d:15c0:828:62f5:eb43:f726:5fee])
-        by smtp.gmail.com with ESMTPSA id kt2-20020a170906aac200b0094f6458157csm4562796ejb.223.2023.04.19.01.36.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Apr 2023 01:36:35 -0700 (PDT)
-Message-ID: <503a69d7-1adf-2a5a-b29d-8d873570e61b@linaro.org>
-Date:   Wed, 19 Apr 2023 10:36:34 +0200
+        Wed, 19 Apr 2023 04:38:26 -0400
+Received: from 167-179-156-38.a7b39c.syd.nbn.aussiebb.net (167-179-156-38.a7b39c.syd.nbn.aussiebb.net [167.179.156.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A712D5BA1;
+        Wed, 19 Apr 2023 01:38:23 -0700 (PDT)
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+        id 1pp3KA-00089X-Gl; Wed, 19 Apr 2023 16:38:00 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 19 Apr 2023 16:37:59 +0800
+Date:   Wed, 19 Apr 2023 16:37:59 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     kernel test robot <lkp@intel.com>
+Cc:     oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org,
+        Sean Wang <sean.wang@mediatek.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>
+Subject: [PATCH] hwrng: Kconfig - Add HAS_IOMEM dependencies for
+ exynos/meson/mtk/npcm
+Message-ID: <ZD+oZ9DWiTxeo3RY@gondor.apana.org.au>
+References: <202304191106.swKbBeDh-lkp@intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v2 1/4] spi: s3c64xx: changed to PIO mode if there is no
- DMA
-Content-Language: en-US
-To:     Jaewon Kim <jaewon02.kim@samsung.com>,
-        Mark Brown <broonie@kernel.org>, Andi Shyti <andi@etezian.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>
-References: <20230419060639.38853-1-jaewon02.kim@samsung.com>
- <CGME20230419062755epcas2p1370c1ca60d88d6b114a7c7c1de3f15c0@epcas2p1.samsung.com>
- <20230419060639.38853-2-jaewon02.kim@samsung.com>
- <41ebe41f-d773-7cc3-dcad-8574c858645e@linaro.org>
- <e29c3c88-e487-75da-662b-6720a1ef1dc6@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <e29c3c88-e487-75da-662b-6720a1ef1dc6@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202304191106.swKbBeDh-lkp@intel.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 19/04/2023 10:31, Jaewon Kim wrote:
-> 
-> On 23. 4. 19. 17:03, Krzysztof Kozlowski wrote:
->> On 19/04/2023 08:06, Jaewon Kim wrote:
->>> Polling mode supported with qurik if there was no DMA in the SOC.
->> typo: quirk
->> You missed verb in your first part of sentence. I don't understand it.
-> 
-> Sorry, I change this sentence like below.
-> 
-> Polling mode supported as a quirk for SOCs without DMA.
+On Wed, Apr 19, 2023 at 11:43:42AM +0800, kernel test robot wrote:
+>
+>    s390-linux-ld: drivers/char/hw_random/exynos-trng.o: in function `exynos_trng_probe':
+>    exynos-trng.c:(.text+0x39e): undefined reference to `devm_platform_ioremap_resource'
+>    s390-linux-ld: drivers/char/hw_random/meson-rng.o: in function `meson_rng_probe':
+>    meson-rng.c:(.text+0x10a): undefined reference to `devm_platform_ioremap_resource'
+>    s390-linux-ld: drivers/char/hw_random/mtk-rng.o: in function `mtk_rng_probe':
+>    mtk-rng.c:(.text+0x40e): undefined reference to `devm_platform_ioremap_resource'
+>    s390-linux-ld: drivers/char/hw_random/npcm-rng.o: in function `npcm_rng_probe':
+>    npcm-rng.c:(.text+0x2ca): undefined reference to `devm_platform_ioremap_resource'
 
-I would say still verb is missing as supported in past tense does not
-make sense.
+OK, this patch should fix these ones at least:
 
-See:
-https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+---8<---
+Add missing dependencies on HAS_IOMEM as otherwise they will trigger
+failed builds with COMPILE_TEST enabled.
 
-> 
+Also add dependencies on OF where appropriate.
 
+Change the default so that these drivers are not enabled just because
+COMPILE_TEST is turned on.
 
-Best regards,
-Krzysztof
+Reported-by: kernel test robot <lkp@intel.com>
+Link: https://lore.kernel.org/oe-kbuild-all/202304191106.swKbBeDh-lkp@intel.com/
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
+diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
+index ae508e96cfc2..f3146470ce88 100644
+--- a/drivers/char/hw_random/Kconfig
++++ b/drivers/char/hw_random/Kconfig
+@@ -400,9 +400,9 @@ config HW_RANDOM_POLARFIRE_SOC
+ 
+ config HW_RANDOM_MESON
+ 	tristate "Amlogic Meson Random Number Generator support"
+-	depends on HW_RANDOM
+ 	depends on ARCH_MESON || COMPILE_TEST
+-	default y
++	depends on HAS_IOMEM && OF
++	default HW_RANDOM if ARCH_MESON
+ 	help
+ 	  This driver provides kernel-side support for the Random Number
+ 	  Generator hardware found on Amlogic Meson SoCs.
+@@ -427,9 +427,9 @@ config HW_RANDOM_CAVIUM
+ 
+ config HW_RANDOM_MTK
+ 	tristate "Mediatek Random Number Generator support"
+-	depends on HW_RANDOM
+ 	depends on ARCH_MEDIATEK || COMPILE_TEST
+-	default y
++	depends on HAS_IOMEM && OF
++	default HW_RANDOM if ARCH_MEDIATEK
+ 	help
+ 	  This driver provides kernel-side support for the Random Number
+ 	  Generator hardware found on Mediatek SoCs.
+@@ -456,7 +456,8 @@ config HW_RANDOM_S390
+ config HW_RANDOM_EXYNOS
+ 	tristate "Samsung Exynos True Random Number Generator support"
+ 	depends on ARCH_EXYNOS || COMPILE_TEST
+-	default HW_RANDOM
++	depends on HAS_IOMEM
++	default HW_RANDOM if ARCH_EXYNOS
+ 	help
+ 	  This driver provides support for the True Random Number
+ 	  Generator available in Exynos SoCs.
+@@ -483,7 +484,8 @@ config HW_RANDOM_OPTEE
+ config HW_RANDOM_NPCM
+ 	tristate "NPCM Random Number Generator support"
+ 	depends on ARCH_NPCM || COMPILE_TEST
+-	default HW_RANDOM
++	depends on HAS_IOMEM
++	default HW_RANDOM if ARCH_NPCM
+ 	help
+ 	  This driver provides support for the Random Number
+ 	  Generator hardware available in Nuvoton NPCM SoCs.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
