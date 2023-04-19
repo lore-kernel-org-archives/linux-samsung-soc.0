@@ -2,61 +2,61 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD682C77B73
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Apr 2023 08:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA40C77B78
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Apr 2023 08:21:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232444AbjDSIUA (ORCPT
+        id S232355AbjDSIVN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 19 Apr 2023 04:20:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58132 "EHLO
+        Wed, 19 Apr 2023 04:21:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232446AbjDSIT7 (ORCPT
+        with ESMTP id S232269AbjDSIVM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 19 Apr 2023 04:19:59 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C05BEC155
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Apr 2023 01:19:57 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id fy21so36517436ejb.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Apr 2023 01:19:57 -0700 (PDT)
+        Wed, 19 Apr 2023 04:21:12 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 507127A82
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Apr 2023 01:21:10 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id kt6so41335866ejb.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Apr 2023 01:21:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681892396; x=1684484396;
+        d=linaro.org; s=google; t=1681892469; x=1684484469;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ItPXPHDOfZGbby39xkX7IqQWchop/Vei1qaPQuYQG5Y=;
-        b=FDMLi9cc8hu6zqp7VRHACmMiH4HGnt+zZut8ui16zl3vDJz1/nyupD3o4bqE62UFhl
-         inKHhKUMeLNwHioNH/UOlPEALp+PnEHNm3cU/0Hy/xl/u58XXw4S6+G9ASdi759qbPIw
-         3JpJhlT6gKbOVJtqOtxhnZRpDEAaumnXSaWl0lVy6yBLWikKOdaOFXSdPLDc59C1e/tq
-         HE56Rahq3aiB9cRREmJD3d+l8CCWNgwr7FJHRs5M3o6CdsyjydOzm7+r1Rwq5YbouKpM
-         c18QD0xkEBVAARvhOtxZpnqcTCh+/vwjhHJ3ZxeLhezCzScZYObNhmksAMDRkS/tyRGP
-         zvlw==
+        bh=RqPKWPiQ8+y3+LyUWsBFNDNPzOI/PBWOQwZkMXBI3Es=;
+        b=CJ5scG94dQsUIHi9sqRUZJKMVOsTwn1NecluOHiKAbgJykZvznbFd0zpBhnVJY4UcT
+         Ove0nf3k7Jiu1jl+r96JzEg/I9WyKDXz7zeIJK4XQchNvByhRm6gW6mkyKWnremO03dx
+         aLwkBAtdxAU3cPxEMEf/tSToAi5FodUFrx9RKcRhzoc0bvYazsHc9GuXfqqARvM2mNxO
+         sjoGP3EkOA3de7t7Z954LOoRWf6P5ZgRUu+2RCyqW4QRoNWl3XeB2juJVF1pW55jQ6/n
+         MrdKSQSJ8QKOMYAH0cv5pS2K1AHLcIBlsFoiIbKZhTaUTvgjQkC5AKQuSljgyE+C2pqf
+         d29Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681892396; x=1684484396;
+        d=1e100.net; s=20221208; t=1681892469; x=1684484469;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ItPXPHDOfZGbby39xkX7IqQWchop/Vei1qaPQuYQG5Y=;
-        b=SIbN5lf7Vk0eTZS0dk4+AmZfmSG/2H5080UVuOeOSDfFIgrS/8WQlLkytHCXtKwVMV
-         EQ+6Vz9lbo2w6RTIiAm7PKJ/EIVh9C4mlUa0vXPEg8PQURo6L2jUDx0Jzsu/WgtHm1xL
-         ruyNf4VDgGYWL0s2pRoGK2cIp8tLuLFXL6c2eF9eu8f6M+xr54LUBhNNN/9OckLXfoqM
-         xgCoP5zmU7OBclBlZA59IPicToOl3KQayEtY6Pn5b9kejifxiS1WuBlgZdFNijxHa+Xn
-         MLmh7gbq1LJqA6C63lXiY0mN+Sd/f7PqoFF5aIBvbvsDJ6fND6zdE6IWOL06Rs6mkj00
-         GDJQ==
-X-Gm-Message-State: AAQBX9eKtJWlwSf5IIiuGnsrt9YuxqSGfJTW64ZaJ+OyNpI799lZK70n
-        5WY/XnhKfOmPMKiaDlzXs5H/2A==
-X-Google-Smtp-Source: AKy350YsPQp5+u1mozQqwN0mh9L0kY/J42LpWWAGw7UUxDNq0t+l1NHztwdBopzCzWmvT7z8L7b/jg==
-X-Received: by 2002:a17:906:953:b0:94f:37af:d21b with SMTP id j19-20020a170906095300b0094f37afd21bmr11149062ejd.74.1681892396201;
-        Wed, 19 Apr 2023 01:19:56 -0700 (PDT)
+        bh=RqPKWPiQ8+y3+LyUWsBFNDNPzOI/PBWOQwZkMXBI3Es=;
+        b=cwO6TpIOfIdQYg5VqyojDvF/T4ilgCRpOqvY6tfBs/O8pqg0rZJZDPCnXZ6ZQYV/Fl
+         CVDPfnmxpwnWh3kMG2v2AH85CgSt4aZh/4Bwz+b9K0mAVjQ/ZIy6xTAkZa8Irz2dsoGJ
+         4zrxm1yw2dq4ytVxdQhPE9Yb+2qvnQJiVofUzpfHQ94P40Qu8H9vzJcD0QIH1vTmiQOG
+         F/eQlePGCmUeYpfgQjOpayt5DfjvzNP5Kf3ZzSV727Cawb1L8Ikjh7e1whdZglc/G7ei
+         zzETOR0STMJdaYIDwOnshWn9MAWLPcZy6URis1wkUVdxlnYZi42eB/dkDkC0YRPIIraO
+         g33A==
+X-Gm-Message-State: AAQBX9ds7xEtwCLUd0G+iwhrOwhEX4+ZiDnt7dLaThoUToxAmli+QhIW
+        HO2qnSGM2HUkvXBmXe79M35XFQ==
+X-Google-Smtp-Source: AKy350ZBV0waGDxi1JEvFsVajSenAMWdYIAAtiJEIOQ38Iq0E2LTPpkv9e81HyNBnJkmHg0Q0nqrKw==
+X-Received: by 2002:a17:906:3e5b:b0:94f:31ee:ba36 with SMTP id t27-20020a1709063e5b00b0094f31eeba36mr11551763eji.37.1681892468650;
+        Wed, 19 Apr 2023 01:21:08 -0700 (PDT)
 Received: from ?IPV6:2a02:810d:15c0:828:62f5:eb43:f726:5fee? ([2a02:810d:15c0:828:62f5:eb43:f726:5fee])
-        by smtp.gmail.com with ESMTPSA id q1-20020aa7d441000000b0050499afe96bsm7880909edr.10.2023.04.19.01.19.55
+        by smtp.gmail.com with ESMTPSA id hv14-20020a17090760ce00b0095251a3d66fsm2022814ejc.119.2023.04.19.01.21.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Apr 2023 01:19:55 -0700 (PDT)
-Message-ID: <b91c6cfb-4fd2-1189-72fd-92b40d1b4743@linaro.org>
-Date:   Wed, 19 Apr 2023 10:19:54 +0200
+        Wed, 19 Apr 2023 01:21:08 -0700 (PDT)
+Message-ID: <88e74f8f-feee-159a-3048-736a5ffc13cd@linaro.org>
+Date:   Wed, 19 Apr 2023 10:21:07 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH v2 3/4] spi: s3c64xx: add sleep during transfer
+Subject: Re: [PATCH v2 4/4] spi: s3c64xx: support interrupt based pio mode
 Content-Language: en-US
 To:     Jaewon Kim <jaewon02.kim@samsung.com>,
         Mark Brown <broonie@kernel.org>, Andi Shyti <andi@etezian.org>,
@@ -65,10 +65,10 @@ Cc:     linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Chanho Park <chanho61.park@samsung.com>
 References: <20230419060639.38853-1-jaewon02.kim@samsung.com>
- <CGME20230419062755epcas2p1bca14bbd5200ebe5241780d2d7ec1596@epcas2p1.samsung.com>
- <20230419060639.38853-4-jaewon02.kim@samsung.com>
+ <CGME20230419062755epcas2p43a1127f4bb28cf1cf3f42e5d3cc597cd@epcas2p4.samsung.com>
+ <20230419060639.38853-5-jaewon02.kim@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230419060639.38853-4-jaewon02.kim@samsung.com>
+In-Reply-To: <20230419060639.38853-5-jaewon02.kim@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -76,39 +76,63 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 19/04/2023 08:06, Jaewon Kim wrote:
-> In polling mode, the status register is constantly read to check transfer
-> completion. It cause excessive CPU usage.
-> So, it calculates the SPI transfer time and made it sleep.
+> Interrupt based pio mode is supported to reduce CPU load.
+> If transfer size is larger than 32 byte, it is processed using interrupt.
 > 
 > Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
 > ---
->  drivers/spi/spi-s3c64xx.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+>  drivers/spi/spi-s3c64xx.c | 82 ++++++++++++++++++++++++++++++++-------
+>  1 file changed, 67 insertions(+), 15 deletions(-)
 > 
 > diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 886722fb40ea..cf3060b2639b 100644
+> index cf3060b2639b..ce1afb9a4ed4 100644
 > --- a/drivers/spi/spi-s3c64xx.c
 > +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -561,6 +561,14 @@ static int s3c64xx_wait_for_pio(struct s3c64xx_spi_driver_data *sdd,
->  	u32 cpy_len;
->  	u8 *buf;
->  	int ms;
-> +	u32 tx_time;
-> +
-> +	/* sleep during signal transfer time */
-> +	status = readl(regs + S3C64XX_SPI_STATUS);
-> +	if (RX_FIFO_LVL(status, sdd) < xfer->len) {
-> +		tx_time = (xfer->len * 8 * 1000 * 1000) / sdd->cur_speed;
-> +		usleep_range(tx_time / 2, tx_time);
-> +	}
-
-Did you actually check the delays introduced by it? Is it worth?
-
+> @@ -58,6 +58,8 @@
+>  #define S3C64XX_SPI_MODE_BUS_TSZ_HALFWORD	(1<<17)
+>  #define S3C64XX_SPI_MODE_BUS_TSZ_WORD		(2<<17)
+>  #define S3C64XX_SPI_MODE_BUS_TSZ_MASK		(3<<17)
+> +#define S3C64XX_SPI_MODE_RX_RDY_LVL		GENMASK(16, 11)
+> +#define S3C64XX_SPI_MODE_RX_RDY_LVL_SHIFT	11
+>  #define S3C64XX_SPI_MODE_SELF_LOOPBACK		(1<<3)
+>  #define S3C64XX_SPI_MODE_RXDMA_ON		(1<<2)
+>  #define S3C64XX_SPI_MODE_TXDMA_ON		(1<<1)
+> @@ -114,6 +116,8 @@
 >  
->  	/* millisecs to xfer 'len' bytes @ 'cur_speed' */
->  	ms = xfer->len * 8 * 1000 / sdd->cur_speed;
+>  #define S3C64XX_SPI_TRAILCNT		S3C64XX_SPI_MAX_TRAILCNT
+>  
+> +#define S3C64XX_SPI_POLLING_SIZE	32
+> +
+>  #define msecs_to_loops(t) (loops_per_jiffy / 1000 * HZ * t)
+>  #define is_polling(x)	(x->cntrlr_info->polling)
+>  
+> @@ -552,10 +556,11 @@ static int s3c64xx_wait_for_dma(struct s3c64xx_spi_driver_data *sdd,
+>  }
+>  
+>  static int s3c64xx_wait_for_pio(struct s3c64xx_spi_driver_data *sdd,
+> -				struct spi_transfer *xfer)
+> +				struct spi_transfer *xfer, int use_irq)
+>  {
+>  	void __iomem *regs = sdd->regs;
+>  	unsigned long val;
+> +	unsigned long time;
+>  	u32 status;
+>  	int loops;
+>  	u32 cpy_len;
+> @@ -563,17 +568,24 @@ static int s3c64xx_wait_for_pio(struct s3c64xx_spi_driver_data *sdd,
+>  	int ms;
+>  	u32 tx_time;
+>  
+> -	/* sleep during signal transfer time */
+> -	status = readl(regs + S3C64XX_SPI_STATUS);
+> -	if (RX_FIFO_LVL(status, sdd) < xfer->len) {
+> -		tx_time = (xfer->len * 8 * 1000 * 1000) / sdd->cur_speed;
+> -		usleep_range(tx_time / 2, tx_time);
+> -	}
 
-You have now some code duplication so this could be combined.
+You just added this code. Adding and immediately removing it, suggests
+this should be one patch.
+
 
 Best regards,
 Krzysztof
