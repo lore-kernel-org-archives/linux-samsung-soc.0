@@ -2,116 +2,99 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C404C77B7E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Apr 2023 09:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B223C77B7E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Apr 2023 09:57:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231831AbjDUJpK (ORCPT
+        id S231526AbjDUJ5l (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 21 Apr 2023 05:45:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52956 "EHLO
+        Fri, 21 Apr 2023 05:57:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232010AbjDUJoy (ORCPT
+        with ESMTP id S229820AbjDUJ5j (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Apr 2023 05:44:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95E3BB452;
-        Fri, 21 Apr 2023 02:44:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0F64264F6F;
-        Fri, 21 Apr 2023 09:44:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5AC0C433EF;
-        Fri, 21 Apr 2023 09:44:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682070259;
-        bh=RJvg9Cl+YFqg0zLVP3PJyan3HevOBCGTOaODk9YxFk8=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=OtIYL1ILsEvQ3ssJ4FjPRxbk066rNrrUEGHT+eLqNPBLc9399cehsK1f2f61cNI5d
-         YMei8zmjkJRUOJQDpHqc8T09JGpgkDxY6fN1A0DjFlo6qrzQGuwrKKwx9sPD30XpLz
-         q+s7AEKx3l99uQ0EP+0uuBlAphXlrXVGtGDtqZn0mqvl/cNG6teVP87j/cXGVG7twf
-         gANGOiu3hegwUPNZUX7M8h1iZ345ji+Jtd6BH02abOD4qZ67zBBvgpXHe0YSNFMxz/
-         prvNWQbg6ImzXCOyEEhXktg1B/DgtR2a2wjOQ9287bffv+6PlD81L+jf9c7S1ASARq
-         lC26afFLKIyAQ==
-Message-ID: <288d8b93-8dfc-2aa2-4c36-49a2612820fd@kernel.org>
-Date:   Fri, 21 Apr 2023 11:44:15 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH 2/7] ARM: dts: s5pv210: Adjust I2S entries to match spec
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Jonathan Bakker <xc-racer2@live.ca>, alim.akhtar@samsung.com
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Fri, 21 Apr 2023 05:57:39 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07566A5EA
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Apr 2023 02:57:38 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-504ecbfddd5so2097122a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Apr 2023 02:57:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1682071056; x=1684663056;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oHpDG2NFTHiJKeL0NreEJ/zw2aOnV+F8kaX5Ii5zVog=;
+        b=GtLFK4AGXdMtOXz+kfxIxStURuoCfjWNX7T9PLSxaOE4vaTEDD9Q24ifc+yUVkDhqa
+         pXq28re0GGbI+LE2VCM4tR0fXanS1Wlr5bn5y1WgL53DXrC7egbPhVg8hvckoLjnQbQi
+         mwl1V0cwQzD0Y5Qr+3rHfqeUL8yQKEhtjgnw71HaF+LkTEPNNcYztY50MtrxNaDxi6RX
+         YQoDWchpBxi7RiD2NmyXJMzUYD8Ztyl/S6t7B6eTeRGS++LjHXB7DGQYNJhFRo2cZWUw
+         ASfvhMoHFQ6rs7YM+3A7xy9Os57lG6+kDiTPzocMy46w80/YQpQOKxbgRhFmt5RkDn1m
+         2Fdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682071056; x=1684663056;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oHpDG2NFTHiJKeL0NreEJ/zw2aOnV+F8kaX5Ii5zVog=;
+        b=LxVGiQU+0cZ3I6onjsikWqN09ftW3cWmKCz/R7/tEjGQPvL6GCSyRUK/iFylZ0lHOq
+         FHcI/uCumIAB0hHAWMU/1rXKePHI1314f9qbvWiOZjBJUknJi+n6Yt/Q0EyiuX6PPimp
+         b3onHBnZA7kFGtjTK3pLiy5Sxn7MbpuQPMIq/Kquz9OFcoajZeFm8pJonWMfHjGcVdJI
+         NjNpTG/n0n8JC27IwfewFQWcth6p4hbFqQqdDmRwEAlTYPhb3UBMxUyWsdZMDtNOWUYY
+         /Oe2Mq6gwneZCgDktvZradW0pQTHp1bmKC6/whtUTnQ8Vv2xpBGwFxTyJfSiLUUIaLno
+         PKxQ==
+X-Gm-Message-State: AAQBX9cEtG15+uobHEJ5eeBx4g0gs5cI6Y2w9LjfnT7C2jTrEz/tL7Gh
+        HyUMH30NI6KjX6X1VFoufNe6arPeXet6GAtHrNU=
+X-Google-Smtp-Source: AKy350brurKh6ztiJQMzGbml9x3XPmS0CuNx0oUEUciJh5hj3eeB4wyqKXl+umFreGX4NJiRww2PnQ==
+X-Received: by 2002:aa7:da41:0:b0:505:4391:398 with SMTP id w1-20020aa7da41000000b0050543910398mr4726331eds.33.1682071056475;
+        Fri, 21 Apr 2023 02:57:36 -0700 (PDT)
+Received: from krzk-bin.. ([2a02:810d:15c0:828:668b:1e57:3caa:4d06])
+        by smtp.gmail.com with ESMTPSA id f7-20020a05640214c700b004fa380a14e7sm1686062edx.77.2023.04.21.02.57.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Apr 2023 02:57:35 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CY4PR04MB0567E33A07D8761C2D485327CB179@CY4PR04MB0567.namprd04.prod.outlook.com>
- <CY4PR04MB056784D54ADDBB4F57F82D4ACB189@CY4PR04MB0567.namprd04.prod.outlook.com>
- <4ebe2bb9-4f92-2dff-6737-d057e5950b24@kernel.org>
- <f44c9881-6f7b-f4f5-8225-e0c74c83fab1@kernel.org>
- <CY4PR04MB05677B21384FCE2013EB1B94CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
- <414f1ad8-8ee1-9913-c0e8-b4f66f3e7180@kernel.org>
-In-Reply-To: <414f1ad8-8ee1-9913-c0e8-b4f66f3e7180@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Cc:     replicant@osuosl.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Jonathan Bakker <xc-racer2@live.ca>,
+        Pawel Chmiel <pawel.mikolaj.chmiel@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/4] ARM: dts: s5pv210: align pin configuration nodes with bindings
+Date:   Fri, 21 Apr 2023 11:57:18 +0200
+Message-Id: <20230421095721.31857-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 24/03/2022 12:49, Krzysztof Kozlowski wrote:
-> On 23/03/2022 18:24, Jonathan Bakker wrote:
->> Hi Krzysztof,
->>
->> On 2022-03-23 8:15 a.m., Krzysztof Kozlowski wrote:
->>> On 23/03/2022 16:14, Krzysztof Kozlowski wrote:
->>>> On 23/03/2022 16:03, Jonathan Bakker wrote:
->>>>> Based on the device tree spec, clocks should be ordered tx/rx.
->>>>> Re-order from rx/tx to avoid warnings when running make dtbs_check
->>>>>
->>>>> Additionally, the number of #sound-dai-cells should be 1, not 0
->>>>>
->>>>> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
->>>>> ---
->>>>>  arch/arm/boot/dts/s5pv210-aries.dtsi |  2 +-
->>>>>  arch/arm/boot/dts/s5pv210.dtsi       | 18 +++++++++---------
->>>>>  2 files changed, 10 insertions(+), 10 deletions(-)
->>>>>
->>>>> diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
->>>>> index 70ff56daf4cb..503b5a50ef1a 100644
->>>>> --- a/arch/arm/boot/dts/s5pv210-aries.dtsi
->>>>> +++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
->>>>> @@ -644,7 +644,7 @@
->>>>>  };
->>>>>  
->>>>>  &i2s0 {
->>>>> -	dmas = <&pdma0 9>, <&pdma0 10>, <&pdma0 11>;
->>>>> +	dmas = <&pdma0 10>, <&pdma0 9>, <&pdma0 11>;
->>>>>  	status = "okay";
->>>>
->>>> Except that fix that's the same commit as here:
->>>> https://lore.kernel.org/all/20200907161141.31034-26-krzk@kernel.org/
->>>> so just extend it.
->>>>
->>>> sound-dai-cells should go to a separate commit. But are you sure they
->>>> are correct? The Fascinate 4G seems to be using them as cells=0.
->>>
->>> See my previous patch and discussion:
->>> https://lore.kernel.org/all/20200907161141.31034-10-krzk@kernel.org/
->>>
->>
->> Thanks, I'd totally forgotten about this series from the past.  I'll re-test
->> those commits and submit your copies of them in v2 if that's OK with you and
->> that they're confirmed functional?
-> 
-> My dma fixes change lacked this aries fix. The sound-dai-cells needed
-> more rethinking.
-> 
+Bindings expect that pins in initial and sleep states nodes end with
+'-pin':
 
-Hi Jonathan,
+  s5pv210-fascinate4g.dtb: pinctrl@e0200000: sleep-state: 'gpa0-0', ...
+    'mp07-7' do not match any of the regexes: '^(pin-[a-z0-9-]+|[a-z0-9-]+-pin)$', 'pinctrl-[0-9]+'
 
-Any plans for checking/fixing/testing and resending the sound-dai-cells
-fixes?
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm/boot/dts/s5pv210-pinctrl.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
+index 6d6daef9fb7a..ae0b4a423746 100644
+--- a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
++++ b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
+@@ -19,7 +19,7 @@
+ #include "s5pv210-pinctrl.h"
+ 
+ #define PIN_SLP(_pin, _mode, _pull)					\
+-	_pin {								\
++	pin- ## _pin {							\
+ 		samsung,pins = #_pin;					\
+ 		samsung,pin-con-pdn = <S5PV210_PIN_PDN_ ##_mode>;	\
+ 		samsung,pin-pud-pdn = <S5PV210_PIN_PULL_ ##_pull>;	\
+-- 
+2.34.1
 
