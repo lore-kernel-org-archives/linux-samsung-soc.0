@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 927F7C77B75
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Apr 2023 09:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C752C7618E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Apr 2023 09:57:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231928AbjDUJ5p (ORCPT
+        id S231488AbjDUJ5r (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 21 Apr 2023 05:57:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34750 "EHLO
+        Fri, 21 Apr 2023 05:57:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231882AbjDUJ5o (ORCPT
+        with ESMTP id S229820AbjDUJ5m (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Apr 2023 05:57:44 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9346CAD1B
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Apr 2023 02:57:41 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-5055141a8fdso2062404a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Apr 2023 02:57:41 -0700 (PDT)
+        Fri, 21 Apr 2023 05:57:42 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA7FCAF03
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Apr 2023 02:57:40 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-504eb1155d3so10623375a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Apr 2023 02:57:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682071060; x=1684663060;
+        d=linaro.org; s=google; t=1682071059; x=1684663059;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ll096wS+rMglwJUqHd7/WviOAK7D+NwskZNxj/VNilE=;
-        b=x7/VlZitTyclDzd4sI/XDO8hgRJmkhaUmI9qAJFg/WWdopJe/xPdFJtXHOWMBmHchF
-         SG7gMPPK3FCjaV+WIkN20GtRm1fo4/IXGT0W36JTywqUu7upngxjS16nlKRnDzkUlVRu
-         /hMEm9VpDBY9mSTq8fNB/Ea3yz5MS0YXEnr0ckIffzwD7SqxCJMjY/SG5HTNpnVw/zGj
-         u3oW9vGYwe6dNesRbHa8w1anFUjvNL27Z+nRJwnhFHyAiUgqmKQAvpyRlaFSOt4QN5mm
-         6kVTvkrnQk523qfuauWKWHvh8ZxQZzOLKTIlbFTF9Wzh7c/Q5asD+s44mwrPYuAbkwTC
-         JxeA==
+        bh=Js5v1t4KKnCssImdfdgDTmPMhwTRtlT+yhAUL5IKccM=;
+        b=gcv0aLa2GGY9gGt5yZH+k1fb+BL8NDxwHwPBapEkU9AqJsWo56kLftbQt7YVSrIkOq
+         wBK+IJTFCF6l2Bb60apK+xD8BCvTYfAPZkcRfW/S3rRYAW0EaYo73irxPnQkmtyDuXJD
+         XNUKQULVdtoXQlNfvlC/JaDjnMTZmhG9Vi5plGmcqRSgB2R2xk3h2ITPCceSqObkCmaH
+         RtQhoFOPDWphrmVGF87NykoyyOAKCjndvrLGA0obYmve8wjU3NTMKDt4AOI+JExCLAQa
+         wBwrjVO+8NzZ6CBu6+yLj25nZ5iDCslBD4qeM7Gvwy9jqr/yGauBPc4XhJNFstlgLNqs
+         XG7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682071060; x=1684663060;
+        d=1e100.net; s=20221208; t=1682071059; x=1684663059;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ll096wS+rMglwJUqHd7/WviOAK7D+NwskZNxj/VNilE=;
-        b=ee48E37jED8DQH8tK603e2NXdN1rj49yA33v5FeMOb8TWQX34mi14LEX1uovtyic1J
-         z46oP7qTw6piTHOxNCeXbcPMBrwbY6Hd39RqLJkgZSrisa2gk96DOAwpZVOxW74UP00m
-         Fn2bfF/IZiFvgnbtXBP88p/ezMWDDP+n/lNZywwYEzxLsoL3Yv84RtiidOwB/gwjGkoW
-         WU5gzljZXu2zwf15/NymzpqHeT7XlHW8zJGTZo/t9SPbNV6StWYASxAxvhJhNVi/84N4
-         k683KR2ongOpnjYEe1QwwxkKoVrrtJQuFs+imuS7YhsnhBhwreVoxX+Kjf+IByipiAYl
-         WCiw==
-X-Gm-Message-State: AAQBX9essl2LL3KC0g/2vKlhZrLqc7UJ1kghUvYA7YSlTrtOhTmjFCsW
-        T9h3YtlgZ0B+oQy6YrjlBDKkNw==
-X-Google-Smtp-Source: AKy350Ze8DH2vV1SQhJHC1mCp9M5Zia3JaHxu3ktakvGrCE/pUS0tx+VxY0PsWOLP6ct7di+QhLOAw==
-X-Received: by 2002:aa7:d683:0:b0:506:be43:e1ae with SMTP id d3-20020aa7d683000000b00506be43e1aemr4163022edr.34.1682071060070;
-        Fri, 21 Apr 2023 02:57:40 -0700 (PDT)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:668b:1e57:3caa:4d06])
-        by smtp.gmail.com with ESMTPSA id f7-20020a05640214c700b004fa380a14e7sm1686062edx.77.2023.04.21.02.57.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=Js5v1t4KKnCssImdfdgDTmPMhwTRtlT+yhAUL5IKccM=;
+        b=M3UYd8+X86fMo3eg2oOhPQ9NHIevpd9W2bS/ES9mIfWvoeJXcI0+3Jd0opr98JGTMd
+         1ArAvGWp1JUGVhyQj0Gy2zQuTpGxM2fiJe2B3Ue0OMh5wwJmeIClUNYnIXl+B9NcToEr
+         2EGpAv+jh4RXQMfpQT6Qha3/kH1GwcPTT6rrbiuv1zaxtECjOZeXwxoMfUaqBx4uGU0E
+         C6STi2Z7v+rJsjbhUZIVoW7dDiQnHo905ceyiHXgN0WXhPtH/E4yVkAQ++f7mfu18DwS
+         25/DNrK7W4Xzt0snDBvx71Rnna07SkIZ2GlVVMN++blDEIMO0qocQcdGE8fNrZPNf9oq
+         rpMg==
+X-Gm-Message-State: AAQBX9cFdgUy9VNQj/QVe8kZPvemy3vsxCLlphResvkjtHY7A/ukp+9i
+        VdXrw/btZbyLgeY8CH9leVQcYA==
+X-Google-Smtp-Source: AKy350ZixIK8ktBnRps+cQbP6PThFK5nahFtaZy5IB68hFKhBMjU0XhVYLDuYrLXtxvJteJt+QntTA==
+X-Received: by 2002:a05:6402:1353:b0:504:9e79:e86f with SMTP id y19-20020a056402135300b005049e79e86fmr4041444edw.18.1682071059033;
         Fri, 21 Apr 2023 02:57:39 -0700 (PDT)
+Received: from krzk-bin.. ([2a02:810d:15c0:828:668b:1e57:3caa:4d06])
+        by smtp.gmail.com with ESMTPSA id f7-20020a05640214c700b004fa380a14e7sm1686062edx.77.2023.04.21.02.57.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Apr 2023 02:57:38 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -62,9 +62,9 @@ Cc:     replicant@osuosl.org, phone-devel@vger.kernel.org,
         Jonathan Bakker <xc-racer2@live.ca>,
         Pawel Chmiel <pawel.mikolaj.chmiel@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 4/4] ARM: dts: s5pv210: add dummy 5V regulator for backlight on SMDKv210
-Date:   Fri, 21 Apr 2023 11:57:21 +0200
-Message-Id: <20230421095721.31857-4-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 3/4] ARM: dts: s5pv210: re-order MFC clock names to match Exynos and bindings
+Date:   Fri, 21 Apr 2023 11:57:20 +0200
+Message-Id: <20230421095721.31857-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230421095721.31857-1-krzysztof.kozlowski@linaro.org>
 References: <20230421095721.31857-1-krzysztof.kozlowski@linaro.org>
@@ -74,35 +74,29 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Backlight is supplied by DC5V regulator.  The DTS has no PMIC node, so
-just add a regulator-fixed to solve it and fix dtbs_check warning:
+Align the order of two MFC clocks with Exynos4 DTS and MFC bindings
 
-  s5pv210-smdkv210.dtb: backlight: 'power-supply' is a required property
-
+Link: https://lore.kernel.org/r/20230328114729.61436-1-aakarsh.jain@samsung.com
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm/boot/dts/s5pv210-smdkv210.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/s5pv210.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/s5pv210-smdkv210.dts b/arch/arm/boot/dts/s5pv210-smdkv210.dts
-index fbae768d65e2..6e26c67e0a26 100644
---- a/arch/arm/boot/dts/s5pv210-smdkv210.dts
-+++ b/arch/arm/boot/dts/s5pv210-smdkv210.dts
-@@ -55,6 +55,14 @@ backlight {
- 		default-brightness-level = <6>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pwm3_out>;
-+		power-supply = <&dc5v_reg>;
-+	};
-+
-+	dc5v_reg: regulator-0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "DC5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
- 	};
- };
+diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
+index fbe7f3d17f41..d9436bbf77c8 100644
+--- a/arch/arm/boot/dts/s5pv210.dtsi
++++ b/arch/arm/boot/dts/s5pv210.dtsi
+@@ -452,8 +452,8 @@ mfc: codec@f1700000 {
+ 			reg = <0xf1700000 0x10000>;
+ 			interrupt-parent = <&vic2>;
+ 			interrupts = <14>;
+-			clocks = <&clocks DOUT_MFC>, <&clocks CLK_MFC>;
+-			clock-names = "sclk_mfc", "mfc";
++			clocks = <&clocks CLK_MFC>, <&clocks DOUT_MFC>;
++			clock-names = "mfc", "sclk_mfc";
+ 		};
  
+ 		vic0: interrupt-controller@f2000000 {
 -- 
 2.34.1
 
