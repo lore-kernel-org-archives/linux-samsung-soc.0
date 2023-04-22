@@ -2,94 +2,89 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71756C7618E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Apr 2023 19:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E290C77B76
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Apr 2023 13:23:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231360AbjDUTCI (ORCPT
+        id S229539AbjDVNX4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 21 Apr 2023 15:02:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59130 "EHLO
+        Sat, 22 Apr 2023 09:23:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229666AbjDUTCH (ORCPT
+        with ESMTP id S229479AbjDVNXz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Apr 2023 15:02:07 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BCBB2D51
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Apr 2023 12:02:06 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-94eee951c70so296375366b.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Apr 2023 12:02:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682103725; x=1684695725;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2UBS6qwpsvEyxP32TXwMi8fHBLYovTzCgL1PEPMBQuA=;
-        b=DOB3Ioeq/rZx6nkgZaBN9mIZE/veSl/HxbvsKaSyApSgF2V9oBicjtQGTAItyB8aeM
-         c+Z5z1lMrvqZ4HFN1sTPky+Hiqs1p+x6O7KSwj3oC1dMtbobpgQq/UkJRpWr7G4MI8VB
-         HPESqVa/DTBbtyAyqJ8bPRosZY8w9rWgoKpEZRzmLQ77Xlo1qkntNhC2PoOIVTWpoEKQ
-         JwnJ621i04/JTTM6BTzty16Q/zkcjJvcgW+ewYUGcuar5b8ZKe9+tnCBuz1tbANmUK5L
-         ZRBE3HMOHoZDtPov+p7ovMRTJVhUthEggoClFDkCOUZDJDvXd1Ua56B5x6FgF3xY448V
-         bFnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682103725; x=1684695725;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2UBS6qwpsvEyxP32TXwMi8fHBLYovTzCgL1PEPMBQuA=;
-        b=NPgKlZ7oUMCwOdrsCp71XxxgqBNA0kntrwDNz+nb2JqwkAZwc1oU5E9PqV93A3mFz2
-         aDTcv9p2COt6m+QPgo2btm4a2iCUj2NwMevMHGVoXnjcjyGcEl21ouFxOB819UfTf1vJ
-         kLIoRCtp2lKAkAAE/58KZ1bTTyYgFiItgJgsWGnOlVRw8s0CtruCeySbDfMyOlPHFgRM
-         bQ50ajW52DlF1hrYL/AfWCR4HZiTaOt1WekuliBQ0KK8YGwa/03krPbtqMswY4ad8Jba
-         CTWFLLUM2sElQXZlr+VHEfcLhEodBwQSC5B6jxW59kaNtUKH/+pJ6DZ/hJAsbbM4PiVG
-         3fVQ==
-X-Gm-Message-State: AAQBX9cJfk2WQwcCvF2DaVSJVjAYg4FXjeChzVgw11436wnw6FozyAX8
-        FxQ8pNugVQS4xZOimeeXEaMP2w==
-X-Google-Smtp-Source: AKy350YsW2AxsPNc39fiucZ92EWX/p6AW1NDZ8Y2qO4dJNRiW3qIVSW2Q8N1evqIXOQheLneJbDZQA==
-X-Received: by 2002:a17:906:71c2:b0:94e:e35f:6fed with SMTP id i2-20020a17090671c200b0094ee35f6fedmr3622193ejk.75.1682103725011;
-        Fri, 21 Apr 2023 12:02:05 -0700 (PDT)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:687d:8c5:41cb:9883])
-        by smtp.gmail.com with ESMTPSA id x16-20020a170906805000b00953285b937asm2376231ejw.189.2023.04.21.12.02.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Apr 2023 12:02:04 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sat, 22 Apr 2023 09:23:55 -0400
+X-Greylist: delayed 424 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 22 Apr 2023 06:23:44 PDT
+Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 658BC1FED;
+        Sat, 22 Apr 2023 06:23:44 -0700 (PDT)
+Received: by www.linux-watchdog.org (Postfix, from userid 500)
+        id 34C5140A03; Sat, 22 Apr 2023 13:22:30 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 34C5140A03
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
+        s=odk20180602; t=1682162550;
+        bh=Ii2LxPiMXmjmzfkCcsyLVLNBXvLfF8tTgwZi1LaNQRs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q8/8ylASz/AorxRyuNxlecsO+KRPJRHJ3EEE/4vOU8kDMAjP3eMg5CJxEF2XyM6o0
+         WtuRdx9yYgBOJiKYU1ATHcsynFret0nscZad/nxWh3VqTdlJwsDX3MbhuKeqS+a9ZU
+         LY0EpaHeMr+YbfXI4P1TYP5OSTVMwwZ2OJpfPFnY=
+Date:   Sat, 22 Apr 2023 13:22:29 +0200
+From:   Wim Van Sebroeck <wim@linux-watchdog.org>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] ARM: dts: s5pv210: remove empty camera pinctrl configuration
-Date:   Fri, 21 Apr 2023 21:02:02 +0200
-Message-Id: <20230421190202.15471-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] watchdog: s3c2410_wdt: Use Use
+ devm_clk_get[_optional]_enabled() helpers
+Message-ID: <20230422112229.GA23896@www.linux-watchdog.org>
+References: <20230304165653.2179835-1-linux@roeck-us.net>
+ <20230306091048.mfrpexle24t6nwzy@pengutronix.de>
+ <20230418065603.rzpiazzw4upitynt@pengutronix.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230418065603.rzpiazzw4upitynt@pengutronix.de>
+User-Agent: Mutt/1.5.20 (2009-12-10)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The camera's pinctrl configuration is simply empty and not effective.
-Remove it to fix dtbs_check warnings like:
+Hi Uwe,
 
-  s5pv210-torbreck.dtb: camera@fa600000: pinctrl-0: True is not of type 'array'
+> Hello,
+> 
+> On Mon, Mar 06, 2023 at 10:10:48AM +0100, Uwe Kleine-König wrote:
+> > On Sat, Mar 04, 2023 at 08:56:52AM -0800, Guenter Roeck wrote:
+> > > The devm_clk_get[_optional]_enabled() helpers:
+> > >     - call devm_clk_get[_optional]()
+> > >     - call clk_prepare_enable() and register what is needed in order to
+> > >       call clk_disable_unprepare() when needed, as a managed resource.
+> > > 
+> > > This simplifies the code and avoids the calls to clk_disable_unprepare().
+> > > 
+> > > While at it, use dev_err_probe consistently, and use its return value
+> > > to return the error code.
+> > > 
+> > > Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> > > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> > 
+> > Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> 
+> This patch is in next now as b05a2e58c16c47f3d752b7db1714ef077e5b82d9.
+> My name occurs twice in the tag area, once it is mangled as
+> 
+> 	Uwe Kleine-K=F6nig
+> 
+> I would welcome fixing that (i.e. s/=F6/ö/). When this commit is
+> touched, you can also do s/Use Use/Use/ in the Subject.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm/boot/dts/s5pv210.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+Fixed.
 
-diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
-index d9436bbf77c8..faa3682ab5dd 100644
---- a/arch/arm/boot/dts/s5pv210.dtsi
-+++ b/arch/arm/boot/dts/s5pv210.dtsi
-@@ -549,8 +549,6 @@ i2c1: i2c@fab00000 {
- 
- 		camera: camera@fa600000 {
- 			compatible = "samsung,fimc";
--			pinctrl-names = "default";
--			pinctrl-0 = <>;
- 			clocks = <&clocks SCLK_CAM0>, <&clocks SCLK_CAM1>;
- 			clock-names = "sclk_cam0", "sclk_cam1";
- 			#address-cells = <1>;
--- 
-2.34.1
+Kind regards,
+wim.
 
