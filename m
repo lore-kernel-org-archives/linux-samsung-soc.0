@@ -2,89 +2,128 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E290C77B76
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Apr 2023 13:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C8D1C7EE20
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Apr 2023 13:50:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229539AbjDVNX4 (ORCPT
+        id S229926AbjDVNuK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 22 Apr 2023 09:23:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37788 "EHLO
+        Sat, 22 Apr 2023 09:50:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbjDVNXz (ORCPT
+        with ESMTP id S229554AbjDVNuH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 22 Apr 2023 09:23:55 -0400
-X-Greylist: delayed 424 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 22 Apr 2023 06:23:44 PDT
-Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 658BC1FED;
-        Sat, 22 Apr 2023 06:23:44 -0700 (PDT)
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-        id 34C5140A03; Sat, 22 Apr 2023 13:22:30 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 34C5140A03
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-        s=odk20180602; t=1682162550;
-        bh=Ii2LxPiMXmjmzfkCcsyLVLNBXvLfF8tTgwZi1LaNQRs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q8/8ylASz/AorxRyuNxlecsO+KRPJRHJ3EEE/4vOU8kDMAjP3eMg5CJxEF2XyM6o0
-         WtuRdx9yYgBOJiKYU1ATHcsynFret0nscZad/nxWh3VqTdlJwsDX3MbhuKeqS+a9ZU
-         LY0EpaHeMr+YbfXI4P1TYP5OSTVMwwZ2OJpfPFnY=
-Date:   Sat, 22 Apr 2023 13:22:29 +0200
-From:   Wim Van Sebroeck <wim@linux-watchdog.org>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] watchdog: s3c2410_wdt: Use Use
- devm_clk_get[_optional]_enabled() helpers
-Message-ID: <20230422112229.GA23896@www.linux-watchdog.org>
-References: <20230304165653.2179835-1-linux@roeck-us.net>
- <20230306091048.mfrpexle24t6nwzy@pengutronix.de>
- <20230418065603.rzpiazzw4upitynt@pengutronix.de>
+        Sat, 22 Apr 2023 09:50:07 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 869AA1BEB;
+        Sat, 22 Apr 2023 06:50:05 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id 4fb4d7f45d1cf-506bfe81303so4536514a12.1;
+        Sat, 22 Apr 2023 06:50:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682171404; x=1684763404;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WFcPcfg308BxIs2D12U44N+18aoFFJxwabh2xPhsPSk=;
+        b=ZRWs3JpD4Cp5/pHGbDd0vrTAVGX7MoGwPJIJGgfDW35EVVzY7pVHO1cr+CMew4W30p
+         LssfreTk3/208zOZke8KMcbc5fRWXdHA1gLcffdeonmQ1cUm09zZdb7Qax14xXqktigh
+         QxVFZlPxVn+VDM9CKTWGq2LYuxR3RzYjFrprgWqmNAwY/xi4H8xNsc+kt0VKUI+/YJis
+         qEI1pzNybL5k5euRWSNV8a+Zk0eVTMAXFwkhC0Ved4lMSY7As7fGXewYKgf18p+dGQsc
+         OWQWry1WTSwtalqKuUvjPaulrvkzhckKJWomjmsPu5aIEGm3MfwYgVjIgZ9AR3G3sIm1
+         gFYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682171404; x=1684763404;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WFcPcfg308BxIs2D12U44N+18aoFFJxwabh2xPhsPSk=;
+        b=YHtdifYPr278Wus8Jc+cYsuOrZjDGWe//gWavURvo2GnS9R1L/aRvE2JUcqZ6wkKOA
+         y0ZOCA1VCyZtXOtrgLstzJ15jABFFTg64pLhV0iBhZUuyhhO1gFxQDWf9Sqa9jUEG6qS
+         /wp6Fb9pizTEKTxL0OafhG1UGpoZx+lWHDtnouP5tTWfTaxf9mBZKaQCrddgj98Klf3t
+         XPJ2acbJpkuOZC/Whavn9eYNfA9JLEyoDWO/8tm1ztg/U8mSI5b8kEGABCjCBscVFSEV
+         TTL1tkbvZt3WrZ8AGcG0/CPsJPA9wUtPPy4STpUnJIcaGI7vWYZRukwUmgFms7nnmFDP
+         BI7A==
+X-Gm-Message-State: AAQBX9dXR9NKae4d9v4NVWtsAEXk99ZivEGy5yoJOGvcFv77i/9/Qnnd
+        /y6MFtbnC4GofUpaPSVF/3k=
+X-Google-Smtp-Source: AKy350agXYSrpjkbP6WbEUuG++nS8/psneQ03hXKL+jNOlMEImcYh4gHMeo5CK525yNYdOAzt8ZgwA==
+X-Received: by 2002:aa7:da41:0:b0:506:8660:77a3 with SMTP id w1-20020aa7da41000000b00506866077a3mr8228114eds.37.1682171403662;
+        Sat, 22 Apr 2023 06:50:03 -0700 (PDT)
+Received: from [192.168.50.244] (83.11.224.11.ipv4.supernova.orange.pl. [83.11.224.11])
+        by smtp.gmail.com with ESMTPSA id v2-20020aa7d802000000b004ad601533a3sm2846990edq.55.2023.04.22.06.50.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Apr 2023 06:50:03 -0700 (PDT)
+Message-ID: <5818b5be-f9cc-8009-e2a4-1049d84a944d@gmail.com>
+Date:   Sat, 22 Apr 2023 15:50:01 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230418065603.rzpiazzw4upitynt@pengutronix.de>
-User-Agent: Mutt/1.5.20 (2009-12-10)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+From:   Artur Weber <aweber.kernel@gmail.com>
+Subject: Re: [PATCH v2 12/12] ARM: dts: exynos: Add Samsung Galaxy Tab 3 8.0
+ boards
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>, soc@kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-phy@lists.infradead.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+References: <20230416133422.1949-1-aweber.kernel@gmail.com>
+ <20230416133422.1949-13-aweber.kernel@gmail.com>
+ <9aba4c1d-93f3-7613-6fb5-0591a281ec0a@linaro.org>
+Content-Language: en-US
+In-Reply-To: <9aba4c1d-93f3-7613-6fb5-0591a281ec0a@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Uwe,
+Hi,
 
-> Hello,
-> 
-> On Mon, Mar 06, 2023 at 10:10:48AM +0100, Uwe Kleine-König wrote:
-> > On Sat, Mar 04, 2023 at 08:56:52AM -0800, Guenter Roeck wrote:
-> > > The devm_clk_get[_optional]_enabled() helpers:
-> > >     - call devm_clk_get[_optional]()
-> > >     - call clk_prepare_enable() and register what is needed in order to
-> > >       call clk_disable_unprepare() when needed, as a managed resource.
-> > > 
-> > > This simplifies the code and avoids the calls to clk_disable_unprepare().
-> > > 
-> > > While at it, use dev_err_probe consistently, and use its return value
-> > > to return the error code.
-> > > 
-> > > Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> > > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> > 
-> > Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> 
-> This patch is in next now as b05a2e58c16c47f3d752b7db1714ef077e5b82d9.
-> My name occurs twice in the tag area, once it is mangled as
-> 
-> 	Uwe Kleine-K=F6nig
-> 
-> I would welcome fixing that (i.e. s/=F6/ö/). When this commit is
-> touched, you can also do s/Use Use/Use/ in the Subject.
+thank you for the review.
 
-Fixed.
+On 16/04/2023 20:26, Krzysztof Kozlowski wrote:
+> On 16/04/2023 15:34, Artur Weber wrote:
+> [...]
+>> +
+>> +		backlight: backlight@2c {
+>> +			compatible = "ti,lp8556";
+> 
+> You need to convert bindings to DT schema first. I don't accept any new
+> usages of TXT bindings anymore, sorry.
+> 
 
-Kind regards,
-wim.
+I'll be taking a look at the conversion (will likely submit it as a
+separate patchset, since I've been looking into some minor driver-side
+changes there as well...), although I have one question - who should I
+list as the bindings maintainer ("maintainers" field in YAML format)? Is
+this someone specific for that subsystem, or the author of the driver,
+or someone else? (It's worth noting that there isn't a maintainer listed
+for the lp855x driver in the MAINTAINERS file.)
+Documentation/devicetree/bindings/writing-schema.rst doesn't really
+mention anything about this.
+
+>> +&bus_acp {
+> 
+> Order label/phandle overrides by name, so acp before dmc.
+> 
+
+Out of curiosity - should I order the children of the / node or the
+pinctrl nodes by name as well?
+
+Best regards
+Artur Weber
 
