@@ -2,65 +2,66 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1F8C77B73
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 23 Apr 2023 08:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05568C77B76
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 23 Apr 2023 12:53:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229643AbjDWIZv (ORCPT
+        id S229603AbjDWMxV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 23 Apr 2023 04:25:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42932 "EHLO
+        Sun, 23 Apr 2023 08:53:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229657AbjDWIZs (ORCPT
+        with ESMTP id S230336AbjDWMxD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 23 Apr 2023 04:25:48 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62CB519B1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Apr 2023 01:25:46 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-506b8c6bc07so5538298a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Apr 2023 01:25:46 -0700 (PDT)
+        Sun, 23 Apr 2023 08:53:03 -0400
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5962B10D0;
+        Sun, 23 Apr 2023 05:53:02 -0700 (PDT)
+Received: by mail-ed1-x542.google.com with SMTP id 4fb4d7f45d1cf-5058181d58dso5970371a12.1;
+        Sun, 23 Apr 2023 05:53:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682238345; x=1684830345;
+        d=gmail.com; s=20221208; t=1682254381; x=1684846381;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=qETio9rQ+I+ApbmjseQZz+b4a2GrMopfzyspvxvfmDI=;
-        b=CNlnud9ixhpA7rN5EkdFypqZA/9EHtbHo0dnoloz/zm9AmQu9Q7dFAPSj4qpSWmA20
-         LojHlppqQf6E2hQUooLbrCEqRzfDtZLvo/byw7QN4ujUSkjLnpmj3Ejl9UP4EoVVkVJJ
-         5js84TxfRY5fzJBR9v7M6CZkkJz11L7tpmtrEsbML+0/W5NrrY2NHnQV0Y86EoVyi4tG
-         dFteiFaIqHvaV4yAmni+nFeReHPTtKmlzPNBhQyj4eEC6dYOPxKpOgh7Fesd9EpWlnIp
-         bB7P6hgsKucCZU2KN3vOd2+7LnBC+WlY/jANPYX1BQ0wf8f8O0Bm1xBwgY0eYj70aW5E
-         hD9g==
+        bh=iytNL3ionK0y40hikstW/BCZlPf3T/1Wm7ZwrV0sJlw=;
+        b=mxFY2HrILM2cerTaYDSv71GR+WQ2TxeE3y9At9pEM0MB96S0zeycHmvj5b2o2Nyfah
+         8Hl6doywdvO32gzAWuXTOUT7U2gYPyaTtw08w4VvSPX7Ciu6zck0aaLKatWWicqz0szb
+         IRmEldsEp1zTkz495xH/zXysU/vFiKUiGzyvNn7aSQE7K0RkI0v9udqJrqic2TQ2bNwn
+         cZcriicgvgEM8HKLukppbCVWxS5Wztoc8HBi9T6Hpy8HogBf7Dg3UEEfv1/j8RSxD1GD
+         S2VJGecIOyRBelHB9ALxDbN5CJd5KkrmJEWVjCMVNimtYnhkWEcLruPlcm57ib1JZTC1
+         Cjng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682238345; x=1684830345;
+        d=1e100.net; s=20221208; t=1682254381; x=1684846381;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qETio9rQ+I+ApbmjseQZz+b4a2GrMopfzyspvxvfmDI=;
-        b=QcrdtmuvzSs1bj2vbhFnif9zEhP/uYEzbdxzHS64lq+1Uw3mvbkDpsMW5iVAdPqj9o
-         k8AuQLKoO4K0LmzX6Py3M+p1w1cULYYCGnsw7Riqwo9AX4ZST7MLbbm97jObxybgfrKS
-         oCNeC2iBnIz8Zs+kT89dQzf2XzfT5f38YUdnu1PRG7aTaLE2ouA3H0MPT1g70cYNn1hk
-         FqG4UZ2En2Oy3WQuHctudAMDjZdHvGOTxdvRbmruiIF7yvdIC9KhYi+jzkTcpki/JmsD
-         VJsxcseVcF3szl7GFZ4vjrndCiRq53NiUsKwywlSuXRT14OZvoR+KE7jjYlJ3trBC8E7
-         g8Bw==
-X-Gm-Message-State: AAQBX9ee4UrWcvKI4Sdp5LEDbc6NXYLodzmBiaAGLe3+sMuHmpQGvVXv
-        frp+lpPTpSunmDB/7mpwoAD9qg==
-X-Google-Smtp-Source: AKy350a52plHENuAAwWUdq2bp/DaP8sNnY6cqie/09b6KCgt6I5FlFz697CL/6UK2AIp1gEeHdBZUg==
-X-Received: by 2002:a05:6402:74c:b0:506:976e:5242 with SMTP id p12-20020a056402074c00b00506976e5242mr8618775edy.25.1682238344819;
-        Sun, 23 Apr 2023 01:25:44 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:5d52:d466:d57f:118c? ([2a02:810d:15c0:828:5d52:d466:d57f:118c])
-        by smtp.gmail.com with ESMTPSA id p21-20020a056402075500b0050684020babsm3464665edy.27.2023.04.23.01.25.43
+        bh=iytNL3ionK0y40hikstW/BCZlPf3T/1Wm7ZwrV0sJlw=;
+        b=HwVlsVKpHYSVNm7yqFgG+1kXXHQzQCQsYHt3X13aKd+lvpjVAIE1FGo00XVvLVKKcF
+         Cf4GtwMpNteY3p0El13f6u1JdK3nm5P5uBJc9wuxFfkj359cB+5FqHNvzkQvDijIbxrk
+         PCHEYFNnxq9uYG3vK5bm+HIBOb/yMfmY8gavF7hizcN4jOez/suFDslH+yMBiWhhBCGz
+         pojp5xJMhurlbcTA2iAtLnaqtbUgLGdnaRQ076U6rFcWgzk3B64OXTKLLExKWi1ASWka
+         jHgwNQ6YVmaXDmWkUdlOWlAhNm56cMjZXxkUQwtJRMRX+fE/OKLOPkgh5iX85aRAYHfb
+         zqUg==
+X-Gm-Message-State: AAQBX9frco1oStuokQmgCdyJreA1J/fWUoFKK6W4Yg9jvzSQKgX+Lp9k
+        uZFBKGkgkoKynOkuN8sDwSo=
+X-Google-Smtp-Source: AKy350bSWYI/SvP558yd57KKjIp5PRfYPqiEM6lRUyYP8OmlVk45UlwzWUqDELXx4SoaZLUxhRnKcA==
+X-Received: by 2002:a05:6402:641:b0:504:921b:825 with SMTP id u1-20020a056402064100b00504921b0825mr9276422edx.36.1682254380636;
+        Sun, 23 Apr 2023 05:53:00 -0700 (PDT)
+Received: from [192.168.50.244] (83.11.224.11.ipv4.supernova.orange.pl. [83.11.224.11])
+        by smtp.gmail.com with ESMTPSA id i21-20020a05640200d500b00501d73cfc86sm3847476edu.9.2023.04.23.05.52.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Apr 2023 01:25:44 -0700 (PDT)
-Message-ID: <80c6cfbd-5661-ba39-2193-c6ae8eba3648@linaro.org>
-Date:   Sun, 23 Apr 2023 10:25:42 +0200
+        Sun, 23 Apr 2023 05:53:00 -0700 (PDT)
+Message-ID: <c717e975-092a-5090-89de-ec08237388a3@gmail.com>
+Date:   Sun, 23 Apr 2023 14:52:58 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
 Subject: Re: [PATCH v2 12/12] ARM: dts: exynos: Add Samsung Galaxy Tab 3 8.0
  boards
 Content-Language: en-US
-To:     Artur Weber <aweber.kernel@gmail.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+To:     Henrik Grimler <henrik@grimler.se>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         Rob Herring <robh+dt@kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
@@ -81,62 +82,56 @@ Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         linux-phy@lists.infradead.org,
         ~postmarketos/upstreaming@lists.sr.ht
 References: <20230416133422.1949-1-aweber.kernel@gmail.com>
- <20230416133422.1949-13-aweber.kernel@gmail.com>
- <9aba4c1d-93f3-7613-6fb5-0591a281ec0a@linaro.org>
- <5818b5be-f9cc-8009-e2a4-1049d84a944d@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <5818b5be-f9cc-8009-e2a4-1049d84a944d@gmail.com>
+ <20230416133422.1949-13-aweber.kernel@gmail.com> <ZEBN2AciChG03FpM@L14.lan>
+From:   Artur Weber <aweber.kernel@gmail.com>
+In-Reply-To: <ZEBN2AciChG03FpM@L14.lan>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 22/04/2023 15:50, Artur Weber wrote:
-> Hi,
+Hi,
+
+On 19/04/2023 22:23, Henrik Grimler wrote:
+>> +	memory@40000000 {
+>> +		device_type = "memory";
+>> +
+>> +		/* Technically 2GB, but last 1GB is flaky, so we ignore it for now */
+>> +		reg = <0x40000000 0x3FC00000>;
 > 
-> thank you for the review.
-> 
-> On 16/04/2023 20:26, Krzysztof Kozlowski wrote:
->> On 16/04/2023 15:34, Artur Weber wrote:
->> [...]
->>> +
->>> +		backlight: backlight@2c {
->>> +			compatible = "ti,lp8556";
->>
->> You need to convert bindings to DT schema first. I don't accept any new
->> usages of TXT bindings anymore, sorry.
->>
-> 
-> I'll be taking a look at the conversion (will likely submit it as a
-> separate patchset, since I've been looking into some minor driver-side
-> changes there as well...), although I have one question - who should I
-> list as the bindings maintainer ("maintainers" field in YAML format)? Is
+> Comment says 1GB but you are skipping 1GB+4MB.  Is the entire region
+> flaky or perhaps just the 4MB region in the middle?
 
-Anyone who has interest in the device/driver, like driver maintainer,
-device developers, you erc.
+I copied the memory bank configuration from downstream: according to
+boot logs and ATAG data from the stock bootloader, there are two memory
+regions: one starting at 0x40000000 (size: 1020M) and one starting at
+0x80000000 (size: 1024M). Here, only the first bank is added, since the
+second one doesn't work.
 
-> this someone specific for that subsystem, or the author of the driver,
-> or someone else? (It's worth noting that there isn't a maintainer listed
-> for the lp855x driver in the MAINTAINERS file.)
-> Documentation/devicetree/bindings/writing-schema.rst doesn't really
-> mention anything about this.
-> 
->>> +&bus_acp {
->>
->> Order label/phandle overrides by name, so acp before dmc.
->>
-> 
-> Out of curiosity - should I order the children of the / node 
+I tried changing the size of this first bank to the full 1024M, and it
+seems to be booting fine; still, I'd rather leave this at the same size
+as claimed by downstream and ATAG.
 
-Yes.
+The second memory bank (anything past 0x80000000) doesn't work, as
+downstream has some weird special behavior regarding it: that region
+contains "page holes", and there's a check that discards every second
+page frame in that region[1][2]. That also means my comment is incorrect
+- indeed, 2GB of memory are passed to the kernel, but the second 1GB is
+effectively halved, leaving us with 1.5GB. (That's an oversight on my
+part - I wasn't aware of this when writing the DTS initially, and only
+checked this more in-depth now.)
 
-> or the
-> pinctrl nodes by name as well?
+I'm not sure if there's a way to re-create this behavior in mainline;
+the closest thing I can think of is making a separate entry in reg for
+each of the working pages, but that would leave us with hundreds of
+lines, which is not ideal... so it's much easier to just leave it unused
+for now.
 
-These are usually by pin name.
+Best regards
+Artur Weber
 
-
-Best regards,
-Krzysztof
-
+[1]
+https://github.com/gr8nole/android_kernel_samsung_smdk4x12/blob/786b1473b93aabf40c18a2dca035503cce5ecac7/arch/arm/mm/init.c#L413-L414
+[2]
+https://github.com/gr8nole/android_kernel_samsung_smdk4x12/blob/786b1473b93aabf40c18a2dca035503cce5ecac7/arch/arm/mach-exynos/include/mach/memory.h#L30-L38
