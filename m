@@ -2,163 +2,130 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE9EEC77B73
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 23 Apr 2023 05:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4593DC77B73
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 23 Apr 2023 08:08:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230047AbjDWFG1 (ORCPT
+        id S229458AbjDWIIo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 23 Apr 2023 01:06:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38134 "EHLO
+        Sun, 23 Apr 2023 04:08:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229604AbjDWFGZ (ORCPT
+        with ESMTP id S229453AbjDWIIn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 23 Apr 2023 01:06:25 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93C631FEB
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Apr 2023 22:06:21 -0700 (PDT)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230423050617epoutp02e1ac0976fdad69006c9937a1c98f56f4~Yd-o6PoJs2804028040epoutp02U
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Apr 2023 05:06:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230423050617epoutp02e1ac0976fdad69006c9937a1c98f56f4~Yd-o6PoJs2804028040epoutp02U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1682226377;
-        bh=uxiSEk/esPlWCRRTZnSGg1y8KEbrKWSrSrE4p9D0d4A=;
-        h=From:To:In-Reply-To:Subject:Date:References:From;
-        b=qfamblvhwYYQ11bYWBDNedtDjSUyjIR0dQIayDUeYkzUJcua6GnnBzsWD7l9a0zxI
-         zsrUQqCaBJzaLzg4ceWoXnUMVK/9JqmPNR7gFSBVHWufLFca/DmSbspChwSKrvxuJJ
-         Hmi61/iL4bf1SEf6+sAttda+L89SYG0NepE4R978=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20230423050616epcas5p3aebf0eac048e389fc317deb6271e5290~Yd-oguGUG0894908949epcas5p3U;
-        Sun, 23 Apr 2023 05:06:16 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.177]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4Q3x7B5zRvz4x9Pr; Sun, 23 Apr
-        2023 05:06:14 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        48.45.09987.6CCB4446; Sun, 23 Apr 2023 14:06:14 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20230423050614epcas5p3d55915ba1d10d112e71894107a7ca070~Yd-mO1RvN0894908949epcas5p3R;
-        Sun, 23 Apr 2023 05:06:14 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230423050614epsmtrp1d3eb14916e7336fcaa1e046c55c5f955~Yd-mOIA0w1321413214epsmtrp1d;
-        Sun, 23 Apr 2023 05:06:14 +0000 (GMT)
-X-AuditID: b6c32a4b-7fbff70000002703-26-6444bcc68618
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        EC.19.08279.6CCB4446; Sun, 23 Apr 2023 14:06:14 +0900 (KST)
-Received: from alimakhtar04 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230423050613epsmtip12d9b89458ab5ac84fe1c9c9e177cc1fa~Yd-lFRO_U2405324053epsmtip1B;
-        Sun, 23 Apr 2023 05:06:13 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20230421190202.15471-1-krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH] ARM: dts: s5pv210: remove empty camera pinctrl
- configuration
-Date:   Sun, 23 Apr 2023 10:36:11 +0530
-Message-ID: <340901d975a1$53de6ad0$fb9b4070$@samsung.com>
+        Sun, 23 Apr 2023 04:08:43 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14F24172C
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Apr 2023 01:08:42 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pqUln-0003lR-Hu; Sun, 23 Apr 2023 10:08:27 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pqUll-00DCWp-0g; Sun, 23 Apr 2023 10:08:25 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pqUlk-00FVtr-BJ; Sun, 23 Apr 2023 10:08:24 +0200
+Date:   Sun, 23 Apr 2023 10:08:24 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] watchdog: s3c2410_wdt: Use Use
+ devm_clk_get[_optional]_enabled() helpers
+Message-ID: <20230423080824.7u2ydmmwk4jdbobm@pengutronix.de>
+References: <20230304165653.2179835-1-linux@roeck-us.net>
+ <20230306091048.mfrpexle24t6nwzy@pengutronix.de>
+ <20230418065603.rzpiazzw4upitynt@pengutronix.de>
+ <20230422112229.GA23896@www.linux-watchdog.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGoG4MPsMzRMzzdGHd0mLCSi9wmTAIxB2sIr4mDHrA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEJsWRmVeSWpSXmKPExsWy7bCmhu6xPS4pBk1fdC3mHznHatH34iGz
-        xd7XW9ktNj2+xmpxedccNosZ5/cxWbTuPcLuwO6xaVUnm8eda3vYPDYvqff4vEkugCUq2yYj
-        NTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6AAlhbLEnFKg
-        UEBicbGSvp1NUX5pSapCRn5xia1SakFKToFJgV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbGrd6d
-        zAU/uCsuvn/K2sD4k7OLkZNDQsBE4l/nRkYQW0hgN6PEwoVVEPYnRon7K7m6GLmA7G+MEi8n
-        TmGBaTizdQkjRGIvo8SBv3PZIJyXjBJnJl0GG8UmoCuxY3EbWEJEYBOTxJf9e9m7GDk4OAVc
-        JCZdkgExhQWCJX7cywQpZxFQlVjVdosJxOYVsJQ4vPQJK4QtKHFy5hOwxcwC8hLb385hhjhC
-        QeLn02VgNSICVhIHzmxig6gRl3h59Ag7yFoJgVYOiZc3u6AaXCQeTrkA9YGwxKvjW9ghbCmJ
-        l/1tYKdJCHhILPojBRHOkHi7fD0jhG0vceDKHBaQEmYBTYn1u/QhVvFJ9P5+wgTRySvR0SYE
-        Ua0q0fzuKtQiaYmJ3d2sELaHxP7Ni1khITWdUeLb3AlsExgVZiH5chaSL2ch+WYWwuYFjCyr
-        GCVTC4pz01OLTQuM81LL4bGdnJ+7iRGcOLW8dzA+evBB7xAjEwfjIUYJDmYlEV6PUqcUId6U
-        xMqq1KL8+KLSnNTiQ4ymwKCfyCwlmpwPTN15JfGGJpYGJmZmZiaWxmaGSuK86rYnk4UE0hNL
-        UrNTUwtSi2D6mDg4pRqYUs78/n7qkzOrUa9nddKCmfyHrxf2rFcQmLtvqoLQyaqCuCktLCVf
-        v55/MaFs3ctf8xdl8izYIvH/o/QELu+pd1cI/VqYrab+kW/Le92qXVlbgyf7S32bWFy58ESA
-        8pX6j3F8+70Ftnju0E6qdlCqn+s+tamm/MHC1IMy16dXOmyou3U7bkag/5UwE3eGM83r2ASZ
-        P71ewcqev3unxfrX5lLvrJ4fPDjV1XDndWXjhuwvmeXhWi/+Hp6TsY03b63GR/P1OxwZaz++
-        EXh3d/XTKw9C8tt6t95V9mZfZHrE66eC25xLnlZZalvP7b7+uyLiQ7PQ3XM3YiZ7N3kIb+JV
-        M41dezi+WEtoisjyJK3JS5VYijMSDbWYi4oTARjoyc8lBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrALMWRmVeSWpSXmKPExsWy7bCSnO6xPS4pBjdWSVrMP3KO1aLvxUNm
-        i72vt7JbbHp8jdXi8q45bBYzzu9jsmjde4Tdgd1j06pONo871/aweWxeUu/xeZNcAEsUl01K
-        ak5mWWqRvl0CV8at3p3MBT+4Ky6+f8rawPiTs4uRk0NCwETizNYljF2MXBxCArsZJX7sPc0M
-        kZCWuL5xAjuELSyx8t9zdoii54wSp95dYgJJsAnoSuxY3MYGkhAR2MYksar5DxtE1VRGiQ9X
-        zwBVcXBwCrhITLokA9IgLBAocfnYDLANLAKqEqvaboEN4hWwlDi89AkrhC0ocXLmExaQVmYB
-        PYm2jYwgYWYBeYntb+dAHacg8fPpMrByEQEriQNnNrFB1IhLvDx6hH0Co9AsJJNmIUyahWTS
-        LCQdCxhZVjFKphYU56bnFhsWGOallusVJ+YWl+al6yXn525iBEeKluYOxu2rPugdYmTiYDzE
-        KMHBrCTC61HqlCLEm5JYWZValB9fVJqTWnyIUZqDRUmc90LXyXghgfTEktTs1NSC1CKYLBMH
-        p1QD0+RENc4rK7j6HjIphbRGKyhdEXk56aylsudMLe2lt63cLurem/XV4ff3+ryA8xP8K5/b
-        npjIyGIQs0rZ27Uy6OUKt6Z59zq+LTgulVZ/7/tF4/tTzugfN5cPtm+emKN/tqZ1u6p934tJ
-        G1/KTOqb+ueH1eLO871/S/58WNt2b4m6ZUtf4fELcepMp1L/zH25py9nlfy6CSFCX7bKKW34
-        dH7bJYeLrye/vBL6f5Lx+cx+iXS7DdoMv07PlDz531xsZmoJ/2a1HYk1XxWrujS2CSQ79XKz
-        3Zpzukxapz22KUp0g1xBvXZO7DWbeAult+1XarMUNffZ7kiefqRfPW9i5DHd2SJS0s6W11d8
-        eGFvrsRSnJFoqMVcVJwIAEsqoIUDAwAA
-X-CMS-MailID: 20230423050614epcas5p3d55915ba1d10d112e71894107a7ca070
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230421190209epcas5p1ad0aa67d1b9d19f746f42412c4424f15
-References: <CGME20230421190209epcas5p1ad0aa67d1b9d19f746f42412c4424f15@epcas5p1.samsung.com>
-        <20230421190202.15471-1-krzysztof.kozlowski@linaro.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ii4dxdi23ndnywjj"
+Content-Disposition: inline
+In-Reply-To: <20230422112229.GA23896@www.linux-watchdog.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
+--ii4dxdi23ndnywjj
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Sent: Saturday, April 22, 2023 12:32 AM
-> To: Rob Herring <robh+dt@kernel.org>; Krzysztof Kozlowski
-> <krzysztof.kozlowski+dt@linaro.org>; Alim Akhtar
-> <alim.akhtar@samsung.com>; devicetree@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
-> kernel@vger.kernel.org
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Subject: [PATCH] ARM: dts: s5pv210: remove empty camera pinctrl
-> configuration
-> 
-> The camera's pinctrl configuration is simply empty and not effective.
-> Remove it to fix dtbs_check warnings like:
-> 
->   s5pv210-torbreck.dtb: camera@fa600000: pinctrl-0: True is not of type
-> 'array'
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+On Sat, Apr 22, 2023 at 01:22:29PM +0200, Wim Van Sebroeck wrote:
+> Hi Uwe,
+>=20
+> > Hello,
+> >=20
+> > On Mon, Mar 06, 2023 at 10:10:48AM +0100, Uwe Kleine-K=F6nig wrote:
+> > > On Sat, Mar 04, 2023 at 08:56:52AM -0800, Guenter Roeck wrote:
+> > > > The devm_clk_get[_optional]_enabled() helpers:
+> > > >     - call devm_clk_get[_optional]()
+> > > >     - call clk_prepare_enable() and register what is needed in orde=
+r to
+> > > >       call clk_disable_unprepare() when needed, as a managed resour=
+ce.
+> > > >=20
+> > > > This simplifies the code and avoids the calls to clk_disable_unprep=
+are().
+> > > >=20
+> > > > While at it, use dev_err_probe consistently, and use its return val=
+ue
+> > > > to return the error code.
+> > > >=20
+> > > > Cc: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> > > > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> > >=20
+> > > Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> >=20
+> > This patch is in next now as b05a2e58c16c47f3d752b7db1714ef077e5b82d9.
+> > My name occurs twice in the tag area, once it is mangled as
+> >=20
+> > 	Uwe Kleine-K=3DF6nig
+> >=20
+> > I would welcome fixing that (i.e. s/=3DF6/=F6/). When this commit is
+> > touched, you can also do s/Use Use/Use/ in the Subject.
+>=20
+> Fixed.
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+Looking at the output of
 
->  arch/arm/boot/dts/s5pv210.dtsi | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/s5pv210.dtsi
-> b/arch/arm/boot/dts/s5pv210.dtsi index d9436bbf77c8..faa3682ab5dd
-> 100644
-> --- a/arch/arm/boot/dts/s5pv210.dtsi
-> +++ b/arch/arm/boot/dts/s5pv210.dtsi
-> @@ -549,8 +549,6 @@ i2c1: i2c@fab00000 {
-> 
->  		camera: camera@fa600000 {
->  			compatible = "samsung,fimc";
-> -			pinctrl-names = "default";
-> -			pinctrl-0 = <>;
->  			clocks = <&clocks SCLK_CAM0>, <&clocks
-> SCLK_CAM1>;
->  			clock-names = "sclk_cam0", "sclk_cam1";
->  			#address-cells = <1>;
-> --
-> 2.34.1
+	git range-diff b05a2e58c16c47f3d752b7db1714ef077e5b82d9...9b31b1ea125ca2e7=
+34ae89badc0c3073b4445842
 
+it looks good to me now.
 
+Thanks
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--ii4dxdi23ndnywjj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmRE53cACgkQj4D7WH0S
+/k51MQf9GQenHNrdE5Chnn1T7wY3+ZaqeHuRUzF2W9AeBfOx6mq5o86ClrpDoMWI
+jKPWe/2g5KGNmjYbpmnVAaujc3XscQM8znRYmJE5m/vkKKbbWoaqgP+dVQPhIImz
++GitDdLYnV5E9nHqWuLB2ajsqsWcvI9bIcHsvsfGaD3BVKzwMaxjWAQoZtoZvG6V
+jZ5dcFhcnmZgOMSwK2nCMj5SXHEYPczFTpDB00aXZ1hBLsxfEUUuz5iZeOfCCGrs
+DqoNF3l29Lji9IsINO6BTnroOoKqVIckgaKGwB8HRFiF4CKhEX+6pOZT3tweu13b
+4Lp2sZKvLM37rgHgChQMRaZ5hVXZXA==
+=hwCc
+-----END PGP SIGNATURE-----
+
+--ii4dxdi23ndnywjj--
