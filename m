@@ -2,110 +2,58 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 518AEC7EE22
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Apr 2023 08:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC64C77B61
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Apr 2023 09:45:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233448AbjDYIAw (ORCPT
+        id S233255AbjDYJp1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 25 Apr 2023 04:00:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34974 "EHLO
+        Tue, 25 Apr 2023 05:45:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233440AbjDYIAm (ORCPT
+        with ESMTP id S233386AbjDYJpZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 25 Apr 2023 04:00:42 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 149325586;
-        Tue, 25 Apr 2023 01:00:36 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A432262C51;
-        Tue, 25 Apr 2023 08:00:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B19AC4339B;
-        Tue, 25 Apr 2023 08:00:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682409635;
-        bh=cDv3M/1s+tjOQjJbPUGblM4x/VHbLIoWAfEO3RoBZLM=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=t8tVDcisi1Ua1xsK0eh4wXd6TRl8zqRR065VHttovC11XtMZF6D/4bba5k+B9QVcD
-         wosEZN7on9/BZBObgZeW4zV919V5Z45lRsX9k7Fm3mqp0kUE89nHF/t0zlqhvF9+dB
-         2h6Dz3k0IgtGd470zSwjfCJivMhODaPf9YsDcjkg014i+ABYaNR22jfQS6VgIFy5WX
-         vVhV9/8kPwppHz662OIcc0AhHtcKwYVCwvnfRzqmvB8PESp/To9CcsNdaTVKSHAQ9+
-         fTB2q5Cbai6xwkIifbnmNyaVCEpLHdO8kzBQU4MtjB0kPYGm2MS/weEHAZC22lIJik
-         7OelZpaQThsmg==
-Message-ID: <7fe274df-6bcd-5993-d6cc-8fbcef435866@kernel.org>
-Date:   Tue, 25 Apr 2023 10:00:26 +0200
+        Tue, 25 Apr 2023 05:45:25 -0400
+Received: from mail.lokoho.com (mail.lokoho.com [217.61.105.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F310555B3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Apr 2023 02:45:24 -0700 (PDT)
+Received: by mail.lokoho.com (Postfix, from userid 1001)
+        id 4197783413; Tue, 25 Apr 2023 10:44:39 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
+        t=1682415902; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
+        h=Date:From:To:Subject:From;
+        b=oFDp1zk18mYwjiOjgQF9CHJQnB9YXtlBLVyOj1xGzLdzAAL1R7rHw69Q3bfy2SFzG
+         S65P/4n9PSzVRJeUZTq5f+/eSDMIeIiDEG9LbDwCXJm/lHbX6b/2gp7OOCc8yGjzRV
+         45ic8Vgc2MHLAkaFZXBIEJAjJNBPVctacaDC93DVncbNvPGc4NibrA+LVXMLobc+Br
+         H0OBi5urc1rZ9mmke+pPzIoUAIbIdIlctiiL4BxVc265APRjQf/T9MpCQsN/iLlfeq
+         h9yyOsa/DxyjTr1JGdAYFnHhmgMUKiP6cf5CVSnVeRww58NvHGwLzJZVOwNBzTZYCV
+         Xe5Xt7RmiOUSg==
+Received: by mail.lokoho.com for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Apr 2023 09:42:51 GMT
+Message-ID: <20230425102243-0.1.5k.201ri.0.rc075i4lo9@lokoho.com>
+Date:   Tue, 25 Apr 2023 09:42:51 GMT
+From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
+To:     <linux-samsung-soc@vger.kernel.org>
+Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
+X-Mailer: mail.lokoho.com
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
-Content-Language: en-US
-To:     Rob Herring <robh+dt@kernel.org>,
-        Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-omap@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-aspeed@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org,
-        chrome-platform@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        kernel@dh-electronics.com, linux-mediatek@lists.infradead.org,
-        openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
-        linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org,
-        linux-unisoc@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-realtek-soc@lists.infradead.org,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-References: <20220328000915.15041-1-ansuelsmth@gmail.com>
- <85eb14ec-f465-7447-ad77-a3dabc666f47@kernel.org>
- <YkKRYnN84D9VZhGj@Ansuel-xps.localdomain>
- <CAL_Jsq+RQQ-ADMxLPUFwk6S6kGmb6oNDy4k52fnU0EtbUvqmSA@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <CAL_Jsq+RQQ-ADMxLPUFwk6S6kGmb6oNDy4k52fnU0EtbUvqmSA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 25/04/2023 00:10, Rob Herring wrote:
->> I had some problem with gmail and sending mail too much users. I put Rob
->> and You and all the various list to try to workaround the "gmail spam
->> protection"
->>
->>> I am pretty sure we were discussing such split idea in the past and it
->>> did not get traction, but I cannot recall the exact discussion.
->>>
->>
->> I think the main issue here is how to handle bot and how problematic is
->> to merge this. As written in the cover letter the final version of this
->> should be a big series of 50+ patch with every commit specific to each
->> oem. In theory we should be able to merge the different oem separately
->> and try to at least start the categorization.
->> Another idea I got to at least have a "migration path" is to convert
->> every dts in the dts/ directory to a symbolic link that target the dts
->> in the correct oem. But I assume that would fix only part of the problem
->> and git am will still be problematic.
-> 
-> I have a script[1] that does the conversion written the last time this
-> came up. Just have to agree on directory names. I think the easiest
-> would be for Arnd/Olof to run it at the end of a merge window before
-> rc1.
-> 
-> I'm very much in favor of this happening especially before *any*
-> overlays are added to add to the mess (it's probably already
-> happened).
-> 
-> Rob
-> 
-> [1] https://lore.kernel.org/all/20181204183649.GA5716@bogus/
+Dzie=C5=84 dobry,
 
-This is the thread I was thinking about. Looks good for me (the original
-script with exynos->samsung).
+zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
+=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
+o dalszych rozm=C3=B3w.=20
 
-Best regards,
-Krzysztof
+Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
+=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
+=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
+strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
 
+Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
+
+
+Pozdrawiam
+Adam Charachuta
