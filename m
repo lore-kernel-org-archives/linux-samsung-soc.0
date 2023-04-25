@@ -2,119 +2,83 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B0DC7EE21
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Apr 2023 16:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE2ABC77B61
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Apr 2023 16:56:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231631AbjDYQVj (ORCPT
+        id S234801AbjDYQ43 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 25 Apr 2023 12:21:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54814 "EHLO
+        Tue, 25 Apr 2023 12:56:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233893AbjDYQVh (ORCPT
+        with ESMTP id S234811AbjDYQ42 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 25 Apr 2023 12:21:37 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C26C92684;
-        Tue, 25 Apr 2023 09:21:35 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E2F24B3;
-        Tue, 25 Apr 2023 09:22:19 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD31A3F587;
-        Tue, 25 Apr 2023 09:21:31 -0700 (PDT)
-Message-ID: <45bc13a8-1442-2dd3-b9ea-1ed2f5962bac@arm.com>
-Date:   Tue, 25 Apr 2023 17:21:30 +0100
+        Tue, 25 Apr 2023 12:56:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32FC0D307;
+        Tue, 25 Apr 2023 09:56:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BFE4962699;
+        Tue, 25 Apr 2023 16:56:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B901EC433D2;
+        Tue, 25 Apr 2023 16:56:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682441782;
+        bh=22mPNmkUVHl+VVe7JN/fIv8NuIT+SW8vRSUhM5SEw18=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YHazUVu7uEXa/CUAumf1vdTfPwZ3kOoIumXwpjEuAww5ie1isrYoXmTIeMKDTnX+1
+         3/g2NnbxeyflDVxa48sovr5yskrHJTDf7W6+kwyF1aA826C6+1OFN0MpxHbCFpBnE/
+         rAPNmhNyb0GMwrsRLb1A4Eur7t7MlXei+uD8VFBKfEt7AsS4jhwjoDZhnDhC30nNhy
+         wVsn+zHStUxjYoaAh6nT+ImJSbKkaCtFqiCMEsTqMuX6yklP/o4LKHESBFF82JiLoC
+         QX9qX1oKiyKPuRx/6Q4qw3adV/pjr/Vwxcsa+fhcPjWcBqZrC51UXV8fGnsL6NiXIr
+         lzv7Nat3L2f5Q==
+Date:   Tue, 25 Apr 2023 18:56:18 +0200
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] drm/exynos: fix g2d_open/close helper function
+ definitions
+Message-ID: <20230425165618.2ztg4mecuvpkdg3a@intel.intel>
+References: <20230417210423.2517593-1-arnd@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
-Content-Language: en-GB
-To:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Daniel Palmer <daniel@0x0f.com>,
-        Ansuel Smith <ansuelsmth@gmail.com>,
-        Claudiu Beznea <Claudiu.Beznea@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Santiago Esteban <Santiago.Esteban@microchip.com>,
-        Cristian Birsan <Cristian.Birsan@microchip.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-actions@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-omap@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@axis.com, linux-aspeed@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org,
-        chrome-platform@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        kernel@dh-electronics.com, linux-mediatek@lists.infradead.org,
-        openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
-        linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org,
-        linux-unisoc@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-realtek-soc@lists.infradead.org
-References: <20220328000915.15041-1-ansuelsmth@gmail.com>
- <CAFr9PXkgrRe-=E=GhNnZ4w1x_FMb97-_RmX6ND1vEd74_TbZSw@mail.gmail.com>
- <4ff4f171-c5f8-87af-aad1-5e7686292288@microchip.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <4ff4f171-c5f8-87af-aad1-5e7686292288@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230417210423.2517593-1-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 29/03/2022 9:50 am, Nicolas Ferre wrote:
-> Ansuel, All,
-> 
-> On 28/03/2022 at 10:55, Daniel Palmer wrote:
->> Hi Ansuel
->>
->> On Mon, 28 Mar 2022 at 09:09, Ansuel Smith <ansuelsmth@gmail.com> wrote:
->>>
->>> Hi,
->>> as the title say, the intention of this ""series"" is to finally 
->>> categorize
->>> the ARM dts directory in subdirectory for each oem.
->>
->> While I agree with this change and think it's for the good (browsing
->> the ARM dts directory at the moment is frustrating..) I think
->> buildroot and others need to be told about this as it'll potentially
->> break their kernel build scripting for ARM and probably messes up the
->> configs they have for existing boards.
-> 
-> This aspect mustn't be underestimated and I anticipate lots of issues 
-> during a long time on this particular topic of "build systems".
-> 
-> Another aspect is CI and public or private testing farms we all have 
-> running.
+Hi Arnd,
 
-Yet another is if this affects what `make dtbs_install` does (I don't 
-know for sure, but I'd be inclined to suspect it might). Some distros 
-use that to deliver the DTBs as part of their kernel package, so if 
-paths suddenly change it could break end users' bootloader setups too.
+On Mon, Apr 17, 2023 at 11:04:11PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The empty stub functions are defined as global functions, which
+> causes a warning because of missing prototypes:
+> 
+> drivers/gpu/drm/exynos/exynos_drm_g2d.h:37:5: error: no previous prototype for 'g2d_open'
+> drivers/gpu/drm/exynos/exynos_drm_g2d.h:42:5: error: no previous prototype for 'g2d_close'
+> 
+> Mark them as 'static inline' to avoid the warning and to make
+> them behave as intended.
+> 
+> Fixes: eb4d9796fa34 ("drm/exynos: g2d: Convert to driver component API")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Cc: <stable@vger.kernel.org> # v4.19+
+
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org> 
 
 Thanks,
-Robin.
-
-> These aspects always refrained me to change anything in the naming 
-> scheme of our DT files, but if we go in this direction, we must really 
-> be prepared and I'm still not convince it's worth it...
-> 
-> 
-> If this has to happen, I would also like to queue some file name changes 
-> to do all modifications in one go in order to lower the annoyance level 
-> of those who would need to adapt to those changes.
-> 
-> BTW, is there a common scheme for dts/dtsi file naming? Is it more 
-> enforced in one way or another for arm64 in a sense that I can take some 
-> norm as an example?
-> 
-> [..]
-> 
-> Best regards,
->    Nicolas
-> 
-> 
-> 
+Andi
