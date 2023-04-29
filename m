@@ -2,97 +2,116 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D27E7C7EE29
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Apr 2023 07:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 416E1C7EE24
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Apr 2023 15:55:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243092AbjD0HtE (ORCPT
+        id S231439AbjD2Pzr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 27 Apr 2023 03:49:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56794 "EHLO
+        Sat, 29 Apr 2023 11:55:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243068AbjD0HtD (ORCPT
+        with ESMTP id S230027AbjD2Pzp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Apr 2023 03:49:03 -0400
-Received: from muru.com (muru.com [72.249.23.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4BFD1DD;
-        Thu, 27 Apr 2023 00:48:47 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id AA15480A4;
-        Thu, 27 Apr 2023 07:48:46 +0000 (UTC)
-Date:   Thu, 27 Apr 2023 10:48:45 +0300
-From:   Tony Lindgren <tony@atomide.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Ansuel Smith <ansuelsmth@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-omap@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-aspeed@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org,
-        chrome-platform@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        kernel@dh-electronics.com, linux-mediatek@lists.infradead.org,
-        openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
-        linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org,
-        linux-unisoc@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-realtek-soc@lists.infradead.org
-Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
-Message-ID: <20230427074845.GG14287@atomide.com>
-References: <20220328000915.15041-1-ansuelsmth@gmail.com>
- <85eb14ec-f465-7447-ad77-a3dabc666f47@kernel.org>
- <YkKRYnN84D9VZhGj@Ansuel-xps.localdomain>
- <CAL_Jsq+RQQ-ADMxLPUFwk6S6kGmb6oNDy4k52fnU0EtbUvqmSA@mail.gmail.com>
- <CAMuHMdWNTE48MFy6fqxAsfMWz9b6E7dVNXtXtESP95sxk2PGwA@mail.gmail.com>
- <CAL_JsqJthKTm8bhRF2B=ae1tvtPeYYXx_Tm76qQtSwLtH5C6VA@mail.gmail.com>
- <1cfc224b-f8b0-3143-42d2-188b56368c61@gmail.com>
- <CAMuHMdU91NtZeFKe6mB3B48TNb64wfPu77xRbOEVX4tV65e38w@mail.gmail.com>
+        Sat, 29 Apr 2023 11:55:45 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0DC7172E;
+        Sat, 29 Apr 2023 08:55:44 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-94f0dd117dcso146462966b.3;
+        Sat, 29 Apr 2023 08:55:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682783743; x=1685375743;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TxvGvkws6v3OUPVKHHB+9cC8k2VhJOwpUtI24BtY69g=;
+        b=REYv5IGmxp2EXyq8ER51sGhzE/vJ8B13FZucXizKVVauZ2+kxdXZrsbWRxGiSyw9vY
+         mKasHYVY5c5pCmWaY5LlkET5nfRS718JeXly2SPQYhCV2slCyqdhsHj48MIZVoGUzkPq
+         ZgsNaog2b1xuhmY2gebCZ49QMwXmFjKt9yW1vJqbiX32rit3XriwHMgwOsIZ1XXjDnUp
+         7zGiX1xTBBEcV7zShZw2HjZesYzYfHtf3xnx1YNBUeQmJP6BSR0dRF02DQN7teRAOkzS
+         UoXP2vVvFV6Euyh8Yz12CbC7D5p7rRHeUxKlx5rSfyN6iRGkVetF0bzrP7WpVunUyuvw
+         7iew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682783743; x=1685375743;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TxvGvkws6v3OUPVKHHB+9cC8k2VhJOwpUtI24BtY69g=;
+        b=RW56g2/5XMmJcnTDNCUfCHJWJK+R1cAxjgV+j/MD9IyJf8P6nnz/zir0CkJSP+R7I7
+         ftMv6MddX2AUmBzr0zgp/E8rITsVKa9Gq2uVMY1+YsWaK8oJD4OlckkTA+/L8ckZpHQE
+         I1U+5Kp1TFgNdlHji1F973r45yVPURlXXYlkB4iDRiEIwrmoVxymnEjCkwcIlGlzkIMA
+         U7tVLvlHp1ImaNwNI4lxcq4RFCxH2w41iFt816Y4O96wc5vMyg48hRLepmfWSVoN6/uA
+         y8YvcoP/wN2hTQ1BPymrCEmZJHRfT69KvBax9DucsZb/Kz0Hz/fpliM27KdmzY+BTVio
+         5rMQ==
+X-Gm-Message-State: AC+VfDzXni+fvzMIXPdjxle648KuT5je6PLpASppB+LZTnodSEdBlEQ2
+        Rvl9JQL/uPWi7/xbD4XgjoQ=
+X-Google-Smtp-Source: ACHHUZ5dT/PeCwnQSBGn49wK0jIxYcMU3RAAAEX/X4fj13wWXTPrHhe6nJQLWFRONNoSzGgOljix5A==
+X-Received: by 2002:a17:906:dc93:b0:94f:1ac0:850b with SMTP id cs19-20020a170906dc9300b0094f1ac0850bmr9028611ejc.71.1682783743147;
+        Sat, 29 Apr 2023 08:55:43 -0700 (PDT)
+Received: from [192.168.50.244] (83.8.115.30.ipv4.supernova.orange.pl. [83.8.115.30])
+        by smtp.gmail.com with ESMTPSA id sg9-20020a170907a40900b00959aba150c3sm8040932ejc.50.2023.04.29.08.55.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 29 Apr 2023 08:55:42 -0700 (PDT)
+Message-ID: <712cd0a7-fdb9-059a-90b7-5c3b6a08fd5b@gmail.com>
+Date:   Sat, 29 Apr 2023 17:55:40 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdU91NtZeFKe6mB3B48TNb64wfPu77xRbOEVX4tV65e38w@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH v2 03/12] ARM: exynos: Re-introduce Exynos4212 support
+Content-Language: en-US
+To:     Henrik Grimler <henrik@grimler.se>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>, soc@kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-phy@lists.infradead.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+References: <20230416133422.1949-1-aweber.kernel@gmail.com>
+ <20230416133422.1949-4-aweber.kernel@gmail.com> <ZEBN8ImTp/tRdej+@L14.lan>
+From:   Artur Weber <aweber.kernel@gmail.com>
+In-Reply-To: <ZEBN8ImTp/tRdej+@L14.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-* Geert Uytterhoeven <geert@linux-m68k.org> [230427 07:47]:
-> On Thu, Apr 27, 2023 at 9:37 AM Matthias Brugger <matthias.bgg@gmail.com> wrote:
-> > On 25/04/2023 17:57, Rob Herring wrote:
-> > > On Tue, Apr 25, 2023 at 2:28 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > >> On Tue, Apr 25, 2023 at 12:16 AM Rob Herring <robh+dt@kernel.org> wrote:
-> > >>> I have a script[1] that does the conversion written the last time this
-> > >>> came up. Just have to agree on directory names. I think the easiest
-> > >>> would be for Arnd/Olof to run it at the end of a merge window before
-> > >>> rc1.
-> > >>
-> > >> "emev2" and "sh7" are missing for renesas.
-> > >
-> > > No doubt it's been bitrotting (or I may have missed some).
-> > >
-> > >> Does your script also cater for .dts files not matching any pattern,
-> > >> but including a .dtsi file that does match a pattern?
-> > >
-> > > I assume I built everything after moving, but maybe not...
-> > >
-> > > That's all just "details". First, we need agreement on a) moving
-> > > things to subdirs and b) doing it 1-by-1 or all at once. So far we've
-> > > been stuck on a) for being 'too much churn'.
-> > >
-> >
-> > I think it makes sense to move them and probably the best way to do so is, as
-> > you proposed: that Arnd or Olof run the script to move them just before -rc1
+On 19/04/2023 22:24, Henrik Grimler wrote:
+>>  	/*
+>>  	 * The second parameter of SMC_CMD_CPU1BOOT command means CPU id.
+>> +	 * But, Exynos4212 has only one secondary CPU so second parameter
+>> +	 * isn't used for informing secure firmware about CPU id.
+>>  	 */
+>> +	if (soc_is_exynos4212())
+>> +		cpu = 0;
 > 
-> FTR, no objections from my side.
+> Is it necessary to set cpu = 0?  Are there any obvious issues without
+> it (like second cpu not being brought up)?
 
-Sounds good to me.
+Just tested this; looks like it's required here, without it the second
+core fails to start up:
 
-Regards,
+[    0.064277] smp: Bringing up secondary CPUs ...
+[    1.067163] CPU1: failed to boot: -110
+[    1.069683] smp: Brought up 1 node, 1 CPU
+[    1.072470] SMP: Total of 1 processors activated (48.00 BogoMIPS).
 
-Tony
+SBOOT on my tablet claims the version is T310XXSBQB2, so it should match
+with the one you checked.
+
+Best regards
+Artur Weber
