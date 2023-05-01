@@ -2,116 +2,424 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 416E1C7EE24
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Apr 2023 15:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBFFAC77B60
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 May 2023 03:03:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231439AbjD2Pzr (ORCPT
+        id S232402AbjEADDF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 29 Apr 2023 11:55:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51720 "EHLO
+        Sun, 30 Apr 2023 23:03:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230027AbjD2Pzp (ORCPT
+        with ESMTP id S232488AbjEADCq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 29 Apr 2023 11:55:45 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0DC7172E;
-        Sat, 29 Apr 2023 08:55:44 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-94f0dd117dcso146462966b.3;
-        Sat, 29 Apr 2023 08:55:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682783743; x=1685375743;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TxvGvkws6v3OUPVKHHB+9cC8k2VhJOwpUtI24BtY69g=;
-        b=REYv5IGmxp2EXyq8ER51sGhzE/vJ8B13FZucXizKVVauZ2+kxdXZrsbWRxGiSyw9vY
-         mKasHYVY5c5pCmWaY5LlkET5nfRS718JeXly2SPQYhCV2slCyqdhsHj48MIZVoGUzkPq
-         ZgsNaog2b1xuhmY2gebCZ49QMwXmFjKt9yW1vJqbiX32rit3XriwHMgwOsIZ1XXjDnUp
-         7zGiX1xTBBEcV7zShZw2HjZesYzYfHtf3xnx1YNBUeQmJP6BSR0dRF02DQN7teRAOkzS
-         UoXP2vVvFV6Euyh8Yz12CbC7D5p7rRHeUxKlx5rSfyN6iRGkVetF0bzrP7WpVunUyuvw
-         7iew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682783743; x=1685375743;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TxvGvkws6v3OUPVKHHB+9cC8k2VhJOwpUtI24BtY69g=;
-        b=RW56g2/5XMmJcnTDNCUfCHJWJK+R1cAxjgV+j/MD9IyJf8P6nnz/zir0CkJSP+R7I7
-         ftMv6MddX2AUmBzr0zgp/E8rITsVKa9Gq2uVMY1+YsWaK8oJD4OlckkTA+/L8ckZpHQE
-         I1U+5Kp1TFgNdlHji1F973r45yVPURlXXYlkB4iDRiEIwrmoVxymnEjCkwcIlGlzkIMA
-         U7tVLvlHp1ImaNwNI4lxcq4RFCxH2w41iFt816Y4O96wc5vMyg48hRLepmfWSVoN6/uA
-         y8YvcoP/wN2hTQ1BPymrCEmZJHRfT69KvBax9DucsZb/Kz0Hz/fpliM27KdmzY+BTVio
-         5rMQ==
-X-Gm-Message-State: AC+VfDzXni+fvzMIXPdjxle648KuT5je6PLpASppB+LZTnodSEdBlEQ2
-        Rvl9JQL/uPWi7/xbD4XgjoQ=
-X-Google-Smtp-Source: ACHHUZ5dT/PeCwnQSBGn49wK0jIxYcMU3RAAAEX/X4fj13wWXTPrHhe6nJQLWFRONNoSzGgOljix5A==
-X-Received: by 2002:a17:906:dc93:b0:94f:1ac0:850b with SMTP id cs19-20020a170906dc9300b0094f1ac0850bmr9028611ejc.71.1682783743147;
-        Sat, 29 Apr 2023 08:55:43 -0700 (PDT)
-Received: from [192.168.50.244] (83.8.115.30.ipv4.supernova.orange.pl. [83.8.115.30])
-        by smtp.gmail.com with ESMTPSA id sg9-20020a170907a40900b00959aba150c3sm8040932ejc.50.2023.04.29.08.55.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Apr 2023 08:55:42 -0700 (PDT)
-Message-ID: <712cd0a7-fdb9-059a-90b7-5c3b6a08fd5b@gmail.com>
-Date:   Sat, 29 Apr 2023 17:55:40 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH v2 03/12] ARM: exynos: Re-introduce Exynos4212 support
-Content-Language: en-US
-To:     Henrik Grimler <henrik@grimler.se>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>, soc@kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Sun, 30 Apr 2023 23:02:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 951763C01;
+        Sun, 30 Apr 2023 20:00:11 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 60FA3616E2;
+        Mon,  1 May 2023 02:59:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A25BC4339E;
+        Mon,  1 May 2023 02:59:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682909963;
+        bh=rmsCnKggDewOdf7wQ1OM7mfPKrYhNDatX383oeO2poU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gAaDo/mUuGXFd8tcosY/t9knOHQw1HQcyoJ1aZNasnq6uc7KjFwxVS9mlnb4aKXJx
+         G3/dIDL5qZ8DsCinbue0M8UvYXAXHGoLUXxhu2VTaEutEWS2O/CNIszqkSpKCJeHj3
+         T6bmDtuS5hVaTkfgftiWhnnl+dtNBzJglFS3EWluY3FpAl0Z3R4uNKVZatIKUjQVN/
+         qbjFOOFnweXatNYjuPAJLv7Ox1vbcgmal6zgG+xK2jccAhIZI2HbVZMpvnbgAugXm1
+         n6mKc2WXPh0j9i6JiOFz1drs61tZqjPCuGJhwK3tlxW7drXAa1UYLSHMhs1aMi/5Ly
+         wZfLFXMdYZXWQ==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Lad Prabhakar <prabhakar.csengg@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Sasha Levin <sashal@kernel.org>, mchehab@kernel.org,
+        s.nawrocki@samsung.com, krzysztof.kozlowski@linaro.org,
+        bparrot@ti.com, mkrufky@linuxtv.org, slongerbeam@gmail.com,
+        gregkh@linuxfoundation.org, shawnguo@kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-phy@lists.infradead.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-References: <20230416133422.1949-1-aweber.kernel@gmail.com>
- <20230416133422.1949-4-aweber.kernel@gmail.com> <ZEBN8ImTp/tRdej+@L14.lan>
-From:   Artur Weber <aweber.kernel@gmail.com>
-In-Reply-To: <ZEBN8ImTp/tRdej+@L14.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.3 40/44] media: Prefer designated initializers over memset for subdev pad ops
+Date:   Sun, 30 Apr 2023 22:56:28 -0400
+Message-Id: <20230501025632.3253067-40-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230501025632.3253067-1-sashal@kernel.org>
+References: <20230501025632.3253067-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 19/04/2023 22:24, Henrik Grimler wrote:
->>  	/*
->>  	 * The second parameter of SMC_CMD_CPU1BOOT command means CPU id.
->> +	 * But, Exynos4212 has only one secondary CPU so second parameter
->> +	 * isn't used for informing secure firmware about CPU id.
->>  	 */
->> +	if (soc_is_exynos4212())
->> +		cpu = 0;
-> 
-> Is it necessary to set cpu = 0?  Are there any obvious issues without
-> it (like second cpu not being brought up)?
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Just tested this; looks like it's required here, without it the second
-core fails to start up:
+[ Upstream commit e3a69496a1cde364c74a600d7a370179b58aed29 ]
 
-[    0.064277] smp: Bringing up secondary CPUs ...
-[    1.067163] CPU1: failed to boot: -110
-[    1.069683] smp: Brought up 1 node, 1 CPU
-[    1.072470] SMP: Total of 1 processors activated (48.00 BogoMIPS).
+Structures passed to subdev pad operations are all zero-initialized, but
+not always with the same kind of code constructs. While most drivers
+used designated initializers, which zero all the fields that are not
+specified, when declaring variables, some use memset(). Those two
+methods lead to the same end result, and, depending on compiler
+optimizations, may even be completely equivalent, but they're not
+consistent.
 
-SBOOT on my tablet claims the version is T310XXSBQB2, so it should match
-with the one you checked.
+Improve coding style consistency by using designated initializers
+instead of calling memset(). Where applicable, also move the variables
+to inner scopes of for loops to ensure correct initialization in all
+iterations.
 
-Best regards
-Artur Weber
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Lad Prabhakar <prabhakar.csengg@gmail.com> # For am437x
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/platform/renesas/vsp1/vsp1_drm.c | 18 +++++++++---------
+ .../media/platform/renesas/vsp1/vsp1_entity.c  | 11 +++++------
+ .../platform/samsung/exynos4-is/fimc-capture.c |  7 ++++---
+ drivers/media/platform/ti/am437x/am437x-vpfe.c | 15 ++++++++-------
+ drivers/media/platform/ti/cal/cal-video.c      |  8 ++++----
+ drivers/media/usb/dvb-usb/cxusb-analog.c       | 14 +++++++-------
+ drivers/staging/media/imx/imx-media-capture.c  | 12 ++++++------
+ drivers/staging/media/imx/imx-media-utils.c    |  8 ++++----
+ drivers/staging/media/omap4iss/iss_video.c     |  6 +++---
+ 9 files changed, 50 insertions(+), 49 deletions(-)
+
+diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drm.c b/drivers/media/platform/renesas/vsp1/vsp1_drm.c
+index c6f25200982c8..7fe375b6322cd 100644
+--- a/drivers/media/platform/renesas/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/renesas/vsp1/vsp1_drm.c
+@@ -66,7 +66,9 @@ static int vsp1_du_insert_uif(struct vsp1_device *vsp1,
+ 			      struct vsp1_entity *prev, unsigned int prev_pad,
+ 			      struct vsp1_entity *next, unsigned int next_pad)
+ {
+-	struct v4l2_subdev_format format;
++	struct v4l2_subdev_format format = {
++		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++	};
+ 	int ret;
+ 
+ 	if (!uif) {
+@@ -82,8 +84,6 @@ static int vsp1_du_insert_uif(struct vsp1_device *vsp1,
+ 	prev->sink = uif;
+ 	prev->sink_pad = UIF_PAD_SINK;
+ 
+-	memset(&format, 0, sizeof(format));
+-	format.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+ 	format.pad = prev_pad;
+ 
+ 	ret = v4l2_subdev_call(&prev->subdev, pad, get_fmt, NULL, &format);
+@@ -118,8 +118,12 @@ static int vsp1_du_pipeline_setup_rpf(struct vsp1_device *vsp1,
+ 				      struct vsp1_entity *uif,
+ 				      unsigned int brx_input)
+ {
+-	struct v4l2_subdev_selection sel;
+-	struct v4l2_subdev_format format;
++	struct v4l2_subdev_selection sel = {
++		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++	};
++	struct v4l2_subdev_format format = {
++		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++	};
+ 	const struct v4l2_rect *crop;
+ 	int ret;
+ 
+@@ -129,8 +133,6 @@ static int vsp1_du_pipeline_setup_rpf(struct vsp1_device *vsp1,
+ 	 */
+ 	crop = &vsp1->drm->inputs[rpf->entity.index].crop;
+ 
+-	memset(&format, 0, sizeof(format));
+-	format.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+ 	format.pad = RWPF_PAD_SINK;
+ 	format.format.width = crop->width + crop->left;
+ 	format.format.height = crop->height + crop->top;
+@@ -147,8 +149,6 @@ static int vsp1_du_pipeline_setup_rpf(struct vsp1_device *vsp1,
+ 		__func__, format.format.width, format.format.height,
+ 		format.format.code, rpf->entity.index);
+ 
+-	memset(&sel, 0, sizeof(sel));
+-	sel.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+ 	sel.pad = RWPF_PAD_SINK;
+ 	sel.target = V4L2_SEL_TGT_CROP;
+ 	sel.r = *crop;
+diff --git a/drivers/media/platform/renesas/vsp1/vsp1_entity.c b/drivers/media/platform/renesas/vsp1/vsp1_entity.c
+index 4c3bd2b1ca287..c31f05a80bb56 100644
+--- a/drivers/media/platform/renesas/vsp1/vsp1_entity.c
++++ b/drivers/media/platform/renesas/vsp1/vsp1_entity.c
+@@ -184,15 +184,14 @@ vsp1_entity_get_pad_selection(struct vsp1_entity *entity,
+ int vsp1_entity_init_cfg(struct v4l2_subdev *subdev,
+ 			 struct v4l2_subdev_state *sd_state)
+ {
+-	struct v4l2_subdev_format format;
+ 	unsigned int pad;
+ 
+ 	for (pad = 0; pad < subdev->entity.num_pads - 1; ++pad) {
+-		memset(&format, 0, sizeof(format));
+-
+-		format.pad = pad;
+-		format.which = sd_state ? V4L2_SUBDEV_FORMAT_TRY
+-			     : V4L2_SUBDEV_FORMAT_ACTIVE;
++		struct v4l2_subdev_format format = {
++			.pad = pad,
++			.which = sd_state ? V4L2_SUBDEV_FORMAT_TRY
++			       : V4L2_SUBDEV_FORMAT_ACTIVE,
++		};
+ 
+ 		v4l2_subdev_call(subdev, pad, set_fmt, sd_state, &format);
+ 	}
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-capture.c b/drivers/media/platform/samsung/exynos4-is/fimc-capture.c
+index e3b95a2b7e040..beaee54ee73bf 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-capture.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-capture.c
+@@ -763,7 +763,10 @@ static int fimc_pipeline_try_format(struct fimc_ctx *ctx,
+ 	struct fimc_dev *fimc = ctx->fimc_dev;
+ 	struct fimc_pipeline *p = to_fimc_pipeline(fimc->vid_cap.ve.pipe);
+ 	struct v4l2_subdev *sd = p->subdevs[IDX_SENSOR];
+-	struct v4l2_subdev_format sfmt;
++	struct v4l2_subdev_format sfmt = {
++		.which = set ? V4L2_SUBDEV_FORMAT_ACTIVE
++		       : V4L2_SUBDEV_FORMAT_TRY,
++	};
+ 	struct v4l2_mbus_framefmt *mf = &sfmt.format;
+ 	struct media_entity *me;
+ 	struct fimc_fmt *ffmt;
+@@ -774,9 +777,7 @@ static int fimc_pipeline_try_format(struct fimc_ctx *ctx,
+ 	if (WARN_ON(!sd || !tfmt))
+ 		return -EINVAL;
+ 
+-	memset(&sfmt, 0, sizeof(sfmt));
+ 	sfmt.format = *tfmt;
+-	sfmt.which = set ? V4L2_SUBDEV_FORMAT_ACTIVE : V4L2_SUBDEV_FORMAT_TRY;
+ 
+ 	me = fimc_pipeline_get_head(&sd->entity);
+ 
+diff --git a/drivers/media/platform/ti/am437x/am437x-vpfe.c b/drivers/media/platform/ti/am437x/am437x-vpfe.c
+index 2dfae9bc0bba8..dffac89cbd210 100644
+--- a/drivers/media/platform/ti/am437x/am437x-vpfe.c
++++ b/drivers/media/platform/ti/am437x/am437x-vpfe.c
+@@ -1499,7 +1499,9 @@ static int vpfe_enum_size(struct file *file, void  *priv,
+ 			  struct v4l2_frmsizeenum *fsize)
+ {
+ 	struct vpfe_device *vpfe = video_drvdata(file);
+-	struct v4l2_subdev_frame_size_enum fse;
++	struct v4l2_subdev_frame_size_enum fse = {
++		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++	};
+ 	struct v4l2_subdev *sd = vpfe->current_subdev->sd;
+ 	struct vpfe_fmt *fmt;
+ 	int ret;
+@@ -1514,11 +1516,9 @@ static int vpfe_enum_size(struct file *file, void  *priv,
+ 
+ 	memset(fsize->reserved, 0x0, sizeof(fsize->reserved));
+ 
+-	memset(&fse, 0x0, sizeof(fse));
+ 	fse.index = fsize->index;
+ 	fse.pad = 0;
+ 	fse.code = fmt->code;
+-	fse.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+ 	ret = v4l2_subdev_call(sd, pad, enum_frame_size, NULL, &fse);
+ 	if (ret)
+ 		return ret;
+@@ -2146,7 +2146,6 @@ vpfe_async_bound(struct v4l2_async_notifier *notifier,
+ {
+ 	struct vpfe_device *vpfe = container_of(notifier->v4l2_dev,
+ 					       struct vpfe_device, v4l2_dev);
+-	struct v4l2_subdev_mbus_code_enum mbus_code;
+ 	struct vpfe_subdev_info *sdinfo;
+ 	struct vpfe_fmt *fmt;
+ 	int ret = 0;
+@@ -2173,9 +2172,11 @@ vpfe_async_bound(struct v4l2_async_notifier *notifier,
+ 
+ 	vpfe->num_active_fmt = 0;
+ 	for (j = 0, i = 0; (ret != -EINVAL); ++j) {
+-		memset(&mbus_code, 0, sizeof(mbus_code));
+-		mbus_code.index = j;
+-		mbus_code.which = V4L2_SUBDEV_FORMAT_ACTIVE;
++		struct v4l2_subdev_mbus_code_enum mbus_code = {
++			.index = j,
++			.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++		};
++
+ 		ret = v4l2_subdev_call(subdev, pad, enum_mbus_code,
+ 				       NULL, &mbus_code);
+ 		if (ret)
+diff --git a/drivers/media/platform/ti/cal/cal-video.c b/drivers/media/platform/ti/cal/cal-video.c
+index 4eade409d5d36..bbfd2719725aa 100644
+--- a/drivers/media/platform/ti/cal/cal-video.c
++++ b/drivers/media/platform/ti/cal/cal-video.c
+@@ -811,7 +811,6 @@ static const struct v4l2_file_operations cal_fops = {
+ 
+ static int cal_ctx_v4l2_init_formats(struct cal_ctx *ctx)
+ {
+-	struct v4l2_subdev_mbus_code_enum mbus_code;
+ 	struct v4l2_mbus_framefmt mbus_fmt;
+ 	const struct cal_format_info *fmtinfo;
+ 	unsigned int i, j, k;
+@@ -826,10 +825,11 @@ static int cal_ctx_v4l2_init_formats(struct cal_ctx *ctx)
+ 	ctx->num_active_fmt = 0;
+ 
+ 	for (j = 0, i = 0; ; ++j) {
++		struct v4l2_subdev_mbus_code_enum mbus_code = {
++			.index = j,
++			.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++		};
+ 
+-		memset(&mbus_code, 0, sizeof(mbus_code));
+-		mbus_code.index = j;
+-		mbus_code.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+ 		ret = v4l2_subdev_call(ctx->phy->source, pad, enum_mbus_code,
+ 				       NULL, &mbus_code);
+ 		if (ret == -EINVAL)
+diff --git a/drivers/media/usb/dvb-usb/cxusb-analog.c b/drivers/media/usb/dvb-usb/cxusb-analog.c
+index e93183ddd7975..deba5224cb8df 100644
+--- a/drivers/media/usb/dvb-usb/cxusb-analog.c
++++ b/drivers/media/usb/dvb-usb/cxusb-analog.c
+@@ -1014,7 +1014,10 @@ static int cxusb_medion_try_s_fmt_vid_cap(struct file *file,
+ {
+ 	struct dvb_usb_device *dvbdev = video_drvdata(file);
+ 	struct cxusb_medion_dev *cxdev = dvbdev->priv;
+-	struct v4l2_subdev_format subfmt;
++	struct v4l2_subdev_format subfmt = {
++		.which = isset ? V4L2_SUBDEV_FORMAT_ACTIVE :
++			 V4L2_SUBDEV_FORMAT_TRY,
++	};
+ 	u32 field;
+ 	int ret;
+ 
+@@ -1024,9 +1027,6 @@ static int cxusb_medion_try_s_fmt_vid_cap(struct file *file,
+ 	field = vb2_start_streaming_called(&cxdev->videoqueue) ?
+ 		cxdev->field_order : cxusb_medion_field_order(cxdev);
+ 
+-	memset(&subfmt, 0, sizeof(subfmt));
+-	subfmt.which = isset ? V4L2_SUBDEV_FORMAT_ACTIVE :
+-		V4L2_SUBDEV_FORMAT_TRY;
+ 	subfmt.format.width = f->fmt.pix.width & ~1;
+ 	subfmt.format.height = f->fmt.pix.height & ~1;
+ 	subfmt.format.code = MEDIA_BUS_FMT_FIXED;
+@@ -1464,7 +1464,9 @@ int cxusb_medion_analog_init(struct dvb_usb_device *dvbdev)
+ 					    .buf = tuner_analog_msg_data,
+ 					    .len =
+ 					    sizeof(tuner_analog_msg_data) };
+-	struct v4l2_subdev_format subfmt;
++	struct v4l2_subdev_format subfmt = {
++		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++	};
+ 	int ret;
+ 
+ 	/* switch tuner to analog mode so IF demod will become accessible */
+@@ -1507,8 +1509,6 @@ int cxusb_medion_analog_init(struct dvb_usb_device *dvbdev)
+ 	v4l2_subdev_call(cxdev->tuner, video, s_std, cxdev->norm);
+ 	v4l2_subdev_call(cxdev->cx25840, video, s_std, cxdev->norm);
+ 
+-	memset(&subfmt, 0, sizeof(subfmt));
+-	subfmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+ 	subfmt.format.width = cxdev->width;
+ 	subfmt.format.height = cxdev->height;
+ 	subfmt.format.code = MEDIA_BUS_FMT_FIXED;
+diff --git a/drivers/staging/media/imx/imx-media-capture.c b/drivers/staging/media/imx/imx-media-capture.c
+index 93ba092360105..5cc67786b9169 100644
+--- a/drivers/staging/media/imx/imx-media-capture.c
++++ b/drivers/staging/media/imx/imx-media-capture.c
+@@ -501,14 +501,14 @@ static int capture_legacy_g_parm(struct file *file, void *fh,
+ 				 struct v4l2_streamparm *a)
+ {
+ 	struct capture_priv *priv = video_drvdata(file);
+-	struct v4l2_subdev_frame_interval fi;
++	struct v4l2_subdev_frame_interval fi = {
++		.pad = priv->src_sd_pad,
++	};
+ 	int ret;
+ 
+ 	if (a->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+ 		return -EINVAL;
+ 
+-	memset(&fi, 0, sizeof(fi));
+-	fi.pad = priv->src_sd_pad;
+ 	ret = v4l2_subdev_call(priv->src_sd, video, g_frame_interval, &fi);
+ 	if (ret < 0)
+ 		return ret;
+@@ -523,14 +523,14 @@ static int capture_legacy_s_parm(struct file *file, void *fh,
+ 				 struct v4l2_streamparm *a)
+ {
+ 	struct capture_priv *priv = video_drvdata(file);
+-	struct v4l2_subdev_frame_interval fi;
++	struct v4l2_subdev_frame_interval fi = {
++		.pad = priv->src_sd_pad,
++	};
+ 	int ret;
+ 
+ 	if (a->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+ 		return -EINVAL;
+ 
+-	memset(&fi, 0, sizeof(fi));
+-	fi.pad = priv->src_sd_pad;
+ 	fi.interval = a->parm.capture.timeperframe;
+ 	ret = v4l2_subdev_call(priv->src_sd, video, s_frame_interval, &fi);
+ 	if (ret < 0)
+diff --git a/drivers/staging/media/imx/imx-media-utils.c b/drivers/staging/media/imx/imx-media-utils.c
+index 411e907b68eba..b545750ca5262 100644
+--- a/drivers/staging/media/imx/imx-media-utils.c
++++ b/drivers/staging/media/imx/imx-media-utils.c
+@@ -432,15 +432,15 @@ int imx_media_init_cfg(struct v4l2_subdev *sd,
+ 		       struct v4l2_subdev_state *sd_state)
+ {
+ 	struct v4l2_mbus_framefmt *mf_try;
+-	struct v4l2_subdev_format format;
+ 	unsigned int pad;
+ 	int ret;
+ 
+ 	for (pad = 0; pad < sd->entity.num_pads; pad++) {
+-		memset(&format, 0, sizeof(format));
++		struct v4l2_subdev_format format = {
++			.pad = pad,
++			.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++		};
+ 
+-		format.pad = pad;
+-		format.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+ 		ret = v4l2_subdev_call(sd, pad, get_fmt, NULL, &format);
+ 		if (ret)
+ 			continue;
+diff --git a/drivers/staging/media/omap4iss/iss_video.c b/drivers/staging/media/omap4iss/iss_video.c
+index 05548eab7daad..74fb0d185a8ff 100644
+--- a/drivers/staging/media/omap4iss/iss_video.c
++++ b/drivers/staging/media/omap4iss/iss_video.c
+@@ -237,7 +237,9 @@ static int
+ __iss_video_get_format(struct iss_video *video,
+ 		       struct v4l2_mbus_framefmt *format)
+ {
+-	struct v4l2_subdev_format fmt;
++	struct v4l2_subdev_format fmt = {
++		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++	};
+ 	struct v4l2_subdev *subdev;
+ 	u32 pad;
+ 	int ret;
+@@ -246,9 +248,7 @@ __iss_video_get_format(struct iss_video *video,
+ 	if (!subdev)
+ 		return -EINVAL;
+ 
+-	memset(&fmt, 0, sizeof(fmt));
+ 	fmt.pad = pad;
+-	fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+ 
+ 	mutex_lock(&video->mutex);
+ 	ret = v4l2_subdev_call(subdev, pad, get_fmt, NULL, &fmt);
+-- 
+2.39.2
+
