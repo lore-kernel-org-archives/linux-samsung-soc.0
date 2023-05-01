@@ -2,423 +2,307 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34449C77B61
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 May 2023 03:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24984C77B7C
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 May 2023 18:03:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233128AbjEADRA (ORCPT
+        id S232532AbjEASDL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 30 Apr 2023 23:17:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43778 "EHLO
+        Mon, 1 May 2023 14:03:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233780AbjEADQQ (ORCPT
+        with ESMTP id S232473AbjEASDJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 30 Apr 2023 23:16:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4AFA59E4;
-        Sun, 30 Apr 2023 20:06:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2B9EA616FE;
-        Mon,  1 May 2023 03:05:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B108C433D2;
-        Mon,  1 May 2023 03:05:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682910337;
-        bh=NEZZgyMkgqzV6hstE1vG2k12ik+0biq/ChTLVT7fTdA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yy2YBOmuIsSvfpn1y6fk4OpZQ4maOvcHuyi1E+0Rm77d68MnqqYFtDRISODzHANRm
-         gnwNZfIwXqazpRvEbAqg2XrRAAEXUatG7HDmLOV5aKeFTu63MQR32kFL86XM6qk1JY
-         1h0qDeCu8XDS6DFTp7jkSqCLSAO+kcSyShcm4e2W6mxwD/4Zm48NJ+YOcXtb1NybYO
-         3hcmG18vSV6c7mQuN4/70pspRT0BUozfPeoossr8Khpn4GTujHT3SLnX/daGxdrWMU
-         2/zBIkg5GQuKqfY04Q1GNBA/hAxI43ylGa93eNwgQ+MA0Tu5YtQcj8AjHTII6b8Nt3
-         4YsWrtkhGHmVA==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Lad Prabhakar <prabhakar.csengg@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sasha Levin <sashal@kernel.org>, mchehab@kernel.org,
-        krzysztof.kozlowski@linaro.org, mkrufky@linuxtv.org,
-        slongerbeam@gmail.com, gregkh@linuxfoundation.org,
-        shawnguo@kernel.org, linux-media@vger.kernel.org,
+        Mon, 1 May 2023 14:03:09 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2050.outbound.protection.outlook.com [40.107.94.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F8D710F9;
+        Mon,  1 May 2023 11:03:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bj7iNq1zF4TRA9dS3y+ZFQqTd4bb/SbIXKI0OcLsov+JlEoxu5eY1aaJ8A3YdtGP4ZvT9i6iTkUX2xMatf7FV58njjehpUPf2Eh2f7c2QYu3MJLwjRDEDCxKNVAh7nris6aSVAQ0J4ui9jRev3Cx8keWfExqxZ1IXTXp0R5N4PpjzncWk59fqHt2Cfxe7YTnt3ofVvqXlAi+hdmWFfEdzms9Rj4bQpWyqK0XMdp4S5m8FUAEvYkUvmLGFWQ5uz+bJqNtXsVvBHQbQGB3mZduOAlw62sqCdIhQLFczEHtHAt1Ve6NcNCsbtearbXP2eKqbCWy/PZa70diHyPdi9qiaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yDoVdY+Pc9qumyxpzzNFuOZNqlnuBuVFdJ69BZSqGVo=;
+ b=Srhry845uo4rPZ0Ek+Q5k+SLJf/pLC5CX/pX7mCGT13Zf5znRXpJT9xTuERc91L1Vxnv+tvof2ffZ+R0NicK5eUZoZMkDhdXxfQO4YVT94GCqCBPB4mIrF/sKskQywcydTsvx/2Ogdf8xYERbFolI0Y4KWlzGFiOXiUdtjWy7+1TKSKI3/LTBcIZ8yAugtTKojKHSd15b+g5xErF0tbwLF8btR62YKxlmzf0RK4qqHtQ991xNTr1IK+FMl8pkazX1NCDFZFRRo4p1IzxBHhm2x+xTlLrQ+bLa079ne97r6YLA2XmPxXckH7+oRpL6o1B3p+FaArGhnirCd6johoR2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yDoVdY+Pc9qumyxpzzNFuOZNqlnuBuVFdJ69BZSqGVo=;
+ b=LAoImtAb3uT8ZSaVzIDIZLmPRErEYwU8/vV2XVDw/o6Fud+TZB1BRNGy+FWXCCnDlVut54rauWLcIuVcudEzmnNLgiMg2FClQpoiReP/LAf+ProgDbDZfiOMrPxHCp7oCcPVRURKB2Pq482VUtPr8Fi7dQSWCScflq4lA72mtcKwBvw59ueF+tzAzhKr6v5FhBDEnNWzC7tA/9kvaFhOKwUDl4iOZ88MLcrB43GF0l2gPTLHmmqi+O111XV2txqFedj82AtKtGY/NdUt7/Gv24eKBdp1Cip/beaA66Fi3EUN31shLH/1tGIoaBhsJ7l1ByHRnbQR85FMADWIPyZMFQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by IA1PR12MB6457.namprd12.prod.outlook.com (2603:10b6:208:3ab::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.30; Mon, 1 May
+ 2023 18:03:06 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab%6]) with mapi id 15.20.6340.030; Mon, 1 May 2023
+ 18:03:05 +0000
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Andy Gross <agross@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: [PATCH AUTOSEL 5.15 17/17] media: Prefer designated initializers over memset for subdev pad ops
-Date:   Sun, 30 Apr 2023 23:04:34 -0400
-Message-Id: <20230501030435.3254695-17-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230501030435.3254695-1-sashal@kernel.org>
-References: <20230501030435.3254695-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Steven Price <steven.price@arm.com>
+Subject: [PATCH 06/20] iommu/exynos: Implement an IDENTITY domain
+Date:   Mon,  1 May 2023 15:02:50 -0300
+Message-Id: <6-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com>
+In-Reply-To: <0-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com>
+References: 
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MN2PR06CA0023.namprd06.prod.outlook.com
+ (2603:10b6:208:23d::28) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|IA1PR12MB6457:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4615b5b2-cb88-4ae9-7bc7-08db4a6e5027
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: eJ/Osi5xuOZZEpntF1O6pH+LsLx3Aefnm3P2JgDQU+eBcQ9ru1mRTaWY6OfaN8ykNSJRZRzScrb9NMA888QzIwLa2+jiamnSEZrH1cRvYA4P2jmN7q3JdmrEs3hhzXq203h+Q2iV/z5INQCpY/Nc8aMNQQwFn0bHDVPt1I+LCYjOcXkpiJr8273oalKCkkpAUPVjaYCq+BwVefHfwJ+++GwcxDU30gVJxzeL7BH7q1k45A7NG1mEVsvbfaB0GA0gZ51QCftNSOgw4i8lMnEASiS7+vnjW9DaHlbyfjg7O1vHKZXG7/JppqILJpqCPLZ9vxWACDh7c52oNmA5Wu1xh4ukb0nO4GUbTTOTEkI9KLiHboaI1bW4zp5MstMT6UP0/UNPiabBZOruSUwocBqtlpZNKtAaSVtb4s6fymmDnOgYO+QIidWvlO1nCb4aEW8MIWkHHeX0KquUlZkNP8/jdCNSdUUMqNSbHHLlZLURsowYiiX72U9AlSSjf7POeZUlQ5f3cv2e7x1C89vtIhQO6POKfZp83Bh0ChVCSppvo0BijoAfCE4QPGtoT7K1RCH2w0sS3dbLL605csL/PNT/6US2KKz8kmKaE8dgd+9VaVMecLRMjV9nOGAJko3KLJXQ
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(39860400002)(366004)(346002)(136003)(376002)(451199021)(6506007)(186003)(6486002)(26005)(83380400001)(2616005)(4326008)(5660300002)(316002)(66476007)(66556008)(66946007)(6512007)(41300700001)(8676002)(8936002)(7406005)(54906003)(478600001)(6666004)(2906002)(110136005)(36756003)(7416002)(86362001)(38100700002)(921005)(4216001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7ZUXCtwX/2iBuJ0V+BAJxISHlfwsdWMnhI5UA78r+RIDtN5cmMckqSfQqhfi?=
+ =?us-ascii?Q?qvSF9RXvv4e8M/0vLvpTgmB2soX7LTrbYQXftFj+ytCW0NvOm9QGOhEhEcEd?=
+ =?us-ascii?Q?rQylWFCd+U+BM1UGYnRXCb06pDGAL/P3Kb+1Ty8o8ICT2cwMz826nDnoc1in?=
+ =?us-ascii?Q?XuU/bQhA4N0CX/OfqlglBBCbD/aBvKUXOHsT9wVZl1NgR5/B+AYOpca9vfNZ?=
+ =?us-ascii?Q?epYnXM/G2K3atwXgYZPG1kVaOti4Vi0ezMnDmVwK+6e2HPtOeYzQMTnnf986?=
+ =?us-ascii?Q?ZQHrT0lw7H6i9CKZaMFHOLozjdKEHjdHfX0V5RGpovw0Ff5PKhlcJ00L8T+O?=
+ =?us-ascii?Q?wyM0BiAwzJY1/E0PFzqyRHFDgsOTAGKGQQPrlnrU5RINEmLlxVgd+NAQO/LJ?=
+ =?us-ascii?Q?YMgmx6Ng1QbLN6Wl24Csl2FNDqdBsc+KLcctGLR7V47/Bafyo7OvtZxIqKXu?=
+ =?us-ascii?Q?hVyftExYGHIAyg8/VZ6a/pvqJUp/AW/U4c26zCw7FGB5hySIorqHkf/oQwiq?=
+ =?us-ascii?Q?XoXbENMcVem+dYLGlVRBxg76KCo+hOvV2rv0yrn7eBexi73ZK2r9qNL2Z034?=
+ =?us-ascii?Q?+NMk6IklCBLRb80QiQf3vCabU5CtqXf7v5FHWb14MfmQuo99luguJbFAB528?=
+ =?us-ascii?Q?nkm4xorRThPWpRbKO83t3o7tF+GP0pwG03FE232GK65Q15SKGEKeNaWZkuMb?=
+ =?us-ascii?Q?kxG7USzpVRU0B8L/0BvIvU2dtgLxiObn70tSw/nfTGefIwf59UkpfDIpACyp?=
+ =?us-ascii?Q?aDjqHvfqh+tsZ+6hkYJZJgOxBJHJXDFzh/1Nty8KLmbFdL0jzixyQ5Gb2V+d?=
+ =?us-ascii?Q?hwRhk4BAUBhvbfYUkXkMLkhxaITg4SqIvTGSKXUK1XXI406z47yPjmwBQq+i?=
+ =?us-ascii?Q?8ksBF7Bi8AWkxAUcqz/+2qDvQBzmZoErwhMdwew1g79Gwvj6wBjSCATP9eLi?=
+ =?us-ascii?Q?k00FwDWEHhz2qLF2VaBqnrpalOxpjzmfFpV5GLozhLpj/8CBwoWm2l7tINDA?=
+ =?us-ascii?Q?rMg8tkEc8s3lMHhWise0/901jcRb6Dau1eRJ+mJ7aZLzTYb2vnadjlsI+5BH?=
+ =?us-ascii?Q?ZkI5c+WTLUCKuckprjfTmg5zJjKXPA12i3k7tz+93dEOFyHQnGqjb+4WXgL3?=
+ =?us-ascii?Q?heoapUtg6sxPHKsOFZ9uOAKsGRBl6sHS/XJNuuokeI8gMidTdT9HCk7uMxaQ?=
+ =?us-ascii?Q?JFydx6mASvgGyOL47rO5D0wbXF0zZaa7qCwCWCI5YvHPb8XefblRXEvf8o/2?=
+ =?us-ascii?Q?16yoAqwiHrtpwjgcdMGJUng7Rm7fjUiyHmpI0FHkO8Hh9QU19nPzQy5spvOc?=
+ =?us-ascii?Q?iQRLnm6QtddFL1Hb3psVogVNkErCoearoqVnkZli6mGZ8AfyVX4OZ6ZuKbXH?=
+ =?us-ascii?Q?YSKyy/+y93qNSBBlQ1cs3RxeOj/nzNMimhYBhX42Z7LlBj/hueMaKUKJI+n8?=
+ =?us-ascii?Q?WwQmydbrZ7BD868gu9f6UVjQCkCqVt6r8J/LRhsM5fBse1xjctnuG98F1ulR?=
+ =?us-ascii?Q?k4aarwOT6SN66HWcCpzubQ5p5uHuTRl4aSitGt8fI6RyKxRhw7wkZYuCSsCE?=
+ =?us-ascii?Q?PPHs4sDH5ztCovBC143CMnxZseTF5XoKjPAnD5pQ?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4615b5b2-cb88-4ae9-7bc7-08db4a6e5027
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2023 18:03:05.6881
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xLpIQerFkLDXEfBUcT+yR/O4njgalSuMAVHAw1eHK7iUSIu+rS1+ktjP6t28u1cn
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6457
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+What exynos calls exynos_iommu_detach_device is actually putting the iommu
+into identity mode.
 
-[ Upstream commit e3a69496a1cde364c74a600d7a370179b58aed29 ]
+Move to the new core support for ARM_DMA_USE_IOMMU by defining
+ops->identity_domain.
 
-Structures passed to subdev pad operations are all zero-initialized, but
-not always with the same kind of code constructs. While most drivers
-used designated initializers, which zero all the fields that are not
-specified, when declaring variables, some use memset(). Those two
-methods lead to the same end result, and, depending on compiler
-optimizations, may even be completely equivalent, but they're not
-consistent.
-
-Improve coding style consistency by using designated initializers
-instead of calling memset(). Where applicable, also move the variables
-to inner scopes of for loops to ensure correct initialization in all
-iterations.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Lad Prabhakar <prabhakar.csengg@gmail.com> # For am437x
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 ---
- drivers/media/platform/am437x/am437x-vpfe.c    | 15 ++++++++-------
- .../media/platform/exynos4-is/fimc-capture.c   |  7 ++++---
- drivers/media/platform/ti-vpe/cal-video.c      |  8 ++++----
- drivers/media/platform/vsp1/vsp1_drm.c         | 18 +++++++++---------
- drivers/media/platform/vsp1/vsp1_entity.c      | 11 +++++------
- drivers/media/usb/dvb-usb/cxusb-analog.c       | 14 +++++++-------
- drivers/staging/media/imx/imx-media-capture.c  | 12 ++++++------
- drivers/staging/media/imx/imx-media-utils.c    |  8 ++++----
- drivers/staging/media/omap4iss/iss_video.c     |  6 +++---
- 9 files changed, 50 insertions(+), 49 deletions(-)
+ drivers/iommu/exynos-iommu.c | 64 ++++++++++++++++++------------------
+ 1 file changed, 32 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
-index 1c9cb9e05fdf6..c1ce93efc6559 100644
---- a/drivers/media/platform/am437x/am437x-vpfe.c
-+++ b/drivers/media/platform/am437x/am437x-vpfe.c
-@@ -1499,7 +1499,9 @@ static int vpfe_enum_size(struct file *file, void  *priv,
- 			  struct v4l2_frmsizeenum *fsize)
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index c275fe71c4db32..6ff7901103948a 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -24,6 +24,7 @@
+ 
+ typedef u32 sysmmu_iova_t;
+ typedef u32 sysmmu_pte_t;
++static struct iommu_domain exynos_identity_domain;
+ 
+ /* We do not consider super section mapping (16MB) */
+ #define SECT_ORDER 20
+@@ -829,7 +830,7 @@ static int __maybe_unused exynos_sysmmu_suspend(struct device *dev)
+ 		struct exynos_iommu_owner *owner = dev_iommu_priv_get(master);
+ 
+ 		mutex_lock(&owner->rpm_lock);
+-		if (data->domain) {
++		if (&data->domain->domain != &exynos_identity_domain) {
+ 			dev_dbg(data->sysmmu, "saving state\n");
+ 			__sysmmu_disable(data);
+ 		}
+@@ -847,7 +848,7 @@ static int __maybe_unused exynos_sysmmu_resume(struct device *dev)
+ 		struct exynos_iommu_owner *owner = dev_iommu_priv_get(master);
+ 
+ 		mutex_lock(&owner->rpm_lock);
+-		if (data->domain) {
++		if (&data->domain->domain != &exynos_identity_domain) {
+ 			dev_dbg(data->sysmmu, "restoring state\n");
+ 			__sysmmu_enable(data);
+ 		}
+@@ -980,17 +981,22 @@ static void exynos_iommu_domain_free(struct iommu_domain *iommu_domain)
+ 	kfree(domain);
+ }
+ 
+-static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
+-				    struct device *dev)
++static int exynos_iommu_identity_attach(struct iommu_domain *identity_domain,
++					struct device *dev)
  {
- 	struct vpfe_device *vpfe = video_drvdata(file);
--	struct v4l2_subdev_frame_size_enum fse;
-+	struct v4l2_subdev_frame_size_enum fse = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
- 	struct v4l2_subdev *sd = vpfe->current_subdev->sd;
- 	struct vpfe_fmt *fmt;
- 	int ret;
-@@ -1514,11 +1516,9 @@ static int vpfe_enum_size(struct file *file, void  *priv,
+-	struct exynos_iommu_domain *domain = to_exynos_domain(iommu_domain);
+ 	struct exynos_iommu_owner *owner = dev_iommu_priv_get(dev);
+-	phys_addr_t pagetable = virt_to_phys(domain->pgtable);
++	struct exynos_iommu_domain *domain;
++	phys_addr_t pagetable;
+ 	struct sysmmu_drvdata *data, *next;
+ 	unsigned long flags;
  
- 	memset(fsize->reserved, 0x0, sizeof(fsize->reserved));
- 
--	memset(&fse, 0x0, sizeof(fse));
- 	fse.index = fsize->index;
- 	fse.pad = 0;
- 	fse.code = fmt->code;
--	fse.which = V4L2_SUBDEV_FORMAT_ACTIVE;
- 	ret = v4l2_subdev_call(sd, pad, enum_frame_size, NULL, &fse);
- 	if (ret)
- 		return ret;
-@@ -2146,7 +2146,6 @@ vpfe_async_bound(struct v4l2_async_notifier *notifier,
- {
- 	struct vpfe_device *vpfe = container_of(notifier->v4l2_dev,
- 					       struct vpfe_device, v4l2_dev);
--	struct v4l2_subdev_mbus_code_enum mbus_code;
- 	struct vpfe_subdev_info *sdinfo;
- 	struct vpfe_fmt *fmt;
- 	int ret = 0;
-@@ -2173,9 +2172,11 @@ vpfe_async_bound(struct v4l2_async_notifier *notifier,
- 
- 	vpfe->num_active_fmt = 0;
- 	for (j = 0, i = 0; (ret != -EINVAL); ++j) {
--		memset(&mbus_code, 0, sizeof(mbus_code));
--		mbus_code.index = j;
--		mbus_code.which = V4L2_SUBDEV_FORMAT_ACTIVE;
-+		struct v4l2_subdev_mbus_code_enum mbus_code = {
-+			.index = j,
-+			.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+		};
+-	if (!has_sysmmu(dev) || owner->domain != iommu_domain)
+-		return;
++	if (!owner)
++		return -ENODEV;
++	if (owner->domain == identity_domain)
++		return 0;
 +
- 		ret = v4l2_subdev_call(subdev, pad, enum_mbus_code,
- 				       NULL, &mbus_code);
- 		if (ret)
-diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
-index 7ff4024003f4a..0b3cf01e9537e 100644
---- a/drivers/media/platform/exynos4-is/fimc-capture.c
-+++ b/drivers/media/platform/exynos4-is/fimc-capture.c
-@@ -763,7 +763,10 @@ static int fimc_pipeline_try_format(struct fimc_ctx *ctx,
- 	struct fimc_dev *fimc = ctx->fimc_dev;
- 	struct fimc_pipeline *p = to_fimc_pipeline(fimc->vid_cap.ve.pipe);
- 	struct v4l2_subdev *sd = p->subdevs[IDX_SENSOR];
--	struct v4l2_subdev_format sfmt;
-+	struct v4l2_subdev_format sfmt = {
-+		.which = set ? V4L2_SUBDEV_FORMAT_ACTIVE
-+		       : V4L2_SUBDEV_FORMAT_TRY,
-+	};
- 	struct v4l2_mbus_framefmt *mf = &sfmt.format;
- 	struct media_entity *me;
- 	struct fimc_fmt *ffmt;
-@@ -774,9 +777,7 @@ static int fimc_pipeline_try_format(struct fimc_ctx *ctx,
- 	if (WARN_ON(!sd || !tfmt))
- 		return -EINVAL;
++	domain = to_exynos_domain(owner->domain);
++	pagetable = virt_to_phys(domain->pgtable);
  
--	memset(&sfmt, 0, sizeof(sfmt));
- 	sfmt.format = *tfmt;
--	sfmt.which = set ? V4L2_SUBDEV_FORMAT_ACTIVE : V4L2_SUBDEV_FORMAT_TRY;
+ 	mutex_lock(&owner->rpm_lock);
  
- 	me = fimc_pipeline_get_head(&sd->entity);
- 
-diff --git a/drivers/media/platform/ti-vpe/cal-video.c b/drivers/media/platform/ti-vpe/cal-video.c
-index 3e936a2ca36c6..d87177d04e921 100644
---- a/drivers/media/platform/ti-vpe/cal-video.c
-+++ b/drivers/media/platform/ti-vpe/cal-video.c
-@@ -814,7 +814,6 @@ static const struct v4l2_file_operations cal_fops = {
- 
- static int cal_ctx_v4l2_init_formats(struct cal_ctx *ctx)
- {
--	struct v4l2_subdev_mbus_code_enum mbus_code;
- 	struct v4l2_mbus_framefmt mbus_fmt;
- 	const struct cal_format_info *fmtinfo;
- 	unsigned int i, j, k;
-@@ -829,10 +828,11 @@ static int cal_ctx_v4l2_init_formats(struct cal_ctx *ctx)
- 	ctx->num_active_fmt = 0;
- 
- 	for (j = 0, i = 0; ; ++j) {
-+		struct v4l2_subdev_mbus_code_enum mbus_code = {
-+			.index = j,
-+			.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+		};
- 
--		memset(&mbus_code, 0, sizeof(mbus_code));
--		mbus_code.index = j;
--		mbus_code.which = V4L2_SUBDEV_FORMAT_ACTIVE;
- 		ret = v4l2_subdev_call(ctx->phy->source, pad, enum_mbus_code,
- 				       NULL, &mbus_code);
- 		if (ret == -EINVAL)
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index 06f74d410973e..706d48601bf2c 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -66,7 +66,9 @@ static int vsp1_du_insert_uif(struct vsp1_device *vsp1,
- 			      struct vsp1_entity *prev, unsigned int prev_pad,
- 			      struct vsp1_entity *next, unsigned int next_pad)
- {
--	struct v4l2_subdev_format format;
-+	struct v4l2_subdev_format format = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
- 	int ret;
- 
- 	if (!uif) {
-@@ -82,8 +84,6 @@ static int vsp1_du_insert_uif(struct vsp1_device *vsp1,
- 	prev->sink = uif;
- 	prev->sink_pad = UIF_PAD_SINK;
- 
--	memset(&format, 0, sizeof(format));
--	format.which = V4L2_SUBDEV_FORMAT_ACTIVE;
- 	format.pad = prev_pad;
- 
- 	ret = v4l2_subdev_call(&prev->subdev, pad, get_fmt, NULL, &format);
-@@ -118,8 +118,12 @@ static int vsp1_du_pipeline_setup_rpf(struct vsp1_device *vsp1,
- 				      struct vsp1_entity *uif,
- 				      unsigned int brx_input)
- {
--	struct v4l2_subdev_selection sel;
--	struct v4l2_subdev_format format;
-+	struct v4l2_subdev_selection sel = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
-+	struct v4l2_subdev_format format = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
- 	const struct v4l2_rect *crop;
- 	int ret;
- 
-@@ -129,8 +133,6 @@ static int vsp1_du_pipeline_setup_rpf(struct vsp1_device *vsp1,
- 	 */
- 	crop = &vsp1->drm->inputs[rpf->entity.index].crop;
- 
--	memset(&format, 0, sizeof(format));
--	format.which = V4L2_SUBDEV_FORMAT_ACTIVE;
- 	format.pad = RWPF_PAD_SINK;
- 	format.format.width = crop->width + crop->left;
- 	format.format.height = crop->height + crop->top;
-@@ -147,8 +149,6 @@ static int vsp1_du_pipeline_setup_rpf(struct vsp1_device *vsp1,
- 		__func__, format.format.width, format.format.height,
- 		format.format.code, rpf->entity.index);
- 
--	memset(&sel, 0, sizeof(sel));
--	sel.which = V4L2_SUBDEV_FORMAT_ACTIVE;
- 	sel.pad = RWPF_PAD_SINK;
- 	sel.target = V4L2_SEL_TGT_CROP;
- 	sel.r = *crop;
-diff --git a/drivers/media/platform/vsp1/vsp1_entity.c b/drivers/media/platform/vsp1/vsp1_entity.c
-index 823c15facd1b4..b40926270c149 100644
---- a/drivers/media/platform/vsp1/vsp1_entity.c
-+++ b/drivers/media/platform/vsp1/vsp1_entity.c
-@@ -184,15 +184,14 @@ vsp1_entity_get_pad_selection(struct vsp1_entity *entity,
- int vsp1_entity_init_cfg(struct v4l2_subdev *subdev,
- 			 struct v4l2_subdev_state *sd_state)
- {
--	struct v4l2_subdev_format format;
- 	unsigned int pad;
- 
- 	for (pad = 0; pad < subdev->entity.num_pads - 1; ++pad) {
--		memset(&format, 0, sizeof(format));
--
--		format.pad = pad;
--		format.which = sd_state ? V4L2_SUBDEV_FORMAT_TRY
--			     : V4L2_SUBDEV_FORMAT_ACTIVE;
-+		struct v4l2_subdev_format format = {
-+			.pad = pad,
-+			.which = sd_state ? V4L2_SUBDEV_FORMAT_TRY
-+			       : V4L2_SUBDEV_FORMAT_ACTIVE,
-+		};
- 
- 		v4l2_subdev_call(subdev, pad, set_fmt, sd_state, &format);
+@@ -1009,15 +1015,25 @@ static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
+ 		list_del_init(&data->domain_node);
+ 		spin_unlock(&data->lock);
  	}
-diff --git a/drivers/media/usb/dvb-usb/cxusb-analog.c b/drivers/media/usb/dvb-usb/cxusb-analog.c
-index e93183ddd7975..deba5224cb8df 100644
---- a/drivers/media/usb/dvb-usb/cxusb-analog.c
-+++ b/drivers/media/usb/dvb-usb/cxusb-analog.c
-@@ -1014,7 +1014,10 @@ static int cxusb_medion_try_s_fmt_vid_cap(struct file *file,
+-	owner->domain = NULL;
++	owner->domain = identity_domain;
+ 	spin_unlock_irqrestore(&domain->lock, flags);
+ 
+ 	mutex_unlock(&owner->rpm_lock);
+ 
+ 	dev_dbg(dev, "%s: Detached IOMMU with pgtable %pa\n", __func__,
+ 		&pagetable);
++	return 0;
+ }
+ 
++static struct iommu_domain_ops exynos_identity_ops = {
++	.attach_dev = exynos_iommu_identity_attach,
++};
++
++static struct iommu_domain exynos_identity_domain = {
++	.type = IOMMU_DOMAIN_IDENTITY,
++	.ops = &exynos_identity_ops,
++};
++
+ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
+ 				   struct device *dev)
  {
- 	struct dvb_usb_device *dvbdev = video_drvdata(file);
- 	struct cxusb_medion_dev *cxdev = dvbdev->priv;
--	struct v4l2_subdev_format subfmt;
-+	struct v4l2_subdev_format subfmt = {
-+		.which = isset ? V4L2_SUBDEV_FORMAT_ACTIVE :
-+			 V4L2_SUBDEV_FORMAT_TRY,
-+	};
- 	u32 field;
- 	int ret;
+@@ -1026,12 +1042,11 @@ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
+ 	struct sysmmu_drvdata *data;
+ 	phys_addr_t pagetable = virt_to_phys(domain->pgtable);
+ 	unsigned long flags;
++	int err;
  
-@@ -1024,9 +1027,6 @@ static int cxusb_medion_try_s_fmt_vid_cap(struct file *file,
- 	field = vb2_start_streaming_called(&cxdev->videoqueue) ?
- 		cxdev->field_order : cxusb_medion_field_order(cxdev);
+-	if (!has_sysmmu(dev))
+-		return -ENODEV;
+-
+-	if (owner->domain)
+-		exynos_iommu_detach_device(owner->domain, dev);
++	err = exynos_iommu_identity_attach(&exynos_identity_domain, dev);
++	if (err)
++		return err;
  
--	memset(&subfmt, 0, sizeof(subfmt));
--	subfmt.which = isset ? V4L2_SUBDEV_FORMAT_ACTIVE :
--		V4L2_SUBDEV_FORMAT_TRY;
- 	subfmt.format.width = f->fmt.pix.width & ~1;
- 	subfmt.format.height = f->fmt.pix.height & ~1;
- 	subfmt.format.code = MEDIA_BUS_FMT_FIXED;
-@@ -1464,7 +1464,9 @@ int cxusb_medion_analog_init(struct dvb_usb_device *dvbdev)
- 					    .buf = tuner_analog_msg_data,
- 					    .len =
- 					    sizeof(tuner_analog_msg_data) };
--	struct v4l2_subdev_format subfmt;
-+	struct v4l2_subdev_format subfmt = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
- 	int ret;
+ 	mutex_lock(&owner->rpm_lock);
  
- 	/* switch tuner to analog mode so IF demod will become accessible */
-@@ -1507,8 +1509,6 @@ int cxusb_medion_analog_init(struct dvb_usb_device *dvbdev)
- 	v4l2_subdev_call(cxdev->tuner, video, s_std, cxdev->norm);
- 	v4l2_subdev_call(cxdev->cx25840, video, s_std, cxdev->norm);
+@@ -1407,26 +1422,12 @@ static struct iommu_device *exynos_iommu_probe_device(struct device *dev)
+ 	return &data->iommu;
+ }
  
--	memset(&subfmt, 0, sizeof(subfmt));
--	subfmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
- 	subfmt.format.width = cxdev->width;
- 	subfmt.format.height = cxdev->height;
- 	subfmt.format.code = MEDIA_BUS_FMT_FIXED;
-diff --git a/drivers/staging/media/imx/imx-media-capture.c b/drivers/staging/media/imx/imx-media-capture.c
-index 93ba092360105..5cc67786b9169 100644
---- a/drivers/staging/media/imx/imx-media-capture.c
-+++ b/drivers/staging/media/imx/imx-media-capture.c
-@@ -501,14 +501,14 @@ static int capture_legacy_g_parm(struct file *file, void *fh,
- 				 struct v4l2_streamparm *a)
+-static void exynos_iommu_set_platform_dma(struct device *dev)
+-{
+-	struct exynos_iommu_owner *owner = dev_iommu_priv_get(dev);
+-
+-	if (owner->domain) {
+-		struct iommu_group *group = iommu_group_get(dev);
+-
+-		if (group) {
+-			exynos_iommu_detach_device(owner->domain, dev);
+-			iommu_group_put(group);
+-		}
+-	}
+-}
+-
+ static void exynos_iommu_release_device(struct device *dev)
  {
- 	struct capture_priv *priv = video_drvdata(file);
--	struct v4l2_subdev_frame_interval fi;
-+	struct v4l2_subdev_frame_interval fi = {
-+		.pad = priv->src_sd_pad,
-+	};
- 	int ret;
+ 	struct exynos_iommu_owner *owner = dev_iommu_priv_get(dev);
+ 	struct sysmmu_drvdata *data;
  
- 	if (a->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
- 		return -EINVAL;
+-	exynos_iommu_set_platform_dma(dev);
++	WARN_ON(exynos_iommu_identity_attach(&exynos_identity_domain, dev));
  
--	memset(&fi, 0, sizeof(fi));
--	fi.pad = priv->src_sd_pad;
- 	ret = v4l2_subdev_call(priv->src_sd, video, g_frame_interval, &fi);
- 	if (ret < 0)
- 		return ret;
-@@ -523,14 +523,14 @@ static int capture_legacy_s_parm(struct file *file, void *fh,
- 				 struct v4l2_streamparm *a)
- {
- 	struct capture_priv *priv = video_drvdata(file);
--	struct v4l2_subdev_frame_interval fi;
-+	struct v4l2_subdev_frame_interval fi = {
-+		.pad = priv->src_sd_pad,
-+	};
- 	int ret;
+ 	list_for_each_entry(data, &owner->controllers, owner_node)
+ 		device_link_del(data->link);
+@@ -1457,6 +1458,7 @@ static int exynos_iommu_of_xlate(struct device *dev,
  
- 	if (a->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
- 		return -EINVAL;
+ 		INIT_LIST_HEAD(&owner->controllers);
+ 		mutex_init(&owner->rpm_lock);
++		owner->domain = &exynos_identity_domain;
+ 		dev_iommu_priv_set(dev, owner);
+ 	}
  
--	memset(&fi, 0, sizeof(fi));
--	fi.pad = priv->src_sd_pad;
- 	fi.interval = a->parm.capture.timeperframe;
- 	ret = v4l2_subdev_call(priv->src_sd, video, s_frame_interval, &fi);
- 	if (ret < 0)
-diff --git a/drivers/staging/media/imx/imx-media-utils.c b/drivers/staging/media/imx/imx-media-utils.c
-index 6f90acf9c725c..49ba521dd9edd 100644
---- a/drivers/staging/media/imx/imx-media-utils.c
-+++ b/drivers/staging/media/imx/imx-media-utils.c
-@@ -432,15 +432,15 @@ int imx_media_init_cfg(struct v4l2_subdev *sd,
- 		       struct v4l2_subdev_state *sd_state)
- {
- 	struct v4l2_mbus_framefmt *mf_try;
--	struct v4l2_subdev_format format;
- 	unsigned int pad;
- 	int ret;
+@@ -1471,11 +1473,9 @@ static int exynos_iommu_of_xlate(struct device *dev,
+ }
  
- 	for (pad = 0; pad < sd->entity.num_pads; pad++) {
--		memset(&format, 0, sizeof(format));
-+		struct v4l2_subdev_format format = {
-+			.pad = pad,
-+			.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+		};
- 
--		format.pad = pad;
--		format.which = V4L2_SUBDEV_FORMAT_ACTIVE;
- 		ret = v4l2_subdev_call(sd, pad, get_fmt, NULL, &format);
- 		if (ret)
- 			continue;
-diff --git a/drivers/staging/media/omap4iss/iss_video.c b/drivers/staging/media/omap4iss/iss_video.c
-index d0da083deed53..801e145ea976a 100644
---- a/drivers/staging/media/omap4iss/iss_video.c
-+++ b/drivers/staging/media/omap4iss/iss_video.c
-@@ -244,7 +244,9 @@ static int
- __iss_video_get_format(struct iss_video *video,
- 		       struct v4l2_mbus_framefmt *format)
- {
--	struct v4l2_subdev_format fmt;
-+	struct v4l2_subdev_format fmt = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
- 	struct v4l2_subdev *subdev;
- 	u32 pad;
- 	int ret;
-@@ -253,9 +255,7 @@ __iss_video_get_format(struct iss_video *video,
- 	if (!subdev)
- 		return -EINVAL;
- 
--	memset(&fmt, 0, sizeof(fmt));
- 	fmt.pad = pad;
--	fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
- 
- 	mutex_lock(&video->mutex);
- 	ret = v4l2_subdev_call(subdev, pad, get_fmt, NULL, &fmt);
+ static const struct iommu_ops exynos_iommu_ops = {
++	.identity_domain = &exynos_identity_domain,
+ 	.domain_alloc = exynos_iommu_domain_alloc,
+ 	.device_group = generic_device_group,
+-#ifdef CONFIG_ARM
+-	.set_platform_dma_ops = exynos_iommu_set_platform_dma,
+-#endif
+ 	.probe_device = exynos_iommu_probe_device,
+ 	.release_device = exynos_iommu_release_device,
+ 	.pgsize_bitmap = SECT_SIZE | LPAGE_SIZE | SPAGE_SIZE,
 -- 
-2.39.2
+2.40.0
 
