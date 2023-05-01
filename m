@@ -2,335 +2,191 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F50C7EE33
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 May 2023 18:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD304C7EE24
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 May 2023 19:55:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232744AbjEASDb (ORCPT
+        id S232724AbjEATzj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 1 May 2023 14:03:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45120 "EHLO
+        Mon, 1 May 2023 15:55:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231467AbjEASD1 (ORCPT
+        with ESMTP id S232467AbjEATzh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 1 May 2023 14:03:27 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2056.outbound.protection.outlook.com [40.107.94.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F00E01BC6;
-        Mon,  1 May 2023 11:03:22 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kKcXGlq0EY1Nb0VYw1oVuk/hwjghVkW8MJKosG//+sp35VSRwKM7bz+pHGMnFwzfSEsGxY30tzoFlZclLPZyoof7pVXQrvW5mHeEbObdRZCEp3iGWjVWqhR3U4CrG7APmZJ1+OPBmM4uE1Jr7cuuUx7QlC2tCk/1O/dlSHS3mdu5HzU8Tli6wJXAdtIvlmzT7vXd8TbXnue+l9DLBa42a/96xD0fLPtMcecV2MSB9OwpQnziwjvqXxemitixgbE8STgUUNrdNIgwfoME7FcT50AEB7THxlxcLJim/EaPFNgs77zqTuYl+odKNbTqP+8vj9WxW1333n5HuctlLaHETQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VxfEne6hTvJIrssBCM0Wl3ZWfLoTWweQYD10J76/mu0=;
- b=QubgEOrnMOjMAkKsOsKyKRoqspuRrVjD7Y3D8w19QsgjWqpHPgIKfqVWHdde91j6/1XmdH7aZZ1jYimQTuSqEypWRr3276E1Vit8TqHShUDM/tOEOBmhvBdq7qSIvXZNAgaZYxaoOcZc9dABZ7jYY+RP5GN7yOG9vH0h4ceZUozYSE8weqvmenv9LxsYA15vK2gyotwxXOWcyDKiUXJ93FUjZk7XG0fBD681SsyBiY08ZprZNzZ9lYPSYJ0vMu+H8OHujGuQkQtFDeY//r7Dg5mmZ48nVh/SeWoaI+k9svxIgrR+HvfxwSNyyaHpLEemHu2ZWbX2Ai1uAGEPEyWwMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VxfEne6hTvJIrssBCM0Wl3ZWfLoTWweQYD10J76/mu0=;
- b=fNQm/1cnA5/60eo/z99W4Os97mkLWSfqbyehYno3/3hlcGUeeAlBkuZGPCMTAYrOMBJFdmerh3hoqsGmCnVYR+9fgjs/e9AyUvi5Oz78Mx7qLj47pnEALiNbKwAYN/9mo2MVJXKOV488907cKZHxeOtfRCBdQoLJfRgLQu6UzkKIwuFV1i8xNXfXEPdW2ofqD3C4a5DsTwO3pAP3QxFavPXpier0jfMv02soumDTG45jzP3eg6YTQ5vH/oT+zeZmX21ht1OiuDmRxoeJWfkC5vstRxHfOfa/ssLPfYSMPDHzGDWS0HQyF8l+DZPtEVkLwePDFQinggVDk5OPpAOK7A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
- by IA1PR12MB6457.namprd12.prod.outlook.com (2603:10b6:208:3ab::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.30; Mon, 1 May
- 2023 18:03:14 +0000
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::f7a7:a561:87e9:5fab%6]) with mapi id 15.20.6340.030; Mon, 1 May 2023
- 18:03:14 +0000
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Mon, 1 May 2023 15:55:37 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AB892107;
+        Mon,  1 May 2023 12:55:32 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-50a14564d17so42675000a12.0;
+        Mon, 01 May 2023 12:55:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682970930; x=1685562930;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=R11iQvyL03GOSrYQIrHHw/DmH/A/XUw7XINQmYhJ5NI=;
+        b=peWCZZYGT1AxSPcYux7QrLuiRkQhYXkjUJi2FuQArobYQoTn9v/kN8dB6TUmneJdcv
+         /J+B22IzwHKPMifbMPXags92ZjQ/27VqZZxuChSpgYst6yJIFxKWVMlLTy9qjyU3RuRK
+         QPgU0Y4ClZhElCWA39agtUqu85kBdch4q3q5V6LnioZG+lUY5vdcvqtx6dCLfiYJC0rj
+         OwSm2gxKMNsZvzsh3OW5dQuMJCiUsE7/uqN9e2rNUigdFX61s/2viP/+Bl0LF19hRR7o
+         OywWxt9pKI63y636RxrmssOcsqxlaNP4czqX4Fi/IicxU7Xt0mS0IA1A31rAmOinGYc0
+         qc8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682970930; x=1685562930;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R11iQvyL03GOSrYQIrHHw/DmH/A/XUw7XINQmYhJ5NI=;
+        b=Qwzmvqy048MOOD7f5radSzJhSlTXhhFdLeX8n3UCHKJcGo/9FHeV6QZQIIZpO7F00T
+         NvBelyxE1zwxSFLoeMLfK/xh9Nek6rKgdtga/On9IzH+i7mXN5suew9rKHZ4kgFNdvUI
+         Y37GSe7mcmcXQz7rNSPtm5mSar4GGbdLK7q1dZkdkp0Aqh5K0Yde0np6cZtnP+YTAr2H
+         aO/aelL53cdP2LZ/uZPw90fCHoJIv9z6P/ec0OJziRpcUivmXwBIsu1iYxbg+NKf11GD
+         2kk62H7yONN8Yf+kdUS7pWR2eTQzpWYrJmk9uOzmiHNLtK4RDq8jANS0tH0aNkc46+Dl
+         IoTA==
+X-Gm-Message-State: AC+VfDyPhiJCKetZvNAWl29Ggn1DbmwIaMWGtdh7vLs/PBDCAZq5+3cE
+        VCHl4u8y1PLgA14mWh9PHKg=
+X-Google-Smtp-Source: ACHHUZ4IveGs8ii8zhWZnuM7WomrlcQtno4lmtlx1/IanE/Cp9xLGFa/d5MzJoharVEa0KYhmSCi9A==
+X-Received: by 2002:a17:907:9285:b0:95f:969e:dc5a with SMTP id bw5-20020a170907928500b0095f969edc5amr15852297ejc.30.1682970930448;
+        Mon, 01 May 2023 12:55:30 -0700 (PDT)
+Received: from localhost.my.domain (83.8.115.30.ipv4.supernova.orange.pl. [83.8.115.30])
+        by smtp.gmail.com with ESMTPSA id og36-20020a1709071de400b009600ce4fb53sm6333650ejc.37.2023.05.01.12.55.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 May 2023 12:55:29 -0700 (PDT)
+From:   Artur Weber <aweber.kernel@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>, soc@kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Steven Price <steven.price@arm.com>
-Subject: [PATCH 20/20] iommu: Convert remaining simple drivers to domain_alloc_paging()
-Date:   Mon,  1 May 2023 15:03:04 -0300
-Message-Id: <20-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com>
-In-Reply-To: <0-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com>
-References: 
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR06CA0022.namprd06.prod.outlook.com
- (2603:10b6:208:23d::27) To LV2PR12MB5869.namprd12.prod.outlook.com
- (2603:10b6:408:176::16)
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-phy@lists.infradead.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH v3 00/13] Re-introduce Exynos4212 support and add Samsung Galaxy Tab 3 8.0 boards
+Date:   Mon,  1 May 2023 21:55:12 +0200
+Message-Id: <20230501195525.6268-1-aweber.kernel@gmail.com>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|IA1PR12MB6457:EE_
-X-MS-Office365-Filtering-Correlation-Id: e9159dc7-1166-4bb7-4957-08db4a6e5169
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 6NvOHk8iDdsZrfUjMYazjU6DDanuw2z3fzrYEY3Oz5Na2FRQBbjg43oJjsVW1F2U8E43abG4GEug0kNiP4xEoBHCz+hfG1zctACPK1sdvH/O8bChKSOoeCD71bsGowdu4UwEC/R0y1SpKpdjEvgtuEFPNR66+FSZR7+R/3dv9Yr3pQGi3XMqq69EW9kpMrG26iKuy1+JP35BBLtnnup7eIkfcdaAwZMOv4GmRoKV5Qy4l034/sxklYBjNsqXjnuaMN/Vh5yg5+v11FpIg+B1rRD765++Rlh/x9NChedoqU4eTOhYZmGiHVAXjuwLOynd80dGqwKkTbA7vPow/c/jLeb+mhbK1pLGnQbAZc0TtbsRG7rqvflZK/uIlwvpY1iTyVYnFYuLdW+74t6d/yAIxWm7BXvN+I1cGY0IpI8cYd+mmuj00YVKkBf2qg6K4rZpcsX6kGEPKDpH9HWDrMtYgyJqH0BEY1LUFYrt+K6ugxQ/77MpOlZ6CzBz9nQoYs9TKjqWGl51NW49NI+QV5Pg4Hc09nup6UMPZ73rxKwAEGAIRy7cH0vEvKBNgWUBu6NIEcmAd7GqZHRk4VYbMz9eAt0VZ+IqsdJYZLff+hzu7vg=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(39860400002)(366004)(346002)(136003)(376002)(451199021)(6506007)(186003)(6486002)(26005)(83380400001)(2616005)(4326008)(5660300002)(316002)(66476007)(66556008)(66946007)(6512007)(41300700001)(8676002)(8936002)(7406005)(54906003)(478600001)(6666004)(2906002)(110136005)(36756003)(7416002)(86362001)(38100700002)(921005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?4JU62A81EJU7zMj/Keu2ufqUsCCHhVVJpF+Pamijl6PURRdBu4s+2e63+Iue?=
- =?us-ascii?Q?oZpPciqr9C4+5LR+7/b4CEQ4NAPaa2SKqKCw5WF3jamir9Lk0FiV5eSLVemP?=
- =?us-ascii?Q?74BnhzIuzcund+UErIvE49IY+sDrQCcj8/Xys04zCwTcBeO4HkiDdDgjNS3K?=
- =?us-ascii?Q?cQgsabBN+B1h2KH+wrBEOuOyBsV5DarFvf9qsOuFJPKHLyFmeiFMHnTSI7R7?=
- =?us-ascii?Q?OqlqWXg0Ob6BFqhWAr+RMXLojpsNUf9dbsdJJwcn0yiqzX9y70VmlYmXd2Y9?=
- =?us-ascii?Q?+M3u+BnInlOPgF4Gx+H1ppzwE8Zw5ZGeh31SbUG9k7JowgRbbSpfyscFQcA7?=
- =?us-ascii?Q?qsboD7rxJ+JEXG4DgfYGTrPsNvYFesuBK3fDt3SxJ3i6eaz8dFE1tXdaPC/X?=
- =?us-ascii?Q?SMt7UXrshgcqFbG71d7/r5V8FIyYTXVIkAWfVo/jyvb4hE8sJHaXyRPDhHjX?=
- =?us-ascii?Q?oUzlGtga8swCqtQnpmyaztgXBpYGuKzfwnXw6JJTthI5+vjqjH04/Vm43xlz?=
- =?us-ascii?Q?zUn9nS0gMV4CDpCMcceQfvzrsVPmxmVLwOGdpoBjOl2PX0ZevoV89OpFY+7d?=
- =?us-ascii?Q?1hUxOTw08RcYY8QoUihiTpMCFmRA4KFSxKIMsmL2krtP3xa31utaQPyfV9f1?=
- =?us-ascii?Q?7Hh2ti9/cmRf9HGoJPIQ4hWvmhVovOkKGawEsHVe0TBnwkk0TREbmGGSouCN?=
- =?us-ascii?Q?xG5o9KuTr2rfhGBZ2avdiIXBEfve3W3LMAlJVf+SIVPy+EEetElvmYNFmGcn?=
- =?us-ascii?Q?GJqXXKaespX1LU6OzvhQ+mVZt+fhaxoOnArZhUBxICF2t8BXmsciqcITKgzd?=
- =?us-ascii?Q?cwryDuRxNqmve0MaXqCJ79/TFcUinCN3l7PL1dU0hBvOmqj8q1c6IWaf71Az?=
- =?us-ascii?Q?bgogX5XjAUKK2KBr6/5pYsf1llzm5/bkNXrRwMnXsnRVUNV67M5FcLe1M185?=
- =?us-ascii?Q?dZIB79F+5tRjUFQMKgvW/E/eTkPq5PLcffRgEEy8Oc7gwFEzdiGdrB48Ieud?=
- =?us-ascii?Q?9pA/odOCEvFNB0R5AVZRpDNepnEiwzelLZh5R70PDlRurJVmuG+Whv2ML81V?=
- =?us-ascii?Q?w49ZqQDg3qe7bMvep8WAiJ5OrZ6XWqT3pqM2ZRHO8Z6SuG754Z6aOrAaRcAB?=
- =?us-ascii?Q?JjUc+gDdd5eQ+zfsn8qeZgTcqYa6ChJG2krZb0dS3aXgjSMbtf4h4JP12T3o?=
- =?us-ascii?Q?Hqqciz/UPnmvuv4YxddlvQFhG5DLZxaWkK2VUBE1CYWEpjMJZl3cvfkRuInY?=
- =?us-ascii?Q?h3rY2OW2Qzqwkag3x+gosDmcGa2Dse0ogdjyBaEJ6b0XoaY4BJEGhkwJ3Lg8?=
- =?us-ascii?Q?/rfZBnCmLqwQOH5mAnychUIrzFsT00D9hqIFtMOSvOBOd2Y1jCLXRenLd6hO?=
- =?us-ascii?Q?QWgDWS+QPMpBaPhDL7ibU4KcilW2G3BWOOPhn6WWSo29uO7pP727yg1wjuwr?=
- =?us-ascii?Q?yWcmH4tMR1Lv/DK44zrSZW24LtrnCV7TKGgU4VgP7KlYOtcHAibFmnw5Gz2O?=
- =?us-ascii?Q?o6e5viP8NuAzSGw8qBkt2pOqBKdizqaRaPh1AW/rAsii9Az7w4ICI693lo88?=
- =?us-ascii?Q?nXjU6Rdu/5jt97UogS0hoj0eK7d1xE+GhHKhxCCP?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9159dc7-1166-4bb7-4957-08db4a6e5169
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2023 18:03:07.7860
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oLSLcaEVCPUEJVqvMvCNlVEL0My5KVFiW57R4zcjfzz4kErlGQzumMXXeWQJ48IC
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6457
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-These drivers don't support IOMMU_DOMAIN_DMA, so this commit effectively
-allows them to support that mode.
+This patches re-introduces the Exynos4212 platform and adds support
+for the Samsung Galaxy Tab 3 8.0 series of tablets that uses it:
 
-The prior work to require default_domains makes this safe because every
-one of these drivers is either compilation incompatible with dma-iommu.c,
-or already establishing a default_domain. In both cases alloc_domain()
-will never be called with IOMMU_DOMAIN_DMA for these drivers so it is safe
-to drop the test.
+ - Samsung Galaxy Tab 3 8.0 WiFi (SM-T310/lt01wifi)
+ - Samsung Galaxy Tab 3 8.0 3G (SM-T311/lt013g)
+ - Samsung Galaxy Tab 3 8.0 LTE (SM-T315/lt01lte)
 
-Removing these tests clarifies that the domain allocation path is only
-about the functionality of a paging domain and has nothing to do with
-policy of how the paging domain is used for UNMANAGED/DMA/DMA_FQ.
+What works:
 
-Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
----
- drivers/iommu/fsl_pamu_domain.c | 7 ++-----
- drivers/iommu/msm_iommu.c       | 7 ++-----
- drivers/iommu/mtk_iommu_v1.c    | 7 ++-----
- drivers/iommu/omap-iommu.c      | 7 ++-----
- drivers/iommu/s390-iommu.c      | 7 ++-----
- drivers/iommu/tegra-gart.c      | 7 ++-----
- 6 files changed, 12 insertions(+), 30 deletions(-)
+ - Display and backlight
+ - Touchscreen (without touchkeys)
+ - GPIO buttons, hall sensor
+ - WiFi and Bluetooth
+ - USB, fuel gauge, charging
+ - Accelerometer and magnetometer
+ - WiFi model only: light sensor
 
-diff --git a/drivers/iommu/fsl_pamu_domain.c b/drivers/iommu/fsl_pamu_domain.c
-index 4c65f1adfe7511..641e89f7d7f444 100644
---- a/drivers/iommu/fsl_pamu_domain.c
-+++ b/drivers/iommu/fsl_pamu_domain.c
-@@ -192,13 +192,10 @@ static void fsl_pamu_domain_free(struct iommu_domain *domain)
- 	kmem_cache_free(fsl_pamu_domain_cache, dma_domain);
- }
- 
--static struct iommu_domain *fsl_pamu_domain_alloc(unsigned type)
-+static struct iommu_domain *fsl_pamu_domain_alloc_paging(struct device *dev)
- {
- 	struct fsl_dma_domain *dma_domain;
- 
--	if (type != IOMMU_DOMAIN_UNMANAGED)
--		return NULL;
--
- 	dma_domain = kmem_cache_zalloc(fsl_pamu_domain_cache, GFP_KERNEL);
- 	if (!dma_domain)
- 		return NULL;
-@@ -473,7 +470,7 @@ static struct iommu_device *fsl_pamu_probe_device(struct device *dev)
- static const struct iommu_ops fsl_pamu_ops = {
- 	.default_domain = &fsl_pamu_platform_domain,
- 	.capable	= fsl_pamu_capable,
--	.domain_alloc	= fsl_pamu_domain_alloc,
-+	.domain_alloc_paging = fsl_pamu_domain_alloc_paging,
- 	.probe_device	= fsl_pamu_probe_device,
- 	.device_group   = fsl_pamu_device_group,
- 	.default_domain_ops = &(const struct iommu_domain_ops) {
-diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
-index 26ed81cfeee897..a163cee0b7242d 100644
---- a/drivers/iommu/msm_iommu.c
-+++ b/drivers/iommu/msm_iommu.c
-@@ -302,13 +302,10 @@ static void __program_context(void __iomem *base, int ctx,
- 	SET_M(base, ctx, 1);
- }
- 
--static struct iommu_domain *msm_iommu_domain_alloc(unsigned type)
-+static struct iommu_domain *msm_iommu_domain_alloc_paging(struct device *dev)
- {
- 	struct msm_priv *priv;
- 
--	if (type != IOMMU_DOMAIN_UNMANAGED)
--		return NULL;
--
- 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		goto fail_nomem;
-@@ -691,7 +688,7 @@ irqreturn_t msm_iommu_fault_handler(int irq, void *dev_id)
- 
- static struct iommu_ops msm_iommu_ops = {
- 	.identity_domain = &msm_iommu_identity_domain,
--	.domain_alloc = msm_iommu_domain_alloc,
-+	.domain_alloc_paging = msm_iommu_domain_alloc_paging,
- 	.probe_device = msm_iommu_probe_device,
- 	.device_group = generic_device_group,
- 	.pgsize_bitmap = MSM_IOMMU_PGSIZES,
-diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
-index 7c0c1d50df5f75..67e044c1a7d93b 100644
---- a/drivers/iommu/mtk_iommu_v1.c
-+++ b/drivers/iommu/mtk_iommu_v1.c
-@@ -270,13 +270,10 @@ static int mtk_iommu_v1_domain_finalise(struct mtk_iommu_v1_data *data)
- 	return 0;
- }
- 
--static struct iommu_domain *mtk_iommu_v1_domain_alloc(unsigned type)
-+static struct iommu_domain *mtk_iommu_v1_domain_alloc_paging(struct device *dev)
- {
- 	struct mtk_iommu_v1_domain *dom;
- 
--	if (type != IOMMU_DOMAIN_UNMANAGED)
--		return NULL;
--
- 	dom = kzalloc(sizeof(*dom), GFP_KERNEL);
- 	if (!dom)
- 		return NULL;
-@@ -585,7 +582,7 @@ static int mtk_iommu_v1_hw_init(const struct mtk_iommu_v1_data *data)
- 
- static const struct iommu_ops mtk_iommu_v1_ops = {
- 	.identity_domain = &mtk_iommu_v1_identity_domain,
--	.domain_alloc	= mtk_iommu_v1_domain_alloc,
-+	.domain_alloc_paging = mtk_iommu_v1_domain_alloc_paging,
- 	.probe_device	= mtk_iommu_v1_probe_device,
- 	.probe_finalize = mtk_iommu_v1_probe_finalize,
- 	.release_device	= mtk_iommu_v1_release_device,
-diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
-index 34340ef15241bc..fcf99bd195b32e 100644
---- a/drivers/iommu/omap-iommu.c
-+++ b/drivers/iommu/omap-iommu.c
-@@ -1580,13 +1580,10 @@ static struct iommu_domain omap_iommu_identity_domain = {
- 	.ops = &omap_iommu_identity_ops,
- };
- 
--static struct iommu_domain *omap_iommu_domain_alloc(unsigned type)
-+static struct iommu_domain *omap_iommu_domain_alloc_paging(struct device *dev)
- {
- 	struct omap_iommu_domain *omap_domain;
- 
--	if (type != IOMMU_DOMAIN_UNMANAGED)
--		return NULL;
--
- 	omap_domain = kzalloc(sizeof(*omap_domain), GFP_KERNEL);
- 	if (!omap_domain)
- 		return NULL;
-@@ -1748,7 +1745,7 @@ static struct iommu_group *omap_iommu_device_group(struct device *dev)
- 
- static const struct iommu_ops omap_iommu_ops = {
- 	.identity_domain = &omap_iommu_identity_domain,
--	.domain_alloc	= omap_iommu_domain_alloc,
-+	.domain_alloc_paging = omap_iommu_domain_alloc_paging,
- 	.probe_device	= omap_iommu_probe_device,
- 	.release_device	= omap_iommu_release_device,
- 	.device_group	= omap_iommu_device_group,
-diff --git a/drivers/iommu/s390-iommu.c b/drivers/iommu/s390-iommu.c
-index f0c867c57a5b9b..5695ad71d60e24 100644
---- a/drivers/iommu/s390-iommu.c
-+++ b/drivers/iommu/s390-iommu.c
-@@ -39,13 +39,10 @@ static bool s390_iommu_capable(struct device *dev, enum iommu_cap cap)
- 	}
- }
- 
--static struct iommu_domain *s390_domain_alloc(unsigned domain_type)
-+static struct iommu_domain *s390_domain_alloc_paging(struct device *dev)
- {
- 	struct s390_domain *s390_domain;
- 
--	if (domain_type != IOMMU_DOMAIN_UNMANAGED)
--		return NULL;
--
- 	s390_domain = kzalloc(sizeof(*s390_domain), GFP_KERNEL);
- 	if (!s390_domain)
- 		return NULL;
-@@ -447,7 +444,7 @@ void zpci_destroy_iommu(struct zpci_dev *zdev)
- static const struct iommu_ops s390_iommu_ops = {
- 	.default_domain = &s390_iommu_platform_domain,
- 	.capable = s390_iommu_capable,
--	.domain_alloc = s390_domain_alloc,
-+	.domain_alloc_paging = s390_domain_alloc_paging,
- 	.probe_device = s390_iommu_probe_device,
- 	.release_device = s390_iommu_release_device,
- 	.device_group = generic_device_group,
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index 09865889ff2480..b90801dddef413 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -167,13 +167,10 @@ static struct iommu_domain gart_iommu_platform_domain = {
- 	.ops = &gart_iommu_platform_ops,
- };
- 
--static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
-+static struct iommu_domain *gart_iommu_domain_alloc_paging(struct device *dev)
- {
- 	struct iommu_domain *domain;
- 
--	if (type != IOMMU_DOMAIN_UNMANAGED)
--		return NULL;
--
- 	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
- 	if (domain) {
- 		domain->geometry.aperture_start = gart_handle->iovmm_base;
-@@ -294,7 +291,7 @@ static void gart_iommu_sync(struct iommu_domain *domain,
- 
- static const struct iommu_ops gart_iommu_ops = {
- 	.default_domain = &gart_iommu_platform_domain,
--	.domain_alloc	= gart_iommu_domain_alloc,
-+	.domain_alloc_paging = gart_iommu_domain_alloc_paging,
- 	.probe_device	= gart_iommu_probe_device,
- 	.device_group	= generic_device_group,
- 	.pgsize_bitmap	= GART_IOMMU_PGSIZES,
+Display panel bindings used by the Tab3 DTSI are added in a separate
+patchset - "[PATCH 0/3] Add Samsung S6D7AA0 panel controller driver":
+https://lore.kernel.org/all/20230501185103.25939-1-aweber.kernel@gmail.com/
+
+LP855X binding updates used by the Tab3 DTSI are added in a separate
+patchset - "[PATCH 0/4] video: backlight: lp855x: modernize bindings":
+https://lore.kernel.org/all/20230429104534.28943-1-aweber.kernel@gmail.com/
+
+Changed in v2:
+ - Added note about display panel bindings to cover letter and
+   Tab3 DTSI commit
+
+Changed in v3:
+ - Addressed review comments
+ - Tab3 DTS tweaks (remove broken RTC, add CPU thermal node)
+ - Fixed typos in Exynos DTSIs
+
+Artur Weber (13):
+  dt-bindings: soc: samsung: add Exynos4212 PMU compatible
+  dt-bindings: clock: add Exynos4212 clock compatible
+  ARM: exynos: Re-introduce Exynos4212 support
+  soc: samsung: Re-introduce Exynos4212 support
+  clk: samsung: Add Exynos4212 compatible to CLKOUT driver
+  clk: samsung: Re-add support for Exynos4212 CPU clock
+  Revert "media: exynos4-is: Remove dependency on obsolete SoC support"
+  Revert "phy: Remove SOC_EXYNOS4212 dep. from PHY_EXYNOS4X12_USB"
+  ARM: dts: Move common Exynos4x12 definitions to exynos4x12.dtsi
+  ARM: dts: Re-introduce Exynos4212 DTSI
+  ARM: dts: exynos: Fix some typos in comments
+  dt-bindings: arm: samsung: Add Samsung Galaxy Tab3 family boards
+  ARM: dts: exynos: Add Samsung Galaxy Tab 3 8.0 boards
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |   10 +
+ .../bindings/clock/samsung,exynos-clock.yaml  |    1 +
+ .../bindings/soc/samsung/exynos-pmu.yaml      |    5 +
+ arch/arm/boot/dts/Makefile                    |    3 +
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi     |    4 +-
+ arch/arm/boot/dts/exynos3250.dtsi             |    2 +-
+ arch/arm/boot/dts/exynos4.dtsi                |    2 +-
+ arch/arm/boot/dts/exynos4210-pinctrl.dtsi     |    4 +-
+ arch/arm/boot/dts/exynos4212-tab3-3g8.dts     |   29 +
+ arch/arm/boot/dts/exynos4212-tab3-lte8.dts    |   44 +
+ arch/arm/boot/dts/exynos4212-tab3-wifi8.dts   |   26 +
+ arch/arm/boot/dts/exynos4212-tab3.dtsi        | 1171 +++++++++++++++++
+ arch/arm/boot/dts/exynos4212.dtsi             |  157 +++
+ arch/arm/boot/dts/exynos4412.dtsi             |  646 +--------
+ ...2-pinctrl.dtsi => exynos4x12-pinctrl.dtsi} |    6 +-
+ .../dts/{exynos4412.dtsi => exynos4x12.dtsi}  |  165 +--
+ arch/arm/boot/dts/exynos5.dtsi                |    2 +-
+ arch/arm/boot/dts/exynos5250-pinctrl.dtsi     |    4 +-
+ arch/arm/boot/dts/exynos5250.dtsi             |    2 +-
+ arch/arm/boot/dts/exynos5260-pinctrl.dtsi     |    2 +-
+ arch/arm/boot/dts/exynos5410.dtsi             |    2 +-
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi     |    2 +-
+ arch/arm/boot/dts/exynos5420.dtsi             |    2 +-
+ arch/arm/boot/dts/exynos5800.dtsi             |    2 +-
+ arch/arm/boot/dts/s3c6400.dtsi                |    2 +-
+ arch/arm/boot/dts/s3c6410.dtsi                |    2 +-
+ arch/arm/boot/dts/s3c64xx.dtsi                |    2 +-
+ arch/arm/boot/dts/s5pv210-pinctrl.dtsi        |    2 +-
+ arch/arm/boot/dts/s5pv210.dtsi                |    2 +-
+ arch/arm/mach-exynos/Kconfig                  |    5 +
+ arch/arm/mach-exynos/common.h                 |    8 +
+ arch/arm/mach-exynos/exynos.c                 |    2 +
+ arch/arm/mach-exynos/firmware.c               |    8 +-
+ arch/arm/mach-exynos/pm.c                     |    2 +-
+ arch/arm/mach-exynos/suspend.c                |    4 +
+ drivers/clk/samsung/clk-exynos-clkout.c       |    3 +
+ drivers/clk/samsung/clk-exynos4.c             |   44 +-
+ .../media/platform/samsung/exynos4-is/Kconfig |    2 +-
+ .../platform/samsung/exynos4-is/fimc-core.c   |    2 +-
+ .../platform/samsung/exynos4-is/fimc-lite.c   |    2 +-
+ drivers/phy/samsung/Kconfig                   |    2 +-
+ drivers/soc/samsung/exynos-pmu.c              |    9 +
+ drivers/soc/samsung/exynos-pmu.h              |    2 +
+ drivers/soc/samsung/exynos4-pmu.c             |   13 +-
+ 44 files changed, 1534 insertions(+), 837 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos4212-tab3-3g8.dts
+ create mode 100644 arch/arm/boot/dts/exynos4212-tab3-lte8.dts
+ create mode 100644 arch/arm/boot/dts/exynos4212-tab3-wifi8.dts
+ create mode 100644 arch/arm/boot/dts/exynos4212-tab3.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos4212.dtsi
+ rename arch/arm/boot/dts/{exynos4412-pinctrl.dtsi => exynos4x12-pinctrl.dtsi} (99%)
+ copy arch/arm/boot/dts/{exynos4412.dtsi => exynos4x12.dtsi} (81%)
+
+
+base-commit: e154a338e16cc3b3bbd54c891253319d22383746
 -- 
-2.40.0
+2.40.1
 
