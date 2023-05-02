@@ -2,133 +2,206 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD8EC7EE29
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 May 2023 08:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A092DC77B7E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 May 2023 14:54:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233398AbjEBIPe (ORCPT
+        id S234478AbjEBOyC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 2 May 2023 04:15:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59518 "EHLO
+        Tue, 2 May 2023 10:54:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbjEBIPd (ORCPT
+        with ESMTP id S234487AbjEBOyA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 2 May 2023 04:15:33 -0400
-Received: from new2-smtp.messagingengine.com (new2-smtp.messagingengine.com [66.111.4.224])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74801DD;
-        Tue,  2 May 2023 01:15:30 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 0A58D5803C3;
-        Tue,  2 May 2023 04:15:27 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Tue, 02 May 2023 04:15:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1683015327; x=1683022527; bh=ghjR7QqLTKl0Wa6Qp/pmJnR12EKA7bqxYQW
-        ouqZ3mAY=; b=G/ReWH/CR4stPP8pBvKE2oH2tiIxeT1Y9djsugPvcan1vwLCNKB
-        +CmHc2S3racpCMakxZ1qQRdhDmpzbTSxPsJLCIAsBgFwKTe+QJwmoUIe5cxfT6Wy
-        tgZI7GBK40sokCJo7woyfvbYgCDiIcu9MJqEUid0mCHXVNlzPDjNZzJJBtLrLhF9
-        X/mbJHalC7bJ1Xs6/CKvhniyT1ORP+ioH4B0Q9MMwa1hEm8wfe270mide7U5ucC4
-        jYc1KiyRZtz0ezseY2LvXW4OKb5R6V9gMew5kODf8MnejtSKgLd/xIANaAqpsh7o
-        O3SUD5day0+7MZzwDONO0PUZT+hvXwYxYyA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1683015327; x=1683022527; bh=ghjR7QqLTKl0Wa6Qp/pmJnR12EKA7bqxYQW
-        ouqZ3mAY=; b=Y/xWbzku7vrNHNzte8uy72nMxc+pbAIi4IeA/XfvwUvtiZV9Est
-        bPyNKEthPJpnwnx5/Y68ss9jDEmHmeNI9uaomvywj4LEhNdN2/6OUB0Ap6qjjHvb
-        OQIPRGrLOJBmcaLg/XgkHAzTOPE5Xwu/E3de9zryJ4QMstqpCG+bbbWHvXXdfXgL
-        L+W8t5CYwFrU7f8XrnzjjIYPTrCSQ2/hUzXAWg8+DhkBUcIkmt6eVQO+8Sms9yZ1
-        Z+nDtml+a4kCprv84LWaOxgu+YrgM2G6hBbX6r3CD52Qvxv2Jvyac8zhWROAt9xl
-        Ftb8duEVIIhaiX5H6fsUSxaLGjuOvtdmUyw==
-X-ME-Sender: <xms:nsZQZGG99LYs7t6dhgAngkbsv9osgUeFMS5nCv0_eqkMW790xp5pVg>
-    <xme:nsZQZHXku8NWvKl4XxdR48yR-0RVaLsU5fwZmJq18kazWD7vv8gAEIoPKVDAKkTuy
-    5prPVni2U8mfnd5sN8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfedviecutefuodetggdotefrodftvfcurf
-    hrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfgjeev
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:nsZQZAK8fS_X5YYcPQ8tmCY5TK5FJ7gjlJsS0RCSCVoEK-Zwdrq3Yw>
-    <xmx:nsZQZAFFLoJhNSVEvLGVyQfmt0zeZphfcdHG8-tw9pYY47GFwhKrNA>
-    <xmx:nsZQZMUL4rbP96pvZI76ZCUHun2qRq8vNtMGMdc-nT5M5xb0isYJ2g>
-    <xmx:n8ZQZPq1o7msWppgt2EUHhnFGcmwGcb09Ud671-g5_97NEtVzT49Eg>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 1C690B60086; Tue,  2 May 2023 04:15:26 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-374-g72c94f7a42-fm-20230417.001-g72c94f7a
-Mime-Version: 1.0
-Message-Id: <720a2829-b6b5-411c-ac69-9a53e881f48d@app.fastmail.com>
-In-Reply-To: <CAL_JsqJthKTm8bhRF2B=ae1tvtPeYYXx_Tm76qQtSwLtH5C6VA@mail.gmail.com>
-References: <20220328000915.15041-1-ansuelsmth@gmail.com>
- <85eb14ec-f465-7447-ad77-a3dabc666f47@kernel.org>
- <YkKRYnN84D9VZhGj@Ansuel-xps.localdomain>
- <CAL_Jsq+RQQ-ADMxLPUFwk6S6kGmb6oNDy4k52fnU0EtbUvqmSA@mail.gmail.com>
- <CAMuHMdWNTE48MFy6fqxAsfMWz9b6E7dVNXtXtESP95sxk2PGwA@mail.gmail.com>
- <CAL_JsqJthKTm8bhRF2B=ae1tvtPeYYXx_Tm76qQtSwLtH5C6VA@mail.gmail.com>
-Date:   Tue, 02 May 2023 10:15:03 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Rob Herring" <robh+dt@kernel.org>,
-        "Geert Uytterhoeven" <geert@linux-m68k.org>,
-        "Olof Johansson" <olof@lixom.net>
-Cc:     "Christian Marangi" <ansuelsmth@gmail.com>,
-        "Krzysztof Kozlowski" <krzk@kernel.org>,
-        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-sunxi@lists.linux.dev,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-aspeed@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org,
-        chrome-platform@lists.linux.dev,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        kernel@dh-electronics.com, linux-mediatek@lists.infradead.org,
-        openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
-        "linux-oxnas@groups.io" <linux-oxnas@groups.io>,
-        linux-arm-msm@vger.kernel.org, linux-unisoc@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-realtek-soc@lists.infradead.org
-Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
-Content-Type: text/plain;charset=utf-8
+        Tue, 2 May 2023 10:54:00 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5375B210B;
+        Tue,  2 May 2023 07:53:58 -0700 (PDT)
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 342ErN65031685;
+        Tue, 2 May 2023 14:53:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=A9PzCa1lY9nUR20Q3fDAZA1RsBEr5LdyYZXsjJQssc8=;
+ b=itWJdKMD0Vb1kIguS2uvvFOOLyK9gL3u+2PzJEPocTOIRjyJRVVEm0u5BgKPrNWHt78+
+ 9JZR5LqNUnWgKyagrJRVwRXl45H59PXlaUDtqaj2PFPMUZp3hMgAJvwvJTTuAsM4Gytp
+ /bYtg7X+0tpvaSlRv4DO35XyuHtzCCy109LAtVqLIJkKtEuZTUSISou1oFEFbWv8V/ay
+ Qiu1BETXlt//c8thokXeJy3C8PX+m/VFcDBVgQ7213tir+ncGT95DRwKuq7owvQ/K9oZ
+ 1M6av8FikOWDloi7BlO2KaLxC5a+yU6baB8o1Bh50Gzz33k+hXMOa6DZnkhGcKbDghgq sQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qb4h3rbve-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 14:53:25 +0000
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 342Egimo031178;
+        Tue, 2 May 2023 14:52:56 GMT
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qb4h3rbpg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 14:52:56 +0000
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 341LC9Fa005173;
+        Tue, 2 May 2023 14:52:38 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+        by ppma04ams.nl.ibm.com (PPS) with ESMTPS id 3q8tv6snm7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 14:52:38 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+        by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 342EqZPw54460742
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 2 May 2023 14:52:35 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F3F742004E;
+        Tue,  2 May 2023 14:52:34 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D981B2004D;
+        Tue,  2 May 2023 14:52:32 +0000 (GMT)
+Received: from [9.171.18.35] (unknown [9.171.18.35])
+        by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Tue,  2 May 2023 14:52:32 +0000 (GMT)
+Message-ID: <b9b6a50724b4f1ac2b98e518a8b9a820a912850f.camel@linux.ibm.com>
+Subject: Re: [PATCH 20/20] iommu: Convert remaining simple drivers to
+ domain_alloc_paging()
+From:   Niklas Schnelle <schnelle@linux.ibm.com>
+To:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Steven Price <steven.price@arm.com>
+Date:   Tue, 02 May 2023 16:52:32 +0200
+In-Reply-To: <20-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com>
+References: <20-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
+MIME-Version: 1.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: T6YFZPN53T-8NBr50MiQVf0_hbdxvlIx
+X-Proofpoint-ORIG-GUID: edimN0IzfVknfN6LBbnWL53jz6o5saRq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-02_09,2023-04-27_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1011 impostorscore=0 mlxlogscore=999 lowpriorityscore=0
+ bulkscore=0 malwarescore=0 spamscore=0 phishscore=0 suspectscore=0
+ mlxscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2305020124
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Apr 25, 2023, at 17:57, Rob Herring wrote:
-> On Tue, Apr 25, 2023 at 2:28=E2=80=AFAM Geert Uytterhoeven <geert@linu=
-x-m68k.org> wrote:
->
->> Does your script also cater for .dts files not matching any pattern,
->> but including a .dtsi file that does match a pattern?
->
-> I assume I built everything after moving, but maybe not...
->
-> That's all just "details". First, we need agreement on a) moving
-> things to subdirs and b) doing it 1-by-1 or all at once. So far we've
-> been stuck on a) for being 'too much churn'.
+On Mon, 2023-05-01 at 15:03 -0300, Jason Gunthorpe wrote:
+> These drivers don't support IOMMU_DOMAIN_DMA, so this commit effectively
+> allows them to support that mode.
+>=20
+> The prior work to require default_domains makes this safe because every
+> one of these drivers is either compilation incompatible with dma-iommu.c,
+> or already establishing a default_domain. In both cases alloc_domain()
+> will never be called with IOMMU_DOMAIN_DMA for these drivers so it is saf=
+e
+> to drop the test.
+>=20
+> Removing these tests clarifies that the domain allocation path is only
+> about the functionality of a paging domain and has nothing to do with
+> policy of how the paging domain is used for UNMANAGED/DMA/DMA_FQ.
+>=20
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> ---
+>  drivers/iommu/fsl_pamu_domain.c | 7 ++-----
+>  drivers/iommu/msm_iommu.c       | 7 ++-----
+>  drivers/iommu/mtk_iommu_v1.c    | 7 ++-----
+>  drivers/iommu/omap-iommu.c      | 7 ++-----
+>  drivers/iommu/s390-iommu.c      | 7 ++-----
+>  drivers/iommu/tegra-gart.c      | 7 ++-----
+>  6 files changed, 12 insertions(+), 30 deletions(-)
+>=20
+>=20
+---8<---
+> -static struct iommu_domain *s390_domain_alloc(unsigned domain_type)
+> +static struct iommu_domain *s390_domain_alloc_paging(struct device *dev)
+>  {
+>  	struct s390_domain *s390_domain;
+> =20
+> -	if (domain_type !=3D IOMMU_DOMAIN_UNMANAGED)
+> -		return NULL;
+> -
+>  	s390_domain =3D kzalloc(sizeof(*s390_domain), GFP_KERNEL);
+>  	if (!s390_domain)
+>  		return NULL;
+> @@ -447,7 +444,7 @@ void zpci_destroy_iommu(struct zpci_dev *zdev)
+>  static const struct iommu_ops s390_iommu_ops =3D {
+>  	.default_domain =3D &s390_iommu_platform_domain,
+>  	.capable =3D s390_iommu_capable,
+> -	.domain_alloc =3D s390_domain_alloc,
+> +	.domain_alloc_paging =3D s390_domain_alloc_paging,
 
-Sorry for missing most of the discussion last week. The script sounds
-fine to me, the only reason I didn't want to do this in the past is that
-we had the plan to move platforms out of the kernel tree to an external
-repository and I wanted to do this platform at a time and also only move
-each one once. I don't think that is going to happen anytime soon now,
-so let's just do your script.
+Leaving .domain_alloc unset here leads to an OOPs with your GitHub
+branch (iommu_mandatory_default) when I try to use vfio-pci for KVM
+pass-through via the following call chain:
 
-Can you send me the script and/or a pull request of the resulting
-tree based on my soc/dt branch? Everything is merged upstream,
-and I think git-merge would handle the remaining merges with any
-other changes in mainline.
+...
+vfio_group_fops_unl_ioctl()
+   vfio_group_ioctl_set_container()
+      vfio_container_attach_group()
+         iommu_group_claim_dma_owner()
+            __iommu_take_dma_ownership()
+               __iommu_group_alloc_blocking_domain()
+               __iommu_domain_alloc(=E2=80=A6, IOMMU_DOMAIN_BLOCKED)
 
-        Arnd
+The problem is that in __iommu_domain_alloc() a call to bus->iommu_ops-
+>domain_alloc() is attempted for IOMMU_DOMAIN_BLCOKED even if the
+function pointer is unset.
+
+So I tried with the obvious fix:
+
+@@ -1947,7 +1948,7 @@ static struct iommu_domain *__iommu_domain_alloc(stru=
+ct bus_type *bus,
+        if ((type =3D=3D IOMMU_DOMAIN_UNMANAGED || type =3D=3D IOMMU_DOMAIN=
+_DMA) &&
+            bus->iommu_ops->domain_alloc_paging)
+                domain =3D bus->iommu_ops->domain_alloc_paging(dev);
+-       else
++       else if (bus->iommu_ops->domain_alloc)
+                domain =3D bus->iommu_ops->domain_alloc(type);
+        if (!domain)
+                return NULL;
+
+This then uses the fallback of an empty IOMMU_DOMAIN_UNMANAGED and I
+get a working device in the guest. Also tried hot unplug where the
+device is taken over by the host again. I think with my DMA API
+conversion patches we can support blocking domains properly but for a
+temporary solution the above may be acceptable.
+
+>  	.probe_device =3D s390_iommu_probe_device,
+>  	.release_device =3D s390_iommu_release_device,
+>  	.device_group =3D generic_device_group,
+
