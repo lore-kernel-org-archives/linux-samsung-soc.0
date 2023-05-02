@@ -2,153 +2,133 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D71AC7EE2C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 May 2023 06:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD8EC7EE29
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 May 2023 08:15:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233677AbjEBGup (ORCPT
+        id S233398AbjEBIPe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 2 May 2023 02:50:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54548 "EHLO
+        Tue, 2 May 2023 04:15:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233639AbjEBGul (ORCPT
+        with ESMTP id S229379AbjEBIPd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 2 May 2023 02:50:41 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE6DB1997
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  1 May 2023 23:50:30 -0700 (PDT)
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230502065027epoutp017c747c8a66310599721055a112ad89eb~bQOKAw3HD2683226832epoutp01e
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  2 May 2023 06:50:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230502065027epoutp017c747c8a66310599721055a112ad89eb~bQOKAw3HD2683226832epoutp01e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1683010227;
-        bh=SKfZujidrsTqsYmF1eZVH0aLq7NMqVnKheBQjJ2VIT8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jOvpUuFLrM7+fGPaobuPDVrjG+QIFxmHBL7Yx2TT2tuhk5Pu3gR5pZFl5z5Rf1RRD
-         ZulRz7pfI0pN5Hn+SSwZ65iavFuou+hFtaUM7FIM6SgF1rjZa3doBAJDYSPIo0IDv4
-         wrtLvhEpOATWEN3KTzkzhg8Xju2FA9E+sq66hQuI=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20230502065026epcas2p4d46573700cde0ba3673be225a1a0a5a3~bQOJhDFLB1117111171epcas2p4G;
-        Tue,  2 May 2023 06:50:26 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.102]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4Q9W1F6vpxz4x9QK; Tue,  2 May
-        2023 06:50:25 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F9.9B.08199.1B2B0546; Tue,  2 May 2023 15:50:25 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230502065025epcas2p11549db7400e6707c61bbb1cff1b22252~bQOIQqA191499014990epcas2p10;
-        Tue,  2 May 2023 06:50:25 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230502065025epsmtrp237e89755b46524fb8662ca8adafd175e~bQOIP-WLO2944229442epsmtrp2N;
-        Tue,  2 May 2023 06:50:25 +0000 (GMT)
-X-AuditID: b6c32a47-c29ff70000002007-fe-6450b2b1d88d
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        34.C8.27706.1B2B0546; Tue,  2 May 2023 15:50:25 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.55]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230502065025epsmtip1aed5ec98fa8945164cb1bf16b0809bfe~bQOIE3KSD1524115241epsmtip1m;
-        Tue,  2 May 2023 06:50:25 +0000 (GMT)
-From:   Jaewon Kim <jaewon02.kim@samsung.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>,
-        Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH v3 2/3] spi: s3c64xx: add sleep during transfer
-Date:   Tue,  2 May 2023 15:28:12 +0900
-Message-Id: <20230502062813.112434-3-jaewon02.kim@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230502062813.112434-1-jaewon02.kim@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPKsWRmVeSWpSXmKPExsWy7bCmue7GTQEpBuemG1s8mLeNzWLxj+dM
-        FlMfPmGzuLxf22JHwxFWi72vt7JbbHp8jdXi8q45bBYzzu9jsmj8eJPdgcvj+pJPzB6bVnWy
-        edy5tofNY/OSeo++LasYPT5vkgtgi8q2yUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0
-        MFdSyEvMTbVVcvEJ0HXLzAE6TEmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYF6g
-        V5yYW1yal66Xl1piZWhgYGQKVJiQnfH1cWzBQ66Kd0cXszYw3uPoYuTkkBAwkTj99zxzFyMX
-        h5DADkaJ3Y93QTmfGCWO/OlkgXC+MUo0zHvGCNMy/9tJRojEXkaJGasboZyPjBLLbneDVbEJ
-        aEt8X7+YFSQhIrCYUWLB1Z3sIA6zwA1Gie43m1lAqoQF7CWO3z4FZrMIqEqsvXqBCcTmFbCT
-        WH1zNxPEPnmJ1RsOMIPYnED195pawKZKCNxjl7jR9xrqKBeJ849eskHYwhKvjm9hh7ClJD6/
-        2wsVz5Zon/6HFcKukLi4YTZU3Fhi1rN2oDkcQNdpSqzfpQ9iSggoSxy5BXYaswCfRMfhv+wQ
-        YV6JjjYhiEY1iftTz0ENkZGYdGQl1MUeEr8uzIAG3SRGiSUv1zBOYJSbhbBgASPjKkax1ILi
-        3PTUYqMCY3iUJefnbmIEpzwt9x2MM95+0DvEyMTBeIhRgoNZSYT3Q6FfihBvSmJlVWpRfnxR
-        aU5q8SFGU2DYTWSWEk3OBybdvJJ4QxNLAxMzM0NzI1MDcyVxXmnbk8lCAumJJanZqakFqUUw
-        fUwcnFINTNU9Saf/b1zL1dH5pHKyiPWeGfHvNxndeDRxx9YNCcEXtS54LVP/6voilJtXqqVE
-        /yiHSiD7+aQSq0SpI3G7DDP9zdq3/9J72CdxQVsl6kIPx7sKJ47JC46F77l1TXXu1e8+PG8u
-        vXm9dr/5wlvcDHtb13r5rWTew+IQcMhkich8yWt/Lp1QyNs+i+nZu8D3b+f6t7LWXJTdft9l
-        yrzcM/6ffRzX33hgIFijKHLoi8C3NNeN9h7q2dM0rt9YVNI8NyHvozTntpJNTqdjWdfmas/3
-        r8+TydRY0FJ48/f+z6fNrSeGdLpyrrGXnWNjKS4rrqpXz2Js6nms48Tu7ld5EtME7vzcl3cu
-        dtfGCYcbOpRYijMSDbWYi4oTAdSSxpgCBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBLMWRmVeSWpSXmKPExsWy7bCSnO7GTQEpBn9eilo8mLeNzWLxj+dM
-        FlMfPmGzuLxf22JHwxFWi72vt7JbbHp8jdXi8q45bBYzzu9jsmj8eJPdgcvj+pJPzB6bVnWy
-        edy5tofNY/OSeo++LasYPT5vkgtgi+KySUnNySxLLdK3S+DK+Po4tuAhV8W7o4tZGxjvcXQx
-        cnJICJhIzP92khHEFhLYzSix7HgpRFxGYvmzPjYIW1jifssRVoia94wSt2Yog9hsAtoS39cv
-        BopzcYgILGWUeLznMQuIwyxwj1Hi5aRvTCBVwgL2Esdvn2IBsVkEVCXWXr0AFucVsJNYfXM3
-        E8QGeYnVGw4wg9icQPX3mlqgttlJXOn9yjqBkW8BI8MqRsnUguLc9NxiwwLDvNRyveLE3OLS
-        vHS95PzcTYzgwNTS3MG4fdUHvUOMTByMhxglOJiVRHg/FPqlCPGmJFZWpRblxxeV5qQWH2KU
-        5mBREue90HUyXkggPbEkNTs1tSC1CCbLxMEp1cBUcVa10fXQJFaB/98DVeuyp68tW7VIT26m
-        a4Tj/sZLcWFG7ju8DhaKut+xYP8+f7rg6+vZZ068eXPTIP30+7B0WcYmm508tx4n3Sg9+3vJ
-        v7OL1LjnnHgzfxKjjtK9sMxFlWudptzdsaRY+gGPaJzMR5UwnYW3pFdsmJNW/s7u6R8ppfO6
-        kQUBR9sEtdsPVIk9/huwuCU05kjEPL2inkdVFk2PA7oXLxNS99J7npIS9+iRh4lwjP3ZxuIj
-        K4pFRN90ernmiR8+PE+4ZsJenfQt738dvRkixf5a7JTRLo50ryKGjA2nzzuq28yq1FWft/+x
-        pqfP0XeGD72Ddll07/+qvYjN0Fc+SFWmkq1KeoYSS3FGoqEWc1FxIgDX9jshuwIAAA==
-X-CMS-MailID: 20230502065025epcas2p11549db7400e6707c61bbb1cff1b22252
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230502065025epcas2p11549db7400e6707c61bbb1cff1b22252
-References: <20230502062813.112434-1-jaewon02.kim@samsung.com>
-        <CGME20230502065025epcas2p11549db7400e6707c61bbb1cff1b22252@epcas2p1.samsung.com>
+        Tue, 2 May 2023 04:15:33 -0400
+Received: from new2-smtp.messagingengine.com (new2-smtp.messagingengine.com [66.111.4.224])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74801DD;
+        Tue,  2 May 2023 01:15:30 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 0A58D5803C3;
+        Tue,  2 May 2023 04:15:27 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Tue, 02 May 2023 04:15:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
+        1683015327; x=1683022527; bh=ghjR7QqLTKl0Wa6Qp/pmJnR12EKA7bqxYQW
+        ouqZ3mAY=; b=G/ReWH/CR4stPP8pBvKE2oH2tiIxeT1Y9djsugPvcan1vwLCNKB
+        +CmHc2S3racpCMakxZ1qQRdhDmpzbTSxPsJLCIAsBgFwKTe+QJwmoUIe5cxfT6Wy
+        tgZI7GBK40sokCJo7woyfvbYgCDiIcu9MJqEUid0mCHXVNlzPDjNZzJJBtLrLhF9
+        X/mbJHalC7bJ1Xs6/CKvhniyT1ORP+ioH4B0Q9MMwa1hEm8wfe270mide7U5ucC4
+        jYc1KiyRZtz0ezseY2LvXW4OKb5R6V9gMew5kODf8MnejtSKgLd/xIANaAqpsh7o
+        O3SUD5day0+7MZzwDONO0PUZT+hvXwYxYyA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+        1683015327; x=1683022527; bh=ghjR7QqLTKl0Wa6Qp/pmJnR12EKA7bqxYQW
+        ouqZ3mAY=; b=Y/xWbzku7vrNHNzte8uy72nMxc+pbAIi4IeA/XfvwUvtiZV9Est
+        bPyNKEthPJpnwnx5/Y68ss9jDEmHmeNI9uaomvywj4LEhNdN2/6OUB0Ap6qjjHvb
+        OQIPRGrLOJBmcaLg/XgkHAzTOPE5Xwu/E3de9zryJ4QMstqpCG+bbbWHvXXdfXgL
+        L+W8t5CYwFrU7f8XrnzjjIYPTrCSQ2/hUzXAWg8+DhkBUcIkmt6eVQO+8Sms9yZ1
+        Z+nDtml+a4kCprv84LWaOxgu+YrgM2G6hBbX6r3CD52Qvxv2Jvyac8zhWROAt9xl
+        Ftb8duEVIIhaiX5H6fsUSxaLGjuOvtdmUyw==
+X-ME-Sender: <xms:nsZQZGG99LYs7t6dhgAngkbsv9osgUeFMS5nCv0_eqkMW790xp5pVg>
+    <xme:nsZQZHXku8NWvKl4XxdR48yR-0RVaLsU5fwZmJq18kazWD7vv8gAEIoPKVDAKkTuy
+    5prPVni2U8mfnd5sN8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfedviecutefuodetggdotefrodftvfcurf
+    hrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfgjeev
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:nsZQZAK8fS_X5YYcPQ8tmCY5TK5FJ7gjlJsS0RCSCVoEK-Zwdrq3Yw>
+    <xmx:nsZQZAFFLoJhNSVEvLGVyQfmt0zeZphfcdHG8-tw9pYY47GFwhKrNA>
+    <xmx:nsZQZMUL4rbP96pvZI76ZCUHun2qRq8vNtMGMdc-nT5M5xb0isYJ2g>
+    <xmx:n8ZQZPq1o7msWppgt2EUHhnFGcmwGcb09Ud671-g5_97NEtVzT49Eg>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 1C690B60086; Tue,  2 May 2023 04:15:26 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-374-g72c94f7a42-fm-20230417.001-g72c94f7a
+Mime-Version: 1.0
+Message-Id: <720a2829-b6b5-411c-ac69-9a53e881f48d@app.fastmail.com>
+In-Reply-To: <CAL_JsqJthKTm8bhRF2B=ae1tvtPeYYXx_Tm76qQtSwLtH5C6VA@mail.gmail.com>
+References: <20220328000915.15041-1-ansuelsmth@gmail.com>
+ <85eb14ec-f465-7447-ad77-a3dabc666f47@kernel.org>
+ <YkKRYnN84D9VZhGj@Ansuel-xps.localdomain>
+ <CAL_Jsq+RQQ-ADMxLPUFwk6S6kGmb6oNDy4k52fnU0EtbUvqmSA@mail.gmail.com>
+ <CAMuHMdWNTE48MFy6fqxAsfMWz9b6E7dVNXtXtESP95sxk2PGwA@mail.gmail.com>
+ <CAL_JsqJthKTm8bhRF2B=ae1tvtPeYYXx_Tm76qQtSwLtH5C6VA@mail.gmail.com>
+Date:   Tue, 02 May 2023 10:15:03 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Rob Herring" <robh+dt@kernel.org>,
+        "Geert Uytterhoeven" <geert@linux-m68k.org>,
+        "Olof Johansson" <olof@lixom.net>
+Cc:     "Christian Marangi" <ansuelsmth@gmail.com>,
+        "Krzysztof Kozlowski" <krzk@kernel.org>,
+        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-actions@lists.infradead.org,
+        linux-sunxi@lists.linux.dev,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-aspeed@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org,
+        chrome-platform@lists.linux.dev,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        kernel@dh-electronics.com, linux-mediatek@lists.infradead.org,
+        openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
+        "linux-oxnas@groups.io" <linux-oxnas@groups.io>,
+        linux-arm-msm@vger.kernel.org, linux-unisoc@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-realtek-soc@lists.infradead.org
+Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-In polling mode, the status register is continuously read to check data
-transfer completion. It can cause excessive CPU usage.
-To reduce this, we can calculate the transfer time and put the sleep during
-transfer.
+On Tue, Apr 25, 2023, at 17:57, Rob Herring wrote:
+> On Tue, Apr 25, 2023 at 2:28=E2=80=AFAM Geert Uytterhoeven <geert@linu=
+x-m68k.org> wrote:
+>
+>> Does your script also cater for .dts files not matching any pattern,
+>> but including a .dtsi file that does match a pattern?
+>
+> I assume I built everything after moving, but maybe not...
+>
+> That's all just "details". First, we need agreement on a) moving
+> things to subdirs and b) doing it 1-by-1 or all at once. So far we've
+> been stuck on a) for being 'too much churn'.
 
-When test on ExynosAuto9 SADK board, throughput remained the same, but
-100% CPU utilization decreased to 40%.
+Sorry for missing most of the discussion last week. The script sounds
+fine to me, the only reason I didn't want to do this in the past is that
+we had the plan to move platforms out of the kernel tree to an external
+repository and I wanted to do this platform at a time and also only move
+each one once. I don't think that is going to happen anytime soon now,
+so let's just do your script.
 
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
----
- drivers/spi/spi-s3c64xx.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+Can you send me the script and/or a pull request of the resulting
+tree based on my soc/dt branch? Everything is merged upstream,
+and I think git-merge would handle the remaining merges with any
+other changes in mainline.
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 66ac94022a1b..2a8304678df9 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -561,11 +561,18 @@ static int s3c64xx_wait_for_pio(struct s3c64xx_spi_driver_data *sdd,
- 	u32 cpy_len;
- 	u8 *buf;
- 	int ms;
-+	unsigned long time_us;
- 
--	/* millisecs to xfer 'len' bytes @ 'cur_speed' */
--	ms = xfer->len * 8 * 1000 / sdd->cur_speed;
-+	/* microsecs to xfer 'len' bytes @ 'cur_speed' */
-+	time_us = (xfer->len * 8 * 1000 * 1000) / sdd->cur_speed;
-+	ms = (time_us / 1000);
- 	ms += 10; /* some tolerance */
- 
-+	/* sleep during signal transfer time */
-+	status = readl(regs + S3C64XX_SPI_STATUS);
-+	if (RX_FIFO_LVL(status, sdd) < xfer->len)
-+		usleep_range(time_us / 2, time_us);
-+
- 	val = msecs_to_loops(ms);
- 	do {
- 		status = readl(regs + S3C64XX_SPI_STATUS);
--- 
-2.17.1
-
+        Arnd
