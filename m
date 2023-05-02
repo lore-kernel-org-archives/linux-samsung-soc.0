@@ -2,169 +2,167 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A96A0C7EE21
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 May 2023 22:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C43DC7EE23
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 May 2023 06:50:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230469AbjEAWkx (ORCPT
+        id S233641AbjEBGul (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 1 May 2023 18:40:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35556 "EHLO
+        Tue, 2 May 2023 02:50:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230391AbjEAWkv (ORCPT
+        with ESMTP id S233286AbjEBGug (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 1 May 2023 18:40:51 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2079.outbound.protection.outlook.com [40.107.220.79])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C8B1173C;
-        Mon,  1 May 2023 15:40:46 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SRWDwMbWql6Y3mFirjiUmPSQaHdzIm2348OTeBCoyGyy4ejLzS0TreDzRqmEjbugqpn4Hkana8iJTCwL0NQpk/G1WPB+H44tf05uYBVoYdtGoyC/zT8eg5euXwFAVsJZnIMwifO+wMy/pPbF1laUNJVFwHKEKtkrrwdirFwMEUh6wy9njDCIasRYX166ugl5MS4rdrs2MjD0bRmSJ2HfgXk02wLdWySBq3zLVPLremV1QpJcPp/lzjC4MmZfheJsHKyIm6q70QfQ2s4oqGT8XzfKJ51aOjBWkYwej6DQHj9QL1WKjupi7oAw5I6A3rjjTzBwd85Dmk75exqNnsrL6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u60Tud+7hFRqK1X+1aBMlcowgPhvYr0wyem0e3yFPFM=;
- b=Qdir1mirsyJJF/D3hARBEbxJjCJVmD2NXCkHVvRVXNcdSCh8dSshMSVvUf3EKl3rwla22qxJuhyAMSIPtHMJnB6/NkLj6VC8Vle70y3pRrfh8ynlT0GIZ+T8Fmp+cq2kX1/6/idgyAqKDsnPLftczN61OKwWH5G73+rYecInnXaRHyhLADFW5siXLbgYWFgulbqwulBMiff9crVjx2QwlZkmyUPIdxE7yvf0chdH+IoNTYL7Knv48+OYNBLPXlpXHRtkxoZUKVTyD4btFUHRrO9y4IptRj83dyP0W0cy14nP1vJNaL50ZSKcHaQHjVjYl2bjLPQ9Ok8MylrRYD6mQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u60Tud+7hFRqK1X+1aBMlcowgPhvYr0wyem0e3yFPFM=;
- b=Wdwjz4k1rMWlWvvRWd2SoZA3aKOvNzBdJnIuVYnd6Yad0qcQU+jfSZn8TGe4PA8tVnKsYwr52kcBLifTJs2kTqET/sSKEuiju8I8nFZ/aleO7EutmNMxdciPNXocop4ltdNwPi+fuIpPHJzsBNHczItOvWZo92U4aERZtcJ/aviKzvZsSQU8rVo6iTQiYANVEd8BQKtWH52Oq9uJknZQIkg4eItbyeW0Ejm+8ZPj6nZVRROhlu7rA2XCo8jjee/fxAz72sEUgtz9HjJFzfL6RlWklocaCHDGYMGIpNDKJ6XFhYTwp+T+27Zt0r9+KY1ovM3+SH1PHvdLArdtjDwl1A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
- by PH8PR12MB8430.namprd12.prod.outlook.com (2603:10b6:510:259::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.30; Mon, 1 May
- 2023 22:40:44 +0000
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::f7a7:a561:87e9:5fab%6]) with mapi id 15.20.6340.030; Mon, 1 May 2023
- 22:40:44 +0000
-Date:   Mon, 1 May 2023 19:40:42 -0300
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
-Cc:     Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        iommu@lists.linux.dev, Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Steven Price <steven.price@arm.com>
-Subject: Re: [PATCH 00/20] iommu: Make default_domain's mandatory
-Message-ID: <ZFA/6np8+uXhrK2n@nvidia.com>
-References: <0-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com>
- <7005781.1IzOArtZ34@diego>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7005781.1IzOArtZ34@diego>
-X-ClientProxiedBy: BLAPR05CA0015.namprd05.prod.outlook.com
- (2603:10b6:208:36e::15) To LV2PR12MB5869.namprd12.prod.outlook.com
- (2603:10b6:408:176::16)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|PH8PR12MB8430:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9ee8e333-06da-4138-f8cf-08db4a951927
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: E7uT70tzKyh1FBXjd5+IEr6Ee7DPH4NAIjOFRUh9xpTVNITKZPeOUg8+qpgtlokqja2beblryih+Pp1zK8tzxOvwUw+eKHVfrL6ja1Bi5dl4THaA7yZ1OSLsHnAEe8cPZvjtNQ3hSKNgJsNnx+jSuZhu+ePmhR+/G3kP5f+H/c01GpoAWQDBvTvlwx7v7TIVngUIuq69ZO6Z4Au2kQqNofxNGWZB4cZ3uXizsBuDsrGxEUKpbVLUx2H1oj314GEHQ/mXz1NzYuDEj36zPax/HRyYNwOGsCZ6M+szGYtKDwWdvHhNqJdwCQDEK5gOYh1qyCqPFGVD6LtaV7Q+HB6RqG0bhLTgLIWvbbIeLo9uv1OZQmj1FkwA7uwlTRYJXS3ZYj3Zfw8mePn3gOsSHFKVvTrP3HUXuysWODSLWVuml0fGXxEdDFda6hO7au04IFR2ahWsc2yBvX87YkC/qsu5NMH1WM3ngPfWlF+xnXL1d1EoS/WCP3EtJqebj7TZ1t4Swji8xZZNOmU++CQD6c1anrcCN+p9ZmxyIubawrWaMa+sLG9F4o8koc6wwRfyGMmp0XlCiEEyD97fd6p1NE6X6zpmJjngSDdPoIsCaalP9p0=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(376002)(136003)(366004)(39860400002)(396003)(451199021)(478600001)(2616005)(83380400001)(186003)(4326008)(66556008)(66476007)(6916009)(54906003)(66574015)(966005)(6486002)(26005)(6512007)(6506007)(316002)(8936002)(8676002)(5660300002)(66946007)(41300700001)(7406005)(7416002)(4744005)(2906002)(38100700002)(86362001)(36756003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?clgvK3FabUtkejdzQ3d6Q2w2SHZJRllnd3k1djZsL21lK3NpRnhxMnY1djJ3?=
- =?utf-8?B?cEtVanVFUXV0WW8zR05YQjdkRzh3WXMvVVV1cFNubHNESmhJMDYvRi9lNnYy?=
- =?utf-8?B?cFl5VzA2OThQbm9nVm14V1pSRExwL3U0aExQbUR2OHYrbVNpN2lzbGNEVDNi?=
- =?utf-8?B?NUJTOVNPS3dIaGNvSXp4M0FmZDNkZVZKVG85eE9jYlJvNUIvZ2xnNE96blVK?=
- =?utf-8?B?QjI3NnVDWTdZc0h1cGpqNk03OXhzaGowOVo0dUZkYWx0T004bjZ4ZEZpVitT?=
- =?utf-8?B?S2ZNU0xjTUVWK29UZVYrTlNqY1hEM3YvazVSWllQOFo3c0lpWDBoaC9TeUI5?=
- =?utf-8?B?dWo1dXVMNUF0dCttOW43dHlteVFmTm8yMFNmZ3Z5QWY5QWtKWExJdnBaMExY?=
- =?utf-8?B?eTRnNHlTeTVGM3BmRWM3elpwK2c4VkNDWExZTUJqMHVTS3hlZW9PanJuYzJF?=
- =?utf-8?B?dk5WMXJrWFdIaXR6VG0vTEdYZjB0ZWZHejRmZ0dGV1RDSnQ5V0pHSFh2WU9x?=
- =?utf-8?B?b0ZFQ245djZjTFFZZFB3bVpIYWwxSFdmQlRocnhlRDk5MzhMVEQ4WWZwOEJK?=
- =?utf-8?B?OTZGb2pWaGZBWjE3OGdNZm02TUpEL2ErcytTQ2VYajNHWHhzdjlWZDMrRWFW?=
- =?utf-8?B?V2pUZmp3eG1RU1NrYjJrQThUTHUzc2w1RjRpTStVd3VwTFp6SUsvcW80djQ0?=
- =?utf-8?B?R0V2dnhjMTBxQTV4aVJiS2ZqRFZoS1dTME1DM1dRMWdBdGFqaXl0Tk1aSGND?=
- =?utf-8?B?WXQ1VWZzVGVtZG5zVCtVcmZ2MkREUnlHMEIzSGhWWlJuZFovdUdMeHlKbkhD?=
- =?utf-8?B?SGd3SmtxYVdEYlhHT3A4aklSR3JPVGhrU042dVVUdThETktzU053Z3U0Vkx6?=
- =?utf-8?B?elBwVWxzU0NYSlZlVHhMdExHbnBYYU45SzFXa3k2STYrZXo5OEE5L2FwU3l5?=
- =?utf-8?B?dDFVdzc5MStYMExDRTNzd1NGc3ZJYVg0azlhajE2RVNETnluOVlVanQrRzdK?=
- =?utf-8?B?WnovdGZTZmN2ZUQrTXB1cEZucFRvQ3dGSE04QkRFc1NWcTZ2ZFQwUXhRQVM3?=
- =?utf-8?B?VVFaaUFONE9GZlF6ekQ1L0lCMFlRVjBFTHlWU3pWMEdEdEVvSUlCQm9zWENV?=
- =?utf-8?B?cEhqTXNUTTRzWjI0cE5JV1FHRGN2U2taaEZXZnpFZnltS0gzNGN5M1RHU3E4?=
- =?utf-8?B?L29GQWdqeGZUQjU0b0FxSnZOY05xNGtueHRFZXB0Y2NEY0pacHRtZzFqVUJ5?=
- =?utf-8?B?Y3FFMTI5ajRLYWdwY08vbUV6NHRiN1c0UDBiQ2p5ZWduZERjVnZ1blMvNmhP?=
- =?utf-8?B?MThzcUh6czRXb2UyTThrQUlSajRadGtoZUlpMlorcmNtMmlqcEFzakJCU2Na?=
- =?utf-8?B?NE8rTlFmaVEwUzlGQUNGakhGdkNzbjh6ZzI0b2daRVVmTGRNaTJMcVpONUFW?=
- =?utf-8?B?NHJ3bW91WlNQeDVCcURDU2ZKR2wxY09XTHEvQVFCekNQMGVia2Y1UXlGUmRL?=
- =?utf-8?B?bXlURGtZazd3NmxQaVZhWXVuMTdvYUxPdmdOUkREcUxRYWQ2dCtYci9MZC9P?=
- =?utf-8?B?aE8wYWJjUkN3dTc0ZmtCeHo2dnVlWHBSL3VyRVJzUmxEbEJ3TFNOWTMybE9Q?=
- =?utf-8?B?ODlseUlCMWhTcVhxV0xPVGd6andzbklUc05KYnNzSjVucFZwdjdkNTVDWUll?=
- =?utf-8?B?UDhqblZHVFhkZHhsdWJmWmdOdk54T0QvSEJCYXVhYnA5UDRRMnJtckduT2Rp?=
- =?utf-8?B?M3gxMEZZUXMwK1g3MVhnbjVWRUxGczhIeVM5MkZSWVZzbGFIMWo1YWN3Rzlh?=
- =?utf-8?B?MXRWSkZudWFYQkJWcEdENnpUSVlkTC81MkJDZWtidUpxekdmS1pSeU9HOUFz?=
- =?utf-8?B?VHZidi93N1RaeHlNTkxmd0FHWUc2eVRjY0JUbmVrMjZuN0xlc2dKZE52UlZy?=
- =?utf-8?B?VVlLcWlyUkVQdUtXNy9wS3crdXVoRG5HRWhVRHlIbGJ3eVdvSTJkZm5qdkFC?=
- =?utf-8?B?aUZDTEFhRGpVQnRTa3dKdFNZWllJWFVFdTU5ZTRKVmhSTk9sb0ZiZEk0YmFi?=
- =?utf-8?B?TTFYRC8wanpuMVZUN0hkcEhYZjk2SFloK3NEcTJLaDdKNHAzMURtbkFWR2hn?=
- =?utf-8?Q?Y/ng=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ee8e333-06da-4138-f8cf-08db4a951927
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2023 22:40:43.7512
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: q+uq1QpTeVWOZIPzj35rB7tsKD0g53Y88ErMLo54HYK9NoQSJeuueJ6648Wc/BLB
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB8430
+        Tue, 2 May 2023 02:50:36 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2D233ABB
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  1 May 2023 23:50:30 -0700 (PDT)
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230502065027epoutp03a6ce04f2bac4b80683f3552bbca89463~bQOKEdcKA3022130221epoutp03g
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  2 May 2023 06:50:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230502065027epoutp03a6ce04f2bac4b80683f3552bbca89463~bQOKEdcKA3022130221epoutp03g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1683010227;
+        bh=/zhDcDts5LBX2HV/3UzZnXw4YVjg9uzB6LOd9LsN6rk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YSLTli2ccnyF0XCiccrYSVijYzIU3y3bJXBAj2Hegl68T1IaAJACxw8eIMKGPYbYZ
+         CmwcSf8jTFPIzc3/YVHoa2h1tlJ+69u1Fw0S+Di62TvfXtpbuZTW5SZUNBMAIX2PVD
+         Zgtsp5eUDKWeBmKfaYXvBT1LTeKtdlXQPhpO3Qes=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+        20230502065026epcas2p3c3bbced9152859a716e6d108432f7e32~bQOJiEnwJ1371613716epcas2p3O;
+        Tue,  2 May 2023 06:50:26 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.100]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4Q9W1F6vkzz4x9Q6; Tue,  2 May
+        2023 06:50:25 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        39.9B.08199.1B2B0546; Tue,  2 May 2023 15:50:25 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+        20230502065025epcas2p4143c8ff3d44b7676ea8667c14618f2cd~bQOIKsCsr1117211172epcas2p4A;
+        Tue,  2 May 2023 06:50:25 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230502065025epsmtrp200b9f15f59b5d2422a3f2ee79378198c~bQOIJ-j0d2944229442epsmtrp2M;
+        Tue,  2 May 2023 06:50:25 +0000 (GMT)
+X-AuditID: b6c32a47-e99fd70000002007-fd-6450b2b1a730
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E2.C8.27706.1B2B0546; Tue,  2 May 2023 15:50:25 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.55]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230502065025epsmtip13f5f5d62791d4d87df09e34b99a140c0~bQOIAexil1675316753epsmtip1U;
+        Tue,  2 May 2023 06:50:25 +0000 (GMT)
+From:   Jaewon Kim <jaewon02.kim@samsung.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Chanho Park <chanho61.park@samsung.com>,
+        Jaewon Kim <jaewon02.kim@samsung.com>
+Subject: [PATCH v3 1/3] spi: s3c64xx: change polling mode to optional
+Date:   Tue,  2 May 2023 15:28:11 +0900
+Message-Id: <20230502062813.112434-2-jaewon02.kim@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230502062813.112434-1-jaewon02.kim@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHKsWRmVeSWpSXmKPExsWy7bCmqe7GTQEpBu/maVo8mLeNzWLxj+dM
+        FlMfPmGzuLxf22JHwxFWi72vt7JbbHp8jdXi8q45bBYzzu9jsmj8eJPdgcvj+pJPzB6bVnWy
+        edy5tofNY/OSeo++LasYPT5vkgtgi8q2yUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0
+        MFdSyEvMTbVVcvEJ0HXLzAE6TEmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYF6g
+        V5yYW1yal66Xl1piZWhgYGQKVJiQndGwZwNzwQq+itlnr7E1MP7i7mLk5JAQMJFYsXotaxcj
+        F4eQwA5GiTnH70E5nxglzv9oZYZwvjFK7H7zggWmZdWtdnaIxF5GiUfL1rGCJIQEPjJKvP/m
+        AmKzCWhLfF+/GGyUiMBiRokFV3eCdTAL3GCU6H6zGWyUsICrxMLrVxhBbBYBVYmG26/A4rwC
+        dhL7L8xkglgnL7F6wwFmEJtTwF7iXlML2FQJgUfsEucu90MVuUi0TvrGCGELS7w6voUdwpaS
+        +PxuLxuEnS3RPv0PK4RdIXFxw2youLHErGftQL0cQNdpSqzfpQ9iSggoSxy5BXYOswCfRMfh
+        v+wQYV6JjjYhiEY1iftTz0ENkZGYdGQl1DEeEgtvdzBCwmQSo8TOm5ITGOVmIcxfwMi4ilEs
+        taA4Nz212KjAGB5jyfm5mxjBCU/LfQfjjLcf9A4xMnEwHmKU4GBWEuH9UOiXIsSbklhZlVqU
+        H19UmpNafIjRFBh0E5mlRJPzgSk3ryTe0MTSwMTMzNDcyNTAXEmcV9r2ZLKQQHpiSWp2ampB
+        ahFMHxMHp1QDk4HDoSJfTtPTl9m/77CvvnhI8O1lFflVuzam/9c3/PzX+tzXBXePyq/t0GLn
+        SVzsUNI3p2Zqsv221LVS0+t2Z0z/+vdl/OubJ4TNr899nB6qcnG54v53MuFGMa91dpqtlJGb
+        sWqm60vhP7b7v3UszswSa4/ktll8evNOdpbsV1Imv1bf0mU3+OR3xE3wv962shPPDBlv393U
+        0p69veuzfy3/SS+mVFt5h3+cM0t25Nz78knuVdXOGMnmDaXhP6VZzC89zCvUXdPjGP/OzblT
+        8zxX+Pp2y6n55fVMla8LtK7tNLzGPCMjlPFBp9uSe8mnJr/xV1klt+qah+qqzV+nf+E7ac2p
+        P6XkUrr7e66uNCWW4oxEQy3mouJEAHDLC9wBBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsWy7bCSnO7GTQEpBhs3Clo8mLeNzWLxj+dM
+        FlMfPmGzuLxf22JHwxFWi72vt7JbbHp8jdXi8q45bBYzzu9jsmj8eJPdgcvj+pJPzB6bVnWy
+        edy5tofNY/OSeo++LasYPT5vkgtgi+KySUnNySxLLdK3S+DKaNizgblgBV/F7LPX2BoYf3F3
+        MXJySAiYSKy61c7excjFISSwm1FiZe9lZoiEjMTyZ31sELawxP2WI6wQRe8ZJdo7DrKAJNgE
+        tCW+r18MlhARWMoo8XjPYxYQh1ngHqPEy0nfmECqhAVcJRZev8IIYrMIqEo03H4F1s0rYCex
+        /8JMJogV8hKrNxwAW80pYC9xr6mFFcQWAqq50vuVdQIj3wJGhlWMkqkFxbnpucWGBYZ5qeV6
+        xYm5xaV56XrJ+bmbGMHhqaW5g3H7qg96hxiZOBgPMUpwMCuJ8H4o9EsR4k1JrKxKLcqPLyrN
+        SS0+xCjNwaIkznuh62S8kEB6YklqdmpqQWoRTJaJg1Oqgalft9y15KivRW9m2J/H6mmXf+re
+        erTjisVv0bDLU9sy/k1zMGu/GpHj///WWqs1d17ez29Lv9ToHxluWmQTVbrm6WTTMvPTIb8T
+        POPzK93vqit4n3v4TZiLl/WvitCiM/F+G/rZbyaJxNUnOth2RO9m3aG01CiEmf+/n1nlFIvp
+        q9MOqpabrcyS+P3TZuoi+2V1kvEpW6/XLJq1R0at51S8Q2rY8r89FrmbRA0THsZM+nMjTM09
+        OnV3y4ePbzvvv7jmlZe06/RDb5aaiP9yGsc7dsa+ynhwViHwP9OhNsVH9RHqOzaH511ZwR0f
+        sb9tL5cZa9OHPQ8urd78x/BO6m3Tuo/cx3c3Xrq9ZuLtciWW4oxEQy3mouJEAAg5wce+AgAA
+X-CMS-MailID: 20230502065025epcas2p4143c8ff3d44b7676ea8667c14618f2cd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230502065025epcas2p4143c8ff3d44b7676ea8667c14618f2cd
+References: <20230502062813.112434-1-jaewon02.kim@samsung.com>
+        <CGME20230502065025epcas2p4143c8ff3d44b7676ea8667c14618f2cd@epcas2p4.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, May 01, 2023 at 11:34:45PM +0200, Heiko Stübner wrote:
-> Hi,
-> 
-> Am Montag, 1. Mai 2023, 20:02:44 CEST schrieb Jason Gunthorpe:
-> > This follows the prior series:
-> > 
-> > https://lore.kernel.org/r/0-v4-79d0c229580a+650-iommu_err_unwind_jgg@nvidia.com
-> 
-> which probably will need an update for Greg's recent
-> b18d0a0f92a8 ("iommu: make the pointer to struct bus_type constant")
-> 
-> I've fixed that locally for me for testing
+Previously, Polling mode was supported as quirk for SOC without DMA.
+To provide more flexible support for polling mode, it changed to polling
+mode when the 'dmas' property is not present in the devicetree, rather than
+using a quirk.
 
-Yes, I will rebase it to rc1 next week
+Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+---
+ drivers/spi/spi-s3c64xx.c                 | 4 ++--
+ include/linux/platform_data/spi-s3c64xx.h | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-Thanks,
-Jason
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 71d324ec9a70..66ac94022a1b 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -19,7 +19,6 @@
+ #include <linux/platform_data/spi-s3c64xx.h>
+ 
+ #define MAX_SPI_PORTS		12
+-#define S3C64XX_SPI_QUIRK_POLL		(1 << 0)
+ #define S3C64XX_SPI_QUIRK_CS_AUTO	(1 << 1)
+ #define AUTOSUSPEND_TIMEOUT	2000
+ 
+@@ -116,7 +115,7 @@
+ #define S3C64XX_SPI_TRAILCNT		S3C64XX_SPI_MAX_TRAILCNT
+ 
+ #define msecs_to_loops(t) (loops_per_jiffy / 1000 * HZ * t)
+-#define is_polling(x)	(x->port_conf->quirks & S3C64XX_SPI_QUIRK_POLL)
++#define is_polling(x)	(x->cntrlr_info->polling)
+ 
+ #define RXBUSY    (1<<2)
+ #define TXBUSY    (1<<3)
+@@ -1068,6 +1067,7 @@ static struct s3c64xx_spi_info *s3c64xx_spi_parse_dt(struct device *dev)
+ 	}
+ 
+ 	sci->no_cs = of_property_read_bool(dev->of_node, "no-cs-readback");
++	sci->polling = !of_property_present(dev->of_node, "dmas");
+ 
+ 	return sci;
+ }
+diff --git a/include/linux/platform_data/spi-s3c64xx.h b/include/linux/platform_data/spi-s3c64xx.h
+index 5df1ace6d2c9..cb7b8ddc899f 100644
+--- a/include/linux/platform_data/spi-s3c64xx.h
++++ b/include/linux/platform_data/spi-s3c64xx.h
+@@ -35,6 +35,7 @@ struct s3c64xx_spi_info {
+ 	int src_clk_nr;
+ 	int num_cs;
+ 	bool no_cs;
++	bool polling;
+ 	int (*cfg_gpio)(void);
+ };
+ 
+-- 
+2.17.1
+
