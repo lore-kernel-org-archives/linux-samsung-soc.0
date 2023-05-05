@@ -2,61 +2,61 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D61C77B7F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 May 2023 09:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 291AAC77B7D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 May 2023 09:47:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231186AbjEEJJm (ORCPT
+        id S231840AbjEEJr0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 5 May 2023 05:09:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53232 "EHLO
+        Fri, 5 May 2023 05:47:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231609AbjEEJJe (ORCPT
+        with ESMTP id S231186AbjEEJrY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 5 May 2023 05:09:34 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E35FF185
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  5 May 2023 02:09:32 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-50bc5197d33so2868133a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 May 2023 02:09:32 -0700 (PDT)
+        Fri, 5 May 2023 05:47:24 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4690918FFB
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  5 May 2023 02:47:21 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-50bc37e1525so2923820a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 May 2023 02:47:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683277771; x=1685869771;
+        d=linaro.org; s=google; t=1683280040; x=1685872040;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Jk1DeIVD6aFFUK+hNctD6yXAEyZEjJLVTe/neBKRhIY=;
-        b=jvrwp9mhWR1wGFxOJwjAl/pdhYYzCxyUk8PoYVhPQccwp1nAGcO51/C6zUli7auMGw
-         c0HM3n1GJjFAbAapsfDDLt95A+XJUadNvXIC35gmlHsPVUUZZkh7qCYyEIxZuDExF26H
-         NBCO1HamoDJIwMO8IHRoxJiHNSNG/jmFbNJLrFwNw5AheNAdZzsiqGm5LjJG/2y56UNV
-         huJ0eukgei4iUw+lBpo885iTl79hyGeaJUVGuS9BO4zMD2O3Ad1nOTeE2bQ9yfk0qRii
-         xDVwHDU3xv+Uy1YKF1kb5CSA+N7H1qTdggAz2okwkUmkjuwr+Cx5pzpiPQDQP9Axarwq
-         4Ryw==
+        bh=3YIVNcQdeZiL3e0O4p6IYO2o8zE6ITS/Zjz/otoIFpA=;
+        b=Iqijz+WAZAHtO8uFIvMpu/yycYGpQx+/LpXE9Axcv65dAK4e1uQyPg/LQURKrVpV5Q
+         /jufmtJZYot++2wbF9B/cJSSUKvnm2LylqPOS9p4bNP2aoUp7PIgNP0WH+pb+Yp3gPXF
+         CqPa07bDfGrdfuG+OlH5axVBI9Eb/7Mo6NHKcw429IFhoPnzVJ0jfgOqdm856Web5UOe
+         zDOrus4Wjj45fkQy+Xv38TLJBBsuwkhp3EVJIQD8PGLcThIbQa2334tlweMfMXBM/ayB
+         VwuwMyjM1zIAzG+lgu0seXRbkqRY/ZHEt8apMngYB3JMSlS94pofzX7TjWmcbVPuKjEn
+         0hGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683277771; x=1685869771;
+        d=1e100.net; s=20221208; t=1683280040; x=1685872040;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jk1DeIVD6aFFUK+hNctD6yXAEyZEjJLVTe/neBKRhIY=;
-        b=M+p8jeOt2DSkO5XJJmrY9dcz7yIcyb785U/VHvfVJCjc21StIMLFwOa0KVJKz26xuZ
-         rB9C/Cb0sSb0CDbgJTobuDvxRomh9h9L160B8QFJCtOljdWcN9pHziOpvSMYYRnV1hCC
-         JQOylWqfUE4zL+kL1bxE+toOmwuR9R0sCdtEKiApmsdzlsrzXS7t3d3GBBUHhs37/88H
-         Fu10Wv2iEOT8jPtSCOOHCYGhheGX1nTzsrB7NFYAQ0rvD9WeozCoRjVtC6INs/9eK2c0
-         4qcbCXYkUZzVRBh2sdbOHh0ZezTsEiCzObJsQ9oOx9Ory9X8eTJ8gWq99ef5KIgyvwNX
-         ksDg==
-X-Gm-Message-State: AC+VfDykCAiSY+PH6mtx6TLac0/b+Se6wKp1ayVmdR7Vxk/3ehbz3NHJ
-        SJqAEonJ53YISuTyRXSrFElgAKl1S4n89TUNcufkIw==
-X-Google-Smtp-Source: ACHHUZ41/e6NYpsPmJO0DWdwanI/+UcDIguU5Jfcf7pNmuyKAPFXae54BJBHo5lO/KWa1f7rZWJCww==
-X-Received: by 2002:a17:906:dc92:b0:955:34a5:ae46 with SMTP id cs18-20020a170906dc9200b0095534a5ae46mr537020ejc.77.1683277771141;
-        Fri, 05 May 2023 02:09:31 -0700 (PDT)
+        bh=3YIVNcQdeZiL3e0O4p6IYO2o8zE6ITS/Zjz/otoIFpA=;
+        b=eYUtU5jdy6voPCeNXSHcbtQ38YkvMka9rErgRjcT2X8WJPFIFiD+the5HoiVn0/IOd
+         d60emE3Jcvs55E5NLzoyBrfo43nZ5DpSh6KBjk2KHHlsEes6Bx9fwfpdsC2HtTg52IsA
+         QYCOlolVk2CWU1BjNNQA/3xXbpgEiJPfDC++q8/pQH3qE6tsxvf0nHqQXcrruo8ZNFGf
+         LwqfydYPazMzRQFKjdBbfofjFyQkaD4EjM6SDEeubooVrdHa9+X8qKObA75+zFF4wE2O
+         ObYNk16FDoPukTIrPhx+TosrqSGk5wUZ9p8sN2DnyCfaSxo7JRniCcN3ZjY3G1nZymti
+         krSQ==
+X-Gm-Message-State: AC+VfDwIVNPWzcq6+Opj2gT4DWniUrY9EdzH9e9vTuZVTntVMfoUS3y3
+        3UmHjtBbu/uW5s5eKXSiJYxLYOmH9MrKP1ExiCxpwA==
+X-Google-Smtp-Source: ACHHUZ4nixPNDI7H6BBgyh+5/PxYHS2TDRnhCNQLtbEUh6LobLma18kxhzjldRDZdV8OqSSIZPAcwg==
+X-Received: by 2002:a17:907:360c:b0:961:800b:3f1e with SMTP id bk12-20020a170907360c00b00961800b3f1emr616756ejc.73.1683280040379;
+        Fri, 05 May 2023 02:47:20 -0700 (PDT)
 Received: from ?IPV6:2a02:810d:15c0:828:52e:24ce:bbc1:127d? ([2a02:810d:15c0:828:52e:24ce:bbc1:127d])
-        by smtp.gmail.com with ESMTPSA id z16-20020a170906669000b00965b2d3968csm674500ejo.84.2023.05.05.02.09.29
+        by smtp.gmail.com with ESMTPSA id v1-20020a170906292100b00953381ea1b7sm721680ejd.90.2023.05.05.02.47.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 May 2023 02:09:30 -0700 (PDT)
-Message-ID: <862cc092-d561-7e65-e8d4-a1c2d56a52ab@linaro.org>
-Date:   Fri, 5 May 2023 11:09:29 +0200
+        Fri, 05 May 2023 02:47:20 -0700 (PDT)
+Message-ID: <53b60eca-e8ab-3ff3-61a4-019ccac6cd65@linaro.org>
+Date:   Fri, 5 May 2023 11:47:19 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.1
-Subject: Re: [PATCH v3 2/3] spi: s3c64xx: add sleep during transfer
+Subject: Re: [PATCH v3 3/3] spi: s3c64xx: support interrupt based pio mode
 Content-Language: en-US
 To:     Jaewon Kim <jaewon02.kim@samsung.com>,
         Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
@@ -65,10 +65,10 @@ Cc:     linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Chanho Park <chanho61.park@samsung.com>
 References: <20230502062813.112434-1-jaewon02.kim@samsung.com>
- <CGME20230502065025epcas2p11549db7400e6707c61bbb1cff1b22252@epcas2p1.samsung.com>
- <20230502062813.112434-3-jaewon02.kim@samsung.com>
+ <CGME20230502065025epcas2p34507ffad60b32e091ff0efeced9bc12f@epcas2p3.samsung.com>
+ <20230502062813.112434-4-jaewon02.kim@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230502062813.112434-3-jaewon02.kim@samsung.com>
+In-Reply-To: <20230502062813.112434-4-jaewon02.kim@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -76,18 +76,122 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 02/05/2023 08:28, Jaewon Kim wrote:
-> In polling mode, the status register is continuously read to check data
-> transfer completion. It can cause excessive CPU usage.
-> To reduce this, we can calculate the transfer time and put the sleep during
-> transfer.
+> Support interrupt based pio mode to optimize cpu usage.
+> When transmitting data size is larget than 32 bytes, operates with
+> interrupt based pio mode.
 > 
-> When test on ExynosAuto9 SADK board, throughput remained the same, but
-> 100% CPU utilization decreased to 40%.
+> By using the FIFORDY INT, an interrupt can be triggered when
+> the desired size of data has been received. Using this, we can support
+> interrupt based pio mode.
 > 
 > Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
 > ---
+>  drivers/spi/spi-s3c64xx.c | 66 ++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 58 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 2a8304678df9..323c6da9730b 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -58,6 +58,8 @@
+>  #define S3C64XX_SPI_MODE_BUS_TSZ_HALFWORD	(1<<17)
+>  #define S3C64XX_SPI_MODE_BUS_TSZ_WORD		(2<<17)
+>  #define S3C64XX_SPI_MODE_BUS_TSZ_MASK		(3<<17)
+> +#define S3C64XX_SPI_MODE_RX_RDY_LVL		GENMASK(16, 11)
+> +#define S3C64XX_SPI_MODE_RX_RDY_LVL_SHIFT	11
+>  #define S3C64XX_SPI_MODE_SELF_LOOPBACK		(1<<3)
+>  #define S3C64XX_SPI_MODE_RXDMA_ON		(1<<2)
+>  #define S3C64XX_SPI_MODE_TXDMA_ON		(1<<1)
+> @@ -114,6 +116,8 @@
+>  
+>  #define S3C64XX_SPI_TRAILCNT		S3C64XX_SPI_MAX_TRAILCNT
+>  
+> +#define S3C64XX_SPI_POLLING_SIZE	32
+> +
+>  #define msecs_to_loops(t) (loops_per_jiffy / 1000 * HZ * t)
+>  #define is_polling(x)	(x->cntrlr_info->polling)
+>  
+> @@ -552,7 +556,7 @@ static int s3c64xx_wait_for_dma(struct s3c64xx_spi_driver_data *sdd,
+>  }
+>  
+>  static int s3c64xx_wait_for_pio(struct s3c64xx_spi_driver_data *sdd,
+> -				struct spi_transfer *xfer)
+> +				struct spi_transfer *xfer, bool use_irq)
+>  {
+>  	void __iomem *regs = sdd->regs;
+>  	unsigned long val;
+> @@ -573,6 +577,12 @@ static int s3c64xx_wait_for_pio(struct s3c64xx_spi_driver_data *sdd,
+>  	if (RX_FIFO_LVL(status, sdd) < xfer->len)
+>  		usleep_range(time_us / 2, time_us);
+>  
+> +	if (use_irq) {
+> +		val = msecs_to_jiffies(ms);
+> +		if (!wait_for_completion_timeout(&sdd->xfer_completion, val))
+> +			return -EIO;
+> +	}
+> +
+>  	val = msecs_to_loops(ms);
+>  	do {
+>  		status = readl(regs + S3C64XX_SPI_STATUS);
+> @@ -735,10 +745,13 @@ static int s3c64xx_spi_transfer_one(struct spi_master *master,
+>  	void *rx_buf = NULL;
+>  	int target_len = 0, origin_len = 0;
+>  	int use_dma = 0;
+> +	bool use_irq = false;
+>  	int status;
+>  	u32 speed;
+>  	u8 bpw;
+>  	unsigned long flags;
+> +	u32 rdy_lv;
+> +	u32 val;
+>  
+>  	reinit_completion(&sdd->xfer_completion);
+>  
+> @@ -759,17 +772,46 @@ static int s3c64xx_spi_transfer_one(struct spi_master *master,
+>  	    sdd->rx_dma.ch && sdd->tx_dma.ch) {
+>  		use_dma = 1;
+>  
+> -	} else if (xfer->len > fifo_len) {
+> +	} else if (xfer->len >= fifo_len) {
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I don't fully understand this. If len equals to fifo_len, everything
+would fit into FIFO so no need for all this?
+
+>  		tx_buf = xfer->tx_buf;
+>  		rx_buf = xfer->rx_buf;
+>  		origin_len = xfer->len;
+> -
+>  		target_len = xfer->len;
+> -		if (xfer->len > fifo_len)
+> -			xfer->len = fifo_len;
+> +		xfer->len = fifo_len - 1;
+>  	}
+>  
+>  	do {
+> +		/* transfer size is greater than 32, change to IRQ mode */
+> +		if (xfer->len > S3C64XX_SPI_POLLING_SIZE)
+> +			use_irq = true;
+> +
+> +		if (use_irq) {
+> +			reinit_completion(&sdd->xfer_completion);
+> +
+> +			rdy_lv = xfer->len;
+
+Style is:
+
+/*
+ *
+
+> +			/* Setup RDY_FIFO trigger Level
+> +			 * RDY_LVL =
+> +			 * fifo_lvl up to 64 byte -> N bytes
+> +			 *               128 byte -> RDY_LVL * 2 bytes
+> +			 *               256 byte -> RDY_LVL * 4 bytes
+
+I don't understand it. Based on this equation for 256 bytes,
+RDY_LVL = RDY_LVL * 4?
+Didn't you mean xfer->len?
+
 
 Best regards,
 Krzysztof
