@@ -2,102 +2,106 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F97C7EE2F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 May 2023 03:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C9CC77B73
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 May 2023 04:04:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229986AbjEHD4G (ORCPT
+        id S231814AbjEHEEu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 7 May 2023 23:56:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54690 "EHLO
+        Mon, 8 May 2023 00:04:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231918AbjEHD4F (ORCPT
+        with ESMTP id S231654AbjEHEEr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 7 May 2023 23:56:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 540135FDE;
-        Sun,  7 May 2023 20:56:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B376861E50;
-        Mon,  8 May 2023 03:56:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 017E0C433A1;
-        Mon,  8 May 2023 03:56:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683518162;
-        bh=iqxRQMD53u2tbr+scb/mygfA71sAOYFgkZWapjTWLC8=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=nEjcgk3+n8PYkAocEwDvhmB9jmQVz13X6O5K2hyos1vxLgzNen0Ynbvp4PFTtwysi
-         +BCR/a9mQn1f1BPAE4k0psgkYYi9BqOywL6GkMDTwiUY8GYSL9lYyA1BdBuKzU2hXH
-         dIMT772sNaVuDE9zKYN9NvgT6DxfUYiSp40yp/AmEVnehU+lds/vfVirVunCKpAyLa
-         6GHtWMLiKGxD2l0QV4Eeu747HdERt5Fw9YwxiuyioA/1nUw9YUMaq/ikApjI7ejKWe
-         3t1Ha3yKoi59DNpgdlEAe7bez5m1nP6bIOk3zteJUF1LZ2Qo1c7mFFVQ9iCtduLuP8
-         TS+0FH9YEdnOw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D3B00E26D29;
-        Mon,  8 May 2023 03:56:01 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 00/30] pwm: Convert to platform remove callback returning void
-From:   patchwork-bot+chrome-platform@kernel.org
-Message-Id: <168351816186.5651.2096317681881714301.git-patchwork-notify@kernel.org>
-Date:   Mon, 08 May 2023 03:56:01 +0000
-References: <20230303185445.2112695-1-u.kleine-koenig@pengutronix.de>
-In-Reply-To: <20230303185445.2112695-1-u.kleine-koenig@pengutronix.de>
-To:     =?utf-8?q?Uwe_Kleine-K=C3=B6nig_=3Cu=2Ekleine-koenig=40pengutronix=2Ede=3E?=@ci.codeaurora.org
-Cc:     thierry.reding@gmail.com, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, claudiu.beznea@microchip.com,
-        rjui@broadcom.com, sbranden@broadcom.com, f.fainelli@gmail.com,
-        bleung@chromium.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        vz@mleia.com, matthias.bgg@gmail.com, heiko@sntech.de,
-        krzysztof.kozlowski@linaro.org, palmer@dabbelt.com,
-        paul.walmsley@sifive.com, orsonzhai@gmail.com,
-        baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com,
-        fabrice.gasnier@foss.st.com, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@foss.st.com, wens@csie.org,
-        jernej.skrabec@gmail.com, samuel@sholland.org,
-        jonathanh@nvidia.com, sean.anderson@seco.com,
-        michal.simek@xilinx.com, kernel@pengutronix.de,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, groeck@chromium.org,
-        chrome-platform@lists.linux.dev, festevam@gmail.com,
-        linux-imx@nxp.com, angelogioacchino.delregno@collabora.com,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, alim.akhtar@samsung.com,
-        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
+        Mon, 8 May 2023 00:04:47 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 823605FDA;
+        Sun,  7 May 2023 21:04:42 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-50bc4ba28cbso7443273a12.0;
+        Sun, 07 May 2023 21:04:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683518681; x=1686110681;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7EHAT0FpwV3AmMbV3FwWi0IRotmMH++8ZC/lSzkodBA=;
+        b=geMSnh2vDesRtQzP5cZ6uRXFnNtww8hlBA5Kugl8KRxENtX4dpqiYLyiabSZXjdEy/
+         ePuWKENTV+KkKm2iRoxfYfUSxoIxVmjrH8Gm5BDDonPp3mWBCOmMS9AJF1zpecHhqSCD
+         oXg5GMaEtLifWEbN8Mg9SzthetubwvBBOkLF8nM8Zb4xgqu5gTGFDJjTkxveeXbUWN35
+         elKFwv2kbqzDLfAjr4fBBUD+3coxi1uQlmriHN5eC7ntDZAw6u2CzCgZsAhp3RgX9vA6
+         fnpJTaHPV4VaK9RTG/TPmjAhZi9fJX+zfjhTMc2soBA7TMzM9b5QyRPYami7MCmuG1Ij
+         6CDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683518681; x=1686110681;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7EHAT0FpwV3AmMbV3FwWi0IRotmMH++8ZC/lSzkodBA=;
+        b=OrHWHsmvjTMett/EZreNU6ibWeSG2mgM3JGpAPbCiQFYwkL9y0TPb3hXLNl2yA5NsA
+         nfMuj8nwRtFK8MWMhz6FzbG6XpjTvZpDFM7VpGzaQE1A3yqtKLYSoW9xijTy5ROBV5Zo
+         +m33Je7L2iUKqc3g+wy3APrsC79yhlhqEOI/Zncn6GliGsDI1jNmAWYGCymVfVqBJKGC
+         I/Ull9STCckSYa1v9hFxFn2p6HHaj34DC7WFlThM4DYpU1+Cl2V9WaJrmPFW3WYe9Sen
+         HTZR+8NlFC8MDz/BWiM/QngoU3WskK6QsKt6h9/QvZdoJ7KAvygqxXKCptoMlmBCuHmP
+         zN2g==
+X-Gm-Message-State: AC+VfDz5hy468p1KFhYf7cPxyST7j2Wi7uqJ3KgL61kXeGHWFW5tYHI0
+        4SFo9U8Eh3Wdz1sFm7bKeZ8=
+X-Google-Smtp-Source: ACHHUZ7S7/kq9jz38RlRxFDhe5+6ko5+I6KvU/mC4gq9bmtvxlog+Hpmw1DjqBpVwlOOqJKu63i2Kw==
+X-Received: by 2002:aa7:d5d5:0:b0:508:4f66:e70d with SMTP id d21-20020aa7d5d5000000b005084f66e70dmr6512173eds.36.1683518680757;
+        Sun, 07 May 2023 21:04:40 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:8906:f99a:ce33:2033])
+        by smtp.gmail.com with ESMTPSA id f12-20020a05640214cc00b005068fe6f3d8sm5645242edx.87.2023.05.07.21.04.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 May 2023 21:04:40 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Russell King <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        soc@kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] ARM: s3c: remove obsolete config S3C64XX_SETUP_IDE
+Date:   Mon,  8 May 2023 06:04:33 +0200
+Message-Id: <20230508040433.13648-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello:
+Commit 0d297df03890 ("ARM: s3c: simplify platform code") removes the line
+in Makefile.s3c64xx to configure the inclusion of setup-ide-s3c64xx.c,
+with CONFIG_S3C64XX_SETUP_IDE. So, since then, config S3C64XX_SETUP_IDE has
+no effect and any further purpose.
 
-This patch was applied to chrome-platform/linux.git (for-next)
-by Thierry Reding <thierry.reding@gmail.com>:
+Remove the obsolete config S3C64XX_SETUP_IDE.
 
-On Fri,  3 Mar 2023 19:54:15 +0100 you wrote:
-> Hello,
-> 
-> this patch series adapts the platform drivers below drivers/pwm to use
-> the .remove_new() callback. Compared to the traditional .remove()
-> callback .remove_new() returns no value. This is a good thing because
-> the driver core doesn't (and cannot) cope for errors during remove. The
-> only effect of a non-zero return value in .remove() is that the driver
-> core emits a warning. The device is removed anyhow and an early return
-> from .remove() usually yields a resource leak.
-> 
-> [...]
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ arch/arm/mach-s3c/Kconfig.s3c64xx | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Here is the summary with links:
-  - [09/30] pwm: cros-ec: Convert to platform remove callback returning void
-    https://git.kernel.org/chrome-platform/c/159a61a7b5b0
-
-You are awesome, thank you!
+diff --git a/arch/arm/mach-s3c/Kconfig.s3c64xx b/arch/arm/mach-s3c/Kconfig.s3c64xx
+index 01a7a8eec6e8..8f40af063ad6 100644
+--- a/arch/arm/mach-s3c/Kconfig.s3c64xx
++++ b/arch/arm/mach-s3c/Kconfig.s3c64xx
+@@ -69,11 +69,6 @@ config S3C64XX_SETUP_I2C1
+ 	help
+ 	  Common setup code for i2c bus 1.
+ 
+-config S3C64XX_SETUP_IDE
+-	bool
+-	help
+-	  Common setup code for S3C64XX IDE.
+-
+ config S3C64XX_SETUP_FB_24BPP
+ 	bool
+ 	help
+@@ -110,7 +105,6 @@ config MACH_WLF_CRAGG_6410
+ 	select S3C64XX_DEV_SPI0
+ 	select S3C64XX_SETUP_FB_24BPP
+ 	select S3C64XX_SETUP_I2C1
+-	select S3C64XX_SETUP_IDE
+ 	select S3C64XX_SETUP_KEYPAD
+ 	select S3C64XX_SETUP_SDHCI
+ 	select S3C64XX_SETUP_SPI
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.17.1
 
