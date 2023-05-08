@@ -2,47 +2,47 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40EF4C7EE30
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 May 2023 03:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F97C7EE2F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 May 2023 03:56:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230452AbjEHDpV (ORCPT
+        id S229986AbjEHD4G (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 7 May 2023 23:45:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52658 "EHLO
+        Sun, 7 May 2023 23:56:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231631AbjEHDpS (ORCPT
+        with ESMTP id S231918AbjEHD4F (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 7 May 2023 23:45:18 -0400
+        Sun, 7 May 2023 23:56:05 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2C845B8D;
-        Sun,  7 May 2023 20:45:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 540135FDE;
+        Sun,  7 May 2023 20:56:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4B5AD61E54;
-        Mon,  8 May 2023 03:45:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9BDE1C433A1;
-        Mon,  8 May 2023 03:45:14 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B376861E50;
+        Mon,  8 May 2023 03:56:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 017E0C433A1;
+        Mon,  8 May 2023 03:56:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683517514;
-        bh=B107g9Lt1qqRc8zGMhAvO5F9KOo7vdHb61jTMsoTnGM=;
+        s=k20201202; t=1683518162;
+        bh=iqxRQMD53u2tbr+scb/mygfA71sAOYFgkZWapjTWLC8=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=hkMTnw/raTjwK8dXNNlAE97OKveUSkIvTENObtPpXmS/b16Zo99WrTSP7cywcVOaz
-         2+XnilGdG5W9CxLf21CBgwIE3dr+BS7eeWVfHE2NnInr3cCuU07cmXjcdUiylXBODh
-         rlNP3mWO5sv2ub5TQwGiSAwmfFrT56h1gR1UEdK9KiPWbygV7PLvqSJFb0Bn/t5IPY
-         tOW3rn8pjHLIK17yRFrplFPu32Bd4Kid59zpQP1Hqnns7ZgLQGXjoHeKLpqWF0FShM
-         CS13qoXkg1I2NfqjGaO5WOeMIk3l1Pc07ZvdP+PzhTx1ikCP9qq88EvckL12EFrnQc
-         6GLTtN5goJPrg==
+        b=nEjcgk3+n8PYkAocEwDvhmB9jmQVz13X6O5K2hyos1vxLgzNen0Ynbvp4PFTtwysi
+         +BCR/a9mQn1f1BPAE4k0psgkYYi9BqOywL6GkMDTwiUY8GYSL9lYyA1BdBuKzU2hXH
+         dIMT772sNaVuDE9zKYN9NvgT6DxfUYiSp40yp/AmEVnehU+lds/vfVirVunCKpAyLa
+         6GHtWMLiKGxD2l0QV4Eeu747HdERt5Fw9YwxiuyioA/1nUw9YUMaq/ikApjI7ejKWe
+         3t1Ha3yKoi59DNpgdlEAe7bez5m1nP6bIOk3zteJUF1LZ2Qo1c7mFFVQ9iCtduLuP8
+         TS+0FH9YEdnOw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6D73BE26D27;
-        Mon,  8 May 2023 03:45:14 +0000 (UTC)
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D3B00E26D29;
+        Mon,  8 May 2023 03:56:01 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Subject: Re: [PATCH 00/30] pwm: Convert to platform remove callback returning void
 From:   patchwork-bot+chrome-platform@kernel.org
-Message-Id: <168351751444.5651.16443197694918881526.git-patchwork-notify@kernel.org>
-Date:   Mon, 08 May 2023 03:45:14 +0000
+Message-Id: <168351816186.5651.2096317681881714301.git-patchwork-notify@kernel.org>
+Date:   Mon, 08 May 2023 03:56:01 +0000
 References: <20230303185445.2112695-1-u.kleine-koenig@pengutronix.de>
 In-Reply-To: <20230303185445.2112695-1-u.kleine-koenig@pengutronix.de>
 To:     =?utf-8?q?Uwe_Kleine-K=C3=B6nig_=3Cu=2Ekleine-koenig=40pengutronix=2Ede=3E?=@ci.codeaurora.org
@@ -75,7 +75,7 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Hello:
 
-This patch was applied to chrome-platform/linux.git (for-kernelci)
+This patch was applied to chrome-platform/linux.git (for-next)
 by Thierry Reding <thierry.reding@gmail.com>:
 
 On Fri,  3 Mar 2023 19:54:15 +0100 you wrote:
