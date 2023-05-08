@@ -2,221 +2,92 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0799C77B73
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 May 2023 07:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6313EC77B75
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 May 2023 09:02:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232167AbjEHHul (ORCPT
+        id S233648AbjEHJC3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 8 May 2023 03:50:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57230 "EHLO
+        Mon, 8 May 2023 05:02:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229616AbjEHHuk (ORCPT
+        with ESMTP id S233658AbjEHJCK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 May 2023 03:50:40 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A22D9172C
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 May 2023 00:50:38 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pvvdN-000352-R3; Mon, 08 May 2023 09:50:13 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pvvdK-001wDu-Ru; Mon, 08 May 2023 09:50:10 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pvvdJ-002Kte-5G; Mon, 08 May 2023 09:50:09 +0200
-Date:   Mon, 8 May 2023 09:50:09 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     "James (Qian) Wang" <james.qian.wang@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Mihail Atanassov <mihail.atanassov@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Russell King <linux@armlinux.org.uk>,
-        Joel Stanley <joel@jms.id.au>, Sam Ravnborg <sam@ravnborg.org>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Rahul T R <r-ravikumar@ti.com>,
-        Jayshri Pawar <jpawar@cadence.com>,
-        Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Mark Brown <broonie@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Alison Wang <alison.wang@nxp.com>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Danilo Krummrich <dakr@redhat.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Qiang Yu <yuq825@gmail.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        Ricardo Ribalda <ribalda@chromium.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Marek Vasut <marex@denx.de>, Ben Skeggs <bskeggs@redhat.com>,
-        Karol Herbst <kherbst@redhat.com>,
-        Lyude Paul <lyude@redhat.com>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Guo Zhengkui <guozhengkui@vivo.com>,
-        Yuan Can <yuancan@huawei.com>, Arnd Bergmann <arnd@arndb.de>,
-        Liang He <windhl@126.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Deepak R Varma <drv@mailo.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Emma Anholt <emma@anholt.net>, Melissa Wen <mwen@igalia.com>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-aspeed@lists.ozlabs.org, nouveau@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, John Stultz <jstultz@google.com>,
+        Mon, 8 May 2023 05:02:10 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C898A22732
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 May 2023 02:01:09 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-966400ee79aso245761266b.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 May 2023 02:01:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683536466; x=1686128466;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mdjVB1LcK65MjUQ5lAoWWtjhBM+KfEqN5gXnbsQlIK0=;
+        b=t40AGY5/zL0/XXc7pQ4Npisl0XqlgKQc9BM/f43pHyOgmLT7RrDqoFoJaUTQjSel5S
+         C0hfCvVd2YeezCX1ZvEN4S8f+dCNm5R0iCkNKEVLWdx8Kj39qwAww0eq7SztqAeoKWW5
+         GNipyl/sTouqc+HG67BH0X5Xl61zdJnpc6kwIIYWg2zSJKppGoghENY4OPp31mxr23Tz
+         Ug+u3P37klL3iESNEiUTRQRcRZqTFA4IPjV3KWkMoE0N/5vQOBwneqBDF1YytNJHFk7P
+         HwF3YwPS2hc8WhTkpkuUEgKXk+igPwAGHa7roc6GAuDn3tfjp4+k0Tkp32ehLyCNzFL4
+         6PsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683536466; x=1686128466;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mdjVB1LcK65MjUQ5lAoWWtjhBM+KfEqN5gXnbsQlIK0=;
+        b=WeCSPFl2byZH3zkVNKveWoBiS7LHN+yJDzCoVNyYzsTfZtTA5A69K3P1k6KiST/wH6
+         4FNsCIFdhpep4iv+uGpn2ClJLKfdBNkmYqsdoW4i+/yaMoNp7/7JeMrSLehLKO+yZxMA
+         qOu9ULSbjxCQNG7lKuGul9vikHS61mIumV4/n6j3j5y1pG52hga2L8Zvhi3Zy8ElB3hP
+         ZxcWrf02Cd7qrDr5cbnb0fSMOlZzl/alnjODe47qxaUOUPPr9DwRxWkxdT/4BdC4SPc6
+         QFm5uYaC9gTWPnPXThBUCJOmHfXC2SN2JR/7wHmmMyG2SkaLBkDTO4aQE8Ruuc+ne2WN
+         /8zQ==
+X-Gm-Message-State: AC+VfDxjZQbd/n9aTTktTx8qBSACNuUIaJx/iF/QmBxYJeqpHlqZlk5f
+        R+S77O27cmVggCrzBRF9hd0U9A==
+X-Google-Smtp-Source: ACHHUZ4HpKWDjurqiqoLaDtN/lfcKNWSX5+AEn0mGRBLeJKV/5W39K4QrEkUfS5UpnPMpO6vpYpdLA==
+X-Received: by 2002:a17:907:5c5:b0:965:9edf:f0d0 with SMTP id wg5-20020a17090705c500b009659edff0d0mr7601374ejb.13.1683536466403;
+        Mon, 08 May 2023 02:01:06 -0700 (PDT)
+Received: from krzk-bin.. ([2a02:810d:15c0:828:50e0:ebdf:b755:b300])
+        by smtp.gmail.com with ESMTPSA id z10-20020a1709063a0a00b0094b5ce9d43dsm4685758eje.85.2023.05.08.02.01.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 May 2023 02:01:05 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Russell King <linux@armlinux.org.uk>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-samsung-soc@vger.kernel.org, lima@lists.freedesktop.org,
-        Steven Price <steven.price@arm.com>,
-        linux-rockchip@lists.infradead.org,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        linux-sunxi@lists.linux.dev, Jonas Karlman <jonas@kwiboo.se>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-arm-msm@vger.kernel.org, etnaviv@lists.freedesktop.org,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, Sean Paul <sean@poorly.run>,
         linux-arm-kernel@lists.infradead.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel@pengutronix.de, Yongqin Liu <yongqin.liu@linaro.org>,
-        freedreno@lists.freedesktop.org
-Subject: Re: [PATCH 00/53] drm: Convert to platform remove callback returning
- void
-Message-ID: <20230508075009.4l4ghdrwopfhmcao@pengutronix.de>
-References: <20230507162616.1368908-1-u.kleine-koenig@pengutronix.de>
- <935faac5-280b-b2e0-3fdb-d0424990e43a@suse.de>
+        linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        soc@kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: s3c: remove obsolete config S3C64XX_SETUP_IDE
+Date:   Mon,  8 May 2023 11:01:02 +0200
+Message-Id: <168353645813.78617.10247256011505870361.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230508040433.13648-1-lukas.bulwahn@gmail.com>
+References: <20230508040433.13648-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3pf3cmic5n6cdkye"
-Content-Disposition: inline
-In-Reply-To: <935faac5-280b-b2e0-3fdb-d0424990e43a@suse.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
---3pf3cmic5n6cdkye
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 08 May 2023 06:04:33 +0200, Lukas Bulwahn wrote:
+> Commit 0d297df03890 ("ARM: s3c: simplify platform code") removes the line
+> in Makefile.s3c64xx to configure the inclusion of setup-ide-s3c64xx.c,
+> with CONFIG_S3C64XX_SETUP_IDE. So, since then, config S3C64XX_SETUP_IDE has
+> no effect and any further purpose.
+> 
+> Remove the obsolete config S3C64XX_SETUP_IDE.
+> 
+> [...]
 
-[A few addressed bounced and my script to find the recipents for a patch
-series broke and invented some addresses. I fixed all the problem I'm
-aware of in this mail.]
+Applied, thanks!
 
-On Mon, May 08, 2023 at 09:06:27AM +0200, Thomas Zimmermann wrote:
-> for the whole series:
->=20
-> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
->=20
-> Please see my comment on the patches to tiny/.
->=20
-> Let me know if you want me to merge this patchset into drm-misc-next.
+[1/1] ARM: s3c: remove obsolete config S3C64XX_SETUP_IDE
+      https://git.kernel.org/krzk/linux/c/9d2edccb154bd98baf7f1e21d23f799e4f5e8359
 
-Thanks, I'd wait a bit for more acks/reviews to come in and then plan to
-resend later, also addressing the feedback you sent.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---3pf3cmic5n6cdkye
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmRYqbAACgkQj4D7WH0S
-/k4JeggAnBHUxma4vQ+/T0T9qJC+5c7iGOJ+hg1VKQdu3RFYOsfEdBVHywMuX8Fb
-bkfMbL4jsyN80KX3Sc7XeT0GkuA6n1bkIfJsTz16Dl8pPUTDBLPKYKNT82+brNvg
-XIif/963gu+RJ+x6ME2cdKET84LGmQwhonW2LUxGiRX5JD3FroDO8qaiLtFzkxEg
-zhCTMEQJUy1J6coFLDsxnhLFu4R/6ngT6tZOJfRAB4OiIEFmKVVH0/Y2Ko/ggJ/d
-50TcQO/0MoAzPrToLpaLaT3VtMocbAxQf7XRwpqF4MDvhu7dVfsJIhcWtBYjocz+
-WfD1B59vo0hWYb/QXlkA6OY3tzlBQQ==
-=Fhn+
------END PGP SIGNATURE-----
-
---3pf3cmic5n6cdkye--
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
