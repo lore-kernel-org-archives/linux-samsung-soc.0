@@ -2,89 +2,106 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F80C77B7F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 May 2023 17:04:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A595C7EE2D
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 May 2023 20:53:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234397AbjEHREm (ORCPT
+        id S233766AbjEHUxd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 8 May 2023 13:04:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57328 "EHLO
+        Mon, 8 May 2023 16:53:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234386AbjEHREj (ORCPT
+        with ESMTP id S232966AbjEHUxa (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 May 2023 13:04:39 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15CD06EB6
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 May 2023 10:04:27 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-50bcb229adaso9103132a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 May 2023 10:04:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683565465; x=1686157465;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IAw+LmjENYP6n0JgiGSrlogWGfxzFdRErjaIx7RmFsY=;
-        b=LTMddz/OjQ+Gm/xmlL+u9f//UGe2LOfuR2QNqJzmMZnvIZiQKDF67T0AybETmaDR4p
-         ysi/En4tB8DzHIHnbioW4giP82BrA6hWqqLk96cwcOq4wcEiEBskOVhmg4RPrUuM+8yX
-         BWHTqgQpir3cJFpFRlaHqTXrmcJT1mq+UhRZlWey/SVUmn4ZXBxLbzV0PlXDdFh3M80Y
-         v4iZ2scc9q/Ri47zqfdG54NtONkYz2Zqfm4sPppc7549GT2GzVjl2k4OSUSqsuhqr2G4
-         FM54FqM66QsUY9d94TGQSEO/gSftn9Q0GWhJhY527GaAxE1i7IKkiVVK3bamnBZYLnyg
-         eHDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683565465; x=1686157465;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IAw+LmjENYP6n0JgiGSrlogWGfxzFdRErjaIx7RmFsY=;
-        b=OsZO7HzdsNC2GxwZzh30yErJ8oZt5c7kIZD9qDIys+fG2CKOCdDx5aBcfobRdYk1il
-         05/WJ0/O95BpgvaeA46pRZVqDfq2MOSA7y+9GmPRWYj4SYtEhq0QCC7zmA/gKjPGBatg
-         yWaJPZaHe4/xReOzOeg8+p5u+vm+rMfEIngsEb6zGipAg4l8vZ33QbDQGkqrWm6oCrZz
-         qGm05grw9157x9dsSFkONzFrzBvk98b5YntFZ1mi31sB1NDLYurjbZosRcA5BPVto4IB
-         XbVObgeDJ69ZXkggLY1swnFq6XUvzyLsA1WE9U5Abe99E/v+s9tfjzPw31sIkg3mhscD
-         JX/g==
-X-Gm-Message-State: AC+VfDyNOyQQO8Ly4gHzmmzABZAfguozhAj1YhbZZnjS/njCUzBPj/s9
-        SpOtKUE3G50lpQy4LG21EYEqig==
-X-Google-Smtp-Source: ACHHUZ4VYMYjYzSc1Acapa5ANUYEhCSkSLGGQ/iMjiXSFlOVs1VhRjgzciwj/nWArtp91698u0L/Yg==
-X-Received: by 2002:a17:907:360c:b0:966:23e5:c8f7 with SMTP id bk12-20020a170907360c00b0096623e5c8f7mr5754200ejc.62.1683565465540;
-        Mon, 08 May 2023 10:04:25 -0700 (PDT)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:50e0:ebdf:b755:b300])
-        by smtp.gmail.com with ESMTPSA id lh2-20020a170906f8c200b00965b7bf6aa5sm206862ejb.52.2023.05.08.10.04.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 May 2023 10:04:25 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] ARM: dts: s5pv210: remove empty camera pinctrl configuration
-Date:   Mon,  8 May 2023 19:04:17 +0200
-Message-Id: <168356544397.281925.652895138808564025.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230421190202.15471-1-krzysztof.kozlowski@linaro.org>
-References: <20230421190202.15471-1-krzysztof.kozlowski@linaro.org>
+        Mon, 8 May 2023 16:53:30 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8A236EAE
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 May 2023 13:53:27 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pw7rB-00039y-BC; Mon, 08 May 2023 22:53:17 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pw7r9-0024qf-S3; Mon, 08 May 2023 22:53:15 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pw7r9-002YW9-Aa; Mon, 08 May 2023 22:53:15 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Wolfram Sang <wsa@kernel.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de
+Subject: [PATCH 22/89] i2c: exynos5: Convert to platform remove callback returning void
+Date:   Mon,  8 May 2023 22:51:59 +0200
+Message-Id: <20230508205306.1474415-23-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230508205306.1474415-1-u.kleine-koenig@pengutronix.de>
+References: <20230508205306.1474415-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1750; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=ztLx+AlbW65d/ywo/DVEwKQHtnLEd1zXY5A1G+qBlLg=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkWWCLH4Eq3PEB0oyAr8szNjYm7Co8RJgmcWws1 3HwWMb4fwGJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZFlgiwAKCRCPgPtYfRL+ TiK2B/42C5AFB4cyjBFpnqYu7S/o5UNGLIAy/clAgFJotE4Ws47XeQsoGrxJ1H3ul0K4PNMv8ZN bSnyN4rtnqn2spXdkw2Z6vdTMlYq15tdHeSESPW6OEJrrth+eaN0F5M2RCf+ZGMZEX9ftyj5v2M Ur8HoMZd+D6m9mDQaK/TqTZu+9d5G68fVPsTDKy59HUUNrYxyH/RuZDjtuze3QaU4iZTxgB8aPi oTMiwR0twuN4uWVwF7dJw7ujyLyU3ig5p+oLsS8mTr6ukMPxpmwhUCBRrTE6h5UZ6rs8SRm7PsN rG7svWV01BYotOaFJvVM2eDP4bYAgUM5JZdoVtdPJiwyDwcj
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
 
-On Fri, 21 Apr 2023 21:02:02 +0200, Krzysztof Kozlowski wrote:
-> The camera's pinctrl configuration is simply empty and not effective.
-> Remove it to fix dtbs_check warnings like:
-> 
->   s5pv210-torbreck.dtb: camera@fa600000: pinctrl-0: True is not of type 'array'
-> 
-> 
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-Applied, thanks!
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/i2c/busses/i2c-exynos5.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-[1/1] ARM: dts: s5pv210: remove empty camera pinctrl configuration
-      https://git.kernel.org/krzk/linux/c/b8039b4e40094e81351221275ed61ee7643cdb91
-
-Best regards,
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index 4a6260d04db2..f378cd479e55 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -882,7 +882,7 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int exynos5_i2c_remove(struct platform_device *pdev)
++static void exynos5_i2c_remove(struct platform_device *pdev)
+ {
+ 	struct exynos5_i2c *i2c = platform_get_drvdata(pdev);
+ 
+@@ -890,8 +890,6 @@ static int exynos5_i2c_remove(struct platform_device *pdev)
+ 
+ 	clk_unprepare(i2c->clk);
+ 	clk_unprepare(i2c->pclk);
+-
+-	return 0;
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
+@@ -945,7 +943,7 @@ static const struct dev_pm_ops exynos5_i2c_dev_pm_ops = {
+ 
+ static struct platform_driver exynos5_i2c_driver = {
+ 	.probe		= exynos5_i2c_probe,
+-	.remove		= exynos5_i2c_remove,
++	.remove_new	= exynos5_i2c_remove,
+ 	.driver		= {
+ 		.name	= "exynos5-hsi2c",
+ 		.pm	= &exynos5_i2c_dev_pm_ops,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.39.2
+
