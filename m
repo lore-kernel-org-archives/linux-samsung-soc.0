@@ -2,106 +2,99 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C9CC77B73
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 May 2023 04:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C94C77B73
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 May 2023 05:39:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231814AbjEHEEu (ORCPT
+        id S232442AbjEHFjD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 8 May 2023 00:04:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58824 "EHLO
+        Mon, 8 May 2023 01:39:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231654AbjEHEEr (ORCPT
+        with ESMTP id S229757AbjEHFjC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 May 2023 00:04:47 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 823605FDA;
-        Sun,  7 May 2023 21:04:42 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-50bc4ba28cbso7443273a12.0;
-        Sun, 07 May 2023 21:04:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683518681; x=1686110681;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7EHAT0FpwV3AmMbV3FwWi0IRotmMH++8ZC/lSzkodBA=;
-        b=geMSnh2vDesRtQzP5cZ6uRXFnNtww8hlBA5Kugl8KRxENtX4dpqiYLyiabSZXjdEy/
-         ePuWKENTV+KkKm2iRoxfYfUSxoIxVmjrH8Gm5BDDonPp3mWBCOmMS9AJF1zpecHhqSCD
-         oXg5GMaEtLifWEbN8Mg9SzthetubwvBBOkLF8nM8Zb4xgqu5gTGFDJjTkxveeXbUWN35
-         elKFwv2kbqzDLfAjr4fBBUD+3coxi1uQlmriHN5eC7ntDZAw6u2CzCgZsAhp3RgX9vA6
-         fnpJTaHPV4VaK9RTG/TPmjAhZi9fJX+zfjhTMc2soBA7TMzM9b5QyRPYami7MCmuG1Ij
-         6CDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683518681; x=1686110681;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7EHAT0FpwV3AmMbV3FwWi0IRotmMH++8ZC/lSzkodBA=;
-        b=OrHWHsmvjTMett/EZreNU6ibWeSG2mgM3JGpAPbCiQFYwkL9y0TPb3hXLNl2yA5NsA
-         nfMuj8nwRtFK8MWMhz6FzbG6XpjTvZpDFM7VpGzaQE1A3yqtKLYSoW9xijTy5ROBV5Zo
-         +m33Je7L2iUKqc3g+wy3APrsC79yhlhqEOI/Zncn6GliGsDI1jNmAWYGCymVfVqBJKGC
-         I/Ull9STCckSYa1v9hFxFn2p6HHaj34DC7WFlThM4DYpU1+Cl2V9WaJrmPFW3WYe9Sen
-         HTZR+8NlFC8MDz/BWiM/QngoU3WskK6QsKt6h9/QvZdoJ7KAvygqxXKCptoMlmBCuHmP
-         zN2g==
-X-Gm-Message-State: AC+VfDz5hy468p1KFhYf7cPxyST7j2Wi7uqJ3KgL61kXeGHWFW5tYHI0
-        4SFo9U8Eh3Wdz1sFm7bKeZ8=
-X-Google-Smtp-Source: ACHHUZ7S7/kq9jz38RlRxFDhe5+6ko5+I6KvU/mC4gq9bmtvxlog+Hpmw1DjqBpVwlOOqJKu63i2Kw==
-X-Received: by 2002:aa7:d5d5:0:b0:508:4f66:e70d with SMTP id d21-20020aa7d5d5000000b005084f66e70dmr6512173eds.36.1683518680757;
-        Sun, 07 May 2023 21:04:40 -0700 (PDT)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:8906:f99a:ce33:2033])
-        by smtp.gmail.com with ESMTPSA id f12-20020a05640214cc00b005068fe6f3d8sm5645242edx.87.2023.05.07.21.04.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 May 2023 21:04:40 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Russell King <linux@armlinux.org.uk>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+        Mon, 8 May 2023 01:39:02 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 635BFA245;
+        Sun,  7 May 2023 22:39:00 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.west.internal (Postfix) with ESMTP id 8FDDD3200916;
+        Mon,  8 May 2023 01:38:56 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Mon, 08 May 2023 01:38:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm3; t=1683524336; x=1683610736; bh=IG
+        uhB1AfYiLDeTeaCQ/lxK2IkfOy97OVYEZQfyjOyE8=; b=HJd/3ixkuBsg4xH/jW
+        HALc0Cwu+ulF/i847SnxtIL6wpmn+wKSZzdrX8COeeTh2pJUr7mjgfjAV/yBogVI
+        4H+MkQOCtwBkyOE4wsMxGuf23aS4vq/pDPReE7t/ANoKccMY50tE4JOJTjL2TJcC
+        Nv+9xteKpPhn2Hyycya5TYfQ5p6WtWS1xUwn3RkX1PmX1otQ2+3ipgKvz+sIAhfE
+        nvqUhveiwgO8JhCS+6vuvF07nuv17pBGeTZrDItsC2kDz8gbFHIUJ6/HmleSh07C
+        bLV9GVBQ2lIHunynM9vT5DBXCS9o0V9OXafyBGeOsU3H5P6UeYJVCVADTUir/WTz
+        5cdA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1683524336; x=1683610736; bh=IGuhB1AfYiLDe
+        TeaCQ/lxK2IkfOy97OVYEZQfyjOyE8=; b=NhLJsAvdYck62CQOjCB7hCftKFF3D
+        d27LqxB91+09qM+pOG4hu4dl7Nirzj0DiNmonJncuYTR5p0jEPrP6thcbFY7P+m0
+        rle4a4b7EePpHkIhn1YOSChhwcBYX4hCZbf9PR7z6lZQXlpZy0VF7q36V8Up9Gsp
+        GJsChYslLGTNuygxZPMK2R8Lp6eoyixShZP2O0iuAqIVmD8vAoBFrZ8G5EBr+iGQ
+        SxzWEWTsltXMJvHZKgNEEtVzXFBtNoM32lRvH+XY03YsUy5nPQ9WPdyaWGhAttyg
+        Fpv+//Ds8/ITZ0baNIskmRQyX6xlgbaO/bQPXh/603v7NZAY/GmlkiVog==
+X-ME-Sender: <xms:74pYZHTiZBhpNP0D8IKwpg3P1zqobXUMkDV9QgKqZqn6OtKiG_gvsg>
+    <xme:74pYZIy_TqlfS6KOkc-7hbVLGu7G3eLU-NfORB8Ni7IgAVCfKysdSGJDuI-aCHeSW
+    3OIGGfp0JHWMznmxKk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeefjedguddttdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:74pYZM2uD8uY6FiKh_pinA8SCEg8kyrFeqmU4plDxicr9nnZzWON7g>
+    <xmx:74pYZHAHmbzNTBKdTFgwAsFyyIz8ufJbYPOuw-n6Gl3HJI0jg5lMlg>
+    <xmx:74pYZAiPWgFd1ktDCeQo_0-DNnzh_H-BUIQc1glhyj3FrWviveLQFQ>
+    <xmx:8IpYZLXMX8Pm0PmIE822VPYkH0-qXK_6C84T2hl0zffVLS9EkwGcIw>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 7E219B60086; Mon,  8 May 2023 01:38:55 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-386-g2404815117-fm-20230425.001-g24048151
+Mime-Version: 1.0
+Message-Id: <730b1560-cf57-482a-966b-93b4c51568b2@app.fastmail.com>
+In-Reply-To: <20230508040433.13648-1-lukas.bulwahn@gmail.com>
+References: <20230508040433.13648-1-lukas.bulwahn@gmail.com>
+Date:   Mon, 08 May 2023 07:38:35 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Lukas Bulwahn" <lukas.bulwahn@gmail.com>,
+        "Russell King" <linux@armlinux.org.uk>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+        "Alim Akhtar" <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        soc@kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] ARM: s3c: remove obsolete config S3C64XX_SETUP_IDE
-Date:   Mon,  8 May 2023 06:04:33 +0200
-Message-Id: <20230508040433.13648-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        linux-samsung-soc@vger.kernel.org, soc@kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: s3c: remove obsolete config S3C64XX_SETUP_IDE
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Commit 0d297df03890 ("ARM: s3c: simplify platform code") removes the line
-in Makefile.s3c64xx to configure the inclusion of setup-ide-s3c64xx.c,
-with CONFIG_S3C64XX_SETUP_IDE. So, since then, config S3C64XX_SETUP_IDE has
-no effect and any further purpose.
+On Mon, May 8, 2023, at 06:04, Lukas Bulwahn wrote:
+> Commit 0d297df03890 ("ARM: s3c: simplify platform code") removes the line
+> in Makefile.s3c64xx to configure the inclusion of setup-ide-s3c64xx.c,
+> with CONFIG_S3C64XX_SETUP_IDE. So, since then, config S3C64XX_SETUP_IDE has
+> no effect and any further purpose.
+>
+> Remove the obsolete config S3C64XX_SETUP_IDE.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Remove the obsolete config S3C64XX_SETUP_IDE.
+Indeed, this was only used on the smdk64xx board file,
+so the file was removed along with the deletion of the board,
+but I forgot to remove the Kconfig option.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- arch/arm/mach-s3c/Kconfig.s3c64xx | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/arch/arm/mach-s3c/Kconfig.s3c64xx b/arch/arm/mach-s3c/Kconfig.s3c64xx
-index 01a7a8eec6e8..8f40af063ad6 100644
---- a/arch/arm/mach-s3c/Kconfig.s3c64xx
-+++ b/arch/arm/mach-s3c/Kconfig.s3c64xx
-@@ -69,11 +69,6 @@ config S3C64XX_SETUP_I2C1
- 	help
- 	  Common setup code for i2c bus 1.
- 
--config S3C64XX_SETUP_IDE
--	bool
--	help
--	  Common setup code for S3C64XX IDE.
--
- config S3C64XX_SETUP_FB_24BPP
- 	bool
- 	help
-@@ -110,7 +105,6 @@ config MACH_WLF_CRAGG_6410
- 	select S3C64XX_DEV_SPI0
- 	select S3C64XX_SETUP_FB_24BPP
- 	select S3C64XX_SETUP_I2C1
--	select S3C64XX_SETUP_IDE
- 	select S3C64XX_SETUP_KEYPAD
- 	select S3C64XX_SETUP_SDHCI
- 	select S3C64XX_SETUP_SPI
--- 
-2.17.1
-
+Acked-by: Arnd Bergmann <arnd@arndb.de>
