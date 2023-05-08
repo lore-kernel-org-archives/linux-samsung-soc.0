@@ -2,49 +2,49 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A595C7EE2D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 May 2023 20:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7027FC7EE25
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 May 2023 20:54:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233766AbjEHUxd (ORCPT
+        id S233791AbjEHUyA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 8 May 2023 16:53:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45438 "EHLO
+        Mon, 8 May 2023 16:54:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232966AbjEHUxa (ORCPT
+        with ESMTP id S233835AbjEHUxw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 May 2023 16:53:30 -0400
+        Mon, 8 May 2023 16:53:52 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8A236EAE
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 May 2023 13:53:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49CBE83D4
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 May 2023 13:53:39 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pw7rB-00039y-BC; Mon, 08 May 2023 22:53:17 +0200
+        id 1pw7rN-0003va-QK; Mon, 08 May 2023 22:53:29 +0200
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pw7r9-0024qf-S3; Mon, 08 May 2023 22:53:15 +0200
+        id 1pw7rN-0024u7-3K; Mon, 08 May 2023 22:53:29 +0200
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pw7r9-002YW9-Aa; Mon, 08 May 2023 22:53:15 +0200
+        id 1pw7rL-002YYk-ID; Mon, 08 May 2023 22:53:27 +0200
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Wolfram Sang <wsa@kernel.org>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>, linux-i2c@vger.kernel.org,
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de
-Subject: [PATCH 22/89] i2c: exynos5: Convert to platform remove callback returning void
-Date:   Mon,  8 May 2023 22:51:59 +0200
-Message-Id: <20230508205306.1474415-23-u.kleine-koenig@pengutronix.de>
+        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH 62/89] i2c: s3c2410: Convert to platform remove callback returning void
+Date:   Mon,  8 May 2023 22:52:39 +0200
+Message-Id: <20230508205306.1474415-63-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230508205306.1474415-1-u.kleine-koenig@pengutronix.de>
 References: <20230508205306.1474415-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1750; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=ztLx+AlbW65d/ywo/DVEwKQHtnLEd1zXY5A1G+qBlLg=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkWWCLH4Eq3PEB0oyAr8szNjYm7Co8RJgmcWws1 3HwWMb4fwGJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZFlgiwAKCRCPgPtYfRL+ TiK2B/42C5AFB4cyjBFpnqYu7S/o5UNGLIAy/clAgFJotE4Ws47XeQsoGrxJ1H3ul0K4PNMv8ZN bSnyN4rtnqn2spXdkw2Z6vdTMlYq15tdHeSESPW6OEJrrth+eaN0F5M2RCf+ZGMZEX9ftyj5v2M Ur8HoMZd+D6m9mDQaK/TqTZu+9d5G68fVPsTDKy59HUUNrYxyH/RuZDjtuze3QaU4iZTxgB8aPi oTMiwR0twuN4uWVwF7dJw7ujyLyU3ig5p+oLsS8mTr6ukMPxpmwhUCBRrTE6h5UZ6rs8SRm7PsN rG7svWV01BYotOaFJvVM2eDP4bYAgUM5JZdoVtdPJiwyDwcj
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1758; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=Gw7MoJ9VuAV9qeVw2B1RjMs6wP3+7E0TlyQr5loYb4M=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkWWD8i+Yvmm+ZvrFZTHgSZMYP3DKihBnTPKXWK /WFQc+3et6JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZFlg/AAKCRCPgPtYfRL+ TsQDCACtHtdGD12ta+0gnzM7SQBoJscwqi8m6lFLIay57O2/RaQTnfYUh2oDnDWaJS0D1NgxURE ogF1PZNdktzUYLuueVCt7xQAeb4XXAhqIh5XnWp3eEI+EhVcUgXaeztiRt1K0PoPqk/LN4GAwyl JsnYcni6TWqGJahlffLlhtr6IjzI/oqo9QPSWUTGlVj1n6LGfwvAiKrrkHnHIy3acQb0O/2/sXC GwKfaTeJALtOXC19bya8UcfzMHnCY2t1Rfhr00mN1cIHRPX78/NwL85211Zhw/ZtXEwdgRASklC 3ciiYpko42clyMgR3Dm70h8ZthAuzPBP/4NlRWGrYYE3AcH4
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -68,40 +68,40 @@ callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/i2c/busses/i2c-exynos5.c | 6 ++----
+ drivers/i2c/busses/i2c-s3c2410.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index 4a6260d04db2..f378cd479e55 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -882,7 +882,7 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
- 	return ret;
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 45e9df81345a..28f0e5c64f32 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1114,7 +1114,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	return 0;
  }
  
--static int exynos5_i2c_remove(struct platform_device *pdev)
-+static void exynos5_i2c_remove(struct platform_device *pdev)
+-static int s3c24xx_i2c_remove(struct platform_device *pdev)
++static void s3c24xx_i2c_remove(struct platform_device *pdev)
  {
- 	struct exynos5_i2c *i2c = platform_get_drvdata(pdev);
+ 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
  
-@@ -890,8 +890,6 @@ static int exynos5_i2c_remove(struct platform_device *pdev)
+@@ -1123,8 +1123,6 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
  
- 	clk_unprepare(i2c->clk);
- 	clk_unprepare(i2c->pclk);
+ 	i2c_del_adapter(&i2c->adap);
 -
 -	return 0;
  }
  
  #ifdef CONFIG_PM_SLEEP
-@@ -945,7 +943,7 @@ static const struct dev_pm_ops exynos5_i2c_dev_pm_ops = {
+@@ -1172,7 +1170,7 @@ static const struct dev_pm_ops s3c24xx_i2c_dev_pm_ops = {
  
- static struct platform_driver exynos5_i2c_driver = {
- 	.probe		= exynos5_i2c_probe,
--	.remove		= exynos5_i2c_remove,
-+	.remove_new	= exynos5_i2c_remove,
+ static struct platform_driver s3c24xx_i2c_driver = {
+ 	.probe		= s3c24xx_i2c_probe,
+-	.remove		= s3c24xx_i2c_remove,
++	.remove_new	= s3c24xx_i2c_remove,
+ 	.id_table	= s3c24xx_driver_ids,
  	.driver		= {
- 		.name	= "exynos5-hsi2c",
- 		.pm	= &exynos5_i2c_dev_pm_ops,
+ 		.name	= "s3c-i2c",
 -- 
 2.39.2
 
