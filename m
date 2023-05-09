@@ -2,121 +2,166 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C12AC7EE25
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 May 2023 18:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDF4C77B7C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 May 2023 22:55:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229741AbjEISWk (ORCPT
+        id S230316AbjEIWzN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 9 May 2023 14:22:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47756 "EHLO
+        Tue, 9 May 2023 18:55:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233513AbjEISWi (ORCPT
+        with ESMTP id S229489AbjEIWzL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 9 May 2023 14:22:38 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D3561B5
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  9 May 2023 11:22:36 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-9661047f8b8so725513966b.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 May 2023 11:22:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683656555; x=1686248555;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7dMhyasFr9nXSZl5Z5p5MReNTd4O4eHsrz0nla4Qm+s=;
-        b=RMWGy7UP/JCkXpB3JKA2udiLxmUUOLWkyxxUMXXqsW+USiwJjT5yYUyCzL0hpyzENU
-         6b7S6DwQW3rs7FYIMNJxBIxNL8/wfZ6EU+0LJa2x/errkOe16fJQYOGvBZIhd1tTgDKd
-         5SxIHuICNQmrlSIRjzJ6ZcKgIVcF0TgB+KN6FCeXWkVac8W8U9t8+r5LvH+rZd//DDHO
-         b02IJrUqA3qMztIJjAYtsa8YLbmhQUKmQU3rYN/gwHueJH+g5qID4fFcYvHEgTRaj+gU
-         7OCv3HRUvrBa/+CHeBBd02Niw04FseRjJz7nojmaD6+Hl/afWqLYN2Lnkx5fmUefaxw9
-         qmMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683656555; x=1686248555;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7dMhyasFr9nXSZl5Z5p5MReNTd4O4eHsrz0nla4Qm+s=;
-        b=OTDEfZtN7TKhzHNZUpJO2BGZyyxqp3vCQPe1ze7gdmOR+W5fdyV3taqHbMxPx88nXb
-         vgkz7zrfgyj+DCDp8aA5IgSYUrRyR+OZiKDXhYNYNp2kOgz2d2Bs8LQfOOlC/Fk0q7vN
-         Dh89iuEiQ5KTYPx3lswopemU2nXHTBVM0/0kzdolC9wE8VXYd6AQAPlqe3xOHilPE8ye
-         OE+QYGA9MXY/dUtg2PZ5EzTmkHTNFDNd6drDjlVKazO5nKnoUmuJQFjUxwQU/Hs8EV1r
-         Ca7nuiCJNhwva0uTstU3krJV7owARJmjkaTp+kLXO3DkDdUslgqD2X46HZSKkTrS2hiw
-         OH3A==
-X-Gm-Message-State: AC+VfDwVRaJKynb/2MnZPD1J9H9ycsIJUBzysxiaSTdjbLdpi55On9n4
-        Z+/GwxqoPvTU0lmd6Iap/ehANg==
-X-Google-Smtp-Source: ACHHUZ7GGPqJakf4qQTpgmeEUROOguTzfeOp6RuEtJHlxvapmbgQvPl4hRK3FghMJ3pOX/WWzIFvEA==
-X-Received: by 2002:a17:906:58d5:b0:969:9fd0:7cee with SMTP id e21-20020a17090658d500b009699fd07ceemr5319936ejs.10.1683656554867;
-        Tue, 09 May 2023 11:22:34 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:d0d5:7818:2f46:5e76? ([2a02:810d:15c0:828:d0d5:7818:2f46:5e76])
-        by smtp.gmail.com with ESMTPSA id hy26-20020a1709068a7a00b0095fd0462695sm1630087ejc.5.2023.05.09.11.22.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 May 2023 11:22:34 -0700 (PDT)
-Message-ID: <7c724dc9-fef6-54e0-3470-7e8473494319@linaro.org>
-Date:   Tue, 9 May 2023 20:22:33 +0200
+        Tue, 9 May 2023 18:55:11 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59AEC59E7;
+        Tue,  9 May 2023 15:55:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net; s=s31663417;
+        t=1683672871; i=j.neuschaefer@gmx.net;
+        bh=IjOsP3Hl5WOUcxHtKpSlXVU2zmb5sAncILY7B0EhNVs=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=ndYA2tf/LPtkgltTOvt7X2+Zi6uiTPSZbAqw/mXBwe2s3qEMYWIHbVw2U7syYOtiu
+         0ByeTgk6m0fQkzncsA2uFg7rs+4GDkYCaq3zleDHMNFIszwJSYZevaNUwCstSv1xs2
+         q2XsYVKyF7xXnp4qsykgKdmrMBdtxCsRttws9I9ls8dUQV5PBqFxC2CHyOsYGjarJ/
+         Rr2m1bZj51r337gAlDvnDkQfA5v+OxXvevYZAHhLDsYKtlfaLNIq481n2v1Dl3mPUG
+         +ciwlK0+ezWRctjT6rrS4cmxjRJOY33gMIuTSxMpaalo6ZUK907KGn7D4ZZQnJjuQD
+         xm3g+5vkab4wA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from probook ([95.223.44.193]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Ml6m4-1qdIgl1tr2-00lTxs; Wed, 10
+ May 2023 00:54:31 +0200
+Date:   Wed, 10 May 2023 00:54:29 +0200
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-aspeed@lists.ozlabs.org,
+        linux-realtek-soc@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        chrome-platform@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+        openbmc@lists.ozlabs.org, Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-rockchip@lists.infradead.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-actions@lists.infradead.org,
+        linux-unisoc@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        kernel@dh-electronics.com, Olof Johansson <olof@lixom.net>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "linux-oxnas@groups.io" <linux-oxnas@groups.io>
+Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
+Message-ID: <ZFrPJQdwoxqFpzUO@probook>
+References: <20220328000915.15041-1-ansuelsmth@gmail.com>
+ <85eb14ec-f465-7447-ad77-a3dabc666f47@kernel.org>
+ <YkKRYnN84D9VZhGj@Ansuel-xps.localdomain>
+ <CAL_Jsq+RQQ-ADMxLPUFwk6S6kGmb6oNDy4k52fnU0EtbUvqmSA@mail.gmail.com>
+ <CAMuHMdWNTE48MFy6fqxAsfMWz9b6E7dVNXtXtESP95sxk2PGwA@mail.gmail.com>
+ <CAL_JsqJthKTm8bhRF2B=ae1tvtPeYYXx_Tm76qQtSwLtH5C6VA@mail.gmail.com>
+ <720a2829-b6b5-411c-ac69-9a53e881f48d@app.fastmail.com>
+ <CAL_JsqKCtmkwzKa01gyG65fH8ye6R3KhR41PJbJhOJ4X9j=znA@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v3 00/13] Re-introduce Exynos4212 support and add Samsung
- Galaxy Tab 3 8.0 boards
-Content-Language: en-US
-To:     Artur Weber <aweber.kernel@gmail.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>, soc@kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-phy@lists.infradead.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-References: <20230501195525.6268-1-aweber.kernel@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230501195525.6268-1-aweber.kernel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ue5Z9u7UyMsdbJpp"
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqKCtmkwzKa01gyG65fH8ye6R3KhR41PJbJhOJ4X9j=znA@mail.gmail.com>
+X-Provags-ID: V03:K1:aR+k41JkL+Jax7RkQK1pXFPVqGsXbknpTCCf601eNGl3xQsbw4B
+ lW4IptIuDnFJb+jaCScKg4f1qDLjuoiDEqEJsUWT/Ek6YzDXkULOeXYq9EqgQyN8A6axbG1
+ JRKm5mq+iW4e1K1v2w2BOTrGSmAwegcfBLrzES8HGqnWOqrguxalKWu6+fqbhobKFkw7JNy
+ qeUuaRpvcFFSSatMddRDg==
+UI-OutboundReport: notjunk:1;M01:P0:NarrxlSjiwo=;5z5rCQykqX1e+FbZ2ba6e5Rh6DH
+ bfvBGeIXFywNjKNr0Tn58UPG96wezZLM4+H12pkCrjAC7Mqwg2PXJ70aoM1kBI8o+tAa0/419
+ 3XnQYa+XRlKna2zFjBCJKWpZoYii5XtCMCKO105lV0P6vMHckC89sxCK/LdwCvu0lF7OfocC+
+ 2ouaaWRHCt4YshSvfh5z/Ja+IC5J4jOv8eNZ6b4Ga79LPwxkC/RJjnB/nQ4E0edaxrobbRSOn
+ Mpc/31AKJOkyrRi41IgtGWTEODyE2XZV00pU1y5sHoF3JU/eGsc2doa+Rrzh30STHQZStIaTS
+ 0sulR/BBWHEsrZf3LZvhDzOcbQ+0mpl9BfQXNLiDuCZay2ePoIqaUwts7JSoeIsxQHjZrbVOf
+ h75oej0aNqoFhgx0M6WDh9xZydkRj4bbDxKZdwcWTSlHLDLbE26jSZC/2Oe+gjXSYJFSqcTIo
+ y61XXOKn0w6OleXfF53iuFeaDOuP15yxKD4yYijJGDa3gETH/hjoY9RV4RF3njrNZ9cpp0pyL
+ Wt5sq1md9IKuXv5zDNciEDB062aPPEfIdiuOL3ekvbmUkb/y0X/5vyJogDfXW1s/BcAt1Lw7O
+ 3fGQXfFWHtWSvKoTsdKwCQNoGLoqEX0ymmlOjO2H6zmOGgpDD61I3NBO058aLG0Ir0rXeho5F
+ meMuCSguMavkm9x2cC+ehI31nsDXo/+BF4SlfWoDxIdTlxFojtrUwUJw55+y8lR/UsTKS8nM4
+ UfuLe8Un7sHRz/mdblkfo8MYekpfSGy5OF1q4F6ySdpHLnN9/KLwguD2QRIXgxNbN+S3apSzh
+ 3RdOKnqeNprc0VYDcOdrgnL7BqsQDF2Rl2MSPh0TxeAydGQ6S6Uk6WUGWH/J/uB0ZIvQUETeq
+ 5wpcXi+kJF8q+LL66lQwIIQV2De+d1d5U2u4IhbVKY+H63H0/8T+2HkkllmX/vS+xMdVykkpc
+ +lGd2EXuA+PHYRD1FvmkNVjxg7g=
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 01/05/2023 21:55, Artur Weber wrote:
-> This patches re-introduces the Exynos4212 platform and adds support
-> for the Samsung Galaxy Tab 3 8.0 series of tablets that uses it:
-> 
->  - Samsung Galaxy Tab 3 8.0 WiFi (SM-T310/lt01wifi)
->  - Samsung Galaxy Tab 3 8.0 3G (SM-T311/lt013g)
->  - Samsung Galaxy Tab 3 8.0 LTE (SM-T315/lt01lte)
-> 
-> What works:
-> 
->  - Display and backlight
->  - Touchscreen (without touchkeys)
->  - GPIO buttons, hall sensor
->  - WiFi and Bluetooth
->  - USB, fuel gauge, charging
->  - Accelerometer and magnetometer
->  - WiFi model only: light sensor
+
+--ue5Z9u7UyMsdbJpp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, May 02, 2023 at 02:40:19PM -0500, Rob Herring wrote:
+[...]
+> I've dusted off my script and made a branch[1] with the result.
+> There's just a couple of fixes needed after the script is run (see the
+> top commit). The cross arch includes are all fixed up by the script.
+> dtbs_install maintains a flat install. I compared the number of .dtbs
+> before and after to check the script.
+>=20
+> I think the only issue remaining is finalizing the mapping of
+> platforms to subdirs. What I have currently is a mixture of SoC
+> families and vendors. The most notable are all the Freescale/NXP
+> platforms, pxa, socfpga, and stm32. It's not consistent with arm64
+> either. Once that's finalized, I still need to go update MAINTAINERS.
+>=20
+> Here's the current mapping:
+>=20
+> vendor_map =3D {
+[...]
+>     'aspeed' : 'aspeed',
+>     'ast2' : 'aspeed',
+>     'facebook' : 'aspeed',
+>     'ibm' : 'aspeed',
+
+>     'openbmc' : 'aspeed',
+
+The openbmc flash layouts are currently only used by aspeed devicetrees,
+but they don't really depend on any aspeed details. It would be possible
+to reuse them in Nuvoton BMC devicetrees in the future, for example.
+
+In that sense, I think putting them in a separate "openbmc" directory
+would be slightly better.
 
 
-Thanks for the patches, nice work.
-
-I applied parts of the set. Please:
-1. Split the patchset per subsystems, so separate to media, phy and me.
-2. Check reviews and resend bindings for display and LP855X.
-3. Rebase and check/fix DTS and send a new version. I cannot apply DTS
-without bindings being reviewed.
+Jonathan
 
 
-Best regards,
-Krzysztof
 
+[...]
+>     'nuvo' : 'nuvoton',
+[...]
+> }
+>=20
+> Rob
+>=20
+> [1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git arm-dts-=
+move-v2
+
+--ue5Z9u7UyMsdbJpp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmRazv0ACgkQCDBEmo7z
+X9tB/A//Y5MU9b+r/mxCUuxjsa0CB4Ewu8xmc+YTd1pdMEIrJYfgdpXFskBmzFsg
+QFYR1gBnq7P4mhusW4RaYWxpzD3M45B2vIuhgL6t8lqIWae0UuNbPEO4rbCIbvGZ
+PCx1dTAGZ2vg+mxRK0OYouuCE9EvgrC9PGmOcgDkqCLngGsr11gXz0GMNebggmie
+TX8iauQHnzfGaSQWtwIdQRu1gj2d/VO5NSn4CrgvMIuLCSwhTwY+e9H9/+CcrqHK
+wNiMG0W8yY5CMO7ZSYf7EkEidunJ0htwqJmUoLfpqN4NZ/21yno69v+L36ZRu/lq
++KrZJeaXC3Ar39R2x75Pns5em46uwJJdI5aXumj9xPU3A3rgWCQcrECZJ7i/HEoK
+hzhnsQhJNP4jAPVxdiaWJTYUXHRwafI6/GVvj1BvfgqZ9VHE28iGdDcgVvOfmkDx
+eRZQxcJzFaWZeWTOeM05/dHUDUJXFrYvDsj0+FgneBU/oqEc+H4bR9AP2ttU24hU
+4jBq2I2FlDyKlC0ARS22oRQlZG6KS50d1Nvx6cLr7lxeOHmcW09dPCqHijQVtX3V
+f/Z7MYrDEXgTK8r1wJk6PuvVN+jFX/l/Ali5L/OJqUsZB4bgteXKEWXWMmgik1/I
+d3nr3gTYEaykVkjCJORFKu4G2FHrzWgWpFYsl8Mu+safGLa+rdA=
+=Jzyt
+-----END PGP SIGNATURE-----
+
+--ue5Z9u7UyMsdbJpp--
