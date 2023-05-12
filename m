@@ -2,209 +2,156 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3BDFC7EE23
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 May 2023 02:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D540EC77B75
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 May 2023 08:41:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239782AbjELCzb (ORCPT
+        id S240164AbjELIl6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 11 May 2023 22:55:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42528 "EHLO
+        Fri, 12 May 2023 04:41:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231229AbjELCza (ORCPT
+        with ESMTP id S232659AbjELIl5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 11 May 2023 22:55:30 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DA2D10FE;
-        Thu, 11 May 2023 19:55:29 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4f26f437b30so1538362e87.1;
-        Thu, 11 May 2023 19:55:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683860128; x=1686452128;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dkOUlUNxiR4Gqj0+EmYuULSRki0JxNp8SsnGkEdjwKw=;
-        b=PpruK/NzGHjzRovvWCYvW7HqDD68KmOoIjPRjVBwwjOl44YKmS9LJw0bJlpO5wCaTK
-         JYQMRTt8PUIg7Tt3sXx/BumOofEX1UyIXH2rVZ7HQ4xk8w/0TIePej2ODQWIhhjMLGCF
-         ObsKQnai0HwA0gxPpanVkllqPWACWFvsyhk8otvSXkxJ7boKNh6rOvhXhhU7XGpKW3yF
-         bnb3jZjGoJuviMp6XaP/FxIe9hwsqI+C+2qQBWPRGsJkiS6fP0ZvUhHR+JTm3yUIwJpq
-         rSKT9UqKx0zvTFuela8XEHqJdseFq2qZbEhMjlCN21nk45Ltut9jjYaQ7C5U84jN7UFH
-         YUlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683860128; x=1686452128;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dkOUlUNxiR4Gqj0+EmYuULSRki0JxNp8SsnGkEdjwKw=;
-        b=SNHFvnD+CBi7k+wKkZwcApgmHUUpAhRhOk1MsquemG3eAdvr0TGMiptNimpA49Yjii
-         WLmRcnKKdvXiBee/qgLZ5cXjox5MPdiXdn4utH9qdn2cWNbGdWgqu++Dh/vyGJ3+xAlw
-         qa/JhZPKDdanrccEGMuHitPFTblufERSv7KunhepPFmA9pXp7XlkYED8VJ4lzQnkx1wa
-         UlTycLHBU2XTMG68cHHe8hD+6YiZxLkLKz1scCt51BNDUC1J4jNksKeI/uigK4+0fUke
-         qcqohiXdg0ihHlctFzwmFdTTVrd2TgYSqt34J4fx/XadIGSDaMzfjoCbdc94l7J3lzaL
-         HPag==
-X-Gm-Message-State: AC+VfDwUgiB7bFmfPd4Dhg2hNPFparvcrQJNwYMUgp+vPMopBhJZlEkk
-        Ce25K+qUKpdHmx0zlqJPtSw=
-X-Google-Smtp-Source: ACHHUZ4dxW4iqzv/N28X1gKcL88SemTjJ65/wtcy0AZdHSmj4XHMTrDxPz8Icvt/RO3sRR4TuYCJgw==
-X-Received: by 2002:ac2:488c:0:b0:4f1:4086:9384 with SMTP id x12-20020ac2488c000000b004f140869384mr3159987lfc.61.1683860127415;
-        Thu, 11 May 2023 19:55:27 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-144-198.dynamic.spd-mgts.ru. [109.252.144.198])
-        by smtp.googlemail.com with ESMTPSA id c26-20020ac244ba000000b004efae490c51sm1285288lfm.240.2023.05.11.19.55.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 May 2023 19:55:26 -0700 (PDT)
-Message-ID: <4a5ebc65-a384-a8df-c692-ca114f1a018d@gmail.com>
-Date:   Fri, 12 May 2023 05:55:23 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH 02/20] iommu/terga-gart: Replace set_platform_dma_ops()
- with IOMMU_DOMAIN_PLATFORM
-Content-Language: en-US
-To:     Jason Gunthorpe <jgg@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Fri, 12 May 2023 04:41:57 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C777B3A96;
+        Fri, 12 May 2023 01:41:55 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 85EC92277E;
+        Fri, 12 May 2023 08:41:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1683880914; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=pWQ1m120kigJP8UI6CyQFrBjDqO1iQT2O49PACRC7NY=;
+        b=mnFQs8mVfueIa/exRdcpKrEU2GTwDYtt4Ut4AUoRyeO2HeCTyXk/NuBpUJdhfuNQ+07Blv
+        iIroG2RhLFmydYDquWy8pwc6KQ5zHj+k8DJG5sOHJufzKhV80f6BcHMxq+YNCYdTPYyT3B
+        QhFfLGHeK/18steKR301Y0RMtv9V/EY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1683880914;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=pWQ1m120kigJP8UI6CyQFrBjDqO1iQT2O49PACRC7NY=;
+        b=lcj89k5WVh2hez+Bd24Oq73UKlKEc85Ivu/B6pfMwNsSbV2OIrZMU8oIFW4VJnpHVuYQFa
+        6E5Ifjx2JsjJbODA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2CFD213466;
+        Fri, 12 May 2023 08:41:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 3DnrCdL7XWQZKQAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Fri, 12 May 2023 08:41:54 +0000
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     daniel@ffwll.ch, airlied@gmail.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        javierm@redhat.com
+Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Steven Price <steven.price@arm.com>
-References: <2-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com>
- <1db712d2-9e33-4183-2766-34e32f170507@arm.com> <ZFI/D6mnLKYpdIqx@nvidia.com>
- <1a995f30-31fe-354f-ddfe-e944fa36e7a0@arm.com> <ZFJlZ03lswl9uHD0@nvidia.com>
- <ZFJzKQcKNFHdIWqy@orome> <ZFKXz/HWFkYOJrgT@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <ZFKXz/HWFkYOJrgT@nvidia.com>
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH 00/11] drm/fbdev: Remove DRM's helpers for fbdev I/O
+Date:   Fri, 12 May 2023 10:41:41 +0200
+Message-Id: <20230512084152.31233-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.40.1
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-03.05.2023 20:20, Jason Gunthorpe пишет:
-> On Wed, May 03, 2023 at 04:43:53PM +0200, Thierry Reding wrote:
-> 
->>> The only thing it does is cause dma-iommu.c in ARM64 to use the
->>> dma-ranges from OF instead of the domain aperture. sprd has no
->>> dma-ranges in arch/arm64/boot/dts/sprd.
->>>
->>> Further, sprd hard fails any map attempt outside the aperture, so it
->>> looks like a bug if the OF somehow chooses a wider aperture as
->>> dma-iommu.c will start failing maps.
->>
->> That all sounds odd. of_dma_configure_id() already sets up the DMA mask
->> based on dma-ranges and the DMA API uses that to restrict what IOVA any
->> buffers can get mapped to for a given device.
-> 
-> Yes, and after it sets up the mask it also passes that range down like this:
-> 
->  of_dma_configure_id():
-> 	end = dma_start + size - 1;
-> 	mask = DMA_BIT_MASK(ilog2(end) + 1);
-> 	dev->coherent_dma_mask &= mask;
-> 
-> 	arch_setup_dma_ops(dev, dma_start, size, iommu, coherent);
-> 
-> Which eventually goes to:
-> 
->  iommu_setup_dma_ops()
->  iommu_dma_init_domain()
-> 
-> Which then does:
-> 
-> 	if (domain->geometry.force_aperture) {
-> 
-> And if not set uses the dma_start/size parameter as the actual
-> aperture. (!?)
-> 
-> Since sprd does this in the iommu driver:
-> 
-> 	dom->domain.geometry.aperture_start = 0;
-> 	dom->domain.geometry.aperture_end = SZ_256M - 1;
-> 
-> And it is serious about enforcing it during map:
-> 
-> 	unsigned long start = domain->geometry.aperture_start;
-> 	unsigned long end = domain->geometry.aperture_end;
-> 
-> 	if (iova < start || (iova + size) > (end + 1)) {
-> 			return -EINVAL;
-> 
-> We must see the dma_start/size parameter be a subset of the aperture
-> or eventually dma-iommu.c will see map failures.
-> 
-> I can't see how this is can happen, so it looks like omitting
-> force_aperture is a mistake not a deliberate choice. I'll make a patch
-> and see if the SPRD folks have any comment. If there is no reason I
-> can go ahead and purge force_aperture and all the dma_start/size
-> passing through arch_setup_dma_ops().
-> 
->>> Thus, I propose we just remove the whole thing. All drivers must set
->>> an aperture and the aperture is the pure HW capability to map an
->>> IOPTE at that address. ie it reflects the design of the page table
->>> itself and nothing else.
->>
->> Yeah, that sounds reasonable. If the aperture represents what the IOMMU
->> supports. Together with each device's DMA mask we should have everything
->> we need.
-> 
-> Arguably we should respect the dma-ranges as well, but I think that
-> should come up from the iommu driver via the get_resv_regions() which
-> is the usual place we return FW originated information.
-> 
->> For Tegra GART I think there's indeed no use-cases at the moment. Dmitry
->> had at one point tried to make use of it because it can be helpful on
->> some of the older devices that were very memory-constrained. That
->> support never made it upstream because it required significant changes
->> in various places, if I recall correctly. For anything with a decent
->> enough amount of RAM, CMA is usually a better option.
-> 
-> So the actual use case of this HW is to linearize buffers? ie it is a
-> general scatter/gather engine?
-> 
->> This has occasionally come up in the past and I seem to remember that it
->> had once been proposed to simply remove tegra-gart and there had been no
->> objections. Adding Dmitry, if he doesn't have objections to remaving it,
->> neither do I.
-> 
-> Dmitry, please say yes and I will remove it instead of trying to carry
-> it. The driver is almost 10 years old at this point, I'm skeptical
-> anyone will need it on a 6.2 era kernel..
+DRM provides a number of wrappers around fbdev cfb_() sys_(), fb_io_()
+and fb_sys_() helpers. The DRM functions don't provide any additional
+functionality for most DRM drivers. So remove them and call the fbdev
+I/O helpers directly.
 
-You probably missed that support for many of 10 years old Tegra2/3
-devices was added to kernel during last years.
+The DRM fbdev I/O wrappers were originally added because <linux/fb.h>
+does not protect its content with CONFIG_FB. DRM fbdev emulation did
+not build if the the config option had been disabled. This has been
+fixed. For fbdev-generic and i915, the wrappers added support for damage
+handling. But this is better handled within the two callers, as each
+is special in its damage handling.
 
-This GART isn't used by upstream DRM driver, but it's used by downstream
-kernel which uses alternative Tegra DRM driver that works better for
-older hardware.
+Patches 1 to 8 replace the DRM wrappers in a number of fbdev emulations.
+Patch 9 exports two helpers for damage handling. Patches 10 and 11
+update fbdev-generic and i915 with the help of the exported functions.
+The patches also remove DRM's fbdev I/O helpers, which are now unused.
 
-If it's too much burden to maintain this driver, then feel free to
-remove it and I'll continue maintaining it in downstream myself.
-Otherwise I can test your changes if needed.
+DRM's fbdev helpers had to select fbdev I/O helpers for I/O and for
+system memory. Each fbdev emulation now selects the correct helpers
+for itself. Depending on the selected DRM drivers, kernel builds will
+now only contain the necessary fbdev I/O helpers and might be slightly
+smaller in size.
+
+Thomas Zimmermann (11):
+  drm/armada: Use regular fbdev I/O helpers
+  drm/exynos: Use regular fbdev I/O helpers
+  drm/gma500: Use regular fbdev I/O helpers
+  drm/radeon: Use regular fbdev I/O helpers
+  drm/fbdev-dma: Use regular fbdev I/O helpers
+  drm/msm: Use regular fbdev I/O helpers
+  drm/omapdrm: Use regular fbdev I/O helpers
+  drm/tegra: Use regular fbdev I/O helpers
+  drm/fb-helper: Export helpers for marking damage areas
+  drm/fbdev-generic: Implement dedicated fbdev I/O helpers
+  drm/i915: Implement dedicated fbdev I/O helpers
+
+ drivers/gpu/drm/Kconfig                       |  27 +-
+ drivers/gpu/drm/Makefile                      |   7 +-
+ drivers/gpu/drm/armada/Kconfig                |   8 +
+ drivers/gpu/drm/armada/Makefile               |   2 +-
+ drivers/gpu/drm/armada/armada_drm.h           |   2 +-
+ drivers/gpu/drm/armada/armada_fbdev.c         |   9 +-
+ drivers/gpu/drm/drm_fb_helper.c               | 233 ++----------------
+ drivers/gpu/drm/drm_fbdev_dma.c               |  12 +-
+ drivers/gpu/drm/drm_fbdev_generic.c           |  47 +++-
+ drivers/gpu/drm/exynos/Kconfig                |   8 +
+ drivers/gpu/drm/exynos/Makefile               |   2 +-
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c     |  10 +-
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.h     |   2 +-
+ drivers/gpu/drm/gma500/Kconfig                |   8 +
+ drivers/gpu/drm/gma500/Makefile               |   2 +-
+ drivers/gpu/drm/gma500/fbdev.c                |   9 +-
+ drivers/gpu/drm/gma500/psb_drv.h              |   2 +-
+ drivers/gpu/drm/i915/Kconfig                  |   8 +
+ drivers/gpu/drm/i915/Makefile                 |   2 +-
+ .../drm/i915/display/intel_display_debugfs.c  |   2 +-
+ drivers/gpu/drm/i915/display/intel_fbdev.c    |  51 +++-
+ drivers/gpu/drm/i915/display/intel_fbdev.h    |   2 +-
+ drivers/gpu/drm/msm/Kconfig                   |   9 +
+ drivers/gpu/drm/msm/Makefile                  |   2 +-
+ drivers/gpu/drm/msm/msm_drv.h                 |   2 +-
+ drivers/gpu/drm/msm/msm_fbdev.c               |  12 +-
+ drivers/gpu/drm/omapdrm/Kconfig               |   9 +
+ drivers/gpu/drm/omapdrm/Makefile              |   2 +-
+ drivers/gpu/drm/omapdrm/omap_debugfs.c        |   4 +-
+ drivers/gpu/drm/omapdrm/omap_fbdev.c          |  12 +-
+ drivers/gpu/drm/omapdrm/omap_fbdev.h          |   2 +-
+ drivers/gpu/drm/omapdrm/omap_gem.c            |   4 +-
+ drivers/gpu/drm/radeon/Kconfig                |   8 +
+ drivers/gpu/drm/radeon/Makefile               |   2 +-
+ drivers/gpu/drm/radeon/radeon_fbdev.c         |   9 +-
+ drivers/gpu/drm/radeon/radeon_mode.h          |   2 +-
+ drivers/gpu/drm/tegra/Kconfig                 |   9 +
+ drivers/gpu/drm/tegra/Makefile                |   2 +-
+ drivers/gpu/drm/tegra/drm.h                   |   2 +-
+ drivers/gpu/drm/tegra/fbdev.c                 |  11 +-
+ include/drm/drm_fb_helper.h                   |  84 +------
+ include/drm/drm_fbdev_dma.h                   |   2 +-
+ include/drm/drm_fbdev_generic.h               |   2 +-
+ 43 files changed, 264 insertions(+), 382 deletions(-)
+
+
+base-commit: 451e49cfbaa90720149e63f4fa9c7824013c783d
+-- 
+2.40.1
 
