@@ -2,54 +2,54 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5F6C7EE2F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 May 2023 08:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08506C7EE33
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 May 2023 08:42:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240241AbjELImF (ORCPT
+        id S239562AbjELImH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 12 May 2023 04:42:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54386 "EHLO
+        Fri, 12 May 2023 04:42:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240000AbjELImA (ORCPT
+        with ESMTP id S240230AbjELImB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 12 May 2023 04:42:00 -0400
+        Fri, 12 May 2023 04:42:01 -0400
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F3C37ECC;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F375B5B98;
         Fri, 12 May 2023 01:41:58 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id B3E4C22781;
-        Fri, 12 May 2023 08:41:56 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 99A7A22782;
+        Fri, 12 May 2023 08:41:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1683880916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1683880917; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=w02s8f8cJ9HqyytEROGfv4NyKbnbsgx40Z9GRTlUz7Q=;
-        b=1I5xXd6kNv4IA9qna8MjTnQ4HE39FC2SHd6sTOYGRCphawKMgHwN8CqEr9dHP2h4HY0q3i
-        t2lUtKy7yjREszs3m5bjYMEG18O0+hEX4b0scIU2yuqwfIpYAKKfXue5Cp65YbaxQ4m8Xf
-        kKZWxZzh2vydb+bWstHIE3OQKOElAg8=
+        bh=8BjzotcJ/g/OydyjWWBEl9qUeaQLADdgIhbNndEyZA4=;
+        b=EZhos1CmMfwXfSfbHMh+BXKYw3A3UJ+ss5Tn5+IxavV6lBgKXaX3b4LSvZyU21cGpeWO1o
+        Rj6wB/49ZAaneMwSrW4UerGdAclKP+j4KW3wpflozXsW1m45aCMTNZ7wgTkVXHJmKJwjek
+        7hehsL8x3ThBN1sBuueNrYZjtrFdskU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1683880916;
+        s=susede2_ed25519; t=1683880917;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=w02s8f8cJ9HqyytEROGfv4NyKbnbsgx40Z9GRTlUz7Q=;
-        b=NYKn35Pz06XMGgXcUg/QERkkoOEdbjVcjEtriTm7CWDyFyoU39LDsv0nZqRv3085h8XyoL
-        CeE/yqbhjLefmmAA==
+        bh=8BjzotcJ/g/OydyjWWBEl9qUeaQLADdgIhbNndEyZA4=;
+        b=EdfMUn2tGIMZcnZ8fpVSEMj7lgA9WRe4oRAhOnqcgN5vPkk0O64OPalJXBNCctD8qHWPht
+        Od8DkofGq8ki5nAQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7043113A0A;
-        Fri, 12 May 2023 08:41:56 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 53F2713466;
+        Fri, 12 May 2023 08:41:57 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id QEyVGtT7XWQZKQAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Fri, 12 May 2023 08:41:56 +0000
+        id AM+kE9X7XWQZKQAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Fri, 12 May 2023 08:41:57 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@gmail.com,
         maarten.lankhorst@linux.intel.com, mripard@kernel.org,
@@ -59,11 +59,10 @@ Cc:     dri-devel@lists.freedesktop.org,
         linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
         linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Tomi Valkeinen <tomba@kernel.org>
-Subject: [PATCH 07/11] drm/omapdrm: Use regular fbdev I/O helpers
-Date:   Fri, 12 May 2023 10:41:48 +0200
-Message-Id: <20230512084152.31233-8-tzimmermann@suse.de>
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH 10/11] drm/fbdev-generic: Implement dedicated fbdev I/O helpers
+Date:   Fri, 12 May 2023 10:41:51 +0200
+Message-Id: <20230512084152.31233-11-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230512084152.31233-1-tzimmermann@suse.de>
 References: <20230512084152.31233-1-tzimmermann@suse.de>
@@ -73,152 +72,332 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use the regular fbdev helpers for framebuffer I/O instead of DRM's
-helpers. Omapdrm does not use damage handling, so DRM's fbdev helpers
-are mere wrappers around the fbdev code.
+Implement dedicated fbdev helpers for framebuffer I/O instead
+of using DRM's helpers. Fbdev-generic was the only caller of the
+DRM helpers, so remove them from the helper module.
 
-Add CONFIG_DRM_OMAP_FBDEV_EMULATION to select the necessary
+Add CONFIG_DRM_FBDEV_GENERIC_EMULATION to select the necessary
 Kconfig options automatically. Make fbdev emulation depend on
 the new config option.
 
-By using fbdev helpers directly within each DRM fbdev emulation,
-we can eventually remove DRM's wrapper functions entirely.
-
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Tomi Valkeinen <tomba@kernel.org>
 ---
- drivers/gpu/drm/omapdrm/Kconfig        |  9 +++++++++
- drivers/gpu/drm/omapdrm/Makefile       |  2 +-
- drivers/gpu/drm/omapdrm/omap_debugfs.c |  4 ++--
- drivers/gpu/drm/omapdrm/omap_fbdev.c   | 12 +++++++-----
- drivers/gpu/drm/omapdrm/omap_fbdev.h   |  2 +-
- drivers/gpu/drm/omapdrm/omap_gem.c     |  4 ++--
- 6 files changed, 22 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/Kconfig             |  15 ++--
+ drivers/gpu/drm/Makefile            |   5 +-
+ drivers/gpu/drm/drm_fb_helper.c     | 107 ----------------------------
+ drivers/gpu/drm/drm_fbdev_generic.c |  47 ++++++++++--
+ include/drm/drm_fb_helper.h         |  41 -----------
+ include/drm/drm_fbdev_generic.h     |   2 +-
+ 6 files changed, 55 insertions(+), 162 deletions(-)
 
-diff --git a/drivers/gpu/drm/omapdrm/Kconfig b/drivers/gpu/drm/omapdrm/Kconfig
-index 76ded1568bd0..7f7efc302752 100644
---- a/drivers/gpu/drm/omapdrm/Kconfig
-+++ b/drivers/gpu/drm/omapdrm/Kconfig
-@@ -4,6 +4,7 @@ config DRM_OMAP
- 	depends on DRM && OF
- 	depends on ARCH_OMAP2PLUS
- 	select DRM_KMS_HELPER
-+	select DRM_OMAP_FBDEV_EMULATION if DRM_FBDEV_EMULATION
- 	select VIDEOMODE_HELPERS
- 	select HDMI
- 	default n
-@@ -130,3 +131,11 @@ config OMAP2_DSS_SLEEP_AFTER_VENC_RESET
- 	  disable the sleep if it doesn't cause problems on your platform.
+diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+index c007cb75715e..c67c97471b3c 100644
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -95,9 +95,19 @@ config DRM_KUNIT_TEST
+ config DRM_KMS_HELPER
+ 	tristate
+ 	depends on DRM
++	select DRM_FBDEV_GENERIC_EMULATION if DRM_FBDEV_EMULATION
+ 	help
+ 	  CRTC helpers for KMS drivers.
  
- endif
-+
-+config DRM_OMAP_FBDEV_EMULATION
-+	tristate
-+	depends on DRM_OMAP
++config DRM_FBDEV_GENERIC_EMULATION
++	bool
++	depends on DRM_KMS_HELPER
++	select FB_DEFERRED_IO
 +	select FB_SYS_COPYAREA
 +	select FB_SYS_FILLRECT
 +	select FB_SYS_FOPS
 +	select FB_SYS_IMAGEBLIT
-diff --git a/drivers/gpu/drm/omapdrm/Makefile b/drivers/gpu/drm/omapdrm/Makefile
-index 710b4e0abcf0..917fcafc77c1 100644
---- a/drivers/gpu/drm/omapdrm/Makefile
-+++ b/drivers/gpu/drm/omapdrm/Makefile
-@@ -17,7 +17,7 @@ omapdrm-y := omap_drv.o \
- 	omap_dmm_tiler.o \
- 	tcm-sita.o
++
+ config DRM_DEBUG_DP_MST_TOPOLOGY_REFS
+         bool "Enable refcount backtrace history in the DP MST helpers"
+ 	depends on STACKTRACE_SUPPORT
+@@ -135,11 +145,6 @@ config DRM_FBDEV_EMULATION
+ 	select FB_CFB_FILLRECT
+ 	select FB_CFB_COPYAREA
+ 	select FB_CFB_IMAGEBLIT
+-	select FB_DEFERRED_IO
+-	select FB_SYS_FOPS
+-	select FB_SYS_FILLRECT
+-	select FB_SYS_COPYAREA
+-	select FB_SYS_IMAGEBLIT
+ 	select FRAMEBUFFER_CONSOLE if !EXPERT
+ 	select FRAMEBUFFER_CONSOLE_DETECT_PRIMARY if FRAMEBUFFER_CONSOLE
+ 	default y
+diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+index d94821d37c2d..f737f0e476b5 100644
+--- a/drivers/gpu/drm/Makefile
++++ b/drivers/gpu/drm/Makefile
+@@ -121,9 +121,8 @@ drm_kms_helper-y := \
+ 	drm_self_refresh_helper.o \
+ 	drm_simple_kms_helper.o
+ drm_kms_helper-$(CONFIG_DRM_PANEL_BRIDGE) += bridge/panel.o
+-drm_kms_helper-$(CONFIG_DRM_FBDEV_EMULATION) += \
+-	drm_fbdev_generic.o \
+-	drm_fb_helper.o
++drm_kms_helper-$(CONFIG_DRM_FBDEV_EMULATION) += drm_fb_helper.o
++drm_kms_helper-$(CONFIG_DRM_FBDEV_GENERIC_EMULATION) += drm_fbdev_generic.o
+ obj-$(CONFIG_DRM_KMS_HELPER) += drm_kms_helper.o
  
--omapdrm-$(CONFIG_DRM_FBDEV_EMULATION) += omap_fbdev.o
-+omapdrm-$(CONFIG_DRM_OMAP_FBDEV_EMULATION) += omap_fbdev.o
+ #
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index 8724e08c518b..ba0a808f14ee 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -729,113 +729,6 @@ void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagerefli
+ }
+ EXPORT_SYMBOL(drm_fb_helper_deferred_io);
  
- omapdrm-y += dss/base.o dss/output.o dss/dss.o dss/dispc.o \
- 		dss/dispc_coefs.o dss/pll.o dss/video-pll.o
-diff --git a/drivers/gpu/drm/omapdrm/omap_debugfs.c b/drivers/gpu/drm/omapdrm/omap_debugfs.c
-index a3d470468e5b..796d20d010c0 100644
---- a/drivers/gpu/drm/omapdrm/omap_debugfs.c
-+++ b/drivers/gpu/drm/omapdrm/omap_debugfs.c
-@@ -42,7 +42,7 @@ static int mm_show(struct seq_file *m, void *arg)
+-/**
+- * drm_fb_helper_sys_read - Implements struct &fb_ops.fb_read for system memory
+- * @info: fb_info struct pointer
+- * @buf: userspace buffer to read from framebuffer memory
+- * @count: number of bytes to read from framebuffer memory
+- * @ppos: read offset within framebuffer memory
+- *
+- * Returns:
+- * The number of bytes read on success, or an error code otherwise.
+- */
+-ssize_t drm_fb_helper_sys_read(struct fb_info *info, char __user *buf,
+-			       size_t count, loff_t *ppos)
+-{
+-	return fb_sys_read(info, buf, count, ppos);
+-}
+-EXPORT_SYMBOL(drm_fb_helper_sys_read);
+-
+-/**
+- * drm_fb_helper_sys_write - Implements struct &fb_ops.fb_write for system memory
+- * @info: fb_info struct pointer
+- * @buf: userspace buffer to write to framebuffer memory
+- * @count: number of bytes to write to framebuffer memory
+- * @ppos: write offset within framebuffer memory
+- *
+- * Returns:
+- * The number of bytes written on success, or an error code otherwise.
+- */
+-ssize_t drm_fb_helper_sys_write(struct fb_info *info, const char __user *buf,
+-				size_t count, loff_t *ppos)
+-{
+-	struct drm_fb_helper *helper = info->par;
+-	loff_t pos = *ppos;
+-	ssize_t ret;
+-	struct drm_rect damage_area;
+-
+-	ret = fb_sys_write(info, buf, count, ppos);
+-	if (ret <= 0)
+-		return ret;
+-
+-	if (helper->funcs->fb_dirty) {
+-		drm_fb_helper_memory_range_to_clip(info, pos, ret, &damage_area);
+-		drm_fb_helper_damage(helper, damage_area.x1, damage_area.y1,
+-				     drm_rect_width(&damage_area),
+-				     drm_rect_height(&damage_area));
+-	}
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL(drm_fb_helper_sys_write);
+-
+-/**
+- * drm_fb_helper_sys_fillrect - wrapper around sys_fillrect
+- * @info: fbdev registered by the helper
+- * @rect: info about rectangle to fill
+- *
+- * A wrapper around sys_fillrect implemented by fbdev core
+- */
+-void drm_fb_helper_sys_fillrect(struct fb_info *info,
+-				const struct fb_fillrect *rect)
+-{
+-	struct drm_fb_helper *helper = info->par;
+-
+-	sys_fillrect(info, rect);
+-
+-	if (helper->funcs->fb_dirty)
+-		drm_fb_helper_damage(helper, rect->dx, rect->dy, rect->width, rect->height);
+-}
+-EXPORT_SYMBOL(drm_fb_helper_sys_fillrect);
+-
+-/**
+- * drm_fb_helper_sys_copyarea - wrapper around sys_copyarea
+- * @info: fbdev registered by the helper
+- * @area: info about area to copy
+- *
+- * A wrapper around sys_copyarea implemented by fbdev core
+- */
+-void drm_fb_helper_sys_copyarea(struct fb_info *info,
+-				const struct fb_copyarea *area)
+-{
+-	struct drm_fb_helper *helper = info->par;
+-
+-	sys_copyarea(info, area);
+-
+-	if (helper->funcs->fb_dirty)
+-		drm_fb_helper_damage(helper, area->dx, area->dy, area->width, area->height);
+-}
+-EXPORT_SYMBOL(drm_fb_helper_sys_copyarea);
+-
+-/**
+- * drm_fb_helper_sys_imageblit - wrapper around sys_imageblit
+- * @info: fbdev registered by the helper
+- * @image: info about image to blit
+- *
+- * A wrapper around sys_imageblit implemented by fbdev core
+- */
+-void drm_fb_helper_sys_imageblit(struct fb_info *info,
+-				 const struct fb_image *image)
+-{
+-	struct drm_fb_helper *helper = info->par;
+-
+-	sys_imageblit(info, image);
+-
+-	if (helper->funcs->fb_dirty)
+-		drm_fb_helper_damage(helper, image->dx, image->dy, image->width, image->height);
+-}
+-EXPORT_SYMBOL(drm_fb_helper_sys_imageblit);
+-
+ /**
+  * drm_fb_helper_cfb_read - Implements struct &fb_ops.fb_read for I/O memory
+  * @info: fb_info struct pointer
+diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
+index 8e5148bf40bb..f53fc49e34a4 100644
+--- a/drivers/gpu/drm/drm_fbdev_generic.c
++++ b/drivers/gpu/drm/drm_fbdev_generic.c
+@@ -34,6 +34,43 @@ static int drm_fbdev_generic_fb_release(struct fb_info *info, int user)
  	return 0;
  }
  
--#ifdef CONFIG_DRM_FBDEV_EMULATION
-+#ifdef CONFIG_DRM_OMAP_FBDEV_EMULATION
- static int fb_show(struct seq_file *m, void *arg)
- {
- 	struct drm_info_node *node = (struct drm_info_node *) m->private;
-@@ -71,7 +71,7 @@ static int fb_show(struct seq_file *m, void *arg)
- static struct drm_info_list omap_debugfs_list[] = {
- 	{"gem", gem_show, 0},
- 	{"mm", mm_show, 0},
--#ifdef CONFIG_DRM_FBDEV_EMULATION
-+#ifdef CONFIG_DRM_OMAP_FBDEV_EMULATION
- 	{"fb", fb_show, 0},
- #endif
- };
-diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-index b950e93b3846..55a65b81ccdc 100644
---- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
-+++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-@@ -4,6 +4,8 @@
-  * Author: Rob Clark <rob@ti.com>
-  */
- 
-+#include <linux/fb.h>
++static ssize_t drm_fbdev_generic_fb_write(struct fb_info *info, const char __user *buf,
++					  size_t count, loff_t *ppos)
++{
++	struct drm_fb_helper *helper = info->par;
++	loff_t pos = *ppos;
++	ssize_t ret;
 +
- #include <drm/drm_drv.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_fb_helper.h>
-@@ -103,11 +105,11 @@ static const struct fb_ops omap_fb_ops = {
- 	.fb_pan_display = omap_fbdev_pan_display,
- 	.fb_ioctl	= drm_fb_helper_ioctl,
- 
--	.fb_read = drm_fb_helper_sys_read,
--	.fb_write = drm_fb_helper_sys_write,
--	.fb_fillrect = drm_fb_helper_sys_fillrect,
--	.fb_copyarea = drm_fb_helper_sys_copyarea,
--	.fb_imageblit = drm_fb_helper_sys_imageblit,
-+	.fb_read = fb_sys_read,
-+	.fb_write = fb_sys_write,
-+	.fb_fillrect = sys_fillrect,
-+	.fb_copyarea = sys_copyarea,
-+	.fb_imageblit = sys_imageblit,
- 
- 	.fb_destroy = omap_fbdev_fb_destroy,
++	ret = fb_sys_write(info, buf, count, ppos);
++	if (ret > 0)
++		drm_fb_helper_damage_range(helper, pos, ret);
++	return ret;
++}
++
++static void drm_fbdev_generic_fb_fillrect(struct fb_info *info, const struct fb_fillrect *rect)
++{
++	struct drm_fb_helper *helper = info->par;
++
++	sys_fillrect(info, rect);
++	drm_fb_helper_damage(helper, rect->dx, rect->dy, rect->width, rect->height);
++}
++
++static void drm_fbdev_generic_fb_copyarea(struct fb_info *info, const struct fb_copyarea *area)
++{
++	struct drm_fb_helper *helper = info->par;
++
++	sys_copyarea(info, area);
++	drm_fb_helper_damage(helper, area->dx, area->dy, area->width, area->height);
++}
++
++static void drm_fbdev_generic_fb_imageblit(struct fb_info *info, const struct fb_image *image)
++{
++	struct drm_fb_helper *helper = info->par;
++
++	sys_imageblit(info, image);
++	drm_fb_helper_damage(helper, image->dx, image->dy, image->width, image->height);
++}
++
+ static void drm_fbdev_generic_fb_destroy(struct fb_info *info)
+ {
+ 	struct drm_fb_helper *fb_helper = info->par;
+@@ -56,12 +93,12 @@ static const struct fb_ops drm_fbdev_generic_fb_ops = {
+ 	.owner		= THIS_MODULE,
+ 	.fb_open	= drm_fbdev_generic_fb_open,
+ 	.fb_release	= drm_fbdev_generic_fb_release,
+-	.fb_read	= drm_fb_helper_sys_read,
+-	.fb_write	= drm_fb_helper_sys_write,
++	.fb_read	= fb_sys_read,
++	.fb_write	= drm_fbdev_generic_fb_write,
+ 	DRM_FB_HELPER_DEFAULT_OPS,
+-	.fb_fillrect	= drm_fb_helper_sys_fillrect,
+-	.fb_copyarea	= drm_fb_helper_sys_copyarea,
+-	.fb_imageblit	= drm_fb_helper_sys_imageblit,
++	.fb_fillrect	= drm_fbdev_generic_fb_fillrect,
++	.fb_copyarea	= drm_fbdev_generic_fb_copyarea,
++	.fb_imageblit	= drm_fbdev_generic_fb_imageblit,
+ 	.fb_mmap	= fb_deferred_io_mmap,
+ 	.fb_destroy	= drm_fbdev_generic_fb_destroy,
  };
-diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.h b/drivers/gpu/drm/omapdrm/omap_fbdev.h
-index 74c691a8d45f..ee65bc05f34e 100644
---- a/drivers/gpu/drm/omapdrm/omap_fbdev.h
-+++ b/drivers/gpu/drm/omapdrm/omap_fbdev.h
-@@ -11,7 +11,7 @@
+diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
+index 80c402f4e379..e3240d749a43 100644
+--- a/include/drm/drm_fb_helper.h
++++ b/include/drm/drm_fb_helper.h
+@@ -259,18 +259,6 @@ void drm_fb_helper_damage_range(struct drm_fb_helper *helper, off_t off, size_t
+ 
+ void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagereflist);
+ 
+-ssize_t drm_fb_helper_sys_read(struct fb_info *info, char __user *buf,
+-			       size_t count, loff_t *ppos);
+-ssize_t drm_fb_helper_sys_write(struct fb_info *info, const char __user *buf,
+-				size_t count, loff_t *ppos);
+-
+-void drm_fb_helper_sys_fillrect(struct fb_info *info,
+-				const struct fb_fillrect *rect);
+-void drm_fb_helper_sys_copyarea(struct fb_info *info,
+-				const struct fb_copyarea *area);
+-void drm_fb_helper_sys_imageblit(struct fb_info *info,
+-				 const struct fb_image *image);
+-
+ ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
+ 			       size_t count, loff_t *ppos);
+ ssize_t drm_fb_helper_cfb_write(struct fb_info *info, const char __user *buf,
+@@ -398,35 +386,6 @@ static inline int drm_fb_helper_defio_init(struct drm_fb_helper *fb_helper)
+ 	return -ENODEV;
+ }
+ 
+-static inline ssize_t drm_fb_helper_sys_read(struct fb_info *info,
+-					     char __user *buf, size_t count,
+-					     loff_t *ppos)
+-{
+-	return -ENODEV;
+-}
+-
+-static inline ssize_t drm_fb_helper_sys_write(struct fb_info *info,
+-					      const char __user *buf,
+-					      size_t count, loff_t *ppos)
+-{
+-	return -ENODEV;
+-}
+-
+-static inline void drm_fb_helper_sys_fillrect(struct fb_info *info,
+-					      const struct fb_fillrect *rect)
+-{
+-}
+-
+-static inline void drm_fb_helper_sys_copyarea(struct fb_info *info,
+-					      const struct fb_copyarea *area)
+-{
+-}
+-
+-static inline void drm_fb_helper_sys_imageblit(struct fb_info *info,
+-					       const struct fb_image *image)
+-{
+-}
+-
+ static inline ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
+ 					     size_t count, loff_t *ppos)
+ {
+diff --git a/include/drm/drm_fbdev_generic.h b/include/drm/drm_fbdev_generic.h
+index 75799342098d..2db4faffda20 100644
+--- a/include/drm/drm_fbdev_generic.h
++++ b/include/drm/drm_fbdev_generic.h
+@@ -5,7 +5,7 @@
  
  struct drm_device;
  
 -#ifdef CONFIG_DRM_FBDEV_EMULATION
-+#ifdef CONFIG_DRM_OMAP_FBDEV_EMULATION
- void omap_fbdev_setup(struct drm_device *dev);
++#if defined(CONFIG_DRM_FBDEV_GENERIC_EMULATION)
+ void drm_fbdev_generic_setup(struct drm_device *dev, unsigned int preferred_bpp);
  #else
- static inline void omap_fbdev_setup(struct drm_device *dev)
-diff --git a/drivers/gpu/drm/omapdrm/omap_gem.c b/drivers/gpu/drm/omapdrm/omap_gem.c
-index 6b58a5bb7b44..96e8135f127b 100644
---- a/drivers/gpu/drm/omapdrm/omap_gem.c
-+++ b/drivers/gpu/drm/omapdrm/omap_gem.c
-@@ -634,7 +634,7 @@ int omap_gem_dumb_map_offset(struct drm_file *file, struct drm_device *dev,
- 	return ret;
- }
- 
--#ifdef CONFIG_DRM_FBDEV_EMULATION
-+#ifdef CONFIG_DRM_OMAP_FBDEV_EMULATION
- /* Set scrolling position.  This allows us to implement fast scrolling
-  * for console.
-  *
-@@ -1067,7 +1067,7 @@ void omap_gem_put_sg(struct drm_gem_object *obj, struct sg_table *sgt)
- 	omap_gem_unpin(obj);
- }
- 
--#ifdef CONFIG_DRM_FBDEV_EMULATION
-+#ifdef CONFIG_DRM_OMAP_FBDEV_EMULATION
- /*
-  * Get kernel virtual address for CPU access.. this more or less only
-  * exists for omap_fbdev.
+ static inline void drm_fbdev_generic_setup(struct drm_device *dev, unsigned int preferred_bpp)
 -- 
 2.40.1
 
