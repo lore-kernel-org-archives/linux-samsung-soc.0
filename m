@@ -2,120 +2,101 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D3B3C77B7D
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 13 May 2023 17:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A60C77B7D
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 13 May 2023 18:50:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232109AbjEMRhk (ORCPT
+        id S232006AbjEMSuY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 13 May 2023 13:37:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56866 "EHLO
+        Sat, 13 May 2023 14:50:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229506AbjEMRhj (ORCPT
+        with ESMTP id S229611AbjEMSuX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 13 May 2023 13:37:39 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A963612C
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 May 2023 10:37:37 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-965c3f9af2aso1698930166b.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 May 2023 10:37:37 -0700 (PDT)
+        Sat, 13 May 2023 14:50:23 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 690F8DC
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 May 2023 11:50:22 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-50bd2d7ba74so99260363a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 May 2023 11:50:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683999456; x=1686591456;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=phEaoLqXnuHVjhKK/074Q+ATg9GGDFAIHK3RaliX/xs=;
-        b=evSV/R5ffLjVwauCYY48D1u+m+e/VX17IimUCeC218UBpgANY/+ME4eqapH7Yj1bTq
-         xOvbH10IfQYFcEFSpJA/qOGU+H1S+s9SJXp1ym6ZMvaC8bGppNn/tOLlS+eQXhtabKOq
-         ZZiowXQeo7lgL3OsiH2dkUtArpkqSZLBAUQL4F2ivc78Q0SMMtkY1aXWZyWqvNoJoKQ8
-         gX2TKhWmxEJTJ6omiYxBAL6Mtde07NztQGyu/SQD5kN20pM11pHSffzWQm3/D5zFs7hy
-         DdxupsruO6PEYFIfy5VFVeMCgr0uXrYQ0woqBhW2ZrQH02iJ/hhztq/tQSCMWdik/m0b
-         aPEQ==
+        d=linaro.org; s=google; t=1684003821; x=1686595821;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MPztQ4ysSm8CI2wA0uE15k28FITvSfHGliPiFsdgAxY=;
+        b=GFxiA3x12RZw7/KFiB77zyI6i+oO28ferVOUkRzQBkN2czSkTeEvp2OJUxcKqgygC9
+         tMuOl07beoP9i7edYYURBQA6Z7mSpDas1PqwdL+c8OTLko/Oqp0KzbOojmnGS41A8qZA
+         FB1ZzddNAANqCzbqWrbobWl6e/ZxYnJvNCs4PHqK0KfEQEod2mDkUSVAiZOIPXsc8K/h
+         OWa+G84b/9leETthM4DJWkc8zL9DerqpLS5pxD6p6OFVfWp0YiqyX/Z/9VoS1lZNY3/P
+         b1+OrHISjkBWx3X1ywYgpYOlmJWPCAJ12Z5Tw2QAJIejozSUaVF8qXVhpmScHYfWdg9w
+         h9HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683999456; x=1686591456;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=phEaoLqXnuHVjhKK/074Q+ATg9GGDFAIHK3RaliX/xs=;
-        b=boC/b7Eg37wc3XFxrymnD8S1FRxMst9oAYw94cgPjFTn919Eq+03q98PBqndATq0x1
-         mLF7jnA8G//ulhhU6Kc3roEjgklcz3W1NCku4u37IpwdvkiTrcnUJ7jp41HTBMlT8ZJ+
-         khvPzXrdR9mTIiDKEsP8OsBwELpnqPdxS4Hk3QCmQImOhQlxBkjmeDMAqpncPvAUSP9P
-         03obRjTGeQbJYeTZaoJNA7rYGorfM8OTFIOG5MpPn83UoVfwkRT3TQ9nF3n+rwv5IJpD
-         p7pLxaxa8kD5WjjG6LT3z6keLgZbU52xrTzW8XBttkeSCMERB62IIoyX3Gkk2mXr+Pxf
-         OmOw==
-X-Gm-Message-State: AC+VfDyDGyKUSEoznK578cfBwBtFbwNXKz0kP/rlVDnkhcR7jBrMdJOK
-        XiGWbhUcJ0M49ubZlumJ//riSg==
-X-Google-Smtp-Source: ACHHUZ7Ff9s2f9f/z+N90bS59Y0tGzNori+ir7oCbpWhVrC2abp4fhHbcXH203MWt1UyD/1QZkhKsw==
-X-Received: by 2002:a17:906:58c8:b0:966:168d:8c5 with SMTP id e8-20020a17090658c800b00966168d08c5mr24174817ejs.57.1683999456087;
-        Sat, 13 May 2023 10:37:36 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:bc2d:23f8:43c2:2aed? ([2a02:810d:15c0:828:bc2d:23f8:43c2:2aed])
-        by smtp.gmail.com with ESMTPSA id jr18-20020a170906515200b00965f5d778e3sm7043541ejc.120.2023.05.13.10.37.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 13 May 2023 10:37:35 -0700 (PDT)
-Message-ID: <a65abc07-eace-eaa6-e821-2eed438e068b@linaro.org>
-Date:   Sat, 13 May 2023 19:37:34 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] ASoC: MAINTAINERS: drop Krzysztof Kozlowski from Samsung
- audio
-Content-Language: en-US
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
-        'Liam Girdwood' <lgirdwood@gmail.com>,
-        'Mark Brown' <broonie@kernel.org>,
-        'Jaroslav Kysela' <perex@perex.cz>,
-        'Takashi Iwai' <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Cc:     'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>,
-        p.rajanbabu@samsung.com,
-        =?UTF-8?B?J+2MkOy5tOymiCc=?= <pankaj.dubey@samsung.com>
-References: <CGME20230513090242epcas5p34625f5b6f0a180263e6607a38e0c996f@epcas5p3.samsung.com>
- <20230513090228.4340-1-krzysztof.kozlowski@linaro.org>
- <000001d985a8$9fd3fb50$df7bf1f0$@samsung.com>
+        d=1e100.net; s=20221208; t=1684003821; x=1686595821;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MPztQ4ysSm8CI2wA0uE15k28FITvSfHGliPiFsdgAxY=;
+        b=WGDbmeLVt/z/AIud9+L2kEHFbpgyDbraQBeSF+/h0gNzK1gUG5KRvZncVsHT/7XDNZ
+         K7LvwpMk3S+Gcz0j1QCx9nPJ7q7RFsH1gfVQnkFadjufGOPwkBFDba8clnaa9v+O32P6
+         b0YxZLcwyfK48R6qOKWiWT2fHxbWsK+wcmJpCeZMY4ydTJIR5CSZwUUJmGNLxDvhXqVQ
+         Mh2TnugCkMJi+LSLPVncnvAFUn1mVLhKFyc7A9R2jTNnQGuHlf5XbzddN5jYwqAhSLLy
+         U2rLxTvDARpLZdgBSe0m3Bd4iELuJuZOmLR+LQDHucic+21/3kPTdJcf0jpB8KXLYse0
+         GU5Q==
+X-Gm-Message-State: AC+VfDyq4HYE3fE9uKxCPaicE1/KhBwKdyETrMcCkT3h9bOWsExnCiNe
+        zHmhl+K36wdsLKlqqt8BNrR8Bw==
+X-Google-Smtp-Source: ACHHUZ7cM/4sDDsWPTlMqC7K237m8lTf25p1JBv3zCY6hwb7iFthgLMbZuJHxqnpO7F/CzUvjQexCg==
+X-Received: by 2002:a17:906:5d13:b0:960:6263:138f with SMTP id g19-20020a1709065d1300b009606263138fmr27091674ejt.27.1684003820858;
+        Sat, 13 May 2023 11:50:20 -0700 (PDT)
+Received: from krzk-bin.. ([2a02:810d:15c0:828:ba68:e5c9:694e:c6e4])
+        by smtp.gmail.com with ESMTPSA id n12-20020a1709065dac00b009663cf5dc2fsm7122023ejv.66.2023.05.13.11.50.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 May 2023 11:50:20 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <000001d985a8$9fd3fb50$df7bf1f0$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 7/7] arm64: dts: exynos: Remove clock from Exynos850 pmu_system_controller
+Date:   Sat, 13 May 2023 20:50:18 +0200
+Message-Id: <168400381592.12030.10842902628648015143.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230308233822.31180-8-semen.protsenko@linaro.org>
+References: <20230308233822.31180-1-semen.protsenko@linaro.org> <20230308233822.31180-8-semen.protsenko@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 13/05/2023 16:38, Alim Akhtar wrote:
-> Hello Krzysztof,
+
+On Wed, 08 Mar 2023 17:38:22 -0600, Sam Protsenko wrote:
+> As described in the corresponding binding documentation for
+> "samsung,exynos850-pmu", the "clocks" property should be used for
+> specifying CLKOUT mux inputs. Therefore, the clock provided to exynos850
+> pmu_system_controller is incorrect and should be removed. Instead of
+> making syscon regmap keep that clock running for PMU accesses, it should
+> be made always running in the clock driver, because the kernel is not
+> the only software accessing PMU registers on Exynos850 platform.
 > 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Sent: Saturday, May 13, 2023 2:32 PM
->> To: linux-samsung-soc@vger.kernel.org; Sylwester Nawrocki
->> <s.nawrocki@samsung.com>; Liam Girdwood <lgirdwood@gmail.com>;
->> Mark Brown <broonie@kernel.org>; Jaroslav Kysela <perex@perex.cz>;
->> Takashi Iwai <tiwai@suse.com>; alsa-devel@alsa-project.org; linux-
->> kernel@vger.kernel.org
->> Cc: Alim Akhtar <alim.akhtar@samsung.com>; Arnd Bergmann
->> <arnd@arndb.de>; Olof Johansson <olof@lixom.net>; Krzysztof Kozlowski
->> <krzysztof.kozlowski@linaro.org>
->> Subject: [PATCH] ASoC: MAINTAINERS: drop Krzysztof Kozlowski from
->> Samsung audio
->>
->> Remove Krzysztof Kozlowski from maintainer of Samsung SoC Audio drivers
->> and change the status to maintenance (no one is reality being paid for
->> looking at this).
->>
-> Thank you! For your over the year’s contribution and support in
-> maintaining and enhancing Samsung SoC Audio driver. Your input always helps
-> and I hope that will continue in future as well.
+> [...]
 
-Thanks! Although I did not contribute that much to the Samsung Audio
-driver, but rather tried to keep it reviewed and in some shape.
+Applied, thanks!
 
-> While at it, I know Padmanabhna (CCed) was recently doing and is working on
-> I2S driver and Audio codec driver upstreaming to add support for some of
-> the recent platforms. I will check with him if he has interest to take up
-> this.
-
-That would be great!
+[7/7] arm64: dts: exynos: Remove clock from Exynos850 pmu_system_controller
+      https://git.kernel.org/krzk/linux/c/858fd147234dbb66401bc102968a479f92e7ad43
 
 Best regards,
-Krzysztof
-
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
