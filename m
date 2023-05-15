@@ -2,53 +2,48 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7725AC77B7D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 May 2023 11:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E8D9C77B75
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 May 2023 11:10:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240509AbjEOLJp (ORCPT
+        id S233037AbjEOLJ7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 15 May 2023 07:09:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52678 "EHLO
+        Mon, 15 May 2023 07:09:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231730AbjEOLJo (ORCPT
+        with ESMTP id S241244AbjEOLJx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 15 May 2023 07:09:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAC0610F1;
-        Mon, 15 May 2023 04:09:36 -0700 (PDT)
+        Mon, 15 May 2023 07:09:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ED03E5B;
+        Mon, 15 May 2023 04:09:53 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6F4646227B;
-        Mon, 15 May 2023 11:09:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D76DBC433EF;
-        Mon, 15 May 2023 11:09:33 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C271462295;
+        Mon, 15 May 2023 11:09:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0814C433D2;
+        Mon, 15 May 2023 11:09:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684148975;
-        bh=lwjgziLcEsIzBPxxZ1N8abCwzxvPGfURke6CIpHvtww=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=YuNMzPkbzr28+j0Zo8hTdy3k5Ja8MNwey/47bnhvvp39UClQ1RjDBJwvXkB3vK9jb
-         +FrQrprKO/3/gtG3k7KoorIUtPuMv/luFfVAxrafGmthNLmIDUmKqGIwaWAF/SATn7
-         DUPtBx9KtK8L5f05ze+WfcJA40mLLtEa0+X7KAE9GVOmHT9xQx0WirJgS7VZdHM5uq
-         aUYxWWdb6FD/9QlHZvIIlvG1pSS56OmLLhdZCQq7WLyl7x3Fmp4DsRcDBQPu39Lhk2
-         KcJG5M1oISFsZBpcXsU/H4ckjQ8TmGFpIf/eLrVmvTEARafIxwNF6EanGDG9HGgYmS
-         i3fXELO7XL3mg==
+        s=k20201202; t=1684148992;
+        bh=dY7dcUuhtCnaIotYfTGR91pIk6dZNsFbIzgqKiaUhL4=;
+        h=From:To:In-Reply-To:References:Subject:Date:From;
+        b=pBwcLOM5+iavGmzVbrLZ8x7hXzFMI71seHb8fYtFhF0/9J4/E3d0jS4HyOidOJlfR
+         wL9bvm2/zjRWe+7ctIY9isccslzoYDCpJuZqIKBRn+6ElG9TmHFKOyZTsnbi3njWui
+         hhFVIkXHUOgEtcu+uJiawyfJ1navPvBA1VTgVgBLvveyw42Z+31fHbARztfq3Svs3H
+         wlSLyMQXuw9c2YSK63H1HWB8IX2q9xo6gMw4j9s/1TdRjyPZFt7WNM/V8u2aSvc8wo
+         N53+umW7IlO6amkNspsD63MTbEY2rOroAtZaY2WckkZue7n1y2P+vG6arjB1sWoyIS
+         /riLzPgNKC0UQ==
 From:   Mark Brown <broonie@kernel.org>
-To:     linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
+To:     Andi Shyti <andi.shyti@kernel.org>, linux-spi@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-In-Reply-To: <20230513090228.4340-1-krzysztof.kozlowski@linaro.org>
-References: <20230513090228.4340-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] ASoC: MAINTAINERS: drop Krzysztof Kozlowski from
- Samsung audio
-Message-Id: <168414897357.394037.3389766402303422512.b4-ty@kernel.org>
-Date:   Mon, 15 May 2023 20:09:33 +0900
+In-Reply-To: <20230513173646.4306-1-krzysztof.kozlowski@linaro.org>
+References: <20230513173646.4306-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] spi: MAINTAINERS: drop Krzysztof Kozlowski from
+ Samsung SPI
+Message-Id: <168414899059.394221.12943543309007276806.b4-ty@kernel.org>
+Date:   Mon, 15 May 2023 20:09:50 +0900
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -57,21 +52,19 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, 13 May 2023 11:02:28 +0200, Krzysztof Kozlowski wrote:
-> Remove Krzysztof Kozlowski from maintainer of Samsung SoC Audio drivers
-> and change the status to maintenance (no one is reality being paid for
-> looking at this).
+On Sat, 13 May 2023 19:36:46 +0200, Krzysztof Kozlowski wrote:
+> Remove Krzysztof Kozlowski from maintainers of Samsung SoC SPI drivers.
 > 
 > 
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/1] ASoC: MAINTAINERS: drop Krzysztof Kozlowski from Samsung audio
-      commit: 647b5f5fdcbaba6f6fd8db69508fcbeb1fdfc2a6
+[1/1] spi: MAINTAINERS: drop Krzysztof Kozlowski from Samsung SPI
+      commit: ec9452594e04804cabbc561e88e96b48ab4655e4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
