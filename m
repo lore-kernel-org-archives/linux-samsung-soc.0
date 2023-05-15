@@ -2,95 +2,117 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E378AC77B7D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 May 2023 08:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 141EDC7EE22
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 May 2023 09:21:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229566AbjEOIjz (ORCPT
+        id S240145AbjEOJVR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 15 May 2023 04:39:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56262 "EHLO
+        Mon, 15 May 2023 05:21:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236794AbjEOIjt (ORCPT
+        with ESMTP id S231691AbjEOJUn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 15 May 2023 04:39:49 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E28ACE1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 May 2023 01:39:48 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1adc913094aso42269555ad.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 May 2023 01:39:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684139988; x=1686731988;
-        h=message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Amoq70hJo95bJKTUhw34c70+hMrAHPIR1QAD0MEHOU=;
-        b=hxPK0WxB9Vd205mAXPeYmUI/v5OdIhm6ike/rZ/FOd5XHroZvrUz7SUk8H4oIOuU0n
-         ITpLBotnnJI5qcIQir1QD6rONPLnGvqGjZf1Dk9luB108f4MWAVJTUFNNiZJHwRjBtjm
-         69fok9g2sPW2WfxIyLHMeKWeWvxLblDj+5EsynX1RMQGVpoWbR6FmIA8OcVPNT5J6t0H
-         T1cxYZqvCFIuoisA6odhiOvx2N2x9l7hckeHOt+1gKHc+e0H9J1URXwP8V+GFMlokBpo
-         nSAYpl1iCbxonWINcrkEMeWrXfMU77+mkGXe+uoGbT62dJd1pCpsaByqZvNhBVJxo2RY
-         Jbjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684139988; x=1686731988;
-        h=message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0Amoq70hJo95bJKTUhw34c70+hMrAHPIR1QAD0MEHOU=;
-        b=MCPMMmwQC0b4KCmm8PuOdTWGxyEV0bYMk/frfk2HO+OWXy4dek941oue0/RoIPN2mS
-         WZNzOyBuzh3k0HZO9CjvKF7n3UM40mSrZ2GowNnt/f7Tf83fPQZ0lQKg53O2BXNXcwJD
-         IZeqBF11oWU/j5r1lZ/1tv8uQSFBB9Jqj39QuIv5FlD+M4tcVq8Jf+1tYWUxEEkc3a1g
-         hBV81koXCxNNj1kFoqk0ENCICbaLsnfK3QjW2G41FSlf8NHpxSoNA9gCRswxB+MPGUCO
-         JRGkkEbsHSF8xnMccFhbtsuPFWnm9JwbUlT/MEwY90zZRji887amq8+OpWQcUj1cp0ke
-         cIFg==
-X-Gm-Message-State: AC+VfDwNkIsEtbjsKKoT3r/5gT0sc/uLmCwvxr6k3ckelm7i0bHouQa8
-        cynl4Q3cudY8t2xWkNM9NSs=
-X-Google-Smtp-Source: ACHHUZ6ILvv6weLQnLUsBdUVXWZNoEu/AENG0wlalTDEiXqqNISRfL8AcnnhPToRo1R3hvqbV8//8w==
-X-Received: by 2002:a17:902:efc5:b0:19c:f096:bbef with SMTP id ja5-20020a170902efc500b0019cf096bbefmr30750375plb.49.1684139988247;
-        Mon, 15 May 2023 01:39:48 -0700 (PDT)
-Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
-        by smtp.gmail.com with ESMTPSA id r21-20020a170902be1500b001a80ad9c599sm1325267pls.294.2023.05.15.01.39.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 May 2023 01:39:47 -0700 (PDT)
-Sender: Inki Dae <daeinki@gmail.com>
-From:   Inki Dae <inki.dae@samsung.com>
-To:     airlied@linux.ie, daniel@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-fixes
-Date:   Mon, 15 May 2023 17:39:43 +0900
-Message-Id: <20230515083943.43933-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 15 May 2023 05:20:43 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C79D49D0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 May 2023 02:16:07 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pyUJJ-0003bq-GO; Mon, 15 May 2023 11:16:05 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pyUJH-000KQ7-QJ; Mon, 15 May 2023 11:16:03 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pyUJG-004cSX-RM; Mon, 15 May 2023 11:16:02 +0200
+Date:   Mon, 15 May 2023 11:16:02 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Inki Dae <daeinki@gmail.com>
+Cc:     linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        dri-devel@lists.freedesktop.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        David Airlie <airlied@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 18/53] drm/exynos: Convert to platform remove callback
+ returning void
+Message-ID: <20230515091602.7tyzortaowrzmqqo@pengutronix.de>
+References: <20230507162616.1368908-1-u.kleine-koenig@pengutronix.de>
+ <20230507162616.1368908-19-u.kleine-koenig@pengutronix.de>
+ <CAAQKjZN0DpnjpybZaEYz=eS4khTbY7RdS4i0-rC_-O_jk1iY-g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="y5vle46a7hdut33r"
+Content-Disposition: inline
+In-Reply-To: <CAAQKjZN0DpnjpybZaEYz=eS4khTbY7RdS4i0-rC_-O_jk1iY-g@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Dave and Daniel,
 
-   Just one fixup to graphics 2d module for exynos.
+--y5vle46a7hdut33r
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-   Please kindly let me know if there is any problem.
+On Mon, May 15, 2023 at 04:32:00PM +0900, Inki Dae wrote:
+> Hi,
+>=20
+> 2023=EB=85=84 5=EC=9B=94 8=EC=9D=BC (=EC=9B=94) =EC=98=A4=EC=A0=84 1:27, =
+Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>=EB=8B=98=EC=9D=B4 =
+=EC=9E=91=EC=84=B1:
+> >
+> > The .remove() callback for a platform driver returns an int which makes
+> > many driver authors wrongly assume it's possible to do error handling by
+> > returning an error code. However the value returned is (mostly) ignored
+> > and this typically results in resource leaks. To improve here there is a
+> > quest to make the remove callback return void. In the first step of this
+> > quest all drivers are converted to .remove_new() which already returns
+> > void.
+> >
+> > Trivially convert the exynos drm drivers from always returning zero in
+> > the remove callback to the void returning variant.
+>=20
+> Could you please update exynos_drm_vidi.c also? Seems you missed.
 
-Thanks,
-Inki Dae
+This one cannot be trivially converted as vidi_remove() doensn't return
+zero in all cases. I didn't grok the details about ctx->raw_edid and
+don't know if skipping component_del() is right or not.
 
-The following changes since commit d8843eebbbd15b78c6a7745717b3705eca923b0f:
+If you know the driver, feel free to address this.
 
-  Merge tag 'amd-drm-fixes-6.4-2023-05-11' of https://gitlab.freedesktop.org/agd5f/linux into drm-fixes (2023-05-12 06:46:34 +1000)
+Best regards
+Uwe
 
-are available in the Git repository at:
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig         =
+   |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-fixes-for-v6.4-rc3
+--y5vle46a7hdut33r
+Content-Type: application/pgp-signature; name="signature.asc"
 
-for you to fetch changes up to 2ef0785b30bd6549ddbc124979f1b6596e065ae2:
+-----BEGIN PGP SIGNATURE-----
 
-  drm/exynos: fix g2d_open/close helper function definitions (2023-05-15 14:10:34 +0900)
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmRh+FEACgkQj4D7WH0S
+/k6HRgf9HY3yWZaML7K5a0dBuvYi0q/tvr4cD6GAN3/3VjillX69yUO9eJ5wtDHs
+E05ob9kgXrZc4xfVy5F1lMb5rgsPWah4W6Fsr4SOtxXP/bTNZrgeyMngZK6pp0R+
+NRwwX7mlsxZNIBavnlBPw9ytlIwCG9uI4TPd51v+Gk/jN87D+PoPVoRx171/bW5n
+DlJh6NiINGvkmx+pjnAqHEG5DechPRrL/yDoxNGG7pnvNnx+/kwic4FgU1GrNS3/
+s0GLO5l8LiVpa4k5s1/mUPDruK9I3v7W8ryO3/DZhgfnzKunQSkEKNFEkD8JREft
+2PDkIu9zfWBYm0QKt1aOYSyCjM7g/w==
+=leeg
+-----END PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Just one fixup to exynos_drm_g2d module.
-- Fix below build warning by marking them as 'static inline'
-    drivers/gpu/drm/exynos/exynos_drm_g2d.h:37:5: error: no previous prototype for 'g2d_open'
-    drivers/gpu/drm/exynos/exynos_drm_g2d.h:42:5: error: no previous prototype for 'g2d_close'
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      drm/exynos: fix g2d_open/close helper function definitions
-
- drivers/gpu/drm/exynos/exynos_drm_g2d.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--y5vle46a7hdut33r--
