@@ -2,86 +2,157 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E8D9C77B75
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 May 2023 11:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08901C77B7D
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 May 2023 17:46:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233037AbjEOLJ7 (ORCPT
+        id S244638AbjEORp6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 15 May 2023 07:09:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52848 "EHLO
+        Mon, 15 May 2023 13:45:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241244AbjEOLJx (ORCPT
+        with ESMTP id S244640AbjEORpd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 15 May 2023 07:09:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ED03E5B;
-        Mon, 15 May 2023 04:09:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C271462295;
-        Mon, 15 May 2023 11:09:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0814C433D2;
-        Mon, 15 May 2023 11:09:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684148992;
-        bh=dY7dcUuhtCnaIotYfTGR91pIk6dZNsFbIzgqKiaUhL4=;
-        h=From:To:In-Reply-To:References:Subject:Date:From;
-        b=pBwcLOM5+iavGmzVbrLZ8x7hXzFMI71seHb8fYtFhF0/9J4/E3d0jS4HyOidOJlfR
-         wL9bvm2/zjRWe+7ctIY9isccslzoYDCpJuZqIKBRn+6ElG9TmHFKOyZTsnbi3njWui
-         hhFVIkXHUOgEtcu+uJiawyfJ1navPvBA1VTgVgBLvveyw42Z+31fHbARztfq3Svs3H
-         wlSLyMQXuw9c2YSK63H1HWB8IX2q9xo6gMw4j9s/1TdRjyPZFt7WNM/V8u2aSvc8wo
-         N53+umW7IlO6amkNspsD63MTbEY2rOroAtZaY2WckkZue7n1y2P+vG6arjB1sWoyIS
-         /riLzPgNKC0UQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     Andi Shyti <andi.shyti@kernel.org>, linux-spi@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230513173646.4306-1-krzysztof.kozlowski@linaro.org>
-References: <20230513173646.4306-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] spi: MAINTAINERS: drop Krzysztof Kozlowski from
- Samsung SPI
-Message-Id: <168414899059.394221.12943543309007276806.b4-ty@kernel.org>
-Date:   Mon, 15 May 2023 20:09:50 +0900
+        Mon, 15 May 2023 13:45:33 -0400
+Received: from mailrelay1-1.pub.mailoutpod2-cph3.one.com (mailrelay1-1.pub.mailoutpod2-cph3.one.com [IPv6:2a02:2350:5:400::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E27541692D
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 May 2023 10:43:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ravnborg.org; s=rsa1;
+        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+         from:date:from;
+        bh=fqvFeHqmKCMHySPrpw7LmvcOX8WEkqN8R0ZmmJ8wedU=;
+        b=LuflRTNROY0CD/SiMRa00x4NM6Ba/5KTNjWTIw8iM/ymbOPFU7XTgc6q5gyZ/RxhcGu3BdwMovzCp
+         jkO2iHve1fpUDPs5+9sEyMW9owAADTy0xdwPW0I7B6mFXa8uI7kYxnTSgBbw5MbodbHGNWpUka4U21
+         7h4mUNZZX/nMZg5diOgd58PYk8p/9e90AdYpUcl38rMb+77YaK9AcriBKJ5UvxbVNk7QjI4MPHaVyF
+         s+s7BzbpNWkYsKbeS7jVjPPHWkqG4Mb0166SVe8vsZWwNVVX/aHNDon2Im1qM6q5MFmwgr1q7CV7Lj
+         I89SkTPK+tfPo/g4wL5kRwP0R5bKAxA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
+        d=ravnborg.org; s=ed1;
+        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+         from:date:from;
+        bh=fqvFeHqmKCMHySPrpw7LmvcOX8WEkqN8R0ZmmJ8wedU=;
+        b=m5Ru3cp+fr+MYVaiT66lh06RTG0M0Yo3MAHPI8gz+3ae51FIPn6TF9LZlN4ODMpJHOnJ+Mwz6Vd71
+         GaCU+trDA==
+X-HalOne-ID: fb2cb6b5-f347-11ed-8278-99461c6a3fe8
+Received: from ravnborg.org (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
+        by mailrelay1 (Halon) with ESMTPSA
+        id fb2cb6b5-f347-11ed-8278-99461c6a3fe8;
+        Mon, 15 May 2023 17:43:22 +0000 (UTC)
+Date:   Mon, 15 May 2023 19:43:20 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     daniel@ffwll.ch, airlied@gmail.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        javierm@redhat.com, linux-samsung-soc@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        dri-devel@lists.freedesktop.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 03/12] drm/exynos: Use regular fbdev I/O helpers
+Message-ID: <20230515174320.GA1745913@ravnborg.org>
+References: <20230515094033.2133-1-tzimmermann@suse.de>
+ <20230515094033.2133-4-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-bfdf5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230515094033.2133-4-tzimmermann@suse.de>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, 13 May 2023 19:36:46 +0200, Krzysztof Kozlowski wrote:
-> Remove Krzysztof Kozlowski from maintainers of Samsung SoC SPI drivers.
+Hi Thomas,
+
+On Mon, May 15, 2023 at 11:40:24AM +0200, Thomas Zimmermann wrote:
+> Use the regular fbdev helpers for framebuffer I/O instead of DRM's
+> helpers. Exynos does not use damage handling, so DRM's fbdev helpers
+> are mere wrappers around the fbdev code.
 > 
+> By using fbdev helpers directly within each DRM fbdev emulation,
+> we can eventually remove DRM's wrapper functions entirely.
 > 
+> v2:
+> 	* use FB_IO_HELPERS option
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Inki Dae <inki.dae@samsung.com>
+> Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Cc: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/Kconfig            |  1 +
+>  drivers/gpu/drm/exynos/Makefile           |  2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 10 +++++-----
+>  3 files changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+> index 0cb92d651ff1..7ca7e1dab52c 100644
+> --- a/drivers/gpu/drm/exynos/Kconfig
+> +++ b/drivers/gpu/drm/exynos/Kconfig
+> @@ -7,6 +7,7 @@ config DRM_EXYNOS
+>  	select DRM_DISPLAY_HELPER if DRM_EXYNOS_DP
+>  	select DRM_KMS_HELPER
+>  	select VIDEOMODE_HELPERS
+> +	select FB_IO_HELPERS if DRM_FBDEV_EMULATION
+>  	select SND_SOC_HDMI_CODEC if SND_SOC
+>  	help
+>  	  Choose this option if you have a Samsung SoC Exynos chipset.
+> diff --git a/drivers/gpu/drm/exynos/Makefile b/drivers/gpu/drm/exynos/Makefile
+> index 2fd2f3ee4fcf..233a66036584 100644
+> --- a/drivers/gpu/drm/exynos/Makefile
+> +++ b/drivers/gpu/drm/exynos/Makefile
+> @@ -6,7 +6,6 @@
+>  exynosdrm-y := exynos_drm_drv.o exynos_drm_crtc.o exynos_drm_fb.o \
+>  		exynos_drm_gem.o exynos_drm_plane.o exynos_drm_dma.o
+>  
+> -exynosdrm-$(CONFIG_DRM_FBDEV_EMULATION) += exynos_drm_fbdev.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS_FIMD)	+= exynos_drm_fimd.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS5433_DECON)	+= exynos5433_drm_decon.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS7_DECON)	+= exynos7_drm_decon.o
+> @@ -23,5 +22,6 @@ exynosdrm-$(CONFIG_DRM_EXYNOS_ROTATOR)	+= exynos_drm_rotator.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS_SCALER)	+= exynos_drm_scaler.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS_GSC)	+= exynos_drm_gsc.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS_MIC)     += exynos_drm_mic.o
+> +exynosdrm-$(CONFIG_DRM_FBDEV_EMULATION)	+= exynos_drm_fbdev.o
+What does this change do?
+Maybe something that was left by accident?
 
-Applied to
+	Sam
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: MAINTAINERS: drop Krzysztof Kozlowski from Samsung SPI
-      commit: ec9452594e04804cabbc561e88e96b48ab4655e4
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+>  
+>  obj-$(CONFIG_DRM_EXYNOS)		+= exynosdrm.o
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> index ea4b3d248aac..b3333dd1d087 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> @@ -8,6 +8,8 @@
+>   *	Seung-Woo Kim <sw0312.kim@samsung.com>
+>   */
+>  
+> +#include <linux/fb.h>
+> +
+>  #include <drm/drm_crtc_helper.h>
+>  #include <drm/drm_drv.h>
+>  #include <drm/drm_fb_helper.h>
+> @@ -49,11 +51,9 @@ static const struct fb_ops exynos_drm_fb_ops = {
+>  	.owner		= THIS_MODULE,
+>  	DRM_FB_HELPER_DEFAULT_OPS,
+>  	.fb_mmap        = exynos_drm_fb_mmap,
+> -	.fb_read	= drm_fb_helper_cfb_read,
+> -	.fb_write	= drm_fb_helper_cfb_write,
+> -	.fb_fillrect	= drm_fb_helper_cfb_fillrect,
+> -	.fb_copyarea	= drm_fb_helper_cfb_copyarea,
+> -	.fb_imageblit	= drm_fb_helper_cfb_imageblit,
+> +	.fb_fillrect	= cfb_fillrect,
+> +	.fb_copyarea	= cfb_copyarea,
+> +	.fb_imageblit	= cfb_imageblit,
+>  	.fb_destroy	= exynos_drm_fb_destroy,
+>  };
+>  
+> -- 
+> 2.40.1
