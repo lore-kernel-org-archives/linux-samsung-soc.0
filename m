@@ -2,208 +2,374 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC45CC7EE25
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 May 2023 13:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 089F2C7EE25
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 May 2023 02:04:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233311AbjEPNOz (ORCPT
+        id S231706AbjEQCEI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 16 May 2023 09:14:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60158 "EHLO
+        Tue, 16 May 2023 22:04:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232376AbjEPNOp (ORCPT
+        with ESMTP id S231704AbjEQCEH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 16 May 2023 09:14:45 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B56C910FE;
-        Tue, 16 May 2023 06:14:43 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 748C71FE71;
-        Tue, 16 May 2023 13:14:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1684242882; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GKjzpGS7tW9V68LhGYL4giB4gAwlkVhk3ib1w3wujrY=;
-        b=08y7cz0zUoL+B1F0ZnnVCoCB/4jFvI7X20l0zIjXaQlTqZMqx9sgy/LKRMVrrRUuzmfAnf
-        i9O12SAtRYGwB9Jrjw/wo88lScIA3GftZmlhAg2xN1CD3rlS4xUGVNLuhuOGpEFiD7AUyi
-        lTUbiJWgyj8oRALacVljgEIzReffcpw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1684242882;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GKjzpGS7tW9V68LhGYL4giB4gAwlkVhk3ib1w3wujrY=;
-        b=Ub4B6xfMkjIbfuZNAczm4TfxQQ1Ry/K1sr6L+BhKR6AnThvExTqMkDNNkLfGD0Qp2q+DB4
-        9oj//2UjAe4mDyBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0E3F2138F5;
-        Tue, 16 May 2023 13:14:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 3qNtAsKBY2R/QQAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Tue, 16 May 2023 13:14:42 +0000
-Message-ID: <09028144-8666-ba64-d94d-92139e469efe@suse.de>
-Date:   Tue, 16 May 2023 15:14:41 +0200
+        Tue, 16 May 2023 22:04:07 -0400
+X-Greylist: delayed 330 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 16 May 2023 19:04:04 PDT
+Received: from 189.cn (ptr.189.cn [183.61.185.104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4538E4222;
+        Tue, 16 May 2023 19:04:04 -0700 (PDT)
+HMM_SOURCE_IP: 10.64.8.31:42626.2114773713
+HMM_ATTACHE_NUM: 0000
+HMM_SOURCE_TYPE: SMTP
+Received: from clientip-114.242.206.180 (unknown [10.64.8.31])
+        by 189.cn (HERMES) with SMTP id 7D6F9102973;
+        Wed, 17 May 2023 09:58:31 +0800 (CST)
+Received: from  ([114.242.206.180])
+        by gateway-151646-dep-75648544bd-2qvwx with ESMTP id 810a8ff56b7f48219248832b0e786209 for tzimmermann@suse.de;
+        Wed, 17 May 2023 09:58:33 CST
+X-Transaction-ID: 810a8ff56b7f48219248832b0e786209
+X-Real-From: 15330273260@189.cn
+X-Receive-IP: 114.242.206.180
+X-MEDUSA-Status: 0
+Sender: 15330273260@189.cn
+Message-ID: <80b4b615-0a71-89e8-3a58-fbeb8a9a06e8@189.cn>
+Date:   Wed, 17 May 2023 09:58:30 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH v2 03/12] drm/exynos: Use regular fbdev I/O helpers
-Content-Language: en-US
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     daniel@ffwll.ch, airlied@gmail.com,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        javierm@redhat.com, linux-samsung-soc@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        dri-devel@lists.freedesktop.org,
-        Kyungmin Park <kyungmin.park@samsung.com>,
+ Thunderbird/102.11.0
+Subject: Re: [v2,11/12] drm/fbdev-generic: Implement dedicated fbdev I/O
+ helpers
+To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
+        airlied@gmail.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, javierm@redhat.com, sam@ravnborg.org
+Cc:     linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         freedreno@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org
-References: <20230515094033.2133-1-tzimmermann@suse.de>
- <20230515094033.2133-4-tzimmermann@suse.de>
- <20230515174320.GA1745913@ravnborg.org>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <20230515174320.GA1745913@ravnborg.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------lmicXarUWLuzvl3cSPm20cMq"
+References: <20230515094033.2133-12-tzimmermann@suse.de>
+Content-Language: en-US
+From:   Sui Jingfeng <15330273260@189.cn>
+In-Reply-To: <20230515094033.2133-12-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------lmicXarUWLuzvl3cSPm20cMq
-Content-Type: multipart/mixed; boundary="------------mIKpmu0MXjw05PYRo3QM4tHe";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: daniel@ffwll.ch, airlied@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, javierm@redhat.com, linux-samsung-soc@vger.kernel.org,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-msm@vger.kernel.org,
- intel-gfx@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>,
- amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
- freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
-Message-ID: <09028144-8666-ba64-d94d-92139e469efe@suse.de>
-Subject: Re: [PATCH v2 03/12] drm/exynos: Use regular fbdev I/O helpers
-References: <20230515094033.2133-1-tzimmermann@suse.de>
- <20230515094033.2133-4-tzimmermann@suse.de>
- <20230515174320.GA1745913@ravnborg.org>
-In-Reply-To: <20230515174320.GA1745913@ravnborg.org>
+Hi, Thomas
 
---------------mIKpmu0MXjw05PYRo3QM4tHe
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
 
-SGkgU2FtDQoNCkFtIDE1LjA1LjIzIHVtIDE5OjQzIHNjaHJpZWIgU2FtIFJhdm5ib3JnOg0K
-PiBIaSBUaG9tYXMsDQo+IA0KPiBPbiBNb24sIE1heSAxNSwgMjAyMyBhdCAxMTo0MDoyNEFN
-ICswMjAwLCBUaG9tYXMgWmltbWVybWFubiB3cm90ZToNCj4+IFVzZSB0aGUgcmVndWxhciBm
-YmRldiBoZWxwZXJzIGZvciBmcmFtZWJ1ZmZlciBJL08gaW5zdGVhZCBvZiBEUk0ncw0KPj4g
-aGVscGVycy4gRXh5bm9zIGRvZXMgbm90IHVzZSBkYW1hZ2UgaGFuZGxpbmcsIHNvIERSTSdz
-IGZiZGV2IGhlbHBlcnMNCj4+IGFyZSBtZXJlIHdyYXBwZXJzIGFyb3VuZCB0aGUgZmJkZXYg
-Y29kZS4NCj4+DQo+PiBCeSB1c2luZyBmYmRldiBoZWxwZXJzIGRpcmVjdGx5IHdpdGhpbiBl
-YWNoIERSTSBmYmRldiBlbXVsYXRpb24sDQo+PiB3ZSBjYW4gZXZlbnR1YWxseSByZW1vdmUg
-RFJNJ3Mgd3JhcHBlciBmdW5jdGlvbnMgZW50aXJlbHkuDQo+Pg0KPj4gdjI6DQo+PiAJKiB1
-c2UgRkJfSU9fSEVMUEVSUyBvcHRpb24NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBUaG9tYXMg
-WmltbWVybWFubiA8dHppbW1lcm1hbm5Ac3VzZS5kZT4NCj4+IENjOiBJbmtpIERhZSA8aW5r
-aS5kYWVAc2Ftc3VuZy5jb20+DQo+PiBDYzogU2V1bmctV29vIEtpbSA8c3cwMzEyLmtpbUBz
-YW1zdW5nLmNvbT4NCj4+IENjOiBLeXVuZ21pbiBQYXJrIDxreXVuZ21pbi5wYXJrQHNhbXN1
-bmcuY29tPg0KPj4gQ2M6IEtyenlzenRvZiBLb3psb3dza2kgPGtyenlzenRvZi5rb3psb3dz
-a2lAbGluYXJvLm9yZz4NCj4+IENjOiBBbGltIEFraHRhciA8YWxpbS5ha2h0YXJAc2Ftc3Vu
-Zy5jb20+DQo+PiAtLS0NCj4+ICAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnICAg
-ICAgICAgICAgfCAgMSArDQo+PiAgIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvTWFrZWZpbGUg
-ICAgICAgICAgIHwgIDIgKy0NCj4+ICAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2ZiZGV2LmMgfCAxMCArKysrKy0tLS0tDQo+PiAgIDMgZmlsZXMgY2hhbmdlZCwgNyBp
-bnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tj
-b25maWcNCj4+IGluZGV4IDBjYjkyZDY1MWZmMS4uN2NhN2UxZGFiNTJjIDEwMDY0NA0KPj4g
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnDQo+PiArKysgYi9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL0tjb25maWcNCj4+IEBAIC03LDYgKzcsNyBAQCBjb25maWcgRFJN
-X0VYWU5PUw0KPj4gICAJc2VsZWN0IERSTV9ESVNQTEFZX0hFTFBFUiBpZiBEUk1fRVhZTk9T
-X0RQDQo+PiAgIAlzZWxlY3QgRFJNX0tNU19IRUxQRVINCj4+ICAgCXNlbGVjdCBWSURFT01P
-REVfSEVMUEVSUw0KPj4gKwlzZWxlY3QgRkJfSU9fSEVMUEVSUyBpZiBEUk1fRkJERVZfRU1V
-TEFUSU9ODQo+PiAgIAlzZWxlY3QgU05EX1NPQ19IRE1JX0NPREVDIGlmIFNORF9TT0MNCj4+
-ICAgCWhlbHANCj4+ICAgCSAgQ2hvb3NlIHRoaXMgb3B0aW9uIGlmIHlvdSBoYXZlIGEgU2Ft
-c3VuZyBTb0MgRXh5bm9zIGNoaXBzZXQuDQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9NYWtlZmlsZSBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvTWFrZWZpbGUN
-Cj4+IGluZGV4IDJmZDJmM2VlNGZjZi4uMjMzYTY2MDM2NTg0IDEwMDY0NA0KPj4gLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9NYWtlZmlsZQ0KPj4gKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9NYWtlZmlsZQ0KPj4gQEAgLTYsNyArNiw2IEBADQo+PiAgIGV4eW5vc2Ry
-bS15IDo9IGV4eW5vc19kcm1fZHJ2Lm8gZXh5bm9zX2RybV9jcnRjLm8gZXh5bm9zX2RybV9m
-Yi5vIFwNCj4+ICAgCQlleHlub3NfZHJtX2dlbS5vIGV4eW5vc19kcm1fcGxhbmUubyBleHlu
-b3NfZHJtX2RtYS5vDQo+PiAgIA0KPj4gLWV4eW5vc2RybS0kKENPTkZJR19EUk1fRkJERVZf
-RU1VTEFUSU9OKSArPSBleHlub3NfZHJtX2ZiZGV2Lm8NCj4+ICAgZXh5bm9zZHJtLSQoQ09O
-RklHX0RSTV9FWFlOT1NfRklNRCkJKz0gZXh5bm9zX2RybV9maW1kLm8NCj4+ICAgZXh5bm9z
-ZHJtLSQoQ09ORklHX0RSTV9FWFlOT1M1NDMzX0RFQ09OKQkrPSBleHlub3M1NDMzX2RybV9k
-ZWNvbi5vDQo+PiAgIGV4eW5vc2RybS0kKENPTkZJR19EUk1fRVhZTk9TN19ERUNPTikJKz0g
-ZXh5bm9zN19kcm1fZGVjb24ubw0KPj4gQEAgLTIzLDUgKzIyLDYgQEAgZXh5bm9zZHJtLSQo
-Q09ORklHX0RSTV9FWFlOT1NfUk9UQVRPUikJKz0gZXh5bm9zX2RybV9yb3RhdG9yLm8NCj4+
-ICAgZXh5bm9zZHJtLSQoQ09ORklHX0RSTV9FWFlOT1NfU0NBTEVSKQkrPSBleHlub3NfZHJt
-X3NjYWxlci5vDQo+PiAgIGV4eW5vc2RybS0kKENPTkZJR19EUk1fRVhZTk9TX0dTQykJKz0g
-ZXh5bm9zX2RybV9nc2Mubw0KPj4gICBleHlub3Nkcm0tJChDT05GSUdfRFJNX0VYWU5PU19N
-SUMpICAgICArPSBleHlub3NfZHJtX21pYy5vDQo+PiArZXh5bm9zZHJtLSQoQ09ORklHX0RS
-TV9GQkRFVl9FTVVMQVRJT04pCSs9IGV4eW5vc19kcm1fZmJkZXYubw0KPiBXaGF0IGRvZXMg
-dGhpcyBjaGFuZ2UgZG8/DQo+IE1heWJlIHNvbWV0aGluZyB0aGF0IHdhcyBsZWZ0IGJ5IGFj
-Y2lkZW50Pw0KDQpJdCByZW9yZGVycyB0aGUgc3RhdGVtZW50cyBhbHBoYWJldGljYWxseS4g
-SSBjYW4gcmVtb3ZlIHRoaXMsIGlmIHVud2FudGVkLg0KDQpCZXN0IHJlZ2FyZHMNClRob21h
-cw0KDQo+IA0KPiAJU2FtDQo+IA0KPj4gICANCj4+ICAgb2JqLSQoQ09ORklHX0RSTV9FWFlO
-T1MpCQkrPSBleHlub3Nkcm0ubw0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9mYmRldi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2ZiZGV2LmMNCj4+IGluZGV4IGVhNGIzZDI0OGFhYy4uYjMzMzNkZDFkMDg3IDEw
-MDY0NA0KPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiZGV2
-LmMNCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5j
-DQo+PiBAQCAtOCw2ICs4LDggQEANCj4+ICAgICoJU2V1bmctV29vIEtpbSA8c3cwMzEyLmtp
-bUBzYW1zdW5nLmNvbT4NCj4+ICAgICovDQo+PiAgIA0KPj4gKyNpbmNsdWRlIDxsaW51eC9m
-Yi5oPg0KPj4gKw0KPj4gICAjaW5jbHVkZSA8ZHJtL2RybV9jcnRjX2hlbHBlci5oPg0KPj4g
-ICAjaW5jbHVkZSA8ZHJtL2RybV9kcnYuaD4NCj4+ICAgI2luY2x1ZGUgPGRybS9kcm1fZmJf
-aGVscGVyLmg+DQo+PiBAQCAtNDksMTEgKzUxLDkgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBm
-Yl9vcHMgZXh5bm9zX2RybV9mYl9vcHMgPSB7DQo+PiAgIAkub3duZXIJCT0gVEhJU19NT0RV
-TEUsDQo+PiAgIAlEUk1fRkJfSEVMUEVSX0RFRkFVTFRfT1BTLA0KPj4gICAJLmZiX21tYXAg
-ICAgICAgID0gZXh5bm9zX2RybV9mYl9tbWFwLA0KPj4gLQkuZmJfcmVhZAk9IGRybV9mYl9o
-ZWxwZXJfY2ZiX3JlYWQsDQo+PiAtCS5mYl93cml0ZQk9IGRybV9mYl9oZWxwZXJfY2ZiX3dy
-aXRlLA0KPj4gLQkuZmJfZmlsbHJlY3QJPSBkcm1fZmJfaGVscGVyX2NmYl9maWxscmVjdCwN
-Cj4+IC0JLmZiX2NvcHlhcmVhCT0gZHJtX2ZiX2hlbHBlcl9jZmJfY29weWFyZWEsDQo+PiAt
-CS5mYl9pbWFnZWJsaXQJPSBkcm1fZmJfaGVscGVyX2NmYl9pbWFnZWJsaXQsDQo+PiArCS5m
-Yl9maWxscmVjdAk9IGNmYl9maWxscmVjdCwNCj4+ICsJLmZiX2NvcHlhcmVhCT0gY2ZiX2Nv
-cHlhcmVhLA0KPj4gKwkuZmJfaW1hZ2VibGl0CT0gY2ZiX2ltYWdlYmxpdCwNCj4+ICAgCS5m
-Yl9kZXN0cm95CT0gZXh5bm9zX2RybV9mYl9kZXN0cm95LA0KPj4gICB9Ow0KPj4gICANCj4+
-IC0tIA0KPj4gMi40MC4xDQoNCi0tIA0KVGhvbWFzIFppbW1lcm1hbm4NCkdyYXBoaWNzIERy
-aXZlciBEZXZlbG9wZXINClNVU0UgU29mdHdhcmUgU29sdXRpb25zIEdlcm1hbnkgR21iSA0K
-RnJhbmtlbnN0cmFzc2UgMTQ2LCA5MDQ2MSBOdWVybmJlcmcsIEdlcm1hbnkNCkdGOiBJdm8g
-VG90ZXYsIEFuZHJldyBNeWVycywgQW5kcmV3IE1jRG9uYWxkLCBCb3VkaWVuIE1vZXJtYW4N
-CkhSQiAzNjgwOSAoQUcgTnVlcm5iZXJnKQ0K
+After apply your patch set, the kernel with 
+arch/loongarch/configs/loongson3_defconfig
 
---------------mIKpmu0MXjw05PYRo3QM4tHe--
+can not finish compile anymore.  gcc complains:
 
---------------lmicXarUWLuzvl3cSPm20cMq
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
 
------BEGIN PGP SIGNATURE-----
+   AR      drivers/gpu/built-in.a
+   AR      drivers/built-in.a
+   AR      built-in.a
+   AR      vmlinux.a
+   LD      vmlinux.o
+   OBJCOPY modules.builtin.modinfo
+   GEN     modules.builtin
+   GEN     .vmlinux.objs
+   MODPOST Module.symvers
+ERROR: modpost: "fb_sys_write" [drivers/gpu/drm/drm_kms_helper.ko] 
+undefined!
+ERROR: modpost: "sys_imageblit" [drivers/gpu/drm/drm_kms_helper.ko] 
+undefined!
+ERROR: modpost: "sys_fillrect" [drivers/gpu/drm/drm_kms_helper.ko] 
+undefined!
+ERROR: modpost: "sys_copyarea" [drivers/gpu/drm/drm_kms_helper.ko] 
+undefined!
+ERROR: modpost: "fb_sys_read" [drivers/gpu/drm/drm_kms_helper.ko] undefined!
+make[1]: *** [scripts/Makefile.modpost:136: Module.symvers] Error 1
+make: *** [Makefile:1978: modpost] Error 2
 
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmRjgcEFAwAAAAAACgkQlh/E3EQov+Ap
-7xAAtDTqOO+cWdlVRZdjXBhkoahIqQTYsq6fXRlqOzJCc3QOiIqEoH6TKVXImK5JxjzEDfLsei5P
-nifoeeMVEo6LeBIIYBSPNbNVmLDp6LXRD4lYQGFtQYRXHz/BmPV0htc2aDtCGX5sd9Y5rHQJM9pD
-uUbJ3KoYRfr4vUXUpUgVhVWQ8EhJPkjKweiftJcP1R8nEKxEIlkg5iY3sebsuoFHqQEfZf0phelw
-DyBnl9PvxGlMh8jN9zR9E5kepTqUZ1u64gdtC2lBvovBFXCiZSKRwlOaGuGzSJKSIcl2zrlxW30R
-H5CA12nGNICsX6weA9eZbCWhTGn6cEVETY8fbs5MOSYtxMlAmwtToBmiKYRTsE4BtykSsXinzm5V
-RSy4LeVLsWl0lVHW1n8XvjBS6A6JVHmrZchgGTJsFGNjCO4Utb8r8q/4VxmWIkozDshwFIG1DoPL
-1FsE1WlbadqGGF1sSyS5xhedv3MvyxXXHrbnMEAGRIErmKjUUxbPZ2eb0CCyUhx7R/UhIkgOxpR+
-qIPoMq61Q5PVOJua34IR9ncJR+VTgF8C1nnZEzJRW1O3EOc06fEHRxBDKwBhvDrzQy//cA+bDzyc
-zB9s1hbttJgRR4zdYRmm+1A4yXuoWWPnvGG6tNGK2p33kSlwa/XOvvWlOSkeEV9DMkHIjODU+g3S
-iwo=
-=27yr
------END PGP SIGNATURE-----
 
---------------lmicXarUWLuzvl3cSPm20cMq--
+On 2023/5/15 17:40, Thomas Zimmermann wrote:
+> Implement dedicated fbdev helpers for framebuffer I/O instead
+> of using DRM's helpers. Fbdev-generic was the only caller of the
+> DRM helpers, so remove them from the helper module.
+>
+> v2:
+> 	* use FB_SYS_HELPERS_DEFERRED option
+>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>   drivers/gpu/drm/Kconfig             |   6 +-
+>   drivers/gpu/drm/drm_fb_helper.c     | 107 ----------------------------
+>   drivers/gpu/drm/drm_fbdev_generic.c |  47 ++++++++++--
+>   include/drm/drm_fb_helper.h         |  41 -----------
+>   4 files changed, 43 insertions(+), 158 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+> index 77fb10ddd8a2..92a782827b7b 100644
+> --- a/drivers/gpu/drm/Kconfig
+> +++ b/drivers/gpu/drm/Kconfig
+> @@ -95,6 +95,7 @@ config DRM_KUNIT_TEST
+>   config DRM_KMS_HELPER
+>   	tristate
+>   	depends on DRM
+> +	select FB_SYS_HELPERS_DEFERRED if DRM_FBDEV_EMULATION
+
+Here, select FB_SYS_HELPERS helps resolve the above issue mentioned.
+
+>   	help
+>   	  CRTC helpers for KMS drivers.
+>   
+> @@ -135,11 +136,6 @@ config DRM_FBDEV_EMULATION
+>   	select FB_CFB_FILLRECT
+>   	select FB_CFB_COPYAREA
+>   	select FB_CFB_IMAGEBLIT
+> -	select FB_DEFERRED_IO
+> -	select FB_SYS_FOPS
+> -	select FB_SYS_FILLRECT
+> -	select FB_SYS_COPYAREA
+> -	select FB_SYS_IMAGEBLIT
+>   	select FRAMEBUFFER_CONSOLE if !EXPERT
+>   	select FRAMEBUFFER_CONSOLE_DETECT_PRIMARY if FRAMEBUFFER_CONSOLE
+>   	default y
+> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> index 8724e08c518b..ba0a808f14ee 100644
+> --- a/drivers/gpu/drm/drm_fb_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> @@ -729,113 +729,6 @@ void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagerefli
+>   }
+>   EXPORT_SYMBOL(drm_fb_helper_deferred_io);
+>   
+> -/**
+> - * drm_fb_helper_sys_read - Implements struct &fb_ops.fb_read for system memory
+> - * @info: fb_info struct pointer
+> - * @buf: userspace buffer to read from framebuffer memory
+> - * @count: number of bytes to read from framebuffer memory
+> - * @ppos: read offset within framebuffer memory
+> - *
+> - * Returns:
+> - * The number of bytes read on success, or an error code otherwise.
+> - */
+> -ssize_t drm_fb_helper_sys_read(struct fb_info *info, char __user *buf,
+> -			       size_t count, loff_t *ppos)
+> -{
+> -	return fb_sys_read(info, buf, count, ppos);
+> -}
+> -EXPORT_SYMBOL(drm_fb_helper_sys_read);
+> -
+> -/**
+> - * drm_fb_helper_sys_write - Implements struct &fb_ops.fb_write for system memory
+> - * @info: fb_info struct pointer
+> - * @buf: userspace buffer to write to framebuffer memory
+> - * @count: number of bytes to write to framebuffer memory
+> - * @ppos: write offset within framebuffer memory
+> - *
+> - * Returns:
+> - * The number of bytes written on success, or an error code otherwise.
+> - */
+> -ssize_t drm_fb_helper_sys_write(struct fb_info *info, const char __user *buf,
+> -				size_t count, loff_t *ppos)
+> -{
+> -	struct drm_fb_helper *helper = info->par;
+> -	loff_t pos = *ppos;
+> -	ssize_t ret;
+> -	struct drm_rect damage_area;
+> -
+> -	ret = fb_sys_write(info, buf, count, ppos);
+> -	if (ret <= 0)
+> -		return ret;
+> -
+> -	if (helper->funcs->fb_dirty) {
+> -		drm_fb_helper_memory_range_to_clip(info, pos, ret, &damage_area);
+> -		drm_fb_helper_damage(helper, damage_area.x1, damage_area.y1,
+> -				     drm_rect_width(&damage_area),
+> -				     drm_rect_height(&damage_area));
+> -	}
+> -
+> -	return ret;
+> -}
+> -EXPORT_SYMBOL(drm_fb_helper_sys_write);
+> -
+> -/**
+> - * drm_fb_helper_sys_fillrect - wrapper around sys_fillrect
+> - * @info: fbdev registered by the helper
+> - * @rect: info about rectangle to fill
+> - *
+> - * A wrapper around sys_fillrect implemented by fbdev core
+> - */
+> -void drm_fb_helper_sys_fillrect(struct fb_info *info,
+> -				const struct fb_fillrect *rect)
+> -{
+> -	struct drm_fb_helper *helper = info->par;
+> -
+> -	sys_fillrect(info, rect);
+> -
+> -	if (helper->funcs->fb_dirty)
+> -		drm_fb_helper_damage(helper, rect->dx, rect->dy, rect->width, rect->height);
+> -}
+> -EXPORT_SYMBOL(drm_fb_helper_sys_fillrect);
+> -
+> -/**
+> - * drm_fb_helper_sys_copyarea - wrapper around sys_copyarea
+> - * @info: fbdev registered by the helper
+> - * @area: info about area to copy
+> - *
+> - * A wrapper around sys_copyarea implemented by fbdev core
+> - */
+> -void drm_fb_helper_sys_copyarea(struct fb_info *info,
+> -				const struct fb_copyarea *area)
+> -{
+> -	struct drm_fb_helper *helper = info->par;
+> -
+> -	sys_copyarea(info, area);
+> -
+> -	if (helper->funcs->fb_dirty)
+> -		drm_fb_helper_damage(helper, area->dx, area->dy, area->width, area->height);
+> -}
+> -EXPORT_SYMBOL(drm_fb_helper_sys_copyarea);
+> -
+> -/**
+> - * drm_fb_helper_sys_imageblit - wrapper around sys_imageblit
+> - * @info: fbdev registered by the helper
+> - * @image: info about image to blit
+> - *
+> - * A wrapper around sys_imageblit implemented by fbdev core
+> - */
+> -void drm_fb_helper_sys_imageblit(struct fb_info *info,
+> -				 const struct fb_image *image)
+> -{
+> -	struct drm_fb_helper *helper = info->par;
+> -
+> -	sys_imageblit(info, image);
+> -
+> -	if (helper->funcs->fb_dirty)
+> -		drm_fb_helper_damage(helper, image->dx, image->dy, image->width, image->height);
+> -}
+> -EXPORT_SYMBOL(drm_fb_helper_sys_imageblit);
+> -
+>   /**
+>    * drm_fb_helper_cfb_read - Implements struct &fb_ops.fb_read for I/O memory
+>    * @info: fb_info struct pointer
+> diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
+> index 8e5148bf40bb..f53fc49e34a4 100644
+> --- a/drivers/gpu/drm/drm_fbdev_generic.c
+> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
+> @@ -34,6 +34,43 @@ static int drm_fbdev_generic_fb_release(struct fb_info *info, int user)
+>   	return 0;
+>   }
+>   
+> +static ssize_t drm_fbdev_generic_fb_write(struct fb_info *info, const char __user *buf,
+> +					  size_t count, loff_t *ppos)
+> +{
+> +	struct drm_fb_helper *helper = info->par;
+> +	loff_t pos = *ppos;
+> +	ssize_t ret;
+> +
+> +	ret = fb_sys_write(info, buf, count, ppos);
+> +	if (ret > 0)
+> +		drm_fb_helper_damage_range(helper, pos, ret);
+> +	return ret;
+> +}
+> +
+> +static void drm_fbdev_generic_fb_fillrect(struct fb_info *info, const struct fb_fillrect *rect)
+> +{
+> +	struct drm_fb_helper *helper = info->par;
+> +
+> +	sys_fillrect(info, rect);
+> +	drm_fb_helper_damage(helper, rect->dx, rect->dy, rect->width, rect->height);
+> +}
+> +
+> +static void drm_fbdev_generic_fb_copyarea(struct fb_info *info, const struct fb_copyarea *area)
+> +{
+> +	struct drm_fb_helper *helper = info->par;
+> +
+> +	sys_copyarea(info, area);
+> +	drm_fb_helper_damage(helper, area->dx, area->dy, area->width, area->height);
+> +}
+> +
+> +static void drm_fbdev_generic_fb_imageblit(struct fb_info *info, const struct fb_image *image)
+> +{
+> +	struct drm_fb_helper *helper = info->par;
+> +
+> +	sys_imageblit(info, image);
+> +	drm_fb_helper_damage(helper, image->dx, image->dy, image->width, image->height);
+> +}
+> +
+>   static void drm_fbdev_generic_fb_destroy(struct fb_info *info)
+>   {
+>   	struct drm_fb_helper *fb_helper = info->par;
+> @@ -56,12 +93,12 @@ static const struct fb_ops drm_fbdev_generic_fb_ops = {
+>   	.owner		= THIS_MODULE,
+>   	.fb_open	= drm_fbdev_generic_fb_open,
+>   	.fb_release	= drm_fbdev_generic_fb_release,
+> -	.fb_read	= drm_fb_helper_sys_read,
+> -	.fb_write	= drm_fb_helper_sys_write,
+> +	.fb_read	= fb_sys_read,
+> +	.fb_write	= drm_fbdev_generic_fb_write,
+>   	DRM_FB_HELPER_DEFAULT_OPS,
+> -	.fb_fillrect	= drm_fb_helper_sys_fillrect,
+> -	.fb_copyarea	= drm_fb_helper_sys_copyarea,
+> -	.fb_imageblit	= drm_fb_helper_sys_imageblit,
+> +	.fb_fillrect	= drm_fbdev_generic_fb_fillrect,
+> +	.fb_copyarea	= drm_fbdev_generic_fb_copyarea,
+> +	.fb_imageblit	= drm_fbdev_generic_fb_imageblit,
+>   	.fb_mmap	= fb_deferred_io_mmap,
+>   	.fb_destroy	= drm_fbdev_generic_fb_destroy,
+>   };
+> diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
+> index 80c402f4e379..e3240d749a43 100644
+> --- a/include/drm/drm_fb_helper.h
+> +++ b/include/drm/drm_fb_helper.h
+> @@ -259,18 +259,6 @@ void drm_fb_helper_damage_range(struct drm_fb_helper *helper, off_t off, size_t
+>   
+>   void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagereflist);
+>   
+> -ssize_t drm_fb_helper_sys_read(struct fb_info *info, char __user *buf,
+> -			       size_t count, loff_t *ppos);
+> -ssize_t drm_fb_helper_sys_write(struct fb_info *info, const char __user *buf,
+> -				size_t count, loff_t *ppos);
+> -
+> -void drm_fb_helper_sys_fillrect(struct fb_info *info,
+> -				const struct fb_fillrect *rect);
+> -void drm_fb_helper_sys_copyarea(struct fb_info *info,
+> -				const struct fb_copyarea *area);
+> -void drm_fb_helper_sys_imageblit(struct fb_info *info,
+> -				 const struct fb_image *image);
+> -
+>   ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
+>   			       size_t count, loff_t *ppos);
+>   ssize_t drm_fb_helper_cfb_write(struct fb_info *info, const char __user *buf,
+> @@ -398,35 +386,6 @@ static inline int drm_fb_helper_defio_init(struct drm_fb_helper *fb_helper)
+>   	return -ENODEV;
+>   }
+>   
+> -static inline ssize_t drm_fb_helper_sys_read(struct fb_info *info,
+> -					     char __user *buf, size_t count,
+> -					     loff_t *ppos)
+> -{
+> -	return -ENODEV;
+> -}
+> -
+> -static inline ssize_t drm_fb_helper_sys_write(struct fb_info *info,
+> -					      const char __user *buf,
+> -					      size_t count, loff_t *ppos)
+> -{
+> -	return -ENODEV;
+> -}
+> -
+> -static inline void drm_fb_helper_sys_fillrect(struct fb_info *info,
+> -					      const struct fb_fillrect *rect)
+> -{
+> -}
+> -
+> -static inline void drm_fb_helper_sys_copyarea(struct fb_info *info,
+> -					      const struct fb_copyarea *area)
+> -{
+> -}
+> -
+> -static inline void drm_fb_helper_sys_imageblit(struct fb_info *info,
+> -					       const struct fb_image *image)
+> -{
+> -}
+> -
+>   static inline ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
+>   					     size_t count, loff_t *ppos)
+>   {
