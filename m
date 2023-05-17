@@ -2,49 +2,49 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE39FC7EE22
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 May 2023 23:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8896EC77B75
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 May 2023 23:04:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229978AbjEQXEH (ORCPT
+        id S229952AbjEQXEI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 17 May 2023 19:04:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46090 "EHLO
+        Wed, 17 May 2023 19:04:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229966AbjEQXEG (ORCPT
+        with ESMTP id S229971AbjEQXEH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 17 May 2023 19:04:06 -0400
+        Wed, 17 May 2023 19:04:07 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA97B7685
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 May 2023 16:03:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 209B561A1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 May 2023 16:03:40 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pzQAY-00089k-GS; Thu, 18 May 2023 01:02:54 +0200
+        id 1pzQAe-0008OC-2l; Thu, 18 May 2023 01:03:00 +0200
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pzQAW-000wr5-51; Thu, 18 May 2023 01:02:52 +0200
+        id 1pzQAc-000wtP-70; Thu, 18 May 2023 01:02:58 +0200
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pzQAV-005UYC-D2; Thu, 18 May 2023 01:02:51 +0200
+        id 1pzQAa-005UZp-CP; Thu, 18 May 2023 01:02:56 +0200
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Alim Akhtar <alim.akhtar@samsung.com>, linux-usb@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de
-Subject: [PATCH 47/97] usb: ehci-exynos: Convert to platform remove callback returning void
-Date:   Thu, 18 May 2023 01:01:49 +0200
-Message-Id: <20230517230239.187727-48-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 72/97] usb: ohci-s3c2410: Convert to platform remove callback returning void
+Date:   Thu, 18 May 2023 01:02:14 +0200
+Message-Id: <20230517230239.187727-73-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230517230239.187727-1-u.kleine-koenig@pengutronix.de>
 References: <20230517230239.187727-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1894; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=sdaNvSMllo7FJ63Vr0mA/chKoNhlxVQIVWkT2Ljhub0=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkZVxDmaaDrhv91DXiU7i7NVl741g+M8SJbCsTJ Sgb1xbXKyWJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZGVcQwAKCRCPgPtYfRL+ TjyrB/41RYWaqrAk8sl+HM93vnNGtFVoBUcC77MY3ceLYEqZUUrBJt/euLJ2rjmPFdgW/23Wm1N XUR7azX1aPOfT+RMfhEK4vN6b589iblCvhwm7iJNdPpMYj/49gKGTJ5Hrk9Ji35s6skSvu9wszp KvYXYT7rVOd0KhkQO5I3s9PdZ7lBiOs1QafTP2lx5w1Oop8hXt13J0QrFeWNmqfuDR1p+yXly13 dCM48XE22T21JYQq0gf7b0jY6PsAdKJPw+1urv7MlNGK9Vpb/TKn2vdJ1PWCE8CoWi6tD3xJWJ3 Yq9zRCuS48sCSXn6OU/LGo/alMlCLO2dyDNJkpjDD41dQrGt
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1921; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=M6mXoig1dWl/Ywk+GLiUxx2mru6fVHVmDiXl+L/3aFE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkZVycpkB4UYuUIQZso7pGfRKcNOnixVHRS5flO PZaUAr9m/CJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZGVcnAAKCRCPgPtYfRL+ TuYhB/0cC+JHseq+/EuztzA9TtWlzAvz2HwPEjvZIB8W8TU1dCQyMeOc/pkZ3Bm+4QobgF+CEMp YueaGkJNbKo/sJHDL/JmaWnNo0JmAwTQ7y54jV7fOMtlb6+927wuksUuqjSTOt6pw/++iq2oeYV Xa7GawlEHAcrB3ChiJEmejgCzQ4/l8sp4qN/Vk67cxW4q0mMYzFkw2Te8iUlHEkZqpXdIA1sQKS AoRn5IFLGqMv0bEQ2Rh3Tzkdt6B3kxdBG2cuKlf+IiSLNfOhF/+vJUm8rfwTEaKmMCDWrz7fSd0 6BHxhZ+w0vsgrYrwBRLT0Rv4l1yqRzAiXfmKHqVwG+vXmB75
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -69,40 +69,39 @@ callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/usb/host/ehci-exynos.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/usb/host/ohci-s3c2410.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-index 47c9f06c3d84..20f8c0ec6810 100644
---- a/drivers/usb/host/ehci-exynos.c
-+++ b/drivers/usb/host/ehci-exynos.c
-@@ -230,7 +230,7 @@ static int exynos_ehci_probe(struct platform_device *pdev)
- 	return err;
- }
- 
--static int exynos_ehci_remove(struct platform_device *pdev)
-+static void exynos_ehci_remove(struct platform_device *pdev)
+diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
+index 85a0a9ae0095..c5c9b4cbcb9a 100644
+--- a/drivers/usb/host/ohci-s3c2410.c
++++ b/drivers/usb/host/ohci-s3c2410.c
+@@ -329,7 +329,7 @@ static void s3c2410_hcd_oc(struct s3c2410_hcd_info *info, int port_oc)
+  * the HCD's stop() method.  It is always called from a thread
+  * context, normally "rmmod", "apmd", or something similar.
+  */
+-static int
++static void
+ ohci_hcd_s3c2410_remove(struct platform_device *dev)
  {
- 	struct usb_hcd *hcd = platform_get_drvdata(pdev);
- 	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
-@@ -244,8 +244,6 @@ static int exynos_ehci_remove(struct platform_device *pdev)
- 	clk_disable_unprepare(exynos_ehci->clk);
- 
+ 	struct usb_hcd *hcd = platform_get_drvdata(dev);
+@@ -337,7 +337,6 @@ ohci_hcd_s3c2410_remove(struct platform_device *dev)
+ 	usb_remove_hcd(hcd);
+ 	s3c2410_stop_hc(dev);
  	usb_put_hcd(hcd);
--
 -	return 0;
  }
  
- #ifdef CONFIG_PM
-@@ -311,7 +309,7 @@ MODULE_DEVICE_TABLE(of, exynos_ehci_match);
+ /*
+@@ -458,7 +457,7 @@ MODULE_DEVICE_TABLE(of, ohci_hcd_s3c2410_dt_ids);
  
- static struct platform_driver exynos_ehci_driver = {
- 	.probe		= exynos_ehci_probe,
--	.remove		= exynos_ehci_remove,
-+	.remove_new	= exynos_ehci_remove,
+ static struct platform_driver ohci_hcd_s3c2410_driver = {
+ 	.probe		= ohci_hcd_s3c2410_probe,
+-	.remove		= ohci_hcd_s3c2410_remove,
++	.remove_new	= ohci_hcd_s3c2410_remove,
  	.shutdown	= usb_hcd_platform_shutdown,
- 	.driver = {
- 		.name	= "exynos-ehci",
+ 	.driver		= {
+ 		.name	= "s3c2410-ohci",
 -- 
 2.39.2
 
