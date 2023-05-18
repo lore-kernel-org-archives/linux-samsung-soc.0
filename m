@@ -2,172 +2,142 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EEE5C7EE23
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 May 2023 23:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C39C7EE24
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 May 2023 07:44:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229699AbjEQXcn (ORCPT
+        id S230073AbjERHo0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 17 May 2023 19:32:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56890 "EHLO
+        Thu, 18 May 2023 03:44:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbjEQXcm (ORCPT
+        with ESMTP id S229962AbjERHoX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 17 May 2023 19:32:42 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2044.outbound.protection.outlook.com [40.107.223.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6225F40EB;
-        Wed, 17 May 2023 16:32:41 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=g2J+oE80v+B1Kweq6z+STuijyPtEkRwz8pWoXjK5/lQ4oTOz3mj7kQzuMqaizG9F3CDXxn1SPDZ12GUVIrss5lQvnO8AOsROrJUHU08jWds/Xwy2ni4vQ6NT3akOEHyDNXrU0AQf7GG7/ndMSDYssSOJNoOJW7BNYvWmlow4ZTg+0Z1R81JLQTzISBekPtY7ntcWV4mBmsXlEhhFfteRdZHsEOze+edxxSXD+de+gaZsjOsIXvAO6wJx60ga8lV5hSOXUMsHx0ZRZtxb0cbb5t0uynFY9iRHWxsQFsEsfk5XV5EcivwgSrhAade6XQ/BagWzw4JeIkEsqBhvyzz5og==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SU7+OS0futKjoBt58LQ+nXP395IRweXRjQi4kW6PQLU=;
- b=Oeo0w4/5iIve7I8iVusfV7B8W3I/Fz6Wxu2h+/W+gJKHNDn5maJ1ZKO016jx3O6IIRHXD4iEAEXDy+N3X3RJw5NDwwpb+S9cIgbKHcAafK0ONde0BZSBLcYpJvbwFpi4010MX9ajBY89qOqYnJMMHu5USl52el4hupiiJNKxyqnfTg8ptZvVkZHk+yTXIMGrvN7eQmUokftc15sZCRDH+bpPurGs1h3H7L43+Xrx5bh4uxSrLpW6Wx3ctNAc5Hx1SOQvtYS+chdssRAE2v0q1N55PQVj4Ay5uC5Nphu8dOe9Zn4ysQpWiHtzSLlqilkyffZxycabLwasEIhuoZaLAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=lists.ozlabs.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SU7+OS0futKjoBt58LQ+nXP395IRweXRjQi4kW6PQLU=;
- b=T9dbxYfi0ePh8X7jY4DWSOh/1wX2Pd3qEz/X3enlbBpLhGYWh+9H9J8rgPwD7yquiJvDAeDLOhOt3pCQFi00U3NOIDUA+dUAlN02tFWC75pOM12ItgpPcDBhHd9ZpcYDl38kmQI1OsTb5REddcPhFx6Xh+wL59OQnHdxP1vmaSbLPy5tbCWpGE5+RUrMnr52BGOg0U50+SzNGm6CizbLS/swXInbWEdZZzWGEbUBf/F2IQJ9XEVzzQSnFTnxUKykC1E4AswHHdnhtQbiN/JngfDwbkNa4gGol5cIZ3UJUOhjcCjjt/pyJm2XsU9g6JPUnJJWxkFTHhHsR7JY/otAnw==
-Received: from MW4PR04CA0257.namprd04.prod.outlook.com (2603:10b6:303:88::22)
- by SA0PR12MB4542.namprd12.prod.outlook.com (2603:10b6:806:73::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6411.17; Wed, 17 May
- 2023 23:32:39 +0000
-Received: from CO1NAM11FT087.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:88:cafe::3c) by MW4PR04CA0257.outlook.office365.com
- (2603:10b6:303:88::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6411.18 via Frontend
- Transport; Wed, 17 May 2023 23:32:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CO1NAM11FT087.mail.protection.outlook.com (10.13.174.68) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6411.19 via Frontend Transport; Wed, 17 May 2023 23:32:38 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 17 May 2023
- 16:32:32 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.37; Wed, 17 May 2023 16:32:32 -0700
-Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37 via Frontend
- Transport; Wed, 17 May 2023 16:32:29 -0700
-Date:   Wed, 17 May 2023 16:32:28 -0700
-From:   Nicolin Chen <nicolinc@nvidia.com>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-CC:     Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, <iommu@lists.linux.dev>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        "Jonathan Hunter" <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>, <linux-s390@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
-        <linux-tegra@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        <linuxppc-dev@lists.ozlabs.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        "Niklas Schnelle" <schnelle@linux.ibm.com>,
-        Steven Price <steven.price@arm.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v2 00/25] iommu: Make default_domain's mandatory
-Message-ID: <ZGVkDB+MCrx3tQho@Asurada-Nvidia>
-References: <0-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com>
+        Thu, 18 May 2023 03:44:23 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1693C211B
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 May 2023 00:44:21 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230518074417euoutp01aa9a525d79c21168d5ad6ddb6eec71ef~gLRuZVfO80715307153euoutp019
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 May 2023 07:44:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230518074417euoutp01aa9a525d79c21168d5ad6ddb6eec71ef~gLRuZVfO80715307153euoutp019
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1684395857;
+        bh=SLVY/n0NOgJuLlPxSfHb8xa2VifNCuXjo5NyzsDrXr4=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=b8ftHhStxzpUjLR/uNhBzBqUdU402ZwiVzV3/0K71PXTG+i8GN11M8ffpK6L2TYIn
+         AG5FH+MkXxozqq+FjhxZoJYLmIjde3nOkQZz3zquGMHYt5zXZOEUj9O+y52VHI7hLB
+         1ioqWGMIRx5f30hheoD7RXW4qzr2gDSKMcbfdn0M=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20230518074416eucas1p1547736fe516e6e923def1c977e8e6f08~gLRuMSi7a2266922669eucas1p1N;
+        Thu, 18 May 2023 07:44:16 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id CF.6B.35386.057D5646; Thu, 18
+        May 2023 08:44:16 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230518074416eucas1p1dfd47a3438f2252211cf7daa82e2ac1e~gLRt_mABO2267322673eucas1p1U;
+        Thu, 18 May 2023 07:44:16 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230518074416eusmtrp2b9512fd6c1228fb6288d529d651c5822~gLRt87B1x0474504745eusmtrp2Z;
+        Thu, 18 May 2023 07:44:16 +0000 (GMT)
+X-AuditID: cbfec7f4-cdfff70000028a3a-d2-6465d750f473
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 33.D3.14344.057D5646; Thu, 18
+        May 2023 08:44:16 +0100 (BST)
+Received: from AMDC4653.eu.corp.samsungelectronics.net (unknown
+        [106.120.51.32]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230518074416eusmtip266789f297403e88dbd442292923aff3e~gLRte-d7M0852408524eusmtip2N;
+        Thu, 18 May 2023 07:44:16 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH] PM / devfreq: exynos: add Exynos PPMU as a soft module
+ dependency
+Date:   Thu, 18 May 2023 09:44:03 +0200
+Message-Id: <20230518074403.2894799-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <0-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT087:EE_|SA0PR12MB4542:EE_
-X-MS-Office365-Filtering-Correlation-Id: 192db192-fae9-42d6-3f47-08db572f0083
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Xp1ANaCQqDkvQxMkDGNeVnZgg2QHq7mlxtx6A8BUGbMjgoK/P5t4maMzuKixtU7LOp1Uo51Vq1YlcBrFPWS0rnzkEwCuhDzcZeOuHx/19o9krkOp0BlyU+ELCWMUAa2hwCDlxWgHCeqWhgEmE/6HiMNQ3HaErUKoXy1VV+dz5h9TrvywnLzRpJS4c5bx3ly6mA5NODX6vzM91weyCKzGWGqSEKxblrcKPQn6ug8piZ8Bp71af5OIFJd4wIwY6r5tgQhZ/OWx3z6/vImdPUa7OL33h6NUI3X+UUCl3lwWLMfbYcf48h2em+LTnt8k2b/xfZfdLOwqtyB+/vcWiH0tUgSU3UCZFbEQlnWMm2dGI2NsnvZSke9uazUM3qy3KR6LdIVfXbnjrx9xpCEzwl9H0xvpZT7axGCMoG/RBVT/rjx0IO6nfxRmzCFQIRXTm245v+wimriyw7R8Z691v8EpdPwTZ+JsqDOSIdYsWIxL6jK14OaX+JShd8mKAe5d5V918vZ2AcBEpzMLOWu0zl+eOMkD6ihhybqSDfKBlYw5BFA+BxtQo0mXWF+7TCnGhGrvi/rGWPHYrKmd3RPzf0jRIRe1ckw48EBLqTTkA0QPyisnVLFgu2A+82FWUp2LDoyPUY1LjMGD65nnIxPjWZdUVjbHzaY9rvlgmAIWNrawbvWntCrWkGwAGa9aU59g/9Iwyk6RYfuMygImtPEcSX7+iCzGDeF7hBh5dMDabpdtET0nSRboAE8Ym/yNorJPawsljffBQTVY97BVKPn21CS5etWQxehgcoxSHpfuCz7vii6g6rpIQ9uyBl4A9UO5PmM9
-X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(346002)(396003)(39860400002)(136003)(376002)(451199021)(36840700001)(40470700004)(46966006)(36860700001)(82740400003)(7636003)(356005)(40460700003)(41300700001)(7416002)(7406005)(2906002)(6862004)(8676002)(5660300002)(33716001)(6636002)(8936002)(55016003)(86362001)(316002)(4326008)(70206006)(70586007)(40480700001)(82310400005)(83380400001)(966005)(336012)(186003)(47076005)(107886003)(426003)(9686003)(26005)(478600001)(54906003)(67856001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2023 23:32:38.5800
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 192db192-fae9-42d6-3f47-08db572f0083
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT087.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4542
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkleLIzCtJLcpLzFFi42LZduzned2A66kpBp/2W1g8mLeNzeL6l+es
+        Fntfb2W3+Nx7hNFixvl9TBZrj9xlt7jduILNgd3jzrU9bB59W1YxenzeJBfAHMVlk5Kak1mW
+        WqRvl8CVca99NVPBfO6KM+1djA2Mpzi7GDk5JARMJO4f+c3SxcjFISSwglHiScsLNgjnC6PE
+        ql1/mSCcz4wSmzcdYoNpudh6DKpqOaPE75n7GCGcViaJ//c+M4JUsQkYSnS97QLrEBFIl1hy
+        /A9YEbPATkaJIwcbwRLCAiESJ1afArNZBFQl5uw6AGbzCthL7Pn+hx1inbzE/oNnmSHighIn
+        Zz5hAbGZgeLNW2czgwyVEJjIITHhzCtGiAYXiUf/tkI1C0u8Or4FypaR+L9zPhNEQzujxILf
+        96GcCYwSDc9vQXVbS9w59wvoDA6gFZoS63fpg5gSAo4S0zr1IEw+iRtvBSFu4JOYtG06M0SY
+        V6KjTQhihprErOPr4LYevHCJGcL2kFh1ZjUriC0kECtxe+JrtgmMCrOQfDYLyWezEE5YwMi8
+        ilE8tbQ4Nz212CgvtVyvODG3uDQvXS85P3cTIzC1nP53/MsOxuWvPuodYmTiYDzEKMHBrCTC
+        G9iXnCLEm5JYWZValB9fVJqTWnyIUZqDRUmcV9v2ZLKQQHpiSWp2ampBahFMlomDU6qBqcUz
+        wWXZjPkbzn5tfHiA6Sf3Nk7ruoydqRrX3uuvXCB4ukf7p8sEGeY4nRX77jw81LZg+Rl2G18d
+        bp+GJz1XBBsmPJshE5vs0OF5x9R0R+fDU/e7eGt4WXT1nnz08M7We3pgnXrPFNHzPlembFDp
+        3vpo1qym48sC1V/byy91u3FV1JK5hTftZljN8rMFxVHTpjLfPf07MfuKQkNjWu+5PUo//nFM
+        V/rNWS8bPOVBsKnBqY4stZmMGy0kJ15wfDvzcH/CNonYiQ+5uTMcl2pM3SwYtt4sxtVfqjWK
+        5XCH0cv1MTNX9drInz6Xuc3zX+bqvZdDMz54uf0x74zcyX1yg+1vm0t7hE/LX5r4/KzMMiWW
+        4oxEQy3mouJEAME8plicAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsVy+t/xe7oB11NTDObdVrN4MG8bm8X1L89Z
+        Lfa+3spu8bn3CKPFjPP7mCzWHrnLbnG7cQWbA7vHnWt72Dz6tqxi9Pi8SS6AOUrPpii/tCRV
+        ISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEv4177aqaC+dwVZ9q7
+        GBsYT3F2MXJySAiYSFxsPcbWxcjFISSwlFHiyJ4WFoiEjMTJaQ2sELawxJ9rXVBFzUwSMxa9
+        YQJJsAkYSnS9BUlwcogIZEpM+HONHaSIWWA3o8SsPwuZQRLCAkESP9t/gdksAqoSc3YdAGvg
+        FbCX2PP9DzvEBnmJ/QfPMkPEBSVOznwCdgUzULx562zmCYx8s5CkZiFJLWBkWsUoklpanJue
+        W2ykV5yYW1yal66XnJ+7iREY0tuO/dyyg3Hlq496hxiZOBgPMUpwMCuJ8Ab2JacI8aYkVlal
+        FuXHF5XmpBYfYjQFum8is5Rocj4wqvJK4g3NDEwNTcwsDUwtzYyVxHk9CzoShQTSE0tSs1NT
+        C1KLYPqYODilGpg48rg2fVeUFPz5+phRPLNLh0ZQukbZKgEDoU6pEuXWz1fyF5Z9ven48Mdp
+        l0NO17wfBjxz2fLpWsRCt8mtG5c1f9CbmW3PLc+1MmYRgwZTSFFam7vf6xNLC9avMrk5NSpZ
+        WqTs+E+256cTZ+6fcW7n3oUyH3wUQ76oS0+SvtNS5KaT+yN5coXobmmnb1zRrZU/fkcrFTXI
+        vrvPU7ZFOjWSy/7B+o63Xz4aRz2sk2j+7KtsNYPtRYlZQ3Xj8z2XNye9NdKboxtx6Jbg4oym
+        N/+YRTq6i3Y/YffV3LnbVSspaen3RS97GMsy/F9lRbx8HbHSoXm7Rt/9A5uv8j+p+zdTbcPZ
+        mjle0yVXVD4UO6jEUpyRaKjFXFScCAD5ad5z8gIAAA==
+X-CMS-MailID: 20230518074416eucas1p1dfd47a3438f2252211cf7daa82e2ac1e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20230518074416eucas1p1dfd47a3438f2252211cf7daa82e2ac1e
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230518074416eucas1p1dfd47a3438f2252211cf7daa82e2ac1e
+References: <CGME20230518074416eucas1p1dfd47a3438f2252211cf7daa82e2ac1e@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, May 15, 2023 at 09:00:33PM -0300, Jason Gunthorpe wrote:
+Commit adf8238ef403 ("ARM: dts: exynos: move exynos-bus nodes out of soc
+in Exynos4412") changed the order of the exynos-bus nodes, what results
+in different probe order of the Exynos Bus devices. Although the driver
+properly handles the deferred probe and all devices seems to be finally
+properly registered, this change revealed some kind of a bug related to
+PPMU counters registration and passive governor operation. Usually in 1
+of 10 boots this results in complete board freeze during loading of the
+kernel modules.
+
+To avoid that freeze, ensure that the Exynos PPMU driver is already
+loaded before the Exynos Bus driver starts probing.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+This is a follow-up of the following discussion:
+https://lore.kernel.org/all/d287ca9f-b056-d39a-aa93-b0e2cb279f73@linaro.org/
+---
+ drivers/devfreq/exynos-bus.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index 88414445adf3..245898f1a88e 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -518,6 +518,7 @@ static struct platform_driver exynos_bus_platdrv = {
+ };
+ module_platform_driver(exynos_bus_platdrv);
  
-> This is on github: https://github.com/jgunthorpe/linux/commits/iommu_all_defdom
++MODULE_SOFTDEP("pre: exynos_ppmu");
+ MODULE_DESCRIPTION("Generic Exynos Bus frequency driver");
+ MODULE_AUTHOR("Chanwoo Choi <cw00.choi@samsung.com>");
+ MODULE_LICENSE("GPL v2");
+-- 
+2.34.1
 
-Ran some VFIO-passthrough sanity on x86 and ARM64, using this
-branch. It should cover partially this series. So, if I may:
-
-Tested-by: Nicolin Chen <nicolinc@nvidia.com>
-
-Thanks
-Nic
-
-> v2:
->  - FSL is an IDENTITY domain
->  - Delete terga-gart instead of trying to carry it
->  - Use the policy determination from iommu_get_default_domain_type() to
->    drive the arm_iommu mode
->  - Reorganize and introduce new patches to do the above:
->     * Split the ops->identity_domain to an independent earlier patch
->     * Remove the UNMANAGED return from def_domain_type in mtk_v1 earlier
->       so the new iommu_get_default_domain_type() can work
->     * Make the driver's def_domain_type have higher policy priority than
->       untrusted
->     * Merge the set_platfom_dma_ops hunk from mtk_v1 along with rockchip
->       into the patch that forced IDENTITY on ARM32
->  - Revise sun50i to be cleaner and have a non-NULL internal domain
->  - Reword logging in exynos
->  - Remove the gdev from the group alloc path, instead add a new
->    function __iommu_group_domain_alloc() that takes in the group
->    and uses the first device. Split this to its own patch
->  - New patch to make iommufd's mock selftest into a real driver
->  - New patch to fix power's partial iommu driver
