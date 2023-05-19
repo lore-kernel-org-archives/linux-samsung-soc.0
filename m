@@ -2,54 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3A7C77B75
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 19 May 2023 19:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9FA3C77B7A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 19 May 2023 19:06:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229673AbjESTGx (ORCPT
+        id S229914AbjESTGz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 19 May 2023 15:06:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52388 "EHLO
+        Fri, 19 May 2023 15:06:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229643AbjESTGw (ORCPT
+        with ESMTP id S229807AbjESTGy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 19 May 2023 15:06:52 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42A9EE5C;
-        Fri, 19 May 2023 12:06:34 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-51190fd46c3so1338119a12.1;
-        Fri, 19 May 2023 12:06:34 -0700 (PDT)
+        Fri, 19 May 2023 15:06:54 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7A3510FC;
+        Fri, 19 May 2023 12:06:35 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-96f5685f902so226394366b.2;
+        Fri, 19 May 2023 12:06:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684523192; x=1687115192;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KIVD26O0XaIuTEjpysSAOudJibPoc4VOZbd4aMrlF9w=;
-        b=sDbR6BDkjWavH6129ai7vd/lD3LYmnz4KJaFT+gW1Ybic0sB8iPLtr6h5sbAnxDGkH
-         9k57dw8/oKGTFDtO/yucVJ1abbGpqV5rIwKPqbTpOcg98ofITN6fjTieXiQ8fcLo0hp4
-         kZmk/yfgq6q6VTPNMftz034qjjI9zPZK102TNfOW53We7J8TpeM+51PIFHhgzGDXPIiO
-         /d1uWodpKWLVOJuoGRXJ8/H1F48ksR0YAfHpSHb2LksravmGScX7nj7egUmV4utL5ciS
-         EDmye0bNg3lu6GnlGXTI8g7cbzob+qCbRT8gBoqYeOX+8FEU4PZYzqtqRP8/mDmY+i7t
-         SiNg==
+        d=gmail.com; s=20221208; t=1684523194; x=1687115194;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FoiF8G9Su5Au1q+xAlyfAZ9zrwZD9VyRtnMMrJygBro=;
+        b=KeNG10ieA7D2EeGNEIIhVMsiUPWBZQ6FZkLl7/eNk00j2FTsZECjFRuQ3UL190Y+Dt
+         A0amcIYrZZB50phLh31Re2iq71u7b5R2HzoHVKATVQ/M81efZ5AAirVN5H9zfBwMvSoZ
+         OCxdiyyMchzDXUkJghHtAPlhfddxQMvP2YFSgtIlmp3G7WUzsuoUcAwuDwzZxhF2VLQf
+         ttybHw0crpQ6sHLp1sZVkDKVN6B/T9oNPkNzDbOGrcFJpiPk0MzcRRU4dOmjwh5MPVFV
+         GfLhUz8knnn+xjv5U+odhsQp2A9ZowXTlPNI7biFBSi4rUo+BkLvTesyO6cyvUD+xunf
+         yh9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684523192; x=1687115192;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KIVD26O0XaIuTEjpysSAOudJibPoc4VOZbd4aMrlF9w=;
-        b=e3xaW8Sq+5NsS+XcMhifxo/l4HfDUVZ0xcFzBwdbvFtRKygwLKKvBg5IGj9Otw8LMl
-         WBZZyCwbbmS7qXeqJsDkUzgN1v6oHIzNuW/CAnta4/4W0AuXtKzZXn+FdicomhgKhVKk
-         DeuYKAmtBm8iTDlrFMsggie80cmCarnjUmVW4mJqVs83/DhbvtT0m58HdHU5K1pli2sY
-         /JqNxNQtXSU5155VFnZGBt/Er+afl5qcz8Je82vHpZ4xCdXYzIzHkaoRea3b2Yl+NDk3
-         O6grQKtx9Te+bIHgCv9aKOY+3lAYCHHNvrEWh8uM1VjtCICM3HZrW5y07ELe6QIbv+dx
-         9TQw==
-X-Gm-Message-State: AC+VfDyA5byqbgx3GiBPVofTJZTdNKCRms+q44Wi3NPe823VRpR70MKt
-        fDrXxfhyLu6pT75Eh6mJ5XQ0g3aQ+TE=
-X-Google-Smtp-Source: ACHHUZ4pZEx+JoDG795WwGZFFMH4+7+t90PIXJtaDtTh2nVqemSJoCGq/LuO4Xm+ysKz5iqlolFatQ==
-X-Received: by 2002:a17:907:1620:b0:94f:2b80:f3b4 with SMTP id hb32-20020a170907162000b0094f2b80f3b4mr2787388ejc.69.1684523191681;
-        Fri, 19 May 2023 12:06:31 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1684523194; x=1687115194;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FoiF8G9Su5Au1q+xAlyfAZ9zrwZD9VyRtnMMrJygBro=;
+        b=AzZzoZrEh/tYPloXMKtxI7zqFFWMyprF6AcQaR2un11iVxrdB8FPozC2bX3YGUX11B
+         w6Ba/FmZ7H28+oMld6LFbHgl6cpyS0aVUOFIJaWwPGRz5AXIndMxhIj5MHZscs9vunam
+         N9Qju9arwVkMEFOBO6iDYo1vM4wgl0q/DZBOWW5vMiQ+MNwcOb9cIifnmojDsGkR3Sv2
+         xAhROlA4o3Lin8oY/O7OzSeTMjqNiYvxiHjPE3CBFuW4JzLCYq0Okv3deOpi3/PHWr16
+         zsZm8VOPOrHhUinqtpO99/AMEp/UCqZeJWRpzpcOxV/eDigeLaRN+Q47wZYSmtloEb0m
+         nM0Q==
+X-Gm-Message-State: AC+VfDzGuBNOdaXNqjIOue+4pLY4A+/zt5todRuxRKohuSN3A5NF1kJt
+        C0o4EX/UC5ZA4U5miLEUhaE4GUerVBA=
+X-Google-Smtp-Source: ACHHUZ4wm6BeiL+mgp+txFVQb0ZcCQgL7XwjHq+ebYpqiLsJbjaZs/YOAyo3Xt/Zwu4JpG2uxlxb0Q==
+X-Received: by 2002:a17:907:1c1a:b0:96a:6c1:20a4 with SMTP id nc26-20020a1709071c1a00b0096a06c120a4mr3145679ejc.56.1684523194162;
+        Fri, 19 May 2023 12:06:34 -0700 (PDT)
 Received: from localhost.my.domain (83.11.222.198.ipv4.supernova.orange.pl. [83.11.222.198])
-        by smtp.gmail.com with ESMTPSA id q1-20020a17090609a100b0094f1b8901e1sm2624244eje.68.2023.05.19.12.06.30
+        by smtp.gmail.com with ESMTPSA id q1-20020a17090609a100b0094f1b8901e1sm2624244eje.68.2023.05.19.12.06.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 May 2023 12:06:31 -0700 (PDT)
+        Fri, 19 May 2023 12:06:33 -0700 (PDT)
 From:   Artur Weber <aweber.kernel@gmail.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -59,57 +60,66 @@ Cc:     Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht,
         Artur Weber <aweber.kernel@gmail.com>
-Subject: [PATCH 0/3] ARM: dts: samsung: Fix some typos in comments
-Date:   Fri, 19 May 2023 21:06:22 +0200
-Message-Id: <20230519190625.7844-1-aweber.kernel@gmail.com>
+Subject: [PATCH 2/3] ARM: dts: s3c64xx: Fix some typos in comments
+Date:   Fri, 19 May 2023 21:06:24 +0200
+Message-Id: <20230519190625.7844-3-aweber.kernel@gmail.com>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230519190625.7844-1-aweber.kernel@gmail.com>
+References: <20230519190625.7844-1-aweber.kernel@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Change 'specfic' to 'specific', 'optiosn' to 'options' and remove
-duplicated 'are listed' in DTSI heading comments. While we're at it,
-fix the s5pv210-pinctrl.dtsi header (seems like it was copied out of
-the main DTSI file and never changed to match the new contents).
-
-This patch has been split off from a patch in a separate series:
-"[PATCH v3 11/13] ARM: dts: exynos: Fix some typos in comments"
-https://lore.kernel.org/all/20230501195525.6268-12-aweber.kernel@gmail.com/
-It has been split into 3 separate commits: one for Exynos chips,
-one for s3c64xx and one for s5pv210.
+Change 'specfic' to 'specific'.
 
 Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+---
+ arch/arm/boot/dts/s3c6400.dtsi | 2 +-
+ arch/arm/boot/dts/s3c6410.dtsi | 2 +-
+ arch/arm/boot/dts/s3c64xx.dtsi | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Artur Weber (3):
-  ARM: dts: exynos: Fix some typos in comments
-  ARM: dts: s3c64xx: Fix some typos in comments
-  ARM: dts: s5pv210: Fix typo in comments, fix pinctrl header
-
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  4 ++--
- arch/arm/boot/dts/exynos3250.dtsi         |  2 +-
- arch/arm/boot/dts/exynos4.dtsi            |  2 +-
- arch/arm/boot/dts/exynos4210-pinctrl.dtsi |  4 ++--
- arch/arm/boot/dts/exynos4412.dtsi         |  2 +-
- arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |  4 ++--
- arch/arm/boot/dts/exynos5.dtsi            |  2 +-
- arch/arm/boot/dts/exynos5250-pinctrl.dtsi |  4 ++--
- arch/arm/boot/dts/exynos5250.dtsi         |  2 +-
- arch/arm/boot/dts/exynos5260-pinctrl.dtsi |  2 +-
- arch/arm/boot/dts/exynos5410.dtsi         |  2 +-
- arch/arm/boot/dts/exynos5420-pinctrl.dtsi |  2 +-
- arch/arm/boot/dts/exynos5420.dtsi         |  2 +-
- arch/arm/boot/dts/exynos5800.dtsi         |  2 +-
- arch/arm/boot/dts/s3c6400.dtsi            |  2 +-
- arch/arm/boot/dts/s3c6410.dtsi            |  2 +-
- arch/arm/boot/dts/s3c64xx.dtsi            |  2 +-
- arch/arm/boot/dts/s5pv210-pinctrl.dtsi    | 12 ++++--------
- arch/arm/boot/dts/s5pv210.dtsi            |  2 +-
- 19 files changed, 26 insertions(+), 30 deletions(-)
-
-
-base-commit: fd811cce9b92635799ba5c6de657e4a53c68adf6
+diff --git a/arch/arm/boot/dts/s3c6400.dtsi b/arch/arm/boot/dts/s3c6400.dtsi
+index 8c28e8a0c824..7cc785a63866 100644
+--- a/arch/arm/boot/dts/s3c6400.dtsi
++++ b/arch/arm/boot/dts/s3c6400.dtsi
+@@ -5,7 +5,7 @@
+  * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
+  *
+  * Samsung's S3C6400 SoC device nodes are listed in this file. S3C6400
+- * based board files can include this file and provide values for board specfic
++ * based board files can include this file and provide values for board specific
+  * bindings.
+  *
+  * Note: This file does not include device nodes for all the controllers in
+diff --git a/arch/arm/boot/dts/s3c6410.dtsi b/arch/arm/boot/dts/s3c6410.dtsi
+index a766d6de696c..13e9cc69b8a8 100644
+--- a/arch/arm/boot/dts/s3c6410.dtsi
++++ b/arch/arm/boot/dts/s3c6410.dtsi
+@@ -5,7 +5,7 @@
+  * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
+  *
+  * Samsung's S3C6410 SoC device nodes are listed in this file. S3C6410
+- * based board files can include this file and provide values for board specfic
++ * based board files can include this file and provide values for board specific
+  * bindings.
+  *
+  * Note: This file does not include device nodes for all the controllers in
+diff --git a/arch/arm/boot/dts/s3c64xx.dtsi b/arch/arm/boot/dts/s3c64xx.dtsi
+index c03df6355500..0b59135ffe88 100644
+--- a/arch/arm/boot/dts/s3c64xx.dtsi
++++ b/arch/arm/boot/dts/s3c64xx.dtsi
+@@ -6,7 +6,7 @@
+  *
+  * Samsung's S3C64xx SoC series device nodes are listed in this file.
+  * Particular SoCs from S3C64xx series can include this file and provide
+- * values for SoCs specfic bindings.
++ * values for SoCs specific bindings.
+  *
+  * Note: This file does not include device nodes for all the controllers in
+  * S3C64xx SoCs. As device tree coverage for S3C64xx increases, additional
 -- 
 2.40.1
 
