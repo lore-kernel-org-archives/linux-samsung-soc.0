@@ -2,135 +2,132 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3923AC77B7A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 19 May 2023 15:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC7FC7EE26
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 19 May 2023 18:29:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230440AbjESPj4 (ORCPT
+        id S229612AbjESS3A (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 19 May 2023 11:39:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57144 "EHLO
+        Fri, 19 May 2023 14:29:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbjESPjz (ORCPT
+        with ESMTP id S229675AbjESS27 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 19 May 2023 11:39:55 -0400
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2063.outbound.protection.outlook.com [40.107.101.63])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C22E1A5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 May 2023 08:39:53 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Qtuels8XDCJqgfgBWP8C9mlDYe0F2MAEYjzwA6Z89KpPAubnNYJpOiGeqY8B1nNT6lyL/kRC2+9Z+V6ToaRzqeNtYiOTodNJolEn1svTy3vjdHTFEHd98nz9OElg+0WYiEarBVMdDgVcA2UvrhEePwjItmhN/V/PzqCSMypMiNU6LAWfA53+86qFXyVihSiU1rJJ8UROeaumWbV1lQ9CeD7hr6NAsPLn61hkSkvy4OaOx0nlHszS+Y4LwAk+l35/1witZn3QyzbqMx3naCQ5aFxGB+DFIrJBXZQLFLaIJfzAvsM65BjpmiqHMjpoj7AdfKe7WdbdiEqUrssi9mNvZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cfmfe01kbpnLfdKNLmKP2ZMP7CaU0Ku6Jsi22KlHWF0=;
- b=anYnRzYHHL18Q2cBfZm1zvPMHoA6flc+J7MCe4Syk6HBNHU5HnYJZgP2mbWqv0ptD5YocDBffpv0IE/PzpmM2A2n2gqyqneTk4GYktZiZWmuQC7qq+Zci/BBqq/gqacqbG9UVLbILFzMwrJ3zPIghs2DIclo1H6SuNmBO7E4Tq6rcb/rfjkpODP/IEddEbbwZXAknqfcUtUwO2te3pNzZgJRSyn5nR1Hb+Cyx3DRFJb2Xf/mnvxZpeqv3UYSo1X7pbs7op7low/yVmoU51wvtEPg0kys+DzpMlnyDV92WrC/xd6/MOq0+9sHnLjCx51gxl+P0zfoUmsFereFvrCtjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cfmfe01kbpnLfdKNLmKP2ZMP7CaU0Ku6Jsi22KlHWF0=;
- b=R7fbjvf/LoRHPk5UuGvbvpFEQGCB1n54Ctj2LEfzHTV6FW73x0qWFIF+5kvcdFadpZHmALpz3+lMOtVErPzJjhPdHQTXrdi8bO1gvhcyK4GYLHxVD732tqu/1rinpzMPvyX6Fr0FO1HvQXMdTiMjmzixsa8XFx6FWf5q/ALnbwZjKkNgh5bTvl2aNgOhrSBxT7+W6xs7Yt/wp9W1+YeHPGglQRfENki1ZWBOH+8NUDr1ekZIloBxOTxRSdN5+nh33fJbWq46szY5XdBkbQHu0GtdYobhBExySlJaQ9dEUhbf3xawg/rSRkm6u1f2QxxuP0u9UhW0n5h1rrU1jRrGPQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
- by CH3PR12MB9250.namprd12.prod.outlook.com (2603:10b6:610:1ae::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6411.21; Fri, 19 May
- 2023 15:39:49 +0000
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::f7a7:a561:87e9:5fab%6]) with mapi id 15.20.6411.021; Fri, 19 May 2023
- 15:39:49 +0000
-Date:   Fri, 19 May 2023 12:39:47 -0300
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Alim Akhtar <alim.akhtar@samsung.com>, iommu@lists.linux.dev,
-        Joerg Roedel <joro@8bytes.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Fri, 19 May 2023 14:28:59 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75EF21A1;
+        Fri, 19 May 2023 11:28:58 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-96aae59bbd6so678884066b.3;
+        Fri, 19 May 2023 11:28:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684520937; x=1687112937;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WlvvDrxI+8RIoRlqGPQtu1ddIFRRsxtK/LYB4K1t6K8=;
+        b=N/cEBGaYZ08QnrzSQmmg9MF9G6mNibaGTIF7Xyf/hkjz3yE2Jp11UAx2+rYdMN4gDM
+         jkUycYMykO5k8VLewS95pKAjkBEAWqww4BnjEU/vH6puyWuva4MM7LyvbnEpJ8eaa9DI
+         7b8rK+zVTZuz5jBnVmRwO+CMGdZR891zOaQL9kOwypl6IVIUoRpHqlCCDQ/3KBqo0aXo
+         7QLRuNHpPAer+F2uh/9hOcbeMj9RhQ4vnPsuE+cYMWOMxhNLM5Acor/2tCQS8ofXjFq7
+         rlvX+uOiOaAGj5hhApAKpNOmvVDmAi/amGY7RIS8L7IawZjiZ1SFdU9oaou36teJVhOI
+         2wkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684520937; x=1687112937;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WlvvDrxI+8RIoRlqGPQtu1ddIFRRsxtK/LYB4K1t6K8=;
+        b=OVUXXj26+P1JPxCHLRiY0eaUlyffA2hNo73DozavFpU/nHIMKccmQ+oo10VREDs8Lq
+         4K5mSZioTBsL6vZGnfbtBNovE1AL8CgOXEbp2KGXm27+OenLUrzUbwwh2dwk/1D9h2H4
+         /xZxaSWN3Msaq9Yullt376WBpqEwpwLU1yHm2Y/sXrWnI00osmdZ8MGR4QzBg0Q6J5Im
+         dt99ojBeGMTMmatPJAooLHQuKiGPbKM5TipIfqLz7MSEtmfBHp58QhtpXfuJc9FQajEb
+         K6o+3oWkNsDcs22h9K7FcMwWNq+ttvVWHyO1k59m8ETKrdcuZsuBU63R+67PI8iJtjFR
+         fQ5Q==
+X-Gm-Message-State: AC+VfDzRAs8CXcN9+l4ifR/B88TUD3QEUfob2b9a07Ou2uvt2h0f6lSK
+        kQP2/QbD2qkr3Sh9AU/C2mk=
+X-Google-Smtp-Source: ACHHUZ4R5YD3cMgV+tRC5UioVf2DwYIMuBKxYzGkAv6uLyu7ptlFV1obSOW7EKeU7d++ICsSSTMLXg==
+X-Received: by 2002:a17:907:72c5:b0:96f:5f44:ea02 with SMTP id du5-20020a17090772c500b0096f5f44ea02mr2615072ejc.8.1684520936856;
+        Fri, 19 May 2023 11:28:56 -0700 (PDT)
+Received: from localhost.my.domain (83.11.222.198.ipv4.supernova.orange.pl. [83.11.222.198])
+        by smtp.gmail.com with ESMTPSA id u27-20020a170906069b00b0094f7744d135sm2597897ejb.78.2023.05.19.11.28.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 May 2023 11:28:56 -0700 (PDT)
+From:   Artur Weber <aweber.kernel@gmail.com>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>, linux-media@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [PATCH] iommu/exynos: Implement an IDENTITY domain
-Message-ID: <ZGeYQ6DAca6ujN18@nvidia.com>
-References: <0-v1-9bede1ab3a9b+15-exynos-identity_jgg@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0-v1-9bede1ab3a9b+15-exynos-identity_jgg@nvidia.com>
-X-ClientProxiedBy: BL6PEPF00013E0C.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:22e:400:0:1001:0:e) To LV2PR12MB5869.namprd12.prod.outlook.com
- (2603:10b6:408:176::16)
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH] media: Revert "media: exynos4-is: Remove dependency on obsolete SoC support"
+Date:   Fri, 19 May 2023 20:28:53 +0200
+Message-Id: <20230519182853.3836-1-aweber.kernel@gmail.com>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|CH3PR12MB9250:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1297e802-598f-4382-3cde-08db587f47ad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: WQOD5QeHtvPoozgQhuOd9qdaF+8WpaZ0gSOdEeHK7n07PGnqIhaxsaUCKRzSj3MFqbI/lHZBH1kRt8x9LtUXLnlpBbYLmSKSKPIH42kN/3jHe7u+REzzCLm7W94J9B9glE1teauY4dvSzLJcTpG7Y3eJw9Y+67cumISC9s89yZbBQdjvwhsCbgNJkC/8QDj4PL6PiUYOLjdlvbtIyjBEQoY5c/0/xFiKiM2EdaNAfFRJ7ChzUAkIy1U3N8Ch5KGP7U3r3HbO7WXtjPpUFkw0k/VMR5Ij25pUiHmGdBBSelJym19C+NN1khxzTIgeEHnSqkYz/7lF7/BgIHrQui3YfrG0B6MDqCRjJrllXNOjorQcMiZQApYPxiUG1JEZvk9wBtD2hax+fVC1sEmr392DVogS1M5Hu0ZZwm1tXV5vHEexaozsZcFR3E8Ts1uhaVRUdS+ZjhXvBOgWzOc4oDPnoDHNtJG8ISdJ2+hF4dVh++ThFRGcQmFgLOYHybPHmadPhQXznwZXR6Ye91YJx2gOzQ3YvbttgES4QdyphYcEA9yCavzdx/aRrxKbTlty/VTMvpByIW7+rgcVpODUcLfSOMwEo/nQNmMddZgYMJA5LgU=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(366004)(39860400002)(346002)(376002)(136003)(451199021)(66556008)(66946007)(66476007)(186003)(110136005)(8676002)(478600001)(8936002)(5660300002)(41300700001)(316002)(2616005)(38100700002)(83380400001)(6486002)(966005)(26005)(6512007)(6506007)(86362001)(2906002)(4744005)(36756003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?naitvCyEloMzyFjR3tKSuHeRua+bYqwuKOHHSNJqR3ck1NWcnjQI9gVCOH9F?=
- =?us-ascii?Q?TjYqvG4afNPjO+Zdtzu6XyZRdv82GMx2+sZJwQkqxpv0DniGfJPmGHYfxRea?=
- =?us-ascii?Q?vBWD3MuUOR1+ct7UgWN50NGXf5OgYR4yHxUigdw0bem3S+k9qJEvm/VWzxhe?=
- =?us-ascii?Q?o/oR/P6KcCoAdqbJlXVpRUcYS+JYeCP1dtf7aYtYH3VvAaNtxOJmoE1dd81c?=
- =?us-ascii?Q?wKGguEanYKEVNWqPcbNrnu8B/1j9C4gEVGAEERDU8vMdDgBXtmjUquWuId7+?=
- =?us-ascii?Q?5jqWAbiWuxiYzmUPXJmnhlHCT3KOp137a2Ox1xNFF/ghJ06hIAsTisng/uWb?=
- =?us-ascii?Q?/BQXfP3FHijCdyWDwHn0CD/BkLodKeT4y7PEzlMq8HBVkxBxRmqw2emNEKaT?=
- =?us-ascii?Q?EchpshYtBEWQpdy7r3w44KkSlsMlPUKHJqUgu8aAeSIEVYnyH1CmrtIQVceU?=
- =?us-ascii?Q?PUjdOMBCYurZLrYAhHxOA3msF3VlQQxcDgqdd2NKUGL5gqkscNYPwzCMYff8?=
- =?us-ascii?Q?wsDb1pRKdcBVtc8JmuDDsvzkQ8Oun14w2us4RikyTqwPNLm7ybeX3MpmMev1?=
- =?us-ascii?Q?8s8lzahPXspffKRC8OP4V8RDr7h4zidJKrxLPdKHqaKJg9O8D25fcuoYEO/7?=
- =?us-ascii?Q?fAJ5r3knVbP1aSgRcjD+fwza+oOhvCJ/D4TXdHNdJq/C2Vh4omz4kqW9kjuj?=
- =?us-ascii?Q?DpPtUOfjAnHLU5dx8baMn5Kw1ejksqLuxPZdYXgnTudqJT3syiLCqGWLRueO?=
- =?us-ascii?Q?Yhrx57bJZpVcNQWnrIlBrLIjJFswoFKAN0OQKq2gw/GtWJBHRKiLnTLRRTjI?=
- =?us-ascii?Q?MUxokPMU4aCJT5S/OFw9yq/wIyHdEEIJeDzpTlSj+JRBcZEHhJZSiUUrluje?=
- =?us-ascii?Q?Kv3Ht945ZMCG73mF7KrUQioTayBmmEvFhXtNjKyI6e37fQl3lfnZ2HEMQSt5?=
- =?us-ascii?Q?25z4RJgHluqvr5WE/j8i8qmt71EG2wr5uL5HBX5Q7oTb0bQ8i4laSIrmgKf+?=
- =?us-ascii?Q?Vs5rY6+o8Nd4o/VuUnwDTIuhnt9WXcxlkPkLHDGTDs3opRa7ra9YjT6b9706?=
- =?us-ascii?Q?dm8bF5rYd3myWBkm+p3H6wY17qBkcF6sEc3lEG/c3kqmBPE2Pfk6wI1g8Iou?=
- =?us-ascii?Q?+3uvspG5/7KwWeB98bjzdIyEL2JK82inftfvQGbZUtUHQZDDxNzbPypdFdjN?=
- =?us-ascii?Q?/lFkv9JGjpKU8KoB5Y0N0wyMH4mMZJLLfVsxAtCWBWwcZKL8/D3cXrTHbEbv?=
- =?us-ascii?Q?n1l9ZT5prUC2k0xgh2wHfsfIizdfF8cRPKPT1KbhrYtylk+e5qA6jgyU22rW?=
- =?us-ascii?Q?uns9gOV4AqSbbGViTWv50VsBR3NiTQ8T5aC4SK51Xcnbm+SBQBNZqXNEZ6JI?=
- =?us-ascii?Q?LPuJ8FkYSbBMybJQUnylU/Yus8K306s2V2gXq8PaFQdmosW3mO/GesgTjWKn?=
- =?us-ascii?Q?zBOxKiVKSRz03IQrZggO0pM/djqIhTjZq3z7H2IxZTlOQ7IDdE16zh7TAVs/?=
- =?us-ascii?Q?aDvPZme5oll59IXRRDQxg378IfcoDiDhoRgOg9WFP6L81kp8U3kJjJQ24OkV?=
- =?us-ascii?Q?f7q0NqzJizRrDgt6miBWY7/rjAvqePWIiKZxXmIn?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1297e802-598f-4382-3cde-08db587f47ad
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 May 2023 15:39:49.1351
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: smAbQzxskIts6sm6LtdwEyDh17l9UQ0ehOJwpHOLYsNaN+01IqJ/KrDTE2K4Hn7s
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9250
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Apr 06, 2023 at 08:42:57PM -0300, Jason Gunthorpe wrote:
-> What exynos calls exynos_iommu_detach_device is actually putting the iommu
-> into identity mode. Instead of having a translation mode that is invisible
-> to the core code implement it as an actual IDENTITY domain.
-> 
-> On ARM64 this will allow the IDENTITIY dma iommu mode to work, and on
-> ARM32 this clarifies what set_platform_dma_ops is actually doing.
-> 
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> ---
->  drivers/iommu/exynos-iommu.c | 67 ++++++++++++++++++++++--------------
->  1 file changed, 42 insertions(+), 25 deletions(-)
-> 
-> Marek, as requested here is that patch on top of your stuff that went to rc
+Support for the Exynos4212 SoC was originally dropped as there were
+no boards using it. We will be adding a device that uses it, so add
+it back.
 
-Just for clarity this patch was superseded by this series where it is patch
-10:
+This reverts commit 2d41a0c9ae51ac363d107f2510022106e7234b33.
 
-https://lore.kernel.org/linux-iommu/0-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+---
+This patch has been split off from the following series:
+"[PATCH v3 00/13] Re-introduce Exynos4212 support and add Samsung
+Galaxy Tab 3 8.0 boards"
+https://lore.kernel.org/all/20230501195525.6268-1-aweber.kernel@gmail.com/
+---
+ drivers/media/platform/samsung/exynos4-is/Kconfig     | 2 +-
+ drivers/media/platform/samsung/exynos4-is/fimc-core.c | 2 +-
+ drivers/media/platform/samsung/exynos4-is/fimc-lite.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Jason
+diff --git a/drivers/media/platform/samsung/exynos4-is/Kconfig b/drivers/media/platform/samsung/exynos4-is/Kconfig
+index da33faa7132e..7f9ba053dd8e 100644
+--- a/drivers/media/platform/samsung/exynos4-is/Kconfig
++++ b/drivers/media/platform/samsung/exynos4-is/Kconfig
+@@ -47,7 +47,7 @@ config VIDEO_S5P_MIPI_CSIS
+ config VIDEO_EXYNOS_FIMC_LITE
+ 	tristate "EXYNOS FIMC-LITE camera interface driver"
+ 	depends on I2C
+-	depends on SOC_EXYNOS4412 || SOC_EXYNOS5250 || COMPILE_TEST
++	depends on SOC_EXYNOS4212 || SOC_EXYNOS4412 || SOC_EXYNOS5250 || COMPILE_TEST
+ 	depends on HAS_DMA
+ 	select VIDEOBUF2_DMA_CONTIG
+ 	select VIDEO_EXYNOS4_IS_COMMON
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-core.c b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
+index a2034ade8b9e..976b4f747ad4 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-core.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
+@@ -1128,7 +1128,7 @@ static const struct fimc_drvdata fimc_drvdata_exynos4210 = {
+ 	.out_buf_count	= 32,
+ };
+ 
+-/* EXYNOS4412 */
++/* EXYNOS4212, EXYNOS4412 */
+ static const struct fimc_drvdata fimc_drvdata_exynos4x12 = {
+ 	.num_entities	= 4,
+ 	.lclk_frequency	= 166000000UL,
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-lite.c b/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
+index 24b3dda26714..c3146ae08447 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
+@@ -1621,7 +1621,7 @@ static const struct dev_pm_ops fimc_lite_pm_ops = {
+ 			   NULL)
+ };
+ 
+-/* EXYNOS4412 */
++/* EXYNOS4212, EXYNOS4412 */
+ static struct flite_drvdata fimc_lite_drvdata_exynos4 = {
+ 	.max_width		= 8192,
+ 	.max_height		= 8192,
+
+base-commit: a23a3041c733e068bed5ece88acb45fe0edf0413
+-- 
+2.40.1
+
