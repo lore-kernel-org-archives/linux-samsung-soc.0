@@ -2,60 +2,134 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 357CAC77B7A
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 20 May 2023 08:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A48E8C7EE2F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 May 2023 12:25:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230284AbjETIy4 (ORCPT
+        id S233309AbjEVMZk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 20 May 2023 04:54:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36822 "EHLO
+        Mon, 22 May 2023 08:25:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229595AbjETIyz (ORCPT
+        with ESMTP id S233694AbjEVMYo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 20 May 2023 04:54:55 -0400
-X-Greylist: delayed 86702 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 20 May 2023 01:54:51 PDT
-Received: from mail.corrib.pl (mail.corrib.pl [185.58.226.145])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A93BE198
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 20 May 2023 01:54:51 -0700 (PDT)
-Received: by mail.corrib.pl (Postfix, from userid 1001)
-        id C95FAA567F; Fri, 19 May 2023 09:06:19 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=corrib.pl; s=mail;
-        t=1684483599; bh=85MOfYTjIHwki6Ys5IeFKzEzX5V7umZoL3TytLG0W/k=;
-        h=Date:From:To:Subject:From;
-        b=FM+BxS1BBMDSmq3e+r/F2l1tdSH8ltvJzP25Sbhx2qXhupyq50HCT1mGq1xwweX94
-         JGlFC0SJaP97O1gT5+HGa8c/+359MwEf/GwY14Q8QPFqO52dGuPgvIic1JpNYa7Arp
-         yKxD2R+7nnXRZdTXlyK4jY53w7zUow3hYl/y5ohtOyT+hkFSjZSHULi6JmKSmWpDvf
-         JrDdU9IEkIFxvXHnJhUn80dCTH0NqJu7PceYqY91/ew6b5XaXbfsBh48kNnyrCBqNo
-         T1eyXkdURC+iYgwXB2ftcTnl5qpxfl+Rn7h9slGjZiRo66sh1+g1QTGYFS+YrABZNc
-         Q8rSleA26yDpQ==
-Received: by mail.corrib.pl for <linux-samsung-soc@vger.kernel.org>; Fri, 19 May 2023 08:06:12 GMT
-Message-ID: <20230519074500-0.1.7b.ofbj.0.t9nhd62ub2@corrib.pl>
-Date:   Fri, 19 May 2023 08:06:12 GMT
-From:   "Szczepan Andryszczuk" <szczepan.andryszczuk@corrib.pl>
-To:     <linux-samsung-soc@vger.kernel.org>
-Subject: Faktoring
-X-Mailer: mail.corrib.pl
+        Mon, 22 May 2023 08:24:44 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E1D635AF;
+        Mon, 22 May 2023 05:22:38 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 7B6FE1FECD;
+        Mon, 22 May 2023 12:21:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1684758104; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=uiYTGLoGZBNir0OiYcExL2dl4KpON0koS7GTXu2ItZk=;
+        b=W+CjfatBINoDRSTUoiaknEaCb3dxbit6y39VCc0SS9ZVPbvP4j3PHfaTH+MD7omEI+vVVU
+        cX4+EyFDWiHKEElvRKyygDPLIBheM5ABkbP2NMki/ZjpIVGsMb8BcBiElcDfpZ/JbTQ1Jd
+        /+tZVKz4Jrr/yn2LeF51ZWMr6Lw3z8E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1684758104;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=uiYTGLoGZBNir0OiYcExL2dl4KpON0koS7GTXu2ItZk=;
+        b=Xh0lEFl/3kiFKR4xsKnIEgslEleMZBb5rjwMD82Ylx6x4fmuIDQK2czVyr/9yzkZlhI1m+
+        voDgMq/s+RxC/SBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2E0CB13776;
+        Mon, 22 May 2023 12:21:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id eOZBClhea2RYVAAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Mon, 22 May 2023 12:21:44 +0000
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     daniel@ffwll.ch, airlied@gmail.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        javierm@redhat.com, sam@ravnborg.org
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v3 06/12] drm/fbdev-dma: Use regular fbdev I/O helpers
+Date:   Mon, 22 May 2023 14:21:34 +0200
+Message-Id: <20230522122140.30131-7-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230522122140.30131-1-tzimmermann@suse.de>
+References: <20230522122140.30131-1-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Use the regular fbdev helpers for framebuffer I/O instead of DRM's
+helpers. Fbdev-dma does not use damage handling, so DRM's fbdev helpers
+are mere wrappers around the fbdev code.
 
-rozwa=C5=BCali Pa=C5=84stwo wyb=C3=B3r finansowania, kt=C3=B3re spe=C5=82=
-ni potrzeby firmy, zapewniaj=C4=85c natychmiastowy dost=C4=99p do got=C3=B3=
-wki, bez zb=C4=99dnych przestoj=C3=B3w?=20
+By using fbdev helpers directly within each DRM fbdev emulation,
+we can eventually remove DRM's wrapper functions entirely.
 
-Przygotowali=C5=9Bmy rozwi=C4=85zania faktoringowe dopasowane do Pa=C5=84=
-stwa bran=C5=BCy i wielko=C5=9Bci firmy, dzi=C4=99ki kt=C3=B3rym, nie mus=
-z=C4=85 Pa=C5=84stwo martwi=C4=87 si=C4=99 o niewyp=C5=82acalno=C5=9B=C4=87=
- kontrahent=C3=B3w, poniewa=C5=BC transakcje s=C4=85 zabezpieczone i posi=
-adaj=C4=85 gwarancj=C4=99 sp=C5=82aty.=20
+v2:
+	* use FB_SYS_HELPERS option
 
-Chc=C4=85 Pa=C5=84stwo przeanalizowa=C4=87 dost=C4=99pne opcje?
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+---
+ drivers/gpu/drm/Kconfig         |  1 +
+ drivers/gpu/drm/drm_fbdev_dma.c | 12 +++++++-----
+ 2 files changed, 8 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+index ba3fb04bb691..77fb10ddd8a2 100644
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -223,6 +223,7 @@ config DRM_TTM_HELPER
+ config DRM_GEM_DMA_HELPER
+ 	tristate
+ 	depends on DRM
++	select FB_SYS_HELPERS if DRM_FBDEV_EMULATION
+ 	help
+ 	  Choose this if you need the GEM DMA helper functions
+ 
+diff --git a/drivers/gpu/drm/drm_fbdev_dma.c b/drivers/gpu/drm/drm_fbdev_dma.c
+index 728deffcc0d9..09a36dc38c43 100644
+--- a/drivers/gpu/drm/drm_fbdev_dma.c
++++ b/drivers/gpu/drm/drm_fbdev_dma.c
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: MIT
+ 
++#include <linux/fb.h>
++
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_drv.h>
+ #include <drm/drm_fb_helper.h>
+@@ -64,12 +66,12 @@ static const struct fb_ops drm_fbdev_dma_fb_ops = {
+ 	.owner = THIS_MODULE,
+ 	.fb_open = drm_fbdev_dma_fb_open,
+ 	.fb_release = drm_fbdev_dma_fb_release,
+-	.fb_read = drm_fb_helper_sys_read,
+-	.fb_write = drm_fb_helper_sys_write,
++	.fb_read = fb_sys_read,
++	.fb_write = fb_sys_write,
+ 	DRM_FB_HELPER_DEFAULT_OPS,
+-	.fb_fillrect = drm_fb_helper_sys_fillrect,
+-	.fb_copyarea = drm_fb_helper_sys_copyarea,
+-	.fb_imageblit = drm_fb_helper_sys_imageblit,
++	.fb_fillrect = sys_fillrect,
++	.fb_copyarea = sys_copyarea,
++	.fb_imageblit = sys_imageblit,
+ 	.fb_destroy = drm_fbdev_dma_fb_destroy,
+ 	.fb_mmap = drm_fbdev_dma_fb_mmap,
+ };
+-- 
+2.40.1
 
-Pozdrawiam
-Szczepan Andryszczuk
