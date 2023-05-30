@@ -2,91 +2,109 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC69C77B73
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 May 2023 08:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69057C7EE23
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 May 2023 12:14:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229715AbjE3IXu (ORCPT
+        id S229691AbjE3MOZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 30 May 2023 04:23:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39180 "EHLO
+        Tue, 30 May 2023 08:14:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229866AbjE3IXu (ORCPT
+        with ESMTP id S229535AbjE3MOY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 May 2023 04:23:50 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 780B1A8
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 May 2023 01:23:48 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-5149e65c244so2583902a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 May 2023 01:23:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685435027; x=1688027027;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TEsCzUKSiWVPPeknX8+hByIEVhGsGzHD1pGEFygRlm0=;
-        b=yHkjqm6ZHURHd1iLB6RZaj1hr/1jGTO4fLwdJmhCGxP4nAi0F+82GDhjBlxu/x4awz
-         EC6P93u/SwhmNHuqMhQ20RxC/hbCTgh83UUE0AFMNtj09Z4WpL0yBGsQNlvn1f/xcLRS
-         ctLNZTr8h16/XgeEKXi+uR4AC2id7jw2sBkyvwS686gjIYasDH3F5y6iztqiCb6LM/mg
-         2o7EA/ubDoW0/+rboSm0KnLsWaOaEI6+5+pDWLM/KH6Ye3+Hou33RWfDQYdWs7gHhiCu
-         0Kq24zjtRqpRf2NR1I4Xy9IBYHX+QUhmYTj26SXbO2J2D1kOPJfibzxpCT5DbX0aZkmM
-         cT7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685435027; x=1688027027;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TEsCzUKSiWVPPeknX8+hByIEVhGsGzHD1pGEFygRlm0=;
-        b=Z2VYFuRVg6ZZcmCmpukrhBafMDUtDA3njMVx2odD66uJsQ84LNtne5R7pKbmEQpFWM
-         zRO4adiuNgIe6+QBkJkY5l1FsutCOy+UZyqRlUIr/w+9TvZTPaaB6w8s995XCdpmZ+2k
-         iHMmVKDHfdlUfJuzsFRhS/qNNWs/DaRBY8pnM7BBfldxdGMryjnRKJ0oMFD2wQXOsjAu
-         VrBLQAhBy2K0WYfeuq5Zm9XTHSSmpR21rZ4Oc+ChJOzayeaRncql6MjB9WqKuqPm4gYl
-         jB2rKfqc8kblNtkuPBkfcBx8apvT621OKuRPoxd0+CFMJzv5rH+u4zdwMbkQRuqfgmmH
-         yjyQ==
-X-Gm-Message-State: AC+VfDyN6fO/dmnO9oDOwZcKkKUJA4p9eG62CBh9Gn+PDeELarXuhRyO
-        7Of+F6GL4YLcFdJQZYCkImUXww==
-X-Google-Smtp-Source: ACHHUZ4zcOrrGMPmlUr6NKJLi2DZ5iSiufjm7KVQzwH4izaGU1dSOp48sGNxfFgbWF9FA9U83053Zg==
-X-Received: by 2002:a17:907:724b:b0:96a:316f:8abf with SMTP id ds11-20020a170907724b00b0096a316f8abfmr1563256ejc.20.1685435026889;
-        Tue, 30 May 2023 01:23:46 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.199.204])
-        by smtp.gmail.com with ESMTPSA id le8-20020a170907170800b0096f803afbe3sm7026896ejc.66.2023.05.30.01.23.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 May 2023 01:23:46 -0700 (PDT)
-Message-ID: <df3a0493-5602-a015-4fb0-d27e938f6003@linaro.org>
-Date:   Tue, 30 May 2023 10:23:44 +0200
+        Tue, 30 May 2023 08:14:24 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 478849D
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 May 2023 05:14:23 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1q3yF3-0002nP-KM; Tue, 30 May 2023 14:14:21 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1q3yF0-003s3C-IG; Tue, 30 May 2023 14:14:18 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1q3yEz-009UQV-Qm; Tue, 30 May 2023 14:14:17 +0200
+Date:   Tue, 30 May 2023 14:14:17 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de,
+        patches@opensource.cirrus.com,
+        Russell King <linux@armlinux.org.uk>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: s3c: Switch i2c drivers back to use .probe()
+Message-ID: <20230530121417.dmow3dhajwv5wo3o@pengutronix.de>
+References: <20230526214003.2134595-1-u.kleine-koenig@pengutronix.de>
+ <168543271188.12093.7915373684614866148.b4-ty@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] media: Revert "media: exynos4-is: Remove dependency on
- obsolete SoC support"
-Content-Language: en-US
-To:     Artur Weber <aweber.kernel@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-References: <20230519182853.3836-1-aweber.kernel@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230519182853.3836-1-aweber.kernel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dhbsszq3h2drxvgm"
+Content-Disposition: inline
+In-Reply-To: <168543271188.12093.7915373684614866148.b4-ty@linaro.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 19/05/2023 20:28, Artur Weber wrote:
-> Support for the Exynos4212 SoC was originally dropped as there were
-> no boards using it. We will be adding a device that uses it, so add
-> it back.
-> 
-> This reverts commit 2d41a0c9ae51ac363d107f2510022106e7234b33.
-> 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 
+--dhbsszq3h2drxvgm
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Tue, May 30, 2023 at 09:45:48AM +0200, Krzysztof Kozlowski wrote:
+>=20
+> On Fri, 26 May 2023 23:40:03 +0200, Uwe Kleine-K=F6nig wrote:
+> > After commit b8a1a4cd5a98 ("i2c: Provide a temporary .probe_new()
+> > call-back type"), all drivers being converted to .probe_new() and then
+> > 03c835f498b5 ("i2c: Switch .probe() to not take an id parameter")
+> > convert back to (the new) .probe() to be able to eventually drop
+> > .probe_new() from struct i2c_driver.
+> >=20
+> >=20
+> > [...]
+>=20
+>=20
+> Fixed checkpatch issue in commit and applied. Please don't skip checkpatc=
+h on
+> your submissions.
+>=20
+> Applied, thanks!
+>=20
+> [1/1] ARM: s3c: Switch i2c drivers back to use .probe()
+>       https://git.kernel.org/krzk/linux/c/ca027ae58eaab3632966158ce440a7f=
+50da52bef
 
-Best regards,
-Krzysztof
+I'm aware checkpatch wanted another "commit" but I didn't add it
+consciously because it sounds strange in my (German) ear. *shrug*
 
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--dhbsszq3h2drxvgm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmR16JgACgkQj4D7WH0S
+/k7Dowf+NzChdEN1xHLrRexUX5BP7aVbq7d7P17DCXlCkwCcNrRH15Q3iq+83EG1
+gyybZZBErRsVytw0+eVVPgfUGe6A8AVFpET8hWC5AMfSKosYXVIYfATFq1KjJUOT
+UFbqH8y/esStCHEIdbfADiQjG8Mxs1UNUVNvgGNZSDv5kizQeMtdc4ZlmTH9Z3DJ
+CIt9UOTOQ1iCG8MxHggkArC4sywTNUvv/spyoTcwpxSxCLZc3QHAjatOCivphdS2
+X+jVU66Wnlr+h05+SJRfaq1HW94q2PnCAPqOlYY71P5xA7FAPHPw8d2UBiAJp68I
+R7m36IW2zWLQXCvTgSboozXmps/++g==
+=Z40u
+-----END PGP SIGNATURE-----
+
+--dhbsszq3h2drxvgm--
