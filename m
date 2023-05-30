@@ -2,70 +2,71 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F68C77B7A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 May 2023 07:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC6D6C77B73
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 May 2023 08:22:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229473AbjE3HsT (ORCPT
+        id S229987AbjE3IWv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 30 May 2023 03:48:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38948 "EHLO
+        Tue, 30 May 2023 04:22:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbjE3Hr6 (ORCPT
+        with ESMTP id S229621AbjE3IWr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 May 2023 03:47:58 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEEA1188
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 May 2023 00:47:25 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-97000a039b2so752906366b.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 May 2023 00:47:25 -0700 (PDT)
+        Tue, 30 May 2023 04:22:47 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E773EA
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 May 2023 01:22:46 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-96fe88cd2fcso746719566b.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 May 2023 01:22:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685432751; x=1688024751;
+        d=linaro.org; s=google; t=1685434965; x=1688026965;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2CJ/jdt5ToTz4HsGN0SUmAFj8fhZwa0w4KNdEIXItN4=;
-        b=IieD8l7Dsc8W0T8J3IK51/jVSZNptr02K/pU6d/n4X6Q5WKZxkgQfc7Sn4bu2drZpY
-         BLqDdSCbPz8wSCHwnBq5seBzvoTFKWzXVDUnQGsisqvi/53XM53x5ppfBXO+KBT6GaYs
-         z1b3YrT4yBU7NUkfHkJr5lLsqD0Uj1NY69Ldr0h9wrCCUKeE17d9SKeuFicjsCEOMbWS
-         /l+PBBoQWkve/Q8ulR6cQ0Df19IH6X+kSg0vUF0zpGXTHTrxwB+ppBfjl8iwEVbLNwEl
-         x8j5JBs998dxrGWL6rJqwRGXekc6+avZEbUuf6Nr4MVm9t7VVcMesVBIl7Vu9VAIcOgw
-         qAgg==
+        bh=B/06GITGnCR0InunQ97FoRRag82uonE7bPllWWYnN1M=;
+        b=U1TazgPBw5tN1EoHoX2aYS+f7yuRJQmgbSX8Faf0Bl+3Aen9PgAwjj/0rmvY9/jx/V
+         wxUIl2QoR9bQBNWCOFoGRZvur5o8ChrHMf5YTCBx7BSdQyb7i0mCLSc6Hvu1ROVnMOmR
+         qVL+77W7bRowiTu0GS4l1gbrykcmPub1l5cyvgiwp9qlcZkVHMv2glUWHW3XveLtjIbM
+         RzxBtF+OaPNpCMPPq8+YGn2mdyLtvUriEkuiTO9c+PqnSpUy80yLpaEWwgUBYIh2mEMA
+         m4Bfen7IRj2WfC0fXuHiXESe875Pr9nt/Neqkv41FZRzwKmqOGNKNFZKnTyBMO1nZe9J
+         lgZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685432751; x=1688024751;
+        d=1e100.net; s=20221208; t=1685434965; x=1688026965;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2CJ/jdt5ToTz4HsGN0SUmAFj8fhZwa0w4KNdEIXItN4=;
-        b=JT+OMZ4sfaB0zMpEyW9ks4fgZpDz7WGqnta+cgCeu9I/fQ6eg6xluvnFno7cktJTTE
-         IaT9iFoLo010uYXEIZG87kZH/CCVYpefeK+470xiao4ELCEyLKu/r86778FSrI05gmT3
-         cjWx23XM5ib2sHRHDmAjXCO3DNiZfIQHkGofQjaUihIskj0dQvJ2INS6B/IofEpDj15w
-         ai4DQOz6L987K32XqE0Y3PoW0XMmrLn+RwnMVZ/V3cQkvCPGt0YQj99CNHCD7ZKl1tZl
-         88eUjTTtyFN5wPGTmXuLsB9j9alMIVXOETkZCHaAKQHMU6uqbfJ20Bq3vuaNxYqyHp9N
-         Smzw==
-X-Gm-Message-State: AC+VfDzdjAb37FZHtELggAFi/9EwiC7w5ltsJDbFFtiqOYGjqdRyBoP+
-        XAgLBJiznE01fcwpHwNTFVMmcA==
-X-Google-Smtp-Source: ACHHUZ5y3krPfedbQs54gM8P+NWWDmTSo9CkScOOWkgMTsp0pbGRN+H+NkrNoLC67eeC/VdgyoArRA==
-X-Received: by 2002:a17:907:8a11:b0:96f:9cea:a351 with SMTP id sc17-20020a1709078a1100b0096f9ceaa351mr1808296ejc.37.1685432751328;
-        Tue, 30 May 2023 00:45:51 -0700 (PDT)
+        bh=B/06GITGnCR0InunQ97FoRRag82uonE7bPllWWYnN1M=;
+        b=IlTeEh+uoukj2VDhUcdDjYTLHVuQeahTVajtqyMZblQ4bUloBmLXv4t6Y37r4cWcgp
+         O8FwLq8swkAYBb1QSxkkMAccVQoF91zwIahUlMRN5FyR39nOoaValvKzppy8PBuNZjJH
+         jbQ1T2RTPsbB6tfyFV85DyGKkimd7XPn8Bc1X005clU0kYcQAXRGeNfHwaMOCCdvFjp6
+         CZdA7NfUjswGVfOUvF5HMvXIxRr/Q8Q8cZd0vamj367vtpmpHmohpRDO4izVvXr1sRqW
+         Yg6VpNmCC1lB9W1q3tESNr1tbShms9eR3fobSiqsOlaqANue+7T38y5SaYkFuAl3gaeO
+         felQ==
+X-Gm-Message-State: AC+VfDzyNo3/pYw2U8M3hZJ7Jz4Bwj5XNkIFnUx3gIXYmMV/OCkRknmP
+        atzi7jNL4nKIAwTDu6WC/Rgm/w==
+X-Google-Smtp-Source: ACHHUZ75GDAqupUSVPJ5Aas4ogi42LerslQkAQXJPqBERjGGYbWLC0fwnXvjKlihSB0tFyOdHnUbNQ==
+X-Received: by 2002:a17:907:3da0:b0:974:1e0e:9bd3 with SMTP id he32-20020a1709073da000b009741e0e9bd3mr1622046ejc.23.1685434964999;
+        Tue, 30 May 2023 01:22:44 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.199.204])
-        by smtp.gmail.com with ESMTPSA id a3-20020a1709066d4300b0094f07545d40sm6938832ejt.220.2023.05.30.00.45.50
+        by smtp.gmail.com with ESMTPSA id cf6-20020a170906b2c600b0096f272206b3sm6949583ejb.125.2023.05.30.01.22.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 May 2023 00:45:50 -0700 (PDT)
+        Tue, 30 May 2023 01:22:44 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Artur Weber <aweber.kernel@gmail.com>
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        patches@opensource.cirrus.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH] ARM: s3c: Switch i2c drivers back to use .probe()
-Date:   Tue, 30 May 2023 09:45:48 +0200
-Message-Id: <168543271188.12093.7915373684614866148.b4-ty@linaro.org>
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH 0/3] ARM: dts: samsung: Fix some typos in comments
+Date:   Tue, 30 May 2023 10:22:36 +0200
+Message-Id: <168543493680.14409.2040056469867223710.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230526214003.2134595-1-u.kleine-koenig@pengutronix.de>
-References: <20230526214003.2134595-1-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20230519190625.7844-1-aweber.kernel@gmail.com>
+References: <20230519190625.7844-1-aweber.kernel@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -74,24 +75,28 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
-On Fri, 26 May 2023 23:40:03 +0200, Uwe Kleine-König wrote:
-> After commit b8a1a4cd5a98 ("i2c: Provide a temporary .probe_new()
-> call-back type"), all drivers being converted to .probe_new() and then
-> 03c835f498b5 ("i2c: Switch .probe() to not take an id parameter")
-> convert back to (the new) .probe() to be able to eventually drop
-> .probe_new() from struct i2c_driver.
+On Fri, 19 May 2023 21:06:22 +0200, Artur Weber wrote:
+> Change 'specfic' to 'specific', 'optiosn' to 'options' and remove
+> duplicated 'are listed' in DTSI heading comments. While we're at it,
+> fix the s5pv210-pinctrl.dtsi header (seems like it was copied out of
+> the main DTSI file and never changed to match the new contents).
 > 
+> This patch has been split off from a patch in a separate series:
+> "[PATCH v3 11/13] ARM: dts: exynos: Fix some typos in comments"
+> https://lore.kernel.org/all/20230501195525.6268-12-aweber.kernel@gmail.com/
+> It has been split into 3 separate commits: one for Exynos chips,
+> one for s3c64xx and one for s5pv210.
 > 
 > [...]
 
-
-Fixed checkpatch issue in commit and applied. Please don't skip checkpatch on
-your submissions.
-
 Applied, thanks!
 
-[1/1] ARM: s3c: Switch i2c drivers back to use .probe()
-      https://git.kernel.org/krzk/linux/c/ca027ae58eaab3632966158ce440a7f50da52bef
+[1/3] ARM: dts: exynos: Fix some typos in comments
+      https://git.kernel.org/krzk/linux/c/2f6905307a7bb998e819c03097f3cc54a51b015a
+[2/3] ARM: dts: s3c64xx: Fix some typos in comments
+      https://git.kernel.org/krzk/linux/c/316c31fba6eda4543d5e234b13d0c0605a83a643
+[3/3] ARM: dts: s5pv210: Fix typo in comments, fix pinctrl header
+      https://git.kernel.org/krzk/linux/c/6a988251c4e53da33107c1975f578904c0635b43
 
 Best regards,
 -- 
