@@ -2,88 +2,121 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8972C7EE23
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 May 2023 22:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E676C77B7C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 31 May 2023 04:39:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233305AbjE3WWB (ORCPT
+        id S230001AbjEaEje (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 30 May 2023 18:22:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46320 "EHLO
+        Wed, 31 May 2023 00:39:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233554AbjE3WWA (ORCPT
+        with ESMTP id S229890AbjEaEjd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 May 2023 18:22:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8347106;
-        Tue, 30 May 2023 15:21:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 83D1863450;
-        Tue, 30 May 2023 22:21:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78E71C433D2;
-        Tue, 30 May 2023 22:21:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685485314;
-        bh=KIc/pp1lOWtTgIyst2JNrfoGv5WLci5gKABpg1IBUx8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lrm6iAfkq5oCiLKo3eLSlvibhpItzBRgAlKYT1IbbWm4DhfffmNQ5Kbkc5IMBT+dQ
-         z/BlERcBVmq+eA3PmJ925+zx3TlxlFkZYRtmlegS3m6V74SYfGu/9bg/UOaydE+2wA
-         UE2jROuXxcjlOZuPyXn+MNvP036ABcil7TWUoev531/tJhsptWY1FlLboQPsOy8m4Z
-         XE7Wuy52mG5UcB2uKJXLZt3fVOMRmQ9DSaEWmQluiaaOHmtoNLJzzQf8novuLLn8D0
-         WHk1ok406k2DSu0ootecDRmT8bcqBgN4vn8yYuw25dS45x9pReZlAdQ7zrErXV+q8f
-         MknRyZ6XAPF+A==
-Date:   Wed, 31 May 2023 00:21:50 +0200
-From:   Andi Shyti <andi.shyti@kernel.org>
-To:     Min Li <lm0963hack@gmail.com>
+        Wed, 31 May 2023 00:39:33 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B474197;
+        Tue, 30 May 2023 21:39:32 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id 98e67ed59e1d1-256918803baso457678a91.1;
+        Tue, 30 May 2023 21:39:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685507972; x=1688099972;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KVic8ZozVX5AlLBxJqcr+ixPM2ET/77wx3a5l9yrvTA=;
+        b=YdkgddUdmRbj6JnRhb0cOb/hkVpjC4ma1FBFF7MmudnlBD7T6ZzdyBwlBbmmKS7mAE
+         fPOTVp0kyePChrSuNNq4RexORKiiWGKe6BNknVFN4gmM0Vaz2IN8v1B2xwtRDUFpYR2E
+         W5Jos/s/M4bIEJnxNy/Awl8gVHim40jo/ndGy49Jr3VuvK3lRYFAn4tiQkxFqLYC6tSU
+         FJGTiSExcjsmUbbNTNtjpF/totbZJkwi8xRFycX7IzRQ/6loY2yAgSJXEFaW7z/6tEI4
+         7prr879NFKF5qzYCgXQkb1fGDkK2vJhkXUYT5UiWASWnNbv/Cp/H36Mh82zRPSX9NOwT
+         6xpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685507972; x=1688099972;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KVic8ZozVX5AlLBxJqcr+ixPM2ET/77wx3a5l9yrvTA=;
+        b=c4DV15tqM3H2JVG4YkKfTNTw1pU+y7lqnEwRdsp2hyMwyYojScEfx7Y+FhOPCLELPg
+         BdFGXJo0V2TEaCakLFGfIjKgwAWCRJBuqAsoJGgOXFEQnlRcG78Vh+a23AuY195wJjiL
+         npyyyjOz7xq+7BI/hO23tKOP5oHe2HCOfKVFUyMRQR7xA5hoXxCP14/zJePlW6J7hLr7
+         iVBuFRgQvSuVa9AK7VtQNnPviiJ2ZvFQr2ZKV4Njum5miGSvu6OyPMwrzsY0YpRxjcsf
+         TOxOwufoqjmdd4waOJT4JwuvP3P+1xjPiZlt3xE4ZkMQ25Xp9vdWsgy7eVQPnBNP0Vdj
+         wA4w==
+X-Gm-Message-State: AC+VfDyHzhCaoiNRARmFSiyea1w7L0DeaIW0Pai1bPd37hvOH03Ca/kj
+        vasDPA0L/g+79vGWry8gd7JzmGoCmynM9iWJoXI=
+X-Google-Smtp-Source: ACHHUZ7TQ+bwgry6OeU5ofjgd1i5pr0uySNoEw1Qia05YkABxpVcHW04AhtbBXo36TYZBu0rojShIeGrV14pmdoWRiQ=
+X-Received: by 2002:a17:90b:4b83:b0:256:9095:a368 with SMTP id
+ lr3-20020a17090b4b8300b002569095a368mr993241pjb.4.1685507972065; Tue, 30 May
+ 2023 21:39:32 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230526130131.16521-1-lm0963hack@gmail.com> <20230530222150.24oogloda6wtvpvm@intel.intel>
+In-Reply-To: <20230530222150.24oogloda6wtvpvm@intel.intel>
+From:   lm0963 <lm0963hack@gmail.com>
+Date:   Wed, 31 May 2023 12:39:20 +0800
+Message-ID: <CAAgLYK7FNrAYFRp7C3LDtqevFENQLw8YYAFR2Pk9wdfQ5RKVeg@mail.gmail.com>
+Subject: Re: [PATCH] drm/exynos: fix race condition UAF in exynos_g2d_exec_ioctl
+To:     Andi Shyti <andi.shyti@kernel.org>
 Cc:     inki.dae@samsung.com, sw0312.kim@samsung.com,
         kyungmin.park@samsung.com, airlied@gmail.com, daniel@ffwll.ch,
         krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
         dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/exynos: fix race condition UAF in
- exynos_g2d_exec_ioctl
-Message-ID: <20230530222150.24oogloda6wtvpvm@intel.intel>
-References: <20230526130131.16521-1-lm0963hack@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230526130131.16521-1-lm0963hack@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Min,
+Hi Andi,
 
-On Fri, May 26, 2023 at 09:01:31PM +0800, Min Li wrote:
-> If it is async, runqueue_node is freed in g2d_runqueue_worker on another
-> worker thread. So in extreme cases, if g2d_runqueue_worker runs first, and
-> then executes the following if statement, there will be use-after-free.
-> 
-> Signed-off-by: Min Li <lm0963hack@gmail.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_g2d.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> index ec784e58da5c..414e585ec7dd 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> @@ -1335,7 +1335,7 @@ int exynos_g2d_exec_ioctl(struct drm_device *drm_dev, void *data,
->  	/* Let the runqueue know that there is work to do. */
->  	queue_work(g2d->g2d_workq, &g2d->runqueue_work);
->  
-> -	if (runqueue_node->async)
-> +	if (req->async)
+On Wed, May 31, 2023 at 6:21=E2=80=AFAM Andi Shyti <andi.shyti@kernel.org> =
+wrote:
+>
+> Hi Min,
+>
+> On Fri, May 26, 2023 at 09:01:31PM +0800, Min Li wrote:
+> > If it is async, runqueue_node is freed in g2d_runqueue_worker on anothe=
+r
+> > worker thread. So in extreme cases, if g2d_runqueue_worker runs first, =
+and
+> > then executes the following if statement, there will be use-after-free.
+> >
+> > Signed-off-by: Min Li <lm0963hack@gmail.com>
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_drm_g2d.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/=
+exynos/exynos_drm_g2d.c
+> > index ec784e58da5c..414e585ec7dd 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> > @@ -1335,7 +1335,7 @@ int exynos_g2d_exec_ioctl(struct drm_device *drm_=
+dev, void *data,
+> >       /* Let the runqueue know that there is work to do. */
+> >       queue_work(g2d->g2d_workq, &g2d->runqueue_work);
+> >
+> > -     if (runqueue_node->async)
+> > +     if (req->async)
+>
+> did you actually hit this? If you did, then the fix is not OK.
 
-did you actually hit this? If you did, then the fix is not OK.
+No, I didn't actually hit this. I found it through code review. This
+is only a theoretical issue that can only be triggered in extreme
+cases.
 
-Andi
+>
+> Andi
+>
+> >               goto out;
+> >
+> >       wait_for_completion(&runqueue_node->complete);
+> > --
+> > 2.34.1
+> >
 
->  		goto out;
->  
->  	wait_for_completion(&runqueue_node->complete);
-> -- 
-> 2.34.1
-> 
+
+
+--=20
+Min Li
