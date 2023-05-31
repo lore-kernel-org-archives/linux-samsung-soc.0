@@ -2,126 +2,160 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48751C77B7A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 31 May 2023 08:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 929F0C77B7A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 31 May 2023 10:55:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234992AbjEaIUd (ORCPT
+        id S235048AbjEaKy7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 31 May 2023 04:20:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45958 "EHLO
+        Wed, 31 May 2023 06:54:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234310AbjEaIUc (ORCPT
+        with ESMTP id S231344AbjEaKyt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 31 May 2023 04:20:32 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8204793;
-        Wed, 31 May 2023 01:20:30 -0700 (PDT)
-Received: from [192.168.88.20] (91-154-35-171.elisa-laajakaista.fi [91.154.35.171])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AB62D7FC;
-        Wed, 31 May 2023 10:20:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1685521207;
-        bh=EL3RWdaIqfPKhp0EXpVPxPCT9ntFr8tTKWXlYphupWI=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=MvSXDrHk7T4BnPJqHjbFiTX+4V0oyXpM4JlCJJT+bzOMxSOycyjTIr/UAfnt1xezv
-         qzMGM+1MWvguHV2odb3hKaYoA6dxUihmMViSPeeHPMA04EyWI4cWEcnv/H7riWMXBY
-         LXCYZwLPo9seo/aN3CtoiK5GheRzH+ZTTqCtxMHI=
-Message-ID: <c4146861-3e8c-7410-4fec-27e7bce7e2de@ideasonboard.com>
-Date:   Wed, 31 May 2023 11:20:24 +0300
+        Wed, 31 May 2023 06:54:49 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBFA4123;
+        Wed, 31 May 2023 03:54:47 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1b02e0ec7d5so4509475ad.1;
+        Wed, 31 May 2023 03:54:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685530487; x=1688122487;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aW1b1ccAWN4g+utpYsd/EKLY8pCRgvbm0rstGDwBDSU=;
+        b=EKcuDnKmwPD117tH/GwwZWVjGgwRlWmNDDSwzZCPJHnmMbbDbi88XW7atFxnH+K5k2
+         zc9VDCeYx5zo0zp1XbC9WmmcFzlucpPHOpc/9MAWBNFvIaHH4mFKDp2thmrcAHxoSp3C
+         GfRhl2uH0J7Vl6OJFM24WgsV1osBETWIb3srvZ/LGDEiNs9+PZtIyk2sgDO+5MH1fhf+
+         Cj81WiOizy3KS+SygfcL5IhTMCWHonqJmQ6FSmEODyRVis4NRXZr6+rCzYw4nNErvCGv
+         gvVsy2+DGnILZALoejASkTaBUwcSl9nNHAYZjDTTX110ewqrb3JXNAh4W5ewOqn6DZuP
+         mvFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685530487; x=1688122487;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aW1b1ccAWN4g+utpYsd/EKLY8pCRgvbm0rstGDwBDSU=;
+        b=dAdyq5espzg3UPXsYVcbGEacXWQCZBrpG7PZhMxo0DbqFD1qjIvMJAte+YXnC5D3mA
+         me323wP8iUNNP7uDkV6kQC3IhF9cN9FPFBpsqCeQbmD8mRia7MyQX/na0G5xMYNNFAsT
+         IiSePT8y57ghbbRjx2kRjiSJIQSH6Yknd5U2YBMiaUMan0Na9AJKqb/DW2uPLI/E1p6v
+         Esnsz7CPDIqjYSWjq5ZpnuCDpTgHbnKxRcy2P5elCRPL8moFKaON3t4xZ68kOIKdR6vF
+         fiw3s3lFJqggwYZpf7tif9td9zQby9v86DC7v4R54E1J1M6r7j0WebcQILqs7Er9hhEB
+         ugyg==
+X-Gm-Message-State: AC+VfDxEfg76M0sffWzSdSI9ynSBRv1WkWXFFIPZ/NJ9i7ukx2j/eEYt
+        rjSAcek6Ziy5QbbZ5aAK7h3+09HclY4gPBA0woS4wvMAY+u+suSH
+X-Google-Smtp-Source: ACHHUZ6Pk/b50QlriP6fmYh21EsZlRkoEXx2f4SkiI3WgSLoGLCoajx5TP+OOXzXRcAbrFO52OXXYS5rFksm4EKd1fQ=
+X-Received: by 2002:a17:902:e852:b0:1b0:3cda:6351 with SMTP id
+ t18-20020a170902e85200b001b03cda6351mr5360668plg.0.1685530487124; Wed, 31 May
+ 2023 03:54:47 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v5 08/13] drm/omapdrm: Use regular fbdev I/O helpers
-Content-Language: en-US
-To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
-        airlied@gmail.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, javierm@redhat.com, sam@ravnborg.org,
-        suijingfeng@loongson.cn
-Cc:     dri-devel@lists.freedesktop.org,
+References: <20230526130131.16521-1-lm0963hack@gmail.com> <20230530222150.24oogloda6wtvpvm@intel.intel>
+ <CAAgLYK7FNrAYFRp7C3LDtqevFENQLw8YYAFR2Pk9wdfQ5RKVeg@mail.gmail.com> <20230531081917.grx3qqqm7usaqoa5@intel.intel>
+In-Reply-To: <20230531081917.grx3qqqm7usaqoa5@intel.intel>
+From:   lm0963 <lm0963hack@gmail.com>
+Date:   Wed, 31 May 2023 18:54:34 +0800
+Message-ID: <CAAgLYK4KzuKMTkBwzCJj4wa+W+=9fR+A1J=XR-n1E-W7EjexuA@mail.gmail.com>
+Subject: Re: [PATCH] drm/exynos: fix race condition UAF in exynos_g2d_exec_ioctl
+To:     Andi Shyti <andi.shyti@kernel.org>
+Cc:     inki.dae@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, airlied@gmail.com, daniel@ffwll.ch,
+        krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+        dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org
-References: <20230530150253.22758-1-tzimmermann@suse.de>
- <20230530150253.22758-9-tzimmermann@suse.de>
-From:   Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-In-Reply-To: <20230530150253.22758-9-tzimmermann@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 30/05/2023 18:02, Thomas Zimmermann wrote:
-> Use the regular fbdev helpers for framebuffer I/O instead of DRM's
-> helpers. Omapdrm does not use damage handling, so DRM's fbdev helpers
-> are mere wrappers around the fbdev code.
-> 
-> By using fbdev helpers directly within each DRM fbdev emulation,
-> we can eventually remove DRM's wrapper functions entirely.
-> 
-> v4:
-> 	* use initializer macros for struct fb_ops
-> v2:
-> 	* use FB_SYS_HELPERS option
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Acked-by: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Tomi Valkeinen <tomba@kernel.org>
-> ---
->   drivers/gpu/drm/omapdrm/Kconfig      |  1 +
->   drivers/gpu/drm/omapdrm/omap_fbdev.c | 11 +++--------
->   2 files changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/omapdrm/Kconfig b/drivers/gpu/drm/omapdrm/Kconfig
-> index 76ded1568bd0..b4ac76c9f31b 100644
-> --- a/drivers/gpu/drm/omapdrm/Kconfig
-> +++ b/drivers/gpu/drm/omapdrm/Kconfig
-> @@ -4,6 +4,7 @@ config DRM_OMAP
->   	depends on DRM && OF
->   	depends on ARCH_OMAP2PLUS
->   	select DRM_KMS_HELPER
-> +	select FB_SYS_HELPERS if DRM_FBDEV_EMULATION
->   	select VIDEOMODE_HELPERS
->   	select HDMI
->   	default n
-> diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> index b950e93b3846..b7ccce0704a3 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> @@ -4,6 +4,8 @@
->    * Author: Rob Clark <rob@ti.com>
->    */
->   
-> +#include <linux/fb.h>
-> +
->   #include <drm/drm_drv.h>
->   #include <drm/drm_crtc_helper.h>
->   #include <drm/drm_fb_helper.h>
-> @@ -95,20 +97,13 @@ static void omap_fbdev_fb_destroy(struct fb_info *info)
->   
->   static const struct fb_ops omap_fb_ops = {
->   	.owner = THIS_MODULE,
-> -
-> +	FB_DEFAULT_SYS_OPS,
->   	.fb_check_var	= drm_fb_helper_check_var,
->   	.fb_set_par	= drm_fb_helper_set_par,
->   	.fb_setcmap	= drm_fb_helper_setcmap,
->   	.fb_blank	= drm_fb_helper_blank,
->   	.fb_pan_display = omap_fbdev_pan_display,
->   	.fb_ioctl	= drm_fb_helper_ioctl,
-> -
-> -	.fb_read = drm_fb_helper_sys_read,
-> -	.fb_write = drm_fb_helper_sys_write,
-> -	.fb_fillrect = drm_fb_helper_sys_fillrect,
-> -	.fb_copyarea = drm_fb_helper_sys_copyarea,
-> -	.fb_imageblit = drm_fb_helper_sys_imageblit,
-> -
->   	.fb_destroy = omap_fbdev_fb_destroy,
->   };
->   
+Hi Andi,
 
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+On Wed, May 31, 2023 at 4:19=E2=80=AFPM Andi Shyti <andi.shyti@kernel.org> =
+wrote:
+>
+> Hi Min,
+>
+> > > > If it is async, runqueue_node is freed in g2d_runqueue_worker on an=
+other
+> > > > worker thread. So in extreme cases, if g2d_runqueue_worker runs fir=
+st, and
+> > > > then executes the following if statement, there will be use-after-f=
+ree.
+> > > >
+> > > > Signed-off-by: Min Li <lm0963hack@gmail.com>
+> > > > ---
+> > > >  drivers/gpu/drm/exynos/exynos_drm_g2d.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/=
+drm/exynos/exynos_drm_g2d.c
+> > > > index ec784e58da5c..414e585ec7dd 100644
+> > > > --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> > > > +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> > > > @@ -1335,7 +1335,7 @@ int exynos_g2d_exec_ioctl(struct drm_device *=
+drm_dev, void *data,
+> > > >       /* Let the runqueue know that there is work to do. */
+> > > >       queue_work(g2d->g2d_workq, &g2d->runqueue_work);
+> > > >
+> > > > -     if (runqueue_node->async)
+> > > > +     if (req->async)
+> > >
+> > > did you actually hit this? If you did, then the fix is not OK.
+> >
+> > No, I didn't actually hit this. I found it through code review. This
+> > is only a theoretical issue that can only be triggered in extreme
+> > cases.
+>
+> first of all runqueue is used again two lines below this, which
+> means that if you don't hit the uaf here you will hit it
+> immediately after.
 
-  Tomi
+No, if async is true, then it will goto out, which will directly return.
 
+if (runqueue_node->async)
+    goto out;   // here, go to out, will directly return
+
+wait_for_completion(&runqueue_node->complete);      // not hit
+g2d_free_runqueue_node(g2d, runqueue_node);
+
+out:
+return 0;
+
+>
+> Second, if runqueue is freed, than we need to remove the part
+> where it's freed because it doesn't make sense to free runqueue
+> at this stage.
+
+It is freed by g2d_free_runqueue_node in g2d_runqueue_worker
+
+static void g2d_runqueue_worker(struct work_struct *work)
+{
+    ......
+    if (runqueue_node) {
+        pm_runtime_mark_last_busy(g2d->dev);
+        pm_runtime_put_autosuspend(g2d->dev);
+
+        complete(&runqueue_node->complete);
+        if (runqueue_node->async)
+            g2d_free_runqueue_node(g2d, runqueue_node);        // freed her=
+e
+    }
+
+>
+> Finally, can you elaborate on the code review that you did so
+> that we all understand it?
+
+queue_work(g2d->g2d_workq, &g2d->runqueue_work);
+msleep(100);        // add sleep here to let g2d_runqueue_worker run first
+if (runqueue_node->async)
+    goto out;
+
+
+>
+> Andi
+
+
+
+--
+Min Li
