@@ -2,121 +2,168 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E676C77B7C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 31 May 2023 04:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A148C77B7A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 31 May 2023 07:45:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbjEaEje (ORCPT
+        id S234741AbjEaHpd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 31 May 2023 00:39:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40182 "EHLO
+        Wed, 31 May 2023 03:45:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229890AbjEaEjd (ORCPT
+        with ESMTP id S234575AbjEaHp0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 31 May 2023 00:39:33 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B474197;
-        Tue, 30 May 2023 21:39:32 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id 98e67ed59e1d1-256918803baso457678a91.1;
-        Tue, 30 May 2023 21:39:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685507972; x=1688099972;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KVic8ZozVX5AlLBxJqcr+ixPM2ET/77wx3a5l9yrvTA=;
-        b=YdkgddUdmRbj6JnRhb0cOb/hkVpjC4ma1FBFF7MmudnlBD7T6ZzdyBwlBbmmKS7mAE
-         fPOTVp0kyePChrSuNNq4RexORKiiWGKe6BNknVFN4gmM0Vaz2IN8v1B2xwtRDUFpYR2E
-         W5Jos/s/M4bIEJnxNy/Awl8gVHim40jo/ndGy49Jr3VuvK3lRYFAn4tiQkxFqLYC6tSU
-         FJGTiSExcjsmUbbNTNtjpF/totbZJkwi8xRFycX7IzRQ/6loY2yAgSJXEFaW7z/6tEI4
-         7prr879NFKF5qzYCgXQkb1fGDkK2vJhkXUYT5UiWASWnNbv/Cp/H36Mh82zRPSX9NOwT
-         6xpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685507972; x=1688099972;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KVic8ZozVX5AlLBxJqcr+ixPM2ET/77wx3a5l9yrvTA=;
-        b=c4DV15tqM3H2JVG4YkKfTNTw1pU+y7lqnEwRdsp2hyMwyYojScEfx7Y+FhOPCLELPg
-         BdFGXJo0V2TEaCakLFGfIjKgwAWCRJBuqAsoJGgOXFEQnlRcG78Vh+a23AuY195wJjiL
-         npyyyjOz7xq+7BI/hO23tKOP5oHe2HCOfKVFUyMRQR7xA5hoXxCP14/zJePlW6J7hLr7
-         iVBuFRgQvSuVa9AK7VtQNnPviiJ2ZvFQr2ZKV4Njum5miGSvu6OyPMwrzsY0YpRxjcsf
-         TOxOwufoqjmdd4waOJT4JwuvP3P+1xjPiZlt3xE4ZkMQ25Xp9vdWsgy7eVQPnBNP0Vdj
-         wA4w==
-X-Gm-Message-State: AC+VfDyHzhCaoiNRARmFSiyea1w7L0DeaIW0Pai1bPd37hvOH03Ca/kj
-        vasDPA0L/g+79vGWry8gd7JzmGoCmynM9iWJoXI=
-X-Google-Smtp-Source: ACHHUZ7TQ+bwgry6OeU5ofjgd1i5pr0uySNoEw1Qia05YkABxpVcHW04AhtbBXo36TYZBu0rojShIeGrV14pmdoWRiQ=
-X-Received: by 2002:a17:90b:4b83:b0:256:9095:a368 with SMTP id
- lr3-20020a17090b4b8300b002569095a368mr993241pjb.4.1685507972065; Tue, 30 May
- 2023 21:39:32 -0700 (PDT)
+        Wed, 31 May 2023 03:45:26 -0400
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9AEEC5
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 31 May 2023 00:45:24 -0700 (PDT)
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230531074522epoutp01a421bb7e5e26a7b63705e5ce8022670e~kKrYoJ7U_1509315093epoutp01h
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 31 May 2023 07:45:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230531074522epoutp01a421bb7e5e26a7b63705e5ce8022670e~kKrYoJ7U_1509315093epoutp01h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1685519122;
+        bh=H6wakReZj3X6TMsaGJiAoGxjSAD48emzppa7JMd+Quw=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=JEfd3688uI7Eh4XJGTl1ykENCdoEguvQJ0C65REFJ+tYp+0P+sp+PhvtI0MpgkU2f
+         Cuc+1mt0Zj+0LKt0z/0TUoO6BbbxydyRsq3Ne6bhkFyrY6EhecAMxqox+Jcz8/fAKy
+         1rVe0ZYAtNLplueDEYobigpI9Ah+eGyKeQCTcHgA=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20230531074521epcas1p16f21c73bc229931a2313695ec2f5d344~kKrYHMYBm3064830648epcas1p1z;
+        Wed, 31 May 2023 07:45:21 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.36.136]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4QWLsF27BDz4x9Pw; Wed, 31 May
+        2023 07:45:21 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        19.F7.48553.11BF6746; Wed, 31 May 2023 16:45:21 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230531074520epcas1p1c0d3f71f7baf85caccca82316a7b80fb~kKrXO4i7U3069230692epcas1p1u;
+        Wed, 31 May 2023 07:45:20 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230531074520epsmtrp2862b808b9ec38ed7a764524fd94e254a~kKrXJiIy31510215102epsmtrp2Q;
+        Wed, 31 May 2023 07:45:20 +0000 (GMT)
+X-AuditID: b6c32a39-509937000001bda9-b4-6476fb11202a
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        73.86.27706.01BF6746; Wed, 31 May 2023 16:45:20 +0900 (KST)
+Received: from inkidae001 (unknown [10.113.221.213]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20230531074520epsmtip205e0a19fdc3e2293041f027e4c134aaf~kKrW7MAMc2089220892epsmtip2H;
+        Wed, 31 May 2023 07:45:20 +0000 (GMT)
+From:   =?ks_c_5601-1987?B?tOvAzrHiL1RpemVuIFBsYXRmb3JtIExhYihTUikvu++8usD8wNo=?= 
+        <inki.dae@samsung.com>
+To:     "'Min Li'" <lm0963hack@gmail.com>
+Cc:     <sw0312.kim@samsung.com>, <kyungmin.park@samsung.com>,
+        <airlied@gmail.com>, <daniel@ffwll.ch>,
+        <krzysztof.kozlowski@linaro.org>, <alim.akhtar@samsung.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <20230526130131.16521-1-lm0963hack@gmail.com>
+Subject: RE: [PATCH] drm/exynos: fix race condition UAF in
+ exynos_g2d_exec_ioctl
+Date:   Wed, 31 May 2023 16:45:20 +0900
+Message-ID: <13cd01d99393$d9b7b070$8d271150$@samsung.com>
 MIME-Version: 1.0
-References: <20230526130131.16521-1-lm0963hack@gmail.com> <20230530222150.24oogloda6wtvpvm@intel.intel>
-In-Reply-To: <20230530222150.24oogloda6wtvpvm@intel.intel>
-From:   lm0963 <lm0963hack@gmail.com>
-Date:   Wed, 31 May 2023 12:39:20 +0800
-Message-ID: <CAAgLYK7FNrAYFRp7C3LDtqevFENQLw8YYAFR2Pk9wdfQ5RKVeg@mail.gmail.com>
-Subject: Re: [PATCH] drm/exynos: fix race condition UAF in exynos_g2d_exec_ioctl
-To:     Andi Shyti <andi.shyti@kernel.org>
-Cc:     inki.dae@samsung.com, sw0312.kim@samsung.com,
-        kyungmin.park@samsung.com, airlied@gmail.com, daniel@ffwll.ch,
-        krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="ks_c_5601-1987"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: ko
+Thread-Index: AQHl90PUgZVgoIOsoCnWfp0gsuCaowGTj1Ryr06bZVA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGJsWRmVeSWpSXmKPExsWy7bCmvq7g77IUgwuHeC1OXF/EZPFg3jY2
+        i//bJjJbXPn6ns1i7+ut7BZnm96wW2x6fI3V4vKuOWwWM87vY7I4Pr2ByWLG5JdsDtwee78t
+        YPHYOesuu8eda3vYPO53H2fy2Lyk3qNvyypGj8+b5ALYo7JtMlITU1KLFFLzkvNTMvPSbZW8
+        g+Od403NDAx1DS0tzJUU8hJzU22VXHwCdN0yc4BuVFIoS8wpBQoFJBYXK+nb2RTll5akKmTk
+        F5fYKqUWpOQUmBboFSfmFpfmpevlpZZYGRoYGJkCFSZkZ/zacZex4AZPxfHTM1gaGG9zdTFy
+        ckgImEh0zp7P1sXIxSEksINRYtWjCVDOJ0aJUw96GSGcb4wS9+f+Ye5i5ABr6d0WBBHfyyix
+        eNZjVpBRQgIvGSXWLioCsdkEMiTuti9mBakXEVCVmHAxAKSeWWAbk8S5gyDrODk4Bawknlzv
+        YwSpERYIkuj84AgSZgEqP7TkLFgJr4ClxJG2+YwQtqDEyZlPWEBsZgEjiSWr5zNB2PIS29/O
+        YYb4RkHi59NlrBBxEYnZnW1gcRGgVfeubWIHuUFC4AiHRPvz9awQDS4S2z+chmoWlnh1fAs7
+        hC0l8fndXjaIhsmMEneur2CBcGYwShz+eZ0RospYYv/SyUwQtqLEzt9zGSFW80m8+9rDCgkt
+        XomONiGIEiWJYxdvQLVKSFxYMpFtAqPSLCTPzULy3Cwkz81C8tACRpZVjGKpBcW56anFhgWm
+        8OhOzs/dxAhOwFqWOxinv/2gd4iRiYPxEKMEB7OSCK9tYnGKEG9KYmVValF+fFFpTmrxIUZT
+        YHhPZJYSTc4H5oC8knhDE0sDEzMjYxMLQzNDJXHeL0+1U4QE0hNLUrNTUwtSi2D6mDg4pRqY
+        mL2bju+8a+DC7d0t/Lfoc/7VRxKzXm6U0bqWrvxw/S6Turu7be2Tk3QbonZ67rKKsj7zye6Q
+        9E1FlsJg7rcnTRqUq0S8LjukNrM+/33JJ2fjsSgpw2SzwK03p9mklAvOfh49W/Sc0sz1tjOY
+        vD9csHW/van+6j7GSq4DbF6vzxu8KohhOR6pKac6bakXa9aVzXHWpde2WT3ws9EO5QiWKT1h
+        oHewr/PvtzXT1H6cmrhAwCprScbOyro3v2/cbPwkvolD6W77lqUrWbkTEmdmeoT7bmE5ucpS
+        agGba+LKcJYJLEs8Ly+r2RQ1x/zrwmdesWts3Vjkt15/ve/xDu2uSGmpkDsTlr92czHqW5yk
+        xFKckWioxVxUnAgA9BM2mkkEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHIsWRmVeSWpSXmKPExsWy7bCSvK7A77IUg4+/tC1OXF/EZPFg3jY2
+        i//bJjJbXPn6ns1i7+ut7BZnm96wW2x6fI3V4vKuOWwWM87vY7I4Pr2ByWLG5JdsDtwee78t
+        YPHYOesuu8eda3vYPO53H2fy2Lyk3qNvyypGj8+b5ALYo7hsUlJzMstSi/TtErgyfu24y1hw
+        g6fi+OkZLA2Mt7m6GDk4JARMJHq3BXUxcnEICexmlJjWuZgJIi4hsWUrB4QpLHH4cDFEyXNG
+        iZ6vt1i6GDk52ATSJCbN3c8KUiMioCox4WIASA2zwAEmievr17JBNHQzSlx5eIcJpIFTwEri
+        yfU+RhBbWCBA4uqtx2wgNgtQ86ElZ8FsXgFLiSNt8xkhbEGJkzOfgC1jBrqz8XA3lC0vsf3t
+        HGYQW0JAQeLn02WsEHERidmdbWBxEaBd965tYp/AKDwLyahZSEbNQjJqFpL2BYwsqxglUwuK
+        c9Nziw0LDPNSy/WKE3OLS/PS9ZLzczcxgqNQS3MH4/ZVH/QOMTJxMB5ilOBgVhLhtU0sThHi
+        TUmsrEotyo8vKs1JLT7EKM3BoiTOe6HrZLyQQHpiSWp2ampBahFMlomDU6qBaf1sZsOsQwpz
+        djp8eHNEbvnahJuraz7stE452mKb2Fq8Rkve4m5a94n6q/4LtjMv/PVorvvpjgv5XC46rwv+
+        /bq09P10xmaxl3V3/1YzzDAxqYl4r5Nbu3bWI5aIab5db052eVRP7Z1etr/h+AyDMpGw4886
+        Z7Lx8NiftpptMsd6Foeia3Z6gNFT7tWaX8Sz1PPCf1xdPWHR5b5Nl+eutMlwWba1RLmTSY3x
+        uuY7j+Pza26X//feVPdttdIR5XXHHrbf3ZLhJNF2il3e5Ny3Wf/6VjFYpdmud9N7WpwQcJS1
+        ML0kflLu7qPq4j1BHFteLft1Ovo0w7mVLIXTlRSent/29+RLycWZf6I9Gv9eYFNiKc5INNRi
+        LipOBAC51w5YMQMAAA==
+X-CMS-MailID: 20230531074520epcas1p1c0d3f71f7baf85caccca82316a7b80fb
+X-Msg-Generator: CA
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230527081826epcas1p15ec3fca591d914aff2019ddf7fd1d59c
+References: <CGME20230527081826epcas1p15ec3fca591d914aff2019ddf7fd1d59c@epcas1p1.samsung.com>
+        <20230526130131.16521-1-lm0963hack@gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Andi,
-
-On Wed, May 31, 2023 at 6:21=E2=80=AFAM Andi Shyti <andi.shyti@kernel.org> =
-wrote:
->
-> Hi Min,
->
-> On Fri, May 26, 2023 at 09:01:31PM +0800, Min Li wrote:
-> > If it is async, runqueue_node is freed in g2d_runqueue_worker on anothe=
-r
-> > worker thread. So in extreme cases, if g2d_runqueue_worker runs first, =
-and
-> > then executes the following if statement, there will be use-after-free.
-> >
-> > Signed-off-by: Min Li <lm0963hack@gmail.com>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_drm_g2d.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/=
-exynos/exynos_drm_g2d.c
-> > index ec784e58da5c..414e585ec7dd 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> > @@ -1335,7 +1335,7 @@ int exynos_g2d_exec_ioctl(struct drm_device *drm_=
-dev, void *data,
-> >       /* Let the runqueue know that there is work to do. */
-> >       queue_work(g2d->g2d_workq, &g2d->runqueue_work);
-> >
-> > -     if (runqueue_node->async)
-> > +     if (req->async)
->
-> did you actually hit this? If you did, then the fix is not OK.
-
-No, I didn't actually hit this. I found it through code review. This
-is only a theoretical issue that can only be triggered in extreme
-cases.
-
->
-> Andi
->
-> >               goto out;
-> >
-> >       wait_for_completion(&runqueue_node->complete);
-> > --
-> > 2.34.1
-> >
+Hi,
 
 
+> -----Original Message-----
+> From: Min Li <lm0963hack@gmail.com>
+> Sent: Friday, May 26, 2023 10:02 PM
+> To: inki.dae@samsung.com
+> Cc: sw0312.kim@samsung.com; kyungmin.park@samsung.com; airlied@gmail.com;
+> daniel@ffwll.ch; krzysztof.kozlowski@linaro.org; alim.akhtar@samsung.com;
+> dri-devel@lists.freedesktop.org; linux-arm-kernel@lists.infradead.org;
+> linux-samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [PATCH] drm/exynos: fix race condition UAF in
+> exynos_g2d_exec_ioctl
+> 
+> If it is async, runqueue_node is freed in g2d_runqueue_worker on another
+> worker thread. So in extreme cases, if g2d_runqueue_worker runs first, and
+> then executes the following if statement, there will be use-after-free.
+> 
 
---=20
-Min Li
+I received a report about the related issue from a white hacker before.
+Thanks for contribution. :)
+
+> Signed-off-by: Min Li <lm0963hack@gmail.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_g2d.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> index ec784e58da5c..414e585ec7dd 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> @@ -1335,7 +1335,7 @@ int exynos_g2d_exec_ioctl(struct drm_device
+*drm_dev,
+> void *data,
+>  	/* Let the runqueue know that there is work to do. */
+>  	queue_work(g2d->g2d_workq, &g2d->runqueue_work);
+> 
+> -	if (runqueue_node->async)
+> +	if (req->async)
+>  		goto out;
+> 
+>  	wait_for_completion(&runqueue_node->complete);
+> --
+> 2.34.1
+
+
