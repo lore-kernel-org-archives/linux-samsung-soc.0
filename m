@@ -2,59 +2,34 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CECC7EE31
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  1 Jun 2023 16:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78656C7EE2E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  1 Jun 2023 18:25:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231386AbjFAQwL (ORCPT
+        id S231499AbjFASZu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 1 Jun 2023 12:52:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35410 "EHLO
+        Thu, 1 Jun 2023 14:25:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230007AbjFAQwI (ORCPT
+        with ESMTP id S229648AbjFASZs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 1 Jun 2023 12:52:08 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 659541BE;
-        Thu,  1 Jun 2023 09:51:44 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-96fab30d1e1so252295066b.0;
-        Thu, 01 Jun 2023 09:51:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685638275; x=1688230275;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E6aw7YI0APlK+a4Ho7hkA2bZ/IE4Hfe3r+p1hUTo22w=;
-        b=P5K1gIvm5lMpyivClcYlSPpZk74Scq23UC7J49ZKXtd2Ty5NCk14Pzlmiw6G4TAT4e
-         R1SGrpIa7IOeMrrklx7UG2tAsiq9TFD4L8+GH42Zwqhfq/57kAkCKDh9e1B9u0uiq27N
-         Z2+cMvWVhGdpGqS04+8eMH1XROW5TNrSoWp21DvbX4Cljkzg06zAxgkEeZxXqtAHLxHn
-         Ukmg1ow9zsxYl1omDwPfgFBfHdDY/RlrCywsx1cRypvE8ktrFFqeuPghyapZVqcnmPfd
-         pHVao4wq68V+9Udu892pd4CZQNueuUSskC33wv4222J7q5LLmeCFeujIxSJZqtaz7HbM
-         QbBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685638275; x=1688230275;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E6aw7YI0APlK+a4Ho7hkA2bZ/IE4Hfe3r+p1hUTo22w=;
-        b=fKPNEMp/U6snZTRUz+tYWTu2y/IILBAEvWnS1EZL2awC6ErHzXNeTOO0/KhmQx0Ma7
-         knIyfgCSWCD93BRz3q3ptoMBqFNuDJbySn4QZ+FBJVn/cthB6jALOtNY0mnLHUJOfSBm
-         +Zz8MWzYrkMU/MsWXL3Wq6JIAU8WvJB4AQ4Ew4em8XAK40FTXXY/dCbT5Lc45KWs3rcW
-         oJEWyrXVxvaic1vqF6or2tjBy2MIQvTGYYr40WAj/oRf4jPqld33+S/wKcxhtjSrtqtc
-         c9Ic3b++Oh1ZowwzNTBz+V8xhCz4i/6IqMamlvaJ/r5cRtgQz5eqyNs6luerZDajtoOv
-         726Q==
-X-Gm-Message-State: AC+VfDyhTDQPm/1ivpSWRMzwXlmOfrykpIYOpgRudIphc7x6EngO7xSN
-        5HL6ldJJV2L6FTzmaLhAuv4=
-X-Google-Smtp-Source: ACHHUZ6tapSBvaY3YL2Ex5VOuVrYb3aIm5DVnhvBJZ6q0GGzp5g+K/kybtTX/EWGyJOG95QWxE5s1Q==
-X-Received: by 2002:a17:907:7f15:b0:94a:4e86:31bc with SMTP id qf21-20020a1709077f1500b0094a4e8631bcmr2589785ejc.13.1685638274568;
-        Thu, 01 Jun 2023 09:51:14 -0700 (PDT)
-Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id s7-20020a170906c30700b0094f410225c7sm10744283ejz.169.2023.06.01.09.51.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jun 2023 09:51:14 -0700 (PDT)
-Date:   Thu, 1 Jun 2023 18:51:11 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     Andy Gross <agross@kernel.org>,
+        Thu, 1 Jun 2023 14:25:48 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7B12D97;
+        Thu,  1 Jun 2023 11:25:46 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B9511063;
+        Thu,  1 Jun 2023 11:26:31 -0700 (PDT)
+Received: from [10.57.84.85] (unknown [10.57.84.85])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B053E3F663;
+        Thu,  1 Jun 2023 11:25:38 -0700 (PDT)
+Message-ID: <914124dd-c319-15c5-cc03-c5db0e4002f4@arm.com>
+Date:   Thu, 1 Jun 2023 19:25:32 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v2 04/25] iommu: Add IOMMU_DOMAIN_PLATFORM for S390
+Content-Language: en-GB
+To:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Bjorn Andersson <andersson@kernel.org>,
         AngeloGioacchino Del Regno 
@@ -82,102 +57,120 @@ Cc:     Andy Gross <agross@kernel.org>,
         Nicholas Piggin <npiggin@gmail.com>,
         Orson Zhai <orsonzhai@gmail.com>,
         Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
         Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Krishna Reddy <vdumpa@nvidia.com>,
         Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
         Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
         Dmitry Osipenko <digetx@gmail.com>,
         Nicolin Chen <nicolinc@nvidia.com>,
         Niklas Schnelle <schnelle@linux.ibm.com>,
         Steven Price <steven.price@arm.com>,
         Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v2 05/25] iommu/tegra-gart: Remove tegra-gart
-Message-ID: <ZHjMf9_uunlvVWtB@orome>
-References: <0-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com>
- <5-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="0JJNQg2cyOE2ETg4"
-Content-Disposition: inline
-In-Reply-To: <5-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+References: <4-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <4-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On 2023-05-16 01:00, Jason Gunthorpe wrote:
+> The PLATFORM domain will be set as the default domain and attached as
+> normal during probe. The driver will ignore the initial attach from a NULL
+> domain to the PLATFORM domain.
+> 
+> After this, the PLATFORM domain's attach_dev will be called whenever we
+> detach from an UNMANAGED domain (eg for VFIO). This is the same time the
+> original design would have called op->detach_dev().
+> 
+> This is temporary until the S390 dma-iommu.c conversion is merged.
 
---0JJNQg2cyOE2ETg4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If we do need a stopgap here, can we please just call the current 
+situation an identity domain? It's true enough in the sense that the 
+IOMMU API is not offering any translation or guarantee of isolation, so 
+the semantics of an identity domain - from the point of view of anything 
+inside the IOMMU API that would be looking - are no weaker or less 
+useful than a "platform" domain whose semantics are intentionally unknown.
 
-On Mon, May 15, 2023 at 09:00:38PM -0300, Jason Gunthorpe wrote:
-> Thierry says this is not used anymore, and doesn't think it ever will
-> be. The HW it supports is about 10 years old now and newer HW uses
-> different IOMMU drivers.
->=20
-> As this is the only driver with a GART approach, and it doesn't really
-> meet the driver expectations from the IOMMU core, let's just remove it
-> so we don't have to think about how to make it fit in.
->=20
-> It has a number of identified problems:
->  - The assignment of iommu_groups doesn't match the HW behavior
->=20
->  - It claims to have an UNMANAGED domain but it is really an IDENTITY
->    domain with a translation aperture. This is inconsistent with the core
->    expectation for security sensitive operations
->=20
->  - It doesn't implement a SW page table under struct iommu_domain so
->    * It can't accept a map until the domain is attached
->    * It forgets about all maps after the domain is detached
->    * It doesn't clear the HW of maps once the domain is detached
->      (made worse by having the wrong groups)
->=20
-> Cc: Thierry Reding <treding@nvidia.com>
-> Cc: Dmitry Osipenko <digetx@gmail.com>
+Then similarly for patch #3 - since we already know s390 is temporary, 
+it seems an anathema to introduce a whole domain type with its own weird 
+ops->default_domain mechanism solely for POWER to not actually use 
+domains with.
+
+In terms of reasoning, I don't see that IOMMU_DOMAIN_PLATFORM is any 
+more useful than a NULL default domain, it just renames the problem, and 
+gives us more code to maintain for the privilege. As I say, though, we 
+don't actually need to juggle the semantic of a "we don't know what's 
+happening here" domain around any further, since it works out that a 
+"we're not influencing anything here" domain actually suffices for what 
+we want to reason about, and those are already well-defined. Sure, the 
+platform DMA ops *might* be doing more, but that's beyond the scope of 
+the IOMMU API either way. At that point, lo and behold, s390 and POWER 
+now look just like ARM and the core code only needs a single special 
+case for arch-specific default identity domains, lovely!
+
+Thanks,
+Robin.
+
+> Tested-by: Heiko Stuebner <heiko@sntech.de>
+> Tested-by: Niklas Schnelle <schnelle@linux.ibm.com>
 > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 > ---
->  arch/arm/configs/multi_v7_defconfig |   1 -
->  arch/arm/configs/tegra_defconfig    |   1 -
->  drivers/iommu/Kconfig               |  11 -
->  drivers/iommu/Makefile              |   1 -
->  drivers/iommu/tegra-gart.c          | 371 ----------------------------
->  drivers/memory/tegra/mc.c           |  34 ---
->  drivers/memory/tegra/tegra20.c      |  28 ---
->  include/soc/tegra/mc.h              |  26 --
->  8 files changed, 473 deletions(-)
->  delete mode 100644 drivers/iommu/tegra-gart.c
-
-To clarify, I think this hardware could very well be used again, but I
-don't think it makes sense to use it in the context of the IOMMU
-subsystem. If anybody wants to make use of this on Tegra20, it probably
-makes more sense to move the GART programming into whatever driver ends
-up using it instead of jumping through all these hoops just to make it
-work like something it isn't.
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---0JJNQg2cyOE2ETg4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIyBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmR4zHwACgkQ3SOs138+
-s6EzXg/4sDDYzIY93jnjqgBAzF26DdM9+f9tNLS+tEhgUpn3WoMfZ+2mVBZJ6Qvl
-+zK/7cpay72mra2XCdI2nBDl4fc/MivQMZ2uBvnu1mNY4uQypRWZsVlnpKO5nkpf
-55oa0ZvczaCmITixiNpt58qIRcL/+Rwn+kuXCMcfZYr8WXq09eTZJ/E0SndTbgRv
-RNPyDbkY2T939Z3KYEhZH3filqm0ul9asQvbO31FsU+htgOT6XEYwanpd1jZuV+E
-uemlmy/fYzUkBbJoZ1wk9/pbYhZqlvZnOF3XvyJXOfsbrBiP/gkDstxYeMS86AVq
-ITwKKqX80dphMpO6Af5OEpuKjrh6wtzPgdgcKIMIgd6aQADSX5xLsQ/P0kIqI0em
-H679cza6Mm7Nl7NwmAMCiOVL568ME8criReWPK5nEnRg4TLj1AvsKLAubgHxXIP/
-Hzxox5RDNL5ubE2gcko6btoFu+yXxvxGT9nF1YcJxBcWUhHPVqpwg1q403RqF0bE
-Kfcfzs07wR/OM8vsXJxYxZdgE7HdZkh/vZnE0MWmiaGCHDaPZdx8vsMW8g0G1Wn9
-a3GXa18+zdEntyjXiH2QaNuytRlcnTWX6Egc9uLjzjyWgjW8dA2PHN70fli1p+Zf
-wv1qFNssXNER2qzepDmLQj621WybUok9GAhhWu0jfezY8b75zw==
-=Ciid
------END PGP SIGNATURE-----
-
---0JJNQg2cyOE2ETg4--
+>   drivers/iommu/s390-iommu.c | 21 +++++++++++++++++++--
+>   1 file changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/s390-iommu.c b/drivers/iommu/s390-iommu.c
+> index fbf59a8db29b11..f0c867c57a5b9b 100644
+> --- a/drivers/iommu/s390-iommu.c
+> +++ b/drivers/iommu/s390-iommu.c
+> @@ -142,14 +142,31 @@ static int s390_iommu_attach_device(struct iommu_domain *domain,
+>   	return 0;
+>   }
+>   
+> -static void s390_iommu_set_platform_dma(struct device *dev)
+> +/*
+> + * Switch control over the IOMMU to S390's internal dma_api ops
+> + */
+> +static int s390_iommu_platform_attach(struct iommu_domain *platform_domain,
+> +				      struct device *dev)
+>   {
+>   	struct zpci_dev *zdev = to_zpci_dev(dev);
+>   
+> +	if (!zdev->s390_domain)
+> +		return 0;
+> +
+>   	__s390_iommu_detach_device(zdev);
+>   	zpci_dma_init_device(zdev);
+> +	return 0;
+>   }
+>   
+> +static struct iommu_domain_ops s390_iommu_platform_ops = {
+> +	.attach_dev = s390_iommu_platform_attach,
+> +};
+> +
+> +static struct iommu_domain s390_iommu_platform_domain = {
+> +	.type = IOMMU_DOMAIN_PLATFORM,
+> +	.ops = &s390_iommu_platform_ops,
+> +};
+> +
+>   static void s390_iommu_get_resv_regions(struct device *dev,
+>   					struct list_head *list)
+>   {
+> @@ -428,12 +445,12 @@ void zpci_destroy_iommu(struct zpci_dev *zdev)
+>   }
+>   
+>   static const struct iommu_ops s390_iommu_ops = {
+> +	.default_domain = &s390_iommu_platform_domain,
+>   	.capable = s390_iommu_capable,
+>   	.domain_alloc = s390_domain_alloc,
+>   	.probe_device = s390_iommu_probe_device,
+>   	.release_device = s390_iommu_release_device,
+>   	.device_group = generic_device_group,
+> -	.set_platform_dma_ops = s390_iommu_set_platform_dma,
+>   	.pgsize_bitmap = SZ_4K,
+>   	.get_resv_regions = s390_iommu_get_resv_regions,
+>   	.default_domain_ops = &(const struct iommu_domain_ops) {
