@@ -2,131 +2,164 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54709C77B7E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  1 Jun 2023 09:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 842C2C7EE23
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  1 Jun 2023 10:00:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232881AbjFAJnA (ORCPT
+        id S233109AbjFAJ7o (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 1 Jun 2023 05:43:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57926 "EHLO
+        Thu, 1 Jun 2023 05:59:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232713AbjFAJm7 (ORCPT
+        with ESMTP id S232625AbjFAJ7V (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 1 Jun 2023 05:42:59 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D047B139;
-        Thu,  1 Jun 2023 02:42:44 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-5149c76f4dbso1022135a12.1;
-        Thu, 01 Jun 2023 02:42:44 -0700 (PDT)
+        Thu, 1 Jun 2023 05:59:21 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7D52137
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  1 Jun 2023 02:59:13 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-9700219be87so82195366b.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Jun 2023 02:59:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685612563; x=1688204563;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7q5khLoEX4J3lidnUZjzKtgn8/eZ/Y3adwlIXy+1pGo=;
-        b=DOk+vfUpNWI6QjumU5Q8+7tLd2D676JlGoIQM4t1DetpGC9GA89dMTgrSitzFdCjeN
-         Z77tsGABwvU36zQJ2XcPN5KRSYoPcsSCNtdMjbV3W84CJI8D40lGXeEH+pGa3ob3liUO
-         I5DqokWzpfOu/jU0+/NveUCl6Gv4CFsXhYJZyvVW7hGnYAJRsRlbBj/rZkXkfRW+62tC
-         v/hIZyCWXaXmcOZDAYUhB9UtQ8nr/4l3/EBrhO1EKwjqVc7SjAYpDtb/bCUF/RiOGS/e
-         jGgBjF+wuFDJ79cqaBA4FNM/aiRA+bs51RAV/5u+pTNzxt7ZPSEs/fsg6Tak4a/ReNNO
-         cxKg==
+        d=linaro.org; s=google; t=1685613552; x=1688205552;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=90Gu+poX8fKoB/oDjzLzAZDuwhhlwN9OQimMwgRQWp4=;
+        b=iM8LO+FPwTHgjFORfknFCDDjXMCN2xMBI+2u+Ik/H0rhbGttDgWLwFWhgV7GidR1EJ
+         rT6uT9O6KV8yJ1zVK1wy3YY1eN2aY9T+KNEqoDB9S9q+ALh5koKj0ZcZg7K3qnr8a3TS
+         mMqOuQNhrbdoYz7kJFD4qlolN2dXiGlGU9TFlTWcjlSBIeKE+t2qyN/bJpQY/mKW9nJc
+         OWII9OiOktwbOH/ooYR18Gu5H9ENNz6JdXBobJpeBcrKbUaZcvlrqW4zd+LP3xs3nSxY
+         Q8YzxYUo4cxMOj5Rz1DEnWj27tc4Y74KZFM4ZzRujD87iDPWXQrdnu4efzE7m37QlORd
+         CT7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685612563; x=1688204563;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7q5khLoEX4J3lidnUZjzKtgn8/eZ/Y3adwlIXy+1pGo=;
-        b=fPFSNPOrW/Y/yAPcALeB9684STjQh/9X1H9d4Mp9QXzQec3WOvEV0sHjNEEYcpAevH
-         AZaRsSg4HoTd/3ZSs9kCuIHulFhdj9+qacvVlttXLKSBhDSFjGCRx0xMkEncQV9mcI8M
-         0ZSA+kjiSoqhl2+k3WpMPA/vQBJO+qS56Xhy2biYo6rX5ELfy+pkWIt4T4TVK0Xl25IA
-         aYhNRSH3Rhd/w+ElDYzD0+ObswvgAYa6zx1aF8UnaW3flpH6QYzvbYxKzUhaUnn9E46O
-         PUBOZptKYeSkrH5fXLo2PIOAiXDlmbxxhT4A0FDOaOYBFxxJmfzuKD9jZzgDKlnVGHp2
-         9JUg==
-X-Gm-Message-State: AC+VfDzNo1oFWKXgLM6CfaXY+Zqfio7pwHCQD3sUQez6PfI0z75ELRF8
-        PVFU24Pu6e7wTUBRm2TKXq8=
-X-Google-Smtp-Source: ACHHUZ4Ut/2p85sdNMlqXBYqd/kF5rcU9VA6xQW4nb4z+SUKQQBkigJa799rdC1rKMIMKpGvTRQY1g==
-X-Received: by 2002:a05:6402:349:b0:50b:c89f:f381 with SMTP id r9-20020a056402034900b0050bc89ff381mr5344371edw.29.1685612563085;
-        Thu, 01 Jun 2023 02:42:43 -0700 (PDT)
-Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id n15-20020a05640206cf00b004fbdfbb5acesm6916135edy.89.2023.06.01.02.42.42
+        d=1e100.net; s=20221208; t=1685613552; x=1688205552;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=90Gu+poX8fKoB/oDjzLzAZDuwhhlwN9OQimMwgRQWp4=;
+        b=Pn4Zcrg4Xgo6kQBDCHfXoMxXhEwJLRElOdPG90aPT8ZpTxGEVh0QaNSIf0yYSUok+X
+         B6su84JjBiR3bj8g5EILkdPkvKWHyFOw3tNDZ61kXs6EXoh+S2Lgc1KCV3LuPjoKFS3+
+         /X11sZPtkoCrpLfqKTPhUNgsGQScyJ1OJZZfMUNZ8qIi4iMGSlvciqdKZXo0bn5zX6sm
+         OJACxCOWoaO9eM3E/6dmV4ZPM3X/hXLNt1afhntIbWXdiM9Mvy6uu/VZAd4jZMJKv3M/
+         sf+6uUORUxpo9dGmcyjoP6bG8fqrqG93NrXX+oT4/i4HGo/PtGwmUxeNbzAXhHO/LiI/
+         11GA==
+X-Gm-Message-State: AC+VfDwyra1g92I19r3+7GTqKflEo+57e9Jvqys4tVp5AfcmQ5cfTW1V
+        4rIEFN6ixhk+kyfzkNlEGHISFw==
+X-Google-Smtp-Source: ACHHUZ6Q1hQXvbyzsDG+IHmi111NeKcnhKLafRhBIRJoDPR46b5dmWgA63foRAXbsa1b46P3eS2Jzg==
+X-Received: by 2002:a17:907:7213:b0:974:1e0e:9bd4 with SMTP id dr19-20020a170907721300b009741e0e9bd4mr6983394ejc.16.1685613551711;
+        Thu, 01 Jun 2023 02:59:11 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.199.204])
+        by smtp.gmail.com with ESMTPSA id y11-20020a1709060a8b00b00965bf86c00asm10475549ejf.143.2023.06.01.02.59.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jun 2023 02:42:42 -0700 (PDT)
-Date:   Thu, 1 Jun 2023 11:42:40 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     daniel@ffwll.ch, airlied@gmail.com,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        javierm@redhat.com, sam@ravnborg.org, suijingfeng@loongson.cn,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v5 09/13] drm/tegra: Use regular fbdev I/O helpers
-Message-ID: <ZHhoEHn_i79j8IAf@orome>
-References: <20230530151228.22979-1-tzimmermann@suse.de>
- <20230530151228.22979-10-tzimmermann@suse.de>
+        Thu, 01 Jun 2023 02:59:11 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Keiji Hayashibara <hayashibara.keiji@socionext.com>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/3] spi: dt-bindings: allwinner: simplify with unevaluatedProperties
+Date:   Thu,  1 Jun 2023 11:59:06 +0200
+Message-Id: <20230601095908.563865-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="J8y/7sWNqq9Yj/uK"
-Content-Disposition: inline
-In-Reply-To: <20230530151228.22979-10-tzimmermann@suse.de>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Remove properties already mentioned by common spi-controller.yaml and
+switch to unevaluatedProperties:false to achieve same functional effect.
+This makes the binding a bit smaller.  Similarly there is no need to
+allow additionalProperties for children, because spi-controller.yaml
+already does it.
 
---J8y/7sWNqq9Yj/uK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml  | 8 +-------
+ .../devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml  | 8 +-------
+ 2 files changed, 2 insertions(+), 14 deletions(-)
 
-On Tue, May 30, 2023 at 05:12:24PM +0200, Thomas Zimmermann wrote:
-> Use the regular fbdev helpers for framebuffer I/O instead of DRM's
-> helpers. Tegra does not use damage handling, so DRM's fbdev helpers
-> are mere wrappers around the fbdev code.
->=20
-> By using fbdev helpers directly within each DRM fbdev emulation,
-> we can eventually remove DRM's wrapper functions entirely.
->=20
-> v4:
-> 	* use initializer macros for struct fb_ops
-> v2:
-> 	* use FB_SYS_HELPERS option
->=20
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Acked-by: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Mikko Perttunen <mperttunen@nvidia.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/gpu/drm/tegra/Kconfig | 1 +
->  drivers/gpu/drm/tegra/fbdev.c | 8 +++-----
->  2 files changed, 4 insertions(+), 5 deletions(-)
+diff --git a/Documentation/devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml b/Documentation/devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml
+index 2155478bfc4d..a6f34bdd1d3c 100644
+--- a/Documentation/devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml
++++ b/Documentation/devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml
+@@ -14,9 +14,6 @@ maintainers:
+   - Maxime Ripard <mripard@kernel.org>
+ 
+ properties:
+-  "#address-cells": true
+-  "#size-cells": true
+-
+   compatible:
+     const: allwinner,sun4i-a10-spi
+ 
+@@ -46,12 +43,9 @@ properties:
+       - const: rx
+       - const: tx
+ 
+-  num-cs: true
+-
+ patternProperties:
+   "^.*@[0-9a-f]+":
+     type: object
+-    additionalProperties: true
+     properties:
+       reg:
+         items:
+@@ -71,7 +65,7 @@ required:
+   - clocks
+   - clock-names
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml b/Documentation/devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml
+index fa5260eca531..28b8ace63044 100644
+--- a/Documentation/devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml
++++ b/Documentation/devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml
+@@ -14,9 +14,6 @@ maintainers:
+   - Maxime Ripard <mripard@kernel.org>
+ 
+ properties:
+-  "#address-cells": true
+-  "#size-cells": true
+-
+   compatible:
+     oneOf:
+       - const: allwinner,sun50i-r329-spi
+@@ -68,12 +65,9 @@ properties:
+       - const: rx
+       - const: tx
+ 
+-  num-cs: true
+-
+ patternProperties:
+   "^.*@[0-9a-f]+":
+     type: object
+-    additionalProperties: true
+     properties:
+       reg:
+         items:
+@@ -93,7 +87,7 @@ required:
+   - clocks
+   - clock-names
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+-- 
+2.34.1
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---J8y/7sWNqq9Yj/uK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmR4aBAACgkQ3SOs138+
-s6EMnhAApvbF83jJgB6q5JCxzWJ69rSVfi9hjhGoa9Wz9miYwATuP3yzLuDbf21b
-6diFMn3cJ9yU+3PrBZasS4/WLyXsu0DIW8ZWsexZ2nCnjEmMjBshzfr7CaOHCHAQ
-PeobxSDdVCgv898nMOwOOlDHSVpuGbexSge1pq9Tsfid4IDWZHTap1y3a56iyhxy
-tsP27T0aQ+2jKYTegSaokFocUaeFper7JWV3mSr1FZH4N8CqskB3p+YMSzdWp9K4
-KiSrfAo8w09MPTwy3A/LxzIGXaGofiOUITd/zk6CWEl33Be2v1iva7Anq3cljKiT
-KU5vNPVgmK3Fhz0o08cFuUS6t42GtMh/iij/1ZE5HePx5IPkZjJGSpg/9DXNHOA1
-68V0xsUPRSUpEIm6Q91oPZVFTF4PGK0rYkRWCIH+C6JW67wvfKbRoUgwbEN+ZrC7
-yQMNtpi9HKHq3v/+PahWPiWTEp3K7GAy2HAoEdtP5whzNqohKwn+qIHXC7Cu9tPC
-aexe4C80Aq8PBX1v2E/cVRq69BnzDwDZEiBXjRugfzDZn0KhMuPNxFJxwyi27ibK
-dWrkkLHypmvS04FY0HGzt5OxuuIPTiiPfg57DAfl9LmTisbXRI9RyPHF508ll9T6
-HgJJLHycd7x1y639mAntcOoe9GfgQwA9rUiv4mvIe3EkrJQqBgg=
-=793F
------END PGP SIGNATURE-----
-
---J8y/7sWNqq9Yj/uK--
