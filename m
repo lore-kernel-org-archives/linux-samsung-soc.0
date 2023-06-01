@@ -2,196 +2,131 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2EB1C77B7A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  1 Jun 2023 08:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54709C77B7E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  1 Jun 2023 09:43:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231424AbjFAI3o (ORCPT
+        id S232881AbjFAJnA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 1 Jun 2023 04:29:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40032 "EHLO
+        Thu, 1 Jun 2023 05:43:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232012AbjFAI3d (ORCPT
+        with ESMTP id S232713AbjFAJm7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 1 Jun 2023 04:29:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A4D79F;
-        Thu,  1 Jun 2023 01:29:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CF56E6413F;
-        Thu,  1 Jun 2023 08:29:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBACFC433D2;
-        Thu,  1 Jun 2023 08:29:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685608171;
-        bh=K2Tqhq3A7MhIloDIiTA3oZim6gs0AvBZw9GEwz95QhI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jOFIFlhenGHiK0R8E9Ij0OM7qK8Otbc1gk+GH7InjGo8vgQSCmx5FQjpxEP3mKDGL
-         KM8xV30JEHprgMbf4rLOcJ3PXjTyhO+8RBna6FssJx6YIV2ilwwNcaGu/ZxWEwStQI
-         kijUbSQzaLXmPkRYgOwkFtcvUDmfYsoINZ6mZYJOuS3Dq+mgiGdpoWWFEatz8ao7tw
-         IiNuRFVn1BUlBGT+PKHNl9qmBtlQ/nr7V6hXYDPWmTy4s2CFHF3+ve84DlESyzKk4S
-         pcYxiDpnn7cmXEvyg9IYwOVM1dYOyOBJXrto3C/T5nPIbXMxo4TMT9suRxReBocoLi
-         CjXQO1B3DZxXg==
-Date:   Thu, 1 Jun 2023 10:29:28 +0200
-From:   Andi Shyti <andi.shyti@kernel.org>
-To:     =?utf-8?B?64yA7J246riwL1RpemVuIFBsYXRmb3JtIExhYihTUikv7IK87ISx7KCE7J6Q?= 
-        <inki.dae@samsung.com>
-Cc:     'lm0963' <lm0963hack@gmail.com>, sw0312.kim@samsung.com,
-        kyungmin.park@samsung.com, airlied@gmail.com, daniel@ffwll.ch,
-        krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+        Thu, 1 Jun 2023 05:42:59 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D047B139;
+        Thu,  1 Jun 2023 02:42:44 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-5149c76f4dbso1022135a12.1;
+        Thu, 01 Jun 2023 02:42:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685612563; x=1688204563;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7q5khLoEX4J3lidnUZjzKtgn8/eZ/Y3adwlIXy+1pGo=;
+        b=DOk+vfUpNWI6QjumU5Q8+7tLd2D676JlGoIQM4t1DetpGC9GA89dMTgrSitzFdCjeN
+         Z77tsGABwvU36zQJ2XcPN5KRSYoPcsSCNtdMjbV3W84CJI8D40lGXeEH+pGa3ob3liUO
+         I5DqokWzpfOu/jU0+/NveUCl6Gv4CFsXhYJZyvVW7hGnYAJRsRlbBj/rZkXkfRW+62tC
+         v/hIZyCWXaXmcOZDAYUhB9UtQ8nr/4l3/EBrhO1EKwjqVc7SjAYpDtb/bCUF/RiOGS/e
+         jGgBjF+wuFDJ79cqaBA4FNM/aiRA+bs51RAV/5u+pTNzxt7ZPSEs/fsg6Tak4a/ReNNO
+         cxKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685612563; x=1688204563;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7q5khLoEX4J3lidnUZjzKtgn8/eZ/Y3adwlIXy+1pGo=;
+        b=fPFSNPOrW/Y/yAPcALeB9684STjQh/9X1H9d4Mp9QXzQec3WOvEV0sHjNEEYcpAevH
+         AZaRsSg4HoTd/3ZSs9kCuIHulFhdj9+qacvVlttXLKSBhDSFjGCRx0xMkEncQV9mcI8M
+         0ZSA+kjiSoqhl2+k3WpMPA/vQBJO+qS56Xhy2biYo6rX5ELfy+pkWIt4T4TVK0Xl25IA
+         aYhNRSH3Rhd/w+ElDYzD0+ObswvgAYa6zx1aF8UnaW3flpH6QYzvbYxKzUhaUnn9E46O
+         PUBOZptKYeSkrH5fXLo2PIOAiXDlmbxxhT4A0FDOaOYBFxxJmfzuKD9jZzgDKlnVGHp2
+         9JUg==
+X-Gm-Message-State: AC+VfDzNo1oFWKXgLM6CfaXY+Zqfio7pwHCQD3sUQez6PfI0z75ELRF8
+        PVFU24Pu6e7wTUBRm2TKXq8=
+X-Google-Smtp-Source: ACHHUZ4Ut/2p85sdNMlqXBYqd/kF5rcU9VA6xQW4nb4z+SUKQQBkigJa799rdC1rKMIMKpGvTRQY1g==
+X-Received: by 2002:a05:6402:349:b0:50b:c89f:f381 with SMTP id r9-20020a056402034900b0050bc89ff381mr5344371edw.29.1685612563085;
+        Thu, 01 Jun 2023 02:42:43 -0700 (PDT)
+Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id n15-20020a05640206cf00b004fbdfbb5acesm6916135edy.89.2023.06.01.02.42.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Jun 2023 02:42:42 -0700 (PDT)
+Date:   Thu, 1 Jun 2023 11:42:40 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     daniel@ffwll.ch, airlied@gmail.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        javierm@redhat.com, sam@ravnborg.org, suijingfeng@loongson.cn,
         dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/exynos: fix race condition UAF in
- exynos_g2d_exec_ioctl
-Message-ID: <20230601082928.4mk7hfi5hunaxm4y@intel.intel>
-References: <20230526130131.16521-1-lm0963hack@gmail.com>
- <20230530222150.24oogloda6wtvpvm@intel.intel>
- <CAAgLYK7FNrAYFRp7C3LDtqevFENQLw8YYAFR2Pk9wdfQ5RKVeg@mail.gmail.com>
- <20230531081917.grx3qqqm7usaqoa5@intel.intel>
- <CAAgLYK4KzuKMTkBwzCJj4wa+W+=9fR+A1J=XR-n1E-W7EjexuA@mail.gmail.com>
- <CGME20230531120656epcas1p1df61dae784f4b6833b39c43da697be08@epcas1p1.samsung.com>
- <20230531120531.dynd3iyggauucly7@intel.intel>
- <007001d99413$0f08ba60$2d1a2f20$@samsung.com>
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v5 09/13] drm/tegra: Use regular fbdev I/O helpers
+Message-ID: <ZHhoEHn_i79j8IAf@orome>
+References: <20230530151228.22979-1-tzimmermann@suse.de>
+ <20230530151228.22979-10-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="J8y/7sWNqq9Yj/uK"
 Content-Disposition: inline
-In-Reply-To: <007001d99413$0f08ba60$2d1a2f20$@samsung.com>
+In-Reply-To: <20230530151228.22979-10-tzimmermann@suse.de>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Inki,
 
-> > > > > > > If it is async, runqueue_node is freed in g2d_runqueue_worker on
-> > another
-> > > > > > > worker thread. So in extreme cases, if g2d_runqueue_worker runs
-> > first, and
-> > > > > > > then executes the following if statement, there will be use-
-> > after-free.
-> > > > > > >
-> > > > > > > Signed-off-by: Min Li <lm0963hack@gmail.com>
-> > > > > > > ---
-> > > > > > >  drivers/gpu/drm/exynos/exynos_drm_g2d.c | 2 +-
-> > > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > > >
-> > > > > > > diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> > b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> > > > > > > index ec784e58da5c..414e585ec7dd 100644
-> > > > > > > --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> > > > > > > +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> > > > > > > @@ -1335,7 +1335,7 @@ int exynos_g2d_exec_ioctl(struct
-> > drm_device *drm_dev, void *data,
-> > > > > > >       /* Let the runqueue know that there is work to do. */
-> > > > > > >       queue_work(g2d->g2d_workq, &g2d->runqueue_work);
-> > > > > > >
-> > > > > > > -     if (runqueue_node->async)
-> > > > > > > +     if (req->async)
-> > > > > >
-> > > > > > did you actually hit this? If you did, then the fix is not OK.
-> > > > >
-> > > > > No, I didn't actually hit this. I found it through code review. This
-> > > > > is only a theoretical issue that can only be triggered in extreme
-> > > > > cases.
-> > > >
-> > > > first of all runqueue is used again two lines below this, which
-> > > > means that if you don't hit the uaf here you will hit it
-> > > > immediately after.
-> > >
-> > > No, if async is true, then it will goto out, which will directly return.
-> > >
-> > > if (runqueue_node->async)
-> > >     goto out;   // here, go to out, will directly return
-> > >
-> > > wait_for_completion(&runqueue_node->complete);      // not hit
-> > > g2d_free_runqueue_node(g2d, runqueue_node);
-> > >
-> > > out:
-> > > return 0;
-> > 
-> > that's right, sorry, I misread it.
-> > 
-> > > > Second, if runqueue is freed, than we need to remove the part
-> > > > where it's freed because it doesn't make sense to free runqueue
-> > > > at this stage.
-> > >
-> > > It is freed by g2d_free_runqueue_node in g2d_runqueue_worker
-> > >
-> > > static void g2d_runqueue_worker(struct work_struct *work)
-> > > {
-> > >     ......
-> > >     if (runqueue_node) {
-> > >         pm_runtime_mark_last_busy(g2d->dev);
-> > >         pm_runtime_put_autosuspend(g2d->dev);
-> > >
-> > >         complete(&runqueue_node->complete);
-> > >         if (runqueue_node->async)
-> > >             g2d_free_runqueue_node(g2d, runqueue_node);        // freed here
-> > 
-> > this is what I'm wondering: is it correct to free a resource
-> > here? The design looks to me a bit fragile and prone to mistakes.
-> 
-> This question seems to deviate from the purpose of this patch. If you are providing additional opinions for code quality improvement unrelated to this patch, it would be more appropriate for me to answer instead of him.
+--J8y/7sWNqq9Yj/uK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It's not deviating as the question was already made in my first
-review. It just looks strange to me that a piece of data shared
-amongst processes can be freed up without sinchronizing. A bunch
-of if's do not make it robust enough.
+On Tue, May 30, 2023 at 05:12:24PM +0200, Thomas Zimmermann wrote:
+> Use the regular fbdev helpers for framebuffer I/O instead of DRM's
+> helpers. Tegra does not use damage handling, so DRM's fbdev helpers
+> are mere wrappers around the fbdev code.
+>=20
+> By using fbdev helpers directly within each DRM fbdev emulation,
+> we can eventually remove DRM's wrapper functions entirely.
+>=20
+> v4:
+> 	* use initializer macros for struct fb_ops
+> v2:
+> 	* use FB_SYS_HELPERS option
+>=20
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Acked-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> ---
+>  drivers/gpu/drm/tegra/Kconfig | 1 +
+>  drivers/gpu/drm/tegra/fbdev.c | 8 +++-----
+>  2 files changed, 4 insertions(+), 5 deletions(-)
 
-The patch itself, in my point of view, is not really fixing much
-and won't make any difference, it's just exposing the weakness I
-mentioned.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-However, honestly speaking, I don't know the driver well enough
-to suggest architectural changes and that's why I r-b'ed this
-one. But the first thing that comes to my mind, without looking
-much at the code, is using kref's as a way to make sure that a
-resource doesn't magically disappear under your nose.
+--J8y/7sWNqq9Yj/uK
+Content-Type: application/pgp-signature; name="signature.asc"
 
-But, of course, this is up to you and if in your opinion this is
-OK and it fixes it... then you definitely know better :)
+-----BEGIN PGP SIGNATURE-----
 
-Thanks for this discussion,
-Andi
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmR4aBAACgkQ3SOs138+
+s6EMnhAApvbF83jJgB6q5JCxzWJ69rSVfi9hjhGoa9Wz9miYwATuP3yzLuDbf21b
+6diFMn3cJ9yU+3PrBZasS4/WLyXsu0DIW8ZWsexZ2nCnjEmMjBshzfr7CaOHCHAQ
+PeobxSDdVCgv898nMOwOOlDHSVpuGbexSge1pq9Tsfid4IDWZHTap1y3a56iyhxy
+tsP27T0aQ+2jKYTegSaokFocUaeFper7JWV3mSr1FZH4N8CqskB3p+YMSzdWp9K4
+KiSrfAo8w09MPTwy3A/LxzIGXaGofiOUITd/zk6CWEl33Be2v1iva7Anq3cljKiT
+KU5vNPVgmK3Fhz0o08cFuUS6t42GtMh/iij/1ZE5HePx5IPkZjJGSpg/9DXNHOA1
+68V0xsUPRSUpEIm6Q91oPZVFTF4PGK0rYkRWCIH+C6JW67wvfKbRoUgwbEN+ZrC7
+yQMNtpi9HKHq3v/+PahWPiWTEp3K7GAy2HAoEdtP5whzNqohKwn+qIHXC7Cu9tPC
+aexe4C80Aq8PBX1v2E/cVRq69BnzDwDZEiBXjRugfzDZn0KhMuPNxFJxwyi27ibK
+dWrkkLHypmvS04FY0HGzt5OxuuIPTiiPfg57DAfl9LmTisbXRI9RyPHF508ll9T6
+HgJJLHycd7x1y639mAntcOoe9GfgQwA9rUiv4mvIe3EkrJQqBgg=
+=793F
+-----END PGP SIGNATURE-----
 
-> The runqueue node - which contains command list for g2d rendering - is generated when the user calls the ioctl system call. Therefore, if the user-requested command list is rendered by g2d device then there is no longer a reason to keep it. :)
-> 
-> > 
-> > The patch per se is OK. It doesn't make much difference to me
-> > where you actually read async, although this patch looks a bit
-> > safer:
-> > 
-> > Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
-> 
-> Thanks,
-> Inki Dae
-> 
-> > 
-> > However some refactoring might be needed to make it a bit more
-> > robust.
-> > 
-> > Thanks,
-> > Andi
-> > 
-> > >     }
-> > >
-> > > >
-> > > > Finally, can you elaborate on the code review that you did so
-> > > > that we all understand it?
-> > >
-> > > queue_work(g2d->g2d_workq, &g2d->runqueue_work);
-> > > msleep(100);        // add sleep here to let g2d_runqueue_worker run first
-> > > if (runqueue_node->async)
-> > >     goto out;
-> > >
-> > >
-> > > >
-> > > > Andi
-> > >
-> > >
-> > >
-> > > --
-> > > Min Li
-> 
-> 
+--J8y/7sWNqq9Yj/uK--
