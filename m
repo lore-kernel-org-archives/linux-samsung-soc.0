@@ -2,86 +2,65 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04829C7EE2C
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  2 Jun 2023 12:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFAA9C7EE24
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  3 Jun 2023 10:40:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235452AbjFBMiv (ORCPT
+        id S234411AbjFCKkT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 2 Jun 2023 08:38:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41708 "EHLO
+        Sat, 3 Jun 2023 06:40:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235485AbjFBMia (ORCPT
+        with ESMTP id S236222AbjFCKkO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 2 Jun 2023 08:38:30 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C2201B1;
-        Fri,  2 Jun 2023 05:38:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2D0FB65006;
-        Fri,  2 Jun 2023 12:38:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F366C433A4;
-        Fri,  2 Jun 2023 12:38:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685709498;
-        bh=IPU8TLmU2hYJoTc9TwVSKxHzByBu50xs7lBkNTi4cSw=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=AsEVNsZGTXzzYW9mTh7YQ2Js8obgyqsQJs5t+Dmf9YA42Pa/YQTzd/R6k4et8rqA5
-         gWZlQdLzUDUGNnlYP13S1OuefMWK1uX+Y866MywVC0xTkz2e8y1A+y0iXyN8K1kGbU
-         PwV3rdFAl/n1bkHCVoPbd7iqZ9sobHqWl+LWN6aLdxTzs+jqh+XMIimz0CPM/d5CYN
-         i3fUOoti36dL2rY1HBDrBvcpyayaCh5B3Cs+1qFkjoY4Nse8cEa+HmWs5f7La+8t/c
-         rORXS3QqRjmNr+jmjrWd1RMusLUXUhClPGDks6IfT9zmSxJOKE+O52dm2pVryujWY8
-         0L1vElL7DRjXA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andi Shyti <andi.shyti@kernel.org>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>, linux-spi@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-In-Reply-To: <20230531205550.568340-1-andi.shyti@kernel.org>
-References: <20230531205550.568340-1-andi.shyti@kernel.org>
-Subject: Re: [PATCH] spi: s3c64xx: Use devm_clk_get_enabled()
-Message-Id: <168570949723.29417.13931671044967003727.b4-ty@kernel.org>
-Date:   Fri, 02 Jun 2023 13:38:17 +0100
+        Sat, 3 Jun 2023 06:40:14 -0400
+X-Greylist: delayed 4201 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 03 Jun 2023 03:39:52 PDT
+Received: from mail.webtopbits.pl (mail.webtopbits.pl [195.231.64.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59AFE1702
+        for <linux-samsung-soc@vger.kernel.org>; Sat,  3 Jun 2023 03:39:52 -0700 (PDT)
+Received: by mail.webtopbits.pl (Postfix, from userid 1001)
+        id 8BD6DA3989; Fri,  2 Jun 2023 09:51:04 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=webtopbits.pl;
+        s=mail; t=1685695865;
+        bh=Eh8ECMiYd4baGAwPAzhz8mhJACXX7NSRkYjh+plaY18=;
+        h=Date:From:To:Subject:From;
+        b=l+6Rvu9Ddx/Hsrp4eGEufKYPgNyM+DMQtySYISzET2pZbbuwF5QFEn23OLOViSG1V
+         UMqyTG2dWhOF20sr2ephrBACWI37uLaaDe5A85rkxbBWp5cB2QoIRRY+AP/Iys1BP5
+         Lfkd1n2M+F6JaRxeXSqBsQMM5xn7reyo3fNlUEDDRL5JirK3WMEJNKnMinE//FU9j7
+         OEpMvZBT2kU26ZMnbs9/fSbEi+6Kyt76uC6gWBhO15Yw/lZ/bq5p3K2PqQz8IwFF4U
+         AW0sy0O51pQwHUi6SpRY6cvpfgiurIY/RlZ2YKvIX4lZxwCh2aZn3s++Gx4cl9rQAx
+         UNELH4Z0HLvwA==
+Received: by mail.webtopbits.pl for <linux-samsung-soc@vger.kernel.org>; Fri,  2 Jun 2023 08:50:56 GMT
+Message-ID: <20230602085530-0.1.8w.5kvg.0.tkcuh46z3d@webtopbits.pl>
+Date:   Fri,  2 Jun 2023 08:50:56 GMT
+From:   "Kamil Durjasz" <kamil.durjasz@webtopbits.pl>
+To:     <linux-samsung-soc@vger.kernel.org>
+Subject: =?UTF-8?Q?Wy=C5=BCsza_konwersja_w_e-sklepie_?=
+X-Mailer: mail.webtopbits.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-bfdf5
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 31 May 2023 22:55:50 +0200, Andi Shyti wrote:
-> Replace the tuple devm_clk_get()/clk_prepare_enable() with the
-> single function devm_clk_get_enabled().
-> 
-> 
+Dzie=C5=84 dobry,
 
-Applied to
+w jaki spos=C3=B3b docieraj=C4=85 Pa=C5=84stwo do odbiorc=C3=B3w?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Tworzymy pot=C4=99=C5=BCne narz=C4=99dzia sprzeda=C5=BCy, kt=C3=B3re pozw=
+alaj=C4=85 kompleksowo rozwi=C4=85za=C4=87 problemy potencjalnych klient=C3=
+=B3w i skutecznie wp=C5=82yn=C4=85=C4=87 na ich decyzje zakupowe.=20
 
-Thanks!
+Skupiamy si=C4=99 na Pa=C5=84stwa potrzebach zwi=C4=85zanych z obs=C5=82u=
+g=C4=85 sklepu, oczekiwaniach i planach sprzeda=C5=BCowych. Szczeg=C3=B3=C5=
+=82owo dopasowujemy grafik=C4=99, funkcjonalno=C5=9Bci, struktur=C4=99 i =
+mikrointerakcje do Pa=C5=84stwa grupy docelowej, co przek=C5=82ada si=C4=99=
+ na oczekiwane rezultaty.
 
-[1/1] spi: s3c64xx: Use devm_clk_get_enabled()
-      commit: 20c475d21ed9326f7b1396c9bb8991b375cb6c50
+Ch=C4=99tnie przedstawi=C4=99 dotychczasowe realizacje, aby mogli Pa=C5=84=
+stwo przekona=C4=87 si=C4=99 o naszych mo=C5=BCliwo=C5=9Bciach. Mog=C4=99=
+ si=C4=99 skontaktowa=C4=87?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Pozdrawiam
+Kamil Durjasz
