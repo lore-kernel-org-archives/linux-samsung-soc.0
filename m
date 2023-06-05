@@ -2,318 +2,142 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C890C7EE29
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jun 2023 19:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A29C77B73
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Jun 2023 03:00:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232285AbjFDTPo (ORCPT
+        id S232413AbjFEDAJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 4 Jun 2023 15:15:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46408 "EHLO
+        Sun, 4 Jun 2023 23:00:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232237AbjFDTPn (ORCPT
+        with ESMTP id S230437AbjFEDAI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 4 Jun 2023 15:15:43 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 323C3DA
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  4 Jun 2023 12:15:39 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-9745d99cfccso487742366b.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 Jun 2023 12:15:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685906137; x=1688498137;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oH9Cr0aed9+SlGFSxcuX+CM/ZuPzolXMmmuHZioD1Hw=;
-        b=M3lclyEwwgmcfweqqFKYlO/pXrx5sqR43R8US5cgUcuQhYgXTxTBH8bnmoz+xOxQ2x
-         Qww5rcE2NpTNCTpfUf5lWWC+vIqXTCNNcE/fUOjDtZhvG5ZIzvrMpuMi/f6M+y2dVp9i
-         s0poQ0QHk+JdzLZeEy4BiP0LPnClqeazR+Pi7c89GerlRJu8hA9D/NV6Yo2jURUrtXe7
-         6frzkKUcbwyBWYBLiv4QSu0/sJ2P2ZUqmdD0NtwOD8CN3Lnos87LuMEExUGb4lI6KGId
-         53mruOVpbKZmf4ArPdMAeACMFiGST6DhgYMSa5Ku0aktXjiL8VWIQKTNY2F1oiPrM07L
-         XyXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685906137; x=1688498137;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oH9Cr0aed9+SlGFSxcuX+CM/ZuPzolXMmmuHZioD1Hw=;
-        b=OCektLETi9FplpndMKHd6jTsQmlj5PSR2FdqZ6+QN+2ogBGhEK7hScAqhrH379pPVP
-         ypuJuz9Scrdw0H5WpcCD/XLba8OjcUIt4VGR8RyPfgaG4SQOg+3A1DEwF47cfx52gasI
-         GHn1ppmI1kGNH1anoZ6UDqNW79C9RDoAF3lfKpJUpKbKMKh1Ii0n5JlcnTtUjiXDDAbK
-         K97mgOMFhFlATAzE4ak85uNEYTLPjV+BITB+6mSFIhEHLRp4ViZ69tuJZ+ooabNiu/7v
-         lBOIBDCMWmw8mg7x4CpydhpoX0WybQPOUUYInOw5ndK9dHV5s5eMNx2iqfcvkDhWH8Hk
-         n0MA==
-X-Gm-Message-State: AC+VfDzDIappD2CPg3T/T+DB/acrqSBGmeEmHjUv7eBVTTL39xOgfmuB
-        9kjorzTGEpR6FJ0hd2tIDtrBJw==
-X-Google-Smtp-Source: ACHHUZ7Ksh/PEECYfIW7+cnMnPoU2N/J0/a3hIXQ3RDFnmAk+dCPnK6b0/p2X6w6QuFk8miSunoa5A==
-X-Received: by 2002:a17:907:1607:b0:96a:6c64:8066 with SMTP id hb7-20020a170907160700b0096a6c648066mr5595587ejc.4.1685906137605;
-        Sun, 04 Jun 2023 12:15:37 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.199.204])
-        by smtp.gmail.com with ESMTPSA id f14-20020a170906494e00b0097461fecc91sm3335292ejt.81.2023.06.04.12.15.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 Jun 2023 12:15:37 -0700 (PDT)
-Message-ID: <aae10e8f-b4f2-7417-ab08-41d6ec9ab8fc@linaro.org>
-Date:   Sun, 4 Jun 2023 21:15:34 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v4] ARM: dts: exynos: Add Samsung Galaxy Tab 3 8.0 boards
+        Sun, 4 Jun 2023 23:00:08 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2054.outbound.protection.outlook.com [40.107.92.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63BB1A1;
+        Sun,  4 Jun 2023 20:00:07 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NBg11iGTQL4zp0R/rmXuQB02qGcw5USu0xV6IDJXxLQOB2tM8G75k/kV4cPJBJNAuRCq5C7ir7YR9speBzth+3Ly9GuMgKHcwveLcTAuawgC8yvh5Lwi8ctugnzX/x7wK7s48UNiTzar7lOjiuJ36BwbngwGXoxmECcz+74XqZvgol51q23jbYDXDmTtm98N4KX1VWOXjXUi1qxYKXTNTRO5tactnL2tLifrddYgmCQre3G2Y0gIBdxSlrvwoRrI43OzpPyAP726xTryw5HUTTLbFXLogg6f6mWj7ttokFjmttgf5JHWJGKBtflKLpWAuRtjvI4HOMq71jkPVlNaAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qNvw7QJa5380MGZpoUcy0iccLHEi6eUyeZdom0hOd68=;
+ b=KV8GCkGrJJCB8yqIv+yhtnHGskrMDt6OsjZq2ss8OMl6e4NQbLa1Dh9KybSA0qmKUd7SByWPz3aUsmO1vxf3PuJwKwr6I9EeTHF3LK214L27cikKZrSw2WxluXEQ2BplU9Pi6w22vp8wx3XVK67XUz4X94qYUkRgP9aYX/1lkV1lGv69xMIihWJyCUGa5uheIhPvsyg7QdCeY5C5MTrTo3KgUjWA+paaT1+1TvuDtAqmH1PV/3VAIsAAif7WqkIyzwj1GeyBFF5cgwXY3v1RPOOBuAGymC8JuXdTFIUIiPg7YHM9ZMGngbCXyutHkQgIrJRS4eEfwFNQxXDmsP2oWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qNvw7QJa5380MGZpoUcy0iccLHEi6eUyeZdom0hOd68=;
+ b=tECc5bbS7cRz1XdXK8yGe5Kfi/xKqLoQvkqClbDShfBxfc4dPb2dQYZV21dk90y37wz8bIUjz0V/rPtuD+/FauEqa0MvxhHNF+qy5kpzvIzxuQlK4EneSS2EtDJlS2ZeTrgN41O4zos2eH/THLjyL7KE+gChCApN29tqL7QVtdI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
+ by CY8PR12MB8066.namprd12.prod.outlook.com (2603:10b6:930:70::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.32; Mon, 5 Jun
+ 2023 03:00:05 +0000
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::b4a6:94bb:6895:645]) by PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::b4a6:94bb:6895:645%3]) with mapi id 15.20.6455.030; Mon, 5 Jun 2023
+ 03:00:04 +0000
+Message-ID: <512e8b06-3ef4-66ae-5ca3-5a863a10c51f@amd.com>
+Date:   Mon, 5 Jun 2023 08:29:53 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+From:   Ravi Bangoria <ravi.bangoria@amd.com>
+Subject: Re: [REGRESSION][BISECT] perf/core: Remove pmu linear searching code
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        mark.rutland@arm.com, jolsa@kernel.org, irogers@google.com,
+        bp@alien8.de, adrian.hunter@intel.com,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "regressions@lists.linux.dev" <regressions@lists.linux.dev>,
+        Ravi Bangoria <ravi.bangoria@amd.com>
+References: <3abd3693-ad87-9abf-a762-337076638fcc@linaro.org>
 Content-Language: en-US
-To:     Artur Weber <aweber.kernel@gmail.com>,
-        Olof Johansson <olof@lixom.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, soc@kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-References: <20230604165627.16963-1-aweber.kernel@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230604165627.16963-1-aweber.kernel@gmail.com>
+In-Reply-To: <3abd3693-ad87-9abf-a762-337076638fcc@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0175.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:26::30) To PH7PR12MB6588.namprd12.prod.outlook.com
+ (2603:10b6:510:210::10)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|CY8PR12MB8066:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6d587b48-669a-4a18-122a-08db6570f617
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: qr2iYDebxadt7QMcLECrUX500Rek2ZjREeNwcklJw5m1VH7sAZpBxT+iDFCuKNDj0+RS8B8u94C3uUbK23cIZfV9BJeVJJ9M2tSKZkw+2Pl105sZJU4/fyJXuQTNTLI7TwFljxKdwm5BOizw6EQOT1CWKSTGw6t9A0OQrDD4H7PktIKIiwMenk8vALuEkhJcEwtQROtenIFZx0nnZdvTgx+nTl1hOWTEGPnupgPtbmqcg5yduob04Qt7rEwVBQ+zWrsGOWsAmArN3kIfW9XRXtt/BfMA4cKznOgP8f07ZjqVtm/FVPe0td/uVIZ7R9D6Ius/w/0KGaj7Pz3HAGQwwFguGizQznbGtzsE67OHcq2ub7k4LtvfYRNE4Z5nsM+0XDaKGSoqPEz6KSzWSo8S2qNrdSW8+QWmtZ++mS65p6uyH9h7EzzEv53XK3KybgdNzD4awIb6l5NqzoXbQp+n6MHd1peJfMlS03eegpfvko0CXLcT71T/JGErUSxfmzcqsh0IqFQU+1t6/qLKr1lvM51o2tGfhJ1SjDBkmOUeLkAJKyOvpHIXPvs39YrFKZYiP8hKDEaAOB+VzEe7FrqzTkNlmuxhL6+tB3WYSSN8dWhWnXNiD6tuW3hBZ3SiKLFnxOeq2hvUC7PSEqDUg7HA7A==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(376002)(39860400002)(346002)(136003)(396003)(451199021)(66476007)(66946007)(2906002)(4744005)(478600001)(31686004)(316002)(6916009)(4326008)(8936002)(8676002)(41300700001)(54906003)(44832011)(66556008)(6666004)(5660300002)(7416002)(6486002)(6512007)(53546011)(55236004)(6506007)(26005)(966005)(38100700002)(2616005)(186003)(36756003)(86362001)(31696002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZTdLQ1BjUmZqQVl6MURsbjFCbGtGZjJsOVFqSGNORDJRYzA3dGRwU0xkaGg3?=
+ =?utf-8?B?UHM0RjFXMXFOc2xLN1BSc1poWnhNbTZYRE5NY0RHampiSVhUTGx2eE5SWDY3?=
+ =?utf-8?B?ZW9YNjY1Qnh1aDNrUmRTTUlJUlVVeTF0clpZZlNGbjU3SkQyZUhLWG5oaHE4?=
+ =?utf-8?B?ckZHRGhpczFvUXZwU21xS0RFK2xMeWEvdFRRcitqWUw4QUVDOVZzOCtCWi9Y?=
+ =?utf-8?B?M25IV2tVYjkwSVhaWGtkeW1LUDRya1dHbWVsbFZJVTc1N2wxNEFBTnJUcit5?=
+ =?utf-8?B?TkRwUmx1T0REYnRINndCakJPUlYvOTJFOXZvdlRoQVYydnhuSllWTnB0VXQx?=
+ =?utf-8?B?MCs4SWFyL2VnMElrTDlqY2xOOVFaUWlPZ2VNbFhRUlpQZzJJb3BkaDVTeTlq?=
+ =?utf-8?B?R0ErSUlQQ0JVVmZibkhtZHhRODhsZEI4OFc5Y1JPMjd1RDd5TWVhV1FreStn?=
+ =?utf-8?B?dkZxTGkrUk5FSXhZOTNrNVdRM2IzT0srZVd2OVF4NGJwUHlHR1RjV0hlUjR1?=
+ =?utf-8?B?WlcySHV6elFmeVZEMXRMaEFaODVHdmJPWGRhMmNzZURHdVNtbjRDeUdZSVNS?=
+ =?utf-8?B?R2RHQ3g4a1Z0eTR0SVkxODFWS1JWM3FjWGk4OUVrQUdsN3ZsUDh2elVKN2cy?=
+ =?utf-8?B?SkJrd0tFcnplcG9zMEhrcVloa29id205MUZ3Y2Fqc0FnN3BxN3U2Uys0WUgw?=
+ =?utf-8?B?aWdvcFEzNm9aSHZiMzh0STg4ZHdNa0VtdHJRY09OK0JhQ2dxUlRaWHZBSkFo?=
+ =?utf-8?B?MTg0TnRxZHJQRUFhQ1U1cmo3NTVPR2p1WCt6eHNMUEt2b0VFTWJsaHJySkxy?=
+ =?utf-8?B?dnVRYTkveFY3ZGppMlAzQ1RJeVk0Y2JkeXJYQXJ4aW1zSGdjWWh2clJtaTZO?=
+ =?utf-8?B?VC9Pbi9aWVlBTnE0REVjS0tJSlhhMU5jZDZ0dkd1ZGppTS9rc2VJY1JNQTZD?=
+ =?utf-8?B?L1FEM0FRWGx6QlhSRFhxUW5ob3Q2VXhpZWVUSkROa1lqRWdLQjVFd3pZKzdX?=
+ =?utf-8?B?K1ZJYjVuRGk3Uys1TG9BSHBYNDVaM2FpV2Y4TlpOcS9vRTMrWi9LVzVNL1FM?=
+ =?utf-8?B?N3FVeXUxOTBFMVcyMi9VOUZjWUFoeXhxZkc2eUpncUlkTndvaDNtYkhsS1ln?=
+ =?utf-8?B?S0VDaFJ0eEwxRmlJL3ZlM0k5Y2VCQjc4OTdZc2M5bzVMcGU1UmI4RjVRMTFY?=
+ =?utf-8?B?cTNGUTJJZGttNSs1Q0YvWmZpZEtKTHJSVDVXREtWdkw5eUZ0UkZhOE9xbmh2?=
+ =?utf-8?B?MThqZUV5ZXcyUWxKUmtsc1diM0N4d0VNd1VQRzFTQVlXZmhWRXNrblBrZDJ5?=
+ =?utf-8?B?SDNpdWFwNGN4SFN3YXh5aFFDSHFtTUZOUXVaM05Ea3B2SXRhNW5sdGJyK3gv?=
+ =?utf-8?B?ODh3ejVQY0ZCazVYMVRWVmtjNVg2RVZWd09TVEJ6aGpsUWxQRW5Ca2xnY1Fw?=
+ =?utf-8?B?bFhUbVNTVkgvdHlIaEx5RGp0TXFVTHZqLzhYZU16MkNiMkxKcWY0MndjUGVw?=
+ =?utf-8?B?MEg3TjlFZTNaNXpkeHowNElMR2x6Mm9za0FSOEZQSXlHLzJpRUoyWmhxZDBW?=
+ =?utf-8?B?dmh6SlJFRjdSVEEwdlVYUzdMaHNMVzRwOVVFZWQvdy9oK3NEcUUxTDVUYUxY?=
+ =?utf-8?B?eUZwMnYyVjM3bHlldzdQWUZWMFRzZ2R2Sjk4V3Z2bExadHRaNUtjeXpsei9q?=
+ =?utf-8?B?S2oxL0YrS3o3Q1BpazVXalpzMzJRNGhBSmlvd1hsVUpqbTJkWHRkS2RuZEYz?=
+ =?utf-8?B?WXZkR1R2V1ZrK0p5ODVKNDBkR3dIUUhJYW4xK05MRnJYV3BCeU1xM0pWRHha?=
+ =?utf-8?B?TUJJU1d2R01XSHBBRGp2bEtmem5mQnNTRTB0UjhqOFNCbUZzMFJTRmdoOUtT?=
+ =?utf-8?B?ZkxCY0xkZTNjZDRPa2JpUFUrM2V2ZUl5cTRmVzY1RWNoV01vcFhoUTc5c2p2?=
+ =?utf-8?B?TFI3aXVhQ0MxV0FOamovSmpMeEo2RjErKzc0Z2w0VXVoZVFJcG9UOEFObTRV?=
+ =?utf-8?B?UmJ6aElUS3NFVHZ0ejFKM1E4eGNINU5pRmNBRW0yLzlJdGROdWdZMnlGVnZE?=
+ =?utf-8?B?VEdOeUlaYWJkRytVREhPamUzWUdKd0FMSDhsc0VUeFNOeVhTWTZzK0ZSQmM1?=
+ =?utf-8?Q?T+5GJLlVlwvWlhgv1TfQ+RZPf?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d587b48-669a-4a18-122a-08db6570f617
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2023 03:00:04.6270
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kceMnWHlcY8z2aL2Y2Zl6mpENqGukSuTeD3vdYgUlLUthZsLZ7rYOzWZAXSoYI/IKWqMoi5iRYWUv6xtfG/nLw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8066
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 04/06/2023 18:56, Artur Weber wrote:
-> Introduce support for the Galaxy Tab 3 8.0 series of boards:
+On 04-Jun-23 5:08 PM, Krzysztof Kozlowski wrote:
+> Hi,
 > 
->  - Samsung Galaxy Tab 3 8.0 WiFi (SM-T310/lt01wifi)
->  - Samsung Galaxy Tab 3 8.0 3G (SM-T311/lt013g)
->  - Samsung Galaxy Tab 3 8.0 LTE (SM-T315/lt01lte)
+> #regzbot introduced: 9551fbb64d09
 > 
-> What works:
-> 
->  - Display and backlight
->  - Touchscreen
->  - GPIO buttons, hall sensor
->  - WiFi and Bluetooth
->  - USB, fuel gauge, charging
->  - Accelerometer and magnetometer
->  - Audio: speaker, microphone, headset
->  - WiFi model only: light sensor
-> 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
-> This is an updated version of "[PATCH v3 13/13] ARM: dts: exynos: Add Samsung
-> Galaxy Tab 3 8.0 boards"[1].
-> 
-> Changed in v4:
-> - Added touchkey keycodes
-> - Added audio nodes
-> - Added MMC aliases
-> - Fixed dtbs_check warnings
-> - Fixed indentation in pinctrl sleep state overrides
-> 
-> Changed in v3:
->  - Addressed review comments
->  - Removed rtc node (RTC is provided by PMIC)
->  - Added CPU thermal node
->  - Fixed dtbs_check warnings
->  - Added common changes from next/dt
-> 
-> Should pass dtbs_check with no errors, provided that the following patches
-> are present:
-> 
-> Backlight node is adapted to changes from "[PATCH v2 1/4] dt-bindings:
-> backlight: lp855x: convert to YAML and modernize"[2]. The whole patchset
-> has been reviewed, waiting for any further reviews or a merge.
-> 
-> Touchkey keycode property is added by "[PATCH 1/2] dt-bindings: mms114: Add
-> linux,keycodes property for touch keys"[3]. So far only the bindings part
-> of the patch has been acked, otherwise everything is awaiting review.
-> 
-> Display bindings have been added by "[PATCH v5 1/3] dt-bindings: display:
-> panel: Add Samsung S6D7AA0 LCD panel controller"[4]. These are already
-> reviewed and merged into the DRM tree.
-> 
-> [1] https://lore.kernel.org/linux-devicetree/20230501195525.6268-14-aweber.kernel@gmail.com/
-> [2] https://lore.kernel.org/linux-devicetree/20230519180728.2281-2-aweber.kernel@gmail.com/
-> [3] https://lore.kernel.org/linux-devicetree/20230521145843.19489-2-aweber.kernel@gmail.com/
-> [4] https://lore.kernel.org/linux-devicetree/20230519170354.29610-2-aweber.kernel@gmail.com/
-> ---
->  arch/arm/boot/dts/Makefile                  |    3 +
->  arch/arm/boot/dts/exynos4212-tab3-3g8.dts   |   29 +
->  arch/arm/boot/dts/exynos4212-tab3-lte8.dts  |   44 +
->  arch/arm/boot/dts/exynos4212-tab3-wifi8.dts |   26 +
->  arch/arm/boot/dts/exynos4212-tab3.dtsi      | 1303 +++++++++++++++++++
->  5 files changed, 1405 insertions(+)
->  create mode 100644 arch/arm/boot/dts/exynos4212-tab3-3g8.dts
->  create mode 100644 arch/arm/boot/dts/exynos4212-tab3-lte8.dts
->  create mode 100644 arch/arm/boot/dts/exynos4212-tab3-wifi8.dts
->  create mode 100644 arch/arm/boot/dts/exynos4212-tab3.dtsi
-> 
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 59829fc90315..6a4ca481171e 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -217,6 +217,9 @@ dtb-$(CONFIG_ARCH_EXYNOS4) += \
->  	exynos4210-smdkv310.dtb \
->  	exynos4210-trats.dtb \
->  	exynos4210-universal_c210.dtb \
-> +	exynos4212-tab3-3g8.dtb \
-> +	exynos4212-tab3-lte8.dtb \
-> +	exynos4212-tab3-wifi8.dtb \
->  	exynos4412-i9300.dtb \
->  	exynos4412-i9305.dtb \
->  	exynos4412-itop-elite.dtb \
-> diff --git a/arch/arm/boot/dts/exynos4212-tab3-3g8.dts b/arch/arm/boot/dts/exynos4212-tab3-3g8.dts
-> new file mode 100644
-> index 000000000000..d96b2dd44608
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos4212-tab3-3g8.dts
-> @@ -0,0 +1,29 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung's Exynos4212 based Galaxy Tab 3 8.0 3G board device tree
-> + * source
-> + *
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynos4212-tab3.dtsi"
-> +
-> +/ {
-> +	model = "Samsung Galaxy Tab 3 8.0 3G (SM-T311) based on Exynos4212";
-> +	compatible = "samsung,t311", "samsung,tab3", "samsung,exynos4212", "samsung,exynos4";
-> +	chassis-type = "tablet";
-> +};
-> +
-> +/* Pin control sleep state overrides */
-> +&sleep0 {
-> +	PIN_SLP(gpb-5, INPUT, UP);
-> +};
-> +
-> +&sleep1 {
-> +	PIN_SLP(gpl0-0, OUT0, NONE);
-> +	PIN_SLP(gpl1-0, OUT0, NONE);
-> +	PIN_SLP(gpl2-4, OUT0, NONE);
-> +	PIN_SLP(gpm3-3, OUT1, NONE);
-> +};
-> diff --git a/arch/arm/boot/dts/exynos4212-tab3-lte8.dts b/arch/arm/boot/dts/exynos4212-tab3-lte8.dts
-> new file mode 100644
-> index 000000000000..bbb398eca7b0
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos4212-tab3-lte8.dts
-> @@ -0,0 +1,44 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung's Exynos4212 based Galaxy Tab 3 8.0 LTE board device tree
-> + * source
-> + *
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynos4212-tab3.dtsi"
-> +
-> +/ {
-> +	model = "Samsung Galaxy Tab 3 8.0 LTE (SM-T315) based on Exynos4212";
-> +	compatible = "samsung,t315", "samsung,tab3", "samsung,exynos4212", "samsung,exynos4";
-> +	chassis-type = "tablet";
-> +};
-> +
-> +/* Pin control sleep state overrides */
-> +&sleep0 {
-> +	PIN_SLP(gpa0-4, INPUT, UP);
-> +	PIN_SLP(gpa0-5, INPUT, UP);
-> +
-> +	PIN_SLP(gpb-5, INPUT, UP);
-> +
-> +	PIN_SLP(gpc0-0, PREV, NONE);
-> +	PIN_SLP(gpc1-3, INPUT, NONE);
-> +
-> +	PIN_SLP(gpf1-6, INPUT, NONE);
-> +	PIN_SLP(gpf2-2, PREV, NONE);
-> +};
-> +
-> +&sleep1 {
-> +	PIN_SLP(gpl0-0, PREV, NONE);
-> +
-> +	PIN_SLP(gpl1-0, PREV, NONE);
-> +
-> +	PIN_SLP(gpl2-1, INPUT, DOWN);
-> +	PIN_SLP(gpl2-2, INPUT, DOWN);
-> +	PIN_SLP(gpl2-4, OUT0, NONE);
-> +	PIN_SLP(gpl2-5, PREV, NONE);
-> +
-> +	PIN_SLP(gpm3-3, OUT1, NONE);
-> +};
-> diff --git a/arch/arm/boot/dts/exynos4212-tab3-wifi8.dts b/arch/arm/boot/dts/exynos4212-tab3-wifi8.dts
-> new file mode 100644
-> index 000000000000..54cb01703b60
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos4212-tab3-wifi8.dts
-> @@ -0,0 +1,26 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung's Exynos4212 based Galaxy Tab 3 8.0 WiFi board device tree
-> + * source
-> + *
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynos4212-tab3.dtsi"
-> +
-> +/ {
-> +	model = "Samsung Galaxy Tab 3 8.0 WiFi (SM-T310) based on Exynos4212";
-> +	compatible = "samsung,t310", "samsung,tab3", "samsung,exynos4212", "samsung,exynos4";
-> +	chassis-type = "tablet";
-> +};
-> +
-> +&i2c_lightsensor {
-> +	status = "okay";
-> +
-> +	lightsensor@10 {
-> +		compatible = "capella,cm3323";
-> +		reg = <0x10>;
-> +	};
-> +};
-> diff --git a/arch/arm/boot/dts/exynos4212-tab3.dtsi b/arch/arm/boot/dts/exynos4212-tab3.dtsi
-> new file mode 100644
-> index 000000000000..e014100e11f8
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos4212-tab3.dtsi
-> @@ -0,0 +1,1303 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung's Exynos4212 based Galaxy Tab 3 board common source
-> + *
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynos4212.dtsi"
-> +#include "exynos4412-ppmu-common.dtsi"
-> +#include "exynos-mfc-reserved-memory.dtsi"
-> +#include <dt-bindings/clock/samsung,s2mps11.h>
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/leds/common.h>
-> +#include <dt-bindings/input/gpio-keys.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include "exynos-pinctrl.h"
-> +
-> +/*
-> + * This device does not use the built-in RTC; instead, the RTC in the
-> + * S5M8786 PMIC is used instead. Remove the unused node to avoid DTB check
-> + * warnings.
-> + */
-> +/delete-node/ &rtc;
+> Bisect pointed to commit 9551fbb64d09 ("perf/core: Remove pmu linear
+> searching code") as first one where all hardware events are gone from
+> perf for ARMv7 Exynos5422 board.
 
-This is not the solution. The S3C RTC is there. Just like all other
-boards we have two RTCs and DTS should be complete. Definitely you
-should not remove something just because there were warnings. Instead
-warnings should be fixed.
+Is this inside KVM guest? Does this help:
+https://lore.kernel.org/all/20230525212723.3361524-1-oliver.upton@linux.dev
 
-Best regards,
-Krzysztof
-
+Thanks,
+Ravi
