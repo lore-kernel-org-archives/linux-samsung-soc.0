@@ -2,140 +2,142 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D800C7EE24
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Jun 2023 10:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31646C7EE23
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Jun 2023 01:27:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229716AbjFEK1R (ORCPT
+        id S230376AbjFFB1G (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 5 Jun 2023 06:27:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48562 "EHLO
+        Mon, 5 Jun 2023 21:27:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229625AbjFEK1Q (ORCPT
+        with ESMTP id S233672AbjFFB1F (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Jun 2023 06:27:16 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6FB3EA1;
-        Mon,  5 Jun 2023 03:27:15 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B40AD152B;
-        Mon,  5 Jun 2023 03:28:00 -0700 (PDT)
-Received: from FVFF77S0Q05N (unknown [10.57.24.244])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 474AA3F793;
-        Mon,  5 Jun 2023 03:27:13 -0700 (PDT)
-Date:   Mon, 5 Jun 2023 11:27:10 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
+        Mon, 5 Jun 2023 21:27:05 -0400
+Received: from 1.mo576.mail-out.ovh.net (1.mo576.mail-out.ovh.net [178.33.251.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACDC98F
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Jun 2023 18:26:58 -0700 (PDT)
+Received: from director10.ghost.mail-out.ovh.net (unknown [10.109.146.131])
+        by mo576.mail-out.ovh.net (Postfix) with ESMTP id 2A24722CCD
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Jun 2023 01:21:49 +0000 (UTC)
+Received: from ghost-submission-6684bf9d7b-z4jdh (unknown [10.108.4.240])
+        by director10.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 31F041FD54;
+        Tue,  6 Jun 2023 01:21:48 +0000 (UTC)
+Received: from etezian.org ([37.59.142.98])
+        by ghost-submission-6684bf9d7b-z4jdh with ESMTPSA
+        id tW7AAiyKfmS7BysAD7mFsg
+        (envelope-from <andi@etezian.org>); Tue, 06 Jun 2023 01:21:48 +0000
+Authentication-Results: garm.ovh; auth=pass (GARM-98R00274518744-50b6-452d-bc83-83386cd09704,
+                    89204758E3263BAD5AD9D1E9907359A1AF45ECBD) smtp.auth=andi@etezian.org
+X-OVh-ClientIp: 178.238.172.216
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Ravi Bangoria <ravi.bangoria@amd.com>, jolsa@kernel.org,
-        irogers@google.com, bp@alien8.de, adrian.hunter@intel.com,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Subject: Re: [REGRESSION][BISECT] perf/core: Remove pmu linear searching code
-Message-ID: <ZH24fi8MWALIV72Z@FVFF77S0Q05N>
-References: <3abd3693-ad87-9abf-a762-337076638fcc@linaro.org>
- <ZH2KVyyC5oMr+Vk2@FVFF77S0Q05N>
- <20230605092731.GZ4253@hirez.programming.kicks-ass.net>
- <20230605101401.GL38236@hirez.programming.kicks-ass.net>
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Andi Shyti <andi.shyti@kernel.org>
+Subject: [PATCH 1/2] spi: s3c64xx: Use the managed spi master allocation function
+Date:   Tue,  6 Jun 2023 03:20:50 +0200
+Message-Id: <20230606012051.2139333-2-andi.shyti@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230606012051.2139333-1-andi.shyti@kernel.org>
+References: <20230606012051.2139333-1-andi.shyti@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230605101401.GL38236@hirez.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 9956614353698359879
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrgedttddggeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomheptehnughiucfuhhihthhiuceorghnughirdhshhihthhisehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvghrnhepgfduveejteegteelhfetueetheegfeehhfektddvleehtefhheevkeduleeuueevnecukfhppeduvdejrddtrddtrddupddujeekrddvfeekrddujedvrddvudeipdefjedrheelrddugedvrdelkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepoegrnhguihesvghtvgiiihgrnhdrohhrgheqpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqshgrmhhsuhhnghdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheejiedpmhhouggvpehsmhhtphhouhht
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jun 05, 2023 at 12:14:01PM +0200, Peter Zijlstra wrote:
-> On Mon, Jun 05, 2023 at 11:27:31AM +0200, Peter Zijlstra wrote:
-> 
-> > That said; given that this commit has been tagged twice now, I suppose I
-> > should go revert it and we'll try again after a more thorough audit.
-> 
-> I'll go queue this then...
-> 
-> ---
-> Subject: perf: Re-instate the linear PMU search
-> From: Peter Zijlstra <peterz@infradead.org>
-> Date: Mon Jun  5 11:42:39 CEST 2023
-> 
-> Full revert of commit 9551fbb64d09 ("perf/core: Remove pmu linear
-> searching code").
-> 
-> Some architectures (notably arm/arm64) still relied on the linear
-> search in order to find the PMU that consumes
-> PERF_TYPE_{HARDWARE,HW_CACHE,RAW}.
-> 
-> This will need a more thorought audit and clean.
-> 
-> Reported-by: Nathan Chancellor <nathan@kernel.org>
-> Reported-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Use devm_spi_alloc_master() and get rid of one goto error path
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Andi Shyti <andi.shyti@kernel.org>
+---
+ drivers/spi/spi-s3c64xx.c | 26 ++++++++------------------
+ 1 file changed, 8 insertions(+), 18 deletions(-)
 
-Thanks for sorting this out!
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index d5ec32bda1587..787a89c046860 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1177,8 +1177,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		return irq;
+ 	}
+ 
+-	master = spi_alloc_master(&pdev->dev,
+-				sizeof(struct s3c64xx_spi_driver_data));
++	master = devm_spi_alloc_master(&pdev->dev, sizeof(*sdd));
+ 	if (master == NULL) {
+ 		dev_err(&pdev->dev, "Unable to allocate SPI Master\n");
+ 		return -ENOMEM;
+@@ -1197,7 +1196,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		if (ret < 0) {
+ 			dev_err(&pdev->dev, "failed to get alias id, errno %d\n",
+ 				ret);
+-			goto err_deref_master;
++			return ret;
+ 		}
+ 		sdd->port_id = ret;
+ 	} else {
+@@ -1232,23 +1231,19 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		master->can_dma = s3c64xx_spi_can_dma;
+ 
+ 	sdd->regs = devm_ioremap_resource(&pdev->dev, mem_res);
+-	if (IS_ERR(sdd->regs)) {
+-		ret = PTR_ERR(sdd->regs);
+-		goto err_deref_master;
+-	}
++	if (IS_ERR(sdd->regs))
++		return PTR_ERR(sdd->regs);
+ 
+ 	if (sci->cfg_gpio && sci->cfg_gpio()) {
+ 		dev_err(&pdev->dev, "Unable to config gpio\n");
+-		ret = -EBUSY;
+-		goto err_deref_master;
++		return -EBUSY;
+ 	}
+ 
+ 	/* Setup clocks */
+ 	sdd->clk = devm_clk_get_enabled(&pdev->dev, "spi");
+ 	if (IS_ERR(sdd->clk)) {
+ 		dev_err(&pdev->dev, "Unable to acquire clock 'spi'\n");
+-		ret = PTR_ERR(sdd->clk);
+-		goto err_deref_master;
++		return PTR_ERR(sdd->clk);
+ 	}
+ 
+ 	sprintf(clk_name, "spi_busclk%d", sci->src_clk_nr);
+@@ -1256,16 +1251,14 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	if (IS_ERR(sdd->src_clk)) {
+ 		dev_err(&pdev->dev,
+ 			"Unable to acquire clock '%s'\n", clk_name);
+-		ret = PTR_ERR(sdd->src_clk);
+-		goto err_deref_master;
++		return PTR_ERR(sdd->src_clk);
+ 	}
+ 
+ 	if (sdd->port_conf->clk_ioclk) {
+ 		sdd->ioclk = devm_clk_get_enabled(&pdev->dev, "spi_ioclk");
+ 		if (IS_ERR(sdd->ioclk)) {
+ 			dev_err(&pdev->dev, "Unable to acquire 'ioclk'\n");
+-			ret = PTR_ERR(sdd->ioclk);
+-			goto err_deref_master;
++			return PTR_ERR(sdd->ioclk);
+ 		}
+ 	}
+ 
+@@ -1314,9 +1307,6 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 
+-err_deref_master:
+-	spi_master_put(master);
+-
+ 	return ret;
+ }
+ 
+-- 
+2.40.1
 
-Mark.
-
-> ---
->  kernel/events/core.c |   39 +++++++++++++++++++++++++--------------
->  1 file changed, 25 insertions(+), 14 deletions(-)
-> 
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -11630,27 +11630,38 @@ static struct pmu *perf_init_event(struc
->  	}
->  
->  again:
-> -	ret = -ENOENT;
->  	rcu_read_lock();
->  	pmu = idr_find(&pmu_idr, type);
->  	rcu_read_unlock();
-> -	if (!pmu)
-> -		goto fail;
-> +	if (pmu) {
-> +		if (event->attr.type != type && type != PERF_TYPE_RAW &&
-> +		    !(pmu->capabilities & PERF_PMU_CAP_EXTENDED_HW_TYPE))
-> +			goto fail;
-> +
-> +		ret = perf_try_init_event(pmu, event);
-> +		if (ret == -ENOENT && event->attr.type != type && !extended_type) {
-> +			type = event->attr.type;
-> +			goto again;
-> +		}
->  
-> -	if (event->attr.type != type && type != PERF_TYPE_RAW &&
-> -	    !(pmu->capabilities & PERF_PMU_CAP_EXTENDED_HW_TYPE))
-> -		goto fail;
-> -
-> -	ret = perf_try_init_event(pmu, event);
-> -	if (ret == -ENOENT && event->attr.type != type && !extended_type) {
-> -		type = event->attr.type;
-> -		goto again;
-> +		if (ret)
-> +			pmu = ERR_PTR(ret);
-> +
-> +		goto unlock;
->  	}
->  
-> +	list_for_each_entry_rcu(pmu, &pmus, entry, lockdep_is_held(&pmus_srcu)) {
-> +		ret = perf_try_init_event(pmu, event);
-> +		if (!ret)
-> +			goto unlock;
-> +
-> +		if (ret != -ENOENT) {
-> +			pmu = ERR_PTR(ret);
-> +			goto unlock;
-> +		}
-> +	}
->  fail:
-> -	if (ret)
-> -		pmu = ERR_PTR(ret);
-> -
-> +	pmu = ERR_PTR(-ENOENT);
->  unlock:
->  	srcu_read_unlock(&pmus_srcu, idx);
->  
