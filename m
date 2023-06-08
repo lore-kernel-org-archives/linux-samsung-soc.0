@@ -2,41 +2,72 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E2ECC7EE2E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Jun 2023 17:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B053C7EE29
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Jun 2023 17:45:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236856AbjFHRTZ (ORCPT
+        id S235116AbjFHRpd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 8 Jun 2023 13:19:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44458 "EHLO
+        Thu, 8 Jun 2023 13:45:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236294AbjFHRTX (ORCPT
+        with ESMTP id S231477AbjFHRpb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Jun 2023 13:19:23 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 144F12D52;
-        Thu,  8 Jun 2023 10:19:19 -0700 (PDT)
-Received: from [192.168.88.20] (91-154-35-171.elisa-laajakaista.fi [91.154.35.171])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 869151424;
-        Thu,  8 Jun 2023 19:18:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1686244727;
-        bh=QCp8g9xbRRzi5prPR0P8JsS2fOCtTw24NgdzRtNAQkA=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ivurqXuacySqj7S5bBj29CW1kOJEhzPVX1wUbbe7JjGtmaeDnNDrp9ES7xz5sou7/
-         9SxWEvF253nRIvAd0xO3RIxe1NHh8UBjYsr6TpHlRJXbv0I3E64FJ/IqZp0bSQeO4O
-         iBcyUJnbVzHVylvQf0/AKIbigSnsRT2cigQiHQWY=
-Message-ID: <2b8ccac8-2828-1279-93aa-a601d8d72e43@ideasonboard.com>
-Date:   Thu, 8 Jun 2023 20:19:02 +0300
+        Thu, 8 Jun 2023 13:45:31 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A61C2D47
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Jun 2023 10:45:29 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-655fce0f354so668022b3a.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Jun 2023 10:45:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1686246328; x=1688838328;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PeA6Fr7MyJEEh+PxA+wsyF1Cp1tipvwi/ySisRbvhVk=;
+        b=khr//wAmbG9QgLn8LzNsD7SAqR/dYo1aPB7w6WUXJYCbZBWY9NeurWPghCmasng71l
+         Eofn038Kp3Kj6OTKR/b+ZP/3N2OTH6A2XLqVdGSdW4GScNCV9piyEqmyypmkEQjcsJtp
+         4+swvfivbyZRddZgsTEhtS6AnGyMeilWC48pk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686246328; x=1688838328;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PeA6Fr7MyJEEh+PxA+wsyF1Cp1tipvwi/ySisRbvhVk=;
+        b=TVeosRPwfh59u6MigpFUbaYjsYJSq2ZVKSYMfFGyeLTQFik5Ie5Gvexeisc1Qrne0Z
+         CYucq8wzm9VPZj3wWrljEMDrkrGD9gazTHPq4e6G626IRxu4ORSU2shYd4qsysWx6ORw
+         uZWaGSpnfitqjmAYZIpI/y9tWm6y6Dl5HH6DF2HyUCnaSzOImzs8EwC3gIHBjnCijim8
+         BPwa9mN+qKDv3h5lRba+sSOpC4uszaBSp4ioRShyUPKrwVPUXbbWabgxpXnY3mDWEv1C
+         iDaWZGPG2qK6cbslkylIlPRdGBXWfqlQ3ATcbx8VnL3L3AZA01swL2BkLtY9OGcigdu5
+         QKHw==
+X-Gm-Message-State: AC+VfDxk9zzXkEt1dZKq+d7j2zlQHluC0JfQbNIjjEHnh1MIVeMVYAJp
+        sTICGS/tV6MpYyH9qlRlJ8AK9tldzePG8KePlnYrkA==
+X-Google-Smtp-Source: ACHHUZ53DujwzJDGFh3QSLMT4c5RAM/ZLx4rzuwde43ErR2IniVQA+hJR04sxUnjw4RuU5lc98qLGQ==
+X-Received: by 2002:a05:6a00:2442:b0:651:7133:3f59 with SMTP id d2-20020a056a00244200b0065171333f59mr5921534pfj.3.1686246328265;
+        Thu, 08 Jun 2023 10:45:28 -0700 (PDT)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com. [209.85.214.176])
+        by smtp.gmail.com with ESMTPSA id x18-20020a056a00271200b0063d2989d5b4sm1373612pfv.45.2023.06.08.10.45.27
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Jun 2023 10:45:27 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1b1b51ec3e9so218365ad.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Jun 2023 10:45:27 -0700 (PDT)
+X-Received: by 2002:a05:6e02:188a:b0:33e:6b65:6f78 with SMTP id
+ o10-20020a056e02188a00b0033e6b656f78mr167838ilu.27.1686245934574; Thu, 08 Jun
+ 2023 10:38:54 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 00/53] drm: Convert to platform remove callback returning
- void
-Content-Language: en-US
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Doug Anderson <dianders@chromium.org>
-Cc:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+References: <20230507162616.1368908-1-u.kleine-koenig@pengutronix.de>
+ <20230601154002.uv2wfatpb7b45duz@pengutronix.de> <CAD=FV=WvP--wJwBQtnSoW_xb57R1Wf9dH0XzWxe+NorczXfeAw@mail.gmail.com>
+ <20230608162642.GA23400@pendragon.ideasonboard.com> <2b8ccac8-2828-1279-93aa-a601d8d72e43@ideasonboard.com>
+In-Reply-To: <2b8ccac8-2828-1279-93aa-a601d8d72e43@ideasonboard.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 8 Jun 2023 10:38:41 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=V6YuP4ojsFSVSMFaGGDCVvzEQFTKm66pRTwD7Ry=_Kaw@mail.gmail.com>
+Message-ID: <CAD=FV=V6YuP4ojsFSVSMFaGGDCVvzEQFTKm66pRTwD7Ry=_Kaw@mail.gmail.com>
+Subject: Re: [PATCH 00/53] drm: Convert to platform remove callback returning void
+To:     Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
         Liviu Dudau <liviu.dudau@arm.com>,
         Mihail Atanassov <mihail.atanassov@arm.com>,
         Brian Starkey <brian.starkey@arm.com>,
@@ -106,7 +137,7 @@ Cc:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
         Rob Herring <robh@kernel.org>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
         Orson Zhai <orsonzhai@gmail.com>,
         Baolin Wang <baolin.wang@linux.alibaba.com>,
         Chunyan Zhang <zhang.lyra@gmail.com>,
@@ -124,8 +155,8 @@ Cc:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
         Samuel Holland <samuel@sholland.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Maxime Ripard <maxime@cerno.tech>,
-        =?UTF-8?Q?Ma=c3=adra_Canal?= <mcanal@igalia.com>,
-        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
+        =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>,
+        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
         Jyri Sarha <jyri.sarha@iki.fi>,
         Alexey Brodkin <abrodkin@synopsys.com>,
         Emma Anholt <emma@anholt.net>, Melissa Wen <mwen@igalia.com>,
@@ -158,96 +189,139 @@ Cc:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
         linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         kernel@pengutronix.de, Yongqin Liu <yongqin.liu@linaro.org>,
         freedreno@lists.freedesktop.org
-References: <20230507162616.1368908-1-u.kleine-koenig@pengutronix.de>
- <20230601154002.uv2wfatpb7b45duz@pengutronix.de>
- <CAD=FV=WvP--wJwBQtnSoW_xb57R1Wf9dH0XzWxe+NorczXfeAw@mail.gmail.com>
- <20230608162642.GA23400@pendragon.ideasonboard.com>
-From:   Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-In-Reply-To: <20230608162642.GA23400@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 08/06/2023 19:26, Laurent Pinchart wrote:
-> Hi Doug,
-> 
-> On Thu, Jun 08, 2023 at 09:08:15AM -0700, Doug Anderson wrote:
->> On Thu, Jun 1, 2023 at 8:40 AM Uwe Kleine-König wrote:
->>> On Sun, May 07, 2023 at 06:25:23PM +0200, Uwe Kleine-König wrote:
->>>> this patch series adapts the platform drivers below drivers/gpu/drm
->>>> to use the .remove_new() callback. Compared to the traditional .remove()
->>>> callback .remove_new() returns no value. This is a good thing because
->>>> the driver core doesn't (and cannot) cope for errors during remove. The
->>>> only effect of a non-zero return value in .remove() is that the driver
->>>> core emits a warning. The device is removed anyhow and an early return
->>>> from .remove() usually yields a resource leak.
->>>>
->>>> By changing the remove callback to return void driver authors cannot
->>>> reasonably (but wrongly) assume any more that there happens some kind of
->>>> cleanup later.
->>>
->>> I wonder if someone would volunteer to add the whole series to
->>> drm-misc-next?!
->>
->> It looks as if Neil applied quite a few of them already, so I looked
->> at what was left...
->>
->> I'm a little hesitant to just apply the whole kit-and-caboodle to
->> drm-misc-next since there are specific DRM trees for a bunch of them
->> and it would be better if they landed there. ...so I went through all
->> the patches that still applied to drm-misc-next, then used
->> 'scripts/get_maintainer.pl --scm' to check if they were maintained
->> through drm-misc. That still left quite a few patches. I've applied
->> those ones and pushed to drm-misc-next:
->>
->> 71722685cd17 drm/xlnx/zynqmp_dpsub: Convert to platform remove
->> callback returning void
->> 1ed54a19f3b3 drm/vc4: Convert to platform remove callback returning void
->> b957812839f8 drm/v3d: Convert to platform remove callback returning void
->> e2fd3192e267 drm/tve200: Convert to platform remove callback returning void
->> 84e6da7ad553 drm/tiny: Convert to platform remove callback returning void
->> 34cdd1f691ad drm/tidss: Convert to platform remove callback returning void
->> d665e3c9d37a drm/sun4i: Convert to platform remove callback returning void
->> 0c259ab19146 drm/stm: Convert to platform remove callback returning void
->> 9a865e45884a drm/sti: Convert to platform remove callback returning void
->> 3c855610840e drm/rockchip: Convert to platform remove callback returning void
->> e41977a83b71 drm/panfrost: Convert to platform remove callback returning void
->> cef3776d0b5a drm/panel: Convert to platform remove callback returning void
->> bd296a594e87 drm/mxsfb: Convert to platform remove callback returning void
->> 38ca2d93d323 drm/meson: Convert to platform remove callback returning void
->> fd1457d84bae drm/mcde: Convert to platform remove callback returning void
->> 41a56a18615c drm/logicvc: Convert to platform remove callback returning void
->> 980ec6444372 drm/lima: Convert to platform remove callback returning void
->> 82a2c0cc1a22 drm/hisilicon: Convert to platform remove callback returning void
->> c3b28b29ac0a drm/fsl-dcu: Convert to platform remove callback returning void
->> a118fc6e71f9 drm/atmel-hlcdc: Convert to platform remove callback returning void
->> 9a32dd324c46 drm/aspeed: Convert to platform remove callback returning void
->> 2c7d291c498c drm/arm/malidp: Convert to platform remove callback returning void
->> a920028df679 drm/arm/hdlcd: Convert to platform remove callback returning void
->> 1bf3d76a7d15 drm/komeda: Convert to platform remove callback returning void
->>
->> The following ones appeared to apply to the top of drm-misc-next, but
->> I didn't apply them since get_maintainer didn't say they were part of
->> drm-misc-next:
->>
->> drm/tiny: Convert to platform remove callback returning void
->> drm/tilcdc: Convert to platform remove callback returning void
->> drm/sprd: Convert to platform remove callback returning void
->> drm/shmobile: Convert to platform remove callback returning void
->> drm/rcar-du: Convert to platform remove callback returning void
-> 
-> If you don't mind, could you take the rcar-du patch through drm-misc too
-> ? I don't plan to send another pull request for v6.5.
-> 
->> drm/omap: Convert to platform remove callback returning void
-> 
-> Tomi, should drm/omap moved to being maintained through drm-misc ?
+Hi,
 
-Yes. tilcdc, tidss and omapdrm are all maintained through drm-misc. But 
-I guess I need to add something to the MAINTAINERS to make this clear. 
-I'll look at it.
+On Thu, Jun 8, 2023 at 10:19=E2=80=AFAM Tomi Valkeinen
+<tomi.valkeinen@ideasonboard.com> wrote:
+>
+> On 08/06/2023 19:26, Laurent Pinchart wrote:
+> > Hi Doug,
+> >
+> > On Thu, Jun 08, 2023 at 09:08:15AM -0700, Doug Anderson wrote:
+> >> On Thu, Jun 1, 2023 at 8:40=E2=80=AFAM Uwe Kleine-K=C3=B6nig wrote:
+> >>> On Sun, May 07, 2023 at 06:25:23PM +0200, Uwe Kleine-K=C3=B6nig wrote=
+:
+> >>>> this patch series adapts the platform drivers below drivers/gpu/drm
+> >>>> to use the .remove_new() callback. Compared to the traditional .remo=
+ve()
+> >>>> callback .remove_new() returns no value. This is a good thing becaus=
+e
+> >>>> the driver core doesn't (and cannot) cope for errors during remove. =
+The
+> >>>> only effect of a non-zero return value in .remove() is that the driv=
+er
+> >>>> core emits a warning. The device is removed anyhow and an early retu=
+rn
+> >>>> from .remove() usually yields a resource leak.
+> >>>>
+> >>>> By changing the remove callback to return void driver authors cannot
+> >>>> reasonably (but wrongly) assume any more that there happens some kin=
+d of
+> >>>> cleanup later.
+> >>>
+> >>> I wonder if someone would volunteer to add the whole series to
+> >>> drm-misc-next?!
+> >>
+> >> It looks as if Neil applied quite a few of them already, so I looked
+> >> at what was left...
+> >>
+> >> I'm a little hesitant to just apply the whole kit-and-caboodle to
+> >> drm-misc-next since there are specific DRM trees for a bunch of them
+> >> and it would be better if they landed there. ...so I went through all
+> >> the patches that still applied to drm-misc-next, then used
+> >> 'scripts/get_maintainer.pl --scm' to check if they were maintained
+> >> through drm-misc. That still left quite a few patches. I've applied
+> >> those ones and pushed to drm-misc-next:
+> >>
+> >> 71722685cd17 drm/xlnx/zynqmp_dpsub: Convert to platform remove
+> >> callback returning void
+> >> 1ed54a19f3b3 drm/vc4: Convert to platform remove callback returning vo=
+id
+> >> b957812839f8 drm/v3d: Convert to platform remove callback returning vo=
+id
+> >> e2fd3192e267 drm/tve200: Convert to platform remove callback returning=
+ void
+> >> 84e6da7ad553 drm/tiny: Convert to platform remove callback returning v=
+oid
+> >> 34cdd1f691ad drm/tidss: Convert to platform remove callback returning =
+void
+> >> d665e3c9d37a drm/sun4i: Convert to platform remove callback returning =
+void
+> >> 0c259ab19146 drm/stm: Convert to platform remove callback returning vo=
+id
+> >> 9a865e45884a drm/sti: Convert to platform remove callback returning vo=
+id
+> >> 3c855610840e drm/rockchip: Convert to platform remove callback returni=
+ng void
+> >> e41977a83b71 drm/panfrost: Convert to platform remove callback returni=
+ng void
+> >> cef3776d0b5a drm/panel: Convert to platform remove callback returning =
+void
+> >> bd296a594e87 drm/mxsfb: Convert to platform remove callback returning =
+void
+> >> 38ca2d93d323 drm/meson: Convert to platform remove callback returning =
+void
+> >> fd1457d84bae drm/mcde: Convert to platform remove callback returning v=
+oid
+> >> 41a56a18615c drm/logicvc: Convert to platform remove callback returnin=
+g void
+> >> 980ec6444372 drm/lima: Convert to platform remove callback returning v=
+oid
+> >> 82a2c0cc1a22 drm/hisilicon: Convert to platform remove callback return=
+ing void
+> >> c3b28b29ac0a drm/fsl-dcu: Convert to platform remove callback returnin=
+g void
+> >> a118fc6e71f9 drm/atmel-hlcdc: Convert to platform remove callback retu=
+rning void
+> >> 9a32dd324c46 drm/aspeed: Convert to platform remove callback returning=
+ void
+> >> 2c7d291c498c drm/arm/malidp: Convert to platform remove callback retur=
+ning void
+> >> a920028df679 drm/arm/hdlcd: Convert to platform remove callback return=
+ing void
+> >> 1bf3d76a7d15 drm/komeda: Convert to platform remove callback returning=
+ void
+> >>
+> >> The following ones appeared to apply to the top of drm-misc-next, but
+> >> I didn't apply them since get_maintainer didn't say they were part of
+> >> drm-misc-next:
+> >>
+> >> drm/tiny: Convert to platform remove callback returning void
+> >> drm/tilcdc: Convert to platform remove callback returning void
+> >> drm/sprd: Convert to platform remove callback returning void
+> >> drm/shmobile: Convert to platform remove callback returning void
+> >> drm/rcar-du: Convert to platform remove callback returning void
+> >
+> > If you don't mind, could you take the rcar-du patch through drm-misc to=
+o
+> > ? I don't plan to send another pull request for v6.5.
+> >
+> >> drm/omap: Convert to platform remove callback returning void
+> >
+> > Tomi, should drm/omap moved to being maintained through drm-misc ?
+>
+> Yes. tilcdc, tidss and omapdrm are all maintained through drm-misc.
 
-  Tomi
+tidss was already in my list of applied patches.
 
+I've applied the other two and pushed:
+
+c2807ecb5290 drm/omap: Convert to platform remove callback returning void
+e52d1282f919 drm/tilcdc: Convert to platform remove callback returning void
+
+
+> But
+> I guess I need to add something to the MAINTAINERS to make this clear.
+> I'll look at it.
+
+The key I was looking for was:
+
+T:      git git://anongit.freedesktop.org/drm/drm-misc
+
+-Doug
