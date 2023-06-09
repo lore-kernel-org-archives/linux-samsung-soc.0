@@ -2,95 +2,92 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1348C7EE2F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Jun 2023 08:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2EBDC7EE2E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Jun 2023 11:52:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238963AbjFIIQK (ORCPT
+        id S239349AbjFILwb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 9 Jun 2023 04:16:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50070 "EHLO
+        Fri, 9 Jun 2023 07:52:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240079AbjFIIQI (ORCPT
+        with ESMTP id S239525AbjFILwO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Jun 2023 04:16:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80FBE1FEC;
-        Fri,  9 Jun 2023 01:16:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1E83561300;
-        Fri,  9 Jun 2023 08:16:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 032BBC433D2;
-        Fri,  9 Jun 2023 08:16:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686298566;
-        bh=fhq7UqggYiVg/1COUBVntIvsMJLXIEfwBDhAv2lnM2Y=;
-        h=From:To:Cc:Subject:Date:From;
-        b=G28YEgrgn2lu1p5R3l5ckjxag/p3SQF3AL/dQ4H0P6yHYvymEjeqjKHwgbwZFshiN
-         +DXRcLNePGWkV2wjJrnBHW0MM2SjvfQviBwCjzKym9TF3W1fFrDGOlsAIZf0oxG0X2
-         JduFSfbl4efpACPpq+1j3w3mxIgKZSwNXjF0npmmIhimGZ0oHhqqgwU0SUIuc6aqUY
-         RpTDqVcnOHAALa+eJ96oS6nDhDofPv2I180Bg2Cgcr3lOvUH2USV88C7EKjrE1mQbF
-         ZxENFHAnMcnAEwFfUFxp90ulbJWi+u/dGJqYWdRIYk8M4PBWi/UKr2msYHnMTexwws
-         EfQr+wvYaOZzQ==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: samsung: add CONFIG_OF dependency
-Date:   Fri,  9 Jun 2023 10:15:49 +0200
-Message-Id: <20230609081559.915867-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+        Fri, 9 Jun 2023 07:52:14 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D00453AA8
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Jun 2023 04:51:43 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-9745baf7c13so254738366b.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Jun 2023 04:51:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686311502; x=1688903502;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8T0wN2xyHqkgu/5OvE+DJyHc6IdgUb7ALA/gkh9SISw=;
+        b=R6Y0oCxUhD2vEYpqllcsJqc1+F/482gIVAuE9WtvwhqwEP9I17G+luiaYk3DpqYZ2t
+         FQPUR3S0cpdiCiLkOLlMRLZ3r1oCUnxRQnFCB4EIPupbl63b2ly7Hg/R7WcPIB5fgnQK
+         zl+gZrt6jPopzygQE0iBq80u3eehgDL0vlldGIXRouKSCBscddlkVmLctx4KK+K8Xu7D
+         urK9ed1G9yQ0qDI5lpoK71WDo7EnUh2vYQ7U5er1+hTQyB4hQSsOv1ueiEJ39d7R8t2x
+         D34opUNIU0bAr2tnBqezuIoTE3lE1q8AR0B7R8locsSBVe0i/s/9dEwI+lQKdZxOeBIw
+         VoqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686311502; x=1688903502;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8T0wN2xyHqkgu/5OvE+DJyHc6IdgUb7ALA/gkh9SISw=;
+        b=eBQTqeRNBrljREk/nB5ro2/cEx6CEz6F6adSEn2luLL5GnYrM4PYWLQFj/m/C/2/gi
+         FXEn4qhcfKdwgB5fOVgZsO2ELbQywOsdSRjXgVMOTHvVM1pgknc2O1I3aVrZ+fYxRtXn
+         sEiP93APmjJoWVocfxCQLe3lvlvrc42N+IP/1OlRzRh1RkPoHnD2TdXkkddd6VQPwYw6
+         wdJO9OKCXgW7pHxGqrm1Dmbc2dhPeScAaRS4OUOPPYRUioLPPW1OGfdYdfIImMgyzZ7V
+         gzYBI3W+cYtuRxtIY0DzCyPhr2wJ7f6TYlxanJMtH3GqEHwLTzfoRimJJNN/9Q1LEejM
+         Rj7g==
+X-Gm-Message-State: AC+VfDxOXyHFzWBSEC6mWVRYmZLwLEuX0hqyutO1kJWp91ccJvYn4uaI
+        FoAZi5MrDJ2TGZGUNB5SuqXtAA==
+X-Google-Smtp-Source: ACHHUZ4ZX0E/X/YKvqntJSvw3Tv9/5A0eEJHzdaINnGFUFFPTZjJm0mPy2wbX2mDTVvwXuPdfsrBOQ==
+X-Received: by 2002:a17:906:fe03:b0:974:1eb9:f750 with SMTP id wy3-20020a170906fe0300b009741eb9f750mr1421632ejb.36.1686311502112;
+        Fri, 09 Jun 2023 04:51:42 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id r2-20020a170906548200b0096f5b48fe43sm1193972ejo.47.2023.06.09.04.51.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Jun 2023 04:51:41 -0700 (PDT)
+Message-ID: <56eff2be-710e-cf3a-0dc0-d0f1d21c8825@linaro.org>
+Date:   Fri, 9 Jun 2023 13:51:39 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH 1/2] tty: serial: samsung_tty: Fix a memory leak in
+ s3c24xx_serial_getclk() in case of error
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Thomas Abraham <thomas.abraham@linaro.org>,
+        Kukjin Kim <kgene.kim@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
+References: <e4359d5ef206f5b349c1d15a515a1205e78dda55.1686285892.git.christophe.jaillet@wanadoo.fr>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <e4359d5ef206f5b349c1d15a515a1205e78dda55.1686285892.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 09/06/2023 06:45, Christophe JAILLET wrote:
+> If clk_get_rate() fails, the clk that has just been allocated needs to be
+> freed.
+> 
+> Fixes: 5f5a7a5578c5 ("serial: samsung: switch to clkdev based clock lookup")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-When CONFIG_OF is disabled, build testing on x86 runs into a couple of
-objtool warnings from functions that unconditionally call panic() but
-have no __noreturn annotation:
 
-vmlinux.o: warning: objtool: exynos3250_cmu_isp_probe+0x17: samsung_cmu_register_one() is missing a __noreturn annotation
-vmlinux.o: warning: objtool: exynos7885_cmu_probe+0x16: exynos_arm64_register_cmu() is missing a __noreturn annotation
-vmlinux.o: warning: objtool: exynos850_cmu_probe+0x16: exynos_arm64_register_cmu() is missing a __noreturn annotation
-vmlinux.o: warning: objtool: exynosautov9_cmu_probe+0x16: exynos_arm64_register_cmu() is missing a __noreturn annotation
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-The objtool analysis is correct, and this could be addressed by just
-returning success whenever CONFIG_OF is disabled to let all that code
-be eliminated, but since the driver is no use without CONFIG_OF,
-just add that as a dependency. It will still get compile tested on
-all architectures since CONFIG_OF is enabled in allmodconfig and most
-randconfig builds.
-
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/samsung/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index c07bb50513bfe..76a494e95027a 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -2,6 +2,7 @@
- # Recent Exynos platforms should just select COMMON_CLK_SAMSUNG:
- config COMMON_CLK_SAMSUNG
- 	bool "Samsung Exynos clock controller support" if COMPILE_TEST
-+	depends on OF
- 	select S3C64XX_COMMON_CLK if ARM && ARCH_S3C64XX
- 	select S5PV210_COMMON_CLK if ARM && ARCH_S5PV210
- 	select EXYNOS_3250_COMMON_CLK if ARM && SOC_EXYNOS3250
--- 
-2.39.2
+Best regards,
+Krzysztof
 
