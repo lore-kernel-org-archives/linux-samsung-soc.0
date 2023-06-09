@@ -2,97 +2,139 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE7AC7EE43
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Jun 2023 11:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDCD3C7EE29
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Jun 2023 11:57:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239103AbjFILzL (ORCPT
+        id S232328AbjFIL5L (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 9 Jun 2023 07:55:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43490 "EHLO
+        Fri, 9 Jun 2023 07:57:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239929AbjFILyw (ORCPT
+        with ESMTP id S239237AbjFIL5J (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Jun 2023 07:54:52 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7CC2359E
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Jun 2023 04:54:30 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-51640b9ed95so2903026a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Jun 2023 04:54:30 -0700 (PDT)
+        Fri, 9 Jun 2023 07:57:09 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBF183A9C
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Jun 2023 04:56:35 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-977e7d6945aso310190066b.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Jun 2023 04:56:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686311609; x=1688903609;
+        d=linaro.org; s=google; t=1686311781; x=1688903781;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hFLyNFdjW8q+t01Kpf1PQ/GPcGV/1xyWhVkZdWigx8Q=;
-        b=P84n5OXIDE2oJV4pFMoCu86Pu6g9l83iWP+oBjcYzqOt4w0dgvH1Vx+7XepY21LFHE
-         Xg3oJ7wnQfgo0RirnxhJx6TW90TYkyH6AGvHvivTGiMLi/B+iyhjW4f9yJW0pYBKy0os
-         2idCU13J4k6Uxh4gErJwjA5KPORzBc4Jjv7RUUvMlLnkemwkDj8Y5td+AMfzJxqh5+v/
-         oNDrWVbO1PC8d6MNDtpCVBHf4ySqkSH9pSdXYmq6go/yBkv1mcU/ET8rcmcAJy1NXUXc
-         RiWFe9lPbg2xCS67V62jIBnQBxkIhT3dfE83y8d3MYDc84iwzxGXjVkai9P6JJNnL1k6
-         CNvw==
+        bh=oYrIxCV5eN1GYZDJEJ1UfI92aRFL2OYEZ4NP6sPPE2c=;
+        b=LO+fORubTVhmrOyNTWIDUURXux/NlOjg6bPwDxETFP0wrzbqPmSJH579qNs6TW9Dy/
+         kZUXic95WuWnCLXNRivrshUhTP8eHvUuzi3fP/8jbEHRSqLfIdV/VRUW3KlOy5d5wgc7
+         GqNUDBVs4TaECJ1Scp/WsddYlkFwsx4dgKGE3fPANBz/M+NrHmnoqsjA33Oy1Syy+u9x
+         VieIWj1BMAx8bMcXUSxhIkZaUZBR5lc5Bc6WgLmZ7R0PVBIg1i9XmdB6JNKneuc8uf4+
+         o0vww0+nzpd+h1nhfMZDhvkscVZLjlVFZA2X6uoZKbVFxjw2GsNxV6lpXMPLimtr0lyP
+         IbJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686311609; x=1688903609;
+        d=1e100.net; s=20221208; t=1686311781; x=1688903781;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hFLyNFdjW8q+t01Kpf1PQ/GPcGV/1xyWhVkZdWigx8Q=;
-        b=aNhUL4YmEPmMc1jbNgtqKAPXCOHNyKhkzM6IPJN8ordtZ3isFoXfG8i/xYlfvgvTqx
-         y1U0VtrUAUEO+etfPpvr/F1DDxd8turZ43kWP6KRGqhoOorPY6G+8kQNVCjWpCDfRRDC
-         0iYb7f0evUhG6TcFRD95Pgbgw/sGKqUxRP1/sLdAr4qtSP8x4S464MHs0w5WbFgxEmY1
-         zIg4uHSB2VhMk2BUjLE9gPSjcFEXjRNJVDuLL6cXRqaX+4SuZI3fzkoyE1i+prH53mge
-         mh7fNYZ5oA4nx+L2IxsYX7mEjs7FPkShuS02QHoiV1ndWt1VDFUC073lzP1Xe+MJ9rqj
-         mXzQ==
-X-Gm-Message-State: AC+VfDx6pC/dT5n/JaZBSAJLq/o0t3TKD7cFmkayQ/65rKAD1ip55Qiw
-        JTDqocBn4mdof9lKKIAjdBrShw==
-X-Google-Smtp-Source: ACHHUZ4NZJ1Rx44rsznhdvEIYrZ5YDVyZDaKGvwoc5f2sIGzzVpBTv1xaoE4WfaUaNDrDmxPlcB9Dw==
-X-Received: by 2002:a17:907:980d:b0:969:e9ec:9a0 with SMTP id ji13-20020a170907980d00b00969e9ec09a0mr1603279ejc.77.1686311608931;
-        Fri, 09 Jun 2023 04:53:28 -0700 (PDT)
+        bh=oYrIxCV5eN1GYZDJEJ1UfI92aRFL2OYEZ4NP6sPPE2c=;
+        b=Lqs5Nb0K8Q9/fx50Yir5nwe0p64HUDOI4Nm8K99qgBM4nDUJZo20VFV6QZ3Au+FGzM
+         9LDDdcd6l8aSu6CkVloOYyuuQHfmDMUaYbpmnpLRNaI1E7WyyX+sFljvBfkDxd6BQv6n
+         TzOCKtoOFJXCm++omn0x3y2cfBBgq7c9/sIX8Ou0h411RaMJX/36duBeSCDS5aP9CrvR
+         i/8YGqNHNBQwRy4JiKYZcsRVCbqXEcUKIlVIEqhF7jkGQ19uzle+pqIxccrM+6YKU12U
+         vxj2vjEY/UpZwDG+FsFEDc7Nn0BJRWXOQqARKKLEbwRetzpI4kX+JO7ZzL/Y3zcOrA78
+         DXZQ==
+X-Gm-Message-State: AC+VfDxresp0hgn8qcsU97a2ZaIZkKJk0D+CuKMTgmTEAeNoPf4WS14G
+        yTVsfD2IFR4fmBDEdyV5foVPQw==
+X-Google-Smtp-Source: ACHHUZ7kFcjPb/Bl918mM98lpkRB6MU3jCR+A5T5xmYDhf2Kx350E1NZgAXUcmyAU0dnBFyQ5CpUHQ==
+X-Received: by 2002:a17:907:789:b0:978:ab6b:afd4 with SMTP id xd9-20020a170907078900b00978ab6bafd4mr1639295ejb.43.1686311781136;
+        Fri, 09 Jun 2023 04:56:21 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id u3-20020a17090617c300b009788dfde0b2sm1222514eje.12.2023.06.09.04.53.27
+        by smtp.gmail.com with ESMTPSA id b14-20020a1709064d4e00b00974638e4a98sm1207167ejv.24.2023.06.09.04.56.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Jun 2023 04:53:28 -0700 (PDT)
-Message-ID: <4d27c8ea-f5bd-704d-e8fc-823799854bb5@linaro.org>
-Date:   Fri, 9 Jun 2023 13:53:26 +0200
+        Fri, 09 Jun 2023 04:56:20 -0700 (PDT)
+Message-ID: <f3607725-b08c-8d96-02f8-f8f89af8e8b1@linaro.org>
+Date:   Fri, 9 Jun 2023 13:56:19 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.2
-Subject: Re: [PATCH 2/2] tty: serial: samsung_tty: Fix a memory leak in
+Subject: Re: AW: [PATCH 2/2] tty: serial: samsung_tty: Fix a memory leak in
  s3c24xx_serial_getclk() when iterating clk
 Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+To:     Walter Harms <wharms@bfs.de>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jirislaby@kernel.org>,
         Thomas Abraham <thomas.abraham@linaro.org>,
         Kukjin Kim <kgene.kim@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
 References: <e4359d5ef206f5b349c1d15a515a1205e78dda55.1686285892.git.christophe.jaillet@wanadoo.fr>
  <93bf8f574310256fcea50e5c5a62b5c37e20bb14.1686285892.git.christophe.jaillet@wanadoo.fr>
+ <f31523d7270d4a1f82d96b7891ed13e6@bfs.de>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <93bf8f574310256fcea50e5c5a62b5c37e20bb14.1686285892.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <f31523d7270d4a1f82d96b7891ed13e6@bfs.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 09/06/2023 06:45, Christophe JAILLET wrote:
-> When the best clk is searched, we iterate over all possible clk.
+On 09/06/2023 10:57, Walter Harms wrote:
 > 
-> If we find a better match, the previous one, if any, needs to be freed.
-> If a better match has already been found, we still need to free the new
-> one, otherwise it leaks.
+> while we are here ....
 > 
-> Fixes: 5f5a7a5578c5 ("serial: samsung: switch to clkdev based clock lookup")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is speculative. Review with care.
+> perhaps INT_MAX from kernel.h ?
 > 
+> int   deviation = (1 << 30) - 1;
+> 
+> the part before looks a bit strange
+> 
+> if (ourport->info->has_divslot) {
+>                         unsigned long div = rate / req_baud;
+> 
+>                         /* The UDIVSLOT register on the newer UARTs allows us to
+>                          * get a divisor adjustment of 1/16th on the baud clock.
+>                          *
+>                          * We don't keep the UDIVSLOT value (the 16ths we
+>                          * calculated by not multiplying the baud by 16) as it
+>                          * is easy enough to recalculate.
+>                          */
+> 
+>                         quot = div / 16;
+>                         baud = rate / div;
+> because
+>    baud=rate/rate/req_baud = req_baud
+> can this be simplyfied ? (or is the numeric required  ?)
+> 
+> 
+> Homebrew abs()  kernel.h has a abs() can we use it here ?
+> 
+>             if (calc_deviation < 0)
+>                         calc_deviation = -calc_deviation;
+> 
+> to the patch:
+> 
+> +                       /*
+> +                        * If we find a better clk, release the previous one, if
+> +                        * any.
+> +                        */
+> +                       if (!IS_ERR(*best_clk))
+> +                               clk_put(*best_clk);
+> 
+> the intentions are good. *best_clk is user supplied (and should be NULL)
+> filled & released in the next round but IMHO must be valid (is clk).
+> so no need to check. (ntl clk_put seems to handle NULL and ERR )
+>    if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
+>                 return;
 
+Don't top-post.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Anyway, I don't understand what you want to say here.
 
 Best regards,
 Krzysztof
