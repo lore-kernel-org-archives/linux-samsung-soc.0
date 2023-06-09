@@ -2,46 +2,46 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2CB8CA9EB1
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Jun 2023 19:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 148C8C88C84
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Jun 2023 19:56:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231771AbjFIT4s (ORCPT
+        id S231895AbjFIT4u (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 9 Jun 2023 15:56:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51726 "EHLO
+        Fri, 9 Jun 2023 15:56:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232211AbjFIT4i (ORCPT
+        with ESMTP id S231841AbjFIT4k (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Jun 2023 15:56:38 -0400
+        Fri, 9 Jun 2023 15:56:40 -0400
 Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2043.outbound.protection.outlook.com [40.107.243.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E2FE1730;
-        Fri,  9 Jun 2023 12:56:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8CCBE4A;
+        Fri,  9 Jun 2023 12:56:38 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ny/QLz501byOV8eupXHS1azzb+Wt7Mn+JZYbA0MpYFtnkBbel5BvBeM5A22JLWx0/JAIKtaPdAVdHcBDZE/sVFKnYP43+u1XwlAQFAaYLgdkzBfWknwBKopquT4CRqAD87bK8QNOd+uq6gufxIckgFdCRiSLa6jj0msiB4peSLIHHDbV3Z18OVueP655kILMMbJl13QXr3kiUMADcmRat0e0aGmzIvHvOmmJdd7N7scqJdHNCf/vv5hp939hp9R97I3CmKWUOddlSLjlRp34Se6bWIjiqPkaqa/helsTBD/88o7Ihsw1V3QrmPyS0QyHOausSiDfhPPQvCqisYr60Q==
+ b=lFIYJW91l7SSaT51PKfN6uY3ilbg3MS98e1cikziG718rel8+a/wz0flBqKTFQlwUflZFT/AgKSximERsh8sbOymnxhXD0AQ3pbcn6tHgh/deySIBfzYe7QKNpGNP7AhnM7BW15kTsembB6U8wgOI1v6oFiyFxOEFkzXToVVpviEAJqZkEVZW+MtF5l968cqKDSgnwBUk12ia3lL9pDZ5QZ86i9jP/3+d3PbD2OwdDesazfwrMgXXsK8bwcw40urEnLtah28pqXaIUU+LsQIeOhavxzjPWuZ5R/QoTEQ+sDs65PfcUkL90KdS+okgEqhalJ9cVfJMjAt8b5e5kNlCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LFI6YlGa/rRO/LUho1t6NDgB0fD4aHQKfGv6pVqsJA0=;
- b=lnRLqz5KdYgWmNHMxdQV0mQdmuILIWpjD39b60LojPLBlv/IQzGYDxYma0RC+89M5wY2ZkolQLiE/whF5ICakxAA6z/PtHHAbAKBBYrL6mr8YMXvGG+DWZrMadRjD2HoKQNMLhKlRnRc2eMzxMbSwgC1wQTK9rISOFISKxQzxY8ld0e2vQ1I4tvvUFI3/4QY55Ts93lrPB9cPZjhDIbCCYU827jw2EBwvGoqTqbEhiIGUmooVbQNCCSbWkKRuh1J5a+3pyAo4s3MCSYZCsA6MLGHGeu1YSAvZXyhr4mLHL6vU6xEDMO1ElOPTqZnyd1IAKU/nz8YXmmLOj1WMtHaSA==
+ bh=W1C264BQBMTFlLs4E/xf3D1AOn2brjnRUGsr5ogwL0Y=;
+ b=BAWz1VfDfn1oyOdGiWoes6FI6KbpUWLvCn2zo6Mqe+LvwbgFo2Fscs2P7HywjeBDPAVrLPHVaD8q1+zctQCj+vKiSTsmV1UALsofE6xa20cATdwRRHFNKyzS9hPMROihy38QkiqE6WWp45Yd9qRP1Fb2wGoADtzcex9r8sOky1trYVzUg5e30hG694NffiLRKtdT9/s8jRnxqDAErfK3+nJ+T0gJx/7x04BFHjzTSYm1K/DcM1CTOvleNCIoKx4p6ad/wdGqxMtO11J40xOaEGe6qNYx2nzouumMZPSA4HTtq/D5K7SglE4YcOLzTTFnDKlJnqcibCNVpxQ3UDcz+Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LFI6YlGa/rRO/LUho1t6NDgB0fD4aHQKfGv6pVqsJA0=;
- b=ZxwgZr+eZ1INxxBZSMRncm88Tzc2MLYLHTOAQhEm6HzY79uNlALiAY/RrE6j6AI2DSqXa1V/JIYwHP9q7cs1CpPKkHS/J14UKNMpR0dOWyS+pSjXVqlOvnuV/wpv8Aur68D4tH7wfc3WeM42iYqETIxA1ot23vPVGu3xxoBbn0z/cuvenD7Yl8xnXbM9v7ZpAKjQtOBrigsOSONcFZSBctFA5XnMO3fhe0ZCoGTUEnaI5bQ+yBi81ZV6oJ2eDz3wfu4g7FeaK5OTA70EFtpTi8HIg/jX75as06ydZqFQ/J/lDYBHhdfR421XTILMkeGBoPsFmzMAa9UAWMUyakTFfg==
+ bh=W1C264BQBMTFlLs4E/xf3D1AOn2brjnRUGsr5ogwL0Y=;
+ b=k/uwhYDUXCt4BJPtXbs1LuLXq7xefJBFppJ83ItGKqqOlZ7Vb74sohMeXOUsGN4nW61eMJNWUW+Bzu6GbmbEK3e6ACsW6XfL4FrvWeLFKFq+pfe6F39A7DZlnUplWOB+1GXYZC9okmQ/9DfyYRskamOQaFVAux69f8wxYybM80nDtH0NRAjtudtak+xEcaPcVBFYF8DM+q9PnPOcXzCY6L8b8dqVBQEeUyZgNybgLJW+ab/16MC8shM1MQX7D3mAKCkSvuNMeuRrQpjeg1DPhNV/nNr5c7v4LoZsTeXRhDTBdFiorQYYsO2j2fu6R4xCapM0oKhp/31GATBC18M4vQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
  by MN0PR12MB5785.namprd12.prod.outlook.com (2603:10b6:208:374::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.36; Fri, 9 Jun
- 2023 19:56:26 +0000
+ 2023 19:56:27 +0000
 Received: from LV2PR12MB5869.namprd12.prod.outlook.com
  ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
  ([fe80::f7a7:a561:87e9:5fab%6]) with mapi id 15.20.6455.030; Fri, 9 Jun 2023
- 19:56:26 +0000
+ 19:56:27 +0000
 From:   Jason Gunthorpe <jgg@nvidia.com>
 To:     Andy Gross <agross@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
@@ -84,141 +84,233 @@ Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
         Niklas Schnelle <schnelle@linux.ibm.com>,
         Steven Price <steven.price@arm.com>,
         Thierry Reding <treding@nvidia.com>
-Subject: [PATCH v3 14/25] iommu/msm: Implement an IDENTITY domain
-Date:   Fri,  9 Jun 2023 16:56:02 -0300
-Message-Id: <14-v3-89830a6c7841+43d-iommu_all_defdom_jgg@nvidia.com>
+Subject: [PATCH v3 10/25] iommu/exynos: Implement an IDENTITY domain
+Date:   Fri,  9 Jun 2023 16:55:58 -0300
+Message-Id: <10-v3-89830a6c7841+43d-iommu_all_defdom_jgg@nvidia.com>
 In-Reply-To: <0-v3-89830a6c7841+43d-iommu_all_defdom_jgg@nvidia.com>
 References: 
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: BY3PR05CA0060.namprd05.prod.outlook.com
- (2603:10b6:a03:39b::35) To LV2PR12MB5869.namprd12.prod.outlook.com
+X-ClientProxiedBy: SJ0PR03CA0379.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a1::24) To LV2PR12MB5869.namprd12.prod.outlook.com
  (2603:10b6:408:176::16)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|MN0PR12MB5785:EE_
-X-MS-Office365-Filtering-Correlation-Id: ad775b14-09ac-459e-c7ca-08db692399ee
+X-MS-Office365-Filtering-Correlation-Id: 6d9ab37f-3289-4f52-cdd6-08db69239b4a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: SgyiDDbhtyLQDZjV2A8J27WxjjryAjq8EzPOoqnolEEwsDUIkeMEdokrZkyoWl1m9zf72adYkUpjX4JsPZKU6CcYczqM6fe8U7x2Q4W4Cp3IRL56t4LfMiFcvv6YjNHYvMeGe6vzgZtJM2QzsncTaZUvD5n9J+KU1agbKt1X2ThQyT12rPsaeHj0vZzGifObdo4jMRG1BwyYrr0klGLeREFitZKzfbpH642CXSDGX/glLQSZ4nuHNV2iaPvCwvvdhGn+jp3Mgp7mlxYLFUkPG4PrcIfMXXk3h+k4pFstYavWAcIZye7lybqLwlYOI37ZZOkR+x1vbeSYt9S1n31VwRnEBgHVzNzD6c4h7NLwvwFWhJDhiE/Lr/PWbkheYA83GaKmcmA65cPA0sAbMeUrHGFPMMR981JMVftAupWcuFsIjRgvBDdCvIx5Lk2oZ+tl2n/sR8vy6W8rNA5v0tde3F/If/1dzwJQy1EtDcUexYLCC2U/D1uU0uj6aKx6Id1LWZT6Y4nRispPBPTIoOdu+UsBHCztMJhYsoRDpZ68Rm7k0nBPB9Knk4ITs/qxKB2vdlmXCoIzR4MHMl0T9me6qezNGDaYpf6+4jYr/qBj7r0=
+X-Microsoft-Antispam-Message-Info: l5kAei8VvRh26wPnNNTgNWeOX8cm/qthZvQvjU3do+RKqcunw9i4TtQJr8aLqaM0w+7rQnd3CxtjL7b9IG1U5NYsaTULqCv4pFsGkwydmgG3sriRHvVyEccjVjrGYMtSZyDfaBFkFPoAtvBH+DQdoFNjfmJiU6VJafnecORpRCeGba9MTO7hphLy78a2KzFJcaOsPCdqCI1K30qWnS5qLsRwhzFhri/7dzMPaCQgMZbvCLs+5aEdEFZ4r14GbGaBwxAm8qPOovgnNmhiRmtprldvjH17/vO3PeiDwaP4sXlVxvseHc+cPDFG1yW21bJFm8ebchAGBrF1s0bOGz5Rs3gUGXjCfljxmgBvp9J6TOb7jQTn+CvKgUeJhls/dLkFfwhNFuQdMLa5bapLp/l5b8gUZFQ1Ugix3aJ3H1JFUielCMqy5CbBs2D8egp1OjWonVL5vkoqhOJD5P+QMae1zUW0JGSZqp81bM5tPfUPiZyLSfb+8BUSPEvXFBShU4C9AilYNlySnkPtZEAL/Dw0fXjaPkOmLdDbBgle29c9dHRDrzhDPR5FoIRsW7VrDv+p2wFqDAIdRqhopdko9+6vxpwMxqjKzbQUsAHbOSomXpg=
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(136003)(39860400002)(346002)(366004)(376002)(451199021)(83380400001)(7416002)(7406005)(110136005)(478600001)(8676002)(8936002)(4326008)(86362001)(66476007)(66946007)(921005)(66556008)(5660300002)(38100700002)(41300700001)(316002)(6666004)(6486002)(36756003)(2906002)(54906003)(6512007)(107886003)(186003)(26005)(6506007)(2616005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?a3TNEbUU85knR5N9WjLBSYiIbDJny673+7k5kaGT1xIG8/WZJcGvBCNKfr89?=
- =?us-ascii?Q?OEp6WrfUo8u3iaQT5gVZU2DMb8VCyYoICxHdxX2REw3AG7pwmAgIYdAyNRfW?=
- =?us-ascii?Q?GQ4C6y70vM30AJG3+73u7wOLeKddYmfG/2GPAQXJf0m4ndACD7r/CIjmdq4q?=
- =?us-ascii?Q?9wphPrFF2+S0CIwrsPVABrVE2XEM9ErpR4UC8ZY8QyT5/HDvqbfyQYnNmmgS?=
- =?us-ascii?Q?kKndop39e6lVGH6SajRaTDKG3IJEbRu8psg97gUNLFRQlbbxXxnHn0bYlDG1?=
- =?us-ascii?Q?7eMb+4nV85pG7bvs2FtiGHOTl9RK0K0Gn1LDj4W/tn7ex74C/4Bj/OdO2yaG?=
- =?us-ascii?Q?TYeN4qtHASoNSAAeJQbMEJY82pKbB0KMmV4jsMjxfd5tvQz5iTmdAko2TLkc?=
- =?us-ascii?Q?3wyUFzCfIhGwhSP+FkAUGZW8UNcs7n5BwSpn3y0LPt1gi0ejMpF2mslDbb2p?=
- =?us-ascii?Q?/a9CIkrV3CGaddCDPDCSJxNfIXNt+d8agV4fPbrLnuw4UXMP3t9RXcBDIe4P?=
- =?us-ascii?Q?GDSpyZn3w3OwggXWlnn63hxjbJgRqRsDYVQ2VPDQJvVNUue0jNOLRmvU+A4H?=
- =?us-ascii?Q?t1ulxWRal2okEr9ElhZCc5PgxSR7HaKqpYAZkWdG38ACowhXg2n5tIx2A5N5?=
- =?us-ascii?Q?7NpouGZ07qBz1K6hXbyexF9SPvsRolGF5G8AW6rGholABhgfla75Hwi0ZdCX?=
- =?us-ascii?Q?xgQJtnt1Q/PNviI8ITzPYmMnPREJjXEZtwOnaHZkRTooRjDBmknOVwv+e1R/?=
- =?us-ascii?Q?UXqBxW0AJqbBC0vFkZyyNdq75S++D0q18gYXn5a8LhdxcRPCGpsChiaWra15?=
- =?us-ascii?Q?W//CW3IDBWIrWU59GIw23a/d8ZCyljcOo3RaSPducGw991QuQtk+SFYU1zqf?=
- =?us-ascii?Q?UO4DwuSe+7C+h45CE0nx/aMnJIoZpOwzsyZU9OeK6JLocvSQLlYo+WKRMIEt?=
- =?us-ascii?Q?tseYKRoZmNPoplkT26RhCrZvj+UKEmCSdb3JTQLP2vU9ZNtO8V6uRqkP+G6u?=
- =?us-ascii?Q?G86QIjNIhsi/XxvVlh0Tx4qdA6tlPhC50KjPP8eNiTV3x5MZBDihupOPumx6?=
- =?us-ascii?Q?/ftEL5BHOKoYY5N7P7Rew0AzfPBi6hhYnXCgBaMgmSkw8bgUtrY4xAySW/7B?=
- =?us-ascii?Q?jr7FUMW7WWQWl/R0GOD2hF1m0DwXRNZnownaclk08CsX+g5g9agfVWsmPc9R?=
- =?us-ascii?Q?/h/lQR+zDuWcPKswmdJwiyA7yzki7uw3f2/Hf0sp39zuLDr+KcwROUKFsSvY?=
- =?us-ascii?Q?ti+fNeaRW8/HVoXlBPHDsfbBcqYZMTHSAuKZrZVZz13ugmFn6EkbtV7CUG2D?=
- =?us-ascii?Q?LNibP5VV+FN0lA+dpNo5wNN/uvfXq/Pd/g+/j9xcHQ3kQhjRLR9T3KNUa6IU?=
- =?us-ascii?Q?qqRQKIue6m9ynTWUNTaSbLSyrWQO/WrafdHySij3EscvoObu5q4XV1K/Ztnv?=
- =?us-ascii?Q?TobaTFyCHCdJ55ZCVbOAYpTIwRVAGXwzRwI7Wcb74r/x4vbSri/cAZMkk+Bp?=
- =?us-ascii?Q?mxGO+1mtciRmNa79klBOafq6sO/vQIjk5fL9VQDuwpxcSrYH0b4X8ANY/1ky?=
- =?us-ascii?Q?n+w0sU9aX/H9u+jMeHL3pDUvv/Lk0yzU0H9RJrHC?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1jiKpdHCAtqDY6HIE/aAsGrWAdA5ffCENu35XHTkFkY1KfvyV/mx5C2Tx9MT?=
+ =?us-ascii?Q?1VVqTvceP1XO+vqanX/bt6PGoYIVa7yzOccP6W7wvk5TWOuCs4f5+LsNwe3s?=
+ =?us-ascii?Q?ddYoDrqlNheoIZngMT09PadFBpV0IiPxI6/M5R1pzVPFEZ+NLVAnWCTa+AgN?=
+ =?us-ascii?Q?CCDl7zLEgCcCHgXlZ6e5qg8k2cQewjewkQ4Vm4mGvZVFmyoOpMJD2mAbj1W6?=
+ =?us-ascii?Q?LQ4DtRC1J6/KqkQjkQS3olE/B0WGuIxJGDJ9ztf+v6tau5ev89jBi23AS+5e?=
+ =?us-ascii?Q?dGIzGOk8Y2K9V0wabhZAK3aV+/GNctJ4tGZN0ohPnMBILNSqRt6Vc8v6X/ov?=
+ =?us-ascii?Q?jhQM5B5kT4n8YhWKJXafOjToZMOwlfV1CHn7V1JYUcdMOtb9mCh1pwPTwrSQ?=
+ =?us-ascii?Q?ztq0YHA66RKQj6n0C1xP6tbuOxOg08WvQeMOS/yxt6iCLgsBmMEdwRCiNfgs?=
+ =?us-ascii?Q?8XjfPo+klrAWpEJg8E3zq7Om28aLQ30TczKi+xCs0Y+1KEpdNwknTt+2QlWU?=
+ =?us-ascii?Q?Om2TCcfSMD3xagdaobK+9Rio2To52ubb0tIH8CcuIhWLul0bgpMkShyIvfZs?=
+ =?us-ascii?Q?ba0P5Vb6mHmO6zXYQC2xOXfoeHxosrO5WiNrBmc6e3fwBjF/pj5/9pdscQdF?=
+ =?us-ascii?Q?I28p0vAYOxtYtnSjGr9YKHAse5BzHnnA8qZUW0DgYEF9rj/R2X+vtmkmy/lp?=
+ =?us-ascii?Q?yg6Lgli5Sv7S/qLR8T94bWn4eX95Icj7b2N2H6l2uC+mJhQoHMtO5d38Hqhf?=
+ =?us-ascii?Q?l1wB9Kc8f25vyavyIKp/cabvZF+Zz86izruGxED1dDivt2guUzdQKULcBcqb?=
+ =?us-ascii?Q?/jTHHF7gyAUg+q6CvgQz5/GSrt4DB5qFh3cIhfv9qacvVIh384mvW7BH2lcx?=
+ =?us-ascii?Q?kp9zZxEVMwODgG4P7FEp/Qdr/sPXsmlF2wRdjOkzb3gak4w+I0xfk1/sdaLg?=
+ =?us-ascii?Q?kMp0WjM7PNUi5CR49ighfbuEfb7wdI57UwdZ8rlbNQl/Hg9c3kEdVzchX0qi?=
+ =?us-ascii?Q?14l2e/brwUpsGBiJc7qMUduJFsGv+Qg5KY0N0/MST7kqDKv2VCAA0c7wG9aD?=
+ =?us-ascii?Q?qP8yDwsHq+eQmYptwlgqkU0KY3uEfEYXLEK1MIUpfry4X1m3MNN1H9M5moO3?=
+ =?us-ascii?Q?29Y3mvGIXZIs0iQP0+5oaXZFVkp623SjAYxSjR77C4Nb+wN48jJ1ofPgjWGQ?=
+ =?us-ascii?Q?F5taXJ/HLJ+H8Cdcmj7uDWaQMA7HUXDv+pJ7XQWj8/2kbETzSE84oM3o4aZo?=
+ =?us-ascii?Q?taXJlIrxXqw6x0K/zvIkx5q0kThPAoNg+fz16RMVhKLHlIrVh5ms8kLU0lkJ?=
+ =?us-ascii?Q?ZFsrb4mvo36ysp5JDeSXaK/wOByzyAP7Yml2kcAZDZHYQpHIoyaBQid/UtYU?=
+ =?us-ascii?Q?oKl4JFPeesZpSv37/Zk8FRYyH0mDnXwnwCJPfOuyoBZtbTZKKxxVoyggLhDV?=
+ =?us-ascii?Q?M4MvZYH+wKQxEVThl7D+j7ELQwCrYwhW4JkdMf+a5PbpTaRSXIHievjL3+Kr?=
+ =?us-ascii?Q?jAfvBPhe+5ulJ2ooRDGfFLCa+MmVD7HZTQ56fHqkbZDarNkQlPIxYrDs1KAy?=
+ =?us-ascii?Q?q84XeSw1GbPjrnyWdBEshyIOVDadK6meseXISQoY?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad775b14-09ac-459e-c7ca-08db692399ee
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d9ab37f-3289-4f52-cdd6-08db69239b4a
 X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2023 19:56:23.1673
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2023 19:56:25.4580
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: E2yhwY4Wl4jPia9wjzBFPDQ2hVg4VtTG3JrXTfx4kyZNMaEoKcd41o3yD2fyNAWj
+X-MS-Exchange-CrossTenant-UserPrincipalName: slcVzNebVuqpsWNJiKmdYmYWN0PI/dpYl9Gy1uY2KL+UJhS5IVMn1VzIwcB9tlfe
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5785
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-What msm does during omap_iommu_set_platform_dma() is actually putting the
-iommu into identity mode.
+What exynos calls exynos_iommu_detach_device is actually putting the iommu
+into identity mode.
 
 Move to the new core support for ARM_DMA_USE_IOMMU by defining
 ops->identity_domain.
 
-This driver does not support IOMMU_DOMAIN_DMA, however it cannot be
-compiled on ARM64 either. Most likely it is fine to support dma-iommu.c
-
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 ---
- drivers/iommu/msm_iommu.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+ drivers/iommu/exynos-iommu.c | 66 +++++++++++++++++-------------------
+ 1 file changed, 32 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
-index 79d89bad5132b7..26ed81cfeee897 100644
---- a/drivers/iommu/msm_iommu.c
-+++ b/drivers/iommu/msm_iommu.c
-@@ -443,15 +443,20 @@ static int msm_iommu_attach_dev(struct iommu_domain *domain, struct device *dev)
- 	return ret;
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index c275fe71c4db32..5e12b85dfe8705 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -24,6 +24,7 @@
+ 
+ typedef u32 sysmmu_iova_t;
+ typedef u32 sysmmu_pte_t;
++static struct iommu_domain exynos_identity_domain;
+ 
+ /* We do not consider super section mapping (16MB) */
+ #define SECT_ORDER 20
+@@ -829,7 +830,7 @@ static int __maybe_unused exynos_sysmmu_suspend(struct device *dev)
+ 		struct exynos_iommu_owner *owner = dev_iommu_priv_get(master);
+ 
+ 		mutex_lock(&owner->rpm_lock);
+-		if (data->domain) {
++		if (&data->domain->domain != &exynos_identity_domain) {
+ 			dev_dbg(data->sysmmu, "saving state\n");
+ 			__sysmmu_disable(data);
+ 		}
+@@ -847,7 +848,7 @@ static int __maybe_unused exynos_sysmmu_resume(struct device *dev)
+ 		struct exynos_iommu_owner *owner = dev_iommu_priv_get(master);
+ 
+ 		mutex_lock(&owner->rpm_lock);
+-		if (data->domain) {
++		if (&data->domain->domain != &exynos_identity_domain) {
+ 			dev_dbg(data->sysmmu, "restoring state\n");
+ 			__sysmmu_enable(data);
+ 		}
+@@ -980,17 +981,20 @@ static void exynos_iommu_domain_free(struct iommu_domain *iommu_domain)
+ 	kfree(domain);
  }
  
--static void msm_iommu_set_platform_dma(struct device *dev)
-+static int msm_iommu_identity_attach(struct iommu_domain *identity_domain,
-+				     struct device *dev)
+-static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
+-				    struct device *dev)
++static int exynos_iommu_identity_attach(struct iommu_domain *identity_domain,
++					struct device *dev)
  {
- 	struct iommu_domain *domain = iommu_get_domain_for_dev(dev);
--	struct msm_priv *priv = to_msm_priv(domain);
-+	struct msm_priv *priv;
+-	struct exynos_iommu_domain *domain = to_exynos_domain(iommu_domain);
+ 	struct exynos_iommu_owner *owner = dev_iommu_priv_get(dev);
+-	phys_addr_t pagetable = virt_to_phys(domain->pgtable);
++	struct exynos_iommu_domain *domain;
++	phys_addr_t pagetable;
+ 	struct sysmmu_drvdata *data, *next;
  	unsigned long flags;
- 	struct msm_iommu_dev *iommu;
- 	struct msm_iommu_ctx_dev *master;
--	int ret;
-+	int ret = 0;
  
-+	if (domain == identity_domain || !domain)
+-	if (!has_sysmmu(dev) || owner->domain != iommu_domain)
+-		return;
++	if (owner->domain == identity_domain)
 +		return 0;
 +
-+	priv = to_msm_priv(domain);
- 	free_io_pgtable_ops(priv->iop);
++	domain = to_exynos_domain(owner->domain);
++	pagetable = virt_to_phys(domain->pgtable);
  
- 	spin_lock_irqsave(&msm_iommu_lock, flags);
-@@ -468,8 +473,18 @@ static void msm_iommu_set_platform_dma(struct device *dev)
+ 	mutex_lock(&owner->rpm_lock);
+ 
+@@ -1009,15 +1013,25 @@ static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
+ 		list_del_init(&data->domain_node);
+ 		spin_unlock(&data->lock);
  	}
- fail:
- 	spin_unlock_irqrestore(&msm_iommu_lock, flags);
-+	return ret;
+-	owner->domain = NULL;
++	owner->domain = identity_domain;
+ 	spin_unlock_irqrestore(&domain->lock, flags);
+ 
+ 	mutex_unlock(&owner->rpm_lock);
+ 
+-	dev_dbg(dev, "%s: Detached IOMMU with pgtable %pa\n", __func__,
+-		&pagetable);
++	dev_dbg(dev, "%s: Restored IOMMU to IDENTITY from pgtable %pa\n",
++		__func__, &pagetable);
++	return 0;
  }
  
-+static struct iommu_domain_ops msm_iommu_identity_ops = {
-+	.attach_dev = msm_iommu_identity_attach,
++static struct iommu_domain_ops exynos_identity_ops = {
++	.attach_dev = exynos_iommu_identity_attach,
 +};
 +
-+static struct iommu_domain msm_iommu_identity_domain = {
++static struct iommu_domain exynos_identity_domain = {
 +	.type = IOMMU_DOMAIN_IDENTITY,
-+	.ops = &msm_iommu_identity_ops,
++	.ops = &exynos_identity_ops,
 +};
 +
- static int msm_iommu_map(struct iommu_domain *domain, unsigned long iova,
- 			 phys_addr_t pa, size_t pgsize, size_t pgcount,
- 			 int prot, gfp_t gfp, size_t *mapped)
-@@ -675,10 +690,10 @@ irqreturn_t msm_iommu_fault_handler(int irq, void *dev_id)
+ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
+ 				   struct device *dev)
+ {
+@@ -1026,12 +1040,11 @@ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
+ 	struct sysmmu_drvdata *data;
+ 	phys_addr_t pagetable = virt_to_phys(domain->pgtable);
+ 	unsigned long flags;
++	int err;
+ 
+-	if (!has_sysmmu(dev))
+-		return -ENODEV;
+-
+-	if (owner->domain)
+-		exynos_iommu_detach_device(owner->domain, dev);
++	err = exynos_iommu_identity_attach(&exynos_identity_domain, dev);
++	if (err)
++		return err;
+ 
+ 	mutex_lock(&owner->rpm_lock);
+ 
+@@ -1407,26 +1420,12 @@ static struct iommu_device *exynos_iommu_probe_device(struct device *dev)
+ 	return &data->iommu;
  }
  
- static struct iommu_ops msm_iommu_ops = {
-+	.identity_domain = &msm_iommu_identity_domain,
- 	.domain_alloc = msm_iommu_domain_alloc,
- 	.probe_device = msm_iommu_probe_device,
+-static void exynos_iommu_set_platform_dma(struct device *dev)
+-{
+-	struct exynos_iommu_owner *owner = dev_iommu_priv_get(dev);
+-
+-	if (owner->domain) {
+-		struct iommu_group *group = iommu_group_get(dev);
+-
+-		if (group) {
+-			exynos_iommu_detach_device(owner->domain, dev);
+-			iommu_group_put(group);
+-		}
+-	}
+-}
+-
+ static void exynos_iommu_release_device(struct device *dev)
+ {
+ 	struct exynos_iommu_owner *owner = dev_iommu_priv_get(dev);
+ 	struct sysmmu_drvdata *data;
+ 
+-	exynos_iommu_set_platform_dma(dev);
++	WARN_ON(exynos_iommu_identity_attach(&exynos_identity_domain, dev));
+ 
+ 	list_for_each_entry(data, &owner->controllers, owner_node)
+ 		device_link_del(data->link);
+@@ -1457,6 +1456,7 @@ static int exynos_iommu_of_xlate(struct device *dev,
+ 
+ 		INIT_LIST_HEAD(&owner->controllers);
+ 		mutex_init(&owner->rpm_lock);
++		owner->domain = &exynos_identity_domain;
+ 		dev_iommu_priv_set(dev, owner);
+ 	}
+ 
+@@ -1471,11 +1471,9 @@ static int exynos_iommu_of_xlate(struct device *dev,
+ }
+ 
+ static const struct iommu_ops exynos_iommu_ops = {
++	.identity_domain = &exynos_identity_domain,
+ 	.domain_alloc = exynos_iommu_domain_alloc,
  	.device_group = generic_device_group,
--	.set_platform_dma_ops = msm_iommu_set_platform_dma,
- 	.pgsize_bitmap = MSM_IOMMU_PGSIZES,
- 	.of_xlate = qcom_iommu_of_xlate,
- 	.default_domain_ops = &(const struct iommu_domain_ops) {
+-#ifdef CONFIG_ARM
+-	.set_platform_dma_ops = exynos_iommu_set_platform_dma,
+-#endif
+ 	.probe_device = exynos_iommu_probe_device,
+ 	.release_device = exynos_iommu_release_device,
+ 	.pgsize_bitmap = SECT_SIZE | LPAGE_SIZE | SPAGE_SIZE,
 -- 
 2.40.1
 
