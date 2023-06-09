@@ -2,168 +2,217 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED555C7EE25
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Jun 2023 14:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 157ADC7EE2F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Jun 2023 16:17:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241455AbjFIOdZ (ORCPT
+        id S241521AbjFIQRj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 9 Jun 2023 10:33:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54006 "EHLO
+        Fri, 9 Jun 2023 12:17:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231752AbjFIOdY (ORCPT
+        with ESMTP id S241062AbjFIQRh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Jun 2023 10:33:24 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 439D330CB
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Jun 2023 07:33:21 -0700 (PDT)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230609143317epoutp01e589363028c3fdad103954882ce0ffc7~nBDHpCFWD0150601506epoutp01B
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Jun 2023 14:33:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230609143317epoutp01e589363028c3fdad103954882ce0ffc7~nBDHpCFWD0150601506epoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1686321197;
-        bh=me+rLSB/b9GJujJAu0CxdDXUqp8gKCsUQo7RBcotCvU=;
-        h=From:To:In-Reply-To:Subject:Date:References:From;
-        b=c1Njslau/uUZ4+VH3HULWeK1O6V8EHLK2Iv+aPrdj3Oc501HsSB/T8M5bKdLy6y2l
-         P4/Cb/2DOefmyNQSlQI7zVUkJgCmOxUPDs/e/ghmcwJwHz7r3CB+9QdwgZdmysn5UM
-         vZ87RsjGjDfGQnQNl7zm72BEjQa8cDOwoYZqY6eY=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20230609143316epcas5p33ad45ed9c8971f82e327789259db5671~nBDGOQmll2770927709epcas5p3N;
-        Fri,  9 Jun 2023 14:33:16 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.177]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4Qd3Tk5Q5Dz4x9Pp; Fri,  9 Jun
-        2023 14:33:14 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F5.95.04567.A2833846; Fri,  9 Jun 2023 23:33:14 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230609143314epcas5p10b58341bcfc6c4beba80f9260efc37df~nBDEKzFjc1099610996epcas5p1R;
-        Fri,  9 Jun 2023 14:33:14 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230609143314epsmtrp154e5d8efd48e5f965618d24077296bf8~nBDEHrbSQ2364323643epsmtrp1T;
-        Fri,  9 Jun 2023 14:33:14 +0000 (GMT)
-X-AuditID: b6c32a49-943ff700000011d7-92-6483382adb43
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        64.37.28392.92833846; Fri,  9 Jun 2023 23:33:14 +0900 (KST)
-Received: from alimakhtar04 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230609143312epsmtip2db4e030b83f2545c23689acb258fcf0b~nBDCiMLnf1736317363epsmtip28;
-        Fri,  9 Jun 2023 14:33:12 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Avri Altman'" <avri.altman@wdc.com>,
-        "'Bart Van Assche'" <bvanassche@acm.org>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>,
-        "'Conor Dooley'" <conor+dt@kernel.org>,
-        <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20230609140651.64488-1-krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH] dt-bindings: ufs: samsung,exynos: drop unneeded quotes
-Date:   Fri, 9 Jun 2023 20:03:10 +0530
-Message-ID: <1efd01d99adf$5289fe20$f79dfa60$@samsung.com>
+        Fri, 9 Jun 2023 12:17:37 -0400
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3153B35BC
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Jun 2023 09:17:32 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id 7engq8ZMSV4eY7engq8iIM; Fri, 09 Jun 2023 18:17:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1686327444;
+        bh=PB4fuyF0N+bwbxmHLmFFwIIYDx59WjSLbp5IAGZ7Me0=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=OnGvM7AFlKojkEVatPTJq4/0tLPWGizuduEDMEotrmqRjV8gh7cmYb22mNDFB573x
+         0lsa4cuWTjSIwzDjQldlEZ+5mF+610tJbA7JNhzgLF2jTTNGktphH2wDV0ICMsi5/n
+         Q9KOgBfrJV+6IdyUUbletE51T+kOjD5rjjL+Na0QR519xMCKY6tZZ2Vt0X94yJFB9Z
+         2B56N0sCTRMxInt95dSo1f72KaNXYZrvDNngkqf7/hyHNTC+SlW8D7J8yiEGvcoZol
+         b2YL5Yv6KVl2xvUhi9Xt44o7wndPyJoeiznIr+7bRZNng9xr+SOGGvLECBIXfPIplT
+         9TYK+U7xlOe1A==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 09 Jun 2023 18:17:24 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <f1d56fd3-6e1b-58fe-74bd-85d610e62a87@wanadoo.fr>
+Date:   Fri, 9 Jun 2023 18:17:19 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJ2GdCv8AveMME/ypslsmkvG38IjAO0j+NfrivkBWA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAJsWRmVeSWpSXmKPExsWy7bCmhq6WRXOKwbVFGhYvf15ls5j24Sez
-        xZq955gs5h85x2rR9+Ihs8Xe11vZLTY9vsZqcXnXHDaLGef3MVl0X9/BZtG69wi7A7fH5Sve
-        HptWdbJ53Lm2h81j85J6j8+b5DzaD3QzBbBFZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZ
-        GOoaWlqYKynkJeam2iq5+AToumXmAF2npFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1I
-        ySkwKdArTswtLs1L18tLLbEyNDAwMgUqTMjO6N93mqngHV9F99r1bA2M+3m6GDk5JARMJPa/
-        e8rUxcjFISSwm1Fi2/XX7BDOJ0aJiVcb2UCqhAQ+M0rcXKLZxcgB1vH6sQhEzS5GiXv3W1kh
-        nJeMEg8P7GcHaWAT0JXYsbiNDSQhInCWWeLXiVNgCU4BF4lLq2cwg9jCAt4SvV8WMILYLAIq
-        EgfnNYPFeQUsJWb86mWDsAUlTs58wgJiMwvIS2x/O4cZ4m4FiZ9Pl7GC2CICVhJrN91mhqgR
-        l3h59Ag7RM0WDon7G0IhbBeJlnaIXRICwhKvjm+BqpGSeNnfxg7xmYfEoj9SEOEMibfL10OV
-        20scuDKHBaSEWUBTYv0ufYhNfBK9v58wQXTySnS0CUFUq0o0v7vKAmFLS0zs7maFsD0k3s8+
-        zQYJqumMEouuv2KbwKgwC8mTs5A8OQvJM7MQNi9gZFnFKJlaUJybnlpsWmCYl1oOj+7k/NxN
-        jOCkq+W5g/Hugw96hxiZOBgPMUpwMCuJ8GqbNKcI8aYkVlalFuXHF5XmpBYfYjQFhvxEZinR
-        5Hxg2s8riTc0sTQwMTMzM7E0NjNUEudVtz2ZLCSQnliSmp2aWpBaBNPHxMEp1cA0ycL7o+n5
-        2rOspqJvGqQOP72iGdeQkty7zGXvGy29X575iW2dhbE3evRyv/8/rfTj0NxS2xPeebN8299U
-        RM/d5sYQLKukazbXOPH4/5P6amFnbRUEXpZnyNTeX3Nkavf5bw8n+1cvPsTOPVldNf3buQYh
-        rXWi7pu/HdpY8N0g59l/gbvnghZU3EzWZqxoWszwxP/iliXu9qrvdfXPpeiK+2wTWhhoY3yy
-        IlShMvJbpdWb0hNbtskZKkx6+2dCWHyuFVvg3ecL7T0Mljq79qYePZyopfphYarAhIeHt7M2
-        zE64+lpirbRak5Li/N1ly9mObwj4+ltQuC1+K5/a40cVEzsDV9i9vWem8fiARKwSS3FGoqEW
-        c1FxIgDHGrboQwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplkeLIzCtJLcpLzFFi42LZdlhJXlfLojnF4MwyRouXP6+yWUz78JPZ
-        Ys3ec0wW84+cY7Xoe/GQ2WLv663sFpseX2O1uLxrDpvFjPP7mCy6r+9gs2jde4Tdgdvj8hVv
-        j02rOtk87lzbw+axeUm9x+dNch7tB7qZAtiiuGxSUnMyy1KL9O0SuDL6951mKnjHV9G9dj1b
-        A+N+ni5GDg4JAROJ149Fuhi5OIQEdjBKHPj5gqWLkRMoLi1xfeMEdghbWGLlv+fsEEXPGSWO
-        HF3MCJJgE9CV2LG4jQ0kISJwlVniy+/JjBBVUxklbv9uBqviFHCRuLR6BjOILSzgLdH7ZQFY
-        nEVAReLgvGawOK+ApcSMX71sELagxMmZT1hAzmMW0JNo2whWziwgL7H97RxmiIsUJH4+XcYK
-        YosIWEms3XSbGaJGXOLl0SPsExiFZiGZNAth0iwkk2Yh6VjAyLKKUTK1oDg3PbfYsMAoL7Vc
-        rzgxt7g0L10vOT93EyM4xrS0djDuWfVB7xAjEwfjIUYJDmYlEV5tk+YUId6UxMqq1KL8+KLS
-        nNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGpiWW+x6J7dzheXOJQK/fs+9Okns
-        aIBt//UtTMv0Tx9te2sk/OPMlzpZv+3vWmU5Hge5/C3r+SAnttNxuiGfY+TJSW+zZddPf7lF
-        xULifGdtYk/ZtHbl7pYwl90/zHK3fV6mXyD89NHtb3+4MwxPnt944Pq1LSWTijU9Mn+zK+sF
-        GblrMBXIhgv21Ko9V83zMV8/R8q4KrXkTP1lb7UZgml1L2eG+r+5NYH3ZP2dnbt041auFl3s
-        msB/9d/zpQXvL9dEXWCNe2BfLJewoNqufNW995MXbSgWbElU3Ot7L9dn56U5LPZ7koS7dqqZ
-        P/iW1X/AmtVq+v9GBuvtv6e7lC1teboi69My4aI5un7af9SUWIozEg21mIuKEwErhDYfIAMA
-        AA==
-X-CMS-MailID: 20230609143314epcas5p10b58341bcfc6c4beba80f9260efc37df
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230609140700epcas5p39500e13a887cbbcf0f79f7b3a5b3789d
-References: <CGME20230609140700epcas5p39500e13a887cbbcf0f79f7b3a5b3789d@epcas5p3.samsung.com>
-        <20230609140651.64488-1-krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: AW: [PATCH 2/2] tty: serial: samsung_tty: Fix a memory leak in
+ s3c24xx_serial_getclk() when iterating clk
+Content-Language: fr
+To:     Walter Harms <wharms@bfs.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Thomas Abraham <thomas.abraham@linaro.org>,
+        Kukjin Kim <kgene.kim@samsung.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
+References: <e4359d5ef206f5b349c1d15a515a1205e78dda55.1686285892.git.christophe.jaillet@wanadoo.fr>
+ <93bf8f574310256fcea50e5c5a62b5c37e20bb14.1686285892.git.christophe.jaillet@wanadoo.fr>
+ <f31523d7270d4a1f82d96b7891ed13e6@bfs.de>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <f31523d7270d4a1f82d96b7891ed13e6@bfs.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof
+Le 09/06/2023 à 10:57, Walter Harms a écrit :
+> 
+> while we are here ....
+> 
+> perhaps INT_MAX from kernel.h ?
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Sent: Friday, June 9, 2023 7:37 PM
-> To: Alim Akhtar <alim.akhtar@samsung.com>; Avri Altman
-> <avri.altman@wdc.com>; Bart Van Assche <bvanassche@acm.org>; Rob
-> Herring <robh+dt@kernel.org>; Krzysztof Kozlowski
-> <krzysztof.kozlowski+dt@linaro.org>; Conor Dooley
-> <conor+dt@kernel.org>; linux-scsi@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Subject: [PATCH] dt-bindings: ufs: samsung,exynos: drop unneeded quotes
+from include/vdso/limits.h
+
+> int   deviation = (1 << 30) - 1;
+
+I don't know the initial intent for this value, but it is not the same 
+as MAX_INT.
+
 > 
-> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
-> checking for this can be enabled in yamllint.
+> the part before looks a bit strange
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> if (ourport->info->has_divslot) {
+>                          unsigned long div = rate / req_baud;
+> 
+>                          /* The UDIVSLOT register on the newer UARTs allows us to
+>                           * get a divisor adjustment of 1/16th on the baud clock.
+>                           *
+>                           * We don't keep the UDIVSLOT value (the 16ths we
+>                           * calculated by not multiplying the baud by 16) as it
+>                           * is easy enough to recalculate.
+>                           */
+> 
+>                          quot = div / 16;
+>                          baud = rate / div;
+> because
+>     baud=rate/rate/req_baud = req_baud
+
+In math yes. In integer computation, no.
+	rate = 20000
+	req_baud = 9600
+
+	div = rate / req_baud 		==> 2
+	baud = rate / div;		==> 20000 / 2 = 10000
+
+	9600 <> 10000
+
+I don't know if it is the intent, but it is the way it works.
+
+And knowing that:
+	calc_deviation = req_baud - baud;
+I guess that it is the way it is expected to work.
+
+With your reasoning, calc_deviation would be always 0.
+
+> can this be simplyfied ? (or is the numeric required  ?)
+> 
+> 
+> Homebrew abs()  kernel.h has a abs() can we use it here ?
+
+include/linux/math.h
+
+> 
+>              if (calc_deviation < 0)
+>                          calc_deviation = -calc_deviation;
+
+Ok, why not.
+
+> 
+> to the patch:
+> 
+> +                       /*
+> +                        * If we find a better clk, release the previous one, if
+> +                        * any.
+> +                        */
+> +                       if (!IS_ERR(*best_clk))
+> +                               clk_put(*best_clk);
+> 
+> the intentions are good. *best_clk is user supplied (and should be NULL)
+
+??? Why should it be NULL?
+
+There is only one caller, and the value id &clk, knowing that:
+    struct clk *clk = ERR_PTR(-EINVAL);
+
+The code could be changed to have an initial NULL value, but it would'nt 
+bring that much added value, in my PoV.
+It would only save a test which is just fine as-is.
+
+> filled & released in the next round but IMHO must be valid (is clk).
+> so no need to check. (ntl clk_put seems to handle NULL and ERR )
+>     if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
+>                  return;
+
+My point with "if (!IS_ERR(*best_clk))" is to handle the initial 
+iteration when *best_clk is ERR_PTR(-EINVAL).
+clk_put() can handle it, but it would WARN in the normal path, so it 
+sounds strange to me.
+
+CJ
+
+> 
+> JM2C
+>   wh
+> ________________________________________
+> Von: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Gesendet: Freitag, 9. Juni 2023 06:45:39
+> An: Krzysztof Kozlowski; Alim Akhtar; Greg Kroah-Hartman; Jiri Slaby; Thomas Abraham; Kukjin Kim
+> Cc: linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org; Christophe JAILLET; linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-serial@vger.kernel.org
+> Betreff: [PATCH 2/2] tty: serial: samsung_tty: Fix a memory leak in s3c24xx_serial_getclk() when iterating clk
+> 
+> When the best clk is searched, we iterate over all possible clk.
+> 
+> If we find a better match, the previous one, if any, needs to be freed.
+> If a better match has already been found, we still need to free the new
+> one, otherwise it leaks.
+> 
+> Fixes: 5f5a7a5578c5 ("serial: samsung: switch to clkdev based clock lookup")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-Thanks!
-
-Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
-
->  Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> This patch is speculative. Review with care.
 > 
-> diff --git a/Documentation/devicetree/bindings/ufs/samsung,exynos-
-> ufs.yaml b/Documentation/devicetree/bindings/ufs/samsung,exynos-
-> ufs.yaml
-> index a9988798898d..88cc1e3a0c88 100644
-> --- a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> +++ b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> @@ -54,7 +54,7 @@ properties:
->      const: ufs-phy
+> I think that some clk_put() are also missing somewhere else in the driver
+> but won't be able to investigate further.
+> ---
+>   drivers/tty/serial/samsung_tty.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
 > 
->    samsung,sysreg:
-> -    $ref: '/schemas/types.yaml#/definitions/phandle-array'
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->      description: Should be phandle/offset pair. The phandle to the syscon
-> node
->                   which indicates the FSYSx sysreg interface and the
-offset of
->                   the control register for UFS io coherency setting.
+> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+> index dd751e7010e3..c07877dd25fa 100644
+> --- a/drivers/tty/serial/samsung_tty.c
+> +++ b/drivers/tty/serial/samsung_tty.c
+> @@ -1488,10 +1488,18 @@ static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
+>                          calc_deviation = -calc_deviation;
+> 
+>                  if (calc_deviation < deviation) {
+> +                       /*
+> +                        * If we find a better clk, release the previous one, if
+> +                        * any.
+> +                        */
+> +                       if (!IS_ERR(*best_clk))
+> +                               clk_put(*best_clk);
+>                          *best_clk = clk;
+>                          best_quot = quot;
+>                          *clk_num = cnt;
+>                          deviation = calc_deviation;
+> +               } else {
+> +                       clk_put(clk);
+>                  }
+>          }
+> 
 > --
 > 2.34.1
-
+> 
+> 
 
