@@ -2,101 +2,95 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C08BC7EE29
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Jun 2023 04:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1348C7EE2F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Jun 2023 08:16:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235170AbjFIEx0 (ORCPT
+        id S238963AbjFIIQK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 9 Jun 2023 00:53:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50870 "EHLO
+        Fri, 9 Jun 2023 04:16:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229571AbjFIExZ (ORCPT
+        with ESMTP id S240079AbjFIIQI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Jun 2023 00:53:25 -0400
-X-Greylist: delayed 459 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 08 Jun 2023 21:53:24 PDT
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 93B9B30E8
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Jun 2023 21:53:24 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id 7U0KqPBjCDGHG7U0Wq4YHb; Fri, 09 Jun 2023 06:45:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1686285952;
-        bh=PEZXQDap3pTmCCLCcgCzrjYNlvmhAuSx1kWCIhd8mYU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=MNXndMF/jixUheplVtvmjAeKNdqfUNPyGiPl/BQL6RB8FmYTuDSD0XJmujKY+yCAI
-         K8mm0h/Hajyw1zqBxN2m49rlL2K7GdkZHpirX8vjjktGce6QqrHJ2urq8Kbw1oFoI9
-         d2BG20yCDVqYhP+vEZa1utxMtwu9T7VINxnej2aA2xyqPiIjc0Df7W0qYLbgw211M0
-         6SmE2i5hucStjfdLlyJN2J+2o2udu9+UeBaAQOD3JcgLWLUWXt8cnfb29x4oS3XqIs
-         cqUPy0HgV5AHSz+16w13cITmb50wgy8gu8KfTMBW3Reosssbtncwh9BThkQOggKGQi
-         38sMb7mq0Pp+w==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 09 Jun 2023 06:45:52 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+        Fri, 9 Jun 2023 04:16:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80FBE1FEC;
+        Fri,  9 Jun 2023 01:16:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1E83561300;
+        Fri,  9 Jun 2023 08:16:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 032BBC433D2;
+        Fri,  9 Jun 2023 08:16:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686298566;
+        bh=fhq7UqggYiVg/1COUBVntIvsMJLXIEfwBDhAv2lnM2Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=G28YEgrgn2lu1p5R3l5ckjxag/p3SQF3AL/dQ4H0P6yHYvymEjeqjKHwgbwZFshiN
+         +DXRcLNePGWkV2wjJrnBHW0MM2SjvfQviBwCjzKym9TF3W1fFrDGOlsAIZf0oxG0X2
+         JduFSfbl4efpACPpq+1j3w3mxIgKZSwNXjF0npmmIhimGZ0oHhqqgwU0SUIuc6aqUY
+         RpTDqVcnOHAALa+eJ96oS6nDhDofPv2I180Bg2Cgcr3lOvUH2USV88C7EKjrE1mQbF
+         ZxENFHAnMcnAEwFfUFxp90ulbJWi+u/dGJqYWdRIYk8M4PBWi/UKr2msYHnMTexwws
+         EfQr+wvYaOZzQ==
+From:   Arnd Bergmann <arnd@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Thomas Abraham <thomas.abraham@linaro.org>,
-        Kukjin Kim <kgene.kim@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [PATCH 2/2] tty: serial: samsung_tty: Fix a memory leak in s3c24xx_serial_getclk() when iterating clk
-Date:   Fri,  9 Jun 2023 06:45:39 +0200
-Message-Id: <93bf8f574310256fcea50e5c5a62b5c37e20bb14.1686285892.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <e4359d5ef206f5b349c1d15a515a1205e78dda55.1686285892.git.christophe.jaillet@wanadoo.fr>
-References: <e4359d5ef206f5b349c1d15a515a1205e78dda55.1686285892.git.christophe.jaillet@wanadoo.fr>
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: samsung: add CONFIG_OF dependency
+Date:   Fri,  9 Jun 2023 10:15:49 +0200
+Message-Id: <20230609081559.915867-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-When the best clk is searched, we iterate over all possible clk.
+From: Arnd Bergmann <arnd@arndb.de>
 
-If we find a better match, the previous one, if any, needs to be freed.
-If a better match has already been found, we still need to free the new
-one, otherwise it leaks.
+When CONFIG_OF is disabled, build testing on x86 runs into a couple of
+objtool warnings from functions that unconditionally call panic() but
+have no __noreturn annotation:
 
-Fixes: 5f5a7a5578c5 ("serial: samsung: switch to clkdev based clock lookup")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+vmlinux.o: warning: objtool: exynos3250_cmu_isp_probe+0x17: samsung_cmu_register_one() is missing a __noreturn annotation
+vmlinux.o: warning: objtool: exynos7885_cmu_probe+0x16: exynos_arm64_register_cmu() is missing a __noreturn annotation
+vmlinux.o: warning: objtool: exynos850_cmu_probe+0x16: exynos_arm64_register_cmu() is missing a __noreturn annotation
+vmlinux.o: warning: objtool: exynosautov9_cmu_probe+0x16: exynos_arm64_register_cmu() is missing a __noreturn annotation
+
+The objtool analysis is correct, and this could be addressed by just
+returning success whenever CONFIG_OF is disabled to let all that code
+be eliminated, but since the driver is no use without CONFIG_OF,
+just add that as a dependency. It will still get compile tested on
+all architectures since CONFIG_OF is enabled in allmodconfig and most
+randconfig builds.
+
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-This patch is speculative. Review with care.
+ drivers/clk/samsung/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-I think that some clk_put() are also missing somewhere else in the driver
-but won't be able to investigate further.
----
- drivers/tty/serial/samsung_tty.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index dd751e7010e3..c07877dd25fa 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -1488,10 +1488,18 @@ static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
- 			calc_deviation = -calc_deviation;
- 
- 		if (calc_deviation < deviation) {
-+			/*
-+			 * If we find a better clk, release the previous one, if
-+			 * any.
-+			 */
-+			if (!IS_ERR(*best_clk))
-+				clk_put(*best_clk);
- 			*best_clk = clk;
- 			best_quot = quot;
- 			*clk_num = cnt;
- 			deviation = calc_deviation;
-+		} else {
-+			clk_put(clk);
- 		}
- 	}
- 
+diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+index c07bb50513bfe..76a494e95027a 100644
+--- a/drivers/clk/samsung/Kconfig
++++ b/drivers/clk/samsung/Kconfig
+@@ -2,6 +2,7 @@
+ # Recent Exynos platforms should just select COMMON_CLK_SAMSUNG:
+ config COMMON_CLK_SAMSUNG
+ 	bool "Samsung Exynos clock controller support" if COMPILE_TEST
++	depends on OF
+ 	select S3C64XX_COMMON_CLK if ARM && ARCH_S3C64XX
+ 	select S5PV210_COMMON_CLK if ARM && ARCH_S5PV210
+ 	select EXYNOS_3250_COMMON_CLK if ARM && SOC_EXYNOS3250
 -- 
-2.34.1
+2.39.2
 
