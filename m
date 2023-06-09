@@ -2,124 +2,83 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66786C8300C
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Jun 2023 20:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D81C7EE25
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Jun 2023 04:53:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232119AbjFHUeN (ORCPT
+        id S230010AbjFIExR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 8 Jun 2023 16:34:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44460 "EHLO
+        Fri, 9 Jun 2023 00:53:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjFHUeK (ORCPT
+        with ESMTP id S229571AbjFIExQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Jun 2023 16:34:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60167172E;
-        Thu,  8 Jun 2023 13:34:09 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E800F61520;
-        Thu,  8 Jun 2023 20:34:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5147AC4339B;
-        Thu,  8 Jun 2023 20:34:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686256448;
-        bh=sDQU8yDhZvEN0YygXlDwwk/pG5OO2+PNN+eimNV1mxQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fgaZ349JLx+w83grh2ZLXulv/+6NJAi3DgUkiDjdPUnEbtk4GQEssHtbOIddqu7NS
-         lPaC6AHuim2fJRANrT5DaAmdXiQpvBm+7mGFYRsrpE+oxJUOyxOcSTn5lKiyDxe1Or
-         n5YgMMfQ4bTaC2QJt/JnTYxj/givMqGUBBz3rUIry4SQD/wz5fgIIRzW+GMrEpzSFi
-         PbfnO38m/nfnN3xuhX7TtG4zZHxJFbZGDmEo4sAIkiZ9b2pSGKKgp/euyIGBlEVoLc
-         GjISgjtw2dBk6OSTF08aIBGYgRcFyZGTf1PvKvLV50bqV6sHmzKcOLVI2G/vh42+xc
-         r1JZZ8BI/NqLw==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-4f624daccd1so1292163e87.0;
-        Thu, 08 Jun 2023 13:34:08 -0700 (PDT)
-X-Gm-Message-State: AC+VfDwOq1BLSa3kYFrjl204xs+74DUnDtlruVNmK1lWDymaPqXV4+8f
-        A/uDDTnEAEt06Flu5XXLisylgiePxXycxtwQbA==
-X-Google-Smtp-Source: ACHHUZ5SCj+1HRHRtKPyWx3l9LJOj9l0nyCPip7lrCiON1VeZXUrpVZAJ73MOZnz04qUR2b59Vv4/CBNUYxpj6dT0Jg=
-X-Received: by 2002:a2e:9cd6:0:b0:2b1:d91b:51c3 with SMTP id
- g22-20020a2e9cd6000000b002b1d91b51c3mr4481468ljj.30.1686256446472; Thu, 08
- Jun 2023 13:34:06 -0700 (PDT)
+        Fri, 9 Jun 2023 00:53:16 -0400
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 79FB730E8
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Jun 2023 21:53:15 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id 7U0KqPBjCDGHG7U0Kq4YGn; Fri, 09 Jun 2023 06:45:43 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1686285943;
+        bh=UkPuf1cEggfUhF63kQO/8xolTLGbzwLNxFq6qhE7R0c=;
+        h=From:To:Cc:Subject:Date;
+        b=ID8zcjZT9VNLSLnTBfTRFr7XdAJhLgGQQTZmuTkb8ZRx1I4puHUr3FQjEy9dizrt1
+         +7adlgaC23iIECotO7NMgpk6j7KCOEfm3jRftQprT2A53sWY5bt3RaOketL6bUfAD5
+         VOxq1Q2AFB7OXRMufd0PVN3LlKc8Txd1YBW/wQFCGRaf4qVdgn5ZhNXIF/jJ+50DOs
+         ghNrWe8JWisDPa66b89R+/ZFNK6uBEpAARxgn5xwkfxV0+Ap9z+ileXfnpMkWSPSOs
+         x8NPJdeXGHRNnDwW6n8G+sRF44HeyZkdQwJDEnTF16cnPXLuz922jTX7m+hoJxBYOs
+         Cc0p82GxdZrEQ==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 09 Jun 2023 06:45:43 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Thomas Abraham <thomas.abraham@linaro.org>,
+        Kukjin Kim <kgene.kim@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [PATCH 1/2] tty: serial: samsung_tty: Fix a memory leak in s3c24xx_serial_getclk() in case of error
+Date:   Fri,  9 Jun 2023 06:45:38 +0200
+Message-Id: <e4359d5ef206f5b349c1d15a515a1205e78dda55.1686285892.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20220328000915.15041-1-ansuelsmth@gmail.com> <85eb14ec-f465-7447-ad77-a3dabc666f47@kernel.org>
- <YkKRYnN84D9VZhGj@Ansuel-xps.localdomain> <CAL_Jsq+RQQ-ADMxLPUFwk6S6kGmb6oNDy4k52fnU0EtbUvqmSA@mail.gmail.com>
- <CAMuHMdWNTE48MFy6fqxAsfMWz9b6E7dVNXtXtESP95sxk2PGwA@mail.gmail.com>
- <CAL_JsqJthKTm8bhRF2B=ae1tvtPeYYXx_Tm76qQtSwLtH5C6VA@mail.gmail.com>
- <720a2829-b6b5-411c-ac69-9a53e881f48d@app.fastmail.com> <CAL_JsqKCtmkwzKa01gyG65fH8ye6R3KhR41PJbJhOJ4X9j=znA@mail.gmail.com>
- <ZFrPJQdwoxqFpzUO@probook>
-In-Reply-To: <ZFrPJQdwoxqFpzUO@probook>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 8 Jun 2023 14:33:53 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLTj_L-V8HR=TzO6+r9Xew=yivaKG1ngCn+NCjgPZwZzw@mail.gmail.com>
-Message-ID: <CAL_JsqLTj_L-V8HR=TzO6+r9Xew=yivaKG1ngCn+NCjgPZwZzw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
-To:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-aspeed@lists.ozlabs.org,
-        linux-realtek-soc@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        chrome-platform@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
-        openbmc@lists.ozlabs.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-rockchip@lists.infradead.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-unisoc@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        kernel@dh-electronics.com, Olof Johansson <olof@lixom.net>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "linux-oxnas@groups.io" <linux-oxnas@groups.io>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, May 9, 2023 at 4:55=E2=80=AFPM Jonathan Neusch=C3=A4fer
-<j.neuschaefer@gmx.net> wrote:
->
-> On Tue, May 02, 2023 at 02:40:19PM -0500, Rob Herring wrote:
-> [...]
-> > I've dusted off my script and made a branch[1] with the result.
-> > There's just a couple of fixes needed after the script is run (see the
-> > top commit). The cross arch includes are all fixed up by the script.
-> > dtbs_install maintains a flat install. I compared the number of .dtbs
-> > before and after to check the script.
-> >
-> > I think the only issue remaining is finalizing the mapping of
-> > platforms to subdirs. What I have currently is a mixture of SoC
-> > families and vendors. The most notable are all the Freescale/NXP
-> > platforms, pxa, socfpga, and stm32. It's not consistent with arm64
-> > either. Once that's finalized, I still need to go update MAINTAINERS.
-> >
-> > Here's the current mapping:
-> >
-> > vendor_map =3D {
-> [...]
-> >     'aspeed' : 'aspeed',
-> >     'ast2' : 'aspeed',
-> >     'facebook' : 'aspeed',
-> >     'ibm' : 'aspeed',
->
-> >     'openbmc' : 'aspeed',
->
-> The openbmc flash layouts are currently only used by aspeed devicetrees,
-> but they don't really depend on any aspeed details. It would be possible
-> to reuse them in Nuvoton BMC devicetrees in the future, for example.
->
-> In that sense, I think putting them in a separate "openbmc" directory
-> would be slightly better.
+If clk_get_rate() fails, the clk that has just been allocated needs to be
+freed.
 
-Could be used on arm64 or riscv too at some point. We do some cross
-arch includes, but IMO it would be better to move to
-include/dt-bindings/ or somewhere outside of arch/. Other common
-things I didn't move. I could do that here too. I prefer to that the
-sub-directories are just chip vendors/families.
+Fixes: 5f5a7a5578c5 ("serial: samsung: switch to clkdev based clock lookup")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/tty/serial/samsung_tty.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Rob
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 2a7520ad3abd..dd751e7010e3 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -1459,8 +1459,10 @@ static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
+ 			continue;
+ 
+ 		rate = clk_get_rate(clk);
+-		if (!rate)
++		if (!rate) {
++			clk_put(clk);
+ 			continue;
++		}
+ 
+ 		if (ourport->info->has_divslot) {
+ 			unsigned long div = rate / req_baud;
+-- 
+2.34.1
+
