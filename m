@@ -2,40 +2,64 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A91BC7EE43
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 10 Jun 2023 17:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1540C7EE45
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 10 Jun 2023 17:33:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229445AbjFJRKV (ORCPT
+        id S229758AbjFJRdI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 10 Jun 2023 13:10:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57504 "EHLO
+        Sat, 10 Jun 2023 13:33:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbjFJRKU (ORCPT
+        with ESMTP id S229722AbjFJRdH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 10 Jun 2023 13:10:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F8E2D7E;
-        Sat, 10 Jun 2023 10:10:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 359B6613F8;
-        Sat, 10 Jun 2023 17:10:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B4AC433EF;
-        Sat, 10 Jun 2023 17:10:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686417018;
-        bh=ZaO/RYVvXHSOs2jr3g0SgfMw80BeXu3HOAR90E2DWuM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sBGyVra/pzwdhmhL3FVMM6WbG48PlQnnKFfNLANSLbHuIy7gjbiZFYaBJdmTvH+wd
-         SbbDJ4ds5uQ8jhUfia44FtQSLf9rnu43Ujimj0K6MoRLjao28vbHUGSu/mwFL3BtYk
-         ItJcJllgNWDny1ajlycFzqneBQQceocwuir3/FJMzZAxg9aTbhaATRR0mu54YjPAwX
-         Lj6E4MRAxnOU6T+8rERqemrs44TP3KVcxc6mOgGmWtJmz+Jl6ZqTWEOp87TlBBnqYK
-         FBXZGeZNqHnrljM25D+Yf/tGW0nczbauVgGAmCevqO5VY4cEEVbY3zsqCHBKVkNx+8
-         Lbem7Fx67r2fw==
-Date:   Sat, 10 Jun 2023 19:10:15 +0200
-From:   Andi Shyti <andi.shyti@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        Sat, 10 Jun 2023 13:33:07 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AC9B3A96
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Jun 2023 10:33:02 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-51494659d49so4975009a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Jun 2023 10:33:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686418380; x=1689010380;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L4bnIpR9CgJpJzTmXfn0C/1nmTJ0UiQ90VgxrCtMoa4=;
+        b=lXFuf4nVjc9DVvhKA87gweSooacUOZJK857m/2VVWgdNpiU1331/eee+BBLkVMbCQD
+         HieERfMLCBE4pYvAs6VkEr2/GPABUcauccqZrvxz9AmSoGT1tqa+PvXeotdx320y0R5e
+         NjchVIlrAChbtawzmBT1LTAC1qIaajxxwBXEe3eqxYFgAmn0xOUCtsAeMMFPNQc5x52Q
+         3C12OIpYsR+7pl/p38Fn81GQw5QArvOg2ADA8q3oe5htS7k4XhPoQKOViMzXPbQ1Quy3
+         fwLuT6IYqnvIetYm44TK1VStGmDVbHuWp8AmYb8LwS2Mf/pMAaun+diNfwusrdpgMnHk
+         FEYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686418380; x=1689010380;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L4bnIpR9CgJpJzTmXfn0C/1nmTJ0UiQ90VgxrCtMoa4=;
+        b=J1DC95iLC83D66uojd7kn79GF4BjHyWPKrFeajGOvwwlb/nZ5hLi0WdbIyoXdTXlxM
+         5Pjl+dlpuGG1qkAFhFL+SkiU/9t8tYIIUh/wBTUJDHeN0qbzLxem/wG7aJOUO+sGv1A2
+         +L4Hr4IJ7F0tEZ8dCe/zvRVN+BVGyF0DNPyPmEZGX45DVDb/G8CrtqnhidfkSHuXKD5L
+         Q/FxZn19WQmDCfEhYXcZKP1glo9/tKD1e+437st/W9CVWqQ/+MWcYMwFVTR0sWrtDJbC
+         vlOM1AcBUiVKBOG8GxfIx9M/gvJpZoXo25FEG91s8lHEZ6PQSPjuj22oVcNjJ3rHvk3T
+         o6NA==
+X-Gm-Message-State: AC+VfDwRAqNaEHqlBkHtTD/+wANuocgeFs95UHqayS8gStWrRsWA/ugG
+        QJgXf4uBBjuk0MsTqoNd8nfFjLCz2SWu5AsrZ7I=
+X-Google-Smtp-Source: ACHHUZ5s9ZGmlGSKCjaP75e/iHcNsj70nZVM80Q/d9NXNiLFEfbrf0lDd3oBuKAPWKlPs+2PenADaQ==
+X-Received: by 2002:a05:6402:546:b0:516:4107:7847 with SMTP id i6-20020a056402054600b0051641077847mr1600897edx.3.1686418380442;
+        Sat, 10 Jun 2023 10:33:00 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id g13-20020a056402114d00b0051830f22825sm587844edw.90.2023.06.10.10.32.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 10 Jun 2023 10:33:00 -0700 (PDT)
+Message-ID: <7a66ca20-0f79-6182-1f5c-1770e83b53a9@linaro.org>
+Date:   Sat, 10 Jun 2023 19:32:57 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH 1/2] tty: serial: samsung_tty: Fix a memory leak in
+ s3c24xx_serial_getclk() in case of error
+Content-Language: en-US
+To:     Andi Shyti <andi.shyti@kernel.org>
 Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -45,72 +69,81 @@ Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 1/2] tty: serial: samsung_tty: Fix a memory leak in
- s3c24xx_serial_getclk() in case of error
-Message-ID: <20230610171015.vf7emd5crpr7n4mg@intel.intel>
 References: <e4359d5ef206f5b349c1d15a515a1205e78dda55.1686285892.git.christophe.jaillet@wanadoo.fr>
  <20230610102607.7nonyh5xhuhpyy6e@intel.intel>
  <58d3f250-499d-5a18-6798-f9833cc2dbbd@wanadoo.fr>
  <20230610145429.uvmxxgxc5tc6x5b5@intel.intel>
  <eb935f16-1f89-0be9-86c9-24e8a88c2d8b@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
+ <20230610171015.vf7emd5crpr7n4mg@intel.intel>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230610171015.vf7emd5crpr7n4mg@intel.intel>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <eb935f16-1f89-0be9-86c9-24e8a88c2d8b@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Jun 10, 2023 at 06:23:58PM +0200, Krzysztof Kozlowski wrote:
-> On 10/06/2023 16:54, Andi Shyti wrote:
-> > On Sat, Jun 10, 2023 at 04:07:51PM +0200, Christophe JAILLET wrote:
-> >> Le 10/06/2023 à 12:26, Andi Shyti a écrit :
-> >>>> @@ -1459,8 +1459,10 @@ static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
-> >>>>   			continue;
-> >>>>   		rate = clk_get_rate(clk);
-> >>>> -		if (!rate)
-> >>>> +		if (!rate) {
-> >>>> +			clk_put(clk);
-> >>>>   			continue;
-> >>>
-> >>> could you also print an error here?
-> >>>
-> >>
-> >> Is:
-> >> 	dev_err(ourport->port.dev,
-> >> 		"Failed to get clock rate for %s.\n", clkname);
+On 10/06/2023 19:10, Andi Shyti wrote:
+> On Sat, Jun 10, 2023 at 06:23:58PM +0200, Krzysztof Kozlowski wrote:
+>> On 10/06/2023 16:54, Andi Shyti wrote:
+>>> On Sat, Jun 10, 2023 at 04:07:51PM +0200, Christophe JAILLET wrote:
+>>>> Le 10/06/2023 Ã  12:26, Andi Shyti a Ã©critÂ :
+>>>>>> @@ -1459,8 +1459,10 @@ static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
+>>>>>>   			continue;
+>>>>>>   		rate = clk_get_rate(clk);
+>>>>>> -		if (!rate)
+>>>>>> +		if (!rate) {
+>>>>>> +			clk_put(clk);
+>>>>>>   			continue;
+>>>>>
+>>>>> could you also print an error here?
+>>>>>
+>>>>
+>>>> Is:
+>>>> 	dev_err(ourport->port.dev,
+>>>> 		"Failed to get clock rate for %s.\n", clkname);
+>>
+>> Why do we need it? Most of other users of clk_get_rate() don't print.
 > 
-> Why do we need it? Most of other users of clk_get_rate() don't print.
+> that's not a reason not to print it.
 
-that's not a reason not to print it.
+This is the reason, because it was the conscious choice - not to print,
+otherwise drivers are unreadable.
 
-> Probably because such condition is highly unlikely if not impossible.
+> 
+>> Probably because such condition is highly unlikely if not impossible.
+> 
+> still... that's not a reason not to print it.
 
-still... that's not a reason not to print it.
+It is a reason not to print it in the driver. Code readability is more
+important than adding error messages for every possible case in the driver.
 
-All errors are unlikely and if it's unlikely, why there is no
-unlikely(!rate)? Which doesn't improve the reason not to print
-it.
+> 
+> All errors are unlikely and if it's unlikely, why there is no
+> unlikely(!rate)? Which doesn't improve the reason not to print
+> it.
+> 
+> The more unlikely, the lauder you need to be:
+> 
+> WARN_ON(!rate)... maybe too much!
+> BUG_ON(!rate)... way too much!
+> 
+> But these are inversely proportional to the likeliness of the
+> error.
+> 
+>> This makes simple function unnecessarily bigger...
+> 
+> and... that's not a reason not to print it :)
 
-The more unlikely, the lauder you need to be:
+This is the reason not to print it in the driver, because it makes the
+code less maintainable. Such unlikely errors should be handled by core,
+not by every driver. If this error message here is reasonable, I would
+argue that it is reasonable to add it to other places... try doing it.
+You will see to what silly code it leads.
 
-WARN_ON(!rate)... maybe too much!
-BUG_ON(!rate)... way too much!
+It's like adding dev_err to regmap_mmio read/write failures - code will
+be difficult to read.
 
-But these are inversely proportional to the likeliness of the
-error.
+Best regards,
+Krzysztof
 
-> This makes simple function unnecessarily bigger...
-
-and... that's not a reason not to print it :)
-
-If it's needed, it's needed. If we are considering the error,
-then we need to treat it as an error.
-
-In any case, I'm not strong with it, indeed, I r-b it anyway. I
-personally prefer and suggested printing the error. Up to
-Christophe.
-
-Thanks,
-Andi
