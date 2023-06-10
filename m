@@ -2,66 +2,48 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1540C7EE45
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 10 Jun 2023 17:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF59C7EE29
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 10 Jun 2023 17:40:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229758AbjFJRdI (ORCPT
+        id S230048AbjFJRkq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 10 Jun 2023 13:33:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35888 "EHLO
+        Sat, 10 Jun 2023 13:40:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229722AbjFJRdH (ORCPT
+        with ESMTP id S229706AbjFJRkq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 10 Jun 2023 13:33:07 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AC9B3A96
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Jun 2023 10:33:02 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-51494659d49so4975009a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Jun 2023 10:33:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686418380; x=1689010380;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L4bnIpR9CgJpJzTmXfn0C/1nmTJ0UiQ90VgxrCtMoa4=;
-        b=lXFuf4nVjc9DVvhKA87gweSooacUOZJK857m/2VVWgdNpiU1331/eee+BBLkVMbCQD
-         HieERfMLCBE4pYvAs6VkEr2/GPABUcauccqZrvxz9AmSoGT1tqa+PvXeotdx320y0R5e
-         NjchVIlrAChbtawzmBT1LTAC1qIaajxxwBXEe3eqxYFgAmn0xOUCtsAeMMFPNQc5x52Q
-         3C12OIpYsR+7pl/p38Fn81GQw5QArvOg2ADA8q3oe5htS7k4XhPoQKOViMzXPbQ1Quy3
-         fwLuT6IYqnvIetYm44TK1VStGmDVbHuWp8AmYb8LwS2Mf/pMAaun+diNfwusrdpgMnHk
-         FEYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686418380; x=1689010380;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L4bnIpR9CgJpJzTmXfn0C/1nmTJ0UiQ90VgxrCtMoa4=;
-        b=J1DC95iLC83D66uojd7kn79GF4BjHyWPKrFeajGOvwwlb/nZ5hLi0WdbIyoXdTXlxM
-         5Pjl+dlpuGG1qkAFhFL+SkiU/9t8tYIIUh/wBTUJDHeN0qbzLxem/wG7aJOUO+sGv1A2
-         +L4Hr4IJ7F0tEZ8dCe/zvRVN+BVGyF0DNPyPmEZGX45DVDb/G8CrtqnhidfkSHuXKD5L
-         Q/FxZn19WQmDCfEhYXcZKP1glo9/tKD1e+437st/W9CVWqQ/+MWcYMwFVTR0sWrtDJbC
-         vlOM1AcBUiVKBOG8GxfIx9M/gvJpZoXo25FEG91s8lHEZ6PQSPjuj22oVcNjJ3rHvk3T
-         o6NA==
-X-Gm-Message-State: AC+VfDwRAqNaEHqlBkHtTD/+wANuocgeFs95UHqayS8gStWrRsWA/ugG
-        QJgXf4uBBjuk0MsTqoNd8nfFjLCz2SWu5AsrZ7I=
-X-Google-Smtp-Source: ACHHUZ5s9ZGmlGSKCjaP75e/iHcNsj70nZVM80Q/d9NXNiLFEfbrf0lDd3oBuKAPWKlPs+2PenADaQ==
-X-Received: by 2002:a05:6402:546:b0:516:4107:7847 with SMTP id i6-20020a056402054600b0051641077847mr1600897edx.3.1686418380442;
-        Sat, 10 Jun 2023 10:33:00 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id g13-20020a056402114d00b0051830f22825sm587844edw.90.2023.06.10.10.32.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 10 Jun 2023 10:33:00 -0700 (PDT)
-Message-ID: <7a66ca20-0f79-6182-1f5c-1770e83b53a9@linaro.org>
-Date:   Sat, 10 Jun 2023 19:32:57 +0200
+        Sat, 10 Jun 2023 13:40:46 -0400
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF5CD3596
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Jun 2023 10:40:44 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id 82ZrqmMZ9zQvw82ZrqHy0w; Sat, 10 Jun 2023 19:40:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1686418842;
+        bh=i1Sh8dJjTFlCaTk9M3h35/JWQH6oYT76I7m3djZfolw=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=VEA3tNb/PUSL7zOwIQfair02JRzCzphQr3ge3mSPNAXlnkyjmc3JiBpettCO1unys
+         AhAtPtMCmVDtVVyFveeukhuEuVWEwq614efks87/peyhJa2uqshmN6UJMf3oIXlLuU
+         rrM4nHW6p0PBiyaqYHg3PNEptPqP/sYcAD5LA+AOKFF4EU0HyEEkEFpEl3fXDfA0mh
+         orueoPfm0tfDv1dmMeSMNQVxnsV37x+odbYL7M+ueFZ29THL5jiTCIDcAOc91yni1Z
+         ECkPDFvKvjvo+vqeI2SNcwF9QUO8a/cbsUp6AhtUZV+BAZPxAN1q3jZhAIXCwAI20V
+         obvtCJ3JyWOyw==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 10 Jun 2023 19:40:42 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <dd58a6a5-c65c-ea3b-6ed7-dcbcfc2263bc@wanadoo.fr>
+Date:   Sat, 10 Jun 2023 19:40:39 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
+ Thunderbird/102.11.0
 Subject: Re: [PATCH 1/2] tty: serial: samsung_tty: Fix a memory leak in
  s3c24xx_serial_getclk() in case of error
-Content-Language: en-US
-To:     Andi Shyti <andi.shyti@kernel.org>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+Content-Language: fr, en-US
+To:     Andi Shyti <andi.shyti@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jirislaby@kernel.org>,
         Thomas Abraham <thomas.abraham@linaro.org>,
@@ -75,26 +57,26 @@ References: <e4359d5ef206f5b349c1d15a515a1205e78dda55.1686285892.git.christophe.
  <20230610145429.uvmxxgxc5tc6x5b5@intel.intel>
  <eb935f16-1f89-0be9-86c9-24e8a88c2d8b@linaro.org>
  <20230610171015.vf7emd5crpr7n4mg@intel.intel>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20230610171015.vf7emd5crpr7n4mg@intel.intel>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 10/06/2023 19:10, Andi Shyti wrote:
+Le 10/06/2023 à 19:10, Andi Shyti a écrit :
 > On Sat, Jun 10, 2023 at 06:23:58PM +0200, Krzysztof Kozlowski wrote:
 >> On 10/06/2023 16:54, Andi Shyti wrote:
 >>> On Sat, Jun 10, 2023 at 04:07:51PM +0200, Christophe JAILLET wrote:
 >>>> Le 10/06/2023 à 12:26, Andi Shyti a écrit :
 >>>>>> @@ -1459,8 +1459,10 @@ static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
->>>>>>   			continue;
->>>>>>   		rate = clk_get_rate(clk);
+>>>>>>    			continue;
+>>>>>>    		rate = clk_get_rate(clk);
 >>>>>> -		if (!rate)
 >>>>>> +		if (!rate) {
 >>>>>> +			clk_put(clk);
->>>>>>   			continue;
+>>>>>>    			continue;
 >>>>>
 >>>>> could you also print an error here?
 >>>>>
@@ -106,18 +88,10 @@ On 10/06/2023 19:10, Andi Shyti wrote:
 >> Why do we need it? Most of other users of clk_get_rate() don't print.
 > 
 > that's not a reason not to print it.
-
-This is the reason, because it was the conscious choice - not to print,
-otherwise drivers are unreadable.
-
 > 
 >> Probably because such condition is highly unlikely if not impossible.
 > 
 > still... that's not a reason not to print it.
-
-It is a reason not to print it in the driver. Code readability is more
-important than adding error messages for every possible case in the driver.
-
 > 
 > All errors are unlikely and if it's unlikely, why there is no
 > unlikely(!rate)? Which doesn't improve the reason not to print
@@ -134,16 +108,33 @@ important than adding error messages for every possible case in the driver.
 >> This makes simple function unnecessarily bigger...
 > 
 > and... that's not a reason not to print it :)
+> 
+> If it's needed, it's needed. If we are considering the error,
+> then we need to treat it as an error.
+> 
+> In any case, I'm not strong with it, indeed, I r-b it anyway. I
+> personally prefer and suggested printing the error. Up to
+> Christophe.
 
-This is the reason not to print it in the driver, because it makes the
-code less maintainable. Such unlikely errors should be handled by core,
-not by every driver. If this error message here is reasonable, I would
-argue that it is reasonable to add it to other places... try doing it.
-You will see to what silly code it leads.
+git grep -A5 clk_get_rate | grep dev_err | wc -l
+173
+git grep clk_get_rate | wc -l
+1464
 
-It's like adding dev_err to regmap_mmio read/write failures - code will
-be difficult to read.
+(+ Krzysztof's argumentation)
 
-Best regards,
-Krzysztof
+So lets go for v1.
+
+Can v1 be taken as is?
+(knowing that I don't really care about the new 3/3 related to abs())
+
+Or should I send a v3 to ease the process?
+
+CJ
+
+
+> 
+> Thanks,
+> Andi
+> 
 
