@@ -2,38 +2,38 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4BBEB64D7
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Jun 2023 10:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97016EB64D7
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Jun 2023 10:33:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345068AbjFPKcr (ORCPT
+        id S1344838AbjFPKdt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 16 Jun 2023 06:32:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56072 "EHLO
+        Fri, 16 Jun 2023 06:33:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344692AbjFPKc1 (ORCPT
+        with ESMTP id S1344796AbjFPKdG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Jun 2023 06:32:27 -0400
+        Fri, 16 Jun 2023 06:33:06 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA6BA4237;
-        Fri, 16 Jun 2023 03:27:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F313255B1;
+        Fri, 16 Jun 2023 03:28:14 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D8CDF635C2;
-        Fri, 16 Jun 2023 10:27:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE648C43391;
-        Fri, 16 Jun 2023 10:27:08 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A89F5635C2;
+        Fri, 16 Jun 2023 10:28:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C79B6C433C9;
+        Fri, 16 Jun 2023 10:28:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686911230;
-        bh=VRkjnQDfjXAu6adCt3PdtX8T/zECSCAXojz7WBO3BNU=;
+        s=k20201202; t=1686911294;
+        bh=XFn1afc3CoB5JTiXT23yatsipLgYi74pLHBf8rgy/9A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AJMuC8mC2JAJgJ/DSA6FDcWJHNbcxbTZ8XpqiE8NxR44ysqt3RAMJNBg34qgO+byU
-         ggGB0k2pkY4gc4TXmsV3b5MZUnEEQyiFmPM7ndtl454/BMOSJfBs5cIW/xhf/BKHbA
-         cgGudqoXj3VJk4kqBC2m8YNvCcBpYvnt7t1Mp1VLi2n+67F+puEOnj+tgy3S8OlNd1
-         a9LmGoB6ldt8EQiWDV6I6WhCMWIUpKRtOdD+wDYmlBYL7LtIT74dV+AgzwVK0aiAw+
-         UIZKDKfJW/RifttxE3VYBUGpnY5NMjX/Nn/OWQ85bq5Nub1weUdikFEFfuOryRQAzC
-         LSJCogCScTbkw==
+        b=au8rLR70nUpkzqCyoxzzKLG5H8RuPmlRS7oYAqjD8NqLFhvIqX0llPEtj956/oiP7
+         xg6bcGWPLWY5ybMG48qazVKNuhxhoUk43IAR1iMuE5lh9iW+npaSfS2uVXzgQM5Per
+         XbqaMVYdnVrqBKONrH2yCFucujnv3O9saqt8g2oLIfNOaHzklz6MyuA8yJEXeBhD3n
+         +XMMaD7wzhkql0RMR2583gde4OJYGa//PbVhjQgXZBnvNIV6+SNyPI1aWuox/LwxPT
+         XgPPk1iY1HNKJJDapW3/F/yQtSTurz0KUDbO38iqAohuAqsdVwsQRCk0JzpeWHMSUg
+         SsKGGwDt3dgXw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Inki Dae <inki.dae@samsung.com>,
@@ -43,16 +43,16 @@ Cc:     Inki Dae <inki.dae@samsung.com>,
         krzysztof.kozlowski@linaro.org, dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 20/26] drm/exynos: vidi: fix a wrong error return
-Date:   Fri, 16 Jun 2023 06:26:17 -0400
-Message-Id: <20230616102625.673454-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 09/14] drm/exynos: vidi: fix a wrong error return
+Date:   Fri, 16 Jun 2023 06:27:46 -0400
+Message-Id: <20230616102753.673975-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230616102625.673454-1-sashal@kernel.org>
-References: <20230616102625.673454-1-sashal@kernel.org>
+In-Reply-To: <20230616102753.673975-1-sashal@kernel.org>
+References: <20230616102753.673975-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.34
+X-stable-base: Linux 5.10.184
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -76,10 +76,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index 4d56c8c799c5a..f5e1adfcaa514 100644
+index e5662bdcbbde3..e96436e11a36c 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -469,8 +469,6 @@ static int vidi_remove(struct platform_device *pdev)
+@@ -468,8 +468,6 @@ static int vidi_remove(struct platform_device *pdev)
  	if (ctx->raw_edid != (struct edid *)fake_edid_info) {
  		kfree(ctx->raw_edid);
  		ctx->raw_edid = NULL;
