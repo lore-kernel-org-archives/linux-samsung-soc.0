@@ -2,38 +2,38 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9596EB64D7
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Jun 2023 10:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11505EB64DB
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Jun 2023 10:32:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344337AbjFPKai (ORCPT
+        id S1345008AbjFPKcf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 16 Jun 2023 06:30:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49966 "EHLO
+        Fri, 16 Jun 2023 06:32:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344676AbjFPK3o (ORCPT
+        with ESMTP id S1345010AbjFPKbM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Jun 2023 06:29:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B943F49F5;
-        Fri, 16 Jun 2023 03:27:12 -0700 (PDT)
+        Fri, 16 Jun 2023 06:31:12 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63EE05261;
+        Fri, 16 Jun 2023 03:27:52 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 82ADD6360D;
-        Fri, 16 Jun 2023 10:27:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 901D3C433C0;
-        Fri, 16 Jun 2023 10:27:10 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 493A8635F7;
+        Fri, 16 Jun 2023 10:27:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 298AEC433C0;
+        Fri, 16 Jun 2023 10:27:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686911231;
+        s=k20201202; t=1686911264;
         bh=pIJzDSdZm6E+NnIwO57Xq2I4agMZenBysCO9cU1z8zM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eqwXIMYLGbVLIS1XqMe5LORdtgIOhyVC+O1J1pgH+MDkPDsAo6oPssMRlPXnzD1ZL
-         pPOKp5+dyg7ei6S5y7mT2+fayW/M00mrb+xlcBsi0ifU5YSrxJ6si1xFffUbXjLBIc
-         h49GPyQ/ylfjK4gs1ox88t8LjAUAPzV9PwYosDuxqi8aA1zmbhSFd4SGE/xEFkfz0Q
-         FaNY7pqW3TByguTRbpHHCLxV6EM7Q7uG1Ev7IzzZOTTe1wo+0ffHLVWkt4GOk3Qgww
-         hkXdLybWKSusYbql8mQYWlSpOQscNMayJsB5PW32BbmffwfIVK5wzypqmc36QQAMML
-         qezrc9pzX+gpA==
+        b=uZOwqEp0dUDEw6XptxGdY/6dzWRqZucSy3heMuoL+1+JUwFIgUMumnPef8TUz5iKi
+         Et2tk81FWfxCeD8WOUDWu1Y5ZegMKVth+3i6posyAvzRQOFhZgXFF6ol2/RhGJ+pOj
+         GRdXrf9cp/EdYUV0pBDlS0JMLrEm9HUZCOo41DiNWSQfPoAQnoSajKEszcU1535YhL
+         0pQA03H0lfsdDNwqj9dJ1szpYY8QpcN0rwAEKj03f+WOn0PBUOcYyMWvvvF7Khg2zM
+         65h6blI5suCCME1fhKS9yUSNg4k4e2XAyru6uUEpMkZxtP58w0pufw6JU9Pvnyeg5d
+         CAcjgHCqouUzw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Min Li <lm0963hack@gmail.com>, Andi Shyti <andi.shyti@kernel.org>,
@@ -43,16 +43,16 @@ Cc:     Min Li <lm0963hack@gmail.com>, Andi Shyti <andi.shyti@kernel.org>,
         krzysztof.kozlowski@linaro.org, dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 21/26] drm/exynos: fix race condition UAF in exynos_g2d_exec_ioctl
-Date:   Fri, 16 Jun 2023 06:26:18 -0400
-Message-Id: <20230616102625.673454-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 11/16] drm/exynos: fix race condition UAF in exynos_g2d_exec_ioctl
+Date:   Fri, 16 Jun 2023 06:27:14 -0400
+Message-Id: <20230616102721.673775-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230616102625.673454-1-sashal@kernel.org>
-References: <20230616102625.673454-1-sashal@kernel.org>
+In-Reply-To: <20230616102721.673775-1-sashal@kernel.org>
+References: <20230616102721.673775-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.34
+X-stable-base: Linux 5.15.117
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
