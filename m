@@ -2,84 +2,76 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87727EB64D9
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Jun 2023 21:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F274EEB64D7
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Jun 2023 12:38:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229650AbjFSVQn (ORCPT
+        id S229746AbjFTMir (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 19 Jun 2023 17:16:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47076 "EHLO
+        Tue, 20 Jun 2023 08:38:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbjFSVQm (ORCPT
+        with ESMTP id S232206AbjFTMip (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Jun 2023 17:16:42 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A8A4DC;
-        Mon, 19 Jun 2023 14:16:42 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C06E560EAE;
-        Mon, 19 Jun 2023 21:16:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91A1DC433C0;
-        Mon, 19 Jun 2023 21:16:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687209401;
-        bh=JBTWR99Q1eDNuEVibhcmNlst4vu0Z56hRZJoZoOhNwg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ntsWACbUMlnuW5BSnHsZG2TTKeBnqu9hsRTu2DIbaC85MZo+lGwm6tnlfJ8J+7HM9
-         elm8G1GjrejFg+VwKxcuqiQFN37K7ae5J7lxLKIBz39nVf4tA40IPNiVmFDP2LdOGS
-         J9HwwI7Ci9S3Xp6IJuDchl8Nyj3BhSr3D+O0zRSBAIBUnB5E8uW4ZqzfbGmp6nW5AM
-         2Wr4XOsUqqPhLxfvwTFsrrj098Qspkf3uPElDBmFpjQttojz2GxLSn0LO2897pFljV
-         6tGr0YE4Nu5z+wbRNotqfHjARq6tLaliXmpnC2ONRZ4eHtpFBh3l84C+hEOwW+WqJR
-         Bc8rxLL7U4PJQ==
-Date:   Mon, 19 Jun 2023 22:16:37 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Lee Jones <lee@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: mfd: samsung,s5m8767: Simplify excluding
- properties
-Message-ID: <20230619-rejoin-brook-f878220ba872@spud>
-References: <20230619101424.25897-1-krzysztof.kozlowski@linaro.org>
+        Tue, 20 Jun 2023 08:38:45 -0400
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59E1B10E2;
+        Tue, 20 Jun 2023 05:38:43 -0700 (PDT)
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id 1qBad3-0002Ja-8H; Tue, 20 Jun 2023 14:38:37 +0200
+Message-ID: <984f4eb8-2d47-45ad-184f-7f5637820101@leemhuis.info>
+Date:   Tue, 20 Jun 2023 14:38:36 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hmlYTsCCInqqIcWl"
-Content-Disposition: inline
-In-Reply-To: <20230619101424.25897-1-krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [REGRESSION][BISECT] perf/core: Remove pmu linear searching code
+Content-Language: en-US, de-DE
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Ravi Bangoria <ravi.bangoria@amd.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Cc:     mark.rutland@arm.com, jolsa@kernel.org, irogers@google.com,
+        bp@alien8.de, adrian.hunter@intel.com,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "regressions@lists.linux.dev" <regressions@lists.linux.dev>
+References: <3abd3693-ad87-9abf-a762-337076638fcc@linaro.org>
+From:   "Linux regression tracking #update (Thorsten Leemhuis)" 
+        <regressions@leemhuis.info>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <3abd3693-ad87-9abf-a762-337076638fcc@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1687264723;ff7c3218;
+X-HE-SMSGID: 1qBad3-0002Ja-8H
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+[TLDR: This mail in primarily relevant for Linux regression tracking. A
+change or fix related to the regression discussed in this thread was
+posted or applied, but it did not use a Closes: tag to point to the
+report, as Linus and the documentation call for. Things happen, no
+worries -- but now the regression tracking bot needs to be told manually
+about the fix. See link in footer if these mails annoy you.]
 
---hmlYTsCCInqqIcWl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 04.06.23 13:38, Krzysztof Kozlowski wrote:
+> 
+> #regzbot introduced: 9551fbb64d09
+> 
+> Bisect pointed to commit 9551fbb64d09 ("perf/core: Remove pmu linear
+> searching code") as first one where all hardware events are gone from
+> perf for ARMv7 Exynos5422 board.
 
-On Mon, Jun 19, 2023 at 12:14:24PM +0200, Krzysztof Kozlowski wrote:
-> Mutually exclusive s5m8767,pmic-buck[234]-uses-gpio-dvs properties can
-> be written simpler, with half of the lines of code.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+#regzbot fix: 228020b490eda91
+#regzbot ignore-activity
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+That page also explains what to do if mails like this annoy you.
 
-Cheers,
-Conor.
 
---hmlYTsCCInqqIcWl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZJDFtQAKCRB4tDGHoIJi
-0iUCAP4i1Kjk0wc2dj0ZaaIq8QmB9iocPvRDHthhZumZnr0ePgD9Hqb8IWG9I42G
-VOFA7KootLNN1/cXoX+wPZIFqtB0bwE=
-=o6Lb
------END PGP SIGNATURE-----
-
---hmlYTsCCInqqIcWl--
