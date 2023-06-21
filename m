@@ -2,76 +2,69 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F274EEB64D7
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Jun 2023 12:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F138AEB64D7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Jun 2023 17:57:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229746AbjFTMir (ORCPT
+        id S231179AbjFUR5a (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 20 Jun 2023 08:38:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58294 "EHLO
+        Wed, 21 Jun 2023 13:57:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232206AbjFTMip (ORCPT
+        with ESMTP id S231735AbjFUR5T (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Jun 2023 08:38:45 -0400
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59E1B10E2;
-        Tue, 20 Jun 2023 05:38:43 -0700 (PDT)
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        id 1qBad3-0002Ja-8H; Tue, 20 Jun 2023 14:38:37 +0200
-Message-ID: <984f4eb8-2d47-45ad-184f-7f5637820101@leemhuis.info>
-Date:   Tue, 20 Jun 2023 14:38:36 +0200
+        Wed, 21 Jun 2023 13:57:19 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 010902708;
+        Wed, 21 Jun 2023 10:56:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1BE15615DC;
+        Wed, 21 Jun 2023 17:56:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 140CEC433C9;
+        Wed, 21 Jun 2023 17:56:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687370165;
+        bh=wJPOrVNIgTywFQepJZTNQ+QlyeGFs0MkGE1Cz6G2XTQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FNr6TbArDHSoi3xmVTBdDyYTb16ATq5PrGIWD5FsMFgYJivOYG1r/Z2Mt2EfVaqug
+         tu9+Yjr4mQsUbwGsSQDL6XTt4LilJFK35UOfESsESJpNQDlQ4NJNR5AlauAX+W/Wha
+         AcnpDOk8zQUG51OVRNqykbZJgvMBbfEsy/Nbq8eghb8IjJCGLltD3RJ9qG5gxA5vA+
+         74IQiBD6zogFk2ln6Np598zBBzOUTFWN97opNlzyzSgUCBx9oJyuxDXca2a0mw2wad
+         I1xlYkRllUqsPM2QXvUz2rnoAza5I5zF5aTtcLt3vwlHU8/s1wMt4PQxy++znE/KW7
+         9cW/rsLkLWvIQ==
+Date:   Wed, 21 Jun 2023 18:56:01 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: mfd: samsung,s5m8767: Simplify excluding
+ properties
+Message-ID: <20230621175601.GQ10378@google.com>
+References: <20230619101424.25897-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [REGRESSION][BISECT] perf/core: Remove pmu linear searching code
-Content-Language: en-US, de-DE
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Ravi Bangoria <ravi.bangoria@amd.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Cc:     mark.rutland@arm.com, jolsa@kernel.org, irogers@google.com,
-        bp@alien8.de, adrian.hunter@intel.com,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "regressions@lists.linux.dev" <regressions@lists.linux.dev>
-References: <3abd3693-ad87-9abf-a762-337076638fcc@linaro.org>
-From:   "Linux regression tracking #update (Thorsten Leemhuis)" 
-        <regressions@leemhuis.info>
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <3abd3693-ad87-9abf-a762-337076638fcc@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1687264723;ff7c3218;
-X-HE-SMSGID: 1qBad3-0002Ja-8H
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230619101424.25897-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-[TLDR: This mail in primarily relevant for Linux regression tracking. A
-change or fix related to the regression discussed in this thread was
-posted or applied, but it did not use a Closes: tag to point to the
-report, as Linus and the documentation call for. Things happen, no
-worries -- but now the regression tracking bot needs to be told manually
-about the fix. See link in footer if these mails annoy you.]
+On Mon, 19 Jun 2023, Krzysztof Kozlowski wrote:
 
-On 04.06.23 13:38, Krzysztof Kozlowski wrote:
+> Mutually exclusive s5m8767,pmic-buck[234]-uses-gpio-dvs properties can
+> be written simpler, with half of the lines of code.
 > 
-> #regzbot introduced: 9551fbb64d09
-> 
-> Bisect pointed to commit 9551fbb64d09 ("perf/core: Remove pmu linear
-> searching code") as first one where all hardware events are gone from
-> perf for ARMv7 Exynos5422 board.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../bindings/mfd/samsung,s5m8767.yaml         | 25 ++++++-------------
+>  1 file changed, 7 insertions(+), 18 deletions(-)
 
-#regzbot fix: 228020b490eda91
-#regzbot ignore-activity
+Applied, thanks
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-That page also explains what to do if mails like this annoy you.
-
-
+-- 
+Lee Jones [李琼斯]
