@@ -2,69 +2,93 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F138AEB64D7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Jun 2023 17:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A15D6EB64D7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Jun 2023 01:27:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231179AbjFUR5a (ORCPT
+        id S229806AbjFVB1E (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 21 Jun 2023 13:57:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57296 "EHLO
+        Wed, 21 Jun 2023 21:27:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231735AbjFUR5T (ORCPT
+        with ESMTP id S229796AbjFVB1C (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 21 Jun 2023 13:57:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 010902708;
-        Wed, 21 Jun 2023 10:56:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1BE15615DC;
-        Wed, 21 Jun 2023 17:56:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 140CEC433C9;
-        Wed, 21 Jun 2023 17:56:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687370165;
-        bh=wJPOrVNIgTywFQepJZTNQ+QlyeGFs0MkGE1Cz6G2XTQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FNr6TbArDHSoi3xmVTBdDyYTb16ATq5PrGIWD5FsMFgYJivOYG1r/Z2Mt2EfVaqug
-         tu9+Yjr4mQsUbwGsSQDL6XTt4LilJFK35UOfESsESJpNQDlQ4NJNR5AlauAX+W/Wha
-         AcnpDOk8zQUG51OVRNqykbZJgvMBbfEsy/Nbq8eghb8IjJCGLltD3RJ9qG5gxA5vA+
-         74IQiBD6zogFk2ln6Np598zBBzOUTFWN97opNlzyzSgUCBx9oJyuxDXca2a0mw2wad
-         I1xlYkRllUqsPM2QXvUz2rnoAza5I5zF5aTtcLt3vwlHU8/s1wMt4PQxy++znE/KW7
-         9cW/rsLkLWvIQ==
-Date:   Wed, 21 Jun 2023 18:56:01 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: mfd: samsung,s5m8767: Simplify excluding
- properties
-Message-ID: <20230621175601.GQ10378@google.com>
-References: <20230619101424.25897-1-krzysztof.kozlowski@linaro.org>
+        Wed, 21 Jun 2023 21:27:02 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 855881BD4;
+        Wed, 21 Jun 2023 18:27:01 -0700 (PDT)
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35LKHFmL007951;
+        Thu, 22 Jun 2023 01:26:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2023-03-30;
+ bh=jX27C/oUUJtUmxJEH6sxeuA+0J19a7Fvbg033jVIPA0=;
+ b=K/hqrwv1o/gFrefS58Fd5m5hdbrCmIWhQsb0AmMDlrmIBrp/4X6mHt6X7OkrhgDJq3jh
+ l1aDJ+xeKBQhyUioxasoA2YCj++QNIL/9Se/uTSpeAmot7fv5DCj90/6v/GeJmmsBTd+
+ dTG0BKFLIpyGBtgyiiJL0EYqpevFUP7iomeNYETKbWbHsCE+1kdjZMnpWFSEUqMy6AuL
+ L2GJz/l63bVUpWjjpecQlSERRf8Nl11LVoTfeiG7+/fcc24eV7wuqJY/s1SmAg6h1A+0
+ u0pbFhQClnsixkM6OgZzCHdGqHPX3OZPmixmEugEz9I69BDQ+urGcRn+iDJE4l1aVMJq sg== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3r93m3rw3m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Jun 2023 01:26:35 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 35M0f7oW038610;
+        Thu, 22 Jun 2023 01:26:35 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3r9396thya-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Jun 2023 01:26:34 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 35M1QXav038374;
+        Thu, 22 Jun 2023 01:26:34 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3r9396thxp-4;
+        Thu, 22 Jun 2023 01:26:34 +0000
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-scsi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCH] dt-bindings: ufs: samsung,exynos: drop unneeded quotes
+Date:   Wed, 21 Jun 2023 21:26:22 -0400
+Message-Id: <168739587243.247655.8617428148720225678.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230609140651.64488-1-krzysztof.kozlowski@linaro.org>
+References: <20230609140651.64488-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230619101424.25897-1-krzysztof.kozlowski@linaro.org>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-06-21_14,2023-06-16_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 suspectscore=0
+ adultscore=0 mlxscore=0 mlxlogscore=756 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
+ definitions=main-2306220009
+X-Proofpoint-GUID: Alecm8faq3WsiG8DyeQK7GyGLQt9i-66
+X-Proofpoint-ORIG-GUID: Alecm8faq3WsiG8DyeQK7GyGLQt9i-66
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 19 Jun 2023, Krzysztof Kozlowski wrote:
+On Fri, 09 Jun 2023 16:06:51 +0200, Krzysztof Kozlowski wrote:
 
-> Mutually exclusive s5m8767,pmic-buck[234]-uses-gpio-dvs properties can
-> be written simpler, with half of the lines of code.
+> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
+> checking for this can be enabled in yamllint.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../bindings/mfd/samsung,s5m8767.yaml         | 25 ++++++-------------
->  1 file changed, 7 insertions(+), 18 deletions(-)
+> 
 
-Applied, thanks
+Applied to 6.5/scsi-queue, thanks!
+
+[1/1] dt-bindings: ufs: samsung,exynos: drop unneeded quotes
+      https://git.kernel.org/mkp/scsi/c/e246514ae698
 
 -- 
-Lee Jones [李琼斯]
+Martin K. Petersen	Oracle Linux Engineering
