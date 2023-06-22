@@ -2,93 +2,93 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A15D6EB64D7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Jun 2023 01:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 871EDEB64DB
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Jun 2023 10:20:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229806AbjFVB1E (ORCPT
+        id S231311AbjFVKU3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 21 Jun 2023 21:27:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45170 "EHLO
+        Thu, 22 Jun 2023 06:20:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229796AbjFVB1C (ORCPT
+        with ESMTP id S231285AbjFVKU1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 21 Jun 2023 21:27:02 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 855881BD4;
-        Wed, 21 Jun 2023 18:27:01 -0700 (PDT)
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35LKHFmL007951;
-        Thu, 22 Jun 2023 01:26:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2023-03-30;
- bh=jX27C/oUUJtUmxJEH6sxeuA+0J19a7Fvbg033jVIPA0=;
- b=K/hqrwv1o/gFrefS58Fd5m5hdbrCmIWhQsb0AmMDlrmIBrp/4X6mHt6X7OkrhgDJq3jh
- l1aDJ+xeKBQhyUioxasoA2YCj++QNIL/9Se/uTSpeAmot7fv5DCj90/6v/GeJmmsBTd+
- dTG0BKFLIpyGBtgyiiJL0EYqpevFUP7iomeNYETKbWbHsCE+1kdjZMnpWFSEUqMy6AuL
- L2GJz/l63bVUpWjjpecQlSERRf8Nl11LVoTfeiG7+/fcc24eV7wuqJY/s1SmAg6h1A+0
- u0pbFhQClnsixkM6OgZzCHdGqHPX3OZPmixmEugEz9I69BDQ+urGcRn+iDJE4l1aVMJq sg== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3r93m3rw3m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Jun 2023 01:26:35 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 35M0f7oW038610;
-        Thu, 22 Jun 2023 01:26:35 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3r9396thya-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Jun 2023 01:26:34 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 35M1QXav038374;
-        Thu, 22 Jun 2023 01:26:34 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3r9396thxp-4;
-        Thu, 22 Jun 2023 01:26:34 +0000
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-scsi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH] dt-bindings: ufs: samsung,exynos: drop unneeded quotes
-Date:   Wed, 21 Jun 2023 21:26:22 -0400
-Message-Id: <168739587243.247655.8617428148720225678.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230609140651.64488-1-krzysztof.kozlowski@linaro.org>
-References: <20230609140651.64488-1-krzysztof.kozlowski@linaro.org>
+        Thu, 22 Jun 2023 06:20:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78E4C129;
+        Thu, 22 Jun 2023 03:20:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0DC60617BE;
+        Thu, 22 Jun 2023 10:20:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BCF4C433C8;
+        Thu, 22 Jun 2023 10:20:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687429223;
+        bh=SYl7L3El4kLgtnTMh7BKKEOpmUvMHtKtirHsySgizNw=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=msh7+e24+6Qq8hiSGIlXgZfnJmz/CXyamAAP5FY6G3LrO6XQNaRMxsW7HNqWIzMvn
+         XHg3Esi9AHN4l4bhAMYc18e/iTf3yBUvu9eYF19KNZnYfurj1+RX36rwkqwqguCSdZ
+         BBSXFsPBwPsjIMj8NbFDKR+Rk5FMvT1aghffwSYbBBN8vZzcf/BnC9TYj/4D2eZVVN
+         KMUNB3dhaP76Tf969sdwYzKcf9IEgDtC7WE7I/CDmxaVN0SeRQlgUmSq7fUxJWnEtg
+         AxTGbQgqAN74AiFIsXdgFURf6EOJag3g+8/xOdAMxo6TuzluJPB/zpE/7CNFc8bdWH
+         /FSDHYe/3jnLQ==
+Message-ID: <361c2f87-1424-f452-912f-0e4a339f5c46@kernel.org>
+Date:   Thu, 22 Jun 2023 12:20:13 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-06-21_14,2023-06-16_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 suspectscore=0
- adultscore=0 mlxscore=0 mlxlogscore=756 malwarescore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
- definitions=main-2306220009
-X-Proofpoint-GUID: Alecm8faq3WsiG8DyeQK7GyGLQt9i-66
-X-Proofpoint-ORIG-GUID: Alecm8faq3WsiG8DyeQK7GyGLQt9i-66
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH][next] cgroup: Avoid -Wstringop-overflow warnings
+Content-Language: en-US
+To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+References: <ZIpm3pcs3iCP9UaR@work>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <ZIpm3pcs3iCP9UaR@work>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 09 Jun 2023 16:06:51 +0200, Krzysztof Kozlowski wrote:
-
-> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
-> checking for this can be enabled in yamllint.
+On 15/06/2023 03:18, Gustavo A. R. Silva wrote:
+> Address the following -Wstringop-overflow warnings seen when
+> built with ARM architecture and aspeed_g4_defconfig configuration
+> (notice that under this configuration CGROUP_SUBSYS_COUNT == 0):
+> kernel/cgroup/cgroup.c:1208:16: warning: 'find_existing_css_set' accessing 4 bytes in a region of size 0 [-Wstringop-overflow=]
+> kernel/cgroup/cgroup.c:1258:15: warning: 'css_set_hash' accessing 4 bytes in a region of size 0 [-Wstringop-overflow=]
+> kernel/cgroup/cgroup.c:6089:18: warning: 'css_set_hash' accessing 4 bytes in a region of size 0 [-Wstringop-overflow=]
+> kernel/cgroup/cgroup.c:6153:18: warning: 'css_set_hash' accessing 4 bytes in a region of size 0 [-Wstringop-overflow=]
 > 
-> 
 
-Applied to 6.5/scsi-queue, thanks!
+Hi,
 
-[1/1] dt-bindings: ufs: samsung,exynos: drop unneeded quotes
-      https://git.kernel.org/mkp/scsi/c/e246514ae698
+This patch landed in next but causes boot failures on
+Exynos ARMv7 board (32 bit) with systemd (exynos_defconfig):
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+NFS-Mount: 192.168.1.10:/srv/nfs/odroidhc1
+Waiting 10 seconds for device /dev/nfs ...
+ERROR: device '/dev/nfs' not found. Skipping fsck.
+Mount cmd: 
+mount.nfs4 -o vers=4,nolock 192.168.1.10:/srv/nfs/odroidhc1 /new_root
+:: running cleanup hook [udev]
+[   23.752917] systemd[1]: System time before build time, advancing clock.
+[   23.851828] systemd[1]: Failed to mount tmpfs at /sys/fs/cgroup: No such file or directory
+[   23.868459] systemd[1]: Failed to mount cgroup at /sys/fs/cgroup/systemd: No such file or directory
+[!!!!!!] Failed to mount API filesystems.
+[   23.914562] systemd[1]: Freezing execution.
+
+Full log:
+https://krzk.eu/#/builders/21/builds/4110/steps/15/logs/serial0
+
+Best regards,
+Krzysztof
+
