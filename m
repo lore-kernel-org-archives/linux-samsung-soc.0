@@ -2,55 +2,137 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D4F3EB64D7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Jun 2023 09:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6691EB64D7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Jun 2023 16:49:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229522AbjF1JnE (ORCPT
+        id S230060AbjF1Qsc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Jun 2023 05:43:04 -0400
-Received: from mail.lokoho.com ([217.61.105.98]:44546 "EHLO mail.lokoho.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231546AbjF1Hz6 (ORCPT
+        Wed, 28 Jun 2023 12:48:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40858 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231185AbjF1QsU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Jun 2023 03:55:58 -0400
-Received: by mail.lokoho.com (Postfix, from userid 1001)
-        id AAD9D85ADE; Wed, 28 Jun 2023 08:53:12 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
-        t=1687938794; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
-        h=Date:From:To:Subject:From;
-        b=WHOp+pDESm6QeneDykrHuU2oCivB3uIUCZbebLOcroO4LeTdg5CHTReJKpBrs4Mxi
-         80CwOMt1NCbZn+NfAqQNCqt5wXtreWyw/0JZmze7VI+qyW0R2QEU+eaAJMPyBL+ymW
-         0WszQa7jf6d9g7YoeBNCFuq/cUJ+1qQQutOLlTsmiarfSUpWAq5KcyY86oZ/nB27dO
-         Zt1bgTkg5gCd/1u8xcmE0d77mnykeNjLtxVHN4lM7YZ4iJEoW66ipuq6/g9tf6tNaG
-         mwcAC37FJFeVQ+VTHWys0SJ7OO9H8dzc7pP+MbydWXnwSW/ccYazZ4EaoUzQK1my15
-         lzaCjkebqLx9Q==
-Received: by mail.lokoho.com for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Jun 2023 07:50:51 GMT
-Message-ID: <20230628074502-0.1.6x.2sit1.0.t4d50avti0@lokoho.com>
-Date:   Wed, 28 Jun 2023 07:50:51 GMT
-From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
-To:     <linux-samsung-soc@vger.kernel.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.lokoho.com
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 28 Jun 2023 12:48:20 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AC95210B;
+        Wed, 28 Jun 2023 09:48:19 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1b7e6512973so1044625ad.3;
+        Wed, 28 Jun 2023 09:48:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687970898; x=1690562898;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wp97cGGpKr64bUZG2HsIrRL1H4FjGhOC/kMVFyCMzf8=;
+        b=FSGDU7NlG8PeyFJEJEEBv6tE/GDYvudPVH7ysSaPc/LdPy9v0r0hxtd3TMbIkGkjCB
+         9WDL7pA6Gvd166G2iHQNMGmHcsROaQul3p68o6dnGZIdJl7K6H9Ps7wpsoywYF+ZCp/f
+         GKgShm/+vT3YalEz52rY+g2TqEu/XrJrBzXab0IJccy7W2CxvwSnpRPxrSTdjWOy1JQC
+         +sYAz7WYDe5H7R+xlWQ6OF9rt1C+2U6Q5T49TosC0l+qpZMrnOWy+c6reDxC+ZR7dZ9F
+         esoTtAaLJBoahP5T2b6RY/hqzTlPu31YMfuTK1TKnkyC0LMZEBPnNiKIj3W9LP75hfxl
+         ItVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687970898; x=1690562898;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wp97cGGpKr64bUZG2HsIrRL1H4FjGhOC/kMVFyCMzf8=;
+        b=bOBxV5m2B/tvXHk7b1cwwPD3ZYKo2XR2hwU7jqwPYbry6mzS2p+D4uKXItbG5BzCsO
+         FCTL04OVDtRB8PLKwB3Y6nMdZsL7OrucgY9Mz+RH/wVuMReOGUGM8NV0gvXEcBxx1cWY
+         G17az/cDVaqd8xUkJLdSxbJnSYg0kDK+HqaiN77dGe331jdr6sNW9NWj0Rf9z2N7/hGq
+         yot5Q/ZomLAoSVq6WxLpsqNEEhLXjLIQQ8WGbzZTzH5FidBCGyPBpSXuFN/3ykUB6qTy
+         cKmhtBdXiOrXF9DHLyl83COnzhy+WSPHyVNL7ZTeEFjhpbmZF2KqRZ7CiFED2inAl0E9
+         lyBg==
+X-Gm-Message-State: AC+VfDw+a7sP1eD5/niwPHKXuAtignO3HbLYsmMHEPWTeZ0k8YiHDZiM
+        pDV4/Z4FmBSd+s0oKmlZhow=
+X-Google-Smtp-Source: ACHHUZ5yIpKRZwCdR+tbijRQabMXEhbZXBA+ET3pD1NIQ5tWmMWdS5ewR9m0gZpDIpBRIhrcdegezA==
+X-Received: by 2002:a17:90a:1999:b0:25e:ad19:5f46 with SMTP id 25-20020a17090a199900b0025ead195f46mr23301757pji.12.1687970898452;
+        Wed, 28 Jun 2023 09:48:18 -0700 (PDT)
+Received: from 377044c6c369.cse.ust.hk (191host097.mobilenet.cse.ust.hk. [143.89.191.97])
+        by smtp.gmail.com with ESMTPSA id ob11-20020a17090b390b00b00262dc783974sm6733914pjb.31.2023.06.28.09.48.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Jun 2023 09:48:17 -0700 (PDT)
+From:   Chengfeng Ye <dg573847474@gmail.com>
+To:     krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+        wim@linux-watchdog.org, linux@roeck-us.net
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chengfeng Ye <dg573847474@gmail.com>
+Subject: [PATCH] watchdog: s3c2410: Fix potential deadlock on &wdt->lock
+Date:   Wed, 28 Jun 2023 16:47:59 +0000
+Message-Id: <20230628164759.67594-1-dg573847474@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Dzie=C5=84 dobry,
+As &wdt->lock is acquired by hard irq s3c2410wdt_irq(),
+other acquisition of the same lock under process context should
+disable irq, otherwise deadlock could happen if the
+irq preempt the execution while the lock is held in process context
+on the same CPU.
 
-zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
-=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
-o dalszych rozm=C3=B3w.=20
+  [Interrupt]: s3c2410wdt_irq
+    -->/root/linux/drivers/watchdog/s3c2410_wdt.c:547
+    -->/root/linux/drivers/watchdog/s3c2410_wdt.c:383
+    -->spin_lock(&wdt->lock);
 
-Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
-=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
-=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
-strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
+  [Process Context]: s3c2410wdt_suspend
+    -->/root/linux/drivers/watchdog/s3c2410_wdt.c:764
+    -->/root/linux/drivers/watchdog/s3c2410_wdt.c:403
+    -->spin_lock(&wdt->lock);
 
-Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
+  [Process Context]: s3c2410wdt_probe
+    -->/root/linux/drivers/watchdog/s3c2410_wdt.c:710
+    -->/root/linux/drivers/watchdog/s3c2410_wdt.c:415
+    -->spin_lock(&wdt->lock);
 
+This flaw was found by an experimental static analysis tool I am
+developing for irq-related deadlock, which reported the above
+warning when analyzing the linux kernel 6.4-rc7 release.
 
-Pozdrawiam
-Adam Charachuta
+The tentative patch fix the potential deadlock by spin_lock_irqsave().
+
+Signed-off-by: Chengfeng Ye <dg573847474@gmail.com>
+---
+ drivers/watchdog/s3c2410_wdt.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 95416a9bdd4b..2dfc0d6a3004 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -399,10 +399,11 @@ static void __s3c2410wdt_stop(struct s3c2410_wdt *wdt)
+ static int s3c2410wdt_stop(struct watchdog_device *wdd)
+ {
+ 	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
++	unsigned long flags;
+ 
+-	spin_lock(&wdt->lock);
++	spin_lock_irqsave(&wdt->lock, flags);
+ 	__s3c2410wdt_stop(wdt);
+-	spin_unlock(&wdt->lock);
++	spin_unlock_irqrestore(&wdt->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -411,8 +412,9 @@ static int s3c2410wdt_start(struct watchdog_device *wdd)
+ {
+ 	unsigned long wtcon;
+ 	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
++	unsigned long flags;
+ 
+-	spin_lock(&wdt->lock);
++	spin_lock_irqsave(&wdt->lock, flags);
+ 
+ 	__s3c2410wdt_stop(wdt);
+ 
+@@ -433,7 +435,7 @@ static int s3c2410wdt_start(struct watchdog_device *wdd)
+ 	writel(wdt->count, wdt->reg_base + S3C2410_WTDAT);
+ 	writel(wdt->count, wdt->reg_base + S3C2410_WTCNT);
+ 	writel(wtcon, wdt->reg_base + S3C2410_WTCON);
+-	spin_unlock(&wdt->lock);
++	spin_unlock_irqrestore(&wdt->lock, flags);
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
+
