@@ -2,85 +2,93 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D224C001B1
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Jul 2023 16:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96411EB64D9
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Jul 2023 17:24:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229615AbjGDQSP (ORCPT
+        id S231153AbjGDRYi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 4 Jul 2023 12:18:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33874 "EHLO
+        Tue, 4 Jul 2023 13:24:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231450AbjGDQSO (ORCPT
+        with ESMTP id S229451AbjGDRYh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 Jul 2023 12:18:14 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B5B8DC;
-        Tue,  4 Jul 2023 09:18:13 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3fbc244d3a8so61082245e9.2;
-        Tue, 04 Jul 2023 09:18:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688487492; x=1691079492;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nI8tUMgDhEdpyNYB/YO1aEnXiY794w1w4iPgAjar+34=;
-        b=ItTeBv4l15fG2/2aUpz7byKAn5g0biOiC/fx8+A6NBIWO8KVs4BNjHVlPBGm22NT5q
-         dxkovBfNoZvC8kQSyTBi+izaSMGhQhi3W/Bp2IfnIqfaVZyosX6+iVO6CDznnfG+L1vs
-         m6fpZyC7RRcXMpkH0UnOQy+NdiqQKYwqWSiwHHsILiBF8re3Dwx+ajIPVPV6IM6Cv+or
-         AyLsrnrQBrTBWde4PVvAEuVIw6r2R0IBWqgOX6sJg+HHNktC+CoeZ7OaHMuWK8xh9RhK
-         G66/YQXM1tU8urtYqHr0zgUlIpYaiGZzd7Ux6W9MI88eOmG4Pptf+XV7cIZwLciPd7eE
-         WaZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688487492; x=1691079492;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nI8tUMgDhEdpyNYB/YO1aEnXiY794w1w4iPgAjar+34=;
-        b=e1OMAXV5F4SkEeYUlF4I5T5GKDHY0dNd4+zF3YX8q5QgfUhhuhkuwhf+KS/gYszLw0
-         6qYnekOQoODeAjJL9r+vsW7HhDxyycopk+Cd9Xwd9kTGGslyFTxIPBgA+5E8yiL7z1c9
-         xah1KOUVpPDwO96Ks3GJAJ7tnu0MD7PHrtCC9IqYiAG9/iiSOsLrpEtV8HLPsFT+b9IC
-         XPrfSr92kdyGQrGqnr1CkGfAVNb1eQqlhleVZ0I/AUXg0715CjwKYG/oKkUiMcQnSl5F
-         E/grMZhDSap1iiOwst125bbf7zSkUlIqIAd37+4R0aFQmvgDa9THnSizETJEgffGv5oC
-         ILgA==
-X-Gm-Message-State: ABy/qLY2oUF+MInCfdLJIHsjsr1HrZGd8fLtZia+ksVl1xFBjsZIiYHl
-        xPX/gt2W6AJB0hSXHEM754pLNAhcKhlWDeo/NiA=
-X-Google-Smtp-Source: APBJJlG+cnJ/93rVQl1tJXhZpFezKYLGiip0i1kztanotmE2J9rqGcQeahjruTDeuYbCKyVOFI3sSF8cQlR+B99bhrU=
-X-Received: by 2002:adf:ee41:0:b0:314:4db:e0b2 with SMTP id
- w1-20020adfee41000000b0031404dbe0b2mr10971046wro.15.1688487491565; Tue, 04
- Jul 2023 09:18:11 -0700 (PDT)
+        Tue, 4 Jul 2023 13:24:37 -0400
+X-Greylist: delayed 636 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 04 Jul 2023 10:24:35 PDT
+Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6558E10D5;
+        Tue,  4 Jul 2023 10:24:35 -0700 (PDT)
+Received: from ipservice-092-217-072-126.092.217.pools.vodafone-ip.de ([92.217.72.126] helo=martin-debian-2.paytec.ch)
+        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <martin@kaiser.cx>)
+        id 1qGjb8-0000oy-J7; Tue, 04 Jul 2023 19:13:54 +0200
+From:   Martin Kaiser <martin@kaiser.cx>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH] hwrng: exynos - switch to DEFINE_SIMPLE_DEV_PM_OPS
+Date:   Tue,  4 Jul 2023 19:10:51 +0200
+Message-Id: <20230704171051.69763-1-martin@kaiser.cx>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <20230628164759.67594-1-dg573847474@gmail.com> <b6d3a872-f32e-bfcd-b603-c08339737045@linaro.org>
- <CAAo+4rUzusAyyffkCvEq+wJQacqfrcTx-SviqXaTzPsqOkjB7w@mail.gmail.com>
-In-Reply-To: <CAAo+4rUzusAyyffkCvEq+wJQacqfrcTx-SviqXaTzPsqOkjB7w@mail.gmail.com>
-From:   Chengfeng Ye <dg573847474@gmail.com>
-Date:   Wed, 5 Jul 2023 00:18:00 +0800
-Message-ID: <CAAo+4rV1gFhCpS0=bQa-nBmDLrQ2tensXii5GDfEkTb=9SvbhA@mail.gmail.com>
-Subject: Re: [PATCH] watchdog: s3c2410: Fix potential deadlock on &wdt->lock
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     alim.akhtar@samsung.com, wim@linux-watchdog.org,
-        linux@roeck-us.net, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Please kindly note that I am resending the last email since it did not
-reach maillist.
+SIMPLE_DEV_PM_OPS is deprecated, replace it with DEFINE_SIMPLE_DEV_PM_OPS
+and use pm_sleep_ptr for setting the driver's pm routines. We can now
+remove the __maybe_unused qualifier in the suspend and resume functions.
 
-> Hi, Krzysztof
-> Thanks for the reply.
-> > This interrupt is a threaded interrupt. Therefore the
-> > s3c2410wdt_keepalive() will be called again from process thread. Are you
-> > sure there is deadlock?
-> Is it really that s3c2410wdt_irq is a threaded interrupt? I could be wrong but I can
-> see that the interrupt is registered via the following code. It is the third argument
-> of devm_request_irq but not devm_request_threaded_irq or request_threaded_irq,
-> as far as I know, it should be an interrupt handler for the interrupt line wdt_irq
-> executed under irq context.
-> ret = devm_request_irq(dev, wdt_irq, s3c2410wdt_irq, 0, pdev->name, pdev);
-> > Anyway, please also strip unrelated paths and rather use function names,
-> > not references to lines, because these might be not accurate.
-> No problem, I will provide a new patch with the function name soon.
-> Best Regards,
-> Chengfeng
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+---
+compile-tested only
+
+ drivers/char/hw_random/exynos-trng.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_random/exynos-trng.c
+index 9cc3d542dd0f..30207b7ac5f4 100644
+--- a/drivers/char/hw_random/exynos-trng.c
++++ b/drivers/char/hw_random/exynos-trng.c
+@@ -185,14 +185,14 @@ static int exynos_trng_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused exynos_trng_suspend(struct device *dev)
++static int exynos_trng_suspend(struct device *dev)
+ {
+ 	pm_runtime_put_sync(dev);
+ 
+ 	return 0;
+ }
+ 
+-static int __maybe_unused exynos_trng_resume(struct device *dev)
++static int exynos_trng_resume(struct device *dev)
+ {
+ 	int ret;
+ 
+@@ -205,7 +205,7 @@ static int __maybe_unused exynos_trng_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static SIMPLE_DEV_PM_OPS(exynos_trng_pm_ops, exynos_trng_suspend,
++static DEFINE_SIMPLE_DEV_PM_OPS(exynos_trng_pm_ops, exynos_trng_suspend,
+ 			 exynos_trng_resume);
+ 
+ static const struct of_device_id exynos_trng_dt_match[] = {
+@@ -219,7 +219,7 @@ MODULE_DEVICE_TABLE(of, exynos_trng_dt_match);
+ static struct platform_driver exynos_trng_driver = {
+ 	.driver = {
+ 		.name = "exynos-trng",
+-		.pm = &exynos_trng_pm_ops,
++		.pm = pm_sleep_ptr(&exynos_trng_pm_ops),
+ 		.of_match_table = exynos_trng_dt_match,
+ 	},
+ 	.probe = exynos_trng_probe,
+-- 
+2.30.2
+
