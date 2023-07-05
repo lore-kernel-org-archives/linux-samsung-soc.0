@@ -2,64 +2,64 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B63C001B0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 13:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E84DAC001DE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 13:57:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232170AbjGENzg (ORCPT
+        id S231865AbjGEN5Q (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Jul 2023 09:55:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56066 "EHLO
+        Wed, 5 Jul 2023 09:57:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232449AbjGENza (ORCPT
+        with ESMTP id S231384AbjGEN5Q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Jul 2023 09:55:30 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3016D19AE
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jul 2023 06:55:27 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-314172bb818so7605888f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Jul 2023 06:55:27 -0700 (PDT)
+        Wed, 5 Jul 2023 09:57:16 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22BBE11B
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jul 2023 06:57:14 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-3113da5260dso7339147f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Jul 2023 06:57:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688565325; x=1691157325;
+        d=linaro.org; s=google; t=1688565432; x=1691157432;
         h=content-transfer-encoding:in-reply-to:organization:references:cc:to
          :content-language:subject:reply-to:from:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=QDtJCKqfKjcaKFw75l+br9FSk3/UDaoY4ROK4bND+g4=;
-        b=bMY4zcmVkRkJZuGTA/33qY4pDQWVLuUTDNqW/Ux6jP9erW+UhwIf8QtmjuEgBm2vsv
-         ghUmFqo7e48R9GIW9Tv1zVyXNUmvK/H7vYx8tZ73fxSftzxvB0D/fENKY5xY+uUVP2gK
-         oxS8XvPWaS326vR+V8PJvOIhZr59gE5i7ZPhyRlgpf6FGMihAysHqNhkw2MzhxKQRYQ+
-         ynmXBDhPXypo8gW7b0viowmjJanw3tmV74qmbkMLTP2pFGg3Q3llS3m75Qat1+yR6y34
-         8WiXgiGWQpcBc+BprKeMv3lLlUkl4A8DdI/0xx2+VNWrtvOTpHozakUvW7U7TI+dG7Y4
-         NncA==
+        bh=vpsssEPmpajsdnttO+o6S0QxmmSISUMu1xjEBKdnavk=;
+        b=fD71TGTj9jsY0UXWe1YPxNQrgKHIBCFFVo4LqQx2+K/2cTGPHFlq79aRE47A/ZItFd
+         6XyygQZ/vXwtQNJX/HTbSduyvXmSH7sf3x9GybmS2clBIMBvzCcZZczmmdTWoyV4YBSE
+         4aFq6AHV7zb/rZhvTIPupJCK11S2uKUYJAXZ7YgSAimNCxydK1GV11RehdCt9EZ9LhtI
+         kfnQC2YWcqFqm26EjEVrHpiAWiJhgTrOHFIbcrxTZ0x0p5D4CoxxnAc9hRYpa+3Fr538
+         zmoRXKtxuk06B74XQLvcgaF+XsMlKgfAHf+P675k5wTM7jKYX/9SbO2ZtiYdjsiZq9nH
+         AAbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688565325; x=1691157325;
+        d=1e100.net; s=20221208; t=1688565432; x=1691157432;
         h=content-transfer-encoding:in-reply-to:organization:references:cc:to
          :content-language:subject:reply-to:from:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QDtJCKqfKjcaKFw75l+br9FSk3/UDaoY4ROK4bND+g4=;
-        b=BPVNd0zwZPNfjmIz+iUP2FFDUs8c3CMDtpxqezRtQWp2Ybq1ZrmeEVB+b5zzHHO29c
-         hsQfHCx6zN54y67e0Cgy6uTlrSuH2ehh1EJBdCHYjFGc3jGTsKBmNnPYFj5EQvvv//+T
-         K0omPpm2woCa7R8dcG7BHaRtXV9rBd8OrVGIbjZckrmDf6etXcJqKdFzJ9yMydU3iX8i
-         vv1c5MwzvhQOhOmrLhNt+TvJZVQV2Otm30OB6kR2pyA2ZYiYQIGbTxQMw63CmLbHdWan
-         BZ39iErJfobboI6DAnBSLxGRbDdnnwWXid+SooVLKrrfuq7FGGZwo5ndyUOs3sDJMNeI
-         OWmA==
-X-Gm-Message-State: ABy/qLYAP8kYRHOIS3GnpZAke7qR8YQfQs54PDO/CCZQvK3ZC8et9zA2
-        HOO7fQD6Wg7i+YzJ63J9UvxX6w==
-X-Google-Smtp-Source: APBJJlEDj7353XXfmQuL/K85xJsW2fbnWCsuq5RfNgpui++UqX0DPWU+I7uxm15VgnfHX9RGnjKMLg==
-X-Received: by 2002:adf:e747:0:b0:314:2f5b:2ce with SMTP id c7-20020adfe747000000b003142f5b02cemr10156381wrn.12.1688565325537;
-        Wed, 05 Jul 2023 06:55:25 -0700 (PDT)
+        bh=vpsssEPmpajsdnttO+o6S0QxmmSISUMu1xjEBKdnavk=;
+        b=eXPnbASJs658OBe3KrIgCP0fsgfZFeOY/rMmbozJj8p5HcQXXmiQxvc+QHWgj/mm7y
+         pX2H27WXq4MnuSi9xNzpWxuYRAg11ZBqqblBz89Fbl70oXWc5V1TSQ7AiKdEducTbPvK
+         U2vIHF5zOfqiLN57gmN5sUmf0FGHc7vCvsxNmqISkq3r4HhgsFcTFjpE8m0T4WUyofKJ
+         sTNL7kwHb9DcvIBW+SKiorK6aJ/ZRaeQKby+6wGMC5Nfm1pi8IpRguZWOd4glN4J/gs4
+         JFkKrlGMgTCHR4JV/yKDtC3WK2JKlUeWmh0iqPhzWYtWSF/Tdnzm4OWNsVieW0oTXuIG
+         GSbA==
+X-Gm-Message-State: ABy/qLb4esm6FyW8HBHc01QDARBRB0aX0Sixj0vKAtAK8srqbewP8Her
+        0ZqOa8a2jeY/8negkoj/1huQtQ==
+X-Google-Smtp-Source: APBJJlH2dsA5o6+F7TnmKCeRS52ZywTNpTZxfxsv8glLGMhJN/IETOKgQmhOy4erRIAKsJmydhhq3g==
+X-Received: by 2002:a5d:452f:0:b0:314:35c2:c4aa with SMTP id j15-20020a5d452f000000b0031435c2c4aamr7986708wra.8.1688565432505;
+        Wed, 05 Jul 2023 06:57:12 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:982:cbb0:65eb:d140:2d45:ee85? ([2a01:e0a:982:cbb0:65eb:d140:2d45:ee85])
-        by smtp.gmail.com with ESMTPSA id u11-20020adfdd4b000000b003143765e207sm8251847wrm.49.2023.07.05.06.55.24
+        by smtp.gmail.com with ESMTPSA id u13-20020a5d514d000000b0030e56a9ff25sm30867700wrt.31.2023.07.05.06.57.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jul 2023 06:55:25 -0700 (PDT)
-Message-ID: <f7bf6f1a-1cc6-55e3-82a2-ecc6818be5c4@linaro.org>
-Date:   Wed, 5 Jul 2023 15:55:24 +0200
+        Wed, 05 Jul 2023 06:57:11 -0700 (PDT)
+Message-ID: <194ac047-b20e-04c1-1d96-67cc483bb4a1@linaro.org>
+Date:   Wed, 5 Jul 2023 15:57:11 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
 From:   Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 1/3] drm/panel: ld9040: Use better magic values
+Subject: Re: [PATCH 2/3] drm/panel: ld9040: Register a backlight device
 Content-Language: en-US
 To:     Paul Cercueil <paul@crapouillou.net>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -71,66 +71,94 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org
 References: <20230703214715.623447-1-paul@crapouillou.net>
- <20230703214715.623447-2-paul@crapouillou.net>
+ <20230703214715.623447-3-paul@crapouillou.net>
 Organization: Linaro Developer Services
-In-Reply-To: <20230703214715.623447-2-paul@crapouillou.net>
+In-Reply-To: <20230703214715.623447-3-paul@crapouillou.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi
-
 On 03/07/2023 23:47, Paul Cercueil wrote:
-> I have no idea what the prior magic values mean, and I have no idea
-> what my replacement (extracted from [1]) magic values mean.
-> 
-> What I do know, is that these new values result in a much better
-> picture, where the blacks are really black (as you would expect on an
-> AMOLED display) instead of grey-ish.
-> 
-> [1] https://github.com/dorimanx/Dorimanx-SG2-I9100-Kernel/blob/master-jelly-bean/arch/arm/mach-exynos/u1-panel.h
+> Register a backlight device to be able to switch between all the gamma
+> levels.
 > 
 > Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 > ---
->   drivers/gpu/drm/panel/panel-samsung-ld9040.c | 11 ++++++-----
->   1 file changed, 6 insertions(+), 5 deletions(-)
+>   drivers/gpu/drm/panel/panel-samsung-ld9040.c | 40 ++++++++++++++++++++
+>   1 file changed, 40 insertions(+)
 > 
 > diff --git a/drivers/gpu/drm/panel/panel-samsung-ld9040.c b/drivers/gpu/drm/panel/panel-samsung-ld9040.c
-> index 01eb211f32f7..7fd9444b42c5 100644
+> index 7fd9444b42c5..b4f87d6244cb 100644
 > --- a/drivers/gpu/drm/panel/panel-samsung-ld9040.c
 > +++ b/drivers/gpu/drm/panel/panel-samsung-ld9040.c
-> @@ -180,17 +180,18 @@ static void ld9040_init(struct ld9040 *ctx)
->   {
->   	ld9040_dcs_write_seq_static(ctx, MCS_USER_SETTING, 0x5a, 0x5a);
->   	ld9040_dcs_write_seq_static(ctx, MCS_PANEL_CONDITION,
-> -		0x05, 0x65, 0x96, 0x71, 0x7d, 0x19, 0x3b, 0x0d,
-> -		0x19, 0x7e, 0x0d, 0xe2, 0x00, 0x00, 0x7e, 0x7d,
-> -		0x07, 0x07, 0x20, 0x20, 0x20, 0x02, 0x02);
-> +		0x05, 0x5e, 0x96, 0x6b, 0x7d, 0x0d, 0x3f, 0x00,
-> +		0x00, 0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +		0x07, 0x05, 0x1f, 0x1f, 0x1f, 0x00, 0x00);
->   	ld9040_dcs_write_seq_static(ctx, MCS_DISPCTL,
-> -		0x02, 0x08, 0x08, 0x10, 0x10);
-> +		0x02, 0x06, 0x0a, 0x10, 0x10);
->   	ld9040_dcs_write_seq_static(ctx, MCS_MANPWR, 0x04);
->   	ld9040_dcs_write_seq_static(ctx, MCS_POWER_CTRL,
->   		0x0a, 0x87, 0x25, 0x6a, 0x44, 0x02, 0x88);
-> -	ld9040_dcs_write_seq_static(ctx, MCS_ELVSS_ON, 0x0d, 0x00, 0x16);
-> +	ld9040_dcs_write_seq_static(ctx, MCS_ELVSS_ON, 0x0f, 0x00, 0x16);
->   	ld9040_dcs_write_seq_static(ctx, MCS_GTCON, 0x09, 0x00, 0x00);
->   	ld9040_brightness_set(ctx);
-> +
-
-You can drop this spurious new line for v2
-
->   	ld9040_dcs_write_seq_static(ctx, MIPI_DCS_EXIT_SLEEP_MODE);
->   	ld9040_dcs_write_seq_static(ctx, MIPI_DCS_SET_DISPLAY_ON);
+> @@ -8,6 +8,7 @@
+>    * Andrzej Hajda <a.hajda@samsung.com>
+>   */
+>   
+> +#include <linux/backlight.h>
+>   #include <linux/delay.h>
+>   #include <linux/gpio/consumer.h>
+>   #include <linux/module.h>
+> @@ -311,8 +312,40 @@ static int ld9040_parse_dt(struct ld9040 *ctx)
+>   	return 0;
 >   }
+>   
+> +static int ld9040_bl_update_status(struct backlight_device *dev)
+> +{
+> +	struct ld9040 *ctx = dev_get_drvdata(&dev->dev);
+> +
+> +	ctx->brightness = dev->props.brightness;
+> +	ld9040_brightness_set(ctx);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ld9040_bl_get_intensity(struct backlight_device *dev)
+> +{
+> +	if (dev->props.fb_blank == FB_BLANK_UNBLANK &&
+> +			dev->props.power == FB_BLANK_UNBLANK)
+> +		return dev->props.brightness;
+> +
+> +	return 0;
+> +}
 
-And add
-
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+You can totally drop the _get_brightness.
 
 Neil
+
+> +
+> +static const struct backlight_ops ld9040_bl_ops = {
+> +	.get_brightness = ld9040_bl_get_intensity,
+> +	.update_status  = ld9040_bl_update_status,
+> +};
+> +
+> +static const struct backlight_properties ld9040_bl_props = {
+> +	.type = BACKLIGHT_RAW,
+> +	.scale = BACKLIGHT_SCALE_NON_LINEAR,
+> +	.max_brightness = ARRAY_SIZE(ld9040_gammas) - 1,
+> +	.brightness = ARRAY_SIZE(ld9040_gammas) - 1,
+> +};
+> +
+>   static int ld9040_probe(struct spi_device *spi)
+>   {
+> +	struct backlight_device *bldev;
+>   	struct device *dev = &spi->dev;
+>   	struct ld9040 *ctx;
+>   	int ret;
+> @@ -354,6 +387,13 @@ static int ld9040_probe(struct spi_device *spi)
+>   	drm_panel_init(&ctx->panel, dev, &ld9040_drm_funcs,
+>   		       DRM_MODE_CONNECTOR_DPI);
+>   
+> +
+> +	bldev = devm_backlight_device_register(dev, dev_name(dev), dev,
+> +					       ctx, &ld9040_bl_ops,
+> +					       &ld9040_bl_props);
+> +	if (IS_ERR(bldev))
+> +		return PTR_ERR(bldev);
+> +
+>   	drm_panel_add(&ctx->panel);
+>   
+>   	return 0;
+
