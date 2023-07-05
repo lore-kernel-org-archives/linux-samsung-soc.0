@@ -2,30 +2,30 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0EA6EB64DD
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 20:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B26C6C0015E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 20:48:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233889AbjGEUpp (ORCPT
+        id S234079AbjGEUs5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Jul 2023 16:45:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48920 "EHLO
+        Wed, 5 Jul 2023 16:48:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233930AbjGEUpj (ORCPT
+        with ESMTP id S234090AbjGEUsy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Jul 2023 16:45:39 -0400
+        Wed, 5 Jul 2023 16:48:54 -0400
 Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D591BD8;
-        Wed,  5 Jul 2023 13:45:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FA0119B;
+        Wed,  5 Jul 2023 13:48:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1688589820;
+        s=mail; t=1688589932;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=g6vjt2izK19oSi33JhUJpysHlzW8ZjJUpjtvGXmKD7c=;
-        b=CxMzmr4y+mcbZcS8jZWQWeUlWvAe7HpbDeQrpTiL5r7NjcUDsCS8lBxODFN/Zauhx0M8dt
-        mvqJ2p9RWo/hFNeFGhRNN26W1GdPg2NJ2MNJNxJFc1Vmu9+2uFunS6zjHynj4aA4Duu2+X
-        tjz6gep4rn3uowpN3jPP2QK+qJLqJkI=
+        bh=Dd7kJehD/sxOz38mxb1O6og++o78tUkBbMzQnSlqq3U=;
+        b=ebydb06n8lqrvr3AtowfN8t44XnZkga/icMCWbGlov+nL8WQGp7F+nQpgqO3QqCJz2/0Ud
+        hr7q30x050GYzxQ87GRTINrdVla4YahJ6xZXJZepUvf/ByLBooMKFVH1YeO66/ek7u+/k3
+        90E3xdN5EAXTlldQFwuQh4cLZPCkCnU=
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Wolfram Sang <wsa@kernel.org>
 Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -34,11 +34,12 @@ Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 07/23] i2c: exynos5: Remove #ifdef guards for PM related functions
-Date:   Wed,  5 Jul 2023 22:42:58 +0200
-Message-Id: <20230705204314.89800-8-paul@crapouillou.net>
-In-Reply-To: <20230705204314.89800-1-paul@crapouillou.net>
+Subject: [PATCH 20/23] i2c: s3c2410: Remove #ifdef guards for PM related functions
+Date:   Wed,  5 Jul 2023 22:45:18 +0200
+Message-Id: <20230705204521.90050-2-paul@crapouillou.net>
+In-Reply-To: <20230705204521.90050-1-paul@crapouillou.net>
 References: <20230705204314.89800-1-paul@crapouillou.net>
+ <20230705204521.90050-1-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -61,42 +62,49 @@ Cc: Alim Akhtar <alim.akhtar@samsung.com>
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org
 ---
- drivers/i2c/busses/i2c-exynos5.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/i2c/busses/i2c-s3c2410.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index f378cd479e55..5b201a326c13 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -892,7 +892,6 @@ static void exynos5_i2c_remove(struct platform_device *pdev)
- 	clk_unprepare(i2c->pclk);
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 28f0e5c64f32..d23a9e7fcb48 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1125,7 +1125,6 @@ static void s3c24xx_i2c_remove(struct platform_device *pdev)
+ 	i2c_del_adapter(&i2c->adap);
  }
  
 -#ifdef CONFIG_PM_SLEEP
- static int exynos5_i2c_suspend_noirq(struct device *dev)
+ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
  {
- 	struct exynos5_i2c *i2c = dev_get_drvdata(dev);
-@@ -934,11 +933,10 @@ static int exynos5_i2c_resume_noirq(struct device *dev)
- 	clk_disable_unprepare(i2c->pclk);
- 	return ret;
+ 	struct s3c24xx_i2c *i2c = dev_get_drvdata(dev);
+@@ -1155,26 +1154,19 @@ static int s3c24xx_i2c_resume_noirq(struct device *dev)
+ 
+ 	return 0;
  }
 -#endif
  
- static const struct dev_pm_ops exynos5_i2c_dev_pm_ops = {
--	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(exynos5_i2c_suspend_noirq,
--				      exynos5_i2c_resume_noirq)
-+	NOIRQ_SYSTEM_SLEEP_PM_OPS(exynos5_i2c_suspend_noirq,
-+				  exynos5_i2c_resume_noirq)
+-#ifdef CONFIG_PM
+ static const struct dev_pm_ops s3c24xx_i2c_dev_pm_ops = {
+-	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(s3c24xx_i2c_suspend_noirq,
+-				      s3c24xx_i2c_resume_noirq)
++	NOIRQ_SYSTEM_SLEEP_PM_OPS(s3c24xx_i2c_suspend_noirq,
++				  s3c24xx_i2c_resume_noirq)
  };
  
- static struct platform_driver exynos5_i2c_driver = {
-@@ -946,7 +944,7 @@ static struct platform_driver exynos5_i2c_driver = {
- 	.remove_new	= exynos5_i2c_remove,
+-#define S3C24XX_DEV_PM_OPS (&s3c24xx_i2c_dev_pm_ops)
+-#else
+-#define S3C24XX_DEV_PM_OPS NULL
+-#endif
+-
+ static struct platform_driver s3c24xx_i2c_driver = {
+ 	.probe		= s3c24xx_i2c_probe,
+ 	.remove_new	= s3c24xx_i2c_remove,
+ 	.id_table	= s3c24xx_driver_ids,
  	.driver		= {
- 		.name	= "exynos5-hsi2c",
--		.pm	= &exynos5_i2c_dev_pm_ops,
-+		.pm	= pm_sleep_ptr(&exynos5_i2c_dev_pm_ops),
- 		.of_match_table = exynos5_i2c_match,
+ 		.name	= "s3c-i2c",
+-		.pm	= S3C24XX_DEV_PM_OPS,
++		.pm	= pm_sleep_ptr(&s3c24xx_i2c_dev_pm_ops),
+ 		.of_match_table = of_match_ptr(s3c24xx_i2c_match),
  	},
  };
 -- 
