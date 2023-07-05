@@ -2,150 +2,140 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C2B1C0015E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 13:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7037AEB64DA
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 13:52:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232139AbjGENEn (ORCPT
+        id S232458AbjGENwo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Jul 2023 09:04:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57330 "EHLO
+        Wed, 5 Jul 2023 09:52:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232117AbjGENEi (ORCPT
+        with ESMTP id S232435AbjGENwd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Jul 2023 09:04:38 -0400
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2102.outbound.protection.outlook.com [40.107.215.102])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38B39DA;
-        Wed,  5 Jul 2023 06:04:37 -0700 (PDT)
+        Wed, 5 Jul 2023 09:52:33 -0400
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2122.outbound.protection.outlook.com [40.107.117.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FB6C19A6;
+        Wed,  5 Jul 2023 06:52:24 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Yg2Ic404T1/tDzjKxho71QnKy5GRhQw0iOhN8EDVEteYqjSWimY2jsDo4VCx3JbXxTjIbOfUAW42NxrDaHrTQwZZX6qsKCRVpySCkcNbguBZI3ZGlrCXkr33qd9tp3lRxuT5uDyJDaQUVAI5fuiIS9Wpwjw6UjHA4b5Qq8Kq9tudYaSyUrj3PNGVsOs3IQfIGD4X+8rM1X/wAsUYq/epPBwgCy39xEZqvgb3epvONI6DaeFiOVu0AQVJ57Ri1f1W7Wg6Lj/A4gj+xHkzUD7RP80nSciHImykWm6FqZz1P5TLpL2FRzmSA8VerC5Cb/aYK9Pwajf8pSFTQuDL664kpg==
+ b=IzGPHifEPhEDp66U5GhJtqT3heu/dSX4QfUaCZ0T5VdwpTigkzDnp8eepKHpOF/gVCNhOKZMdSs1w6i+W6Z1jQUjqywuSXc0uLWpIcAtmkcENWnurGxp0nFiQyjZlYdI0ApFGRhj98ELO3Z3VZ1ZEc8z4YuKqP48k4CVCb9mTMkBtniHQnVCtIilrsryw/IR2X7eJSK/03jNZ5LRb8m0xhqr3PvzCdZA4l8MyP+XfOseUpjTH0UcSmiQx14Oy+XqmnlaOAn5BJ9BdmjtSE+TOD0PelmkAwwhynE97aD5UxLlz0w9UapXb2cqbvNWCCi3w4CMo+GWlbRksXEfUIfK4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z5jXm6dQN4RzzpE/swXSXXJbHtqjwIw1Ubsqg5yY/O4=;
- b=Q4lyEvZcXuof7FTofeeu1t9Q0puvikEPp5HeFt4j800oS+cM+418RewS0J+6N52AIDcARGOVxZpg0FjciD3o7C0JLYUxTh5yRhveoWqp/x/P/2lFFsZeFqCfOtakKAbpdY+tOTm2dvMvslsxqud/sOcrrOXEwEN8dEdoRpQO1Dgh5ji8r+duxl1ie4wPQfvbRHKVJiStwtfdv4tmWfW9V3VmY9JNutLmrm+SQEV1E6umfNXyf51e8dXS1KQP/rdlDko4K7xdiegOt9touvzACBjc4845+UAtCGx/UNbbc+pmOrlBodMOw8Gy0jlzFPuGw18z9zABAIvjRMyb8moZvg==
+ bh=zi6TzN2hL0vt3qrUYbV1lXQWxJA8TiWxiQ0uLCPdZRg=;
+ b=UifFbtDbyDEQAsQchqEbm1QHI6RcrUkKDyxWur508VQWKk/ZYG1DnY545Ibmv052D+gTwH+obLn1a8Es6WBT/uJ4Mes0BUo54UQlmSPjTUsvZzr6h91teLPhGVSk2XQzowg7C6RD1iEuJAqRvzWYuaec29kqXpRETJv1zT86lZU29RkRmbqJ7cI6QnUSxmfPW0lLj17qDPcIV6jfy1kS0KTJRQRBNnwQtolAm2DjPoANZx6EzU2CyRe2k84wLloGzYNMS/vU3GRH+WAHYfcaS+iD7URdD71jUaE1G/OSriBNoxOo36v2FmBS0Dvcy/vMTK1H2tHw9ro6vPk8fLuZJg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
  dkim=pass header.d=vivo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z5jXm6dQN4RzzpE/swXSXXJbHtqjwIw1Ubsqg5yY/O4=;
- b=lzDFXV5RTx+r0DgJbNtyV3lexa658Pa1oQkrgGWgGGjsXOxAq2Uu+eEHgJY0ITTquMQXlh38LJRHCeXL1w9mK0xPIp3sxnlWEQUFRV8gJkdG5PpS2aB6P2l2YIAkzXQJIEzBu5ZzQizw7w6D5puXxYrD5hHf02YKFUj2RUpzr7G5hK8Ld6J6U/U50DCluug70c7R7OGGRmLzpDSIwdGyEkYHbtPDU96MMz/TN289K/to3N/Zjao/KApBkSeDtO4IFyziFmpW5bLJlmS6brDuf7TNd/6y19Kp5dsY5T0d+LXUnMYC5RfMt6s83K06exdtYNkB7/Jsu3XefznW4DKosQ==
+ bh=zi6TzN2hL0vt3qrUYbV1lXQWxJA8TiWxiQ0uLCPdZRg=;
+ b=kjGUwEVJH23JEQJc1Wl0KsfWXx6+9mNa3vxujHdnojSQSvItP2mUc8fUuL2JHKimHAiqX/EXg6xPeGb1r0vsQDI76sxuP/Va+TEFXfBHqUdG881MRnoZiTFhzguvsKwUBWR6kwOnyxSXe9y343mMlKfO9jb+s6EUCDJGOLbO+pUHnMEwK6KdzRI4glpKB9/0Kg5gSH6USMdljRn/uaDuupNKAMXF9bIL/JyCmdjwX2C2dxP7WP1FdHC7pgqtktCiVmKDDJlo54KON4iNKU19FBEMy7GoqUH483iLjWY6awn6MZ/S/q5cR65MMxcXLh9mdI165zb18REF6oeFtxDhmg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=vivo.com;
 Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by SEYPR06MB5891.apcprd06.prod.outlook.com (2603:1096:101:d4::14) with
+ by PSAPR06MB3991.apcprd06.prod.outlook.com (2603:1096:301:38::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6565.17; Wed, 5 Jul
- 2023 13:04:34 +0000
+ 2023 13:52:19 +0000
 Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
  ([fe80::fa0e:6c06:7474:285c]) by SEZPR06MB5269.apcprd06.prod.outlook.com
  ([fe80::fa0e:6c06:7474:285c%5]) with mapi id 15.20.6565.016; Wed, 5 Jul 2023
- 13:04:34 +0000
+ 13:52:19 +0000
 From:   Yangtao Li <frank.li@vivo.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     Yangtao Li <frank.li@vivo.com>, iommu@lists.linux.dev,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Andi Shyti <andi.shyti@kernel.org>
+Cc:     Yangtao Li <frank.li@vivo.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] iommu/exynos: Convert to devm_platform_ioremap_resource()
-Date:   Wed,  5 Jul 2023 21:04:14 +0800
-Message-Id: <20230705130416.46710-4-frank.li@vivo.com>
+        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 09/11] i2c: s3c2410: Use devm_platform_get_and_ioremap_resource()
+Date:   Wed,  5 Jul 2023 21:51:56 +0800
+Message-Id: <20230705135159.33327-9-frank.li@vivo.com>
 X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230705130416.46710-1-frank.li@vivo.com>
-References: <20230705130416.46710-1-frank.li@vivo.com>
+In-Reply-To: <20230705135159.33327-1-frank.li@vivo.com>
+References: <20230705135159.33327-1-frank.li@vivo.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0057.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::10) To SEZPR06MB5269.apcprd06.prod.outlook.com
+X-ClientProxiedBy: TYCPR01CA0049.jpnprd01.prod.outlook.com
+ (2603:1096:405:2::13) To SEZPR06MB5269.apcprd06.prod.outlook.com
  (2603:1096:101:78::6)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|SEYPR06MB5891:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2cd66c90-37c7-449a-00f9-08db7d5860e4
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|PSAPR06MB3991:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5bda0aaf-8e40-41dc-5f41-08db7d5f0c88
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: pDObYfuZ5kpprLtC+PmSuY/iwzVb//Y1blheAQmldHadrHNqeMMzYwPXyXFJA4c7Rk7khNhQw6JqZEN4YG2AcKkvDws4ZxO4UscnXspy5PSKQk7NPeMKr7RuFMo/8trGsiLvLjeyxz11bmYRad8PWJFTCTWwjhBA1cLs+LPw/VVY6D0ZL0vMskSkYhfj/F0v3gdtB3xg3u0A0velpZhuauFizTKGbhnOonk50Sckscrk4Z+rPY9Iq4vMEpYFxAXESvxj1fLOaUu+KXa6+H/vMVy/fRuPzh2hG0e4XChfRP4zvY/oOKDA/zA4dFI/dZuwNsmKnVNbt50X+K2DKNS76780bLCE3Mcp3jGZabqFqrapCbWKpeHff9QqDZ5z7RJc2kOnDIRVJ352fEtkGpSa9ALcyDK2QKffrE4R5BFa/2JqeekPPrTTyj6mk+yxreZ2y/1TvC/3ZdDJKrRhhsVQQRqo0gbnxtlRiz4+7SsHGQ0WaddF1jNXDzQ2C3+MSjiREH8ryDqOihTMEoZHsmi8kHhm0YKKAYNGD9dVUHo5gUwOznPSeEgdVkuOyL2IbI92cPqnvqFM3gENIykcWxfKayHb7GDag519g3OG+4TSDp6xnUJpZue2T+qUNFhGIxky
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(366004)(346002)(136003)(39860400002)(376002)(451199021)(478600001)(52116002)(6486002)(6666004)(110136005)(66946007)(186003)(6506007)(1076003)(26005)(6512007)(66556008)(2906002)(41300700001)(4326008)(66476007)(316002)(7416002)(5660300002)(8936002)(8676002)(38100700002)(38350700002)(86362001)(36756003)(83380400001)(2616005);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: HSw2htB2RHaqDULWqcb2VGHP+X5CcwmuhsodCWIWjREcgQIh7i/HbEsmDDGjkz6U1cG2JY5cDMR6D0sUcBy9FFTmpFpcaossYYQ/hPhvcCtybA/AxS413PzlJBVjQprfSbXmUlcdSsKNkS03RNNRszoAaFp2Mg0dtxhk28nipZrS70aGkecoVPlnBKaFDYcV/I0l3WZ9xn9HEn7PfAiQI4xWAczniRqm2euZNY6e/jL/nDKIMJLPtB2lVRxx5dfRfexBJ6Ksai8D0MoJz2BIEDP1LWIlU6m/DZrkYShq+XxNsUx0Tojyakb0jQQUeAhbKvD0bW7zb4NnLHrXjdjPScjcvCMGx/d+186ci7MbVy4kXx7RWrUZxeVBnchHOSDD7WS3LrtdLIBteFGyOFzJ5pCnStvUS1Kh4bg/gaF+QJuu2eAcHvHjdXK/vyiCmXseOvyzIO6JYsv1Tv7NUfCRr1zaGUUuQLYP8oB08nlyyiiF3FQvMYjlEpRIAsVmm4IhcD6gWDtZ9OSMdSvUYrhz5PiT0LaM/O4CvKRczuJ8AtOmROQPt/mj0T4ZiP8AU3CO8P0vA+bjJW9932Q07nvDcVQsXqxJyurf2qjrDs3DogErjmGIisLt/NJDXjIzDNBO
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(366004)(346002)(136003)(376002)(39860400002)(451199021)(38100700002)(38350700002)(66476007)(66556008)(4326008)(66946007)(2616005)(186003)(86362001)(6486002)(52116002)(6666004)(36756003)(6512007)(26005)(6506007)(478600001)(110136005)(1076003)(8936002)(8676002)(4744005)(5660300002)(316002)(2906002)(41300700001)(83380400001);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+2YCRJ7x+P9J/m/eIz6uVUrDbGz1iItdMgkVznr50Cv6a6pud4E8ZXT4yIfX?=
- =?us-ascii?Q?F1nbqL30nM1d/NOXEcncyitObqjAmMAAUffOu89sK0vzPFzFJfaQyixUfQ9s?=
- =?us-ascii?Q?czOxDIAun7dk98YUFeBTq6ESZSdDfUiFSEyKZ14zn+zUEgV667wx+IZyRq4E?=
- =?us-ascii?Q?+CUz8cJ+8Ddo45q5JFwhtxv+4POlj/CdNIUnqHAMS2oBPf23F2laLOTcVLGv?=
- =?us-ascii?Q?vAlkNcB2B/p0wDcISDz9qbHnnRyEngxfcSrMz5f60tBnpY98istk5Lq/JnZf?=
- =?us-ascii?Q?A+u6hyb2C5eUo/dcxtf43WA78NpKN7t6nGQi7s43bN697+3XBUhbNRuejivk?=
- =?us-ascii?Q?1v+MYZulxi9W+5ry41d0lJBoRNACNqiyd4kDYTXK1kjU7OfSxSp2pJoI4BwT?=
- =?us-ascii?Q?kIpcAD0FlzSX2gZE9dU52SPibmUOX3rFc7cwkvVla+XGPAcByY7BCS6KmnJR?=
- =?us-ascii?Q?mdg3MHW5KqIpwn6Nzq/mw0VxABEEgev3J7PrVr1VX7TDnEpWzCgBi2dPaCxd?=
- =?us-ascii?Q?ptkOln/bx1SlruJyn0/4hhXowy/rtkAJRc6moG4LioF2Zx5t1NHf3ncNzEXt?=
- =?us-ascii?Q?E/qcT2IFyHFU/6dNYze47VRVbAlyrqY9MXxynGy0VouthKKxe09pWpcumwqT?=
- =?us-ascii?Q?qqTsPpDWQWebkGUHDlNFFZ2qcXoq+KBN3RyfIYsiKTpZzdMH0qkov0YQhS38?=
- =?us-ascii?Q?9s553Q2rLFyC79/P+TNwxP2ruzjFYfLwVRJgYLpQrFTE9mCqIfegZ0YRKocQ?=
- =?us-ascii?Q?piVn6UKtEpdKx8YA5On4QV3j2NIXAgo/kCN0ohmoURxKaijSEoD9e1KO38io?=
- =?us-ascii?Q?qDYYJ7lXcO1wOK5I+n9XyuBvFyY2aSoks1an6Ei0po+Mh5Hx+SvoELKVhDw1?=
- =?us-ascii?Q?5Y/a1vvtmjxY2RJoCKazmt65bAj6k93ql34j6m532lAYJFvDsr2b052U9kSZ?=
- =?us-ascii?Q?fPwv9i8lXBy6V3F3UgUSKZX50PJbtDYUVkrs2w8TDlAYGGuPvZltFoTT1T3R?=
- =?us-ascii?Q?+diJGZliKs54exYQtpMLSpadQSKSzUBxfaiI5nP3Zb8ajAGMMk6ht+ugOz9M?=
- =?us-ascii?Q?foq0bmj1SqA8gtzc/TdHjL0/ssSWXVn1VVkR1tNkzThmhiD8mU8UF72b9j4l?=
- =?us-ascii?Q?ZtKiFQHo9LlOHcTWeVCc6vpxLZxsej+jJIOYeFTzwpkazmNyYjub+MiGiqbA?=
- =?us-ascii?Q?TD8FMGU8xDsbCp0bQGcdxiYyK75m34Z2QhX9tLAOQoXs4+OEe0QyIjCWY7ua?=
- =?us-ascii?Q?siZG4dlPGey8bRwPaDJ/QyWtLF0Ag8OobovhzBYz8KK5/9d39DVInzhH0oc9?=
- =?us-ascii?Q?pbFvDfghbiJNAwMDIw9J1ZMqHDqyc5USVJp+Ab3uHzD0B2+5/TNY1NCtyFRv?=
- =?us-ascii?Q?+8dYLfk8ebkkRCNfCy9C6bStCKBdMs2big8H5KS3YegKag4eIxwEzaJigBs+?=
- =?us-ascii?Q?d9zWiJ11FPlEvWRHdp2Affq1FvxXb++jcrWzmya1+zeHNvejlZQ9eHqcZGUL?=
- =?us-ascii?Q?x1dD0GF+4WHIz9iIy2n6rxgwRZWXMZXyfmDdhqHdIvbzGsnKTkq5tiDCVe6x?=
- =?us-ascii?Q?4dFdomgzQQ5berMF9ipm7yVptJKkDvZbFtQf4zzj?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?g5sQwXUIVmVXagbSEn0lRLbv6UH3paFIH8yB5XjVxa6m73sHX3+hcz+Ahj+P?=
+ =?us-ascii?Q?jWiu8rirXuMGWKSwKYUQ88yqcBzE9iHRJuV2NyiprVSCfduZoUYUllw3mzeo?=
+ =?us-ascii?Q?lp3uP37EZW1E3f5FPeu8rqbKXfCoLXTbPjSt6Eth6KC7G1Pg8sjG2mM9rCcy?=
+ =?us-ascii?Q?MhAyD78fyOUxDIxaeqRs0c57sD81WS4u/l+EsaI9OySnF1m/on0P482ehNb1?=
+ =?us-ascii?Q?s71Vc59RoyEsmf+nDaTSTiFOcucS/4CP0KZ61Lt7BjCOuHOKjSXP1d3ObprO?=
+ =?us-ascii?Q?sFIjDH/hwSkSkJKsxKhLoi0AXt+L9dFkiASj46x1Y7al+eu3a5Zgp9k6u9Rt?=
+ =?us-ascii?Q?p7mbA4kcGlx3m7YTN6cnyZfrd/q/p1v9XX//NTFo0qvC5xUrtPsU8vv75ypb?=
+ =?us-ascii?Q?qah8xQjg4Y/FJD7x8P1A7A1siSBCZwOTJgVBILYXipR3zDXruX3aUu4TyzcR?=
+ =?us-ascii?Q?vPkLxI5dDEx3cplzN7+eAAs8qN5ngyC21dV8IZot0ZMdncm70D81+7B8Wtjc?=
+ =?us-ascii?Q?pJGioNi0+WvcRxXbnjC6+7yg43EjvJB9ezigxUXffW48kD/zME07tFlBygfd?=
+ =?us-ascii?Q?Zq0vaPDi9xQE1omSxJ5nB3IsB7eCQ2okBzk0lhnOdvha46pEc5SZVNl2uM3P?=
+ =?us-ascii?Q?TNWkj+lPZF0rKqbHnHxpaHEWnJiWWhZ/HPZeTIlY0sRodzFsOgPQRMkoHuPI?=
+ =?us-ascii?Q?wk6tDj7M9xjjv3c+T6Bbvqr+GafUaZFBuhHZWQ+EMmTXUUCUhSA6Hx+IWdIu?=
+ =?us-ascii?Q?x9DowSBVKYfUtY36hcb7g3hBpM91xz0dC0+SFe3Tl0q8vg4J0K3FLqY0T+Ta?=
+ =?us-ascii?Q?2tPpDctVsD69Vh3R4LBNTvYAW+u1TBdcWpKbi5ebvjcyCi325ZP/rGpy4T5c?=
+ =?us-ascii?Q?BbrZRLrU5zVM/yq0/0cs/Tu6T3oG3pHr/cj/2zCwSrtnJsBDKJwKqAWzaRwV?=
+ =?us-ascii?Q?F9nbXvcS4TiTeK2NDgM2+1oyTy0oqhj60FjFzeX6bzgssPxyrCOK0mXA2xME?=
+ =?us-ascii?Q?d8AJ81H//L0s97OCS3RSvyoWxdIWZx3bHfznzk7BGbBXGD5JIsCc8fLXESLM?=
+ =?us-ascii?Q?aTmZhjAtvfAF4od0o/Fb7T6J2/NlibdqXHUQPq9BSnbfR0Q1doT/KxZ+JL+7?=
+ =?us-ascii?Q?UdJTgGD82TYj6Cr0bxOOV+ac5u79DuehQKQXeN97OnSNJ+gLJjFP253yW0Bf?=
+ =?us-ascii?Q?lB67vmlWsKB651xcUgJfd7dp/T0XBU4Yooxc9UCrcp+bvOw3GQEjGpt70P2E?=
+ =?us-ascii?Q?M+KXAayIe445Ns//tNKePKjQgJQNmlhPOKPV5oGyoby8XEoTGUhJmUwj2ukP?=
+ =?us-ascii?Q?laMCiEWQNcvyptLClur9fm4ZlEs/2nctPUnE0+/0EcTbH1tmR0jAyeaVYOtG?=
+ =?us-ascii?Q?wteJePqP3pIltHRw0DNrnrL2jz0y56uSwKa9+F2elmozpEOo/RDYgaHMwgtO?=
+ =?us-ascii?Q?ZpdfZrDqPdcHM4HH3SuzhiBV0/gvI6KpMv/p7Yt06dlkjS5xLD5eApvqF06F?=
+ =?us-ascii?Q?/vC1WxDFe83vojQ/zJciLeT/gyPMQ61C3tsKZR4bfC6jGY7Hj6uG9z2GiB6U?=
+ =?us-ascii?Q?a+N2JMmR0Lb9JJrE8t/u84F+hS1RIKC2xq/oct4W?=
 X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2cd66c90-37c7-449a-00f9-08db7d5860e4
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5bda0aaf-8e40-41dc-5f41-08db7d5f0c88
 X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2023 13:04:34.1571
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2023 13:52:19.0489
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GxKRRORmEbSVym3vndl8AdAsY5Ipguxr3byntiu4DaBu6AxEwA6dj6gkAeMiKLt6qQlmbtTFWNswGnZhov3XxA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5891
+X-MS-Exchange-CrossTenant-UserPrincipalName: fSrWeIRx+t3hx/gOhdcp6QIvM71ItIFov2Ccuyti7bF1B19WdlB/MeZsMdfJ5JMV+sw9bDNL5Kbg2cbmygWloQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PSAPR06MB3991
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify code.
+Convert platform_get_resource(), devm_ioremap_resource() to a single
+call to devm_platform_get_and_ioremap_resource(), as this is exactly
+what this function does.
 
 Signed-off-by: Yangtao Li <frank.li@vivo.com>
 ---
- drivers/iommu/exynos-iommu.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/i2c/busses/i2c-s3c2410.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index c275fe71c4db..ab6208015997 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -725,19 +725,17 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
- 	int irq, ret;
- 	struct device *dev = &pdev->dev;
- 	struct sysmmu_drvdata *data;
--	struct resource *res;
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 28f0e5c64f32..c14c3807e135 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1034,9 +1034,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	dev_dbg(&pdev->dev, "clock source %p\n", i2c->clk);
  
- 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
+ 	/* map the registers */
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	data->sfrbase = devm_ioremap_resource(dev, res);
-+	data->sfrbase = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(data->sfrbase))
- 		return PTR_ERR(data->sfrbase);
+-	i2c->regs = devm_ioremap_resource(&pdev->dev, res);
+-
++	i2c->regs = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+ 	if (IS_ERR(i2c->regs))
+ 		return PTR_ERR(i2c->regs);
  
- 	irq = platform_get_irq(pdev, 0);
--	if (irq <= 0)
-+	if (irq < 0)
- 		return irq;
- 
- 	ret = devm_request_irq(dev, irq, exynos_sysmmu_irq, 0,
 -- 
 2.39.0
 
