@@ -2,130 +2,126 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C62FC0015E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 09:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 584E6C001B1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 09:04:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230487AbjGEJCd (ORCPT
+        id S231818AbjGEJEN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Jul 2023 05:02:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39880 "EHLO
+        Wed, 5 Jul 2023 05:04:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231818AbjGEJCb (ORCPT
+        with ESMTP id S231682AbjGEJEM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Jul 2023 05:02:31 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69E891BE2;
-        Wed,  5 Jul 2023 02:02:08 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-313f61890fbso6915787f8f.3;
-        Wed, 05 Jul 2023 02:02:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688547725; x=1691139725;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UctMD9lLbWvKap2mhJgEf9aqIh1/TdkYL5wIxpcYTBk=;
-        b=r8+4Tj5Xb7xK0aTS57RfRrE0CNQiGZbpPtZuex/JSE3MnQUQmtVMpuOLTqhO6uu+9A
-         iIS5MzRPLbWdYz1A5uCEOXpIMYqD4lzTALw0l0zLr+p0BbTriV9eIb+8ymenTCl7IcmH
-         kmyc2kHbUSyfFUo45mxLGEOWMERPvus+9Gw9EcATNx8pgMOubQwojQvSXQeh4VTnawOH
-         epiAeASwaOISfmMxtcJuKRF63lNflEW056nhKEeHCY6BZvW7ib5AZVyD9RE/Z8gRgAEm
-         4aBckDidNyJF0J7ISx1Fugzsq0TFwt3oW/chZiWr+jck0HR1AfxfCf252FWu+8DHKXKA
-         nuKA==
+        Wed, 5 Jul 2023 05:04:12 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85E15121
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jul 2023 02:03:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1688547804;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rSX7qOujOrm27lX5ys/0lBz1p5bJBCSZMCXRlfpyvEg=;
+        b=Q26ZwIhJ6DuOdfvKNzdxqgryMFUqoo+CKIj9fdTdQkSTfqsZRvSzhSGgBva2aCxqWfiu/W
+        VykWv/d0I/iz+vm9kC5tfSsvCGEnazrSzNzD/KPNo8/2pG43sxoCcVuSwi/4yCnNt2qhCT
+        FaKdI1/Zna7r9WnrNGxQdR4iqZXdbqQ=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-108-LXL5bJOeOnmuQQJe6d4dXA-1; Wed, 05 Jul 2023 05:03:23 -0400
+X-MC-Unique: LXL5bJOeOnmuQQJe6d4dXA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-3fbdde92299so13036845e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Jul 2023 02:03:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688547725; x=1691139725;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UctMD9lLbWvKap2mhJgEf9aqIh1/TdkYL5wIxpcYTBk=;
-        b=iLJGZAb3sRxrXt7Dr0Gy1n7l7EgjRrQO/iLhjfDljAi5Dr0ebPFGkfmwNR8nTwSMJ6
-         8b61THFvQBR6nnge9jkI3KjAr0BGyGyiqgZryYTOKzjIuHZ+KeSTdlUN3bSV9DsdAXje
-         nlXQpfQCo1vAfNtfd513TOLpPOptw5vnWh8Dcz0D2QMeXNlBMzthmaIvIIngw6fgq06j
-         05d54MRBUS8IPFhlRJNxqyPddkZydLyqSRtIu5zcqXlFjCANKfx3cyRzdHvCqmzgDof6
-         Sg7EHV4Nut/FBSDKtQxeeY1OOYavhrY909iyJ9lyoqgH0vdm095s6b7lwpbK95E68jSS
-         1+VA==
-X-Gm-Message-State: ABy/qLZNCyVETyROsJhNIfA10O2k3mxtoqGaVq/IVtnkIdpNws8FvaZN
-        wFrKADJWHF1tyoVhZt7/jF10Pwoe2Uz8JvcC2xA=
-X-Google-Smtp-Source: APBJJlGyt6Z8HpphV7Bs5WkfA8gyuunqGho5HCctx0qj3+Nx/dh8VCLMOXn5Ta043CeE4oSyMKF0K8cew8kRbbhRpkI=
-X-Received: by 2002:a5d:4c43:0:b0:313:eee0:89a4 with SMTP id
- n3-20020a5d4c43000000b00313eee089a4mr13008306wrt.12.1688547725257; Wed, 05
- Jul 2023 02:02:05 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1688547803; x=1691139803;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rSX7qOujOrm27lX5ys/0lBz1p5bJBCSZMCXRlfpyvEg=;
+        b=TgGLYAh//t2JtzZhRQMn9S9M655Dkytkg91T635gNlMte39MRv0R8ZRmkp65shyvHy
+         ub8LkHwSk34ww4SvclqyuFn3UJeL/Hj/8EAzHbCX/x3tfu5fcjUHmy2yH7sIdPUYW4KP
+         ZAGxrpt4oYVdQfesXH0AO31crujp9n1/hK/KbGSyrUnaGsNv3GVXlRf6pwhaXuFQ2dA9
+         l0+iW5yUxWDYWg/Gx9eSs4+yphW0lYi4WjTQuXfkaUuTKrXwQoUjZtIoHDyp9ICcqKCR
+         7nou0RodfqMa4QgDqwvMqBLF8KS2dvJ8IwjE92G5fCosT4Pd85Z/QP6L5r3dHeJ+s7yx
+         tAug==
+X-Gm-Message-State: AC+VfDyXxLqlqf7GqTXD5ZO2iJl80VvXleZN4TUcrWRTq4zEKxhoPXfF
+        uiaphw04dfowrA/3VRhvMfckUux/j3nWf9hHFNA72CsMr27iipIn+3p1rH+r9/IO213vdQ8n+8d
+        nGiFNEXSDddZkXh7v2YJ+AGt5dJWwOhk=
+X-Received: by 2002:a1c:f314:0:b0:3fb:adc0:609b with SMTP id q20-20020a1cf314000000b003fbadc0609bmr14653364wmq.13.1688547802806;
+        Wed, 05 Jul 2023 02:03:22 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ4D75aEjUYAXwEsqp9EVXq6EMXjhrEVDhsSnE0141Cb1WbjzG1CyfPykxapyYpYnd68hWU11g==
+X-Received: by 2002:a1c:f314:0:b0:3fb:adc0:609b with SMTP id q20-20020a1cf314000000b003fbadc0609bmr14653330wmq.13.1688547802102;
+        Wed, 05 Jul 2023 02:03:22 -0700 (PDT)
+Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id m11-20020a7bce0b000000b003f90b9b2c31sm1507833wmc.28.2023.07.05.02.03.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jul 2023 02:03:21 -0700 (PDT)
+From:   Javier Martinez Canillas <javierm@redhat.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-fbdev@vger.kernel.org,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: Re: [PATCH 07/10] drm/omapdrm: Set VM flags in GEM-object mmap
+ function
+In-Reply-To: <20230704160133.20261-8-tzimmermann@suse.de>
+References: <20230704160133.20261-1-tzimmermann@suse.de>
+ <20230704160133.20261-8-tzimmermann@suse.de>
+Date:   Wed, 05 Jul 2023 11:03:21 +0200
+Message-ID: <87o7kqraqu.fsf@minerva.mail-host-address-is-not-set>
 MIME-Version: 1.0
-References: <20230705072304.37741-1-dg573847474@gmail.com> <d15656f4-0d39-fbaf-884a-77935cd69e3f@linaro.org>
-In-Reply-To: <d15656f4-0d39-fbaf-884a-77935cd69e3f@linaro.org>
-From:   Chengfeng Ye <dg573847474@gmail.com>
-Date:   Wed, 5 Jul 2023 17:01:54 +0800
-Message-ID: <CAAo+4rW+bU-M=Wb16yMev8i3tdafH1p1bryCkKygDsShQ08n0w@mail.gmail.com>
-Subject: Re: [PATCH v2] watchdog: s3c2410: Fix potential deadlock on &wdt->lock
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     alim.akhtar@samsung.com, wim@linux-watchdog.org,
-        linux@roeck-us.net, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+Thomas Zimmermann <tzimmermann@suse.de> writes:
 
-Thanks for the reminder!
+> Use the mmap callback in struct drm_gem_object_funcs to set the
+> VM flags. Replace a number of mmap helpers in omapdrm with their
+> GEM helper counterparts. Generate DRM's file-operations instance
+> with GEM's DEFINE_DRM_GEM_FOPS.
+>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> ---
 
-I didn't notice that s3c2410wdt_keepalive() can also be called from
-.ping callback. Would send a v3 patch soon.
+> +static int omap_gem_object_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
+>  {
+>  	struct omap_gem_object *omap_obj = to_omap_bo(obj);
+>  
+> -	vm_flags_mod(vma, VM_MIXEDMAP, VM_PFNMAP);
+> +	vm_flags_set(vma, VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP | VM_IO | VM_MIXEDMAP);
+>  
+>  	if (omap_obj->flags & OMAP_BO_WC) {
+>  		vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
+> @@ -563,12 +548,14 @@ int omap_gem_mmap_obj(struct drm_gem_object *obj,
+>  		 * address_space (so unmap_mapping_range does what we want,
+>  		 * in particular in the case of mmap'd dmabufs)
+>  		 */
+> -		vma->vm_pgoff = 0;
+> +		vma->vm_pgoff -= drm_vma_node_start(&obj->vma_node);
+>  		vma_set_file(vma, obj->filp);
+>  
+>  		vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
+>  	}
+>  
+> +	vma->vm_page_prot = pgprot_decrypted(vma->vm_page_prot);
+> +
+>  	return 0;
+>  }
+>
 
-Best Regards,
-Chengfeng
+I think this rework deserves a more elaborated commit message.
 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> =E4=BA=8E2023=E5=B9=B4=
-7=E6=9C=885=E6=97=A5=E5=91=A8=E4=B8=89 16:58=E5=86=99=E9=81=93=EF=BC=9A
->
-> On 05/07/2023 09:23, Chengfeng Ye wrote:
-> > As &wdt->lock is acquired by hard irq s3c2410wdt_irq(), other
-> > acquisition of the same lock under process context should
-> > disable irq, otherwise deadlock could happen if the irq preempt
-> > the execution while the lock is held in process context on the
-> > same CPU.
-> >
-> > [Deadlock Scenario]
-> > s3c2410wdt_suspend()
-> >     -> s3c2410wdt_stop()
-> >     -> spin_lock(&wdt->lock)
-> >         <irq iterrupt>
-> >         -> s3c2410wdt_irq()
-> >         -> s3c2410wdt_keepalive()
-> >         -> spin_lock(&wdt->lock) (deadlock here)
-> >
-> > [Deadlock Scenario]
-> > s3c2410wdt_probe()
-> >     -> s3c2410wdt_start()
-> >     -> spin_lock(&wdt->lock)
-> >         <irq iterrupt>
-> >         -> s3c2410wdt_irq()
-> >         -> s3c2410wdt_keepalive()
-> >         -> spin_lock(&wdt->lock) (deadlock here)
-> >
-> > This flaw was found by an experimental static analysis tool I am
-> > developing for irq-related deadlock, which reported the above
-> > warning when analyzing the linux kernel 6.4-rc7 release.
-> >
-> > The tentative patch fix the potential deadlock by spin_lock_irqsave()
-> > under process context.
-> >
-> > Signed-off-by: Chengfeng Ye <dg573847474@gmail.com>
-> > ---
-> >  drivers/watchdog/s3c2410_wdt.c | 10 ++++++----
-> >  1 file changed, 6 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_=
-wdt.c
-> > index 95416a9bdd4b..2dfc0d6a3004 100644
-> > --- a/drivers/watchdog/s3c2410_wdt.c
-> > +++ b/drivers/watchdog/s3c2410_wdt.c
-> > @@ -399,10 +399,11 @@ static void __s3c2410wdt_stop(struct s3c2410_wdt =
-*wdt)
->
-> Why you didn't update also s3c2410wdt_keepalive()?
->
-> Best regards,
-> Krzysztof
->
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+
+-- 
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
