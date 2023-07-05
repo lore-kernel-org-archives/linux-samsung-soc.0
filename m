@@ -2,138 +2,168 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E2ECEB64DA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 17:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 910EEEB64DA
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 20:43:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229645AbjGER40 (ORCPT
+        id S233790AbjGEUne (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Jul 2023 13:56:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36898 "EHLO
+        Wed, 5 Jul 2023 16:43:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231269AbjGER4Z (ORCPT
+        with ESMTP id S233758AbjGEUnb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Jul 2023 13:56:25 -0400
-X-Greylist: delayed 965 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 05 Jul 2023 10:55:58 PDT
-Received: from mailrelay4-1.pub.mailoutpod2-cph3.one.com (mailrelay4-1.pub.mailoutpod2-cph3.one.com [IPv6:2a02:2350:5:403::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BB6F1BCF
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jul 2023 10:55:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ravnborg.org; s=rsa1;
-        h=in-reply-to:content-transfer-encoding:content-type:mime-version:references:
-         message-id:subject:cc:to:from:date:from;
-        bh=uX1KxxDBhiVzU9ji2kzcp/Y9e3VFw+X4GIkq8uU2bbU=;
-        b=F5wP4GaD2OeQcLZCchJTXLTRkr0vmE7y7CKsxYuClzsRDNJ+3yyY7cEprDx7f/FhtN8Z33tJsusRX
-         mVakIqrhR1bEcfPpxboAERlKmb+NSF0ARG+NFKBxjvALdajSBXT1WlcaT2vGeq2CGlSonASxqHZrnm
-         KzmQw1g6dN3QSzKHYudGwh1LIgVmJ53dQAWtGDDyQ1QcEVCZQkOm0Rdy+bUVn7PRVrW4xQpGWCVwlQ
-         YSoWRXNNvAjnYgnE5qYBRcB+piSPngd0oBGvijCU4i+UpH4eHsZY2EmcnHVtW9aSOYM2PU6hqFBJG+
-         9JIGfzE8uVI7USi5+cVtXYGUdCffx8A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
-        d=ravnborg.org; s=ed1;
-        h=in-reply-to:content-transfer-encoding:content-type:mime-version:references:
-         message-id:subject:cc:to:from:date:from;
-        bh=uX1KxxDBhiVzU9ji2kzcp/Y9e3VFw+X4GIkq8uU2bbU=;
-        b=Do9skGeypNLVI7zeveYEQqKi0JsTReyLIbwKr68clQyyQMJ3aNfdzB7vvRM2FtMtLRQ9Oo10dibXO
-         VHe/CPDAQ==
-X-HalOne-ID: f076bdb9-1b5a-11ee-97e5-592bb1efe9dc
-Received: from ravnborg.org (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
-        by mailrelay4 (Halon) with ESMTPSA
-        id f076bdb9-1b5a-11ee-97e5-592bb1efe9dc;
-        Wed, 05 Jul 2023 17:39:50 +0000 (UTC)
-Date:   Wed, 5 Jul 2023 19:39:49 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     neil.armstrong@linaro.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
+        Wed, 5 Jul 2023 16:43:31 -0400
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4BED19B;
+        Wed,  5 Jul 2023 13:43:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1688589809;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=wyXkGZNGA5ysK2ltkve4RVlCutN+wjP1W2giIyjMZxk=;
+        b=nScC7Am7eHbPkqLsb+E2gznpiUpMVyfzuF8FL3UiEEkgxgDebdCyG0lG4/LsIyuatJlX4p
+        bLgSjmITOHNmgrkD8zSZN2pAMtILouf7m0vVi2R75j9CXCT1jpDBwzoRZP8oDzs/SSuMLd
+        FF8hRZbcRQMFlzMf9jstb8q8Hg0pEdM=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Wolfram Sang <wsa@kernel.org>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>,
+        Elie Morisse <syniurge@gmail.com>,
+        Shyam Sundar S K <shyam-sundar.s-k@amd.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Jan Dabros <jsd@semihalf.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Qii Wang <qii.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Peter Korsgaard <peter@korsgaard.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 2/3] drm/panel: ld9040: Register a backlight device
-Message-ID: <20230705173949.GA106478@ravnborg.org>
-References: <20230703214715.623447-1-paul@crapouillou.net>
- <20230703214715.623447-3-paul@crapouillou.net>
- <194ac047-b20e-04c1-1d96-67cc483bb4a1@linaro.org>
- <8e81dd5d9f62139e740ea123aa2087cb1bbcb04b.camel@crapouillou.net>
+        Conghui Chen <conghui.chen@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Peter Rosin <peda@axentia.se>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH 00/23] i2c: Use new PM macros
+Date:   Wed,  5 Jul 2023 22:42:51 +0200
+Message-Id: <20230705204314.89800-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8e81dd5d9f62139e740ea123aa2087cb1bbcb04b.camel@crapouillou.net>
+X-Spam: Yes
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Paul,
+Hi Wolfram,
 
-On Wed, Jul 05, 2023 at 04:38:05PM +0200, Paul Cercueil wrote:
-> Hi Neil,
-> 
-> Le mercredi 05 juillet 2023 à 15:57 +0200, Neil Armstrong a écrit :
-> > On 03/07/2023 23:47, Paul Cercueil wrote:
-> > > Register a backlight device to be able to switch between all the
-> > > gamma
-> > > levels.
-> > > 
-> > > Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> > > ---
-> > >   drivers/gpu/drm/panel/panel-samsung-ld9040.c | 40
-> > > ++++++++++++++++++++
-> > >   1 file changed, 40 insertions(+)
-> > > 
-> > > diff --git a/drivers/gpu/drm/panel/panel-samsung-ld9040.c
-> > > b/drivers/gpu/drm/panel/panel-samsung-ld9040.c
-> > > index 7fd9444b42c5..b4f87d6244cb 100644
-> > > --- a/drivers/gpu/drm/panel/panel-samsung-ld9040.c
-> > > +++ b/drivers/gpu/drm/panel/panel-samsung-ld9040.c
-> > > @@ -8,6 +8,7 @@
-> > >    * Andrzej Hajda <a.hajda@samsung.com>
-> > >   */
-> > >   
-> > > +#include <linux/backlight.h>
-> > >   #include <linux/delay.h>
-> > >   #include <linux/gpio/consumer.h>
-> > >   #include <linux/module.h>
-> > > @@ -311,8 +312,40 @@ static int ld9040_parse_dt(struct ld9040 *ctx)
-> > >         return 0;
-> > >   }
-> > >   
-> > > +static int ld9040_bl_update_status(struct backlight_device *dev)
-> > > +{
-> > > +       struct ld9040 *ctx = dev_get_drvdata(&dev->dev);
-> > > +
-> > > +       ctx->brightness = dev->props.brightness;
-Use backlight_get_brightness(dev);
+This patchset converts the I2C subsystem to use the PM macros that were
+introduced in v5.17, which allow the dev_pm_ops and related callbacks to
+be automatically dropped by the compiler when CONFIG_PM or
+CONFIG_PM_SLEEP are disabled, without having to use #ifdef guards.
 
-> > > +       ld9040_brightness_set(ctx);
-> > > +
-> > > +       return 0;
-> > > +}
-> > > +
-> > > +static int ld9040_bl_get_intensity(struct backlight_device *dev)
-> > > +{
-> > > +       if (dev->props.fb_blank == FB_BLANK_UNBLANK &&
-> > > +                       dev->props.power == FB_BLANK_UNBLANK)
-> > > +               return dev->props.brightness;
-> > > +
-> > > +       return 0;
-> > > +}
-> > 
-> > You can totally drop the _get_brightness.
-> 
-> The current behaviour is to return 0 when the framebuffer is blanked. A
-> few drivers do that so I thought it was the norm; and the backlight
-> core doesn't do that by default (and just uses dev->props.brightness).
-> 
-> It is not clear to me if that's the preferred behaviour. The
-> "backlight_get_brightness" function in backlight.h seems to suggest
-> that the current behaviour is correct, unless it is not supposed to be
-> used in the backlight_ops.get_brightness() callback. Then in that case
-> some other drivers get it wrong too.
-Several drivers get it wrong.
-You are supposed to provide get_brightness only when you read back a
-value from the HW, which is not the case here so just drop it is the
-right choice.
+The point of this, is that all this code is now compiled independently
+of any Kconfig option, which makes bugs and regressions easier to catch.
 
-	Sam
+This continues the work that has been started in other subsystems (DRM,
+IIO, watchdog).
+
+As an added bonus, the diff is 71+/192-, that means less code you will
+have to maintain ;)
+
+The patches generally don't change the behaviour, with a few exceptions,
+that are documented in the corresponding patches.
+
+I would like to draw the attention to a few patches in particular:
+
+- [01/23] the driver most likely does something that it shouldn't do
+  (use the same callbacks for runtime PM and system PM). The patch does
+  not change this behaviour but I have questions.
+
+- [11/23] uses platform_driver.{suspend,resume} instead of the regular
+  .driver.pm. I have no idea why it does that and I believe it doesn't
+  really have to.
+
+- [18/23] I feel like the qup_i2c_suspend / qup_i2c_resume don't really
+  need to exist, and the pm_runtime_force_suspend() /
+  pm_runtime_force_resume() helpers should be used instead, using the
+  DEFINE_RUNTIME_DEV_PM_OPS() macro.
+
+Cheers,
+-Paul
+
+Paul Cercueil (23):
+  i2c: amd-mp2: Remove #ifdef guards for PM related functions
+  i2c: au1550: Remove #ifdef guards for PM related functions
+  i2c: iproc: Remove #ifdef guards for PM related functions
+  i2c: brcmstb: Remove #ifdef guards for PM related functions
+  i2c: davinci: Remove #ifdef guards for PM related functions
+  i2c: designware: Remove #ifdef guards for PM related functions
+  i2c: exynos5: Remove #ifdef guards for PM related functions
+  i2c: hix5hd2: Remove #ifdef guards for PM related functions
+  i2c: i801: Remove #ifdef guards for PM related functions
+  i2c: img-scb: Remove #ifdef guards for PM related functions
+  i2c: kempld: Remove #ifdef guards for PM related functions
+  i2c: lpc2k: Remove #ifdef guards for PM related functions
+  i2c: mt65xx: Remove #ifdef guards for PM related functions
+  i2c: nomadik: Remove #ifdef guards for PM related functions
+  i2c: ocores: Remove #ifdef guards for PM related functions
+  i2c: pnx: Remove #ifdef guards for PM related functions
+  i2c: pxa: Remove #ifdef guards for PM related functions
+  i2c: qup: Remove #ifdef guards for PM related functions
+  i2c: rcar: Remove #ifdef guards for PM related functions
+  i2c: s3c2410: Remove #ifdef guards for PM related functions
+  i2c: sh-mobile: Remove #ifdef guards for PM related functions
+  i2c: virtio: Remove #ifdef guards for PM related functions
+  i2c: mux: pca954x: Remove #ifdef guards for PM related functions
+
+ drivers/i2c/busses/i2c-amd-mp2-pci.c        | 14 +++++--------
+ drivers/i2c/busses/i2c-amd-mp2-plat.c       |  8 ++------
+ drivers/i2c/busses/i2c-amd-mp2.h            |  2 --
+ drivers/i2c/busses/i2c-au1550.c             | 15 +++-----------
+ drivers/i2c/busses/i2c-bcm-iproc.c          | 10 +---------
+ drivers/i2c/busses/i2c-brcmstb.c            |  8 +++-----
+ drivers/i2c/busses/i2c-davinci.c            | 12 +++--------
+ drivers/i2c/busses/i2c-designware-platdrv.c | 22 ++++++---------------
+ drivers/i2c/busses/i2c-exynos5.c            |  8 +++-----
+ drivers/i2c/busses/i2c-hix5hd2.c            | 10 ++++------
+ drivers/i2c/busses/i2c-i801.c               |  6 ++----
+ drivers/i2c/busses/i2c-img-scb.c            | 13 ++++--------
+ drivers/i2c/busses/i2c-kempld.c             |  9 ++-------
+ drivers/i2c/busses/i2c-lpc2k.c              |  8 +-------
+ drivers/i2c/busses/i2c-mt65xx.c             |  8 +++-----
+ drivers/i2c/busses/i2c-nomadik.c            | 14 +++++--------
+ drivers/i2c/busses/i2c-ocores.c             | 10 +++-------
+ drivers/i2c/busses/i2c-pnx.c                | 12 ++++-------
+ drivers/i2c/busses/i2c-pxa.c                |  8 +-------
+ drivers/i2c/busses/i2c-qup.c                | 16 ++++-----------
+ drivers/i2c/busses/i2c-rcar.c               | 10 ++--------
+ drivers/i2c/busses/i2c-s3c2410.c            | 14 +++----------
+ drivers/i2c/busses/i2c-sh_mobile.c          | 12 +++--------
+ drivers/i2c/busses/i2c-virtio.c             |  8 ++------
+ drivers/i2c/muxes/i2c-mux-pca954x.c         |  6 ++----
+ 25 files changed, 71 insertions(+), 192 deletions(-)
+
+-- 
+2.40.1
+
