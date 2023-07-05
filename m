@@ -2,59 +2,59 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC657EB64DA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 08:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72005EB64DD
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 08:50:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231720AbjGEIj0 (ORCPT
+        id S231912AbjGEIuZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Jul 2023 04:39:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57150 "EHLO
+        Wed, 5 Jul 2023 04:50:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230345AbjGEIjZ (ORCPT
+        with ESMTP id S230453AbjGEIuY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Jul 2023 04:39:25 -0400
+        Wed, 5 Jul 2023 04:50:24 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8249C1A2
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jul 2023 01:38:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77DD81713
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jul 2023 01:49:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688546319;
+        s=mimecast20190719; t=1688546984;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=0ev84vUzUh8ZH6f1TjRoMQmaeXWVKy1q8JlkhwPTuuw=;
-        b=d4P3/wJedq4/9u52+s60wkaaG4H5xhmk62Pk+v75tvkDJk0kDMJwPG8AdirL7mIL3Un4SY
-        YednNuS+HC8ruF7vvusz08LSI6Rouu++lnih55cIo7J6GzRdhw0qRGhiMG+NrSFIHm88Yo
-        g0NAWX4cTErOLkRGtClEtaOYKseapQQ=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=mygE2eC1+1F6RcP4Lm9OLsM0G/twLQqV8R8dIF6r2eA=;
+        b=J/YsifluszoJ343eM3UBt1Wy4p+tKaqfCyTi5o3g2JPs6eCM71LWJ5TF/U6pkD6uic/Ege
+        R7vAlgWY/QK5nfalTqHLcNKWMvCqXhROtTyMV8IUyLWP07Y2oIjV1QWmxsiIlDz4Frh7PG
+        Jh9oDtvY2DvxhL8JoBHbZHBkxNNng6I=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-103-S9fCpztQMy-iHDCbMMikxw-1; Wed, 05 Jul 2023 04:38:38 -0400
-X-MC-Unique: S9fCpztQMy-iHDCbMMikxw-1
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-4edc7406cbaso6435260e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Jul 2023 01:38:38 -0700 (PDT)
+ us-mta-59-zxXDZyL8OgaxLqBQ0YEZog-1; Wed, 05 Jul 2023 04:49:43 -0400
+X-MC-Unique: zxXDZyL8OgaxLqBQ0YEZog-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-314256aedcbso2534467f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Jul 2023 01:49:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688546317; x=1691138317;
+        d=1e100.net; s=20221208; t=1688546982; x=1691138982;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ev84vUzUh8ZH6f1TjRoMQmaeXWVKy1q8JlkhwPTuuw=;
-        b=BxCpb8/tjxUCsYNp5xKRy6Mo90+aJwI4hqBP4S8+mV8WZ1m2VR99r9XgUqFBWDtCqu
-         qaZgQcipA6XJ9ta8ISp6n2D9vthCuMCkV1RMqg2YSLb1Gv+xSqn9nODfHi+L8TkDHoiC
-         4bZrrLLoau7QeWrv5E23h6+7up4xZGHyGS9ku/641IvH8LyOpnop1maZ1iwTmSn5clge
-         +PhQhzj4ZZBJW0u5PODCq0yUx3GKaCMQei0joouEwzVjga6gcZuBAbYBpHVaBI651vG4
-         ziigfQ7J30cgPGuy2yvyfTancw2d8X6GJiinDsnAXqaE10PMQbZ9cmiIp3brvyVsnHfo
-         6dmQ==
-X-Gm-Message-State: ABy/qLZ+QU9qtE4NIGZ4yCZlSv9zDXIKmK0lVVUIoT5MsCc2ZxtaFfdH
-        y04K5OCqQrmYsaQEVwi9ocljOEE1C7sZE6LhCMjBcFz/ydTfBEwP2fVxAT5jewo9ALepw2EWHis
-        AgX4kPfVFwEEi4+oKZIwFgMZOBahkbCc=
-X-Received: by 2002:a05:6512:2211:b0:4fb:8948:2b2b with SMTP id h17-20020a056512221100b004fb89482b2bmr14099220lfu.48.1688546317012;
-        Wed, 05 Jul 2023 01:38:37 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlHw/8+9xxPRw7DNATPC6lakSSCvVuMDKfqLB9aRt/ZUrBO5oK9Z8Als1e5OzgdL2qBEpY21lQ==
-X-Received: by 2002:a05:6512:2211:b0:4fb:8948:2b2b with SMTP id h17-20020a056512221100b004fb89482b2bmr14099194lfu.48.1688546316638;
-        Wed, 05 Jul 2023 01:38:36 -0700 (PDT)
+        bh=mygE2eC1+1F6RcP4Lm9OLsM0G/twLQqV8R8dIF6r2eA=;
+        b=cWpUf2YnetKUkIoAKYxwl+L/TA+kbVG/WmQH+rM4vGuZXB3Z+W7bhpTXi9GZ2hu7Tp
+         h0FV6OYgKERMfIfLzDkASbbnil25yvVIN6144/mkJbVASVzR2fKFQoXv2GYy7FMkQBgE
+         UrzPqNJGF1+eBdumqZM7bJpLn+DGe9Fkt88RHi4rOMUqH2AhEEVFFiBOSGvhtQZR4Bzj
+         RNqx9q0Qe1EJOFUj92nPO2ifH1hFC91gykAe1IZxcJvHNi7H1qthFaQuHNblssi7exac
+         owWWcAYW0Bge1VsD51w+MwciBwrTF7hjPF0LmvhCDeC4aVz6OpjNJOuzFBcJDrJ51I/t
+         ihZg==
+X-Gm-Message-State: ABy/qLYMxUBh/uOh4GupjQHplJzaP3Ohd0gw5g2JeoZbrT2zEAU1l6B6
+        DzXoPXZY97O83gOyp5AQyvtAY1V5SSsIimPpFpUkyE3GDRoPzdJH6ViuEW9TlWERDdsWayMzIy4
+        dJb9TkiQYIqUKypK5QSnew4ElDxz9/aRAGua+kTgtYQ==
+X-Received: by 2002:adf:e44d:0:b0:313:f97c:d87f with SMTP id t13-20020adfe44d000000b00313f97cd87fmr12842675wrm.67.1688546982145;
+        Wed, 05 Jul 2023 01:49:42 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlHiFHQIX6+LSUFE4lngdNXwrF3KteEAZwZqL0tALqI5G9uCMk9AA+C1J9hJqpvVRrGAzg2C2Q==
+X-Received: by 2002:adf:e44d:0:b0:313:f97c:d87f with SMTP id t13-20020adfe44d000000b00313f97cd87fmr12842658wrm.67.1688546981884;
+        Wed, 05 Jul 2023 01:49:41 -0700 (PDT)
 Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id m3-20020a056000180300b003141e9e2f81sm14564718wrh.4.2023.07.05.01.38.36
+        by smtp.gmail.com with ESMTPSA id x18-20020adff0d2000000b003141e86e751sm14564867wro.5.2023.07.05.01.49.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jul 2023 01:38:36 -0700 (PDT)
+        Wed, 05 Jul 2023 01:49:41 -0700 (PDT)
 From:   Javier Martinez Canillas <javierm@redhat.com>
 To:     Thomas Zimmermann <tzimmermann@suse.de>,
         maarten.lankhorst@linux.intel.com, mripard@kernel.org
@@ -68,12 +68,12 @@ Cc:     dri-devel@lists.freedesktop.org,
         Kyungmin Park <kyungmin.park@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH 05/10] drm/exynos: Use fbdev DMA helpers
-In-Reply-To: <20230704160133.20261-6-tzimmermann@suse.de>
+Subject: Re: [PATCH 06/10] drm/exynos: Set fbdev flags
+In-Reply-To: <20230704160133.20261-7-tzimmermann@suse.de>
 References: <20230704160133.20261-1-tzimmermann@suse.de>
- <20230704160133.20261-6-tzimmermann@suse.de>
-Date:   Wed, 05 Jul 2023 10:38:35 +0200
-Message-ID: <87ttuirbw4.fsf@minerva.mail-host-address-is-not-set>
+ <20230704160133.20261-7-tzimmermann@suse.de>
+Date:   Wed, 05 Jul 2023 10:49:40 +0200
+Message-ID: <87r0pmrbdn.fsf@minerva.mail-host-address-is-not-set>
 MIME-Version: 1.0
 Content-Type: text/plain
 Precedence: bulk
@@ -82,25 +82,47 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Thomas Zimmermann <tzimmermann@suse.de> writes:
 
-> Use fbdev's DMA helpers for fbdev emulation. They drivers previously
+> Set fbdev default flags FBNFO_DEFAULT and mark the framebuffer with
 
-s/They/The
+FBINFO_DEFAULT, or did you meand FBINFO_FLAG_DEFAULT (the flag your patch
+is actually using) ?
 
-> used the I/O-memory helpers, while allocating DMA-able system memory.
-> This could (in theory) result in bus errors from accessing the memory
-> range.
->
-> This bug has been present since the exynos driver was first added.
+I just noticed that are the same... and in patch 04/10 you used the former
+for the tegra driver, but here you are using the latter. Is on purpose or
+just a mistake ?
+
+> FBINFO_VIRTFB. The framebuffer range is in DMA-able memory and should
+> be accessed with the CPU's regular memory ops.
 >
 > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Fixes: 1c248b7d2960 ("DRM: add DRM Driver for Samsung SoC EXYNOS4210.")
+> Cc: Inki Dae <inki.dae@samsung.com>
+> Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Cc: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> index 7ca3424b59ce..28dc398d6e10 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> @@ -72,6 +72,7 @@ static int exynos_drm_fbdev_update(struct drm_fb_helper *helper,
+>  		return PTR_ERR(fbi);
+>  	}
+>  
+> +	fbi->flags = FBINFO_FLAG_DEFAULT;
 
-Wonder the value of this "Fixes:" tag since this patch depends on the DMA
-helpers introduced in 1/10?  I would just drop it, since it might confuse
-the different kernel stable scripts that attempt to backport by looking at
-this tag.
+The #define FBINFO_FLAG_DEFAULT	FBINFO_DEFAULT seems to be there since the
+original v2.6.12-rc2 git import in commit 1da177e4c3f4, so is hard to know
+why was introduced. FBINFO_DEFAULT is more used, I will just stick to that:
 
-As you said, it has been present from the beginning of this driver.
+$ git grep FBINFO_DEFAULT | wc -l
+92
+
+$ git grep FBINFO_FLAG_DEFAULT | wc -l
+38
 
 Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
