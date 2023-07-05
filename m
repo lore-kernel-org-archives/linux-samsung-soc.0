@@ -2,172 +2,163 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E6F6EB64DA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 09:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FEB7C0015E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 09:10:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232241AbjGEJIr (ORCPT
+        id S231820AbjGEJKI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Jul 2023 05:08:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41842 "EHLO
+        Wed, 5 Jul 2023 05:10:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231918AbjGEJIo (ORCPT
+        with ESMTP id S230157AbjGEJKH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Jul 2023 05:08:44 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A796172D;
-        Wed,  5 Jul 2023 02:08:41 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id E29261F890;
-        Wed,  5 Jul 2023 09:08:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1688548119; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nCqvRYw6+xokOEyOjAg8Z1ew/iNTwqZl1xt4Ki2PQf0=;
-        b=GZrveshmit45yqAh8rO7/7DRA87WkbvMdDNVgT3ziVtVI0cVHDtSxfeRLK4aXS9+gt3Jyy
-        8KDbp29DOqm8Ab8CTInBBF3E5dX6uBO+zNbQV+NG4RwOfTERW6YGV2pv00snyXGxSTwAhU
-        WEHOzbpUJYlQ547+mxP+jIiXnTR6T9U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1688548119;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nCqvRYw6+xokOEyOjAg8Z1ew/iNTwqZl1xt4Ki2PQf0=;
-        b=T689o8tRz1z3eRSk3c86tFmWTBmWqc2yLM20iBB2mDs6Oqv13oruzpEejQ+7eQmBWjpjIi
-        senD5DZ3ejISYYDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B145C134F3;
-        Wed,  5 Jul 2023 09:08:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id YeU9KhczpWQkYwAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Wed, 05 Jul 2023 09:08:39 +0000
-Message-ID: <45ed59d1-32a5-86cb-094f-5ce7ad758d5b@suse.de>
-Date:   Wed, 5 Jul 2023 11:08:38 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 01/10] fbdev: Add fb_ops init macros for framebuffers in
- DMA-able memory
-Content-Language: en-US
-To:     Javier Martinez Canillas <javierm@redhat.com>,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org
-Cc:     linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Helge Deller <deller@gmx.de>, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20230704160133.20261-1-tzimmermann@suse.de>
- <20230704160133.20261-2-tzimmermann@suse.de>
- <875y6ysr6g.fsf@minerva.mail-host-address-is-not-set>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <875y6ysr6g.fsf@minerva.mail-host-address-is-not-set>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------DSsyXgywvRAKtkTazazBzV0j"
+        Wed, 5 Jul 2023 05:10:07 -0400
+Received: from mail-oa1-x2b.google.com (mail-oa1-x2b.google.com [IPv6:2001:4860:4864:20::2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C7AC10D5;
+        Wed,  5 Jul 2023 02:10:06 -0700 (PDT)
+Received: by mail-oa1-x2b.google.com with SMTP id 586e51a60fabf-1b0249f1322so5311272fac.3;
+        Wed, 05 Jul 2023 02:10:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688548205; x=1691140205;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KcsOeGLimul89G1ISXwaKkbEQdp5PaXxX2niuxY6rwo=;
+        b=EcXaSlbOlR5e36VZentjv18TglOo4SR5IxwQuC62hO+13KuXYr6w0oJkkcSKXWNTh/
+         xQd1w0d35T/52TOVUJJF+z0xu9D+snC54xOF+YOOrc0xHPBHnS8t1iQ3/rRdBo0Ba7Gy
+         Vyp8gd4RvbUjm7l7+9m8ibGi/vWGfsqfpiaXE+z8gV1BQF6wYFfAwCifZuszxBIJ0M62
+         kyGcXBrt75e9Hh4hyeTpjW0TfG1DsJEeThJw/Ltbqmh5038nXuhNdQbYF6rQnzJ4It8X
+         tYAgt51CzVy3QzJ7mnbbMZucmyCO393GVNRbiWURxK0cah0ppF7CVyfu7y+V7I7ovNp+
+         9BUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688548205; x=1691140205;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KcsOeGLimul89G1ISXwaKkbEQdp5PaXxX2niuxY6rwo=;
+        b=AIqC37EyEd9Jvn8etThUpNwdewnFKvnnhG24Tl5grCuIadHJqp+b0ahfBBraSlyJsn
+         85szUBoJrUYHWXrETO+L0OAn91zi3mDTLN7DLdIZwZHiZ4FDJbRBSG06DbxolEYsXDGU
+         JVekJmbkz4IjUNxi2I2QkdE1wkUVkbS3js//il+Gm9cQ1XSMBG4pRcQTTQDI5t5I/kYl
+         AwBu9Oe5kZDJ8Iz2V0tuCP3GCak/ztWUmnuOeAuUK4TQKkNdLYdxCr/TVSArPI8rn3Ba
+         jXlkl/4hBSVBpw8XrZqm4YKhUZCZZlbLGHcxQR5sHDufjhdhEyW+rivc+K1jDZXisXYO
+         gdMQ==
+X-Gm-Message-State: ABy/qLZH4YR09ndTGZU5z+izEvqTrLK5JEGlIlYWheftpud8P7zEH+lC
+        /49kWhF6/CVrOABY5fIPmM0=
+X-Google-Smtp-Source: ACHHUZ4ckVuETojQlbMs5VH38cwbmsi9JDfq/6TswQOECm+hW1eTRWtCjuU7c+baqOXg9aQBxcfdRw==
+X-Received: by 2002:a05:6870:9d05:b0:19f:202b:513c with SMTP id pp5-20020a0568709d0500b0019f202b513cmr14517197oab.29.1688548205257;
+        Wed, 05 Jul 2023 02:10:05 -0700 (PDT)
+Received: from 377044c6c369.cse.ust.hk (191host097.mobilenet.cse.ust.hk. [143.89.191.97])
+        by smtp.gmail.com with ESMTPSA id f39-20020a056871072700b001a69e7efd13sm15079978oap.5.2023.07.05.02.10.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jul 2023 02:10:04 -0700 (PDT)
+From:   Chengfeng Ye <dg573847474@gmail.com>
+To:     krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+        wim@linux-watchdog.org, linux@roeck-us.net
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chengfeng Ye <dg573847474@gmail.com>
+Subject: [PATCH v3] watchdog: s3c2410: Fix potential deadlock on &wdt->lock
+Date:   Wed,  5 Jul 2023 09:09:51 +0000
+Message-Id: <20230705090951.63762-1-dg573847474@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------DSsyXgywvRAKtkTazazBzV0j
-Content-Type: multipart/mixed; boundary="------------ke1NSCnTChFDaBiTrn3IJd0T";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Javier Martinez Canillas <javierm@redhat.com>,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org
-Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- Helge Deller <deller@gmx.de>, dri-devel@lists.freedesktop.org,
- linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Message-ID: <45ed59d1-32a5-86cb-094f-5ce7ad758d5b@suse.de>
-Subject: Re: [PATCH 01/10] fbdev: Add fb_ops init macros for framebuffers in
- DMA-able memory
-References: <20230704160133.20261-1-tzimmermann@suse.de>
- <20230704160133.20261-2-tzimmermann@suse.de>
- <875y6ysr6g.fsf@minerva.mail-host-address-is-not-set>
-In-Reply-To: <875y6ysr6g.fsf@minerva.mail-host-address-is-not-set>
+As &wdt->lock is acquired by hard irq s3c2410wdt_irq(),
+other acquisition of the same lock under process context should
+disable irq, otherwise deadlock could happen if the
+irq preempt the execution while the lock is held in process context
+on the same CPU.
 
---------------ke1NSCnTChFDaBiTrn3IJd0T
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+[Deadlock Scenario]
+s3c2410wdt_suspend()
+    -> s3c2410wdt_stop()
+    -> spin_lock(&wdt->lock)
+        <irq iterrupt>
+        -> s3c2410wdt_irq()
+        -> s3c2410wdt_keepalive()
+        -> spin_lock(&wdt->lock) (deadlock here)
 
-SGkgSmF2aWVyDQoNCkFtIDA1LjA3LjIzIHVtIDEwOjIzIHNjaHJpZWIgSmF2aWVyIE1hcnRp
-bmV6IENhbmlsbGFzOg0KPiBUaG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1hbm5Ac3VzZS5k
-ZT4gd3JpdGVzOg0KPiANCj4gSGVsbG8gVGhvbWFzLA0KPiANCj4+IEFkZCBpbml0aWFsaXpl
-ciBtYWNyb3MgZm9yIHN0cnVjdCBmYl9vcHMgZm9yIGZyYW1lYnVmZmVycyBpbiBETUEtYWJs
-ZQ0KPj4gbWVtb3J5IGFyZWFzLiBBbHNvIGFkZCBhIGNvcnJlc3BvbmRpbmcgS2NvbmZpZyB0
-b2tlbi4gQXMgb2Ygbm93LCB0aGlzDQo+PiBpcyBlcXVpdmFsZW50IHRvIHN5c3RlbSBmcmFt
-ZWJ1ZmZlcnMgYW5kIG1vc3RseSB1c2VmdWwgZm9yIGxhYmVsaW5nDQo+PiBkcml2ZXJzIGNv
-cnJlY3RseS4NCj4+DQo+PiBBIGxhdGVyIHBhdGNoIG1heSBhZGQgYSBnZW5lcmljIERNQS1z
-cGVjaWZpYyBtbWFwIG9wZXJhdGlvbi4gTGludXgNCj4+IG9mZmVycyBhIG51bWJlciBvZiBk
-bWFfbW1hcF8qKCkgaGVscGVycyBmb3IgZGlmZmVyZW50IHVzZSBjYXNlcy4NCj4+DQo+PiBT
-aWduZWQtb2ZmLWJ5OiBUaG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1hbm5Ac3VzZS5kZT4N
-Cj4+IENjOiBIZWxnZSBEZWxsZXIgPGRlbGxlckBnbXguZGU+DQo+PiAtLS0NCj4+ICAgZHJp
-dmVycy92aWRlby9mYmRldi9LY29uZmlnIHwgIDggKysrKysrKysNCj4+ICAgaW5jbHVkZS9s
-aW51eC9mYi5oICAgICAgICAgIHwgMTMgKysrKysrKysrKysrKw0KPj4gICAyIGZpbGVzIGNo
-YW5nZWQsIDIxIGluc2VydGlvbnMoKykNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy92
-aWRlby9mYmRldi9LY29uZmlnIGIvZHJpdmVycy92aWRlby9mYmRldi9LY29uZmlnDQo+PiBp
-bmRleCBjZWNmMTU0MTg2MzIuLmYxNDIyOTc1NzMxMSAxMDA2NDQNCj4+IC0tLSBhL2RyaXZl
-cnMvdmlkZW8vZmJkZXYvS2NvbmZpZw0KPj4gKysrIGIvZHJpdmVycy92aWRlby9mYmRldi9L
-Y29uZmlnDQo+PiBAQCAtMTY4LDYgKzE2OCwxNCBAQCBjb25maWcgRkJfREVGRVJSRURfSU8N
-Cj4+ICAgCWJvb2wNCj4+ICAgCWRlcGVuZHMgb24gRkINCj4+ICAgDQo+PiArY29uZmlnIEZC
-X0RNQV9IRUxQRVJTDQo+PiArCWJvb2wNCj4+ICsJZGVwZW5kcyBvbiBGQg0KPj4gKwlzZWxl
-Y3QgRkJfU1lTX0NPUFlBUkVBDQo+PiArCXNlbGVjdCBGQl9TWVNfRklMTFJFQ1QNCj4+ICsJ
-c2VsZWN0IEZCX1NZU19GT1BTDQo+PiArCXNlbGVjdCBGQl9TWVNfSU1BR0VCTElUDQo+PiAr
-DQo+PiAgIGNvbmZpZyBGQl9JT19IRUxQRVJTDQo+PiAgIAlib29sDQo+PiAgIAlkZXBlbmRz
-IG9uIEZCDQo+PiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9mYi5oIGIvaW5jbHVkZS9s
-aW51eC9mYi5oDQo+PiBpbmRleCAxZDVjMTNmMzRiMDkuLjExOTFhNzhjNTI4OSAxMDA2NDQN
-Cj4+IC0tLSBhL2luY2x1ZGUvbGludXgvZmIuaA0KPj4gKysrIGIvaW5jbHVkZS9saW51eC9m
-Yi5oDQo+PiBAQCAtNTk0LDYgKzU5NCwxOSBAQCBleHRlcm4gc3NpemVfdCBmYl9zeXNfd3Jp
-dGUoc3RydWN0IGZiX2luZm8gKmluZm8sIGNvbnN0IGNoYXIgX191c2VyICpidWYsDQo+PiAg
-IAlfX0ZCX0RFRkFVTFRfU1lTX09QU19EUkFXLCBcDQo+PiAgIAlfX0ZCX0RFRkFVTFRfU1lT
-X09QU19NTUFQDQo+PiAgIA0KPj4gKy8qDQo+PiArICogSGVscGVycyBmb3IgZnJhbWVidWZm
-ZXJzIGluIERNQS1hYmxlIG1lbW9yeQ0KPj4gKyAqLw0KPj4gKw0KPiANCj4gVGhlIGNvbW1l
-bnQgZm9yIEkvTyBtZW1vcnkgaGVscGVycyBzYXlzOg0KPiANCj4gLyoNCj4gICAqIEluaXRp
-YWxpemVzIHN0cnVjdCBmYl9vcHMgZm9yIGZyYW1lYnVmZmVycyBpbiBJL08gbWVtb3J5Lg0K
-PiAgICovDQo+IA0KPiBJIHRoaW5rIHRoYXQgd291bGQgYmUgZ29vZCB0byBoYXZlIGNvbnNp
-c3RlbmN5IGJldHdlZW4gdGhlc2UgdHdvLA0KDQpTdXJlLCBJIGhhZCB0aGUgc2FtZSB0aG91
-Z2h0LiBJIHRoaW5rIEknbGwgcmF0aGVyIGNoYW5nZSB0aGUgZXhpc3RpbmcgDQpjb21tZW50
-cyBhIGJpdC4NCg0KQmVzdCByZWdhcmRzDQpUaG9tYXMNCg0KDQo+IHNvIHNvbWV0aGluZyBs
-aWtlOg0KPiANCj4gLyoNCj4gICAqIEluaXRpYWxpemVzIHN0cnVjdCBmYl9vcHMgZm9yIGZy
-YW1lYnVmZmVycyBpbiBETUEtYWJsZSBtZW1vcnkuDQo+ICAgKi8NCj4gDQo+PiArI2RlZmlu
-ZSBfX0ZCX0RFRkFVTFRfRE1BX09QU19SRFdSIFwNCj4+ICsJLmZiX3JlYWQJPSBmYl9zeXNf
-cmVhZCwgXA0KPj4gKwkuZmJfd3JpdGUJPSBmYl9zeXNfd3JpdGUNCj4+ICsNCj4+ICsjZGVm
-aW5lIF9fRkJfREVGQVVMVF9ETUFfT1BTX0RSQVcgXA0KPj4gKwkuZmJfZmlsbHJlY3QJPSBz
-eXNfZmlsbHJlY3QsIFwNCj4+ICsJLmZiX2NvcHlhcmVhCT0gc3lzX2NvcHlhcmVhLCBcDQo+
-PiArCS5mYl9pbWFnZWJsaXQJPSBzeXNfaW1hZ2VibGl0DQo+PiArDQo+IA0KPiBSZXZpZXdl
-ZC1ieTogSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzIDxqYXZpZXJtQHJlZGhhdC5jb20+DQo+
-IA0KDQotLSANClRob21hcyBaaW1tZXJtYW5uDQpHcmFwaGljcyBEcml2ZXIgRGV2ZWxvcGVy
-DQpTVVNFIFNvZnR3YXJlIFNvbHV0aW9ucyBHZXJtYW55IEdtYkgNCkZyYW5rZW5zdHJhc3Nl
-IDE0NiwgOTA0NjEgTnVlcm5iZXJnLCBHZXJtYW55DQpHRjogSXZvIFRvdGV2LCBBbmRyZXcg
-TXllcnMsIEFuZHJldyBNY0RvbmFsZCwgQm91ZGllbiBNb2VybWFuDQpIUkIgMzY4MDkgKEFH
-IE51ZXJuYmVyZykNCg==
+[Deadlock Scenario]
+s3c2410wdt_probe()
+    -> s3c2410wdt_start()
+    -> spin_lock(&wdt->lock)
+        <irq iterrupt>
+        -> s3c2410wdt_irq()
+        -> s3c2410wdt_keepalive()
+        -> spin_lock(&wdt->lock) (deadlock here)
 
---------------ke1NSCnTChFDaBiTrn3IJd0T--
+[Deadlock Scenario]
+s3c2410wdt_keepalive()
+    -> spin_lock(&wdt->lock)
+        <irq iterrupt>
+        -> s3c2410wdt_irq()
+        -> s3c2410wdt_keepalive()
+        -> spin_lock(&wdt->lock) (deadlock here)
 
---------------DSsyXgywvRAKtkTazazBzV0j
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
+This flaw was found by an experimental static analysis tool I am
+developing for irq-related deadlock, which reported the above
+warning when analyzing the linux kernel 6.4-rc7 release.
 
------BEGIN PGP SIGNATURE-----
+The tentative patch fix the potential deadlock by spin_lock_irqsave()
+under process context.
 
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmSlMxYFAwAAAAAACgkQlh/E3EQov+Dr
-NBAArgLkjnNOyy3WrhjOi6DrP0uWuMNDID2zLhx3QZlZuF7r0OK7UdcAUt3zxY/G/8iJZ55m663D
-e9+qWh7zczNjg8mQ5tTK0WQCQ06cS3+9/lL9fCEi3SYvNmqjKCyYjYcCTJOwexOV/UMAI2nwoPTG
-NTlHBqyMaqFlgAphNeOP3PEgvkTeI/+eqmquHAMsgsRrDyyhEAAQBkaWk6sDNoV6m1pMBd0jJ3gn
-U4z4zul09xvku2/fSbNLJoP3nIBcDhx55V4Y5oKmT+VpkYLIZvSrPmcGUpgQMccWJkWyn+VHknCM
-1cz+CbQgZLPlGjms3OiJxFAUhV6/+sg5Z2lKejqRKxWIylw14fcKNWgxoq63AvqO8CLblxVpq488
-rRBXoEnleRAKrVufNwYPSJ1JxJW9hhbl2VCvVeGkLAF9tY1OtVsqXWVCZ/uPbQA0eJhN8zo9Esys
-G2dAP8roe4mTAlVFf3WDhjBK9ZsRItnHE9f4tJBedcdmINVXh92hZN02sRSMm9hCC11QNs+Op4x/
-I+lqAD0RXSdmwBCdX5c/hhrIwQPTByRGZW9I2zMAMc3SQvbkN7KkDRga8TBHh+yrZfYudXL0d0Jb
-foumBqatUmsWB7qb8SFMljxmUin5K8OgTCYRBdUsBxVQd666OkCRC0BswaS1JVCsrN8ZFLMh0saC
-s2o=
-=DbR5
------END PGP SIGNATURE-----
+Signed-off-by: Chengfeng Ye <dg573847474@gmail.com>
+---
+ drivers/watchdog/s3c2410_wdt.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
---------------DSsyXgywvRAKtkTazazBzV0j--
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 95416a9bdd4b..e1dc71ece01e 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -379,10 +379,11 @@ static int s3c2410wdt_enable(struct s3c2410_wdt *wdt, bool en)
+ static int s3c2410wdt_keepalive(struct watchdog_device *wdd)
+ {
+ 	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
++	unsigned long flags;
+ 
+-	spin_lock(&wdt->lock);
++	spin_lock_irqsave(&wdt->lock, flags);
+ 	writel(wdt->count, wdt->reg_base + S3C2410_WTCNT);
+-	spin_unlock(&wdt->lock);
++	spin_unlock_irqrestore(&wdt->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -399,10 +400,11 @@ static void __s3c2410wdt_stop(struct s3c2410_wdt *wdt)
+ static int s3c2410wdt_stop(struct watchdog_device *wdd)
+ {
+ 	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
++	unsigned long flags;
+ 
+-	spin_lock(&wdt->lock);
++	spin_lock_irqsave(&wdt->lock, flags);
+ 	__s3c2410wdt_stop(wdt);
+-	spin_unlock(&wdt->lock);
++	spin_unlock_irqrestore(&wdt->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -411,8 +413,9 @@ static int s3c2410wdt_start(struct watchdog_device *wdd)
+ {
+ 	unsigned long wtcon;
+ 	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
++	unsigned long flags;
+ 
+-	spin_lock(&wdt->lock);
++	spin_lock_irqsave(&wdt->lock, flags);
+ 
+ 	__s3c2410wdt_stop(wdt);
+ 
+@@ -433,7 +436,7 @@ static int s3c2410wdt_start(struct watchdog_device *wdd)
+ 	writel(wdt->count, wdt->reg_base + S3C2410_WTDAT);
+ 	writel(wdt->count, wdt->reg_base + S3C2410_WTCNT);
+ 	writel(wtcon, wdt->reg_base + S3C2410_WTCON);
+-	spin_unlock(&wdt->lock);
++	spin_unlock_irqrestore(&wdt->lock, flags);
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
+
