@@ -2,140 +2,135 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7037AEB64DA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 13:52:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B63C001B0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 13:55:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232458AbjGENwo (ORCPT
+        id S232170AbjGENzg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Jul 2023 09:52:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52820 "EHLO
+        Wed, 5 Jul 2023 09:55:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232435AbjGENwd (ORCPT
+        with ESMTP id S232449AbjGENza (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Jul 2023 09:52:33 -0400
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2122.outbound.protection.outlook.com [40.107.117.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FB6C19A6;
-        Wed,  5 Jul 2023 06:52:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IzGPHifEPhEDp66U5GhJtqT3heu/dSX4QfUaCZ0T5VdwpTigkzDnp8eepKHpOF/gVCNhOKZMdSs1w6i+W6Z1jQUjqywuSXc0uLWpIcAtmkcENWnurGxp0nFiQyjZlYdI0ApFGRhj98ELO3Z3VZ1ZEc8z4YuKqP48k4CVCb9mTMkBtniHQnVCtIilrsryw/IR2X7eJSK/03jNZ5LRb8m0xhqr3PvzCdZA4l8MyP+XfOseUpjTH0UcSmiQx14Oy+XqmnlaOAn5BJ9BdmjtSE+TOD0PelmkAwwhynE97aD5UxLlz0w9UapXb2cqbvNWCCi3w4CMo+GWlbRksXEfUIfK4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zi6TzN2hL0vt3qrUYbV1lXQWxJA8TiWxiQ0uLCPdZRg=;
- b=UifFbtDbyDEQAsQchqEbm1QHI6RcrUkKDyxWur508VQWKk/ZYG1DnY545Ibmv052D+gTwH+obLn1a8Es6WBT/uJ4Mes0BUo54UQlmSPjTUsvZzr6h91teLPhGVSk2XQzowg7C6RD1iEuJAqRvzWYuaec29kqXpRETJv1zT86lZU29RkRmbqJ7cI6QnUSxmfPW0lLj17qDPcIV6jfy1kS0KTJRQRBNnwQtolAm2DjPoANZx6EzU2CyRe2k84wLloGzYNMS/vU3GRH+WAHYfcaS+iD7URdD71jUaE1G/OSriBNoxOo36v2FmBS0Dvcy/vMTK1H2tHw9ro6vPk8fLuZJg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zi6TzN2hL0vt3qrUYbV1lXQWxJA8TiWxiQ0uLCPdZRg=;
- b=kjGUwEVJH23JEQJc1Wl0KsfWXx6+9mNa3vxujHdnojSQSvItP2mUc8fUuL2JHKimHAiqX/EXg6xPeGb1r0vsQDI76sxuP/Va+TEFXfBHqUdG881MRnoZiTFhzguvsKwUBWR6kwOnyxSXe9y343mMlKfO9jb+s6EUCDJGOLbO+pUHnMEwK6KdzRI4glpKB9/0Kg5gSH6USMdljRn/uaDuupNKAMXF9bIL/JyCmdjwX2C2dxP7WP1FdHC7pgqtktCiVmKDDJlo54KON4iNKU19FBEMy7GoqUH483iLjWY6awn6MZ/S/q5cR65MMxcXLh9mdI165zb18REF6oeFtxDhmg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by PSAPR06MB3991.apcprd06.prod.outlook.com (2603:1096:301:38::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6565.17; Wed, 5 Jul
- 2023 13:52:19 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::fa0e:6c06:7474:285c]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::fa0e:6c06:7474:285c%5]) with mapi id 15.20.6565.016; Wed, 5 Jul 2023
- 13:52:19 +0000
-From:   Yangtao Li <frank.li@vivo.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Andi Shyti <andi.shyti@kernel.org>
-Cc:     Yangtao Li <frank.li@vivo.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 09/11] i2c: s3c2410: Use devm_platform_get_and_ioremap_resource()
-Date:   Wed,  5 Jul 2023 21:51:56 +0800
-Message-Id: <20230705135159.33327-9-frank.li@vivo.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230705135159.33327-1-frank.li@vivo.com>
-References: <20230705135159.33327-1-frank.li@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCPR01CA0049.jpnprd01.prod.outlook.com
- (2603:1096:405:2::13) To SEZPR06MB5269.apcprd06.prod.outlook.com
- (2603:1096:101:78::6)
+        Wed, 5 Jul 2023 09:55:30 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3016D19AE
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jul 2023 06:55:27 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-314172bb818so7605888f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Jul 2023 06:55:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688565325; x=1691157325;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=QDtJCKqfKjcaKFw75l+br9FSk3/UDaoY4ROK4bND+g4=;
+        b=bMY4zcmVkRkJZuGTA/33qY4pDQWVLuUTDNqW/Ux6jP9erW+UhwIf8QtmjuEgBm2vsv
+         ghUmFqo7e48R9GIW9Tv1zVyXNUmvK/H7vYx8tZ73fxSftzxvB0D/fENKY5xY+uUVP2gK
+         oxS8XvPWaS326vR+V8PJvOIhZr59gE5i7ZPhyRlgpf6FGMihAysHqNhkw2MzhxKQRYQ+
+         ynmXBDhPXypo8gW7b0viowmjJanw3tmV74qmbkMLTP2pFGg3Q3llS3m75Qat1+yR6y34
+         8WiXgiGWQpcBc+BprKeMv3lLlUkl4A8DdI/0xx2+VNWrtvOTpHozakUvW7U7TI+dG7Y4
+         NncA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688565325; x=1691157325;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QDtJCKqfKjcaKFw75l+br9FSk3/UDaoY4ROK4bND+g4=;
+        b=BPVNd0zwZPNfjmIz+iUP2FFDUs8c3CMDtpxqezRtQWp2Ybq1ZrmeEVB+b5zzHHO29c
+         hsQfHCx6zN54y67e0Cgy6uTlrSuH2ehh1EJBdCHYjFGc3jGTsKBmNnPYFj5EQvvv//+T
+         K0omPpm2woCa7R8dcG7BHaRtXV9rBd8OrVGIbjZckrmDf6etXcJqKdFzJ9yMydU3iX8i
+         vv1c5MwzvhQOhOmrLhNt+TvJZVQV2Otm30OB6kR2pyA2ZYiYQIGbTxQMw63CmLbHdWan
+         BZ39iErJfobboI6DAnBSLxGRbDdnnwWXid+SooVLKrrfuq7FGGZwo5ndyUOs3sDJMNeI
+         OWmA==
+X-Gm-Message-State: ABy/qLYAP8kYRHOIS3GnpZAke7qR8YQfQs54PDO/CCZQvK3ZC8et9zA2
+        HOO7fQD6Wg7i+YzJ63J9UvxX6w==
+X-Google-Smtp-Source: APBJJlEDj7353XXfmQuL/K85xJsW2fbnWCsuq5RfNgpui++UqX0DPWU+I7uxm15VgnfHX9RGnjKMLg==
+X-Received: by 2002:adf:e747:0:b0:314:2f5b:2ce with SMTP id c7-20020adfe747000000b003142f5b02cemr10156381wrn.12.1688565325537;
+        Wed, 05 Jul 2023 06:55:25 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:65eb:d140:2d45:ee85? ([2a01:e0a:982:cbb0:65eb:d140:2d45:ee85])
+        by smtp.gmail.com with ESMTPSA id u11-20020adfdd4b000000b003143765e207sm8251847wrm.49.2023.07.05.06.55.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jul 2023 06:55:25 -0700 (PDT)
+Message-ID: <f7bf6f1a-1cc6-55e3-82a2-ecc6818be5c4@linaro.org>
+Date:   Wed, 5 Jul 2023 15:55:24 +0200
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|PSAPR06MB3991:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5bda0aaf-8e40-41dc-5f41-08db7d5f0c88
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HSw2htB2RHaqDULWqcb2VGHP+X5CcwmuhsodCWIWjREcgQIh7i/HbEsmDDGjkz6U1cG2JY5cDMR6D0sUcBy9FFTmpFpcaossYYQ/hPhvcCtybA/AxS413PzlJBVjQprfSbXmUlcdSsKNkS03RNNRszoAaFp2Mg0dtxhk28nipZrS70aGkecoVPlnBKaFDYcV/I0l3WZ9xn9HEn7PfAiQI4xWAczniRqm2euZNY6e/jL/nDKIMJLPtB2lVRxx5dfRfexBJ6Ksai8D0MoJz2BIEDP1LWIlU6m/DZrkYShq+XxNsUx0Tojyakb0jQQUeAhbKvD0bW7zb4NnLHrXjdjPScjcvCMGx/d+186ci7MbVy4kXx7RWrUZxeVBnchHOSDD7WS3LrtdLIBteFGyOFzJ5pCnStvUS1Kh4bg/gaF+QJuu2eAcHvHjdXK/vyiCmXseOvyzIO6JYsv1Tv7NUfCRr1zaGUUuQLYP8oB08nlyyiiF3FQvMYjlEpRIAsVmm4IhcD6gWDtZ9OSMdSvUYrhz5PiT0LaM/O4CvKRczuJ8AtOmROQPt/mj0T4ZiP8AU3CO8P0vA+bjJW9932Q07nvDcVQsXqxJyurf2qjrDs3DogErjmGIisLt/NJDXjIzDNBO
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(366004)(346002)(136003)(376002)(39860400002)(451199021)(38100700002)(38350700002)(66476007)(66556008)(4326008)(66946007)(2616005)(186003)(86362001)(6486002)(52116002)(6666004)(36756003)(6512007)(26005)(6506007)(478600001)(110136005)(1076003)(8936002)(8676002)(4744005)(5660300002)(316002)(2906002)(41300700001)(83380400001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?g5sQwXUIVmVXagbSEn0lRLbv6UH3paFIH8yB5XjVxa6m73sHX3+hcz+Ahj+P?=
- =?us-ascii?Q?jWiu8rirXuMGWKSwKYUQ88yqcBzE9iHRJuV2NyiprVSCfduZoUYUllw3mzeo?=
- =?us-ascii?Q?lp3uP37EZW1E3f5FPeu8rqbKXfCoLXTbPjSt6Eth6KC7G1Pg8sjG2mM9rCcy?=
- =?us-ascii?Q?MhAyD78fyOUxDIxaeqRs0c57sD81WS4u/l+EsaI9OySnF1m/on0P482ehNb1?=
- =?us-ascii?Q?s71Vc59RoyEsmf+nDaTSTiFOcucS/4CP0KZ61Lt7BjCOuHOKjSXP1d3ObprO?=
- =?us-ascii?Q?sFIjDH/hwSkSkJKsxKhLoi0AXt+L9dFkiASj46x1Y7al+eu3a5Zgp9k6u9Rt?=
- =?us-ascii?Q?p7mbA4kcGlx3m7YTN6cnyZfrd/q/p1v9XX//NTFo0qvC5xUrtPsU8vv75ypb?=
- =?us-ascii?Q?qah8xQjg4Y/FJD7x8P1A7A1siSBCZwOTJgVBILYXipR3zDXruX3aUu4TyzcR?=
- =?us-ascii?Q?vPkLxI5dDEx3cplzN7+eAAs8qN5ngyC21dV8IZot0ZMdncm70D81+7B8Wtjc?=
- =?us-ascii?Q?pJGioNi0+WvcRxXbnjC6+7yg43EjvJB9ezigxUXffW48kD/zME07tFlBygfd?=
- =?us-ascii?Q?Zq0vaPDi9xQE1omSxJ5nB3IsB7eCQ2okBzk0lhnOdvha46pEc5SZVNl2uM3P?=
- =?us-ascii?Q?TNWkj+lPZF0rKqbHnHxpaHEWnJiWWhZ/HPZeTIlY0sRodzFsOgPQRMkoHuPI?=
- =?us-ascii?Q?wk6tDj7M9xjjv3c+T6Bbvqr+GafUaZFBuhHZWQ+EMmTXUUCUhSA6Hx+IWdIu?=
- =?us-ascii?Q?x9DowSBVKYfUtY36hcb7g3hBpM91xz0dC0+SFe3Tl0q8vg4J0K3FLqY0T+Ta?=
- =?us-ascii?Q?2tPpDctVsD69Vh3R4LBNTvYAW+u1TBdcWpKbi5ebvjcyCi325ZP/rGpy4T5c?=
- =?us-ascii?Q?BbrZRLrU5zVM/yq0/0cs/Tu6T3oG3pHr/cj/2zCwSrtnJsBDKJwKqAWzaRwV?=
- =?us-ascii?Q?F9nbXvcS4TiTeK2NDgM2+1oyTy0oqhj60FjFzeX6bzgssPxyrCOK0mXA2xME?=
- =?us-ascii?Q?d8AJ81H//L0s97OCS3RSvyoWxdIWZx3bHfznzk7BGbBXGD5JIsCc8fLXESLM?=
- =?us-ascii?Q?aTmZhjAtvfAF4od0o/Fb7T6J2/NlibdqXHUQPq9BSnbfR0Q1doT/KxZ+JL+7?=
- =?us-ascii?Q?UdJTgGD82TYj6Cr0bxOOV+ac5u79DuehQKQXeN97OnSNJ+gLJjFP253yW0Bf?=
- =?us-ascii?Q?lB67vmlWsKB651xcUgJfd7dp/T0XBU4Yooxc9UCrcp+bvOw3GQEjGpt70P2E?=
- =?us-ascii?Q?M+KXAayIe445Ns//tNKePKjQgJQNmlhPOKPV5oGyoby8XEoTGUhJmUwj2ukP?=
- =?us-ascii?Q?laMCiEWQNcvyptLClur9fm4ZlEs/2nctPUnE0+/0EcTbH1tmR0jAyeaVYOtG?=
- =?us-ascii?Q?wteJePqP3pIltHRw0DNrnrL2jz0y56uSwKa9+F2elmozpEOo/RDYgaHMwgtO?=
- =?us-ascii?Q?ZpdfZrDqPdcHM4HH3SuzhiBV0/gvI6KpMv/p7Yt06dlkjS5xLD5eApvqF06F?=
- =?us-ascii?Q?/vC1WxDFe83vojQ/zJciLeT/gyPMQ61C3tsKZR4bfC6jGY7Hj6uG9z2GiB6U?=
- =?us-ascii?Q?a+N2JMmR0Lb9JJrE8t/u84F+hS1RIKC2xq/oct4W?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5bda0aaf-8e40-41dc-5f41-08db7d5f0c88
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2023 13:52:19.0489
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fSrWeIRx+t3hx/gOhdcp6QIvM71ItIFov2Ccuyti7bF1B19WdlB/MeZsMdfJ5JMV+sw9bDNL5Kbg2cbmygWloQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PSAPR06MB3991
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 1/3] drm/panel: ld9040: Use better magic values
+Content-Language: en-US
+To:     Paul Cercueil <paul@crapouillou.net>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <20230703214715.623447-1-paul@crapouillou.net>
+ <20230703214715.623447-2-paul@crapouillou.net>
+Organization: Linaro Developer Services
+In-Reply-To: <20230703214715.623447-2-paul@crapouillou.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert platform_get_resource(), devm_ioremap_resource() to a single
-call to devm_platform_get_and_ioremap_resource(), as this is exactly
-what this function does.
+Hi
 
-Signed-off-by: Yangtao Li <frank.li@vivo.com>
----
- drivers/i2c/busses/i2c-s3c2410.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+On 03/07/2023 23:47, Paul Cercueil wrote:
+> I have no idea what the prior magic values mean, and I have no idea
+> what my replacement (extracted from [1]) magic values mean.
+> 
+> What I do know, is that these new values result in a much better
+> picture, where the blacks are really black (as you would expect on an
+> AMOLED display) instead of grey-ish.
+> 
+> [1] https://github.com/dorimanx/Dorimanx-SG2-I9100-Kernel/blob/master-jelly-bean/arch/arm/mach-exynos/u1-panel.h
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>   drivers/gpu/drm/panel/panel-samsung-ld9040.c | 11 ++++++-----
+>   1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-samsung-ld9040.c b/drivers/gpu/drm/panel/panel-samsung-ld9040.c
+> index 01eb211f32f7..7fd9444b42c5 100644
+> --- a/drivers/gpu/drm/panel/panel-samsung-ld9040.c
+> +++ b/drivers/gpu/drm/panel/panel-samsung-ld9040.c
+> @@ -180,17 +180,18 @@ static void ld9040_init(struct ld9040 *ctx)
+>   {
+>   	ld9040_dcs_write_seq_static(ctx, MCS_USER_SETTING, 0x5a, 0x5a);
+>   	ld9040_dcs_write_seq_static(ctx, MCS_PANEL_CONDITION,
+> -		0x05, 0x65, 0x96, 0x71, 0x7d, 0x19, 0x3b, 0x0d,
+> -		0x19, 0x7e, 0x0d, 0xe2, 0x00, 0x00, 0x7e, 0x7d,
+> -		0x07, 0x07, 0x20, 0x20, 0x20, 0x02, 0x02);
+> +		0x05, 0x5e, 0x96, 0x6b, 0x7d, 0x0d, 0x3f, 0x00,
+> +		0x00, 0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +		0x07, 0x05, 0x1f, 0x1f, 0x1f, 0x00, 0x00);
+>   	ld9040_dcs_write_seq_static(ctx, MCS_DISPCTL,
+> -		0x02, 0x08, 0x08, 0x10, 0x10);
+> +		0x02, 0x06, 0x0a, 0x10, 0x10);
+>   	ld9040_dcs_write_seq_static(ctx, MCS_MANPWR, 0x04);
+>   	ld9040_dcs_write_seq_static(ctx, MCS_POWER_CTRL,
+>   		0x0a, 0x87, 0x25, 0x6a, 0x44, 0x02, 0x88);
+> -	ld9040_dcs_write_seq_static(ctx, MCS_ELVSS_ON, 0x0d, 0x00, 0x16);
+> +	ld9040_dcs_write_seq_static(ctx, MCS_ELVSS_ON, 0x0f, 0x00, 0x16);
+>   	ld9040_dcs_write_seq_static(ctx, MCS_GTCON, 0x09, 0x00, 0x00);
+>   	ld9040_brightness_set(ctx);
+> +
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 28f0e5c64f32..c14c3807e135 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -1034,9 +1034,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	dev_dbg(&pdev->dev, "clock source %p\n", i2c->clk);
- 
- 	/* map the registers */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	i2c->regs = devm_ioremap_resource(&pdev->dev, res);
--
-+	i2c->regs = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
- 	if (IS_ERR(i2c->regs))
- 		return PTR_ERR(i2c->regs);
- 
--- 
-2.39.0
+You can drop this spurious new line for v2
 
+>   	ld9040_dcs_write_seq_static(ctx, MIPI_DCS_EXIT_SLEEP_MODE);
+>   	ld9040_dcs_write_seq_static(ctx, MIPI_DCS_SET_DISPLAY_ON);
+>   }
+
+And add
+
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+
+Neil
