@@ -2,59 +2,59 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2896EB64DD
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 09:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5270AC001B1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 09:08:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231720AbjGEJGZ (ORCPT
+        id S232391AbjGEJIG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Jul 2023 05:06:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41480 "EHLO
+        Wed, 5 Jul 2023 05:08:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231491AbjGEJGY (ORCPT
+        with ESMTP id S232357AbjGEJIE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Jul 2023 05:06:24 -0400
+        Wed, 5 Jul 2023 05:08:04 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B21A810D5
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jul 2023 02:05:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E376F1700
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jul 2023 02:07:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688547939;
+        s=mimecast20190719; t=1688548036;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=FkUdoB9ukiXu+GwQPoh7yLjinOj86HTx0mJIEOcNqHk=;
-        b=XF2Ty5+4s9gCoV8n7LHDoERopxwpo86Ru71klVOgsVxem42AWvqjL4FWU5cuNfpp4ZcgGJ
-        +Gj+zebDnCrm9a2VVpf9BShSfLHI0tEDWaK9b0Hnl350HBR197RlLimghqxXqI77MDnhtg
-        eUCJ2C7y9G03mXz01L0MP9koQZrdso8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=a06dM4DVhOWie+29y5OH6RTZsrC7pthC/bnsJb9dU4k=;
+        b=TkctYdfkaG7vg82cKjocujjyNN5f97SGBL0O8qElhImGEztSuHPnXfne6t5x5MRb0EwqZp
+        bX+PYReIO2No8v9pat+IOLaqHDow16jV/JVa0mEsQbq7YQIC/4jcGvumAG/r4yGdfqjIMi
+        vNcelHt24pWiqCavtCB1LAIZSBf5pZg=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-316-7ZT7Tqr2MiSgp3cNeuZpqA-1; Wed, 05 Jul 2023 05:05:37 -0400
-X-MC-Unique: 7ZT7Tqr2MiSgp3cNeuZpqA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-3f42bcef2acso37781115e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Jul 2023 02:05:37 -0700 (PDT)
+ us-mta-224-RNBh-Q3MNi-8v02E3P-WDw-1; Wed, 05 Jul 2023 05:07:15 -0400
+X-MC-Unique: RNBh-Q3MNi-8v02E3P-WDw-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3143ac4a562so1483677f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Jul 2023 02:07:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688547937; x=1691139937;
+        d=1e100.net; s=20221208; t=1688548034; x=1691140034;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FkUdoB9ukiXu+GwQPoh7yLjinOj86HTx0mJIEOcNqHk=;
-        b=H1lRMdm8KTyOQqJOsNGSbgY5gqsmVAHVjTLDU4VfkIIgKjVVXtG97wrk8FDRLJ591f
-         dr8ypkppKNCLG8WOuTHO/3VEQ76Ir5jpPxrfCznMSNwDeu2aiNTL5JKJRkbMPkJFB4xj
-         f9dcAf8/OhLpXTBGbCcFzLYvSIrH4vs9tU/BLaDJaDnN6Vvw10ZXny77syx5WccH/l9w
-         ZBjdiZOmdq0NKKG+Xd4a4m8UiAKOqtlgt6xuiCepBM7ZkDNAnHE7Xob89+rzAgDLbbIE
-         otJ91cjDU9oNLZRG97dbe/8g7tlk2SQ2NaJhHoG6D1kJRqUfKmgo7BoLM/FIJq5PRnSJ
-         qUpw==
-X-Gm-Message-State: ABy/qLbsiiBEKLp5BYoPuHQfh3f9TIgJ5MHga3ZF2lBmZWs4vZlJULJL
-        YQb6IkoQaiak+qKv5msFAoP1C6HwHToQC1L/mObvV4WDnrPD8qGJyxCDsCKiDK020s6AbzOmkuV
-        IF1xvgKF9rB88ZkxNIWbHPOh95b+4PIY=
-X-Received: by 2002:a1c:f712:0:b0:3fb:dbd0:a7ea with SMTP id v18-20020a1cf712000000b003fbdbd0a7eamr6291384wmh.37.1688547936822;
-        Wed, 05 Jul 2023 02:05:36 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlFea/9ghtylfsKDHnVQCxTc0bPKyrA8WH7Zc8b8ay9vM+p1C9BZYAjxS62tSMn7FBeqBkEyEw==
-X-Received: by 2002:a1c:f712:0:b0:3fb:dbd0:a7ea with SMTP id v18-20020a1cf712000000b003fbdbd0a7eamr6291366wmh.37.1688547936580;
-        Wed, 05 Jul 2023 02:05:36 -0700 (PDT)
+        bh=a06dM4DVhOWie+29y5OH6RTZsrC7pthC/bnsJb9dU4k=;
+        b=TKOdYM9BWqsCVuMyQuEo/2fBk20pm2G3I/EIDb+/2fe+jnROddw4iI+bp4jfOOEzyO
+         Uy2bJ7/iystl+mAVrg1JV51sQC5kIPhRrjTGKm1bQoK58R9p+jo53qNahpX/va5OAF9Z
+         SVP+5/YAoeWsSSXdnz19C7jT+8s0d1SIScDrx7B81fWzrATjv6SBCl9earu3uswz8lKp
+         kYO0iuBYJbx/S51URM+R9Y2BVOo33BG4CJvBZE9OA1mkozQ4d9PPaCSfltNWmKsM2a42
+         0ntQrD1EcWtf1xKzcPrqFJJXrfwCnn/mk3MrVZqeGD55gqD5BBqmT5RjDZSF23cIyvom
+         IzqA==
+X-Gm-Message-State: ABy/qLb1v855jVfjg/tjBJHggPklKGxV71QQ6zA+cL2nfkcIWwCJ6M0V
+        +Di60Ougv4ozlcSYQrBpefQ8g7SuRdd0eB1GWjcdnSuD3sebp9Z2uNbqBS+rScRXmCi9Q/psUo3
+        j8S4Ew818O+rW3MMB+H6HfnFWZrtLubs=
+X-Received: by 2002:adf:f3c4:0:b0:313:ebf3:850e with SMTP id g4-20020adff3c4000000b00313ebf3850emr13765071wrp.37.1688548033939;
+        Wed, 05 Jul 2023 02:07:13 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlHGcT0p8hhCDRF3h+9mFlbkiFbzXDC8/ZzlCbbtfV1aXJy0eKEzcQDMciMIa3WCioCrYV9vdg==
+X-Received: by 2002:adf:f3c4:0:b0:313:ebf3:850e with SMTP id g4-20020adff3c4000000b00313ebf3850emr13765052wrp.37.1688548033678;
+        Wed, 05 Jul 2023 02:07:13 -0700 (PDT)
 Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id k7-20020a05600c0b4700b003f9b155b148sm1517462wmr.34.2023.07.05.02.05.36
+        by smtp.gmail.com with ESMTPSA id m3-20020adff383000000b0031417b0d338sm16044699wro.87.2023.07.05.02.07.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jul 2023 02:05:36 -0700 (PDT)
+        Wed, 05 Jul 2023 02:07:13 -0700 (PDT)
 From:   Javier Martinez Canillas <javierm@redhat.com>
 To:     Thomas Zimmermann <tzimmermann@suse.de>,
         maarten.lankhorst@linux.intel.com, mripard@kernel.org
@@ -64,12 +64,12 @@ Cc:     dri-devel@lists.freedesktop.org,
         linux-fbdev@vger.kernel.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
         Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Subject: Re: [PATCH 08/10] drm/omapdrm: Use GEM mmap for fbdev emulation
-In-Reply-To: <20230704160133.20261-9-tzimmermann@suse.de>
+Subject: Re: [PATCH 09/10] drm/omapdrm: Set fbdev flags
+In-Reply-To: <20230704160133.20261-10-tzimmermann@suse.de>
 References: <20230704160133.20261-1-tzimmermann@suse.de>
- <20230704160133.20261-9-tzimmermann@suse.de>
-Date:   Wed, 05 Jul 2023 11:05:35 +0200
-Message-ID: <87lefuran4.fsf@minerva.mail-host-address-is-not-set>
+ <20230704160133.20261-10-tzimmermann@suse.de>
+Date:   Wed, 05 Jul 2023 11:07:12 +0200
+Message-ID: <87ilayrakf.fsf@minerva.mail-host-address-is-not-set>
 MIME-Version: 1.0
 Content-Type: text/plain
 Precedence: bulk
@@ -78,19 +78,9 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Thomas Zimmermann <tzimmermann@suse.de> writes:
 
-> The fbdev emulation currently uses fbdev's default mmap code, which
-> has been written for I/O memory. Provide an mmap that uses GEM's mmap
-> infrastructure.
->
-> Utilize fine-grained fbdev macros to initialize struct fb_ops. The
-> macros set the read/write and the draw callbacks for DMA memory. Set
-> the fb_mmap callback to omapdrm's new mmap helper. Also select the
-> correct Kconfig token for fbdev's DMA helpers. Note that the DMA
-> helpers are the same as for system memory.
->
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> ---
+> Set fbdev default flags FBNFO_DEFAULT and mark the framebuffer with
+
+FBINFO_DEFAULT. I noticed that the same typo is in patch 04/10 as well.
 
 Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
