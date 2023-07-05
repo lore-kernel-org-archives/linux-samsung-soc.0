@@ -2,141 +2,140 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DBE4EB64DD
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 07:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C0A2C001DD
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 08:07:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230286AbjGEHX7 (ORCPT
+        id S232426AbjGEIHL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Jul 2023 03:23:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46268 "EHLO
+        Wed, 5 Jul 2023 04:07:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232259AbjGEHX5 (ORCPT
+        with ESMTP id S230195AbjGEIHK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Jul 2023 03:23:57 -0400
-Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8944510D5;
-        Wed,  5 Jul 2023 00:23:53 -0700 (PDT)
-Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-1b06ea7e7beso5935003fac.0;
-        Wed, 05 Jul 2023 00:23:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688541833; x=1691133833;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UtRultwczflx7AHsIym9/WcCjEB4FHHPYH8wgJ+7ZX8=;
-        b=V7LGiFMGlYLr2yn2Y0Rzccc4dgCcZ4tSHNjP7HzaTPY7G3TuyCEiD6WeJU+gnysCcf
-         NF73WRKgDoZD3cAQOlonlktwqDWlYoeJXwUC5df8A4iB2pUD623LDjHudXB1K+YtCC4Q
-         PkThH5LwdetekBVPTjuQ3pLpfaaayKr1q3XaN7swpKAqoukoQh1GmOoGf2VeMv+N6nM7
-         ySMNNcwehuOmdrG6bBivGTEN4ieYXCbLKQv0PP1S+ibDF1BXj14CcaElwSjMEraQQphw
-         68sabzJuDsW4DXGgWoGDDM76KcpZQUjv5BKJ/ZqU7vi2Mexb7i8IoVbY9G9cwI1ouhGd
-         xPCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688541833; x=1691133833;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UtRultwczflx7AHsIym9/WcCjEB4FHHPYH8wgJ+7ZX8=;
-        b=Cg79wjuVg05AD20vVE+hT6VB8K9Rr0Emx/MSuD9WZBrDdAQDzTT1Za73cAGmJHJy/7
-         5MzSBMgPsTOHtEy4FwxqjPReSYYwn4UOij4e5hbfMao4AJTBhrIL2Ik1mILjPGGGBrTE
-         enjo9vw9CAy/TCbaEE+bkHdlB8MQ9DP1dw4g5E05InGF7UjM3zCIG+8cr0eZqdcIRlwR
-         BTNIBWolwbN9p+W0ptsUJALtE3GFWYApAh/gOrpZrrzKUFOP3oIuRi/uX21HbdHL8qTF
-         sL5bOawvMQ9Mv6iWP1bN3Q7bBEg4mrd2LtgJIAV90dh/ZOpDRJNu6Cm+giYT0ltxZUfm
-         80dg==
-X-Gm-Message-State: ABy/qLakaqYf7SIP7fuynuvWG4vy2ICewEbc18/Sp6oFf/8GokNtwVkX
-        n+FunmVQM1m7fVSeApkINB8=
-X-Google-Smtp-Source: APBJJlGKTDdDczDO9DBJTucbfA58+S106cvsp3S/i5Bqu4Q7tkykGKqJvUQTxUZLj0/YpjVamFiLVg==
-X-Received: by 2002:a05:6871:4f18:b0:1b3:cee4:cac9 with SMTP id zu24-20020a0568714f1800b001b3cee4cac9mr3731186oab.33.1688541832660;
-        Wed, 05 Jul 2023 00:23:52 -0700 (PDT)
-Received: from 377044c6c369.cse.ust.hk (191host097.mobilenet.cse.ust.hk. [143.89.191.97])
-        by smtp.gmail.com with ESMTPSA id k19-20020a056870d0d300b001b3a5ab6cacsm3781314oaa.16.2023.07.05.00.23.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jul 2023 00:23:52 -0700 (PDT)
-From:   Chengfeng Ye <dg573847474@gmail.com>
-To:     krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
-        wim@linux-watchdog.org, linux@roeck-us.net
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chengfeng Ye <dg573847474@gmail.com>
-Subject: [PATCH v2] watchdog: s3c2410: Fix potential deadlock on &wdt->lock
-Date:   Wed,  5 Jul 2023 07:23:04 +0000
-Message-Id: <20230705072304.37741-1-dg573847474@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 5 Jul 2023 04:07:10 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A786E1716
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jul 2023 01:07:06 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qGxXO-0003pF-Mg; Wed, 05 Jul 2023 10:06:58 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qGxXM-00CDNI-Cf; Wed, 05 Jul 2023 10:06:56 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qGxXL-002Oax-32; Wed, 05 Jul 2023 10:06:55 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH v2 2/8] pwm: samsung: Put per-channel data into driver data
+Date:   Wed,  5 Jul 2023 10:06:44 +0200
+Message-Id: <20230705080650.2353391-3-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230705080650.2353391-1-u.kleine-koenig@pengutronix.de>
+References: <20230705080650.2353391-1-u.kleine-koenig@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3039; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=WbiUwtPhzGh+pbselDpueT/s8UBjYMzeiRbx+5zTqq4=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkpSSPWvJ6AQIwKMYnjS7Qm+aJ2ek7MjuPpBH7p MJ+4ijKLIeJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZKUkjwAKCRCPgPtYfRL+ Tk7gCACH0Fi8f0lpQzCKqkOQHd0QeL4SkQGmefCTrxSRQvwtBbKy+o302v6xpGPEKjJUA79eDCZ HzNohOGBi9Wiuy+pyp5XDtge9gayxEtbSTpTf+U9w/td4lQRNLn85Gcuv68rHOPRYk+AT8K2Oy+ lJ8WyTP2tRQZLqOrdV/XVj57oDmigWnh6EgGu7OyhwEm+qf60gp16M5hb9t5daSgEI52waGtxdZ OX7PU4Z2Uu7NEhT7M47+3rIn0Sl2SJ3VYHnXtnoPWx0pTeSBn3B+kh/TOGEe8Dwbm0B9uGLtatN RnI5l/2pqplhffD5HPM/FDQb71WHqKpQAmP9+YJe5Dnxplxu
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-As &wdt->lock is acquired by hard irq s3c2410wdt_irq(), other
-acquisition of the same lock under process context should
-disable irq, otherwise deadlock could happen if the irq preempt
-the execution while the lock is held in process context on the
-same CPU.
+Instead of allocating extra data in .request() provide the needed memory
+in struct samsung_pwm_chip. This reduces the number of allocations. Even
+though now all 5 channel structs are allocated this is probably
+outweighed by the reduced overhead to track up to 6 smaller allocations.
 
-[Deadlock Scenario]
-s3c2410wdt_suspend()
-    -> s3c2410wdt_stop()
-    -> spin_lock(&wdt->lock)
-        <irq iterrupt>
-        -> s3c2410wdt_irq()
-        -> s3c2410wdt_keepalive()
-        -> spin_lock(&wdt->lock) (deadlock here)
-
-[Deadlock Scenario]
-s3c2410wdt_probe()
-    -> s3c2410wdt_start()
-    -> spin_lock(&wdt->lock)
-        <irq iterrupt>
-        -> s3c2410wdt_irq()
-        -> s3c2410wdt_keepalive()
-        -> spin_lock(&wdt->lock) (deadlock here)
-
-This flaw was found by an experimental static analysis tool I am
-developing for irq-related deadlock, which reported the above
-warning when analyzing the linux kernel 6.4-rc7 release.
-
-The tentative patch fix the potential deadlock by spin_lock_irqsave()
-under process context.
-
-Signed-off-by: Chengfeng Ye <dg573847474@gmail.com>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/watchdog/s3c2410_wdt.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/pwm/pwm-samsung.c | 20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 95416a9bdd4b..2dfc0d6a3004 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -399,10 +399,11 @@ static void __s3c2410wdt_stop(struct s3c2410_wdt *wdt)
- static int s3c2410wdt_stop(struct watchdog_device *wdd)
- {
- 	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
-+	unsigned long flags;
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index e8828f57ab15..d1a2bc01071b 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -88,6 +88,7 @@ struct samsung_pwm_chip {
+ 	struct clk *base_clk;
+ 	struct clk *tclk0;
+ 	struct clk *tclk1;
++	struct samsung_pwm_channel channel[SAMSUNG_PWM_NUM];
+ };
  
--	spin_lock(&wdt->lock);
-+	spin_lock_irqsave(&wdt->lock, flags);
- 	__s3c2410wdt_stop(wdt);
--	spin_unlock(&wdt->lock);
-+	spin_unlock_irqrestore(&wdt->lock, flags);
+ #ifndef CONFIG_CLKSRC_SAMSUNG_PWM
+@@ -228,7 +229,6 @@ static unsigned long pwm_samsung_calc_tin(struct samsung_pwm_chip *chip,
+ static int pwm_samsung_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+ 	struct samsung_pwm_chip *our_chip = to_samsung_pwm_chip(chip);
+-	struct samsung_pwm_channel *our_chan;
+ 
+ 	if (!(our_chip->variant.output_mask & BIT(pwm->hwpwm))) {
+ 		dev_warn(chip->dev,
+@@ -237,20 +237,11 @@ static int pwm_samsung_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ 		return -EINVAL;
+ 	}
+ 
+-	our_chan = kzalloc(sizeof(*our_chan), GFP_KERNEL);
+-	if (!our_chan)
+-		return -ENOMEM;
+-
+-	pwm_set_chip_data(pwm, our_chan);
++	memset(&our_chip->channel[pwm->hwpwm], 0, sizeof(our_chip->channel[pwm->hwpwm]));
  
  	return 0;
  }
-@@ -411,8 +412,9 @@ static int s3c2410wdt_start(struct watchdog_device *wdd)
+ 
+-static void pwm_samsung_free(struct pwm_chip *chip, struct pwm_device *pwm)
+-{
+-	kfree(pwm_get_chip_data(pwm));
+-}
+-
+ static int pwm_samsung_enable(struct pwm_chip *chip, struct pwm_device *pwm)
  {
- 	unsigned long wtcon;
- 	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
-+	unsigned long flags;
+ 	struct samsung_pwm_chip *our_chip = to_samsung_pwm_chip(chip);
+@@ -318,7 +309,7 @@ static int __pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 				int duty_ns, int period_ns, bool force_period)
+ {
+ 	struct samsung_pwm_chip *our_chip = to_samsung_pwm_chip(chip);
+-	struct samsung_pwm_channel *chan = pwm_get_chip_data(pwm);
++	struct samsung_pwm_channel *chan = &our_chip->channel[pwm->hwpwm];
+ 	u32 tin_ns = chan->tin_ns, tcnt, tcmp, oldtcmp;
  
--	spin_lock(&wdt->lock);
-+	spin_lock_irqsave(&wdt->lock, flags);
+ 	tcnt = readl(our_chip->base + REG_TCNTB(pwm->hwpwm));
+@@ -473,7 +464,6 @@ static int pwm_samsung_apply(struct pwm_chip *chip, struct pwm_device *pwm,
  
- 	__s3c2410wdt_stop(wdt);
+ static const struct pwm_ops pwm_samsung_ops = {
+ 	.request	= pwm_samsung_request,
+-	.free		= pwm_samsung_free,
+ 	.apply		= pwm_samsung_apply,
+ 	.owner		= THIS_MODULE,
+ };
+@@ -639,9 +629,9 @@ static int pwm_samsung_resume(struct device *dev)
  
-@@ -433,7 +435,7 @@ static int s3c2410wdt_start(struct watchdog_device *wdd)
- 	writel(wdt->count, wdt->reg_base + S3C2410_WTDAT);
- 	writel(wdt->count, wdt->reg_base + S3C2410_WTCNT);
- 	writel(wtcon, wdt->reg_base + S3C2410_WTCON);
--	spin_unlock(&wdt->lock);
-+	spin_unlock_irqrestore(&wdt->lock, flags);
+ 	for (i = 0; i < SAMSUNG_PWM_NUM; i++) {
+ 		struct pwm_device *pwm = &chip->pwms[i];
+-		struct samsung_pwm_channel *chan = pwm_get_chip_data(pwm);
++		struct samsung_pwm_channel *chan = &our_chip->channel[i];
  
- 	return 0;
- }
+-		if (!chan)
++		if (!(pwm->flags & PWMF_REQUESTED))
+ 			continue;
+ 
+ 		if (our_chip->variant.output_mask & BIT(i))
 -- 
-2.17.1
+2.39.2
 
