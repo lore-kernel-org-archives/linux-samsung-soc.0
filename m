@@ -2,199 +2,141 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A869EB64DD
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 02:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DBE4EB64DD
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 07:24:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230305AbjGECKt (ORCPT
+        id S230286AbjGEHX7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 4 Jul 2023 22:10:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52952 "EHLO
+        Wed, 5 Jul 2023 03:23:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229776AbjGECKs (ORCPT
+        with ESMTP id S232259AbjGEHX5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 Jul 2023 22:10:48 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C81EC10D9
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  4 Jul 2023 19:10:45 -0700 (PDT)
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230705021041epoutp03481e8a1c25358590b535ea5d7c7ef872~u1sKfSSg_1400014000epoutp03G
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jul 2023 02:10:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230705021041epoutp03481e8a1c25358590b535ea5d7c7ef872~u1sKfSSg_1400014000epoutp03G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1688523041;
-        bh=4E+MzmqOKL2RtSjlP0QIVLmiF2vs0swS5EIe841yo2E=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=hSt0rjUTI2r09JM/oYIRzPAGrq5AiQVpRUTb6pS4zCohp5bMMyzyKz1/OhaR1hkv1
-         HLWhByt6hRjEn1bZO7rtOmquOsxfZbi927hgkvsXIeXP/B2HwBkkSfDLWOlJ8zyUGG
-         GX4ajwjBcghgsD27brdTkxAUPEXRltU+oIURwi7M=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20230705021041epcas1p3c9816f14c108d50d56b77f31536a987f~u1sJ8WNa00837808378epcas1p3S;
-        Wed,  5 Jul 2023 02:10:41 +0000 (GMT)
-Received: from epsmgec1p1-new.samsung.com (unknown [182.195.36.135]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4Qwjmv70kFz4x9Pr; Wed,  5 Jul
-        2023 02:10:39 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        86.88.12307.F11D4A46; Wed,  5 Jul 2023 11:10:39 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20230705021039epcas1p4e94d1de39688cf905452a04d2ed53959~u1sIdBUam0754707547epcas1p4G;
-        Wed,  5 Jul 2023 02:10:39 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230705021039epsmtrp2d12b8fd3a52ef908527c7e39ccefd381~u1sIcJw_I0958409584epsmtrp2s;
-        Wed,  5 Jul 2023 02:10:39 +0000 (GMT)
-X-AuditID: b6c32a4c-cd7ff70000053013-52-64a4d11f3002
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        88.39.34491.F11D4A46; Wed,  5 Jul 2023 11:10:39 +0900 (KST)
-Received: from inkidae001 (unknown [10.113.221.213]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230705021039epsmtip2ac67d7b1ff03b5cf87e11c4fc4fe5b2a~u1sIJ7YET1774717747epsmtip2i;
-        Wed,  5 Jul 2023 02:10:39 +0000 (GMT)
-From:   =?ks_c_5601-1987?B?tOvAzrHiL1RpemVuIFBsYXRmb3JtIExhYihTUikvu++8usD8wNo=?= 
-        <inki.dae@samsung.com>
-To:     "'Thomas Zimmermann'" <tzimmermann@suse.de>, <javierm@redhat.com>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>
-Cc:     <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-fbdev@vger.kernel.org>,
-        "'Seung-Woo Kim'" <sw0312.kim@samsung.com>,
-        "'Kyungmin Park'" <kyungmin.park@samsung.com>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Alim Akhtar'" <alim.akhtar@samsung.com>
-In-Reply-To: <20230704160133.20261-6-tzimmermann@suse.de>
-Subject: RE: [PATCH 05/10] drm/exynos: Use fbdev DMA helpers
-Date:   Wed, 5 Jul 2023 11:10:39 +0900
-Message-ID: <00ec01d9aee5$e4c35290$ae49f7b0$@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="ks_c_5601-1987"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: ko
-Thread-Index: AQHuhM/LBRmP0P1z6R6SIKtY9iGhpwG3SkJIAXEc4UKvZ3zNMA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLJsWRmVeSWpSXmKPExsWy7bCmvq78xSUpBn+emFs8mLeNzeLK1/ds
-        FgunLWe02Pt6K7vF2aY37BabHl9jtTjR94HVYsb5fUwWnV9mAZV83Mpi0da5DCg2+SWbxZY3
-        E1kdeD02repk87hzbQ+bx7yTgR73u48zeWxeUu/xft9VNo++LasYPTafrvb4vEkugDMq2yYj
-        NTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6GolhbLEnFKg
-        UEBicbGSvp1NUX5pSapCRn5xia1SakFKToFpgV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbGvma9
-        ggNiFbc2bWRrYPwv1MXIySEhYCLR93QfWxcjF4eQwB5GiTXPfrCDJIQEPjFK/NxtD2F/Y5TY
-        OZ8fpuHE5POMEA17GSWufv7DClH0klFiwzFrEJtNIEPibvtiVpAiEYEmRokZ79vBHGaBX0wS
-        Pw6tZQap4hSwlLjas4gNxBYWsJFYtuwJ2GoWARWJlvsHwWxeoJqelY9ZIGxBiZMzn4DZzAJG
-        EktWz2eCsOUltr+dwwxxnoLEz6fLWCHiIhKzO9vA4iICThLv+06xgBwhIXCDQ2Lv7QmsEA0u
-        Ep37+9kgbGGJV8e3sEPYUhKf3+1lg2iYzChx5/oKqO4ZjBKHf15nhKgylti/dDIThK0osfP3
-        XEaI1XwS7772AG3gAIrzSnS0QUNbSeLYxRtQrRISF5ZMZJvAqDQLyXOzkDw3C8lzs5A8tICR
-        ZRWjVGpBcW56arJhgaFuXmo5PM6T83M3MYLTtZbPDsbv6//qHWJk4mA8xCjBwawkwrvi++IU
-        Id6UxMqq1KL8+KLSnNTiQ4ymwDCfyCwlmpwPzBh5JfGGJpYGJmZGxiYWhmaGSuK8MZ/aU4QE
-        0hNLUrNTUwtSi2D6mDg4pRqYHLdatfLM3d1pnn+t0M3p1v7a2N3b5kctdNxvLhuYIPSkNfqG
-        5ItI85NsxRvCTA5mySit6hRtlBVYIWLFaeY++8n62Rt/hZW69rx4I1ldrOKt+nM3S1k9Y+EM
-        iyr9WL41bj/Lc3yW359zbrfkQ+kdyamSwtonRFh2HrfddUvzZLoiw/U19+YLs3NrB8s/4z5x
-        1Vfma82mgufpQfMUA6ZL5QpO2iS+K2ZXfuZGFgfH7ZuiA09ES2r+3nTVn+WI6e2nMqKZR4va
-        Q+apqUi72fNuVTF890K0dJd09LyFczRmdrOWRk48wny+pvlHqYGuVvMJNc7TXpLnlOYdmSL7
-        tHfxC+2th5ekiR1YKjj5bJkSS3FGoqEWc1FxIgDmXc/7YAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsWy7bCSvK78xSUpBh3HxC0ezNvGZnHl63s2
-        i4XTljNa7H29ld3ibNMbdotNj6+xWpzo+8BqMeP8PiaLzi+zgEo+bmWxaOtcBhSb/JLNYsub
-        iawOvB6bVnWyedy5tofNY97JQI/73ceZPDYvqfd4v+8qm0ffllWMHptPV3t83iQXwBnFZZOS
-        mpNZllqkb5fAlbGvWa/ggFjFrU0b2RoY/wt1MXJySAiYSJyYfJ6xi5GLQ0hgN6PE6y8tTF2M
-        HEAJCYktWzkgTGGJw4eLIUqeM0p8PD6NGaSXTSBNYtLc/awgCRGBNkaJRx//gznMAg3MEgtP
-        rWaHaNnOKLFizhlGkBZOAUuJqz2L2EBsYQEbiWXLnrCD2CwCKhIt9w+C2bxANT0rH7NA2IIS
-        J2c+AbOZgU5tPNwNZctLbH87hxniBQWJn0+XsULERSRmd7aBxUUEnCTe951imcAoPAvJqFlI
-        Rs1CMmoWkvYFjCyrGCVTC4pz03OLDQsM81LL9YoTc4tL89L1kvNzNzGCo1VLcwfj9lUf9A4x
-        MnEwHmKU4GBWEuFd8X1xihBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe8Re9KUIC6YklqdmpqQWp
-        RTBZJg5OqQYmtjPHOFyrTqzzsTEU1C6J+Xj1REpr6NmQUBW/26m3qiZ72/hGPrJ2XN/lOdmj
-        votH++pRvWsPYjbonHY2yIpIq1jQcfCTjZjCfY4Py673P1Fki3B8eXVeaM3Cq1wZ96rm3tj6
-        /G3k2czge3aHFvucvcSbqX6Uo088LH/d7GBVx+ZJfBxn3oR94jIRvJ20dXuFgFD2rCXR4TPl
-        nSf18IZ+n6l8v+B1MkfQR5bQu5+vbn4rcKhtBve19OTNrT3fjnX/7V++n2Va+KzXrg133zNs
-        T/2atNLVO26r1hlR3oTDKh96vF/m/4vMSOSNTHoiv583Tqpxmt2ZH1Xnln/Ym6q7/GgL//8f
-        t8O/zFdxcr2sxFKckWioxVxUnAgAr5utA0UDAAA=
-X-CMS-MailID: 20230705021039epcas1p4e94d1de39688cf905452a04d2ed53959
-X-Msg-Generator: CA
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230704160141epcas1p1059d0c1b202ddb900c530a47247824fc
-References: <20230704160133.20261-1-tzimmermann@suse.de>
-        <CGME20230704160141epcas1p1059d0c1b202ddb900c530a47247824fc@epcas1p1.samsung.com>
-        <20230704160133.20261-6-tzimmermann@suse.de>
+        Wed, 5 Jul 2023 03:23:57 -0400
+Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8944510D5;
+        Wed,  5 Jul 2023 00:23:53 -0700 (PDT)
+Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-1b06ea7e7beso5935003fac.0;
+        Wed, 05 Jul 2023 00:23:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688541833; x=1691133833;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UtRultwczflx7AHsIym9/WcCjEB4FHHPYH8wgJ+7ZX8=;
+        b=V7LGiFMGlYLr2yn2Y0Rzccc4dgCcZ4tSHNjP7HzaTPY7G3TuyCEiD6WeJU+gnysCcf
+         NF73WRKgDoZD3cAQOlonlktwqDWlYoeJXwUC5df8A4iB2pUD623LDjHudXB1K+YtCC4Q
+         PkThH5LwdetekBVPTjuQ3pLpfaaayKr1q3XaN7swpKAqoukoQh1GmOoGf2VeMv+N6nM7
+         ySMNNcwehuOmdrG6bBivGTEN4ieYXCbLKQv0PP1S+ibDF1BXj14CcaElwSjMEraQQphw
+         68sabzJuDsW4DXGgWoGDDM76KcpZQUjv5BKJ/ZqU7vi2Mexb7i8IoVbY9G9cwI1ouhGd
+         xPCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688541833; x=1691133833;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UtRultwczflx7AHsIym9/WcCjEB4FHHPYH8wgJ+7ZX8=;
+        b=Cg79wjuVg05AD20vVE+hT6VB8K9Rr0Emx/MSuD9WZBrDdAQDzTT1Za73cAGmJHJy/7
+         5MzSBMgPsTOHtEy4FwxqjPReSYYwn4UOij4e5hbfMao4AJTBhrIL2Ik1mILjPGGGBrTE
+         enjo9vw9CAy/TCbaEE+bkHdlB8MQ9DP1dw4g5E05InGF7UjM3zCIG+8cr0eZqdcIRlwR
+         BTNIBWolwbN9p+W0ptsUJALtE3GFWYApAh/gOrpZrrzKUFOP3oIuRi/uX21HbdHL8qTF
+         sL5bOawvMQ9Mv6iWP1bN3Q7bBEg4mrd2LtgJIAV90dh/ZOpDRJNu6Cm+giYT0ltxZUfm
+         80dg==
+X-Gm-Message-State: ABy/qLakaqYf7SIP7fuynuvWG4vy2ICewEbc18/Sp6oFf/8GokNtwVkX
+        n+FunmVQM1m7fVSeApkINB8=
+X-Google-Smtp-Source: APBJJlGKTDdDczDO9DBJTucbfA58+S106cvsp3S/i5Bqu4Q7tkykGKqJvUQTxUZLj0/YpjVamFiLVg==
+X-Received: by 2002:a05:6871:4f18:b0:1b3:cee4:cac9 with SMTP id zu24-20020a0568714f1800b001b3cee4cac9mr3731186oab.33.1688541832660;
+        Wed, 05 Jul 2023 00:23:52 -0700 (PDT)
+Received: from 377044c6c369.cse.ust.hk (191host097.mobilenet.cse.ust.hk. [143.89.191.97])
+        by smtp.gmail.com with ESMTPSA id k19-20020a056870d0d300b001b3a5ab6cacsm3781314oaa.16.2023.07.05.00.23.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jul 2023 00:23:52 -0700 (PDT)
+From:   Chengfeng Ye <dg573847474@gmail.com>
+To:     krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+        wim@linux-watchdog.org, linux@roeck-us.net
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chengfeng Ye <dg573847474@gmail.com>
+Subject: [PATCH v2] watchdog: s3c2410: Fix potential deadlock on &wdt->lock
+Date:   Wed,  5 Jul 2023 07:23:04 +0000
+Message-Id: <20230705072304.37741-1-dg573847474@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+As &wdt->lock is acquired by hard irq s3c2410wdt_irq(), other
+acquisition of the same lock under process context should
+disable irq, otherwise deadlock could happen if the irq preempt
+the execution while the lock is held in process context on the
+same CPU.
 
-> -----Original Message-----
-> From: Thomas Zimmermann <tzimmermann@suse.de>
-> Sent: Wednesday, July 5, 2023 12:50 AM
-> To: javierm@redhat.com; maarten.lankhorst@linux.intel.com;
-> mripard@kernel.org
-> Cc: dri-devel@lists.freedesktop.org; linux-arm-kernel@lists.infradead.org;
-> linux-samsung-soc@vger.kernel.org; linux-tegra@vger.kernel.org; linux-
-> fbdev@vger.kernel.org; Thomas Zimmermann <tzimmermann@suse.de>; Inki Dae
-> <inki.dae@samsung.com>; Seung-Woo Kim <sw0312.kim@samsung.com>; Kyungmin
-> Park <kyungmin.park@samsung.com>; Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org>; Alim Akhtar <alim.akhtar@samsung.com>
-> Subject: [PATCH 05/10] drm/exynos: Use fbdev DMA helpers
-> 
-> Use fbdev's DMA helpers for fbdev emulation. They drivers previously
-> used the I/O-memory helpers, while allocating DMA-able system memory.
-> This could (in theory) result in bus errors from accessing the memory
-> range.
-> 
-> This bug has been present since the exynos driver was first added.
+[Deadlock Scenario]
+s3c2410wdt_suspend()
+    -> s3c2410wdt_stop()
+    -> spin_lock(&wdt->lock)
+        <irq iterrupt>
+        -> s3c2410wdt_irq()
+        -> s3c2410wdt_keepalive()
+        -> spin_lock(&wdt->lock) (deadlock here)
 
-Acked-by : Inki Dae <inki.dae@samsung.com>
+[Deadlock Scenario]
+s3c2410wdt_probe()
+    -> s3c2410wdt_start()
+    -> spin_lock(&wdt->lock)
+        <irq iterrupt>
+        -> s3c2410wdt_irq()
+        -> s3c2410wdt_keepalive()
+        -> spin_lock(&wdt->lock) (deadlock here)
 
-Thanks,
-Inki Dae
+This flaw was found by an experimental static analysis tool I am
+developing for irq-related deadlock, which reported the above
+warning when analyzing the linux kernel 6.4-rc7 release.
 
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Fixes: 1c248b7d2960 ("DRM: add DRM Driver for Samsung SoC EXYNOS4210.")
-> Cc: Inki Dae <inki.dae@samsung.com>
-> Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/Kconfig            | 2 +-
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/Kconfig
-> b/drivers/gpu/drm/exynos/Kconfig
-> index 7ca7e1dab52c..661b42ad4873 100644
-> --- a/drivers/gpu/drm/exynos/Kconfig
-> +++ b/drivers/gpu/drm/exynos/Kconfig
-> @@ -7,7 +7,7 @@ config DRM_EXYNOS
->  	select DRM_DISPLAY_HELPER if DRM_EXYNOS_DP
->  	select DRM_KMS_HELPER
->  	select VIDEOMODE_HELPERS
-> -	select FB_IO_HELPERS if DRM_FBDEV_EMULATION
-> +	select FB_DMA_HELPERS if DRM_FBDEV_EMULATION
->  	select SND_SOC_HDMI_CODEC if SND_SOC
->  	help
->  	  Choose this option if you have a Samsung SoC Exynos chipset.
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> index fdf65587f1fe..7ca3424b59ce 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -49,9 +49,9 @@ static void exynos_drm_fb_destroy(struct fb_info *info)
-> 
->  static const struct fb_ops exynos_drm_fb_ops = {
->  	.owner		= THIS_MODULE,
-> -	__FB_DEFAULT_IO_OPS_RDWR,
-> +	__FB_DEFAULT_DMA_OPS_RDWR,
->  	DRM_FB_HELPER_DEFAULT_OPS,
-> -	__FB_DEFAULT_IO_OPS_DRAW,
-> +	__FB_DEFAULT_DMA_OPS_DRAW,
->  	.fb_mmap        = exynos_drm_fb_mmap,
->  	.fb_destroy	= exynos_drm_fb_destroy,
->  };
-> --
-> 2.41.0
+The tentative patch fix the potential deadlock by spin_lock_irqsave()
+under process context.
 
+Signed-off-by: Chengfeng Ye <dg573847474@gmail.com>
+---
+ drivers/watchdog/s3c2410_wdt.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 95416a9bdd4b..2dfc0d6a3004 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -399,10 +399,11 @@ static void __s3c2410wdt_stop(struct s3c2410_wdt *wdt)
+ static int s3c2410wdt_stop(struct watchdog_device *wdd)
+ {
+ 	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
++	unsigned long flags;
+ 
+-	spin_lock(&wdt->lock);
++	spin_lock_irqsave(&wdt->lock, flags);
+ 	__s3c2410wdt_stop(wdt);
+-	spin_unlock(&wdt->lock);
++	spin_unlock_irqrestore(&wdt->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -411,8 +412,9 @@ static int s3c2410wdt_start(struct watchdog_device *wdd)
+ {
+ 	unsigned long wtcon;
+ 	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
++	unsigned long flags;
+ 
+-	spin_lock(&wdt->lock);
++	spin_lock_irqsave(&wdt->lock, flags);
+ 
+ 	__s3c2410wdt_stop(wdt);
+ 
+@@ -433,7 +435,7 @@ static int s3c2410wdt_start(struct watchdog_device *wdd)
+ 	writel(wdt->count, wdt->reg_base + S3C2410_WTDAT);
+ 	writel(wdt->count, wdt->reg_base + S3C2410_WTCNT);
+ 	writel(wtcon, wdt->reg_base + S3C2410_WTCON);
+-	spin_unlock(&wdt->lock);
++	spin_unlock_irqrestore(&wdt->lock, flags);
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
 
