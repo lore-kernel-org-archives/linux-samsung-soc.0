@@ -2,112 +2,124 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6101C001B0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 09:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1DCAEB64DA
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jul 2023 12:51:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231789AbjGEJyK (ORCPT
+        id S231935AbjGEMvs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Jul 2023 05:54:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34284 "EHLO
+        Wed, 5 Jul 2023 08:51:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231770AbjGEJyJ (ORCPT
+        with ESMTP id S230100AbjGEMvr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Jul 2023 05:54:09 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FCD91719
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jul 2023 02:53:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688550802;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DRNRYYR3em1ug3SJuQFxKqDHhttEDU94J84H5e4z6eY=;
-        b=DbCMNgBqUuPGYVWaNkP6yTrkxq4OBOT135lr3urH0bzLn6dip8ttFY+dt0pdnVVffH+DYI
-        rRzFQfxhythU+d0vIrRKGnuRpyyXSXPJJFJsAAg0SOCfZgc6aG42liaq27/2xl83E+f510
-        ViU7HFeS5SaDvUkhD03m6THTG4L4Dd8=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-223-nYKe40VwNoqeWFiApZxcxQ-1; Wed, 05 Jul 2023 05:53:19 -0400
-X-MC-Unique: nYKe40VwNoqeWFiApZxcxQ-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-4fb9c4b7020so5547325e87.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Jul 2023 02:53:19 -0700 (PDT)
+        Wed, 5 Jul 2023 08:51:47 -0400
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62D0110EC;
+        Wed,  5 Jul 2023 05:51:46 -0700 (PDT)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-57722942374so81284317b3.1;
+        Wed, 05 Jul 2023 05:51:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688561505; x=1691153505;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=4TI27rCidWfDrTg//jli+vwhntyHlTcbniPH3pF/oFs=;
+        b=K9XRyruMZJQkMx3rZPrVX8w6LdJkA87VWurC83c6F8gl4iuk87S2F8/uHyd8Fq3tA0
+         3GRLA7GQ1F1+1BhrK5Fq+/zjnTCVBEhD2p7vPkSzj4ii0gyOmJfjbFdfrxVdOBF5/9QQ
+         aJ+h1Rk+K1Mfj3XxU7+wEK4wSyUXFoynxPs+uufPEMM7zynHFTmy3OSLD7QmkS9H92/T
+         X5W4mO9mdpRCOHKO7BPjw+Z6pYEowQWWCSefQ/F9+jsk+d/97G6smeTN4T0boCeYOT8o
+         OaJpMlVh1hE/YeQiuqbYcQ/KROqNHhVwxfdSk+EathWrC6ahbmlkWBNKBzunozOcEtai
+         U3zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688550798; x=1691142798;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DRNRYYR3em1ug3SJuQFxKqDHhttEDU94J84H5e4z6eY=;
-        b=RaZqnnvNkU6zcGYHjvn0f7iyo6f94P6vvK5eS1/RGgND9kGz/XvTMXxh2bPzdEy/4H
-         DcKK2IyX/DTtv1td/bzPLvlsP55gVnwUHLK7YJ1rBwwm6OcNiifh6bviP0d62FLyR4Q7
-         ZltvLRWui25LMzvhuo9abYQZSY1jbWuzqEtwZVzkmr4Bpbk+XS4Jt+IOg4SJnbjEyp57
-         MiolfunC+W/8ZZn8vZ5FyOjSrJYhtO/O6oDBYqd87Ua0z7/0R77oIkvBB8vaW+hecTBF
-         HZAG0S6dFLXuoIgFqjj9lYJJBS1aat4ukq3rUHslAQctfY6W80V7y0wUuMoHLqUEaDoK
-         xciQ==
-X-Gm-Message-State: ABy/qLZR0Jz2k+IaPdgsl4GbFuzGcx7z6zNvMiCwkco2tSDKO5BxfY9i
-        cN+kL2l8tfJ3UPQnMxSNc/CfU1gFnAfH78VmbUbnCxw3tDtgxQPwDKi5JuG8W7wH3C6urYuJgAG
-        YBA0SC2GyBJVjz1O16Y3n+8btN3GeIpI=
-X-Received: by 2002:a05:6512:68c:b0:4fb:897e:21cc with SMTP id t12-20020a056512068c00b004fb897e21ccmr16115763lfe.67.1688550798482;
-        Wed, 05 Jul 2023 02:53:18 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlGfRPzFk83Dq4TRvBUdnBTYWW72Dkqa6fZSxS4fGVLTYvFLeND2XwmxN1ZysjO2uVZDU0mefw==
-X-Received: by 2002:a05:6512:68c:b0:4fb:897e:21cc with SMTP id t12-20020a056512068c00b004fb897e21ccmr16115751lfe.67.1688550798187;
-        Wed, 05 Jul 2023 02:53:18 -0700 (PDT)
-Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id z9-20020a05600c220900b003fbdf8292a7sm1606487wml.46.2023.07.05.02.53.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jul 2023 02:53:17 -0700 (PDT)
-From:   Javier Martinez Canillas <javierm@redhat.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH 06/10] drm/exynos: Set fbdev flags
-In-Reply-To: <a69f00d6-d6f9-377a-a4a6-fc6cc4bd6b7f@suse.de>
-References: <20230704160133.20261-1-tzimmermann@suse.de>
- <20230704160133.20261-7-tzimmermann@suse.de>
- <87r0pmrbdn.fsf@minerva.mail-host-address-is-not-set>
- <a69f00d6-d6f9-377a-a4a6-fc6cc4bd6b7f@suse.de>
-Date:   Wed, 05 Jul 2023 11:53:17 +0200
-Message-ID: <877crer8fm.fsf@minerva.mail-host-address-is-not-set>
+        d=1e100.net; s=20221208; t=1688561505; x=1691153505;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4TI27rCidWfDrTg//jli+vwhntyHlTcbniPH3pF/oFs=;
+        b=RbLt90BvG1Kt8Fi8WlldNDTHS+K9/EMt9CmkG6aV95nEatRobMbQkD3FLVoGvd2iJZ
+         KFR9JqteYN4Onhbc4gk1MxP7PhJ1YOCtQ5eTgIVNA/26BMCpWgGY6QH/o18CGwsZ2mKW
+         7on7zruMq2aEQ4RDkf1ruLXrJru8aTclJbmJyv3pIdSZGJZxrFiDzK9yvJksg79rMcuV
+         tZkjXLZOVY+RijMN7Nxd9yfB60oVJf4c4O4Ub0KWy8eeytulIOkeb+jpNr2pQR5/CBXK
+         tM9ymjVuLKOeAilma0oVpKly8fn3gnj3ISHqDVEYVCQG4CGIjvLBixYnt+tJdIneOXvy
+         FuLg==
+X-Gm-Message-State: ABy/qLZHdSeYy1fkXlucxOogx8CmHJopp0OzaDTyDAtTT8doqegB+AAQ
+        35roaiH05VVNgBpiF2ipP1A=
+X-Google-Smtp-Source: APBJJlHnCbIk0q/1dfWa+mjZ7vkiGALafRuPrf4kVThas3u/z9NR4VybXSSpeRW0QabXz9d4nbCQvg==
+X-Received: by 2002:a81:4c8e:0:b0:56c:f68f:d824 with SMTP id z136-20020a814c8e000000b0056cf68fd824mr13630800ywa.45.1688561505495;
+        Wed, 05 Jul 2023 05:51:45 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id x185-20020a814ac2000000b005771bb5a25dsm3795474ywa.61.2023.07.05.05.51.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jul 2023 05:51:44 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <f7f1ddb5-a4fd-f79c-f870-8fa7410cd0c7@roeck-us.net>
+Date:   Wed, 5 Jul 2023 05:51:41 -0700
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v3] watchdog: s3c2410: Fix potential deadlock on
+ &wdt->lock
+Content-Language: en-US
+To:     Chengfeng Ye <dg573847474@gmail.com>,
+        krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+        wim@linux-watchdog.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230705090951.63762-1-dg573847474@gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+In-Reply-To: <20230705090951.63762-1-dg573847474@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Thomas Zimmermann <tzimmermann@suse.de> writes:
+On 7/5/23 02:09, Chengfeng Ye wrote:
+> As &wdt->lock is acquired by hard irq s3c2410wdt_irq(),
+> other acquisition of the same lock under process context should
+> disable irq, otherwise deadlock could happen if the
+> irq preempt the execution while the lock is held in process context
+> on the same CPU.
+> 
+> [Deadlock Scenario]
+> s3c2410wdt_suspend()
+>      -> s3c2410wdt_stop()
+>      -> spin_lock(&wdt->lock)
+>          <irq iterrupt>
+>          -> s3c2410wdt_irq()
+>          -> s3c2410wdt_keepalive()
+>          -> spin_lock(&wdt->lock) (deadlock here)
+> 
+> [Deadlock Scenario]
+> s3c2410wdt_probe()
+>      -> s3c2410wdt_start()
+>      -> spin_lock(&wdt->lock)
+>          <irq iterrupt>
+>          -> s3c2410wdt_irq()
+>          -> s3c2410wdt_keepalive()
+>          -> spin_lock(&wdt->lock) (deadlock here)
+> 
+> [Deadlock Scenario]
+> s3c2410wdt_keepalive()
+>      -> spin_lock(&wdt->lock)
+>          <irq iterrupt>
+>          -> s3c2410wdt_irq()
+>          -> s3c2410wdt_keepalive()
+>          -> spin_lock(&wdt->lock) (deadlock here)
+> 
+> This flaw was found by an experimental static analysis tool I am
+> developing for irq-related deadlock, which reported the above
+> warning when analyzing the linux kernel 6.4-rc7 release.
+> 
+> The tentative patch fix the potential deadlock by spin_lock_irqsave()
+> under process context.
+> 
+> Signed-off-by: Chengfeng Ye <dg573847474@gmail.com>
 
-> Hi
->
-> Am 05.07.23 um 10:49 schrieb Javier Martinez Canillas:
+I am sure you know what you changed in each version of your patches. I don't.
+Please provide change logs when you send new versions of your patches.
 
-[...]
-
->> 
->> The #define FBINFO_FLAG_DEFAULT	FBINFO_DEFAULT seems to be there since the
->> original v2.6.12-rc2 git import in commit 1da177e4c3f4, so is hard to know
->> why was introduced. FBINFO_DEFAULT is more used, I will just stick to that:
->
-> Thanks for commenting on this issue. I didn't notice that.
->
-> I think I'll just remove these _DEFAULT assignments from the patchset.
->
-> And I think we should nuke them entirely everywhere. The _DEFAULT values 
-> are just 0 after commit 376b3ff54c9a1. So there's no value in assigning 
-> them at all.
->
-
-Agreed.
-
--- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+Guenter
 
