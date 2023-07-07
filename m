@@ -2,105 +2,101 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3835BEB64D9
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Jul 2023 08:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82102EB64DA
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Jul 2023 10:14:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232842AbjGGIei (ORCPT
+        id S232809AbjGGKOf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 7 Jul 2023 04:34:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60156 "EHLO
+        Fri, 7 Jul 2023 06:14:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232782AbjGGIec (ORCPT
+        with ESMTP id S233083AbjGGKOF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Jul 2023 04:34:32 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA474183;
-        Fri,  7 Jul 2023 01:34:30 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 723FE1FEC7;
-        Fri,  7 Jul 2023 08:34:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1688718869; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
+        Fri, 7 Jul 2023 06:14:05 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C426D30D5
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Jul 2023 03:12:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1688724748;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=ekgUz+mjy+gWrvl+EnjksazPACAkT7jWIf87XY9ABXw=;
-        b=XmqrVIohbJzyCDb2JyXKTkBWpsOXFJGd/J9G0No6PTxcxbOI1jyuSYzw9kxJvRiVRQ51wM
-        sbJ9SXVExu5UNft77a69oLhW5ZvydKcs5JtA63oya8kEhLLqajbRv491VsfjhKZxB+O51w
-        xEmlJy05LZ1eASP5QuJ8hIMKjqoXZnI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1688718869;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ekgUz+mjy+gWrvl+EnjksazPACAkT7jWIf87XY9ABXw=;
-        b=wAYzu4eGL0qd6Cmdi5nhYNxFXDiPsfXvoDKUTxoZpMbMFGh1hyyjlO+2nIpbJ7trHSUEEI
-        /KN1s6L8kZZyhpBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3B9591346D;
-        Fri,  7 Jul 2023 08:34:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id iAiZDRXOp2RdQAAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Fri, 07 Jul 2023 08:34:29 +0000
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-To:     javierm@redhat.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org
+        bh=DlW1R/8hRwezlWgbC+wvZSXHhVUh/eG+VQMZJgN0Tvc=;
+        b=TzYnI9s5JcszrVKky2QMsAwqLDqmVIzYsOQP9Vgvzug/CT+YkMRdTbgqfrB+XK6FUs2xgT
+        fW2V1YOD/FXcRs7wlMK+fziefLnxFdeKHL/wyfDNmgPtfBwSsMAbmDqiQzD/1J22O1WsXQ
+        IIc1f1BwsxGn0rZPNFhW7NtTmhqdbhk=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-149-Nrd2kVUAMNeVEF49bPqWrQ-1; Fri, 07 Jul 2023 06:12:27 -0400
+X-MC-Unique: Nrd2kVUAMNeVEF49bPqWrQ-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-3fa976b8b6fso10276365e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Jul 2023 03:12:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688724746; x=1691316746;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DlW1R/8hRwezlWgbC+wvZSXHhVUh/eG+VQMZJgN0Tvc=;
+        b=VWg3V6K3JE61am6DD92nqat4VFV/yRW2ROEAc8ZSKu/9GWeeJaPIv/ltXtajGFlOTM
+         PKmPSOD03iFs6Pn78oOOYSIOnju1lb5y9U0O128jBzJUVTnDT36/q7otdMcCK49N21WB
+         7fp4a/fFBq/J0Almn0+fq2ZxPSdqp0+9TCb5qgVoOsSIfxr/IqvWWK9jF8wKpmWu25pK
+         YNqSwCjFalA3d1fXdi6E1RZ3Xj2HkCLkipNXLueGl56IB5sVPbnv1F6GwJTcb0NYgzlZ
+         kZAygDkSGx1xiqboe5L2sfs/vXc0bhct1UEceQ+3Izht7XTSLpD21yljhwhZPrB400yH
+         Y4Ew==
+X-Gm-Message-State: ABy/qLb/WTywtH8JrBGEQChvaw3W5M8tdHV3jtvdHa06Auk2emXp9Ehz
+        CXpastpnxM66VdqSlwbLsp57PE83/FGcB6uHen+1v/1YGdctht1Y74YvIdKW7UwnMhohFqYUXl9
+        xn8eym3TVm9QUEhV3wLGJAWT6q8oTt7c=
+X-Received: by 2002:adf:e40b:0:b0:313:f02f:be7f with SMTP id g11-20020adfe40b000000b00313f02fbe7fmr3429139wrm.55.1688724746547;
+        Fri, 07 Jul 2023 03:12:26 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlEl0rRQx8YRJhH9y3kGM2crHvIosSMl2yPsiQFeLRX1mWJpZ5P5lO4jWKSG6bWALHyxhssqPQ==
+X-Received: by 2002:adf:e40b:0:b0:313:f02f:be7f with SMTP id g11-20020adfe40b000000b00313f02fbe7fmr3429126wrm.55.1688724746175;
+        Fri, 07 Jul 2023 03:12:26 -0700 (PDT)
+Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id m5-20020adfe945000000b00313f9085119sm4031028wrn.113.2023.07.07.03.12.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jul 2023 03:12:25 -0700 (PDT)
+From:   Javier Martinez Canillas <javierm@redhat.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org
 Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-fbdev@vger.kernel.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
-        Helge Deller <deller@gmx.de>
-Subject: [PATCH v3 11/12] fbdev: Remove FB_DEFAULT_SYS_OPS
-Date:   Fri,  7 Jul 2023 10:32:02 +0200
-Message-ID: <20230707083422.18691-12-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230707083422.18691-1-tzimmermann@suse.de>
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Subject: Re: [PATCH v3 05/12] drm/tegra: Store pointer to vmap'ed
+ framebuffer in screen_buffer
+In-Reply-To: <20230707083422.18691-6-tzimmermann@suse.de>
 References: <20230707083422.18691-1-tzimmermann@suse.de>
+ <20230707083422.18691-6-tzimmermann@suse.de>
+Date:   Fri, 07 Jul 2023 12:12:19 +0200
+Message-ID: <87pm54xc70.fsf@minerva.mail-host-address-is-not-set>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Remove the initializer macro FB_DEFAULT_SYS_OPS and its helper macro
-__FB_DEFAULT_SYS_OPS_MMAP. There are no users.
+Thomas Zimmermann <tzimmermann@suse.de> writes:
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Tegra uses DMA-able memory, which has to be acessed with CPU ops
+> for system-memory. Store the framebuffer's vmap address in struct
+> fb_info.screen_buffer. The currently used field 'screen_base' is
+> for I/O memory.
+>
+> Suggested-by: Thierry Reding <thierry.reding@gmail.com>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+
 Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-Acked-by: Maxime Ripard <mripard@kernel.org>
-Cc: Helge Deller <deller@gmx.de> (maintainer:FRAMEBUFFER LAYER)
----
- include/linux/fb.h | 8 --------
- 1 file changed, 8 deletions(-)
 
-diff --git a/include/linux/fb.h b/include/linux/fb.h
-index 1191a78c5289..d370f84fbca9 100644
---- a/include/linux/fb.h
-+++ b/include/linux/fb.h
-@@ -586,14 +586,6 @@ extern ssize_t fb_sys_write(struct fb_info *info, const char __user *buf,
- 	.fb_copyarea	= sys_copyarea, \
- 	.fb_imageblit	= sys_imageblit
- 
--#define __FB_DEFAULT_SYS_OPS_MMAP \
--	.fb_mmap	= NULL /* default implementation */
--
--#define FB_DEFAULT_SYS_OPS \
--	__FB_DEFAULT_SYS_OPS_RDWR, \
--	__FB_DEFAULT_SYS_OPS_DRAW, \
--	__FB_DEFAULT_SYS_OPS_MMAP
--
- /*
-  * Helpers for framebuffers in DMA-able memory
-  */
 -- 
-2.41.0
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
 
