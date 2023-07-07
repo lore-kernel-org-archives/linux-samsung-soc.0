@@ -2,182 +2,129 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 618C0EB64DC
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Jul 2023 02:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B3DFEB64DA
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Jul 2023 08:34:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230443AbjGGCBk (ORCPT
+        id S232160AbjGGIe3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 6 Jul 2023 22:01:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49792 "EHLO
+        Fri, 7 Jul 2023 04:34:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbjGGCBj (ORCPT
+        with ESMTP id S231461AbjGGIe2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Jul 2023 22:01:39 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81BB51FC3
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Jul 2023 19:01:35 -0700 (PDT)
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230707020131epoutp01888396406da55eaeed566b23d1fdbc2f~vc2uSafH80112701127epoutp01F
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Jul 2023 02:01:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230707020131epoutp01888396406da55eaeed566b23d1fdbc2f~vc2uSafH80112701127epoutp01F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1688695291;
-        bh=PelmqNjPk6oGqr+lcQscDDbKwoYt8iFv7lsSXZ03UmI=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=luyfCIl3bXzuI5QT1nWtKOisZrTtU+AP598MGtr7llexDzg7QLTvlu51sbumiqhyl
-         r9EvnSkkUGBvXRKdEceZ2WR7RJqlisYMHPwBtWvPfQVztcSQUTaDXrCKhH5lC/Kl2V
-         PxCNZlkf+2rWEf/RcxxBktdYu4cr1DfG8gXNeIe8=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230707020130epcas1p23da995d70977a4d1729186a5652aa9c5~vc2tr7BDm2743927439epcas1p2u;
-        Fri,  7 Jul 2023 02:01:30 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.36.135]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4QxxTP33qWz4x9Pv; Fri,  7 Jul
-        2023 02:01:29 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FA.9C.22933.7F177A46; Fri,  7 Jul 2023 11:01:27 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20230707020127epcas1p328fc9539cb01bf314f569e676c277f86~vc2q4MKf_1856118561epcas1p3b;
-        Fri,  7 Jul 2023 02:01:27 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230707020127epsmtrp12d135f5243a3857ae29611840fcd0c98~vc2q3S9-R0210602106epsmtrp1E;
-        Fri,  7 Jul 2023 02:01:27 +0000 (GMT)
-X-AuditID: b6c32a39-a83ff70000005995-51-64a771f7a53e
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        83.16.34491.7F177A46; Fri,  7 Jul 2023 11:01:27 +0900 (KST)
-Received: from inkidae001 (unknown [10.113.221.213]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230707020127epsmtip20f142e261c01eca40e56dc0c4330cec4~vc2qmQ3cU0804308043epsmtip2j;
-        Fri,  7 Jul 2023 02:01:27 +0000 (GMT)
-From:   =?ks_c_5601-1987?B?tOvAzrHiL1RpemVuIFBsYXRmb3JtIExhYihTUikvu++8usD8wNo=?= 
-        <inki.dae@samsung.com>
-To:     "'Thomas Zimmermann'" <tzimmermann@suse.de>, <javierm@redhat.com>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>
-Cc:     <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-fbdev@vger.kernel.org>,
-        "'Seung-Woo Kim'" <sw0312.kim@samsung.com>,
-        "'Kyungmin Park'" <kyungmin.park@samsung.com>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Alim Akhtar'" <alim.akhtar@samsung.com>
-In-Reply-To: <20230706124905.15134-7-tzimmermann@suse.de>
-Subject: RE: [PATCH v2 06/11] drm/exynos: Set fbdev FBINFO_VIRTFB flag
-Date:   Fri, 7 Jul 2023 11:01:27 +0900
-Message-ID: <026c01d9b076$f090ef00$d1b2cd00$@samsung.com>
+        Fri, 7 Jul 2023 04:34:28 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDC6B90;
+        Fri,  7 Jul 2023 01:34:27 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 7989C227B0;
+        Fri,  7 Jul 2023 08:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1688718866; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=Pvfj/OY6eCHI5adzX5a09+e+OBxPRPHmLMKqJIGthDI=;
+        b=1GFi3pIGlBjSZkCD/VYvTY5TMcveaTo2LhruYtHhaMYNkMV8bjN6ZvuZScTeBSuIj1N951
+        S3p7n9wct/WmCXVSVsJwYTbsHbMY7Ph3loJvwC9HKAfMc99osCFJJ0uLMtoDdTQAxL57JT
+        Kgy4uydqkc5Ah9uaFHeNHY9ziHw1P8c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1688718866;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=Pvfj/OY6eCHI5adzX5a09+e+OBxPRPHmLMKqJIGthDI=;
+        b=3ZFfdrcNBnX0QGiMOP/uCo/tK0c3jzRLvVLQMdkCfhlkjQGhUmk/NQ1hsItKS5pHpbvyme
+        02tuatFhYQSDuQCg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4697B1346D;
+        Fri,  7 Jul 2023 08:34:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 0qwgEBLOp2RdQAAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Fri, 07 Jul 2023 08:34:26 +0000
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     javierm@redhat.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-fbdev@vger.kernel.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v3 00/12] drm: Improve fbdev emulation for DMA-able framebuffers
+Date:   Fri,  7 Jul 2023 10:31:51 +0200
+Message-ID: <20230707083422.18691-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ks_c_5601-1987"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: ko
-Thread-Index: AQGcl+T1wpybQEf0N9BGhueYe3tDCQE/Zq+0Ao2EXCuwCVaXQA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLJsWRmVeSWpSXmKPExsWy7bCmnu73wuUpBhPbDS0ezNvGZnHl63s2
-        i4XTljNa7H29ld3ibNMbdotNj6+xWpzo+8BqMeP8PiaLzi+zgEo+bmWxaOtcBhSb/JLNYsub
-        iawOvB6bVnWyedy5tofNY97JQI/73ceZPDYvqfd4v+8qm0ffllWMHptPV3t83iQXwBmVbZOR
-        mpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdLWSQlliTilQ
-        KCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8C0QK84Mbe4NC9dLy+1xMrQwMDIFKgwITtj7v2/
-        jAV7BCra7v1ibmDs4uti5OSQEDCRuPXrCWMXIxeHkMAORontV6+yQzifGCUmfZ/LCuF8Y5To
-        ufeJGablw+O/bBCJvYwSm1d+YYFwXjJKHFw8lx2kik0gQ+Ju+2KwdhGBJkaJGe/bwRxmgV9M
-        Ej8OrQWbxSlgKbHrwBEmEFtYwE2ibeEzsDiLgIrEry17wOK8QDVvTu5nhbAFJU7OfMICYjML
-        GEksWT2fCcKWl9j+dg7UfQoSP58uY4WIi0jM7mwDi4sIOEncuf8R7FUJgTscEh+WdUA1uEjc
-        X/gPyhaWeHV8CzuELSXxsr+NHaJhMqPEnesrWCCcGYwSh39eZ4SoMpbYv3QyE4StKLHz91xG
-        iNV8Eu++9gCdwQEU55XoaBOCKFGSOHbxBlSrhMSFJRPZJjAqzULy3Cwkz81C8twsJA8tYGRZ
-        xSiWWlCcm55abFhgCo/z5PzcTYzgdK1luYNx+tsPeocYmTgYDzFKcDArifAeO7MsRYg3JbGy
-        KrUoP76oNCe1+BCjKTC8JzJLiSbnAzNGXkm8oYmlgYmZkbGJhaGZoZI477m3vSlCAumJJanZ
-        qakFqUUwfUwcnFINTEqua06xiRRErXnivOXJ6V3BXZmM295VLiyd8qsrXyV3woLKH843e0UE
-        etTvMOt3T3RYofdG99XrPRO5bsTcMby4ylooqW/CAkOBIvnFwXZzuorcl4h9Fnidu//2IqfT
-        qp+KH0nob/omu8n+o1h4bqL/kt6UGoWHqw9fyn9+Ovd0f/D5D7OFT35jt/CevX/1l2DejTv3
-        at0+5vFAg810n6dX7tx5oXJpR9NNhafyKq+Jn6gQ+V+udU9asjjf0mCTGpVeDu5T3Q/VZzPb
-        cVvbzfW3kl3YEHzOYQfLiRWr4zjWB9sI3/q4Pl5neqyptpVfVli60qctPfr6Plpv9ly1r+AJ
-        EZlqz+f5yONS86ODSizFGYmGWsxFxYkAXJUZb2AEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsWy7bCSvO73wuUpBju7JCwezNvGZnHl63s2
-        i4XTljNa7H29ld3ibNMbdotNj6+xWpzo+8BqMeP8PiaLzi+zgEo+bmWxaOtcBhSb/JLNYsub
-        iawOvB6bVnWyedy5tofNY97JQI/73ceZPDYvqfd4v+8qm0ffllWMHptPV3t83iQXwBnFZZOS
-        mpNZllqkb5fAlTH3/l/Ggj0CFW33fjE3MHbxdTFyckgImEh8ePyXrYuRi0NIYDejxML+Pcxd
-        jBxACQmJLVs5IExhicOHi0HKhQSeM0rMO6ELYrMJpElMmrufFaRVRKCNUeLRx/9gDrNAA7PE
-        wlOr2SGGbmeU2Nx5jQWkhVPAUmLXgSNMILawgJtE28JnzCA2i4CKxK8te8DivEA1b06CjAWx
-        BSVOznwC1ssMdGnj4W4oW15i+9s5zBAfKEj8fLqMFSIuIjG7sw0sLiLgJHHn/kfGCYzCs5CM
-        moVk1Cwko2YhaV/AyLKKUTK1oDg3PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM4WrU0dzBuX/VB
-        7xAjEwfjIUYJDmYlEd5jZ5alCPGmJFZWpRblxxeV5qQWH2KU5mBREucVf9GbIiSQnliSmp2a
-        WpBaBJNl4uCUamDq5Vv+IuLKUY8d3xhu2BgyCjJkvrxX9O+kT/bXT7JFX60XG3x6vSNg/szA
-        eM95F87Nmi3w1CzrllnjM4PnQp+rJC4/Tz3d8emCVIvKknjjZb2XpBadFb2RfuvVpapfvwXN
-        4+4xqH/dO31x8hqDmdkdyQ8Y0v6LPMjnfNK/XYZzwUXD1qdSff/85KZnmt9sjmzZveD4+Zd2
-        mx7pV27a8V+4YoPWy+o4HWnx1q4/797u1erb/WDCVIHfvqbf76w4MumC0SJhoZWHY3zntbxa
-        kZC51vnGLwmnm/NLZbgq79hx7A3uu6SlraJ16uFFxpjyBheuLaWyFmJ2U/6dqC7c8MPGOlHk
-        U5GPjuWOiuRGWY7dSizFGYmGWsxFxYkANMGVdUUDAAA=
-X-CMS-MailID: 20230707020127epcas1p328fc9539cb01bf314f569e676c277f86
-X-Msg-Generator: CA
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230706125011epcas1p437211c1555189b16614f13aa212688db
-References: <20230706124905.15134-1-tzimmermann@suse.de>
-        <CGME20230706125011epcas1p437211c1555189b16614f13aa212688db@epcas1p4.samsung.com>
-        <20230706124905.15134-7-tzimmermann@suse.de>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Add fbdev helpers for framebuffers in DMA-able memory and update
+fbdev emulation in the respective DRM drivers. DMA memory used to
+handled as system memory. Improve this and prepare for possible
+future changes.
 
-> -----Original Message-----
-> From: Thomas Zimmermann <tzimmermann@suse.de>
-> Sent: Thursday, July 6, 2023 9:47 PM
-> To: javierm@redhat.com; maarten.lankhorst@linux.intel.com;
-> mripard@kernel.org
-> Cc: dri-devel@lists.freedesktop.org; linux-arm-kernel@lists.infradead.org;
-> linux-samsung-soc@vger.kernel.org; linux-tegra@vger.kernel.org; linux-
-> fbdev@vger.kernel.org; Thomas Zimmermann <tzimmermann@suse.de>; Inki Dae
-> <inki.dae@samsung.com>; Seung-Woo Kim <sw0312.kim@samsung.com>; Kyungmin
-> Park <kyungmin.park@samsung.com>; Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org>; Alim Akhtar <alim.akhtar@samsung.com>
-> Subject: [PATCH v2 06/11] drm/exynos: Set fbdev FBINFO_VIRTFB flag
-> 
-> Mark the framebuffer with FBINFO_VIRTFB. The framebuffer range is
-> in DMA-able memory and should be accessed with the CPU's regular
-> memory ops.
-> 
-> v2:
-> 	* drop FBINFO_FLAG_DEFAULT
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-> Acked-by: Maxime Ripard <mripard@kernel.org>
+Patch 1 adds initializer macros for struct fb_ops and a Kconfig
+token for framebuffers in DMA memory.
 
-Acked-by : Inki Dae <inki.dae@samsung.com>
+Patches 2 to 5 update fbdev-dma and tegra. No functional changes
+are expected as both used system memory before.
 
-Thanks,
-Inki Dae
+Patches 6 and 7 update exynos to use DMA helpers. Exynos incorrectly
+used fbdev's I/O-memory helpers. Fix this.
 
-> Cc: Inki Dae <inki.dae@samsung.com>
-> Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> index 7ca3424b59ce..828318de8529 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -79,6 +79,7 @@ static int exynos_drm_fbdev_update(struct drm_fb_helper
-> *helper,
->  	offset = fbi->var.xoffset * fb->format->cpp[0];
->  	offset += fbi->var.yoffset * fb->pitches[0];
-> 
-> +	fbi->flags |= FBINFO_VIRTFB;
->  	fbi->screen_buffer = exynos_gem->kvaddr + offset;
->  	fbi->screen_size = size;
->  	fbi->fix.smem_len = size;
-> --
-> 2.41.0
+Patches 8 to 10 update omapdrm to use DMA helpers. Patch 7 first
+reworks the driver's mmap to current best practices. This also makes
+it suitable for use with fbdev, which patches 8 and 9 implement.
 
+Patchies 11 removes some fbdev macros for system memory that are now
+unused; patch 12 fixes some comments.
+
+The patchset would ideally go through drm-misc-next. Future patches
+can build upon it and update fbdev drivers in similar ways.
+
+v3:
+	* set screen_buffer in tegra (Thierry)
+v2:
+	* fix omap mmap flags
+	* drop FBINFO_DEFAULT from patches
+	* minor cleanups
+
+Thomas Zimmermann (12):
+  fbdev: Add fb_ops init macros for framebuffers in DMA-able memory
+  drm/fbdev-dma: Use fbdev DMA helpers
+  drm/tegra: Use fbdev DMA helpers
+  drm/tegra: Set fbdev FBINFO_VIRTFB flag
+  drm/tegra: Store pointer to vmap'ed framebuffer in screen_buffer
+  drm/exynos: Use fbdev DMA helpers
+  drm/exynos: Set fbdev FBINFO_VIRTFB flag
+  drm/omapdrm: Set VM flags in GEM-object mmap function
+  drm/omapdrm: Use GEM mmap for fbdev emulation
+  drm/omapdrm: Set fbdev FBINFO_VIRTFB flag
+  fbdev: Remove FB_DEFAULT_SYS_OPS
+  fbdev: Harmonize some comments in <linux/fb.h>
+
+ drivers/gpu/drm/Kconfig                   |  2 +-
+ drivers/gpu/drm/drm_fbdev_dma.c           |  4 ++--
+ drivers/gpu/drm/exynos/Kconfig            |  2 +-
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c |  5 ++--
+ drivers/gpu/drm/omapdrm/Kconfig           |  2 +-
+ drivers/gpu/drm/omapdrm/omap_drv.c        | 12 +---------
+ drivers/gpu/drm/omapdrm/omap_fbdev.c      | 16 +++++++++++--
+ drivers/gpu/drm/omapdrm/omap_gem.c        | 24 +++++--------------
+ drivers/gpu/drm/omapdrm/omap_gem.h        |  3 ---
+ drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c |  7 +-----
+ drivers/gpu/drm/tegra/Kconfig             |  2 +-
+ drivers/gpu/drm/tegra/fbdev.c             |  7 +++---
+ drivers/video/fbdev/Kconfig               |  8 +++++++
+ include/linux/fb.h                        | 29 ++++++++++-------------
+ 14 files changed, 56 insertions(+), 67 deletions(-)
+
+-- 
+2.41.0
 
