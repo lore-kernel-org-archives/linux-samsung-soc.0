@@ -2,120 +2,79 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D3BC00528
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Jul 2023 14:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B96EB64DA
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Jul 2023 08:40:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232874AbjGGOF3 (ORCPT
+        id S229809AbjGHIkm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 7 Jul 2023 10:05:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41096 "EHLO
+        Sat, 8 Jul 2023 04:40:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232865AbjGGOFK (ORCPT
+        with ESMTP id S229723AbjGHIkl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Jul 2023 10:05:10 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3719C212D
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Jul 2023 07:04:59 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2b69f958ef3so30905311fa.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Jul 2023 07:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688738697; x=1691330697;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2qyum3k4tjelZ9EZzRNlVIF22Us+iBOxD/GKR5sbt34=;
-        b=f3RG+EafmByUgKe8RFhvUo0UapMEMxPfE1WH+JdHr4CyT3ofKlMLlN+fBgAA8In52w
-         FUBiwolmlm+jKRRY75fobnEb/2oT3CL5ixV+f5+QuKSj1fcIRRYP2LvlR5OH6ivpXy2H
-         wbIUSC8Lbega6GxYA0NHK+nq/5LMsvJUq+Ydamp8kaXOSRJVakkybleuhujUl8f7xExG
-         YM9W8eAfG4hqaJVvoGNPzuMGW3rP0DHNJoAWa9N5WiD6Cd2YSaJmutUequzWeoVl1ESp
-         YXzr94lap+QWCbAzQ8Xx+H/23zy04oMpbncsbFzU0RMtZ25orOPrGEyt7Zop37ZlkBJS
-         xsAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688738697; x=1691330697;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2qyum3k4tjelZ9EZzRNlVIF22Us+iBOxD/GKR5sbt34=;
-        b=Lzkxse0YN3MvTt1+dgG1av0JsXAGyycY2o1KpkcVqXouj7Cu4fPA6JQpG+NToE7nM4
-         cQC/r89TtQV4w76fK6k+Nhtaolt0XJCYV8aflFVaCyh8km86mASysZAwOxV6/XqIYlRo
-         GBuMj66DTkk7AnDnhy1Xr/qWUDUHFDPdZWyJTKPpOMdktndOKPPHyavRVElO9TQZhMEd
-         mwF5TkJ+TKo7nSZ0abrutm/G97JXnZyDUp9FLFDioDEzb64RBiw+HTm1sVgK/cvn0ioO
-         /jP1CblUhEn3ZNqq9jUJmkfHm/vXt7P4YxEci9AvZL0rwy3SuUb1w3mRz4Uo+6FfWFfg
-         XCtg==
-X-Gm-Message-State: ABy/qLZwDEo2zcaN/iQaAkfAlQMBLYSjF1uqHg7QNj0QRQiUOgSYJg/V
-        zJI4wBtQbMHVfDuoiY5ngGkp/A==
-X-Google-Smtp-Source: APBJJlEIR/ULGxuj2SzHUNnMAJkyr9wn+Mq7Vhm89E5STBrFYsy5xjKKlWzX/dG7nKg7feP+/lEDDw==
-X-Received: by 2002:a2e:80c4:0:b0:2b6:9b2e:e352 with SMTP id r4-20020a2e80c4000000b002b69b2ee352mr4154824ljg.9.1688738697355;
-        Fri, 07 Jul 2023 07:04:57 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-94-254-63-18.NA.cust.bahnhof.se. [94.254.63.18])
-        by smtp.gmail.com with ESMTPSA id u21-20020a2e8555000000b002b6cb25e3f1sm760341ljj.108.2023.07.07.07.04.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jul 2023 07:04:55 -0700 (PDT)
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sat, 8 Jul 2023 04:40:41 -0400
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFC37FF;
+        Sat,  8 Jul 2023 01:40:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1688805636;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=kZp/RuTQA9sv6le/NdMKkvZz1qlquoEfqK2QgHrlgBk=;
+        b=J9y0FOqnmMfGk1BCYAQa7QaGavIpGz2/AHbajLggP+WjAmsu9+p8Byugu9B/MYr2G+altw
+        3qrac/FtnmYpqJeSU/IOFriu9y33/ZySeB4Ztquv69DXCS2BXqxv3Ln60QyvMelixdRqRv
+        2i7rcThlMWnQe2kW4gIyp2T4Y1aMFpM=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 11/18] soc: samsung: Move power-domain driver to the genpd dir
-Date:   Fri,  7 Jul 2023 16:04:27 +0200
-Message-Id: <20230707140434.723349-12-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230707140434.723349-1-ulf.hansson@linaro.org>
-References: <20230707140434.723349-1-ulf.hansson@linaro.org>
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2 0/3] Galaxy S2 (i9100) panel updates v2
+Date:   Sat,  8 Jul 2023 10:40:24 +0200
+Message-Id: <20230708084027.18352-1-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spam: Yes
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: <linux-samsung-soc@vger.kernel.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/genpd/Makefile                                          | 1 +
- drivers/genpd/samsung/Makefile                                  | 2 ++
- .../samsung/pm_domains.c => genpd/samsung/exynos-pm-domains.c}  | 0
- drivers/soc/samsung/Makefile                                    | 1 -
- 4 files changed, 3 insertions(+), 1 deletion(-)
- create mode 100644 drivers/genpd/samsung/Makefile
- rename drivers/{soc/samsung/pm_domains.c => genpd/samsung/exynos-pm-domains.c} (100%)
+Hi,
 
-diff --git a/drivers/genpd/Makefile b/drivers/genpd/Makefile
-index c178421e0cbc..1cf0ff26a44f 100644
---- a/drivers/genpd/Makefile
-+++ b/drivers/genpd/Makefile
-@@ -7,3 +7,4 @@ obj-y					+= mediatek/
- obj-y					+= qcom/
- obj-y					+= renesas/
- obj-y					+= rockchip/
-+obj-y					+= samsung/
-diff --git a/drivers/genpd/samsung/Makefile b/drivers/genpd/samsung/Makefile
-new file mode 100644
-index 000000000000..397aa5908c1d
---- /dev/null
-+++ b/drivers/genpd/samsung/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+obj-$(CONFIG_EXYNOS_PM_DOMAINS)		+= exynos-pm-domains.o
-diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/genpd/samsung/exynos-pm-domains.c
-similarity index 100%
-rename from drivers/soc/samsung/pm_domains.c
-rename to drivers/genpd/samsung/exynos-pm-domains.c
-diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
-index d35270fc6b2b..248a33d7754a 100644
---- a/drivers/soc/samsung/Makefile
-+++ b/drivers/soc/samsung/Makefile
-@@ -10,7 +10,6 @@ obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o
- 
- obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)	+= exynos3250-pmu.o exynos4-pmu.o \
- 					exynos5250-pmu.o exynos5420-pmu.o
--obj-$(CONFIG_EXYNOS_PM_DOMAINS) += pm_domains.o
- obj-$(CONFIG_EXYNOS_REGULATOR_COUPLER) += exynos-regulator-coupler.o
- 
- obj-$(CONFIG_SAMSUNG_PM_CHECK)	+= s3c-pm-check.o
+Follow-up on my patchset that fixes the display of the Samsung Galaxy S2
+when running PostmarketOS.
+
+The first two patches update the LD9040 panel driver so that it looks
+much better, and supports setting the backlight.
+
+The third patch fixes the size of the panel in the Device Tree. The
+previous values were completely bogus and caused Phosh (PmOS' UI) to
+display tiny icons and text as it thought the DPI was much lower.
+
+Changes since V1:
+[1/3]: Remove spurious new line
+[2/3]: Remove .get_brightness() callback, use bl_get_data() and
+       backlight_get_brightness()
+
+Cheers,
+-Paul
+
+Paul Cercueil (3):
+  drm/panel: ld9040: Use better magic values
+  drm/panel: ld9040: Register a backlight device
+  ARM: dts: exynos/i9100: Fix LCD screen's physical size
+
+ arch/arm/boot/dts/exynos4210-i9100.dts       |  4 +-
+ drivers/gpu/drm/panel/panel-samsung-ld9040.c | 42 +++++++++++++++++---
+ 2 files changed, 38 insertions(+), 8 deletions(-)
+
 -- 
-2.34.1
+2.40.1
 
