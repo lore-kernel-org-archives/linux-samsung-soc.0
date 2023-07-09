@@ -2,120 +2,93 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3DFEB64DC
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  9 Jul 2023 15:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00140EB64DD
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  9 Jul 2023 21:14:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233608AbjGIPQp (ORCPT
+        id S229534AbjGIVOK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 9 Jul 2023 11:16:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54170 "EHLO
+        Sun, 9 Jul 2023 17:14:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233156AbjGIPPo (ORCPT
+        with ESMTP id S229481AbjGIVOJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 9 Jul 2023 11:15:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08D712691;
-        Sun,  9 Jul 2023 08:14:59 -0700 (PDT)
+        Sun, 9 Jul 2023 17:14:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36E97118;
+        Sun,  9 Jul 2023 14:14:09 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B1F8E60C1E;
-        Sun,  9 Jul 2023 15:14:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29DCAC43391;
-        Sun,  9 Jul 2023 15:14:54 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C969B60C4F;
+        Sun,  9 Jul 2023 21:14:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE4D8C433C8;
+        Sun,  9 Jul 2023 21:14:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688915695;
-        bh=cYERX19L3V+eUJUB67jPFLLDmLp9pyRhGPVzzYToiIw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mUQtom4w/vBlZCJ09IHYL8khv/OJxssPbEbC2AyiD/28WyblRN4hiTLI06X0gMZ6e
-         EE7N2trlW5oDWy79dIpUajIlld0oTTrnh6qjwQn5o/JYU/TI7/DK8VjN7hEP+3x5eR
-         OKyh813P9d/5M8LzQcXNBLRIX+GYnJ7gK/B+RRYdm5fMnX9j62Vz7WOx8iQk0dhQix
-         O9kO+ls1jCvW+btM0zNDfHmEDWJyLW3+rpSiBQWtgiZ0+rZ9c7EdMtaWAeKXe2Los0
-         rGFvXxa1xibwqyNZpQlhxNAuVFelNG7lbE55Av7tQ30NjxQoo+w0ZW5FMvF1+dXFAb
-         cg9f2G50G2yKw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
-        Sasha Levin <sashal@kernel.org>, andi.shyti@kernel.org,
-        broonie@kernel.org, krzysztof.kozlowski@linaro.org,
-        linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        s=k20201202; t=1688937248;
+        bh=djyTuseLBeA/Gg1w7QGVbC0L8UjHiviHHPC+JTv+QFQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WGW3Rrobh4cpmkwae04EinmulxFvrNVqwMYvVBpWeXAaj+C3QsT/GM9yZaZgRCN9K
+         1ZiV06ncKleNveVvZ2niBS+q/Q9G49V3bqqWUwc6EQCuEO8Z4NGrjj0Wt4TXsioe0x
+         aLbzDW6a2NWQcTzq4WwWCQiLOdd2Tuqs0ig/0XaEINeaKaKxhu7AEYzyuS8pQBPq+2
+         WYvPE58NJOHi8dkjeLzkgHRmGvL+lepEWaq5BXo3WYZqUAQVcXi+m9u+Lic6nfXDLA
+         6zQLFXdG0uefYnZ8Zj8gCBlNgBP5E0UCelE94V2ctFr+uSXJSIBVjiYbQSHC8i3TwW
+         5vYINae9gAqyw==
+Date:   Sun, 9 Jul 2023 22:14:04 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Jaewon Kim <jaewon02.kim@samsung.com>, andi.shyti@kernel.org,
+        krzysztof.kozlowski@linaro.org, linux-spi@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.1 04/18] spi: s3c64xx: change polling mode to optional
-Date:   Sun,  9 Jul 2023 11:14:32 -0400
-Message-Id: <20230709151446.513549-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230709151446.513549-1-sashal@kernel.org>
-References: <20230709151446.513549-1-sashal@kernel.org>
+Subject: Re: [PATCH AUTOSEL 6.4 04/26] spi: s3c64xx: change polling mode to
+ optional
+Message-ID: <ZKsjHAaH41V8J+Dc@finisterre.sirena.org.uk>
+References: <20230709151255.512931-1-sashal@kernel.org>
+ <20230709151255.512931-4-sashal@kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.38
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gSG3AG9Mzt2Vuaqg"
+Content-Disposition: inline
+In-Reply-To: <20230709151255.512931-4-sashal@kernel.org>
+X-Cookie: Slow day.  Practice crawling.
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Jaewon Kim <jaewon02.kim@samsung.com>
 
-[ Upstream commit d1a7718ee8dbcc488d3243d52e19c755123e0024 ]
+--gSG3AG9Mzt2Vuaqg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Previously, Polling mode was supported as quirk for SOC without DMA.
-To provide more flexible support for polling mode, it changed to polling
-mode when the 'dmas' property is not present in the devicetree, rather than
-using a quirk.
+On Sun, Jul 09, 2023 at 11:12:33AM -0400, Sasha Levin wrote:
+> From: Jaewon Kim <jaewon02.kim@samsung.com>
+>=20
+> [ Upstream commit d1a7718ee8dbcc488d3243d52e19c755123e0024 ]
+>=20
+> Previously, Polling mode was supported as quirk for SOC without DMA.
+> To provide more flexible support for polling mode, it changed to polling
+> mode when the 'dmas' property is not present in the devicetree, rather th=
+an
+> using a quirk.
 
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org
-Link: https://lore.kernel.org/r/20230502062813.112434-2-jaewon02.kim@samsung.com
-Signed-off-by: Mark Brown <broonie@kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/spi/spi-s3c64xx.c                 | 4 ++--
- include/linux/platform_data/spi-s3c64xx.h | 1 +
- 2 files changed, 3 insertions(+), 2 deletions(-)
+This is a new feature/performance improvement, not a fix.
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 71d324ec9a70a..66ac94022a1ba 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -19,7 +19,6 @@
- #include <linux/platform_data/spi-s3c64xx.h>
- 
- #define MAX_SPI_PORTS		12
--#define S3C64XX_SPI_QUIRK_POLL		(1 << 0)
- #define S3C64XX_SPI_QUIRK_CS_AUTO	(1 << 1)
- #define AUTOSUSPEND_TIMEOUT	2000
- 
-@@ -116,7 +115,7 @@
- #define S3C64XX_SPI_TRAILCNT		S3C64XX_SPI_MAX_TRAILCNT
- 
- #define msecs_to_loops(t) (loops_per_jiffy / 1000 * HZ * t)
--#define is_polling(x)	(x->port_conf->quirks & S3C64XX_SPI_QUIRK_POLL)
-+#define is_polling(x)	(x->cntrlr_info->polling)
- 
- #define RXBUSY    (1<<2)
- #define TXBUSY    (1<<3)
-@@ -1068,6 +1067,7 @@ static struct s3c64xx_spi_info *s3c64xx_spi_parse_dt(struct device *dev)
- 	}
- 
- 	sci->no_cs = of_property_read_bool(dev->of_node, "no-cs-readback");
-+	sci->polling = !of_property_present(dev->of_node, "dmas");
- 
- 	return sci;
- }
-diff --git a/include/linux/platform_data/spi-s3c64xx.h b/include/linux/platform_data/spi-s3c64xx.h
-index 5df1ace6d2c98..cb7b8ddc899fb 100644
---- a/include/linux/platform_data/spi-s3c64xx.h
-+++ b/include/linux/platform_data/spi-s3c64xx.h
-@@ -35,6 +35,7 @@ struct s3c64xx_spi_info {
- 	int src_clk_nr;
- 	int num_cs;
- 	bool no_cs;
-+	bool polling;
- 	int (*cfg_gpio)(void);
- };
- 
--- 
-2.39.2
+--gSG3AG9Mzt2Vuaqg
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmSrIxwACgkQJNaLcl1U
+h9BQFQf8CKzKdu0m0tAVJQpSKAYVP/C+mC0FyYeSoywlsnn8mLEcj7hs5ISAoj4K
+0vgSSirVRBuVdqaPIT/nMihQFDOgMP6PCIxZKsirh87f3kztnL7H0XWIyj3PD2ZB
+X8+TVi0+M95hrkzXkQEp0fybPglb+OkOagEiWVKrwWgF8Qb+HzdHjJ2kmr/5opes
+DjMEj1HuCV2t2in/ghB7dSiHm1XfJdATOO9BLpqiHVE5mMinaJyZBK3cIl+0K9jr
+0vMRbTGaIujAW7FOc4In1WP+zqBi99Z8JeUQW9bfOrGx+BwKJIP2mj01a6H43JKK
+tbyu6gRM9jaoEff+HrZWnL8ukPTlvQ==
+=7XeE
+-----END PGP SIGNATURE-----
+
+--gSG3AG9Mzt2Vuaqg--
