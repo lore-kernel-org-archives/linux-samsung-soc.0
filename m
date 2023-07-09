@@ -2,38 +2,38 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB88CC001DC
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  9 Jul 2023 15:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0201C001DC
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  9 Jul 2023 15:15:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230265AbjGIPNJ (ORCPT
+        id S233372AbjGIPPG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 9 Jul 2023 11:13:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53002 "EHLO
+        Sun, 9 Jul 2023 11:15:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230115AbjGIPNH (ORCPT
+        with ESMTP id S233272AbjGIPOo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 9 Jul 2023 11:13:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69ACD129;
-        Sun,  9 Jul 2023 08:13:06 -0700 (PDT)
+        Sun, 9 Jul 2023 11:14:44 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B363D19B2;
+        Sun,  9 Jul 2023 08:14:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 02B6F60C0F;
-        Sun,  9 Jul 2023 15:13:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7125DC433CD;
-        Sun,  9 Jul 2023 15:13:04 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B5F1360C1E;
+        Sun,  9 Jul 2023 15:14:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D6C3C433CC;
+        Sun,  9 Jul 2023 15:14:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688915585;
-        bh=tvc5t0jTo/2AsKb4nX3c9HZPyNl0VeVsb3Bm30zrepA=;
+        s=k20201202; t=1688915645;
+        bh=cYERX19L3V+eUJUB67jPFLLDmLp9pyRhGPVzzYToiIw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OUcnfjT7O+0FbBYdBcUzgqzVrbbpEEW65IN2XQjXywJix29n8MQoEZ9+m9tAJOBRJ
-         6UBUhXMmpWyRBiMgQiI3q94ooRsAy5L2C158WKExic04zSjuv/kcCC9tL5bV7lxtnK
-         DsyOFFVNNJ33dO7cKcg/bPkopcsl54bITfv4DypdXlIw3yziGDgjpy4Vh8YcKJPZmv
-         TjEnChntwC/cdJ8jFJlVys2GdhfGEagHySk6ZR/DFcB1mtpR4nfamgBuAw/fuDv48P
-         LdNnxpQPurS5ZXANvBdpWsUsTgmtHV/1YIFiX3zBTFepV4wJ5C6IYAcVxNb7blFwjE
-         rBz2esTnHsTww==
+        b=jrSSbAVDiesB/xQAsAOGt5myxBVeZoiyTiBPY4vBpH1K9gGM5uJv2vVg0v49vh2NE
+         ux71iyyvfIHnyWSsPIMCKhPmOCZqWk+MpvgZzBR/mJsP1uHWepIc9rqzbcluiepOVc
+         9fRtdxpgy4NwWYpNk8uM8BNX4na2NF4O+8aVMuW3uufqp5yzXLUmY5JRZuHgqel8kl
+         3Vxd+F2guUNBFih2uHVDkDaWZLN4fLM7S9ng1IOfuaL/Dl5J4M8n9CN/Pve4TrAPh4
+         bSu656VdC5q4BqX3xKjXOU6dJ6aEjpBQGzucjUKYgiO5dHOmMTeKaqbds3N+KGZ/TF
+         0f7516nJkBWlA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
@@ -41,16 +41,16 @@ Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
         broonie@kernel.org, krzysztof.kozlowski@linaro.org,
         linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.4 04/26] spi: s3c64xx: change polling mode to optional
-Date:   Sun,  9 Jul 2023 11:12:33 -0400
-Message-Id: <20230709151255.512931-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.3 04/22] spi: s3c64xx: change polling mode to optional
+Date:   Sun,  9 Jul 2023 11:13:38 -0400
+Message-Id: <20230709151356.513279-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230709151255.512931-1-sashal@kernel.org>
-References: <20230709151255.512931-1-sashal@kernel.org>
+In-Reply-To: <20230709151356.513279-1-sashal@kernel.org>
+References: <20230709151356.513279-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.4.2
+X-stable-base: Linux 6.3.12
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -76,7 +76,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 7ac17f0d18a95..5f59d6f8c8d8f 100644
+index 71d324ec9a70a..66ac94022a1ba 100644
 --- a/drivers/spi/spi-s3c64xx.c
 +++ b/drivers/spi/spi-s3c64xx.c
 @@ -19,7 +19,6 @@
@@ -105,10 +105,10 @@ index 7ac17f0d18a95..5f59d6f8c8d8f 100644
  	return sci;
  }
 diff --git a/include/linux/platform_data/spi-s3c64xx.h b/include/linux/platform_data/spi-s3c64xx.h
-index 3101152ce449f..1d6e6c424fc69 100644
+index 5df1ace6d2c98..cb7b8ddc899fb 100644
 --- a/include/linux/platform_data/spi-s3c64xx.h
 +++ b/include/linux/platform_data/spi-s3c64xx.h
-@@ -36,6 +36,7 @@ struct s3c64xx_spi_info {
+@@ -35,6 +35,7 @@ struct s3c64xx_spi_info {
  	int src_clk_nr;
  	int num_cs;
  	bool no_cs;
