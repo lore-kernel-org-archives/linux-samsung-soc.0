@@ -2,141 +2,160 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96ABDEB64D9
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Jul 2023 10:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7247CEB64DC
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Jul 2023 14:41:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233362AbjGJKPu (ORCPT
+        id S230048AbjGJOlT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 10 Jul 2023 06:15:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55576 "EHLO
+        Mon, 10 Jul 2023 10:41:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233372AbjGJKPg (ORCPT
+        with ESMTP id S229938AbjGJOlS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 10 Jul 2023 06:15:36 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1EF535AB
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jul 2023 03:14:04 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-51e344efd75so7954109a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jul 2023 03:14:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688984043; x=1691576043;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nUEWXEFp+1oZr3kpVMJaoQSxkbkTSjRww+xMqeNuW+U=;
-        b=coOXt0JVy/PKdCwR4/GcJ2HCVu/jydih7pmt243YtW7vhvpPOEmjrMvIUoiGNb2tqw
-         KUmOuEut8EA2oUMSKMubkfa6j/7dqVGpgdbIFI9TWrsfWlxVYf779f9F8xrMNW2dabhg
-         tx9BWEHUJX1XLBGIP29lOQpaqsE7awuMjNMnWQzkiDB1yAWLBlFv79Ar+CpmOB2Nn0vy
-         rr5mREIrx/Tut1WlmmcDE8ProxiTJthgC4g1kR8OCgQBw7A+VkKs4QA6HYpcsNEA0J/K
-         x4UGQI8wPTq53z1DO/XEsCAe50C+8iiXfLx7SQCyXXH6uUUO4vDxvQ5VTT/HISalohPr
-         HFQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688984043; x=1691576043;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nUEWXEFp+1oZr3kpVMJaoQSxkbkTSjRww+xMqeNuW+U=;
-        b=GuBV0uCuYPtW5pd505GZm+ijeDpwECMWCiDDn5N289LZQsWlcuDERT2nn963gVbsVe
-         f2tb2VOcJECRXIal4UMQh+oZAQ6F/lzPnM0tuRZ4TYsbkgJpqTTTWBIHId0pW+vS9rmy
-         XcdpgsXWQIzSydmzbFPxwD8jqcxd4vxkuEwYQO7ENWDwjOoNiSwb8Jvi3O6R6H42aFP/
-         UXQhA15l1yUVdQs0FbPxZXmqJRl870vVtxdfW6QnKM8MMunTfpxH+GoYPV2ocN0nYqCZ
-         YBXkN55AZZWOhsody95OH3f1gzEsyHSHfkinLhAdpusm4LYFeNR7H2qYieEGMm/09RaR
-         MgZg==
-X-Gm-Message-State: ABy/qLatVflTARaog5juZPOdyqs94bvFVxrMYHLB//5Pfn4kfxpez1RU
-        V7Cxy0gX7JZemzUhdJvN+kVBeA==
-X-Google-Smtp-Source: APBJJlHmi2r9OzHgiqvApCLLnrK8IZai9S0ZSxrSRSQMHeshe+fZ1oKO/Dp9bywWV1JxTmwA8MelPg==
-X-Received: by 2002:aa7:c508:0:b0:51d:e185:a211 with SMTP id o8-20020aa7c508000000b0051de185a211mr8809170edq.21.1688984043258;
-        Mon, 10 Jul 2023 03:14:03 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id n24-20020aa7d058000000b0051df583ca96sm5454199edo.43.2023.07.10.03.14.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jul 2023 03:14:02 -0700 (PDT)
-Message-ID: <c1dcf8dc-b230-fd54-fc25-e57d6c6b6dea@linaro.org>
-Date:   Mon, 10 Jul 2023 12:14:01 +0200
+        Mon, 10 Jul 2023 10:41:18 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45016D7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jul 2023 07:41:17 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230710144113euoutp0174b409921a1dcf84ce0ef9055218746c~wiJ5Wc5MB1373413734euoutp01D
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jul 2023 14:41:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230710144113euoutp0174b409921a1dcf84ce0ef9055218746c~wiJ5Wc5MB1373413734euoutp01D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1689000073;
+        bh=MwQOmwymU1eBeIeukQqIHQbMFNBNnL7OZIhhKksmZkw=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=WwD2LmTvxHTryyoGCqnpkraQLhfTjY5KKRQYSPT6eghVVaAiuBaXEWQyjnO5J1+ME
+         yPNMSOFzUccm/Hp7YAj1BorD04ztfJrBOewS+W7DF1eKq2IAWQlBDpUbbnaz6mrCY7
+         D6C8pbOQHhsCMQdkZAJEsumADbLTsP/YvXenn0cA=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20230710144113eucas1p1de160100648b36a1d8ef365a0430cd0c~wiJ5EBnFu0505705057eucas1p1Q;
+        Mon, 10 Jul 2023 14:41:13 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 14.8B.37758.9881CA46; Mon, 10
+        Jul 2023 15:41:13 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230710144113eucas1p1f4063f2e41b1d23a83dc7be40bc0e2ba~wiJ4psC9U0729307293eucas1p18;
+        Mon, 10 Jul 2023 14:41:13 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230710144113eusmtrp1b1f06ceea2215d2cea410f25c4e13517~wiJ4pHzW62680526805eusmtrp1v;
+        Mon, 10 Jul 2023 14:41:13 +0000 (GMT)
+X-AuditID: cbfec7f5-7ffff7000002937e-ad-64ac18897559
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id FB.86.10549.9881CA46; Mon, 10
+        Jul 2023 15:41:13 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230710144112eusmtip149150385311f28ed1122bcda27d13b3d~wiJ37eZjX2841128411eusmtip1J;
+        Mon, 10 Jul 2023 14:41:12 +0000 (GMT)
+Message-ID: <33712296-5887-d810-096b-c95cd718626d@samsung.com>
+Date:   Mon, 10 Jul 2023 16:41:12 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v4 10/21] thermal/drivers/exynos: convert to use
- devm_request*_irq_probe()
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
+        Gecko/20100101 Thunderbird/102.13.0
+Subject: Re: [PATCH 4/6] iommu/exynos: Convert to
+ devm_platform_ioremap_resource()
 Content-Language: en-US
-To:     Yangtao Li <frank.li@vivo.com>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
+To:     Yangtao Li <frank.li@vivo.com>, Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20230710095926.15614-1-frank.li@vivo.com>
- <20230710095926.15614-10-frank.li@vivo.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230710095926.15614-10-frank.li@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Cc:     iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20230705130416.46710-4-frank.li@vivo.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLKsWRmVeSWpSXmKPExsWy7djP87qdEmtSDL6/lLF4MG8bm8XEIzOY
+        LH59sbDonL2B3WLv663sFpseX2O1uLxrDpvFjPP7mCwOfnjCatFyx9SBy+PJwXlMHmvmrWH0
+        2LSqk83jzrU9bB6bl9R7vNg8k9Gjb8sqRo/Pm+Q8NnzqYA7gjOKySUnNySxLLdK3S+DKWPmH
+        p2AVV8XLZ1fYGhiXcHQxcnJICJhIdPU0MXUxcnEICaxglPj2YhIbhPOFUaL70Vwo5zOjRFfT
+        LmaYlvVN99hAbCGB5YwSD05zQNgfGSVu9pt2MXJw8ArYSZxarw4SZhFQlVjzezUTiM0rIChx
+        cuYTFhBbVCBVYsftCawgtrBAiMTUzg6wGmYBcYlbT+aDXSQi8BJo5KF+sCOYBZoYJXq/9oMt
+        ZhMwlOh62wVmcwqYS2xcepYZolteYvvbOcwgDRICkzklLhy+zwJxtYtEb9MuVghbWOLV8S3s
+        ELaMxOnJPSwQDe2MEgt+32eCcCYwSjQ8v8UIUWUtcefcLzaQ35gFNCXW79KHCDtKzPs9lwUk
+        LCHAJ3HjrSDEEXwSk7ZNZ4YI80p0tAlBVKtJzDq+Dm7twQuXmCcwKs1CCphZSAEwC8k7sxD2
+        LmBkWcUonlpanJueWmycl1quV5yYW1yal66XnJ+7iRGYwk7/O/51B+OKVx/1DjEycTAeYpTg
+        YFYS4S04uCpFiDclsbIqtSg/vqg0J7X4EKM0B4uSOK+27clkIYH0xJLU7NTUgtQimCwTB6dU
+        A9OKkGffpzRGnH2YUzNBVe1r4TROZsdnzO/2nv6aImr6+Of3/16e6qmVXU+cBJmYGQ3vz/te
+        bq49S6/GKsPYukahyPl64GOx7Uv1FDWUVgjwp074Hfb93J3PT0q/qa1Ycep6Lv9DSb9DMfWu
+        lrl32+5OChIPnryTNWTbm6MaN6csDtwuEhVQLn/O/MUR62v/GpZqGi1YKMlr+uPIT+1teRtY
+        dnaw7iuO+ST5hv3Q7QvbuJI2OX/PvXMq+SqL/OL8utnpiwRvaYSzB7h36i8I+BEZtEB8QvWM
+        aX78j/piIqOLjNPWCW+seS+uHVIju2LJtfuM/Yp6fac5Dl57czT27noVOS6x5QemPs0Kc4mO
+        +KbEUpyRaKjFXFScCACqNcXS0AMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIIsWRmVeSWpSXmKPExsVy+t/xu7qdEmtSDH7vZLV4MG8bm8XEIzOY
+        LH59sbDonL2B3WLv663sFpseX2O1uLxrDpvFjPP7mCwOfnjCatFyx9SBy+PJwXlMHmvmrWH0
+        2LSqk83jzrU9bB6bl9R7vNg8k9Gjb8sqRo/Pm+Q8NnzqYA7gjNKzKcovLUlVyMgvLrFVija0
+        MNIztLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3S9DLWPmHp2AVV8XLZ1fYGhiXcHQxcnJI
+        CJhIrG+6x9bFyMUhJLCUUeLZ/R4miISMxMlpDawQtrDEn2tdUEXvGSVmrznB3sXIwcErYCdx
+        ar06SA2LgKrEmt+rwXp5BQQlTs58wgJiiwqkSvxq2AU2R1ggRGJqZwdYDbOAuMStJ/OZQGaK
+        CLxklLje2wnmMAs0MUp8/rGNFWLbdkaJWce7GEFa2AQMJbregpzBycEpYC6xcelZZohRZhJd
+        WyFqmAXkJba/ncM8gVFoFpJLZiHZOAtJyywkLQsYWVYxiqSWFuem5xYb6hUn5haX5qXrJefn
+        bmIExu22Yz8372Cc9+qj3iFGJg7GQ4wSHMxKIrwFB1elCPGmJFZWpRblxxeV5qQWH2I0BQbH
+        RGYp0eR8YOLIK4k3NDMwNTQxszQwtTQzVhLn9SzoSBQSSE8sSc1OTS1ILYLpY+LglGpgWprn
+        cFpnauP5C582uL5t49z/XEvobvobT+XjUv5RP1/f/+axj2nl2ymnHotGrn0cmLVlunbHc9bH
+        HLechIXj3hVNklhx1zvZ790pz6kqSudUCmf7Xv+uUHSOaanWtrlVJ43y7x8IffD8eTmD+4Nt
+        B2OaV8uJ8WeuKBeOXXvqaKkSS908/tVeqzQ+Fv5yCTrfIrXtaQ6b+HrZI7dZlloKTb28U665
+        WWxP2dpJsVwTGd0vyBR8XPr+v42+lfI2sanaR96LNLZkOr1+kNI9scryWbHUv4Cs2s5jdq5C
+        +9NEmS3dHgrzeAgHaxx517/ykKmy+BWJ7n1VDzc77n41+xbj+5gj6tMMXQVtK9JNe2XclViK
+        MxINtZiLihMBFeEYvmQDAAA=
+X-CMS-MailID: 20230710144113eucas1p1f4063f2e41b1d23a83dc7be40bc0e2ba
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20230705130438eucas1p231e5c29315bc0c2e15e947079ed4e39a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230705130438eucas1p231e5c29315bc0c2e15e947079ed4e39a
+References: <20230705130416.46710-1-frank.li@vivo.com>
+        <CGME20230705130438eucas1p231e5c29315bc0c2e15e947079ed4e39a@eucas1p2.samsung.com>
+        <20230705130416.46710-4-frank.li@vivo.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 10/07/2023 11:59, Yangtao Li wrote:
-> There are more than 700 calls to devm_request_threaded_irq method and
-> more than 1000 calls to devm_request_irq method. Most drivers only
-> request one interrupt resource, and these error messages are basically
-> the same. If error messages are printed everywhere, more than 2000 lines
-> of code can be saved by removing the msg in the driver.
-> 
-> And tglx point out that:
-> 
->   If we actually look at the call sites of
->   devm_request_threaded_irq() then the vast majority of them print more or
->   less lousy error messages. A quick grep/sed/awk/sort/uniq revealed
-> 
->      519 messages total (there are probably more)
-> 
->      352 unique messages
-> 
->      323 unique messages after lower casing
-> 
->          Those 323 are mostly just variants of the same patterns with
->          slight modifications in formatting and information provided.
-> 
->      186 of these messages do not deliver any useful information,
->          e.g. "no irq", "
-> 
->      The most useful one of all is: "could request wakeup irq: %d"
-> 
->   So there is certainly an argument to be made that this particular
->   function should print a well formatted and informative error message.
-> 
->   It's not a general allocator like kmalloc(). It's specialized and in the
->   vast majority of cases failing to request the interrupt causes the
->   device probe to fail. So having proper and consistent information why
->   the device cannot be used _is_ useful.
-> 
-> So convert to use devm_request*_irq_probe() API, which ensure that all
-> error handling branches print error information.
-> 
-> In this way, when this function fails, the upper-layer functions can
-> directly return an error code without missing debugging information.
-> Otherwise, the error message will be printed redundantly or missing.
-> 
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: "Uwe Kleine-König" <u.kleine-koenig@pengutronix.de>
-> Cc: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-> Cc: AngeloGioacchino Del Regno  <angelogioacchino.delregno@collabora.com>
+On 05.07.2023 15:04, Yangtao Li wrote:
+> Use devm_platform_ioremap_resource() to simplify code.
+>
 > Signed-off-by: Yangtao Li <frank.li@vivo.com>
+
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+
 > ---
+>   drivers/iommu/exynos-iommu.c | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index c275fe71c4db..ab6208015997 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -725,19 +725,17 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+>   	int irq, ret;
+>   	struct device *dev = &pdev->dev;
+>   	struct sysmmu_drvdata *data;
+> -	struct resource *res;
+>   
+>   	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+>   	if (!data)
+>   		return -ENOMEM;
+>   
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	data->sfrbase = devm_ioremap_resource(dev, res);
+> +	data->sfrbase = devm_platform_ioremap_resource(pdev, 0);
+>   	if (IS_ERR(data->sfrbase))
+>   		return PTR_ERR(data->sfrbase);
+>   
+>   	irq = platform_get_irq(pdev, 0);
+> -	if (irq <= 0)
+> +	if (irq < 0)
+>   		return irq;
+>   
+>   	ret = devm_request_irq(dev, irq, exynos_sysmmu_irq, 0,
 
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
