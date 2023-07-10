@@ -2,64 +2,35 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D079EB64DC
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Jul 2023 07:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E40CBEB64D9
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Jul 2023 07:57:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229713AbjGJHpW (ORCPT
+        id S232291AbjGJH5F (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 10 Jul 2023 03:45:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48028 "EHLO
+        Mon, 10 Jul 2023 03:57:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231208AbjGJHpI (ORCPT
+        with ESMTP id S231646AbjGJH5A (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 10 Jul 2023 03:45:08 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D088186
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jul 2023 00:45:04 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-98de21518fbso551862766b.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jul 2023 00:45:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688975103; x=1691567103;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2MNKvxKhU5E3UfL1yykCL9W6AhB6g7MU09MxNEWDvB0=;
-        b=Z5O9WCbpFEAEEX7ipSOm5t/0clVvwUC6C1Pysrl5LNHPr8d252uBkYx24L5kenOgj8
-         d/okzdRXK45OgldGAb7iP3KIB5LrGWiH3ZJu1XvRmV5e2Xo9KlYE8p4XWrXCHxjrF5fT
-         GvKf+Rgg8OcFAHQhzgaOon1JhYhau5BlztjxTFtvCamoM99I3NcuaEsEq/9jumfgNOZn
-         mtoc0YtVNohyOtGhvPKiV7KOxij2wK0BzVl8S2godl+Ue8YEXSDZucUZb4gD2F4ckP8w
-         ftVPVFqnOxKCzyVLnwM/3U07Awi2UKBgTBHzKX/64qn/o3ZFbWDz7yREO3xoGU9PhHmi
-         fsXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688975103; x=1691567103;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2MNKvxKhU5E3UfL1yykCL9W6AhB6g7MU09MxNEWDvB0=;
-        b=JnAV7naIskCgTrD0Lo7a3s9D9q8yba3GYJ/vJfMWuvDt45PROl2F+AYaqkmFMiK/OD
-         oiJUJjYvCEJp2r6ANOpV+2utXsu3qlpdEMAx1m7lSkopUdXP2ZYqBjYddyTwqHu2qBto
-         EtICOZZwguY9de3x9lVTyxRxjth7L9W5fJ/Z5zQgQdFTJpsEVku46Y2qyInWh9tk4VXu
-         nhcFt14+ncYgP0h0l/ZtHnL1ULHHOgcQaYEEOpQK5Apm3b+sT5+DmGLmYpRJTKOLCnT6
-         np8NAezpObM+oRk9G+RG+UCF5ZqcUaCdmmqpC+e4hFHVkloqg81OWwkPR/MdHo+Iv/Zb
-         GlrQ==
-X-Gm-Message-State: ABy/qLb5/k0pSFe/FSx316ud7a7Vod0aPJrQ3wwl0TR3R80ikOQ15Kcg
-        vZKWYoJ6F/oQJu4K3CsVGKDkVg==
-X-Google-Smtp-Source: APBJJlHEWjZH7QcFgJVsbgRVy1gCD4+9E6PvXub3qGjdk22ca0yCMxJ77I0SGdcFF0cZjF/dDmDUQQ==
-X-Received: by 2002:a17:906:20dd:b0:993:ec0b:1a27 with SMTP id c29-20020a17090620dd00b00993ec0b1a27mr7106837ejc.24.1688975103071;
-        Mon, 10 Jul 2023 00:45:03 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id ay26-20020a170906d29a00b009887f4e0291sm5717231ejb.27.2023.07.10.00.45.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jul 2023 00:45:02 -0700 (PDT)
-Message-ID: <48d345c2-c5fe-08e9-b8c2-8d83f826e45a@linaro.org>
-Date:   Mon, 10 Jul 2023 09:45:01 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v2 3/3] ARM: dts: exynos/i9100: Fix LCD screen's physical
- size
-Content-Language: en-US
-To:     Paul Cercueil <paul@crapouillou.net>,
+        Mon, 10 Jul 2023 03:57:00 -0400
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8515102;
+        Mon, 10 Jul 2023 00:56:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1688975816;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=iNq4WB0ehO9BFDBl02287PbimM0hbhShaw3I63MKiPE=;
+        b=xBknwHZXPDeZO/kIF8N+R96UwfmeWjC49WRpANzlgQEGeTKwDrcsJpEEc7IrIQrlDZUKv0
+        ZffwSrGy+yeEfBA1CBXF5fpuPx3n8SInDM7nmcO+uBoeUDpyPPoFZ8zf/cnCxxE1+xc3wt
+        FKuJ2KN4/KxH3qytjVx0nAYe2l9GQeo=
+Message-ID: <053472d1f44ae57105ced620417616c4e82c2d81.camel@crapouillou.net>
+Subject: Re: [PATCH v2 3/3] ARM: dts: exynos/i9100: Fix LCD screen's
+ physical size
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
@@ -69,52 +40,66 @@ To:     Paul Cercueil <paul@crapouillou.net>,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, stable@vger.kernel.org
+Date:   Mon, 10 Jul 2023 09:56:54 +0200
+In-Reply-To: <48d345c2-c5fe-08e9-b8c2-8d83f826e45a@linaro.org>
 References: <20230708084027.18352-1-paul@crapouillou.net>
- <20230708084027.18352-4-paul@crapouillou.net>
- <98b39071-cbfa-bc58-032e-56f6e9dd5c2a@linaro.org>
- <7672f0b65cf7d2a1bb81019417aa3fa98fbac5e3.camel@crapouillou.net>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <7672f0b65cf7d2a1bb81019417aa3fa98fbac5e3.camel@crapouillou.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+         <20230708084027.18352-4-paul@crapouillou.net>
+         <98b39071-cbfa-bc58-032e-56f6e9dd5c2a@linaro.org>
+         <7672f0b65cf7d2a1bb81019417aa3fa98fbac5e3.camel@crapouillou.net>
+         <48d345c2-c5fe-08e9-b8c2-8d83f826e45a@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 10/07/2023 09:35, Paul Cercueil wrote:
-> Hi Krzysztof,
-> 
-> Le lundi 10 juillet 2023 à 08:59 +0200, Krzysztof Kozlowski a écrit :
->> On 08/07/2023 10:40, Paul Cercueil wrote:
->>> The previous values were completely bogus, and resulted in the
->>> computed
->>> DPI ratio being much lower than reality, causing applications and
->>> UIs to
->>> misbehave.
->>>
->>> The new values were measured by myself with a ruler.
->>>
->>> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>> Fixes: 8620cc2f99b7 ("ARM: dts: exynos: Add devicetree file for the
->>> Galaxy S2")
->>> Cc: <stable@vger.kernel.org> # v5.8+
->>> ---
->>
->> This does not apply. You rebased your work on some older
->> version/tree,
->> without new layout. Please work on linux-next.
-> 
-> This patchset was based on drm-misc-next, because that's where I was
-> planning to apply it; and it was extremely unlikely (but not
-> impossible, apparently) that the i9100.dts would be modified in the
-> meantime.
-> 
-> I can rebase on linux-next, the problem then is that I then don't know
-> how/where to apply the patchset.
+Le lundi 10 juillet 2023 =C3=A0 09:45 +0200, Krzysztof Kozlowski a =C3=A9cr=
+it=C2=A0:
+> On 10/07/2023 09:35, Paul Cercueil wrote:
+> > Hi Krzysztof,
+> >=20
+> > Le lundi 10 juillet 2023 =C3=A0 08:59 +0200, Krzysztof Kozlowski a
+> > =C3=A9crit=C2=A0:
+> > > On 08/07/2023 10:40, Paul Cercueil wrote:
+> > > > The previous values were completely bogus, and resulted in the
+> > > > computed
+> > > > DPI ratio being much lower than reality, causing applications
+> > > > and
+> > > > UIs to
+> > > > misbehave.
+> > > >=20
+> > > > The new values were measured by myself with a ruler.
+> > > >=20
+> > > > Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> > > > Fixes: 8620cc2f99b7 ("ARM: dts: exynos: Add devicetree file for
+> > > > the
+> > > > Galaxy S2")
+> > > > Cc: <stable@vger.kernel.org> # v5.8+
+> > > > ---
+> > >=20
+> > > This does not apply. You rebased your work on some older
+> > > version/tree,
+> > > without new layout. Please work on linux-next.
+> >=20
+> > This patchset was based on drm-misc-next, because that's where I
+> > was
+> > planning to apply it; and it was extremely unlikely (but not
+> > impossible, apparently) that the i9100.dts would be modified in the
+> > meantime.
+> >=20
+> > I can rebase on linux-next, the problem then is that I then don't
+> > know
+> > how/where to apply the patchset.
+>=20
+> DTS cannot go via drm-misc-next, so if that's your intention please
+> always split the patchset into separate ones. *Always*.
 
-DTS cannot go via drm-misc-next, so if that's your intention please
-always split the patchset into separate ones. *Always*.
+Noted.
 
-Best regards,
-Krzysztof
+Then I'll apply the patches [1/3] and [2/3] to drm-misc-next since I
+have my ACKs, and re-send patch [3/3] as standalone and rebased on
+linux-next.
 
+Cheers,
+-Paul
