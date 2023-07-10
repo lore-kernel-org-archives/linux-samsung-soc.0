@@ -2,104 +2,94 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E40CBEB64D9
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Jul 2023 07:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 977E4EB64DA
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Jul 2023 08:00:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232291AbjGJH5F (ORCPT
+        id S230250AbjGJIA1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 10 Jul 2023 03:57:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57476 "EHLO
+        Mon, 10 Jul 2023 04:00:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231646AbjGJH5A (ORCPT
+        with ESMTP id S230350AbjGJIA0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 10 Jul 2023 03:57:00 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8515102;
-        Mon, 10 Jul 2023 00:56:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1688975816;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=iNq4WB0ehO9BFDBl02287PbimM0hbhShaw3I63MKiPE=;
-        b=xBknwHZXPDeZO/kIF8N+R96UwfmeWjC49WRpANzlgQEGeTKwDrcsJpEEc7IrIQrlDZUKv0
-        ZffwSrGy+yeEfBA1CBXF5fpuPx3n8SInDM7nmcO+uBoeUDpyPPoFZ8zf/cnCxxE1+xc3wt
-        FKuJ2KN4/KxH3qytjVx0nAYe2l9GQeo=
-Message-ID: <053472d1f44ae57105ced620417616c4e82c2d81.camel@crapouillou.net>
-Subject: Re: [PATCH v2 3/3] ARM: dts: exynos/i9100: Fix LCD screen's
- physical size
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Mon, 10 Jul 2023 04:00:26 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F18E2100
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jul 2023 01:00:24 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-99342a599e9so546101566b.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jul 2023 01:00:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688976023; x=1691568023;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dgj45cMQ8fbHZJEPaedkT94SZAiskNOhiYOLw8ukyxY=;
+        b=DtGN8JNRpbFFQLNli5r5OHgdaTMgJDXd4zVxngKE4WPBa6H8PRewdn2LdcBzrJVCpf
+         6RKQrkIOuO23P0Gbpy//4xizqdb6BNl3oQgGKP6obZzC2PAbbGd7LNJwyshLpv3Gj7yw
+         APQ0k2R3MLalmLZWetLumwP0/w756plGqiGy4qYRTd6MMVPBX+cbAv1/JKIECH59OlKq
+         oAgaOvS3W/ylYtWuUlqOrEQGZlC2JQml/SWsQFyuPn92j4lhhzBaJNKzMaT1E9zEzhiy
+         cU44l48j5sI4mazXZy4z+IU1UUQVUpdKcuFsCJ6cwSWgYN3JeGEbQPV5dAUXXLbRb7hz
+         5xBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688976023; x=1691568023;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dgj45cMQ8fbHZJEPaedkT94SZAiskNOhiYOLw8ukyxY=;
+        b=eNqL6FmGfMywv2eQWNSBDSUTpgij1tsanTXNNU+n0FCefewJUpadjVg895q6CXMv7z
+         CrpjKkN0SavINW9gYtYattJ+sIEMb2BY2T4qkuO5LHyx+9rGGoYVDiNDp+JWbozKTfFf
+         9ENQ5zNlXwFmz3cKesaZ2VuMU47sMOiDSr+V080VYs4c09Yhtv7P3XseX5TIiYNTWMkY
+         UqLvz3t8eOMdsFsXoa0UitIgCmS2Qr8/BBpLghx5xDSog2Y2lP1EPEaCjGZpYOualVDT
+         0tDPLKCO53Bxhw0pDuQvU/kcLNI90wVl905B+CMaVJcUXvBeN4V32V/OGLJDMFM/fhT5
+         YQgw==
+X-Gm-Message-State: ABy/qLZ0HOoDu8vr5nHSlzn14IRvBrWA5UlbKuWTEGcazQfiTJGhIdJo
+        gk3JWjvi2ffdmSBMiTVyN2x+CQ==
+X-Google-Smtp-Source: APBJJlHCknvNzOQ/uNpwV+f9LgYPvw05rCyeOAKGA/OT6eFMR/EynTQE3BFh18+i+0NL/LSNCxwwCA==
+X-Received: by 2002:a17:906:151:b0:994:673:8af6 with SMTP id 17-20020a170906015100b0099406738af6mr2057645ejh.29.1688976023448;
+        Mon, 10 Jul 2023 01:00:23 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.223.104])
+        by smtp.gmail.com with ESMTPSA id br17-20020a170906d15100b009930c61dc0esm5819123ejb.92.2023.07.10.01.00.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jul 2023 01:00:22 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Alim Akhtar <alim.akhtar@samsung.com>, linux-fsd@tesla.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, stable@vger.kernel.org
-Date:   Mon, 10 Jul 2023 09:56:54 +0200
-In-Reply-To: <48d345c2-c5fe-08e9-b8c2-8d83f826e45a@linaro.org>
-References: <20230708084027.18352-1-paul@crapouillou.net>
-         <20230708084027.18352-4-paul@crapouillou.net>
-         <98b39071-cbfa-bc58-032e-56f6e9dd5c2a@linaro.org>
-         <7672f0b65cf7d2a1bb81019417aa3fa98fbac5e3.camel@crapouillou.net>
-         <48d345c2-c5fe-08e9-b8c2-8d83f826e45a@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 1/4] arm64: dts: exynos: minor whitespace cleanup around '='
+Date:   Mon, 10 Jul 2023 10:00:18 +0200
+Message-Id: <168897600949.19079.11019882842666346111.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230702185012.43699-1-krzysztof.kozlowski@linaro.org>
+References: <20230702185012.43699-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Le lundi 10 juillet 2023 =C3=A0 09:45 +0200, Krzysztof Kozlowski a =C3=A9cr=
-it=C2=A0:
-> On 10/07/2023 09:35, Paul Cercueil wrote:
-> > Hi Krzysztof,
-> >=20
-> > Le lundi 10 juillet 2023 =C3=A0 08:59 +0200, Krzysztof Kozlowski a
-> > =C3=A9crit=C2=A0:
-> > > On 08/07/2023 10:40, Paul Cercueil wrote:
-> > > > The previous values were completely bogus, and resulted in the
-> > > > computed
-> > > > DPI ratio being much lower than reality, causing applications
-> > > > and
-> > > > UIs to
-> > > > misbehave.
-> > > >=20
-> > > > The new values were measured by myself with a ruler.
-> > > >=20
-> > > > Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> > > > Fixes: 8620cc2f99b7 ("ARM: dts: exynos: Add devicetree file for
-> > > > the
-> > > > Galaxy S2")
-> > > > Cc: <stable@vger.kernel.org> # v5.8+
-> > > > ---
-> > >=20
-> > > This does not apply. You rebased your work on some older
-> > > version/tree,
-> > > without new layout. Please work on linux-next.
-> >=20
-> > This patchset was based on drm-misc-next, because that's where I
-> > was
-> > planning to apply it; and it was extremely unlikely (but not
-> > impossible, apparently) that the i9100.dts would be modified in the
-> > meantime.
-> >=20
-> > I can rebase on linux-next, the problem then is that I then don't
-> > know
-> > how/where to apply the patchset.
->=20
-> DTS cannot go via drm-misc-next, so if that's your intention please
-> always split the patchset into separate ones. *Always*.
 
-Noted.
+On Sun, 02 Jul 2023 20:50:09 +0200, Krzysztof Kozlowski wrote:
+> The DTS code coding style expects exactly one space before and after '='
+> sign.
+> 
+> 
 
-Then I'll apply the patches [1/3] and [2/3] to drm-misc-next since I
-have my ACKs, and re-send patch [3/3] as standalone and rebased on
-linux-next.
+Applied, thanks!
 
-Cheers,
--Paul
+[1/4] arm64: dts: exynos: minor whitespace cleanup around '='
+      https://git.kernel.org/krzk/linux/c/fc947ed0b294a18d712c9e94e54722442762f45f
+[2/4] arm64: dts: fsd: minor whitespace cleanup around '='
+      https://git.kernel.org/krzk/linux/c/e366be1a67b894d4d4732a26f027753db09a9805
+[3/4] ARM: dts: exynos: minor whitespace cleanup around '='
+      https://git.kernel.org/krzk/linux/c/cf19cc977b732942f265558f57f17e0dbd02d2a5
+[4/4] ARM: dts: s5pv210: minor whitespace cleanup around '='
+      https://git.kernel.org/krzk/linux/c/798bfb676ce436c4de73def56ac2f51dad116090
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
