@@ -2,137 +2,122 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA9BEB64DD
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jul 2023 10:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB060EB64DD
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jul 2023 14:22:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230361AbjGKKJd (ORCPT
+        id S233563AbjGKOWe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 Jul 2023 06:09:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48356 "EHLO
+        Tue, 11 Jul 2023 10:22:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230119AbjGKKJd (ORCPT
+        with ESMTP id S233573AbjGKOWO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 Jul 2023 06:09:33 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC733A9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jul 2023 03:09:30 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4fafe87c6fbso8721765e87.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jul 2023 03:09:30 -0700 (PDT)
+        Tue, 11 Jul 2023 10:22:14 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4059171C
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jul 2023 07:21:56 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id 38308e7fff4ca-2b6a084a34cso88279241fa.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jul 2023 07:21:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689070169; x=1691662169;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7dRYhDe8BiVEV0EBlHbMEnxi5wvB4qWMFbFVB8lXRts=;
-        b=aFgnj794CZ/PSLsUzrOXSBGzhI4B7HswMutmsFqschHSz8cORA+/pDetACQMnLtiVf
-         SmrzCFCT/cs+yM6BikKD/fqtRXullzc+RV31vTmrAL7rMnzI7g16FM72t2KqZivXVtiL
-         fMRV7ruLnrIMLDcjsLJWEglSNQS1EXdKxUdtJ7xeV2OpYxq6LtL3o6/GCUCTxNGksEAq
-         OaXuZwr3JCMIQ1l/iQaAsAXZe5TMsMdztIpr3EeEXtf9nprw/1zwlBw+P4lNXSRt+M6k
-         rXc9W4f0n7upozPz3dJJtgCxGq6YYdfg3Q3boXohjB+hDA1PLH4SmzjbP61YS/E3XkvU
-         pJlA==
+        d=linaro.org; s=google; t=1689085311; x=1691677311;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VFrOQnDAjQXhegqY3n085GeOtwznqIRmWRPa23xaqYk=;
+        b=IlGgStRsBKeMLAFHJdbUiGKJo1bir5icXwayDj/ChqrfXnHbSeTLx0r3b2Wr+ISbHx
+         RF5U3VQWKBXdklcE/6WDZ/pT1xzdbtMH1/DrDDJ5blYp1I1VPHE8PjO7jbk4W/LTTbUl
+         RY5rh1I5jxerBO3uyO7GPAR8Oa08hyLKzz2B7H3f/x4hn3RnlMRv782Yvid6ZBsnk6XV
+         Hq6nX5/2k6QRlnfA1cT3wXCccQkvYCsE3xuHh6g6wXv2BSH7U/RYLjUmgfsXqA0d/CAy
+         2DYgxcoK8cqrjydXdo7Http9VSQD7GmHi7d738p4hMnuwqxUyAwqAUxLlhL7w8IY9z83
+         Ddww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689070169; x=1691662169;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7dRYhDe8BiVEV0EBlHbMEnxi5wvB4qWMFbFVB8lXRts=;
-        b=S1N1WRS53PcMwen5IaOHVow7G3RYrVSr2l7weHwc4Dc3ENyET9GAJJcvXXAEA8SkWm
-         V76tgqQFHvFHPIyH6NW/KeKN4rnlHGyVvHK1VgrXoBUT4SXAyiZNf5F7e/1cBofuKgEP
-         4SFOdN/EYTZNjqABcY0MzkmKUyYL72AvFO/Qr944KxZhGsxr7NB0fRvwmhIPkw9YBxfK
-         hEf9I02A072Foy/eihv2YBKAYNi7FLfLlz3IyUA/THRqwObXThK13/5kR+ctYg0XXTsZ
-         uJ6GDuwxBwdQWvB5Jorq7LpYF48/j0oRHySjv7SKgkRanYj42pL2DUBDG+woq7iemXTl
-         MpjQ==
-X-Gm-Message-State: ABy/qLaesBgxn1WL27sxQBtj4QyvxFA2rBO7im+y1wmPrX9KMAOKblnI
-        m5xwJ5XObDt1vPTArLeUXn7aCg==
-X-Google-Smtp-Source: APBJJlHdaYP6KQEeXomKRN9uoCu1+yo8uHO71sdRJ/mNUCNoupGWQiJZQ4tH2nJN9kqa4WSAGURoBQ==
-X-Received: by 2002:a05:6512:2346:b0:4fb:7be5:8f4e with SMTP id p6-20020a056512234600b004fb7be58f4emr3008339lfu.6.1689070168929;
-        Tue, 11 Jul 2023 03:09:28 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id 15-20020ac2482f000000b004fb88fffd19sm256372lft.146.2023.07.11.03.09.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jul 2023 03:09:28 -0700 (PDT)
-Message-ID: <1090089b-2fa9-9781-51a8-38957e261bfd@linaro.org>
-Date:   Tue, 11 Jul 2023 13:09:27 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH] drm/client: Send hotplug event after registering a client
-Content-Language: en-GB
-To:     Thomas Zimmermann <tzimmermann@suse.de>, javierm@redhat.com,
-        noralf@tronnes.org
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        amd-gfx@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Paul Schyska <pschyska@gmail.com>,
-        Torsten Krah <krah.tm@gmail.com>,
-        linux-arm-msm@vger.kernel.org,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        freedreno@lists.freedesktop.org,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        d=1e100.net; s=20221208; t=1689085311; x=1691677311;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VFrOQnDAjQXhegqY3n085GeOtwznqIRmWRPa23xaqYk=;
+        b=QPiOGs2rAKHv05WfBZPA9ha9uBLqEtckLve9BRlJKihPWtLLmCZEFCThDkSvtp5PIh
+         m6MKx0fsRnOAWm8oDZQViT/D9MqmURGipNSVkII7RyOGHb6YSlgofcFqlFwXeySBaSc5
+         SiKctZvEq9UyD00+wcGUgwy3HGvBq910SZRYlb4tic6h3sJA62gwgIRHqqmGa56/9vlS
+         vgYucMCizKopBmtUnoaQgJiowq6EwNtxl9xWom+3MTTz+SCDJPkoY/f03Mx8O8L+/neD
+         +EZpd01iWbJGAIjZZ45zNYRu/BI9+8YPz4206Obn0Gx7D5TK70Jz6M6PM5ixPzGAXMTe
+         T/6Q==
+X-Gm-Message-State: ABy/qLYShuDKFZapgEBDr62Y/ytL3oV8OGr4/GJnCB2fkGxvlIYuFV3R
+        WlvZfMVkJabKoJMtNbBMEm867A==
+X-Google-Smtp-Source: APBJJlFpJIzG7c3KWaB6WeDaqp42L69JcYpEqVOIElZ7HYwlvZNeiW0m5Dae5iPiRFppI4th8bQ+5A==
+X-Received: by 2002:a2e:9208:0:b0:2b6:e124:4d96 with SMTP id k8-20020a2e9208000000b002b6e1244d96mr12317412ljg.26.1689085311515;
+        Tue, 11 Jul 2023 07:21:51 -0700 (PDT)
+Received: from uffe-tuxpro14.. (h-94-254-63-18.NA.cust.bahnhof.se. [94.254.63.18])
+        by smtp.gmail.com with ESMTPSA id j17-20020a2e6e11000000b002b6ee75648fsm483080ljc.12.2023.07.11.07.21.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jul 2023 07:21:51 -0700 (PDT)
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Moritz Duge <MoritzDuge@kolahilft.de>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-References: <20230710091029.27503-1-tzimmermann@suse.de>
- <325dad0e-38ff-9f60-efc9-0fd711d63267@linaro.org>
- <117aea3d-c316-509d-7be7-ade155b4ae85@suse.de>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <117aea3d-c316-509d-7be7-ade155b4ae85@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 11/18] soc: samsung: Move power-domain driver to the genpd dir
+Date:   Tue, 11 Jul 2023 16:21:48 +0200
+Message-Id: <20230711142148.751712-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/07/2023 09:07, Thomas Zimmermann wrote:
-> Hi
-> 
-> Am 10.07.23 um 23:11 schrieb Dmitry Baryshkov:
-> [...]
->>> ---
->>>   drivers/gpu/drm/armada/armada_fbdev.c     |  4 ----
->>>   drivers/gpu/drm/drm_client.c              | 21 +++++++++++++++++++++
->>>   drivers/gpu/drm/drm_fbdev_dma.c           |  4 ----
->>>   drivers/gpu/drm/drm_fbdev_generic.c       |  4 ----
->>>   drivers/gpu/drm/exynos/exynos_drm_fbdev.c |  4 ----
->>>   drivers/gpu/drm/gma500/fbdev.c            |  4 ----
->>>   drivers/gpu/drm/msm/msm_fbdev.c           |  4 ----
->>
->> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # msm
-> 
-> Thanks.
-> 
->>
->>>   drivers/gpu/drm/omapdrm/omap_fbdev.c      |  4 ----
->>>   drivers/gpu/drm/radeon/radeon_fbdev.c     |  4 ----
->>>   drivers/gpu/drm/tegra/fbdev.c             |  4 ----
->>>   10 files changed, 21 insertions(+), 36 deletions(-)
->>
->> BTW: As you have been clearing this area. I see that significant 
->> amount of DRM drivers use exactly the same code for 
->> msm_fbdev_client_funcs and for the significant part of 
->> foo_fbdev_setup(). Do you have any plans for moving that into a 
->> library / generic code? If not, I can take a look at crafting the patch.
->>
-> 
-> You're not the first to ask. :) I've so far not attempted to address 
-> this duplication. I've been bitten by premature helperization before, so 
-> I wanted to wait a bit longer. A lot of the fbdev and client code is 
-> changing quite a bit. After things stabilized, I want to to try to do 
-> some more code sharing.
+To simplify with maintenance let's move the samsung power-domain driver to
+the new genpd directory. Going forward, patches are intended to be managed
+through a separate git tree, according to MAINTAINERS.
 
-Ack, thank you for sharing this.
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: <linux-samsung-soc@vger.kernel.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ drivers/genpd/Makefile                                          | 1 +
+ drivers/genpd/samsung/Makefile                                  | 2 ++
+ .../samsung/pm_domains.c => genpd/samsung/exynos-pm-domains.c}  | 0
+ drivers/soc/samsung/Makefile                                    | 1 -
+ 4 files changed, 3 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/genpd/samsung/Makefile
+ rename drivers/{soc/samsung/pm_domains.c => genpd/samsung/exynos-pm-domains.c} (100%)
 
+diff --git a/drivers/genpd/Makefile b/drivers/genpd/Makefile
+index c178421e0cbc..1cf0ff26a44f 100644
+--- a/drivers/genpd/Makefile
++++ b/drivers/genpd/Makefile
+@@ -7,3 +7,4 @@ obj-y					+= mediatek/
+ obj-y					+= qcom/
+ obj-y					+= renesas/
+ obj-y					+= rockchip/
++obj-y					+= samsung/
+diff --git a/drivers/genpd/samsung/Makefile b/drivers/genpd/samsung/Makefile
+new file mode 100644
+index 000000000000..397aa5908c1d
+--- /dev/null
++++ b/drivers/genpd/samsung/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++obj-$(CONFIG_EXYNOS_PM_DOMAINS)		+= exynos-pm-domains.o
+diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/genpd/samsung/exynos-pm-domains.c
+similarity index 100%
+rename from drivers/soc/samsung/pm_domains.c
+rename to drivers/genpd/samsung/exynos-pm-domains.c
+diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+index d35270fc6b2b..248a33d7754a 100644
+--- a/drivers/soc/samsung/Makefile
++++ b/drivers/soc/samsung/Makefile
+@@ -10,7 +10,6 @@ obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o
+ 
+ obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)	+= exynos3250-pmu.o exynos4-pmu.o \
+ 					exynos5250-pmu.o exynos5420-pmu.o
+-obj-$(CONFIG_EXYNOS_PM_DOMAINS) += pm_domains.o
+ obj-$(CONFIG_EXYNOS_REGULATOR_COUPLER) += exynos-regulator-coupler.o
+ 
+ obj-$(CONFIG_SAMSUNG_PM_CHECK)	+= s3c-pm-check.o
 -- 
-With best wishes
-Dmitry
+2.34.1
 
