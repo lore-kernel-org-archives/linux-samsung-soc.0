@@ -2,102 +2,108 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 031DDC001DE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jul 2023 08:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50099C001B0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jul 2023 08:43:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231204AbjGKIZT (ORCPT
+        id S230474AbjGKInQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 Jul 2023 04:25:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43842 "EHLO
+        Tue, 11 Jul 2023 04:43:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231163AbjGKIZR (ORCPT
+        with ESMTP id S229990AbjGKInP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 Jul 2023 04:25:17 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26814C0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jul 2023 01:25:12 -0700 (PDT)
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230711082510epoutp020d4268d76dafcc3067ee69c137134b30~wwq1nkbNA0721507215epoutp02b
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jul 2023 08:25:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230711082510epoutp020d4268d76dafcc3067ee69c137134b30~wwq1nkbNA0721507215epoutp02b
+        Tue, 11 Jul 2023 04:43:15 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57C2EBC
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jul 2023 01:43:13 -0700 (PDT)
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230711084311epoutp043638367215d40523a7836de2b71fc3fa~ww6kUkGLo0925909259epoutp04F
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jul 2023 08:43:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230711084311epoutp043638367215d40523a7836de2b71fc3fa~ww6kUkGLo0925909259epoutp04F
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1689063910;
-        bh=+x3YgvcySm4e4OWhzCgiX503lxS9Tal1A2wn7/lnMtM=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=AioBY9DPhNboTY4DImvuidDheOTLB0gsQSIvEecrpeQknmETriEcvh17yq5BAesKI
-         DPVZ05r5de0gg2NR88uIYgJv9wq7A6xBkC03nShhyZFd+NcbJ3y56RNnEjAxTCC1i/
-         oHII1++nONYMxmwNd0T2o1VlJp0T2jsartOsC4ns=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20230711082509epcas2p2089503c1f234b156a89711d21ecf4415~wwq01jGLE0267302673epcas2p2l;
-        Tue, 11 Jul 2023 08:25:09 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.92]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4R0YpD4Y5Qz4x9Ps; Tue, 11 Jul
-        2023 08:25:08 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A5.35.32393.4E11DA46; Tue, 11 Jul 2023 17:25:08 +0900 (KST)
+        s=mail20170921; t=1689064991;
+        bh=/fo5+GPfSG58Ft64sKkgPC9cdBMfwnfIvD5VK2E1I+E=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=hMaz91PY1oTKd33fD/TmAVRffTkjWE6DOw1LwuiNbQeR60QnW0usTdrcr7Kg7uvyf
+         uvxohSfPufeUlCVgZo9aHW7VQVwNR00LLHzbKHyz7JDMqMk++28TVHY+JtI8fM82Ef
+         GnYX42V+xl+NDvJc3FxNyOXspSua++ewtc7nxTmg=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20230711084310epcas2p4af0e5b0e002805c13b46f17428b55d53~ww6j07nTW2825128251epcas2p4t;
+        Tue, 11 Jul 2023 08:43:10 +0000 (GMT)
+Received: from epsmgec2p1.samsung.com (unknown [182.195.36.89]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4R0ZC16sB8z4x9QB; Tue, 11 Jul
+        2023 08:43:09 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+        epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        56.23.55279.D161DA46; Tue, 11 Jul 2023 17:43:09 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-        20230711082508epcas2p3088d488035e7e2910bf087d640e9c268~wwqznTvSd0591905919epcas2p3v;
-        Tue, 11 Jul 2023 08:25:08 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230711084309epcas2p1073b2e64f19ef1452c08455c56d249c0~ww6imu7ll1882518825epcas2p1a;
+        Tue, 11 Jul 2023 08:43:09 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230711082508epsmtrp15a884d0c37a11b08c3c3af853551c67e~wwqzmUZtC0611406114epsmtrp1L;
-        Tue, 11 Jul 2023 08:25:08 +0000 (GMT)
-X-AuditID: b6c32a48-87fff70000007e89-35-64ad11e4878e
+        20230711084309epsmtrp12fa05f4a130540fef089dd1ce14fe771~ww6il0ghY1777917779epsmtrp1K;
+        Tue, 11 Jul 2023 08:43:09 +0000 (GMT)
+X-AuditID: b6c32a43-2f3ff7000001d7ef-7b-64ad161d0ac7
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9F.4D.64355.3E11DA46; Tue, 11 Jul 2023 17:25:07 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.55]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230711082507epsmtip1ec149368577a49a67b0b31a5bb4ab76c~wwqzWUhre2887328873epsmtip1e;
-        Tue, 11 Jul 2023 08:25:07 +0000 (GMT)
-From:   Jaewon Kim <jaewon02.kim@samsung.com>
-To:     Andi Shyti <andi.shyti@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>,
-        Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH] spi: s3c64xx: clear loopback bit after loopback test
-Date:   Tue, 11 Jul 2023 17:20:20 +0900
-Message-Id: <20230711082020.138165-1-jaewon02.kim@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNKsWRmVeSWpSXmKPExsWy7bCmme4TwbUpBo8nK1k8mLeNzeL+1w5G
-        i6kPn7BZXN6vbbGj4Qirxd7XW9ktNj2+xmpxedccNosZ5/cxWTR+vMnuwOWxaVUnm8eda3vY
-        PDYvqffo27KK0ePzJrkA1qhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE
-        3FRbJRefAF23zBygm5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BeYFesWJucWl
-        eel6eaklVoYGBkamQIUJ2Rkft8oU3GermLDwO2MD4y3WLkZODgkBE4l1M7YwdTFycQgJ7GCU
-        +HKrmxXC+cQosfHaZhY459OuF0wwLfMnbIVK7GSUmNr0hhnC+cgo8Xbjf2aQKjYBbYnv6xeD
-        zRIRWMEose3CB7AWZoEbjBLdb0AGc3IIC7hKPJzdDzaXRUBV4u66XqBuDg5eATuJl9erIdbJ
-        S6zecIAZwt7FLrH0qi+E7SLRtmofG4QtLPHq+BZ2CFtK4mV/G5SdLdE+/Q/UpxUSFzfMhqo3
-        lpj1rJ0RZBWzgKbE+l36IKaEgLLEkVtghzEL8El0HP7LDhHmlehoE4JoVJO4P/Uc1BAZiUlH
-        VkLDxEOia2ETWFxIIFZi5aEzjBMYZWchzF/AyLiKUSy1oDg3PbXYqMAEHkfJ+bmbGMGpTMtj
-        B+Pstx/0DjEycTAeYpTgYFYS4S04uCpFiDclsbIqtSg/vqg0J7X4EKMpMLAmMkuJJucDk2le
-        SbyhiaWBiZmZobmRqYG5kjjvvda5KUIC6YklqdmpqQWpRTB9TBycUg1MFl4nZl/NW/i57Ofk
-        63LlMjkv/Pa8+rjUrPp3VMi1H3VqK1vsXz4r95kob177Ma5FJn/xy6xrKgz5Qnppy551a3TJ
-        TiloXmrXaruO2f5H2HP1vPKrs9pFZ+eIWah3eyd8dvL9kefFmKjwbNef9v0nY3YoJb6sesZj
-        y8p8J/Thm1V6TMncT1vaVf+u3S395voC54Sk6ZrLHRIOhMS81b5u/tjPm7XpuZqC2mVfrumt
-        9cKi9fYbI52FJK/cjPW+9aatzap275zjRUc620S27ldPVlSblGN5pLR090FL5w1X1uXwvnCz
-        On+z2tHU582NhXO/ma49aODGlHjg6ssNKstPPXnjHZzfxdIsc3PW11AlluKMREMt5qLiRACH
-        eIi77gMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnluLIzCtJLcpLzFFi42LZdlhJTveJ4NoUgy4jiwfztrFZ3P/awWgx
-        9eETNovL+7UtdjQcYbXY+3oru8Wmx9dYLS7vmsNmMeP8PiaLxo832R24PDat6mTzuHNtD5vH
-        5iX1Hn1bVjF6fN4kF8AaxWWTkpqTWZZapG+XwJXxcatMwX22igkLvzM2MN5i7WLk5JAQMJGY
-        P2ErSxcjF4eQwHZGiU27jkAlZCSWP+tjg7CFJe63gMRBit4zStxqfsEMkmAT0Jb4vn4xWEJE
-        YBVQ9/IzjCAOs8A9RomXk74xgVQJC7hKPJzdD2azCKhK3F3XC9TNwcErYCfx8no1xAZ5idUb
-        DjBPYORZwMiwilE0taA4Nz03ucBQrzgxt7g0L10vOT93EyM4rLSCdjAuW/9X7xAjEwfjIUYJ
-        DmYlEd6Cg6tShHhTEiurUovy44tKc1KLDzFKc7AoifMq53SmCAmkJ5akZqemFqQWwWSZODil
-        Gpg6nnP31VhtNxeO+6Nzr2WRkz77l+wZfVOzm12+nc+998V6U+X39uyMYw+2HRT+oVufus7l
-        17vEjbt2HHiV9mmfx0w2qQubJRwTXYLTpq3wkPrKy3bwpcfOyo+PzFZHub1oDOC5fprBd9kD
-        nol2P0/WtjDX/OkM098+c5tAQ/l+49MLnk/m5bBNDI6zzH0ovevc94bEiati67LN7SJebN9h
-        mXnI9R3LyRKBqp36db0h2Ud/OVq8O8VvtPLLq6rcmpYTfwT7Jnfb6d7ynP1L+8Xj4KDwRTsP
-        P7BqSzy1v4nlV+a902/7/nw3WDL9jZHDtDO/VUx3LnyZGR6o2vDq/2PxaSFVdZbdMipOgisC
-        WKyUWIozEg21mIuKEwFt2bCemgIAAA==
-X-CMS-MailID: 20230711082508epcas2p3088d488035e7e2910bf087d640e9c268
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F5.79.30535.D161DA46; Tue, 11 Jul 2023 17:43:09 +0900 (KST)
+Received: from KORCO082417 (unknown [75.12.40.192]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20230711084309epsmtip182e2372e0e727cb95d224865deaab978~ww6iZg_4I1142811428epsmtip1J;
+        Tue, 11 Jul 2023 08:43:09 +0000 (GMT)
+From:   "Chanho Park" <chanho61.park@samsung.com>
+To:     "'Jaewon Kim'" <jaewon02.kim@samsung.com>,
+        "'Andi Shyti'" <andi.shyti@kernel.org>,
+        "'Mark Brown'" <broonie@kernel.org>,
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+        "'Alim Akhtar'" <alim.akhtar@samsung.com>
+Cc:     <linux-spi@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+In-Reply-To: <20230711082020.138165-1-jaewon02.kim@samsung.com>
+Subject: RE: [PATCH] spi: s3c64xx: clear loopback bit after loopback test
+Date:   Tue, 11 Jul 2023 17:43:08 +0900
+Message-ID: <000001d9b3d3$b81deaa0$2859bfe0$@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKEB9fWRKMuuBMGwH0DXsDDFTgnuwG1Aiv/rlHuGMA=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHJsWRmVeSWpSXmKPExsWy7bCmqa6s2NoUg5YvhhYP5m1js7j/tYPR
+        YurDJ2wWOxqOsFrsfb2V3WLT42usFpd3zWGzmHF+H5NF48eb7A6cHptWdbJ53Lm2h81j85J6
+        j74tqxg9Pm+SC2CNyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy
+        8QnQdcvMAbpHSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgXqBXnJhbXJqXrpeX
+        WmJlaGBgZApUmJCdsft9F3PBZ96Kh//4Gxivc3cxcnJICJhInJn8mKmLkYtDSGAHo8T9jm4o
+        5xOjxJ6+NVDON0aJHa1LGGFadh56ywyR2Msosf3jf6iqF4wS/YfesoFUsQnoS7zs2MYKkhAR
+        eMoo8XPqV7AWZoE+RollXxvAqjgF7CVW7foDZgsLeEpcW9bP3sXIwcEioCox/04GiMkrYClx
+        d0EwSAWvgKDEyZlPWEBsZgF5ie1v5zBDXKQg8fPpMlYQW0TASmLDE5AfQGpEJGZ3toGtlRBY
+        ySGx/s5TFpCZEgIuEvtuc0H0Cku8Or6FHcKWknjZ38YOUVIusWNZEkRrC6NEc9seqF32Ej9u
+        TmEFqWEW0JRYv0sfolxZ4sgtqMv4JDoO/4WawivR0SYE0agucWD7dBYIW1aie85n1gmMSrOQ
+        /DULyV+zkNw/C2HXAkaWVYxiqQXFuempyUYFhvCoTs7P3cQITqhazjsYr8z/p3eIkYmD8RCj
+        BAezkghvwcFVKUK8KYmVValF+fFFpTmpxYcYTYHhPJFZSjQ5H5jS80riDU0sDUzMzAzNjUwN
+        zJXEee+1zk0REkhPLEnNTk0tSC2C6WPi4JRqYLLubcx+6MZcu/8cx8Etf99cY21aIfD0S0WR
+        7e/rB556Ks6ZeeFVR94DCQ6f3rdaAmdtequ40ut7nU6/fiS3/ZlUtLbAjBevv3F+6TgVp3Rw
+        OuO1yOOGHc3Wz8LK6nK+sStGHPyQP6UsULDH8VW6mzybh4Pd69/3ZH6/vKahebpQev2WfXPT
+        tZsf6H0SvDAvo3vd2qOT4rL45//wWf3x67+PE6vNhf9M1378NVdkFZeJWdfc+Bmn080+797y
+        fwJj781WYaep//Jie5OLpcKK7J9P5hOW9exZbO61PXHxAuZLnUfkX0/mrj9uFLpvsdDdHvsr
+        R1c0flS3c+e/+bGY50Lay9lnLBflcR8JN82MalJiKc5INNRiLipOBACo1rELMQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmkeLIzCtJLcpLzFFi42LZdlhJTldWbG2Kwdd9ghYP5m1js7j/tYPR
+        YurDJ2wWOxqOsFrsfb2V3WLT42usFpd3zWGzmHF+H5NF48eb7A6cHptWdbJ53Lm2h81j85J6
+        j74tqxg9Pm+SC2CN4rJJSc3JLEst0rdL4MrY/b6LueAzb8XDf/wNjNe5uxg5OSQETCR2HnrL
+        3MXIxSEksJtRouPyHmaIhKzEs3c72CFsYYn7LUdYIYqeMUq0PD4LlmAT0Jd42bENLCEi8JxR
+        YvKr8+wgDrPAJEaJc4sfM4FUCQlMYJS4taoaxOYUsJdYtesPG4gtLOApcW1ZP1ADBweLgKrE
+        /DsZICavgKXE3QXBIBW8AoISJ2c+YQGxmQW0JZ7efAply0tsfzsH6lAFiZ9Pl7GC2CICVhIb
+        nnQzQdSISMzubGOewCg8C8moWUhGzUIyahaSlgWMLKsYJVMLinPTc4sNC4zyUsv1ihNzi0vz
+        0vWS83M3MYLjS0trB+OeVR/0DjEycTAeYpTgYFYS4S04uCpFiDclsbIqtSg/vqg0J7X4EKM0
+        B4uSOO+3170pQgLpiSWp2ampBalFMFkmDk6pBqbWHRu+NxRmanQeS2SZPXdK9LaMWaybavak
+        NqxU3d0/Mc0pXe1/y9NItbd9cyY+36lsJP3tZHxfxb/XF+ema59Zktg3a/EzTR9jr8nKicUC
+        VxX1GqRSAv4FHIrd6h64bN+jnbKGzWW7DpaxvdA6ar6D+8Zp7gORrToVJj3L54RLRdrvtA18
+        +clCa4+lZehKb3VT2RK+RRuu39DMDq3dc+B6t8z76kv5F+5mfqmy+11eaM4299aR8wUGTR1X
+        ks45s5kn6b/98Sb56rSrD3xD1i2f6PzzkaP1CQHzhxVTn39feiVy6nfjNN9r7EfKA8P5H8Q8
+        O+/7auG7s66v9Y/8EykIDW4WMFmQ6hA1h6XprqgSS3FGoqEWc1FxIgDIe2GRHgMAAA==
+X-CMS-MailID: 20230711084309epcas2p1073b2e64f19ef1452c08455c56d249c0
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
@@ -106,33 +112,59 @@ DLP-Filter: Pass
 X-CFilter-Loop: Reflected
 X-CMS-RootMailID: 20230711082508epcas2p3088d488035e7e2910bf087d640e9c268
 References: <CGME20230711082508epcas2p3088d488035e7e2910bf087d640e9c268@epcas2p3.samsung.com>
+        <20230711082020.138165-1-jaewon02.kim@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-When SPI loopback transfer is performed, S3C64XX_SPI_MODE_SELF_LOOPBACK
-bit still remained. It works as loopback even if the next transfer is
-not spi loopback mode.
-If not SPI_LOOP, needs to clear S3C64XX_SPI_MODE_SELF_LOOPBACK bit.
+Hi Jaewon,
 
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
----
- drivers/spi/spi-s3c64xx.c | 2 ++
- 1 file changed, 2 insertions(+)
+> -----Original Message-----
+> From: Jaewon Kim <jaewon02.kim@samsung.com>
+> Sent: Tuesday, July 11, 2023 5:20 PM
+> To: Andi Shyti <andi.shyti@kernel.org>; Mark Brown <broonie@kernel.org>;
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>; Alim Akhtar
+> <alim.akhtar@samsung.com>
+> Cc: linux-spi@vger.kernel.org; linux-samsung-soc@vger.kernel.org; linux-
+> arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Chanho Park
+> <chanho61.park@samsung.com>; Jaewon Kim <jaewon02.kim@samsung.com>
+> Subject: [PATCH] spi: s3c64xx: clear loopback bit after loopback test
+> 
+> When SPI loopback transfer is performed, S3C64XX_SPI_MODE_SELF_LOOPBACK
+> bit still remained. It works as loopback even if the next transfer is not
+> spi loopback mode.
+> If not SPI_LOOP, needs to clear S3C64XX_SPI_MODE_SELF_LOOPBACK bit.
+> 
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index fd55697144cc..b6c2659a66ca 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -684,6 +684,8 @@ static int s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
- 
- 	if ((sdd->cur_mode & SPI_LOOP) && sdd->port_conf->has_loopback)
- 		val |= S3C64XX_SPI_MODE_SELF_LOOPBACK;
-+	else
-+		val &= ~S3C64XX_SPI_MODE_SELF_LOOPBACK;
- 
- 	writel(val, regs + S3C64XX_SPI_MODE_CFG);
- 
--- 
-2.17.1
+In order for this patch to be sent to the stable tree, below tag is required.
+Fixes: ffb7bcd3b27e ("spi: s3c64xx: support loopback mode")
+
+Otherwise, looks good to me.
+Reviewed-by: Chanho Park <chanho61.park@samsung.com>
+
+Best Regards,
+Chanho Park
+
+> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+> ---
+>  drivers/spi/spi-s3c64xx.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c index
+> fd55697144cc..b6c2659a66ca 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -684,6 +684,8 @@ static int s3c64xx_spi_config(struct
+> s3c64xx_spi_driver_data *sdd)
+> 
+>  	if ((sdd->cur_mode & SPI_LOOP) && sdd->port_conf->has_loopback)
+>  		val |= S3C64XX_SPI_MODE_SELF_LOOPBACK;
+> +	else
+> +		val &= ~S3C64XX_SPI_MODE_SELF_LOOPBACK;
+> 
+>  	writel(val, regs + S3C64XX_SPI_MODE_CFG);
+> 
+> --
+> 2.17.1
+
 
