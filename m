@@ -2,175 +2,200 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45982C001DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jul 2023 15:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD3FEB64DC
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jul 2023 17:23:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231544AbjGKPKu (ORCPT
+        id S232530AbjGKRXR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 Jul 2023 11:10:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34868 "EHLO
+        Tue, 11 Jul 2023 13:23:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231520AbjGKPKt (ORCPT
+        with ESMTP id S233225AbjGKRXI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 Jul 2023 11:10:49 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3B811705
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jul 2023 08:10:33 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230711151029euoutp02b1905020546fca32693ce8cbf7f02db8~w2Mup9FMF2382623826euoutp02b
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jul 2023 15:10:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230711151029euoutp02b1905020546fca32693ce8cbf7f02db8~w2Mup9FMF2382623826euoutp02b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1689088229;
-        bh=PR6/oisp6C6D0XMxyINuZwhMGfLjoew2gWfv7sDpXvY=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=aM8UbV4I3GoUpyt6vodDYo4g72CJT+T9ndhpNwgxhG/TUpGU/oBGxFFrGAvgfcExk
-         K+rKiHMKjfKT527KeYUIvyGhzVAY7No+Vx1N04FgzFc9A63YC/ZeO+Kh4izcorbpw3
-         v8cDfqTluAYhANgLq5qSABm8G+LW/u2lH8c7kv44=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230711151029eucas1p2a55cd6bb5a717d5489414afea00c4e47~w2MuQes3H1781617816eucas1p2t;
-        Tue, 11 Jul 2023 15:10:29 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id F1.91.11320.4E07DA46; Tue, 11
-        Jul 2023 16:10:29 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230711151028eucas1p2c290e05e2df325ff16d53fea88ab8877~w2Mt7hyN80061100611eucas1p2K;
-        Tue, 11 Jul 2023 15:10:28 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230711151028eusmtrp19bb25444389ec29dd674e3a370201f05~w2Mt6nYIy0196201962eusmtrp1E;
-        Tue, 11 Jul 2023 15:10:28 +0000 (GMT)
-X-AuditID: cbfec7f4-993ff70000022c38-05-64ad70e41771
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 14.63.10549.4E07DA46; Tue, 11
-        Jul 2023 16:10:28 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230711151028eusmtip1a4ab5c8ae0daf7e045928ff55aa7449b~w2MtSFwzI0116901169eusmtip1K;
-        Tue, 11 Jul 2023 15:10:27 +0000 (GMT)
-Message-ID: <f33bb13a-b4dc-4011-1c59-3454d54c3606@samsung.com>
-Date:   Tue, 11 Jul 2023 17:10:28 +0200
+        Tue, 11 Jul 2023 13:23:08 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19D211711;
+        Tue, 11 Jul 2023 10:22:42 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36BGmrQ4004850;
+        Tue, 11 Jul 2023 17:20:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=Dd4av3OA7sDfdLwFbUft5WszPcE37l6Zz5pV11nT7+w=;
+ b=oybR2R5GSqWmiD+UUCyYs9kMaH52iIobJcAe/POJSRCH1Yhmx/lidlfdKcy6LSxbx5Jr
+ S2mGuiAgr7scG9dkHZAEFA15XSpz6d6K7PzN83UKT1L60BUOMEsDXdL9974mUrhqwsv2
+ 9pWkOuNLhXb8UL7LKdNSnivTAAShFCYHVAn9a5JO3+kkjcWkPE4d+Ql2sWc7fUF5KZe9
+ 4gOd66qpRUNbdQGKcVhgyCLu1kxAOdxJw3JMQgJThdjvRN0XbLO3BDf6ctO43grqi2Uw
+ ehr5Kd0fLk2ieRwz/TK8nY45ePPOVmJrCDD18vzgSH/2hSh4euTvGAoLmj/ixCh8Fxa4 4g== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rsax482h9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Jul 2023 17:20:52 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36BHKpXW018001
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Jul 2023 17:20:51 GMT
+Received: from [10.110.47.185] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Tue, 11 Jul
+ 2023 10:20:50 -0700
+Message-ID: <7eaf29c9-c2bf-3979-687a-596d3ba538fa@quicinc.com>
+Date:   Tue, 11 Jul 2023 10:20:50 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
-        Gecko/20100101 Thunderbird/102.13.0
-Subject: Re: [PATCH v2 11/18] soc: samsung: Move power-domain driver to the
- genpd dir
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] drm/client: Send hotplug event after registering a client
 Content-Language: en-US
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc:     linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
+To:     Thomas Zimmermann <tzimmermann@suse.de>, <javierm@redhat.com>,
+        <noralf@tronnes.org>
+CC:     <dri-devel@lists.freedesktop.org>,
+        Moritz Duge <MoritzDuge@kolahilft.de>,
+        Torsten Krah <krah.tm@gmail.com>,
+        Paul Schyska <pschyska@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        David Airlie <airlied@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20230711142148.751712-1-ulf.hansson@linaro.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjmO+d4PFutPqeyNwuFkUFZahFxuidZ7V83IhKshh5M07k21w0i
-        G1ZzXhpqNVfpWpaizkyXlWQXK5cZ3SwLEzUyreUg2yyWabUdK/897/M+z/s+78fHkOIqvxAm
-        WZHBqRTyVCktpBpaPE/nfVBaE6Nd+QTbW9JAs6MFLf5s0+er/mzd+w4/tr3xLM268u4j1vj0
-        FsE+eu2iWbt16yqBbORHAZJ1ddykZfVlh2UvH2r9ZPm2SiRz1YVuoOOEyxK51OS9nCpqxU7h
-        rtLqPFppDdrfoftEZKI7WI8EDOCF8MTyivJiMa5AcFsn0SPhH+xGcNJiI/jChaDu4hfyr8Pm
-        qSD5RjmCtpbecdUQgt6hC/5elQivgE7HIO3FFA6HErOR4PkAaC3u8+0Lxhxcf2vw0yOGCcRb
-        oajVZyWxBDr7Sn3yIJwCN1ostHc+ifsRWH/m+Lw0ng96p943X4CXw2hp07g5DK45z/rSAXYz
-        8DPvhD8fOxaqdcMUjwPBYbeN8zOgrTCX4g3HEZhHegi+MCDIHOhEvGopdD35QXujkng2XG6M
-        4ukYeF10hvLSgKfAG2cAH2IKFDScJnlaBLpjYl49C0z2mn9r7z57QRqQ1DThWUwT7jdNOMf0
-        f68ZUZVIwmnUaUmceoGC2xeplqepNYqkyIT0tDr05z+1jdnd11G5YyiyGREMakbAkNIgkfJu
-        ZaJYlCg/cJBTpe9QaVI5dTOazlBSiShieWuCGCfJM7jdHKfkVH+7BCMIySRkyCCMdVdldw9r
-        N+rnvguZWlPkaY9/EHvnY7ykuLw4dGzRmPHK7dE1wnPy/ARbT56+uyfTMRxRq1hbX6CJbhrr
-        TpmWk6y4ZN7clNXfHzZQeqD6lGu6c/LittyRgdD2L579qPP+JMfM3Oys3I9drU6z/qu1Pc2S
-        P+vbPXt2yZajDWLpobK96l+OwObtSaKY749MgsL0EsHnY8cdjeVZcc/iA1ZqDRkmbfDuQgve
-        8rzWUy1yvxiJitHVUisjHh7psGwwrl6yJ+5Dij26cumpI4O/6JxNazcPldGHtmmV9TZxz2Nx
-        aO3pvjfB19yDmsfGmq7zwzPWn1gXbry0/cKqMM3qIiml3iWfP4dUqeW/AbMMF1C+AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHIsWRmVeSWpSXmKPExsVy+t/xu7pPCtamGGzfp2HxYN42Nou/k46x
-        W+x9vZXdYtPja6wWl3fNYbP43HuE0WLG+X1MFqeuf2azOL423IHT4/evSYwed67tYfPYvKTe
-        48qJJlaPvi2rGD0+b5ILYIvSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3
-        s0lJzcksSy3St0vQy5i/ppetYK1IxbWOl0wNjAcEuhg5OSQETCS2/FzB3MXIxSEksJRR4u6t
-        y0wQCRmJk9MaWCFsYYk/17rYIIreM0oc2v6HESTBK2AncevVGzYQm0VAVWLeghlMEHFBiZMz
-        n7CA2KICqRK/GnYBDeLgEBYIl5hykh0kzCwgLnHryXywchGBLIkbvY+YQOYzCzxjlFh4czUT
-        xLIJjBJTVx1gBqliEzCU6HrbBbaMU8BW4u/8vVCTzCS6tnYxQtjyEtvfzmGewCg0C8kds5As
-        nIWkZRaSlgWMLKsYRVJLi3PTc4sN9YoTc4tL89L1kvNzNzECI3LbsZ+bdzDOe/VR7xAjEwfj
-        IUYJDmYlEd6Cg6tShHhTEiurUovy44tKc1KLDzGaAgNjIrOUaHI+MCXklcQbmhmYGpqYWRqY
-        WpoZK4nzehZ0JAoJpCeWpGanphakFsH0MXFwSjUwVfsvO5zjO/fc6o+dUVt2VAcJKyz30xJX
-        qeNYvvDj2gPv3jX3uLwMuyHabPK8bM3qyX+W7301m4HrXfL6okr+zaHH3/x8o7VVtVisaO/Z
-        PSHvzi2RVez8ahv69Ub2vOvRfRz5p6SflZ03/KQ+h/FQd/Uv9sC/q6t+Bn9VCpWUdzy7K1tn
-        irjahiqm59nhF5jYn6q+zjs69YLgmxTLlPfPJR/pHftnLLbI9/nLP/b7fRotheIiZZXP7xFY
-        cIr/P7vSG8vX0wo7ZW9G3F8Ye06S92NI/1lX2U6JUyKhP3I2pB2S37pn5gdjD2t+194KthNq
-        uu+O+K6aZvBMKOLxPcfvP/vDr/F8n7vqhu/fi2zp85RYijMSDbWYi4oTATh0F6tRAwAA
-X-CMS-MailID: 20230711151028eucas1p2c290e05e2df325ff16d53fea88ab8877
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230711142243eucas1p24e278e48ee335a68d7c68690fa00306a
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230711142243eucas1p24e278e48ee335a68d7c68690fa00306a
-References: <CGME20230711142243eucas1p24e278e48ee335a68d7c68690fa00306a@eucas1p2.samsung.com>
-        <20230711142148.751712-1-ulf.hansson@linaro.org>
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
+        <amd-gfx@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>,
+        <stable@vger.kernel.org>
+References: <20230710091029.27503-1-tzimmermann@suse.de>
+From:   Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20230710091029.27503-1-tzimmermann@suse.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: n6Fnwihzb_lU2DPCKZ58uhtNAcMjQTE9
+X-Proofpoint-GUID: n6Fnwihzb_lU2DPCKZ58uhtNAcMjQTE9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-11_09,2023-07-11_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ bulkscore=0 priorityscore=1501 impostorscore=0 mlxlogscore=999 spamscore=0
+ lowpriorityscore=0 adultscore=0 clxscore=1011 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
+ definitions=main-2307110154
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11.07.2023 16:21, Ulf Hansson wrote:
-> To simplify with maintenance let's move the samsung power-domain driver to
-> the new genpd directory. Going forward, patches are intended to be managed
-> through a separate git tree, according to MAINTAINERS.
->
+
+
+On 7/10/2023 2:10 AM, Thomas Zimmermann wrote:
+> Generate a hotplug event after registering a client to allow the
+> client to configure its display. Remove the hotplug calls from the
+> existing clients for fbdev emulation. This change fixes a concurrency
+> bug between registering a client and receiving events from the DRM
+> core. The bug is present in the fbdev emulation of all drivers.
+> 
+> The fbdev emulation currently generates a hotplug event before
+> registering the client to the device. For each new output, the DRM
+> core sends an additional hotplug event to each registered client.
+> 
+> If the DRM core detects first output between sending the artificial
+> hotplug and registering the device, the output's hotplug event gets
+> lost. If this is the first output, the fbdev console display remains
+> dark. This has been observed with amdgpu and fbdev-generic.
+> 
+> Fix this by adding hotplug generation directly to the client's
+> register helper drm_client_register(). Registering the client and
+> receiving events are serialized by struct drm_device.clientlist_mutex.
+> So an output is either configured by the initial hotplug event, or
+> the client has already been registered.
+> 
+> The bug was originally added in commit 6e3f17ee73f7 ("drm/fb-helper:
+> generic: Call drm_client_add() after setup is done"), in which adding
+> a client and receiving a hotplug event switched order. It was hidden,
+> as most hardware and drivers have at least on static output configured.
+> Other drivers didn't use the internal DRM client or still had struct
+> drm_mode_config_funcs.output_poll_changed set. That callback handled
+> hotplug events as well. After not setting the callback in amdgpu in
+> commit 0e3172bac3f4 ("drm/amdgpu: Don't set struct
+> drm_driver.output_poll_changed"), amdgpu did not show a framebuffer
+> console if output events got lost. The bug got copy-pasted from
+> fbdev-generic into the other fbdev emulation.
+> 
+> Reported-by: Moritz Duge <MoritzDuge@kolahilft.de>
+> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/2649
+> Fixes: 6e3f17ee73f7 ("drm/fb-helper: generic: Call drm_client_add() after setup is done")
+> Fixes: 8ab59da26bc0 ("drm/fb-helper: Move generic fbdev emulation into separate source file")
+> Fixes: b79fe9abd58b ("drm/fbdev-dma: Implement fbdev emulation for GEM DMA helpers")
+> Fixes: 63c381552f69 ("drm/armada: Implement fbdev emulation as in-kernel client")
+> Fixes: 49953b70e7d3 ("drm/exynos: Implement fbdev emulation as in-kernel client")
+> Fixes: 8f1aaccb04b7 ("drm/gma500: Implement client-based fbdev emulation")
+> Fixes: 940b869c2f2f ("drm/msm: Implement fbdev emulation as in-kernel client")
+> Fixes: 9e69bcd88e45 ("drm/omapdrm: Implement fbdev emulation as in-kernel client")
+> Fixes: e317a69fe891 ("drm/radeon: Implement client-based fbdev emulation")
+> Fixes: 71ec16f45ef8 ("drm/tegra: Implement fbdev emulation as in-kernel client")
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Tested-by: Moritz Duge <MoritzDuge@kolahilft.de>
+> Tested-by: Torsten Krah <krah.tm@gmail.com>
+> Tested-by: Paul Schyska <pschyska@gmail.com>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Noralf Trønnes <noralf@tronnes.org>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Javier Martinez Canillas <javierm@redhat.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Inki Dae <inki.dae@samsung.com>
+> Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
 > Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: <linux-samsung-soc@vger.kernel.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-
+> Cc: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+> Cc: Rob Clark <robdclark@gmail.com>
+> Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> Cc: Alex Deucher <alexander.deucher@amd.com>
+> Cc: "Christian König" <christian.koenig@amd.com>
+> Cc: "Pan, Xinhui" <Xinhui.Pan@amd.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: freedreno@lists.freedesktop.org
+> Cc: amd-gfx@lists.freedesktop.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: <stable@vger.kernel.org> # v5.2+
 > ---
->   drivers/genpd/Makefile                                          | 1 +
->   drivers/genpd/samsung/Makefile                                  | 2 ++
->   .../samsung/pm_domains.c => genpd/samsung/exynos-pm-domains.c}  | 0
->   drivers/soc/samsung/Makefile                                    | 1 -
->   4 files changed, 3 insertions(+), 1 deletion(-)
->   create mode 100644 drivers/genpd/samsung/Makefile
->   rename drivers/{soc/samsung/pm_domains.c => genpd/samsung/exynos-pm-domains.c} (100%)
->
-> diff --git a/drivers/genpd/Makefile b/drivers/genpd/Makefile
-> index c178421e0cbc..1cf0ff26a44f 100644
-> --- a/drivers/genpd/Makefile
-> +++ b/drivers/genpd/Makefile
-> @@ -7,3 +7,4 @@ obj-y					+= mediatek/
->   obj-y					+= qcom/
->   obj-y					+= renesas/
->   obj-y					+= rockchip/
-> +obj-y					+= samsung/
-> diff --git a/drivers/genpd/samsung/Makefile b/drivers/genpd/samsung/Makefile
-> new file mode 100644
-> index 000000000000..397aa5908c1d
-> --- /dev/null
-> +++ b/drivers/genpd/samsung/Makefile
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-$(CONFIG_EXYNOS_PM_DOMAINS)		+= exynos-pm-domains.o
-> diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/genpd/samsung/exynos-pm-domains.c
-> similarity index 100%
-> rename from drivers/soc/samsung/pm_domains.c
-> rename to drivers/genpd/samsung/exynos-pm-domains.c
-> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
-> index d35270fc6b2b..248a33d7754a 100644
-> --- a/drivers/soc/samsung/Makefile
-> +++ b/drivers/soc/samsung/Makefile
-> @@ -10,7 +10,6 @@ obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o
->   
->   obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)	+= exynos3250-pmu.o exynos4-pmu.o \
->   					exynos5250-pmu.o exynos5420-pmu.o
-> -obj-$(CONFIG_EXYNOS_PM_DOMAINS) += pm_domains.o
->   obj-$(CONFIG_EXYNOS_REGULATOR_COUPLER) += exynos-regulator-coupler.o
->   
->   obj-$(CONFIG_SAMSUNG_PM_CHECK)	+= s3c-pm-check.o
+>   drivers/gpu/drm/armada/armada_fbdev.c     |  4 ----
+>   drivers/gpu/drm/drm_client.c              | 21 +++++++++++++++++++++
+>   drivers/gpu/drm/drm_fbdev_dma.c           |  4 ----
+>   drivers/gpu/drm/drm_fbdev_generic.c       |  4 ----
+>   drivers/gpu/drm/exynos/exynos_drm_fbdev.c |  4 ----
+>   drivers/gpu/drm/gma500/fbdev.c            |  4 ----
+>   drivers/gpu/drm/msm/msm_fbdev.c           |  4 ----
+>   drivers/gpu/drm/omapdrm/omap_fbdev.c      |  4 ----
+>   drivers/gpu/drm/radeon/radeon_fbdev.c     |  4 ----
+>   drivers/gpu/drm/tegra/fbdev.c             |  4 ----
+>   10 files changed, 21 insertions(+), 36 deletions(-)
+> 
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
