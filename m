@@ -2,93 +2,62 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C0DEB64DC
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jul 2023 07:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B38EB64DD
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jul 2023 08:14:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbjGKHiP (ORCPT
+        id S231308AbjGKIO2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 Jul 2023 03:38:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52430 "EHLO
+        Tue, 11 Jul 2023 04:14:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230119AbjGKHiO (ORCPT
+        with ESMTP id S229901AbjGKIO1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 Jul 2023 03:38:14 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C1BE1AC
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jul 2023 00:38:13 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-51e566b1774so2591699a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jul 2023 00:38:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689061091; x=1691653091;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Rx8H9As3YW36H58C24CHOAt5gVbFUaVPwH/qkPeltgA=;
-        b=Otb6Q+H12C1MG49c1/HOyW7wiMJN3PdzI8R2HXi0dC2zkhD+hwgITRq0B3rbrnBlHC
-         aBguDm3mJMekGZR5U2fHR8L9oIy/FrejZFLiprGMiJimOuqgz7o5hxLzrWJ/NEg2TrVx
-         T+UOFANp8SygESr+6KxyAi/j8Jg4TdCKZLvBZ2HmFuF4fcHsYicldL+agjgh8xw9M8D7
-         qtwNsz+Ol/NtMPVER8P4T3FCvcnPW8BDSZlAbA1gLtFrXRUeEuZcqR/nHT04z+rJ7Vjg
-         80RFfX1WC7zdNktLvePWMPfvGQ/dmNTWzNB4nvcI0uAOabloFWZpsUd/RX1iZWAskreD
-         bTaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689061091; x=1691653091;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rx8H9As3YW36H58C24CHOAt5gVbFUaVPwH/qkPeltgA=;
-        b=W2qfIx9fMW1H974HxU6CY6J9/sh3qRajrZ/VPvN3A6FK047CqqVqaI6R0zD5H3eBda
-         XiLXZ3DyPJCrPT1++tE9BKCqyREZOkINNzkSUo8JE+rXf7oWBAJoQY5FUmnP2Qaas+S2
-         EmhcOax6YYI3Xa1mrwceYI7xy+u0/oMTxFdAJkBFVQGqUqUObaF9l7t+sw0RJftTKPNy
-         Su2RWNC9WEW6pWh/zrWHAdgKpQMs5Kt+vqpiXKA4Jmzwui6XyMLnCPmdc/cghiw3HYKK
-         6XyDkGzK4ux0Nh9QarRAnmYt/6Wib3Zb/UIZgqB4zMjDKnFeX+vQKJ0thjYn8PCas8+y
-         3m7Q==
-X-Gm-Message-State: ABy/qLbafNIhd1pgMF6CR9R/jTlylt2RvIP7BZR2hTTPXVTz1orzuf5+
-        qUifn6bWL7OfwQURY0EsDM5E6k4YJvQuYdgxF9o=
-X-Google-Smtp-Source: APBJJlHyHjzHC8e0SOfh0h8Lzjgp0m0GgKV0prF8oQ5UrvplNd05w6cHvPGuBAcUiYE9+jsR6bE1Hg==
-X-Received: by 2002:a17:906:f2ca:b0:96f:d345:d0f7 with SMTP id gz10-20020a170906f2ca00b0096fd345d0f7mr12103193ejb.62.1689061091717;
-        Tue, 11 Jul 2023 00:38:11 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id ov4-20020a170906fc0400b00992b50fbbe9sm786810ejb.90.2023.07.11.00.38.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jul 2023 00:38:11 -0700 (PDT)
-Message-ID: <c3149d29-1ec2-0123-1784-f7da6c43a6c5@linaro.org>
-Date:   Tue, 11 Jul 2023 09:38:09 +0200
+        Tue, 11 Jul 2023 04:14:27 -0400
+Received: from mail.ettrick.pl (mail.ettrick.pl [141.94.21.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5030EE4D
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jul 2023 01:14:24 -0700 (PDT)
+Received: by mail.ettrick.pl (Postfix, from userid 1002)
+        id 6A84C27C63; Tue, 11 Jul 2023 08:11:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ettrick.pl; s=mail;
+        t=1689063107; bh=V4qwQGqC7KpJoyielzRpnopuINFIOvKXsSgJ3ZENIXU=;
+        h=Date:From:To:Subject:From;
+        b=PKsVGhgTTVCC2n0cCaZMbr9KY30sIrk0msM4jw2R9KQIaqpgfKM9yvM/vV0hcMi1v
+         /hJtYFaw6H9o6Ke3SZrKf7JPeq+jKkbp/cAiRjIbkkL+iqdqCVXq8/JqMWJOZ26oQ7
+         a+PECEWFSoL9wqBP+cHKze6k+oewhzW/a4saUWgSKlk9k8wB7nAayoqZduOvXwraxE
+         /rWo+QRybCKd4jYNE56EmGdt8IXyLABDkYk6ylbatKnXDmYpDZuEwiBK7rHAFyCEMW
+         hoUwM6ZY/6zuJqsg8qOJ7gaEg1cXBkHysl5pQiNfijCqVyJE9lJZV4OUCgsQdk1xt2
+         Gz0hCJcqLZobA==
+Received: by mail.ettrick.pl for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jul 2023 08:11:02 GMT
+Message-ID: <20230711064500-0.1.8.1wkm.0.5ao8krhy1k@ettrick.pl>
+Date:   Tue, 11 Jul 2023 08:11:02 GMT
+From:   "Norbert Karecki" <norbert.karecki@ettrick.pl>
+To:     <linux-samsung-soc@vger.kernel.org>
+Subject: Fotowoltaika - propozycja instalacji
+X-Mailer: mail.ettrick.pl
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 11/18] soc: samsung: Move power-domain driver to the genpd
- dir
-Content-Language: en-US
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc:     linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-References: <20230707140434.723349-1-ulf.hansson@linaro.org>
- <20230707140434.723349-12-ulf.hansson@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230707140434.723349-12-ulf.hansson@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 07/07/2023 16:04, Ulf Hansson wrote:
+Dzie=C5=84 dobry,
+=20
+Czy rozwa=C5=BCali Pa=C5=84stwo monta=C5=BC systemu fotowoltaicznego?
+=20
+Instalacja fotowoltaiczna jest najlepszym sposobem na obni=C5=BCenie wyso=
+ko=C5=9Bci rachunk=C3=B3w za pr=C4=85d (pozostaj=C4=85 tylko op=C5=82aty =
+sta=C5=82e) i zabezpieczenie si=C4=99 przed rosn=C4=85cymi cenami energii=
+ elektrycznej. Jest to w pe=C5=82ni odnawialne i bezemisyjne =C5=BAr=C3=B3=
+d=C5=82o energii, dzi=C4=99ki czemu przyczyniamy si=C4=99 do ochrony =C5=9B=
+rodowiska naturalnego.
+=20
+Dzia=C5=82amy od wielu lat na rynku energetycznym. Przygotujemy projekt, =
+wycen=C4=99 oraz kompleksowo wykonamy i zg=C5=82osimy realizacj=C4=99 do =
+zak=C5=82adu energetycznego.=20
+=20
+Czy chc=C4=85 Pa=C5=84stwo pozna=C4=87 nasz=C4=85 propozycj=C4=99? =20
 
-You miss here some commit msg shortly explaining the rationale behind this.
 
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: <linux-samsung-soc@vger.kernel.org>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Let me know if you prefer me to take it via Samsung SoC.
-
-Best regards,
-Krzysztof
-
+Pozdrawiam
+Norbert Karecki
