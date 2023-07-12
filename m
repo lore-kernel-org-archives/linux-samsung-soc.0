@@ -2,178 +2,124 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D64EB64D9
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Jul 2023 08:19:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED384EB64D9
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Jul 2023 09:47:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232421AbjGLITN (ORCPT
+        id S233199AbjGLJrW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 12 Jul 2023 04:19:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46212 "EHLO
+        Wed, 12 Jul 2023 05:47:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232559AbjGLISI (ORCPT
+        with ESMTP id S232525AbjGLJrV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 12 Jul 2023 04:18:08 -0400
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2125.outbound.protection.outlook.com [40.107.215.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4798C268C;
-        Wed, 12 Jul 2023 01:16:10 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=itgAo1XV+z+mBO7pOrcWLlfwh8KXgzXBBZPE02o3ZdHGM5HAgA9CVEAkJVfEg4PouEyC33bP02OD54MRyjfDB7zlaOJFEpfBdw1cgz9bSq/NwCsIp6cZyKj4/9Wzd7sSHXFIKVPVZ+mRzyHIUyZHcQg67lGTHBNAbzibitQD/Gy55E4xpdkVRdeSD+W/trkt92ZDi5ZSZwuEnWeOBuxOpV2I7HaB06WzNUL/R8CBQfUC4hRqSp21p37PFrOeITWAAETXpucSuvlEDGXOJfipaWgSKK28MrcS8M6qhtoCEkkbQ6YsIHRybVOXLE/Ks0X3/TkVzaxspvwfXyHQ6eQF9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zwexwAivTuXG9PH+vKIuYHomSb4dE8f2xbl35x1I5FM=;
- b=Zh3SbAQHHed5/jZDSv8mOnm4rlfHHq/SKFDMtjaMJPZI7+RCagn4zriLFZ4tUzKWfy8anlG4/pQOHFx8LKMK01335Y6YywqARPImZQ2kxzxhQPH211lcYwwWJCtHfffB0NWn/1pwKGP9756jALrpbpQIZYj6FW0zndn6wnq2Br8gCXE9sSe1liL7GbBM5gqx0dCZ0Gmdbo0q62VfbucZkTnAwvhXF1NSH3sJyANQXgfR0w4X0r/zzYGT+pWJL9KT0akJMgUaV6OBRvBrct35OwcFFjvjpwbTm7P/GTJD1J3Ev3Ddhu+TaHybq2kg9WAqysjbSBeseK/CNau9M6tsSg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zwexwAivTuXG9PH+vKIuYHomSb4dE8f2xbl35x1I5FM=;
- b=D+CjgTzetb+FFhhB4Cb57Ks/Ep2sY5lQPhZRTizEopMKkDfNUDfO37C71lx3fX8RjEN8/biheopSajLSP/AdSYbLciF+cSz2vgnRDLTee2S+gO+6Rx3LPcj6jClGSaT8FxVmBjayGqCd6kgB+WUnbQxBVpJc7E6YbyiarAWVI00W2okg7GAw8jN7jgh2blijM/uLarBo0nHtdd2TUSOphkamqas53xMg5zSGUJBeUKHta4GGaCMxSHiS0JjI764e6qO0Sjr378Cii5Jz0EyC3cCb36PRkVudZz/F9iVx4ERiO1fWJ2KMOSncqF6h6RazOdcRbscaT2URYGUnP8wkhA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by TYZPR06MB5027.apcprd06.prod.outlook.com (2603:1096:400:1c9::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.20; Wed, 12 Jul
- 2023 08:14:38 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::fa0e:6c06:7474:285c]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::fa0e:6c06:7474:285c%5]) with mapi id 15.20.6565.028; Wed, 12 Jul 2023
- 08:14:38 +0000
-From:   Yangtao Li <frank.li@vivo.com>
-To:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     Yangtao Li <frank.li@vivo.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 25/27] thermal/drivers/exynos: Convert to platform remove callback returning void
-Date:   Wed, 12 Jul 2023 16:12:56 +0800
-Message-Id: <20230712081258.29254-25-frank.li@vivo.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230712081258.29254-1-frank.li@vivo.com>
-References: <20230712081258.29254-1-frank.li@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR04CA0208.apcprd04.prod.outlook.com
- (2603:1096:4:187::10) To SEZPR06MB5269.apcprd06.prod.outlook.com
- (2603:1096:101:78::6)
+        Wed, 12 Jul 2023 05:47:21 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 671B0B0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jul 2023 02:47:20 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qJWRB-0001Gg-5W; Wed, 12 Jul 2023 11:47:09 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qJWR9-00Dr3b-JG; Wed, 12 Jul 2023 11:47:07 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qJWR8-004GSS-N0; Wed, 12 Jul 2023 11:47:06 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de
+Subject: [PATCH RFC v1 09/52] drm/exynos: Use struct drm_crtc::drm_dev instead of struct drm_crtc::dev
+Date:   Wed, 12 Jul 2023 11:46:19 +0200
+Message-Id: <20230712094702.1770121-10-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230712094702.1770121-1-u.kleine-koenig@pengutronix.de>
+References: <20230712094702.1770121-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|TYZPR06MB5027:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8eabc445-a10b-4a4b-8649-08db82b0093c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: hv5mdTmvnI7IbTR3V1DsHDFHdM0tFZqt68MMsRYquQZlnqnYwouYAr1unKj+XQLfllow2qyt0WF9pIBY/i8L1nPmyZuiDweQWGCT8Hsi7AdXsDt4vD2HRAO1z9B7/NLSQCpptqkajgH9KYBwhBXFgU3t/s1ppnEBZW9UPMZuEziBIutVWiJbuKIBCoAugJ+nWthlrVSw6/Z7m4RMvb9+hbix338n8aNY3z/wsAr44QzM+N9hVo/tkFqMb5uNsq4lXLL9n390Rio+vMxVbN9bsQTOlMo87W3BG7EP6k80TW4Qm5YnJ0+SPCLFilBacDss9SkPHOkNyVLbH7cfOXQQDiqemQZs6rF2J4Osa3Dkueb28WhP9dCDmKl/jBSe7X3ultsBP0Vn/zgfAwyF3VSHMuj13EFWkUGnhAvmtkO9+58iO5fOt0osV7Uul8Oq3LWCd6HJX0viCQ09crkkikvo7RbnUpOpcvzNAYOr2z9jTWy2ifRfqAZuR6b7Pre68IgJ30GosYHRY1zV7dG0WvcLRVS6vubJYFVoQX4brc1xqQ+dkAV4G+bp6CDENzlHnfByqB9F5lrkfpj55BX84fW6JgQ7IGGk9a7SxUP+/eof6XnH0Qo1fjRGzCaAlgerhYYd
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(39850400004)(366004)(376002)(136003)(346002)(451199021)(66556008)(66946007)(66476007)(4326008)(478600001)(36756003)(110136005)(54906003)(86362001)(26005)(186003)(1076003)(6506007)(6666004)(6512007)(6486002)(52116002)(83380400001)(38350700002)(38100700002)(2616005)(41300700001)(7416002)(8676002)(8936002)(5660300002)(316002)(2906002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dXo1Vmw0UllobDR4QjdKVUFnYU9xbnZSZEJRT3ZnNkpmVi83QlMvVlVsVnhN?=
- =?utf-8?B?NThJS3E5dUcvaXlUK3cvNXM2Y2E2MHNvYW5ZZGttU0hwbDluQ3lHQXV5aVdI?=
- =?utf-8?B?ZEF0ZWFjVHBRZDNMejIvY08vYkxaNlJtempLK0pzbDVnc1ZMaHdHVEtBQ1gr?=
- =?utf-8?B?eWtuNjlwODgzZ0Y0TWozd1J2RFlteVFySGZkZENZSElHVEU4S0RrZDgwSkNR?=
- =?utf-8?B?ZVJLNHJPUDRzOTJ1REpYQlJ3d0l5dVdyM2lTTFVLUmZLV2tpQTlLRnR2Z2Y1?=
- =?utf-8?B?OE5WNkh1Tnhid3dFWHBqbXFwb2NqR0p5Q2J3UFNWTGlTbDFnQW1OdnZreFlm?=
- =?utf-8?B?a2hRaCszcTVsSWlVa0RRKy9ySG1XcEFOZysxbkxTUjUzeko2WnpsN0I2cmJ6?=
- =?utf-8?B?VmN6L2czTFRjQ1Q4a3V6YmZUQ3pYcCtJVWdsQkVWQkd4WFBUOW9FMVIvbmNI?=
- =?utf-8?B?WmIyVkdSOGNOZzJhbkNVQ2lkSmw0bEphZ1hpREwxWDNOblM3VzloZG1pdHNU?=
- =?utf-8?B?ZGdYbGJnQjJUMDFnSkNvTFljU21Na04zZFdBbEJhNTE2aGxyU2JxRnh3MGlY?=
- =?utf-8?B?S1p4YkxoOXcrMlRJbnZSSHJzcUlwU2NGM0ZnY1VSOGhtZEkwbSthT2VxMEpS?=
- =?utf-8?B?NXkyelBqRC83aThVSXNjUHVETmtxNFlGeWhsZ2JJWEM2WXNSSDdtNEhZL25S?=
- =?utf-8?B?UFphU1RhNThwbFRaUTJWd0g5Smp1VC9mdkVJY1hNNGpaUkNRRjhDT2tXTWFI?=
- =?utf-8?B?WHpFMjZGUG5wZXh4QW1yMzdJUDFmYmt0L0wzVWZITVZYbnE4eE5LN1Q0YlFD?=
- =?utf-8?B?SWNzSHVqZGJrVFhqc3ZTYWNTWHgrRjVQVHArZ3cvV2tucVlHNnRXcVRjRzBy?=
- =?utf-8?B?cnFlSlpBQlYyTW9oMDNhcWRFekQvQXM0ZldCVmZkTzJjUklOOVJwbHFTc3M0?=
- =?utf-8?B?ZlpQZ0p2SDlSaHcyeFJtTHB4NTd3ZW03QzBiekxZMU9tTjZoZWlkeTFaRWxv?=
- =?utf-8?B?ZFpDUlVJWGw5MjBsczlvT0RmZ2JOSmh6cFhGM1F2ZnMva0RJL05CWUlnU1dl?=
- =?utf-8?B?L2Framl6c1I2YUIrMy9jdHB5ZTJCam1LQ01FVktEV1hqUUxUVFZGZ1lkMjA2?=
- =?utf-8?B?L2lvVlI3T0ROejREaVpWWHVMMXcxL2s5MmJtUmUvRks1NUV5VG51ZDNYQTBu?=
- =?utf-8?B?NjZubm9peXY5WFd6NFc3aXF5U2VXUEpGanJMR3I3dzRPUEhJSDgwdU5TaWdF?=
- =?utf-8?B?NTVRRVMvRW94cTRSRnhCMllvWVBVSUNmS3FXRDE3OHlPS2NmbGpYK2hXS1NI?=
- =?utf-8?B?TU9CKzdweVJTUE9VVVdGUE5sMktUR1FuaUtBV1UzTUJkeFVRMmo4b0RXS3Zu?=
- =?utf-8?B?ODA4U0cwVEhNUU8vK3VRVWI0SW1QWHNtbCtVRUwwcXNyS1V5cjMyZGQ4aVYr?=
- =?utf-8?B?Z1dHaVZDU1NOOFZOQXJSVTEzVFhSNHVCbTh5TjRUZWcweEh0L21wOFFCcDlI?=
- =?utf-8?B?TkZXMkhSaTBpSnorU0dwTGhnK1NIRjF6Q2lVL3B2UHBsL3hvZVpRRGZBaENI?=
- =?utf-8?B?YzJMRFkzQVNPVStxdFRSUU9MRDRmaVZ3SFhkVFB1RlZPd1ZpSElYWHZEQi9u?=
- =?utf-8?B?dStHNzBJWlh4USt1N2ZpUHBoeURhTFBYbFlPZStVclRvajRIQ2pkQndFeDYv?=
- =?utf-8?B?YVZsR2xEdWxIM3RBNlE3a2Era1FyaW1kalkwT1lpZlRlRmkwR0RDanYzOWUy?=
- =?utf-8?B?RnB6WWdET3ZZN1c5WmVrbE9IR0xKWjhjWEd3WElWaDQrWXhMa3dsOGc3amFz?=
- =?utf-8?B?QUZJSFkyenZCTFI0OXduMUVsY3J2SWdZOHIvdlpvU1kzVUZRYkZDUlJhRVJU?=
- =?utf-8?B?a3d3d2szOExxMm0xckxBdEFVUjF2TVQyS1cwb2RhRTNIUU5GeUJaLzhOem9G?=
- =?utf-8?B?N1BvQVg2NWJkcU1SY3crYTZ2WnhiQVBvc2plK093b1M0MkV6MHgxamlkZTJE?=
- =?utf-8?B?dys4VGRWOXBYSWlXNGx0SFFUU1QyQ1V6ZTFrZGp5eTVPY2ZaQ290ZCtuN2s4?=
- =?utf-8?B?bW5Zejd4dk5veXpQR0swclV5cXRzazVqY2JpZDM5Qm0wYnhjZE1ZaTQ0ZmtN?=
- =?utf-8?Q?YDiIiwtQzHVPRVPcqNkZLicy9?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8eabc445-a10b-4a4b-8649-08db82b0093c
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2023 08:14:38.5280
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5a0mwpVlssaeNODlpSoH/B74qhPdUPwdGkLH9FvAPfzK3SyyS8u8yHmMjPn00MLD+8KKAr8I7UrzcfY4FrlsDg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5027
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2568; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=In6DzNoxBPTC0Au6RuM9kPD7DeunayqwfIlc13LkkCE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkrnZgjJgmUR+QGukfFuwXwIjGVgj/9Sd/gPGUE ib0KqT+xZCJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZK52YAAKCRCPgPtYfRL+ Tpn+B/9NvoE0bF4V4KSRrj62VIl+cdlzSYRZutuJR4qQSbUs7fAdV3AwbILSOxHt00RJ2ukS6Jl cCZMqwKGL9Gk8bnxD0m7FUuF5bZcuGIM4A78MaQ1cAO2rN54A0Zt0TeJnCILEmDuPD4cvvMU7cg YSu0PTvKasROy047/h94j/Qcr39qqAsBwwcag1r4fF3UznMUkRsu3VLlin9TVrrlrKMDGje7h/D xO4GS1JwJu7zDLU455pLsfEuAmwiG9cJ1YfPC99Co7en3t6QE7IeYnmm+JPuD6O48lzId1EHl8s 4CpdzdsW2nQpoS14eYn89nB1TWp+9q/6NvLO3HulEYjcoUPk
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is (mostly) ignored
-and this typically results in resource leaks. To improve here there is a
-quest to make the remove callback return void. In the first step of this
-quest all drivers are converted to .remove_new() which already returns
-void.
+Prepare dropping the alias "dev" for struct drm_crtc::drm_dev. "drm_dev"
+is the better name as "dev" is usually a struct device pointer.
 
-Trivially convert this driver from always returning zero in the remove
-callback to the void returning variant.
+No semantic changes.
 
-Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Yangtao Li <frank.li@vivo.com>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/thermal/samsung/exynos_tmu.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 8 ++++----
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 4 ++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 45e5c840d130..576ad558cfb7 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -1124,7 +1124,7 @@ static int exynos_tmu_probe(struct platform_device *pdev)
- 	return ret;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 4153f302de7c..c1e2c14ab07d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -40,9 +40,9 @@ static void exynos_drm_crtc_atomic_disable(struct drm_crtc *crtc,
+ 		exynos_crtc->ops->atomic_disable(exynos_crtc);
+ 
+ 	if (crtc->state->event && !crtc->state->active) {
+-		spin_lock_irq(&crtc->dev->event_lock);
++		spin_lock_irq(&crtc->drm_dev->event_lock);
+ 		drm_crtc_send_vblank_event(crtc, crtc->state->event);
+-		spin_unlock_irq(&crtc->dev->event_lock);
++		spin_unlock_irq(&crtc->drm_dev->event_lock);
+ 
+ 		crtc->state->event = NULL;
+ 	}
+@@ -129,9 +129,9 @@ void exynos_crtc_handle_event(struct exynos_drm_crtc *exynos_crtc)
+ 
+ 	WARN_ON(drm_crtc_vblank_get(crtc) != 0);
+ 
+-	spin_lock_irqsave(&crtc->dev->event_lock, flags);
++	spin_lock_irqsave(&crtc->drm_dev->event_lock, flags);
+ 	drm_crtc_arm_vblank_event(crtc, event);
+-	spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
++	spin_unlock_irqrestore(&crtc->drm_dev->event_lock, flags);
  }
  
--static int exynos_tmu_remove(struct platform_device *pdev)
-+static void exynos_tmu_remove(struct platform_device *pdev)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+ static void exynos_drm_crtc_destroy(struct drm_crtc *crtc)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index 7c3aa77186d3..1a8cb7b6af57 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -115,7 +115,7 @@ static void exynos_plane_mode_set(struct exynos_drm_plane_state *exynos_state)
+ 	exynos_state->crtc.w = actual_w;
+ 	exynos_state->crtc.h = actual_h;
  
-@@ -1137,8 +1137,6 @@ static int exynos_tmu_remove(struct platform_device *pdev)
+-	DRM_DEV_DEBUG_KMS(crtc->dev->dev,
++	DRM_DEV_DEBUG_KMS(crtc->drm_dev->dev,
+ 			  "plane : offset_x/y(%d,%d), width/height(%d,%d)",
+ 			  exynos_state->crtc.x, exynos_state->crtc.y,
+ 			  exynos_state->crtc.w, exynos_state->crtc.h);
+@@ -224,7 +224,7 @@ exynos_drm_plane_check_size(const struct exynos_drm_plane_config *config,
+ 	if (width_ok && height_ok)
+ 		return 0;
  
- 	if (!IS_ERR(data->regulator))
- 		regulator_disable(data->regulator);
--
--	return 0;
+-	DRM_DEV_DEBUG_KMS(crtc->dev->dev, "scaling mode is not supported");
++	DRM_DEV_DEBUG_KMS(crtc->drm_dev->dev, "scaling mode is not supported");
+ 	return -ENOTSUPP;
  }
  
- #ifdef CONFIG_PM_SLEEP
-@@ -1173,7 +1171,7 @@ static struct platform_driver exynos_tmu_driver = {
- 		.of_match_table = exynos_tmu_match,
- 	},
- 	.probe = exynos_tmu_probe,
--	.remove	= exynos_tmu_remove,
-+	.remove_new = exynos_tmu_remove,
- };
- 
- module_platform_driver(exynos_tmu_driver);
 -- 
-2.39.0
+2.39.2
 
