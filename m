@@ -2,93 +2,68 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A72C001DE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Jul 2023 15:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6F2EB64DD
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Jul 2023 15:58:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233681AbjGLPeg (ORCPT
+        id S233333AbjGLP6d (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 12 Jul 2023 11:34:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50574 "EHLO
+        Wed, 12 Jul 2023 11:58:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233583AbjGLPee (ORCPT
+        with ESMTP id S232238AbjGLP6d (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 12 Jul 2023 11:34:34 -0400
+        Wed, 12 Jul 2023 11:58:33 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 144131BFA;
-        Wed, 12 Jul 2023 08:34:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4136A2;
+        Wed, 12 Jul 2023 08:58:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 888BD61864;
-        Wed, 12 Jul 2023 15:34:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20ACAC433C9;
-        Wed, 12 Jul 2023 15:34:27 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 44E8561800;
+        Wed, 12 Jul 2023 15:58:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03FD9C433C8;
+        Wed, 12 Jul 2023 15:58:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689176069;
-        bh=YgQ7abP3N+JH1cPPrmVFk/Ktw1lSieyjGSon5H2pQo4=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=vM+ig1hXHoTgkEfo0U9c11KAe3Du/5PnuEFjj6KGWe7wWyv4trKLxMvMJYu/YDupl
-         EvxJlmKdTHHmeNous7jvFi3aJf78oiLCIeDRT9Fz6kxnt8m9aTVSZnF4lP4Fs94yqc
-         nAplA5y+wGGFBa163j9nkAkRbXK+cn8gnRHRCIp2PplI4LSQu6FgG1Ae7/BtnPUwGK
-         f6wmXmnFt9J8ttchAYdxqpga4VDnpxMOJc8rdHudpbxzyV5sosX88fZ8VMWAVjN1IH
-         JYeYyl8254IgnFL3NHMW3ZoQKAdc9X0p+ywdEdlPXkjVkPxeSBZQtOqACabKxfgo3s
-         wsCKNvS/3vO6A==
-From:   Mark Brown <broonie@kernel.org>
-To:     Andi Shyti <andi.shyti@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        s=k20201202; t=1689177510;
+        bh=i0KOxKhT1Xq7gHoW71iFp7fjo8k1aansRE9L0aErbWc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KxCeM7VMhRsTGk6UiazC5hxfLgIuu/MUs2oDkNPnAuIOFxTBoBZz/fQGjNuvmBJhC
+         Ya2F/L3XSq7kSj+VB2+5RTzYhCLe4BPnvClqD5LX2DEtVigu9DJCyJ7DgLr6iQuNLd
+         Y1mcg16mlv0B8SQIhvzmMu17mx1tIHV2LoyRimZlfNC+jMEc4/MjuqyGhKMOTcnzBk
+         lxCwyWp63rvWcXTOvF0jef2NViAdoPrP2dZW9X06X5a8kjtCKuxZkfaBpGDNi7M+RT
+         axAQYGDUroBrrPxRAEf6uWGRLJHtPC+AK6tC75djvF2fInA6zpQc/DKhyVCBeW3uHV
+         LPjzNHY+3+zBQ==
+Date:   Wed, 12 Jul 2023 17:58:26 +0200
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Yangtao Li <frank.li@vivo.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Jaewon Kim <jaewon02.kim@samsung.com>
-Cc:     linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>
-In-Reply-To: <20230711082020.138165-1-jaewon02.kim@samsung.com>
-References: <CGME20230711082508epcas2p3088d488035e7e2910bf087d640e9c268@epcas2p3.samsung.com>
- <20230711082020.138165-1-jaewon02.kim@samsung.com>
-Subject: Re: [PATCH] spi: s3c64xx: clear loopback bit after loopback test
-Message-Id: <168917606784.94105.1230521336031355958.b4-ty@kernel.org>
-Date:   Wed, 12 Jul 2023 16:34:27 +0100
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 09/11] i2c: s3c2410: Use
+ devm_platform_get_and_ioremap_resource()
+Message-ID: <20230712155826.hs63ef7gs4mwid7l@intel.intel>
+References: <20230710063351.17490-1-frank.li@vivo.com>
+ <20230710063351.17490-9-frank.li@vivo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-099c9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230710063351.17490-9-frank.li@vivo.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 11 Jul 2023 17:20:20 +0900, Jaewon Kim wrote:
-> When SPI loopback transfer is performed, S3C64XX_SPI_MODE_SELF_LOOPBACK
-> bit still remained. It works as loopback even if the next transfer is
-> not spi loopback mode.
-> If not SPI_LOOP, needs to clear S3C64XX_SPI_MODE_SELF_LOOPBACK bit.
+Hi Yangtao,
+
+On Mon, Jul 10, 2023 at 02:33:48PM +0800, Yangtao Li wrote:
+> Convert platform_get_resource(), devm_ioremap_resource() to a single
+> call to devm_platform_get_and_ioremap_resource(), as this is exactly
+> what this function does.
 > 
-> 
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
 
-Applied to
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org> 
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: s3c64xx: clear loopback bit after loopback test
-      commit: 9ec3c5517e22a12d2ff1b71e844f7913641460c6
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Andi
