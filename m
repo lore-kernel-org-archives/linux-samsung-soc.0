@@ -2,63 +2,64 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34757EB64DC
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jul 2023 05:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F059AEB64DC
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jul 2023 05:32:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234538AbjGNF1E (ORCPT
+        id S235080AbjGNFcB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 14 Jul 2023 01:27:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57936 "EHLO
+        Fri, 14 Jul 2023 01:32:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbjGNF1D (ORCPT
+        with ESMTP id S235091AbjGNFbl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Jul 2023 01:27:03 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C23DBCE
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jul 2023 22:27:01 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-9928abc11deso199450966b.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jul 2023 22:27:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689312420; x=1691904420;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ft6IvjrZTPyPOF9DZulMSyZSaY4hCN4HAaLDF28wpRo=;
-        b=NRPm25RPoQ/OzSKh7eLutSSHgHv3MBss9UqNwO9Y2uqOz4AlqOTgkEMvnssEgrJO8Z
-         re/kDNrGgq3jIfURePWQQeRsXGuKUTKjZi18EseHW+cL+DN1B9Ms5Z9jO2jTgxZRBkWJ
-         pXgL6EJpkcvaxC2YuNio3Y5G1djM6cvbHZDSm8A+xItfU46RXpqJ76T6/VPXbf1VovkN
-         oZR+Rb7DRfBjLAuoFVfuISNK9aGRmuubwg7HPKyAbZjDpxuNbNYBjOOIB0UXBZ4n9IfA
-         Lt5p7ni7sr8WXj0nvTHbrl8tTLmKK+qVat5F5sjD5fiu6YWxF/zgO4t0gFdouFWCfLxy
-         dL+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689312420; x=1691904420;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ft6IvjrZTPyPOF9DZulMSyZSaY4hCN4HAaLDF28wpRo=;
-        b=Ixq8VbBqZ8wD8sVlgkJusc6ThaYWLSwrqFtg8rIo1n3zfgLdJZ6WDdKxw7v34xyZFN
-         I5CDf/wmVHxdpOjed85+gAO2BnxLzriqZdSYWfywvJPRSq2ltvmdi7ax6qOgHbCsEb43
-         jOxGnzU5NTC5tIPwVsLeZyt7TGZKT7Y6ucQjtCDoevBdjqaaRSsg12XmDTrBjKx0Y0pB
-         Xo1slKzLJkcFHMHMBkzgkvZTr28Kn8/YbcF149RZlZ1131Kds9vEcjRsL8NidVIpOkwc
-         UwG8CzttHHUybBDfW6ZG4HJ3n3FK9NqokTAGsujfIJrL0HSXKmf0RGNBqZ4l1j6MffXg
-         rcLA==
-X-Gm-Message-State: ABy/qLZYP6XRMrqqShTTAPV5mX1riXtE37+T1wOp3Ub0r4ZuDw71jjhn
-        lFbvLDz14BtHhU5Wktnm/dCdSQ==
-X-Google-Smtp-Source: APBJJlEUp21s8VCMsojlIgbJv65jiwdNFkcOhUxHu5FPF7wxKX5riA03gHOpIdbFQg+VuLv8LDepQA==
-X-Received: by 2002:a17:906:1050:b0:991:f913:a479 with SMTP id j16-20020a170906105000b00991f913a479mr3377345ejj.2.1689312420297;
-        Thu, 13 Jul 2023 22:27:00 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id gz19-20020a170906f2d300b00992e94bcfabsm4809659ejb.167.2023.07.13.22.26.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jul 2023 22:26:59 -0700 (PDT)
-Message-ID: <3bc9c34a-ba55-61c5-87ea-80b369841873@linaro.org>
-Date:   Fri, 14 Jul 2023 07:26:57 +0200
+        Fri, 14 Jul 2023 01:31:41 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 660F43A8D
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jul 2023 22:31:18 -0700 (PDT)
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230714053115epoutp04486324573c936772b2e800e2608ddc9b~xpO2SvCXZ1794617946epoutp04x
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jul 2023 05:31:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230714053115epoutp04486324573c936772b2e800e2608ddc9b~xpO2SvCXZ1794617946epoutp04x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1689312675;
+        bh=FH9ncGZNeuvXThGojUuRBNFIVkXtbRJVe1BwpUu+UwE=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=bqM9DdJjGi3oZwRqTqqPGyIVusfLot9dqS6t9EyP/DNAUbnht6B9pG0LfZtsQUR6+
+         5c6KUHlPcrqmDiLQyTJWnjJ7PiQDsIJw5AbL5M0QfvXtZm26Hkf65QcGKjJ4Ij9MtF
+         YnpQmtc9Z7oGp7V2MYRxcOj9pVynugAy+oJPiVXw=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+        20230714053115epcas2p2df39db9341dc7fb4d19e2cacf18fa7de~xpO18GDGp1685916859epcas2p2l;
+        Fri, 14 Jul 2023 05:31:15 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.36.98]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4R2KpB633fz4x9Py; Fri, 14 Jul
+        2023 05:31:14 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        23.E4.32393.2ADD0B46; Fri, 14 Jul 2023 14:31:14 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230714053114epcas2p1ebc203b5522cc05c984a55b30bdbcd1b~xpO1Q82Ar3185131851epcas2p1E;
+        Fri, 14 Jul 2023 05:31:14 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230714053114epsmtrp2f7630b7f688b759da530ab3deca8f76e~xpO1P3dSl0594005940epsmtrp27;
+        Fri, 14 Jul 2023 05:31:14 +0000 (GMT)
+X-AuditID: b6c32a48-0fa7ca8000007e89-b8-64b0dda2df51
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        EF.08.64355.2ADD0B46; Fri, 14 Jul 2023 14:31:14 +0900 (KST)
+Received: from [10.229.8.168] (unknown [10.229.8.168]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230714053114epsmtip29085bfc1299f6034c1ceadf41cdf3ec9~xpO09a-5i2248122481epsmtip25;
+        Fri, 14 Jul 2023 05:31:14 +0000 (GMT)
+Message-ID: <d5148039-e3f4-b9ca-d7e9-19d64ecc1445@samsung.com>
+Date:   Fri, 14 Jul 2023 14:28:41 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
+        Thunderbird/102.11.0
 Subject: Re: [PATCH] arm64: dts: exynos: add pwm node for exynosautov9-sadk
-Content-Language: en-US
-To:     Jaewon Kim <jaewon02.kim@samsung.com>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
@@ -66,73 +67,126 @@ To:     Jaewon Kim <jaewon02.kim@samsung.com>,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Chanho Park <chanho61.park@samsung.com>
-References: <CGME20230714052025epcas2p46d5485a277c9f21ace14300dd9d7b4d8@epcas2p4.samsung.com>
- <20230714051521.22720-1-jaewon02.kim@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230714051521.22720-1-jaewon02.kim@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
+From:   Jaewon Kim <jaewon02.kim@samsung.com>
+In-Reply-To: <3bc9c34a-ba55-61c5-87ea-80b369841873@linaro.org>
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGJsWRmVeSWpSXmKPExsWy7bCmme6iuxtSDJ73GVo8mLeNzeLyfm2L
+        NXvPMVnMP3KO1aLvxUNmi72vt7JbbHp8jdXi8q45bBYzzu9jsmjde4Tdgctj06pONo871/aw
+        eWxeUu/Rt2UVo8fnTXIBrFHZNhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJ
+        uam2Si4+AbpumTlANykplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCswL9IoTc4tL
+        89L18lJLrAwNDIxMgQoTsjPufL3BVHBJsOLVzessDYyr+boYOTkkBEwkphx+zNbFyMUhJLCD
+        UeLw7C5GCOcTo8S/h18QnEfnnjPCtMw88I0dIrGTUWJm9xuo/teMEl3brrGAVPEK2Emcu7gc
+        zGYRUJX4tXU6M0RcUOLkzCdgcVGBaInWZffZQGxhAW+JBasaWUAGiQg8YZRYtK4BbDezwCZG
+        iV9dd8G6mQXEJW49mc8EYrMJaEt8X7+YFcTmBNq2+SrEVGYBeYntb+cwgzRLCMzkkJg78TMz
+        xOEuEg1tX5kgbGGJV8e3sEPYUhKf3+1lg7CzJdqn/2GFsCskLm6YDRU3lpj1rB3oIg6gBZoS
+        63fpg5gSAsoSR25BreWT6Dj8lx0izCvR0SYE0agmcX/qOaghMhKTjqyEOsBD4nHfU8YJjIqz
+        kIJlFpInZyF5ZhbC3gWMLKsYxVILinPTU4uNCkzg0Z2cn7uJEZxgtTx2MM5++0HvECMTB+Mh
+        RgkOZiURXpVt61KEeFMSK6tSi/Lji0pzUosPMZoCI2cis5Rocj4wxeeVxBuaWBqYmJkZmhuZ
+        GpgrifPea52bIiSQnliSmp2aWpBaBNPHxMEp1cDkUZ18WUCii11wWnjSRKnc/RzTJ/mxrDpb
+        zWFo5JLvH5RbMN/xWP47sSwlXvnqiCc8PmttfYva479zhx9ccurkHJdz+2xKBed8FDF/ppWh
+        mZ8lEuaanyqzwuuTz/2jLQcO9Xjap1y8eLAteNGCYPdlRpe28DGy7J2+cwfr9rkSK44/VZxb
+        WZrnHiCXJh+75I7By8+dlTLWEwRKHjZ6aD3Y9/KGSckrlbq/dTY7zybqe3ievSC2Pzb/3Iqg
+        q3sFzW4ffbaRQ/TFg8tn797mkdpyhvX5Yx2x8/dfrbx8OsMxzPpPRlyLryjLs/3SLq+fGm0S
+        59g1U+KrwuP8gw9yNtgv/S7y/JwuA4upgU6+S4QSS3FGoqEWc1FxIgA89uLoOQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmkeLIzCtJLcpLzFFi42LZdlhJXnfR3Q0pBh2dghYP5m1js7i8X9ti
+        zd5zTBbzj5xjteh78ZDZYu/rrewWmx5fY7W4vGsOm8WM8/uYLFr3HmF34PLYtKqTzePOtT1s
+        HpuX1Hv0bVnF6PF5k1wAaxSXTUpqTmZZapG+XQJXxp2vN5gKLglWvLp5naWBcTVfFyMnh4SA
+        icTMA9/Yuxi5OIQEtjNKzLi5kBEiISOx/FkfG4QtLHG/5QgrRNFLRomXB04zgyR4Bewkzl1c
+        zgJiswioSvzaOh0qLihxcuYTsLioQLTE6s8XWEFsYQFviQWrGllABokIPGGUmD1vBxOIwyyw
+        iVHizOWnUHccZZS4vusDWAuzgLjErSfzmUBsNgFtie/rF4PFOYFWb74KsYJZwEyia2sXI4Qt
+        L7H97RzmCYxCs5BcMgvJqFlIWmYhaVnAyLKKUTS1oDg3PTe5wFCvODG3uDQvXS85P3cTIzie
+        tIJ2MC5b/1fvECMTB+MhRgkOZiURXpVt61KEeFMSK6tSi/Lji0pzUosPMUpzsCiJ8yrndKYI
+        CaQnlqRmp6YWpBbBZJk4OKUamFQvluUtv1/JrbnqouChl7OE3gbHrQo75ZqQOtmdO6zgsERj
+        2dWFcw+/Zzt7XfTg868NL39xbXyX+81A2vPMqyiZWLkrvNM0nIN/nf3XMlU+1FH5jjGjS6vg
+        lqI2q8qF61QDbNS1vvBcPhFg62v5SrrdleVycsC/q3G9n++5Rq7zkZ96VfvGoRgP9o74QGub
+        5gPu1lfn/SyQsklIj9ke1ZgsdG2n+a3T7cbnOR1Y33EL+9ouPC/Ofuj5l6Qr1bm7Px6fOzdj
+        +ktJ9QOCsYsmBfTL/Ly2t0uHYeWfx5pBt97O/L3cKO1ZOe/TBaG7jyQUsr1X9rj+odTiut2s
+        x5JiahoWr7ZtjbvEyrXlyEMDUSWW4oxEQy3mouJEAOTok90WAwAA
+X-CMS-MailID: 20230714053114epcas2p1ebc203b5522cc05c984a55b30bdbcd1b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230714052025epcas2p46d5485a277c9f21ace14300dd9d7b4d8
+References: <CGME20230714052025epcas2p46d5485a277c9f21ace14300dd9d7b4d8@epcas2p4.samsung.com>
+        <20230714051521.22720-1-jaewon02.kim@samsung.com>
+        <3bc9c34a-ba55-61c5-87ea-80b369841873@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14/07/2023 07:15, Jaewon Kim wrote:
-> Add pwm node to support fan on exynosautov9-sadk board.
-> PWM channel 3 of ExynosAutov9 is connected to fan for SoC cooling
-> in SADK board.
-> 
-> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-> ---
->  arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts | 6 ++++++
->  arch/arm64/boot/dts/exynos/exynosautov9.dtsi     | 9 +++++++++
->  2 files changed, 15 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
-> index 898c2fc345ed..e717bb1cad81 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
-> @@ -50,6 +50,12 @@
->  	};
->  };
->  
-> +&pwm {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pwm_tout3>;
-> +	status = "okay";
-> +};
-> +
->  &serial_0 {
->  	pinctrl-0 = <&uart0_bus_dual>;
->  	status = "okay";
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-> index d3c5cdeff47f..e8860b03fe89 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-> @@ -1560,6 +1560,15 @@
->  			samsung,syscon-phandle = <&pmu_system_controller>;
->  			samsung,cluster-index = <1>;
->  		};
-> +
-> +		pwm: pwm@103f0000 {
-> +			compatible = "samsung,exynos4210-pwm";
-
-Thanks for the patch. I think we should change existing practice for
-Samsung SoC and start adding dedicated specific compatible for such
-blocks. It's the same practice we follow in other SoCs. It's also
-recommendation I give to other platforms.
-
-Therefore this should be "samsung,exynosautov9-pwm",
-"samsung,exynos4210-pwm". Feel free to update other DTS as well.
-
-> +			reg = <0x103f0000 0x100>;
-> +			samsung,pwm-outputs = <0>, <1>, <2>, <3>;
-> +			#pwm-cells = <3>;
-> +			clocks = <&xtcxo>;
-
-This does not look like correct clock. Are you sure XTCXO goes to PWM?
+Hi Krzysztof
 
 
+On 23. 7. 14. 14:26, Krzysztof Kozlowski wrote:
+> On 14/07/2023 07:15, Jaewon Kim wrote:
+>> Add pwm node to support fan on exynosautov9-sadk board.
+>> PWM channel 3 of ExynosAutov9 is connected to fan for SoC cooling
+>> in SADK board.
+>>
+>> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+>> ---
+>>   arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts | 6 ++++++
+>>   arch/arm64/boot/dts/exynos/exynosautov9.dtsi     | 9 +++++++++
+>>   2 files changed, 15 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
+>> index 898c2fc345ed..e717bb1cad81 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
+>> +++ b/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
+>> @@ -50,6 +50,12 @@
+>>   	};
+>>   };
+>>   
+>> +&pwm {
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pwm_tout3>;
+>> +	status = "okay";
+>> +};
+>> +
+>>   &serial_0 {
+>>   	pinctrl-0 = <&uart0_bus_dual>;
+>>   	status = "okay";
+>> diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+>> index d3c5cdeff47f..e8860b03fe89 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+>> @@ -1560,6 +1560,15 @@
+>>   			samsung,syscon-phandle = <&pmu_system_controller>;
+>>   			samsung,cluster-index = <1>;
+>>   		};
+>> +
+>> +		pwm: pwm@103f0000 {
+>> +			compatible = "samsung,exynos4210-pwm";
+> Thanks for the patch. I think we should change existing practice for
+> Samsung SoC and start adding dedicated specific compatible for such
+> blocks. It's the same practice we follow in other SoCs. It's also
+> recommendation I give to other platforms.
+>
+> Therefore this should be "samsung,exynosautov9-pwm",
+> "samsung,exynos4210-pwm". Feel free to update other DTS as well.
 
-Best regards,
-Krzysztof
+Okay, I will update "samsung,exynosautov9-pwm" compatible in next version.
+
+
+>
+>> +			reg = <0x103f0000 0x100>;
+>> +			samsung,pwm-outputs = <0>, <1>, <2>, <3>;
+>> +			#pwm-cells = <3>;
+>> +			clocks = <&xtcxo>;
+> This does not look like correct clock. Are you sure XTCXO goes to PWM?
+>
+>
+>
+> Best regards,
+> Krzysztof
+>
+>
+
+Thanks
+
+Jaewon Kim
 
