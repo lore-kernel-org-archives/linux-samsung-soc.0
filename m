@@ -2,161 +2,95 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8918EC0015E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jul 2023 10:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75467C04A6A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jul 2023 14:05:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235355AbjGNK2I (ORCPT
+        id S235749AbjGNOF5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 14 Jul 2023 06:28:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39420 "EHLO
+        Fri, 14 Jul 2023 10:05:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236156AbjGNK1u (ORCPT
+        with ESMTP id S235685AbjGNOFz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Jul 2023 06:27:50 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F73330F9
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jul 2023 03:27:46 -0700 (PDT)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230714102744epoutp03d7fd120c9f67777f2f5178a14814d77e~xtRtw8Xsd1716217162epoutp03L
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jul 2023 10:27:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230714102744epoutp03d7fd120c9f67777f2f5178a14814d77e~xtRtw8Xsd1716217162epoutp03L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1689330464;
-        bh=pQwE7hGHNpUalJYbZMe/5YAh0YAAucCvwgefNMirZWU=;
-        h=From:To:In-Reply-To:Subject:Date:References:From;
-        b=q6Gy7aKF8NiOkHmczB/E9RyJy+ajnLr3te8NGFiqLbr343keSGdId4HJsGDKI9H3/
-         xZJKpDvqjiaOiVAPL3sHabBXcvQjP6xUtu9Ug5RJd5ltM5Etbo5JW7p7YVwyGtmLWF
-         OPJzkJ+6neCCmDflHfEQZuWO0ASzxxYpmWhbphZM=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20230714102743epcas5p29fb6154964c9050935ee3d4be4591a7f~xtRs1RL2x1464814648epcas5p2E;
-        Fri, 14 Jul 2023 10:27:43 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.174]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4R2SNF2XNSz4x9Pw; Fri, 14 Jul
-        2023 10:27:41 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0E.C6.06099.D1321B46; Fri, 14 Jul 2023 19:27:41 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230714102740epcas5p15e78092443564705be2e704e81c7bd16~xtRqTRVHR2484924849epcas5p1x;
-        Fri, 14 Jul 2023 10:27:40 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230714102740epsmtrp27376730554c05f50cef6d74adae0c8ec~xtRqSq4V71016210162epsmtrp2a;
-        Fri, 14 Jul 2023 10:27:40 +0000 (GMT)
-X-AuditID: b6c32a4b-d308d700000017d3-6f-64b1231de2dc
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        23.7A.64355.C1321B46; Fri, 14 Jul 2023 19:27:40 +0900 (KST)
-Received: from alimakhtar04 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230714102739epsmtip14cf56d2651b790f38de2e59f6f6db2db~xtRpBJMgf0144301443epsmtip1c;
-        Fri, 14 Jul 2023 10:27:39 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Conor Dooley'" <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-In-Reply-To: <20230713152926.82884-2-krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH 2/2] ARM: dts: samsung: s5pv210-smdkv210: correct
- ethernet reg addresses (split)
-Date:   Fri, 14 Jul 2023 15:57:38 +0530
-Message-ID: <020601d9b63d$d1629760$7427c620$@samsung.com>
+        Fri, 14 Jul 2023 10:05:55 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 688103580;
+        Fri, 14 Jul 2023 07:05:53 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id D2D961F747;
+        Fri, 14 Jul 2023 14:05:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1689343551;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WfJYvmV12IuAluB3xxpilLWbnnbGqme6TLcXjOvVTys=;
+        b=qOb3n5CgUl/kxztnUq+EG3DQjjAw7kU0gPdV+91ITOdnPR5Ruh2eoXbnOwJ1jIVbrkvdTa
+        deCwzyBOT7WtSLgxmEYtUL2D6Abfza5mkN4mZ6MTQTxFr/7E/I83KlVs+Z2kIa58M5H9F7
+        P152JWT0JFnKDyAikCQCl1wns3Y6bxU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1689343551;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WfJYvmV12IuAluB3xxpilLWbnnbGqme6TLcXjOvVTys=;
+        b=8SacSFrMGznoswC3DLlSI9eAQn481Dq8gZ3qFdvYfFr/5pVQhmCFltTS3Vrh5kJCPOvliz
+        +xMjlRGwh91cZzCQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 62C1E138F8;
+        Fri, 14 Jul 2023 14:05:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id XKdBFz9WsWRNEwAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Fri, 14 Jul 2023 14:05:51 +0000
+Date:   Fri, 14 Jul 2023 15:59:14 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Conor Dooley <conor@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Nishanth Menon <nm@ti.com>, linux-riscv@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        soc@kernel.org, workflows@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/3] Documentation/process: maintainer-soc: add clean
+ platforms profile
+Message-ID: <20230714135914.GI20457@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20230714084725.27847-1-krzysztof.kozlowski@linaro.org>
+ <20230714084725.27847-2-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQEZgCtotC3IzK/AHOMlie1EtymBAwFtUnfTAdIFZ7CxH4BiYA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMJsWRmVeSWpSXmKPExsWy7bCmlq6s8sYUg1fT+CzW7D3HZDH/yDlW
-        i72vt7JbbHp8jdXi8q45bBYzzu9jsmjde4Tdgd1j06pONo871/aweWxeUu/xeZNcAEtUtk1G
-        amJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0AFKCmWJOaVA
-        oYDE4mIlfTubovzSklSFjPziElul1IKUnAKTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyM69dv
-        MRUs5qn4MmECWwPjeq4uRk4OCQETiXvXl7F0MXJxCAnsZpRYdWYCG0hCSOATo8TGmzVwdu+V
-        ZJiGlxO+MkM07GSU2P3nODuE85JRYvntH0wgVWwCuhI7FreBTRIRmM0kcelaHojNKeAi0X37
-        JliNsECaxNfv69lBbBYBVYk97+aD1fMKWEqsmfmZGcIWlDg58wkLiM0sIC+x/e0cZogrFCR+
-        Pl3GCjHfSWL7tUvMEDXiEi+PHgE7SEKglUOif9lORogGF4ktr3uYIGxhiVfHt7BD2FISn9/t
-        BVrMAWR7SCz6IwURzpB4u3w9VKu9xIErc1hASpgFNCXW79KHWMUn0fv7CRNEJ69ER5sQRLWq
-        RPO7qywQtrTExO5uVgjbQ2Lp4t9skKC6yCix/eFatgmMCrOQfDkLyZezkHwzC2HzAkaWVYyS
-        qQXFuempxaYFxnmp5fDoTs7P3cQITp1a3jsYHz34oHeIkYmD8RCjBAezkgivyrZ1KUK8KYmV
-        ValF+fFFpTmpxYcYTYFBP5FZSjQ5H5i880riDU0sDUzMzMxMLI3NDJXEeV+3zk0REkhPLEnN
-        Tk0tSC2C6WPi4JRqYNr16d7ZK727FxQG/EtnKeDU63+o0b/ga8bpk0qd6TrXndU3mUzVUiip
-        +akc5j1vH/dBHbG1c+VPzw265XykVDPKyuKzxlFO0ctCJtFr+UTLb8w4VFTVLXXSLuYIJ2/4
-        85NFkxKUEw7/W66jqqxsXv+8eQb3hA3l/odasn90yUcYbT5fcCV77fmsotItMWvur5p80z7m
-        X/gTjY0bTDdud/y1KlzEtVjjpk/NxMbufebSZn/Xuhbzt23s07T5KyL8wY8h37HHw5Ir7iL7
-        aquJR0qubu+8uX1DYmPm42bzibesVZNXqbwyT93zxH76N1njS64fmD65bwqrnMzkkTfnZabD
-        kpbpVbMKp6Xl3oqqVmIpzkg01GIuKk4EAJQeG08mBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFLMWRmVeSWpSXmKPExsWy7bCSnK6M8sYUg+vLzS3W7D3HZDH/yDlW
-        i72vt7JbbHp8jdXi8q45bBYzzu9jsmjde4Tdgd1j06pONo871/aweWxeUu/xeZNcAEsUl01K
-        ak5mWWqRvl0CV8b167eYChbzVHyZMIGtgXE9VxcjJ4eEgInEywlfmbsYuTiEBLYzSrxc2sQK
-        kZCWuL5xAjuELSyx8t9zMFtI4DmjxJPZ+iA2m4CuxI7FbWwgzSICC5kkXl09yAZRdJZR4mNL
-        EIjNKeAi0X37JlMXIweHsECKxPwt8SBhFgFViT3v5oOV8wpYSqyZ+ZkZwhaUODnzCQtIObOA
-        nkTbRkaQMLOAvMT2t3OYIc5RkPj5dBnYmSICThLbr11ihqgRl3h59Aj7BEahWUgmzUKYNAvJ
-        pFlIOhYwsqxiFE0tKM5Nz00uMNQrTswtLs1L10vOz93ECI4OraAdjMvW/9U7xMjEwXiIUYKD
-        WUmEV2XbuhQh3pTEyqrUovz4otKc1OJDjNIcLErivMo5nSlCAumJJanZqakFqUUwWSYOTqkG
-        puqrj5unf162Yk+xpsHbmE2un6ZvPVbpfOuhxbxzz2c93rNdoLHotpf0yvvn/nntOby554lR
-        Abf4ogkvz6bs+Toprj5U+v7PWlOWth9f2Dep6e1Pqbza8l0n5KD/R74fr3Z1+j4Wn6N9NfvD
-        IqNJezbo7j/f5XQvfqbozk9xVgndHa5CFvxCWkGLF71SeePz2Cvx/weX/NScWVV28nMMXonf
-        WZFn/lhT+6ptkfzGsub3XLra8kz5zOe+n+1+P/FIJ9Nl5wsfnqy53J/26Uxhw1sN+9mC6xbL
-        Vh/vbcrs+B8xT3TT5hW2O3TCL6l9vfjmm8Oclb7d6SuFp1Zfntf09udc1+VLexY0+J4uq3we
-        LLBUiaU4I9FQi7moOBEAaG+7s/0CAAA=
-X-CMS-MailID: 20230714102740epcas5p15e78092443564705be2e704e81c7bd16
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230713152937epcas5p276fc33fef3b23cc02fea8b914a45e725
-References: <20230713152926.82884-1-krzysztof.kozlowski@linaro.org>
-        <CGME20230713152937epcas5p276fc33fef3b23cc02fea8b914a45e725@epcas5p2.samsung.com>
-        <20230713152926.82884-2-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230714084725.27847-2-krzysztof.kozlowski@linaro.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Fri, Jul 14, 2023 at 10:47:24AM +0200, Krzysztof Kozlowski wrote:
+> +Overview
+> +--------
+> +
+> +SoC platforms or subarchitectures follow all the rules from
+> +Documentation/process/maintainer-soc.rst.  However platforms referencing this
 
-
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Sent: Thursday, July 13, 2023 8:59 PM
-> To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>; Alim Akhtar
-> <alim.akhtar@samsung.com>; Rob Herring <robh+dt@kernel.org>; Conor
-> Dooley <conor+dt@kernel.org>; linux-arm-kernel@lists.infradead.org; linux-
-> samsung-soc@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org
-> Subject: [PATCH 2/2] ARM: dts: samsung: s5pv210-smdkv210: correct ethernet
-> reg addresses (split)
-> 
-> The davicom,dm9000 Ethernet Controller accepts two reg addresses.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
-
-Do you need to add fixes: to send to previous stable releases?
-In any case:
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-
-
->  arch/arm/boot/dts/samsung/s5pv210-smdkv210.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/samsung/s5pv210-smdkv210.dts
-> b/arch/arm/boot/dts/samsung/s5pv210-smdkv210.dts
-> index 6e26c67e0a26..901e7197b136 100644
-> --- a/arch/arm/boot/dts/samsung/s5pv210-smdkv210.dts
-> +++ b/arch/arm/boot/dts/samsung/s5pv210-smdkv210.dts
-> @@ -41,7 +41,7 @@ pmic_ap_clk: clock-0 {
-> 
->  	ethernet@a8000000 {
->  		compatible = "davicom,dm9000";
-> -		reg = <0xA8000000 0x2 0xA8000002 0x2>;
-> +		reg = <0xa8000000 0x2>, <0xa8000002 0x2>;
->  		interrupt-parent = <&gph1>;
->  		interrupts = <1 IRQ_TYPE_LEVEL_HIGH>;
->  		local-mac-address = [00 00 de ad be ef];
-> --
-> 2.34.1
-
-
+Just a drive by comment, references to highly relevant documents should
+be clickable, so :doc:`Documentation/process/maintainer-soc` , with
+exceptions like if the document has been referenced already.
