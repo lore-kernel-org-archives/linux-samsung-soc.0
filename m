@@ -2,110 +2,161 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 576EAEB64DA
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jul 2023 05:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E912EB64DC
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jul 2023 05:20:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234751AbjGNFDc (ORCPT
+        id S234851AbjGNFUo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 14 Jul 2023 01:03:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46264 "EHLO
+        Fri, 14 Jul 2023 01:20:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234745AbjGNFDb (ORCPT
+        with ESMTP id S234829AbjGNFUk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Jul 2023 01:03:31 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F5662D5F
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jul 2023 22:03:29 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-31441dfbf97so1692080f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jul 2023 22:03:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689311008; x=1691903008;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tX9dAg9Z2unJC3pHf2Z5DOZUouKHxctPcJNS/6UJayM=;
-        b=NDIMRZFXfKhI/GbAFRavn+QkEDqPzVXBMp4CkFHf86pBeSvyemf8lx+GUs0O3ypGqh
-         Dii/aJ820X0TTGUs14N+bu5DEoO5aRoelF2zkkkgDoDzp09ZYy5o6fdC2g8rQAytazvz
-         MrmtYDppmH61VZttMbX8KxfyZpzpN6smiHbtbL0b0cvmG3qyvUKdWUr4U9siA8HKKEAs
-         oJImnPKndiXIObEd+0Kz00owImyj3uWSH6CjusTXAOckDRKe2c0qC/WEel2ydryFz4Fo
-         P2Ns0YAoplh8FWJchQjSh3kmrIJpXml3d6J3Oga3k0A7bxMuM4yV2Pc84noKpm8R/cnK
-         TSuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689311008; x=1691903008;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tX9dAg9Z2unJC3pHf2Z5DOZUouKHxctPcJNS/6UJayM=;
-        b=EGtNp7csLaW+CbBW1Rt8mKd/rqv/PHtiz91y+Nrsk9LF2iMr7p8WItY0azXQ5qacCt
-         JdVIjaPM0WVLMjw6kUb1PJCZCtp3TmMafA02z/fkhWWvsrK8lnoSHLJt1oqVcvwjjZ7x
-         U83c6Jo2tzMZ/2tjGf9fZpVKs6iLVnzyVdWv/cbvsBcyJDXmjPOKuW1Dy6FYdiXFAlIV
-         7nw0kEoShmr1VHUATGTGNB/Ly1WFNEs8QYA9NiwtFaoS065NSFY9p1WrcAVbnfFpAjLV
-         Tj4uh+kvVPi5YqgNpTu2wPxyEfrSmUmSfmz+iOZmtXkql4AnKwr/QKJJZCIaztM1pz5V
-         GwlQ==
-X-Gm-Message-State: ABy/qLbb1okG/NjN3QQfX9LiwAhSIOmkixxWYDz8Ylo7Zjz9WQdrgX+x
-        4etPUj4DD/M5Y8InJ7jFvuahWIvL3lMR+XSOpsQ=
-X-Google-Smtp-Source: APBJJlGXloEV5t6PJTFoUlQh2npgiYtXnhIvDspCbHc4ipFaroX1UaF04+28soNd3GA8b3nthzAxvA==
-X-Received: by 2002:a05:6000:c3:b0:316:f00c:7682 with SMTP id q3-20020a05600000c300b00316f00c7682mr221875wrx.65.1689311008095;
-        Thu, 13 Jul 2023 22:03:28 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id j18-20020a5d4492000000b00315a1c160casm9690702wrq.99.2023.07.13.22.03.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jul 2023 22:03:27 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: mfd: Un-support Maxim and Samsung PMIC drivers
-Date:   Fri, 14 Jul 2023 07:03:13 +0200
-Message-Id: <20230714050313.8424-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 14 Jul 2023 01:20:40 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B02102D79
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jul 2023 22:20:31 -0700 (PDT)
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230714052026epoutp0330543d1b4bf0c9d95d92fe0559ad6581~xpFZx8erD2469024690epoutp03M
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jul 2023 05:20:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230714052026epoutp0330543d1b4bf0c9d95d92fe0559ad6581~xpFZx8erD2469024690epoutp03M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1689312026;
+        bh=HgQ1MLPChBeRR9u2P73bmaJa95URuggnT6VF1NFZi0Q=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=JyPr8RssLY52B0n037ypZPGohz6obYTJFsXoNj9n6VfGhd1m1v5pqbLlf3+scrpdA
+         /k8codzMhaqwFGqVfR/rD3LaMnGZvdNvqmtwzfcwhCIv67ucfWtXGlfhYrsUrSMLCx
+         Qr2a6jxoJPuDVR8+gfpM8fmOy4SNe7gBuR3HNiGw=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20230714052026epcas2p1cb17548c6bcdfafe38a129feed128ac8~xpFZZrydn1134511345epcas2p1s;
+        Fri, 14 Jul 2023 05:20:26 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.36.101]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4R2KYj4hvcz4x9Q5; Fri, 14 Jul
+        2023 05:20:25 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        62.F5.40133.91BD0B46; Fri, 14 Jul 2023 14:20:25 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+        20230714052025epcas2p46d5485a277c9f21ace14300dd9d7b4d8~xpFYn5g8-1875118751epcas2p4T;
+        Fri, 14 Jul 2023 05:20:25 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230714052025epsmtrp1ec16bc9ee2542943a04b8164b3626db9~xpFYnD_ot0608206082epsmtrp1m;
+        Fri, 14 Jul 2023 05:20:25 +0000 (GMT)
+X-AuditID: b6c32a46-4edb870000009cc5-cc-64b0db19ec1f
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        EA.92.14748.91BD0B46; Fri, 14 Jul 2023 14:20:25 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.55]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230714052024epsmtip22a0713a12c6a631e2368ad5af71bed45~xpFYTiwBm1519115191epsmtip2H;
+        Fri, 14 Jul 2023 05:20:24 +0000 (GMT)
+From:   Jaewon Kim <jaewon02.kim@samsung.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chanho Park <chanho61.park@samsung.com>,
+        Jaewon Kim <jaewon02.kim@samsung.com>
+Subject: [PATCH] arm64: dts: exynos: add pwm node for exynosautov9-sadk
+Date:   Fri, 14 Jul 2023 14:15:21 +0900
+Message-Id: <20230714051521.22720-1-jaewon02.kim@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFKsWRmVeSWpSXmKPExsWy7bCmqa7k7Q0pBk/bFC0ezNvGZnF5v7bF
+        mr3nmCzmHznHarGj4QirRd+Lh8wWmx5fY7W4vGsOm8WM8/uYLFr3HmF34PLYtKqTzePOtT1s
+        HpuX1Hv0bVnF6PF5k1wAa1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5i
+        bqqtkotPgK5bZg7QTUoKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpScAvMCveLE3OLS
+        vHS9vNQSK0MDAyNToMKE7Iyzv3+wFezgrni+7QlzA+Nhzi5GTg4JAROJJZsbmboYuTiEBHYw
+        SvzevoodJCEk8IlR4t06YYjEN0aJg/8WMMF0rPj3jhEisZdR4ti/KewQzkdGie1/JrOAVLEJ
+        aEt8X7+YFSQhIrCGUWL1p80sIA6zwE1Gid3HrgE5HBzCAu4Smw86gzSwCKhKPLj5lxnE5hWw
+        lZjQ9JURYp28xOoNB5gh7EPsEocemoC0Sgi4SEw/yQcRFpZ4dXwLO4QtJfGyvw3KzpZon/6H
+        FcKukLi4YTYbhG0sMetZOyPIGGYBTYn1u/QhJipLHLkFdj2zAJ9Ex+G/7BBhXomONiGIRjWJ
+        +1PPQQ2RkZh0ZCU0SDwkHvc9ZYSEW6zE9r7DjBMYZWchzF/AyLiKUSy1oDg3PbXYqMAIHkXJ
+        +bmbGMGJTMttB+OUtx/0DjEycTAeYpTgYFYS4VXZti5FiDclsbIqtSg/vqg0J7X4EKMpMLAm
+        MkuJJucDU2leSbyhiaWBiZmZobmRqYG5kjjvvda5KUIC6YklqdmpqQWpRTB9TBycUg1MXuUz
+        zhQLWelov3608rN1317Ne9OmtfwPmZS27O3XdUG7g+reLF6jmjHJu2XtpRzbTGvB1nVPz5/Z
+        d6I1eZ2gft3l9ftWtabUZE3yOtZovbY48YyU6sYzipz1MryXOx4Kf5smUffA7c2kaevu9vpX
+        mPG7PUp6qPQ/+Olea6NHe6N2BNTOdbFZNSf5vrH1Wg33g58ZV97ZrR+1ya67945j2FG7v86v
+        97BucL9Q7zurRKYtW0LaffP9zoNsIvbXPNyVP2z/4XDW0eDh2SuvDnu7KoVMelOsER9fM2Xb
+        +ePikYHHdx91tlpU5iduvPRM83GVac8Yb/k2TE3lV3T6I3X0isjC1c5rpmxekVvw/Hi8shJL
+        cUaioRZzUXEiAC5opjHtAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphluLIzCtJLcpLzFFi42LZdlhJXlfy9oYUg9v3mC0ezNvGZnF5v7bF
+        mr3nmCzmHznHarGj4QirRd+Lh8wWmx5fY7W4vGsOm8WM8/uYLFr3HmF34PLYtKqTzePOtT1s
+        HpuX1Hv0bVnF6PF5k1wAaxSXTUpqTmZZapG+XQJXxtnfP9gKdnBXPN/2hLmB8TBnFyMnh4SA
+        icSKf+8YQWwhgd2MEmv7jCDiMhLLn/WxQdjCEvdbjrB2MXIB1bxnlPj/dgEzSIJNQFvi+/rF
+        YAkRgXWMEi3fXjKCOMwC9xkl9my9C+RwcAgLuEtsPugM0sAioCrx4OZfsGZeAVuJCU1fGSE2
+        yEus3nCAeQIjzwJGhlWMkqkFxbnpucmGBYZ5qeV6xYm5xaV56XrJ+bmbGMEBpqWxg/He/H96
+        hxiZOBgPMUpwMCuJ8KpsW5cixJuSWFmVWpQfX1Sak1p8iFGag0VJnNdwxuwUIYH0xJLU7NTU
+        gtQimCwTB6dUA5P0E3XJtUZ65z+qXBLZ+oSx0UfU/lFvwv0p6Swid+T+Z7Wp90UZWWs6LMsz
+        /OA8efuBn4p8yRLbSmVaFvydaSp32KqURX2G9YNttsI37fq8n5ZKZLqu+OEnZLTm8eqNfzRj
+        Xwb++lm1keORhZqddX5qxN48nevCzx10p63otJI8rsqXXf9TIcVZV33JsciDfx/J3t3Z52N4
+        w82Oz7Zt5tVPF43uvux9mP64yVvDv2FtrN2OCkux/8yXI79LXltexBjzOkSw2nCl49PL3h6M
+        T1wV7nVKqDztWGlcKuxdpr0n/8nC5d0nXh/aUFSuf3DC2+Ne8+ZcYGGb/dVsfmeh1YL8fbtM
+        azuTdp7N3/akTomlOCPRUIu5qDgRAPCfAVyfAgAA
+X-CMS-MailID: 20230714052025epcas2p46d5485a277c9f21ace14300dd9d7b4d8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230714052025epcas2p46d5485a277c9f21ace14300dd9d7b4d8
+References: <CGME20230714052025epcas2p46d5485a277c9f21ace14300dd9d7b4d8@epcas2p4.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Since few years no one is really paid to support drivers for: Maxim
-MUICs/PMICs for Exynos based boards and Samsung PMICs.  Correct the
-status to keep them as maintained.
+Add pwm node to support fan on exynosautov9-sadk board.
+PWM channel 3 of ExynosAutov9 is connected to fan for SoC cooling
+in SADK board.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
 ---
- MAINTAINERS | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts | 6 ++++++
+ arch/arm64/boot/dts/exynos/exynosautov9.dtsi     | 9 +++++++++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ab839af24fc3..0b8cd03f5e52 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12840,7 +12840,7 @@ F:	drivers/power/supply/max77976_charger.c
- MAXIM MUIC CHARGER DRIVERS FOR EXYNOS BASED BOARDS
- M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- L:	linux-pm@vger.kernel.org
--S:	Supported
-+S:	Maintained
- B:	mailto:linux-samsung-soc@vger.kernel.org
- F:	Documentation/devicetree/bindings/power/supply/maxim,max14577.yaml
- F:	Documentation/devicetree/bindings/power/supply/maxim,max77693.yaml
-@@ -12851,7 +12851,7 @@ MAXIM PMIC AND MUIC DRIVERS FOR EXYNOS BASED BOARDS
- M:	Chanwoo Choi <cw00.choi@samsung.com>
- M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- L:	linux-kernel@vger.kernel.org
--S:	Supported
-+S:	Maintained
- B:	mailto:linux-samsung-soc@vger.kernel.org
- F:	Documentation/devicetree/bindings/*/maxim,max14577.yaml
- F:	Documentation/devicetree/bindings/*/maxim,max77686.yaml
-@@ -18809,7 +18809,7 @@ SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS
- M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- L:	linux-kernel@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
--S:	Supported
-+S:	Maintained
- B:	mailto:linux-samsung-soc@vger.kernel.org
- F:	Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml
- F:	Documentation/devicetree/bindings/mfd/samsung,s2m*.yaml
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
+index 898c2fc345ed..e717bb1cad81 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
++++ b/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
+@@ -50,6 +50,12 @@
+ 	};
+ };
+ 
++&pwm {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pwm_tout3>;
++	status = "okay";
++};
++
+ &serial_0 {
+ 	pinctrl-0 = <&uart0_bus_dual>;
+ 	status = "okay";
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+index d3c5cdeff47f..e8860b03fe89 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+@@ -1560,6 +1560,15 @@
+ 			samsung,syscon-phandle = <&pmu_system_controller>;
+ 			samsung,cluster-index = <1>;
+ 		};
++
++		pwm: pwm@103f0000 {
++			compatible = "samsung,exynos4210-pwm";
++			reg = <0x103f0000 0x100>;
++			samsung,pwm-outputs = <0>, <1>, <2>, <3>;
++			#pwm-cells = <3>;
++			clocks = <&xtcxo>;
++			clock-names = "timers";
++		};
+ 	};
+ };
+ 
 -- 
-2.34.1
+2.17.1
 
