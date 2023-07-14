@@ -2,96 +2,77 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F41C001DE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jul 2023 15:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6FDEB64DC
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jul 2023 15:37:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236281AbjGNPEf (ORCPT
+        id S235430AbjGNPhl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 14 Jul 2023 11:04:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38668 "EHLO
+        Fri, 14 Jul 2023 11:37:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236293AbjGNPEf (ORCPT
+        with ESMTP id S236016AbjGNPhd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Jul 2023 11:04:35 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCD8F2700;
-        Fri, 14 Jul 2023 08:04:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-        bh=qkCLhchmFE6Ae0iC8ZYvyTVa+UOqDTQhu4Aq6+1S4Xw=; b=lBOjZeMIMEUpxXjADFtB3DDa77
-        Sssnp153TrRmreFV3fpKhKKAR9RmFUQ9/sx86lLWLcSt7JvFsYwaS6EmQ4ah9MMlG8HtPhRhcJ15g
-        TbkbeNO1mo6++2ARehIbb7ptpTZ1Kq8snGkUvGhpD4FHJXbE0cDfNYrIgaZ/n+xI0fd8Ym7b105kv
-        S/ktaDSWFC+d9pDEBMJDxwR8OJlZ/wTJ9i/sPeVPc/gD5kZXoVoqPNpr9UFHH1p0Q57kMavNI4tqB
-        +dFoIHzlP8ZzxjophTo2TZSsuZmEIjnWNNAa1rp2hmlGpXNU0hrvmNGFX047YrfCnbxpzkHUUplhV
-        KdH/1tqA==;
-Received: from [2601:1c2:980:9ec0::2764]
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qKKL7-006TC1-01;
-        Fri, 14 Jul 2023 15:04:13 +0000
-Message-ID: <ccf1e027-1f36-3dfb-af65-c7eea27c89cb@infradead.org>
-Date:   Fri, 14 Jul 2023 08:04:11 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 1/3] MAINTAINERS: soc: reference maintainer profile
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Conor Dooley <conor@kernel.org>,
+        Fri, 14 Jul 2023 11:37:33 -0400
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D02F63AAC;
+        Fri, 14 Jul 2023 08:37:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1689349047;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=iB4MLkaNbIMlX2miQHHC4OLh5yJC/IsGcGP+bRXSFjA=;
+        b=mKKxX92whhko9sWa9pykrYKsScSbbnnwy1Mf7cvAx61n5Cltg0vHLy+Lq4M0sTvYEawirt
+        bIkI7b0gIgSsHeEMo+GUCcA/4B/5VUl2mZWVBrodQj1xNx2bYYYbdDPXNLG/OTd3vpsenB
+        zACSXIRjtQfqhAw31Vy79fbwdyK92y0=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Nishanth Menon <nm@ti.com>, linux-riscv@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        soc@kernel.org, workflows@vger.kernel.org,
-        linux-doc@vger.kernel.org
-References: <20230714084725.27847-1-krzysztof.kozlowski@linaro.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20230714084725.27847-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>,
+        Sam Ravnborg <sam@ravnborg.org>, stable@vger.kernel.org
+Subject: [PATCH] ARM: dts: exynos/i9100: Fix LCD screen's physical size
+Date:   Fri, 14 Jul 2023 17:37:20 +0200
+Message-Id: <20230714153720.336990-1-paul@crapouillou.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam: Yes
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+The previous values were completely bogus, and resulted in the computed
+DPI ratio being much lower than reality, causing applications and UIs to
+misbehave.
 
+The new values were measured by myself with a ruler.
 
-On 7/14/23 01:47, Krzysztof Kozlowski wrote:
-> Mention the SoC maintainer profile in P: entry.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Sam Ravnborg <sam@ravnborg.org>
+Fixes: 8620cc2f99b7 ("ARM: dts: exynos: Add devicetree file for the Galaxy S2")
+Cc: <stable@vger.kernel.org> # v5.8+
+---
+ arch/arm/boot/dts/samsung/exynos4210-i9100.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Yes, please.
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f646ba70a01b..b61289fa7891 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1558,6 +1558,7 @@ M:	Olof Johansson <olof@lixom.net>
->  M:	soc@kernel.org
->  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->  S:	Maintained
-> +P:	Documentation/process/maintainer-soc.rst
->  C:	irc://irc.libera.chat/armlinux
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git
->  F:	Documentation/process/maintainer-soc.rst
-
+diff --git a/arch/arm/boot/dts/samsung/exynos4210-i9100.dts b/arch/arm/boot/dts/samsung/exynos4210-i9100.dts
+index 37cd4dde53e4..a9ec1f6c1dea 100644
+--- a/arch/arm/boot/dts/samsung/exynos4210-i9100.dts
++++ b/arch/arm/boot/dts/samsung/exynos4210-i9100.dts
+@@ -207,8 +207,8 @@ lcd@0 {
+ 			power-on-delay = <10>;
+ 			reset-delay = <10>;
+ 
+-			panel-width-mm = <90>;
+-			panel-height-mm = <154>;
++			panel-width-mm = <56>;
++			panel-height-mm = <93>;
+ 
+ 			display-timings {
+ 				timing {
 -- 
-~Randy
+2.40.1
+
