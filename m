@@ -2,55 +2,54 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51AE5EB64DC
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jul 2023 08:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3279BC04A6A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jul 2023 08:47:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235274AbjGNIrp (ORCPT
+        id S235399AbjGNIrq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 14 Jul 2023 04:47:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53948 "EHLO
+        Fri, 14 Jul 2023 04:47:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235628AbjGNIrg (ORCPT
+        with ESMTP id S235610AbjGNIrd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Jul 2023 04:47:36 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD60826B1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jul 2023 01:47:34 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-51fdf291330so1967819a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jul 2023 01:47:34 -0700 (PDT)
+        Fri, 14 Jul 2023 04:47:33 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D8D226A5
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jul 2023 01:47:30 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-4fc8049fd8bso2707631e87.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jul 2023 01:47:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689324453; x=1691916453;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xfnzqz2i7m5w9zMzOs0RqunR9vvDiHlmabhYNl07DtU=;
-        b=QRTexeIsaQuwzZmHHH1qWjMfaVgQohb1jM0TSX3h4pKx34oQYn6cbwXTCromOfGYcL
-         Tta5/ZU3WfrIC8LZEwrhwIv6Fl5UViGAHoX4Z40wOK0wfmiDGYo6M1P6RYRh92tvEm1A
-         lgjoNI1FK4t3XozduDsu/mzKG2HtaKxRew6IKwKC+SHAtHe2meEXKda8QekvCoagcIO6
-         KTWXFl0cFonQ/GYkBq3XXft+Mu0GybbpwqYcmIi8CIbvPujfORGmzQPb5wgTdps6gVYC
-         XOQqon7bQHYJpakPB9YpjonH7WCwfyozV/VhsVBrmvQZoqqXDWTApIdqBkRxZJmpK9Mo
-         jkEA==
+        d=linaro.org; s=google; t=1689324449; x=1691916449;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=R8aePuJNV+aTV/P2+d1zYFy1JBvn+SWePZ58r04GmFw=;
+        b=Yv7wNCignVQeQHx68i0XxK3/6GnIxCb5iM+IxeTjplbMgzS5ZtFIEB/aBTEjPcsGQo
+         K/mpiJeUBlNHm0kHoZBkiohGUSSm9+Mi5FNldcjIcQ+SQT40x7B4nquXzDbdPBQ2XsK8
+         qtlpvESK5DwpFP1JToV9AYRDC1pzj2EjYxTpiAP/XHu4om4/Bj3gDlzec+IDfba3rAf9
+         CbRJlFJiSnhiK3K4BfH96M9QQyyC0o7KoBemZildDs7MP1wT6ZoOSuJ/EmNIqxeFWmrE
+         JqqZ/T8CUFWgiljdQRkmtema9Scy91H9ikRBceYOsDNjn+eqfm4T+VSrYT6c4xbIfNij
+         53Pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689324453; x=1691916453;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xfnzqz2i7m5w9zMzOs0RqunR9vvDiHlmabhYNl07DtU=;
-        b=BMd94ZcOVlLZtRbCmyMnCRA6oQYLj95AgcNMsRV7msB3HgOhdaZXNfCwKTHqFN/JYn
-         0KkqCYNb5rlEaUthpyQ5qXWTnTJmzvg7303lTcLSdMYpRkeJaENewT+c9TDsOzskSU3g
-         SpMARiZ7O2j5BEO0fmzKR9JGWRyKJJnvw3OiaoXKXhBDtV1pjescJm0XZDsPgNJA9HsA
-         E9GZJtTTR0/BdlEvpxwO7vHbdOAq8dq3a1iI6KUg4VMcPIYVSTa6s04M/Jq2yTypFOfL
-         gDe2MmuD9O2LDdMuvtHTwZEnmAYxmjT9rU337NwQ7J2Uhe4/DhrGiUq37Coj1tB8Xam/
-         DFYw==
-X-Gm-Message-State: ABy/qLaSfJEVN1XO6mQwP+acCIIKTG/dD+KLEpEOg9kTVbUxLKw5j/FK
-        5wY+BdxchugqEcWZV7jwx+5EdA==
-X-Google-Smtp-Source: APBJJlEuf4i2pzMRoEofkzTMljBMlpAzj4iNGEl1v3hbp1MIkjUaSwOo0LcuFm7jwuef4HKv2BzhmA==
-X-Received: by 2002:aa7:d359:0:b0:51e:4bd6:ce4a with SMTP id m25-20020aa7d359000000b0051e4bd6ce4amr4058266edr.11.1689324453302;
-        Fri, 14 Jul 2023 01:47:33 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689324449; x=1691916449;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R8aePuJNV+aTV/P2+d1zYFy1JBvn+SWePZ58r04GmFw=;
+        b=A1laGR57NF+1UljsSQg9STb3ZuJszqhtJXtdSjKwDgve+IHiL3iQLEKrMbWxNvhS4I
+         gHb39m62pbQdqUNfY1kPpbEPujEpAti5ODMfSz354TBwWwBuxKNPiSOdDhy0d6FgltDB
+         MoyLfYnxrZDz7aMtVTOvd2QVKk8kin1KPf2+35D1/p1+0ttfczEH2zjZ8++SUDxxQ6LO
+         3l0v/U5ddD6hUlPIMJFafBHNXIaVZ/aE6kH8x7zhScJv/3z9Ot247XOe1xAC3eGFyWUp
+         O9QQvFw4YTwB7a36wjdbjOQ8JpIFohGHTh7rgUy44CJtKmmLq1wRWZdNka/A9DbHHTj1
+         R2ew==
+X-Gm-Message-State: ABy/qLb0W97B3MWq/uEEu16MfPm2CKny4Ss9VKV5qBjN3CMoWh0JmEOH
+        v+EPG90X9G6DIVzuwQkju2kOqg==
+X-Google-Smtp-Source: APBJJlFjG7pdcW2yr/b2fsXuHegMrNjuBRaWxyLYGHZw7UwjJRO5qo5VVUqBvzsKR8P2U1WefMFewA==
+X-Received: by 2002:a05:6512:33c8:b0:4fb:7666:3bc0 with SMTP id d8-20020a05651233c800b004fb76663bc0mr4290710lfg.47.1689324448797;
+        Fri, 14 Jul 2023 01:47:28 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id w24-20020aa7cb58000000b0051e0f8aac74sm5480662edt.8.2023.07.14.01.47.31
+        by smtp.gmail.com with ESMTPSA id w24-20020aa7cb58000000b0051e0f8aac74sm5480662edt.8.2023.07.14.01.47.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jul 2023 01:47:32 -0700 (PDT)
+        Fri, 14 Jul 2023 01:47:28 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Conor Dooley <conor@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -70,44 +69,35 @@ To:     Conor Dooley <conor@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         soc@kernel.org, workflows@vger.kernel.org,
         linux-doc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 3/3] MAINTAINER: samsung: document dtbs_check requirement for Samsung
-Date:   Fri, 14 Jul 2023 10:47:25 +0200
-Message-Id: <20230714084725.27847-3-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/3] MAINTAINERS: soc: reference maintainer profile
+Date:   Fri, 14 Jul 2023 10:47:23 +0200
+Message-Id: <20230714084725.27847-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230714084725.27847-1-krzysztof.kozlowski@linaro.org>
-References: <20230714084725.27847-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Samsung ARM/ARM64 SoCs (including legacy S3C64xx and S5PV210) are also
-expected not to bring any new dtbs_check warnings.  In fact this have
-been already enforced and tested since few release.
+Mention the SoC maintainer profile in P: entry.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
----
-
-Previous idea was here:
-https://lore.kernel.org/all/20230712084131.127982-1-krzysztof.kozlowski@linaro.org/
 ---
  MAINTAINERS | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 7405fb6e38c3..9a539af4d775 100644
+index f646ba70a01b..b61289fa7891 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -2632,6 +2632,7 @@ R:	Alim Akhtar <alim.akhtar@samsung.com>
+@@ -1558,6 +1558,7 @@ M:	Olof Johansson <olof@lixom.net>
+ M:	soc@kernel.org
  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-samsung-soc@vger.kernel.org
  S:	Maintained
-+P:	Documentation/process/maintainer-soc-clean-dts.rst
- Q:	https://patchwork.kernel.org/project/linux-samsung-soc/list/
- B:	mailto:linux-samsung-soc@vger.kernel.org
- C:	irc://irc.libera.chat/linux-exynos
++P:	Documentation/process/maintainer-soc.rst
+ C:	irc://irc.libera.chat/armlinux
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git
+ F:	Documentation/process/maintainer-soc.rst
 -- 
 2.34.1
 
