@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92512C00528
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Jul 2023 22:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB9DC04A94
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Jul 2023 22:08:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230111AbjGPWIQ (ORCPT
+        id S230243AbjGPWIR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 16 Jul 2023 18:08:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36040 "EHLO
+        Sun, 16 Jul 2023 18:08:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231395AbjGPWII (ORCPT
+        with ESMTP id S231236AbjGPWIF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 16 Jul 2023 18:08:08 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B0BAD9;
-        Sun, 16 Jul 2023 15:08:07 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2b6ff1a637bso54690981fa.3;
-        Sun, 16 Jul 2023 15:08:06 -0700 (PDT)
+        Sun, 16 Jul 2023 18:08:05 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94D74DD;
+        Sun, 16 Jul 2023 15:08:04 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2b9338e4695so16638801fa.2;
+        Sun, 16 Jul 2023 15:08:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689545285; x=1692137285;
+        d=gmail.com; s=20221208; t=1689545283; x=1692137283;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ugXpMr+bRzbd6kwqs4nSMZRO9LhGaT1WWKpkMn+sESs=;
-        b=J902K7sDSU4Rt4aB4MsWvcY7K4BoVpmEOVfKM068i+rc9mkd96UlUVOF4S/Z7c5SIO
-         d30NDPEq+6evbgh0oGShHZWunL6Mi+GlBhHkvxZnAlXhfHLG35Jh6PuKnJvqOvBwbfG1
-         JCEg+vg5y8ml4AtGDXo/+/S0S/QSwZYmRCVaMk5UEduEpjik0h7Fl8PUAjWTKSolNAfT
-         eXoZujNz1peqDAWrcO9ZzCzetS9S4Xu+YeHwLxHr35g14wH1GGTQ06BdHaZU4mMhNsxX
-         BsDTKjJJ14L0CkmBbW0Q2xFbkBzaPrxTLHhfNVVM+1+AUU8Jcpsf9yj3NOkZe8EScnV/
-         LJEg==
+        bh=iHngaqCrQ0FneY3+XbEOWJuLApZy3bmRMZLz2KpBf1c=;
+        b=L4GI92GU6vM/1ZQXffG1IjEVmcWipHn8WGI40hwXgxkf8kvrWinRd2GroRzEj2qN0c
+         xBuxSiY1Fo8mrcc3Ter7T7tSiuqxQHX5YX3GklL3bCI6z8eN29/rOvtw/0oSzv+XHg5h
+         kcHxTN/flFBRJAM/w0HDVncdHSz7snH42641QDKTt3fAW77sQxIFWU9z0jsaBPwflaQU
+         2l4lZT7TSpTBq2QWh6Zj2FOSTP3jJl+Q+tR0j1XizpLMSgk6Y55leg4xEcO3dx5sfvcx
+         XzmTGx6+U/BmAfqSYorOSPLZVF1NNt5peOAZ7OGi84VK3SyNVSNgV2UXynPSsvnpEGc/
+         5Rrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689545285; x=1692137285;
+        d=1e100.net; s=20221208; t=1689545283; x=1692137283;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ugXpMr+bRzbd6kwqs4nSMZRO9LhGaT1WWKpkMn+sESs=;
-        b=NhUgVPo51445ZbyTp0TqO6eeXTHqB4XqaOnh5HlUUbvpTzSfffGr9yOKX2r3BfkFQ8
-         HgqhsoXD+GM9a4+t8BnVUp+7yE0Ou3Aznpdv7Hg05jrH3YfWaw6mIeQBbDT5gxXNh6XB
-         XI6McukeBynoWFnEjvz7ItgS7zfSMc1BAOYIcz083JC/HeA5lnowZBaaVoU6JLgQhY1b
-         SzxaY7vH3CDbDS3u+WzhYtyoumfHRq79QMW0l4g8zhT9UbWopp+oPU1jiGJmsk0cHjk8
-         1DG/B1sr3draBy11duHd+SXy2fBpVcHRO1hdlaA2whq1fp3eOjMMfFvMsjz6q8cRSj4A
-         gItw==
-X-Gm-Message-State: ABy/qLZ1xgqujRHtLWw18h+zYZG9AKpS+I3BcZSIoDAOXeh0v0fUpzCy
-        l6UpPSA1lRfxHrctjBNLaFY=
-X-Google-Smtp-Source: APBJJlFAXsafN5wXf769iQpJt4tz/9VY6FOtsLGjhkgPZIU8mp5Jeyq1oC/JxcKV8bqnZFNFtp8OOQ==
-X-Received: by 2002:a05:6512:3c92:b0:4fa:5e76:7ad4 with SMTP id h18-20020a0565123c9200b004fa5e767ad4mr8282328lfv.10.1689545285145;
-        Sun, 16 Jul 2023 15:08:05 -0700 (PDT)
+        bh=iHngaqCrQ0FneY3+XbEOWJuLApZy3bmRMZLz2KpBf1c=;
+        b=OFsiVsZ8REL7LtpYRRvs/N97cz4Jx8vWrLS4drSj1z+6whtOhH4aCkg8yZfCxt4ATX
+         AhSb2Rw5WFZwtBDV2/r08bnt1GsTKX023kQDYnYjYIS2OLxjeDXh+TZp9zX+H+FLAvmY
+         AyMRI6aps6s1RKhIm8JyZ5demhycwCXekJZDKnWGy0V+oBBo2qznaem4lAAfXlZigisD
+         bedbpDcBIHTfxCJUWcuQMAUGA8/srCPJOeDtMW5bDoLRSOQU1I57M8z5+Y6XDTU0+1G9
+         BomSVwOK5x0e8FoZcLZu90HjtMwFebYl3VEc2+PVqGnFsV4pkqS9/aewuKxexNJBBL/H
+         SR3Q==
+X-Gm-Message-State: ABy/qLbX9b7BICOOdisSFMWh01tCM3HejIP60QIhzfWCsf9B9ZhZVEt2
+        ecNKY+aRBedutbL8jW+NwcI=
+X-Google-Smtp-Source: APBJJlGWtrMFmsvq6yAnusvLwDBJwvhynCdN12nafWVo6Zc0QEnz1uUV5LT5R0XhkZ/t+4yNJpF/Sg==
+X-Received: by 2002:a05:6512:340b:b0:4fb:9f24:bba9 with SMTP id i11-20020a056512340b00b004fb9f24bba9mr8627430lfr.5.1689545282702;
+        Sun, 16 Jul 2023 15:08:02 -0700 (PDT)
 Received: from localhost.localdomain ([62.122.67.26])
-        by smtp.gmail.com with ESMTPSA id h24-20020a197018000000b004fb9c625b4asm2464091lfc.210.2023.07.16.15.08.04
+        by smtp.gmail.com with ESMTPSA id h24-20020a197018000000b004fb9c625b4asm2464091lfc.210.2023.07.16.15.08.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Jul 2023 15:08:04 -0700 (PDT)
+        Sun, 16 Jul 2023 15:08:02 -0700 (PDT)
 From:   Markuss Broks <markuss.broks@gmail.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Markuss Broks <markuss.broks@gmail.com>,
@@ -60,9 +60,9 @@ Cc:     Markuss Broks <markuss.broks@gmail.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/7] ARM: dts: exynos: k3g: Add touchkeys support
-Date:   Mon, 17 Jul 2023 01:05:06 +0300
-Message-ID: <20230716220644.22158-6-markuss.broks@gmail.com>
+Subject: [PATCH 2/7] ARM: dts: exynos: k3g: Add GPIO keys support
+Date:   Mon, 17 Jul 2023 01:05:04 +0300
+Message-ID: <20230716220644.22158-4-markuss.broks@gmail.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230716220644.22158-1-markuss.broks@gmail.com>
 References: <20230716220644.22158-1-markuss.broks@gmail.com>
@@ -72,59 +72,101 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This device has touch keys that are compatible with those
-installed on Samsung TM2 dev board.
+Add the four physical buttons support, volume buttons have
+external pull-up resistors.
 
 Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
 ---
- arch/arm/boot/dts/exynos5422-samsung-k3g.dts | 32 ++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ arch/arm/boot/dts/exynos5422-samsung-k3g.dts | 60 ++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos5422-samsung-k3g.dts b/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
-index 582faedd6aab..b3576a745054 100644
+index 1a11a6993ba7..c3e006dc34ea 100644
 --- a/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
 +++ b/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
-@@ -104,6 +104,33 @@ battery@36 {
- 		};
- 	};
+@@ -8,6 +8,7 @@
+ /dts-v1/;
+ #include <dt-bindings/clock/samsung,s2mps11.h>
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include "exynos5800.dtsi"
+ #include "exynos5422-cpus.dtsi"
+@@ -21,6 +22,45 @@ / {
  
-+	i2c-touchkey {
-+		compatible = "i2c-gpio";
-+
-+		sda-gpios = <&gpd1 4 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		scl-gpios = <&gpd1 5 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <2>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		touchkey@20 {
-+			compatible = "cypress,tm2-touchkey";
-+			reg = <0x20>;
-+
-+			interrupt-parent = <&gpy7>;
-+			interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&touchkey_irq>;
-+
-+			vcc-supply = <&ldo38_reg>;
-+			vdd-supply = <&ldo30_reg>;
-+
-+			linux,keycodes = <KEY_APPSELECT KEY_BACK>;
-+		};
+ 	aliases {
+ 		mmc0 = &mmc_0;
++		mmc1 = &mmc_1;
 +	};
 +
- 	tsp_vdd: regulator-tsp-vdd-en {
- 		compatible = "regulator-fixed";
- 		regulator-name = "tsp_vdd_en";
-@@ -742,6 +769,11 @@ power_gpio: power-key-pins {
- 		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&power_gpio &volume_up_gpio &volume_down_gpio &home_gpio>;
++
++		key-volume-up {
++			label = "Volume Up";
++			gpios = <&gpx0 2 GPIO_ACTIVE_LOW>;
++			linux,input-type = <1>;
++			linux,code = <KEY_VOLUMEUP>;
++			debounce-interval = <15>;
++		};
++
++		key-volume-down {
++			label = "Volume Down";
++			gpios = <&gpx0 3 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_VOLUMEDOWN>;
++			debounce-interval = <15>;
++		};
++
++		key-home {
++			label = "Home";
++			gpios = <&gpx0 5 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_HOMEPAGE>;
++			wakeup-source;
++			debounce-interval = <15>;
++		};
++
++		key-power {
++			label = "Power";
++			gpios = <&gpx2 2 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_POWER>;
++			wakeup-source;
++			debounce-interval = <15>;
++		};
  	};
  
-+	touchkey_irq: touchkey-irq-pins {
-+		samsung,pins = "gpy7-1";
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
+ 	memory@20000000 {
+@@ -641,6 +681,21 @@ &mmc_1 {
+ };
+ 
+ &pinctrl_0 {
++	volume_up_gpio: volume-up-pins {
++		samsung,pins = "gpx0-2";
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>; /* External pull up */
++	};
++
++	volume_down_gpio: volume-down-pins {
++		samsung,pins = "gpx0-3";
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>; /* External pull up */
++	};
++
++	home_gpio: home-key-pins {
++		samsung,pins = "gpx0-5";
++		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
++	};
++
+ 	s2mps11_irq: s2mps11-irq-pins {
+ 		samsung,pins = "gpx0-7";
+ 		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
+@@ -653,6 +708,11 @@ touch_irq: touch-irq-pins {
+ 		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
+ 	};
+ 
++	power_gpio: power-key-pins {
++		samsung,pins = "gpx2-2";
++		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
 +	};
 +
  	wlan_reset: wlan-reset {
