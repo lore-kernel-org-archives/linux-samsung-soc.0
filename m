@@ -2,105 +2,176 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A91BC001DE
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Jul 2023 17:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92352EB64DD
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Jul 2023 22:08:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229468AbjGPRiz (ORCPT
+        id S229986AbjGPWIQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 16 Jul 2023 13:38:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33438 "EHLO
+        Sun, 16 Jul 2023 18:08:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229687AbjGPRiy (ORCPT
+        with ESMTP id S231163AbjGPWIE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 16 Jul 2023 13:38:54 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0EE5E5E
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jul 2023 10:38:52 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-51e29ede885so5331548a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jul 2023 10:38:52 -0700 (PDT)
+        Sun, 16 Jul 2023 18:08:04 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 591F1FE;
+        Sun, 16 Jul 2023 15:08:03 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4fb7373dd35so6304751e87.1;
+        Sun, 16 Jul 2023 15:08:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689529131; x=1692121131;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Dnj2dm4vAkRY2ym0OVHyApOFbv82RoBY1nhPV64txIc=;
-        b=ca2vSsFEY38zKN0EbYp6domY97w81vz0hIi07dVBT5hifthGJze3JUOsxydAMxe/hA
-         C1la7xfOBPKT1xW/R3iK/TBh08wi1ABM7XnCU1B2b9WwuqojVljCidbsz6JDVMr0fqD2
-         UdqEbS3rKKCuBoev+pjjB61sb43U0J/+71OuK7GUb3iZdJ/mZ0wMGZ3yd+VM9Ic+/NTZ
-         88PlyGo9190saQM4NW3HtsnTNPamtSWJGnRHA0SiLfRGdhx2gUXHwtYM7MduxZrKWRTU
-         qLVZ2kUWC5Tvi3Y1ymPafOEJeCPyowC+lW9Zgkgh3JxI1FZhvD1ZF8nV3NBE2Qj7QVVO
-         mrqQ==
+        d=gmail.com; s=20221208; t=1689545281; x=1692137281;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iHngaqCrQ0FneY3+XbEOWJuLApZy3bmRMZLz2KpBf1c=;
+        b=ENfeZFXfbFdTAhHwUcejne2kgnWjt3QCatDMZAiOB2QmHQlzV4Z+D1gkXDNMlOG0Q4
+         uFWkgIPCHB7NvnvtCzok7p2/ab2kPauN8lo+YYW2Yr9R0LYspHiabBHAU259sMKB/0Kj
+         x6EzoWabJ7KNZ4LykRU69cNs/4/JiDvV0vTl0Z/2Mn1JcQYpLSjtBcChdZkptYaoeunT
+         yG7cv4Bk5WGQGXkGBHg0aLzbz3uzF/OjoKLdJURDweImnTUOj1kA42+ZGy6A+akX7kMh
+         Kpw77Y1ovClJS2glWrrQpsuoRk2mKCMM4rg6UZRq+Yx+9/c6JOqfalg3A7rdnyW7qEpA
+         B+4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689529131; x=1692121131;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dnj2dm4vAkRY2ym0OVHyApOFbv82RoBY1nhPV64txIc=;
-        b=RhJwi5YQEYuJVF1l0S3+hy0Hfur1GcP/eKdvC0m1csFA8cpyd5UgDJMZVCKsh6NfZF
-         iORbYmNEMR3NvkL6wKDNT19LJoTs6dwoWeDG0F6WoDMW7ICC+RQHJVG0VtXtowwhiOIq
-         16EmgedUNq2vII9woltNWU/fELt8RBwIBagFW+2qnRwzCgIUur0Kx9+Cry5EmrrA52bP
-         NdEV6mZjYrghLEnSX5I4GTTRpicBNwNhgwO+XJT7byt+Wo0UCjGFs8RpllVctfP12o5p
-         bFM86U002Efm2xHf4StlvDmu+SdgM5VxXCiVwsP2LdE34tg/WvqMYfvpe+SZ/Ebz5y2M
-         nrEA==
-X-Gm-Message-State: ABy/qLYnAl2BcxJqwPKpG+2xf/Wj5oKZ1M9G7rFo+MJkTvL66anOo3zV
-        mZAdF3aNRkW5hjsEQt8JITEpjA==
-X-Google-Smtp-Source: APBJJlESRlu42cRoBqDewXcLEuNc4SOEf32yD7ybhMHPRpitvwU2E7d+YPl8NrMEY+pgx94+m5nxuA==
-X-Received: by 2002:a50:ff13:0:b0:521:7577:d34 with SMTP id a19-20020a50ff13000000b0052175770d34mr4690734edu.0.1689529131025;
-        Sun, 16 Jul 2023 10:38:51 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id p3-20020a056402074300b0051bec856cb4sm8721685edy.50.2023.07.16.10.38.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Jul 2023 10:38:50 -0700 (PDT)
-Message-ID: <4a627f7f-05c8-cbb1-1c21-e121729de1bc@linaro.org>
-Date:   Sun, 16 Jul 2023 19:38:49 +0200
+        d=1e100.net; s=20221208; t=1689545281; x=1692137281;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iHngaqCrQ0FneY3+XbEOWJuLApZy3bmRMZLz2KpBf1c=;
+        b=JcaeszZZskNBU5uyP0i5P16pbXnHjsNOs5F8tKjJ1AxIxJ6Zoz/sn2WWvQjr4ZEWQf
+         aMydI04w+vtNRyTaOi5Erfq6HDoJo55tKipF1ddIqIkMnKQtxlPEhhHBM+MrPvqvFQsp
+         fH1kd9dVGomi7MSWYYI1Oo6NUVmqy+etRVWlDZZZGOOx1Wh9iy7tU1RC5jS3Z4WBfK+H
+         Xsc9V9bZh9FUARHDrI2iZYYMpQlTozectA7SLeAOtRfiRlY9l3p0G/9DEUEZja8tvtJq
+         mg3M7heL874GwqovAJA2DJRhKJM6cKascGKrVvu3j1/1dBbU8weS/hCwfevDvj2JaM8Z
+         7fbQ==
+X-Gm-Message-State: ABy/qLYw3RFFmO7D7mRJOAyv9ISY8Xjm+CV/r7SXuVoOjISA35R0rREW
+        Bm1o4Yx88fdZVQ5Ocdq378g=
+X-Google-Smtp-Source: APBJJlFdTGOJjV77YehFgSdWX+e70CQdgXv1R+rqWI4JKHgHA4XS20L0eqPhcB7MSYeWuOglrIGX0w==
+X-Received: by 2002:a05:6512:1590:b0:4f8:453f:732f with SMTP id bp16-20020a056512159000b004f8453f732fmr3584726lfb.2.1689545281527;
+        Sun, 16 Jul 2023 15:08:01 -0700 (PDT)
+Received: from localhost.localdomain ([62.122.67.26])
+        by smtp.gmail.com with ESMTPSA id h24-20020a197018000000b004fb9c625b4asm2464091lfc.210.2023.07.16.15.08.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Jul 2023 15:08:01 -0700 (PDT)
+From:   Markuss Broks <markuss.broks@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Markuss Broks <markuss.broks@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/7] ARM: dts: exynos: Add GPIO keys support for k3g
+Date:   Mon, 17 Jul 2023 01:05:03 +0300
+Message-ID: <20230716220644.22158-3-markuss.broks@gmail.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230716220644.22158-1-markuss.broks@gmail.com>
+References: <20230716220644.22158-1-markuss.broks@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 1/2] ARM: dts: samsung: s3c6410-mini6410: correct ethernet
- reg addresses (split)
-Content-Language: en-US
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        'Rob Herring' <robh+dt@kernel.org>,
-        'Conor Dooley' <conor+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <CGME20230713152937epcas5p483e95ece242b0dc2c9a1ada1ba328117@epcas5p4.samsung.com>
- <20230713152926.82884-1-krzysztof.kozlowski@linaro.org>
- <020501d9b63d$b8e29e60$2aa7db20$@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <020501d9b63d$b8e29e60$2aa7db20$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14/07/2023 12:26, Alim Akhtar wrote:
-> Hello Krzysztof
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Sent: Thursday, July 13, 2023 8:59 PM
->> To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>; Alim Akhtar
->> <alim.akhtar@samsung.com>; Rob Herring <robh+dt@kernel.org>; Conor
->> Dooley <conor+dt@kernel.org>; linux-arm-kernel@lists.infradead.org; linux-
->> samsung-soc@vger.kernel.org; devicetree@vger.kernel.org; linux-
->> kernel@vger.kernel.org
->> Subject: [PATCH 1/2] ARM: dts: samsung: s3c6410-mini6410: correct ethernet
->> reg addresses (split)
->>
->> The davicom,dm9000 Ethernet Controller accepts two reg addresses.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
-> Do you need to add fixes: to send to previous stable releases?
-> In any case:
+Add the four physical buttons support, volume buttons have
+external pull-up resistors.
 
+Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+---
+ arch/arm/boot/dts/exynos5422-samsung-k3g.dts | 60 ++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-The format was actually working, but indeed it makes sense to backport
-it. I'll add it when applying.
-
-Best regards,
-Krzysztof
+diff --git a/arch/arm/boot/dts/exynos5422-samsung-k3g.dts b/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
+index 1a11a6993ba7..c3e006dc34ea 100644
+--- a/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
++++ b/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
+@@ -8,6 +8,7 @@
+ /dts-v1/;
+ #include <dt-bindings/clock/samsung,s2mps11.h>
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include "exynos5800.dtsi"
+ #include "exynos5422-cpus.dtsi"
+@@ -21,6 +22,45 @@ / {
+ 
+ 	aliases {
+ 		mmc0 = &mmc_0;
++		mmc1 = &mmc_1;
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&power_gpio &volume_up_gpio &volume_down_gpio &home_gpio>;
++
++		key-volume-up {
++			label = "Volume Up";
++			gpios = <&gpx0 2 GPIO_ACTIVE_LOW>;
++			linux,input-type = <1>;
++			linux,code = <KEY_VOLUMEUP>;
++			debounce-interval = <15>;
++		};
++
++		key-volume-down {
++			label = "Volume Down";
++			gpios = <&gpx0 3 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_VOLUMEDOWN>;
++			debounce-interval = <15>;
++		};
++
++		key-home {
++			label = "Home";
++			gpios = <&gpx0 5 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_HOMEPAGE>;
++			wakeup-source;
++			debounce-interval = <15>;
++		};
++
++		key-power {
++			label = "Power";
++			gpios = <&gpx2 2 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_POWER>;
++			wakeup-source;
++			debounce-interval = <15>;
++		};
+ 	};
+ 
+ 	memory@20000000 {
+@@ -641,6 +681,21 @@ &mmc_1 {
+ };
+ 
+ &pinctrl_0 {
++	volume_up_gpio: volume-up-pins {
++		samsung,pins = "gpx0-2";
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>; /* External pull up */
++	};
++
++	volume_down_gpio: volume-down-pins {
++		samsung,pins = "gpx0-3";
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>; /* External pull up */
++	};
++
++	home_gpio: home-key-pins {
++		samsung,pins = "gpx0-5";
++		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
++	};
++
+ 	s2mps11_irq: s2mps11-irq-pins {
+ 		samsung,pins = "gpx0-7";
+ 		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
+@@ -653,6 +708,11 @@ touch_irq: touch-irq-pins {
+ 		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
+ 	};
+ 
++	power_gpio: power-key-pins {
++		samsung,pins = "gpx2-2";
++		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
++	};
++
+ 	wlan_reset: wlan-reset {
+ 		samsung,pins = "gpy7-7";
+ 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+-- 
+2.41.0
 
