@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E61C05051
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Jul 2023 22:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E6AC00528
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Jul 2023 22:08:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230339AbjGPWIT (ORCPT
+        id S230377AbjGPWIU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 16 Jul 2023 18:08:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36068 "EHLO
+        Sun, 16 Jul 2023 18:08:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232186AbjGPWIK (ORCPT
+        with ESMTP id S230509AbjGPWIE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 16 Jul 2023 18:08:10 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53C05DF;
-        Sun, 16 Jul 2023 15:08:09 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4fbbfaacfc1so6038361e87.1;
-        Sun, 16 Jul 2023 15:08:09 -0700 (PDT)
+        Sun, 16 Jul 2023 18:08:04 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5451EE1;
+        Sun, 16 Jul 2023 15:08:02 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2b701e41cd3so57737791fa.3;
+        Sun, 16 Jul 2023 15:08:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689545287; x=1692137287;
+        d=gmail.com; s=20221208; t=1689545280; x=1692137280;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BRuqOpK0EekPSITqQINTY+JRczLmYXbl+EYLdJCsn+M=;
-        b=U7Ty7kCIUKc+y0mYLry2J3cBRyWd44XiBd7tgbCbFJUBnviG+Im4Fq7j732oX/W2kb
-         Hyr9GxBO9tO7hPPKABuN4PLaJpDIisAl6JTCpaXPZGz1bIMKsUFrP+FVXNBy7+R3TEUQ
-         T3nbSwqP35BicPN6cBn+eyqSBkhnLn3RZrvhIqqyyc3NEhvUYTFGoweO+ahaQc58K7PW
-         41WDoiwBJmqbTLIasqkEOGsYFILarVxHaIKVCREgZ7uryuRNP8+VewgKFUB0yQr1kzZq
-         s+7bJM1FvFH7cBWPT1lKX+pV8Ky3KGhfQ+yG+qVXOKWs2ehRt+euEZ+P4AN1Oxa4YjFs
-         O4Vw==
+        bh=Kbi4z5OwpHmDw3fNzdltzwmv9tZsIUUsK9ON0f/StLE=;
+        b=MHjtVot+MLxS37P81JK1IL9KQsTVRv6tY+PcdA0A/HKUWOjaCSAB0zOPn2r1RnVPrs
+         OshoTuSqtqQqH90Ez21GbQ3xnOeq52WhtuYd8jdtRcq3kHG5/UCOY8EhzmU+JfGXVNRQ
+         sd9LzwNqgLm3kqLNQMDYX4f3UWzh+Vu5kpQdJxlOEGvUoMXp5bcmvQ0CDb6HRRHS2OOD
+         zdj3fsNOAdAledXRqrjM3GbU+m91OUZQrz83mZJxyfJXq2yihpktPMquqqrEXFafQWvz
+         OZHiaGS2MX5dd92AexqXOzNm/Rxc8Oo9oZYqPbnI/lZl8j7c6nrBlH+232GJhfZgzOuu
+         TQmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689545287; x=1692137287;
+        d=1e100.net; s=20221208; t=1689545280; x=1692137280;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BRuqOpK0EekPSITqQINTY+JRczLmYXbl+EYLdJCsn+M=;
-        b=BmnYNIRDcDIDOiSpChKgC4JnRNgHf5eeb49HdtJ9BFNFlGoKNApq1ByuVzfwJz9LVO
-         ChHckj6Zn2/LfSS1+/s9iKiw3QJIBhSkHUvhAxDR65AHSZ4nnR8p0MkSDCXavziTxS/F
-         7tDoxw10BL7N5UtrwRWMp01a9mcg9c+amn3bEWlIWyTq0/Owlfd4KhFyQDSTTRumK4H0
-         n/F48R3gu+8E95tu6XKS+YKnfkufFALyhFjBzMgCcrtJcg3lcAFlNZ4ta1cgXjVBDO2n
-         Sp3y4suDHs1S/81tjvRCGYna1q3eZlTCR3G1giHfxYO2GvQEOuHm4ZK3XSynFKKSzitp
-         9j2Q==
-X-Gm-Message-State: ABy/qLbucMKaPgUdn+ULi/cttS4by7kf2ZWR/V5e31ojYpNmUZHd1Boh
-        fioJOP1foLacvkyjiV9rEzk=
-X-Google-Smtp-Source: APBJJlEGrMjcsJb1IJWGNtvK7PtPxfRlh2ETvy31xSMPdNilQykqlVigCiLS59PbC2LH3XWryooYIw==
-X-Received: by 2002:a05:6512:2249:b0:4fa:79da:ca8a with SMTP id i9-20020a056512224900b004fa79daca8amr9543736lfu.7.1689545287499;
-        Sun, 16 Jul 2023 15:08:07 -0700 (PDT)
+        bh=Kbi4z5OwpHmDw3fNzdltzwmv9tZsIUUsK9ON0f/StLE=;
+        b=DhWyBIwQYcn3Wdt3WfDLWRQ6EA7cRLAZt8Kmjso8MlPiIi9Wfe9eyM+maLkKt2tgKe
+         PBbyP1sena6eV6qTngx52BuEX3wYMP+dexG4v6yo7ZwMEzN8j7plRAEjb1dHD690Rtud
+         C2J8Qew4mWwQyOuLJdXtPXicXrDorT9YUQ5Xly3GYORGcFQV1d9riYROe1OaY5dpIA1a
+         2ggT5S8OLK9i41aR+oGbT0yBPR2yWIe9GYm1NoDQEdmqL9Fo1ex2yZ4tusxE/Fd49qQA
+         2j/PWPXXGv+if7jncoVsWvDxV4V/CBWOEqZNHfjTGjsI4aXMso8BeqZY14Z4IvQjY1Kl
+         990A==
+X-Gm-Message-State: ABy/qLZ/6mfHWttcNKOM1qibuzQhpZid6rhm7imIvyhHo6PB7MDYGK2r
+        VVEL3HtIX5/EwyoFUwERu1I=
+X-Google-Smtp-Source: APBJJlHX89VVhGlZFpr4YPnj5Qh5M5j38bPVFfe9FO60d7SLDNziW0bZZ18Ccs+88nFaaGPrvfOthg==
+X-Received: by 2002:a05:6512:b9b:b0:4fb:8680:138a with SMTP id b27-20020a0565120b9b00b004fb8680138amr7492520lfv.22.1689545280210;
+        Sun, 16 Jul 2023 15:08:00 -0700 (PDT)
 Received: from localhost.localdomain ([62.122.67.26])
-        by smtp.gmail.com with ESMTPSA id h24-20020a197018000000b004fb9c625b4asm2464091lfc.210.2023.07.16.15.08.06
+        by smtp.gmail.com with ESMTPSA id h24-20020a197018000000b004fb9c625b4asm2464091lfc.210.2023.07.16.15.07.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Jul 2023 15:08:07 -0700 (PDT)
+        Sun, 16 Jul 2023 15:07:59 -0700 (PDT)
 From:   Markuss Broks <markuss.broks@gmail.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Markuss Broks <markuss.broks@gmail.com>,
@@ -60,9 +60,9 @@ Cc:     Markuss Broks <markuss.broks@gmail.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/7] ARM: dts: exynos: k3g: Document the devices which are not supported
-Date:   Mon, 17 Jul 2023 01:05:08 +0300
-Message-ID: <20230716220644.22158-8-markuss.broks@gmail.com>
+Subject: [PATCH 1/7] ARM: dts: exynos: k3g: Add WiFi card support
+Date:   Mon, 17 Jul 2023 01:05:02 +0300
+Message-ID: <20230716220644.22158-2-markuss.broks@gmail.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230716220644.22158-1-markuss.broks@gmail.com>
 References: <20230716220644.22158-1-markuss.broks@gmail.com>
@@ -72,51 +72,68 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add placeholders for peripherals which we currently lack support for.
-This includes Maxim MAX86900 heart rate sensor and oximeter, which
-seems to be similar to other health sensors by Maxim, but it is not
-fully compatible; STM32F401 MCU which acts like a sensor hub,
-which can be flashed and controlled via the SPI bus, for which I made
-some simple firmware to check if it's possible to program with custom
-code, and it appears you can do so, but at the moment kernel lacks
-the APIs to either control sensors directly through the MCU or any
-standards for a sensor hub, so it's laid off; WM5110 audio codec which
-fails to communicate for some reason.
+This device has Broadcom BCM4354 WiFi card installed,
+which uses SDIO interface.
 
 Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
 ---
- arch/arm/boot/dts/exynos5422-samsung-k3g.dts | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm/boot/dts/exynos5422-samsung-k3g.dts | 29 ++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos5422-samsung-k3g.dts b/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
-index 813dbf0438de..e019b630db94 100644
+index c35261a338ff..1a11a6993ba7 100644
 --- a/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
 +++ b/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
-@@ -743,6 +743,24 @@ rmi4-f12@12 {
+@@ -48,6 +48,13 @@ tsp_vdd: regulator-tsp-vdd-en {
+ 		gpio = <&gpy3 5 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
  	};
++
++	wlan_pwrseq: wlan-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		reset-gpios = <&gpy7 7 GPIO_ACTIVE_LOW>; /* WIFI_EN */
++		clocks = <&s2mps11_osc S2MPS11_CLK_BT>; /* Used not only for Bluetooth */
++		clock-names = "ext_clock";
++	};
  };
  
-+&i2c_3 {
+ &cpu0 {
+@@ -616,6 +623,23 @@ &mmc_0 {
+ 	bus-width = <8>;
+ };
+ 
++/* WiFi SDIO module */
++&mmc_1 {
 +	status = "okay";
-+
-+	/* Maxim MAX86900 heart rate sensor and oximeter on address 0x57 */
++	cap-sdio-irq;
++	cap-sd-highspeed;
++	non-removable;
++	samsung,dw-mshc-ciu-div = <1>;
++	samsung,dw-mshc-sdr-timing = <0 1>;
++	samsung,dw-mshc-ddr-timing = <0 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd1_clk>, <&sd1_cmd>, <&sd1_int>, <&sd1_bus1>,
++			<&sd1_bus4>, <&wlan_reset>;
++	bus-width = <4>;
++	vqmmc-supply = <&ldo3_reg>;
++	mmc-pwrseq = <&wlan_pwrseq>;
 +};
 +
-+&spi_0 {
-+	status = "okay";
+ &pinctrl_0 {
+ 	s2mps11_irq: s2mps11-irq-pins {
+ 		samsung,pins = "gpx0-7";
+@@ -628,6 +652,11 @@ touch_irq: touch-irq-pins {
+ 		samsung,pins = "gpx1-6";
+ 		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
+ 	};
 +
-+	/* STMicroelectronics STM32F401 MCU to which sensors are connected */
-+};
-+
-+&spi_2 {
-+	status = "okay";
-+
-+	/* Wolfson WM5110 audio codec */
-+};
-+
- /* eMMC flash */
- &mmc_0 {
- 	status = "okay";
++	wlan_reset: wlan-reset {
++		samsung,pins = "gpy7-7";
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++	};
+ };
+ 
+ &rtc {
 -- 
 2.41.0
 
