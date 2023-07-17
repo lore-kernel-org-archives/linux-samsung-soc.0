@@ -2,210 +2,81 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9016DC00528
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jul 2023 15:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E45C001DC
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jul 2023 22:58:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230319AbjGQPkJ (ORCPT
+        id S230230AbjGQW6r (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Jul 2023 11:40:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42160 "EHLO
+        Mon, 17 Jul 2023 18:58:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230394AbjGQPkH (ORCPT
+        with ESMTP id S229919AbjGQW6q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Jul 2023 11:40:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73C5810D
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 08:40:06 -0700 (PDT)
+        Mon, 17 Jul 2023 18:58:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABE2210EF;
+        Mon, 17 Jul 2023 15:58:45 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D900661135
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 15:40:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B346C4167D
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 15:40:05 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4017C612B4;
+        Mon, 17 Jul 2023 22:58:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1F80C433C7;
+        Mon, 17 Jul 2023 22:58:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689608405;
-        bh=tF/K12dcb1AtR13XQY0pq3bgmoCAiVfZHpGq03H1+sk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mX8RhJfEol8SKSIZYImvm3vgYGg2QOjrhEImVy70eQw9yFGHJhacPYnLrSEjLcXVH
-         lsK1foH9DnVkOrz0XgrZvShJMkw35zdZXkm28OGXKxZAPZQPWjnMqmD7u1K/6wWyrF
-         KESSOxDGgUcHfAUMGWeNgAp8rP61IeLKmYc7IOGocR2yzizGnLQn+2LOPOUV3VN8RI
-         nXJsuiRAgYTOZFEMemZolvUrK9EbLD+pNe2um6lCwrS0nGmoypnFT87DTWspO0tENT
-         6g2YWD6p/fpzoiD+byVvvn8YboH7BuhPrNAUEc3aLc7yE8lROrZtFeZkeMUjss/bxz
-         8gUvf0rnNUAvw==
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-1b0748bc78dso3632424fac.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 08:40:05 -0700 (PDT)
-X-Gm-Message-State: ABy/qLaBUjx9ZIuczirmggv93koowUYeZ/eLrS/S9fDFpI+RBJtXMI+3
-        ZiV84Qew4FSkLGlaOocGrabf2xNCu9Px4hAueTY3Bw==
-X-Google-Smtp-Source: APBJJlHs9bNlVGErzzDkG3ITNYPrBi9bcbK5hB2pZ5ku9OA6MncccRQ7QQDddVXbZVn5Z/tCXP76UHYBqks/PFSJBmQ=
-X-Received: by 2002:a17:90b:1095:b0:263:3567:f99 with SMTP id
- gj21-20020a17090b109500b0026335670f99mr13011407pjb.15.1689608384033; Mon, 17
- Jul 2023 08:39:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230714174545.4056287-1-robh@kernel.org> <114500369.nniJfEyVGO@phil>
- <CAL_JsqJMo4LHRmsfRQAr-j6oNESbS=q+eFU+B7e720emjf+8nA@mail.gmail.com>
-In-Reply-To: <CAL_JsqJMo4LHRmsfRQAr-j6oNESbS=q+eFU+B7e720emjf+8nA@mail.gmail.com>
-From:   Robert Foss <rfoss@kernel.org>
-Date:   Mon, 17 Jul 2023 17:39:32 +0200
-X-Gmail-Original-Message-ID: <CAN6tsi5wOhptw4PgP2etkC5KYh_5cfOXZuVhsN6YCMiqn15hog@mail.gmail.com>
-Message-ID: <CAN6tsi5wOhptw4PgP2etkC5KYh_5cfOXZuVhsN6YCMiqn15hog@mail.gmail.com>
-Subject: Re: [PATCH] drm: Explicitly include correct DT includes
-To:     Rob Herring <robh@kernel.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
+        s=k20201202; t=1689634724;
+        bh=rM26BLazDBsUWhbicT5Xil9vOWS3Rtw9EQvF4oPqBU4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=d+xnaUrzFHksDRaRYvhXNRgDZX1mSPr8+8T2JlAVzjfLb5Ydem2RGjv/HG/6XV4q7
+         yndeBtrZtuOOy3WeWki60J1w7TicdtV2hdl9UHfxGS70DlD9BDkXLeyGGG5INGvs7J
+         KHWMBTmDTWRNpRF4Sx3urZKpXpy4WBXb8Ngvw6NcACdYu7gCDxtSOY0fwDRszrjorB
+         rHe/qr1/3cYHG+HwtW1iQOc3LuoOjhofWJvBgxCGYk0SPbUyw8rwnsU1INhXZRcp8k
+         pgwjn3wBS96h2SJhv9juWlGzzwN+agtw9ScLFQM51oIoN+792a0PdyVE3oLKLzdjE4
+         V7t1LsOU3SNpA==
+Received: (nullmailer pid 3211848 invoked by uid 1000);
+        Mon, 17 Jul 2023 22:54:49 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Russell King <linux@armlinux.org.uk>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Yongqin Liu <yongqin.liu@linaro.org>,
-        John Stultz <jstultz@google.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Qiang Yu <yuq825@gmail.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Jerry Han <hanxu5@huaqin.corp-partner.google.com>,
-        Icenowy Zheng <icenowy@aosc.io>, Ondrej Jirman <megi@xff.cz>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
-        Purism Kernel Team <kernel@puri.sm>,
-        Jianhua Lu <lujianhua000@gmail.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Artur Weber <aweber.kernel@gmail.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Emma Anholt <emma@anholt.net>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        devicetree@vger.kernel.org, Ondrej Jirman <megous@megous.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-mips@vger.kernel.org, lima@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: s5pv210: Explicitly include correct DT includes
+Date:   Mon, 17 Jul 2023 16:54:46 -0600
+Message-Id: <20230717225446.3211738-1-robh@kernel.org>
+X-Mailer: git-send-email 2.40.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jul 17, 2023 at 4:27=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
-:
->
-> On Sun, Jul 16, 2023 at 3:26=E2=80=AFAM Heiko Stuebner <heiko@sntech.de> =
-wrote:
-> >
-> > Am Freitag, 14. Juli 2023, 19:45:34 CEST schrieb Rob Herring:
-> > > The DT of_device.h and of_platform.h date back to the separate
-> > > of_platform_bus_type before it as merged into the regular platform bu=
-s.
-> > > As part of that merge prepping Arm DT support 13 years ago, they
-> > > "temporarily" include each other. They also include platform_device.h
-> > > and of.h. As a result, there's a pretty much random mix of those incl=
-ude
-> > > files used throughout the tree. In order to detangle these headers an=
-d
-> > > replace the implicit includes with struct declarations, users need to
-> > > explicitly include the correct includes.
-> > >
-> > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > > ---
-> >
-> > [...]
-> >
-> > > diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/driver=
-s/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
-> > > index 917e79951aac..2744d8f4a6fa 100644
-> > > --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
-> > > +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
-> > > @@ -12,7 +12,9 @@
-> > >  #include <linux/mfd/syscon.h>
-> > >  #include <linux/module.h>
-> > >  #include <linux/of_device.h>
-> > > +#include <linux/of_platform.h>
-> > >  #include <linux/phy/phy.h>
-> > > +#include <linux/platform_device.h>
-> > >  #include <linux/pm_runtime.h>
-> > >  #include <linux/regmap.h>
-> >
-> > I'm not sure if I'm just misreading something, but in all other places
-> > of_device.h gets removed while here is stays as an include. Is this
-> > correct this way?
->
-> Yes, because of_match_device() is used.
->
-> Rob
->
+The DT of_device.h and of_platform.h date back to the separate
+of_platform_bus_type before it was merged into the regular platform bus.
+As part of that merge prepping Arm DT support 13 years ago, they
+"temporarily" include each other. They also include platform_device.h
+and of.h. As a result, there's a pretty much random mix of those include
+files used throughout the tree. In order to detangle these headers and
+replace the implicit includes with struct declarations, users need to
+explicitly include the correct includes.
+---
+ arch/arm/mach-s5pv210/s5pv210.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-For drivers/gpu/drm/bridge/
+diff --git a/arch/arm/mach-s5pv210/s5pv210.c b/arch/arm/mach-s5pv210/s5pv210.c
+index a21ed3bb992a..7d4a10184160 100644
+--- a/arch/arm/mach-s5pv210/s5pv210.c
++++ b/arch/arm/mach-s5pv210/s5pv210.c
+@@ -7,7 +7,7 @@
+ // Tomasz Figa <t.figa@samsung.com>
+ 
+ #include <linux/of_fdt.h>
+-#include <linux/of_platform.h>
++#include <linux/platform_device.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+-- 
+2.40.1
 
-Acked-by: Robert Foss <rfoss@kernel.org>
