@@ -2,61 +2,62 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63388C04A6A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jul 2023 14:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9016DC00528
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jul 2023 15:40:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231157AbjGQO1t (ORCPT
+        id S230319AbjGQPkJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Jul 2023 10:27:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51434 "EHLO
+        Mon, 17 Jul 2023 11:40:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230096AbjGQO1s (ORCPT
+        with ESMTP id S230394AbjGQPkH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Jul 2023 10:27:48 -0400
+        Mon, 17 Jul 2023 11:40:07 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 048DEC0;
-        Mon, 17 Jul 2023 07:27:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73C5810D
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 08:40:06 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7F081610A5;
-        Mon, 17 Jul 2023 14:27:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE66CC433BC;
-        Mon, 17 Jul 2023 14:27:45 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D900661135
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 15:40:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B346C4167D
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 15:40:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689604065;
-        bh=rkLKjJGA9W9V1hgJstWBCmZrxpmjuvUsbHV5ieMMp8c=;
+        s=k20201202; t=1689608405;
+        bh=tF/K12dcb1AtR13XQY0pq3bgmoCAiVfZHpGq03H1+sk=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tbqM5G1Bre2zBYNYlSaGpYvtGMUIHymVMKeK/TzG0KjBzCmaAHwEaXmM+fnWr8QHf
-         A5IwGR12akMgYWcxzwUULBkB0mekTRl4kMKQRSfx+pzkXO2wU5OR+OPuWWdNpyb/9Y
-         27H/XVZnsbuLv2tvpMFxcyKcBrfhw24Ct3Dtn6k2jIwf9fiUxfMZRE5qGgbeygcQZ2
-         vy5S/pTq31758S5Um6WTDPfgsWL212q22eKGrybewvdX7t97Q3XcLfmDw1+8j8e8ow
-         KnsnOeGJcjyYNIZVOv3JTTaB9YED46K0NRnfA2+aAkAVdCs2rPfSquk+go0eGVrLFe
-         3iKfcFajgoGdg==
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3128fcd58f3so4906778f8f.1;
-        Mon, 17 Jul 2023 07:27:45 -0700 (PDT)
-X-Gm-Message-State: ABy/qLZghUs7lncWXZM1dChUiBvE2K96n+Y7rN059Pv2fwxl6iHVk14T
-        6ODXg/fvJP4CsTxsqg2NjYnOS2p4QPrexgZRBA==
-X-Google-Smtp-Source: APBJJlFSY1EKmbumZhe1Fkfe0qsodiNyBdGN/d2gmlGF1ZwWgImoQ1RpodF7t1ooNJHJiRju6eg8DIGKKeloqUgo0eo=
-X-Received: by 2002:a2e:8945:0:b0:2b9:48f1:b195 with SMTP id
- b5-20020a2e8945000000b002b948f1b195mr576527ljk.44.1689604043579; Mon, 17 Jul
- 2023 07:27:23 -0700 (PDT)
+        b=mX8RhJfEol8SKSIZYImvm3vgYGg2QOjrhEImVy70eQw9yFGHJhacPYnLrSEjLcXVH
+         lsK1foH9DnVkOrz0XgrZvShJMkw35zdZXkm28OGXKxZAPZQPWjnMqmD7u1K/6wWyrF
+         KESSOxDGgUcHfAUMGWeNgAp8rP61IeLKmYc7IOGocR2yzizGnLQn+2LOPOUV3VN8RI
+         nXJsuiRAgYTOZFEMemZolvUrK9EbLD+pNe2um6lCwrS0nGmoypnFT87DTWspO0tENT
+         6g2YWD6p/fpzoiD+byVvvn8YboH7BuhPrNAUEc3aLc7yE8lROrZtFeZkeMUjss/bxz
+         8gUvf0rnNUAvw==
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-1b0748bc78dso3632424fac.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 08:40:05 -0700 (PDT)
+X-Gm-Message-State: ABy/qLaBUjx9ZIuczirmggv93koowUYeZ/eLrS/S9fDFpI+RBJtXMI+3
+        ZiV84Qew4FSkLGlaOocGrabf2xNCu9Px4hAueTY3Bw==
+X-Google-Smtp-Source: APBJJlHs9bNlVGErzzDkG3ITNYPrBi9bcbK5hB2pZ5ku9OA6MncccRQ7QQDddVXbZVn5Z/tCXP76UHYBqks/PFSJBmQ=
+X-Received: by 2002:a17:90b:1095:b0:263:3567:f99 with SMTP id
+ gj21-20020a17090b109500b0026335670f99mr13011407pjb.15.1689608384033; Mon, 17
+ Jul 2023 08:39:44 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230714174545.4056287-1-robh@kernel.org> <114500369.nniJfEyVGO@phil>
-In-Reply-To: <114500369.nniJfEyVGO@phil>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 17 Jul 2023 08:27:10 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJMo4LHRmsfRQAr-j6oNESbS=q+eFU+B7e720emjf+8nA@mail.gmail.com>
-Message-ID: <CAL_JsqJMo4LHRmsfRQAr-j6oNESbS=q+eFU+B7e720emjf+8nA@mail.gmail.com>
+ <CAL_JsqJMo4LHRmsfRQAr-j6oNESbS=q+eFU+B7e720emjf+8nA@mail.gmail.com>
+In-Reply-To: <CAL_JsqJMo4LHRmsfRQAr-j6oNESbS=q+eFU+B7e720emjf+8nA@mail.gmail.com>
+From:   Robert Foss <rfoss@kernel.org>
+Date:   Mon, 17 Jul 2023 17:39:32 +0200
+X-Gmail-Original-Message-ID: <CAN6tsi5wOhptw4PgP2etkC5KYh_5cfOXZuVhsN6YCMiqn15hog@mail.gmail.com>
+Message-ID: <CAN6tsi5wOhptw4PgP2etkC5KYh_5cfOXZuVhsN6YCMiqn15hog@mail.gmail.com>
 Subject: Re: [PATCH] drm: Explicitly include correct DT includes
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     Liviu Dudau <liviu.dudau@arm.com>,
+To:     Rob Herring <robh@kernel.org>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        Liviu Dudau <liviu.dudau@arm.com>,
         David Airlie <airlied@gmail.com>,
         Daniel Vetter <daniel@ffwll.ch>,
         Andrzej Hajda <andrzej.hajda@intel.com>,
         Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         Jonas Karlman <jonas@kwiboo.se>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
@@ -157,44 +158,54 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Jul 16, 2023 at 3:26=E2=80=AFAM Heiko Stuebner <heiko@sntech.de> wr=
-ote:
+On Mon, Jul 17, 2023 at 4:27=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
+:
 >
-> Am Freitag, 14. Juli 2023, 19:45:34 CEST schrieb Rob Herring:
-> > The DT of_device.h and of_platform.h date back to the separate
-> > of_platform_bus_type before it as merged into the regular platform bus.
-> > As part of that merge prepping Arm DT support 13 years ago, they
-> > "temporarily" include each other. They also include platform_device.h
-> > and of.h. As a result, there's a pretty much random mix of those includ=
-e
-> > files used throughout the tree. In order to detangle these headers and
-> > replace the implicit includes with struct declarations, users need to
-> > explicitly include the correct includes.
+> On Sun, Jul 16, 2023 at 3:26=E2=80=AFAM Heiko Stuebner <heiko@sntech.de> =
+wrote:
 > >
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
+> > Am Freitag, 14. Juli 2023, 19:45:34 CEST schrieb Rob Herring:
+> > > The DT of_device.h and of_platform.h date back to the separate
+> > > of_platform_bus_type before it as merged into the regular platform bu=
+s.
+> > > As part of that merge prepping Arm DT support 13 years ago, they
+> > > "temporarily" include each other. They also include platform_device.h
+> > > and of.h. As a result, there's a pretty much random mix of those incl=
+ude
+> > > files used throughout the tree. In order to detangle these headers an=
+d
+> > > replace the implicit includes with struct declarations, users need to
+> > > explicitly include the correct includes.
+> > >
+> > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > > ---
+> >
+> > [...]
+> >
+> > > diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/driver=
+s/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> > > index 917e79951aac..2744d8f4a6fa 100644
+> > > --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> > > +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> > > @@ -12,7 +12,9 @@
+> > >  #include <linux/mfd/syscon.h>
+> > >  #include <linux/module.h>
+> > >  #include <linux/of_device.h>
+> > > +#include <linux/of_platform.h>
+> > >  #include <linux/phy/phy.h>
+> > > +#include <linux/platform_device.h>
+> > >  #include <linux/pm_runtime.h>
+> > >  #include <linux/regmap.h>
+> >
+> > I'm not sure if I'm just misreading something, but in all other places
+> > of_device.h gets removed while here is stays as an include. Is this
+> > correct this way?
 >
-> [...]
+> Yes, because of_match_device() is used.
 >
-> > diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/drivers/=
-gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
-> > index 917e79951aac..2744d8f4a6fa 100644
-> > --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
-> > +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
-> > @@ -12,7 +12,9 @@
-> >  #include <linux/mfd/syscon.h>
-> >  #include <linux/module.h>
-> >  #include <linux/of_device.h>
-> > +#include <linux/of_platform.h>
-> >  #include <linux/phy/phy.h>
-> > +#include <linux/platform_device.h>
-> >  #include <linux/pm_runtime.h>
-> >  #include <linux/regmap.h>
+> Rob
 >
-> I'm not sure if I'm just misreading something, but in all other places
-> of_device.h gets removed while here is stays as an include. Is this
-> correct this way?
 
-Yes, because of_match_device() is used.
+For drivers/gpu/drm/bridge/
 
-Rob
+Acked-by: Robert Foss <rfoss@kernel.org>
