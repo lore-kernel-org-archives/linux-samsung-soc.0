@@ -2,133 +2,161 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 213F4C00528
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jul 2023 06:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 206BAC0015E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jul 2023 06:26:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231543AbjGQGYW (ORCPT
+        id S229697AbjGQG0P (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Jul 2023 02:24:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57174 "EHLO
+        Mon, 17 Jul 2023 02:26:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231476AbjGQGYN (ORCPT
+        with ESMTP id S231668AbjGQGZx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Jul 2023 02:24:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B427FE72;
-        Sun, 16 Jul 2023 23:24:06 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1FCC260F33;
-        Mon, 17 Jul 2023 06:24:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A093FC433C7;
-        Mon, 17 Jul 2023 06:23:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689575045;
-        bh=mzBDvBJqqLyJpJlXdHHc50ky7DqFeoJEZrmNjEwRYw4=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=cSmXkQBMdVKYM2skEir1bV6wfmjtrQbqO1IJGKuBIhaVowNQUTrTgCxjHIGLjQxrf
-         aC/Mqe8ThUtGNnjeclaKm5yYvx+1VkzQA8Mr9utTM3ZL+DpRjNnGms0i8Owh/zz47+
-         h23rcDa+qzK1c9z1FR8QVJBepzxuuB2xEgqOuOIqx4jooERucg0rTondYvdBHeVIOz
-         bL1wNk7h7Adc3SmCkPC256BY6lJOEvwXhhD9BG3119i3AtN9OvJn0PEErA3fywzUPz
-         Uelr5Xmo7pEGEjZ7k3ZowAQcz2l0sAxbf5yJcE3PDjGEbPdkw3ro5etSrrJpG2MR4S
-         U/6x9udfwh94A==
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Kishon Vijay Abraham I <kishon@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Justin Chen <justin.chen@broadcom.com>,
-        Al Cooper <alcooperx@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Yu Chen <chenyu56@huawei.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Alban Bedel <albeu@free.fr>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Robert Marko <robert.marko@sartura.hr>,
-        Luka Perkov <luka.perkov@sartura.hr>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Vincent Shih <vincent.sunplus@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        JC Kuo <jckuo@nvidia.com>, Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-can@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org
-In-Reply-To: <20230714174841.4061919-1-robh@kernel.org>
-References: <20230714174841.4061919-1-robh@kernel.org>
-Subject: Re: [PATCH] phy: Explicitly include correct DT includes
-Message-Id: <168957502626.294691.2933301083453115851.b4-ty@kernel.org>
-Date:   Mon, 17 Jul 2023 11:53:46 +0530
+        Mon, 17 Jul 2023 02:25:53 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 721DC170D
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jul 2023 23:25:30 -0700 (PDT)
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230717062439epoutp02ecbfae614ce4db5af1d9bd10779cbf2f~yk5VGgv5f1845118451epoutp02f
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 06:24:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230717062439epoutp02ecbfae614ce4db5af1d9bd10779cbf2f~yk5VGgv5f1845118451epoutp02f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1689575079;
+        bh=EVI2S727mJ4PMA5lU03bgnJnLMSMGGnnOXiGWXlih98=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=XHJTZZHUEIQsv4LRbioTKathlmoxAm08fXqTpSgT8Bne03cP2w/sxfBWsNpN0frIf
+         414FdMJkmFt3ay7kPCTzL8MDrl+zJ8uFtpaTafNjt9+DenOfIi8Bu3gWQjCAasyS/S
+         84MfvIoqWWPqJ87QW+pIOztoV9AaAVPevcW34ZXQ=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20230717062438epcas2p156365b4166d8172d70ed84a913c3abef~yk5UjQHuv2022020220epcas2p1c;
+        Mon, 17 Jul 2023 06:24:38 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.36.92]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4R4BrQ4TTjz4x9QH; Mon, 17 Jul
+        2023 06:24:38 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        24.DE.32393.6AED4B46; Mon, 17 Jul 2023 15:24:38 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230717062438epcas2p1846e5f0b23af60d2cd2cea9dd349f056~yk5TzYX8U0894908949epcas2p1u;
+        Mon, 17 Jul 2023 06:24:38 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230717062438epsmtrp1e44239a2e2aaaff00037086ad20b27e2~yk5TynO_S0786807868epsmtrp1k;
+        Mon, 17 Jul 2023 06:24:38 +0000 (GMT)
+X-AuditID: b6c32a48-adffa70000007e89-10-64b4dea6dfc8
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        24.75.64355.6AED4B46; Mon, 17 Jul 2023 15:24:38 +0900 (KST)
+Received: from [10.229.8.168] (unknown [10.229.8.168]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230717062437epsmtip28e6e659cc949c8d2b82b7abd7893f8b0~yk5ThGKPO1750017500epsmtip2O;
+        Mon, 17 Jul 2023 06:24:37 +0000 (GMT)
+Message-ID: <2615b892-bbe1-240e-6717-0bde8f3dd4c8@samsung.com>
+Date:   Mon, 17 Jul 2023 15:22:04 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+        Thunderbird/102.11.0
+Subject: Re: [PATCH v2 2/3] pwm: samsung: Add compatible for ExynosAutov9
+ SoC
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Chanho Park <chanho61.park@samsung.com>
+From:   Jaewon Kim <jaewon02.kim@samsung.com>
+In-Reply-To: <31af3a96-7e98-8bb1-f9e9-53ccb0441310@linaro.org>
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.2
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHJsWRmVeSWpSXmKPExsWy7bCmhe6ye1tSDF5PUbZ4MG8bm8Xl/doW
+        a/aeY7KYf+Qcq0Xfi4fMFntfb2W32PT4GqvF5V1z2Czu3l3FaDHj/D4mi9a9R9gtfu6ax2Jx
+        e+JkRgdej52z7rJ7bFrVyeZx59oeNo/NS+o9+v8aePRtWcXo8XmTXAB7VLZNRmpiSmqRQmpe
+        cn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtCtSgpliTmlQKGAxOJiJX07
+        m6L80pJUhYz84hJbpdSClJwC8wK94sTc4tK8dL281BIrQwMDI1OgwoTsjKV9z1kLXnBUvH/0
+        mrWBcSZ7FyMnh4SAicSFvp/MXYxcHEICOxglTv3ezQLhfGKUOHTpLRucc/X4U7iW/febmCAS
+        OxklWk++gep/zSgx9ewvNpAqXgE7iaMT/zCD2CwCqhI/1m5ngYgLSpyc+QTMFhWIlmhddh+s
+        XljAX2LirVVMIDazgLjErSfzwTaICFxlkji8eRPYBmaBs4wSDyfcZQWpYhPQlvi+fjGYzQm0
+        beK5e1Dd8hLb384Ba5AQOMIhcWLHDGaIw10k+vveskHYwhKvjm+BekhK4mV/G5SdLdE+/Q8r
+        hF0hcXHDbKh6Y4lZz9oZuxg5gBZoSqzfpQ9iSggoSxy5xQKxlk+i4/Bfdogwr0RHmxBEo5rE
+        /annoIbISEw6spIJwvaQOHHgDusERsVZSMEyC8n7s5A8Mwth7wJGllWMYqkFxbnpqcVGBSbw
+        6E7Oz93ECE7IWh47GGe//aB3iJGJg/EQowQHs5II7/dVm1KEeFMSK6tSi/Lji0pzUosPMZoC
+        I2cis5Rocj4wJ+SVxBuaWBqYmJkZmhuZGpgrifPea52bIiSQnliSmp2aWpBaBNPHxMEp1cBU
+        /pPlyf7lu1dzb+TLFfftXPhSfOZ8ndL43IiVOzwFbsf+C3zrmcK1Vc7YM6Dy735PWYOMsIOr
+        spQPuO15l6M6e2PG1msPfsqzOYfNnuF0y6Z10q6b06sE1EyOq17I/Lzw7lPna7oFb3IEt6y4
+        7/xge++JuHn5P3eGLpGY9PMcD8uCrafV1UtWbuMQ3bujp6B41vJv0w1DWpjPNdjK1fQvvvRx
+        9a6TKn7T5V1npMYeynioeqbj3gu2mwFHfKTunbb8nKphsPNE2te88JBShllrq76qmKxVWZZe
+        nvRlu/uSL6/3r992fMev2RpXZoRclDrVfLyQR33hkhshcrPKm5o1Zimsl+ALrUs8YDAhLSPn
+        phJLcUaioRZzUXEiAD0tvuZRBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsWy7bCSvO6ye1tSDL6/ZbZ4MG8bm8Xl/doW
+        a/aeY7KYf+Qcq0Xfi4fMFntfb2W32PT4GqvF5V1z2Czu3l3FaDHj/D4mi9a9R9gtfu6ax2Jx
+        e+JkRgdej52z7rJ7bFrVyeZx59oeNo/NS+o9+v8aePRtWcXo8XmTXAB7FJdNSmpOZllqkb5d
+        AlfG0r7nrAUvOCreP3rN2sA4k72LkZNDQsBEYv/9JqYuRi4OIYHtjBI7Lh5lhUjISCx/1scG
+        YQtL3G85AhYXEnjJKDFpciyIzStgJ3F04h9mEJtFQFXix9rtLBBxQYmTM5+A2aIC0RKrP18A
+        6uXgEBbwlZixjxskzCwgLnHryXywvSIC15kkzp25zQjiMAucZZR42PMd6qKfjBLrLu5kBGlh
+        E9CW+L5+MdgVnECbJ567xwQxykyia2sXI4QtL7H97RzmCYxCs5AcMgvJxllIWmYhaVnAyLKK
+        UTS1oDg3PTe5wFCvODG3uDQvXS85P3cTIzj2tIJ2MC5b/1fvECMTB+MhRgkOZiUR3u+rNqUI
+        8aYkVlalFuXHF5XmpBYfYpTmYFES51XO6UwREkhPLEnNTk0tSC2CyTJxcEo1ME39KsS+asu2
+        KU+atCYpMtY8NBWc98B8m/XFqbvCff3endVPEKqxX+Vq1sDm4DyL+VNdRPbGMwvtembvuXs+
+        xOJmqIhf1aRtOXWvDU4v91obkSjgrDWnabag/sQg6RsPTkrtX8PxZYnTYtabHRZNDhzmC7c+
+        4J/zZkkSt7fO3a8HS9JOnH7BcnKrirLT09ZUFec707eaNHzvfhz4//U547hMo5bVcbe3JXBd
+        7bZUmJi1h+vs5UNMBy7cmeGftJezNLq4asfyhNqL8ttWP7+yutCRYfttI6cHX37KF/Xm1BwL
+        f6pkFXS7mfngbw67tK9OXNr35+0J3XtqRvLeipUuRqvOKGi2fmlep/JDvN7p430lluKMREMt
+        5qLiRACYGzbuLAMAAA==
+X-CMS-MailID: 20230717062438epcas2p1846e5f0b23af60d2cd2cea9dd349f056
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230714101434epcas2p3e2475698c527ca72dee797225d3dad37
+References: <20230714100929.94563-1-jaewon02.kim@samsung.com>
+        <CGME20230714101434epcas2p3e2475698c527ca72dee797225d3dad37@epcas2p3.samsung.com>
+        <20230714100929.94563-3-jaewon02.kim@samsung.com>
+        <31af3a96-7e98-8bb1-f9e9-53ccb0441310@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
-On Fri, 14 Jul 2023 11:48:35 -0600, Rob Herring wrote:
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
-> 
-> [...]
+On 23. 7. 17. 14:58, Krzysztof Kozlowski wrote:
+> On 14/07/2023 12:09, Jaewon Kim wrote:
+>> Add new compatible string to support ExynosAutov9 SoC.
+>>
+>> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+>> ---
+>>   drivers/pwm/pwm-samsung.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+>> index e8828f57ab15..50a88565c440 100644
+>> --- a/drivers/pwm/pwm-samsung.c
+>> +++ b/drivers/pwm/pwm-samsung.c
+>> @@ -513,6 +513,7 @@ static const struct of_device_id samsung_pwm_matches[] = {
+>>   	{ .compatible = "samsung,s5p6440-pwm", .data = &s5p64x0_variant },
+>>   	{ .compatible = "samsung,s5pc100-pwm", .data = &s5pc100_variant },
+>>   	{ .compatible = "samsung,exynos4210-pwm", .data = &s5p64x0_variant },
+>> +	{ .compatible = "samsung,exynosautov9-pwm", .data = &s5p64x0_variant },
+> That's not what I asked for. You do not need entry here. Devices are
+> compatible.
 
-Applied, thanks!
+I misunderstood your intent.
 
-[1/1] phy: Explicitly include correct DT includes
-      commit: 7559e7572c03e433efec7734af6a674fdd83dd68
+I will add only this compatible to DT and send it again with v3 patch.
 
-Best regards,
--- 
-~Vinod
+> Best regards,
+> Krzysztof
+>
+>
 
+Thanks
+
+Jaewon Kim
 
