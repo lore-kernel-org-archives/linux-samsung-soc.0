@@ -2,132 +2,134 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BEDEB64DC
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jul 2023 12:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F9DC001DC
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jul 2023 12:26:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229756AbjGQMXF (ORCPT
+        id S231139AbjGQM0g (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Jul 2023 08:23:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47964 "EHLO
+        Mon, 17 Jul 2023 08:26:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229476AbjGQMXE (ORCPT
+        with ESMTP id S230311AbjGQM0d (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Jul 2023 08:23:04 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D504AB9
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 05:23:02 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-98e39784a85so1187164366b.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 05:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689596581; x=1692188581;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2vhwu1zp3S5PiRdDu32pUjkHXYPNpSh6XO9BtN9Bqmk=;
-        b=x8Kpuu7atosaYgXr1dMB4cVtN0RBwRi9X2gwVon76DSiXtTX2vvl23/e5Svst2LMSL
-         ixVyWJ/mvM/mxMBMFHgiGZuxaXrxuce+QMW3iFsWK/5UHiLWpPvQ30p2fPuXezclwT5u
-         JwQ9JD+HZhA24SSm73STxLXKlzHYSGgSDoXy7pemnb7O2TCa/HkDGYY+Mu9SVen1VfHJ
-         R2T80S64RwZy9CXAlDjxrDJzVxxQuPSWzhFeDlrqIJoVxpqeSVssAbIhDRcsYgPmviyO
-         /+2IHLKIEd4GFmKMwaJBHMZvV1G8BNagDL4NRvHx+PO5KQnBlcJQ11fFwvvybNrFxVEs
-         fxNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689596581; x=1692188581;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2vhwu1zp3S5PiRdDu32pUjkHXYPNpSh6XO9BtN9Bqmk=;
-        b=ICU5H7SGCfW5dqb00I/vdy5n7fCRJ7CWV4WAdpyVvCi5sZdhzzeqzj0p//ll4sSvdr
-         bZtknn/L+uyOu8YFHEJ6m1p4COZYFD9zwIY7XpcEjCJyk0WT2hQmWPG/voTHHEr2PPeE
-         AzH23OtywAXISN2QzKr12QKedZ0Vf8tEBArLSEcFCIOY4FQ1IGX2jb7YQMxgp60d/CbX
-         NALsqckC1ZXagky1VQ0QejqkTgQw325bddnRX+U9iHuBISEmWhC3bQvwSvhU9786aKmg
-         SPtrtu9yvkSuLKGDwlUn/jSGylZpb4R8NbnGHLRpOECnamLUDRFP/Y2z2oLRdpD26YL7
-         c3eA==
-X-Gm-Message-State: ABy/qLYRSOm0hw5dpkQI120rMsakB2+BM0bIAKQ3GwL7IwpfORUiQhUp
-        NSySCouoHKfORbTAAdm0YrM8mQ==
-X-Google-Smtp-Source: APBJJlHPBiZufczBjnjB/8OgazGqsfTjzsPvN3r4urbCM8aFAGsuynBEWcPDR8TS01nu7v5Oot8HmA==
-X-Received: by 2002:a17:906:2d1:b0:994:5457:269e with SMTP id 17-20020a17090602d100b009945457269emr9126055ejk.0.1689596581219;
-        Mon, 17 Jul 2023 05:23:01 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id y27-20020a1709063a9b00b00992ca779f42sm9171089ejd.97.2023.07.17.05.22.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jul 2023 05:23:00 -0700 (PDT)
-Message-ID: <5b5299b6-a0b9-2ece-6c8c-5374ec18cd1c@linaro.org>
-Date:   Mon, 17 Jul 2023 14:22:58 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v4 1/2] dt-bindings: pwm: samsung: add exynosautov9
- compatible
-Content-Language: en-US
-To:     Jaewon Kim <jaewon02.kim@samsung.com>,
+        Mon, 17 Jul 2023 08:26:33 -0400
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 824BDB9;
+        Mon, 17 Jul 2023 05:26:30 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BE0D32000C;
+        Mon, 17 Jul 2023 12:26:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1689596788;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xfIQQUGuk2YngWOS8fdrYDdOu8Z6QhNBtgynXxqIkxI=;
+        b=pu6DLejjSYrxTONDk5/XdeXoNmahir1eSWyr0IAyC5+CzV+z7kVIv0SIU1WMmF5on1CgqD
+        KQMv7HISFwBD83UgHXeIYvA6rMs4zilESREno4fIl9tHoG5j8KuMGef30GXaJomEjoNSXB
+        b27ZnZ9I2DkJ16lt7XoMqFe9mN2ip4prfSVsj2SpNBgHGroLTT9anwzmDU7ZmjHgcKavfM
+        YT6a5qXXuO8iNNI928PNokmiYbnOK1bsbfPyiXo6MfvnS5M/07LrFJlHjhELObDmMRCvQo
+        UvLPoo3HQls1bUDPug12g+YVs2SccW7y5VCvmnwJJIZUaBWuD6j/7/vLgvzENw==
+Date:   Mon, 17 Jul 2023 14:26:14 +0200
+From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andreas =?UTF-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Alex Helms <alexander.helms.jy@renesas.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Emilio =?UTF-8?Q?L=C3=B3pez?= <emilio@elopez.com.ar>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20230717094202.18296-1-jaewon02.kim@samsung.com>
- <CGME20230717094721epcas2p1c5c1254e24d4a1d0fb366e1b4d551536@epcas2p1.samsung.com>
- <20230717094202.18296-2-jaewon02.kim@samsung.com>
- <9b09afec-4e0e-a600-92e1-2104a1b2e36e@linaro.org>
- <68aacadd-f27d-76d3-36a1-78f5662ecb97@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <68aacadd-f27d-76d3-36a1-78f5662ecb97@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Michal Simek <michal.simek@amd.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-oxnas@groups.io,
+        linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] clk: Explicitly include correct DT includes
+Message-ID: <20230717142614.78db5c4e@booty>
+In-Reply-To: <20230714174342.4052882-1-robh@kernel.org>
+References: <20230714174342.4052882-1-robh@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 17/07/2023 13:26, Jaewon Kim wrote:
-> 
-> On 23. 7. 17. 19:59, Krzysztof Kozlowski wrote:
->> On 17/07/2023 11:42, Jaewon Kim wrote:
->>> Add samsung,exynosautov9-pwm compatible string to binding document.
->>>
->>> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
->>> ---
->>>   .../devicetree/bindings/pwm/pwm-samsung.yaml     | 16 ++++++++++------
->>>   1 file changed, 10 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
->>> index fe603fb1b2cc..6f65e2b52f52 100644
->>> --- a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
->>> +++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
->>> @@ -20,12 +20,16 @@ description: |+
->>>   
->>>   properties:
->>>     compatible:
->>> -    enum:
->>> -      - samsung,s3c2410-pwm             # 16-bit, S3C24xx
->>> -      - samsung,s3c6400-pwm             # 32-bit, S3C64xx
->>> -      - samsung,s5p6440-pwm             # 32-bit, S5P64x0
->>> -      - samsung,s5pc100-pwm             # 32-bit, S5PC100, S5PV210, Exynos4210 rev0 SoCs
->>> -      - samsung,exynos4210-pwm          # 32-bit, Exynos
->>> +    oneOf:
->>> +      - const: samsung,s3c2410-pwm        # 16-bit
->>> +      - const: samsung,s3c6400-pwm        # 32-bit, S3C64xx
->>> +      - const: samsung,s5p6440-pwm        # 32-bit, S5P64x0
->>> +      - const: samsung,s5pc100-pwm        # 32-bit, S5PC100, S5PV210, Exynos4210 rev0 SoCs
->>> +      - const: samsung,exynos4210-pwm     # 32-bit, Exynos
->> These are still an enum.
-> Okay I will change const to enum.
->>
->>> +      - items:
->>> +          - enum:
->>> +              - samsung,exynosautov9-pwm  # 32-bit, ExynosAutov9
->> Let's drop the comment?
-> 
-> Should I just delete this comment or delete all comments in the 
-> enum(16-bit,S3C24xx, .....).
+On Fri, 14 Jul 2023 11:43:29 -0600
+Rob Herring <robh@kernel.org> wrote:
 
-No, the other can stay. Here it is redundant, since Autov9 is obvious -
-comes from compatible - and rest is coming from compatibility with older
-models.
+>  drivers/clk/clk-versaclock5.c                    | 1 -
 
-Best regards,
-Krzysztof
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com> # versaclock5
 
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
