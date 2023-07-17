@@ -2,143 +2,139 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D28C04A94
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jul 2023 08:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C2B9C001B0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jul 2023 09:00:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231341AbjGQIUX (ORCPT
+        id S230192AbjGQJAa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Jul 2023 04:20:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42760 "EHLO
+        Mon, 17 Jul 2023 05:00:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbjGQIUV (ORCPT
+        with ESMTP id S230206AbjGQJA0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Jul 2023 04:20:21 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 35916130;
-        Mon, 17 Jul 2023 01:20:20 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B87413D5;
-        Mon, 17 Jul 2023 01:21:03 -0700 (PDT)
-Received: from [10.57.37.37] (unknown [10.57.37.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 41CB33F73F;
-        Mon, 17 Jul 2023 01:19:59 -0700 (PDT)
-Message-ID: <e2c69d34-7523-98ae-93a2-04e132745ebd@arm.com>
-Date:   Mon, 17 Jul 2023 09:19:59 +0100
+        Mon, 17 Jul 2023 05:00:26 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C39AAE54
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 02:00:24 -0700 (PDT)
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com [209.85.210.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 17B073F213
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 09:00:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1689584423;
+        bh=JHnHS0B61qcl/Td8/lm9RDjYsfSOyiiTTr5PsC3FWaA=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=cjjX2f3GtORdVHhLvdkR6dCrcMHr2MAIBKwmMJggdDi0YC0ppg2CIOlluoaHaSTIz
+         vQGsS3jNDlod/gBW/5VbbnSgCuQ+puWs/Jl1aL61Zgy1WLCbHlSnSf10xf3kLcZksF
+         a3rXvBlKYWjUQBiV/HBZZMjjklEO/klZTs/KPxHhJW2PXw56iup6y6WD1rOkmCYZPb
+         sfBXpgI+98ReWm6tCDYMyIUQZE4IdlSLvKcFfyiYCWCfHze3APSRUtfZ6OXrDZ9mr7
+         Cykz3l3jUEmHVUzM/oF7gLS/mpBfBGDfLLwGvNHKxLhOpMO6TeIxHviEit9yL3d5Qw
+         cg9O5lPS6/zOA==
+Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-6b750bebc82so6284567a34.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 02:00:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689584422; x=1692176422;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JHnHS0B61qcl/Td8/lm9RDjYsfSOyiiTTr5PsC3FWaA=;
+        b=UjlA5FKxl5E9cBskWCS6Doltzl0tSY1r//3W7ZSaGeMRJU0rDYiiTPXj1HyYhez6/z
+         tPyif56vPduiR4UhKvD1frxIxT/66p6kdb84q4OnOoZ0Qi1bv2td1tCoJSupe93c0Q1h
+         dccYnf/AhKOfy1krWtnkA3Ydc+y3Z8k6xvs9kEKrHsjc0WWqPYuTCMYF0gbycCbFRiSd
+         DX+zxg19i/TcuDk4+LNBznEtA8exPUAZdN/UWUiCMHUGKsylUu1SxRiFWABTZAqhtCps
+         8MGrolJCTSGxWz/t2vG8TnWYllNINFIkdsfqh+rkisT+JLJpNJ3NiwernmrMRz3aymwk
+         xB3w==
+X-Gm-Message-State: ABy/qLYDGndWgkXfPwu8PQEORUUVNsIfPk+T67MEmQHhN8XeMTrG40Q0
+        C5Do9KM4IFIPeNES3X+renrGWA67RoAEg4Zxq3Of5f38MBAmVEC6P84HwgXWQxsc2glrYhujKTr
+        aOMMfMPjbEsNPL9jm/eLt3l+qzFLjNsfy/wOTchKBcZ9DGMkoru5gU3C3Q+wdaHHf
+X-Received: by 2002:ac8:7c48:0:b0:403:2dfd:1fdf with SMTP id o8-20020ac87c48000000b004032dfd1fdfmr15892556qtv.23.1689584401493;
+        Mon, 17 Jul 2023 02:00:01 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlEMazgMYki8IR1CHHFS4st+/s+/y1hah0oj0+nBQlO+NhXDM06BTdCzgvWJM4HcjDSd4KVriXj5Pmlo8MNpIrE=
+X-Received: by 2002:ac8:7c48:0:b0:403:2dfd:1fdf with SMTP id
+ o8-20020ac87c48000000b004032dfd1fdfmr15892526qtv.23.1689584401259; Mon, 17
+ Jul 2023 02:00:01 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] drm: Explicitly include correct DT includes
+References: <20230714174901.4062397-1-robh@kernel.org>
+In-Reply-To: <20230714174901.4062397-1-robh@kernel.org>
+From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Date:   Mon, 17 Jul 2023 10:59:45 +0200
+Message-ID: <CAJM55Z_Eba-LKxKAH0i0_vDM6JO_HvWgDLCLFQDave2+UFLMzA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: Explicitly include correct DT includes
 To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, Ondrej Jirman <megous@megous.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-mips@vger.kernel.org, lima@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org, Liviu Dudau <liviu.dudau@arm.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
         Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
         NXP Linux Team <linux-imx@nxp.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Yongqin Liu <yongqin.liu@linaro.org>,
-        John Stultz <jstultz@google.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Qiang Yu <yuq825@gmail.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Wang <sean.wang@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
         Kevin Hilman <khilman@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry B aryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Jerry Han <hanxu5@huaqin.corp-partner.google.com>,
-        Icenowy Zheng <icenowy@aosc.io>, Ondrej Jirman <megi@xff.cz>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        =?UTF-8?Q?Guido_G=c3=bcnther?= <agx@sigxcpu.org>,
-        Purism Kernel Team <kernel@puri.sm>,
-        Jianhua Lu <lujianhua000@gmail.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Artur Weber <aweber.kernel@gmail.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Emma Anholt <emma@anholt.net>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Chester Lin <clin@suse.com>, NXP S32 Linux Team <s32@nxp.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Tony Lindgren <tony@atomide.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Daniel Mack <daniel@zonque.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
         Orson Zhai <orsonzhai@gmail.com>,
         Baolin Wang <baolin.wang@linux.alibaba.com>,
         Chunyan Zhang <zhang.lyra@gmail.com>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Jianlong Huang <jianlong.huang@starfivetech.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
+        Dvorkin Dmitry <dvorkin@tibbo.com>,
+        Wells Lu <wellslutw@gmail.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Samuel Holland <samuel@sholland.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20230714174545.4056287-1-robh@kernel.org>
-Content-Language: en-GB
-From:   Steven Price <steven.price@arm.com>
-In-Reply-To: <20230714174545.4056287-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-oxnas@groups.io, linux-rockchip@lists.infradead.org,
+        linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14/07/2023 18:45, Rob Herring wrote:
+On Fri, 14 Jul 2023 at 19:52, Rob Herring <robh@kernel.org> wrote:
+>
 > The DT of_device.h and of_platform.h date back to the separate
 > of_platform_bus_type before it as merged into the regular platform bus.
 > As part of that merge prepping Arm DT support 13 years ago, they
@@ -147,29 +143,14 @@ On 14/07/2023 18:45, Rob Herring wrote:
 > files used throughout the tree. In order to detangle these headers and
 > replace the implicit includes with struct declarations, users need to
 > explicitly include the correct includes.
-> 
+>
 > Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-[...]
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> index bbada731bbbd..20c25c836198 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> @@ -4,8 +4,9 @@
->  /* Copyright 2019 Collabora ltd. */
->  
->  #include <linux/module.h>
-> -#include <linux/of_platform.h>
-> +#include <linux/of.h>
->  #include <linux/pagemap.h>
-> +#include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <drm/panfrost_drm.h>
->  #include <drm/drm_drv.h>
 
-Panfrost part:
+>  drivers/pinctrl/starfive/pinctrl-starfive-jh7110-aon.c | 5 +----
+>  drivers/pinctrl/starfive/pinctrl-starfive-jh7110-sys.c | 2 --
+>  drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c     | 1 -
 
-Reviewed-by: Steven Price <steven.price@arm.com>
+Acked-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 
-Steve
-
+Thanks,
+/Emil
