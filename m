@@ -2,234 +2,203 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60175C04A94
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jul 2023 11:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA5DC0015E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jul 2023 11:38:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230168AbjGQLgK (ORCPT
+        id S229986AbjGQLif (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Jul 2023 07:36:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45640 "EHLO
+        Mon, 17 Jul 2023 07:38:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjGQLgI (ORCPT
+        with ESMTP id S229583AbjGQLif (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Jul 2023 07:36:08 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95D92E4C;
-        Mon, 17 Jul 2023 04:36:07 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (aztw-30-b2-v4wan-166917-cust845.vm26.cable.virginm.net [82.37.23.78])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AC0DD16C4;
-        Mon, 17 Jul 2023 13:35:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1689593710;
-        bh=Q3mYfdnpaLKlY8/jxmRm80QstU9e0PZzEci91ZZE1j4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=D34b2nk3MBeIsD4Hh9go1cz7KYgQfaVb0QwyTeWrvQudhj3fcvsR86k18n5c2Eh/a
-         11cp7FnDEwboNqdfvQSni7J+NuSf4nawSesO0QfLQ1Tb/Qq/1vhrC/00e2IYaQomU7
-         muczhfhcRx636pqbzTWg6NH753X76UJuCpEmbpUo=
-Content-Type: text/plain; charset="utf-8"
+        Mon, 17 Jul 2023 07:38:35 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F25D1980
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 04:38:07 -0700 (PDT)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230717113758epoutp02001e7b3c1ba1a64d6a763227f1977cc7~ypK49ytBa1414714147epoutp02M
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 11:37:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230717113758epoutp02001e7b3c1ba1a64d6a763227f1977cc7~ypK49ytBa1414714147epoutp02M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1689593878;
+        bh=+14wjOmfGISgMaiKf6FTdHxcFzhaPxAZxa4WsygZgG0=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=eyZoQ68YuhTE4U/KFgJH7FWiFcy8p9/NLWX7lz7OaDLckJFyRtHHcuep2We1y/7T1
+         38trx77gwPsh7UMzw8xly1lnfHC98ACE5oyuDvHtEEIjvWJkWrK/q9svjvTsP8QMIc
+         SI1WRtP1VPY+aL7CNxq4+zOs+2wM/nE61I/YTV6A=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20230717113758epcas5p1cfeb3845c81781bc26eea4a544acdf7b~ypK4ocJr60921709217epcas5p1f;
+        Mon, 17 Jul 2023 11:37:58 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.179]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4R4Knw06Hxz4x9Pq; Mon, 17 Jul
+        2023 11:37:56 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DA.EA.44250.31825B46; Mon, 17 Jul 2023 20:37:55 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230717113755epcas5p2c474d62544126f79dac38e6514961ec3~ypK2Z76FI0932109321epcas5p2v;
+        Mon, 17 Jul 2023 11:37:55 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230717113755epsmtrp24d7903f66b3800cbf0341ae463e73218~ypK2ZRNxG2324923249epsmtrp2r;
+        Mon, 17 Jul 2023 11:37:55 +0000 (GMT)
+X-AuditID: b6c32a4a-c4fff7000000acda-60-64b52813ebb0
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        55.77.64355.31825B46; Mon, 17 Jul 2023 20:37:55 +0900 (KST)
+Received: from alimakhtar04 (unknown [107.122.12.5]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20230717113754epsmtip2229a9ca8ff5d6544a45b645362f09243~ypK1VMqXx0308203082epsmtip2C;
+        Mon, 17 Jul 2023 11:37:54 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Rob Herring'" <robh@kernel.org>,
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>
+Cc:     <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <20230714175147.4068046-1-robh@kernel.org>
+Subject: RE: [PATCH] soc: samsung: Explicitly include correct DT includes
+Date:   Mon, 17 Jul 2023 17:07:53 +0530
+Message-ID: <001d01d9b8a3$20bd7ed0$62387c70$@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230714174545.4056287-1-robh@kernel.org>
-References: <20230714174545.4056287-1-robh@kernel.org>
-Subject: Re: [PATCH] drm: Explicitly include correct DT includes
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     devicetree@vger.kernel.org, Ondrej Jirman <megous@megous.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-mips@vger.kernel.org, lima@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-To:     Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Artur Weber <aweber.kernel@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Emma Anholt <emma@anholt.net>,
-        Fabio Estevam <festevam@gmail.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Guido =?utf-8?q?G=C3=BCnther?= <agx@sigxcpu.org>,
-        Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>,
-        Icenow y Zheng <icenowy@aosc.io>,
-        Inki Dae <inki.dae@samsung.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jerry Han <hanxu5@huaqin.corp-partner.google.com>,
-        Jianhua Lu <lujianhua000@gmail.com>,
-        John Stultz <jstultz@google.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Liu Ying <victor.liu@nxp.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Marek Vasut <marex@denx.de>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Ondrej Jirman <megi@xff.cz>, Orson Zhai <orsonzhai@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
-        Purism Kernel Team <kernel@puri.sm>,
-        Qiang Yu <yuq825@gmail.com>,
-        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Rob Clark <robdclark@gmail.com>, Rob Herring <robh@kernel.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sean Paul <sean@poorly.run>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Steven Price <steven.price@arm.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        Yongqin Liu <yongqin.liu@linaro.org>
-Date:   Mon, 17 Jul 2023 12:35:59 +0100
-Message-ID: <168959375926.3515353.7529038208688306372@Monstersaurus>
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQFvrXnpEE06/lEBy1HujFZ2/GC4HQLREcuCsHtiWfA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplk+LIzCtJLcpLzFFi42LZdlhTU1dYY2uKwculVhbzj5xjtdj7eiu7
+        xabH11gtLu+aw2Yx4/w+Jov/e3awO7B5bFrVyeZx59oeNo/NS+o9Pm+SC2CJyrbJSE1MSS1S
+        SM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMAdqtpFCWmFMKFApILC5W
+        0rezKcovLUlVyMgvLrFVSi1IySkwKdArTswtLs1L18tLLbEyNDAwMgUqTMjO+P9qPlvBPrGK
+        fT+mMzcw/hXqYuTkkBAwkXhyeRtTFyMXh5DAbkaJjicrGCGcT4wSfza+YoJzdr/7zgTTMufz
+        TRaIxE5GifkfPjCDJIQEXjJKNK/UALHZBHQldixuYwOxRQQSJVruPwYbyyzQzyix4csLVpAE
+        p4C5xN+3F9hBbGEBT4lbP54DNXBwsAioShzu1AYxeQUsJQ6/B9vLKyAocXLmExYQm1lAXmL7
+        2znMEPcoSPx8uowVIi4u8fLoEXaItVYSF3d+ZwNZKyHQySHRfOQm1AMuEo2nTzJC2MISr45v
+        YYewpSQ+v9sLdoKEgIfEoj9SEOEMibfL10OV20scuDKHBaSEWUBTYv0ufYi1fBK9v58wQXTy
+        SnS0QQNXVaL53VUWCFtaYmJ3NyuE7SHxqXke+wRGxVlIHpuF5LFZSJ6ZhbBsASPLKkbJ1ILi
+        3PTUYtMCo7zUcnhsJ+fnbmIEp0strx2MDx980DvEyMTBeIhRgoNZSYT3+6pNKUK8KYmVValF
+        +fFFpTmpxYcYTYFhPZFZSjQ5H5iw80riDU0sDUzMzMxMLI3NDJXEeV+3zk0REkhPLEnNTk0t
+        SC2C6WPi4JRqYBKLmRV6cc6KyXvN5xktPMf67aGv0YQa68N3dFcomrerZv8zsFJS3scx1UE+
+        Y+LGevHw1fsMfzY9l+H/9N4/bu6SKlbXe263ZW3DFrw+vrqlplB/n4y88aUtzy5kb7gkMkHk
+        vVrqXLaFn6SY2cWrjwoadWxLSJAJ9d0g6FyTruN30eLZ5JaOIBaphttt0ad2uhUkyjhMcXHp
+        K/S6lrJt6+rVJez8OyQNInM+nVPZbzd/o3vKeX62roJNc5vnWzm6LvrWVzn79IOOW1/VVVvX
+        r1JTYLncuiAs8YWO8qcH3+4ofb+wSd5JcZGCm07a7j3lt9bHfzvTs2fPvhXuTRIlu2t9b5ZN
+        dJyx0DhvowePhRJLcUaioRZzUXEiAL0+IHcgBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsWy7bCSvK6wxtYUg627NSzmHznHarH39VZ2
+        i02Pr7FaXN41h81ixvl9TBb/9+xgd2Dz2LSqk83jzrU9bB6bl9R7fN4kF8ASxWWTkpqTWZZa
+        pG+XwJXx/9V8toJ9YhX7fkxnbmD8K9TFyMkhIWAiMefzTZYuRi4OIYHtjBK7tp1gh0hIS1zf
+        OAHKFpZY+e85O0TRc0aJ5if3mUASbAK6EjsWt7GB2CICiRIX/z1jBCliFpjMKPH9wFomiI4O
+        Ronnc++DVXEKmEv8fXsBbKywgKfErR/PgeIcHCwCqhKHO7VBTF4BS4nD78Hm8woISpyc+YQF
+        JMwsoCfRtpERJMwsIC+x/e0cZojbFCR+Pl3GChEXl3h59Ag7xDlWEhd3fmebwCg8C8mkWQiT
+        ZiGZNAtJ9wJGllWMoqkFxbnpuckFhnrFibnFpXnpesn5uZsYwdGiFbSDcdn6v3qHGJk4GA8x
+        SnAwK4nwfl+1KUWINyWxsiq1KD++qDQntfgQozQHi5I4r3JOZ4qQQHpiSWp2ampBahFMlomD
+        U6qBSVonhTtd+9NbFqnG22wXpDb+1Pbq2pw9/cKPy0YLbes/R71hm5G4PrWY+dDFewIbbYtW
+        Lvaa1puWZ33zkdbZafondx6e+GN/4NP6jbo+IQH8k3u1/pmp8hpn1VRkfrs7cfamh6kJ+Rse
+        TVK6HXdnshWrbMjuS8skZx16/f+GcUTckTTHB4uUKhlfTr/1kun5wh8705geOP9WEJu/hWX7
+        bN7NWQIfFZ+12fxu31yZHcpyas98yykP4514uNTFZdz+3niR0bh0Qb+Om1/nE5tFa9VSNizr
+        WOJeVF5+/2rQjx/9tss3rDHawRxZbZqVMHmbx7v4zAslAcufLkldPMH1cOULpntpEzrX/tJ9
+        +OFo9nslluKMREMt5qLiRAAbijVLBQMAAA==
+X-CMS-MailID: 20230717113755epcas5p2c474d62544126f79dac38e6514961ec3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230714175226epcas5p2957137e6e0b4a69efb913fe744be827a
+References: <CGME20230714175226epcas5p2957137e6e0b4a69efb913fe744be827a@epcas5p2.samsung.com>
+        <20230714175147.4068046-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Quoting Rob Herring (2023-07-14 18:45:34)
+
+
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: Friday, July 14, 2023 11:22 PM
+> To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>; Alim Akhtar
+> <alim.akhtar@samsung.com>
+> Cc: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+linux-
+> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [PATCH] soc: samsung: Explicitly include correct DT includes
+> 
 > The DT of_device.h and of_platform.h date back to the separate
 > of_platform_bus_type before it as merged into the regular platform bus.
 > As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
->=20
+"temporarily"
+> include each other. They also include platform_device.h and of.h. As a
+result,
+> there's a pretty much random mix of those include files used throughout
+the
+> tree. In order to detangle these headers and replace the implicit includes
+with
+> struct declarations, users need to explicitly include the correct
+includes.
+> 
 > Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
 
->  drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c         | 2 +-
->  drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c         | 2 ++
->  drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c         | 1 +
->  drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c       | 1 -
->  drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi.c      | 1 -
+Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-For drivers/gpu/drm/renesas/rcar-du/
-
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c b/drivers/gpu/=
-drm/renesas/rcar-du/rcar_du_drv.c
-> index 1ffde19cb87f..3904b0cca814 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-> @@ -12,7 +12,7 @@
+>  drivers/soc/samsung/exynos-chipid.c | 1 -
+>  drivers/soc/samsung/exynos-pmu.c    | 2 +-
+>  drivers/soc/samsung/pm_domains.c    | 3 ++-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/soc/samsung/exynos-chipid.c
+b/drivers/soc/samsung/exynos-
+> chipid.c
+> index 0fb3631e7346..7ba45c4aff97 100644
+> --- a/drivers/soc/samsung/exynos-chipid.c
+> +++ b/drivers/soc/samsung/exynos-chipid.c
+> @@ -17,7 +17,6 @@
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> -#include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
+>  #include <linux/slab.h>
+> diff --git a/drivers/soc/samsung/exynos-pmu.c
+b/drivers/soc/samsung/exynos-
+> pmu.c
+> index 5b2664da9853..250537d7cfd6 100644
+> --- a/drivers/soc/samsung/exynos-pmu.c
+> +++ b/drivers/soc/samsung/exynos-pmu.c
+> @@ -7,9 +7,9 @@
+> 
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> -#include <linux/of_device.h>
+>  #include <linux/mfd/core.h>
+>  #include <linux/mfd/syscon.h>
+> +#include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/delay.h>
+> 
+> diff --git a/drivers/soc/samsung/pm_domains.c
+> b/drivers/soc/samsung/pm_domains.c
+> index d07f3c9d6903..9b502e8751d1 100644
+> --- a/drivers/soc/samsung/pm_domains.c
+> +++ b/drivers/soc/samsung/pm_domains.c
+> @@ -11,11 +11,12 @@
+> 
 >  #include <linux/io.h>
->  #include <linux/mm.h>
->  #include <linux/module.h>
-> -#include <linux/of_device.h>
-> +#include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm.h>
->  #include <linux/slab.h>
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c b/drivers/gpu/=
-drm/renesas/rcar-du/rcar_du_kms.c
-> index adfb36b0e815..9ff4537c26c8 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c
-> @@ -20,8 +20,10 @@
-> =20
->  #include <linux/device.h>
->  #include <linux/dma-buf.h>
-> +#include <linux/of.h>
->  #include <linux/of_graph.h>
->  #include <linux/of_platform.h>
+>  #include <linux/err.h>
 > +#include <linux/platform_device.h>
->  #include <linux/wait.h>
-> =20
->  #include "rcar_du_crtc.h"
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c b/drivers/gpu/=
-drm/renesas/rcar-du/rcar_du_vsp.c
-> index 45c05d0ffc70..9cbb5e6e2cba 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c
-> @@ -22,6 +22,7 @@
->  #include <linux/bitops.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
->  #include <linux/scatterlist.h>
 >  #include <linux/slab.h>
->  #include <linux/videodev2.h>
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gp=
-u/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> index e10e4d4b89a2..db2e6f16f954 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> @@ -12,7 +12,6 @@
->  #include <linux/math64.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <linux/of_graph.h>
->  #include <linux/platform_device.h>
->  #include <linux/reset.h>
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi.c b/drivers/g=
-pu/drm/renesas/rcar-du/rzg2l_mipi_dsi.c
-> index aa95b85a2964..8048bdca2d6c 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi.c
-> @@ -10,7 +10,6 @@
->  #include <linux/iopoll.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <linux/of_graph.h>
->  #include <linux/platform_device.h>
+>  #include <linux/pm_domain.h>
+>  #include <linux/delay.h>
+> +#include <linux/of.h>
+>  #include <linux/of_address.h>
+> -#include <linux/of_platform.h>
 >  #include <linux/pm_runtime.h>
+> 
+>  struct exynos_pm_domain_config {
+> --
+> 2.40.1
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
