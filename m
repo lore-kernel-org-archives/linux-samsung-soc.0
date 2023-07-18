@@ -2,62 +2,62 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98BF4EB64DA
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jul 2023 06:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7052CEB64DA
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jul 2023 06:06:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229740AbjGRGFL (ORCPT
+        id S230448AbjGRGGg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 18 Jul 2023 02:05:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51148 "EHLO
+        Tue, 18 Jul 2023 02:06:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229678AbjGRGFK (ORCPT
+        with ESMTP id S231131AbjGRGGf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Jul 2023 02:05:10 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C21711706
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 23:04:54 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-51ff0e3d8c1so7091194a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 23:04:54 -0700 (PDT)
+        Tue, 18 Jul 2023 02:06:35 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D3EDEA
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 23:06:33 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-5216f713f8bso5125074a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 23:06:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689660293; x=1692252293;
+        d=linaro.org; s=google; t=1689660392; x=1692252392;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Pi+9LyUJ5THFqcDKma4bfg7WT28WRPLEB3mh8U0f0MM=;
-        b=OeTntWAywOZKB1oNuN09bvqBfrZtjS7cc7QIGJUknhN1nhL5lJ19pe39McNGzMdVZ/
-         2baIcWl7oPCdNbURAO1uTmv1RiinIAN8PD7B6ag1lzndSNUxt+R+DfH4iCBqadpKtgbT
-         3ctxeomdyA4m8WhUz1xdkGGou33FcCh55XLyHljmBFlCjG80tHLFeuVIJm9+edvSr6tj
-         UIG4vzNTFil5SzLheRy5E0gYrOoOWarkETcV/fzkG3Y5Rkp5iVDifUEUNYDHtriW6iAS
-         cg3hy1a/wmMLo5oVFovpfF9nRDIAFXg/O22Ckfv1LiEb0a5smXVleZ1SnmiWHzF2tZ34
-         PmNQ==
+        bh=r3E/REAd1PY+Cafajtk4h0rH83WVGTGX7hhI9F7Vli0=;
+        b=AnEBkeGg+icA/9lTeVQ2Mt6YiwQ+FOnIiw143u9tuDa0YDZpQ49rej8OzOkYUBhPKK
+         vbrJv+4LowZWShkbAyMF6rQQyRxA8zNryp/wRpFlSIi0249ank4AsA6vP4jIhqDWxs0a
+         k4U+atFg6x/coIIuZDk/LKXzoz8cYvMGcNweMqvP2wR5fHwIHvRNEGDDmJrJVTTFnObE
+         FIGSPOqzQi3AXxcvkfXyPMSeGIXm4FYq39/ATckEeXI/S50jb3+4AUC6iNZmzKvQbS5L
+         lnMz949+C4W0NX7+Z2KTu7N5njLnc1JyoWgLhBrvi4nuQPzniXG1+GmGc2Conr6Rdq32
+         40+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689660293; x=1692252293;
+        d=1e100.net; s=20221208; t=1689660392; x=1692252392;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pi+9LyUJ5THFqcDKma4bfg7WT28WRPLEB3mh8U0f0MM=;
-        b=Y8Ir1aYXHLaor4EriZ719UV9z3LCyxmqt1QGoUtrjj0rT4CbsGssPD12sm+sqJ9ErT
-         A/ClwwgKQu/LcKRxWNKCzW6Cm7P525M62UeHoqsVz8VvUHjzYZOdH2muxHT03VUDI+Wh
-         f8X4oxGfnu+b63k5Bh9G+suH53V4LhqXPhKsoEXwxMaWvpKk/xPLAauwIhsUPSwbPbMQ
-         O2X814FFbeh2lAHHzouOXQo/QzKseNCBf8mmJT+j0iGWDQhirQQr8Vg4dID8tlf7IfpA
-         vRn1tFyWljjxj9+bNydgFSVHSPqNJgtGVYeF3kUVVWpbzYGGqJlcbQEnRG+BE/VURjz5
-         PmAQ==
-X-Gm-Message-State: ABy/qLY8JcbfodyjuMHcvQOXpfvHN8noH27XRtfdSpXvYPYelQDlUUjk
-        SkvkuJGEVIGIV/l4KQ4y3RzpxA==
-X-Google-Smtp-Source: APBJJlHRVmfQeCVSCe7SzkfH922H82pL93UZ8ds+SivT/bPyeVwzM25IpfuKTfhihInE7zgo7TD1mg==
-X-Received: by 2002:aa7:d896:0:b0:521:8ca5:6070 with SMTP id u22-20020aa7d896000000b005218ca56070mr4088823edq.33.1689660293228;
-        Mon, 17 Jul 2023 23:04:53 -0700 (PDT)
+        bh=r3E/REAd1PY+Cafajtk4h0rH83WVGTGX7hhI9F7Vli0=;
+        b=AiBBRK6ttMq5eVzEjW2x9ZCK7EiH3+SDz8vVcxJRnvxbiXb+Qn/utBd24SDflpOaBg
+         QjxAAi6h4+3Z0CcqjlHFhRCDrPeKUUVPjNoJV/3L206xQPBsDa7mCuKC+xWIr7OTlLs5
+         r6Ve09NvpItl9rkOzzAET8L4KtGPnf+FY1N+BITK+3kCVkSRPBdLYJBREN0u5V/8Yz/w
+         IP1Jbv69GWIFHu3nk1RKmlj80ofdfIryePoqb1jznbBRTvw5jZ5REEaU7Vm2E8sSq35e
+         uCnn9AutvUsZZnK5H/7zWqKBdygukQAmmDPUJmk0LqGtomTeXmr4I+LU6qNzwRn/s7mW
+         bjmA==
+X-Gm-Message-State: ABy/qLYTumDtMLzp6Af3bcZPJD2/JFIXj3eGpQMCrE1peIXdOSBtCFRB
+        qss0RCxrFncWDyfjyp9s1L4MnA==
+X-Google-Smtp-Source: APBJJlFYm/q1jH0wn2AtcjBZ6ivjdesS6NxsnwNVQYeWFkZoY71A9o2TCsdZjM9mActq7FJOXHme/w==
+X-Received: by 2002:a17:907:20d2:b0:997:bb66:3d1 with SMTP id qq18-20020a17090720d200b00997bb6603d1mr5520876ejb.25.1689660392158;
+        Mon, 17 Jul 2023 23:06:32 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id i19-20020aa7dd13000000b0051de3c6c5e5sm657685edv.94.2023.07.17.23.04.51
+        by smtp.gmail.com with ESMTPSA id e9-20020a170906374900b009893650453fsm554206ejc.173.2023.07.17.23.06.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jul 2023 23:04:52 -0700 (PDT)
-Message-ID: <4e546dbf-8f10-a27e-dd8b-052151ebf00a@linaro.org>
-Date:   Tue, 18 Jul 2023 08:04:51 +0200
+        Mon, 17 Jul 2023 23:06:31 -0700 (PDT)
+Message-ID: <a62141a9-a2c0-6568-cb05-5ef59250e10f@linaro.org>
+Date:   Tue, 18 Jul 2023 08:06:29 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH v5 1/2] dt-bindings: pwm: samsung: add exynosautov9
- compatible
+Subject: Re: [PATCH v5 2/2] arm64: dts: exynos: add pwm node for
+ exynosautov9-sadk
 Content-Language: en-US
 To:     Jaewon Kim <jaewon02.kim@samsung.com>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -70,10 +70,10 @@ Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
 References: <20230718034201.136800-1-jaewon02.kim@samsung.com>
- <CGME20230718034723epcas2p3913ad208c70659965b4ec204570aa0a1@epcas2p3.samsung.com>
- <20230718034201.136800-2-jaewon02.kim@samsung.com>
+ <CGME20230718034723epcas2p354fc5502d4ed212c7f748d2849e6b60a@epcas2p3.samsung.com>
+ <20230718034201.136800-3-jaewon02.kim@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230718034201.136800-2-jaewon02.kim@samsung.com>
+In-Reply-To: <20230718034201.136800-3-jaewon02.kim@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -81,12 +81,32 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 18/07/2023 05:42, Jaewon Kim wrote:
-> Add samsung,exynosautov9-pwm compatible string to binding document.
+> Add pwm node to support fan on exynosautov9-sadk board.
+> PWM channel 3 of ExynosAutov9 is connected to fan for SoC cooling
+> in SADK board.
 > 
 > Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
 > ---
+>  arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts |  6 ++++++
+>  arch/arm64/boot/dts/exynos/exynosautov9.dtsi     | 10 ++++++++++
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
+> index 101f51bf565a..bc1815f6ada2 100644
+> --- a/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
+> +++ b/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
+> @@ -49,6 +49,12 @@
+>  	};
+>  };
+>  
+> +&pwm {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pwm_tout3>;
+> +	status = "okay";
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I think you miss disabling it.
+
+> +};
 
 Best regards,
 Krzysztof
