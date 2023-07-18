@@ -2,155 +2,141 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68AF8C04A6A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jul 2023 03:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E481C04A94
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jul 2023 05:49:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229603AbjGRDrh (ORCPT
+        id S230348AbjGRFtM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Jul 2023 23:47:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43682 "EHLO
+        Tue, 18 Jul 2023 01:49:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230199AbjGRDre (ORCPT
+        with ESMTP id S230377AbjGRFtC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Jul 2023 23:47:34 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2004E10E2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 20:47:28 -0700 (PDT)
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230718034725epoutp034cd9afb4fb483d5d574c1f63d2a2114f~y2ZVDaSdI0156701567epoutp034
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jul 2023 03:47:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230718034725epoutp034cd9afb4fb483d5d574c1f63d2a2114f~y2ZVDaSdI0156701567epoutp034
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1689652045;
-        bh=L5iesQnu6wEMqGN1E46p7ijr/52gAmlg78TCYwaaXOM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D4t+WWOWv7KV96MbiY2IIOR1TFmS17FppPDtNoV4k1Lu35tfzwUj11oiumCMKWlOV
-         yfvQLzBvObvmqFR/TBDBVQZZCZgGspXOnUZmsYOkjSMW8ruqHPNkp2OX6mu0hPzKvV
-         lHfF8EdL0DvjCegSejq41567l+x2jxzijHKsL5Ag=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20230718034724epcas2p1fe80ed107287e78af9324f76d211eab2~y2ZUolLVS2175421754epcas2p1S;
-        Tue, 18 Jul 2023 03:47:24 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.98]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4R4lJX3xkNz4x9Q6; Tue, 18 Jul
-        2023 03:47:24 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        62.7A.32606.C4B06B46; Tue, 18 Jul 2023 12:47:24 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-        20230718034723epcas2p3913ad208c70659965b4ec204570aa0a1~y2ZTsTuwx2780627806epcas2p3i;
-        Tue, 18 Jul 2023 03:47:23 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230718034723epsmtrp1ca8a74cfe8d4fb4601332174acea49e5~y2ZTrmIHm2911129111epsmtrp1B;
-        Tue, 18 Jul 2023 03:47:23 +0000 (GMT)
-X-AuditID: b6c32a47-9cbff70000007f5e-b5-64b60b4cd286
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        61.03.64355.B4B06B46; Tue, 18 Jul 2023 12:47:23 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.55]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230718034723epsmtip10495c00da0e86785e60c4ac773b93a65~y2ZTeAuMF1656116561epsmtip1a;
-        Tue, 18 Jul 2023 03:47:23 +0000 (GMT)
-From:   Jaewon Kim <jaewon02.kim@samsung.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH v5 1/2] dt-bindings: pwm: samsung: add exynosautov9
- compatible
-Date:   Tue, 18 Jul 2023 12:42:00 +0900
-Message-Id: <20230718034201.136800-2-jaewon02.kim@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230718034201.136800-1-jaewon02.kim@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFKsWRmVeSWpSXmKPExsWy7bCmha4P97YUg7XNEhYP5m1js1iz9xyT
-        xfwj51gtdjQcYbXoe/GQ2WLT42usFpd3zWGzuHt3FaPFjPP7mCxa9x5ht/i5ax6Lxe2Jkxkd
-        eDx2zrrL7rFpVSebx51re9g8Ni+p9+j/a+DRt2UVo8fnTXIB7FHZNhmpiSmpRQqpecn5KZl5
-        6bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAdyoplCXmlAKFAhKLi5X07WyK8ktL
-        UhUy8otLbJVSC1JyCswL9IoTc4tL89L18lJLrAwNDIxMgQoTsjM277zNXPCYu6J9knYD4zaO
-        LkZODgkBE4nVy5vYQWwhgR2MEl1dCV2MXED2J0aJez+PssM5s6+uZIPpOHfjBxNEx05GiWfb
-        ciCKPjJK9LdeAhvFJqAt8X39YlYQW0RgIZPEs/tlIEXMAqcZJdbeesICkhAWCJC4PbGPEcRm
-        EVCV2LP4OFicV8BO4v6RI1Db5CVWbzjADGJzCthLTNi9B+wkCYGP7BJ/X91lhShykXh18iQj
-        hC0s8er4FnYIW0riZX8blJ0t0T79D1R9hcTFDbOhFhhLzHrWDtTLAXSdpsT6XfogpoSAssSR
-        W2DnMAvwSXQc/ssOEeaV6GgTgmhUk7g/9RzUEBmJSUdWMkHYHhJ33rUxQsJnEqPE5gvaExjl
-        ZiHMX8DIuIpRLLWgODc9tdiowBgeXcn5uZsYwYlQy30H44y3H/QOMTJxMB5ilOBgVhLh/b5q
-        U4oQb0piZVVqUX58UWlOavEhRlNg0E1klhJNzgem4rySeEMTSwMTMzNDcyNTA3Mlcd57rXNT
-        hATSE0tSs1NTC1KLYPqYODilGpg67DyTmlbL5yd2N3vwqX6ZO0PsZqwT48I2/W4rlWK9A64s
-        K47xrpisVbdd1+fPpNdV0vpK81jiGLqa5C3X+nqZRxV8ErnfuuvHruYj3hd3Wgd0PZS8NJf9
-        rZlhscy7e5ufNf8v5vgQ/muxUO+OqUUfzm17qbx95rT7NVb+TL//mSRfq7g9083ww655ZcU6
-        CV4RpxP3f1X/cW6NzpID3f9E+yO99uusvFXjGFtkblxaphU8s15kr7xP31EOVuffUw8ks78u
-        Tlpgdi4qZcZVtVXXLbraAn353++bz9h7W9Y7PpV7b129p7HLiu1TEhIrU/5cfeIdLD7BI/jQ
-        +rxt1zdmPHnYmLX+UEGQl802RiWW4oxEQy3mouJEAJtjrWQNBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCLMWRmVeSWpSXmKPExsWy7bCSnK4397YUg0fNehYP5m1js1iz9xyT
-        xfwj51gtdjQcYbXoe/GQ2WLT42usFpd3zWGzuHt3FaPFjPP7mCxa9x5ht/i5ax6Lxe2Jkxkd
-        eDx2zrrL7rFpVSebx51re9g8Ni+p9+j/a+DRt2UVo8fnTXIB7FFcNimpOZllqUX6dglcGZt3
-        3mYueMxd0T5Ju4FxG0cXIyeHhICJxLkbP5hAbCGB7YwSUz+bQsRlJJY/62ODsIUl7rccYe1i
-        5AKqec8o0fb2DitIgk1AW+L7+sVgCRGBxUwSb7ofgjnMAhcZJU78ucIOUiUs4Cdx6Mk6sFEs
-        AqoSexYfZwGxeQXsJO4fOQK1Ql5i9YYDzCA2p4C9xITde9ghTrKT+Lj0G+MERr4FjAyrGEVT
-        C4pz03OTCwz1ihNzi0vz0vWS83M3MYIDVitoB+Oy9X/1DjEycTAeYpTgYFYS4f2+alOKEG9K
-        YmVValF+fFFpTmrxIUZpDhYlcV7lnM4UIYH0xJLU7NTUgtQimCwTB6dUA1O6ZKSCxOKr0u8v
-        cJ4M+fts4vrpd1rfXHJctId1m2X4n/2hnWtX2i5YllD/+lx6SlNJXo7o7dpLZ/xNWzOXcf29
-        IVwas0z5XEBHXtaC5ILLZ7UqOpazGZxPU3h/o2xdxu4917YaLc5PqThi4CPuL+TL2/g0oDnh
-        8Awfc9PIUte7Pbaad7M357ff57l4dfMGOxGr1jWTKrq0jry7v85ONFDB3kEredJ6hQThZ/M1
-        UjuEXrRPY//ELNkmv71hhVWp97uz3HEhF9iq1KPcDqyU+cVSYtp7JEa24Osjh8C1r66zT/53
-        1uS0YF495/I11QYaaTypux/mBUvt2Fz+LjxvYuah/Stl/67otDdVOD33oBJLcUaioRZzUXEi
-        ABfuLazHAgAA
-X-CMS-MailID: 20230718034723epcas2p3913ad208c70659965b4ec204570aa0a1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230718034723epcas2p3913ad208c70659965b4ec204570aa0a1
-References: <20230718034201.136800-1-jaewon02.kim@samsung.com>
-        <CGME20230718034723epcas2p3913ad208c70659965b4ec204570aa0a1@epcas2p3.samsung.com>
+        Tue, 18 Jul 2023 01:49:02 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1455610E4;
+        Mon, 17 Jul 2023 22:49:00 -0700 (PDT)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36I5eYYS008122;
+        Tue, 18 Jul 2023 05:47:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=botXgHX6lvKxI//MS5qCm7ZrIXLhTHjIntqkzLlfZ7E=;
+ b=J+4F8hVZ9+BwXwycxS77FsGp/9CE9z+niHIhfkHXTTN1u1B5I4Gz8RZIfz2g9YRSZyaQ
+ 5IiMd2Ea9PRZk6tya8+iagYVyPCKHdbDI2z83Gs9Ba+CD76fhvJylaXLGJnCqNeBfKQJ
+ TMFPlfaII/AgZHC2l1sB5BXV/3ltQJs5X6IaC+VqPDuLi6bz8Q8VeDlXA/woLuHyfixM
+ jrPmvjMPTJxYoLQCz8PZH0LHT5JpIGFLF7xPcpHJj9wHDK0+kg44VLM0N1yPA8Sd+jrY
+ H5i+W5aKvBQ66myjQAIbg/pvcTFLjzepU0hhJEb+ERLTXctjzZFJdewjSntr9XPMHNkl sA== 
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rwfj78jh8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Jul 2023 05:47:29 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36I5lSOk009126
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Jul 2023 05:47:28 GMT
+Received: from [10.216.47.173] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Mon, 17 Jul
+ 2023 22:47:20 -0700
+Message-ID: <e4784d1c-73da-9cda-6aef-d02625e8efd2@quicinc.com>
+Date:   Tue, 18 Jul 2023 11:17:12 +0530
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4 00/21] Add Qualcomm Minidump kernel driver related
+ support
+To:     <linux-samsung-soc@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>
+CC:     Greg KH <gregkh@linuxfoundation.org>, <corbet@lwn.net>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <keescook@chromium.org>,
+        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <andy.shevchenko@gmail.com>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>,
+        "Trilok Soni" <quic_tsoni@quicinc.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
+ <2023062814-chance-flounder-f002@gregkh>
+ <CAL_JsqLO9yey2-4FcWsaGxijiS6hGL0SH9VoMuiyei-u9=Cv=w@mail.gmail.com>
+ <CACRpkda3CJ7G4-wDPkWmzg6nyCoEfG+u2cQH6KXWNjbftd90ow@mail.gmail.com>
+ <355de4c7-180d-4edd-b6fd-9c8e29e40e42@quicinc.com>
+ <52650970-de78-764f-28e2-ee0115b7d5c6@quicinc.com>
+Content-Language: en-US
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <52650970-de78-764f-28e2-ee0115b7d5c6@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 4MQCr3V3jn7NkD1q7loLspC5CvNWJFhH
+X-Proofpoint-ORIG-GUID: 4MQCr3V3jn7NkD1q7loLspC5CvNWJFhH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-17_15,2023-07-13_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ mlxlogscore=999 impostorscore=0 clxscore=1011 phishscore=0 spamscore=0
+ lowpriorityscore=0 priorityscore=1501 mlxscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307180053
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add samsung,exynosautov9-pwm compatible string to binding document.
++ linux-samsung-soc@vger.kernel.org
++ linux-mediatek@lists.infradead.org
 
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
----
- .../devicetree/bindings/pwm/pwm-samsung.yaml    | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-index fe603fb1b2cc..2162f661ed5a 100644
---- a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-+++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-@@ -20,12 +20,17 @@ description: |+
- 
- properties:
-   compatible:
--    enum:
--      - samsung,s3c2410-pwm             # 16-bit, S3C24xx
--      - samsung,s3c6400-pwm             # 32-bit, S3C64xx
--      - samsung,s5p6440-pwm             # 32-bit, S5P64x0
--      - samsung,s5pc100-pwm             # 32-bit, S5PC100, S5PV210, Exynos4210 rev0 SoCs
--      - samsung,exynos4210-pwm          # 32-bit, Exynos
-+    oneOf:
-+      - enum:
-+          - samsung,s3c2410-pwm             # 16-bit, S3C24xx
-+          - samsung,s3c6400-pwm             # 32-bit, S3C64xx
-+          - samsung,s5p6440-pwm             # 32-bit, S5P64x0
-+          - samsung,s5pc100-pwm             # 32-bit, S5PC100, S5PV210, Exynos4210 rev0 SoCs
-+          - samsung,exynos4210-pwm          # 32-bit, Exynos
-+      - items:
-+          - enum:
-+              - samsung,exynosautov9-pwm
-+          - const: samsung,exynos4210-pwm
- 
-   reg:
-     maxItems: 1
--- 
-2.17.1
 
+On 7/15/2023 5:15 AM, Trilok Soni wrote:
+> On 7/5/2023 10:29 AM, Trilok Soni wrote:
+>> On 7/4/2023 2:27 AM, Linus Walleij wrote:
+>>> On Thu, Jun 29, 2023 at 1:12 AM Rob Herring <robh+dt@kernel.org> wrote:
+>>>
+>>>> My bigger issue with this whole series is what would this all look
+>>>> like if every SoC vendor upstreamed their own custom dumping
+>>>> mechanism. That would be a mess. (I have similar opinions on the
+>>>> $soc-vendor hypervisors.)
+>>>
+>>> I agree with Rob's stance.
+>>>
+>>> I think it would be useful to get input from the hwtracing developers
+>>> (Alexander and Mathieu) who faced this "necessarily different" issue
+>>> with all the hwtrace mechanisms and found a way out of it. I suspect
+>>> they can have an idea of how this should be abstracted.
+>>
+>> Any mailing list you suggest we expand to so that we get inputs from 
+>> the hwtracing developers and maintainers or just look into the 
+>> MAINTAINERS file and start an email thread?
+>>
+>> We are fine to submit the abstract for the LPC in next two weeks, but 
+>> prefer to have lot of good discussion before it on the mailing list, 
+>> so that we have code to talk about in LPC.
+> 
+> We have submitted abstract at LPC MC. Let's continue the discussion here 
+> though.
+> 
+> Mukesh, do you want to expand the lists as necessary to see if other 
+> soc-vendors are having any inputs here? May be add Exynos or MTK kernel 
+> mailing lists + linux-kernel? I don't know if anyone will respond or 
+> not, but let's try.
+
+Sure.
+
+-Mukesh
+> 
+> ---Trilok Soni
+> 
