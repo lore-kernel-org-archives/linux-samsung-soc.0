@@ -2,141 +2,92 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E481C04A94
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jul 2023 05:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98BF4EB64DA
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jul 2023 06:05:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230348AbjGRFtM (ORCPT
+        id S229740AbjGRGFL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 18 Jul 2023 01:49:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44346 "EHLO
+        Tue, 18 Jul 2023 02:05:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230377AbjGRFtC (ORCPT
+        with ESMTP id S229678AbjGRGFK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Jul 2023 01:49:02 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1455610E4;
-        Mon, 17 Jul 2023 22:49:00 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36I5eYYS008122;
-        Tue, 18 Jul 2023 05:47:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=botXgHX6lvKxI//MS5qCm7ZrIXLhTHjIntqkzLlfZ7E=;
- b=J+4F8hVZ9+BwXwycxS77FsGp/9CE9z+niHIhfkHXTTN1u1B5I4Gz8RZIfz2g9YRSZyaQ
- 5IiMd2Ea9PRZk6tya8+iagYVyPCKHdbDI2z83Gs9Ba+CD76fhvJylaXLGJnCqNeBfKQJ
- TMFPlfaII/AgZHC2l1sB5BXV/3ltQJs5X6IaC+VqPDuLi6bz8Q8VeDlXA/woLuHyfixM
- jrPmvjMPTJxYoLQCz8PZH0LHT5JpIGFLF7xPcpHJj9wHDK0+kg44VLM0N1yPA8Sd+jrY
- H5i+W5aKvBQ66myjQAIbg/pvcTFLjzepU0hhJEb+ERLTXctjzZFJdewjSntr9XPMHNkl sA== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rwfj78jh8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 18 Jul 2023 05:47:29 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36I5lSOk009126
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 18 Jul 2023 05:47:28 GMT
-Received: from [10.216.47.173] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Mon, 17 Jul
- 2023 22:47:20 -0700
-Message-ID: <e4784d1c-73da-9cda-6aef-d02625e8efd2@quicinc.com>
-Date:   Tue, 18 Jul 2023 11:17:12 +0530
+        Tue, 18 Jul 2023 02:05:10 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C21711706
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 23:04:54 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-51ff0e3d8c1so7091194a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 23:04:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1689660293; x=1692252293;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Pi+9LyUJ5THFqcDKma4bfg7WT28WRPLEB3mh8U0f0MM=;
+        b=OeTntWAywOZKB1oNuN09bvqBfrZtjS7cc7QIGJUknhN1nhL5lJ19pe39McNGzMdVZ/
+         2baIcWl7oPCdNbURAO1uTmv1RiinIAN8PD7B6ag1lzndSNUxt+R+DfH4iCBqadpKtgbT
+         3ctxeomdyA4m8WhUz1xdkGGou33FcCh55XLyHljmBFlCjG80tHLFeuVIJm9+edvSr6tj
+         UIG4vzNTFil5SzLheRy5E0gYrOoOWarkETcV/fzkG3Y5Rkp5iVDifUEUNYDHtriW6iAS
+         cg3hy1a/wmMLo5oVFovpfF9nRDIAFXg/O22Ckfv1LiEb0a5smXVleZ1SnmiWHzF2tZ34
+         PmNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689660293; x=1692252293;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pi+9LyUJ5THFqcDKma4bfg7WT28WRPLEB3mh8U0f0MM=;
+        b=Y8Ir1aYXHLaor4EriZ719UV9z3LCyxmqt1QGoUtrjj0rT4CbsGssPD12sm+sqJ9ErT
+         A/ClwwgKQu/LcKRxWNKCzW6Cm7P525M62UeHoqsVz8VvUHjzYZOdH2muxHT03VUDI+Wh
+         f8X4oxGfnu+b63k5Bh9G+suH53V4LhqXPhKsoEXwxMaWvpKk/xPLAauwIhsUPSwbPbMQ
+         O2X814FFbeh2lAHHzouOXQo/QzKseNCBf8mmJT+j0iGWDQhirQQr8Vg4dID8tlf7IfpA
+         vRn1tFyWljjxj9+bNydgFSVHSPqNJgtGVYeF3kUVVWpbzYGGqJlcbQEnRG+BE/VURjz5
+         PmAQ==
+X-Gm-Message-State: ABy/qLY8JcbfodyjuMHcvQOXpfvHN8noH27XRtfdSpXvYPYelQDlUUjk
+        SkvkuJGEVIGIV/l4KQ4y3RzpxA==
+X-Google-Smtp-Source: APBJJlHRVmfQeCVSCe7SzkfH922H82pL93UZ8ds+SivT/bPyeVwzM25IpfuKTfhihInE7zgo7TD1mg==
+X-Received: by 2002:aa7:d896:0:b0:521:8ca5:6070 with SMTP id u22-20020aa7d896000000b005218ca56070mr4088823edq.33.1689660293228;
+        Mon, 17 Jul 2023 23:04:53 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.104])
+        by smtp.gmail.com with ESMTPSA id i19-20020aa7dd13000000b0051de3c6c5e5sm657685edv.94.2023.07.17.23.04.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jul 2023 23:04:52 -0700 (PDT)
+Message-ID: <4e546dbf-8f10-a27e-dd8b-052151ebf00a@linaro.org>
+Date:   Tue, 18 Jul 2023 08:04:51 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH v4 00/21] Add Qualcomm Minidump kernel driver related
- support
-To:     <linux-samsung-soc@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>
-CC:     Greg KH <gregkh@linuxfoundation.org>, <corbet@lwn.net>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <keescook@chromium.org>,
-        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <andy.shevchenko@gmail.com>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>,
-        "Trilok Soni" <quic_tsoni@quicinc.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
- <2023062814-chance-flounder-f002@gregkh>
- <CAL_JsqLO9yey2-4FcWsaGxijiS6hGL0SH9VoMuiyei-u9=Cv=w@mail.gmail.com>
- <CACRpkda3CJ7G4-wDPkWmzg6nyCoEfG+u2cQH6KXWNjbftd90ow@mail.gmail.com>
- <355de4c7-180d-4edd-b6fd-9c8e29e40e42@quicinc.com>
- <52650970-de78-764f-28e2-ee0115b7d5c6@quicinc.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: pwm: samsung: add exynosautov9
+ compatible
 Content-Language: en-US
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <52650970-de78-764f-28e2-ee0115b7d5c6@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4MQCr3V3jn7NkD1q7loLspC5CvNWJFhH
-X-Proofpoint-ORIG-GUID: 4MQCr3V3jn7NkD1q7loLspC5CvNWJFhH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-17_15,2023-07-13_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- mlxlogscore=999 impostorscore=0 clxscore=1011 phishscore=0 spamscore=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2307180053
+To:     Jaewon Kim <jaewon02.kim@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20230718034201.136800-1-jaewon02.kim@samsung.com>
+ <CGME20230718034723epcas2p3913ad208c70659965b4ec204570aa0a1@epcas2p3.samsung.com>
+ <20230718034201.136800-2-jaewon02.kim@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230718034201.136800-2-jaewon02.kim@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-+ linux-samsung-soc@vger.kernel.org
-+ linux-mediatek@lists.infradead.org
-
-
-
-On 7/15/2023 5:15 AM, Trilok Soni wrote:
-> On 7/5/2023 10:29 AM, Trilok Soni wrote:
->> On 7/4/2023 2:27 AM, Linus Walleij wrote:
->>> On Thu, Jun 29, 2023 at 1:12 AM Rob Herring <robh+dt@kernel.org> wrote:
->>>
->>>> My bigger issue with this whole series is what would this all look
->>>> like if every SoC vendor upstreamed their own custom dumping
->>>> mechanism. That would be a mess. (I have similar opinions on the
->>>> $soc-vendor hypervisors.)
->>>
->>> I agree with Rob's stance.
->>>
->>> I think it would be useful to get input from the hwtracing developers
->>> (Alexander and Mathieu) who faced this "necessarily different" issue
->>> with all the hwtrace mechanisms and found a way out of it. I suspect
->>> they can have an idea of how this should be abstracted.
->>
->> Any mailing list you suggest we expand to so that we get inputs from 
->> the hwtracing developers and maintainers or just look into the 
->> MAINTAINERS file and start an email thread?
->>
->> We are fine to submit the abstract for the LPC in next two weeks, but 
->> prefer to have lot of good discussion before it on the mailing list, 
->> so that we have code to talk about in LPC.
+On 18/07/2023 05:42, Jaewon Kim wrote:
+> Add samsung,exynosautov9-pwm compatible string to binding document.
 > 
-> We have submitted abstract at LPC MC. Let's continue the discussion here 
-> though.
-> 
-> Mukesh, do you want to expand the lists as necessary to see if other 
-> soc-vendors are having any inputs here? May be add Exynos or MTK kernel 
-> mailing lists + linux-kernel? I don't know if anyone will respond or 
-> not, but let's try.
+> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+> ---
 
-Sure.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
--Mukesh
-> 
-> ---Trilok Soni
-> 
+Best regards,
+Krzysztof
+
