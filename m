@@ -2,156 +2,124 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC87EB64DA
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jul 2023 06:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E91EB64DD
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jul 2023 07:40:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230317AbjGRG1r (ORCPT
+        id S231401AbjGRHki (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 18 Jul 2023 02:27:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35438 "EHLO
+        Tue, 18 Jul 2023 03:40:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231253AbjGRG1k (ORCPT
+        with ESMTP id S231769AbjGRHki (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Jul 2023 02:27:40 -0400
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 582C9172C
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jul 2023 23:27:28 -0700 (PDT)
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230718062725epoutp0427411e9046c47ed6fbb74c8f15aa1b4e~y4lB2ccm33251032510epoutp04L
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jul 2023 06:27:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230718062725epoutp0427411e9046c47ed6fbb74c8f15aa1b4e~y4lB2ccm33251032510epoutp04L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1689661645;
-        bh=AuiPCWEWR/H2A9GOfmwJJHkrf3gA1m989r4DeTYfrng=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ua0iMA0FxxEi/RLgHs2JJYIIvRk2przwCbmdSWhtWT5C5MwSaIConNXFQzqZGAF/I
-         PKBMcs8s8z3E6t8H1EvDUFoBnSjvupv/FEqaWCB4ufDmSgK89s+qopFcNvXWZIhKl4
-         CwVC1gMPoaF2P9hS4inXtoXiFZjPUrWXJiCANHrE=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20230718062724epcas2p2ecb2ef9b77761949d99848f2941f93b1~y4lBRtIEV1962319623epcas2p2B;
-        Tue, 18 Jul 2023 06:27:24 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.68]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4R4ps83Kbwz4x9QB; Tue, 18 Jul
-        2023 06:27:24 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        70.56.40133.CC036B46; Tue, 18 Jul 2023 15:27:24 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-        20230718062724epcas2p4c5e986c62fba72f722a37973e721a452~y4lAhZHPJ3019630196epcas2p4s;
-        Tue, 18 Jul 2023 06:27:24 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230718062723epsmtrp1c57f8bf743b262a8fe28c060147f7040~y4lAgfv-P2369723697epsmtrp1D;
-        Tue, 18 Jul 2023 06:27:23 +0000 (GMT)
-X-AuditID: b6c32a46-6fdfa70000009cc5-75-64b630cc1111
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A8.68.14748.BC036B46; Tue, 18 Jul 2023 15:27:23 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.55]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230718062723epsmtip25ad045fd2df07990ee5f30ea8a4489bb~y4lAOAPyZ0231302313epsmtip2O;
-        Tue, 18 Jul 2023 06:27:23 +0000 (GMT)
-From:   Jaewon Kim <jaewon02.kim@samsung.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        Tue, 18 Jul 2023 03:40:38 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A94DA19BA;
+        Tue, 18 Jul 2023 00:40:11 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-4fba8f2197bso8830226e87.3;
+        Tue, 18 Jul 2023 00:40:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689666005; x=1692258005;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hlUUoYrCI/PAw1b9Jcxa6W/yhkHrrsXYB8ywBb4Zdcw=;
+        b=kjDicRWDABKhbwaNAQ0t5axb/afcaD0DP5Q4MPYeRPIHpGD7r2KtF58q4y93nWfF2b
+         49VVL9MukYEaIY6p3upv0Jkd6SzR1QnGGcqIuKMylp1Ud+AKaEmngB4ed/VJeurAE7AD
+         VdStOvapIk/cV//SDyf22g05q5gnj043/39V2HeYNDgUzlZv2Hnd8xasORgd9uOZLAMc
+         9g6wuZRboi64mU4ggfU/KgZwggakOtkwFtimgJOd/xoxzdveeHrYG2O4AqAKp0tnrR+B
+         htXPjftOOvDBTuJ5hzjX3CsyclAoUAhb5Yar5MxyrP4mZzoCTcuWiDdEVOA2A1xhxkCb
+         kg+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689666005; x=1692258005;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hlUUoYrCI/PAw1b9Jcxa6W/yhkHrrsXYB8ywBb4Zdcw=;
+        b=IE+iJTixa63GCHX3jv9dZtDtRIEd7mWVCUhuJgJ01DwQmoOg6S9F8qQqmqeOOWQS0d
+         UKmX94LqaFooZGyB5tcQTyn4OdeHVit+FdKlAp7x1KkuP1ImRlUwb3br/xy5iREq7O2M
+         Li5F2hJYzwIdNpl2hzE08R4p6mB6+ramW5jD1rcZiXKleB1GrotUPW7DYSzGEkLK9lJ1
+         loB9Ha6oG38J0y5lGkfZCLBFIZXxEPKfPUiYN/Qw+0t+aM8bGtSxjoghC4W5U/fwyxDF
+         znA0tOSgzVNbpnl/ADbfmNLEmwiWwnEu4vuQzEco6HoAk6zbI5zQLzS/IQJ1ovLqtmVd
+         cg9Q==
+X-Gm-Message-State: ABy/qLYdsj9ZVQ3bUBPADtGrOjd6BJyk7tp7bZ35+1nqo0Ahc75J/UFc
+        L+5Pl1GDDr5mqF65aoc5Fwo=
+X-Google-Smtp-Source: APBJJlEX8zzhQn7Ou05/CQZQgAl+5rvY7vzNrtVjpZZJO0DRW82rk/rzW43gjG3e1aiIIPG6nLE4Cg==
+X-Received: by 2002:a05:6512:3248:b0:4fb:73d1:58e5 with SMTP id c8-20020a056512324800b004fb73d158e5mr8279860lfr.53.1689666004642;
+        Tue, 18 Jul 2023 00:40:04 -0700 (PDT)
+Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id n17-20020aa7c791000000b005215eb17bb7sm779736eds.88.2023.07.18.00.40.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jul 2023 00:40:04 -0700 (PDT)
+Date:   Tue, 18 Jul 2023 09:40:02 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH v6 1/2] dt-bindings: pwm: samsung: add exynosautov9
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] dt-bindings: pwm: samsung: add exynosautov9
  compatible
-Date:   Tue, 18 Jul 2023 15:21:59 +0900
-Message-Id: <20230718062200.79306-2-jaewon02.kim@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230718062200.79306-1-jaewon02.kim@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJKsWRmVeSWpSXmKPExsWy7bCmue4Zg20pBk3fhS0ezNvGZrFm7zkm
-        i/lHzrFa7Gg4wmrR9+Ihs8Wmx9dYLS7vmsNmcffuKkaLGef3MVm07j3CbvFz1zwWi9sTJzM6
-        8HjsnHWX3WPTqk42jzvX9rB5bF5S79H/18Cjb8sqRo/Pm+QC2KOybTJSE1NSixRS85LzUzLz
-        0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOA7lRSKEvMKQUKBSQWFyvp29kU5ZeW
-        pCpk5BeX2CqlFqTkFJgX6BUn5haX5qXr5aWWWBkaGBiZAhUmZGfM/7marWAZT8Xh/sPMDYxf
-        OLoYOTkkBEwkLp94xA5iCwnsYJS4sDKxi5ELyP7EKLH1RjcLhPONUWLih29sXYwcYB3n2tgh
-        4nsZJboOtzBCdH9klNg0PwTEZhPQlvi+fjEriC0isJBJ4tn9MpAGZoHTjBJrbz1hAUkICwRI
-        fH28BqyZRUBV4s2CL2ALeAVsJb7cLoO4Tl5i9YYDzCA2p4CdxOrdl5kg4o0cEo1N5RC2i0TH
-        pfPsELawxKvjW6BsKYmX/W1QdrZE+/Q/rBB2hcTFDbPZIGxjiVnP2hlB1jILaEqs36UP8aKy
-        xJFbYEcyC/BJdBz+yw4R5pXoaBOCaFSTuD/1HNQQGYlJR1ZCHeYhsffDFGioTQQG4f4VjBMY
-        5WYhLFjAyLiKUSy1oDg3PbXYqMAIHlvJ+bmbGMFpUMttB+OUtx/0DjEycTAeYpTgYFYS4f2+
-        alOKEG9KYmVValF+fFFpTmrxIUZTYMhNZJYSTc4HJuK8knhDE0sDEzMzQ3MjUwNzJXHee61z
-        U4QE0hNLUrNTUwtSi2D6mDg4pRqYapSFLeUW/DEpSLE2EZqlVtHOyHZN8pzFsaNa047p6mqd
-        Vwz8MYm7eOOvqoPum7Q5Jhyo/pbWVVy+o8RsbXvUlIytF/MmTY6aGxMxR5RXYPfX+IyS8G+/
-        /uyYILGsS+mB40Rh/SdbFt5YWFP+8U3L24vbQxxKy+riCszVk152B5Usjs8wcr8uIC3PvPHi
-        kn85pxka3l77X3nRZvLHNSd3LC948utv/bJvC6/f1DVcvnrxoj7XasdVUf4xnO972iTjbzRz
-        8a5c9WJSyM6rkW+vG/1nLj8WNu30RZEDQi+Zsyvizm/QWRmbse7H2127r9mu7Q0Xmfaa6adb
-        9vc/X6f1XUi6a/zoRNLrf0/PTdvkY6HEUpyRaKjFXFScCACU+dDGDAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBLMWRmVeSWpSXmKPExsWy7bCSvO5pg20pBgtXm1k8mLeNzWLN3nNM
-        FvOPnGO12NFwhNWi78VDZotNj6+xWlzeNYfN4u7dVYwWM87vY7Jo3XuE3eLnrnksFrcnTmZ0
-        4PHYOesuu8emVZ1sHneu7WHz2Lyk3qP/r4FH35ZVjB6fN8kFsEdx2aSk5mSWpRbp2yVwZcz/
-        uZqtYBlPxeH+w8wNjF84uhg5OCQETCTOtbF3MXJxCAnsZpS4vegqaxcjJ1BcRmL5sz42CFtY
-        4n7LEVaIoveMEh19ExlBEmwC2hLf1y8GS4gILGaSeNP9EMxhFrjIKHHizxV2kCphAT+J7V0L
-        mEFsFgFViTcLvrCBrOYVsJX4crsMYoO8xOoNB8BKOAXsJFbvvswEYgsBlay4N49pAiPfAkaG
-        VYySqQXFuem5yYYFhnmp5XrFibnFpXnpesn5uZsYwYGrpbGD8d78f3qHGJk4GA8xSnAwK4nw
-        fl+1KUWINyWxsiq1KD++qDQntfgQozQHi5I4r+GM2SlCAumJJanZqakFqUUwWSYOTqkGJtkU
-        w/g1k9f4hkf+EXnneUE86d6y8580Oiysy0J/MH/yXCf+3fbkxVnLo2TvqZxinhwVYv/g85+Q
-        1L8CVnYLGuN29JqLJlvEr+76yH15uuPT5uOTUhWvz+dNvZb7W2fv+vkJqXvVchkC1GU3/eDc
-        7ao58cy076kJ4monjSImvY7Zua89lPd56dXjD671fFrTcTGg8amaqtqGt19Pv+h9q7M6OmPF
-        r28H7q+ZM/sVZ+ox1YxSmYLjjAe5FxxQb8qwvq01w7JlCr/z2prgzEuTTU9V80rEHnTTuXvt
-        7ql1odNnfOy5ItK87OTjvW33PRU+XbFfue3Wh9sb158Wnzs5PiWYMX5nTlXlv5/hlSfVOkqV
-        WIozEg21mIuKEwFX6sAvywIAAA==
-X-CMS-MailID: 20230718062724epcas2p4c5e986c62fba72f722a37973e721a452
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230718062724epcas2p4c5e986c62fba72f722a37973e721a452
-References: <20230718062200.79306-1-jaewon02.kim@samsung.com>
-        <CGME20230718062724epcas2p4c5e986c62fba72f722a37973e721a452@epcas2p4.samsung.com>
+Message-ID: <ZLZB0om1y9qLXDdF@orome>
+References: <20230718034201.136800-1-jaewon02.kim@samsung.com>
+ <CGME20230718034723epcas2p3913ad208c70659965b4ec204570aa0a1@epcas2p3.samsung.com>
+ <20230718034201.136800-2-jaewon02.kim@samsung.com>
+ <4e546dbf-8f10-a27e-dd8b-052151ebf00a@linaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dlM6TTb11shujLiI"
+Content-Disposition: inline
+In-Reply-To: <4e546dbf-8f10-a27e-dd8b-052151ebf00a@linaro.org>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add samsung,exynosautov9-pwm compatible string to binding document.
 
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/pwm/pwm-samsung.yaml    | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+--dlM6TTb11shujLiI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-index fe603fb1b2cc..2162f661ed5a 100644
---- a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-+++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-@@ -20,12 +20,17 @@ description: |+
- 
- properties:
-   compatible:
--    enum:
--      - samsung,s3c2410-pwm             # 16-bit, S3C24xx
--      - samsung,s3c6400-pwm             # 32-bit, S3C64xx
--      - samsung,s5p6440-pwm             # 32-bit, S5P64x0
--      - samsung,s5pc100-pwm             # 32-bit, S5PC100, S5PV210, Exynos4210 rev0 SoCs
--      - samsung,exynos4210-pwm          # 32-bit, Exynos
-+    oneOf:
-+      - enum:
-+          - samsung,s3c2410-pwm             # 16-bit, S3C24xx
-+          - samsung,s3c6400-pwm             # 32-bit, S3C64xx
-+          - samsung,s5p6440-pwm             # 32-bit, S5P64x0
-+          - samsung,s5pc100-pwm             # 32-bit, S5PC100, S5PV210, Exynos4210 rev0 SoCs
-+          - samsung,exynos4210-pwm          # 32-bit, Exynos
-+      - items:
-+          - enum:
-+              - samsung,exynosautov9-pwm
-+          - const: samsung,exynos4210-pwm
- 
-   reg:
-     maxItems: 1
--- 
-2.17.1
+On Tue, Jul 18, 2023 at 08:04:51AM +0200, Krzysztof Kozlowski wrote:
+> On 18/07/2023 05:42, Jaewon Kim wrote:
+> > Add samsung,exynosautov9-pwm compatible string to binding document.
+> >=20
+> > Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+> > ---
+>=20
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+Do you prefer to take this through the Samsung tree for DT validation
+and whatnot, or should I pick this up via the PWM tree?
+
+In case of the former:
+
+Acked-by: Thierry Reding <thierry.reding@gmail.com>
+
+--dlM6TTb11shujLiI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmS2QdIACgkQ3SOs138+
+s6GPvQ//TUOiCPcnWeVXaAwdZc2XSAxzoylvus3O4J09K1PohEs9vtWqQgeC0t+R
+TLPHjqnvTyxLPv8V3xCKOTotz9ygzHan5jwrbjL+YFvVSKAY+PoveltFqE9cZ58B
+IS8LOpKNM1QlIXWAtAiO/S0GSHnj8QkKHuuLyTx6Che3+PXA1KcZP4Rkj6qaCFV5
+/TVfgNXwG2EdpalIHQL/9h2E45cxSPiwUZKRVf/9nZH20cKFJzlnSSvKXM1XMlbx
+qkkWeODv0I3gqzJYmxDKIK/ud44QqtT8eNE359nfFvlGHNaaxTuM2g9Z7SItqkFx
+BlEHroATKiJ/9pLv6rZPb7l3Pq76JwFzr2/hVZg/TMqDblJnpIbKE3VsLHvBFpQk
+BRa9ggt4+PYbRcaD1Phs+XgRHxiLBTJJqLk/VWsjy17eGseL77WBwrEkI9+I8cgH
+n67pjD6X2lo1mpnUvwKxPzZ3t/SUOHMTOnrBdAciwywItpK4Qc7wHRQah4DVW/q+
+69cPxUAvl25iIvOioNzDbmZ41Dkn5jJkfQakFp4kKCxO8xJzv+cBz1wKmU/vcLlU
+JrVUtIIFZ+9lY/NxIjd8qOCCO6hjQCOcm+7aq0NVW2UX1DxTe5YE1dwYUQhRCOf/
+khwiyqRpotI0D1kjPtNG8MPd3WM5bGEDV+7TTo97T86zGFMREnE=
+=PPnI
+-----END PGP SIGNATURE-----
+
+--dlM6TTb11shujLiI--
