@@ -2,61 +2,62 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45104C001DE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Jul 2023 09:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB65C001DC
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Jul 2023 09:18:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231250AbjGSJRc (ORCPT
+        id S231373AbjGSJSI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 19 Jul 2023 05:17:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33706 "EHLO
+        Wed, 19 Jul 2023 05:18:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230414AbjGSJRb (ORCPT
+        with ESMTP id S231364AbjGSJSH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 19 Jul 2023 05:17:31 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25F7D10B
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jul 2023 02:17:30 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-51ff0e3d8c1so9026445a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jul 2023 02:17:30 -0700 (PDT)
+        Wed, 19 Jul 2023 05:18:07 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF93E8E
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jul 2023 02:18:05 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4fbf09a9139so10828452e87.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jul 2023 02:18:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689758248; x=1692350248;
+        d=linaro.org; s=google; t=1689758284; x=1692350284;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=vbFAUTqn4J/1uXGDz1Y+p40GpYX5buZBByhfIvb+XTw=;
-        b=pWC6FgUMIYeP779sWAqgtzO3nU1XJ6nhP75SPD12kn5z7GaOdQUHJSr1oj+fpvsMzu
-         1olNjVI5wRWrn45bUPuYJyc5Bco8Iwi76p6mGXk8gdDHJ8p+VfH0Y9Ob/M/hmJowz1Gc
-         J+pNlH0r5n+VARIHACKHBpFtJ+fkdhK77/Ra2Fb2lW0F96NuMi3yPmIb8SIxEbJT+vJ4
-         NbT2hiKo+epWuNBHDFljYudEOU8wGGY0fV8Na+/YoGH0+S92GxieXHMoNGOhVnIdlO7o
-         mBmS3hhhglibp+4T6hBrbrEi0hI9yP9Rr6ZhyVA0T7CkDbC5e5ZxaRjLFEr2TUPH/EFx
-         M6bw==
+        bh=8bR6aQXx5gvtM8troROxyJmOZ+pi9iajw/Z15AHeaio=;
+        b=vFfwGMfwvCrNPj4v9IrGwMmaaZW/CeEPEQQj1A5KHspVAVg2/z5ddaYwFsU/jB683n
+         SxwmkZ1wa/7bKCQs11/tzVVp2tfeSjy2uDQzAP8TM5Iy05gFc7J9AZTUVdevV8A1Y2zt
+         bBPXISWXd3y8SOCg3Ikbdi+Ps+XZPEfKhsqNatEbXevtasFL5BzXZtOyrnTmc4mGsqfp
+         GNPtAx9uOchcvfqsV6n8mJ7X2bqqfhcEvlmMhtTjFFsNNKeU4l6O6NJFrj3afOWefOz1
+         TwjZueFaZMegw+tjoNnPd/ykQ0c12EGOcP7gtAiEsnl8XloXRPvMsC+myJ15FSOyLZgA
+         DSdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689758248; x=1692350248;
+        d=1e100.net; s=20221208; t=1689758284; x=1692350284;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vbFAUTqn4J/1uXGDz1Y+p40GpYX5buZBByhfIvb+XTw=;
-        b=SzmIucM+Lu3WFXK8R3X0LAbGrEd7ClA/3pwjQDOrvCLxNmzK9/vvsjECQcSwjR+6Mx
-         ldPZlDaz5ziY4n0qnHbhpiHikHitX9y4la6X//If6Ul8w+QZxA9RgL6AxnqzeLTLQAi4
-         wUrosSy6LSNetyoHh+FGJjUn3wkveLd8txe7vKZcWqgRYr9EZzl5ZiqTTz4AocK2wHYx
-         YrGEGviQP8p+xHdm8ofz4NsI79l2A3kzH+dXER8aQkDBHmz3QGcLWpsk8yHSvSYvZ6ZF
-         Guluz0KDpnY05HQcQqkQ3J3aWzAz4iqejZsvnQAtvVKNgFVpcHVYY7J08FkE8OBH7CIu
-         qNrw==
-X-Gm-Message-State: ABy/qLb/6p56a/qp10RejA3njBNZX8Rnkjs8vH8X8eXZC85cJT6m+zF8
-        L4KmTZTdWn/x6u/bXyoaicHuaeLsbJ9YEEUdbWU6sw==
-X-Google-Smtp-Source: APBJJlEa4+3uhs2sYS9ftR+O+4gIJ5VpENZ++c6LZlxKhiuUtFmEJV/gmWJNZ1CJFLaGAPqoWDTMng==
-X-Received: by 2002:aa7:d384:0:b0:51b:ec86:b49a with SMTP id x4-20020aa7d384000000b0051bec86b49amr2063330edq.7.1689758248587;
-        Wed, 19 Jul 2023 02:17:28 -0700 (PDT)
+        bh=8bR6aQXx5gvtM8troROxyJmOZ+pi9iajw/Z15AHeaio=;
+        b=I6Av8w3mGY3JGBgUNKIta3+SePVFwa3aDgXN6ylZeVyVnTAta9rnEn/VgCnfTw1rdH
+         eNTOVcwqt6533yT6BB49fJo+evP10+jGSXrKJUpgTafhMkRA5hjQpYnFLEdQPr94cmzl
+         zB9NA3Pk2f5791HpU6kSiSw4oZma/mtHimz/zSqzKRHm5/ZzM07aSvWx1skecbJ6Vhwn
+         OQELLzo9N7zfp+B2ACfodddqCCyW2lwbRlgh9iDlvlYM/5wH2hNi2zrzLsDB3dndYWwM
+         D+tdwx9u3Z52N3WJEjoxIt0IcdZxbbxWBzv7LGF8G6w6ZWRvKi993hoh+eXOdoLd9MDW
+         yJcQ==
+X-Gm-Message-State: ABy/qLbE74aLmNuYQutHZQ/dKAMhfhBHIYl1ap9Y2bGA8IZulpKxaf1I
+        /x6TfDHN246IFfipxrXF8cJ7og==
+X-Google-Smtp-Source: APBJJlFegdZTVHyt7GrEMcFiknGLKSDT6xWCe7LltsFQrdarnRlnbEqzhTEm8K9uOAbfXVzsEnfndA==
+X-Received: by 2002:ac2:4553:0:b0:4f8:cd67:88e6 with SMTP id j19-20020ac24553000000b004f8cd6788e6mr11961116lfm.44.1689758284109;
+        Wed, 19 Jul 2023 02:18:04 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id k26-20020a056402049a00b0051e186a6fb0sm2422099edv.33.2023.07.19.02.17.27
+        by smtp.gmail.com with ESMTPSA id y11-20020aa7d50b000000b0051e2a4edfd5sm2408972edq.21.2023.07.19.02.18.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jul 2023 02:17:28 -0700 (PDT)
-Message-ID: <3c291f6a-7e9a-b863-9c34-c486647edbf7@linaro.org>
-Date:   Wed, 19 Jul 2023 11:17:26 +0200
+        Wed, 19 Jul 2023 02:18:03 -0700 (PDT)
+Message-ID: <e99c428f-0d70-cfee-dcc1-d82b2d270390@linaro.org>
+Date:   Wed, 19 Jul 2023 11:18:02 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH 5/7] ARM: dts: exynos: k3g: Add notification LED support
+Subject: Re: [PATCH 6/7] ARM: dts: exynos: k3g: Document the devices which are
+ not supported
 Content-Language: en-US
 To:     Markuss Broks <markuss.broks@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -66,9 +67,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230716220644.22158-1-markuss.broks@gmail.com>
- <20230716220644.22158-7-markuss.broks@gmail.com>
+ <20230716220644.22158-8-markuss.broks@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230716220644.22158-7-markuss.broks@gmail.com>
+In-Reply-To: <20230716220644.22158-8-markuss.broks@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -76,49 +77,39 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 17/07/2023 00:05, Markuss Broks wrote:
-> This device has a Texas Instruments LP5562 LED controller
-> which controls the LEDs which are used as notification lights.
-> It has three colors which can be combined, supports pulse mode
-> and other various features.
+> Add placeholders for peripherals which we currently lack support for.
+> This includes Maxim MAX86900 heart rate sensor and oximeter, which
+> seems to be similar to other health sensors by Maxim, but it is not
+> fully compatible; STM32F401 MCU which acts like a sensor hub,
+> which can be flashed and controlled via the SPI bus, for which I made
+> some simple firmware to check if it's possible to program with custom
+> code, and it appears you can do so, but at the moment kernel lacks
+> the APIs to either control sensors directly through the MCU or any
+> standards for a sensor hub, so it's laid off; WM5110 audio codec which
+> fails to communicate for some reason.
 > 
 > Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
 > ---
->  arch/arm/boot/dts/exynos5422-samsung-k3g.dts | 47 ++++++++++++++++++++
->  1 file changed, 47 insertions(+)
+>  arch/arm/boot/dts/exynos5422-samsung-k3g.dts | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
 > 
 > diff --git a/arch/arm/boot/dts/exynos5422-samsung-k3g.dts b/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
-> index b3576a745054..813dbf0438de 100644
+> index 813dbf0438de..e019b630db94 100644
 > --- a/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
 > +++ b/arch/arm/boot/dts/exynos5422-samsung-k3g.dts
-> @@ -10,6 +10,7 @@
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/input/input.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/leds/common.h>
->  #include "exynos5800.dtsi"
->  #include "exynos5422-cpus.dtsi"
->  
-> @@ -131,6 +132,52 @@ touchkey@20 {
->  		};
+> @@ -743,6 +743,24 @@ rmi4-f12@12 {
 >  	};
+>  };
 >  
-> +	i2c-led {
-> +		compatible = "i2c-gpio";
+> +&i2c_3 {
+> +	status = "okay";
 > +
-> +		sda-gpios = <&gpy3 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		scl-gpios = <&gpy3 7 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		i2c-gpio,delay-us = <2>;
+> +	/* Maxim MAX86900 heart rate sensor and oximeter on address 0x57 */
+> +};
 > +
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		lp5562@30 {
+> +&spi_0 {
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-Most likely this is led-controller
+The node overrides/extends are ordered by name.
 
 
 
