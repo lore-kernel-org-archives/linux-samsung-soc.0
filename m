@@ -2,89 +2,98 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB609EB64DA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Jul 2023 07:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 000C0EB64DA
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Jul 2023 08:04:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229644AbjGSHgb (ORCPT
+        id S229626AbjGSIEd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 19 Jul 2023 03:36:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34100 "EHLO
+        Wed, 19 Jul 2023 04:04:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229875AbjGSHgX (ORCPT
+        with ESMTP id S229759AbjGSIEc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 19 Jul 2023 03:36:23 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF1601736
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jul 2023 00:36:20 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-52165886aa3so7551188a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jul 2023 00:36:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689752179; x=1692344179;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ASco8vj7+XaPQen56URwDE1RtWpxUMyxaWBEjOtEJHo=;
-        b=Cnz1csnoz89sYWUFjF5+rCspweC7RZvwPEU4Cg5MAF7UKpXzochmOa/qauV3CKgkjv
-         fAJRVMXPFDrQNYOPUKdgZ7EU7ck3LB0bn8XcyOtCVRNMpYOcRn5TYaARwdkfvI0h4Vyd
-         N6SGOv0GYyy/lVRTQFQF11PtuSiZi4ZBakUZUOGM/IEt7aPqg2Il7ZUODmJExn5d/QHq
-         uYoqJS3rLdn9zbPr87U1Djc03IfPrAvt/2/XB/dzfMVqRMXfoq6t5q+f2DvhwH05s6Xo
-         I8HdO07cSAQ1BJp6rwLZvx+SFNFdw1/iwSqYgVw+BPHGQMPlCDAW+CAwVbvhe2rKd0px
-         kXKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689752179; x=1692344179;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ASco8vj7+XaPQen56URwDE1RtWpxUMyxaWBEjOtEJHo=;
-        b=cj1Z20wR9xdw7dOvcMrzanFRiQuP693bLUfdcRacBNOF338E6seTAC/zvU6nKQDAzu
-         M8232DvQGXhPims9GpFvSams9iOQpyL7kZGIAPi2LX/q825vDIJJs68GkZh4XaFzu+/E
-         iumMNFUYp97HsePwkNPWpzMvs06F9o4FVf6P7AR9MzUvqv6X27JYbExCnLFmNbzHPBmc
-         obnZ2pbWNylqc3lod8NSFb09uf0qmzBntoI6mpXaSOXnaE1E0y2hktncSpYbQ5G1mPN2
-         affvSfeJ7zYV4bEenRrdk//W/jydmdM7Apiy7rmSobNLPMVCCsO1pkqmN6oY2DmSj3KR
-         qPag==
-X-Gm-Message-State: ABy/qLbPCCpgMSFw3VWhx7qHKqJL0r7WdEdWo/ZYG8jpjZHIpU33HgsT
-        M8W0rtr7i+KUWSB4q+4geqmtGQ==
-X-Google-Smtp-Source: APBJJlEKMYKstWVoOwy2osy2Orx7A7obEkkxdyX2eTBoa5l4pHTs29W1yKNfhK6tTJHPkKTVCn1cOA==
-X-Received: by 2002:aa7:c74d:0:b0:51d:ad03:95f with SMTP id c13-20020aa7c74d000000b0051dad03095fmr1780896eds.7.1689752179304;
-        Wed, 19 Jul 2023 00:36:19 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id v5-20020aa7cd45000000b0051e069ebee3sm2310594edw.14.2023.07.19.00.36.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jul 2023 00:36:18 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/2] ARM: dts: samsung: s3c6410-mini6410: correct ethernet reg addresses (split)
-Date:   Wed, 19 Jul 2023 09:36:11 +0200
-Message-Id: <168975215984.14599.16321800531414229232.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230713152926.82884-1-krzysztof.kozlowski@linaro.org>
-References: <20230713152926.82884-1-krzysztof.kozlowski@linaro.org>
+        Wed, 19 Jul 2023 04:04:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABBA8BE;
+        Wed, 19 Jul 2023 01:04:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4305A61228;
+        Wed, 19 Jul 2023 08:04:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86E2DC433C8;
+        Wed, 19 Jul 2023 08:04:28 +0000 (UTC)
+Message-ID: <7dcadd80-ae5c-0e53-d91a-2ee5028e51f5@xs4all.nl>
+Date:   Wed, 19 Jul 2023 10:04:26 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v1] media:Fix repeated initialization
+Content-Language: en-US
+To:     Wang Ming <machel@vivo.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-media@vger.kernel.org
+Cc:     opensource.kernel@vivo.com
+References: <20230705142142.3526-1-machel@vivo.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+In-Reply-To: <20230705142142.3526-1-machel@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
-On Thu, 13 Jul 2023 17:29:25 +0200, Krzysztof Kozlowski wrote:
-> The davicom,dm9000 Ethernet Controller accepts two reg addresses.
+On 05/07/2023 16:21, Wang Ming wrote:
+> If the first report returns NULL,
+> there is no need to execute the
+> fimc_capture_try_format() function
+> again.
 > 
+> Signed-off-by: Wang Ming <machel@vivo.com>
+> ---
+>  .../media/platform/samsung/exynos4-is/fimc-capture.c   | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
+> diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-capture.c b/drivers/media/platform/samsung/exynos4-is/fimc-capture.c
+> index a0d43bf892e6..5ce2f04afa1e 100644
+> --- a/drivers/media/platform/samsung/exynos4-is/fimc-capture.c
+> +++ b/drivers/media/platform/samsung/exynos4-is/fimc-capture.c
+> @@ -825,10 +825,12 @@ static int fimc_pipeline_try_format(struct fimc_ctx *ctx,
+>  		tfmt->height = mf->height;
+>  		ffmt = fimc_capture_try_format(ctx, &tfmt->width, &tfmt->height,
+>  					NULL, &fcc, FIMC_SD_PAD_SINK_CAM);
+> -		ffmt = fimc_capture_try_format(ctx, &tfmt->width, &tfmt->height,
+> -					NULL, &fcc, FIMC_SD_PAD_SOURCE);
+> -		if (ffmt && ffmt->mbus_code)
+> -			mf->code = ffmt->mbus_code;
+> +		if (ffmt) {
+> +			ffmt = fimc_capture_try_format(ctx, &tfmt->width, &tfmt->height,
+> +				NULL, &fcc, FIMC_SD_PAD_SOURCE);
+> +			if (ffmt && ffmt->mbus_code)
+> +				mf->code = ffmt->mbus_code;
+> +		}
 
-Applied, thanks!
+I'm not so sure this is a bug at all. I think (not quite certain) that the
+first fimc_capture_try_format() call constrains the width and height to
+whatever is the SINK_CAM pad, then further constrains it to that of the
+SOURCE pad.
 
-[1/2] ARM: dts: samsung: s3c6410-mini6410: correct ethernet reg addresses (split)
-      https://git.kernel.org/krzk/linux/c/cf0cb2af6a18f28b84f9f1416bff50ca60d6e98a
-[2/2] ARM: dts: samsung: s5pv210-smdkv210: correct ethernet reg addresses (split)
-      https://git.kernel.org/krzk/linux/c/982655cb0e7f18934d7532c32366e574ad61dbd7
+But really, someone from Samsung should take a look as well. Adding Marek and
+Sylwester.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Regards,
+
+	Hans
+
+>  		if (mf->width != tfmt->width || mf->height != tfmt->height)
+>  			continue;
+>  		tfmt->code = mf->code;
+
