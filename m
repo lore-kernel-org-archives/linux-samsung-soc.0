@@ -2,124 +2,90 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87EA3C04E69
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Jul 2023 18:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F22EB64DD
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Jul 2023 19:00:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229821AbjGTSuy convert rfc822-to-8bit (ORCPT
+        id S229960AbjGTTAX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Jul 2023 14:50:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46798 "EHLO
+        Thu, 20 Jul 2023 15:00:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbjGTSuw (ORCPT
+        with ESMTP id S229941AbjGTTAV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Jul 2023 14:50:52 -0400
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39EBF2D54;
-        Thu, 20 Jul 2023 11:50:31 -0700 (PDT)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-94ea38c90ccso34165966b.1;
-        Thu, 20 Jul 2023 11:50:31 -0700 (PDT)
+        Thu, 20 Jul 2023 15:00:21 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71261173A
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jul 2023 12:00:20 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4fdddf92b05so1405619e87.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jul 2023 12:00:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1689879619; x=1690484419;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1ujTh5UmKEDSKTenMtxBAdE9mDjrAQ930PzSC8IqC6Q=;
+        b=xghr8q17c18wW7dXqb9NO2Qr2e+RjU6Uk5qefPuNxmbKkgEhryRnuVs3B05XuukZ/p
+         XredteMRHtxGIBczNrlW3mplnMeidO17FnyicvSXFRUrsckF/NkDRGb4MhTkf0aRP9Ov
+         tKQ/YBJYpffXwLmqGou35EkB52zmtkLIBkNLRmW1BGCnJvm5SN+bgEDa8oOXIbvWrYkF
+         pqlgh+5Ust1O677xT4CIv/qjFpYXvZJXDbSuLXw7wp1k6CrfsXop5jv81fdgO6Il6j8z
+         43yymq99GwPYKxIMGfW9glaOh3EyZDjJMCcDtY5gwEWFhO/fu1BjXkfzo4D95FHqY2sg
+         TC8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689879029; x=1690483829;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1689879619; x=1690484419;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8Ri7fimkcHumz6u7/WZYeGYX85HXnNnQ+B/CYo4XrX0=;
-        b=PASJCP1x+y2EzoDAYUI5XcK0Z0/GmzxaQ6NyZY/o7xzT5BAJIufjy5WjFLbFOdJeh1
-         BNSavTc46dKgIChv7K3ZPZdetGzDhnAhrfh/D0mXpvxYJk8BYu6yrtTD5t9ThZK8lQom
-         YjAzMZQDIjlzSQnzjnsE2mFK7V1CL+IY1Jx8aN4GfEtQCudrJGxBpL1VIN+yKqvk3w+N
-         y3/zRYqsHkRaed25+48T/tqgPYsdCQgsFwI2Pn/d+FekGiIeYIcV07/XsDOsWOeGQYiv
-         BtXVm+8Xa9IVTK/6bH9byfomZ3WHXPTg2x+UcC4DL3sVlzQkP9kC/j0eln2e7tkr08Ju
-         C8Fw==
-X-Gm-Message-State: ABy/qLY4CmK/Gn12bX59thNFlb4of4ggQwMb7t8vexd5PfMbqluAuuJw
-        3Az+zTpWl6J9zRHzfKTo7jWredHw6fv+9/Ah5qM=
-X-Google-Smtp-Source: APBJJlHi91lqNeNV5b3NsqRozieOcqVx3nEK9H5IGaNOQgSl+w6cuVzQPslNMDSGV1xCPVo92lepZZT6y5Duc+GvbWI=
-X-Received: by 2002:a17:906:7a11:b0:993:d90e:3101 with SMTP id
- d17-20020a1709067a1100b00993d90e3101mr2893837ejo.1.1689879029584; Thu, 20 Jul
- 2023 11:50:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230714175008.4064592-1-robh@kernel.org> <CAJZ5v0i-OByOSjpxrj5d9S9QHRySK-MEUo+bK_J_4ihsCBmnSg@mail.gmail.com>
- <CAL_JsqLy22S5bTFu-ZKXhSMtMPPq9z1Gdb5kJMVmhui55miDsQ@mail.gmail.com>
-In-Reply-To: <CAL_JsqLy22S5bTFu-ZKXhSMtMPPq9z1Gdb5kJMVmhui55miDsQ@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 20 Jul 2023 20:50:18 +0200
-Message-ID: <CAJZ5v0hM63nVphwkYK1bL4uf_dXSew2+LBuG9kuhvvLdrhLxAw@mail.gmail.com>
-Subject: Re: [PATCH] thermal: Explicitly include correct DT includes
-To:     Rob Herring <robh@kernel.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Markus Mayer <mmayer@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
+        bh=1ujTh5UmKEDSKTenMtxBAdE9mDjrAQ930PzSC8IqC6Q=;
+        b=arwVo37SPMJCHTTK5B6wQaSygkIJ6Vik8IRxj0MJldSKJXI0DEsWqK/VGi0+PEzLcb
+         GoEi4Uu2FPt1ngEUTy+y2JbyW7J2aF/nwKluypFexeZifvKQoMHnGKvYYzDm4zWfMRX5
+         jUzvuEYmjWTagiPkCr114uZR07CT0Q9x0jFfWzhGv0EjjaTxP5vggnVlxgLn3IbfHL3E
+         qee+9QYy6dtVULGnxRyHP6CUE1h/LmFeO3Tl5tvpX6xA39TAtbu10B3dPhOMgslBgVNr
+         vcomhkrzKt+926LosxQGCx/dWdJlKK4400CInEB+Y5qbu1v95VQrTrXfm+7ausfRYrRg
+         MLiw==
+X-Gm-Message-State: ABy/qLZ3zttPmHMopjn3OxWjvSy8xw1Q6eZ+U6zqXEczgGkvOYYqOk7J
+        fQS5miCPN4UP8GH4CucG0pCQkA==
+X-Google-Smtp-Source: APBJJlGT7g82L+Hkwe8xj95tuxpUpxZWcf2IaXzPx9bPpdXMBveogBFlZKgmneiMXJunYel+lZG4Rg==
+X-Received: by 2002:a05:6512:2015:b0:4fd:c923:db5e with SMTP id a21-20020a056512201500b004fdc923db5emr2682237lfb.21.1689879618531;
+        Thu, 20 Jul 2023 12:00:18 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.223.104])
+        by smtp.gmail.com with ESMTPSA id s22-20020aa7d796000000b0051e2a5d9290sm1104842edq.77.2023.07.20.12.00.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jul 2023 12:00:18 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Artur Weber <aweber.kernel@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Linux Kernel Functional Testing <lkft@linaro.org>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>
+Subject: Re: [PATCH] ARM: dts: samsung: fix Exynos4212 Tab3 makefile entries
+Date:   Thu, 20 Jul 2023 21:00:14 +0200
+Message-Id: <168987960900.215967.4720344822144706929.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230720141537.188869-1-krzysztof.kozlowski@linaro.org>
+References: <20230720141537.188869-1-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jul 14, 2023 at 9:53 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Fri, Jul 14, 2023 at 12:54 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> >
-> > On Fri, Jul 14, 2023 at 7:51 PM Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > The DT of_device.h and of_platform.h date back to the separate
-> > > of_platform_bus_type before it as merged into the regular platform bus.
-> > > As part of that merge prepping Arm DT support 13 years ago, they
-> > > "temporarily" include each other. They also include platform_device.h
-> > > and of.h. As a result, there's a pretty much random mix of those include
-> > > files used throughout the tree. In order to detangle these headers and
-> > > replace the implicit includes with struct declarations, users need to
-> > > explicitly include the correct includes.
-> > >
-> > > Signed-off-by: Rob Herring <robh@kernel.org>
-> >
-> > Acked-by: Rafael J. Wysocki <rafael@kernel.org>
-> >
-> > or please let me know if you want me to pick this up.
->
-> Single patch in your subsystem with no dependencies. Please pick it up.
 
-Done, thanks!
+On Thu, 20 Jul 2023 16:15:37 +0200, Krzysztof Kozlowski wrote:
+> Makefile targets are DTB, not DTS.
+> 
+> 
+
+Applied, thanks!
+
+[1/1] ARM: dts: samsung: fix Exynos4212 Tab3 makefile entries
+      https://git.kernel.org/krzk/linux/c/838cf5a4377b9af926731cc68876e9c081873ea6
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
