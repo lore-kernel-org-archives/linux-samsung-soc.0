@@ -2,95 +2,116 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFF0C001DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Jul 2023 16:24:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D0F0C00528
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Jul 2023 17:01:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230386AbjGXQYY (ORCPT
+        id S231609AbjGXRBL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Jul 2023 12:24:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51662 "EHLO
+        Mon, 24 Jul 2023 13:01:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbjGXQYX (ORCPT
+        with ESMTP id S229767AbjGXRBD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Jul 2023 12:24:23 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31EB690;
-        Mon, 24 Jul 2023 09:24:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B90A66124A;
-        Mon, 24 Jul 2023 16:24:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CF91C433C8;
-        Mon, 24 Jul 2023 16:24:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690215862;
-        bh=6NGzDJNu/uN9rHgETSJqMjm2aZhAn1+hlsqguz+TxYk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YlciR1IC/iFXisfN79U+eBJ7EOQq0RaK9uZFbmi+HWWrrFhU+G1WHkw0tiZcq9sbk
-         xmFzlwCmY//YuageHq76Za2GZ8mnadQNoMHVsHe+uXVYLpYFboo+tGbEKcA8zHHX65
-         980/5SLR1ay+DllILY7dMNOteTRWxjD4y/YNaK9udiDYuyiKXjxDIYpknBOf91oT7i
-         EGRfX2NMeIAEHxJmGrvm7F/OmmU+rExNvmnTR2kjMPxPNEeA96txM2ZzWn7BTyq2HH
-         XusXruOcez2uLVSvQg7fAMCjyjLqWLd9nkjzzDGOCXcAzChbJq8dbBR66S43G1Q8d7
-         nIAOdxUXSJi+A==
-Received: (nullmailer pid 3775609 invoked by uid 1000);
-        Mon, 24 Jul 2023 16:24:19 -0000
-Date:   Mon, 24 Jul 2023 10:24:19 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-kernel@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH 1/3] media: dt-bindings: samsung,exynos4212-fimc-is:
- replace duplicate pmu node with phandle
-Message-ID: <169021585853.3775371.15388589164520572622.robh@kernel.org>
-References: <20230722115441.139628-1-krzysztof.kozlowski@linaro.org>
+        Mon, 24 Jul 2023 13:01:03 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9596419A5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Jul 2023 10:00:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1690217985;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=4nkZEjGqKMSg9XiMs6wuEiyuXPT5uFzTR3xSKZPtXrE=;
+        b=QlyK6gTaCEAWtJqGf8K9gAWvPRt2qeFzY5x7ydUdFOrgR7gl9GMJAv3ksdQU5FTIpKW4L1
+        D97HY3kxg3F7aCe9TqTNzLPoUbUVQEucrJ9+l1dNbi9WfyezvFzmJFx3GZf0EeYoOlk3pk
+        LBP6yfNNtHdj4pMb7yjFRSwWunlNK4w=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-320-F6TWdedgPPOv2sepyhrg-w-1; Mon, 24 Jul 2023 12:59:44 -0400
+X-MC-Unique: F6TWdedgPPOv2sepyhrg-w-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-63cf53a33a3so26954816d6.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Jul 2023 09:59:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690217984; x=1690822784;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4nkZEjGqKMSg9XiMs6wuEiyuXPT5uFzTR3xSKZPtXrE=;
+        b=BQG0DEyIT7ikBZ7OLxUd/oGBtRgM13iRTxr5ze4FdszbqjtAqWGhCu0tmpuJuF8eRD
+         gmzH0xjIl0LDFoL5sq+HOtCQyhdp+eLwUUzLutxzekg6oU+2yHjZjWtKC5LUGP9Jn7UT
+         eXx60kNsmHA1m93EJKlO1Kxylc9v6U2C5QLH3a7ji5Bsy9SXiw9HV/X0XtDQZztigATu
+         BXbpQYH34/4ZC6sn0PXtM6NilkrQuJMThHSb9J6UhvYurG1le5lOiid7vrk3Qq85xIPX
+         wx1SkrutxbdIiOlfgmfgqxhxaOmxR06vBt9ugfwZE8JDi921eMfr6PjCZfI20a0F9NE/
+         YM6g==
+X-Gm-Message-State: ABy/qLZiEYF3fcXx8lkiGvflAH7Uq199ZBnXQJApOUwOGGuXrc5ppgMs
+        iqt4H2H93Au0FyOk/cBN9h5bfjw6iN85EJr4QfQDhfGgN0Fs1eKASoV6xLyd6NXoFNUQtqjclLl
+        y3/+5AldInsNSTdOVIj7N73Rgcn8kdPY=
+X-Received: by 2002:a05:6214:4a4d:b0:63c:8afd:7273 with SMTP id ph13-20020a0562144a4d00b0063c8afd7273mr349408qvb.12.1690217984343;
+        Mon, 24 Jul 2023 09:59:44 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlFO7x4sJQe6yNcwbJzHDwKetm24F7RG9qQSBeAxMG+DYnqfAzn8WMDsH6icpFD+s4FFI4gTGA==
+X-Received: by 2002:a05:6214:4a4d:b0:63c:8afd:7273 with SMTP id ph13-20020a0562144a4d00b0063c8afd7273mr349393qvb.12.1690217984140;
+        Mon, 24 Jul 2023 09:59:44 -0700 (PDT)
+Received: from brian-x1 (c-73-214-169-22.hsd1.pa.comcast.net. [73.214.169.22])
+        by smtp.gmail.com with ESMTPSA id v14-20020a0cdd8e000000b0062ffcda34c6sm3670040qvk.137.2023.07.24.09.59.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jul 2023 09:59:43 -0700 (PDT)
+Date:   Mon, 24 Jul 2023 12:59:42 -0400
+From:   Brian Masney <bmasney@redhat.com>
+To:     Mukesh Ojha <quic_mojha@quicinc.com>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        lkml <linux-kernel@vger.kernel.org>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: Feedback on Qualcomm's minidump (debug) solution for end user
+ device crash
+Message-ID: <ZL6t/sZTZBfvSYOm@brian-x1>
+References: <0199db00-1b1d-0c63-58ff-03efae02cb21@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230722115441.139628-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <0199db00-1b1d-0c63-58ff-03efae02cb21@quicinc.com>
+User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
++ linux-arm-kernel list
 
-On Sat, 22 Jul 2023 13:54:39 +0200, Krzysztof Kozlowski wrote:
-> The FIMC IS camera must access the PMU (Power Management Unit) IO memory
-> to control camera power.  This was achieved by duplicating the PMU node
-> as its child like:
+On Thu, Jul 20, 2023 at 08:32:24PM +0530, Mukesh Ojha wrote:
+> Hi Samsung/MTK/Any other SOC vendors,
 > 
->   soc@0 {
->     system-controller@10020000 { ... }; // Real PMU
+> This is to bring to your notice that, we (Qualcomm) are working on
+> upstreaming our minidump solution which is to address the problem of
+> debugging on field device crashes where collecting entire ddr dump
+> would not be feasible and collecting minimal data from the ddr would
+> help in debug direction or even help in root causing issue.
 > 
->     camera@11800000 {
->       fimc-is@12000000 {
->         // FIMC IS camera node
->         pmu@10020000 {
->           reg = <0x10020000 0x3000>; // Fake PMU node
->         };
->       };
->     };
->   };
+> We have recently posted v4 version here [1]
 > 
-> This is not a correct representation of the hardware.  Mapping the PMU
-> (Power Management Unit) IO memory should be via syscon-like phandle
-> (samsung,pmu-syscon, already used for other drivers), not by duplicating
-> "pmu" Devicetree node inside the FIMC IS.
+> Based on comments[2], community is more worried about, if each SOC
+> vendor come up with their own dumping method today or in future and
+> whether it can have a common solution to a similar problem faced by
+> other SOC vendor.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../media/samsung,exynos4212-fimc-is.yaml         | 15 ++++++++++-----
->  .../devicetree/bindings/media/samsung,fimc.yaml   |  5 +----
->  2 files changed, 11 insertions(+), 9 deletions(-)
+> We wanted to take your feedback if you also encounter a similar problem
+> or maintain something similar solution in downstream which can be
+> upstreamed. This will help us in a way to have a common solution in
+> upstream.
 > 
+> [1]
+> https://lore.kernel.org/lkml/10dd2ead-758a-89f0-cda4-70ae927269eb@quicinc.com/
+> 
+> [2]
+> https://lore.kernel.org/lkml/CAL_JsqLO9yey2-4FcWsaGxijiS6hGL0SH9VoMuiyei-u9=Cv=w@mail.gmail.com/
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Adding the main ARM list to solicit feedback from other silicon
+manufacturers.
+
+The cover sheet on the v4 patch set is available at:
+https://lore.kernel.org/lkml/1687955688-20809-1-git-send-email-quic_mojha@quicinc.com/
+
+Brian
 
