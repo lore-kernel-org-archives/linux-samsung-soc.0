@@ -2,318 +2,525 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D72C04A6A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Jul 2023 17:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC2FEB64DD
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Jul 2023 20:55:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231727AbjGXRaK (ORCPT
+        id S229897AbjGXUzd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Jul 2023 13:30:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37190 "EHLO
+        Mon, 24 Jul 2023 16:55:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229895AbjGXRaI (ORCPT
+        with ESMTP id S229532AbjGXUzc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Jul 2023 13:30:08 -0400
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2053.outbound.protection.outlook.com [40.107.102.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAA9810FF;
-        Mon, 24 Jul 2023 10:30:00 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LZzHA7bN/uHXP2wwP8lQpdKyU9i1bZHJtllyLPjvB9zbtSr+xvqLpOJthTAmydkSNcSCuSxin7W27GZjtq9VTYC037r1+L8xwj0HJt1uZh26w4q0S5RwNmSRvM/93Vf58yjkqYeNCKyf2pftFMsFQQgaRCGBJsqPHn0lM2K/XIFLMNaTN5ZFUmPYGjk6H+8K9s2u5XyXxi7n8HUpm0JDDoM7RtnzT8M6vPQkLgO8jC6ewjQ4Lhjf0mECAEY9ROXnad6L++IGYx7cBybvOcEcbXmz2imbFyu8lSqJ48j9zxmLhZPadMxpmV4TXryQpJvnbYhMASiItv7M0+dmdfYLYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xhB6YJf/MxhkoeZ3msnO+Mh1ntwDQViVJ1bE4PnFaI0=;
- b=Nqf7g24kEnNcRfZCk6HmSHwFiG0LoBVwr4laYofEpamIj7QK34OmqRfkoOvfwZvJCiYNdJIQseop/k9tKYLZs3t2tGmJxRhxA4VRi2NydvL0ULg7Hh/TAajEIgh2uaajRFxDpcXA5rJTcULXWidkmp1dFec8PK77Z72w/0tTwlAcbUUQKvEIyGTSJ8N5AXr6XEqVILHFXk2L1/Ec8FPIWPIv0snaAQ9PNrek+HHDa9v3rM/j1m/fqg+aLiqHZjTMrVV+gSYHwrqAp3FsNT2GKTnI+bJJgOkI8+5/j8/jrY8Y2ilnaNglgRORe5ooKAlWRIYLLGbIPgvFNbi/UWL/RA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xhB6YJf/MxhkoeZ3msnO+Mh1ntwDQViVJ1bE4PnFaI0=;
- b=Ox970yVWTsdrJlYmz+tixKLe6hVmONPJ6RJ/K8KfN3Va4kH3fekAYLTWDXA1U+mhOCUEWYaTrRUuVVmJh2a/Dxh05Iu/SxHq1TiYIk354HkpDPGfgRwDlWiCNbkl8M9SgoWVbIT1wzF4sMQWAhtzReIN+Lu0FT3vO4BFZY7tdvK9loO18QrUl8QP18X1O/rJ1wzHIySU6manUyOyPpmTjeqZuWlukYtD2ZoRKJ7vc0aQnxGdXY3jH9JtlczK1Sub8rsqicKO7fgS87v+sU6yiOKgVwA2jhKOrt3+xbvRZ2Z+oToDn44NJtkGHw7KlnMB9GryBA62clYTJGQM+EJyog==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
- by DM6PR12MB4958.namprd12.prod.outlook.com (2603:10b6:5:20a::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.31; Mon, 24 Jul
- 2023 17:29:58 +0000
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::5111:16e8:5afe:1da1]) by LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::5111:16e8:5afe:1da1%6]) with mapi id 15.20.6609.032; Mon, 24 Jul 2023
- 17:29:57 +0000
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
+        Mon, 24 Jul 2023 16:55:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534B619A2;
+        Mon, 24 Jul 2023 13:55:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E9C806140B;
+        Mon, 24 Jul 2023 20:55:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30742C433C7;
+        Mon, 24 Jul 2023 20:55:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690232114;
+        bh=UNWeI8/IPcpigkk0BNIt3X86Rolac+01l9DHpBbNjaQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=V0q/D1zAHu5tsWgBv/rF0usOl/FBTlDdN/QzvhGIrBQ4Xu7G8brhDoNYUXXAgrWUQ
+         0VKqSpYSzoxzxU0nLJMl+8CUKBGwYObzIpZhqm2I5ekjoEKYTb0MfSgvWLbqfKF1Rl
+         HjY5OIAvJtZk/gJl0YK2F/dDFUlVCHgJQAm8aZ/JaDSoUlNwru0sQuiqFEUoJb8hhz
+         cDSiS+qz5l/qzAp3EKpchS0iHyzoJjYSjJ/EoWBweVxmGIGS5B/ZKQTQqVeEJTl7DH
+         mOSfdI0jLaBpzKQbH9KzZ90iGgDBxFdT1GMJnR8SDCsFYBcUhlHrEBm0CsWMjR3hIq
+         y9JC+L1NLTZQA==
+Received: (nullmailer pid 767831 invoked by uid 1000);
+        Mon, 24 Jul 2023 20:55:10 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
+        Srinivas Neeli <srinivas.neeli@amd.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Xingyu Wu <xingyu.wu@starfivetech.com>,
+        Samin Guo <samin.guo@starfivetech.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Steven Price <steven.price@arm.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: [PATCH v5 00/25] iommu: Make default_domain's mandatory
-Date:   Mon, 24 Jul 2023 14:21:50 -0300
-Message-ID: <0-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR03CA0015.namprd03.prod.outlook.com
- (2603:10b6:208:23a::20) To LV2PR12MB5869.namprd12.prod.outlook.com
- (2603:10b6:408:176::16)
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev
+Subject: [PATCH v2] watchdog: Explicitly include correct DT includes
+Date:   Mon, 24 Jul 2023 14:55:01 -0600
+Message-Id: <20230724205503.767612-1-robh@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|DM6PR12MB4958:EE_
-X-MS-Office365-Filtering-Correlation-Id: 914b71ab-c6f1-440a-af41-08db8c6b99db
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: RvK/mIvkr8cJSRF+jIHRI78Mbga2Gq22rwcW7fKsJWOiIPG1q7TterXEC7RT5T5V8PbeafvOTdmTq7WUG2p9pf1l4fCyF3oVz799rs1yqzDd4kt3UVpT9uLWdka9CdfQ0+wjEs8I0LDkY9tyvLCvLT7kyJ7hzHMaA90KaxMv+35Alve/LZlzBj+OuRe4+PJq/WQxipk13jvzEHUhzxPWnR4nv2JcVqwBRJ9wMK1fyO2C3Y2ZVd9NApAt9NE9m+rzRwknbLemZDYJyVSrpSLDEr1Wp2ogzMdisdZ+hY8w16LqIaOSv9StYb/0f0carpEVSPsHGILbqgdpMMec+G52fg4x4HtZWyha7bVTTssrUw+6bsbqO7YrfTi8XzPEaZ6BqIEd4y6PmOy3N3WGshHm6V2zYo7CUBN4Dl5wsoiOi3KwjXVa+VOO5rSdU67bXSauT6l3YS0lAbw4c7N3t8CDmlnte+3bB/5kfhBqbxQW7IJFJ+wfsEdkaQ1n1TdhVbyPgRY9AumkEgUIWsqCYojidwzNKO+JUJhfA0eIwHEXVKbwZUYnPHtUHYSwHhQVJGV1GmpodswpMY1dvNd1VUng0wJ4eo2vxfnni0uENm2xfKKxGLU/+hkz3lEHGdd4J23v2o32QZ8tAVq1UAmQg3w45vUNjES5hOBKtQuxpTA16rsTxFxB5Etno/p5fVah2dludVFu5r9vWL1L0mRUVGu+KA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(376002)(346002)(39860400002)(366004)(136003)(451199021)(38100700002)(921005)(2616005)(107886003)(83380400001)(36756003)(7406005)(7416002)(8936002)(110136005)(8676002)(5660300002)(54906003)(478600001)(66556008)(316002)(66476007)(4326008)(66946007)(41300700001)(966005)(6486002)(186003)(26005)(6506007)(2906002)(6666004)(6512007)(86362001)(4216001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hyv4GEvbEu6s8n7CyANUjgIurc4bJWnNm9hH53P08K+atN+mry69ykVnBNiS?=
- =?us-ascii?Q?tChnd6f0j0LCiTtk1Wp15Hg5+TVrLTBE1ifmzJ7glkV9YAucKNhX7DQZNsuZ?=
- =?us-ascii?Q?FP4Q7wnjmqXcFM1buHZR38/Rf0zMKY9wJd/DNUlZDzLQzdZAGQh0acEHv5y5?=
- =?us-ascii?Q?zNk7ICDrR1B4bKMCH34LYzCR7FG31sgzo8MsuunoseV37b00kn9gKAxjdgT1?=
- =?us-ascii?Q?cFofFYwpFGumsK4jR2SFXW9h/ptG47ADk79pu23Y/aX04wZhABHFM+Ba88hS?=
- =?us-ascii?Q?hKNQpMb5IeKZj5L6VWp2NwD7O71BnAI0ZMmvin2y2Sj+HF02nxXzc19Vef2K?=
- =?us-ascii?Q?iWq9RCS2r5x9gK7iPfbybg2+71ThYKCATxu7hDWcbGxY5pKO8gb8nsmmf/8n?=
- =?us-ascii?Q?fNTidC0W6kNKbCQE5E+YHC5D2sGD6i85ZMVoV/3bdPDS+7jqby3rfeVGYA2d?=
- =?us-ascii?Q?vpQ4g2l2sT8+aLFDasOp8fvfl924zJ2eigARQnKnZV0YtGexSA/BBaQTr+PZ?=
- =?us-ascii?Q?SmxWZ5ksOtrOFLi17wge3O8Sdu6/HW28EURFIJaPLMKGNSvMbZnDMgdh8H33?=
- =?us-ascii?Q?/AEffAIZUDpGemsAwGCfidELywWenAzKj3RVP2EX0Wal2vGWlTjZt1NN7iaQ?=
- =?us-ascii?Q?O4BaWVU0CQIkDWU+oO05b9HT9bcL/stoxNu5ksfsb5YddZrMlzUqmMFZvumr?=
- =?us-ascii?Q?1xJWx3aGwO/dOvCYCfLxsVYfAlU3K9i+ySR9U+5Xg0k0yJYaq21AVOVsZl37?=
- =?us-ascii?Q?yuP38R7Tr+VKxetWcen7ByianIivBcw2myO4Q7JCAR+cSTtqdHKsx7E5pxaF?=
- =?us-ascii?Q?DDN8hG9gaBcvvNiZdJLCuEo5MmAipNrQDWWQc389kmS4Bn+GlzJW+ke0zJDK?=
- =?us-ascii?Q?9Duh0QBCaoeez2mD5CWWO7EvYuj1eSIyZaSgCkYvz6CYB5uzaKYFXlXFc/Gc?=
- =?us-ascii?Q?G+IAWonh9RxyyF7V1ff08C+crSaqRHyMInhDAWn+1jA9BqVHcrxGLgwm0fGq?=
- =?us-ascii?Q?uKYSn4Ewt1Y17TZGKJWOgcFsOxRBWyL+T6qwe9HZBNGvhJu6yu0kI8hMAxt3?=
- =?us-ascii?Q?xKXOci3vC8qZjPgNgQ9splfVnOmRvDy3HFHqVH34LTZK+NBfydLYOdb8wMUQ?=
- =?us-ascii?Q?Oe0Z9Nmg9pi8ukX6rfB9hSsyIIwjOf6P9RCMMOpNYWdVs9INI7bRyqqC8fFv?=
- =?us-ascii?Q?17W0pzcbUycJr+PFcs9ITTFZN9qa+m6icRcXJN2Zkaw0B+by7Q5LLN/W3QK0?=
- =?us-ascii?Q?kfWtMFinXj3MbkpSwmI9CGooMVzuTHITDzGLRdDhDL8k3L0yqDsnpIL4KAES?=
- =?us-ascii?Q?WbJtOjQUFgjHK5a5EmSHP4PvFWcyxK7YXHLbcn5+QQx8rThoOlUReUX/3Yrr?=
- =?us-ascii?Q?h5aKXEZ+WP+hkGyH0c1tCY/z0AbTC62zNyqqk/8ZUcLV2o9Mn9c6xHZWqGbT?=
- =?us-ascii?Q?avMrDhxhhkM4fJWBqU8v8llWDG+Gs63QusMfmXzht5Xet4yHbEaN6IFLdX62?=
- =?us-ascii?Q?mT6keX3NXpy/wfgKF3LchPfcqXNLBWb1CHXGimO0ZsNVtSa7aXO25oSDAxXg?=
- =?us-ascii?Q?Zkfd4NctMi6euEC8zJZr2goYTSBlUBh0jYWbvQdE?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 914b71ab-c6f1-440a-af41-08db8c6b99db
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2023 17:29:57.5563
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yL1mCWRCouEPKh4HEgE0CPMc8HApV2n9DhjENlleek5HQmYtk9lcDH/yiQ1Jaygx
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4958
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-[ It would be good to get this in linux-next, we have some good test
-coverage on the ARM side already, thanks! ]
+The DT of_device.h and of_platform.h date back to the separate
+of_platform_bus_type before it as merged into the regular platform bus.
+As part of that merge prepping Arm DT support 13 years ago, they
+"temporarily" include each other. They also include platform_device.h
+and of.h. As a result, there's a pretty much random mix of those include
+files used throughout the tree. In order to detangle these headers and
+replace the implicit includes with struct declarations, users need to
+explicitly include the correct includes.
 
-It has been a long time coming, this series completes the default_domain
-transition and makes it so that the core IOMMU code will always have a
-non-NULL default_domain for every driver on every
-platform. set_platform_dma_ops() turned out to be a bad idea, and so
-completely remove it.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+v2:
+ - Add gef_wdt.c and mpc8xxx_wdt.c
+---
+ drivers/watchdog/armada_37xx_wdt.c | 1 -
+ drivers/watchdog/at91rm9200_wdt.c  | 3 +--
+ drivers/watchdog/cpwd.c            | 2 +-
+ drivers/watchdog/ftwdt010_wdt.c    | 6 ++----
+ drivers/watchdog/gef_wdt.c         | 2 +-
+ drivers/watchdog/imx2_wdt.c        | 3 +--
+ drivers/watchdog/imx7ulp_wdt.c     | 1 -
+ drivers/watchdog/meson_wdt.c       | 4 ++--
+ drivers/watchdog/mpc8xxx_wdt.c     | 4 ++--
+ drivers/watchdog/mtk_wdt.c         | 1 -
+ drivers/watchdog/of_xilinx_wdt.c   | 3 +--
+ drivers/watchdog/pic32-dmt.c       | 3 +--
+ drivers/watchdog/pic32-wdt.c       | 3 +--
+ drivers/watchdog/pika_wdt.c        | 2 +-
+ drivers/watchdog/qcom-wdt.c        | 1 -
+ drivers/watchdog/rave-sp-wdt.c     | 2 +-
+ drivers/watchdog/riowd.c           | 2 +-
+ drivers/watchdog/rza_wdt.c         | 4 ++--
+ drivers/watchdog/rzg2l_wdt.c       | 2 +-
+ drivers/watchdog/s3c2410_wdt.c     | 1 -
+ drivers/watchdog/sama5d4_wdt.c     | 1 -
+ drivers/watchdog/sbsa_gwdt.c       | 3 +--
+ drivers/watchdog/starfive-wdt.c    | 3 ++-
+ drivers/watchdog/stm32_iwdg.c      | 1 -
+ drivers/watchdog/sunxi_wdt.c       | 1 -
+ drivers/watchdog/xilinx_wwdt.c     | 4 ++--
+ 26 files changed, 24 insertions(+), 39 deletions(-)
 
-This is achieved by changing each driver to either:
-
-1 - Convert the existing (or deleted) ops->detach_dev() into an
-    op->attach_dev() of an IDENTITY domain.
-
-    This is based on the theory that the ARM32 HW is able to function when
-    the iommu is turned off and so the turned off state is an IDENTITY
-    translation.
-
-2 - Use a new PLATFORM domain type. This is a hack to accommodate drivers
-    that we don't really know WTF they do. S390 is legitimately using this
-    to switch to it's platform dma_ops implementation, which is where the
-    name comes from.
-
-3 - Do #1 and force the default domain to be IDENTITY, this corrects
-    the tegra-smmu case where even an ARM64 system would have a NULL
-    default_domain.
-
-Using this we can apply the rules:
-
-a) ARM_DMA_USE_IOMMU mode always uses either the driver's
-   ops->default_domain, ops->def_domain_type(), or an IDENTITY domain.
-   All ARM32 drivers provide one of these three options.
-
-b) dma-iommu.c mode uses either the driver's ops->default_domain,
-   ops->def_domain_type or the usual DMA API policy logic based on the
-   command line/etc to pick IDENTITY/DMA domain types
-
-c) All other arch's (PPC/S390) use ops->default_domain always.
-
-See the patch "Require a default_domain for all iommu drivers" for a
-per-driver breakdown.
-
-The conversion broadly teaches a bunch of ARM32 drivers that they can do
-IDENTITY domains. There is some educated guessing involved that these are
-actual IDENTITY domains. If this turns out to be wrong the driver can be
-trivially changed to use a BLOCKING domain type instead. Further, the
-domain type only matters for drivers using ARM64's dma-iommu.c mode as it
-will select IDENTITY based on the command line and expect IDENTITY to
-work. For ARM32 and other arch cases it is purely documentation.
-
-Finally, based on all the analysis in this series, we can purge
-IOMMU_DOMAIN_UNMANAGED/DMA constants from most of the drivers. This
-greatly simplifies understanding the driver contract to the core
-code. IOMMU drivers should not be involved in policy for how the DMA API
-works, that should be a core core decision.
-
-The main gain from this work is to remove alot of ARM_DMA_USE_IOMMU
-specific code and behaviors from drivers. All that remains in iommu
-drivers after this series is the calls to arm_iommu_create_mapping().
-
-This is a step toward removing ARM_DMA_USE_IOMMU.
-
-The IDENTITY domains added to the ARM64 supporting drivers can be tested
-by booting in ARM64 mode and enabling CONFIG_IOMMU_DEFAULT_PASSTHROUGH. If
-the system still boots then most likely the implementation is an IDENTITY
-domain. If not we can trivially change it to BLOCKING or at worst PLATFORM
-if there is no detail what is going on in the HW.
-
-I think this is pretty safe for the ARM32 drivers as they don't really
-change, the code that was in detach_dev continues to be called in the same
-places it was called before.
-
-This is on github: https://github.com/jgunthorpe/linux/commits/iommu_all_defdom
-
-v5:
- - Rebase on v6.5-rc1/Joerg's tree
- - Fix Dan's remark about 'gdev uninitialized' in patch 9
-v4: https://lore.kernel.org/r/0-v4-874277bde66e+1a9f6-iommu_all_defdom_jgg@nvidia.com
- - Fix rebasing typo missing ops->alloc_domain_paging check
- - Rebase on latest Joerg tree
-v3: https://lore.kernel.org/r/0-v3-89830a6c7841+43d-iommu_all_defdom_jgg@nvidia.com
- - FSL is back to a PLATFORM domain, with some fixing so it attach only
-   does something when leaving an UNMANAGED domain like it always was
- - Rebase on Joerg's tree, adjust for "alloc_type" change
- - Change the ARM32 untrusted check to a WARN_ON since no ARM32 system
-   can currently set trusted
-v2: https://lore.kernel.org/r/0-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com
- - FSL is an IDENTITY domain
- - Delete terga-gart instead of trying to carry it
- - Use the policy determination from iommu_get_default_domain_type() to
-   drive the arm_iommu mode
- - Reorganize and introduce new patches to do the above:
-    * Split the ops->identity_domain to an independent earlier patch
-    * Remove the UNMANAGED return from def_domain_type in mtk_v1 earlier
-      so the new iommu_get_default_domain_type() can work
-    * Make the driver's def_domain_type have higher policy priority than
-      untrusted
-    * Merge the set_platfom_dma_ops hunk from mtk_v1 along with rockchip
-      into the patch that forced IDENTITY on ARM32
- - Revise sun50i to be cleaner and have a non-NULL internal domain
- - Reword logging in exynos
- - Remove the gdev from the group alloc path, instead add a new
-   function __iommu_group_domain_alloc() that takes in the group
-   and uses the first device. Split this to its own patch
- - New patch to make iommufd's mock selftest into a real driver
- - New patch to fix power's partial iommu driver
-v1: https://lore.kernel.org/r/0-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com
-
-Jason Gunthorpe (25):
-  iommu: Add iommu_ops->identity_domain
-  iommu: Add IOMMU_DOMAIN_PLATFORM
-  powerpc/iommu: Setup a default domain and remove set_platform_dma_ops
-  iommu: Add IOMMU_DOMAIN_PLATFORM for S390
-  iommu/fsl_pamu: Implement a PLATFORM domain
-  iommu/tegra-gart: Remove tegra-gart
-  iommu/mtk_iommu_v1: Implement an IDENTITY domain
-  iommu: Reorganize iommu_get_default_domain_type() to respect
-    def_domain_type()
-  iommu: Allow an IDENTITY domain as the default_domain in ARM32
-  iommu/exynos: Implement an IDENTITY domain
-  iommu/tegra-smmu: Implement an IDENTITY domain
-  iommu/tegra-smmu: Support DMA domains in tegra
-  iommu/omap: Implement an IDENTITY domain
-  iommu/msm: Implement an IDENTITY domain
-  iommufd/selftest: Make the mock iommu driver into a real driver
-  iommu: Remove ops->set_platform_dma_ops()
-  iommu/qcom_iommu: Add an IOMMU_IDENTITIY_DOMAIN
-  iommu/ipmmu: Add an IOMMU_IDENTITIY_DOMAIN
-  iommu/mtk_iommu: Add an IOMMU_IDENTITIY_DOMAIN
-  iommu/sun50i: Add an IOMMU_IDENTITIY_DOMAIN
-  iommu: Require a default_domain for all iommu drivers
-  iommu: Add __iommu_group_domain_alloc()
-  iommu: Add ops->domain_alloc_paging()
-  iommu: Convert simple drivers with DOMAIN_DMA to domain_alloc_paging()
-  iommu: Convert remaining simple drivers to domain_alloc_paging()
-
- arch/arm/configs/multi_v7_defconfig     |   1 -
- arch/arm/configs/tegra_defconfig        |   1 -
- arch/powerpc/kernel/iommu.c             |  38 ++-
- drivers/iommu/Kconfig                   |  11 -
- drivers/iommu/Makefile                  |   1 -
- drivers/iommu/arm/arm-smmu/qcom_iommu.c |  45 ++-
- drivers/iommu/exynos-iommu.c            |  73 +++--
- drivers/iommu/fsl_pamu_domain.c         |  41 ++-
- drivers/iommu/iommu-priv.h              |  16 +
- drivers/iommu/iommu.c                   | 248 ++++++++++------
- drivers/iommu/iommufd/iommufd_private.h |   5 +-
- drivers/iommu/iommufd/main.c            |   8 +-
- drivers/iommu/iommufd/selftest.c        | 141 ++++-----
- drivers/iommu/ipmmu-vmsa.c              |  50 +++-
- drivers/iommu/msm_iommu.c               |  30 +-
- drivers/iommu/mtk_iommu.c               |  30 +-
- drivers/iommu/mtk_iommu_v1.c            |  28 +-
- drivers/iommu/omap-iommu.c              |  28 +-
- drivers/iommu/rockchip-iommu.c          |  26 +-
- drivers/iommu/s390-iommu.c              |  28 +-
- drivers/iommu/sprd-iommu.c              |   7 +-
- drivers/iommu/sun50i-iommu.c            |  35 ++-
- drivers/iommu/tegra-gart.c              | 371 ------------------------
- drivers/iommu/tegra-smmu.c              |  50 +++-
- drivers/memory/tegra/mc.c               |  34 ---
- drivers/memory/tegra/tegra20.c          |  28 --
- include/linux/iommu.h                   |  16 +-
- include/soc/tegra/mc.h                  |  26 --
- 28 files changed, 614 insertions(+), 802 deletions(-)
- create mode 100644 drivers/iommu/iommu-priv.h
- delete mode 100644 drivers/iommu/tegra-gart.c
-
-
-base-commit: a5003e75a1714857c01317d04982eef81331fe2f
+diff --git a/drivers/watchdog/armada_37xx_wdt.c b/drivers/watchdog/armada_37xx_wdt.c
+index e58652939f8a..8133a5d05647 100644
+--- a/drivers/watchdog/armada_37xx_wdt.c
++++ b/drivers/watchdog/armada_37xx_wdt.c
+@@ -14,7 +14,6 @@
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/types.h>
+diff --git a/drivers/watchdog/at91rm9200_wdt.c b/drivers/watchdog/at91rm9200_wdt.c
+index d20ec27ba354..558015f08c7a 100644
+--- a/drivers/watchdog/at91rm9200_wdt.c
++++ b/drivers/watchdog/at91rm9200_wdt.c
+@@ -18,6 +18,7 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/mfd/syscon/atmel-st.h>
+ #include <linux/miscdevice.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/platform_device.h>
+@@ -26,8 +27,6 @@
+ #include <linux/types.h>
+ #include <linux/watchdog.h>
+ #include <linux/uaccess.h>
+-#include <linux/of.h>
+-#include <linux/of_device.h>
+ 
+ #define WDT_DEFAULT_TIME	5	/* seconds */
+ #define WDT_MAX_TIME		256	/* seconds */
+diff --git a/drivers/watchdog/cpwd.c b/drivers/watchdog/cpwd.c
+index 47250f9b68c7..901b94d456db 100644
+--- a/drivers/watchdog/cpwd.c
++++ b/drivers/watchdog/cpwd.c
+@@ -31,7 +31,7 @@
+ #include <linux/mutex.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
++#include <linux/platform_device.h>
+ #include <linux/uaccess.h>
+ 
+ #include <asm/irq.h>
+diff --git a/drivers/watchdog/ftwdt010_wdt.c b/drivers/watchdog/ftwdt010_wdt.c
+index 442c5bf63ff4..28f5af752c10 100644
+--- a/drivers/watchdog/ftwdt010_wdt.c
++++ b/drivers/watchdog/ftwdt010_wdt.c
+@@ -14,7 +14,7 @@
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/watchdog.h>
+@@ -221,20 +221,18 @@ static const struct dev_pm_ops ftwdt010_wdt_dev_pm_ops = {
+ 				ftwdt010_wdt_resume)
+ };
+ 
+-#ifdef CONFIG_OF
+ static const struct of_device_id ftwdt010_wdt_match[] = {
+ 	{ .compatible = "faraday,ftwdt010" },
+ 	{ .compatible = "cortina,gemini-watchdog" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, ftwdt010_wdt_match);
+-#endif
+ 
+ static struct platform_driver ftwdt010_wdt_driver = {
+ 	.probe		= ftwdt010_wdt_probe,
+ 	.driver		= {
+ 		.name	= "ftwdt010-wdt",
+-		.of_match_table = of_match_ptr(ftwdt010_wdt_match),
++		.of_match_table = ftwdt010_wdt_match,
+ 		.pm = &ftwdt010_wdt_dev_pm_ops,
+ 	},
+ };
+diff --git a/drivers/watchdog/gef_wdt.c b/drivers/watchdog/gef_wdt.c
+index 97afc907f659..6a1db1c783fa 100644
+--- a/drivers/watchdog/gef_wdt.c
++++ b/drivers/watchdog/gef_wdt.c
+@@ -31,7 +31,7 @@
+ #include <linux/fs.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/of_platform.h>
++#include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/uaccess.h>
+ 
+diff --git a/drivers/watchdog/imx2_wdt.c b/drivers/watchdog/imx2_wdt.c
+index 6fcc3596103c..1a27665a2f53 100644
+--- a/drivers/watchdog/imx2_wdt.c
++++ b/drivers/watchdog/imx2_wdt.c
+@@ -26,8 +26,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+-#include <linux/of_address.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/watchdog.h>
+diff --git a/drivers/watchdog/imx7ulp_wdt.c b/drivers/watchdog/imx7ulp_wdt.c
+index 7ca486794ba7..c703586c6e5f 100644
+--- a/drivers/watchdog/imx7ulp_wdt.c
++++ b/drivers/watchdog/imx7ulp_wdt.c
+@@ -9,7 +9,6 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/reboot.h>
+ #include <linux/watchdog.h>
+diff --git a/drivers/watchdog/meson_wdt.c b/drivers/watchdog/meson_wdt.c
+index 539feaa1f904..497496f64f55 100644
+--- a/drivers/watchdog/meson_wdt.c
++++ b/drivers/watchdog/meson_wdt.c
+@@ -11,11 +11,11 @@
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+-#include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
++#include <linux/property.h>
+ #include <linux/types.h>
+ #include <linux/watchdog.h>
+ 
+diff --git a/drivers/watchdog/mpc8xxx_wdt.c b/drivers/watchdog/mpc8xxx_wdt.c
+index 1c569be72ea2..867f9f311379 100644
+--- a/drivers/watchdog/mpc8xxx_wdt.c
++++ b/drivers/watchdog/mpc8xxx_wdt.c
+@@ -16,8 +16,8 @@
+ #include <linux/fs.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+-#include <linux/of_address.h>
+-#include <linux/of_platform.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
+ #include <linux/module.h>
+ #include <linux/watchdog.h>
+ #include <linux/io.h>
+diff --git a/drivers/watchdog/mtk_wdt.c b/drivers/watchdog/mtk_wdt.c
+index a9c437598e7e..b2330b16b497 100644
+--- a/drivers/watchdog/mtk_wdt.c
++++ b/drivers/watchdog/mtk_wdt.c
+@@ -25,7 +25,6 @@
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/reset-controller.h>
+ #include <linux/types.h>
+diff --git a/drivers/watchdog/of_xilinx_wdt.c b/drivers/watchdog/of_xilinx_wdt.c
+index 2a079ca04aa3..05657dc1d36a 100644
+--- a/drivers/watchdog/of_xilinx_wdt.c
++++ b/drivers/watchdog/of_xilinx_wdt.c
+@@ -10,14 +10,13 @@
+ #include <linux/clk.h>
+ #include <linux/err.h>
+ #include <linux/module.h>
++#include <linux/platform_device.h>
+ #include <linux/types.h>
+ #include <linux/kernel.h>
+ #include <linux/ioport.h>
+ #include <linux/watchdog.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+-#include <linux/of_address.h>
+ 
+ /* Register offsets for the Wdt device */
+ #define XWT_TWCSR0_OFFSET   0x0 /* Control/Status Register0 */
+diff --git a/drivers/watchdog/pic32-dmt.c b/drivers/watchdog/pic32-dmt.c
+index bc4ccddc75a3..466b4a41411f 100644
+--- a/drivers/watchdog/pic32-dmt.c
++++ b/drivers/watchdog/pic32-dmt.c
+@@ -10,9 +10,8 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+-#include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm.h>
+ #include <linux/watchdog.h>
+diff --git a/drivers/watchdog/pic32-wdt.c b/drivers/watchdog/pic32-wdt.c
+index 6d1a00222991..4d7eaf290e1c 100644
+--- a/drivers/watchdog/pic32-wdt.c
++++ b/drivers/watchdog/pic32-wdt.c
+@@ -10,9 +10,8 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+-#include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm.h>
+ #include <linux/watchdog.h>
+diff --git a/drivers/watchdog/pika_wdt.c b/drivers/watchdog/pika_wdt.c
+index a98abd0d3146..782b8c23d99c 100644
+--- a/drivers/watchdog/pika_wdt.c
++++ b/drivers/watchdog/pika_wdt.c
+@@ -23,8 +23,8 @@
+ #include <linux/bitops.h>
+ #include <linux/uaccess.h>
+ #include <linux/io.h>
++#include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/of_platform.h>
+ 
+ #define DRV_NAME "PIKA-WDT"
+ 
+diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
+index d776474dcdf3..9e790f0c2096 100644
+--- a/drivers/watchdog/qcom-wdt.c
++++ b/drivers/watchdog/qcom-wdt.c
+@@ -11,7 +11,6 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/watchdog.h>
+-#include <linux/of_device.h>
+ 
+ enum wdt_reg {
+ 	WDT_RST,
+diff --git a/drivers/watchdog/rave-sp-wdt.c b/drivers/watchdog/rave-sp-wdt.c
+index 2c95615b6354..5d1c2176d445 100644
+--- a/drivers/watchdog/rave-sp-wdt.c
++++ b/drivers/watchdog/rave-sp-wdt.c
+@@ -13,7 +13,7 @@
+ #include <linux/mfd/rave-sp.h>
+ #include <linux/module.h>
+ #include <linux/nvmem-consumer.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/reboot.h>
+ #include <linux/slab.h>
+diff --git a/drivers/watchdog/riowd.c b/drivers/watchdog/riowd.c
+index c04b383e1712..b293792a292a 100644
+--- a/drivers/watchdog/riowd.c
++++ b/drivers/watchdog/riowd.c
+@@ -14,7 +14,7 @@
+ #include <linux/miscdevice.h>
+ #include <linux/watchdog.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
++#include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/uaccess.h>
+ #include <linux/slab.h>
+diff --git a/drivers/watchdog/rza_wdt.c b/drivers/watchdog/rza_wdt.c
+index fe6c2ed35e04..cb4901b3f777 100644
+--- a/drivers/watchdog/rza_wdt.c
++++ b/drivers/watchdog/rza_wdt.c
+@@ -9,9 +9,9 @@
+ #include <linux/bitops.h>
+ #include <linux/clk.h>
+ #include <linux/delay.h>
++#include <linux/io.h>
+ #include <linux/module.h>
+-#include <linux/of_address.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/watchdog.h>
+ 
+diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
+index d404953d0e0f..1741f98ca67c 100644
+--- a/drivers/watchdog/rzg2l_wdt.c
++++ b/drivers/watchdog/rzg2l_wdt.c
+@@ -11,7 +11,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 95416a9bdd4b..2bcc8faa7fa5 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -23,7 +23,6 @@
+ #include <linux/slab.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/regmap.h>
+ #include <linux/delay.h>
+diff --git a/drivers/watchdog/sama5d4_wdt.c b/drivers/watchdog/sama5d4_wdt.c
+index aeee934ca51b..71e8b5fbf51f 100644
+--- a/drivers/watchdog/sama5d4_wdt.c
++++ b/drivers/watchdog/sama5d4_wdt.c
+@@ -11,7 +11,6 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/of_irq.h>
+ #include <linux/platform_device.h>
+ #include <linux/reboot.h>
+diff --git a/drivers/watchdog/sbsa_gwdt.c b/drivers/watchdog/sbsa_gwdt.c
+index fd3cfdda4949..421ebcda62e6 100644
+--- a/drivers/watchdog/sbsa_gwdt.c
++++ b/drivers/watchdog/sbsa_gwdt.c
+@@ -43,10 +43,9 @@
+ #include <linux/io.h>
+ #include <linux/io-64-nonatomic-lo-hi.h>
+ #include <linux/interrupt.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+-#include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/uaccess.h>
+ #include <linux/watchdog.h>
+diff --git a/drivers/watchdog/starfive-wdt.c b/drivers/watchdog/starfive-wdt.c
+index 8058fca4d05d..9e6db8e0164f 100644
+--- a/drivers/watchdog/starfive-wdt.c
++++ b/drivers/watchdog/starfive-wdt.c
+@@ -8,7 +8,8 @@
+ #include <linux/clk.h>
+ #include <linux/iopoll.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+ #include <linux/watchdog.h>
+diff --git a/drivers/watchdog/stm32_iwdg.c b/drivers/watchdog/stm32_iwdg.c
+index 570a71509d2a..fa5e70c4b93a 100644
+--- a/drivers/watchdog/stm32_iwdg.c
++++ b/drivers/watchdog/stm32_iwdg.c
+@@ -17,7 +17,6 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/watchdog.h>
+ 
+diff --git a/drivers/watchdog/sunxi_wdt.c b/drivers/watchdog/sunxi_wdt.c
+index 6cf82922d3fb..b85354a99582 100644
+--- a/drivers/watchdog/sunxi_wdt.c
++++ b/drivers/watchdog/sunxi_wdt.c
+@@ -18,7 +18,6 @@
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/types.h>
+ #include <linux/watchdog.h>
+diff --git a/drivers/watchdog/xilinx_wwdt.c b/drivers/watchdog/xilinx_wwdt.c
+index 2585038d5575..1d998db41533 100644
+--- a/drivers/watchdog/xilinx_wwdt.c
++++ b/drivers/watchdog/xilinx_wwdt.c
+@@ -9,9 +9,9 @@
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/ioport.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
+-#include <linux/of_address.h>
++#include <linux/platform_device.h>
+ #include <linux/watchdog.h>
+ 
+ /* Max timeout is calculated at 100MHz source clock */
 -- 
-2.41.0
+2.40.1
 
