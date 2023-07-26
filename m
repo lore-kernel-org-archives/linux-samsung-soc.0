@@ -2,59 +2,90 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E8DFC001DC
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Jul 2023 07:44:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D54C001DC
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Jul 2023 08:59:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232724AbjGZHor (ORCPT
+        id S232432AbjGZI7e (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Jul 2023 03:44:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37722 "EHLO
+        Wed, 26 Jul 2023 04:59:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231437AbjGZHoA (ORCPT
+        with ESMTP id S233355AbjGZI7D (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Jul 2023 03:44:00 -0400
-Received: from mail.strategicvision.pl (mail.strategicvision.pl [217.61.105.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6652030C4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jul 2023 00:39:39 -0700 (PDT)
-Received: by mail.strategicvision.pl (Postfix, from userid 1002)
-        id 49DA984A62; Wed, 26 Jul 2023 09:36:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=strategicvision.pl;
-        s=mail; t=1690357069;
-        bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
-        h=Date:From:To:Subject:From;
-        b=boVRT+zjm4piRilffnBxuDiaxh/5VM3ZM6EGToWosoosLc0TzLt+/iN2nzlmeU1e8
-         jqjfOQ4iBKJy3136qAjgbRpZxdeJ4r6jJO5Dp5eAEeLkg5i8UZMGrM1IswHacOYJUk
-         M5eLDmijlqceeJpDWmchMiEdJ8SNAP6/Q2aafzpfiyDczmwNtvnrROXrzerSFZSSNe
-         gxoLk8rFFlErkX5WNmyvnn5vindxrrN0lgiTy8lFnD7BOemZYHuKmnfpLO7kiXXkRY
-         OeRl8aK4pJY/ZgV8df6VcUD0gepiuprZLiX1cGz/jO7aCzXMoDGo1SFwHttYmQlFFE
-         NLPUWdz6w9MCA==
-Received: by mail.strategicvision.pl for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jul 2023 07:35:40 GMT
-Message-ID: <20230726084502-0.1.k.8mft.0.uiz62lphn0@strategicvision.pl>
-Date:   Wed, 26 Jul 2023 07:35:40 GMT
-From:   "Adam Charachuta" <adam.charachuta@strategicvision.pl>
-To:     <linux-samsung-soc@vger.kernel.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.strategicvision.pl
+        Wed, 26 Jul 2023 04:59:03 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D416A10EC
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jul 2023 01:53:07 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-99bc512526cso70219966b.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jul 2023 01:53:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690361586; x=1690966386;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ePMoozvjCcycaiqcHeImLG9eyPBpOYe7wziGRg59LE0=;
+        b=lgoMvXdgAFgWxKocPub4MrcqStSktw3AUhlwgGGUkA0hfmP3Q/iF5l4I+cYd9PuvRy
+         PeXQpNrGSSfTR5tUks68UBztiBk229DnwQInlapWuRDYhapSz5kv1DlsHQ/HhToPMQ4d
+         jl8G66P5pH8746e+pTWTGm7M7EnQfuc7+/V9Fucx3WFAAkAJ2KbPzmjppIiGOTMAdVXO
+         aTNpYjnV6MRbY9hGMQAwX5WfQ2XgPxADwt4+2mkmmPFZEOBMNH0YWm340gYzUPvJBw4q
+         b+gTl1WInwhG37dvaWfHSwom7BfpjdXtFqPvBesR8oLzSMAn2VEdvDVjGT7yOZqOIwdV
+         9RRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690361586; x=1690966386;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ePMoozvjCcycaiqcHeImLG9eyPBpOYe7wziGRg59LE0=;
+        b=NRatbo2MX+PlpDUBsFoyIVpZVmYgscYAr+CMUGm914GZUCRRdeDiYY3HyndKntngWs
+         V6o/u1uAtlecEwC80zLNcXAxAD9EpUTRw6P6n4WtX003NhLeJ8DKgpVls8DVV41aV2bB
+         cA0aGn/FK6U8jFIE9b6WP6lZ2n7AeAbhcLMOnqi2INETPcnnEFNyCB+GKp/Bf7ATDswI
+         tC2Oh8YrU2892kUTTKUmRznBmc6MxbG9SQHmP6PR3BdLp4XGx+ec1XMEne0ydC2ewVk6
+         n56zrMlmcnHV9OV1kwEJV5fF2dWc+FIk4B4nPBtUm5ap0a6uRcA46Kw4mkhuaXKWeytt
+         b7vw==
+X-Gm-Message-State: ABy/qLb3SCIx/qamrt8MoejU5Vpf5ao59hgSemTIkDx0/PD1d+iT9yAI
+        7qxRELkb8pwzMtieutV2Cmq02OY1fhaI1lo6Xw4=
+X-Google-Smtp-Source: APBJJlGpls+c1lUCS+2vNzlVTg/p2kuFxf1wQZUfBrKhCjMicsXoy+rDSBMXj+s2s8itF2waA2rxCQ==
+X-Received: by 2002:a17:907:1dd6:b0:992:48b7:99e3 with SMTP id og22-20020a1709071dd600b0099248b799e3mr1086042ejc.63.1690361585305;
+        Wed, 26 Jul 2023 01:53:05 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.223.104])
+        by smtp.gmail.com with ESMTPSA id rv14-20020a17090710ce00b0099b921de301sm4606340ejb.159.2023.07.26.01.53.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jul 2023 01:53:04 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 1/2] ARM: dts: samsung: exynos5250-snow: use 'gpios' suffix for i2c-arb
+Date:   Wed, 26 Jul 2023 10:53:01 +0200
+Message-Id: <169036157563.124820.14961945548354190838.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230721133246.15752-1-krzysztof.kozlowski@linaro.org>
+References: <20230721133246.15752-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Dzie=C5=84 dobry,
 
-zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
-=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
-o dalszych rozm=C3=B3w.=20
+On Fri, 21 Jul 2023 15:32:45 +0200, Krzysztof Kozlowski wrote:
+> Linux drivers support both variants - gpios and gpio - but first is
+> preferred.
+> 
+> 
 
-Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
-=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
-=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
-strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
+Applied, thanks!
 
-Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
+[1/2] ARM: dts: samsung: exynos5250-snow: use 'gpios' suffix for i2c-arb
+      https://git.kernel.org/krzk/linux/c/4f861a9b8167ab2b4d96ed13544aa6133ae7bf55
+[2/2] ARM: dts: samsung: exynos5250-snow: switch i2c-arb to new child variant
+      https://git.kernel.org/krzk/linux/c/7562d91450b58d2cbb5387cc4b381088f338e635
 
-
-Pozdrawiam
-Adam Charachuta
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
