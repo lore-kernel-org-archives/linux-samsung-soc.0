@@ -2,112 +2,141 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D8AC00528
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Jul 2023 06:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E53BC001DE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Jul 2023 07:24:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231420AbjGZGYu (ORCPT
+        id S232651AbjGZHYy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Jul 2023 02:24:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51002 "EHLO
+        Wed, 26 Jul 2023 03:24:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbjGZGYs (ORCPT
+        with ESMTP id S232587AbjGZHYX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Jul 2023 02:24:48 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01B9713E;
-        Tue, 25 Jul 2023 23:24:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1690352688; x=1721888688;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=DlKsXPAKvUQNyaHWuLEMn+YeZGej9B0RE5XdM6qJwbQ=;
-  b=Bv8tYZ49F6dheDLmRpqj8/J75MVfhlWP0F9nDiiTZ+s0ox8wWNjJkruz
-   2kt5mok9zllXjAEB6IqNAldq0hb4jQTKc+b8Z850JCKv/x/7HDgDeDpNK
-   tnXVI4v59JfeYyIBqp0nQpBR/lACqzJ9AYDD/93F7l8rXXyWYsRRjJudO
-   0OgwEmdn8C3JC8txNbOiiSvGG5SR89JDor7ZZkjTA5s0R+EoptH9e5KPL
-   L8xTxUiuYjFsQha2Rc5BFlfJ+vcNvTctKg/o1T0IVw5rWCp2UTKhvel1W
-   GZpgQfE8ozDYmzu71aQv2OtB/kxUuBCTyJfQs8aZUQ+5EaqJLvQge7Fis
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10782"; a="365384331"
-X-IronPort-AV: E=Sophos;i="6.01,231,1684825200"; 
-   d="scan'208";a="365384331"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2023 23:24:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10782"; a="1057075644"
-X-IronPort-AV: E=Sophos;i="6.01,231,1684825200"; 
-   d="scan'208";a="1057075644"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.254.208.129]) ([10.254.208.129])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2023 23:24:20 -0700
-Message-ID: <7186790f-abed-61ba-2d19-6ab66640f30a@linux.intel.com>
-Date:   Wed, 26 Jul 2023 14:24:18 +0800
+        Wed, 26 Jul 2023 03:24:23 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73693212E
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jul 2023 00:23:08 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-5217bb5ae05so8539281a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jul 2023 00:23:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690356187; x=1690960987;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=psNiZywRuwsEhBcPK2P7fSk1gm5v6+Plq5WYmUtqhGI=;
+        b=uO2Rg5sY0eV3ATcWWu8U29fSH7pHqcvqqelJZLxN6hAzE5QhkpBH/VvplWzpMPS+Zn
+         muWYU+1ya7ja1oJa1FBVrckfaTRLKABUhMH8AZDt3WSeTzBRFnRHdc4uihjUd1vtI33o
+         GzPSK005rh0JrURuPf6BhpNEZvWUWBgT0VSXkredst7zi2rfEWuYBuphRkgXP+ZpSXb1
+         Ha1cuiCFksKY5vEoEp8yFXMzGjFKVwFfuq7/KyFGu/s2QpWFBS2JUUgg/uZGYpCjA13Z
+         nBZtbHytrFuLtZAVsewKKydugPMfpSYSoxCIFzDl3Vo0ziX/IvzgCRluV27XqPPpHdcB
+         MvBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690356187; x=1690960987;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=psNiZywRuwsEhBcPK2P7fSk1gm5v6+Plq5WYmUtqhGI=;
+        b=gAqBoDKA2HzzsfrTDxq71EA83jmbxVkAH9FJzD/XQd/xvripiXPwL6EzYEi7Ud1ViQ
+         rMzQkqz3MAUEJmxSESCmw6RAIN5KqTtuzbwG0eM4LMwk/fG1zGhEdNjUYiEQO9Ml1jCB
+         i+wn+SuDYHuUJcKVOh84FiUmvi3aXMiJFGltb4jHFv24qhMFv5jmPfaJmi2C7AfDvCGG
+         JsbBfn3PfZBTuNFgsW0rKrWQmT4LAUDoAGuG/ngdzHVzDLVsZdZPkjuRYdTgnE+3sfRI
+         7cznCx74c7gihFXHDYCC1o1fQqqWmi8WalUlSEk4sAYDHi36u5jEksHDZlVaO6LDbVrf
+         Zp1A==
+X-Gm-Message-State: ABy/qLYAHsbLwDDqsynTFOf/52FQP2g/mG9lUFq/Qk50wnNfYSzuA4lK
+        /HDhYYAFY7EQrIa/HOzGYcfP7g==
+X-Google-Smtp-Source: APBJJlHxdheepEk7RhDXpUGoFmdJOcw7RX/66s0wEdZEKSQRGdJuvQKkTHbZGppyP7FDRint8diEBA==
+X-Received: by 2002:a17:906:8478:b0:992:d013:1131 with SMTP id hx24-20020a170906847800b00992d0131131mr904451ejc.52.1690356186935;
+        Wed, 26 Jul 2023 00:23:06 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.104])
+        by smtp.gmail.com with ESMTPSA id y25-20020a1709064b1900b00992e265495csm9240054eju.212.2023.07.26.00.23.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jul 2023 00:23:06 -0700 (PDT)
+Message-ID: <97ec26e7-fb3e-ed01-d6f5-563a6ba8b209@linaro.org>
+Date:   Wed, 26 Jul 2023 09:23:04 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Cc:     baolu.lu@linux.intel.com, Dmitry Osipenko <digetx@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Steven Price <steven.price@arm.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v5 02/25] iommu: Add IOMMU_DOMAIN_PLATFORM
+Subject: Re: [PATCH v2] ARM: dts: samsung: exynos4412-midas: add USB connector
+ and USB OTG
 Content-Language: en-US
-To:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
+To:     Henrik Grimler <henrik@grimler.se>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-References: <2-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
-From:   Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <2-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        replicant@osuosl.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        =?UTF-8?Q?Martin_J=c3=bccker?= <martin.juecker@gmail.com>,
+        Artur Weber <aweber.kernel@gmail.com>
+References: <20230723142417.97734-1-krzysztof.kozlowski@linaro.org>
+ <ZMAfSIF0Rwc69nEv@grimlerstat.localdomain>
+ <d04af4a2-a07b-66b7-47e1-5c90fb11fe54@linaro.org>
+ <ZMA9AcfElvuYZTiV@grimlerstat.localdomain>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <ZMA9AcfElvuYZTiV@grimlerstat.localdomain>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2023/7/25 1:21, Jason Gunthorpe wrote:
-> This is used when the iommu driver is taking control of the dma_ops,
-> currently only on S390 and power spapr. It is designed to preserve the
-> original ops->detach_dev() semantic that these S390 was built around.
+On 25/07/2023 23:22, Henrik Grimler wrote:
+>>> MHL works reliably if cable is attached before boot, but if cable is
+>>> attached on already running device it sometimes work after detaching
+>>> and attaching cable a few times.  On cable attach, when it does not
+>>> work, we get:
+>>>
+>>>   [  252.831734] max77693-muic max77693-muic: external connector is detached(chg_type:0x0, prev_chg_type:0x0)
+>>>   [  253.733916] max77693-muic max77693-muic: external connector is attached(chg_type:0x1, prev_chg_type:0x1)
+>>>   [  253.735232] max77693-muic max77693-muic: CONTROL1 : 0x09, CONTROL2 : 0x04, state : attached
+>>>   [  254.691877] i2c i2c-15: sendbytes: NAK bailout.
+>>>   [  254.692150] sii9234 15-0039: writebm:  TPI[0x3d] <- 0x3e
+>>>   [  255.984336] sii9234 15-0039: RGND is not 1k
+>>>   [  256.068970] sii9234 15-0039: RSEN_HIGH without RGND_1K
+>>>   [  256.104457] sii9234 15-0039: discovery failed, no power for MHL?
+>>>   [  256.118272] i2c i2c-15: sendbytes: NAK bailout.
+>>>   [  256.118539] sii9234 15-0039: writebm:  TPI[0x3d] <- 0x3e
+>>>   [  256.375966] sii9234 15-0039: RSEN_HIGH without RGND_1K
+>>>   [  256.411561] sii9234 15-0039: discovery failed, no power for MHL?
+>>>
+>>> while when it works:
+>>>
+>>>   [  175.348307] max77693-muic max77693-muic: external connector is detached(chg_type:0x1, prev_chg_type:0x0)
+>>>   [  175.349576] max77693-muic max77693-muic: CONTROL1 : 0x00, CONTROL2 : 0x01, state : detached
+>>>   [  179.304373] dwc2 12480000.usb: new device is full-speed
+>>>   [  179.305920] max77693-muic max77693-muic: external connector is detached(chg_type:0x0, prev_chg_type:0x0)
+>>>   [  180.205735] max77693-muic max77693-muic: external connector is attached(chg_type:0x1, prev_chg_type:0x1)
+>>>   [  180.207211] max77693-muic max77693-muic: CONTROL1 : 0x09, CONTROL2 : 0x04, state : attached
+>>>   [  180.309727] i2c i2c-15: sendbytes: NAK bailout.
+>>>   [  180.309996] sii9234 15-0039: writebm:  TPI[0x3d] <- 0x3e
+>>>
+>>> Not sure if issue here is in muic driver or sii9234 driver.
+>>>
+>>> OTG still does not seem to work, the muic driver detects (only) a
+>>> detach when OTG cable is attached:
+>>>
+>>>   max77693-muic max77693-muic: external connector is detached(chg_type:0x0, prev_chg_type:0x0)
+>>>
+>>> Same happened when otg cable was attached before these hsotg changes
+>>> as well. I suppose issue here is with max77693-muic driver.
+>>>
+>>
+>> Thanks for testing. I miss here one important thing - did anything
+>> regressed? Is MHL behaving not worse than before? OTG, as non-working,
+>> matters less in such case.
 > 
-> Provide an opaque domain type and a 'default_domain' ops value that allows
-> the driver to trivially force any single domain as the default domain.
-> 
-> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
-> ---
->   drivers/iommu/iommu.c | 14 +++++++++++++-
->   include/linux/iommu.h |  6 ++++++
->   2 files changed, 19 insertions(+), 1 deletion(-)
+> No regressions as far as I can tell, only improvements.  We want the
+> muic node and mhl_to_muic/muic_to_mhl ports so that muic can notify
+> the mhl chip of cable attachment/detachment (with requires an
+> additional patch to the sii9234 driver that I will send soon [1]).
+> The alternative, having the mhl chip always on, has caused issues with
+> some GUIs [2].
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Awesome, thank you!
+
+Best regards,
+Krzysztof
+
