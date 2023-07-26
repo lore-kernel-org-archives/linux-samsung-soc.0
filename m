@@ -2,98 +2,123 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD0DC04A6A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Jul 2023 08:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A022CC001E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Jul 2023 09:35:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230009AbjGZI7g (ORCPT
+        id S233529AbjGZJfH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Jul 2023 04:59:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55096 "EHLO
+        Wed, 26 Jul 2023 05:35:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232439AbjGZI7F (ORCPT
+        with ESMTP id S233365AbjGZJeq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Jul 2023 04:59:05 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E1AC1BCB
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jul 2023 01:53:08 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-98e39784a85so159462266b.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jul 2023 01:53:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690361587; x=1690966387;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y323VqrnUwbgFr3AWb69nYFgPXshHmv3xK/j+qJy0Bg=;
-        b=Xfj/4PSo4GwepbrqH4ykwdWq2F3+aV9+IwCm0z0na6qALSSvFky5z/aDJjzySbo8xf
-         rb0gc8He5P3H0AQFdfQsakIc4/6km7FAGGWGYQVURdtmpkN7YsomsMD7xgvL7zOCvEaP
-         gVqzVgEhGBN/zbM+4mdju9H9V05u2avVS7KrPearyxsIcOs0vN6kZiVIoy3hNLEG53px
-         A7jAGYO5IFdGEJ4XkvMycqSaZ4qacog8mhjWxx3OJnizcqxWRB9aNKln6aG1WGgpfleO
-         DDnpy6KWwh3ZRACV0/UhJiwVASCqgfkKkxmqY/7DxEZPL8mbNOIRPf5kei2uFRhRy+gg
-         G5Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690361587; x=1690966387;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y323VqrnUwbgFr3AWb69nYFgPXshHmv3xK/j+qJy0Bg=;
-        b=BAUabeaku8l2SQ+oEBWXKLQqVWkQYWPApdU34LX+YcYWshfxSRBXsxUHlSTe8cFJlb
-         7zNnCTX6nRkCDG2DURqh3oD+IY4ut1EzF1RKwPwN3q1p8iXLdOMODcqwqUK9IdY2nWsz
-         iSuvicscCVzobv9kd5MpwyYncqotE3+jjXES4atqNg8/C5n5nTddtnIWT4bgDjqF0ndR
-         a3G697Cv2Q8PwwdC2eltAOAh2M93hv5TeeD6KrhCN6mhqGzzcA3YXg43kU6nZMhIGTAj
-         OZyu2zuaNryqtFntomIIrjIY+qHssaxUqQuuBkzJCQvaPRsMSOykti1sIB48GzHgJC0A
-         3Xhw==
-X-Gm-Message-State: ABy/qLYGLqDG8xUOZ6YCt7PJoLbalYzTUpqxVQHe+HjalRMNfbh6CU++
-        u1q9M9Gm8eSsIwEYUy/mvvXatA==
-X-Google-Smtp-Source: APBJJlGJkcswTgOcEC/0azVT1I0P9EPqZI5ur9E7qHLTgnW7AEp7IKoSN5ESxsx2FVdpiE8O5+jd6Q==
-X-Received: by 2002:a17:907:d01:b0:978:8979:c66c with SMTP id gn1-20020a1709070d0100b009788979c66cmr6659274ejc.18.1690361587522;
-        Wed, 26 Jul 2023 01:53:07 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id rv14-20020a17090710ce00b0099b921de301sm4606340ejb.159.2023.07.26.01.53.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jul 2023 01:53:07 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>, replicant@osuosl.org,
-        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>,
-        Henrik Grimler <henrik@grimler.se>,
-        Artur Weber <aweber.kernel@gmail.com>
-Subject: Re: [PATCH v2] ARM: dts: samsung: exynos4412-midas: add USB connector and USB OTG
-Date:   Wed, 26 Jul 2023 10:53:02 +0200
-Message-Id: <169036157564.124820.10583684522543257497.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230723142417.97734-1-krzysztof.kozlowski@linaro.org>
-References: <20230723142417.97734-1-krzysztof.kozlowski@linaro.org>
+        Wed, 26 Jul 2023 05:34:46 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 494D92136;
+        Wed, 26 Jul 2023 02:33:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1690364018; x=1721900018;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Ll36FTmiauk1Ig4tVtkzd2SFsMYrQLOvgACeMV/OFOs=;
+  b=KGHeCtEksotBezN9xwfue7nZv7ufcuVV5SXjqJWpU7IALlCWE+7h37lH
+   e+zmjSuup9RrRgoFIvGNYq1LvGOV/VmA2FXqWfc08eQEAU5qmE27hOXkW
+   CE5Ji0aheYz0fvVylGY9GPKgZBZtduEv7HYeK/zb2ERWTz9KoCew6wqg3
+   pK2un7L7FQnseg3w+epEGiDtbXPDzQzQ2ymoh7CanEFCyoyemxwtFIm4O
+   LY7Kcq+hMejIk0p/EFK+/a/D7G/CrHPxGgKb8arcFWWYIAFHvFPvas6e5
+   +M5RmFpVH54H/h2lax/UEZJurVQ1KZkjR4ioV/mqAgVgK+FpOU+Sz1ChA
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10782"; a="348246008"
+X-IronPort-AV: E=Sophos;i="6.01,231,1684825200"; 
+   d="scan'208";a="348246008"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2023 02:33:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10782"; a="703667560"
+X-IronPort-AV: E=Sophos;i="6.01,231,1684825200"; 
+   d="scan'208";a="703667560"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.254.208.129]) ([10.254.208.129])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2023 02:33:26 -0700
+Message-ID: <8bf0b97e-6fb9-f266-566f-6e5112df3c52@linux.intel.com>
+Date:   Wed, 26 Jul 2023 17:33:24 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Cc:     baolu.lu@linux.intel.com, Dmitry Osipenko <digetx@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Steven Price <steven.price@arm.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v5 08/25] iommu: Reorganize
+ iommu_get_default_domain_type() to respect def_domain_type()
+Content-Language: en-US
+To:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linuxppc-dev@lists.ozlabs.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+References: <8-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
+From:   Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <8-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
-On Sun, 23 Jul 2023 16:24:17 +0200, Krzysztof Kozlowski wrote:
-> Add full description of USB-MUIC (MAX77693 MUIC) and MUIC-MHL
-> connections, along with proper USB connector and OTG mode for DWC2 USB
-> controller.
+On 2023/7/25 1:21, Jason Gunthorpe wrote:
+> Except for dart every driver returns 0 or IDENTITY from def_domain_type().
 > 
-> This fixes dtc W=1 warnings:
+> The drivers that return IDENTITY have some kind of good reason, typically
+> that quirky hardware really can't support anything other than IDENTITY.
 > 
->   Warning (graph_child_address): /i2c-mhl/hdmi-bridge@39/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
+> Arrange things so that if the driver says it needs IDENTITY then
+> iommu_get_default_domain_type() either fails or returns IDENTITY.  It will
+> never reject the driver's override to IDENTITY.
 > 
-> [...]
+> The only real functional difference is that the PCI untrusted flag is now
+> ignored for quirky HW instead of overriding the IOMMU driver.
+> 
+> This makes the next patch cleaner that wants to force IDENTITY always for
+> ARM_IOMMU because there is no support for DMA.
+> 
+> Tested-by: Steven Price<steven.price@arm.com>
+> Tested-by: Marek Szyprowski<m.szyprowski@samsung.com>
+> Tested-by: Nicolin Chen<nicolinc@nvidia.com>
+> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
+> ---
+>   drivers/iommu/iommu.c | 66 +++++++++++++++++++++----------------------
+>   1 file changed, 33 insertions(+), 33 deletions(-)
 
-Applied, thanks!
-
-[1/1] ARM: dts: samsung: exynos4412-midas: add USB connector and USB OTG
-      https://git.kernel.org/krzk/linux/c/57f706bf73079379a9e9f5490c94c2473077bb2e
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
