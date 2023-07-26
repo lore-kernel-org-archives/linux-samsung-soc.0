@@ -2,123 +2,69 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A022CC001E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Jul 2023 09:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A233FC001E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Jul 2023 09:41:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233529AbjGZJfH (ORCPT
+        id S233723AbjGZJl5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Jul 2023 05:35:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50844 "EHLO
+        Wed, 26 Jul 2023 05:41:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233365AbjGZJeq (ORCPT
+        with ESMTP id S233663AbjGZJls (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Jul 2023 05:34:46 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 494D92136;
-        Wed, 26 Jul 2023 02:33:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1690364018; x=1721900018;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Ll36FTmiauk1Ig4tVtkzd2SFsMYrQLOvgACeMV/OFOs=;
-  b=KGHeCtEksotBezN9xwfue7nZv7ufcuVV5SXjqJWpU7IALlCWE+7h37lH
-   e+zmjSuup9RrRgoFIvGNYq1LvGOV/VmA2FXqWfc08eQEAU5qmE27hOXkW
-   CE5Ji0aheYz0fvVylGY9GPKgZBZtduEv7HYeK/zb2ERWTz9KoCew6wqg3
-   pK2un7L7FQnseg3w+epEGiDtbXPDzQzQ2ymoh7CanEFCyoyemxwtFIm4O
-   LY7Kcq+hMejIk0p/EFK+/a/D7G/CrHPxGgKb8arcFWWYIAFHvFPvas6e5
-   +M5RmFpVH54H/h2lax/UEZJurVQ1KZkjR4ioV/mqAgVgK+FpOU+Sz1ChA
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10782"; a="348246008"
-X-IronPort-AV: E=Sophos;i="6.01,231,1684825200"; 
-   d="scan'208";a="348246008"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2023 02:33:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10782"; a="703667560"
-X-IronPort-AV: E=Sophos;i="6.01,231,1684825200"; 
-   d="scan'208";a="703667560"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.254.208.129]) ([10.254.208.129])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2023 02:33:26 -0700
-Message-ID: <8bf0b97e-6fb9-f266-566f-6e5112df3c52@linux.intel.com>
-Date:   Wed, 26 Jul 2023 17:33:24 +0800
+        Wed, 26 Jul 2023 05:41:48 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04164DB;
+        Wed, 26 Jul 2023 02:41:46 -0700 (PDT)
+Received: from kwepemi500008.china.huawei.com (unknown [172.30.72.55])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4R9pjn4CMhzNmZk;
+        Wed, 26 Jul 2023 17:38:21 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi500008.china.huawei.com
+ (7.221.188.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 26 Jul
+ 2023 17:41:43 +0800
+From:   Ruan Jinjie <ruanjinjie@huawei.com>
+To:     <krzysztof.kozlowski@linaro.org>, <alim.akhtar@samsung.com>,
+        <andi.shyti@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-i2c@vger.kernel.org>
+CC:     <ruanjinjie@huawei.com>
+Subject: [PATCH -next] i2c: s3c2410: Remove redundant dev_err()
+Date:   Wed, 26 Jul 2023 17:42:26 +0000
+Message-ID: <20230726174226.2480552-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Cc:     baolu.lu@linux.intel.com, Dmitry Osipenko <digetx@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Steven Price <steven.price@arm.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v5 08/25] iommu: Reorganize
- iommu_get_default_domain_type() to respect def_domain_type()
-Content-Language: en-US
-To:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-References: <8-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
-From:   Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <8-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.90.53.73]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemi500008.china.huawei.com (7.221.188.139)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2023/7/25 1:21, Jason Gunthorpe wrote:
-> Except for dart every driver returns 0 or IDENTITY from def_domain_type().
-> 
-> The drivers that return IDENTITY have some kind of good reason, typically
-> that quirky hardware really can't support anything other than IDENTITY.
-> 
-> Arrange things so that if the driver says it needs IDENTITY then
-> iommu_get_default_domain_type() either fails or returns IDENTITY.  It will
-> never reject the driver's override to IDENTITY.
-> 
-> The only real functional difference is that the PCI untrusted flag is now
-> ignored for quirky HW instead of overriding the IOMMU driver.
-> 
-> This makes the next patch cleaner that wants to force IDENTITY always for
-> ARM_IOMMU because there is no support for DMA.
-> 
-> Tested-by: Steven Price<steven.price@arm.com>
-> Tested-by: Marek Szyprowski<m.szyprowski@samsung.com>
-> Tested-by: Nicolin Chen<nicolinc@nvidia.com>
-> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
-> ---
->   drivers/iommu/iommu.c | 66 +++++++++++++++++++++----------------------
->   1 file changed, 33 insertions(+), 33 deletions(-)
+There is no need to call the dev_err() function directly to print a custom
+message when handling an error from platform_get_irq() function as
+it is going to display an appropriate error message in case of a failure.
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Ruan Jinjie <ruanjinjie@huawei.com>
+---
+ drivers/i2c/busses/i2c-s3c2410.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 28f0e5c64f32..703a43446eaa 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1076,7 +1076,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	if (!(i2c->quirks & QUIRK_POLL)) {
+ 		i2c->irq = ret = platform_get_irq(pdev, 0);
+ 		if (ret < 0) {
+-			dev_err(&pdev->dev, "cannot find IRQ\n");
+ 			clk_unprepare(i2c->clk);
+ 			return ret;
+ 		}
+-- 
+2.34.1
+
