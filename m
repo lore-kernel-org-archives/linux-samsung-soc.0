@@ -2,148 +2,174 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA02C0015E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Jul 2023 21:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E61C001DE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Jul 2023 04:02:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230341AbjGYVWT (ORCPT
+        id S231547AbjGZECp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 25 Jul 2023 17:22:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55402 "EHLO
+        Wed, 26 Jul 2023 00:02:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230337AbjGYVWS (ORCPT
+        with ESMTP id S231300AbjGZEBq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 25 Jul 2023 17:22:18 -0400
-X-Greylist: delayed 7591 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 25 Jul 2023 14:22:16 PDT
-Received: from out-16.mta1.migadu.com (out-16.mta1.migadu.com [IPv6:2001:41d0:203:375::10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CD7EE69;
-        Tue, 25 Jul 2023 14:22:16 -0700 (PDT)
-Date:   Tue, 25 Jul 2023 23:22:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-        t=1690320134;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tHqrqD8etAmFPoplWVHS6xgjs7yFI6bgpUy2PExyaBw=;
-        b=lpg23rv0b5yAMBdEBTGiVqKzZ5nlcCQaUn5sXVFujyxLf4FUNyH5LGF4XT6sPC6RMkESeJ
-        2IlxEb8lyMvI59riJo1Mmds0qqAZHDNRJ2SjdDTcVYQqCEas+ezNDxtD/NMMSAa79N4ocg
-        n+ssBDzw4ym09d16PDOwWeVMwKPw81E=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Henrik Grimler <henrik@grimler.se>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        replicant@osuosl.org, phone-devel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Martin =?iso-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>,
-        Artur Weber <aweber.kernel@gmail.com>
-Subject: Re: [PATCH v2] ARM: dts: samsung: exynos4412-midas: add USB
- connector and USB OTG
-Message-ID: <ZMA9AcfElvuYZTiV@grimlerstat.localdomain>
-References: <20230723142417.97734-1-krzysztof.kozlowski@linaro.org>
- <ZMAfSIF0Rwc69nEv@grimlerstat.localdomain>
- <d04af4a2-a07b-66b7-47e1-5c90fb11fe54@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+        Wed, 26 Jul 2023 00:01:46 -0400
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2120.outbound.protection.outlook.com [40.107.117.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AD3826BE;
+        Tue, 25 Jul 2023 21:01:28 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DY057Tfhwgdy0BUfSC9gZwNAeHnb/t9YvFPpdjREDiaHiHeq1oE/F+0SRE/TJHUet9wcTRuEQPa+7I7Hk6W2p4TO25r7hM96jGigf6h9pJ72gOtIq2vm/CCh+1ikxn6ksjC02XewxonJKsGLMXkJCutHmEmHh9TW0joakaJOgdCq2EqJ0S0Fsulm+Z7/2MvebzCX+gQGNpuRMyRApFtKbkVKusA1gDmb+q33JC20IeRJXHrR/0BKavztccsOC1pjWcj6iMgm6p9aVZSLJRsnUezmUNTRqLwQJqwV0Tdr4nI+0lHNfNfEQxwx/hN3sK0ZHApcR98+HSbaumv7tuh+4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gkUpr7l0pDttVGz3kqCsUAr3ho/CgWL/40WVT1faxUc=;
+ b=OqqFZ1+en6kCqadR+K9gqTU4KMnMEr0UhAUnsl/xopgKNKnonUqpAaWN0gFGy0SF8jRw0fDMaIY/O89DzfKmL90iomU4H640RWsrTF2yLUrBOL1DEj+dnX0yqapKa/0BOX+I5WnUrFBnH18N7asH+faKZZNk5Nd2byXnmM8XrgrKtMPd+thTvl1SssdpMO5/cuVLxkrBho4YH1A1aRg8M96upNLmBZWeokKW2YGxpkNB93Dc9H8ICP5KarGw796yahRSAm5hw9edpyEpr/Soj8GXJvWifGMmtdrOQ9zF2C8C76n0oLeMp82TGmpBTemYdLBD+LV1MVq2mvUTGLD33w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gkUpr7l0pDttVGz3kqCsUAr3ho/CgWL/40WVT1faxUc=;
+ b=SRBEHQlamksChbKgSfHcY1AqxC/Ij6/BdidGTaxV+EQleUR8zhqQnd4dt0C6A4g6s+w5Gv7br71NSF3GVNu8v4zeqYLA5MQCJInlEsb+jVBOfWHcv73XYqXjmglbSDwwdOcNvxCUbMOY+yQq6BcNiikWCeIIoQSBEeQzGAw9Oq8h8WJ638NpBmNdzx0/yjkcCK2/ySsV7DXXsRz/9qxTi1mSHjH01YxR+DagpUskJv8eGA3Bt04cJfQpvxQw/gOhJtHEcp4jvcKnXijWC7G9/X5zhO8yXwKQb3SpO2SRPVC726ZT+Y0X2yzMIt6FfKfa7rtksCkOFQ7N/IA60IYGDA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by TYZPR06MB3934.apcprd06.prod.outlook.com (2603:1096:400:7::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.33; Wed, 26 Jul
+ 2023 04:01:22 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::732f:ea1d:45a1:1e0b]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::732f:ea1d:45a1:1e0b%3]) with mapi id 15.20.6631.026; Wed, 26 Jul 2023
+ 04:01:22 +0000
+From:   Yangtao Li <frank.li@vivo.com>
+To:     Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     Yangtao Li <frank.li@vivo.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-mmc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 14/61] mmc: dw_mmc: exynos: Convert to platform remove callback returning void
+Date:   Wed, 26 Jul 2023 11:59:54 +0800
+Message-Id: <20230726040041.26267-14-frank.li@vivo.com>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230726040041.26267-1-frank.li@vivo.com>
+References: <20230726040041.26267-1-frank.li@vivo.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d04af4a2-a07b-66b7-47e1-5c90fb11fe54@linaro.org>
-X-Migadu-Flow: FLOW_OUT
+X-ClientProxiedBy: SG2PR02CA0093.apcprd02.prod.outlook.com
+ (2603:1096:4:90::33) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|TYZPR06MB3934:EE_
+X-MS-Office365-Filtering-Correlation-Id: 90722416-c551-493f-8c1b-08db8d8cf981
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: wX6EFvNIuIQd/649CJtu3yTHPnck52lzHQmccPYxKC14qYXI8SlBovs6aFAV/JT29q3doV5BnGud2fo9fgRze8yzbpeWydJXFHcoFby3sKppeQ1ckK/9J9oSmaDfqTQEO1ZhBOIXKP3ilHNqXfHdoEZpY+KZu6yWx32c3TtM9cCYvevGCGT+uloXnZeeVKnDC0zzOPghu3Zdm0yhK8Vhp08Bbo+9YWUoXADn4IX7BvUnquDKl61faitCFyIRvSOEyyS9DpM6bgB/PlmTXyI5z1u+5KAv0eO88rvTdtIq+ciKi1h0CJ6tLfWfWyjxB6zLyWW+vV4tPbD89oMae/fYR4okM3KbuBVdLMvKufQQyoFGzv6MncS8080PMF0r8KkQuaNMERQh6b7WDae85vVk7VZte/8wcYnv3EO1L6fWAnJEIwn/llPehqLrw7MDEQv9iKkl6NYDGRO7UA+VpqaDtpzgYQXu5yPKQI9s1RWTcrYSDzJnPHZTMhjch73DH7qamgu7MFk85SwvX30Sk8uDNBVHqGu63AwVXhQ4W9mzNRY0ctm/RqsqIIMORtADzdR/o1OFqQ56pwMAo/TUxvlwUhkIame3DDtc1gBH3mchbe6Phy+bvrrrdNClWfpBQrsf
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(396003)(346002)(39860400002)(366004)(136003)(451199021)(66574015)(66946007)(66556008)(83380400001)(2616005)(41300700001)(38100700002)(38350700002)(86362001)(36756003)(8936002)(8676002)(5660300002)(478600001)(110136005)(6486002)(52116002)(54906003)(66476007)(316002)(4326008)(6666004)(2906002)(6512007)(1076003)(186003)(26005)(6506007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UGNEdlNaVzFmdUl4M2RLMFh6K0haT0xRYXhNUUdtcVJuQ1YzUDNWU0FHdWF4?=
+ =?utf-8?B?NEJxSFdZMVRyU3JJVUZEOVB2MUhxdE1IaGNyU1o4V2g2ODFUbVZHVEVzK3pu?=
+ =?utf-8?B?ZHo1Q1lzME5SUDl2MnMwSi9XY3R5MnduT2RvNk0yZ3RwcllEaFJrMlBSUjRz?=
+ =?utf-8?B?bFA1aERSNkNHMnczcXUyOGlQSVhmUmd3b01pUEh4cFluTkMwTU9XMTZLN0U2?=
+ =?utf-8?B?YnV3bFBQZ3BYSy8zaTlCMHNpWjR4Sjl4N2tHRmR0TjB1NGlKRWRtNXhyM0pH?=
+ =?utf-8?B?emF5dXhnMmtMeFZxYnl4dFh1SURaSnZMbVEzTGUxak5YdEtoVEFMUlVFNGNi?=
+ =?utf-8?B?Yld2TUlXR015TzZHaFNoeDJZU09qRkEvZDFHelZrQmtPZmJnRzFhNC9QUVZ4?=
+ =?utf-8?B?WFpnUW5QVjFZZVhSbUd2dkh4VFlja20za2I1UUludmNpbCs5ZUNyeHFUNWVF?=
+ =?utf-8?B?eU5xYmpVaENqM05UaytIdEJYWjU2WWNoS0trQUVuOGpaK1B2MENVVEE3Z0Uy?=
+ =?utf-8?B?aHVzQkFBV1lRUG1Za2ZxamhocHlNZjhEU1ZJMzRod1ZhbmJadXhuWGhJaGNR?=
+ =?utf-8?B?VEZqNWFweWc2RFRzeUJqdEt0SGVWWTlNSnlQVk0wUHJoSExBRDlqNHlQeDFz?=
+ =?utf-8?B?N0hFTVhEZGx5U3RwV2NidjJ4WFJTY3pueXhWUC91R25jdExyZ3Q1V05VdFhZ?=
+ =?utf-8?B?dEo2YUFZSjRIYXdLMUprcC9HbGpldjErTThmSXdybHd6aWhnd01zZmtRNkQr?=
+ =?utf-8?B?eTV0UmJqaW1SME5UZDZOaHE0Y2grWXZua2svRWUxWXBDNjhMVkMya0ZsRVQ2?=
+ =?utf-8?B?aC9rNFd3bkZrZmhLNEpSR0hmSytkcnVNQXVidk1JNjJXRFBwVWlTY1lYRGR6?=
+ =?utf-8?B?NzZOOFZrRElsVDFHck91YnUwWkZrZWVWdW80SWlvVW5WL1JYYi9VQUlHZ2d6?=
+ =?utf-8?B?bjgvb0IzRnBBYzNvVmFjUk9TQW85a1JMbTlIWUpQYjVPZEhUMkJIN0NyL1N0?=
+ =?utf-8?B?dFJ1dldHWGVYdlFOcENRMktjM3RSZ2c5SXY4bjZLS2paU25GSUF1aWlBckN6?=
+ =?utf-8?B?WURnYTkzTG9ZS2I5VjhjZEYwUElxNHQvNmREOUsxb3NWRms4aS9oYnJ6MTAv?=
+ =?utf-8?B?ZkRRL1EweDhxa3JGWW5CWlFnYTRweDg1KyttR3UyMkE4bmdvM1FtK21RWmxK?=
+ =?utf-8?B?QXJVdWNrb2FPTzBxNlYzcFpxeFFtbkZ2bmhVUGRkczAyOElOdjBpSkJKMlpr?=
+ =?utf-8?B?Y3o4UmpaQkNQcUdPMlBid2xxaWRjUkRLdkd6ZDU5eVhHYmxnNzBXdEJCM0Z3?=
+ =?utf-8?B?aHAzN0VHQlNYWVBicFhGcnVmeUtDcUIvM002MVJBb2l3eDQ4RFBCZnBTVFg5?=
+ =?utf-8?B?Q3puU3o4UW1FVllpWGMrQ1Nza2Foa3hsWWJxNUR3Qno1VUtwTXdMOWk4NXhG?=
+ =?utf-8?B?VEdhU2FiZU9jWnlFdHI0LzMyeENNSVFXWEZlLzhBZCtMWkNNcTlOV2VIZHFK?=
+ =?utf-8?B?aE0ySVIybGl3ekdUSjFZSXRHblUrQ3JoS1QzUzZ0WmxzUUZkVXprRGY5aDJW?=
+ =?utf-8?B?NURhNkdFR2ltbG9XK1lHYVh4ZUtSSjRqazJObk1CdUE2KzV2bEgyR1luaG9x?=
+ =?utf-8?B?cnA3VVptR2F2WnkrdFB6Slk3SGx3Z0lIQjdTdzg4dEZSMDVCNW9SZmVPQXVL?=
+ =?utf-8?B?R2s3bzFxSTVpd2R4M3FBQjNUZlhCYjAraFc1bnhMcDhqZlI1d2ZyOEd6eGps?=
+ =?utf-8?B?L1VjWEJnV081dUNKcFJ0SEppSlRMRHF3VkpPZG5kYjFsbG0yMzM3QlBDZ051?=
+ =?utf-8?B?cEtrYXlENUJ5bWQ1ZVhCKy9JZzA4ZDk5SklZUGNZK0NDeWxBU040T3ZkV2xZ?=
+ =?utf-8?B?VkFJRTJWSk5WY0V5TURCMitKRWV3K0tMSjA3ZE1DbmxsTkZEeTYzTWZPR1NX?=
+ =?utf-8?B?dzdiNHg5T0hIeEU0dGdOS1dpcW1lQlhoS1VCaDVOVFNjT0o2QmlhUno4WWMx?=
+ =?utf-8?B?bEJUdWUyRDEzdlhvdGVkWFNHeWFVMnpYMjcyNEhBUWh3L1A1c0k2d3RWSjlR?=
+ =?utf-8?B?OVQrT1YxUFlnWEUzTFpOQ3lvYUNiT2N6U1NwVnpZN1M5YjJ0YXhna3FyUFl3?=
+ =?utf-8?Q?VatfueOpUGEEzSNyr91UGCdRY?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 90722416-c551-493f-8c1b-08db8d8cf981
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2023 04:01:22.5419
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: un1xXXYFNLo+qJhvyWWu9J/Vqx+QAWFJCNkKIO2pQRRnSdYZWCw1tJEMlY7TGD37GfxXfldPngq2OBpc3Ocnqg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB3934
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
 
-On Tue, Jul 25, 2023 at 10:08:00PM +0200, Krzysztof Kozlowski wrote:
-> On 25/07/2023 21:15, Henrik Grimler wrote:
-> > On Sun, Jul 23, 2023 at 04:24:17PM +0200, Krzysztof Kozlowski wrote:
-> >> Add full description of USB-MUIC (MAX77693 MUIC) and MUIC-MHL
-> >> connections, along with proper USB connector and OTG mode for DWC2 USB
-> >> controller.
-> >>
-> >> This fixes dtc W=1 warnings:
-> >>
-> >>   Warning (graph_child_address): /i2c-mhl/hdmi-bridge@39/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
-> >>
-> >> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> >> Cc: replicant@osuosl.org
-> >> Cc: phone-devel@vger.kernel.org
-> >> Cc: ~postmarketos/upstreaming@lists.sr.ht
-> >> Cc: Martin Jücker <martin.juecker@gmail.com>
-> >> Cc: Henrik Grimler <henrik@grimler.se>
-> >> Cc: Artur Weber <aweber.kernel@gmail.com>
-> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > 
-> > Tested-by: Henrik Grimler <henrik@grimler.se>
-> > 
-> > * Peripheral mode (still) works
-> > * MHL somewhat works
-> > * OTG (still) does not work
-> > 
-> > Further details for those interested:
-> > 
-> > MHL works reliably if cable is attached before boot, but if cable is
-> > attached on already running device it sometimes work after detaching
-> > and attaching cable a few times.  On cable attach, when it does not
-> > work, we get:
-> > 
-> >   [  252.831734] max77693-muic max77693-muic: external connector is detached(chg_type:0x0, prev_chg_type:0x0)
-> >   [  253.733916] max77693-muic max77693-muic: external connector is attached(chg_type:0x1, prev_chg_type:0x1)
-> >   [  253.735232] max77693-muic max77693-muic: CONTROL1 : 0x09, CONTROL2 : 0x04, state : attached
-> >   [  254.691877] i2c i2c-15: sendbytes: NAK bailout.
-> >   [  254.692150] sii9234 15-0039: writebm:  TPI[0x3d] <- 0x3e
-> >   [  255.984336] sii9234 15-0039: RGND is not 1k
-> >   [  256.068970] sii9234 15-0039: RSEN_HIGH without RGND_1K
-> >   [  256.104457] sii9234 15-0039: discovery failed, no power for MHL?
-> >   [  256.118272] i2c i2c-15: sendbytes: NAK bailout.
-> >   [  256.118539] sii9234 15-0039: writebm:  TPI[0x3d] <- 0x3e
-> >   [  256.375966] sii9234 15-0039: RSEN_HIGH without RGND_1K
-> >   [  256.411561] sii9234 15-0039: discovery failed, no power for MHL?
-> > 
-> > while when it works:
-> > 
-> >   [  175.348307] max77693-muic max77693-muic: external connector is detached(chg_type:0x1, prev_chg_type:0x0)
-> >   [  175.349576] max77693-muic max77693-muic: CONTROL1 : 0x00, CONTROL2 : 0x01, state : detached
-> >   [  179.304373] dwc2 12480000.usb: new device is full-speed
-> >   [  179.305920] max77693-muic max77693-muic: external connector is detached(chg_type:0x0, prev_chg_type:0x0)
-> >   [  180.205735] max77693-muic max77693-muic: external connector is attached(chg_type:0x1, prev_chg_type:0x1)
-> >   [  180.207211] max77693-muic max77693-muic: CONTROL1 : 0x09, CONTROL2 : 0x04, state : attached
-> >   [  180.309727] i2c i2c-15: sendbytes: NAK bailout.
-> >   [  180.309996] sii9234 15-0039: writebm:  TPI[0x3d] <- 0x3e
-> > 
-> > Not sure if issue here is in muic driver or sii9234 driver.
-> > 
-> > OTG still does not seem to work, the muic driver detects (only) a
-> > detach when OTG cable is attached:
-> > 
-> >   max77693-muic max77693-muic: external connector is detached(chg_type:0x0, prev_chg_type:0x0)
-> > 
-> > Same happened when otg cable was attached before these hsotg changes
-> > as well. I suppose issue here is with max77693-muic driver.
-> > 
-> 
-> Thanks for testing. I miss here one important thing - did anything
-> regressed? Is MHL behaving not worse than before? OTG, as non-working,
-> matters less in such case.
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-No regressions as far as I can tell, only improvements.  We want the
-muic node and mhl_to_muic/muic_to_mhl ports so that muic can notify
-the mhl chip of cable attachment/detachment (with requires an
-additional patch to the sii9234 driver that I will send soon [1]).
-The alternative, having the mhl chip always on, has caused issues with
-some GUIs [2].
+Cc: Uwe Kleine-KÃ¶nig <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+---
+ drivers/mmc/host/dw_mmc-exynos.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> Best regards,
-> Krzysztof
+diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+index 9f20ac524c8b..698408e8bad0 100644
+--- a/drivers/mmc/host/dw_mmc-exynos.c
++++ b/drivers/mmc/host/dw_mmc-exynos.c
+@@ -664,15 +664,13 @@ static int dw_mci_exynos_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int dw_mci_exynos_remove(struct platform_device *pdev)
++static void dw_mci_exynos_remove(struct platform_device *pdev)
+ {
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 	pm_runtime_put_noidle(&pdev->dev);
+ 
+ 	dw_mci_pltfm_remove(pdev);
+-
+-	return 0;
+ }
+ 
+ static const struct dev_pm_ops dw_mci_exynos_pmops = {
+@@ -685,7 +683,7 @@ static const struct dev_pm_ops dw_mci_exynos_pmops = {
+ 
+ static struct platform_driver dw_mci_exynos_pltfm_driver = {
+ 	.probe		= dw_mci_exynos_probe,
+-	.remove		= dw_mci_exynos_remove,
++	.remove_new	= dw_mci_exynos_remove,
+ 	.driver		= {
+ 		.name		= "dwmmc_exynos",
+ 		.probe_type	= PROBE_PREFER_ASYNCHRONOUS,
+-- 
+2.39.0
 
-[1] https://gitlab.com/exynos4-mainline/linux/-/commit/742d05797799
-[2] https://gitlab.gnome.org/World/Phosh/phosh/-/issues/828#note_1542189
-
-Best regards,
-Henrik Grimler
