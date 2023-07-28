@@ -2,159 +2,89 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E22EAC04E69
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Jul 2023 09:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E27C0015E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Jul 2023 10:23:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234191AbjG1JNW (ORCPT
+        id S233872AbjG1KXZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 28 Jul 2023 05:13:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33418 "EHLO
+        Fri, 28 Jul 2023 06:23:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235225AbjG1JMl (ORCPT
+        with ESMTP id S235824AbjG1KW5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Jul 2023 05:12:41 -0400
+        Fri, 28 Jul 2023 06:22:57 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19D593A97;
-        Fri, 28 Jul 2023 02:10:38 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D6D33A93;
+        Fri, 28 Jul 2023 03:22:56 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A8B1762088;
-        Fri, 28 Jul 2023 09:10:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFF74C433C7;
-        Fri, 28 Jul 2023 09:10:27 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 915FD620A6;
+        Fri, 28 Jul 2023 10:22:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBE88C433C8;
+        Fri, 28 Jul 2023 10:22:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690535437;
-        bh=jsukJ3h2ilmz083UcYGengZNcUIJYlLHWk6g/LKxW1A=;
+        s=k20201202; t=1690539775;
+        bh=+vEJnzBoP95jYYK6wGhSJU041hNBp2P06AHOmeiwTNM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Jq54e2P2vabTsv0/ZkCTu/TtAKcPA/986KlVzpTtjaLAFsettUVGxIIEhV012qHmY
-         XjZnDjmAeW2ab1ZsUURkM7jE4L/524t63e/2b+AR7jZDEQXiyB3jMa2BRjo+JEpwRs
-         l3QdUPJ8w/4urXWddV+VETsCyali7ZkVGVcRJ/K6g+RVz5T9C+bf9WioC+uygEDa9I
-         Rh3AvZFW0PdulmDiZySwu0Xy2XsI/jHB3Xyi77hPM/dAwa7KUnEsd9+KEupPqjueWP
-         u1x3RpBtfjI/oksjIHjYF89qn/jUU3ZW18drI+6RQKSDrQ5SYoMzV9cMfadNlCraZU
-         lW9h48LazI1/g==
-Date:   Fri, 28 Jul 2023 10:10:24 +0100
+        b=hVM5OXJXY/86BAFVJ4pQ5MP/VVU0iYrFjfDFQ+FXWrZq6ZlsCStFTjMRQjV90LU8s
+         ha6aj6+hWF/Xg5zApaE9RV/6RtjTES1HuUy2d1huhjt5rTtUVF4z18/IukElI/sGIz
+         ImiWz0EBqdwABNoUw/x/eAMf/fNGXy1LnMCK0uVjvQkoBYH2mORpKyjxDwMEqHFrps
+         hGfZ4xZymitLFy4j6MZGPp4RVoYbC1Hx7na/EOKhYHdb2WILb1ZYUhhWQVD8+LzPdi
+         7n1yutgPx1OTHzh6BCenYKlDijE9vHtKWj4cj0TuzO1ITkHn38cAhLQShVuSdwF8Gk
+         LZXsXBhgWoggQ==
+Date:   Fri, 28 Jul 2023 11:22:49 +0100
 From:   Lee Jones <lee@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Thor Thayer <thor.thayer@linux.intel.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Cristian Ciocaltea <cristian.ciocaltea@gmail.com>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Sebastian Reichel <sre@kernel.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-actions@lists.infradead.org, chrome-platform@lists.linux.dev,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH] mfd: Explicitly include correct DT includes
-Message-ID: <20230728091024.GE8175@google.com>
-References: <20230714174731.4059811-1-robh@kernel.org>
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: mfd: Un-support Maxim and Samsung PMIC
+ drivers
+Message-ID: <20230728102249.GI8175@google.com>
+References: <20230714050313.8424-1-krzysztof.kozlowski@linaro.org>
+ <169053368548.11881.1252357994598966736.b4-ty@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230714174731.4059811-1-robh@kernel.org>
+In-Reply-To: <169053368548.11881.1252357994598966736.b4-ty@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 14 Jul 2023, Rob Herring wrote:
+On Fri, 28 Jul 2023, Krzysztof Kozlowski wrote:
 
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/mfd/ab8500-core.c           | 1 -
->  drivers/mfd/acer-ec-a500.c          | 2 +-
->  drivers/mfd/act8945a.c              | 2 +-
->  drivers/mfd/altera-sysmgr.c         | 3 +--
->  drivers/mfd/arizona-core.c          | 1 -
->  drivers/mfd/atc260x-core.c          | 1 -
->  drivers/mfd/bcm590xx.c              | 1 -
->  drivers/mfd/cros_ec_dev.c           | 2 +-
->  drivers/mfd/da9052-i2c.c            | 5 +----
->  drivers/mfd/da9055-i2c.c            | 1 -
->  drivers/mfd/da9062-core.c           | 2 +-
->  drivers/mfd/hi655x-pmic.c           | 4 ++--
->  drivers/mfd/iqs62x.c                | 2 +-
->  drivers/mfd/lp873x.c                | 2 +-
->  drivers/mfd/madera-i2c.c            | 1 -
->  drivers/mfd/madera-spi.c            | 1 -
->  drivers/mfd/max77620.c              | 1 -
->  drivers/mfd/max77686.c              | 1 -
->  drivers/mfd/max77843.c              | 2 +-
->  drivers/mfd/max8907.c               | 1 -
->  drivers/mfd/max8925-core.c          | 1 -
->  drivers/mfd/max8997.c               | 1 -
->  drivers/mfd/max8998.c               | 1 -
->  drivers/mfd/mt6358-irq.c            | 5 ++---
->  drivers/mfd/mt6397-core.c           | 5 +++--
->  drivers/mfd/mt6397-irq.c            | 5 ++---
->  drivers/mfd/palmas.c                | 3 ++-
->  drivers/mfd/qcom-pm8008.c           | 2 +-
->  drivers/mfd/rave-sp.c               | 2 +-
->  drivers/mfd/rk8xx-core.c            | 2 +-
->  drivers/mfd/rohm-bd71828.c          | 2 +-
->  drivers/mfd/rohm-bd718x7.c          | 2 +-
->  drivers/mfd/rohm-bd9576.c           | 2 +-
->  drivers/mfd/rt5033.c                | 2 +-
->  drivers/mfd/rz-mtu3.c               | 4 +++-
->  drivers/mfd/sec-core.c              | 2 --
->  drivers/mfd/sprd-sc27xx-spi.c       | 2 +-
->  drivers/mfd/ssbi.c                  | 6 +++---
->  drivers/mfd/stm32-lptimer.c         | 1 +
->  drivers/mfd/stm32-timers.c          | 1 +
->  drivers/mfd/sun4i-gpadc.c           | 4 ++--
->  drivers/mfd/ti-lmu.c                | 1 -
->  drivers/mfd/ti_am335x_tscadc.c      | 2 +-
->  drivers/mfd/tps6507x.c              | 1 -
->  drivers/mfd/tps65090.c              | 1 -
->  drivers/mfd/tps65217.c              | 1 -
->  drivers/mfd/tps65218.c              | 1 -
->  drivers/mfd/tps6594-core.c          | 2 +-
->  drivers/mfd/twl6040.c               | 2 --
->  drivers/mfd/wm831x-core.c           | 3 +--
->  drivers/mtd/chips/cfi_cmdset_0002.c | 3 +--
->  51 files changed, 42 insertions(+), 66 deletions(-)
+> On Fri, 14 Jul 2023 07:03:13 +0200, Krzysztof Kozlowski wrote:
+> > Since few years no one is really paid to support drivers for: Maxim
+> > MUICs/PMICs for Exynos based boards and Samsung PMICs.  Correct the
+> > status to keep them as maintained.
+> > 
+> > 
+> 
+> Hi Lee,
+> 
+> I sent it around two weeks ago. It wasn't picked up, so maybe everyone expects
+> me to take it via Samsung SoC... so I took it.
+> 
+> I hope it is okay, if not, let me know and I will drop it.
 
-Applied, thanks
+It was on my list.  Going through my backlog today.
+
+No matter.  Keep it applied.
+
+> Applied, thanks!
+> 
+> [1/1] MAINTAINERS: mfd: Un-support Maxim and Samsung PMIC drivers
+>       https://git.kernel.org/krzk/linux/c/eecff3319287179032600eeec5fa357a53ae0fe1
+> 
+> Best regards,
+> -- 
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 -- 
 Lee Jones [李琼斯]
