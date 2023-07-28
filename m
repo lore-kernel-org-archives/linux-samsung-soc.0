@@ -2,89 +2,86 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E27C0015E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Jul 2023 10:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E575C001DE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Jul 2023 13:23:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233872AbjG1KXZ (ORCPT
+        id S234323AbjG1NXt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 28 Jul 2023 06:23:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50586 "EHLO
+        Fri, 28 Jul 2023 09:23:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235824AbjG1KW5 (ORCPT
+        with ESMTP id S234091AbjG1NXt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Jul 2023 06:22:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D6D33A93;
-        Fri, 28 Jul 2023 03:22:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 915FD620A6;
-        Fri, 28 Jul 2023 10:22:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBE88C433C8;
-        Fri, 28 Jul 2023 10:22:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690539775;
-        bh=+vEJnzBoP95jYYK6wGhSJU041hNBp2P06AHOmeiwTNM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hVM5OXJXY/86BAFVJ4pQ5MP/VVU0iYrFjfDFQ+FXWrZq6ZlsCStFTjMRQjV90LU8s
-         ha6aj6+hWF/Xg5zApaE9RV/6RtjTES1HuUy2d1huhjt5rTtUVF4z18/IukElI/sGIz
-         ImiWz0EBqdwABNoUw/x/eAMf/fNGXy1LnMCK0uVjvQkoBYH2mORpKyjxDwMEqHFrps
-         hGfZ4xZymitLFy4j6MZGPp4RVoYbC1Hx7na/EOKhYHdb2WILb1ZYUhhWQVD8+LzPdi
-         7n1yutgPx1OTHzh6BCenYKlDijE9vHtKWj4cj0TuzO1ITkHn38cAhLQShVuSdwF8Gk
-         LZXsXBhgWoggQ==
-Date:   Fri, 28 Jul 2023 11:22:49 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: mfd: Un-support Maxim and Samsung PMIC
- drivers
-Message-ID: <20230728102249.GI8175@google.com>
-References: <20230714050313.8424-1-krzysztof.kozlowski@linaro.org>
- <169053368548.11881.1252357994598966736.b4-ty@linaro.org>
+        Fri, 28 Jul 2023 09:23:49 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32328DB;
+        Fri, 28 Jul 2023 06:23:48 -0700 (PDT)
+Received: from canpemm500007.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RC7Zy6KYbzVjrs;
+        Fri, 28 Jul 2023 21:22:02 +0800 (CST)
+Received: from localhost (10.174.179.215) by canpemm500007.china.huawei.com
+ (7.192.104.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Fri, 28 Jul
+ 2023 21:23:39 +0800
+From:   Yue Haibing <yuehaibing@huawei.com>
+To:     <krzysztof.kozlowski@linaro.org>, <alim.akhtar@samsung.com>,
+        <yuehaibing@huawei.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] i2c: s3c2410: Remove unused extern declarations
+Date:   Fri, 28 Jul 2023 21:23:18 +0800
+Message-ID: <20230728132318.25072-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <169053368548.11881.1252357994598966736.b4-ty@linaro.org>
+Content-Type: text/plain
+X-Originating-IP: [10.174.179.215]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ canpemm500007.china.huawei.com (7.192.104.62)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 28 Jul 2023, Krzysztof Kozlowski wrote:
+commit 0d297df03890 ("ARM: s3c: simplify platform code") left behind
+s3c_i2c(*)_set_platdata().
+commit d78c16ccde96 ("ARM: SAMSUNG: Remove remaining legacy code")
+leave s5p_i2c_hdmiphy_set_platdata() declaration.
+And commit bad1e6aadd17 ("ARM: SAMSUNG: Cleanup plat-samsung/devs.c and devs.h")
+leave s3c_i2c(*)_cfg_gpio() alone.
 
-> 
-> On Fri, 14 Jul 2023 07:03:13 +0200, Krzysztof Kozlowski wrote:
-> > Since few years no one is really paid to support drivers for: Maxim
-> > MUICs/PMICs for Exynos based boards and Samsung PMICs.  Correct the
-> > status to keep them as maintained.
-> > 
-> > 
-> 
-> Hi Lee,
-> 
-> I sent it around two weeks ago. It wasn't picked up, so maybe everyone expects
-> me to take it via Samsung SoC... so I took it.
-> 
-> I hope it is okay, if not, let me know and I will drop it.
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ include/linux/platform_data/i2c-s3c2410.h | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-It was on my list.  Going through my backlog today.
-
-No matter.  Keep it applied.
-
-> Applied, thanks!
-> 
-> [1/1] MAINTAINERS: mfd: Un-support Maxim and Samsung PMIC drivers
->       https://git.kernel.org/krzk/linux/c/eecff3319287179032600eeec5fa357a53ae0fe1
-> 
-> Best regards,
-> -- 
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+diff --git a/include/linux/platform_data/i2c-s3c2410.h b/include/linux/platform_data/i2c-s3c2410.h
+index 550746715139..c8c3146c34ea 100644
+--- a/include/linux/platform_data/i2c-s3c2410.h
++++ b/include/linux/platform_data/i2c-s3c2410.h
+@@ -52,23 +52,10 @@ struct s3c2410_platform_i2c {
+  */
+ extern void s3c_i2c0_set_platdata(struct s3c2410_platform_i2c *i2c);
+ extern void s3c_i2c1_set_platdata(struct s3c2410_platform_i2c *i2c);
+-extern void s3c_i2c2_set_platdata(struct s3c2410_platform_i2c *i2c);
+-extern void s3c_i2c3_set_platdata(struct s3c2410_platform_i2c *i2c);
+-extern void s3c_i2c4_set_platdata(struct s3c2410_platform_i2c *i2c);
+-extern void s3c_i2c5_set_platdata(struct s3c2410_platform_i2c *i2c);
+-extern void s3c_i2c6_set_platdata(struct s3c2410_platform_i2c *i2c);
+-extern void s3c_i2c7_set_platdata(struct s3c2410_platform_i2c *i2c);
+-extern void s5p_i2c_hdmiphy_set_platdata(struct s3c2410_platform_i2c *i2c);
+ 
+ /* defined by architecture to configure gpio */
+ extern void s3c_i2c0_cfg_gpio(struct platform_device *dev);
+ extern void s3c_i2c1_cfg_gpio(struct platform_device *dev);
+-extern void s3c_i2c2_cfg_gpio(struct platform_device *dev);
+-extern void s3c_i2c3_cfg_gpio(struct platform_device *dev);
+-extern void s3c_i2c4_cfg_gpio(struct platform_device *dev);
+-extern void s3c_i2c5_cfg_gpio(struct platform_device *dev);
+-extern void s3c_i2c6_cfg_gpio(struct platform_device *dev);
+-extern void s3c_i2c7_cfg_gpio(struct platform_device *dev);
+ 
+ extern struct s3c2410_platform_i2c default_i2c_data;
+ 
 -- 
-Lee Jones [李琼斯]
+2.34.1
+
