@@ -2,86 +2,109 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E575C001DE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Jul 2023 13:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B90FFC001DC
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Jul 2023 11:44:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234323AbjG1NXt (ORCPT
+        id S229944AbjG3Lof (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 28 Jul 2023 09:23:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40780 "EHLO
+        Sun, 30 Jul 2023 07:44:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234091AbjG1NXt (ORCPT
+        with ESMTP id S229483AbjG3Loe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Jul 2023 09:23:49 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32328DB;
-        Fri, 28 Jul 2023 06:23:48 -0700 (PDT)
-Received: from canpemm500007.china.huawei.com (unknown [172.30.72.57])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RC7Zy6KYbzVjrs;
-        Fri, 28 Jul 2023 21:22:02 +0800 (CST)
-Received: from localhost (10.174.179.215) by canpemm500007.china.huawei.com
- (7.192.104.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Fri, 28 Jul
- 2023 21:23:39 +0800
-From:   Yue Haibing <yuehaibing@huawei.com>
-To:     <krzysztof.kozlowski@linaro.org>, <alim.akhtar@samsung.com>,
-        <yuehaibing@huawei.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] i2c: s3c2410: Remove unused extern declarations
-Date:   Fri, 28 Jul 2023 21:23:18 +0800
-Message-ID: <20230728132318.25072-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Sun, 30 Jul 2023 07:44:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56EA210C;
+        Sun, 30 Jul 2023 04:44:33 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D29D860C0F;
+        Sun, 30 Jul 2023 11:44:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 276ADC433C7;
+        Sun, 30 Jul 2023 11:44:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690717472;
+        bh=OS6JHCZoJbPzUiN8ZwsAyWz7H87me0X8MFKTbJ1BfOY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=HnK4fZF8FSrUTtwOvRB5A9/Ik1QvD2zySIifyrj8TjHOk7aEztdxN4z7AW97ML6Jm
+         r8Ctcj4WSSWv9jrjIPwKXcvDwrJP2QXZ4bySRSUwxCqDt82z/gAacU2+hkLAkBPzfE
+         uNh7x+TIbSqgKrStcHRG2teWRwdd+UwwcFwWnw2gMhtcRx0UOigQdw+MyK2MlIcgzd
+         4+WeGNnPXaRKZWrOmcrTQlOgdJ6zQQBOH7l7fg64SWjd7V3p2zlmsx2BhvJe45yArU
+         ljHY89EgjRUagpv6s+yb8JRjJsMCG0nX7A3/CKgBzq5GTXw59yO1xOQoYBW9kP4VIl
+         jl595Tlaj0REw==
+Message-ID: <15caeb52-b670-9000-fa2b-b8d1b8485016@kernel.org>
+Date:   Sun, 30 Jul 2023 13:44:22 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.174.179.215]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- canpemm500007.china.huawei.com (7.192.104.62)
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Subject: Re: Feedback on Qualcomm's minidump (debug) solution for end user
+ device crash
+Content-Language: en-US
+To:     Brian Masney <bmasney@redhat.com>,
+        Mukesh Ojha <quic_mojha@quicinc.com>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        lkml <linux-kernel@vger.kernel.org>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Nishanth Menon <nm@ti.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+References: <0199db00-1b1d-0c63-58ff-03efae02cb21@quicinc.com>
+ <ZL6t/sZTZBfvSYOm@brian-x1>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <ZL6t/sZTZBfvSYOm@brian-x1>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-commit 0d297df03890 ("ARM: s3c: simplify platform code") left behind
-s3c_i2c(*)_set_platdata().
-commit d78c16ccde96 ("ARM: SAMSUNG: Remove remaining legacy code")
-leave s5p_i2c_hdmiphy_set_platdata() declaration.
-And commit bad1e6aadd17 ("ARM: SAMSUNG: Cleanup plat-samsung/devs.c and devs.h")
-leave s3c_i2c(*)_cfg_gpio() alone.
+On 24/07/2023 18:59, Brian Masney wrote:
+> + linux-arm-kernel list
+> 
+> On Thu, Jul 20, 2023 at 08:32:24PM +0530, Mukesh Ojha wrote:
+>> Hi Samsung/MTK/Any other SOC vendors,
+>>
+>> This is to bring to your notice that, we (Qualcomm) are working on
+>> upstreaming our minidump solution which is to address the problem of
+>> debugging on field device crashes where collecting entire ddr dump
+>> would not be feasible and collecting minimal data from the ddr would
+>> help in debug direction or even help in root causing issue.
+>>
+>> We have recently posted v4 version here [1]
+>>
+>> Based on comments[2], community is more worried about, if each SOC
+>> vendor come up with their own dumping method today or in future and
+>> whether it can have a common solution to a similar problem faced by
+>> other SOC vendor.
+>>
+>> We wanted to take your feedback if you also encounter a similar problem
+>> or maintain something similar solution in downstream which can be
+>> upstreamed. This will help us in a way to have a common solution in
+>> upstream.
+>>
+>> [1]
+>> https://lore.kernel.org/lkml/10dd2ead-758a-89f0-cda4-70ae927269eb@quicinc.com/
+>>
+>> [2]
+>> https://lore.kernel.org/lkml/CAL_JsqLO9yey2-4FcWsaGxijiS6hGL0SH9VoMuiyei-u9=Cv=w@mail.gmail.com/
+> 
+> Adding the main ARM list to solicit feedback from other silicon
+> manufacturers.
+> 
+> The cover sheet on the v4 patch set is available at:
+> https://lore.kernel.org/lkml/1687955688-20809-1-git-send-email-quic_mojha@quicinc.com/
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- include/linux/platform_data/i2c-s3c2410.h | 13 -------------
- 1 file changed, 13 deletions(-)
+I doubt anyone follows the lists, so at least Cc some maintainers.
 
-diff --git a/include/linux/platform_data/i2c-s3c2410.h b/include/linux/platform_data/i2c-s3c2410.h
-index 550746715139..c8c3146c34ea 100644
---- a/include/linux/platform_data/i2c-s3c2410.h
-+++ b/include/linux/platform_data/i2c-s3c2410.h
-@@ -52,23 +52,10 @@ struct s3c2410_platform_i2c {
-  */
- extern void s3c_i2c0_set_platdata(struct s3c2410_platform_i2c *i2c);
- extern void s3c_i2c1_set_platdata(struct s3c2410_platform_i2c *i2c);
--extern void s3c_i2c2_set_platdata(struct s3c2410_platform_i2c *i2c);
--extern void s3c_i2c3_set_platdata(struct s3c2410_platform_i2c *i2c);
--extern void s3c_i2c4_set_platdata(struct s3c2410_platform_i2c *i2c);
--extern void s3c_i2c5_set_platdata(struct s3c2410_platform_i2c *i2c);
--extern void s3c_i2c6_set_platdata(struct s3c2410_platform_i2c *i2c);
--extern void s3c_i2c7_set_platdata(struct s3c2410_platform_i2c *i2c);
--extern void s5p_i2c_hdmiphy_set_platdata(struct s3c2410_platform_i2c *i2c);
- 
- /* defined by architecture to configure gpio */
- extern void s3c_i2c0_cfg_gpio(struct platform_device *dev);
- extern void s3c_i2c1_cfg_gpio(struct platform_device *dev);
--extern void s3c_i2c2_cfg_gpio(struct platform_device *dev);
--extern void s3c_i2c3_cfg_gpio(struct platform_device *dev);
--extern void s3c_i2c4_cfg_gpio(struct platform_device *dev);
--extern void s3c_i2c5_cfg_gpio(struct platform_device *dev);
--extern void s3c_i2c6_cfg_gpio(struct platform_device *dev);
--extern void s3c_i2c7_cfg_gpio(struct platform_device *dev);
- 
- extern struct s3c2410_platform_i2c default_i2c_data;
- 
--- 
-2.34.1
++Cc Alim, Kukjin, Vignesh, Nishanth, Matthias.
+
+Best regards,
+Krzysztof
 
