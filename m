@@ -2,92 +2,107 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9745BC001DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Jul 2023 13:09:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8430C001DE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Jul 2023 15:52:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232067AbjGaNJh (ORCPT
+        id S231445AbjGaPwf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 Jul 2023 09:09:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47390 "EHLO
+        Mon, 31 Jul 2023 11:52:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232685AbjGaNJU (ORCPT
+        with ESMTP id S232688AbjGaPwe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Jul 2023 09:09:20 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF62B10F5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jul 2023 06:09:19 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-99bf91956cdso326746466b.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jul 2023 06:09:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690808958; x=1691413758;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FfMuxXi5TvQls5fruvhXx6XFvK+TXODXow4SAYLJGyY=;
-        b=YIIFAwIAU89YqdlY5xoXlgtiPTk8CtcKCOl4cnjSq1qVkKNLBjqIdW4ydAnhqTaBFo
-         F4t/Te49WdORIENXOMZDtoqNyM+ulsFDkW5btWkCkwwDmUy2GpbJ3t/GgFJWhgUWJ5jH
-         1dcPhVgYazqOxASD8ReqJZFR1PEs92yWspK8t0lPzO0oTIEh6vda7zCj20MePrkQFmoH
-         MqORnsj1aKLecUIYMcNgNcNuR0fLKvupdtWed0U2gysGAAH53xsgKlZlVgPH64vMhMru
-         rqAfSSKFg+51TV9MJC5B6X+M8mA6dSBqTd6oTTTzwFyRlRv0GaJFAg9bfTVUM+riOaFS
-         vm0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690808958; x=1691413758;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FfMuxXi5TvQls5fruvhXx6XFvK+TXODXow4SAYLJGyY=;
-        b=E305ZtR2Hi1/cn5Ci6wJtL73qsqUMxAS0O3jpXFlsNsZ1xHAVJZbeYh6Dl34Zy3DbN
-         UxlN1mfe/6q7wOoYrt4xzDFjtneyKWqiQPl07jCBpvGYPrTF6a7by0VzhG466Rf3NCvq
-         U+pbfAXsYxBe9xgno2PmxhN3lIBreG/8WvmHcvanldZmHJLVkvF9zT6Oa3YdF6HvaVFr
-         OntXx7EGzbF9ZTompE5JE2A2jAPD+azN7aX40qZRaoZ68ODLVvgffjYB9UgUdFVZ2wGS
-         1H8bZ0O21FnYGWqg21kxVNY+WThNKLOjqwc+nxG+ZV+FW8GBsSa9ERPAvUzpjXMerW0h
-         csSw==
-X-Gm-Message-State: ABy/qLbYTbtPAFHjFpOstai+8pDp+r5+NblQvc0Bn6Zyav9xw/bvRTLV
-        6x2X3Kk6guuFQP1obAvdq/NhuA==
-X-Google-Smtp-Source: APBJJlFVb9Kpp3kpY6QmBy9WgGIv7M6Ad8CkhSl3Nur0WbmyqeK07KblydLr57EhN5CFADUyfv+srg==
-X-Received: by 2002:a17:906:2c6:b0:99b:499c:ddb6 with SMTP id 6-20020a17090602c600b0099b499cddb6mr6630736ejk.68.1690808958179;
-        Mon, 31 Jul 2023 06:09:18 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.183])
-        by smtp.gmail.com with ESMTPSA id x23-20020a1709065ad700b009893b06e9e3sm6211722ejs.225.2023.07.31.06.09.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Jul 2023 06:09:17 -0700 (PDT)
-Message-ID: <467bcd2c-19c6-f7c3-44e7-d0c4f8d460f4@linaro.org>
-Date:   Mon, 31 Jul 2023 15:09:16 +0200
+        Mon, 31 Jul 2023 11:52:34 -0400
+X-Greylist: delayed 94 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 31 Jul 2023 08:52:26 PDT
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD7DB172C
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jul 2023 08:52:26 -0700 (PDT)
+DKIM-Signature: a=rsa-sha256; b=DMi77ear/iZF1UDc+VOzM2c7AtwCSig4GAd85tFsfDcAeXP2E0L34dIJokY4Em/Tlo4xLIKWjtIFLZoOXzUyAY4KB+otQ7aex7+sc0es9ElO0eBNjSgh6ijys1/cyl9yHBJUgD+9uS8qmdFXbgrZgJt71Dx0dejar9znxDwedoFvN+9HW2ShH2JTnvPdzY3LCWYp7s0Vi94ZsXYmTrVw6hJNhVxjBnyXmmksHS45viVscrcBhVLha29cTP/SnWjMwa4L2vKSOkUoevJd/7Y5l87pin2gXOSDxkdZXMFYOR9pO1b26OMgTQQJjwmyTeztSLIbViBuNUjaP3cBvvFqMQ==; s=purelymail1; d=iskren.info; v=1; bh=eNdJS1WJkEMJiLxhmli0JSlZQRMNa/96vjAbAJHmhoU=; h=Received:Subject:To:From;
+DKIM-Signature: a=rsa-sha256; b=Q9GpMGbQj8hvBCF5gmgA0xSnJmBsCgbcfv+1IQPKwvp9qCsq0hPLMt868WCQekcq0R9UBTK6uSdSc7YNMIR1v5eFDqUUQ6WPh6wQ92I93ZWOqKwoQ8ObAa6EyMFlXu9Hlt/lNbjAkKNmp3xapqPfrlVi11A9QaRismj96MVcLx4I474uJeI4/31wxLfdz7odwJKqeyXVzsm7aCRfhnImqByU3kXj1MEflm80Vp9F72IX/9X+LR8BvkKK5O9SbM9wgrj/wgItl1S0OS3znk/Ew6245N1jvitPwEN1jSnvF8z2Ed7Cn01SAN9ysQEIWL4RYTQyuB3PvuCyaZFnp8YhTA==; s=purelymail1; d=purelymail.com; v=1; bh=eNdJS1WJkEMJiLxhmli0JSlZQRMNa/96vjAbAJHmhoU=; h=Feedback-ID:Received:Subject:To:From;
+Feedback-ID: 10275:2339:null:purelymail
+X-Pm-Original-To: linux-samsung-soc@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -1185265924;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Mon, 31 Jul 2023 15:49:41 +0000 (UTC)
+Message-ID: <95135e09-75d2-fea1-775b-1233a83349a1@iskren.info>
+Date:   Mon, 31 Jul 2023 18:49:37 +0300
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Subject: Re: [PATCH -next] drm/exynos: remove redundant of_match_ptr
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/4] Add optional properties to MAX17040
+To:     Svyatoslav Ryhel <clamor95@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Matheus Castello <matheus@castello.eng.br>,
+        Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Stefan Hansson <newbie13xd@gmail.com>
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20230731073613.10394-1-clamor95@gmail.com>
 Content-Language: en-US
-To:     Zhu Wang <wangzhu9@huawei.com>, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        airlied@gmail.com, daniel@ffwll.ch, alim.akhtar@samsung.com,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, u.kleine-koenig@pengutronix.de,
-        arnd@arndb.de
-References: <20230731123336.55152-1-wangzhu9@huawei.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230731123336.55152-1-wangzhu9@huawei.com>
+From:   Iskren Chernev <me@iskren.info>
+In-Reply-To: <20230731073613.10394-1-clamor95@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 31/07/2023 14:33, Zhu Wang wrote:
-> The driver depends on CONFIG_OF, so it is not necessary to use
-> of_match_ptr here.
+
+
+On 7/31/23 10:36, Svyatoslav Ryhel wrote:
+> Extend properties supported by max17040 fuel gauge if it is accompanied
+> by different devices.
 > 
-> Even for drivers that do not depend on CONFIG_OF, it's almost always
-> better to leave out the of_match_ptr(), since the only thing it can
-> possibly do is to save a few bytes of .text if a driver can be used both
-> with and without it. Hence we remove of_match_ptr.
+> If max17040 is coupled with a charger, pass charger status since it should
+> match and max17040 has no dedicated status detection ability.
 > 
-> Signed-off-by: Zhu Wang <wangzhu9@huawei.com>
+> max17040_get_online can be reused for PRESENT property since if it is
+> online it must be present.
+> 
+> Finally, max17040 may be coupled with a dedicated thermal sensor which
+> monitors battery temperature so lets add support for iio channel to match
+> hw setup. With that said, the driver got dependency on CONFIG_IIO which
+> was added to Kconfig. All defconfigs apart s5pv210_defconfig have IIO
+> already enabled so only s5pv210_defconfig needed adjustment.
 
+[whole series]
+Reviewed-by: Iskren Chernev <me@iskren.info>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+> ---
+> Changes from v2:
+> - documentation: fixed typo i2c0 > i2c
+> - added dependency on CONFIG_IIO
+> - enabled CONFIG_IIO for s5pv210_defconfig to avoid regressions (all other
+>   defconfigs which include max17040 already have IIO enabled)
+> 
+> Changes from v1:
+> - documentation: dropped monitored-battery and power-supplies (inherited
+>   from inclusion)
+> - dropped passing charger health as battery health
+> - dropped patch for simple battery cell support
+> - switched iio_read_channel_raw to iio_read_channel_processed_scale
+> - switched iio_channel_get to devm_iio_channel_get
+> - re-organized implementation of temp channel (implemented in way 
+>   *_get_optional functions usually act)
+> ---
+> 
+> Svyatoslav Ryhel (4):
+>   dt-bindings: power: supply: maxim,max17040: update properties
+>   power: max17040: pass status property from supplier
+>   power: max17040: get thermal data from adc if available
+>   ARM: configs: s5pv210_defconfig: enable IIO required by MAX17040
+> 
+>  .../bindings/power/supply/maxim,max17040.yaml | 31 +++++++++++++++++++
+>  arch/arm/configs/s5pv210_defconfig            |  1 +
+>  drivers/power/supply/Kconfig                  |  2 +-
+>  drivers/power/supply/max17040_battery.c       | 27 ++++++++++++++++
+>  4 files changed, 60 insertions(+), 1 deletion(-)
+> 
