@@ -2,107 +2,70 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8430C001DE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Jul 2023 15:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 861A8C001DE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Jul 2023 16:23:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231445AbjGaPwf (ORCPT
+        id S233076AbjGaQXZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 Jul 2023 11:52:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58890 "EHLO
+        Mon, 31 Jul 2023 12:23:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232688AbjGaPwe (ORCPT
+        with ESMTP id S232880AbjGaQXW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Jul 2023 11:52:34 -0400
-X-Greylist: delayed 94 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 31 Jul 2023 08:52:26 PDT
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD7DB172C
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jul 2023 08:52:26 -0700 (PDT)
-DKIM-Signature: a=rsa-sha256; b=DMi77ear/iZF1UDc+VOzM2c7AtwCSig4GAd85tFsfDcAeXP2E0L34dIJokY4Em/Tlo4xLIKWjtIFLZoOXzUyAY4KB+otQ7aex7+sc0es9ElO0eBNjSgh6ijys1/cyl9yHBJUgD+9uS8qmdFXbgrZgJt71Dx0dejar9znxDwedoFvN+9HW2ShH2JTnvPdzY3LCWYp7s0Vi94ZsXYmTrVw6hJNhVxjBnyXmmksHS45viVscrcBhVLha29cTP/SnWjMwa4L2vKSOkUoevJd/7Y5l87pin2gXOSDxkdZXMFYOR9pO1b26OMgTQQJjwmyTeztSLIbViBuNUjaP3cBvvFqMQ==; s=purelymail1; d=iskren.info; v=1; bh=eNdJS1WJkEMJiLxhmli0JSlZQRMNa/96vjAbAJHmhoU=; h=Received:Subject:To:From;
-DKIM-Signature: a=rsa-sha256; b=Q9GpMGbQj8hvBCF5gmgA0xSnJmBsCgbcfv+1IQPKwvp9qCsq0hPLMt868WCQekcq0R9UBTK6uSdSc7YNMIR1v5eFDqUUQ6WPh6wQ92I93ZWOqKwoQ8ObAa6EyMFlXu9Hlt/lNbjAkKNmp3xapqPfrlVi11A9QaRismj96MVcLx4I474uJeI4/31wxLfdz7odwJKqeyXVzsm7aCRfhnImqByU3kXj1MEflm80Vp9F72IX/9X+LR8BvkKK5O9SbM9wgrj/wgItl1S0OS3znk/Ew6245N1jvitPwEN1jSnvF8z2Ed7Cn01SAN9ysQEIWL4RYTQyuB3PvuCyaZFnp8YhTA==; s=purelymail1; d=purelymail.com; v=1; bh=eNdJS1WJkEMJiLxhmli0JSlZQRMNa/96vjAbAJHmhoU=; h=Feedback-ID:Received:Subject:To:From;
-Feedback-ID: 10275:2339:null:purelymail
-X-Pm-Original-To: linux-samsung-soc@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -1185265924;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Mon, 31 Jul 2023 15:49:41 +0000 (UTC)
-Message-ID: <95135e09-75d2-fea1-775b-1233a83349a1@iskren.info>
-Date:   Mon, 31 Jul 2023 18:49:37 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/4] Add optional properties to MAX17040
-To:     Svyatoslav Ryhel <clamor95@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Matheus Castello <matheus@castello.eng.br>,
-        Sebastian Reichel <sre@kernel.org>,
+        Mon, 31 Jul 2023 12:23:22 -0400
+Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29D9410D0;
+        Mon, 31 Jul 2023 09:23:18 -0700 (PDT)
+Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id AA2B02C5;
+        Mon, 31 Jul 2023 16:23:17 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net AA2B02C5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+        t=1690820597; bh=yFSfFyUQXT4DT++sxUWwAVT0WoQ6QyQTZaoT9AgNIvo=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=Ru3FR0Ekg1gFV8rnHsCa289Fm+t2lemULUPWgU0OBPUqHBb0cX5+t91PdIKIxqQXi
+         UnD3psVJrhfeNBShkC6Rr9BGZCV0fYyST7yWz7fEO34BCv/a4ECniDKDIMfGJlt8Y4
+         c/IpuvyFTykpBy9+3Hv71ns/wX328fRUGSQP5x+/YzepM9sqnYBTqtojGHBclwn1v5
+         HDzQxgTqbehGT9Ri4skj8w5fzfCXaUfGf721/SF1TfVFt+xSj0cavFfdWa3Dz7TccC
+         Ko0oCeZAJodwZSGFoMmHBYwnEzqTpYxc45CGHlDs08S0XlgfnCoCb2b9zlb8fUGkXk
+         83MhZs3vc+j5w==
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Stefan Hansson <newbie13xd@gmail.com>
-Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20230731073613.10394-1-clamor95@gmail.com>
-Content-Language: en-US
-From:   Iskren Chernev <me@iskren.info>
-In-Reply-To: <20230731073613.10394-1-clamor95@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>, soc@kernel.org,
+        workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+        arm@kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v3 1/3] MAINTAINERS: soc: reference maintainer profile
+In-Reply-To: <20230723131924.78190-1-krzysztof.kozlowski@linaro.org>
+References: <20230723131924.78190-1-krzysztof.kozlowski@linaro.org>
+Date:   Mon, 31 Jul 2023 10:23:17 -0600
+Message-ID: <87y1iwcaoa.fsf@meer.lwn.net>
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> writes:
 
+> Mention the SoC maintainer profile in P: entry.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
 
-On 7/31/23 10:36, Svyatoslav Ryhel wrote:
-> Extend properties supported by max17040 fuel gauge if it is accompanied
-> by different devices.
-> 
-> If max17040 is coupled with a charger, pass charger status since it should
-> match and max17040 has no dedicated status detection ability.
-> 
-> max17040_get_online can be reused for PRESENT property since if it is
-> online it must be present.
-> 
-> Finally, max17040 may be coupled with a dedicated thermal sensor which
-> monitors battery temperature so lets add support for iio channel to match
-> hw setup. With that said, the driver got dependency on CONFIG_IIO which
-> was added to Kconfig. All defconfigs apart s5pv210_defconfig have IIO
-> already enabled so only s5pv210_defconfig needed adjustment.
+I've applied this series, thanks.
 
-[whole series]
-Reviewed-by: Iskren Chernev <me@iskren.info>
-
-> ---
-> Changes from v2:
-> - documentation: fixed typo i2c0 > i2c
-> - added dependency on CONFIG_IIO
-> - enabled CONFIG_IIO for s5pv210_defconfig to avoid regressions (all other
->   defconfigs which include max17040 already have IIO enabled)
-> 
-> Changes from v1:
-> - documentation: dropped monitored-battery and power-supplies (inherited
->   from inclusion)
-> - dropped passing charger health as battery health
-> - dropped patch for simple battery cell support
-> - switched iio_read_channel_raw to iio_read_channel_processed_scale
-> - switched iio_channel_get to devm_iio_channel_get
-> - re-organized implementation of temp channel (implemented in way 
->   *_get_optional functions usually act)
-> ---
-> 
-> Svyatoslav Ryhel (4):
->   dt-bindings: power: supply: maxim,max17040: update properties
->   power: max17040: pass status property from supplier
->   power: max17040: get thermal data from adc if available
->   ARM: configs: s5pv210_defconfig: enable IIO required by MAX17040
-> 
->  .../bindings/power/supply/maxim,max17040.yaml | 31 +++++++++++++++++++
->  arch/arm/configs/s5pv210_defconfig            |  1 +
->  drivers/power/supply/Kconfig                  |  2 +-
->  drivers/power/supply/max17040_battery.c       | 27 ++++++++++++++++
->  4 files changed, 60 insertions(+), 1 deletion(-)
-> 
+jon
