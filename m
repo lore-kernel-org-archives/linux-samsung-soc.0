@@ -2,161 +2,246 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E367C00528
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Aug 2023 21:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A51C04FDF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Aug 2023 23:50:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232699AbjHBV3P (ORCPT
+        id S232607AbjHBXuf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Aug 2023 17:29:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35796 "EHLO
+        Wed, 2 Aug 2023 19:50:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232616AbjHBV3N (ORCPT
+        with ESMTP id S232682AbjHBXue (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Aug 2023 17:29:13 -0400
-X-Greylist: delayed 3603 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 02 Aug 2023 14:29:10 PDT
-Received: from 17.mo583.mail-out.ovh.net (17.mo583.mail-out.ovh.net [46.105.56.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3FBC1BC7
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Aug 2023 14:29:10 -0700 (PDT)
-Received: from director8.ghost.mail-out.ovh.net (unknown [10.109.143.210])
-        by mo583.mail-out.ovh.net (Postfix) with ESMTP id 14E0326F25
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Aug 2023 20:11:42 +0000 (UTC)
-Received: from ghost-submission-6684bf9d7b-bx767 (unknown [10.110.208.218])
-        by director8.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 516431FD16;
-        Wed,  2 Aug 2023 20:11:37 +0000 (UTC)
-Received: from etezian.org ([37.59.142.99])
-        by ghost-submission-6684bf9d7b-bx767 with ESMTPSA
-        id lfT3D3m4ymRdtgAAkSz/Gg
-        (envelope-from <andi@etezian.org>); Wed, 02 Aug 2023 20:11:37 +0000
-Authentication-Results: garm.ovh; auth=pass (GARM-99G003c63778ac-0bbd-4dff-bfae-0bec4c240887,
-                    0C641BB37B7CC30D107EA61C426C60CA54BC1A77) smtp.auth=andi@etezian.org
-X-OVh-ClientIp: 178.238.172.51
-From:   Andi Shyti <andi.shyti@kernel.org>
-To:     Wolfram Sang <wsa@kernel.org>, Paul Cercueil <paul@crapouillou.net>
-Cc:     Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Elie Morisse <syniurge@gmail.com>,
-        Shyam Sundar S K <shyam-sundar.s-k@amd.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Jan Dabros <jsd@semihalf.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Qii Wang <qii.wang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        Wed, 2 Aug 2023 19:50:34 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2043.outbound.protection.outlook.com [40.107.244.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8925A30DF;
+        Wed,  2 Aug 2023 16:50:30 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=L1lBrJzGkf7JPp08MlTjQO1VEuW/OCoMPb4HDZmnb2F7xZdne0RrrgMiiZwW2hqJnrN1TDXK8WOe9KU5ULDLDPRsYzBVF/1FsCjT7Ckt4Lx0U/KfA06/jKvRbXLBGYDaDGAVd2RU1i4RvtRtY4b2ihMLtrpXT7E02eEjZeuOaqmQGwlxhvP1qPIJIGy/tTUxsffBxl94gqSlCXtS7YDY6dpQHEgEZzWnb6iXhVAgYDEc4C8PHfhFrtxPn0qXSni/gFe6uTDfLs5VQID9mpwfeAbS8nbA9yyJFYJ5mVc/bXcruBRtt2S9B8uJwUR7gXzVfa5hJjpsRwZgXhE9J3jLWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eHN3lxbUhZe5dlztn3JAaGIbSyJWd59/f8Amea8VZ88=;
+ b=bb/uz8F49+S+oNrqSpnmxHKdCssjU2VtKIWwW6SjM6LL3DGp8CEGG5DrJ7MNkr1xGUoAnzTTAQvfilKl4UykS1BCdIKnLL5NmkKPwA3Ncrs3ReygSieghR4l/OQj016lLXZIXQMdRfZKyXIOEE4pLcfp/nECdNfF/na/Rf2t4S3ygWRamZ7icxmw+xu/MOCKvfZps8JEUPjdrdMD2VkE09lFDSbgI4jHM6wcVf2IBxS63X2EdNGcZvjGW3kjfTN7kfbKYOKmL7+btw76OeLTzUY/lNuKI1icmDOrK53A4+wHYWSvBmdhwIYtw1TTwYARxK53J/pKi2gVnX1hL4HKCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eHN3lxbUhZe5dlztn3JAaGIbSyJWd59/f8Amea8VZ88=;
+ b=F8yuHxtPXSemhi9ySIq0801zRJfYny0s2hEYI7FenC7jq/MX2oJOVlIQB4FCbCn0vy1cpEXIqG+QyjvSVXFuVBqd7aRSR0r2dG2H60PEV77oVSqF836RhEv4TtWzOH75+D8g/P31e5D+XdjxzBY7JHn411h56fgCsDGV2j/6tghCY3FfHykVeqy0HXND9YunjKdY67mfaXtmx+++xQkm7M1d2PguCeohmIapLRqkvfkbjzk/YlvFZe/El/iowiDN/zGr3V5F4lEh+L/A7yxsHPN+bYk/Fin0Wng8L1oTl1SjYDiVYLa8vz/24d5Ruxd++9oRaGFq3DbYwrf6KoCrjQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by DM6PR12MB4941.namprd12.prod.outlook.com (2603:10b6:5:1b8::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.45; Wed, 2 Aug
+ 2023 23:50:27 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::5111:16e8:5afe:1da1]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::5111:16e8:5afe:1da1%6]) with mapi id 15.20.6631.045; Wed, 2 Aug 2023
+ 23:50:27 +0000
+Date:   Wed, 2 Aug 2023 20:50:24 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Andy Gross <agross@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Bjorn Andersson <andersson@kernel.org>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Peter Korsgaard <peter@korsgaard.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Kevin Tian <kevin.tian@intel.com>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Conghui Chen <conghui.chen@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Peter Rosin <peda@axentia.se>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v2 00/22] i2c: Use new PM macros
-Date:   Wed,  2 Aug 2023 22:10:34 +0200
-Message-Id: <169100562778.1919254.5355387350651563678.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230722115046.27323-1-paul@crapouillou.net>
-References: <20230722115046.27323-1-paul@crapouillou.net>
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linuxppc-dev@lists.ozlabs.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Steven Price <steven.price@arm.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v5 15/25] iommufd/selftest: Make the mock iommu driver
+ into a real driver
+Message-ID: <ZMrrwBTt5zHLwWoF@nvidia.com>
+References: <0-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
+ <15-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <15-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
+X-ClientProxiedBy: MN2PR15CA0051.namprd15.prod.outlook.com
+ (2603:10b6:208:237::20) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 13293781676598954517
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedviedrkedtgdehtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfgggtgfesthekredtredtjeenucfhrhhomheptehnughiucfuhhihthhiuceorghnughirdhshhihthhisehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvghrnhepveevieffieefgfefuddvteelffeuhfelffejteejuddvveekveehvdejgeefteevnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepuddvjedrtddrtddruddpudejkedrvdefkedrudejvddrhedupdefjedrheelrddugedvrdelleenucevlhhushhtvghrufhiiigvpedutdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpeeorghnughisegvthgviihirghnrdhorhhgqedpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhsrghmshhunhhgqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehkeefpdhmohguvgepshhmthhpohhuth
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|DM6PR12MB4941:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6e969a22-8258-4b1f-a50b-08db93b33ebe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: xFlIwAP18pcxCg3Z4pQDw7Whi02dFi1bfCs0lJfAkjwKy9OlwiMWuqNOnV6VtVAlxMHVEoGPTrtdiZZShxN7V04kHcCeXgRgPdBXTyxhXHopREDroW9Rnk0RJsUqbC87hDMCvvbSdM7FI1568qeoageJL08vFOqi4V+WqWWnhheznjTQaT4NYRHRLU3fYH62E8K2dK9Jvq1M0f3nwGTMByYLUAmu10fZ5XODAz5yuJ9+TMbwOJ0Tvt0539u1R+z1KBkAvctT5Rijxv+tZ2Mdrr2zWCzCepZkwtxxb4dcQcc426w8T5oJ9aziCDFyizkWh7PCAjNvbtj659MGBOGC/26nw9PX2WHixtqR7Psyt4rHW4/KQQNf/2pVUNEl56tTZnnYmzujU7nR81WLED2kS28fKEO8ZkiXJPxwVfItExrnxJpIoDA7SxsEsZdXPjD+oravq26E0cexLeo3WHff/2ijr9fNRGuDtUZrnPj1LVGt/hc8P9rr1pIMNd8YTqZnN2xVJSvNcp6kY7g0aa3Fgv7wKq5wX01ZKL0pbxFWqKnPfShnEm0BIOXTgoLJdK9TwFc4ycaYqMMNsJ9ZZQ8QWioaI5NjjXYLrCDZoXZn8g0=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(346002)(366004)(136003)(376002)(396003)(451199021)(186003)(2616005)(36756003)(6512007)(316002)(478600001)(86362001)(54906003)(110136005)(66946007)(6666004)(66476007)(66556008)(921005)(38100700002)(4326008)(6486002)(6506007)(26005)(41300700001)(107886003)(8936002)(8676002)(7416002)(7406005)(5660300002)(2906002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?oI3N+pzrI64bLLvzAJoCCHKzrgLOnE/Ddg9aX2NYH7lD1aC8E2M5ouIaSMTr?=
+ =?us-ascii?Q?5qWSJZDyrxX+ZivnipkKOMKD0eF+QzKH4kI3FF6XPwJk8CGC+sDKcICeowA9?=
+ =?us-ascii?Q?60FUADf7uDcWpNGAQ8d9Mu8JcFq7Hlr5kVvDyA3Fn8FtICcYfRVD+y7m5K/d?=
+ =?us-ascii?Q?U5ZaUJvJxj9DU60ZnJqQIG2zKhQuuKzuX8d0kC5NYiN9i1cFxYC5bWCMwHef?=
+ =?us-ascii?Q?q7PkuZB/4U8vkZsKAioukgxdlGqpWhuCC+EZ5CqJkKAp5qUixh1zoJrm+N45?=
+ =?us-ascii?Q?5mQYAdCvNr7M9XulGIMNGa4x2O7F42ZeDyue3j6/D/PN5Hs4rpVGm7ewI2ow?=
+ =?us-ascii?Q?CBnfC5S9PE0DIkefTTBDWgYMTJHczhMPwYxNwtuoC8LBjwkQ8OjWPJvLPg+1?=
+ =?us-ascii?Q?IaUaFZYFVGp0JICzGmGQ/cXeAsArnTyHPMyCIractN26jmwJJIevqrE7EIEz?=
+ =?us-ascii?Q?LKn3xwD66wwKILIe/H2/f7hntpvYIOFDxhfeSXMTVDsPBMALBkCNBiaNvr8d?=
+ =?us-ascii?Q?2OpckqteZrHXNJx/2ANNVqtSkbMQSCkOF+4mJYVsds4KBuJWDtu10AawNIDi?=
+ =?us-ascii?Q?G+tlf6GN0YJy3xTZ+279oG9bB3sWu4Af5km3/6ZtVViJlq0o4WqBm+breP8K?=
+ =?us-ascii?Q?G/wYR44S17stTC1a/uV7kY4ZeV1fT6Aqcr386Zr0TWVGAXcY5PDrfWWFaz7n?=
+ =?us-ascii?Q?4JEvI8UsnXDCwvjkxD4DFhU6yiByTFrQAaANxfMMVteCjt6WGMu1bfDIQsKH?=
+ =?us-ascii?Q?j5axXyM8XV7yc7W+JK/M652H+U8WzRDnR4516M4j214fkcMq1aqCO8XCA+uO?=
+ =?us-ascii?Q?SXoyvuGxcDf/2vM+ej8CtNRKy3ALi1VaZkmORbBeNgSpdS+NqmeMTkEFq9zm?=
+ =?us-ascii?Q?6O6boRf7SlW4kr1joa5ZNDF9fHIcWg6sUIEytbfXlI8gz1WHUPYarTzhDTbZ?=
+ =?us-ascii?Q?MtjnGPRtnhbFWSQ/7SwVflJVsBfwuqin1BTu5gPh5CG4NstgtaDgdl4JS/+Y?=
+ =?us-ascii?Q?JoTiRgvNVpbeOYhlOmJGF0FKT79pdcNKI+qLRkdBYhom4C38QOmireLOp6Ip?=
+ =?us-ascii?Q?n9xCqH/LwI50x4EW351xZTtrSuoiB1AVgsaPgekx8MmBa70/HyPYqNYDAo5Q?=
+ =?us-ascii?Q?+Zlc2CpSnSlBuZH4vGRFreaTr/0VXgcW8j0ZVlwTquF4O12/UJGobdcYepZr?=
+ =?us-ascii?Q?HebZ6eFb2kQZWmqadVh9+li8r+sAyl2Upx8N/Tdb2yPkI2IYePfGWzKH7osg?=
+ =?us-ascii?Q?kV11AUdlBsSyfUPQ1WS81544bV8+uY6fAUB4hFqtH/s28MSzpKum1wGrIqTe?=
+ =?us-ascii?Q?grXaR77VtPvzEeMeJ40rUgKINuSR6k+3WWreCwxujKGkTcYs/SdH/4kjxLwT?=
+ =?us-ascii?Q?AyZqEoDpIT6lyGU2ZlL8JhyitxFavpDC8t2sbC9V4vCLl/SOTDlRdmovpD3R?=
+ =?us-ascii?Q?2MwZtAC1B0S9wvFBNR37ieSk/vidSqyfbmMNbQZdD95h2iLdA1bxI4lQ2zV/?=
+ =?us-ascii?Q?ZBindd0JaHI2criBAMQcdccexryXBPmLUJZrOWJq0gLWvvByCGy3JzYaI02E?=
+ =?us-ascii?Q?Tf02KswTq1C2qj5SveCzCwPxt2fUmxLl0R27YkO2?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e969a22-8258-4b1f-a50b-08db93b33ebe
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2023 23:50:27.0221
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XmXyZjnaALR/E6RlXvsBBSGsw0U6OizKqNDcduEUNdIqu+YBucipah1VaMqb3gyW
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4941
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi
+On Mon, Jul 24, 2023 at 02:22:05PM -0300, Jason Gunthorpe wrote:
 
-On Sat, 22 Jul 2023 13:50:24 +0200, Paul Cercueil wrote:
-> Here is a revised version of my patchset that converts the I2C drivers
-> to use the new PM macros.
-> 
-> Changes since V1 include:
-> - Previous patch [01/23] that updated the amd-mp2 driver has been
->   dropped per Jonathan's request.
-> - [09/22]: Unfold _DEV_PM_OPS() macro
-> - [10/22]: Convert to use regular device PM instead of using
->   platform_driver.{suspend,resume}. I figured it was OK to also change
->   it to use the new PM macros and keep it in one single patch.
-> - [13/22]: Rewrap runtime PM line
-> 
-> [...]
+> -void __init iommufd_test_init(void)
+> +int __init iommufd_test_init(void)
+>  {
+> +	struct platform_device_info pdevinfo = {
+> +		.name = "iommufd_selftest_iommu",
+> +	};
+> +	int rc;
+> +
+>  	dbgfs_root =
+>  		fault_create_debugfs_attr("fail_iommufd", NULL, &fail_iommufd);
+> -	WARN_ON(bus_register(&iommufd_mock_bus_type));
+> +
+> +	selftest_iommu_dev = platform_device_register_full(&pdevinfo);
+> +	if (IS_ERR(selftest_iommu_dev)) {
+> +		rc = PTR_ERR(selftest_iommu_dev);
+> +		goto err_dbgfs;
+> +	}
+> +
+> +	rc = bus_register(&iommufd_mock_bus_type.bus);
+> +	if (rc)
+> +		goto err_platform;
+> +
+> +	mock_iommu_device.dev = &selftest_iommu_dev->dev;
+> +	rc = iommu_device_register_bus(&mock_iommu_device, &mock_ops,
+> +				  &iommufd_mock_bus_type.bus,
+> +				  &iommufd_mock_bus_type.nb);
+> +	if (rc)
+> +		goto err_bus;
+> +	return 0;
+> +
+> +err_bus:
+> +	bus_unregister(&iommufd_mock_bus_type.bus);
+> +err_platform:
+> +	platform_device_del(selftest_iommu_dev);
+> +err_dbgfs:
+> +	debugfs_remove_recursive(dbgfs_root);
+> +	return rc;
+>  }
+>  
+>  void iommufd_test_exit(void)
+>  {
+> +	iommu_device_unregister_bus(&mock_iommu_device,
+> +				    &iommufd_mock_bus_type.bus,
+> +				    &iommufd_mock_bus_type.nb);
+> +	bus_unregister(&iommufd_mock_bus_type.bus);
+> +	platform_device_del(selftest_iommu_dev);
+>  	debugfs_remove_recursive(dbgfs_root);
+> -	bus_unregister(&iommufd_mock_bus_type);
+>  }
 
-Applied to i2c/andi-for-next on
 
-https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git
+There is a mistake here that started to become visible after one of
+the rebases, it needs to call iommu_device_sysfs_add() prior to
+iommu_device_register_bus() otherwise the iommu core stuff does not
+fully initialize and weird stuff starts happening.
 
-Please note that this patch may still undergo further evaluation
-and the final decision will be made in collaboration with
-Wolfram.
+So, it needs this:
 
-Thank you,
-Andi
+diff --git a/drivers/iommu/iommufd/selftest.c b/drivers/iommu/iommufd/selftest.c
+index 5433c9c545526d..d2b59a1157441c 100644
+--- a/drivers/iommu/iommufd/selftest.c
++++ b/drivers/iommu/iommufd/selftest.c
+@@ -987,14 +987,21 @@ int __init iommufd_test_init(void)
+ 	if (rc)
+ 		goto err_platform;
+ 
+-	mock_iommu_device.dev = &selftest_iommu_dev->dev;
++	rc = iommu_device_sysfs_add(&mock_iommu_device,
++				    &selftest_iommu_dev->dev, NULL, "%s",
++				    dev_name(&selftest_iommu_dev->dev));
++	if (rc)
++		goto err_bus;
++
+ 	rc = iommu_device_register_bus(&mock_iommu_device, &mock_ops,
+ 				  &iommufd_mock_bus_type.bus,
+ 				  &iommufd_mock_bus_type.nb);
+ 	if (rc)
+-		goto err_bus;
++		goto err_sysfs;
+ 	return 0;
+ 
++err_sysfs:
++	iommu_device_sysfs_remove(&mock_iommu_device);
+ err_bus:
+ 	bus_unregister(&iommufd_mock_bus_type.bus);
+ err_platform:
+@@ -1006,6 +1013,7 @@ int __init iommufd_test_init(void)
+ 
+ void iommufd_test_exit(void)
+ {
++	iommu_device_sysfs_remove(&mock_iommu_device);
+ 	iommu_device_unregister_bus(&mock_iommu_device,
+ 				    &iommufd_mock_bus_type.bus,
+ 				    &iommufd_mock_bus_type.nb);
 
-Patches applied
-===============
-[01/22] i2c: au1550: Remove #ifdef guards for PM related functions
-        commit: 45a21c833d23848487963cb5d7eab27d748d2491
-[02/22] i2c: iproc: Remove #ifdef guards for PM related functions
-        commit: 679e955c54d83743184c06ffdfae62fcd406825b
-[03/22] i2c: brcmstb: Remove #ifdef guards for PM related functions
-        commit: 6079d3054ba1ffdd3b85fd0b006a7130762ef2b0
-[04/22] i2c: davinci: Remove #ifdef guards for PM related functions
-        commit: d81a91c4bbeac742284cf34edd6ccf121cd15ddb
-[05/22] i2c: designware: Remove #ifdef guards for PM related functions
-        commit: a6ca696a40af0f652dc79b480dbd54096672d2b5
-[06/22] i2c: exynos5: Remove #ifdef guards for PM related functions
-        commit: af65727a77cc3c90e6d01bad387c7c8f337af2ad
-[07/22] i2c: hix5hd2: Remove #ifdef guards for PM related functions
-        commit: 38373903059c7e82d141007fe311cba237a00e86
-[08/22] i2c: i801: Remove #ifdef guards for PM related functions
-        commit: 02d1b6a99b4c5b4f05343aea46da96a8f795836c
-[09/22] i2c: img-scb: Remove #ifdef guards for PM related functions
-        commit: d2150e96646ddbd9a0f7f193107e7c310cbbe455
-[10/22] i2c: kempld: Convert to use regular device PM
-        commit: abef155faf2bb13b7aca9c2df74d63bb81ebcd55
-[11/22] i2c: lpc2k: Remove #ifdef guards for PM related functions
-        commit: a31425a6d93571433aa254b1eb4262ed378a08c2
-[12/22] i2c: mt65xx: Remove #ifdef guards for PM related functions
-        commit: 910047e7741fbfe15a4fdb14de7a2c3d72284d9f
-[13/22] i2c: nomadik: Remove #ifdef guards for PM related functions
-        commit: d55ee2c2f6fe629e6f8eb5b9c824b2545bc9b5d2
-[14/22] i2c: ocores: Remove #ifdef guards for PM related functions
-        commit: f5e33fcc30fa1e4085d6381f50b4f35ca412d708
-[15/22] i2c: pnx: Remove #ifdef guards for PM related functions
-        commit: 1670c7091b2aead73c21f3f27bbac44943d739ae
-[16/22] i2c: pxa: Remove #ifdef guards for PM related functions
-        commit: 605b9efba5d6a290f7ea41bd23ee5a11c3bacfcf
-[17/22] i2c: qup: Remove #ifdef guards for PM related functions
-        commit: aeb96820afefc02b8ac287685c9f6c75e2e56b31
-[18/22] i2c: rcar: Remove #ifdef guards for PM related functions
-        commit: dd4e0c0b6f01cf1c42d8bbb4a29d657a44a64bc0
-[19/22] i2c: s3c2410: Remove #ifdef guards for PM related functions
-        commit: 386d59093b247b258c6257525ff7c74b8ee9e6ca
-[20/22] i2c: sh-mobile: Remove #ifdef guards for PM related functions
-        commit: 8a76e5af8731db81ab325e734c5acfc386d3139c
-[21/22] i2c: virtio: Remove #ifdef guards for PM related functions
-        commit: 61999179835e23f4b245258087bfc20cf3c082ee
-[22/22] i2c: mux: pca954x: Remove #ifdef guards for PM related functions
-        commit: 458405d7c5b85e60a1b68972d1432d20fa9dc557
