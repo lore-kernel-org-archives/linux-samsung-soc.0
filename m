@@ -2,85 +2,96 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9606C0015E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Aug 2023 06:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 743F3C001DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Aug 2023 11:28:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230310AbjHCGjp (ORCPT
+        id S235188AbjHCL2Y (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Aug 2023 02:39:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47046 "EHLO
+        Thu, 3 Aug 2023 07:28:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231628AbjHCGjk (ORCPT
+        with ESMTP id S231599AbjHCL2Y (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Aug 2023 02:39:40 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 821491FC3;
-        Wed,  2 Aug 2023 23:39:39 -0700 (PDT)
-Received: from [192.168.15.130] (94-240-0-14.lukman.pl [94.240.0.14])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: andrzej.p)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id E524366015A0;
-        Thu,  3 Aug 2023 07:39:37 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1691044778;
-        bh=mbhJCCamZaUvv7gj02tF6AHf2SgoVVliqliY7HWr6Fc=;
-        h=Date:Subject:To:References:From:In-Reply-To:From;
-        b=Ki+FGbYnYinawxuZ3Md+oDYFBxqYps2wHfnsUIjwuH2Qzpjv2+mgbitN5ERaO/GZD
-         K3MiG7Htvsm7FbzZNpPc+Wtb+W2iMrniYONBVcy9/jaDe7Lnk3oVZhh4p0pKJtk/8b
-         7iFDXwfN6x7loiHLhmxftkAi7/bQrgJkUyZg7EUG4ao+JEvKtkVY6+Om2tQSsUiOgD
-         lclR2+3mJlPZI+kVniDTfOKMNnMrfeOqKqXEncA1F/hbAu24nJC5EE0eSkALZvOSii
-         UHclJNupXCsawQCKfZ6SuFlcYia4MHzh3tlggQ1NjknYDcogSgg20E3Q5/iw0pqhyz
-         IQ3d0BoZ5oV9g==
-Message-ID: <c24b1f67-d68c-698b-90f6-cff136482ca0@collabora.com>
-Date:   Thu, 3 Aug 2023 08:39:35 +0200
+        Thu, 3 Aug 2023 07:28:24 -0400
+Received: from smtp2.axis.com (smtp2.axis.com [195.60.68.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92CF2213F;
+        Thu,  3 Aug 2023 04:27:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=axis.com; q=dns/txt; s=axis-central1; t=1691062073;
+  x=1722598073;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=CWAbCO1we5B8Sov+saRxkyn+MCI47BcIO2eUN5nHl+E=;
+  b=PcRsw/6/4AOp/otdDHFyvnA2ULhtRpMEPo7HlMrTAuq4VDy9rPPynRiT
+   VYhkklHXVwG1D90XaSkmf+R8MVyDlMApSoUQ9JfRzAR7gW9f22X7j6RMm
+   m90dsGwwxwF7JDLzPZiSrwdhGsBTWIzXPR0jqRAfm7fpzCFEvb+o3Eg5f
+   sEyiDnGfbbQ34N1EasGRfiLWqXsO9zRI4T826Y4sx2pO3EC5MOdXY3bYD
+   Nlvo7PyZD5bTzk9VHQZ1S8diEqQLxyGgxX9bxTFnqYwIOHKM1KLjq/ZaP
+   6i5dMJBjY722tko9axMEFmjocdJbChhrdO1VQIkvro6iCf+EGuzZgf3jT
+   Q==;
+From:   Anton Eliasson <anton.eliasson@axis.com>
+Date:   Thu, 3 Aug 2023 13:26:42 +0200
+Subject: [PATCH] tty: serial: samsung: Set missing PM ops for hibernation
+ support
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH -next 1/2] media: camif-core: Do not check for 0 return
- after calling platform_get_irq()
-Content-Language: en-US
-To:     Ruan Jinjie <ruanjinjie@huawei.com>, sylvester.nawrocki@gmail.com,
-        mchehab@kernel.org, ezequiel@vanguardiasur.com.ar,
-        p.zabel@pengutronix.de, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-References: <20230803024645.2716057-1-ruanjinjie@huawei.com>
- <20230803024645.2716057-2-ruanjinjie@huawei.com>
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-In-Reply-To: <20230803024645.2716057-2-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20230803-samsung_tty_pm_ops-v1-1-1ea7be72194d@axis.com>
+X-B4-Tracking: v=1; b=H4sIAPGOy2QC/x3MQQqAIBBA0avIrBM0g7KrRIjUVLPIxKkoorsnL
+ d/i/wcYEyFDKx5IeBLTFjJ0IWBYfJhR0pgNpSqNqo2W7Fc+wuz2/XZxdVtkWQ+2mYyyvkILOYw
+ JJ7r+ade/7weqG39rZAAAAA==
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@axis.com>, Anton Eliasson <anton.eliasson@axis.com>
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-W dniu 3.08.2023 o 04:46, Ruan Jinjie pisze:
-> It is not possible for platform_get_irq() to return 0. Use the
-> return value from platform_get_irq().
-> 
-> Signed-off-by: Ruan Jinjie <ruanjinjie@huawei.com>
+At least freeze, restore and thaw need to be set in order for the driver
+to support system hibernation. The existing suspend/resume functions can
+be reused since those functions don't touch the device's power state or
+wakeup capability. Use the helper macros SET_SYSTEM_SLEEP_PM_OPS and
+SET_NOIRQ_SYSTEM_SLEEP_PM_OPS for symmetry with similar drivers.
 
-Reviewed-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Signed-off-by: Anton Eliasson <anton.eliasson@axis.com>
+---
+I have not investigated the impact of adding the additional noirq
+handler functions. The hardware that I tested on (Axis ARTPEC-8) appears
+to work both with and without them assigned. Other similar drivers that
+use noirq handlers assign them to both resume, thaw and restore so I
+follow that style also.
+---
+ drivers/tty/serial/samsung_tty.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> ---
->   drivers/media/platform/samsung/s3c-camif/camif-core.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/samsung/s3c-camif/camif-core.c b/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> index afe1fcc37354..e4529f666e20 100644
-> --- a/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> +++ b/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> @@ -381,8 +381,8 @@ static int camif_request_irqs(struct platform_device *pdev,
->   		init_waitqueue_head(&vp->irq_queue);
->   
->   		irq = platform_get_irq(pdev, i);
-> -		if (irq <= 0)
-> -			return -ENXIO;
-> +		if (irq < 0)
-> +			return irq;
->   
->   		ret = devm_request_irq(&pdev->dev, irq, s3c_camif_irq_handler,
->   				       0, dev_name(&pdev->dev), vp);
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index b29e9dfd81a6..e2247c11067d 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -2273,9 +2273,8 @@ static int s3c24xx_serial_resume_noirq(struct device *dev)
+ }
+ 
+ static const struct dev_pm_ops s3c24xx_serial_pm_ops = {
+-	.suspend = s3c24xx_serial_suspend,
+-	.resume = s3c24xx_serial_resume,
+-	.resume_noirq = s3c24xx_serial_resume_noirq,
++	SET_SYSTEM_SLEEP_PM_OPS(s3c24xx_serial_suspend, s3c24xx_serial_resume)
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(NULL, s3c24xx_serial_resume_noirq)
+ };
+ #define SERIAL_SAMSUNG_PM_OPS	(&s3c24xx_serial_pm_ops)
+ 
+
+---
+base-commit: 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5
+change-id: 20230731-samsung_tty_pm_ops-7c98f309a4e9
+
+Best regards,
+-- 
+Anton Eliasson <anton.eliasson@axis.com>
 
