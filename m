@@ -2,154 +2,69 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EF7FC001DE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  5 Aug 2023 20:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C62B6C001DB
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  5 Aug 2023 21:38:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbjHEUgQ (ORCPT
+        id S229542AbjHEVi3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 5 Aug 2023 16:36:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39842 "EHLO
+        Sat, 5 Aug 2023 17:38:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbjHEUgP (ORCPT
+        with ESMTP id S229436AbjHEVi3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 5 Aug 2023 16:36:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D1A0127;
-        Sat,  5 Aug 2023 13:36:14 -0700 (PDT)
+        Sat, 5 Aug 2023 17:38:29 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DC9E1BCA;
+        Sat,  5 Aug 2023 14:38:28 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id ABC1460EF3;
-        Sat,  5 Aug 2023 20:36:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8402EC433C7;
-        Sat,  5 Aug 2023 20:36:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2E70D60F3C;
+        Sat,  5 Aug 2023 21:38:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EADFC433C8;
+        Sat,  5 Aug 2023 21:38:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691267773;
-        bh=HV9N1662vFNg45/injmUeZzoXqqRaYKc6xS67ObhrCE=;
+        s=k20201202; t=1691271507;
+        bh=S420Jp3noijPO33VAPxKsjX9jKoQBlgGUHnNfSpqMTo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T8b37KpHrfdrHcPTjbp9eehNf/qy/zQ094uspwpe3knxbV/SAwFyOO+iL6poGeRt5
-         mmN2THgQL8TANiBbUZTIqmUiv0S7zyq3SAoSc1CzwM7lN991SYLqic8rCimc7bWwRI
-         Vu7ZXvkbMfRfxqG+wpJINgbL+2KpSYU+uMd2Pk44r5RPsQzRq94XsuoRFZfLcF3djQ
-         F5MggUSz0nkmmAejuORlF5VcmTYFbpwgyjqW04dzJAO9QAMzfqz5myArTvUzYEHRfd
-         0AdEI801aM4xbN8FAEhz4+QIYaCxO1e4lYxIngw3YRdHEiuSSaRBpD/K+KyiSmsD0z
-         8QDHViYep2Zwg==
-Date:   Sat, 5 Aug 2023 22:36:10 +0200
+        b=RsSSWjPLh02PC/C3W5pntdrkUWEFyfpnspeDV2c5Su5REmVuEyfbbhMRMXQIFTGO2
+         i1VBoKbrXlCVjxJwPleQs4xQ+OcCN/4OZHThxrcqc0Upu1Sao8Ie6RoanBIu0tRYI6
+         wCu5KK7Ynow7VWUlvAvcdEJTaNcFuXDLsORQ3Cc4OS4sN9WiWxnx01Jxz6+KOz/tgR
+         uNqxfnpridRqtI6/U2VbZRyz+ElUm5OCyeyOalZSJZEsznSmG1bTLj32kMPi6FooFh
+         fNXHyw2QIr4I1K+Zj1ce1wrAGpbTmmb1o5d5q9aij2OnwYI3/OgkEFsmbOghl6I3kL
+         DxDnRixaumX7A==
+Date:   Sat, 5 Aug 2023 23:38:24 +0200
 From:   Andi Shyti <andi.shyti@kernel.org>
-To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee@kernel.org>, Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+To:     Anton Eliasson <anton.eliasson@axis.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Michael Walle <michael@walle.cc>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Hammer Hsieh <hammerh0314@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Sean Anderson <sean.anderson@seco.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Anjelique Melendez <quic_amelende@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Luca Weiss <luca@z3ntu.xyz>,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-        asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        chrome-platform@lists.linux.dev, linux-mips@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v2 1/2] pwm: Manage owner assignment implicitly for
- drivers
-Message-ID: <20230805203610.jl7eea2lasmg2as2@intel.intel>
-References: <20230804142707.412137-1-u.kleine-koenig@pengutronix.de>
- <20230804142707.412137-2-u.kleine-koenig@pengutronix.de>
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@axis.com
+Subject: Re: [PATCH] tty: serial: samsung: Set missing PM ops for hibernation
+ support
+Message-ID: <20230805213824.ol7sr3b52rwrsfs6@intel.intel>
+References: <20230803-samsung_tty_pm_ops-v1-1-1ea7be72194d@axis.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230804142707.412137-2-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20230803-samsung_tty_pm_ops-v1-1-1ea7be72194d@axis.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Uwe,
+Hi Anton,
 
-On Fri, Aug 04, 2023 at 04:27:06PM +0200, Uwe Kleine-König wrote:
-> Instead of requiring each driver to care for assigning the owner member
-> of struct pwm_ops, handle that implicitly using a macro. Note that the
-> owner member has to be moved to struct pwm_chip, as the ops structure
-> usually lives in read-only memory and so cannot be modified.
-> 
-> The upside is that new lowlevel drivers cannot forget the assignment and
-> save one line each. The pwm-crc driver didn't assign .owner, that's not
-> a problem in practise though as the driver cannot be compiled as a
+On Thu, Aug 03, 2023 at 01:26:42PM +0200, Anton Eliasson wrote:
+> At least freeze, restore and thaw need to be set in order for the driver
+> to support system hibernation. The existing suspend/resume functions can
+> be reused since those functions don't touch the device's power state or
+> wakeup capability. Use the helper macros SET_SYSTEM_SLEEP_PM_OPS and
+> SET_NOIRQ_SYSTEM_SLEEP_PM_OPS for symmetry with similar drivers.
 
-/practise/practice/
+and why do we need hibernation in this device?
 
-> module.
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-
-Acked-by: Andi Shyti <andi.shyti@kernel.org> 
-
-Thanks,
 Andi
