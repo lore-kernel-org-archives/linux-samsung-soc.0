@@ -2,125 +2,87 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0243C001DE
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Aug 2023 08:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD419C001B0
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Aug 2023 15:43:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229693AbjHFI3K (ORCPT
+        id S230157AbjHFPnp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 6 Aug 2023 04:29:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54458 "EHLO
+        Sun, 6 Aug 2023 11:43:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbjHFI3J (ORCPT
+        with ESMTP id S230131AbjHFPno (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 6 Aug 2023 04:29:09 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1025B1BF9
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Aug 2023 01:29:08 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-99bdcade7fbso483664066b.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Aug 2023 01:29:07 -0700 (PDT)
+        Sun, 6 Aug 2023 11:43:44 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CD961988
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Aug 2023 08:43:43 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4fe0d5f719dso6143542e87.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Aug 2023 08:43:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691310546; x=1691915346;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=55oKMHK7cfUAjvWBhyAthQvSiE0af+1dehaVDdqDOHE=;
-        b=lrbem2akHaoEP1hNXRLxd5L+j636EuxBLZ3WxPWqbqp2DnjQR5Ff6QUQNCRj9gKC5u
-         auMutJMofuhNLR0J41euPuzq+aNsbqKiVy1ufEMkK6RNNvdHqZGmoC5I4xirSbBYVBEA
-         thBachlkGY6GuAwmvysf39iChCPNMHayfp76gPfgixfHQabmQcyG3/PQuDzGGDcyr+JC
-         aZj8k+SUR+MxJ+aNiKaEmHt9Z8jgiQ1nHcXj6z+Fxz1mtYyaSqvvUbwElwnGIrRy23vU
-         Lv6MYcRPNGN7y7nPdn3j6B0VPKJH5+jSIr1ag8MmAdkwuEuIu0CRaHf+ugAoOsz2ThkD
-         YGmg==
+        d=linaro.org; s=google; t=1691336621; x=1691941421;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4oWs4U2ro/t4/q4Z3II5xjIwWsnCpXNAMYIlFzVA7to=;
+        b=d/KHmHcFTscfybAgeJW/vORuTjCnWcizHj3JJbdw2Uzg+gGgoRalYZsn8Hfn4GNyWL
+         JFgwztEuuItCn9ikVJ2l1amtITa1Sy1ZcwhLeEcBXdIIZPiJFTpcNq+osxAiSxB6DqQ+
+         uYoxDSfhQKF8e2iOEyJSh2eBoiazcHCSO+pwqdit6GG2RWBJ8Vae7zBeo3OTr6k9j3eP
+         Kn9hE7BkdJyT3t8Z5x6dKmvRTbWADKq7XYMTlP0uAj+xOWp+PbqLH0B+//p0y/amSrjS
+         GtIsZsB8dDb4vxMctISFAf9t5yzODAHBRlU3EiXNy8UXrzxkxJunEdvymlp7Pz2wozHw
+         XLgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691310546; x=1691915346;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=55oKMHK7cfUAjvWBhyAthQvSiE0af+1dehaVDdqDOHE=;
-        b=Xe23zNsPA4bX0pe0rgZ5ghVlh4QFHcU+9uL393ggl28IAbzR19qeMI7SUHsFM/DYXw
-         o/xKBB0DNWlBBI5MVtObNtB8XrKD6ZdLEygMOgGP2940M1G0hLwj4gejvO4Va+ZVznbn
-         oiN/1nlzvaILUkOHaVjYRszv58MmQdMsbghlI5+VH2VqW5TbtCZSWJWQR+7CHoKD6uIk
-         LrYuO93pSWA59K4G4kgwOusaWiZrQJfgvYblpgs72gZCvPFr5g2nimbo1DtuOL1DT0NG
-         IWT7ieBKbr9xa0+vVnR1UsRA/cTzUEtNeYpf3j0N2tyVU28p5i0hFLuV4zqle9lYSsL0
-         pTIQ==
-X-Gm-Message-State: AOJu0Yx9nT5hemdiTiQoXtOO7WsZatZl9wOQdSjX3rijQE/QScWvamZQ
-        BjTTXtBVrTnC9pC5UhS1tmqA4w==
-X-Google-Smtp-Source: AGHT+IGmNl9aFbtULewFk5HUP7c06MVi+NImcKGO40WOR1/CE5aUF/a1HN/nGwuW7PPaSGEpQ6eX9Q==
-X-Received: by 2002:a17:906:3289:b0:988:9ec1:a8c5 with SMTP id 9-20020a170906328900b009889ec1a8c5mr5582947ejw.55.1691310546570;
-        Sun, 06 Aug 2023 01:29:06 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.245])
-        by smtp.gmail.com with ESMTPSA id t6-20020a1709060c4600b0099bcb44493fsm3694370ejf.147.2023.08.06.01.29.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Aug 2023 01:29:06 -0700 (PDT)
-Message-ID: <16047849-1001-4d6f-4995-0fdfc065cded@linaro.org>
-Date:   Sun, 6 Aug 2023 10:29:04 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH v3 4/4] ARM: configs: s5pv210_defconfig: enable IIO
- required by MAX17040
-To:     Andi Shyti <andi.shyti@kernel.org>,
-        Svyatoslav Ryhel <clamor95@gmail.com>
-Cc:     Iskren Chernev <me@iskren.info>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Matheus Castello <matheus@castello.eng.br>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Stefan Hansson <newbie13xd@gmail.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20230731073613.10394-1-clamor95@gmail.com>
- <20230731073613.10394-5-clamor95@gmail.com>
- <20230805224211.qquexvseq24hxcju@intel.intel>
-Content-Language: en-US
+        d=1e100.net; s=20221208; t=1691336621; x=1691941421;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4oWs4U2ro/t4/q4Z3II5xjIwWsnCpXNAMYIlFzVA7to=;
+        b=K4QaD337ATVsrk3i57W3b+quHZ1GtI23AgNWtOyg2g+7+1zjCv52XfWhqoeGaodTQu
+         rjq6A9jZot8Y+iQn9mkNzAlqal4hEe2HO4HMSRRAkAIvU3V1yen4L2pT+MHg/r2PScwB
+         +q0+JIwOR7XMEsCVdJvZqoU+4xMLcbGdWjZvtOfGBN45pKNP/3cUO8sx4fzTehW3o4wr
+         +0QDfbStZySdZId3mhn07KHNd0+bc/0HBdNEvvJKcrqoAHkXni6Smxz5lCtkACc11ddw
+         t9e9ZJlcRUX+trDzMAbqYCm/M5RJI2luhlmG4szZRUQz6buOePRJro1wDftR67Mq95Vh
+         KOgA==
+X-Gm-Message-State: AOJu0Yz1NOLhNGFjpTxMv3C+Jq5IKIniphjxM4eeBt2UrkBma0rGl9MN
+        GLsZHxaynKP1mJbayN3hmFB2Ew==
+X-Google-Smtp-Source: AGHT+IEWCJTsvsSIf8enwv7oo2giSQDBES8kdxqCPcfEumlUYVlBTwRhmSAmKQTz+OOWgMXQu4p+3Q==
+X-Received: by 2002:ac2:55af:0:b0:4fe:589a:857d with SMTP id y15-20020ac255af000000b004fe589a857dmr4116275lfg.34.1691336621334;
+        Sun, 06 Aug 2023 08:43:41 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.222.245])
+        by smtp.gmail.com with ESMTPSA id d14-20020aa7d5ce000000b00522b7c5d53esm4020402eds.54.2023.08.06.08.43.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Aug 2023 08:43:40 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230805224211.qquexvseq24hxcju@intel.intel>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] arm64: dts: exynos: exynos5433-tm2: drop redundant status=okay
+Date:   Sun,  6 Aug 2023 17:43:37 +0200
+Message-Id: <169133661267.27382.4777449887249443533.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230731090821.104733-1-krzysztof.kozlowski@linaro.org>
+References: <20230731090821.104733-1-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/08/2023 00:42, Andi Shyti wrote:
-> Hi Svyatoslav,
-> 
-> On Mon, Jul 31, 2023 at 10:36:13AM +0300, Svyatoslav Ryhel wrote:
->> After adding support for passing temperature data from thermal sensor
->> to MAX17040 it got dependency on CONFIG_IIO. From all defconfigs
->> using MAX17040 only s5pv210_defconfig did not have IIO already enabled
->> so let's enable it to avoid regression.
->>
->> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
->> ---
->>  arch/arm/configs/s5pv210_defconfig | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arm/configs/s5pv210_defconfig b/arch/arm/configs/s5pv210_defconfig
->> index 4c1e480b5bbd..24070ee3d43e 100644
->> --- a/arch/arm/configs/s5pv210_defconfig
->> +++ b/arch/arm/configs/s5pv210_defconfig
->> @@ -97,6 +97,7 @@ CONFIG_MMC_SDHCI_S3C_DMA=y
->>  CONFIG_RTC_CLASS=y
->>  CONFIG_RTC_DRV_MAX8998=m
->>  CONFIG_DMADEVICES=y
->> +CONFIG_IIO=y
->>  CONFIG_PWM=y
->>  CONFIG_PWM_SAMSUNG=y
->>  CONFIG_PHY_SAMSUNG_USB2=m
-> 
-> Should this patch be squashed to the previous patch? I think you
-> break bisectability for this board if you enable iio only here.
 
-The defconfig change matters less - distros don't use them - so this
-points to the fact that patchset affected the users. All existing users
-of max17040 drivers, who do not enable IIO, will have their setups broken.
+On Mon, 31 Jul 2023 11:08:21 +0200, Krzysztof Kozlowski wrote:
+> status=okay is by default.
+> 
+> 
+
+Applied, thanks!
+
+[1/1] arm64: dts: exynos: exynos5433-tm2: drop redundant status=okay
+      https://git.kernel.org/krzk/linux/c/d157d43754582f3981b7eefc691abc4d865430e1
 
 Best regards,
-Krzysztof
-
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
