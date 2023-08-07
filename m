@@ -2,137 +2,154 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8273CC001DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Aug 2023 12:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B19C04A6A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Aug 2023 13:06:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229925AbjHGMcB (ORCPT
+        id S231940AbjHGNG3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Aug 2023 08:32:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60198 "EHLO
+        Mon, 7 Aug 2023 09:06:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232991AbjHGMb7 (ORCPT
+        with ESMTP id S233791AbjHGNG2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Aug 2023 08:31:59 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7357810F7;
-        Mon,  7 Aug 2023 05:31:56 -0700 (PDT)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 377CLbWv020687;
-        Mon, 7 Aug 2023 12:31:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=IeSCRN7LQH0G+TbFV5xj/6YyE8DspF7qV0UbMHUtQn8=;
- b=nPrXVmvHaf8Wz9/R2oW0bDnaRWZ6cy1QrsAo40ICODcnh87tKqwE7rFbZNp47UyagARl
- GcG3qxOLlTinHJPTLwYP4l4yy+NzmeHLV0QvXpynCnddscll4inHKlFHgShDU6mVLxvi
- PtgdpYVCgD1HSPxgVuyRdo8qyz0f3CwUiOOdOLadQ7j3oXYfhuleww6GrEunxnhp8kEh
- wC2vg5snBLM6fbBNx8fLPqxi8gw1H3/5i2o+Jc4O9uxRPSX/vzI24+utcrnjBTQWtaQf
- QN0X6+vafMINL5Leq1nn5Hc0SZo98FqTBlNSN8ZfzsraE7bhq9hImXhtlROcP3DVl7at 1w== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s9dcybg78-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 07 Aug 2023 12:31:39 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 377CVdru003542
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 7 Aug 2023 12:31:39 GMT
-Received: from [10.214.66.81] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Mon, 7 Aug
- 2023 05:31:35 -0700
-Message-ID: <81b15738-615d-a039-7bc3-22aa5b3a54bd@quicinc.com>
-Date:   Mon, 7 Aug 2023 18:01:27 +0530
+        Mon, 7 Aug 2023 09:06:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C424D1701;
+        Mon,  7 Aug 2023 06:06:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 586DA619CC;
+        Mon,  7 Aug 2023 13:06:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D0FC433C7;
+        Mon,  7 Aug 2023 13:06:23 +0000 (UTC)
+Message-ID: <0b361e6c-d141-4758-edc2-c75b6f0efbe3@xs4all.nl>
+Date:   Mon, 7 Aug 2023 15:06:21 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: Feedback on Qualcomm's minidump (debug) solution for end user
- device crash
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Brian Masney <bmasney@redhat.com>
-CC:     <linux-samsung-soc@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 3/3] media: exynos4-is: fimc-is: replace duplicate pmu
+ node with phandle
+Content-Language: en-US, nl
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Nishanth Menon <nm@ti.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-References: <0199db00-1b1d-0c63-58ff-03efae02cb21@quicinc.com>
- <ZL6t/sZTZBfvSYOm@brian-x1> <15caeb52-b670-9000-fa2b-b8d1b8485016@kernel.org>
-Content-Language: en-US
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <15caeb52-b670-9000-fa2b-b8d1b8485016@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230722115441.139628-1-krzysztof.kozlowski@linaro.org>
+ <20230722115441.139628-3-krzysztof.kozlowski@linaro.org>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+In-Reply-To: <20230722115441.139628-3-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 7NUSzpeiHBwBl3kjaqMRKkjROOgAmd4j
-X-Proofpoint-GUID: 7NUSzpeiHBwBl3kjaqMRKkjROOgAmd4j
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-07_12,2023-08-03_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
- mlxscore=0 bulkscore=0 impostorscore=0 mlxlogscore=651 suspectscore=0
- spamscore=0 lowpriorityscore=0 clxscore=1011 priorityscore=1501
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308070116
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi Krzysztof,
 
+On 22/07/2023 13:54, Krzysztof Kozlowski wrote:
+> Devicetree for the FIMC IS camera included duplicated PMU node as its
+> child like:
+> 
+>   soc@0 {
+>     system-controller@10020000 { ... }; // Real PMU
+> 
+>     camera@11800000 {
+>       fimc-is@12000000 {
+>         // FIMC IS camera node
+>         pmu@10020000 {
+>           reg = <0x10020000 0x3000>; // Fake PMU node
+>         };
+>       };
+>     };
+>   };
+> 
+> This is not a correct representation of the hardware.  Mapping the PMU
+> (Power Management Unit) IO memory should be via syscon-like phandle
+> (samsung,pmu-syscon, already used for other drivers), not by duplicating
+> "pmu" Devicetree node inside the FIMC IS.  Backward compatibility is
+> preserved.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../platform/samsung/exynos4-is/fimc-is.c     | 33 ++++++++++++++-----
+>  1 file changed, 24 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is.c b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
+> index 530a148fe4d3..c4c191771093 100644
+> --- a/drivers/media/platform/samsung/exynos4-is/fimc-is.c
+> +++ b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
+> @@ -767,12 +767,32 @@ static void fimc_is_debugfs_create(struct fimc_is *is)
+>  static int fimc_is_runtime_resume(struct device *dev);
+>  static int fimc_is_runtime_suspend(struct device *dev);
+>  
+> +static void __iomem *fimc_is_get_pmu_regs(struct device *dev)
+> +{
+> +	struct device_node *node;
+> +	void __iomem *regs;
+> +
+> +	node = of_parse_phandle(dev->of_node, "samsung,pmu-syscon", 0);
+> +	if (!node) {
+> +		dev_warn(dev, "Finding PMU node via deprecated method, update your DTB\n");
+> +		node = of_get_child_by_name(dev->of_node, "pmu");
+> +		if (!node)
+> +			return ERR_PTR(-ENODEV);
+> +	}
+> +
+> +	regs = of_iomap(node, 0);
+> +	of_node_put(node);
+> +	if (!regs)
+> +		return ERR_PTR(-ENOMEM);
 
-On 7/30/2023 5:14 PM, Krzysztof Kozlowski wrote:
-> On 24/07/2023 18:59, Brian Masney wrote:
->> + linux-arm-kernel list
->>
->> On Thu, Jul 20, 2023 at 08:32:24PM +0530, Mukesh Ojha wrote:
->>> Hi Samsung/MTK/Any other SOC vendors,
->>>
->>> This is to bring to your notice that, we (Qualcomm) are working on
->>> upstreaming our minidump solution which is to address the problem of
->>> debugging on field device crashes where collecting entire ddr dump
->>> would not be feasible and collecting minimal data from the ddr would
->>> help in debug direction or even help in root causing issue.
->>>
->>> We have recently posted v4 version here [1]
->>>
->>> Based on comments[2], community is more worried about, if each SOC
->>> vendor come up with their own dumping method today or in future and
->>> whether it can have a common solution to a similar problem faced by
->>> other SOC vendor.
->>>
->>> We wanted to take your feedback if you also encounter a similar problem
->>> or maintain something similar solution in downstream which can be
->>> upstreamed. This will help us in a way to have a common solution in
->>> upstream.
->>>
->>> [1]
->>> https://lore.kernel.org/lkml/10dd2ead-758a-89f0-cda4-70ae927269eb@quicinc.com/
->>>
->>> [2]
->>> https://lore.kernel.org/lkml/CAL_JsqLO9yey2-4FcWsaGxijiS6hGL0SH9VoMuiyei-u9=Cv=w@mail.gmail.com/
->>
->> Adding the main ARM list to solicit feedback from other silicon
->> manufacturers.
->>
->> The cover sheet on the v4 patch set is available at:
->> https://lore.kernel.org/lkml/1687955688-20809-1-git-send-email-quic_mojha@quicinc.com/
-> 
-> I doubt anyone follows the lists, so at least Cc some maintainers.
-> 
-> +Cc Alim, Kukjin, Vignesh, Nishanth, Matthias.
+sparse gives me these warnings for these ERR_PTR returns:
 
-Thanks @Krzysztof/@Brian for extending the list.
+drivers/media/platform/samsung/exynos4-is/fimc-is.c:780:39: warning: incorrect type in return expression (different address spaces)
+drivers/media/platform/samsung/exynos4-is/fimc-is.c:780:39:    expected void [noderef] __iomem *
+drivers/media/platform/samsung/exynos4-is/fimc-is.c:780:39:    got void *
+drivers/media/platform/samsung/exynos4-is/fimc-is.c:786:31: warning: incorrect type in return expression (different address spaces)
+drivers/media/platform/samsung/exynos4-is/fimc-is.c:786:31:    expected void [noderef] __iomem *
+drivers/media/platform/samsung/exynos4-is/fimc-is.c:786:31:    got void *
 
--Mukesh
-> 
-> Best regards,
-> Krzysztof
-> 
+Regards,
+
+	Hans
+
+> +
+> +	return regs;
+> +}
+> +
+>  static int fimc_is_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct fimc_is *is;
+>  	struct resource res;
+> -	struct device_node *node;
+>  	int ret;
+>  
+>  	is = devm_kzalloc(&pdev->dev, sizeof(*is), GFP_KERNEL);
+> @@ -794,14 +814,9 @@ static int fimc_is_probe(struct platform_device *pdev)
+>  	if (IS_ERR(is->regs))
+>  		return PTR_ERR(is->regs);
+>  
+> -	node = of_get_child_by_name(dev->of_node, "pmu");
+> -	if (!node)
+> -		return -ENODEV;
+> -
+> -	is->pmu_regs = of_iomap(node, 0);
+> -	of_node_put(node);
+> -	if (!is->pmu_regs)
+> -		return -ENOMEM;
+> +	is->pmu_regs = fimc_is_get_pmu_regs(dev);
+> +	if (IS_ERR(is->pmu_regs))
+> +		return PTR_ERR(is->pmu_regs);
+>  
+>  	is->irq = irq_of_parse_and_map(dev->of_node, 0);
+>  	if (!is->irq) {
+
