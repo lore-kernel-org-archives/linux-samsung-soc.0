@@ -2,142 +2,142 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB59FC00528
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Aug 2023 13:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F5BBC04A6A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Aug 2023 15:13:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234459AbjHGNvt (ORCPT
+        id S230168AbjHGPNt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Aug 2023 09:51:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39868 "EHLO
+        Mon, 7 Aug 2023 11:13:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234318AbjHGNvs (ORCPT
+        with ESMTP id S230162AbjHGPNs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Aug 2023 09:51:48 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1249010D7
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Aug 2023 06:51:47 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-51e28cac164so11809054a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Aug 2023 06:51:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691416305; x=1692021105;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5U7uXQPqJdJRTybbD7UWkq4hcpTzTPPBe48JRQK60d8=;
-        b=siUwPP6TAI6SSnVRXaqAXAkU8Y+9KQFZNj8SGOBskXBIh5sKvzKy5gY3yyHBWgiERn
-         bhmarSHyd6YFmvOXWtq7r29XxO6ht/vgMpJSHrL8LpRBWtOblDd1S2qDnQBiMvbYE0ig
-         1m0no4m00eF9Cs8ietNs0mpAFHuFT8/OUqmSZgq10I0uJMOqax04L67CiRZK5pHAk+gT
-         pDLWYzbvzWdq/b5se479A9NNUxiZxS2MM3+bApIBYpjn/K3kF0smFqXVoJLP5ta97b/Y
-         z4//rrJqg3X35F14zrNDD7PWe3JNaHiEp3ezuFaSKEP7UQoLbUVonTYJmzsRLbPxKLfp
-         ojPA==
+        Mon, 7 Aug 2023 11:13:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7E7510F6
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Aug 2023 08:13:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1691421181;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=MSkCa7A9TXUS3VXQ5McnNNZT+8+UROTnmjHayz9OLCM=;
+        b=JBjMEN+KOLXzkZ3v/X0MoX2f8zmm5mrbT9NuLbCJWJ/Mj8BMETFNTvq9aErd6LK+ub7xSk
+        cSoPedaAji1ooq+Tdju3cp+6k7f/cgzxG6nxcn9PFCU+sW21w7+oG3skki67lk6dqAodMz
+        Dpau2LBNCqrXQq8cjqZa13tbUjTZNZ8=
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
+ [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-620-GJVeUz7zN8S9oo5nf3tGPQ-1; Mon, 07 Aug 2023 11:08:53 -0400
+X-MC-Unique: GJVeUz7zN8S9oo5nf3tGPQ-1
+Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-d1851c52f3dso4876684276.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Aug 2023 08:08:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691416305; x=1692021105;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5U7uXQPqJdJRTybbD7UWkq4hcpTzTPPBe48JRQK60d8=;
-        b=Nux+FJlpTTgcJfvIYNRjZw73JreLqGRy64dtpI3YssS/3GER6EjVMTFoOGv/KFAGAH
-         nP0382DQwRGPzmGKqWmVMst/d2DAW11dImfZhWuzOLyq0wE4RwP90RUfROl2uee0xhVB
-         e5F69DAbiGAEWXqbthz8fhsON2toYTddWrVg0sMyEnFPiPwngv2FP9Yq8j/sRhiAasON
-         vW3UCLQObk3tg0u/DHQpOKlDjPSysauaa3ho0mmoNcx/CcLDKR56wtrh3nbuXnvzst9Z
-         mcQRo5OwwM8fvBKU+orE1ZK6oDfsgQ78lcEP1Vms5ApT+KynIf5t1ekKOycIYxmJz9qO
-         Dqmw==
-X-Gm-Message-State: AOJu0YyQlKEuRo4pL7UsC+oY9nhg2iOqIze3NWDOA558S3ebfoBRTg3O
-        pTbR7wLAAa0vOfOgT8iHSvOYhA==
-X-Google-Smtp-Source: AGHT+IFHT60GM0SzX9TXq5wlvNhwlntdej2m89q9MKu3133qU0DChWx1leGNQ8gUg3hl1tGkiS5DKQ==
-X-Received: by 2002:a05:6402:51d2:b0:521:ef0f:8ef9 with SMTP id r18-20020a05640251d200b00521ef0f8ef9mr8152852edd.19.1691416305604;
-        Mon, 07 Aug 2023 06:51:45 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.113])
-        by smtp.gmail.com with ESMTPSA id e26-20020a50ec9a000000b0051873c201a0sm5195571edr.26.2023.08.07.06.51.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Aug 2023 06:51:45 -0700 (PDT)
-Message-ID: <af8893b8-0556-e355-abe9-aba99c7a839a@linaro.org>
-Date:   Mon, 7 Aug 2023 15:51:43 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH v3 4/4] ARM: configs: s5pv210_defconfig: enable IIO
- required by MAX17040
-Content-Language: en-US
-To:     Andi Shyti <andi.shyti@kernel.org>
-Cc:     Svyatoslav Ryhel <clamor95@gmail.com>,
-        Iskren Chernev <me@iskren.info>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Matheus Castello <matheus@castello.eng.br>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
+        d=1e100.net; s=20221208; t=1691420933; x=1692025733;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MSkCa7A9TXUS3VXQ5McnNNZT+8+UROTnmjHayz9OLCM=;
+        b=Ft+bqEtaMdsJdADTrF8ACAsIn+V1jag/yTV7dJGnabIEOARAGuFmh8ayQXM52ldsQf
+         Ba9dH4erk6y/wbuWPHJWlHgk0jJB2f5DRjQS4W8/BlWjOxkksHShrCHNzQBbCLmWbuKt
+         rKvm9poGlDyOIR9UgdHBKsnfPv7v495GBi/oDqOLf2CxraABNq0ugdDrYjR7zcz1Wz6T
+         9RxR54DASUEyVetUxe0T+g9Yj2nvxIRzGlgK7dxLu2KgPF5YNpJHmBNL7cz0RY3pxaWs
+         AemsUbZgCbAlyIQc3cODynKLCy08a8IJB5KJiRS3VALa5FmJRl3DTJ02avAlnn8vu5j/
+         AnaA==
+X-Gm-Message-State: AOJu0YyikLKLoz35NvAAf9ocTs1ZFv+zOdzps4X6rkrD7IBDZA1xoWJw
+        sy+jHk7LMXAINDRK5AB72jLsDNWym+0ixNL9V5eX58392+8ka611XR4wQYDS6Hn0s1Bxtb/pxwC
+        qHLKEM5U7IjmGNgALqOt59gBy2bUGCh0=
+X-Received: by 2002:a25:29c2:0:b0:c62:2320:2598 with SMTP id p185-20020a2529c2000000b00c6223202598mr8059902ybp.62.1691420933319;
+        Mon, 07 Aug 2023 08:08:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEFwHp4dDJnIOl2S3nXfBjqj/u/Iz50+0PkY1Lm8o+KMODDnct/IB/u4h0wbSKzpgdvXF7AeQ==
+X-Received: by 2002:a25:29c2:0:b0:c62:2320:2598 with SMTP id p185-20020a2529c2000000b00c6223202598mr8059891ybp.62.1691420933058;
+        Mon, 07 Aug 2023 08:08:53 -0700 (PDT)
+Received: from brian-x1 (c-73-214-169-22.hsd1.pa.comcast.net. [73.214.169.22])
+        by smtp.gmail.com with ESMTPSA id a10-20020a5b0aca000000b00d1dffdd7a97sm2250323ybr.57.2023.08.07.08.08.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Aug 2023 08:08:52 -0700 (PDT)
+Date:   Mon, 7 Aug 2023 11:08:50 -0400
+From:   Brian Masney <bmasney@redhat.com>
+To:     Mukesh Ojha <quic_mojha@quicinc.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        lkml <linux-kernel@vger.kernel.org>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Stefan Hansson <newbie13xd@gmail.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20230731073613.10394-1-clamor95@gmail.com>
- <20230731073613.10394-5-clamor95@gmail.com>
- <20230805224211.qquexvseq24hxcju@intel.intel>
- <16047849-1001-4d6f-4995-0fdfc065cded@linaro.org>
- <20230807085543.3tfzpsa2joolay3r@intel.intel>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230807085543.3tfzpsa2joolay3r@intel.intel>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Kukjin Kim <kgene@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Nishanth Menon <nm@ti.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: Feedback on Qualcomm's minidump (debug) solution for end user
+ device crash
+Message-ID: <ZNEJAh0in/fjq6s9@brian-x1>
+References: <0199db00-1b1d-0c63-58ff-03efae02cb21@quicinc.com>
+ <ZL6t/sZTZBfvSYOm@brian-x1>
+ <15caeb52-b670-9000-fa2b-b8d1b8485016@kernel.org>
+ <81b15738-615d-a039-7bc3-22aa5b3a54bd@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <81b15738-615d-a039-7bc3-22aa5b3a54bd@quicinc.com>
+User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 07/08/2023 10:55, Andi Shyti wrote:
-> Hi,
+On Mon, Aug 07, 2023 at 06:01:27PM +0530, Mukesh Ojha wrote:
+> On 7/30/2023 5:14 PM, Krzysztof Kozlowski wrote:
+> > On 24/07/2023 18:59, Brian Masney wrote:
+> > > + linux-arm-kernel list
+> > > 
+> > > On Thu, Jul 20, 2023 at 08:32:24PM +0530, Mukesh Ojha wrote:
+> > > > Hi Samsung/MTK/Any other SOC vendors,
+> > > > 
+> > > > This is to bring to your notice that, we (Qualcomm) are working on
+> > > > upstreaming our minidump solution which is to address the problem of
+> > > > debugging on field device crashes where collecting entire ddr dump
+> > > > would not be feasible and collecting minimal data from the ddr would
+> > > > help in debug direction or even help in root causing issue.
+> > > > 
+> > > > We have recently posted v4 version here [1]
+> > > > 
+> > > > Based on comments[2], community is more worried about, if each SOC
+> > > > vendor come up with their own dumping method today or in future and
+> > > > whether it can have a common solution to a similar problem faced by
+> > > > other SOC vendor.
+> > > > 
+> > > > We wanted to take your feedback if you also encounter a similar problem
+> > > > or maintain something similar solution in downstream which can be
+> > > > upstreamed. This will help us in a way to have a common solution in
+> > > > upstream.
+> > > > 
+> > > > [1]
+> > > > https://lore.kernel.org/lkml/10dd2ead-758a-89f0-cda4-70ae927269eb@quicinc.com/
+> > > > 
+> > > > [2]
+> > > > https://lore.kernel.org/lkml/CAL_JsqLO9yey2-4FcWsaGxijiS6hGL0SH9VoMuiyei-u9=Cv=w@mail.gmail.com/
+> > > 
+> > > Adding the main ARM list to solicit feedback from other silicon
+> > > manufacturers.
+> > > 
+> > > The cover sheet on the v4 patch set is available at:
+> > > https://lore.kernel.org/lkml/1687955688-20809-1-git-send-email-quic_mojha@quicinc.com/
+> > 
+> > I doubt anyone follows the lists, so at least Cc some maintainers.
+> > 
+> > +Cc Alim, Kukjin, Vignesh, Nishanth, Matthias.
 > 
-> On Sun, Aug 06, 2023 at 10:29:04AM +0200, Krzysztof Kozlowski wrote:
->> On 06/08/2023 00:42, Andi Shyti wrote:
->>> Hi Svyatoslav,
->>>
->>> On Mon, Jul 31, 2023 at 10:36:13AM +0300, Svyatoslav Ryhel wrote:
->>>> After adding support for passing temperature data from thermal sensor
->>>> to MAX17040 it got dependency on CONFIG_IIO. From all defconfigs
->>>> using MAX17040 only s5pv210_defconfig did not have IIO already enabled
->>>> so let's enable it to avoid regression.
->>>>
->>>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
->>>> ---
->>>>  arch/arm/configs/s5pv210_defconfig | 1 +
->>>>  1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/arch/arm/configs/s5pv210_defconfig b/arch/arm/configs/s5pv210_defconfig
->>>> index 4c1e480b5bbd..24070ee3d43e 100644
->>>> --- a/arch/arm/configs/s5pv210_defconfig
->>>> +++ b/arch/arm/configs/s5pv210_defconfig
->>>> @@ -97,6 +97,7 @@ CONFIG_MMC_SDHCI_S3C_DMA=y
->>>>  CONFIG_RTC_CLASS=y
->>>>  CONFIG_RTC_DRV_MAX8998=m
->>>>  CONFIG_DMADEVICES=y
->>>> +CONFIG_IIO=y
->>>>  CONFIG_PWM=y
->>>>  CONFIG_PWM_SAMSUNG=y
->>>>  CONFIG_PHY_SAMSUNG_USB2=m
->>>
->>> Should this patch be squashed to the previous patch? I think you
->>> break bisectability for this board if you enable iio only here.
->>
->> The defconfig change matters less - distros don't use them - so this
->> points to the fact that patchset affected the users. All existing users
->> of max17040 drivers, who do not enable IIO, will have their setups broken.
-> 
-> That's why I'm suggesting to squash this patch with the previous.
+> Thanks @Krzysztof/@Brian for extending the list.
 
-It would not solve much. All existing users will be still broken.
+Hi Mukesh,
 
-> 
-> Anyway, up to you... except of this note everything looks fine in
-> the series.
+Since no one has responded yet: I suspect your best bet to land the
+minidump functionality upstream is to refactor it to use the pstore
+functionality that Rob suggested:
 
-I would actually prefer not to depend on IIO, but this would require
-stubs for missing IIO functions.
+https://lore.kernel.org/lkml/CAL_JsqK7MHR09U5h01=Gf1ZLeDVCgZdN-W1hQRH3AX+E94_uUg@mail.gmail.com/
 
-Best regards,
-Krzysztof
+Brian
 
