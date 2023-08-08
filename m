@@ -2,117 +2,109 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A81CBC001B0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Aug 2023 20:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C69C001DB
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Aug 2023 20:48:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234180AbjHHUd0 (ORCPT
+        id S233250AbjHHUsP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Aug 2023 16:33:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39462 "EHLO
+        Tue, 8 Aug 2023 16:48:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234747AbjHHUdH (ORCPT
+        with ESMTP id S233904AbjHHUsC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Aug 2023 16:33:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B95E5AC6E;
-        Tue,  8 Aug 2023 10:02:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3697F61AA9;
-        Tue,  8 Aug 2023 17:02:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9664C433CA;
-        Tue,  8 Aug 2023 17:02:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691514155;
-        bh=ATXpfxlq2nkVzaslrJEtPL7Am1LPKQ5nq2x9hWexo9A=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=VqehRm5FttgFzXgTZNvxsHCKo6dwAPk9EklpjDPrze+zGQ+Q8VGADnGr1umjHfufn
-         54ZxjciXNdsAUhOnNio5g1VoPdfLfz8bb232ZZun7gZLuTw0nO1HPzD27FrjK0Gv70
-         quYZ5DCR+obScBWw/Z7bS+2kGU0POXpNeFX+Bf0VwNrRC7JZTV9emjZK/OUNADAQDV
-         /hdPRsou1GAGvQyzTD1Z9y2gxhfdD1TBXuHkVQ3/Q9vQ7nNIyDaPBuCnNTUtNM8St/
-         eODKIgaOXVmx71/hIp17f4x9k0FaIwkj0La8EvHUr8jjjcl207KBfeNcHy2UhNztrz
-         dgJdKXDILsQ/w==
-From:   Mark Brown <broonie@kernel.org>
+        Tue, 8 Aug 2023 16:48:02 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38C7F41220
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Aug 2023 09:40:52 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-99bdcade7fbso811823666b.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Aug 2023 09:40:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691512848; x=1692117648;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qtIG2M/ca+5GsdX8n1RK00emvWGjV3tMf5tcX7VIHus=;
+        b=gFJH3s3CoTCkV3leqMUbZMzudyki+VKkP1J5hjmm55Ji9tpo+nSZkTexs0oe0W3/nA
+         k/CO9EmlFHvRhrydKxSNFbVYLE1VJct+Co/8h5QWWZxjxhA7wcAhUhv/Xe+He4TJP/1E
+         IKlg9ZIIuEoadufD9OCm3fvXcyovTsDVTzq7be4qfyyTEfKSXaveEYRbBHN89gNwDjpF
+         fdmgg/+OjYaZmoCiKLmkgbqboWBE3BSX64SexJ4WYektYpXt7ZyJ+tOu3HoZFUH18y8W
+         5N9IWxIyaDybLC3IIH/mVVpXxyDMTJVN8TVhDV7ew+l5WVkUZGOGS4C4IUVz8MXEr04A
+         fFSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691512848; x=1692117648;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qtIG2M/ca+5GsdX8n1RK00emvWGjV3tMf5tcX7VIHus=;
+        b=lp+4Qcgbgkl4UOs20HaUHBNM7gMh/qTzEjXofILt6slBYeg667Z+Ul0JNt+4UtHx3+
+         eFNDCcp2XjMLSowSAPeTZTk4g3ROxrLqD7bNYy3jZP6KGx2OcEPDip+pbWKG/1bzpRsA
+         dBtkah6ZehtgnOVqxVF49z88QXsbDkxuzYFfbASOPxXAuUDVKQASqwy28MIkxPCHxM0Z
+         7yDBM/Hhfg5NhEuygRIQXcDLniCbuwOu/PnMp19aiXBuWOR8UHKbw3RsZ42nO8ibAHVk
+         gii+jF18ry0fHNyoyILCHM2KRFX8uRS/OAyDS0tFP8aWs4hBiA8J8DoUaYIOHirOaH1N
+         S/rQ==
+X-Gm-Message-State: AOJu0YyCjJB4oHm00ThnECkOT0SzWVvkgUd14zCJLSkYSxX2jUsrK2m1
+        3vwbAFSDL+M6LYf7A1F9tV/OmCYEjWHngQIjJUg=
+X-Google-Smtp-Source: AGHT+IGabpvcf+YfqqvSp128b6pb/ZcVi3xmONq1O6a4S0szO5ZdOqerklrUaTjPj2ZyYc9Tu1UkPA==
+X-Received: by 2002:a2e:6817:0:b0:2b5:8a21:5627 with SMTP id c23-20020a2e6817000000b002b58a215627mr9324746lja.51.1691502403287;
+        Tue, 08 Aug 2023 06:46:43 -0700 (PDT)
+Received: from [127.0.1.1] ([85.235.12.238])
+        by smtp.gmail.com with ESMTPSA id u23-20020a2e8557000000b002b93d66b82asm2284493ljj.112.2023.08.08.06.46.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Aug 2023 06:46:42 -0700 (PDT)
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 08 Aug 2023 15:46:31 +0200
+Subject: [PATCH 04/11] regulator: rk808: Drop useless headers
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230808-descriptors-regulator-v1-4-939b5e84dd18@linaro.org>
+References: <20230808-descriptors-regulator-v1-0-939b5e84dd18@linaro.org>
+In-Reply-To: <20230808-descriptors-regulator-v1-0-939b5e84dd18@linaro.org>
 To:     Tony Lindgren <tony@atomide.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
         Claudiu Beznea <claudiu.beznea@microchip.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
+        Matti Vaittinen <mazziesaccount@gmail.com>
 Cc:     linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-In-Reply-To: <20230808-descriptors-regulator-v1-0-939b5e84dd18@linaro.org>
-References: <20230808-descriptors-regulator-v1-0-939b5e84dd18@linaro.org>
-Subject: Re: [PATCH 00/11] Regulator legacy GPIO header removal
-Message-Id: <169151415259.72832.7760300817402372059.b4-ty@kernel.org>
-Date:   Tue, 08 Aug 2023 18:02:32 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-034f2
+        linux-mediatek@lists.infradead.org,
+        Linus Walleij <linus.walleij@linaro.org>
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 08 Aug 2023 15:46:27 +0200, Linus Walleij wrote:
-> This removes some low hanging dangling <linux/gpio.h>
-> includes.
-> 
-> 
+The RK808 is already using the proper <linux/gpio/consumer.h>
+header and includes the legacy headers <linux/gpio.h> and
+<linux/of_gpio.h> for no reason, drop the includes.
 
-Applied to
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/regulator/rk808-regulator.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk808-regulator.c
+index 460525ed006c..e65339ef47ad 100644
+--- a/drivers/regulator/rk808-regulator.c
++++ b/drivers/regulator/rk808-regulator.c
+@@ -15,10 +15,8 @@
+  */
+ 
+ #include <linux/delay.h>
+-#include <linux/gpio.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+-#include <linux/of_gpio.h>
+ #include <linux/mfd/rk808.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/of_regulator.h>
 
-Thanks!
-
-[01/11] regulator: tps65910: Drop useless header
-        commit: 9b966639b0cc742a9c4b6329a8e27128e4424cf1
-[02/11] regulator: s2mpa01: Drop useless header
-        commit: d0d58fe27b344fb6d0edb5fd2038372b5e5ed95b
-[03/11] regulator: rpi-panel-attiny: Drop useless header
-        commit: 052eff402fb754f3472833cb679ceef954ebf2a0
-[04/11] regulator: rk808: Drop useless headers
-        (no commit info)
-[05/11] regulator: rc5t583: Drop useless header
-        commit: 2f26d97863f05b83b8f7872aff81ecb9d6b76b50
-[06/11] regulator: mt6311: Drop useless header
-        commit: 4eb351fb89d68efeaca3625dccbbf492f5450801
-[07/11] regulator: mcp16502: Drop useless header
-        commit: 2e903eac35ec0ea1f44af5a53d87d98309295fc3
-[08/11] regulator: max20086: Drop useless header
-        commit: d150c73aa233d6469392282ef648dba5fd4b4821
-[09/11] regulator: lp8755: Drop useless header
-        commit: e4d48f64fcd469feeb09fc452f8cd1dfc00b43f6
-[10/11] regulator: bd71828: Drop useless header
-        commit: a5c9a1444088099c6d52939ed2f34049d5d00b5f
-[11/11] regulator: bd71815: Drop useless header
-        commit: f321708da4db6b15a8691dc64b2d5169234937bc
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-- 
+2.34.1
 
