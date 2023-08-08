@@ -2,64 +2,65 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2111CC001DB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Aug 2023 17:57:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B50C001DB
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Aug 2023 17:58:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229950AbjHHR5X (ORCPT
+        id S235183AbjHHR6D (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Aug 2023 13:57:23 -0400
+        Tue, 8 Aug 2023 13:58:03 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231615AbjHHR4c (ORCPT
+        with ESMTP id S229485AbjHHR5X (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Aug 2023 13:56:32 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99A4844AA
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Aug 2023 09:25:34 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-99bf91956cdso769625066b.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Aug 2023 09:25:34 -0700 (PDT)
+        Tue, 8 Aug 2023 13:57:23 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12E7FC20A5
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Aug 2023 09:26:02 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-52307552b03so8071905a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Aug 2023 09:26:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691511924; x=1692116724;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1tJ6rclTR0PEh2oroSnTnDtEG+/lNahgfPTnucDt2ik=;
-        b=tc1sSPEoLW/wJNv1Hszn+BIBihepQ6vMCYWy1OlaUNdIZwzAk3jw17aj8u4M0vufgj
-         VuWI/bsH08+yDX8xJm0AgKnoKjMO/CFMQl4h6mtAQDOYz7VOrAmQ9foOpypn6QnY0r+q
-         nTbp+BKaXChHksiGqhjp6bDsA9PqXY9dzRo9SRKZZ32qCqU1g0FDaOIp50/kqdbMbxPz
-         cizA4u4UtE2MHZzHnA9VuR5/ULECvbbflf9L4G44gGJOTDHcbwX5oJ1/FhvJP61L1Ak8
-         7F6LM4PSyuW/cufBz1S3vIuGpAReiif3bx3T8Q7/EddZSQrDh2C4+d80fpM3MEM7LA18
-         LeHg==
+        d=linaro.org; s=google; t=1691511949; x=1692116749;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=d/kMxPLtuYtfsGSJG2tOdeZ1yEQcKsWU7BmPk/CzUa0=;
+        b=tv4vzLr5H1s4ugTiC4gQeKDTg7aW3O54JLSjTrscVnNJsO9XxOW4s70nVTrn5oIbWe
+         k/9WOnox+FuLd0p8oP7ZxEZzKuW/VOihKG4HmlQfkts68VSKaS+3pgO7PGJb7C1wWPGh
+         2dQ7DMRnEk+D7f3GTR3UbK5l8iNwvLbISbqNUTqq+rc548munc3p3Yk2HWKz7JuWksek
+         cPrX3aMYTJh7IYQttK5YxOKGTRgpc3+ILtEeZ41Y2w7iYeUw1duL7Lkb++BxexAio2QF
+         buNwhHwlT6QM5I7DVTSzOy43kVBv+BAJGi4cEFOahVZOHfq5SlXvOZ6MckoaRuRmA1A8
+         z0Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691511924; x=1692116724;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1tJ6rclTR0PEh2oroSnTnDtEG+/lNahgfPTnucDt2ik=;
-        b=JNtTZ9TcKb4KtSFZqOOPnqDRB79v/1/r6w8kKyfK18zooMA1VpIFpLxY899YKv43KM
-         CpGROQNHnntVR8q//fIyB5jUT7rIBySFsj/a7+p05QgXPOnxEcyqWekGqMoGybkaQ3oj
-         TEpoFM9kyAuFkwkVpeXvCnlCrSm2OUihS6oAifuP7dDsfFYXZByhfaKrVyeGYa31WDiB
-         VnLrH41pt4nk/F/BaTLHpwczD6QA7YV78vD9AzXE2I8E9e68zZy2Haq341xzjJJ5cF4k
-         vNuMISU8rFt9sfrbcOC/wf9dbrNX1qaJLNxo1nSegpqlFem+BCkUxg/thq5/p1Kijlta
-         mfIA==
-X-Gm-Message-State: AOJu0Yz2N/qNFuQRx66F03Dl7p+Bd/avah9n4EoS7DYtyez0oHVGgq3w
-        YFleNUeoTlDCfGlRJRR9Ve874x7BZkBaNIFwNWA=
-X-Google-Smtp-Source: AGHT+IFYJ1tDnISQpqIa3O1xFstJdgHXSmoJBbKAjvv0Omwmg90Vc69nrF9vgwo5e9S+tacn/hSCZQ==
-X-Received: by 2002:a2e:9b01:0:b0:2b6:c790:150a with SMTP id u1-20020a2e9b01000000b002b6c790150amr9582164lji.22.1691502405476;
-        Tue, 08 Aug 2023 06:46:45 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1691511949; x=1692116749;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d/kMxPLtuYtfsGSJG2tOdeZ1yEQcKsWU7BmPk/CzUa0=;
+        b=gwMVV/Spb5jEFhYaJat+b2vidSUo3OZjUBMVaWkZRI5A1yjqN+7K1TmzQe4FsTnst0
+         73/mJbZn6EViZCySR7gOOIowhbKNaqI6Ib7lv/hYnhB0gNCRX6R7DfHBcm5sQp/OPc9C
+         h/6h+NWz7akwIjmW8X+PblAixi/H8t2HPYOJyr73RKXZhfo3EcjX4WXjq2x0c7mDGsU9
+         7z6QxsKzlkgm1xI69k29ucBdZR6oVKnqCHB56dtbxJ2Se7dU4h1dT684VUcFkG0Pe6/+
+         aTtKKPXatDeAlaL6KtEAuyKZVCgvI3nf8/BPUge3Al6A4zqJSmH+XleGzgGcdCvag6Wp
+         lHzg==
+X-Gm-Message-State: AOJu0YzosvYb9QFxjjomwT6V3oAzq8pfbunH7qtTxWP1MZ+MSu2HwlG1
+        lkp6FFy8MLT4uH9FP+V/ijSVaUvnc8AfesHserU=
+X-Google-Smtp-Source: AGHT+IHWCMZNWUenzR2ow6DEw9qzbs1hN0zvPorE5eMO9zjCNiMy4ZjezjEMoOdrW0oJwauJJK4sjw==
+X-Received: by 2002:a2e:9e0c:0:b0:2b9:a6a1:f12 with SMTP id e12-20020a2e9e0c000000b002b9a6a10f12mr8506359ljk.43.1691502397847;
+        Tue, 08 Aug 2023 06:46:37 -0700 (PDT)
 Received: from [127.0.1.1] ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id u23-20020a2e8557000000b002b93d66b82asm2284493ljj.112.2023.08.08.06.46.44
+        by smtp.gmail.com with ESMTPSA id u23-20020a2e8557000000b002b93d66b82asm2284493ljj.112.2023.08.08.06.46.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 06:46:45 -0700 (PDT)
+        Tue, 08 Aug 2023 06:46:36 -0700 (PDT)
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 08 Aug 2023 15:46:33 +0200
-Subject: [PATCH 06/11] regulator: mt6311: Drop useless header
+Subject: [PATCH 00/11] Regulator legacy GPIO header removal
+Date:   Tue, 08 Aug 2023 15:46:27 +0200
+Message-Id: <20230808-descriptors-regulator-v1-0-939b5e84dd18@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230808-descriptors-regulator-v1-6-939b5e84dd18@linaro.org>
-References: <20230808-descriptors-regulator-v1-0-939b5e84dd18@linaro.org>
-In-Reply-To: <20230808-descriptors-regulator-v1-0-939b5e84dd18@linaro.org>
+X-B4-Tracking: v=1; b=H4sIADNH0mQC/3WNQQqDMBBFryKzbkqMtUpX3qO4iGaiA2Jkpg0tk
+ rs3Fbrsbt7n/zc7CDKhwK3YgTGSUFgzlKcCxtmuEypymcFoU+lWN8qhjEzbI7Aoxum52HyqCl1
+ jL8Y73RjI243R0+vw3vvMM0muvY83sfymP2P7xxhLpZXxvq4GfbVDbbuFVsvhHHiCPqX0AYvhI
+ ou7AAAA
 To:     Tony Lindgren <tony@atomide.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
@@ -80,27 +81,41 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The mt6311 includes the legacy header <linux/gpio.h> for no
-reason, drop the include.
+This removes some low hanging dangling <linux/gpio.h>
+includes.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/regulator/mt6311-regulator.c | 1 -
- 1 file changed, 1 deletion(-)
+Linus Walleij (11):
+      regulator: tps65910: Drop useless header
+      regulator: s2mpa01: Drop useless header
+      regulator: rpi-panel-attiny: Drop useless header
+      regulator: rk808: Drop useless headers
+      regulator: rc5t583: Drop useless header
+      regulator: mt6311: Drop useless header
+      regulator: mcp16502: Drop useless header
+      regulator: max20086: Drop useless header
+      regulator: lp8755: Drop useless header
+      regulator: bd71828: Drop useless header
+      regulator: bd71815: Drop useless header
 
-diff --git a/drivers/regulator/mt6311-regulator.c b/drivers/regulator/mt6311-regulator.c
-index b0771770cc26..63a51485f2cc 100644
---- a/drivers/regulator/mt6311-regulator.c
-+++ b/drivers/regulator/mt6311-regulator.c
-@@ -4,7 +4,6 @@
- // Author: Henry Chen <henryc.chen@mediatek.com>
- 
- #include <linux/err.h>
--#include <linux/gpio.h>
- #include <linux/i2c.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
+ drivers/regulator/bd71815-regulator.c          | 1 -
+ drivers/regulator/bd71828-regulator.c          | 1 -
+ drivers/regulator/lp8755.c                     | 1 -
+ drivers/regulator/max20086-regulator.c         | 1 -
+ drivers/regulator/mcp16502.c                   | 1 -
+ drivers/regulator/mt6311-regulator.c           | 1 -
+ drivers/regulator/rc5t583-regulator.c          | 1 -
+ drivers/regulator/rk808-regulator.c            | 2 --
+ drivers/regulator/rpi-panel-attiny-regulator.c | 1 -
+ drivers/regulator/s2mpa01.c                    | 1 -
+ drivers/regulator/tps65910-regulator.c         | 1 -
+ 11 files changed, 12 deletions(-)
+---
+base-commit: 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5
+change-id: 20230807-descriptors-regulator-3ed7a42fd072
 
+Best regards,
 -- 
-2.34.1
+Linus Walleij <linus.walleij@linaro.org>
 
