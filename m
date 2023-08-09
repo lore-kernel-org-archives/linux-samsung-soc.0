@@ -2,174 +2,177 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72EA8C001B0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Aug 2023 13:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFC5C41513
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Aug 2023 16:18:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231752AbjHIN5U (ORCPT
+        id S230250AbjHIQSb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 9 Aug 2023 09:57:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42888 "EHLO
+        Wed, 9 Aug 2023 12:18:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229658AbjHIN5T (ORCPT
+        with ESMTP id S229693AbjHIQS3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Aug 2023 09:57:19 -0400
-Received: from smtp2.axis.com (smtp2.axis.com [195.60.68.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8D4998;
-        Wed,  9 Aug 2023 06:57:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=axis.com; q=dns/txt; s=axis-central1; t=1691589438;
-  x=1723125438;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=pGhoi9CnrUQDz4w7zPHrJrIA8Tm/XClaj+RjQPMV0tE=;
-  b=MjGF2ey474AFfQOv7LKTP7tvc1eCgdt2E2RDfEeIXn7NOWCTIb6NSjUd
-   c3bBJYuLpByKEekIo3JwzCXYBAaQd88Qn5RNjRhWmIrxTr3OiRWYvPq3F
-   EZVYWdZ2l+hSqTHFFjEYwVEwOKsGX4pfIua/8G1EP5HwC3iBD2uwIUCiC
-   Kq+Mh7UvnLLi6n9YAWrng47OQZOoA3n3e39SN1atVtmUVGqf5SvwSWFY0
-   ZJvfy84v85eUMXWwzMfSIzVdL4fP7wp6zWiwwNJcnf+CEVdjxumU8Os20
-   i4mYHTVtPaJb404+0XCO8xDML3r3kRJbWGgEQLXUzdxTeYn6glRafyBT/
-   g==;
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bP042yidy7wfbu+NXcK5kBZWKv64DhBIu+8I7+FJfYh4ep4mFB7Y4cB6LWBHlOgNS1wlw2ZbixV44Qwbraf5djJUrmYXVn2tm2dnaiW/I/SsHvvwSjwONgdy62NAOrgWLTPMZa99R714SYqwtwdjSnUNAe/SvFGqdr2TiS9snqnawI1JUjqmWEGmlHMg4OEyRuBjBJlaPaxLRCv5g4zwBs2AigXHMQSgNIIlcsygK7dNacHOIeDFyLfnaaM9eYYkB9u/WM3QQtueiKp5JUYGXpRxIThGc17DfhhOaXS+PbQ8ORr5Ja7QWYmg52GwOjArepEeGU9cRPoL+W9jsYadpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pGhoi9CnrUQDz4w7zPHrJrIA8Tm/XClaj+RjQPMV0tE=;
- b=giNvYqM7Tqs9qd0z8kwHQJ6TdPFMl2QyEMezOI0G/d4RXrETo+EjlnWIGgPtXPZVm5PTB7ChDgk7jz/CQurcQjANyM5I9xggYWVRu5WDyCeYYlnyPJC8Gqh7VEJiWW2AP5fQpZAu1bSgYhXukydR32QYRMnWm6C+25hPqDChkIio5fYTqVMY6PUqqpZA9aV6cK5nwX8Bx5wi63ddvaleE7QS9oesrSIZtlrW8u3i8YsmXzilEXQUmsFXb0d/w9fli0SUxjZw1rcDG1BNPK0TUwPGQSe/2wiz73n3CqHkm6uOjEuDGV70BcmKSj8lXaCyYVdNMkcrgt7sXcxGX0cMog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
- dkim=pass header.d=axis.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=axis365.onmicrosoft.com; s=selector2-axis365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pGhoi9CnrUQDz4w7zPHrJrIA8Tm/XClaj+RjQPMV0tE=;
- b=O7/wtqKML6ZpY5Cpg//F8IITEtCmijCu4R+z7jIlioNbdFYye+i+TqXVyJRojGyHdXLla0Amwj0a66v4HMLLTtcr1Syn/AV06yjd+LXXuzrratB9gxYEZ+iZvMoP/jUfYmcG41J2c0eVO5mTyVMdnSPdA5ovpJEnKUFN7CIO4os=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axis.com;
-Message-ID: <47611b1a-8cea-acba-dbc3-bbbba9470d34@axis.com>
-Date:   Wed, 9 Aug 2023 15:57:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] tty: serial: samsung: Set missing PM ops for hibernation
- support
-Content-Language: en-GB
-To:     Andi Shyti <andi.shyti@kernel.org>
-CC:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@axis.com>
-References: <20230803-samsung_tty_pm_ops-v1-1-1ea7be72194d@axis.com>
- <20230805213824.ol7sr3b52rwrsfs6@intel.intel>
- <1dbc24c4-b057-0e71-432a-a7d0ce2df2dc@axis.com>
- <20230807213452.aev2ubalxvydmxjv@intel.intel>
-From:   Anton Eliasson <anton.eliasson@axis.com>
-In-Reply-To: <20230807213452.aev2ubalxvydmxjv@intel.intel>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MM0P280CA0040.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:b::11) To AS1PR02MB10348.eurprd02.prod.outlook.com
- (2603:10a6:20b:473::13)
+        Wed, 9 Aug 2023 12:18:29 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0CD51982;
+        Wed,  9 Aug 2023 09:18:25 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 379F7Kbd015177;
+        Wed, 9 Aug 2023 16:18:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=pc+j7IaGMjxp0gWLH/cgKwZFlgWmLlLO/9/+BwPqzeo=;
+ b=MJlzFhUrRSUHKJysr6TuYDlhd1iYS/ouQn6Hcs0uKBowN+fs2AUDTXES9eKdy5tVGdi7
+ HIdV0LDXbuRSImfdZSXvrJwVg/DIYoWfdcPtkqaKwl1db6XtS9abTASw6EBHwI3MdbC4
+ KPKAmtdsPb4jDosiBakhdB8Aonu3Q6yW8mivWZn+d0HYKw/7rD9jTRDkafVVutm6Vleb
+ rla4uIAdAzJLpwStK1+98Bn8KakXzgSXPzvCe81W3AjU27dUStVXVbMvYRhkGpxOSwye
+ A2f/HiVL9T4AdERYuH/Df7mwaDB1etnk9md0m7slHzSxAOFnhrOT6dDuv5O1fg5igR9T zQ== 
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sc1ny1rhb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 09 Aug 2023 16:18:09 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 379GI8FN018967
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 9 Aug 2023 16:18:08 GMT
+Received: from [10.216.57.155] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 9 Aug
+ 2023 09:18:02 -0700
+Message-ID: <a8750c05-15d4-1b58-c274-39f24ac018ca@quicinc.com>
+Date:   Wed, 9 Aug 2023 21:47:58 +0530
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS1PR02MB10348:EE_|GV2PR02MB9638:EE_
-X-MS-Office365-Filtering-Correlation-Id: f32e4116-ad64-47bb-4879-08db98e08676
-X-LD-Processed: 78703d3c-b907-432f-b066-88f7af9ca3af,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: n98+fFm8y3BlR51CvNWVV19MFxiFKTJ6/+oK3VWm0ZS9+aIY13KZH/TxNyvdV+waFbyiXafgVDOfgF0xU+/UWd4QHm0NWm11eR/jLaZCXOUvL/fEEP8icQgdYTQ/nKyKCYsfl8uZwXevv/W77IJATQVJ0BBI1pI3SOD9V0YXIPjDeGbYvYOfcfo4r67HHdbh4jIuIZXycW3ruu3OTiZ3QXGbD7+64OYzGe6tGMN7ipHoXPClxYh8EMh6U9XYG2FI95Szu/3ft2j4c4wNxm3v9Dt6ILQ3b3a14pRf7DkL1iKj02Rb1p0zgDivr6W59jseqZZ4ZsLZ0Tw8om8yppqP0wpBhrQE9HmRdQTJMfKLG7C/OY/Wg0sHk9Ef+3VeWPJQKiRVXBWMSiQhb9fVzXMRpZQH5fB4D0r6tpKUqf2K2gS0kgLLJVaX5Lo3rVRsuYruVUjx7wL7p7o2X5AEy5e81i2nMuKb0QzAXQjPkvq1WSJKWKUT9nRfFacoQKkxDGlGI35V1wXLuytOprBDwcpOZKcXuAm/VIopp0iO98JtTAsAyb7eAsdmVcO/cLVDe/FIFgfqyDEhVi3gEY6MhEoEDKGTJZ3L1JnLh1ZVzIHAp5QTpn/lwi2muw0J1ZppjhTF
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS1PR02MB10348.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(39860400002)(136003)(396003)(346002)(376002)(366004)(451199021)(1800799006)(186006)(316002)(6916009)(4326008)(83380400001)(41300700001)(54906003)(966005)(6512007)(478600001)(6486002)(2616005)(66946007)(66556008)(66476007)(6506007)(26005)(107886003)(2906002)(36756003)(31696002)(86362001)(5660300002)(38100700002)(8936002)(8676002)(44832011)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bVNFVmoyK1h2cS85NnliYnNROXRRK0c3SnBlQW1sSGdXYzA3aHcvc0Z5VE9j?=
- =?utf-8?B?OXFuVWFzSE5kQWNPQW80VisrN0FTU1FRS0N3TlRrdU1zVXdkblVPZTIrYVUy?=
- =?utf-8?B?bUo4Z0VCV0R4VHdEY054SXdUalJpS2E1THNzdkpqaDcycWIrdkNTaTF3V25m?=
- =?utf-8?B?N3hLU0NiTUZhU0tudmowQURtSUQ4VHI0QjVSd1J6aXdpekszZVAxczZGT1Qy?=
- =?utf-8?B?bkZrWDVFZHk0MmFTV0FoaEY3M1lwMDlabzk3ZUphM29nUW8vVWNuSzFJbU5C?=
- =?utf-8?B?Mi8zVy9zeGIrVzE0RTJ2bVgyS05HNUVkMGxYMDNjVkRVY1hyMTdqcUx5WEll?=
- =?utf-8?B?MzhKOHAySkZDOEM1U1ZaRTlFK3JuVHpoZ0xOb3pNSG1sWjlKN0ZVWlFxOEhJ?=
- =?utf-8?B?YmM4b1NqQWFvRHVQekhSZ2oxb3czcjd6aWdjWDFxMG5pcU9BWDVLMG9zQjNl?=
- =?utf-8?B?ak9yUXhWZkRnT0N1eDhWTlpyNVNscUVYZFpDVlVWczJUYk9za0J2UE1kQk5J?=
- =?utf-8?B?OEIwRTRwU21nUmwvVEM2Q0c3YmxoM2VPRVJLd1JHOG0wWDRrOGlPRzFCMmJN?=
- =?utf-8?B?VW1UMmF4Q3lkMEVnWEN5NWhqUktIV09BTjZvZWxOa0EzazQyVXNQRVdqTUV1?=
- =?utf-8?B?b2JpRTZTTHp5dWdpN2NLMGlPNG5SZTQ4ODN6dHlmV0FKbVRJZy9XNG14cWgx?=
- =?utf-8?B?NkdRL1NvOXhVVHpvYkU5NG9jR2NkTUwzc2VQbU9NUjQyMnpDbVQ1djkvaHp2?=
- =?utf-8?B?TXNJWVFWMytlMjhYZWZVczlZeXEvRDYwc1FPTytiWHQycGNDdzg2MmsrcVhk?=
- =?utf-8?B?WXkyNzJJM285a0RIelF5K0k0ZWFUNUpJWTRDVVlqdU9tYmMyUTNKVUJQN2do?=
- =?utf-8?B?V2swZzVWT3BLR1h0bjB0UEFpK2hPR2c4anVXZWtBdTk1aVBSQzZmcGZQc0JQ?=
- =?utf-8?B?UU1TY0o3MWlFL0tmMDdoRlpoWDE1Yy85ck5BUExoRTlKMFZ4Rjkzbk5mT2ls?=
- =?utf-8?B?eFBxajljb1NTUlRSQ1ZBdzVGYlRPbmZzUThrSUpBc0w1N1Zjam9qeFlsYytU?=
- =?utf-8?B?RFdDcGhWTk5YdXMzQmJSUnZyaDVkZGhUdFYxUEQ0aGNSZk52ZTFveFlqWkxt?=
- =?utf-8?B?STRBd3ZDSVdWV3VtQUx3aHBlZ2tKN1dvb1B1WUZZbFMxZUJKQVV6MlhCZnQx?=
- =?utf-8?B?MnRTZ1U0OUxiSHJVZjJHc2g2dUIwN1d2SWlYZXFtOVcwODZDVTJsTWkrTnBD?=
- =?utf-8?B?UGxBTVZFUXU4UlVCUGtyajJqT3N0bzA1WXlLOTRyR1JSNXM5dk1XZmJMZjgz?=
- =?utf-8?B?MWU0a3d3cUtQeXBzYlBQbGxRMlFxblFXMm5UY2tOWllIYmEzL3ZWaVFOTzFB?=
- =?utf-8?B?bFh3TjVrVC9pNlNjT1IxWDdIS1FhcG1Ib25Wcmg5SG9rSCtTSnRHUWd5cEZu?=
- =?utf-8?B?NDEvcHJjMVVpVHR4OWhPUzRmYnFUMlNERkNKRFdZM1praFhUdlNxWXlxQkxG?=
- =?utf-8?B?UDJFRzRoTkxUUDc4Z0xyc2FLSERCOWRNbXI4NWZHc0VZaXlXbXNWSWlJVkNV?=
- =?utf-8?B?Vytlc2xSTFJCaUZ1em9FNjMwd09HZjJVejAxZUd1b1laNlo5Y0F6Y0cyc2pC?=
- =?utf-8?B?emhQN3lTR3k4bzNJSC9HaGROQmFNL2oyNlQ4dkVDTlpEZjlaNVRnU2dCdkJm?=
- =?utf-8?B?ZVRFU0hQc1BWeVFaQlJ3ZGdnT0RKSzFVT0ZTdHdpeWFPR2taVDFuKzlDK1pt?=
- =?utf-8?B?ZmdtQnMzU1lhcGJGbnBMVytkdVgreXVrVkd3cnRUc240aWxnOUdiUDU2YThr?=
- =?utf-8?B?WHNKMFNqd3VPYWZPK2U4YVgzUURqdFJmY0ZIZXgrazhzNjA4cFJwOVRIV1l6?=
- =?utf-8?B?MHdXSDlpOW90aXNLMzQ1WStkZk9TUlVKdFdUS0tmYW9sbS8rbnZqZnRxRnFj?=
- =?utf-8?B?anpDQ0ZhdllQMHNOSk4rRkF5bXhOeUVETkViUmh3THRLRnZyYy9wVXVOTzVT?=
- =?utf-8?B?b2twSjVqSFYydXpxeXplaHFaRGwySHZhRDllaVIwNDhMZFIxa0FWRitVbmx4?=
- =?utf-8?B?OUw2Y0ZGK2tvQXNQTFpNVTdxaW9POGtoTEZIK2d4RlU3djVBMG5TRHB6a1A0?=
- =?utf-8?Q?5VXU=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f32e4116-ad64-47bb-4879-08db98e08676
-X-MS-Exchange-CrossTenant-AuthSource: AS1PR02MB10348.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2023 13:57:10.0829
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IJimeNqoNIvQvHSWHwjjOAqoRJ6hFG80hOZSb6OtdE84IcqgcOjHedbtYo6pCkW5
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR02MB9638
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: Feedback on Qualcomm's minidump (debug) solution for end user
+ device crash
+Content-Language: en-US
+To:     Kukjin Kim <kgene.kim@gmail.com>, Brian Masney <bmasney@redhat.com>
+CC:     Krzysztof Kozlowski <krzk@kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Nishanth Menon <nm@ti.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+References: <ZNEJAh0in/fjq6s9@brian-x1>
+ <1DAA278D-BDFE-4880-8453-99F098D4E259@gmail.com>
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <1DAA278D-BDFE-4880-8453-99F098D4E259@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 75Jwzds8lHrLoCfIBzffa-zf_i-VWGcn
+X-Proofpoint-ORIG-GUID: 75Jwzds8lHrLoCfIBzffa-zf_i-VWGcn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-08-09_13,2023-08-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
+ spamscore=0 bulkscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
+ impostorscore=0 malwarescore=0 mlxlogscore=881 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2308090143
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 07/08/2023 23.34, Andi Shyti wrote:
-> Hi Anton,
->
-> On Mon, Aug 07, 2023 at 11:57:04AM +0200, Anton Eliasson wrote:
->> On 05/08/2023 23.38, Andi Shyti wrote:
->>> Hi Anton,
->>>
->>> On Thu, Aug 03, 2023 at 01:26:42PM +0200, Anton Eliasson wrote:
->>>> At least freeze, restore and thaw need to be set in order for the driver
->>>> to support system hibernation. The existing suspend/resume functions can
->>>> be reused since those functions don't touch the device's power state or
->>>> wakeup capability. Use the helper macros SET_SYSTEM_SLEEP_PM_OPS and
->>>> SET_NOIRQ_SYSTEM_SLEEP_PM_OPS for symmetry with similar drivers.
->>> and why do we need hibernation in this device?
->>>
->>> Andi
->> Hi!
+
+
+On 8/9/2023 1:19 PM, Kukjin Kim wrote:
+> 
+>> 2023. 8. 8. 오전 12:08, Brian Masney <bmasney@redhat.com> 작성:
 >>
->> I wanted to test whether hibernation is possible on our SoC, even though it
->> is not a common feature on embedded ARM systems. This is the only mainline
->> driver that I found that needed modification, for my proof-of-concept
->> anyway, and I couldn't see any harm in the change.
-> Thanks, makes sense, mine was just curiosity, can I know which
-> SoC you are testing that is using the samsung serial device?
->
-> You can add my r-b, anyway:
->
-> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
->
+>> ﻿On Mon, Aug 07, 2023 at 06:01:27PM +0530, Mukesh Ojha wrote:
+>>>> On 7/30/2023 5:14 PM, Krzysztof Kozlowski wrote:
+>>>> On 24/07/2023 18:59, Brian Masney wrote:
+>>>>> + linux-arm-kernel list
+>>>>>
+>>>>> On Thu, Jul 20, 2023 at 08:32:24PM +0530, Mukesh Ojha wrote:
+>>>>>> Hi Samsung/MTK/Any other SOC vendors,
+>>>>>>
+>>>>>> This is to bring to your notice that, we (Qualcomm) are working on
+>>>>>> upstreaming our minidump solution which is to address the problem of
+>>>>>> debugging on field device crashes where collecting entire ddr dump
+>>>>>> would not be feasible and collecting minimal data from the ddr would
+>>>>>> help in debug direction or even help in root causing issue.
+>>>>>>
+>>>>>> We have recently posted v4 version here [1]
+>>>>>>
+>>>>>> Based on comments[2], community is more worried about, if each SOC
+>>>>>> vendor come up with their own dumping method today or in future and
+>>>>>> whether it can have a common solution to a similar problem faced by
+>>>>>> other SOC vendor.
+>>>>>>
+>>>>>> We wanted to take your feedback if you also encounter a similar problem
+>>>>>> or maintain something similar solution in downstream which can be
+>>>>>> upstreamed. This will help us in a way to have a common solution in
+>>>>>> upstream.
+>>>>>>
+>>>>>> [1]
+>>>>>> https://lore.kernel.org/lkml/10dd2ead-758a-89f0-cda4-70ae927269eb@quicinc.com/
+>>>>>>
+>>>>>> [2]
+>>>>>> https://lore.kernel.org/lkml/CAL_JsqLO9yey2-4FcWsaGxijiS6hGL0SH9VoMuiyei-u9=Cv=w@mail.gmail.com/
+>>>>>
+>>>>> Adding the main ARM list to solicit feedback from other silicon
+>>>>> manufacturers.
+>>>>>
+>>>>> The cover sheet on the v4 patch set is available at:
+>>>>> https://lore.kernel.org/lkml/1687955688-20809-1-git-send-email-quic_mojha@quicinc.com/
+>>>>
+>>>> I doubt anyone follows the lists, so at least Cc some maintainers.
+>>>>
+>>>> +Cc Alim, Kukjin, Vignesh, Nishanth, Matthias.
+>>>
+>>> Thanks @Krzysztof/@Brian for extending the list.
+>>
+>> Hi Mukesh,
+>>
+>> Since no one has responded yet: I suspect your best bet to land the
+>> minidump functionality upstream is to refactor it to use the pstore
+>> functionality that Rob suggested:
+>>
+>> https://lore.kernel.org/lkml/CAL_JsqK7MHR09U5h01=Gf1ZLeDVCgZdN-W1hQRH3AX+E94_uUg@mail.gmail.com/
+>>
+>> Brian
+>>
+> Hi all,
+> 
+> Sorry for the late response and thanks for the asking.
+> 
+> In Samsung side, we’re checking about that internally as well. I’d like to know whether the minidump upstreaming is considered to be used in other chipset or some logic of that can be used. In addition, if Samsung wants, own the way upstreaming can be acceptable. It doesn’t mean we have a plan at this moment though.
+
+Thanks for the response @Kukjin
+
+It is not something considered already instead it is what Qualcomm has
+support for its SOC in the downstream and we want to upstream the linux
+drivers and Minidump will need boot firmware support to be able to be
+used by other SOC vendors.
+
+So, the reason of seeking feedback on exactly the problem statement
+to debug crash from field devices where complete ddr dump is not
+feasible instead collect minimal information available to debug
+crashes and also about if SOC vendors have any solution for this
+issue which is common and upstream-able and can be leveraged.
+
+So, if the problem statement is valid and now it is the time to
+share and get conclusion on some common solution, Feel free to
+check and comment on our minidump patches.
+
+https://lore.kernel.org/lkml/10dd2ead-758a-89f0-cda4-70ae927269eb@quicinc.com/
+
+-Mukesh
+
+> 
 > Thanks,
-> Andi
-
-It's the Axis Communications ARTPEC-8, an SoC for surveillance cameras: 
-https://www.axis.com/solutions/system-on-chip
-
-Thanks for the review!
-
-Anton Eliasson
-
+> Kukjin Kim <kgene(at)kernel.org>
