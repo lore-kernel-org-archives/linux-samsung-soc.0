@@ -2,147 +2,185 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA5CEB64DD
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Aug 2023 06:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2699EB64DD
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Aug 2023 06:15:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229492AbjHIGC2 (ORCPT
+        id S229686AbjHIGPh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 9 Aug 2023 02:02:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34190 "EHLO
+        Wed, 9 Aug 2023 02:15:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230331AbjHIGC1 (ORCPT
+        with ESMTP id S229602AbjHIGPg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Aug 2023 02:02:27 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEE981BFE
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Aug 2023 23:02:24 -0700 (PDT)
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230809060219epoutp03b1d4ced2fa1f3aa47c9b9af713698487~5obY_5c2O1893418934epoutp035
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Aug 2023 06:02:19 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230809060219epoutp03b1d4ced2fa1f3aa47c9b9af713698487~5obY_5c2O1893418934epoutp035
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1691560939;
-        bh=Hqwh95qbZ9slU4yEMhbAKqRtPtKBpjOVFp4ZT1NMtzo=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=Hf6XVqcEJD1yJ6hXEKjiYMpz8gh67rHLP3pQuWUwoJAKzzUd3+EuhFLULlZJk+KrL
-         h9tlZFDHJkLcQsVKDrBSwVs1UFS6ynSY8giO7acE1fFdMG+bEswe9pELyQpbuA0E5c
-         91iSxb26WfWeUhe5zXDgAygLpB2Pd9Dj0Wb65kyM=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230809060218epcas1p2536588d541cc094582d2d55437b631be~5obYxYdcm3079830798epcas1p2w;
-        Wed,  9 Aug 2023 06:02:18 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.38.236]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4RLKG12SfQz4x9Q5; Wed,  9 Aug
-        2023 06:02:17 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A6.CE.33652.9EB23D46; Wed,  9 Aug 2023 15:02:17 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20230809060216epcas1p31ee8f5adc0b079b3bf347369c04f2dfe~5obW8dVcX0035300353epcas1p3J;
-        Wed,  9 Aug 2023 06:02:16 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230809060216epsmtrp2a3b013e3aa3e3a22ea4d67505afd09ad~5obW7zVGV1266612666epsmtrp2X;
-        Wed,  9 Aug 2023 06:02:16 +0000 (GMT)
-X-AuditID: b6c32a35-1fffd70000008374-f0-64d32be933e0
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        75.81.14748.8EB23D46; Wed,  9 Aug 2023 15:02:16 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.211]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230809060216epsmtip21c1f92719306775b24c6f11a3306bca2~5obWyPi6v1829218292epsmtip2W;
-        Wed,  9 Aug 2023 06:02:16 +0000 (GMT)
-From:   Inki Dae <inki.dae@samsung.com>
-To:     airlied@linux.ie, daniel@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-next
-Date:   Wed,  9 Aug 2023 15:02:16 +0900
-Message-Id: <20230809060216.374042-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
+        Wed, 9 Aug 2023 02:15:36 -0400
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2086.outbound.protection.outlook.com [40.107.95.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 790B8133;
+        Tue,  8 Aug 2023 23:15:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NSt7+R0WqGiZKXXOV8kK/g42X7tU3jaLmcogER24j8boq4nvKQhXrO85UY0zK35zgOzF8RSPlp9U6WyFW0MjCQNSfCU7z50GLwUKOUZpd3rBEC1MeYerbs+yjgbcwA1xFJcMUbnz/yMylTm0juXnLr3vwixQNTPfEa/a/BZ5gDsO42XsMSajKhoXxkirrix+sjF2rVPoNpiGYcM/q6W/Phlejq40X+e8BXF/ohjbe8Cje+Llv6YkGtsR+ESg7M989u0XEdk4JP+xO7yT0k2j+cKBKG9BaSGWpwLrIBQuGnfkK5fRuSPXIL1WsAbmLJ7p1B4PKg0+gOhocmTSeP2PQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XqKdQWNsZujQELLTqxPkmyoj62uEMHdzP7cZc4NWsc4=;
+ b=QKJFiQkPMYH8edANr0BlIBmgFS1Tnad8fbOXXtSA60tIN7GdF5BUZgpKse9XFB3NV5LBchDSAP8AIUqlOGmXpR0LSfvJvsYBpV+L5Ol/CNQXoa1gq6rykqgc92nMa+Yk52OsLDSE3OXDfg151nyhE7+6z+9lc+IuW4v8XGffdzoZu3FjBVJ34M3S5kW5f1aXjGP6Mz4LBfoP8meKCW5nZ8vnJTRi9/6sdz3s2qWkZn7TWqz0YsKTsXaNzY7z4MYbeaEzrP7omV/8X89fzeu3DWCKxuiZ0AEJn7LvY492TcjuD1SkK7GIHu/riS1kpTvmlw4nZm6tkeVu74Ras8Cyig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XqKdQWNsZujQELLTqxPkmyoj62uEMHdzP7cZc4NWsc4=;
+ b=gKAYPQse0GC/UbtnGwG3yCJMRG7wNcxuWfnPbyy6bUobMjilnguO2GnJPH2BFqZng3AQthUuDo/pjJlRQoJHuDTtnB8nSQmXRYrzWJYom+vQGhYQLJiTtMlnJGW/Ni0DbE7ygj/kOh/wnirQ6NPboB2qiypRedXidERPPy+OCIA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BN8PR12MB3587.namprd12.prod.outlook.com (2603:10b6:408:43::13)
+ by CY5PR12MB6228.namprd12.prod.outlook.com (2603:10b6:930:20::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6652.27; Wed, 9 Aug
+ 2023 06:15:33 +0000
+Received: from BN8PR12MB3587.namprd12.prod.outlook.com
+ ([fe80::3d:c14:667a:1c81]) by BN8PR12MB3587.namprd12.prod.outlook.com
+ ([fe80::3d:c14:667a:1c81%4]) with mapi id 15.20.6652.028; Wed, 9 Aug 2023
+ 06:15:33 +0000
+Message-ID: <c2b0d96e-b768-b295-c672-3ae52e14b10b@amd.com>
+Date:   Wed, 9 Aug 2023 08:15:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH -next 1/7] drm/amdkfd: Remove unnecessary NULL values
+Content-Language: en-US
+To:     Ruan Jinjie <ruanjinjie@huawei.com>, Felix.Kuehling@amd.com,
+        alexander.deucher@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
+        daniel@ffwll.ch, harry.wentland@amd.com, sunpeng.li@amd.com,
+        Rodrigo.Siqueira@amd.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+        robdclark@gmail.com, quic_abhinavk@quicinc.com,
+        dmitry.baryshkov@linaro.org, sean@poorly.run,
+        marijn.suijten@somainline.org, bskeggs@redhat.com,
+        kherbst@redhat.com, lyude@redhat.com, kraxel@redhat.com,
+        gurchetansingh@chromium.org, olvaffe@gmail.com,
+        paulo.miguel.almeida.rodenas@gmail.com, wenjing.liu@amd.com,
+        haoping.liu@amd.com, Charlene.Liu@amd.com, chiahsuan.chung@amd.com,
+        george.shen@amd.com, sancchen@amd.com, tony.tascioglu@amd.com,
+        jaehyun.chung@amd.com, tales.aparecida@gmail.com, drv@mailo.com,
+        aurabindo.pillai@amd.com, quic_vpolimer@quicinc.com,
+        jiasheng@iscas.ac.cn, noralf@tronnes.org,
+        jose.exposito89@gmail.com, javierm@redhat.com,
+        mairacanal@riseup.net, davidgow@google.com,
+        arthurgrillo@riseup.net, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org
+References: <20230809034445.434902-1-ruanjinjie@huawei.com>
+ <20230809034445.434902-2-ruanjinjie@huawei.com>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20230809034445.434902-2-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHKsWRmVeSWpSXmKPExsWy7bCmru5L7cspBv9b+Sx6z51ksvi/bSKz
-        xZWv79ksZpzfx+TA4rH32wIWj+3fHrB63O8+zuTxeZNcAEtUtk1GamJKapFCal5yfkpmXrqt
-        kndwvHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0EolhbLEnFKgUEBicbGSvp1NUX5pSapC
-        Rn5xia1SakFKToFpgV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbGwiWzGAt6uSu2P9nD3sC4hrOL
-        kZNDQsBE4tLb/2xdjFwcQgI7GCWO39rGDOF8YpR4fKmNBcL5xihx4PQjRpiWlwu2QLXsZZTY
-        cWULVMsXRomZq14wg1SxCahKTFxxnw3EFgGy3056DBZnFnCT+LP0LAuILSygLLH7+j5WEJsF
-        qObIlH6wGl4BK4kfD15CbZOXmHnpOztEXFDi5MwnLBBz5CWat84GWywhsIld4sW+h2wQDS4S
-        1/4dYYWwhSVeHd/CDmFLSXx+t5cNomEyo8Sd6ytYIJwZjBKHf16HWmcssX/pZKYuRg6gFZoS
-        63fpQ4QVJXb+nssIsZlP4t3XHlaQEgkBXomONiGIEiWJYxdvQE2RkLiwZCLUPR4SM599A7tB
-        SCBWYvfsLawTGOVnIflnFpJ/ZiEsXsDIvIpRLLWgODc9tdiwwBAer8n5uZsYwQlPy3QH48S3
-        H/QOMTJxMB5ilOBgVhLhtQ2+lCLEm5JYWZValB9fVJqTWnyI0RQYwhOZpUST84EpN68k3tDE
-        0sDEzMjYxMLQzFBJnJf5UW+KkEB6YklqdmpqQWoRTB8TB6dUA5Pu/u1uFnPe9d7QF5VwvvJg
-        x9oNk2/GqMhueJz14eyKGu/1Cesd7ug9qHin5qAb4P+Su33Ni88nfiaJGHWIFUdcOSXt4bWl
-        mi/4cWFQpMGVPbvCrtnm6j+dcf5W3KfuP0Zy99NSL3rznGEQiVnvcvnY/5fzTnK9Xu3F/uKa
-        kor19aInN7W+BUon/xBV114if3LahHWXz4tk/1o39bpxhEzmUg2XNed7vQK+PS88c3mZCJsA
-        h9al+rPGFgc3nNhs+9mX4dULFvPiX6yz+INSJC4c3XL4RUTUNOu9B4+occQySch3+3Kk/Zqw
-        j7ljYaaU/g/b81MctzFUmsmsq7g8L8fvT9eU+cWbdJ/sPxms37RMiaU4I9FQi7moOBEAdPVC
-        bgEEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBLMWRmVeSWpSXmKPExsWy7bCSvO4L7cspBievmVv0njvJZPF/20Rm
-        iytf37NZzDi/j8mBxWPvtwUsHtu/PWD1uN99nMnj8ya5AJYoLpuU1JzMstQifbsEroyFS2Yx
-        FvRyV2x/soe9gXENZxcjJ4eEgInEywVb2EBsIYHdjBKHb8p1MXIAxSUktmzlgDCFJQ4fLu5i
-        5AKq+MQo8e3yE1aQcjYBVYmJK+6DtYoIqEs8uLyQEcRmFvCQeL9nNTuILSygLLH7+j6wehag
-        +iNT+plBbF4BK4kfD14yQpwgLzHz0nd2iLigxMmZT1gg5shLNG+dzTyBkW8WktQsJKkFjEyr
-        GCVTC4pz03OTDQsM81LL9YoTc4tL89L1kvNzNzGCA09LYwfjvfn/9A4xMnEwHmKU4GBWEuG1
-        Db6UIsSbklhZlVqUH19UmpNafIhRmoNFSZzXcMbsFCGB9MSS1OzU1ILUIpgsEwenVAOTQLvf
-        jrdHpz/dYf67iWndznxh6xNJSe7XVeSOuiqyfbqjJtWi1tIR8eXnrwvHG771WN2fOsd38Yzg
-        5zMqmhfITb7qvVR6yeN1Hu+Crnsx3uy8yFo0MXsmPyvz95+Hf36cmHSufdnN+rpOn3VHo4Pn
-        pLAbnNzIKybsHT5tvWk3o696etyK1OM6Lh1lR/YbOu38ZzAty3KHU5mtiUhjYLSY8tS/cjlr
-        4r2+5y9iuCvxc8W2nplfO+Ks2J7xLb9haKSteqfA1OOKRaPl6fvv1ynNZAlWqbY6YXk9YmaC
-        ocTkCk8h+3NfNhh7vd726qad/+JbVRVXCstztl5uz5usXVRxTM7mut2SIq5g6U8zj7xWYinO
-        SDTUYi4qTgQAMswliasCAAA=
-X-CMS-MailID: 20230809060216epcas1p31ee8f5adc0b079b3bf347369c04f2dfe
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230809060216epcas1p31ee8f5adc0b079b3bf347369c04f2dfe
-References: <CGME20230809060216epcas1p31ee8f5adc0b079b3bf347369c04f2dfe@epcas1p3.samsung.com>
+X-ClientProxiedBy: FR3P281CA0207.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a5::12) To BN8PR12MB3587.namprd12.prod.outlook.com
+ (2603:10b6:408:43::13)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8PR12MB3587:EE_|CY5PR12MB6228:EE_
+X-MS-Office365-Filtering-Correlation-Id: db2f1aeb-8c33-4dcf-672e-08db98a0098a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9lBNf5pI3/wHCv3eD6u2IqjyxcG0626nG1CbrHWZJ2S3wW7ztPIG8rsvQYRfW4S44nU1+gbiMpQLO5bE2p3xYe91G3iAT9DjZA2b8s59lzqzAHfQNRaze0qJv6QCsFswEYuQj/mBv+9WcBAx9yv3Gwe3Zd0+5quqAj37YtKibpWB+UEYoFvopudW0EVd3sThQ7GiYn+aDId86fj9vQF235dlwqnPMnCvHacG1c5T3pdznj4PJz0vdIuAcZK2g1lgMxX/eJMBRPFXLdxaTZNPZq8oKfiHuw79zWGkWcuMl+bHOF+Pgwcecvhfx4RWxOFuiAYHIJ6hgQE0n69ADAOAs6FbTe7tVsmh9t3wVVQ5/Qdxzt8P7ZRBCqTvX/I79+I49zgmkgm4Nmp+bRrkneDZZdi4EFmy7ykdFumkkGL0WIHydRtRbp7s2Atl3QNgZtGsyPHYsgnQrY6FcLgJi3HdxnWYbQU29x/65H23YBvOq2oqqCk7XSQVf7lCQ+fBwGoXWSSR74GmOCCnJ6KnEcp/3jwlGdRv/fcYZXGN8z7gazVgT5U3wne+RXs0oucfv5J/fbM9WLN41BuYg1c+tMVpRgOixlcFt5Yj2Y7PKt5iFntEphVOYc6a0mlCN3A5iK4rneHBFZXAIZPT6ANwKMS0rl8gN2LYw8FyBh1bjU4BWiI=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR12MB3587.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(396003)(39860400002)(376002)(136003)(346002)(1800799006)(451199021)(186006)(7416002)(7406005)(8936002)(5660300002)(8676002)(41300700001)(316002)(83380400001)(31696002)(86362001)(2906002)(6512007)(31686004)(6666004)(6486002)(1191002)(2616005)(6506007)(66556008)(36756003)(66946007)(66476007)(921005)(478600001)(38100700002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eFB6ZDE5V2w5NSt0UVZaK2tQcGJXNUF5Y2kreWNzMnV4VDE5bGQ5Um1MVC83?=
+ =?utf-8?B?NHVrd1p5V2pGOFJMYUFFa0huZ01SMlVmN1dsQ2dQOUtqSU5yUm52TzkyWGs4?=
+ =?utf-8?B?VERhQUc3Z0FVdDNlenBlcTgzZzRLU1p2TTdtNVEyeVZldTFuVVFYVlErUFMz?=
+ =?utf-8?B?WkkwTnVmdUJyVjFFYTlSdlpNNllYWTI5U0o3Mkh2TkFyNHE1Vm5wRERxWFpn?=
+ =?utf-8?B?UnJmUndleGZDTG9DRW5HOWF6cWtPdTBmM015RUJ6S21WNlhvMEQ4T1J5TVY1?=
+ =?utf-8?B?OHcybnk5VW1ET01sNUZOQVhFT3pOYkRid2lwYW55SXZrQ29ldUF2UStqTnFC?=
+ =?utf-8?B?UlNjUm94aWV4aDNFditxZC9KRXh5UnQwQ2VCQUtOYlJPS1cxaHYrNWpWTWxw?=
+ =?utf-8?B?RVBMS2NxS2ZJTTM0dlZVT3RFODdBc0g1cnFBcGtXbW9FMGlnNVh6VTdMdHhi?=
+ =?utf-8?B?YlRFSDBNajhMcURsTkRocUxGY0hXaktpdkNnSExnZVVrZW1qTGxWN1QrcFpa?=
+ =?utf-8?B?U1FmZGwxOW0yTDJ3N1B0ZnU2VzlOeURmTkFtTGlyRmp6NTVOU2QzSTJLcE9U?=
+ =?utf-8?B?RE1NZ0N1ZERNMHJkL0MrVU41emEwOGJjMG9IenhibTJpNmJSMURVWko4aGNF?=
+ =?utf-8?B?YmMvOXJ0NExZUlBFZ0l0eElma3dyWTQwREJiYzFDcit5bVNJRmEwMkhZQ3pB?=
+ =?utf-8?B?OC9Zb3kzcnhpSFgxeXpZMUlVM3NCaDd4NWxDOUFNam10SktEalA5YkpGRGpq?=
+ =?utf-8?B?MzlyNmNZdUFzS0kyNmhPZWNiak5rUGN5WmNYcWV4TVNhbFN4cFpvemJzWUlx?=
+ =?utf-8?B?aXBPN2oyWEdPSXVGNE10NmxJWHQxZ2VIUjVZZGc0b20ybzlsaW5vSTNkejU2?=
+ =?utf-8?B?Q0U1SjYvaUsvSlE2cUora3pvWklxdFRNd09MMGQrVUIxTUFWaDJ4NkgzcE53?=
+ =?utf-8?B?dWZKZUM4bWVwNXVrcnprNHpZRXZrM2ZOa3Jvc3o3dWpHdTU0ZWg5ZHlCaWVm?=
+ =?utf-8?B?RVc0aS9oU0tkK3M0SklvQStDSVJWR3I4Z0F6bnJXN3pxUzkxSEJKT2NaeFdl?=
+ =?utf-8?B?dW4wUGpUaWJGMEhIYzRPYUl6N0Q5ZksxRnFseGtwc3FvYWZ2Q1M4TFhaRzdj?=
+ =?utf-8?B?VWJ1eHZHSFl6cXp1N3VCdFpsajduc3l0K2wxWlNJQTM2R0NNWFF5Qy9uQ2RG?=
+ =?utf-8?B?ZkVac0x1S0duSHdmMHVGUFdYaWdUUmQ1QU5PN3VCaytsQlE5Zmh2TnZGNU1o?=
+ =?utf-8?B?V0hHa3Y5U1I4dXJOalIzbHBNdE1PdjZOTzZDaUY0Y2JOaXNDV0FEWi83blQ3?=
+ =?utf-8?B?VTBmNEtvQ3R1SHBnUmRoLzBJL1RveDBFUGkyYktoS3dRNm8wYlY5eENNaG9R?=
+ =?utf-8?B?SXBPdnBYMzl6OEhEa3hBT3N3Z09NSEI2VGxRam9NbEVSR3hjZHV6T2psUlhQ?=
+ =?utf-8?B?cFE5SG0yQS9RS3RPWGQvZSt6NlBocnBtdjd3ZjJ0TkgwTHFDbG1NWXZDNnN1?=
+ =?utf-8?B?ampkMjRWeU1BaXBzOENwZVNTaUtXTFFTelNBVFdrVDFLekJwOHlpM2E5ckZr?=
+ =?utf-8?B?SlBmS3UzZThDNGRFZEYzTXB0Tm5uMXMzZTd6Y1Y0MGR2M0FBM3p2Q0FxeWZT?=
+ =?utf-8?B?MXVkUFpnUWVWZHZBbXJXYUMxK2RGbzJvZ09aT1hSSUt6bGhsQ0FCTHRWeHlt?=
+ =?utf-8?B?b0NDMTU3ZHNaRnNBZTd6cUFvTW4ycWw4ZmZFVzhFcVl2YlZDQmdBYjFGOFR4?=
+ =?utf-8?B?K2NYSEo3cGlGRnlnU05hdmk3Nzk4bEthUHNjZ2lDTWg2VkhqelVVRkxHSW1m?=
+ =?utf-8?B?RjJYRkd3djM2L1JJTTl3RGs2eXl0VXVON1M5Yk9UdFE1cWVWdFk3TzlibEdv?=
+ =?utf-8?B?eVM3ZGNuV1ZuSWUrZUtyaW5DZ0pFWWpIRktUdU9NOVVCcDNQaklNZU5pUm9L?=
+ =?utf-8?B?NGZpN2g5M09xVitKZUNXYVFrblRVbkhtVTFKdzZ6Z0htaGI1L1hOT2ZTbWNR?=
+ =?utf-8?B?ZmtJQmphSjkyU0FJRGphT1JaUU9KNHN4WmpnZnNCWFpjaHExQU5xZUdiODRI?=
+ =?utf-8?B?V3QxUnlLSFZtMm5PanZSV2pXNk5pdFFjeW9WNVBTbG8wa0J4MGlxME4zcXE2?=
+ =?utf-8?B?a1g4Mm5EYTRFRDUxRjZZcFNXZ0lVOVR5T0RLUTZ6T0JieFIwSld4S3g0dUVI?=
+ =?utf-8?Q?lCL/gFM7KuZktA/kSXMsflTLet2M5HLpXg4TlNI433YX?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: db2f1aeb-8c33-4dcf-672e-08db98a0098a
+X-MS-Exchange-CrossTenant-AuthSource: BN8PR12MB3587.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2023 06:15:32.9069
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SNlZEvRvIgEQhQzuGsOmJQYPSJsOurd+bv1gYRBgzDXrWuVsEs0AqZbg1XYXknjU
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6228
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Dave and Daniel,
+Am 09.08.23 um 05:44 schrieb Ruan Jinjie:
+> The NULL initialization of the pointers assigned by kzalloc() first is
+> not necessary, because if the kzalloc() failed, the pointers will be
+> assigned NULL, otherwise it works as usual. so remove it.
+>
+> Signed-off-by: Ruan Jinjie <ruanjinjie@huawei.com>
 
-   Just one fixup and cleanup.
-   Please kindly let me know if there is any problem.
+Reviewed-by: Christian König <christian.koenig@amd.com> for this one, 
+the amd display code and the radeon stuff.
 
 Thanks,
-Inki Dae
+Christian.
 
-The following changes since commit d9aa1da9a8cfb0387eb5703c15bd1f54421460ac:
+> ---
+>   drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c
+> index 863cf060af48..d01bb57733b3 100644
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c
+> @@ -48,7 +48,7 @@ int pipe_priority_map[] = {
+>   
+>   struct kfd_mem_obj *allocate_hiq_mqd(struct kfd_node *dev, struct queue_properties *q)
+>   {
+> -	struct kfd_mem_obj *mqd_mem_obj = NULL;
+> +	struct kfd_mem_obj *mqd_mem_obj;
+>   
+>   	mqd_mem_obj = kzalloc(sizeof(struct kfd_mem_obj), GFP_KERNEL);
+>   	if (!mqd_mem_obj)
+> @@ -64,7 +64,7 @@ struct kfd_mem_obj *allocate_hiq_mqd(struct kfd_node *dev, struct queue_properti
+>   struct kfd_mem_obj *allocate_sdma_mqd(struct kfd_node *dev,
+>   					struct queue_properties *q)
+>   {
+> -	struct kfd_mem_obj *mqd_mem_obj = NULL;
+> +	struct kfd_mem_obj *mqd_mem_obj;
+>   	uint64_t offset;
+>   
+>   	mqd_mem_obj = kzalloc(sizeof(struct kfd_mem_obj), GFP_KERNEL);
 
-  Merge tag 'drm-intel-gt-next-2023-08-04' of git://anongit.freedesktop.org/drm/drm-intel into drm-next (2023-08-07 13:49:25 +1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v6.6
-
-for you to fetch changes up to 6b83c85b64078ff49b4d3d0b2cd2c2bf6f1b6a85:
-
-  drm/exynos: remove redundant of_match_ptr (2023-08-08 09:35:19 +0900)
-
-----------------------------------------------------------------
-Fixup
-- fix a possible null pointer dereference issue in
-  exynos_drm_crtc_atomic_disable(), which was reported by
-  the automatic static analysis tool. And below is a relevant link,
-  https://sites.google.com/view/basscheck/home
-
-Cleanup
-- drop the use of of_match_ptr which is redundant.
-
-----------------------------------------------------------------
-Tuo Li (1):
-      drm/exynos: fix a possible null-pointer dereference due to data race in exynos_drm_crtc_atomic_disable()
-
-Zhu Wang (1):
-      drm/exynos: remove redundant of_match_ptr
-
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 5 ++---
- drivers/gpu/drm/exynos/exynos_drm_gsc.c  | 2 +-
- 2 files changed, 3 insertions(+), 4 deletions(-)
