@@ -2,105 +2,102 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D1AC04A94
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Aug 2023 21:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B02EB64DD
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Aug 2023 03:45:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229437AbjHHViJ (ORCPT
+        id S230016AbjHIDp2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Aug 2023 17:38:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43724 "EHLO
+        Tue, 8 Aug 2023 23:45:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231151AbjHHViF (ORCPT
+        with ESMTP id S229963AbjHIDp1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Aug 2023 17:38:05 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B754367D0
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Aug 2023 09:30:52 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-51a52a7d859so52321a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Aug 2023 09:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691512225; x=1692117025;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qejuevXVg8c+kej4ztr9ux7GUIQQ5z+UOyvSNuEDXRw=;
-        b=MdR5y/YJzgBn9xsRMxoeTcRu3v/kKjq8wtej92ezftE54MzSUvCbZNaAV3zBNFPqoD
-         iPMjhsWely6RdGhS3OGEeP8Unm6VZ2dAqHSRZbytUj9EbRcZJ+2F8dLJ+dRXDgcGnvv8
-         1fc7ANbNSvqSxiEjBEqukeqYDJewMRLkA+ByWUyxNuKXWZt/sAGpp/Scsa0v7dKwd2vD
-         9njHV3zn7n4o7zxtJJiJ2rdLHk3YZFHiGF8bsZK2911Ra1TeTCF7DEPiXYtdRO6oN1eC
-         P//3ufBRKWLbcwelrPfcpUzZ71YsjSoqZ2dqmQDBZMwxGTrCHNzcYE8YjKXbmjVDOxYl
-         28MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691512225; x=1692117025;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qejuevXVg8c+kej4ztr9ux7GUIQQ5z+UOyvSNuEDXRw=;
-        b=TT2wNBn74T4JfhZLc3Yq3Tc6eXkttZvrEI6ChO/Hx5UDi0FQrFuzCkkf0tZ8k1LHCo
-         zNQbBnt45aXpSJMexps0aWGpuXiMFMkyBpws1WHTCMwNbRhNk3dtmmVg6/fg4k49oSwW
-         8sBy++lUa4Gohd1ddxLuUvmyhg0iuZCzrud1oeubGikoSN6jaqPo1mcszPmRGu7XXhpS
-         1I0jW4LnOk4VgTBBjYYuhaRBxnRWblm0PbXxI1CMnluT5xlscPWGI3kykXj8Jtx4w+i/
-         FHxKDGRD5dUhCBoMa1G93NhNtZaIl2t7+he1lZON0bi98twtJFEoxVVOKqtevK/jTPZS
-         NUeA==
-X-Gm-Message-State: AOJu0YyZwyhvre24SGPEvXwllyi9rk33I/ffg/yDAkbpv89Ui4z1DbBe
-        6nkWCMRFFK5pX19cyTd34YRmn7DxiWjxq9qInBk=
-X-Google-Smtp-Source: AGHT+IFQaReEoylTuoBa3pq7fPTiDA0ZX2U+hTy0EvkesIRlzxiuW1TvGZ9HVbCDFIPha62GXZlwgw==
-X-Received: by 2002:a2e:9c89:0:b0:2b6:b7c3:bb89 with SMTP id x9-20020a2e9c89000000b002b6b7c3bb89mr3403498lji.18.1691502411764;
-        Tue, 08 Aug 2023 06:46:51 -0700 (PDT)
-Received: from [127.0.1.1] ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id u23-20020a2e8557000000b002b93d66b82asm2284493ljj.112.2023.08.08.06.46.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 06:46:51 -0700 (PDT)
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 08 Aug 2023 15:46:38 +0200
-Subject: [PATCH 11/11] regulator: bd71815: Drop useless header
+        Tue, 8 Aug 2023 23:45:27 -0400
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89A371736;
+        Tue,  8 Aug 2023 20:45:25 -0700 (PDT)
+Received: from kwepemi500008.china.huawei.com (unknown [172.30.72.53])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4RLGBf426Tz1GDtx;
+        Wed,  9 Aug 2023 11:44:10 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi500008.china.huawei.com
+ (7.221.188.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 9 Aug
+ 2023 11:45:19 +0800
+From:   Ruan Jinjie <ruanjinjie@huawei.com>
+To:     <Felix.Kuehling@amd.com>, <alexander.deucher@amd.com>,
+        <christian.koenig@amd.com>, <Xinhui.Pan@amd.com>,
+        <airlied@gmail.com>, <daniel@ffwll.ch>, <harry.wentland@amd.com>,
+        <sunpeng.li@amd.com>, <Rodrigo.Siqueira@amd.com>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <inki.dae@samsung.com>,
+        <sw0312.kim@samsung.com>, <kyungmin.park@samsung.com>,
+        <krzysztof.kozlowski@linaro.org>, <alim.akhtar@samsung.com>,
+        <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>,
+        <dmitry.baryshkov@linaro.org>, <sean@poorly.run>,
+        <marijn.suijten@somainline.org>, <bskeggs@redhat.com>,
+        <kherbst@redhat.com>, <lyude@redhat.com>, <kraxel@redhat.com>,
+        <gurchetansingh@chromium.org>, <olvaffe@gmail.com>,
+        <paulo.miguel.almeida.rodenas@gmail.com>, <wenjing.liu@amd.com>,
+        <haoping.liu@amd.com>, <Charlene.Liu@amd.com>,
+        <chiahsuan.chung@amd.com>, <george.shen@amd.com>,
+        <sancchen@amd.com>, <tony.tascioglu@amd.com>,
+        <jaehyun.chung@amd.com>, <tales.aparecida@gmail.com>,
+        <drv@mailo.com>, <aurabindo.pillai@amd.com>,
+        <quic_vpolimer@quicinc.com>, <jiasheng@iscas.ac.cn>,
+        <noralf@tronnes.org>, <jose.exposito89@gmail.com>,
+        <javierm@redhat.com>, <mairacanal@riseup.net>,
+        <davidgow@google.com>, <arthurgrillo@riseup.net>,
+        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
+        <nouveau@lists.freedesktop.org>,
+        <virtualization@lists.linux-foundation.org>
+CC:     <ruanjinjie@huawei.com>
+Subject: [PATCH -next 0/7] drm: Remove many unnecessary NULL values
+Date:   Wed, 9 Aug 2023 11:44:38 +0800
+Message-ID: <20230809034445.434902-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230808-descriptors-regulator-v1-11-939b5e84dd18@linaro.org>
-References: <20230808-descriptors-regulator-v1-0-939b5e84dd18@linaro.org>
-In-Reply-To: <20230808-descriptors-regulator-v1-0-939b5e84dd18@linaro.org>
-To:     Tony Lindgren <tony@atomide.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Matti Vaittinen <mazziesaccount@gmail.com>
-Cc:     linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>
-X-Mailer: b4 0.12.3
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.90.53.73]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemi500008.china.huawei.com (7.221.188.139)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The bd71815 regulator driver includes the legacy header
-<linux/gpio.h> for no reason, it is already using the proper
-<linux/gpio/consumer.h> include. Drop the include.
+The NULL initialization of the pointers assigned by kzalloc() or
+kunit_kzalloc() first is not necessary, because if the kzalloc() or
+kunit_kzalloc() failed, the pointers will be assigned NULL, otherwise
+it works as usual. so remove it.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/regulator/bd71815-regulator.c | 1 -
- 1 file changed, 1 deletion(-)
+Ruan Jinjie (7):
+  drm/amdkfd: Remove unnecessary NULL values
+  drm/amd/display: Remove unnecessary NULL values
+  drm/msm: Remove unnecessary NULL values
+  drm/radeon: Remove unnecessary NULL values
+  drm/virtio: Remove an unnecessary NULL value
+  drm/format-helper: Remove unnecessary NULL values
+  drm: Remove unnecessary NULL values
 
-diff --git a/drivers/regulator/bd71815-regulator.c b/drivers/regulator/bd71815-regulator.c
-index 475b1e0110e7..26192d55a685 100644
---- a/drivers/regulator/bd71815-regulator.c
-+++ b/drivers/regulator/bd71815-regulator.c
-@@ -18,7 +18,6 @@
- #include <linux/regulator/driver.h>
- #include <linux/delay.h>
- #include <linux/slab.h>
--#include <linux/gpio.h>
- #include <linux/mfd/rohm-generic.h>
- #include <linux/mfd/rohm-bd71815.h>
- #include <linux/regulator/of_regulator.h>
+ drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c  |  4 +--
+ .../gpu/drm/amd/display/dc/bios/bios_parser.c |  4 +--
+ .../drm/amd/display/dc/bios/bios_parser2.c    |  4 +--
+ drivers/gpu/drm/drm_agpsupport.c              |  2 +-
+ drivers/gpu/drm/drm_atomic_uapi.c             |  2 +-
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c       |  2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c      |  2 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c      |  2 +-
+ drivers/gpu/drm/nouveau/dispnv04/tvnv17.c     |  2 +-
+ drivers/gpu/drm/radeon/radeon_agp.c           |  2 +-
+ drivers/gpu/drm/radeon/radeon_combios.c       |  6 ++--
+ .../gpu/drm/radeon/radeon_legacy_encoders.c   |  4 +--
+ .../gpu/drm/tests/drm_format_helper_test.c    | 28 +++++++++----------
+ drivers/gpu/drm/virtio/virtgpu_submit.c       |  2 +-
+ 14 files changed, 33 insertions(+), 33 deletions(-)
 
 -- 
 2.34.1
