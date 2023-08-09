@@ -2,27 +2,27 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B02EB64DD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB019C001B0
 	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Aug 2023 03:45:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230016AbjHIDp2 (ORCPT
+        id S230100AbjHIDp3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Aug 2023 23:45:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44410 "EHLO
+        Tue, 8 Aug 2023 23:45:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229963AbjHIDp1 (ORCPT
+        with ESMTP id S230007AbjHIDp2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Aug 2023 23:45:27 -0400
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89A371736;
-        Tue,  8 Aug 2023 20:45:25 -0700 (PDT)
+        Tue, 8 Aug 2023 23:45:28 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ED52173A;
+        Tue,  8 Aug 2023 20:45:27 -0700 (PDT)
 Received: from kwepemi500008.china.huawei.com (unknown [172.30.72.53])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4RLGBf426Tz1GDtx;
-        Wed,  9 Aug 2023 11:44:10 +0800 (CST)
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4RLGBh4Rl9zmXD6;
+        Wed,  9 Aug 2023 11:44:12 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemi500008.china.huawei.com
  (7.221.188.139) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 9 Aug
- 2023 11:45:19 +0800
+ 2023 11:45:22 +0800
 From:   Ruan Jinjie <ruanjinjie@huawei.com>
 To:     <Felix.Kuehling@amd.com>, <alexander.deucher@amd.com>,
         <christian.koenig@amd.com>, <Xinhui.Pan@amd.com>,
@@ -54,10 +54,12 @@ To:     <Felix.Kuehling@amd.com>, <alexander.deucher@amd.com>,
         <nouveau@lists.freedesktop.org>,
         <virtualization@lists.linux-foundation.org>
 CC:     <ruanjinjie@huawei.com>
-Subject: [PATCH -next 0/7] drm: Remove many unnecessary NULL values
-Date:   Wed, 9 Aug 2023 11:44:38 +0800
-Message-ID: <20230809034445.434902-1-ruanjinjie@huawei.com>
+Subject: [PATCH -next 1/7] drm/amdkfd: Remove unnecessary NULL values
+Date:   Wed, 9 Aug 2023 11:44:39 +0800
+Message-ID: <20230809034445.434902-2-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230809034445.434902-1-ruanjinjie@huawei.com>
+References: <20230809034445.434902-1-ruanjinjie@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -69,36 +71,37 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The NULL initialization of the pointers assigned by kzalloc() or
-kunit_kzalloc() first is not necessary, because if the kzalloc() or
-kunit_kzalloc() failed, the pointers will be assigned NULL, otherwise
-it works as usual. so remove it.
+The NULL initialization of the pointers assigned by kzalloc() first is
+not necessary, because if the kzalloc() failed, the pointers will be
+assigned NULL, otherwise it works as usual. so remove it.
 
-Ruan Jinjie (7):
-  drm/amdkfd: Remove unnecessary NULL values
-  drm/amd/display: Remove unnecessary NULL values
-  drm/msm: Remove unnecessary NULL values
-  drm/radeon: Remove unnecessary NULL values
-  drm/virtio: Remove an unnecessary NULL value
-  drm/format-helper: Remove unnecessary NULL values
-  drm: Remove unnecessary NULL values
+Signed-off-by: Ruan Jinjie <ruanjinjie@huawei.com>
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c  |  4 +--
- .../gpu/drm/amd/display/dc/bios/bios_parser.c |  4 +--
- .../drm/amd/display/dc/bios/bios_parser2.c    |  4 +--
- drivers/gpu/drm/drm_agpsupport.c              |  2 +-
- drivers/gpu/drm/drm_atomic_uapi.c             |  2 +-
- drivers/gpu/drm/exynos/exynos_drm_ipp.c       |  2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c      |  2 +-
- drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c      |  2 +-
- drivers/gpu/drm/nouveau/dispnv04/tvnv17.c     |  2 +-
- drivers/gpu/drm/radeon/radeon_agp.c           |  2 +-
- drivers/gpu/drm/radeon/radeon_combios.c       |  6 ++--
- .../gpu/drm/radeon/radeon_legacy_encoders.c   |  4 +--
- .../gpu/drm/tests/drm_format_helper_test.c    | 28 +++++++++----------
- drivers/gpu/drm/virtio/virtgpu_submit.c       |  2 +-
- 14 files changed, 33 insertions(+), 33 deletions(-)
-
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c
+index 863cf060af48..d01bb57733b3 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c
+@@ -48,7 +48,7 @@ int pipe_priority_map[] = {
+ 
+ struct kfd_mem_obj *allocate_hiq_mqd(struct kfd_node *dev, struct queue_properties *q)
+ {
+-	struct kfd_mem_obj *mqd_mem_obj = NULL;
++	struct kfd_mem_obj *mqd_mem_obj;
+ 
+ 	mqd_mem_obj = kzalloc(sizeof(struct kfd_mem_obj), GFP_KERNEL);
+ 	if (!mqd_mem_obj)
+@@ -64,7 +64,7 @@ struct kfd_mem_obj *allocate_hiq_mqd(struct kfd_node *dev, struct queue_properti
+ struct kfd_mem_obj *allocate_sdma_mqd(struct kfd_node *dev,
+ 					struct queue_properties *q)
+ {
+-	struct kfd_mem_obj *mqd_mem_obj = NULL;
++	struct kfd_mem_obj *mqd_mem_obj;
+ 	uint64_t offset;
+ 
+ 	mqd_mem_obj = kzalloc(sizeof(struct kfd_mem_obj), GFP_KERNEL);
 -- 
 2.34.1
 
