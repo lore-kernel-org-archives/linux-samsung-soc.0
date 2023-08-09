@@ -2,27 +2,27 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EEFEB64DD
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Aug 2023 03:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFDEC04A6A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Aug 2023 03:45:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230049AbjHIDpb (ORCPT
+        id S230007AbjHIDpd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Aug 2023 23:45:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46442 "EHLO
+        Tue, 8 Aug 2023 23:45:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230007AbjHIDpa (ORCPT
+        with ESMTP id S230194AbjHIDpc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Aug 2023 23:45:30 -0400
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB7CD173A;
-        Tue,  8 Aug 2023 20:45:29 -0700 (PDT)
-Received: from kwepemi500008.china.huawei.com (unknown [172.30.72.57])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4RLGBl4YvDz1GDtg;
-        Wed,  9 Aug 2023 11:44:15 +0800 (CST)
+        Tue, 8 Aug 2023 23:45:32 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64A3B1BC3;
+        Tue,  8 Aug 2023 20:45:31 -0700 (PDT)
+Received: from kwepemi500008.china.huawei.com (unknown [172.30.72.55])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4RLGBn0R4ZzmXGL;
+        Wed,  9 Aug 2023 11:44:17 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemi500008.china.huawei.com
  (7.221.188.139) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 9 Aug
- 2023 11:45:24 +0800
+ 2023 11:45:26 +0800
 From:   Ruan Jinjie <ruanjinjie@huawei.com>
 To:     <Felix.Kuehling@amd.com>, <alexander.deucher@amd.com>,
         <christian.koenig@amd.com>, <Xinhui.Pan@amd.com>,
@@ -54,9 +54,9 @@ To:     <Felix.Kuehling@amd.com>, <alexander.deucher@amd.com>,
         <nouveau@lists.freedesktop.org>,
         <virtualization@lists.linux-foundation.org>
 CC:     <ruanjinjie@huawei.com>
-Subject: [PATCH -next 2/7] drm/amd/display: Remove unnecessary NULL values
-Date:   Wed, 9 Aug 2023 11:44:40 +0800
-Message-ID: <20230809034445.434902-3-ruanjinjie@huawei.com>
+Subject: [PATCH -next 3/7] drm/msm: Remove unnecessary NULL values
+Date:   Wed, 9 Aug 2023 11:44:41 +0800
+Message-ID: <20230809034445.434902-4-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230809034445.434902-1-ruanjinjie@huawei.com>
 References: <20230809034445.434902-1-ruanjinjie@huawei.com>
@@ -77,54 +77,36 @@ assigned NULL, otherwise it works as usual. so remove it.
 
 Signed-off-by: Ruan Jinjie <ruanjinjie@huawei.com>
 ---
- drivers/gpu/drm/amd/display/dc/bios/bios_parser.c  | 4 ++--
- drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 2 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c
-index 4f005ae1516c..6b3190447581 100644
---- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c
-+++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c
-@@ -96,7 +96,7 @@ struct dc_bios *bios_parser_create(
- 	struct bp_init_data *init,
- 	enum dce_version dce_version)
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+index 8ce7586e2ddf..3c475f8042b0 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+@@ -1466,7 +1466,7 @@ struct drm_crtc *dpu_crtc_init(struct drm_device *dev, struct drm_plane *plane,
+ 	struct msm_drm_private *priv = dev->dev_private;
+ 	struct dpu_kms *dpu_kms = to_dpu_kms(priv->kms);
+ 	struct drm_crtc *crtc = NULL;
+-	struct dpu_crtc *dpu_crtc = NULL;
++	struct dpu_crtc *dpu_crtc;
+ 	int i, ret;
+ 
+ 	dpu_crtc = kzalloc(sizeof(*dpu_crtc), GFP_KERNEL);
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
+index 56a3063545ec..b68682c1b5bc 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
+@@ -379,7 +379,7 @@ struct mdp5_smp *mdp5_smp_init(struct mdp5_kms *mdp5_kms, const struct mdp5_smp_
  {
--	struct bios_parser *bp = NULL;
-+	struct bios_parser *bp;
+ 	struct mdp5_smp_state *state;
+ 	struct mdp5_global_state *global_state;
+-	struct mdp5_smp *smp = NULL;
++	struct mdp5_smp *smp;
+ 	int ret;
  
- 	bp = kzalloc(sizeof(struct bios_parser), GFP_KERNEL);
- 	if (!bp)
-@@ -2576,7 +2576,7 @@ static struct integrated_info *bios_parser_create_integrated_info(
- 	struct dc_bios *dcb)
- {
- 	struct bios_parser *bp = BP_FROM_DCB(dcb);
--	struct integrated_info *info = NULL;
-+	struct integrated_info *info;
- 
- 	info = kzalloc(sizeof(struct integrated_info), GFP_KERNEL);
- 
-diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-index 540d19efad8f..c7b3359f1e1d 100644
---- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-+++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-@@ -3086,7 +3086,7 @@ static struct integrated_info *bios_parser_create_integrated_info(
- 	struct dc_bios *dcb)
- {
- 	struct bios_parser *bp = BP_FROM_DCB(dcb);
--	struct integrated_info *info = NULL;
-+	struct integrated_info *info;
- 
- 	info = kzalloc(sizeof(struct integrated_info), GFP_KERNEL);
- 
-@@ -3675,7 +3675,7 @@ struct dc_bios *firmware_parser_create(
- 	struct bp_init_data *init,
- 	enum dce_version dce_version)
- {
--	struct bios_parser *bp = NULL;
-+	struct bios_parser *bp;
- 
- 	bp = kzalloc(sizeof(struct bios_parser), GFP_KERNEL);
- 	if (!bp)
+ 	smp = kzalloc(sizeof(*smp), GFP_KERNEL);
 -- 
 2.34.1
 
