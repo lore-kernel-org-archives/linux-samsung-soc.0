@@ -2,137 +2,139 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 339D0C04E69
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Aug 2023 12:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B35BC001B0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Aug 2023 13:11:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231534AbjHIMaS convert rfc822-to-8bit (ORCPT
+        id S231948AbjHINLm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 9 Aug 2023 08:30:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54482 "EHLO
+        Wed, 9 Aug 2023 09:11:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbjHIMaR (ORCPT
+        with ESMTP id S230417AbjHINLl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Aug 2023 08:30:17 -0400
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96AE910F3;
-        Wed,  9 Aug 2023 05:30:14 -0700 (PDT)
-Received: from [194.95.143.137] (helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1qTiJH-00071M-LR; Wed, 09 Aug 2023 14:29:07 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee@kernel.org>, Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Jonathan =?ISO-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Michael Walle <michael@walle.cc>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Hammer Hsieh <hammerh0314@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Sean Anderson <sean.anderson@seco.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Anjelique Melendez <quic_amelende@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Luca Weiss <luca@z3ntu.xyz>,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-        asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        chrome-platform@lists.linux.dev, linux-mips@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v2 1/2] pwm: Manage owner assignment implicitly for drivers
-Date:   Wed, 09 Aug 2023 14:29:04 +0200
-Message-ID: <5316381.7s5MMGUR32@phil>
-In-Reply-To: <20230804142707.412137-2-u.kleine-koenig@pengutronix.de>
-References: <20230804142707.412137-1-u.kleine-koenig@pengutronix.de>
- <20230804142707.412137-2-u.kleine-koenig@pengutronix.de>
+        Wed, 9 Aug 2023 09:11:41 -0400
+Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F35E810FB;
+        Wed,  9 Aug 2023 06:11:40 -0700 (PDT)
+Received: by mail-oi1-x235.google.com with SMTP id 5614622812f47-3a36b52b4a4so587378b6e.1;
+        Wed, 09 Aug 2023 06:11:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1691586700; x=1692191500;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0bsfHSbir+1N3BPwsEF83+v9jo06cZjJVauWxQE2x88=;
+        b=X39VyQ81ASYk/nBdQF2k0zkOJr/0vtM4ZpjXBKvnXgqH0R4bVOzYwN862VOzrR+xcj
+         x3FpupRMsRy7LDq7LpyqF25wC6tbW75E04I9YjPO14TSPjRX6C5prULvlJsGvEEptNVm
+         +KaJ1dgo9yDYvvU9xgG4hPh/jBo2jN+cWTaB9vM2sw0taGzXVXkI09vm9gjv3YdsbQfq
+         fVPylz6eN+KR5L6QcKAbs2scRSlOmKkbZMpF9eiAuRUCeeiue3+fNiq6cua13K7CE3MR
+         iwhCAiADw5MAtzoz2nRqhIRpteROYyPsV+/Zu+9qMzuIk9n/JNtv02kFrJu5jM+1rnUx
+         ohVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691586700; x=1692191500;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0bsfHSbir+1N3BPwsEF83+v9jo06cZjJVauWxQE2x88=;
+        b=OWRkcqykIuEfSO7ul/S3lcp7vSK6unliTaSElOULR/T9XE1KOfPW8lghJ4vv9sG5Vz
+         i7gDThpBT2elOtbVuxZbf5+8RmbPR+BVuFAzqrYVQGmfImVr6uK+miHW/sFQMeWs9Zb9
+         NpGvbqQv/EdBKatErDq3HJHBqWNyGUj9ukyufNjIrjbbP4/uEBkQQlJShXsiDZWGIuG+
+         l2Bf5ZSpMxjtLI3JAwPU0uSdw4ERzC0Z6thgvjoybeW82H6ugfgyLkor0EShJf1tP6Px
+         uewNJbz6d7jlu6llurl6AoljqTZ87e2PgTUBzOe+Y15RjVcM6TdFR8UvQeAvDWzw5h9M
+         QX1w==
+X-Gm-Message-State: AOJu0YwXPFIXVBGB5KBGcbm8q6qMX/zbHuLYuwZTNb9DvtMFN3ZClJi2
+        lPZWX9/dAaEIQ1yf/raUburbVFyjCPQGSav6VhE=
+X-Google-Smtp-Source: AGHT+IGr/N7x0qp/tLHJD9vnx3F+mQLn8Qo3mYlXKDAIof/DZHtBXv2c6gcV9z6BHmLltXrWKyQrwzMGuJze0KPjlPM=
+X-Received: by 2002:aca:bb0b:0:b0:3a7:46c4:e8cd with SMTP id
+ l11-20020acabb0b000000b003a746c4e8cdmr8330814oif.12.1691586700314; Wed, 09
+ Aug 2023 06:11:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+References: <20230809034445.434902-1-ruanjinjie@huawei.com>
+ <20230809034445.434902-2-ruanjinjie@huawei.com> <c2b0d96e-b768-b295-c672-3ae52e14b10b@amd.com>
+In-Reply-To: <c2b0d96e-b768-b295-c672-3ae52e14b10b@amd.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 9 Aug 2023 09:11:29 -0400
+Message-ID: <CADnq5_MZXYBmxr3dJn4vmW2qAbzUDM0eL48anjCot77LinE8tg@mail.gmail.com>
+Subject: Re: [PATCH -next 1/7] drm/amdkfd: Remove unnecessary NULL values
+To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc:     Ruan Jinjie <ruanjinjie@huawei.com>, Felix.Kuehling@amd.com,
+        alexander.deucher@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
+        daniel@ffwll.ch, harry.wentland@amd.com, sunpeng.li@amd.com,
+        Rodrigo.Siqueira@amd.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+        robdclark@gmail.com, quic_abhinavk@quicinc.com,
+        dmitry.baryshkov@linaro.org, sean@poorly.run,
+        marijn.suijten@somainline.org, bskeggs@redhat.com,
+        kherbst@redhat.com, lyude@redhat.com, kraxel@redhat.com,
+        gurchetansingh@chromium.org, olvaffe@gmail.com,
+        paulo.miguel.almeida.rodenas@gmail.com, wenjing.liu@amd.com,
+        haoping.liu@amd.com, Charlene.Liu@amd.com, chiahsuan.chung@amd.com,
+        george.shen@amd.com, sancchen@amd.com, tony.tascioglu@amd.com,
+        jaehyun.chung@amd.com, tales.aparecida@gmail.com, drv@mailo.com,
+        aurabindo.pillai@amd.com, quic_vpolimer@quicinc.com,
+        jiasheng@iscas.ac.cn, noralf@tronnes.org,
+        jose.exposito89@gmail.com, javierm@redhat.com,
+        mairacanal@riseup.net, davidgow@google.com,
+        arthurgrillo@riseup.net, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Am Freitag, 4. August 2023, 16:27:06 CEST schrieb Uwe Kleine-König:
-> Instead of requiring each driver to care for assigning the owner member
-> of struct pwm_ops, handle that implicitly using a macro. Note that the
-> owner member has to be moved to struct pwm_chip, as the ops structure
-> usually lives in read-only memory and so cannot be modified.
-> 
-> The upside is that new lowlevel drivers cannot forget the assignment and
-> save one line each. The pwm-crc driver didn't assign .owner, that's not
-> a problem in practise though as the driver cannot be compiled as a
-> module.
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> ---
+Applied.  Thanks!
 
->  drivers/pwm/pwm-rockchip.c            |  1 -
-
-Acked-by: Heiko Stuebner <heiko@sntech.de> #pwm-rockchip
-
-
-
+On Wed, Aug 9, 2023 at 2:15=E2=80=AFAM Christian K=C3=B6nig <christian.koen=
+ig@amd.com> wrote:
+>
+> Am 09.08.23 um 05:44 schrieb Ruan Jinjie:
+> > The NULL initialization of the pointers assigned by kzalloc() first is
+> > not necessary, because if the kzalloc() failed, the pointers will be
+> > assigned NULL, otherwise it works as usual. so remove it.
+> >
+> > Signed-off-by: Ruan Jinjie <ruanjinjie@huawei.com>
+>
+> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com> for this one=
+,
+> the amd display code and the radeon stuff.
+>
+> Thanks,
+> Christian.
+>
+> > ---
+> >   drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c b/drivers/gpu=
+/drm/amd/amdkfd/kfd_mqd_manager.c
+> > index 863cf060af48..d01bb57733b3 100644
+> > --- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c
+> > +++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c
+> > @@ -48,7 +48,7 @@ int pipe_priority_map[] =3D {
+> >
+> >   struct kfd_mem_obj *allocate_hiq_mqd(struct kfd_node *dev, struct que=
+ue_properties *q)
+> >   {
+> > -     struct kfd_mem_obj *mqd_mem_obj =3D NULL;
+> > +     struct kfd_mem_obj *mqd_mem_obj;
+> >
+> >       mqd_mem_obj =3D kzalloc(sizeof(struct kfd_mem_obj), GFP_KERNEL);
+> >       if (!mqd_mem_obj)
+> > @@ -64,7 +64,7 @@ struct kfd_mem_obj *allocate_hiq_mqd(struct kfd_node =
+*dev, struct queue_properti
+> >   struct kfd_mem_obj *allocate_sdma_mqd(struct kfd_node *dev,
+> >                                       struct queue_properties *q)
+> >   {
+> > -     struct kfd_mem_obj *mqd_mem_obj =3D NULL;
+> > +     struct kfd_mem_obj *mqd_mem_obj;
+> >       uint64_t offset;
+> >
+> >       mqd_mem_obj =3D kzalloc(sizeof(struct kfd_mem_obj), GFP_KERNEL);
+>
