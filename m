@@ -2,139 +2,154 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B35BC001B0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Aug 2023 13:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC44EB64DD
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Aug 2023 13:19:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231948AbjHINLm (ORCPT
+        id S229926AbjHINTg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 9 Aug 2023 09:11:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40234 "EHLO
+        Wed, 9 Aug 2023 09:19:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230417AbjHINLl (ORCPT
+        with ESMTP id S229453AbjHINTf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Aug 2023 09:11:41 -0400
-Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F35E810FB;
-        Wed,  9 Aug 2023 06:11:40 -0700 (PDT)
-Received: by mail-oi1-x235.google.com with SMTP id 5614622812f47-3a36b52b4a4so587378b6e.1;
-        Wed, 09 Aug 2023 06:11:40 -0700 (PDT)
+        Wed, 9 Aug 2023 09:19:35 -0400
+Received: from smtp2.axis.com (smtp2.axis.com [195.60.68.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC1A2C1;
+        Wed,  9 Aug 2023 06:19:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691586700; x=1692191500;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0bsfHSbir+1N3BPwsEF83+v9jo06cZjJVauWxQE2x88=;
-        b=X39VyQ81ASYk/nBdQF2k0zkOJr/0vtM4ZpjXBKvnXgqH0R4bVOzYwN862VOzrR+xcj
-         x3FpupRMsRy7LDq7LpyqF25wC6tbW75E04I9YjPO14TSPjRX6C5prULvlJsGvEEptNVm
-         +KaJ1dgo9yDYvvU9xgG4hPh/jBo2jN+cWTaB9vM2sw0taGzXVXkI09vm9gjv3YdsbQfq
-         fVPylz6eN+KR5L6QcKAbs2scRSlOmKkbZMpF9eiAuRUCeeiue3+fNiq6cua13K7CE3MR
-         iwhCAiADw5MAtzoz2nRqhIRpteROYyPsV+/Zu+9qMzuIk9n/JNtv02kFrJu5jM+1rnUx
-         ohVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691586700; x=1692191500;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0bsfHSbir+1N3BPwsEF83+v9jo06cZjJVauWxQE2x88=;
-        b=OWRkcqykIuEfSO7ul/S3lcp7vSK6unliTaSElOULR/T9XE1KOfPW8lghJ4vv9sG5Vz
-         i7gDThpBT2elOtbVuxZbf5+8RmbPR+BVuFAzqrYVQGmfImVr6uK+miHW/sFQMeWs9Zb9
-         NpGvbqQv/EdBKatErDq3HJHBqWNyGUj9ukyufNjIrjbbP4/uEBkQQlJShXsiDZWGIuG+
-         l2Bf5ZSpMxjtLI3JAwPU0uSdw4ERzC0Z6thgvjoybeW82H6ugfgyLkor0EShJf1tP6Px
-         uewNJbz6d7jlu6llurl6AoljqTZ87e2PgTUBzOe+Y15RjVcM6TdFR8UvQeAvDWzw5h9M
-         QX1w==
-X-Gm-Message-State: AOJu0YwXPFIXVBGB5KBGcbm8q6qMX/zbHuLYuwZTNb9DvtMFN3ZClJi2
-        lPZWX9/dAaEIQ1yf/raUburbVFyjCPQGSav6VhE=
-X-Google-Smtp-Source: AGHT+IGr/N7x0qp/tLHJD9vnx3F+mQLn8Qo3mYlXKDAIof/DZHtBXv2c6gcV9z6BHmLltXrWKyQrwzMGuJze0KPjlPM=
-X-Received: by 2002:aca:bb0b:0:b0:3a7:46c4:e8cd with SMTP id
- l11-20020acabb0b000000b003a746c4e8cdmr8330814oif.12.1691586700314; Wed, 09
- Aug 2023 06:11:40 -0700 (PDT)
+  d=axis.com; q=dns/txt; s=axis-central1; t=1691587175;
+  x=1723123175;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=WXFlV4I7SADXiSgWdW2XHqolRiqvSTrR54BxtWYUzJ8=;
+  b=jzj9b3vpD9YVgFWHuY4Pc6npXNUeNkOqYwTg+vSnGBkBoBDdEyI15XVt
+   1bJJ11NMN/66CPa4aBskXUXw0BMX+fAhP4FdlLP+zsbgaVX0kV9mQQCCw
+   3E+lucLw9FmMPdJ9WNNRuxXdkT2h+3RXUfuKCIN61fCa7e753Xb2rGGmm
+   tmM8R+DcQR9GaQrkN4XNrCE+9uFOg/tCbW5SRFEEZm9XITCGWkW3Fh2ZN
+   QOCiYRrbt0PenQhmzRsVLKy4b5wB7dXu9kWzhMvVw2DtWYWgBwu1T79FL
+   YX88YsKxesssyYnVTNNIpNKE8sI7mfFADUmZHj1N36/7ByHF7AFdtaHBQ
+   Q==;
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dfXQBMN3dvoAAOu7pv7cSKTVCO0T0x159iK1r8DKgpDBRHLVhW1K1YukLIIoMx5nSuYyErhx4+tYYIig4CnBdF3eIlLIFvDDSlc3uP2Sta7w0aDiKd/FF168DvLdjTb1CsxYCcfDPGXGLij1NvhHTMIyKeKKM6p5x+khdGcYaK84BZmm7x5rDb36i9/BaNCF/avHnUhWW0q1edmq8XTChofFsIUVrBay9y/ebrrw6ZVbZQ8c/lq2d5urOxWPXN09NyGgk7sLBR50JvW8s22hGGV+DgChe7M2VPiDAvP/77IH3Mkdkq+nnTJPfeSGABmbsUly/Tyka+On1Dk9xwviIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WXFlV4I7SADXiSgWdW2XHqolRiqvSTrR54BxtWYUzJ8=;
+ b=VhCMcosoEEaznYEIKCEGB9CxFjGGZtZ1XQZa0Jsnrv5qXQaEcWpPEh4NJapRFybnFoTYviGie0tjs4BvXjxOVGb+cijU7tweHQAShvFKiszHQmol9WfwmfZ96ScOwfj4KlSH5pdHXqRktX80abm7+IijpJKFKFETqyvLRf8Ni6bzKs7EZqhFgj6X5lLqvqI3rE46YrIXfo+zvLhSpOw7cqf5fkxUoqSAlC6ltGBSobr4dCjxsJahWJYll1v5oyrQ8BjqGL7F2gbr8oEG5pw7YqlE6G3oxwjE0nrz97gzDiSAbpzi2P7LWBqUJgyj/fI6sgHFqakwIeloIOR83ENOBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
+ dkim=pass header.d=axis.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=axis365.onmicrosoft.com; s=selector2-axis365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WXFlV4I7SADXiSgWdW2XHqolRiqvSTrR54BxtWYUzJ8=;
+ b=V2XIOQO2EtHRbRYoOm0IP8/TialO0bA04X55WbtDmxZL81r/uW0wATuwm1qnOwUZyNypVbqkBgDN7Th4LJsfDGHIFrSRC4LRo/vLulEl2LGQhJ2F31MYAIEtnK9JuI6UOiD9h6nPOUZUp5AwvVQb5XztXpWh8Qpw9tkKeJ3NUT8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=axis.com;
+Message-ID: <01a3c57a-bef4-9a9e-3f8b-0231653232a8@axis.com>
+Date:   Wed, 9 Aug 2023 15:19:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] tty: serial: samsung: Set missing PM ops for hibernation
+ support
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@axis.com>
+References: <20230803-samsung_tty_pm_ops-v1-1-1ea7be72194d@axis.com>
+ <9967fa81-f3f4-04c4-a837-d507a19989cc@linaro.org>
+Content-Language: en-GB
+From:   Anton Eliasson <anton.eliasson@axis.com>
+In-Reply-To: <9967fa81-f3f4-04c4-a837-d507a19989cc@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MM0P280CA0051.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:190:b::35) To AS1PR02MB10348.eurprd02.prod.outlook.com
+ (2603:10a6:20b:473::13)
 MIME-Version: 1.0
-References: <20230809034445.434902-1-ruanjinjie@huawei.com>
- <20230809034445.434902-2-ruanjinjie@huawei.com> <c2b0d96e-b768-b295-c672-3ae52e14b10b@amd.com>
-In-Reply-To: <c2b0d96e-b768-b295-c672-3ae52e14b10b@amd.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Wed, 9 Aug 2023 09:11:29 -0400
-Message-ID: <CADnq5_MZXYBmxr3dJn4vmW2qAbzUDM0eL48anjCot77LinE8tg@mail.gmail.com>
-Subject: Re: [PATCH -next 1/7] drm/amdkfd: Remove unnecessary NULL values
-To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc:     Ruan Jinjie <ruanjinjie@huawei.com>, Felix.Kuehling@amd.com,
-        alexander.deucher@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
-        daniel@ffwll.ch, harry.wentland@amd.com, sunpeng.li@amd.com,
-        Rodrigo.Siqueira@amd.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, tzimmermann@suse.de, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
-        robdclark@gmail.com, quic_abhinavk@quicinc.com,
-        dmitry.baryshkov@linaro.org, sean@poorly.run,
-        marijn.suijten@somainline.org, bskeggs@redhat.com,
-        kherbst@redhat.com, lyude@redhat.com, kraxel@redhat.com,
-        gurchetansingh@chromium.org, olvaffe@gmail.com,
-        paulo.miguel.almeida.rodenas@gmail.com, wenjing.liu@amd.com,
-        haoping.liu@amd.com, Charlene.Liu@amd.com, chiahsuan.chung@amd.com,
-        george.shen@amd.com, sancchen@amd.com, tony.tascioglu@amd.com,
-        jaehyun.chung@amd.com, tales.aparecida@gmail.com, drv@mailo.com,
-        aurabindo.pillai@amd.com, quic_vpolimer@quicinc.com,
-        jiasheng@iscas.ac.cn, noralf@tronnes.org,
-        jose.exposito89@gmail.com, javierm@redhat.com,
-        mairacanal@riseup.net, davidgow@google.com,
-        arthurgrillo@riseup.net, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS1PR02MB10348:EE_|PAVPR02MB10009:EE_
+X-MS-Office365-Filtering-Correlation-Id: 365b516d-c897-458b-b189-08db98db4339
+X-LD-Processed: 78703d3c-b907-432f-b066-88f7af9ca3af,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 7YSY0D2gMfox+TdkK8YfxKyIk5MjyaoibMaAVNK1zo0QiaUgKMwspWLRbIno3WX8B2Co6vCpEl4Z8uP9Rr+FnicyNoktk7nLvgQi/XeeZSMh7AKuZ7t/iW2NYI9J5r/Oa+ixbE073xTG3atvxBR4ujHC+5RyQ9pAvK/qgWCDwbbtv3+PdUJQakePA1oz6J2gVWs+kpCgDPXu/s5lJz7Lj0JeTZM9YREoUjGdRjTHzeVG4PMFmU9XM1kW9Rxiacni2IlLQ+mB+PwGRffOVfb9m9eLlKmlQODvDJMnCifZ3i7e9JxcS1eHAyzq2eMCDgmYGuOgN/HHcku7cjuIlFBC5XlCsmCElcgle0VhWMz/d5ft6h0XYeuvR+l7VBl/zwok4YwCZm7g8vtMVuFIFLx24PG6oX8f9WPGuFVvqh0ksI1Px6LzAC9yX09f1s+1ZzJFm2EIVt1QbIiFIoeIh66GiXEAmopCSzomMl6ioN7PzSU6gshda1QYqm0eIJuNmrpRBM4VlDJRzVSEs6TPR+umwj3APu3CFOiIQHJJxFmNUPizbXmXB4QbP4LEoGUKTs1N0y0RJAklx7VFC+Sru03TRwkCb6h08bTUUWo/7ZL+DoSVqbHvKatNeB79j4LWwGB2yJpfGNE7SjMWLYS6aqBslw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS1PR02MB10348.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(396003)(39860400002)(136003)(366004)(346002)(376002)(1800799006)(186006)(451199021)(86362001)(31696002)(31686004)(44832011)(5660300002)(2906002)(4744005)(41300700001)(8936002)(66476007)(66556008)(8676002)(316002)(38100700002)(110136005)(83380400001)(36756003)(2616005)(478600001)(4326008)(66946007)(53546011)(6506007)(26005)(6486002)(6512007)(107886003)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MENLQzJaYVhabmxYVysxUXF6eTVzT2p5Tzl5WUFvVllwYS9XTkhlSFNtWThT?=
+ =?utf-8?B?OUFWSXBGOHAyZ3QvZElheVo5b1dvbXhFcUw3Y1RpL1ZlNUQ1VDdkUjJNanBh?=
+ =?utf-8?B?YVFaUURRc2YzVGFZQ1hKb0g4Q1RLcG9EYnhWeTdGYzRJSTdQOXpaWndLd3Q3?=
+ =?utf-8?B?bVFUcFpSYXF6c2NLUTd1ZVVIRlVWSFMyaXZpRTdWVVEzNjVWRERNdCtpYTNO?=
+ =?utf-8?B?QU9vcTdSaFp1QWlMMEFZNi9XODZTM3E5RmhMZ0pWVXc4dUZWbnBvZ2hMVDNI?=
+ =?utf-8?B?Z2JEbnlqTFM1RWg3VXBwakZ0NisrVkQ3cTlwUXNDUVZrNnZ0WEVnQXZoaysx?=
+ =?utf-8?B?SHMxUmhPTDJ2ZjdQWE5hVHBZdXFIY2pjeiszczNHVVl3YnFPd2RKL05xM1o5?=
+ =?utf-8?B?dC9URFl4WmM0SnpoZys3R0V6SDBNdGhIOC9Mbyt5L0tIYnJQMEw4WTVBeWZ3?=
+ =?utf-8?B?Vjc3SGt0WHNRQ2hxenZ3TjNkaUR2Rzc2aXlQOU9ocHNEQzR0a2xGeDd4WkRo?=
+ =?utf-8?B?blJkSWN1dXhiK0dTb1lvMzhrNE9Ca2tIVFNiVnBnV3RmUStoSllzQmE1RkxI?=
+ =?utf-8?B?RksrL1BrRVlwa0R4cFNQREtLWXNWc2xhUXp3ZE1ULzliaEJMRGVzbmlpYXBv?=
+ =?utf-8?B?cW1TVGFaRjcyNm0wSFhhYXlCblc5R3UrN3lmNFZXdXFMVVJ5UzRpMVVldjJy?=
+ =?utf-8?B?QXMyRlNPelFUc3JPZUhzNmZqRGk2R0NKbEpabWpQRS9aaEFIR2VuTVhDNTN1?=
+ =?utf-8?B?K0FSZkIwdUh3cWo1bDFCR2RZV1ZDVHdzNUlpOFhJZ0lQYmdLOTQ3bmZFOWJr?=
+ =?utf-8?B?T2VtVytKMG56VkNyZ3ZPb3pucXdkdGdaSnFhallIWkhPSlN5T2gxVlJ4N0gx?=
+ =?utf-8?B?Nmw5WFV3RmJwS0pWYXVOWm8ydnpBWG84WE1CaUZWYjBXeUJ1N1ZlbGRNUTN6?=
+ =?utf-8?B?RUFwcVhTL1F5QlNOR0k4dUN0Z0hEQVE1UEpvelh0MUV1SFgzUFlkcmUrL3lI?=
+ =?utf-8?B?VDJkY1hYTFIrWnc3NDlmcGdUbk4xV2IxL2JRRitzMVo3QUpoVVQwTTZEL1JI?=
+ =?utf-8?B?dzZNbzlnRkZ5am1mUTlVaW5lUEtBSXlkUzZ6ZDM2ZDlNbHh1bWtGSjVta2VV?=
+ =?utf-8?B?SmxCTDZqRlpzaEx6YmxDa0NTNXVpdXNzQ0tsSjl0ZnNCWlYvQkpIbXQvd1JZ?=
+ =?utf-8?B?c1J5SWVELy9LYThXVHpMQmNNdzJUSTJyeFNQaWZadUVwOUNMTVhXaTBYZW5q?=
+ =?utf-8?B?dWUwMlBpN2RBT1hwUG5ONVl5ZWpBQy9NVTFFRlZtcVovaUpGSURKcWoyNktZ?=
+ =?utf-8?B?M3BxeGJNVjJxUGxFK1BZZEVKNFBpNG9seklMenZXcTNsaGVPak8wWThoZ05j?=
+ =?utf-8?B?UWFOcWJFRFA1SFpyRC9HcjFBcjZScGEwdUFINURsREVrdmJuV2tNbGx0VDE4?=
+ =?utf-8?B?dWM5ZHRTc003N3E0anh3UU1UZDN5cEhxQTYvWWE2enF1T0UyN0xSZXdIVEZD?=
+ =?utf-8?B?dGZpZW9BQ1Q5elJiVWFJd2ZhVUduL251anhjbGlIOFdBc0o5MXcvNWwrekd6?=
+ =?utf-8?B?VzJMWW9WajNxdzM4Wm16UTVxS0c3QzBacTZHOGNCMFVVVGIvb2trZVJQbXpV?=
+ =?utf-8?B?UVFiTGs3Z2drQ3RPU1JySEtDczZkWkdjaHpTUElySk5vMW0zTlBBVjJJMDYw?=
+ =?utf-8?B?R0c1eHRhRzN6TUpFUUxscEEvRUtZODg0WVJZQjM5eTFUOS9BcW1jdmJoUmYv?=
+ =?utf-8?B?SkNoTTE0S0RwcWNPaCs5S1hTcHdCaVlVMXNoUFVhS2QyT2Z3YnU4S2I5bHZM?=
+ =?utf-8?B?c1N0YllkeVdhUXhYSWVBM2NmbmJZcVc2ZHhKQkNzQzFHcE1ZdjlCcGJQVGdM?=
+ =?utf-8?B?Wk10ZGJYNjQ5MXJmZk5Xd1V4VnZuNUhIUXNFTWlJNnlsTndveTV4Um9zQWRN?=
+ =?utf-8?B?NjZZcmE2K1lWQVpHVVJxNGFRWStHdUU2cXJVbFhBdUlxem9HK2cvTjZTVCtD?=
+ =?utf-8?B?S0YrdUhyUmsyaG9KQ05BSE1VM3dpTmZmcDNWcXFPbnE4Q3R5UnpTU1grY0pX?=
+ =?utf-8?B?ZnRGQ0FiRldpaEJoTXUrNE11YXFMWGZ1Q3VLN0tIMnB1UEpramwxTTZBK2sy?=
+ =?utf-8?Q?vsTc=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 365b516d-c897-458b-b189-08db98db4339
+X-MS-Exchange-CrossTenant-AuthSource: AS1PR02MB10348.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2023 13:19:29.7367
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lkYY0BYsQDOwbglbbnm6A/YklOmoEPpmnE8tmNcvq8up2JwdkOE7YB5NNZ1FWe6X
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR02MB10009
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Applied.  Thanks!
+On 07/08/2023 15.50, Krzysztof Kozlowski wrote:
+> On 03/08/2023 13:26, Anton Eliasson wrote:
+>> At least freeze, restore and thaw need to be set in order for the driver
+>> to support system hibernation. The existing suspend/resume functions can
+>> be reused since those functions don't touch the device's power state or
+>> wakeup capability. Use the helper macros SET_SYSTEM_SLEEP_PM_OPS and
+>> SET_NOIRQ_SYSTEM_SLEEP_PM_OPS for symmetry with similar drivers.
+>>
+> Looks sensible, although you should also test the other sleep methods,
+> e.g. suspend to idle.
+>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> Best regards,
+> Krzysztof
+>
+Yes, s2idle still works. Standby / Power-On Suspend and s2ram we don't 
+have support for so I can't test it. Thanks for the review!
 
-On Wed, Aug 9, 2023 at 2:15=E2=80=AFAM Christian K=C3=B6nig <christian.koen=
-ig@amd.com> wrote:
->
-> Am 09.08.23 um 05:44 schrieb Ruan Jinjie:
-> > The NULL initialization of the pointers assigned by kzalloc() first is
-> > not necessary, because if the kzalloc() failed, the pointers will be
-> > assigned NULL, otherwise it works as usual. so remove it.
-> >
-> > Signed-off-by: Ruan Jinjie <ruanjinjie@huawei.com>
->
-> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com> for this one=
-,
-> the amd display code and the radeon stuff.
->
-> Thanks,
-> Christian.
->
-> > ---
-> >   drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c | 4 ++--
-> >   1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c b/drivers/gpu=
-/drm/amd/amdkfd/kfd_mqd_manager.c
-> > index 863cf060af48..d01bb57733b3 100644
-> > --- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c
-> > +++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c
-> > @@ -48,7 +48,7 @@ int pipe_priority_map[] =3D {
-> >
-> >   struct kfd_mem_obj *allocate_hiq_mqd(struct kfd_node *dev, struct que=
-ue_properties *q)
-> >   {
-> > -     struct kfd_mem_obj *mqd_mem_obj =3D NULL;
-> > +     struct kfd_mem_obj *mqd_mem_obj;
-> >
-> >       mqd_mem_obj =3D kzalloc(sizeof(struct kfd_mem_obj), GFP_KERNEL);
-> >       if (!mqd_mem_obj)
-> > @@ -64,7 +64,7 @@ struct kfd_mem_obj *allocate_hiq_mqd(struct kfd_node =
-*dev, struct queue_properti
-> >   struct kfd_mem_obj *allocate_sdma_mqd(struct kfd_node *dev,
-> >                                       struct queue_properties *q)
-> >   {
-> > -     struct kfd_mem_obj *mqd_mem_obj =3D NULL;
-> > +     struct kfd_mem_obj *mqd_mem_obj;
-> >       uint64_t offset;
-> >
-> >       mqd_mem_obj =3D kzalloc(sizeof(struct kfd_mem_obj), GFP_KERNEL);
->
+
+Anton Eliasson
+
