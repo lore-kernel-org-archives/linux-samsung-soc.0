@@ -2,139 +2,147 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEB8C04A94
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Aug 2023 03:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA5CEB64DD
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Aug 2023 06:02:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230319AbjHIDps (ORCPT
+        id S229492AbjHIGC2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Aug 2023 23:45:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52010 "EHLO
+        Wed, 9 Aug 2023 02:02:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbjHIDpn (ORCPT
+        with ESMTP id S230331AbjHIGC1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Aug 2023 23:45:43 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 207911BC3;
-        Tue,  8 Aug 2023 20:45:42 -0700 (PDT)
-Received: from kwepemi500008.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RLGB70k3szVklh;
-        Wed,  9 Aug 2023 11:43:43 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi500008.china.huawei.com
- (7.221.188.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 9 Aug
- 2023 11:45:35 +0800
-From:   Ruan Jinjie <ruanjinjie@huawei.com>
-To:     <Felix.Kuehling@amd.com>, <alexander.deucher@amd.com>,
-        <christian.koenig@amd.com>, <Xinhui.Pan@amd.com>,
-        <airlied@gmail.com>, <daniel@ffwll.ch>, <harry.wentland@amd.com>,
-        <sunpeng.li@amd.com>, <Rodrigo.Siqueira@amd.com>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <tzimmermann@suse.de>, <inki.dae@samsung.com>,
-        <sw0312.kim@samsung.com>, <kyungmin.park@samsung.com>,
-        <krzysztof.kozlowski@linaro.org>, <alim.akhtar@samsung.com>,
-        <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>,
-        <dmitry.baryshkov@linaro.org>, <sean@poorly.run>,
-        <marijn.suijten@somainline.org>, <bskeggs@redhat.com>,
-        <kherbst@redhat.com>, <lyude@redhat.com>, <kraxel@redhat.com>,
-        <gurchetansingh@chromium.org>, <olvaffe@gmail.com>,
-        <paulo.miguel.almeida.rodenas@gmail.com>, <wenjing.liu@amd.com>,
-        <haoping.liu@amd.com>, <Charlene.Liu@amd.com>,
-        <chiahsuan.chung@amd.com>, <george.shen@amd.com>,
-        <sancchen@amd.com>, <tony.tascioglu@amd.com>,
-        <jaehyun.chung@amd.com>, <tales.aparecida@gmail.com>,
-        <drv@mailo.com>, <aurabindo.pillai@amd.com>,
-        <quic_vpolimer@quicinc.com>, <jiasheng@iscas.ac.cn>,
-        <noralf@tronnes.org>, <jose.exposito89@gmail.com>,
-        <javierm@redhat.com>, <mairacanal@riseup.net>,
-        <davidgow@google.com>, <arthurgrillo@riseup.net>,
-        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
-        <nouveau@lists.freedesktop.org>,
-        <virtualization@lists.linux-foundation.org>
-CC:     <ruanjinjie@huawei.com>
-Subject: [PATCH -next 7/7] drm: Remove unnecessary NULL values
-Date:   Wed, 9 Aug 2023 11:44:45 +0800
-Message-ID: <20230809034445.434902-8-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230809034445.434902-1-ruanjinjie@huawei.com>
-References: <20230809034445.434902-1-ruanjinjie@huawei.com>
+        Wed, 9 Aug 2023 02:02:27 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEE981BFE
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Aug 2023 23:02:24 -0700 (PDT)
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230809060219epoutp03b1d4ced2fa1f3aa47c9b9af713698487~5obY_5c2O1893418934epoutp035
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Aug 2023 06:02:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230809060219epoutp03b1d4ced2fa1f3aa47c9b9af713698487~5obY_5c2O1893418934epoutp035
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1691560939;
+        bh=Hqwh95qbZ9slU4yEMhbAKqRtPtKBpjOVFp4ZT1NMtzo=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=Hf6XVqcEJD1yJ6hXEKjiYMpz8gh67rHLP3pQuWUwoJAKzzUd3+EuhFLULlZJk+KrL
+         h9tlZFDHJkLcQsVKDrBSwVs1UFS6ynSY8giO7acE1fFdMG+bEswe9pELyQpbuA0E5c
+         91iSxb26WfWeUhe5zXDgAygLpB2Pd9Dj0Wb65kyM=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20230809060218epcas1p2536588d541cc094582d2d55437b631be~5obYxYdcm3079830798epcas1p2w;
+        Wed,  9 Aug 2023 06:02:18 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.38.236]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4RLKG12SfQz4x9Q5; Wed,  9 Aug
+        2023 06:02:17 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A6.CE.33652.9EB23D46; Wed,  9 Aug 2023 15:02:17 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20230809060216epcas1p31ee8f5adc0b079b3bf347369c04f2dfe~5obW8dVcX0035300353epcas1p3J;
+        Wed,  9 Aug 2023 06:02:16 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230809060216epsmtrp2a3b013e3aa3e3a22ea4d67505afd09ad~5obW7zVGV1266612666epsmtrp2X;
+        Wed,  9 Aug 2023 06:02:16 +0000 (GMT)
+X-AuditID: b6c32a35-1fffd70000008374-f0-64d32be933e0
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        75.81.14748.8EB23D46; Wed,  9 Aug 2023 15:02:16 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.211]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230809060216epsmtip21c1f92719306775b24c6f11a3306bca2~5obWyPi6v1829218292epsmtip2W;
+        Wed,  9 Aug 2023 06:02:16 +0000 (GMT)
+From:   Inki Dae <inki.dae@samsung.com>
+To:     airlied@linux.ie, daniel@ffwll.ch
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL] exynos-drm-next
+Date:   Wed,  9 Aug 2023 15:02:16 +0900
+Message-Id: <20230809060216.374042-1-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.90.53.73]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi500008.china.huawei.com (7.221.188.139)
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHKsWRmVeSWpSXmKPExsWy7bCmru5L7cspBv9b+Sx6z51ksvi/bSKz
+        xZWv79ksZpzfx+TA4rH32wIWj+3fHrB63O8+zuTxeZNcAEtUtk1GamJKapFCal5yfkpmXrqt
+        kndwvHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0EolhbLEnFKgUEBicbGSvp1NUX5pSapC
+        Rn5xia1SakFKToFpgV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbGwiWzGAt6uSu2P9nD3sC4hrOL
+        kZNDQsBE4tLb/2xdjFwcQgI7GCWO39rGDOF8YpR4fKmNBcL5xihx4PQjRpiWlwu2QLXsZZTY
+        cWULVMsXRomZq14wg1SxCahKTFxxnw3EFgGy3056DBZnFnCT+LP0LAuILSygLLH7+j5WEJsF
+        qObIlH6wGl4BK4kfD15CbZOXmHnpOztEXFDi5MwnLBBz5CWat84GWywhsIld4sW+h2wQDS4S
+        1/4dYYWwhSVeHd/CDmFLSXx+t5cNomEyo8Sd6ytYIJwZjBKHf16HWmcssX/pZKYuRg6gFZoS
+        63fpQ4QVJXb+nssIsZlP4t3XHlaQEgkBXomONiGIEiWJYxdvQE2RkLiwZCLUPR4SM599A7tB
+        SCBWYvfsLawTGOVnIflnFpJ/ZiEsXsDIvIpRLLWgODc9tdiwwBAer8n5uZsYwQlPy3QH48S3
+        H/QOMTJxMB5ilOBgVhLhtQ2+lCLEm5JYWZValB9fVJqTWnyI0RQYwhOZpUST84EpN68k3tDE
+        0sDEzMjYxMLQzFBJnJf5UW+KkEB6YklqdmpqQWoRTB8TB6dUA5Pu/u1uFnPe9d7QF5VwvvJg
+        x9oNk2/GqMhueJz14eyKGu/1Cesd7ug9qHin5qAb4P+Su33Ni88nfiaJGHWIFUdcOSXt4bWl
+        mi/4cWFQpMGVPbvCrtnm6j+dcf5W3KfuP0Zy99NSL3rznGEQiVnvcvnY/5fzTnK9Xu3F/uKa
+        kor19aInN7W+BUon/xBV114if3LahHWXz4tk/1o39bpxhEzmUg2XNed7vQK+PS88c3mZCJsA
+        h9al+rPGFgc3nNhs+9mX4dULFvPiX6yz+INSJC4c3XL4RUTUNOu9B4+occQySch3+3Kk/Zqw
+        j7ljYaaU/g/b81MctzFUmsmsq7g8L8fvT9eU+cWbdJ/sPxms37RMiaU4I9FQi7moOBEAdPVC
+        bgEEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBLMWRmVeSWpSXmKPExsWy7bCSvO4L7cspBievmVv0njvJZPF/20Rm
+        iytf37NZzDi/j8mBxWPvtwUsHtu/PWD1uN99nMnj8ya5AJYoLpuU1JzMstQifbsEroyFS2Yx
+        FvRyV2x/soe9gXENZxcjJ4eEgInEywVb2EBsIYHdjBKHb8p1MXIAxSUktmzlgDCFJQ4fLu5i
+        5AKq+MQo8e3yE1aQcjYBVYmJK+6DtYoIqEs8uLyQEcRmFvCQeL9nNTuILSygLLH7+j6wehag
+        +iNT+plBbF4BK4kfD14yQpwgLzHz0nd2iLigxMmZT1gg5shLNG+dzTyBkW8WktQsJKkFjEyr
+        GCVTC4pz03OTDQsM81LL9YoTc4tL89L1kvNzNzGCA09LYwfjvfn/9A4xMnEwHmKU4GBWEuG1
+        Db6UIsSbklhZlVqUH19UmpNafIhRmoNFSZzXcMbsFCGB9MSS1OzU1ILUIpgsEwenVAOTQLvf
+        jrdHpz/dYf67iWndznxh6xNJSe7XVeSOuiqyfbqjJtWi1tIR8eXnrwvHG771WN2fOsd38Yzg
+        5zMqmhfITb7qvVR6yeN1Hu+Crnsx3uy8yFo0MXsmPyvz95+Hf36cmHSufdnN+rpOn3VHo4Pn
+        pLAbnNzIKybsHT5tvWk3o696etyK1OM6Lh1lR/YbOu38ZzAty3KHU5mtiUhjYLSY8tS/cjlr
+        4r2+5y9iuCvxc8W2nplfO+Ks2J7xLb9haKSteqfA1OOKRaPl6fvv1ynNZAlWqbY6YXk9YmaC
+        ocTkCk8h+3NfNhh7vd726qad/+JbVRVXCstztl5uz5usXVRxTM7mut2SIq5g6U8zj7xWYinO
+        SDTUYi4qTgQAMswliasCAAA=
+X-CMS-MailID: 20230809060216epcas1p31ee8f5adc0b079b3bf347369c04f2dfe
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
 X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230809060216epcas1p31ee8f5adc0b079b3bf347369c04f2dfe
+References: <CGME20230809060216epcas1p31ee8f5adc0b079b3bf347369c04f2dfe@epcas1p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The NULL initialization of the pointers assigned by kzalloc() first is
-not necessary, because if the kzalloc() failed, the pointers will be
-assigned NULL, otherwise it works as usual. so remove it.
+Hi Dave and Daniel,
 
-Signed-off-by: Ruan Jinjie <ruanjinjie@huawei.com>
----
- drivers/gpu/drm/drm_agpsupport.c          | 2 +-
- drivers/gpu/drm/drm_atomic_uapi.c         | 2 +-
- drivers/gpu/drm/exynos/exynos_drm_ipp.c   | 2 +-
- drivers/gpu/drm/nouveau/dispnv04/tvnv17.c | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+   Just one fixup and cleanup.
+   Please kindly let me know if there is any problem.
 
-diff --git a/drivers/gpu/drm/drm_agpsupport.c b/drivers/gpu/drm/drm_agpsupport.c
-index a4ad6fd13abc..158709849481 100644
---- a/drivers/gpu/drm/drm_agpsupport.c
-+++ b/drivers/gpu/drm/drm_agpsupport.c
-@@ -384,7 +384,7 @@ int drm_legacy_agp_free_ioctl(struct drm_device *dev, void *data,
- struct drm_agp_head *drm_legacy_agp_init(struct drm_device *dev)
- {
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
--	struct drm_agp_head *head = NULL;
-+	struct drm_agp_head *head;
- 
- 	head = kzalloc(sizeof(*head), GFP_KERNEL);
- 	if (!head)
-diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
-index 98d3b10c08ae..5a433af75132 100644
---- a/drivers/gpu/drm/drm_atomic_uapi.c
-+++ b/drivers/gpu/drm/drm_atomic_uapi.c
-@@ -942,7 +942,7 @@ int drm_atomic_get_property(struct drm_mode_object *obj,
- static struct drm_pending_vblank_event *create_vblank_event(
- 		struct drm_crtc *crtc, uint64_t user_data)
- {
--	struct drm_pending_vblank_event *e = NULL;
-+	struct drm_pending_vblank_event *e;
- 
- 	e = kzalloc(sizeof *e, GFP_KERNEL);
- 	if (!e)
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index ea9f66037600..419d0afccdb9 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -695,7 +695,7 @@ static int exynos_drm_ipp_task_setup_buffers(struct exynos_drm_ipp_task *task,
- static int exynos_drm_ipp_event_create(struct exynos_drm_ipp_task *task,
- 				 struct drm_file *file_priv, uint64_t user_data)
- {
--	struct drm_pending_exynos_ipp_event *e = NULL;
-+	struct drm_pending_exynos_ipp_event *e;
- 	int ret;
- 
- 	e = kzalloc(sizeof(*e), GFP_KERNEL);
-diff --git a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
-index 670c9739e5e1..9accb2a12719 100644
---- a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
-+++ b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
-@@ -789,7 +789,7 @@ nv17_tv_create(struct drm_connector *connector, struct dcb_output *entry)
- {
- 	struct drm_device *dev = connector->dev;
- 	struct drm_encoder *encoder;
--	struct nv17_tv_encoder *tv_enc = NULL;
-+	struct nv17_tv_encoder *tv_enc;
- 
- 	tv_enc = kzalloc(sizeof(*tv_enc), GFP_KERNEL);
- 	if (!tv_enc)
--- 
-2.34.1
+Thanks,
+Inki Dae
 
+The following changes since commit d9aa1da9a8cfb0387eb5703c15bd1f54421460ac:
+
+  Merge tag 'drm-intel-gt-next-2023-08-04' of git://anongit.freedesktop.org/drm/drm-intel into drm-next (2023-08-07 13:49:25 +1000)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v6.6
+
+for you to fetch changes up to 6b83c85b64078ff49b4d3d0b2cd2c2bf6f1b6a85:
+
+  drm/exynos: remove redundant of_match_ptr (2023-08-08 09:35:19 +0900)
+
+----------------------------------------------------------------
+Fixup
+- fix a possible null pointer dereference issue in
+  exynos_drm_crtc_atomic_disable(), which was reported by
+  the automatic static analysis tool. And below is a relevant link,
+  https://sites.google.com/view/basscheck/home
+
+Cleanup
+- drop the use of of_match_ptr which is redundant.
+
+----------------------------------------------------------------
+Tuo Li (1):
+      drm/exynos: fix a possible null-pointer dereference due to data race in exynos_drm_crtc_atomic_disable()
+
+Zhu Wang (1):
+      drm/exynos: remove redundant of_match_ptr
+
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 5 ++---
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c  | 2 +-
+ 2 files changed, 3 insertions(+), 4 deletions(-)
