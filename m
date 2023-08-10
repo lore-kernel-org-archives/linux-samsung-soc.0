@@ -2,121 +2,99 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11193C001DB
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Aug 2023 13:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FBD1C04E69
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Aug 2023 15:12:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233757AbjHJNiI (ORCPT
+        id S236033AbjHJPM6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Aug 2023 09:38:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41516 "EHLO
+        Thu, 10 Aug 2023 11:12:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231989AbjHJNiH (ORCPT
+        with ESMTP id S235624AbjHJPM6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Aug 2023 09:38:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C02BE7F;
-        Thu, 10 Aug 2023 06:38:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D484C65CAD;
-        Thu, 10 Aug 2023 13:38:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF1DC433C8;
-        Thu, 10 Aug 2023 13:38:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691674686;
-        bh=0OPYjnIks9F8xNaJ00TW2wNWuFrlrAMiXrDrbTbNpwE=;
-        h=Date:Subject:To:References:From:In-Reply-To:From;
-        b=U0Cm3KNSeCl9sGwrkNrs6J/UOkdyQ2uyUyxuKTQCUkZCqj6U2+rb4NvsHkaW3yMoE
-         KdBSjyFQwcUkAbY1KiMcPvljVb9SEa68mH//MoIsyU5n451EutQtT8I6m05UEutc23
-         VFqV3bBedq5nOwc9g3r/s1Yf1a+rsc2UxqfWPola87VILA5SinR+1nAz2qKDdOTScA
-         5R331HrCzHTf/f2HPa8dFALppAJaUKi5EfQ27CIQT+b8S1tX3QuXFmCmJQHY9J7LGG
-         g/ef1rxd4BrmFtyu9jBGzEhHe6PKPjkBtwvM4u+m6wuGptybkhv9eN1mPRs1QVabu+
-         wGl3Ghf3f0mBQ==
-Message-ID: <cac9c508-5638-dbc5-8086-ade995ee644b@kernel.org>
-Date:   Thu, 10 Aug 2023 22:38:01 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 00/11] clk: samsung: remove number of clocks from bindings
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        Thu, 10 Aug 2023 11:12:58 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2307326B6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Aug 2023 08:12:57 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-4fe4f5290daso1527674e87.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Aug 2023 08:12:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691680375; x=1692285175;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Atb0jrTiyZhB6Vba51W4Bj3vyiqmbf0UlTzWhJceDM4=;
+        b=r7C9lnpMgM4Js8CG5h1thqpG4k+iWowsNEeDSDDiLm888xblWp7LiXr6tzMlVODlOt
+         4m+d+Ni4XLkVm51w7O1TaEm265a2br61qqr4fcZAK2YmTjVXZsFMxn+Pys/Eh6jIqKeP
+         viMzwOFfEx8SP6bSCPSVcWYwB6XqBma/gIyJ2y3qK5v1ggGespboZ8Efoadeaq6EpRqR
+         yynWNOCe9dw8/r8lJcFxWOkwv/vFsB71SoL+bhAgZ704LDdWdxXsZyMpNWdABGdptRHE
+         G8au4PIjfAJDPN33RorGMXNYmLFBQcZ5nffRo7w3eCrGckfLX8ojAdlGMqdFIv9aGlJj
+         czig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691680375; x=1692285175;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Atb0jrTiyZhB6Vba51W4Bj3vyiqmbf0UlTzWhJceDM4=;
+        b=BrUY6AuQDcIBVYFG6WLLBGE1DG1inCFNDvndt6yidtvdmnyat4e/iufXps3KQrmt9/
+         trrRXETGXpzk4GKh6/wq1+6FbsULOqz2naUxCMSx+EVNO2ctBcCZs0XvG3MGHG05+G+D
+         /9LqBr7cu1FSaZcDkE6aRWXEdkPWN8HtcxQ8Yd6WkHeFPUkq0JrNPj10tm6Ly0RolLFN
+         bG+gyc5c7E1w6uPWPyEiszPhSA+XIfTLYZwVUJshMfDxiBPcXkozxnTtcFh64smJAu+3
+         4zKjW5mQajiCw9SaT4+2wOaQiMBNJ7v0Gk+Pt/1SYboyQoXxL8hqrPBeWv+1V2Fu2D24
+         Vliw==
+X-Gm-Message-State: AOJu0YyyU1k6TT59oWNX0uCD7RpL7Px1EXFWCBLcyM2ROwDWAA2kWDwx
+        2tEAkfOblpvKsXab0L9CjmtRPw==
+X-Google-Smtp-Source: AGHT+IELhKUyC2Ck6DRpg9YZOxR7vxC4ZUjcUDDjABEw+6deoYPNnB//97RRqPn1xIXH1Cq1Cu/obA==
+X-Received: by 2002:a05:6512:4013:b0:4fb:8771:e898 with SMTP id br19-20020a056512401300b004fb8771e898mr2355684lfb.15.1691680375326;
+        Thu, 10 Aug 2023 08:12:55 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.222.113])
+        by smtp.gmail.com with ESMTPSA id 5-20020a05600c020500b003fe29dc0ff2sm2416242wmi.21.2023.08.10.08.12.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Aug 2023 08:12:54 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20230808082738.122804-1-krzysztof.kozlowski@linaro.org>
-From:   Chanwoo Choi <chanwoo@kernel.org>
-In-Reply-To: <20230808082738.122804-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 1/3] samsung: drivers for v6.6
+Date:   Thu, 10 Aug 2023 17:12:48 +0200
+Message-Id: <20230810151250.220202-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
 
-On 23. 8. 8. 17:27, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> No dependencies, patches can be taken in one set via my clk tree.
-> 
-> Best regards,
-> Krzysztof
-> 
-> Krzysztof Kozlowski (11):
->   clk: samsung: exynos3250: do not define number of clocks in bindings
->   clk: samsung: exynos4: do not define number of clocks in bindings
->   clk: samsung: exynos5250: do not define number of clocks in bindings
->   clk: samsung: exynos5260: do not define number of clocks in bindings
->   clk: samsung: exynos5410: do not define number of clocks in bindings
->   clk: samsung: exynos5420: do not define number of clocks in bindings
->   clk: samsung: exynos5433: do not define number of clocks in bindings
->   clk: samsung: exynos7885: do not define number of clocks in bindings
->   clk: samsung: exynos850: do not define number of clocks in bindings
->   clk: samsung: exynoautov9: do not define number of clocks in bindings
->   dt-bindings: clock: samsung: remove define with number of clocks
-> 
->  drivers/clk/samsung/clk-exynos3250.c          | 11 +++-
->  drivers/clk/samsung/clk-exynos4.c             |  5 +-
->  drivers/clk/samsung/clk-exynos4412-isp.c      |  5 +-
->  drivers/clk/samsung/clk-exynos5250.c          |  5 +-
->  drivers/clk/samsung/clk-exynos5260.c          | 41 ++++++++----
->  drivers/clk/samsung/clk-exynos5410.c          |  5 +-
->  drivers/clk/samsung/clk-exynos5420.c          |  5 +-
->  drivers/clk/samsung/clk-exynos5433.c          | 65 +++++++++++++------
->  drivers/clk/samsung/clk-exynos7885.c          | 14 ++--
->  drivers/clk/samsung/clk-exynos850.c           | 35 ++++++----
->  drivers/clk/samsung/clk-exynosautov9.c        | 29 ++++++---
->  include/dt-bindings/clock/exynos3250.h        | 18 -----
->  include/dt-bindings/clock/exynos4.h           |  5 --
->  include/dt-bindings/clock/exynos5250.h        |  3 -
->  include/dt-bindings/clock/exynos5260-clk.h    | 25 -------
->  include/dt-bindings/clock/exynos5410.h        |  2 -
->  include/dt-bindings/clock/exynos5420.h        |  3 -
->  include/dt-bindings/clock/exynos5433.h        | 42 ------------
->  include/dt-bindings/clock/exynos7885.h        |  4 --
->  include/dt-bindings/clock/exynos850.h         | 10 ---
->  .../dt-bindings/clock/samsung,exynosautov9.h  | 18 -----
->  21 files changed, 154 insertions(+), 196 deletions(-)
-> 
+  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
 
-There are no behavior changes.
-It remove the unused clock id from binding header file.
-I will remove the confusion of user of clock. Thanks.
+are available in the Git repository at:
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-6.6
 
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+for you to fetch changes up to eecff3319287179032600eeec5fa357a53ae0fe1:
 
+  MAINTAINERS: mfd: Un-support Maxim and Samsung PMIC drivers (2023-07-28 10:39:41 +0200)
+
+----------------------------------------------------------------
+Samsung SoC driver changes for v6.6
+
+Minor cleanup of headers and maintainer entries for Samsung SoC drivers.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (2):
+      MAINTAINERS: samsung: Un-support cpuidle and clock drivers
+      MAINTAINERS: mfd: Un-support Maxim and Samsung PMIC drivers
+
+Rob Herring (1):
+      soc: samsung: Explicitly include correct DT includes
+
+ MAINTAINERS                         | 10 +++++-----
+ drivers/soc/samsung/exynos-chipid.c |  1 -
+ drivers/soc/samsung/exynos-pmu.c    |  2 +-
+ drivers/soc/samsung/pm_domains.c    |  3 ++-
+ 4 files changed, 8 insertions(+), 8 deletions(-)
