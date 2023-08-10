@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 091EDC04FE0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Aug 2023 15:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A16C04A6A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Aug 2023 15:13:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236039AbjHJPM7 (ORCPT
+        id S234855AbjHJPNC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Aug 2023 11:12:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50392 "EHLO
+        Thu, 10 Aug 2023 11:13:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236037AbjHJPM7 (ORCPT
+        with ESMTP id S234097AbjHJPNB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Aug 2023 11:12:59 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB482694
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Aug 2023 08:12:58 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3fe4ad22eb0so9052945e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Aug 2023 08:12:58 -0700 (PDT)
+        Thu, 10 Aug 2023 11:13:01 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90DF92694
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Aug 2023 08:13:00 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2b9e6cc93c6so15734751fa.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Aug 2023 08:13:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691680377; x=1692285177;
+        d=linaro.org; s=google; t=1691680379; x=1692285179;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ihehJxrTNK++d1PA1IF6JXA5I34hdQPx/lmWfAqYS0A=;
-        b=zwRAzjdKw5Uh7/H/QGM4/xh5m+K71vN1qXj+4jCP0zPQr0q/vev4zD5LhpVy/KCyRf
-         woeTNCiAOQBGoS20pnwwtLRbZ1F4JgvEpTLZupE4V1IOj6LhL0Rm61uWFBACMuqdWCsU
-         Om2FD2ffPV14yvg7Hx4RcUX2ORnptVgmHHWixFrXZ6L0nMaFieTSDU1kJolzSgg3/yOl
-         HSOQNNhks1e+B1ixM5XXfbQTm+mCA6hazx9ZY9yUeNatanM/p4gTisHFQ+eWjiG6lMHM
-         41iaqXYqk+3cQdfXhj2tEJCR9quprc6Ho7Gu+5GE9dKx+GJmvlr0/g3qlJS1wZbfFj8z
-         y8ag==
+        bh=sdDT26B+V+vLaTDUp/YfHK3rTLHjJZ5TyquwU+jDUTg=;
+        b=hCBkjMlRwOwHdUIZUbK4Vmgot6S0HpOAYovZGCHIe6YVA9w0MSDGsKmvVkibHTVzHD
+         skFYcetIYyLbdZhOrEe/ZUZ56ZsdcOk97isqCcEkgpkl3IH733ZKkUtaTPOmNI7MxQHI
+         K3sfbL0Lo94H3Qek+jTg0N00aUUhuO6pUulscX8DQjohQjiAuq6PA8n/Il2pa/J+h9F+
+         R1KQ/O6HnhQCTCpbHCglSicQoPil3SMygN6Ihefgy0NhjbfVOVMyS6M/+sMUPyizD1hW
+         baBazklOaKIWK1qsIwGeW5nEvWgu+K2kkPLLGEbC/cRGtY+faa2qTbLQadM40TFppFOk
+         uTlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691680377; x=1692285177;
+        d=1e100.net; s=20221208; t=1691680379; x=1692285179;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ihehJxrTNK++d1PA1IF6JXA5I34hdQPx/lmWfAqYS0A=;
-        b=SriARpiZVATaNLRxtiIoVhUqUyv9ryN5c9+v1oiUgJXdn/9o4hT/93JXXNfdpWyY9e
-         890mWNXHhQedbQZeR4i/Z8AgLLRXyT8+qK7ff591VOWnB4gAOaBxW52Y05EmWgd2V6Go
-         qmchVbiTF8D8I/DWJ5K3QcaO922SQ79oOszuBdCS+MvSt5aTo9fjrJRcPwGn0Yp8CIhz
-         5/j/3HbdEU90XZxD6CC0BNTeH08M9GdCHFb1/SrdRGvxHYWOzJB1pvFh/rH5j5GSyOJ4
-         xA0BESH9mmydKwtFflJq01FYNFLZfcl2iPb+1RSMR99E0ZoXLQYJLZ1SstB2INxWzTKL
-         hCRA==
-X-Gm-Message-State: AOJu0YxH19VnTnDibeFhIssSPNr5fO7f64QNYC0Ragy4gXmtOJzojyOu
-        jpe6/Sia08TXzcdBXVY6YxBH1w==
-X-Google-Smtp-Source: AGHT+IFHMAVzT051cf++Anz0qtU1svuxejGcPcBz1h7lnMWe48wUCEK4q+TCvF2P2ZCCdXgg00KGbw==
-X-Received: by 2002:adf:e843:0:b0:313:e8b6:1699 with SMTP id d3-20020adfe843000000b00313e8b61699mr2218576wrn.55.1691680377133;
-        Thu, 10 Aug 2023 08:12:57 -0700 (PDT)
+        bh=sdDT26B+V+vLaTDUp/YfHK3rTLHjJZ5TyquwU+jDUTg=;
+        b=kk8zm+ZefPkkmXraB0B/UbsGKjAaRPBina7cnzZqOZD08Eh/RYHBrnnYYg8YQ/hmdv
+         c82jHLBeGrUGRwE6O3utY78adXBGjWGvG4kisyN9wPaXUJNsXKfLRLcGAg5eMP1pqRx2
+         xTLHanI3kwi2B/T8XpdEDXj2pLiRV7Zx3kEldaJK36bxai1VhwrTa4PO4SpslIXzx8g2
+         1YikAHAb16X8KTpCtpemCuX1gWf8JV5Zo1DKRyoHmWFu2WKX4NurmHlS22LZ7lCmFie9
+         7ZkFOcBZ4LohiAplyIWz9BHQPtyZQB0wlP/2SrsiJbX06igYEDjuI5w83PV5yJi2Lgsn
+         Eusw==
+X-Gm-Message-State: AOJu0YzTp2p4ZQ5WGG6D663jrT9WDG5fg4z2ou/2ZutXc3+iApxu9z7Y
+        tc0GXtu8nyUrGf+/UapqysoJxQ==
+X-Google-Smtp-Source: AGHT+IGupjKFY36wRNEtTkCoS9n57Wd8DU6a0M9vinXIEc0RwmTcvWIePJIex5oTwUEiMt1H6ZTG/A==
+X-Received: by 2002:a2e:9987:0:b0:2ba:3452:a799 with SMTP id w7-20020a2e9987000000b002ba3452a799mr2349401lji.42.1691680378781;
+        Thu, 10 Aug 2023 08:12:58 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.222.113])
-        by smtp.gmail.com with ESMTPSA id 5-20020a05600c020500b003fe29dc0ff2sm2416242wmi.21.2023.08.10.08.12.55
+        by smtp.gmail.com with ESMTPSA id 5-20020a05600c020500b003fe29dc0ff2sm2416242wmi.21.2023.08.10.08.12.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Aug 2023 08:12:56 -0700 (PDT)
+        Thu, 10 Aug 2023 08:12:58 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
         arm@kernel.org, soc@kernel.org
@@ -59,9 +59,9 @@ Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/3] arm64: dts: samsung: DTS for v6.6
-Date:   Thu, 10 Aug 2023 17:12:49 +0200
-Message-Id: <20230810151250.220202-2-krzysztof.kozlowski@linaro.org>
+Subject: [GIT PULL 3/3] ARM: dts: samsung: DTS for v6.6
+Date:   Thu, 10 Aug 2023 17:12:50 +0200
+Message-Id: <20230810151250.220202-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230810151250.220202-1-krzysztof.kozlowski@linaro.org>
 References: <20230810151250.220202-1-krzysztof.kozlowski@linaro.org>
@@ -77,34 +77,57 @@ The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-6.6
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-6.6
 
-for you to fetch changes up to d157d43754582f3981b7eefc691abc4d865430e1:
+for you to fetch changes up to 57f706bf73079379a9e9f5490c94c2473077bb2e:
 
-  arm64: dts: exynos: exynos5433-tm2: drop redundant status=okay (2023-08-06 17:42:22 +0200)
-
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v6.6
-
-1. Add dedicated compatibles for PWM block.
-2. Add PWM to ExynosAutov9 SADK board.
-3. Few white-space and other cleanups.
+  ARM: dts: samsung: exynos4412-midas: add USB connector and USB OTG (2023-07-26 10:51:41 +0200)
 
 ----------------------------------------------------------------
-Jaewon Kim (2):
-      dt-bindings: pwm: samsung: add exynosautov9 compatible
-      arm64: dts: exynos: add pwm node for exynosautov9-sadk
+Samsung DTS ARM changes for v6.6
 
-Krzysztof Kozlowski (4):
-      arm64: dts: exynos: add missing space before {
-      arm64: dts: exynos: minor whitespace cleanup around '='
-      arm64: dts: fsd: minor whitespace cleanup around '='
-      arm64: dts: exynos: exynos5433-tm2: drop redundant status=okay
+1. Galaxy S II: correct LCD screen's physical size.
+2. Add Samsung Galaxy Tab 3 8.0 boards (Exynos4212).
+3. Galaxy S3 family: add USB connector and USB OTG. Full USB OTG still
+   seems not to work, but at least HDMI improved and dtbs_check is
+   happy.
+4. Fix issues pointed out by dtbs_check and W=1: unit addresses, use
+   'gpios' suffix over 'gpio', update i2c-arb device node to newer
+   binding.
+5. Few white-space cleanups.
 
- Documentation/devicetree/bindings/pwm/pwm-samsung.yaml | 17 +++++++++++------
- arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi  |  1 -
- arch/arm64/boot/dts/exynos/exynos7.dtsi                |  8 ++++----
- arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts       |  6 ++++++
- arch/arm64/boot/dts/exynos/exynosautov9.dtsi           | 13 ++++++++++++-
- arch/arm64/boot/dts/tesla/fsd.dtsi                     |  4 ++--
- 6 files changed, 35 insertions(+), 14 deletions(-)
+----------------------------------------------------------------
+Artur Weber (1):
+      ARM: dts: exynos: Add Samsung Galaxy Tab 3 8.0 boards
+
+Krzysztof Kozlowski (8):
+      ARM: dts: exynos: minor whitespace cleanup around '='
+      ARM: dts: s5pv210: minor whitespace cleanup around '='
+      ARM: dts: samsung: s3c6410-mini6410: correct ethernet reg addresses (split)
+      ARM: dts: samsung: s5pv210-smdkv210: correct ethernet reg addresses (split)
+      ARM: dts: samsung: fix Exynos4212 Tab3 makefile entries
+      ARM: dts: samsung: exynos5250-snow: use 'gpios' suffix for i2c-arb
+      ARM: dts: samsung: exynos5250-snow: switch i2c-arb to new child variant
+      ARM: dts: samsung: exynos4412-midas: add USB connector and USB OTG
+
+Paul Cercueil (1):
+      ARM: dts: samsung: exynos4210-i9100: Fix LCD screen's physical size
+
+ arch/arm/boot/dts/samsung/Makefile                 |    3 +
+ arch/arm/boot/dts/samsung/exynos4210-i9100.dts     |    4 +-
+ arch/arm/boot/dts/samsung/exynos4210-trats.dts     |    8 +-
+ .../boot/dts/samsung/exynos4210-universal_c210.dts |    4 +-
+ arch/arm/boot/dts/samsung/exynos4212-tab3-3g8.dts  |   29 +
+ arch/arm/boot/dts/samsung/exynos4212-tab3-lte8.dts |   44 +
+ .../arm/boot/dts/samsung/exynos4212-tab3-wifi8.dts |   26 +
+ arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi     | 1310 ++++++++++++++++++++
+ arch/arm/boot/dts/samsung/exynos4412-midas.dtsi    |   52 +-
+ .../boot/dts/samsung/exynos5250-snow-common.dtsi   |    8 +-
+ arch/arm/boot/dts/samsung/s3c6410-mini6410.dts     |    2 +-
+ arch/arm/boot/dts/samsung/s5pv210-pinctrl.dtsi     |   12 +-
+ arch/arm/boot/dts/samsung/s5pv210-smdkv210.dts     |    2 +-
+ 13 files changed, 1480 insertions(+), 24 deletions(-)
+ create mode 100644 arch/arm/boot/dts/samsung/exynos4212-tab3-3g8.dts
+ create mode 100644 arch/arm/boot/dts/samsung/exynos4212-tab3-lte8.dts
+ create mode 100644 arch/arm/boot/dts/samsung/exynos4212-tab3-wifi8.dts
+ create mode 100644 arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
