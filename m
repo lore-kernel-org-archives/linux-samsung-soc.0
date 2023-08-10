@@ -2,177 +2,95 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFC5C41513
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Aug 2023 16:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D26C41513
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Aug 2023 06:21:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230250AbjHIQSb (ORCPT
+        id S232403AbjHJGVi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 9 Aug 2023 12:18:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33868 "EHLO
+        Thu, 10 Aug 2023 02:21:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229693AbjHIQS3 (ORCPT
+        with ESMTP id S230155AbjHJGVi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Aug 2023 12:18:29 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0CD51982;
-        Wed,  9 Aug 2023 09:18:25 -0700 (PDT)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 379F7Kbd015177;
-        Wed, 9 Aug 2023 16:18:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=pc+j7IaGMjxp0gWLH/cgKwZFlgWmLlLO/9/+BwPqzeo=;
- b=MJlzFhUrRSUHKJysr6TuYDlhd1iYS/ouQn6Hcs0uKBowN+fs2AUDTXES9eKdy5tVGdi7
- HIdV0LDXbuRSImfdZSXvrJwVg/DIYoWfdcPtkqaKwl1db6XtS9abTASw6EBHwI3MdbC4
- KPKAmtdsPb4jDosiBakhdB8Aonu3Q6yW8mivWZn+d0HYKw/7rD9jTRDkafVVutm6Vleb
- rla4uIAdAzJLpwStK1+98Bn8KakXzgSXPzvCe81W3AjU27dUStVXVbMvYRhkGpxOSwye
- A2f/HiVL9T4AdERYuH/Df7mwaDB1etnk9md0m7slHzSxAOFnhrOT6dDuv5O1fg5igR9T zQ== 
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sc1ny1rhb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Aug 2023 16:18:09 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 379GI8FN018967
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 9 Aug 2023 16:18:08 GMT
-Received: from [10.216.57.155] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 9 Aug
- 2023 09:18:02 -0700
-Message-ID: <a8750c05-15d4-1b58-c274-39f24ac018ca@quicinc.com>
-Date:   Wed, 9 Aug 2023 21:47:58 +0530
+        Thu, 10 Aug 2023 02:21:38 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51BFFE52
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Aug 2023 23:21:37 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-52340d9187aso610759a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Aug 2023 23:21:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691648496; x=1692253296;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5KGBV5nb6p4yPHUwdCPzMc/o3J23+nmIfdlWDVvQhtE=;
+        b=dtR16Eu+ffBLTlPzjZEiufh3uLvlptbLi+dN5pZd6XTR3dCgfkkUQms9MBcUi2sq3l
+         BggBI51u1RVPYVVYimgaVugYO0pjmF+zF+UZKxBwGGZwLDFf+7kOtrpYU6gWr+Gm62mv
+         0H+GJrXjuz9Eweo3UkytVDZKWG3kMvTXQ9IVi2hWDhG+58euJ1wpwg23iHsq7iNlcG2S
+         mz0bVsf6pliUaDvm27zJd619eUm7+GIJIZBVrM8ookFl9M+mljn75xdBq090qkYHWvnc
+         U2M2X0aUNcDCktqnoaKj79CAHsqNgssSpcDdqyMAnm4UNx1HYdAJjB4E6Sw2KifVUbiM
+         Hs6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691648496; x=1692253296;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5KGBV5nb6p4yPHUwdCPzMc/o3J23+nmIfdlWDVvQhtE=;
+        b=aVeQB3kosIPf3gD5QR3FGThJtQyklncWsbL7r8KfljO8W8j9vOpcBjxbCzVa835S+L
+         EOiMDwdr15Tn5RQ54NLk6mf25vqOoP2S1gknAc3YpeYactwdow4nkWVrSdT4jnMqHKGf
+         ioTI6Sp1qOwF33r8PpSfF0fpdb70mZ6Ba16LlqgBBY8mVRAB405unTd954nOq5Kd/wSv
+         +4h1UsM2Eyp9JeiOXZKfolG8iWGivFqsGip5ACgT8RxCvZjZTt+hD4nYc9zQMZ1NZTdu
+         Kx+ZQrOHRTnj5RtWED2nK92JD9bsMC1ZyRa2IxFTzTZ4C4pA8gKQ+zzDYLEBwIMBIPZb
+         H/UA==
+X-Gm-Message-State: AOJu0YwUMgo7ojaFHid+O/uXyM4hsiy1oW6ivzj4Hvc/u1/kDB0qtj5I
+        1qVCXJwc5ud0vbRKotuRrEdL0g==
+X-Google-Smtp-Source: AGHT+IGP2gOp/IwE3JkY3x07NPNLX11aABuD7Bquej0WMUPMvXxR5A87VXfKZVNYOdFGRa1TKYiPdg==
+X-Received: by 2002:a05:6402:57:b0:523:3f1e:68c4 with SMTP id f23-20020a056402005700b005233f1e68c4mr1169796edu.34.1691648495834;
+        Wed, 09 Aug 2023 23:21:35 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.113])
+        by smtp.gmail.com with ESMTPSA id t9-20020aa7d709000000b0051df54c6a27sm369321edq.56.2023.08.09.23.21.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Aug 2023 23:21:35 -0700 (PDT)
+Message-ID: <a1545e38-62fc-b5a1-e4c2-9f32b28e40f1@linaro.org>
+Date:   Thu, 10 Aug 2023 08:21:33 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: Feedback on Qualcomm's minidump (debug) solution for end user
- device crash
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH] ARM: dts: exynos/i9100: Unconditionally enable LDO12
 Content-Language: en-US
-To:     Kukjin Kim <kgene.kim@gmail.com>, Brian Masney <bmasney@redhat.com>
-CC:     Krzysztof Kozlowski <krzk@kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Nishanth Menon <nm@ti.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-References: <ZNEJAh0in/fjq6s9@brian-x1>
- <1DAA278D-BDFE-4880-8453-99F098D4E259@gmail.com>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <1DAA278D-BDFE-4880-8453-99F098D4E259@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 75Jwzds8lHrLoCfIBzffa-zf_i-VWGcn
-X-Proofpoint-ORIG-GUID: 75Jwzds8lHrLoCfIBzffa-zf_i-VWGcn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-09_13,2023-08-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
- spamscore=0 bulkscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
- impostorscore=0 malwarescore=0 mlxlogscore=881 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308090143
+To:     Paul Cercueil <paul@crapouillou.net>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20230808110341.57891-1-paul@crapouillou.net>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230808110341.57891-1-paul@crapouillou.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
-
-On 8/9/2023 1:19 PM, Kukjin Kim wrote:
+On 08/08/2023 13:03, Paul Cercueil wrote:
+> The kernel hangs for a good 12 seconds without any info being printed to
+> dmesg, very early in the boot process, if this regulator is not enabled.
 > 
->> 2023. 8. 8. 오전 12:08, Brian Masney <bmasney@redhat.com> 작성:
->>
->> ﻿On Mon, Aug 07, 2023 at 06:01:27PM +0530, Mukesh Ojha wrote:
->>>> On 7/30/2023 5:14 PM, Krzysztof Kozlowski wrote:
->>>> On 24/07/2023 18:59, Brian Masney wrote:
->>>>> + linux-arm-kernel list
->>>>>
->>>>> On Thu, Jul 20, 2023 at 08:32:24PM +0530, Mukesh Ojha wrote:
->>>>>> Hi Samsung/MTK/Any other SOC vendors,
->>>>>>
->>>>>> This is to bring to your notice that, we (Qualcomm) are working on
->>>>>> upstreaming our minidump solution which is to address the problem of
->>>>>> debugging on field device crashes where collecting entire ddr dump
->>>>>> would not be feasible and collecting minimal data from the ddr would
->>>>>> help in debug direction or even help in root causing issue.
->>>>>>
->>>>>> We have recently posted v4 version here [1]
->>>>>>
->>>>>> Based on comments[2], community is more worried about, if each SOC
->>>>>> vendor come up with their own dumping method today or in future and
->>>>>> whether it can have a common solution to a similar problem faced by
->>>>>> other SOC vendor.
->>>>>>
->>>>>> We wanted to take your feedback if you also encounter a similar problem
->>>>>> or maintain something similar solution in downstream which can be
->>>>>> upstreamed. This will help us in a way to have a common solution in
->>>>>> upstream.
->>>>>>
->>>>>> [1]
->>>>>> https://lore.kernel.org/lkml/10dd2ead-758a-89f0-cda4-70ae927269eb@quicinc.com/
->>>>>>
->>>>>> [2]
->>>>>> https://lore.kernel.org/lkml/CAL_JsqLO9yey2-4FcWsaGxijiS6hGL0SH9VoMuiyei-u9=Cv=w@mail.gmail.com/
->>>>>
->>>>> Adding the main ARM list to solicit feedback from other silicon
->>>>> manufacturers.
->>>>>
->>>>> The cover sheet on the v4 patch set is available at:
->>>>> https://lore.kernel.org/lkml/1687955688-20809-1-git-send-email-quic_mojha@quicinc.com/
->>>>
->>>> I doubt anyone follows the lists, so at least Cc some maintainers.
->>>>
->>>> +Cc Alim, Kukjin, Vignesh, Nishanth, Matthias.
->>>
->>> Thanks @Krzysztof/@Brian for extending the list.
->>
->> Hi Mukesh,
->>
->> Since no one has responded yet: I suspect your best bet to land the
->> minidump functionality upstream is to refactor it to use the pstore
->> functionality that Rob suggested:
->>
->> https://lore.kernel.org/lkml/CAL_JsqK7MHR09U5h01=Gf1ZLeDVCgZdN-W1hQRH3AX+E94_uUg@mail.gmail.com/
->>
->> Brian
->>
-> Hi all,
+> Force-enable it to work around this issue, until we know more about the
+> underlying problem.
 > 
-> Sorry for the late response and thanks for the asking.
-> 
-> In Samsung side, we’re checking about that internally as well. I’d like to know whether the minidump upstreaming is considered to be used in other chipset or some logic of that can be used. In addition, if Samsung wants, own the way upstreaming can be acceptable. It doesn’t mean we have a plan at this moment though.
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Fixes: 8620cc2f99b7 ("ARM: dts: exynos: Add devicetree file for the Galaxy S2")
+> Cc: <stable@vger.kernel.org> # v5.8+
+> ---
+>  arch/arm/boot/dts/exynos4210-i9100.dts | 8 ++++++++
 
-Thanks for the response @Kukjin
+The path changed long time ago. Really, please do not work on some
+outdated pmOS or whatever downstream drivers.
 
-It is not something considered already instead it is what Qualcomm has
-support for its SOC in the downstream and we want to upstream the linux
-drivers and Minidump will need boot firmware support to be able to be
-used by other SOC vendors.
+Best regards,
+Krzysztof
 
-So, the reason of seeking feedback on exactly the problem statement
-to debug crash from field devices where complete ddr dump is not
-feasible instead collect minimal information available to debug
-crashes and also about if SOC vendors have any solution for this
-issue which is common and upstream-able and can be leveraged.
-
-So, if the problem statement is valid and now it is the time to
-share and get conclusion on some common solution, Feel free to
-check and comment on our minidump patches.
-
-https://lore.kernel.org/lkml/10dd2ead-758a-89f0-cda4-70ae927269eb@quicinc.com/
-
--Mukesh
-
-> 
-> Thanks,
-> Kukjin Kim <kgene(at)kernel.org>
