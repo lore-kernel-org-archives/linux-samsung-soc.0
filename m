@@ -2,78 +2,95 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E156DC001DE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Aug 2023 09:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE460C001DE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Aug 2023 10:02:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234831AbjHJJVt (ORCPT
+        id S235174AbjHJKCw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Aug 2023 05:21:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41740 "EHLO
+        Thu, 10 Aug 2023 06:02:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234838AbjHJJVi (ORCPT
+        with ESMTP id S235260AbjHJKC3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Aug 2023 05:21:38 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 414545273;
-        Thu, 10 Aug 2023 02:20:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1691659207;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Cxvgd7KEPdRFvLppPHwdt3/66MA1MYdo2I92LCsqcJw=;
-        b=yJmYb7pXHr2AwACbS3+BVJGdag/qTfZ+8AVnC3mjDxldrx/mxTJMwP9jwvGwnjNAGJE1XX
-        o/MxaYG4zJh2olZ/32e48x5Z17uWbu2GxftPPa4qsFBuC33pmmE+Ro1WRLORwcOTeIKmhp
-        iAadRqo8Aka0JuPQBlCq7e5Rc90c5ZM=
-Message-ID: <a4c76fa5f119fcc93c3b87a11dd6de973387e72e.camel@crapouillou.net>
-Subject: Re: [PATCH] ARM: dts: exynos/i9100: Unconditionally enable LDO12
-From:   Paul Cercueil <paul@crapouillou.net>
+        Thu, 10 Aug 2023 06:02:29 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 711AB1BD
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Aug 2023 03:00:38 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3fe4cdb727cso6868115e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Aug 2023 03:00:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691661627; x=1692266427;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EJpAe1JQRQzLr4HpWXO5enRMUdenJgniTKPQuT4aMag=;
+        b=o2Xu3N8gsBKbsUqsqPOXA90TMKTtooEE7vy7ZbyqxPNFgdRjzYSFaAJfNIzfu9fb3G
+         uwi1FMmAHBaxrClDBQKIiW19XCbK/z9Ct5iVUJT1IQmgR1hQbFTm90SFm6FjlUnIqoY0
+         OY/ZpgkJPiqTqLwu0lA99ZB0NXyEGI7YEfGay/HSXJo0Z3g7u1ghsjthdKEAYJQjqVf9
+         UqPWePVhZ1WqT0ofoLzCOBcj+Jv7VntvDl36Hj3eOyA8+WJIqqkD0ro7TPEXBc2v4vWT
+         AUJhC4uBq1gmhf8T6LyjTJ5Drh3gT4rtJzsCLFGXcIA0IWcLSjZt/XZibqPUdJUGj3tY
+         ZgSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691661627; x=1692266427;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EJpAe1JQRQzLr4HpWXO5enRMUdenJgniTKPQuT4aMag=;
+        b=DuchuvaNgrN6p3cCQdS90sjLUsBdUr0AWRh50RpHZdebYw2mD1xoVDIrI8dpyOWsXN
+         XNLxKfQTF1AZjyY8kJH2E9vRKgA08OnWJ++f+a/ZoLriT93ux0RQFQILzsVM8QLedi+h
+         uGYgVoDl6sfFrRrv6rAaZECwq9GDXTmaLoZJyPIhe+ohzf3rmioVi1/HeCW8az0rqS3+
+         QPwfX6GXNpPBncalbJXlRqD7s3QfVzMQeWYZ7gcvhuJUiWz0NcUvfFnwQr0u4sTcm1lS
+         4hqH++7m9Wrc3aiEaBKGreekGPw+qbNoxcPbFo4qF8GojpPcjIlwIcm73Wlhe68FPxUi
+         HnFg==
+X-Gm-Message-State: AOJu0YwdaRvQCUgPbfqgNdyNTM8gZ/nplTJedqokRKmz870fIVGzf/7q
+        zlG8qE664AzQXS2hjNwf7VJPkA==
+X-Google-Smtp-Source: AGHT+IHxqMT31Sy/C+YwIQaVLuwACdfzqMWxRxpt+agaXRC3ydv+UIu51hWX4dWN7D0RnMHVf8X0Eg==
+X-Received: by 2002:a05:600c:204e:b0:3fb:e643:1225 with SMTP id p14-20020a05600c204e00b003fbe6431225mr1448299wmg.13.1691661627238;
+        Thu, 10 Aug 2023 03:00:27 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.222.113])
+        by smtp.gmail.com with ESMTPSA id f2-20020a7bcd02000000b003fe210d8e84sm4569498wmj.5.2023.08.10.03.00.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Aug 2023 03:00:26 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Date:   Thu, 10 Aug 2023 11:20:05 +0200
-In-Reply-To: <a1545e38-62fc-b5a1-e4c2-9f32b28e40f1@linaro.org>
-References: <20230808110341.57891-1-paul@crapouillou.net>
-         <a1545e38-62fc-b5a1-e4c2-9f32b28e40f1@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Andi Shyti <andi.shyti@kernel.org>
+Subject: [PATCH] crypto: exynos - fix Wvoid-pointer-to-enum-cast warning
+Date:   Thu, 10 Aug 2023 12:00:23 +0200
+Message-Id: <20230810100023.123557-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Le jeudi 10 ao=C3=BBt 2023 =C3=A0 08:21 +0200, Krzysztof Kozlowski a =C3=A9=
-crit=C2=A0:
-> On 08/08/2023 13:03, Paul Cercueil wrote:
-> > The kernel hangs for a good 12 seconds without any info being
-> > printed to
-> > dmesg, very early in the boot process, if this regulator is not
-> > enabled.
-> >=20
-> > Force-enable it to work around this issue, until we know more about
-> > the
-> > underlying problem.
-> >=20
-> > Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> > Fixes: 8620cc2f99b7 ("ARM: dts: exynos: Add devicetree file for the
-> > Galaxy S2")
-> > Cc: <stable@vger.kernel.org> # v5.8+
-> > ---
-> > =C2=A0arch/arm/boot/dts/exynos4210-i9100.dts | 8 ++++++++
->=20
-> The path changed long time ago. Really, please do not work on some
-> outdated pmOS or whatever downstream drivers.
+'type' is an enum, thus cast of pointer on 64-bit compile test with W=1
+causes:
 
-That was on v6.4.2 yes. I simply forgot to rebase on the latest RC,
-sorry about that.
+  exynos-rng.c:280:14: error: cast to smaller integer type 'enum exynos_prng_type' from 'const void *' [-Werror,-Wvoid-pointer-to-enum-cast]
 
-I'll send a V2, and I now have some more patches touching that file
-that I can bundle with.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/crypto/exynos-rng.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--Paul
+diff --git a/drivers/crypto/exynos-rng.c b/drivers/crypto/exynos-rng.c
+index cbd8ca6e52ee..b1df66be9adc 100644
+--- a/drivers/crypto/exynos-rng.c
++++ b/drivers/crypto/exynos-rng.c
+@@ -277,7 +277,7 @@ static int exynos_rng_probe(struct platform_device *pdev)
+ 	if (!rng)
+ 		return -ENOMEM;
+ 
+-	rng->type = (enum exynos_prng_type)of_device_get_match_data(&pdev->dev);
++	rng->type = (uintptr_t)of_device_get_match_data(&pdev->dev);
+ 
+ 	mutex_init(&rng->lock);
+ 
+-- 
+2.34.1
+
