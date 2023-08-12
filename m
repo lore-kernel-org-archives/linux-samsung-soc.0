@@ -2,128 +2,89 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3015BC0015E
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 12 Aug 2023 05:01:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9008C001E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 12 Aug 2023 06:28:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232238AbjHLFBk (ORCPT
+        id S229499AbjHLG2m (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 12 Aug 2023 01:01:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43600 "EHLO
+        Sat, 12 Aug 2023 02:28:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231685AbjHLFBj (ORCPT
+        with ESMTP id S229497AbjHLG2m (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 12 Aug 2023 01:01:39 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C91881736;
-        Fri, 11 Aug 2023 22:01:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1691816498; x=1723352498;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=8ESbiLHr+YCgav0uKLzgJWB6fuptDUr8xuFAEutcc9g=;
-  b=eIia5ItIbWR7COp6ipg1ZQK3kKUaSAtgQVwByV6TodkErLoK9i2Zsu0g
-   +w1MyPO8lc7EoPA1FiowUtDJNtte6F0JNuMqxWH3NJkNw3LcEj16zuk0L
-   ahq48G7XRZuPo9cPAyXURGBLC0ON1ZvJ0JBUZ7V6bYcu+RLcUeawojK+i
-   uy5RT1taXg+4yDuB4tT2pSd5g9QYfuj+a46/IYgOyeuhANSwkh8cJtKcK
-   +vMwvHXVkQ7Wtxwrkanxw9TEAW8ueR8nLB4oZrUjhtTe+6d6kgQav3iGy
-   TZolSmW8RXCs+AXptWYxThvEXUJ5AAzxesu45bcPmiTG0VlkkSTYf8Vg/
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10799"; a="375513664"
-X-IronPort-AV: E=Sophos;i="6.01,167,1684825200"; 
-   d="scan'208";a="375513664"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2023 22:01:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10799"; a="767872740"
-X-IronPort-AV: E=Sophos;i="6.01,167,1684825200"; 
-   d="scan'208";a="767872740"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.254.214.60]) ([10.254.214.60])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2023 22:01:26 -0700
-Message-ID: <d4451419-627b-36de-0b0f-3a7e8bc59a35@linux.intel.com>
-Date:   Sat, 12 Aug 2023 13:01:24 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Cc:     baolu.lu@linux.intel.com, Dmitry Osipenko <digetx@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Steven Price <steven.price@arm.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v6 15/25] iommufd/selftest: Make the mock iommu driver
- into a real driver
-Content-Language: en-US
-To:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sat, 12 Aug 2023 02:28:42 -0400
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CB8F1FD9
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Aug 2023 23:28:41 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.143])
+        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4RN9hx6ylWz4f3mLP
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Aug 2023 14:28:33 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.111])
+        by APP4 (Coremail) with SMTP id gCh0CgCHZKeTJtdk4W4SAg--.61609S2;
+        Sat, 12 Aug 2023 14:28:36 +0800 (CST)
+From:   Xiang Yang <xiangyang@huaweicloud.com>
+To:     inki.dae@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, airlied@gmail.com, daniel@ffwll.ch,
+        krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com
+Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-References: <15-v6-e8114faedade+425-iommu_all_defdom_jgg@nvidia.com>
-From:   Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <15-v6-e8114faedade+425-iommu_all_defdom_jgg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        linux-samsung-soc@vger.kernel.org, xiangyang3@huawei.com
+Subject: [PATCH -next] drm/exynos: fix a potential error pointer dereference
+Date:   Sat, 12 Aug 2023 14:27:48 +0800
+Message-Id: <20230812062748.2223414-1-xiangyang@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: gCh0CgCHZKeTJtdk4W4SAg--.61609S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrur45uw4kJw45Wr15CrWUCFg_yoWDtwc_KF
+        18Wrn7Xr109F1qv3sFyFZ3XFy29F1fuFWrWa92q393XF17ZrWFqrZrZrWYyrW7WFWj9F9r
+        Ja1jqrW2qr4xGjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb7AYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_JFC_Wr1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+        67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+        j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+        kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY
+        0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I
+        0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAI
+        cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcV
+        CF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
+        aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+X-CM-SenderInfo: x0ld0wp1dqwq5kxd4v5lfo033gof0z/
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2023/8/3 8:08, Jason Gunthorpe wrote:
-> +/*
-> + * Register an iommu driver against a single bus. This is only used by iommufd
-> + * selftest to create a mock iommu driver. The caller must provide
-> + * some memory to hold a notifier_block.
-> + */
-> +int iommu_device_register_bus(struct iommu_device *iommu,
-> +			      const struct iommu_ops *ops, struct bus_type *bus,
-> +			      struct notifier_block *nb)
-> +{
-> +	int err;
-> +
-> +	iommu->ops = ops;
-> +	nb->notifier_call = iommu_bus_notifier;
-> +	err = bus_register_notifier(bus, nb);
-> +	if (err)
-> +		return err;
-> +
-> +	spin_lock(&iommu_device_lock);
-> +	list_add_tail(&iommu->list, &iommu_device_list);
-> +	spin_unlock(&iommu_device_lock);
-> +
-> +	bus->iommu_ops = ops;
-> +	err = bus_iommu_probe(bus);
+From: Xiang Yang <xiangyang3@huawei.com>
 
-By the way, bus_iommu_probe() has been changed in iommu-next, so it
-needs to be rebased here.
+Smatch reports the warning below:
+drivers/gpu/drm/exynos/exynos_hdmi.c:1864 hdmi_bind()
+error: 'crtc' dereferencing possible ERR_PTR()
 
-Best regards,
-baolu
+The return value of exynos_drm_crtc_get_by_type maybe ERR_PTR(-ENODEV),
+which can not be used directly. Fix this by checking the return value
+before using it.
+
+Signed-off-by: Xiang Yang <xiangyang3@huawei.com>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index f3aaa4ea3e68..dd9903eab563 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1861,6 +1861,8 @@ static int hdmi_bind(struct device *dev, struct device *master, void *data)
+ 		return ret;
+ 
+ 	crtc = exynos_drm_crtc_get_by_type(drm_dev, EXYNOS_DISPLAY_TYPE_HDMI);
++	if (IS_ERR(crtc))
++		return PTR_ERR(crtc);
+ 	crtc->pipe_clk = &hdata->phy_clk;
+ 
+ 	ret = hdmi_create_connector(encoder);
+-- 
+2.34.1
+
