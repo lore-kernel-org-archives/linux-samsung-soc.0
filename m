@@ -2,102 +2,148 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3995CC04A6A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Aug 2023 11:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F233C001DB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Aug 2023 12:12:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232346AbjHNLmW (ORCPT
+        id S232997AbjHNMLy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Aug 2023 07:42:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41398 "EHLO
+        Mon, 14 Aug 2023 08:11:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234765AbjHNLmD (ORCPT
+        with ESMTP id S233228AbjHNMLZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Aug 2023 07:42:03 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E72318E
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Aug 2023 04:41:59 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-99bfcf4c814so565991566b.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Aug 2023 04:41:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692013318; x=1692618118;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IhI41MstBcReN+KiXInXlGALbA3TY4zyWt7Hb7Xh6lE=;
-        b=Lpb4nuLPT+nK3Cjb3I7qaZ++ML5Oev14P4kQJSedWS5cBuIkkmr9n9aNloPOa4i+j2
-         UeqOeFZ7SCDT+TdY2J+EQ9QdhfmGUPf3rm3jIkmCwE+94J02sTZrhJuqXw3Wega+UdRu
-         WUKuExc2VvtWAQeVmcUX9KfjwiMmK1Op943+Glqxgr8YQ7b+2lusBy2XYf3d/8YAUDXR
-         +0nhT5C9HFNElWfeu+/YqwiHFiWiUXIUFrXPcZ5IKlPd4VG6SSEderykny1k5t0g7e+q
-         yK/lcsunSQht5zHYniNTkMrH0JpO0umocmY6WAidBsu/qoHYCzyToAkUTuUm+VGDNBV1
-         k+nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692013318; x=1692618118;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IhI41MstBcReN+KiXInXlGALbA3TY4zyWt7Hb7Xh6lE=;
-        b=KKCt8zuo+nDkYWqRvUQ3C8APefhXmM8RZuRZerMDpboVch7dFc+C211gZunRWK2l5x
-         XUwx8IMi6T6MztJeA/OLNfIA5bGC0ANWz1MmDnaC1KLFNBHhRzGo9WNesKeoC1DWjAUY
-         IUs1++rhcPg7Pdvehlmgl0ibXGn+5HNd99SAd7pOwcjsBbpAWgyGPrQqR+7qiLiXI4oE
-         RWqIsDcS9FPoJqw2vLiPEhTR4dhHMdu0j/taBW+subD8N0+1WhlNZez1ywkLWTwP+phL
-         TJsUNp8EuFGOW+GI0N5CRv05wPce+z61tKH8klZ3EYpqTE+Ifyz1pChOfhaEnP0Yqia5
-         azRw==
-X-Gm-Message-State: AOJu0Yw/x5LzRz9Elpnc0L/EG2uFcBQbJetibj4ZAxHECVZ3FiWc/t4q
-        zsNN40sGAYH6qBadICz++lSpew==
-X-Google-Smtp-Source: AGHT+IG/eVkW2LOammMu0dK30+SXAixKrT/nEbuJdbKpKu18kGx+4imaPC2iN1beqLcDP2tzU7DPNw==
-X-Received: by 2002:a17:906:5190:b0:99b:40b5:1c3b with SMTP id y16-20020a170906519000b0099b40b51c3bmr8604771ejk.57.1692013317890;
-        Mon, 14 Aug 2023 04:41:57 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id b12-20020a170906490c00b0099d959f9536sm2695254ejq.12.2023.08.14.04.41.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Aug 2023 04:41:57 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Mon, 14 Aug 2023 08:11:25 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C572DD
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Aug 2023 05:11:22 -0700 (PDT)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230814121119epoutp03f86aa2621a0f4d45f8f560df57ecec8a~7PsADjVDJ0128701287epoutp03G
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Aug 2023 12:11:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230814121119epoutp03f86aa2621a0f4d45f8f560df57ecec8a~7PsADjVDJ0128701287epoutp03G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1692015079;
+        bh=Rjr03Bu9FUZKm0+7wnZqblJfU3eVTmIM2z74hNt1NMk=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=DCrUi2XnKzpTjLmno9kAKmm952SuRrseMraBc7PDohV4PM91Rkn7z9NAxRYGvdQfI
+         p6a9JSK1ZbBMv0cntq36sTk4A+aF+6+u/RuAcckrmpsts95O0dLdNkEf02VLDAYOzp
+         t2Vuuu1WmLJQ4jIQ2byNcM8cw5R82Gs4mipPcoeU=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20230814121118epcas5p2d26ea99d26a5aca2b3f970953f5aaf14~7Pr-Al46s0418204182epcas5p2a;
+        Mon, 14 Aug 2023 12:11:18 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.180]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4RPYCS47sZz4x9Pq; Mon, 14 Aug
+        2023 12:11:16 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        81.35.06099.4E91AD46; Mon, 14 Aug 2023 21:11:16 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20230814112600epcas5p49fe29a3ef85e2b0158f5ee3426652fc8~7PEb58t_81173811738epcas5p4K;
+        Mon, 14 Aug 2023 11:26:00 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230814112600epsmtrp2440213a1a0d8e8a47d1792869822f6ea~7PEb43_sX1292612926epsmtrp2e;
+        Mon, 14 Aug 2023 11:26:00 +0000 (GMT)
+X-AuditID: b6c32a4b-d308d700000017d3-95-64da19e41ab2
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C8.1E.34491.84F0AD46; Mon, 14 Aug 2023 20:26:00 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+        [107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230814112557epsmtip2c503164ab25b1a49fb5615ebe8560f40~7PEY6bUNw0830008300epsmtip2I;
+        Mon, 14 Aug 2023 11:25:57 +0000 (GMT)
+From:   Sriranjani P <sriranjani.p@samsung.com>
+To:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        richardcochran@gmail.com, alexandre.torgue@foss.st.com,
+        joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
+        alim.akhtar@samsung.com, linux-fsd@tesla.com,
+        pankaj.dubey@samsung.com, swathi.ks@samsung.com,
+        ravi.patel@samsung.com
+Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] arm64: dts: various cleanup for v6.6
-Date:   Mon, 14 Aug 2023 13:41:54 +0200
-Message-Id: <20230814114154.26017-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sriranjani P <sriranjani.p@samsung.com>
+Subject: [PATCH v3 0/4] net: stmmac: dwc-qos: Add FSD EQoS support
+Date:   Mon, 14 Aug 2023 16:55:35 +0530
+Message-Id: <20230814112539.70453-1-sriranjani.p@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPJsWRmVeSWpSXmKPExsWy7bCmpu4TyVspBt+XS1v8fDmN0eLBvG1s
+        Fmv2nmOymHO+hcVi/pFzrBZPjz1it7i36B2rRd+Lh8wWF7b1sVpsenyN1eLhq3CLy7vmsFnM
+        OL+PyWLe37WsFscWiFl8O/2G0WLR1i/sFg8/7GG3OHLmBbNF694j7Ba336xjtfiy8Sa7g5jH
+        lpU3mTye9m9l99g56y67x4JNpR6bVnWyedy5tofNY/OSeo/3+66yefRtWcXosWX/Z0aPf01z
+        2T0+b5IL4InKtslITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1
+        y8wBelhJoSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BSoFecmFtcmpeul5daYmVo
+        YGBkClSYkJ3x7el+1oKZXBUrJq5hbWDs4ehi5OSQEDCR2P/iH2sXIxeHkMBuRok7N8+zQTif
+        GCXOzuxkgXC+MUrMfrSAEaZl9sxPTBCJvYwSp1bcgKpqZZL4sGIKK0gVm4CuROu1z2BVIgJt
+        zBJrPk1hBkkwC5xhlOjbpwdiCws4SSxsOc8OYrMIqEpcnrQDbAWvgK3ElUPtUOvkJVZvOMAM
+        MkhC4AKHxJkN95khEi4Snx5tZoewhSVeHd8CZUtJfH63lw3CTpfYfGQzK4SdI9HR1AzVay9x
+        4MocoLM5gA7SlFi/Sx8iLCsx9dQ6Jog7+SR6fz9hgojzSuyYB2OrSSx+1Ally0isffQJaryH
+        RNefxywgtpBArETzlNXsExhlZyFsWMDIuIpRMrWgODc9tdi0wDgvtRweVcn5uZsYwSlZy3sH
+        46MHH/QOMTJxMB5ilOBgVhLh7eG9lSLEm5JYWZValB9fVJqTWnyI0RQYZhOZpUST84FZIa8k
+        3tDE0sDEzMzMxNLYzFBJnPd169wUIYH0xJLU7NTUgtQimD4mDk6pBqaMic9ij0v0xYXXn+Br
+        kOL+Ut3yirUsQaQi22Z65h8ldY0dWy2nhB/wDdr/pbD4iGrb/BBLr2ulNWd844yCnEPd88ze
+        OezMbplh93VvWUla8URz3QVPLPmYuRNWzJ4YlPtYxuTS/a/rNrOm99WLb/YOn3LJbp1qEV/v
+        M3tGXe9FV8slhTOKFHRm3Vt/2+hOXunVbdP+fpLs8GF8xz9Hkrlkw9PqkKVKUkqyZ9UyXVZ3
+        ppW+Fli8h/OqJ1P9G6YvM2P+OlYay25LOhB8XY3hWDt391ph7fzJBUsXqKtf+bM/0UUmeM0d
+        e8WVnHzebxPzirmd9lVLz17xeuG2Ta8zFKOkp9ctkA6a5eO8P9pNiaU4I9FQi7moOBEAfTgu
+        5FIEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNLMWRmVeSWpSXmKPExsWy7bCSvK4H/60Ug2fLRC1+vpzGaPFg3jY2
+        izV7zzFZzDnfwmIx/8g5Vounxx6xW9xb9I7Vou/FQ2aLC9v6WC02Pb7GavHwVbjF5V1z2Cxm
+        nN/HZDHv71pWi2MLxCy+nX7DaLFo6xd2i4cf9rBbHDnzgtmide8Rdovbb9axWnzZeJPdQcxj
+        y8qbTB5P+7eye+ycdZfdY8GmUo9NqzrZPO5c28PmsXlJvcf7fVfZPPq2rGL02LL/M6PHv6a5
+        7B6fN8kF8ERx2aSk5mSWpRbp2yVwZXx7up+1YCZXxYqJa1gbGHs4uhg5OSQETCRmz/zE1MXI
+        xSEksJtR4vTVxewQCRmJkw+WMEPYwhIr/z1nhyhqZpJYvmAOE0iCTUBXovXaZ7BuEYFZzBLz
+        Jq9gBnGYBS4wSqy+cxesSljASWJhy3mwsSwCqhKXJ+1gBLF5BWwlrhxqZ4RYIS+xesMB5gmM
+        PAsYGVYxSqYWFOem5xYbFhjmpZbrFSfmFpfmpesl5+duYgTHh5bmDsbtqz7oHWJk4mA8xCjB
+        wawkwtvDeytFiDclsbIqtSg/vqg0J7X4EKM0B4uSOK/4i94UIYH0xJLU7NTUgtQimCwTB6dU
+        A1NVcP7XLU/yhNpz121hu331tJL19l/vpmRPuh015SjDRU6Z7XsCi+407twV8Zo5/Gu66AYD
+        k/8F6p29Dkc/yTq/O7rtEtO21mfzKz20LgS7K3p+nuAzIyn7SFhmUXTptZ/xyn1lV2ZYXeW4
+        ns3HaOa7pUhNOet2+2SB42etFx54VbHU8t+PGzszM5fcvbpi4625Sis/n/7Ed7BZ79nq02/W
+        /mgSTquQuZCyf8pPo97XE3RT1Jeum1k4f8HJKf6v2GZqa3149nYlu6+F1cdqrQPfQ3cw3l91
+        YDV/c80uyYbGxTMNLuwwv+NmYnBv1rGJod/NVy2p7f/SNOl9hsbOXclfzz+PXue296VxA8v2
+        R6l5R5RYijMSDbWYi4oTARAQ0CH+AgAA
+X-CMS-MailID: 20230814112600epcas5p49fe29a3ef85e2b0158f5ee3426652fc8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230814112600epcas5p49fe29a3ef85e2b0158f5ee3426652fc8
+References: <CGME20230814112600epcas5p49fe29a3ef85e2b0158f5ee3426652fc8@epcas5p4.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+FSD platform has two instances of EQoS IP, one is in FSYS0 block and
+another one is in PERIC block. This patch series add required DT binding,
+DT file modifications and platform driver specific changes for the same.
 
-Not much this time - I just two patches.
+Changes since v2:
+1. Addressed all the review comments suggested by Krzysztof with respect to
+DT binding and DTS files.
+2. Added SOB Swathi for her contributions in this patch.
 
-Best regards,
-Krzysztof
+Sriranjani P (4):
+  dt-bindings: net: Add FSD EQoS device tree bindings
+  net: stmmac: dwc-qos: Add FSD EQoS support
+  arm64: dts: fsd: Add Ethernet support for FSYS0 Block of FSD SoC
+  arm64: dts: fsd: Add Ethernet support for PERIC Block of FSD SoC
 
+ .../devicetree/bindings/net/snps,dwmac.yaml   |   5 +-
+ .../devicetree/bindings/net/tesla,ethqos.yaml | 114 ++++++++++++
+ arch/arm64/boot/dts/tesla/fsd-evb.dts         |  18 ++
+ arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi    | 112 ++++++++++++
+ arch/arm64/boot/dts/tesla/fsd.dtsi            |  51 ++++++
+ .../stmicro/stmmac/dwmac-dwc-qos-eth.c        | 172 ++++++++++++++++++
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c |  28 ++-
+ include/linux/stmmac.h                        |   1 +
+ 8 files changed, 497 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/tesla,ethqos.yaml
 
-The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
+-- 
+2.17.1
 
-  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git tags/dt64-cleanup-6.6
-
-for you to fetch changes up to 1193001081e98d13c786fe0cae407cb747104cdc:
-
-  arm64: dts: lg: add missing cache properties (2023-07-13 08:44:15 +0200)
-
-----------------------------------------------------------------
-Minor improvements in ARM64 DTS for v6.6
-
-Just two cleanups of missing cache properties for Nuvoton and LG.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (2):
-      arm64: dts: nuvoton: add missing cache properties
-      arm64: dts: lg: add missing cache properties
-
- arch/arm64/boot/dts/lg/lg1312.dtsi               | 2 ++
- arch/arm64/boot/dts/lg/lg1313.dtsi               | 2 ++
- arch/arm64/boot/dts/nuvoton/nuvoton-npcm845.dtsi | 2 ++
- 3 files changed, 6 insertions(+)
