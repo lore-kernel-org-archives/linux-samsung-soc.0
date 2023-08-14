@@ -2,166 +2,168 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F19C04A94
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Aug 2023 15:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8030AC001E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Aug 2023 15:35:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232492AbjHNPHT (ORCPT
+        id S231544AbjHNPe4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Aug 2023 11:07:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36664 "EHLO
+        Mon, 14 Aug 2023 11:34:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232558AbjHNPG6 (ORCPT
+        with ESMTP id S231162AbjHNPeq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Aug 2023 11:06:58 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ECD510C8;
-        Mon, 14 Aug 2023 08:06:57 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3464F61528;
-        Mon, 14 Aug 2023 15:06:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A20CC433C7;
-        Mon, 14 Aug 2023 15:06:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692025616;
-        bh=+NIKQGsKmMMJbWFy16rBGIgRnc+Ftb898/twa/T7r7g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iguzc7DllXfmP7krdyWbHbMkYboZP7rMjJtswoyw5kS5vxprid9l9xOYb6xNpnCzr
-         AEJVOetq7XDHHXuSKOd4mTRb5KyBr3CdWdremFn4n4EYE12cF2r6vP9i8hn3jh9srl
-         MeYbnYJHbNfND77dHGBaULNEXEiR3/xH7zEb79lZ1J6Y/At/0iNmuSN1kzJaveQno7
-         +5oSrtFk70ei0SFBZ97WzP2qH1NSNTH7on9oqtmpSegd1trHNElUPnWsn+PivJB/w7
-         hqu1ejd69/RfT2HNXM8OZAgKYKxxAorQufFasTlrrP4Qo4zZnPvegnJAsYxTVb73h4
-         IQ27ogWNy1muw==
-Date:   Mon, 14 Aug 2023 17:06:53 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Andi Shyti <andi.shyti@kernel.org>
-Cc:     Paul Cercueil <paul@crapouillou.net>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Elie Morisse <syniurge@gmail.com>,
-        Shyam Sundar S K <shyam-sundar.s-k@amd.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Jan Dabros <jsd@semihalf.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Qii Wang <qii.wang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mon, 14 Aug 2023 11:34:46 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2076.outbound.protection.outlook.com [40.107.94.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BECAAC5;
+        Mon, 14 Aug 2023 08:34:45 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iNyICTO+wETiRaoVSm1sW0FGFl8048HLtZ/1w3d5Y62yRGWiKBdPCqe8JOGLxaWYjtxayzg/B8ylP3ep5v2j+Hr96U2CM64TI5jqFUipgCMrG/b/aaakCalKs4OhYH44ABIJgjJ+BOtaxg17meVkev/2Dw9fJyhgeBZVVJlmfhxTrTUt8qnxv21Cz0Hu+T1fM84U+ObyAsK7N7P/d1woB7XY2oNSUDTLeKS+MuiVOt+mEWC15snyFoBRo8sLW9n+aJwjQMEHSO9lzfPcdLckIKhvphCDG1vX8Zd14qGq5x1p7Z7VZ87FLgzz4O5bVy+Mu745Lykn6Cm1CQFygmDOCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Fu/mcvZD+1dFTLDVu+GJy3sVoBfuTSxiIJcYJD/zY2o=;
+ b=TFB821TBnoNvMz95HvlcudSjAPM9q0/hwfoznxYuZaXqj1h/G9iWddr+qRf4hKkE0jxqO+tuXH6u0qo0lTnC9ubnl4l8HGCxfjL4q1K1GKoaqJ/MaHq1lIPgigVJiJ4F5tqilo7c+MAl7H2E/w7p0uxWUIOeaWW9G3XceFwgcAZfPnMhrGJ1oFmM1ceEg0txaHryswCRhZPZQbQ0cJGQLsGTQvAkwCN36alb7SAVGy9rX8uAiFVc3SFuG9TG2XuzXAexS8bd09KsQ0fUq1mMOrTONlOV4nk0XyYCQRYSHoBw0QIsOprER8nAAO1Zm9Ijok4CGNzxEfBBf5MiWKNehA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fu/mcvZD+1dFTLDVu+GJy3sVoBfuTSxiIJcYJD/zY2o=;
+ b=liM/lDdafoqlnMirBRwpWDxpeFQIeepsrldqwMnEUogJsTUPYpwL8YH2k0PdRfasRgr5HErSffc+7uC0UY1Fu8RJdwaeaaFcF2e2Z3H5wIOzatjWDIw/HeSmYd9odjUziLrwsYk59+WL9z1yT+eudeTwDlC25FQTaLWfXi9kHdhfBpn9fRgBBCB1Aikr0jCvpzRXTjDGNW6ZCBe9cPjkUP+i7vAu8sVVmnZnaXs/9nUGtx6fJHimhvH2MYYCvne9YtjIv5XY21Guda3PWyrIzwpeBpbQ+3SyBAloNHRGd93j1FdMhVB9WXfhRZdo+oL0nONQT4wACunM4N04XFHrQw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by BL3PR12MB6548.namprd12.prod.outlook.com (2603:10b6:208:38f::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6678.26; Mon, 14 Aug
+ 2023 15:34:42 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::5111:16e8:5afe:1da1]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::5111:16e8:5afe:1da1%6]) with mapi id 15.20.6678.022; Mon, 14 Aug 2023
+ 15:34:42 +0000
+Date:   Mon, 14 Aug 2023 12:34:40 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Baolu Lu <baolu.lu@linux.intel.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Bjorn Andersson <andersson@kernel.org>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Peter Korsgaard <peter@korsgaard.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Kevin Tian <kevin.tian@intel.com>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Conghui Chen <conghui.chen@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Peter Rosin <peda@axentia.se>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v2 00/22] i2c: Use new PM macros
-Message-ID: <ZNpDDWiqpGlZ01fb@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Elie Morisse <syniurge@gmail.com>,
-        Shyam Sundar S K <shyam-sundar.s-k@amd.com>,
-        Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Jan Dabros <jsd@semihalf.com>, Jean Delvare <jdelvare@suse.com>,
-        Qii Wang <qii.wang@mediatek.com>,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linuxppc-dev@lists.ozlabs.org,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>,
-        Vladimir Zapolskiy <vz@mleia.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Conghui Chen <conghui.chen@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Peter Rosin <peda@axentia.se>, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-References: <20230722115046.27323-1-paul@crapouillou.net>
- <169100562778.1919254.5355387350651563678.b4-ty@kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="YOrVHCxcIjSDhBYQ"
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Steven Price <steven.price@arm.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v6 12/25] iommu/tegra-smmu: Support DMA domains in tegra
+Message-ID: <ZNpJkMp3W45mPnHB@nvidia.com>
+References: <12-v6-e8114faedade+425-iommu_all_defdom_jgg@nvidia.com>
+ <6675bf11-ed80-15b9-b8bc-dee65b595ba5@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <169100562778.1919254.5355387350651563678.b4-ty@kernel.org>
+In-Reply-To: <6675bf11-ed80-15b9-b8bc-dee65b595ba5@linux.intel.com>
+X-ClientProxiedBy: YT4PR01CA0094.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:ff::8) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|BL3PR12MB6548:EE_
+X-MS-Office365-Filtering-Correlation-Id: 29fdf2a8-e9e1-4751-a7af-08db9cdbfab4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: igu67aXulfWo3E5bpIycQfWYRs8QxK1avua+jd8u+WMUQxR5mpVPb6tqYDEEW2kqEMSZw3wP6Ut2aDfv4QYkD5hq90EY8+aOIkzTNUidTjwzX/CY68DVwmiRU7zSe3MbA+VdRdcU2+ocw/gyRC4XRTUfQPhpwAvjDswMUDCbOvMul2mIDSaUGFvEAUjGage0X/wzuzbHWRpoxMovN4c1Xw8YZhXk8uZNxUCvFQFWU1Ca/z6HUcaK4s/Z4PvK+5grYhaFa63FL6OJWUglhP9BrjkfZ4EYkDIxkr26hgqrrOy5ilGftgKhJYqC7OfwVILjLhlNo/5SXR9zlCIJrOqMyNsO/MGrmpnIkaSfAmW3OIHH9ejXnRz1fHi0elBbA0OVoD1YvgBzPuT8MPhF5QyZO+pLrDfKa6RjV3C85vCd+GAN3c0LWwSM5lG24vTHvfnclg0qe44EVGCSUtwC7K5gzCSHpyNzOg2ZYnS4BpPM76kJEJmnc/DlysMJgaqDlzHMtE3ssQlesgPCa4LzNetRZGO0gjOciaN3093DwT8GqC2bvj2RIMaeRBW/uPu9sp6g
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(366004)(346002)(396003)(136003)(39860400002)(376002)(1800799006)(186006)(451199021)(38100700002)(36756003)(86362001)(6512007)(6506007)(4744005)(6486002)(478600001)(2906002)(7406005)(7416002)(107886003)(2616005)(26005)(83380400001)(316002)(54906003)(41300700001)(66946007)(66556008)(66476007)(6916009)(5660300002)(8676002)(8936002)(4326008);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?BwSh4lqDUzhgC3yavwwSvn97qkOLyvGztrUKQ4Y62gKhUGBvwCw+n1K2K88s?=
+ =?us-ascii?Q?nuCifP7MvTIo68+p5Z65VPGdT2BSAvuOlan+j1fX5GgjKKwG6vOktvxNig4v?=
+ =?us-ascii?Q?YGWMBmmYvlDVWZh55nJm71VQJAeMtFligUkWCYHHfLnHucdo9DMH5m1MXlCu?=
+ =?us-ascii?Q?SrGYIm4ECEcdTM2uwAQ5cUu3GoahQlelbJrLgp9JRYkHFjSo2jLDXIDY1Sf2?=
+ =?us-ascii?Q?MtA+9AkWmSYakxGoiOuchckfjPP7j+A3v0L7DNVRA2LvuiDueSgzo+h3ZN65?=
+ =?us-ascii?Q?v+0jMGhoQWdQkQqV8lBHJork91CR0dpAmcI04S/F5XeSmB/axsScttDrxtbO?=
+ =?us-ascii?Q?w38xf5ggr3wOLCGP3rAoQIyxuo54/K9aHXhPUlqyTa7Z0ZdJrbWaV/cdAVIQ?=
+ =?us-ascii?Q?Zo0JhgyUt866+knXgNj/IChzdzxZ+4gxFc9Y2lmBJPk7c/mD/9J92sO/NpU8?=
+ =?us-ascii?Q?rsTrJOtxEz4+7K1rR6VY37v7boPtx2LgRY3rAzoGFLYKZ3y04eqxK6bR8h7e?=
+ =?us-ascii?Q?YPyw8s1YOjkMjufIA0JQSIyrFbTKNvfXBIvqJ+z0w3qdH2wRpHh+IwKY3pSH?=
+ =?us-ascii?Q?yXMGow7GW0v3fBRpTm1ZxOOyaHvJGMcEN8lhoQkdTUb73NSkeg9jemPw2yX4?=
+ =?us-ascii?Q?G7sJ+rAP/S7++pfaUw8DYj0Mm9lIHJWXcDNc/hdOvlveXK2K5VJwd4I5lbEX?=
+ =?us-ascii?Q?STRa/uaX22TLHabs6hcaD5P81QqUTMqlv6/UY0TmCEBWXAWlnLaQ6RCWHwyp?=
+ =?us-ascii?Q?qa7eb7MkFg4F0gcVK9O991+z4jaFm9ePxvKl3NNzWwrwqbE9eIiY6TnMYmSx?=
+ =?us-ascii?Q?Xf/24x9KmeVWpxsX+yRxkA5MBecXfmbVmAPZQHiyJlLCqwn9OQoiisMGQwGQ?=
+ =?us-ascii?Q?s8IGQBQ5MNeZo0rP9hzXYhLWPMtBa7ofLJW+BPQnsJow3da8C9lKQhYOyZUF?=
+ =?us-ascii?Q?oMgMad+bJCfHnewpvSqGaa7J4pT0vBUE4X9i+nm/hrRqjkDPbY99fhZgjxc+?=
+ =?us-ascii?Q?T9xvUQKbq29jhrG84SRaUx4YtKJ8cuYnrXHb/q8ccrJog+WAvSZAWPYcBNDU?=
+ =?us-ascii?Q?wKMyfZrp6XYhLXOP7nzrlNVo6U3HQbf01pCRqrLGBZ6OV/k76L5vLwuHddUr?=
+ =?us-ascii?Q?upxB0ppomvhe/Bb/iuX1PqbfAH7o0IbM5A9cBcsPLduBPS9OJoDaRfziSiyo?=
+ =?us-ascii?Q?XqxvLHsAGpUFvBC/ITC3rMrJEd9VF4EejRLaCgQlJxD0ayK2skcsEDlTHXMi?=
+ =?us-ascii?Q?6m7yeky5ivVRQB1D75A0RN/YS/vuFMwjhzD7h/DY1T2+WJ48hI3J9myFMuhr?=
+ =?us-ascii?Q?3d8eRpVez+4nWiXrUIU9SLrPxPAi7fydPrgaaLRlqE26JzUMEBG1Q6dMiN3c?=
+ =?us-ascii?Q?OIB3zbpWUdTAlX0BYqMlVjh1B4+rQovcfxP4Ze6AqxVGDO4qPbHmpU1Kb24p?=
+ =?us-ascii?Q?hn1IE8omiBbX6uiOtKkjPzpu08l3kDymay338h7aS4kjfw135rbLjEOyvkSm?=
+ =?us-ascii?Q?64WbubL8rKzcK5ZObAN3LGebeHBIOZkxdQtiGynnuXqMV1OsZRO9WmT37wy5?=
+ =?us-ascii?Q?+qtB8DrgnxQOwCjjErsU6x0VuHfu0gBvmHLbL18s?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 29fdf2a8-e9e1-4751-a7af-08db9cdbfab4
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2023 15:34:42.4766
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TiGpi1xC9GlFP+UdJ+GyUePShcJTK8DDABaYIk7UV4XhBX8+Vg41hlkVQnIvQ5Vt
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6548
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Mon, Aug 14, 2023 at 01:08:39PM +0800, Baolu Lu wrote:
 
---YOrVHCxcIjSDhBYQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > @@ -989,6 +989,12 @@ static int tegra_smmu_def_domain_type(struct device *dev)
+> >   }
+> >   static const struct iommu_ops tegra_smmu_ops = {
+> > +	/*
+> > +	 * FIXME: For now we want to run all translation in IDENTITY mode,
+> > +	 * better would be to have a def_domain_type op do this for just the
+> > +	 * quirky device.
+> > +	 */
+> > +	.default_domain = &tegra_smmu_identity_domain,
+> 
+> tegra_smmu_def_domain_type() has already forced the core to use
+> ops->identity_domain, why do we still need ops->default_domain?
 
-On Wed, Aug 02, 2023 at 10:10:34PM +0200, Andi Shyti wrote:
-> Hi
->=20
-> On Sat, 22 Jul 2023 13:50:24 +0200, Paul Cercueil wrote:
-> > Here is a revised version of my patchset that converts the I2C drivers
-> > to use the new PM macros.
-> >=20
-> > Changes since V1 include:
-> > - Previous patch [01/23] that updated the amd-mp2 driver has been
-> >   dropped per Jonathan's request.
-> > - [09/22]: Unfold _DEV_PM_OPS() macro
-> > - [10/22]: Convert to use regular device PM instead of using
-> >   platform_driver.{suspend,resume}. I figured it was OK to also change
-> >   it to use the new PM macros and keep it in one single patch.
-> > - [13/22]: Rewrap runtime PM line
-> >=20
-> > [...]
+This looks like it is just some cruft from an earlier version that did
+not have tegra_smmu_def_domain_type(), I deleted it
 
-Applied to for-next (via Andi's branch), thanks!
-
-
---YOrVHCxcIjSDhBYQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmTaQwwACgkQFA3kzBSg
-KbaDMw//VbdoB1uujcbHlW8pgRVSqHqnF88zf15UYW4oQMPcz5HTf2NthklikoXP
-VZotOIw8HpQfsLEJc9ZOw6WaA+g1/1A0kJ6nft2+w4lXiT1lRRF0Nbq9VLDJ8iXS
-se9KGtH9oWoiaDSRWT3rcpPTW2C5sPMBl9nz9Uf6zzx43rq2ATtETKSp1qi+tNXe
-D2QeZ6Rq8U7xak/PyGO1DSM0IEHMygAQNWn7xU0GM8x5m/OREG1z4nodwrfgo0eO
-a1iXMQ1yhJWFE2bVR9RncJqOcq+fIjnQs9ckAHbVB3E4qjO8N9jW577W9AEnmxhi
-tAnS+LmXLz1exjmqAfeJ+R+KHUkT/Bj3eTNdnYk2vEdxR2OV+a87dfJMARmb1E5f
-/92dgijhP2RRi3gNzIidpmHVqFF2L0jEDkWjd9OiZtU6gTmlt1oi815msusEeYic
-AYR6Xr2bvlNuw0VCPyp2hn0NvhvzG3JZnTdZ3m0KYuqvX23wVf6Kp6PI+xnHqF8h
-tqW9h1oqXlbhY2BsoWgVgiECeVbd4kUNhPh4nKiA+BPov7NFkFs7lU5jz8qqvpEh
-d2O/6g2bL9qLQWmvOBMmQrLLtCXH5OQWSJMT+Y6gGtpfDlXYXZGVpGkPF3XWJCNP
-hwQhPiLVTevWUMJgFmIPd3hxyb8Brn6BDBx1qb8G1sciMZxYULw=
-=Jr5W
------END PGP SIGNATURE-----
-
---YOrVHCxcIjSDhBYQ--
+Thanks,
+Jason
