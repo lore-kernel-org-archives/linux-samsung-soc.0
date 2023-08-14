@@ -2,194 +2,239 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56569C04E69
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Aug 2023 17:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8150EB64DD
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Aug 2023 19:40:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230017AbjHNRbD (ORCPT
+        id S231865AbjHNTj4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Aug 2023 13:31:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58666 "EHLO
+        Mon, 14 Aug 2023 15:39:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230442AbjHNRag (ORCPT
+        with ESMTP id S231358AbjHNTjq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Aug 2023 13:30:36 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2085.outbound.protection.outlook.com [40.107.244.85])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AB0B133;
-        Mon, 14 Aug 2023 10:30:34 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CaCFlgOyZ4m7k3XyWZYvpEd5ZyDFzyJPhguZn9dyqfwt8ltR6hvUSdZB8vD9DjRE3zxz5yFXVXSljLzQJVUE2vP19y9+UZPOyjA3DcGqnqMtm0/AhYCR9P4DXvzFMj+D7AMQU8NqCwDxiK5AOlPFYlAp8v/Q8rUcgDxcRxUHZxd3EC5Fw0vDr7qOGpmsiaHv+cNAZzWjQQVuSmySkIaWsKWnn2wGeXVtT4+vDnCV2oiAv+jva2XdDtbXMZ2E2deG7HgWK/HUahw+Q61QBkzs5HUTzMUUox66VVwidJdMYLrAUm3+NuN+ZiWgJGV3irKTNVekVEnm/oSqB121Mw1Rog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y3pNRKemzhOIPa6pNoK/rQxGwjMeSRkydMK98LvtGJo=;
- b=AKf78I9lfOILhnTgevME5/UGxYsas+Iif7P5eRTRzjVellceHuJDzlZVNsV8hJ1KHcFWj7cE4qSyy5eCvN3oPddaLzGACb2TUIRIjSRZpdtu3ObhwuP1DxDtWjGUfAJmwNewY5vbQSp1u8VyV0nOgA/sTYGdMz5/S2q6HPbBVvvIIwUXojwJOQuo9vwOnJr9kKgKQgPXk5GMnBtkN6MnXGhCRu24XOMggED55g9+zgzeftaEC0zjF1wCoC6R4cky82Wm+xSQJb32mm4lmfAzPLgkNU7tuo5xIN+bOGB1BzP0XLY5+f1Cdgpx12hBeYw/JDrtyfi7lxn8JxswNPNRwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y3pNRKemzhOIPa6pNoK/rQxGwjMeSRkydMK98LvtGJo=;
- b=EJls9eu6SkgPctyU2XzjCBouTKJY6eRishdaYs2bn4W4yhFUyXzrk4ySJzH66LRCH61l+ut6+5+ncHhWIoDO/4gDLE7VfZhTG1mQf+mWTjVdnV5HlbBjtcyOSlqc5YUxZcMCUvCehkq2XrQHzNJ4gwBxFDW7c70iCgsb3voaFrdXmuovyQiMsytdkxh+X6vQWhvb00gv3E5aj1MaJuJYCZwOT1FaS2LGrPgPXDxKNNecW1Cpt6sUKj9T6Ktgo379iGEI/KbNHdIGlJEQ1oLhX+O7Vo8Mtx5jC6OmmkUjgxFkebWWVfkAzwRGKF3Xz/W4R4Bjij4IWu+L9yRjAhf3cw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
- by IA0PR12MB8280.namprd12.prod.outlook.com (2603:10b6:208:3df::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6678.24; Mon, 14 Aug
- 2023 17:30:29 +0000
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::5111:16e8:5afe:1da1]) by LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::5111:16e8:5afe:1da1%6]) with mapi id 15.20.6678.022; Mon, 14 Aug 2023
- 17:30:29 +0000
-Date:   Mon, 14 Aug 2023 14:30:25 -0300
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Baolu Lu <baolu.lu@linux.intel.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Steven Price <steven.price@arm.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v6 00/25] iommu: Make default_domain's mandatory
-Message-ID: <ZNpksUtIY+3N1Hn3@nvidia.com>
-References: <0-v6-e8114faedade+425-iommu_all_defdom_jgg@nvidia.com>
- <50feed07-f89a-dfc2-d8a8-16f9bf0fe937@linux.intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <50feed07-f89a-dfc2-d8a8-16f9bf0fe937@linux.intel.com>
-X-ClientProxiedBy: BYAPR01CA0037.prod.exchangelabs.com (2603:10b6:a03:94::14)
- To LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+        Mon, 14 Aug 2023 15:39:46 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3874010F2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Aug 2023 12:39:44 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3fe4a89e8c4so43235755e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Aug 2023 12:39:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1692041983; x=1692646783;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ROJLZco4JemYu/fTJva9m2yQGXFsGiO+fv8ztilfBjQ=;
+        b=KF9WyC6F4AqBJ1aAZHoYv2xC1p85qxmd3RbkyvrS2gpAibZnmBZG5yMJzd+wHbKxeL
+         J3a3UW5zyVBBHGq+BsT80gB3K6beqW8yanN66BAdfC+W9IF+b9EGrj8o1dhX1HQ2Lxec
+         crhpZVjLnVNyb75OE9qMkwFLDb3iH4STnPlUrJybOul4vucN0XHD4Px86IbacwPu9qIa
+         F6E+2ZpdkwDIHopBAhxKdWagtNZ+WeTEe6+xXZjg2YKmNXpYzfgczv6RZjYbqaqkS6no
+         bfuvgtSpnhXv/W0QJ4Q05oMfRi29w+Se64dabrimPLQflRUNCjBdjNMDi60yUyZkTIEs
+         Zc2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692041983; x=1692646783;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ROJLZco4JemYu/fTJva9m2yQGXFsGiO+fv8ztilfBjQ=;
+        b=OLsHaZLpUFxyw99v9EporHGg2XNiRuFol/wEheEY5Hfidw+pGDKIewsyD1GON6l0Q9
+         XHSTFDj1mjfhu5YnlgTBgt7MDXme5U7/QO6pIQir5cmjDt2UBr5n/jhm3G0A8wwAeNO1
+         khpRj9ZjlVBpgfyE2G2CWT1yHoq855nhcMYyWJMTdw3PI2ohDQZ11dzCg7IWJKXxGZug
+         n7+ncZJjqr+bJESF+Xn5251xZIO2bf1BJTAyZCZa1itDoGGFtvfdnbZ4PVeqrGJjVhAz
+         2KBcJM1o1JppiById6eH5cr/tby7C1Hm20SKqQlM4+4QrqJo2ZAjXCv1lLSKGJVIR5uT
+         UyJw==
+X-Gm-Message-State: AOJu0YyuTyZg1mr+hln+rJv0ft+kE1UjEnaH9lhd5oXbAI9vW8vQdu78
+        lK+nBHcC9cpydoTjJpkRA4kxRw==
+X-Google-Smtp-Source: AGHT+IG+r1hJetgi+phkFK5PuwtBM/rf++axV4VBx0RhCpdoo3UabLGB6RkubzEpT25nkpJrsb3ubg==
+X-Received: by 2002:a05:600c:214d:b0:3fc:62c:8275 with SMTP id v13-20020a05600c214d00b003fc062c8275mr8454710wml.35.1692041982710;
+        Mon, 14 Aug 2023 12:39:42 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.214.188])
+        by smtp.gmail.com with ESMTPSA id y21-20020a7bcd95000000b003fc00892c13sm15448673wmj.35.2023.08.14.12.39.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Aug 2023 12:39:42 -0700 (PDT)
+Message-ID: <16eab776-07d4-3c31-7e82-444863303102@linaro.org>
+Date:   Mon, 14 Aug 2023 21:39:40 +0200
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|IA0PR12MB8280:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4dec0aae-b228-46dd-a1bc-08db9cec273c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ObG5WL5hXf73ld5xVkdV9rGSht+CPvTRahLzOrBwwrqo3eRNHPHV4qjU/hRT8ItRywHMgcmyITHP9K2ExfWQFtd2v+g2HuAk3o3BDnGDFmD/NmpQ9V/phq+lIQfsYRo2doqtIaj+Z8LVl3BI75jdvxMIdDJLvJwxpJmz+XoKvTTLIlQCBQNlRHf9GB7Sa6p7wfosHFUqLjK9ps+HxZBySs0qMUtSuaJ3LLupM4GwEHuyy0Ipacqgf7kgwwRc4ISoXj8asL4/CFPAuJnMMcwjioo4T4WFpU0PvTMPEz+cbs/stAMZfLVRS2QL4Aff1WgE2IFFvP6ZDHmocRi8aAGXpGMOY2Sn9sCj+dv3xSjXBYa9LLEqM6fmpm4LPfJ7AkD0Gy6QEBPf9KTCTe+CrIZO9en2/RjJj+K2MoYt99vMdSSyPyQVqX/3E3Ce3D/PRGebeCfXq8lTw9VO5Bb/PrteBoZYvF2U9RvlxHc8OfkLgb6I/kyuMk7B4gUzZMHJ0JIfmM6nhFV4yUwKJIoYW23fVM8/GembtYPh8VDeqfG+LjyvG1NNqiH7yKjnDKYSjUI+CEAU/5/S4Dszl+E0T1n6CM7EgAsQl7sz2zFXSS01PJt9k5A1n3mMiUM1Bpkab0+NZ8OULx/iZspnw4nl9MI21w==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(376002)(396003)(39860400002)(346002)(366004)(136003)(451199021)(186006)(1800799006)(6512007)(6486002)(6666004)(54906003)(478600001)(2616005)(6506007)(2906002)(107886003)(26005)(316002)(4326008)(6916009)(66946007)(8936002)(66556008)(5660300002)(7416002)(7406005)(8676002)(41300700001)(66476007)(38100700002)(36756003)(86362001)(67856001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Tznxj4HhhR9nWsDCwoV6ELxC76TapySK2wMOAyE6Ouiz4NSGWoIIKgi/BD+4?=
- =?us-ascii?Q?Sr76X5obYG5doDcvOCKZPhJ8HPtEh6Qs20Zm92zbJwgN+OMBrZPenWuwZ2bx?=
- =?us-ascii?Q?gEtXU1R51wYN1RLIwOkEh5eHKlSTn4CdIeL7v8ha6T2XaZMJ5ATcWQovhscQ?=
- =?us-ascii?Q?337bPNQA+zN7aLUvueE/BHEXrK24rHVp9O9T/kcgYz/6NAdHO9bbyEfYkNlc?=
- =?us-ascii?Q?KEDNcFQNpNPZNGzKKZFOUoWslDuZ4N8qXa/seqFWy5yOMb5fLx/xP1DF2PBw?=
- =?us-ascii?Q?T9c7R/lG2k2koaMpOp4ahwBFDeIn8exfUAUr83fi/m0d0zDDX+NNgrisgaiQ?=
- =?us-ascii?Q?CthSAOTmMnpjE+AaKlzpLV9ohYk072AJBZ14LfCmWggQiCv0d+JqfQyNNz0O?=
- =?us-ascii?Q?iwUrajujan65RhiTHAqukX4DVkYuEHcotXnmRMZ/ygI65WIxL+d5kQeZV2Se?=
- =?us-ascii?Q?3O+z4lHwDN0B2et9z7Mmeq2S4hVAHRkcokcjlYYSuOYjCsA3FX8e6ydA6ZXx?=
- =?us-ascii?Q?mIHUhZkCqrfiGI7UkZq+RCmcnVNC1a9w0RcqkLioG90qHByc2JtxUVueKlqF?=
- =?us-ascii?Q?mh9Mav9NFxIN55JLbA4H8HVOsCLv6OCJUbe7azuyfT/MoOOpCEnz18oc3sJ4?=
- =?us-ascii?Q?aLv7597SWE5q9NPQqYdBW8DGVQDLewzkg4I+bEA3cRV3y+ysbY3hHjoHlUPK?=
- =?us-ascii?Q?MOPvaFGF2S9AMW26QUBemnK4d/XaN4eyI5g5KUZ/MOwXcwbgbG+qDa87zYSw?=
- =?us-ascii?Q?BpOmgRZ7znKjc1zexg5QWpcF2XyNI1/Jxkr7E5ssKCwnRMi2Mw/BNS+J/IbA?=
- =?us-ascii?Q?f9ajbJ1GSeJdjnLGRT1/an8eGkI+Eave3zENtcW3w5VQka+QVqueAdGI2qmb?=
- =?us-ascii?Q?c7/aeTjJfszlBx8IWMx2wkpC1f95PLLyPiUWvbosa/JPl6so2F7wjC67CpVH?=
- =?us-ascii?Q?564fp7qcZ1m3hX8+AnTtY1eONvwmdg6CB++Vr4Elf3thWfH/edR/EcVLwEzq?=
- =?us-ascii?Q?XFbag8l47dGRGsEnryralKi04teF/12K1w7vhwmthLwQX+oIdAewt0V1merp?=
- =?us-ascii?Q?IEunbyEoCFeWSeh7rs4P+QMwKJbteVLJZ3or7yV80nIquzt6DHPXLAMS0WMN?=
- =?us-ascii?Q?5iHDS042uWmjLew+tuiehwFrrJA+Ot7FmSF7xrQTizoElcdvYExyaIM5Tkb2?=
- =?us-ascii?Q?75rLXfkfHUmxrpl/OC15pPQMRhbdZrUgpvgne97/t9vCgjgUkkWbt8SvPwx3?=
- =?us-ascii?Q?OhmW503Mimvl1OyeBCWbvk6qdl+QPBVuRYygw1FcjwUn8ryfUw/xSemGI5TE?=
- =?us-ascii?Q?lzKm6Med4TLt4DHCNm16vvGqdZevF1nkJbH7thUTC6KcTlMvJ8eliwCSUjHj?=
- =?us-ascii?Q?lFZq+4CRGbr+5EaiKQdOa/95U91xFlHpSskbF/k0z5Co3RUOqDbnoSr2R2/A?=
- =?us-ascii?Q?fQMnICi2rTirnQjAIQvaQzE5/0YL3rAMqe6UWeOmmIzw5iaFKQfpEi/VtaIL?=
- =?us-ascii?Q?ZwrZ+qwUyzDC2oOCAfgmzVsw+YOZr6jR8m1KUWxn9WCrvMzt96O+d92PTxMc?=
- =?us-ascii?Q?SqODEGs2hWRY5G2d7C7ipsbM4BAH3ZLcHcR3vkAj?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4dec0aae-b228-46dd-a1bc-08db9cec273c
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2023 17:30:28.9942
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NgiNbHxAGGf0equWbkPcTUZ5uP45Wfm4kvMU79izw2qWF82HkIheCklJhfp+RLkY
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8280
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH v3 1/4] dt-bindings: net: Add FSD EQoS device tree
+ bindings
+Content-Language: en-US
+To:     Sriranjani P <sriranjani.p@samsung.com>, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, richardcochran@gmail.com,
+        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+        mcoquelin.stm32@gmail.com, alim.akhtar@samsung.com,
+        linux-fsd@tesla.com, pankaj.dubey@samsung.com,
+        swathi.ks@samsung.com, ravi.patel@samsung.com
+Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20230814112539.70453-1-sriranjani.p@samsung.com>
+ <CGME20230814112605epcas5p31aca7b23e70e8d93df11414291f7ce66@epcas5p3.samsung.com>
+ <20230814112539.70453-2-sriranjani.p@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230814112539.70453-2-sriranjani.p@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Aug 14, 2023 at 04:43:23PM +0800, Baolu Lu wrote:
-
-> > This is on github:https://github.com/jgunthorpe/linux/commits/iommu_all_defdom
+On 14/08/2023 13:25, Sriranjani P wrote:
+> Add FSD Ethernet compatible in Synopsys dt-bindings document. Add FSD
+> Ethernet YAML schema to enable the DT validation.
 > 
-> It seems that after this series, all ARM iommu drivers are able to
-> support the IDENTITY default domain, hence perhaps we can remove below
-> code?
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> Signed-off-by: Swathi K S <swathi.ks@samsung.com>
+> Signed-off-by: Sriranjani P <sriranjani.p@samsung.com>
+> ---
+>  .../devicetree/bindings/net/snps,dwmac.yaml   |   5 +-
+>  .../devicetree/bindings/net/tesla,ethqos.yaml | 114 ++++++++++++++++++
+>  2 files changed, 117 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/tesla,ethqos.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> index ddf9522a5dc2..0ced7901e644 100644
+> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> @@ -96,6 +96,7 @@ properties:
+>          - snps,dwxgmac
+>          - snps,dwxgmac-2.10
+>          - starfive,jh7110-dwmac
+> +        - tesla,fsd-ethqos-4.21
 
-Yes, but this code is still used
+I don't think one given SoC - and I was told FSD is strictly defined one
+specific SoC - can have different versions of the same block, so drop
+the block versioning.
 
-> If I remember it correctly, the background of this part of code is
-> that some arm drivers didn't support IDENTITY domain, so fall back to
-> DMA domain if IDENTITY domain allocation fails.
+>  
+>    reg:
+>      minItems: 1
+> @@ -117,7 +118,7 @@ properties:
+>  
+>    clocks:
+>      minItems: 1
+> -    maxItems: 8
+> +    maxItems: 10
+>      additionalItems: true
+>      items:
+>        - description: GMAC main clock
+> @@ -129,7 +130,7 @@ properties:
+>  
+>    clock-names:
+>      minItems: 1
+> -    maxItems: 8
+> +    maxItems: 10
+>      additionalItems: true
+>      contains:
+>        enum:
+> diff --git a/Documentation/devicetree/bindings/net/tesla,ethqos.yaml b/Documentation/devicetree/bindings/net/tesla,ethqos.yaml
+> new file mode 100644
+> index 000000000000..b78829246364
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/tesla,ethqos.yaml
+> @@ -0,0 +1,114 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/tesla,ethqos.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: FSD Ethernet Quality of Service
+> +
+> +maintainers:
+> +  - Sriranjani P <sriranjani.p@samsung.com>
+> +  - Swathi K S <swathi.ks@samsung.com>
+> +
+> +description:
+> +  dwmmac based tesla ethernet devices which support Gigabit
+> +  ethernet.
+> +
+> +allOf:
+> +  - $ref: snps,dwmac.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: tesla,fsd-ethqos-4.21.yaml
 
-Not quite..
+?
 
-	if (req_type)
-		return __iommu_group_alloc_default_domain(group, req_type);
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 5
 
-req_type == 0 can still happen because it depends on what
-def_domain_type returns, which is still 0 in alot of cases
+Why? I expect it to be specific.
 
-	/* The driver gave no guidance on what type to use, try the default */
-	dom = __iommu_group_alloc_default_domain(group, iommu_def_domain_type);
-	if (dom)
-		return dom;
+> +    maxItems: 10
+> +
+> +  clock-names:
+> +    minItems: 5
+> +    maxItems: 10
+> +    items:
+> +      - const: ptp_ref
+> +      - const: master_bus
+> +      - const: slave_bus
+> +      - const: tx
+> +      - const: rx
+> +      - const: master2_bus
+> +      - const: slave2_bus
+> +      - const: eqos_rxclk_mux
+> +      - const: eqos_phyrxclk
+> +      - const: dout_peric_rgmii_clk
+> +
+> +  fsd-rx-clock-skew:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    items:
+> +      - items:
+> +          - description: phandle to the syscon node
+> +          - description: offset of the control register
+> +    description:
+> +      Should be phandle/offset pair. The phandle to the syscon node.
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  phy-mode:
+> +    $ref: ethernet-controller.yaml#/properties/phy-connection-type
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - rx-clock-skew
 
-So we try the default which might be IDENTITY/DMA/DMA_FQ - still have
-to do this.
+Eee? Isn't it fsd-rx-clock-skew which anyway is not correct?
 
-	/* Otherwise IDENTITY and DMA_FQ defaults will try DMA */
-	if (iommu_def_domain_type == IOMMU_DOMAIN_DMA)
-		return NULL;
-	dom = __iommu_group_alloc_default_domain(group, IOMMU_DOMAIN_DMA);
-	if (!dom)
-		return NULL;
+> +  - iommus
+> +  - phy-mode
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/fsd-clk.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    ethernet_1: ethernet@14300000 {
+> +              compatible = "tesla,dwc-qos-ethernet-4.21";
 
-	pr_warn("Failed to allocate default IOMMU domain of type %u for group %s - Falling back to IOMMU_DOMAIN_DMA",
-		iommu_def_domain_type, group->name);
+Three different compatibles for the same.
 
-And this hunk is primarily a fallback in case the DMA_FQ didn't
-work. Then we try normal DMA.
+No, please test your patches before sending.
 
-That it also protected against not implementing IDENTITY is a side
-effect, so I think we have to keep all of this still.
+I am not even checking if previous feedback was applied... Did you
+really go through it?
 
-Jason
+Best regards,
+Krzysztof
+
