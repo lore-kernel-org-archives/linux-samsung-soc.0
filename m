@@ -2,89 +2,169 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38AD9C001DE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8118AC04A6A
 	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Aug 2023 06:10:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234966AbjHOGJf (ORCPT
+        id S234970AbjHOGJg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Aug 2023 02:09:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40130 "EHLO
+        Tue, 15 Aug 2023 02:09:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235016AbjHOGIo (ORCPT
+        with ESMTP id S235065AbjHOGI7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Aug 2023 02:08:44 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 188052684
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Aug 2023 23:07:28 -0700 (PDT)
-Received: from canpemm500007.china.huawei.com (unknown [172.30.72.57])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4RQ11269hLztRwt;
-        Tue, 15 Aug 2023 14:03:50 +0800 (CST)
-Received: from localhost (10.174.179.215) by canpemm500007.china.huawei.com
- (7.192.104.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.31; Tue, 15 Aug
- 2023 14:07:26 +0800
-From:   Yue Haibing <yuehaibing@huawei.com>
-To:     <krzysztof.kozlowski@linaro.org>, <alim.akhtar@samsung.com>,
-        <yuehaibing@huawei.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <andi.shyti@kernel.org>
-Subject: [PATCH v2 -next] i2c: s3c2410: Remove unused extern declarations
-Date:   Tue, 15 Aug 2023 14:07:20 +0800
-Message-ID: <20230815060720.17360-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Tue, 15 Aug 2023 02:08:59 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36A6C199B
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Aug 2023 23:07:48 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4ff72830927so2976297e87.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Aug 2023 23:07:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1692079666; x=1692684466;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KVnFJiMRFz78ILhOUZDeG2BsOXYQ6IIoucdYjDSoZck=;
+        b=ux9EU2te+pnF27RxeJooc1JFE42D9LgEkZ2ZnZNaRNmMU/MdYm5I/WOjXN5wWc5XJw
+         KxiiRwiTeEWBCMn4tCdMZRpoqxR4efsO3S4SUIkpEdE3mzWTcmnjgKjpXPICQeMkEkYv
+         RV3yqfbn07fxqkCs6gtgVbG7c4svgBnGAxOe0PaLP4lswOmJh5SHRxIGw2K9oF/qqdw4
+         kskGGJ2MDI03gV7dMi/CGWHvS+rvLb61oyzlfTUSQtzR1ZfTTvlbyIpPCwCF2Ip0yw41
+         xKzFqxq0dXXKw9TBDlkT0XzEiUiRFrBejBitXo6mT3UameP3IJHKmRdbOT6Ohywv/pnD
+         3fHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692079666; x=1692684466;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KVnFJiMRFz78ILhOUZDeG2BsOXYQ6IIoucdYjDSoZck=;
+        b=IT+lSbOE1I4LZUf7DwDT6/fUVwhDpLI2G7IJNwU0Bqi/CtpUcUQPKdsj3B41XuJs6I
+         U5OQdvb3ARBTKt5Eb9JDYmQmg8VOXKJQ9ae72oekl2msKUyVSTWH8tm8WEu6H6w90SsQ
+         YRmMyuaMenl60InU6BhULnySYXFJ8rSXsb9rGKmYA5SQmbPlCQNUx2cK7fc0GoS82rxr
+         fr2MfrkJeEGKvV2V11XoPV342jGR8xkr6xlIYQnFzHPRWmZLys+TAAVNwGGBGiwlXu0O
+         Vvg8QZsowPUGJFcm/LFBNzISQMqGSaHYg7fpLg4jLpx0RZ2ycKGtvhrq/ISORCm+g2tL
+         XNIw==
+X-Gm-Message-State: AOJu0Yw0JAwlLl+WkGXKvjCP8MuOSUZ18UJ95467QNNUID+Cp0Q33zGl
+        a6lC0PtOLU6tTLnnHTAamtvS6g==
+X-Google-Smtp-Source: AGHT+IEU8GZRCKc+uj+gjwiht9Ao/Ja/R6voPLEfx7IHejJ8qPJgWiAfPI7J2oLEh5VRT/2VcidT2w==
+X-Received: by 2002:a05:6512:304d:b0:4ff:74e2:4268 with SMTP id b13-20020a056512304d00b004ff74e24268mr5037814lfb.56.1692079666243;
+        Mon, 14 Aug 2023 23:07:46 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.214.188])
+        by smtp.gmail.com with ESMTPSA id gw4-20020a170906f14400b00993b381f808sm6528093ejb.38.2023.08.14.23.07.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Aug 2023 23:07:45 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v3 2/3] media: dt-bindings: samsung,fimc: correct unit addresses in DTS example
+Date:   Tue, 15 Aug 2023 08:07:38 +0200
+Message-Id: <20230815060739.30160-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230815060739.30160-1-krzysztof.kozlowski@linaro.org>
+References: <20230815060739.30160-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.174.179.215]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- canpemm500007.china.huawei.com (7.192.104.62)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-After some cleanups[*] certain s3c_i2c(*)_cfg_gpio() prototypes
-have become unused. Remove them.
+The camera node's ranges property and unit addresses of its children
+were not correct.  If camera is @11800000, then its fimc child is @0.
 
-[*] 0d297df03890 ("ARM: s3c: simplify platform code")
-    d78c16ccde96 ("ARM: SAMSUNG: Remove remaining legacy code")
-    bad1e6aadd17 ("ARM: SAMSUNG: Cleanup plat-samsung/devs.c and devs.h")
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org> 
 ---
-v2: rewrite commit message as Andi suggested
----
- include/linux/platform_data/i2c-s3c2410.h | 13 -------------
- 1 file changed, 13 deletions(-)
 
-diff --git a/include/linux/platform_data/i2c-s3c2410.h b/include/linux/platform_data/i2c-s3c2410.h
-index 550746715139..c8c3146c34ea 100644
---- a/include/linux/platform_data/i2c-s3c2410.h
-+++ b/include/linux/platform_data/i2c-s3c2410.h
-@@ -52,23 +52,10 @@ struct s3c2410_platform_i2c {
-  */
- extern void s3c_i2c0_set_platdata(struct s3c2410_platform_i2c *i2c);
- extern void s3c_i2c1_set_platdata(struct s3c2410_platform_i2c *i2c);
--extern void s3c_i2c2_set_platdata(struct s3c2410_platform_i2c *i2c);
--extern void s3c_i2c3_set_platdata(struct s3c2410_platform_i2c *i2c);
--extern void s3c_i2c4_set_platdata(struct s3c2410_platform_i2c *i2c);
--extern void s3c_i2c5_set_platdata(struct s3c2410_platform_i2c *i2c);
--extern void s3c_i2c6_set_platdata(struct s3c2410_platform_i2c *i2c);
--extern void s3c_i2c7_set_platdata(struct s3c2410_platform_i2c *i2c);
--extern void s5p_i2c_hdmiphy_set_platdata(struct s3c2410_platform_i2c *i2c);
+Changes in v3:
+1. None
+
+Changes in v2:
+1. Add Ab tag.
+---
+ .../bindings/media/samsung,fimc.yaml          | 22 +++++++++----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/media/samsung,fimc.yaml b/Documentation/devicetree/bindings/media/samsung,fimc.yaml
+index 530a08f5d3fe..88b176d594e2 100644
+--- a/Documentation/devicetree/bindings/media/samsung,fimc.yaml
++++ b/Documentation/devicetree/bindings/media/samsung,fimc.yaml
+@@ -117,7 +117,7 @@ examples:
+         #clock-cells = <1>;
+         #address-cells = <1>;
+         #size-cells = <1>;
+-        ranges = <0x0 0x0 0x18000000>;
++        ranges = <0x0 0x0 0xba1000>;
  
- /* defined by architecture to configure gpio */
- extern void s3c_i2c0_cfg_gpio(struct platform_device *dev);
- extern void s3c_i2c1_cfg_gpio(struct platform_device *dev);
--extern void s3c_i2c2_cfg_gpio(struct platform_device *dev);
--extern void s3c_i2c3_cfg_gpio(struct platform_device *dev);
--extern void s3c_i2c4_cfg_gpio(struct platform_device *dev);
--extern void s3c_i2c5_cfg_gpio(struct platform_device *dev);
--extern void s3c_i2c6_cfg_gpio(struct platform_device *dev);
--extern void s3c_i2c7_cfg_gpio(struct platform_device *dev);
+         clocks = <&clock CLK_SCLK_CAM0>, <&clock CLK_SCLK_CAM1>,
+                  <&clock CLK_PIXELASYNCM0>, <&clock CLK_PIXELASYNCM1>;
+@@ -132,9 +132,9 @@ examples:
+         pinctrl-0 = <&cam_port_a_clk_active &cam_port_b_clk_active>;
+         pinctrl-names = "default";
  
- extern struct s3c2410_platform_i2c default_i2c_data;
+-        fimc@11800000 {
++        fimc@0 {
+             compatible = "samsung,exynos4212-fimc";
+-            reg = <0x11800000 0x1000>;
++            reg = <0x00000000 0x1000>;
+             interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
+             clocks = <&clock CLK_FIMC0>,
+                      <&clock CLK_SCLK_FIMC0>;
+@@ -151,9 +151,9 @@ examples:
  
+         /* ... FIMC 1-3 */
+ 
+-        csis@11880000 {
++        csis@80000 {
+             compatible = "samsung,exynos4210-csis";
+-            reg = <0x11880000 0x4000>;
++            reg = <0x00080000 0x4000>;
+             interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+             clocks = <&clock CLK_CSIS0>,
+                      <&clock CLK_SCLK_CSIS0>;
+@@ -186,9 +186,9 @@ examples:
+ 
+         /* ... CSIS 1 */
+ 
+-        fimc-lite@12390000 {
++        fimc-lite@b90000 {
+               compatible = "samsung,exynos4212-fimc-lite";
+-              reg = <0x12390000 0x1000>;
++              reg = <0xb90000 0x1000>;
+               interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+               power-domains = <&pd_isp>;
+               clocks = <&isp_clock CLK_ISP_FIMC_LITE0>;
+@@ -198,9 +198,9 @@ examples:
+ 
+         /* ... FIMC-LITE 1 */
+ 
+-        fimc-is@12000000 {
++        fimc-is@800000 {
+             compatible = "samsung,exynos4212-fimc-is";
+-            reg = <0x12000000 0x260000>;
++            reg = <0x00800000 0x260000>;
+             interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
+                          <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
+             clocks = <&isp_clock CLK_ISP_FIMC_LITE0>,
+@@ -242,9 +242,9 @@ examples:
+             #size-cells = <1>;
+             ranges;
+ 
+-            i2c-isp@12140000 {
++            i2c-isp@940000 {
+                 compatible = "samsung,exynos4212-i2c-isp";
+-                reg = <0x12140000 0x100>;
++                reg = <0x00940000 0x100>;
+                 clocks = <&isp_clock CLK_ISP_I2C1_ISP>;
+                 clock-names = "i2c_isp";
+                 pinctrl-0 = <&fimc_is_i2c1>;
 -- 
 2.34.1
 
