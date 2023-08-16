@@ -2,95 +2,118 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71782C25B7F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Aug 2023 20:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0ACC41513
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Aug 2023 20:20:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345879AbjHPULe (ORCPT
+        id S244350AbjHPUTn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Aug 2023 16:11:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39776 "EHLO
+        Wed, 16 Aug 2023 16:19:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346103AbjHPUL0 (ORCPT
+        with ESMTP id S1346102AbjHPUTX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Aug 2023 16:11:26 -0400
-Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E07C91980
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Aug 2023 13:11:24 -0700 (PDT)
-Received: by mail-ot1-x331.google.com with SMTP id 46e09a7af769-6bd066b0fd4so4815495a34.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Aug 2023 13:11:24 -0700 (PDT)
+        Wed, 16 Aug 2023 16:19:23 -0400
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F40F1BF7
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Aug 2023 13:19:22 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-589cc9f7506so67157567b3.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Aug 2023 13:19:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692216684; x=1692821484;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Lws75iJ418dvUiFUMpSCZSJpyx26Sbj9eIlHFk1PcY=;
-        b=gN0LEIm74Bz0xvqXdVi1r5MAh02OiOvRcyxW0f5+qOT1fJ/7dmXHMYpRBo7e8fuedD
-         8E4aeaIwULrgMTSxCM6jl7PiqnX64zMuGoumHx0wl9gy/X+Bc+FYvDnQVSxw7e/jJLxx
-         HlLEC2nruRP1nKj8dGZNxRz3ZfnKUDUPrlmrFzHIumdsS2pBPPbZXXu7Io7JbR8rLxHT
-         52TZ66fWdg83GsKplHOCsehJ/qqNNLkipPKwsrkQB02DfKddjUYHpd4MCyGel9BmX377
-         U5dFdwvUhxoGzVKdzENDAKD78Yk6dYBnyZPLXU7qe5kjSmRbYP6Yqyeb0vQob5B29ZEV
-         EGww==
+        d=google.com; s=20221208; t=1692217161; x=1692821961;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3wsWTylhhPdG3/T8LNZoJaxLDgLi/vqIDceWVK88NME=;
+        b=Ht3ZRd1ImNrc2iTkzCJ5Fql3ljWCB2/SIVSsRNPxYYsUGod5lhvmeTUN5m3FrjuquK
+         yL/RgT2BZliIqrkqCktYGQQQcjCncJNHHINboxuRqGGFWxbtQ1YDCAEtEKwrmFE4ZBHP
+         UFxkKjPiw6Qij5Ai7S4lvAOmHBP0MUy6fAM+SSZwI/F5Z1pCqWikJh4O7NUr7IxN2+7V
+         dC2jUXD03hBSxm5SCpr2+nuPq9ZM3WVjvxqaJCnHxvtyEduJvTqlMNLMf6Dt7hNGzZxV
+         OObllt001yGEJEjG4sYLTOL+Q2yr8czIGVcvpF7v5/YIvcUWt2l8KuK7e8rBtnrhKKZG
+         fv/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692216684; x=1692821484;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2Lws75iJ418dvUiFUMpSCZSJpyx26Sbj9eIlHFk1PcY=;
-        b=Vqepl9CMGM05HYpQDjw/Ca2HDVluGcjYMqjaIkWGoRqK8NM5cEspM2NC96sFKs7/sh
-         rngatuawk3wOwbKtRFPX2USm007B0ZLmPjsDZKvkQM2/9m8HC2zWsWpAL3QRSei/y9ok
-         K6DRF0THTuSBjtelfBRZLeKbREkjdkcossZp6BOUGGZHUPkUdHuKKOPxLycPPpmLXPQc
-         5KfJ3BbraBOrxWoQ6XePEpY1bmEw1D5OYju3QNnzyfoKJ2DzDwoWD41xZokS0uBc0Tg6
-         yQDPdwQWU/h53mh32JmCUt7CfBLkHthcE9FBnXaAygpJqjobhFyWqPWtIjgqAHDdWVcd
-         7f9A==
-X-Gm-Message-State: AOJu0Yy4dqq9+iSs+10yq8o9Z5qsy9h3TFTWezgAGPXNo/rqRBVUMLzR
-        N+o5QJ3mTJEu2LzWVOAqK79ThA==
-X-Google-Smtp-Source: AGHT+IFnT/6Su+IdemW7NvD/jLoMyj22j+Z2P6LjjB67eLjhfM9Ka2Q7lSUSr79I01dl9GO21DBAtw==
-X-Received: by 2002:a9d:6a99:0:b0:6b8:dc53:9efd with SMTP id l25-20020a9d6a99000000b006b8dc539efdmr3138769otq.3.1692216684263;
-        Wed, 16 Aug 2023 13:11:24 -0700 (PDT)
-Received: from localhost ([136.49.140.41])
-        by smtp.gmail.com with ESMTPSA id i6-20020a9d6506000000b006b58616daa1sm6349374otl.2.2023.08.16.13.11.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Aug 2023 13:11:23 -0700 (PDT)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Conor Dooley <conor+dt@kernel.org>,
+        d=1e100.net; s=20221208; t=1692217161; x=1692821961;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3wsWTylhhPdG3/T8LNZoJaxLDgLi/vqIDceWVK88NME=;
+        b=FVWMzoT46Vf7RUX7FnZdYX9EecTv+KBgoloNpvvQZzpkRCwd4NyzX9J+pewixNS/6y
+         FMr/oThW8RfC9gBUDKN6H5RdXOx+SzJZu45xryiiDU1ta7Uk9DZT2TCnWP/jrst1PdC+
+         GPSLuvWR48NzeDnRPVgXqWoC5NAzLxTSqRY6H/6LDtjV6IjEoOICyACfDPj40LSWCPhp
+         /JC0jaAOM+vjZiOWKIRsSqLJ5mJMfGyBWPPQdk+sSggADgG5RN1JESvroCDz1TftY98u
+         2Gr0PcdNImFPMrRcx0Wpur9ndUCqVNnFJsBehqbNLar1mO5GWV9yP91cItc9dXm7rXjG
+         QyvQ==
+X-Gm-Message-State: AOJu0YwssVJuLl82mioa1+QO2chfoNGTgfrUBhVXqoqPsq1r55EdPNq7
+        GZZwPhOeTgR63sVyT7ZtbpVmii8fjurVKImGiA==
+X-Google-Smtp-Source: AGHT+IF1NY2O9E+AcCVUc6YmSnFStWnAWmT+ayAT17Q7KEQNdNUBTRt8h9InsGVkNddn7kVhEA8MaXYUcc13W2aRUA==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
+ (user=justinstitt job=sendgmr) by 2002:a81:4407:0:b0:58c:b45f:3e94 with SMTP
+ id r7-20020a814407000000b0058cb45f3e94mr37282ywa.8.1692217161433; Wed, 16 Aug
+ 2023 13:19:21 -0700 (PDT)
+Date:   Wed, 16 Aug 2023 20:19:06 +0000
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIADkv3WQC/x3NSw7CMAxF0a1UHmMpCVX5bAUxqMgLeEASbIiKq
+ u6diOGZ3LuSQQVG52ElRROTkjv8bqDbY853sMRuCi7s3dFP3IpEjioNahzRkuLFaMhvxvLNxbj W54encY7ehfF0SIF6rCqSLP/R5bptPwOrzAp4AAAA
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1692217160; l=1505;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=3i09RUBjajBo5aL6e0TrKmXYq85q23Jzin6ZTPYdgyY=; b=S4oTPqidmSx4pnXekqz3cAvXwTPXkBzQ1EIFWu9hSsoThdtp9eduwMFBcm4W1kNzVJZvIyFio
+ YGlmbwClC6pBWurTU/dRHGUj2NmAVzjjY0yT3dMx3QDNiHt27E7UCjd
+X-Mailer: b4 0.12.3
+Message-ID: <20230816-void-drivers-devfreq-event-exynos-ppmu-v1-1-3fac11083742@google.com>
+Subject: [PATCH] PM / devfreq: exynos-ppmu: fix clang -Wvoid-pointer-to-enum-cast
+ warning
+From:   Justin Stitt <justinstitt@google.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: usb: samsung,exynos-dwc3: Fix Exynos5433 compatible
-Date:   Wed, 16 Aug 2023 15:11:23 -0500
-Message-Id: <20230816201123.3530-1-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.39.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>
+Cc:     linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The correct compatible for Exynos5433 is "samsung,exynos5433-dwusb3".
-Fix the typo in its usage.
+When building with clang 18 I see the following warning:
+|       drivers/devfreq/event/exynos-ppmu.c:530:21: warning: cast to smaller
+|       integer type 'enum exynos_ppmu_type' from 'const void *' [-Wvoid-pointer-to-enum-cast]
+|         530 |       info->ppmu_type = (enum exynos_ppmu_type)of_id->data;
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-Fixes: 949ea75b7ba4 ("dt-bindings: usb: samsung,exynos-dwc3: convert to dtschema")
+This is due to the fact that `of_id->data` is a void* while
+`enum exynos_ppmu_type` has the size of an int.
+
+Cast `of_id->data` to a uintptr_t to silence the above warning for clang
+builds using W=1
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/1910
+Reported-by: Nathan Chancellor <nathan@kernel.org>
+Signed-off-by: Justin Stitt <justinstitt@google.com>
 ---
- Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml | 2 +-
+ drivers/devfreq/event/exynos-ppmu.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml b/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-index 42ceaf13cd5d..240f41b7133a 100644
---- a/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-@@ -72,7 +72,7 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: samsung,exynos54333-dwusb3
-+            const: samsung,exynos5433-dwusb3
-     then:
-       properties:
-         clocks:
--- 
-2.39.2
+diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+index 896a6cc93b00..f798e1d6994d 100644
+--- a/drivers/devfreq/event/exynos-ppmu.c
++++ b/drivers/devfreq/event/exynos-ppmu.c
+@@ -527,7 +527,7 @@ static int of_get_devfreq_events(struct device_node *np,
+ 
+ 	of_id = of_match_device(exynos_ppmu_id_match, dev);
+ 	if (of_id)
+-		info->ppmu_type = (enum exynos_ppmu_type)of_id->data;
++		info->ppmu_type = (uintptr_t)of_id->data;
+ 	else {
+ 		of_node_put(events_np);
+ 		return -EINVAL;
+
+---
+base-commit: 2ccdd1b13c591d306f0401d98dedc4bdcd02b421
+change-id: 20230816-void-drivers-devfreq-event-exynos-ppmu-64ad102497f2
+
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
 
