@@ -2,118 +2,152 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0ACC41513
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Aug 2023 20:20:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0AB5C30630
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Aug 2023 14:55:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244350AbjHPUTn (ORCPT
+        id S1352343AbjHQOyo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Aug 2023 16:19:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43152 "EHLO
+        Thu, 17 Aug 2023 10:54:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346102AbjHPUTX (ORCPT
+        with ESMTP id S1352340AbjHQOyO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Aug 2023 16:19:23 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F40F1BF7
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Aug 2023 13:19:22 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-589cc9f7506so67157567b3.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Aug 2023 13:19:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1692217161; x=1692821961;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3wsWTylhhPdG3/T8LNZoJaxLDgLi/vqIDceWVK88NME=;
-        b=Ht3ZRd1ImNrc2iTkzCJ5Fql3ljWCB2/SIVSsRNPxYYsUGod5lhvmeTUN5m3FrjuquK
-         yL/RgT2BZliIqrkqCktYGQQQcjCncJNHHINboxuRqGGFWxbtQ1YDCAEtEKwrmFE4ZBHP
-         UFxkKjPiw6Qij5Ai7S4lvAOmHBP0MUy6fAM+SSZwI/F5Z1pCqWikJh4O7NUr7IxN2+7V
-         dC2jUXD03hBSxm5SCpr2+nuPq9ZM3WVjvxqaJCnHxvtyEduJvTqlMNLMf6Dt7hNGzZxV
-         OObllt001yGEJEjG4sYLTOL+Q2yr8czIGVcvpF7v5/YIvcUWt2l8KuK7e8rBtnrhKKZG
-         fv/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692217161; x=1692821961;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3wsWTylhhPdG3/T8LNZoJaxLDgLi/vqIDceWVK88NME=;
-        b=FVWMzoT46Vf7RUX7FnZdYX9EecTv+KBgoloNpvvQZzpkRCwd4NyzX9J+pewixNS/6y
-         FMr/oThW8RfC9gBUDKN6H5RdXOx+SzJZu45xryiiDU1ta7Uk9DZT2TCnWP/jrst1PdC+
-         GPSLuvWR48NzeDnRPVgXqWoC5NAzLxTSqRY6H/6LDtjV6IjEoOICyACfDPj40LSWCPhp
-         /JC0jaAOM+vjZiOWKIRsSqLJ5mJMfGyBWPPQdk+sSggADgG5RN1JESvroCDz1TftY98u
-         2Gr0PcdNImFPMrRcx0Wpur9ndUCqVNnFJsBehqbNLar1mO5GWV9yP91cItc9dXm7rXjG
-         QyvQ==
-X-Gm-Message-State: AOJu0YwssVJuLl82mioa1+QO2chfoNGTgfrUBhVXqoqPsq1r55EdPNq7
-        GZZwPhOeTgR63sVyT7ZtbpVmii8fjurVKImGiA==
-X-Google-Smtp-Source: AGHT+IF1NY2O9E+AcCVUc6YmSnFStWnAWmT+ayAT17Q7KEQNdNUBTRt8h9InsGVkNddn7kVhEA8MaXYUcc13W2aRUA==
-X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
- (user=justinstitt job=sendgmr) by 2002:a81:4407:0:b0:58c:b45f:3e94 with SMTP
- id r7-20020a814407000000b0058cb45f3e94mr37282ywa.8.1692217161433; Wed, 16 Aug
- 2023 13:19:21 -0700 (PDT)
-Date:   Wed, 16 Aug 2023 20:19:06 +0000
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIADkv3WQC/x3NSw7CMAxF0a1UHmMpCVX5bAUxqMgLeEASbIiKq
- u6diOGZ3LuSQQVG52ElRROTkjv8bqDbY853sMRuCi7s3dFP3IpEjioNahzRkuLFaMhvxvLNxbj W54encY7ehfF0SIF6rCqSLP/R5bptPwOrzAp4AAAA
-X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1692217160; l=1505;
- i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
- bh=3i09RUBjajBo5aL6e0TrKmXYq85q23Jzin6ZTPYdgyY=; b=S4oTPqidmSx4pnXekqz3cAvXwTPXkBzQ1EIFWu9hSsoThdtp9eduwMFBcm4W1kNzVJZvIyFio
- YGlmbwClC6pBWurTU/dRHGUj2NmAVzjjY0yT3dMx3QDNiHt27E7UCjd
-X-Mailer: b4 0.12.3
-Message-ID: <20230816-void-drivers-devfreq-event-exynos-ppmu-v1-1-3fac11083742@google.com>
-Subject: [PATCH] PM / devfreq: exynos-ppmu: fix clang -Wvoid-pointer-to-enum-cast
- warning
-From:   Justin Stitt <justinstitt@google.com>
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>
-Cc:     linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, Justin Stitt <justinstitt@google.com>
-Content-Type: text/plain; charset="utf-8"
+        Thu, 17 Aug 2023 10:54:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0837210E;
+        Thu, 17 Aug 2023 07:54:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 985D863B7A;
+        Thu, 17 Aug 2023 14:54:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9331C433C9;
+        Thu, 17 Aug 2023 14:54:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692284052;
+        bh=AOOfVg3e/s3+25cWM9lAvk/yXFSa41SxrSYIyPfpKsk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QONEdwsnLM4PXR3bR+xS8DLGGKgA7FynsruyB0XiC7/1c/s9XEsYLfzu1X8TzCbNw
+         mXQONNYTId8rBay+2R3kWHTDRneI2XRZLFOV9TjkYEW31r9096XZyJkociObSomsJZ
+         2zhCTUZapAMLXZRdigseJzQEQQY6pJHzmDGHHmiHNIxcVXlEpm/IhB2WqsHzNAWNXN
+         u4PNAedFOjOxgpx5p2yr2Kuj9sCIfhNYllkyn/6HFmOdhm1RNJzRY1V39X+xIuEvrC
+         AKqoiyIdcc9cd53kpB/3BnE4DiNPbVTxDXI/jN8l37/tiWiwG34eJOfm5ZCNPpW0zd
+         Z2sRcSe3S4YAg==
+Received: (nullmailer pid 958974 invoked by uid 1000);
+        Thu, 17 Aug 2023 14:54:08 -0000
+Date:   Thu, 17 Aug 2023 09:54:08 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Sriranjani P <sriranjani.p@samsung.com>
+Cc:     edumazet@google.com, linux-kernel@vger.kernel.org,
+        alexandre.torgue@foss.st.com, ravi.patel@samsung.com,
+        alim.akhtar@samsung.com, linux-samsung-soc@vger.kernel.org,
+        linux-fsd@tesla.com, conor+dt@kernel.org,
+        mcoquelin.stm32@gmail.com, kuba@kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, pabeni@redhat.com,
+        pankaj.dubey@samsung.com, richardcochran@gmail.com,
+        krzysztof.kozlowski+dt@linaro.org, joabreu@synopsys.com,
+        devicetree@vger.kernel.org, davem@davemloft.net,
+        swathi.ks@samsung.com
+Subject: Re: [PATCH v3 1/4] dt-bindings: net: Add FSD EQoS device tree
+ bindings
+Message-ID: <20230817145408.GA953517-robh@kernel.org>
+References: <20230814112539.70453-1-sriranjani.p@samsung.com>
+ <CGME20230814112605epcas5p31aca7b23e70e8d93df11414291f7ce66@epcas5p3.samsung.com>
+ <20230814112539.70453-2-sriranjani.p@samsung.com>
+ <169201998303.2086680.8457687937999615543.robh@kernel.org>
+ <000001d9d003$b3a9a8a0$1afcf9e0$@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000001d9d003$b3a9a8a0$1afcf9e0$@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-When building with clang 18 I see the following warning:
-|       drivers/devfreq/event/exynos-ppmu.c:530:21: warning: cast to smaller
-|       integer type 'enum exynos_ppmu_type' from 'const void *' [-Wvoid-pointer-to-enum-cast]
-|         530 |       info->ppmu_type = (enum exynos_ppmu_type)of_id->data;
+On Wed, Aug 16, 2023 at 11:06:51AM +0530, Sriranjani P wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Rob Herring [mailto:robh@kernel.org]
+> > Sent: 14 August 2023 19:03
+> > To: Sriranjani P <sriranjani.p@samsung.com>
+> > Cc: edumazet@google.com; linux-kernel@vger.kernel.org;
+> > alexandre.torgue@foss.st.com; ravi.patel@samsung.com;
+> > alim.akhtar@samsung.com; linux-samsung-soc@vger.kernel.org; linux-
+> > fsd@tesla.com; conor+dt@kernel.org; mcoquelin.stm32@gmail.com;
+> > kuba@kernel.org; netdev@vger.kernel.org; linux-arm-
+> > kernel@lists.infradead.org; pabeni@redhat.com; robh+dt@kernel.org;
+> > pankaj.dubey@samsung.com; richardcochran@gmail.com;
+> > krzysztof.kozlowski+dt@linaro.org; joabreu@synopsys.com;
+> > devicetree@vger.kernel.org; davem@davemloft.net;
+> > swathi.ks@samsung.com
+> > Subject: Re: [PATCH v3 1/4] dt-bindings: net: Add FSD EQoS device tree
+> > bindings
+> > 
+> > 
+> > On Mon, 14 Aug 2023 16:55:36 +0530, Sriranjani P wrote:
+> > > Add FSD Ethernet compatible in Synopsys dt-bindings document. Add FSD
+> > > Ethernet YAML schema to enable the DT validation.
+> > >
+> > > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> > > Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> > > Signed-off-by: Swathi K S <swathi.ks@samsung.com>
+> > > Signed-off-by: Sriranjani P <sriranjani.p@samsung.com>
+> > > ---
+> > >  .../devicetree/bindings/net/snps,dwmac.yaml   |   5 +-
+> > >  .../devicetree/bindings/net/tesla,ethqos.yaml | 114
+> > > ++++++++++++++++++
+> > >  2 files changed, 117 insertions(+), 2 deletions(-)  create mode
+> > > 100644 Documentation/devicetree/bindings/net/tesla,ethqos.yaml
+> > >
+> > 
+> > My bot found errors running 'make DT_CHECKER_FLAGS=-m
+> > dt_binding_check'
+> > on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> > 
+> > yamllint warnings/errors:
+> > 
+> > dtschema/dtc warnings/errors:
+> > /builds/robherring/dt-review-
+> > ci/linux/Documentation/devicetree/bindings/net/tesla,ethqos.yaml:
+> > properties:clock-names: {'minItems': 5, 'maxItems': 10, 'items': [{'const':
+> > 'ptp_ref'}, {'const': 'master_bus'}, {'const': 'slave_bus'}, {'const': 'tx'}, {'const':
+> > 'rx'}, {'const': 'master2_bus'}, {'const': 'slave2_bus'}, {'const':
+> > 'eqos_rxclk_mux'}, {'const': 'eqos_phyrxclk'}, {'const':
+> > 'dout_peric_rgmii_clk'}]} should not be valid under {'required': ['maxItems']}
+> > 	hint: "maxItems" is not needed with an "items" list
+> > 	from schema $id: https://protect2.fireeye.com/v1/url?k=f50e335d-
+> > aa950a44-f50fb812-000babff3793-de26ea17ef025418&q=1&e=897786e4-
+> > 5f9b-40d8-8a7f-399cb69c7ee8&u=http%3A%2F%2Fdevicetree.org%2Fmeta-
+> > schemas%2Fitems.yaml%23
+> > Documentation/devicetree/bindings/net/tesla,ethqos.example.dtb:
+> > /example-0/ethernet@14300000: failed to match any schema with
+> > compatible: ['tesla,dwc-qos-ethernet-4.21']
+> > 
+> 
+> Thanks for review. Will fix this in v4.
 
-This is due to the fact that `of_id->data` is a void* while
-`enum exynos_ppmu_type` has the size of an int.
+It's not a review. It's an automated reply running what you should have 
+run yourself...
 
-Cast `of_id->data` to a uintptr_t to silence the above warning for clang
-builds using W=1
+> 
+> > doc reference errors (make refcheckdocs):
+> > 
+> > See https://protect2.fireeye.com/v1/url?k=ccb7f6d0-932ccfc9-ccb67d9f-
+> > 000babff3793-2137ac63fe6ddef8&q=1&e=897786e4-5f9b-40d8-8a7f-
+> > 399cb69c7ee8&u=https%3A%2F%2Fpatchwork.ozlabs.org%2Fproject%2Fdev
+> > icetree-bindings%2Fpatch%2F20230814112539.70453-2-
+> > sriranjani.p%40samsung.com
+> > 
+> > The base for the series is generally the latest rc1. A different dependency
+> > should be noted in *this* patch.
+> > 
+> 
+> Sorry, I could not get this comment, can you elaborate this. 
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/1910
-Reported-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Justin Stitt <justinstitt@google.com>
----
- drivers/devfreq/event/exynos-ppmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The automated tests apply patches to the latest rc1 tag. Patches which 
+apply, but have some other dependency may have warnings. If you have 
+such a dependency, you should note it in the patch (below the '---').
 
-diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-index 896a6cc93b00..f798e1d6994d 100644
---- a/drivers/devfreq/event/exynos-ppmu.c
-+++ b/drivers/devfreq/event/exynos-ppmu.c
-@@ -527,7 +527,7 @@ static int of_get_devfreq_events(struct device_node *np,
- 
- 	of_id = of_match_device(exynos_ppmu_id_match, dev);
- 	if (of_id)
--		info->ppmu_type = (enum exynos_ppmu_type)of_id->data;
-+		info->ppmu_type = (uintptr_t)of_id->data;
- 	else {
- 		of_node_put(events_np);
- 		return -EINVAL;
-
----
-base-commit: 2ccdd1b13c591d306f0401d98dedc4bdcd02b421
-change-id: 20230816-void-drivers-devfreq-event-exynos-ppmu-64ad102497f2
-
-Best regards,
---
-Justin Stitt <justinstitt@google.com>
-
+Rob
