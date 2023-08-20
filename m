@@ -2,135 +2,137 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FFA5EE49AA
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 19 Aug 2023 08:36:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B21C4EE49A5
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 20 Aug 2023 07:35:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229787AbjHSIgZ (ORCPT
+        id S230014AbjHTHfV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 19 Aug 2023 04:36:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55810 "EHLO
+        Sun, 20 Aug 2023 03:35:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229631AbjHSIgR (ORCPT
+        with ESMTP id S229676AbjHTHfV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 19 Aug 2023 04:36:17 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A24E1784A0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 Aug 2023 01:36:14 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-5257f2c0773so2123103a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 Aug 2023 01:36:14 -0700 (PDT)
+        Sun, 20 Aug 2023 03:35:21 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42A91E1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Aug 2023 00:34:34 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4ff9b389677so3379853e87.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Aug 2023 00:34:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692434173; x=1693038973;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BDBtWmYqzi/9lap98sdHnoiAOUS5fWqLSgUpQ5yHcg8=;
-        b=V+9qdLiaFCVpY1Tkm+g3WJCnO8uHFCMIGwQrtu3UbD/XWMAsOhz0XSUdYqsC9f3xSE
-         qLC4uFsqBGXKf/cLmfRoLDBqXoQ5awd0UZc4+YyYGFvj8ce6fD69eRijb4NmqXPmK3mz
-         vgWA6Fsv4Qr1M83ci+w1hbCaDBeN+lcxxZ+u6hUXrLDgCIqKWchmy/ofXBjPtPbvJb9t
-         jKwzsf3PRcK6zMTAF5newTIktNR9RHokbZLYjDoMai0U1GFa/oNyhApEhjuBvU/VSqM5
-         3f7J6iHvizfaI2a7fBkxYlWR1v9Xamid89TTJuFX+Z1ptW9IWUE4hmEZb9SXR3smKB4w
-         Rh7w==
+        d=linaro.org; s=google; t=1692516872; x=1693121672;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=I6tLuLD++BQvtPqr+6W85PTyjvuOfHBFRdTsdV0IpdU=;
+        b=e7nzwYaFWQx61iKPJENX92vHtkW2gMXKzGibwJSliKlUyjxeCqSOHfxPtlcCTmdSYX
+         aAL/wOyV0kM64RplgZelyFqCkZq4zQNBv9WrYTQp0poEfBuEBPafl7z/9d4C8JX+9z45
+         xmw3A0hKmcNe1DHFr+ydynsfPYAOoOmEEHAodnthnOW7yWfJ+qEA0T44PP5jZzCsxdIm
+         h2V2QDlcFSCI2BOCvTv+aaictNI9KJQltG7HXNNk/ZBSyffs0C7J9zIuOFvcFQlEY4t2
+         6+IsqK8SBkcr3cgbsdrjoTIQWdKzQR/1S5k8GOuULgNuiwOZPpEFls7IOP+o+dcQOTFl
+         +r4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692434173; x=1693038973;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BDBtWmYqzi/9lap98sdHnoiAOUS5fWqLSgUpQ5yHcg8=;
-        b=hR5g5iu8ZoCWPfFCFxRzVFQ8zn8T+KsGsZe9+hek43SknLtCCYnmaRsybGknKUzFFG
-         OOplrH1SmjeX8gSwu9+2uAs+wMwLHRtBCxHNUUKNs/ky2BKRzfw5DsdrCqks6a5cqa54
-         P6Wi6DXEdkqGrx//BxuoYl4lAtq4tXQ/lu6OFTgs2pSZQ9QdKMLkj5EN2jQIQo4U8iEw
-         V+DrZidH3SxoJrupx4w+xWRwxfnh9OslNWcownot/M6M4/hrmzXRO9XleF/noWi6BkEW
-         2XyEQ42roKpZ06vUDWo2DchHjY/W6IjHGoJL/HySQuDV9sMekOwN668x/l1D9lycJF92
-         cIBg==
-X-Gm-Message-State: AOJu0YyzvxRbucSzxgHbEkfyQU+ZfB6IbVUPvOSzNijEiXXdY4ldYpLH
-        wd6SxKuILlDbjQcrixFkqQ8SCA==
-X-Google-Smtp-Source: AGHT+IG9aSDFMBTYcEsiQxovHMkUD1SuVY1yIm8Qi0ivlYlrZ6iAac9z2z70JTra3Ik1+KkdydzjMw==
-X-Received: by 2002:a17:906:ef90:b0:99b:f3f3:e412 with SMTP id ze16-20020a170906ef9000b0099bf3f3e412mr936414ejb.52.1692434172926;
-        Sat, 19 Aug 2023 01:36:12 -0700 (PDT)
-Received: from [192.168.0.22] ([77.252.47.198])
-        by smtp.gmail.com with ESMTPSA id c6-20020a170906170600b0099e05fb8f95sm2319361eje.137.2023.08.19.01.36.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Aug 2023 01:36:12 -0700 (PDT)
-Message-ID: <de962afe-719b-01cd-b9ee-1868c7da9105@linaro.org>
-Date:   Sat, 19 Aug 2023 10:36:10 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH 8/8] arm64: dts: exynos: Enable USB support on E850-96
- board
-Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc:     JaeHun Jung <jh0801.jung@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Heiko Stuebner <heiko@sntech.de>,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20230819031731.22618-1-semen.protsenko@linaro.org>
- <20230819031731.22618-9-semen.protsenko@linaro.org>
+        d=1e100.net; s=20221208; t=1692516872; x=1693121672;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I6tLuLD++BQvtPqr+6W85PTyjvuOfHBFRdTsdV0IpdU=;
+        b=X+zN+nbpkHWcRfBazxuXsJQDVZvt9QczdkSDlD7LdiukP0hum/WNscj6MTHgLKE3/K
+         GRjD5KMrvMN9IOh+XlXxqTrpixG8V7S3lNCef1CpmhaRFczKUb0u/WMXmJyvEatZ7FPc
+         UABA0o/1ZzK05Zd7sjFgSEZ0RxvLIZJwTw/frNflTm+64AltuKWS4uvphOcoeJ3yRpju
+         xFWesD7rsJ+jXKJNihn6bTAz/AIQMJZKauYgcHRdp3O9tzziNuNt3xLMbJZSm8DYbEyo
+         fhoEMCXPwE0VGSMUCKwL29NieGwZA0cJE9ehH3Iy6+GFTJehHaCvuPjhUFnbBvnPSkv6
+         9vEA==
+X-Gm-Message-State: AOJu0YxPptpgf3aTzKQQbYJstNdhz/mPebTdXJn6Lef2RB2pESx2oald
+        s/KGzupsL6WNCO7JspVfoQKh3g==
+X-Google-Smtp-Source: AGHT+IGTlwDtllwhmcd3CgyHAJvbhZrkf+x4N/xPpPA8SZhot/IZi3eQMY8owGPvMR9WrGsk4rylVw==
+X-Received: by 2002:a05:6512:2305:b0:4fe:c98:789a with SMTP id o5-20020a056512230500b004fe0c98789amr3440222lfu.37.1692516872535;
+        Sun, 20 Aug 2023 00:34:32 -0700 (PDT)
+Received: from krzk-bin.. ([77.252.47.198])
+        by smtp.gmail.com with ESMTPSA id k9-20020a056402048900b0052540e85390sm3792062edv.43.2023.08.20.00.34.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Aug 2023 00:34:31 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230819031731.22618-9-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] clk: samsung: drivers for v6.6
+Date:   Sun, 20 Aug 2023 09:34:29 +0200
+Message-Id: <20230820073429.9069-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 19/08/2023 05:17, Sam Protsenko wrote:
-> The E850-96 board has a micro-USB socket and two USB 2.0 host sockets.
-> The USB role (host or peripheral) is selected automatically depending on
-> micro-USB cable attachment state:
->   - micro-USB cable is attached: USB device role
->   - micro-USB cable is detached: USB host role
-> 
-> USB can't act simultaneously as a device and a host, because Exynos850
-> SoC has only one USB controller and there are no external USB
-> controllers on the E850-96 board. So the USB switch chip (specifically
-> TS3USB221A) connects SoC USB lines either to micro-USB connector or to
-> USB hub chip (LAN9514), w.r.t. micro-USB cable attachment state.
-> 
-> When USB works in the host role, Ethernet capability becomes available
-> too, as LAN9514 chip (providing USB hub) also enables Ethernet PHY and
-> Ethernet MAC.
-> 
-> Dynamic role switching is done in gpio-usb-b-connector, using current
-> micro-USB VBUS line level as a trigger:
->   - VBUS=high: SoC USB lines are wired to micro-USB socket
->   - VBUS=low: SoC USB lines are wired to USB hub chip
-> 
-> In order to make USB host functional when the board is booted with
-> micro-USB cable disconnected, role-switch-default-mode = "host" is used.
-> 
-> One can look at E850-96 board schematics [1] to figure out how exactly
-> all related USB hardware connections and lines reflect into
-> corresponding device tree definitions.
-> 
-> As PMIC regulators are not implemented yet, we rely on USB LDOs being
-> already enabled in the bootloader, and a dummy regulator is provided to
-> "usbdrd" vdd nodes for now.
-> 
-> [1] https://www.96boards.org/documentation/consumer/e850-96b/hardware-docs/
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
->  .../boot/dts/exynos/exynos850-e850-96.dts     | 58 +++++++++++++++++++
->  1 file changed, 58 insertions(+)
-> 
+Hi,
 
-This looks good. Please split the DTS patches from the patchset, so they
-won't be applied by Greg. Anyway, I finished pulling for this cycle, so
-this will have to wait till v6.6-rc1.
+Few commits for Samsung clock drivers.
 
 Best regards,
 Krzysztof
 
+
+The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
+
+  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.6
+
+for you to fetch changes up to b3f9581affb03ed28ff1905b649e66904f29b9e4:
+
+  dt-bindings: clock: samsung: remove define with number of clocks (2023-08-15 07:50:15 +0200)
+
+----------------------------------------------------------------
+Samsung SoC clock drivers changes for 6.6
+
+Remove from the bindings the #defines with number of clocks supported by
+each clock controller driver.  This number can vary, e.g. when we
+implement more clocks in the driver.  Having the number in the bindings
+prevents changing it.  Instead, this should be just a #define inside the
+driver.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (11):
+      clk: samsung: exynos3250: do not define number of clocks in bindings
+      clk: samsung: exynos4: do not define number of clocks in bindings
+      clk: samsung: exynos5250: do not define number of clocks in bindings
+      clk: samsung: exynos5260: do not define number of clocks in bindings
+      clk: samsung: exynos5410: do not define number of clocks in bindings
+      clk: samsung: exynos5420: do not define number of clocks in bindings
+      clk: samsung: exynos5433: do not define number of clocks in bindings
+      clk: samsung: exynos7885: do not define number of clocks in bindings
+      clk: samsung: exynos850: do not define number of clocks in bindings
+      clk: samsung: exynoautov9: do not define number of clocks in bindings
+      dt-bindings: clock: samsung: remove define with number of clocks
+
+ drivers/clk/samsung/clk-exynos3250.c             | 11 ++--
+ drivers/clk/samsung/clk-exynos4.c                |  5 +-
+ drivers/clk/samsung/clk-exynos4412-isp.c         |  5 +-
+ drivers/clk/samsung/clk-exynos5250.c             |  5 +-
+ drivers/clk/samsung/clk-exynos5260.c             | 41 ++++++++++-----
+ drivers/clk/samsung/clk-exynos5410.c             |  5 +-
+ drivers/clk/samsung/clk-exynos5420.c             |  5 +-
+ drivers/clk/samsung/clk-exynos5433.c             | 65 ++++++++++++++++--------
+ drivers/clk/samsung/clk-exynos7885.c             | 14 +++--
+ drivers/clk/samsung/clk-exynos850.c              | 35 +++++++++----
+ drivers/clk/samsung/clk-exynosautov9.c           | 29 +++++++----
+ include/dt-bindings/clock/exynos3250.h           | 18 -------
+ include/dt-bindings/clock/exynos4.h              |  5 --
+ include/dt-bindings/clock/exynos5250.h           |  3 --
+ include/dt-bindings/clock/exynos5260-clk.h       | 25 ---------
+ include/dt-bindings/clock/exynos5410.h           |  2 -
+ include/dt-bindings/clock/exynos5420.h           |  3 --
+ include/dt-bindings/clock/exynos5433.h           | 42 ---------------
+ include/dt-bindings/clock/exynos7885.h           |  4 --
+ include/dt-bindings/clock/exynos850.h            | 10 ----
+ include/dt-bindings/clock/samsung,exynosautov9.h | 18 -------
+ 21 files changed, 154 insertions(+), 196 deletions(-)
