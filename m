@@ -2,86 +2,145 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DDE7EE49AF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Aug 2023 18:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CF4EE49B2
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Aug 2023 22:38:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229621AbjHVSOt (ORCPT
+        id S231438AbjHVWix (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Aug 2023 14:14:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49300 "EHLO
+        Tue, 22 Aug 2023 18:38:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbjHVSOt (ORCPT
+        with ESMTP id S230187AbjHVWiw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Aug 2023 14:14:49 -0400
+        Tue, 22 Aug 2023 18:38:52 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC10811F;
-        Tue, 22 Aug 2023 11:14:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9DECCDD;
+        Tue, 22 Aug 2023 15:38:50 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 89C5765B0C;
-        Tue, 22 Aug 2023 18:14:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8737C433C8;
-        Tue, 22 Aug 2023 18:14:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 442E563D4B;
+        Tue, 22 Aug 2023 22:38:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3BACC433B6;
+        Tue, 22 Aug 2023 22:38:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692728086;
-        bh=bT544UBRGcCu3KciRnWuvQZJPAko+oTrWuhgYPYj+wM=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=lT109YoDvDGnN1g1hZVQsIGE2ONBzVw1+Oqj6DV28+VcqpoyBETL3aot22bxUb2KF
-         UhSwoSVSsIiLiksKlkRnAsZ6rFEFH6yMwBtA/LfEK6R/0otkDGdHzYn7N+PSxIOfWY
-         moYSbVdgrVo0j6LS2oYFIeAy3SG6LFouDHREkqukF3+paZQxfrn6xEGC2YToAmKF3T
-         Qv+Ovp0gPtsxwvlJIGdvdfa0t2xEDxrIA8//4IzqC9as0CR8d+frgHAN+sNCC7392N
-         jzSdnz6emR4kVVXlOufCM0DHRIvynzRIArYptsLCFYuVTtXjEftUFEHdbXO38D7zbz
-         KiqEJS2GWKZLg==
-Message-ID: <20d97115695c13341e8f66db1c90f9af.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1692743929;
+        bh=U15eYY76gsnD/RHRrRp2WW4I4OCWvlLasJey1YPS3bA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Jn4NXR0lfbWYS5Bph9NDsU+CUS6oKPixIBuJYm6y13c3Oey4zsZFxl5LEbilQxJik
+         FeYi4hk81hW93Pito7BlDOIWLAaYnB0RhnPhbkxJtYjIwxdi5/i0pNyJyNN/nCccuI
+         fmY+ssuFxpfa7I30gkLK8YDwU53i5SgxztwwtwOd89uEzAB/wmwwNcI4B7etE38nUX
+         1KT94QzqmI87253Kc52MD6Y8fou1jBGiX1pJkpWJMnTdedMpWf+KZdUDC39Y5QFc9X
+         pamJJqabcmOvoF7HZyud2tyJQOPli0tj7WP4SaXb0FkLx82tm9eotCxnMBwonE7SUu
+         gzqa24AIGrPmA==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2bcb89b4767so43872971fa.3;
+        Tue, 22 Aug 2023 15:38:49 -0700 (PDT)
+X-Gm-Message-State: AOJu0YyZus2vU2dDMD/W5mtDf7ItNOiHAf94VYBt93eGRNIVi07Bba4y
+        YLO+AhO3AfymF9WV/yf61eGt2ld82IGHHHEKPA==
+X-Google-Smtp-Source: AGHT+IF0JLsyZnXZQBcgCFuF2kEmLMhxys3SoS78ueuZDPswTtorzz1H8NCRQqi/aO+jact/25/WQ07MKCBccdqUsKI=
+X-Received: by 2002:a2e:9919:0:b0:2bb:8d96:6041 with SMTP id
+ v25-20020a2e9919000000b002bb8d966041mr7975933lji.45.1692743927592; Tue, 22
+ Aug 2023 15:38:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230820073429.9069-1-krzysztof.kozlowski@linaro.org>
-References: <20230820073429.9069-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] clk: samsung: drivers for v6.6
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+References: <20230714175008.4064592-1-robh@kernel.org> <CAJZ5v0i-OByOSjpxrj5d9S9QHRySK-MEUo+bK_J_4ihsCBmnSg@mail.gmail.com>
+ <CAL_JsqLy22S5bTFu-ZKXhSMtMPPq9z1Gdb5kJMVmhui55miDsQ@mail.gmail.com> <CAJZ5v0hM63nVphwkYK1bL4uf_dXSew2+LBuG9kuhvvLdrhLxAw@mail.gmail.com>
+In-Reply-To: <CAJZ5v0hM63nVphwkYK1bL4uf_dXSew2+LBuG9kuhvvLdrhLxAw@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 22 Aug 2023 17:38:32 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJGoDPLKgu8awJfuWpqzg8HOuruDa1z4s-Swb7Cm5OaJw@mail.gmail.com>
+Message-ID: <CAL_JsqJGoDPLKgu8awJfuWpqzg8HOuruDa1z4s-Swb7Cm5OaJw@mail.gmail.com>
+Subject: Re: [PATCH] thermal: Explicitly include correct DT includes
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Guillaume La Roque <glaroque@baylibre.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 22 Aug 2023 11:14:44 -0700
-User-Agent: alot/0.10
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2023-08-20 00:34:29)
-> Hi,
->=20
-> Few commits for Samsung clock drivers.
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
-> The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaa=
-a5:
->=20
->   Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-6.6
->=20
-> for you to fetch changes up to b3f9581affb03ed28ff1905b649e66904f29b9e4:
->=20
->   dt-bindings: clock: samsung: remove define with number of clocks (2023-=
-08-15 07:50:15 +0200)
->=20
-> ----------------------------------------------------------------
+On Thu, Jul 20, 2023 at 1:50=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>
+> On Fri, Jul 14, 2023 at 9:53=E2=80=AFPM Rob Herring <robh@kernel.org> wro=
+te:
+> >
+> > On Fri, Jul 14, 2023 at 12:54=E2=80=AFPM Rafael J. Wysocki <rafael@kern=
+el.org> wrote:
+> > >
+> > > On Fri, Jul 14, 2023 at 7:51=E2=80=AFPM Rob Herring <robh@kernel.org>=
+ wrote:
+> > > >
+> > > > The DT of_device.h and of_platform.h date back to the separate
+> > > > of_platform_bus_type before it as merged into the regular platform =
+bus.
+> > > > As part of that merge prepping Arm DT support 13 years ago, they
+> > > > "temporarily" include each other. They also include platform_device=
+.h
+> > > > and of.h. As a result, there's a pretty much random mix of those in=
+clude
+> > > > files used throughout the tree. In order to detangle these headers =
+and
+> > > > replace the implicit includes with struct declarations, users need =
+to
+> > > > explicitly include the correct includes.
+> > > >
+> > > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > >
+> > > Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+> > >
+> > > or please let me know if you want me to pick this up.
+> >
+> > Single patch in your subsystem with no dependencies. Please pick it up.
+>
+> Done, thanks!
 
-Thanks. Pulled into clk-next
+I'm not seeing this in linux-next.
+
+Rob
