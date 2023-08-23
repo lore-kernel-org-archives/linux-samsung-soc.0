@@ -2,123 +2,136 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53074EE49AF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Aug 2023 03:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D34EE49B6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Aug 2023 12:32:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232397AbjHWDG1 (ORCPT
+        id S234628AbjHWMcE convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Aug 2023 23:06:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57572 "EHLO
+        Wed, 23 Aug 2023 08:32:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232403AbjHWDG0 (ORCPT
+        with ESMTP id S231228AbjHWMcD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Aug 2023 23:06:26 -0400
-Received: from 167-179-156-38.a7b39c.syd.nbn.aussiebb.net (167-179-156-38.a7b39c.syd.nbn.aussiebb.net [167.179.156.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4C18E4D;
-        Tue, 22 Aug 2023 20:06:17 -0700 (PDT)
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-        id 1qYeB0-006oC8-CQ; Wed, 23 Aug 2023 11:04:59 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 23 Aug 2023 11:04:59 +0800
-Date:   Wed, 23 Aug 2023 11:04:59 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
+        Wed, 23 Aug 2023 08:32:03 -0400
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA373E9;
+        Wed, 23 Aug 2023 05:31:57 -0700 (PDT)
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-56cae50792fso556699eaf.1;
+        Wed, 23 Aug 2023 05:31:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692793917; x=1693398717;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3ApOaAU2C11Pn2qOxjg2kIqTJJ7VnWEqUmde/1TenZQ=;
+        b=HbLSFAH43YyJbbYXXS/ISjhnvojwIyX6slvWg94dQSOAa3rH2uS42FdLcTSKlixrCM
+         RPkgnQlrnSIPwScAwHM51Z4j0g7DFoC2aILVZ7wR/PVLWb+djoPBmubnaWLhmXg15x9l
+         hZOeR08y2O9oNGvml0MEwRwCWA/S64cPy6g8CeFAPzInJj2OBm0Wjzpo4i26KRCqdmOa
+         u3LciQ2WrvThH19spCzdu0NI93iWLR6XTZ+Wi59l0dOQh/vrJSK9lYjKDiC1eRoM/ngl
+         LXaulvMIFuxxa4pCp4QQ0el2fNEJ6SwNR1Wf18o65artX3cCCWEjk1T6jX4YB1QboqBH
+         eG6w==
+X-Gm-Message-State: AOJu0Yy9Hfaj7zk3hn9obuwFZZjSFDCdADn+WayGedmU6K3dUlOls0iw
+        b4FX+u/TRJojWLCprfyp/BKfQ2p7nT7C2ORDHq4=
+X-Google-Smtp-Source: AGHT+IHhMwKmKIBwwvi/YmGkSAgu5efCUMytt4QejM22SViosU4j5VAi4fORzp0+24y420UMM8bLIkI7yh9A1hX+wbo=
+X-Received: by 2002:a4a:e741:0:b0:56e:94ed:c098 with SMTP id
+ n1-20020a4ae741000000b0056e94edc098mr12003584oov.0.1692793917062; Wed, 23 Aug
+ 2023 05:31:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230714175008.4064592-1-robh@kernel.org> <CAJZ5v0i-OByOSjpxrj5d9S9QHRySK-MEUo+bK_J_4ihsCBmnSg@mail.gmail.com>
+ <CAL_JsqLy22S5bTFu-ZKXhSMtMPPq9z1Gdb5kJMVmhui55miDsQ@mail.gmail.com>
+ <CAJZ5v0hM63nVphwkYK1bL4uf_dXSew2+LBuG9kuhvvLdrhLxAw@mail.gmail.com> <CAL_JsqJGoDPLKgu8awJfuWpqzg8HOuruDa1z4s-Swb7Cm5OaJw@mail.gmail.com>
+In-Reply-To: <CAL_JsqJGoDPLKgu8awJfuWpqzg8HOuruDa1z4s-Swb7Cm5OaJw@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 23 Aug 2023 14:31:44 +0200
+Message-ID: <CAJZ5v0j2psZUYF1gYTK3G=+MdrLOg1QhOxENhSvWbvGcjzLizg@mail.gmail.com>
+Subject: Re: [PATCH] thermal: Explicitly include correct DT includes
 To:     Rob Herring <robh@kernel.org>
-Cc:     Corentin Labbe <clabbe.montjoie@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
         Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
         Samuel Holland <samuel@sholland.org>,
-        Neal Liu <neal_liu@aspeedtech.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@linaro.org>,
-        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-        Pankaj Gupta <pankaj.gupta@nxp.com>,
-        Gaurav Jain <gaurav.jain@nxp.com>,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
-        Declan Murphy <declan.murphy@intel.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Jia Jie Ho <jiajie.ho@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Harsha <harsha.harsha@amd.com>, devicetree@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH] crypto: Explicitly include correct DT includes
-Message-ID: <ZOV3Ww1l8Fu6fYim@gondor.apana.org.au>
-References: <20230714174421.4054194-1-robh@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230714174421.4054194-1-robh@kernel.org>
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jul 14, 2023 at 11:44:18AM -0600, Rob Herring wrote:
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/crypto/allwinner/sun4i-ss/sun4i-ss-core.c   | 1 -
->  drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c   | 1 -
->  drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c   | 1 -
->  drivers/crypto/amlogic/amlogic-gxl-core.c           | 1 -
->  drivers/crypto/aspeed/aspeed-acry.c                 | 3 ---
->  drivers/crypto/atmel-aes.c                          | 6 ++----
->  drivers/crypto/atmel-ecc.c                          | 2 +-
->  drivers/crypto/atmel-sha.c                          | 6 ++----
->  drivers/crypto/atmel-tdes.c                         | 6 ++----
->  drivers/crypto/bcm/cipher.c                         | 3 +--
->  drivers/crypto/caam/ctrl.c                          | 1 +
->  drivers/crypto/caam/jr.c                            | 1 +
->  drivers/crypto/caam/qi.c                            | 1 +
->  drivers/crypto/ccree/cc_driver.c                    | 1 -
->  drivers/crypto/exynos-rng.c                         | 2 +-
->  drivers/crypto/gemini/sl3516-ce-core.c              | 1 -
->  drivers/crypto/img-hash.c                           | 4 ++--
->  drivers/crypto/intel/keembay/keembay-ocs-hcu-core.c | 3 ++-
->  drivers/crypto/n2_core.c                            | 2 +-
->  drivers/crypto/omap-aes.c                           | 1 -
->  drivers/crypto/omap-des.c                           | 2 --
->  drivers/crypto/omap-sham.c                          | 1 -
->  drivers/crypto/rockchip/rk3288_crypto.c             | 1 -
->  drivers/crypto/s5p-sss.c                            | 1 -
->  drivers/crypto/sa2ul.c                              | 3 ++-
->  drivers/crypto/sahara.c                             | 1 -
->  drivers/crypto/starfive/jh7110-cryp.c               | 2 +-
->  drivers/crypto/starfive/jh7110-hash.c               | 1 -
->  drivers/crypto/stm32/stm32-cryp.c                   | 2 +-
->  drivers/crypto/stm32/stm32-hash.c                   | 2 +-
->  drivers/crypto/talitos.c                            | 4 ++--
->  drivers/crypto/xilinx/zynqmp-aes-gcm.c              | 2 +-
->  drivers/crypto/xilinx/zynqmp-sha.c                  | 1 -
->  33 files changed, 25 insertions(+), 45 deletions(-)
+On Wed, Aug 23, 2023 at 12:38 AM Rob Herring <robh@kernel.org> wrote:
+>
+> On Thu, Jul 20, 2023 at 1:50 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Fri, Jul 14, 2023 at 9:53 PM Rob Herring <robh@kernel.org> wrote:
+> > >
+> > > On Fri, Jul 14, 2023 at 12:54 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > > >
+> > > > On Fri, Jul 14, 2023 at 7:51 PM Rob Herring <robh@kernel.org> wrote:
+> > > > >
+> > > > > The DT of_device.h and of_platform.h date back to the separate
+> > > > > of_platform_bus_type before it as merged into the regular platform bus.
+> > > > > As part of that merge prepping Arm DT support 13 years ago, they
+> > > > > "temporarily" include each other. They also include platform_device.h
+> > > > > and of.h. As a result, there's a pretty much random mix of those include
+> > > > > files used throughout the tree. In order to detangle these headers and
+> > > > > replace the implicit includes with struct declarations, users need to
+> > > > > explicitly include the correct includes.
+> > > > >
+> > > > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > > >
+> > > > Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+> > > >
+> > > > or please let me know if you want me to pick this up.
+> > >
+> > > Single patch in your subsystem with no dependencies. Please pick it up.
+> >
+> > Done, thanks!
+>
+> I'm not seeing this in linux-next.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+f6a756e8fb12 thermal: Explicitly include correct DT includes
+
+It's there in my linux-next branch (and in my thermal branch) and it
+should be there in linux-next too.
