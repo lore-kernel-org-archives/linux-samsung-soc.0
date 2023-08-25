@@ -2,220 +2,251 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 576E0C6FA8F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Aug 2023 15:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B3D0C88CB9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Aug 2023 01:53:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242261AbjHXPRf (ORCPT
+        id S238031AbjHYBw4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 24 Aug 2023 11:17:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45100 "EHLO
+        Thu, 24 Aug 2023 21:52:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242194AbjHXPRO (ORCPT
+        with ESMTP id S232034AbjHYBwq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 24 Aug 2023 11:17:14 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE9FD1BDB
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Aug 2023 08:16:59 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-68bedde0b7bso746874b3a.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Aug 2023 08:16:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1692890219; x=1693495019;
-        h=in-reply-to:from:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=HYFf6jurwqJVcysVZBLIwK62zU3VY8z8wudLyLOlif0=;
-        b=PCrHA6w/5t5jYeVm0q02NQ7IRV4jvJub0eAavrN3w7vsdE9EBNCZs/Jm9ZorvU+zPx
-         iiAwr3LfWYDP4zNMlKa5jOZr8KjAYIJcDQ59GOIbSbFVzRg97OqOGdT3sjj4qoCBqhcp
-         xat2/6EZTvjiMuqvvbGPEB9DDdYNRJYaJdcZk=
+        Thu, 24 Aug 2023 21:52:46 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DF7C1BD1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Aug 2023 18:51:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1692928312;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DWLhpWKTuJ/+RpYHbnTOi50aZ6LnaGdh4R08Ifp1NrU=;
+        b=RqRT/ORQBbwwT6Ay4VCYEG5Un3Um36dcB7OOb44eagUoW8+Ba8Pwq5eVsRnzoYY7iotCYM
+        T+qsDQ5YmeGp9u4BF8TBxmedtSCOUejHPwaCphHuoOpqfS5soRw38UDLVTaWFLT9kSOrZ1
+        vDogYTMr4nMQkLN5fKoi20qULf2wQ5M=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-15-29j53e92POavMK8x8FoUig-1; Thu, 24 Aug 2023 21:51:51 -0400
+X-MC-Unique: 29j53e92POavMK8x8FoUig-1
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4120af3b5b8so4922071cf.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Aug 2023 18:51:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692890219; x=1693495019;
-        h=in-reply-to:from:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20221208; t=1692928310; x=1693533110;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HYFf6jurwqJVcysVZBLIwK62zU3VY8z8wudLyLOlif0=;
-        b=OyFge+bROqpP1mgc02Z215Ixft1f53MkjovQXpNHuPYoCVb0Coavwyt58j0XELjAYe
-         mifvjNG3iKDmNQ7A9EwrrtfVFZBryRgHf0RJ/PYyWX6Fj5B7+jHR2xN/6RkXIM1mjLwC
-         tUblZa8i/QgjUchN0sRv5kMvEFC7/l0bgd3tPTix1X+hqKA/Al+g5mvJgthMh0ndFT3P
-         1EFiwT4cHDk30lJ4F8j9EgibjShWjHLjSM32+1aJ+syEfj45FsU5y70NjaiubRMCTVvo
-         zlw7YT/8bpucpw/349eKRvsaWae+gAfC+UG5rU7ur3zgoGCTR+Sk7sirnlwrB9klIL6n
-         lKCw==
-X-Gm-Message-State: AOJu0YxIWhNytCl0Hp3hi6XyhDBui8evntSXzNwdSWX6LjDttAZP4XPH
-        xOvNnXQn1cAGCXlGt2P2KZIo8A==
-X-Google-Smtp-Source: AGHT+IHWD+IJ6SHtmSytHItm4n3pme/UFCVhe1Ydiq1H229vBi/c5qSM2mWdoh5w2nY5vU73BHdwVw==
-X-Received: by 2002:a05:6a20:8e01:b0:135:4527:efe4 with SMTP id y1-20020a056a208e0100b001354527efe4mr20898796pzj.10.1692890219164;
-        Thu, 24 Aug 2023 08:16:59 -0700 (PDT)
-Received: from [192.168.1.3] (ip72-194-116-95.oc.oc.cox.net. [72.194.116.95])
-        by smtp.gmail.com with ESMTPSA id y4-20020aa78544000000b006862b2a6b0dsm11535368pfn.15.2023.08.24.08.16.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Aug 2023 08:16:58 -0700 (PDT)
-Message-ID: <bd0a1e56-be02-6c3e-374b-0610116d94aa@broadcom.com>
-Date:   Thu, 24 Aug 2023 08:16:54 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] thermal: Explicitly include correct DT includes
-To:     Rob Herring <robh@kernel.org>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Markus Mayer <mmayer@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        bh=DWLhpWKTuJ/+RpYHbnTOi50aZ6LnaGdh4R08Ifp1NrU=;
+        b=XsmG8warCfDFXbLffvHHoFSj5sryc0wx+9rrQunPzmatae7F+Cx/JVks8AWfrSPWgD
+         Dp5Ykfu67YkA0rAegzmtALLX8T9cgXApgxGmVpNhdLWXmRZ6nFjS1rH0MXSZsqqe7736
+         eCGTATvIAaw8AsuJ2JDRNvNFgEDbKwNqIEw+/V8K5NJbwKBTT9xpf3MQzwUAGAJ/Jun9
+         7vgcB0efu/YDbvukleAkOSePDKjAekxFywBnGi8zTN5CZW+3XKH1yAfd5Y1OsSaXbFq9
+         JAA/F95rOfy3/aOWlF43e8SlPtJ9CEIEfAzOyLxke+LuMJEkSJvhw/3kC08waebS3I/P
+         ImVg==
+X-Gm-Message-State: AOJu0YyN7BZVfq/RvM/G9cDP/KLuhUlaX876/Hiul4TBxM9ZH8o84ZpX
+        z4ysnCaKbkueWhkhDm+U80mFLrPbylAz99kiWUYwSxK7E39zfB9YU2seI7hJfJQtTT0QBVjqdAt
+        tw6YF+CtDK31wwzZSWXyBCFSd8mKGFp0=
+X-Received: by 2002:ac8:59d6:0:b0:400:8613:5378 with SMTP id f22-20020ac859d6000000b0040086135378mr20752348qtf.20.1692928310639;
+        Thu, 24 Aug 2023 18:51:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHSb6TqK3YZra5FavtOfFBMuLIN1bj8qAZDBsTSTbyHb3Qk54OyKXOKpdirNK5+OZKcbYX2cg==
+X-Received: by 2002:ac8:59d6:0:b0:400:8613:5378 with SMTP id f22-20020ac859d6000000b0040086135378mr20752335qtf.20.1692928310369;
+        Thu, 24 Aug 2023 18:51:50 -0700 (PDT)
+Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
+        by smtp.gmail.com with ESMTPSA id i17-20020ac860d1000000b00405447ee5e8sm224859qtm.55.2023.08.24.18.51.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Aug 2023 18:51:49 -0700 (PDT)
+Date:   Thu, 24 Aug 2023 18:51:48 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Andy Gross <agross@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
         Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linuxppc-dev@lists.ozlabs.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
         Samuel Holland <samuel@sholland.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-References: <20230714175008.4064592-1-robh@kernel.org>
-From:   Florian Fainelli <florian.fainelli@broadcom.com>
-In-Reply-To: <20230714175008.4064592-1-robh@kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="0000000000002d7e000603acb87a"
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Steven Price <steven.price@arm.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v7 02/24] iommu: Add IOMMU_DOMAIN_PLATFORM
+Message-ID: <hbmfqpq2oyjjz3loccfbslpalzhlsyr2w3bpx6qasq23kyrfso@e6kry74ifgnt>
+References: <0-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
+ <2-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
---0000000000002d7e000603acb87a
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-
-
-On 7/14/2023 10:50 AM, Rob Herring wrote:
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
+On Wed, Aug 23, 2023 at 01:47:16PM -0300, Jason Gunthorpe wrote:
+> This is used when the iommu driver is taking control of the dma_ops,
+> currently only on S390 and power spapr. It is designed to preserve the
+> original ops->detach_dev() semantic that these S390 was built around.
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Provide an opaque domain type and a 'default_domain' ops value that allows
+> the driver to trivially force any single domain as the default domain.
+> 
+> Update iommufd selftest to use this instead of set_platform_dma_ops
+> 
+> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 > ---
->   drivers/thermal/amlogic_thermal.c           | 2 --
->   drivers/thermal/broadcom/bcm2711_thermal.c  | 2 +-
->   drivers/thermal/broadcom/brcmstb_thermal.c  | 2 +-
+>  drivers/iommu/iommu.c            | 13 +++++++++++++
+>  drivers/iommu/iommufd/selftest.c | 14 +++++---------
+>  include/linux/iommu.h            |  6 ++++++
+>  3 files changed, 24 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 33bd1107090720..7cedb0640290c8 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -184,6 +184,8 @@ static const char *iommu_domain_type_str(unsigned int t)
+>  	case IOMMU_DOMAIN_DMA:
+>  	case IOMMU_DOMAIN_DMA_FQ:
+>  		return "Translated";
+> +	case IOMMU_DOMAIN_PLATFORM:
+> +		return "Platform";
+>  	default:
+>  		return "Unknown";
+>  	}
+> @@ -1752,6 +1754,17 @@ iommu_group_alloc_default_domain(struct iommu_group *group, int req_type)
+>  
+>  	lockdep_assert_held(&group->mutex);
+>  
+> +	/*
+> +	 * Allow legacy drivers to specify the domain that will be the default
+> +	 * domain. This should always be either an IDENTITY or PLATFORM domain.
+> +	 * Do not use in new drivers.
+> +	 */
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com> # broadcom
--- 
-Florian
+Would it be worthwhile to mention this in iommu.h for the iommu_ops default_domain?
 
---0000000000002d7e000603acb87a
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+> +	if (bus->iommu_ops->default_domain) {
+> +		if (req_type)
+> +			return ERR_PTR(-EINVAL);
+> +		return bus->iommu_ops->default_domain;
+> +	}
+> +
+>  	if (req_type)
+>  		return __iommu_group_alloc_default_domain(bus, group, req_type);
+>  
+> diff --git a/drivers/iommu/iommufd/selftest.c b/drivers/iommu/iommufd/selftest.c
+> index d48a202a7c3b81..fb981ba97c4e87 100644
+> --- a/drivers/iommu/iommufd/selftest.c
+> +++ b/drivers/iommu/iommufd/selftest.c
+> @@ -281,14 +281,6 @@ static bool mock_domain_capable(struct device *dev, enum iommu_cap cap)
+>  	return cap == IOMMU_CAP_CACHE_COHERENCY;
+>  }
+>  
+> -static void mock_domain_set_plaform_dma_ops(struct device *dev)
+> -{
+> -	/*
+> -	 * mock doesn't setup default domains because we can't hook into the
+> -	 * normal probe path
+> -	 */
+> -}
+> -
+>  static struct iommu_device mock_iommu_device = {
+>  };
+>  
+> @@ -298,12 +290,16 @@ static struct iommu_device *mock_probe_device(struct device *dev)
+>  }
+>  
+>  static const struct iommu_ops mock_ops = {
+> +	/*
+> +	 * IOMMU_DOMAIN_BLOCKED cannot be returned from def_domain_type()
+> +	 * because it is zero.
+> +	 */
+> +	.default_domain = &mock_blocking_domain,
+>  	.owner = THIS_MODULE,
+>  	.pgsize_bitmap = MOCK_IO_PAGE_SIZE,
+>  	.hw_info = mock_domain_hw_info,
+>  	.domain_alloc = mock_domain_alloc,
+>  	.capable = mock_domain_capable,
+> -	.set_platform_dma_ops = mock_domain_set_plaform_dma_ops,
+>  	.device_group = generic_device_group,
+>  	.probe_device = mock_probe_device,
+>  	.default_domain_ops =
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index d0920b2a9f1c0e..48a18b6e07abff 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -64,6 +64,7 @@ struct iommu_domain_geometry {
+>  #define __IOMMU_DOMAIN_DMA_FQ	(1U << 3)  /* DMA-API uses flush queue    */
+>  
+>  #define __IOMMU_DOMAIN_SVA	(1U << 4)  /* Shared process address space */
+> +#define __IOMMU_DOMAIN_PLATFORM	(1U << 5)
+>  
+>  #define IOMMU_DOMAIN_ALLOC_FLAGS ~__IOMMU_DOMAIN_DMA_FQ
+>  /*
+> @@ -81,6 +82,8 @@ struct iommu_domain_geometry {
+>   *				  invalidation.
+>   *	IOMMU_DOMAIN_SVA	- DMA addresses are shared process addresses
+>   *				  represented by mm_struct's.
+> + *	IOMMU_DOMAIN_PLATFORM	- Legacy domain for drivers that do their own
+> + *				  dma_api stuff. Do not use in new drivers.
+>   */
+>  #define IOMMU_DOMAIN_BLOCKED	(0U)
+>  #define IOMMU_DOMAIN_IDENTITY	(__IOMMU_DOMAIN_PT)
+> @@ -91,6 +94,7 @@ struct iommu_domain_geometry {
+>  				 __IOMMU_DOMAIN_DMA_API |	\
+>  				 __IOMMU_DOMAIN_DMA_FQ)
+>  #define IOMMU_DOMAIN_SVA	(__IOMMU_DOMAIN_SVA)
+> +#define IOMMU_DOMAIN_PLATFORM	(__IOMMU_DOMAIN_PLATFORM)
+>  
+>  struct iommu_domain {
+>  	unsigned type;
+> @@ -262,6 +266,7 @@ struct iommu_iotlb_gather {
+>   * @owner: Driver module providing these ops
+>   * @identity_domain: An always available, always attachable identity
+>   *                   translation.
+> + * @default_domain: If not NULL this will always be set as the default domain.
+>   */
+>  struct iommu_ops {
+>  	bool (*capable)(struct device *dev, enum iommu_cap);
+> @@ -297,6 +302,7 @@ struct iommu_ops {
+>  	unsigned long pgsize_bitmap;
+>  	struct module *owner;
+>  	struct iommu_domain *identity_domain;
+> +	struct iommu_domain *default_domain;
+>  };
+>  
+>  /**
+> -- 
+> 2.41.0
+> 
 
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
-9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
-AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
-UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
-KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
-nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
-Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
-VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
-ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
-CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
-MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
-d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
-hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
-bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
-BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
-KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
-kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
-2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
-3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
-NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
-AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
-LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
-/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIDAkara8lJPPBhCq
-t6v04LaDsVizwC4qkLKimmoSP16fMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
-AQkFMQ8XDTIzMDgyNDE1MTY1OVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
-AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
-MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBN41iIKZurmzTDDnuys23uH2al+WNIaYYH
-ZPi9ocbUCT/ikybgUePbne7VGwBRw8uCkvT27C584EqExUHb48XnsF5YmUcxSiS6P8Jum7Bm0PIN
-TrATKzhawVgJnjasjC6N+jOSvShJHUUPXo1E9v9j13ZFK2d1lLMoQLxNyOBbNwdFdBIsIM4rHfdq
-C5taTXmiv/fUtCRJietWBtCdWcc3I/FCPJwVKuXqvm+LMIx1mKGcbaAuM/S8C5ZtiPbm9jkEXkm1
-o8yCJMYpcdf6aQLxtEbLJuj9iZYDPf5WSXuWFx959hlBTJIm1ddKskMXcmTO8qGoGrVM1VIUurvo
-GCsT
---0000000000002d7e000603acb87a--
