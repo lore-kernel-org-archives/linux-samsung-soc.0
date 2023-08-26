@@ -2,136 +2,92 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA35EE49B3
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Aug 2023 22:17:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C424C83F16
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 26 Aug 2023 18:11:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229767AbjHYWRP (ORCPT
+        id S231269AbjHZSKn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 25 Aug 2023 18:17:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54962 "EHLO
+        Sat, 26 Aug 2023 14:10:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229821AbjHYWQn (ORCPT
+        with ESMTP id S231233AbjHZSKZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 25 Aug 2023 18:16:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C60E2120
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Aug 2023 15:15:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693001752;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kso0bHAJbNi7PoOyIay86CVNgj3x+jo0WkAZo3ICUzc=;
-        b=I/b1eeDSrtzINZmmsMuwwvD/o4MHLL81h0N+3E+bVBBHsT/99GKvHzwVtcQhFDKGY5ZUh2
-        aNuluPA5ks13R9sOsdrpDZKOKEF8WFMtBCof+T0rTADWLjazWUK6S++HE4L1abuAgURUBH
-        XbcZJTwYz5PMETA+3+NSmJaQtaWAibA=
-Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
- [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-660-2gXuh0RsO2uLVtTrEKiD6g-1; Fri, 25 Aug 2023 18:15:51 -0400
-X-MC-Unique: 2gXuh0RsO2uLVtTrEKiD6g-1
-Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5735a879147so315993eaf.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Aug 2023 15:15:51 -0700 (PDT)
+        Sat, 26 Aug 2023 14:10:25 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4A0010F9
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 26 Aug 2023 11:10:21 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-52683b68c2fso2723309a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 26 Aug 2023 11:10:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1693073420; x=1693678220;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4QiagJfRx5PmjGMtP0dUi7DvNIVha/t7dHrhZvI83zo=;
+        b=WsSgNBrqrlOgtnKRSmIfPV2pbGKqfKX1GCK0whPtAztjTVsT9PPs8OSoQxSvtsQJdF
+         D5Ndk9sTCcE4q9tyc77eUdIr2fBshZGlNcx2yrwpIRoSa5lIcr5zPKfu4Y1JzN+ViqUZ
+         1u359VPuql8fwxk3ebKBBU0lbyZ9VGWRruygvtu68RJjPWwa1MsUGw8XAGe5Ldpqdnss
+         9Ji0wJJhYWa+b91DpYAPLpnJO4GvlfTzPA7vBd3t9DJBizJqxuqR6WweN51WddUOEmGC
+         4Dm69tTgQpazyJ4CZNrryqIoUL0JIA0f8z+Acnw5snEqsp2PD/+IascZAwPD50xwewTz
+         pndA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693001750; x=1693606550;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kso0bHAJbNi7PoOyIay86CVNgj3x+jo0WkAZo3ICUzc=;
-        b=cAAHOwHnYUVieqqLCOLWmuXAwTstwu/rWKuSktnOxDWjl59Ig1jdRN/ISbGerJvzaM
-         2GyFchskRo7wzzZWzrMZKaCWoWB3QVWYcYUttLRS6WwetRh9oOgI6FJj/2XtkUlCzIsw
-         1fsGA2Vi1wblnGhb6/U+8sYyX9S2MYdAZ0QoswpVLaY9xJJ1mFYI8Uol4cwP4L50LAxD
-         cG+cmbH0ThuoCVQpwfWm6pGeTYklEs4sSFmNl4gav/JMzPuuNOZyaYugk60ZiohmXEwj
-         hCmALYPK7ZKs5T2cfPX/V2lmuTYYMxr4q3C1Gu5s5ZgRtmlRNDuM4k04lZOSgh7rKAQb
-         kHZA==
-X-Gm-Message-State: AOJu0YxRKalF6fN1MgkX2iD5lML00qTBFJh5Yh0SPeivr1aUSPlrrVF7
-        UPMpSb62+Yy5QoxQO+4CcK7gKVMWmtRU4egQotAQ0cohWPpeD9PdraS6UfPg64+miFYVkuxZhdI
-        XTLxg3JeLERlEIQvRHUFITt74hLY0K34=
-X-Received: by 2002:a05:6358:7e53:b0:139:d0bc:acfa with SMTP id p19-20020a0563587e5300b00139d0bcacfamr20095493rwm.23.1693001750539;
-        Fri, 25 Aug 2023 15:15:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFkY4Kv1xGxroqOwtsL16yLvAJMOO7lHXk5XmHI00VwDkZfKODP2FZnPBehYOmoTkQvGLsKdQ==
-X-Received: by 2002:a05:6358:7e53:b0:139:d0bc:acfa with SMTP id p19-20020a0563587e5300b00139d0bcacfamr20095448rwm.23.1693001750156;
-        Fri, 25 Aug 2023 15:15:50 -0700 (PDT)
-Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
-        by smtp.gmail.com with ESMTPSA id v19-20020a0cdd93000000b0064f3b0d0143sm816749qvk.142.2023.08.25.15.15.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Aug 2023 15:15:49 -0700 (PDT)
-Date:   Fri, 25 Aug 2023 15:15:48 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Steven Price <steven.price@arm.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v7 07/24] iommu/mtk_iommu_v1: Implement an IDENTITY domain
-Message-ID: <yentwv7rhnjolgvcdq23e2tizhpduwbpgaojrmaqnsuzvsrlsh@ey75l3ffixok>
-References: <0-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
- <7-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
+        d=1e100.net; s=20221208; t=1693073420; x=1693678220;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4QiagJfRx5PmjGMtP0dUi7DvNIVha/t7dHrhZvI83zo=;
+        b=C+uWX/SYIYw7OK9MJk3tkoaS7acGckGpNsCdS4yXeLorztQdxM/Kw3fAdIiw09aVzz
+         DCTlmyjwpP9Sx/wtfRPcw2+0ft0wA8LrRel1pnstJxnqnIA5vCEaxDHWrpestiKga6Qk
+         p3345VwUy7jkeZCZ7VRGtecI/cB5O6RN0Rm8W+naazMsDAcaoqExrZoRce17kySH6dVy
+         lktPxgljB59+dqUMmGyxYJBYRFgR/07ayqMKQypLeZnPI5ZLtW36USTHbgXavauAg8tV
+         YrZhu5Y1LyGaqIONH++xdbayNdnp6zH2KRV7JrLValCtTfCW6cmbmpLFY4k0d0QaqrsX
+         ySsQ==
+X-Gm-Message-State: AOJu0Yxrwqo2iiNsGW+S5VFN9AgpqNkM128ctaaDBUurmk7KlaIlMkSH
+        MgnZkuw1PZQ4fMErvCb2nG0kZw==
+X-Google-Smtp-Source: AGHT+IEFWoVX8d9z28lL17g6Z+qe5o8zR28N7GoXPVvbRQc4gaGzV9XT5uFIFnm8ML7Ge9ve5Sb9tQ==
+X-Received: by 2002:a17:906:1090:b0:99b:c8db:d92f with SMTP id u16-20020a170906109000b0099bc8dbd92fmr17059997eju.69.1693073420226;
+        Sat, 26 Aug 2023 11:10:20 -0700 (PDT)
+Received: from [192.168.0.22] ([77.252.47.198])
+        by smtp.gmail.com with ESMTPSA id q22-20020a170906361600b00982cfe1fe5dsm2452697ejb.65.2023.08.26.11.10.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Aug 2023 11:10:19 -0700 (PDT)
+Message-ID: <6fd3a9ab-667d-934b-f1c2-03776be93d4d@linaro.org>
+Date:   Sat, 26 Aug 2023 20:10:18 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH v2 0/2] arm64: dts: exynos: Enable USB for E850-96 board
+Content-Language: en-US
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        JaeHun Jung <jh0801.jung@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230825215445.28309-1-semen.protsenko@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230825215445.28309-1-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Aug 23, 2023 at 01:47:21PM -0300, Jason Gunthorpe wrote:
-> What mtk does during mtk_iommu_v1_set_platform_dma() is actually putting
-> the iommu into identity mode. Make this available as a proper IDENTITY
-> domain.
+On 25/08/2023 23:54, Sam Protsenko wrote:
+> This patch series enables USB gadget, USB host and Ethernet support for
+> E850-96 board. The most major change was done in USB PHY driver, as the
+> register layout of PHY block in Exynos850 is very different from
+> Exynos5 one.
 > 
-> The mtk_iommu_v1_def_domain_type() from
-> commit 8bbe13f52cb7 ("iommu/mediatek-v1: Add def_domain_type") explains
-> this was needed to allow probe_finalize() to be called, but now the
-> IDENTITY domain will do the same job so change the returned
-> def_domain_type.
-> 
-> mkt_v1 is the only driver that returns IOMMU_DOMAIN_UNMANAGED from
-> def_domain_type().  This allows the next patch to enforce an IDENTITY
-> domain policy for this driver.
-> 
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> ---
->  drivers/iommu/mtk_iommu_v1.c | 21 +++++++++++++++++++--
->  1 file changed, 19 insertions(+), 2 deletions(-)
-> 
+> Changes in v2:
 
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Thank you for the patch. Looks good.
+It is too late in the cycle for me to pick it up. I will take it after
+the merge window.
+
+Best regards,
+Krzysztof
 
