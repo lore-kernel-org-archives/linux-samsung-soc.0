@@ -2,61 +2,61 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 232DEC71153
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Aug 2023 20:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 147F8C83F15
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Aug 2023 20:55:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233565AbjH1Use (ORCPT
+        id S232556AbjH1Uyc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 28 Aug 2023 16:48:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51158 "EHLO
+        Mon, 28 Aug 2023 16:54:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233240AbjH1UsE (ORCPT
+        with ESMTP id S229877AbjH1UyD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Aug 2023 16:48:04 -0400
+        Mon, 28 Aug 2023 16:54:03 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36D0110D
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Aug 2023 13:47:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D385BD
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Aug 2023 13:53:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693255635;
+        s=mimecast20190719; t=1693256000;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=ZPnnQCDZkoCLUNIk6pqqLPBY9OW9d6paRIVLOJnAj78=;
-        b=XC91y03PGZR0HvAzwBnNJNT4SwBDgT6GqHgpkCIB47BajQN+3tTw4IVMe77wJWjMgxgnCG
-        OtxLC/kqhBUVygdGOtgAOsXDV2Iy1YGsTNdFOSjKtaTrThueSDokaFEELpM/0XGGOAdtgm
-        n9f5EVj0O+URltOLMjABUijFQY3Al4Y=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=qzw/wSjdBQfPlF1y1vWCr8uR+Xbcc5Ojc8ATgenlbFw=;
+        b=MUGBkjX1SAoYiO57oNz+CgGXdx7TXHY4FdNbUtQjx+EMOHix5MUmwXOKax0jjVnQ4JVPQV
+        wm5+Qz4TeSV2ZSumGzyMj9R7WDhJKcAPAx4OW/cLWtIO4vgQ7lUY1/5XdCVB/eRMMp429U
+        MJIwc3e3KtYIwHQ0luGi7FgkJxVehO0=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-130-NpauHY4SO3ieSswpUgoRMg-1; Mon, 28 Aug 2023 16:47:14 -0400
-X-MC-Unique: NpauHY4SO3ieSswpUgoRMg-1
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-76f1e2d6ea4so6594285a.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Aug 2023 13:47:13 -0700 (PDT)
+ us-mta-20-wNSZqF5TP8KBFlGqH8XMnw-1; Mon, 28 Aug 2023 16:53:19 -0400
+X-MC-Unique: wNSZqF5TP8KBFlGqH8XMnw-1
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-411fc812914so40714161cf.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Aug 2023 13:53:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693255633; x=1693860433;
+        d=1e100.net; s=20221208; t=1693255999; x=1693860799;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZPnnQCDZkoCLUNIk6pqqLPBY9OW9d6paRIVLOJnAj78=;
-        b=TYhn/Nnb/rRewyQWB8W0F8uVRo9ir//skAcTYS9HG9GoyCEAkvwvxH1RqnroGo+Rk4
-         IwZ8dyP3XSHhQw2SnVujMLJUUjBRE+cDN6+K1zQsYgkyaU5winQmUtGTrdmQZW+0NDIy
-         RvDhNDzlVYIVODUs/U01qwt93v1Io9LjcvEX93Q4XRBMoYba8qp6fNjg30iu+f+SGmFu
-         v5bPpokmOKJV1IdLmqd3vYG5CNlX5pqiyMzrYVi2PdHlDR9JoaIBnU3zYMQaApIzh3zr
-         0JQNj3vUk8rX34ugcxg+D8IzvYG2hWto2wxtNBphrMIOMBgA2Rvzne59l66oWLzRx2Xd
-         B9PA==
-X-Gm-Message-State: AOJu0YxBeHnH63FkBbpPpNG9KFW694A/GlRzW9uaRYMd1YbKdY92BoPZ
-        CXd2irSqTgGawoIJbzBTLyxCZzmGxUKP6e6MEYg8V78RZuDpGO4NSHbYWtZrN2vB7wQyLnzBa0E
-        Q2jjGIh1rmrXu29ym0ZK2M1G/iEMR7No=
-X-Received: by 2002:a05:620a:4614:b0:76d:aa3b:ac9c with SMTP id br20-20020a05620a461400b0076daa3bac9cmr24655253qkb.46.1693255633383;
-        Mon, 28 Aug 2023 13:47:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHwVuI8ZPuQEBsqBHLA4mM96XswCj3GuW2ha49h3MQX3EuB7tqhbB8UeA/K6lT7Jvy4c0Wwkw==
-X-Received: by 2002:a05:620a:4614:b0:76d:aa3b:ac9c with SMTP id br20-20020a05620a461400b0076daa3bac9cmr24655228qkb.46.1693255633141;
-        Mon, 28 Aug 2023 13:47:13 -0700 (PDT)
+        bh=qzw/wSjdBQfPlF1y1vWCr8uR+Xbcc5Ojc8ATgenlbFw=;
+        b=U5+iLX/tYRkmMsdf+WONBgULmdjpbKEcx4jx114G2j0iNRqhaHOr1G8UaprzFuNdpy
+         luDBItWDrrpw3OOqhu9Nb9FVdYOf7zCjUhRKHgCoW/0TMH2EdZU5L5/QdA6nIVDWzyMe
+         QWNWwnyL+tt1JVHNDYfzIsWf2rm4W8mt44bdpQEsjahacRGp0yyOwvt+CvPg1HIvjvEi
+         8k0wf1wFycS6m/Vt+Fi2BiukX8qzCielGYCc1Z7DNDoKu/SCpckhalfWXuSGO+IPpzIL
+         jhn7aUexqcXLddihWTr8CDv5iWFZLloNNjnp/NwcK5A0neWT1+Cux9onCtOPXRxX4Mt4
+         CrEA==
+X-Gm-Message-State: AOJu0YyM5rQ6v1PPD/qxE0Mm9lrgOyUeSZT/+w5/Tc6V0GyHUcikow+x
+        iXFd0og1trAtBl4OOLStHKMerjMQpRFIGZLx7fXtD8bU0R8FID9WIK+sX1KDCARZ0ofHSR5Sqs6
+        J96kDd14rS7o295IqT5X4WlWk7pUGmc0=
+X-Received: by 2002:a05:622a:13cc:b0:407:fb08:c44c with SMTP id p12-20020a05622a13cc00b00407fb08c44cmr31265771qtk.47.1693255998862;
+        Mon, 28 Aug 2023 13:53:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG1P7U6WABsjNUNOIrt30Nh8s3ysfvweacBVh9WudC6nYyRn08u0phTJIzmGkwySv3sSUL+sw==
+X-Received: by 2002:a05:622a:13cc:b0:407:fb08:c44c with SMTP id p12-20020a05622a13cc00b00407fb08c44cmr31265764qtk.47.1693255998660;
+        Mon, 28 Aug 2023 13:53:18 -0700 (PDT)
 Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
-        by smtp.gmail.com with ESMTPSA id g9-20020a05620a13c900b0076db1caab16sm2631338qkl.22.2023.08.28.13.47.12
+        by smtp.gmail.com with ESMTPSA id z21-20020ac84555000000b0040ff0590fd2sm2553633qtn.87.2023.08.28.13.53.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Aug 2023 13:47:12 -0700 (PDT)
-Date:   Mon, 28 Aug 2023 13:47:11 -0700
+        Mon, 28 Aug 2023 13:53:18 -0700 (PDT)
+Date:   Mon, 28 Aug 2023 13:53:16 -0700
 From:   Jerry Snitselaar <jsnitsel@redhat.com>
 To:     Jason Gunthorpe <jgg@nvidia.com>
 Cc:     Andy Gross <agross@kernel.org>,
@@ -100,21 +100,21 @@ Cc:     Andy Gross <agross@kernel.org>,
         Niklas Schnelle <schnelle@linux.ibm.com>,
         Steven Price <steven.price@arm.com>,
         Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v7 13/24] iommu/omap: Implement an IDENTITY domain
-Message-ID: <242a7ntgcvqofkvw2aapftr3pgczpueam3beyr4qey5mgx2rh4@odjyxtbbscfz>
+Subject: Re: [PATCH v7 14/24] iommu/msm: Implement an IDENTITY domain
+Message-ID: <37fnmzxe5cqs57gei3i6irsnnybzkbkdjf3nhertw55bb4ke6w@un2o657nczbc>
 References: <0-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
- <13-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
+ <14-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <13-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
+In-Reply-To: <14-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Aug 23, 2023 at 01:47:27PM -0300, Jason Gunthorpe wrote:
-> What omap does during omap_iommu_set_platform_dma() is actually putting
-> the iommu into identity mode.
+On Wed, Aug 23, 2023 at 01:47:28PM -0300, Jason Gunthorpe wrote:
+> What msm does during msm_iommu_set_platform_dma() is actually putting the
+> iommu into identity mode.
 > 
 > Move to the new core support for ARM_DMA_USE_IOMMU by defining
 > ops->identity_domain.
@@ -125,8 +125,8 @@ On Wed, Aug 23, 2023 at 01:47:27PM -0300, Jason Gunthorpe wrote:
 > Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 > ---
->  drivers/iommu/omap-iommu.c | 21 ++++++++++++++++++---
->  1 file changed, 18 insertions(+), 3 deletions(-)
+>  drivers/iommu/msm_iommu.c | 23 +++++++++++++++++++----
+>  1 file changed, 19 insertions(+), 4 deletions(-)
 > 
 
 Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
