@@ -2,62 +2,61 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25739C83F17
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Aug 2023 09:52:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FA5C83F17
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Aug 2023 09:57:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234675AbjH2Jv4 (ORCPT
+        id S233029AbjH2J5R (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Aug 2023 05:51:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57884 "EHLO
+        Tue, 29 Aug 2023 05:57:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234941AbjH2Jvz (ORCPT
+        with ESMTP id S235074AbjH2J4z (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Aug 2023 05:51:55 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D112DEA
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Aug 2023 02:51:51 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-52bcd4db4bdso979205a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Aug 2023 02:51:51 -0700 (PDT)
+        Tue, 29 Aug 2023 05:56:55 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30CF5CF9
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Aug 2023 02:56:26 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-9a58dbd5daeso411594066b.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Aug 2023 02:56:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693302710; x=1693907510;
+        d=linaro.org; s=google; t=1693302971; x=1693907771;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mpZOvmtn/uBflk6UybG+LvnSX9jdUkyMKQebc/rvrZU=;
-        b=k8Jpl+T/nVE735bxJtvutdmgAHlJzhxATj53E0fbQBJzzqiwTEJT/5XdSfpU15UDBd
-         NwTzq0gRFx7x83pnPe1NaEglOkzxXuZSzOI9E/G33syssQok6GKFaghyaWHWAAC4tkTs
-         o/r9q8MnybrwrIpTox/ign049K0ThTIJwOgLSuMDFryT5DulQ48DEO6YA7zbsRJfoba+
-         0E9aOqG7fSp8auH9xK1M97yl6NJb4EB60YleWTQ0UJY2PRVCT6cqZAQHTeQK7M0ZG0zJ
-         kkOJ70ZTBd3q+umTLG3LG1RSa8MOBNwasd2/i/tJrH6e6v9P4YsAbtC+Z1mEflaVMgQB
-         dz3A==
+        bh=9Jps0qXeyPLdx+b5De4g4xbuY+7aT5vkCHcXrjuUV+Y=;
+        b=OKuqNU9MpyPIJHFWbNDDPELOreMyC3nGbzUQuvwWmKtrIcg8RHDNkDWzmbrmnnFmT6
+         DyQw4klN3ZaAualjzdSAmsWqsbpECq9vKBR7YPoHvvAfuejn7q5T+sd+RsZqBu5ae35Z
+         z8GsJ+WzEPtVzeU++j8rnM4CobDrMKOgRgHaOS1ShOspnbDF9MEZUJ/pgPQxLRgtXEwk
+         88ANIHmf1xT28cdC47Thv18zt1doh1SeJLWtNn6A+f+V7KWzfP3awOAJoIyCfwuDhZVu
+         SB3ME+oDJn9FlwIAJSIeOAmsUoahcY9niLlOaTRdrPk9iUa8DQviJKZqBVQHOBR0X16f
+         ImgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693302710; x=1693907510;
+        d=1e100.net; s=20221208; t=1693302971; x=1693907771;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mpZOvmtn/uBflk6UybG+LvnSX9jdUkyMKQebc/rvrZU=;
-        b=aguUbcFgsukVZGJIjeAI9CwYZs8CpYZz1utRDR7HVtdfs83avOCc+cFs99yNz2jL8/
-         k/zU1qIcCI/8EWBwbhplEt+m/jFhicOtZ99liuA5p4sEFFPv7jKWIUE8BEjXQhp5uO5t
-         90aXGHByXqf/yWVDlABMA7eca4G8r4CYSwyfPbIWmQyUUeONkLPFvfNfMeBsGJDEd3cK
-         B3fVXM5zQISHyPSeAvPbiQU3L559XcwiqLqcQ+iCCmqIGZkEDR2v8X896Fi+kzXaDVqi
-         f/Qi0Km8iNOcXXLlE+js3pofFvIw1TpASLIbCqqa/6annz0hv1Q+zm8li71WhTUQzZRS
-         Lcmw==
-X-Gm-Message-State: AOJu0YyVTigclsTE5ukWLdhxBi0v5Wvp3B50Gbfj4gFbBxjTPeEuUyRU
-        s0ZPiD7QpZPSM4T7HCEECBmBqg==
-X-Google-Smtp-Source: AGHT+IFUiV8p/ANbFTNC9RIN/3r4iqb4l6G/ZsoMzvfM4AkWJBdPw90kH5yF7d7rR4Roq+3CcYVclg==
-X-Received: by 2002:a17:906:530c:b0:9a5:8155:6de with SMTP id h12-20020a170906530c00b009a5815506demr7288568ejo.45.1693302709860;
-        Tue, 29 Aug 2023 02:51:49 -0700 (PDT)
+        bh=9Jps0qXeyPLdx+b5De4g4xbuY+7aT5vkCHcXrjuUV+Y=;
+        b=ZljJWuK4QbBU9bScn46WFO0R2OcMNiOHUPfh7CQGtisBdVyyD4r/hzNX2cdaVkeIRz
+         wai8CKRd3ucvb8VbwCc6zCuBIAtkTYALqXpPps6190DiMKjOc2CHjWiMiQctQ6cKwBMU
+         a5kPdGg1qp1XHUeKox1pZIjF3mZU5e4+1u1C7o2G+JEoPiSrluH/9XHAfR3WbayGoLVZ
+         wce34g+Mjzx8JA3LLTuME4xJo9c0lkjYzUxrnKip+5gbBiwcKn2Pr+K+UnMleY2i/+B4
+         DZ68zc+NOXEvRq5igBKtAEQZRuQchBBAOFmEDtEWUH5xmPNBbIwxkz3yl77H8Y5hIg/k
+         JivQ==
+X-Gm-Message-State: AOJu0Yy3deqOUCdcAVw3sCtX0dVCBzF0n12yL/5xeUE4NekXL+ePNFHi
+        77OZtEwKC+1CxsiyzrPcz4S+pg==
+X-Google-Smtp-Source: AGHT+IEjhxFak4PhQe3Tgs47lEQYmobKxofGOlrRmfYW9HU2F55i2HVmIX6rN/v0yjl1q+ycOMRmMw==
+X-Received: by 2002:a17:906:2091:b0:9a2:ecd:d962 with SMTP id 17-20020a170906209100b009a20ecdd962mr9825131ejq.4.1693302970981;
+        Tue, 29 Aug 2023 02:56:10 -0700 (PDT)
 Received: from [192.168.0.22] ([77.252.47.196])
-        by smtp.gmail.com with ESMTPSA id d16-20020a1709061f5000b009931a3adf64sm5857775ejk.17.2023.08.29.02.51.48
+        by smtp.gmail.com with ESMTPSA id h25-20020a1709063b5900b0099cc3c7ace2sm5878362ejf.140.2023.08.29.02.56.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Aug 2023 02:51:49 -0700 (PDT)
-Message-ID: <0cb5fbd9-083f-8db7-e850-fcda9817bd23@linaro.org>
-Date:   Tue, 29 Aug 2023 11:51:47 +0200
+        Tue, 29 Aug 2023 02:56:10 -0700 (PDT)
+Message-ID: <a3b9ff0f-fff9-9439-5ec9-95a4de9bdfaa@linaro.org>
+Date:   Tue, 29 Aug 2023 11:56:09 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.14.0
-Subject: Re: [PATCH 03/11] thermal: exynos: switch from workqueue-driven
- interrupt handling to threaded interrupts
+Subject: Re: [PATCH 04/11] thermal: exynos: remove fine-grained clk management
 Content-Language: en-US
 To:     Mateusz Majewski <m.majewski2@samsung.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -76,10 +75,10 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Brown <broonie@kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>
 References: <20230829091853.626011-1-m.majewski2@samsung.com>
- <CGME20230829092410eucas1p243a88662e8e64f0c406685931d9a80a3@eucas1p2.samsung.com>
- <20230829091853.626011-4-m.majewski2@samsung.com>
+ <CGME20230829092412eucas1p2b79a6f90b9077a3a5486845b7e68bbc6@eucas1p2.samsung.com>
+ <20230829091853.626011-5-m.majewski2@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230829091853.626011-4-m.majewski2@samsung.com>
+In-Reply-To: <20230829091853.626011-5-m.majewski2@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -87,25 +86,15 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 29/08/2023 11:18, Mateusz Majewski wrote:
-> The workqueue boilerplate is mostly one-to-one what the threaded
-> interrupts do.
-> 
-> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
+> This clock only controls the register operations. The gain in power
+> efficiency is therefore quite dubious, while there is price of added
+> complexity that is important to get right (as a register operation might
+> outright hang the CPU if the clock is not enabled).
 
+So once it is done right, this stops being argument. The benefit is to
+keep this clock disabled most of the time, which now we lost.
 
->  	data->clk = devm_clk_get(&pdev->dev, "tmu_apbif");
->  	if (IS_ERR(data->clk)) {
->  		dev_err(&pdev->dev, "Failed to get clock\n");
-> @@ -1094,8 +1080,10 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->  		goto err_sclk;
->  	}
->  
-> -	ret = devm_request_irq(&pdev->dev, data->irq, exynos_tmu_irq,
-> -		IRQF_TRIGGER_RISING | IRQF_SHARED, dev_name(&pdev->dev), data);
-> +	ret = devm_request_threaded_irq(
-> +		&pdev->dev, data->irq, NULL, exynos_tmu_threaded_irq,
-
-This does not look properly aligned.
+I don't find this patch correct approach.
 
 Best regards,
 Krzysztof
