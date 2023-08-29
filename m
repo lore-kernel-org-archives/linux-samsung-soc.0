@@ -2,61 +2,62 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FA5C83F17
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Aug 2023 09:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AE5C83F17
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Aug 2023 10:03:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233029AbjH2J5R (ORCPT
+        id S232466AbjH2KDL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Aug 2023 05:57:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35806 "EHLO
+        Tue, 29 Aug 2023 06:03:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235074AbjH2J4z (ORCPT
+        with ESMTP id S234027AbjH2KCn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Aug 2023 05:56:55 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30CF5CF9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Aug 2023 02:56:26 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-9a58dbd5daeso411594066b.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Aug 2023 02:56:26 -0700 (PDT)
+        Tue, 29 Aug 2023 06:02:43 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DA39BC
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Aug 2023 03:02:40 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-5298e43bb67so8671553a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Aug 2023 03:02:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693302971; x=1693907771;
+        d=linaro.org; s=google; t=1693303359; x=1693908159; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9Jps0qXeyPLdx+b5De4g4xbuY+7aT5vkCHcXrjuUV+Y=;
-        b=OKuqNU9MpyPIJHFWbNDDPELOreMyC3nGbzUQuvwWmKtrIcg8RHDNkDWzmbrmnnFmT6
-         DyQw4klN3ZaAualjzdSAmsWqsbpECq9vKBR7YPoHvvAfuejn7q5T+sd+RsZqBu5ae35Z
-         z8GsJ+WzEPtVzeU++j8rnM4CobDrMKOgRgHaOS1ShOspnbDF9MEZUJ/pgPQxLRgtXEwk
-         88ANIHmf1xT28cdC47Thv18zt1doh1SeJLWtNn6A+f+V7KWzfP3awOAJoIyCfwuDhZVu
-         SB3ME+oDJn9FlwIAJSIeOAmsUoahcY9niLlOaTRdrPk9iUa8DQviJKZqBVQHOBR0X16f
-         ImgA==
+        bh=xNfc1YCzECSmHdy+J5cr9YqVtcVteK3GsZt2ifwyGH4=;
+        b=P3BpxzUodeNxtHNYzDbhTJ2hrQuMHlwGM139bxjDQIzc5ypgBk9Ib0ZL8ycwytf/sc
+         IrqjeOq/HFUHt7yhB9SL1k08PTb9KV/8R00VZDqcvPnopiGG05RNIAgS2V2BpMcRQnwM
+         XSEUlq5oh9yJa0U7qrgRFhHXx4TtBNm31g+54AXhVAV9vVt+M2WldfFzuCbjaz9Ogv9r
+         WG65py12GrcP6Q8MgIZ3sRMdDZ/ypTFvRUjsXp7DYLsa6owZPacRzBpc4BqSjDHjPFdn
+         6FMEx4RBgdpqN1ygIWtIiTz0Go63Z7W5Iv+aac9GvplK6lhVd1bUc6t2//3ucEl0/okq
+         VUbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693302971; x=1693907771;
+        d=1e100.net; s=20221208; t=1693303359; x=1693908159;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Jps0qXeyPLdx+b5De4g4xbuY+7aT5vkCHcXrjuUV+Y=;
-        b=ZljJWuK4QbBU9bScn46WFO0R2OcMNiOHUPfh7CQGtisBdVyyD4r/hzNX2cdaVkeIRz
-         wai8CKRd3ucvb8VbwCc6zCuBIAtkTYALqXpPps6190DiMKjOc2CHjWiMiQctQ6cKwBMU
-         a5kPdGg1qp1XHUeKox1pZIjF3mZU5e4+1u1C7o2G+JEoPiSrluH/9XHAfR3WbayGoLVZ
-         wce34g+Mjzx8JA3LLTuME4xJo9c0lkjYzUxrnKip+5gbBiwcKn2Pr+K+UnMleY2i/+B4
-         DZ68zc+NOXEvRq5igBKtAEQZRuQchBBAOFmEDtEWUH5xmPNBbIwxkz3yl77H8Y5hIg/k
-         JivQ==
-X-Gm-Message-State: AOJu0Yy3deqOUCdcAVw3sCtX0dVCBzF0n12yL/5xeUE4NekXL+ePNFHi
-        77OZtEwKC+1CxsiyzrPcz4S+pg==
-X-Google-Smtp-Source: AGHT+IEjhxFak4PhQe3Tgs47lEQYmobKxofGOlrRmfYW9HU2F55i2HVmIX6rN/v0yjl1q+ycOMRmMw==
-X-Received: by 2002:a17:906:2091:b0:9a2:ecd:d962 with SMTP id 17-20020a170906209100b009a20ecdd962mr9825131ejq.4.1693302970981;
-        Tue, 29 Aug 2023 02:56:10 -0700 (PDT)
+        bh=xNfc1YCzECSmHdy+J5cr9YqVtcVteK3GsZt2ifwyGH4=;
+        b=OHxlGRbKwUMMGkyPlH9JbQggtkRjAKFCXsxH5fUG4qIZdTcB2fMnlPkqFG0W4STFUh
+         0s1/uHz/TE81RWZaR92JveSIYmaI2IAWkhMMXGobtmK84ymLIS4WzPXxR+tTP5b98s5G
+         Z5GSwt97tx5TfaBAYmS7w7Gm5vICUjT8wCH4BD+YjYekSkPNP4yJfR0GB3qRfeaeStDu
+         XNv9pptj/aN8YEZzwyE3WELj8a/NIJYPi96Pl3uAZC2GMMrckpda6P6jZ7N9bW3VUYmG
+         lHVrpUV9u7fyBtQjdbj+FzP+Ef006IDSNtdbAXryHYFv4tt5Vttua/8jJi14/NeNdQhF
+         Le4A==
+X-Gm-Message-State: AOJu0YwrTYO8d7h8fBN00nyzGDTJSJD6gPv+a1FTVfQEyKxur/23LZrn
+        UwMBP9EWyxtBHC6JlQOexgP+Ig==
+X-Google-Smtp-Source: AGHT+IFHNtgUX1U+W+lEJ40ltziK5ZFMd1TqeGtv9haM9ughdurndzqlJlcIDfvWInNeikh9GiEWDw==
+X-Received: by 2002:a05:6402:50ca:b0:522:405f:a7 with SMTP id h10-20020a05640250ca00b00522405f00a7mr2475248edb.16.1693303359021;
+        Tue, 29 Aug 2023 03:02:39 -0700 (PDT)
 Received: from [192.168.0.22] ([77.252.47.196])
-        by smtp.gmail.com with ESMTPSA id h25-20020a1709063b5900b0099cc3c7ace2sm5878362ejf.140.2023.08.29.02.56.09
+        by smtp.gmail.com with ESMTPSA id y21-20020aa7c255000000b005257da6be23sm5460501edo.75.2023.08.29.03.02.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Aug 2023 02:56:10 -0700 (PDT)
-Message-ID: <a3b9ff0f-fff9-9439-5ec9-95a4de9bdfaa@linaro.org>
-Date:   Tue, 29 Aug 2023 11:56:09 +0200
+        Tue, 29 Aug 2023 03:02:38 -0700 (PDT)
+Message-ID: <674ae250-8256-8ffb-01fd-eb2bd6026808@linaro.org>
+Date:   Tue, 29 Aug 2023 12:02:37 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.14.0
-Subject: Re: [PATCH 04/11] thermal: exynos: remove fine-grained clk management
+Subject: Re: [PATCH 08/11] thermal: exynos: stop using the threshold mechanism
+ on Exynos 4210
 Content-Language: en-US
 To:     Mateusz Majewski <m.majewski2@samsung.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -75,10 +76,10 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Brown <broonie@kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>
 References: <20230829091853.626011-1-m.majewski2@samsung.com>
- <CGME20230829092412eucas1p2b79a6f90b9077a3a5486845b7e68bbc6@eucas1p2.samsung.com>
- <20230829091853.626011-5-m.majewski2@samsung.com>
+ <CGME20230829092421eucas1p1970c3fb42ca622129bf92511893500b1@eucas1p1.samsung.com>
+ <20230829091853.626011-9-m.majewski2@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230829091853.626011-5-m.majewski2@samsung.com>
+In-Reply-To: <20230829091853.626011-9-m.majewski2@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -86,15 +87,18 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 29/08/2023 11:18, Mateusz Majewski wrote:
-> This clock only controls the register operations. The gain in power
-> efficiency is therefore quite dubious, while there is price of added
-> complexity that is important to get right (as a register operation might
-> outright hang the CPU if the clock is not enabled).
+> Exynos 4210 supports setting a base threshold value, which is added to
+> all trip points. This might be useful, but is not really necessary in
+> our usecase, so we always set it to 0 to simplify the code a bit.
+> 
+> Additionally, this change makes it so that we convert the value to the
+> calibrated one in a slightly different place. This is more correct
+> morally, though it does not make any change when single-point
 
-So once it is done right, this stops being argument. The benefit is to
-keep this clock disabled most of the time, which now we lost.
+I don't think code placement is an aspect of morality, yet okay:
 
-I don't find this patch correct approach.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
 Best regards,
 Krzysztof
