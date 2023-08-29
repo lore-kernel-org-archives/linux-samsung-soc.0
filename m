@@ -2,54 +2,54 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B5F8C83F1F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Aug 2023 09:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09397C83F25
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Aug 2023 09:25:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234271AbjH2JZE (ORCPT
+        id S234712AbjH2JZG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Aug 2023 05:25:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48846 "EHLO
+        Tue, 29 Aug 2023 05:25:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234680AbjH2JYa (ORCPT
+        with ESMTP id S234731AbjH2JYc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Aug 2023 05:24:30 -0400
+        Tue, 29 Aug 2023 05:24:32 -0400
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A25D1BB
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Aug 2023 02:24:25 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230829092424euoutp029bbad121b9891892dea19f6adf685468~-0Fimc-el0812808128euoutp02B
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Aug 2023 09:24:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230829092424euoutp029bbad121b9891892dea19f6adf685468~-0Fimc-el0812808128euoutp02B
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9002119F
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Aug 2023 02:24:28 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230829092427euoutp02fea798474d0a30d4ede3ebdaed666f6a~-0FlobKX80626506265euoutp02I
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Aug 2023 09:24:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230829092427euoutp02fea798474d0a30d4ede3ebdaed666f6a~-0FlobKX80626506265euoutp02I
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1693301064;
-        bh=MISFxXLRGqBlhsnV74hyg0jBZORCFgJ+ZNkWVkvzueo=;
+        s=mail20170921; t=1693301067;
+        bh=C5FbbJybvkzNZK0Gyfa1Nr5aayYuC3Mc7brz6IA0CMs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X1ALU1ZaQlQfJmmPyq/2vYhFT236PybJ2vQkQNRGDvCVc1h7fOBuHqVXoqGA2EDtM
-         1ZDWd1vMwvbSBiaF8ySM+GbDOyikTQEmjRjURRNiTDfuOx0gDJ1ob3ko4V1z/dDGFJ
-         /zEEfH2g10uTKFjkDdmye4EzNTT8twkBLUcc0AOU=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230829092423eucas1p176bd125264a400fcaf3467cbc8649494~-0FiLmy2y1819818198eucas1p1E;
-        Tue, 29 Aug 2023 09:24:23 +0000 (GMT)
+        b=XVkjLOvj3Z31jVU0WNO4Oh6iftr4rtmAGsRhgRDc50KAQUk3VREsqs9WV6mFAT/1k
+         QYS+eKvVaCWSlQbtkIZhlhNfDdv4fY5K86GMw2LhPcszKH67c4VarN8VNOrKaIrjt3
+         xdvDLwxUggKHeELLNT5tqBcSDQMeUzjjfv3q2FFk=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20230829092426eucas1p2d03704c98d91b12179f2b29af682988e~-0FlSALwA2824228242eucas1p2a;
+        Tue, 29 Aug 2023 09:24:26 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 04.E8.42423.749BDE46; Tue, 29
-        Aug 2023 10:24:23 +0100 (BST)
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id F4.8F.37758.A49BDE46; Tue, 29
+        Aug 2023 10:24:26 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230829092423eucas1p1fc13c188d99482b195e115fd19a1391d~-0FhrCmah2075220752eucas1p1o;
-        Tue, 29 Aug 2023 09:24:23 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230829092426eucas1p222c2a1c2013f4eb9ee739f03761e5236~-0FkfWmzM2729627296eucas1p2j;
+        Tue, 29 Aug 2023 09:24:26 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230829092423eusmtrp1c33955e9998a3af345772e7d3e831fd7~-0FhqahHc3270032700eusmtrp1l;
-        Tue, 29 Aug 2023 09:24:23 +0000 (GMT)
-X-AuditID: cbfec7f2-a3bff7000002a5b7-4c-64edb9475ddf
+        20230829092426eusmtrp171367fb1384d1ee8b77399c5b6dc0598~-0FketUkS3248032480eusmtrp1V;
+        Tue, 29 Aug 2023 09:24:26 +0000 (GMT)
+X-AuditID: cbfec7f5-815ff7000002937e-7c-64edb94aa42a
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 41.9B.14344.649BDE46; Tue, 29
-        Aug 2023 10:24:22 +0100 (BST)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 6F.E9.10549.949BDE46; Tue, 29
+        Aug 2023 10:24:26 +0100 (BST)
 Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
         [106.120.51.28]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230829092422eusmtip2ef283c90696bc30860c4f4d372111754~-0FgvxfYQ1320013200eusmtip2F;
-        Tue, 29 Aug 2023 09:24:22 +0000 (GMT)
+        20230829092425eusmtip286b9ff2658d36cd4f3a82c6ae94a37bf~-0FjjIsYn1321813218eusmtip2F;
+        Tue, 29 Aug 2023 09:24:25 +0000 (GMT)
 From:   Mateusz Majewski <m.majewski2@samsung.com>
 To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -67,198 +67,131 @@ Cc:     Mateusz Majewski <m.majewski2@samsung.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 09/11] thermal: exynos: split initialization of TMU and the
- thermal zone
-Date:   Tue, 29 Aug 2023 11:18:47 +0200
-Message-ID: <20230829091853.626011-10-m.majewski2@samsung.com>
+Subject: [PATCH 11/11] ARM: dts: exynos: disable polling in Odroid
+ XU3-related devices
+Date:   Tue, 29 Aug 2023 11:18:49 +0200
+Message-ID: <20230829091853.626011-12-m.majewski2@samsung.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230829091853.626011-1-m.majewski2@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDKsWRmVeSWpSXmKPExsWy7djPc7ruO9+mGBzrU7B4MG8bm8Xh+RUW
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHKsWRmVeSWpSXmKPExsWy7djPc7peO9+mGLS1GVs8mLeNzeLw/AqL
+        qQ+fsFl833KdyWLN3nNMFvM+y1rMP3KO1aLvxUNmi29XOpgsNj2+xmpxedccNovPvUcYLWac
+        38dkMfHYZGaLtUfuslvM/TKV2aJ17xF2iycP+9gchDx2zrrL7rF4z0smj02rOtk87lzbw+ax
+        eUm9R9+WVYwenzfJBbBHcdmkpOZklqUW6dslcGUs/rGKpWCmcMWrluXsDYw/+LoYOTkkBEwk
+        jh6bxdzFyMUhJLCCUeLr6VssEM4XRok/D99COZ8ZJdYsmsAE03KhdwkrRGI5UNW15ywgCSGB
+        ViaJD3/8QGw2AQOJB2+WsYMUiQgsZpTYunMWE4jDLDCXRaJh5U+wDmGBCIn5F7cyg9gsAqoS
+        n49OBFvBK2An8fnuITaIdfISz2/dYQexOYHi08+3Q9UISpyc+QRsDjNQTfPW2WBfSAhM55SY
+        8OEQI0Szi8Tq9Y+gbGGJV8e3sEPYMhKnJ/ewQNj5EjM2vweyOYDsCom7B70gTGuJj2eYQUxm
+        AU2J9bv0IYodJS6+fAVVzCdx460gxAF8EpO2TWeGCPNKdLQJQVSrShzfM4kZwpaWeNJyGxqE
+        HhJHGxeyT2BUnIXklVlIXpmFsHcBI/MqRvHU0uLc9NRi47zUcr3ixNzi0rx0veT83E2MwCR3
+        +t/xrzsYV7z6qHeIkYmD8RCjBAezkgjvJcdXKUK8KYmVValF+fFFpTmpxYcYpTlYlMR5tW1P
+        JgsJpCeWpGanphakFsFkmTg4pRqYOvjfPPo9w3n/ZxOtq9p+m/63OG/gNbddwtLVpHlH6Dm/
+        ovjmvk95U66xJd9WagvL4uTy5GWQDMh14Ipnj/AvmfE9TLv1xA6Xjfnz1vF9cV7YsW1u4TTv
+        0z7K/xpNmlYc0TztxtrR4BWsItnfZVtg++SksMN8iXqOJ/5cpQt2KHWz2W5/Xvu1alKXbMLX
+        py/LwzJfaR2ym5Yc5PfqePE7fbd1gb9nTWuNrJqnfOllzZmIiJaTMyevOHL0y2nvrrS7FevC
+        pCNNr/65sjZ5fcbyv5lHwi5NVNWP3KrxQjosJWQC18z7NoddVF6alqd5r/y25O92gdqtqjLf
+        bk5bcfLsEd7qGB6lPzybfI59aDNRYinOSDTUYi4qTgQAAH5OSuEDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsVy+t/xe7peO9+mGDzrZrJ4MG8bm8Xh+RUW
         Ux8+YbP4vuU6k8WaveeYLOZ9lrWYf+Qcq0Xfi4fMFt+udDBZbHp8jdXi8q45bBafe48wWsw4
         v4/JYuKxycwWa4/cZbeY+2Uqs0Xr3iPsFk8e9rE5CHnsnHWX3WPxnpdMHptWdbJ53Lm2h81j
-        85J6j74tqxg9Pm+SC2CP4rJJSc3JLEst0rdL4MpoeHGHveC5fMX5fW0sDYyXJLsYOTgkBEwk
-        Jl/y6WLk4hASWMEosernaRYI5wujxJTGTUwQzmdGiasNM9i6GDnBOl51dbFDJJYzSjx9fowJ
-        JCEk0Mok0bOxCsRmEzCQePBmGViRiMBiRomtO2eBjWIWmMsi0bDyJwtIlbBAlMSvvZ3MIDaL
-        gKrEhtkLGUFsXgE7iSmfFzFCrJOXeH7rDjuIzQkUn36+nQmiRlDi5MwnYHOYgWqat85mBlkg
-        ITCdU6J51zQWiO9cJDZ1eEPMEZZ4dXwLO4QtI3F6cg8LhJ0vMWPze6jyCom7B70gTGuJj2eY
-        QUxmAU2J9bv0IYodJXrXf2CHqOCTuPFWEGI/n8SkbdOZIcK8Eh1tQhDVqhLH90xihrClJZ60
-        3GaCsD0kNt5czzKBUXEWkk9mIflkFsLeBYzMqxjFU0uLc9NTiw3zUsv1ihNzi0vz0vWS83M3
-        MQIT3Ol/xz/tYJz76qPeIUYmDsZDjBIczEoivJccX6UI8aYkVlalFuXHF5XmpBYfYpTmYFES
-        59W2PZksJJCeWJKanZpakFoEk2Xi4JRqYKq4JheSvmKB1GlVCf+f8ZVZ3Z8eRuW8crz9/JDR
-        s/ga5pQFW8SPlRuZmkenPgowEd9xbANf3JaKvQ8mJ7zMD28PeKKxIMuyd9PUv+nXObx2lodd
-        1d9/2Lqpv3X6na0nVY7fOsnWG7Sf/Zfflvl1rWKf18gzSvbddLm9T8CJw43Fw5dj4zHpKY4t
-        m4ViUrQzGNx5l/zLi6xuKJiupc5k/mf9/bq9F1dFlNW5HDjE+nJziIOc4avD/xfWrTyp2bTi
-        e+6iF+ePc0p5cfk157lUC5VcOqAtavP0m8ufE2wTep8nPDsuVXLmwoTnz1RTtfhjfZTlLuR5
-        FO59tVEh7lrfkr1X30SnKZ3X+iJp/HufjhJLcUaioRZzUXEiAK36DWXfAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPIsWRmVeSWpSXmKPExsVy+t/xe7ruO9+mGJxwt3gwbxubxeH5FRZT
-        Hz5hs/i+5TqTxZq955gs5n2WtZh/5ByrRd+Lh8wW3650MFlsenyN1eLyrjlsFp97jzBazDi/
-        j8li4rHJzBZrj9xlt5j7ZSqzReveI+wWTx72sTkIeeycdZfdY/Gel0wem1Z1snncubaHzWPz
-        knqPvi2rGD0+b5ILYI/SsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJ
-        zcksSy3St0vQy2h4cYe94Ll8xfl9bSwNjJckuxg5OSQETCRedXWxdzFycQgJLGWU+LvmBRtE
-        Qlri8Jcp7BC2sMSfa11sEEXNTBLth3pZQBJsAgYSD94sA+sWEVjOKHH13nIWEIdZYDmLxPM1
-        H5hBqoQFIiSuPD0C1sEioCqxYfZCRhCbV8BOYsrnRYwQK+Qlnt+6A7aOEyg+/Xw7E4gtJGAr
-        sWbCOTaIekGJkzOfgM1hBqpv3jqbeQKjwCwkqVlIUgsYmVYxiqSWFuem5xYb6RUn5haX5qXr
-        JefnbmIExuS2Yz+37GBc+eqj3iFGJg7GQ4wSHMxKIryXHF+lCPGmJFZWpRblxxeV5qQWH2I0
-        Bbp7IrOUaHI+MCnklcQbmhmYGpqYWRqYWpoZK4nzehZ0JAoJpCeWpGanphakFsH0MXFwSjUw
-        bZ3Xorj63rrXB1W+SNmcdjRYsT0sNYn56Iq9085Krv3XZSz+uIThYsejvZViLi8+2ncx31r2
-        LMluAb/yac4Fs2N2/713Uy9y4fWYELH+5lbj1Q0MJ241JhiU5npsyw6srdKvC/ZoLos8fbfu
-        /gRz6cem0ifMzyrpcXy+ojapNkmur3fL91q2OzeUqspZ1v9xZGh/ONdI7/fVj6raYRd3Fng6
-        92tf0kn+4unnv7HsRei5tO9N2Zy825cJbanuW+vNrrKFYeGqVTwTBILeCrR9fL0ox2P2u/qN
-        Kn+D11399WJyX20o3/zJi1bdOzXPV5qt8O+urcqP5PVfuM6VVn/C3/JCcL/qypZ6N2bJTfMF
-        lViKMxINtZiLihMBfH7+KlIDAAA=
-X-CMS-MailID: 20230829092423eucas1p1fc13c188d99482b195e115fd19a1391d
+        85J6j74tqxg9Pm+SC2CP0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJ
+        Sc3JLEst0rdL0MtY/GMVS8FM4YpXLcvZGxh/8HUxcnJICJhIXOhdwtrFyMUhJLCUUWLVpT3M
+        EAlpicNfprBD2MISf651sUEUNTNJrNq7HSzBJmAg8eDNMnaQhIjAckaJq/eWs4A4zALLWSSe
+        r/kANkpYIEzi1ZZZLCA2i4CqxOejE5lAbF4BO4nPdw+xQayQl3h+6w7YVE6g+PTz7WA1QgK2
+        EmsmnGODqBeUODnzCdgcZqD65q2zmScwCsxCkpqFJLWAkWkVo0hqaXFuem6xoV5xYm5xaV66
+        XnJ+7iZGYFRuO/Zz8w7Gea8+6h1iZOJgPMQowcGsJMJ7yfFVihBvSmJlVWpRfnxRaU5q8SFG
+        U6C7JzJLiSbnA9NCXkm8oZmBqaGJmaWBqaWZsZI4r2dBR6KQQHpiSWp2ampBahFMHxMHp1QD
+        k3Be8HQ7fv9tQp5bn8frJ/2fssXAn3vLpbqLhfJ5i7fZe8hO9b0tMGHtGhNj6Q0STUbahSxr
+        769WCS/6/Mfe6GR2YdJdy5yb8ZIf181OKvRJn6i7+fOmOhsmnnMc3bPz0926nTW3bNsyr9v1
+        45lezQd1Ec+dfV7deXh6Vkzvnh0rdG8qO233TtnKpDHT8Av/1YLc71XqtcuXSc8Vv6Tzo/Fm
+        m7/PadaCu798u5etuLfy2Ic/eeHLnM/cKewOly8+kbHi/PfMrCWG++8UFCxaL9rGZS3dzT5X
+        etH8lPzaB4pPwtje9kcUztf58ONcl6VFy+cNvyrtzBkmqv5/s/2Fj37gxm9203myf3AcvKbV
+        rsRSnJFoqMVcVJwIAJuplj5TAwAA
+X-CMS-MailID: 20230829092426eucas1p222c2a1c2013f4eb9ee739f03761e5236
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230829092423eucas1p1fc13c188d99482b195e115fd19a1391d
+X-RootMTR: 20230829092426eucas1p222c2a1c2013f4eb9ee739f03761e5236
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20230829092423eucas1p1fc13c188d99482b195e115fd19a1391d
+X-CMS-RootMailID: 20230829092426eucas1p222c2a1c2013f4eb9ee739f03761e5236
 References: <20230829091853.626011-1-m.majewski2@samsung.com>
-        <CGME20230829092423eucas1p1fc13c188d99482b195e115fd19a1391d@eucas1p1.samsung.com>
+        <CGME20230829092426eucas1p222c2a1c2013f4eb9ee739f03761e5236@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This will be needed in the future, as the thermal zone subsystem might
-call our callbacks right after devm_thermal_of_zone_register. Currently
-we just make get_temp return EAGAIN in such case, but this will not be
-possible with state-modifying callbacks, for instance set_trips.
+After having switched to dynamic trip points, we no longer have a
+hardware limit for trip point count and can support as many as we want
+without polling.
 
 Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
 ---
- drivers/thermal/samsung/exynos_tmu.c | 78 ++++++++++++++++------------
- 1 file changed, 45 insertions(+), 33 deletions(-)
+ .../dts/samsung/exynos5422-odroidxu3-common.dtsi | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 6c107fe9fd27..aa3de367b3c7 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -250,20 +250,43 @@ static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_info)
- }
- 
- static int exynos_tmu_initialize(struct platform_device *pdev)
-+{
-+	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-+	unsigned int status;
-+	int ret = 0;
-+
-+	mutex_lock(&data->lock);
-+
-+	status = readb(data->base + EXYNOS_TMU_REG_STATUS);
-+	if (!status) {
-+		ret = -EBUSY;
-+	} else {
-+		data->tmu_initialize(pdev);
-+		data->tmu_clear_irqs(data);
-+	}
-+
-+	mutex_unlock(&data->lock);
-+
-+	return ret;
-+}
-+
-+static int exynos_thermal_zone_configure(struct platform_device *pdev)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
- 	struct thermal_zone_device *tzd = data->tzd;
- 	int num_trips = thermal_zone_get_num_trips(tzd);
--	unsigned int status;
- 	int ret = 0, temp;
- 
- 	ret = thermal_zone_get_crit_temp(tzd, &temp);
-+
- 	if (ret && data->soc != SOC_ARCH_EXYNOS5433) { /* FIXME */
- 		dev_err(&pdev->dev,
- 			"No CRITICAL trip point defined in device tree!\n");
--		goto out;
-+		goto err;
- 	}
- 
-+	mutex_lock(&data->lock);
-+
- 	if (num_trips > data->ntrip) {
- 		dev_info(&pdev->dev,
- 			 "More trip points than supported by this TMU.\n");
-@@ -272,36 +295,23 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 			 num_trips - data->ntrip);
- 	}
- 
--	mutex_lock(&data->lock);
-+	int i, ntrips = min_t(int, num_trips, data->ntrip);
- 
--	status = readb(data->base + EXYNOS_TMU_REG_STATUS);
--	if (!status) {
--		ret = -EBUSY;
--	} else {
--		int i, ntrips =
--			min_t(int, num_trips, data->ntrip);
-+	/* Write temperature code for rising and falling threshold */
-+	for (i = 0; i < ntrips; i++) {
-+		struct thermal_trip trip;
- 
--		data->tmu_initialize(pdev);
-+		ret = thermal_zone_get_trip(tzd, i, &trip);
-+		if (ret)
-+			goto err;
- 
--		/* Write temperature code for rising and falling threshold */
--		for (i = 0; i < ntrips; i++) {
--
--			struct thermal_trip trip;
--
--			ret = thermal_zone_get_trip(tzd, i, &trip);
--			if (ret)
--				goto err;
--
--			data->tmu_set_trip_temp(data, i, trip.temperature / MCELSIUS);
--			data->tmu_set_trip_hyst(data, i, trip.temperature / MCELSIUS,
--						trip.hysteresis / MCELSIUS);
--		}
--
--		data->tmu_clear_irqs(data);
-+		data->tmu_set_trip_temp(data, i, trip.temperature / MCELSIUS);
-+		data->tmu_set_trip_hyst(data, i, trip.temperature / MCELSIUS,
-+					trip.hysteresis / MCELSIUS);
- 	}
--err:
-+
- 	mutex_unlock(&data->lock);
--out:
-+err:
- 	return ret;
- }
- 
-@@ -1006,10 +1016,12 @@ static int exynos_tmu_probe(struct platform_device *pdev)
- 		break;
- 	}
- 
--	/*
--	 * data->tzd must be registered before calling exynos_tmu_initialize(),
--	 * requesting irq and calling exynos_tmu_control().
--	 */
-+	ret = exynos_tmu_initialize(pdev);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to initialize TMU\n");
-+		return ret;
-+	}
-+
- 	data->tzd = devm_thermal_of_zone_register(&pdev->dev, 0, data,
- 						  &exynos_sensor_ops);
- 	if (IS_ERR(data->tzd)) {
-@@ -1020,9 +1032,9 @@ static int exynos_tmu_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	ret = exynos_tmu_initialize(pdev);
-+	ret = exynos_thermal_zone_configure(pdev);
- 	if (ret) {
--		dev_err(&pdev->dev, "Failed to initialize TMU\n");
-+		dev_err(&pdev->dev, "Failed to configure the thermal zone\n");
- 		return ret;
- 	}
- 
+diff --git a/arch/arm/boot/dts/samsung/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/samsung/exynos5422-odroidxu3-common.dtsi
+index b4a851aa8881..4a4c55a4beb3 100644
+--- a/arch/arm/boot/dts/samsung/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/samsung/exynos5422-odroidxu3-common.dtsi
+@@ -55,7 +55,7 @@ fan0: pwm-fan {
+ 	thermal-zones {
+ 		cpu0_thermal: cpu0-thermal {
+ 			thermal-sensors = <&tmu_cpu0>;
+-			polling-delay-passive = <250>;
++			polling-delay-passive = <0>;
+ 			polling-delay = <0>;
+ 			trips {
+ 				cpu0_alert0: cpu-alert-0 {
+@@ -78,12 +78,6 @@ cpu0_crit0: cpu-crit-0 {
+ 					hysteresis = <0>; /* millicelsius */
+ 					type = "critical";
+ 				};
+-				/*
+-				 * Exynos542x supports only 4 trip-points
+-				 * so for these polling mode is required.
+-				 * Start polling at temperature level of last
+-				 * interrupt-driven trip: cpu0_alert2
+-				 */
+ 				cpu0_alert3: cpu-alert-3 {
+ 					temperature = <70000>; /* millicelsius */
+ 					hysteresis = <10000>; /* millicelsius */
+@@ -144,7 +138,7 @@ cpu0_cooling_map4: map4 {
+ 		};
+ 		cpu1_thermal: cpu1-thermal {
+ 			thermal-sensors = <&tmu_cpu1>;
+-			polling-delay-passive = <250>;
++			polling-delay-passive = <0>;
+ 			polling-delay = <0>;
+ 			trips {
+ 				cpu1_alert0: cpu-alert-0 {
+@@ -217,7 +211,7 @@ cpu1_cooling_map4: map4 {
+ 		};
+ 		cpu2_thermal: cpu2-thermal {
+ 			thermal-sensors = <&tmu_cpu2>;
+-			polling-delay-passive = <250>;
++			polling-delay-passive = <0>;
+ 			polling-delay = <0>;
+ 			trips {
+ 				cpu2_alert0: cpu-alert-0 {
+@@ -290,7 +284,7 @@ cpu2_cooling_map4: map4 {
+ 		};
+ 		cpu3_thermal: cpu3-thermal {
+ 			thermal-sensors = <&tmu_cpu3>;
+-			polling-delay-passive = <250>;
++			polling-delay-passive = <0>;
+ 			polling-delay = <0>;
+ 			trips {
+ 				cpu3_alert0: cpu-alert-0 {
+@@ -363,7 +357,7 @@ cpu3_cooling_map4: map4 {
+ 		};
+ 		gpu_thermal: gpu-thermal {
+ 			thermal-sensors = <&tmu_gpu>;
+-			polling-delay-passive = <250>;
++			polling-delay-passive = <0>;
+ 			polling-delay = <0>;
+ 			trips {
+ 				gpu_alert0: gpu-alert-0 {
 -- 
 2.41.0
 
