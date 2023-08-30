@@ -2,60 +2,62 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A41BC83F17
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Aug 2023 00:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A8DC83F19
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Aug 2023 18:29:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238911AbjH3ApJ (ORCPT
+        id S230020AbjH3S3M (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Aug 2023 20:45:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54978 "EHLO
+        Wed, 30 Aug 2023 14:29:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241461AbjH3Aot (ORCPT
+        with ESMTP id S241370AbjH3GxL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Aug 2023 20:44:49 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92150CD6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Aug 2023 17:44:46 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id 98e67ed59e1d1-26b41112708so3251571a91.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Aug 2023 17:44:46 -0700 (PDT)
+        Wed, 30 Aug 2023 02:53:11 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D827B19A
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Aug 2023 23:53:07 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-9a58dbd5daeso555114666b.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Aug 2023 23:53:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693356286; x=1693961086; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EAx3hUaf67x8Bu35HoDBYJ84Q7sU3VyyMWOcJhmdXls=;
-        b=MVmzGGCHceCVXKEKF/KelU/z0eELehCzttHKv5oO7Du1rSLIH0ln/2CSMje8pUe5xF
-         PP2HDWxxmnowDM4gOEfksWxYgJxtilW4zyVGmIFD7dwAgQW6agg0hFKRVAlktrVSgxEr
-         lnXSLwReHPs+lWOA2/35xQ4M9tSm7ytgpIW63n7GtNWOrIUvmOemWU2tDfExV0+qlYbR
-         07BDlwweOdCKrock2e9ko7j82Qj2BLLOWNzFnVYLnm7O4PTfWkUO/4XPo9m32EbhflyV
-         XTiG0NjchtBt4YnplGsuIXCbTGmvn3AVg41CBPx0STnSzN87+MV1rAUQGzlRbHnrXvVX
-         i9+Q==
+        d=linaro.org; s=google; t=1693378386; x=1693983186; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9pOJN0Q6wkLvMewxsTy82PsqahQrqDIj24ECvJdWCSo=;
+        b=hFPOrGSG6AL5SBXwq3saM68KoWP6qmzTIlrRUhkIZiCAhFd0j0qZMLGk++XHS8YnRp
+         ad9FAeprO9wlMAJQHLbQBCXJ4eh6hBlJlopnXZ/uG86awguRGOgC7F1HZfjic/mWPSnp
+         6t2sHZkEvhhen+BDjtvgocdIJiBH5MRC+7pnzsqSjUcZTy2CPt5/mYC7xBLyzJmI1WAx
+         8jpKOckvpWLodIDixV0UI0kHjuCsiE+K9XbYDT3k/VE6mGus2LPwKwpbzRb4BPgDNy34
+         rauVepznllVEFvjA1v+lbNT7p4Z9ATbdNSodIfevbfNwMhonpzUkO4XCkC/r0ljVGfBX
+         J63w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693356286; x=1693961086;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EAx3hUaf67x8Bu35HoDBYJ84Q7sU3VyyMWOcJhmdXls=;
-        b=gO17NsEGsu76UZriZtBqYLBGOcIWh2QXeN8v7AaBEFJbn22co06st+NPG7dZ8uq7Tt
-         ZN6rOiQMM+Q0cpu+xTifD8lcKO98kJQKVl4Dg7ylRrVnWTZseNk+eYlhd/CGzf/ipMfc
-         JMsQafCI3IJEu2/+dil3eV+VQ+idyoBXy9NkrblvqRq+7hI6FTVXvtQUGEbED+LNkWOn
-         eH/hH9lZHKXdRBNFxuJa7fnh9EhRpLf4Q9jdFwGpSO5M4MebXEtOsoYfyFrsoFA6LAt6
-         sVQXzIbNMAJL0y/6v1YlEnwkQ7PKdQNTnMjpUTSEARdZd0OeEHQvAhbGGGy4Qjl+Cyg0
-         KbJQ==
-X-Gm-Message-State: AOJu0Yx4WcMhORIe5oAkO/00a5gFCYBRAUMJDCVyq/12tr9xF18y7gPH
-        +oPo5LbFz2WYQVMvQrUskTsHIYwh2sbq522PnWK/AQ==
-X-Google-Smtp-Source: AGHT+IGK3L9I8mGxNoIS6qRuELIHILt6Wgic76VJlZ4wkMageK4SmY3xsxrz7+5yM5g6fOr1CjbqGtBAkeFZp3jZzIk=
-X-Received: by 2002:a17:90a:4587:b0:269:1e3f:a54d with SMTP id
- v7-20020a17090a458700b002691e3fa54dmr777844pjg.10.1693356286018; Tue, 29 Aug
- 2023 17:44:46 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1693378386; x=1693983186;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9pOJN0Q6wkLvMewxsTy82PsqahQrqDIj24ECvJdWCSo=;
+        b=bo286SVe9wIGgSKJ2/hZmJEoNEb3n1zQggy2CQozJ64FJCsBLXMCEjPRZ6d3oSFwiS
+         S8P54fs46EvrGT/N0ihhAnb5wA0zsBrYvKRzsFc8zEn/kZq9Rghtx3zRTi/yQZ5q25S2
+         Uphc3jWgMJ9OdavtKVqfO5UC561s6ej59cPlkAnw863HeqAFdkTFLJB71gbHBY6dBPwM
+         Y6LN7LhSbHQscwjpiqYLoM93uAQIiVz943gV+xWoDoqozvarfp2BYE/TPCQS8lBnAMuk
+         hNLLo7QB8X7zQXj9fsZ/Nk2ze29xdttSI8mjQWfuq07JNE5rca70Cm+hwJUOMDKdxV9Y
+         94hg==
+X-Gm-Message-State: AOJu0YzxTPQKzzqGLdy2/npem1ECbgunrFHQkJYUQo4WIoYX3825WOEr
+        uHtfzp/gNskXDTPCRX9wGaN8sA==
+X-Google-Smtp-Source: AGHT+IH7By/K8X7TFjmuxWQpjwkhFG9OOMBqvVumSGucfH7kiTRm0wx4GZG99lfl8UxbibAn1Rk6Wg==
+X-Received: by 2002:a17:907:7750:b0:9a1:9284:11b with SMTP id kx16-20020a170907775000b009a19284011bmr990508ejc.7.1693378386280;
+        Tue, 29 Aug 2023 23:53:06 -0700 (PDT)
+Received: from [192.168.0.22] (77-252-46-238.static.ip.netia.com.pl. [77.252.46.238])
+        by smtp.gmail.com with ESMTPSA id d12-20020a170906344c00b00982a92a849asm6833731ejb.91.2023.08.29.23.53.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Aug 2023 23:53:05 -0700 (PDT)
+Message-ID: <90723ba8-c511-f90c-3a1a-3c33215fe27b@linaro.org>
+Date:   Wed, 30 Aug 2023 08:53:04 +0200
 MIME-Version: 1.0
-References: <20230825215445.28309-1-semen.protsenko@linaro.org> <6fd3a9ab-667d-934b-f1c2-03776be93d4d@linaro.org>
-In-Reply-To: <6fd3a9ab-667d-934b-f1c2-03776be93d4d@linaro.org>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Tue, 29 Aug 2023 19:44:34 -0500
-Message-ID: <CAPLW+4njcwODXoA3Gj=48E-DPOqofcPnJkYMv6yzF5JjyOshDA@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
 Subject: Re: [PATCH v2 0/2] arm64: dts: exynos: Enable USB for E850-96 board
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
@@ -64,33 +66,47 @@ Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         JaeHun Jung <jh0801.jung@samsung.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20230825215445.28309-1-semen.protsenko@linaro.org>
+ <6fd3a9ab-667d-934b-f1c2-03776be93d4d@linaro.org>
+ <CAPLW+4njcwODXoA3Gj=48E-DPOqofcPnJkYMv6yzF5JjyOshDA@mail.gmail.com>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <CAPLW+4njcwODXoA3Gj=48E-DPOqofcPnJkYMv6yzF5JjyOshDA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Aug 26, 2023 at 1:10=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 25/08/2023 23:54, Sam Protsenko wrote:
-> > This patch series enables USB gadget, USB host and Ethernet support for
-> > E850-96 board. The most major change was done in USB PHY driver, as the
-> > register layout of PHY block in Exynos850 is very different from
-> > Exynos5 one.
-> >
-> > Changes in v2:
->
-> Thank you for the patch. Looks good.
-> It is too late in the cycle for me to pick it up. I will take it after
-> the merge window.
->
+On 30/08/2023 02:44, Sam Protsenko wrote:
+> On Sat, Aug 26, 2023 at 1:10 PM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>>
+>> On 25/08/2023 23:54, Sam Protsenko wrote:
+>>> This patch series enables USB gadget, USB host and Ethernet support for
+>>> E850-96 board. The most major change was done in USB PHY driver, as the
+>>> register layout of PHY block in Exynos850 is very different from
+>>> Exynos5 one.
+>>>
+>>> Changes in v2:
+>>
+>> Thank you for the patch. Looks good.
+>> It is too late in the cycle for me to pick it up. I will take it after
+>> the merge window.
+>>
+> 
+> Thanks, Krzysztof! So we can expect these to get into v6.6, correct?
 
-Thanks, Krzysztof! So we can expect these to get into v6.6, correct?
-Also, I'm trying to keep track of all my patches, so please let me
-know if you are going to apply this series to your trees soon, and
-which exactly (I presume krzk/linux-dt.git/for-next?).
+No, this is v6.6 merge window and it already started. I will take it
+after, thus v6.7.
 
-> Best regards,
-> Krzysztof
->
+> Also, I'm trying to keep track of all my patches, so please let me
+> know if you are going to apply this series to your trees soon, and
+> which exactly (I presume krzk/linux-dt.git/for-next?).
+
+I always send confirmation of applied patches with reference to repo and
+commit (although not branch).
+
+Best regards,
+Krzysztof
+
