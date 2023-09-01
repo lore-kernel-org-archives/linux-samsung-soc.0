@@ -2,154 +2,227 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 068DBCA0FE5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Sep 2023 15:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB87CA0FF6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Sep 2023 23:43:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237564AbjIAPfM (ORCPT
+        id S1351273AbjIAXnm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 1 Sep 2023 11:35:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36920 "EHLO
+        Fri, 1 Sep 2023 19:43:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241228AbjIAPfL (ORCPT
+        with ESMTP id S1351083AbjIAXnk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 1 Sep 2023 11:35:11 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5BD910CF
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Sep 2023 08:35:07 -0700 (PDT)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230901153503epoutp023cb134d8005a956d0c25fe30963b7da1~A0FB7kyN53007030070epoutp02c
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Sep 2023 15:35:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230901153503epoutp023cb134d8005a956d0c25fe30963b7da1~A0FB7kyN53007030070epoutp02c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1693582504;
-        bh=aOlYQ5cBte/JzMksONmfKqcJOHs9+CZOZVn/iaN6WH4=;
-        h=From:To:In-Reply-To:Subject:Date:References:From;
-        b=nWbLvm2Z44V6o7tMidoCp2zpPx4RUMcSVCRPvEiELd+1QpjxrEHEiTrCBfnAQQ1z3
-         ZBmfA6FjZf/d4XxaphVHS5uiMWJUnHr60e8yrKKzFtSDNjvPcE0Gj01gtL6LOjXdWi
-         JZbIneLUQAvBx1kVLkK70cphI/Xdg1WYYE8h5SZA=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20230901153503epcas5p17aada13e7e175c5d6358b274d0e96509~A0FBdLNAd2796027960epcas5p12;
-        Fri,  1 Sep 2023 15:35:03 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.174]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4RchtG2gYYz4x9Pr; Fri,  1 Sep
-        2023 15:35:02 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9A.E6.09949.6A402F46; Sat,  2 Sep 2023 00:35:02 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20230901153501epcas5p471785b05f3bdb4acdb27ff402cf3f331~A0E-ap-3V2822928229epcas5p45;
-        Fri,  1 Sep 2023 15:35:01 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230901153501epsmtrp24014501e2a47447fb5e3085742fe4549~A0E-X_SLI2406224062epsmtrp2S;
-        Fri,  1 Sep 2023 15:35:01 +0000 (GMT)
-X-AuditID: b6c32a49-bd9f8700000026dd-4d-64f204a676dc
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3B.A2.08788.5A402F46; Sat,  2 Sep 2023 00:35:01 +0900 (KST)
-Received: from alimakhtar04 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230901153459epsmtip214e46d6101a491878b35aeda8143695d~A0E_Ds1bQ1862818628epsmtip2U;
-        Fri,  1 Sep 2023 15:34:59 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <arm@kernel.org>, <soc@kernel.org>,
-        "'Arnd Bergmann'" <arnd@arndb.de>,
-        "'Olof Johansson'" <olof@lixom.net>
-In-Reply-To: <20230901115732.45854-1-krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH] arm64: defconfig: enable syscon-poweroff driver
-Date:   Fri, 1 Sep 2023 21:04:58 +0530
-Message-ID: <000401d9dce9$ded545f0$9c7fd1d0$@samsung.com>
+        Fri, 1 Sep 2023 19:43:40 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1002E1737
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Sep 2023 16:43:00 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-68a3e271491so1916360b3a.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Sep 2023 16:43:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1693611745; x=1694216545; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B9XoCDC9hhqnTfSWxv39xNaYsVGjr9sqIdwDF3cygwY=;
+        b=EJFbu+Co2SmIXC4xt4ddhfP62SSmhPMlIudfU5pVn/dB3BTGMpkCF86aKayMRh45n+
+         RnfwXDmW/DkUBkT7smLfMB2BeYK1cR49YCybRwO4cKdgIN5ub3K0qeF5ZCuuY6ELz9zR
+         +E9rLa1Wl5evrqncQBmsnzm9qxhgQoJRDkIpw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693611745; x=1694216545;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B9XoCDC9hhqnTfSWxv39xNaYsVGjr9sqIdwDF3cygwY=;
+        b=AiKLqfd/ptTsbAVPBaQE6uMQCqx3UMCDu5xWH3HFs76v+TuXglf6Od5HxIiVjY+9GO
+         /jb0hclyXLgnQ+EaCauHaYPc+RlqfJRKEjuTx25f+zt39HNzJ1lDJS95lJgWSCPEbPg2
+         zgNWLedSkPeHhTjfXTetNfHkfwLlaBoDHeTqJY7/MNvsrv3ENtrZXk9Rrtr9nSLoLLTV
+         5vGZ3sXZaIsu5EqisaODl09MNbTZ408Q+EATDDSvg5qUeVwqA0c6zjcuelfHdjkTX6Y+
+         uEOhLWLuweSO1yt4uXsMPzWt57SGrrq1weMcPO1kCashrQyGKpVXCegp9whbTq8W7Id1
+         KY/g==
+X-Gm-Message-State: AOJu0Yx020jNSoNruT9ICx48iyfRMvbvNV5bQNf1qRMGxpbyPN00wAjJ
+        Gvn55n9hsSjdoGo90eJpoecvNw==
+X-Google-Smtp-Source: AGHT+IF3gOcPwfPrD/s0fytOUG/vRSOI4D+jnCuIcvxglrqeHeLMaTT6rOOv/A4qBfa/r+8zKOWj4g==
+X-Received: by 2002:a05:6a00:1916:b0:68b:fb93:5b4e with SMTP id y22-20020a056a00191600b0068bfb935b4emr4542619pfi.26.1693611745505;
+        Fri, 01 Sep 2023 16:42:25 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:9d:2:8d94:1fc5:803c:41cc])
+        by smtp.gmail.com with ESMTPSA id o9-20020a639a09000000b0056c3a4a3ca5sm3326390pge.36.2023.09.01.16.42.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Sep 2023 16:42:24 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Bokun.Zhang@amd.com, Hawking.Zhang@amd.com, James.Zhu@amd.com,
+        Sascha Hauer <s.hauer@pengutronix.de>, Victor.Zhao@amd.com,
+        Xinhui.Pan@amd.com, YiPeng.Chai@amd.com, abrodkin@synopsys.com,
+        airlied@gmail.com, alexander.deucher@amd.com,
+        alim.akhtar@samsung.com, amd-gfx@lists.freedesktop.org,
+        angelogioacchino.delregno@collabora.com,
+        anitha.chrisanthus@intel.com, biju.das.jz@bp.renesas.com,
+        bskeggs@redhat.com, christian.koenig@amd.com,
+        chunkuang.hu@kernel.org, daniel@ffwll.ch, edmund.j.dea@intel.com,
+        festevam@gmail.com, geert+renesas@glider.be, inki.dae@samsung.com,
+        jonathanh@nvidia.com, kernel@pengutronix.de, kherbst@redhat.com,
+        kieran.bingham+renesas@ideasonboard.com,
+        krzysztof.kozlowski@linaro.org, kyungmin.park@samsung.com,
+        l.stach@pengutronix.de, laurent.pinchart@ideasonboard.com,
+        laurentiu.palcu@oss.nxp.com, le.ma@amd.com, lijo.lazar@amd.com,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux@armlinux.org.uk, liviu.dudau@arm.com, lyude@redhat.com,
+        maarten.lankhorst@linux.intel.com, mario.limonciello@amd.com,
+        matthias.bgg@gmail.com, mdaenzer@redhat.com, mperttunen@nvidia.com,
+        nouveau@lists.freedesktop.org, orsonzhai@gmail.com,
+        p.zabel@pengutronix.de, patrik.r.jakobsson@gmail.com,
+        paul@crapouillou.net, rfoss@kernel.org, robh@kernel.org,
+        sam@ravnborg.org, shawnguo@kernel.org, shiwu.zhang@amd.com,
+        srinivasan.shanmugam@amd.com, steven.price@arm.com,
+        sw0312.kim@samsung.com, thierry.reding@gmail.com,
+        tzimmermann@suse.de, zhang.lyra@gmail.com
+Subject: [RFT PATCH 00/15] drm: non-drm-misc drivers call drm_atomic_helper_shutdown() at the right times
+Date:   Fri,  1 Sep 2023 16:41:11 -0700
+Message-ID: <20230901234202.566951-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.42.0.283.g2d96d420d3-goog
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJpw2blY2KnWiSxJ1DezFvi/M20/AGXv2sKrtmOvbA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBJsWRmVeSWpSXmKPExsWy7bCmhu4ylk8pBtemCFsc+7KFzeLvpGPs
-        FvOPnGO12Pt6K7vFpsfXWC0u75rDZjHj/D4mi1PXP7NZPL7+h82B0+P3r0mMHptWdbJ53Lm2
-        h81j85J6jysnmlg9Pm+SC2CLyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LI
-        S8xNtVVy8QnQdcvMATpKSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgUqBXnJhb
-        XJqXrpeXWmJlaGBgZApUmJCdMedXF1vBE66KR4v2MzUwruXsYuTkkBAwkWhvvMDWxcjFISSw
-        m1Gid/YVFgjnE6PEk7f7mSGcb4wSM669YoVpefBpBxOILSSwl1Hi/fREiKKXjBKfbrYygyTY
-        BHQldixuA5srIrCbSeLzxw3sIAlOAReJXduXgBUJA9lfJ3wFm8oioCKxuOkYC4jNK2ApcXHR
-        SSYIW1Di5MwnYHFmAXmJ7W/nMENcoSDx8+kysF4RASuJ3bduMkLUiEu8PHqEHaJmIYfEw99c
-        ELaLxO6Du6B6hSVeHd8CVSMl8fndXqBDOYBsD4lFf6QgwhkSb5evZ4Sw7SUOXJnDAlLCLKAp
-        sX6XPsQmPone30+YIDp5JTrahCCqVSWa311lgbClJSZ2d0ODzUNiU/M0aEhPZ5RY1H+CZQKj
-        wiwkT85C8uQsJM/MQti8gJFlFaNkakFxbnpqsWmBYV5qOTy+k/NzNzGCk6yW5w7Guw8+6B1i
-        ZOJgPMQowcGsJMIba/YuRYg3JbGyKrUoP76oNCe1+BCjKTDkJzJLiSbnA9N8Xkm8oYmlgYmZ
-        mZmJpbGZoZI47+vWuSlCAumJJanZqakFqUUwfUwcnFINTJV3lq6emy1z2l5jwZFOHddtIpPZ
-        zc4uX3hi5srpoTd/spyNScrneR4WI/NY+srmLZPCDqpHr98uNzE69uDJL+afYhf++ZA0M9lr
-        afcqv8Yinu/t7zZ93lgWYdFdoOSiMKNerOWo/0P1OinhdXVrb7AvFBBs3e8S7XXZ99+Hy/kr
-        li+5Ytbgvz5/zjq+rixdr+7T6QrxzNmBO25+tecWbJX+5lny9Mnvwl/fd9sLRMWobd/scGft
-        JP4b35WcY7ynyfPURrmv4mowY879tv60/3LV69dY14rvvnrfTGqFmY7zmgezeNb2yy2bbjBP
-        aOe2s5836jiWqtelps0zeXiV0zVo9rMHW6xSn1s0VhZZ2SuxFGckGmoxFxUnAgBGyLLsOwQA
-        AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphkeLIzCtJLcpLzFFi42LZdlhJXncpy6cUg+vP2C2OfdnCZvF30jF2
-        i/lHzrFa7H29ld1i0+NrrBaXd81hs5hxfh+Txanrn9ksHl//w+bA6fH71yRGj02rOtk87lzb
-        w+axeUm9x5UTTawenzfJBbBFcdmkpOZklqUW6dslcGXM+dXFVvCEq+LRov1MDYxrObsYOTkk
-        BEwkHnzawQRiCwnsZpRY89gNIi4tcX3jBHYIW1hi5b/nQDYXUM1zRolZf26ygCTYBHQldixu
-        YwNJiAgcZpLobbjOClE1lVFi/dftrCBVnAIuEru2L2EGsYWB7K8TvoLFWQRUJBY3HQObxCtg
-        KXFx0UkmCFtQ4uTMJ0BxDg5mAT2Jto2MIGFmAXmJ7W/nMENcpCDx8+kysDEiAlYSu2/dhKoR
-        l3h59Aj7BEahWUgmzUKYNAvJpFlIOhYwsqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/d
-        xAiOKC2tHYx7Vn3QO8TIxMF4iFGCg1lJhDfW7F2KEG9KYmVValF+fFFpTmrxIUZpDhYlcd5v
-        r3tThATSE0tSs1NTC1KLYLJMHJxSDUzq3wPXLzzzc6LDi6ka34uZmK59WezeHtTy++60U6ev
-        F3/SXn9ad/WUbdkbXyztEXu0db8Rv/0EFSEpzT9f+UMXFc/mb33U1bfmX9mJ+ZJNaXESn2Sd
-        shJN4y5ocDEruK9RlrGUfms0/4bXl2lf22t+beh92vw80CpsxZw/MqmN5t8iah+Zb78aOTeU
-        5YCO55577bfUD2QHVS3Mmxr57ET0XY+NC7pWnGq4JFmm8CvIg9t5tulN1uOl1uc2vGScxv3T
-        io0lcsHe7l85152nNCXmcxzmDHt0kV8knOWqS+POe3Ii2lnZW3Z+smR7Zy/c+zSoKibkRa1C
-        jszl7TKvE5a/z7qQqbC2gl/6yRVd3pdKLMUZiYZazEXFiQBKg3yKFwMAAA==
-X-CMS-MailID: 20230901153501epcas5p471785b05f3bdb4acdb27ff402cf3f331
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230901115741epcas5p185b55c93ec71163e618a5a70b141800c
-References: <CGME20230901115741epcas5p185b55c93ec71163e618a5a70b141800c@epcas5p1.samsung.com>
-        <20230901115732.45854-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Sent: Friday, September 1, 2023 5:28 PM
-> To: Alim Akhtar <alim.akhtar@samsung.com>; devicetree@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
-> linux-kernel@vger.kernel.org; arm@kernel.org; soc@kernel.org; Arnd
-> Bergmann <arnd@arndb.de>; Olof Johansson <olof@lixom.net>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Subject: [PATCH] arm64: defconfig: enable syscon-poweroff driver
-> 
-> Enable the generic syscon-poweroff driver used on all Exynos ARM64 SoCs
-> (e.g. Exynos5433) and few APM SoCs.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+NOTE: in order to avoid email sending limits on the cover letter, I've
+split this patch series in two. Patches that target drm-misc and ones
+that don't. The cover letter of the two is identical other than this note.
 
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 5315789f4868..ec59174b14db 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -636,6 +636,7 @@ CONFIG_POWER_RESET_MSM=y
-> CONFIG_POWER_RESET_QCOM_PON=m  CONFIG_POWER_RESET_XGENE=y
-> CONFIG_POWER_RESET_SYSCON=y
-> +CONFIG_POWER_RESET_SYSCON_POWEROFF=y
->  CONFIG_SYSCON_REBOOT_MODE=y
->  CONFIG_NVMEM_REBOOT_MODE=m
->  CONFIG_BATTERY_SBS=m
-> --
-> 2.34.1
+This patch series came about after a _long_ discussion between me and
+Maxime Ripard in response to a different patch I sent out [1]. As part
+of that discussion, we realized that it would be good if DRM drivers
+consistently called drm_atomic_helper_shutdown() properly at shutdown
+and driver remove time as it's documented that they should do. The
+eventual goal of this would be to enable removing some hacky code from
+panel drivers where they had to hook into shutdown themselves because
+the DRM driver wasn't calling them.
 
+It turns out that quite a lot of drivers seemed to be missing
+drm_atomic_helper_shutdown() in one or both places that it was
+supposed to be. This patch series attempts to fix all the drivers that
+I was able to identify.
+
+NOTE: fixing this wasn't exactly cookie cutter. Each driver has its
+own unique way of setting itself up and tearing itself down. Some
+drivers also use the component model, which adds extra fun. I've made
+my best guess at solving this and I've run a bunch of compile tests
+(specifically, allmodconfig for amd64, arm64, and powerpc). That being
+said, these code changes are not totally trivial and I've done zero
+real testing on them. Making these patches was also a little mind
+numbing and I'm certain my eyes glazed over at several points when
+writing them. What I'm trying to say is to please double-check that I
+didn't do anything too silly, like cast your driver's drvdata to the
+wrong type. Even better, test these patches!
+
+I've organized this series like this:
+1. One patch for all simple cases of just needing a call at shutdown
+   time for drivers that go through drm-misc.
+2. A separate patch for "drm/vc4", even though it goes through
+   drm-misc, since I wanted to leave an extra note for that one.
+3. Patches for drivers that just needed a call at shutdown time for
+   drivers that _don't_ go through drm-misc.
+4. Patches for the few drivers that had the call at shutdown time but
+   lacked it at remove time.
+5. One patch for all simple cases of needing a call at shutdown and
+   remove (or unbind) time for drivers that go through drm-misc.
+6. A separate patch for "drm/hisilicon/kirin", even though it goes
+   through drm-misc, since I wanted to leave an extra note for that
+   one.
+7. Patches for drivers that needed a call at shutdown and remove (or
+   unbind) time for drivers that _don't_ go through drm-misc.
+
+I've labeled this patch series as RFT (request for testing) to help
+call attention to the fact that I didn't personally test any of these
+patches.
+
+If you're a maintainer of one of these drivers and you think that the
+patch for your driver looks fabulous, you've tested it, and you'd like
+to land it right away then please do. For non-drm-misc drivers there
+are no dependencies here. Some of the drm-misc drivers depend on the
+first patch, AKA ("drm/atomic-helper: drm_atomic_helper_shutdown(NULL)
+should be a noop"). I've tried to call this out but it also should be
+obvious once you know to look for it.
+
+I'd like to call out a few drivers that I _didn't_ fix in this series
+and why. If any of these drivers should be fixed then please yell.
+- DRM driers backed by usb_driver (like gud, gm12u320, udl): I didn't
+  add the call to drm_atomic_helper_shutdown() at shutdown time
+  because there's no ".shutdown" callback for them USB drivers. Given
+  that USB is hotpluggable, I'm assuming that they are robust against
+  this and the special shutdown callback isn't needed.
+- ofdrm and simpledrm: These didn't have drm_atomic_helper_shutdown()
+  in either shutdown or remove, but I didn't add it. I think that's OK
+  since they're sorta special and not really directly controlling
+  hardware power sequencing.
+- virtio, vkms, vmwgfx, xen: I believe these are all virtual (thus
+  they wouldn't directly drive a panel) and adding the shutdown
+  didn't look straightforward, so I skipped them.
+
+I've let each patch in the series get CCed straight from
+get_maintainer. That means not everyone will have received every patch
+but everyone should be on the cover letter. I know some people dislike
+this but when touching this many drivers there's not much
+choice. dri-devel and lkml have been CCed and lore/lei exist, so
+hopefully that's enough for folks. I'm happy to add people to the
+whole series for future posts.
+
+[1] https://lore.kernel.org/lkml/20230804140605.RFC.4.I930069a32baab6faf46d6b234f89613b5cec0f14@changeid
+
+
+Douglas Anderson (15):
+  drm/armada: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/imx/dcss: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/ingenic: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/kmb: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/mediatek: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/nouveau: Call drm_atomic_helper_shutdown() or equiv at shutdown
+    time
+  drm/tegra: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/arcpgu: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/amdgpu: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/sprd: Call drm_atomic_helper_shutdown() at remove time
+  drm/exynos: Call drm_atomic_helper_shutdown() at shutdown/unbind time
+  drm/gma500: Call drm_helper_force_disable_all() at shutdown/remove
+    time
+  drm/imx/ipuv3: Call drm_atomic_helper_shutdown() at shutdown/unbind
+    time
+  drm/radeon: Call drm_helper_force_disable_all() at shutdown/remove
+    time
+  drm/renesas/shmobile: Call drm_helper_force_disable_all() at
+    shutdown/remove time
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu.h           |  1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c    | 10 +++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c       |  2 +
+ drivers/gpu/drm/armada/armada_drv.c           |  8 +++
+ drivers/gpu/drm/exynos/exynos_drm_drv.c       | 11 ++++
+ drivers/gpu/drm/gma500/psb_drv.c              |  8 +++
+ drivers/gpu/drm/imx/dcss/dcss-drv.c           |  8 +++
+ drivers/gpu/drm/imx/dcss/dcss-kms.c           |  7 ++
+ drivers/gpu/drm/imx/dcss/dcss-kms.h           |  1 +
+ drivers/gpu/drm/imx/ipuv3/imx-drm-core.c      | 11 ++++
+ drivers/gpu/drm/ingenic/ingenic-drm-drv.c     | 66 ++++++++++++-------
+ drivers/gpu/drm/kmb/kmb_drv.c                 |  6 ++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c        |  9 +++
+ drivers/gpu/drm/nouveau/nouveau_display.c     |  9 +++
+ drivers/gpu/drm/nouveau/nouveau_display.h     |  1 +
+ drivers/gpu/drm/nouveau/nouveau_drm.c         | 13 ++++
+ drivers/gpu/drm/nouveau/nouveau_drv.h         |  1 +
+ drivers/gpu/drm/nouveau/nouveau_platform.c    |  6 ++
+ drivers/gpu/drm/radeon/radeon_drv.c           |  7 +-
+ .../gpu/drm/renesas/shmobile/shmob_drm_drv.c  | 10 +++
+ drivers/gpu/drm/sprd/sprd_drm.c               |  4 +-
+ drivers/gpu/drm/tegra/drm.c                   |  6 ++
+ drivers/gpu/drm/tiny/arcpgu.c                 |  6 ++
+ 23 files changed, 187 insertions(+), 24 deletions(-)
+
+-- 
+2.42.0.283.g2d96d420d3-goog
 
