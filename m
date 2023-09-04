@@ -2,94 +2,67 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8423EC71153
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Sep 2023 20:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22CEBC71153
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Sep 2023 07:55:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238123AbjICUXp (ORCPT
+        id S1352469AbjIDHzH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 3 Sep 2023 16:23:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57008 "EHLO
+        Mon, 4 Sep 2023 03:55:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232437AbjICUXo (ORCPT
+        with ESMTP id S229541AbjIDHzE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 3 Sep 2023 16:23:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B6BBF7;
-        Sun,  3 Sep 2023 13:23:42 -0700 (PDT)
+        Mon, 4 Sep 2023 03:55:04 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47887138;
+        Mon,  4 Sep 2023 00:54:55 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8867460BEF;
-        Sun,  3 Sep 2023 20:23:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BCADC433C8;
-        Sun,  3 Sep 2023 20:23:39 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E5E46B80D77;
+        Mon,  4 Sep 2023 07:54:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DACFC433CA;
+        Mon,  4 Sep 2023 07:54:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693772620;
-        bh=dGeWDYffGXpYdRIjbzwkZnHNen8yfRyoIpJPK7mrlhg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bmU7K7ryj4099spbk1nlKsJGrrwvu4a/0ZewREUVQM+JubSpMcHS0qUj1Nkm9HC5o
-         W2d7dRcCMOvZV5TTe4+AMNxD6aIgST2SUeFSq1Mt48Mv4/nEmsRJ6GBnRoJnAcomwj
-         ka8BAfJJf2I6CtiTRaZjNu2HeRZFt+H2G9ku7JfZ2E5+dgiLnmel0jxkzHHzCCVXcU
-         Xjm/jLj8YuB6wYcVW4B1sH0QSLoIyF+XKMzVmZW8bFATS5Ga3StVNrjz+3pXoiX9eo
-         m/blwEZR4ZCqVyPOWe8jIVZu9eVG7Dnqkczd+HSlcT8XmNpyEGaoeI61ne0w/S/zhq
-         vXpEBs1ErC1Iw==
-Date:   Sun, 3 Sep 2023 22:23:36 +0200
-From:   Andi Shyti <andi.shyti@kernel.org>
-To:     Katya Orlova <e.orlova@ispras.ru>
-Cc:     Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH] media: s3c-camif: Avoid inappropriate kfree()
-Message-ID: <20230903202336.qjdg6zw6otig2qdv@zenone.zhora.eu>
-References: <20230824090725.28148-1-e.orlova@ispras.ru>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230824090725.28148-1-e.orlova@ispras.ru>
+        s=k20201202; t=1693814092;
+        bh=xc2YozwhEL1/YHfZS9+Y6217G0tcKGwiBjaWl0K5Cyk=;
+        h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+        b=jKFwPbfSBENdrDNjfQ8bpT1Dix0QCVFSi5ovbrgJS0uEVftPoNyXoUuP6gVc9JunW
+         FHGntM8knG/xiqDkWNCs2cyl3eqPYwm0MqApy2EWxZqYFItZ231AtG+GYiTzaus5Z9
+         CL3JV0sbNTvw+oytnh6OtoqVZjB+qbhDnZmKex3uq9ym3hakXR1HyL1trh0iOBgYG0
+         BL8IBJUYCFPS//OQ+OgdVDkCD35Hd9RNIuiXg0VRqqaz6GXuQ5esDAUBCuUSmyJqSO
+         gv7QrMhn6gM/bUDaK/+6PF9HJGdh6qqK1W3og5GwMglhsxPp9q/bWUrSUE0cL4a8eD
+         39zB18X/OK3yQ==
+Message-ID: <22638b6d731fdcb29367c90461cf0154.mripard@kernel.org>
+Date:   Mon, 04 Sep 2023 07:54:50 +0000
+From:   "Maxime Ripard" <mripard@kernel.org>
+To:     "Douglas Anderson" <dianders@chromium.org>
+Subject: Re: [RFT PATCH 11/15] drm/exynos: Call drm_atomic_helper_shutdown()
+ at shutdown/unbind time
+In-Reply-To: <20230901164111.RFT.11.Iea33274908b6b258955f45a8aaf6f5bba24ad6cd@changeid>
+References: <20230901164111.RFT.11.Iea33274908b6b258955f45a8aaf6f5bba24ad6cd@changeid>
+Cc:     airlied@gmail.com, alim.akhtar@samsung.com, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org, inki.dae@samsung.com,
+        krzysztof.kozlowski@linaro.org, kyungmin.park@samsung.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com,
+        "Maxime Ripard" <mripard@kernel.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Katya,
-
-On Thu, Aug 24, 2023 at 12:07:25PM +0300, Katya Orlova wrote:
-> s3c_camif_register_video_node() works with video_device structure stored
-> as a field of camif_vp,
-> so it should not be kfreed. But there is video_device_release() on error
-> path that do it.
-
-that's correct, the video_device is allocated with the camif_dev
-allocation.
-
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+On Fri, 1 Sep 2023 16:41:22 -0700, Douglas Anderson wrote:
+> Based on grepping through the source code this driver appears to be
+> missing a call to drm_atomic_helper_shutdown() at system shutdown time
+> and at driver unbind time. Among other things, this means that if a
+> panel is in use that it won't be cleanly powered off at system
+> shutdown time.
 > 
-> Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
-> Signed-off-by: Katya Orlova <e.orlova@ispras.ru>
-> ---
->  drivers/media/platform/samsung/s3c-camif/camif-capture.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/samsung/s3c-camif/camif-capture.c b/drivers/media/platform/samsung/s3c-camif/camif-capture.c
-> index 76634d242b10..79c8ee845c38 100644
-> --- a/drivers/media/platform/samsung/s3c-camif/camif-capture.c
-> +++ b/drivers/media/platform/samsung/s3c-camif/camif-capture.c
-> @@ -1172,7 +1172,6 @@ int s3c_camif_register_video_node(struct camif_dev *camif, int idx)
->  err_me_cleanup:
->  	media_entity_cleanup(&vfd->entity);
->  err_vd_rel:
-> -	video_device_release(vfd);
+> [ ... ]
 
-The best fix, though, is to completely get rid of the
-"err_vd_rel" goto label. You mind doint that on a v2?
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
-Thanks,
-Andi
-
->  	return ret;
->  }
->  
-> -- 
-> 2.30.2
-> 
+Thanks!
+Maxime
