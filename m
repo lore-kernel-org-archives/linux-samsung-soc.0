@@ -2,32 +2,32 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A3EEEB56D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D108EEB56B
 	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Sep 2023 19:38:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239778AbjIHTiO (ORCPT
+        id S237372AbjIHTiN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 8 Sep 2023 15:38:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53218 "EHLO
+        Fri, 8 Sep 2023 15:38:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230384AbjIHThW (ORCPT
+        with ESMTP id S1345074AbjIHThc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 8 Sep 2023 15:37:22 -0400
+        Fri, 8 Sep 2023 15:37:32 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAAC7212A;
-        Fri,  8 Sep 2023 12:36:57 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C7DDC4163C;
-        Fri,  8 Sep 2023 19:36:50 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 062591704;
+        Fri,  8 Sep 2023 12:37:11 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1724EC433CB;
+        Fri,  8 Sep 2023 19:36:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694201812;
-        bh=SKtZBkIgwSXQzOLWVJokvcy5wPpU5mthvIS28XtE/xM=;
+        s=k20201202; t=1694201819;
+        bh=l05wLca+GLs2HPmojVCoJBmTQZU4/uSUnmvjn5E8K1o=;
         h=From:To:Cc:Subject:Date:From;
-        b=kIA9ZX0NCgdXM1uGRZE2RX9zlpVibn2dnVseF4IQ5qMqJrvs6TwqLJPcAXoSIK++V
-         cgRy5frNykdjhmMHa7WHiIvAx5S14jekUsxMwxVRAnqYhleqhAxXznX+Z/kPyEMuIV
-         Bjlfp55s7ZGi46B4QM2quETCC1izu2gW/hu4DgKGT9XFI+SIUKtipDFRhdUmiKdr2x
-         mKxGw3uxJuaahZrfEDauD36CEJxKX9B23kvH9OBXlmGnVfN2kZJ/1QeqQOgGdqBS+L
-         pnT1yTf0VDUjbulEQrWYzmuy3vNxdVkZcwGQ7pKGW6cQtqc/AiyKzBL5rf6v2khu9S
-         FBbbaRV92L4Ng==
+        b=NogmhBzK42et/A66vkzZzTT2ngv2ZxPEXJiVaf8EDc/5ekGepFRSJ20evHhb+V5qz
+         fcmXIO8MuHdz5lS/Cuqhv0HwogcxS5/lMKCSEnyR+TbcxPJ3SMeWLUWxqdBHYWSrVc
+         QesJoxxFmymsZdVA+16lKcxJhfTm4ljEk1pGj0bW+2WNOLkGXzVa1Ct6Dg2x5C7Bsl
+         FSzUTVCxAGtMcUmLY3f/VkuJ/+fIWvFiZjqVovz8n5LGFducLVpnd9XCP7CZbsONDG
+         YZdl26tjsJq/RS+EZ3SMQ0esH+2pBmToUt/5/jgrC12CBLwafdxy/nMCToIMXHPElh
+         r408uJBdr+feg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Tuo Li <islituo@gmail.com>, BassCheck <bass@buaa.edu.cn>,
@@ -38,14 +38,14 @@ Cc:     Tuo Li <islituo@gmail.com>, BassCheck <bass@buaa.edu.cn>,
         dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 1/3] drm/exynos: fix a possible null-pointer dereference due to data race in exynos_drm_crtc_atomic_disable()
-Date:   Fri,  8 Sep 2023 15:36:46 -0400
-Message-Id: <20230908193648.3464004-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 1/3] drm/exynos: fix a possible null-pointer dereference due to data race in exynos_drm_crtc_atomic_disable()
+Date:   Fri,  8 Sep 2023 15:36:53 -0400
+Message-Id: <20230908193656.3464052-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.294
+X-stable-base: Linux 4.14.325
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -84,7 +84,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 2696289ecc78f..b3e23ace5869c 100644
+index 4787560bf93e7..e1aa518ea0ba1 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
 @@ -43,13 +43,12 @@ static void exynos_drm_crtc_atomic_disable(struct drm_crtc *crtc,
