@@ -2,65 +2,109 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9491BC83F2C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Sep 2023 16:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FE9EEB56B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Sep 2023 19:32:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244083AbjIEQ1F (ORCPT
+        id S234676AbjIHTcp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:27:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33588 "EHLO
+        Fri, 8 Sep 2023 15:32:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354083AbjIEJfU (ORCPT
+        with ESMTP id S1344833AbjIHTcn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 5 Sep 2023 05:35:20 -0400
-X-Greylist: delayed 4341 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Sep 2023 02:35:17 PDT
-Received: from mail.equinoxrise.pl (mail.equinoxrise.pl [217.61.112.157])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AACB1A8
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Sep 2023 02:35:17 -0700 (PDT)
-Received: by mail.equinoxrise.pl (Postfix, from userid 1002)
-        id BDBE38367F; Mon,  4 Sep 2023 09:41:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=equinoxrise.pl;
-        s=mail; t=1693813345;
-        bh=v6OgBfK5dN7P5dQ0wCu59rOfZaiqziJeLNblJ8dOcGI=;
-        h=Date:From:To:Subject:From;
-        b=HqgA/dvN13rpqXWGjVrZ714t43mgCVv5zfjFYsylnVvOggHrXxZaVl6DmgzmVshpB
-         iJ1+8LxTyiRSenm4Fsuv1dmZqEGJgGFWghAQA3USbPpCvEvtwTaYUjHgW7TPqZEGSN
-         +9gfBs3JoKI631fcQ6RLEpYNWHsqIOnbvHN+2nzFNdyQdc+fJX4yxc8TaL54/xE+Lm
-         ticQbxr4TMjfp5drVwqGtpbYVmv7y1FmGVUmHH/d7PZqHP1aoDtjvSpi1j0ILs6Kuh
-         7r1VtmK5fo8hkm2IjnBopsI5MkqiHFbVrdNsPtvk565G7Zc6dj+87m5JphDjtbHdhu
-         lcPzWazyqA8dQ==
-Received: by mail.equinoxrise.pl for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Sep 2023 07:40:34 GMT
-Message-ID: <20230904084500-0.1.7.rjr.0.gihj1xl4dn@equinoxrise.pl>
-Date:   Mon,  4 Sep 2023 07:40:34 GMT
-From:   "Mateusz Talaga" <mateusz.talaga@equinoxrise.pl>
-To:     <linux-samsung-soc@vger.kernel.org>
-Subject: Prezentacja
-X-Mailer: mail.equinoxrise.pl
+        Fri, 8 Sep 2023 15:32:43 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B8981717;
+        Fri,  8 Sep 2023 12:32:16 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D446C433CC;
+        Fri,  8 Sep 2023 19:31:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694201489;
+        bh=QPi7U8LFYJTn90nKMCS6rP5mjt7sQN4sOXteL2xyPXs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Qb6UED9gVl7k31TabxaCNKepskjH4eYh6Z9ySPH699yGh9/69qSwBuEqmQH5gTCaM
+         +7oh8HD56o4qq5WFV0nKZS6SsL9wNTTq8ClL9VePXNlopyUdU0MUc1uMnmccmjdY32
+         ayYqjq8YSlpF4+ovSHSZJCOolXhARRYmXkuGGVBaVF3Q+66oQh1Xq029jPT+Y41YXh
+         BWSgMHHIyFyvI2g5W4yktY1cSvvcDaHTtt6PnWTpGRF3QR4TmiBQunXwh//C+EWzdR
+         ZnPiP/GO3+iZLXV1PnPQ/0f8D33htHKW9dUAjgAnprckyj762ZrWKAoKhr1LmqGWA/
+         n2iF9K4dHB3Pw==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Tuo Li <islituo@gmail.com>, BassCheck <bass@buaa.edu.cn>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Sasha Levin <sashal@kernel.org>, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, airlied@gmail.com, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.5 26/36] drm/exynos: fix a possible null-pointer dereference due to data race in exynos_drm_crtc_atomic_disable()
+Date:   Fri,  8 Sep 2023 15:28:37 -0400
+Message-Id: <20230908192848.3462476-26-sashal@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230908192848.3462476-1-sashal@kernel.org>
+References: <20230908192848.3462476-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.5.2
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Dzie=C5=84 dobry!
+From: Tuo Li <islituo@gmail.com>
 
-Czy m=C3=B3g=C5=82bym przedstawi=C4=87 rozwi=C4=85zanie, kt=C3=B3re umo=C5=
-=BCliwia monitoring ka=C5=BCdego auta w czasie rzeczywistym w tym jego po=
-zycj=C4=99, zu=C5=BCycie paliwa i przebieg?
+[ Upstream commit 2e63972a2de14482d0eae1a03a73e379f1c3f44c ]
 
-Dodatkowo nasze narz=C4=99dzie minimalizuje koszty utrzymania samochod=C3=
-=B3w, skraca czas przejazd=C3=B3w, a tak=C5=BCe tworzenie planu tras czy =
-dostaw.
+The variable crtc->state->event is often protected by the lock
+crtc->dev->event_lock when is accessed. However, it is accessed as a
+condition of an if statement in exynos_drm_crtc_atomic_disable() without
+holding the lock:
 
-Z naszej wiedzy i do=C5=9Bwiadczenia korzysta ju=C5=BC ponad 49 tys. Klie=
-nt=C3=B3w. Monitorujemy 809 000 pojazd=C3=B3w na ca=C5=82ym =C5=9Bwiecie,=
- co jest nasz=C4=85 najlepsz=C4=85 wizyt=C3=B3wk=C4=85.
+  if (crtc->state->event && !crtc->state->active)
 
-Bardzo prosz=C4=99 o e-maila zwrotnego, je=C5=9Bli mogliby=C5=9Bmy wsp=C3=
-=B3lnie om=C3=B3wi=C4=87 potencja=C5=82 wykorzystania takiego rozwi=C4=85=
-zania w Pa=C5=84stwa firmie.
+However, if crtc->state->event is changed to NULL by another thread right
+after the conditions of the if statement is checked to be true, a
+null-pointer dereference can occur in drm_crtc_send_vblank_event():
 
+  e->pipe = pipe;
 
-Pozdrawiam
-Mateusz Talaga
+To fix this possible null-pointer dereference caused by data race, the
+spin lock coverage is extended to protect the if statement as well as the
+function call to drm_crtc_send_vblank_event().
+
+Reported-by: BassCheck <bass@buaa.edu.cn>
+Link: https://sites.google.com/view/basscheck/home
+Signed-off-by: Tuo Li <islituo@gmail.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Added relevant link.
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 4153f302de7c4..d19e796c20613 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -39,13 +39,12 @@ static void exynos_drm_crtc_atomic_disable(struct drm_crtc *crtc,
+ 	if (exynos_crtc->ops->atomic_disable)
+ 		exynos_crtc->ops->atomic_disable(exynos_crtc);
+ 
++	spin_lock_irq(&crtc->dev->event_lock);
+ 	if (crtc->state->event && !crtc->state->active) {
+-		spin_lock_irq(&crtc->dev->event_lock);
+ 		drm_crtc_send_vblank_event(crtc, crtc->state->event);
+-		spin_unlock_irq(&crtc->dev->event_lock);
+-
+ 		crtc->state->event = NULL;
+ 	}
++	spin_unlock_irq(&crtc->dev->event_lock);
+ }
+ 
+ static int exynos_crtc_atomic_check(struct drm_crtc *crtc,
+-- 
+2.40.1
+
