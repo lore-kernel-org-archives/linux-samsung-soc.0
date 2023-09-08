@@ -2,32 +2,32 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C9A8EEB566
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Sep 2023 19:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 701A5EEB566
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Sep 2023 19:57:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240647AbjIHTr5 (ORCPT
+        id S236254AbjIHT5U (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 8 Sep 2023 15:47:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39724 "EHLO
+        Fri, 8 Sep 2023 15:57:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241668AbjIHTr4 (ORCPT
+        with ESMTP id S233042AbjIHT5T (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 8 Sep 2023 15:47:56 -0400
+        Fri, 8 Sep 2023 15:57:19 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55D20B4;
-        Fri,  8 Sep 2023 12:47:25 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1446CC433BF;
-        Fri,  8 Sep 2023 19:35:19 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B94099C;
+        Fri,  8 Sep 2023 12:57:15 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68450C433B6;
+        Fri,  8 Sep 2023 19:33:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694201721;
+        s=k20201202; t=1694201616;
         bh=QPi7U8LFYJTn90nKMCS6rP5mjt7sQN4sOXteL2xyPXs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qfBXAdK66kfxTcJW/owp3bOEyFhujYNy/cqpRds78zCBejMlsOCRJcCV9T9wwMQNK
-         x43Bcj9PfDOi6CukoV+Pn3F2Gd8+PXK/1j33rWhsKEpxTqxIytW1fWHhuClMuS1RkN
-         sYQmX61zkO8rVh5dBF1MeZSx6vu00Lv13SN6O366qwLlwHD7/Sc2hvjqm3JCwlEZ8c
-         kVg+k6FFbUKFB+DkiUwPM94nguwX1lLv71QwEdznKUNW61a2/pbOXysTRkjTPtZXbQ
-         vR5+h8bsfdDxJjS+OAGEyQFsh7kQe9r8KZ9jPmxJkW3AkqlXeGNyv/S6xIE3lN3MpB
-         SvaIhFhQ8zqOA==
+        b=jtXT+dGo+ut9kLhkUhMMvNABAfhhNCSUWFekLKe2c3Z7hRVSWhUVXC9nzG4W5MafZ
+         pTSxhmrdd39zHFHqkuDEwnyIX4/OK/M5HVQ79wP5Td5EE1SrITtGv+y9c0hOLFz6f5
+         CbvFaLm5aESnV+9ZwZSKiJmUF0z8LyP0iKoje6wTyHp+tyosQskPDD8VtnY1QOO76A
+         eBo8M2i9eW8gSE5bk2BiT8LRrcKQ04ezFZEgNAaKtY00nIugApRDeOhJbudoygCbGa
+         BUZxFhka9CpQ9ez2LlQSpMHKHDEq+1UAjntybtXBwd/agfrk1tP+LhNC/2C6Hto6gQ
+         vi/4FZq8c3NzQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Tuo Li <islituo@gmail.com>, BassCheck <bass@buaa.edu.cn>,
@@ -38,16 +38,16 @@ Cc:     Tuo Li <islituo@gmail.com>, BassCheck <bass@buaa.edu.cn>,
         dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 17/22] drm/exynos: fix a possible null-pointer dereference due to data race in exynos_drm_crtc_atomic_disable()
-Date:   Fri,  8 Sep 2023 15:34:01 -0400
-Message-Id: <20230908193407.3463368-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.4 21/31] drm/exynos: fix a possible null-pointer dereference due to data race in exynos_drm_crtc_atomic_disable()
+Date:   Fri,  8 Sep 2023 15:31:50 -0400
+Message-Id: <20230908193201.3462957-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230908193407.3463368-1-sashal@kernel.org>
-References: <20230908193407.3463368-1-sashal@kernel.org>
+In-Reply-To: <20230908193201.3462957-1-sashal@kernel.org>
+References: <20230908193201.3462957-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.52
+X-stable-base: Linux 6.4.15
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
