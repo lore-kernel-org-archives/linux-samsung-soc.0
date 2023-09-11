@@ -2,118 +2,100 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC8AFCA0ED2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A1DCA0EC0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:38:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348957AbjIKVb5 (ORCPT
+        id S1348979AbjIKVcC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:31:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41502 "EHLO
+        Mon, 11 Sep 2023 17:32:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236548AbjIKK4x (ORCPT
+        with ESMTP id S236915AbjIKLjk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 06:56:53 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AAF712A;
-        Mon, 11 Sep 2023 03:56:48 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38B59mU6027733;
-        Mon, 11 Sep 2023 10:56:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=DbnYX27WPooqna/K4n9yFhv6DuoLktOiurg8+HW7UGI=;
- b=G5lc/d51iVzsvPmXr7CNYQykOHM5hwP78PWa00A2V5HVsZ21mRvhpjfBIeJE87HTWCXc
- LpLD+88as51FWYpjaWAwzd2V9ubNo/8h0gFRWogr0AOJV7+fyxMa/xm4WcHJ/YygxVOH
- NW7vFbmruU7CUB1+1xYqcRloluySgFL9GQKwMv8sIqkBzKEH/pRe4g7k2rVhNCH8TFV6
- my0IYw/tqYm3Oj9wSNMi7WHbQvRhEuXs6e1Oa3MjJplo7YHNRcNjUDUW3JIN6SQbhWhn
- MHpiOC8rnmXp+lPqBX0ECaQ/alyQrYihmhWUm6wGa+KzGWnL4fYNNlT3W5VmQpzpgQRl GA== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t0gx9uj8e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 10:56:13 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAuCVv006051
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 10:56:13 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.36; Mon, 11 Sep 2023 03:55:54 -0700
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
-CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_mojha@quicinc.com>
-Subject: [REBASE PATCH v5 12/17] MAINTAINERS: Add entry for minidump related files
-Date:   Mon, 11 Sep 2023 16:23:54 +0530
-Message-ID: <1694429639-21484-13-git-send-email-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+        Mon, 11 Sep 2023 07:39:40 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38E8112E
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 04:39:36 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-5230a22cfd1so5548958a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 04:39:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694432374; x=1695037174; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NH52jm7IMEAL8WOz6GO3ZaoQovB8Mynr78vb+JMDDFY=;
+        b=dlsaDdLmTnO+W0e37aC6HgwwgZarPRRgTspzC1fN4w5DgQ+0cFNdeMzDxbS72s0Huk
+         3JZEVJwZqj4hcWLx6lHYojIuAXmSWTZNHoUAQEXIi1Vb8Bektaz2aZy/28ikywNUTBvP
+         JHblECpaQ6B+l6Yw53krsMwk52pHAhoxXCPfgaEsqxVNOcNAPbP0dF96FQXxG8kI/c+D
+         M9lg1uVpqUpEfm6afMhjQHOCX8QkzBBKSLYDMOu+B+vwv1ps9EP/Cj942BpuS+Lei3nG
+         MXdQX8FtVPt0WSrkvs2pr5AKU40908hFHgAY3lObRCsATw5MOjLdz/3BmQSaTY21uGN5
+         DK1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694432374; x=1695037174;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NH52jm7IMEAL8WOz6GO3ZaoQovB8Mynr78vb+JMDDFY=;
+        b=NYdSEBqqp7inbK/v/sv+gP2cUppT6yV4oFPIPEo/BXmsAXpamQJ8mm4ZNly8YEdc5q
+         rYyWVm+bQhr032D1slwODfxXyvdd446GJK2xlp1ByGhV9eny25M4brs0xApVjZwvbx8l
+         q4iTvll7OtuIosrXfq5AsHwq4+rizczwnFeRFDzypdPsC2oQlAJcK6C9uFqC0ETyaL5M
+         A/Ii+7vlqPfw1JzazNmJzYtvgPUr9jEgPTgztHwT6PZM0MHQT4TnObQH2+l3gzEo8bo7
+         2VH3ASAtHZ3AP/Js/Rgmq892IE377nNzQqNe+/60eiAvlet8QzO8+TtDF4+sIXkmrYDm
+         zgJw==
+X-Gm-Message-State: AOJu0YyqE+U0ieFhfXYV8QuxxxerWXR+CzMWd0jKGmJapiDCNGv4AV0Y
+        6ka+Cv/qhMtJ+lSUh3NW3n2CpA==
+X-Google-Smtp-Source: AGHT+IHQzJx0OOWqneHLnfwmUEWkbPQlTh6C51/9DolgrjBu0no1cVmvFHk2fPX1jxefFnGnxXt14A==
+X-Received: by 2002:aa7:d054:0:b0:522:b112:6254 with SMTP id n20-20020aa7d054000000b00522b1126254mr7592357edo.4.1694432374700;
+        Mon, 11 Sep 2023 04:39:34 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.214.188])
+        by smtp.gmail.com with ESMTPSA id g15-20020a056402180f00b00523b1335618sm4431003edy.97.2023.09.11.04.39.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Sep 2023 04:39:34 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        JaeHun Jung <jh0801.jung@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] arm64: dts: exynos: Enable USB for E850-96 board
+Date:   Mon, 11 Sep 2023 13:39:25 +0200
+Message-Id: <169443234709.34398.2292674968084168960.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230825215445.28309-1-semen.protsenko@linaro.org>
+References: <20230825215445.28309-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: YRrNlut77-pfb0Q7VO8KlYt01oytLrjs
-X-Proofpoint-GUID: YRrNlut77-pfb0Q7VO8KlYt01oytLrjs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=896 malwarescore=0
- suspectscore=0 adultscore=0 priorityscore=1501 impostorscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309110099
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add the entries into maintainer file for all the minidump related
-modules.
 
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On Fri, 25 Aug 2023 16:54:43 -0500, Sam Protsenko wrote:
+> This patch series enables USB gadget, USB host and Ethernet support for
+> E850-96 board. The most major change was done in USB PHY driver, as the
+> register layout of PHY block in Exynos850 is very different from
+> Exynos5 one.
+> 
+> Changes in v2:
+>   - Removed already applied patches from the patch series
+>   - Rebased on top of latest linux-next
+>   - Put ranges after compatible in usbdrd node (patch #1)
+> 
+> [...]
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2833e2da63e0..2ec5fafe7060 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17787,6 +17787,16 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/regulator/vqmmc-ipq4019-regulator.yaml
- F:	drivers/regulator/vqmmc-ipq4019-regulator.c
- 
-+QUALCOMM MINIDUMP DRIVER
-+M:	Mukesh Ojha <quic_mojha@quicinc.com>
-+L:	linux-arm-msm@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/admin-guide/qcom_minidump.rst
-+F:	drivers/soc/qcom/qcom_rproc_minidump.c
-+F:	drivers/soc/qcom/qcom_minidump.c
-+F:	drivers/soc/qcom/qcom_ramoops_minidump.c
-+
-+
- QUALCOMM NAND CONTROLLER DRIVER
- M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
- L:	linux-mtd@lists.infradead.org
+Applied, thanks!
+
+[1/2] arm64: dts: exynos: Enable USB in Exynos850
+      https://git.kernel.org/krzk/linux/c/2f911ca41e519dc5986f9483d3e15df4802b64f5
+[2/2] arm64: dts: exynos: Enable USB support on E850-96 board
+      https://git.kernel.org/krzk/linux/c/f2951ee8f7bcdb3844ffe6e54b0601ad8fa58640
+
+Best regards,
 -- 
-2.7.4
-
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
