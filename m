@@ -2,123 +2,280 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D07CA0ED1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4ABCA0EC1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:38:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348784AbjIKVa7 (ORCPT
+        id S1348849AbjIKVbV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:30:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51040 "EHLO
+        Mon, 11 Sep 2023 17:31:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236535AbjIKK4u (ORCPT
+        with ESMTP id S238089AbjIKNg2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 06:56:50 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2857F3;
-        Mon, 11 Sep 2023 03:56:45 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38BAHUGk005010;
-        Mon, 11 Sep 2023 10:56:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=Ulb6ivCBYfJxHUM4YBEtsEJoOnSrk2SMWeoI7ndeucs=;
- b=PMVy+DkuMntEMbC6E3AaypPc6J9MF6sKEejS5SF4eIQSNVSFrmhXAPTRcddOmNDRtS+y
- XBwgCr78Vw0oH9FlMM2ELswZh7cIbka+q5Un9HtRgSz61u0g8J9xtSCG3Maflg4du5XG
- QN/OQN6J0dZ5gE4stSdDACe+nNVNVC18By+VvtxgZxyGcPB2Ehq/8NhkSoMnTTADQ03A
- H/TqrLJl25Amd8ejof0lM4LyGMqfKv/PY2D3S0UCBc+0isIpJk4tI3yGmOlOtvQeR/MU
- oqIg5cY+vJy/WEj16vLShRAANt6ILj4pEcYIC5J3bMu0/vzx02WPiHPBXXyXx3NN0bkE 5g== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t0hfqkenc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 10:56:13 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAuCVs006051
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 10:56:12 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.36; Mon, 11 Sep 2023 03:55:28 -0700
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
-CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_mojha@quicinc.com>
-Subject: [REBASE PATCH v5 09/17] pstore/ram: Use dynamic ramoops reserve resource
-Date:   Mon, 11 Sep 2023 16:23:51 +0530
-Message-ID: <1694429639-21484-10-git-send-email-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+        Mon, 11 Sep 2023 09:36:28 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9540C1AE
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 06:36:22 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230911133621euoutp02c907e2c5c78aaa67a56922bbc18007c5~D26PMf0Hh1285912859euoutp02i
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 13:36:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230911133621euoutp02c907e2c5c78aaa67a56922bbc18007c5~D26PMf0Hh1285912859euoutp02i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1694439381;
+        bh=AHRUH7iv0+JjlcsKRA9WgTab92k33Ne0onjy9WkFjoQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Ls2WySLP+bdPSsdu80HvhvF/+o5fw744lkgNiBkT0ER247DILu1Cz8gOWgG0z/eRM
+         BtnHSuGOZVj62ct4YN704VzelERJlS1zD2CvYNAufv8RH0DeU2HnfzF7QR00L1Eq+u
+         uybfqTp7Mvmea1aIhw69Qz5GpO5nysCa7r5HWXvo=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20230911133621eucas1p22a8ec8768ab851d4e58c47518c002376~D26O2XA2e1712617126eucas1p2s;
+        Mon, 11 Sep 2023 13:36:21 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id A3.13.37758.4D71FF46; Mon, 11
+        Sep 2023 14:36:20 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230911133620eucas1p27a0d0f480638c97fa59bf9c4f34a02cb~D26OeqwID0331103311eucas1p28;
+        Mon, 11 Sep 2023 13:36:20 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230911133620eusmtrp267269e8199ae0082d7e133eb8ff20c7d~D26Od9wl60864008640eusmtrp2s;
+        Mon, 11 Sep 2023 13:36:20 +0000 (GMT)
+X-AuditID: cbfec7f5-7ffff7000002937e-74-64ff17d4ac0b
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id B8.8A.14344.4D71FF46; Mon, 11
+        Sep 2023 14:36:20 +0100 (BST)
+Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
+        [106.120.51.28]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230911133619eusmtip227c9f2ad6cd3f8dbcaf512ab8f14f89d~D26NNk7cJ0797807978eusmtip2f;
+        Mon, 11 Sep 2023 13:36:19 +0000 (GMT)
+From:   Mateusz Majewski <m.majewski2@samsung.com>
+To:     linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Mateusz Majewski <m.majewski2@samsung.com>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2 6/7] thermal: exynos: split initialization of TMU and the
+ thermal zone
+Date:   Mon, 11 Sep 2023 15:34:30 +0200
+Message-ID: <20230911133435.14061-7-m.majewski2@samsung.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230911133435.14061-1-m.majewski2@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: VlpMUntWdgjbfQBbSQt02UT2ECOTiSRG
-X-Proofpoint-GUID: VlpMUntWdgjbfQBbSQt02UT2ECOTiSRG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
- suspectscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
- priorityscore=1501 lowpriorityscore=0 impostorscore=0 clxscore=1015
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309110099
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLKsWRmVeSWpSXmKPExsWy7djP87pXxP+nGEw5aWnxYN42NovD8yss
+        pj58wmbxfct1Jot5n2Ut9r7eym7x7UoHk8Wmx9dYLS7vmsNm8bn3CKPFjPP7mCwmHpvMbLH2
+        yF12i7lfpjJbPHnYx+bA77Fz1l12j8V7XjJ5bFrVyeZx59oeNo/NS+o9+rasYvT4vEkugD2K
+        yyYlNSezLLVI3y6BK2PTj/ksBRPVKvYenM7YwPhDrouRk0NCwETi25tWxi5GLg4hgRWMEqtu
+        PGKDcL4wSnQ/mcYCUiUk8JlRYtb0cpiOJa86WSGKljNKHNl+iAnCaWWSeLlmPVgHm4CBxIM3
+        y9hBbBGBVkaJmU3qIEXMApeYJe7eXAtUxMEhLBAt8WqCF0gNi4CqxIL3N5lAbF4BG4mLW5cx
+        QmyTl3h+6w7YHE4BW4mza6ezQ9QISpyc+QRsFzNQTfPW2cwg8yUE/nNIXGzezgTR7CIxYfVz
+        KFtY4tXxLewQtozE/53zoeL5EjM2vwe7R0KgQuLuQS8I01ri4xlmEJNZQFNi/S59iGJHiSmr
+        NzNDVPBJ3HgrCHEAn8SkbdOhwrwSHW1CENWqEsf3TGKGsKUlnrTchlrpIdG14jbrBEbFWUhe
+        mYXklVkIexcwMq9iFE8tLc5NTy02zkst1ytOzC0uzUvXS87P3cQITGGn/x3/uoNxxauPeocY
+        mTgYDzFKcDArifCWHPqbIsSbklhZlVqUH19UmpNafIhRmoNFSZxX2/ZkspBAemJJanZqakFq
+        EUyWiYNTqoGpw//H62yuKtNdE//xmAofn1kqfrX1TIx7csvLx4ET9BrXNx+YEy751bV96+Vr
+        HWvCfn3wq71z/M3JEjfVAx2PKiR2su86Mc0sPbUvpWVXQcSezJ8Boac5+mtbN9tJzG3kDF/Z
+        8PiH6YUe+ag69zM1bV07UgwSbtnYlFg8OGey0jor6G7/99ml/kUK89mzHk3TbuswXDlx+rSE
+        3V3f5Ty/XOvvZZimoR+at5xr6j4pi8rZDZ8d6natvHnrkc97d/G0zEiZE2v81mQ9n79ZbY7e
+        sZ2zVkV1Gb5n/p7+pqt2sklw7GneW5cbTvBZMOw5aDG7cKY705kly0KUVhuHmr3iWPF1/yxd
+        q2d8Mw/xu+9RYinOSDTUYi4qTgQADKCQk9ADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLIsWRmVeSWpSXmKPExsVy+t/xe7pXxP+nGMxpVrR4MG8bm8Xh+RUW
+        Ux8+YbP4vuU6k8W8z7IWe19vZbf4dqWDyWLT42usFpd3zWGz+Nx7hNFixvl9TBYTj01mtlh7
+        5C67xdwvU5ktnjzsY3Pg99g56y67x+I9L5k8Nq3qZPO4c20Pm8fmJfUefVtWMXp83iQXwB6l
+        Z1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5egl7Hpx3yW
+        golqFXsPTmdsYPwh18XIySEhYCKx5FUnK4gtJLCUUeLJrniIuLTE4S9T2CFsYYk/17rYIGqa
+        mSQ2fc8AsdkEDCQevFkGVMPFISLQySjRtfkcE0iCWeAWs8T911ogtrBApMTmP5vAmlkEVCUW
+        vL8JVsMrYCNxcesyRogF8hLPb90BW8YpYCtxdu10IJsDaJmNRP8ZHYhyQYmTM5+wQIyXl2je
+        Opt5AqPALCSpWUhSCxiZVjGKpJYW56bnFhvpFSfmFpfmpesl5+duYgTG27ZjP7fsYFz56qPe
+        IUYmDsZDjBIczEoivCWH/qYI8aYkVlalFuXHF5XmpBYfYjQFOnsis5Rocj4w4vNK4g3NDEwN
+        TcwsDUwtzYyVxHk9CzoShQTSE0tSs1NTC1KLYPqYODilGpj4j64Ksi1p32+99c987Z6Vv69v
+        iHn/3ubmzYUnLxwXnPEkoXZWqMSX7VsONz1zXKA68cuFAyqHUt7ssfXQ8e+cdFc5benhL9uu
+        3GkOuuhhGPo2TPTbwZxrTV2Lrh1UnlLE3vmB3WzJorUbMpK1Ol5tyBZcJHJ04sLux6YcnZGp
+        j78o/3rLkX1GjFn0pk/s9BU8u9wf8238/dzqab7tRzVreadF198+aLGz23XX3e2CrGc/x9PS
+        wqR8t+fWGqsi7HdVXrSJOzpp8SbuphlLlHdc3TNr7lQ1FqaLc6et+bfL2iBSyeHghVe28g+F
+        qwPXOIt1pZ6qSylIWF8xoTeMdefisil7r2a/XN+5aZbp5NovukosxRmJhlrMRcWJAHfPoRdA
+        AwAA
+X-CMS-MailID: 20230911133620eucas1p27a0d0f480638c97fa59bf9c4f34a02cb
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20230911133620eucas1p27a0d0f480638c97fa59bf9c4f34a02cb
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230911133620eucas1p27a0d0f480638c97fa59bf9c4f34a02cb
+References: <20230911133435.14061-1-m.majewski2@samsung.com>
+        <CGME20230911133620eucas1p27a0d0f480638c97fa59bf9c4f34a02cb@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-As dynamic ramoops command line parsing is now added, so
-lets add the support in ramoops driver to get the resource
-structure and add it during platform device registration.
+This will be needed in the future, as the thermal zone subsystem might
+call our callbacks right after devm_thermal_of_zone_register. Currently
+we just make get_temp return EAGAIN in such case, but this will not be
+possible with state-modifying callbacks, for instance set_trips.
 
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
 ---
- fs/pstore/ram.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+v1 -> v2: We take clocks into account; exynos_tmu_initialize needs both
+  clocks, as tmu_initialize might use the base_second registers. However,
+  exynos_thermal_zone_configure only needs clk.
 
-diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-index d36702c7ab3c..ab551caa1d2a 100644
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -914,13 +914,17 @@ static void __init ramoops_register_dummy(void)
+ drivers/thermal/samsung/exynos_tmu.c | 104 +++++++++++++++------------
+ 1 file changed, 60 insertions(+), 44 deletions(-)
+
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 77afbf9f2db0..7b23ec73f93a 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -251,25 +251,8 @@ static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_info)
+ static int exynos_tmu_initialize(struct platform_device *pdev)
+ {
+ 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+-	struct thermal_zone_device *tzd = data->tzd;
+-	int num_trips = thermal_zone_get_num_trips(tzd);
+ 	unsigned int status;
+-	int ret = 0, temp;
+-
+-	ret = thermal_zone_get_crit_temp(tzd, &temp);
+-	if (ret && data->soc != SOC_ARCH_EXYNOS5433) { /* FIXME */
+-		dev_err(&pdev->dev,
+-			"No CRITICAL trip point defined in device tree!\n");
+-		goto out;
+-	}
+-
+-	if (num_trips > data->ntrip) {
+-		dev_info(&pdev->dev,
+-			 "More trip points than supported by this TMU.\n");
+-		dev_info(&pdev->dev,
+-			 "%d trip points should be configured in polling mode.\n",
+-			 num_trips - data->ntrip);
+-	}
++	int ret = 0;
  
- 	/*
- 	 * Prepare a dummy platform data structure to carry the module
--	 * parameters. If mem_size isn't set, then there are no module
--	 * parameters, and we can skip this.
-+	 * parameters. If mem_size isn't set, check for dynamic ramoops
-+	 * size and extract the information if it is set.
- 	 */
--	if (!mem_size)
-+	if (!mem_size && !dyn_ramoops_res.end)
- 		return;
- 
- 	pr_info("using module parameters\n");
-+	if (dyn_ramoops_res.end) {
-+		mem_size = resource_size(&dyn_ramoops_res);
-+		mem_address = dyn_ramoops_res.start;
+ 	mutex_lock(&data->lock);
+ 	clk_enable(data->clk);
+@@ -280,32 +263,63 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+ 	if (!status) {
+ 		ret = -EBUSY;
+ 	} else {
+-		int i, ntrips =
+-			min_t(int, num_trips, data->ntrip);
+-
+ 		data->tmu_initialize(pdev);
+-
+-		/* Write temperature code for rising and falling threshold */
+-		for (i = 0; i < ntrips; i++) {
+-
+-			struct thermal_trip trip;
+-
+-			ret = thermal_zone_get_trip(tzd, i, &trip);
+-			if (ret)
+-				goto err;
+-
+-			data->tmu_set_trip_temp(data, i, trip.temperature / MCELSIUS);
+-			data->tmu_set_trip_hyst(data, i, trip.temperature / MCELSIUS,
+-						trip.hysteresis / MCELSIUS);
+-		}
+-
+ 		data->tmu_clear_irqs(data);
+ 	}
++
++	mutex_unlock(&data->lock);
++	clk_disable(data->clk);
++	if (!IS_ERR(data->clk_sec))
++		clk_disable(data->clk_sec);
++
++	return ret;
++}
++
++static int exynos_thermal_zone_configure(struct platform_device *pdev)
++{
++	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
++	struct thermal_zone_device *tzd = data->tzd;
++	int i, num_trips = thermal_zone_get_num_trips(tzd);
++	int ret = 0, temp;
++
++	ret = thermal_zone_get_crit_temp(tzd, &temp);
++
++	if (ret && data->soc != SOC_ARCH_EXYNOS5433) { /* FIXME */
++		dev_err(&pdev->dev,
++			"No CRITICAL trip point defined in device tree!\n");
++		goto out;
 +	}
++
++	mutex_lock(&data->lock);
++
++	if (num_trips > data->ntrip) {
++		dev_info(&pdev->dev,
++			 "More trip points than supported by this TMU.\n");
++		dev_info(&pdev->dev,
++			 "%d trip points should be configured in polling mode.\n",
++			 num_trips - data->ntrip);
++	}
++
++	clk_enable(data->clk);
++
++	num_trips = min_t(int, num_trips, data->ntrip);
++
++	/* Write temperature code for rising and falling threshold */
++	for (i = 0; i < num_trips; i++) {
++		struct thermal_trip trip;
++
++		ret = thermal_zone_get_trip(tzd, i, &trip);
++		if (ret)
++			goto err;
++
++		data->tmu_set_trip_temp(data, i, trip.temperature / MCELSIUS);
++		data->tmu_set_trip_hyst(data, i, trip.temperature / MCELSIUS,
++					trip.hysteresis / MCELSIUS);
++	}
++
+ err:
+ 	clk_disable(data->clk);
+ 	mutex_unlock(&data->lock);
+-	if (!IS_ERR(data->clk_sec))
+-		clk_disable(data->clk_sec);
+ out:
+ 	return ret;
+ }
+@@ -1038,10 +1052,12 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+ 		break;
+ 	}
  
- 	memset(&pdata, 0, sizeof(pdata));
- 	pdata.mem_size = mem_size;
+-	/*
+-	 * data->tzd must be registered before calling exynos_tmu_initialize(),
+-	 * requesting irq and calling exynos_tmu_control().
+-	 */
++	ret = exynos_tmu_initialize(pdev);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to initialize TMU\n");
++		return ret;
++	}
++
+ 	data->tzd = devm_thermal_of_zone_register(&pdev->dev, 0, data,
+ 						  &exynos_sensor_ops);
+ 	if (IS_ERR(data->tzd)) {
+@@ -1052,9 +1068,9 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+ 		goto err_sclk;
+ 	}
+ 
+-	ret = exynos_tmu_initialize(pdev);
++	ret = exynos_thermal_zone_configure(pdev);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "Failed to initialize TMU\n");
++		dev_err(&pdev->dev, "Failed to configure the thermal zone\n");
+ 		goto err_sclk;
+ 	}
+ 
 -- 
-2.7.4
+2.41.0
 
