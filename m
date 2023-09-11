@@ -2,170 +2,123 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA534CA0ECF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D07CA0ED1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:38:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241940AbjIKVbI (ORCPT
+        id S1348784AbjIKVa7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:31:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39026 "EHLO
+        Mon, 11 Sep 2023 17:30:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244193AbjIKTdz (ORCPT
+        with ESMTP id S236535AbjIKK4u (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 15:33:55 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D7321B6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 12:33:49 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-31ad779e6b3so4864898f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 12:33:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694460828; x=1695065628; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=inHsDNknLIsreaH/7mQ9fcoY03dG1phB2IV/CbQwYHw=;
-        b=mFEOtuiSTTU+v/GlQI4WyjnX39mrkym+osx8DihRHVm9cshQBluEk5F60ZGeJLOe1Y
-         v8h+2VTRaghV8CJFrGyPxL+UMGq9iThi3Oe5b/2p+iS6vu2aBb1sKHO5tj6zxEAFEY2m
-         JZJr9Ji3kazXz6Y6ZRFu8U3Mf1+tUzLP2j+1ZlsxyvG2lnPbmJRkK5YGyI+f/bS45Vi6
-         i/0s30bWI5hEeImXhPDlSX+bgJ/mIcnVTO5I/JIDu0RDB3grV+sYDUR9KLWf4J5dcZbv
-         qT/e3AUPWUaS82DsUwBmzhIWEpLMxQmdVSEVtDOTlmzvL7Ade1/8hN0A04Zq/joiVsL4
-         CY4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694460828; x=1695065628;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=inHsDNknLIsreaH/7mQ9fcoY03dG1phB2IV/CbQwYHw=;
-        b=s5Z4ObQatHEvAl5yzgkVsPOfM2Im6NPKWWzoOENlo7srqNzK/LTE1zsk2qP6drtV5b
-         AbhViF/PQjqXt7xQuUp2V0arp5pl5U+mvfgUAEiXedrVY1Wlv+r9+hADjTu8lAWE5zAv
-         loxLRdWSs/HW/HCKQci+ZE5FSVYGuLjt3UAyu2i4w0xgH3WTWOCHS3oppSwbos1W2Ve+
-         U+j4eyQnUaeNGfRzY69AdLnaxoEuynZ/tnHFOSwZcMXktO69KJrYVbcCfqQBLC+Ctu2I
-         khfJu8stMQFZC69hxNvvOyHWdsbiPkO0jABvXZYa+hV7zWCybM+RrzggNlA4u2HOM0fI
-         iRgA==
-X-Gm-Message-State: AOJu0YwmxjdU/ah+XVqBZoeq7R0JZ+pxw8lymLjLGggpYtgA851RUeOa
-        eM7d5aOLDqDHtFQqbhEuv33IOw==
-X-Google-Smtp-Source: AGHT+IHPh4+mNCvhlbAWncPBV2Sm+011b3XyySb0xj15kRO2fiVHvavlbXLcuAA8FfPzM2ZflHLaHA==
-X-Received: by 2002:a5d:560d:0:b0:31d:cd33:b30e with SMTP id l13-20020a5d560d000000b0031dcd33b30emr8891759wrv.4.1694460827797;
-        Mon, 11 Sep 2023 12:33:47 -0700 (PDT)
-Received: from [192.168.37.137] (178235177248.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.248])
-        by smtp.gmail.com with ESMTPSA id e24-20020a056402089800b0052565298bedsm5043464edy.34.2023.09.11.12.33.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Sep 2023 12:33:47 -0700 (PDT)
-Message-ID: <ee8cc664-e698-4b0c-886d-ac33eb23b51e@linaro.org>
-Date:   Mon, 11 Sep 2023 21:33:43 +0200
+        Mon, 11 Sep 2023 06:56:50 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2857F3;
+        Mon, 11 Sep 2023 03:56:45 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38BAHUGk005010;
+        Mon, 11 Sep 2023 10:56:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=Ulb6ivCBYfJxHUM4YBEtsEJoOnSrk2SMWeoI7ndeucs=;
+ b=PMVy+DkuMntEMbC6E3AaypPc6J9MF6sKEejS5SF4eIQSNVSFrmhXAPTRcddOmNDRtS+y
+ XBwgCr78Vw0oH9FlMM2ELswZh7cIbka+q5Un9HtRgSz61u0g8J9xtSCG3Maflg4du5XG
+ QN/OQN6J0dZ5gE4stSdDACe+nNVNVC18By+VvtxgZxyGcPB2Ehq/8NhkSoMnTTADQ03A
+ H/TqrLJl25Amd8ejof0lM4LyGMqfKv/PY2D3S0UCBc+0isIpJk4tI3yGmOlOtvQeR/MU
+ oqIg5cY+vJy/WEj16vLShRAANt6ILj4pEcYIC5J3bMu0/vzx02WPiHPBXXyXx3NN0bkE 5g== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t0hfqkenc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:56:13 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAuCVs006051
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:56:12 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Mon, 11 Sep 2023 03:55:28 -0700
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
+CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_mojha@quicinc.com>
+Subject: [REBASE PATCH v5 09/17] pstore/ram: Use dynamic ramoops reserve resource
+Date:   Mon, 11 Sep 2023 16:23:51 +0530
+Message-ID: <1694429639-21484-10-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/17] soc: qcom: Add Qualcomm APSS minidump kernel
- driver
-Content-Language: en-US
-To:     Jeff Johnson <quic_jjohnson@quicinc.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Mukesh Ojha <quic_mojha@quicinc.com>, corbet@lwn.net,
-        agross@kernel.org, andersson@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
-        mathieu.poirier@linaro.org, catalin.marinas@arm.com,
-        will@kernel.org, linus.walleij@linaro.org,
-        andy.shevchenko@gmail.com, vigneshr@ti.com, nm@ti.com,
-        matthias.bgg@gmail.com, kgene@kernel.org, alim.akhtar@samsung.com,
-        bmasney@redhat.com, quic_tsoni@quicinc.com
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel@quicinc.com
-References: <1694290578-17733-1-git-send-email-quic_mojha@quicinc.com>
- <1694290578-17733-7-git-send-email-quic_mojha@quicinc.com>
- <e35a8b4f-ba1a-514e-9c59-a74442f0cb1f@linaro.org>
- <36d9bd32-7ea4-4d84-b1e9-3cfcc3bec85c@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <36d9bd32-7ea4-4d84-b1e9-3cfcc3bec85c@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: VlpMUntWdgjbfQBbSQt02UT2ECOTiSRG
+X-Proofpoint-GUID: VlpMUntWdgjbfQBbSQt02UT2ECOTiSRG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ suspectscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
+ priorityscore=1501 lowpriorityscore=0 impostorscore=0 clxscore=1015
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309110099
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11.09.2023 21:09, Jeff Johnson wrote:
-> On 9/11/2023 4:07 AM, Krzysztof Kozlowski wrote:
->> On 09/09/2023 22:16, Mukesh Ojha wrote:
->>> +/**
->>> + * qcom_minidump_region_register() - Register region in APSS Minidump table.
->>> + * @region: minidump region.
->>> + *
->>> + * Return: On success, it returns 0 and negative error value on failure.
->>> + */
->>> +int qcom_minidump_region_register(const struct qcom_minidump_region *region)
->>> +{
->>> +    struct minidump *md;
->>> +    int ret;
->>> +
->>> +    md = qcom_smem_minidump_ready();
->>> +    if (!md)
->>> +        return -EPROBE_DEFER;
->>> +
->>> +    if (!qcom_minidump_valid_region(region))
->>> +        return -EINVAL;
->>> +
->>> +    mutex_lock(&md->md_lock);
->>> +    ret = qcom_md_region_register(md, region);
->>> +    if (ret)
->>> +        goto unlock;
->>> +
->>> +    qcom_md_update_elfheader(md, region);
->>> +unlock:
->>> +    mutex_unlock(&md->md_lock);
->>> +    return ret;
->>> +}
->>> +EXPORT_SYMBOL_GPL(qcom_minidump_region_register);
->>
->> NAK, there is no user for this.
->>
->> Drop all exports from minidump drivers. Your upstream driver *must not*
->> expose stuff to your vendor drivers.
-> 
-> Do we not expect that upstream drivers would want to register?
-> Mind you, in the downstream code the following was a bad limitation:
-> #define MAX_NUM_OF_SS           10
-No, Krzysztof meant that you are not allowed to export symbols
-without immediately providing a user for them - meaning if the
-functions are not going to be used upstream, this change will
-not be accepted.
+As dynamic ramoops command line parsing is now added, so
+lets add the support in ramoops driver to get the resource
+structure and add it during platform device registration.
 
-Konrad
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+ fs/pstore/ram.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+index d36702c7ab3c..ab551caa1d2a 100644
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -914,13 +914,17 @@ static void __init ramoops_register_dummy(void)
+ 
+ 	/*
+ 	 * Prepare a dummy platform data structure to carry the module
+-	 * parameters. If mem_size isn't set, then there are no module
+-	 * parameters, and we can skip this.
++	 * parameters. If mem_size isn't set, check for dynamic ramoops
++	 * size and extract the information if it is set.
+ 	 */
+-	if (!mem_size)
++	if (!mem_size && !dyn_ramoops_res.end)
+ 		return;
+ 
+ 	pr_info("using module parameters\n");
++	if (dyn_ramoops_res.end) {
++		mem_size = resource_size(&dyn_ramoops_res);
++		mem_address = dyn_ramoops_res.start;
++	}
+ 
+ 	memset(&pdata, 0, sizeof(pdata));
+ 	pdata.mem_size = mem_size;
+-- 
+2.7.4
+
