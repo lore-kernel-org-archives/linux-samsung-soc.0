@@ -2,121 +2,102 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5704CCA0ECB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D914CA0EC8
 	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Sep 2023 23:02:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348966AbjIKVb7 (ORCPT
+        id S1348990AbjIKVcF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:31:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46906 "EHLO
+        Mon, 11 Sep 2023 17:32:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242676AbjIKQFp (ORCPT
+        with ESMTP id S236906AbjIKLjh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 12:05:45 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC2891AE
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 09:05:40 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-401b393df02so54241975e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 09:05:40 -0700 (PDT)
+        Mon, 11 Sep 2023 07:39:37 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACC6A12E
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 04:39:32 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-401d24f1f27so49416145e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 04:39:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694448339; x=1695053139; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VBVJ2wHJ2/UKLMCz0YHp9T+QNyQaVPOEmzHr3wHgHAg=;
-        b=iirHIJlj/Q1ROqFAMDiIEBdBoauZRMnmRnc0msgGDaO9EZZmBmn7Cn8dQiejSkxgkl
-         SZ9JPgsKdOXkTdAAs2S7UEldKGnXJ9/ZkaRMc+wWG1VvhrY6I/AoZc5AG3h/P6jjDkew
-         J5WewO4CHKoEHL1E9jttRTqwo877Qj6S7BLSguonSMvbhto+YRaAs/foKBq5Bh+v7RrS
-         wuqoQot43wlKYK9H+9s9GUIBdER6EJVcd4rp0oiR/w+IeYwn73/SLAaiWOUGVzHVMv11
-         i4Zlmy6lA5S/gOOaT8GgxefdUKiyAQPc/wOQVILBKLVfPQlfGN2O1B4vo8OfuAsabtE1
-         J9LQ==
+        d=linaro.org; s=google; t=1694432371; x=1695037171; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+xobEw3dWGWqa/MKJ616lGiXiH8NsToU1rm76WPlst0=;
+        b=o0UCY5vZafH9Qz1ohhA/zZyXJ8vmxDxBTsFYXkLGQtGZ/ebv05FHsHSpA0xtKiar+E
+         ck5bF54C3nUFD0dIh0ag5bOCBl4jKYTGYBjqxdOi0G7zsZnzxfMRU6nw2kxP1wTLMGVb
+         9Jb7csZCkkIN8BNzeMIt6Ltbwxuw+ehawMeVU9WS097gmT/Zf/n3JRKt2nQxBZ/bjkX1
+         8nLCKUJHcWvvsSzFl3KYF9btOVp8R2CcFEIWHZE4Flw14yyAKKla0WkdDMv4s0UVkPAR
+         ppEJTp0ygOZ2IO6h93YLpQODg79FrioQlY/Uvr4TZlEHacMnZMqnOzEahYUv/CRihAJY
+         2JSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694448339; x=1695053139;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VBVJ2wHJ2/UKLMCz0YHp9T+QNyQaVPOEmzHr3wHgHAg=;
-        b=iKDJuomTlA81asS2+Vv504ckTI4NeJ4uE/2xnx/5I97DXta9iB9zP3IuS/aVAt3bLd
-         P8qknXQVPWzQA7Ku1vvBlv4Hl/BUtILAs4u4j4lwsfvfh2P5KNv4UaZDJdOuEVMnwsOe
-         vK8x5a0eXyKyRRLvBM7j7nl3XtSoh6pfoBnv29wOHofIcmIGnUH6hCVfoQkC38MrfdtT
-         U6/rwmwFnX2m+XAOz6/5uRN2DzvHDQsBML0soMmwdabo7UnVMHF3+sVNa5ua66m5G+RO
-         chMR2rLRiech5ScRPvw7P8Cn7dEQT2ADXp4Oq5r9dZI7evsGq+rnrHMmZfNgy4Gub5Ez
-         8A6w==
-X-Gm-Message-State: AOJu0Yxr1nlW+NqdlhjMY82WX283srvxFNsSnsxPLdYVq8yxuPjLwEpL
-        N3NFewt5TVqYGr1CFy4TJ5/VNg==
-X-Google-Smtp-Source: AGHT+IGyuy2+dN6nVi/A8nEkH5DvEYQPGPUixpXjx1K6xC3tj2xMB32WaeVax7THWg5xlQU35kx7hg==
-X-Received: by 2002:a05:600c:2116:b0:401:c8b9:4b8a with SMTP id u22-20020a05600c211600b00401c8b94b8amr9091672wml.29.1694448339176;
-        Mon, 11 Sep 2023 09:05:39 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id 12-20020a05600c028c00b003fee6e170f9sm10490902wmk.45.2023.09.11.09.05.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Sep 2023 09:05:38 -0700 (PDT)
-Message-ID: <5f1791b4-78d8-9895-e639-238411b60f00@linaro.org>
-Date:   Mon, 11 Sep 2023 18:05:35 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH 04/11] thermal: exynos: remove fine-grained clk management
-Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mateusz Majewski <m.majewski2@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        d=1e100.net; s=20230601; t=1694432371; x=1695037171;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+xobEw3dWGWqa/MKJ616lGiXiH8NsToU1rm76WPlst0=;
+        b=tgZnAya3K1K0lANfsxyUYC5lg5+6X2uTDOOyT0WLUPlIjXiB+CdM3bcK7Uf/+2OkY6
+         F1Cj0m94tg+ks3l7PI75Sr9TV0yGN9d2UXYr5NPMY5rcsRZR9I7ucBK1q8QW/otTa8B5
+         le5do5+YnCtkAPelve/yQnhe1h5vp/8TLQmmwQ723VdUgWE0OAxFX/EeKtaCDs/dfFpC
+         CM823R6bjowvXN5ai+pLxJpidvx9xuBKxyP4pMRJpSx/9JsC35Abd7HoI6DuVjTXwaBy
+         K5tpjJuPuScILsFFZEbV+SwrLr9xlKZ9D4285D4jddVzs/pEqKmGuBDoG4BG8efY0C6B
+         JciA==
+X-Gm-Message-State: AOJu0YzOc21ciYI4Ro+H2M9K5rK3yG5h9SCTWIfEmHcIcQpyBF5EjCEq
+        izipb7b785gVsxtW04EIDGSjYw==
+X-Google-Smtp-Source: AGHT+IG71SGDp/D1D4AhCLBkMhgmC1yfDcdZoDBZg1is1WJqDXuiI7ooRn5v+pBNF3d59frbXMBphQ==
+X-Received: by 2002:adf:f302:0:b0:319:790e:3bc5 with SMTP id i2-20020adff302000000b00319790e3bc5mr7018815wro.41.1694432371116;
+        Mon, 11 Sep 2023 04:39:31 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.214.188])
+        by smtp.gmail.com with ESMTPSA id g15-20020a056402180f00b00523b1335618sm4431003edy.97.2023.09.11.04.39.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Sep 2023 04:39:30 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-References: <20230829091853.626011-1-m.majewski2@samsung.com>
- <CGME20230829092412eucas1p2b79a6f90b9077a3a5486845b7e68bbc6@eucas1p2.samsung.com>
- <20230829091853.626011-5-m.majewski2@samsung.com>
- <a3b9ff0f-fff9-9439-5ec9-95a4de9bdfaa@linaro.org>
- <afbdce92-beb9-cb7f-305f-968c71dde838@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <afbdce92-beb9-cb7f-305f-968c71dde838@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 1/8] arm64: dts: exynos: exynos5433-tm2: switch sound card to audio-routing
+Date:   Mon, 11 Sep 2023 13:39:23 +0200
+Message-Id: <169443234709.34398.9426055874115362482.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230731095730.204567-1-krzysztof.kozlowski@linaro.org>
+References: <20230731095730.204567-1-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 01/09/2023 10:40, Marek Szyprowski wrote:
-> On 29.08.2023 11:56, Krzysztof Kozlowski wrote:
->> On 29/08/2023 11:18, Mateusz Majewski wrote:
->>> This clock only controls the register operations. The gain in power
->>> efficiency is therefore quite dubious, while there is price of added
->>> complexity that is important to get right (as a register operation might
->>> outright hang the CPU if the clock is not enabled).
->> So once it is done right, this stops being argument. The benefit is to
->> keep this clock disabled most of the time, which now we lost.
->>
->> I don't find this patch correct approach.
-> 
-> I've suggested this change while playing with this driver.
-> 
-> For me turning AHB clock on/off during normal driver operation seems to 
-> be over-engineering and really gives no real power saving benefits, 
-> especially if thermal driver is the only one that does such fine-grained 
-> clock management (none of the Exynos supported in mainline does that). 
-> Removing it simplifies code and makes it easier to understand or read, 
-> as the current code already was somehow problematic to understand and 
-> unintuitive:
-> 
-> https://lore.kernel.org/all/c3258cb2-9a56-d048-5738-1132331a157d@linaro.org/
-> 
-> Taking into account that the driver is not really maintained, making it 
-> simpler without noticeable feature loss counts as a benefit for me.
 
-Hm, ok, let it be, although I bet once someone will come and start
-adding runtime PM for clock handling...
+On Mon, 31 Jul 2023 11:57:23 +0200, Krzysztof Kozlowski wrote:
+> "samsung,audio-routing" property is being deprecated, so switch to
+> generic "audio-routing".
+> 
+> 
+
+Applied, thanks!
+
+[1/8] arm64: dts: exynos: exynos5433-tm2: switch sound card to audio-routing
+      https://git.kernel.org/krzk/linux/c/4179ae98fd525f2895ac726fcd433e730c5e8727
+[2/8] ARM: dts: samsung: exynos4212-tab3: switch sound card to audio-routing
+      https://git.kernel.org/krzk/linux/c/fc730f1702e2a5de9ad52f98189460c0d7d75916
+[3/8] ARM: dts: samsung: exynos4412-galaxy-s3: switch sound card to audio-routing
+      https://git.kernel.org/krzk/linux/c/a1116f96688c7e2d210635ec7cb631473d8ef653
+[4/8] ARM: dts: samsung: exynos4412-n710x: switch sound card to audio-routing
+      https://git.kernel.org/krzk/linux/c/1222d604dbbbe54a9e9d5811d46f0680cc9972ce
+[5/8] ARM: dts: samsung: exynos4412-odroid: switch sound card to audio-routing
+      https://git.kernel.org/krzk/linux/c/f632a4376134722cb16c78d819505aedd9c0d8e3
+[6/8] ARM: dts: samsung: exynos5422-odroid: switch sound card to audio-routing
+      https://git.kernel.org/krzk/linux/c/c670e7c8f72f68b4fc20eb85fa6101b5ce108515
+[7/8] ARM: dts: samsung: s5pv210-fascinate4g: switch sound card to audio-routing
+      https://git.kernel.org/krzk/linux/c/04e08772a1ffa0620fbf89dfaed3a7aef724c739
+[8/8] ARM: dts: samsung: s5pv210-galaxys: switch sound card to audio-routing
+      https://git.kernel.org/krzk/linux/c/8edc16a1e27a941670907a94d15dbf7f68fbf8c7
 
 Best regards,
-Krzysztof
-
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
