@@ -2,144 +2,283 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0692CA0EC7
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9038FCA0EC5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:38:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348867AbjIKVbb (ORCPT
+        id S1348856AbjIKVb1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:31:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51096 "EHLO
+        Mon, 11 Sep 2023 17:31:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238027AbjIKNej (ORCPT
+        with ESMTP id S236532AbjIKKzc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 09:34:39 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4C2CCD7
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 06:34:33 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230911133432euoutp0224e10a0adc037d716aff822faa25b67f~D24prrhdL1177211772euoutp02e
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 13:34:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230911133432euoutp0224e10a0adc037d716aff822faa25b67f~D24prrhdL1177211772euoutp02e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1694439272;
-        bh=/mi0r8mYaalw3knCfTu3gBJk6obrNHW3Nz7s/KCIWgA=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=ZACIlGI+2K8qVA2wGGgkJ4C/t5HRDYg7t2BFIYdgS/atNu/6dHSTZ4pHoAUSMMEgD
-         uZRFAZJ9y9J/SCGSLx0JoFT3tAKlZMPdMIavKgB4IiToeAau8O7r58ojHodiJSGL1S
-         p15VddbXacVKEycNj8sKNWq/fm2QK8/Uwv1e2n4k=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230911133431eucas1p1028e1babd7fda9c36d15da5ac371d780~D24pUSUXl3154231542eucas1p1H;
-        Mon, 11 Sep 2023 13:34:31 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 9C.41.42423.7671FF46; Mon, 11
-        Sep 2023 14:34:31 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230911133431eucas1p2631e7060cecb0914933ed45b837cf8eb~D24o3k1BS1712417124eucas1p2g;
-        Mon, 11 Sep 2023 13:34:31 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230911133431eusmtrp2f45317b7cd9c99c65a5faf1e744acb79~D24o2pvFw0730407304eusmtrp2T;
-        Mon, 11 Sep 2023 13:34:31 +0000 (GMT)
-X-AuditID: cbfec7f2-a3bff7000002a5b7-c7-64ff1767793b
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id A2.2A.14344.7671FF46; Mon, 11
-        Sep 2023 14:34:31 +0100 (BST)
-Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
-        [106.120.51.28]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230911133430eusmtip1cfb8f5bcad10b64100b515751c11ecd7~D24oSDyBB2147821478eusmtip12;
-        Mon, 11 Sep 2023 13:34:30 +0000 (GMT)
-From:   Mateusz Majewski <m.majewski2@samsung.com>
-To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Mateusz Majewski <m.majewski2@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] ARM: dts: exynos: enable polling in Exynos 4210
-Date:   Mon, 11 Sep 2023 15:34:14 +0200
-Message-ID: <20230911133417.14042-1-m.majewski2@samsung.com>
-X-Mailer: git-send-email 2.41.0
+        Mon, 11 Sep 2023 06:55:32 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0D81F1;
+        Mon, 11 Sep 2023 03:55:27 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38B9fmxc007832;
+        Mon, 11 Sep 2023 10:55:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=t03UP7q891F/c5g/2wfXb+TlibZKK7FwWRcbw5U5eKA=;
+ b=Ho4hFkEokMgmCBaW03nkJmxZDwRVhB9HufpTQa42iWofQmsFDaxDVr+dBA8RPXgEvp11
+ zOBvKg+gwvLaIo2gnqlqWeUVvjm8TeWs9urt+C1MpYjfL+wfDtpLhbPNZV4ZPgvd/zG7
+ Gq7B95RsuuGt4PzpOYqNS1urVCN7ufeKXUdN5UfqOEycb+Y7IQ/nsG6DNYjty+oPlKB4
+ cy1KxXI9dUSuyK0qw8Pw4R0/Ju5vrs1GA6qXr7+NI3dreTY4TPiVIBxYwXp43YCmaGBi
+ 5q1N8UotK7P7FY/SwWwHfb3+zMX7ExbGKZq/opTe/PBT6r3ySC+QZ7Eq6RWeGw1lev51 Nw== 
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t1u3yrs88-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:55:02 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAt1uO032425
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:55:01 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Mon, 11 Sep 2023 03:54:44 -0700
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
+CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_mojha@quicinc.com>
+Subject: [REBASE PATCH v5 04/17] remoteproc: qcom: Remove minidump related data from qcom_common.c
+Date:   Mon, 11 Sep 2023 16:23:46 +0530
+Message-ID: <1694429639-21484-5-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPKsWRmVeSWpSXmKPExsWy7djP87rp4v9TDGZNMbd4MG8bm8WaveeY
-        LOYfOcdq0ffiIbPFpsfXWC0u75rDZjHj/D4mi4nHJjNbrD1yl92ide8Rdgcuj02rOtk87lzb
-        w+axeUm9R9+WVYwenzfJBbBGcdmkpOZklqUW6dslcGW8WPaWveApZ8W/a19YGxi7OLoYOTkk
-        BEwktlw/xt7FyMUhJLCCUWLej7+MEM4XRolZj5+yQTifGSUevz3KBtPy/fpOqJbljBJnTi6B
-        amllkphxbQILSBWbgIHEgzfLwKpEBNoZJRbcfcYM4jALdDJJvP86nRWkSljAWeLKu2Z2EJtF
-        QFXi8MMXYDavgI3E9M5WFoh98hLPb92BigtKnJz5BCzODBRv3jobbKiEwBYOicV/IZolBFwk
-        vq/YzQphC0u8Or4FKi4j8X/nfCYIO19ixub3QIM4gOwKibsHvSBMa4mPZ5hBTGYBTYn1u/Qh
-        ih0lLpz7yAZRwSdx460gxAF8EpO2TWeGCPNKdLQJQVSrShzfM4kZwpaWeNJyG2qlh8TH5xB/
-        CwnESlyYNZtxAqPCLCRvzULy1iyEGxYwMq9iFE8tLc5NTy02zEst1ytOzC0uzUvXS87P3cQI
-        TEOn/x3/tINx7quPeocYmTgYDzFKcDArifCWHPqbIsSbklhZlVqUH19UmpNafIhRmoNFSZxX
-        2/ZkspBAemJJanZqakFqEUyWiYNTqoFp1qIFbsy9Gz/1GDLf/7Vku17s+WsFX6IVyrRmzwhv
-        jGc8tYw9kmFZh1fDAbOYvfM43fP03gUm/Wjg/PdSOvpqUpGpYftWlro99S5rZs46tbwkQPTH
-        n4M+5+aGNkR3P8iqFlujPbXu2w43hQC/vz979OW1jn4RWxC/MDD7tiVzA2fmUVWHnS6Ohltk
-        32uK3X+rlHU+Qnp6kPxalW/JbbJ9uifnrqzQDHavfHvny4VHPNo39pqFy20QLL6oa1S2oGTh
-        qvqza6PPV0XrxrNKXGl89e/7jeNhtw4913o7JS+rbPoTpfoz/5Jbg4u2dS62d9l64eHbd3H1
-        u///E7Oe2Zv7YcU+o/dltTZr5p5OO71UiaU4I9FQi7moOBEAtI+1FLIDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsVy+t/xu7rp4v9TDLoXS1k8mLeNzWLN3nNM
-        FvOPnGO16HvxkNli0+NrrBaXd81hs5hxfh+TxcRjk5kt1h65y27RuvcIuwOXx6ZVnWwed67t
-        YfPYvKTeo2/LKkaPz5vkAlij9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX0
-        7WxSUnMyy1KL9O0S9DJeLHvLXvCUs+LftS+sDYxdHF2MnBwSAiYS36/vZO9i5OIQEljKKHHi
-        7yN2iIS0xOEvU6BsYYk/17rYIIqamSRW/57CDJJgEzCQePBmGVi3iEA3o8ShmbdYQBxmgW4m
-        ie7FjxhBqoQFnCWuvGsGG8UioCpx+OELMJtXwEZiemcrC8QKeYnnt+5AxQUlTs58AhZnBoo3
-        b53NPIGRbxaS1CwkqQWMTKsYRVJLi3PTc4uN9IoTc4tL89L1kvNzNzECo2DbsZ9bdjCufPVR
-        7xAjEwfjIUYJDmYlEd6SQ39ThHhTEiurUovy44tKc1KLDzGaAt03kVlKNDkfGId5JfGGZgam
-        hiZmlgamlmbGSuK8ngUdiUIC6YklqdmpqQWpRTB9TBycUg1M6llfY8uuHLqVE1LL5vTpzN8w
-        7tnhadMWpnAunCyh7nw6cSVLcNGJmpUxu169/NPAWHK+q8X9w5Y/EYEeS5emz2ROkLV7I7nQ
-        YaLmrLf2c+ZP1fv8slR5udgNmyWZsYvqg3ucZNtP3hf5InZMU/nebgdf29UNwV+VCp9v11M+
-        f6mcn+eO7q+rSVO0Zcsuz6td8bylqU+SaecKrVXxrgUhU4w6J+zTnKwbunDam4t7Ymq5nzCE
-        B98tOPfioMoRo9MT/oYrmBwVWK2qoMYtLsQS115kdcvXd8L5inXFCkt4Mp/ONTK/E1fGJPhI
-        NSGdN/OvafGZzfp+19QiX1xQCZuzXyPaufP785bvFbc8NsgpsRRnJBpqMRcVJwIAw1INSwsD
-        AAA=
-X-CMS-MailID: 20230911133431eucas1p2631e7060cecb0914933ed45b837cf8eb
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230911133431eucas1p2631e7060cecb0914933ed45b837cf8eb
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230911133431eucas1p2631e7060cecb0914933ed45b837cf8eb
-References: <CGME20230911133431eucas1p2631e7060cecb0914933ed45b837cf8eb@eucas1p2.samsung.com>
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: tjFQUm_2yuDC0uqVCtc9PxTbx7sDBJRy
+X-Proofpoint-ORIG-GUID: tjFQUm_2yuDC0uqVCtc9PxTbx7sDBJRy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
+ clxscore=1015 phishscore=0 impostorscore=0 suspectscore=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 mlxlogscore=999 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309110099
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-It seems that thermal in Exynos 4210 is broken without this, as it will
-never decrease cooling after increasing it.
+As minidump specific data structure and functions move under
+config QCOM_RPROC_MINIDUMP, so remove minidump specific data
+from driver/remoteproc/qcom_common.c .
 
-Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 ---
-v1 -> v2: Just uploaded separately from all the thermal: exynos:
-  patches with a shorter recipient list, no change otherwise.
+ drivers/remoteproc/qcom_common.c | 160 ---------------------------------------
+ 1 file changed, 160 deletions(-)
 
- arch/arm/boot/dts/samsung/exynos4210.dtsi | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/samsung/exynos4210.dtsi b/arch/arm/boot/dts/samsung/exynos4210.dtsi
-index 0e27c3375e2e..aae185b7f91c 100644
---- a/arch/arm/boot/dts/samsung/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/samsung/exynos4210.dtsi
-@@ -391,8 +391,14 @@ &cpu_alert2 {
- };
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index 03e5f5d533eb..085fd73fa23a 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -17,7 +17,6 @@
+ #include <linux/rpmsg/qcom_smd.h>
+ #include <linux/slab.h>
+ #include <linux/soc/qcom/mdt_loader.h>
+-#include <linux/soc/qcom/smem.h>
  
- &cpu_thermal {
--	polling-delay-passive = <0>;
--	polling-delay = <0>;
-+	/* Exynos 4210 supports thermal interrupts, but only for the rising threshold.
-+	 * This means that polling is not needed for preventing overheating, but only
-+	 * for decreasing cooling when possible. Hence we poll with a high delay.
-+	 * Ideally, we would disable polling for the first trip point, but this isn't
-+	 * really possible without outrageous hacks.
-+	 */
-+	polling-delay-passive = <5000>;
-+	polling-delay = <5000>;
- };
+ #include "remoteproc_internal.h"
+ #include "qcom_common.h"
+@@ -26,61 +25,6 @@
+ #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, subdev)
+ #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
  
- &gic {
+-#define MAX_NUM_OF_SS           10
+-#define MAX_REGION_NAME_LENGTH  16
+-#define SBL_MINIDUMP_SMEM_ID	602
+-#define MINIDUMP_REGION_VALID		('V' << 24 | 'A' << 16 | 'L' << 8 | 'I' << 0)
+-#define MINIDUMP_SS_ENCR_DONE		('D' << 24 | 'O' << 16 | 'N' << 8 | 'E' << 0)
+-#define MINIDUMP_SS_ENABLED		('E' << 24 | 'N' << 16 | 'B' << 8 | 'L' << 0)
+-
+-/**
+- * struct minidump_region - Minidump region
+- * @name		: Name of the region to be dumped
+- * @seq_num:		: Use to differentiate regions with same name.
+- * @valid		: This entry to be dumped (if set to 1)
+- * @address		: Physical address of region to be dumped
+- * @size		: Size of the region
+- */
+-struct minidump_region {
+-	char	name[MAX_REGION_NAME_LENGTH];
+-	__le32	seq_num;
+-	__le32	valid;
+-	__le64	address;
+-	__le64	size;
+-};
+-
+-/**
+- * struct minidump_subsystem - Subsystem's SMEM Table of content
+- * @status : Subsystem toc init status
+- * @enabled : if set to 1, this region would be copied during coredump
+- * @encryption_status: Encryption status for this subsystem
+- * @encryption_required : Decides to encrypt the subsystem regions or not
+- * @region_count : Number of regions added in this subsystem toc
+- * @regions_baseptr : regions base pointer of the subsystem
+- */
+-struct minidump_subsystem {
+-	__le32	status;
+-	__le32	enabled;
+-	__le32	encryption_status;
+-	__le32	encryption_required;
+-	__le32	region_count;
+-	__le64	regions_baseptr;
+-};
+-
+-/**
+- * struct minidump_global_toc - Global Table of Content
+- * @status : Global Minidump init status
+- * @md_revision : Minidump revision
+- * @enabled : Minidump enable status
+- * @subsystems : Array of subsystems toc
+- */
+-struct minidump_global_toc {
+-	__le32				status;
+-	__le32				md_revision;
+-	__le32				enabled;
+-	struct minidump_subsystem	subsystems[MAX_NUM_OF_SS];
+-};
+-
+ struct qcom_ssr_subsystem {
+ 	const char *name;
+ 	struct srcu_notifier_head notifier_list;
+@@ -90,110 +34,6 @@ struct qcom_ssr_subsystem {
+ static LIST_HEAD(qcom_ssr_subsystem_list);
+ static DEFINE_MUTEX(qcom_ssr_subsys_lock);
+ 
+-static void qcom_minidump_cleanup(struct rproc *rproc)
+-{
+-	struct rproc_dump_segment *entry, *tmp;
+-
+-	list_for_each_entry_safe(entry, tmp, &rproc->dump_segments, node) {
+-		list_del(&entry->node);
+-		kfree(entry->priv);
+-		kfree(entry);
+-	}
+-}
+-
+-static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsystem *subsystem,
+-			void (*rproc_dumpfn_t)(struct rproc *rproc, struct rproc_dump_segment *segment,
+-				void *dest, size_t offset, size_t size))
+-{
+-	struct minidump_region __iomem *ptr;
+-	struct minidump_region region;
+-	int seg_cnt, i;
+-	dma_addr_t da;
+-	size_t size;
+-	char *name;
+-
+-	if (WARN_ON(!list_empty(&rproc->dump_segments))) {
+-		dev_err(&rproc->dev, "dump segment list already populated\n");
+-		return -EUCLEAN;
+-	}
+-
+-	seg_cnt = le32_to_cpu(subsystem->region_count);
+-	ptr = ioremap((unsigned long)le64_to_cpu(subsystem->regions_baseptr),
+-		      seg_cnt * sizeof(struct minidump_region));
+-	if (!ptr)
+-		return -EFAULT;
+-
+-	for (i = 0; i < seg_cnt; i++) {
+-		memcpy_fromio(&region, ptr + i, sizeof(region));
+-		if (le32_to_cpu(region.valid) == MINIDUMP_REGION_VALID) {
+-			name = kstrndup(region.name, MAX_REGION_NAME_LENGTH - 1, GFP_KERNEL);
+-			if (!name) {
+-				iounmap(ptr);
+-				return -ENOMEM;
+-			}
+-			da = le64_to_cpu(region.address);
+-			size = le64_to_cpu(region.size);
+-			rproc_coredump_add_custom_segment(rproc, da, size, rproc_dumpfn_t, name);
+-		}
+-	}
+-
+-	iounmap(ptr);
+-	return 0;
+-}
+-
+-void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
+-		void (*rproc_dumpfn_t)(struct rproc *rproc,
+-		struct rproc_dump_segment *segment, void *dest, size_t offset,
+-		size_t size))
+-{
+-	int ret;
+-	struct minidump_subsystem *subsystem;
+-	struct minidump_global_toc *toc;
+-
+-	/* Get Global minidump ToC*/
+-	toc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, NULL);
+-
+-	/* check if global table pointer exists and init is set */
+-	if (IS_ERR(toc) || !toc->status) {
+-		dev_err(&rproc->dev, "Minidump TOC not found in SMEM\n");
+-		return;
+-	}
+-
+-	/* Get subsystem table of contents using the minidump id */
+-	subsystem = &toc->subsystems[minidump_id];
+-
+-	/**
+-	 * Collect minidump if SS ToC is valid and segment table
+-	 * is initialized in memory and encryption status is set.
+-	 */
+-	if (subsystem->regions_baseptr == 0 ||
+-	    le32_to_cpu(subsystem->status) != 1 ||
+-	    le32_to_cpu(subsystem->enabled) != MINIDUMP_SS_ENABLED) {
+-		return rproc_coredump(rproc);
+-	}
+-
+-	if (le32_to_cpu(subsystem->encryption_status) != MINIDUMP_SS_ENCR_DONE) {
+-		dev_err(&rproc->dev, "Minidump not ready, skipping\n");
+-		return;
+-	}
+-
+-	/**
+-	 * Clear out the dump segments populated by parse_fw before
+-	 * re-populating them with minidump segments.
+-	 */
+-	rproc_coredump_cleanup(rproc);
+-
+-	ret = qcom_add_minidump_segments(rproc, subsystem, rproc_dumpfn_t);
+-	if (ret) {
+-		dev_err(&rproc->dev, "Failed with error: %d while adding minidump entries\n", ret);
+-		goto clean_minidump;
+-	}
+-	rproc_coredump_using_sections(rproc);
+-clean_minidump:
+-	qcom_minidump_cleanup(rproc);
+-}
+-EXPORT_SYMBOL_GPL(qcom_minidump);
+-
+ static int glink_subdev_start(struct rproc_subdev *subdev)
+ {
+ 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
 -- 
-2.41.0
+2.7.4
 
