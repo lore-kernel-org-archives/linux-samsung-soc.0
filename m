@@ -2,162 +2,243 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D93B3CA0ED9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DE58CA0ED5
 	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:37:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348744AbjIKVao (ORCPT
+        id S239959AbjIKVaj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:30:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38892 "EHLO
+        Mon, 11 Sep 2023 17:30:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238064AbjIKNgU (ORCPT
+        with ESMTP id S236539AbjIKK4v (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 09:36:20 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A715E1A2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 06:36:15 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230911133614euoutp02c0e4a2a129909e8fb50120ff74f0e2de~D26I1UVnm1285912859euoutp02b
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 13:36:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230911133614euoutp02c0e4a2a129909e8fb50120ff74f0e2de~D26I1UVnm1285912859euoutp02b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1694439374;
-        bh=+NqJJH6X7tjJ6+L0iqf3etPp0U96Y5vmOPMMdXKrkyk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gL49LS8pN2n8bl4Z2YCwljc/5qiPRvxI2blDai5o2dbafyUHwMxP8zmLrNNdXjSRc
-         zOTUSDvCchEZTTOWJz81CkE0tDhxaDVmvUmCPZaUNHDofo5unDkyKM+4uCflyHtjqw
-         iKS2zDmHliAt6d/KGy2qQMNdtI/t0ocL1zG3Hvy0=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230911133614eucas1p2a6f24ec6a713974c775678e9c2003a01~D26IbnJrG2317523175eucas1p26;
-        Mon, 11 Sep 2023 13:36:14 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id B5.B1.42423.EC71FF46; Mon, 11
-        Sep 2023 14:36:14 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230911133613eucas1p1671b7d154e1d567b02516d8c4d8074ab~D26IBuEM31288212882eucas1p1u;
-        Mon, 11 Sep 2023 13:36:13 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230911133613eusmtrp263e49da0aa697d53623dc88f9bfdfffc~D26IBDe3x0864008640eusmtrp2U;
-        Mon, 11 Sep 2023 13:36:13 +0000 (GMT)
-X-AuditID: cbfec7f2-a51ff7000002a5b7-5a-64ff17ce85f2
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 17.BB.10549.DC71FF46; Mon, 11
-        Sep 2023 14:36:13 +0100 (BST)
-Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
-        [106.120.51.28]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230911133612eusmtip2be196bc65de7d8b30f10c76d75aaf216~D26Gwe_vL0323103231eusmtip2N;
-        Mon, 11 Sep 2023 13:36:12 +0000 (GMT)
-From:   Mateusz Majewski <m.majewski2@samsung.com>
-To:     linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Mateusz Majewski <m.majewski2@samsung.com>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 2/7] thermal: exynos: drop id field
-Date:   Mon, 11 Sep 2023 15:34:26 +0200
-Message-ID: <20230911133435.14061-3-m.majewski2@samsung.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230911133435.14061-1-m.majewski2@samsung.com>
+        Mon, 11 Sep 2023 06:56:51 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBA09127;
+        Mon, 11 Sep 2023 03:56:46 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38B8eBlD007844;
+        Mon, 11 Sep 2023 10:56:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=NKMHFIzgNDvTMejnjOR6kwDOnmpfUj34ZTlTQsO29Hg=;
+ b=KoVO7sdBJS0she7hPmr4/t1yUhTGgxueqxfq0T1eZxgraPLGrp0cActMnGTzUDg99Jtk
+ BxnOLzKd3EVlQ2z03YbA8feoytur2YXujEFaTdZmoal0WVWbv52OH2LbKvp+AS8KZj7a
+ rpDrftwtIr4JdSfrBdxbqz9/izdj3rzMu1bCkLJgFi+CTrFbgawnwRLWxo4mOc9EPof/
+ qB3+SfFUntkO0IRr4Sa5Pb0c2SwbwKeSjkXgtlthAAUmTXcyXj2CYP4N/WDuWJ0djdSp
+ jsmUvadwxlrd/Mj1SqEYo1oH/iN/nhl8FfpJWyl8yc4peCIScbj3FacS+f2NkoA8z0Yk ZQ== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t0hvyke07-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:56:13 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAuCVr006051
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:56:12 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Mon, 11 Sep 2023 03:55:19 -0700
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
+CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_mojha@quicinc.com>
+Subject: [REBASE PATCH v5 08/17] arm64: mm: Add dynamic ramoops region support through command line
+Date:   Mon, 11 Sep 2023 16:23:50 +0530
+Message-ID: <1694429639-21484-9-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHKsWRmVeSWpSXmKPExsWy7djPc7rnxP+nGCy9yWzxYN42NovD8yss
-        pj58wmbxfct1Jot5n2Ut9r7eym7x7UoHk8Wmx9dYLS7vmsNm8bn3CKPFjPP7mCwmHpvMbLH2
-        yF12i7lfpjJbPHnYx+bA77Fz1l12j8V7XjJ5bFrVyeZx59oeNo/NS+o9+rasYvT4vEkugD2K
-        yyYlNSezLLVI3y6BK2PCxV0sBZN4Km4ff8fawPiJs4uRk0NCwERi7cc1bF2MXBxCAisYJRat
-        +wnlfGGU+D9zAQuE85lR4lvHDXaYlpbe7awgtpDAckaJ1muuEEWtTBK7J99lAkmwCRhIPHiz
-        DKxBRKCVUWJmkzpIEbPAJWaJuzfXsoAkhAXMJA603QBrYBFQlXhwagFYnFfARuLkY4hBEgLy
-        Es9v3QEbxClgK3F27XR2iBpBiZMzn4DVMwPVNG+dzQyyQEKgmVPi0tseRohmF4l31+axQtjC
-        Eq+Ob4F6QUbi/875UAvyJWZsfg80iAPIrpC4e9ALwrSW+HiGGcRkFtCUWL9LH6LYUWLei19Q
-        xXwSN94KQhzAJzFp23RmiDCvREebEES1qsTxPZOYIWxpiSctt6FWekicf/uOZQKj4iwkr8xC
-        8soshL0LGJlXMYqnlhbnpqcWG+allusVJ+YWl+al6yXn525iBCax0/+Of9rBOPfVR71DjEwc
-        jIcYJTiYlUR4Sw79TRHiTUmsrEotyo8vKs1JLT7EKM3BoiTOq217MllIID2xJDU7NbUgtQgm
-        y8TBKdXAZLXk5Pll+9OXrDp1M8FGcHd4mLDdE8nabbtuB69aJnI8f+qhb+vOCdvM3O5dFHFg
-        5laBTO3t/yt3Ma12+DvvqOW7aWwtZUYOyrcurNzQW/SnxreEqbfmleyOlyccJV8L6unJ7fBQ
-        0DUKe37jzpuNl4JV16kKJvPxXjjNcLY4oPRZSO2tCq5PcSayZ+0ET+9xFTn/17Nli3FwmfiM
-        9a1rVspbXtR7GuEgu+5Y3e9l7iyrcs6IJJ+SKPgkfdrQ1svcm8O9eHbUPu1ctksX+q/tm/w8
-        p/uF9aH9E7J/CR7tSRK+tdT783rvY9q3mRh/KmZ129fmGj7yzI2unDqDdfPvpCrZT4vEC0/J
-        PpgmHNuzVImlOCPRUIu5qDgRALRGpKjRAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPIsWRmVeSWpSXmKPExsVy+t/xe7pnxf+nGLT9VrZ4MG8bm8Xh+RUW
-        Ux8+YbP4vuU6k8W8z7IWe19vZbf4dqWDyWLT42usFpd3zWGz+Nx7hNFixvl9TBYTj01mtlh7
-        5C67xdwvU5ktnjzsY3Pg99g56y67x+I9L5k8Nq3qZPO4c20Pm8fmJfUefVtWMXp83iQXwB6l
-        Z1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5eglzHh4i6W
-        gkk8FbePv2NtYPzE2cXIySEhYCLR0rudtYuRi0NIYCmjxK0DLxghEtISh79MYYewhSX+XOti
-        gyhqZpL4PekfM0iCTcBA4sGbZewgCRGBTkaJrs3nmEASzAK3mCXuv9YCsYUFzCQOtN0Ai7MI
-        qEo8OLWABcTmFbCROPn4LhPEBnmJ57fugG3jFLCVOLt2OpDNAbTNRqL/jA5EuaDEyZlPWCDG
-        y0s0b53NPIFRYBaS1CwkqQWMTKsYRVJLi3PTc4sN9YoTc4tL89L1kvNzNzECY27bsZ+bdzDO
-        e/VR7xAjEwfjIUYJDmYlEd6SQ39ThHhTEiurUovy44tKc1KLDzGaAp09kVlKNDkfGPV5JfGG
-        ZgamhiZmlgamlmbGSuK8ngUdiUIC6YklqdmpqQWpRTB9TBycUg1MwS8PH1raGOjDvGW3/sfN
-        bDPWH7M79YXDhjtCruuL5MXmlA1hUxaEP2FjzGPIn3HudcA/9kWesf7K0fs/n8pIm/H7x+Ot
-        s0QZ9+25/yhp3w6pC2ec20XaDz8JZjwu9aIxS2Jm6YXnbQl/jf2Lzn2dF7+5+YyZc+qrtZnb
-        l8++t+D79MOzDBcV117wC/A9y3FixfoqJQYVnR1cez9Us+Sxaad3tdcKa4sltuczXNO03G38
-        6YBhk2SEs0z1+zZBj+A7m1vlk7do70x3DVurp/j0443pvw3CFn8Q3/XzXeCvTQJztz8/wHDb
-        XZKbi9umabsva1npzz4JPqXtPGyGQZGMfPZi3MbFQnyzqhcZBjxQYinOSDTUYi4qTgQAwn0I
-        NUIDAAA=
-X-CMS-MailID: 20230911133613eucas1p1671b7d154e1d567b02516d8c4d8074ab
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230911133613eucas1p1671b7d154e1d567b02516d8c4d8074ab
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230911133613eucas1p1671b7d154e1d567b02516d8c4d8074ab
-References: <20230911133435.14061-1-m.majewski2@samsung.com>
-        <CGME20230911133613eucas1p1671b7d154e1d567b02516d8c4d8074ab@eucas1p1.samsung.com>
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: D7aQZe1nCAe-0oMdraPzGcnkv8bF0XPZ
+X-Proofpoint-GUID: D7aQZe1nCAe-0oMdraPzGcnkv8bF0XPZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ clxscore=1015 mlxscore=0 malwarescore=0 impostorscore=0 adultscore=0
+ priorityscore=1501 mlxlogscore=999 spamscore=0 lowpriorityscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309110099
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-We do not use the value, and only Exynos 7 defines this alias anyway.
+The reserved memory region for ramoops is assumed to be at a fixed
+and known location when read from the devicetree. This may not be
+required for something like Qualcomm's minidump which is interested
+in knowing addresses of ramoops region but it does not put hard
+requirement of address being fixed as most of it's SoC does not
+support warm reset and does not use pstorefs at all instead it has
+firmware way of collecting ramoops region if it gets to know the
+address and register it with apss minidump table which is sitting
+in shared memory region in DDR and firmware will have access to
+these table during reset and collects it on crash of SoC.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
+So, add the support of reserving ramoops region to be dynamically
+allocated early during boot if it is request through command line
+via 'dyn_ramoops_size=' and fill up reserved resource structure and
+export the structure, so that it can be read by ramoops driver.
+
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 ---
-v1 -> v2: minor commit message rewording.
+ arch/arm64/mm/init.c       | 94 ++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/pstore_ram.h |  2 +
+ 2 files changed, 96 insertions(+)
 
- drivers/thermal/samsung/exynos_tmu.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 2c1cfb8c4b33..90c33e8017af 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -138,7 +138,6 @@ enum soc_type {
- /**
-  * struct exynos_tmu_data : A structure to hold the private data of the TMU
-  *			    driver
-- * @id: identifier of the one instance of the TMU controller.
-  * @base: base address of the single instance of the TMU controller.
-  * @base_second: base address of the common registers of the TMU controller.
-  * @irq: irq number of the TMU controller.
-@@ -172,7 +171,6 @@ enum soc_type {
-  * @tmu_clear_irqs: SoC specific TMU interrupts clearing method
-  */
- struct exynos_tmu_data {
--	int id;
- 	void __iomem *base;
- 	void __iomem *base_second;
- 	int irq;
-@@ -865,10 +863,6 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 	if (!data || !pdev->dev.of_node)
- 		return -ENODEV;
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 8a0f8604348b..680c1ce18fbe 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -31,6 +31,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/acpi_iort.h>
+ #include <linux/kmemleak.h>
++#include <linux/pstore_ram.h>
  
--	data->id = of_alias_get_id(pdev->dev.of_node, "tmuctrl");
--	if (data->id < 0)
--		data->id = 0;
--
- 	data->irq = irq_of_parse_and_map(pdev->dev.of_node, 0);
- 	if (data->irq <= 0) {
- 		dev_err(&pdev->dev, "failed to get IRQ\n");
+ #include <asm/boot.h>
+ #include <asm/fixmap.h>
+@@ -100,6 +101,93 @@ phys_addr_t __ro_after_init arm64_dma_phys_limit;
+ #define ARM64_MEMSTART_ALIGN	(1UL << ARM64_MEMSTART_SHIFT)
+ #endif
+ 
++#define RAMOOPS_ADDR_HIGH_MAX		(PHYS_MASK + 1)
++
++/* Location of the reserved area for the dynamic ramoops */
++struct resource dyn_ramoops_res = {
++	.name  = "ramoops",
++	.start = 0,
++	.end   = 0,
++	.flags = IORESOURCE_BUSY | IORESOURCE_SYSTEM_RAM,
++	.desc  = IORES_DESC_NONE,
++};
++EXPORT_SYMBOL(dyn_ramoops_res);
++
++static int __init parse_dynamic_ramoops(char *cmdline, unsigned long long *size)
++{
++	const char *name = "dyn_ramoops_size=";
++	char *p = NULL;
++	char *q = NULL;
++	char *tmp;
++
++	if (!cmdline)
++		return -ENOENT;
++
++	/* Check for "dyn_ramoops_size" and use the later if there are more */
++	p = strstr(cmdline, name);
++	while (p) {
++		q = p;
++		p = strchr(p, ' ');
++		if (!p)
++			break;
++
++		p = strstr(p + 1, name);
++	}
++
++	if (!q) {
++		pr_err("ramoops: No entry found for %s\n", name);
++		return -ENOENT;
++	}
++
++	p = q + strlen(name);
++	*size = memparse(p, &tmp);
++	if (p == tmp) {
++		pr_err("ramoops: memory value expected\n");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int __init parse_dyn_ramoops_size_dummy(char *arg)
++{
++	return 0;
++}
++early_param("dyn_ramoops_size", parse_dyn_ramoops_size_dummy);
++
++/*
++ * reserve_dynamic_ramoops() - reserves memory for dynamic ramoops
++ *
++ * This enable dynamic reserve memory support for ramoops through
++ * command line.
++ */
++static void __init reserve_dynamic_ramoops(void)
++{
++	char *cmdline = boot_command_line;
++	unsigned long long ramoops_base;
++	unsigned long long ramoops_size;
++
++	if (!IS_ENABLED(CONFIG_PSTORE_RAM))
++		return;
++
++	if (parse_dynamic_ramoops(cmdline, &ramoops_size))
++		return;
++
++	ramoops_base = memblock_phys_alloc_range(ramoops_size, SMP_CACHE_BYTES,
++						 0, RAMOOPS_ADDR_HIGH_MAX);
++	if (!ramoops_base) {
++		pr_err("cannot allocate ramoops dynamic memory (size:0x%llx).\n",
++			ramoops_size);
++		return;
++	}
++
++	kmemleak_ignore_phys(ramoops_base);
++
++	dyn_ramoops_res.start = ramoops_base;
++	dyn_ramoops_res.end = ramoops_base + ramoops_size - 1;
++	insert_resource(&iomem_resource, &dyn_ramoops_res);
++}
++
+ static int __init reserve_crashkernel_low(unsigned long long low_size)
+ {
+ 	unsigned long long low_base;
+@@ -481,6 +569,12 @@ void __init bootmem_init(void)
+ 	 */
+ 	reserve_crashkernel();
+ 
++	/*
++	 * Reserving ramoops region resource dynamically in case it is
++	 * requested from command line.
++	 */
++	reserve_dynamic_ramoops();
++
+ 	memblock_dump_all();
+ }
+ 
+diff --git a/include/linux/pstore_ram.h b/include/linux/pstore_ram.h
+index 9d65ff94e216..07d700b7649d 100644
+--- a/include/linux/pstore_ram.h
++++ b/include/linux/pstore_ram.h
+@@ -10,6 +10,8 @@
+ 
+ #include <linux/pstore.h>
+ 
++extern struct resource dyn_ramoops_res;
++
+ struct persistent_ram_ecc_info {
+ 	int block_size;
+ 	int ecc_size;
 -- 
-2.41.0
+2.7.4
 
