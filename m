@@ -2,237 +2,215 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA97CA0EC6
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 393DBCA0ECE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:37:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239371AbjIKVaS (ORCPT
+        id S240404AbjIKVaX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:30:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45998 "EHLO
+        Mon, 11 Sep 2023 17:30:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236557AbjIKK5H (ORCPT
+        with ESMTP id S238075AbjIKNgW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 06:57:07 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6C91F3;
-        Mon, 11 Sep 2023 03:57:02 -0700 (PDT)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38BAoP0T025337;
-        Mon, 11 Sep 2023 10:56:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=uaoggU+O059yy0NtlBEpDD3gw5NIJW0KcsRpeOQKyIM=;
- b=Yc12rM0pRN8woQeor+feNqt2nL8u34Eh332DR5OlFjq+6OBndHlVyt20qWOcTWUIBm44
- eYutRWDpKX4pQqHFx7RQEJx63ZiUNOMiDHw42UbV1NIogIIGNijbfAXLhAQ7D2bnVgbA
- 3U//Dw9wpN3XLpmzI2OTEGQfp5ZEB4Cp5Br4eJYxtxOIbbVa/TJjfiL2i96xe50h6BN0
- RaXLo7WIUfhVnB48aKCJ/AN6U6CVlefXoQiR4TJHU9zsl3GSzuXeF4aAhHMieEWAYIds
- 0WuoA4Fa6BzI0OHI63d6iJ8LsVLb22UUmCG3RKoi93aMZdCFIGvuqRV7wjAQYWriXI3G Lg== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t1xjmrefd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 10:56:40 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAudcw006749
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 10:56:39 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.36; Mon, 11 Sep 2023 03:56:29 -0700
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
-CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_mojha@quicinc.com>
-Subject: [REBASE PATCH v5 16/17] firmware: qcom_scm: Refactor code to support multiple download mode
-Date:   Mon, 11 Sep 2023 16:23:58 +0530
-Message-ID: <1694429639-21484-17-git-send-email-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+        Mon, 11 Sep 2023 09:36:22 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96528106
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 06:36:17 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230911133616euoutp0246f250bf0d0a987c83bc62ac812cb8ed~D26Kpcw7X1421914219euoutp02-
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 13:36:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230911133616euoutp0246f250bf0d0a987c83bc62ac812cb8ed~D26Kpcw7X1421914219euoutp02-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1694439376;
+        bh=pq/kPzrdSjU01Z636IhckK77P9sciHZtEKXMXxtJZQs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=WYVL03MGhD1VtRR0P07h1qlUGoMRDpN0AKO3SwveQZhIGE9DjkPZYLlq69U5lXfrq
+         BALQHY5tEr4HGFqsFgDpIsV3dqXtUTkqO8khHhyRAhecueuwREh5+yjyAMe/u+wVVI
+         fhgfJRF1BUgh+HkbZP1opT/QgDEkZnUMhw1F1O58=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20230911133616eucas1p2697a9b235b9a5b8c8e178c54b5c0f4cd~D26KMUhoE1710917109eucas1p20;
+        Mon, 11 Sep 2023 13:36:16 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 78.B1.42423.FC71FF46; Mon, 11
+        Sep 2023 14:36:15 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230911133615eucas1p123b3bed5bfa998bda65196d425f9b49d~D26J0kcQK1222512225eucas1p1u;
+        Mon, 11 Sep 2023 13:36:15 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230911133615eusmtrp2ed989fffc1414750f73187076b5a049c~D26Jz3JM70862108621eusmtrp2k;
+        Mon, 11 Sep 2023 13:36:15 +0000 (GMT)
+X-AuditID: cbfec7f2-a51ff7000002a5b7-60-64ff17cf1211
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id B9.BB.10549.FC71FF46; Mon, 11
+        Sep 2023 14:36:15 +0100 (BST)
+Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
+        [106.120.51.28]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230911133614eusmtip2b7efd7b129eb7cc246b92048d8b56b38~D26IXahex0323103231eusmtip2O;
+        Mon, 11 Sep 2023 13:36:13 +0000 (GMT)
+From:   Mateusz Majewski <m.majewski2@samsung.com>
+To:     linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Mateusz Majewski <m.majewski2@samsung.com>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2 3/7] thermal: exynos: switch from workqueue-driven
+ interrupt handling to threaded interrupts
+Date:   Mon, 11 Sep 2023 15:34:27 +0200
+Message-ID: <20230911133435.14061-4-m.majewski2@samsung.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230911133435.14061-1-m.majewski2@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Yu3TMLFHfI0m0rNQlxh7FXtuDai56q4W
-X-Proofpoint-GUID: Yu3TMLFHfI0m0rNQlxh7FXtuDai56q4W
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- phishscore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=999
- malwarescore=0 adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309110099
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLKsWRmVeSWpSXmKPExsWy7djP87rnxf+nGOycZW7xYN42NovD8yss
+        pj58wmbxfct1Jot5n2Ut9r7eym7x7UoHk8Wmx9dYLS7vmsNm8bn3CKPFjPP7mCwmHpvMbLH2
+        yF12i7lfpjJbPHnYx+bA77Fz1l12j8V7XjJ5bFrVyeZx59oeNo/NS+o9+rasYvT4vEkugD2K
+        yyYlNSezLLVI3y6BK2PigwfMBT8lKna9im5gvCLSxcjJISFgIvGkq4+ti5GLQ0hgBaPEzlVd
+        TBDOF0aJd5duMEI4nxklFjb9ZYVpufr1BFRiOaPElwk3WCCcViaJV0cnsoBUsQkYSDx4s4wd
+        xBYRaGWUmNmkDlLELHCJWeLuzbVARRwcwgKFEttm6YPUsAioSryaOBdsA6+AjcT0k+dYILbJ
+        Szy/dQdsDqeArcTZtdPZIWoEJU7OfAJWwwxU07x1NjPIfAmB/xwSX+fNZ4dodpFYu+so1CBh
+        iVfHt0DFZST+75zPBGHnS8zY/B7sHgmBCom7B70gTGuJj2eYQUxmAU2J9bv0IYodJSY8O8YG
+        UcEnceOtIMQBfBKTtk1nhgjzSnS0CUFUq0oc3zOJGcKWlnjSchtqpYfE0c/vWSYwKs5C8sos
+        JK/MQti7gJF5FaN4amlxbnpqsWFearlecWJucWleul5yfu4mRmAKO/3v+KcdjHNffdQ7xMjE
+        wXiIUYKDWUmEt+TQ3xQh3pTEyqrUovz4otKc1OJDjNIcLErivNq2J5OFBNITS1KzU1MLUotg
+        skwcnFINTJOWSUs39vlEVduk7H4at93SUXHa63lVLCnbsl7GyTTcdn5TviDCI92+80BSspIJ
+        e6PBMmWj17l9Xh7+MtWKm+YvnNjhe5Bz7e7bx5nXbUi+sORw8sqD0elCXFLfpYxepTsc3/b1
+        lZUwi8k0qXtnFDcoJ/76q7RATdbrczBL65HnOpOnv579PueH+S6f/4e6nhycMpfDT3BDh8OE
+        2dpvTppMZOPn5lbxefuHreqqWJHqnOibFSdLeoSitfJdFlw60pw1/SKfbS93MNsa41z2Pn2T
+        Xb0zcrJfP5t6uNjjmsSjl401Eoeub99y16Iv7ljR1I7/tnLbpNZc3GV2VVO4PNcqR7b08pfe
+        2RbmZ7wLlViKMxINtZiLihMBBWrbAtADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHIsWRmVeSWpSXmKPExsVy+t/xe7rnxf+nGHx9qWDxYN42NovD8yss
+        pj58wmbxfct1Jot5n2Ut9r7eym7x7UoHk8Wmx9dYLS7vmsNm8bn3CKPFjPP7mCwmHpvMbLH2
+        yF12i7lfpjJbPHnYx+bA77Fz1l12j8V7XjJ5bFrVyeZx59oeNo/NS+o9+rasYvT4vEkugD1K
+        z6Yov7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL2PigwfM
+        BT8lKna9im5gvCLSxcjJISFgInH16wnGLkYuDiGBpYwSszcsZ4FISEsc/jKFHcIWlvhzrYsN
+        oqiZSWLKlRtgRWwCBhIP3ixjB0mICHQySnRtPscEkmAWuMUscf+1FogtLJAv8XnnE1YQm0VA
+        VeLVxLlgNq+AjcT0k+egtslLPL91B2wbp4CtxNm104FsDqBtNhL9Z3QgygUlTs58wgIxXl6i
+        eets5gmMArOQpGYhSS1gZFrFKJJaWpybnltsqFecmFtcmpeul5yfu4kRGHHbjv3cvINx3quP
+        eocYmTgYDzFKcDArifCWHPqbIsSbklhZlVqUH19UmpNafIjRFOjsicxSosn5wJjPK4k3NDMw
+        NTQxszQwtTQzVhLn9SzoSBQSSE8sSc1OTS1ILYLpY+LglGpgip9dvP6kUs9s9vdOAoGRFhvi
+        ltxQu6x9MnEG43f3g1VatR8muNatq3ed6Z0nz+UmJTbx2cXQyWWrXT7tEjohtO+F6rXJ9x7r
+        FUUEL+1+GNBaVzyfd+K7o0EHoiwS/uf5SW/cfdEjq/PF49WpmwwO/5tkIj57N69ZnOeag6tN
+        qs/ubXGYMONuxHOb6QV9C4Wn6Lqt05zOsufGRW2uMo4Udk4eKz7xY6vnnda4JHVnNd+67Zyc
+        5syR8hvb4pxzNzq1VdnM9i3+F67Rv9Vc9sKMLX28f6QKPt9nqNh661NHl3dwlmOc05VT83xt
+        hA8ulRJcWDf/tdU8OfUYSZY+Ce5nU9xa4xjj/6kmPnRKPi+rxFKckWioxVxUnAgA7Lfc0EED
+        AAA=
+X-CMS-MailID: 20230911133615eucas1p123b3bed5bfa998bda65196d425f9b49d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20230911133615eucas1p123b3bed5bfa998bda65196d425f9b49d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230911133615eucas1p123b3bed5bfa998bda65196d425f9b49d
+References: <20230911133435.14061-1-m.majewski2@samsung.com>
+        <CGME20230911133615eucas1p123b3bed5bfa998bda65196d425f9b49d@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Currently on Qualcomm SoC, download_mode is enabled if
-CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT is selected.
+The workqueue boilerplate is mostly one-to-one what the threaded
+interrupts do.
 
-Refactor the code such that it supports multiple download
-modes and drop CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT config
-instead, give interface to set the download mode from
-module parameter.
-
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
 ---
- drivers/firmware/Kconfig    | 11 ---------
- drivers/firmware/qcom_scm.c | 56 +++++++++++++++++++++++++++++++++++++++------
- 2 files changed, 49 insertions(+), 18 deletions(-)
+v1 -> v2: devm_request_threaded_irq call formatting change.
 
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index b59e3041fd62..ff7e9f330559 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -215,17 +215,6 @@ config MTK_ADSP_IPC
- config QCOM_SCM
- 	tristate
+ drivers/thermal/samsung/exynos_tmu.c | 29 +++++++++-------------------
+ 1 file changed, 9 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 90c33e8017af..ba9414b419ef 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -142,7 +142,6 @@ enum soc_type {
+  * @base_second: base address of the common registers of the TMU controller.
+  * @irq: irq number of the TMU controller.
+  * @soc: id of the SOC type.
+- * @irq_work: pointer to the irq work structure.
+  * @lock: lock to implement synchronization.
+  * @clk: pointer to the clock structure.
+  * @clk_sec: pointer to the clock structure for accessing the base_second.
+@@ -175,7 +174,6 @@ struct exynos_tmu_data {
+ 	void __iomem *base_second;
+ 	int irq;
+ 	enum soc_type soc;
+-	struct work_struct irq_work;
+ 	struct mutex lock;
+ 	struct clk *clk, *clk_sec, *sclk;
+ 	u32 cal_type;
+@@ -763,10 +761,9 @@ static int exynos7_tmu_read(struct exynos_tmu_data *data)
+ 		EXYNOS7_TMU_TEMP_MASK;
+ }
  
--config QCOM_SCM_DOWNLOAD_MODE_DEFAULT
--	bool "Qualcomm download mode enabled by default"
--	depends on QCOM_SCM
--	help
--	  A device with "download mode" enabled will upon an unexpected
--	  warm-restart enter a special debug mode that allows the user to
--	  "download" memory content over USB for offline postmortem analysis.
--	  The feature can be enabled/disabled on the kernel command line.
+-static void exynos_tmu_work(struct work_struct *work)
++static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
+ {
+-	struct exynos_tmu_data *data = container_of(work,
+-			struct exynos_tmu_data, irq_work);
++	struct exynos_tmu_data *data = id;
+ 
+ 	thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
+ 
+@@ -778,7 +775,8 @@ static void exynos_tmu_work(struct work_struct *work)
+ 
+ 	clk_disable(data->clk);
+ 	mutex_unlock(&data->lock);
+-	enable_irq(data->irq);
++
++	return IRQ_HANDLED;
+ }
+ 
+ static void exynos4210_tmu_clear_irqs(struct exynos_tmu_data *data)
+@@ -812,16 +810,6 @@ static void exynos4210_tmu_clear_irqs(struct exynos_tmu_data *data)
+ 	writel(val_irq, data->base + tmu_intclear);
+ }
+ 
+-static irqreturn_t exynos_tmu_irq(int irq, void *id)
+-{
+-	struct exynos_tmu_data *data = id;
 -
--	  Say Y here to enable "download mode" by default.
+-	disable_irq_nosync(irq);
+-	schedule_work(&data->irq_work);
 -
- config SYSFB
- 	bool
- 	select BOOT_VESA_SUPPORT
-diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
-index 5cacae63ee2a..4ecdb0d025a4 100644
---- a/drivers/firmware/qcom_scm.c
-+++ b/drivers/firmware/qcom_scm.c
-@@ -20,13 +20,13 @@
- #include <linux/of_irq.h>
- #include <linux/of_platform.h>
- #include <linux/clk.h>
-+#include <linux/kstrtox.h>
- #include <linux/reset-controller.h>
- #include <linux/arm-smccc.h>
+-	return IRQ_HANDLED;
+-}
+-
+ static const struct of_device_id exynos_tmu_match[] = {
+ 	{
+ 		.compatible = "samsung,exynos3250-tmu",
+@@ -1023,8 +1011,6 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_sensor;
  
- #include "qcom_scm.h"
+-	INIT_WORK(&data->irq_work, exynos_tmu_work);
+-
+ 	data->clk = devm_clk_get(&pdev->dev, "tmu_apbif");
+ 	if (IS_ERR(data->clk)) {
+ 		dev_err(&pdev->dev, "Failed to get clock\n");
+@@ -1093,8 +1079,11 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+ 		goto err_sclk;
+ 	}
  
--static bool download_mode = IS_ENABLED(CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT);
--module_param(download_mode, bool, 0);
-+static u32 download_mode;
- 
- #define SCM_HAS_CORE_CLK	BIT(0)
- #define SCM_HAS_IFACE_CLK	BIT(1)
-@@ -83,6 +83,11 @@ static const char * const qcom_scm_convention_names[] = {
- 	[SMC_CONVENTION_LEGACY] = "smc legacy",
- };
- 
-+static const char * const download_mode_name[] = {
-+	[QCOM_DLOAD_NODUMP]	= "off",
-+	[QCOM_DLOAD_FULLDUMP]	= "full",
-+};
-+
- static struct qcom_scm *__scm;
- static DEFINE_SPINLOCK(lock);
- 
-@@ -448,9 +453,10 @@ static int __qcom_scm_set_dload_mode(struct device *dev, bool enable)
- 	return qcom_scm_call_atomic(__scm->dev, &desc, NULL);
- }
- 
--static void qcom_scm_set_download_mode(bool enable)
-+static void qcom_scm_set_download_mode(u32 download_mode)
- {
--	u32 val = enable ? QCOM_DLOAD_FULLDUMP : QCOM_DLOAD_NODUMP;
-+	bool enable = !!download_mode;
-+	u32 val = download_mode;
- 	bool avail;
- 	int ret = 0;
- 
-@@ -1430,6 +1436,42 @@ static irqreturn_t qcom_scm_irq_handler(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
-+static int get_download_mode(char *buffer, const struct kernel_param *kp)
-+{
-+	if (download_mode >= ARRAY_SIZE(download_mode_name))
-+		return sysfs_emit(buffer, "unknown mode\n");
-+
-+	return sysfs_emit(buffer, "%s\n", download_mode_name[download_mode]);
-+}
-+
-+static int set_download_mode(const char *val, const struct kernel_param *kp)
-+{
-+	u32 old = download_mode;
-+	int ret;
-+
-+	ret = sysfs_match_string(download_mode_name, val);
-+	if (ret < 0) {
-+		download_mode = old;
-+		pr_err("qcom_scm: unknown download mode: %s\n", val);
-+		return -EINVAL;
-+	}
-+
-+	download_mode = ret;
-+	if (__scm)
-+		qcom_scm_set_download_mode(download_mode);
-+
-+	return 0;
-+}
-+
-+static const struct kernel_param_ops download_mode_param_ops = {
-+	.get = get_download_mode,
-+	.set = set_download_mode,
-+};
-+
-+module_param_cb(download_mode, &download_mode_param_ops, NULL, 0644);
-+MODULE_PARM_DESC(download_mode,
-+		"download mode: off/full are acceptable values");
-+
- static int qcom_scm_probe(struct platform_device *pdev)
- {
- 	struct qcom_scm *scm;
-@@ -1493,12 +1535,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
- 	__get_convention();
- 
- 	/*
--	 * If requested enable "download mode", from this point on warmboot
-+	 * If "download mode" is requested, from this point on warmboot
- 	 * will cause the boot stages to enter download mode, unless
- 	 * disabled below by a clean shutdown/reboot.
- 	 */
- 	if (download_mode)
--		qcom_scm_set_download_mode(true);
-+		qcom_scm_set_download_mode(download_mode);
- 
- 	return 0;
- }
-@@ -1506,7 +1548,7 @@ static int qcom_scm_probe(struct platform_device *pdev)
- static void qcom_scm_shutdown(struct platform_device *pdev)
- {
- 	/* Clean shutdown, disable download mode to allow normal restart */
--	qcom_scm_set_download_mode(false);
-+	qcom_scm_set_download_mode(QCOM_DLOAD_NODUMP);
- }
- 
- static const struct of_device_id qcom_scm_dt_match[] = {
+-	ret = devm_request_irq(&pdev->dev, data->irq, exynos_tmu_irq,
+-		IRQF_TRIGGER_RISING | IRQF_SHARED, dev_name(&pdev->dev), data);
++	ret = devm_request_threaded_irq(&pdev->dev, data->irq, NULL,
++					exynos_tmu_threaded_irq,
++					IRQF_TRIGGER_RISING
++						| IRQF_SHARED | IRQF_ONESHOT,
++					dev_name(&pdev->dev), data);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to request irq: %d\n", data->irq);
+ 		goto err_sclk;
 -- 
-2.7.4
+2.41.0
 
