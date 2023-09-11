@@ -2,97 +2,120 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 748F7CA0EC3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Sep 2023 23:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5704CCA0ECB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Sep 2023 23:02:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349002AbjIKVcJ (ORCPT
+        id S1348966AbjIKVb7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:32:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58516 "EHLO
+        Mon, 11 Sep 2023 17:31:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236590AbjIKLCi (ORCPT
+        with ESMTP id S242676AbjIKQFp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 07:02:38 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40D8DCDD
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 04:02:34 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-501bd6f7d11so6967928e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 04:02:34 -0700 (PDT)
+        Mon, 11 Sep 2023 12:05:45 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC2891AE
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 09:05:40 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-401b393df02so54241975e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 09:05:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694430152; x=1695034952; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1694448339; x=1695053139; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=IeK6HQWOkE6erW/8t8XvbP/nXkU1GU8xBhJ8mesdBUw=;
-        b=MWQoaKSNNKbir7N9+SzvDmj2SFq6UAe42uI1SAjtnda44Z9mmSnCJwr2Rktw77xcn1
-         i69EnN8jP3N6VGXk1WdT0uXYGxFpN5E4es2KeZj7OygHMh3JrHlu/9t8EvFtFLxDEKN1
-         9Va8bIBXyWG1Tyte3CKxHhiT+UxH0LTndXcz5Gzpg0mnGBIJ4AcCWUH4YYBmqYUF6MbP
-         FTDIu0vG3+VhxVP+FFhot94pnnhsfTnJuZxraeLHaBSakr+eiomuw4wFLRH0vFlA66UE
-         gcFr/BCvD8xHD2nXVMPBYicQU69chSnP+f5BxsKI+tKGa9t+JoiDQ24skodTUaauKb+6
-         C3nw==
+        bh=VBVJ2wHJ2/UKLMCz0YHp9T+QNyQaVPOEmzHr3wHgHAg=;
+        b=iirHIJlj/Q1ROqFAMDiIEBdBoauZRMnmRnc0msgGDaO9EZZmBmn7Cn8dQiejSkxgkl
+         SZ9JPgsKdOXkTdAAs2S7UEldKGnXJ9/ZkaRMc+wWG1VvhrY6I/AoZc5AG3h/P6jjDkew
+         J5WewO4CHKoEHL1E9jttRTqwo877Qj6S7BLSguonSMvbhto+YRaAs/foKBq5Bh+v7RrS
+         wuqoQot43wlKYK9H+9s9GUIBdER6EJVcd4rp0oiR/w+IeYwn73/SLAaiWOUGVzHVMv11
+         i4Zlmy6lA5S/gOOaT8GgxefdUKiyAQPc/wOQVILBKLVfPQlfGN2O1B4vo8OfuAsabtE1
+         J9LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694430152; x=1695034952;
+        d=1e100.net; s=20230601; t=1694448339; x=1695053139;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IeK6HQWOkE6erW/8t8XvbP/nXkU1GU8xBhJ8mesdBUw=;
-        b=a0MZgjTbZqg6FwveSfZvOAeKeaDaG0by3Z4uxNGdl/NP+ZW8fhakNgGFuRs2RN9JnI
-         Mjn8awt+V5mZ4QC45O8RgCXB0J/v+DpbKf9q7aHQDKqS2RnwVQyBZdijM0qmhLRt6zzs
-         MT2l3GKlTmXju818t5p3mnoq6c2FF4hye/jpNdolUuku39qt+NIaDhbWOsVzlCi2jMXZ
-         R12B0s+cc2A7Yp3dgxNENkRN3vbvcQM+AvK1FiYoHTOg+5F+I8thz/58uEijEr2KHQU/
-         f1BF27lxy70RFLtXxIzE94aAzru6LsDjCQD4/gFnEaaMefhgIcn5JqTBhdJrfMstqbGu
-         ZZaQ==
-X-Gm-Message-State: AOJu0YyWFTWYl8SSQULR2zRt2MSrbGJCywNriTjgGpvel/IGuxmREUFj
-        Kwu0X3ufDe1JHIaArYvKecxpEw==
-X-Google-Smtp-Source: AGHT+IEKKrXTCBCABNJdmP3x5+smqQBfXEnldaNpLWrHhAXFPqtMZ9mgYBI5HztaY0OQCZFgFLOtDg==
-X-Received: by 2002:ac2:5bc8:0:b0:4fe:15b5:a5f9 with SMTP id u8-20020ac25bc8000000b004fe15b5a5f9mr6933428lfn.54.1694430152499;
-        Mon, 11 Sep 2023 04:02:32 -0700 (PDT)
+        bh=VBVJ2wHJ2/UKLMCz0YHp9T+QNyQaVPOEmzHr3wHgHAg=;
+        b=iKDJuomTlA81asS2+Vv504ckTI4NeJ4uE/2xnx/5I97DXta9iB9zP3IuS/aVAt3bLd
+         P8qknXQVPWzQA7Ku1vvBlv4Hl/BUtILAs4u4j4lwsfvfh2P5KNv4UaZDJdOuEVMnwsOe
+         vK8x5a0eXyKyRRLvBM7j7nl3XtSoh6pfoBnv29wOHofIcmIGnUH6hCVfoQkC38MrfdtT
+         U6/rwmwFnX2m+XAOz6/5uRN2DzvHDQsBML0soMmwdabo7UnVMHF3+sVNa5ua66m5G+RO
+         chMR2rLRiech5ScRPvw7P8Cn7dEQT2ADXp4Oq5r9dZI7evsGq+rnrHMmZfNgy4Gub5Ez
+         8A6w==
+X-Gm-Message-State: AOJu0Yxr1nlW+NqdlhjMY82WX283srvxFNsSnsxPLdYVq8yxuPjLwEpL
+        N3NFewt5TVqYGr1CFy4TJ5/VNg==
+X-Google-Smtp-Source: AGHT+IGyuy2+dN6nVi/A8nEkH5DvEYQPGPUixpXjx1K6xC3tj2xMB32WaeVax7THWg5xlQU35kx7hg==
+X-Received: by 2002:a05:600c:2116:b0:401:c8b9:4b8a with SMTP id u22-20020a05600c211600b00401c8b94b8amr9091672wml.29.1694448339176;
+        Mon, 11 Sep 2023 09:05:39 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id pk24-20020a170906d7b800b0098d2d219649sm5250690ejb.174.2023.09.11.04.02.29
+        by smtp.gmail.com with ESMTPSA id 12-20020a05600c028c00b003fee6e170f9sm10490902wmk.45.2023.09.11.09.05.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Sep 2023 04:02:31 -0700 (PDT)
-Message-ID: <e833b9c1-23e3-f8ad-feec-000c053bd020@linaro.org>
-Date:   Mon, 11 Sep 2023 13:02:28 +0200
+        Mon, 11 Sep 2023 09:05:38 -0700 (PDT)
+Message-ID: <5f1791b4-78d8-9895-e639-238411b60f00@linaro.org>
+Date:   Mon, 11 Sep 2023 18:05:35 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.15.0
-Subject: Re: [REBASE PATCH v5 01/17] docs: qcom: Add qualcomm minidump guide
+Subject: Re: [PATCH 04/11] thermal: exynos: remove fine-grained clk management
 Content-Language: en-US
-To:     Mukesh Ojha <quic_mojha@quicinc.com>, corbet@lwn.net,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, keescook@chromium.org, tony.luck@intel.com,
-        gpiccoli@igalia.com, mathieu.poirier@linaro.org,
-        catalin.marinas@arm.com, will@kernel.org, linus.walleij@linaro.org,
-        andy.shevchenko@gmail.com, vigneshr@ti.com, nm@ti.com,
-        matthias.bgg@gmail.com, kgene@kernel.org, alim.akhtar@samsung.com,
-        bmasney@redhat.com, quic_tsoni@quicinc.com
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel@quicinc.com
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
- <1694429639-21484-2-git-send-email-quic_mojha@quicinc.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mateusz Majewski <m.majewski2@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+References: <20230829091853.626011-1-m.majewski2@samsung.com>
+ <CGME20230829092412eucas1p2b79a6f90b9077a3a5486845b7e68bbc6@eucas1p2.samsung.com>
+ <20230829091853.626011-5-m.majewski2@samsung.com>
+ <a3b9ff0f-fff9-9439-5ec9-95a4de9bdfaa@linaro.org>
+ <afbdce92-beb9-cb7f-305f-968c71dde838@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1694429639-21484-2-git-send-email-quic_mojha@quicinc.com>
+In-Reply-To: <afbdce92-beb9-cb7f-305f-968c71dde838@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/09/2023 12:53, Mukesh Ojha wrote:
-> Add the qualcomm minidump guide for the users which tries to cover
-> the dependency, API use and the way to test and collect minidump
-> on Qualcomm supported SoCs.
+On 01/09/2023 10:40, Marek Szyprowski wrote:
+> On 29.08.2023 11:56, Krzysztof Kozlowski wrote:
+>> On 29/08/2023 11:18, Mateusz Majewski wrote:
+>>> This clock only controls the register operations. The gain in power
+>>> efficiency is therefore quite dubious, while there is price of added
+>>> complexity that is important to get right (as a register operation might
+>>> outright hang the CPU if the clock is not enabled).
+>> So once it is done right, this stops being argument. The benefit is to
+>> keep this clock disabled most of the time, which now we lost.
+>>
+>> I don't find this patch correct approach.
 > 
-> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> ---
+> I've suggested this change while playing with this driver.
+> 
+> For me turning AHB clock on/off during normal driver operation seems to 
+> be over-engineering and really gives no real power saving benefits, 
+> especially if thermal driver is the only one that does such fine-grained 
+> clock management (none of the Exynos supported in mainline does that). 
+> Removing it simplifies code and makes it easier to understand or read, 
+> as the current code already was somehow problematic to understand and 
+> unintuitive:
+> 
+> https://lore.kernel.org/all/c3258cb2-9a56-d048-5738-1132331a157d@linaro.org/
+> 
+> Taking into account that the driver is not really maintained, making it 
+> simpler without noticeable feature loss counts as a benefit for me.
 
-Please let us review your previous patch before sending new versions or
-resends or rebases.
+Hm, ok, let it be, although I bet once someone will come and start
+adding runtime PM for clock handling...
 
 Best regards,
 Krzysztof
