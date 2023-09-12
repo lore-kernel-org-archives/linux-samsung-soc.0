@@ -2,136 +2,90 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66179CA0EC3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Sep 2023 06:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B98CA0ECF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Sep 2023 08:24:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229538AbjILGGt (ORCPT
+        id S232564AbjILIYN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 12 Sep 2023 02:06:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54388 "EHLO
+        Tue, 12 Sep 2023 04:24:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229495AbjILGGt (ORCPT
+        with ESMTP id S232641AbjILIYJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Sep 2023 02:06:49 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E34B4E78
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 23:06:44 -0700 (PDT)
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230912060642epoutp019082ef8435f15b8efb718262386b31ac~EEa7aNcGf0200602006epoutp01B
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Sep 2023 06:06:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230912060642epoutp019082ef8435f15b8efb718262386b31ac~EEa7aNcGf0200602006epoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1694498802;
-        bh=4bcw94gLGxDMnnKRk6uK6p6mnuHhueBZymKra7u5+yg=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=hrc/iM8wEYKYUlvwoNsPNKt8zqCfohCznkIgCr6O4zqdqDjeOZryOalEt0WPAx+ck
-         8PTVQIjD/11nsJYJ/+HzV2e1cm7tW6cAzHANeuX2oFz1XTltjVF565dG6aT8R1iOYD
-         ObgQZphvbg5Ksz3n0+2ane2NfgeNwTdnYCa+3iO8=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20230912060641epcas2p162ecc6fb9bdabab137197d87fca8eea3~EEa6xBR-12481624816epcas2p1G;
-        Tue, 12 Sep 2023 06:06:41 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.99]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4RlClP1lXLz4x9Q1; Tue, 12 Sep
-        2023 06:06:41 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F1.77.09660.1FFFFF46; Tue, 12 Sep 2023 15:06:41 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-        20230912060640epcas2p43a9e6e11906d03641e76fb3df97462b8~EEa547k9Z1824418244epcas2p4X;
-        Tue, 12 Sep 2023 06:06:40 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230912060640epsmtrp1999c83b72087890b491927e653b55e18~EEa529Cgb1194111941epsmtrp1X;
-        Tue, 12 Sep 2023 06:06:40 +0000 (GMT)
-X-AuditID: b6c32a47-d5dfa700000025bc-46-64fffff13a12
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F7.39.18916.0FFFFF46; Tue, 12 Sep 2023 15:06:40 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.55]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230912060640epsmtip1c23c5896519d7126e5219fb516eb67f6~EEa5NfEXc2007820078epsmtip1G;
-        Tue, 12 Sep 2023 06:06:40 +0000 (GMT)
-From:   Jaewon Kim <jaewon02.kim@samsung.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH] arm64: dts: exynos: Use pinctrl macros for exynos5433-tm2
-Date:   Tue, 12 Sep 2023 14:56:35 +0900
-Message-ID: <20230912055635.49092-1-jaewon02.kim@samsung.com>
-X-Mailer: git-send-email 2.42.0
+        Tue, 12 Sep 2023 04:24:09 -0400
+Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FDF910E9
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Sep 2023 01:24:05 -0700 (PDT)
+Received: by mail-yb1-xb2a.google.com with SMTP id 3f1490d57ef6-d7b8d2631fdso5012851276.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Sep 2023 01:24:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694507044; x=1695111844; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JTDlvFYbsx79XjnXV/v1eS2oK868sA5+g3OCAFf6938=;
+        b=FBhB4z6HcF6EizL+/lwxRnvBPsnUBCZNCJdmUZqMhF2t8tNtnTGFF+JCUzlHUG9Exo
+         EggToZqBJppvlFyjEBigx34yWBARuEWqMz4yka52D9EM9UM1QrISxBRPtWDZ29WUYe9q
+         d2krkdkVjxK27mY+IVp4h5OuRfx8EOC24+q01oOZ9zVKap5Gn+pmjs1tgIAXdxIMWl2s
+         hlUypNi+ZXFlGreD6ZHACbQH+jnwcETJOh0eM2WKZkO86QxIoS8ndf9uFvCult8qmb5z
+         WmJNShM2s+Z914AefMurd58mLEBMQpCYyRNyQgzLfOJXMC6Jyztx8eDTmu+++2h4nbhP
+         glxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694507044; x=1695111844;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JTDlvFYbsx79XjnXV/v1eS2oK868sA5+g3OCAFf6938=;
+        b=a57zJB3C1C9o7PkQ2vHpvMgtxAXS6TVfxP1bwIMLETjhJij5anD9xL56/OdLwIsTin
+         7OYitbeIB/TYxT/vht+Zv1RHAXzEXsKC+UPmdgQyZ49OpQZJAWEUXVFv6baVWspZptoj
+         MoxuHelUPqMKIPWOv74wjmhWuggKlL2yiw5UmnFwWKWe9u6nF+7IwI77otPBnG/4QktL
+         rqqC6tUjn14sYPUn5JpdBxMAIRU3BbB42wixg/MK+I3JqOKxqtYD9ZDhsMM1Zt4vq7Hs
+         yqN0hvAtsfZIAaGvopV+FOI1MUU8WH/ZVzNelfIDhNfXotyYsaeWUowSSMfrt25kZ4r1
+         YnJA==
+X-Gm-Message-State: AOJu0YyBZ2N9dvPkL77Njbsa7BBzPUQkc+sNsMWM5Iao7rHO+Tou4IJn
+        1mbm5p2olN8XjZIL7DMTkaLri0BvcUaizcvWHIJiZg==
+X-Google-Smtp-Source: AGHT+IFd+7FzVpzIXwF6eF0XM98eCqwGR8vQyKfh9Y2GKm2qYYnTSN7eR9A+5PvS2Qu/0xw3IHJQEnNJumvhS4CTpxY=
+X-Received: by 2002:a25:d4c6:0:b0:d7b:95ff:14f with SMTP id
+ m189-20020a25d4c6000000b00d7b95ff014fmr13092370ybf.61.1694507044304; Tue, 12
+ Sep 2023 01:24:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnk+LIzCtJLcpLzFFi42LZdljTVPfj//8pBnsus1g8mLeNzWLN3nNM
-        FvOPnGO12NFwhNWi78VDZotNj6+xWlzeNYfNYsb5fUwWrXuPsDtwemxa1cnmcefaHjaPzUvq
-        Pfq2rGL0+LxJLoA1KtsmIzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJ
-        xSdA1y0zB+geJYWyxJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BeYFecWJucWleul5e
-        aomVoYGBkSlQYUJ2Rs/uC2wFzWwVLft2sjQwTmPtYuTkkBAwkXh++j07iC0ksINR4nNvTBcj
-        F5D9iVFi9qrZjHDOzndXGWE6Zq/bA5XYySixctsOdgjnI6PE34NPwGaxCWhLfF+/mBUkISKw
-        hlFi9afNLCAOs8AGRolj+1+AbRcW8JKY8GQjM4jNIqAq8e/bGbAdvAK2Eo3TVzND7JOX2LPo
-        OxNEXFDi5MwnLCA2M1C8eetsqJpr7BLT2rghbBeJ7a8msEHYwhKvjm9hh7ClJF72t0HZ2RLt
-        0/9AQ6BC4uKG2VD1xhKznrUD3cABNF9TYv0ufRBTQkBZ4sgtqK18Eh2H/7JDhHklOtqEIBrV
-        JO5PPQc1REZi0pGVTBC2h8SvX8uYQcqFBGIlulutJzDKz0Lyyiwkr8xCWLuAkXkVo1hqQXFu
-        emqxUYExPE6T83M3MYJTpJb7DsYZbz/oHWJk4mA8xCjBwawkwlty6G+KEG9KYmVValF+fFFp
-        TmrxIUZTYOBOZJYSTc4HJum8knhDE0sDEzMzQ3MjUwNzJXHee61zU4QE0hNLUrNTUwtSi2D6
-        mDg4pRqY9O2KPNtNw4J3y6rI1U6ULI3T6W8q2XZ/zcvzLApX4swULy+79m1LYYPnTOf+i39/
-        zmrlf8n9+FbG2zMsIn/P7+sseOfcW3ZAgvGkxAM739cHF+TJ991+Xd6W1+Oc9ungmyneXGsO
-        NWgKSNj8WLpbPi71ds6+Iz/5JNOSLL7Y5D2/3uD/b1H9kifrfkefem9YV2PR9ujFFTvjyOQs
-        A9ETVvFLWsrXPunb7pp8wu3YzoysTXLLWM7efVDF8UKCu+C/7okzARwTz0t7zX60vbV3/cbF
-        KZNVHD3cfQJl006pqQW7OJ+703Nhp2JBiVj+AtfT0161MLunlPe4nOWrMj5w7Mb5HeoM63Y9
-        D9yWE26lxFKckWioxVxUnAgAF9yX4RoEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsWy7bCSnO6H//9TDD590rF4MG8bm8WaveeY
-        LOYfOcdqsaPhCKtF34uHzBabHl9jtbi8aw6bxYzz+5gsWvceYXfg9Ni0qpPN4861PWwem5fU
-        e/RtWcXo8XmTXABrFJdNSmpOZllqkb5dAldGz+4LbAXNbBUt+3ayNDBOY+1i5OSQEDCRmL1u
-        D2MXIxeHkMB2Ron1q+4yQyRkJJY/62ODsIUl7rccYYUoes8ocWznE0aQBJuAtsT39YvBEiIC
-        6xglWr69BBvFLLCFUeLi8Wdg7cICXhITnmwEG8sioCrx79sZsG5eAVuJxumrodbJS+xZ9J0J
-        Ii4ocXLmExYQmxko3rx1NvMERr5ZSFKzkKQWMDKtYhRNLSjOTc9NLjDUK07MLS7NS9dLzs/d
-        xAgOWq2gHYzL1v/VO8TIxMF4iFGCg1lJhLfk0N8UId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rzK
-        OZ0pQgLpiSWp2ampBalFMFkmDk6pBqZNIQ86Q0qEsoskF7xjnef09LBm2pF/puvKLzapeLtK
-        HZx5P/Vz+OO3KwJnPl83iVEq+KhpV0jSjau+yV82S88QPMImFFCRcztHjbF9GUe+8eV117vz
-        NvfWB20+2N3a+GYm557O7viM3ZOVRB7t8uBZmDxn0cmKH+YPmg/kXPrYVCckrHr/a8dy94rg
-        tp0cV3xz/Bkcn7lkl2u3Wn3e2LfqdsafSh8OHp/Y9c2TbBcEuYV/3hU0I333kjVP1hmcY+tS
-        X6i9uuq58Ywt3FKz5ZXUihe65sQnP+fc8WFG8In5Ry5dWvVfoPF43jz33ewvp6c8PNDdWxJR
-        /Ko74vgRq7J9K3gOTfUIFZKvK+T82KjEUpyRaKjFXFScCADM86RbyQIAAA==
-X-CMS-MailID: 20230912060640epcas2p43a9e6e11906d03641e76fb3df97462b8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230912060640epcas2p43a9e6e11906d03641e76fb3df97462b8
-References: <CGME20230912060640epcas2p43a9e6e11906d03641e76fb3df97462b8@epcas2p4.samsung.com>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com> <1694429639-21484-15-git-send-email-quic_mojha@quicinc.com>
+In-Reply-To: <1694429639-21484-15-git-send-email-quic_mojha@quicinc.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 12 Sep 2023 10:23:53 +0200
+Message-ID: <CACRpkdYBH09emydQPaRUgEJuHdV0tk3=xeMXxD9UVP0GH2XZEw@mail.gmail.com>
+Subject: Re: [REBASE PATCH v5 14/17] pinctrl: qcom: Use qcom_scm_io_update_field()
+To:     Mukesh Ojha <quic_mojha@quicinc.com>
+Cc:     corbet@lwn.net, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
+        mathieu.poirier@linaro.org, catalin.marinas@arm.com,
+        will@kernel.org, andy.shevchenko@gmail.com, vigneshr@ti.com,
+        nm@ti.com, matthias.bgg@gmail.com, kgene@kernel.org,
+        alim.akhtar@samsung.com, bmasney@redhat.com,
+        quic_tsoni@quicinc.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, kernel@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use pinctrl macro instead of hard-coded number.
-This makes the code more readable.
+On Mon, Sep 11, 2023 at 12:56=E2=80=AFPM Mukesh Ojha <quic_mojha@quicinc.co=
+m> wrote:
 
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Use qcom_scm_io_update_field() exported function in
+> pinctrl-msm driver.
+>
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index d163891cd399..c2a9e59d36a0 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -1103,7 +1103,7 @@ initial_alive: initial-state {
- 
- 	te_irq: te-irq-pins {
- 		samsung,pins = "gpf1-3";
--		samsung,pin-function = <0xf>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
- 	};
- };
- 
--- 
-2.42.0
+As long as the qcom maintainers agree on the rest of the patches:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
+Yours,
+Linus Walleij
