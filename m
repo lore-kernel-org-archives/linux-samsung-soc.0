@@ -2,117 +2,136 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0392DCA0ECE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Sep 2023 01:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66179CA0EC3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Sep 2023 06:06:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232789AbjILBOf (ORCPT
+        id S229538AbjILGGt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 21:14:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57840 "EHLO
+        Tue, 12 Sep 2023 02:06:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232806AbjILBOY (ORCPT
+        with ESMTP id S229495AbjILGGt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 21:14:24 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6BDE6FDD1;
-        Mon, 11 Sep 2023 18:03:36 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38C0KXkH031847;
-        Tue, 12 Sep 2023 00:39:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=b+ZDvkvQfKietDBjdlhgqxs9r2mzT6RnU3pGyGd2BkA=;
- b=XSPS0PTtdcMZxd6ljmCdyxivBX0e0Llbz4hMM1uUnMpq90hn0OTRUTyBkH7/HydYrrMR
- YTF2AgTo5PKj+DF6euX8I6G7AgrmyuaW8NKAGrMMwUxc74XFT4AbY2FuxNl2vxp9VN5c
- msoAWjjKQXZlI3VkQa1SH2FEjUGweATifEvcE8WCBv8XicDrVmKdBNx5GyfBu2HYE1NW
- U6/oISTtd8NH4lq5xcavPb/oA8VDWBlvoAoDFJ34Gp6ZF8uufpX/wv1K+4UKRvX8xEz/
- nwSBYJebtY+chzhxl4AADpDlSnzat6fdpot3CKwZ8bMonFH8v69FJG0ExQwmaR7R9+6u Yg== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t29b0gggd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Sep 2023 00:39:37 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38C0daBH012692
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Sep 2023 00:39:36 GMT
-Received: from hu-pkondeti-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.36; Mon, 11 Sep 2023 17:39:24 -0700
-Date:   Tue, 12 Sep 2023 06:09:21 +0530
-From:   Pavan Kondeti <quic_pkondeti@quicinc.com>
-To:     Mukesh Ojha <quic_mojha@quicinc.com>
-CC:     Pavan Kondeti <quic_pkondeti@quicinc.com>, <corbet@lwn.net>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
-Subject: Re: [PATCH v5 09/17] pstore/ram: Use dynamic ramoops reserve resource
-Message-ID: <d69a1822-0972-419a-ae8b-b6979733a18b@quicinc.com>
-References: <1694290578-17733-1-git-send-email-quic_mojha@quicinc.com>
- <1694290578-17733-10-git-send-email-quic_mojha@quicinc.com>
- <20425ace-3ef5-4eaf-8319-999bafa34a07@quicinc.com>
- <35c9d1b1-0f48-b873-d703-c880f3b91422@quicinc.com>
+        Tue, 12 Sep 2023 02:06:49 -0400
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E34B4E78
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Sep 2023 23:06:44 -0700 (PDT)
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230912060642epoutp019082ef8435f15b8efb718262386b31ac~EEa7aNcGf0200602006epoutp01B
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Sep 2023 06:06:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230912060642epoutp019082ef8435f15b8efb718262386b31ac~EEa7aNcGf0200602006epoutp01B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1694498802;
+        bh=4bcw94gLGxDMnnKRk6uK6p6mnuHhueBZymKra7u5+yg=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=hrc/iM8wEYKYUlvwoNsPNKt8zqCfohCznkIgCr6O4zqdqDjeOZryOalEt0WPAx+ck
+         8PTVQIjD/11nsJYJ/+HzV2e1cm7tW6cAzHANeuX2oFz1XTltjVF565dG6aT8R1iOYD
+         ObgQZphvbg5Ksz3n0+2ane2NfgeNwTdnYCa+3iO8=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20230912060641epcas2p162ecc6fb9bdabab137197d87fca8eea3~EEa6xBR-12481624816epcas2p1G;
+        Tue, 12 Sep 2023 06:06:41 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.99]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4RlClP1lXLz4x9Q1; Tue, 12 Sep
+        2023 06:06:41 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F1.77.09660.1FFFFF46; Tue, 12 Sep 2023 15:06:41 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+        20230912060640epcas2p43a9e6e11906d03641e76fb3df97462b8~EEa547k9Z1824418244epcas2p4X;
+        Tue, 12 Sep 2023 06:06:40 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230912060640epsmtrp1999c83b72087890b491927e653b55e18~EEa529Cgb1194111941epsmtrp1X;
+        Tue, 12 Sep 2023 06:06:40 +0000 (GMT)
+X-AuditID: b6c32a47-d5dfa700000025bc-46-64fffff13a12
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F7.39.18916.0FFFFF46; Tue, 12 Sep 2023 15:06:40 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.55]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230912060640epsmtip1c23c5896519d7126e5219fb516eb67f6~EEa5NfEXc2007820078epsmtip1G;
+        Tue, 12 Sep 2023 06:06:40 +0000 (GMT)
+From:   Jaewon Kim <jaewon02.kim@samsung.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jaewon Kim <jaewon02.kim@samsung.com>
+Subject: [PATCH] arm64: dts: exynos: Use pinctrl macros for exynos5433-tm2
+Date:   Tue, 12 Sep 2023 14:56:35 +0900
+Message-ID: <20230912055635.49092-1-jaewon02.kim@samsung.com>
+X-Mailer: git-send-email 2.42.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <35c9d1b1-0f48-b873-d703-c880f3b91422@quicinc.com>
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tfU2_hR73glnule_LYZ8-x9Z18vDoumI
-X-Proofpoint-ORIG-GUID: tfU2_hR73glnule_LYZ8-x9Z18vDoumI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-11_19,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- adultscore=0 impostorscore=0 priorityscore=1501 mlxscore=0 mlxlogscore=719
- lowpriorityscore=0 bulkscore=0 spamscore=0 suspectscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
- definitions=main-2309120003
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnk+LIzCtJLcpLzFFi42LZdljTVPfj//8pBnsus1g8mLeNzWLN3nNM
+        FvOPnGO12NFwhNWi78VDZotNj6+xWlzeNYfNYsb5fUwWrXuPsDtwemxa1cnmcefaHjaPzUvq
+        Pfq2rGL0+LxJLoA1KtsmIzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJ
+        xSdA1y0zB+geJYWyxJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BeYFecWJucWleul5e
+        aomVoYGBkSlQYUJ2Rs/uC2wFzWwVLft2sjQwTmPtYuTkkBAwkXh++j07iC0ksINR4nNvTBcj
+        F5D9iVFi9qrZjHDOzndXGWE6Zq/bA5XYySixctsOdgjnI6PE34NPwGaxCWhLfF+/mBUkISKw
+        hlFi9afNLCAOs8AGRolj+1+AbRcW8JKY8GQjM4jNIqAq8e/bGbAdvAK2Eo3TVzND7JOX2LPo
+        OxNEXFDi5MwnLCA2M1C8eetsqJpr7BLT2rghbBeJ7a8msEHYwhKvjm9hh7ClJF72t0HZ2RLt
+        0/9AQ6BC4uKG2VD1xhKznrUD3cABNF9TYv0ufRBTQkBZ4sgtqK18Eh2H/7JDhHklOtqEIBrV
+        JO5PPQc1REZi0pGVTBC2h8SvX8uYQcqFBGIlulutJzDKz0Lyyiwkr8xCWLuAkXkVo1hqQXFu
+        emqxUYExPE6T83M3MYJTpJb7DsYZbz/oHWJk4mA8xCjBwawkwlty6G+KEG9KYmVValF+fFFp
+        TmrxIUZTYOBOZJYSTc4HJum8knhDE0sDEzMzQ3MjUwNzJXHee61zU4QE0hNLUrNTUwtSi2D6
+        mDg4pRqY9O2KPNtNw4J3y6rI1U6ULI3T6W8q2XZ/zcvzLApX4swULy+79m1LYYPnTOf+i39/
+        zmrlf8n9+FbG2zMsIn/P7+sseOfcW3ZAgvGkxAM739cHF+TJ991+Xd6W1+Oc9ungmyneXGsO
+        NWgKSNj8WLpbPi71ds6+Iz/5JNOSLL7Y5D2/3uD/b1H9kifrfkefem9YV2PR9ujFFTvjyOQs
+        A9ETVvFLWsrXPunb7pp8wu3YzoysTXLLWM7efVDF8UKCu+C/7okzARwTz0t7zX60vbV3/cbF
+        KZNVHD3cfQJl006pqQW7OJ+703Nhp2JBiVj+AtfT0161MLunlPe4nOWrMj5w7Mb5HeoM63Y9
+        D9yWE26lxFKckWioxVxUnAgAF9yX4RoEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsWy7bCSnO6H//9TDD590rF4MG8bm8WaveeY
+        LOYfOcdqsaPhCKtF34uHzBabHl9jtbi8aw6bxYzz+5gsWvceYXfg9Ni0qpPN4861PWwem5fU
+        e/RtWcXo8XmTXABrFJdNSmpOZllqkb5dAldGz+4LbAXNbBUt+3ayNDBOY+1i5OSQEDCRmL1u
+        D2MXIxeHkMB2Ron1q+4yQyRkJJY/62ODsIUl7rccYYUoes8ocWznE0aQBJuAtsT39YvBEiIC
+        6xglWr69BBvFLLCFUeLi8Wdg7cICXhITnmwEG8sioCrx79sZsG5eAVuJxumrodbJS+xZ9J0J
+        Ii4ocXLmExYQmxko3rx1NvMERr5ZSFKzkKQWMDKtYhRNLSjOTc9NLjDUK07MLS7NS9dLzs/d
+        xAgOWq2gHYzL1v/VO8TIxMF4iFGCg1lJhLfk0N8UId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rzK
+        OZ0pQgLpiSWp2ampBalFMFkmDk6pBqZNIQ86Q0qEsoskF7xjnef09LBm2pF/puvKLzapeLtK
+        HZx5P/Vz+OO3KwJnPl83iVEq+KhpV0jSjau+yV82S88QPMImFFCRcztHjbF9GUe+8eV117vz
+        NvfWB20+2N3a+GYm557O7viM3ZOVRB7t8uBZmDxn0cmKH+YPmg/kXPrYVCckrHr/a8dy94rg
+        tp0cV3xz/Bkcn7lkl2u3Wn3e2LfqdsafSh8OHp/Y9c2TbBcEuYV/3hU0I333kjVP1hmcY+tS
+        X6i9uuq58Ywt3FKz5ZXUihe65sQnP+fc8WFG8In5Ry5dWvVfoPF43jz33ewvp6c8PNDdWxJR
+        /Ko74vgRq7J9K3gOTfUIFZKvK+T82KjEUpyRaKjFXFScCADM86RbyQIAAA==
+X-CMS-MailID: 20230912060640epcas2p43a9e6e11906d03641e76fb3df97462b8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230912060640epcas2p43a9e6e11906d03641e76fb3df97462b8
+References: <CGME20230912060640epcas2p43a9e6e11906d03641e76fb3df97462b8@epcas2p4.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 11, 2023 at 04:21:44PM +0530, Mukesh Ojha wrote:
-> 
-> 
-> On 9/11/2023 11:03 AM, Pavan Kondeti wrote:
-> > On Sun, Sep 10, 2023 at 01:46:10AM +0530, Mukesh Ojha wrote:
-> > > As dynamic ramoops command line parsing is now added, so
-> > > lets add the support in ramoops driver to get the resource
-> > > structure and add it during platform device registration.
-> > > 
-> > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> > > ---
-> > >   fs/pstore/ram.c | 10 +++++++---
-> > >   1 file changed, 7 insertions(+), 3 deletions(-)
-> > > 
-> > 
-> > Documentation/admin-guide/ramoops.rst might need an update as well.
-> 
-> I have said in the cover-letter under changes in v5, it is open for
-> comment and not yet documented it yet.
-> 
-Sure.
+Use pinctrl macro instead of hard-coded number.
+This makes the code more readable.
 
-To easy on the reviewers, the under cut portion of a specific patch could be
-used to add footer notes like TODO/Testing etc. In this case, I was lazy to 
-read the loong cover letter posted in this series ;-)
+Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+---
+ arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Pavan
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index d163891cd399..c2a9e59d36a0 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -1103,7 +1103,7 @@ initial_alive: initial-state {
+ 
+ 	te_irq: te-irq-pins {
+ 		samsung,pins = "gpf1-3";
+-		samsung,pin-function = <0xf>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
+ 	};
+ };
+ 
+-- 
+2.42.0
+
