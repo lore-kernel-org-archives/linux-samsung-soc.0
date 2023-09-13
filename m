@@ -2,143 +2,95 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF26ECA5506
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Sep 2023 07:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4DECA5502
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Sep 2023 08:00:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238497AbjIMHKd (ORCPT
+        id S238647AbjIMIAb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 03:10:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45522 "EHLO
+        Wed, 13 Sep 2023 04:00:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238367AbjIMHKb (ORCPT
+        with ESMTP id S238653AbjIMIAb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Sep 2023 03:10:31 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D921726;
-        Wed, 13 Sep 2023 00:10:27 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38D6Ld4e032251;
-        Wed, 13 Sep 2023 07:10:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=qqRVKtn6/zyJ17CeKnTMdnuTgtPxVETYhHbBrmlREPw=;
- b=ghG+PRtO5O0X6vZ4Xh3f9VBp8PMbtP+X2XnBsyoSIejQ5qwoEjmEda6/oSz54D5DG3uN
- s1O3DpdB1bng3T6r1l5K6GC3o9e9z8S7IL+2JEaiEhSAoJ+8WjRQJigGmb521gO3I1+B
- IGv2AM/0tE15ueO7oTqybrCgW3N3kwvogrJ+gxe+QUjN7+ZXYwyBlG3BMXpKFmnIUOua
- nX/gwKLrMpXwhw0nMdtAUiwGwFnPOBzcpC1Vt6LOsHxVmOyNR5JSFLYXSwIz+ncgdYJu
- NymOt6ejVAMxMI8OSarMc0QY6NKnk+jlwdGVJ6OtiKkny3MaH69SSRhPHKUP4Y2y8pPH bQ== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t2y8jrxe8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Sep 2023 07:10:01 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38D7A0vs000953
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Sep 2023 07:10:00 GMT
-Received: from [10.214.66.81] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Wed, 13 Sep
- 2023 00:09:48 -0700
-Message-ID: <fe7d618d-ca22-0fd4-efc0-cad52cb984bc@quicinc.com>
-Date:   Wed, 13 Sep 2023 12:39:45 +0530
+        Wed, 13 Sep 2023 04:00:31 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2464D3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Sep 2023 01:00:26 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-31c6d17aec4so6366550f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Sep 2023 01:00:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694592025; x=1695196825; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/Kj5eZKkF+ZVKGS6KdoZl544DimPgkEdMytOlJF/XNw=;
+        b=jjriZRu+9ElAwdOZk8N2A7MfC0TaNfj5EdDxq67AsX9IC+NytY4i5FV8mscfRdBVTd
+         UMSL0BkHp603GqEZZKJ8qjTFx44fiUwZyQh7v3daAdHXfXlBCsjB7Y7ciRyx0nV1PqKT
+         eo8iUyDd29NE2V30KNi9jsSo1Y2+mbADJt5XVOq1uhDZpUp72GjFjoLBqxQdXZqFMkTq
+         EhQH0vSnXTZMC/1Do6np0avLqGjvnvnt0glEKxIDx/Swjx4Qdqg9EroOSgaSOqhLAY7n
+         ISxfClCYkteWxUbx86gS8VHO2HuTUZqum1Lg12wdm7YY4hhPOc7kGxLEdSqt3/f7jroZ
+         JybA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694592025; x=1695196825;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Kj5eZKkF+ZVKGS6KdoZl544DimPgkEdMytOlJF/XNw=;
+        b=YzD5iC/qMYPnqJasEAVUQ3vPyPF4yOQDeszN6wiDWVkEWvFD4Tt68U7TDrx1mthsBB
+         ePV3imZ9e8dE9b2mo4oiGaQTPw2k6nZYMI9ZxfPyutEpcgfQM8kckEIGoPo/3CyJfwWp
+         EbiPTcQSs70qrq3yARlbFJi8RKHLDoWeYpbRxsB5G20ISs8xfgumEdtMpxvmC3IL/Ia5
+         vMbfGvEJH75CcYaNtm1Q/nD3mnmcHa8bWxOmD3i3Ln7sY35OMhQUethY8wE3a+EnP2dH
+         Aql6sGBct5CqLFXZ8PNRsr2bWXzWcdiONr4U1fpIOQ0jsmONYiqoHIv8QaC/Y+qF5KTV
+         lobw==
+X-Gm-Message-State: AOJu0Yxmwo00bFz8ryqAJB4P/SXVIYwjUmDcQ4+DQpM0nr+PDz5Ifx34
+        0rpPuylv8Qj1OeWolLIU007OJw==
+X-Google-Smtp-Source: AGHT+IE4VAS+PKlGYPxo0qX4pXbrIRoc2X7YSFpIGuvpDfjts/D15qYoJwuunsFw7qPuhPOJuMJvVQ==
+X-Received: by 2002:a5d:4bca:0:b0:319:755c:3c1e with SMTP id l10-20020a5d4bca000000b00319755c3c1emr1502886wrt.11.1694592025323;
+        Wed, 13 Sep 2023 01:00:25 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.214.188])
+        by smtp.gmail.com with ESMTPSA id l16-20020adfa390000000b0031c5e9c2ed7sm4108785wrb.92.2023.09.13.01.00.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Sep 2023 01:00:24 -0700 (PDT)
+Message-ID: <667b6a4f-1d61-2788-6eeb-229a1b85141b@linaro.org>
+Date:   Wed, 13 Sep 2023 10:00:21 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v5 06/17] soc: qcom: Add Qualcomm APSS minidump kernel
- driver
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH v2 1/7] thermal: exynos: remove an unnecessary field
+ description
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
-CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
-References: <1694290578-17733-1-git-send-email-quic_mojha@quicinc.com>
- <1694290578-17733-7-git-send-email-quic_mojha@quicinc.com>
- <3bb1e84f-3b65-0596-1b6b-6decb0ff53cc@linaro.org>
- <0eeef9c4-14c0-8283-803b-4684854d4be6@quicinc.com>
- <94770fc6-7d72-8283-5858-786685620d5c@linaro.org>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <94770fc6-7d72-8283-5858-786685620d5c@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Mateusz Majewski <m.majewski2@samsung.com>,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+References: <20230911133435.14061-1-m.majewski2@samsung.com>
+ <CGME20230911133611eucas1p286e43809a6ca785911c0bbdce15dc15d@eucas1p2.samsung.com>
+ <20230911133435.14061-2-m.majewski2@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230911133435.14061-2-m.majewski2@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 0R0xqRb59Cba6lgs1UtXK0Q91VYNBJeX
-X-Proofpoint-GUID: 0R0xqRb59Cba6lgs1UtXK0Q91VYNBJeX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-12_24,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- impostorscore=0 spamscore=0 mlxlogscore=929 malwarescore=0
- priorityscore=1501 clxscore=1015 mlxscore=0 suspectscore=0
- lowpriorityscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2308100000 definitions=main-2309130059
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
-
-On 9/12/2023 3:24 PM, Krzysztof Kozlowski wrote:
-> On 12/09/2023 11:26, Mukesh Ojha wrote:
->>>
->>>> +		return -EINVAL;
->>>> +	}
->>>> +
->>>> +	mutex_init(&md->md_lock);
->>>> +	ret = qcom_apss_md_table_init(md, &mdgtoc->subsystems[MINIDUMP_APSS_DESC]);
->>>> +	if (ret) {
->>>> +		dev_err(md->dev, "apss minidump initialization failed: %d\n", ret);
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	/* First entry would be ELF header */
->>>> +	ret = qcom_md_add_elfheader(md);
->>>> +	if (ret) {
->>>> +		dev_err(md->dev, "Failed to add elf header: %d\n", ret);
->>>> +		memset(md->apss_data->md_ss_toc, 0, sizeof(struct minidump_subsystem));
->>>
->>> Why do you need it?
->>
->> Earlier, i got comment about clearing the SS TOC(subsystem table of
->> content) which is shared with other SS and it will have stale values.
+On 11/09/2023 15:34, Mateusz Majewski wrote:
+> It seems that the field has been removed in one of the previous commits,
+> but the description has been forgotten.
 > 
-> OK, but then the entire code is poorly readable. First, any cleanup of
-> qcom_apss_md_table_init() should be named similarly, e.g.
-> qcom_apss_md_table_clean() or qcom_apss_md_table_exit() or whatever
-> seems feasible.
+> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
+> ---
 
-ACK on this.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> 
-> Second, shouldn't writing to shared memory be the last step? Step which
-> cannot fail and there is no cleanup afterwards (like
-> platform_set_drvdata)? I don't enjoy looking at this interface...
+Best regards,
+Krzysztof
 
-It can be done, if i shift adding elf header as first thing to first
-caller of qcom_minidump_region_register() but then i would have to 
-remove qcom_ramoops_minidump() from this probe in 11/17 patch.
-
--Mukesh
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
