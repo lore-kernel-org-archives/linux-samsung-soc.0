@@ -2,142 +2,151 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB71CA550A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Sep 2023 08:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19073CA551F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Sep 2023 09:25:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238797AbjIMIM3 (ORCPT
+        id S239344AbjIMJZU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 04:12:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39762 "EHLO
+        Wed, 13 Sep 2023 05:25:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238877AbjIMIMN (ORCPT
+        with ESMTP id S239264AbjIMJZT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Sep 2023 04:12:13 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CA81199C
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Sep 2023 01:12:01 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-5007abb15e9so11209435e87.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Sep 2023 01:12:00 -0700 (PDT)
+        Wed, 13 Sep 2023 05:25:19 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 063A21999;
+        Wed, 13 Sep 2023 02:25:16 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-68fb70fca9fso2843405b3a.2;
+        Wed, 13 Sep 2023 02:25:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694592719; x=1695197519; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Eia8zDzv+HtcosL0sFP1xVfmwcdZSEW7E/46TEr37W0=;
-        b=aPG7MYuphs06h2MiTJoIP3w48iXxygjRv9Wpg3RbzNSW88KW0dDZ/duMIsBR4eDWOY
-         q58R68pCXif+VM1LZCGpgo5Tf8dTUEFLdIKNkc7NSUwQZ8Sy4vPOFPFcjN5Mm9Q89vYH
-         IyaGKkuDz6J65ipA/W016TopVjK8q6XN98QXf8BHnYKn1m5+ZYJEbUuLi/BH45+vIrvj
-         WLyNP+G8kfZe/3MtEkHAbnVM3JpiysEnYjuo9kGdVBto2mzDkOPU2tEfa4w7Z5VRkB+6
-         ePUHT6OFormAetsQsFd/VMoMEPkMYXsR/xTP0DybdjMdLaCK9avO3wFIsjt5RsYB/7Wy
-         zY4g==
+        d=gmail.com; s=20221208; t=1694597115; x=1695201915; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NpFYAXnOqxjLWxlwZ45c7Msf6OlbS0bhBMJrCMsl3zg=;
+        b=nSnCf0cK4xpn5q4uEWbi4jgNyj0YzEsrtBBZ271rYq2sgh5We1k0YxkCtQ4fazBZos
+         ePABUdjDWp3xK7NGi+9pyFeYQ+QTnstMkVdat7uZJ5NbLR9n8dbjmW8xRKh/+ntPtm/t
+         oUGiR4lOAqjyCbO8F7DNfmFHHourggWUIRInKRKcg5U2dqbbjcVD+ZqM93L6n0T8nLsO
+         XMX8CsWd79cvTgVmZ7TgOcknUcS0XNVwiJ7feFCfM3xcVou08AeFHBLCddNMP+i935Bc
+         yKIfxiEyRC8B60TNfKYiBx4wnKx+/K3gLTEHH2+Q7etVfYAqgw/G544/zGAdvKpsDqwO
+         JXHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694592719; x=1695197519;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Eia8zDzv+HtcosL0sFP1xVfmwcdZSEW7E/46TEr37W0=;
-        b=T7iFCgeryP6GHMcdwLYGRuKzcsubWNdC7QxTIYQtRFd+mZQvcbnFfrN/DHbTH7aIMR
-         cUsOk/GqUNiFpOnYUuLzrDu2xLd1neCR50zicAGmEhP6MC8h9O8zsrVbApYbFJUa+ZlD
-         RwX8DP4ZugPGxfGMa80r77Hi2O3ha7sI6LhrTb4O5P1Xm+840Q8BQhzW4BOFhRSgl6Au
-         J4UlKsJihTrRCDgwDp82deY2Msa2CvsIlgZBslY9AzyIj1aVzKuxZVPeUjBd3LFCbx6a
-         w0g1e/ZvlQqmLA7yVWaU8a9ZWqUQOHP47Sb8NJoQ+rO0vjiS4pyxj3vzbaeTqG6YehZB
-         pgZQ==
-X-Gm-Message-State: AOJu0YynJpzhUUkcp4yK98vjP3c1JrVCcsocsI6UAbOntRaB2sxLf7au
-        /Lwn2K+ejscT/O7kLd3oOrPDdw==
-X-Google-Smtp-Source: AGHT+IHp5o0wXS0xcvX2jwn9i5O9G2Ix9P6EWjUc3OAKHKI6CAMbJiUEbTX5kD1YW/2b/KBnTbb5rA==
-X-Received: by 2002:a05:6512:551:b0:4fb:8435:3efc with SMTP id h17-20020a056512055100b004fb84353efcmr1283002lfl.16.1694592719163;
-        Wed, 13 Sep 2023 01:11:59 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id v1-20020a5d6b01000000b0031f300a4c26sm14741521wrw.93.2023.09.13.01.11.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 01:11:58 -0700 (PDT)
-Message-ID: <bf9a07ff-5628-05ab-2362-a917d3d38313@linaro.org>
-Date:   Wed, 13 Sep 2023 10:11:56 +0200
+        d=1e100.net; s=20230601; t=1694597115; x=1695201915;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NpFYAXnOqxjLWxlwZ45c7Msf6OlbS0bhBMJrCMsl3zg=;
+        b=AIAkg9YnxQsQyiVbRqg5n1xUNLOyholxgx3Vu+bHGBI9x+wTDYBDKenAOFvotQJ90E
+         q34z4mzNhzLFtBFErH5UcizFWYzfXw+xv6MUoLPqzEruIez3z24qfkhmW8uBPfVuUsrI
+         Ic/yC2lctMPuDp9R6Wk0bwq61Qt8WTN/9oGEzmzja0XYalSglKYQ/sOcB+Az2gj7sVpi
+         fos8mUV+SRAe0qQU0nH7bktWS1CSAo44sPTvLXKvSunJkU6xAG4OQT3/Bg8Vq1xLxldA
+         wEbbVS5qx8lADAwmvchVdn9TQwnc7dpENfJIgR2yAz1NeB/n/vm1SMbnaw2zy6Gx6WRG
+         vVVg==
+X-Gm-Message-State: AOJu0Yxf/9b3naYXtLDUcMuj/0suPI5XXpl4TQQ0+GUKlt1Q+W2d3eQ0
+        SYGJeyE5PeKBdTZM1oZ3SXI=
+X-Google-Smtp-Source: AGHT+IG/3WIzQMbIKyGZtuuCHIWrLbl2lrCKitCBZEZyOjDkgyQfkCiMeKwYbJrLvyEtH8At6O8gvQ==
+X-Received: by 2002:a05:6a20:8f1f:b0:13f:c40c:379 with SMTP id b31-20020a056a208f1f00b0013fc40c0379mr2117577pzk.13.1694597115404;
+        Wed, 13 Sep 2023 02:25:15 -0700 (PDT)
+Received: from debian.me ([103.124.138.83])
+        by smtp.gmail.com with ESMTPSA id i4-20020a170902eb4400b001b8b26fa6c1sm9914334pli.115.2023.09.13.02.25.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Sep 2023 02:25:14 -0700 (PDT)
+Received: by debian.me (Postfix, from userid 1000)
+        id 9D86780666AA; Wed, 13 Sep 2023 16:25:11 +0700 (WIB)
+Date:   Wed, 13 Sep 2023 16:25:11 +0700
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+To:     Mukesh Ojha <quic_mojha@quicinc.com>, <corbet@lwn.net>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
+Cc:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
+Subject: Re: [REBASE PATCH v5 01/17] docs: qcom: Add qualcomm minidump guide
+Message-ID: <ZQF_9-nX47QUCycO@debian.me>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+ <1694429639-21484-2-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH v2 4/7] thermal: exynos: simplify regulator
- (de)initialization
-Content-Language: en-US
-To:     Mateusz Majewski <m.majewski2@samsung.com>,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20230911133435.14061-1-m.majewski2@samsung.com>
- <CGME20230911133616eucas1p10c5eeb0f0240dde975ccc5935cb5c311@eucas1p1.samsung.com>
- <20230911133435.14061-5-m.majewski2@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230911133435.14061-5-m.majewski2@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1694429639-21484-2-git-send-email-quic_mojha@quicinc.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/09/2023 15:34, Mateusz Majewski wrote:
-> This does reduce the error granularity a bit, but the code
-> simplification seems to be worth it.
-> 
-> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
-> ---
->  drivers/thermal/samsung/exynos_tmu.c | 33 +++++++---------------------
->  1 file changed, 8 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index ba9414b419ef..8451deb65f43 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -157,7 +157,6 @@ enum soc_type {
->   * @reference_voltage: reference voltage of amplifier
->   *	in the positive-TC generator block
->   *	0 < reference_voltage <= 31
-> - * @regulator: pointer to the TMU regulator structure.
->   * @tzd: pointer to thermal_zone_device structure
->   * @ntrip: number of supported trip points.
->   * @enabled: current status of TMU device
-> @@ -183,7 +182,6 @@ struct exynos_tmu_data {
->  	u16 temp_error1, temp_error2;
->  	u8 gain;
->  	u8 reference_voltage;
-> -	struct regulator *regulator;
->  	struct thermal_zone_device *tzd;
->  	unsigned int ntrip;
->  	bool enabled;
-> @@ -994,42 +992,34 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->  	 * TODO: Add regulator as an SOC feature, so that regulator enable
->  	 * is a compulsory call.
->  	 */
-> -	data->regulator = devm_regulator_get_optional(&pdev->dev, "vtmu");
-> -	if (!IS_ERR(data->regulator)) {
-> -		ret = regulator_enable(data->regulator);
-> -		if (ret) {
-> -			dev_err(&pdev->dev, "failed to enable vtmu\n");
-> -			return ret;
-> -		}
-> -	} else {
-> -		if (PTR_ERR(data->regulator) == -EPROBE_DEFER)
-> +	ret = devm_regulator_get_enable_optional(&pdev->dev, "vtmu");
-> +	if (ret) {
-> +		if (ret == -EPROBE_DEFER)
->  			return -EPROBE_DEFER;
-> -		dev_info(&pdev->dev, "Regulator node (vtmu) not found\n");
-> +		dev_info(&pdev->dev, "Failed to get regulator node (vtmu)\n");
+On Mon, Sep 11, 2023 at 04:23:43PM +0530, Mukesh Ojha wrote:
+> +Qualcomm APSS Minidump kernel driver concept
+> +--------------------------------------------
+> +::
+> +
+> <snipped>...
+> +Dump collection
+> +---------------
+> +
+> +	+-----------+
+> +	|           |
+> +	|           |         +------+
+> +	|           |         |      |
+> +	|           |         +--+---+ Product(Qualcomm SoC)
+> +	+-----------+             |
+> +	|+++++++++++|<------------+
+> +	|+++++++++++|    usb cable
+> +	+-----------+
+> +            x86_64 PC
+> +
 
-This is not equivalent. If regulator is provided and enable fails, the
-old code is nicely returning error. Now, it will print misleading
-message - failed to get regulator - and continue.
+Sphinx reports htmldocs warnings:
 
-While this simplifies the code, it ignores important running condition -
-having regulator enabled.
+/home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:100: WARNING: Literal block expected; none found.
+/home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:243: WARNING: Unexpected indentation.
+/home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:234: WARNING: Malformed table.
 
-Best regards,
-Krzysztof
++-----------+
+|           |
+|           |         +------+
+|           |         |      |
+|           |         +--+---+ Product(Qualcomm SoC)
++-----------+             |
+|+++++++++++|<------------+
+|+++++++++++|    usb cable
++-----------+
+/home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:243: WARNING: Blank line required after table.
 
+I have to apply the fixup:
+
+---- >8 ----
+diff --git a/Documentation/admin-guide/qcom_minidump.rst b/Documentation/admin-guide/qcom_minidump.rst
+index 20202da8ca40b9..5709a3853ae7ea 100644
+--- a/Documentation/admin-guide/qcom_minidump.rst
++++ b/Documentation/admin-guide/qcom_minidump.rst
+@@ -95,7 +95,6 @@ could be anywhere scattered in the DDR.
+ 
+ Qualcomm APSS Minidump kernel driver concept
+ --------------------------------------------
+-::
+ 
+ Qualcomm APSS minidump kernel driver adds the capability to add Linux
+ region to be dumped as part of RAM dump collection. At the moment,
+@@ -231,6 +230,8 @@ respective dump as per set download mode.
+ Dump collection
+ ---------------
+ 
++::
++
+ 	+-----------+
+ 	|           |
+ 	|           |         +------+
+
+Thanks.
+
+-- 
+An old man doll... just what I always wanted! - Clara
