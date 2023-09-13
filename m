@@ -2,62 +2,62 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54ABECA5507
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Sep 2023 08:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB71CA550A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Sep 2023 08:12:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238749AbjIMIDg (ORCPT
+        id S238797AbjIMIM3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 04:03:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39588 "EHLO
+        Wed, 13 Sep 2023 04:12:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238731AbjIMIDe (ORCPT
+        with ESMTP id S238877AbjIMIMN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Sep 2023 04:03:34 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F3B6198A
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Sep 2023 01:03:30 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-99c1d03e124so809674166b.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Sep 2023 01:03:29 -0700 (PDT)
+        Wed, 13 Sep 2023 04:12:13 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CA81199C
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Sep 2023 01:12:01 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-5007abb15e9so11209435e87.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Sep 2023 01:12:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694592208; x=1695197008; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1694592719; x=1695197519; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1kjOm+yO1bEpK06tIac4VtD/LcBLpSROVXeAOIcQH5M=;
-        b=SQrHhEiMPGVaAGg2kk6tdcb0hK9lY3w/tpEjPljPCnAPTnQ8rVz6uODjNONYpIzqxS
-         o1LdVFrKWmEg/EZoZGrVXLgTNKoveQPPgNd3695nlQ2MEXJCYMo7DMmexWRTwV1r/C+g
-         FiPESkpLUA3EHWMSbuDxy0szFmsNOyyxihKS9AmV4SHKV84twrGAQmwonNUhLAs1goNr
-         +48b+IO1GJktwtCF25UJn2Re3Mm0CTAHCuSDG7MM+KbZnL9Icc+coEhqwpuFNE0Xjv/m
-         DSGBvwS+5xtuX9xEUr8VS0ihZgWERvF885Oj/0xUYIWV2oZfjsKY5ueuKImWJ3mx5qsC
-         UEQg==
+        bh=Eia8zDzv+HtcosL0sFP1xVfmwcdZSEW7E/46TEr37W0=;
+        b=aPG7MYuphs06h2MiTJoIP3w48iXxygjRv9Wpg3RbzNSW88KW0dDZ/duMIsBR4eDWOY
+         q58R68pCXif+VM1LZCGpgo5Tf8dTUEFLdIKNkc7NSUwQZ8Sy4vPOFPFcjN5Mm9Q89vYH
+         IyaGKkuDz6J65ipA/W016TopVjK8q6XN98QXf8BHnYKn1m5+ZYJEbUuLi/BH45+vIrvj
+         WLyNP+G8kfZe/3MtEkHAbnVM3JpiysEnYjuo9kGdVBto2mzDkOPU2tEfa4w7Z5VRkB+6
+         ePUHT6OFormAetsQsFd/VMoMEPkMYXsR/xTP0DybdjMdLaCK9avO3wFIsjt5RsYB/7Wy
+         zY4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694592208; x=1695197008;
+        d=1e100.net; s=20230601; t=1694592719; x=1695197519;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1kjOm+yO1bEpK06tIac4VtD/LcBLpSROVXeAOIcQH5M=;
-        b=nMUGrYxmvSyttWd7fNkcduCo4kKFdIjIbEaenoZ0niWhzLCNol2755nY4zf0vhS4da
-         4iIxpiXio3Ptwcz3r7PZ4yA2rdaf+vOVMDHSpxVnOuVt36c4bab6PX07gsaCVqxq/oUD
-         Y0l8yq8cQyJFiHft4a9GomBEukTFEHdm5OyOv9fs1lHnURqCjgFsWAUfVF3DQiDTz5K+
-         ZJ8BL/9vHJyuIoDBU8p5K/+mM3vCXPUygT/ELg/y03iEJaqgb3rawYTmsCAfYjNp4ozp
-         hh4j6t2FDhfMvYXqF/5a9unj1Wvf0F3+6QGGFOV3VbbGCN16zZF23IOnHJDzvLI++SJp
-         XkNg==
-X-Gm-Message-State: AOJu0YyGD4nzAOgUL2RI0v46bhmojQWV9UwFud9HQBNe1nRBAokLcaHD
-        wD4xFs/1aV2iOhrMDiNlCv4UjQ==
-X-Google-Smtp-Source: AGHT+IG3mCSisdpUbOJbDzS4VuyhZpOae5IS8BiUDI4Gst+a+ZzqN5sEd3+j3W8X0yWL0L35+WbCkA==
-X-Received: by 2002:a17:906:3158:b0:9a2:5bf:8b14 with SMTP id e24-20020a170906315800b009a205bf8b14mr1215035eje.22.1694592208501;
-        Wed, 13 Sep 2023 01:03:28 -0700 (PDT)
+        bh=Eia8zDzv+HtcosL0sFP1xVfmwcdZSEW7E/46TEr37W0=;
+        b=T7iFCgeryP6GHMcdwLYGRuKzcsubWNdC7QxTIYQtRFd+mZQvcbnFfrN/DHbTH7aIMR
+         cUsOk/GqUNiFpOnYUuLzrDu2xLd1neCR50zicAGmEhP6MC8h9O8zsrVbApYbFJUa+ZlD
+         RwX8DP4ZugPGxfGMa80r77Hi2O3ha7sI6LhrTb4O5P1Xm+840Q8BQhzW4BOFhRSgl6Au
+         J4UlKsJihTrRCDgwDp82deY2Msa2CvsIlgZBslY9AzyIj1aVzKuxZVPeUjBd3LFCbx6a
+         w0g1e/ZvlQqmLA7yVWaU8a9ZWqUQOHP47Sb8NJoQ+rO0vjiS4pyxj3vzbaeTqG6YehZB
+         pgZQ==
+X-Gm-Message-State: AOJu0YynJpzhUUkcp4yK98vjP3c1JrVCcsocsI6UAbOntRaB2sxLf7au
+        /Lwn2K+ejscT/O7kLd3oOrPDdw==
+X-Google-Smtp-Source: AGHT+IHp5o0wXS0xcvX2jwn9i5O9G2Ix9P6EWjUc3OAKHKI6CAMbJiUEbTX5kD1YW/2b/KBnTbb5rA==
+X-Received: by 2002:a05:6512:551:b0:4fb:8435:3efc with SMTP id h17-20020a056512055100b004fb84353efcmr1283002lfl.16.1694592719163;
+        Wed, 13 Sep 2023 01:11:59 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id ho15-20020a1709070e8f00b009ad8ba6976bsm1974171ejc.9.2023.09.13.01.03.26
+        by smtp.gmail.com with ESMTPSA id v1-20020a5d6b01000000b0031f300a4c26sm14741521wrw.93.2023.09.13.01.11.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 01:03:27 -0700 (PDT)
-Message-ID: <c75ef5f8-5c37-0ac4-bce5-05de81368dc9@linaro.org>
-Date:   Wed, 13 Sep 2023 10:03:25 +0200
+        Wed, 13 Sep 2023 01:11:58 -0700 (PDT)
+Message-ID: <bf9a07ff-5628-05ab-2362-a917d3d38313@linaro.org>
+Date:   Wed, 13 Sep 2023 10:11:56 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.15.0
-Subject: Re: [PATCH v2 3/7] thermal: exynos: switch from workqueue-driven
- interrupt handling to threaded interrupts
+Subject: Re: [PATCH v2 4/7] thermal: exynos: simplify regulator
+ (de)initialization
 Content-Language: en-US
 To:     Mateusz Majewski <m.majewski2@samsung.com>,
         linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
@@ -72,10 +72,10 @@ Cc:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>
 References: <20230911133435.14061-1-m.majewski2@samsung.com>
- <CGME20230911133615eucas1p123b3bed5bfa998bda65196d425f9b49d@eucas1p1.samsung.com>
- <20230911133435.14061-4-m.majewski2@samsung.com>
+ <CGME20230911133616eucas1p10c5eeb0f0240dde975ccc5935cb5c311@eucas1p1.samsung.com>
+ <20230911133435.14061-5-m.majewski2@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230911133435.14061-4-m.majewski2@samsung.com>
+In-Reply-To: <20230911133435.14061-5-m.majewski2@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -83,16 +83,60 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 11/09/2023 15:34, Mateusz Majewski wrote:
-> The workqueue boilerplate is mostly one-to-one what the threaded
-> interrupts do.
+> This does reduce the error granularity a bit, but the code
+> simplification seems to be worth it.
 > 
 > Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
 > ---
-> v1 -> v2: devm_request_threaded_irq call formatting change.
+>  drivers/thermal/samsung/exynos_tmu.c | 33 +++++++---------------------
+>  1 file changed, 8 insertions(+), 25 deletions(-)
 > 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index ba9414b419ef..8451deb65f43 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -157,7 +157,6 @@ enum soc_type {
+>   * @reference_voltage: reference voltage of amplifier
+>   *	in the positive-TC generator block
+>   *	0 < reference_voltage <= 31
+> - * @regulator: pointer to the TMU regulator structure.
+>   * @tzd: pointer to thermal_zone_device structure
+>   * @ntrip: number of supported trip points.
+>   * @enabled: current status of TMU device
+> @@ -183,7 +182,6 @@ struct exynos_tmu_data {
+>  	u16 temp_error1, temp_error2;
+>  	u8 gain;
+>  	u8 reference_voltage;
+> -	struct regulator *regulator;
+>  	struct thermal_zone_device *tzd;
+>  	unsigned int ntrip;
+>  	bool enabled;
+> @@ -994,42 +992,34 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>  	 * TODO: Add regulator as an SOC feature, so that regulator enable
+>  	 * is a compulsory call.
+>  	 */
+> -	data->regulator = devm_regulator_get_optional(&pdev->dev, "vtmu");
+> -	if (!IS_ERR(data->regulator)) {
+> -		ret = regulator_enable(data->regulator);
+> -		if (ret) {
+> -			dev_err(&pdev->dev, "failed to enable vtmu\n");
+> -			return ret;
+> -		}
+> -	} else {
+> -		if (PTR_ERR(data->regulator) == -EPROBE_DEFER)
+> +	ret = devm_regulator_get_enable_optional(&pdev->dev, "vtmu");
+> +	if (ret) {
+> +		if (ret == -EPROBE_DEFER)
+>  			return -EPROBE_DEFER;
+> -		dev_info(&pdev->dev, "Regulator node (vtmu) not found\n");
+> +		dev_info(&pdev->dev, "Failed to get regulator node (vtmu)\n");
 
+This is not equivalent. If regulator is provided and enable fails, the
+old code is nicely returning error. Now, it will print misleading
+message - failed to get regulator - and continue.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+While this simplifies the code, it ignores important running condition -
+having regulator enabled.
 
 Best regards,
 Krzysztof
