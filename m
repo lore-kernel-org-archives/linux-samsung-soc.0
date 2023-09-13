@@ -2,46 +2,46 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D660CA5537
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Sep 2023 13:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EDEACA553D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Sep 2023 13:44:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241089AbjIMNoP (ORCPT
+        id S241109AbjIMNoT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 09:44:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40756 "EHLO
+        Wed, 13 Sep 2023 09:44:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241057AbjIMNoL (ORCPT
+        with ESMTP id S241108AbjIMNoS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Sep 2023 09:44:11 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2067.outbound.protection.outlook.com [40.107.243.67])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2495C19B1;
-        Wed, 13 Sep 2023 06:44:07 -0700 (PDT)
+        Wed, 13 Sep 2023 09:44:18 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2045.outbound.protection.outlook.com [40.107.243.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2446319B6;
+        Wed, 13 Sep 2023 06:44:14 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oLV7LfC5BDjy0hjkcUO6TewK5tDUXLR8o/CtTOe2KSe22aP+bWTaVELwgsGMS/3gfzPdyGVfOHrlv1MX5kzukF5ltfPmjVfWXGAPwzUqysPAViuQA+BZZO6jLiyesQh5U65Un2hbOsTPSvS63t4O/sOtbQ3H7yF3xet68Z7TkTVuTq8UsybQsRAV0+hCTxQHcMz1UqukuM9U0goeM/s9aoVknG+Y2eaOfaG440HzGjNktaeKgUv80w6PNfEHIFskU4ecCMN6C50oGp84aWCRUQWZMRT5KqKCjBVIseCIFmISVXrBus0kxcq5XXCgof0jYgDRDQfAUPhPJZOrmO+Xvg==
+ b=CRspkht1ymIeP4sOGmSom0ebeeoCFnazYDjaWjAXh+mUBSttKVUa7MyeGne11kSLN3dS6bnyiqn1SK9ZmnF1XUgAa6w90bq8e/Du0HFDYTOwUY92Apad/ancohPidlD9Ys1XECoX75w07X9xEKDqduRUV1FnbO+rbqpvKOsWtiTkWvPrQ4duoEuAl4eUm2wgGoI/vWwEl1nQhexDeRW0l7J+w0Ctjr3Uixgakc8F+qf8ZsSn3ytDCArX3B6yL6ReEZZK+zFZcXQ49NTjHsc1lxTYu/19kaA9bgqOAPyHzFu3gH05qUcczlrJ+dNzwjs+JDpYAMnho26CtxVW98nOYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MUomoVEC0agBTaPcp3ut5vf/tdyAsRF6u/es6T4a+nw=;
- b=nWFzgtUaKd0uFsQ+c5Gfbhm9TdBxCnLp+TW/3JN87ABlcy83kDr/zD31UpRdteNt0zXOXfrhpANSN9n/WZ1tZGpZ9Dj7RsiUmdCSID+faJVgrfcBqEEUCfdPIvZDjI5HLmnPlhpacVvfGiqetCjZLl0KRkJ6ke+2rwQtBhxBJ5x3vcHuNNAbIFeZVv8n77ZqAuDvWsIf1bHVIuO40XMooCjVM7GXeueHs3jjlUFz+ZKdtpdxOYhfZI62/jeHLQ0/8c/YgmbJ/Aom7QN7TqillvR6Shzg2ES8fnNH3h69yc42jpNNHclobQ1/ThA4T86VYtx4cFWmHrjTzL9UZeWs8g==
+ bh=UwL5Iai/3p1GMeQMa03kMTSjbjzYmp4R4ELx0fkW8hs=;
+ b=jK47u26/XActVUEEUaUwzHxOH2T6Gl1gD8I/KhIZefqAqaD/o7YTpeLIcUV7ALVJ97VEvtr8ZjtWYKo3ylvtC5PR69u9SGthT/J2gSVV03KW9gDD62sbIrlI7Aao7WzpKsWAm6Ynv2BWVlvYxl4oDHdo0PRpe3igk0HNJbnNlzE2XsOB1qtJ/3zc59WuQEdKWOImfIKLEJ/O69ewNkT4LcKVRs8p22uIlXkW6sVLHFoA6SxfNb8qpGRTq/sObASkg1yubY1+37AD3TthvWPbDu+2q2CzAOTrowKSQ9QH/fdeaBhGIXeIPaglmGnqCZ4gOyAfwy4V3iT9yrFO5vUVxA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MUomoVEC0agBTaPcp3ut5vf/tdyAsRF6u/es6T4a+nw=;
- b=BWdlpNpL/tqUyMtlMTsxPn2jVkFfGezzyYjP1UyEx5CMIh4ZZt63qx44h8jeeFqyHhfTDJvJWQGe4wO9PaUZZjgF2fIq57ewTCR6/XqOJ5w7Zc6hkAhWZnJOx41fqXmzBbUDfNuJySY83pPnVomHJnREYpml/etHfYk3VrJPKVln7yy6CUPMJMwEwZDLYbMGpQUMb/4QgiV2AYlPBLnLrokYVHD2HZCr1iqi5k+5aaWGyrdpuwKN+zRzSjjXw5BLhMtIFJMnB5YNXq8uElp5focczoV9KpYNi8BuClEJe+pExQQFu6rrOyFIkwkC0etkXSPHIxAzTkM37XVpntZnRg==
+ bh=UwL5Iai/3p1GMeQMa03kMTSjbjzYmp4R4ELx0fkW8hs=;
+ b=psjrK+HqJIuYf6M0rVQ9r1liMuFdU2veEl49vcEnkwMaYZeCiGPpghoVAyMRHuRsUiC3G47SeVfQfDsCq0GlLtN0u2xMIAUXGxEgJz45cYehcw1TQNDDTtm06H4qNzr0YRLncFh3mzN25EDMI/+fEFQ+J3fVJg8JHJWuCbkYhEiNRlW2UTMWieUC8q3IuFvAQxJ6oXRVSzfz3ADSRA7Di92hfrNeQ7UB+k6KXcBE5LEEXXPozlKkl3ksfnF19UIzYMERWcUd/7kRB3m0CF8scA5ypQVO/4RuvRzgRPiCw2b9gbLV38qgTuagoa9qhv/oWz6sUD5INkTRpEYciwRcHg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
- by SA3PR12MB7923.namprd12.prod.outlook.com (2603:10b6:806:317::9) with
+ by SJ2PR12MB7848.namprd12.prod.outlook.com (2603:10b6:a03:4ca::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.34; Wed, 13 Sep
- 2023 13:44:03 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6768.31; Wed, 13 Sep
+ 2023 13:44:11 +0000
 Received: from LV2PR12MB5869.namprd12.prod.outlook.com
  ([fe80::faf:4cd0:ae27:1073]) by LV2PR12MB5869.namprd12.prod.outlook.com
  ([fe80::faf:4cd0:ae27:1073%6]) with mapi id 15.20.6768.036; Wed, 13 Sep 2023
- 13:44:03 +0000
+ 13:44:11 +0000
 From:   Jason Gunthorpe <jgg@nvidia.com>
 To:     Andy Gross <agross@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
@@ -85,702 +85,249 @@ Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
         Niklas Schnelle <schnelle@linux.ibm.com>,
         Steven Price <steven.price@arm.com>,
         Thierry Reding <treding@nvidia.com>
-Subject: [PATCH v8 06/24] iommu/tegra-gart: Remove tegra-gart
-Date:   Wed, 13 Sep 2023 10:43:39 -0300
-Message-ID: <6-v8-81230027b2fa+9d-iommu_all_defdom_jgg@nvidia.com>
-In-Reply-To: <0-v8-81230027b2fa+9d-iommu_all_defdom_jgg@nvidia.com>
-References: 
+Subject: [PATCH v8 00/24] iommu: Make default_domain's mandatory
+Date:   Wed, 13 Sep 2023 10:43:33 -0300
+Message-ID: <0-v8-81230027b2fa+9d-iommu_all_defdom_jgg@nvidia.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: BL1PR13CA0253.namprd13.prod.outlook.com
- (2603:10b6:208:2ba::18) To LV2PR12MB5869.namprd12.prod.outlook.com
+X-ClientProxiedBy: MN2PR03CA0012.namprd03.prod.outlook.com
+ (2603:10b6:208:23a::17) To LV2PR12MB5869.namprd12.prod.outlook.com
  (2603:10b6:408:176::16)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|SA3PR12MB7923:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4fe6465e-80bc-4c45-daf1-08dbb45f7be5
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|SJ2PR12MB7848:EE_
+X-MS-Office365-Filtering-Correlation-Id: 570511ec-927a-464d-0719-08dbb45f8303
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 2DAUj85WfHSPE29DK/L3iGyiVMHxXG1xDLl5I1K9xXLKRjL8Dw8PxwIBp3w+w8n4PvH1UYIdqVsDza2kzW1SYeIzImR4/JM5K3uGq/jmetbx/iimWolc552TO1SoZITQV6rfW/aJGxOzToz91JggsEftDYmZ6s6CL6pwE0Bhy+CTbIcw42cxcVvMw7zE5Iitf86QryOiMKj9Pii/JR8N+h/Lr/sx7bjCbwXSnt3Mi7llFOy9TsQLFaq1vNfnuhW751WVMib2sXbbeD1P4zB7PSHCsaj8lnsl2BemcAMByJBoEj60+7182l7nAWOc52Ax4ue+Z65aOgNb+QvQcmetIlZikEt8U0owywZjqUmewTloUDfSSSfNhfXiTJLbRfBFPUTHKAeSvdUaIHNsYz49Uz5MKz6zYXERAzdUZW52/42RJTMvrPlzfKXuFhDWRCm3aBejn9yTntBdWLYDEJs+uun1uvXX5AGDtgUx3QovLgAF78W6HOsFxBQ1xfcOoFL0TfjPKgfpE1Z/iWshi9c71/OKstl+4tUXWz8/JBmPpnTBr9z4RztsG/ISRfXnrUtR4/lhpWXUciurfCI3qG/kMwHutZmKC7VbKQ7ZUfI3xIL7Gtrn6C4mq6kUWUG8RXKq
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(396003)(346002)(376002)(136003)(366004)(1800799009)(451199024)(186009)(478600001)(38100700002)(83380400001)(36756003)(6512007)(26005)(921005)(6486002)(6506007)(2616005)(30864003)(6666004)(86362001)(107886003)(41300700001)(316002)(54906003)(66476007)(5660300002)(4326008)(8936002)(7416002)(7406005)(66946007)(110136005)(2906002)(8676002)(66556008)(4216001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: TBZD2cq1XoWNfevwgl6cO8xRR9qx0Z1x/guy+HLG6AMbEUCYfE6LhP7rKPDoPpIYZS5PkO/iyu4j8HBlcdDfEdJNtxHwnqDsYof9kOEE7De825bFNTZIlS6DBZHqlLcHw0cflkOKTilwZ+jvE+ZD/+GdttP0JGjMPCI4ZKvhhM4kLPO/CMJpINh+Eni0JDr1gVIH6o1MzkdsF5bkYTctvoOch/1N1holocTJ3MQzgsyTLQNNhsDUP+l4hbWjwwJwCKQ02utUlvkgskUsf9WOt+l7wgY1o9eQZOSasAvLNX/LXnZd6/lcPNn6Q59i7cXnRJre3kgvyDm5qPPcZf1GNNXdcHBsgRib/DTG48GMMCf7MVTz+p4ccisHg4jdQG70G50tayZy/bcmQ/NnoPeEqT/6uh123Z+JU0eLa5GJFc7/9PLP1qQN+woP+ySrQ5eHns2ZuEMwO4UpTBp3CKmJgYRFU2A/GSK/hvhew8+UJdt8Ap28EnsA/C+YC2kJJJ9eAnnBGne00Eq1/DhhrsFv/zaM0NBL4VYxEEDzmZYSArsH+SwuEkZO2b281Xq2N6133kOlzZZFsNAayUyMlS0KnP9q9DGNsOSlWblBomXsX2OOfvbZ5Yb94pHW1MupHM4HA2+EiNImFyC/YxhppEXFaY3VPT4w4WYPJvyIDnz66Bc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(366004)(136003)(346002)(39860400002)(396003)(1800799009)(186009)(451199024)(83380400001)(86362001)(6512007)(921005)(66946007)(110136005)(2616005)(478600001)(966005)(107886003)(6666004)(38100700002)(6506007)(6486002)(26005)(316002)(4326008)(54906003)(66476007)(8936002)(66556008)(41300700001)(36756003)(8676002)(5660300002)(2906002)(7406005)(7416002)(4216001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?0oYPsIqv9ogIlnWZikTkgRSEj+mcDOdIufpAP/z6JAXieJw0zb88eWCZsSva?=
- =?us-ascii?Q?hpBv75hlFBRO10BrvVDpelT99Js/a+1Xll5G4LKwt+Yj1jBo2RH8ADAf74Jr?=
- =?us-ascii?Q?qy0xAuZANp1n+z4uolyzc0b0x8mWYEbhzdtGUlXxm8mCyBYZB1yUsbRx4XPK?=
- =?us-ascii?Q?4H6DbV9UUs0jugKgSYXzhrWey+xg90vF3l6Dt4ry1n1457X9d8XvP4J1EyeW?=
- =?us-ascii?Q?9cqAYowgqb0SOkhUBCmOM9Y335bhYBicuAkNG9umw8pP0joxEvm1619nDJVm?=
- =?us-ascii?Q?FZIuViD4GUDFN1kONrxo6zB7t59P0dlPu2tu6r5538R2hLta1FLUE8qAebGO?=
- =?us-ascii?Q?04we8GcrntKBoC4fMFPL/F1/Rxvo7rEnwmTHAp/yUf6qd7M+PHejr9SEXvwA?=
- =?us-ascii?Q?7uIY+SnrmYT0ELxn3Pkgri3Jmq3Cd3tlfqnzjelT3ihtXVQsCVcdOyjg6874?=
- =?us-ascii?Q?nrJ5kQkXvMkZPpbGQj3RvSqdO+LobMrYOQbgBj86TVuxlSLC87xGCS/YmAeJ?=
- =?us-ascii?Q?ZlzfeNfT2nTi3v5IWE5z0elditQwSPUet20gUsNb4hEfRm9jNd6CaeslSLgT?=
- =?us-ascii?Q?g9SC6A7F0/aPTKTAKXeqbZhlVyVniEYywby6bx6gVov0TbDrw1ljkii62gd6?=
- =?us-ascii?Q?pDQexWfpmLO25/bsxWIjMurI+rlJP3OZT2qSL6XF6FTa1yChvkPChaDwTLh3?=
- =?us-ascii?Q?61R8jT9B+pYVHz6Bjuq9siNTuU0sA5DZFU+BquPOvenbYV1GlOoLbIBjoyaS?=
- =?us-ascii?Q?clYAy2d8R5xUszdJzkpDvtK5NiYdH8Zai1fQGW68PFScc4+ETplrAxkTA/wQ?=
- =?us-ascii?Q?buls05Kn97WObeE76hytoJGKF5U4sjnfRg6XmjPt8f+92xXfGzR+M8yhdMvU?=
- =?us-ascii?Q?NXVY2CSiKPuuEOX+9aEkq4afl4aMA5Nm3W8YdBKhYx9ubRgDVeia+X2p/j2D?=
- =?us-ascii?Q?oNabmXDVA5Q2QWbssLgDfhw36ZnaI0WVuSyLtTcWXndwsF8r1EQj07zXp5NF?=
- =?us-ascii?Q?PePmdDVakIOU7qGVKl4wHT03VfCvb/kA7WcA/KqAUmGsv/X+zbyB1IqFHK9T?=
- =?us-ascii?Q?Z26UJjMCK34hsIshZ+I+S9dUp4FP/g3VMhN9uBws20eQLK8i2EumYzAze83c?=
- =?us-ascii?Q?ICBtfSP5CkUtck1qTu+mtBPsliIit16kI7qnCnsYzb3p0b8jYCiGdd/3V/Nm?=
- =?us-ascii?Q?77fHlT0huzkVjVYT2KNXuHwBovzmr/SF0i8p5OBRyTjySnL8ddOAqJZMuCZx?=
- =?us-ascii?Q?RgJyZptrKHl+siMGJgwB5BSxvMpg+VUkrqkxtp7T8raFWREf31AHrVXmqSJz?=
- =?us-ascii?Q?1wnrBdNKHN6xjg3hvLYDW+sE/YSiMCkCrMQu0AmbZJOuWIfxeqWifhBxErY8?=
- =?us-ascii?Q?XIeMflz/v0+uWUsJqu+twYuI/DCkC7S6fQvRI58DKll5g3ZRm64vL7yVa/vm?=
- =?us-ascii?Q?cjp/lCZ8Q9ir+0LuRNqcjnzv/wf3rD3DGj0KTZSKQtNb6Wn8hdfjERvOd1ki?=
- =?us-ascii?Q?LtafJ/CaPQWgjT8gL/nKEBR74Df4zwa/BfWq0g6rNgKfmrqUHwnc2eiO+beG?=
- =?us-ascii?Q?3ou4X1dNa+IYUwBNDgTyCnOX9g0TUUA+pTz7jOGb?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Lm/1x4nDBCwifZHnBKDeqS0YZ12dl9DsYiW4fvrJXSk0pjfTX2lRPD3zcz0e?=
+ =?us-ascii?Q?j25bxg7EdN/aKuvDwZogOzCh5jacWkJiKIZhVCpWhBNZT+Enlx+fNbNGRMgz?=
+ =?us-ascii?Q?JurawNwxF1aUtIiq9fHu9yTVELGugqz/TEPwzsxyUzTAW1Cs80+kuUIGq3SB?=
+ =?us-ascii?Q?pKlJwd3uFuDHnlnwaypAWdVFcAihtvfHX9GF/9EB5/0R+o7rohGj3LVKIWfq?=
+ =?us-ascii?Q?0Fn6VhGBTpW6GrySmMXUWKHW7WYP5/QYQXwXjplR9Vu7eMkS/1+wj+b/Mg1T?=
+ =?us-ascii?Q?gQdaLxsh3SMeDSILS3H2nzOQAX1rxjil54B0nYk8nBbt/wStM49kf/FaIICC?=
+ =?us-ascii?Q?wn9H4NbxhriJWOGRA1UQkQVF6+1RjkD2RupKGIn3wKNMVjUQY54JxINbswQZ?=
+ =?us-ascii?Q?2lZCkAqE+MGj4C+UcAmaC41GEo8iQKq/zVeewsn0VXUCzYYTPF0Wtxs17O38?=
+ =?us-ascii?Q?0P3g5STpu9qY4aeHkWlqC3KaykicPDo87yMdmMPz8bac/C9Hu2x94VB0bUSm?=
+ =?us-ascii?Q?I464+TufIpEes+m4S6kH8k/1OmDJkC3p8D7oD2x5u+YM4iQTwUEyfAd/4fXJ?=
+ =?us-ascii?Q?V4Sc5MiRxDZclmeUgq77Ag+nxYiTzAVKFhWC8TwSWaLWOl7Ng2vqBc9P06Q+?=
+ =?us-ascii?Q?d5J4xyb+YTJUvJM5IDK4cq3mo3w2XUJXWoE7G0tJqcrjXV63HwtYneqj59yB?=
+ =?us-ascii?Q?GqyMjQSrYnRjPBkPEA2hYhbQ0xHwjqldqWne5dNHo3GuqsBQJxJC+FBQBu44?=
+ =?us-ascii?Q?3MP9WMVzF6vKIiTQ654jx2Ogaynu1Rq/wiOBI8V1mgc8OwLQgnIGohJpPG07?=
+ =?us-ascii?Q?RZGzG6RzPLuyx7+Irfe9qXE1xgxCpJbPpYJ7u9YsElEoP8wJvVryHCYT1PoZ?=
+ =?us-ascii?Q?wKr5DzALpA0PJ6NLb6AImRQVkeKJjMtsl6NsOQ6Zo9ghpD89M5695CoInV8B?=
+ =?us-ascii?Q?ciuZ/80uU5tpYWljtyFyrqMW5IS1q8VjHn3Gx0Hdk535l8v6Q8CrTEKskCn0?=
+ =?us-ascii?Q?Sg2lrvHPCjBESETgFp0qtm5Zmg1W5ms5dMBCbUiJT0kw/MQQm8GJa6N+WNZF?=
+ =?us-ascii?Q?ISMdotlVLKuggNPx/f1X9NYbV4Av7mtWA70dC0a2bwiRei259h3VBgK9c3uT?=
+ =?us-ascii?Q?rFUsz/p/M1+UoD61pXLWvRaJzYzU7YWvhMVC6pUWM0+uSS/EtQgn9w0rAtED?=
+ =?us-ascii?Q?etGhQggl+2hP0G7Tt3ZJt9ESpoj+xbBxE6ycEKrSr6Tbnz+9lz+RqKqKdlBo?=
+ =?us-ascii?Q?QH7Mume5HhYKSBWLdTsKvNhsqVnuPKzX5v2UP8fS2tM5qmpbyNxtIyf3Kt+T?=
+ =?us-ascii?Q?OPXlIbze4K2Cm/0MFPuYwFOUhiQL52LANyZdydSI+61Zu1cjO7hpJlzzW78l?=
+ =?us-ascii?Q?O4sySCQHY8qmSh1/sDP7HnsQiCA4lRTY9aFOYEFBtrCKj09bGkMvpqh7bbYR?=
+ =?us-ascii?Q?6eg94bTs81YeVCyNa2vpafOTkByRwInF8DlGzL+sCBStdvPfBJz1467TGNp5?=
+ =?us-ascii?Q?ZJggK8Dhac+M2QcRHKi1bJFB2jVvGArpa468i6wtZ3DfDBSHuDqTHKX5OoRg?=
+ =?us-ascii?Q?SmdJz3vfo+RYcxdwvzGa4FqNGiE0pBvPKE2sqOUG?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4fe6465e-80bc-4c45-daf1-08dbb45f7be5
+X-MS-Exchange-CrossTenant-Network-Message-Id: 570511ec-927a-464d-0719-08dbb45f8303
 X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2023 13:44:00.2447
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2023 13:44:11.7593
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: b1eD7OH7o+hXGO73ysRQS88571od3qrxi6Jk0nWBPB7oN7rJx2s0Gn858Dn49ACn
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7923
+X-MS-Exchange-CrossTenant-UserPrincipalName: WOt6dtkTnkJuRCFntVRhsZksuLZ2uLsLWz6DMZbuZqh9bBmXuAJga1Qt0W0T2Pv7
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7848
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Thierry says this is not used anymore, and doesn't think it makes sense as
-an iommu driver. The HW it supports is about 10 years old now and newer HW
-uses different IOMMU drivers.
+It has been a long time coming, this series completes the default_domain
+transition and makes it so that the core IOMMU code will always have a
+non-NULL default_domain for every driver on every
+platform. set_platform_dma_ops() turned out to be a bad idea, and so
+completely remove it.
 
-As this is the only driver with a GART approach, and it doesn't really
-meet the driver expectations from the IOMMU core, let's just remove it
-so we don't have to think about how to make it fit in.
+This is achieved by changing each driver to either:
 
-It has a number of identified problems:
- - The assignment of iommu_groups doesn't match the HW behavior
+1 - Convert the existing (or deleted) ops->detach_dev() into an
+    op->attach_dev() of an IDENTITY domain.
 
- - It claims to have an UNMANAGED domain but it is really an IDENTITY
-   domain with a translation aperture. This is inconsistent with the core
-   expectation for security sensitive operations
+    This is based on the theory that the ARM32 HW is able to function when
+    the iommu is turned off and so the turned off state is an IDENTITY
+    translation.
 
- - It doesn't implement a SW page table under struct iommu_domain so
-   * It can't accept a map until the domain is attached
-   * It forgets about all maps after the domain is detached
-   * It doesn't clear the HW of maps once the domain is detached
-     (made worse by having the wrong groups)
+2 - Use a new PLATFORM domain type. This is a hack to accommodate drivers
+    that we don't really know WTF they do. S390 is legitimately using this
+    to switch to it's platform dma_ops implementation, which is where the
+    name comes from.
 
-Cc: Thierry Reding <treding@nvidia.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
-Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
----
- arch/arm/configs/multi_v7_defconfig |   1 -
- arch/arm/configs/tegra_defconfig    |   1 -
- drivers/iommu/Kconfig               |  11 -
- drivers/iommu/Makefile              |   1 -
- drivers/iommu/tegra-gart.c          | 371 ----------------------------
- drivers/memory/tegra/mc.c           |  34 ---
- drivers/memory/tegra/tegra20.c      |  28 ---
- include/soc/tegra/mc.h              |  26 --
- 8 files changed, 473 deletions(-)
+3 - Do #1 and force the default domain to be IDENTITY, this corrects
+    the tegra-smmu case where even an ARM64 system would have a NULL
+    default_domain.
+
+Using this we can apply the rules:
+
+a) ARM_DMA_USE_IOMMU mode always uses either the driver's
+   ops->default_domain, ops->def_domain_type(), or an IDENTITY domain.
+   All ARM32 drivers provide one of these three options.
+
+b) dma-iommu.c mode uses either the driver's ops->default_domain,
+   ops->def_domain_type or the usual DMA API policy logic based on the
+   command line/etc to pick IDENTITY/DMA domain types
+
+c) All other arch's (PPC/S390) use ops->default_domain always.
+
+See the patch "Require a default_domain for all iommu drivers" for a
+per-driver breakdown.
+
+The conversion broadly teaches a bunch of ARM32 drivers that they can do
+IDENTITY domains. There is some educated guessing involved that these are
+actual IDENTITY domains. If this turns out to be wrong the driver can be
+trivially changed to use a BLOCKING domain type instead. Further, the
+domain type only matters for drivers using ARM64's dma-iommu.c mode as it
+will select IDENTITY based on the command line and expect IDENTITY to
+work. For ARM32 and other arch cases it is purely documentation.
+
+Finally, based on all the analysis in this series, we can purge
+IOMMU_DOMAIN_UNMANAGED/DMA constants from most of the drivers. This
+greatly simplifies understanding the driver contract to the core
+code. IOMMU drivers should not be involved in policy for how the DMA API
+works, that should be a core core decision.
+
+The main gain from this work is to remove alot of ARM_DMA_USE_IOMMU
+specific code and behaviors from drivers. All that remains in iommu
+drivers after this series is the calls to arm_iommu_create_mapping().
+
+This is a step toward removing ARM_DMA_USE_IOMMU.
+
+The IDENTITY domains added to the ARM64 supporting drivers can be tested
+by booting in ARM64 mode and enabling CONFIG_IOMMU_DEFAULT_PASSTHROUGH. If
+the system still boots then most likely the implementation is an IDENTITY
+domain. If not we can trivially change it to BLOCKING or at worst PLATFORM
+if there is no detail what is going on in the HW.
+
+I think this is pretty safe for the ARM32 drivers as they don't really
+change, the code that was in detach_dev continues to be called in the same
+places it was called before.
+
+This is on github: https://github.com/jgunthorpe/linux/commits/iommu_all_defdom
+
+v8:
+ - Rebase on v6.6-rc1
+ - Adjust comments for ops.default_domain
+v7:
+ - Rebase on v6.5-rc6/Joerg's tree/iommufd
+ - Most of patch "iommufd/selftest: Make the mock iommu driver into a real
+   driver" is now in the iommufd tree, diffuse the remaining bits to
+   "iommu: Add iommu_ops->identity_domain" and
+   "iommu: Add IOMMU_DOMAIN_PLATFORM"
+ - Move the check for domain->ops->free to patch 1 as the rockchip
+   conversion relies on it
+ - Add IOMMU_DOMAIN_PLATFORM to iommu_domain_type_str
+ - Rewrite "iommu: Reorganize iommu_get_default_domain_type() to respect def_domain_type()"
+   to be clearer and more robust
+ - Remove left over .default_domain in tegra-smmu.c
+ - Use group_iommu_ops() in all appropriate places
+ - Typo s/paging/dev/ in sun50i
+v6: https://lore.kernel.org/r/0-v6-e8114faedade+425-iommu_all_defdom_jgg@nvidia.com
+ - Rebase on v6.5-rc1/Joerg's tree
+ - Fix the iommufd self test missing the iommu_device_sysfs_add()
+ - Update typo in msm commit message
+v5: https://lore.kernel.org/r/0-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com
+ - Rebase on v6.5-rc1/Joerg's tree
+ - Fix Dan's remark about 'gdev uninitialized' in patch 9
+v4: https://lore.kernel.org/r/0-v4-874277bde66e+1a9f6-iommu_all_defdom_jgg@nvidia.com
+ - Fix rebasing typo missing ops->alloc_domain_paging check
+ - Rebase on latest Joerg tree
+v3: https://lore.kernel.org/r/0-v3-89830a6c7841+43d-iommu_all_defdom_jgg@nvidia.com
+ - FSL is back to a PLATFORM domain, with some fixing so it attach only
+   does something when leaving an UNMANAGED domain like it always was
+ - Rebase on Joerg's tree, adjust for "alloc_type" change
+ - Change the ARM32 untrusted check to a WARN_ON since no ARM32 system
+   can currently set trusted
+v2: https://lore.kernel.org/r/0-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com
+ - FSL is an IDENTITY domain
+ - Delete terga-gart instead of trying to carry it
+ - Use the policy determination from iommu_get_default_domain_type() to
+   drive the arm_iommu mode
+ - Reorganize and introduce new patches to do the above:
+    * Split the ops->identity_domain to an independent earlier patch
+    * Remove the UNMANAGED return from def_domain_type in mtk_v1 earlier
+      so the new iommu_get_default_domain_type() can work
+    * Make the driver's def_domain_type have higher policy priority than
+      untrusted
+    * Merge the set_platfom_dma_ops hunk from mtk_v1 along with rockchip
+      into the patch that forced IDENTITY on ARM32
+ - Revise sun50i to be cleaner and have a non-NULL internal domain
+ - Reword logging in exynos
+ - Remove the gdev from the group alloc path, instead add a new
+   function __iommu_group_domain_alloc() that takes in the group
+   and uses the first device. Split this to its own patch
+ - New patch to make iommufd's mock selftest into a real driver
+ - New patch to fix power's partial iommu driver
+v1: https://lore.kernel.org/r/0-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com
+
+Jason Gunthorpe (24):
+  iommu: Add iommu_ops->identity_domain
+  iommu: Add IOMMU_DOMAIN_PLATFORM
+  powerpc/iommu: Setup a default domain and remove set_platform_dma_ops
+  iommu: Add IOMMU_DOMAIN_PLATFORM for S390
+  iommu/fsl_pamu: Implement a PLATFORM domain
+  iommu/tegra-gart: Remove tegra-gart
+  iommu/mtk_iommu_v1: Implement an IDENTITY domain
+  iommu: Reorganize iommu_get_default_domain_type() to respect
+    def_domain_type()
+  iommu: Allow an IDENTITY domain as the default_domain in ARM32
+  iommu/exynos: Implement an IDENTITY domain
+  iommu/tegra-smmu: Implement an IDENTITY domain
+  iommu/tegra-smmu: Support DMA domains in tegra
+  iommu/omap: Implement an IDENTITY domain
+  iommu/msm: Implement an IDENTITY domain
+  iommu: Remove ops->set_platform_dma_ops()
+  iommu/qcom_iommu: Add an IOMMU_IDENTITIY_DOMAIN
+  iommu/ipmmu: Add an IOMMU_IDENTITIY_DOMAIN
+  iommu/mtk_iommu: Add an IOMMU_IDENTITIY_DOMAIN
+  iommu/sun50i: Add an IOMMU_IDENTITIY_DOMAIN
+  iommu: Require a default_domain for all iommu drivers
+  iommu: Add __iommu_group_domain_alloc()
+  iommu: Add ops->domain_alloc_paging()
+  iommu: Convert simple drivers with DOMAIN_DMA to domain_alloc_paging()
+  iommu: Convert remaining simple drivers to domain_alloc_paging()
+
+ arch/arm/configs/multi_v7_defconfig     |   1 -
+ arch/arm/configs/tegra_defconfig        |   1 -
+ arch/powerpc/kernel/iommu.c             |  38 ++-
+ drivers/iommu/Kconfig                   |  11 -
+ drivers/iommu/Makefile                  |   1 -
+ drivers/iommu/arm/arm-smmu/qcom_iommu.c |  45 ++-
+ drivers/iommu/exynos-iommu.c            |  73 +++--
+ drivers/iommu/fsl_pamu_domain.c         |  41 ++-
+ drivers/iommu/iommu.c                   | 259 ++++++++++-------
+ drivers/iommu/iommufd/selftest.c        |  19 +-
+ drivers/iommu/ipmmu-vmsa.c              |  50 +++-
+ drivers/iommu/msm_iommu.c               |  30 +-
+ drivers/iommu/mtk_iommu.c               |  30 +-
+ drivers/iommu/mtk_iommu_v1.c            |  28 +-
+ drivers/iommu/omap-iommu.c              |  28 +-
+ drivers/iommu/rockchip-iommu.c          |  26 +-
+ drivers/iommu/s390-iommu.c              |  28 +-
+ drivers/iommu/sprd-iommu.c              |   7 +-
+ drivers/iommu/sun50i-iommu.c            |  35 ++-
+ drivers/iommu/tegra-gart.c              | 371 ------------------------
+ drivers/iommu/tegra-smmu.c              |  44 ++-
+ drivers/memory/tegra/mc.c               |  34 ---
+ drivers/memory/tegra/tegra20.c          |  28 --
+ include/linux/iommu.h                   |  18 +-
+ include/soc/tegra/mc.h                  |  26 --
+ 25 files changed, 516 insertions(+), 756 deletions(-)
  delete mode 100644 drivers/iommu/tegra-gart.c
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 23fc49f23d255a..5dc4416b75d36f 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -1073,7 +1073,6 @@ CONFIG_QCOM_IPCC=y
- CONFIG_OMAP_IOMMU=y
- CONFIG_OMAP_IOMMU_DEBUG=y
- CONFIG_ROCKCHIP_IOMMU=y
--CONFIG_TEGRA_IOMMU_GART=y
- CONFIG_TEGRA_IOMMU_SMMU=y
- CONFIG_EXYNOS_IOMMU=y
- CONFIG_QCOM_IOMMU=y
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 613f07b8ce1505..8635b7216bfc5a 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -292,7 +292,6 @@ CONFIG_CHROME_PLATFORMS=y
- CONFIG_CROS_EC=y
- CONFIG_CROS_EC_I2C=m
- CONFIG_CROS_EC_SPI=m
--CONFIG_TEGRA_IOMMU_GART=y
- CONFIG_TEGRA_IOMMU_SMMU=y
- CONFIG_ARCH_TEGRA_2x_SOC=y
- CONFIG_ARCH_TEGRA_3x_SOC=y
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index 2b12b583ef4b1e..cd6727898b1175 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -236,17 +236,6 @@ config SUN50I_IOMMU
- 	help
- 	  Support for the IOMMU introduced in the Allwinner H6 SoCs.
- 
--config TEGRA_IOMMU_GART
--	bool "Tegra GART IOMMU Support"
--	depends on ARCH_TEGRA_2x_SOC
--	depends on TEGRA_MC
--	select IOMMU_API
--	help
--	  Enables support for remapping discontiguous physical memory
--	  shared with the operating system into contiguous I/O virtual
--	  space through the GART (Graphics Address Relocation Table)
--	  hardware included on Tegra SoCs.
--
- config TEGRA_IOMMU_SMMU
- 	bool "NVIDIA Tegra SMMU Support"
- 	depends on ARCH_TEGRA
-diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
-index 769e43d780ce89..95ad9dbfbda022 100644
---- a/drivers/iommu/Makefile
-+++ b/drivers/iommu/Makefile
-@@ -20,7 +20,6 @@ obj-$(CONFIG_OMAP_IOMMU) += omap-iommu.o
- obj-$(CONFIG_OMAP_IOMMU_DEBUG) += omap-iommu-debug.o
- obj-$(CONFIG_ROCKCHIP_IOMMU) += rockchip-iommu.o
- obj-$(CONFIG_SUN50I_IOMMU) += sun50i-iommu.o
--obj-$(CONFIG_TEGRA_IOMMU_GART) += tegra-gart.o
- obj-$(CONFIG_TEGRA_IOMMU_SMMU) += tegra-smmu.o
- obj-$(CONFIG_EXYNOS_IOMMU) += exynos-iommu.o
- obj-$(CONFIG_FSL_PAMU) += fsl_pamu.o fsl_pamu_domain.o
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-deleted file mode 100644
-index a482ff838b5331..00000000000000
---- a/drivers/iommu/tegra-gart.c
-+++ /dev/null
-@@ -1,371 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * IOMMU API for Graphics Address Relocation Table on Tegra20
-- *
-- * Copyright (c) 2010-2012, NVIDIA CORPORATION.  All rights reserved.
-- *
-- * Author: Hiroshi DOYU <hdoyu@nvidia.com>
-- */
--
--#define dev_fmt(fmt)	"gart: " fmt
--
--#include <linux/io.h>
--#include <linux/iommu.h>
--#include <linux/moduleparam.h>
--#include <linux/platform_device.h>
--#include <linux/slab.h>
--#include <linux/spinlock.h>
--#include <linux/vmalloc.h>
--
--#include <soc/tegra/mc.h>
--
--#define GART_REG_BASE		0x24
--#define GART_CONFIG		(0x24 - GART_REG_BASE)
--#define GART_ENTRY_ADDR		(0x28 - GART_REG_BASE)
--#define GART_ENTRY_DATA		(0x2c - GART_REG_BASE)
--
--#define GART_ENTRY_PHYS_ADDR_VALID	BIT(31)
--
--#define GART_PAGE_SHIFT		12
--#define GART_PAGE_SIZE		(1 << GART_PAGE_SHIFT)
--#define GART_PAGE_MASK		GENMASK(30, GART_PAGE_SHIFT)
--
--/* bitmap of the page sizes currently supported */
--#define GART_IOMMU_PGSIZES	(GART_PAGE_SIZE)
--
--struct gart_device {
--	void __iomem		*regs;
--	u32			*savedata;
--	unsigned long		iovmm_base;	/* offset to vmm_area start */
--	unsigned long		iovmm_end;	/* offset to vmm_area end */
--	spinlock_t		pte_lock;	/* for pagetable */
--	spinlock_t		dom_lock;	/* for active domain */
--	unsigned int		active_devices;	/* number of active devices */
--	struct iommu_domain	*active_domain;	/* current active domain */
--	struct iommu_device	iommu;		/* IOMMU Core handle */
--	struct device		*dev;
--};
--
--static struct gart_device *gart_handle; /* unique for a system */
--
--static bool gart_debug;
--
--/*
-- * Any interaction between any block on PPSB and a block on APB or AHB
-- * must have these read-back to ensure the APB/AHB bus transaction is
-- * complete before initiating activity on the PPSB block.
-- */
--#define FLUSH_GART_REGS(gart)	readl_relaxed((gart)->regs + GART_CONFIG)
--
--#define for_each_gart_pte(gart, iova)					\
--	for (iova = gart->iovmm_base;					\
--	     iova < gart->iovmm_end;					\
--	     iova += GART_PAGE_SIZE)
--
--static inline void gart_set_pte(struct gart_device *gart,
--				unsigned long iova, unsigned long pte)
--{
--	writel_relaxed(iova, gart->regs + GART_ENTRY_ADDR);
--	writel_relaxed(pte, gart->regs + GART_ENTRY_DATA);
--}
--
--static inline unsigned long gart_read_pte(struct gart_device *gart,
--					  unsigned long iova)
--{
--	unsigned long pte;
--
--	writel_relaxed(iova, gart->regs + GART_ENTRY_ADDR);
--	pte = readl_relaxed(gart->regs + GART_ENTRY_DATA);
--
--	return pte;
--}
--
--static void do_gart_setup(struct gart_device *gart, const u32 *data)
--{
--	unsigned long iova;
--
--	for_each_gart_pte(gart, iova)
--		gart_set_pte(gart, iova, data ? *(data++) : 0);
--
--	writel_relaxed(1, gart->regs + GART_CONFIG);
--	FLUSH_GART_REGS(gart);
--}
--
--static inline bool gart_iova_range_invalid(struct gart_device *gart,
--					   unsigned long iova, size_t bytes)
--{
--	return unlikely(iova < gart->iovmm_base || bytes != GART_PAGE_SIZE ||
--			iova + bytes > gart->iovmm_end);
--}
--
--static inline bool gart_pte_valid(struct gart_device *gart, unsigned long iova)
--{
--	return !!(gart_read_pte(gart, iova) & GART_ENTRY_PHYS_ADDR_VALID);
--}
--
--static int gart_iommu_attach_dev(struct iommu_domain *domain,
--				 struct device *dev)
--{
--	struct gart_device *gart = gart_handle;
--	int ret = 0;
--
--	spin_lock(&gart->dom_lock);
--
--	if (gart->active_domain && gart->active_domain != domain) {
--		ret = -EINVAL;
--	} else if (dev_iommu_priv_get(dev) != domain) {
--		dev_iommu_priv_set(dev, domain);
--		gart->active_domain = domain;
--		gart->active_devices++;
--	}
--
--	spin_unlock(&gart->dom_lock);
--
--	return ret;
--}
--
--static void gart_iommu_set_platform_dma(struct device *dev)
--{
--	struct iommu_domain *domain = iommu_get_domain_for_dev(dev);
--	struct gart_device *gart = gart_handle;
--
--	spin_lock(&gart->dom_lock);
--
--	if (dev_iommu_priv_get(dev) == domain) {
--		dev_iommu_priv_set(dev, NULL);
--
--		if (--gart->active_devices == 0)
--			gart->active_domain = NULL;
--	}
--
--	spin_unlock(&gart->dom_lock);
--}
--
--static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
--{
--	struct iommu_domain *domain;
--
--	if (type != IOMMU_DOMAIN_UNMANAGED)
--		return NULL;
--
--	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
--	if (domain) {
--		domain->geometry.aperture_start = gart_handle->iovmm_base;
--		domain->geometry.aperture_end = gart_handle->iovmm_end - 1;
--		domain->geometry.force_aperture = true;
--	}
--
--	return domain;
--}
--
--static void gart_iommu_domain_free(struct iommu_domain *domain)
--{
--	WARN_ON(gart_handle->active_domain == domain);
--	kfree(domain);
--}
--
--static inline int __gart_iommu_map(struct gart_device *gart, unsigned long iova,
--				   unsigned long pa)
--{
--	if (unlikely(gart_debug && gart_pte_valid(gart, iova))) {
--		dev_err(gart->dev, "Page entry is in-use\n");
--		return -EINVAL;
--	}
--
--	gart_set_pte(gart, iova, GART_ENTRY_PHYS_ADDR_VALID | pa);
--
--	return 0;
--}
--
--static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
--			  phys_addr_t pa, size_t bytes, int prot, gfp_t gfp)
--{
--	struct gart_device *gart = gart_handle;
--	int ret;
--
--	if (gart_iova_range_invalid(gart, iova, bytes))
--		return -EINVAL;
--
--	spin_lock(&gart->pte_lock);
--	ret = __gart_iommu_map(gart, iova, (unsigned long)pa);
--	spin_unlock(&gart->pte_lock);
--
--	return ret;
--}
--
--static inline int __gart_iommu_unmap(struct gart_device *gart,
--				     unsigned long iova)
--{
--	if (unlikely(gart_debug && !gart_pte_valid(gart, iova))) {
--		dev_err(gart->dev, "Page entry is invalid\n");
--		return -EINVAL;
--	}
--
--	gart_set_pte(gart, iova, 0);
--
--	return 0;
--}
--
--static size_t gart_iommu_unmap(struct iommu_domain *domain, unsigned long iova,
--			       size_t bytes, struct iommu_iotlb_gather *gather)
--{
--	struct gart_device *gart = gart_handle;
--	int err;
--
--	if (gart_iova_range_invalid(gart, iova, bytes))
--		return 0;
--
--	spin_lock(&gart->pte_lock);
--	err = __gart_iommu_unmap(gart, iova);
--	spin_unlock(&gart->pte_lock);
--
--	return err ? 0 : bytes;
--}
--
--static phys_addr_t gart_iommu_iova_to_phys(struct iommu_domain *domain,
--					   dma_addr_t iova)
--{
--	struct gart_device *gart = gart_handle;
--	unsigned long pte;
--
--	if (gart_iova_range_invalid(gart, iova, GART_PAGE_SIZE))
--		return -EINVAL;
--
--	spin_lock(&gart->pte_lock);
--	pte = gart_read_pte(gart, iova);
--	spin_unlock(&gart->pte_lock);
--
--	return pte & GART_PAGE_MASK;
--}
--
--static struct iommu_device *gart_iommu_probe_device(struct device *dev)
--{
--	if (!dev_iommu_fwspec_get(dev))
--		return ERR_PTR(-ENODEV);
--
--	return &gart_handle->iommu;
--}
--
--static int gart_iommu_of_xlate(struct device *dev,
--			       struct of_phandle_args *args)
--{
--	return 0;
--}
--
--static void gart_iommu_sync_map(struct iommu_domain *domain, unsigned long iova,
--				size_t size)
--{
--	FLUSH_GART_REGS(gart_handle);
--}
--
--static void gart_iommu_sync(struct iommu_domain *domain,
--			    struct iommu_iotlb_gather *gather)
--{
--	size_t length = gather->end - gather->start + 1;
--
--	gart_iommu_sync_map(domain, gather->start, length);
--}
--
--static const struct iommu_ops gart_iommu_ops = {
--	.domain_alloc	= gart_iommu_domain_alloc,
--	.probe_device	= gart_iommu_probe_device,
--	.device_group	= generic_device_group,
--	.set_platform_dma_ops = gart_iommu_set_platform_dma,
--	.pgsize_bitmap	= GART_IOMMU_PGSIZES,
--	.of_xlate	= gart_iommu_of_xlate,
--	.default_domain_ops = &(const struct iommu_domain_ops) {
--		.attach_dev	= gart_iommu_attach_dev,
--		.map		= gart_iommu_map,
--		.unmap		= gart_iommu_unmap,
--		.iova_to_phys	= gart_iommu_iova_to_phys,
--		.iotlb_sync_map	= gart_iommu_sync_map,
--		.iotlb_sync	= gart_iommu_sync,
--		.free		= gart_iommu_domain_free,
--	}
--};
--
--int tegra_gart_suspend(struct gart_device *gart)
--{
--	u32 *data = gart->savedata;
--	unsigned long iova;
--
--	/*
--	 * All GART users shall be suspended at this point. Disable
--	 * address translation to trap all GART accesses as invalid
--	 * memory accesses.
--	 */
--	writel_relaxed(0, gart->regs + GART_CONFIG);
--	FLUSH_GART_REGS(gart);
--
--	for_each_gart_pte(gart, iova)
--		*(data++) = gart_read_pte(gart, iova);
--
--	return 0;
--}
--
--int tegra_gart_resume(struct gart_device *gart)
--{
--	do_gart_setup(gart, gart->savedata);
--
--	return 0;
--}
--
--struct gart_device *tegra_gart_probe(struct device *dev, struct tegra_mc *mc)
--{
--	struct gart_device *gart;
--	struct resource *res;
--	int err;
--
--	BUILD_BUG_ON(PAGE_SHIFT != GART_PAGE_SHIFT);
--
--	/* the GART memory aperture is required */
--	res = platform_get_resource(to_platform_device(dev), IORESOURCE_MEM, 1);
--	if (!res) {
--		dev_err(dev, "Memory aperture resource unavailable\n");
--		return ERR_PTR(-ENXIO);
--	}
--
--	gart = kzalloc(sizeof(*gart), GFP_KERNEL);
--	if (!gart)
--		return ERR_PTR(-ENOMEM);
--
--	gart_handle = gart;
--
--	gart->dev = dev;
--	gart->regs = mc->regs + GART_REG_BASE;
--	gart->iovmm_base = res->start;
--	gart->iovmm_end = res->end + 1;
--	spin_lock_init(&gart->pte_lock);
--	spin_lock_init(&gart->dom_lock);
--
--	do_gart_setup(gart, NULL);
--
--	err = iommu_device_sysfs_add(&gart->iommu, dev, NULL, "gart");
--	if (err)
--		goto free_gart;
--
--	err = iommu_device_register(&gart->iommu, &gart_iommu_ops, dev);
--	if (err)
--		goto remove_sysfs;
--
--	gart->savedata = vmalloc(resource_size(res) / GART_PAGE_SIZE *
--				 sizeof(u32));
--	if (!gart->savedata) {
--		err = -ENOMEM;
--		goto unregister_iommu;
--	}
--
--	return gart;
--
--unregister_iommu:
--	iommu_device_unregister(&gart->iommu);
--remove_sysfs:
--	iommu_device_sysfs_remove(&gart->iommu);
--free_gart:
--	kfree(gart);
--
--	return ERR_PTR(err);
--}
--
--module_param(gart_debug, bool, 0644);
--MODULE_PARM_DESC(gart_debug, "Enable GART debugging");
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index 67d6e70b4eab11..a083921a8968ba 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -979,35 +979,6 @@ static int tegra_mc_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_GART) && !mc->soc->smmu) {
--		mc->gart = tegra_gart_probe(&pdev->dev, mc);
--		if (IS_ERR(mc->gart)) {
--			dev_err(&pdev->dev, "failed to probe GART: %ld\n",
--				PTR_ERR(mc->gart));
--			mc->gart = NULL;
--		}
--	}
--
--	return 0;
--}
--
--static int __maybe_unused tegra_mc_suspend(struct device *dev)
--{
--	struct tegra_mc *mc = dev_get_drvdata(dev);
--
--	if (mc->soc->ops && mc->soc->ops->suspend)
--		return mc->soc->ops->suspend(mc);
--
--	return 0;
--}
--
--static int __maybe_unused tegra_mc_resume(struct device *dev)
--{
--	struct tegra_mc *mc = dev_get_drvdata(dev);
--
--	if (mc->soc->ops && mc->soc->ops->resume)
--		return mc->soc->ops->resume(mc);
--
- 	return 0;
- }
- 
-@@ -1020,15 +991,10 @@ static void tegra_mc_sync_state(struct device *dev)
- 		icc_sync_state(dev);
- }
- 
--static const struct dev_pm_ops tegra_mc_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(tegra_mc_suspend, tegra_mc_resume)
--};
--
- static struct platform_driver tegra_mc_driver = {
- 	.driver = {
- 		.name = "tegra-mc",
- 		.of_match_table = tegra_mc_of_match,
--		.pm = &tegra_mc_pm_ops,
- 		.suppress_bind_attrs = true,
- 		.sync_state = tegra_mc_sync_state,
- 	},
-diff --git a/drivers/memory/tegra/tegra20.c b/drivers/memory/tegra/tegra20.c
-index 544bfd216a220b..aa4b97d5e73236 100644
---- a/drivers/memory/tegra/tegra20.c
-+++ b/drivers/memory/tegra/tegra20.c
-@@ -688,32 +688,6 @@ static int tegra20_mc_probe(struct tegra_mc *mc)
- 	return 0;
- }
- 
--static int tegra20_mc_suspend(struct tegra_mc *mc)
--{
--	int err;
--
--	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_GART) && mc->gart) {
--		err = tegra_gart_suspend(mc->gart);
--		if (err < 0)
--			return err;
--	}
--
--	return 0;
--}
--
--static int tegra20_mc_resume(struct tegra_mc *mc)
--{
--	int err;
--
--	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_GART) && mc->gart) {
--		err = tegra_gart_resume(mc->gart);
--		if (err < 0)
--			return err;
--	}
--
--	return 0;
--}
--
- static irqreturn_t tegra20_mc_handle_irq(int irq, void *data)
- {
- 	struct tegra_mc *mc = data;
-@@ -789,8 +763,6 @@ static irqreturn_t tegra20_mc_handle_irq(int irq, void *data)
- 
- static const struct tegra_mc_ops tegra20_mc_ops = {
- 	.probe = tegra20_mc_probe,
--	.suspend = tegra20_mc_suspend,
--	.resume = tegra20_mc_resume,
- 	.handle_irq = tegra20_mc_handle_irq,
- };
- 
-diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
-index a5ef84944a0680..71ae37d3bedd76 100644
---- a/include/soc/tegra/mc.h
-+++ b/include/soc/tegra/mc.h
-@@ -96,7 +96,6 @@ struct tegra_smmu_soc {
- 
- struct tegra_mc;
- struct tegra_smmu;
--struct gart_device;
- 
- #ifdef CONFIG_TEGRA_IOMMU_SMMU
- struct tegra_smmu *tegra_smmu_probe(struct device *dev,
-@@ -116,28 +115,6 @@ static inline void tegra_smmu_remove(struct tegra_smmu *smmu)
- }
- #endif
- 
--#ifdef CONFIG_TEGRA_IOMMU_GART
--struct gart_device *tegra_gart_probe(struct device *dev, struct tegra_mc *mc);
--int tegra_gart_suspend(struct gart_device *gart);
--int tegra_gart_resume(struct gart_device *gart);
--#else
--static inline struct gart_device *
--tegra_gart_probe(struct device *dev, struct tegra_mc *mc)
--{
--	return ERR_PTR(-ENODEV);
--}
--
--static inline int tegra_gart_suspend(struct gart_device *gart)
--{
--	return -ENODEV;
--}
--
--static inline int tegra_gart_resume(struct gart_device *gart)
--{
--	return -ENODEV;
--}
--#endif
--
- struct tegra_mc_reset {
- 	const char *name;
- 	unsigned long id;
-@@ -185,8 +162,6 @@ struct tegra_mc_ops {
- 	 */
- 	int (*probe)(struct tegra_mc *mc);
- 	void (*remove)(struct tegra_mc *mc);
--	int (*suspend)(struct tegra_mc *mc);
--	int (*resume)(struct tegra_mc *mc);
- 	irqreturn_t (*handle_irq)(int irq, void *data);
- 	int (*probe_device)(struct tegra_mc *mc, struct device *dev);
- };
-@@ -225,7 +200,6 @@ struct tegra_mc {
- 	struct tegra_bpmp *bpmp;
- 	struct device *dev;
- 	struct tegra_smmu *smmu;
--	struct gart_device *gart;
- 	void __iomem *regs;
- 	void __iomem *bcast_ch_regs;
- 	void __iomem **ch_regs;
+
+base-commit: 0bb80ecc33a8fb5a682236443c1e740d5c917d1d
 -- 
 2.42.0
 
