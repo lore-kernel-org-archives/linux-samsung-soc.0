@@ -2,90 +2,125 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38512EDE98F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Sep 2023 08:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A45E0EDE9A6
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Sep 2023 11:18:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236253AbjINIKq (ORCPT
+        id S237860AbjINLSn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 14 Sep 2023 04:10:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53548 "EHLO
+        Thu, 14 Sep 2023 07:18:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235990AbjINIKp (ORCPT
+        with ESMTP id S237253AbjINLSd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 14 Sep 2023 04:10:45 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FBAFCD8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Sep 2023 01:10:41 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-403004a96a4so7021295e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Sep 2023 01:10:41 -0700 (PDT)
+        Thu, 14 Sep 2023 07:18:33 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D3FF212C
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Sep 2023 04:18:25 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-501bd7711e8so1381351e87.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Sep 2023 04:18:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694679039; x=1695283839; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jjz+NUe5hgs2hIHHXxH6w/00yPGwJQXYEzuFex6noc0=;
-        b=b14A8v2tIkMxCndyUJTBBgwmgZz+bAcWL6peuOZvQjrdSAI8VYWfJsnUYV0bd/+mBd
-         qS8CpmHcmkzSSUO/MuUM2ewfn5EZwS0gVxhPvbuZMOKmvuJRCDVl5rUT4xNCI31tlpnI
-         6t8aYxOvjejoC11GOniEiLBLQeND53GUAaXJEBpwsJE//rwDlqwZgsXHZ7+Gg6jUdJ+r
-         utacaLfh+1upIAyG3SF1++zrs3f9dFaqeVHw/pRnBjYwNDjVI3PwPBDDCmHS/5u4obL6
-         +hAeS7aoV70UEbRQlqG40Jl3TTifsLp7A2+Fb7F7zPAFEm4VKO1tDbkd7wPj9B14IGSD
-         npjg==
+        d=linaro.org; s=google; t=1694690304; x=1695295104; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dxUofEX7JvW4d1sce0CQyOiNxdylns5iYNZqQoeIs6k=;
+        b=jt2dV+xCcdsHan5nRusfwoJ2jmHu2siafSZKt52McWqoJyFf5L/I6uL12536fu2trV
+         zfSXXW86lz62V5ed3JYSmxQ0jpivpOGB/Uo/3VPQ+zZHzMq4hChJp8VTj4VZnfM79/bm
+         cMpUtAv+eq6ysfzY9ByNyxS2fZ5+gveqftCF7UvPJofuIpbez2+Y27WAhbeI2lXU+Pia
+         wiCIgQVxPT9MVS4qm8JUzhexDWMznxMkDifQYVrN7mCTnpkM68NHq+5Bjst99khUDKX9
+         +9h9MZP02GlNARGn3dq88xuzLteLfhxNXzARlHRcGO7a3UeaV7qqTvt04FE2TjkwZ1HG
+         oQ7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694679039; x=1695283839;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jjz+NUe5hgs2hIHHXxH6w/00yPGwJQXYEzuFex6noc0=;
-        b=YjSr7Oag7esKnB6UT8bhGXGtvsOXd8Ixew7szaGwTLU5i1r644ReR0YLt+Y67i9keC
-         HimQIEhdZNJo6AT1bsjTInke59zmbAzsi6pBArVWU3glhAbmDntk4530EdO6Is77+eAy
-         gBbzGyTMaagBH7NX0amXCbrTgCRHu2P27mdLI1OfJr3HU2whfeWY+o6E4CYrKiyed547
-         6GzWDIyA4aQUQ+i5+HBKWtPwmpBm2akOrmxU+Ii8gSa2DXb7ZWKbYZfdUK34gKO+Da//
-         N24pcF0WjwLEZYOZzBm4TIOycbJS6pVSUqXZCAAe7wBI4hh9KeAqs9FXNpgbZXVQC5ga
-         GmYg==
-X-Gm-Message-State: AOJu0YxQVp6a6liKOe/57ROCqx3FRcB7PSYeFMjTk+ru/JuNJUQeaVyp
-        XbKxwZ68hMC+yEeYqVAzNaG7PQ==
-X-Google-Smtp-Source: AGHT+IE2bWZZmlPTiRjEI+ekUEDONcxec7lp5Jn5BWw+Jld3Ytewru9YGgQRWN15rYA/XM5ICyPfhg==
-X-Received: by 2002:a1c:f717:0:b0:401:bf87:989c with SMTP id v23-20020a1cf717000000b00401bf87989cmr3984627wmh.34.1694679039623;
-        Thu, 14 Sep 2023 01:10:39 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id c4-20020a05600c0ac400b004030c778396sm4152155wmr.4.2023.09.14.01.10.37
+        d=1e100.net; s=20230601; t=1694690304; x=1695295104;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dxUofEX7JvW4d1sce0CQyOiNxdylns5iYNZqQoeIs6k=;
+        b=CKEz8SRN9auSsL62DVNevY1L5TsqULEapiv3IcfpMO4Dnt6Gbf2QV+L4BvSsJ1u7cw
+         n9aCwpV3dip9AAQLqTvzQVkFLLB0Ebk9QHBdC9Wi9EOTIvwC51/nxW8Y1s7kgh/pM089
+         nRsnlvhLfdJwZJHyHMf7hl1sCn7OJinZZcXYXnYS6RT9aWx7wsI7wuOs+k0oSXCkxH58
+         Qg3ef/QHPzs/C7FFYhkmQ7NiJ9M+U42RKVh4j5HnfgKYuNzYdFGbaBIhAJ6b+CaaxlKC
+         0/VbnqFMfEmjN2p8SrY+1KpRs8am5VtobiGakJ63xIEN93c93CLGb83FVL2rBCw+OpVB
+         2OeA==
+X-Gm-Message-State: AOJu0YwcXLY9vYIFaIeM+QcAotJ7/jR+a/JKHGGLs+939CNAqiPCJPdz
+        nyXk1oWPUICp/zaWlIpwkLcEhg==
+X-Google-Smtp-Source: AGHT+IECyQHUqtnFN9/j9xE0JHalnzMd/YBsRnoVECOTPF6IR0x4USQA3KdxsBpACd9No4jnwUmqcA==
+X-Received: by 2002:a05:6512:20cc:b0:500:bfcb:1bf6 with SMTP id u12-20020a05651220cc00b00500bfcb1bf6mr3670193lfr.57.1694690303682;
+        Thu, 14 Sep 2023 04:18:23 -0700 (PDT)
+Received: from uffe-tuxpro14.. (h-94-254-63-18.NA.cust.bahnhof.se. [94.254.63.18])
+        by smtp.gmail.com with ESMTPSA id r10-20020ac252aa000000b004fb9c625b4asm231711lfm.210.2023.09.14.04.18.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Sep 2023 01:10:38 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mateusz Majewski <m.majewski2@samsung.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
+        Thu, 14 Sep 2023 04:18:23 -0700 (PDT)
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: exynos: enable polling in Exynos 4210
-Date:   Thu, 14 Sep 2023 10:10:31 +0200
-Message-Id: <169467902473.16247.10096195941299515281.b4-ty@linaro.org>
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 11/17] pmdomain: samsung: Move Kconfig option to the pmdomain subsystem
+Date:   Thu, 14 Sep 2023 13:18:19 +0200
+Message-Id: <20230914111819.586688-1-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230911133417.14042-1-m.majewski2@samsung.com>
-References: <CGME20230911133431eucas1p2631e7060cecb0914933ed45b837cf8eb@eucas1p2.samsung.com> <20230911133417.14042-1-m.majewski2@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+The Kconfig option belongs closer to the corresponding implementation,
+hence let's move it from the soc subsystem to the pmdomain subsystem.
 
-On Mon, 11 Sep 2023 15:34:14 +0200, Mateusz Majewski wrote:
-> It seems that thermal in Exynos 4210 is broken without this, as it will
-> never decrease cooling after increasing it.
-> 
-> 
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: <linux-samsung-soc@vger.kernel.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ drivers/pmdomain/Kconfig         | 1 +
+ drivers/pmdomain/samsung/Kconfig | 8 ++++++++
+ drivers/soc/samsung/Kconfig      | 4 ----
+ 3 files changed, 9 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/pmdomain/samsung/Kconfig
 
-Applied, thanks!
-
-[1/1] ARM: dts: exynos: enable polling in Exynos 4210
-      https://git.kernel.org/krzk/linux/c/ef399736c3ba77fb82d778b1b7285baa65a7e079
-
-Best regards,
+diff --git a/drivers/pmdomain/Kconfig b/drivers/pmdomain/Kconfig
+index 74066c5daa37..1e2c5f531638 100644
+--- a/drivers/pmdomain/Kconfig
++++ b/drivers/pmdomain/Kconfig
+@@ -10,5 +10,6 @@ source "drivers/pmdomain/mediatek/Kconfig"
+ source "drivers/pmdomain/qcom/Kconfig"
+ source "drivers/pmdomain/renesas/Kconfig"
+ source "drivers/pmdomain/rockchip/Kconfig"
++source "drivers/pmdomain/samsung/Kconfig"
+ 
+ endmenu
+diff --git a/drivers/pmdomain/samsung/Kconfig b/drivers/pmdomain/samsung/Kconfig
+new file mode 100644
+index 000000000000..0debfe36b00a
+--- /dev/null
++++ b/drivers/pmdomain/samsung/Kconfig
+@@ -0,0 +1,8 @@
++# SPDX-License-Identifier: GPL-2.0
++if SOC_SAMSUNG
++
++config EXYNOS_PM_DOMAINS
++	bool "Exynos PM domains" if COMPILE_TEST
++	depends on (ARCH_EXYNOS && PM_GENERIC_DOMAINS) || COMPILE_TEST
++
++endif
+diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+index 7a8f291e7704..27ec99af77e3 100644
+--- a/drivers/soc/samsung/Kconfig
++++ b/drivers/soc/samsung/Kconfig
+@@ -48,10 +48,6 @@ config EXYNOS_PMU_ARM_DRIVERS
+ 	bool "Exynos PMU ARMv7-specific driver extensions" if COMPILE_TEST
+ 	depends on EXYNOS_PMU
+ 
+-config EXYNOS_PM_DOMAINS
+-	bool "Exynos PM domains" if COMPILE_TEST
+-	depends on (ARCH_EXYNOS && PM_GENERIC_DOMAINS) || COMPILE_TEST
+-
+ config SAMSUNG_PM_CHECK
+ 	bool "S3C2410 PM Suspend Memory CRC"
+ 	depends on PM && (ARCH_S3C64XX || ARCH_S5PV210)
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.34.1
+
