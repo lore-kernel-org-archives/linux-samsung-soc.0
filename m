@@ -2,120 +2,89 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 814CAEDE98F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Sep 2023 08:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F27EDE98F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Sep 2023 08:10:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235969AbjINIDm (ORCPT
+        id S232458AbjINIKl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 14 Sep 2023 04:03:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40684 "EHLO
+        Thu, 14 Sep 2023 04:10:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236065AbjINIDl (ORCPT
+        with ESMTP id S235932AbjINIKl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 14 Sep 2023 04:03:41 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 862ADA1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Sep 2023 01:03:37 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-99c1c66876aso85401966b.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Sep 2023 01:03:37 -0700 (PDT)
+        Thu, 14 Sep 2023 04:10:41 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D98421BE6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Sep 2023 01:10:36 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-401c90ed2ecso7408105e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Sep 2023 01:10:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694678616; x=1695283416; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4NRB4alMY1NVgea7TozYUMItQUlkCZKiIlDqxQtzmM8=;
-        b=Unc+nWjND6ZGB0WKXskuSUQ75iChOQoisCFygUyR2s+F6ZZY68pYqatSeI8VFq5D2W
-         QTIGbmPmOCmZHvDVqWv0ihyefbz0GAbt6WglYpw2Vgolc6xgcP4rB63s363/kmnhMBmy
-         xk+hbatpweg5XLXvzT+zg4xFPSzVYo/GxgPbS8/A5pJMIl8MpGyhM9e1TAnT9P6Q2Nuq
-         6vYYZe28cp3MfzWRdPuwDW7RwLeStQP7M8oyzTSPTZrsqzYvcW6/r9xQD8wSuy4xVmgr
-         HPn5+HjgCW4JVAELnPQddT1FR4hhtiNK5LOx7CdDgbwSlurAVoCxLB/nLS2uOkSgFmqM
-         L4Rg==
+        d=linaro.org; s=google; t=1694679035; x=1695283835; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hin5IormyU5dD/AsuAUUHoFBHLo1oonPXuLbsZDcZfM=;
+        b=qc6tGIzJnXHJrkKuKH3zQCkBaNa+nHl0dY76oNkioDPkTilWsKWPTaH+FBcK0w4a2n
+         w19xC4X9l1nKOJX241+zH6AvEaJZZqqGl6wQpvMkPRS1LHyNFtNwF1pmY9HOU5H5SfHf
+         ApxExjKerMMFhDLoGCMgC4c10BVDXfJImxYIRlxgMNrLEq+rKR7u05pDe6RpFDTE6Ekn
+         1npNGmMjRBY151t5W/Kvrd6c9wTpwS4ghOsmjMyrjRHDoQE4kYJWuSNESW7zjIqc7zYS
+         tdUr0H4NPZBpiiNAyUiOjoxn4rNUsMSpJA/yD4At3JhUtRgZpUV+V4N2iGiimQ+SbRNM
+         9dfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694678616; x=1695283416;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4NRB4alMY1NVgea7TozYUMItQUlkCZKiIlDqxQtzmM8=;
-        b=ZULOdcrzRNz/XJWGqxbvf5pzPQPOn8y8gtjjpU58EJCI31xN7vnt2pvmIolINkc8yr
-         2BMzaJAXL9orA0lwJgDTsgpkNu20y4xUmd2cgdYunO4MIqo64PFMD01iF3evCLus8/r/
-         +V4mA4/8/+m3AsbTERBWAGKPajt0BDO6jV9wENEBqN6m2yAhxm3pWdn5gra2wuRij/Wq
-         AF4NHhSP9uXwekUIzBjh4UbcXtBrhcATs9woJznztivnADtA0VF5zbsoneTOkAfQtc/E
-         ICTPV3cvMHfJ1p3UniCOTZIvHnVVjPrIG9zzA0mYZABHpZI1t+rl5+mghXOQ+NfxA/ig
-         b1AQ==
-X-Gm-Message-State: AOJu0YzR6my3reJ5n1QsnOGllZeH7jwR1jFY2dBI6vU3uHUkCLRN3BlA
-        uHOLFB6vk99jgZExfQAJKDUH9Q==
-X-Google-Smtp-Source: AGHT+IFV4DfNqYLwUOKA3yGGXOAhUvrZ0uU0sDJrGix/jT6KMxNQwV//CEpyKC2hA+lZLd08e7+uJA==
-X-Received: by 2002:a17:906:5a5f:b0:9aa:20b2:35e7 with SMTP id my31-20020a1709065a5f00b009aa20b235e7mr3762342ejc.9.1694678615900;
-        Thu, 14 Sep 2023 01:03:35 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id v4-20020a17090690c400b00992b1c93279sm619880ejw.110.2023.09.14.01.03.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Sep 2023 01:03:34 -0700 (PDT)
-Message-ID: <f69b4727-679f-7874-2d0e-137d17e5841f@linaro.org>
-Date:   Thu, 14 Sep 2023 10:03:32 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH v2] ARM: dts: exynos: enable polling in Exynos 4210
-Content-Language: en-US
+        d=1e100.net; s=20230601; t=1694679035; x=1695283835;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hin5IormyU5dD/AsuAUUHoFBHLo1oonPXuLbsZDcZfM=;
+        b=kU/1KA9a+wUw3L2vyFWbMHkHQzoP73CNRzxIeYJdiff9ufThIERLE3BeE9VxRzpIoy
+         w2Wn/BAZhMOpnOuad8Xz2fGDGIeCCHrUEafPdWF88p2kcnLsxHU1tVDymJA1Y/C6BXuA
+         MEfgKj4Z5DVG2kaOQWyR6xLE3aAy1TNfimimzsoDCdu4XL6KIwRyqM8Fp0I+GADuxTLb
+         3SY8Loc8x83dWIK9xj85HDGEoFcT6x3gbu3w8Tx2C+EqHfIgCKw0No7tXThs7DXY77ZL
+         ONFxS1RWOXa2HFQPni1iHI+Wg59ImdFUoHADmTa4ow0CN5B9Ru76bi3SVLFzzyJqwTxT
+         8NTQ==
+X-Gm-Message-State: AOJu0Ywrt9WsaHxmiGDmpYE3SXkk8XF7ZpReFf1HUKt6NGDH9TB4DM4d
+        9jZqYb14J908GAcDxlvUGp4HWw==
+X-Google-Smtp-Source: AGHT+IE4V2wgERUskaxyDybA22SPbjKwWDreD4TUrJWgmpWBN9TSuDjDhVZXOc5XcG6yR7iBkfIb2w==
+X-Received: by 2002:a7b:cbd7:0:b0:3fb:a506:5656 with SMTP id n23-20020a7bcbd7000000b003fba5065656mr3969326wmi.32.1694679035279;
+        Thu, 14 Sep 2023 01:10:35 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.214.188])
+        by smtp.gmail.com with ESMTPSA id c4-20020a05600c0ac400b004030c778396sm4152155wmr.4.2023.09.14.01.10.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Sep 2023 01:10:34 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Mateusz Majewski <m.majewski2@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
+To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-References: <CGME20230911133431eucas1p2631e7060cecb0914933ed45b837cf8eb@eucas1p2.samsung.com>
- <20230911133417.14042-1-m.majewski2@samsung.com>
- <e30a38fd-ea70-d5de-795f-9c8ea3177ac4@linaro.org>
-In-Reply-To: <e30a38fd-ea70-d5de-795f-9c8ea3177ac4@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Jaewon Kim <jaewon02.kim@samsung.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: exynos: Use pinctrl macros for exynos5433-tm2
+Date:   Thu, 14 Sep 2023 10:10:29 +0200
+Message-Id: <169467902473.16247.3464125892860371063.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230912055635.49092-1-jaewon02.kim@samsung.com>
+References: <CGME20230912060640epcas2p43a9e6e11906d03641e76fb3df97462b8@epcas2p4.samsung.com> <20230912055635.49092-1-jaewon02.kim@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14/09/2023 10:01, Krzysztof Kozlowski wrote:
-> On 11/09/2023 15:34, Mateusz Majewski wrote:
->> It seems that thermal in Exynos 4210 is broken without this, as it will
->> never decrease cooling after increasing it.
->>
->> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
->> ---
->> v1 -> v2: Just uploaded separately from all the thermal: exynos:
->>   patches with a shorter recipient list, no change otherwise.
->>
->>  arch/arm/boot/dts/samsung/exynos4210.dtsi | 10 ++++++++--
->>  1 file changed, 8 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/samsung/exynos4210.dtsi b/arch/arm/boot/dts/samsung/exynos4210.dtsi
->> index 0e27c3375e2e..aae185b7f91c 100644
->> --- a/arch/arm/boot/dts/samsung/exynos4210.dtsi
->> +++ b/arch/arm/boot/dts/samsung/exynos4210.dtsi
->> @@ -391,8 +391,14 @@ &cpu_alert2 {
->>  };
->>  
->>  &cpu_thermal {
->> -	polling-delay-passive = <0>;
->> -	polling-delay = <0>;
->> +	/* Exynos 4210 supports thermal interrupts, but only for the rising threshold.
+
+On Tue, 12 Sep 2023 14:56:35 +0900, Jaewon Kim wrote:
+> Use pinctrl macro instead of hard-coded number.
+> This makes the code more readable.
 > 
-> This is a friendly reminder during the review process.
-> 
-> It seems my previous comments were not fully addressed. Maybe my
-> feedback got lost between the quotes, maybe you just forgot to apply it.
-> Please go back to the previous discussion and either implement all
-> requested changes or keep discussing them.
-> 
-> I fixed it up and applied.
 > 
 
-BTW, line wrapping was also not correct :/ Please follow coding style -
-it is still 80, unless exception makes things readable. There is no need
-for exception here.
+Applied, thanks!
+
+[1/1] arm64: dts: exynos: Use pinctrl macros for exynos5433-tm2
+      https://git.kernel.org/krzk/linux/c/d8c326bd5aa5d6aac0c4826dfeadcb02dc77ab88
 
 Best regards,
-Krzysztof
-
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
