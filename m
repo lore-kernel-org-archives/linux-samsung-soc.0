@@ -2,194 +2,113 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 300CFCE79CE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Sep 2023 12:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EEC2CE79D2
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Sep 2023 12:27:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235471AbjITMPm (ORCPT
+        id S235660AbjITM12 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 20 Sep 2023 08:15:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54598 "EHLO
+        Wed, 20 Sep 2023 08:27:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235426AbjITMPk (ORCPT
+        with ESMTP id S235783AbjITM1X (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Sep 2023 08:15:40 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D57FC6;
-        Wed, 20 Sep 2023 05:15:34 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C455C433CD;
-        Wed, 20 Sep 2023 12:15:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1695212133;
-        bh=g5VXH4dqcnZla98jtZdW/n2ZtHda9lu09MCNjOaSiq4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=snBYH1ptLOkKx+T70at47c3tkUlScJR1iQ/zq5v0Wpvm2VMMVnRHqlN9JPdeJzyh7
-         pRx7RzbjHaIjWZ5JVQqYtAqLZ0qWlTwWg+h2wHeou8Oc6VYBRs+qxYTp8O5el5k0hV
-         Y6PlUN6UWfOeVKhmpe2RchfgDNPt96hkfYJBNn0Y=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     stable@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        patches@lists.linux.dev, Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Benoit Parrot <bparrot@ti.com>, Rob Herring <robh@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 129/273] media: Use of_node_name_eq for node name comparisons
-Date:   Wed, 20 Sep 2023 13:29:29 +0200
-Message-ID: <20230920112850.498608128@linuxfoundation.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230920112846.440597133@linuxfoundation.org>
-References: <20230920112846.440597133@linuxfoundation.org>
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
+        Wed, 20 Sep 2023 08:27:23 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46494EB
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Sep 2023 05:27:17 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-991c786369cso937645066b.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Sep 2023 05:27:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1695212835; x=1695817635; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hv2thh1H9tA97kPGliYAF+DpZy/mFhBKmC18f7g/H+8=;
+        b=gTBJ71bQIeIVolDEZJIODZhuDnrWLqps9SijgyLrQpTQpXNDl9CsRDpdrRglaEzyXt
+         ekH0Q8wd2rJ4Owa7f9X2BbRnw/qbqbDOsaumPnTlh/g4zKTuSCenS0zQ14CWkARLV/Uk
+         0EYW7KYQ051zL1sXCEDJCdLP124OkKiOiJtwLwDkHvM9vLx9wkUve5bR19cRE0YTCypp
+         YJwpbky8d4Vh2Q/Bs0m06gPnjkZNIg69iSKvc5e9zCVdyvrfkakTOjt8xM+aclIPoqif
+         IKs/KvlvQHpXnJjGkI41sWdEgDtY4LwEgnsKFNbSqi1SpxN1aUbuu51YzbAhIrYDE21V
+         NmSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695212835; x=1695817635;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hv2thh1H9tA97kPGliYAF+DpZy/mFhBKmC18f7g/H+8=;
+        b=EfFIHYg46XNhRuZ3WPJ+nTKu7KLUCZ7yO6qRKhPqZEtMfjbbUzY+nfA+O7ieCPZ4oM
+         bKawIpnWzxLk+xu5yPJgh117YANW2Ns4bPNGan5ThGfcaPwxC9SSdbt6cffTBESXsYyo
+         u6KBWeQcCWG3c4D89uQo0d2qYJyvVwD5bJjPtPo9DuO7cXtWXq7jiplf2fwB9NU7gTuo
+         4ZXMVh2cUqOfw7MG3TzaA3xY5u5KNSvNNhifOvEg8qMuV7xglFkNm50VJDeAZ1AXVScO
+         01VMp57i6NOKK+vottP/fSej3SQK0poR43JzfeezNoLcD6p/lzpxPyq/03d5CPqI4Lz/
+         /0Uw==
+X-Gm-Message-State: AOJu0Yy8Cj72BvRAJLxHKBqMaR/lvUXNCYOSfXmTHlOSfhxkY97U3LB8
+        Ll6QOdmBQr10tTOe2QqrQAGmnw==
+X-Google-Smtp-Source: AGHT+IGhilnDj/sus5JakUZtSo3PYNc+I+MMntBHtlUMM1+I1hu3v/I4zTxsAW6rKgXqdzXJYZ8m6w==
+X-Received: by 2002:a17:906:2ce:b0:9a5:846d:d81f with SMTP id 14-20020a17090602ce00b009a5846dd81fmr1726172ejk.17.1695212835687;
+        Wed, 20 Sep 2023 05:27:15 -0700 (PDT)
+Received: from [172.20.24.238] (static-212-193-78-212.thenetworkfactory.nl. [212.78.193.212])
+        by smtp.gmail.com with ESMTPSA id z18-20020a1709060ad200b009887f4e0291sm9210859ejf.27.2023.09.20.05.27.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Sep 2023 05:27:14 -0700 (PDT)
+Message-ID: <817a2b0c-cc90-e109-0b8d-4283f0ac2610@linaro.org>
+Date:   Wed, 20 Sep 2023 14:27:14 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 3/3] media: exynos4-is: fimc-is: replace duplicate pmu
+ node with phandle
+Content-Language: en-US
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230815060739.30160-1-krzysztof.kozlowski@linaro.org>
+ <20230815060739.30160-3-krzysztof.kozlowski@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230815060739.30160-3-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On 15/08/2023 08:07, Krzysztof Kozlowski wrote:
+> Devicetree for the FIMC IS camera included duplicated PMU node as its
+> child like:
+> 
+>   soc@0 {
+>     system-controller@10020000 { ... }; // Real PMU
+> 
+>     camera@11800000 {
+>       fimc-is@12000000 {
+>         // FIMC IS camera node
+>         pmu@10020000 {
+>           reg = <0x10020000 0x3000>; // Fake PMU node
+>         };
+>       };
+>     };
+>   };
+> 
+> This is not a correct representation of the hardware.  Mapping the PMU
+> (Power Management Unit) IO memory should be via syscon-like phandle
+> (samsung,pmu-syscon, already used for other drivers), not by duplicating
+> "pmu" Devicetree node inside the FIMC IS.  Backward compatibility is
+> preserved.
 
-------------------
+Hey Mauro,
 
-From: Rob Herring <robh@kernel.org>
+This patchset is waiting a bit. Patchwork:
+https://patchwork.linuxtv.org/project/linux-media/list/?series=11051
 
-[ Upstream commit 2fc6e404117e5b921097c929ba572a00e4421b50 ]
+This is a cleanup which blocks further DTS cleanup changes. Any comments
+from your side?
 
-Convert string compares of DT node names to use of_node_name_eq helper
-instead. This removes direct access to the node name pointer.
-
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Hyun Kwon <hyun.kwon@xilinx.com>
-Cc: Michal Simek <michal.simek@xilinx.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Benoit Parrot <bparrot@ti.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Stable-dep-of: d7b13edd4cb4 ("media: v4l2-core: Fix a potential resource leak in v4l2_fwnode_parse_link()")
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/media/platform/exynos4-is/media-dev.c | 12 ++++++------
- drivers/media/platform/ti-vpe/cal.c           |  4 ++--
- drivers/media/platform/xilinx/xilinx-tpg.c    |  2 +-
- drivers/media/v4l2-core/v4l2-fwnode.c         |  6 ++----
- 4 files changed, 11 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index 03171f2cf2968..5f50ea283a04f 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -445,7 +445,7 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
- 	 */
- 	np = of_get_parent(rem);
- 
--	if (np && !of_node_cmp(np->name, "i2c-isp"))
-+	if (of_node_name_eq(np, "i2c-isp"))
- 		pd->fimc_bus_type = FIMC_BUS_TYPE_ISP_WRITEBACK;
- 	else
- 		pd->fimc_bus_type = pd->sensor_bus_type;
-@@ -492,7 +492,7 @@ static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
- 	for_each_available_child_of_node(parent, node) {
- 		struct device_node *port;
- 
--		if (of_node_cmp(node->name, "csis"))
-+		if (!of_node_name_eq(node, "csis"))
- 			continue;
- 		/* The csis node can have only port subnode. */
- 		port = of_get_next_child(node, NULL);
-@@ -713,13 +713,13 @@ static int fimc_md_register_platform_entities(struct fimc_md *fmd,
- 			continue;
- 
- 		/* If driver of any entity isn't ready try all again later. */
--		if (!strcmp(node->name, CSIS_OF_NODE_NAME))
-+		if (of_node_name_eq(node, CSIS_OF_NODE_NAME))
- 			plat_entity = IDX_CSIS;
--		else if	(!strcmp(node->name, FIMC_IS_OF_NODE_NAME))
-+		else if (of_node_name_eq(node, FIMC_IS_OF_NODE_NAME))
- 			plat_entity = IDX_IS_ISP;
--		else if (!strcmp(node->name, FIMC_LITE_OF_NODE_NAME))
-+		else if (of_node_name_eq(node, FIMC_LITE_OF_NODE_NAME))
- 			plat_entity = IDX_FLITE;
--		else if	(!strcmp(node->name, FIMC_OF_NODE_NAME) &&
-+		else if (of_node_name_eq(node, FIMC_OF_NODE_NAME) &&
- 			 !of_property_read_bool(node, "samsung,lcd-wb"))
- 			plat_entity = IDX_FIMC;
- 
-diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
-index d945323fc437d..f9488e01a36f0 100644
---- a/drivers/media/platform/ti-vpe/cal.c
-+++ b/drivers/media/platform/ti-vpe/cal.c
-@@ -1618,7 +1618,7 @@ of_get_next_port(const struct device_node *parent,
- 				return NULL;
- 			}
- 			prev = port;
--		} while (of_node_cmp(port->name, "port") != 0);
-+		} while (!of_node_name_eq(port, "port"));
- 	}
- 
- 	return port;
-@@ -1638,7 +1638,7 @@ of_get_next_endpoint(const struct device_node *parent,
- 		if (!ep)
- 			return NULL;
- 		prev = ep;
--	} while (of_node_cmp(ep->name, "endpoint") != 0);
-+	} while (!of_node_name_eq(ep, "endpoint"));
- 
- 	return ep;
- }
-diff --git a/drivers/media/platform/xilinx/xilinx-tpg.c b/drivers/media/platform/xilinx/xilinx-tpg.c
-index 9c49d1d10bee5..06d25e5fafbf2 100644
---- a/drivers/media/platform/xilinx/xilinx-tpg.c
-+++ b/drivers/media/platform/xilinx/xilinx-tpg.c
-@@ -725,7 +725,7 @@ static int xtpg_parse_of(struct xtpg_device *xtpg)
- 		const struct xvip_video_format *format;
- 		struct device_node *endpoint;
- 
--		if (!port->name || of_node_cmp(port->name, "port"))
-+		if (!of_node_name_eq(port, "port"))
- 			continue;
- 
- 		format = xvip_of_get_format(port);
-diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-index 169bdbb1f61a5..8046871e89f87 100644
---- a/drivers/media/v4l2-core/v4l2-fwnode.c
-+++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-@@ -290,8 +290,7 @@ int v4l2_fwnode_parse_link(struct fwnode_handle *__fwnode,
- 	fwnode = fwnode_get_parent(__fwnode);
- 	fwnode_property_read_u32(fwnode, port_prop, &link->local_port);
- 	fwnode = fwnode_get_next_parent(fwnode);
--	if (is_of_node(fwnode) &&
--	    of_node_cmp(to_of_node(fwnode)->name, "ports") == 0)
-+	if (is_of_node(fwnode) && of_node_name_eq(to_of_node(fwnode), "ports"))
- 		fwnode = fwnode_get_next_parent(fwnode);
- 	link->local_node = fwnode;
- 
-@@ -304,8 +303,7 @@ int v4l2_fwnode_parse_link(struct fwnode_handle *__fwnode,
- 	fwnode = fwnode_get_parent(fwnode);
- 	fwnode_property_read_u32(fwnode, port_prop, &link->remote_port);
- 	fwnode = fwnode_get_next_parent(fwnode);
--	if (is_of_node(fwnode) &&
--	    of_node_cmp(to_of_node(fwnode)->name, "ports") == 0)
-+	if (is_of_node(fwnode) && of_node_name_eq(to_of_node(fwnode), "ports"))
- 		fwnode = fwnode_get_next_parent(fwnode);
- 	link->remote_node = fwnode;
- 
--- 
-2.40.1
-
-
+Best regards,
+Krzysztof
 
