@@ -2,145 +2,202 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D6BE7D0A6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Sep 2023 19:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD0D9E7D0A2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Sep 2023 20:29:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231379AbjIUTtI (ORCPT
+        id S231834AbjIUU3U (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Sep 2023 15:49:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60366 "EHLO
+        Thu, 21 Sep 2023 16:29:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230424AbjIUTsn (ORCPT
+        with ESMTP id S231857AbjIUU3F (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Sep 2023 15:48:43 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B90B259F8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Sep 2023 12:28:41 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1c1e3a4a06fso11210835ad.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Sep 2023 12:28:41 -0700 (PDT)
+        Thu, 21 Sep 2023 16:29:05 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B565D8D7A
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Sep 2023 12:28:15 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-690bfd4f3ebso1139830b3a.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Sep 2023 12:28:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1695324521; x=1695929321; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iA2li7ELqa/hnFznycO86SuLFz051HXi1UIFyEU+SsY=;
-        b=BGmAnpIi3iuDy812Osm+g+26341LogmDzQhgtW6SO6RxhNh2/Xxh9zdGfTP1dghyfu
-         mwBgbXni0d0hUX2T+0307DGHcjWJjqjCHyQ6333ddP7sLjutHJ8eOWH0AU8ZqzyA5uwe
-         0tQCgIWsVbv8HjmWYojERkl+ck9leykdb9Cyg=
+        d=chromium.org; s=google; t=1695324495; x=1695929295; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TaaYKX/WzN2yAJiXuwCzXo10Y+Z2eYCI0rB7JbtaKbk=;
+        b=jtVmpnRIDN8TiFRUC7vxoAkApDBnuY+DFs1EZtRPnVdSQbWt0X1XuHm9VtOmjLG8zK
+         /E/Qr3pUtZLN6BJO0FVKBBCD5wmT1ceRfFbMQfDS98RknkOQWo7LmuO93spe61s0SKHs
+         K5IlxdqepbOYRS+AnEFxfEPdwVym6Kr4qrzHY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695324521; x=1695929321;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iA2li7ELqa/hnFznycO86SuLFz051HXi1UIFyEU+SsY=;
-        b=YihBDoDG1hJvpNdSNeyhApsbRC2oKS9TQAreuWHRaJbF6N/qNszASyDWnHr90hlB2U
-         GmIRUmmusDK3ErLKJlgHL7n1O/woU3t6s12uPsjx7RFcfveZMghUeKcPG9tNuKUUEhb6
-         4tOQnIt/6rZo9Coe3Qz3K3XflL7/SpFU93hxdt1zhf8hweua8Y9BNZ6NszdNB4S3v2yr
-         Aeie5ZM9pDUhUjjgRQXTz5aNWHvXVVYbwysSuvJu7gys4XX1P/A0RAaJPfxQtl/dTgVe
-         emn3e65nHaPtBJK7yxHChs07Ok6wu29E3/4DGzJCzhdh1jI7ldgI/3FEcgdEdnthSe61
-         K4uw==
-X-Gm-Message-State: AOJu0YxDlIjFSbRIs8wE50Sryrbh4Kp1BTnDswobes/qY1b9wkcTOh/9
-        Q0EDoB4j6RFs1pr3lxte2jR42Q==
-X-Google-Smtp-Source: AGHT+IGqiH8+93CjsgTzwhYDRPl823KLkGG4+0EgU7Nds+tbBUgFbUmFj98SJgfl8Opc5kzECLW4aw==
-X-Received: by 2002:a17:903:1205:b0:1c4:638:fff4 with SMTP id l5-20020a170903120500b001c40638fff4mr6441686plh.17.1695324521206;
-        Thu, 21 Sep 2023 12:28:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1695324495; x=1695929295;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TaaYKX/WzN2yAJiXuwCzXo10Y+Z2eYCI0rB7JbtaKbk=;
+        b=qrApVzOI2zeXwLK/JFBHdPg1v3uydyuVLDzEYEsMVo/rjCeABN7i5Vk0Yir+bXl7KQ
+         e5rxoeyEY7kT1gglKfviEFRSfFWXS2RtU8+R5iub/shgseZs2B6/A4Jm/8Ol+2hHwALl
+         0P4NKf6eBRBYvtS7dAowyTpF7QZpeUUMpex8qmdQtOso71/4V67H7YfzkFsnb+EXaYQC
+         a8g6fPkkYf0F/OPwDLlOw307PUF8/QEqyOuZ2pNH9cSaAI3rxjExSIZtrNj77TFsIMm9
+         IdLnZknzle0j3SvXrRRzcmRiw2UIcsU6xK0O6jBy8qrakIezJK7ipqqyo871gprchFNu
+         Wd6Q==
+X-Gm-Message-State: AOJu0YxZ3+8YqxvJQgCoj1+bg0bYM17IIl4whqxLmWXIn2fjwt+0NMuT
+        dLPMAnDT7/ol1kSRzAt9B/kJaA==
+X-Google-Smtp-Source: AGHT+IEMW+st7pK1ERCOwxwoalcSvIpW84hrr+4hW9zDszK+PkTuQiJ5+HlDQX/MBJ7tT52BBQ4d4g==
+X-Received: by 2002:a05:6a21:4985:b0:151:991c:84b6 with SMTP id ax5-20020a056a21498500b00151991c84b6mr6676548pzc.59.1695324494675;
+        Thu, 21 Sep 2023 12:28:14 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:9d:2:e6ed:6d49:f262:8041])
-        by smtp.gmail.com with ESMTPSA id w8-20020a1709029a8800b001b9f032bb3dsm1892875plp.3.2023.09.21.12.28.39
+        by smtp.gmail.com with ESMTPSA id w8-20020a1709029a8800b001b9f032bb3dsm1892875plp.3.2023.09.21.12.28.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Sep 2023 12:28:40 -0700 (PDT)
+        Thu, 21 Sep 2023 12:28:13 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>
-Cc:     Douglas Anderson <dianders@chromium.org>, airlied@gmail.com,
-        alim.akhtar@samsung.com, daniel@ffwll.ch, inki.dae@samsung.com,
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Bokun.Zhang@amd.com, Hawking.Zhang@amd.com, James.Zhu@amd.com,
+        Sascha Hauer <s.hauer@pengutronix.de>, Victor.Zhao@amd.com,
+        Xinhui.Pan@amd.com, abrodkin@synopsys.com, airlied@gmail.com,
+        alexander.deucher@amd.com, alim.akhtar@samsung.com,
+        amd-gfx@lists.freedesktop.org,
+        angelogioacchino.delregno@collabora.com,
+        anitha.chrisanthus@intel.com, biju.das.jz@bp.renesas.com,
+        bskeggs@redhat.com, christian.koenig@amd.com,
+        chunkuang.hu@kernel.org, daniel@ffwll.ch, edmund.j.dea@intel.com,
+        felix.kuehling@amd.com, festevam@gmail.com,
+        geert+renesas@glider.be, inki.dae@samsung.com,
+        jim.cromie@gmail.com, jonathanh@nvidia.com, kernel@pengutronix.de,
+        kherbst@redhat.com, kieran.bingham+renesas@ideasonboard.com,
         krzysztof.kozlowski@linaro.org, kyungmin.park@samsung.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com
-Subject: [RFT PATCH v2 09/12] drm/exynos: Call drm_atomic_helper_shutdown() at shutdown/unbind time
-Date:   Thu, 21 Sep 2023 12:26:52 -0700
-Message-ID: <20230921122641.RFT.v2.9.Iea33274908b6b258955f45a8aaf6f5bba24ad6cd@changeid>
+        l.stach@pengutronix.de, laurent.pinchart@ideasonboard.com,
+        laurentiu.palcu@oss.nxp.com, le.ma@amd.com, lijo.lazar@amd.com,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        lyude@redhat.com, maarten.lankhorst@linux.intel.com,
+        mario.limonciello@amd.com, matthias.bgg@gmail.com,
+        mdaenzer@redhat.com, mperttunen@nvidia.com,
+        nouveau@lists.freedesktop.org, orsonzhai@gmail.com,
+        p.zabel@pengutronix.de, patrik.r.jakobsson@gmail.com,
+        paul@crapouillou.net, robh@kernel.org, sam@ravnborg.org,
+        shawnguo@kernel.org, shiwu.zhang@amd.com,
+        srinivasan.shanmugam@amd.com, steven.price@arm.com,
+        sw0312.kim@samsung.com, thierry.reding@gmail.com,
+        tzimmermann@suse.de, zhang.lyra@gmail.com
+Subject: [RFT PATCH v2 00/12] drm: call drm_atomic_helper_shutdown() at the right times
+Date:   Thu, 21 Sep 2023 12:26:43 -0700
+Message-ID: <20230921192749.1542462-1-dianders@chromium.org>
 X-Mailer: git-send-email 2.42.0.515.g380fc7ccd1-goog
-In-Reply-To: <20230921192749.1542462-1-dianders@chromium.org>
-References: <20230921192749.1542462-1-dianders@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Based on grepping through the source code this driver appears to be
-missing a call to drm_atomic_helper_shutdown() at system shutdown time
-and at driver unbind time. Among other things, this means that if a
-panel is in use that it won't be cleanly powered off at system
-shutdown time.
 
-The fact that we should call drm_atomic_helper_shutdown() in the case
-of OS shutdown/restart and at driver remove (or unbind) time comes
-straight out of the kernel doc "driver instance overview" in
-drm_drv.c.
+This patch series came about after a _long_ discussion between me and
+Maxime Ripard in response to a different patch I sent out [1]. As part
+of that discussion, we realized that it would be good if DRM drivers
+consistently called drm_atomic_helper_shutdown() properly at shutdown
+and driver remove time as it's documented that they should do. The
+eventual goal of this would be to enable removing some hacky code from
+panel drivers where they had to hook into shutdown themselves because
+the DRM driver wasn't calling them.
 
-A few notes about this fix:
-- When adding drm_atomic_helper_shutdown() to the unbind path, I added
-  it after drm_kms_helper_poll_fini() since that's when other drivers
-  seemed to have it.
-- Technically with a previous patch, ("drm/atomic-helper:
-  drm_atomic_helper_shutdown(NULL) should be a noop"), we don't
-  actually need to check to see if our "drm" pointer is NULL before
-  calling drm_atomic_helper_shutdown(). We'll leave the "if" test in,
-  though, so that this patch can land without any dependencies. It
-  could potentially be removed later.
-- This patch also makes sure to set the drvdata to NULL in the case of
-  bind errors to make sure that shutdown can't access freed data.
+It turns out that quite a lot of drivers seemed to be missing
+drm_atomic_helper_shutdown() in one or both places that it was
+supposed to be. This patch series attempts to fix all the drivers that
+I was able to identify.
 
-Suggested-by: Maxime Ripard <mripard@kernel.org>
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-This commit is only compile-time tested.
+NOTE: fixing this wasn't exactly cookie cutter. Each driver has its
+own unique way of setting itself up and tearing itself down. Some
+drivers also use the component model, which adds extra fun. I've made
+my best guess at solving this and I've run a bunch of compile tests
+(specifically, allmodconfig for amd64, arm64, and powerpc). That being
+said, these code changes are not totally trivial and I've done zero
+real testing on them. Making these patches was also a little mind
+numbing and I'm certain my eyes glazed over at several points when
+writing them. What I'm trying to say is to please double-check that I
+didn't do anything too silly, like cast your driver's drvdata to the
+wrong type. Even better, test these patches!
 
-(no changes since v1)
+I've labeled this patch series as RFT (request for testing) to help
+call attention to the fact that I didn't personally test any of these
+patches.
 
- drivers/gpu/drm/exynos/exynos_drm_drv.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+I'd like to call out a few drivers that I _didn't_ fix in this series
+and why. If any of these drivers should be fixed then please yell.
+- DRM drivers backed by usb_driver (like gud, gm12u320, udl): I didn't
+  add the call to drm_atomic_helper_shutdown() at shutdown time
+  because there's no ".shutdown" callback for them USB drivers. Given
+  that USB is hotpluggable, I'm assuming that they are robust against
+  this and the special shutdown callback isn't needed.
+- ofdrm and simpledrm: These didn't have drm_atomic_helper_shutdown()
+  in either shutdown or remove, but I didn't add it. I think that's OK
+  since they're sorta special and not really directly controlling
+  hardware power sequencing.
+- virtio, vkms, vmwgfx, xen: I believe these are all virtual (thus
+  they wouldn't directly drive a panel) and adding the shutdown
+  didn't look straightforward, so I skipped them.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index 8399256cb5c9..5380fb6c55ae 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -300,6 +300,7 @@ static int exynos_drm_bind(struct device *dev)
- 	drm_mode_config_cleanup(drm);
- 	exynos_drm_cleanup_dma(drm);
- 	kfree(private);
-+	dev_set_drvdata(dev, NULL);
- err_free_drm:
- 	drm_dev_put(drm);
- 
-@@ -313,6 +314,7 @@ static void exynos_drm_unbind(struct device *dev)
- 	drm_dev_unregister(drm);
- 
- 	drm_kms_helper_poll_fini(drm);
-+	drm_atomic_helper_shutdown(drm);
- 
- 	component_unbind_all(drm->dev, drm);
- 	drm_mode_config_cleanup(drm);
-@@ -350,9 +352,18 @@ static int exynos_drm_platform_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static void exynos_drm_platform_shutdown(struct platform_device *pdev)
-+{
-+	struct drm_device *drm = platform_get_drvdata(pdev);
-+
-+	if (drm)
-+		drm_atomic_helper_shutdown(drm);
-+}
-+
- static struct platform_driver exynos_drm_platform_driver = {
- 	.probe	= exynos_drm_platform_probe,
- 	.remove	= exynos_drm_platform_remove,
-+	.shutdown = exynos_drm_platform_shutdown,
- 	.driver	= {
- 		.name	= "exynos-drm",
- 		.pm	= &exynos_drm_pm_ops,
+I've let each patch in the series get CCed straight from
+get_maintainer. That means not everyone will have received every patch
+but everyone should be on the cover letter. I know some people dislike
+this but when touching this many drivers there's not much
+choice. dri-devel and lkml have been CCed and lore/lei exist, so
+hopefully that's enough for folks. I'm happy to add people to the
+whole series for future posts.
+
+NOTE: I landed everything I could from v1 of the patch series [2] [3]
+to drm-misc. This v2 is everyone that is still left. If you'd like me
+to land one of the patches here to drm-misc for you, please say
+so. Otherwise I will assume maintainers will pick patches for their
+particular driver and land them. There are no dependencies.
+
+[1] https://lore.kernel.org/lkml/20230804140605.RFC.4.I930069a32baab6faf46d6b234f89613b5cec0f14@changeid
+[2] https://lore.kernel.org/r/20230901234015.566018-1-dianders@chromium.org
+[3] https://lore.kernel.org/r/20230901234202.566951-1-dianders@chromium.org
+
+Changes in v2:
+- Rebased and resolved conflicts.
+
+Douglas Anderson (12):
+  drm/imx/dcss: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/kmb: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/mediatek: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/nouveau: Call drm_atomic_helper_shutdown() or equiv at shutdown
+    time
+  drm/tegra: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/arcpgu: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/amdgpu: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/sprd: Call drm_atomic_helper_shutdown() at remove time
+  drm/exynos: Call drm_atomic_helper_shutdown() at shutdown/unbind time
+  drm/gma500: Call drm_helper_force_disable_all() at shutdown/remove
+    time
+  drm/radeon: Call drm_helper_force_disable_all() at shutdown/remove
+    time
+  drm/renesas/shmobile: Call drm_helper_force_disable_all() at
+    shutdown/remove time
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu.h              |  1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c       | 10 ++++++++++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c          |  2 ++
+ drivers/gpu/drm/exynos/exynos_drm_drv.c          | 11 +++++++++++
+ drivers/gpu/drm/gma500/psb_drv.c                 |  8 ++++++++
+ drivers/gpu/drm/imx/dcss/dcss-drv.c              |  8 ++++++++
+ drivers/gpu/drm/imx/dcss/dcss-kms.c              |  7 +++++++
+ drivers/gpu/drm/imx/dcss/dcss-kms.h              |  1 +
+ drivers/gpu/drm/kmb/kmb_drv.c                    |  6 ++++++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c           |  9 +++++++++
+ drivers/gpu/drm/nouveau/nouveau_display.c        |  9 +++++++++
+ drivers/gpu/drm/nouveau/nouveau_display.h        |  1 +
+ drivers/gpu/drm/nouveau/nouveau_drm.c            | 13 +++++++++++++
+ drivers/gpu/drm/nouveau/nouveau_drv.h            |  1 +
+ drivers/gpu/drm/nouveau/nouveau_platform.c       |  6 ++++++
+ drivers/gpu/drm/radeon/radeon_drv.c              |  7 ++++++-
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c | 10 ++++++++++
+ drivers/gpu/drm/sprd/sprd_drm.c                  |  4 +++-
+ drivers/gpu/drm/tegra/drm.c                      |  6 ++++++
+ drivers/gpu/drm/tiny/arcpgu.c                    |  6 ++++++
+ 20 files changed, 124 insertions(+), 2 deletions(-)
+
 -- 
 2.42.0.515.g380fc7ccd1-goog
 
