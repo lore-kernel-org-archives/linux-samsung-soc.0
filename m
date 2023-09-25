@@ -2,162 +2,219 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC023CE7A81
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Sep 2023 10:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E193ECE7A97
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Sep 2023 22:01:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230484AbjIYKDq (ORCPT
+        id S229921AbjIYWBX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 25 Sep 2023 06:03:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51908 "EHLO
+        Mon, 25 Sep 2023 18:01:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230506AbjIYKDW (ORCPT
+        with ESMTP id S229509AbjIYWBW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 25 Sep 2023 06:03:22 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC26E1733
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Sep 2023 02:58:54 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-991c786369cso731052066b.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Sep 2023 02:58:54 -0700 (PDT)
+        Mon, 25 Sep 2023 18:01:22 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7440116
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Sep 2023 15:01:12 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id 5614622812f47-3ab244e7113so4627980b6e.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Sep 2023 15:01:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695635933; x=1696240733; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=07uVGcYaT587O+lJP2m3ZC4n8yo7xprZQQOPVOh74lw=;
-        b=LQgE6d877ZTfqLeh9Jov8Jp/ZK4NUcsktEp3Nwz0XRnOBNtLp1bsAm7OEfTkNBCoJM
-         2U1aQQTs5z+I9+CvJrG3He7b9+8dRuNijzZQ/4IVeMO/kedBMDRH/6snWJ6QblFJutQr
-         rUNy6fkhUaK2/MPJFmigZA+LPBvssB/WM/KKp32dgyGFD6NSfOoWp+OxiMmDs8eX/qx3
-         njFZxzcqvds1HgLf96iph+3rCiyT2F9e4K6b5iiom7REIoWOvY3E4IVSi4745oevmw+n
-         nc7RWKO1mw843ExIeSzhKzBoq940MeGjP6b9vNKvq3TjES/Yb5KeYxtlhgQZOSaLDdLs
-         Xs4g==
+        d=chromium.org; s=google; t=1695679272; x=1696284072; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=f56JQlsSAmLM+rWl8eVCaUJ/LY2QFxeZQE+QgWmGsq0=;
+        b=YoRyRJ9Giht3eW/Q610XE3F2Ud3rrWCyPsdIRd3z37dSf+q8+/GbTO7oIOYkm68NHD
+         Um0RxXgS1al6+JEyF4ESYIb5DuJljtFqBzPpMsUTJUIAkqviGSrkvTidAx8m0dUuvVPZ
+         y8vohGcTvi8Tbym221c1rZIrbnGTLHHYq6utw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695635933; x=1696240733;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=07uVGcYaT587O+lJP2m3ZC4n8yo7xprZQQOPVOh74lw=;
-        b=ATJ7ow0bw4DgOft1i4b+LjwzsGNbZsszhlVD8mNDbizpY8K9dewFATeuPoglLF0Flg
-         N6nZUKyOGd3lP7MZZjeQLoK541o2eaY64RNcz6nllBYRSfD9U5iEHw6RDBII/UxTJ+nE
-         5phhann31iAhResm3A6wO8XA0w7mcK/Aof56qyxyYtf5+QK3j5MCsZl3V6zY2lcX2Iha
-         yBs8Zn8u0+p1MvMZB8Wa/QVBwvs+J/weV7zH10sNhJGEaixUDLXdWdP5V+QApmSqrTJy
-         jw7TLJf7IWn0Ukb0XcYdcnZoK5rO2zeyJVzocx2cz9E8gXQIVYyq02DpP61TMl8MA/8A
-         yLTA==
-X-Gm-Message-State: AOJu0Yxi7HGrPk2lT8CkQZXfLiqefwTv8dJ6MQCa6orgNZ29+kjs84/e
-        +FmJnFeGu3VbJjla4ABkZpnj/A==
-X-Google-Smtp-Source: AGHT+IGSfyahZeZWFSCp2lS84BASF/3XwkdnTR8ykM/qYp0D0Ky7td4khxNtqawySDMtRTwzWoBeZw==
-X-Received: by 2002:a17:907:2cc1:b0:9a1:f10d:9746 with SMTP id hg1-20020a1709072cc100b009a1f10d9746mr5022065ejc.20.1695635933026;
-        Mon, 25 Sep 2023 02:58:53 -0700 (PDT)
-Received: from [192.168.101.165] (178235177023.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.23])
-        by smtp.gmail.com with ESMTPSA id k3-20020a17090646c300b009ae57888718sm6040535ejs.207.2023.09.25.02.58.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Sep 2023 02:58:52 -0700 (PDT)
-Message-ID: <311837de-5acb-4b5b-b64d-9bdc1403a087@linaro.org>
-Date:   Mon, 25 Sep 2023 11:58:48 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/40] soc: Convert to platform remove callback returning
- void
-Content-Language: en-US
-To:     =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        Joel Stanley <joel@jms.id.au>, Li Yang <leoyang.li@nxp.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
-        Huisong Li <lihuisong@huawei.com>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Karol Gugala <kgugala@antmicro.com>,
-        Mateusz Holenko <mholenko@antmicro.com>,
-        Gabriel Somlo <gsomlo@gmail.com>,
-        Yinbo Zhu <zhuyinbo@loongson.cn>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>,
-        Shang XiaoJing <shangxiaojing@huawei.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Rob Herring <robh@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Michal Simek <michal.simek@amd.com>
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
+        d=1e100.net; s=20230601; t=1695679272; x=1696284072;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f56JQlsSAmLM+rWl8eVCaUJ/LY2QFxeZQE+QgWmGsq0=;
+        b=PhyuVdhxlaKWS2lMJ6Fb+kGspQUext2n+cDQ6cnKMgTb+9i609L7vChQEx+0xJVSOZ
+         QYJe62HiHTnwXJulTHr97jhz1LLjHrjpNdQHlN9ha033t50+Rc5/ME9YQt+fb/gPkRC2
+         W+LEU7NZmjpLPQcy6gbOeKxXFrMqY+USXQweGIYKnjw7birJKTWvQeRqSMIe0D72RCD6
+         PofDQv6RnJ7jm3NkIcQ95qO8bzpS446bcRTtUFpUZcZKwigDsBmkUHpOv4Dzr9knH1Bp
+         qbrktFwRltHpDEvuTSATJYm4sMLDmE9wE1fDCLjMqp3TjDU7OncwCD353fCNc4LfEwzj
+         9mpg==
+X-Gm-Message-State: AOJu0YxgRU9MHdAZslnwkB6mhEYAP+v2c24IKPv9tSJPzAD2QULRw5fd
+        8vW///7LfzooAzj213PcM4RD2g==
+X-Google-Smtp-Source: AGHT+IF1Hh6HqLLdCLMtBH4MBn5gTyDegFYkgrOxkSx/P6oII1rExFDnHQGDyN9+FIpRz6er1CzuVQ==
+X-Received: by 2002:a05:6808:1386:b0:3a7:38c5:bc18 with SMTP id c6-20020a056808138600b003a738c5bc18mr11073698oiw.32.1695679272043;
+        Mon, 25 Sep 2023 15:01:12 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:9d:2:f75d:a4e1:226a:3071])
+        by smtp.gmail.com with ESMTPSA id x23-20020a62fb17000000b00690f622d3cdsm8549874pfm.126.2023.09.25.15.01.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Sep 2023 15:01:11 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Hsin-Yi Wang <hsinyi@chromium.org>, matthias.bgg@gmail.com,
         linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Zev Weiss <zev@bewilderbeest.net>,
-        linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        linux-mediatek@lists.infradead.org,
-        linux-riscv@lists.infradead.org,
-        zhang songyi <zhang.songyi@zte.com.cn>,
-        Lubomir Rintel <lkundrak@v3.sk>, linux-arm-msm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Nick Alcock <nick.alcock@oracle.com>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ruan Jinjie <ruanjinjie@huawei.com>, kernel@pengutronix.de
-References: <20230925095532.1984344-1-u.kleine-koenig@pengutronix.de>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20230925095532.1984344-1-u.kleine-koenig@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Douglas Anderson <dianders@chromium.org>, airlied@gmail.com,
+        daniel@ffwll.ch, jitao.shi@mediatek.com, linus.walleij@linaro.org,
+        linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
+        quic_jesszhan@quicinc.com, sam@ravnborg.org
+Subject: [PATCH] drm/panel: Move AUX B116XW03 out of panel-edp back to panel-simple
+Date:   Mon, 25 Sep 2023 15:00:11 -0700
+Message-ID: <20230925150010.1.Iff672233861bcc4cf25a7ad0a81308adc3bda8a4@changeid>
+X-Mailer: git-send-email 2.42.0.515.g380fc7ccd1-goog
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 25.09.2023 11:54, Uwe Kleine-König wrote:
-> Hello,
-> 
-> this series converts all platform drivers below drivers/soc to use
-> .remove_new(). The motivation is to get rid of an integer return code
-> that is (mostly) ignored by the platform driver core and error prone on
-> the driver side.
-> 
-> See commit 5c5a7680e67b ("platform: Provide a remove callback that
-> returns no value") for an extended explanation and the eventual goal.
->
-Acked-by: Konrad Dybcio <konrad.dybcio@linaro.org> # qcom
+In commit 5f04e7ce392d ("drm/panel-edp: Split eDP panels out of
+panel-simple") I moved a pile of panels out of panel-simple driver
+into the newly created panel-edp driver. One of those panels, however,
+shouldn't have been moved.
 
-Konrad
+As is clear from commit e35e305eff0f ("drm/panel: simple: Add AUO
+B116XW03 panel support"), AUX B116XW03 is an LVDS panel. It's used in
+exynos5250-snow and exynos5420-peach-pit where it's clear that the
+panel is hooked up with LVDS. Furthermore, searching for datasheets I
+found one that makes it clear that this panel is LVDS.
+
+As far as I can tell, I got confused because in commit 88d3457ceb82
+("drm/panel: auo,b116xw03: fix flash backlight when power on") Jitao
+Shi added "DRM_MODE_CONNECTOR_eDP". That seems wrong. Looking at the
+downstream ChromeOS trees, it seems like some Mediatek boards are
+using a panel that they call "auo,b116xw03" that's an eDP panel. The
+best I can guess is that they actually have a different panel that has
+similar timing. If so then the proper panel should be used or they
+should switch to the generic "edp-panel" compatible.
+
+When moving this back to panel-edp, I wasn't sure what to use for
+.bus_flags and .bus_format and whether to add the extra "enable" delay
+from commit 88d3457ceb82 ("drm/panel: auo,b116xw03: fix flash
+backlight when power on"). I've added formats/flags/delays based on my
+(inexpert) analysis of the datasheet. These are untested.
+
+NOTE: if/when this is backported to stable, we might run into some
+trouble. Specifically, before 474c162878ba ("arm64: dts: mt8183:
+jacuzzi: Move panel under aux-bus") this panel was used by
+"mt8183-kukui-jacuzzi", which assumed it was an eDP panel. I don't
+know what to suggest for that other than someone making up a bogus
+panel for jacuzzi that's just for the stable channel.
+
+Fixes: 88d3457ceb82 ("drm/panel: auo,b116xw03: fix flash backlight when power on")
+Fixes: 5f04e7ce392d ("drm/panel-edp: Split eDP panels out of panel-simple")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+I haven't had a snow or peach-pit hooked up for debugging / testing
+for years. I presume that they must be broken and hope that this fixes
+them.
+
+ drivers/gpu/drm/panel/panel-edp.c    | 29 -----------------------
+ drivers/gpu/drm/panel/panel-simple.c | 35 ++++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+), 29 deletions(-)
+
+diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
+index feb665df35a1..95c8472d878a 100644
+--- a/drivers/gpu/drm/panel/panel-edp.c
++++ b/drivers/gpu/drm/panel/panel-edp.c
+@@ -976,32 +976,6 @@ static const struct panel_desc auo_b116xak01 = {
+ 	},
+ };
+ 
+-static const struct drm_display_mode auo_b116xw03_mode = {
+-	.clock = 70589,
+-	.hdisplay = 1366,
+-	.hsync_start = 1366 + 40,
+-	.hsync_end = 1366 + 40 + 40,
+-	.htotal = 1366 + 40 + 40 + 32,
+-	.vdisplay = 768,
+-	.vsync_start = 768 + 10,
+-	.vsync_end = 768 + 10 + 12,
+-	.vtotal = 768 + 10 + 12 + 6,
+-	.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
+-};
+-
+-static const struct panel_desc auo_b116xw03 = {
+-	.modes = &auo_b116xw03_mode,
+-	.num_modes = 1,
+-	.bpc = 6,
+-	.size = {
+-		.width = 256,
+-		.height = 144,
+-	},
+-	.delay = {
+-		.enable = 400,
+-	},
+-};
+-
+ static const struct drm_display_mode auo_b133han05_mode = {
+ 	.clock = 142600,
+ 	.hdisplay = 1920,
+@@ -1725,9 +1699,6 @@ static const struct of_device_id platform_of_match[] = {
+ 	}, {
+ 		.compatible = "auo,b116xa01",
+ 		.data = &auo_b116xak01,
+-	}, {
+-		.compatible = "auo,b116xw03",
+-		.data = &auo_b116xw03,
+ 	}, {
+ 		.compatible = "auo,b133han05",
+ 		.data = &auo_b133han05,
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index bb89e6d047bc..439d26928938 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -919,6 +919,38 @@ static const struct panel_desc auo_b101xtn01 = {
+ 	},
+ };
+ 
++static const struct drm_display_mode auo_b116xw03_mode = {
++	.clock = 70589,
++	.hdisplay = 1366,
++	.hsync_start = 1366 + 40,
++	.hsync_end = 1366 + 40 + 40,
++	.htotal = 1366 + 40 + 40 + 32,
++	.vdisplay = 768,
++	.vsync_start = 768 + 10,
++	.vsync_end = 768 + 10 + 12,
++	.vtotal = 768 + 10 + 12 + 6,
++	.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
++};
++
++static const struct panel_desc auo_b116xw03 = {
++	.modes = &auo_b116xw03_mode,
++	.num_modes = 1,
++	.bpc = 6,
++	.size = {
++		.width = 256,
++		.height = 144,
++	},
++	.delay = {
++		.prepare = 1,
++		.enable = 200,
++		.disable = 200,
++		.unprepare = 500,
++	},
++	.bus_format = MEDIA_BUS_FMT_RGB666_1X7X3_SPWG,
++	.bus_flags = DRM_BUS_FLAG_DE_HIGH,
++	.connector_type = DRM_MODE_CONNECTOR_LVDS,
++};
++
+ static const struct display_timing auo_g070vvn01_timings = {
+ 	.pixelclock = { 33300000, 34209000, 45000000 },
+ 	.hactive = { 800, 800, 800 },
+@@ -4128,6 +4160,9 @@ static const struct of_device_id platform_of_match[] = {
+ 	}, {
+ 		.compatible = "auo,b101xtn01",
+ 		.data = &auo_b101xtn01,
++	}, {
++		.compatible = "auo,b116xw03",
++		.data = &auo_b116xw03,
+ 	}, {
+ 		.compatible = "auo,g070vvn01",
+ 		.data = &auo_g070vvn01,
+-- 
+2.42.0.515.g380fc7ccd1-goog
+
