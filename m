@@ -2,118 +2,104 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8394ACE7A95
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Sep 2023 09:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D48DDCE7A81
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Sep 2023 09:56:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229458AbjIYJsZ (ORCPT
+        id S230380AbjIYJ4J (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 25 Sep 2023 05:48:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39080 "EHLO
+        Mon, 25 Sep 2023 05:56:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbjIYJsZ (ORCPT
+        with ESMTP id S230117AbjIYJz4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 25 Sep 2023 05:48:25 -0400
-X-Greylist: delayed 395 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 25 Sep 2023 02:48:18 PDT
-Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1B6469C;
-        Mon, 25 Sep 2023 02:48:17 -0700 (PDT)
-Received: from 8bytes.org (pd9fe9df8.dip0.t-ipconnect.de [217.254.157.248])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.8bytes.org (Postfix) with ESMTPSA id 77E231A21FF;
-        Mon, 25 Sep 2023 11:41:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-        s=default; t=1695634900;
-        bh=NxrKhr6WG806XBJKBm2IQBKy1pD2rNt9qo9c3PhenPs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GA2roFK14T/HQ96iZoC9nQCcCo2VMXnhAiD8ufn22sBjj4nGQjiI9eN19UQ841ll3
-         tvmwuAznroYnlkDSX8YTdeSVvZ5KpTzjXvuSOcVi3oi86ErBR5VUYuyHP/MA5BOWAU
-         2wX/3AeQvi06bRFniHUSbxMlOYWJVwrevTN+8G/rCRuZXK0/Oah1SMzErVPnQM/e2T
-         NUJCJaJ6P7HXKFeguW86oDlRl/R1XGiBrT/L/fsslL6xPva/C12AXKWxwIS06iDf1G
-         mjJRMv3x6qjDMx6PAdu3wlyXUnjfaKVtb3KqzO0YfjGfzBDGWx9Kyiat+OEkROq8qK
-         VOyZFET5SBvfw==
-Date:   Mon, 25 Sep 2023 11:41:38 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Mon, 25 Sep 2023 05:55:56 -0400
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A717FC6
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Sep 2023 02:55:48 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qkiJa-000859-TZ; Mon, 25 Sep 2023 11:55:42 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qkiJa-008q0X-FA; Mon, 25 Sep 2023 11:55:42 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qkiJa-004dmM-5r; Mon, 25 Sep 2023 11:55:42 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Steven Price <steven.price@arm.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v8 00/24] iommu: Make default_domain's mandatory
-Message-ID: <ZRFV0vxoexLu-CWJ@8bytes.org>
-References: <0-v8-81230027b2fa+9d-iommu_all_defdom_jgg@nvidia.com>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH 31/40] soc/samsung: exynos-chipid: Convert to platform remove callback returning void
+Date:   Mon, 25 Sep 2023 11:55:22 +0200
+Message-Id: <20230925095532.1984344-32-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230925095532.1984344-1-u.kleine-koenig@pengutronix.de>
+References: <20230925095532.1984344-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0-v8-81230027b2fa+9d-iommu_all_defdom_jgg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1808; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=5kh+y4DOQVrSyZkhWv/uw6w4/RUDtFUk39hMgcVFiI0=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlEVhiyd9rJ769lDBMAmedB3kviAVUASyQCp9/t LhMqggF/tuJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZRFYYgAKCRCPgPtYfRL+ Tg/8B/94KeKdeLgFZohjWhwnbra0fvi3MpKMsMjNUhpcd5kPIi1qsJy67sN20WFAReEnLBGMqMZ aqAl6ldk1b53Q2M3ATlr6o+JVUSh7zypA2EjalEXxZCHtfZ1FWpEPlQexHVRVwtmsQ26hHvrcRI DtGCjq9+3xNJyX8NJdou4dGOGtFmWg219SQ354karaHcN6fL96DwdljDjZtkQKnc0ZHa+C50ZAd SguGjS2vTnqeGDvd0vmPAFZ+PxNxvPtmU+T5eEmjpAOLiB4ch2ZBLCfK3z6kYiF8RQCK9hikHu0 DYJ3QM1mfBiYubDx2Lxkej4YtYn8R56ctFvTfBsTeyfJWTFm
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 13, 2023 at 10:43:33AM -0300, Jason Gunthorpe wrote:
-> Jason Gunthorpe (24):
->   iommu: Add iommu_ops->identity_domain
->   iommu: Add IOMMU_DOMAIN_PLATFORM
->   powerpc/iommu: Setup a default domain and remove set_platform_dma_ops
->   iommu: Add IOMMU_DOMAIN_PLATFORM for S390
->   iommu/fsl_pamu: Implement a PLATFORM domain
->   iommu/tegra-gart: Remove tegra-gart
->   iommu/mtk_iommu_v1: Implement an IDENTITY domain
->   iommu: Reorganize iommu_get_default_domain_type() to respect
->     def_domain_type()
->   iommu: Allow an IDENTITY domain as the default_domain in ARM32
->   iommu/exynos: Implement an IDENTITY domain
->   iommu/tegra-smmu: Implement an IDENTITY domain
->   iommu/tegra-smmu: Support DMA domains in tegra
->   iommu/omap: Implement an IDENTITY domain
->   iommu/msm: Implement an IDENTITY domain
->   iommu: Remove ops->set_platform_dma_ops()
->   iommu/qcom_iommu: Add an IOMMU_IDENTITIY_DOMAIN
->   iommu/ipmmu: Add an IOMMU_IDENTITIY_DOMAIN
->   iommu/mtk_iommu: Add an IOMMU_IDENTITIY_DOMAIN
->   iommu/sun50i: Add an IOMMU_IDENTITIY_DOMAIN
->   iommu: Require a default_domain for all iommu drivers
->   iommu: Add __iommu_group_domain_alloc()
->   iommu: Add ops->domain_alloc_paging()
->   iommu: Convert simple drivers with DOMAIN_DMA to domain_alloc_paging()
->   iommu: Convert remaining simple drivers to domain_alloc_paging()
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is ignored (apart
+from emitting a warning) and this typically results in resource leaks.
+To improve here there is a quest to make the remove callback return
+void. In the first step of this quest all drivers are converted to
+.remove_new() which already returns void. Eventually after all drivers
+are converted, .remove_new() will be renamed to .remove().
 
-Applied, thanks.
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
+
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/soc/samsung/exynos-chipid.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+index 7ba45c4aff97..3fd0f2b84dd3 100644
+--- a/drivers/soc/samsung/exynos-chipid.c
++++ b/drivers/soc/samsung/exynos-chipid.c
+@@ -158,13 +158,11 @@ static int exynos_chipid_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int exynos_chipid_remove(struct platform_device *pdev)
++static void exynos_chipid_remove(struct platform_device *pdev)
+ {
+ 	struct soc_device *soc_dev = platform_get_drvdata(pdev);
+ 
+ 	soc_device_unregister(soc_dev);
+-
+-	return 0;
+ }
+ 
+ static const struct exynos_chipid_variant exynos4210_chipid_drv_data = {
+@@ -197,7 +195,7 @@ static struct platform_driver exynos_chipid_driver = {
+ 		.of_match_table = exynos_chipid_of_device_ids,
+ 	},
+ 	.probe	= exynos_chipid_probe,
+-	.remove	= exynos_chipid_remove,
++	.remove_new = exynos_chipid_remove,
+ };
+ module_platform_driver(exynos_chipid_driver);
+ 
+-- 
+2.40.1
+
