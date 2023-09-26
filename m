@@ -2,133 +2,152 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D368E7D27D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Sep 2023 11:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A17E7E639
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Sep 2023 14:02:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234481AbjIZLCv (ORCPT
+        id S234927AbjIZOCY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 26 Sep 2023 07:02:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37650 "EHLO
+        Tue, 26 Sep 2023 10:02:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234140AbjIZLCu (ORCPT
+        with ESMTP id S234924AbjIZOCY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 26 Sep 2023 07:02:50 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 014DC95
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Sep 2023 04:02:42 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230926110240euoutp01c556d7887fe5d733a6916f99e523f949~IbfVbRY3r1871318713euoutp01b
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Sep 2023 11:02:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230926110240euoutp01c556d7887fe5d733a6916f99e523f949~IbfVbRY3r1871318713euoutp01b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1695726160;
-        bh=O7tx0lXDWQj5gRzSHsDM5GgUD1m2unsJnLQNdOCKuHg=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=YfYNLSoY6+2NlKv+L4B0QeE4joAIAzC94VRNUv0yOMlbX8YGLPYGulp0P9O8lAZ1L
-         zWVB5xfiIVrV0RqmMpEAaxWw4lSBKqjCavI825/baXbLXAjsw7xO0/WNwQWDfqn7cw
-         eQSTHaqsX+Y+SuU9GV6jw3SZGo+TqOAtIRX13Gds=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230926110239eucas1p1fcb67b3e953b67a6358c63cd99ca0691~IbfVBIQBT2966429664eucas1p1o;
-        Tue, 26 Sep 2023 11:02:39 +0000 (GMT)
-X-AuditID: cbfec7f2-a51ff7000002a5b7-bf-6512ba4f1251
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id DF.CB.42423.F4AB2156; Tue, 26
-        Sep 2023 12:02:39 +0100 (BST)
-Mime-Version: 1.0
-Subject: Re: [PATCH v2 4/7] thermal: exynos: simplify regulator
- (de)initialization
-Reply-To: m.majewski2@samsung.com
-Sender: Mateusz Majewski <m.majewski2@samsung.com>
-From:   Mateusz Majewski <m.majewski2@samsung.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        ALIM AKHTAR <alim.akhtar@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <bf9a07ff-5628-05ab-2362-a917d3d38313@linaro.org>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20230926110239eucms1p2b539245c5b10591def4cd15f14896ad6@eucms1p2>
-Date:   Tue, 26 Sep 2023 13:02:39 +0200
-X-CMS-MailID: 20230926110239eucms1p2b539245c5b10591def4cd15f14896ad6
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230911133616eucas1p10c5eeb0f0240dde975ccc5935cb5c311
-X-EPHeader: Mail
-X-ConfirmMail: N,general
-CMS-TYPE: 201P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7djPc7r+u4RSDX4t1rN4MG8bm8Xh+RUW
-        Ux8+YbP4vuU6k8W8z7IWe19vZbf4dqWDyWLT42usFpd3zWGz+Nx7hNFixvl9TBZrj9xlt5j7
-        ZSqzxZOHfWwOfB47Z91l91i85yWTx6ZVnWwed67tYfPYvKTeo2/LKkaPz5vkAtijuGxSUnMy
-        y1KL9O0SuDLOfVnPXvCQvWL9iffsDYzz2boYOTkkBEwkLvevYe5i5OIQEljBKNFx/DmQw8HB
-        KyAo8XeHMEiNsECIxKRlc5lBbCEBRYnO7W/YIOJGEode7AKz2QQMJB68WcYOMkdE4AKTxOW7
-        DWBDmQXeMEm8PfKNEWIbr8SM9qcsELa0xPblW8HinAJ2EhfuHIOqEZW4ufotO4z9/th8qLiI
-        ROu9s8wQtqDEg5+7oeIyEicXLIOyiyVerr0EVVMhcXzJdKg55hKb5q5hhXjMV+Ly4xyQMIuA
-        qsTjycdYIUpcJFZ+Pg5mMwvIS2x/OwccDswCmhLrd+lDlDhKbNjwH2qigMSaE3OgNklIbG15
-        AtXKJzFp23RmmG93zHvCBGGrShzfM4kZ5vMnLbeZJjAqzUKE9Cwki2chLF7AyLyKUTy1tDg3
-        PbXYMC+1XK84Mbe4NC9dLzk/dxMjMG2d/nf80w7Gua8+6h1iZOJgPMQowcGsJML76xlfqhBv
-        SmJlVWpRfnxRaU5q8SFGaQ4WJXFebduTyUIC6YklqdmpqQWpRTBZJg5OqQam5MM9nNwH9R/Y
-        1e5anyZgpXIs/2xSsKzAhKs5/Ku5aoS++HLvOixZ+mbb60yxfyf9PZwETwX57z/rr7bwSBVn
-        1z3Rnwu/6ZdOctNUEDiyYaYip2yCcbNZKDfnkj2djaKTuhRnFteeebwx2Ov6korsBRufeyyb
-        0um/u/7VxCeH9yt9C3pebeOQ82zvMrG7+7OPyrs+zcpcmvo90bhv3WH7tIaMsIXb7u7Z/TT4
-        94JoB/uTX28dfqu1wM15w6OCmRdsw/luqAWdSW4uWh9xc2v1lIlhB0JYGI6e2JGcFquweFpA
-        xmszqTjhoNKi0PWBcoaRWe+vtHb4ndGak3pggmXR4+D6W/MPXf74pKOoUv+fEktxRqKhFnNR
-        cSIAlAJRCcoDAAA=
-X-CMS-RootMailID: 20230911133616eucas1p10c5eeb0f0240dde975ccc5935cb5c311
-References: <bf9a07ff-5628-05ab-2362-a917d3d38313@linaro.org>
-        <20230911133435.14061-1-m.majewski2@samsung.com>
-        <20230911133435.14061-5-m.majewski2@samsung.com>
-        <CGME20230911133616eucas1p10c5eeb0f0240dde975ccc5935cb5c311@eucms1p2>
+        Tue, 26 Sep 2023 10:02:24 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDC3DFC
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Sep 2023 07:02:16 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-50307759b65so14530974e87.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Sep 2023 07:02:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1695736934; x=1696341734; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FBohR+UrQgBr4N5azTZZcBABGSeyKmANhNOajTqGdkY=;
+        b=QlTIuPGJUwV+exApiZ4B2+QkGTPuWsRTgzqym1nUxd4dLovvz+OWg4TYKU1QBHAfBD
+         TNmGVQHqibsyiekSR8WqmG3dg0e5qw34miSQFJx1uB5PgSm76iZcmZOZ/XbKpVqi4/oS
+         KCAem1sYeHEAMqtEWQ8fnvDWF5THBJwNl2Dmo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695736934; x=1696341734;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FBohR+UrQgBr4N5azTZZcBABGSeyKmANhNOajTqGdkY=;
+        b=aFN6q+Mip4bQp8ng5PPt4E3bdJOdugQhYcsU6HhiERjhnAx/X7R3McBiDJIRzNDErt
+         +iqFNVqcgst8CY/HoXQ+Yk/aS+FnKucOCi6tzJm9wafqMuQN1FE0ltf2wEKuG0clbaK0
+         CIw/iu6O59Lyi954/M68q4srGJBDmNV3dASQzIe5+kIRtsTQpJ4HaG/NDmy5Sfs33WeU
+         BB1i28ZlYmyM5jCzqgKPo9dhSt2p4DVtb4dYL2epc6Omjeg29zTtUD0I47hxsLAYJqmY
+         /e5LoDzWOhrsef4RhbqOIuxpqr1ZLKmqjMhQ+3U5ZLrdw/f2szS9acM1fcwW+Ro4jE7T
+         U0Yg==
+X-Gm-Message-State: AOJu0Yz7lDhWsCoMlmd0rCLt5UJ5pAIlMh9Jh+5fmCKjZHMnr+/F3vpr
+        BtMm/hFCfC+dXZSeVyKnLvqjN4zPm4EMtoSDJ3BGseUG
+X-Google-Smtp-Source: AGHT+IEy/nqR4nWVHqe44YWODOOtfLjCWtPLWYTWN6jio6m04gfO5i65mdSEof4ooSoJwMAgN0BDwA==
+X-Received: by 2002:a05:6512:230e:b0:4fd:d08c:fa3e with SMTP id o14-20020a056512230e00b004fdd08cfa3emr10597069lfu.42.1695736933747;
+        Tue, 26 Sep 2023 07:02:13 -0700 (PDT)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id r27-20020ac25a5b000000b004fdd6b72bfdsm2197293lfn.117.2023.09.26.07.02.12
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Sep 2023 07:02:13 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-50348c54439so4762e87.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Sep 2023 07:02:12 -0700 (PDT)
+X-Received: by 2002:ac2:548e:0:b0:501:a2b4:8ff5 with SMTP id
+ t14-20020ac2548e000000b00501a2b48ff5mr54282lfk.7.1695736932511; Tue, 26 Sep
+ 2023 07:02:12 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230925150010.1.Iff672233861bcc4cf25a7ad0a81308adc3bda8a4@changeid>
+ <b0037c9f-588b-4eb8-6415-0fe75bed264f@collabora.com>
+In-Reply-To: <b0037c9f-588b-4eb8-6415-0fe75bed264f@collabora.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 26 Sep 2023 07:01:55 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UWQgLLfU4X+6OUR5AWOkJKwG9J7BbKGRCgze6LTY6JNw@mail.gmail.com>
+Message-ID: <CAD=FV=UWQgLLfU4X+6OUR5AWOkJKwG9J7BbKGRCgze6LTY6JNw@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel: Move AUX B116XW03 out of panel-edp back to panel-simple
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        Hsin-Yi Wang <hsinyi@chromium.org>, matthias.bgg@gmail.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>, airlied@gmail.com,
+        daniel@ffwll.ch, jitao.shi@mediatek.com, linus.walleij@linaro.org,
+        linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
+        quic_jesszhan@quicinc.com, sam@ravnborg.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-> This is not equivalent. If regulator is provided and enable fails, the
-> old code is nicely returning error. Now, it will print misleading
-> message - failed to get regulator - and continue.
+On Tue, Sep 26, 2023 at 1:06=E2=80=AFAM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
 >
-> While this simplifies the code, it ignores important running condition -
-> having regulator enabled.
+> Il 26/09/23 00:00, Douglas Anderson ha scritto:
+> > In commit 5f04e7ce392d ("drm/panel-edp: Split eDP panels out of
+> > panel-simple") I moved a pile of panels out of panel-simple driver
+> > into the newly created panel-edp driver. One of those panels, however,
+> > shouldn't have been moved.
+> >
+> > As is clear from commit e35e305eff0f ("drm/panel: simple: Add AUO
+> > B116XW03 panel support"), AUX B116XW03 is an LVDS panel. It's used in
+> > exynos5250-snow and exynos5420-peach-pit where it's clear that the
+> > panel is hooked up with LVDS. Furthermore, searching for datasheets I
+> > found one that makes it clear that this panel is LVDS.
+> >
+> > As far as I can tell, I got confused because in commit 88d3457ceb82
+> > ("drm/panel: auo,b116xw03: fix flash backlight when power on") Jitao
+> > Shi added "DRM_MODE_CONNECTOR_eDP". That seems wrong. Looking at the
+> > downstream ChromeOS trees, it seems like some Mediatek boards are
+> > using a panel that they call "auo,b116xw03" that's an eDP panel. The
+> > best I can guess is that they actually have a different panel that has
+> > similar timing. If so then the proper panel should be used or they
+> > should switch to the generic "edp-panel" compatible.
+> >
+> > When moving this back to panel-edp, I wasn't sure what to use for
+> > .bus_flags and .bus_format and whether to add the extra "enable" delay
+> > from commit 88d3457ceb82 ("drm/panel: auo,b116xw03: fix flash
+> > backlight when power on"). I've added formats/flags/delays based on my
+> > (inexpert) analysis of the datasheet. These are untested.
+> >
+> > NOTE: if/when this is backported to stable, we might run into some
+> > trouble. Specifically, before 474c162878ba ("arm64: dts: mt8183:
+> > jacuzzi: Move panel under aux-bus") this panel was used by
+> > "mt8183-kukui-jacuzzi", which assumed it was an eDP panel. I don't
+> > know what to suggest for that other than someone making up a bogus
+> > panel for jacuzzi that's just for the stable channel.
+> >
+> > Fixes: 88d3457ceb82 ("drm/panel: auo,b116xw03: fix flash backlight when=
+ power on")
+> > Fixes: 5f04e7ce392d ("drm/panel-edp: Split eDP panels out of panel-simp=
+le")
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> > ---
+> > I haven't had a snow or peach-pit hooked up for debugging / testing
+> > for years. I presume that they must be broken and hope that this fixes
+> > them.
+>
+> We could avoid backport breakages by avoiding to backport this to any ker=
+nel
+> that doesn't contain commit 474c162878ba ("arm64: dts: mt8183: jacuzzi: M=
+ove
+> panel under aux-bus")... because creating a dummy panel to get two wrongs
+> right is definitely not ok.
 
-Would doing this be correct?
+Sure, except that leaves us with ... a breakage. :-P
 
-ret = devm_regulator_get_enable_optional(&pdev->dev, "vtmu");
-switch (ret) {
-case 0:
-case -ENODEV:
-	break;
-case -EPROBE_DEFER:
-	return -EPROBE_DEFER;
-default:
-	dev_err(&pdev->dev, "Failed to get enabled regulator: %d\n",
-		ret);
-	return ret;
-}
+Although I haven't tested it, I have a hard time believing that
+exynos5250-snow and exynos5420-peach-pit will work properly with the
+panel defined as an eDP panel. That means that they will be broken. If
+someone cared to get those fixed in a stable backport then we'd be
+stuck deciding who to break. If you have any brilliant ideas then I'm
+all ears.
 
-I understand that we would get -ENODEV in case of the regulator being
-unavailable, which we would ignore (this is the "equivalent" of
-devm_regulator_get_optional failing in the original code). And in case
-of enable failing, we would get some other error, which we would handle.
+...then again, I presume this has been broken since commit
+88d3457ceb82 ("drm/panel: auo,b116xw03: fix flash backlight when power
+on"). That was a little over 3 years ago. Maybe I'm wrong and somehow
+things still limp along and sorta work even though the panel is
+defined incorrectly?
 
-Thanks for being patient with me by the way, hopefully I will learn quickly :)
-
-Best regards,
-Mateusz
+-Doug
