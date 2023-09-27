@@ -2,216 +2,134 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64136E82CCA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Sep 2023 19:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2992CE80A8A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Sep 2023 22:57:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229493AbjI0Tpa convert rfc822-to-8bit (ORCPT
+        id S229547AbjI0W5u (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 27 Sep 2023 15:45:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57464 "EHLO
+        Wed, 27 Sep 2023 18:57:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjI0Tp3 (ORCPT
+        with ESMTP id S229460AbjI0W5t (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 27 Sep 2023 15:45:29 -0400
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1254310E;
-        Wed, 27 Sep 2023 12:45:26 -0700 (PDT)
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-57bf04841ccso490361eaf.0;
-        Wed, 27 Sep 2023 12:45:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695843925; x=1696448725;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZdrldCq/11jLKtSHJnC0CV3/MzVWic6Gg0opWfLdlIY=;
-        b=RqO4wDtEdl0t5BzX26SqxWEma6WzFCL1n+DVW7rYHhqklu9J69/EWU69vuxIP0Pu2g
-         kaxxKS19niUHg6PpMwZ2pATH25Z4iTJTFtA7hJgpzKxnsBSJ6+5jeXvuOOJJMAHL4C5t
-         zNAOZms1qG/EaZZgvbK8Iunupx7GE8l92qqi1BCnRvzDzSQfqlKvgpYZsaHXscX2HB38
-         TnzaOo+iA/wNow9VO0i/3ZgDVMFSG+AQhiExjIKnM5+pjmxO9fjCIF91hUk3vfD4pYpm
-         nwwtAdBLZdiE1GBzv9YZZbYyAPnZceNda83E9Tv/IEABthUtlz68ltsw/zs3QAZDQELW
-         B32g==
-X-Gm-Message-State: AOJu0YxmVLd+oQdKdUrCJCnOxH6z1fw9XC12KczXYSQ7XNOQ9u4FN7wF
-        Kngo9hwuCaQHBBxJmfZiG4VYyfI36s04DbXduZ0=
-X-Google-Smtp-Source: AGHT+IGMlW6Putl8V3MXq3RkAqHyCPJSNsGyuWiCwQkEk43f5FSeBHFESqXka7uzLRnNc/5oUKZ3iepgewdBHpsbPHk=
-X-Received: by 2002:a4a:e704:0:b0:57b:94b7:c6ba with SMTP id
- y4-20020a4ae704000000b0057b94b7c6bamr3501682oou.0.1695843925125; Wed, 27 Sep
- 2023 12:45:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230927193736.2236447-1-u.kleine-koenig@pengutronix.de>
-In-Reply-To: <20230927193736.2236447-1-u.kleine-koenig@pengutronix.de>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 27 Sep 2023 21:45:14 +0200
-Message-ID: <CAJZ5v0guyQ-SpNHXYBG2F_WyCSvgjXocGBy61Ep1Cy5-H-MOsQ@mail.gmail.com>
-Subject: Re: [PATCH 00/31] thermal: Convert to platform remove callback
- returning void
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, kernel@pengutronix.de,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Heiko Stuebner <heiko@sntech.de>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        linux-rpi-kernel@lists.infradead.org,
+        Wed, 27 Sep 2023 18:57:49 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0D52AF;
+        Wed, 27 Sep 2023 15:57:47 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E53C9C433C7;
+        Wed, 27 Sep 2023 22:57:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695855467;
+        bh=U6mvGN6IUsN3aQ3Mg+rtFDHole4TLUqxeXU4RuqCc9I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BghfInz1dtGj+a0NwGrQpQyiHTPQFE7pGKytrpsBClpu9NX2eDcjSChVYZmAF6XDB
+         owkxfj0jdteMSoWlG/cGItYI7rwQRUHp8gvgTfu6LqVuG2Ju3NmaLW+PzihWROGETC
+         8im2c1V6bhHXdTgg2FyeVqoOoGl2C9rGCm7cO+QnD4KASaYNOMS1b5kWe3RD3hlBwa
+         8K94UVok49+wD2jCK35a7ooWNY6CyXEsRolTaaTlHbmMq6gapMGZ2q5sD3ePlXHOQS
+         huIRK9HVFU8DWh9mV8DVS8hYOkca+rRCVDtybY9i3VxzNc3SAJ8sCy+Qm1xR/Ceo4m
+         4kcCfJF20jzJQ==
+Date:   Wed, 27 Sep 2023 16:01:58 -0700
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Joel Stanley <joel@jms.id.au>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Leo Li <leoyang.li@nxp.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
+        Huisong Li <lihuisong@huawei.com>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Karol Gugala <kgugala@antmicro.com>,
+        Mateusz Holenko <mholenko@antmicro.com>,
+        Gabriel Somlo <gsomlo@gmail.com>,
+        Yinbo Zhu <zhuyinbo@loongson.cn>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Conor.Dooley" <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Sumit Gupta <sumitg@nvidia.com>,
+        Shang XiaoJing <shangxiaojing@huawei.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Rob Herring <robh@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Michal Simek <michal.simek@amd.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
         linux-arm-kernel@lists.infradead.org,
-        Balsam CHIHI <bchihi@baylibre.com>,
-        Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Zev Weiss <zev@bewilderbeest.net>,
+        linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
-        <nfraprado@collabora.com>,
-        Alexandre Mergnat <amergnat@baylibre.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Chen Jiahao <chenjiahao16@huawei.com>,
         linux-mediatek@lists.infradead.org,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org,
+        linux-riscv@lists.infradead.org,
+        "zhang.songyi" <zhang.songyi@zte.com.cn>,
+        Lubomir Rintel <lkundrak@v3.sk>, linux-arm-msm@vger.kernel.org,
         linux-rockchip@lists.infradead.org,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         linux-samsung-soc@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>, linux-omap@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Nick Alcock <nick.alcock@oracle.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ruan Jinjie <ruanjinjie@huawei.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH 00/40] soc: Convert to platform remove callback returning
+ void
+Message-ID: <f4hvrslynlgmxu4a2gogc5idvumskhaalxgwildy56yqk2wz7d@lkh4swkv52mi>
+References: <20230925095532.1984344-1-u.kleine-koenig@pengutronix.de>
+ <CACPK8XeROYz_XaB3TvUhdXm7Vm8fjC8yU+mfvA58=_FiDrBy-g@mail.gmail.com>
+ <1b2fddf8-c0a6-4afa-8ad0-f280dea1607f@app.fastmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1b2fddf8-c0a6-4afa-8ad0-f280dea1607f@app.fastmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Wed, Sep 27, 2023 at 10:43:16AM +0200, Arnd Bergmann wrote:
+> On Wed, Sep 27, 2023, at 04:25, Joel Stanley wrote:
+> > On Mon, 25 Sept 2023 at 09:55, Uwe Kleine-K�nig <u.kleine-koenig@pengutronix.de> wrote:
+> >>
+> >> this series converts all platform drivers below drivers/soc to use
+> >> .remove_new(). The motivation is to get rid of an integer return code
+> >> that is (mostly) ignored by the platform driver core and error prone on
+> >> the driver side.
+> >>
+> >> See commit 5c5a7680e67b ("platform: Provide a remove callback that
+> >> returns no value") for an extended explanation and the eventual goal.
+> >>
+> >> As there is no single maintainer team for drivers/soc, I suggest the
+> >> individual maintainers to pick up "their" patches.
+> >
+> > I'd be happy if Arnd merged the lot at once. Arnd, what do you think?
+> >
+> > If that will be too messy then I understand. I have queued the aspeed
+> > ones locally and will push that out if we decide that's the best way
+> > to go.
+> 
+> The main downside of merging it all at once through the soc tree
+> is that there may be patches that conflict with other work going on
+> in individual drivers.
+> 
+> What I'd suggest doing here is:
+> 
+> - have platform maintainers pick up patches for their drivers
+>   if that is their preference for any reason
+> 
 
-On Wed, Sep 27, 2023 at 9:38 PM Uwe Kleine-König
-<u.kleine-koenig@pengutronix.de> wrote:
->
-> Hello,
->
-> this series converts all platform drivers below drivers/thermal to use
-> .remove_new(). The motivation is to get rid of an integer return code
-> that is (mostly) ignored by the platform driver core and error prone on
-> the driver side.
->
-> See commit 5c5a7680e67b ("platform: Provide a remove callback that
-> returns no value") for an extended explanation and the eventual goal.
->
-> There are no interdependencies between the patches. As there are still
-> quite a few drivers to convert, I'm happy about every patch that makes
-> it in. So even if there is a merge conflict with one patch until you
-> apply or a subject prefix is suboptimal, please apply the remainder of
-> this series anyhow.
+I'd prefer this for the qcom drivers at least, please let me know if you
+would like me to proceed.
 
-I think I'll go ahead and apply all of this in one go (for 6.7).
+Regards,
+Bjorn
 
-Daniel, any objections?
-
-
-> Uwe Kleine-König (31):
->   thermal: amlogic: Convert to platform remove callback returning void
->   thermal: armada: Convert to platform remove callback returning void
->   thermal: bcm2835: Convert to platform remove callback returning void
->   thermal: ns: Convert to platform remove callback returning void
->   thermal: da9062: Convert to platform remove callback returning void
->   thermal: dove: Convert to platform remove callback returning void
->   thermal: hisi: Convert to platform remove callback returning void
->   thermal: imx8mm: Convert to platform remove callback returning void
->   thermal: imx: Convert to platform remove callback returning void
->   thermal: int3400: Convert to platform remove callback returning void
->   thermal: int3401: Convert to platform remove callback returning void
->   thermal: int3402: Convert to platform remove callback returning void
->   thermal: int3403: Convert to platform remove callback returning void
->   thermal: int3406: Convert to platform remove callback returning void
->   thermal: k3_bandgap: Convert to platform remove callback returning void
->   thermal: k3_j72xx_bandgap: Convert to platform remove callback returning void
->   thermal: kirkwood: Convert to platform remove callback returning void
->   thermal: lvts: Convert to platform remove callback returning void
->   thermal: tsens: Convert to platform remove callback returning void
->   thermal: rcar_gen3: Convert to platform remove callback returning void
->   thermal: rcar: Convert to platform remove callback returning void
->   thermal: rockchip: Convert to platform remove callback returning void
->   thermal: rzg2l: Convert to platform remove callback returning void
->   thermal: exynos_tmu: Convert to platform remove callback returning void
->   thermal: spear: Convert to platform remove callback returning void
->   thermal: sprd: Convert to platform remove callback returning void
->   thermal: stm: Convert to platform remove callback returning void
->   thermal: soctherm: Convert to platform remove callback returning void
->   thermal: tegra-bpmp: Convert to platform remove callback returning void
->   thermal: ti-bandgap: Convert to platform remove callback returning void
->   thermal: uniphier: Convert to platform remove callback returning void
->
->  drivers/thermal/amlogic_thermal.c                    | 12 +++++-------
->  drivers/thermal/armada_thermal.c                     |  6 ++----
->  drivers/thermal/broadcom/bcm2835_thermal.c           |  6 ++----
->  drivers/thermal/broadcom/ns-thermal.c                |  6 ++----
->  drivers/thermal/da9062-thermal.c                     |  5 ++---
->  drivers/thermal/dove_thermal.c                       |  6 ++----
->  drivers/thermal/hisi_thermal.c                       |  6 ++----
->  drivers/thermal/imx8mm_thermal.c                     |  6 ++----
->  drivers/thermal/imx_thermal.c                        |  6 ++----
->  .../thermal/intel/int340x_thermal/int3400_thermal.c  |  5 ++---
->  .../thermal/intel/int340x_thermal/int3401_thermal.c  |  6 ++----
->  .../thermal/intel/int340x_thermal/int3402_thermal.c  |  6 ++----
->  .../thermal/intel/int340x_thermal/int3403_thermal.c  |  6 ++----
->  .../thermal/intel/int340x_thermal/int3406_thermal.c  |  5 ++---
->  drivers/thermal/k3_bandgap.c                         |  6 ++----
->  drivers/thermal/k3_j72xx_bandgap.c                   |  6 ++----
->  drivers/thermal/kirkwood_thermal.c                   |  6 ++----
->  drivers/thermal/mediatek/lvts_thermal.c              |  6 ++----
->  drivers/thermal/qcom/tsens.c                         |  6 ++----
->  drivers/thermal/rcar_gen3_thermal.c                  |  6 ++----
->  drivers/thermal/rcar_thermal.c                       |  6 ++----
->  drivers/thermal/rockchip_thermal.c                   |  6 ++----
->  drivers/thermal/rzg2l_thermal.c                      |  6 ++----
->  drivers/thermal/samsung/exynos_tmu.c                 |  6 ++----
->  drivers/thermal/spear_thermal.c                      |  6 ++----
->  drivers/thermal/sprd_thermal.c                       |  5 ++---
->  drivers/thermal/st/stm_thermal.c                     |  6 ++----
->  drivers/thermal/tegra/soctherm.c                     |  6 ++----
->  drivers/thermal/tegra/tegra-bpmp-thermal.c           |  6 ++----
->  drivers/thermal/ti-soc-thermal/ti-bandgap.c          |  6 ++----
->  drivers/thermal/uniphier_thermal.c                   |  6 ++----
->  31 files changed, 65 insertions(+), 123 deletions(-)
->
-> base-commit: 18030226a48de1fbfabf4ae16aaa2695a484254f
-> --
-> 2.40.1
->
+> - get a pull request from Uwe for the soc tree for anything that has
+>   not been picked up in one or two weeks from now
+> 
+>       Arnd
