@@ -2,174 +2,174 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFD2CE7AF8
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Sep 2023 06:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B1CCE7B09
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Sep 2023 07:05:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230220AbjI1GP4 (ORCPT
+        id S230324AbjI1HFa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 28 Sep 2023 02:15:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57936 "EHLO
+        Thu, 28 Sep 2023 03:05:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbjI1GP4 (ORCPT
+        with ESMTP id S230270AbjI1HF3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 Sep 2023 02:15:56 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8CFD99
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Sep 2023 23:15:54 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qlkIf-0005M7-3R; Thu, 28 Sep 2023 08:15:01 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qlkIT-009W0C-Oq; Thu, 28 Sep 2023 08:14:49 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qlkIT-005Ytu-DX; Thu, 28 Sep 2023 08:14:49 +0200
-Date:   Thu, 28 Sep 2023 08:14:49 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Nishanth Menon <nm@ti.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Mateusz Holenko <mholenko@antmicro.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        linux-tegra@vger.kernel.org,
-        "Conor.Dooley" <conor.dooley@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-riscv@lists.infradead.org,
-        Karol Gugala <kgugala@antmicro.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
-        Rob Herring <robh@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        Ruan Jinjie <ruanjinjie@huawei.com>,
-        Yinbo Zhu <zhuyinbo@loongson.cn>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org,
-        Gabriel Somlo <gsomlo@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Huisong Li <lihuisong@huawei.com>,
-        Joel Stanley <joel@jms.id.au>, Sumit Gupta <sumitg@nvidia.com>,
-        "zhang.songyi" <zhang.songyi@zte.com.cn>,
-        Zev Weiss <zev@bewilderbeest.net>, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Krzysztof Halasa <khalasa@piap.pl>, loongarch@lists.linux.dev,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michal Simek <michal.simek@amd.com>,
+        Thu, 28 Sep 2023 03:05:29 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BA08DD
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Sep 2023 00:05:25 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-3231d6504e1so8692254f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Sep 2023 00:05:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1695884723; x=1696489523; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JK5FKcmSKFk/poFkH6WaIiPHJq3+6nK77MGlhBlv5xc=;
+        b=eMabU90bnM4dFTt5f8JHuzgfBY/en3tQqKF4Kyc1cADJDDJyL/JlrMz6oDwWn4w0n1
+         KvmDxZSpD3c8I2zwFi4kb1IgaLIkYod90qxoriKKlmIAFeVFRmu0ZLR4L4goNGCH0uwg
+         FNkT6/RjOx6tua2r4wJzKDXFn8avoK8jQhkRxQGAAfP2YqQ96G9CT0vA9FOvAD5fwrcL
+         DJn1rJWcRSkY5w+YLdmqtZRTM1qbpU3klvi9UwZBY87CW+AJMt/3ABHiKC6jt9a+0L9P
+         5d5LbrEyTRGp2IQ7jmWZ/QYJjSCCZOkQ8AmqiFHPnzxrAu6Li0E3pc/nU4313SerGrfH
+         un8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695884723; x=1696489523;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JK5FKcmSKFk/poFkH6WaIiPHJq3+6nK77MGlhBlv5xc=;
+        b=SgbESeYaS5CFVyRssnIcA2RVUHRnR5pxJK/LNO//jro1v2+s3L89+qI/wO/htqiTJY
+         rnS1RQA0dr7enZDzluy47W/14s02/3jE9pWIV+WW1c0Zs2X4YSolTeLjPv4IVZa/iwBp
+         MGlcVZg8KKUWzp5OejF/gi8aX/g/XFJKffXYeaVDOtaybHu/Klnh/RZPkw/rKh5jwPGq
+         B6uE6MRYDR9L1GjROovqVedTDfkRTcXTZS4p3ER5xIITSdUXIyUBYYJk4GFTdt//nHEe
+         HcAvlwQ1PpXB+tGQG2mY1lq9OJKYxmUoTarzC6L911NTyFqw8JfopvatKIqUHKVz/kRn
+         i6xQ==
+X-Gm-Message-State: AOJu0YwVPOZkX9P1ub6mViisLwXKpqjTglflM+01vjwTMk88qZzMN8xo
+        Fhwx+EbXUTKY8aztwF1SP6taSw==
+X-Google-Smtp-Source: AGHT+IHtRxKk7CXcPNdMQTTEBVfCDemBFx4pebeQoAgF8nP7IxdEu3s1ozmEdmztrqIM2F97b6iYUw==
+X-Received: by 2002:a5d:5b17:0:b0:31f:a4fa:130a with SMTP id bx23-20020a5d5b17000000b0031fa4fa130amr465227wrb.14.1695884723076;
+        Thu, 28 Sep 2023 00:05:23 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0? ([2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0])
+        by smtp.googlemail.com with ESMTPSA id bv19-20020a0560001f1300b0032327b70ef6sm10037825wrb.70.2023.09.28.00.05.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Sep 2023 00:05:22 -0700 (PDT)
+Message-ID: <d8515a00-4d41-2d23-09ca-30f474fcbabd@linaro.org>
+Date:   Thu, 28 Sep 2023 09:05:20 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 00/31] thermal: Convert to platform remove callback
+ returning void
+Content-Language: en-US
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Guillaume La Roque <glaroque@baylibre.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, kernel@pengutronix.de,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Heiko Stuebner <heiko@sntech.de>,
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
+        Balsam CHIHI <bchihi@baylibre.com>,
+        Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        linux-kernel@vger.kernel.org,
-        Shang XiaoJing <shangxiaojing@huawei.com>,
-        Leo Li <leoyang.li@nxp.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
+        <nfraprado@collabora.com>,
+        Alexandre Mergnat <amergnat@baylibre.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Chen Jiahao <chenjiahao16@huawei.com>,
         linux-mediatek@lists.infradead.org,
-        Nick Alcock <nick.alcock@oracle.com>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 00/40] soc: Convert to platform remove callback returning
- void
-Message-ID: <20230928061449.xxqhyyrg6e357dn2@pengutronix.de>
-References: <20230925095532.1984344-1-u.kleine-koenig@pengutronix.de>
- <CACPK8XeROYz_XaB3TvUhdXm7Vm8fjC8yU+mfvA58=_FiDrBy-g@mail.gmail.com>
- <1b2fddf8-c0a6-4afa-8ad0-f280dea1607f@app.fastmail.com>
- <f4hvrslynlgmxu4a2gogc5idvumskhaalxgwildy56yqk2wz7d@lkh4swkv52mi>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="yfll6esgccshw4fu"
-Content-Disposition: inline
-In-Reply-To: <f4hvrslynlgmxu4a2gogc5idvumskhaalxgwildy56yqk2wz7d@lkh4swkv52mi>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Minghao Chi <chi.minghao@zte.com.cn>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Keerthy <j-keerthy@ti.com>, linux-omap@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>
+References: <20230927193736.2236447-1-u.kleine-koenig@pengutronix.de>
+ <CAJZ5v0guyQ-SpNHXYBG2F_WyCSvgjXocGBy61Ep1Cy5-H-MOsQ@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <CAJZ5v0guyQ-SpNHXYBG2F_WyCSvgjXocGBy61Ep1Cy5-H-MOsQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On 27/09/2023 21:45, Rafael J. Wysocki wrote:
+> Hi,
+> 
+> On Wed, Sep 27, 2023 at 9:38 PM Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> wrote:
+>>
+>> Hello,
+>>
+>> this series converts all platform drivers below drivers/thermal to use
+>> .remove_new(). The motivation is to get rid of an integer return code
+>> that is (mostly) ignored by the platform driver core and error prone on
+>> the driver side.
+>>
+>> See commit 5c5a7680e67b ("platform: Provide a remove callback that
+>> returns no value") for an extended explanation and the eventual goal.
+>>
+>> There are no interdependencies between the patches. As there are still
+>> quite a few drivers to convert, I'm happy about every patch that makes
+>> it in. So even if there is a merge conflict with one patch until you
+>> apply or a subject prefix is suboptimal, please apply the remainder of
+>> this series anyhow.
+> 
+> I think I'll go ahead and apply all of this in one go (for 6.7).
+> 
+> Daniel, any objections?
 
---yfll6esgccshw4fu
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No objection, for the series:
 
-On Wed, Sep 27, 2023 at 04:01:58PM -0700, Bjorn Andersson wrote:
-> On Wed, Sep 27, 2023 at 10:43:16AM +0200, Arnd Bergmann wrote:
-> > On Wed, Sep 27, 2023, at 04:25, Joel Stanley wrote:
-> > > On Mon, 25 Sept 2023 at 09:55, Uwe Kleine-K=F6nig <u.kleine-koenig@pe=
-ngutronix.de> wrote:
-> > >>
-> > >> this series converts all platform drivers below drivers/soc to use
-> > >> .remove_new(). The motivation is to get rid of an integer return code
-> > >> that is (mostly) ignored by the platform driver core and error prone=
- on
-> > >> the driver side.
-> > >>
-> > >> See commit 5c5a7680e67b ("platform: Provide a remove callback that
-> > >> returns no value") for an extended explanation and the eventual goal.
-> > >>
-> > >> As there is no single maintainer team for drivers/soc, I suggest the
-> > >> individual maintainers to pick up "their" patches.
-> > >
-> > > I'd be happy if Arnd merged the lot at once. Arnd, what do you think?
-> > >
-> > > If that will be too messy then I understand. I have queued the aspeed
-> > > ones locally and will push that out if we decide that's the best way
-> > > to go.
-> >=20
-> > The main downside of merging it all at once through the soc tree
-> > is that there may be patches that conflict with other work going on
-> > in individual drivers.
-> >=20
-> > What I'd suggest doing here is:
-> >=20
-> > - have platform maintainers pick up patches for their drivers
-> >   if that is their preference for any reason
->=20
-> I'd prefer this for the qcom drivers at least, please let me know if you
-> would like me to proceed.
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-I can send a pull request as Arnd suggested. So iff you want the qcom
-drivers not be a part of that PR, just make sure they appear in next
-during the next week. :-)
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-(I'm not sure if "this" in your last quoted sentence is "platform
-maintainers pick up" or "merging it all at once through the soc tree". I
-think you mean the former. Still if you don't want me to pick up the
-qcom patches and won't manage to make them appear in next via your tree,
-I ask you to tell me explicitly to skip these in my PR.)
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-Best regards and thanks,
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---yfll6esgccshw4fu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmUVGdgACgkQj4D7WH0S
-/k4H8ggAlzMNhL51l548JwUtvGIKaakJoHBLPcGIj/hsCvofuN0HLiMSEtj8Dg6K
-8y1eWVR1Yl+MqkggqjwkOCCy2eX7GYvKXYBRynjaryEtuaE5wSH09zlTWvWBc/ac
-XaBPBsvT6wrBDQBNG9hy4EuMwz7hTRZqp6r0nJV4SSrnor+Lh3EgudImNy82xdmh
-qewYGPdP1R2M1dIIvRSxcLGWHQike9Rti3B8LNTQOTOKB4RrnNfwmPZAk+6LSRAW
-ArlW9S66AzVOe1E5gY70pi4VTQ8AmegEFPOJf3ZqPVAr5s/FYfmxf7GUUM/j/BMh
-7vHOjZMrtO+JkBW/lzWwgV6oKIHgtA==
-=TaoJ
------END PGP SIGNATURE-----
-
---yfll6esgccshw4fu--
