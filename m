@@ -2,174 +2,142 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B1CCE7B09
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Sep 2023 07:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7337CE7B1F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Sep 2023 19:24:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230324AbjI1HFa (ORCPT
+        id S231731AbjI1TYc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 28 Sep 2023 03:05:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41734 "EHLO
+        Thu, 28 Sep 2023 15:24:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230270AbjI1HF3 (ORCPT
+        with ESMTP id S230320AbjI1TYb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 Sep 2023 03:05:29 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BA08DD
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Sep 2023 00:05:25 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-3231d6504e1so8692254f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Sep 2023 00:05:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695884723; x=1696489523; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JK5FKcmSKFk/poFkH6WaIiPHJq3+6nK77MGlhBlv5xc=;
-        b=eMabU90bnM4dFTt5f8JHuzgfBY/en3tQqKF4Kyc1cADJDDJyL/JlrMz6oDwWn4w0n1
-         KvmDxZSpD3c8I2zwFi4kb1IgaLIkYod90qxoriKKlmIAFeVFRmu0ZLR4L4goNGCH0uwg
-         FNkT6/RjOx6tua2r4wJzKDXFn8avoK8jQhkRxQGAAfP2YqQ96G9CT0vA9FOvAD5fwrcL
-         DJn1rJWcRSkY5w+YLdmqtZRTM1qbpU3klvi9UwZBY87CW+AJMt/3ABHiKC6jt9a+0L9P
-         5d5LbrEyTRGp2IQ7jmWZ/QYJjSCCZOkQ8AmqiFHPnzxrAu6Li0E3pc/nU4313SerGrfH
-         un8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695884723; x=1696489523;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JK5FKcmSKFk/poFkH6WaIiPHJq3+6nK77MGlhBlv5xc=;
-        b=SgbESeYaS5CFVyRssnIcA2RVUHRnR5pxJK/LNO//jro1v2+s3L89+qI/wO/htqiTJY
-         rnS1RQA0dr7enZDzluy47W/14s02/3jE9pWIV+WW1c0Zs2X4YSolTeLjPv4IVZa/iwBp
-         MGlcVZg8KKUWzp5OejF/gi8aX/g/XFJKffXYeaVDOtaybHu/Klnh/RZPkw/rKh5jwPGq
-         B6uE6MRYDR9L1GjROovqVedTDfkRTcXTZS4p3ER5xIITSdUXIyUBYYJk4GFTdt//nHEe
-         HcAvlwQ1PpXB+tGQG2mY1lq9OJKYxmUoTarzC6L911NTyFqw8JfopvatKIqUHKVz/kRn
-         i6xQ==
-X-Gm-Message-State: AOJu0YwVPOZkX9P1ub6mViisLwXKpqjTglflM+01vjwTMk88qZzMN8xo
-        Fhwx+EbXUTKY8aztwF1SP6taSw==
-X-Google-Smtp-Source: AGHT+IHtRxKk7CXcPNdMQTTEBVfCDemBFx4pebeQoAgF8nP7IxdEu3s1ozmEdmztrqIM2F97b6iYUw==
-X-Received: by 2002:a5d:5b17:0:b0:31f:a4fa:130a with SMTP id bx23-20020a5d5b17000000b0031fa4fa130amr465227wrb.14.1695884723076;
-        Thu, 28 Sep 2023 00:05:23 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0? ([2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0])
-        by smtp.googlemail.com with ESMTPSA id bv19-20020a0560001f1300b0032327b70ef6sm10037825wrb.70.2023.09.28.00.05.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Sep 2023 00:05:22 -0700 (PDT)
-Message-ID: <d8515a00-4d41-2d23-09ca-30f474fcbabd@linaro.org>
-Date:   Thu, 28 Sep 2023 09:05:20 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 00/31] thermal: Convert to platform remove callback
- returning void
-Content-Language: en-US
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Guillaume La Roque <glaroque@baylibre.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, kernel@pengutronix.de,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Heiko Stuebner <heiko@sntech.de>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Balsam CHIHI <bchihi@baylibre.com>,
-        Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
-        <nfraprado@collabora.com>,
-        Alexandre Mergnat <amergnat@baylibre.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Chen Jiahao <chenjiahao16@huawei.com>,
-        linux-mediatek@lists.infradead.org,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Thu, 28 Sep 2023 15:24:31 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B1B51A3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Sep 2023 12:24:29 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230928192427euoutp01687a6ef70ad527a28bc3c4e36652309a~JJoBrYx3-1092710927euoutp01b
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Sep 2023 19:24:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230928192427euoutp01687a6ef70ad527a28bc3c4e36652309a~JJoBrYx3-1092710927euoutp01b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1695929067;
+        bh=GFOyU81B/Zw0ASGJNMLnJcw4VVGvy7QuYTXBvsRx+xQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=A8k+eG2amUBfRrEN/nSRgUUQeLsrCAc/VPgQf8jAMD0Xngi9t1Q/8eeVwFhTFFyJ7
+         i5LHredwrBnakxBO4cY7V6A01A0ra0qC1I1/pgx57uOYS43H7bC8GlzJCpHSkCcVb4
+         ycjhBcHGrUm+dgHTXNJhv/y1YlPOcT0q4ez79OtE=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20230928192426eucas1p104af8583aedfa059f6ee7bad21573821~JJoAm_1Nm1181211812eucas1p17;
+        Thu, 28 Sep 2023 19:24:26 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id DC.60.11320.AE2D5156; Thu, 28
+        Sep 2023 20:24:26 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230928192426eucas1p2b1763303daefc3fe1ac9354c17432572~JJoAOlcjT0047000470eucas1p2p;
+        Thu, 28 Sep 2023 19:24:26 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230928192426eusmtrp2fd6c1a553186f69c82c415e7fda1585a~JJoAOFyXz2794927949eusmtrp2l;
+        Thu, 28 Sep 2023 19:24:26 +0000 (GMT)
+X-AuditID: cbfec7f4-993ff70000022c38-9c-6515d2eafc61
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 02.F9.25043.AE2D5156; Thu, 28
+        Sep 2023 20:24:26 +0100 (BST)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230928192425eusmtip22b152eb299f6856c83994bbbac2651ce~JJn-y2dj12447124471eusmtip2P;
+        Thu, 28 Sep 2023 19:24:25 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>, linux-omap@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>
-References: <20230927193736.2236447-1-u.kleine-koenig@pengutronix.de>
- <CAJZ5v0guyQ-SpNHXYBG2F_WyCSvgjXocGBy61Ep1Cy5-H-MOsQ@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <CAJZ5v0guyQ-SpNHXYBG2F_WyCSvgjXocGBy61Ep1Cy5-H-MOsQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Andi Shyti <andi.shyti@kernel.org>,
+        Wolfram Sang <wsa@kernel.org>
+Subject: [PATCH 1/3] i2c: s3c24xx: fix read transfers in polled mode
+Date:   Thu, 28 Sep 2023 21:24:12 +0200
+Message-Id: <20230928192414.258169-2-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230928192414.258169-1-m.szyprowski@samsung.com>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmleLIzCtJLcpLzFFi42LZduznOd1Xl0RTDbbOkLF4MG8bm8X9rx2M
+        Fntfb2W36Pj7hdFixvl9TBZrj9xlt7i7fy6jA7vHplWdbB53ru1h8+jbsorR4/MmuQCWKC6b
+        lNSczLLUIn27BK6MCf9fsBfc5ai43MXdwDiJvYuRk0NCwESi89RFpi5GLg4hgRWMErsu3mKE
+        cL4wSuybdpMZwvnMKLG98wtcy7/VU6CqljNKLJ39mhkkAdYybZcriM0mYCjR9baLDcQWEXCQ
+        mLf2OztIA7PAZaCaOduYQBLCAi4SW/+9ZwWxWQRUJSa1NANN5eDgFbCT+HRSB2KZvMT+g2eZ
+        QcKcAvYSFz5LgoR5BQQlTs58wgJiMwOVNG+dDXaohMAWDombrX+ZIXpdJKZ1rYeyhSVeHd8C
+        9YCMxP+d85kgGtoZJRb8vg/lTGCUaHgOCgCQKmuJO+d+sYFsZhbQlFi/Sx8i7Chx9M8LsLCE
+        AJ/EjbeCEEfwSUzaNp0ZIswr0dEmBFGtJjHr+Dq4tQcvXII6x0Pi1ZNTzBMYFWcheWcWkndm
+        IexdwMi8ilE8tbQ4Nz212CgvtVyvODG3uDQvXS85P3cTIzC9nP53/MsOxuWvPuodYmTiYDzE
+        KMHBrCTC+/C2UKoQb0piZVVqUX58UWlOavEhRmkOFiVxXm3bk8lCAumJJanZqakFqUUwWSYO
+        TqkGphB7A4mb30VfpLGzhAZNPJOybNmBjtvTV93Uf3Qk8Y992vOnHd0sUuufeN0+93ZNiv+J
+        Ttu8qf19pt7JR89cm1/x7Z6X/7Wt52+Lrjj/XXN/lds2+W3XopN/7e2fZla9yT3o4urob8aC
+        zHbNhnOn/90i++nGvWmOU5zeV7oknl3iv+P+KQ2bVR53Rbv2PD90k8UutsDx2Tf7/nU/+pZt
+        Ppp70+f73il9ZkwxAbuCtneVhdW/bT/7U+XGjYP7T1x/+bluuc7ClvNtbx4ee62mv2f73Sm3
+        Nws9dM48kqFa73rI+bjX9CD+IO9Xb67Msi2dGXf/x8M3cXUf3Zb+CuoN+ia0Q/n8j0OTruYw
+        Wpy5zZ60S4mlOCPRUIu5qDgRADcVN8meAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsVy+t/xe7qvLommGjzawGzxYN42Nov7XzsY
+        Lfa+3spu0fH3C6PFjPP7mCzWHrnLbnF3/1xGB3aPTas62TzuXNvD5tG3ZRWjx+dNcgEsUXo2
+        RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZE/6/YC+4
+        y1FxuYu7gXESexcjJ4eEgInEv9VTGLsYuTiEBJYySrTfX8UKkZCRODmtAcoWlvhzrYsNougT
+        o8Sn/ulsIAk2AUOJrrddYLaIgJPE7UWzWEGKmAWuM0p8P/CPESQhLOAisfXfe7BJLAKqEpNa
+        moHiHBy8AnYSn07qQCyQl9h/8CwzSJhTwF7iwmdJEFMIqGLOcRWQCl4BQYmTM5+wgNjMQNXN
+        W2czT2AUmIUkNQtJagEj0ypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzAKNh27OeWHYwrX33U
+        O8TIxMF4iFGCg1lJhPfhbaFUId6UxMqq1KL8+KLSnNTiQ4ymQEdPZJYSTc4HxmFeSbyhmYGp
+        oYmZpYGppZmxkjivZ0FHopBAemJJanZqakFqEUwfEwenVAOTjoPus3U3l/0JmfmYT3B6z7dZ
+        Mzmbd4u2rzD9MGGV7yuNaV4mBrNynrjFCZ7znMDAMz/13+aYh0Y/ilkMn6+0Uav79n+59bQv
+        7m/F9npsndPXWuyRO32pQmDxotodfPLLkvezMhT1dOvOVnjD9YjbeUddRPRXq5B47jLZBlmf
+        zZIbVk/e4CcodfZVo2TN0UvhyxjWX7E5nDBv0gHv/UetRZIMyt747Fx0t20jj/G0R+5K3+Mm
+        C994FxXzVf5CHL/Y3Md5G+Mmsc3oVPWZHPGx/rug8s/Df67suN5Z/UotNVjf9lOzyo7bATLP
+        jNo9np6a8bQx/4eadv/MxyWL0wuivgfMf6zO15B5ikXjsK2nEktxRqKhFnNRcSIASC0KqQsD
+        AAA=
+X-CMS-MailID: 20230928192426eucas1p2b1763303daefc3fe1ac9354c17432572
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20230928192426eucas1p2b1763303daefc3fe1ac9354c17432572
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230928192426eucas1p2b1763303daefc3fe1ac9354c17432572
+References: <20230928192414.258169-1-m.szyprowski@samsung.com>
+        <CGME20230928192426eucas1p2b1763303daefc3fe1ac9354c17432572@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 27/09/2023 21:45, Rafael J. Wysocki wrote:
-> Hi,
-> 
-> On Wed, Sep 27, 2023 at 9:38 PM Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> wrote:
->>
->> Hello,
->>
->> this series converts all platform drivers below drivers/thermal to use
->> .remove_new(). The motivation is to get rid of an integer return code
->> that is (mostly) ignored by the platform driver core and error prone on
->> the driver side.
->>
->> See commit 5c5a7680e67b ("platform: Provide a remove callback that
->> returns no value") for an extended explanation and the eventual goal.
->>
->> There are no interdependencies between the patches. As there are still
->> quite a few drivers to convert, I'm happy about every patch that makes
->> it in. So even if there is a merge conflict with one patch until you
->> apply or a subject prefix is suboptimal, please apply the remainder of
->> this series anyhow.
-> 
-> I think I'll go ahead and apply all of this in one go (for 6.7).
-> 
-> Daniel, any objections?
+To properly handle read transfers in polled mode, no waiting for the ACK
+state is needed. Just wait a bit to ensure start state is on the bus and
+continue processing bytes.
 
-No objection, for the series:
+Fixes: 117053f77a5a ("i2c: s3c2410: Add polling mode support")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/i2c/busses/i2c-s3c2410.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 127eb3805fac..f9dcb1112a61 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -216,8 +216,13 @@ static bool is_ack(struct s3c24xx_i2c *i2c)
+ 	int tries;
+ 
+ 	for (tries = 50; tries; --tries) {
+-		if (readl(i2c->regs + S3C2410_IICCON)
+-			& S3C2410_IICCON_IRQPEND) {
++		unsigned long tmp = readl(i2c->regs + S3C2410_IICCON);
++
++		if (!(tmp & S3C2410_IICCON_ACKEN)) {
++			usleep_range(100, 200);
++			return true;
++		}
++		if (tmp & S3C2410_IICCON_IRQPEND) {
+ 			if (!(readl(i2c->regs + S3C2410_IICSTAT)
+ 				& S3C2410_IICSTAT_LASTBIT))
+ 				return true;
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.34.1
 
