@@ -2,181 +2,132 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4129CE810D5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Sep 2023 19:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 905E5E743C0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Sep 2023 20:27:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231426AbjI1TYe (ORCPT
+        id S232178AbjI1U1g (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 28 Sep 2023 15:24:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50400 "EHLO
+        Thu, 28 Sep 2023 16:27:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231195AbjI1TYc (ORCPT
+        with ESMTP id S230251AbjI1U1f (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 Sep 2023 15:24:32 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EE0C1A8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Sep 2023 12:24:30 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230928192428euoutp01a14efe2846c199ecd1f4302630768b5e~JJoCtNB6O0400004000euoutp01v
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Sep 2023 19:24:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230928192428euoutp01a14efe2846c199ecd1f4302630768b5e~JJoCtNB6O0400004000euoutp01v
+        Thu, 28 Sep 2023 16:27:35 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA838180
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Sep 2023 13:27:32 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230928202730euoutp02231de7377ab56009d60711d894497566~JKfFD188g0612906129euoutp02J
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Sep 2023 20:27:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230928202730euoutp02231de7377ab56009d60711d894497566~JKfFD188g0612906129euoutp02J
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1695929068;
-        bh=oBDmmJRwhJ39d2l7by/nE4QIBDkcbt4eJaaAte6Fm54=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CaPkqy+Vjg0wjru2aDsvfif63n2hT9A9cs28aQSkVHyQ8Qa4ZrCR5Q3gna8v2Uhuh
-         gGgUpnXmfZyK1hoeYArohC3gfI55+YPwF42XXHYhW2Mj5Ul9aQ9qoFRr8PZEKc77ZD
-         K5ScyhbKVluQInChyZ2xPYWZhJuEyv7CeKKiJDl8=
+        s=mail20170921; t=1695932850;
+        bh=qHVZtxOvVfnkh5gF6bX/+HrWDHgKU7GLHI8Jw8U5I/0=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=RFZu1Aw9i2YeWOZclNAzKQqLkEwSkiKdIuJ3Ns/bJjzkghQxPo9xEz5yul+Of6AOs
+         OSc7y9Cp2GGPD+GA9WC9CBPcuTHtp6PysczcnJF8o8QDvENoL6PsbKz9WeLr6u9EZR
+         SFYtyw+yxZnrIPXuTgf2Eq+RKdnkb9WH5U6gMeZ8=
 Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230928192427eucas1p25f4bb1a4c32ff9bd8384d4df11653828~JJoB6L9hh2293122931eucas1p2F;
-        Thu, 28 Sep 2023 19:24:27 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id E1.03.42423.BE2D5156; Thu, 28
-        Sep 2023 20:24:27 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230928192427eucas1p2e9e7147af816c288e3fec365467ca357~JJoBDNgNP2294322943eucas1p2E;
-        Thu, 28 Sep 2023 19:24:27 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230928192426eusmtrp19854def43ee1f91c36d45f6143a3197b~JJoBCmcU62223422234eusmtrp1D;
-        Thu, 28 Sep 2023 19:24:26 +0000 (GMT)
-X-AuditID: cbfec7f2-a51ff7000002a5b7-8d-6515d2eb92ca
+        20230928202729eucas1p299c5b08e32faa37df2eaac6b6a6ed42a~JKfEEReSr0305803058eucas1p2-;
+        Thu, 28 Sep 2023 20:27:29 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 19.A6.42423.1B1E5156; Thu, 28
+        Sep 2023 21:27:29 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230928202728eucas1p11a2f2850382ec2327bdd3514837123ec~JKfC3icfY1254012540eucas1p1F;
+        Thu, 28 Sep 2023 20:27:28 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230928202728eusmtrp21dd47d7293d92091e4f8abe4765febea~JKfC3Eafe3232032320eusmtrp2U;
+        Thu, 28 Sep 2023 20:27:28 +0000 (GMT)
+X-AuditID: cbfec7f2-a3bff7000002a5b7-8c-6515e1b1224a
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id C0.DC.10549.AE2D5156; Thu, 28
-        Sep 2023 20:24:26 +0100 (BST)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 34.AA.25043.0B1E5156; Thu, 28
+        Sep 2023 21:27:28 +0100 (BST)
 Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230928192426eusmtip2d264c5d5577478fd49a61b7a60e8260b~JJoAnAffY1592515925eusmtip2m;
-        Thu, 28 Sep 2023 19:24:26 +0000 (GMT)
+        20230928202728eusmtip2b833a4acafb2c07f4c8a059698929211~JKfCah4IE2907129071eusmtip2i;
+        Thu, 28 Sep 2023 20:27:28 +0000 (GMT)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
+To:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Wolfram Sang <wsa@kernel.org>
-Subject: [PATCH 3/3] i2c: s3c24xx: add support for atomic transfers
-Date:   Thu, 28 Sep 2023 21:24:14 +0200
-Message-Id: <20230928192414.258169-4-m.szyprowski@samsung.com>
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ARM: exynos_defconfig: replace SATA_AHCI_PLATFORM with
+ AHCI_DWC driver
+Date:   Thu, 28 Sep 2023 22:27:24 +0200
+Message-Id: <20230928202724.340420-1-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230928192414.258169-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkleLIzCtJLcpLzFFi42LZduzned3Xl0RTDV49NbZ4MG8bm8X9rx2M
-        Fntfb2W36Pj7hdFixvl9TBZrj9xlt7i7fy6jA7vHplWdbB53ru1h8+jbsorR4/MmuQCWKC6b
-        lNSczLLUIn27BK6Mw99bmQuuCVXcmHmWpYFxA38XIyeHhICJxLxvK1lAbCGBFYwSB+dYdDFy
-        AdlfGCU6pj1lhUh8ZpT4v9MJpuHZ6VdAcQ6g+HJGiZ9SECVA9XsuJIDYbAKGEl1vu9hAbBEB
-        B4l5a7+zg8xkFrjMKDFtzjYmkISwgLPE7t0TwGwWAVWJvqXLmEFsXgE7iaYrjcwQu+Ql9h88
-        ywyyi1PAXuLCZ0mIEkGJkzOfgN3MDFTSvHU2M8h8CYEtHBK/b79khOh1keictgbKFpZ4dXwL
-        O4QtI3F6cg8LREM7o8SC3/eZIJwJjBINz29BdVhL3Dn3iw1kM7OApsT6XfoQYUeJ5pd/mEDC
-        EgJ8EjfeCkIcwScxadt0Zogwr0RHmxBEtZrErOPr4NYevHAJ6i0PifkLF7NPYFScheSdWUje
-        mYWwdwEj8ypG8dTS4tz01GLDvNRyveLE3OLSvHS95PzcTYzA1HL63/FPOxjnvvqod4iRiYPx
-        EKMEB7OSCO/D20KpQrwpiZVVqUX58UWlOanFhxilOViUxHm1bU8mCwmkJ5akZqemFqQWwWSZ
-        ODilGphCndI6XJk4SpKjN4ctq5AMYHPwUxOSVNlxIP79CflUozjmMOllPk7uf6bwK3fnThN0
-        i5/D9v+jZHEBh+Ji1kvuk+oO307e6Hq6YOvi5bn9hnoWXo+4cg8cj77PJtIj1cVasvVpj4Db
-        hiMhQk8ef/u6veJw9ttJNRutJnBPX3SqzMIttvN+l/07cflej8DT83a8u7UoViGz0vBl/owL
-        O7rCa9ac532lHx/yub1nvezj/wkf5W/Me/pliuJmJgZPt+/n1/ksuHcw4fWUpJ4N69N/nT69
-        5rGBeIRMT/fd8HmyaSd+69VfsPXnPJ91tNpZI3TuAYc5QkeEGxPyWTafeH7HZvmlE2bv1/L+
-        vJMbpK3EUpyRaKjFXFScCABsAp+dnAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFLMWRmVeSWpSXmKPExsVy+t/xe7qvLommGiz7bGHxYN42Nov7XzsY
-        Lfa+3spu0fH3C6PFjPP7mCzWHrnLbnF3/1xGB3aPTas62TzuXNvD5tG3ZRWjx+dNcgEsUXo2
-        RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZh7+3Mhdc
-        E6q4MfMsSwPjBv4uRk4OCQETiWenX7F2MXJxCAksZZT4/XUBC0RCRuLktAZWCFtY4s+1LjaI
-        ok+MEvt2fwdLsAkYSnS9BUlwcogIOEncXjQLbBKzwHVGie8H/jGCJIQFnCV2757ABGKzCKhK
-        9C1dxgxi8wrYSTRdaWSG2CAvsf/gWSCbg4NTwF7iwmdJEFMIqGTOcRWIakGJkzOfgN3GDFTd
-        vHU28wRGgVlIUrOQpBYwMq1iFEktLc5Nzy021CtOzC0uzUvXS87P3cQIjIRtx35u3sE479VH
-        vUOMTByMhxglOJiVRHgf3hZKFeJNSaysSi3Kjy8qzUktPsRoCnT1RGYp0eR8YCzmlcQbmhmY
-        GpqYWRqYWpoZK4nzehZ0JAoJpCeWpGanphakFsH0MXFwSjUwtU70YdR1vDz1ePMb67WZtxQ+
-        X34Qc+0t4+eNux7kfH4jtfL6X6Wunkds8b8fb9ScHnZdJbYp8EbqaY1mZmbWe771Zg9zdXkn
-        XOxLkP3zeXXQ4Rmsm6878eVXOO9bM8H4iqjBL3Hvxo2xf3YzTXuWY9Bszv97alhDg6qqtMq7
-        2Ofqf0ye1H+ed/Bn1la7isC5DoybJDeon13twnPrfDzv5ecXZcxZIssTd12Rt4wsNv4a25zG
-        m6t8/KHVqWIuLfvPfb+FP5706T8cM8d9QnPLjFq7LccfpS2KO5IS/k90q3u4Ruuin1OTDn4/
-        ecS5oLJtRxIjy+/tidOnfdN+mq0hu6Lh95QNa9/NW69scPnjDiWW4oxEQy3mouJEAOQAnx0N
-        AwAA
-X-CMS-MailID: 20230928192427eucas1p2e9e7147af816c288e3fec365467ca357
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphleLIzCtJLcpLzFFi42LZduznOd2ND0VTDXat1rN4MG8bm8XfScfY
+        Lfa+3spusenxNVaLGef3MVmsPXKX3YHN4/evSYwed67tYfPYvKTeo2/LKkaPz5vkAlijuGxS
+        UnMyy1KL9O0SuDKmb8gr2M1W8XPFEuYGxuOsXYycHBICJhJrH81h7mLk4hASWMEosfrMUlYI
+        5wujROPpbywQzmdGie9zGplhWtof9EK1LGeU+LNmF0JL34Y+FpAqNgFDia63XWxdjBwcIgLe
+        EsuvKYLUMAusZ5S49GUW2HJhgUiJV11HwKayCKhKfG/exgZi8wrYSTz7+Axqm7zE/oNnmSHi
+        ghInZz4Bm88MFG/eOhvsCgmBqRwSWx7dZ4JocJHY+mwJC4QtLPHq+BZ2CFtG4v/O+UwQDe2M
+        Egt+34dyJjBKNDy/xQhRZS1x59wvsLOZBTQl1u/Shwg7Ssy6u5QJJCwhwCdx460gxBF8EpO2
+        TWeGCPNKdLQJQVSrScw6vg5u7cELl6B+8ZA4NWM52GlCArESB+b1M01gVJiF5LVZSF6bhXDD
+        AkbmVYziqaXFuempxYZ5qeV6xYm5xaV56XrJ+bmbGIEJ5vS/4592MM599VHvECMTB+MhRgkO
+        ZiUR3oe3hVKFeFMSK6tSi/Lji0pzUosPMUpzsCiJ82rbnkwWEkhPLEnNTk0tSC2CyTJxcEo1
+        MLnZSOav87Q4X9/2heuS8v2Nq08veBh/9loXf7v6KfnzEn9nZ1mc7HXd+zLo4sSPFasZ5jyZ
+        Mul4/bm38bF1nwx1+jcl9/vXNLF7zjnIYl168/Q2kQr1n0lb4v5c3Bhh3/ppGxsTw7obxhd8
+        uxPUp7VvXj795bJ9Ef9NUpZvV7O4dqAp9FONiUwd+61HN+MmJTyNCX+bu7t+Ngt3I8NZ+4MF
+        u32kWeK3pLo2ir7aOT304klVCW61gzf+HGjf/mhdhQnbngvpcov+TSqVr2c9LJpcOY3DRDfq
+        /vK1+u4pE12vJP01W8547pekzrWj9aWz+iz1jE50GbxjrVEy++Wt8fDn2nkJJ3dPk7q36q+N
+        toESS3FGoqEWc1FxIgBNQ0t1nwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrELMWRmVeSWpSXmKPExsVy+t/xe7obHoqmGjw+L2XxYN42Nou/k46x
+        W+x9vZXdYtPja6wWM87vY7JYe+QuuwObx+9fkxg97lzbw+axeUm9R9+WVYwenzfJBbBG6dkU
+        5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GVM35BXsJut
+        4ueKJcwNjMdZuxg5OSQETCTaH/QydzFycQgJLGWU2HrvLTtEQkbi5LQGqCJhiT/Xutggij4x
+        SnRv7WEGSbAJGEp0vQVJcHKICPhKNH/dwApSxCywkVFi/8IWFpCEsEC4xJWHM8GKWARUJb43
+        bwOzeQXsJJ59fMYMsUFeYv/Bs8wQcUGJkzOfgPUyA8Wbt85mnsDINwtJahaS1AJGplWMIqml
+        xbnpucVGesWJucWleel6yfm5mxiBgb3t2M8tOxhXvvqod4iRiYPxEKMEB7OSCO/D20KpQrwp
+        iZVVqUX58UWlOanFhxhNge6byCwlmpwPjK28knhDMwNTQxMzSwNTSzNjJXFez4KORCGB9MSS
+        1OzU1ILUIpg+Jg5OqQam4mXK1VP8g853SfcwGQtqP5lck9Di7F9okl+wexWrzaKQCc0PP356
+        23u/9yS3/rKt9Y8fix5r1e4ykn+4cenER2sLXGWtJzruiFTVSvhq5c7qM/c6V8ard9JSt+XC
+        V3Pf4CueVqHVv+NY0Yo/1ZzNZRsqs12nnHs7r+9Mp/q9+W/6Plxfdkwr7+/Zg1aZk/o1+M3V
+        lrB9/ZDczrzV7cUSFvM/KtqPJaZtvSj3qX/ijYY7m7vcnX9+3B53Pt2An3nT501eT1cWVNvf
+        SH91+c5l1o398i27L7aJbL1hWfK75HoHS/Bj2yLGVc/unbqierp2f8QLtay9DiZCN/1eCD9p
+        39nUcPBgge3vApHIfsvzSizFGYmGWsxFxYkAu0ZKVvUCAAA=
+X-CMS-MailID: 20230928202728eucas1p11a2f2850382ec2327bdd3514837123ec
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230928192427eucas1p2e9e7147af816c288e3fec365467ca357
+X-RootMTR: 20230928202728eucas1p11a2f2850382ec2327bdd3514837123ec
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20230928192427eucas1p2e9e7147af816c288e3fec365467ca357
-References: <20230928192414.258169-1-m.szyprowski@samsung.com>
-        <CGME20230928192427eucas1p2e9e7147af816c288e3fec365467ca357@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20230928202728eucas1p11a2f2850382ec2327bdd3514837123ec
+References: <CGME20230928202728eucas1p11a2f2850382ec2327bdd3514837123ec@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add support for atomic transfers using polled mode with interrupts
-intentionally disabled to get rid of the warning introduced by commit
-63b96983a5dd ("i2c: core: introduce callbacks for atomic transfers").
+Commit 33629d35090f ("ata: ahci: Add DWC AHCI SATA controller support")
+moved support for "snps,dwc-ahci" compatible (present in exynos5250.dtsi)
+to separate DWC AHCI driver, so reflect this change in exynos_defconfig.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/i2c/busses/i2c-s3c2410.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+ arch/arm/configs/exynos_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 8da85cb42980..586b82b30bdf 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -76,6 +76,7 @@
- #define QUIRK_HDMIPHY		(1 << 1)
- #define QUIRK_NO_GPIO		(1 << 2)
- #define QUIRK_POLL		(1 << 3)
-+#define QUIRK_FORCE_POLL	(1 << 4)
- 
- /* Max time to wait for bus to become idle after a xfer (in us) */
- #define S3C2410_IDLE_TIMEOUT	5000
-@@ -174,7 +175,7 @@ static inline void s3c24xx_i2c_master_complete(struct s3c24xx_i2c *i2c, int ret)
- 	if (ret)
- 		i2c->msg_idx = ret;
- 
--	if (!(i2c->quirks & QUIRK_POLL))
-+	if (!(i2c->quirks & (QUIRK_POLL | QUIRK_FORCE_POLL)))
- 		wake_up(&i2c->wait);
- }
- 
-@@ -700,7 +701,7 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
- 	s3c24xx_i2c_enable_irq(i2c);
- 	s3c24xx_i2c_message_start(i2c, msgs);
- 
--	if (i2c->quirks & QUIRK_POLL) {
-+	if (i2c->quirks & (QUIRK_POLL | QUIRK_FORCE_POLL)) {
- 		while ((i2c->msg_num != 0) && is_ack(i2c)) {
- 			unsigned long stat = readl(i2c->regs + S3C2410_IICSTAT);
- 
-@@ -774,6 +775,21 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
- 	return -EREMOTEIO;
- }
- 
-+static int s3c24xx_i2c_xfer_atomic(struct i2c_adapter *adap,
-+				   struct i2c_msg *msgs, int num)
-+{
-+	struct s3c24xx_i2c *i2c = (struct s3c24xx_i2c *)adap->algo_data;
-+	int ret;
-+
-+	disable_irq(i2c->irq);
-+	i2c->quirks |= QUIRK_FORCE_POLL;
-+	ret = s3c24xx_i2c_xfer(adap, msgs, num);
-+	i2c->quirks &= ~QUIRK_FORCE_POLL;
-+	enable_irq(i2c->irq);
-+
-+	return ret;
-+}
-+
- /* declare our i2c functionality */
- static u32 s3c24xx_i2c_func(struct i2c_adapter *adap)
- {
-@@ -784,6 +800,7 @@ static u32 s3c24xx_i2c_func(struct i2c_adapter *adap)
- /* i2c bus registration info */
- static const struct i2c_algorithm s3c24xx_i2c_algorithm = {
- 	.master_xfer		= s3c24xx_i2c_xfer,
-+	.master_xfer_atomic     = s3c24xx_i2c_xfer_atomic,
- 	.functionality		= s3c24xx_i2c_func,
- };
- 
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 53b1d41b4a8b..66ebb761126c 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -93,7 +93,7 @@ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_SG=y
+ CONFIG_ATA=y
+ # CONFIG_SATA_PMP is not set
+-CONFIG_SATA_AHCI_PLATFORM=y
++CONFIG_AHCI_DWC=y
+ # CONFIG_ATA_SFF is not set
+ CONFIG_MD=y
+ CONFIG_BLK_DEV_DM=y
 -- 
 2.34.1
 
