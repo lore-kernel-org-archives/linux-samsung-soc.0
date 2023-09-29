@@ -2,174 +2,131 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 372F8E810D5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Sep 2023 12:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E18E71D21
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Sep 2023 12:18:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229508AbjI2MBC (ORCPT
+        id S233203AbjI2MSK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 29 Sep 2023 08:01:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53016 "EHLO
+        Fri, 29 Sep 2023 08:18:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233143AbjI2MBA (ORCPT
+        with ESMTP id S233193AbjI2MSJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 29 Sep 2023 08:01:00 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 538501AA
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Sep 2023 05:00:58 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230929120056euoutp019b39dfc5e10e155f227391a30fd9d71c~JXOEHl55O2431224312euoutp01I
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Sep 2023 12:00:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230929120056euoutp019b39dfc5e10e155f227391a30fd9d71c~JXOEHl55O2431224312euoutp01I
+        Fri, 29 Sep 2023 08:18:09 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B13C7195
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Sep 2023 05:18:07 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230929121806euoutp0243bf41ee4a72186b31f12c640071085e~JXdDtJeBm1101411014euoutp02C
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Sep 2023 12:18:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230929121806euoutp0243bf41ee4a72186b31f12c640071085e~JXdDtJeBm1101411014euoutp02C
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1695988856;
-        bh=fzvHSn0K/vvih3FBWJPttdyUhHofQi37Qv2N4vHM+dc=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=YlAOE6KO39foXMczY0kuWg1q53nHq8+xhwyxePHjbf1IP43e5kLL8/elaJulkhFmx
-         f0/G4UrzntWIQ5IuVqo29pIrsXtNQ+czkuVs4VLUGE+gTKyI8uLdX/h3RIV/lf/KJ2
-         zE5BuRFctAj365LUiKgccjEtn86AguLjbkegudFo=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230929120055eucas1p23557fafbd1fad7c23d4016d660b62deb~JXODvNdFe0038200382eucas1p2d;
-        Fri, 29 Sep 2023 12:00:55 +0000 (GMT)
+        s=mail20170921; t=1695989886;
+        bh=L2S/Qqh17Y6dRqVOiBnPiQaWvvdVHFT6HxbDcIE/924=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=Zl8TUIBMENqCSv5LPfe1+5eCuS9CkTvF3cFsA7hsqkoZKUmzw9rcuIkSltAuEtdVJ
+         L87Mz/EMkcm3p9DEQCHeXjtYfC33x95luhIPWXFmQO4AL1TiXD5SRS7MdN9oThwST/
+         S4pEmC4mvC/6ARkegOQGqAAXHU6JvkrOH9rnKUjk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20230929121806eucas1p15dd857a20cc8293f360f44c2d9c5766a~JXdDhma8v0592705927eucas1p1E;
+        Fri, 29 Sep 2023 12:18:06 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 00.7A.37758.77CB6156; Fri, 29
-        Sep 2023 13:00:55 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230929120055eucas1p2393f113d877b1c7055439992f9fa9771~JXODSzeMx1799717997eucas1p2P;
-        Fri, 29 Sep 2023 12:00:55 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230929120055eusmtrp1cbf9f790a06b73df4b66710388f0ce74~JXODR0de60425004250eusmtrp1J;
-        Fri, 29 Sep 2023 12:00:55 +0000 (GMT)
-X-AuditID: cbfec7f5-7ffff7000002937e-ea-6516bc77d5cc
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 94.FC.25043.77CB6156; Fri, 29
-        Sep 2023 13:00:55 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230929120054eusmtip12edfc5cbaef7cbc98f335181d3e0ba70~JXOCV8Ods1347113471eusmtip1K;
-        Fri, 29 Sep 2023 12:00:54 +0000 (GMT)
-Message-ID: <2e688177-7a69-051f-2d2c-c8067c38f3be@samsung.com>
-Date:   Fri, 29 Sep 2023 14:00:54 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
-        Gecko/20100101 Thunderbird/102.15.1
-Subject: Re: [PATCH v2 4/7] thermal: exynos: simplify regulator
- (de)initialization
-Content-Language: en-US
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        m.majewski2@samsung.com,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        ALIM AKHTAR <alim.akhtar@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 97.03.11320.E70C6156; Fri, 29
+        Sep 2023 13:18:06 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230929121805eucas1p18f8ad323c1243684436ae831f4cc563c~JXdDEUKrl0592705927eucas1p1D;
+        Fri, 29 Sep 2023 12:18:05 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230929121805eusmtrp210e4f2d09c89ca12bc1bc79f462cfe6d~JXdDDvUEQ1696416964eusmtrp2c;
+        Fri, 29 Sep 2023 12:18:05 +0000 (GMT)
+X-AuditID: cbfec7f4-97dff70000022c38-2d-6516c07e01c0
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 82.E1.10549.D70C6156; Fri, 29
+        Sep 2023 13:18:05 +0100 (BST)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230929121805eusmtip2b70ba01d9863b22623ff2c61b014e0ea~JXdCowJXo2572825728eusmtip2F;
+        Fri, 29 Sep 2023 12:18:05 +0000 (GMT)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <10e6377e-ab3f-c318-9860-56ff3b8aed92@linaro.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJKsWRmVeSWpSXmKPExsWy7djP87rle8RSDc52GVg8mLeNzeLw/AqL
-        qQ+fsFl833KdyWLeZ1mLva+3slt8u9LBZLHp8TVWi8u75rBZfO49wmgx4/w+JouJxyYzW8z9
-        MpXZ4snDPjYHPo+ds+6yeyze85LJY9OqTjaPO9f2sHlsXlLv0bdlFaPH501yAexRXDYpqTmZ
-        ZalF+nYJXBmLZ/1lLZjFXbHqxmemBsYezi5GTg4JAROJTd+/MHYxcnEICaxglDh3qYUNwvnC
-        KPFh1TlGkCohgc+MEo9XG8B03G9ugOpYziix9N9sZoiij4wSb07ygNi8AnYSPQ9WgjWzCKhK
-        fP12iR0iLihxcuYTFhBbVCBVovnNebC4sECIxKRlc8HmMAuIS9x6Mp8JZIGIwHRmiSkbJ7CD
-        OMwCE5kk/hw9C1bFJmAo0fW2iw3E5gTaNudKAztEt7zE9rdzmEEaJARmc0osu7yZBeJuF4mj
-        6w8wQdjCEq+Ob2GHsGUkTk/uYYFoaGeUWPD7PhOEM4FRouH5LUaIKmuJO+d+Aa3jAFqhKbF+
-        lz5E2FFiw4b/7CBhCQE+iRtvBSGO4JOYtG06M0SYV6KjTQiiWk1i1vF1cGsPXrjEPIFRaRZS
-        wMxCCoBZSN6ZhbB3ASPLKkbx1NLi3PTUYuO81HK94sTc4tK8dL3k/NxNjMDUdvrf8a87GFe8
-        +qh3iJGJg/EQowQHs5II78PbQqlCvCmJlVWpRfnxRaU5qcWHGKU5WJTEebVtTyYLCaQnlqRm
-        p6YWpBbBZJk4OKUamLolp4Z1B//ILU5kPSYVeEt9y90nG3k3fnbeeH2zw9b9db99UhnXGS9b
-        ZBmrf3FpxMYyhWV76ppP7soSO5zNvaX5zY49FzJm3lLarWvUIvurY8aC6It2t5q2TWH0kFjW
-        a1Pt+LAnldfQ7lz2aSPu5oudTDrqa45M+9Sx9E7lcqtL5+Vl1Pau2eMn4H3Wesbds2x8v0Q+
-        tRTunXbNTOG5SbvJvxUXbhytescp8PjLRfHbS6df/NL+tbZyxYkL7SzRIY8eKalOjG14tCb5
-        uO65Pfm/loY9+pl6yXj77f/feBMnMJyevnZ9nIgL5wzF8NtJjpJ9YlOsSvcpyUjL/fBx+PLk
-        QEzETg39j6Wb0m7/PNmpxFKckWioxVxUnAgA4l4CrdwDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLIsWRmVeSWpSXmKPExsVy+t/xu7rle8RSDZ485rN4MG8bm8Xh+RUW
-        Ux8+YbP4vuU6k8W8z7IWe19vZbf4dqWDyWLT42usFpd3zWGz+Nx7hNFixvl9TBYTj01mtpj7
-        ZSqzxZOHfWwOfB47Z91l91i85yWTx6ZVnWwed67tYfPYvKTeo2/LKkaPz5vkAtij9GyK8ktL
-        UhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DIWz/rLWjCLu2LV
-        jc9MDYw9nF2MnBwSAiYS95sbGLsYuTiEBJYySuxd/pkVIiEjcXJaA5QtLPHnWhcbRNF7Rond
-        /U/AErwCdhI9D1YygtgsAqoSX79dYoeIC0qcnPmEBcQWFUiVOD1tE1iNsECIxKRlc5lBbGYB
-        cYlbT+YzgQwVEZjOLPFm0WMwh1lgIpPEq0uXmSHWnWGWOL9mI9goNgFDia63IHdwcnACrZ5z
-        pYEdYpSZRNfWLkYIW15i+9s5zBMYhWYhuWQWko2zkLTMQtKygJFlFaNIamlxbnpusZFecWJu
-        cWleul5yfu4mRmA8bzv2c8sOxpWvPuodYmTiYDzEKMHBrCTC+/C2UKoQb0piZVVqUX58UWlO
-        avEhRlNgcExklhJNzgcmlLySeEMzA1NDEzNLA1NLM2MlcV7Pgo5EIYH0xJLU7NTUgtQimD4m
-        Dk6pBqbAqh8KLS2Gnt5nNqgc1//Hall7kCmmdnPkTjOtZPVzKUrvnzlLx/SHLUtQb/aO8Pn/
-        M1HnjYhh0KvyG5+Xa/8VUY9f1OWtV7kq96+DE48So6Fls75v/TzD1yc9Op4deTBrj+H5xyfO
-        Jz/6b/8kY77J+mfn7VkyT97ucl7KvbG47vz2WJH+kH8fzkwRMvKfWcQUJV8eIGI0Q7f+998Y
-        Dn8VPw+L4O/+Lv0+x9k2XLT9b2Qf92X68ajKTTG25SX2+1YvTXef6Ka64dJLuwmFC8+4/zJP
-        ka3riHbk42n6xF66af+y+Lnvprz+HfLu6XHFh48j45tF4y3d9LUNVlwxXXPCP5J929wX1kKJ
-        1jKBSizFGYmGWsxFxYkA08m5unADAAA=
-X-CMS-MailID: 20230929120055eucas1p2393f113d877b1c7055439992f9fa9771
+To:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ARM: multi_v7_defconfig: make Exynos related PHYs modules
+Date:   Fri, 29 Sep 2023 14:18:00 +0200
+Message-Id: <20230929121800.1722211-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphleLIzCtJLcpLzFFi42LZduzned26A2KpBvf+Clo8mLeNzeLvpGPs
+        Fntfb2W32PT4GqvFjPP7mCzWHrnL7sDm8fvXJEaPO9f2sHlsXlLv0bdlFaPH501yAaxRXDYp
+        qTmZZalF+nYJXBlbjrxhKVjPVjFh3VumBsbjrF2MnBwSAiYSk66+Ze9i5OIQEljBKPGr5QeU
+        84VRoufUXBYI5zOjxPF1c9hhWlY27GGCSCxnlHhyv5URrqXjyyomkCo2AUOJrrddbF2MHBwi
+        At4Sy68pgtQwC6xnlLj0ZRYrSFxYwEui+7UcSDmLgKrEldNzGUFsXgF7iaOz1jNDLJOX2H/w
+        LDNEXFDi5MwnLCA2M1C8eetsZpCZEgIzOSQ6Jq9lgWhwkTjX8x/KFpZ4dXwL1NUyEv93zmeC
+        aGhnlFjw+z6UM4FRouH5LUaIKmuJO+d+gV3NLKApsX6XPkTYUeLZj93MIGEJAT6JG28FIY7g
+        k5i0bTpUmFeio00IolpNYtbxdXBrD164BPWLh8TuCWvB4S4kECvx/dwVpgmMCrOQvDYLyWuz
+        EG5YwMi8ilE8tbQ4Nz212CgvtVyvODG3uDQvXS85P3cTIzDBnP53/MsOxuWvPuodYmTiYDzE
+        KMHBrCTC+/C2UKoQb0piZVVqUX58UWlOavEhRmkOFiVxXm3bk8lCAumJJanZqakFqUUwWSYO
+        TqkGpuRz742+s+3jOLl266LoBt09evXPOjQFlgVb3JnysCY2MODxjukr3Kp5NVydt98TPfbI
+        d1FQaGhFRxtDUOGm9K1yd7estYhaknCfO233V6nqiq+2W6qvpna26HAfeOfNfXe/3dHtXT99
+        RQ2PmOmF2t0rZy7Y7+j4UVnCSTN4+mEpt3+GCRkBjaXx2lz1kstT5t2dvv7C3bepKRffKyxu
+        lJDnY/GemfGtwpHh2ZNrh9LeLdTQz1zxIXe5Qnn/Ngfp21wXrI94hPYe9vS1alHe/TpiaXD9
+        QZucn8JzH1nsUZlz0d58W3vW/ZkS0qo5Ynx7XDh/53VOPrbcxXPOvm0NS00MfRxfdIh+nMAc
+        x+atxFKckWioxVxUnAgAKlz5UZ8DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrELMWRmVeSWpSXmKPExsVy+t/xe7q1B8RSDa5eNLF4MG8bm8XfScfY
+        Lfa+3spusenxNVaLGef3MVmsPXKX3YHN4/evSYwed67tYfPYvKTeo2/LKkaPz5vkAlij9GyK
+        8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DK2HHnDUrCe
+        rWLCurdMDYzHWbsYOTkkBEwkVjbsYepi5OIQEljKKLHo21mohIzEyWkNULawxJ9rXWwQRZ8Y
+        JSY+uc4GkmATMJToetsFZosI+Eo0f93AClLELLCRUWL/whaWLkYODmEBL4nu13IgNSwCqhJX
+        Ts9lBLF5Bewljs5azwyxQF5i/8GzzBBxQYmTM5+wgNjMQPHmrbOZJzDyzUKSmoUktYCRaRWj
+        SGppcW56brGhXnFibnFpXrpecn7uJkZgYG879nPzDsZ5rz7qHWJk4mA8xCjBwawkwvvwtlCq
+        EG9KYmVValF+fFFpTmrxIUZToPsmMkuJJucDYyuvJN7QzMDU0MTM0sDU0sxYSZzXs6AjUUgg
+        PbEkNTs1tSC1CKaPiYNTqoHJv+T619qZFcH+Ta/WZ8QUFi6MnF+7Z+KbpwtF6iRjYzZ4sV//
+        cP3WofdZnYIz2zoX9ex0myXaXnRvwnoBQfEz3xm29Nc+rtKc8rctbnmfHqP55Y5VJRwPzSse
+        l7SujrjLYVYXemLXA+GPsZ+nvNt984XXjMKCsm8LVLLtWrzfuXXW7f6cF8wr+X6OdMTlbTL7
+        I28Za6fPfSe0IEGy9/53sdeGOxReGnhvE9i8urd3zcUnl2rmz7v9ZufF3Cl3jdhu7X+8oPN7
+        RJS28T1NNt8PTrry1xa39uU6dC+1cWPaJem2aPfyU3xTu2+9P3zeSWFLpOmViS39j65kMT3R
+        UPoscCGZSaFlmURItc2Eiu1vlFiKMxINtZiLihMBSCe30fUCAAA=
+X-CMS-MailID: 20230929121805eucas1p18f8ad323c1243684436ae831f4cc563c
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230911133616eucas1p10c5eeb0f0240dde975ccc5935cb5c311
+X-RootMTR: 20230929121805eucas1p18f8ad323c1243684436ae831f4cc563c
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20230911133616eucas1p10c5eeb0f0240dde975ccc5935cb5c311
-References: <bf9a07ff-5628-05ab-2362-a917d3d38313@linaro.org>
-        <20230911133435.14061-1-m.majewski2@samsung.com>
-        <20230911133435.14061-5-m.majewski2@samsung.com>
-        <CGME20230911133616eucas1p10c5eeb0f0240dde975ccc5935cb5c311@eucms1p2>
-        <20230926110239eucms1p2b539245c5b10591def4cd15f14896ad6@eucms1p2>
-        <67a7d507-7025-ee3e-f388-0a96e11eae41@linaro.org>
-        <a6f943be-a92f-f9ec-4103-7edc70a2c9a8@samsung.com>
-        <10e6377e-ab3f-c318-9860-56ff3b8aed92@linaro.org>
+X-CMS-RootMailID: 20230929121805eucas1p18f8ad323c1243684436ae831f4cc563c
+References: <CGME20230929121805eucas1p18f8ad323c1243684436ae831f4cc563c@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 29.09.2023 13:45, Daniel Lezcano wrote:
-> On 29/09/2023 13:03, Marek Szyprowski wrote:
->> On 29.09.2023 12:46, Daniel Lezcano wrote:
->>> On 26/09/2023 13:02, Mateusz Majewski wrote:
->>>> Hi,
->>>>
->>>>> This is not equivalent. If regulator is provided and enable fails, 
->>>>> the
->>>>> old code is nicely returning error. Now, it will print misleading
->>>>> message - failed to get regulator - and continue.
->>>>>
->>>>> While this simplifies the code, it ignores important running
->>>>> condition -
->>>>> having regulator enabled.
->>>>
->>>> Would doing this be correct?
->>>>
->>>> ret = devm_regulator_get_enable_optional(&pdev->dev, "vtmu");
->>>> switch (ret) {
->>>> case 0:
->>>> case -ENODEV:
->>>
->>> Not sure to understand why -NODEV is not an error
->>
->>
->> Because this what devm_regulator_get_enable_optional() returns if no
->> regulator is defined. I also got confused by this a few times.
->
-> The code before this change calls devm_regulator_get_optional() which 
-> returns -ENODEV too, right ? But there is no special case for this error.
->
-> So this change uses devm_regulator_get_enable_optional() and handle 
-> the ENODEV as a non-error, so there is a change in the behavior.
+Exynos Display Port PHY and Exynos MIPI Video PHY drivers are not
+essential to boot on the Exynos based system, so make them modules
+instead of build-in.
 
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/configs/multi_v7_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-It looks that the original code ignores any non-EPROBE_DEFER errors from 
-devm_regulator_get_optional(). That's a bug, indeed.
-
-
-Best regards
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index dbba33cfb3bf..4b7810a09aa6 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -1201,6 +1201,8 @@ CONFIG_PHY_QCOM_USB_HS=y
+ CONFIG_PHY_RCAR_GEN2=m
+ CONFIG_PHY_ROCKCHIP_DP=m
+ CONFIG_PHY_ROCKCHIP_USB=y
++CONFIG_PHY_EXYNOS_DP_VIDEO=m
++CONFIG_PHY_EXYNOS_MIPI_VIDEO=m
+ CONFIG_PHY_SAMSUNG_USB2=m
+ CONFIG_PHY_EXYNOS5250_SATA=m
+ CONFIG_PHY_UNIPHIER_USB2=y
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.34.1
 
