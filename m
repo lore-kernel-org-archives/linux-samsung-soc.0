@@ -2,111 +2,84 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F99FE728C5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Sep 2023 16:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E130E7734B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Sep 2023 22:57:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233215AbjI2QTn (ORCPT
+        id S233526AbjI2W5g (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 29 Sep 2023 12:19:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42874 "EHLO
+        Fri, 29 Sep 2023 18:57:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232883AbjI2QTm (ORCPT
+        with ESMTP id S229508AbjI2W5g (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 29 Sep 2023 12:19:42 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F7D51AE
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Sep 2023 09:19:40 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qmGD6-0007mo-1p; Fri, 29 Sep 2023 18:19:24 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qmGD4-009r5J-2y; Fri, 29 Sep 2023 18:19:22 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qmGD3-00615m-Ou; Fri, 29 Sep 2023 18:19:21 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>, linux-pwm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-mediatek@lists.infradead.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Fri, 29 Sep 2023 18:57:36 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2D4EDD;
+        Fri, 29 Sep 2023 15:57:34 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98ADFC433C7;
+        Fri, 29 Sep 2023 22:57:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696028254;
+        bh=fMo+CYSaDL4iXScdLYsbbHAA3MELdawJLPLByOOpjN4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pGk3CqiwrnZ5skvAgnxXgDQlvMm/107JQ3OErzqlYe60Q6SYewdWZ6HkPTKRTvKGU
+         5nIcNMOL2NgkJyMJm0p92DRgCkXzT7v+4nKEdQK2tZaLo32MXEnSmfip5Fv2HhjvWy
+         On0ExG3DMxDC458mkd7RmIoQxGY9DG6qy0METdkAdjHh+LS0LIJLwnSZdsVme1NCXH
+         LNoj7luxn5SaBvnwI/wOanEBDAIoYy12llBbr0YGHylLB167T1+es1VFvG9FjbZSoy
+         /1J3EMBRRaTOyQWaIIZ5oGmisWdiMUy9+o1K1R0zwy2hga2KfFuHS0EfuK8b5vujR5
+         fBoepazVaKdOg==
+Date:   Sat, 30 Sep 2023 00:57:28 +0200
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        chrome-platform@lists.linux.dev
-Subject: [PATCH 00/11] pwm: Some random cleanups
-Date:   Fri, 29 Sep 2023 18:19:07 +0200
-Message-Id: <20230929161918.2410424-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.40.1
+        Wolfram Sang <wsa@kernel.org>
+Subject: Re: [PATCH] i2c: exynos5: add support for atomic transfers
+Message-ID: <20230929225728.uuptlphev4tg7jnf@zenone.zhora.eu>
+References: <CGME20230929113851eucas1p28d902fbb6054951d57314ff181985e30@eucas1p2.samsung.com>
+ <20230929113841.1272625-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1447; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=EU2LjIzzIEw1uOSkgKF6jDTiS5CXMLB75+qFfOk57jI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlFvj0VfUlmGHNT0hrh6Yv9rwSiuxTi4ATgbZcq HPOTBZ67PiJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZRb49AAKCRCPgPtYfRL+ TlSiB/9Njt9Jdg9B7UzciPo87WQq9tGAbpUf6QFamH+saJ1AQm4yHL6lCd2oMFbBFlkLpalWp5Q Ynhb2OC//zWV/w66/9erqdkKn5LTizfPsEJWy5ED6PvZi4fUxWdYy+oihDDO5fnq0xCqXClqL4t W38Mvf9eGBlF+7GR+xlsYLtTgFvLoCHgWXvshv0IbIxpNGWL5ECEeZLNLWODax95gD2jb4vhIQS jtStovnFEYHljix7uE8O6A8ls/IcFj2TQ/Lr9HJ3hiUIjgYRLCLnOIvb4mdZllSmudbdVQAlKqN gBs2FuQnXjr2XEPOQhb9hEh41lHHoB9/iMUdDKfXZP/hw29+
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230929113841.1272625-1-m.szyprowski@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello,
+Hi Marek,
 
-this is a set of patches I based my efforts for closing a race condition
-in the pwm core on. I thought I already sent them out, but it seems I
-didn't. So here they come!
+> @@ -178,6 +179,7 @@ struct exynos5_i2c {
+>  	unsigned int		msg_ptr;
+>  
+>  	unsigned int		irq;
+> +	unsigned int		polled;
 
-Best regards
-Uwe
+Is this supposed to be called polling?
 
-Uwe Kleine-König (11):
-  pwm: bcm-iproc: Simplify using devm functions
-  pwm: bcm2835: Simplify using devm functions
-  pwm: brcmstb: Simplify using devm functions
-  pwm: imx-tpm: Simplify using devm functions
-  pwm: mtk-disp: Simplify using devm_pwmchip_add()
-  pwm: spear: Simplify using devm functions
-  pwm: sprd: Provide a helper to cast a chip to driver data
-  pwm: sprd: Simplify using devm_pwmchip_add() and dev_err_probe()
-  pwm: vt8500: Simplify using devm functions
-  pwm: samsung: Consistently use the same name for driver data
-  pwm: cros-ec: Simplify using devm_pwmchip_add() and dev_err_probe()
+>  	void __iomem		*regs;
+>  	struct clk		*clk;		/* operating clock */
+> @@ -711,6 +713,24 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+>  	spin_unlock_irqrestore(&i2c->lock, flags);
+>  }
+>  
+> +static unsigned long exynos5_i2c_polled_irqs_timeout(struct exynos5_i2c *i2c,
+> +						     unsigned long timeout_ms)
+> +{
+> +	ktime_t start, now;
+> +
+> +	start = now = ktime_get();
+> +	while (ktime_ms_delta(now, start) < timeout_ms &&
+> +	       !((i2c->trans_done && (i2c->msg->len == i2c->msg_ptr)) ||
+> +	         (i2c->state < 0))) {
+> +		while (readl(i2c->regs + HSI2C_INT_ENABLE) &
+> +		       readl(i2c->regs + HSI2C_INT_STATUS))
+> +			exynos5_i2c_irq(i2c->irq, i2c);
+> +		usleep_range(100, 200);
+> +		now = ktime_get();
+> +	}
+> +	return ktime_ms_delta(now, start) < timeout_ms;
 
- drivers/pwm/pwm-bcm-iproc.c |  37 +++-------
- drivers/pwm/pwm-bcm2835.c   |  27 ++------
- drivers/pwm/pwm-brcmstb.c   |  42 +++---------
- drivers/pwm/pwm-cros-ec.c   |  33 +++------
- drivers/pwm/pwm-imx-tpm.c   |  29 ++------
- drivers/pwm/pwm-mtk-disp.c  |  24 ++-----
- drivers/pwm/pwm-samsung.c   | 130 ++++++++++++++++++------------------
- drivers/pwm/pwm-spear.c     |  40 +++--------
- drivers/pwm/pwm-sprd.c      |  28 +++-----
- drivers/pwm/pwm-vt8500.c    |  42 +++---------
- 10 files changed, 137 insertions(+), 295 deletions(-)
+what are you returning here?
 
-base-commit: 0bb80ecc33a8fb5a682236443c1e740d5c917d1d
--- 
-2.40.1
-
+Andi
