@@ -2,182 +2,154 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FCF8E75437
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Oct 2023 09:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88DF6E7544A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Oct 2023 11:17:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239475AbjJCJGI (ORCPT
+        id S232149AbjJCLRN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Oct 2023 05:06:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56706 "EHLO
+        Tue, 3 Oct 2023 07:17:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239463AbjJCJGH (ORCPT
+        with ESMTP id S231337AbjJCLRM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Oct 2023 05:06:07 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49780A9
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Oct 2023 02:06:04 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-5344d996bedso1029365a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Oct 2023 02:06:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696323963; x=1696928763; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yTn3D6znwaCBRUiGNETpplkhBo7JdWjGGXiqyWYcpRY=;
-        b=dB00IByxelr8I0TQ+SlfL/zcGz7pvnvf/z3AFkZRagSvngaUCY9P3EP9oBeAHxNCVN
-         P3QlxtscZrj9HT4s4q0FJ/f/fEH4NXoBZCy/h+cMBU/VMv9WQkuYv2Lrmt4Fo3pokCIk
-         4U4Kw+NLgcP5Tgr+JhKjxNETXAXxaobu90M69kjXnqE7LsUUZ/Hc+09SSeIUGELv3y93
-         +eaZGGfw+9UabcTP5j9PqN6jDLt6AYaSgpPt5vsSfQ2weEPZ7wuaVxE26Y/WF47nd59K
-         zKEzF0ZayDrXdtsFDTiyLlXi+7wyQkvXYMK0WndiOt2rCBsSyxyuaKi/eWFi7vNwfZIG
-         ofFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696323963; x=1696928763;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yTn3D6znwaCBRUiGNETpplkhBo7JdWjGGXiqyWYcpRY=;
-        b=LVptbMH8aMK4UzCSszaTvSyXwx9VAVnnOel6dI2qAaKJXg9gj+cWWvGIFNieI9XqXk
-         HelNjZS4voBVLWNafNhkMLkQu5YDe6lSavWbVh0jbJiHX3DGAO8G+nyvyB8oOBZOez1c
-         W2lpZsEYkUVWyJgaP1MPP9UDw+dJY+VpcK9kSEtw0mTEOG4RIF5liBEl1hG1Mjrp3/1D
-         UFRwu+lhHyAKKArx8+lmiRDkUxK8sCJx+wLawj61A95bfHGB3jR1HeDpMlW68ZDyQokE
-         Lf9jWqfIwpQQboTaRuo96eUzAo3kXuXuX7WTBsb5YEd456dv2888XZSl3nxqTsmIGPPP
-         EINA==
-X-Gm-Message-State: AOJu0YzVb7VENcnpRFAgIbJrQfO9OnG+fYwwJeGRW6V+QbryscIyo/rZ
-        YUY6v+RIzZWr1ZGnbPOQj7y/tA==
-X-Google-Smtp-Source: AGHT+IG3WBtRtTk9mAInS4n1ptJJuNmHc7Y6kJeSwHHKSDILPqaOyieoUgi9z1ravG8PuW/F1IZzNw==
-X-Received: by 2002:aa7:c584:0:b0:530:a226:1f25 with SMTP id g4-20020aa7c584000000b00530a2261f25mr11151740edq.17.1696323962742;
-        Tue, 03 Oct 2023 02:06:02 -0700 (PDT)
-Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id j15-20020a50ed0f000000b0052ffc2e82f1sm545005eds.4.2023.10.03.02.06.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Oct 2023 02:06:02 -0700 (PDT)
-Message-ID: <8f139c6e-78e1-4804-bbd5-f598bba9908d@linaro.org>
-Date:   Tue, 3 Oct 2023 11:06:00 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/7] thermal: exynos: simplify regulator
- (de)initialization
-Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        m.majewski2@samsung.com,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Tue, 3 Oct 2023 07:17:12 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A81979E
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Oct 2023 04:17:06 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231003111705euoutp02a045405c3a31ba4a241c8b91fa2d0e82~KlM6y5gCe1049610496euoutp02x
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Oct 2023 11:17:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231003111705euoutp02a045405c3a31ba4a241c8b91fa2d0e82~KlM6y5gCe1049610496euoutp02x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1696331825;
+        bh=ZhBY96cBP6gAaiohQ/UMT7LgySEcdy7SO3w5LIRu/1Q=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=H4bGR/n97o3CVb5O6mtY1uf8rE1BizUNgWCYwyRNs0fPPs0QxVneA3HW9shV81P+T
+         rCb5wUvDhMs+liYSkYhJk6F1lDulCdeP+EieM1R7h7Z8UtKBaQhLI5gOaprOSWrKPX
+         NXwOkMAFUsjHcxIvf2eRL9BgIb2aQb4l5k6nd7rg=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20231003111704eucas1p28ab24b3e2430da1bb40756fde9c5862b~KlM6S_aed2873528735eucas1p2l;
+        Tue,  3 Oct 2023 11:17:04 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 47.F7.42423.038FB156; Tue,  3
+        Oct 2023 12:17:04 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20231003111703eucas1p271e5b007be186b73639f3b958e2544f8~KlM5uZ58G2873528735eucas1p2j;
+        Tue,  3 Oct 2023 11:17:03 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20231003111703eusmtrp181ebbcabe450e5587ef0adc9ac13ca83~KlM5qDw7m2246422464eusmtrp1O;
+        Tue,  3 Oct 2023 11:17:03 +0000 (GMT)
+X-AuditID: cbfec7f2-a51ff7000002a5b7-b2-651bf8308760
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 77.CE.25043.F28FB156; Tue,  3
+        Oct 2023 12:17:03 +0100 (BST)
+Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
+        [106.120.51.28]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20231003111703eusmtip232904fb217ea4b7dbd4badffe018cc8c~KlM44gcpm2901629016eusmtip2V;
+        Tue,  3 Oct 2023 11:17:03 +0000 (GMT)
+From:   Mateusz Majewski <m.majewski2@samsung.com>
+To:     linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Mateusz Majewski <m.majewski2@samsung.com>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Amit Kucheria <amitk@kernel.org>,
         Zhang Rui <rui.zhang@intel.com>,
-        ALIM AKHTAR <alim.akhtar@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-References: <bf9a07ff-5628-05ab-2362-a917d3d38313@linaro.org>
- <20230911133435.14061-1-m.majewski2@samsung.com>
- <20230911133435.14061-5-m.majewski2@samsung.com>
- <CGME20230911133616eucas1p10c5eeb0f0240dde975ccc5935cb5c311@eucms1p2>
- <20230926110239eucms1p2b539245c5b10591def4cd15f14896ad6@eucms1p2>
- <67a7d507-7025-ee3e-f388-0a96e11eae41@linaro.org>
- <a6f943be-a92f-f9ec-4103-7edc70a2c9a8@samsung.com>
- <10e6377e-ab3f-c318-9860-56ff3b8aed92@linaro.org>
- <2e688177-7a69-051f-2d2c-c8067c38f3be@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <2e688177-7a69-051f-2d2c-c8067c38f3be@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Mark Brown <broonie@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v3 0/8] Improve Exynos thermal driver
+Date:   Tue,  3 Oct 2023 13:16:26 +0200
+Message-ID: <20231003111638.241542-1-m.majewski2@samsung.com>
+X-Mailer: git-send-email 2.42.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLKsWRmVeSWpSXmKPExsWy7djP87oGP6RTDdZskrV4MG8bm8Xh+RUW
+        Ux8+YbP4vuU6k8W8z7IWe19vZbf4dqWDyWLT42usFpd3zWGz+Nx7hNFixvl9TBYTj01mtlh7
+        5C67xdwvU5ktnjzsY3Pg99g56y67x+I9L5k8Nq3qZPO4c20Pm8fmJfUefVtWMXp83iQXwB7F
+        ZZOSmpNZllqkb5fAlbHz5mXGgtfcFXfefmJqYDzN2cXIySEhYCJx/OFf1i5GLg4hgRWMEhs+
+        nmWEcL4wSmw5s5cFwvnMKHFm61MmmJat+3ayQySWM0qsenuSCcJpZZJ4sOcnI0gVm4CBxIM3
+        y9hBbBGBVkaJmU3qIEXMApeYJe7eXMsCkhAWMJX4OPs62FgWAVWJHS8ngDXwCthKdHV3MkOs
+        k5fYs+g7E0RcUOLkzCdgvcxA8eats5lBhkoIPOGQ+LnnKtAbHECOi0TfO26IXmGJV8e3sEPY
+        MhKnJ/ewQNj5EjM2v2eBKK+QuHvQC8K0lvh4hhnEZBbQlFi/Sx+i2FHi85EJjBAVfBI33gpC
+        7OeTmLRtOjNEmFeio00IolpV4vieSVCnS0s8abkNDTUPiT+fesAuFBKIlXizzWECo8IsJE/N
+        QvLULIQTFjAyr2IUTy0tzk1PLTbMSy3XK07MLS7NS9dLzs/dxAhMYaf/Hf+0g3Huq496hxiZ
+        OBgPMUpwMCuJ8IYdlUoV4k1JrKxKLcqPLyrNSS0+xCjNwaIkzqttezJZSCA9sSQ1OzW1ILUI
+        JsvEwSnVwKTUJXL/+zrVNdfLj56b/kh2Wtnkda8+MU39xbLX7oHA2okzTvz+lfmb4ddjzudl
+        T/ZzhS4U1XMoqlHR4u59cEj5wNf5BbMufbRl3yHj6v1tL+sv3bPP7mtuOcOROfGX6INA1dQK
+        5Ydmmt3x5y96Gt6zePIgrVqlYnrXPOtP3ae+/b//8/uWWw/UT25h/SN98V+xbkP7pLkp0/7f
+        0Hk83aR2R/6M06pLJ6rdvcgfe+jRa/YMk/OLdj+bOctVRS8jL1ckIT7s84oFjdozvBmjXrfs
+        SpoqXqB0lH+K5J20qG1PChZZuFTotfcslrvw7Fb1u9+qEheOOXJLzLT2jbXQyuD9Xp8XfnB/
+        YnKU1e9ivROnlFiKMxINtZiLihMB7RSledADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOIsWRmVeSWpSXmKPExsVy+t/xe7r6P6RTDW5/M7Z4MG8bm8Xh+RUW
+        Ux8+YbP4vuU6k8W8z7IWe19vZbf4dqWDyWLT42usFpd3zWGz+Nx7hNFixvl9TBYTj01mtlh7
+        5C67xdwvU5ktnjzsY3Pg99g56y67x+I9L5k8Nq3qZPO4c20Pm8fmJfUefVtWMXp83iQXwB6l
+        Z1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5egl7Hz5mXG
+        gtfcFXfefmJqYDzN2cXIySEhYCKxdd9OdhBbSGApo8SkEyUQcWmJw1+msEPYwhJ/rnWxdTFy
+        AdU0M0mc+LeRCSTBJmAg8eDNMnaQhIhAJ6NE1+ZzYAlmgVvMEvdfa4HYwgKmEh9nXweLswio
+        Sux4OQFsKq+ArURXdyczxAZ5iT2LvjNBxAUlTs58wgIxR16ieets5gmMfLOQpGYhSS1gZFrF
+        KJJaWpybnltspFecmFtcmpeul5yfu4kRGEPbjv3csoNx5auPeocYmTgYDzFKcDArifCGHZVK
+        FeJNSaysSi3Kjy8qzUktPsRoCnTfRGYp0eR8YBTnlcQbmhmYGpqYWRqYWpoZK4nzehZ0JAoJ
+        pCeWpGanphakFsH0MXFwSjUw2ZxNiH5WWGskwcc71aXpWvzSKfVXuaO4N6fGnE82a98soTp1
+        54+Al9fcT02oOS+8pfmwhXBcx40PAhvWTo2dpRrTZlyv7yaeYpD2bvt8D0UPvmPi62ad2f19
+        5mNf3SXHZI70Tgr/vGGJQLjiZhPFq9sX+33aG7zA4nKOoccXzT3/Eiy4uXSaPB6tKFhT+GaW
+        6qvU6K8zbXYzHjbjXNKXqfDI4FhZwPwSy7gfEbvvT2teIevQFXhLUP+Ia+Gv1pvup2M/5R2b
+        XdQTOVc0WEX7CufuJJ8TgflH+owK/D02nheNPu/267po0sr8zdfcJn49EX2EsYwrztCh1Jsj
+        s0xU0Ggno6qvs10ZS9lK/TtKLMUZiYZazEXFiQAC+PziKgMAAA==
+X-CMS-MailID: 20231003111703eucas1p271e5b007be186b73639f3b958e2544f8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20231003111703eucas1p271e5b007be186b73639f3b958e2544f8
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20231003111703eucas1p271e5b007be186b73639f3b958e2544f8
+References: <CGME20231003111703eucas1p271e5b007be186b73639f3b958e2544f8@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 29/09/2023 14:00, Marek Szyprowski wrote:
-> On 29.09.2023 13:45, Daniel Lezcano wrote:
->> On 29/09/2023 13:03, Marek Szyprowski wrote:
->>> On 29.09.2023 12:46, Daniel Lezcano wrote:
->>>> On 26/09/2023 13:02, Mateusz Majewski wrote:
->>>>> Hi,
->>>>>
->>>>>> This is not equivalent. If regulator is provided and enable fails, 
->>>>>> the
->>>>>> old code is nicely returning error. Now, it will print misleading
->>>>>> message - failed to get regulator - and continue.
->>>>>>
->>>>>> While this simplifies the code, it ignores important running
->>>>>> condition -
->>>>>> having regulator enabled.
->>>>>
->>>>> Would doing this be correct?
->>>>>
->>>>> ret = devm_regulator_get_enable_optional(&pdev->dev, "vtmu");
->>>>> switch (ret) {
->>>>> case 0:
->>>>> case -ENODEV:
->>>>
->>>> Not sure to understand why -NODEV is not an error
->>>
->>>
->>> Because this what devm_regulator_get_enable_optional() returns if no
->>> regulator is defined. I also got confused by this a few times.
->>
->> The code before this change calls devm_regulator_get_optional() which 
->> returns -ENODEV too, right ? But there is no special case for this error.
->>
->> So this change uses devm_regulator_get_enable_optional() and handle 
->> the ENODEV as a non-error, so there is a change in the behavior.
-> 
-> 
-> It looks that the original code ignores any non-EPROBE_DEFER errors from 
-> devm_regulator_get_optional(). That's a bug, indeed.
+This work improves Exynos thermal driver in various ways. This is
+related to the discussion in
+https://lore.kernel.org/all/97201878-3bb8-eac5-7fac-a690322ac43a@linaro.org/
 
-How about separate change fixing it? I know the same code will be
-changed twice, but it will be easier to backport and analyze in case of
-issues.
+The primary issue being fixed is a lockdep warning, which is fixed by
+the thermal: exynos: use set_trips patch. We also simplify the code in
+general.
 
-Best regards,
-Krzysztof
+Changelog:
+ v3:
+   - Fixed regulator initialization
+   - Fixed formatting of some comments
+ v2:
+   - Added missing field descriptions
+   - Removed an unnecessary field description
+   - Removed the commits that made clock management more fine-grained
+     (need more discussion), and adapted the new code to manage clocks
+   - Removed the devicetree changes (will be uploaded separately),
+     changing the recipient list accordingly
+   - Improved formatting of the devm_request_threaded_irq call
+
+Mateusz Majewski (8):
+  thermal: exynos: remove an unnecessary field description
+  thermal: exynos: drop id field
+  thermal: exynos: switch from workqueue-driven interrupt handling to
+    threaded interrupts
+  thermal: exynos: handle devm_regulator_get_optional return value
+    correctly
+  thermal: exynos: simplify regulator (de)initialization
+  thermal: exynos: stop using the threshold mechanism on Exynos 4210
+  thermal: exynos: split initialization of TMU and the thermal zone
+  thermal: exynos: use set_trips
+
+ drivers/thermal/samsung/exynos_tmu.c | 536 ++++++++++++++-------------
+ 1 file changed, 282 insertions(+), 254 deletions(-)
+
+-- 
+2.42.0
 
