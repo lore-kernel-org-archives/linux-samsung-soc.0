@@ -2,85 +2,68 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B70E776DA
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Oct 2023 01:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9E9E7542C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Oct 2023 06:26:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229938AbjJCBGH (ORCPT
+        id S230127AbjJCG0M (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 2 Oct 2023 21:06:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54580 "EHLO
+        Tue, 3 Oct 2023 02:26:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229880AbjJCBGH (ORCPT
+        with ESMTP id S229547AbjJCG0L (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 2 Oct 2023 21:06:07 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5830FB4;
-        Mon,  2 Oct 2023 18:06:02 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99EB4C433C8;
-        Tue,  3 Oct 2023 01:05:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696295161;
-        bh=F4f0krFznweIk4taQ98VjdjNBbxdo6qbxD3mNrr0nSM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qjo96mCWqTKW7xGjcbugvTHPxzMEDCajwcw1va4Y2FbcHxO3ZcGKJhTfC83106ARL
-         tU6n9aOW7ZWhDLjnQiboRRQ82EVD3td822hvni2XK2g9yNk3HSm2Ur7Z555ck5rG+o
-         12dhoHDmpsg6GbUi7vFsQpePSjmL7y7isIq5rL6cYanqyxddTPGOhvh9UX6i8cVIA7
-         ZNczfsHMS606tgeAt9grrKxT2FqCR0UULw6bIjRTIClFh9JhkLAVjJWQ9lZKETlzhR
-         YTYWmLkKqRpNbxBQIivk0G2e/6Y+0MGkQudKU03TMbdV9ij8lvPLibuVE8O1+k6oVB
-         UoMFwMLszD8rA==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Joel Stanley <joel@jms.id.au>, Li Yang <leoyang.li@nxp.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
-        Huisong Li <lihuisong@huawei.com>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Karol Gugala <kgugala@antmicro.com>,
-        Mateusz Holenko <mholenko@antmicro.com>,
-        Gabriel Somlo <gsomlo@gmail.com>,
-        Yinbo Zhu <zhuyinbo@loongson.cn>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>,
-        Shang XiaoJing <shangxiaojing@huawei.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Rob Herring <robh@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Michal Simek <michal.simek@amd.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Zev Weiss <zev@bewilderbeest.net>,
-        linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-mediatek@lists.infradead.org,
-        linux-riscv@lists.infradead.org,
-        zhang songyi <zhang.songyi@zte.com.cn>,
-        Lubomir Rintel <lkundrak@v3.sk>, linux-arm-msm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+        Tue, 3 Oct 2023 02:26:11 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C648CE
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Oct 2023 23:26:05 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-9ad810be221so88151166b.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Oct 2023 23:26:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696314364; x=1696919164; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PpEwkCw5GnWeIajtcnKE26FVy0W9ijUsXwT0C9dhf/Q=;
+        b=JLwioHnOHBe8DaG4nl1z42GWp6JAvL7f99nSkU6OW4ov5KUjQxxRVaMOFvMtajmxK1
+         TWtpsQJThCZLzzYGMwkWFhd/Iovbr7DUBXtWCTuvxkCkKE3En/iWEuwTPCBJnvRO9JH0
+         19alaLWTjlKDiJNP7LjPRQ7AA9rAC1wtf4JuaNefg2v/miHBwD4eq68y0uUK6C0WkWlU
+         y9LHnUl2HK6Kdjn+ZabiAV4iI4oFB9KtKn2FA8aMysewsc6wcKyCQySQIEzNRV2odXgA
+         1W4neCbg2GylqgDmVJ2cKDr8Xe0P8IZmnp4U7FzsOR7Rfbu+L1Rite9fyPDFP0UY2m5s
+         Xmiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696314364; x=1696919164;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PpEwkCw5GnWeIajtcnKE26FVy0W9ijUsXwT0C9dhf/Q=;
+        b=cocFIg3f93Z7Jl27vpBPVX3BLyQxStMfg2sh4VM+4cI7C7tjLrbY/cGepxX4HmBZHy
+         Qin2/lXxJR3V9T3MCTkD2ZN+35XPfdAXh0u8+ZvkwFeEDHCOVKU0MDH98jiWGaEuNjE8
+         jVtqSCdmJ54XEyEg8trUCNAwQgKvudw2QrNr23DzDY2/TCDsRgxW6z9tA8+A2WhINLEy
+         fN4aA/qgXVUXZFJ8j0TFkr6BE6pkb0SIvJyCG95aFhgpN8c6A+fg6uoQzG/EZMDiKoIW
+         Juk27TR7SzYE4/+zflU2uuRerH3i/FmQix6uKAvdhe+PkmI8GZ+CURt85EEPKArT0/+j
+         9VvA==
+X-Gm-Message-State: AOJu0YwPd+IEJzWlxtuDpuT+eEzVxUUxsEkL7vYBJop2ZYgikFDQbq/3
+        oQcXMeLnh2mT9cXKBlSyV4uCCA==
+X-Google-Smtp-Source: AGHT+IErAzIDRQU6+AMoAoRc4mCT35WMprnfrGiXAkO9KI1yfHllcIRvQS7niFnruw1Wa16MEeymjg==
+X-Received: by 2002:a17:906:518d:b0:9a5:a44a:86f3 with SMTP id y13-20020a170906518d00b009a5a44a86f3mr10749411ejk.25.1696314364011;
+        Mon, 02 Oct 2023 23:26:04 -0700 (PDT)
+Received: from krzk-bin.. (5-157-101-10.dyn.eolo.it. [5.157.101.10])
+        by smtp.gmail.com with ESMTPSA id fy17-20020a170906b7d100b009adca8ada31sm487583ejb.12.2023.10.02.23.26.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Oct 2023 23:26:03 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
-        Nick Alcock <nick.alcock@oracle.com>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ruan Jinjie <ruanjinjie@huawei.com>, kernel@pengutronix.de
-Subject: Re: (subset) [PATCH 00/40] soc: Convert to platform remove callback returning void
-Date:   Mon,  2 Oct 2023 18:10:02 -0700
-Message-ID: <169629539848.1944895.16954663145011378401.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230925095532.1984344-1-u.kleine-koenig@pengutronix.de>
-References: <20230925095532.1984344-1-u.kleine-koenig@pengutronix.de>
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] ARM: multi_v7_defconfig: add AHCI_DWC driver
+Date:   Tue,  3 Oct 2023 08:25:59 +0200
+Message-Id: <169631435596.9647.2846474395495695081.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230928202736.340435-1-m.szyprowski@samsung.com>
+References: <CGME20230928202741eucas1p1b39edbdd390e2b1aaaeea5f8e364d58e@eucas1p1.samsung.com> <20230928202736.340435-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -89,44 +72,18 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
-On Mon, 25 Sep 2023 11:54:51 +0200, Uwe Kleine-König wrote:
-> this series converts all platform drivers below drivers/soc to use
-> .remove_new(). The motivation is to get rid of an integer return code
-> that is (mostly) ignored by the platform driver core and error prone on
-> the driver side.
+On Thu, 28 Sep 2023 22:27:36 +0200, Marek Szyprowski wrote:
+> Commit 33629d35090f ("ata: ahci: Add DWC AHCI SATA controller support")
+> moved support for "snps,dwc-ahci" compatible (present in exynos5250.dtsi)
+> to separate DWC AHCI driver, so enable this driver in multi_v7_defconfig.
 > 
-> See commit 5c5a7680e67b ("platform: Provide a remove callback that
-> returns no value") for an extended explanation and the eventual goal.
 > 
-> [...]
 
 Applied, thanks!
 
-[18/40] soc/qcom: icc-bwmon: Convert to platform remove callback returning void
-        commit: dd714c568ed4e6f79017be45077de71e9908af03
-[19/40] soc/qcom: llcc-qcom: Convert to platform remove callback returning void
-        commit: d85a9d18a58156fc8b5ab185e00e078adaaeefde
-[20/40] soc/qcom: ocmem: Convert to platform remove callback returning void
-        commit: 0b742c498bcd7d215501b10fe9df72a16237735a
-[21/40] soc/qcom: pmic_glink: Convert to platform remove callback returning void
-        commit: 4b3373e42dc2caa34394ac090c8c70bed49badd6
-[22/40] soc/qcom: qcom_aoss: Convert to platform remove callback returning void
-        commit: ffbe84a514f863a46a85c1e47b2b6d930b1b463e
-[23/40] soc/qcom: qcom_gsbi: Convert to platform remove callback returning void
-        commit: 57b31729bd2c72b00d400106e18db91e9d95d3c3
-[24/40] soc/qcom: qcom_stats: Convert to platform remove callback returning void
-        commit: a47ff90bf2f93ce4ca99858948a74a0c10a2bc45
-[25/40] soc/qcom: rmtfs_mem: Convert to platform remove callback returning void
-        commit: 7c93da5b8b69d4e4e7270c33ba3206af43930e1d
-[26/40] soc/qcom: smem: Convert to platform remove callback returning void
-        commit: 4b8dee9a34d51a61f60add996fae6a7140a20ae5
-[27/40] soc/qcom: smp2p: Convert to platform remove callback returning void
-        commit: 1cd966c2dc19654ed08c843e5c933db8c1349636
-[28/40] soc/qcom: smsm: Convert to platform remove callback returning void
-        commit: bdd7cc62cf69fe989557445d65d6c8cb2f956518
-[29/40] soc/qcom: socinfo: Convert to platform remove callback returning void
-        commit: c0989f7d1264b2b1885345a28a32fd5e1e61f9c7
+[1/1] ARM: multi_v7_defconfig: add AHCI_DWC driver
+      https://git.kernel.org/krzk/linux/c/de1f6a85398e6bff2e6dfa326531daf6358b64dc
 
 Best regards,
 -- 
-Bjorn Andersson <andersson@kernel.org>
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
