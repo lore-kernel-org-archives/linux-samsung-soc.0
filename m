@@ -2,81 +2,59 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 523CEE7AD77
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Oct 2023 17:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E6AE8FDD1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Oct 2023 07:58:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232065AbjJCRQh (ORCPT
+        id S232790AbjJDH6w (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Oct 2023 13:16:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42506 "EHLO
+        Wed, 4 Oct 2023 03:58:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240639AbjJCRQg (ORCPT
+        with ESMTP id S241601AbjJDH6w (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Oct 2023 13:16:36 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D24FC9;
-        Tue,  3 Oct 2023 10:16:33 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3D7EC433C7;
-        Tue,  3 Oct 2023 17:16:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696353393;
-        bh=F/q5FdCpTXptzB2goqPSXt3V+oWWX+WpmBEJWVvOADI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=puKvn6mdRY7PJozEAWmS+PbOh7VRriWSdl8bqUHNrn03BZD8Dp0bXq6J6BQwrDz7T
-         X7N5hZq1PlohbS42kMhcYqZFwnOHIgILzqYSe00hhQURH/r4K6skOWvOy2OOlpdB8f
-         fGd/wIOmdCv23ACQrtpXK/ZajrabloTy8ChvzEdYL3Hocm6Le5KaWmrhDEkcZzZoOu
-         MuPEByQdoEi3AS7lTwuzS8JjVu4bRz3WOEHa/YRym8yLlojzmxW7j5tRLzAGnynCS7
-         yyqkT54kO8VVStupnQrlaFuDwc3ZVL1MMkIbiRuubS7sddaUo3wCQE5lfbbwR7/aDF
-         oJfO1pCPcEo4g==
-Date:   Tue, 3 Oct 2023 19:16:27 +0200
-From:   Andi Shyti <andi.shyti@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Wolfram Sang <wsa@kernel.org>
-Subject: Re: [PATCH] i2c: exynos5: add support for atomic transfers
-Message-ID: <20231003171627.xf4g3eex2m7tqhaq@zenone.zhora.eu>
-References: <CGME20230929113851eucas1p28d902fbb6054951d57314ff181985e30@eucas1p2.samsung.com>
- <20230929113841.1272625-1-m.szyprowski@samsung.com>
- <20230929225728.uuptlphev4tg7jnf@zenone.zhora.eu>
- <7b850f2f-82a2-43ae-9cbd-0fcc41b2bec0@samsung.com>
+        Wed, 4 Oct 2023 03:58:52 -0400
+X-Greylist: delayed 466 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 04 Oct 2023 00:58:49 PDT
+Received: from mail.citycodes.pl (mail.citycodes.pl [158.255.215.195])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 832DAAC
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Oct 2023 00:58:49 -0700 (PDT)
+Received: by mail.citycodes.pl (Postfix, from userid 1001)
+        id 085721F6F1; Wed,  4 Oct 2023 09:50:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=citycodes.pl; s=mail;
+        t=1696405862; bh=mMhfBvhM53FtUQl1P3lyeSY5aDBQYiR8qQBy6YFQHi0=;
+        h=Date:From:To:Subject:From;
+        b=C/pXtWCa2HHzqugLjfNT+4SH3KoPiuHifFM4Rk48nxXOcGfCJg6/VX5dJxfr09dP1
+         SzzEGh9HiJyy1wZ51G7Kt5JkSzqvPcyskq/bvx1Hqgl8TNdnBmWQmWz1aguS/T9U6c
+         a94G3RdKyTpOe7adh3JU+krUSxMVkQ4X8Q6xMrcAf72A3t+JXd53Wda4z9ZJE1w82s
+         I3vFpWyMJ+qBNhwm4/efNSCaaDqzwY5lKypBY+ZzZcI4bi1U7nny8a0l6Qti1AOOcU
+         QqEaKG9B7HTCJQNo+BnkeM3raIJGIeu7j9OISC8Z3rjUDJn0EzgdsB1hk0LA1N7R3Z
+         QxslK2vXFJpCw==
+Received: by mail.citycodes.pl for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Oct 2023 07:50:33 GMT
+Message-ID: <20231004084500-0.1.7v.j1qi.0.2jihqfjngu@citycodes.pl>
+Date:   Wed,  4 Oct 2023 07:50:33 GMT
+From:   "Kamil Lasek" <kamil.lasek@citycodes.pl>
+To:     <linux-samsung-soc@vger.kernel.org>
+Subject: =?UTF-8?Q?Rozszerzenie_Programu_M=C3=B3j_Pr=C4=85d_5.0?=
+X-Mailer: mail.citycodes.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7b850f2f-82a2-43ae-9cbd-0fcc41b2bec0@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Szanowni Pa=C5=84stwo!
 
-> >> +static unsigned long exynos5_i2c_polled_irqs_timeout(struct exynos5_i2c *i2c,
-> >> +						     unsigned long timeout_ms)
-> >> +{
-> >> +	ktime_t start, now;
-> >> +
-> >> +	start = now = ktime_get();
-> >> +	while (ktime_ms_delta(now, start) < timeout_ms &&
-> >> +	       !((i2c->trans_done && (i2c->msg->len == i2c->msg_ptr)) ||
-> >> +	         (i2c->state < 0))) {
-> >> +		while (readl(i2c->regs + HSI2C_INT_ENABLE) &
-> >> +		       readl(i2c->regs + HSI2C_INT_STATUS))
-> >> +			exynos5_i2c_irq(i2c->irq, i2c);
-> >> +		usleep_range(100, 200);
-> >> +		now = ktime_get();
-> >> +	}
-> >> +	return ktime_ms_delta(now, start) < timeout_ms;
-> > what are you returning here?
-> 
-> Values similar to wait_for_completion_timeout(); 0 means timeout and 
-> non-zero that the waiting condition has been reached, please check how 
-> it is used in exynos5_i2c_xfer_msg(). Maybe the function should be named 
-> a bit different, but I had no good idea so far.
+W ramach nowej edycji programu M=C3=B3j Pr=C4=85d mog=C4=85 otrzyma=C4=87=
+ Pa=C5=84stwo dofinansowanie na zakup i monta=C5=BC fotowoltaiki i/lub ma=
+gazynu energii. Maksymalna kwota dofinansowania wynosi 58 tys. z=C5=82.=20
 
-but you are returning a boolean here. Make it a boolean then, no?
+Jako firma wyspecjalizowana w tym zakresie zajmiemy si=C4=99 Pa=C5=84stwa=
+ wnioskiem o dofinansowanie oraz instalacj=C4=85 i serwisem dopasowanych =
+do Pa=C5=84stwa budynku paneli s=C5=82onecznych.
 
-It's true that the timeout is treated as a 1/0, but still it's a
-bit misleading.
+B=C4=99d=C4=99 wdzi=C4=99czny za informacj=C4=99 czy s=C4=85 Pa=C5=84stwo=
+ zainteresowani.
 
-Andi
+
+Pozdrawiam,
+Kamil Lasek
