@@ -2,129 +2,203 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F38E9270D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 15:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34285E9270D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 16:05:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233180AbjJEPlm (ORCPT
+        id S234654AbjJEQEz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Oct 2023 11:41:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33386 "EHLO
+        Thu, 5 Oct 2023 12:04:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234100AbjJEPlH (ORCPT
+        with ESMTP id S236865AbjJEQDd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Oct 2023 11:41:07 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6EE0677EE
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 07:55:47 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231005111725euoutp01c245783405ac8335e11509208d0db0b8~LMfySNrXX1624916249euoutp01J
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 11:17:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231005111725euoutp01c245783405ac8335e11509208d0db0b8~LMfySNrXX1624916249euoutp01J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1696504645;
-        bh=WdBl7UA5fyuvUgO4bx/z2RRv+6uENgRWAgMYFmjv1v0=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=RWAI7tryPW1UQ41T0zekv0fB9jls8RV6KhI9wRlwVYaBTOImszqdzfLgZeCshVMP7
-         eX4T/OOshgoDAhe1UtyGNyPXp/9ne/3kxIySMhKgCX7ATgzE5o0LbDRBxtqu0lMh3J
-         kwYf2vDTjg+RBJVgoSG8efvOLSp3bd/4Gez0Nhmk=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20231005111725eucas1p29c5e3b6d6e1c8078f6f8bfd5bf16d75d~LMfx9dD231064510645eucas1p24;
-        Thu,  5 Oct 2023 11:17:25 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 3C.5C.11320.54B9E156; Thu,  5
-        Oct 2023 12:17:25 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20231005111724eucas1p19824dca99456dca9c2c5caa6bfeaf7db~LMfxoH8EQ2766727667eucas1p1F;
-        Thu,  5 Oct 2023 11:17:24 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20231005111724eusmtrp1eec3f9f538305377efc58943d340df5b~LMfxnnubX0863208632eusmtrp1_;
-        Thu,  5 Oct 2023 11:17:24 +0000 (GMT)
-X-AuditID: cbfec7f4-97dff70000022c38-d4-651e9b45b99e
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 04.28.10549.44B9E156; Thu,  5
-        Oct 2023 12:17:24 +0100 (BST)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20231005111724eusmtip1580d0b3d51467eb00be8435d216ecd37~LMfxJjzof2779027790eusmtip1Y;
-        Thu,  5 Oct 2023 11:17:24 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] ARM: multi_v7_defconfig: add tm2-touchkey driver
-Date:   Thu,  5 Oct 2023 13:17:18 +0200
-Message-Id: <20231005111718.1096634-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 5 Oct 2023 12:03:33 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A5B385DB8
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 08:57:25 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-327be5fe4beso1111425f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Oct 2023 08:57:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696521444; x=1697126244; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dqGxynjd2WPI1dcd+xfmUDs2mxNl3KtmyJFW0p/wctU=;
+        b=dwGhxgLZi7YRLBQftSjLjjY7VD2il1J05qW/5YBdSnUsolZHGmnKeI/CQqpJ19sS7q
+         +uoRAsa5BeO+gcbBkuLfV4TO1lnx8fKzXMRoiJVL3UbaVVndwAVihH2qFofkk8P7YUni
+         7zFDiwUc2EOsx+G1w1Jebr2A2LeF22aQgqgFDFSMDAQlqufMrnm25KgPxCYCtEs2FwKm
+         fOJV1LIDb6CfRxL/HFOxg3PxVwDC6hX2i+CUQczl4HvPWisuIzbr6EE/KRqQt3jk2ZHj
+         DZhY5sa7U+okVVw65pMHyiEvVt3yx/cryPc2UUBf/hTGS586Nsu2LmYXbxQRrlI/2g5E
+         If1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696521444; x=1697126244;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dqGxynjd2WPI1dcd+xfmUDs2mxNl3KtmyJFW0p/wctU=;
+        b=FYvXgLgr3yycn+1xdULvKwQ6HxOic7HPFKbzmC8+A2k6GfNekgn45AFNVAr7/VuonT
+         GMtWftvI/9nqOLXD4tCPajtYpJc4gNCQSA7uQGl+NU3pcoO9jgul6y98dPAc+TSV4FsC
+         vLxUSei6HS4Ztab/2dO5VziCXOqL2SIEu+ZE2BrFHE07LUQyvb8oi6eGT+uDwB4jIrZt
+         A1jItI4CQP68H29AcdmuYkvxz+3+sWo4Cgo1mZUI2e17gpTzM5KKQrh1JsM3pBfJYZCt
+         Qt1rFOaxNwW2C05q0pe3YFEeXS7dmPoJvJpJPB4vchG06HfR1r2VRnj2MxbIvjVVKh/Q
+         cG4A==
+X-Gm-Message-State: AOJu0YzYV5mT6PEJGv1Cm5NKp6TAc/m62HkGsblNEsPfz2VohohBr0bz
+        JsDt3u4cVCg2XBPlZjgfRywnzQ==
+X-Google-Smtp-Source: AGHT+IFVvYSS2Teb+3C+yTzocwyuLqySOLh37A4RBSXTHwdRSE57cXIgg0jBOZT62IFM/d6hCX7Abw==
+X-Received: by 2002:adf:e8cc:0:b0:322:da1f:60d9 with SMTP id k12-20020adfe8cc000000b00322da1f60d9mr5392415wrn.47.1696521443734;
+        Thu, 05 Oct 2023 08:57:23 -0700 (PDT)
+Received: from gpeter-l.lan (host-92-12-225-146.as13285.net. [92.12.225.146])
+        by smtp.gmail.com with ESMTPSA id t9-20020a5d4609000000b0031f8a59dbeasm2084336wrq.62.2023.10.05.08.57.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Oct 2023 08:57:23 -0700 (PDT)
+From:   Peter Griffin <peter.griffin@linaro.org>
+To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, olof@lixom.net, cw00.choi@samsung.com
+Cc:     peter.griffin@linaro.org, tudor.ambarus@linaro.org,
+        andre.draszik@linaro.org, semen.protsenko@linaro.org,
+        soc@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: [PATCH 03/21] dt-bindings: clock: Add Google gs101 clock management unit bindings
+Date:   Thu,  5 Oct 2023 16:56:00 +0100
+Message-ID: <20231005155618.700312-4-peter.griffin@linaro.org>
+X-Mailer: git-send-email 2.42.0.582.g8ccd20d70d-goog
+In-Reply-To: <20231005155618.700312-1-peter.griffin@linaro.org>
+References: <20231005155618.700312-1-peter.griffin@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkleLIzCtJLcpLzFFi42LZduzneV3X2XKpBse7WSwezNvGZvF30jF2
-        i72vt7JbbHp8jdVixvl9TBZrj9xld2Dz+P1rEqPHnWt72Dw2L6n36NuyitHj8ya5ANYoLpuU
-        1JzMstQifbsEroymUwsZC/6zVnRskWxgXMDaxcjJISFgIjHt9GWmLkYuDiGBFYwS/1Y3MkI4
-        XxglTnS1M0M4nxklGnZMY4JpmbD5CAtEYjmjxKSP31ngWt4ePM4MUsUmYCjR9baLrYuRg0NE
-        wFti+TVFkBpmgfWMEpe+zGIFiQsLOEr0fhAGKWcRUJXo7f4MtoBXwF7i4oOZ7BDL5CX2HzzL
-        DBEXlDg58wkLiM0MFG/eOhvsOgmBqRwSG0+sgbrORWJD7yyo54QlXh3fAjVIRuL05B4WiIZ2
-        RokFv+8zQTgTgH57fosRospa4s65X2BXMwtoSqzfpQ9iSgAdOn2RBYTJJ3HjrSDEDXwSk7ZN
-        Z4YI80p0tAlBzFCTmHV8HdzWgxcuQZV4SOzZwwUSFhKIlZh/cDf7BEaFWUgem4XksVkIFyxg
-        ZF7FKJ5aWpybnlpslJdarlecmFtcmpeul5yfu4kRmFpO/zv+ZQfj8lcf9Q4xMnEwHmKU4GBW
-        EuFNb5BJFeJNSaysSi3Kjy8qzUktPsQozcGiJM6rbXsyWUggPbEkNTs1tSC1CCbLxMEp1cCk
-        +njRQl2WFqPVnHO5Rfqrz8c+eBa81Ed+g+BvA37j2KyHW0sLTh+sVDioe1Dw3Jq5efOTqxkv
-        Nc6Q/L85fc5954cSRczrvzZc89S8K//06d8PPQu2CrOcKj/489f7a0dPzo5n9ZMU9JBqy7s+
-        sf3bTYPHmk6xjmXO2rtypPW49G9XXLU+9qbyjatI7lbdWkO1mE03/Tafz0xdxvZ9ntwMzj8T
-        mhcu/xTyb1VfWxrTsp4UBrXp1xwDPstbrGJWXbxyhuoU4Y6bt3wnx64+XRLh6zmhs/uR26Ef
-        +lO/Xmo4xfnpmr7htwgZedmJHPfN3CuFV5bYLskxKT0TM0OwWrZA8hAbR37q549soqvW9nor
-        sRRnJBpqMRcVJwIAnCFq/JwDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrILMWRmVeSWpSXmKPExsVy+t/xu7ous+VSDfpvqVs8mLeNzeLvpGPs
-        Fntfb2W32PT4GqvFjPP7mCzWHrnL7sDm8fvXJEaPO9f2sHlsXlLv0bdlFaPH501yAaxRejZF
-        +aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehlNpxYyFvxn
-        rejYItnAuIC1i5GTQ0LARGLC5iMsXYxcHEICSxklrt+awQyRkJE4Oa0BqkhY4s+1LjaIok+M
-        EkcmfGIESbAJGEp0vQVJcHKICPhKNH/dwApSxCywkVFi/8IWoLEcHMICjhK9H4RBalgEVCV6
-        uz8zgdi8AvYSFx/MZIdYIC+x/+BZZoi4oMTJmU9YQGxmoHjz1tnMExj5ZiFJzUKSWsDItIpR
-        JLW0ODc9t9hQrzgxt7g0L10vOT93EyMwrLcd+7l5B+O8Vx/1DjEycTAeYpTgYFYS4U1vkEkV
-        4k1JrKxKLcqPLyrNSS0+xGgKdN9EZinR5HxgZOWVxBuaGZgamphZGphamhkrifN6FnQkCgmk
-        J5akZqemFqQWwfQxcXBKNTAxzW8NuJv8J+VHQk2VBfdTV4v9yw8sVOrk+fvHpDnI7suMi6fT
-        0/aFp8rfmH+bRYDR6K/ADbYFqbwaPGvdl2VXz7E9wOKR9T7w4SrTpPvrrerO1fZsu+ydE+Gf
-        EHV5o/J91t1ZdvNEbJ5d28DVPEHlavIziTbeXQcYZcva7PWy3/q6MerFdCo3ZucarlT4sErK
-        s8mnfGVfzD+OLLkd0yeVNfjcL1SpuavL5GKX1HjbvCqsaekrQ/MP6a7vDykG/f9zf/0XC0ZH
-        9VfzzhdzmPxju/2haevu+acm2lV8/3V1/uz3Dk+DE7t94/VnbGbJyO4NNZS0//Hy+3W7qzP/
-        BxzN/erCEXm9d0XPmmvGLEosxRmJhlrMRcWJAHIB3aP0AgAA
-X-CMS-MailID: 20231005111724eucas1p19824dca99456dca9c2c5caa6bfeaf7db
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20231005111724eucas1p19824dca99456dca9c2c5caa6bfeaf7db
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20231005111724eucas1p19824dca99456dca9c2c5caa6bfeaf7db
-References: <CGME20231005111724eucas1p19824dca99456dca9c2c5caa6bfeaf7db@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The Cypress 'touchkey' hardware is available on Exynos4412-based Midas
-family boards, so enable the driver for it to increase testing coverage.
+Provide dt-schema documentation for Google gs101 SoC clock controller.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ .../bindings/clock/google,gs101-clock.yaml    | 109 ++++++++++++++++++
+ 1 file changed, 109 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index bbaa478dff0d..af064a4b73e1 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -315,6 +315,7 @@ CONFIG_KEYBOARD_PXA27x=m
- CONFIG_KEYBOARD_SAMSUNG=m
- CONFIG_KEYBOARD_ST_KEYSCAN=y
- CONFIG_KEYBOARD_SPEAR=y
-+CONFIG_KEYBOARD_TM2_TOUCHKEY=m
- CONFIG_KEYBOARD_CROS_EC=m
- CONFIG_MOUSE_PS2_ELANTECH=y
- CONFIG_MOUSE_CYAPA=m
+diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+new file mode 100644
+index 000000000000..a28d05d88afe
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+@@ -0,0 +1,109 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/google,gs101-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Google GS101 SoC clock controller
++
++maintainers:
++  - Peter Griffin <peter.griffin@linaro.org>
++
++description: |
++  Google GS101 clock controller is comprised of several CMU units, generating
++  clocks for different domains. Those CMU units are modeled as separate device
++  tree nodes, and might depend on each other. The root clock in that clock tree
++  is OSCCLK (24.576 MHz). That external clock must be defined as a fixed-rate
++  clock in dts.
++
++  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
++  dividers; all other leaf clocks (other CMUs) are usually derived from CMU_TOP.
++
++  Each clock is assigned an identifier and client nodes can use this identifier
++  to specify the clock which they consume. All clocks available for usage
++  in clock consumer nodes are defined as preprocessor macros in
++  'dt-bindings/clock/gs101.h' header.
++
++properties:
++  compatible:
++    enum:
++      - google,gs101-cmu-top
++      - google,gs101-cmu-apm
++      - google,gs101-cmu-misc
++
++  clocks:
++    minItems: 1
++    maxItems: 5
++
++  clock-names:
++    minItems: 1
++    maxItems: 5
++
++  "#clock-cells":
++    const: 1
++
++  reg:
++    maxItems: 1
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: google,gs101-cmu-top
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (24.576 MHz)
++
++        clock-names:
++          items:
++            - const: oscclk
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: google,gs101-cmu-misc
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (24.576 MHz)
++            - description: Misc bus clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: dout_cmu_misc_bus
++
++required:
++  - compatible
++  - "#clock-cells"
++  - clocks
++  - clock-names
++  - reg
++
++additionalProperties: false
++
++examples:
++  # Clock controller node for CMU_TOP
++  - |
++    #include <dt-bindings/interrupt-controller/gs101.h>
++    soc {
++    #address-cells = <2>;
++    #size-cells = <1>;
++
++    cmu_top: clock-controller@1e080000 {
++        compatible = "google,gs101-cmu-top";
++        reg = <0x0 0x1e080000 0x8000>;
++        #clock-cells = <1>;
++        clocks = <&ext_24_5m>;
++        clock-names = "oscclk";
++        };
++    };
++
++...
 -- 
-2.34.1
+2.42.0.582.g8ccd20d70d-goog
 
