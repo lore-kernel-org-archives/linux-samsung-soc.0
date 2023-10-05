@@ -2,61 +2,61 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B69E92718
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 16:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AAACE9271B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 17:20:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230512AbjJEQnR (ORCPT
+        id S229620AbjJERTl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Oct 2023 12:43:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46986 "EHLO
+        Thu, 5 Oct 2023 13:19:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234459AbjJEQlb (ORCPT
+        with ESMTP id S230334AbjJERSl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Oct 2023 12:41:31 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC0373865
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 09:12:03 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-538575a38ffso1950237a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Oct 2023 09:12:03 -0700 (PDT)
+        Thu, 5 Oct 2023 13:18:41 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9830B1FDE
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 09:32:41 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-533c4d20b33so2753285a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Oct 2023 09:32:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696522322; x=1697127122; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1696523558; x=1697128358; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9lxM4OiGaB4e3uq2pWffPreokXzaYO67D0mgzpzgon8=;
-        b=a/r53c5IAuWC7liI9ugDKYX8rtsQBZrFvQ2vgS0sHLUs6vr3VhtksZrkO/O1T0xmkV
-         lpM0bbL7PkP6GuQv5wwhCUYFz2uSjkIgUEvmS0fvn0rftiXm6d5n7DF72iBr/D89E5ML
-         R9Qw7jDyA9xeszpSxIURxYkwjGywo/6jSNIAKPrPYroGeAtZOSn5MJqMbx7OtfZZVeUT
-         v7OvFgWsaTs+k9qgrqYQCI33PAHfncG3jAYzXBZk9ITUhdOYwIuC8rw2rSOLQou0DUGa
-         VhVRTDJpFk0F1WuXXVMiSlntZf7k9w0foOtLdTQ2HFL0S0tcXSS9ogmdjI4/Q1S9mFgq
-         xpOQ==
+        bh=Ys4Rn9sDoKGLwbwHx69SQsJVl2W8HKJketH4+P2llm4=;
+        b=s7tv75jd+0inYLVeAoANn1ZqVBVkU9qGAxHIihZEBqqCx73/1pUYdCec6CWPV2Uk9+
+         LgoKwMeGHva/rTH6V7ZtJHPpBSnK/oua0mFrI1Wyxcqnp40EDEl/skd2jJ99QyIkVsnR
+         0Jfx+3o9SQorO7gRPFFfrCc2Dda1RwDcFSfFaYV8wDdG8zXfPwtazP7afINUYCmluDqB
+         SiJXa87HWRB1N7FNMOVl4WpOCgo8AGr1UDF2/G+c09gf3xpow6yZt1CqklF711RmKVoE
+         sm34M5/O0fhFHNwk8h021JNh4xaO4IW4IaqZhzSYgYc1x2cQ7JtO/P1YgDrLz8SsQ9aD
+         46ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696522322; x=1697127122;
+        d=1e100.net; s=20230601; t=1696523558; x=1697128358;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9lxM4OiGaB4e3uq2pWffPreokXzaYO67D0mgzpzgon8=;
-        b=XrsIgvV02AaOdAcF04fSQoE4xBwZUCbK1pRS2cH5HG+T/PdjYsfA0jeqU5KVPGvdW8
-         dokU7BEYGvbTht+BPr2l4nMjzNqG604coTfNtaC81qmm0zTRJyR0AT+cyDMSCGZoMNCo
-         ojcFjUYtj2Ut9Q3kFw37PgmYtHZcs1bFNIVDua9Uf3OS530Ldxx2WSU0DfNQa8wA0rnv
-         Y9BkK5wLmADf+WLE9UWqSUbjaueVuXxdZoIWYZ2rT+Mjq34HoYf6LDy80afXC8jLGSGe
-         CWlZx9D0kU2FVz14bMeYa6fevHZeAtcFj1oTz5ddbDJznXQ1EAabrID7lZsfj7vE8iJ5
-         9Qaw==
-X-Gm-Message-State: AOJu0Yxc/vXgqxZXyc2d0A+TJq8GgaPRXt9ADHBE9RTdAz+9sHIzjg3/
-        Lk8dbOTMlrhRdRvcbEPcHVlVnQ==
-X-Google-Smtp-Source: AGHT+IFZJthaVaTYewEeZJtni3cSipAL+gy8tpIe3TbQsRdvHNdhR212iy3ddLH56ot/orPcub/dwg==
-X-Received: by 2002:aa7:db45:0:b0:533:520:a5a8 with SMTP id n5-20020aa7db45000000b005330520a5a8mr5184779edt.29.1696522322395;
-        Thu, 05 Oct 2023 09:12:02 -0700 (PDT)
+        bh=Ys4Rn9sDoKGLwbwHx69SQsJVl2W8HKJketH4+P2llm4=;
+        b=FiY5XCUNkGZ3dadHJQLsEmuL+IVqrTeYOOOrQvT1ooe1HcNLc3p3RVtWtdpfUcwu7m
+         Q1dZ5CNDswrvWd5spfRFDVHkKaqNg62M83TFvu6fPrGJJNDamPg5kZ2J5XFseoZyHcf5
+         FF9qnNi0EEmighGhWh+dBR6kIChpzYA02hc47+JjmO3hWK/rfpE7b/j54ANXvZy/N7fI
+         uhb9XqLCtuLNHIKlpLmPaqZ/mpi+e2cw1L4jAl1+a5baTT3dH/oxe5ecd1zmqvweF0A+
+         R1DLEdYg3osEGvnVGJTZKqdy73Xn70hjcZHZkz2qRuBq11ceKFcqmDpvLv8RQYtkU1bj
+         3syQ==
+X-Gm-Message-State: AOJu0Yxbiu1gmEtj/t4slj54vuAk1Ll5HwqK7YOV3BtuN2rujaowtyy3
+        t3Adb6HCIdDckFsWpeZG90gJpA==
+X-Google-Smtp-Source: AGHT+IHkIVXrSP+A9S4CtovH+/G5fq5stJEIfgvDH0uUnlUH6PBq543HITeATGsKpGI38se8HqfNNw==
+X-Received: by 2002:aa7:d44d:0:b0:523:2e23:a0bf with SMTP id q13-20020aa7d44d000000b005232e23a0bfmr3029730edr.11.1696523558539;
+        Thu, 05 Oct 2023 09:32:38 -0700 (PDT)
 Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id u1-20020a05640207c100b005311e934765sm1278866edy.27.2023.10.05.09.11.59
+        by smtp.gmail.com with ESMTPSA id b6-20020a056402138600b00536031525e5sm1277462edv.91.2023.10.05.09.32.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Oct 2023 09:12:01 -0700 (PDT)
-Message-ID: <103c7112-d469-48bf-bdbe-fb6608b97a64@linaro.org>
-Date:   Thu, 5 Oct 2023 18:11:59 +0200
+        Thu, 05 Oct 2023 09:32:37 -0700 (PDT)
+Message-ID: <b1598405-b01f-426a-aaba-89f2d2dc9c2e@linaro.org>
+Date:   Thu, 5 Oct 2023 18:32:35 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/21] dt-bindings: clock: gs101: Add cmu_apm clock
- indices
+Subject: Re: [PATCH 00/21] Add minimal Tensor/GS101 SoC support and
+ Oriole/Pixel6 board
 Content-Language: en-US
 To:     Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
@@ -71,7 +71,6 @@ Cc:     tudor.ambarus@linaro.org, andre.draszik@linaro.org,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
 References: <20231005155618.700312-1-peter.griffin@linaro.org>
- <20231005155618.700312-11-peter.griffin@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -117,24 +116,39 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231005155618.700312-11-peter.griffin@linaro.org>
+In-Reply-To: <20231005155618.700312-1-peter.griffin@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 05/10/2023 17:56, Peter Griffin wrote:
-> CMU_APM generates clocks for the Active Power Management
-> controller. Add clock indices for those muxs, dividers and
-> gates.
+On 05/10/2023 17:55, Peter Griffin wrote:
+> Hi folks,
 > 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  include/dt-bindings/clock/gs101.h | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
+> This series adds initial SoC support for the GS101 SoC and also initial board
+> support for Pixel 6 phone (Oriole).
+> 
+> The gs101 / Tensor SoC is also used in Pixel6a (bluejay) and Pixel 6 Pro (raven).
+> Currently DT is just added for the gs101 SoC and Oriole.
 
-Please squash it with previous patch.
+Thanks for submitting the patches. Nice work!
+
+This is basically a custom-made variant of Exynos made by Samsung for
+Google. Something similar what is with Tesla FSD (and Axis Artpec-8
+which was not upstreamed, AFAIR). Many, many drivers and bindings will
+be re-used. I want to be sure that GS101 fits into existing Samsung
+Exynos support, re-uses it as much as possible and extend when necessary
+without breaking anything. Therefore, when the patches are ready, I
+would like to be the one applying entire set and future submissions
+through Samsung SoC tree, just like I am doing it with Tesla FSD, so I
+keep entire Samsung-ecosystem in shape.
+
+This also means that you are lucky to be selected to:
+https://elixir.bootlin.com/linux/v6.6-rc4/source/Documentation/process/maintainer-soc-clean-dts.rst
+joining there Tesla FSD and entire Samsung Exynos family :)
+
+I hope that's ok.
 
 Best regards,
 Krzysztof
