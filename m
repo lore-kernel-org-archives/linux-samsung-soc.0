@@ -2,184 +2,173 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71195E92734
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 19:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 291AEE92FCE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 23:37:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232274AbjJET4R (ORCPT
+        id S229543AbjJEXht (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Oct 2023 15:56:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56166 "EHLO
+        Thu, 5 Oct 2023 19:37:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232102AbjJET4J (ORCPT
+        with ESMTP id S229574AbjJEXgl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Oct 2023 15:56:09 -0400
-X-Greylist: delayed 567 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 05 Oct 2023 12:56:03 PDT
-Received: from proxmox1.postmarketos.org (proxmox1.postmarketos.org [213.239.216.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 039DA193;
-        Thu,  5 Oct 2023 12:56:02 -0700 (PDT)
-Received: from [192.168.1.177] (unknown [10.0.0.254])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by proxmox1.postmarketos.org (Postfix) with ESMTPSA id C3509140B01;
-        Thu,  5 Oct 2023 19:46:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
-        s=donut; t=1696535193;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=cIOhWmDhaGKnIOKqSallat4hBjPWg9wv14CRRkvBnO8=;
-        b=gkP75ATkFuJkXErAW/PpJat6k5/Htnp9NLF6G0yL5FPd9zb3e7/4+WegrFXn/YJQD6dv0d
-        wDuXLaeWdpjeOiVL+s7MmiUVDSub0JXNcdNWf290sEABUVFheVGLr10eIByPNP109dIJ7u
-        WbIGNxc7cBE21VbaBcnx/e9oYMG/TFg=
-Message-ID: <fe78f7e4-9655-639c-4a8c-120daa221ce7@postmarketos.org>
-Date:   Thu, 5 Oct 2023 22:46:32 +0300
+        Thu, 5 Oct 2023 19:36:41 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 196342721
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 16:20:01 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1c60128d3f6so71795ad.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Oct 2023 16:20:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1696548000; x=1697152800; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=g9+/T8jL1FueuqbJWbDBnW4JHhnHC6qNQT3btWThJAA=;
+        b=v+UouYNuHRJZLn6qa9pJlSug21LceqYMP5xJLBs9AV3PUI6CY9ziCJvFykObqwWyZI
+         93HL2qRPazgPcjnAqexgNvuIaSVfnlvgzFDZscbBOeCwL2y26LlCy7Fc501aHKwe/bIU
+         xzBXd8VCKDpYeict0m6yZtkzqiobtvwhJrnc18eD0QPziGC0YVN5ykkAYcklcpcnlqNl
+         eu0rKyhDl5cuZKlyNCsN8pq+JtkEV8u49VyWRqAeOI7MUuSxjrHO0/XqvTFSqxKeEFfz
+         V4PV2sV92v40eI0by02BJttTmjFBd+K6BPQ4oV5brWXrSmtrdnitnLQylHgXN5gBFwhg
+         qK2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696548000; x=1697152800;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g9+/T8jL1FueuqbJWbDBnW4JHhnHC6qNQT3btWThJAA=;
+        b=mXYkODpRftDtCSmbMQ49uAkCcNPXzr1J0VmhAn7rnqrjyRcT+Llj7WUcmC/OuZZO6O
+         +KZWHo2QPrTFeMXpO9P1YwPptDY903W9C4D8yWWc6U6lMwJ16t80/iG0rjcHU2JrTemj
+         zlb3qZVDngt91zdaruhnPKSmK1klMI6EnsX1FncKXtPZ67q3UpHGJjd65Qbla4jfzkV7
+         NZxceRnNKx+vy/bQj9u4PwIGYMk3s+Blb0uaFGHOP+pFwgFmpIi84L6Zugrjx1CjjWgC
+         3FzQNoQwA7+psGirbEVa6WvzkZFwncYUPtDjHzirHMdO4frzXupAMoeUGCUEBOW8Wzq4
+         wYDQ==
+X-Gm-Message-State: AOJu0Ywch8Jml5f/9BlxpUHwBOccPOG5CJS5orGBKUrkcSGqjQtUxLHK
+        RAzXO2r2xxOkPrOi+SER2uuXog==
+X-Google-Smtp-Source: AGHT+IG6SUbZdWjUlwVKgWGyn2h7w47kdQ+sEw89YZgLkBjRn4vrO6PiIxtJlw/+S61vF8DHpPNtxw==
+X-Received: by 2002:a17:902:d506:b0:1c4:4470:bfa7 with SMTP id b6-20020a170902d50600b001c44470bfa7mr232458plg.29.1696548000224;
+        Thu, 05 Oct 2023 16:20:00 -0700 (PDT)
+Received: from google.com (13.65.82.34.bc.googleusercontent.com. [34.82.65.13])
+        by smtp.gmail.com with ESMTPSA id rm10-20020a17090b3eca00b0026d214a2b33sm4130541pjb.7.2023.10.05.16.19.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Oct 2023 16:19:59 -0700 (PDT)
+Date:   Thu, 5 Oct 2023 16:19:56 -0700
+From:   William McVicker <willmcvicker@google.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
+        s.nawrocki@samsung.com, linus.walleij@linaro.org,
+        wim@linux-watchdog.org, linux@roeck-us.net,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        olof@lixom.net, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
+        andre.draszik@linaro.org, semen.protsenko@linaro.org,
+        soc@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com
+Subject: Re: [PATCH 18/21] arm64: dts: google: Add initial Google gs101 SoC
+ support
+Message-ID: <ZR9EnFw3vB92vlYM@google.com>
+References: <20231005155618.700312-1-peter.griffin@linaro.org>
+ <20231005155618.700312-19-peter.griffin@linaro.org>
+ <ZR75cIvnQS2cqTT3@google.com>
+ <2023100520-cleaver-sinless-fbae@gregkh>
+ <99419159-cab0-4c79-a4a0-12229bfad3c0@linaro.org>
+ <2023100513-mashing-scrubber-ea59@gregkh>
+ <efc9f099-9c97-460b-b0c8-9891aa3b772a@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] drm/panel: Move AUX B116XW03 out of panel-edp back to
- panel-simple
-Content-Language: en-US
-To:     Doug Anderson <dianders@chromium.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        Hsin-Yi Wang <hsinyi@chromium.org>, matthias.bgg@gmail.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>, airlied@gmail.com,
-        daniel@ffwll.ch, jitao.shi@mediatek.com, linus.walleij@linaro.org,
-        linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
-        quic_jesszhan@quicinc.com, sam@ravnborg.org,
-        Anton Bambura <jenneron@protonmail.com>
-References: <20230925150010.1.Iff672233861bcc4cf25a7ad0a81308adc3bda8a4@changeid>
- <b0037c9f-588b-4eb8-6415-0fe75bed264f@collabora.com>
- <CAD=FV=UWQgLLfU4X+6OUR5AWOkJKwG9J7BbKGRCgze6LTY6JNw@mail.gmail.com>
- <CAD=FV=UqG6DiAyjcLKeoUWKutepGd46Zx=8O-NWKoYC-fZEG6g@mail.gmail.com>
-From:   Anton Bambura <jenneron@postmarketos.org>
-In-Reply-To: <CAD=FV=UqG6DiAyjcLKeoUWKutepGd46Zx=8O-NWKoYC-fZEG6g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <efc9f099-9c97-460b-b0c8-9891aa3b772a@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On 10/05/2023, Krzysztof Kozlowski wrote:
+> On 05/10/2023 21:23, Greg KH wrote:
+> > On Thu, Oct 05, 2023 at 09:18:48PM +0200, Krzysztof Kozlowski wrote:
+> >>>> I'd like to bring up this thread and discuss the option of not introducing
+> >>>> another ARCH_* config:
+> >>>>
+> >>>>   https://lore.kernel.org/all/20200306103652.GA3634389@kroah.com/
+> >>>
+> >>> I agree, PLEASE don't add platform config options as that makes it
+> >>> impossible to make a unified kernel image that works for more than one
+> >>> platform at the same time.
+> >>
+> >> There is no single problem in making unified image as we were doing
+> >> since beginning of ARM64. The ARCH_* is not a obstacle for this.
+> > 
+> > Then why are the ARCH_* options needed at all?  What does this help out
+> > with?
+> 
+> It helps all the people and distros who do not want to build/package
+> drivers or modules for unrelated hardware or architectures.
+> 
+> Let's take Samsung Exynos UART driver. It will never, 100% never, work
+> on x86, x86_64. There is no single need to package it for kernels build
+> for these products. It will not work on nVidia Tegra ARM64, Qualcomm
+> ARM64 SoC, so if you do not want to run on Exynos, then you do no select
+> ARCH_EXYNOS and have significantly smaller image.
+> 
+> Now, there is no problem to have one kernel for nVidia Tegra + Qualcomm
+> + Samsung Exynos with everything you need. The ARCH_EXYNOS or SOC_EXYNOS
+> or SOC_GOOGLE serves only the purpose to allow distros and people
+> customize build for specific hardware.
+> 
+> It does not limit anyone on anything.
 
-On 10/5/23 21:10, Doug Anderson wrote:
+I'm glad you brought up Exynos UART because this is where one of the
+limitations is introduced. For example, if you want to modularize out all the
+vendor specific drivers from the core kernel to create a common arm64 kernel
+binary that works on all ARM64 devices, you will not be able to build in the
+early console UART drivers without enabling the respective ARCH_* configs.
+Being able to include SERIAL_SAMSUNG and SERIAL_MSM without all the vendor
+specific drivers that ARCH_EXYNOS and ARCH_QCOM select is very valuable for
+debugging early boot issues.
 
-> Hi,
->
-> On Tue, Sep 26, 2023 at 7:01 AM Doug Anderson <dianders@chromium.org> wrote:
->> Hi,
->>
->> On Tue, Sep 26, 2023 at 1:06 AM AngeloGioacchino Del Regno
->> <angelogioacchino.delregno@collabora.com> wrote:
->>> Il 26/09/23 00:00, Douglas Anderson ha scritto:
->>>> In commit 5f04e7ce392d ("drm/panel-edp: Split eDP panels out of
->>>> panel-simple") I moved a pile of panels out of panel-simple driver
->>>> into the newly created panel-edp driver. One of those panels, however,
->>>> shouldn't have been moved.
->>>>
->>>> As is clear from commit e35e305eff0f ("drm/panel: simple: Add AUO
->>>> B116XW03 panel support"), AUX B116XW03 is an LVDS panel. It's used in
->>>> exynos5250-snow and exynos5420-peach-pit where it's clear that the
->>>> panel is hooked up with LVDS. Furthermore, searching for datasheets I
->>>> found one that makes it clear that this panel is LVDS.
->>>>
->>>> As far as I can tell, I got confused because in commit 88d3457ceb82
->>>> ("drm/panel: auo,b116xw03: fix flash backlight when power on") Jitao
->>>> Shi added "DRM_MODE_CONNECTOR_eDP". That seems wrong. Looking at the
->>>> downstream ChromeOS trees, it seems like some Mediatek boards are
->>>> using a panel that they call "auo,b116xw03" that's an eDP panel. The
->>>> best I can guess is that they actually have a different panel that has
->>>> similar timing. If so then the proper panel should be used or they
->>>> should switch to the generic "edp-panel" compatible.
->>>>
->>>> When moving this back to panel-edp, I wasn't sure what to use for
->>>> .bus_flags and .bus_format and whether to add the extra "enable" delay
->>>> from commit 88d3457ceb82 ("drm/panel: auo,b116xw03: fix flash
->>>> backlight when power on"). I've added formats/flags/delays based on my
->>>> (inexpert) analysis of the datasheet. These are untested.
->>>>
->>>> NOTE: if/when this is backported to stable, we might run into some
->>>> trouble. Specifically, before 474c162878ba ("arm64: dts: mt8183:
->>>> jacuzzi: Move panel under aux-bus") this panel was used by
->>>> "mt8183-kukui-jacuzzi", which assumed it was an eDP panel. I don't
->>>> know what to suggest for that other than someone making up a bogus
->>>> panel for jacuzzi that's just for the stable channel.
->>>>
->>>> Fixes: 88d3457ceb82 ("drm/panel: auo,b116xw03: fix flash backlight when power on")
->>>> Fixes: 5f04e7ce392d ("drm/panel-edp: Split eDP panels out of panel-simple")
->>>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->>>> ---
->>>> I haven't had a snow or peach-pit hooked up for debugging / testing
->>>> for years. I presume that they must be broken and hope that this fixes
->>>> them.
->>> We could avoid backport breakages by avoiding to backport this to any kernel
->>> that doesn't contain commit 474c162878ba ("arm64: dts: mt8183: jacuzzi: Move
->>> panel under aux-bus")... because creating a dummy panel to get two wrongs
->>> right is definitely not ok.
->> Sure, except that leaves us with ... a breakage. :-P
->>
->> Although I haven't tested it, I have a hard time believing that
->> exynos5250-snow and exynos5420-peach-pit will work properly with the
->> panel defined as an eDP panel. That means that they will be broken. If
->> someone cared to get those fixed in a stable backport then we'd be
->> stuck deciding who to break. If you have any brilliant ideas then I'm
->> all ears.
->>
->> ...then again, I presume this has been broken since commit
->> 88d3457ceb82 ("drm/panel: auo,b116xw03: fix flash backlight when power
->> on"). That was a little over 3 years ago. Maybe I'm wrong and somehow
->> things still limp along and sorta work even though the panel is
->> defined incorrectly?
-> I dug out a exynos5250-snow out of my pile and booted postmarket OS on
-> it, which was shockingly easy/pleasant (kudos to those involved!). I
-> found that it was booting a kernel based on 6.1.24. Digging into
-> sysfs, I found that indeed it appeared to be using the "panel-edp"
-> driver, so I guess it is limping along with the wrong driver and wrong
-> flags...
+I understand that ARCH_* configs are used to selectively pick which device tree
+blobs are built, but forcing developers to pick all or nothing is where I have
+a problem.
 
-Hi. I'm the maintainer of chromebooks (including exynos 5 ones) in 
-postmarketOS.
+Regards,
+Will
 
-We are indeed on 6.1.24 yet, but we will upgrade it to the latest LTS soon.
-
-> It wasn't totally clear for me how to build a new kernel and deploy it
-> for postmarket OS, so I wasn't able to confirm this change. I've CCed
-> the person listed on the postmarket OS wiki though to see if they have
-> any insight.
-
-The recommended way to build kernel is envkernel, see
-
-https://wiki.postmarketos.org/wiki/Compiling_kernels_with_envkernel.sh. 
-This way you can build kernel, package it and sideload it to your 
-device, so it will get installed including updating /lib/modules and 
-flashing chrome os kernel partition.
-
-You would need to source envkernel.sh in your kernel tree, place kernel 
-config at .output/.config, build it and perform:
-pmbootstrap build --envkernel linux-postmarketos-exynos5
-pmbootstrap sideload --install-key --host <ip> linux-postmarketos-exynos5
-
-We use lts branch of https://gitlab.com/exynos5-mainline/linux with this 
-config:
-
-https://gitlab.com/postmarketOS/pmaports/-/blob/master/device/community/linux-postmarketos-exynos5/config-postmarketos-exynos5.armv7
-
->
-> In any case, it sounds as if things are working well enough on older
-> OSes, so maybe we can just skip trying to do any stable backport on
-> this. It still seems like we should land it, though, since the current
-> state of the world seems pretty broken. Anyone willing to give a
-> Reviewed-by or Acked-by tag?
->
-> -Doug
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
-
+> 
+> 
+> 
+> > 
+> >>>> I especially don't like the "depends on ARCH_EXYNOS" because that forces one to
+> >>>> include all the other Exynos drivers that ARCH_EXYNOS selects that Google
+> >>>> Tensor SoCs don't need. Can we consider using SOC_GOOGLE instead and for all
+> >>>> drivers that actually depend on the SoC hardware, we can just add "depends on
+> >>>> SOC_GOOGLE"?
+> >>>
+> >>> Why do any of this at all?  It should not be needed.
+> >>>
+> >>>> The idea is that drivers should be tied to hardware -- not a specific vendor.
+> >>>
+> >>> And drivers should be auto-loaded.
+> >>>
+> >>> All of these drivers are not vendor-specific at all, they are based on
+> >>> the same IP blocks as others, so that is how they should be unified.
+> >>
+> >> They are vendor specific. All of them are specifically for Exynos
+> >> hardwre, because this is Exynos. We call it Google GS/Tensor SoC just
+> >> for fancy convenience, but this just Exynos.
+> > 
+> > Ok, then why is this ARCH_ option needed if these IP blocks really are
+> > from something else and are part of other drivers?
+> 
+> For the same reason above, because if I want to build kernel for
+> Qualcomm, I want to drop easily anything not related. If I want to build
+> kernel without I2C, I disable I2C bus which effectively disables all
+> drivers which work on I2C. If I want to build kernel without Exynos, I
+> disable ARCH_EXYNOS which effectively disables entire Exynos hardware.
+> 
+> Think of SoC as a bus or interface.
+> 
+> Best regards,
+> Krzysztof
+> 
