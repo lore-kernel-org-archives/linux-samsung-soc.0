@@ -2,200 +2,184 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B59E92732
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 19:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71195E92734
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 19:56:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229950AbjJET3f (ORCPT
+        id S232274AbjJET4R (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Oct 2023 15:29:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57718 "EHLO
+        Thu, 5 Oct 2023 15:56:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229573AbjJET3e (ORCPT
+        with ESMTP id S232102AbjJET4J (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Oct 2023 15:29:34 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 034D2E4
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 12:29:32 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-9ada2e6e75fso255390166b.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Oct 2023 12:29:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696534170; x=1697138970; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8FcIrqBncC9Mrs6EWL94iGiE6FYJb1dG9INjYIsj2wg=;
-        b=Sp+kRiJ60ClUIP33/zrpqR68uGfgHZeMm4+XnQVqUKnwHYLTHDTgipSVBvkvO7lFpR
-         7h1tSOVKgN8l2i/GTjnG0M9DaNczXTUEAG71AvnBnBn42TQYQFhqer5jGKafpJT7WvR6
-         tA5eRjDWdtxxNTE/q8IpFKLILd1+IrqsFz0+HQ5cEedOjtug1P7ljlT+kr5h9L3rcov2
-         VKexLghFPEYp5xgZyK/VHS3hOqF56CEwfJOgLieboNi4pMVXZ0WB5qAlU8Uv79zbLbB7
-         2QvjoKpbF9H6OzYsCphE03nxvt9/6JUQ6Gl1HpjSo29aiG46TVAeLjoE4qZlXqKcJ2ie
-         BVeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696534170; x=1697138970;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8FcIrqBncC9Mrs6EWL94iGiE6FYJb1dG9INjYIsj2wg=;
-        b=V0KtoNomDe/2wehjS5Y315/E+FW6+UIzQWhK9jbTGYihPmTWV9KTKwDV109kLBdSU8
-         L7RtV4YN2AuUA5Sxn4KZfSndwg0Uz4frxeXEMfn7x93v6N67glLNwRe/YkV84PtZZ6Y0
-         GnaDiYMu7RO70q6ga9WX3U08MISRaT8fzttuQtnFDBykVSK7+IkbzLKDV6GWEqi3lHNU
-         GfvEwDT34bD0P0hlGEEsFR8uGLLPoYGpzfUDyZuG67qGGtz9bVBJsxEJFtdk7Dl/R/45
-         lxuOIf7G9722/YXQCsSSQAUXf2ls8QcxcaFGYsjpSD0KQ0jLFYDsUAMLGcXZ/o1pXRZE
-         JT8g==
-X-Gm-Message-State: AOJu0Ywh7fTxu+o5WTJf77iEYHKQnB5cdV4CXMODFxZIbvRiMznXPJuC
-        kae0vZufFLt3wybDfRYNkXmkVA==
-X-Google-Smtp-Source: AGHT+IH5OVqZVwFMXRaCd1BDzWuuagJUNL+cVtINgJ+JuCQ4BBFliTN5odpOdP1Nfa2kVem3dld3Pg==
-X-Received: by 2002:a17:906:220c:b0:9b8:a556:87a5 with SMTP id s12-20020a170906220c00b009b8a55687a5mr5241419ejs.22.1696534170424;
-        Thu, 05 Oct 2023 12:29:30 -0700 (PDT)
-Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id u2-20020a17090617c200b009ad8084e08asm1640184eje.0.2023.10.05.12.29.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Oct 2023 12:29:29 -0700 (PDT)
-Message-ID: <efc9f099-9c97-460b-b0c8-9891aa3b772a@linaro.org>
-Date:   Thu, 5 Oct 2023 21:29:26 +0200
+        Thu, 5 Oct 2023 15:56:09 -0400
+X-Greylist: delayed 567 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 05 Oct 2023 12:56:03 PDT
+Received: from proxmox1.postmarketos.org (proxmox1.postmarketos.org [213.239.216.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 039DA193;
+        Thu,  5 Oct 2023 12:56:02 -0700 (PDT)
+Received: from [192.168.1.177] (unknown [10.0.0.254])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by proxmox1.postmarketos.org (Postfix) with ESMTPSA id C3509140B01;
+        Thu,  5 Oct 2023 19:46:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
+        s=donut; t=1696535193;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=cIOhWmDhaGKnIOKqSallat4hBjPWg9wv14CRRkvBnO8=;
+        b=gkP75ATkFuJkXErAW/PpJat6k5/Htnp9NLF6G0yL5FPd9zb3e7/4+WegrFXn/YJQD6dv0d
+        wDuXLaeWdpjeOiVL+s7MmiUVDSub0JXNcdNWf290sEABUVFheVGLr10eIByPNP109dIJ7u
+        WbIGNxc7cBE21VbaBcnx/e9oYMG/TFg=
+Message-ID: <fe78f7e4-9655-639c-4a8c-120daa221ce7@postmarketos.org>
+Date:   Thu, 5 Oct 2023 22:46:32 +0300
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 18/21] arm64: dts: google: Add initial Google gs101 SoC
- support
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] drm/panel: Move AUX B116XW03 out of panel-edp back to
+ panel-simple
 Content-Language: en-US
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     William McVicker <willmcvicker@google.com>,
-        Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
-        andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        soc@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@google.com
-References: <20231005155618.700312-1-peter.griffin@linaro.org>
- <20231005155618.700312-19-peter.griffin@linaro.org>
- <ZR75cIvnQS2cqTT3@google.com> <2023100520-cleaver-sinless-fbae@gregkh>
- <99419159-cab0-4c79-a4a0-12229bfad3c0@linaro.org>
- <2023100513-mashing-scrubber-ea59@gregkh>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <2023100513-mashing-scrubber-ea59@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Doug Anderson <dianders@chromium.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        Hsin-Yi Wang <hsinyi@chromium.org>, matthias.bgg@gmail.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>, airlied@gmail.com,
+        daniel@ffwll.ch, jitao.shi@mediatek.com, linus.walleij@linaro.org,
+        linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
+        quic_jesszhan@quicinc.com, sam@ravnborg.org,
+        Anton Bambura <jenneron@protonmail.com>
+References: <20230925150010.1.Iff672233861bcc4cf25a7ad0a81308adc3bda8a4@changeid>
+ <b0037c9f-588b-4eb8-6415-0fe75bed264f@collabora.com>
+ <CAD=FV=UWQgLLfU4X+6OUR5AWOkJKwG9J7BbKGRCgze6LTY6JNw@mail.gmail.com>
+ <CAD=FV=UqG6DiAyjcLKeoUWKutepGd46Zx=8O-NWKoYC-fZEG6g@mail.gmail.com>
+From:   Anton Bambura <jenneron@postmarketos.org>
+In-Reply-To: <CAD=FV=UqG6DiAyjcLKeoUWKutepGd46Zx=8O-NWKoYC-fZEG6g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 05/10/2023 21:23, Greg KH wrote:
-> On Thu, Oct 05, 2023 at 09:18:48PM +0200, Krzysztof Kozlowski wrote:
->>>> I'd like to bring up this thread and discuss the option of not introducing
->>>> another ARCH_* config:
+
+On 10/5/23 21:10, Doug Anderson wrote:
+
+> Hi,
+>
+> On Tue, Sep 26, 2023 at 7:01 AM Doug Anderson <dianders@chromium.org> wrote:
+>> Hi,
+>>
+>> On Tue, Sep 26, 2023 at 1:06 AM AngeloGioacchino Del Regno
+>> <angelogioacchino.delregno@collabora.com> wrote:
+>>> Il 26/09/23 00:00, Douglas Anderson ha scritto:
+>>>> In commit 5f04e7ce392d ("drm/panel-edp: Split eDP panels out of
+>>>> panel-simple") I moved a pile of panels out of panel-simple driver
+>>>> into the newly created panel-edp driver. One of those panels, however,
+>>>> shouldn't have been moved.
 >>>>
->>>>   https://lore.kernel.org/all/20200306103652.GA3634389@kroah.com/
->>>
->>> I agree, PLEASE don't add platform config options as that makes it
->>> impossible to make a unified kernel image that works for more than one
->>> platform at the same time.
+>>>> As is clear from commit e35e305eff0f ("drm/panel: simple: Add AUO
+>>>> B116XW03 panel support"), AUX B116XW03 is an LVDS panel. It's used in
+>>>> exynos5250-snow and exynos5420-peach-pit where it's clear that the
+>>>> panel is hooked up with LVDS. Furthermore, searching for datasheets I
+>>>> found one that makes it clear that this panel is LVDS.
+>>>>
+>>>> As far as I can tell, I got confused because in commit 88d3457ceb82
+>>>> ("drm/panel: auo,b116xw03: fix flash backlight when power on") Jitao
+>>>> Shi added "DRM_MODE_CONNECTOR_eDP". That seems wrong. Looking at the
+>>>> downstream ChromeOS trees, it seems like some Mediatek boards are
+>>>> using a panel that they call "auo,b116xw03" that's an eDP panel. The
+>>>> best I can guess is that they actually have a different panel that has
+>>>> similar timing. If so then the proper panel should be used or they
+>>>> should switch to the generic "edp-panel" compatible.
+>>>>
+>>>> When moving this back to panel-edp, I wasn't sure what to use for
+>>>> .bus_flags and .bus_format and whether to add the extra "enable" delay
+>>>> from commit 88d3457ceb82 ("drm/panel: auo,b116xw03: fix flash
+>>>> backlight when power on"). I've added formats/flags/delays based on my
+>>>> (inexpert) analysis of the datasheet. These are untested.
+>>>>
+>>>> NOTE: if/when this is backported to stable, we might run into some
+>>>> trouble. Specifically, before 474c162878ba ("arm64: dts: mt8183:
+>>>> jacuzzi: Move panel under aux-bus") this panel was used by
+>>>> "mt8183-kukui-jacuzzi", which assumed it was an eDP panel. I don't
+>>>> know what to suggest for that other than someone making up a bogus
+>>>> panel for jacuzzi that's just for the stable channel.
+>>>>
+>>>> Fixes: 88d3457ceb82 ("drm/panel: auo,b116xw03: fix flash backlight when power on")
+>>>> Fixes: 5f04e7ce392d ("drm/panel-edp: Split eDP panels out of panel-simple")
+>>>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>>>> ---
+>>>> I haven't had a snow or peach-pit hooked up for debugging / testing
+>>>> for years. I presume that they must be broken and hope that this fixes
+>>>> them.
+>>> We could avoid backport breakages by avoiding to backport this to any kernel
+>>> that doesn't contain commit 474c162878ba ("arm64: dts: mt8183: jacuzzi: Move
+>>> panel under aux-bus")... because creating a dummy panel to get two wrongs
+>>> right is definitely not ok.
+>> Sure, except that leaves us with ... a breakage. :-P
 >>
->> There is no single problem in making unified image as we were doing
->> since beginning of ARM64. The ARCH_* is not a obstacle for this.
-> 
-> Then why are the ARCH_* options needed at all?  What does this help out
-> with?
-
-It helps all the people and distros who do not want to build/package
-drivers or modules for unrelated hardware or architectures.
-
-Let's take Samsung Exynos UART driver. It will never, 100% never, work
-on x86, x86_64. There is no single need to package it for kernels build
-for these products. It will not work on nVidia Tegra ARM64, Qualcomm
-ARM64 SoC, so if you do not want to run on Exynos, then you do no select
-ARCH_EXYNOS and have significantly smaller image.
-
-Now, there is no problem to have one kernel for nVidia Tegra + Qualcomm
-+ Samsung Exynos with everything you need. The ARCH_EXYNOS or SOC_EXYNOS
-or SOC_GOOGLE serves only the purpose to allow distros and people
-customize build for specific hardware.
-
-It does not limit anyone on anything.
-
-
-
-> 
->>>> I especially don't like the "depends on ARCH_EXYNOS" because that forces one to
->>>> include all the other Exynos drivers that ARCH_EXYNOS selects that Google
->>>> Tensor SoCs don't need. Can we consider using SOC_GOOGLE instead and for all
->>>> drivers that actually depend on the SoC hardware, we can just add "depends on
->>>> SOC_GOOGLE"?
->>>
->>> Why do any of this at all?  It should not be needed.
->>>
->>>> The idea is that drivers should be tied to hardware -- not a specific vendor.
->>>
->>> And drivers should be auto-loaded.
->>>
->>> All of these drivers are not vendor-specific at all, they are based on
->>> the same IP blocks as others, so that is how they should be unified.
+>> Although I haven't tested it, I have a hard time believing that
+>> exynos5250-snow and exynos5420-peach-pit will work properly with the
+>> panel defined as an eDP panel. That means that they will be broken. If
+>> someone cared to get those fixed in a stable backport then we'd be
+>> stuck deciding who to break. If you have any brilliant ideas then I'm
+>> all ears.
 >>
->> They are vendor specific. All of them are specifically for Exynos
->> hardwre, because this is Exynos. We call it Google GS/Tensor SoC just
->> for fancy convenience, but this just Exynos.
-> 
-> Ok, then why is this ARCH_ option needed if these IP blocks really are
-> from something else and are part of other drivers?
+>> ...then again, I presume this has been broken since commit
+>> 88d3457ceb82 ("drm/panel: auo,b116xw03: fix flash backlight when power
+>> on"). That was a little over 3 years ago. Maybe I'm wrong and somehow
+>> things still limp along and sorta work even though the panel is
+>> defined incorrectly?
+> I dug out a exynos5250-snow out of my pile and booted postmarket OS on
+> it, which was shockingly easy/pleasant (kudos to those involved!). I
+> found that it was booting a kernel based on 6.1.24. Digging into
+> sysfs, I found that indeed it appeared to be using the "panel-edp"
+> driver, so I guess it is limping along with the wrong driver and wrong
+> flags...
 
-For the same reason above, because if I want to build kernel for
-Qualcomm, I want to drop easily anything not related. If I want to build
-kernel without I2C, I disable I2C bus which effectively disables all
-drivers which work on I2C. If I want to build kernel without Exynos, I
-disable ARCH_EXYNOS which effectively disables entire Exynos hardware.
+Hi. I'm the maintainer of chromebooks (including exynos 5 ones) in 
+postmarketOS.
 
-Think of SoC as a bus or interface.
+We are indeed on 6.1.24 yet, but we will upgrade it to the latest LTS soon.
 
-Best regards,
-Krzysztof
+> It wasn't totally clear for me how to build a new kernel and deploy it
+> for postmarket OS, so I wasn't able to confirm this change. I've CCed
+> the person listed on the postmarket OS wiki though to see if they have
+> any insight.
+
+The recommended way to build kernel is envkernel, see
+
+https://wiki.postmarketos.org/wiki/Compiling_kernels_with_envkernel.sh. 
+This way you can build kernel, package it and sideload it to your 
+device, so it will get installed including updating /lib/modules and 
+flashing chrome os kernel partition.
+
+You would need to source envkernel.sh in your kernel tree, place kernel 
+config at .output/.config, build it and perform:
+pmbootstrap build --envkernel linux-postmarketos-exynos5
+pmbootstrap sideload --install-key --host <ip> linux-postmarketos-exynos5
+
+We use lts branch of https://gitlab.com/exynos5-mainline/linux with this 
+config:
+
+https://gitlab.com/postmarketOS/pmaports/-/blob/master/device/community/linux-postmarketos-exynos5/config-postmarketos-exynos5.armv7
+
+>
+> In any case, it sounds as if things are working well enough on older
+> OSes, so maybe we can just skip trying to do any stable backport on
+> this. It still seems like we should land it, though, since the current
+> state of the world seems pretty broken. Anyone willing to give a
+> Reviewed-by or Acked-by tag?
+>
+> -Doug
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
 
