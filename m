@@ -2,87 +2,153 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8BBCE9270D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 13:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CB6E92702
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 13:57:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231230AbjJEN4S (ORCPT
+        id S231810AbjJEN5C (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Oct 2023 09:56:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43602 "EHLO
+        Thu, 5 Oct 2023 09:57:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244478AbjJENyP (ORCPT
+        with ESMTP id S243693AbjJENy7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Oct 2023 09:54:15 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E99D24E88
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 04:25:00 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-52bd9ddb741so1461840a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Oct 2023 04:25:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696505098; x=1697109898; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WAJxkRY9Sp0cHDK9nJO/7JshgcFSVSYa/FrdKfZWMCk=;
-        b=mi6pE6g52bUKOV6iNp9hPLK2SVlW3XXy3UiNeQV+0k48xlMJ4pAweKaQEV3qLGvni7
-         AMs9gne+09GNpMWzfB5IrcZA03C0c5BfucD8z/he75DprQo+r3z64CEm8/cF8KeG89H2
-         7jLlEhR1/XgstZiQyZ/3d01ihHXHpBHodw5AApePSGXihJ5aOBM0qVYBos5K8bOtsN8K
-         iP3KwnE4NnbnZRXDA4l5Gkx0Fpvi+9L26JxG/44DRNLSJGEy6q0cmtzB9lee5znznGye
-         MYKFGIGo+GJ8QQ65dU8uRF4MKxSAT8+2pAsOd3htKvvB7c48/mXxgMt9layEAvZrqAAe
-         NyHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696505098; x=1697109898;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WAJxkRY9Sp0cHDK9nJO/7JshgcFSVSYa/FrdKfZWMCk=;
-        b=hdXG7AuFp55VlVNikNcEkiRUgQhHeeA3mNWVKMO2XQtqT31Z+9VHMniKiwMGORn8G5
-         MmRkx+Ep483Ndvsfb4OIpNJeaJKXVzCAmawu0naozvamlBSL2Dm0TlTIb0Dl+141YpGY
-         0Fo3YD8FH7RWNqzST4ezyuA5pWaJIl6LhTqtNEn4XClnVis6TLH7LcuSo148im5FEuhn
-         SH//pt6h6XyTLOe0ekTMvqymE/M3O0a2DmRW/ERX2e3QpR5OuPXE5QvjD2xo48DGxpfq
-         ZIrMzeRNgzdjCEZOiWJ7PQy2At50O2/jwcbl4RydQl7fd/pJdSdfywuBSCtacqGIVB2W
-         U9RQ==
-X-Gm-Message-State: AOJu0YzogmcUK4xCPDtKWthIvv53WuimUOjnuPbJ0Y9xJPQLifAYqWfM
-        P1LaNVqHbRHq4gPPu9k/TnJ1NA==
-X-Google-Smtp-Source: AGHT+IF8dKcpZw8TltKhD1bRy085ev7VYENRA9xdx+ZACgTS++TSNHusFQsJ9t32Da0fkqFvf1UaEw==
-X-Received: by 2002:a17:906:1ba1:b0:9b8:7746:f180 with SMTP id r1-20020a1709061ba100b009b87746f180mr4483485ejg.73.1696505098545;
-        Thu, 05 Oct 2023 04:24:58 -0700 (PDT)
-Received: from krzk-bin.. (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id g8-20020a50ee08000000b0053490ca10e3sm903258eds.62.2023.10.05.04.24.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 04:24:58 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: add tm2-touchkey driver
-Date:   Thu,  5 Oct 2023 13:24:56 +0200
-Message-Id: <169650508242.145051.8232679227847989179.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231005111718.1096634-1-m.szyprowski@samsung.com>
-References: <CGME20231005111724eucas1p19824dca99456dca9c2c5caa6bfeaf7db@eucas1p1.samsung.com> <20231005111718.1096634-1-m.szyprowski@samsung.com>
+        Thu, 5 Oct 2023 09:54:59 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DD8B28117;
+        Thu,  5 Oct 2023 06:45:01 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 395AbQC7004548;
+        Thu, 5 Oct 2023 11:44:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
+ cc : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=qcppdkim1; bh=Jgbx4tka3I/uXlQify+yAv1leWqWyj6lyTl8wspgTLU=;
+ b=O5B/LJistzFm3uCwIM9aow5ui4IG9XCXaw3WPNOLg1KNy10XGUpdKx49k8CSxHQgNG86
+ 0rlHkFaY4pR0xEWTXBeVzpg9oZo386qSdIwu0FM+AAJJMg/tkK8hBu+azAT1iujtTDgg
+ VFJYrskw24r9JWvhkQ7YllBGu8Y7lgQ6dZ7oBT88yf4gxkHdqpwd2DThEs9QvLaypU2f
+ iVsbXnztklfXMwjbvx0rgPLhEtESkYcBTMTDhcS9TNEkyOj9VDgmgaQDmhooljd81o52
+ 4C18xxRYwaHVoe6td3P0yhIRjQ2gtYsrteS04guMJzktGKfEp7w5Z5VT7QiUwqUTwxGN fQ== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3thq18rnkc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Oct 2023 11:44:56 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 395BiVpt022075
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 5 Oct 2023 11:44:31 GMT
+Received: from hu-pkondeti-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Thu, 5 Oct 2023 04:44:18 -0700
+Date:   Thu, 5 Oct 2023 17:14:15 +0530
+From:   Pavan Kondeti <quic_pkondeti@quicinc.com>
+To:     Mukesh Ojha <quic_mojha@quicinc.com>
+CC:     Kees Cook <keescook@chromium.org>, Will Deacon <will@kernel.org>,
+        <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
+        <mathieu.poirier@linaro.org>, <catalin.marinas@arm.com>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
+Subject: Re: [REBASE PATCH v5 08/17] arm64: mm: Add dynamic ramoops region
+ support through command line
+Message-ID: <0120ea7e-e9cc-4955-81dd-6801b56068dc@quicinc.com>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+ <1694429639-21484-9-git-send-email-quic_mojha@quicinc.com>
+ <20230912101820.GA10884@willie-the-truck>
+ <202309131613.C0E12D0D14@keescook>
+ <3273977a-be7d-85f6-6754-52a3dd9b784a@quicinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <3273977a-be7d-85f6-6754-52a3dd9b784a@quicinc.com>
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: kzyI8JYkdaVqRWszYrYmRjktNQDws0aI
+X-Proofpoint-ORIG-GUID: kzyI8JYkdaVqRWszYrYmRjktNQDws0aI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-05_08,2023-10-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ suspectscore=0 clxscore=1011 mlxlogscore=999 priorityscore=1501 mlxscore=0
+ phishscore=0 adultscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2309180000
+ definitions=main-2310050092
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
-On Thu, 05 Oct 2023 13:17:18 +0200, Marek Szyprowski wrote:
-> The Cypress 'touchkey' hardware is available on Exynos4412-based Midas
-> family boards, so enable the driver for it to increase testing coverage.
+On Thu, Oct 05, 2023 at 04:52:20PM +0530, Mukesh Ojha wrote:
+> Sorry for the late reply, was on a long vacation.
 > 
+> On 9/14/2023 4:47 AM, Kees Cook wrote:
+> > On Tue, Sep 12, 2023 at 11:18:20AM +0100, Will Deacon wrote:
+> > > On Mon, Sep 11, 2023 at 04:23:50PM +0530, Mukesh Ojha wrote:
+> > > > The reserved memory region for ramoops is assumed to be at a fixed
+> > > > and known location when read from the devicetree. This may not be
+> > > > required for something like Qualcomm's minidump which is interested
+> > > > in knowing addresses of ramoops region but it does not put hard
+> > > > requirement of address being fixed as most of it's SoC does not
+> > > > support warm reset and does not use pstorefs at all instead it has
+> > > > firmware way of collecting ramoops region if it gets to know the
+> > > > address and register it with apss minidump table which is sitting
+> > > > in shared memory region in DDR and firmware will have access to
+> > > > these table during reset and collects it on crash of SoC.
+> > > > 
+> > > > So, add the support of reserving ramoops region to be dynamically
+> > > > allocated early during boot if it is request through command line
+> > > > via 'dyn_ramoops_size=' and fill up reserved resource structure and
+> > > > export the structure, so that it can be read by ramoops driver.
+> > > > 
+> > > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> > > > ---
+> > > >   arch/arm64/mm/init.c       | 94 ++++++++++++++++++++++++++++++++++++++++++++++
+> > > 
+> > > Why does this need to be in the arch code? There's absolutely nothing
+> > > arm64-specific here.
+> > 
+> > I would agree: this needs to be in ramoops itself, IMO. It should be a
+> > ramoops module argument, too.
+> > 
+> > It being unhelpful for systems that don't have an external consumer is
+> > certainly true, but I think it would still make more sense for this
+> > change to live entirely within ramoops. Specifically: you're
+> > implementing a pstore backend behavioral change. In the same way that
+> > patch 10 is putting the "output" side of this into pstore/, I'd expect
+> > the "input" side also in pstore/
 > 
+> How do we reserve memory? are you suggesting to use dma api's for
+> dynamic ramoops ?
+> 
+Sharing my thoughts:
 
-Applied, thanks!
+Your patch is inspired from how kexec allocate memory for crash kernel
+right? There is a series [1] which moved arch code (ARM64/x86) to
+generic kexec core. Something we should also do as the feedback
+received here.
 
-[1/1] ARM: multi_v7_defconfig: add tm2-touchkey driver
-      https://git.kernel.org/krzk/linux/c/c2a5b4597ab821a379cd84e385c9202ffed4c038
+Coming to how part, we still have to use memblock API to increase the chance
+of allocating contiguous memory. Since PSTORE_RAM can also be
+compiled as a module, we probably need another pstore layer that needs to
+be built statically in kernel to allocate memory using memblock API.
+once slab is available, all memblock API will re-direct to slab
+allocations. This layer can be enabled via ARCH_WANTS_PSTORE_xxx or 
+another config that only supports 'y'. PSTORE_RAM can still be a module but 
+when this layer is available, it supports dynamic ramoops. Another option 
+would be just including this layer in PSTORE RAM module but take away module 
+option  when this layer is enabled.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+[1]
+https://lore.kernel.org/all/20211020020317.1220-6-thunder.leizhen@huawei.com/
