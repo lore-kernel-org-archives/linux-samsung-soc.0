@@ -2,136 +2,129 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFEEE92708
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 14:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F38E9270D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 15:41:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238262AbjJEOnO (ORCPT
+        id S233180AbjJEPlm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:43:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33384 "EHLO
+        Thu, 5 Oct 2023 11:41:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236986AbjJEOhh (ORCPT
+        with ESMTP id S234100AbjJEPlH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Oct 2023 10:37:37 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C42C34F6CF;
-        Thu,  5 Oct 2023 07:02:50 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3959mP2d016206;
-        Thu, 5 Oct 2023 11:23:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=AStgfaaTWIWjtJNJOJxciXIDBBRnSo68KvO+i7k27lU=;
- b=ggk4UX5n75YzD4YsFD4zLDhSuQydWWKsE4Qv8PgwqD+GoRRjC7toHCPS/mkyI4wW2CbW
- r0c/BMZzMWqhY1e4ft9nbPA47sNserFtmyue086NlFl++7Qnzcv9iHEWrsRQPtgdlxLR
- ibMgyI1+Nn/IaBjmkVm2g4ieaQysibX7v2QsQlRQCmP7BCbpV74rNqvUL1ZgVmE9g3Rf
- Zf2JzPDbHQizL88V6DlzQL2+S30y4n4YDUv4fPJlB/3sN912+gWQX5PaFsSiJOoWSKEQ
- T65rzenwyoApz9Vh42qef3YNXbz5tPZluzGDsSjn6/qPn/aXWFYeEkT+TSjEzKIANc/O Jg== 
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3th8ck2nn9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 Oct 2023 11:23:56 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 395BNtw3002316
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 5 Oct 2023 11:23:55 GMT
-Received: from [10.216.26.22] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Thu, 5 Oct
- 2023 04:23:05 -0700
-Message-ID: <3273977a-be7d-85f6-6754-52a3dd9b784a@quicinc.com>
-Date:   Thu, 5 Oct 2023 16:52:20 +0530
+        Thu, 5 Oct 2023 11:41:07 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6EE0677EE
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 07:55:47 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231005111725euoutp01c245783405ac8335e11509208d0db0b8~LMfySNrXX1624916249euoutp01J
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 11:17:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231005111725euoutp01c245783405ac8335e11509208d0db0b8~LMfySNrXX1624916249euoutp01J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1696504645;
+        bh=WdBl7UA5fyuvUgO4bx/z2RRv+6uENgRWAgMYFmjv1v0=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=RWAI7tryPW1UQ41T0zekv0fB9jls8RV6KhI9wRlwVYaBTOImszqdzfLgZeCshVMP7
+         eX4T/OOshgoDAhe1UtyGNyPXp/9ne/3kxIySMhKgCX7ATgzE5o0LbDRBxtqu0lMh3J
+         kwYf2vDTjg+RBJVgoSG8efvOLSp3bd/4Gez0Nhmk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20231005111725eucas1p29c5e3b6d6e1c8078f6f8bfd5bf16d75d~LMfx9dD231064510645eucas1p24;
+        Thu,  5 Oct 2023 11:17:25 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 3C.5C.11320.54B9E156; Thu,  5
+        Oct 2023 12:17:25 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20231005111724eucas1p19824dca99456dca9c2c5caa6bfeaf7db~LMfxoH8EQ2766727667eucas1p1F;
+        Thu,  5 Oct 2023 11:17:24 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20231005111724eusmtrp1eec3f9f538305377efc58943d340df5b~LMfxnnubX0863208632eusmtrp1_;
+        Thu,  5 Oct 2023 11:17:24 +0000 (GMT)
+X-AuditID: cbfec7f4-97dff70000022c38-d4-651e9b45b99e
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 04.28.10549.44B9E156; Thu,  5
+        Oct 2023 12:17:24 +0100 (BST)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20231005111724eusmtip1580d0b3d51467eb00be8435d216ecd37~LMfxJjzof2779027790eusmtip1Y;
+        Thu,  5 Oct 2023 11:17:24 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ARM: multi_v7_defconfig: add tm2-touchkey driver
+Date:   Thu,  5 Oct 2023 13:17:18 +0200
+Message-Id: <20231005111718.1096634-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [REBASE PATCH v5 08/17] arm64: mm: Add dynamic ramoops region
- support through command line
-Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>, Will Deacon <will@kernel.org>
-CC:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
-        <mathieu.poirier@linaro.org>, <catalin.marinas@arm.com>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
- <1694429639-21484-9-git-send-email-quic_mojha@quicinc.com>
- <20230912101820.GA10884@willie-the-truck> <202309131613.C0E12D0D14@keescook>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <202309131613.C0E12D0D14@keescook>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tYP2aPd8wLHqCtbdfy0OmUbx-TMAVFMI
-X-Proofpoint-ORIG-GUID: tYP2aPd8wLHqCtbdfy0OmUbx-TMAVFMI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-05_08,2023-10-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- priorityscore=1501 mlxscore=0 impostorscore=0 malwarescore=0
- mlxlogscore=999 adultscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
- suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2309180000 definitions=main-2310050088
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkleLIzCtJLcpLzFFi42LZduzneV3X2XKpBse7WSwezNvGZvF30jF2
+        i72vt7JbbHp8jdVixvl9TBZrj9xld2Dz+P1rEqPHnWt72Dw2L6n36NuyitHj8ya5ANYoLpuU
+        1JzMstQifbsEroymUwsZC/6zVnRskWxgXMDaxcjJISFgIjHt9GWmLkYuDiGBFYwS/1Y3MkI4
+        XxglTnS1M0M4nxklGnZMY4JpmbD5CAtEYjmjxKSP31ngWt4ePM4MUsUmYCjR9baLrYuRg0NE
+        wFti+TVFkBpmgfWMEpe+zGIFiQsLOEr0fhAGKWcRUJXo7f4MtoBXwF7i4oOZ7BDL5CX2HzzL
+        DBEXlDg58wkLiM0MFG/eOhvsOgmBqRwSG0+sgbrORWJD7yyo54QlXh3fAjVIRuL05B4WiIZ2
+        RokFv+8zQTgTgH57fosRospa4s65X2BXMwtoSqzfpQ9iSgAdOn2RBYTJJ3HjrSDEDXwSk7ZN
+        Z4YI80p0tAlBzFCTmHV8HdzWgxcuQZV4SOzZwwUSFhKIlZh/cDf7BEaFWUgem4XksVkIFyxg
+        ZF7FKJ5aWpybnlpslJdarlecmFtcmpeul5yfu4kRmFpO/zv+ZQfj8lcf9Q4xMnEwHmKU4GBW
+        EuFNb5BJFeJNSaysSi3Kjy8qzUktPsQozcGiJM6rbXsyWUggPbEkNTs1tSC1CCbLxMEp1cCk
+        +njRQl2WFqPVnHO5Rfqrz8c+eBa81Ed+g+BvA37j2KyHW0sLTh+sVDioe1Dw3Jq5efOTqxkv
+        Nc6Q/L85fc5954cSRczrvzZc89S8K//06d8PPQu2CrOcKj/489f7a0dPzo5n9ZMU9JBqy7s+
+        sf3bTYPHmk6xjmXO2rtypPW49G9XXLU+9qbyjatI7lbdWkO1mE03/Tafz0xdxvZ9ntwMzj8T
+        mhcu/xTyb1VfWxrTsp4UBrXp1xwDPstbrGJWXbxyhuoU4Y6bt3wnx64+XRLh6zmhs/uR26Ef
+        +lO/Xmo4xfnpmr7htwgZedmJHPfN3CuFV5bYLskxKT0TM0OwWrZA8hAbR37q549soqvW9nor
+        sRRnJBpqMRcVJwIAnCFq/JwDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrILMWRmVeSWpSXmKPExsVy+t/xu7ous+VSDfpvqVs8mLeNzeLvpGPs
+        Fntfb2W32PT4GqvFjPP7mCzWHrnL7sDm8fvXJEaPO9f2sHlsXlLv0bdlFaPH501yAaxRejZF
+        +aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehlNpxYyFvxn
+        rejYItnAuIC1i5GTQ0LARGLC5iMsXYxcHEICSxklrt+awQyRkJE4Oa0BqkhY4s+1LjaIok+M
+        EkcmfGIESbAJGEp0vQVJcHKICPhKNH/dwApSxCywkVFi/8IWoLEcHMICjhK9H4RBalgEVCV6
+        uz8zgdi8AvYSFx/MZIdYIC+x/+BZZoi4oMTJmU9YQGxmoHjz1tnMExj5ZiFJzUKSWsDItIpR
+        JLW0ODc9t9hQrzgxt7g0L10vOT93EyMwrLcd+7l5B+O8Vx/1DjEycTAeYpTgYFYS4U1vkEkV
+        4k1JrKxKLcqPLyrNSS0+xGgKdN9EZinR5HxgZOWVxBuaGZgamphZGphamhkrifN6FnQkCgmk
+        J5akZqemFqQWwfQxcXBKNTAxzW8NuJv8J+VHQk2VBfdTV4v9yw8sVOrk+fvHpDnI7suMi6fT
+        0/aFp8rfmH+bRYDR6K/ADbYFqbwaPGvdl2VXz7E9wOKR9T7w4SrTpPvrrerO1fZsu+ydE+Gf
+        EHV5o/J91t1ZdvNEbJ5d28DVPEHlavIziTbeXQcYZcva7PWy3/q6MerFdCo3ZucarlT4sErK
+        s8mnfGVfzD+OLLkd0yeVNfjcL1SpuavL5GKX1HjbvCqsaekrQ/MP6a7vDykG/f9zf/0XC0ZH
+        9VfzzhdzmPxju/2haevu+acm2lV8/3V1/uz3Dk+DE7t94/VnbGbJyO4NNZS0//Hy+3W7qzP/
+        BxzN/erCEXm9d0XPmmvGLEosxRmJhlrMRcWJAHIB3aP0AgAA
+X-CMS-MailID: 20231005111724eucas1p19824dca99456dca9c2c5caa6bfeaf7db
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20231005111724eucas1p19824dca99456dca9c2c5caa6bfeaf7db
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20231005111724eucas1p19824dca99456dca9c2c5caa6bfeaf7db
+References: <CGME20231005111724eucas1p19824dca99456dca9c2c5caa6bfeaf7db@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Sorry for the late reply, was on a long vacation.
+The Cypress 'touchkey' hardware is available on Exynos4412-based Midas
+family boards, so enable the driver for it to increase testing coverage.
 
-On 9/14/2023 4:47 AM, Kees Cook wrote:
-> On Tue, Sep 12, 2023 at 11:18:20AM +0100, Will Deacon wrote:
->> On Mon, Sep 11, 2023 at 04:23:50PM +0530, Mukesh Ojha wrote:
->>> The reserved memory region for ramoops is assumed to be at a fixed
->>> and known location when read from the devicetree. This may not be
->>> required for something like Qualcomm's minidump which is interested
->>> in knowing addresses of ramoops region but it does not put hard
->>> requirement of address being fixed as most of it's SoC does not
->>> support warm reset and does not use pstorefs at all instead it has
->>> firmware way of collecting ramoops region if it gets to know the
->>> address and register it with apss minidump table which is sitting
->>> in shared memory region in DDR and firmware will have access to
->>> these table during reset and collects it on crash of SoC.
->>>
->>> So, add the support of reserving ramoops region to be dynamically
->>> allocated early during boot if it is request through command line
->>> via 'dyn_ramoops_size=' and fill up reserved resource structure and
->>> export the structure, so that it can be read by ramoops driver.
->>>
->>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
->>> ---
->>>   arch/arm64/mm/init.c       | 94 ++++++++++++++++++++++++++++++++++++++++++++++
->>
->> Why does this need to be in the arch code? There's absolutely nothing
->> arm64-specific here.
-> 
-> I would agree: this needs to be in ramoops itself, IMO. It should be a
-> ramoops module argument, too.
-> 
-> It being unhelpful for systems that don't have an external consumer is
-> certainly true, but I think it would still make more sense for this
-> change to live entirely within ramoops. Specifically: you're
-> implementing a pstore backend behavioral change. In the same way that
-> patch 10 is putting the "output" side of this into pstore/, I'd expect
-> the "input" side also in pstore/
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-How do we reserve memory? are you suggesting to use dma api's for
-dynamic ramoops ?
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index bbaa478dff0d..af064a4b73e1 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -315,6 +315,7 @@ CONFIG_KEYBOARD_PXA27x=m
+ CONFIG_KEYBOARD_SAMSUNG=m
+ CONFIG_KEYBOARD_ST_KEYSCAN=y
+ CONFIG_KEYBOARD_SPEAR=y
++CONFIG_KEYBOARD_TM2_TOUCHKEY=m
+ CONFIG_KEYBOARD_CROS_EC=m
+ CONFIG_MOUSE_PS2_ELANTECH=y
+ CONFIG_MOUSE_CYAPA=m
+-- 
+2.34.1
 
--Mukesh
-> 
-> More comments there, though.
-> 
