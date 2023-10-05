@@ -2,169 +2,170 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 245E2E92717
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 16:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA47E92719
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 16:20:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241755AbjJEQQ1 (ORCPT
+        id S240488AbjJEQTJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Oct 2023 12:16:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36022 "EHLO
+        Thu, 5 Oct 2023 12:19:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241894AbjJEQOy (ORCPT
+        with ESMTP id S242161AbjJEQQ5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Oct 2023 12:14:54 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E0E06702;
-        Thu,  5 Oct 2023 08:43:46 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 395Ct1QM001918;
-        Thu, 5 Oct 2023 15:43:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=psmI8y1A7J+9sPoTmK30CglmBHR27wVbfWQinlszqoc=;
- b=jafGIjoZ7PnWZuORPFbKXbeSUVZMSBs6nPNPJFl6eDNE+4hOws85dewwrvR2YZAZasFj
- qXw7uS1hH2OPHkz+ZpC1OftlDWrpLT/tvwP+P3YRA5vjo6l1aqSa3IqBlidUkSVziXR9
- +DhOlr6OMQXeMSNDQi43DxZSlTV/Vq+prtZ14KrCytysB7x5xnflL9ULW5vGeRMUGUte
- uwfYmm1XnSYJtahxJtcNT4UeD2WoDi7B/8Bw7jToiamCzx6E2igmcCgqSLdEc/QtOVyF
- XLVWJdTXmk3Xhm4VFYysz/x2bMMuDutLQTb/hNIz7anw6sKunNWH/qWJJLd5whvmc6GV NA== 
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3th8e1u5mk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 Oct 2023 15:43:02 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 395Fh1t4012902
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 5 Oct 2023 15:43:01 GMT
-Received: from [10.216.26.22] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Thu, 5 Oct
- 2023 08:42:37 -0700
-Message-ID: <7c59b835-d29e-04af-7f2f-801da584c71c@quicinc.com>
-Date:   Thu, 5 Oct 2023 21:12:25 +0530
+        Thu, 5 Oct 2023 12:16:57 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 207D9178EC
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 09:04:19 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-533c4d20b33so2689561a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Oct 2023 09:04:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696521858; x=1697126658; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KfU8LZJfGanhRhGiSst4h+v18HcAUwEyfYmlvT10K+g=;
+        b=wPT0SlBfaZNcH2ARAB2U7+U8svgxPouGXuQgGR3MSe6F0qW3Rxh50IGOl3l29yZBPq
+         semFRmvx2TRnzJQdfk4M9AIP0CuNNgxc8ABqtcat1Ad7KSDKfmc46YkuLzyNBWKVM2c8
+         6z+HKYdNrxubOsyHP8/wQH/quHoymnx41gUSC96AXfalxPsA29z6O0ZOfDo72tmtxw3A
+         NItJzOHOT63Z9W4VYYrq6o49LES3oKkWEvglnA9WXM5nkMRlmcQLYlaeRFOabO2BLsb0
+         mj+ryIRDC7fDtoxF3h1tCKyrP7a+0ouJIlsMJyBSCbZynYiJfmAgF1itGRw0jSbv7Wn9
+         Z+0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696521858; x=1697126658;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KfU8LZJfGanhRhGiSst4h+v18HcAUwEyfYmlvT10K+g=;
+        b=M35QpWW2s7Iv1DiCB8Mz2ZTG7o5CHlacWc8wvmx8gCkI1pq3spn0URN54Zt0RNw7js
+         f/FutaVanPax5Gr9mc55vvgY0sZk5Hdr4DzFOjROisK+1XXQ43Quaf/YM9u7WIiLVFmI
+         bA0ZQqoUQgaFC/yOrajQ4JVc8a3cU02zjhCIV30MNzRaFozV3+ghpk3D00B+P07lD0Qh
+         RGaULqkBHywzeJod6mOCJmfKFzYHAm8vLcZCApWA0/KXUHSJscpCqEjctbwNVn8mXlDx
+         f4ZDPuF2sxw5HfpTn2CWIuQSrSfO5uGP81DABPJNFVlaKHxw53vBCch1/OSIhg12bhrK
+         uFQw==
+X-Gm-Message-State: AOJu0YwvJDqPOrZybJrv15kjssm2OlP5h+75/mrT1Cxo+edX4tjP9LbC
+        5iyMUs1PtutRszf8IYjS9d7yvQ==
+X-Google-Smtp-Source: AGHT+IE2IUIhqPL8MeLG9G+5wr3NaYBG0Yp9GEL8ttgXRTZOmgq7PTyMy7Go7zBaISn2XPbgCZEm0w==
+X-Received: by 2002:a05:6402:4314:b0:525:4d74:be8c with SMTP id m20-20020a056402431400b005254d74be8cmr1720833edc.14.1696521858249;
+        Thu, 05 Oct 2023 09:04:18 -0700 (PDT)
+Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
+        by smtp.gmail.com with ESMTPSA id n19-20020a056402515300b0053495596f42sm1278344edd.30.2023.10.05.09.04.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Oct 2023 09:04:17 -0700 (PDT)
+Message-ID: <419f823c-2476-4aec-b25d-7e6a2994555a@linaro.org>
+Date:   Thu, 5 Oct 2023 18:04:14 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [REBASE PATCH v5 08/17] arm64: mm: Add dynamic ramoops region
- support through command line
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/21] dt-bindings: interrupt-controller: Add gs101
+ interrupt controller
 Content-Language: en-US
-To:     Pavan Kondeti <quic_pkondeti@quicinc.com>
-CC:     Kees Cook <keescook@chromium.org>, Will Deacon <will@kernel.org>,
-        <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
-        <mathieu.poirier@linaro.org>, <catalin.marinas@arm.com>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
- <1694429639-21484-9-git-send-email-quic_mojha@quicinc.com>
- <20230912101820.GA10884@willie-the-truck> <202309131613.C0E12D0D14@keescook>
- <3273977a-be7d-85f6-6754-52a3dd9b784a@quicinc.com>
- <0120ea7e-e9cc-4955-81dd-6801b56068dc@quicinc.com>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <0120ea7e-e9cc-4955-81dd-6801b56068dc@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
+        s.nawrocki@samsung.com, linus.walleij@linaro.org,
+        wim@linux-watchdog.org, linux@roeck-us.net,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        olof@lixom.net, cw00.choi@samsung.com
+Cc:     tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+        semen.protsenko@linaro.org, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
+References: <20231005155618.700312-1-peter.griffin@linaro.org>
+ <20231005155618.700312-2-peter.griffin@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20231005155618.700312-2-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: IGbUAGYzX116K_An8pah9EbUm59Fl46Y
-X-Proofpoint-ORIG-GUID: IGbUAGYzX116K_An8pah9EbUm59Fl46Y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-05_10,2023-10-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- adultscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0 spamscore=0
- bulkscore=0 mlxlogscore=999 malwarescore=0 impostorscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2309180000
- definitions=main-2310050122
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
-
-On 10/5/2023 5:14 PM, Pavan Kondeti wrote:
-> On Thu, Oct 05, 2023 at 04:52:20PM +0530, Mukesh Ojha wrote:
->> Sorry for the late reply, was on a long vacation.
->>
->> On 9/14/2023 4:47 AM, Kees Cook wrote:
->>> On Tue, Sep 12, 2023 at 11:18:20AM +0100, Will Deacon wrote:
->>>> On Mon, Sep 11, 2023 at 04:23:50PM +0530, Mukesh Ojha wrote:
->>>>> The reserved memory region for ramoops is assumed to be at a fixed
->>>>> and known location when read from the devicetree. This may not be
->>>>> required for something like Qualcomm's minidump which is interested
->>>>> in knowing addresses of ramoops region but it does not put hard
->>>>> requirement of address being fixed as most of it's SoC does not
->>>>> support warm reset and does not use pstorefs at all instead it has
->>>>> firmware way of collecting ramoops region if it gets to know the
->>>>> address and register it with apss minidump table which is sitting
->>>>> in shared memory region in DDR and firmware will have access to
->>>>> these table during reset and collects it on crash of SoC.
->>>>>
->>>>> So, add the support of reserving ramoops region to be dynamically
->>>>> allocated early during boot if it is request through command line
->>>>> via 'dyn_ramoops_size=' and fill up reserved resource structure and
->>>>> export the structure, so that it can be read by ramoops driver.
->>>>>
->>>>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
->>>>> ---
->>>>>    arch/arm64/mm/init.c       | 94 ++++++++++++++++++++++++++++++++++++++++++++++
->>>>
->>>> Why does this need to be in the arch code? There's absolutely nothing
->>>> arm64-specific here.
->>>
->>> I would agree: this needs to be in ramoops itself, IMO. It should be a
->>> ramoops module argument, too.
->>>
->>> It being unhelpful for systems that don't have an external consumer is
->>> certainly true, but I think it would still make more sense for this
->>> change to live entirely within ramoops. Specifically: you're
->>> implementing a pstore backend behavioral change. In the same way that
->>> patch 10 is putting the "output" side of this into pstore/, I'd expect
->>> the "input" side also in pstore/
->>
->> How do we reserve memory? are you suggesting to use dma api's for
->> dynamic ramoops ?
->>
-> Sharing my thoughts:
+On 05/10/2023 17:55, Peter Griffin wrote:
+> Add the gs101 SoC interrupt header that provides human readable
+> constants for all the IRQs in the SoC.
 > 
-> Your patch is inspired from how kexec allocate memory for crash kernel
-> right?
-
-Yes.
-
-> There is a series [1] which moved arch code (ARM64/x86) to
-> generic kexec core. Something we should also do as the feedback
-> received here.
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  .../dt-bindings/interrupt-controller/gs101.h  | 758 ++++++++++++++++++
+>  1 file changed, 758 insertions(+)
+>  create mode 100644 include/dt-bindings/interrupt-controller/gs101.h
 > 
-> Coming to how part, we still have to use memblock API to increase the chance
-> of allocating contiguous memory. Since PSTORE_RAM can also be
-> compiled as a module, we probably need another pstore layer that needs to
-> be built statically in kernel to allocate memory using memblock API.
-> once slab is available, all memblock API will re-direct to slab
-> allocations. This layer can be enabled via ARCH_WANTS_PSTORE_xxx or
-> another config that only supports 'y'. PSTORE_RAM can still be a module but
-> when this layer is available, it supports dynamic ramoops. Another option
-> would be just including this layer in PSTORE RAM module but take away module
-> option  when this layer is enabled.
+> diff --git a/include/dt-bindings/interrupt-controller/gs101.h b/include/dt-bindings/interrupt-controller/gs101.h
+> new file mode 100644
+> index 000000000000..51c8eb54eca2
+> --- /dev/null
+> +++ b/include/dt-bindings/interrupt-controller/gs101.h
+> @@ -0,0 +1,758 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * This header provides constants for gs101 interrupt controller.
+> + *
+> + * Copyright 2019-2023 Google LLC
+> + *
+> + */
+> +
+> +#ifndef _DT_BINDINGS_INTERRUPT_CONTROLLER_GS101_H
+> +#define _DT_BINDINGS_INTERRUPT_CONTROLLER_GS101_H
+> +
+> +#define ITNO	IRQ_TYPE_NONE
+> +#define ITER	IRQ_TYPE_EDGE_RISING
+> +#define ITEF	IRQ_TYPE_EDGE_FALLING
+> +#define ITEB	IRQ_TYPE_EDGE_BOTH
+> +#define ITLH	IRQ_TYPE_LEVEL_HIGH
+> +#define ITLL	IRQ_TYPE_LEVEL_LOW
 
-I thought about this but still the caller will be in Arch code,
-right ? would that be fine with others ?
+No, these are not bindings.
 
--Mukesh
-> 
-> 
-> [1]
-> https://lore.kernel.org/all/20211020020317.1220-6-thunder.leizhen@huawei.com/
+> +
+> +#define IRQ_ALIVE_EINT0		0
+> +#define IRQ_ALIVE_EINT1		1
+
+We do not keep interrupt numbers as bindings. Please drop entire file.
+
+Best regards,
+Krzysztof
+
