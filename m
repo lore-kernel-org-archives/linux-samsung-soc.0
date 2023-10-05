@@ -2,57 +2,57 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D63AE92730
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 19:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AAE6E9272D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 19:22:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231267AbjJETVy (ORCPT
+        id S229734AbjJETWq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Oct 2023 15:21:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39318 "EHLO
+        Thu, 5 Oct 2023 15:22:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231219AbjJETVx (ORCPT
+        with ESMTP id S231142AbjJETWq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Oct 2023 15:21:53 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37CD0E4
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 12:21:51 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-9b9a494cc59so246591566b.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Oct 2023 12:21:51 -0700 (PDT)
+        Thu, 5 Oct 2023 15:22:46 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF6E6E4
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 12:22:44 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-9a58dbd5daeso247293966b.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Oct 2023 12:22:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696533709; x=1697138509; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1696533763; x=1697138563; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=zC5nmhOEkk98rezBT2eL5gPDYlMqNoJcj52hTWs3iUg=;
-        b=NykbaJ9zUW0rzDtgUsFY8vwHSe9X0zKpj/ApIXLdDLm7exPrQjBmP1VZXU9oscFApk
-         4ukmYWSAJg83kQtN17BMtk96pANKyvcWp5Y1F728e8IGqZlpJ4uBWltGAWVzI6kxSKiz
-         Lg3zKfmlko6+O7eNqBkCitJWVU+VLQikNudQXVL/OD+NOBslNn2Te7e0nnoh+TX66VEj
-         w6NDo8J5XVtyJ0HDcyzc5aNz6eUdPkpRCombIxD9b46JGmsZi+nsANDdoxZVTb0kYq3s
-         EqZC4qKB7YGQIXBbgSkSQJhn01yVFt52XmKNYa09WtX3SpFcguQK7jT/oN0Gni/Msayc
-         14WA==
+        bh=H2RLmB7g+8qx4harkihCsHRe2Jxdu/epelEM4mwXVSM=;
+        b=Lza5/yCd8OlmWY4bmAEdxNSACxV7Sfm/gDo/KMK/IeDo/WAL7qDWFckzBowjTcgZDH
+         rfhfR5JyIsLKPMjBDRAiN6AMKvPgkkAL1RbzdBHzZfq1yCjuf0SKowYnoxiMNfmbb9us
+         Z12aUNDS42Fqmg+hARkFV58NMhdV016+28FY/nn4gWdKNcoP4qGh9Ds8Irh2WnDzkEtK
+         TZX2B9odY+dGfyn9Bc6yK9O/DjPz6A/boiKfB3BPOCrP/FvGUgdHTD1UM8J+v9MtVOW/
+         IeLlARuDHgI1TUjc8LrDDMqY9407J7vbObOZ1PWg8imBfmfdkVRHQISMHx+H4fPdG7v9
+         g5Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696533709; x=1697138509;
+        d=1e100.net; s=20230601; t=1696533763; x=1697138563;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zC5nmhOEkk98rezBT2eL5gPDYlMqNoJcj52hTWs3iUg=;
-        b=EB37BdvGKfMDl25UlFrBoSjxiT2hkx7KGsL3MCyQ454/+vCFBXziGebFqxUrZQ1Fw1
-         CGvIkiDo87Uh1MHaVFT0ZfRDV+rLecIRxferZU6h2X/o7HaOO1k9URZ5n/Jw5Jrv8bT0
-         zrztDbq7i1cDRXAngEDf0wobwFvuMbiKz0z7t34pJzvAkuqiyUzCuCwAHGBUnC7ojuRx
-         QJAIaQ8EHk4h0IsbrMngsCAaml+xf8cEC7y/bHP8tG197LyIs92gbcdOMy7U5ZK4Zgjx
-         P+XoWF3lc9eEXt7lC/TDjgTyNyG6/ujl4mjS5wZ3shNTN5NPSi5KJp1FNmrOBm60gAZY
-         sBAg==
-X-Gm-Message-State: AOJu0YxjF3ouGI1B3mD6+Oj2GLgQ0/FDwcDMd8pkdNC661A4xwatccz/
-        vOlhzJr121Y+6A2yA1TVrUospw==
-X-Google-Smtp-Source: AGHT+IEsAQS65ajEAkvqirYG2lP79o5Xp6M15XP9UKihrzfeVYblRVgcZVLCMPbVyNs07EDBpyOXGQ==
-X-Received: by 2002:a17:906:31c5:b0:9a2:5bf:8b14 with SMTP id f5-20020a17090631c500b009a205bf8b14mr6089768ejf.22.1696533709605;
-        Thu, 05 Oct 2023 12:21:49 -0700 (PDT)
+        bh=H2RLmB7g+8qx4harkihCsHRe2Jxdu/epelEM4mwXVSM=;
+        b=haHitfYmuxpVDAdZLqjFXVg5eaxHdI4rSuvFmwEiNN7DGJ3601HyZbQjvVmappzMyS
+         dJNrIGC14zSb/MFVlWukTvYj2eS38s/+a0TnsRRMddQAuaKoYfzyovz+nQ48WYk41+2C
+         BjDFBtggvy+Te68rEBVgo8szvXLSsC40UuLSqrP2KK0n5sFh96jrQZ73Cpd5V9wk61ba
+         9MivmGxsnecGn+yrzY0oqm8M1faJWX+ldHW4IkECv6TbsnebOUg/H+g+Z8etUjA2BgcK
+         teRteBMdFBopf6/ad7pEeq666O/sNd6GILaTry3Lu0aNKVGcAbbpds/J2oaZ4GWX1XTX
+         FEzw==
+X-Gm-Message-State: AOJu0Yy45bIt31O5FT+d8K9+9vYplWsrt9Wut3tNtoHECg6y6lnazb62
+        Q+SXkasQTu7UPblDSOW2PB5t3g==
+X-Google-Smtp-Source: AGHT+IHzCMPH6GCYxav68JKuM4RFSuedz3bF6GTUfGGj4Q7LE6xtvJ+89OJMdsC5nnk7tPBAuRv26A==
+X-Received: by 2002:a17:906:2da:b0:9b7:1e26:e2ea with SMTP id 26-20020a17090602da00b009b71e26e2eamr5297358ejk.41.1696533762679;
+        Thu, 05 Oct 2023 12:22:42 -0700 (PDT)
 Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id rn4-20020a170906d92400b0099bc038eb2bsm1613889ejb.58.2023.10.05.12.21.47
+        by smtp.gmail.com with ESMTPSA id rn4-20020a170906d92400b0099bc038eb2bsm1613889ejb.58.2023.10.05.12.22.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Oct 2023 12:21:49 -0700 (PDT)
-Message-ID: <20c6070e-edeb-4a9d-863d-143abc840874@linaro.org>
-Date:   Thu, 5 Oct 2023 21:21:46 +0200
+        Thu, 05 Oct 2023 12:22:42 -0700 (PDT)
+Message-ID: <db02684f-c32b-4e09-8752-8d07dcb518c3@linaro.org>
+Date:   Thu, 5 Oct 2023 21:22:40 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 18/21] arm64: dts: google: Add initial Google gs101 SoC
@@ -142,76 +142,15 @@ On 05/10/2023 19:59, William McVicker wrote:
 >> It has been tested with a minimal busybox initramfs and boots to
 >> a shell.
 >>
->> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
->> ---
->>  arch/arm64/Kconfig.platforms                  |    6 +
->>  arch/arm64/boot/dts/Makefile                  |    1 +
->>  arch/arm64/boot/dts/google/Makefile           |    6 +
->>  arch/arm64/boot/dts/google/gs101-oriole.dts   |   68 +
->>  arch/arm64/boot/dts/google/gs101-pinctrl.dtsi | 1134 +++++++++++++++++
->>  arch/arm64/boot/dts/google/gs101-pinctrl.h    |   17 +
->>  arch/arm64/boot/dts/google/gs101.dtsi         |  501 ++++++++
->>  7 files changed, 1733 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/google/Makefile
->>  create mode 100644 arch/arm64/boot/dts/google/gs101-oriole.dts
->>  create mode 100644 arch/arm64/boot/dts/google/gs101-pinctrl.dtsi
->>  create mode 100644 arch/arm64/boot/dts/google/gs101-pinctrl.h
->>  create mode 100644 arch/arm64/boot/dts/google/gs101.dtsi
->>
->> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
->> index 6069120199bb..a5ed1b719488 100644
->> --- a/arch/arm64/Kconfig.platforms
->> +++ b/arch/arm64/Kconfig.platforms
->> @@ -107,6 +107,12 @@ config ARCH_EXYNOS
->>  	help
->>  	  This enables support for ARMv8 based Samsung Exynos SoC family.
->>  
->> +config ARCH_GOOGLE_TENSOR
->> +	bool "Google Tensor SoC fmaily"
->> +	depends on ARCH_EXYNOS
->> +	help
->> +	  Support for ARMv8 based Google Tensor platforms.
-> 
-> I'd like to bring up this thread and discuss the option of not introducing
-> another ARCH_* config:
-> 
->   https://lore.kernel.org/all/20200306103652.GA3634389@kroah.com/
-> 
-> I especially don't like the "depends on ARCH_EXYNOS" because that forces one to
-> include all the other Exynos drivers that ARCH_EXYNOS selects that Google
 
-Since we are creating unified kernel images, having other drivers is not
-a problem.
+William,
 
-> Tensor SoCs don't need. Can we consider using SOC_GOOGLE instead and for all
+Please do not Cc non-existing mailboxes. You added Cc kernel-team and we
+all got awesome bounces now:
 
-SOC_GOOGLE will work exactly the same and depend on ARCH_EXYNOS or
-appear everywhere as ARCH_EXYNOS. We already had this talk with Tesla.
-
-
-> drivers that actually depend on the SoC hardware, we can just add "depends on
-> SOC_GOOGLE"?
-> 
-> The idea is that drivers should be tied to hardware -- not a specific vendor.
-
-And hardware is Exynos. Tesla FSD and Google Tensor is Exynos, even if
-you do no like calling it.
-
-> By making drivers depend on ARCH_*, you are introducing an arbitrary vendor
-> dependency and not a hardware dependency.
-
-There is no arbitrary dependency. We call it all Exynos hardware,
-because this is Exynos.
-
-I remember what you were pushing for removal of ARCH_EXYNOS and there
-waas clear feedback, not only from me: this is against communities goals.
-
-> 
-> Thanks,
-> Will
-
-Please trim the replies from unrelated context.
-
+"We're writing to let you know that the group you tried to contact
+(kernel-team) may not exist, or you may not have permission to post
+messages to the group. A few more details on why you weren't able to post:"
 
 Best regards,
 Krzysztof
