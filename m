@@ -2,61 +2,61 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B371E9271D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA43E9271F
 	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 16:21:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241000AbjJEQUi (ORCPT
+        id S241736AbjJEQUk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Oct 2023 12:20:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43242 "EHLO
+        Thu, 5 Oct 2023 12:20:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242529AbjJEQSM (ORCPT
+        with ESMTP id S242364AbjJEQRs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Oct 2023 12:18:12 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E1A8B29D
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 09:07:53 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-532c81b9adbso2062047a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Oct 2023 09:07:52 -0700 (PDT)
+        Thu, 5 Oct 2023 12:17:48 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F0903C271
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 09:06:23 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-51e28cac164so4991637a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Oct 2023 09:06:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696522071; x=1697126871; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1696521982; x=1697126782; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=A9d7j0cYZDsIK9/MC/sZKybXO+oQ0zJyvFJ3Yr4FRco=;
-        b=N3tWq/5w6PYkmVxLN0+/E4dQ+Ch2UbQy8drKpdpMv/BS/DhIaZ+cs2rD//GrgjxczL
-         zKGJWr2yzYZyDOwAQtkZTKflAYBuCOovDBRbjG1ODUGBKB9FQVM9pEyTCQDo7jQn8QZI
-         C51OkE1Pmk+bRR9hxGPL4A5hpLpbOvMrzPF68b3SRBFbCQil9OAhvQZZ758vxwsnh7ag
-         XBCoaR+0qI9EgbEIO4q254iLlylBSbBdvWWn6Mr6nBd9VTBV+703aL7I8ExeH3qFSKti
-         0DW37XBjoENo8Ot1buflEVmHJYj2UfH5ulcB4cLeF0qb6RDVbgVeFf7hEwthhlc4uVsu
-         7qaw==
+        bh=UUL7utwsKCoosQEHOR7FkS6Y1/9AZ1oUraeSYHh9HHU=;
+        b=W8CLTuMUAcXhLK87314Fek4DwnAQwrQF2xBU5J2MRL6N5dfHrDk+7/nzaVakTWPmxG
+         hrrxeKnTA5jCGdyeDCgHfWVjVhj5KosX3wbx3UfeNILZKIBQMDnKaSorKel7X/ZZ2IwC
+         dLoA0zBhFGvShUyCOZ7Kw3uVyeetCiucSmUc4arcY8XhQ9Ryx3CxkyX9lHjRYR3Sj1gS
+         Gg1+AU1SzbikJJvv35GixdEJrNNEMizVoI7BCjMafKvnhLjYGTrbLCcnBIaHSPxu7UqI
+         haocKQbramPNVXNPO1ASKY+VIctM7bkoxBDQqtKT7XztM+mrR+C2gcL6ZcB4Pc7yTUST
+         lMEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696522071; x=1697126871;
+        d=1e100.net; s=20230601; t=1696521982; x=1697126782;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A9d7j0cYZDsIK9/MC/sZKybXO+oQ0zJyvFJ3Yr4FRco=;
-        b=EGZAjhoCHq0r4dkmXUWSLmktJAg1HoWmbRNh9XIdlyzlhzl5nmoIqERtX+zTTZ/KPb
-         Y8PatufCjKDRxKwxYdky+KOk6/XejPTz0BuovI7ts3Eoio4LaY06bQkdh62th6TtjarZ
-         9EPhS4ZuN/a+adtXzhOdV80xXvgBH8SJAQr0sG0NBLsM49Uh4T1IsP7SCixFssPDwfYd
-         BG6PA4e1zoYEiwNeTev2sDn4l2u+C/9wk/OS/G3nLaS6JDJ83FcomjSihWhFT5cnHojA
-         ixJZ3NPw+tjdAchwcZJqoMZkhw/zJfHeLhnW5HBkHHwgmJhJLa02JR19hbdMkrxJe5qI
-         UwjQ==
-X-Gm-Message-State: AOJu0Yz11FfwxnKtVx3Pvjjt3krtkNQR/tt2EM+LDunEhw0q1looamd7
-        hRPryM3+MvVWL28PL4pK2miGrA==
-X-Google-Smtp-Source: AGHT+IFnG+SZs3IDSCXOJSAJ+vJQT9juwlVzYZDKjmMBVRNUOXbrO3Ff4JPb47IziseOqAiusbxhTQ==
-X-Received: by 2002:aa7:c6c4:0:b0:532:ec54:bfff with SMTP id b4-20020aa7c6c4000000b00532ec54bfffmr4972794eds.16.1696522071287;
-        Thu, 05 Oct 2023 09:07:51 -0700 (PDT)
+        bh=UUL7utwsKCoosQEHOR7FkS6Y1/9AZ1oUraeSYHh9HHU=;
+        b=sIOSL3HbQhKlScIW1ehD7o9th3BRMZ124/tBo/7qH9QNZf7Zr6Yn7GitOSK6r3Ri1j
+         iziB6skPCzNKVWEULsgQDRgkirLao9hejt/AbKmPjnPbnvUbT5Z9toc/mvCelf9vBLHR
+         6NTvBrtiQveaANrbKLVwn7tfbQUth7eXu6wn9E4dDdNcXQqTwhy//dZXNGsaQQlrNDzy
+         Qu3oE15hQNRhDTONRAWl0sCDajLuW6pWDx8hRo5n+3bsfcvYpGYnlJE3nBhNIT2alDpr
+         LzZ5vyk3DMgZQIAtyQmQcCpO1bGilSR6peKRpq+zPSFddytWeA4PWN24f9xxKrUH25Wm
+         wnCA==
+X-Gm-Message-State: AOJu0Yx1/uIhCirGkJ8priGtktIA3JLVipX+yODLZZIlaXlFzsg7L/KN
+        fD0V3DmlD4D3UlJQWNjwDolGmQ==
+X-Google-Smtp-Source: AGHT+IGmnHG8CTHPWacl1UAkJcPixE+JYyBFk0DyQ+fC7i4yBVKgohGsIWOzx87M1+siobq/NvMuYQ==
+X-Received: by 2002:a05:6402:2813:b0:535:cbe5:a039 with SMTP id h19-20020a056402281300b00535cbe5a039mr1808230ede.12.1696521981863;
+        Thu, 05 Oct 2023 09:06:21 -0700 (PDT)
 Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id n19-20020a056402515300b0053495596f42sm1278344edd.30.2023.10.05.09.07.49
+        by smtp.gmail.com with ESMTPSA id n19-20020a056402515300b0053495596f42sm1278344edd.30.2023.10.05.09.06.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Oct 2023 09:07:50 -0700 (PDT)
-Message-ID: <f997c21d-d85b-4ad1-ad5b-999524fc72ac@linaro.org>
-Date:   Thu, 5 Oct 2023 18:07:48 +0200
+        Thu, 05 Oct 2023 09:06:21 -0700 (PDT)
+Message-ID: <19afaf88-d709-4b36-b107-7c9e7701b336@linaro.org>
+Date:   Thu, 5 Oct 2023 18:06:19 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/21] dt-bindings: soc: google: exynos-sysreg: add
- dedicated SYSREG compatibles to GS101
+Subject: Re: [PATCH 03/21] dt-bindings: clock: Add Google gs101 clock
+ management unit bindings
 Content-Language: en-US
 To:     Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
@@ -71,7 +71,7 @@ Cc:     tudor.ambarus@linaro.org, andre.draszik@linaro.org,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
 References: <20231005155618.700312-1-peter.griffin@linaro.org>
- <20231005155618.700312-5-peter.griffin@linaro.org>
+ <20231005155618.700312-4-peter.griffin@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -117,7 +117,7 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231005155618.700312-5-peter.griffin@linaro.org>
+In-Reply-To: <20231005155618.700312-4-peter.griffin@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -125,40 +125,132 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 05/10/2023 17:56, Peter Griffin wrote:
-> GS101 has three different SYSREG controllers, add dedicated
-> compatibles for them to the documentation.
+> Provide dt-schema documentation for Google gs101 SoC clock controller.
 > 
 > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
->  .../bindings/soc/samsung/samsung,exynos-sysreg.yaml        | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  .../bindings/clock/google,gs101-clock.yaml    | 109 ++++++++++++++++++
+>  1 file changed, 109 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> index 163e912e9cad..02f580d6489b 100644
-> --- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> +++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> @@ -50,6 +50,13 @@ properties:
->                - samsung,exynosautov9-peric1-sysreg
->            - const: samsung,exynosautov9-sysreg
->            - const: syscon
-> +      - items:
-> +          - enum:
-> +              - google,gs101-peric0-sysreg
-> +              - google,gs101-peric1-sysreg
-> +              - google,gs101-apm-sysreg
-> +          - const: google,gs101-sysreg
+> diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> new file mode 100644
+> index 000000000000..a28d05d88afe
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> @@ -0,0 +1,109 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/google,gs101-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Google GS101 SoC clock controller
+> +
+> +maintainers:
+> +  - Peter Griffin <peter.griffin@linaro.org>
+> +
+> +description: |
+> +  Google GS101 clock controller is comprised of several CMU units, generating
+> +  clocks for different domains. Those CMU units are modeled as separate device
+> +  tree nodes, and might depend on each other. The root clock in that clock tree
+> +  is OSCCLK (24.576 MHz). That external clock must be defined as a fixed-rate
+> +  clock in dts.
+> +
+> +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
+> +  dividers; all other leaf clocks (other CMUs) are usually derived from CMU_TOP.
+> +
+> +  Each clock is assigned an identifier and client nodes can use this identifier
+> +  to specify the clock which they consume. All clocks available for usage
+> +  in clock consumer nodes are defined as preprocessor macros in
+> +  'dt-bindings/clock/gs101.h' header.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - google,gs101-cmu-top
+> +      - google,gs101-cmu-apm
+> +      - google,gs101-cmu-misc
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 5
 
-Please drop this one compatible. Exynos has it only for backwards
-compatibility.
+I see max 2 clocks.
 
-Also, please put entire list ("items") before such entry for
-samsung,exynos5433-sysreg, so everything is more-or-less ordered
-alphabetically, by the fallback compatible.
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 5
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: google,gs101-cmu-top
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (24.576 MHz)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: google,gs101-cmu-misc
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (24.576 MHz)
+> +            - description: Misc bus clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: dout_cmu_misc_bus
 
-> +          - const: syscon
->  
->    reg:
->      maxItems: 1
+What about google,gs101-cmu-apm?
+
+> +
+> +required:
+
+"required:" go before "allOf:"
+
+> +  - compatible
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  # Clock controller node for CMU_TOP
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/gs101.h>
+> +    soc {
+> +    #address-cells = <2>;
+> +    #size-cells = <1>;
+
+Messed indentation.
+
+> +
+> +...
 
 Best regards,
 Krzysztof
