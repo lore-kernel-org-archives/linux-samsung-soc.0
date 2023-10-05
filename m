@@ -2,299 +2,169 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B903E772C1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 16:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 245E2E92717
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 16:16:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239380AbjJEQK6 (ORCPT
+        id S241755AbjJEQQ1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Oct 2023 12:10:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45542 "EHLO
+        Thu, 5 Oct 2023 12:16:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238358AbjJEQJ5 (ORCPT
+        with ESMTP id S241894AbjJEQOy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Oct 2023 12:09:57 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 467BF87202
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 08:57:34 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-405361bba99so10384175e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Oct 2023 08:57:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696521452; x=1697126252; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d11cqKfS+fdxtmrtzzZxvBU5OTmGMgE/XCozhQBkInQ=;
-        b=bolZ88a0qh+aaO+SvY1rYXgLvMveRT0hAU94nU6iInNhb2Jeya1jffxpvoB6en3bFU
-         ccOCAx+kzaq6JNgSBHJ3GKIS68hRhSGeDWNZzUqn+qs8x6KwvPzgeLi4j+vk5S3k+2Nr
-         EZivjsGOVAfSQeBn2Uos2x7rcWu3w4h3LzUDHDIcjoQ1/Upfk3HyY61cPTA/pbSV2gDt
-         2PYvOFpqicIaTIAgaPx0tJrFyLxB2hty1zEQHHVIorFoqcJ6sZ7l8/RNpTYg4Z2oy4UC
-         krqa7Ql2hboQmnOmWNd6jGysl/OS7PAW7JnECNJICLKT0PXVqj6f0Sbjc5OgXyzBi32N
-         ZIaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696521452; x=1697126252;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d11cqKfS+fdxtmrtzzZxvBU5OTmGMgE/XCozhQBkInQ=;
-        b=P2PNh+qH+ONNKwRbYrAIZ8GlRBf8LHU7GAw7xLBerESP4EVbLRtkp72ODEfbsrvWhG
-         yGJsseu4QqcFLLEboNkX114Xt9RACpsrfRPwiVYKYBWjv0e+7IerRjGrmQrfyo/a3dLo
-         02KYit1MG1xgLRhKJf8C9UfQyQuL04J9qI0K7+CmSxJAPa7/6uAIOdF6zw84BlehqLtc
-         kG+gn0Sz4t2kWiSR1tjVgwNh3hoCEjZcv9ZX7JwHxK1Xb2sqV03DSV9HZ4k2c8zG+PO+
-         tyVdkokCiGi/C2Q9oLm7YwH1d852TDznyrxC6IcGQ9LN+HPPaAxbxqWD2v/DGliWIZ3x
-         BlcA==
-X-Gm-Message-State: AOJu0YxZIavULahzvLP/e7Ukq2dnwNYN14gpAwWQhyQ02IsiTCUH6k+r
-        Hq1BKnreH47yTkGS1SY8pSyE8Q==
-X-Google-Smtp-Source: AGHT+IF5JxaO9+rCy97IxTy5wUsRkgWUCcXCf+iMUE0xXftzVtEU+uJrHfiP+TqDv55krBbjdkA52Q==
-X-Received: by 2002:adf:ec52:0:b0:321:6de5:68b4 with SMTP id w18-20020adfec52000000b003216de568b4mr5417975wrn.52.1696521452740;
-        Thu, 05 Oct 2023 08:57:32 -0700 (PDT)
-Received: from gpeter-l.lan (host-92-12-225-146.as13285.net. [92.12.225.146])
-        by smtp.gmail.com with ESMTPSA id t9-20020a5d4609000000b0031f8a59dbeasm2084336wrq.62.2023.10.05.08.57.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 08:57:32 -0700 (PDT)
-From:   Peter Griffin <peter.griffin@linaro.org>
-To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
-        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
-        linus.walleij@linaro.org, wim@linux-watchdog.org,
-        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, olof@lixom.net, cw00.choi@samsung.com
-Cc:     peter.griffin@linaro.org, tudor.ambarus@linaro.org,
-        andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        soc@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [PATCH 09/21] dt-bindings: clock: gs101: Add cmu_top clock indices
-Date:   Thu,  5 Oct 2023 16:56:06 +0100
-Message-ID: <20231005155618.700312-10-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.42.0.582.g8ccd20d70d-goog
-In-Reply-To: <20231005155618.700312-1-peter.griffin@linaro.org>
-References: <20231005155618.700312-1-peter.griffin@linaro.org>
+        Thu, 5 Oct 2023 12:14:54 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E0E06702;
+        Thu,  5 Oct 2023 08:43:46 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 395Ct1QM001918;
+        Thu, 5 Oct 2023 15:43:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=psmI8y1A7J+9sPoTmK30CglmBHR27wVbfWQinlszqoc=;
+ b=jafGIjoZ7PnWZuORPFbKXbeSUVZMSBs6nPNPJFl6eDNE+4hOws85dewwrvR2YZAZasFj
+ qXw7uS1hH2OPHkz+ZpC1OftlDWrpLT/tvwP+P3YRA5vjo6l1aqSa3IqBlidUkSVziXR9
+ +DhOlr6OMQXeMSNDQi43DxZSlTV/Vq+prtZ14KrCytysB7x5xnflL9ULW5vGeRMUGUte
+ uwfYmm1XnSYJtahxJtcNT4UeD2WoDi7B/8Bw7jToiamCzx6E2igmcCgqSLdEc/QtOVyF
+ XLVWJdTXmk3Xhm4VFYysz/x2bMMuDutLQTb/hNIz7anw6sKunNWH/qWJJLd5whvmc6GV NA== 
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3th8e1u5mk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Oct 2023 15:43:02 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 395Fh1t4012902
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 5 Oct 2023 15:43:01 GMT
+Received: from [10.216.26.22] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Thu, 5 Oct
+ 2023 08:42:37 -0700
+Message-ID: <7c59b835-d29e-04af-7f2f-801da584c71c@quicinc.com>
+Date:   Thu, 5 Oct 2023 21:12:25 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [REBASE PATCH v5 08/17] arm64: mm: Add dynamic ramoops region
+ support through command line
+Content-Language: en-US
+To:     Pavan Kondeti <quic_pkondeti@quicinc.com>
+CC:     Kees Cook <keescook@chromium.org>, Will Deacon <will@kernel.org>,
+        <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
+        <mathieu.poirier@linaro.org>, <catalin.marinas@arm.com>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+ <1694429639-21484-9-git-send-email-quic_mojha@quicinc.com>
+ <20230912101820.GA10884@willie-the-truck> <202309131613.C0E12D0D14@keescook>
+ <3273977a-be7d-85f6-6754-52a3dd9b784a@quicinc.com>
+ <0120ea7e-e9cc-4955-81dd-6801b56068dc@quicinc.com>
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <0120ea7e-e9cc-4955-81dd-6801b56068dc@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: IGbUAGYzX116K_An8pah9EbUm59Fl46Y
+X-Proofpoint-ORIG-GUID: IGbUAGYzX116K_An8pah9EbUm59Fl46Y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-05_10,2023-10-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ adultscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0 spamscore=0
+ bulkscore=0 mlxlogscore=999 malwarescore=0 impostorscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2309180000
+ definitions=main-2310050122
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-CMU_TOP geneerates clocks for all the other CMU units. Add clock
-indices for those PLLs, muxes, dividers and gates.
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- include/dt-bindings/clock/gs101.h | 204 ++++++++++++++++++++++++++++++
- 1 file changed, 204 insertions(+)
- create mode 100644 include/dt-bindings/clock/gs101.h
 
-diff --git a/include/dt-bindings/clock/gs101.h b/include/dt-bindings/clock/gs101.h
-new file mode 100644
-index 000000000000..d1e216a33aeb
---- /dev/null
-+++ b/include/dt-bindings/clock/gs101.h
-@@ -0,0 +1,204 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (C) 2023 Linaro Ltd.
-+ * Author: Peter Griffin <peter.griffin@linaro.org>
-+ *
-+ * Device Tree binding constants for Google gs101 clock controller.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLOCK_GOOGLE_GS101_H
-+#define _DT_BINDINGS_CLOCK_GOOGLE_GS101_H
-+
-+/* CMU_TOP PLL*/
-+#define CLK_FOUT_SHARED0_PLL		1
-+#define CLK_FOUT_SHARED1_PLL		2
-+#define CLK_FOUT_SHARED2_PLL		3
-+#define CLK_FOUT_SHARED3_PLL		4
-+#define CLK_FOUT_SPARE_PLL		5
-+
-+/* CMU_TOP MUX*/
-+#define CLK_MOUT_SHARED0_PLL		6
-+#define CLK_MOUT_SHARED1_PLL		7
-+#define CLK_MOUT_SHARED2_PLL		8
-+#define CLK_MOUT_SHARED3_PLL		9
-+#define CLK_MOUT_SPARE_PLL		10
-+#define CLK_MOUT_BUS0_BUS		11
-+#define CLK_MOUT_CMU_BOOST		12
-+#define CLK_MOUT_BUS1_BUS		13
-+#define CLK_MOUT_BUS2_BUS		14
-+#define CLK_MOUT_CORE_BUS		15
-+#define CLK_MOUT_EH_BUS			16
-+#define CLK_MOUT_CPUCL2_SWITCH		17
-+#define CLK_MOUT_CPUCL1_SWITCH		18
-+#define CLK_MOUT_CPUCL0_SWITCH		19
-+#define CLK_MOUT_CPUCL0_DBG		20
-+#define CLK_MOUT_CMU_HPM		21
-+#define CLK_MOUT_G3D_SWITCH		22
-+#define CLK_MOUT_G3D_GLB		23
-+#define CLK_MOUT_DPU_BUS		24
-+#define CLK_MOUT_DISP_BUS		25
-+#define CLK_MOUT_G2D_G2D		26
-+#define CLK_MOUT_G2D_MSCL		27
-+#define CLK_MOUT_HSI0_USB31DRD		28
-+#define CLK_MOUT_HSI0_BUS		29
-+#define CLK_MOUT_HSI0_DPGTC		30
-+#define CLK_MOUT_HSI0_USBDPDGB		31
-+#define CLK_MOUT_HSI1_BUS		32
-+#define CLK_MOUT_HSI1_PCIE		33
-+#define CLK_MOUT_HSI2_BUS		34
-+#define CLK_MOUT_HSI2_PCIE		35
-+#define CLK_MOUT_HSI2_UFS_EMBD		36
-+#define CLK_MOUT_HSI2_MMC_CARD		37
-+#define CLK_MOUT_CSIS			38
-+#define CLK_MOUT_PDP_BUS		39
-+#define CLK_MOUT_PDP_VRA		40
-+#define CLK_MOUT_IPP_BUS		41
-+#define CLK_MOUT_G3AA			42
-+#define CLK_MOUT_ITP			43
-+#define CLK_MOUT_DNS_BUS		44
-+#define CLK_MOUT_TNR_BUS		45
-+#define CLK_MOUT_MCSC_ITSC		46
-+#define CLK_MOUT_MCSC_MCSC		47
-+#define CLK_MOUT_GDC_SCSC		48
-+#define CLK_MOUT_GDC_GDC0		49
-+#define CLK_MOUT_GDC_GDC1		50
-+#define CLK_MOUT_MFC_MFC		51
-+#define CLK_MOUT_MIF_SWITCH		52
-+#define CLK_MOUT_MIF_BUS		53
-+#define CLK_MOUT_MISC_BUS		54
-+#define CLK_MOUT_MISC_SSS		55
-+#define CLK_MOUT_PERIC0_IP		56
-+#define CLK_MOUT_PERIC0_BUS		57
-+#define CLK_MOUT_PERIC1_IP		58
-+#define CLK_MOUT_PERIC1_BUS		59
-+#define CLK_MOUT_TPU_TPU		60
-+#define CLK_MOUT_TPU_TPUCTL		61
-+#define CLK_MOUT_TPU_BUS		62
-+#define CLK_MOUT_TPU_UART		63
-+#define CLK_MOUT_TPU_HPM		64
-+#define CLK_MOUT_BO_BUS			65
-+#define CLK_MOUT_G3D_BUSD		66
-+
-+/* CMU_TOP Dividers*/
-+#define CLK_DOUT_SHARED0_DIV3		67
-+#define CLK_DOUT_SHARED0_DIV2		68
-+#define CLK_DOUT_SHARED0_DIV4		69
-+#define CLK_DOUT_SHARED0_DIV5		70
-+#define CLK_DOUT_SHARED1_DIV3		71
-+#define CLK_DOUT_SHARED1_DIV2		72
-+#define CLK_DOUT_SHARED1_DIV4		73
-+#define CLK_DOUT_SHARED2_DIV2		74
-+#define CLK_DOUT_SHARED3_DIV2		75
-+#define CLK_DOUT_BUS0_BUS		76
-+#define CLK_DOUT_CMU_BOOST		77
-+#define CLK_DOUT_BUS1_BUS		78
-+#define CLK_DOUT_BUS2_BUS		79
-+#define CLK_DOUT_CORE_BUS		80
-+#define CLK_DOUT_EH_BUS			81
-+#define CLK_DOUT_CPUCL2_SWITCH		82
-+#define CLK_DOUT_CPUCL1_SWITCH		83
-+#define CLK_DOUT_CPUCL0_SWITCH		84
-+#define CLK_DOUT_CPUCL0_DBG		85
-+#define CLK_DOUT_CMU_HPM		86
-+#define CLK_DOUT_G3D_SWITCH		87
-+#define CLK_DOUT_G3D_GLB		88
-+#define CLK_DOUT_DPU_BUS		89
-+#define CLK_DOUT_DISP_BUS		90
-+#define CLK_DOUT_G2D_G2D		91
-+#define CLK_DOUT_G2D_MSCL		92
-+#define CLK_DOUT_HSI0_USB31DRD		93
-+#define CLK_DOUT_HSI0_BUS		94
-+#define CLK_DOUT_HSI0_DPGTC		95
-+#define CLK_DOUT_HSI0_USBDPDGB		96
-+#define CLK_DOUT_HSI1_BUS		97
-+#define CLK_DOUT_HSI1_PCIE		98
-+#define CLK_DOUT_HSI2_BUS		100
-+#define CLK_DOUT_HSI2_PCIE		101
-+#define CLK_DOUT_HSI2_UFS_EMBD		102
-+#define CLK_DOUT_HSI2_MMC_CARD		103
-+#define CLK_DOUT_CSIS			104
-+#define CLK_DOUT_PDP_BUS		105
-+#define CLK_DOUT_PDP_VRA		106
-+#define CLK_DOUT_IPP_BUS		107
-+#define CLK_DOUT_G3AA			108
-+#define CLK_DOUT_ITP			109
-+#define CLK_DOUT_DNS_BUS		110
-+#define CLK_DOUT_TNR_BUS		111
-+#define CLK_DOUT_MCSC_ITSC		112
-+#define CLK_DOUT_MCSC_MCSC		113
-+#define CLK_DOUT_GDC_SCSC		114
-+#define CLK_DOUT_GDC_GDC0		115
-+#define CLK_DOUT_GDC_GDC1		116
-+#define CLK_DOUT_MFC_MFC		117
-+#define CLK_DOUT_MIF_BUS		118
-+#define CLK_DOUT_MISC_BUS		119
-+#define CLK_DOUT_MISC_SSS		120
-+#define CLK_DOUT_PERIC0_BUS		121
-+#define CLK_DOUT_PERIC0_IP		122
-+#define CLK_DOUT_PERIC1_BUS		123
-+#define CLK_DOUT_PERIC1_IP		124
-+#define CLK_DOUT_TPU_TPU		125
-+#define CLK_DOUT_TPU_TPUCTL		126
-+#define CLK_DOUT_TPU_BUS		127
-+#define CLK_DOUT_TPU_UART		128
-+#define CLK_DOUT_TPU_HPM		129
-+#define CLK_DOUT_BO_BUS			130
-+
-+/* CMU_TOP Gates*/
-+#define CLK_GOUT_BUS0_BUS		131
-+#define CLK_GOUT_BUS1_BUS		132
-+#define CLK_GOUT_BUS2_BUS		133
-+#define CLK_GOUT_CORE_BUS		134
-+#define CLK_GOUT_EH_BUS			135
-+#define CLK_GOUT_CPUCL2_SWITCH		136
-+#define CLK_GOUT_CPUCL1_SWITCH		137
-+#define CLK_GOUT_CPUCL0_SWITCH		138
-+#define CLK_GOUT_CPUCL0_DBG		139
-+#define CLK_GOUT_CMU_HPM		140
-+#define CLK_GOUT_G3D_SWITCH		141
-+#define CLK_GOUT_G3D_GLB		142
-+#define CLK_GOUT_DPU_BUS		143
-+#define CLK_GOUT_DISP_BUS		144
-+#define CLK_GOUT_G2D_G2D		145
-+#define CLK_GOUT_G2D_MSCL		146
-+#define CLK_GOUT_HSI0_USB31DRD		147
-+#define CLK_GOUT_HSI0_BUS		148
-+#define CLK_GOUT_HSI0_DPGTC		149
-+#define CLK_GOUT_HSI0_USBDPDGB		150
-+#define CLK_GOUT_HSI1_BUS		151
-+#define CLK_GOUT_HSI1_PCIE		152
-+#define CLK_GOUT_HSI2_BUS		153
-+#define CLK_GOUT_HSI2_PCIE		154
-+#define CLK_GOUT_HSI2_UFS_EMBD		155
-+#define CLK_GOUT_HSI2_MMC_CARD		156
-+#define CLK_GOUT_CSIS			157
-+#define CLK_GOUT_PDP_BUS		158
-+#define CLK_GOUT_PDP_VRA		159
-+#define CLK_GOUT_IPP_BUS		160
-+#define CLK_GOUT_G3AA			161
-+#define CLK_GOUT_ITP			162
-+#define CLK_GOUT_DNS_BUS		163
-+#define CLK_GOUT_TNR_BUS		164
-+#define CLK_GOUT_MCSC_ITSC		165
-+#define CLK_GOUT_MCSC_MCSC		166
-+#define CLK_GOUT_GDC_SCSC		167
-+#define CLK_GOUT_GDC_GDC0		168
-+#define CLK_GOUT_GDC_GDC1		169
-+#define CLK_GOUT_MFC_MFC		170
-+#define CLK_GOUT_MIF_SWITCH		171
-+#define CLK_GOUT_MIF_BUS		172
-+#define CLK_GOUT_MISC_BUS		173
-+#define CLK_GOUT_MISC_SSS		174
-+#define CLK_GOUT_PERIC0_BUS		175
-+#define CLK_GOUT_PERIC0_IP		176
-+#define CLK_GOUT_PERIC1_BUS		177
-+#define CLK_GOUT_PERIC1_IP		178
-+#define CLK_GOUT_TPU_TPU		179
-+#define CLK_GOUT_TPU_TPUCTL		180
-+#define CLK_GOUT_TPU_BUS		181
-+#define CLK_GOUT_TPU_UART		182
-+#define CLK_GOUT_TPU_HPM		183
-+#define CLK_GOUT_BO_BUS			184
-+#define CLK_GOUT_CMU_BOOST		185
-+
-+#endif /* _DT_BINDINGS_CLOCK_GOOGLE_GS101_H */
--- 
-2.42.0.582.g8ccd20d70d-goog
+On 10/5/2023 5:14 PM, Pavan Kondeti wrote:
+> On Thu, Oct 05, 2023 at 04:52:20PM +0530, Mukesh Ojha wrote:
+>> Sorry for the late reply, was on a long vacation.
+>>
+>> On 9/14/2023 4:47 AM, Kees Cook wrote:
+>>> On Tue, Sep 12, 2023 at 11:18:20AM +0100, Will Deacon wrote:
+>>>> On Mon, Sep 11, 2023 at 04:23:50PM +0530, Mukesh Ojha wrote:
+>>>>> The reserved memory region for ramoops is assumed to be at a fixed
+>>>>> and known location when read from the devicetree. This may not be
+>>>>> required for something like Qualcomm's minidump which is interested
+>>>>> in knowing addresses of ramoops region but it does not put hard
+>>>>> requirement of address being fixed as most of it's SoC does not
+>>>>> support warm reset and does not use pstorefs at all instead it has
+>>>>> firmware way of collecting ramoops region if it gets to know the
+>>>>> address and register it with apss minidump table which is sitting
+>>>>> in shared memory region in DDR and firmware will have access to
+>>>>> these table during reset and collects it on crash of SoC.
+>>>>>
+>>>>> So, add the support of reserving ramoops region to be dynamically
+>>>>> allocated early during boot if it is request through command line
+>>>>> via 'dyn_ramoops_size=' and fill up reserved resource structure and
+>>>>> export the structure, so that it can be read by ramoops driver.
+>>>>>
+>>>>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+>>>>> ---
+>>>>>    arch/arm64/mm/init.c       | 94 ++++++++++++++++++++++++++++++++++++++++++++++
+>>>>
+>>>> Why does this need to be in the arch code? There's absolutely nothing
+>>>> arm64-specific here.
+>>>
+>>> I would agree: this needs to be in ramoops itself, IMO. It should be a
+>>> ramoops module argument, too.
+>>>
+>>> It being unhelpful for systems that don't have an external consumer is
+>>> certainly true, but I think it would still make more sense for this
+>>> change to live entirely within ramoops. Specifically: you're
+>>> implementing a pstore backend behavioral change. In the same way that
+>>> patch 10 is putting the "output" side of this into pstore/, I'd expect
+>>> the "input" side also in pstore/
+>>
+>> How do we reserve memory? are you suggesting to use dma api's for
+>> dynamic ramoops ?
+>>
+> Sharing my thoughts:
+> 
+> Your patch is inspired from how kexec allocate memory for crash kernel
+> right?
 
+Yes.
+
+> There is a series [1] which moved arch code (ARM64/x86) to
+> generic kexec core. Something we should also do as the feedback
+> received here.
+> 
+> Coming to how part, we still have to use memblock API to increase the chance
+> of allocating contiguous memory. Since PSTORE_RAM can also be
+> compiled as a module, we probably need another pstore layer that needs to
+> be built statically in kernel to allocate memory using memblock API.
+> once slab is available, all memblock API will re-direct to slab
+> allocations. This layer can be enabled via ARCH_WANTS_PSTORE_xxx or
+> another config that only supports 'y'. PSTORE_RAM can still be a module but
+> when this layer is available, it supports dynamic ramoops. Another option
+> would be just including this layer in PSTORE RAM module but take away module
+> option  when this layer is enabled.
+
+I thought about this but still the caller will be in Arch code,
+right ? would that be fine with others ?
+
+-Mukesh
+> 
+> 
+> [1]
+> https://lore.kernel.org/all/20211020020317.1220-6-thunder.leizhen@huawei.com/
