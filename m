@@ -2,173 +2,172 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 291AEE92FCE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Oct 2023 23:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51500E92FD6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 02:20:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229543AbjJEXht (ORCPT
+        id S229657AbjJFCUg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Oct 2023 19:37:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45478 "EHLO
+        Thu, 5 Oct 2023 22:20:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbjJEXgl (ORCPT
+        with ESMTP id S229615AbjJFCUf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Oct 2023 19:36:41 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 196342721
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 16:20:01 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1c60128d3f6so71795ad.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Oct 2023 16:20:01 -0700 (PDT)
+        Thu, 5 Oct 2023 22:20:35 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4B0CD8;
+        Thu,  5 Oct 2023 19:20:33 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-405361bba99so14732525e9.2;
+        Thu, 05 Oct 2023 19:20:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1696548000; x=1697152800; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=g9+/T8jL1FueuqbJWbDBnW4JHhnHC6qNQT3btWThJAA=;
-        b=v+UouYNuHRJZLn6qa9pJlSug21LceqYMP5xJLBs9AV3PUI6CY9ziCJvFykObqwWyZI
-         93HL2qRPazgPcjnAqexgNvuIaSVfnlvgzFDZscbBOeCwL2y26LlCy7Fc501aHKwe/bIU
-         xzBXd8VCKDpYeict0m6yZtkzqiobtvwhJrnc18eD0QPziGC0YVN5ykkAYcklcpcnlqNl
-         eu0rKyhDl5cuZKlyNCsN8pq+JtkEV8u49VyWRqAeOI7MUuSxjrHO0/XqvTFSqxKeEFfz
-         V4PV2sV92v40eI0by02BJttTmjFBd+K6BPQ4oV5brWXrSmtrdnitnLQylHgXN5gBFwhg
-         qK2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696548000; x=1697152800;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1696558832; x=1697163632; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=g9+/T8jL1FueuqbJWbDBnW4JHhnHC6qNQT3btWThJAA=;
-        b=mXYkODpRftDtCSmbMQ49uAkCcNPXzr1J0VmhAn7rnqrjyRcT+Llj7WUcmC/OuZZO6O
-         +KZWHo2QPrTFeMXpO9P1YwPptDY903W9C4D8yWWc6U6lMwJ16t80/iG0rjcHU2JrTemj
-         zlb3qZVDngt91zdaruhnPKSmK1klMI6EnsX1FncKXtPZ67q3UpHGJjd65Qbla4jfzkV7
-         NZxceRnNKx+vy/bQj9u4PwIGYMk3s+Blb0uaFGHOP+pFwgFmpIi84L6Zugrjx1CjjWgC
-         3FzQNoQwA7+psGirbEVa6WvzkZFwncYUPtDjHzirHMdO4frzXupAMoeUGCUEBOW8Wzq4
-         wYDQ==
-X-Gm-Message-State: AOJu0Ywch8Jml5f/9BlxpUHwBOccPOG5CJS5orGBKUrkcSGqjQtUxLHK
-        RAzXO2r2xxOkPrOi+SER2uuXog==
-X-Google-Smtp-Source: AGHT+IG6SUbZdWjUlwVKgWGyn2h7w47kdQ+sEw89YZgLkBjRn4vrO6PiIxtJlw/+S61vF8DHpPNtxw==
-X-Received: by 2002:a17:902:d506:b0:1c4:4470:bfa7 with SMTP id b6-20020a170902d50600b001c44470bfa7mr232458plg.29.1696548000224;
-        Thu, 05 Oct 2023 16:20:00 -0700 (PDT)
-Received: from google.com (13.65.82.34.bc.googleusercontent.com. [34.82.65.13])
-        by smtp.gmail.com with ESMTPSA id rm10-20020a17090b3eca00b0026d214a2b33sm4130541pjb.7.2023.10.05.16.19.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 16:19:59 -0700 (PDT)
-Date:   Thu, 5 Oct 2023 16:19:56 -0700
-From:   William McVicker <willmcvicker@google.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
-        andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        soc@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH 18/21] arm64: dts: google: Add initial Google gs101 SoC
- support
-Message-ID: <ZR9EnFw3vB92vlYM@google.com>
-References: <20231005155618.700312-1-peter.griffin@linaro.org>
- <20231005155618.700312-19-peter.griffin@linaro.org>
- <ZR75cIvnQS2cqTT3@google.com>
- <2023100520-cleaver-sinless-fbae@gregkh>
- <99419159-cab0-4c79-a4a0-12229bfad3c0@linaro.org>
- <2023100513-mashing-scrubber-ea59@gregkh>
- <efc9f099-9c97-460b-b0c8-9891aa3b772a@linaro.org>
+        bh=7A6svaZ5NLBPCdvLBtrQYDjuifxfenalJYib+EmtrBE=;
+        b=PMoIPAQSaPvXLyhyRrSc7Ymkz0KboMwITRzSOZxzm09doaHaeQOWDmKdpbUpW9ZZ9v
+         bYxky/qlSBZ1CEn+pIYZrzXqmwIRcJd/UriB/FxkX+aae9q6FlPdZ8BqFh+OBrHR/D25
+         OPQMdCYNlHXwuyF4sy4c/WVtCFUgEC+rEzy4gGv8omZtSIW9b83xUAVI4fXbgzmqctVJ
+         yQtXJZb9q6Q/8R9GWLegUXhjTlz+mc5y4l57fNsfscJJ7g5m01JSdoAr3jQUjfepl9F7
+         U/MRzN2AhESOAoJi9bO2DKMvZQnQPleprTRL4HQ6lNyU6aVhejb/uljEn/f0dC30ZjFL
+         A6cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696558832; x=1697163632;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7A6svaZ5NLBPCdvLBtrQYDjuifxfenalJYib+EmtrBE=;
+        b=s/Wlz1xEDvCC86cxSXTcYcbMTTWMTygaa0Kz6KkqfBDiox9RnSsfZmHFUX/YQnzFAX
+         yIdmUVdS1Vp4yMT68RJppq5RRGtm/Tdsjy2y1UsWQqJ3VxkjOQIqWhr8dVkEIJ9Nc91S
+         eC6tGVBrQE64cKE2qEfj0dyyDUIEbOQg2HwlpQ/KC//kwBQNERvVk8vk08w9Pibfv022
+         nRZbfCaCNpw73hv3kKLMjU3SUKjAE5SXsRI4JFFaXKIrf4rXn0655ezDtwwzyFcndmLC
+         /72+QfQYuucK9oW2lGm0MALhuk4JgqUUAKTVj3VVy8Tkrf/gaknniz6Zfw5OaluE8USZ
+         ZkcA==
+X-Gm-Message-State: AOJu0YyRf1t+HhuR0yKiY40u5jTV+uOLEGHgj7Zn1azsLe6NwYlvJlx9
+        yG3VCsv/lj9K95kSaOAkB7oyvQMl+W7PZ3lZAitpuZWQuzg=
+X-Google-Smtp-Source: AGHT+IEiTyzp02X3Gv5QGee69SJTznrbwBrw/DOEGtGOalihMEdXuCrKaMq/kTK3AF19NS06vrJBgOIphrRfedf5MxU=
+X-Received: by 2002:adf:f546:0:b0:323:3421:9a9 with SMTP id
+ j6-20020adff546000000b00323342109a9mr6326854wrp.60.1696558831882; Thu, 05 Oct
+ 2023 19:20:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <efc9f099-9c97-460b-b0c8-9891aa3b772a@linaro.org>
+References: <20230921192749.1542462-1-dianders@chromium.org>
+ <CGME20230921194907eucas1p1027c5dfc5c5f77bca3c43673427c89cc@eucas1p1.samsung.com>
+ <20230921122641.RFT.v2.9.Iea33274908b6b258955f45a8aaf6f5bba24ad6cd@changeid> <fb9cd62b-6637-7bcc-e23d-37f3806f8460@samsung.com>
+In-Reply-To: <fb9cd62b-6637-7bcc-e23d-37f3806f8460@samsung.com>
+From:   Inki Dae <daeinki@gmail.com>
+Date:   Fri, 6 Oct 2023 11:19:54 +0900
+Message-ID: <CAAQKjZNn4RTJ-SHHEugcQoS2U9fzNTOGtUpSLLM0w1V6Pb0amw@mail.gmail.com>
+Subject: Re: [RFT PATCH v2 09/12] drm/exynos: Call drm_atomic_helper_shutdown()
+ at shutdown/unbind time
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        dri-devel@lists.freedesktop.org,
+        Maxime Ripard <mripard@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, alim.akhtar@samsung.com,
+        sw0312.kim@samsung.com, krzysztof.kozlowski@linaro.org,
+        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 10/05/2023, Krzysztof Kozlowski wrote:
-> On 05/10/2023 21:23, Greg KH wrote:
-> > On Thu, Oct 05, 2023 at 09:18:48PM +0200, Krzysztof Kozlowski wrote:
-> >>>> I'd like to bring up this thread and discuss the option of not introducing
-> >>>> another ARCH_* config:
-> >>>>
-> >>>>   https://lore.kernel.org/all/20200306103652.GA3634389@kroah.com/
-> >>>
-> >>> I agree, PLEASE don't add platform config options as that makes it
-> >>> impossible to make a unified kernel image that works for more than one
-> >>> platform at the same time.
-> >>
-> >> There is no single problem in making unified image as we were doing
-> >> since beginning of ARM64. The ARCH_* is not a obstacle for this.
-> > 
-> > Then why are the ARCH_* options needed at all?  What does this help out
-> > with?
-> 
-> It helps all the people and distros who do not want to build/package
-> drivers or modules for unrelated hardware or architectures.
-> 
-> Let's take Samsung Exynos UART driver. It will never, 100% never, work
-> on x86, x86_64. There is no single need to package it for kernels build
-> for these products. It will not work on nVidia Tegra ARM64, Qualcomm
-> ARM64 SoC, so if you do not want to run on Exynos, then you do no select
-> ARCH_EXYNOS and have significantly smaller image.
-> 
-> Now, there is no problem to have one kernel for nVidia Tegra + Qualcomm
-> + Samsung Exynos with everything you need. The ARCH_EXYNOS or SOC_EXYNOS
-> or SOC_GOOGLE serves only the purpose to allow distros and people
-> customize build for specific hardware.
-> 
-> It does not limit anyone on anything.
+Thanks for testing. :)
 
-I'm glad you brought up Exynos UART because this is where one of the
-limitations is introduced. For example, if you want to modularize out all the
-vendor specific drivers from the core kernel to create a common arm64 kernel
-binary that works on all ARM64 devices, you will not be able to build in the
-early console UART drivers without enabling the respective ARCH_* configs.
-Being able to include SERIAL_SAMSUNG and SERIAL_MSM without all the vendor
-specific drivers that ARCH_EXYNOS and ARCH_QCOM select is very valuable for
-debugging early boot issues.
+Acked-by : Inki Dae <inki.dae@samsung.com>
 
-I understand that ARCH_* configs are used to selectively pick which device tree
-blobs are built, but forcing developers to pick all or nothing is where I have
-a problem.
-
-Regards,
-Will
-
-> 
-> 
-> 
-> > 
-> >>>> I especially don't like the "depends on ARCH_EXYNOS" because that forces one to
-> >>>> include all the other Exynos drivers that ARCH_EXYNOS selects that Google
-> >>>> Tensor SoCs don't need. Can we consider using SOC_GOOGLE instead and for all
-> >>>> drivers that actually depend on the SoC hardware, we can just add "depends on
-> >>>> SOC_GOOGLE"?
-> >>>
-> >>> Why do any of this at all?  It should not be needed.
-> >>>
-> >>>> The idea is that drivers should be tied to hardware -- not a specific vendor.
-> >>>
-> >>> And drivers should be auto-loaded.
-> >>>
-> >>> All of these drivers are not vendor-specific at all, they are based on
-> >>> the same IP blocks as others, so that is how they should be unified.
-> >>
-> >> They are vendor specific. All of them are specifically for Exynos
-> >> hardwre, because this is Exynos. We call it Google GS/Tensor SoC just
-> >> for fancy convenience, but this just Exynos.
-> > 
-> > Ok, then why is this ARCH_ option needed if these IP blocks really are
-> > from something else and are part of other drivers?
-> 
-> For the same reason above, because if I want to build kernel for
-> Qualcomm, I want to drop easily anything not related. If I want to build
-> kernel without I2C, I disable I2C bus which effectively disables all
-> drivers which work on I2C. If I want to build kernel without Exynos, I
-> disable ARCH_EXYNOS which effectively disables entire Exynos hardware.
-> 
-> Think of SoC as a bus or interface.
-> 
-> Best regards,
-> Krzysztof
-> 
+2023=EB=85=84 9=EC=9B=94 22=EC=9D=BC (=EA=B8=88) =EC=98=A4=ED=9B=84 3:00, M=
+arek Szyprowski <m.szyprowski@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=
+=84=B1:
+>
+>
+> On 21.09.2023 21:26, Douglas Anderson wrote:
+> > Based on grepping through the source code this driver appears to be
+> > missing a call to drm_atomic_helper_shutdown() at system shutdown time
+> > and at driver unbind time. Among other things, this means that if a
+> > panel is in use that it won't be cleanly powered off at system
+> > shutdown time.
+> >
+> > The fact that we should call drm_atomic_helper_shutdown() in the case
+> > of OS shutdown/restart and at driver remove (or unbind) time comes
+> > straight out of the kernel doc "driver instance overview" in
+> > drm_drv.c.
+> >
+> > A few notes about this fix:
+> > - When adding drm_atomic_helper_shutdown() to the unbind path, I added
+> >    it after drm_kms_helper_poll_fini() since that's when other drivers
+> >    seemed to have it.
+> > - Technically with a previous patch, ("drm/atomic-helper:
+> >    drm_atomic_helper_shutdown(NULL) should be a noop"), we don't
+> >    actually need to check to see if our "drm" pointer is NULL before
+> >    calling drm_atomic_helper_shutdown(). We'll leave the "if" test in,
+> >    though, so that this patch can land without any dependencies. It
+> >    could potentially be removed later.
+> > - This patch also makes sure to set the drvdata to NULL in the case of
+> >    bind errors to make sure that shutdown can't access freed data.
+> >
+> > Suggested-by: Maxime Ripard <mripard@kernel.org>
+> > Reviewed-by: Maxime Ripard <mripard@kernel.org>
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>
+> Seems to be working fine on all my test Exynos-based boards with display.
+>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> > ---
+> > This commit is only compile-time tested.
+> >
+> > (no changes since v1)
+> >
+> >   drivers/gpu/drm/exynos/exynos_drm_drv.c | 11 +++++++++++
+> >   1 file changed, 11 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/=
+exynos/exynos_drm_drv.c
+> > index 8399256cb5c9..5380fb6c55ae 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> > @@ -300,6 +300,7 @@ static int exynos_drm_bind(struct device *dev)
+> >       drm_mode_config_cleanup(drm);
+> >       exynos_drm_cleanup_dma(drm);
+> >       kfree(private);
+> > +     dev_set_drvdata(dev, NULL);
+> >   err_free_drm:
+> >       drm_dev_put(drm);
+> >
+> > @@ -313,6 +314,7 @@ static void exynos_drm_unbind(struct device *dev)
+> >       drm_dev_unregister(drm);
+> >
+> >       drm_kms_helper_poll_fini(drm);
+> > +     drm_atomic_helper_shutdown(drm);
+> >
+> >       component_unbind_all(drm->dev, drm);
+> >       drm_mode_config_cleanup(drm);
+> > @@ -350,9 +352,18 @@ static int exynos_drm_platform_remove(struct platf=
+orm_device *pdev)
+> >       return 0;
+> >   }
+> >
+> > +static void exynos_drm_platform_shutdown(struct platform_device *pdev)
+> > +{
+> > +     struct drm_device *drm =3D platform_get_drvdata(pdev);
+> > +
+> > +     if (drm)
+> > +             drm_atomic_helper_shutdown(drm);
+> > +}
+> > +
+> >   static struct platform_driver exynos_drm_platform_driver =3D {
+> >       .probe  =3D exynos_drm_platform_probe,
+> >       .remove =3D exynos_drm_platform_remove,
+> > +     .shutdown =3D exynos_drm_platform_shutdown,
+> >       .driver =3D {
+> >               .name   =3D "exynos-drm",
+> >               .pm     =3D &exynos_drm_pm_ops,
+>
+> Best regards
+> --
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+>
