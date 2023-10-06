@@ -2,142 +2,69 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD93E92FF4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 07:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9300BE92FF4
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 07:55:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230219AbjJFHI7 convert rfc822-to-8bit (ORCPT
+        id S230435AbjJFHzw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Oct 2023 03:08:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54468 "EHLO
+        Fri, 6 Oct 2023 03:55:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230216AbjJFHI6 (ORCPT
+        with ESMTP id S230383AbjJFHzv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Oct 2023 03:08:58 -0400
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD3D7EB;
-        Fri,  6 Oct 2023 00:08:55 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-59f82ad1e09so21831857b3.0;
-        Fri, 06 Oct 2023 00:08:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696576135; x=1697180935;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bDvOGTbwmYKB4yj3dggVQge2NMSHumJx3EfGcewWqNg=;
-        b=P8PqJC3G4xGo2+ilG1ft2/Fvof8Lb9RvotJJWcCR3e3+cfi+17OQFjLia0vWd8OGqP
-         veIej9+m/+D1C+r63oFOplgNuVO/zw0sXdBVAdenYsYb6m02Eg/OwGZCLQb+zPvTRk4O
-         2ysBmddfNkWTWe1Zfz6PJhkSGVlFKY1b45BF59lLwUy+0NDp7J/5xEOMCzIcO/83sRym
-         QZo5wiPKaoZMnWJYYSqXSpYFzrsAzIKfoazD6nSEoJa4+5OBOaH93WUEFQAyOVpQf/HR
-         s/OriPE924HzA3N8s33ZtMew23Fidj2N2Z3cR8H/9NlRs2mcmq5f4ujeLenGzX3iY9BY
-         Vobw==
-X-Gm-Message-State: AOJu0YzmlpjW4rnsDfxKejp16M6y1Vz2gByJMyZbaTZp1lnYw8OFV2cM
-        bz7BWBgztb6VviPOGNt8Af7y0hxoWkh4iQ==
-X-Google-Smtp-Source: AGHT+IEzHd2u+JyGUA1VxiF3B0cNwRjyZsMoyah2KMOfTfFEXGCZr9IfDNYyZvfkFLKQKb+xtrobBg==
-X-Received: by 2002:a81:9289:0:b0:5a2:4409:2124 with SMTP id j131-20020a819289000000b005a244092124mr7760070ywg.35.1696576134761;
-        Fri, 06 Oct 2023 00:08:54 -0700 (PDT)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id u195-20020a8184cc000000b0059f4f30a32bsm1086046ywf.24.2023.10.06.00.08.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Oct 2023 00:08:53 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-59f55c276c3so21557857b3.2;
-        Fri, 06 Oct 2023 00:08:53 -0700 (PDT)
-X-Received: by 2002:a81:4a55:0:b0:599:8bd:5bdf with SMTP id
- x82-20020a814a55000000b0059908bd5bdfmr7486809ywa.50.1696576133283; Fri, 06
- Oct 2023 00:08:53 -0700 (PDT)
+        Fri, 6 Oct 2023 03:55:51 -0400
+Received: from mail.venturelinkbiz.com (mail.venturelinkbiz.com [51.195.119.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6FF8CA
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Oct 2023 00:55:47 -0700 (PDT)
+Received: by mail.venturelinkbiz.com (Postfix, from userid 1002)
+        id 5E25E47625; Fri,  6 Oct 2023 07:55:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=venturelinkbiz.com;
+        s=mail; t=1696578945;
+        bh=JBV4b8UUo1MSngn/QBoedt1Dv52bT8rWeq4R22MtJMs=;
+        h=Date:From:To:Subject:From;
+        b=cnju4MZrpNX9y++lNCqkG9UztEeNxL09Q8f/KZ3RdQN7R+oZO3iHa1IRZKomr1bQj
+         GR9AyALrwEfKYhvYwOkc98WbNqjt4IAnJjlPdz92mTay+F6r81iShe0+xH2hyN8WaY
+         rg5l0hp6cYzYlk7vfiLLVPRJGDecaBtJhkQ0ZyQqEInw7Jouc95XZe1p1fq26B9Lmm
+         P8V0hv06I2Jlt+KVTrWoWvrNT48aArksgTUihHHszsDDl1G+pwFzCOQYdJ4QNarpaX
+         AanLuLAC8PP8OFyi0ojBRi4FkHU7Abn9LhQUXZsfbJuOAjwovEfEA5D18raN/4Gm36
+         F1LmWpFKSG5Hg==
+Received: by mail.venturelinkbiz.com for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Oct 2023 07:55:43 GMT
+Message-ID: <20231006064500-0.1.2u.7uer.0.hzvjw8ekbo@venturelinkbiz.com>
+Date:   Fri,  6 Oct 2023 07:55:43 GMT
+From:   "Michal Rmoutil" <michal.rmoutil@venturelinkbiz.com>
+To:     <linux-samsung-soc@vger.kernel.org>
+Subject: =?UTF-8?Q?Efektivn=C3=AD_sledov=C3=A1n=C3=AD_a_optimalizace_v=C3=BDroby_pro_va=C5=A1i_spole=C4=8Dnost?=
+X-Mailer: mail.venturelinkbiz.com
 MIME-Version: 1.0
-References: <20231005155618.700312-1-peter.griffin@linaro.org> <20231005155618.700312-20-peter.griffin@linaro.org>
-In-Reply-To: <20231005155618.700312-20-peter.griffin@linaro.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 6 Oct 2023 09:08:41 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUgW1qx-7ADh89BRE4Hhk7-+R7o5VrswcBMymxh7zWUnQ@mail.gmail.com>
-Message-ID: <CAMuHMdUgW1qx-7ADh89BRE4Hhk7-+R7o5VrswcBMymxh7zWUnQ@mail.gmail.com>
-Subject: Re: [PATCH 19/21] google/gs101: Add dt overlay for oriole board
-To:     Peter Griffin <peter.griffin@linaro.org>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
-        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
-        linus.walleij@linaro.org, wim@linux-watchdog.org,
-        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, olof@lixom.net, cw00.choi@samsung.com,
-        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-        semen.protsenko@linaro.org, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Peter,
+Dobr=C3=A9 r=C3=A1no,
 
-On Thu, Oct 5, 2023 at 5:58 PM Peter Griffin <peter.griffin@linaro.org> wrote:
-> The LK bootloader on Pixel6 searches for a dt overlay in the
-> dtbo partition with a board_id and board_rev that matches
-> what is baked into the device. If this overlay is not present
-> then the phone will bootloop in fastboot and you can't boot
-> the upstream kernel.
->
-> This commit adds a dtbo for the production oriole variant.
-> The other pre-production board overlays are not included
-> at this time.
->
-> Adding the dtbo here allows for a better experience when
-> building/booting the upstream kernel on Pixel devices
-> as all the DT required to boot the device will be created
-> as part of the kernel build process. Rather than having to
-> fetch the dtbo from some other repo.
->
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+m=C3=A1te mo=C5=BEnost sledovat stav ka=C5=BEd=C3=A9ho stroje a v=C3=BDro=
+bn=C3=ADho procesu z kancel=C3=A1=C5=99e, konferen=C4=8Dn=C3=AD m=C3=ADst=
+nosti nebo dokonce z domova =C4=8Di na cest=C3=A1ch =E2=80=93 na va=C5=A1=
+em telefonu?
 
-Thanks for your patch!
+Poskytujeme rychle implementovateln=C3=BD a snadno pou=C5=BEiteln=C3=BD n=
+=C3=A1stroj, kter=C3=BD zachyt=C3=AD i n=C4=9Bkolikasekundov=C3=BD mikrop=
+rostoj a okam=C5=BEit=C4=9B p=C5=99epo=C4=8D=C3=ADt=C3=A1 vyu=C5=BEit=C3=AD=
+ stroje v kontextu dan=C3=A9 v=C3=BDrobn=C3=AD zak=C3=A1zky.
 
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/google/gs101-oriole.dtso
-> @@ -0,0 +1,21 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Oriole DVT Device Tree
-> + *
-> + * Copyright 2021-2023 Google,LLC
-> + */
-> +
-> +/dts-v1/;
-> +/plugin/;
-> +
-> +/ {
-> +       board_id = <0x20304>;
-> +       board_rev = <0x10000>;
-> +       fragment@boardbase {
-> +               target-path="/";
-> +               __overlay__ {
-> +                       model = "Oriole DVT";
-> +                       compatible = "google,gs101-oriole";
-> +               };
-> +       };
+Kdykoli vid=C3=ADte stav objedn=C3=A1vky a jste informov=C3=A1ni o p=C5=99=
+=C3=ADpadn=C3=A9m sn=C3=AD=C5=BEen=C3=AD efektivity. Syst=C3=A9m s=C3=A1m=
+ analyzuje data a p=C5=99ipravuje cenn=C3=A9 reporty, co=C5=BE oper=C3=A1=
+tor=C5=AFm umo=C5=BE=C5=88uje soust=C5=99edit se na v=C3=BDrobn=C3=AD c=C3=
+=ADl.
 
-Please use sugar-syntax instead of manually defining
-fragment/target-path/__overlay__ constructs.
-You can override these properties in the root node of the base DTS
-using the much simpler:
+C=C3=ADl je jednoduch=C3=BD: jeden pohled =E2=80=93 cel=C3=A1 tov=C3=A1rn=
+a. =C4=8Cek=C3=A1m na odpov=C4=9B=C4=8F, jestli vid=C3=ADte mo=C5=BEnost =
+vyu=C5=BEit=C3=AD takov=C3=A9ho n=C3=A1stroje ve va=C5=A1=C3=AD firm=C4=9B=
+=2E
 
-    &{/} {
-            model = "Oriole DVT";
-            compatible = "google,gs101-oriole";
-    };
 
-The generated DTBO should be identical (modulo naming).
-
-> +};
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Pozdravy
+Michal Rmoutil
