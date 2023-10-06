@@ -2,69 +2,158 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9300BE92FF4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 07:55:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B001BE92FFC
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 08:49:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230435AbjJFHzw (ORCPT
+        id S231183AbjJFIta (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Oct 2023 03:55:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42636 "EHLO
+        Fri, 6 Oct 2023 04:49:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230383AbjJFHzv (ORCPT
+        with ESMTP id S230434AbjJFIt3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Oct 2023 03:55:51 -0400
-Received: from mail.venturelinkbiz.com (mail.venturelinkbiz.com [51.195.119.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6FF8CA
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Oct 2023 00:55:47 -0700 (PDT)
-Received: by mail.venturelinkbiz.com (Postfix, from userid 1002)
-        id 5E25E47625; Fri,  6 Oct 2023 07:55:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=venturelinkbiz.com;
-        s=mail; t=1696578945;
-        bh=JBV4b8UUo1MSngn/QBoedt1Dv52bT8rWeq4R22MtJMs=;
-        h=Date:From:To:Subject:From;
-        b=cnju4MZrpNX9y++lNCqkG9UztEeNxL09Q8f/KZ3RdQN7R+oZO3iHa1IRZKomr1bQj
-         GR9AyALrwEfKYhvYwOkc98WbNqjt4IAnJjlPdz92mTay+F6r81iShe0+xH2hyN8WaY
-         rg5l0hp6cYzYlk7vfiLLVPRJGDecaBtJhkQ0ZyQqEInw7Jouc95XZe1p1fq26B9Lmm
-         P8V0hv06I2Jlt+KVTrWoWvrNT48aArksgTUihHHszsDDl1G+pwFzCOQYdJ4QNarpaX
-         AanLuLAC8PP8OFyi0ojBRi4FkHU7Abn9LhQUXZsfbJuOAjwovEfEA5D18raN/4Gm36
-         F1LmWpFKSG5Hg==
-Received: by mail.venturelinkbiz.com for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Oct 2023 07:55:43 GMT
-Message-ID: <20231006064500-0.1.2u.7uer.0.hzvjw8ekbo@venturelinkbiz.com>
-Date:   Fri,  6 Oct 2023 07:55:43 GMT
-From:   "Michal Rmoutil" <michal.rmoutil@venturelinkbiz.com>
-To:     <linux-samsung-soc@vger.kernel.org>
-Subject: =?UTF-8?Q?Efektivn=C3=AD_sledov=C3=A1n=C3=AD_a_optimalizace_v=C3=BDroby_pro_va=C5=A1i_spole=C4=8Dnost?=
-X-Mailer: mail.venturelinkbiz.com
+        Fri, 6 Oct 2023 04:49:29 -0400
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E142B83;
+        Fri,  6 Oct 2023 01:49:27 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 553463200B27;
+        Fri,  6 Oct 2023 04:49:22 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Fri, 06 Oct 2023 04:49:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1696582161; x=1696668561; bh=fq
+        7jUTQDYY98nWZgnWeYl6Cagk6XWBLFE67pLot1gWo=; b=kBZzKMgJZsyJhJ4jkw
+        jQU20dAsOX6gV5+9PEwOC6EDKw7Yrab03w7x2jeKDOi5U8sb/zmQ8Do9RTmngNC8
+        yW1XTJd1bUm/rTmNlB9F9TExc3icsyP1glN07DJTwfqW+FzA7E339NrTeU5sRc/L
+        n3VnfG7n+yfSNcSvAHPhilUJEguUWvbqXhCccmjZaMBvxEY4yFK+ZSL9Gp0LtFha
+        cZ0A9UoKYcf32ekNsano2pLPsmc54RzW/g3tPBuRro7L3uPt90fH3hIN8BzDhNze
+        p9rH9D8bX843QRBOTm7lQAd41lszXDeeJikGphg72AEiyROyBJHPvmCE3IgtC1B8
+        I8xw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1696582161; x=1696668561; bh=fq7jUTQDYY98n
+        WZgnWeYl6Cagk6XWBLFE67pLot1gWo=; b=Z9wduYnbaSjO4hO9z4ThmB4lkJ+ww
+        qv48JvZetC68Oy7Cwu1FZTuWCiNrKWgPVlC3WfLZq9CQAtRwtR+Hgmm5hm7ogHvR
+        g0HhACHoO4MLD7fxHHWj2C3pZU6RASeeLf/9XyNP46PxJ9+Wl/0D6WC9DBYJNVUx
+        mtNhY7IAXC9PqRSim+iZ7rzPLHV0BIft9I6alaUUj3XxUqUv5l7FauuYS80Rf78F
+        T7iw5HeL/xcklmoBHAfAZMLxvFOyUulgeZzpl67xGf0yowfKAw8nWtTXzHAQ8HCE
+        psBkN+QRkt9PJmeDlBFt3h9VAeNTcJJeZFH8l8liepztop+DKATVvf2XQ==
+X-ME-Sender: <xms:EMofZT2i-9GISWVnjxgMhlfr_K0J1DDCikeZffdfaxxvS-c9ZvWmTA>
+    <xme:EMofZSH-GDrTlbKrOc09JAu6xzst-K08JW-bRaweoc7LuQJp4GgEj665KOBjFQo1J
+    Ga257VUxycRUUCsOyk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrgeeigddtjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:EMofZT4ywgzN7LkzmXzXPySCJeAKjukN8v43qGhqwxizLsQRUilCXg>
+    <xmx:EMofZY2E3kF4qLgYpdHd4RbTBZENJnE3pcBjp3j1fIuAPC4cUrEcNA>
+    <xmx:EMofZWHiFKv5E0Dvozm7fdb71mAiOQ7Sue59rxI-niu4_MbVJRdtNw>
+    <xmx:EcofZZYKcoYBWJfaMLlaG0rL0xmTDuYDJQLE8dL3BH9l1IWy6uP6mQ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id ABDB6B60089; Fri,  6 Oct 2023 04:49:20 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-958-g1b1b911df8-fm-20230927.002-g1b1b911d
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-Id: <e8b23683-36ac-4547-9386-935a1b211d7d@app.fastmail.com>
+In-Reply-To: <44816879-a3a7-4bd0-bb20-19a645107b4b@linaro.org>
+References: <20231005155618.700312-1-peter.griffin@linaro.org>
+ <20231005155618.700312-19-peter.griffin@linaro.org>
+ <ZR75cIvnQS2cqTT3@google.com> <2023100520-cleaver-sinless-fbae@gregkh>
+ <99419159-cab0-4c79-a4a0-12229bfad3c0@linaro.org>
+ <2023100513-mashing-scrubber-ea59@gregkh>
+ <efc9f099-9c97-460b-b0c8-9891aa3b772a@linaro.org>
+ <ZR9EnFw3vB92vlYM@google.com>
+ <44816879-a3a7-4bd0-bb20-19a645107b4b@linaro.org>
+Date:   Fri, 06 Oct 2023 10:48:58 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+        "William McVicker" <willmcvicker@google.com>
+Cc:     "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Peter Griffin" <peter.griffin@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Conor Dooley" <conor+dt@kernel.org>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Tomasz Figa" <tomasz.figa@gmail.com>,
+        "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+        "Linus Walleij" <linus.walleij@linaro.org>,
+        "Wim Van Sebroeck" <wim@linux-watchdog.org>,
+        "Guenter Roeck" <linux@roeck-us.net>,
+        "Catalin Marinas" <catalin.marinas@arm.com>,
+        "Will Deacon" <will@kernel.org>, "Olof Johansson" <olof@lixom.net>,
+        "Chanwoo Choi" <cw00.choi@samsung.com>,
+        "Tudor Ambarus" <tudor.ambarus@linaro.org>,
+        andre.draszik@linaro.org, semen.protsenko@linaro.org,
+        soc@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH 18/21] arm64: dts: google: Add initial Google gs101 SoC support
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Dobr=C3=A9 r=C3=A1no,
+On Fri, Oct 6, 2023, at 08:06, Krzysztof Kozlowski wrote:
+> On 06/10/2023 01:19, William McVicker wrote:
+>> On 10/05/2023, Krzysztof Kozlowski wrote:
+>>> On 05/10/2023 21:23, Greg KH wrote:
+>>
+>> Being able to include SERIAL_SAMSUNG and SERIAL_MSM without all the vendor> specific drivers that ARCH_EXYNOS and ARCH_QCOM select is very
+> valuable for
+>> debugging early boot issues.
+>
+> Really? How related? The drivers are independent. You describe some
+> out-of-tree development process which we never needed for upstream work.
+> And we did here quite a lot of upstream, specially if you look at ARCH_QCOM.
 
-m=C3=A1te mo=C5=BEnost sledovat stav ka=C5=BEd=C3=A9ho stroje a v=C3=BDro=
-bn=C3=ADho procesu z kancel=C3=A1=C5=99e, konferen=C4=8Dn=C3=AD m=C3=ADst=
-nosti nebo dokonce z domova =C4=8Di na cest=C3=A1ch =E2=80=93 na va=C5=A1=
-em telefonu?
+Right: in general, all drivers are independent of the platform
+besides the typical 'depends on ARCH_FOO || COMPILE_TEST' dependency,
+but I think it's worth mentioning the known exceptions, so Greg and
+Will can take that fight to the respective places rather than
+discussing it in the platform submission:
 
-Poskytujeme rychle implementovateln=C3=BD a snadno pou=C5=BEiteln=C3=BD n=
-=C3=A1stroj, kter=C3=BD zachyt=C3=AD i n=C4=9Bkolikasekundov=C3=BD mikrop=
-rostoj a okam=C5=BEit=C4=9B p=C5=99epo=C4=8D=C3=ADt=C3=A1 vyu=C5=BEit=C3=AD=
- stroje v kontextu dan=C3=A9 v=C3=BDrobn=C3=AD zak=C3=A1zky.
+- Some subsystems are considered 'special' and the maintainers
+  prefer the drivers to be automatically selected based on the
+  ARCH_* settings instead of having user-visible options. This is
+  traditionally true for large chunks of drivers/irqchip,
+  drivers/clocksource and drivers/pinctrl, though it has gotten
+  better over time on all of them.
 
-Kdykoli vid=C3=ADte stav objedn=C3=A1vky a jste informov=C3=A1ni o p=C5=99=
-=C3=ADpadn=C3=A9m sn=C3=AD=C5=BEen=C3=AD efektivity. Syst=C3=A9m s=C3=A1m=
- analyzuje data a p=C5=99ipravuje cenn=C3=A9 reporty, co=C5=BE oper=C3=A1=
-tor=C5=AFm umo=C5=BE=C5=88uje soust=C5=99edit se na v=C3=BDrobn=C3=AD c=C3=
-=ADl.
+- Some older 32-bit platforms are still not as modular as we'd
+  like them to be, especially the StrongARM (ARMv4) platforms that
+  require a custom kernel build, and some of ARMv4T and ARMv5
+  boards that are still missing DT support. These tend to require
+  drivers they directly link to from board code, so disabling
+  the drivers would cause a link failure until this gets
+  cleaned up.
 
-C=C3=ADl je jednoduch=C3=BD: jeden pohled =E2=80=93 cel=C3=A1 tov=C3=A1rn=
-a. =C4=8Cek=C3=A1m na odpov=C4=9B=C4=8F, jestli vid=C3=ADte mo=C5=BEnost =
-vyu=C5=BEit=C3=AD takov=C3=A9ho n=C3=A1stroje ve va=C5=A1=C3=AD firm=C4=9B=
-=2E
+- A couple of drivers are force-enabled based on the ARCH_*
+  options because booting without these drivers would risk
+  permanent damage to hardware, e.g. in overtemp or overcurrent
+  scenarios.
 
+- ACPI based platforms require the PCI host bridge driver to
+  be built-in rather than a loadable module because ACPI
+  needs to probe PCI devices during early boot.
 
-Pozdravy
-Michal Rmoutil
+- Some subsystems (notably drivers/gpu/, but others as well)
+  have an excessive number of 'select' statements, so you
+  end up surprise-enabling a number of additional drivers
+  and subsystems by enabling certain less important platform
+  specific drivers.
+
+      Arnd
