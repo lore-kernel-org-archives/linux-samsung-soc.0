@@ -2,175 +2,96 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4426DE92FDE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 03:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A17AEE92FDD
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 04:10:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229815AbjJFDkp (ORCPT
+        id S229815AbjJFEKA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Oct 2023 23:40:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35368 "EHLO
+        Fri, 6 Oct 2023 00:10:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229838AbjJFDko (ORCPT
+        with ESMTP id S229454AbjJFEJ7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Oct 2023 23:40:44 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC569E7
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 20:40:38 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-99c3c8adb27so291455266b.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Oct 2023 20:40:38 -0700 (PDT)
+        Fri, 6 Oct 2023 00:09:59 -0400
+Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26AFDDB
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Oct 2023 21:09:56 -0700 (PDT)
+Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-1e19cb7829bso1042492fac.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Oct 2023 21:09:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696563637; x=1697168437; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1696565395; x=1697170195; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XpUyWVrE/iHQgC/ozZsC6NYywMSYpJaEzFJPxkfNEQE=;
-        b=Rhve3uxTPgNiWVKN2PBRzB/dc+j8iLKYSAm5qAcTtmOjmVZO06ZjGkbYeF9d5tKjDH
-         dujp0Kafa47+s8PJLP6OE7XuhMzAp4kevHIA/Gz+rgFjc8u12BOcHUWifwTVEdXFuZlU
-         ciX4eaAxQtj1v/bKrUEFo0v9udJjDb6d6rOz1RHEURD668rmaa7dIlvk57Ylg9jwn90z
-         JtV0ipcct+rC/Dnift0OUP6tdZff3h6j60cSWBo98XVjshiQ9eiFJzT5YbbRYb1qTmKx
-         pr1B94lCeFr5GLTCXwM1MgthQSQ4LM/LmQqpg7maRrVz7uYMauPoPtWpuFoKb/zOnXaD
-         2BEQ==
+        bh=3WsyJr/JfGO9ZomYRC8lC2LpPAdcpUdaon1QvBmnp74=;
+        b=jYxe/IksxSaKlMhlF61Wo7EronJIsCTSJ3JEW6HXGASIS/r03lufsiNTkH2Xdfat+X
+         gpf4tIkqUN1ID8fHLuUbN5vCmqvcHB0aiZbLQfj5yM8l6qpAcckGwwNm04aVI2amDxVW
+         1QhxY0aTRZcDuxd5PM565zbiRw8I9BDQ1AlhuT6aiSuO6ak1Cu+pRCjtJ+0ez8W3WUdC
+         A7vM6VrI1BE9u7k5MD6n2BtRpjcbyRF05TMarRtUwyln5kN8nHELq7X+afEU/KqZI9E5
+         x8OAWYYuferTjvJu4CpHxHRX6gLrvuzmI+iItUPeFbLYE0c4r0V9qpCD9/SjKNqtr4Ae
+         Jqlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696563637; x=1697168437;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XpUyWVrE/iHQgC/ozZsC6NYywMSYpJaEzFJPxkfNEQE=;
-        b=W5EChwuLr1y6uunJzvixROoVsozEvyebRcfKNUxIEsT26GHddz7MmVnyHri+/kq1pj
-         UHq++g7KBE+iKqASYLxll2zFjKBkbkzxM4KhyR3Qy3v5o8x9WJRXRIBHqlFiXdNuLO0e
-         kXge3R4WaNDhwSqOivFrQ04clM0LlKZbxyu7TudL80rj5l2yScQQR35QqFH7JL7YIkfa
-         HfJhouQsqV2RjRH4RP0r4cItnbxWpQj0RgkdcGLdblAh+8Cg1mJ+hTvj6MC37+CTJWyE
-         MgSLF2ZGThi91tpAx1+7tCuHrTHz6pqAQmNDCBnjJCCtMXPAsbLN49+ro+8yb10s2dNe
-         owbw==
-X-Gm-Message-State: AOJu0YyHvTSCtf4+AAdqbCmzDlsarF6hAzd7eRHr3fQHLcWLTkD9Wt+b
-        JJnuro1iTXo5OF9n+Kwkz7lJuS6yJ/bjYwSvfsA=
-X-Google-Smtp-Source: AGHT+IEXSarpX4D9K7l62tqeOOFIuirkFViAjyDoJBqx2Dqb2516JHcFfgXOGpgW8/z7+m9+5EETDoyKYs0BcsQRPpY=
-X-Received: by 2002:a17:907:7857:b0:9ad:ef31:6efc with SMTP id
- lb23-20020a170907785700b009adef316efcmr5953491ejc.21.1696563636811; Thu, 05
- Oct 2023 20:40:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230919103939.1367659-1-u.kleine-koenig@pengutronix.de>
-In-Reply-To: <20230919103939.1367659-1-u.kleine-koenig@pengutronix.de>
-From:   Inki Dae <daeinki@gmail.com>
-Date:   Fri, 6 Oct 2023 12:39:59 +0900
-Message-ID: <CAAQKjZMiM+UwFZ8aN2L8THaHt6O6OZfdT1JXiZLm-QPN=OOwug@mail.gmail.com>
-Subject: Re: [PATCH] drm: exynos: dsi: Convert to platform remove callback
- returning void
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, Robert Foss <rfoss@kernel.org>,
-        kernel@pengutronix.de, Jonas Karlman <jonas@kwiboo.se>,
-        dri-devel@lists.freedesktop.org,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        d=1e100.net; s=20230601; t=1696565395; x=1697170195;
+        h=message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=3WsyJr/JfGO9ZomYRC8lC2LpPAdcpUdaon1QvBmnp74=;
+        b=TXz6b6BzsCS9g5KGSVr5gOXTGb7sMBSfHN79t/+npvuDgONfFDGj7XmRJnzkVI1BCP
+         E6sA31iBrrIe0gqzDHt6j+9RwMvfxtKPmwSl9bTmdQ6NridanczcNh2TthjwTMI5T1lW
+         Jc70JMjvyXMvBN0MhVHKBzOBzkZawFyA2psPbGciStDDhHU8Z5hR5AvIB5knWclzmbL9
+         Ny1z/+zjJGD49usgPHAPPtlNiCqaJ4sEwnkAtJwi2l8Y6KBpMhjIlVL4oS4v3iSCFlvZ
+         IEGcpMAjHuAr9b8FTonz0CRbIah5/VgQFN9GjNpjY6/bRYgTfB1lMLSnGZWmZcquEUWd
+         afPQ==
+X-Gm-Message-State: AOJu0YwNOgKFtD1tAqEjAe3yf6zf4Gqh3lLG6cgg3iw3LOB8ByYbe+Qk
+        GZsgxBaxlejgwsIZeJCp7+Y=
+X-Google-Smtp-Source: AGHT+IFCd0i4QvBKYK+f8dhJ5cI0/kA3DGkHoagfKKeFHK1BPBs24cJNRsGhsisXeu/pFhEPdsv3Fg==
+X-Received: by 2002:a05:6870:ac26:b0:1b3:9e41:de07 with SMTP id kw38-20020a056870ac2600b001b39e41de07mr8591032oab.36.1696565395120;
+        Thu, 05 Oct 2023 21:09:55 -0700 (PDT)
+Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
+        by smtp.gmail.com with ESMTPSA id h19-20020aa786d3000000b0068ff267f092sm391590pfo.216.2023.10.05.21.09.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Oct 2023 21:09:53 -0700 (PDT)
+Sender: Inki Dae <daeinki@gmail.com>
+From:   Inki Dae <inki.dae@samsung.com>
+To:     airlied@linux.ie, daniel@ffwll.ch
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL] exynos-drm-fixes
+Date:   Fri,  6 Oct 2023 13:09:50 +0900
+Message-Id: <20231006040950.4397-1-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-2023=EB=85=84 9=EC=9B=94 19=EC=9D=BC (=ED=99=94) =EC=98=A4=ED=9B=84 7:40, U=
-we Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> The .remove() callback for a platform driver returns an int which makes
-> many driver authors wrongly assume it's possible to do error handling by
-> returning an error code. However the value returned is ignored (apart
-> from emitting a warning) and this typically results in resource leaks.
-> To improve here there is a quest to make the remove callback return
-> void. In the first step of this quest all drivers are converted to
-> .remove_new() which already returns void. Eventually after all drivers
-> are converted, .remove_new() is renamed to .remove().
->
-> samsung_dsim_remove() returned 0 unconditionally. Make it return void
-> instead to convert the two related platform drivers to use
-> .remove_new().
->
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+Hi Dave and Daniel,
 
-It'd be better to go to drm-misc.
+   Just one fixup to a potential error pointer dereference.
 
-Reviewed-by: Inki Dae <inki.dae@samsung.com>
-Acked-by: Inki Dae <inki.dae@samsung.com>
+   Please kindly let me know if there is any problem.
 
 Thanks,
 Inki Dae
 
-> ---
->  drivers/gpu/drm/bridge/samsung-dsim.c   | 6 ++----
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 2 +-
->  include/drm/bridge/samsung-dsim.h       | 2 +-
->  3 files changed, 4 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/brid=
-ge/samsung-dsim.c
-> index b1df91e37b1b..2b56a5bfe273 100644
-> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
-> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-> @@ -1998,7 +1998,7 @@ int samsung_dsim_probe(struct platform_device *pdev=
-)
->  }
->  EXPORT_SYMBOL_GPL(samsung_dsim_probe);
->
-> -int samsung_dsim_remove(struct platform_device *pdev)
-> +void samsung_dsim_remove(struct platform_device *pdev)
->  {
->         struct samsung_dsim *dsi =3D platform_get_drvdata(pdev);
->
-> @@ -2006,8 +2006,6 @@ int samsung_dsim_remove(struct platform_device *pde=
-v)
->
->         if (dsi->plat_data->host_ops && dsi->plat_data->host_ops->unregis=
-ter_host)
->                 dsi->plat_data->host_ops->unregister_host(dsi);
-> -
-> -       return 0;
->  }
->  EXPORT_SYMBOL_GPL(samsung_dsim_remove);
->
-> @@ -2107,7 +2105,7 @@ MODULE_DEVICE_TABLE(of, samsung_dsim_of_match);
->
->  static struct platform_driver samsung_dsim_driver =3D {
->         .probe =3D samsung_dsim_probe,
-> -       .remove =3D samsung_dsim_remove,
-> +       .remove_new =3D samsung_dsim_remove,
->         .driver =3D {
->                    .name =3D "samsung-dsim",
->                    .pm =3D &samsung_dsim_pm_ops,
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/ex=
-ynos/exynos_drm_dsi.c
-> index 69ea33cae651..2fe0e5f3f638 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -181,7 +181,7 @@ MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
->
->  struct platform_driver dsi_driver =3D {
->         .probe =3D samsung_dsim_probe,
-> -       .remove =3D samsung_dsim_remove,
-> +       .remove_new =3D samsung_dsim_remove,
->         .driver =3D {
->                    .name =3D "exynos-dsi",
->                    .owner =3D THIS_MODULE,
-> diff --git a/include/drm/bridge/samsung-dsim.h b/include/drm/bridge/samsu=
-ng-dsim.h
-> index 6fc9bb2979e4..3f8050d523eb 100644
-> --- a/include/drm/bridge/samsung-dsim.h
-> +++ b/include/drm/bridge/samsung-dsim.h
-> @@ -116,7 +116,7 @@ struct samsung_dsim {
->  };
->
->  extern int samsung_dsim_probe(struct platform_device *pdev);
-> -extern int samsung_dsim_remove(struct platform_device *pdev);
-> +extern void samsung_dsim_remove(struct platform_device *pdev);
->  extern const struct dev_pm_ops samsung_dsim_pm_ops;
->
->  #endif /* __SAMSUNG_DSIM__ */
->
-> base-commit: 0663e1da5ba8e6459e3555ac12c62741668c0d30
-> --
-> 2.40.1
->
+
+The following changes since commit 8a749fd1a8720d4619c91c8b6e7528c0a355c0aa:
+
+  Linux 6.6-rc4 (2023-10-01 14:15:13 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-fixes-for-v6.6-rc5
+
+for you to fetch changes up to e49c384dc1c62fb5bf57c7bf6598957197e57919:
+
+  drm/exynos: fix a potential error pointer dereference (2023-10-06 12:30:23 +0900)
+
+----------------------------------------------------------------
+One fixup
+- Fix a potential error pointer dereference by checking the return value
+  of exynos_drm_crtc_get_by_type() function before accessing to crtc
+  object.
+
+----------------------------------------------------------------
+Xiang Yang (1):
+      drm/exynos: fix a potential error pointer dereference
+
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 2 ++
+ 1 file changed, 2 insertions(+)
