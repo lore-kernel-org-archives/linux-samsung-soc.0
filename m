@@ -2,210 +2,301 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F2E0E81E06
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 15:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EAB6E81E0A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 15:10:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232710AbjJFPIT (ORCPT
+        id S232733AbjJFPKL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Oct 2023 11:08:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60494 "EHLO
+        Fri, 6 Oct 2023 11:10:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230239AbjJFPIS (ORCPT
+        with ESMTP id S232677AbjJFPKK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Oct 2023 11:08:18 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F3FC6
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Oct 2023 08:08:13 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231006150812euoutp01888b1a1a2ce8f0a4af14d9347d69c81e~LjSkh9LfU1154911549euoutp01D
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Oct 2023 15:08:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231006150812euoutp01888b1a1a2ce8f0a4af14d9347d69c81e~LjSkh9LfU1154911549euoutp01D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1696604892;
-        bh=z76s/ciW4Hejdlg9e+eJr7BZxEfsnnnyHl0fW3UO0yE=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=sOOl+Z8ffWdMLb7cltz6FrjKlMHFMjfjf0tZaHXMtyZRYXLxhfzAkiCrw3O4ombKU
-         SOua/9MyorUUXgzDnPPbEg8wHPlRx/75qoiPU43bI1VfByO1uz3Y2t+57JxAT6+Rph
-         8SHNSjed10BjF1EbC8sYZPxZlP+yh54nHKZTyW6o=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20231006150812eucas1p18c0d7df1934c82767fc5fbfcbba828f8~LjSkXnrBc1131411314eucas1p1C;
-        Fri,  6 Oct 2023 15:08:12 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 92.95.42423.CD220256; Fri,  6
-        Oct 2023 16:08:12 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20231006150811eucas1p1a9e2b98d191bb8093daf38daba14e9a0~LjSkDT8P71816418164eucas1p1-;
-        Fri,  6 Oct 2023 15:08:11 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20231006150811eusmtrp1de04c96d81b065202deb75c8cd3e466f~LjSkCtBnk1331413314eusmtrp1D;
-        Fri,  6 Oct 2023 15:08:11 +0000 (GMT)
-X-AuditID: cbfec7f2-a3bff7000002a5b7-13-652022dc4617
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id F3.72.10549.BD220256; Fri,  6
-        Oct 2023 16:08:11 +0100 (BST)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20231006150811eusmtip1e236ce5a09da0e5bd1e5bf00d2278573~LjSjkZvE50922109221eusmtip1a;
-        Fri,  6 Oct 2023 15:08:11 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Wolfram Sang <wsa@kernel.org>
-Subject: [PATCH v3] i2c: exynos5: add support for atomic transfers
-Date:   Fri,  6 Oct 2023 17:08:03 +0200
-Message-Id: <20231006150804.4113844-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.34.1
+        Fri, 6 Oct 2023 11:10:10 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B28F49F;
+        Fri,  6 Oct 2023 08:10:08 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 396DJY15008473;
+        Fri, 6 Oct 2023 15:09:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=116pN689ygt9psamelJSV3WSJBDI4hnmaTYmjbIGKPk=;
+ b=bdTG9AugUWu6LZ23FBsbNo/TYE0Bc53Am3b/ITJMrq3duow2m6UG+kCPo0Q0zBjE6lok
+ jXNh/0lktZrzyDLQSahmVBPvTOLPUxAIzNJ2Dgqi6ywJbq8eg7ipC766HQS5dqvn8pI9
+ TecjD2S/U4jqZlspKF24O7PvjxuxzYL8Xt/56vibIV9nG+IIr29iRtGc06YbRFIJ27JO
+ DSi3qnitzCGz/EI6qe/3RlwB895LeEdmhQ1yUk3TgWlDcBN36cBMKTCmzCCSU5gjTbSx
+ OvVynM3j6ePsCd4zDrFKH/wUmsAmu2FJmhcvFscbnLz14awDjUBCohkYUHsJkOn3goya yw== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tj820sp79-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 06 Oct 2023 15:09:30 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 396F9TqR026704
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 6 Oct 2023 15:09:29 GMT
+Received: from [10.216.35.212] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Fri, 6 Oct
+ 2023 08:08:56 -0700
+Message-ID: <bb29aba3-9378-6405-5f6d-a7d77e0374ad@quicinc.com>
+Date:   Fri, 6 Oct 2023 20:38:52 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplleLIzCtJLcpLzFFi42LZduzned07SgqpBie6uC0ezNvGZnH/awej
-        xd7XW9ktOv5+YbSYcX4fk8XaI3fZLe7un8vowO6xaVUnm8eda3vYPPq2rGL0+LxJLoAlissm
-        JTUnsyy1SN8ugSvj6bx+loJtEhWNs3ezNjA+Ee5i5OSQEDCRuDLtEAuILSSwglFi53VVCPsL
-        o8Te55ZdjFxA9mdGiY1XnrLANMw4fIMNIrGcUeJ35z5WCAeoY/6Ek0wgVWwChhJdb7vYQGwR
-        AQeJ7m1H2EGKmAWuMkqc6p3CDJIQFnCSeLxrByuIzSKgKtHyYj2YzStgL7GmaRbUOnmJ/QfP
-        MkPEBSVOznwCFmcGijdvnc0MMlRCYCqHxL+vLewQDS4S11fOZYKwhSVeHd8CFZeROD25hwWi
-        oZ1RYsHv+0wQzgRGiYbntxghqqwl7pz7BXQ3B9AKTYn1u/Qhwo4SvReXMYGEJQT4JG68FYQ4
-        gk9i0rbpzBBhXomONiGIajWJWcfXwa09eOESM4TtIXF91gFWSPjGStxd2cQ8gVFhFpLXZiF5
-        bRbCDQsYmVcxiqeWFuempxYb5qWW6xUn5haX5qXrJefnbmIEppjT/45/2sE499VHvUOMTByM
-        hxglOJiVRHjTG2RShXhTEiurUovy44tKc1KLDzFKc7AoifOqpsinCgmkJ5akZqemFqQWwWSZ
-        ODilGpjCVna57Pq5Umr36dQ1i/lfJ7Ff/ll76kiMtIj+jZib/kxcqpLm57r3Om66/ny6tsmZ
-        clb5OetZWNpmh51Y/KN8Xqz7KR2rR5MteT/qtizcZXTafWOHz65Q/rdsh2O2l1Utn9+S0B/8
-        SaJQJUclaBInx2nhQ5Eq90PsV3Yodia8fDPl/q0nBtwOPybtnCt8rHLS20nflrQmWC3td2uu
-        VpqQWvvteZlJguDzeTkPtFdrfMwJ26DTzjtXN/FB7I0r1544/6q7d+T1p9fK9yZceWPZzvdM
-        5uJqmVMnp0SdP2IoHnt2yy4HjjOdhWGTs5rv7dwvdepzlJ6PsM/MpVEFrfqMuvOOTo8vWyjR
-        u/TFJu/XSizFGYmGWsxFxYkAjv/c3qADAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsVy+t/xu7q3lRRSDeYtMrJ4MG8bm8X9rx2M
-        Fntfb2W36Pj7hdFixvl9TBZrj9xlt7i7fy6jA7vHplWdbB53ru1h8+jbsorR4/MmuQCWKD2b
-        ovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2Mp/P6WQq2
-        SVQ0zt7N2sD4RLiLkZNDQsBEYsbhG2xdjFwcQgJLGSVWzLzHCpGQkTg5rQHKFpb4c60LqugT
-        o8SMx3cZQRJsAoYSXW9BEpwcIgJOEv/mX2UBKWIWuM4oMeH9TSaQhDBQ4vGuHWCTWARUJVpe
-        rAezeQXsJdY0zWKB2CAvsf/gWWaIuKDEyZlPwOLMQPHmrbOZJzDyzUKSmoUktYCRaRWjSGpp
-        cW56brGhXnFibnFpXrpecn7uJkZgcG879nPzDsZ5rz7qHWJk4mA8xCjBwawkwpveIJMqxJuS
-        WFmVWpQfX1Sak1p8iNEU6L6JzFKiyfnA+MoriTc0MzA1NDGzNDC1NDNWEuf1LOhIFBJITyxJ
-        zU5NLUgtgulj4uCUamDSlertfiN6ouqBrZKK6NkcxtOTj5vI+V+RcipZEcAT/ut6YfrmBRFT
-        ORSXa37zafHlK+2yPD83euOxILGvyS2XH85Zte70yT3+cwoW7LyvVbfs59JZL65Nzyh8vkNq
-        wTODp+a2+t9E8x6tdE6rCGGeN7NwcaHBqiOmae3R77f3FZ/0KdlisEQiZF+8FWvCm7qPS44y
-        SU7fcerpvEIfwWX/X/htEJ37apbCpJysMzrCsfM5o3IC6+687F/f5G2xY6XcqV6VmO4zfmmG
-        ycE3zn5/YBQ0Q0LoxT8JxvMyonc2xquELxd/J5Tq9b/vZtO9MHUHpVzBHX+aBMSTxHhz2VxC
-        7Is0X9mknn/JX3v3i4ESS3FGoqEWc1FxIgBGCkeL9wIAAA==
-X-CMS-MailID: 20231006150811eucas1p1a9e2b98d191bb8093daf38daba14e9a0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20231006150811eucas1p1a9e2b98d191bb8093daf38daba14e9a0
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20231006150811eucas1p1a9e2b98d191bb8093daf38daba14e9a0
-References: <CGME20231006150811eucas1p1a9e2b98d191bb8093daf38daba14e9a0@eucas1p1.samsung.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [REBASE PATCH v5 04/17] remoteproc: qcom: Remove minidump related
+ data from qcom_common.c
+Content-Language: en-US
+To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
+CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+ <1694429639-21484-5-git-send-email-quic_mojha@quicinc.com>
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <1694429639-21484-5-git-send-email-quic_mojha@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: TY-OAbVjGnyZJBDRL_fedObtLqGklWvb
+X-Proofpoint-GUID: TY-OAbVjGnyZJBDRL_fedObtLqGklWvb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-06_12,2023-10-06_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ suspectscore=0 mlxscore=0 malwarescore=0 spamscore=0 bulkscore=0
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2309180000 definitions=main-2310060113
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add support for atomic transfers using polling mode with interrupts
-intentionally disabled. This removes the warning introduced by commit
-63b96983a5dd ("i2c: core: introduce callbacks for atomic transfers")
-during system reboot and power-off.
+Hi Bjorn/Mathieu,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-v3:
-- simplified timeout calculations, adjusted some names even more
+Patches from 2/17-4/17  is just a movement of functions to separate 
+config/file.
 
-v2:
-- adjusted some names as pointed by Andi
----
- drivers/i2c/busses/i2c-exynos5.c | 46 ++++++++++++++++++++++++++++++--
- 1 file changed, 44 insertions(+), 2 deletions(-)
+Do you think, these can be picked independently from this series ?
+I can send them separately, if required.
 
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index 2b0b9cdffa86..65cb06ec3804 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -194,6 +194,11 @@ struct exynos5_i2c {
- 	 */
- 	int			trans_done;
- 
-+	/*
-+	 * Called from atomic context, don't use interrupts.
-+	 */
-+	unsigned int		atomic;
-+
- 	/* Controller operating frequency */
- 	unsigned int		op_clock;
- 
-@@ -711,6 +716,22 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
- 	spin_unlock_irqrestore(&i2c->lock, flags);
- }
- 
-+static bool exynos5_i2c_poll_irqs_timeout(struct exynos5_i2c *i2c,
-+					  unsigned long timeout)
-+{
-+	unsigned long time_left = jiffies + timeout;
-+
-+	while (time_before(jiffies, time_left) &&
-+	       !((i2c->trans_done && (i2c->msg->len == i2c->msg_ptr)) ||
-+	         (i2c->state < 0))) {
-+		while (readl(i2c->regs + HSI2C_INT_ENABLE) &
-+		       readl(i2c->regs + HSI2C_INT_STATUS))
-+			exynos5_i2c_irq(i2c->irq, i2c);
-+		usleep_range(100, 200);
-+	}
-+	return time_before(jiffies, time_left);
-+}
-+
- static int exynos5_i2c_xfer_msg(struct exynos5_i2c *i2c,
- 			      struct i2c_msg *msgs, int stop)
- {
-@@ -725,8 +746,13 @@ static int exynos5_i2c_xfer_msg(struct exynos5_i2c *i2c,
- 
- 	exynos5_i2c_message_start(i2c, stop);
- 
--	timeout = wait_for_completion_timeout(&i2c->msg_complete,
--					      EXYNOS5_I2C_TIMEOUT);
-+	if (!i2c->atomic)
-+		timeout = wait_for_completion_timeout(&i2c->msg_complete,
-+						      EXYNOS5_I2C_TIMEOUT);
-+	else
-+		timeout = exynos5_i2c_poll_irqs_timeout(i2c,
-+							EXYNOS5_I2C_TIMEOUT);
-+
- 	if (timeout == 0)
- 		ret = -ETIMEDOUT;
- 	else
-@@ -777,6 +803,21 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
- 	return ret ?: num;
- }
- 
-+static int exynos5_i2c_xfer_atomic(struct i2c_adapter *adap,
-+				   struct i2c_msg *msgs, int num)
-+{
-+	struct exynos5_i2c *i2c = adap->algo_data;
-+	int ret;
-+
-+	disable_irq(i2c->irq);
-+	i2c->atomic = true;
-+	ret = exynos5_i2c_xfer(adap, msgs, num);
-+	i2c->atomic = false;
-+	enable_irq(i2c->irq);
-+
-+	return ret;
-+}
-+
- static u32 exynos5_i2c_func(struct i2c_adapter *adap)
- {
- 	return I2C_FUNC_I2C | (I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
-@@ -784,6 +825,7 @@ static u32 exynos5_i2c_func(struct i2c_adapter *adap)
- 
- static const struct i2c_algorithm exynos5_i2c_algorithm = {
- 	.master_xfer		= exynos5_i2c_xfer,
-+	.master_xfer_atomic	= exynos5_i2c_xfer_atomic,
- 	.functionality		= exynos5_i2c_func,
- };
- 
--- 
-2.34.1
+@Bjorn: I have sent 13/17-15/17 separately [1] as it is needed
+by some folks and independent from this series.
 
+[1]
+https://lore.kernel.org/all/1696440338-12561-1-git-send-email-quic_mojha@quicinc.com/
+
+-Mukesh
+
+On 9/11/2023 4:23 PM, Mukesh Ojha wrote:
+> As minidump specific data structure and functions move under
+> config QCOM_RPROC_MINIDUMP, so remove minidump specific data
+> from driver/remoteproc/qcom_common.c .
+> 
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> ---
+>   drivers/remoteproc/qcom_common.c | 160 ---------------------------------------
+>   1 file changed, 160 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+> index 03e5f5d533eb..085fd73fa23a 100644
+> --- a/drivers/remoteproc/qcom_common.c
+> +++ b/drivers/remoteproc/qcom_common.c
+> @@ -17,7 +17,6 @@
+>   #include <linux/rpmsg/qcom_smd.h>
+>   #include <linux/slab.h>
+>   #include <linux/soc/qcom/mdt_loader.h>
+> -#include <linux/soc/qcom/smem.h>
+>   
+>   #include "remoteproc_internal.h"
+>   #include "qcom_common.h"
+> @@ -26,61 +25,6 @@
+>   #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, subdev)
+>   #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
+>   
+> -#define MAX_NUM_OF_SS           10
+> -#define MAX_REGION_NAME_LENGTH  16
+> -#define SBL_MINIDUMP_SMEM_ID	602
+> -#define MINIDUMP_REGION_VALID		('V' << 24 | 'A' << 16 | 'L' << 8 | 'I' << 0)
+> -#define MINIDUMP_SS_ENCR_DONE		('D' << 24 | 'O' << 16 | 'N' << 8 | 'E' << 0)
+> -#define MINIDUMP_SS_ENABLED		('E' << 24 | 'N' << 16 | 'B' << 8 | 'L' << 0)
+> -
+> -/**
+> - * struct minidump_region - Minidump region
+> - * @name		: Name of the region to be dumped
+> - * @seq_num:		: Use to differentiate regions with same name.
+> - * @valid		: This entry to be dumped (if set to 1)
+> - * @address		: Physical address of region to be dumped
+> - * @size		: Size of the region
+> - */
+> -struct minidump_region {
+> -	char	name[MAX_REGION_NAME_LENGTH];
+> -	__le32	seq_num;
+> -	__le32	valid;
+> -	__le64	address;
+> -	__le64	size;
+> -};
+> -
+> -/**
+> - * struct minidump_subsystem - Subsystem's SMEM Table of content
+> - * @status : Subsystem toc init status
+> - * @enabled : if set to 1, this region would be copied during coredump
+> - * @encryption_status: Encryption status for this subsystem
+> - * @encryption_required : Decides to encrypt the subsystem regions or not
+> - * @region_count : Number of regions added in this subsystem toc
+> - * @regions_baseptr : regions base pointer of the subsystem
+> - */
+> -struct minidump_subsystem {
+> -	__le32	status;
+> -	__le32	enabled;
+> -	__le32	encryption_status;
+> -	__le32	encryption_required;
+> -	__le32	region_count;
+> -	__le64	regions_baseptr;
+> -};
+> -
+> -/**
+> - * struct minidump_global_toc - Global Table of Content
+> - * @status : Global Minidump init status
+> - * @md_revision : Minidump revision
+> - * @enabled : Minidump enable status
+> - * @subsystems : Array of subsystems toc
+> - */
+> -struct minidump_global_toc {
+> -	__le32				status;
+> -	__le32				md_revision;
+> -	__le32				enabled;
+> -	struct minidump_subsystem	subsystems[MAX_NUM_OF_SS];
+> -};
+> -
+>   struct qcom_ssr_subsystem {
+>   	const char *name;
+>   	struct srcu_notifier_head notifier_list;
+> @@ -90,110 +34,6 @@ struct qcom_ssr_subsystem {
+>   static LIST_HEAD(qcom_ssr_subsystem_list);
+>   static DEFINE_MUTEX(qcom_ssr_subsys_lock);
+>   
+> -static void qcom_minidump_cleanup(struct rproc *rproc)
+> -{
+> -	struct rproc_dump_segment *entry, *tmp;
+> -
+> -	list_for_each_entry_safe(entry, tmp, &rproc->dump_segments, node) {
+> -		list_del(&entry->node);
+> -		kfree(entry->priv);
+> -		kfree(entry);
+> -	}
+> -}
+> -
+> -static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsystem *subsystem,
+> -			void (*rproc_dumpfn_t)(struct rproc *rproc, struct rproc_dump_segment *segment,
+> -				void *dest, size_t offset, size_t size))
+> -{
+> -	struct minidump_region __iomem *ptr;
+> -	struct minidump_region region;
+> -	int seg_cnt, i;
+> -	dma_addr_t da;
+> -	size_t size;
+> -	char *name;
+> -
+> -	if (WARN_ON(!list_empty(&rproc->dump_segments))) {
+> -		dev_err(&rproc->dev, "dump segment list already populated\n");
+> -		return -EUCLEAN;
+> -	}
+> -
+> -	seg_cnt = le32_to_cpu(subsystem->region_count);
+> -	ptr = ioremap((unsigned long)le64_to_cpu(subsystem->regions_baseptr),
+> -		      seg_cnt * sizeof(struct minidump_region));
+> -	if (!ptr)
+> -		return -EFAULT;
+> -
+> -	for (i = 0; i < seg_cnt; i++) {
+> -		memcpy_fromio(&region, ptr + i, sizeof(region));
+> -		if (le32_to_cpu(region.valid) == MINIDUMP_REGION_VALID) {
+> -			name = kstrndup(region.name, MAX_REGION_NAME_LENGTH - 1, GFP_KERNEL);
+> -			if (!name) {
+> -				iounmap(ptr);
+> -				return -ENOMEM;
+> -			}
+> -			da = le64_to_cpu(region.address);
+> -			size = le64_to_cpu(region.size);
+> -			rproc_coredump_add_custom_segment(rproc, da, size, rproc_dumpfn_t, name);
+> -		}
+> -	}
+> -
+> -	iounmap(ptr);
+> -	return 0;
+> -}
+> -
+> -void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
+> -		void (*rproc_dumpfn_t)(struct rproc *rproc,
+> -		struct rproc_dump_segment *segment, void *dest, size_t offset,
+> -		size_t size))
+> -{
+> -	int ret;
+> -	struct minidump_subsystem *subsystem;
+> -	struct minidump_global_toc *toc;
+> -
+> -	/* Get Global minidump ToC*/
+> -	toc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, NULL);
+> -
+> -	/* check if global table pointer exists and init is set */
+> -	if (IS_ERR(toc) || !toc->status) {
+> -		dev_err(&rproc->dev, "Minidump TOC not found in SMEM\n");
+> -		return;
+> -	}
+> -
+> -	/* Get subsystem table of contents using the minidump id */
+> -	subsystem = &toc->subsystems[minidump_id];
+> -
+> -	/**
+> -	 * Collect minidump if SS ToC is valid and segment table
+> -	 * is initialized in memory and encryption status is set.
+> -	 */
+> -	if (subsystem->regions_baseptr == 0 ||
+> -	    le32_to_cpu(subsystem->status) != 1 ||
+> -	    le32_to_cpu(subsystem->enabled) != MINIDUMP_SS_ENABLED) {
+> -		return rproc_coredump(rproc);
+> -	}
+> -
+> -	if (le32_to_cpu(subsystem->encryption_status) != MINIDUMP_SS_ENCR_DONE) {
+> -		dev_err(&rproc->dev, "Minidump not ready, skipping\n");
+> -		return;
+> -	}
+> -
+> -	/**
+> -	 * Clear out the dump segments populated by parse_fw before
+> -	 * re-populating them with minidump segments.
+> -	 */
+> -	rproc_coredump_cleanup(rproc);
+> -
+> -	ret = qcom_add_minidump_segments(rproc, subsystem, rproc_dumpfn_t);
+> -	if (ret) {
+> -		dev_err(&rproc->dev, "Failed with error: %d while adding minidump entries\n", ret);
+> -		goto clean_minidump;
+> -	}
+> -	rproc_coredump_using_sections(rproc);
+> -clean_minidump:
+> -	qcom_minidump_cleanup(rproc);
+> -}
+> -EXPORT_SYMBOL_GPL(qcom_minidump);
+> -
+>   static int glink_subdev_start(struct rproc_subdev *subdev)
+>   {
+>   	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
