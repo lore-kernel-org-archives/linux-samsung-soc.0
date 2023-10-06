@@ -2,154 +2,172 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A80A8E94139
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 22:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DCC9E94136
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 23:03:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233820AbjJFW6u (ORCPT
+        id S233898AbjJFXDA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Oct 2023 18:58:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39244 "EHLO
+        Fri, 6 Oct 2023 19:03:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233568AbjJFW6t (ORCPT
+        with ESMTP id S233880AbjJFXC5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Oct 2023 18:58:49 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA24FAD;
-        Fri,  6 Oct 2023 15:58:47 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8007AC433CB;
-        Fri,  6 Oct 2023 22:58:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696633127;
-        bh=VfpPsL7bm6HmerXk75YQFSWmkvZ5EqPcTozDyLPJ7ZE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=rcV3x9OFyzgcq5JnKP7XyajjlUizbG7zv6TwJX1iaKrCN8FqIuecH1Zs6kZmhQOEZ
-         P5swnL8g91dfdtAH5uD7CUPfp58B/0YpSIN3ixWWJxQCviyKPUkQq+hsY1llVzxYks
-         n7hsv2wXXYKbSOT/lGjFXr+QCVT1bYxu2KJgb8h/w4I/W4nHsezboD2QmBMGg+JS+c
-         fddknGRh0stdSH0IZPgrnL/3usGUh990pEG/HYNmtGfKnUEX0brB5XNw5LeEfdwL77
-         yiA6xNpKXtTYNHFZcFfGboeB8buBhEtSzb/U6IMxeUW700lfF9/6Pry8ADjWXuuya7
-         fqO4GAuHBxKnQ==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5046bf37daeso3418245e87.1;
-        Fri, 06 Oct 2023 15:58:47 -0700 (PDT)
-X-Gm-Message-State: AOJu0Yw9hyN/C7Rv7isqw8Eo8yOD44kYSejPdkCsbeZBGE3mti2mTbMY
-        9v4VE93KEOKvJaxutYldXTzHdTgu2LQOY4KHhQ==
-X-Google-Smtp-Source: AGHT+IGLN4usMWBOz3e69x4mdRwL549LapQyzyV9YwhpOdQ+Wbn8qFwQJDLpXo6dG/GqnWIxylZDOOe8h7XSov2Ays4=
-X-Received: by 2002:a19:6414:0:b0:4fb:8435:3efc with SMTP id
- y20-20020a196414000000b004fb84353efcmr7215825lfb.16.1696633125695; Fri, 06
- Oct 2023 15:58:45 -0700 (PDT)
+        Fri, 6 Oct 2023 19:02:57 -0400
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C07B59C;
+        Fri,  6 Oct 2023 16:02:55 -0700 (PDT)
+Received: from eig-obgw-6002a.ext.cloudfilter.net ([10.0.30.222])
+        by cmsmtp with ESMTP
+        id opcDqGeq1aLCxotqQqoZrt; Fri, 06 Oct 2023 23:02:55 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with ESMTPS
+        id otqPqgORYQ8G7otqPq0rIT; Fri, 06 Oct 2023 23:02:54 +0000
+X-Authority-Analysis: v=2.4 cv=M/pelg8s c=1 sm=1 tr=0 ts=6520921e
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=Dx1Zrv+1i3YEdDUMOX3koA==:17
+ a=OWjo9vPv0XrRhIrVQ50Ab3nP57M=:19 a=dLZJa+xiwSxG16/P+YVxDGlgEgI=:19
+ a=IkcTkHD0fZMA:10 a=bhdUkHdE2iEA:10 a=wYkD_t78qR0A:10 a=pGLkceISAAAA:8
+ a=KKAkSRfTAAAA:8 a=hD80L64hAAAA:8 a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8
+ a=NEAV23lmAAAA:8 a=cm27Pg_UAAAA:8 a=s4AO8cZySA16zO19rckA:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22 a=AjGcO6oz07-iQ99wixmX:22 a=1CNFftbPRP8L7MoqJWF3:22
+ a=xmb-EsYY8bH0VWELuYED:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=o83qUcTIt6yU4XdNU25hJZ8Y70pA8nqO2bf+akwXYT0=; b=mGXSa+z5OOSy4/zhUqo64iqKQo
+        gaehigQh6kK0U9FgMxXrAZJaN46AX/S8uAdRdfyl5nFGnWdWSBK8WA5JvhzLXfGGA0TwHqGjurjeM
+        Y9f9xg+Bne7K5vv20AQrO0sdIvNVAOPE2+/d+SU+X0n6WGNzV10/iZ/AuEEgo82rMcd8NznNmPhGQ
+        KZmm59ek5xp1tVXsTQEK7/fjHSFg0iha7oqAkPviR/obZOmok1efQRMddYaw9GL9eIf104Z44Fr+/
+        Fj/7V+MpYyo29t2HxylOLbqatWMX5k2ao1J8mbOhotmSOfxVfZTI7+s/NsOhdQK7cbCfhGMI5bNp3
+        7of811QQ==;
+Received: from 94-238-9-39.abo.bbox.fr ([94.238.9.39]:47408 helo=[192.168.1.98])
+        by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.96.1)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1qorlt-001Bge-0k;
+        Fri, 06 Oct 2023 15:50:05 -0500
+Message-ID: <589deebd-fda5-4901-8c1f-869acd08b652@embeddedor.com>
+Date:   Fri, 6 Oct 2023 22:50:01 +0200
 MIME-Version: 1.0
-References: <20231006213959.334439-1-robh@kernel.org> <CAA8EJpp7yKZP3SAHdZAJg57vbyRjYAS=vDEV-353mc9yzHe4vw@mail.gmail.com>
-In-Reply-To: <CAA8EJpp7yKZP3SAHdZAJg57vbyRjYAS=vDEV-353mc9yzHe4vw@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 6 Oct 2023 17:58:33 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ0O=-vNqSUjgr_Po=Xy1G+7Zdz7Dz+euUDjcpBAqtGqA@mail.gmail.com>
-Message-ID: <CAL_JsqJ0O=-vNqSUjgr_Po=Xy1G+7Zdz7Dz+euUDjcpBAqtGqA@mail.gmail.com>
-Subject: Re: [PATCH] clk: Use device_get_match_data()
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: samsung: Annotate struct exynos_muxed_weint_data
+ with __counted_by
+Content-Language: en-US
+To:     Kees Cook <keescook@chromium.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Tero Kristo <kristo@kernel.org>, patches@opensource.cirrus.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-hardening@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+References: <20231006201707.work.405-kees@kernel.org>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20231006201707.work.405-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 94.238.9.39
+X-Source-L: No
+X-Exim-ID: 1qorlt-001Bge-0k
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 94-238-9-39.abo.bbox.fr ([192.168.1.98]) [94.238.9.39]:47408
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 0
+X-Org:  HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfEvuItGx7YjxZjV77BzdmamEAcVXbb/2RMIDhftSTw98Xm9fOeOoDiUE7NauZlFFHQ6LFr/aZWPnqUdmwv4G+t9gC+X7h63hHJyttWtB9eUkX0FGJgc2
+ psODvHbQIOi8lvTAzwkdPubUZBJF6776vnHY9w5eFNlt7ojYqeL+//OH0YVvrBQHcS2KZ2wmGLX+pKREGdHGFYOhxALuUSrZTXn1v7LVMKDy87WcyCfaaVcK
+ akHMQg8Idf9GGEuEIpfs2H64KLnw4p14q+gbhkQkgPGhbARQTRu+zRzG5UuEvhPboTwYr5UNOXCf5q5CCsSx7zvUfnx3alCX7shrEffpRFrKGCxU8YNMkeUd
+ jnnjHVlm
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 6, 2023 at 5:10=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Sat, 7 Oct 2023 at 00:41, Rob Herring <robh@kernel.org> wrote:
-> >
-> > Use preferred device_get_match_data() instead of of_match_device() to
-> > get the driver match data. With this, adjust the includes to explicitly
-> > include the correct headers.
-> >
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  drivers/clk/clk-lochnagar.c             |  9 ++-------
-> >  drivers/clk/davinci/da8xx-cfgchip.c     |  8 +++-----
-> >  drivers/clk/davinci/pll.c               | 10 +++-------
-> >  drivers/clk/davinci/psc.c               | 10 +++-------
-> >  drivers/clk/qcom/gcc-msm8960.c          | 13 +++++--------
-> >  drivers/clk/qcom/gcc-msm8974.c          | 10 +++-------
-> >  drivers/clk/qcom/kpss-xcc.c             |  9 ++-------
-> >  drivers/clk/qcom/krait-cc.c             | 14 +++++---------
-> >  drivers/clk/qcom/mmcc-msm8960.c         | 16 +++++-----------
-> >  drivers/clk/qcom/mmcc-sdm660.c          |  8 ++------
-> >  drivers/clk/rockchip/clk-rk3399.c       |  9 ++-------
-> >  drivers/clk/samsung/clk-exynos-clkout.c |  8 +++-----
-> >  drivers/clk/ti/adpll.c                  | 14 ++++----------
-> >  13 files changed, 42 insertions(+), 96 deletions(-)
-> >
 
-> > diff --git a/drivers/clk/qcom/mmcc-msm8960.c b/drivers/clk/qcom/mmcc-ms=
-m8960.c
-> > index 6bf908a51f53..50638ab341ec 100644
-> > --- a/drivers/clk/qcom/mmcc-msm8960.c
-> > +++ b/drivers/clk/qcom/mmcc-msm8960.c
-> > @@ -8,9 +8,9 @@
-> >  #include <linux/err.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/platform_device.h>
-> > +#include <linux/property.h>
-> >  #include <linux/module.h>
-> >  #include <linux/of.h>
-> > -#include <linux/of_device.h>
-> >  #include <linux/clk.h>
-> >  #include <linux/clk-provider.h>
-> >  #include <linux/regmap.h>
-> > @@ -3105,30 +3105,24 @@ MODULE_DEVICE_TABLE(of, mmcc_msm8960_match_tabl=
-e);
-> >
-> >  static int mmcc_msm8960_probe(struct platform_device *pdev)
-> >  {
-> > -       const struct of_device_id *match;
-> >         struct regmap *regmap;
-> > -       bool is_8064;
-> >         struct device *dev =3D &pdev->dev;
-> > +       const struct qcom_cc_desc *desc =3D device_get_match_data(dev);
-> >
-> > -       match =3D of_match_device(mmcc_msm8960_match_table, dev);
-> > -       if (!match)
-> > -               return -EINVAL;
-> > -
-> > -       is_8064 =3D of_device_is_compatible(dev->of_node, "qcom,mmcc-ap=
-q8064");
->
-> Can we please keep of_device_is_compatible here? It is more explicit
-> and self-documenting.
 
-Why do we need to match 3 times (match, device_get_match_data,
-of_device_is_compatible)?
+On 10/6/23 22:17, Kees Cook wrote:
+> Prepare for the coming implementation by GCC and Clang of the __counted_by
+> attribute. Flexible array members annotated with __counted_by can have
+> their accesses bounds-checked at run-time via CONFIG_UBSAN_BOUNDS (for
+> array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
+> functions).
+> 
+> As found with Coccinelle[1], add __counted_by for struct
+> exynos_muxed_weint_data. Additionally, since the element count member
+> must be set before accessing the annotated flexible array member, move
+> its initialization earlier.
+> 
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Alim Akhtar <alim.akhtar@samsung.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-hardening@vger.kernel.org
+> Link: https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci [1]
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Perhaps put it in the match data? Or make a helper function is_8064()
-that does the comparison to the match data?
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-> Also, it would be really nice to have per-platform patches, so that
-> our maintainers can pick them, otherwise the risk of conflicts is
-> pretty high.
+Thanks!
+-- 
+Gustavo
 
-No.
-
-I'm doing this treewide. It's already pretty unmanageable. But feel
-free to submit a separate patch if you prefer to this for QCom. When I
-split things up by sub-arch, then I also have to spend time chasing
-down non-responsive maintainers.
-
-Rob
+> ---
+>   drivers/pinctrl/samsung/pinctrl-exynos.c | 2 +-
+>   drivers/pinctrl/samsung/pinctrl-exynos.h | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> index a8212fc126bf..6b58ec84e34b 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> @@ -616,6 +616,7 @@ __init int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
+>   		+ muxed_banks*sizeof(struct samsung_pin_bank *), GFP_KERNEL);
+>   	if (!muxed_data)
+>   		return -ENOMEM;
+> +	muxed_data->nr_banks = muxed_banks;
+>   
+>   	irq_set_chained_handler_and_data(irq, exynos_irq_demux_eint16_31,
+>   					 muxed_data);
+> @@ -628,7 +629,6 @@ __init int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
+>   
+>   		muxed_data->banks[idx++] = bank;
+>   	}
+> -	muxed_data->nr_banks = muxed_banks;
+>   
+>   	return 0;
+>   }
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
+> index 7bd6d82c9f36..3ac52c2cf998 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.h
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
+> @@ -159,7 +159,7 @@ struct exynos_weint_data {
+>    */
+>   struct exynos_muxed_weint_data {
+>   	unsigned int nr_banks;
+> -	struct samsung_pin_bank *banks[];
+> +	struct samsung_pin_bank *banks[] __counted_by(nr_banks);
+>   };
+>   
+>   int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d);
