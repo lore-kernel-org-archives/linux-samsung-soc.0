@@ -2,88 +2,121 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2710CE81DE9
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 11:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6991E81DF4
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 12:41:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232143AbjJFL57 (ORCPT
+        id S232220AbjJFMlk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Oct 2023 07:57:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55474 "EHLO
+        Fri, 6 Oct 2023 08:41:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232137AbjJFL56 (ORCPT
+        with ESMTP id S232209AbjJFMli (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Oct 2023 07:57:58 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE86EE4
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Oct 2023 04:57:56 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-99bdeae1d0aso388763866b.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Oct 2023 04:57:56 -0700 (PDT)
+        Fri, 6 Oct 2023 08:41:38 -0400
+Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1DD8D6
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Oct 2023 05:41:36 -0700 (PDT)
+Received: by mail-qv1-xf2e.google.com with SMTP id 6a1803df08f44-66b024d26e2so754936d6.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Oct 2023 05:41:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696593475; x=1697198275; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+zpOjWFgV47IagH9G+/bjSRKsIxtDpcqXD/aaWOG/Mo=;
-        b=R9zpl+3YcL96IFFKMEGDX3/NI1LPa6zJFUPXq5pN4yNph/hqoL+GvAfMOmKo5Or35H
-         zBNGjVPblCStNmQGXOYbik1sY94Z/MQT83LBmLDc1VoETDD/nK35louBWBAhp1c0Cnn2
-         6SwJUpMj9jQK5YB94lpvt6UDFW+Bx5xHTN8C706WGA8180uYO9h/tZa1bTMQGu2clKJW
-         mwDdt4Mnf0bwW7bPdPcX+/ytWUR17QfPUFKlMeauGoxePejeG6/W761tTyH5V2fyboR2
-         FOjz++ct1JuzYH9yYBJsZZ0kNEBrIDPSYhYZcUC1fsZnSfcH/Mp7yphVMki/A3LjnyEH
-         DMlw==
+        d=linaro.org; s=google; t=1696596096; x=1697200896; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BG+pU1EHGnCj6tU73G8/u9FDfygPxqAGCLjoLFitfDU=;
+        b=Z1rRQi3HAYdYZVC8Q+Sas5E8KKLeQGX/uOmN+LPLYMEYs74uHg1DGZtvZhBe8KUoSr
+         QaqlfMvz9kUDc4U8l9rAphNzOjhKhrWl+zWf9k9uF9c5mIcs9ewubzYRQ+zrIgFCF7WU
+         ACxTXPBn1rTbcpZhUmmifUOkd/+jBHOliABGrdroul9X0E7+WlNRwZ2eO2aZWBlcYRaz
+         5ub+9SspRgb8VHgqJP1K/axAzZ3fSeg3LH6N7Bv5qkbPT2wPvoIWDJ1jIXQlUbnCgoEi
+         Fk+zDaX1nZ1foCDZT+DALPIhWC5M2Ns026yE7nLYcaPEAw9M3hYVVZeulq5vZzNMLHr1
+         wFSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696593475; x=1697198275;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+zpOjWFgV47IagH9G+/bjSRKsIxtDpcqXD/aaWOG/Mo=;
-        b=tW7SK2piEqK67oACPS9F6/VVXB7TScwgs0Tlc0TSAz5yAw+7E2xJCNSZNrUOO8sVbU
-         D0TmXm4MlfLF+ypEJiyMQVTlJOCFG/uZM3ZvmJkNFOjaYMtR2QtI8wnqL7ZAveF3V5Zm
-         uYGSbY6+O0pFLel5dvmFBL2uCNF8Vhyrtc7KhNGS/tUCFJORN3IgbJcKfWcHZ4QDswus
-         gXraDfFDe7hIUCgIgyEqlv5da3B2aRhLygQUL98bIIdLyIRVPVBJH3FH2nMJrXKjQx2U
-         w0DF2kCO9wMsCjZP1V93i7s42uXdPJ0cq1umc/fennfo6Av8qVpzXwa/3pizVa4KEPtN
-         8ERw==
-X-Gm-Message-State: AOJu0Yyxd8FbJH3AAeXDN7FV3yYICGUSc9ElcQT2+ztfRx8/aHfMWSya
-        jIWzSH1zKJOKa2QmJ4D792/yIirY8i0gsWBTXPf0Xg==
-X-Google-Smtp-Source: AGHT+IHdwXe27ayuwVviV7f3WKHG81y9E3/oY6oQIzFPhOUJPdHydVE/YV1HshMFuU3ThTLIf/52iQ==
-X-Received: by 2002:a17:906:18a1:b0:9a1:c659:7c56 with SMTP id c1-20020a17090618a100b009a1c6597c56mr7059114ejf.22.1696593475273;
-        Fri, 06 Oct 2023 04:57:55 -0700 (PDT)
-Received: from krzk-bin.. (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id f23-20020a170906139700b009b27d4153cfsm2786473ejc.176.2023.10.06.04.57.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Oct 2023 04:57:54 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ARM: exynos_defconfig: add driver for ISL29018
-Date:   Fri,  6 Oct 2023 13:57:51 +0200
-Message-Id: <169659346899.111765.18262202506429002870.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231006110631.3204334-1-m.szyprowski@samsung.com>
-References: <CGME20231006110643eucas1p11d87c94c0fc765bb856f373df553f003@eucas1p1.samsung.com> <20231006110631.3204334-1-m.szyprowski@samsung.com>
+        d=1e100.net; s=20230601; t=1696596096; x=1697200896;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BG+pU1EHGnCj6tU73G8/u9FDfygPxqAGCLjoLFitfDU=;
+        b=h4YuaeBG+PGfVLLwCORzMdm2sIzccepedKKW6SBzXDvS9Gv41eOj41p38VfKMQ2uuP
+         PPhSv0WU+J1/o6tyKO5E8RqKm7V6guKUfRUXmwdrBur8JlrpUapdQ5OUymYuv2bSzVXz
+         owby0CUFz36mBr8+cy2yQjwPsHNom+vBEM9GCJ3nOu10gd4JrndPgiUCyye49osQv20m
+         iy9bFkTlvEt/bAljBFv1YDvuC0SM/NUo/Btug9/k0l5J1NyLJ29Xx5/5MpCvC4OJomJA
+         cO1pIyDo3adMj5eufes7NvdoK6R9TG6eAo/FffiQdDwUXS/IqF0A90vS5btOnV9gFeNr
+         RaXg==
+X-Gm-Message-State: AOJu0YwRy3pbi8oh9cqupuw9drW9pD9f8ax4w+u3NV1U6wCeJtSDG8YL
+        5RSvVstdACI+3SPz3HPLMUZ/WRWYEO8fmow4QhhmVA==
+X-Google-Smtp-Source: AGHT+IEc9cXq8etKpdI34yJncEC8RLd8eZzic0vY4V2CYU6+7KPMm/ULeW87OBJQQb7Lh+PasTJleL0tLgLVqUOGwPQ=
+X-Received: by 2002:a05:6214:400e:b0:64f:4d4a:70c with SMTP id
+ kd14-20020a056214400e00b0064f4d4a070cmr6030330qvb.27.1696596095802; Fri, 06
+ Oct 2023 05:41:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20231005155618.700312-1-peter.griffin@linaro.org>
+ <20231005155618.700312-5-peter.griffin@linaro.org> <f997c21d-d85b-4ad1-ad5b-999524fc72ac@linaro.org>
+In-Reply-To: <f997c21d-d85b-4ad1-ad5b-999524fc72ac@linaro.org>
+From:   Peter Griffin <peter.griffin@linaro.org>
+Date:   Fri, 6 Oct 2023 13:41:24 +0100
+Message-ID: <CADrjBPpHTydVZdi+x6V-QoV++oQEuv4n6-NPXGB2=+AERNETyA@mail.gmail.com>
+Subject: Re: [PATCH 04/21] dt-bindings: soc: google: exynos-sysreg: add
+ dedicated SYSREG compatibles to GS101
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, olof@lixom.net, cw00.choi@samsung.com,
+        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+        semen.protsenko@linaro.org, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi Krzysztof,
 
-On Fri, 06 Oct 2023 13:06:31 +0200, Marek Szyprowski wrote:
-> Intersil 29018 light and proximity sensor is built into Exynos based
-> Peach-Pit/Pi Chromebooks, so enable driver for it to increase testing
-> coverage.
-> 
-> 
+Many thanks for reviewing the series :)
 
-Applied, thanks!
+On Thu, 5 Oct 2023 at 17:07, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 05/10/2023 17:56, Peter Griffin wrote:
+> > GS101 has three different SYSREG controllers, add dedicated
+> > compatibles for them to the documentation.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  .../bindings/soc/samsung/samsung,exynos-sysreg.yaml        | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+> > index 163e912e9cad..02f580d6489b 100644
+> > --- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+> > +++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+> > @@ -50,6 +50,13 @@ properties:
+> >                - samsung,exynosautov9-peric1-sysreg
+> >            - const: samsung,exynosautov9-sysreg
+> >            - const: syscon
+> > +      - items:
+> > +          - enum:
+> > +              - google,gs101-peric0-sysreg
+> > +              - google,gs101-peric1-sysreg
+> > +              - google,gs101-apm-sysreg
+> > +          - const: google,gs101-sysreg
+>
+> Please drop this one compatible. Exynos has it only for backwards
+> compatibility.
 
-[1/1] ARM: exynos_defconfig: add driver for ISL29018
-      https://git.kernel.org/krzk/linux/c/438fb575463fc490e6200e5e28d02159492a97f8
+Just double checking, you mean I should drop this one compatible?
+ +          - const: google,gs101-sysreg
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> Also, please put entire list ("items") before such entry for
+> samsung,exynos5433-sysreg, so everything is more-or-less ordered
+> alphabetically, by the fallback compatible.
+
+Will do!
+
+regards,
+
+Peter
