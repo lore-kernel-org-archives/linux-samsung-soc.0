@@ -2,61 +2,61 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F379E81DF4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 13:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1098FE81DFB
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 13:41:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232402AbjJFNP5 (ORCPT
+        id S232392AbjJFNlk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Oct 2023 09:15:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35410 "EHLO
+        Fri, 6 Oct 2023 09:41:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232401AbjJFNPz (ORCPT
+        with ESMTP id S232302AbjJFNlj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Oct 2023 09:15:55 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9C3FB6
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Oct 2023 06:15:53 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-5362bcc7026so3823808a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Oct 2023 06:15:53 -0700 (PDT)
+        Fri, 6 Oct 2023 09:41:39 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C527495
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Oct 2023 06:41:37 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-9b1ebc80d0aso376956466b.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Oct 2023 06:41:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696598152; x=1697202952; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1696599696; x=1697204496; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=3rwHyzwIwPBcXoAMtUpbTjdhunNKkjMwmENyOXmwnNQ=;
-        b=D7jQTTNRpJSiVDXN+6SDeryC4Wjr3nBOmV5IelA55PhVhnzHkhcl7cI2W/KRw4U0S5
-         ttM4Ifw/lzPsX1YoIOue/x304uRBYC171DP0wHgRKZQMiC5yWcUbu4aJVEVMbpVUY5KR
-         IfC5IMdPvJPaJtP3KU4W3OnKCgwJ+OKzJzQy9X2RduNzH/kTNzrAWa2jgnivLFnJU6hj
-         xNTfzv2Oqd+B0dEqSQ9yc7dtCqrgBJEjFlCzvps4QNF2Pa71A1G+SPTq3D4559fLDb0o
-         JEAOmVdttttk7mzmglMstAmvfz54CzgUrSMbKHGr1LmVS7sTSlxlaA/ZaZr63s5paYz/
-         /oFw==
+        bh=rNR97TSeG/Stmz9F4Oo2bu8gF3PfrIDjuLtuxenu4mU=;
+        b=hzxJ/zZZksugwDcKx4m+oqNlbuTIYFqQs8/ArLdmMJtZnvdh2rwbDks/u5o12lOyen
+         gxvXpp1KtTIPKZj17ksE6ljktoafmmYb3ynoUbqj+MlJq6UGHGLYkGgh9tcaFuBugmru
+         vk6VE20pWfMpwCr7QkmS/81JTGRbwrQu01Hw+1kbSfLf++Tmjje5S/kk7rOEERGg6NfM
+         cisqcjcRggSBYg3OPAoMukmNaNCYIdviBd7QyxKDM/bt5SROzWJZQbDNlyu8doB/cdLs
+         0J/1YwhRpCdAL5nOpu3Cszs7XaqQsEpm7S5WODLgcBJMcEvK9O215URmKq0sjkSU8zVL
+         R8iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696598152; x=1697202952;
+        d=1e100.net; s=20230601; t=1696599696; x=1697204496;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3rwHyzwIwPBcXoAMtUpbTjdhunNKkjMwmENyOXmwnNQ=;
-        b=iD4gK8iVlwouAp2lwBrTZ4qJRtiz/UTzs6esWrLkAIUkXFRfkh45o+QDfymbklJAvR
-         OV6kutLweuxfCGY1EvbhlFEfE+6k1DRhe1XvLQrOdCiS4dGDQCViwP0RZnQVBsFwHAiM
-         sfn9hz650Uqt9QTIncpP6jN/Q1SSxLuFT765R90yJUHN1yCb5/8vdZFOg5ZIJIcckjtr
-         iljCVKfajBoUFA/FpzwMPIcOoq2cJOry1dRtMlYe3VgJj7MrrNW4ipNWbq84vP/TJFe4
-         57+oO6GGt5a4gMIiyGj78/O0NZ9MiVdalINs2YUHZH/v+GMIKuoxcATChWPLakiZ4igP
-         KPag==
-X-Gm-Message-State: AOJu0YxO/gN5U5xeIhxw0Oy2tWmWwzS7ccNxGIGZbupf3nknCpQ4PEu3
-        os5dML8Mp599WWgR9kAsu5TbQw==
-X-Google-Smtp-Source: AGHT+IEKPudg6lu9AocXlJirfbcJk0i0C4Uttf43yrHyHGF5llc2COXxhuIJUmsO9hWVFeMP+gj09w==
-X-Received: by 2002:a17:906:2da:b0:9ae:74d1:4b45 with SMTP id 26-20020a17090602da00b009ae74d14b45mr8155710ejk.65.1696598152046;
-        Fri, 06 Oct 2023 06:15:52 -0700 (PDT)
+        bh=rNR97TSeG/Stmz9F4Oo2bu8gF3PfrIDjuLtuxenu4mU=;
+        b=VpmTwIuLcwtpjCuifJ3CQMdGBGs06X4F3X6WxxcpqgHohr6J7U65O9SMfNApInRufq
+         ug3u2h9l6slBn1uvBLVSaCn2UxgOO5BcHjtosbDERVdJaIKiPA0cb38U2wAO35L0QEmw
+         hFlPTWkt19BhfM+YFEji6JV+m3Nhe6G7v5FJODhGtMFKHWdzWGNrul3/4vn0Ql22Qxi0
+         T9ZTHHIhD9pHlWkgqnyH0OSXOLODeD+ahcfcwfIV261VDew+iyTRq/L3Bzn/ry8LiKw2
+         3e9ACd/MJR1csUKlJ5SwXAXvEHVrSW5MBbN5JzF8guaHyyHrB/iQfkZ1IfY154cO6ieF
+         lo6A==
+X-Gm-Message-State: AOJu0YwCAFpNcx+5nZWJI2dI/N2l6+njb0P59pMUlht+RBuNt6ngrXtv
+        8HyQeXfgYdaGXdDqmc+CEDdCuw==
+X-Google-Smtp-Source: AGHT+IGww1qBNhxg9utdCvH9oqC+40gHXtBF6ObrEEqRfUhbFUoXFQNNMNTlCPi9Js+U3OC+xY2kdQ==
+X-Received: by 2002:a17:907:2723:b0:9a5:d657:47ee with SMTP id d3-20020a170907272300b009a5d65747eemr6732466ejl.58.1696599696268;
+        Fri, 06 Oct 2023 06:41:36 -0700 (PDT)
 Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id k24-20020a17090646d800b00992e265495csm2844494ejs.212.2023.10.06.06.15.50
+        by smtp.gmail.com with ESMTPSA id ci24-20020a170906c35800b009a2235ed496sm2953812ejb.141.2023.10.06.06.41.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Oct 2023 06:15:51 -0700 (PDT)
-Message-ID: <fe1bc0b9-e604-4ff9-ad23-860c2c1a56f9@linaro.org>
-Date:   Fri, 6 Oct 2023 15:15:50 +0200
+        Fri, 06 Oct 2023 06:41:35 -0700 (PDT)
+Message-ID: <1ee043ec-a47b-498e-9399-6e2cdd99f701@linaro.org>
+Date:   Fri, 6 Oct 2023 15:41:28 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/8] thermal: exynos: simplify regulator
- (de)initialization
+Subject: Re: [PATCH v3 7/8] thermal: exynos: split initialization of TMU and
+ the thermal zone
 Content-Language: en-US
 To:     Mateusz Majewski <m.majewski2@samsung.com>,
         linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
@@ -71,8 +71,8 @@ Cc:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>
 References: <20231003111638.241542-1-m.majewski2@samsung.com>
- <CGME20231003111711eucas1p2646dcfd2d7d473b78b012153bca06cc7@eucas1p2.samsung.com>
- <20231003111638.241542-6-m.majewski2@samsung.com>
+ <CGME20231003111713eucas1p27fcc64df0091b6097461f28b05bf772a@eucas1p2.samsung.com>
+ <20231003111638.241542-8-m.majewski2@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -118,7 +118,7 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231003111638.241542-6-m.majewski2@samsung.com>
+In-Reply-To: <20231003111638.241542-8-m.majewski2@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -126,18 +126,13 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 03/10/2023 13:16, Mateusz Majewski wrote:
-> We rewrite the initialization to enable the regulator as part of devm,
-> which allows us to not handle the struct instance manually. We also
-> remove the error message in case the regulator is unavailable, as this
-> is expected behaviour.
+> This will be needed in the future, as the thermal zone subsystem might
+> call our callbacks right after devm_thermal_of_zone_register. Currently
+> we just make get_temp return EAGAIN in such case, but this will not be
+> possible with state-modifying callbacks, for instance set_trips.
 > 
 > Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
 > ---
-> v2 -> v3: fixed error handling of devm_regulator_get_optional to handle
->   the case in which the regulator is available, but enabling it fails.
->   Also removed the error message, split into two commits and reworded
->   the commit message.
-> 
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
