@@ -2,196 +2,210 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A79A6E81DFD
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 13:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F2E0E81E06
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 15:08:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232335AbjJFNvN (ORCPT
+        id S232710AbjJFPIT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Oct 2023 09:51:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57410 "EHLO
+        Fri, 6 Oct 2023 11:08:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232323AbjJFNvM (ORCPT
+        with ESMTP id S230239AbjJFPIS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Oct 2023 09:51:12 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0F5EA6
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Oct 2023 06:51:10 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-9a6190af24aso387713966b.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Oct 2023 06:51:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1696600267; x=1697205067; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=59BqFGPIq+MlLg0nO/rZFvmB+hLKOqd3eB7b4cqnV5I=;
-        b=ncXYf8qn0SHY583VUsRC36Np2Xpqp1KC8KQty6AGmjOH7YWAb/ISOxcQWvgr56OF6j
-         N68FVvkbm4LxFDwvzBt2fuK3ZFU1BMmp/M7wyPkeYwg366dDBBH27iZ+Jyig+ws/Kdj0
-         /WITZxorDhR4hHfRcBTPOp6i8OInIqXpg3fgk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696600267; x=1697205067;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=59BqFGPIq+MlLg0nO/rZFvmB+hLKOqd3eB7b4cqnV5I=;
-        b=tMGMOnOUvMoeYsOVeujQGop9o3+F5aH7mzOtig0Kwn6zMVBR6u12b33yd8CRxWYLXp
-         hXNxk37t/82yw9rDowjFGo6/Iz79ZkxkNrW9VfKLpIbw7wBfFB6fXqnom738jhNwvtZC
-         DSxN+6SdhiyJQqQgXzxdu7g1ICoAkSu/9ZNZ7To1mwL3w5d5kme1Ef5EERNgiPX60cF1
-         /IBalaePmEe8cebEv5V9mpEBw4umNy4iWMnZ3LyroFKSIoMoOBt+TiKFrTIrBnQ9WsK2
-         uuXF3KAd6At+mvfnoRaki/gokIpA3W2QDZA9wFkcC9gyk0ty7wkxRQwCV9PBOTcZPB3q
-         SEuw==
-X-Gm-Message-State: AOJu0Yyc+MzcYEiXkDht8LDC7fYX668Ec6ALhqN2q5e4UG5mBsGpa5JH
-        BEoL3h0c9ZzfHSIIRIxdRAzZN5Mwblr37GBnjBOQQHgA
-X-Google-Smtp-Source: AGHT+IEGSeIPk6Rk4l1jicrQs2Lfsj2cwx33p63Adc7kB2UV4B8e00iKJ3rommznK3fqVtcJVCsPbA==
-X-Received: by 2002:a17:906:3086:b0:9b2:765b:273b with SMTP id 6-20020a170906308600b009b2765b273bmr8151430ejv.70.1696600266906;
-        Fri, 06 Oct 2023 06:51:06 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id ot21-20020a170906ccd500b0099df2ddfc37sm2914928ejb.165.2023.10.06.06.51.05
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Oct 2023 06:51:06 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-534694a9f26so10898a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Oct 2023 06:51:05 -0700 (PDT)
-X-Received: by 2002:a50:8756:0:b0:52f:5697:8dec with SMTP id
- 22-20020a508756000000b0052f56978decmr206638edv.4.1696600265520; Fri, 06 Oct
- 2023 06:51:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230921192749.1542462-1-dianders@chromium.org>
- <CGME20230921194907eucas1p1027c5dfc5c5f77bca3c43673427c89cc@eucas1p1.samsung.com>
- <20230921122641.RFT.v2.9.Iea33274908b6b258955f45a8aaf6f5bba24ad6cd@changeid>
- <fb9cd62b-6637-7bcc-e23d-37f3806f8460@samsung.com> <CAAQKjZNn4RTJ-SHHEugcQoS2U9fzNTOGtUpSLLM0w1V6Pb0amw@mail.gmail.com>
-In-Reply-To: <CAAQKjZNn4RTJ-SHHEugcQoS2U9fzNTOGtUpSLLM0w1V6Pb0amw@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 6 Oct 2023 06:50:49 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=V2JSHsrTfdxP4=-nU4GGZB999iAb+NU3en-4o3-rLmYQ@mail.gmail.com>
-Message-ID: <CAD=FV=V2JSHsrTfdxP4=-nU4GGZB999iAb+NU3en-4o3-rLmYQ@mail.gmail.com>
-Subject: Re: [RFT PATCH v2 09/12] drm/exynos: Call drm_atomic_helper_shutdown()
- at shutdown/unbind time
-To:     Inki Dae <daeinki@gmail.com>
+        Fri, 6 Oct 2023 11:08:18 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F3FC6
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Oct 2023 08:08:13 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231006150812euoutp01888b1a1a2ce8f0a4af14d9347d69c81e~LjSkh9LfU1154911549euoutp01D
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Oct 2023 15:08:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231006150812euoutp01888b1a1a2ce8f0a4af14d9347d69c81e~LjSkh9LfU1154911549euoutp01D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1696604892;
+        bh=z76s/ciW4Hejdlg9e+eJr7BZxEfsnnnyHl0fW3UO0yE=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=sOOl+Z8ffWdMLb7cltz6FrjKlMHFMjfjf0tZaHXMtyZRYXLxhfzAkiCrw3O4ombKU
+         SOua/9MyorUUXgzDnPPbEg8wHPlRx/75qoiPU43bI1VfByO1uz3Y2t+57JxAT6+Rph
+         8SHNSjed10BjF1EbC8sYZPxZlP+yh54nHKZTyW6o=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20231006150812eucas1p18c0d7df1934c82767fc5fbfcbba828f8~LjSkXnrBc1131411314eucas1p1C;
+        Fri,  6 Oct 2023 15:08:12 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 92.95.42423.CD220256; Fri,  6
+        Oct 2023 16:08:12 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20231006150811eucas1p1a9e2b98d191bb8093daf38daba14e9a0~LjSkDT8P71816418164eucas1p1-;
+        Fri,  6 Oct 2023 15:08:11 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20231006150811eusmtrp1de04c96d81b065202deb75c8cd3e466f~LjSkCtBnk1331413314eusmtrp1D;
+        Fri,  6 Oct 2023 15:08:11 +0000 (GMT)
+X-AuditID: cbfec7f2-a3bff7000002a5b7-13-652022dc4617
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id F3.72.10549.BD220256; Fri,  6
+        Oct 2023 16:08:11 +0100 (BST)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20231006150811eusmtip1e236ce5a09da0e5bd1e5bf00d2278573~LjSjkZvE50922109221eusmtip1a;
+        Fri,  6 Oct 2023 15:08:11 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        dri-devel@lists.freedesktop.org,
-        Maxime Ripard <mripard@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, alim.akhtar@samsung.com,
-        sw0312.kim@samsung.com, krzysztof.kozlowski@linaro.org,
-        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Andi Shyti <andi.shyti@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Wolfram Sang <wsa@kernel.org>
+Subject: [PATCH v3] i2c: exynos5: add support for atomic transfers
+Date:   Fri,  6 Oct 2023 17:08:03 +0200
+Message-Id: <20231006150804.4113844-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplleLIzCtJLcpLzFFi42LZduzned07SgqpBie6uC0ezNvGZnH/awej
+        xd7XW9ktOv5+YbSYcX4fk8XaI3fZLe7un8vowO6xaVUnm8eda3vYPPq2rGL0+LxJLoAlissm
+        JTUnsyy1SN8ugSvj6bx+loJtEhWNs3ezNjA+Ee5i5OSQEDCRuDLtEAuILSSwglFi53VVCPsL
+        o8Te55ZdjFxA9mdGiY1XnrLANMw4fIMNIrGcUeJ35z5WCAeoY/6Ek0wgVWwChhJdb7vYQGwR
+        AQeJ7m1H2EGKmAWuMkqc6p3CDJIQFnCSeLxrByuIzSKgKtHyYj2YzStgL7GmaRbUOnmJ/QfP
+        MkPEBSVOznwCFmcGijdvnc0MMlRCYCqHxL+vLewQDS4S11fOZYKwhSVeHd8CFZeROD25hwWi
+        oZ1RYsHv+0wQzgRGiYbntxghqqwl7pz7BXQ3B9AKTYn1u/Qhwo4SvReXMYGEJQT4JG68FYQ4
+        gk9i0rbpzBBhXomONiGIajWJWcfXwa09eOESM4TtIXF91gFWSPjGStxd2cQ8gVFhFpLXZiF5
+        bRbCDQsYmVcxiqeWFuempxYb5qWW6xUn5haX5qXrJefnbmIEppjT/45/2sE499VHvUOMTByM
+        hxglOJiVRHjTG2RShXhTEiurUovy44tKc1KLDzFKc7AoifOqpsinCgmkJ5akZqemFqQWwWSZ
+        ODilGpjCVna57Pq5Umr36dQ1i/lfJ7Ff/ll76kiMtIj+jZib/kxcqpLm57r3Om66/ny6tsmZ
+        clb5OetZWNpmh51Y/KN8Xqz7KR2rR5MteT/qtizcZXTafWOHz65Q/rdsh2O2l1Utn9+S0B/8
+        SaJQJUclaBInx2nhQ5Eq90PsV3Yodia8fDPl/q0nBtwOPybtnCt8rHLS20nflrQmWC3td2uu
+        VpqQWvvteZlJguDzeTkPtFdrfMwJ26DTzjtXN/FB7I0r1544/6q7d+T1p9fK9yZceWPZzvdM
+        5uJqmVMnp0SdP2IoHnt2yy4HjjOdhWGTs5rv7dwvdepzlJ6PsM/MpVEFrfqMuvOOTo8vWyjR
+        u/TFJu/XSizFGYmGWsxFxYkAjv/c3qADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsVy+t/xu7q3lRRSDeYtMrJ4MG8bm8X9rx2M
+        Fntfb2W36Pj7hdFixvl9TBZrj9xlt7i7fy6jA7vHplWdbB53ru1h8+jbsorR4/MmuQCWKD2b
+        ovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2Mp/P6WQq2
+        SVQ0zt7N2sD4RLiLkZNDQsBEYsbhG2xdjFwcQgJLGSVWzLzHCpGQkTg5rQHKFpb4c60LqugT
+        o8SMx3cZQRJsAoYSXW9BEpwcIgJOEv/mX2UBKWIWuM4oMeH9TSaQhDBQ4vGuHWCTWARUJVpe
+        rAezeQXsJdY0zWKB2CAvsf/gWWaIuKDEyZlPwOLMQPHmrbOZJzDyzUKSmoUktYCRaRWjSGpp
+        cW56brGhXnFibnFpXrpecn7uJkZgcG879nPzDsZ5rz7qHWJk4mA8xCjBwawkwpveIJMqxJuS
+        WFmVWpQfX1Sak1p8iNEU6L6JzFKiyfnA+MoriTc0MzA1NDGzNDC1NDNWEuf1LOhIFBJITyxJ
+        zU5NLUgtgulj4uCUamDSlertfiN6ouqBrZKK6NkcxtOTj5vI+V+RcipZEcAT/ut6YfrmBRFT
+        ORSXa37zafHlK+2yPD83euOxILGvyS2XH85Zte70yT3+cwoW7LyvVbfs59JZL65Nzyh8vkNq
+        wTODp+a2+t9E8x6tdE6rCGGeN7NwcaHBqiOmae3R77f3FZ/0KdlisEQiZF+8FWvCm7qPS44y
+        SU7fcerpvEIfwWX/X/htEJ37apbCpJysMzrCsfM5o3IC6+687F/f5G2xY6XcqV6VmO4zfmmG
+        ycE3zn5/YBQ0Q0LoxT8JxvMyonc2xquELxd/J5Tq9b/vZtO9MHUHpVzBHX+aBMSTxHhz2VxC
+        7Is0X9mknn/JX3v3i4ESS3FGoqEWc1FxIgBGCkeL9wIAAA==
+X-CMS-MailID: 20231006150811eucas1p1a9e2b98d191bb8093daf38daba14e9a0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20231006150811eucas1p1a9e2b98d191bb8093daf38daba14e9a0
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20231006150811eucas1p1a9e2b98d191bb8093daf38daba14e9a0
+References: <CGME20231006150811eucas1p1a9e2b98d191bb8093daf38daba14e9a0@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Add support for atomic transfers using polling mode with interrupts
+intentionally disabled. This removes the warning introduced by commit
+63b96983a5dd ("i2c: core: introduce callbacks for atomic transfers")
+during system reboot and power-off.
 
-On Thu, Oct 5, 2023 at 7:20=E2=80=AFPM Inki Dae <daeinki@gmail.com> wrote:
->
-> Thanks for testing. :)
->
-> Acked-by : Inki Dae <inki.dae@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+v3:
+- simplified timeout calculations, adjusted some names even more
 
-Inki: does that mean you'd like this to go through drm-misc? I'm happy
-to do that, but there are no dependencies here so this could easily go
-through your tree.
+v2:
+- adjusted some names as pointed by Andi
+---
+ drivers/i2c/busses/i2c-exynos5.c | 46 ++++++++++++++++++++++++++++++--
+ 1 file changed, 44 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index 2b0b9cdffa86..65cb06ec3804 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -194,6 +194,11 @@ struct exynos5_i2c {
+ 	 */
+ 	int			trans_done;
+ 
++	/*
++	 * Called from atomic context, don't use interrupts.
++	 */
++	unsigned int		atomic;
++
+ 	/* Controller operating frequency */
+ 	unsigned int		op_clock;
+ 
+@@ -711,6 +716,22 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+ 	spin_unlock_irqrestore(&i2c->lock, flags);
+ }
+ 
++static bool exynos5_i2c_poll_irqs_timeout(struct exynos5_i2c *i2c,
++					  unsigned long timeout)
++{
++	unsigned long time_left = jiffies + timeout;
++
++	while (time_before(jiffies, time_left) &&
++	       !((i2c->trans_done && (i2c->msg->len == i2c->msg_ptr)) ||
++	         (i2c->state < 0))) {
++		while (readl(i2c->regs + HSI2C_INT_ENABLE) &
++		       readl(i2c->regs + HSI2C_INT_STATUS))
++			exynos5_i2c_irq(i2c->irq, i2c);
++		usleep_range(100, 200);
++	}
++	return time_before(jiffies, time_left);
++}
++
+ static int exynos5_i2c_xfer_msg(struct exynos5_i2c *i2c,
+ 			      struct i2c_msg *msgs, int stop)
+ {
+@@ -725,8 +746,13 @@ static int exynos5_i2c_xfer_msg(struct exynos5_i2c *i2c,
+ 
+ 	exynos5_i2c_message_start(i2c, stop);
+ 
+-	timeout = wait_for_completion_timeout(&i2c->msg_complete,
+-					      EXYNOS5_I2C_TIMEOUT);
++	if (!i2c->atomic)
++		timeout = wait_for_completion_timeout(&i2c->msg_complete,
++						      EXYNOS5_I2C_TIMEOUT);
++	else
++		timeout = exynos5_i2c_poll_irqs_timeout(i2c,
++							EXYNOS5_I2C_TIMEOUT);
++
+ 	if (timeout == 0)
+ 		ret = -ETIMEDOUT;
+ 	else
+@@ -777,6 +803,21 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
+ 	return ret ?: num;
+ }
+ 
++static int exynos5_i2c_xfer_atomic(struct i2c_adapter *adap,
++				   struct i2c_msg *msgs, int num)
++{
++	struct exynos5_i2c *i2c = adap->algo_data;
++	int ret;
++
++	disable_irq(i2c->irq);
++	i2c->atomic = true;
++	ret = exynos5_i2c_xfer(adap, msgs, num);
++	i2c->atomic = false;
++	enable_irq(i2c->irq);
++
++	return ret;
++}
++
+ static u32 exynos5_i2c_func(struct i2c_adapter *adap)
+ {
+ 	return I2C_FUNC_I2C | (I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
+@@ -784,6 +825,7 @@ static u32 exynos5_i2c_func(struct i2c_adapter *adap)
+ 
+ static const struct i2c_algorithm exynos5_i2c_algorithm = {
+ 	.master_xfer		= exynos5_i2c_xfer,
++	.master_xfer_atomic	= exynos5_i2c_xfer_atomic,
+ 	.functionality		= exynos5_i2c_func,
+ };
+ 
+-- 
+2.34.1
 
-> 2023=EB=85=84 9=EC=9B=94 22=EC=9D=BC (=EA=B8=88) =EC=98=A4=ED=9B=84 3:00,=
- Marek Szyprowski <m.szyprowski@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=
-=84=B1:
-> >
-> >
-> > On 21.09.2023 21:26, Douglas Anderson wrote:
-> > > Based on grepping through the source code this driver appears to be
-> > > missing a call to drm_atomic_helper_shutdown() at system shutdown tim=
-e
-> > > and at driver unbind time. Among other things, this means that if a
-> > > panel is in use that it won't be cleanly powered off at system
-> > > shutdown time.
-> > >
-> > > The fact that we should call drm_atomic_helper_shutdown() in the case
-> > > of OS shutdown/restart and at driver remove (or unbind) time comes
-> > > straight out of the kernel doc "driver instance overview" in
-> > > drm_drv.c.
-> > >
-> > > A few notes about this fix:
-> > > - When adding drm_atomic_helper_shutdown() to the unbind path, I adde=
-d
-> > >    it after drm_kms_helper_poll_fini() since that's when other driver=
-s
-> > >    seemed to have it.
-> > > - Technically with a previous patch, ("drm/atomic-helper:
-> > >    drm_atomic_helper_shutdown(NULL) should be a noop"), we don't
-> > >    actually need to check to see if our "drm" pointer is NULL before
-> > >    calling drm_atomic_helper_shutdown(). We'll leave the "if" test in=
-,
-> > >    though, so that this patch can land without any dependencies. It
-> > >    could potentially be removed later.
-> > > - This patch also makes sure to set the drvdata to NULL in the case o=
-f
-> > >    bind errors to make sure that shutdown can't access freed data.
-> > >
-> > > Suggested-by: Maxime Ripard <mripard@kernel.org>
-> > > Reviewed-by: Maxime Ripard <mripard@kernel.org>
-> > > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> >
-> > Seems to be working fine on all my test Exynos-based boards with displa=
-y.
-> >
-> > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >
-> > Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >
-> > > ---
-> > > This commit is only compile-time tested.
-> > >
-> > > (no changes since v1)
-> > >
-> > >   drivers/gpu/drm/exynos/exynos_drm_drv.c | 11 +++++++++++
-> > >   1 file changed, 11 insertions(+)
-> > >
-> > > diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/dr=
-m/exynos/exynos_drm_drv.c
-> > > index 8399256cb5c9..5380fb6c55ae 100644
-> > > --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> > > +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> > > @@ -300,6 +300,7 @@ static int exynos_drm_bind(struct device *dev)
-> > >       drm_mode_config_cleanup(drm);
-> > >       exynos_drm_cleanup_dma(drm);
-> > >       kfree(private);
-> > > +     dev_set_drvdata(dev, NULL);
-> > >   err_free_drm:
-> > >       drm_dev_put(drm);
-> > >
-> > > @@ -313,6 +314,7 @@ static void exynos_drm_unbind(struct device *dev)
-> > >       drm_dev_unregister(drm);
-> > >
-> > >       drm_kms_helper_poll_fini(drm);
-> > > +     drm_atomic_helper_shutdown(drm);
-> > >
-> > >       component_unbind_all(drm->dev, drm);
-> > >       drm_mode_config_cleanup(drm);
-> > > @@ -350,9 +352,18 @@ static int exynos_drm_platform_remove(struct pla=
-tform_device *pdev)
-> > >       return 0;
-> > >   }
-> > >
-> > > +static void exynos_drm_platform_shutdown(struct platform_device *pde=
-v)
-> > > +{
-> > > +     struct drm_device *drm =3D platform_get_drvdata(pdev);
-> > > +
-> > > +     if (drm)
-> > > +             drm_atomic_helper_shutdown(drm);
-> > > +}
-> > > +
-> > >   static struct platform_driver exynos_drm_platform_driver =3D {
-> > >       .probe  =3D exynos_drm_platform_probe,
-> > >       .remove =3D exynos_drm_platform_remove,
-> > > +     .shutdown =3D exynos_drm_platform_shutdown,
-> > >       .driver =3D {
-> > >               .name   =3D "exynos-drm",
-> > >               .pm     =3D &exynos_drm_pm_ops,
-> >
-> > Best regards
-> > --
-> > Marek Szyprowski, PhD
-> > Samsung R&D Institute Poland
-> >
