@@ -2,117 +2,219 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD0FE92FFC
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 09:39:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B288AE9371D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Oct 2023 10:56:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231485AbjJFJjx (ORCPT
+        id S231839AbjJFKz7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Oct 2023 05:39:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43184 "EHLO
+        Fri, 6 Oct 2023 06:55:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231479AbjJFJjw (ORCPT
+        with ESMTP id S231741AbjJFKz5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Oct 2023 05:39:52 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08003D6
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Oct 2023 02:39:50 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-99c3d3c3db9so322782066b.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Oct 2023 02:39:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696585188; x=1697189988; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GValG6j8RNZe/VVFaV+ji1MJUR/qCB/Q7tXe9d+VUds=;
-        b=NWNJzmTSmzkhOZg/mKJM8BSjUm01kuuQZjpSzh1nJiJa0McDOrK2QEWDK+SdFlf9MY
-         wfEgiC4NdDsaGzULbYP1FRgz6AP2CAxal2wTWTAbGCd25sZgId02fzzF9vm4gUjZuUGO
-         mW2OAyE0Ugr7CSTl0imaULtoeh82RtUTKKOCGe3C8b7GVZXcpCTNWaqbcghEa3wLoCDd
-         vWIj84PfR4mAjexjvTz+r0gbR52spbgq9AIM4xIyKhEXJudoGIfIOC3bnMPCCHd1W6a1
-         sABj8vCgq6qexKRUMupBTJP1oCVqrk2Ow7bSTJpWX7SBumljS+DNiPs377RzJWFk41m5
-         6TDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696585188; x=1697189988;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GValG6j8RNZe/VVFaV+ji1MJUR/qCB/Q7tXe9d+VUds=;
-        b=vDekt86W5bhg7IWLr28/eelH4zaZf5danvbmcF9J85UAuT4fPtF0r6dXy/+fq26cjF
-         r6urifAS2D1KASww/sDN1RTE7VJKufMNQmG9iK1KQesaZXq9hguwPVDdXgC+y/oHKFSF
-         a57ltWKDbFB4EfszL0sgip6AdCJJLvO5X5SbGWKD0o5UpGShrvwE8enpuNFrf65gvJ2G
-         Zg5K5SnJsaZ/qDtUfhLK/T2uGAiK6YXA0mmcONa7EUOlEJo1jsUU4cPpIITIF4WPAVzi
-         PWNeDpjrciAYmQ3n6xeuT8NsQ8wwj7GaqyIZtEHmb92GIKbRvKqZ6CG0dmeio208Ss1i
-         ii/w==
-X-Gm-Message-State: AOJu0YxUeH7eHxevMeeoDkvI0XpXoROtCNNAslzbPctJAORWOyC+MZIx
-        QciFn/cumUrIZ1iJ5amarS8NqQ==
-X-Google-Smtp-Source: AGHT+IF3Vfgt3fpYEEU1JdjAoV9ABhEWf5VbjC67mu7J86cXzN1EweHSYIV0d2PHtTSL5DORtZjjbA==
-X-Received: by 2002:a17:906:19b:b0:9b6:e6ff:b20b with SMTP id 27-20020a170906019b00b009b6e6ffb20bmr6398018ejb.8.1696585188442;
-        Fri, 06 Oct 2023 02:39:48 -0700 (PDT)
-Received: from krzk-bin.. (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id gx13-20020a170906f1cd00b009ad8d444be4sm2583412ejb.43.2023.10.06.02.39.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Oct 2023 02:39:48 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Fri, 6 Oct 2023 06:55:57 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BD1ECA
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Oct 2023 03:55:53 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231006105551euoutp02b952e0949bcde87fadd5ffa73600f246~Lf2PgPSKn3044530445euoutp028
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Oct 2023 10:55:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231006105551euoutp02b952e0949bcde87fadd5ffa73600f246~Lf2PgPSKn3044530445euoutp028
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1696589751;
+        bh=K8cAsFi2biQ8rza2mUXUKVQclBLRbd3hfBEw7Vk5TOA=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=vaJZoqiHfdfnP0YFsiw2D7c8bjXX22xP4ufkxKp8LUmZmKxxUhR74e2GgyWmpgk4r
+         8/ZGONrfFaHqyjNHx/vsCjsa2EsvboTBjwYx0yAV+pD0/CtvbVnCTohGd+ureiP0+q
+         qBkM4zc1CKZZsAxsixcJe/SY1bU28GH0CViikiBo=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20231006105551eucas1p18d763329ab3d7592575a239282899d33~Lf2PRF-pg0100201002eucas1p16;
+        Fri,  6 Oct 2023 10:55:51 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 84.07.37758.7B7EF156; Fri,  6
+        Oct 2023 11:55:51 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20231006105550eucas1p299b28864850bf69d48d4e35058e53afd~Lf2O8G0VO1896218962eucas1p2O;
+        Fri,  6 Oct 2023 10:55:50 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20231006105550eusmtrp2a6a11792d26bb1afea4b7ad461503596~Lf2O7VvlW2880128801eusmtrp2i;
+        Fri,  6 Oct 2023 10:55:50 +0000 (GMT)
+X-AuditID: cbfec7f5-815ff7000002937e-c5-651fe7b7a02f
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 7F.09.10549.6B7EF156; Fri,  6
+        Oct 2023 11:55:50 +0100 (BST)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20231006105550eusmtip2d56d366054269e79793e1bcda3bc3896~Lf2OdnvvH1338713387eusmtip2I;
+        Fri,  6 Oct 2023 10:55:50 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/2] ARM: dts: samsung: DTS for v6.7
-Date:   Fri,  6 Oct 2023 11:39:43 +0200
-Message-Id: <20231006093943.106002-2-krzysztof.kozlowski@linaro.org>
+        Wolfram Sang <wsa@kernel.org>
+Subject: [PATCH v2] i2c: exynos5: add support for atomic transfers
+Date:   Fri,  6 Oct 2023 12:55:45 +0200
+Message-Id: <20231006105545.3194164-1-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231006093943.106002-1-krzysztof.kozlowski@linaro.org>
-References: <20231006093943.106002-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjleLIzCtJLcpLzFFi42LZduzned3tz+VTDTbvFrB4MG8bm8X9rx2M
+        Fntfb2W36Pj7hdFixvl9TBZrj9xlt7i7fy6jA7vHplWdbB53ru1h8+jbsorR4/MmuQCWKC6b
+        lNSczLLUIn27BK6MSR9/Mxa8lKr4dOAiSwPjA9EuRk4OCQETifcTTrCB2EICKxglnly062Lk
+        ArK/MErcnvyJDcL5zCixbMt9FpiOuQvnM0MkljNKNHQ/Y4FrWXZ5HxNIFZuAoUTX2y6wuSIC
+        DhLd246wgxQxC1xllDjVO4UZJCEs4CSxd841sAYWAVWJeUdugdm8AvYS57aeYoJYJy+x/+BZ
+        Zoi4oMTJmU/AzmAGijdvnQ12hoTATA6Ja5MWQd3nIjHj+SN2CFtY4tXxLVC2jMT/nfOZIBra
+        GSUW/L4P5UwAeuL5LUaIKmuJO+d+Ad3NAbRCU2L9Ln2IsKPE6Q9dTCBhCQE+iRtvBSGO4JOY
+        tG06M0SYV6KjTQiiWk1i1vF1cGsPXrjEDGF7SNzZ0cMKCexYiR0blrFNYFSYheS1WUhem4Vw
+        wwJG5lWM4qmlxbnpqcXGeanlesWJucWleel6yfm5mxiBSeb0v+NfdzCuePVR7xAjEwfjIUYJ
+        DmYlEd70BplUId6UxMqq1KL8+KLSnNTiQ4zSHCxK4ryqKfKpQgLpiSWp2ampBalFMFkmDk6p
+        BqamZbwfX/6c/unIh2XbJy+bk5Obp6+uY7yz5OnNzU+jgj+n+6eLTZj40JHXSnrWwsqDCddY
+        ZHddKrP2WNoqsqR6zZHzB5xFy0/kXX0a/SR5q/fTzEOMW0+lydnkMW+78/rrvECWSfd8m267
+        vPF6IpMQnyK5ojdl1+t/2p/lf8UqfetqX172cfbLNL+Fn3Yft9k1L4m5JCpedOYH5wcGT9/P
+        eMl1fbGpfbDd/TcTZxew1b3Mkij4fMM0anGwzXYGg6hVNV8/VHrt+5v0Mplz528Vx89KaWse
+        WWtwfJ4y6f/2Mz+55VNtY3M1xK/XVKX2zxexWhjMq252+PCEa/uTj59t0WxdouB+fentmW9E
+        0y5oK7EUZyQaajEXFScCAPIanZuhAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsVy+t/xe7rbnsunGrz4YWLxYN42Nov7XzsY
+        Lfa+3spu0fH3C6PFjPP7mCzWHrnLbnF3/1xGB3aPTas62TzuXNvD5tG3ZRWjx+dNcgEsUXo2
+        RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZkz7+Zix4
+        KVXx6cBFlgbGB6JdjJwcEgImEnMXzmfuYuTiEBJYyihxf/1zFoiEjMTJaQ2sELawxJ9rXWwQ
+        RZ8YJfperWACSbAJGEp0vQVJcHKICDhJ/Jt/lQWkiFngOqPEhPc3wYqEgRJ751wDs1kEVCXm
+        HbkFZvMK2Euc23qKCWKDvMT+g2eZIeKCEidnPgG7ghko3rx1NvMERr5ZSFKzkKQWMDKtYhRJ
+        LS3OTc8tNtQrTswtLs1L10vOz93ECAzubcd+bt7BOO/VR71DjEwcjIcYJTiYlUR40xtkUoV4
+        UxIrq1KL8uOLSnNSiw8xmgLdN5FZSjQ5HxhfeSXxhmYGpoYmZpYGppZmxkrivJ4FHYlCAumJ
+        JanZqakFqUUwfUwcnFINTB6qbfdepDhHXfweqjX93uQTn6/FhC0WZVhTMicp475I6MIjztrH
+        Hn1f1LJuY9kNhRlVW3qXLz3081r3ltPJT35fin/GwZazOPbDrRVbmG8yPihZ/vPB83/ZLqqx
+        J3kLZzU9j7vj1puy99f11z333kxazPvrgrEoW+mzEzcP8mWfCT++m7fHclPcpPt6Ob0LeaYa
+        5aev7Xnen5lnI2BScblFmNFnd5bL4nnex+fdbp7tMO2Ude+2M+9C53fOYtoyeQeDGuvt0KZF
+        SnuDhfdMXes175lCQNs2JgOX1acyazn2/3JOX7Zaw+jZtmtz7hS+Uv7Yf6GOMfX/JJd7rlli
+        8yL2MS89K5e9mLXIzijcdZ+HEktxRqKhFnNRcSIAWz4MIvcCAAA=
+X-CMS-MailID: 20231006105550eucas1p299b28864850bf69d48d4e35058e53afd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20231006105550eucas1p299b28864850bf69d48d4e35058e53afd
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20231006105550eucas1p299b28864850bf69d48d4e35058e53afd
+References: <CGME20231006105550eucas1p299b28864850bf69d48d4e35058e53afd@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The following changes since commit 0bb80ecc33a8fb5a682236443c1e740d5c917d1d:
+Add support for atomic transfers using polling mode with interrupts
+intentionally disabled. This removes the warning introduced by commit
+63b96983a5dd ("i2c: core: introduce callbacks for atomic transfers")
+during system reboot and power off.
 
-  Linux 6.6-rc1 (2023-09-10 16:28:41 -0700)
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+v2:
+- adjusted some names as pointed by Andi
+---
+ drivers/i2c/busses/i2c-exynos5.c | 51 ++++++++++++++++++++++++++++++--
+ 1 file changed, 48 insertions(+), 3 deletions(-)
 
-are available in the Git repository at:
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index 2b0b9cdffa86..3ff398145b7b 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -162,7 +162,8 @@
+ #define HSI2C_MASTER_ID(x)			((x & 0xff) << 24)
+ #define MASTER_ID(x)				((x & 0x7) + 0x08)
+ 
+-#define EXYNOS5_I2C_TIMEOUT (msecs_to_jiffies(100))
++#define EXYNOS5_I2C_TIMEOUT_MS (100)
++#define EXYNOS5_I2C_TIMEOUT (msecs_to_jiffies(EXYNOS5_I2C_TIMEOUT_MS))
+ 
+ enum i2c_type_exynos {
+ 	I2C_TYPE_EXYNOS5,
+@@ -194,6 +195,11 @@ struct exynos5_i2c {
+ 	 */
+ 	int			trans_done;
+ 
++	/*
++	 * Called from atomic context, don't use interrupts.
++	 */
++	int			no_irqs;
++
+ 	/* Controller operating frequency */
+ 	unsigned int		op_clock;
+ 
+@@ -711,6 +717,24 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+ 	spin_unlock_irqrestore(&i2c->lock, flags);
+ }
+ 
++static bool exynos5_i2c_poll_irqs_timeout(struct exynos5_i2c *i2c,
++					  unsigned long timeout_ms)
++{
++	ktime_t start, now;
++
++	start = now = ktime_get();
++	while (ktime_ms_delta(now, start) < timeout_ms &&
++	       !((i2c->trans_done && (i2c->msg->len == i2c->msg_ptr)) ||
++	         (i2c->state < 0))) {
++		while (readl(i2c->regs + HSI2C_INT_ENABLE) &
++		       readl(i2c->regs + HSI2C_INT_STATUS))
++			exynos5_i2c_irq(i2c->irq, i2c);
++		usleep_range(100, 200);
++		now = ktime_get();
++	}
++	return ktime_ms_delta(now, start) < timeout_ms;
++}
++
+ static int exynos5_i2c_xfer_msg(struct exynos5_i2c *i2c,
+ 			      struct i2c_msg *msgs, int stop)
+ {
+@@ -725,8 +749,13 @@ static int exynos5_i2c_xfer_msg(struct exynos5_i2c *i2c,
+ 
+ 	exynos5_i2c_message_start(i2c, stop);
+ 
+-	timeout = wait_for_completion_timeout(&i2c->msg_complete,
+-					      EXYNOS5_I2C_TIMEOUT);
++	if (!i2c->no_irqs)
++		timeout = wait_for_completion_timeout(&i2c->msg_complete,
++						      EXYNOS5_I2C_TIMEOUT);
++	else
++		timeout = exynos5_i2c_poll_irqs_timeout(i2c,
++							EXYNOS5_I2C_TIMEOUT_MS);
++
+ 	if (timeout == 0)
+ 		ret = -ETIMEDOUT;
+ 	else
+@@ -777,6 +806,21 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
+ 	return ret ?: num;
+ }
+ 
++static int exynos5_i2c_xfer_atomic(struct i2c_adapter *adap,
++				   struct i2c_msg *msgs, int num)
++{
++	struct exynos5_i2c *i2c = adap->algo_data;
++	int ret;
++
++	disable_irq(i2c->irq);
++	i2c->no_irqs = true;
++	ret = exynos5_i2c_xfer(adap, msgs, num);
++	i2c->no_irqs = false;
++	enable_irq(i2c->irq);
++
++	return ret;
++}
++
+ static u32 exynos5_i2c_func(struct i2c_adapter *adap)
+ {
+ 	return I2C_FUNC_I2C | (I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
+@@ -784,6 +828,7 @@ static u32 exynos5_i2c_func(struct i2c_adapter *adap)
+ 
+ static const struct i2c_algorithm exynos5_i2c_algorithm = {
+ 	.master_xfer		= exynos5_i2c_xfer,
++	.master_xfer_atomic	= exynos5_i2c_xfer_atomic,
+ 	.functionality		= exynos5_i2c_func,
+ };
+ 
+-- 
+2.34.1
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-6.7
-
-for you to fetch changes up to ef399736c3ba77fb82d778b1b7285baa65a7e079:
-
-  ARM: dts: samsung: exynos4210: enable polling (2023-09-14 10:05:21 +0200)
-
-----------------------------------------------------------------
-Samsung DTS ARM changes for v6.7
-
-1. Switch all sound cards to generic audio-routing property, supported
-   since previous release for Samsung drivers.  The old
-   samsung,audio-routing property is deprecated.
-2. Correct Exynos4210 thermal by using polling.  Apparently interrupts in
-   Thermal Monitoring Unit are broken.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (7):
-      ARM: dts: samsung: exynos4212-tab3: switch sound card to audio-routing
-      ARM: dts: samsung: exynos4412-galaxy-s3: switch sound card to audio-routing
-      ARM: dts: samsung: exynos4412-n710x: switch sound card to audio-routing
-      ARM: dts: samsung: exynos4412-odroid: switch sound card to audio-routing
-      ARM: dts: samsung: exynos5422-odroid: switch sound card to audio-routing
-      ARM: dts: samsung: s5pv210-fascinate4g: switch sound card to audio-routing
-      ARM: dts: samsung: s5pv210-galaxys: switch sound card to audio-routing
-
-Mateusz Majewski (1):
-      ARM: dts: samsung: exynos4210: enable polling
-
- arch/arm/boot/dts/samsung/exynos4210.dtsi          | 12 +++++-
- arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi     | 41 ++++++++++-----------
- .../arm/boot/dts/samsung/exynos4412-galaxy-s3.dtsi | 43 +++++++++++-----------
- arch/arm/boot/dts/samsung/exynos4412-n710x.dts     | 39 ++++++++++----------
- arch/arm/boot/dts/samsung/exynos4412-odroidu3.dts  | 13 +++----
- arch/arm/boot/dts/samsung/exynos4412-odroidx.dts   |  9 ++---
- .../dts/samsung/exynos5422-odroidxu3-audio.dtsi    | 19 +++++-----
- arch/arm/boot/dts/samsung/exynos5422-odroidxu4.dts |  2 +-
- arch/arm/boot/dts/samsung/s5pv210-fascinate4g.dts  | 33 ++++++++---------
- arch/arm/boot/dts/samsung/s5pv210-galaxys.dts      | 37 +++++++++----------
- 10 files changed, 124 insertions(+), 124 deletions(-)
