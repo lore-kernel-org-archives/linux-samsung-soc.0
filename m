@@ -2,185 +2,118 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C9AE95A8F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  8 Oct 2023 13:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACAAE95A82
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  8 Oct 2023 14:01:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344801AbjJHNJg (ORCPT
+        id S1344841AbjJHOBc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 8 Oct 2023 09:09:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40364 "EHLO
+        Sun, 8 Oct 2023 10:01:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344790AbjJHNJf (ORCPT
+        with ESMTP id S1344837AbjJHOBb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 8 Oct 2023 09:09:35 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAB84C6
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  8 Oct 2023 06:09:33 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-40684f53d11so36344645e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Oct 2023 06:09:33 -0700 (PDT)
+        Sun, 8 Oct 2023 10:01:31 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E26ED6
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  8 Oct 2023 07:01:29 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2b9d07a8d84so46472461fa.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Oct 2023 07:01:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696770572; x=1697375372; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=4T2Z7SYLg4F7zYTghrx8Dfmvyt8d+HUgwBGlBRzhxsY=;
-        b=Hwv3xHsLKycMAh1xz8KQ2al3jmOWg2sVw3HGcwDlK1d/AzY149s2YhjZK3YFNAz6xt
-         eyqtB04+FhUwt5nW9L/8kOK4PIZHQdJeL+FzTNXG36zpKKyCc+9yjC2C+cGAbZYxyhRW
-         IvLlXzxsbQGZ6juo0WtQe8kwKzKiUjXhBDMY+mlSTQUEWCCr1z+i6yCIe/WThNLHsd49
-         NuiKyevW+ROiXwIN8/kSYCJowLdCog9UZ/wOwZrf4vKmfEuzqGbQGoriydQ9JxI5FUst
-         armp+TLOhSID0WUfKBdMf3cEJRJvwqCdyXpL9H3cx1+Uc+vSvW8vooo6sNXKam1E860J
-         dCJg==
+        d=linaro.org; s=google; t=1696773687; x=1697378487; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zxakH265LpATzSTaf30OW9So30zUQfcE2yrNl/MhWDo=;
+        b=dU3x9p4iOX75EpYEqgQ37wy734/yJbCHn/7k5zGHeyOwquq/6Ip9SQoxWsEhlOvw1d
+         i9Xkb044JdQT3z/7Wwh4FY0OCZfcoW2jVHcagOhSR+7a2jZjzLqfmJp6P7kWEZe1x7JW
+         9Bb7wj/sednYz8K5bIkHrqJidBZVajOix86PmLCCMw7MBYKjGxm2xEDNiNP2gYVosH1R
+         HcxYpLqrqI6w9Q9gNo1GKDJMmkVjE0ur4n4kXfMfAN2Ht9koA6Vq0JU5QrbkThi2xzDq
+         il3T+hSVMzJBaZw4tcNEKoeysNez8vPJwqyvMWekikI40sFGIyhY3MqI4ze+3WrWXiGP
+         em+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696770572; x=1697375372;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4T2Z7SYLg4F7zYTghrx8Dfmvyt8d+HUgwBGlBRzhxsY=;
-        b=rhZhWfAepkw2SfUmi+3bShV8m+KeTnE3fQT1NxGRdmUpjDyFn1xxjGinccf3PTEzbV
-         HUxHupKHbzv7/sr6akodu2UwPo7aZvd4ToF6laAVQFXouLXlboL649EMO4WrhhEGFnWd
-         F/C+QOghFtblP9lRQvpneH/XQccjcJp1ZyokGFXJtiHzgySUKaN1NwDbji7vxtDrWBmx
-         ptpeYQSnl4WKMNk0s2Bfcpda8ZJ8VbpAxtUL0CvktI7pt8/FD5hKgKYKb541Q08thbG+
-         cD720vGlJy7yZGJdE4eJfSZlae+daS8iVGEpxmupJspct3xoDufUDe+bfxcgieWDk5CK
-         fFvQ==
-X-Gm-Message-State: AOJu0YzRJLHQtfa8YIALQfhMsOXl/qnCFzDP6QUpEx10vBKDsVTA5gpD
-        ZyzLNTIlYKHjpb2LLuX29zSnrg==
-X-Google-Smtp-Source: AGHT+IEECcUbhP+SmHk2UsmpP/hLROulV1e7rcjBMqTB5kOUEgGwvUhi0BoAxzLCvWtP9ODyCM/1rw==
-X-Received: by 2002:a05:600c:ac4:b0:406:599f:f934 with SMTP id c4-20020a05600c0ac400b00406599ff934mr12096596wmr.12.1696770571922;
-        Sun, 08 Oct 2023 06:09:31 -0700 (PDT)
-Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id t3-20020a05600c450300b0040747010f8csm2174054wmo.40.2023.10.08.06.09.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Oct 2023 06:09:31 -0700 (PDT)
-Message-ID: <04260159-f5a8-47f7-b267-33f4ea19b8a6@linaro.org>
-Date:   Sun, 8 Oct 2023 15:09:29 +0200
+        d=1e100.net; s=20230601; t=1696773687; x=1697378487;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zxakH265LpATzSTaf30OW9So30zUQfcE2yrNl/MhWDo=;
+        b=Yojg8nsKx7s+wTA1/J/kFnrDR6Espp5szGpXpEo3MVrOyHITZ3TRuVt394ZHBYgRbx
+         WGu3fhBpjqG9ebOnfiCSjuK+nj06YB6AYUuwHd6mCDEsrIwB/26+lIYArwbbsjZgDXue
+         vmtJyDqNv0wTNW9GrjOVKY7grddOVRJ+xlkf5mLQ9iilnphkd3WTTugNMDkhUfeJp6Yf
+         LvwhID61AOI+xFIeSAlT4dpkTDlnB0BaMAwZdUiGWuqhWH5vbQPbtrrIyH1faLuCTmcI
+         UxUB7wkMfsbM8TDlrBB4kd/JHnVa8MnAfBUUy5FHdQe9MZ/6j5l+fSzA+H67VzVbuj8U
+         RKPg==
+X-Gm-Message-State: AOJu0YyIo93QOp70BqdsCZtzwTMKy6mzR6L6YolKb5iCtulsY10fPGSd
+        6zO2L0wjmR9qc4/UsZTb6CnU5g==
+X-Google-Smtp-Source: AGHT+IEZhcTkbfnDMA0TmtMUY6GUYhyBTjDeQoEWBa7c/RqNiiO7pOQy12FcGXqIQaqK7WTV5qhK2g==
+X-Received: by 2002:a19:910c:0:b0:501:c1d4:cf68 with SMTP id t12-20020a19910c000000b00501c1d4cf68mr9460445lfd.15.1696773687355;
+        Sun, 08 Oct 2023 07:01:27 -0700 (PDT)
+Received: from umbar.unikie.fi ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id q14-20020ac24a6e000000b00504211d2a73sm1080455lfp.230.2023.10.08.07.01.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Oct 2023 07:01:26 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Felix.Kuehling@amd.com, alexander.deucher@amd.com,
+        christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
+        daniel@ffwll.ch, harry.wentland@amd.com, sunpeng.li@amd.com,
+        Rodrigo.Siqueira@amd.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+        robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run,
+        marijn.suijten@somainline.org, bskeggs@redhat.com,
+        kherbst@redhat.com, lyude@redhat.com, kraxel@redhat.com,
+        gurchetansingh@chromium.org, olvaffe@gmail.com,
+        paulo.miguel.almeida.rodenas@gmail.com, wenjing.liu@amd.com,
+        haoping.liu@amd.com, Charlene.Liu@amd.com, chiahsuan.chung@amd.com,
+        george.shen@amd.com, sancchen@amd.com, tony.tascioglu@amd.com,
+        jaehyun.chung@amd.com, tales.aparecida@gmail.com, drv@mailo.com,
+        aurabindo.pillai@amd.com, quic_vpolimer@quicinc.com,
+        jiasheng@iscas.ac.cn, noralf@tronnes.org,
+        jose.exposito89@gmail.com, javierm@redhat.com,
+        mairacanal@riseup.net, davidgow@google.com,
+        arthurgrillo@riseup.net, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        Ruan Jinjie <ruanjinjie@huawei.com>
+Subject: Re: [PATCH -next 0/7] drm: Remove many unnecessary NULL values
+Date:   Sun,  8 Oct 2023 17:01:18 +0300
+Message-Id: <169677306919.2570646.8217027380730287216.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230809034445.434902-1-ruanjinjie@huawei.com>
+References: <20230809034445.434902-1-ruanjinjie@huawei.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Fix Samsung pinctrl driver static allocation of GPIO
- base warning
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Mateusz Majewski <m.majewski2@samsung.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-References: <CGME20231006130032eucas1p18c6f5c39614768911730fa6ed0201ee3@eucas1p1.samsung.com>
- <20231006125557.212681-1-m.majewski2@samsung.com>
- <CAPLW+4kmA6iYDPFxyASHLJifz63DRxT9gqQ-AsMAVy0RzoaFRw@mail.gmail.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAPLW+4kmA6iYDPFxyASHLJifz63DRxT9gqQ-AsMAVy0RzoaFRw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 07/10/2023 04:14, Sam Protsenko wrote:
-> On Fri, Oct 6, 2023 at 8:01 AM Mateusz Majewski <m.majewski2@samsung.com> wrote:
->>
->> The object of this work is fixing the following warning, which appears
->> on all targets using that driver:
->>
->> gpio gpiochip0: Static allocation of GPIO base is deprecated, use dynamic allocation.
->>
->> This needs a small refactor to how we interact with the pinctrl
->> subsystem. Finally, we remove some bookkeeping that has only been
->> necessary to allocate GPIO bases correctly.
->>
->> Mateusz Majewski (4):
->>   pinctrl: samsung: defer pinctrl_enable
->>   pinctrl: samsung: use add_pin_ranges method to add pinctrl ranges
->>   pinctrl: samsung: choose GPIO numberspace base dynamically
->>   pinctrl: samsung: do not offset pinctrl numberspaces
->>
->>  drivers/pinctrl/samsung/pinctrl-samsung.c | 56 ++++++++++++-----------
->>  drivers/pinctrl/samsung/pinctrl-samsung.h |  4 +-
->>  2 files changed, 31 insertions(+), 29 deletions(-)
->>
->> --
-> 
-> Hi Mateusz,
-> 
-> Thank you for handling this! Those deprecation warnings have been
-> bugging me for some time :) While testing this series on my E850-96
-> board (Exynos850 based), I noticed some changes in
-> /sys/kernel/debug/gpio file, like these:
-> 
-> 8<------------------------------------------------------------------------------------------>8
-> -gpiochip0: GPIOs 0-7, parent: platform/11850000.pinctrl, gpa0:
-> - gpio-7   (                    |Volume Up           ) in  hi IRQ ACTIVE LOW
-> +gpiochip0: GPIOs 512-519, parent: platform/11850000.pinctrl, gpa0:
-> + gpio-519 (                    |Volume Up           ) in  hi IRQ ACTIVE LOW
-> 
-> -gpiochip1: GPIOs 8-15, parent: platform/11850000.pinctrl, gpa1:
-> - gpio-8   (                    |Volume Down         ) in  hi IRQ ACTIVE LOW
-> +gpiochip1: GPIOs 520-527, parent: platform/11850000.pinctrl, gpa1:
-> + gpio-520 (                    |Volume Down         ) in  hi IRQ ACTIVE LOW
-> 
-> -gpiochip2: GPIOs 16-23, parent: platform/11850000.pinctrl, gpa2:
-> +gpiochip2: GPIOs 528-535, parent: platform/11850000.pinctrl, gpa2:
-> 
-> ...
-> 8<------------------------------------------------------------------------------------------>8
-> 
-> So basically it looks like all line numbers were offset by 512. Can
-> you please comment on this? Is it an intentional change, and why it's
-> happening?
-> 
-> Despite of that change, everything seems to be working fine. But I
-> kinda liked the numeration starting from 0 better :)
 
-Could it be the reason of dynamic allocation?
+On Wed, 09 Aug 2023 11:44:38 +0800, Ruan Jinjie wrote:
+> The NULL initialization of the pointers assigned by kzalloc() or
+> kunit_kzalloc() first is not necessary, because if the kzalloc() or
+> kunit_kzalloc() failed, the pointers will be assigned NULL, otherwise
+> it works as usual. so remove it.
+> 
+> Ruan Jinjie (7):
+>   drm/amdkfd: Remove unnecessary NULL values
+>   drm/amd/display: Remove unnecessary NULL values
+>   drm/msm: Remove unnecessary NULL values
+>   drm/radeon: Remove unnecessary NULL values
+>   drm/virtio: Remove an unnecessary NULL value
+>   drm/format-helper: Remove unnecessary NULL values
+>   drm: Remove unnecessary NULL values
+> 
+> [...]
 
+Applied, thanks!
+
+[3/7] drm/msm: Remove unnecessary NULL values
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/92a48b6ed510
 
 Best regards,
-Krzysztof
-
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
