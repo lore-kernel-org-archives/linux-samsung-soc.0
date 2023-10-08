@@ -2,157 +2,103 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE1F8E95A67
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  8 Oct 2023 11:31:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD328E95A67
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  8 Oct 2023 11:37:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344698AbjJHLbd (ORCPT
+        id S230303AbjJHLhx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 8 Oct 2023 07:31:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37562 "EHLO
+        Sun, 8 Oct 2023 07:37:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234336AbjJHLbc (ORCPT
+        with ESMTP id S234320AbjJHLhw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 8 Oct 2023 07:31:32 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BC1A8F
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  8 Oct 2023 04:31:29 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-4066241289bso33322485e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Oct 2023 04:31:29 -0700 (PDT)
+        Sun, 8 Oct 2023 07:37:52 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6CE1F2
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  8 Oct 2023 04:37:50 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-406618d0992so35551065e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Oct 2023 04:37:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696764688; x=1697369488; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8kpDL/2EkbzoWnMzxiTllgB1Bfvz+hmiO3MPGwZuxmA=;
-        b=qWvdav3DrI610FMpZBRUUkmENWYzVJ7e3+Z1hl+iB0pkjFv9CcfRhOAJohoTV+u+l2
-         pZ0GIYwPx9LBPuar8f5MMJw9243FzG1g5CFliKNDCZbUvtPpMAH4h4BzS1lhSJbyulSR
-         +Z9gm5hmMN6b97821V8cJK6ZoM8UNsfxrwfuX5MfRIEI67wnJvfl7mKz61CJTYGOBgWO
-         u6oe1qkPFaf6oyBpSa0Y0GZ89LtbpI69uz61Sbcxu6KUuracp82h84/BhzOkm80a7zZI
-         4uxGWX6fPacUHn5tYZuDsWoO/aHGyXg11ZLyJ1ovXnoFkGBQoVObDN8ldo4rewPhpJC+
-         VNJQ==
+        d=linaro.org; s=google; t=1696765069; x=1697369869; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dhou/iQjgPMNfD8wPNvACa70iSwou2YDuR+hhlISzLw=;
+        b=pW4BbnoRSgUasJg7OfVMFf1yXsHBY4jTNB02M/M8VuznXbh8MkVLgpix86IkSG48W2
+         ceOVYbbi3RxQgT+WOHLmwtTgYenPkHU2VtRAyd7r2+ggf844Li8YxGEt0vwDYErMwWRc
+         ERBCsz2g0cfp3o2SIdyCAvsFkS0yHNr0qkoCExOT0TcZV2F46pgN6b57QWydQ2E1lZ2H
+         PPZ8FFwOCi3WSm9CJRC5VOPSGI7nxBCaxZ97/UMjyOPFPiyDUkkN1ttgsItbJP5KazL5
+         PzlXR4v+5PtUjx1oKtC2kob95heO/vn+cyud0pRbja8IVj7Zychg4Y72cxLvn833cG0Q
+         aoMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696764688; x=1697369488;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8kpDL/2EkbzoWnMzxiTllgB1Bfvz+hmiO3MPGwZuxmA=;
-        b=Ap2b4AY0Hoa56FBKvDsmdi0U+3grM6C4fJltpFEPeo9TIPABV0DuFsirbepNTHzloc
-         CP45xuryKOwzYNPNACi3AHbA5wDgeTjIcH5qEfLNTR60664X77sM/sx3ZEHG/RlwSSea
-         jPbOsa2GwgjfJYQGbhdKOYTAfSDCV+HqtgkLYT3bLUw6Wk5fEOrfX+ODP+qOZqUvNJUi
-         r1+J3iSQHCTtun7/u64wNpEmihsj5VFOuqDw2HJpamdvtE6cnHKWuhBBv6gKcHWgcj0s
-         UygTJUQB1yLHfrSktqRU43INGr5o/adWO7gojf1+C9aie1PI1r6WbajFC5hdPxLJgJtv
-         zgMA==
-X-Gm-Message-State: AOJu0YyH0xvPHHENxqJS9aYsiQU6GDG+D5f/zykFWyquxG+tWQ6+lGzT
-        RFQZaCcXqcAaalShwzUrxudLog==
-X-Google-Smtp-Source: AGHT+IFPEbZR50sq5ODDkFct/jnfXgWL6wPX/6VCH/Rs6bVrKrQ3/cjmK38N6x+AWj1VB3/hWYVlyQ==
-X-Received: by 2002:adf:fd0f:0:b0:319:8a28:4001 with SMTP id e15-20020adffd0f000000b003198a284001mr11889027wrr.41.1696764687977;
-        Sun, 08 Oct 2023 04:31:27 -0700 (PDT)
-Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id 10-20020a05600c228a00b004065d72ab19sm10659953wmf.0.2023.10.08.04.31.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Oct 2023 04:31:27 -0700 (PDT)
-Message-ID: <f6aad872-8732-48a0-a1d8-5d7180c6ea57@linaro.org>
-Date:   Sun, 8 Oct 2023 13:31:25 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: Use device_get_match_data()
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Tero Kristo <kristo@kernel.org>
-Cc:     patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
-References: <20231006213959.334439-1-robh@kernel.org>
+        d=1e100.net; s=20230601; t=1696765069; x=1697369869;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dhou/iQjgPMNfD8wPNvACa70iSwou2YDuR+hhlISzLw=;
+        b=dUCoupqBWa7XQc5vej9fh7giXXwqFs8lB0bCGPbQTm7cGb2nM5K9svQf0H1s9swvRv
+         xl3V3YWSSuZR1Tf9j/V0WY09CQEwPHIfdgIvBN8UBI5DuGcWp5rsncw/9iwrswrzFjZf
+         hELLxC+iEBbxqioCyYVUnYqWZfE/MKLILXrd1ahv/FzQKcMDl7vd0E/y4xK9XwY49C63
+         eeLBSCaSrDc2NlkUgZ/8z7Ri0l3fdiwxVi8NYufaaperyZJNtareiy+b/9Zl99gMzJpZ
+         rLtAPB+VsTGhA+QcJxN5cKtdtQ19vI8g50EvV/HD7h33yw4876dLUYQkChsL+uZvgfP1
+         gllg==
+X-Gm-Message-State: AOJu0Yx2TfWnmsImImpxvlAKH2bn6LkeXR3w85h/TRdp4t9Kbybj+6SG
+        ceUppYRelQYzl3hm5c953kEeCA==
+X-Google-Smtp-Source: AGHT+IHfU/4FonXooH8mQh6VhiaLNCGIy3nUcvXfhakX0VtM/Y+M17cRdFlbYAwKC6lTVuO4vitI/Q==
+X-Received: by 2002:a05:600c:2113:b0:401:73b2:f043 with SMTP id u19-20020a05600c211300b0040173b2f043mr12078730wml.1.1696765068892;
+        Sun, 08 Oct 2023 04:37:48 -0700 (PDT)
+Received: from krzk-bin.. (5-157-101-10.dyn.eolo.it. [5.157.101.10])
+        by smtp.gmail.com with ESMTPSA id m10-20020a7bce0a000000b00405953973c3sm10577942wmc.6.2023.10.08.04.37.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Oct 2023 04:37:48 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231006213959.334439-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-hardening@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+Subject: Re: [PATCH] pinctrl: samsung: Annotate struct exynos_muxed_weint_data with __counted_by
+Date:   Sun,  8 Oct 2023 13:37:45 +0200
+Message-Id: <169676506007.13281.4277310481310428464.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231006201707.work.405-kees@kernel.org>
+References: <20231006201707.work.405-kees@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/10/2023 23:39, Rob Herring wrote:
-> Use preferred device_get_match_data() instead of of_match_device() to
-> get the driver match data. With this, adjust the includes to explicitly
-> include the correct headers.
+
+On Fri, 06 Oct 2023 13:17:07 -0700, Kees Cook wrote:
+> Prepare for the coming implementation by GCC and Clang of the __counted_by
+> attribute. Flexible array members annotated with __counted_by can have
+> their accesses bounds-checked at run-time via CONFIG_UBSAN_BOUNDS (for
+> array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
+> functions).
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/clk/clk-lochnagar.c             |  9 ++-------
->  drivers/clk/davinci/da8xx-cfgchip.c     |  8 +++-----
->  drivers/clk/davinci/pll.c               | 10 +++-------
->  drivers/clk/davinci/psc.c               | 10 +++-------
->  drivers/clk/qcom/gcc-msm8960.c          | 13 +++++--------
->  drivers/clk/qcom/gcc-msm8974.c          | 10 +++-------
->  drivers/clk/qcom/kpss-xcc.c             |  9 ++-------
->  drivers/clk/qcom/krait-cc.c             | 14 +++++---------
->  drivers/clk/qcom/mmcc-msm8960.c         | 16 +++++-----------
->  drivers/clk/qcom/mmcc-sdm660.c          |  8 ++------
->  drivers/clk/rockchip/clk-rk3399.c       |  9 ++-------
->  drivers/clk/samsung/clk-exynos-clkout.c |  8 +++-----
+> As found with Coccinelle[1], add __counted_by for struct
+> exynos_muxed_weint_data. Additionally, since the element count member
+> must be set before accessing the annotated flexible array member, move
+> its initialization earlier.
+> 
+> [...]
 
+Applied, thanks!
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> # Samsung
+[1/1] pinctrl: samsung: Annotate struct exynos_muxed_weint_data with __counted_by
+      https://git.kernel.org/pinctrl/samsung/c/4e1e21117e7e1275477ba80e634c769a511249bd
 
 Best regards,
-Krzysztof
-
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
