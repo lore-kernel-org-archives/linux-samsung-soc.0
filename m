@@ -2,257 +2,114 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9204E95A69
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Oct 2023 14:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A104E95A8F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  8 Oct 2023 03:36:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343696AbjJGOeZ (ORCPT
+        id S1344309AbjJHDgh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 7 Oct 2023 10:34:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37276 "EHLO
+        Sat, 7 Oct 2023 23:36:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231310AbjJGOeY (ORCPT
+        with ESMTP id S1344300AbjJHDgg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 7 Oct 2023 10:34:24 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3671B6
-        for <linux-samsung-soc@vger.kernel.org>; Sat,  7 Oct 2023 07:34:21 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-4065dea9a33so29924885e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 07 Oct 2023 07:34:21 -0700 (PDT)
+        Sat, 7 Oct 2023 23:36:36 -0400
+Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22F11C5
+        for <linux-samsung-soc@vger.kernel.org>; Sat,  7 Oct 2023 20:36:35 -0700 (PDT)
+Received: by mail-ot1-x32d.google.com with SMTP id 46e09a7af769-6c7bbfb7a73so2320219a34.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 07 Oct 2023 20:36:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696689260; x=1697294060; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=94eEVt3eVoDmwE+DGvSN0/z74qQyYZ21QAkDJv+Ws28=;
-        b=uFD7+6Z+KZV+50uhhUvsBPI6ae2eKYFtfrptUvTiGeJvv44s7Wb2gg2FAq9J4BdtuD
-         7mFZ/1neaOa9g0VKOuCxXSlOVKSNZp7+9tOUqz1TsPnZaa8T1kP0EbHGDbQNrBcnBq88
-         Y0tPxahVLyf+7vs1G56MDw4Z1itt8N4gLByuN5IDjxZW3is3+bub0u+29aXxNlEoZqd4
-         soSW2jpiGpSxMmhtm9z15gN2ZLuqfa8mnzzSv+lNu9/viquf9kXfKKrXdEWxDRCOvwh+
-         K/UebwR3dUYMOb/+QoyNm8AlJC67d8OIcdXiQe3zxxhUpOJHe5f0+VfTC7Do31veMjqR
-         CdDw==
+        d=linaro.org; s=google; t=1696736194; x=1697340994; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=O46Z79/thQ1J3qOk74OlVCEf6C6SSN1l//6jVCg8hMY=;
+        b=zNmONDL/Rio2cmoS1E9S64+48isst4YaPeRvvYGG5wH4h1H5OMjyYny3I3HDVzlifD
+         FxfhyKPcs35hfheaJDS0IJOhwlz3RXuElxYuAEWGafN7M76vog4AL3NByF8cdWM6eSM8
+         rxeoR59SO4GH6jcIy0slkUpEX1YVAL/iCF4DIDkWK2Np+TryncKSFO649NrMbGZ7uf2q
+         s3rqjavv6gkhu4kX5jxuuBlB5/2lVQ6sfDI9Y78b32qteIJfz0Q17UzBMOte2gMPr5pr
+         lVZMJhDHdjkvfQhdIbQhqSRntfbK5TPR0fRlT9AxwdZ5GWPt4kNJPtls9Jc4X4O81vPZ
+         YTJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696689260; x=1697294060;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=94eEVt3eVoDmwE+DGvSN0/z74qQyYZ21QAkDJv+Ws28=;
-        b=JBNslC3lp2hSgIdRgiF0pZR804djS/uCcUDLSGU1YnjB4tvB1LxcDWcrXRd9MHpQtO
-         h7WICGaoKq2Vzhym9zG3SFhtPdSRCjTdqasvRy+qZy+CQ0l3FL3A86/iPnuJnqC0/6FQ
-         xs9uPfrXXabxigc4LDbWDAJ/KolRG/KIbdfgivXMKH6kIZvR7UkAYlWocDXjTkd9m6Tb
-         /d4bteZe11j3du86YiP6knBSAgCSu2gb853SXgp8Xq+FM55w4LzF8dEiofAuwkhg8D5T
-         MNXqftpB7uiW0lJeBBo1YSRSR6UYavvyu2DU9o+j0Tw/vdUD0Z+O2T6AolQkPmdnlOuS
-         8wBg==
-X-Gm-Message-State: AOJu0YxXPtT+bN74o1rFoGrsbEQHZsKYyNlWvKfePph7rGR/MWUrdYJW
-        VuSop8y7zI8vN0WTHYpSmHmNGg==
-X-Google-Smtp-Source: AGHT+IGVX5SR4JeejKaTLpcg0bv3C9LXR9eUhIRivYb51KXifgCHFqoiZab4mWlNwtjMPLVWQZhUIg==
-X-Received: by 2002:a5d:4b11:0:b0:31f:ecb2:1bed with SMTP id v17-20020a5d4b11000000b0031fecb21bedmr10644289wrq.15.1696689260133;
-        Sat, 07 Oct 2023 07:34:20 -0700 (PDT)
-Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id c4-20020a5d4cc4000000b003247d3e5d99sm4383849wrt.55.2023.10.07.07.34.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Oct 2023 07:34:19 -0700 (PDT)
-Message-ID: <c4ea7ce3-5132-484c-870b-a62d30e2ee7a@linaro.org>
-Date:   Sat, 7 Oct 2023 16:34:16 +0200
+        d=1e100.net; s=20230601; t=1696736194; x=1697340994;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O46Z79/thQ1J3qOk74OlVCEf6C6SSN1l//6jVCg8hMY=;
+        b=U6ck/UW2kRn+YHz7JqyZPQw9Juhej1C/aP/QxuiVuR8vdP1ZUlPffH+kdYKJIKvtId
+         RNvEDiv0BR+Nlztoz7MoGJGxA29Vlb1egQwqZT8E3OwrmTKTM29FTIiX/y6JB8yan4Bb
+         jK0SE4QcSaEmjxhkvtNzmkh9Gsz9xxb/4ik4f8GRaHdRMPX5ewubydH17p0Y4AqGAiM0
+         bho/M6QZlKeX0Z8tg8LBL+dkKSiVkKOEIqn95woIodKuIsLzo7IWpRFoNBR26wSZk+fF
+         sNFN8DczKiNh4Aq5YbOCxycg6Sg0Ni5X7jDfwddLGSrP89oytlkrlWHj1uPhOCyvf5si
+         GrHA==
+X-Gm-Message-State: AOJu0YwQK5NFOdiW3FK0gpUMhmPpZ4Qohks9yeYunWkbVk7wmo/JGmIq
+        uNczk7qgINRtk1IUAsnaq7UKI/epohI+Jb0Qe9DeBg==
+X-Google-Smtp-Source: AGHT+IF2WJna5aTcHCff9FDb3AFiiR1caqvPjH4/+qNmboSMrw0kS/evk2m4kO5zetYpq0utIAPz9A==
+X-Received: by 2002:a9d:7a42:0:b0:6b9:4216:c209 with SMTP id z2-20020a9d7a42000000b006b94216c209mr12258669otm.12.1696736194435;
+        Sat, 07 Oct 2023 20:36:34 -0700 (PDT)
+Received: from localhost ([136.62.192.75])
+        by smtp.gmail.com with ESMTPSA id c11-20020a9d684b000000b006c460c58b00sm1104080oto.2.2023.10.07.20.36.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Oct 2023 20:36:34 -0700 (PDT)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tony Luck <tony.luck@intel.com>,
+        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org
+Subject: [PATCH] arm64: dts: exynos: Add reserved memory for pstore on E850-96
+Date:   Sat,  7 Oct 2023 22:36:33 -0500
+Message-Id: <20231008033633.21304-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 18/21] arm64: dts: google: Add initial Google gs101 SoC
- support
-To:     William McVicker <willmcvicker@google.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Griffin <peter.griffin@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Olof Johansson <olof@lixom.net>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tudor Ambarus <tudor.ambarus@linaro.org>,
-        andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        soc@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-watchdog@vger.kernel.org, kernel-team@android.com
-References: <20231005155618.700312-1-peter.griffin@linaro.org>
- <20231005155618.700312-19-peter.griffin@linaro.org>
- <ZR75cIvnQS2cqTT3@google.com> <2023100520-cleaver-sinless-fbae@gregkh>
- <99419159-cab0-4c79-a4a0-12229bfad3c0@linaro.org>
- <2023100513-mashing-scrubber-ea59@gregkh>
- <efc9f099-9c97-460b-b0c8-9891aa3b772a@linaro.org>
- <ZR9EnFw3vB92vlYM@google.com>
- <44816879-a3a7-4bd0-bb20-19a645107b4b@linaro.org>
- <e8b23683-36ac-4547-9386-935a1b211d7d@app.fastmail.com>
- <ZSA27y5CVs4yQC4a@google.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <ZSA27y5CVs4yQC4a@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/10/2023 18:33, William McVicker wrote:
-> On 10/06/2023, Arnd Bergmann wrote:
->> On Fri, Oct 6, 2023, at 08:06, Krzysztof Kozlowski wrote:
->>> On 06/10/2023 01:19, William McVicker wrote:
->>>> On 10/05/2023, Krzysztof Kozlowski wrote:
->>>>> On 05/10/2023 21:23, Greg KH wrote:
->>>>
->>>> Being able to include SERIAL_SAMSUNG and SERIAL_MSM without all the vendor> specific drivers that ARCH_EXYNOS and ARCH_QCOM select is very
->>> valuable for
->>>> debugging early boot issues.
->>>
->>> Really? How related? The drivers are independent. You describe some
->>> out-of-tree development process which we never needed for upstream work.
->>> And we did here quite a lot of upstream, specially if you look at ARCH_QCOM.
->>
->> Right: in general, all drivers are independent of the platform
->> besides the typical 'depends on ARCH_FOO || COMPILE_TEST' dependency,
->> but I think it's worth mentioning the known exceptions, so Greg and
->> Will can take that fight to the respective places rather than
->> discussing it in the platform submission:
->>
->> - Some subsystems are considered 'special' and the maintainers
->>   prefer the drivers to be automatically selected based on the
->>   ARCH_* settings instead of having user-visible options. This is
->>   traditionally true for large chunks of drivers/irqchip,
->>   drivers/clocksource and drivers/pinctrl, though it has gotten
->>   better over time on all of them.
->>
->> - Some older 32-bit platforms are still not as modular as we'd
->>   like them to be, especially the StrongARM (ARMv4) platforms that
->>   require a custom kernel build, and some of ARMv4T and ARMv5
->>   boards that are still missing DT support. These tend to require
->>   drivers they directly link to from board code, so disabling
->>   the drivers would cause a link failure until this gets
->>   cleaned up.
->>
->> - A couple of drivers are force-enabled based on the ARCH_*
->>   options because booting without these drivers would risk
->>   permanent damage to hardware, e.g. in overtemp or overcurrent
->>   scenarios.
->>
->> - ACPI based platforms require the PCI host bridge driver to
->>   be built-in rather than a loadable module because ACPI
->>   needs to probe PCI devices during early boot.
->>
->> - Some subsystems (notably drivers/gpu/, but others as well)
->>   have an excessive number of 'select' statements, so you
->>   end up surprise-enabling a number of additional drivers
->>   and subsystems by enabling certain less important platform
->>   specific drivers.
->>
->>       Arnd
-> 
-> So if the argument is that the existing upstream Exynos platforms are required
-> to have these drivers built-in to the kernel to boot:
->     COMMON_CLK_SAMSUNG
->     CLKSRC_EXYNOS_MCT
->     EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
->     EXYNOS_PMU
->     PINCTRL
->     PINCTRL_EXYNOS
->     PM_GENERIC_DOMAINS if PM
->     SOC_SAMSUNG
-> 
-> ...then that is understandable and we can work to fix that.
-> 
-> My last question then is -- why do we need a new ARCH_GOOGLE_TENSOR config in
-> the platform Kconfig? For example, I don't really like this:
-> 
-> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-> index 76a494e95027..4c8f173c4dec 100644
-> --- a/drivers/clk/samsung/Kconfig
-> +++ b/drivers/clk/samsung/Kconfig
-> @@ -13,6 +13,7 @@ config COMMON_CLK_SAMSUNG
->         select EXYNOS_5420_COMMON_CLK if ARM && SOC_EXYNOS5420
->         select EXYNOS_ARM64_COMMON_CLK if ARM64 && ARCH_EXYNOS
->         select TESLA_FSD_COMMON_CLK if ARM64 && ARCH_TESLA_FSD
-> +       select GOOGLE_GS101_COMMON_CLK if ARM64 && ARCH_GOOGLE_TENSOR
-> 
-> What happens when we have GOOGLE_GS101_COMMON_CLK, GOOGLE_GS201_COMMON_CLK, and
-> so on? 
+Reserve a 2 MiB memory region to record kmsg dumps, console, ftrace and
+userspace messages. The implemented memory split allows capturing and
+reading corresponding ring buffers:
+  * dmesg: 6 dumps, 128 KiB each
+  * console: 128 KiB
+  * ftrace: 128 KiB for each of 8 CPUs (1 MiB total)
+  * userspace messages: 128 KiB
 
-Nothing happens... or happens anything you wish. Did you read the
-motivation why this was created like this?
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ arch/arm64/boot/dts/exynos/exynos850-e850-96.dts | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-
-> How are we going to pick the right driver when e have a generic
-> ARCH_GOOGLE_TENSOR config?
-
-You do not have to pick. You select ARCH_GOOGLE_TENSOR and proper pick
-is done by you. Nothing to do more.
-
-> Ideally, we should have one Exynos clock driver that
-> can detect what hardware is running (using the DT) to determine what it needs
-
-It's already like this. We're done.
-
-> to do. If you really want to compile out the other vendor's clock drivers using
-> some configs, then we should do that with SOC_GS101, SOC_GS201, SOC_TESLA_FSD
-
-Whether you call it SOC or ARCH it is the same. We organized it as ARCH.
-
-> configs (not ideal though). With that approach, we could drop the platform
-> ARCH_GOOGLE_TENSOR config and create an SOC_GS101 config that can be used for
-> things like the COMMON_CLK_SAMSUNG driver (for now) and building the GS101 dtb.
-
-There is no need for this. ARCH does exactly the same.
-
-Best regards,
-Krzysztof
+diff --git a/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
+index 8d733361ef82..d54c8fa55c09 100644
+--- a/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
++++ b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
+@@ -59,6 +59,21 @@ memory@80000000 {
+ 		      <0x8 0x80000000 0x80000000>;
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <1>;
++		ranges;
++
++		ramoops@f0000000 {
++			compatible = "ramoops";
++			reg = <0x0 0xf0000000 0x200000>;
++			record-size = <0x20000>;
++			console-size = <0x20000>;
++			ftrace-size = <0x100000>;
++			pmsg-size = <0x20000>;
++		};
++	};
++
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+ 		pinctrl-names = "default";
+-- 
+2.39.2
 
