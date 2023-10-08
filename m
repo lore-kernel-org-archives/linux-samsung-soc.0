@@ -2,118 +2,174 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACAAE95A82
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  8 Oct 2023 14:01:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42838E95A67
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  8 Oct 2023 18:46:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344841AbjJHOBc (ORCPT
+        id S229945AbjJHSqA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 8 Oct 2023 10:01:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55514 "EHLO
+        Sun, 8 Oct 2023 14:46:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344837AbjJHOBb (ORCPT
+        with ESMTP id S234260AbjJHSqA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 8 Oct 2023 10:01:31 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E26ED6
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  8 Oct 2023 07:01:29 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2b9d07a8d84so46472461fa.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Oct 2023 07:01:28 -0700 (PDT)
+        Sun, 8 Oct 2023 14:46:00 -0400
+Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C3DCBA
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  8 Oct 2023 11:45:55 -0700 (PDT)
+Received: by mail-ot1-x333.google.com with SMTP id 46e09a7af769-6c4e30a3604so2598434a34.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Oct 2023 11:45:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696773687; x=1697378487; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zxakH265LpATzSTaf30OW9So30zUQfcE2yrNl/MhWDo=;
-        b=dU3x9p4iOX75EpYEqgQ37wy734/yJbCHn/7k5zGHeyOwquq/6Ip9SQoxWsEhlOvw1d
-         i9Xkb044JdQT3z/7Wwh4FY0OCZfcoW2jVHcagOhSR+7a2jZjzLqfmJp6P7kWEZe1x7JW
-         9Bb7wj/sednYz8K5bIkHrqJidBZVajOix86PmLCCMw7MBYKjGxm2xEDNiNP2gYVosH1R
-         HcxYpLqrqI6w9Q9gNo1GKDJMmkVjE0ur4n4kXfMfAN2Ht9koA6Vq0JU5QrbkThi2xzDq
-         il3T+hSVMzJBaZw4tcNEKoeysNez8vPJwqyvMWekikI40sFGIyhY3MqI4ze+3WrWXiGP
-         em+Q==
+        d=linaro.org; s=google; t=1696790754; x=1697395554; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CujsQmWVijcnFFnAd58nyb3uZ77IiKCwoX5T6HrihiY=;
+        b=Ln2BP+AL9eC4MuEmuE3p9JshAeWJ0gkLRRWEc/oouewX1lqp7fjgY3BJTplfbdtcrY
+         wZ62nPoYqJtyhXGhiOlcfZ+S46P7Sb83/XM8gxx6psdExIYdkMmiGkY/reyFxnz0Z/A3
+         /CYKG0hU3Me+w6N5Vi05IY+cDpvV6Ghcr94Yx+HJlZjh9vekajKYSxs4vbVuXCMM+HLF
+         4aRS8Emb8a5JVvseLjAMtTwbEdh3n9kkAz4wyVHMLEjG2c9d+xapBkIePKMKa0yXB6H1
+         Zif7oCRyI8ljRFpDFKIQ4nDbiD/QXjZsrw0OarBKrW6YmXaNhlGn1TfHsLq/W0aoTRVb
+         oxzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696773687; x=1697378487;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1696790754; x=1697395554;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zxakH265LpATzSTaf30OW9So30zUQfcE2yrNl/MhWDo=;
-        b=Yojg8nsKx7s+wTA1/J/kFnrDR6Espp5szGpXpEo3MVrOyHITZ3TRuVt394ZHBYgRbx
-         WGu3fhBpjqG9ebOnfiCSjuK+nj06YB6AYUuwHd6mCDEsrIwB/26+lIYArwbbsjZgDXue
-         vmtJyDqNv0wTNW9GrjOVKY7grddOVRJ+xlkf5mLQ9iilnphkd3WTTugNMDkhUfeJp6Yf
-         LvwhID61AOI+xFIeSAlT4dpkTDlnB0BaMAwZdUiGWuqhWH5vbQPbtrrIyH1faLuCTmcI
-         UxUB7wkMfsbM8TDlrBB4kd/JHnVa8MnAfBUUy5FHdQe9MZ/6j5l+fSzA+H67VzVbuj8U
-         RKPg==
-X-Gm-Message-State: AOJu0YyIo93QOp70BqdsCZtzwTMKy6mzR6L6YolKb5iCtulsY10fPGSd
-        6zO2L0wjmR9qc4/UsZTb6CnU5g==
-X-Google-Smtp-Source: AGHT+IEZhcTkbfnDMA0TmtMUY6GUYhyBTjDeQoEWBa7c/RqNiiO7pOQy12FcGXqIQaqK7WTV5qhK2g==
-X-Received: by 2002:a19:910c:0:b0:501:c1d4:cf68 with SMTP id t12-20020a19910c000000b00501c1d4cf68mr9460445lfd.15.1696773687355;
-        Sun, 08 Oct 2023 07:01:27 -0700 (PDT)
-Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id q14-20020ac24a6e000000b00504211d2a73sm1080455lfp.230.2023.10.08.07.01.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Oct 2023 07:01:26 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Felix.Kuehling@amd.com, alexander.deucher@amd.com,
-        christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
-        daniel@ffwll.ch, harry.wentland@amd.com, sunpeng.li@amd.com,
-        Rodrigo.Siqueira@amd.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, tzimmermann@suse.de, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
-        robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run,
-        marijn.suijten@somainline.org, bskeggs@redhat.com,
-        kherbst@redhat.com, lyude@redhat.com, kraxel@redhat.com,
-        gurchetansingh@chromium.org, olvaffe@gmail.com,
-        paulo.miguel.almeida.rodenas@gmail.com, wenjing.liu@amd.com,
-        haoping.liu@amd.com, Charlene.Liu@amd.com, chiahsuan.chung@amd.com,
-        george.shen@amd.com, sancchen@amd.com, tony.tascioglu@amd.com,
-        jaehyun.chung@amd.com, tales.aparecida@gmail.com, drv@mailo.com,
-        aurabindo.pillai@amd.com, quic_vpolimer@quicinc.com,
-        jiasheng@iscas.ac.cn, noralf@tronnes.org,
-        jose.exposito89@gmail.com, javierm@redhat.com,
-        mairacanal@riseup.net, davidgow@google.com,
-        arthurgrillo@riseup.net, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        Ruan Jinjie <ruanjinjie@huawei.com>
-Subject: Re: [PATCH -next 0/7] drm: Remove many unnecessary NULL values
-Date:   Sun,  8 Oct 2023 17:01:18 +0300
-Message-Id: <169677306919.2570646.8217027380730287216.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230809034445.434902-1-ruanjinjie@huawei.com>
-References: <20230809034445.434902-1-ruanjinjie@huawei.com>
+        bh=CujsQmWVijcnFFnAd58nyb3uZ77IiKCwoX5T6HrihiY=;
+        b=bVB7ut0cVtibgLr8l26kc2OqdHJTwsMS5lQiRt2a7ltcjwI75oEVeBSn6Zh8P91qn7
+         FXMZ+7Q/xzHz4CrathdNaibFJOYtkCZuUY/yziH3fc9VkJBjSWhIiQm9uac8qA9H1HUg
+         Qz5zIui7eAm7AF+FsoIksRXsuo6D7o83Jj62CeIyoga0T5qgUQiwKPxPOq8t6gn52uJ5
+         8PT7W5Ec4GVKXXDYXiUdsg1J3xlEUWEYmWz92jMp+ilEPdao5prF/Y2+LsXJmgKRNK2/
+         vY0rfGICQZHKPC6yzosgXb7mj0cIgPiS4ImHL3V35oA7YTzZqjv9U1BIeKcF6AzZcarg
+         PY7Q==
+X-Gm-Message-State: AOJu0YysvVzITZndpWcFKSMCpHqxpa/G2klvR2Dvk/ttWv9wt/yKvsN2
+        IA2lHnkxVBAneZoezu0YIU/MPoGW6XpV8Fv1izwxhg==
+X-Google-Smtp-Source: AGHT+IEXssKlgAPw0Do71Nq8kia5d3yzpbhWf9URRm0ZqJp0ZOvO0OUK/rHeMp2thxTzHFTIoqfhNXn+J5HKs5LztRY=
+X-Received: by 2002:a05:6358:63a9:b0:141:10f4:1cbc with SMTP id
+ k41-20020a05635863a900b0014110f41cbcmr14208139rwh.14.1696790754107; Sun, 08
+ Oct 2023 11:45:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <CGME20231006130032eucas1p18c6f5c39614768911730fa6ed0201ee3@eucas1p1.samsung.com>
+ <20231006125557.212681-1-m.majewski2@samsung.com> <CAPLW+4kmA6iYDPFxyASHLJifz63DRxT9gqQ-AsMAVy0RzoaFRw@mail.gmail.com>
+ <04260159-f5a8-47f7-b267-33f4ea19b8a6@linaro.org>
+In-Reply-To: <04260159-f5a8-47f7-b267-33f4ea19b8a6@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Sun, 8 Oct 2023 13:45:42 -0500
+Message-ID: <CAPLW+4nyLunQw+wCxQmw9VDCGx2ECeAhUzjKRCBeHW7fGS1dFA@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Fix Samsung pinctrl driver static allocation of GPIO
+ base warning
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Mateusz Majewski <m.majewski2@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Sun, Oct 8, 2023 at 8:09=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 07/10/2023 04:14, Sam Protsenko wrote:
+> > On Fri, Oct 6, 2023 at 8:01=E2=80=AFAM Mateusz Majewski <m.majewski2@sa=
+msung.com> wrote:
+> >>
+> >> The object of this work is fixing the following warning, which appears
+> >> on all targets using that driver:
+> >>
+> >> gpio gpiochip0: Static allocation of GPIO base is deprecated, use dyna=
+mic allocation.
+> >>
+> >> This needs a small refactor to how we interact with the pinctrl
+> >> subsystem. Finally, we remove some bookkeeping that has only been
+> >> necessary to allocate GPIO bases correctly.
+> >>
+> >> Mateusz Majewski (4):
+> >>   pinctrl: samsung: defer pinctrl_enable
+> >>   pinctrl: samsung: use add_pin_ranges method to add pinctrl ranges
+> >>   pinctrl: samsung: choose GPIO numberspace base dynamically
+> >>   pinctrl: samsung: do not offset pinctrl numberspaces
+> >>
+> >>  drivers/pinctrl/samsung/pinctrl-samsung.c | 56 ++++++++++++----------=
+-
+> >>  drivers/pinctrl/samsung/pinctrl-samsung.h |  4 +-
+> >>  2 files changed, 31 insertions(+), 29 deletions(-)
+> >>
+> >> --
+> >
+> > Hi Mateusz,
+> >
+> > Thank you for handling this! Those deprecation warnings have been
+> > bugging me for some time :) While testing this series on my E850-96
+> > board (Exynos850 based), I noticed some changes in
+> > /sys/kernel/debug/gpio file, like these:
+> >
+> > 8<---------------------------------------------------------------------=
+--------------------->8
+> > -gpiochip0: GPIOs 0-7, parent: platform/11850000.pinctrl, gpa0:
+> > - gpio-7   (                    |Volume Up           ) in  hi IRQ ACTIV=
+E LOW
+> > +gpiochip0: GPIOs 512-519, parent: platform/11850000.pinctrl, gpa0:
+> > + gpio-519 (                    |Volume Up           ) in  hi IRQ ACTIV=
+E LOW
+> >
+> > -gpiochip1: GPIOs 8-15, parent: platform/11850000.pinctrl, gpa1:
+> > - gpio-8   (                    |Volume Down         ) in  hi IRQ ACTIV=
+E LOW
+> > +gpiochip1: GPIOs 520-527, parent: platform/11850000.pinctrl, gpa1:
+> > + gpio-520 (                    |Volume Down         ) in  hi IRQ ACTIV=
+E LOW
+> >
+> > -gpiochip2: GPIOs 16-23, parent: platform/11850000.pinctrl, gpa2:
+> > +gpiochip2: GPIOs 528-535, parent: platform/11850000.pinctrl, gpa2:
+> >
+> > ...
+> > 8<---------------------------------------------------------------------=
+--------------------->8
+> >
+> > So basically it looks like all line numbers were offset by 512. Can
+> > you please comment on this? Is it an intentional change, and why it's
+> > happening?
+> >
+> > Despite of that change, everything seems to be working fine. But I
+> > kinda liked the numeration starting from 0 better :)
+>
+> Could it be the reason of dynamic allocation?
+>
 
-On Wed, 09 Aug 2023 11:44:38 +0800, Ruan Jinjie wrote:
-> The NULL initialization of the pointers assigned by kzalloc() or
-> kunit_kzalloc() first is not necessary, because if the kzalloc() or
-> kunit_kzalloc() failed, the pointers will be assigned NULL, otherwise
-> it works as usual. so remove it.
-> 
-> Ruan Jinjie (7):
->   drm/amdkfd: Remove unnecessary NULL values
->   drm/amd/display: Remove unnecessary NULL values
->   drm/msm: Remove unnecessary NULL values
->   drm/radeon: Remove unnecessary NULL values
->   drm/virtio: Remove an unnecessary NULL value
->   drm/format-helper: Remove unnecessary NULL values
->   drm: Remove unnecessary NULL values
-> 
-> [...]
+I just asked because I didn't know :) But ok, if you want me to do
+some digging... It seems like having GPIO_DYNAMIC_BASE=3D512 is not
+necessarily the reason of dynamic allocation, but instead just a way
+to keep 0-512 range for legacy GPIO drivers which might use that area
+to allocate GPIO numbers statically. It's mentioned here:
 
-Applied, thanks!
+    /*
+     * At the end we want all GPIOs to be dynamically allocated from 0.
+     * However, some legacy drivers still perform fixed allocation.
+     * Until they are all fixed, leave 0-512 space for them.
+     */
+    #define GPIO_DYNAMIC_BASE    512
 
-[3/7] drm/msm: Remove unnecessary NULL values
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/92a48b6ed510
+As mentioned in another comment in gpiochip_add_data_with_key(), that
+numberspace shouldn't matter and in the end should go away, as GPIO
+sysfs interface is pretty much deprecated at this point, and everybody
+should stick to GPIO descriptors.
 
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Anyway, now that it's clear that the base number change was intended
+and shouldn't matter, for all patches in the series:
+
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+Thanks!
+
+>
+> Best regards,
+> Krzysztof
+>
