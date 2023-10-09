@@ -2,96 +2,100 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E73FAE95A8E
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  8 Oct 2023 22:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0AC7E95A8D
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Oct 2023 06:03:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344894AbjJHWqD (ORCPT
+        id S1345128AbjJIGDC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 8 Oct 2023 18:46:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37814 "EHLO
+        Mon, 9 Oct 2023 02:03:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344886AbjJHWqC (ORCPT
+        with ESMTP id S1345146AbjJIGDB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 8 Oct 2023 18:46:02 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1181AA3;
-        Sun,  8 Oct 2023 15:46:01 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71A95C433C7;
-        Sun,  8 Oct 2023 22:45:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696805160;
-        bh=kotJJ9gsZkQcnHWqrlxm2deUqRwlycTaO/tg2RqNNko=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=n2k3nv66A7YBlXrB+jn/PMmf6Kbwu1QoO5H+tphBlky4GMOjW4R7XqmXs/eNXcmr1
-         hk4vuH7fVWuNoawxFa3MyQCO871yng630/NymD5hLqsIbrp6D6U5byi4+F97ZINg2V
-         6rwvVDTbqifL2wF/faMWkaLEFQvPfkqhB7m77IVtYb2pBeU0Npu3q40mrz5lvuaYRr
-         ciqDwM3eNE/Z38lx+7CXnXA1RETJDcJ/4mJyLEVgCupZjXLLslt/Q8DNTQqzPn6s0q
-         YSCaeMuriz9y7ylXS8teEJ8gv2AsaNeXUzW2Q63zlLa7mMVD3MahYpIz2qXMGaxGzh
-         lVqAk/rR2bYFQ==
-Message-ID: <729f0d44-7db9-46d2-bdee-9a58022d9229@kernel.org>
-Date:   Mon, 9 Oct 2023 07:45:55 +0900
+        Mon, 9 Oct 2023 02:03:01 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE4F4A6
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  8 Oct 2023 23:02:57 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-3231dff4343so2394159f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Oct 2023 23:02:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696831376; x=1697436176; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4N3ATREkXvK843TZ23OVVz5eoxmZn5m1pt06q8AVw8o=;
+        b=r3bderavc+mbDo4NIckVzyPhccG8/iq6EfSdIZkLpgiaRDtiy27XASc9vOzLEf6E6I
+         3dqRT0Y5MGFgjS+g6tXgvCQ3dHgzFHgNwoh+l5yFAPOkDo8iWYqQvKYh6dTYwHgWI/Ef
+         gEsoBY8W4LZElxGVTlTj6m1+xrcvR99lf7p74SsjkGVX81XUuiCROppoVb90UDggBSRP
+         OAynwYDyuLfW6lR/KRuLfDGGsKOintrFcpg9Ld0zurNLoDzwOos0mKyiBWeGpFgaVrfO
+         c2QyiXd9GIb4sKzPmMxUFcFHmyL/zJHocW0Mmu9I3IgeDEn2oXdfZRYheEYi5MktCQu0
+         h7gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696831376; x=1697436176;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4N3ATREkXvK843TZ23OVVz5eoxmZn5m1pt06q8AVw8o=;
+        b=q/UqEipalMfOxtSE019HpM3Vmqkb7CjWbDT5lM8JYaxFhPJJO7ae5E/3tHMUW2B//8
+         sBbxtIAtP/Iox/QZ9fjFIeC70CoqrCR4KRlpWu9aKSEZ+yFdGxBa5QhqlTnkRGjN2xY6
+         lG3dcUHtrl0YjMYPMy95UuySk8JD8cL6SSJCctbfL7WishZozpzAbJedwtjm84OyC3Pa
+         WENgKCE5n5i04WgocA2dBgUPl0W7MvKinlGDjXtdqJBoWyj1KwjeKNohINATIncXuOJE
+         XfK/YFB2gYiPfAuCzG8pjB9yrW1Cyfynu/LDc/gRnaacyfMrP/xTM4oLaT3KrXnrwNLR
+         4d3w==
+X-Gm-Message-State: AOJu0Ywa/UQ6bsSbFwnzRqmJwiDtqak3blTTAD/CxbFTmi8h391HvMbl
+        i6gWWANx7+RldTcpXJwt/WpXfQ==
+X-Google-Smtp-Source: AGHT+IGdfiblx37cmyiMJPmbu5ee0oKAHqGuGtxnKYAOTurlL996uBf+3Sda8V3WezqZmlwMERGp1A==
+X-Received: by 2002:adf:fece:0:b0:329:2306:91a7 with SMTP id q14-20020adffece000000b00329230691a7mr9184153wrs.2.1696831376119;
+        Sun, 08 Oct 2023 23:02:56 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.123])
+        by smtp.gmail.com with ESMTPSA id p4-20020a5d68c4000000b003232f167df5sm8518043wrw.108.2023.10.08.23.02.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Oct 2023 23:02:55 -0700 (PDT)
+Message-ID: <3fe1db30-038c-4ff5-8344-5b824503bd7d@linaro.org>
+Date:   Mon, 9 Oct 2023 07:02:53 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: Use device_get_match_data()
-To:     Rob Herring <robh@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Tero Kristo <kristo@kernel.org>
-Cc:     patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
-References: <20231006213959.334439-1-robh@kernel.org>
-From:   Chanwoo Choi <chanwoo@kernel.org>
+Subject: Re: [PATCH] soc: samsung: usi: remove superfluous parameter
 Content-Language: en-US
-In-Reply-To: <20231006213959.334439-1-robh@kernel.org>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        peter.griffin@linaro.org
+References: <20231006090014.277448-1-tudor.ambarus@linaro.org>
+ <CAPLW+4==D1OVB+rY92NVEmfv08=0FBF0LJ07xoHh4YZZPOneXQ@mail.gmail.com>
+From:   Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <CAPLW+4==D1OVB+rY92NVEmfv08=0FBF0LJ07xoHh4YZZPOneXQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 23. 10. 7. 06:39, Rob Herring wrote:
-> Use preferred device_get_match_data() instead of of_match_device() to
-> get the driver match data. With this, adjust the includes to explicitly
-> include the correct headers.
+Hi,
+
+On 10/7/23 00:08, Sam Protsenko wrote:
+> On Fri, Oct 6, 2023 at 4:00 AM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+>>
+>> exynos_usi_set_sw_conf() has a single caller, exynos_usi_configure,
+>> which called it with exynos_usi_set_sw_conf(usi, usi->mode). Since the
+>> mode is already defined in struct exynos_usi, remove the superfluous
+>> pass of the mode parameter. While in exynos_usi_set_sw_conf(), remove the
+>> reinitialization of usi->mode with its same value.
+>>
+>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>> ---
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/clk/clk-lochnagar.c             |  9 ++-------
->  drivers/clk/davinci/da8xx-cfgchip.c     |  8 +++-----
->  drivers/clk/davinci/pll.c               | 10 +++-------
->  drivers/clk/davinci/psc.c               | 10 +++-------
->  drivers/clk/qcom/gcc-msm8960.c          | 13 +++++--------
->  drivers/clk/qcom/gcc-msm8974.c          | 10 +++-------
->  drivers/clk/qcom/kpss-xcc.c             |  9 ++-------
->  drivers/clk/qcom/krait-cc.c             | 14 +++++---------
->  drivers/clk/qcom/mmcc-msm8960.c         | 16 +++++-----------
->  drivers/clk/qcom/mmcc-sdm660.c          |  8 ++------
->  drivers/clk/rockchip/clk-rk3399.c       |  9 ++-------
->  drivers/clk/samsung/clk-exynos-clkout.c |  8 +++-----
->  drivers/clk/ti/adpll.c                  | 14 ++++----------
->  13 files changed, 42 insertions(+), 96 deletions(-)
+> This driver was designed with the easiness of its further possible
+> extension in mind. For example, passing the "mode" into
+> exynos_usi_set_sw_conf() allows one to implement some sysfs nodes for
+> switching USI configuration manually, just by passing the user's mode
+> into exynos_usi_set_sw_conf(). Other things which might also appear as
+> over-engineered, make it easy to add USI_V1 implementation, as we
+> discussed that possibility at the time. So yeah, it was done for a
+> reason, and I'd prefer to leave it as is.
 > 
 
-For samsung exynos,
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
-
+Fine by me, thanks for the explanation.
+Cheers,
+ta
