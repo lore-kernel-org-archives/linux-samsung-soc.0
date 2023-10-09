@@ -2,75 +2,219 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B93E95A91
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Oct 2023 14:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE30C2BA1B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Oct 2023 16:10:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344640AbjJIOuA (ORCPT
+        id S1376809AbjJIQKJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 9 Oct 2023 10:50:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60422 "EHLO
+        Mon, 9 Oct 2023 12:10:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230326AbjJIOt7 (ORCPT
+        with ESMTP id S233666AbjJIQKJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Oct 2023 10:49:59 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B8C7B7;
-        Mon,  9 Oct 2023 07:49:57 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96DDAC433C7;
-        Mon,  9 Oct 2023 14:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696862997;
-        bh=0dalE74v4lnBvJvSmP3JrLr6kKKhrnt8ulY17ktBunY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lkGL2QNf3tO/XWzRQ2GvFSyjzaIkfLIPk2DhuXpcQ9zcbaDBMqb4f579lSVRwSVh9
-         Ll0pN5BNa22w/Nabvbi9iv6T27Ll6UefSZJKdaq2qneI7BvLY4WkmYRB8/tqGxJIx2
-         prUmCl18aPQ223X1EfOGyNwcSYqy8MSQSApg3LOGzM4b2cIi0IjaVkIYyHkuFtc0UJ
-         eEFrtOFp6aGo3mc+28cyhI4CsE3WNxFlB2U5wPJCSe6mhSLlaoDHFkUC8yxTuL4d8J
-         bLnHzdKhMxLngJIBl72IbwCt2ktlXA9Uck1Rd1pJXPMgwqjlW/6vuzVWYxaQyANx8O
-         s/TKH4QpRe1/g==
-Date:   Mon, 9 Oct 2023 07:53:53 -0700
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Mon, 9 Oct 2023 12:10:09 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57BB49F
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Oct 2023 09:10:07 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1c6052422acso268885ad.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Oct 2023 09:10:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1696867807; x=1697472607; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dGIYsu1MNfGtvrI3i3A4TgarZixnrBWwMgUCqpQdV34=;
+        b=33s+XlL4J/APRHue8+XwHkWyT6uv8QlsnCxQ+X7fK5cACeN9CpfFw7+c1BFhUCETwZ
+         rOLuI3g0JNnKb7P4bzwdZkt7SXGoJs+movGEUNi+S/0G/WWIRjeUcb4P0mFdxV3QLltd
+         nTUvarz4mkHA9P/JvhZ0XnHQCRoU5r0A6ztgp651qNwmjEcSycKnW6NYTN6/8hZVQW4F
+         aFeEfYfxAjwSL08fP7t0myynyxiWH9w246IuHAX7hvtlMdF+r4MTLyXYiAAk+BSEgiO+
+         j+elnZi8BTE0DhXADkO0KTVmKdDpOZg7oBtXgWJB0i2EUv+33RUCYKgJryL2QTCberjx
+         bGAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696867807; x=1697472607;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dGIYsu1MNfGtvrI3i3A4TgarZixnrBWwMgUCqpQdV34=;
+        b=tzqiWc4HGTjkzGvlsnPT3YCLqwe2B6bUYtF/ICPaAT1FTUKeEJ03uhbq+YY2eNWEEy
+         dYImLicAYy7idrdHuiJ8zWU8OjQ/hzdJbVuD4+wSpL1oY8l1z9WYmb2FJsMmhkutIUBA
+         fkaoqQ4w0LFgrfnUpVFIO18LQdlSttTs3MwI8lZhwxX1ZmCFxkXnNhWdO5RCxEcEImNo
+         sVb9I7KkSpL3qUp28f4RPzpE9pUOOdkW4UC37EuOOiuY0KZZV9HDLfESG3N2PdLBIkh0
+         DuNcu2Oew2BzGmZCVlqvDtrZNZLI1GURPC8NsLBT1BGrodb8FdfVDzWSe3xPBYeh4GsY
+         ZjUg==
+X-Gm-Message-State: AOJu0YwYddwqjYkSAHurCG/eASS7iobF3PuXTVmVZ/G/RG+dIokYiFpQ
+        hkY9unnpoR9TpMi+ysEJPI+45w==
+X-Google-Smtp-Source: AGHT+IHy1UHB7+iKwEt/4HFm84LkAhlK5DfErxNNnYkX3w3H99+guWbxzofQ+qkXAw5azJ9m9sSRpw==
+X-Received: by 2002:a17:903:18c:b0:1c7:5627:2053 with SMTP id z12-20020a170903018c00b001c756272053mr721817plg.18.1696867806422;
+        Mon, 09 Oct 2023 09:10:06 -0700 (PDT)
+Received: from google.com (13.65.82.34.bc.googleusercontent.com. [34.82.65.13])
+        by smtp.gmail.com with ESMTPSA id 17-20020a17090a001100b00274262bcf8dsm11287754pja.41.2023.10.09.09.10.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Oct 2023 09:10:05 -0700 (PDT)
+Date:   Mon, 9 Oct 2023 09:10:02 -0700
+From:   William McVicker <willmcvicker@google.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Griffin <peter.griffin@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org,
         Michael Turquette <mturquette@baylibre.com>,
+        Conor Dooley <conor+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Olof Johansson <olof@lixom.net>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Tero Kristo <kristo@kernel.org>, patches@opensource.cirrus.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
+        Tudor Ambarus <tudor.ambarus@linaro.org>,
+        andre.draszik@linaro.org, semen.protsenko@linaro.org,
+        soc@kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH] clk: Use device_get_match_data()
-Message-ID: <4dvxssedquxbq4hl6pnkju73n2iilzhaeuak5jgmamms7r33yw@eof45x7mt6co>
-References: <20231006213959.334439-1-robh@kernel.org>
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH 18/21] arm64: dts: google: Add initial Google gs101 SoC
+ support
+Message-ID: <ZSQl2tAgsUhhE3_P@google.com>
+References: <ZR75cIvnQS2cqTT3@google.com>
+ <2023100520-cleaver-sinless-fbae@gregkh>
+ <99419159-cab0-4c79-a4a0-12229bfad3c0@linaro.org>
+ <2023100513-mashing-scrubber-ea59@gregkh>
+ <efc9f099-9c97-460b-b0c8-9891aa3b772a@linaro.org>
+ <ZR9EnFw3vB92vlYM@google.com>
+ <44816879-a3a7-4bd0-bb20-19a645107b4b@linaro.org>
+ <e8b23683-36ac-4547-9386-935a1b211d7d@app.fastmail.com>
+ <ZSA27y5CVs4yQC4a@google.com>
+ <c4ea7ce3-5132-484c-870b-a62d30e2ee7a@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231006213959.334439-1-robh@kernel.org>
+In-Reply-To: <c4ea7ce3-5132-484c-870b-a62d30e2ee7a@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 06, 2023 at 04:39:58PM -0500, Rob Herring wrote:
-> Use preferred device_get_match_data() instead of of_match_device() to
-> get the driver match data. With this, adjust the includes to explicitly
-> include the correct headers.
+On 10/07/2023, Krzysztof Kozlowski wrote:
+> On 06/10/2023 18:33, William McVicker wrote:
+> > On 10/06/2023, Arnd Bergmann wrote:
+> >> On Fri, Oct 6, 2023, at 08:06, Krzysztof Kozlowski wrote:
+> >>> On 06/10/2023 01:19, William McVicker wrote:
+> >>>> On 10/05/2023, Krzysztof Kozlowski wrote:
+> >>>>> On 05/10/2023 21:23, Greg KH wrote:
+> >>>>
+> >>>> Being able to include SERIAL_SAMSUNG and SERIAL_MSM without all the vendor> specific drivers that ARCH_EXYNOS and ARCH_QCOM select is very
+> >>> valuable for
+> >>>> debugging early boot issues.
+> >>>
+> >>> Really? How related? The drivers are independent. You describe some
+> >>> out-of-tree development process which we never needed for upstream work.
+> >>> And we did here quite a lot of upstream, specially if you look at ARCH_QCOM.
+> >>
+> >> Right: in general, all drivers are independent of the platform
+> >> besides the typical 'depends on ARCH_FOO || COMPILE_TEST' dependency,
+> >> but I think it's worth mentioning the known exceptions, so Greg and
+> >> Will can take that fight to the respective places rather than
+> >> discussing it in the platform submission:
+> >>
+> >> - Some subsystems are considered 'special' and the maintainers
+> >>   prefer the drivers to be automatically selected based on the
+> >>   ARCH_* settings instead of having user-visible options. This is
+> >>   traditionally true for large chunks of drivers/irqchip,
+> >>   drivers/clocksource and drivers/pinctrl, though it has gotten
+> >>   better over time on all of them.
+> >>
+> >> - Some older 32-bit platforms are still not as modular as we'd
+> >>   like them to be, especially the StrongARM (ARMv4) platforms that
+> >>   require a custom kernel build, and some of ARMv4T and ARMv5
+> >>   boards that are still missing DT support. These tend to require
+> >>   drivers they directly link to from board code, so disabling
+> >>   the drivers would cause a link failure until this gets
+> >>   cleaned up.
+> >>
+> >> - A couple of drivers are force-enabled based on the ARCH_*
+> >>   options because booting without these drivers would risk
+> >>   permanent damage to hardware, e.g. in overtemp or overcurrent
+> >>   scenarios.
+> >>
+> >> - ACPI based platforms require the PCI host bridge driver to
+> >>   be built-in rather than a loadable module because ACPI
+> >>   needs to probe PCI devices during early boot.
+> >>
+> >> - Some subsystems (notably drivers/gpu/, but others as well)
+> >>   have an excessive number of 'select' statements, so you
+> >>   end up surprise-enabling a number of additional drivers
+> >>   and subsystems by enabling certain less important platform
+> >>   specific drivers.
+> >>
+> >>       Arnd
+> > 
+> > So if the argument is that the existing upstream Exynos platforms are required
+> > to have these drivers built-in to the kernel to boot:
+> >     COMMON_CLK_SAMSUNG
+> >     CLKSRC_EXYNOS_MCT
+> >     EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
+> >     EXYNOS_PMU
+> >     PINCTRL
+> >     PINCTRL_EXYNOS
+> >     PM_GENERIC_DOMAINS if PM
+> >     SOC_SAMSUNG
+> > 
+> > ...then that is understandable and we can work to fix that.
+> > 
+> > My last question then is -- why do we need a new ARCH_GOOGLE_TENSOR config in
+> > the platform Kconfig? For example, I don't really like this:
+> > 
+> > diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+> > index 76a494e95027..4c8f173c4dec 100644
+> > --- a/drivers/clk/samsung/Kconfig
+> > +++ b/drivers/clk/samsung/Kconfig
+> > @@ -13,6 +13,7 @@ config COMMON_CLK_SAMSUNG
+> >         select EXYNOS_5420_COMMON_CLK if ARM && SOC_EXYNOS5420
+> >         select EXYNOS_ARM64_COMMON_CLK if ARM64 && ARCH_EXYNOS
+> >         select TESLA_FSD_COMMON_CLK if ARM64 && ARCH_TESLA_FSD
+> > +       select GOOGLE_GS101_COMMON_CLK if ARM64 && ARCH_GOOGLE_TENSOR
+> > 
+> > What happens when we have GOOGLE_GS101_COMMON_CLK, GOOGLE_GS201_COMMON_CLK, and
+> > so on? 
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Nothing happens... or happens anything you wish. Did you read the
+> motivation why this was created like this?
+> 
+> 
+> > How are we going to pick the right driver when e have a generic
+> > ARCH_GOOGLE_TENSOR config?
+> 
 
-Nice, thanks for cleaning this up.
+Okay, we can figure that out the gs201 specifics when the time comes.
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+> You do not have to pick. You select ARCH_GOOGLE_TENSOR and proper pick
+> is done by you. Nothing to do more.
+> 
+> > Ideally, we should have one Exynos clock driver that
+> > can detect what hardware is running (using the DT) to determine what it needs
+> 
+> It's already like this. We're done.
+> 
+> > to do. If you really want to compile out the other vendor's clock drivers using
+> > some configs, then we should do that with SOC_GS101, SOC_GS201, SOC_TESLA_FSD
+> 
+> Whether you call it SOC or ARCH it is the same. We organized it as ARCH.
+> 
+> > configs (not ideal though). With that approach, we could drop the platform
+> > ARCH_GOOGLE_TENSOR config and create an SOC_GS101 config that can be used for
+> > things like the COMMON_CLK_SAMSUNG driver (for now) and building the GS101 dtb.
+> 
+> There is no need for this. ARCH does exactly the same.
+
+Okay, sounds good. Thanks for the responses.
 
 Regards,
-Bjorn
+Will
+
+> 
+> Best regards,
+> Krzysztof
+> 
