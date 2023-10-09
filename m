@@ -2,314 +2,173 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBABEE95A8E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Oct 2023 11:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F26E95A97
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Oct 2023 12:00:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346402AbjJIL5A (ORCPT
+        id S1346376AbjJIMAu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 9 Oct 2023 07:57:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48810 "EHLO
+        Mon, 9 Oct 2023 08:00:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346381AbjJIL47 (ORCPT
+        with ESMTP id S232860AbjJIMAs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Oct 2023 07:56:59 -0400
-Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ECB6F2
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Oct 2023 04:56:56 -0700 (PDT)
-Received: by mail-qk1-x72e.google.com with SMTP id af79cd13be357-774141bb415so255975985a.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Oct 2023 04:56:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696852615; x=1697457415; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/f3Y8yieoU6v7s5C4WV6Y0O5J9cEkuy8nWCpTmPUkgw=;
-        b=zs0edn9m3Ie8+EHgtBGtkUnjAvFU2XV3dNUHVJ7HxaIgp+LDUAhrsBtFu7GIpGLyV1
-         vI1dG3jiULfQvm6YkCpeCQsh3JSjAeNHXJ0RCqWxOAkRy0QmuaHCPrAnk/hQeEaSxRz6
-         PHvfrw4uwjQ6P/D33cXXcNjEHUy+nOcsRkCWIKwru4niLir82dRsIx0diifo6M7LZFW0
-         dYEX8i7UA7Y3Ze0unK1qXpOK3YRQFwBUpBQMC0yieltfpUZ3FXRtZX9Mp2NtChVRjffI
-         JDFKvQbvwc/WYthdNY1r858xchc50LJATQrMjq5voLEuRgDi6CKHF+WksWXEfotT/LWE
-         8o7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696852615; x=1697457415;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/f3Y8yieoU6v7s5C4WV6Y0O5J9cEkuy8nWCpTmPUkgw=;
-        b=ImsF4lhRzmBptiIsA/V80IYuVcLs6cCT8QWT96z+3zp9xqIST0yZ5eJiYscbO8kL1I
-         aVt44CGfh8oxKHrhwmD9lCYARUGe8scEQD4/TgFkGMsPVKzmeIrl0h2kLXYtnAgqLd1o
-         hQn/FnFagESgGvhzQe2vrijsuAR9hh4sY+Ou+6Cyma8w4Kds4KBA4vOECZLphI3xA6Y2
-         j/S7XAG7YA8aZEB22+OpLxOBj1MGv1/gUtyrOAChd5SR8cPOWd/a/y0qs1RvjCEA/Rnz
-         Fd/HFgELlYkjv3ubyDtFM+Ye6e0aFJX7f5XpcAN7V41MtpY8Kzo9TGao8wMd+ggryJUg
-         1P6g==
-X-Gm-Message-State: AOJu0YwSybn8d1IHEuY/kpfqJgElGyuPDYiFUtygvhZogTv8OgwLm42d
-        oExW37ugOfzZhFvLcuRlC4IfXkruaYxF1Oloi8/15A==
-X-Google-Smtp-Source: AGHT+IHBi7CCnQITPDjc/LN91Jc+xo4HezSa4fpbHKYILisr+wnl+MGmZR0V7UsfYuHDEB90aPuGsjJquCL3jJkS+tU=
-X-Received: by 2002:a0c:f4cf:0:b0:65b:11b3:6ef5 with SMTP id
- o15-20020a0cf4cf000000b0065b11b36ef5mr12663046qvm.17.1696852615374; Mon, 09
- Oct 2023 04:56:55 -0700 (PDT)
+        Mon, 9 Oct 2023 08:00:48 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9173C94;
+        Mon,  9 Oct 2023 05:00:46 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 399Bk93c029864;
+        Mon, 9 Oct 2023 12:00:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=o9r1b72AGzQX2cPr3WsZ4YtvkbsTzQxrKOO5gARLsSg=;
+ b=EqS9Eb8QuzhS2rsmdbzg/FEhk6CjLoBgeb2ZxodZgr80/jtVRB/v1t/oYe9xYXbHgg++
+ m9vY5hE9lS44rxu4+RjHXogYHDr+P4tdv0vifgUMsiSzLEDYgF2W0xsuP5GLxqPD3ND0
+ zatW1t7s2F3ZpspyyLlNa0Te6QBEYoDTKFmCxEJ+Z6uZf0Fe73IhI4ch+MA971Od89WM
+ EbKXPSF2GdZ1eoMrMfGPYAKxTOJ4OnZEOB4fvOrZBY1vu187+2duPrD9iFORbXcibe3x
+ NXP4hYGibfPgAfMj2huKwl1O09eBmYVzJa4ZXBRvLbIRswsY1c2axJda5LcxQA5hjmVR Jg== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tkh592b8c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 09 Oct 2023 12:00:04 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 399C02Xr000308
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 9 Oct 2023 12:00:02 GMT
+Received: from [10.214.225.95] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Mon, 9 Oct
+ 2023 04:59:49 -0700
+Message-ID: <a869ec2e-966b-f8ea-7f68-a77c214a45af@quicinc.com>
+Date:   Mon, 9 Oct 2023 17:29:40 +0530
 MIME-Version: 1.0
-References: <20231005155618.700312-1-peter.griffin@linaro.org>
- <20231005155618.700312-18-peter.griffin@linaro.org> <734eb901-84cc-4a47-a3f6-2313273f79b2@roeck-us.net>
-In-Reply-To: <734eb901-84cc-4a47-a3f6-2313273f79b2@roeck-us.net>
-From:   Peter Griffin <peter.griffin@linaro.org>
-Date:   Mon, 9 Oct 2023 12:56:44 +0100
-Message-ID: <CADrjBPoq-ORF3gXq9MEz6QdU8zmyHQdr0QCsk3=aEMCpNZjFiw@mail.gmail.com>
-Subject: Re: [PATCH 17/21] watchdog: s3c2410_wdt: Add support for Google
- tensor SoCs
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
-        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
-        linus.walleij@linaro.org, wim@linux-watchdog.org,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
-        andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        soc@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [REBASE PATCH v5 10/17] pstore: Add pstore_region_defined()
+ helper and export it
+To:     Kees Cook <keescook@chromium.org>
+CC:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
+        <mathieu.poirier@linaro.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <linus.walleij@linaro.org>,
+        <andy.shevchenko@gmail.com>, <vigneshr@ti.com>, <nm@ti.com>,
+        <matthias.bgg@gmail.com>, <kgene@kernel.org>,
+        <alim.akhtar@samsung.com>, <bmasney@redhat.com>,
+        <quic_tsoni@quicinc.com>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+ <1694429639-21484-11-git-send-email-quic_mojha@quicinc.com>
+ <202309131620.34EB0F6972@keescook>
+Content-Language: en-US
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <202309131620.34EB0F6972@keescook>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: DDbFoX8caW9i9Gk7bqvbx_eyrZSMb8tu
+X-Proofpoint-GUID: DDbFoX8caW9i9Gk7bqvbx_eyrZSMb8tu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-09_11,2023-10-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ clxscore=1015 suspectscore=0 priorityscore=1501 mlxlogscore=999
+ bulkscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2309180000 definitions=main-2310090098
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Guenter,
+Thanks for the review.
 
-On Thu, 5 Oct 2023 at 19:58, Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On Thu, Oct 05, 2023 at 04:56:14PM +0100, Peter Griffin wrote:
-> > This patch adds the compatibles and drvdata for the Google
-> > gs101 & gs201 SoCs found in Pixel 6 and Pixel 7 phones. Similar
-> > to Exynos850 it has two watchdog instances, one for each cluster
-> > and has some control bits in PMU registers.
-> >
-> > The watchdog IP found in gs101 SoCs also supports a few
-> > additional bits/features in the WTCON register which we add
-> > support for and an additional register detailed below.
-> >
-> > dbgack-mask - Enables masking WDT interrupt and reset request
-> > according to asserted DBGACK input
-> >
-> > windowed-mode - Enabled Windowed watchdog mode
-> >
-> > Windowed watchdog mode also has an additional register WTMINCNT.
-> > If windowed watchdog is enabled and you reload WTCNT when the
-> > value is greater than WTMINCNT, it prompts interrupt or reset
-> > request as if the watchdog time has expired.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >  drivers/watchdog/s3c2410_wdt.c | 116 +++++++++++++++++++++++++++++----
-> >  1 file changed, 105 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> > index 0b4bd883ff28..4c23c7e6a3f1 100644
-> > --- a/drivers/watchdog/s3c2410_wdt.c
-> > +++ b/drivers/watchdog/s3c2410_wdt.c
-> > @@ -31,12 +31,14 @@
-> >  #define S3C2410_WTDAT                0x04
-> >  #define S3C2410_WTCNT                0x08
-> >  #define S3C2410_WTCLRINT     0x0c
-> > -
-> > +#define S3C2410_WTMINCNT     0x10
-> >  #define S3C2410_WTCNT_MAXCNT 0xffff
-> >
-> > -#define S3C2410_WTCON_RSTEN  (1 << 0)
-> > -#define S3C2410_WTCON_INTEN  (1 << 2)
-> > -#define S3C2410_WTCON_ENABLE (1 << 5)
-> > +#define S3C2410_WTCON_RSTEN          (1 << 0)
-> > +#define S3C2410_WTCON_INTEN          (1 << 2)
-> > +#define S3C2410_WTCON_ENABLE         (1 << 5)
-> > +#define S3C2410_WTCON_DBGACK_MASK    (1 << 16)
-> > +#define S3C2410_WTCON_WINDOWED_WD    (1 << 20)
-> >
-> >  #define S3C2410_WTCON_DIV16  (0 << 3)
-> >  #define S3C2410_WTCON_DIV32  (1 << 3)
-> > @@ -61,12 +63,16 @@
-> >  #define EXYNOS850_CLUSTER1_NONCPU_INT_EN     0x1644
-> >  #define EXYNOSAUTOV9_CLUSTER1_NONCPU_OUT     0x1520
-> >  #define EXYNOSAUTOV9_CLUSTER1_NONCPU_INT_EN  0x1544
-> > -
-> >  #define EXYNOS850_CLUSTER0_WDTRESET_BIT              24
-> >  #define EXYNOS850_CLUSTER1_WDTRESET_BIT              23
-> >  #define EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT   25
-> >  #define EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT   24
-> > -
-> > +#define GS_CLUSTER0_NONCPU_OUT                       0x1220
-> > +#define GS_CLUSTER1_NONCPU_OUT                       0x1420
-> > +#define GS_CLUSTER0_NONCPU_INT_EN            0x1244
-> > +#define GS_CLUSTER1_NONCPU_INT_EN            0x1444
-> > +#define GS_CLUSTER2_NONCPU_INT_EN            0x1644
-> > +#define GS_RST_STAT_REG_OFFSET                       0x3B44
-> >  /**
-> >   * DOC: Quirk flags for different Samsung watchdog IP-cores
-> >   *
-> > @@ -106,6 +112,8 @@
-> >  #define QUIRK_HAS_PMU_RST_STAT                       (1 << 2)
-> >  #define QUIRK_HAS_PMU_AUTO_DISABLE           (1 << 3)
-> >  #define QUIRK_HAS_PMU_CNT_EN                 (1 << 4)
-> > +#define QUIRK_HAS_DBGACK_BIT                 (1 << 5)
-> > +#define QUIRK_HAS_WTMINCNT_REG                       (1 << 6)
-> >
-> >  /* These quirks require that we have a PMU register map */
-> >  #define QUIRKS_HAVE_PMUREG \
-> > @@ -263,6 +271,54 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl1 = {
-> >                 QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
-> >  };
-> >
-> > +static const struct s3c2410_wdt_variant drv_data_gs101_cl0 = {
-> > +     .mask_reset_reg = GS_CLUSTER0_NONCPU_INT_EN,
-> > +     .mask_bit = 2,
-> > +     .mask_reset_inv = true,
-> > +     .rst_stat_reg = GS_RST_STAT_REG_OFFSET,
-> > +     .rst_stat_bit = 0,
-> > +     .cnt_en_reg = GS_CLUSTER0_NONCPU_OUT,
-> > +     .cnt_en_bit = 8,
-> > +     .quirks = QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_MASK_RESET | QUIRK_HAS_PMU_CNT_EN |
-> > +               QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_WTMINCNT_REG,
-> > +};
-> > +
-> > +static const struct s3c2410_wdt_variant drv_data_gs101_cl1 = {
-> > +     .mask_reset_reg = GS_CLUSTER1_NONCPU_INT_EN,
-> > +     .mask_bit = 2,
-> > +     .mask_reset_inv = true,
-> > +     .rst_stat_reg = GS_RST_STAT_REG_OFFSET,
-> > +     .rst_stat_bit = 1,
-> > +     .cnt_en_reg = GS_CLUSTER1_NONCPU_OUT,
-> > +     .cnt_en_bit = 7,
-> > +     .quirks = QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_MASK_RESET | QUIRK_HAS_PMU_CNT_EN |
-> > +               QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_WTMINCNT_REG,
-> > +};
-> > +
-> > +static const struct s3c2410_wdt_variant drv_data_gs201_cl0 = {
-> > +     .mask_reset_reg = GS_CLUSTER0_NONCPU_INT_EN,
-> > +     .mask_bit = 2,
-> > +     .mask_reset_inv = true,
-> > +     .rst_stat_reg = GS_RST_STAT_REG_OFFSET,
-> > +     .rst_stat_bit = 0,
-> > +     .cnt_en_reg = GS_CLUSTER0_NONCPU_OUT,
-> > +     .cnt_en_bit = 8,
-> > +     .quirks = QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_MASK_RESET | QUIRK_HAS_PMU_CNT_EN |
-> > +               QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_WTMINCNT_REG,
-> > +};
-> > +
-> > +static const struct s3c2410_wdt_variant drv_data_gs201_cl1 = {
-> > +     .mask_reset_reg = GS_CLUSTER1_NONCPU_INT_EN,
-> > +     .mask_bit = 2,
-> > +     .mask_reset_inv = true,
-> > +     .rst_stat_reg = GS_RST_STAT_REG_OFFSET,
-> > +     .rst_stat_bit = 1,
-> > +     .cnt_en_reg = GS_CLUSTER1_NONCPU_OUT,
-> > +     .cnt_en_bit = 7,
-> > +     .quirks = QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_MASK_RESET | QUIRK_HAS_PMU_CNT_EN |
-> > +               QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_WTMINCNT_REG,
-> > +};
-> > +
-> >  static const struct of_device_id s3c2410_wdt_match[] = {
-> >       { .compatible = "samsung,s3c2410-wdt",
-> >         .data = &drv_data_s3c2410 },
-> > @@ -278,6 +334,10 @@ static const struct of_device_id s3c2410_wdt_match[] = {
-> >         .data = &drv_data_exynos850_cl0 },
-> >       { .compatible = "samsung,exynosautov9-wdt",
-> >         .data = &drv_data_exynosautov9_cl0 },
-> > +     { .compatible = "google,gs101-wdt",
-> > +       .data = &drv_data_gs101_cl0 },
-> > +     { .compatible = "google,gs201-wdt",
-> > +       .data = &drv_data_gs201_cl0 },
-> >       {},
-> >  };
-> >  MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
-> > @@ -375,6 +435,21 @@ static int s3c2410wdt_enable(struct s3c2410_wdt *wdt, bool en)
-> >       return 0;
-> >  }
-> >
-> > +static void s3c2410wdt_mask_dbgack(struct s3c2410_wdt *wdt, bool mask)
-> > +{
-> > +     unsigned long wtcon;
-> > +
-> > +     if (!(wdt->drv_data->quirks & QUIRK_HAS_DBGACK_BIT))
-> > +             return;
-> > +
-> > +     wtcon = readl(wdt->reg_base + S3C2410_WTCON);
-> > +     if (mask)
-> > +             wtcon |= S3C2410_WTCON_DBGACK_MASK;
-> > +     else
-> > +             wtcon &= ~S3C2410_WTCON_DBGACK_MASK;
-> > +     writel(wtcon, wdt->reg_base + S3C2410_WTCON);
-> > +}
-> > +
-> >  static int s3c2410wdt_keepalive(struct watchdog_device *wdd)
-> >  {
-> >       struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
-> > @@ -585,9 +660,11 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
-> >       }
-> >
-> >  #ifdef CONFIG_OF
-> > -     /* Choose Exynos850/ExynosAutov9 driver data w.r.t. cluster index */
-> > +     /* Choose Exynos850/ExynosAutov9/gsx01 driver data w.r.t. cluster index */
-> >       if (variant == &drv_data_exynos850_cl0 ||
-> > -         variant == &drv_data_exynosautov9_cl0) {
-> > +         variant == &drv_data_exynosautov9_cl0 ||
-> > +         variant == &drv_data_gs101_cl0 ||
-> > +         variant == &drv_data_gs201_cl0) {
-> >               u32 index;
-> >               int err;
-> >
-> > @@ -600,9 +677,14 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
-> >               case 0:
-> >                       break;
-> >               case 1:
-> > -                     variant = (variant == &drv_data_exynos850_cl0) ?
-> > -                             &drv_data_exynos850_cl1 :
-> > -                             &drv_data_exynosautov9_cl1;
-> > +                     if (variant == &drv_data_exynos850_cl0)
-> > +                             variant = &drv_data_exynos850_cl1;
-> > +                     else if (variant == &drv_data_exynosautov9_cl0)
-> > +                             variant = &drv_data_exynosautov9_cl1;
-> > +                     else if (variant == &drv_data_gs101_cl0)
-> > +                             variant = &drv_data_gs101_cl1;
-> > +                     else if (variant == &drv_data_gs201_cl0)
-> > +                             variant = &drv_data_gs201_cl1;
-> >                       break;
-> >               default:
-> >                       return dev_err_probe(dev, -EINVAL, "wrong cluster index: %u\n", index);
-> > @@ -700,6 +782,8 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
-> >       wdt->wdt_device.bootstatus = s3c2410wdt_get_bootstatus(wdt);
-> >       wdt->wdt_device.parent = dev;
-> >
-> > +     s3c2410wdt_mask_dbgack(wdt, true);
-> > +
-> >       /*
-> >        * If "tmr_atboot" param is non-zero, start the watchdog right now. Also
-> >        * set WDOG_HW_RUNNING bit, so that watchdog core can kick the watchdog.
-> > @@ -712,6 +796,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
-> >               s3c2410wdt_start(&wdt->wdt_device);
-> >               set_bit(WDOG_HW_RUNNING, &wdt->wdt_device.status);
-> >       } else {
-> > +             dev_info(dev, "stopping watchdog timer\n");
->
-> I am not inclined to accept patches adding such noise.
->
-> >               s3c2410wdt_stop(&wdt->wdt_device);
-> >       }
-> >
-> > @@ -738,6 +823,15 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
-> >                (wtcon & S3C2410_WTCON_RSTEN) ? "en" : "dis",
-> >                (wtcon & S3C2410_WTCON_INTEN) ? "en" : "dis");
-> >
-> > +     if (wdt->drv_data->quirks & QUIRK_HAS_DBGACK_BIT)
-> > +             dev_info(dev, "DBGACK %sabled\n",
-> > +                      (wtcon & S3C2410_WTCON_DBGACK_MASK) ? "en" : "dis");
-> > +
-> > +     if (wdt->drv_data->quirks & QUIRK_HAS_WTMINCNT_REG)
-> > +             dev_info(dev, "windowed watchdog %sabled, wtmincnt=%x\n",
-> > +                      (wtcon & S3C2410_WTCON_WINDOWED_WD) ? "en" : "dis",
-> > +                      readl(wdt->reg_base + S3C2410_WTMINCNT));
->
-> ... and I really don't see its value.
+On 9/14/2023 4:54 AM, Kees Cook wrote:
+> On Mon, Sep 11, 2023 at 04:23:52PM +0530, Mukesh Ojha wrote:
+>> There are users like Qualcomm minidump which is interested in
+>> knowing the pstore frontend addresses and sizes from the backend
+>> (ram) to be able to register it with firmware to finally collect
+>> them during crash for debugging.
+>>
+>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+>> ---
+>>   fs/pstore/platform.c   | 15 +++++++++++++++
+>>   fs/pstore/ram.c        | 42 ++++++++++++++++++++++++++++++++++++++++++
+>>   include/linux/pstore.h |  6 ++++++
+>>   3 files changed, 63 insertions(+)
+>>
+>> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+>> index e5bca9a004cc..fdac951059c1 100644
+>> --- a/fs/pstore/platform.c
+>> +++ b/fs/pstore/platform.c
+>> @@ -139,6 +139,21 @@ enum pstore_type_id pstore_name_to_type(const char *name)
+>>   }
+>>   EXPORT_SYMBOL_GPL(pstore_name_to_type);
+>>   
+>> +int pstore_region_defined(struct pstore_record *record,
+>> +			  void **virt, phys_addr_t *phys,
+>> +			  size_t *size, unsigned int *max_dump_cnt)
+>> +{
+>> +	if (!psinfo)
+>> +		return -EINVAL;
+>> +
+>> +	record->psi = psinfo;
+> 
+> Uh, this makes no sense to me. If this is a real pstore_record, you
+> cannot just assign psi here.
 
-Thanks for your review feedback. I will remove these dev_info prints in v2.
+Ok.
 
-regards,
+> 
+>> +
+>> +	return psinfo->region_info ?
+>> +	       psinfo->region_info(record, virt, phys, size, max_dump_cnt) :
+>> +	       -EINVAL;
+> 
+> Common code style for this kind of thing is usually like this:
+> 
+> 	if (!psinfo->region_info)
+> 		return -EINVAL;
+> 
+> 	return psinfo->region_info(...)
 
-Peter.
+Thanks.
+
+-Mukesh
+> 
+>> +}
+>> +EXPORT_SYMBOL_GPL(pstore_region_defined);
+>> +
+>>   static void pstore_timer_kick(void)
+>>   {
+>>   	if (pstore_update_ms < 0)
+>> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+>> index ab551caa1d2a..62202f3ddf63 100644
+>> --- a/fs/pstore/ram.c
+>> +++ b/fs/pstore/ram.c
+>> @@ -437,6 +437,47 @@ static int ramoops_pstore_erase(struct pstore_record *record)
+>>   	return 0;
+>>   }
+>>   
+>> +static int ramoops_region_info(struct pstore_record *record,
+>> +			       void **virt, phys_addr_t *phys,
+>> +			       size_t *size, unsigned int *max_dump_cnt)
+> 
+> But there's a larger problem here -- "virt", "phys" and likely
+> "max_dump_cnt" are aspects _specific to the ram backend_. This can't be
+> a generic pstore interface.
+> 
+> I'm not opposed to it being exposed only from ramoops, though.
+> 
+> But I think you'll want a pstore generic way to iterate over the
+> records..
