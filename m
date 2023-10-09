@@ -2,191 +2,190 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C0C7E95A91
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Oct 2023 09:42:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2050EE95A91
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Oct 2023 09:52:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345753AbjJIJmO (ORCPT
+        id S1345975AbjJIJwe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 9 Oct 2023 05:42:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35818 "EHLO
+        Mon, 9 Oct 2023 05:52:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345695AbjJIJmN (ORCPT
+        with ESMTP id S1345925AbjJIJwd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Oct 2023 05:42:13 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9371F97
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Oct 2023 02:42:11 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-50307acd445so5430108e87.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Oct 2023 02:42:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696844530; x=1697449330; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=V/DhwIR/TEsxYLvB0Erz8lks6ITQCb2MJgXSQrF/MM4=;
-        b=F3c6FravOzbodut9dnbmEvObrXRAuCX2ql7OQ+b+qyrSAiLAhdQt6Ue4E7GjPerwCG
-         HW6cmOiZ2kFw4NzD2GDSSTC2KpA7jZuP7jjvAtf9g/dxtK27R+b/Gg5/2gwHNIK/KyzE
-         mjyX4iATZb5Y7VCLep6+V9qw2OA5uWe1BupDPoMJtX89syI0f5o4IzYUVeN8wb0uRLkt
-         gyPvwXcNgmmJN+iN3Fpe/T6ynjdVXgXKEfVIzV2hSy4A4FTxiMwL5JiwjE3F1XHcOCVO
-         4v0WhEEw7fwuZ1n7M4J8pV9jIWcjeOrSaDwDG907qj6n6FvWOYLX3WQGu5WQpDSl5WHQ
-         AKRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696844530; x=1697449330;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V/DhwIR/TEsxYLvB0Erz8lks6ITQCb2MJgXSQrF/MM4=;
-        b=UH90rylIWMQOO18xdguXEa90RW4UwSZZU4jwDlR0/QQX0m+jOOhMYnGfHAiP3cBvcf
-         r6BMCNMikmelxZJyzHBfzP5Qbv+3Yq6lKaQqXjaBK55RsOd5LHeyrrzeVCR67xSfoxMR
-         f2uNE9gJ4imjcCkVWk4p2VicRfRs2gaGvdB2taEWhWT7QSnwJB0k5UtXnQnVpHOG1mEL
-         gD3kxPQVxYaEtlPwQY9TFFqDV2mxTFCd8aJ6gBImdf17Vf36JEFMTqu3WKhnwe2EqmPI
-         tmzAtkmJR+KU2t7J9uxNwbNwGed/WfuDB86C+n3ubWdJGZPtnvZ48pIH5xBALA1QnlZx
-         0b6w==
-X-Gm-Message-State: AOJu0Yzm86z+BTxId9niqVbvS/gkFZljf19TwUDCpf7nt5EOPwqqJJaP
-        PqI6ekyXGGpl6tHYWyZIfgm7Lw==
-X-Google-Smtp-Source: AGHT+IHN1qZlPIufcgW0ntP7Gk4gW6+oibZ0P4vLTbaymcFoc63INE8W5gN80F5jIaFN5kmEcQXTng==
-X-Received: by 2002:ac2:4a65:0:b0:500:c2d7:3ab4 with SMTP id q5-20020ac24a65000000b00500c2d73ab4mr11239943lfp.8.1696844529780;
-        Mon, 09 Oct 2023 02:42:09 -0700 (PDT)
-Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id bd5-20020a05600c1f0500b004030e8ff964sm13025587wmb.34.2023.10.09.02.42.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Oct 2023 02:42:09 -0700 (PDT)
-Message-ID: <82e30bd1-b7b4-4d95-9f13-008398082ca0@linaro.org>
-Date:   Mon, 9 Oct 2023 11:42:07 +0200
+        Mon, 9 Oct 2023 05:52:33 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34750C5
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Oct 2023 02:52:31 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231009095230euoutp014b06074711279ddadde572a17ca019b1~MZ6x2gflS0416504165euoutp01d
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Oct 2023 09:52:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231009095230euoutp014b06074711279ddadde572a17ca019b1~MZ6x2gflS0416504165euoutp01d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1696845150;
+        bh=2rBYQLGrtHKz4XvyeLH/M1hAAzls0bhQW/62YMnQ7vk=;
+        h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
+        b=nTumuSuMIOKmlU4XPJgCKSAxVFh9UoX1Ux/bcmpypARDpZKAdVwjbiWMGEskAdK/O
+         FX5YRXoMrtMcUPE3c+0Rkf71FQsdOKQeiby+KQTTOgs/1LGsgjoRdVl5fFSTzpZwhD
+         vnppy91DjQf00cFEwZCGAY9oknvIOHePeB9PgFk0=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20231009095229eucas1p27fc38e9971fc230a55fc031569fd128f~MZ6xhMO2K1563915639eucas1p2d;
+        Mon,  9 Oct 2023 09:52:29 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 8A.CA.11320.D5DC3256; Mon,  9
+        Oct 2023 10:52:29 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20231009095229eucas1p291ff3de0cbe84165800414ab24819d93~MZ6xCLBNz1307113071eucas1p2j;
+        Mon,  9 Oct 2023 09:52:29 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20231009095229eusmtrp137bf3c76c92fc79dedd114ddd673fab2~MZ6xAZjSr1702717027eusmtrp1O;
+        Mon,  9 Oct 2023 09:52:29 +0000 (GMT)
+X-AuditID: cbfec7f4-993ff70000022c38-3a-6523cd5dfee5
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 6D.B3.25043.D5DC3256; Mon,  9
+        Oct 2023 10:52:29 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20231009095228eusmtip21e7c48f6cb6bfad4bea478d1116fdabf~MZ6wTRvWf0538005380eusmtip2_;
+        Mon,  9 Oct 2023 09:52:28 +0000 (GMT)
+Message-ID: <c5efd5a6-561c-49a8-b1ee-82997192b030@samsung.com>
+Date:   Mon, 9 Oct 2023 11:52:28 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Fix Samsung pinctrl driver static allocation of GPIO
- base warning
-To:     Sam Protsenko <semen.protsenko@linaro.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 0/4] Fix Samsung pinctrl driver static allocation of
+ GPIO base warning
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>
 Cc:     Mateusz Majewski <m.majewski2@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-References: <CGME20231006130032eucas1p18c6f5c39614768911730fa6ed0201ee3@eucas1p1.samsung.com>
- <20231006125557.212681-1-m.majewski2@samsung.com>
- <CAPLW+4kmA6iYDPFxyASHLJifz63DRxT9gqQ-AsMAVy0RzoaFRw@mail.gmail.com>
- <04260159-f5a8-47f7-b267-33f4ea19b8a6@linaro.org>
- <CAPLW+4nyLunQw+wCxQmw9VDCGx2ECeAhUzjKRCBeHW7fGS1dFA@mail.gmail.com>
+        Linus Walleij <linus.walleij@linaro.org>
 Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAPLW+4nyLunQw+wCxQmw9VDCGx2ECeAhUzjKRCBeHW7fGS1dFA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <82e30bd1-b7b4-4d95-9f13-008398082ca0@linaro.org>
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7djP87qxZ5VTDRbvVLJ4MG8bm8Xe11vZ
+        Lab8Wc5ksenxNVaLzfP/MFpc3jWHzWLG+X1MFhOPTWa2OPymndXieR+Qu2rXH0YHbo+ds+6y
+        e9y5tofNY/OSeo++LasYPT5vkgtgjeKySUnNySxLLdK3S+DKmD3/L1vBV6mKb4uuMTUwzhPt
+        YuTkkBAwkdj8ZiVTFyMXh5DACkaJhSfmMkI4XxglTt96C5X5zChx7VY/O0zLlkWb2CESyxkl
+        lu+YyQzhfGSUOLn9HDNIFa+AncSSDX+BbA4OFgEVicb7ShBhQYmTM5+wgNiiAvIS92/NABvK
+        JmAo0fW2iw3EFhaIkfgwaRvYGBGBNInj16aygMxnFrjDJHFm0RZGkASzgLjErSfzmUDmcwLt
+        2rU2AiIsL7H97RxmiEN/cEjsvFwDUiIh4CLRfs4VIiws8er4FqhfZCROT+4BGy8h0M4oseD3
+        fSYIZwKjRMPzW4wQVdYSd879YgMZxCygKbF+lz7ETEeJro/mECafxI23ghAX8ElM2jadGSLM
+        K9HRJgQxQ01i1vF1cFsPXrjEPIFRaRZSmMxC8tYsJL/MQli7gJFlFaN4amlxbnpqsVFearle
+        cWJucWleul5yfu4mRmCSOv3v+JcdjMtffdQ7xMjEwXiIUYKDWUmEV7dUIVWINyWxsiq1KD++
+        qDQntfgQozQHi5I4r2qKfKqQQHpiSWp2ampBahFMlomDU6qBifHJ7pnLucUMP7IcN3tyVeJq
+        b8h09++zw68WeOSkh85LTv+y6PasCT90130MDT0nxH3l5629+9vVf1qJM5Vtea68fRFvyesw
+        xX5nzW37/l+1rrD+aLxoi+r18pWu+grXHqS/j2x6IdsadnFD5lRL3R2yDGd81prOenvi0fkP
+        m0zXydTU6hj9VdMR9bq4QGZS1IL7V/4qtBksunTtjjcDX+Z3h3+ZjuVbV1ycN2HxyuxZv3iO
+        yUZrrlmRHrLqXW0Ao6han4uz5LYJF2Tfq22Tlswo/qDJ8c7wsNdDBYUv95mfTiz1Ymiacl1g
+        5twfYnPP7Y4wfflakXF13DmTrp1e0y9HvT9tUqWx+W1/1c1HWjVKLMUZiYZazEXFiQAyZ2KE
+        wQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMIsWRmVeSWpSXmKPExsVy+t/xe7qxZ5VTDb58YbZ4MG8bm8Xe11vZ
+        Lab8Wc5ksenxNVaLzfP/MFpc3jWHzWLG+X1MFhOPTWa2OPymndXieR+Qu2rXH0YHbo+ds+6y
+        e9y5tofNY/OSeo++LasYPT5vkgtgjdKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1
+        MjJV0rezSUnNySxLLdK3S9DLmD3/L1vBV6mKb4uuMTUwzhPtYuTkkBAwkdiyaBN7FyMXh5DA
+        UkaJKx8nMkEkZCROTmtghbCFJf5c62KDKHrPKPF/xilmkASvgJ3Ekg1/gWwODhYBFYnG+0oQ
+        YUGJkzOfsIDYogLyEvdvzWAHsdkEDCW63oLM4eQQFoiR6F8wDaxGRCBN4l7bCyaQ+cwCD5gk
+        Xt7+AHVRO7PEjY59YB3MAuISt57MZwJZxgm0eNfaCIiwmUTX1i5GCFteYvvbOcwTGIVmIblj
+        FpLuWUhaZiFpWcDIsopRJLW0ODc9t9hIrzgxt7g0L10vOT93EyMwNrcd+7llB+PKVx/1DjEy
+        cTAeYpTgYFYS4dUtVUgV4k1JrKxKLcqPLyrNSS0+xGgKDIuJzFKiyfnA5JBXEm9oZmBqaGJm
+        aWBqaWasJM7rWdCRKCSQnliSmp2aWpBaBNPHxMEp1cAkEpE31VV13XzRyMQHPMLTjD7wnJh3
+        SK596RRunodXBMT95NNVK89tmb9bbd+kRefa9A1UDI/+vLiTIUuba05Y36unjxREPlt+u2JR
+        qqX/YoLplCt5Fnt9/HfuWNH69aGO6e7rU8Jqzl7t+RO9bhZfTVbOo471tzJi3s/Yb610WM7W
+        StOq+lLZn7pMDb3Wf/JTl8QZJF+2c6/aY1l3MVXOsXfuwXtiC8S4Vef7mU2U47mzw9ZLdZXc
+        rBatt2u5tjuIPDRI/rrTr3mW1L5/21ROSH2e/S3jDivPlvC1iVK7b+//XPNMpePmq9cruk9q
+        C9on8S37ea113seft+4LpBQ1PZuZXpz52PD6gk01bN/DlFiKMxINtZiLihMBUs1av1YDAAA=
+X-CMS-MailID: 20231009095229eucas1p291ff3de0cbe84165800414ab24819d93
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20231006130032eucas1p18c6f5c39614768911730fa6ed0201ee3
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20231006130032eucas1p18c6f5c39614768911730fa6ed0201ee3
+References: <CGME20231006130032eucas1p18c6f5c39614768911730fa6ed0201ee3@eucas1p1.samsung.com>
+        <20231006125557.212681-1-m.majewski2@samsung.com>
+        <CAPLW+4kmA6iYDPFxyASHLJifz63DRxT9gqQ-AsMAVy0RzoaFRw@mail.gmail.com>
+        <04260159-f5a8-47f7-b267-33f4ea19b8a6@linaro.org>
+        <CAPLW+4nyLunQw+wCxQmw9VDCGx2ECeAhUzjKRCBeHW7fGS1dFA@mail.gmail.com>
+        <82e30bd1-b7b4-4d95-9f13-008398082ca0@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 08/10/2023 20:45, Sam Protsenko wrote:
-
+On 09.10.2023 11:42, Krzysztof Kozlowski wrote:
+> On 08/10/2023 20:45, Sam Protsenko wrote:
+>>>> Thank you for handling this! Those deprecation warnings have been
+>>>> bugging me for some time :) While testing this series on my E850-96
+>>>> board (Exynos850 based), I noticed some changes in
+>>>> /sys/kernel/debug/gpio file, like these:
+>>>>
+>>>> 8<------------------------------------------------------------------------------------------>8
+>>>> -gpiochip0: GPIOs 0-7, parent: platform/11850000.pinctrl, gpa0:
+>>>> - gpio-7   (                    |Volume Up           ) in  hi IRQ ACTIVE LOW
+>>>> +gpiochip0: GPIOs 512-519, parent: platform/11850000.pinctrl, gpa0:
+>>>> + gpio-519 (                    |Volume Up           ) in  hi IRQ ACTIVE LOW
+>>>>
+>>>> -gpiochip1: GPIOs 8-15, parent: platform/11850000.pinctrl, gpa1:
+>>>> - gpio-8   (                    |Volume Down         ) in  hi IRQ ACTIVE LOW
+>>>> +gpiochip1: GPIOs 520-527, parent: platform/11850000.pinctrl, gpa1:
+>>>> + gpio-520 (                    |Volume Down         ) in  hi IRQ ACTIVE LOW
+>>>>
+>>>> -gpiochip2: GPIOs 16-23, parent: platform/11850000.pinctrl, gpa2:
+>>>> +gpiochip2: GPIOs 528-535, parent: platform/11850000.pinctrl, gpa2:
+>>>>
+>>>> ...
+>>>> 8<------------------------------------------------------------------------------------------>8
+>>>>
+>>>> So basically it looks like all line numbers were offset by 512. Can
+>>>> you please comment on this? Is it an intentional change, and why it's
+>>>> happening?
+>>>>
+>>>> Despite of that change, everything seems to be working fine. But I
+>>>> kinda liked the numeration starting from 0 better :)
+>>> Could it be the reason of dynamic allocation?
 >>>
->>> Thank you for handling this! Those deprecation warnings have been
->>> bugging me for some time :) While testing this series on my E850-96
->>> board (Exynos850 based), I noticed some changes in
->>> /sys/kernel/debug/gpio file, like these:
->>>
->>> 8<------------------------------------------------------------------------------------------>8
->>> -gpiochip0: GPIOs 0-7, parent: platform/11850000.pinctrl, gpa0:
->>> - gpio-7   (                    |Volume Up           ) in  hi IRQ ACTIVE LOW
->>> +gpiochip0: GPIOs 512-519, parent: platform/11850000.pinctrl, gpa0:
->>> + gpio-519 (                    |Volume Up           ) in  hi IRQ ACTIVE LOW
->>>
->>> -gpiochip1: GPIOs 8-15, parent: platform/11850000.pinctrl, gpa1:
->>> - gpio-8   (                    |Volume Down         ) in  hi IRQ ACTIVE LOW
->>> +gpiochip1: GPIOs 520-527, parent: platform/11850000.pinctrl, gpa1:
->>> + gpio-520 (                    |Volume Down         ) in  hi IRQ ACTIVE LOW
->>>
->>> -gpiochip2: GPIOs 16-23, parent: platform/11850000.pinctrl, gpa2:
->>> +gpiochip2: GPIOs 528-535, parent: platform/11850000.pinctrl, gpa2:
->>>
->>> ...
->>> 8<------------------------------------------------------------------------------------------>8
->>>
->>> So basically it looks like all line numbers were offset by 512. Can
->>> you please comment on this? Is it an intentional change, and why it's
->>> happening?
->>>
->>> Despite of that change, everything seems to be working fine. But I
->>> kinda liked the numeration starting from 0 better :)
+>> I just asked because I didn't know :) But ok, if you want me to do
+>> some digging... It seems like having GPIO_DYNAMIC_BASE=512 is not
+>> necessarily the reason of dynamic allocation, but instead just a way
+>> to keep 0-512 range for legacy GPIO drivers which might use that area
+>> to allocate GPIO numbers statically. It's mentioned here:
 >>
->> Could it be the reason of dynamic allocation?
+>>      /*
+>>       * At the end we want all GPIOs to be dynamically allocated from 0.
+>>       * However, some legacy drivers still perform fixed allocation.
+>>       * Until they are all fixed, leave 0-512 space for them.
+>>       */
+>>      #define GPIO_DYNAMIC_BASE    512
 >>
-> 
-> I just asked because I didn't know :) But ok, if you want me to do
-> some digging... It seems like having GPIO_DYNAMIC_BASE=512 is not
-> necessarily the reason of dynamic allocation, but instead just a way
-> to keep 0-512 range for legacy GPIO drivers which might use that area
-> to allocate GPIO numbers statically. It's mentioned here:
-> 
->     /*
->      * At the end we want all GPIOs to be dynamically allocated from 0.
->      * However, some legacy drivers still perform fixed allocation.
->      * Until they are all fixed, leave 0-512 space for them.
->      */
->     #define GPIO_DYNAMIC_BASE    512
-> 
-> As mentioned in another comment in gpiochip_add_data_with_key(), that
-> numberspace shouldn't matter and in the end should go away, as GPIO
-> sysfs interface is pretty much deprecated at this point, and everybody
-> should stick to GPIO descriptors.
-> 
-> Anyway, now that it's clear that the base number change was intended
-> and shouldn't matter, for all patches in the series:
-> 
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+>> As mentioned in another comment in gpiochip_add_data_with_key(), that
+>> numberspace shouldn't matter and in the end should go away, as GPIO
+>> sysfs interface is pretty much deprecated at this point, and everybody
+>> should stick to GPIO descriptors.
+>>
+>> Anyway, now that it's clear that the base number change was intended
+>> and shouldn't matter, for all patches in the series:
+>>
+>> Reviewed-by: Sam Protsenko<semen.protsenko@linaro.org>
+>> Tested-by: Sam Protsenko<semen.protsenko@linaro.org>
+> If all the GPIOs changed due to switch to dynamic allocation, aren't we
+> breaking all user-space users?
 
-If all the GPIOs changed due to switch to dynamic allocation, aren't we
-breaking all user-space users?
+This /sys based GPIO interface is deprecated, so I don't think that 
+stable numbers is something that we should care.
 
-Best regards,
-Krzysztof
+Userspace, if still uses /sys interface, should depend on the GPIO bank 
+name. I remember that the GPIO numbers varied between different kernel 
+versions (also compared to the 'vendor kernels'), although I don't 
+remember if this was Exynos related case or other.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
