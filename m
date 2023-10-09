@@ -2,94 +2,100 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BACE95A96
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Oct 2023 08:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 520A6E95A8E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Oct 2023 09:09:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234389AbjJIIcS (ORCPT
+        id S1345624AbjJIJJS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 9 Oct 2023 04:32:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49826 "EHLO
+        Mon, 9 Oct 2023 05:09:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234378AbjJIIcR (ORCPT
+        with ESMTP id S1345547AbjJIJJR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Oct 2023 04:32:17 -0400
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 671C4A3;
-        Mon,  9 Oct 2023 01:32:15 -0700 (PDT)
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 3998Ns1d003054;
-        Mon, 9 Oct 2023 03:31:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=PODMain02222019; bh=4MULa8LIRZTV5cI
-        iahOJgFs1cV3PfMr3tjK0c8f3GSE=; b=H43PPY3zCVBdf0vPDwEGXiKLlM9HDYb
-        pV+PuJsdYW5fsV5FZNri3Oi2KHTBJf++lnEHX6h6VcYfVUvVtaCZMQQPBb7vw1l0
-        jQXamdETdZPKveOQxCtMKf5JPK7TwCJIDNMMYDeJvp1Cvfz5e0eb9yH6TJ2TWM/T
-        knltDk6ZBuzEdb9rCaJfTO3jyGj0mdwyMV+Fkqq68LpOKNFJLijQByj92atLVoti
-        x5aUALB3lTBscn0mDG5cJKawJBs9vL4P9lErVKxxPEVatNs2syXn3CqhGt2FIn26
-        juwEDXs28eGa4CuKTajeUsIVf/KKqCRqldYlvKOf2x6odatLP4HXvew==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3tkhhah27e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 09 Oct 2023 03:31:03 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.37; Mon, 9 Oct
- 2023 09:31:01 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1118.37 via Frontend Transport; Mon, 9 Oct 2023 09:31:01 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id BD1C811AC;
-        Mon,  9 Oct 2023 08:31:01 +0000 (UTC)
-Date:   Mon, 9 Oct 2023 08:31:01 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Tero Kristo <kristo@kernel.org>,
-        <patches@opensource.cirrus.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-omap@vger.kernel.org>
-Subject: Re: [PATCH] clk: Use device_get_match_data()
-Message-ID: <20231009083101.GS103419@ediswmail.ad.cirrus.com>
-References: <20231006213959.334439-1-robh@kernel.org>
+        Mon, 9 Oct 2023 05:09:17 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5803597
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Oct 2023 02:09:16 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-40566f8a093so39430835e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Oct 2023 02:09:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696842555; x=1697447355; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/8Z3UYNvAtyEDlrSr7KXfmu9oYxAGlZ+o0c72dpgJv4=;
+        b=IWmoWzlBoTg4Vug7gKUuWmqVkbK/wf1h0+DwkOrhZZ0G6d8b6hJfgiiVlHslAy19TA
+         fwZEDUmmI0UT5l8G94eDYxN0AamcBawg74U+VS5gDUYUmjAZRNhZEWJqspD04e7/MUWU
+         kOYQUNBcPYt2ry/OkSjsVeQ5X3/kg0H7oB7g0xXWR6E7+2+EjjEAwJMG/ur5GvWBJPXR
+         sKULMjm7BSd5RE0flj2yviq/OlGh8rUc4QB/487MDNM7KophGgI1nID+/Ll64w6pphQt
+         JmykHKhXtP4btJ+pYI1bXatdcUBoTmRDNJhkkn/voNsfbfd736O4pjBgL1QQXHFDGjWw
+         fSCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696842555; x=1697447355;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/8Z3UYNvAtyEDlrSr7KXfmu9oYxAGlZ+o0c72dpgJv4=;
+        b=BoOi62RMXRKLaTUsOHUFz9ZQcppDfqirZobNSjAC9jeO4Xe2EgTdUeqZ3AJfQd13oc
+         xJlq0eCEYgZi+2Y2nowBrrRLoTflxe945imqGYzGgvQzJQlshI4yUygT0ODTaB/KOB0d
+         nZ4aExjAd+mZSzI5pmoUNj0LRr7gj+kpqVgQYXSJ0DnWjwtoertzxNPvb8F8uOpCgxuM
+         17rywyodTcawPinIG+bAjidD4vVEmuYjMi3t9p/fUbS4Vj502FkO7oM9PlMTk72g1Y1b
+         nKVCvLhb+WAHEziviTmS8UUh5Kg65TDqSmzdzZjWIODBFpLhPMxYb5iDO1S9LuHhiXgi
+         QMgA==
+X-Gm-Message-State: AOJu0YyEyssyVL0Y8suUF0xors0MphlAxgZ5WXlYNFqiLgT+6WkVD3Fr
+        s+ZtsW64zHyTVOLWMFKV+zY/c0eJuyu7P/jo2/lKMD3J
+X-Google-Smtp-Source: AGHT+IFch8GuFHQEo6J3AnB25YuJr/bD2bLPerLfe0tE6CVQhPSYr2s659RcjWq6ka8GDVR+RhEqcA==
+X-Received: by 2002:a7b:ce09:0:b0:405:3dbb:ec5a with SMTP id m9-20020a7bce09000000b004053dbbec5amr14092958wmc.1.1696842554673;
+        Mon, 09 Oct 2023 02:09:14 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id e24-20020a05600c219800b004013797efb6sm12864525wme.9.2023.10.09.02.09.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Oct 2023 02:09:14 -0700 (PDT)
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+To:     Inki Dae <inki.dae@samsung.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        kernel@pengutronix.de
+In-Reply-To: <20230919103939.1367659-1-u.kleine-koenig@pengutronix.de>
+References: <20230919103939.1367659-1-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] drm: exynos: dsi: Convert to platform remove callback
+ returning void
+Message-Id: <169684255378.1988265.10483577692957189124.b4-ty@linaro.org>
+Date:   Mon, 09 Oct 2023 11:09:13 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20231006213959.334439-1-robh@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-ORIG-GUID: FlYp9zqwQvX4Bbg0m_XlIGcUY-KCFqlB
-X-Proofpoint-GUID: FlYp9zqwQvX4Bbg0m_XlIGcUY-KCFqlB
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 06, 2023 at 04:39:58PM -0500, Rob Herring wrote:
-> Use preferred device_get_match_data() instead of of_match_device() to
-> get the driver match data. With this, adjust the includes to explicitly
-> include the correct headers.
+Hi,
+
+On Tue, 19 Sep 2023 12:39:39 +0200, Uwe Kleine-König wrote:
+> The .remove() callback for a platform driver returns an int which makes
+> many driver authors wrongly assume it's possible to do error handling by
+> returning an error code. However the value returned is ignored (apart
+> from emitting a warning) and this typically results in resource leaks.
+> To improve here there is a quest to make the remove callback return
+> void. In the first step of this quest all drivers are converted to
+> .remove_new() which already returns void. Eventually after all drivers
+> are converted, .remove_new() is renamed to .remove().
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+> [...]
 
-For the Lochnagar bit:
+Thanks, Applied to https://anongit.freedesktop.org/git/drm/drm-misc.git (drm-misc-next)
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com> 
+[1/1] drm: exynos: dsi: Convert to platform remove callback returning void
+      https://cgit.freedesktop.org/drm/drm-misc/commit/?id=c1698c73f4aaef2fd406da1c0a92e1c8f7b7780c
 
-Thanks,
-Charles
+-- 
+Neil
+
