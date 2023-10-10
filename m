@@ -2,110 +2,92 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3E2CD68F8
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Oct 2023 07:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C28CD80B7
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Oct 2023 12:09:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442582AbjJJHvf (ORCPT
+        id S231550AbjJJMJT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 10 Oct 2023 03:51:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59482 "EHLO
+        Tue, 10 Oct 2023 08:09:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1442603AbjJJHve (ORCPT
+        with ESMTP id S231311AbjJJMJS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Oct 2023 03:51:34 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2ECD9F
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Oct 2023 00:51:32 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qq7WS-00085v-Dq; Tue, 10 Oct 2023 09:51:20 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qq7WO-000big-7a; Tue, 10 Oct 2023 09:51:16 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qq7WN-00CvmQ-Tt; Tue, 10 Oct 2023 09:51:15 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel@pengutronix.de,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH 00/11] pwm: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
-Date:   Tue, 10 Oct 2023 09:51:01 +0200
-Message-Id: <20231010075112.755178-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.40.1
+        Tue, 10 Oct 2023 08:09:18 -0400
+Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46AD799
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Oct 2023 05:09:17 -0700 (PDT)
+Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-579de633419so68105857b3.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Oct 2023 05:09:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696939756; x=1697544556; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uEaEMkX8vOBOdzxYFvJA9DgnPvy6/WwAYugNg849Uvw=;
+        b=CcR9sARPY+YNl/5TT4P/jcN/awaRsn37ZxpPJO9y2VJEcMnSCIDqv11N/oPEg3gM6W
+         dNaiHAqjtNFruWYrGGX9ZTsZysKZzjOEWUtU1C7EFbC4apdBiUHl5GWdYHmr/QH0d2gi
+         dcCogU32IUS7I6BtpEjMR1n5usmCwpm3BaGkYJV643Hwo+Mf7zw9O5pJJoso/p4SmdUO
+         kvxRvK45QVzC8ZljpLLN4BDVyzZRMsMe+uITUZ/I7BEA2aGJLVSbaedxWMz5q+GF7XeV
+         dvNNnH0MOiTTNPNmnQKD6ViCaavd6fX5vZulvTdcVcwpmQwx0JyrBTEhTb1+AddmKsWE
+         V3YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696939756; x=1697544556;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uEaEMkX8vOBOdzxYFvJA9DgnPvy6/WwAYugNg849Uvw=;
+        b=F5jN7Q0SflsEjqtYW+28uj45uLbfBx3ZHyM9J4Lyltk95Af2uTLAj8P6hyf2GuFdOt
+         bZcnrAtngpYsMAuZkOAmnh6ROGKkEn32SHu1DRuC1ecTAAfW03a14PsOjosHGXSoNJw0
+         YHqXlRf8+pTtMglV24QTq6zoDJRuCMaYlpwdjiGHYSBZqV3+US+XIEwA7xLwSTk803SW
+         lpDEQIb4I7aPoghAloIjawi1YJ5gg6/wm+//UcMzWd+KhpIgmThCZfvTE+4nG19MvfL6
+         M2MHV8hL4PpeSEYgA1XcHpDiYCaPZka2Ep7R783jz/PnmW8VaagWMgGVWhTmvB5vV0em
+         HMAA==
+X-Gm-Message-State: AOJu0Yze6hntX8paCzfBrplFWlzR28AoOloxuQYRgObXeuTf3Swwu73i
+        OcwpHMcRjS0BOyf+5HayDZijT6jc+RTV+uaxln1ybb88itNPz6kT
+X-Google-Smtp-Source: AGHT+IHRGEq7DdXjBkp0ZcsqBXe3LfpagEhnnJNKWYx9uqyU6eZI1qB/e8NPka/ZmWvype1vTBLGlZHCNknfRy93KUQ=
+X-Received: by 2002:a81:5b02:0:b0:583:a3ab:b950 with SMTP id
+ p2-20020a815b02000000b00583a3abb950mr16029722ywb.50.1696939756492; Tue, 10
+ Oct 2023 05:09:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1674; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=A8HP9dusodcVd01/oywSk7GyIKXIzSNIx/3Y74BCkPc=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlJQJcnufZamylMhsh8sHRAmnhUy5NU96BFuv1Y +e804696reJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZSUCXAAKCRCPgPtYfRL+ Tjh6CACMY4DrmuQjpMLEcju7BTHj+1LkPQrPGzvdAqhyOjGVgG6nn1jcf2VaamQObZChkefRgLs oGITc8kXXHSZrBoDCl/3UmmLnAvW5k3tjbcea5fGxJiYwtHMEHeNP8QN3KvDPJfHdaSBXRSjFxG qeSWUlbgXAxCXPOs+4g2lYNASWm34COaFAlVOM6+RVayhDGxrwp1VpVzb3FoaFsKxd23l6ro6F7 rfSbpRLt9/8ksOGpw8hOrWkkX+yr4FYnGFjHigSeTR3+Pa4R/8DYRXBsd7tiaO4TtfGaE1juULa wGYbs9wy/RogDPwlSXCYddDhVrgS0MNXIWr8BbqF6xiyXxC3
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+References: <CGME20231006130032eucas1p18c6f5c39614768911730fa6ed0201ee3@eucas1p1.samsung.com>
+ <20231006125557.212681-1-m.majewski2@samsung.com>
+In-Reply-To: <20231006125557.212681-1-m.majewski2@samsung.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 10 Oct 2023 14:09:05 +0200
+Message-ID: <CACRpkdZULAeKE_DZX9RVhu0tSutdB_wMgoHhonB3H8DAdjKBEA@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Fix Samsung pinctrl driver static allocation of GPIO
+ base warning
+To:     Mateusz Majewski <m.majewski2@samsung.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello,
+Hi Mateusz,
 
-Florian added pm support to the pwm-bcm2835 driver[1]. This made me
-check what is the "modern" way to add pm support. This series modernizes
-the other pwm drivers with the things I learned.
+On Fri, Oct 6, 2023 at 3:00=E2=80=AFPM Mateusz Majewski <m.majewski2@samsun=
+g.com> wrote:
 
-Best regards
-Uwe
+> The object of this work is fixing the following warning, which appears
+> on all targets using that driver:
+>
+> gpio gpiochip0: Static allocation of GPIO base is deprecated, use dynamic=
+ allocation.
+>
+> This needs a small refactor to how we interact with the pinctrl
+> subsystem. Finally, we remove some bookkeeping that has only been
+> necessary to allocate GPIO bases correctly.
 
-[1] https://lore.kernel.org/linux-pwm/20231009204226.3224521-1-florian.fainelli@broadcom.com
+I see that Krzysztof has already taken care of this series so I just
+wait for a pull request (some days work is a bliss, thanks Krzysztof!)
 
-Uwe Kleine-König (11):
-  pwm: atmel-hlcdc: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
-  pwm: atmel-tcb: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
-  pwm: berlin: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
-  pwm: brcmstb: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
-  pwm: dwc: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
-  pwm: imx-tpm: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
-  pwm: samsung: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
-  pwm: stm32-lp: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
-  pwm: stm32: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
-  pwm: tiecap: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
-  pwm: tiehrpwm: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
-
- drivers/pwm/pwm-atmel-hlcdc.c |  8 +++-----
- drivers/pwm/pwm-atmel-tcb.c   |  8 +++-----
- drivers/pwm/pwm-berlin.c      |  8 +++-----
- drivers/pwm/pwm-brcmstb.c     | 12 ++++--------
- drivers/pwm/pwm-dwc.c         |  6 ++----
- drivers/pwm/pwm-imx-tpm.c     | 10 +++++-----
- drivers/pwm/pwm-samsung.c     |  6 ++----
- drivers/pwm/pwm-stm32-lp.c    | 10 +++++-----
- drivers/pwm/pwm-stm32.c       |  8 ++++----
- drivers/pwm/pwm-tiecap.c      |  6 ++----
- drivers/pwm/pwm-tiehrpwm.c    |  8 +++-----
- 11 files changed, 36 insertions(+), 54 deletions(-)
-
-base-commit: 0bb80ecc33a8fb5a682236443c1e740d5c917d1d
--- 
-2.40.1
-
+Yours,
+Linus Walleij
