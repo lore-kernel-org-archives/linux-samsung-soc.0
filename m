@@ -2,205 +2,101 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97AF6CD8CA2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Oct 2023 15:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC922CD8CA9
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Oct 2023 17:23:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233131AbjJJPri (ORCPT
+        id S233897AbjJJRX6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 10 Oct 2023 11:47:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42706 "EHLO
+        Tue, 10 Oct 2023 13:23:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232502AbjJJPrh (ORCPT
+        with ESMTP id S233981AbjJJRXw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Oct 2023 11:47:37 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBEF393;
-        Tue, 10 Oct 2023 08:47:35 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-9a6190af24aso1014543066b.0;
-        Tue, 10 Oct 2023 08:47:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696952854; x=1697557654; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KKkGXdScv1Oyh1OtZfwEYCK039UMnBrmGwVDK++uXz0=;
-        b=X6qoRkkO6OZDe5cpehRYzHy660TCxZmvx88YgOty99XSpU59gycxFQf6xLf04GZX2V
-         MtD8sgED6JSYbrL8ukR85H4SKKX/aBBFqJ3M2OWQ4BaaMFyfi2cy2DRfE1X7vNrEEpVB
-         UXh+Ve1oMM7x2WsaYj3DTVw7LBPhaJodUC4FAcRQObvnXhzHy7Tze5hUO/HYw00BXISu
-         ihDLJlJyX8oeomVxfVz1MBZq4XHB6YOn1JoD9w3TaZta6QySlE86e0J43Gersz67bOym
-         V4ZTDfrU7AKYIJ9frPR7It5Ry3VUU1tTP6gi0CnT9P03M/X4xR6RP2/Aon1ahU9763eM
-         QTHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696952854; x=1697557654;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KKkGXdScv1Oyh1OtZfwEYCK039UMnBrmGwVDK++uXz0=;
-        b=K0LlmTMfEnff8BBCB+h/61rbSh1nfrAKqskFIVownB6DvdSGzpYcOo2B9qnELDCDv+
-         7axwDI29L9YS2JaeNhg+vvj8CjyGML6nzDjFJbZH0HfGdcQrX3D3oV5Rw2RqGcJ1yMgX
-         LjYxvxeDhAQiDkHoEnMeMcULSFDp9ieaTLF1+AbRU/krskCHj5PpqBsEdHcaeZ4OxzxK
-         oXwO81Ebg0GqCE4N+CZIkUJ7ouv/W4KS6nmnUMvVm7Um6zTqPLQT6UuCqgq6EOXYL/6P
-         t5BNU/RUijenmSuPEaaFdvEl9aViCP1d5W7ipwBfgAcAHq9JEvoScO3XJF6dcdxgXSk2
-         mHBg==
-X-Gm-Message-State: AOJu0YzaqnvMJO7c90rYdA1cRQFfaB0Geanp1IMO5YSB3ILF7Uf1zDM3
-        25npFuOFcOLGplNRNtrZteMY8RGtA69yQ6YtynE=
-X-Google-Smtp-Source: AGHT+IF241DT80TkJ5sHFKC3eYt/LTp5cevbFpTG9oEYTutjLKN9gJny0Pdg8/WeLysTFf0Hej1uHeGIrIFE3+Ybifk=
-X-Received: by 2002:a17:907:1dd2:b0:9ae:406c:3425 with SMTP id
- og18-20020a1709071dd200b009ae406c3425mr17287051ejc.0.1696952854189; Tue, 10
- Oct 2023 08:47:34 -0700 (PDT)
+        Tue, 10 Oct 2023 13:23:52 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC8E5B0;
+        Tue, 10 Oct 2023 10:23:48 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40C44C433C9;
+        Tue, 10 Oct 2023 17:23:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696958628;
+        bh=TSj2de6BZUqT6Q880gh/gtYBmRWs6W7lYgtCRKx6Ag8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=dgVF2qFuAYixvkDzJvLKt5XD8K4GFyiAmDm2ZEc3BKkL3RkH5qcHfTvxRK/LG81jN
+         bM9CfeltEVlZGI3hG99F05by+x2gAEKJ4lI6bx3MiPjy99ClRQLRwvBZjuuHsnyuQW
+         ZO8BphlSzPRPjNeNtrQqEemhb4/ijt71Rm27icQvXLEp+ASy0IBGcoigGrAP2Y8EL0
+         AXwQXkkP0kdRHtdTVG3lQ8YOxUjGpjsW++vUaIs5tJBm4pBpeU0Nd0/RdZ+xExnmnZ
+         +9NM6l4Xr8pUI3P9j/COoVhbFNfgVIeJAp3cb02AS40llxdLPqmB6d4zUr7nkLIaeC
+         xqbfGLhhULBOQ==
+Date:   Tue, 10 Oct 2023 12:23:46 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Kukjin Kim <kgene.kim@samsung.com>,
+        Siva Reddy Kallam <siva.kallam@samsung.com>,
+        Surendranath Gurivireddy Balla <suren.reddy@samsung.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Santosh Shilimkar <santosh.shilimkar@ti.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Rob Herring <robh@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH 0/4] pci: Fix some section mismatches
+Message-ID: <20231010172346.GA984693@bhelgaas>
 MIME-Version: 1.0
-References: <20230921192749.1542462-1-dianders@chromium.org>
- <CGME20230921194907eucas1p1027c5dfc5c5f77bca3c43673427c89cc@eucas1p1.samsung.com>
- <20230921122641.RFT.v2.9.Iea33274908b6b258955f45a8aaf6f5bba24ad6cd@changeid>
- <fb9cd62b-6637-7bcc-e23d-37f3806f8460@samsung.com> <CAAQKjZNn4RTJ-SHHEugcQoS2U9fzNTOGtUpSLLM0w1V6Pb0amw@mail.gmail.com>
- <CAD=FV=V2JSHsrTfdxP4=-nU4GGZB999iAb+NU3en-4o3-rLmYQ@mail.gmail.com>
-In-Reply-To: <CAD=FV=V2JSHsrTfdxP4=-nU4GGZB999iAb+NU3en-4o3-rLmYQ@mail.gmail.com>
-From:   Inki Dae <daeinki@gmail.com>
-Date:   Wed, 11 Oct 2023 00:46:58 +0900
-Message-ID: <CAAQKjZNGnuJSErmn-48suoTUCM62pTXGrNux7XtCptHHXAgswA@mail.gmail.com>
-Subject: Re: [RFT PATCH v2 09/12] drm/exynos: Call drm_atomic_helper_shutdown()
- at shutdown/unbind time
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        dri-devel@lists.freedesktop.org,
-        Maxime Ripard <mripard@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, alim.akhtar@samsung.com,
-        sw0312.kim@samsung.com, krzysztof.kozlowski@linaro.org,
-        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231001170254.2506508-1-u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Sun, Oct 01, 2023 at 07:02:50PM +0200, Uwe Kleine-König wrote:
+> Hello,
+> 
+> modpost checks about section mismatches are about to get stronger, see
+> https://lore.kernel.org/linux-kbuild/20230930165204.2478282-1-u.kleine-koenig@pengutronix.de
+> .
+> 
+> With the above patch applied, enabling the exynos and kirin drivers as
+> modules result in a warning about their remove functions that is fixed
+> here. The keystone driver is a bit special as it can only be enabled
+> built-in and used __refdata on its driver struct. It also had a similar
+> issue for .probe fixed in the last patch.
+> 
+> IMHO all four patches qualify for backporting to stable.
 
-2023=EB=85=84 10=EC=9B=94 6=EC=9D=BC (=EA=B8=88) =EC=98=A4=ED=9B=84 10:51, =
-Doug Anderson <dianders@chromium.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> Hi,
->
-> On Thu, Oct 5, 2023 at 7:20=E2=80=AFPM Inki Dae <daeinki@gmail.com> wrote=
-:
-> >
-> > Thanks for testing. :)
-> >
-> > Acked-by : Inki Dae <inki.dae@samsung.com>
->
-> Inki: does that mean you'd like this to go through drm-misc? I'm happy
-> to do that, but there are no dependencies here so this could easily go
-> through your tree.
+I added stable tags and applied to pci/enumeration for v6.7, thanks!
 
-Ah, you are right. No dependency here. I will pick it up.
+> Uwe Kleine-König (4):
+>   PCI: exynos: Don't put .remove callback in .exit.text section
+>   PCI: kirin: Don't put .remove callback in .exit.text section
+>   PCI: keystone: Don't put .remove callback in .exit.text section
+>   PCI: keystone: Don't put .probe callback in .init.text section
 
-Thanks,
-Inki Dae
+I updated the subjects to be "Don't discard ... callback" to try to
+give a little more semantic context.
 
->
->
-> > 2023=EB=85=84 9=EC=9B=94 22=EC=9D=BC (=EA=B8=88) =EC=98=A4=ED=9B=84 3:0=
-0, Marek Szyprowski <m.szyprowski@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=
-=EC=84=B1:
-> > >
-> > >
-> > > On 21.09.2023 21:26, Douglas Anderson wrote:
-> > > > Based on grepping through the source code this driver appears to be
-> > > > missing a call to drm_atomic_helper_shutdown() at system shutdown t=
-ime
-> > > > and at driver unbind time. Among other things, this means that if a
-> > > > panel is in use that it won't be cleanly powered off at system
-> > > > shutdown time.
-> > > >
-> > > > The fact that we should call drm_atomic_helper_shutdown() in the ca=
-se
-> > > > of OS shutdown/restart and at driver remove (or unbind) time comes
-> > > > straight out of the kernel doc "driver instance overview" in
-> > > > drm_drv.c.
-> > > >
-> > > > A few notes about this fix:
-> > > > - When adding drm_atomic_helper_shutdown() to the unbind path, I ad=
-ded
-> > > >    it after drm_kms_helper_poll_fini() since that's when other driv=
-ers
-> > > >    seemed to have it.
-> > > > - Technically with a previous patch, ("drm/atomic-helper:
-> > > >    drm_atomic_helper_shutdown(NULL) should be a noop"), we don't
-> > > >    actually need to check to see if our "drm" pointer is NULL befor=
-e
-> > > >    calling drm_atomic_helper_shutdown(). We'll leave the "if" test =
-in,
-> > > >    though, so that this patch can land without any dependencies. It
-> > > >    could potentially be removed later.
-> > > > - This patch also makes sure to set the drvdata to NULL in the case=
- of
-> > > >    bind errors to make sure that shutdown can't access freed data.
-> > > >
-> > > > Suggested-by: Maxime Ripard <mripard@kernel.org>
-> > > > Reviewed-by: Maxime Ripard <mripard@kernel.org>
-> > > > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > >
-> > > Seems to be working fine on all my test Exynos-based boards with disp=
-lay.
-> > >
-> > > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > >
-> > > Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > >
-> > > > ---
-> > > > This commit is only compile-time tested.
-> > > >
-> > > > (no changes since v1)
-> > > >
-> > > >   drivers/gpu/drm/exynos/exynos_drm_drv.c | 11 +++++++++++
-> > > >   1 file changed, 11 insertions(+)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/=
-drm/exynos/exynos_drm_drv.c
-> > > > index 8399256cb5c9..5380fb6c55ae 100644
-> > > > --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> > > > +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> > > > @@ -300,6 +300,7 @@ static int exynos_drm_bind(struct device *dev)
-> > > >       drm_mode_config_cleanup(drm);
-> > > >       exynos_drm_cleanup_dma(drm);
-> > > >       kfree(private);
-> > > > +     dev_set_drvdata(dev, NULL);
-> > > >   err_free_drm:
-> > > >       drm_dev_put(drm);
-> > > >
-> > > > @@ -313,6 +314,7 @@ static void exynos_drm_unbind(struct device *de=
-v)
-> > > >       drm_dev_unregister(drm);
-> > > >
-> > > >       drm_kms_helper_poll_fini(drm);
-> > > > +     drm_atomic_helper_shutdown(drm);
-> > > >
-> > > >       component_unbind_all(drm->dev, drm);
-> > > >       drm_mode_config_cleanup(drm);
-> > > > @@ -350,9 +352,18 @@ static int exynos_drm_platform_remove(struct p=
-latform_device *pdev)
-> > > >       return 0;
-> > > >   }
-> > > >
-> > > > +static void exynos_drm_platform_shutdown(struct platform_device *p=
-dev)
-> > > > +{
-> > > > +     struct drm_device *drm =3D platform_get_drvdata(pdev);
-> > > > +
-> > > > +     if (drm)
-> > > > +             drm_atomic_helper_shutdown(drm);
-> > > > +}
-> > > > +
-> > > >   static struct platform_driver exynos_drm_platform_driver =3D {
-> > > >       .probe  =3D exynos_drm_platform_probe,
-> > > >       .remove =3D exynos_drm_platform_remove,
-> > > > +     .shutdown =3D exynos_drm_platform_shutdown,
-> > > >       .driver =3D {
-> > > >               .name   =3D "exynos-drm",
-> > > >               .pm     =3D &exynos_drm_pm_ops,
-> > >
-> > > Best regards
-> > > --
-> > > Marek Szyprowski, PhD
-> > > Samsung R&D Institute Poland
-> > >
+>  drivers/pci/controller/dwc/pci-exynos.c   | 4 ++--
+>  drivers/pci/controller/dwc/pci-keystone.c | 8 ++++----
+>  drivers/pci/controller/dwc/pcie-kirin.c   | 4 ++--
+>  3 files changed, 8 insertions(+), 8 deletions(-)
+> 
+> base-commit: 6465e260f48790807eef06b583b38ca9789b6072
+> -- 
+> 2.40.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
