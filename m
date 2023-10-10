@@ -2,160 +2,102 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B990ECD6136
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Oct 2023 20:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74897CD68F6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Oct 2023 07:51:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378490AbjJIUEK (ORCPT
+        id S1442602AbjJJHva (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 9 Oct 2023 16:04:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56368 "EHLO
+        Tue, 10 Oct 2023 03:51:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376628AbjJIUEJ (ORCPT
+        with ESMTP id S1442604AbjJJHv3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Oct 2023 16:04:09 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24981AC
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Oct 2023 13:04:04 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1c9ad9473d7so40935ad.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Oct 2023 13:04:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1696881843; x=1697486643; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=792ACGhD6QjX3gm4sl6mN1ZnGztud0zoUVjrdn9K8C0=;
-        b=ZHALqsmkzhqOYDFJcfu/axPofTffo1dsrCiTTswHYNc4mVcvVN02tocv8qEfvHkKw8
-         qBSg8z9vnU8sfbN+pyeWDtW5XstfK5EvKWOkeZR5M5RRx2uKBA+z21o04gfADMqsyNND
-         Y3+Rx2HUg2gksU4kdhsC+dYLMMn3FwnlxQdGhqFqaKHx2t64rqOsy+APdJeuZoxm/f8z
-         VoeeRgN9Bp9rq0YYvsU/2ebqteY14M53iq4CTJ0cFN3FQqxyiXqVNdzv5dvkj4Vkld3o
-         SivdRaHbtlR7kBrHNO9Gw3TMh6RevjJk14h+o1QGie5SwINSbfwUM2XiR3afwia6iqJf
-         gFDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696881843; x=1697486643;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=792ACGhD6QjX3gm4sl6mN1ZnGztud0zoUVjrdn9K8C0=;
-        b=aS0Xu2d2Pj7pUByvZ5Ugq0ZEnsJp0fV9mTRbnCGXQ8jnUAjQnTrqHpf9oaHzLT9wEW
-         XEFKQPb+rRuBc4oLKA7xgl46ISVoCcfgmglfUZJHbLtRazlpH7ZRyKeZmLWdjfWZtA1E
-         krgzu+v5jdgwPcxkicvaju+bKA6bVs30fhmX6K3o1zHow2W9jLAAjXLevzuK9AWgWnfU
-         M9EFhW6wQsYnEtIU0kTcX7mpC29/LQL6zvhj7gy3bPSPqLZ7jQVOw/pOClI3cthvS+Gw
-         MXMjigGGZYl4eOPP3MZxbifFrEeymVhYvGGrDvBvzGhTSZv3VVk18HFlhwG73lNVAij3
-         F7VA==
-X-Gm-Message-State: AOJu0Yx+bm/k30hInlNBjX6J/rtm2pmI3hDgc2uOgZADg5e2KNSPR9FS
-        snkPixdNk8ojqdMeEEHgSKRKsQ==
-X-Google-Smtp-Source: AGHT+IGoDE0HuNMIvb5i2H0sYSVhJ0lPtrnwVtRl9vcbmzHn2Ebn09gMy1XHI6WbiXHnD9jwHuRR6Q==
-X-Received: by 2002:a17:902:ec8b:b0:1c6:c41:679c with SMTP id x11-20020a170902ec8b00b001c60c41679cmr803671plg.4.1696881843213;
-        Mon, 09 Oct 2023 13:04:03 -0700 (PDT)
-Received: from google.com (13.65.82.34.bc.googleusercontent.com. [34.82.65.13])
-        by smtp.gmail.com with ESMTPSA id k3-20020a63ab43000000b0050f85ef50d1sm8838631pgp.26.2023.10.09.13.04.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Oct 2023 13:04:02 -0700 (PDT)
-Date:   Mon, 9 Oct 2023 13:03:59 -0700
-From:   William McVicker <willmcvicker@google.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
-        andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        soc@kernel.org, devicetree@vger.kernel.org,
+        Tue, 10 Oct 2023 03:51:29 -0400
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC6C1AF
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Oct 2023 00:51:26 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qq7WS-000879-DV; Tue, 10 Oct 2023 09:51:20 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qq7WP-000bj5-Nu; Tue, 10 Oct 2023 09:51:17 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qq7WP-00Cvmw-EV; Tue, 10 Oct 2023 09:51:17 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH 19/21] google/gs101: Add dt overlay for oriole board
-Message-ID: <ZSRcr6JRbj-wZf7R@google.com>
-References: <20231005155618.700312-1-peter.griffin@linaro.org>
- <20231005155618.700312-20-peter.griffin@linaro.org>
- <7f2032c2-812a-46b5-8914-056cd53c37cb@linaro.org>
+        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
+        kernel@pengutronix.de,
+        Florian Fainelli <florian.fainelli@broadcom.com>
+Subject: [PATCH 07/11] pwm: samsung: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+Date:   Tue, 10 Oct 2023 09:51:08 +0200
+Message-Id: <20231010075112.755178-8-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20231010075112.755178-1-u.kleine-koenig@pengutronix.de>
+References: <20231010075112.755178-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7f2032c2-812a-46b5-8914-056cd53c37cb@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1412; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=tdDsVaIQTBAFmDdZwZMSBACIYYvrBNNMW6Ee1DHfp08=; b=owGbwMvMwMXY3/A7olbonx/jabUkhlRVppSXmwwz+3dzfLohPFdivnHpxXfiFspG87/w6ar1X vd/eCC3k9GYhYGRi0FWTJHFvnFNplWVXGTn2n+XYQaxMoFMYeDiFICJREaz//eXvDM3o9O6Y47l tOd2ZyLyo6oPROfGha4zXXzoA2tPCtvy7RenL/N1V3PVe9+qt0Ah1OpZ1bSdU5t67m07v+ouh6X w+j+nzgiqnGrgditTKtuaX6YbIl2Yf/ThQsWj8t9DYwQZgrRuJNhvS/ZYXPrzc7ir/B5hzYsrMp h3nN4Z1B2i7JglvfRBv5NZyIsvUlZv+6skT3Q3J1clxc4PMemJmWZb38x09YVhmrPjMr0CCbP2J +GVvWKKfG9/SUlxsHrHfzo28y3bbLst1ZOkhfReWyoxdhenqcdOTTHNvuhbkZRpm5jEqCFcM7Mu /8yCGWeKFzO2ZTU9e71IdUGU7eJ91zNzfCXmRZ5UuQ0A
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 10/05/2023, Krzysztof Kozlowski wrote:
-> On 05/10/2023 17:56, Peter Griffin wrote:
-> > The LK bootloader on Pixel6 searches for a dt overlay in the
-> > dtbo partition with a board_id and board_rev that matches
-> > what is baked into the device. If this overlay is not present
-> > then the phone will bootloop in fastboot and you can't boot
-> > the upstream kernel.
-> > 
-> > This commit adds a dtbo for the production oriole variant.
-> > The other pre-production board overlays are not included
-> > at this time.
-> > 
-> > Adding the dtbo here allows for a better experience when
-> > building/booting the upstream kernel on Pixel devices
-> > as all the DT required to boot the device will be created
-> > as part of the kernel build process. Rather than having to
-> > fetch the dtbo from some other repo.
-> > 
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/google/Makefile          |  1 +
-> >  arch/arm64/boot/dts/google/gs101-oriole.dtso | 21 ++++++++++++++++++++
-> >  2 files changed, 22 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/google/gs101-oriole.dtso
-> > 
-> > diff --git a/arch/arm64/boot/dts/google/Makefile b/arch/arm64/boot/dts/google/Makefile
-> > index 6d2026a767d4..3f1761f8daa9 100644
-> > --- a/arch/arm64/boot/dts/google/Makefile
-> > +++ b/arch/arm64/boot/dts/google/Makefile
-> > @@ -2,5 +2,6 @@
-> >  
-> >  dtb-$(CONFIG_ARCH_GOOGLE_TENSOR) += \
-> >  	gs101-oriole.dtb \
-> > +	gs101-oriole.dtbo
-> >  
-> >  
-> > diff --git a/arch/arm64/boot/dts/google/gs101-oriole.dtso b/arch/arm64/boot/dts/google/gs101-oriole.dtso
-> > new file mode 100644
-> > index 000000000000..50832fd94204
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/google/gs101-oriole.dtso
-> > @@ -0,0 +1,21 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Oriole DVT Device Tree
-> > + *
-> > + * Copyright 2021-2023 Google,LLC
-> > + */
-> > +
-> > +/dts-v1/;
-> > +/plugin/;
-> > +
-> > +/ {
-> > +	board_id = <0x20304>;
-> > +	board_rev = <0x10000>;
-> 
-> Undocumented properties. Please propose bindings... Also, underscores
-> are not allowed, so in this form it is a no-go... although I understand
-> the pain of not being able to change the bootloader.
-> 
-> For reference:
-> https://lore.kernel.org/all/20220605150747.GA3465286-robh@kernel.org/
-> https://lore.kernel.org/all/20220610163343.GA1787330-robh@kernel.org/
+This macro has the advantage over SIMPLE_DEV_PM_OPS that we don't have to
+care about when the functions are actually used, so the corresponding
+#ifdef can be dropped.
 
-These names are actually arbitrary and don't depend on the bootloader. They are
-passed into the mkdtimg tool [1] using --id and --rev and used to create the
-dt_table_entries. The bootloader traverses the table and picks the overlay
-based on these properties. So we can use whatever property names we want
-without changing the bootloader.
+Also make use of pm_ptr() to discard all PM related stuff if CONFIG_PM
+isn't enabled.
 
-[1] https://android.googlesource.com/platform/system/libufdt/+/refs/heads/main/utils/
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/pwm/pwm-samsung.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Thanks,
-Will
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index e8828f57ab15..041e2f9476ff 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -630,7 +630,6 @@ static void pwm_samsung_remove(struct platform_device *pdev)
+ 	clk_disable_unprepare(chip->base_clk);
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
+ static int pwm_samsung_resume(struct device *dev)
+ {
+ 	struct samsung_pwm_chip *our_chip = dev_get_drvdata(dev);
+@@ -663,14 +662,13 @@ static int pwm_samsung_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-#endif
+ 
+-static SIMPLE_DEV_PM_OPS(pwm_samsung_pm_ops, NULL, pwm_samsung_resume);
++static DEFINE_SIMPLE_DEV_PM_OPS(pwm_samsung_pm_ops, NULL, pwm_samsung_resume);
+ 
+ static struct platform_driver pwm_samsung_driver = {
+ 	.driver		= {
+ 		.name	= "samsung-pwm",
+-		.pm	= &pwm_samsung_pm_ops,
++		.pm	= pm_ptr(&pwm_samsung_pm_ops),
+ 		.of_match_table = of_match_ptr(samsung_pwm_matches),
+ 	},
+ 	.probe		= pwm_samsung_probe,
+-- 
+2.40.1
 
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
