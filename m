@@ -2,160 +2,116 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 715B7CDB46E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Oct 2023 09:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A148CDB482
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Oct 2023 09:44:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235525AbjJLJgR (ORCPT
+        id S229762AbjJLJox (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 12 Oct 2023 05:36:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60852 "EHLO
+        Thu, 12 Oct 2023 05:44:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235518AbjJLJgP (ORCPT
+        with ESMTP id S235480AbjJLJow (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 12 Oct 2023 05:36:15 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8AE79D
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Oct 2023 02:36:12 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-4075c58ac39so7935205e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Oct 2023 02:36:12 -0700 (PDT)
+        Thu, 12 Oct 2023 05:44:52 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FF389D
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Oct 2023 02:44:51 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-317c3ac7339so715464f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Oct 2023 02:44:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697103369; x=1697708169; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nqk+jEGxZRcwHw++8Av537AXp3rNW/GqUawJd83wdQY=;
-        b=afk3JTiJ48/I45mpJu28/KaVlPnd3NTsUbIX9KxyeNSkG3Yhgx919sZ2diVsGhAVtM
-         /8V29bu8N1H4Hf5Dz4SOtM9GLwMWX8Kh7i010s+ssIFmgdTm039LdbPoYxdE+xSj7Okr
-         k1nmaemw7qCSO66OoyqA9TzcVFmxdNgt/ckkeleFIapypB0cbVMYDBjzPFLDeNE6kDHh
-         rIvtSJxniI9/b22DROl0HZ8zHUQsSQzge87KUJES5z85TKw0xSr0elRt93EZo0Ur0F8/
-         Gp5iRoIiDyFvdLMx/DsIGCLSihV2+Fc3MEGro8MuO3dyDGRZu5NYX9hp6uuJPBXLjJ/v
-         yATA==
+        d=linaro.org; s=google; t=1697103889; x=1697708689; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=k+QKwp7nbl5f01p02Qg76ygu3plfUspesE0c3bZjqAw=;
+        b=ysniDGXROvSZpFs+6obmOEl28B90oClamTM7uit7vfxIxZ2yBfpujMeVJJrqZSmuR4
+         dqOUYUxflNwEzNDpeEyUWttJqryx7i1KhetHexF+ltsNzggA9fe4T0ZD1YIMVi4Vz+N/
+         8rMyi52elUcgTlSwJ5jR6QVS2GTsnZb17Ptqrh0xCbgTUmz/rGwTKcAQ5spJ3dDG2SyU
+         idxheDIPymExuG16vK0jWLXpaVYilVtaIWQVBPf/ZYm7a3D2kuAqEFJi5yAJ2SZI1K2t
+         M/xNDIZoSgmw+Sh6ktMt0yHCVr0/yAwWzZ25jSNK7qGo+FVt8BPLOtQx7O05vsPijGbn
+         djkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697103369; x=1697708169;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nqk+jEGxZRcwHw++8Av537AXp3rNW/GqUawJd83wdQY=;
-        b=MkbTh2o8rBhWbn3bVBIFa0zLoVgcyTTaaqDRKrO0YhSHSy0hbBaiUKq6JH/R/1epMS
-         Q0aPwx0C/3YnJkgl5K0yKUfFDuNL4PXeBflhC1AeNPewFVf96cxp+/lClEnvpZVyChwb
-         W+liM5XkUeuf9my3agDzCaKcyD02VGFutsv4nMjxVp+CRoWvvluf+YeGlrCcXezGDM3Y
-         aNaOJpdt2fg4prY9JPzu8YJMV5M3e5FxXAKGJqe1AK9L2R/xDFWOz6fioW5EEGH/RMl0
-         roSp5JHZGQuMccTGtF9AMrFc3ujP1zOdT4i8F5TfQSwqs1v4l3nwmc4Pek4KL+7uBJxv
-         eBLg==
-X-Gm-Message-State: AOJu0YyA/Pptqnkpajp+2L1lYsSMzdh3/HR3TgaFiQkff+UgHDma57eV
-        JJaG9Jie07zm5Oh0fX45QtPmtg==
-X-Google-Smtp-Source: AGHT+IF4QGWLXvmB8SpNsTMlsBLWuCZdN8cQ16HWSg3hG/fVp9rpe4DL6i2IVqW/BX9YC03BMwvGQw==
-X-Received: by 2002:a05:600c:684:b0:406:8496:bd8c with SMTP id a4-20020a05600c068400b004068496bd8cmr20334835wmn.20.1697103369583;
-        Thu, 12 Oct 2023 02:36:09 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.100])
-        by smtp.gmail.com with ESMTPSA id e18-20020adffd12000000b0031980783d78sm17877455wrr.54.2023.10.12.02.36.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Oct 2023 02:36:09 -0700 (PDT)
-Message-ID: <21742fbf-8484-42ab-aba1-379305091946@linaro.org>
-Date:   Thu, 12 Oct 2023 11:36:06 +0200
+        d=1e100.net; s=20230601; t=1697103889; x=1697708689;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=k+QKwp7nbl5f01p02Qg76ygu3plfUspesE0c3bZjqAw=;
+        b=qJqxnMyMwbn8no+vZOe/0cTDIZ3xVAL7ZMQEZMEBjoLaIkYpyyReO7wWzVJL7CzEK/
+         nhf9GjmcGPiohlmWrI46LnvlOb148c64UHDCXv6n5ZFTAUARkU6TsvgJdwGjeJdp7ApQ
+         EPOVwQmj7QTfPRSIGzXhESJ1+nmQx7in1YSLTMI2U8VV+dxg0OARg91rZMUysWKFZ2+0
+         WZO8BqLqlulkLQjcA8OlhJ8XVgErDsi2RpW1k1UcJWXV0XMPojQRgwTPjiXXxzjcNpRI
+         Lo5XmkhL54IPa9rxIIyzImOmzc5T6EOkYCmR3WabtZWm0rLSKWGl61LvaqeD7QWM6HbR
+         Bpgw==
+X-Gm-Message-State: AOJu0YyiZQDifHwliGV8MFR3qDkEEFNX5gKjKkTNgekOIZ8PpTKZrDMK
+        XCYvxTMFeAkPmARFUnEr/S+WUA==
+X-Google-Smtp-Source: AGHT+IG7sLNYr0zpChWt8fMpTJKOcqZ3lRnegx7zppgFF1S6sXIq/A7SPemRfc4R3uX5KM5QEnagzw==
+X-Received: by 2002:a5d:474c:0:b0:32d:93aa:3d63 with SMTP id o12-20020a5d474c000000b0032d93aa3d63mr634911wrs.69.1697103889452;
+        Thu, 12 Oct 2023 02:44:49 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id e11-20020adfe7cb000000b003176c6e87b1sm17890924wrn.81.2023.10.12.02.44.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Oct 2023 02:44:49 -0700 (PDT)
+Date:   Thu, 12 Oct 2023 12:44:46 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     andrzej.hajda@intel.com
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Subject: [bug report] drm/exynos/iommu: merge IOMMU and DMA code
+Message-ID: <33e52277-1349-472b-a55b-ab5c3462bfcf@moroto.mountain>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/20] dt-bindings: clock: Add Google gs101 clock
- management unit bindings
-To:     Peter Griffin <peter.griffin@linaro.org>
-Cc:     William McVicker <willmcvicker@google.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, gregkh@linuxfoundation.org, cw00.choi@samsung.com,
-        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-        semen.protsenko@linaro.org, saravanak@google.com, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org
-References: <20231011184823.443959-1-peter.griffin@linaro.org>
- <20231011184823.443959-3-peter.griffin@linaro.org>
- <ZScYOUi7qhvGmMIF@google.com>
- <e4523fc3-e1dd-4791-b950-98dfc6dce1f5@linaro.org>
- <CADrjBPpntJMsxb6oGQ7zuX3f0dgE3oYFepL4OdxamBz=_or7kw@mail.gmail.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CADrjBPpntJMsxb6oGQ7zuX3f0dgE3oYFepL4OdxamBz=_or7kw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 12/10/2023 10:56, Peter Griffin wrote:
-> Hi Krzysztof,
-> 
-> On Thu, 12 Oct 2023 at 07:07, Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->>
->> On 11/10/2023 23:48, William McVicker wrote:
->>> On 10/11/2023, Peter Griffin wrote:
->>>> Provide dt-schema documentation for Google gs101 SoC clock controller.
->>>> Currently this adds support for cmu_top, cmu_misc and cmu_apm.
->>>>
->>>> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
->>>
->>> Tested-by: Will McVicker <willmcvicker@google.com>
->>
->> And how do you perform testing of a binding?
-> 
-> I guess if William is using my script to build and flash the kernel it actually
-> runs the DTC checks as part of the build process.
-> 
-> See https://git.codelinaro.org/linaro/googlelt/pixelscripts/-/blob/clo/main/buildp21upstream.sh#L44
+Hello Andrzej Hajda,
 
-So it is a build test? We do not consider building as a test procedure,
-otherwise I should add my and robots tested-by to many other patches.
-Shall I consider other Tested-by tags here also as build-tested only?
+The patch 67fbf3a3ef84: "drm/exynos/iommu: merge IOMMU and DMA code"
+from Oct 12, 2018 (linux-next), leads to the following Smatch static
+checker warning:
 
-Best regards,
-Krzysztof
+	drivers/gpu/drm/exynos/exynos_drm_dma.c:120 exynos_drm_register_dma()
+	warn: 'mapping' isn't an ERR_PTR
 
+drivers/gpu/drm/exynos/exynos_drm_dma.c
+    95 int exynos_drm_register_dma(struct drm_device *drm, struct device *dev,
+    96                             void **dma_priv)
+    97 {
+    98         struct exynos_drm_private *priv = drm->dev_private;
+    99 
+    100         if (!priv->dma_dev) {
+    101                 priv->dma_dev = dev;
+    102                 DRM_INFO("Exynos DRM: using %s device for DMA mapping operations\n",
+    103                          dev_name(dev));
+    104         }
+    105 
+    106         if (!IS_ENABLED(CONFIG_EXYNOS_IOMMU))
+    107                 return 0;
+    108 
+    109         if (!priv->mapping) {
+    110                 void *mapping;
+    111 
+    112                 if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU))
+    113                         mapping = arm_iommu_create_mapping(&platform_bus_type,
+    114                                 EXYNOS_DEV_ADDR_START, EXYNOS_DEV_ADDR_SIZE);
+    115                 else if (IS_ENABLED(CONFIG_IOMMU_DMA))
+    116                         mapping = iommu_get_domain_for_dev(priv->dma_dev);
+
+arm_iommu_create_mapping() and iommu_get_domain_for_dev() seem to return
+NULL on error.
+
+    117                 else
+    118                         mapping = ERR_PTR(-ENODEV);
+    119 
+--> 120                 if (IS_ERR(mapping))
+    121                         return PTR_ERR(mapping);
+
+Smatch uses the pre-compiled code so it says that mapping is always NULL
+on this config...
+
+    122                 priv->mapping = mapping;
+    123         }
+    124 
+    125         return drm_iommu_attach_device(drm, dev, dma_priv);
+    126 }
+
+regards,
+dan carpenter
