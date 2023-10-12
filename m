@@ -2,152 +2,192 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 137F5CDB46E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Oct 2023 16:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81176CDB482
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Oct 2023 16:45:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347325AbjJLQlK (ORCPT
+        id S1344029AbjJLQp3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 12 Oct 2023 12:41:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41600 "EHLO
+        Thu, 12 Oct 2023 12:45:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344003AbjJLQlJ (ORCPT
+        with ESMTP id S1344038AbjJLQp2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 12 Oct 2023 12:41:09 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1754C0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Oct 2023 09:41:05 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1c9c145bb5bso178655ad.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Oct 2023 09:41:05 -0700 (PDT)
+        Thu, 12 Oct 2023 12:45:28 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02621A9
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Oct 2023 09:45:26 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-9b2cee55056so207296366b.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Oct 2023 09:45:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1697128865; x=1697733665; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cSKjALH7K6gqrT2RIcyszQs/ymuQ9k0jAbQvHQpJcQA=;
-        b=CdiVfbCXvfWqv8mkRE4NkVfrWQNrE3h9EzzNhv2rdreG3Rw7byj6e3OAFBHdHvYdo0
-         HLJzoSmcK1o/Pm2vQ5UGVlDdlmTAvI//2rEt8DYfanRPGLMogz1ZsNcCMrq7by9V4SDp
-         tjCMAD6RI/rkTjOiKwLndGJGzP/r2Ci819U9S2VEoKst0Zc1sORnoFAX2IwrG7DNkXnC
-         I2zswzY6L6S5lN3g8bD+Wey+B4YjibOeh7rQXtcZS+sovZjOxnanVMILQytE1MozuEd5
-         3+OQqu6vx14ijZkiBZ9xs0y0nFOaUMFjnbOd42y7A6WgOZyUB3hXENzdb+8H2hNWhoA/
-         HSTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697128865; x=1697733665;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1697129123; x=1697733923; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cSKjALH7K6gqrT2RIcyszQs/ymuQ9k0jAbQvHQpJcQA=;
-        b=wRfIrFIYW9bgJfMK1HGTQzkyYvC1O3a4D+nYzAYRSvJkUF9iy8fVPOol8xmH4ISvln
-         /1RWQvL90lCLKNlAI5AXtBrnoFvvkVbKP1O54K7UHM1yH0CkXIfD0Ifiv41EHoZA1vg3
-         yc92/L3BTZRENMshlRhaZcL/ICT/uVVr4SvtTyG543WScivxly8xUepR/98VPPJwhAIk
-         4z4ibyVl4vz8M9gCEcNahiUw2OmyYHFCVY6awLJ1AHZ9ZCQhKmltSOhj8x87LQd4Vyn1
-         qglQK0lGi3gcjL4iL6ab+9yG71OmrY405NkTR/d4TLgUegs/U9aQb1eYSb9kl7OZJE5t
-         ckSg==
-X-Gm-Message-State: AOJu0Yw7Ap8eCHT/wzCsESU6J0pktK9eT3TwaJsyIuPT6nT8cVDxkpcK
-        hQFgO5gJG1gK8qZ4chdemrMbUQ==
-X-Google-Smtp-Source: AGHT+IGbop51QjWpgXb5pkCyl9/yUmkBYSbumMYF7aG+hEKDNgoq4+8TkErlkAcvF9Oq1e+uxKOYXQ==
-X-Received: by 2002:a17:902:f54e:b0:1c1:e54a:3971 with SMTP id h14-20020a170902f54e00b001c1e54a3971mr478238plf.1.1697128864785;
-        Thu, 12 Oct 2023 09:41:04 -0700 (PDT)
-Received: from google.com (137.22.168.34.bc.googleusercontent.com. [34.168.22.137])
-        by smtp.gmail.com with ESMTPSA id 9-20020a17090a190900b002792b7182dcsm2224617pjg.49.2023.10.12.09.41.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Oct 2023 09:41:04 -0700 (PDT)
-Date:   Thu, 12 Oct 2023 09:41:01 -0700
-From:   William McVicker <willmcvicker@google.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, gregkh@linuxfoundation.org, cw00.choi@samsung.com,
-        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-        semen.protsenko@linaro.org, saravanak@google.com, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org
-Subject: Re: [PATCH v3 02/20] dt-bindings: clock: Add Google gs101 clock
- management unit bindings
-Message-ID: <ZSghnUygaF5ReC4Y@google.com>
-References: <20231011184823.443959-1-peter.griffin@linaro.org>
- <20231011184823.443959-3-peter.griffin@linaro.org>
- <ZScYOUi7qhvGmMIF@google.com>
- <e4523fc3-e1dd-4791-b950-98dfc6dce1f5@linaro.org>
- <CADrjBPpntJMsxb6oGQ7zuX3f0dgE3oYFepL4OdxamBz=_or7kw@mail.gmail.com>
- <21742fbf-8484-42ab-aba1-379305091946@linaro.org>
- <CADrjBPpF3Ta67QzUqyXD1YSFV_kFWqujCxPAjKbvRNhgXeMmOg@mail.gmail.com>
- <67ce052e-ac78-492f-9a36-6947ce161951@linaro.org>
+        bh=XB7Wf5LgsYf36+k+zhs9TduHabjcJcCiXT3QAGky0tQ=;
+        b=PQXg8gaPH0o714Os32OyWfzyCYiyDCtxPyzicgHC20w0Nt9ap5iiuNZ3Ts2VL1M8Y3
+         S5zQeHzgLQBqzJAdHU472H7KTWqJ0bAKiZNRDyYs4kQlOgosMsBJq6jSEQqbezrFktkn
+         rPQzoCKSCiVhZeOaN9DrynQLGfqllnb+psJe4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697129123; x=1697733923;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XB7Wf5LgsYf36+k+zhs9TduHabjcJcCiXT3QAGky0tQ=;
+        b=w6XUNq3TrLNZdnlmApEySSMRzei105kWip9xwb5a7CT0RRdYjOAqRTdSOddtbOeBmv
+         m6ruvHhKQVByhc/ehpN1Z1IKrczWsD7q9tKbVdIaAfW/LiYv/49egcSg8pw9SgZQxNsP
+         lRtN583sS+lLAWeCEFPQ8qrtOAAWcSl38TE0E4oXU0zs/bU+3l8BOAoF9uUmEhOTh7oR
+         Ie6T/0pjGP3IxzyxPGOiHGQbdX64ZED2+bKaXspyew5UN8HsyYOqB0pYuo8/FDkEu9FR
+         /YFZWjE8NyEqwD5fWCPtkd/0Neymwz+m/m89lW3EAN6ot1LO3HuRrMUcjq1GU+tiGXca
+         E5XQ==
+X-Gm-Message-State: AOJu0YxUIZZtc5lvaTWmUSQAKDBEBIeebF2+UD1E0BjPDTzGJ1dDmA8Q
+        JrytyByw4Zn6ftwbb0Djt18UX4NrOtODrp311MxdpQ==
+X-Google-Smtp-Source: AGHT+IFNGOt7gTQOfLVMXK2bDAbUULrIe2OuzHTe7J2+LBTm6e54RQEggVZeCw29kCes2QGwPEMKVQ==
+X-Received: by 2002:a17:906:53c8:b0:9ae:522e:8f78 with SMTP id p8-20020a17090653c800b009ae522e8f78mr20316811ejo.74.1697129122757;
+        Thu, 12 Oct 2023 09:45:22 -0700 (PDT)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com. [209.85.128.49])
+        by smtp.gmail.com with ESMTPSA id p6-20020a1709061b4600b0098e2969ed44sm11172977ejg.45.2023.10.12.09.45.22
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Oct 2023 09:45:22 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-405459d9a96so1975e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Oct 2023 09:45:22 -0700 (PDT)
+X-Received: by 2002:a05:600c:3c96:b0:3f6:f4b:d4a6 with SMTP id
+ bg22-20020a05600c3c9600b003f60f4bd4a6mr262956wmb.7.1697129121865; Thu, 12 Oct
+ 2023 09:45:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67ce052e-ac78-492f-9a36-6947ce161951@linaro.org>
+References: <20230925150010.1.Iff672233861bcc4cf25a7ad0a81308adc3bda8a4@changeid>
+ <b0037c9f-588b-4eb8-6415-0fe75bed264f@collabora.com> <CAD=FV=UWQgLLfU4X+6OUR5AWOkJKwG9J7BbKGRCgze6LTY6JNw@mail.gmail.com>
+ <CAD=FV=UqG6DiAyjcLKeoUWKutepGd46Zx=8O-NWKoYC-fZEG6g@mail.gmail.com> <c3380c97-1b8c-5a68-168e-fc6150701365@postmarketos.org>
+In-Reply-To: <c3380c97-1b8c-5a68-168e-fc6150701365@postmarketos.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 12 Oct 2023 09:45:09 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WAYYv5h6oWWhEJHyZesE5cguBqVufCmK6s4gvMeNkCWg@mail.gmail.com>
+Message-ID: <CAD=FV=WAYYv5h6oWWhEJHyZesE5cguBqVufCmK6s4gvMeNkCWg@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel: Move AUX B116XW03 out of panel-edp back to panel-simple
+To:     Anton Bambura <jenneron@postmarketos.org>
+Cc:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        Hsin-Yi Wang <hsinyi@chromium.org>, matthias.bgg@gmail.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>, airlied@gmail.com,
+        daniel@ffwll.ch, jitao.shi@mediatek.com, linus.walleij@linaro.org,
+        linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
+        quic_jesszhan@quicinc.com, sam@ravnborg.org,
+        Anton Bambura <jenneron@protonmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+Hi,
 
-On 10/12/2023, Krzysztof Kozlowski wrote:
-> On 12/10/2023 12:45, Peter Griffin wrote:
-> > Hi Krzysztof,
-> > 
-> > On Thu, 12 Oct 2023 at 10:36, Krzysztof Kozlowski
-> > <krzysztof.kozlowski@linaro.org> wrote:
+On Sun, Oct 8, 2023 at 1:52=E2=80=AFPM Anton Bambura <jenneron@postmarketos=
+.org> wrote:
+>
+>
+> On 10/5/23 21:10, Doug Anderson wrote:
+> > Hi,
+> >
+> > On Tue, Sep 26, 2023 at 7:01=E2=80=AFAM Doug Anderson <dianders@chromiu=
+m.org> wrote:
+> >> Hi,
 > >>
-> >> On 12/10/2023 10:56, Peter Griffin wrote:
-> >>> Hi Krzysztof,
-> >>>
-> >>> On Thu, 12 Oct 2023 at 07:07, Krzysztof Kozlowski
-> >>> <krzysztof.kozlowski@linaro.org> wrote:
+> >> On Tue, Sep 26, 2023 at 1:06=E2=80=AFAM AngeloGioacchino Del Regno
+> >> <angelogioacchino.delregno@collabora.com> wrote:
+> >>> Il 26/09/23 00:00, Douglas Anderson ha scritto:
+> >>>> In commit 5f04e7ce392d ("drm/panel-edp: Split eDP panels out of
+> >>>> panel-simple") I moved a pile of panels out of panel-simple driver
+> >>>> into the newly created panel-edp driver. One of those panels, howeve=
+r,
+> >>>> shouldn't have been moved.
 > >>>>
-> >>>> On 11/10/2023 23:48, William McVicker wrote:
-> >>>>> On 10/11/2023, Peter Griffin wrote:
-> >>>>>> Provide dt-schema documentation for Google gs101 SoC clock controller.
-> >>>>>> Currently this adds support for cmu_top, cmu_misc and cmu_apm.
-> >>>>>>
-> >>>>>> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> >>>>>
-> >>>>> Tested-by: Will McVicker <willmcvicker@google.com>
+> >>>> As is clear from commit e35e305eff0f ("drm/panel: simple: Add AUO
+> >>>> B116XW03 panel support"), AUX B116XW03 is an LVDS panel. It's used i=
+n
+> >>>> exynos5250-snow and exynos5420-peach-pit where it's clear that the
+> >>>> panel is hooked up with LVDS. Furthermore, searching for datasheets =
+I
+> >>>> found one that makes it clear that this panel is LVDS.
 > >>>>
-> >>>> And how do you perform testing of a binding?
-> >>>
-> >>> I guess if William is using my script to build and flash the kernel it actually
-> >>> runs the DTC checks as part of the build process.
-> >>>
-> >>> See https://git.codelinaro.org/linaro/googlelt/pixelscripts/-/blob/clo/main/buildp21upstream.sh#L44
+> >>>> As far as I can tell, I got confused because in commit 88d3457ceb82
+> >>>> ("drm/panel: auo,b116xw03: fix flash backlight when power on") Jitao
+> >>>> Shi added "DRM_MODE_CONNECTOR_eDP". That seems wrong. Looking at the
+> >>>> downstream ChromeOS trees, it seems like some Mediatek boards are
+> >>>> using a panel that they call "auo,b116xw03" that's an eDP panel. The
+> >>>> best I can guess is that they actually have a different panel that h=
+as
+> >>>> similar timing. If so then the proper panel should be used or they
+> >>>> should switch to the generic "edp-panel" compatible.
+> >>>>
+> >>>> When moving this back to panel-edp, I wasn't sure what to use for
+> >>>> .bus_flags and .bus_format and whether to add the extra "enable" del=
+ay
+> >>>> from commit 88d3457ceb82 ("drm/panel: auo,b116xw03: fix flash
+> >>>> backlight when power on"). I've added formats/flags/delays based on =
+my
+> >>>> (inexpert) analysis of the datasheet. These are untested.
+> >>>>
+> >>>> NOTE: if/when this is backported to stable, we might run into some
+> >>>> trouble. Specifically, before 474c162878ba ("arm64: dts: mt8183:
+> >>>> jacuzzi: Move panel under aux-bus") this panel was used by
+> >>>> "mt8183-kukui-jacuzzi", which assumed it was an eDP panel. I don't
+> >>>> know what to suggest for that other than someone making up a bogus
+> >>>> panel for jacuzzi that's just for the stable channel.
+> >>>>
+> >>>> Fixes: 88d3457ceb82 ("drm/panel: auo,b116xw03: fix flash backlight w=
+hen power on")
+> >>>> Fixes: 5f04e7ce392d ("drm/panel-edp: Split eDP panels out of panel-s=
+imple")
+> >>>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> >>>> ---
+> >>>> I haven't had a snow or peach-pit hooked up for debugging / testing
+> >>>> for years. I presume that they must be broken and hope that this fix=
+es
+> >>>> them.
+> >>> We could avoid backport breakages by avoiding to backport this to any=
+ kernel
+> >>> that doesn't contain commit 474c162878ba ("arm64: dts: mt8183: jacuzz=
+i: Move
+> >>> panel under aux-bus")... because creating a dummy panel to get two wr=
+ongs
+> >>> right is definitely not ok.
+> >> Sure, except that leaves us with ... a breakage. :-P
 > >>
-> >> So it is a build test? We do not consider building as a test procedure,
-> >> otherwise I should add my and robots tested-by to many other patches.
-> > 
-> > Ok so I should only add the Tested-by on the .c patches?
-> 
-> In my opinion, if someone performs only build testing, it is not a
-> testing. You cannot test the bindings other way than build testing, at
-> least I do not know such way. Of course other code like C or DTS affects
-> hardware so it can be tested.
+> >> Although I haven't tested it, I have a hard time believing that
+> >> exynos5250-snow and exynos5420-peach-pit will work properly with the
+> >> panel defined as an eDP panel. That means that they will be broken. If
+> >> someone cared to get those fixed in a stable backport then we'd be
+> >> stuck deciding who to break. If you have any brilliant ideas then I'm
+> >> all ears.
+> >>
+> >> ...then again, I presume this has been broken since commit
+> >> 88d3457ceb82 ("drm/panel: auo,b116xw03: fix flash backlight when power
+> >> on"). That was a little over 3 years ago. Maybe I'm wrong and somehow
+> >> things still limp along and sorta work even though the panel is
+> >> defined incorrectly?
+> > I dug out a exynos5250-snow out of my pile and booted postmarket OS on
+> > it, which was shockingly easy/pleasant (kudos to those involved!). I
+> > found that it was booting a kernel based on 6.1.24. Digging into
+> > sysfs, I found that indeed it appeared to be using the "panel-edp"
+> > driver, so I guess it is limping along with the wrong driver and wrong
+> > flags...
+> >
+> > It wasn't totally clear for me how to build a new kernel and deploy it
+> > for postmarket OS, so I wasn't able to confirm this change. I've CCed
+> > the person listed on the postmarket OS wiki though to see if they have
+> > any insight.
+> Tested it on peach-pit using linux-next with this patch applied. Panel
+> still works and "dmesg | grep panel" returns panel_simple instead of
+> panel_edp.
+>
+> Tested-by: Anton Bambura <jenneron@postmarketos.org>
 
-What additional testing beside building and booting do you prefer at this
-stage? I put my Tested-by for this patch because it includes the google,gs101.h
-header which is used by the DT and clock controller driver during boot. Maybe
-I should have been more clear on what I tested in each patch instead of only
-mentioning how I tested in the cover letter?
+Pushed to drm-misc-fixes:
 
-Sorry for the confusion.
+ad3e33fe071d drm/panel: Move AUX B116XW03 out of panel-edp back to panel-si=
+mple
 
-Thanks,
-Will
-
-> 
-> > 
-> >> Shall I consider other Tested-by tags here also as build-tested only?
-> > 
-> > No. William indicated here
-> > https://lore.kernel.org/linux-arm-kernel/ZScZu-QB2LmB4CSM@google.com/T/#mbd96a26b725d6c85eb4193de8cd70ff277bc728e
-> > that he booted it on his Oriole device.
-> 
-> 
-> OK, I was just a bit confused.
-> 
-> Best regards,
-> Krzysztof
-> 
+-Doug
