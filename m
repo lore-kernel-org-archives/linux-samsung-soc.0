@@ -2,116 +2,217 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A148CDB482
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Oct 2023 09:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54153C46CA1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Oct 2023 10:15:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229762AbjJLJox (ORCPT
+        id S1347137AbjJLKPY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 12 Oct 2023 05:44:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58960 "EHLO
+        Thu, 12 Oct 2023 06:15:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235480AbjJLJow (ORCPT
+        with ESMTP id S1347111AbjJLKPW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 12 Oct 2023 05:44:52 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FF389D
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Oct 2023 02:44:51 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-317c3ac7339so715464f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Oct 2023 02:44:50 -0700 (PDT)
+        Thu, 12 Oct 2023 06:15:22 -0400
+Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 067E2E6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Oct 2023 03:15:19 -0700 (PDT)
+Received: by mail-qv1-xf2d.google.com with SMTP id 6a1803df08f44-66cfd35f595so4652436d6.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Oct 2023 03:15:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697103889; x=1697708689; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k+QKwp7nbl5f01p02Qg76ygu3plfUspesE0c3bZjqAw=;
-        b=ysniDGXROvSZpFs+6obmOEl28B90oClamTM7uit7vfxIxZ2yBfpujMeVJJrqZSmuR4
-         dqOUYUxflNwEzNDpeEyUWttJqryx7i1KhetHexF+ltsNzggA9fe4T0ZD1YIMVi4Vz+N/
-         8rMyi52elUcgTlSwJ5jR6QVS2GTsnZb17Ptqrh0xCbgTUmz/rGwTKcAQ5spJ3dDG2SyU
-         idxheDIPymExuG16vK0jWLXpaVYilVtaIWQVBPf/ZYm7a3D2kuAqEFJi5yAJ2SZI1K2t
-         M/xNDIZoSgmw+Sh6ktMt0yHCVr0/yAwWzZ25jSNK7qGo+FVt8BPLOtQx7O05vsPijGbn
-         djkA==
+        d=linaro.org; s=google; t=1697105718; x=1697710518; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4bfmHiCpC0jdM/8Nmc5CLWmrrts9axW4w44tXuO9DcI=;
+        b=Mau7NHR0b2aPF+Txd8J6JkUTo8sF3sv0sAg5q4yO03xHdzTYYdHql4+KxeQ3xOnyHX
+         P7J2cVnmz29UDTphZg9aWrZA7aF2xkrAOvQ7SyYYHd9szBsMjILvQzRK5E5Ptrx8eBfN
+         c5GleJal1Jgi6QNFa7qxzZo6YzkVN/rORwOGeAvMFd244uikpMNadh3OsJb9hQtg8Ys6
+         7iuLf2r/erNhleLjMwmCUGNKqjoaMLL/iZQkwlu3gCZBpoLRF2wKXgmkEWkb0hL3muav
+         H7bYLqekLbZuKiSWbroDui5xku444r6o02QRzlY2i53OWEMP9atOsv6r3/LZ7Qh1awIW
+         4iDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697103889; x=1697708689;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k+QKwp7nbl5f01p02Qg76ygu3plfUspesE0c3bZjqAw=;
-        b=qJqxnMyMwbn8no+vZOe/0cTDIZ3xVAL7ZMQEZMEBjoLaIkYpyyReO7wWzVJL7CzEK/
-         nhf9GjmcGPiohlmWrI46LnvlOb148c64UHDCXv6n5ZFTAUARkU6TsvgJdwGjeJdp7ApQ
-         EPOVwQmj7QTfPRSIGzXhESJ1+nmQx7in1YSLTMI2U8VV+dxg0OARg91rZMUysWKFZ2+0
-         WZO8BqLqlulkLQjcA8OlhJ8XVgErDsi2RpW1k1UcJWXV0XMPojQRgwTPjiXXxzjcNpRI
-         Lo5XmkhL54IPa9rxIIyzImOmzc5T6EOkYCmR3WabtZWm0rLSKWGl61LvaqeD7QWM6HbR
-         Bpgw==
-X-Gm-Message-State: AOJu0YyiZQDifHwliGV8MFR3qDkEEFNX5gKjKkTNgekOIZ8PpTKZrDMK
-        XCYvxTMFeAkPmARFUnEr/S+WUA==
-X-Google-Smtp-Source: AGHT+IG7sLNYr0zpChWt8fMpTJKOcqZ3lRnegx7zppgFF1S6sXIq/A7SPemRfc4R3uX5KM5QEnagzw==
-X-Received: by 2002:a5d:474c:0:b0:32d:93aa:3d63 with SMTP id o12-20020a5d474c000000b0032d93aa3d63mr634911wrs.69.1697103889452;
-        Thu, 12 Oct 2023 02:44:49 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id e11-20020adfe7cb000000b003176c6e87b1sm17890924wrn.81.2023.10.12.02.44.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Oct 2023 02:44:49 -0700 (PDT)
-Date:   Thu, 12 Oct 2023 12:44:46 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     andrzej.hajda@intel.com
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Subject: [bug report] drm/exynos/iommu: merge IOMMU and DMA code
-Message-ID: <33e52277-1349-472b-a55b-ab5c3462bfcf@moroto.mountain>
+        d=1e100.net; s=20230601; t=1697105718; x=1697710518;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4bfmHiCpC0jdM/8Nmc5CLWmrrts9axW4w44tXuO9DcI=;
+        b=nvAhrAlEVa8wo+GpYcu/A8NXG0ZmEeP9/fP91/o71eQVskbWAvCIJSI0mG3c+I2KI6
+         sy9sqqj/3qA8Jp8+hUoSDQLStCLUBiYJBgoutN09DVk7ZCXPYXXe4rzb3beMVq5Xhacf
+         wK3zj/WWl395P6vQSWYBwQp2Z/RRqQxGEI07sOBMRGeuyhwhOByrkGTcTFTnUeX1rMLl
+         Q1omxucOhmk4oTT5K3X7OuBvdoMAjND00DO4M89u2dfT7N7hvCMxykwbdEFMgsB2uzfJ
+         bt+7NSEAc5/cU6rZBOLKF6X7bJ/9/k46y/EJF4ij2QN5B6hKcO2OucF1YZaYxg5E/ecB
+         ry1w==
+X-Gm-Message-State: AOJu0YzOTxjRqOcE6GSqxYDGWaQ5Vsg1o38YE5Q2BVbrIEbNPvfI/QTo
+        Dxrdddv4bW0ZWd6kv1S6fVDBtIoV8W+IdF+0VsLYrg==
+X-Google-Smtp-Source: AGHT+IEr9WuwYaxxoqJYFrbfAwBrWEHdqAE5exk8Mtmrx/Nk29qQXhDrGvuFAVS7ncKWTmolqk5rMwGO1qR3JFlm9Cg=
+X-Received: by 2002:a05:6214:2c04:b0:65a:fcd1:1d85 with SMTP id
+ qq4-20020a0562142c0400b0065afcd11d85mr24813204qvb.60.1697105718086; Thu, 12
+ Oct 2023 03:15:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20231011184823.443959-1-peter.griffin@linaro.org>
+ <20231011184823.443959-3-peter.griffin@linaro.org> <5907e2b3-9a0b-4871-be08-6ca42200b8ec@linaro.org>
+In-Reply-To: <5907e2b3-9a0b-4871-be08-6ca42200b8ec@linaro.org>
+From:   Peter Griffin <peter.griffin@linaro.org>
+Date:   Thu, 12 Oct 2023 11:15:06 +0100
+Message-ID: <CADrjBPqF67bcTnssQO8cN2n1ZbevziVNa+gA5azEDz_1wXzaNQ@mail.gmail.com>
+Subject: Re: [PATCH v3 02/20] dt-bindings: clock: Add Google gs101 clock
+ management unit bindings
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
+        cw00.choi@samsung.com, tudor.ambarus@linaro.org,
+        andre.draszik@linaro.org, semen.protsenko@linaro.org,
+        saravanak@google.com, willmcvicker@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello Andrzej Hajda,
+Hi Krzysztof,
 
-The patch 67fbf3a3ef84: "drm/exynos/iommu: merge IOMMU and DMA code"
-from Oct 12, 2018 (linux-next), leads to the following Smatch static
-checker warning:
+Thanks for your review.
 
-	drivers/gpu/drm/exynos/exynos_drm_dma.c:120 exynos_drm_register_dma()
-	warn: 'mapping' isn't an ERR_PTR
+On Thu, 12 Oct 2023 at 07:11, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 11/10/2023 20:48, Peter Griffin wrote:
+> > Provide dt-schema documentation for Google gs101 SoC clock controller.
+> > Currently this adds support for cmu_top, cmu_misc and cmu_apm.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  .../bindings/clock/google,gs101-clock.yaml    | 125 ++++++++++
+> >  include/dt-bindings/clock/google,gs101.h      | 232 ++++++++++++++++++
+> >  2 files changed, 357 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> >  create mode 100644 include/dt-bindings/clock/google,gs101.h
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> > new file mode 100644
+> > index 000000000000..f74494594b3b
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> > @@ -0,0 +1,125 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/google,gs101-clock.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Google GS101 SoC clock controller
+> > +
+> > +maintainers:
+> > +  - Peter Griffin <peter.griffin@linaro.org>
+> > +
+> > +description: |
+> > +  Google GS101 clock controller is comprised of several CMU units, generating
+> > +  clocks for different domains. Those CMU units are modeled as separate device
+> > +  tree nodes, and might depend on each other. The root clock in that clock tree
+> > +  is OSCCLK (24.576 MHz). That external clock must be defined as a fixed-rate
+> > +  clock in dts.
+> > +
+> > +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
+> > +  dividers; all other leaf clocks (other CMUs) are usually derived from CMU_TOP.
+> > +
+> > +  Each clock is assigned an identifier and client nodes can use this identifier
+> > +  to specify the clock which they consume. All clocks available for usage
+> > +  in clock consumer nodes are defined as preprocessor macros in
+> > +  'dt-bindings/clock/gs101.h' header.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - google,gs101-cmu-top
+> > +      - google,gs101-cmu-apm
+> > +      - google,gs101-cmu-misc
+> > +
+> > +  clocks:
+> > +    minItems: 1
+> > +    maxItems: 2
+> > +
+> > +  clock-names:
+> > +    minItems: 1
+> > +    maxItems: 2
+> > +
+> > +  "#clock-cells":
+> > +    const: 1
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +allOf:
+>
+> No improvements here from v1.
 
-drivers/gpu/drm/exynos/exynos_drm_dma.c
-    95 int exynos_drm_register_dma(struct drm_device *drm, struct device *dev,
-    96                             void **dma_priv)
-    97 {
-    98         struct exynos_drm_private *priv = drm->dev_private;
-    99 
-    100         if (!priv->dma_dev) {
-    101                 priv->dma_dev = dev;
-    102                 DRM_INFO("Exynos DRM: using %s device for DMA mapping operations\n",
-    103                          dev_name(dev));
-    104         }
-    105 
-    106         if (!IS_ENABLED(CONFIG_EXYNOS_IOMMU))
-    107                 return 0;
-    108 
-    109         if (!priv->mapping) {
-    110                 void *mapping;
-    111 
-    112                 if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU))
-    113                         mapping = arm_iommu_create_mapping(&platform_bus_type,
-    114                                 EXYNOS_DEV_ADDR_START, EXYNOS_DEV_ADDR_SIZE);
-    115                 else if (IS_ENABLED(CONFIG_IOMMU_DMA))
-    116                         mapping = iommu_get_domain_for_dev(priv->dma_dev);
+Seems I missed the
+"required:" go before "allOf:" comment here. Sorry about that I've fixed that
+in v4.
 
-arm_iommu_create_mapping() and iommu_get_domain_for_dev() seem to return
-NULL on error.
+Seems like a few other exynos clock yaml bindings need that fix to.
 
-    117                 else
-    118                         mapping = ERR_PTR(-ENODEV);
-    119 
---> 120                 if (IS_ERR(mapping))
-    121                         return PTR_ERR(mapping);
+>
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: google,gs101-cmu-top
+> > +
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          items:
+> > +            - description: External reference clock (24.576 MHz)
+> > +
+> > +        clock-names:
+> > +          items:
+> > +            - const: oscclk
+> > +
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+>
+> enum:
+>   - google,gs101-cmu-apm
+>   - google,gs101-cmu-misc
 
-Smatch uses the pre-compiled code so it says that mapping is always NULL
-on this config...
+Ok just to be clear, are you saying I should have it like this?
 
-    122                 priv->mapping = mapping;
-    123         }
-    124 
-    125         return drm_iommu_attach_device(drm, dev, dma_priv);
-    126 }
+  - if:
+      properties:
+        compatible:
+          contains:
+            enum:
+              - google,gs101-cmu-misc
+              - google,gs101-cmu-apm
 
-regards,
-dan carpenter
+    then:
+      properties:
+        clocks:
+          minItems: 1
+          items:
+            - description: External reference clock (24.576 MHz)
+            - description: Misc bus clock (from CMU_TOP)
+
+        clock-names:
+          minItems: 1
+          items:
+            - const: oscclk
+            - const: dout_cmu_misc_bus
+
+Instead of a dedicated  'if: const <compatible> then: ' for each CMU?
+
+If I'm wrong above would you been kind enough to elaborate a bit
+more on what you want, as all this dt-schema yaml stuff is a bit new
+for me
+
+Many thanks,
+
+Peter
