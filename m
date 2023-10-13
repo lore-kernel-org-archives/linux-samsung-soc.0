@@ -2,50 +2,50 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDA4CDB482
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Oct 2023 21:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2903BCDB482
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Oct 2023 07:12:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344156AbjJLVC4 (ORCPT
+        id S229879AbjJMHMq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 12 Oct 2023 17:02:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40384 "EHLO
+        Fri, 13 Oct 2023 03:12:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344202AbjJLVC4 (ORCPT
+        with ESMTP id S229751AbjJMHMq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 12 Oct 2023 17:02:56 -0400
+        Fri, 13 Oct 2023 03:12:46 -0400
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C39AAA9
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Oct 2023 14:02:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83AFABE
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Oct 2023 00:12:44 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qr2pU-000772-Cv; Thu, 12 Oct 2023 23:02:48 +0200
+        id 1qrCLi-0006cS-Ag; Fri, 13 Oct 2023 09:12:42 +0200
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qr2pQ-001EgW-QN; Thu, 12 Oct 2023 23:02:44 +0200
+        id 1qrCLg-001LHW-Fe; Fri, 13 Oct 2023 09:12:40 +0200
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qr2pQ-00FDqj-HD; Thu, 12 Oct 2023 23:02:44 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
+        id 1qrCLg-00FOqd-6A; Fri, 13 Oct 2023 09:12:40 +0200
+Date:   Fri, 13 Oct 2023 09:12:40 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+Cc:     linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        kernel@pengutronix.de, kernel test robot <lkp@intel.com>
-Subject: [PATCH] pwm: samsung: Document new member .channel in struct samsung_pwm_chip
-Date:   Thu, 12 Oct 2023 23:02:29 +0200
-Message-ID: <20231012210228.1009473-2-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.42.0
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] pwm: samsung: Document new member .channel in struct
+ samsung_pwm_chip
+Message-ID: <20231013071240.d4d5cnr25q4ezatv@pengutronix.de>
+References: <20231012210228.1009473-2-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1085; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=TinZcVixfWff9r+KWwFdJry6obdM5LE5EMAISvNNtLI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlKF7l6LUqJ6xBMLocRVt/FQXn9YKx6IyvCLH6Z YDeIzqfewCJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZShe5QAKCRCPgPtYfRL+ Ti2zB/98m5mKAl8kqq5TU8HWCMKZhHOPU0j/K+ZSOWYWXB+zmnmmLfB7VAcRfpjolGAd1QZJxj3 QBuaMHQwZ9swkzvNSRpLHZdAoc001DPKMD+j0EhYT1std5J6CxUc1s/A4v8+8ts2oUO20WmfOYM +9Q4Xdaz0Hy3iuKC5MYRt8HvQobwGSCtkk/wunKLCTUl89VNxlxAvsQxNkG5a3lNuIyY1zrS5V5 fG66pAm0mtEhQiGP/yoQsPrxLCjU/lWgcMH7ied5+LM4vViLAZQLY0ZrgMvEkighjjA0eedu5c1 +R2+1O/NsM9G50leXkB41r45cnrEGDqk9Rv5svBbgX8YJPy3
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ff4z2vkwr6lxehao"
+Content-Disposition: inline
+In-Reply-To: <20231012210228.1009473-2-u.kleine-koenig@pengutronix.de>
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
 X-SA-Exim-Mail-From: ukl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
@@ -54,32 +54,50 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-My earlier commit reworking how driver data is tracked added a new
-member to struct samsung_pwm_chip but failed to add matching
-documentation. Make up leeway.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202310130404.uQ33q5Dk-lkp@intel.com/
-Fixes: 4c9548d24c0d ("pwm: samsung: Put per-channel data into driver data")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/pwm/pwm-samsung.c | 1 +
- 1 file changed, 1 insertion(+)
+--ff4z2vkwr6lxehao
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-index c437fab7ded8..42f8587087fb 100644
---- a/drivers/pwm/pwm-samsung.c
-+++ b/drivers/pwm/pwm-samsung.c
-@@ -77,6 +77,7 @@ struct samsung_pwm_channel {
-  * @base_clk:		base clock used to drive the timers
-  * @tclk0:		external clock 0 (can be ERR_PTR if not present)
-  * @tclk1:		external clock 1 (can be ERR_PTR if not present)
-+ * @channel:		per channel driver data
-  */
- struct samsung_pwm_chip {
- 	struct pwm_chip chip;
+Hello Thierry,
 
-base-commit: 4c9548d24c0d4034f056e2c9f0e72599a382a846
--- 
-2.42.0
+On Thu, Oct 12, 2023 at 11:02:29PM +0200, Uwe Kleine-K=F6nig wrote:
+> My earlier commit reworking how driver data is tracked added a new
+> member to struct samsung_pwm_chip but failed to add matching
+> documentation. Make up leeway.
+>=20
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202310130404.uQ33q5Dk-lkp@i=
+ntel.com/
+> Fixes: 4c9548d24c0d ("pwm: samsung: Put per-channel data into driver data=
+")
+> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
 
+I forgot to mention: Feel free to squash this into 4c9548d24c0d. I guess
+you have to rewrite your for-next anyhow as the commits you took from my
+PR and rebased on your for-next lack your S-o-b.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--ff4z2vkwr6lxehao
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmUo7ecACgkQj4D7WH0S
+/k5ZuQf+KolNeWfl7PqqToTN0zx7clRq0BvbqOyuVGvxoRUS49GUO3Gck4xNU+pJ
++ff3Ba9LrUbaIi4zt21sWc7Fv2LSGGCtkf99486xA18aJ/FNeLk+MXGnS/jNNB5Q
+3y3ZhOUIcdV4T3SrCkYdL0/14jILGlDFINw/18xEYVrFg+drkRbRQinDkOIbW3Ep
+vRAeVy9IiCyR/MUDVMSvkZXUacXkyBvfCxYrDW59DzyPVElj9Hdz7oMGIsl8wua/
+Lm9cMQ+K5YrUGSNJWLnTTy2Ycykyo75iU89J0wyIaaM6NUD03K4RsOfmFv7VuGej
+1lD5813SS/iWPwSv6SJ3Yr3B1BuDuQ==
+=o57V
+-----END PGP SIGNATURE-----
+
+--ff4z2vkwr6lxehao--
