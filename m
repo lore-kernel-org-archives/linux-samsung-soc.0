@@ -2,89 +2,99 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAEE9CDB483
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Oct 2023 13:29:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE46CDB483
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Oct 2023 17:27:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231823AbjJMN3u (ORCPT
+        id S229697AbjJMR17 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 13 Oct 2023 09:29:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55156 "EHLO
+        Fri, 13 Oct 2023 13:27:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231840AbjJMN3t (ORCPT
+        with ESMTP id S231381AbjJMR15 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Oct 2023 09:29:49 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DDA2BF;
-        Fri, 13 Oct 2023 06:29:45 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-9ba081173a3so349559866b.1;
-        Fri, 13 Oct 2023 06:29:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697203783; x=1697808583; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vzg3arDSnTgx9Lh5/L+TCT0XkQL6hfP1PayFQO5ztB0=;
-        b=Bz2+FEnYdBCwjT0J5nJ1jnD8/85jy5znPPhDvrh5BGnR0E6qkMBPOTv+I95tMpF4Ku
-         xqI0EGkwReaNYkNluq4t5CQjexfAOADX/uCZbIPir7t4dYUoSEKKhbpAshtZ+6HGnV7u
-         nAJ5sYEnu1kD7jJUhsY4KKGgPseygPBN27q7DQPB9L2z4BPEHdJ9OgvObMrx23d4hCUO
-         KvdufG1AH7tPJDLzot/0H20u1k9/wzWjyM5tKC2bmNlYiZ+uuCwuP1/sS8zRfMnok8S7
-         LB4/PqJ0SrVGilOE2CvS+XVDkDjieeEz+EUbAZl5tL/fy4Tq8W2Ky07gTPkwYu8UNUaW
-         3XYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697203783; x=1697808583;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vzg3arDSnTgx9Lh5/L+TCT0XkQL6hfP1PayFQO5ztB0=;
-        b=O5RYqKJvtnayQpxICOaFwoIlIY5K4bAHq/jj7Gx4ne5LpB90XjL3AvpWH3csOZfUXI
-         lnTm6r9W3HlJYtk/kkp8cs8uxmP2RmX3otnRALURiSmn+fD/4P93fmxTwI3GVUwbKeaJ
-         nGoUh73T5VdObod1q+3LKWe/9LU3hGbJa8fpjilFvuc7mH/b1qBwp4U8TnisuI6pGg3K
-         +WdFQWPe3tfCdoeRmcV4BzzZr2xyxzgIszmlHaC9XEN1kglz55anYQpmkIsWqZ08dS37
-         okJQhFgmjYaN5bSXKuwhFAcn01g2x4g3xCuVvX113/WsicQNsN3Gwa59/5MAbI1b1Csc
-         pC2A==
-X-Gm-Message-State: AOJu0Yy245hrexk25Fxod0PUpoVbkMjN/+KQF6FvIesfjIVAcnLHp4sW
-        7NkiTMlELmZzmODyvNJhK30=
-X-Google-Smtp-Source: AGHT+IFLNY3lBhAg7rxUVOJ1znAqlSnHRe1P7lpJz/Euy4Yb8Tu2B67prK77PTsicnsE0rN4valR2A==
-X-Received: by 2002:a17:906:3ca1:b0:9ae:55f5:180a with SMTP id b1-20020a1709063ca100b009ae55f5180amr23129597ejh.9.1697203782959;
-        Fri, 13 Oct 2023 06:29:42 -0700 (PDT)
-Received: from localhost (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id a6-20020a1709062b0600b0099cb0a7098dsm12636161ejg.19.2023.10.13.06.29.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Oct 2023 06:29:42 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Fri, 13 Oct 2023 13:27:57 -0400
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9803BE
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Oct 2023 10:27:55 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qrLx3-00037R-Kb; Fri, 13 Oct 2023 19:27:53 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qrLx1-001Rci-0T; Fri, 13 Oct 2023 19:27:51 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qrLx0-00FiVh-NR; Fri, 13 Oct 2023 19:27:50 +0200
+Date:   Fri, 13 Oct 2023 19:27:50 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        kernel@pengutronix.de, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] pwm: samsung: Document new member .channel in struct samsung_pwm_chip
-Date:   Fri, 13 Oct 2023 15:29:35 +0200
-Message-ID: <169720375693.285367.8034783567173304872.b4-ty@gmail.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231012210228.1009473-2-u.kleine-koenig@pengutronix.de>
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] pwm: samsung: Document new member .channel in struct
+ samsung_pwm_chip
+Message-ID: <20231013172750.nxcw2ftihpemnymx@pengutronix.de>
 References: <20231012210228.1009473-2-u.kleine-koenig@pengutronix.de>
+ <169720375693.285367.8034783567173304872.b4-ty@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="aiysntojmlc5m3tt"
+Content-Disposition: inline
+In-Reply-To: <169720375693.285367.8034783567173304872.b4-ty@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
-On Thu, 12 Oct 2023 23:02:29 +0200, Uwe Kleine-König wrote:
-> My earlier commit reworking how driver data is tracked added a new
-> member to struct samsung_pwm_chip but failed to add matching
-> documentation. Make up leeway.
-> 
-> 
+--aiysntojmlc5m3tt
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks!
+On Fri, Oct 13, 2023 at 03:29:35PM +0200, Thierry Reding wrote:
+> On Thu, 12 Oct 2023 23:02:29 +0200, Uwe Kleine-K=F6nig wrote:
+> > Fixes: 4c9548d24c0d ("pwm: samsung: Put per-channel data into driver da=
+ta")
+>=20
+> Applied, thanks!
+>=20
+> [1/1] pwm: samsung: Document new member .channel in struct samsung_pwm_ch=
+ip
+>       commit: 4bb36d126cb3147d6bbfd00242a5b846dacad595
 
-[1/1] pwm: samsung: Document new member .channel in struct samsung_pwm_chip
-      commit: 4bb36d126cb3147d6bbfd00242a5b846dacad595
+You might want to change 4c9548d24c0d to e3fe982b2e4e now that you
+rewrote your for-next branch.
 
-Best regards,
--- 
-Thierry Reding <thierry.reding@gmail.com>
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--aiysntojmlc5m3tt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmUpfhUACgkQj4D7WH0S
+/k43Ogf9FP9SKehDlcdovaB/zlYentlI2IsKQ/VkXJruGE8qs0n0JJ/d8XtZZXaC
+adrwFDdI71ZyH/Mt1aW6YDGQ8wTyf+3OpY29z+IZ+gxXApwboI+5gXivqwAJqyXL
+Hytm5ehqZxb6PEB6HkPlinFUyPowv+LUZAmRWlvHegYBvYHc3uFAbW1V7yLM1fJu
+6iyEv8bZ5y0yEGnRlRpI2mxMLy/23HQOwuPOb0xvIZ5UIymAP3QeCOk7vZBM8CTi
+xFeF9rPDpXScnMMYBxBVGDTiP0iw5CKyqW1LXC8A7wj3tuGIHMGv/UIoqPr2zjxc
+R7SqakxFwt2KO0f+S+KxrY8jb2tZig==
+=MrFt
+-----END PGP SIGNATURE-----
+
+--aiysntojmlc5m3tt--
