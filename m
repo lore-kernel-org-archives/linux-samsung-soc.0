@@ -2,51 +2,53 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE46CDB483
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Oct 2023 17:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51AA9CDB485
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Oct 2023 17:42:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbjJMR17 (ORCPT
+        id S231248AbjJMRmf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 13 Oct 2023 13:27:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52028 "EHLO
+        Fri, 13 Oct 2023 13:42:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231381AbjJMR15 (ORCPT
+        with ESMTP id S230501AbjJMRme (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Oct 2023 13:27:57 -0400
+        Fri, 13 Oct 2023 13:42:34 -0400
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9803BE
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Oct 2023 10:27:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5857DA9
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Oct 2023 10:42:33 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qrLx3-00037R-Kb; Fri, 13 Oct 2023 19:27:53 +0200
+        id 1qrMBA-0004W0-7I; Fri, 13 Oct 2023 19:42:28 +0200
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qrLx1-001Rci-0T; Fri, 13 Oct 2023 19:27:51 +0200
+        id 1qrMB8-001Rgm-QX; Fri, 13 Oct 2023 19:42:26 +0200
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qrLx0-00FiVh-NR; Fri, 13 Oct 2023 19:27:50 +0200
-Date:   Fri, 13 Oct 2023 19:27:50 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+        id 1qrMB8-00Fim0-Gy; Fri, 13 Oct 2023 19:42:26 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
 To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
-        kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] pwm: samsung: Document new member .channel in struct
- samsung_pwm_chip
-Message-ID: <20231013172750.nxcw2ftihpemnymx@pengutronix.de>
-References: <20231012210228.1009473-2-u.kleine-koenig@pengutronix.de>
- <169720375693.285367.8034783567173304872.b4-ty@gmail.com>
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
+        kernel@pengutronix.de,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH v2 07/11] pwm: samsung: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+Date:   Fri, 13 Oct 2023 19:42:12 +0200
+Message-ID: <20231013174204.1457085-20-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231013174204.1457085-13-u.kleine-koenig@pengutronix.de>
+References: <20231013174204.1457085-13-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="aiysntojmlc5m3tt"
-Content-Disposition: inline
-In-Reply-To: <169720375693.285367.8034783567173304872.b4-ty@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1453; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=M1OPhPtPgoAx37eXWZT9LtnHNhORjb33xVhLBmafCEM=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlKYF1qmutfQlK4DDVgCGR1CEW2d6QuFS6bUQUv g7TD5F6esaJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZSmBdQAKCRCPgPtYfRL+ Tgq/CAC76lraDjdItS0wz/z1GDQwa1HWy9hQUAGq5G50Qn4U9b3Tox8IW9B/pyZhyaZBq7XvyeZ SInXc3WV5kOsPKO79H8RSf7H8mjHSxHFMqdEZsqE7UFJ6Yrwz/v+kI+/N5973rqgv69LYCvVQCp AmNNZXEFKeY1j7rcMYDn2mYRPpfsM7/P15lfz8rZmLwQRO74nzFU0cjUuIpzxmCh+eX6YZY+IEo m3ro6fpAnzpkF+DrRKSaPwnTyW/s5lNQGuyLlb6D+wJbc0kcCLHH6DGDqe/8B4uKL464xRSwiua 8XoFalI6XjAZ2KsqI4QSUTkAQbJm1CWmG6R6d85xn07+qVOF
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
 X-SA-Exim-Mail-From: ukl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
@@ -55,46 +57,47 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+This macro has the advantage over SIMPLE_DEV_PM_OPS that we don't have to
+care about when the functions are actually used, so the corresponding
 
---aiysntojmlc5m3tt
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Also make use of pm_ptr() to discard all PM related stuff if CONFIG_PM
+isn't enabled.
 
-On Fri, Oct 13, 2023 at 03:29:35PM +0200, Thierry Reding wrote:
-> On Thu, 12 Oct 2023 23:02:29 +0200, Uwe Kleine-K=F6nig wrote:
-> > Fixes: 4c9548d24c0d ("pwm: samsung: Put per-channel data into driver da=
-ta")
->=20
-> Applied, thanks!
->=20
-> [1/1] pwm: samsung: Document new member .channel in struct samsung_pwm_ch=
-ip
->       commit: 4bb36d126cb3147d6bbfd00242a5b846dacad595
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/pwm/pwm-samsung.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-You might want to change 4c9548d24c0d to e3fe982b2e4e now that you
-rewrote your for-next branch.
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index 568491ed6829..e6a8fa77aac7 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -620,7 +620,6 @@ static void pwm_samsung_remove(struct platform_device *pdev)
+ 	clk_disable_unprepare(our_chip->base_clk);
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
+ static int pwm_samsung_resume(struct device *dev)
+ {
+ 	struct samsung_pwm_chip *our_chip = dev_get_drvdata(dev);
+@@ -653,14 +652,13 @@ static int pwm_samsung_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-#endif
+ 
+-static SIMPLE_DEV_PM_OPS(pwm_samsung_pm_ops, NULL, pwm_samsung_resume);
++static DEFINE_SIMPLE_DEV_PM_OPS(pwm_samsung_pm_ops, NULL, pwm_samsung_resume);
+ 
+ static struct platform_driver pwm_samsung_driver = {
+ 	.driver		= {
+ 		.name	= "samsung-pwm",
+-		.pm	= &pwm_samsung_pm_ops,
++		.pm	= pm_ptr(&pwm_samsung_pm_ops),
+ 		.of_match_table = of_match_ptr(samsung_pwm_matches),
+ 	},
+ 	.probe		= pwm_samsung_probe,
+-- 
+2.42.0
 
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---aiysntojmlc5m3tt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmUpfhUACgkQj4D7WH0S
-/k43Ogf9FP9SKehDlcdovaB/zlYentlI2IsKQ/VkXJruGE8qs0n0JJ/d8XtZZXaC
-adrwFDdI71ZyH/Mt1aW6YDGQ8wTyf+3OpY29z+IZ+gxXApwboI+5gXivqwAJqyXL
-Hytm5ehqZxb6PEB6HkPlinFUyPowv+LUZAmRWlvHegYBvYHc3uFAbW1V7yLM1fJu
-6iyEv8bZ5y0yEGnRlRpI2mxMLy/23HQOwuPOb0xvIZ5UIymAP3QeCOk7vZBM8CTi
-xFeF9rPDpXScnMMYBxBVGDTiP0iw5CKyqW1LXC8A7wj3tuGIHMGv/UIoqPr2zjxc
-R7SqakxFwt2KO0f+S+KxrY8jb2tZig==
-=MrFt
------END PGP SIGNATURE-----
-
---aiysntojmlc5m3tt--
