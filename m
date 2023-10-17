@@ -2,141 +2,108 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF0C4CDB474
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Oct 2023 13:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A658CDB483
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Oct 2023 09:21:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234050AbjJPNla (ORCPT
+        id S234820AbjJQJVw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 16 Oct 2023 09:41:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55136 "EHLO
+        Tue, 17 Oct 2023 05:21:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234085AbjJPNlN (ORCPT
+        with ESMTP id S234865AbjJQJVn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 16 Oct 2023 09:41:13 -0400
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 241C810DD;
-        Mon, 16 Oct 2023 06:41:10 -0700 (PDT)
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-6c4bf619b57so3121960a34.1;
-        Mon, 16 Oct 2023 06:41:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697463669; x=1698068469;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NQ/G/Xth0D6auFNQK3nHPPfnMBEhXE0kDfRXlTn6UOY=;
-        b=eLwgFyt5DikRmvW7Fm6aHwG9TWBtTqL1kvC0FjL5uD0cVFzQvkySagRSQI92HT/fJc
-         iSiB1JPIsOzr9+f4ea0le9X/JDjsUXHP8H5aPKReG7b3wngCsduLX7IKNZeEhGIJaiuH
-         qaL0cyKnb4bN75N17SnlOgEx1gO/yUxXBnzSZdG+qa/BMpym1IOacde4zpCdqaNtjqX3
-         Ztt8XixWdSXZCPKRbtZ2lLB4hlxfHn4D3TH7UiwF6v4u8O2j6jY+zgX3Pp074xu73IbP
-         FNu3TtTKwkO2BKJzd5kD8wpAw5jS2et6Y0yy3XoXioOWvOjmHnrd0hhwlPN1jD/W6M6b
-         f7Eg==
-X-Gm-Message-State: AOJu0Ywv2OCl841qP/RiUR3nNz5IFAJZL83Xd0vcIZuuBWwBdRi396pf
-        Bjck5i700LOXzmImkyf3JA==
-X-Google-Smtp-Source: AGHT+IGL1M0GWp//j3qCJFUvTJjD9rn+kXQBERESjCk07ye3/whM/gGvUfOfSpVq8l85kMc+xe7a6g==
-X-Received: by 2002:a9d:6398:0:b0:6bd:a82:8edb with SMTP id w24-20020a9d6398000000b006bd0a828edbmr32048175otk.10.1697463669404;
-        Mon, 16 Oct 2023 06:41:09 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id w6-20020a9d6386000000b006b96384ba1csm1689759otk.77.2023.10.16.06.41.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Oct 2023 06:41:08 -0700 (PDT)
-Received: (nullmailer pid 2647360 invoked by uid 1000);
-        Mon, 16 Oct 2023 13:41:06 -0000
-Date:   Mon, 16 Oct 2023 08:41:06 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Peter Griffin <peter.griffin@linaro.org>
-Cc:     krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, gregkh@linuxfoundation.org, cw00.choi@samsung.com,
-        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-        semen.protsenko@linaro.org, saravanak@google.com,
-        willmcvicker@google.com, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org
-Subject: Re: [PATCH v3 06/20] dt-bindings: pinctrl: samsung: add
- google,gs101-pinctrl compatible
-Message-ID: <20231016134106.GA2643742-robh@kernel.org>
-References: <20231011184823.443959-1-peter.griffin@linaro.org>
- <20231011184823.443959-7-peter.griffin@linaro.org>
+        Tue, 17 Oct 2023 05:21:43 -0400
+Received: from mail-4318.protonmail.ch (mail-4318.protonmail.ch [185.70.43.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A5BB119
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Oct 2023 02:21:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail3; t=1697534496; x=1697793696;
+        bh=OFdosyKcp6PhUrJ2tCBNQ9++8yaOxAtxpU+EBRrduxk=;
+        h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+         Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+        b=Y6ECVSLSwxbsC9spu35iGCIkBYplhs2ocrxGwobTOp1IeQHiBxrTITqbIBSmN350E
+         UPAkm/sKtClLj4PWv/GgztKzCB/jhS94h27uWIovdrWaK/uK8o5QV9RZHDGQGbXo8n
+         Xxs2WrGkhMAw6FkqR7UBz7CuhK/RBozUru/6ASbf8IRRRQmHK8HACsyUUBa9eoTpkw
+         ZL9R2Gg8FDBVAFR/uYC6aJVIpMqA9MoQujeMoWBGL3yYoe1VKrbvx/TmP5ahRDkQaE
+         Q4EA1bZ0bxVQP0z6Ptqd2++GrLdE7vBzUI4r67pQTJ4DxREFbEbYJnFZGyOrP4Tlxw
+         ekPJbMgRZjVrQ==
+Date:   Tue, 17 Oct 2023 09:21:30 +0000
+To:     linux-kernel@vger.kernel.org
+From:   Raymond Hackley <raymondhackley@protonmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Raymond Hackley <raymondhackley@protonmail.com>
+Subject: [PATCH] ARM: dts: exynos: fix input keys with Linux event codes for midas
+Message-ID: <20231017091953.43478-1-raymondhackley@protonmail.com>
+Feedback-ID: 49437091:user:proton
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231011184823.443959-7-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 11, 2023 at 07:48:09PM +0100, Peter Griffin wrote:
-> Add the "google,gs101-pinctrl" compatible to the dt-schema bindings
-> documentation.
-> 
-> Add maxItems of 50 for the interrupts property as gs101 can have
-> multiple irqs.
-> 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  .../bindings/pinctrl/samsung,pinctrl.yaml     | 22 ++++++++++++++++++-
->  1 file changed, 21 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-> index 26614621774a..6dc648490668 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-> @@ -35,6 +35,7 @@ properties:
->  
->    compatible:
->      enum:
-> +      - google,gs101-pinctrl
->        - samsung,s3c2412-pinctrl
->        - samsung,s3c2416-pinctrl
->        - samsung,s3c2440-pinctrl
-> @@ -58,7 +59,8 @@ properties:
->    interrupts:
->      description:
->        Required for GPIO banks supporting external GPIO interrupts.
-> -    maxItems: 1
-> +    minItems: 1
-> +    maxItems: 50
->  
->    power-domains:
->      maxItems: 1
-> @@ -134,6 +136,24 @@ allOf:
->            minItems: 1
->            maxItems: 1
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: google,gs101-pinctrl
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          description:
-> +            Required for external wakeup interrupts. List all external
+Input event code 139 stands for KEY_MENU, instead of KEY_OK as key-ok
+inplies. Fix all event codes with linux-event-codes.h included for midas.
 
-Is it external GPIO interrupts or wakeup interrupts?
+Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
+---
+ arch/arm/boot/dts/samsung/exynos4412-midas.dtsi | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-> +            wakeup interrupts supported by this bank.
-> +          minItems: 1
-> +          maxItems: 50
+diff --git a/arch/arm/boot/dts/samsung/exynos4412-midas.dtsi b/arch/arm/boo=
+t/dts/samsung/exynos4412-midas.dtsi
+index 7daf25865551..d00b500254ab 100644
+--- a/arch/arm/boot/dts/samsung/exynos4412-midas.dtsi
++++ b/arch/arm/boot/dts/samsung/exynos4412-midas.dtsi
+@@ -15,6 +15,7 @@
+=20
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/input/linux-event-codes.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/clock/maxim,max77686.h>
+ #include "exynos-pinctrl.h"
+@@ -137,21 +138,21 @@ gpio-keys {
+=20
+ =09=09key-down {
+ =09=09=09gpios =3D <&gpx3 3 GPIO_ACTIVE_LOW>;
+-=09=09=09linux,code =3D <114>;
++=09=09=09linux,code =3D <KEY_VOLUMEDOWN>;
+ =09=09=09label =3D "volume down";
+ =09=09=09debounce-interval =3D <10>;
+ =09=09};
+=20
+ =09=09key-up {
+ =09=09=09gpios =3D <&gpx2 2 GPIO_ACTIVE_LOW>;
+-=09=09=09linux,code =3D <115>;
++=09=09=09linux,code =3D <KEY_VOLUMEUP>;
+ =09=09=09label =3D "volume up";
+ =09=09=09debounce-interval =3D <10>;
+ =09=09};
+=20
+ =09=09key-power {
+ =09=09=09gpios =3D <&gpx2 7 GPIO_ACTIVE_LOW>;
+-=09=09=09linux,code =3D <116>;
++=09=09=09linux,code =3D <KEY_POWER>;
+ =09=09=09label =3D "power";
+ =09=09=09debounce-interval =3D <10>;
+ =09=09=09wakeup-source;
+@@ -159,7 +160,7 @@ key-power {
+=20
+ =09=09key-ok {
+ =09=09=09gpios =3D <&gpx0 1 GPIO_ACTIVE_LOW>;
+-=09=09=09linux,code =3D <139>;
++=09=09=09linux,code =3D <KEY_OK>;
+ =09=09=09label =3D "ok";
+ =09=09=09debounce-interval =3D <10>;
+ =09=09=09wakeup-source;
+--=20
+2.39.2
 
-For a given SoC, I don't see how this is variable? If it is variable, 
-how do you know which entry is what?
 
-
-> +    else:
-> +      properties:
-> +        interrupts:
-> +          maxItems: 1
-> +
->  additionalProperties: false
->  
->  examples:
-> -- 
-> 2.42.0.655.g421f12c284-goog
-> 
