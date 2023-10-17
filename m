@@ -2,122 +2,157 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB639C41513
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Oct 2023 14:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0625ECDB483
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Oct 2023 20:39:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343732AbjJQOES (ORCPT
+        id S234999AbjJQUjm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 17 Oct 2023 10:04:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36066 "EHLO
+        Tue, 17 Oct 2023 16:39:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233670AbjJQOES (ORCPT
+        with ESMTP id S231149AbjJQUjl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 17 Oct 2023 10:04:18 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F003FC
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Oct 2023 07:04:16 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id 38308e7fff4ca-2c16757987fso72426771fa.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Oct 2023 07:04:16 -0700 (PDT)
+        Tue, 17 Oct 2023 16:39:41 -0400
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 801E79F
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Oct 2023 13:39:39 -0700 (PDT)
+Received: by mail-qv1-xf34.google.com with SMTP id 6a1803df08f44-66d4453ba38so19846276d6.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Oct 2023 13:39:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697551454; x=1698156254; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TsrDGDEum/5uA7iQIpJCzRkScaB2QGiVp3IoiHcOdaw=;
-        b=TnZB0Wqc0VzP+t6Cuyzy1nn5obwWHM4YDtOYMO5GPpwlADzXEFqaR8rterAPwn6lQr
-         Oz1WHrVsUKReOroHp2+1VUKr2CklRjVIXTNQ6//ylL/lLeKVW0JeoGQMOvebd/2R40q7
-         sQR9j6I/knjsPPCQqOnZy1m1QIBDJ3K1sOE81JVsDrGNiM29puiYbqKaaXvbLGusJeZx
-         d7lbme7HXNkZ1DvKdAAoetqSRg6rjxa85tN0VMdlbNQbw8su2bUzQsemr3D5Di9QTyoy
-         pvg54g/lUmyEvXSL7d4cttLwBOHyAsNZuLMdv4CvsZBlEN299GfHkGgvZoup2/QJ+IkS
-         TCyg==
+        d=linaro.org; s=google; t=1697575178; x=1698179978; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XA1skjAgHjdCnqisORMj4wpVmNxlLSwRWz+H3/RjpJo=;
+        b=kxEuL/2GwvpkzB7xAIT6KFwv6Omi5zuwHYy8Z8vu/aryxvxaiDa+3af6p4i/tIOzE3
+         gQHw79+RwVooLEUbODzSqRrUpUiehxVeLGvA4UxHAuQwggMlEcc63avcgQrlrCrbSCNl
+         rbuRX0N7gkbgC9T98TxcjJ9IsqRipR1b0CubyZn7TBI6RsX0Wuy0axSrSBD3PYyo/CW1
+         JxilSmFmgX4yCgOaqZ3j0TUiFULtOjOzoh6Pu6JlW91v+kTH7nEPdRiI5lcZT59n4R0p
+         wmVKTiPB7+cifR98lPjZxi7Lv3KX2qv/yns5hI0CJx2xGloth38jwIKLXbE/YuMRWLDj
+         dWjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697551454; x=1698156254;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TsrDGDEum/5uA7iQIpJCzRkScaB2QGiVp3IoiHcOdaw=;
-        b=j5GWiytKK0Oc/G6xLzvhiY7VZcYTZE7fwLGto46n1173GLqQjJvyK+zESH+ot+M88d
-         tw3GU0HAOuSO+sKc11mlms57/B3Y9IyzkDPmok9DzSSDncFl+wHtxPCDBJkreCO4zpXT
-         FhhB7AYc3NKOtDHhVXx/FyAmFuli22fTJQrgP0FltQFBPDrilZW9Lp8isLKcj30r2Eu0
-         Dnq/gdcAGmBeHpeeCnyPaQmUSuVVk7Gp7tvoHvKWxlu+qSBOtw09Xj1u1+Tm0VCy6cv+
-         cFhtxIx/p8VwN0lV4k8e22Z0rGQZe1Jmu4O+hQe8WApTc+faJiKbxNbDL/QwARKmQxTs
-         BcsA==
-X-Gm-Message-State: AOJu0YxN40sNsuYyA25iCEr6g20fOCXLtJrRMqVfofblMUKGdglQFmE8
-        NTNDNsdbHAw23YyZxhCQk3nZLg==
-X-Google-Smtp-Source: AGHT+IG3knXmy/5vJWYi5wyeUzPAbczRcRkMPFoeND1u5tpRwFY2sHAcBNusoVs8ClImAyYJzR9CHA==
-X-Received: by 2002:a05:651c:1a0f:b0:2c5:16c0:6239 with SMTP id by15-20020a05651c1a0f00b002c516c06239mr2087490ljb.51.1697551454222;
-        Tue, 17 Oct 2023 07:04:14 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id 3-20020a05600c234300b0040813e14b49sm1390701wmq.30.2023.10.17.07.04.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Oct 2023 07:04:13 -0700 (PDT)
-Date:   Tue, 17 Oct 2023 17:04:08 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] pwm: samsung: Fix a bit test
-Message-ID: <917e3890-7895-4b1c-bcee-4eecb3b7fe09@moroto.mountain>
+        d=1e100.net; s=20230601; t=1697575178; x=1698179978;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XA1skjAgHjdCnqisORMj4wpVmNxlLSwRWz+H3/RjpJo=;
+        b=NnRhiA+ebgHNCmG5gXfYSzqOsrdLr+PtS8dCEu3cJto5hXT8/q9ecaOdviKHFt6G/A
+         bnMM6md/N5PKQFKUMAae43xBr2JwT9W9H+CextbumD5P6rtUF9mhzASYAy/Pmedv63Qy
+         fASbaGT3ZFCTZSVuFFH6OAFoRsvOpUg4F5eKNswUogrVtTW6SP5VwyYBuHyaXYHnZZsf
+         Kd7ccC8glXQgePBVf+SqafhrW7QISyZ+GvJ4he0xz8kcHQAj+cxh2wXOYBCkbd6iIu6n
+         g4+dgv7UKw1JxvxpoTREYk2ojwrrHXZR7HZne1O0h+q3PzL5w8OlYoj63SR+YL+BdErP
+         2y7w==
+X-Gm-Message-State: AOJu0Yw+jUAh+u965YHhDgdt91ToYAafLLfDWNLvz9H45KTSpp1Q6gic
+        59a/ZdEeZCxUqCMksFCce8d0UKpywhGvGUY9aoMYyw==
+X-Google-Smtp-Source: AGHT+IG0jZyX5mwItbRNqua2+caVQuoRBxev+i2K+Vc8lTvA4KemQ/ckZaqEBKGa2oMjPe/6P4JpungwpD5qkdU5/AQ=
+X-Received: by 2002:ad4:5ae8:0:b0:64f:49d1:3fe7 with SMTP id
+ c8-20020ad45ae8000000b0064f49d13fe7mr4054747qvh.23.1697575178600; Tue, 17 Oct
+ 2023 13:39:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <20231011184823.443959-1-peter.griffin@linaro.org>
+ <20231011184823.443959-10-peter.griffin@linaro.org> <ef25ed87-f065-4a75-9e57-1f1073d9c805@kernel.org>
+In-Reply-To: <ef25ed87-f065-4a75-9e57-1f1073d9c805@kernel.org>
+From:   Peter Griffin <peter.griffin@linaro.org>
+Date:   Tue, 17 Oct 2023 21:39:27 +0100
+Message-ID: <CADrjBPqHKG84k0YDMzKcxdLJL-Vcp2HqTPm9vMWYnmZBYNX2Pw@mail.gmail.com>
+Subject: Re: [PATCH v3 09/20] clk: samsung: clk-pll: Add support for pll_{0516,0517,518}
+To:     Chanwoo Choi <chanwoo@kernel.org>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
+        cw00.choi@samsung.com, tudor.ambarus@linaro.org,
+        andre.draszik@linaro.org, semen.protsenko@linaro.org,
+        saravanak@google.com, willmcvicker@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This code has two problems.  First, it passes the wrong bit parameter to
-test_bit().  Second, it mixes using PWMF_REQUESTED in test_bit() and in
-open coded bit tests.
+On Tue, 17 Oct 2023 at 09:52, Chanwoo Choi <chanwoo@kernel.org> wrote:
+>
+> On 23. 10. 12. 03:48, Peter Griffin wrote:
+> > These plls are found in the Tensor gs101 SoC found in the Pixel 6.
+> >
+> > pll0516x: Integer PLL with high frequency
+> > pll0517x: Integer PLL with middle frequency
+> > pll0518x: Integer PLL with low frequency
+> >
+> > PLL0516x
+> > FOUT = (MDIV * 2 * FIN)/PDIV * 2^SDIV)
+> >
+> > PLL0517x and PLL0518x
+> > FOUT = (MDIV * FIN)/PDIV*2^SDIV)
+> >
+> > The PLLs are similar enough to pll_0822x that the same code can handle
+> > both. The main difference is the change in the fout formula for the
+> > high frequency 0516 pll.
+> >
+> > Locktime for 516,517 & 518 is 150 the same as the pll_0822x lock factor.
+> > MDIV, SDIV PDIV masks and bit shifts are also the same as 0822x.
+> >
+> > When defining the PLL the "con" parameter should be set to CON3
+> > register, like this
+> >
+> > PLL(pll_0517x, CLK_FOUT_SHARED0_PLL, "fout_shared0_pll", "oscclk",
+> >     PLL_LOCKTIME_PLL_SHARED0, PLL_CON3_PLL_SHARED0,
+> >     NULL),
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  drivers/clk/samsung/clk-pll.c | 9 ++++++++-
+> >  drivers/clk/samsung/clk-pll.h | 3 +++
+> >  2 files changed, 11 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+> > index 74934c6182ce..4ef9fea2a425 100644
+> > --- a/drivers/clk/samsung/clk-pll.c
+> > +++ b/drivers/clk/samsung/clk-pll.c
+> > @@ -442,7 +442,11 @@ static unsigned long samsung_pll0822x_recalc_rate(struct clk_hw *hw,
+> >       pdiv = (pll_con3 >> PLL0822X_PDIV_SHIFT) & PLL0822X_PDIV_MASK;
+> >       sdiv = (pll_con3 >> PLL0822X_SDIV_SHIFT) & PLL0822X_SDIV_MASK;
+> >
+> > -     fvco *= mdiv;
+> > +     if (pll->type == pll_0516x)
+> > +             fvco = fvco * 2 * mdiv;
+> > +     else
+> > +             fvco *= mdiv;
+> > +
+> >       do_div(fvco, (pdiv << sdiv));
+> >
+> >       return (unsigned long)fvco;
+> > @@ -1316,6 +1320,9 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+> >       case pll_1417x:
+> >       case pll_0818x:
+> >       case pll_0822x:
+> > +     case pll_0516x:
+> > +     case pll_0517x:
+> > +     case pll_0518x:
+> >               pll->enable_offs = PLL0822X_ENABLE_SHIFT;
+> >               pll->lock_offs = PLL0822X_LOCK_STAT_SHIFT;
+> >               if (!pll->rate_table)
+> > diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+> > index 0725d485c6ee..ffd3d52c0dec 100644
+> > --- a/drivers/clk/samsung/clk-pll.h
+> > +++ b/drivers/clk/samsung/clk-pll.h
+> > @@ -38,6 +38,9 @@ enum samsung_pll_type {
+> >       pll_0822x,
+> >       pll_0831x,
+> >       pll_142xx,
+> > +     pll_0516x,
+> > +     pll_0517x,
+> > +     pll_0518x,
+> >  };
+> >
+> >  #define PLL_RATE(_fin, _m, _p, _s, _k, _ks) \
+>
+> I replied it with ack before. Again, reply it with ack.
+>
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-The test_bit() function takes a bit number.  In other words,
-"if (test_bit(0, &flags))" is the equivalent of "if (flags & (1 << 0))".
-Passing (1 << 0) to test_bit() is like writing BIT(BIT(0)).  It's a
-double shift bug.
-
-In pwm_samsung_resume() these issues mean that the flag is never set and
-the function is essentially a no-op.
-
-Fixes: 4c9548d24c0d ("pwm: samsung: Put per-channel data into driver data")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-From static analysis and not tested.
-
- drivers/pwm/pwm-samsung.c | 2 +-
- include/linux/pwm.h       | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-index 10fe2c13cd80..acf4a0d8d990 100644
---- a/drivers/pwm/pwm-samsung.c
-+++ b/drivers/pwm/pwm-samsung.c
-@@ -630,7 +630,7 @@ static int pwm_samsung_resume(struct device *dev)
- 		struct pwm_device *pwm = &chip->pwms[i];
- 		struct samsung_pwm_channel *chan = &our_chip->channel[i];
- 
--		if (!(pwm->flags & PWMF_REQUESTED))
-+		if (!test_bit(PWMF_REQUESTED, &pwm->flags))
- 			continue;
- 
- 		if (our_chip->variant.output_mask & BIT(i))
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index e3b437587b32..3eee5bf367fb 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -41,8 +41,8 @@ struct pwm_args {
- };
- 
- enum {
--	PWMF_REQUESTED = 1 << 0,
--	PWMF_EXPORTED = 1 << 1,
-+	PWMF_REQUESTED = 0,
-+	PWMF_EXPORTED  = 1,
- };
- 
- /*
--- 
-2.39.2
-
+Thanks Chanwoo. I will add that in v4
