@@ -2,247 +2,139 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EF4CDB483
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Oct 2023 10:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3EDCDB47E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Oct 2023 19:52:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230057AbjJRKz0 (ORCPT
+        id S231357AbjJRTwt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 18 Oct 2023 06:55:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36094 "EHLO
+        Wed, 18 Oct 2023 15:52:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbjJRKzZ (ORCPT
+        with ESMTP id S229757AbjJRTws (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 18 Oct 2023 06:55:25 -0400
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA83AEA;
-        Wed, 18 Oct 2023 03:55:21 -0700 (PDT)
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-407da05f05aso12426155e9.3;
-        Wed, 18 Oct 2023 03:55:21 -0700 (PDT)
+        Wed, 18 Oct 2023 15:52:48 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8685095
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Oct 2023 12:52:46 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-32d569e73acso6216167f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Oct 2023 12:52:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1697658765; x=1698263565; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nm6W4GF2fEza/pR8Pn+Fd8sPcS6wBwKszXRTj0SkRso=;
+        b=Ube3Hd6VxLMlTIG6EmCWGG+t7tj7aN5QtTUx7Nor+iXdie4VQrXAvmK06sZIjDzI/p
+         CTaF3+V9p9XrzbyQL7eVjpfFjQc03KZBvZ/vP96wvy2jr0jGTUn40kGgSt/kEYdUUMO8
+         RqPvNMbhE/2gizPRdAqGfjRUpQ2yMrMpok3A+mSxCkMvFsuVmWk0jNdeGw4MiOlkWOTg
+         SAVyhf/tDHZJaKtKZcmzfg3q5IFPKp4CDw78HCPgLhupllxUPRTjAHFNNGeyJByNO4X1
+         8ArW7i5yzaZ0TDfk9U6iIDsCcEMIOVzHuyfPFk61DsmtEyscN7PavftxfQ5kqUQ1z6no
+         iOtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697626520; x=1698231320;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rs9LevmP9tka/XKvdemB1cXwK7JUBe4mAxtgJ4jhXQs=;
-        b=SSJGC80ny3PUUBbQCGC1pQFZm07ohO8UkWIJwuTzdDxKJgp5k1PioSEsjjI9ulmcLa
-         9iIlMiez7sgTcbHmXRJzlOL0DUGph0t0Pliqp43n+98XCwsRV/aSAtznaEz8fwpUWQY1
-         eQnlG/tpMeax6jj6J38WibXNDP9YjOf6jAHKTkqySGZEJQErsjp5+rvfIFqDySRIQBFP
-         nVP0q9UmePMyEl7h7hRoa7334dNTeQW+yD4qekEALj3gB+R+/6em5zEmAXK2GtFzpYSr
-         Ng+Ibn4foq7r6WsupyRA5kcab9/KuZOD+ilcy8k0o9QzQd6NIXAK3irAyu7O989T/+OU
-         wy7Q==
-X-Gm-Message-State: AOJu0YwdwgS+yjkMS+BFWxg1V9e9M/FbZqeAwspJb9opixsc7fwq87g1
-        zDgaaJoVE4fWvIHw9XJQ6g9nYAXTXwV5fUrM
-X-Google-Smtp-Source: AGHT+IEDc0yLySq1GGICz5oXgWSJXPi85MBgBwuCoh4eNVzLkUZNzn+GehG6KoZtTKGkg+SUolDtnA==
-X-Received: by 2002:a05:600c:4fd2:b0:407:3b6d:b561 with SMTP id o18-20020a05600c4fd200b004073b6db561mr3649087wmq.9.1697626519887;
-        Wed, 18 Oct 2023 03:55:19 -0700 (PDT)
-Received: from salami.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id o36-20020a05600c512400b00405959469afsm1374498wms.3.2023.10.18.03.55.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Oct 2023 03:55:19 -0700 (PDT)
-From:   =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        =?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
-Subject: [PATCH] tty: serial: samsung_tty: remove dead code
-Date:   Wed, 18 Oct 2023 11:54:54 +0100
-Message-Id: <20231018105454.3911161-1-git@andred.net>
-X-Mailer: git-send-email 2.40.1
+        d=1e100.net; s=20230601; t=1697658765; x=1698263565;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nm6W4GF2fEza/pR8Pn+Fd8sPcS6wBwKszXRTj0SkRso=;
+        b=qhlqmfQeu8yxu4AcMQKL0wzQumCRAeCGDptmbtORLIBAdvD0XHTAJs1xMo0CPVjDke
+         UEcDsYidCz7OPym3rgL3MMJPa3OfTI+LuDi+ev93o+4Gi9vaX4ofmmYu4T5WsxW99LOW
+         wMa2muhTiOgXwnJnvMK1vbxv/BDdZ/hItvgvk78eOcQkgZPz3KYCmTjgL4nfeya4XiHB
+         9gBXB/mG6ikr4zlf/H/dGSTThCetpuCXNmuW+xFKT8C5uLIVjHYo27g9k6ujWexyfNnf
+         F9KsD4yyQSbPwG+nqLiYC38OK47KLZ5YcRPe8p08lP8dwnWy5BHBNq8AsqNdE9exvXAG
+         TljQ==
+X-Gm-Message-State: AOJu0YwcFn71ZayC1zPFNPzq1HwqEB/blFjJjW4mNw5APObnZF1tG5EK
+        obbsnnM+WhhHU3rCxIG4iA71nw==
+X-Google-Smtp-Source: AGHT+IGxqL1+fgOdw1Qir7iE4fmFD3glIhrdd9CUL8vVbEGsIM1fBySeJk6KV1L3NeGH6cmML/TezA==
+X-Received: by 2002:adf:f492:0:b0:32d:b7d4:b90 with SMTP id l18-20020adff492000000b0032db7d40b90mr52515wro.39.1697658765025;
+        Wed, 18 Oct 2023 12:52:45 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.49])
+        by smtp.gmail.com with ESMTPSA id j4-20020adfe504000000b0032da7454ebesm2793693wrm.79.2023.10.18.12.52.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Oct 2023 12:52:44 -0700 (PDT)
+Message-ID: <3360b33c-a6ce-463f-b2d8-43a08340f3c7@linaro.org>
+Date:   Wed, 18 Oct 2023 21:52:42 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tty: serial: samsung_tty: remove dead code
+Content-Language: en-US
+To:     =?UTF-8?Q?Andr=C3=A9_Draszik?= <git@andred.net>,
+        linux-kernel@vger.kernel.org
+Cc:     alim.akhtar@samsung.com, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+References: <20231018105454.3911161-1-git@andred.net>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20231018105454.3911161-1-git@andred.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: André Draszik <andre.draszik@linaro.org>
+On 18/10/2023 12:54, André Draszik wrote:
+> From: André Draszik <andre.draszik@linaro.org>
+> 
+> When support for various old platforms was removed in commit
+> 1ea35b355722, s3c24xx_serial_ops also became unused here because
 
-When support for various old platforms was removed in commit
-1ea35b355722, s3c24xx_serial_ops also became unused here because
-nothing sets port type TYPE_S3C24XX anymore.
+Please use commit xyz ("foo") syntax as pointed out by checkpatch.
 
-Remove s3c24xx_serial_ops and all the code that's unreachable now.
+> nothing sets port type TYPE_S3C24XX anymore.
+> 
+> Remove s3c24xx_serial_ops and all the code that's unreachable now.
+> 
+> Fixes: 1ea35b355722 ("ARM: s3c: remove s3c24xx specific hacks")
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
-Fixes: 1ea35b355722 ("ARM: s3c: remove s3c24xx specific hacks")
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/tty/serial/samsung_tty.c | 105 -------------------------------
- 1 file changed, 105 deletions(-)
+Rest looks good:
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 07fb8a9dac63..6b8d4b4402e9 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -64,7 +64,6 @@
- #define RXSTAT_DUMMY_READ (0x10000000)
- 
- enum s3c24xx_port_type {
--	TYPE_S3C24XX,
- 	TYPE_S3C6400,
- 	TYPE_APPLE_S5L,
- };
-@@ -128,8 +127,6 @@ struct s3c24xx_uart_dma {
- };
- 
- struct s3c24xx_uart_port {
--	unsigned char			rx_claimed;
--	unsigned char			tx_claimed;
- 	unsigned char			rx_enabled;
- 	unsigned char			tx_enabled;
- 	unsigned int			pm_level;
-@@ -1166,29 +1163,6 @@ static void s3c24xx_serial_release_dma(struct s3c24xx_uart_port *p)
- 	}
- }
- 
--static void s3c24xx_serial_shutdown(struct uart_port *port)
--{
--	struct s3c24xx_uart_port *ourport = to_ourport(port);
--
--	if (ourport->tx_claimed) {
--		free_irq(ourport->tx_irq, ourport);
--		ourport->tx_enabled = 0;
--		ourport->tx_claimed = 0;
--		ourport->tx_mode = 0;
--	}
--
--	if (ourport->rx_claimed) {
--		free_irq(ourport->rx_irq, ourport);
--		ourport->rx_claimed = 0;
--		ourport->rx_enabled = 0;
--	}
--
--	if (ourport->dma)
--		s3c24xx_serial_release_dma(ourport);
--
--	ourport->tx_in_progress = 0;
--}
--
- static void s3c64xx_serial_shutdown(struct uart_port *port)
- {
- 	struct s3c24xx_uart_port *ourport = to_ourport(port);
-@@ -1234,48 +1208,6 @@ static void apple_s5l_serial_shutdown(struct uart_port *port)
- 	ourport->tx_in_progress = 0;
- }
- 
--static int s3c24xx_serial_startup(struct uart_port *port)
--{
--	struct s3c24xx_uart_port *ourport = to_ourport(port);
--	int ret;
--
--	ourport->rx_enabled = 1;
--
--	ret = request_irq(ourport->rx_irq, s3c24xx_serial_rx_irq, 0,
--			  s3c24xx_serial_portname(port), ourport);
--
--	if (ret != 0) {
--		dev_err(port->dev, "cannot get irq %d\n", ourport->rx_irq);
--		return ret;
--	}
--
--	ourport->rx_claimed = 1;
--
--	dev_dbg(port->dev, "requesting tx irq...\n");
--
--	ourport->tx_enabled = 1;
--
--	ret = request_irq(ourport->tx_irq, s3c24xx_serial_tx_irq, 0,
--			  s3c24xx_serial_portname(port), ourport);
--
--	if (ret) {
--		dev_err(port->dev, "cannot get irq %d\n", ourport->tx_irq);
--		goto err;
--	}
--
--	ourport->tx_claimed = 1;
--
--	/* the port reset code should have done the correct
--	 * register setup for the port controls
--	 */
--
--	return ret;
--
--err:
--	s3c24xx_serial_shutdown(port);
--	return ret;
--}
--
- static int s3c64xx_serial_startup(struct uart_port *port)
- {
- 	struct s3c24xx_uart_port *ourport = to_ourport(port);
-@@ -1692,8 +1624,6 @@ static const char *s3c24xx_serial_type(struct uart_port *port)
- 	const struct s3c24xx_uart_port *ourport = to_ourport(port);
- 
- 	switch (ourport->info->type) {
--	case TYPE_S3C24XX:
--		return "S3C24XX";
- 	case TYPE_S3C6400:
- 		return "S3C6400/10";
- 	case TYPE_APPLE_S5L:
-@@ -1753,27 +1683,6 @@ static void s3c24xx_serial_put_poll_char(struct uart_port *port,
- 			 unsigned char c);
- #endif
- 
--static const struct uart_ops s3c24xx_serial_ops = {
--	.pm		= s3c24xx_serial_pm,
--	.tx_empty	= s3c24xx_serial_tx_empty,
--	.get_mctrl	= s3c24xx_serial_get_mctrl,
--	.set_mctrl	= s3c24xx_serial_set_mctrl,
--	.stop_tx	= s3c24xx_serial_stop_tx,
--	.start_tx	= s3c24xx_serial_start_tx,
--	.stop_rx	= s3c24xx_serial_stop_rx,
--	.break_ctl	= s3c24xx_serial_break_ctl,
--	.startup	= s3c24xx_serial_startup,
--	.shutdown	= s3c24xx_serial_shutdown,
--	.set_termios	= s3c24xx_serial_set_termios,
--	.type		= s3c24xx_serial_type,
--	.config_port	= s3c24xx_serial_config_port,
--	.verify_port	= s3c24xx_serial_verify_port,
--#if defined(CONFIG_SERIAL_SAMSUNG_CONSOLE) && defined(CONFIG_CONSOLE_POLL)
--	.poll_get_char = s3c24xx_serial_get_poll_char,
--	.poll_put_char = s3c24xx_serial_put_poll_char,
--#endif
--};
--
- static const struct uart_ops s3c64xx_serial_ops = {
- 	.pm		= s3c24xx_serial_pm,
- 	.tx_empty	= s3c24xx_serial_tx_empty,
-@@ -1836,7 +1745,6 @@ static void s3c24xx_serial_init_port_default(int index) {
- 	port->iotype = UPIO_MEM;
- 	port->uartclk = 0;
- 	port->fifosize = 16;
--	port->ops = &s3c24xx_serial_ops;
- 	port->flags = UPF_BOOT_AUTOCONF;
- 	port->line = index;
- }
-@@ -1954,16 +1862,6 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
- 		ourport->tx_irq = ret + 1;
- 	}
- 
--	switch (ourport->info->type) {
--	case TYPE_S3C24XX:
--		ret = platform_get_irq(platdev, 1);
--		if (ret > 0)
--			ourport->tx_irq = ret;
--		break;
--	default:
--		break;
--	}
--
- 	/*
- 	 * DMA is currently supported only on DT platforms, if DMA properties
- 	 * are specified.
-@@ -2083,9 +1981,6 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
- 			&ourport->drv_data->def_cfg;
- 
- 	switch (ourport->info->type) {
--	case TYPE_S3C24XX:
--		ourport->port.ops = &s3c24xx_serial_ops;
--		break;
- 	case TYPE_S3C6400:
- 		ourport->port.ops = &s3c64xx_serial_ops;
- 		break;
--- 
-2.40.1
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
