@@ -2,260 +2,138 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F13CDB465
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Oct 2023 10:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC54CDB483
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Oct 2023 12:41:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345229AbjJSKJT (ORCPT
+        id S1345516AbjJSMlR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 19 Oct 2023 06:09:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56396 "EHLO
+        Thu, 19 Oct 2023 08:41:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345212AbjJSKJP (ORCPT
+        with ESMTP id S235364AbjJSMlQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 19 Oct 2023 06:09:15 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AE9B12D
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Oct 2023 03:09:10 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40806e4106dso3494925e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Oct 2023 03:09:10 -0700 (PDT)
+        Thu, 19 Oct 2023 08:41:16 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9FB1BE
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Oct 2023 05:41:14 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-9b6559cbd74so1353745766b.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Oct 2023 05:41:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697710148; x=1698314948; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=m0Z7d7ptWbmYJPwApAdIZBvgqObyt8ZWq8dUW8kLFFM=;
-        b=s7Av72d/ObO7oKH5pLcbCOnrtdS4DCDRYmQq5xHd9TH6GEhE9o6nIeXG3KwE3K4TXY
-         mzSLXoeltsGI3tQr3i9mMHCQqkekvtdQs37m+wzjQQRcXDikFsL6GNFtV/uByyuDx2ck
-         vG8q7g9o4TzuXQG6IL9UasJl1SZPb43bH5kF7rGZtrD6d7LUNUlHPivEuxqnQB0OXnKi
-         eUOqJCB+we9MpNZL/OihzvhJzXZ6xjDKuDAPikaNTO7nIte+I+zzrzeySF7wlyZHlW+U
-         BqPQRyDU9HJfy2P7wfb7Ow6io5AHQPkRgitjzK37RypKIiCdOuUtrS/paYzOZYxGDSC8
-         dc4g==
+        d=linaro.org; s=google; t=1697719273; x=1698324073; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=vOtyl4QJoNrO7WydaEXmYKfB6hE2a/NTyD/frZ4jsPY=;
+        b=AAYAiBrpNHj/iJBO5bfnkLIDiJ1AGZVyH5ZxzxLI8VA3hQinIYw0Klk4ziuDkTw48x
+         IsJM4MrEqEQM7Sg1eKt7i4w6lgcOe6eHkv5kKVsCsqwDgBXRkSNnVSKW6DKVoQfFUQyN
+         izOBhtYroc+4ZG+efw+tXe5QW3x3iFb1QNbG/eWDX6bXo63LK/WUJ3yAxppET4li12Pr
+         9+pfLNNuWgOBY5HJgBRj+f3u/d197jIVxXlajelCIB5KwLFplelSTkZiSC0UpzgbPE/A
+         2jqRwcisoXYLiymaaBEioRAQlYBnTmzxmf7TrAz/Z1ghEGOEHkcakZiPVKVZHQgfEBlR
+         TTpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697710148; x=1698314948;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m0Z7d7ptWbmYJPwApAdIZBvgqObyt8ZWq8dUW8kLFFM=;
-        b=HsaNHekGtTuIc2ohso8Jg7yrny4jmgllQMnNSzHF3gF8JdjcR/OzRXFKs6JI5yNNsb
-         1+1pAZESwZPqiX0uQo1SQZMg9l8PkaKSYqhCLyifTTIP15HnoCNbXLyuWtli8UPavwZZ
-         v9PZ3eXvd/iEk6Ovi/ZrwlavNDnipjlJrlFw00JsaQOLSwMRHKH6IMJPw8cRZFAoJCPw
-         w5cvxPXHwQvrWbv3AdkCgeUJBPW9AspvHq3gU6MtyQXlP/gXgFZ6eOJO6ZsKJEeErlfV
-         O+wngt2A9rjWu3A2DDoAbeY64+6gc0KbcL/ONk9LKMwepT2WlDdHMHOefrIx2Ot7f64p
-         7zgg==
-X-Gm-Message-State: AOJu0YzOUI+J/E7Y3AA09UdbGjw8Qh3NoJo+ATChgIlJK7J+vVZFlCIP
-        wZ3RkgpWy3HOYDoKqyu93GrpsA==
-X-Google-Smtp-Source: AGHT+IEQNnTsvgWz2h4CJCcPkrnu4v9QYZthiac8p3ajy20I9bZMLfCvwec86847lWLW/8Egjyztlg==
-X-Received: by 2002:a05:600c:602a:b0:407:4126:f71c with SMTP id az42-20020a05600c602a00b004074126f71cmr1407173wmb.6.1697710148522;
-        Thu, 19 Oct 2023 03:09:08 -0700 (PDT)
-Received: from salami.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id f7-20020a05600c4e8700b00403b63e87f2sm4102122wmq.32.2023.10.19.03.09.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Oct 2023 03:09:08 -0700 (PDT)
-From:   =?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [PATCH v2] tty: serial: samsung_tty: remove dead code
-Date:   Thu, 19 Oct 2023 11:09:01 +0100
-Message-Id: <20231019100901.4026680-1-andre.draszik@linaro.org>
-X-Mailer: git-send-email 2.40.1
+        d=1e100.net; s=20230601; t=1697719273; x=1698324073;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vOtyl4QJoNrO7WydaEXmYKfB6hE2a/NTyD/frZ4jsPY=;
+        b=cs2K6iilYxdZRyKtD3chz076QRzFyaGVvwCjpyNRewxw8QSCv9q3PgG9VkOs7TFe85
+         CLeQ98DjFEAB1h4N+lwhIMEaCAaMJEqFXorOalQpECq5cARtgCWhHGMjx8Uzw513cioP
+         1iFDRl++9xBVXDiP4jKCMV03YM3qxo0PYJUyXp0WoevE5AlRgRyQlMosbJ9YdDmEIOiG
+         5zBuFMQ3qU4s8QnQtA9WGm2l3DxGSEkS92ZHIgcnYqfPrqAzhWsRmRlyx74XfDNOsBjP
+         VZ9Qu1irwPdOFLlknkrKFKmtP3wNGmeekCbFUO/p0zDUX1Y+PdMXfIglAo5og0bNjOtw
+         CE0w==
+X-Gm-Message-State: AOJu0YxuRBTJ68bu62VeF8b7dWOthSfp5rUf4uN69ltLOuNCqmLxlwNf
+        rt9osHvuseOUi9DxCN/iK0MGtA==
+X-Google-Smtp-Source: AGHT+IFpRTpF5IE5aoNMh4JyfNEHepUm2xsqyfu8HQfUAZPeCQTGo8cd6RakPS7ojT5UHRlUh2PhuA==
+X-Received: by 2002:a17:907:7254:b0:9be:ca44:87b6 with SMTP id ds20-20020a170907725400b009beca4487b6mr1642416ejc.3.1697719273190;
+        Thu, 19 Oct 2023 05:41:13 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.218.126])
+        by smtp.gmail.com with ESMTPSA id i22-20020a1709064ed600b00992f2befcbcsm3566491ejv.180.2023.10.19.05.41.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Oct 2023 05:41:12 -0700 (PDT)
+Message-ID: <1759a6c8-03a8-424e-b9ef-09d38eed108b@linaro.org>
+Date:   Thu, 19 Oct 2023 14:41:09 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] tty: serial: samsung: drop earlycon support for
+ unsupported platforms
+To:     =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+        linux-kernel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, alim.akhtar@samsung.com,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20231019100639.4026283-1-andre.draszik@linaro.org>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20231019100639.4026283-1-andre.draszik@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-When support for various old platforms was removed in commit
-1ea35b355722 ("ARM: s3c: remove s3c24xx specific hacks"),
-s3c24xx_serial_ops also became unused here because nothing sets port
-type TYPE_S3C24XX anymore.
+On 19/10/2023 12:06, André Draszik wrote:
+> Commit 1ea35b355722 ("ARM: s3c: remove s3c24xx specific hacks") removed
+> support here for several old platforms, but kept support for earlycon
+> for those same platforms.
+> 
+> As earlycon support for otherwise unsupported platforms doesn't seem to
+> be useful, just drop it as well.
+> 
+> Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
 
-Remove s3c24xx_serial_ops and all the code that's unreachable now.
-
-Fixes: 1ea35b355722 ("ARM: s3c: remove s3c24xx specific hacks")
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
----
-v2: update commit message
----
- drivers/tty/serial/samsung_tty.c | 105 -------------------------------
- 1 file changed, 105 deletions(-)
-
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 07fb8a9dac63..6b8d4b4402e9 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -64,7 +64,6 @@
- #define RXSTAT_DUMMY_READ (0x10000000)
- 
- enum s3c24xx_port_type {
--	TYPE_S3C24XX,
- 	TYPE_S3C6400,
- 	TYPE_APPLE_S5L,
- };
-@@ -128,8 +127,6 @@ struct s3c24xx_uart_dma {
- };
- 
- struct s3c24xx_uart_port {
--	unsigned char			rx_claimed;
--	unsigned char			tx_claimed;
- 	unsigned char			rx_enabled;
- 	unsigned char			tx_enabled;
- 	unsigned int			pm_level;
-@@ -1166,29 +1163,6 @@ static void s3c24xx_serial_release_dma(struct s3c24xx_uart_port *p)
- 	}
- }
- 
--static void s3c24xx_serial_shutdown(struct uart_port *port)
--{
--	struct s3c24xx_uart_port *ourport = to_ourport(port);
--
--	if (ourport->tx_claimed) {
--		free_irq(ourport->tx_irq, ourport);
--		ourport->tx_enabled = 0;
--		ourport->tx_claimed = 0;
--		ourport->tx_mode = 0;
--	}
--
--	if (ourport->rx_claimed) {
--		free_irq(ourport->rx_irq, ourport);
--		ourport->rx_claimed = 0;
--		ourport->rx_enabled = 0;
--	}
--
--	if (ourport->dma)
--		s3c24xx_serial_release_dma(ourport);
--
--	ourport->tx_in_progress = 0;
--}
--
- static void s3c64xx_serial_shutdown(struct uart_port *port)
- {
- 	struct s3c24xx_uart_port *ourport = to_ourport(port);
-@@ -1234,48 +1208,6 @@ static void apple_s5l_serial_shutdown(struct uart_port *port)
- 	ourport->tx_in_progress = 0;
- }
- 
--static int s3c24xx_serial_startup(struct uart_port *port)
--{
--	struct s3c24xx_uart_port *ourport = to_ourport(port);
--	int ret;
--
--	ourport->rx_enabled = 1;
--
--	ret = request_irq(ourport->rx_irq, s3c24xx_serial_rx_irq, 0,
--			  s3c24xx_serial_portname(port), ourport);
--
--	if (ret != 0) {
--		dev_err(port->dev, "cannot get irq %d\n", ourport->rx_irq);
--		return ret;
--	}
--
--	ourport->rx_claimed = 1;
--
--	dev_dbg(port->dev, "requesting tx irq...\n");
--
--	ourport->tx_enabled = 1;
--
--	ret = request_irq(ourport->tx_irq, s3c24xx_serial_tx_irq, 0,
--			  s3c24xx_serial_portname(port), ourport);
--
--	if (ret) {
--		dev_err(port->dev, "cannot get irq %d\n", ourport->tx_irq);
--		goto err;
--	}
--
--	ourport->tx_claimed = 1;
--
--	/* the port reset code should have done the correct
--	 * register setup for the port controls
--	 */
--
--	return ret;
--
--err:
--	s3c24xx_serial_shutdown(port);
--	return ret;
--}
--
- static int s3c64xx_serial_startup(struct uart_port *port)
- {
- 	struct s3c24xx_uart_port *ourport = to_ourport(port);
-@@ -1692,8 +1624,6 @@ static const char *s3c24xx_serial_type(struct uart_port *port)
- 	const struct s3c24xx_uart_port *ourport = to_ourport(port);
- 
- 	switch (ourport->info->type) {
--	case TYPE_S3C24XX:
--		return "S3C24XX";
- 	case TYPE_S3C6400:
- 		return "S3C6400/10";
- 	case TYPE_APPLE_S5L:
-@@ -1753,27 +1683,6 @@ static void s3c24xx_serial_put_poll_char(struct uart_port *port,
- 			 unsigned char c);
- #endif
- 
--static const struct uart_ops s3c24xx_serial_ops = {
--	.pm		= s3c24xx_serial_pm,
--	.tx_empty	= s3c24xx_serial_tx_empty,
--	.get_mctrl	= s3c24xx_serial_get_mctrl,
--	.set_mctrl	= s3c24xx_serial_set_mctrl,
--	.stop_tx	= s3c24xx_serial_stop_tx,
--	.start_tx	= s3c24xx_serial_start_tx,
--	.stop_rx	= s3c24xx_serial_stop_rx,
--	.break_ctl	= s3c24xx_serial_break_ctl,
--	.startup	= s3c24xx_serial_startup,
--	.shutdown	= s3c24xx_serial_shutdown,
--	.set_termios	= s3c24xx_serial_set_termios,
--	.type		= s3c24xx_serial_type,
--	.config_port	= s3c24xx_serial_config_port,
--	.verify_port	= s3c24xx_serial_verify_port,
--#if defined(CONFIG_SERIAL_SAMSUNG_CONSOLE) && defined(CONFIG_CONSOLE_POLL)
--	.poll_get_char = s3c24xx_serial_get_poll_char,
--	.poll_put_char = s3c24xx_serial_put_poll_char,
--#endif
--};
--
- static const struct uart_ops s3c64xx_serial_ops = {
- 	.pm		= s3c24xx_serial_pm,
- 	.tx_empty	= s3c24xx_serial_tx_empty,
-@@ -1836,7 +1745,6 @@ static void s3c24xx_serial_init_port_default(int index) {
- 	port->iotype = UPIO_MEM;
- 	port->uartclk = 0;
- 	port->fifosize = 16;
--	port->ops = &s3c24xx_serial_ops;
- 	port->flags = UPF_BOOT_AUTOCONF;
- 	port->line = index;
- }
-@@ -1954,16 +1862,6 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
- 		ourport->tx_irq = ret + 1;
- 	}
- 
--	switch (ourport->info->type) {
--	case TYPE_S3C24XX:
--		ret = platform_get_irq(platdev, 1);
--		if (ret > 0)
--			ourport->tx_irq = ret;
--		break;
--	default:
--		break;
--	}
--
- 	/*
- 	 * DMA is currently supported only on DT platforms, if DMA properties
- 	 * are specified.
-@@ -2083,9 +1981,6 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
- 			&ourport->drv_data->def_cfg;
- 
- 	switch (ourport->info->type) {
--	case TYPE_S3C24XX:
--		ourport->port.ops = &s3c24xx_serial_ops;
--		break;
- 	case TYPE_S3C6400:
- 		ourport->port.ops = &s3c64xx_serial_ops;
- 		break;
--- 
-2.40.1
+Best regards,
+Krzysztof
 
