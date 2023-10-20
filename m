@@ -2,110 +2,106 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E68CDB465
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Oct 2023 14:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 273DACDB47E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Oct 2023 07:56:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346145AbjJSOdP (ORCPT
+        id S1376515AbjJTH45 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 19 Oct 2023 10:33:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48842 "EHLO
+        Fri, 20 Oct 2023 03:56:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235485AbjJSOdE (ORCPT
+        with ESMTP id S1376490AbjJTH4p (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 19 Oct 2023 10:33:04 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB49010E0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Oct 2023 07:32:30 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id 41be03b00d2f7-5ab53b230f1so4310360a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Oct 2023 07:32:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697725950; x=1698330750; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+XNrx3US1TBoOT89cC/5dM/an9l4kgmeujKRHDCLupM=;
-        b=IFYDZo5lAbF2e10ozpQXYA9YrKwGIuwspFDgA+0fUygPYHP5/v2JqhCVXAPVIGWlQC
-         qgWDZ+6PvRDa2X/1GBKbyhbQHpyalEKtHfm+EPtsuheiljoGk1cG4b9FbHFwTECAjT68
-         lu9CYAoA5A9u21MeQztev2qtCYokCoYTLt4gvOetS+byi0lnkKVYNxW/aOWr53uKOjnU
-         XSzLN3Nh1b+DNkpen+QYkC+qWIYYjJkCYH4wfewUnE8XOZLieNMwtwmAzdUcmjp2ByZr
-         17FJ+Ksl31izGAhRcN1+0yLsbCvzq7eguMETPKWT3j5aq5iRkawbahM5R8TEA1AFj8TS
-         6ArQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697725950; x=1698330750;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+XNrx3US1TBoOT89cC/5dM/an9l4kgmeujKRHDCLupM=;
-        b=AA6xpeYd7zcCPS+OhLoA5xLtXxoaD64wXyPykuiMpdaJQCMOTBMlgYngZcjvQybL54
-         kTPbKULuL8i2HYRDV4FoOf/tQ6Aq6YT8dfpcEf5QfqvYlLWsH9PhSYhAZiQELnzb+REK
-         DYE4YxDq6HLN8BndLE6NUSkf7ZTCJj7RV3CYygZhXSIvzn+400KtSrShHXwtnSQWvY0c
-         3blcJMsFGzeDt2Qdtoz2Z5YE7ZVDVWe+YRbkuGUe+X8NB+J2t4WdyFBdLS355JyVQ55n
-         g7BiOJ1E4XOoPckG1sx9cKMnj4bM/6//qx3hU7Bg3uwwle5c6geZ1oaB9QyP/b0TdHk4
-         o/tA==
-X-Gm-Message-State: AOJu0YxuDHB0RPSGXkc64uC1z60szjiSIbt2rH8Iuh9nf+VHSVuGx5Wo
-        7alE17jT5hWcj4pUigHqN2zMPAmOgiJoVn67p/YqPQ==
-X-Google-Smtp-Source: AGHT+IF0maLNEBc0Dq3xbTv91IIXRq9WGF5Xiw5WZ5EZSw0JzAXHB7waQNn5r9NmgLXvWrREApajxxBXEDUsi9Q9LUc=
-X-Received: by 2002:a17:903:238c:b0:1c9:d25c:17c6 with SMTP id
- v12-20020a170903238c00b001c9d25c17c6mr2158169plh.1.1697725950072; Thu, 19 Oct
- 2023 07:32:30 -0700 (PDT)
+        Fri, 20 Oct 2023 03:56:45 -0400
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E916D52
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Oct 2023 00:56:42 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qtkN1-0003JR-EA; Fri, 20 Oct 2023 09:56:35 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qtkN0-002yUy-Dk; Fri, 20 Oct 2023 09:56:34 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qtkN0-002OJB-4Z; Fri, 20 Oct 2023 09:56:34 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+Subject: [PATCH 16/42] crypto: exynos-rng - Convert to platform remove callback returning void
+Date:   Fri, 20 Oct 2023 09:55:38 +0200
+Message-ID: <20231020075521.2121571-60-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231020075521.2121571-44-u.kleine-koenig@pengutronix.de>
+References: <20231020075521.2121571-44-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-References: <20231019100639.4026283-1-andre.draszik@linaro.org> <20231019100639.4026283-2-andre.draszik@linaro.org>
-In-Reply-To: <20231019100639.4026283-2-andre.draszik@linaro.org>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Thu, 19 Oct 2023 09:32:19 -0500
-Message-ID: <CAPLW+4=DG2g1=fZB9do_xb+q2ZU+BcyTgH5i15rqWoi_WUcdVQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dt-bindings: serial: drop unsupported samsung bindings
-To:     =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        alim.akhtar@samsung.com, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1707; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=UacrIPwaulEYZNHEF3e9yLVdfE5LSigzPahDQNQWQ9c=; b=owGbwMvMwMXY3/A7olbonx/jabUkhlQjo5pde1N92UKyW6rnXw0vejNlt0tSkl7JL4fkTJGip Qnbpkh0MhqzMDByMciKKbLYN67JtKqSi+xc++8yzCBWJpApDFycAjCRE2zsf6Xn9l/co8dgNiE2 W3Xi1Pnxs24uOby0MVROt3LuG/WeUB3L/z7sJzj2+Vxof2r9I4lnQl5l3/vPPrcCDuxecoWHyWD vmQrn7XXV2RuipJ2fZBatlu8UL07WeiIZ/vnE1Ek9i6PV9my7vHjRvQNTZG44cM+uWCK4IlRUVN DkZ8A6Ax6vYO9QrYIw4exz57bEvHU8v8C3kb3lgPcpg8oQdpatXt+yttgqNym/y1xnUG7/3v/e2 udnI5/odZ+/o8ijmnT5pNmRoxWvWFLr99vvNu4/7l1j+ZYtktNHqrq5WttZeJuXwC/Fq3bba7as mbnJmsXtH8PBuhfyj7Kswt72SG2bJhPGs+R7JEveP+MPAA==
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 19, 2023 at 5:06=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@l=
-inaro.org> wrote:
->
-> Now that no implementation exists anymore for
-> samsung,s3c24(1[02]|40)-uart, remove those bindings from here as well.
->
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is ignored (apart
+from emitting a warning) and this typically results in resource leaks.
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+To improve here there is a quest to make the remove callback return
+void. In the first step of this quest all drivers are converted to
+.remove_new(), which already returns void. Eventually after all drivers
+are converted, .remove_new() will be renamed to .remove().
 
->  Documentation/devicetree/bindings/serial/samsung_uart.yaml | 4 ----
->  1 file changed, 4 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b=
-/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> index 8bd88d5cbb11..d45079ef7bd9 100644
-> --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> @@ -24,9 +24,6 @@ properties:
->        - enum:
->            - apple,s5l-uart
->            - axis,artpec8-uart
-> -          - samsung,s3c2410-uart
-> -          - samsung,s3c2412-uart
-> -          - samsung,s3c2440-uart
->            - samsung,s3c6400-uart
->            - samsung,s5pv210-uart
->            - samsung,exynos4210-uart
-> @@ -96,7 +93,6 @@ allOf:
->          compatible:
->            contains:
->              enum:
-> -              - samsung,s3c2410-uart
->                - samsung,s5pv210-uart
->      then:
->        properties:
-> --
-> 2.40.1
->
->
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
+
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/crypto/exynos-rng.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/crypto/exynos-rng.c b/drivers/crypto/exynos-rng.c
+index 5d60a4bcb511..0dd8baf16cb4 100644
+--- a/drivers/crypto/exynos-rng.c
++++ b/drivers/crypto/exynos-rng.c
+@@ -306,13 +306,11 @@ static int exynos_rng_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int exynos_rng_remove(struct platform_device *pdev)
++static void exynos_rng_remove(struct platform_device *pdev)
+ {
+ 	crypto_unregister_rng(&exynos_rng_alg);
+ 
+ 	exynos_rng_dev = NULL;
+-
+-	return 0;
+ }
+ 
+ static int __maybe_unused exynos_rng_suspend(struct device *dev)
+@@ -391,7 +389,7 @@ static struct platform_driver exynos_rng_driver = {
+ 		.of_match_table = exynos_rng_dt_match,
+ 	},
+ 	.probe		= exynos_rng_probe,
+-	.remove		= exynos_rng_remove,
++	.remove_new	= exynos_rng_remove,
+ };
+ 
+ module_platform_driver(exynos_rng_driver);
+-- 
+2.42.0
+
