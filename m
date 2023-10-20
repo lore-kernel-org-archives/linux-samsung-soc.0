@@ -2,71 +2,69 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A686ACDB474
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Oct 2023 08:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E23CDB474
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Oct 2023 08:19:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235655AbjJTIS6 (ORCPT
+        id S235682AbjJTITI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Oct 2023 04:18:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38204 "EHLO
+        Fri, 20 Oct 2023 04:19:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235702AbjJTIS5 (ORCPT
+        with ESMTP id S235688AbjJTITC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Oct 2023 04:18:57 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB969BE
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Oct 2023 01:18:51 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-307d58b3efbso370696f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Oct 2023 01:18:51 -0700 (PDT)
+        Fri, 20 Oct 2023 04:19:02 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3932ED4C
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Oct 2023 01:18:57 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-32003aae100so990670f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Oct 2023 01:18:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697789930; x=1698394730; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        d=linaro.org; s=google; t=1697789935; x=1698394735; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
         bh=/7EPy3ZbmC3TdBbgosbJS0HMVczVXbzAkt1T7gdkdH8=;
-        b=uedz8xtvEPwnJAsK7h6b02dfha1yUMNiZdlYpm8RKaqdnttm2ws0sYpAFNbvaCZ2kY
-         IYprWpe5k0hPWwBypK3Gx/IOcBiiHbVx3mqnPcbFS4n+uHxxs1LbrQmUzshhbsqQ4qIG
-         +ulLQd/eyI7jV26hamy+Wn7BUmVEuuOWk6iFItSKj652ESfUcL3H5NXXKn98o7SEO91c
-         OjnRCg663/6ZEY2MMjM4acs0e2t4GydKSdOKsTVXehTrhUYgCSJE/UR1Po7q/wST05qh
-         JIaOM3qmcea96n/P5nF6PvLvV3OODFetf+Pe5RMCdMN9VJKqjtE03OjRZ+fORUIlr0mz
-         mWiw==
+        b=vu/D6PRkloUG5GpFpjr/dk/OcTEVgwJY1Or5NX00WfmP7d+vUH+EdWe9+/afRp8yGh
+         lZd3mMN8dzhLsqpPi67SxBbFDksvRfYN1bywndQYWbQV8DIKVxqSys4yzeqFjYs6do8K
+         rij8yPSKAQy8YZzXvdcSH78DB8Tw2fZkeY980XXPCsOmkmsQkNBg2Ni/IKI8Tb2iRqCy
+         LHbI35GpnqbbInzUVbZk9MvRG/7DwL3B1KBhGO3gM+XcI/EPrE6bjpU4AAXRxjHymbCL
+         2Ze4LrDSbDGbHn73bLuLTM/ZvwGnQNzsFbEAC251tqGxkaM0tY3BO8Z3/HSdqbUQCo7J
+         qySA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697789930; x=1698394730;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
+        d=1e100.net; s=20230601; t=1697789935; x=1698394735;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
         bh=/7EPy3ZbmC3TdBbgosbJS0HMVczVXbzAkt1T7gdkdH8=;
-        b=TCtK9ap9sv26iMRSti/uFPjHlhTjjXP3axDYV3HZnyF2eFdrxTXreBBN+/HS7Wuwv6
-         L7fwzUGNkSbJtlViRdVi4JoTHFhvlUAA4/02apLMyDA5PShAkc2eXpsdycf9EviVLKvj
-         TujO3Qu0zHOhEqgpbwI6qLlTwmTNBEen3j2BhP+SKbC11seF6laVkxfUtyISEhubmTZB
-         RID2Br14ky8uy7ULjs5J3/dkQrXJFfOqiONJKqUHhYyWbHH8NYdxe6ew49uapW09EGQ3
-         A4bx7jpanu1M3cHls7zN6i4AqZgCEO+Ukz80fzUi0Rq/MFY3ug+U9qweZLV4HSRg+kdd
-         GoJw==
-X-Gm-Message-State: AOJu0YzC3gUxCDZjJGVqtxDMb3Q0+iX7R+UCpu+B30mrH1+JALEl/iC9
-        tozDJ+QXWM3ccw0u9cIhUYfIUZYRn+TPjv+a5dY=
-X-Google-Smtp-Source: AGHT+IH3GS1Q79BLTI+TzXXgCI4ePjdJiri/pCbPzIh3rtyt5G4J1PoxJxhDYJSjll9Pwv9G/uNRFQ==
-X-Received: by 2002:adf:efc3:0:b0:32d:8e54:29f7 with SMTP id i3-20020adfefc3000000b0032d8e5429f7mr736528wrp.64.1697789929968;
-        Fri, 20 Oct 2023 01:18:49 -0700 (PDT)
+        b=fuNdxWJkcjNA8WdsxFjNxSpzod5Qk6Nrb8Ff9SyWR4Yvu+7ZGPRNz9tCS8IuDueKpw
+         QrogqkAEn5HHwRgUDi4oVWtEu3QbVCDpAXE3D/tnsGz317+WmAl+ghLiKY42VU/RDfQs
+         Y/zMAsB+f596JBskh2Paq7W/Y9fzpBiLc2o2R2cRRZSuABQhRCls/DvLCNdRUOeaZCZt
+         DwdUeehBPoMJzOCGw3XG1gkHSQXs98EKfi1E7Y0HPBhn/Q/eiq7U6fR+N59DNvrHxzyh
+         BvN+3yQbr7gXvg51oZOL9CABKScUrjvztmQuBgFXGcsgT0gqEI4N9jJ8BTrVlFeadXzu
+         U/aw==
+X-Gm-Message-State: AOJu0YyKcsnyP7C105msdtuRIMTjpPVSboyInJrun5HcqYHYwwRHdOyB
+        TBvkl3AmRO41WDeBd8EHAE76Jg==
+X-Google-Smtp-Source: AGHT+IEuShbbe++yOYKn4Qojku2UZTvSmb30dLOTAL9XF8AfKOw3QDL27VisMkc/hWp5ugzBWEMMUQ==
+X-Received: by 2002:adf:a403:0:b0:32d:9a1f:479d with SMTP id d3-20020adfa403000000b0032d9a1f479dmr4113073wra.23.1697789935641;
+        Fri, 20 Oct 2023 01:18:55 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id n12-20020adfe78c000000b00326f0ca3566sm1150394wrm.50.2023.10.20.01.18.48
+        by smtp.gmail.com with ESMTPSA id n12-20020adfe78c000000b00326f0ca3566sm1150394wrm.50.2023.10.20.01.18.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Oct 2023 01:18:49 -0700 (PDT)
-Message-ID: <5a544610-ae1b-4d2b-9f0b-a1165b0ff637@linaro.org>
-Date:   Fri, 20 Oct 2023 10:18:47 +0200
+        Fri, 20 Oct 2023 01:18:55 -0700 (PDT)
+Message-ID: <5874ca4e-b363-4f7a-9121-a896db454771@linaro.org>
+Date:   Fri, 20 Oct 2023 10:18:54 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 16/42] crypto: exynos-rng - Convert to platform remove
+Subject: Re: [PATCH 35/42] crypto: s5p-sss - Convert to platform remove
  callback returning void
+Content-Language: en-US
 To:     =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+Cc:     Vladimir Zapolskiy <vz@mleia.com>, linux-crypto@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de
 References: <20231020075521.2121571-44-u.kleine-koenig@pengutronix.de>
- <20231020075521.2121571-60-u.kleine-koenig@pengutronix.de>
-Content-Language: en-US
+ <20231020075521.2121571-79-u.kleine-koenig@pengutronix.de>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -112,7 +110,7 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231020075521.2121571-60-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20231020075521.2121571-79-u.kleine-koenig@pengutronix.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
