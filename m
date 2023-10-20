@@ -2,359 +2,495 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73442CDB474
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Oct 2023 12:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4CEC00A98
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Oct 2023 13:54:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377017AbjJTMwf (ORCPT
+        id S1377492AbjJTNyZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Oct 2023 08:52:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50748 "EHLO
+        Fri, 20 Oct 2023 09:54:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377282AbjJTMwe (ORCPT
+        with ESMTP id S1377395AbjJTNyY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Oct 2023 08:52:34 -0400
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FE83D5B;
-        Fri, 20 Oct 2023 05:52:31 -0700 (PDT)
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-6c7b3adbeb6so525575a34.0;
-        Fri, 20 Oct 2023 05:52:31 -0700 (PDT)
+        Fri, 20 Oct 2023 09:54:24 -0400
+Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D2391A3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Oct 2023 06:54:20 -0700 (PDT)
+Received: by mail-oi1-x22f.google.com with SMTP id 5614622812f47-3b2ea7cc821so591852b6e.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Oct 2023 06:54:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1697810059; x=1698414859; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HtwvBV51E4fAFQw0SFxiceF2yhOg1BukmOAnly80J7Q=;
+        b=NxrxgeFrBWwUD5eo2r39RqQjc67L/KFKr+8on+UAz41sc5hNtMVM0Zo7xEoBhlksxQ
+         rHFhZLFZz/w0H//9deaTGFBn2bMmdSHWJXuLpwOsp5AgC5qBsZB9dx8E45m5SFEmYF/P
+         +sZ0JA7V7bAHEXvmnItXBjoD2rWAsxrLAIfFcoZ0G+UxE8XQB9Oxi8vY88jOEtx28eIk
+         r6apqL8IkOv1Hh4s7daIFn2ug2QUVA6TwTWBFq50XnjkD5y9+T6c5ah4wl9qJAXPj9oM
+         9smLVpfWi9Hqr1Ue75m94lFtuVmjIEYoSbQj5GbQ+CIs/si2tksYj96aGAMn4KhPJjgZ
+         TXuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697806351; x=1698411151;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xn9e38NL+2yw7cE8Hne2rqONLjHxjfyoCpZSa/4tQ4w=;
-        b=TYYXxwqyZlRA9ogTwZAcH5+M1HU0uNuFftUkmEQlZkcU2/r/mROe9G/RTDNyCKPpvF
-         S3vU87LOjuEDq1S72LDllZfvm0hnSlCNapRl/UmCid5tuILkpVSGHbdkCf3+pv+1iE1X
-         PeiAJ86pXSEJuZuddiKYejWjhC5qwvfeNLN/tTw+PiOCZD71cTyzMMIZPTZslWPiI0iR
-         eMnJ0BSa9CvzY0mBebiPU556rL4Tiny7uf670djpDdI3IuAGsI2r1AXLgeYn+Fr4fthX
-         Gp6CPpsKpr8EjTa8ahqUDpeKJLqiNxS9QY6DfzoJYcD1QnF6ngYhrDS2797WR+/jC3fE
-         VvIA==
-X-Gm-Message-State: AOJu0YzEW2hwb7ncjoNJ7eMsD78ylHaomZ3YjjeQqXZ5IJbrSgti+/t9
-        +AO2MZhy9mpbqPNurBjv6w==
-X-Google-Smtp-Source: AGHT+IFron30buBMuGXE9aKsFvb6BnHdDTlQ+OFGLIcRg4wTZiiSvINrW5JAcCDc1w70jnOFpuJgEw==
-X-Received: by 2002:a9d:63d9:0:b0:6c4:c026:a658 with SMTP id e25-20020a9d63d9000000b006c4c026a658mr1704794otl.26.1697806350742;
-        Fri, 20 Oct 2023 05:52:30 -0700 (PDT)
-Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id b15-20020a9d6b8f000000b006cd0aa45fb4sm306486otq.55.2023.10.20.05.52.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Oct 2023 05:52:30 -0700 (PDT)
-Received: (nullmailer pid 2930703 invoked by uid 1000);
-        Fri, 20 Oct 2023 12:52:28 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Russell King <linux@armlinux.org.uk>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Joel Stanley <joel@jms.id.au>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Andrew Jeffery <andrew@codeconstruct.com.au>,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH] drm: Use device_get_match_data()
-Date:   Fri, 20 Oct 2023 07:52:13 -0500
-Message-ID: <20231020125214.2930329-1-robh@kernel.org>
-X-Mailer: git-send-email 2.42.0
+        d=1e100.net; s=20230601; t=1697810059; x=1698414859;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HtwvBV51E4fAFQw0SFxiceF2yhOg1BukmOAnly80J7Q=;
+        b=ZpY/NAYSn63TT59NSVyXGRItLA6qF8zNFIXykyBn3CVQ3fEV5o2VDFCzu5vetkoZ2J
+         yIZqh3TXiR4qE2+FCUmzGwviHb//vxSv+CFKdYyoQ9lcbVBgMWY93tmJkjUX6u7+wLgr
+         J9wGRkDFGkLJbLjbZ5+blUPzgZpt9NgU8P2sZgFsgTMp5JW9QRGV3teys9SDlPBVxaUZ
+         ofBqNi4WMlFwN8WOQ5JIaAvKzioRHoJmG0zZ/9Yal08vah/DeenLDpVcCg2LR63iFZy0
+         zB09et3pZxk2/6CPLBtUsVl7gjVFBAwyMQoG8Vdipcfl8cxFT+zowZXOifzpXOm82fJu
+         JGOQ==
+X-Gm-Message-State: AOJu0YyULxlj2MYjv6tuvCO/NdEu6rB9qAInlNbXSwSapAHoRoGeBCy8
+        AhFxY34F7pFc6ugj+TkV0z2RCLxaAaYToW+jPDsdoQ==
+X-Google-Smtp-Source: AGHT+IHpv2Vm4T4YbfcSkCY442O12YSvQFH8kmcGjglhDwt+1P6OnToh5q1mSl0h1YmBGD6KxcLKKTDETppFPSx6AWQ=
+X-Received: by 2002:a05:6808:308b:b0:3ac:4ee2:337b with SMTP id
+ bl11-20020a056808308b00b003ac4ee2337bmr2175099oib.51.1697810059595; Fri, 20
+ Oct 2023 06:54:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20231011184823.443959-1-peter.griffin@linaro.org>
+ <20231011184823.443959-14-peter.griffin@linaro.org> <CAPLW+4nVKXrW3q8d+Lm7p=s9n92Viw2SZLsXV1E4vBxP7cWRwg@mail.gmail.com>
+In-Reply-To: <CAPLW+4nVKXrW3q8d+Lm7p=s9n92Viw2SZLsXV1E4vBxP7cWRwg@mail.gmail.com>
+From:   Peter Griffin <peter.griffin@linaro.org>
+Date:   Fri, 20 Oct 2023 14:54:08 +0100
+Message-ID: <CADrjBPrGtr7Jas1Mr8U8qTm4HCyNppmC1s=XX1JfsoddCrK8Cw@mail.gmail.com>
+Subject: Re: [PATCH v3 13/20] pinctrl: samsung: Add filter selection support
+ for alive banks
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
+        cw00.choi@samsung.com, tudor.ambarus@linaro.org,
+        andre.draszik@linaro.org, saravanak@google.com,
+        willmcvicker@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use preferred device_get_match_data() instead of of_match_device() to
-get the driver match data in a single step. With this, adjust the
-includes to explicitly include the correct headers. That also serves as
-preparation to remove implicit includes within the DT headers
-(of_device.h in particular).
+Hi Sam,
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- drivers/gpu/drm/armada/armada_crtc.c    | 24 +++++++-----------------
- drivers/gpu/drm/aspeed/aspeed_gfx_drv.c | 10 ++++------
- drivers/gpu/drm/exynos/exynos_drm_gsc.c |  9 +++++----
- drivers/gpu/drm/imx/ipuv3/imx-ldb.c     |  9 ++++-----
- drivers/gpu/drm/mxsfb/mxsfb_drv.c       | 10 +++-------
- drivers/gpu/drm/omapdrm/dss/dispc.c     |  4 ++--
- drivers/gpu/drm/omapdrm/dss/dss.c       |  5 +++--
- 7 files changed, 28 insertions(+), 43 deletions(-)
+Thanks for your review feedback. See my answers inline below.
 
-diff --git a/drivers/gpu/drm/armada/armada_crtc.c b/drivers/gpu/drm/armada/armada_crtc.c
-index 15dd667aa2e7..f2886e6f631b 100644
---- a/drivers/gpu/drm/armada/armada_crtc.c
-+++ b/drivers/gpu/drm/armada/armada_crtc.c
-@@ -7,8 +7,9 @@
- #include <linux/clk.h>
- #include <linux/component.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/property.h>
- 
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
-@@ -1012,26 +1013,17 @@ armada_lcd_bind(struct device *dev, struct device *master, void *data)
- 	int irq = platform_get_irq(pdev, 0);
- 	const struct armada_variant *variant;
- 	struct device_node *port = NULL;
-+	struct device_node *np, *parent = dev->of_node;
- 
- 	if (irq < 0)
- 		return irq;
- 
--	if (!dev->of_node) {
--		const struct platform_device_id *id;
- 
--		id = platform_get_device_id(pdev);
--		if (!id)
--			return -ENXIO;
--
--		variant = (const struct armada_variant *)id->driver_data;
--	} else {
--		const struct of_device_id *match;
--		struct device_node *np, *parent = dev->of_node;
--
--		match = of_match_device(dev->driver->of_match_table, dev);
--		if (!match)
--			return -ENXIO;
-+	variant = device_get_match_data(dev);
-+	if (!variant)
-+		return -ENXIO;
- 
-+	if (parent) {
- 		np = of_get_child_by_name(parent, "ports");
- 		if (np)
- 			parent = np;
-@@ -1041,8 +1033,6 @@ armada_lcd_bind(struct device *dev, struct device *master, void *data)
- 			dev_err(dev, "no port node found in %pOF\n", parent);
- 			return -ENXIO;
- 		}
--
--		variant = match->data;
- 	}
- 
- 	return armada_drm_crtc_create(drm, dev, res, irq, variant, port);
-diff --git a/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c b/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
-index 78122b35a0cb..a7a6b70220eb 100644
---- a/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
-+++ b/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
-@@ -6,10 +6,10 @@
- #include <linux/irq.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
--#include <linux/of.h>
--#include <linux/of_device.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
-+#include <linux/property.h>
- #include <linux/regmap.h>
- #include <linux/reset.h>
- 
-@@ -143,7 +143,6 @@ static int aspeed_gfx_load(struct drm_device *drm)
- 	struct aspeed_gfx *priv = to_aspeed_gfx(drm);
- 	struct device_node *np = pdev->dev.of_node;
- 	const struct aspeed_gfx_config *config;
--	const struct of_device_id *match;
- 	struct resource *res;
- 	int ret;
- 
-@@ -152,10 +151,9 @@ static int aspeed_gfx_load(struct drm_device *drm)
- 	if (IS_ERR(priv->base))
- 		return PTR_ERR(priv->base);
- 
--	match = of_match_device(aspeed_gfx_match, &pdev->dev);
--	if (!match)
-+	config = device_get_match_data(&pdev->dev);
-+	if (!config)
- 		return -EINVAL;
--	config = match->data;
- 
- 	priv->dac_reg = config->dac_reg;
- 	priv->int_clr_reg = config->int_clear_reg;
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-index 34cdabc30b4f..35771fb4e85d 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-@@ -11,9 +11,10 @@
- #include <linux/component.h>
- #include <linux/kernel.h>
- #include <linux/mfd/syscon.h>
--#include <linux/of_device.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/property.h>
- #include <linux/regmap.h>
- 
- #include <drm/drm_fourcc.h>
-@@ -103,7 +104,7 @@ struct gsc_context {
- 	unsigned int			num_formats;
- 
- 	void __iomem	*regs;
--	const char	**clk_names;
-+	const char	*const *clk_names;
- 	struct clk	*clocks[GSC_MAX_CLOCKS];
- 	int		num_clocks;
- 	struct gsc_scaler	sc;
-@@ -1217,7 +1218,7 @@ static const unsigned int gsc_tiled_formats[] = {
- static int gsc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct gsc_driverdata *driver_data;
-+	const struct gsc_driverdata *driver_data;
- 	struct exynos_drm_ipp_formats *formats;
- 	struct gsc_context *ctx;
- 	int num_formats, ret, i, j;
-@@ -1226,7 +1227,7 @@ static int gsc_probe(struct platform_device *pdev)
- 	if (!ctx)
- 		return -ENOMEM;
- 
--	driver_data = (struct gsc_driverdata *)of_device_get_match_data(dev);
-+	driver_data = device_get_match_data(dev);
- 	ctx->dev = dev;
- 	ctx->num_clocks = driver_data->num_clocks;
- 	ctx->clk_names = driver_data->clk_names;
-diff --git a/drivers/gpu/drm/imx/ipuv3/imx-ldb.c b/drivers/gpu/drm/imx/ipuv3/imx-ldb.c
-index 989eca32d325..53840ab054c7 100644
---- a/drivers/gpu/drm/imx/ipuv3/imx-ldb.c
-+++ b/drivers/gpu/drm/imx/ipuv3/imx-ldb.c
-@@ -12,8 +12,10 @@
- #include <linux/mfd/syscon.h>
- #include <linux/mfd/syscon/imx6q-iomuxc-gpr.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/of_graph.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
- #include <linux/regmap.h>
- #include <linux/videodev2.h>
- 
-@@ -617,7 +619,6 @@ static int imx_ldb_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
--	const struct of_device_id *of_id = of_match_device(imx_ldb_dt_ids, dev);
- 	struct device_node *child;
- 	struct imx_ldb *imx_ldb;
- 	int dual;
-@@ -638,9 +639,7 @@ static int imx_ldb_probe(struct platform_device *pdev)
- 	regmap_write(imx_ldb->regmap, IOMUXC_GPR2, 0);
- 
- 	imx_ldb->dev = dev;
--
--	if (of_id)
--		imx_ldb->lvds_mux = of_id->data;
-+	imx_ldb->lvds_mux = device_get_match_data(dev);
- 
- 	dual = of_property_read_bool(np, "fsl,dual-channel");
- 	if (dual)
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-index 625c1bfc4173..b483ef48216a 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-@@ -11,9 +11,10 @@
- #include <linux/clk.h>
- #include <linux/dma-mapping.h>
- #include <linux/io.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/property.h>
- #include <linux/pm_runtime.h>
- 
- #include <drm/drm_atomic_helper.h>
-@@ -346,18 +347,13 @@ MODULE_DEVICE_TABLE(of, mxsfb_dt_ids);
- static int mxsfb_probe(struct platform_device *pdev)
- {
- 	struct drm_device *drm;
--	const struct of_device_id *of_id =
--			of_match_device(mxsfb_dt_ids, &pdev->dev);
- 	int ret;
- 
--	if (!pdev->dev.of_node)
--		return -ENODEV;
--
- 	drm = drm_dev_alloc(&mxsfb_driver, &pdev->dev);
- 	if (IS_ERR(drm))
- 		return PTR_ERR(drm);
- 
--	ret = mxsfb_load(drm, of_id->data);
-+	ret = mxsfb_load(drm, device_get_match_data(&pdev->dev));
- 	if (ret)
- 		goto err_free;
- 
-diff --git a/drivers/gpu/drm/omapdrm/dss/dispc.c b/drivers/gpu/drm/omapdrm/dss/dispc.c
-index c26aab4939fa..993691b3cc7e 100644
---- a/drivers/gpu/drm/omapdrm/dss/dispc.c
-+++ b/drivers/gpu/drm/omapdrm/dss/dispc.c
-@@ -22,11 +22,11 @@
- #include <linux/hardirq.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/property.h>
- #include <linux/sizes.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
- #include <linux/of.h>
--#include <linux/of_device.h>
- #include <linux/component.h>
- #include <linux/sys_soc.h>
- #include <drm/drm_fourcc.h>
-@@ -4765,7 +4765,7 @@ static int dispc_bind(struct device *dev, struct device *master, void *data)
- 	if (soc)
- 		dispc->feat = soc->data;
- 	else
--		dispc->feat = of_match_device(dispc_of_match, &pdev->dev)->data;
-+		dispc->feat = device_get_match_data(&pdev->dev);
- 
- 	r = dispc_errata_i734_wa_init(dispc);
- 	if (r)
-diff --git a/drivers/gpu/drm/omapdrm/dss/dss.c b/drivers/gpu/drm/omapdrm/dss/dss.c
-index 02955f976845..988888e164d7 100644
---- a/drivers/gpu/drm/omapdrm/dss/dss.c
-+++ b/drivers/gpu/drm/omapdrm/dss/dss.c
-@@ -22,12 +22,13 @@
- #include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/property.h>
- #include <linux/gfp.h>
- #include <linux/sizes.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
- #include <linux/of.h>
--#include <linux/of_device.h>
-+#include <linux/of_platform.h>
- #include <linux/of_graph.h>
- #include <linux/regulator/consumer.h>
- #include <linux/suspend.h>
-@@ -1445,7 +1446,7 @@ static int dss_probe(struct platform_device *pdev)
- 	if (soc)
- 		dss->feat = soc->data;
- 	else
--		dss->feat = of_match_device(dss_of_match, &pdev->dev)->data;
-+		dss->feat = device_get_match_data(&pdev->dev);
- 
- 	/* Map I/O registers, get and setup clocks. */
- 	dss->base = devm_platform_ioremap_resource(pdev, 0);
--- 
-2.42.0
+On Wed, 11 Oct 2023 at 23:47, Sam Protsenko <semen.protsenko@linaro.org> wr=
+ote:
+>
+> On Wed, Oct 11, 2023 at 1:49=E2=80=AFPM Peter Griffin <peter.griffin@lina=
+ro.org> wrote:
+> >
+> > Newer Exynos SoCs have a filter selection register on alive bank pins.
+> > This allows the selection of a digital or delay filter for each pin. If
+> > the filter selection register is not available then the default filter
+> > (digital) is applied.
+> >
+>
+> I wonder if that solves any particular issue. For Exynos850 I decided
+> against adding this feature because I failed to find any benefits of
+> it. Didn't even come up with the way to test it. Is it really needed
+> for this SoC functioning? In case you have some more details on why
+> it's needed and how it can be tested, please add that info to the
+> commit message as well.
 
+I can certainly add some more information to the commit message.
+
+The filter determines to what extent the signal fluctuations received
+through the pad on the GPIO are considered glitches. The downstream
+kernel used by Pixel 6 phones in production set this filter. If you want to
+test on e850 then I would issue
+
+echo mem > /sys/power/state
+
+And then try to wake the device using some eint gpio. The upstream
+kernel gs101/Oriole isn't functional enough currently to test suspend
+resume. The logic makes sense though that whilst suspended you
+don't want the digital filter enabled, as it is using a clock.
+
+Given this filter is about detecting glitches and signal fluctuations it
+looks like the sort of thing that may not deterministically fail but
+could lead to spurious wakeups, which is obviously not good for a
+battery based device. Additionally setting this filter is what is
+recommended by the SoC manufacturer, so it seems wise to set it.
+
+>
+> > On suspend we apply the analog filter to all pins in the bank, and on
+> > resume the digital filter is reapplied to all pins in the bank.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+>
+> Heads up: I noticed some merge warnings when applying this patch onto
+> the most recent linux-next, like so:
+>
+> 8<---------------------------------------------------------------------->=
+8
+>     Applying: pinctrl: samsung: Add filter selection support for alive ba=
+nks
+>     Using index info to reconstruct a base tree...
+>     M    drivers/pinctrl/samsung/pinctrl-exynos.c
+>     M    drivers/pinctrl/samsung/pinctrl-exynos.h
+>     M    drivers/pinctrl/samsung/pinctrl-samsung.c
+>     M    drivers/pinctrl/samsung/pinctrl-samsung.h
+>     Falling back to patching base and 3-way merge...
+>     Auto-merging drivers/pinctrl/samsung/pinctrl-samsung.h
+>     Auto-merging drivers/pinctrl/samsung/pinctrl-samsung.c
+>     Auto-merging drivers/pinctrl/samsung/pinctrl-exynos.h
+>     Auto-merging drivers/pinctrl/samsung/pinctrl-exynos.c
+> 8<---------------------------------------------------------------------->=
+8
+>
+> It was still applied, but maybe if you are going to send v4 try to
+> rebase your series on top of linux-next first.
+>
+> Below are pretty minor comments for the code.
+>
+> >  drivers/pinctrl/samsung/pinctrl-exynos.c  | 82 ++++++++++++++++++++++-
+> >  drivers/pinctrl/samsung/pinctrl-exynos.h  |  7 ++
+> >  drivers/pinctrl/samsung/pinctrl-samsung.c |  2 +
+> >  drivers/pinctrl/samsung/pinctrl-samsung.h | 23 +++++++
+> >  4 files changed, 113 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl=
+/samsung/pinctrl-exynos.c
+> > index a8212fc126bf..800831aa8357 100644
+> > --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> > +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> > @@ -269,6 +269,68 @@ struct exynos_eint_gpio_save {
+> >         u32 eint_mask;
+> >  };
+> >
+> > +static void exynos_eint_flt_config(struct samsung_pinctrl_drv_data *d,
+> > +                                  struct samsung_pin_bank *bank, int f=
+ilter)
+> > +{
+> > +       unsigned int flt_reg, flt_con =3D 0;
+> > +       unsigned int val, shift;
+> > +       int i;
+> > +       int loop_cnt;
+> > +
+> > +       /*
+> > +        * This function sets the desired filter (digital or delay) to
+> > +        * every pin in the bank. Note the filter selection bitfield is
+> > +        * only found on alive banks. The FLTCON register has the
+> > +        * following layout
+> > +        *
+> > +        * BitfieldName[PinNum][Bit:Bit]
+> > +        *
+> > +        * FLT_EN[3][31] FLT_SEL[3][30] FLT_WIDTH[3][29:24]
+> > +        * FLT_EN[2][23] FLT_SEL[2][22] FLT_WIDTH[2][21:16]
+> > +        * FLT_EN[1][15] FLT_SEL[1][14] FLT_WIDTH[1][13:8]
+> > +        * FLT_EN[0][7]  FLT_SEL[0][6]  FLT_WIDTH[0][5:0]
+> > +        */
+>
+> Maybe move this comment above this function? Or split it in two parts:
+> function doc, and 'flt_con' variable doc.
+
+Ok will move/split it
+
+>
+> > +
+> > +       flt_con |=3D EXYNOS9_FLTCON_EN;
+> > +
+> > +       if (filter)
+>
+> Different values are passed as a 'filter' param to this function. But
+> here it's only used as a boolean value. Something doesn't feel right.
+
+That was done to aid readability at the callee sites
+
+>
+> > +               flt_con |=3D EXYNOS9_FLTCON_SEL_DIGITAL;
+> > +
+> > +       flt_reg =3D EXYNOS_GPIO_EFLTCON_OFFSET + bank->fltcon_offset;
+> > +
+> > +       if (bank->nr_pins > EXYNOS9_FLTCON_NR_PIN)
+> > +               /*
+> > +                * if nr_pins > 4, we should set FLTCON0 register fully=
+.
+> > +                * (pin0 ~ 3). So loop 4 times in case of FLTCON0.
+> > +                */
+>
+> Maybe move this comment above 'if' block? And start with capital
+> letter, for consistency with other multi-line comments.
+
+will fix
+
+>
+> > +               loop_cnt =3D EXYNOS9_FLTCON_NR_PIN;
+> > +       else
+> > +               loop_cnt =3D bank->nr_pins;
+> > +
+> > +       val =3D readl(d->virt_base + flt_reg);
+> > +
+>
+> Maybe remove this empty line to make RMW block the whole?
+
+will do
+>
+> > +       for (i =3D 0; i < loop_cnt; i++) {
+> > +               shift =3D i * EXYNOS9_FLTCON_LEN;
+> > +               val &=3D ~(EXYNOS9_FLTCON_MASK << shift);
+> > +               val |=3D (flt_con << shift);
+> > +       }
+> > +
+>
+> Ditto.
+>
+> > +       writel(val, d->virt_base + flt_reg);
+> > +
+> > +       /* loop for FLTCON1 pin 4 ~ 7 */
+>
+> Start with a capital letter for consistency.
+
+will fix
+
+>
+> > +       if (bank->nr_pins > EXYNOS9_FLTCON_NR_PIN) {
+> > +               val =3D readl(d->virt_base + flt_reg + 0x4);
+> > +               loop_cnt =3D (bank->nr_pins - EXYNOS9_FLTCON_NR_PIN);
+> > +
+> > +               for (i =3D 0; i < loop_cnt; i++) {
+> > +                       shift =3D i * EXYNOS9_FLTCON_LEN;
+> > +                       val &=3D ~(EXYNOS9_FLTCON_MASK << shift);
+> > +                       val |=3D (flt_con << shift);
+> > +               }
+>
+> Code duplication, but it's minor.
+>
+> > +               writel(val, d->virt_base + flt_reg + 0x4);
+> > +       }
+> > +}
+> > +
+> >  /*
+> >   * exynos_eint_gpio_init() - setup handling of external gpio interrupt=
+s.
+> >   * @d: driver data of samsung pinctrl driver.
+> > @@ -321,6 +383,9 @@ __init int exynos_eint_gpio_init(struct samsung_pin=
+ctrl_drv_data *d)
+> >                         goto err_domains;
+> >                 }
+> >
+> > +               /* Set Delay Analog Filter */
+> > +               if (bank->fltcon_type !=3D FLT_DEFAULT)
+> > +                       exynos_eint_flt_config(d, bank, EXYNOS9_FLTCON_=
+SEL_DELAY);
+> >         }
+> >
+> >         return 0;
+> > @@ -555,6 +620,10 @@ __init int exynos_eint_wkup_init(struct samsung_pi=
+nctrl_drv_data *d)
+> >                 if (bank->eint_type !=3D EINT_TYPE_WKUP)
+> >                         continue;
+> >
+> > +               /* Set Digital Filter */
+> > +               if (bank->fltcon_type !=3D FLT_DEFAULT)
+> > +                       exynos_eint_flt_config(d, bank, EXYNOS9_FLTCON_=
+SEL_DIGITAL);
+>
+> Please stick to 80 characters per line when possible.
+
+will fix
+>
+> > +
+> >                 bank->irq_chip =3D devm_kmemdup(dev, irq_chip, sizeof(*=
+irq_chip),
+> >                                               GFP_KERNEL);
+> >                 if (!bank->irq_chip) {
+> > @@ -658,6 +727,7 @@ static void exynos_pinctrl_suspend_bank(
+> >  void exynos_pinctrl_suspend(struct samsung_pinctrl_drv_data *drvdata)
+> >  {
+> >         struct samsung_pin_bank *bank =3D drvdata->pin_banks;
+> > +       struct samsung_pinctrl_drv_data *d =3D bank->drvdata;
+> >         struct exynos_irq_chip *irq_chip =3D NULL;
+> >         int i;
+> >
+> > @@ -665,6 +735,9 @@ void exynos_pinctrl_suspend(struct samsung_pinctrl_=
+drv_data *drvdata)
+> >                 if (bank->eint_type =3D=3D EINT_TYPE_GPIO)
+> >                         exynos_pinctrl_suspend_bank(drvdata, bank);
+> >                 else if (bank->eint_type =3D=3D EINT_TYPE_WKUP) {
+> > +                       /* Setting Delay (Analog) Filter */
+> > +                       if (bank->fltcon_type !=3D FLT_DEFAULT)
+> > +                               exynos_eint_flt_config(d, bank, EXYNOS9=
+_FLTCON_SEL_DELAY);
+>
+> Please stick to 80 characters per line when possible.
+
+will fix
+>
+> >                         if (!irq_chip) {
+> >                                 irq_chip =3D bank->irq_chip;
+> >                                 irq_chip->set_eint_wakeup_mask(drvdata,
+> > @@ -707,11 +780,18 @@ static void exynos_pinctrl_resume_bank(
+> >  void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+> >  {
+> >         struct samsung_pin_bank *bank =3D drvdata->pin_banks;
+> > +       struct samsung_pinctrl_drv_data *d =3D bank->drvdata;
+> >         int i;
+> >
+> >         for (i =3D 0; i < drvdata->nr_banks; ++i, ++bank)
+> > -               if (bank->eint_type =3D=3D EINT_TYPE_GPIO)
+> > +               if (bank->eint_type =3D=3D EINT_TYPE_GPIO) {
+> >                         exynos_pinctrl_resume_bank(drvdata, bank);
+> > +               } else if (bank->eint_type =3D=3D EINT_TYPE_WKUP ||
+> > +                       bank->eint_type =3D=3D EINT_TYPE_WKUP_MUX) {
+>
+> Indent it to be under the open bracket on the previous line.
+
+will fix
+>
+> > +                       /* Set Digital Filter */
+> > +                       if (bank->fltcon_type !=3D FLT_DEFAULT)
+> > +                               exynos_eint_flt_config(d, bank, EXYNOS9=
+_FLTCON_SEL_DIGITAL);
+>
+> Please stick to 80 characters per line when possible.
+
+will fix
+>
+> > +               }
+> >  }
+> >
+> >  static void exynos_retention_enable(struct samsung_pinctrl_drv_data *d=
+rvdata)
+> > diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl=
+/samsung/pinctrl-exynos.h
+> > index 7bd6d82c9f36..63b2426ad5d6 100644
+> > --- a/drivers/pinctrl/samsung/pinctrl-exynos.h
+> > +++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
+> > @@ -50,6 +50,13 @@
+> >
+> >  #define EXYNOS_EINT_MAX_PER_BANK       8
+> >  #define EXYNOS_EINT_NR_WKUP_EINT
+> > +/* EINT filter configuration */
+> > +#define EXYNOS9_FLTCON_EN              BIT(7)
+> > +#define EXYNOS9_FLTCON_SEL_DIGITAL     BIT(6)
+> > +#define EXYNOS9_FLTCON_SEL_DELAY       0
+> > +#define EXYNOS9_FLTCON_MASK            0xff
+> > +#define EXYNOS9_FLTCON_LEN             8
+> > +#define EXYNOS9_FLTCON_NR_PIN          4
+> >
+>
+> I guess we discussed using EXYNOS9 prefix during the review of
+> Exynos850 initial submission, and decided against it. But in case of
+> this SoC (which is obviously Exynos, but is called Google), I'm not
+> even sure which name would be appropriate. I mean, if it's ok to use
+> EXYNOS9 prefix, then maybe I should go ahead and rename existing
+> EXYNOS850 definitions to EXYNOS9 too, as it belongs to the same
+> platform family, to avoid any confusion.
+
+If Exynos850 also has this filter selection functionality, and we want to
+share the same macro names between gs101 and exynos850 then I
+think EXYNOS9_ prefix makes sense. That is what they are called in
+the downstream kernel IIRC
+
+>
+> Krzysztof, what's your take on this?
+>
+> >  #define EXYNOS_PIN_BANK_EINTN(pins, reg, id)           \
+> >         {                                               \
+> > diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctr=
+l/samsung/pinctrl-samsung.c
+> > index e54847040b4a..449f8109d8b5 100644
+> > --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> > +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> > @@ -1104,6 +1104,8 @@ samsung_pinctrl_get_soc_data(struct samsung_pinct=
+rl_drv_data *d,
+> >                 bank->eint_func =3D bdata->eint_func;
+> >                 bank->eint_type =3D bdata->eint_type;
+> >                 bank->eint_mask =3D bdata->eint_mask;
+> > +               bank->fltcon_type =3D bdata->fltcon_type;
+> > +               bank->fltcon_offset =3D bdata->fltcon_offset;
+> >                 bank->eint_offset =3D bdata->eint_offset;
+> >                 bank->name =3D bdata->name;
+> >
+> > diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctr=
+l/samsung/pinctrl-samsung.h
+> > index 9af93e3d8d9f..de2ca8e8b378 100644
+> > --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
+> > +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+> > @@ -82,6 +82,21 @@ enum eint_type {
+> >         EINT_TYPE_WKUP_MUX,
+> >  };
+> >
+> > +/**
+> > + * enum fltcon_type - filter selection
+> > + * @FLT_DEFAULT: filter not selectable, default digital filter
+> > + * @FLT_SELECT: filter selectable (digital or delay)
+> > + *
+> > + * Some banks on some SoCs (gs101 and possibly others) have a selectab=
+le
+> > + * filter on alive banks of 'delay/analog' or 'digital'. If the filter
+> > + * selection is not available then the default filter is used (digital=
+).
+> > + */
+> > +
+>
+> Maybe remove this empty line?
+
+Will fix
+
+regards,
+
+Peter
+
+>
+> > +enum fltcon_type {
+> > +       FLT_DEFAULT,
+> > +       FLT_SELECTABLE,
+> > +};
+> > +
+> >  /* maximum length of a pin in pin descriptor (example: "gpa0-0") */
+> >  #define PIN_NAME_LENGTH        10
+> >
+> > @@ -122,6 +137,8 @@ struct samsung_pin_bank_type {
+> >   * @eint_type: type of the external interrupt supported by the bank.
+> >   * @eint_mask: bit mask of pins which support EINT function.
+> >   * @eint_offset: SoC-specific EINT register or interrupt offset of ban=
+k.
+> > + * @fltcon_type: whether the filter (delay/digital) is selectable
+> > + * @fltcon_offset: SoC-specific EINT filter control register offset of=
+ bank.
+> >   * @name: name to be prefixed for each pin in this pin bank.
+> >   */
+> >  struct samsung_pin_bank_data {
+> > @@ -133,6 +150,8 @@ struct samsung_pin_bank_data {
+> >         enum eint_type  eint_type;
+> >         u32             eint_mask;
+> >         u32             eint_offset;
+> > +       enum fltcon_type fltcon_type;
+> > +       u32             fltcon_offset;
+> >         const char      *name;
+> >  };
+> >
+> > @@ -147,6 +166,8 @@ struct samsung_pin_bank_data {
+> >   * @eint_type: type of the external interrupt supported by the bank.
+> >   * @eint_mask: bit mask of pins which support EINT function.
+> >   * @eint_offset: SoC-specific EINT register or interrupt offset of ban=
+k.
+> > + * @fltcon_type: whether the filter (delay/digital) is selectable
+> > + * @fltcon_offset: SoC-specific EINT filter control register offset of=
+ bank.
+> >   * @name: name to be prefixed for each pin in this pin bank.
+> >   * @pin_base: starting pin number of the bank.
+> >   * @soc_priv: per-bank private data for SoC-specific code.
+> > @@ -169,6 +190,8 @@ struct samsung_pin_bank {
+> >         enum eint_type  eint_type;
+> >         u32             eint_mask;
+> >         u32             eint_offset;
+> > +       enum fltcon_type fltcon_type;
+> > +       u32             fltcon_offset;
+> >         const char      *name;
+> >
+> >         u32             pin_base;
+> > --
+> > 2.42.0.655.g421f12c284-goog
+> >
