@@ -2,173 +2,93 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB6E9C004C0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Oct 2023 21:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 709D3C001E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Oct 2023 18:45:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233210AbjJTVsH (ORCPT
+        id S231903AbjJUSpB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Oct 2023 17:48:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48830 "EHLO
+        Sat, 21 Oct 2023 14:45:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233193AbjJTVsG (ORCPT
+        with ESMTP id S231904AbjJUSpA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Oct 2023 17:48:06 -0400
-Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74D9D10CC
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Oct 2023 14:48:00 -0700 (PDT)
-Received: by mail-qv1-xf2d.google.com with SMTP id 6a1803df08f44-66d0f945893so11212876d6.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Oct 2023 14:48:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697838479; x=1698443279; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/mBv1buCpcnwBc220mZjRsjDHmbRRP2xfyJ2lFdmR6s=;
-        b=fkQSFbeTNaotD+CG4FKQHumTVggsF4QQ1QA1edAb3YoOcjsvemrDs8zsMNkGu8wPXk
-         oAgYd+57Et82jKpaGhkZ75Y1hHIdDtaCiAA5rF8ge6XQaC4O9pD2CYSBjNz2uPwIn6tV
-         sGHY4IrTsZcuOg6d+uCtLwqow3Iu/LVm/UHyHTUHRcYN5PNYRtTKiamZvH+raxvq+qgD
-         8hM6sHMSRlABL5JBLc1XL9igXG0ZIoHslLimSfvDAcYpMUzkDwwdmJcjtSulMFPyYXd6
-         O0iTtB1UJfvENqmACX6Z1BwL7l/Q+RC5Pt1a62/rxF1VRwMC0PyUI6ixz/gYgrUA24s8
-         WmWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697838479; x=1698443279;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/mBv1buCpcnwBc220mZjRsjDHmbRRP2xfyJ2lFdmR6s=;
-        b=NHpIDs0oU6tVcoNuSq9NlcXMvBddGR4PCGMWJkqGy89sjblO2z4MbkvehDCk36QVu1
-         hWUH4xhpcpyVsmZS+s0/MbhRbwfkUvai6dWiqMvaR5tqbWGOqeD7SWzdQSoXojiocUJw
-         qA7y8kh5KmJ1hYr2dAEJUb+ueZJbpfXh2ELi8dBhGJgWN+hovxcCh/mVW5o8heKx8QNX
-         qa3hv+nVDBpgVuuA3/OPQcqSzvOLQVzeMzGWP8VMLjYTVFaIiCeB5GJfi1q1eCNSXUSP
-         SF95YvRggOhcO592XsOrTDisz1sGsPF909Vp8zpLI4p/QmzCtMl7DYwWOq7PX4P/Tb9l
-         4x5A==
-X-Gm-Message-State: AOJu0YzQy0g/nhg35isAndTWe09FkM+a5vbr71D9hzzySyZzz+5v8gKs
-        Rok1GWbpIPmkA6QB1S3jbVnp3ISamhDACgjBk4XxOA==
-X-Google-Smtp-Source: AGHT+IHQJ7x9/SuQ4EBTGwOQciXDqQRU/H0wUJap6zldAAHxxJLfRsl7IevqZUOUANlVf9xne6BrdF0f6OpD88sD5HM=
-X-Received: by 2002:ad4:5dc2:0:b0:66d:9b63:72fb with SMTP id
- m2-20020ad45dc2000000b0066d9b6372fbmr2943620qvh.5.1697838479398; Fri, 20 Oct
- 2023 14:47:59 -0700 (PDT)
+        Sat, 21 Oct 2023 14:45:00 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4702F1A8;
+        Sat, 21 Oct 2023 11:44:59 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F4D3C433C8;
+        Sat, 21 Oct 2023 18:44:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1697913898;
+        bh=U7YZ7LHKux4WrkPmJ5+OeCogRcj6c+fb/+ZlwkDYgFA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iZ9tHtFyKus3+qKD5jnQLzV6FJbDG2Vf4hG0fKTjhpQD31kpWOG/zaH30zwnEE8Tg
+         42dfu1xPd1pi636IL4JJNNChMAiARawEuZAKb5sTGcDSQLvVgQT/5BuKgdjg2z9SBr
+         vywRbhqmBgNqabLxPvuka0bfSQ7G82os5hFvXR8fKaHcF5C1HFk7U7S40rSVxJdJ1v
+         obpjPoXZSOyhshBx7GHliOdN88lXswdI23ilKYvjf0Aynl404tPTnt2+cwjgwqAdAn
+         E9racParcarBcoctuuSDE1mL/Y2EOcYuzoQ1C1khKsx8tcyLLMVDNjqjg0lnooxsb8
+         ZRa2xqwuGCBvg==
+Date:   Sat, 21 Oct 2023 20:44:55 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH v3] i2c: exynos5: add support for atomic transfers
+Message-ID: <ZTQcJ0gixlvWgWiN@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+References: <CGME20231006150811eucas1p1a9e2b98d191bb8093daf38daba14e9a0@eucas1p1.samsung.com>
+ <20231006150804.4113844-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-References: <20231011184823.443959-1-peter.griffin@linaro.org>
- <20231011184823.443959-17-peter.griffin@linaro.org> <eca9feea-b4a6-438c-83c7-452e8fe388c6@app.fastmail.com>
-In-Reply-To: <eca9feea-b4a6-438c-83c7-452e8fe388c6@app.fastmail.com>
-From:   Peter Griffin <peter.griffin@linaro.org>
-Date:   Fri, 20 Oct 2023 22:47:47 +0100
-Message-ID: <CADrjBPqPR54FqsdG1irrAYVn+Bkuc5hU3Vip7mUS8Aeq1b=JOw@mail.gmail.com>
-Subject: Re: [PATCH v3 16/20] tty: serial: samsung: Add gs101 compatible and
- SoC data
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Olof Johansson <olof@lixom.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tudor Ambarus <tudor.ambarus@linaro.org>,
-        andre.draszik@linaro.org,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        saravanak@google.com, William McVicker <willmcvicker@google.com>,
-        soc@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-watchdog@vger.kernel.org, kernel-team@android.com,
-        linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ZSe3s/CW1plPwvyh"
+Content-Disposition: inline
+In-Reply-To: <20231006150804.4113844-1-m.szyprowski@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Arnd,
 
-On Thu, 12 Oct 2023 at 07:07, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Wed, Oct 11, 2023, at 20:48, Peter Griffin wrote:
-> > Add serial driver data for Google Tensor gs101 SoC.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
->
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+--ZSe3s/CW1plPwvyh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
+On Fri, Oct 06, 2023 at 05:08:03PM +0200, Marek Szyprowski wrote:
+> Add support for atomic transfers using polling mode with interrupts
+> intentionally disabled. This removes the warning introduced by commit
+> 63b96983a5dd ("i2c: core: introduce callbacks for atomic transfers")
+> during system reboot and power-off.
+>=20
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
->
-> While the patch is now correct, I would point out a few
-> improvements we could make on top:
->
-> > +static const struct s3c24xx_serial_drv_data gs101_serial_drv_data = {
-> > +     EXYNOS_COMMON_SERIAL_DRV_DATA(),
-> > +     /* rely on samsung,uart-fifosize DT property for fifosize */
-> > +     .fifosize = { 0 },
-> > +};
-> > +
-> >  #define EXYNOS4210_SERIAL_DRV_DATA (&exynos4210_serial_drv_data)
-> >  #define EXYNOS5433_SERIAL_DRV_DATA (&exynos5433_serial_drv_data)
-> >  #define EXYNOS850_SERIAL_DRV_DATA (&exynos850_serial_drv_data)
-> > +#define GS101_SERIAL_DRV_DATA (&gs101_serial_drv_data)
->
-> Since this is now actually correct for any Exynos variant that
-> has the FIFO size listed in the DT, we could use a variable/macro
-> name that leads itself to being used by future chips.
+Applied to for-next, thanks!
 
-I've updated this to exynos_fifoszdt_serial_drv_data and
-EXYNOS_FIFOSZDT_SERIAL_DRV_DATA in v4 and added a
-comment that it is common struct for platforms that specify
-uart,fifosize in DT.
 
-I've also updated the YAML to make this a required property for
-google,gs101-uart.
+--ZSe3s/CW1plPwvyh
+Content-Type: application/pgp-signature; name="signature.asc"
 
->
-> There is also the question of whether we want to address the
-> ordering bug for the other SoC types. The way I understand it,
-> the .fifosize array logic is wrong because it relies on having
-> a particular alias for each of the ports to match the entry in
-> the array.
-> For the exynosautov9, this would be trivially fixed
-> by using the same data as gs101 (since it already lists the
-> correct size in DT), but for the other ones we'd need a different
-> logic.
->
+-----BEGIN PGP SIGNATURE-----
 
-It seems samsung,exynosautov9-uart is in the yaml bindings and
-exynosautov9.dtsi but never actually made it into the driver. But
-it could be added to the driver and made to use the common
-exynos_fifoszdt_serial_drv_data mentioned above.
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmU0HCcACgkQFA3kzBSg
+KbbZhw/+I+IddjVMqvVb2IJUPgXP00i7HwYYQgOjreVJ0uDIjmp3ig7UW8+1WR7b
+817CcjD9veOBTQdNGIMnpJAe8ykAdsnzjNVXazWgMXLLMhLGTQCGPpLDMn0CvoVY
+JdbfjnmX1M2WSUHEVaWaper5jrXY24/bXdlIpD+08ioRpB5ErQcgo+5S5bIjavcn
+GTRb+HSa3UtAQ1w+9DvDphEH/7Eeobrni1O9/FPbZEDJMdJLVGqAMgRhKkmfmwsS
+5r1Crpa6QbuvSwWr4weg37/RU1tx0lPHHmDBTDqTEFjrorYarmYvYfI2tswaJvv5
+r8kD4f/r9mUNTt9kYurjOZACgaPGhxmuVJx2KB4i0mJujlgPQakAiUbJeXTO21PH
+8/EgEiiaik5wRh8APAb0W0MG+BCFUkBT9aGZQHjpOie42F+MT07hlDnOBcPSGwEc
+bxn8f+VyT+134CR69YEiHcXN12FF5PWGHS53gYva7MhAPUiYXjL0CnVOlW+vz7lK
+E50jxwDEFvrwfIqHCcb1M7rKSrQ6xBd9rOUxFAx7IO8Z2/bBM4UVfyCwPNTq2Oge
+5VBtD6oasHxOdGhJw+xj95RcohUQ9bKCiTl8/HIhlTM+rY10ZN3IyzfH6F8rIwxT
+MvFVCOBIIZ3F24s0WHv6UOKkOvV4hZ1KcaK2uJdJB8FI3FTLBTA=
+=BhhW
+-----END PGP SIGNATURE-----
 
-I think any new platform should specify this in DT as many of these
-UARTs on newer Exynos are actually universal serial IPs which can
-be UART, I2C or SPI which is board dependent. So having the fifosize
-in the driver, based on a SoC compatible and relying on probe order
-and DT aliases seems very prone to error.
-
-regards,
-
-Peter.
-
-> > @@ -2688,6 +2696,9 @@ static const struct platform_device_id
-> > s3c24xx_serial_driver_ids[] = {
-> >       }, {
-> >               .name           = "artpec8-uart",
-> >               .driver_data    = (kernel_ulong_t)ARTPEC8_SERIAL_DRV_DATA,
-> > +     }, {
-> > +             .name           = "gs101-uart",
-> > +             .driver_data    = (kernel_ulong_t)GS101_SERIAL_DRV_DATA,
-> >       },
-> >       { },
-> >  };
->
-> I just noticed that the platform_device_id array is currently
-> only used for mach-crag6410, since everything else uses DT
-> based probing. s3c64xx is scheduled for removal in early 2024
-> (though no patch has been sent), and we can probably just
-> remove all the atags/platform_device based code when that happens.
->
->       Arnd
+--ZSe3s/CW1plPwvyh--
