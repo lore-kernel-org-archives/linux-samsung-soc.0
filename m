@@ -2,104 +2,150 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E8BC004C0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Oct 2023 15:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02504C25B41
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Oct 2023 16:51:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231317AbjJWPMq (ORCPT
+        id S230025AbjJWQvS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Oct 2023 11:12:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34558 "EHLO
+        Mon, 23 Oct 2023 12:51:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjJWPMq (ORCPT
+        with ESMTP id S229550AbjJWQvQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Oct 2023 11:12:46 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B99290;
-        Mon, 23 Oct 2023 08:12:44 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7819C433C8;
-        Mon, 23 Oct 2023 15:12:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698073964;
-        bh=J9r7nlhJFffvRTO0VNXoLKm58fWmXlezqgcthHqa3e0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MdGy3kRYTvrPOsVt3U6yr74m85OydntGKdh7nkzwduKWQ0xLqzEd4m4bHv9QwYYxk
-         Q7e3qLQMLo9O75vuto8tlDZl1Rq0t0gvXPip7obGF5r9/Sg8VCNYJcnm73sYhskdQa
-         tc2ZJKxZcw5RI0KvuOx77VQJtDnJBU6Pig/e6xMsxzvnAYpMejAnhyNYksNpxpKeop
-         BoLvDwJo9nEx47/Ue+t6Y+pl3QtJs9rx8n7a9PBsqyOi3WRm8rwaKovbSw3zMsmrea
-         d6G04BL/zFlz6fd7QcG2bHgPsHMNx7WC+4ta58zZhQQLt8tGuzjtp8p0ymqSR0wW5P
-         oWwuP4uUpAS3g==
-Date:   Mon, 23 Oct 2023 17:12:40 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Camel Guo <camel.guo@axis.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@axis.com
-Subject: Re: [PATCH] i2c: exynos5: Calculate t_scl_l, t_scl_h according to
- i2c spec
-Message-ID: <ZTaNaH8qo3Ho+yvL@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Camel Guo <camel.guo@axis.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@axis.com
-References: <20220912085943.1098651-1-camel.guo@axis.com>
+        Mon, 23 Oct 2023 12:51:16 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90C1EE6
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Oct 2023 09:51:09 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-4079ed65471so29173675e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Oct 2023 09:51:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1698079868; x=1698684668; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+KYkeNBxMFZaLMOC8uuqNz7UHwDIeM0eJWnT9pTEOv0=;
+        b=guWlssFNEHGYWfzkZhgJP4vgFZ+PAWzgceLZ4qHbVK+dqFv7pnUMo4lYLV3wfJETx9
+         mEQQw96F7jXzz3cCNqZ6CPzIDIrnuTWM/sHNmDQy32qEJxB9Md2Wv12TA/VPKSNHZslp
+         WOhase80RJN5eqL5EBdGlCjWt8iD6po0NF/olBxm4UaTfIxd4GuRmmWdlPa+KsgwVhiZ
+         cQ9dlBd4+mtsoYf476Rb6cBCl+cCR+ADZKsLk5Lz8NlyGSsbGC/m9GfZc3OfYDrB+Rzi
+         X2uPFGDvzsweXzA4rgSjv1e6N5f9dYm3MiFrDa3lQg9mIhG0Xnqto4omUNinc9FPvmYJ
+         R8WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698079868; x=1698684668;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+KYkeNBxMFZaLMOC8uuqNz7UHwDIeM0eJWnT9pTEOv0=;
+        b=fhT2Qg9epQqHRpluc52DMrCPOX3xz97NDkXKg+zMevqGNnzlItULPL3NyppCIeAxon
+         Y408zMe67+7OFTmHDgUjq1GcAiclUZkFnybNEg9mC+8Oy7IrSvyqMpLk3FESuxLXROh6
+         73c6L4Pnkqo6K0Bh8i29ba0sqyVSyN9jGafZ95KFQP0G0wXwCpf2ZpThkVmSrc3AxBo0
+         WfY2mUYDgxkjbCUWqeZn20C/+zLU2cWa9Kq08f2+TR18iYA5jIb1wDgwa6Te6TV9hifF
+         aXXi+jaIqcomoANZ+H5DKvVxeRGCpzLg1sJ0biCXltS9pyY/ePTz37ULfu+pKIN8d21I
+         nl2Q==
+X-Gm-Message-State: AOJu0YwkBMgaPwEHPmkqLQC0iGKUu/F+vxydZcnstgrhBOGytChYqu7l
+        2pq1RqD3ZrfZgXLPhLM3vuziwQ==
+X-Google-Smtp-Source: AGHT+IHdEJ623CJOHib1AnBFPrsmFMAQ2gYwjCLllx31MKhAQ5Gm+QE6l6Ny8LfOAeQcub6BKv1DTw==
+X-Received: by 2002:a5d:5691:0:b0:314:dc0:2fca with SMTP id f17-20020a5d5691000000b003140dc02fcamr6782688wrv.29.1698079867943;
+        Mon, 23 Oct 2023 09:51:07 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.218.126])
+        by smtp.gmail.com with ESMTPSA id b16-20020a5d5510000000b0032d2489a399sm8068772wrv.49.2023.10.23.09.51.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Oct 2023 09:51:07 -0700 (PDT)
+Message-ID: <bc5bbf47-7bcb-4fc6-a88b-b92d74803a7a@linaro.org>
+Date:   Mon, 23 Oct 2023 18:51:05 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="NHBuWLbeQWJ0REJ9"
-Content-Disposition: inline
-In-Reply-To: <20220912085943.1098651-1-camel.guo@axis.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] ARM: dts: samsung: exynos4412-midas: fix key-ok
+ event code
+Content-Language: en-US
+To:     Raymond Hackley <raymondhackley@protonmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+References: <20231017101402.62740-1-raymondhackley@protonmail.com>
+ <20231017101636.62755-1-raymondhackley@protonmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20231017101636.62755-1-raymondhackley@protonmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On 17/10/2023 12:18, Raymond Hackley wrote:
+> Input event code 139 stands for KEY_MENU, instead of KEY_OK as node name
+> key-ok inplies. Fix it with correct event code 0x160.
+> 
+> Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
+> ---
+>  arch/arm/boot/dts/samsung/exynos4412-midas.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/samsung/exynos4412-midas.dtsi b/arch/arm/boot/dts/samsung/exynos4412-midas.dtsi
+> index 7daf25865551..3c1ae3c19828 100644
+> --- a/arch/arm/boot/dts/samsung/exynos4412-midas.dtsi
+> +++ b/arch/arm/boot/dts/samsung/exynos4412-midas.dtsi
+> @@ -159,7 +159,7 @@ key-power {
+>  
+>  		key-ok {
+>  			gpios = <&gpx0 1 GPIO_ACTIVE_LOW>;
+> -			linux,code = <139>;
+> +			linux,code = <0x160>;
 
---NHBuWLbeQWJ0REJ9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I applied this and was about to send in pull request, but it does not
+seem right, sorry. The button was always called "menu" button. Why
+changing it to OK? Just because of node name? The node name does not
+matter, this could be called "key-1" as well..
 
-On Mon, Sep 12, 2022 at 10:59:43AM +0200, Camel Guo wrote:
-> Previously the duty cycle was divided equally into h_scl_l, t_scl_h.
-> This makes the low period of the SCL clock in Fast Mode is only 1.25us
-> which is way lower than the minimal value (1.3) specified in i2c
-> specification. In order to make sure t_scl_l, t_scl_h always fullfill
-> i2c specification, this commit calculates t_scl_l using this formula:
->=20
-> t_scl_l =3D clk_cycle *
->     ((t_low_min + (scl_clock - t_low_min - t_high_min) / 2) / scl_clock)
->=20
-> where:
-> t_low_min is the minimal value of low period of the SCL clock in us;
-> t_high_min is the minimal value of high period of the SCL clock in us;
-> scl_clock is converted from SCL clock frequency into us.
->=20
-> Signed-off-by: Camel Guo <camel.guo@axis.com>
+Best regards,
+Krzysztof
 
-Applied to for-next, thanks!
-
-
---NHBuWLbeQWJ0REJ9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmU2jWgACgkQFA3kzBSg
-KbaidQ/+Kzl5eb4XcCOXgAi1kIsBaqIK0qMCqygYCEr0/uQi7gVIcTemI0AM86uu
-M1M6UwxYcVGms/5kUHiEsCBjHgDVkistUr49W1Dur4zVvHj/aPwDoDgyXwpCGL08
-0H7L/aJilgj86wGiDASH8/ZLaYrkV8HKWae+ocXVJDLTOrgWlVyjLnklZpK2e0WL
-OCuKjD758ebaTNITimU0BaMZRS08NBXsxlunQN0IaIYdrqa48mSyHb7/EVhcKnp/
-AxjWzxmJxtDakVKPCFNHjLFoeUp2NplMZ/pORRR6k6n/rfa9FWTFFxnuO7TTEDv6
-lhnKqszlYAjFxyToF5prTQMfzKPqJcCVvEnskZjMdIB2/kZyvsW2v3clfx4R0RHQ
-cBdYtEbVeATLDMdAQ3ynh8guAW37/jUF/CnKFOIeuzeMwX3y/bZrDjEwnOmVkyeQ
-mli3gsQoZHAaYXYJcKmYE3/mI2gCoIOiscZfPcDbPSOzLzYV19LgZOcYfS7m2+xl
-qsJQgAkRVgVFFzlFS78F2iGBTEJ2tH3gInxhP9e+uFgOv6jGkMuPWg71aHcI2Eqp
-bLo7xevHVbVu8horeHE9L1UQ1QoxndkuWnPiDPdwaupyU9kD+Ex9u9+SaNfZN/9B
-GiC1taDV6hQTabImUOU9x4rME4noqFUM7pPA/LRwGj7RFwC+NiM=
-=0Pt+
------END PGP SIGNATURE-----
-
---NHBuWLbeQWJ0REJ9--
