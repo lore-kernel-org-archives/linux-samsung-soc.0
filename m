@@ -2,208 +2,144 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25AFDCDB474
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Oct 2023 10:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2FD0CDB474
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Oct 2023 12:58:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230070AbjJWKea (ORCPT
+        id S229615AbjJWM6W (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Oct 2023 06:34:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57858 "EHLO
+        Mon, 23 Oct 2023 08:58:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229942AbjJWKe2 (ORCPT
+        with ESMTP id S229956AbjJWM6V (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Oct 2023 06:34:28 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C11ED68
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Oct 2023 03:34:25 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231023103422euoutp0130f6c0d49dbe49d91f1bee12fad954ce~QthVG0Aax1320513205euoutp01-
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Oct 2023 10:34:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231023103422euoutp0130f6c0d49dbe49d91f1bee12fad954ce~QthVG0Aax1320513205euoutp01-
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1698057262;
-        bh=+4MmQRCPRm1zC57C8sermfjVMdXQDabRKp9YfYkNBNk=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=jiD5YOOGtsq7tL80jKyfJTzXuPikSrWT2ycxLNk/tmKpPixlNp72EO2ZUED6zlXK0
-         yWNTne7r39csOHJSU3Ftyy6ZbLCm0BrbRbs6fP2UulvmTsoqmCmPl/9SAYIKO8F1Tn
-         slF8slEEXutWLxYqJrtmaxKg4uduQGGrBng3eoiY=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20231023103421eucas1p20cfc4bc17f36b18063aff1aa2970bcb8~QthU1bdxM0499004990eucas1p2E;
-        Mon, 23 Oct 2023 10:34:21 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id CA.3C.11320.D2C46356; Mon, 23
-        Oct 2023 11:34:21 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20231023103421eucas1p2f1415d69dd979036ef8bcb1a2dc88978~QthUXfml21979119791eucas1p2b;
-        Mon, 23 Oct 2023 10:34:21 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20231023103421eusmtrp28be71d7e5f38d4dcc15cd54aacba43b8~QthUWwFFr0425004250eusmtrp2L;
-        Mon, 23 Oct 2023 10:34:21 +0000 (GMT)
-X-AuditID: cbfec7f4-993ff70000022c38-ca-65364c2dc562
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 7A.C7.25043.D2C46356; Mon, 23
-        Oct 2023 11:34:21 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20231023103420eusmtip21cb536a4edfc919ec8b7ab907f5830bc~QthTtwqQ42361923619eusmtip2B;
-        Mon, 23 Oct 2023 10:34:20 +0000 (GMT)
-Message-ID: <55812f75-3053-4970-bbbe-8ca563f33721@samsung.com>
-Date:   Mon, 23 Oct 2023 12:34:19 +0200
+        Mon, 23 Oct 2023 08:58:21 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5DAE9C4;
+        Mon, 23 Oct 2023 05:58:19 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 02FED2F4;
+        Mon, 23 Oct 2023 05:59:00 -0700 (PDT)
+Received: from [10.57.82.113] (unknown [10.57.82.113])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A5A03F762;
+        Mon, 23 Oct 2023 05:58:16 -0700 (PDT)
+Message-ID: <91b3ff5a-cfdf-4bba-806e-093a90746d86@arm.com>
+Date:   Mon, 23 Oct 2023 13:59:07 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i2c: exynos5: Calculate t_scl_l, t_scl_h according to
- i2c spec
+Subject: Re: [PATCH v3 7/8] thermal: exynos: split initialization of TMU and
+ the thermal zone
 Content-Language: en-US
-To:     Camel Guo <camel.guo@axis.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@axis.com
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20220912085943.1098651-1-camel.guo@axis.com>
+To:     Mateusz Majewski <m.majewski2@samsung.com>
+Cc:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20231003111638.241542-1-m.majewski2@samsung.com>
+ <CGME20231003111713eucas1p27fcc64df0091b6097461f28b05bf772a@eucas1p2.samsung.com>
+ <20231003111638.241542-8-m.majewski2@samsung.com>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <20231003111638.241542-8-m.majewski2@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHKsWRmVeSWpSXmKPExsWy7djP87q6PmapBlPnqFo8mLeNzeL76wdM
-        Fp9aVC32vt7KbrHp8TVWi46/XxgtLu+aw2Yx4/w+JgcOj+vrAjzuXNvD5rF5Sb1H35ZVjB6f
-        N8kFsEZx2aSk5mSWpRbp2yVwZSxZvJG14LVsxYJNnA2Mn8W6GDk5JARMJC5/f8jSxcjFISSw
-        glFi28RnUM4XRolTTxayQzifGSWuNvSzw7Rc/X6MEcQWEljOKNE5UxTC/ghkL80HsXkF7CQ6
-        7k5kA7FZBFQlDp7awAgRF5Q4OfMJC4gtKiAvcf/WDLCZwgKhErNPnGMCsZkFxCVuPZkPZosI
-        REkcmj0J7AhmgQOMEu+fNIM1sAkYSnS97QJawMHBKWAlcXi3D0SvvMT2t3OYQeolBB5wSPz8
-        sI8R4mgXiaMLV7BA2MISr45vgXpGRuL/TpBlIA3tjBILft+HciYwSjQ8vwXVbS1x59wvsG3M
-        ApoS63fpQ4QdJW7duAkWlhDgk7jxVhDiCD6JSdumM0OEeSU62oQgqtUkZh1fB7f24IVLzBMY
-        lWYhBcssJO/PQvLOLIS9CxhZVjGKp5YW56anFhvlpZbrFSfmFpfmpesl5+duYgQmodP/jn/Z
-        wbj81Ue9Q4xMHIyHGCU4mJVEeGeHm6QK8aYkVlalFuXHF5XmpBYfYpTmYFES51VNkU8VEkhP
-        LEnNTk0tSC2CyTJxcEo1MG29ePjrQavJLbr3ntV8OiVmsnSFfjeH/tR5c3QXCTWUbNpxILLu
-        TR1DiUD0ygq3kG3hoYfPFDlYtM2oXrdQTTbrfNPqnwreTyadrY23XG5dJP32/Nm6e7wdj6Nj
-        /pUeVVmYomjdfjwwyP31gWy5E8rqnZMeL1KrO9m5PGTC/LTeDxOzSst0J7t5amuXSS+LF374
-        fBO76qT+y7unTGlVWtIZbFdc9Xyz2/PzHHNOKZ0/xCQn6u9tsyeDY839v4dUpDYHLuV5WzmN
-        8aet+Z9HCdc3PLoR5fPK86Dc9TUOgT3zqqQ+/+Da61iiePR6WR+HtMSeY09uPttn8efjtFRJ
-        hicy+j9iHd34E+rsD2SFpyuxFGckGmoxFxUnAgBTABbBsQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIIsWRmVeSWpSXmKPExsVy+t/xe7q6PmapBje+clg8mLeNzeL76wdM
-        Fp9aVC32vt7KbrHp8TVWi46/XxgtLu+aw2Yx4/w+JgcOj+vrAjzuXNvD5rF5Sb1H35ZVjB6f
-        N8kFsEbp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXo
-        ZSxZvJG14LVsxYJNnA2Mn8W6GDk5JARMJK5+P8bYxcjFISSwlFHi0etTbBAJGYmT0xpYIWxh
-        iT/Xutggit4zSnxqusgMkuAVsJPouDsRrIFFQFXi4KkNjBBxQYmTM5+wgNiiAvIS92/NYAex
-        hQVCJe4unwHWyywgLnHryXwmEFtEIEri/uZXLCALmAUOMEqcXnEOrEFIwFLi7beDYIPYBAwl
-        ut6CXMHBwSlgJXF4tw/EHDOJrq1djBC2vMT2t3OYJzAKzUJyxiwk62YhaZmFpGUBI8sqRpHU
-        0uLc9NxiI73ixNzi0rx0veT83E2MwLjbduznlh2MK1991DvEyMTBeIhRgoNZSYR3drhJqhBv
-        SmJlVWpRfnxRaU5q8SFGU2BYTGSWEk3OB0Z+Xkm8oZmBqaGJmaWBqaWZsZI4r2dBR6KQQHpi
-        SWp2ampBahFMHxMHp1QDk2Ql/8Mvqzp23JExn/qXwVBRqag810gkjTugwT5Z4Py8j9cCD0w6
-        FJztMcGwSGLN+U0OvcE6Pw7c4libu1WFn+EfS5/mBPfG7tpz16cYTJT6p7Tm4I9Dmxf7Xj+6
-        Xbl5vkH8eSXdBMuHltpz1nzOd77JvvFnTU5pHZvl3OK29T32y3jCrmrYyXRsm8huMf2CwZEz
-        4onJxQtmdbeq3kiKs+yU9O8NDA6TuRxt37h6nt+Pc0n9gtqvrc6JzHh+J1JL6nrWyvIFU7Ue
-        SX8MlprzdN3FL093bTF/fuRi93mJCnORF+vWCZ3rLWNn+nnqCn8hy9cJS4p7J7v8+xBdMeNS
-        wdYtT1ju/r46N/WQ06UEcyWW4oxEQy3mouJEAMYOsqFEAwAA
-X-CMS-MailID: 20231023103421eucas1p2f1415d69dd979036ef8bcb1a2dc88978
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20231023103421eucas1p2f1415d69dd979036ef8bcb1a2dc88978
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20231023103421eucas1p2f1415d69dd979036ef8bcb1a2dc88978
-References: <20220912085943.1098651-1-camel.guo@axis.com>
-        <CGME20231023103421eucas1p2f1415d69dd979036ef8bcb1a2dc88978@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 12.09.2022 10:59, Camel Guo wrote:
-> Previously the duty cycle was divided equally into h_scl_l, t_scl_h.
-> This makes the low period of the SCL clock in Fast Mode is only 1.25us
-> which is way lower than the minimal value (1.3) specified in i2c
-> specification. In order to make sure t_scl_l, t_scl_h always fullfill
-> i2c specification, this commit calculates t_scl_l using this formula:
->
-> t_scl_l = clk_cycle *
->      ((t_low_min + (scl_clock - t_low_min - t_high_min) / 2) / scl_clock)
->
-> where:
-> t_low_min is the minimal value of low period of the SCL clock in us;
-> t_high_min is the minimal value of high period of the SCL clock in us;
-> scl_clock is converted from SCL clock frequency into us.
->
-> Signed-off-by: Camel Guo <camel.guo@axis.com>
+Hi Mateusz,
 
-
-This sounds reasonable and works fine on all Exynos-based test board I 
-have. Feel free to add:
-
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-
+On 10/3/23 12:16, Mateusz Majewski wrote:
+> This will be needed in the future, as the thermal zone subsystem might
+> call our callbacks right after devm_thermal_of_zone_register. Currently
+> we just make get_temp return EAGAIN in such case, but this will not be
+> possible with state-modifying callbacks, for instance set_trips.
+> 
+> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
 > ---
->   drivers/i2c/busses/i2c-exynos5.c | 34 +++++++++++++++++++++++++++++---
->   1 file changed, 31 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-> index 4a6260d04db2..72bc8adea8d5 100644
-> --- a/drivers/i2c/busses/i2c-exynos5.c
-> +++ b/drivers/i2c/busses/i2c-exynos5.c
-> @@ -267,7 +267,7 @@ static void exynos5_i2c_clr_pend_irq(struct exynos5_i2c *i2c)
->    * exynos5_i2c_set_timing: updates the registers with appropriate
->    * timing values calculated
->    *
-> - * Timing values for operation are calculated against either 100kHz
-> + * Timing values for operation are calculated against 100kHz, 400kHz
->    * or 1MHz controller operating frequency.
->    *
->    * Returns 0 on success, -EINVAL if the cycle length cannot
-> @@ -330,6 +330,23 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, bool hs_timings)
->   	 *
->   	 * Constraints: 4 <= temp, 0 <= CLK_DIV < 256, 2 <= clk_cycle <= 510
->   	 *
-> +	 * To split SCL clock into low, high periods appropriately, one
-> +	 * proportion factor for each I2C mode is used, which is calculated
-> +	 * using this formula.
-> +	 * ```
-> +	 * ((t_low_min + (scl_clock - t_low_min - t_high_min) / 2) / scl_clock)
-> +	 * ```
-> +	 * where:
-> +	 * t_low_min is the minimal value of low period of the SCL clock in us;
-> +	 * t_high_min is the minimal value of high period of the SCL clock in us;
-> +	 * scl_clock is converted from SCL clock frequency into us.
-> +	 *
-> +	 * Below are the proportion factors for these I2C modes:
-> +	 *                t_low_min, t_high_min, scl_clock, proportion
-> +	 * Standard Mode:     4.7us,      4.0us,      10us,      0.535
-> +	 * Fast Mode:         1.3us,      0.6us,     2.5us,       0.64
-> +	 * Fast-Plus Mode:    0.5us,     0.26us,       1us,       0.62
-> +	 *
->   	 */
->   	t_ftl_cycle = (readl(i2c->regs + HSI2C_CONF) >> 16) & 0x7;
->   	temp = clkin / op_clk - 8 - t_ftl_cycle;
-> @@ -343,8 +360,19 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, bool hs_timings)
->   		return -EINVAL;
->   	}
+> v1 -> v2: We take clocks into account; exynos_tmu_initialize needs both
+>    clocks, as tmu_initialize might use the base_second registers. However,
+>    exynos_thermal_zone_configure only needs clk.
+> 
+>   drivers/thermal/samsung/exynos_tmu.c | 104 +++++++++++++++------------
+>   1 file changed, 60 insertions(+), 44 deletions(-)
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index 7138e001fa5a..343e27c61528 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -251,25 +251,8 @@ static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_info)
+>   static int exynos_tmu_initialize(struct platform_device *pdev)
+>   {
+>   	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+> -	struct thermal_zone_device *tzd = data->tzd;
+> -	int num_trips = thermal_zone_get_num_trips(tzd);
+>   	unsigned int status;
+> -	int ret = 0, temp;
+> -
+> -	ret = thermal_zone_get_crit_temp(tzd, &temp);
+> -	if (ret && data->soc != SOC_ARCH_EXYNOS5433) { /* FIXME */
+> -		dev_err(&pdev->dev,
+> -			"No CRITICAL trip point defined in device tree!\n");
+> -		goto out;
+> -	}
+> -
+> -	if (num_trips > data->ntrip) {
+> -		dev_info(&pdev->dev,
+> -			 "More trip points than supported by this TMU.\n");
+> -		dev_info(&pdev->dev,
+> -			 "%d trip points should be configured in polling mode.\n",
+> -			 num_trips - data->ntrip);
+> -	}
+> +	int ret = 0;
 >   
-> -	t_scl_l = clk_cycle / 2;
-> -	t_scl_h = clk_cycle / 2;
-> +	/*
-> +	 * Scale clk_cycle to get t_scl_l using the proption factors for individual I2C modes.
-> +	 */
-> +	if (op_clk <= I2C_MAX_STANDARD_MODE_FREQ)
-> +		t_scl_l = clk_cycle * 535 / 1000;
-> +	else if (op_clk <= I2C_MAX_FAST_MODE_FREQ)
-> +		t_scl_l = clk_cycle * 64 / 100;
-> +	else
-> +		t_scl_l = clk_cycle * 62 / 100;
+>   	mutex_lock(&data->lock);
+>   	clk_enable(data->clk);
+> @@ -280,32 +263,63 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>   	if (!status) {
+>   		ret = -EBUSY;
+>   	} else {
+> -		int i, ntrips =
+> -			min_t(int, num_trips, data->ntrip);
+> -
+>   		data->tmu_initialize(pdev);
+> -
+> -		/* Write temperature code for rising and falling threshold */
+> -		for (i = 0; i < ntrips; i++) {
+> -
+> -			struct thermal_trip trip;
+> -
+> -			ret = thermal_zone_get_trip(tzd, i, &trip);
+> -			if (ret)
+> -				goto err;
+> -
+> -			data->tmu_set_trip_temp(data, i, trip.temperature / MCELSIUS);
+> -			data->tmu_set_trip_hyst(data, i, trip.temperature / MCELSIUS,
+> -						trip.hysteresis / MCELSIUS);
+> -		}
+> -
+>   		data->tmu_clear_irqs(data);
+>   	}
 > +
-> +	if (t_scl_l > 0xFF)
-> +		t_scl_l = 0xFF;
-> +	t_scl_h = clk_cycle - t_scl_l;
->   	t_start_su = t_scl_l;
->   	t_start_hd = t_scl_l;
->   	t_stop_su = t_scl_l;
->
-> base-commit: ce888220d5c7a805e0e155302a318d5d23e62950
+> +	mutex_unlock(&data->lock);
+> +	clk_disable(data->clk);
+> +	if (!IS_ERR(data->clk_sec))
+> +		clk_disable(data->clk_sec);
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+In all other places the clock is strictly protected inside the critical
+section, but not here. In this code in theory on SMP (especially with
+big.LITTLE system with different speeds of CPUs) this could lead to
+disabling the clocks just after other CPU acquired the mutex and enabled
+them (in order to use the HW regs).
 
+Please put those two clocks before the mutex_unlock() and in the
+reverse order.
+
+Regards,
+Lukasz
