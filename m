@@ -2,101 +2,103 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13308C001E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Oct 2023 16:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B426DC25B49
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Oct 2023 17:46:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229650AbjJWQyU (ORCPT
+        id S229941AbjJWRq4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Oct 2023 12:54:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58498 "EHLO
+        Mon, 23 Oct 2023 13:46:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbjJWQyT (ORCPT
+        with ESMTP id S229462AbjJWRqy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Oct 2023 12:54:19 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24A8AFD
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Oct 2023 09:54:18 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-4083f61322fso27720595e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Oct 2023 09:54:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698080056; x=1698684856; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LzNpmNp+fktKwDMwK/gxOQWv1rtKi9BTRrCYzOlHcaE=;
-        b=A7AV2tFv7ot3ee9gcjpx3TlBlJSO91PYfoWf/ZdnEF2ofTzElWXG4keTd1RKZftTQP
-         tfwj8yiXiQiQ7WEN4zdPzljsejXaBd1YODNMJ2MR4Kun7fbuQRtk2cAoPJyaOtKC7xAw
-         q7d6wdS4+Ldiivem3qb/WhqBQptWpkrqYz8VLEQNTWfPeH8zd5zM6S5e1EKyhnVxlLAZ
-         nW6D570f+OYwfrqMhuSuT0sPMEAyvBUQz6EfqltJ4oc7l24qxbFDIVachFH+npOGlm2r
-         USMVLy3yeK659FEYe9epvsJ0BsVwPL0kw+ELi10r2lEvpExivkALeabB/b159olXjiH4
-         uxpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698080056; x=1698684856;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LzNpmNp+fktKwDMwK/gxOQWv1rtKi9BTRrCYzOlHcaE=;
-        b=EfFR0HGgCHLQasH6AX2Uj8pBGO+KwoK1eURTsjRF5GqConRyhtOpNMuzx2OW4W9O2h
-         UqDOBzcKVyS7z9mOYXGxBPqvdAV6zzyEeRdUzafU+FAIdR7CzguCtdpJwXaH7O25uYFJ
-         sDOJ74BmRQhRanKON6zV0/bU4JdV/f5eLWEPQjDLWrnCzrmFu6bl8cuIEvWm8NAze4XX
-         IGaeC+0g9AzsHYNi++EnpVp7wlFmVi4CPKME5oEy+GJcUEn5XcqZ6/HsvB96jJH83VvZ
-         V4jOrfGrnMaGrklCTDsZGl3iH7Dr/cF57HLvYiWw4MIq0mRmfX4xDzpJ7BNchfX4imW8
-         hTjw==
-X-Gm-Message-State: AOJu0YzLMqKJQ60ZaN7ESOgwr+ECrsie4JcAhn0WPQYNegmFbJVHkUd4
-        VGFfRGyfP5COqlO3C2dgKHEu5g==
-X-Google-Smtp-Source: AGHT+IES5Wh57HTX5V9DwQtvZnwriBUWvgP62B1LNyPFJZdJp0f2V2qI1D3EsrezWHIvfB2Wc7zBQA==
-X-Received: by 2002:adf:db48:0:b0:32d:9d80:4038 with SMTP id f8-20020adfdb48000000b0032d9d804038mr7071732wrj.49.1698080056571;
-        Mon, 23 Oct 2023 09:54:16 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id z7-20020a5d4c87000000b0031980294e9fsm8097709wrs.116.2023.10.23.09.54.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 09:54:16 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
+        Mon, 23 Oct 2023 13:46:54 -0400
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D5B210A
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Oct 2023 10:46:52 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1quz0p-0001Md-II; Mon, 23 Oct 2023 19:46:47 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1quz0p-003lPo-1y; Mon, 23 Oct 2023 19:46:47 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1quz0o-004VDG-Oo; Mon, 23 Oct 2023 19:46:46 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] arm64: dts: samsung: second pull for v6.7
-Date:   Mon, 23 Oct 2023 18:54:12 +0200
-Message-Id: <20231023165412.529762-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
+        kernel@pengutronix.de,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH v3 07/11] pwm: samsung: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+Date:   Mon, 23 Oct 2023 19:46:24 +0200
+Message-ID: <20231023174616.2282067-20-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231023174616.2282067-13-u.kleine-koenig@pengutronix.de>
+References: <20231023174616.2282067-13-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1477; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=NXKwetwbNKCTUU7iLllj9JWy9eeeqz9I3IefFdtqnNI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlNrFwxUau3jiMz5B6DogpvMagSbvZP3YYUK5h/ 2O4slwOl2yJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZTaxcAAKCRCPgPtYfRL+ TvX9CACKKZrXzW7g5nuSkrqzy7somn1xIdsk7f2qtsPNZBUNU+S6cdXqiXnxEsM0TxWkq5mijYE jNhCCmiDbAnvMz6nc9Ywjn9hNQk64D2g/7EAqu88YW5fzaB9NlScdKxiooWixGvvqvqDYe/T627 H7848D1WwLSWbf/BtChsRInsePTRFkBFHh+bIVYEDc6HfqzIjIdHXhtu2CA2D5rHAKJZm1eDi+8 AEx8iiiyFgt5HosyrEOxJ1rkxvLavms0cKpH5ZGmDQ289GqqH2PNUvUQ8J90zhEZbrFW3EWKoPt 4lNUCktai4KBZsLaIpdDHrv77D+BJ8vBYozELu/E0Ty5Njod
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+This macro has the advantage over SIMPLE_DEV_PM_OPS that we don't have to
+care about when the functions are actually used, so the corresponding
+#ifdef can be dropped.
 
-Just one more patch on top of previous pull request.
+Also make use of pm_ptr() to discard all PM related stuff if CONFIG_PM
+isn't enabled.
 
-Best regards,
-Krzysztof
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/pwm/pwm-samsung.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index 568491ed6829..e6a8fa77aac7 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -620,7 +620,6 @@ static void pwm_samsung_remove(struct platform_device *pdev)
+ 	clk_disable_unprepare(our_chip->base_clk);
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
+ static int pwm_samsung_resume(struct device *dev)
+ {
+ 	struct samsung_pwm_chip *our_chip = dev_get_drvdata(dev);
+@@ -653,14 +652,13 @@ static int pwm_samsung_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-#endif
+ 
+-static SIMPLE_DEV_PM_OPS(pwm_samsung_pm_ops, NULL, pwm_samsung_resume);
++static DEFINE_SIMPLE_DEV_PM_OPS(pwm_samsung_pm_ops, NULL, pwm_samsung_resume);
+ 
+ static struct platform_driver pwm_samsung_driver = {
+ 	.driver		= {
+ 		.name	= "samsung-pwm",
+-		.pm	= &pwm_samsung_pm_ops,
++		.pm	= pm_ptr(&pwm_samsung_pm_ops),
+ 		.of_match_table = of_match_ptr(samsung_pwm_matches),
+ 	},
+ 	.probe		= pwm_samsung_probe,
+-- 
+2.42.0
 
-The following changes since commit f28dde395937e000585ac87c0d1c18885661161d:
-
-  arm64: dts: exynos: remove unused TMU alias (2023-09-14 10:03:47 +0200)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-6.7-2
-
-for you to fetch changes up to 23e4a49943624dd83199989c852565a3ff760fa7:
-
-  arm64: dts: exynos: Add reserved memory for pstore on E850-96 (2023-10-12 22:01:49 +0200)
-
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v6.7, part two
-
-Add ramoops reserved memory region to E850-96 board for debugging
-purposes.
-
-----------------------------------------------------------------
-Sam Protsenko (1):
-      arm64: dts: exynos: Add reserved memory for pstore on E850-96
-
- arch/arm64/boot/dts/exynos/exynos850-e850-96.dts | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
