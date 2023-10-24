@@ -2,56 +2,59 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9315C25B48
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Oct 2023 08:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8948EC25B48
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Oct 2023 12:38:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233686AbjJXIQI (ORCPT
+        id S233144AbjJXMi0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 24 Oct 2023 04:16:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58538 "EHLO
+        Tue, 24 Oct 2023 08:38:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233704AbjJXIQE (ORCPT
+        with ESMTP id S233892AbjJXMiS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 24 Oct 2023 04:16:04 -0400
-Received: from mail.citycodes.pl (mail.citycodes.pl [158.255.215.195])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D4510D4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Oct 2023 01:16:02 -0700 (PDT)
-Received: by mail.citycodes.pl (Postfix, from userid 1001)
-        id DE43C216BE; Tue, 24 Oct 2023 10:15:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=citycodes.pl; s=mail;
-        t=1698135360; bh=fClkhHu/p6gIm8tbpvFwCqGX3kXIMdqjiuDdSiYGEkk=;
-        h=Date:From:To:Subject:From;
-        b=RSAec9diud60zEDjZ/IxcCm5/9lew7iYpae1xiMAUkSJHzFI564eiNR5lzunvPGyQ
-         muRzw6Dk2tZN2ie7y+yW02fR5uGm5nQQBBO5/Jdv7E3b3BKg97pOjiNc4pZu1uyi+S
-         LQOi4wOB74eemkIp2RDAfvAKSHLOUBjTXmm5KhNWjsd4guZB2xViyXCjYmZqAAC5Hp
-         xwZ0lAJj1N2vJcMhE2miMntttmgzcBY4yfBz3VYqD+yTxzOTkGDNJeM6+MpPsC4wun
-         YRo2w+b97WHzK+Gyco/UsSDUMFeAcuO6RMvDADltpLpnDLB3HJIRmjKOhj+tGzSq2h
-         SfK8gDQp1BLQw==
-Received: by mail.citycodes.pl for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Oct 2023 08:15:29 GMT
-Message-ID: <20231024084500-0.1.8a.l8xh.0.7bqzncnigu@citycodes.pl>
-Date:   Tue, 24 Oct 2023 08:15:29 GMT
-From:   "Kamil Lasek" <kamil.lasek@citycodes.pl>
-To:     <linux-samsung-soc@vger.kernel.org>
-Subject: Wycena paneli fotowoltaicznych
-X-Mailer: mail.citycodes.pl
+        Tue, 24 Oct 2023 08:38:18 -0400
+Received: from mail-4319.protonmail.ch (mail-4319.protonmail.ch [185.70.43.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1DA3120;
+        Tue, 24 Oct 2023 05:38:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail3; t=1698151093; x=1698410293;
+        bh=XZn4U+TTmmXfZmr3fNPkxTzNFm221OIMLprzX82zvtw=;
+        h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+         Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+         Message-ID:BIMI-Selector;
+        b=oNxwDKRhxtt42QaAcTyAYHwRtM1V3u/HDLpwBoyvusemBTPl8V54NWoZF6Qfz4jRi
+         T953H554aX+7y3N0XyL/dYMZtqLaBhrhMV+n11kLsHKUn6vQVlP/aIN2vRA2axbUKC
+         qUMl77GgvDTe0hz8whcktcwiPCCJihMuO95tRFA8Am83WeQ5xRHyzBVUhIfKbUzA0K
+         rVUSOtJJRMnA0OhG/SJN8bVYuDif/nFpHQnfHyJ5YiQ54AENho8NNvcZ787Fy7valD
+         IGzbZnMCTAlrDQyRFkbA/qSKA4cdZKlc40QoxwfhdryNYbZLmhWj21d35ZbXi08dKx
+         2mI0c0D5/Js+Q==
+Date:   Tue, 24 Oct 2023 12:37:26 +0000
+To:     krzysztof.kozlowski@linaro.org
+From:   Raymond Hackley <raymondhackley@protonmail.com>
+Cc:     alim.akhtar@samsung.com, conor+dt@kernel.org,
+        devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, raymondhackley@protonmail.com,
+        robh+dt@kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v2 1/2] ARM: dts: samsung: exynos4412-midas: fix key-ok event code
+Message-ID: <20231024123415.2009-1-raymondhackley@protonmail.com>
+In-Reply-To: <bc5bbf47-7bcb-4fc6-a88b-b92d74803a7a@linaro.org>
+References: <20231017101402.62740-1-raymondhackley@protonmail.com> <20231017101636.62755-1-raymondhackley@protonmail.com> <bc5bbf47-7bcb-4fc6-a88b-b92d74803a7a@linaro.org>
+Feedback-ID: 49437091:user:proton
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Hi Krzysztof,
 
-dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
-irm=C4=85.
+This key-ok is the hardware middle button on midas, and there is also
+touchkey, which already provides <KEY_BACK KEY_MENU>, so I assume the other
+KEY_MENU in key-ok is duplicated. Fixing it with KEY_OK as the node name
+implies would make more sense.
 
-=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
-ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej.
+Regards,
+Raymond
 
-Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
-ropozycji?
-
-
-Pozdrawiam,
-Kamil Lasek
