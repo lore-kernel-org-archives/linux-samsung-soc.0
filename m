@@ -2,155 +2,194 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B68C25B6D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Oct 2023 04:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F60CC25B47
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Oct 2023 10:34:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232641AbjJYESY (ORCPT
+        id S234793AbjJYKeP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 25 Oct 2023 00:18:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54942 "EHLO
+        Wed, 25 Oct 2023 06:34:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232620AbjJYESV (ORCPT
+        with ESMTP id S234732AbjJYKeO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Oct 2023 00:18:21 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE5F6122
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Oct 2023 21:18:18 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2c50d1b9f22so70262441fa.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Oct 2023 21:18:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698207497; x=1698812297; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Brd8GKY25UMovr2lsG9TvdPpEmwQAUXbZxdfbbkQOpE=;
-        b=FlKaqcyVdAYJtXjhaJt/N2OrkFr4S6OUbh0ngCT+jV1hCUGmqFFjUQXEOE9DFKD4FE
-         zEAIbgWTQDVb5SvLWhglvVWwsaI6RfkHOgEyTkou+boHN3eT/qiSsDz4FPj2xs9g13ua
-         l2ASkiI0fre3XU0YViPHhtPiXDfdVHJBV8bPJIB5QkDFO4EZ3zrNJ+1kPOGcQrnFOcGF
-         gsFTzupCHOGFDr/ZSRRSGMJvgwafyYPWp9CtEKz63tuCGPKPpV2QYyKqnkLYRU+j/SSC
-         pwPfwga59DsWpxDVCFLk2QRmj3GZEwMnyUS94i7EAy3pnzL32FO0GG15q1tQvnH1gMcB
-         nfPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698207497; x=1698812297;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Brd8GKY25UMovr2lsG9TvdPpEmwQAUXbZxdfbbkQOpE=;
-        b=BxRdBHu4Fatrnl1zJfZ8YKtmoqqLIxP8HD1pUBpRr1vCsLOgKcAqDd7WUYfdV6VI/9
-         RO10mCJskbg2ClyyM0iH+o/EaFrbXwnCMaDbaQp4Xqv3zGiuc1XXrS9gVqlmDy100TOi
-         xowE9uYwHXI32nO4PJbxXrTmu69X11UzNi06wnPaMPUXGui7qoHR/jazRRCzfe2Qtz4L
-         87BBdi8/fUIjBe/ssV1TCDVSvtxkFbjUbHj4rtI7sVP5o0AThLMtAN/vnLA7XDGRJ0lW
-         Ce6YH65ogi7ytLE4dllU4rl5I758Dr82ZZuPwg0x1XX1xpOPfwb/aNTOR9oycIe3JxjT
-         cL2A==
-X-Gm-Message-State: AOJu0YyAXU2HLykuGBWF4y9j3hWdHvaGZbDbgntMymzKy7sdLMRUZNR3
-        fjVdYiPLs4o7NOVtJ13jHpSQEA==
-X-Google-Smtp-Source: AGHT+IHK9MNBEXuKit4Dyq67gtZ3P+f3+x9ngQPQaqjPnQ9oZd4mGeNK5F+gV0c1lFk5HL0q/K6iHQ==
-X-Received: by 2002:a2e:9691:0:b0:2bf:f32a:1f64 with SMTP id q17-20020a2e9691000000b002bff32a1f64mr10173412lji.18.1698207497173;
-        Tue, 24 Oct 2023 21:18:17 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id q16-20020adfea10000000b00326dd5486dcsm11165440wrm.107.2023.10.24.21.18.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Oct 2023 21:18:16 -0700 (PDT)
-Date:   Wed, 25 Oct 2023 07:18:13 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] pwm: samsung: Fix a bit test
-Message-ID: <0d61bf0a-3aca-466c-9198-e937e81b5328@kadam.mountain>
-References: <917e3890-7895-4b1c-bcee-4eecb3b7fe09@moroto.mountain>
- <20231024211157.xv3vzqlmxmxwgvle@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231024211157.xv3vzqlmxmxwgvle@pengutronix.de>
+        Wed, 25 Oct 2023 06:34:14 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BAA8184
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Oct 2023 03:34:10 -0700 (PDT)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231025103405epoutp031c5c3bc9c4a85eaa0555cd34a2c50062~RUzqpBanw0480104801epoutp03V
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Oct 2023 10:34:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231025103405epoutp031c5c3bc9c4a85eaa0555cd34a2c50062~RUzqpBanw0480104801epoutp03V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1698230045;
+        bh=isyn7njcauSMu4EFZHDTZ5HQHHyMnOVu6FNtfgDxVc0=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=c9FhagVC9Nja1b/Hk3x8maBSYJE6yhsrZaZhOedrRmhHOq7RLuTTAAbII6535tz9/
+         b7/iDtRu52GBpCRNuWIepW7pQ7cQ7yyVUqiWJZ3AphocyptuEi5XR6MGLs/O+tsSjb
+         XD+UaeSNFcFIOPWl9TxYfX2UWJC3Zi3h/XROv/Ic=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20231025103405epcas5p2c7aa207c3e8c55c6b1d47430b531f378~RUzqDzDU02457324573epcas5p2P;
+        Wed, 25 Oct 2023 10:34:05 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.180]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4SFlf31lHjz4x9Pp; Wed, 25 Oct
+        2023 10:34:03 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        AB.A5.09672.B1FE8356; Wed, 25 Oct 2023 19:34:03 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20231025102230epcas5p1558641a18fbf4f841c82b0ef4cf5a91f~RUpirJkwp1496314963epcas5p1e;
+        Wed, 25 Oct 2023 10:22:30 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20231025102230epsmtrp257980e7d3f915d1d750b9e5f88adfbee~RUpiqFDCW0922409224epsmtrp2w;
+        Wed, 25 Oct 2023 10:22:30 +0000 (GMT)
+X-AuditID: b6c32a4b-60bfd700000025c8-1d-6538ef1b3dad
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        CA.30.18939.56CE8356; Wed, 25 Oct 2023 19:22:30 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+        [107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20231025102226epsmtip12b72bdd7f9d22a564ba4d422e7b9beba~RUpfjjcKV0054300543epsmtip13;
+        Wed, 25 Oct 2023 10:22:26 +0000 (GMT)
+From:   Aakarsh Jain <aakarsh.jain@samsung.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     m.szyprowski@samsung.com, andrzej.hajda@intel.com,
+        mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+        krzysztof.kozlowski+dt@linaro.org, dillon.minfei@gmail.com,
+        david.plowman@raspberrypi.com, mark.rutland@arm.com,
+        robh+dt@kernel.org, conor+dt@kernel.org,
+        linux-samsung-soc@vger.kernel.org, andi@etezian.org,
+        gost.dev@samsung.com, alim.akhtar@samsung.com,
+        aswani.reddy@samsung.com, pankaj.dubey@samsung.com,
+        ajaykumar.rs@samsung.com, aakarsh.jain@samsung.com
+Subject: [Patch v4 00/11] Add MFC V12 support
+Date:   Wed, 25 Oct 2023 15:52:05 +0530
+Message-Id: <20231025102216.50480-1-aakarsh.jain@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WTf1BUVRTHu++9ffsAn/MCpAuE4hZMMC3s5u52MSDHH/kMZyJrJLGkDd6w
+        DMvutm/BwrG0QkQUsSlHaAEDyQQEWkVYgYB1HYkCUUBicAFZMYgGHZCgwGrXBfvvc875fuec
+        e+69FO7ZSPpRKRoDp9co1SLSnbh0JeQFsf99xEnu5BBorKFAgFrvtxFopPgSicrmf8PQcNkM
+        gSwX6oSoqrkLQ2evtQpQibVLgOrbRgk00GrG0I0CG4Hyxu/gyGS/JUA9l40kOlpbJ0Cnrv+I
+        ofNWmxCV99/A0HemRQyV1j0Uoqxmq3CDD1tVXAXY/jPTOGsutAnZsqYJjDVV5JDs7VtNJHvh
+        zKds1tW/CTbvYgVgZ0yr2Y7ZGWGsR3xqpIpTJnH6QE6TqE1K0SRHiWLeStiUIFdIpGJpBHpZ
+        FKhRpnFRos3bY8WvpagdxxUFZijV6Y5UrJLnReHRkXptuoELVGl5Q5SI0yWpdTJdGK9M49M1
+        yWEazrBeKpG8JHcI309VHT0xQOq6/T5qXGgjDgCjzxHgRkFGBv+qvi50sifTCGD9ed0R4O7g
+        aQD/qbKCJ0FH6a/CZUflydMCV8EMYM+3NtIVZGFwyvK5o0JRJCOGnfVqp8GbOQig/bDBqcGZ
+        Phzeq5/DnAUvh2Y2pww4mWCCoLXmX9LJNBMFv8wewVzd1sDK2lbcaYaMlYItk38ujbEZHu8Z
+        xl3sBX+/dnEp7wdnpppJFydCe+nEkkYNa5q+Ilz8KmztNRLOQXEmBNZcDnelA+DXHdWP++LM
+        Snhs4e7SDDRsKF7mYGi8PS9w8bPwSmU5cDEL+4aagWuP78G5+QfCfBBQ+H+H0wBUAF9Ox6cl
+        c7xct07D7X1yUYnaNBN4/IpDYxrA6MiDMAvAKGABkMJF3vSu7YjzpJOUH2dyem2CPl3N8RYg
+        d+zsBO63KlHr+AYaQ4JUFiGRKRQKWcQ6hVT0DD2ZVZTkySQrDVwqx+k4/bIPo9z8DmBD4yNm
+        zrpv7p01gj/S6C0/UT7amLeDh86+TudvkPl+Er2xhTQ8HWJKF7jhwb03S7wmR+kde7vF+54K
+        GbO9seMzd0NmgEdBiXogVO6mzvxwxVopFZ5bZO081LVN3LX/F1te5bzx4OLGHx7tjgzSGHzw
+        WVtu9R5rb7t8rOH7UvfdjYOl/X2qllp7BreiZiudklOW/VwE3HpoUfaNrftUe6zpFX44oVPi
+        bV8bd29w/wfTX7T506v9J5rH1ebofC9Zd3m574sPd930mcsNKjx3+M3jm+bi4+nehZ3zK6c8
+        7hLv2n4uLlLFFawfzOcfBZ8ras/QCY3PW+hjHjuzV5ntDXtGrsaJCF6llIbiel75H260lsFO
+        BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMLMWRmVeSWpSXmKPExsWy7bCSnG7aG4tUgzvNjBZPd8xktTjw/iCL
+        xYN529gsFv94zmRxf/FnFotDm7eyW6zZe47JYvnxA6wW84+cY7XYfvARi8XNAzuZLC7OvMti
+        0ffiIbPFpsfXWC0u75rDZtGzYSurxYzz+5gs1h65y26x9PpFJotlm/4wWSza+oXdonXvEXYH
+        MY8189Ywelxf8onZY+esu+wei/e8ZPLYtKqTzePOtT1sHpuX1Hu0Hv3F4tG3ZRWjx+dNch6n
+        vn5mD+CO4rJJSc3JLEst0rdL4MromXiTreCCVMXu3wdZGhjniHUxcnJICJhIrJ62gLWLkYtD
+        SGA7o8T2txcYIRIyEv/bjrFD2MISK/89Z4coamaSaLs1A6iIg4NNQFfi7PYckLiIQCujxPWV
+        nUwgDcwCr5klXn9NAbGFgWq+di4GG8oioCpxZP1/NhCbV8BWYlL7AyaIBfISqzccYJ7AyLOA
+        kWEVo2hqQXFuem5ygaFecWJucWleul5yfu4mRnA8aAXtYFy2/q/eIUYmDsZDjBIczEoivJE+
+        FqlCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeZVzOlOEBNITS1KzU1MLUotgskwcnFINTNU1P+9d
+        vnA/89oVz39nkneUPsv5YWt+eOnjE7YrupSa+y3nsbU3FX+czM45b+pNo1nTGDrzV/TYepbw
+        V8uHs154VTyBn+f7/SWqb2aapNoa9E3mEZW64yHEfeDuEmfTk+7pz99Fy0iZfQzOPpsq47G/
+        9bOa/pGJB9STVbYfbXJb8JpXJi19xt8sYU5HZ18XQ5EzRfainpfqY47O8b205X3/u7fxxtcu
+        NfAUMO8suf6jofm9b4r604NnrH5c5f12cHfypveqdyekBJYwr1rJ8TpiVR17YXp1ZHufHcdG
+        e95DemeDLT9oyUfqzMvcwLI65s7F2Y43zqdK1s5cGfKXS2OViGcUV7SvRwy7/AVeJZbijERD
+        Leai4kQA/ysaWfYCAAA=
+X-CMS-MailID: 20231025102230epcas5p1558641a18fbf4f841c82b0ef4cf5a91f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231025102230epcas5p1558641a18fbf4f841c82b0ef4cf5a91f
+References: <CGME20231025102230epcas5p1558641a18fbf4f841c82b0ef4cf5a91f@epcas5p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Oct 24, 2023 at 11:11:57PM +0200, Uwe Kleine-König wrote:
-> Hello Dan,
-> 
-> On Tue, Oct 17, 2023 at 05:04:08PM +0300, Dan Carpenter wrote:
-> > This code has two problems.  First, it passes the wrong bit parameter to
-> > test_bit().  Second, it mixes using PWMF_REQUESTED in test_bit() and in
-> > open coded bit tests.
-> > 
-> > The test_bit() function takes a bit number.  In other words,
-> > "if (test_bit(0, &flags))" is the equivalent of "if (flags & (1 << 0))".
-> > Passing (1 << 0) to test_bit() is like writing BIT(BIT(0)).  It's a
-> > double shift bug.
-> > 
-> > In pwm_samsung_resume() these issues mean that the flag is never set and
-> > the function is essentially a no-op.
-> > 
-> > Fixes: 4c9548d24c0d ("pwm: samsung: Put per-channel data into driver data")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > From static analysis and not tested.
-> > 
-> >  drivers/pwm/pwm-samsung.c | 2 +-
-> >  include/linux/pwm.h       | 4 ++--
-> >  2 files changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-> > index 10fe2c13cd80..acf4a0d8d990 100644
-> > --- a/drivers/pwm/pwm-samsung.c
-> > +++ b/drivers/pwm/pwm-samsung.c
-> > @@ -630,7 +630,7 @@ static int pwm_samsung_resume(struct device *dev)
-> >  		struct pwm_device *pwm = &chip->pwms[i];
-> >  		struct samsung_pwm_channel *chan = &our_chip->channel[i];
-> >  
-> > -		if (!(pwm->flags & PWMF_REQUESTED))
-> > +		if (!test_bit(PWMF_REQUESTED, &pwm->flags))
-> >  			continue;
-> >  
-> >  		if (our_chip->variant.output_mask & BIT(i))
-> > diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-> > index e3b437587b32..3eee5bf367fb 100644
-> > --- a/include/linux/pwm.h
-> > +++ b/include/linux/pwm.h
-> > @@ -41,8 +41,8 @@ struct pwm_args {
-> >  };
-> >  
-> >  enum {
-> > -	PWMF_REQUESTED = 1 << 0,
-> > -	PWMF_EXPORTED = 1 << 1,
-> > +	PWMF_REQUESTED = 0,
-> > +	PWMF_EXPORTED  = 1,
-> 
-> I'd want s/  / / here. Or even not assign explicit values at all?
-> 
+This patch series adds MFC v12 support. MFC v12 is used in Tesla FSD SoC.
 
-I feel like the 0 and 1 add value.  But sure, I can remove the extra
-space.  You're right that trying to align stuff is potentially going to
-cause pain in the future.
+This adds support for following:
 
-> >  };
-> >  
-> >  /*
-> 
-> I'd say these are two separate issues, with the one in pwm-samsung being
-> bad and the one in <linux/pwm.h> "only" ugly.
-> 
-> I wonder how I could get the samsung part wrong. All current usages of
-> PMWF_REQUESTED (and also PWMF_EXPORTED) use test_bit (et al). Grepping
-> through history pwm-pca9685.c got this wrong in a similar way for some
-> time, but otherwise it was always used correctly.
-> 
-> The definition of the flags in <linux/pwm.h> is ugly since 
-> f051c466cf69 ("pwm: Allow chips to support multiple PWMs") from 2011!
-> 
-> @Dan: Would you split the patch in two please?
+-Add support for YV12 and I420 format (3-plane)
+-Add support for Rate Control, UHD and DMABUF for encoder
+-Add support for DPB buffers allocation based on MFC requirement
 
-Sure.
+Changes since v3:
+-Removed vp9 codec support for now and just keeping MFC v12 base
+patches with necessary hardware controls, decoder, encoder and
+structural changes. Also covers luma dbp, chroma dpb and mv sizes
+for each codec as per the UM for MFCv12, along with appropriate
+alignment.
+v3 link: https://patchwork.kernel.org/project/linux-media/cover/20221011122516.32135-1-aakarsh.jain@samsung.com/
 
-regards,
-dan carpenter
+Changes since v2:
+-Addressed review comments by Rob Herring.
+This was regarding the errors found by Rob bot in yaml file. File
+'samsung,s5p-mfc.yaml' is already converted into json schema and is
+merged.
+
+-Addressed review comments by Krzysztof Kozlowski.
+This was regarding depricated properties mentioned in s5p-mfc.txt file.
+Review comment was addressed and 'samsung,s5p-mfc.yaml' is already
+merged now.
+
+-Addressed review comments by Andi Shyti.
+This was regarding addition of 'MFC_V10PLUS_BITS' macro in
+'s5p_mfc_common.h file. 
+v2 link: https://patchwork.kernel.org/project/linux-media/cover/20220907064715.55778-1-smitha.t@samsung.com/
+
+Changes since v1:
+-Addressed review comments by Krzysztof Kozlowski.
+Separated bug fixes patches, resent again with fix tag
+and those are merged now.
+-Added SoC based compatible string.
+
+-Addressed review comments by Andrzej Hajda
+Assigned width64 and height32 variable with ALIGN(ctx->img_..) 
+used in the code in 's5p_mfc_opr_v6.c' file.
+v1 link: https://patchwork.kernel.org/project/linux-media/patch/20220517125548.14746-2-smitha.t@samsung.com/
+
+Aakarsh Jain (11):
+  dt-bindings: media: s5p-mfc: Add mfcv12 variant
+  media: s5p-mfc: Rename IS_MFCV10 macro
+  media: s5p-mfc: Add initial support for MFCv12
+  media: s5p-mfc: Add YV12 and I420 multiplanar format support
+  media: s5p-mfc: Add support for rate controls in MFCv12
+  media: s5p-mfc: Add support for UHD encoding.
+  media: s5p-mfc: Add support for DMABUF for encoder
+  media: s5p-mfc: Set context for valid case before calling try_run
+  media: s5p-mfc: Load firmware for each run in MFCv12.
+  media: s5p-mfc: DPB Count Independent of VIDIOC_REQBUF
+  arm64: dts: fsd: Add MFC related DT enteries
+
+ .../bindings/media/samsung,s5p-mfc.yaml       |  16 +
+ arch/arm64/boot/dts/tesla/fsd.dtsi            |  21 ++
+ .../platform/samsung/s5p-mfc/regs-mfc-v12.h   |  52 +++
+ .../platform/samsung/s5p-mfc/regs-mfc-v7.h    |   1 +
+ .../platform/samsung/s5p-mfc/regs-mfc-v8.h    |   3 +
+ .../media/platform/samsung/s5p-mfc/s5p_mfc.c  |  36 +-
+ .../platform/samsung/s5p-mfc/s5p_mfc_common.h |  29 +-
+ .../platform/samsung/s5p-mfc/s5p_mfc_ctrl.c   |   9 +-
+ .../platform/samsung/s5p-mfc/s5p_mfc_dec.c    |  51 ++-
+ .../platform/samsung/s5p-mfc/s5p_mfc_enc.c    | 138 +++++---
+ .../platform/samsung/s5p-mfc/s5p_mfc_opr.h    |  14 +-
+ .../platform/samsung/s5p-mfc/s5p_mfc_opr_v5.c |  12 +-
+ .../platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c | 312 +++++++++++++++---
+ .../platform/samsung/s5p-mfc/s5p_mfc_opr_v6.h |   7 +-
+ 14 files changed, 574 insertions(+), 127 deletions(-)
+ create mode 100644 drivers/media/platform/samsung/s5p-mfc/regs-mfc-v12.h
+
+-- 
+2.17.1
 
