@@ -2,98 +2,98 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA69C25B47
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Oct 2023 11:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA6AC0032E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Oct 2023 11:57:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234446AbjJYLWK (ORCPT
+        id S234981AbjJYL5p (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 25 Oct 2023 07:22:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39538 "EHLO
+        Wed, 25 Oct 2023 07:57:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233782AbjJYLWJ (ORCPT
+        with ESMTP id S234367AbjJYL5o (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Oct 2023 07:22:09 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1FA5132
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Oct 2023 04:22:06 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2c4fe37f166so79352051fa.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Oct 2023 04:22:06 -0700 (PDT)
+        Wed, 25 Oct 2023 07:57:44 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4ED9137
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Oct 2023 04:57:42 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-4083dbc43cfso40604755e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Oct 2023 04:57:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698232925; x=1698837725; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dwp8E74sI4tVBaqrgu+e8RzHTAWo0YSAPvz5KCe5hyQ=;
-        b=aY07CGEIYA8zybKuO4KqyfbYe0+V0m3ih1/Mp8aNqLBEwpZhGwZbL1IkCxiW1RyUoK
-         NdhfhGU5a7byOEXq9tN5DvTBVfouTZDZv9uHaH47eVbvaxM4fU2WTklwOe/v/IORSCM9
-         renAg5q1HekURoFkVl8Okn5DdHlA5u08iCGhYaIXRDHrqklc2gkfoH25rCx8NuPzPlL8
-         3t3gZKXjwKpQJJhLRqrFay1GnbNvFTImTAwV8kDmgD5+SdTcawFMkVKduS+LYAGbsZ8Y
-         ch7M6mqaqwto/BYwKcH6XlX7bcHNWQTkZGKj1byZZuGjpkJl5Av2fsedBXU7Sq2sqgB8
-         y6WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698232925; x=1698837725;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=linaro.org; s=google; t=1698235061; x=1698839861; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=dwp8E74sI4tVBaqrgu+e8RzHTAWo0YSAPvz5KCe5hyQ=;
-        b=WR2A3ITcR/znmLf/rGIskY0HhGvAN6EaBHf8P/gZiJA95hHv4TlbwhOe0oxUYV2/Ks
-         cbJyiVs1+JKU90MtD6/pLGKPY+8ylnInjLadzL7l/wg0Hk7oMVc1nzyDchdLWyIXCnfi
-         crWumFj4g95By1/Fs2RobXEl4Xh+fhO4TtFJsLaOQ0fY0dM7Qwg4fupLB/VS0HrgnGmR
-         be6scXZDirvQ0Mn37XXaVub4U9hIvceu4Tui3QdDBTi+d0MKNbvyk3HmCSpT/2bH6+uX
-         VBfC/ZHqSJy3Wx/nazaQdZ1nwxyBDm6UzjweRg071y+wGSMGAwK3/z8zt3m4rFBEeKog
-         F1tQ==
-X-Gm-Message-State: AOJu0YziZcjb+ZkEcm6Zdlz+0W/HC1t2ew/+Zk/joo+5Xt+L1mR5Ae3b
-        rQ7HrBZ5/zYPsFWDOpnOZdT7ug==
-X-Google-Smtp-Source: AGHT+IFlEL56ocYJgKzp9u4zcIru0vmdc7o15SYfWmBqbz4xfgdTzW9qzGMVBhIZCBtLcMqtAQbTVA==
-X-Received: by 2002:a05:651c:b20:b0:2c5:8a4:9e6f with SMTP id b32-20020a05651c0b2000b002c508a49e6fmr12089142ljr.37.1698232924963;
-        Wed, 25 Oct 2023 04:22:04 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id o12-20020a05600c4fcc00b0040775501256sm14361794wmq.16.2023.10.25.04.22.03
+        bh=j6uVxf5kYe92K+O00MCE5FtASY43IgluJLHruF2586U=;
+        b=yW8cRiy2S28hINm9iivjLPTYHXDnF3RaX0kTa3T6QkKPyMX8rQDb3fSYe4kJbY0RjQ
+         IXHOQLG0QOy8EX2brbHLSzcPNUye+yeFQcvHIDcwJxeoOZMElRHUZvJx3OPa1Vz91Ed0
+         cHworUftdcF4GwVgpVb9D9b1YLbxVKVV4pwtwOOSm6SR4Wn0eSQROQIe5Evxm2j8kmqC
+         cAl8CI+ogGJ0erGyfi3h3lMzwVI5TmZlMDzweXSvZvRYt5ztHk+dFV8S0EUk7ehTxy/M
+         AMF3gmTyP+Qmiq8TUHE8XXKKwnf759+G35iedNDBnuwrmsF5uF+Bj5aIpaDkS60jykGU
+         BiaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698235061; x=1698839861;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j6uVxf5kYe92K+O00MCE5FtASY43IgluJLHruF2586U=;
+        b=eJeP2yJ0AL5Hez7qU5FilhI4qCjr2Q0N5kUX97wnWLmVXFeMD0bJPi8bYX0UHAykrq
+         zL08fjQWlRrHQlo3/8YhXp60LSty1+GWBFqh3VNQS8+3VPAYqVobBww591v8naRY57sy
+         xkr8oX723ceapddTkm2VqzVIndlJgx0eJ92UhNQRQZfW/ffB5SvW5NUK60rjc7hdpRVo
+         +wpdUln9bpX3hHzypdLl4v49u5xSEPxBSU5Tkutm8CkBAI9OVxmW5+xFnUdpZEP+UPSa
+         0lRocWqmwiZ1TLk5d6qTv+V1pr8IGh5L5HENjoX9tJcbTXj9CF03qWntCRLfVzK1uJBh
+         gkWw==
+X-Gm-Message-State: AOJu0Yz5bDmvmrcVgKGUm8yGJpsWNdOW3xMCWQ14fmsSkCw5nlLbDoHT
+        dG1Ei10eOEFIGNqoi0/0GLh0HA==
+X-Google-Smtp-Source: AGHT+IFlcuVvisAHY6IpOp9uDQk7RA7FjTqkZ2XNTiaE5hdwCeCI/PV48ajajNqa8VjggLSkT9Do7A==
+X-Received: by 2002:a05:600c:3b20:b0:405:4f78:e128 with SMTP id m32-20020a05600c3b2000b004054f78e128mr12172686wms.4.1698235061312;
+        Wed, 25 Oct 2023 04:57:41 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id p30-20020a05600c1d9e00b003fefaf299b6sm14317313wms.38.2023.10.25.04.57.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Oct 2023 04:22:04 -0700 (PDT)
-Message-ID: <d6fdf664bd18eee581a2644e376124e830633045.camel@linaro.org>
-Subject: Re: [PATCH v2] tty: serial: samsung_tty: remove dead code
-From:   =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To:     Andi Shyti <andi.shyti@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, krzysztof.kozlowski@linaro.org,
-        alim.akhtar@samsung.com, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-Date:   Wed, 25 Oct 2023 12:22:03 +0100
-In-Reply-To: <20231024215509.ak4jbbahw2vsahs6@zenone.zhora.eu>
-References: <20231019100901.4026680-1-andre.draszik@linaro.org>
-         <20231024215509.ak4jbbahw2vsahs6@zenone.zhora.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4-1 
+        Wed, 25 Oct 2023 04:57:41 -0700 (PDT)
+Date:   Wed, 25 Oct 2023 14:57:34 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH v2 1/2] pwm: samsung: Fix a bit test in pwm_samsung_resume()
+Message-ID: <e031db45-add0-4da7-97fa-dee95ee936ad@moroto.mountain>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Andi,
+The PWMF_REQUESTED enum is supposed to be used with test_bit() and not
+used as in a bitwise AND.  In this specific code the flag will never be
+set so the function is effectively a no-op.
 
-On Tue, 2023-10-24 at 23:55 +0200, Andi Shyti wrote:
-> Hi Andre,
->=20
-> On Thu, Oct 19, 2023 at 11:09:01AM +0100, Andr=C3=A9 Draszik wrote:
-> > When support for various old platforms was removed in commit
-> > 1ea35b355722 ("ARM: s3c: remove s3c24xx specific hacks"),
-> > s3c24xx_serial_ops also became unused here because nothing sets
-> > port
-> > type TYPE_S3C24XX anymore.
-> >=20
-> > Remove s3c24xx_serial_ops and all the code that's unreachable now.
-> >=20
-> > Fixes: 1ea35b355722 ("ARM: s3c: remove s3c24xx specific hacks")
->=20
-> is this really a fix? Or is it a cleanup?
+Fixes: e3fe982b2e4e ("pwm: samsung: Put per-channel data into driver data")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: Split the patch into two parts
 
-I guess from my position it's fixing the issue of dead code, introduced
-in the commit referenced. Which is of course also a cleanup :-)
+ drivers/pwm/pwm-samsung.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Not sure...
-
-Cheers,
-Andre
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index 568491ed6829..69d9f4577b34 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -631,7 +631,7 @@ static int pwm_samsung_resume(struct device *dev)
+ 		struct pwm_device *pwm = &chip->pwms[i];
+ 		struct samsung_pwm_channel *chan = &our_chip->channel[i];
+ 
+-		if (!(pwm->flags & PWMF_REQUESTED))
++		if (!test_bit(PWMF_REQUESTED, &pwm->flags))
+ 			continue;
+ 
+ 		if (our_chip->variant.output_mask & BIT(i))
+-- 
+2.42.0
 
