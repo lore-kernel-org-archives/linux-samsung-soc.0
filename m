@@ -2,101 +2,139 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 658FAC0032E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Oct 2023 12:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D979C0032E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Oct 2023 12:17:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232789AbjJYMLN (ORCPT
+        id S1343753AbjJYMRt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 25 Oct 2023 08:11:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47442 "EHLO
+        Wed, 25 Oct 2023 08:17:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234082AbjJYMLM (ORCPT
+        with ESMTP id S1343767AbjJYMRp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Oct 2023 08:11:12 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E39A13A
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Oct 2023 05:11:10 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qvcj2-00027m-Ld; Wed, 25 Oct 2023 14:11:04 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qvcj1-004Alg-Ii; Wed, 25 Oct 2023 14:11:03 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qvcj1-005x1E-9S; Wed, 25 Oct 2023 14:11:03 +0200
-Date:   Wed, 25 Oct 2023 14:11:03 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Wed, 25 Oct 2023 08:17:45 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CE4418B
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Oct 2023 05:17:39 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231025121735euoutp02ad4cdf1efbc299bb8aef6afba4c312cd~RWOCByZmP2623326233euoutp02A
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Oct 2023 12:17:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231025121735euoutp02ad4cdf1efbc299bb8aef6afba4c312cd~RWOCByZmP2623326233euoutp02A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1698236255;
+        bh=koPmnIYR71MLFlw+rXLBLGv9mCLgWqZkiQU0rYit4sc=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=t4QhUNIUTrf9qz+kqjlsdgGot6auWNAn7Qx1TCd03shSHkv9KgGVTeH71oGZ7q6KC
+         QwgniJdWdinUxpe6ty4X5Hi00jwA03RhFimTk3wHsnA6y30LMUjSlWj31k7VSm/1t6
+         3O5cbHcZAp1hHvFdnzntawdQZcwvLiayLUv3XPuA=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20231025121735eucas1p246d9725304ab07e9689ac3ab638e7eed~RWOBpXS8j1127511275eucas1p2L;
+        Wed, 25 Oct 2023 12:17:35 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id F9.C0.11320.F5709356; Wed, 25
+        Oct 2023 13:17:35 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20231025121735eucas1p22b65a2c0bc6d30342c4935e3903823a1~RWOBXsbsS0172101721eucas1p2n;
+        Wed, 25 Oct 2023 12:17:35 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20231025121735eusmtrp1ae83709764d1ef5dc79590213cc257b4~RWOBXFbHf2882328823eusmtrp1O;
+        Wed, 25 Oct 2023 12:17:35 +0000 (GMT)
+X-AuditID: cbfec7f4-97dff70000022c38-2d-6539075f8d8f
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 29.B7.25043.E5709356; Wed, 25
+        Oct 2023 13:17:34 +0100 (BST)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20231025121734eusmtip28e9ff31896a5b187787f2384d39232d6~RWOA57erR0336403364eusmtip2Y;
+        Wed, 25 Oct 2023 12:17:34 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] pwm: samsung: Fix a bit test in
- pwm_samsung_resume()
-Message-ID: <20231025121103.ptck4z62wvndgdlr@pengutronix.de>
-References: <e031db45-add0-4da7-97fa-dee95ee936ad@moroto.mountain>
+        Andi Shyti <andi.shyti@kernel.org>,
+        Wolfram Sang <wsa@kernel.org>
+Subject: [PATCH v2 0/3] Add atomic transfers to s3c24xx i2c driver
+Date:   Wed, 25 Oct 2023 14:17:22 +0200
+Message-Id: <20231025121725.46028-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zpelnl45zfbroznb"
-Content-Disposition: inline
-In-Reply-To: <e031db45-add0-4da7-97fa-dee95ee936ad@moroto.mountain>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmleLIzCtJLcpLzFFi42LZduznOd14dstUg6YXQhYP5m1js7j/tYPR
+        Yu/rrewWHX+/MFrMOL+PyWLtkbvsFnf3z2V0YPfYtKqTzePOtT1sHn1bVjF6fN4kF8ASxWWT
+        kpqTWZZapG+XwJXx7thmpoKf7BXT705ha2DcwtbFyMkhIWAisWDbIiYQW0hgBaPErs32XYxc
+        QPYXRom/N1tYIZzPjBJL/u5lguno/HAQKrGcUWLqktdsCC33FjGCVLEJGEp0ve0C2yEi4CAx
+        b+13dpAiZoHLjBLT5mwDGyUs4CSxoH8XWBGLgKrEg/eb2EFsXgFbiWNr9rNDrJOX2H/wLDNE
+        XFDi5MwnLCA2M1C8eetsZoiaiRwSHz64QtguEns37IOKC0u8Or4Fao6MxOnJPSwgR0gItDNK
+        LPh9nwnCmcAo0fD8FiNElbXEnXO/gC7iANqgKbF+lz6IKSHgKLFzohiEySdx460gxAl8EpO2
+        TWeGCPNKdLQJQcxQk5h1fB3c1oMXLkGVeEjsO8cLCelYidOrW1kmMCrMQvLXLCR/zUK4YAEj
+        8ypG8dTS4tz01GKjvNRyveLE3OLSvHS95PzcTYzA9HL63/EvOxiXv/qod4iRiYPxEKMEB7OS
+        CG+kj0WqEG9KYmVValF+fFFpTmrxIUZpDhYlcV7VFPlUIYH0xJLU7NTUgtQimCwTB6dUA1Nx
+        V/oc93k7bPtNTy+3Wx/9+/C8RVet6p+7eCpG6wZwRbT53F3tbbexVMhr/xVGdXPvjDeL9p5y
+        eP9wue6XeXwP/H9N07mlLqFzTOhL9e8i81bXvcbzxPm8799t/HT+gXj+whWeyf8WLcz0/PKO
+        87OL1VITo2qjWM2+81+fB23Kvfd969XHfyqkf+sxHDXwffcnpZEn4+0my/UbE9pP1/v+2HRF
+        cP5KpXcbo7acW/LUdfN0l4/RLNdjbXuP6rWWTX7kvOC84PLQyNPxKR8z94qtSJxUGMW8KX7D
+        wrX1jx7W7Gn7Hfz+jIxmwNffffP+z/B9ueSF9eU3qduqjcRF6tzXLGMosvrbeeVej+OW5HV9
+        SizFGYmGWsxFxYkATrWvWp4DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsVy+t/xe7px7JapBmff2lg8mLeNzeL+1w5G
+        i72vt7JbdPz9wmgx4/w+Jou1R+6yW9zdP5fRgd1j06pONo871/awefRtWcXo8XmTXABLlJ5N
+        UX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7Gu2ObmQp+
+        sldMvzuFrYFxC1sXIyeHhICJROeHg6xdjFwcQgJLGSW+7/8OlZCRODmtgRXCFpb4c62LDaLo
+        E6PEpdc/GUESbAKGEl1vu8AaRAScJG4vmgU2iVngOtCkA//AioSBEgv6d4EVsQioSjx4v4kd
+        xOYVsJU4tmY/O8QGeYn9B88yQ8QFJU7OfMICYjMDxZu3zmaewMg3C0lqFpLUAkamVYwiqaXF
+        uem5xUZ6xYm5xaV56XrJ+bmbGIHBve3Yzy07GFe++qh3iJGJg/EQowQHs5IIb6SPRaoQb0pi
+        ZVVqUX58UWlOavEhRlOg+yYyS4km5wPjK68k3tDMwNTQxMzSwNTSzFhJnNezoCNRSCA9sSQ1
+        OzW1ILUIpo+Jg1OqgSllUnFk1D3f1U3Gu6OlbtZotIi+UdjJdvY2c767nZd2R+G67esjj4fM
+        kgn78b54jWWIiqb2nNn53f/tpt065H9NaePn6Eey4VkbtsrEz5NsF358dJHkhMMzKrXnt2fU
+        1zk6bm1dP/f9Kr7ubcUrGDr8kzYk81ap1X9gjDzu9sW45V2/UKlFgPzHHvaZpyJSTGx+BUwp
+        6LM/13VjyYqQvyZujXbuEz5MvXHqvaGPU4359jLRxdM3X+bguPAv1JPXMKWtdk/m3WDjl5Uz
+        EmUsRD5MTv5s0jPjtdPp2hrNmRyaG6KkpzXWim6O82WzrtMXK7y3M0hRcOmOWpcZs7b/aLx0
+        eeq0g7x/Tpo8lE3kVmIpzkg01GIuKk4EAIVLuwX3AgAA
+X-CMS-MailID: 20231025121735eucas1p22b65a2c0bc6d30342c4935e3903823a1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20231025121735eucas1p22b65a2c0bc6d30342c4935e3903823a1
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20231025121735eucas1p22b65a2c0bc6d30342c4935e3903823a1
+References: <CGME20231025121735eucas1p22b65a2c0bc6d30342c4935e3903823a1@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Dear All,
 
---zpelnl45zfbroznb
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patchset adds support for atomic transfers, which has been added to
+the i2c core recently by the commit 63b96983a5dd ("i2c: core: introduce
+callbacks for atomic transfers") to hide warnings observed during system
+reboot and power-off. Almost everything needed for that was already in
+the driver as so called polling mode. Unfortunately, that polling mode
+has been tested only with single message, write transfers so far and it
+turned out that it doesn't work well with read and multi-message
+transfers, so first it had to be fixed.
 
-Hello Dan,
+Best regards,
+Marek Szyprowski
 
-On Wed, Oct 25, 2023 at 02:57:34PM +0300, Dan Carpenter wrote:
-> The PWMF_REQUESTED enum is supposed to be used with test_bit() and not
-> used as in a bitwise AND.  In this specific code the flag will never be
-> set so the function is effectively a no-op.
->=20
-> Fixes: e3fe982b2e4e ("pwm: samsung: Put per-channel data into driver data=
-")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+Changelog:
+v2:
+- updated and extended commit messages
 
-@Thierry: e3fe982b2e4e is currently in your for-next branch. So it would
-be good to get Dan's patch into your PR for 6.7-rc1.
 
-Thanks
-Uwe
+Patch summary:
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+Marek Szyprowski (3):
+  i2c: s3c24xx: fix read transfers in polling mode
+  i2c: s3c24xx: fix transferring more than one message in polling mode
+  i2c: s3c24xx: add support for atomic transfers
 
---zpelnl45zfbroznb
-Content-Type: application/pgp-signature; name="signature.asc"
+ drivers/i2c/busses/i2c-s3c2410.c | 55 +++++++++++++++++++++-----------
+ 1 file changed, 36 insertions(+), 19 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.34.1
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmU5BdYACgkQj4D7WH0S
-/k5c4Qf8DMLh//DxSj4/1JTd7zwD+4SRK8uIst1TlaY4J5LAYvtuS71ekVCZRAWs
-UmnHnCRph9cO0t/iO5ByLUpMCUkFl1pscve+VBq68SuMx+r75vMpbNjYkZkf0vRq
-tvsJehuVargiPvCLhGPU0EEIh5NmnUPClt9PRWa64HpiSmJDy0iCk1hlmDIEzMtH
-/rKqE2hj36QOuwEK/kv/YOVLQdlVU8SN+ZmNr8WjsA9Wyb+e/G6tWR2VIF3hiv35
-s+k8JY9CBlIzO06pzjpvy7tqcgiAv4/klV2utLT2DXs+f1Pnlo1k8+ui8cpkiUKY
-OyF69dT6Q1rHzu3CYI0BB1Vrcss1UA==
-=2irA
------END PGP SIGNATURE-----
-
---zpelnl45zfbroznb--
