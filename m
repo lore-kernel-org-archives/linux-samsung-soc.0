@@ -2,133 +2,243 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B00BEC25B48
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Oct 2023 05:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE617C25B48
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Oct 2023 13:57:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234938AbjJZFpg (ORCPT
+        id S231171AbjJZN5i (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 Oct 2023 01:45:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44986 "EHLO
+        Thu, 26 Oct 2023 09:57:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234937AbjJZFpX (ORCPT
+        with ESMTP id S230308AbjJZN5f (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Oct 2023 01:45:23 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A073A1994;
-        Wed, 25 Oct 2023 22:45:00 -0700 (PDT)
-Received: from [192.168.88.20] (91-158-149-209.elisa-laajakaista.fi [91.158.149.209])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4808475B;
-        Thu, 26 Oct 2023 07:44:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1698299084;
-        bh=F61gyrqDirP+JCND20tgRzoVp5z4zN+HisVG9917ft8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=BbntZ58q4/rUw2mWYoHoHvNRltSNczNUUSjBDjO9l9kWivVBIkXW06179jzSweO93
-         vYecg06HpWOhJJcJv2634rv1zFnK+IUBUAeZJms1FkOIRgZ3uxHmz0T/boJ3i1Se0v
-         6fr/dygiEsu691Drl/zOAx/Kx/Bnh+Wmj0p+ibzo=
-Message-ID: <d1da5acd-384f-4ddd-a721-ce677cc38a3d@ideasonboard.com>
-Date:   Thu, 26 Oct 2023 08:44:52 +0300
+        Thu, 26 Oct 2023 09:57:35 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B272FBD
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Oct 2023 06:57:32 -0700 (PDT)
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20231026135728epoutp0408b69e213fb602e76d593a7b71b6f880~RrOhmPFPR3210032100epoutp04j
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Oct 2023 13:57:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20231026135728epoutp0408b69e213fb602e76d593a7b71b6f880~RrOhmPFPR3210032100epoutp04j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1698328648;
+        bh=MdmirowD58CoPKSMUS/Cs8WZUs4Y/X2+s8TFqx+fLBk=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=OkblbULPy8GLTSdd49k6HALI8MkL4wogVA9psz7nQTCTCOJpGUOR5H8eQUtEnRkJY
+         zAi29Uo+EWLz+ZCQj/+NYAUN0vqnQ9sRm4TL2SF+fPTS9HDgmB7pwOrW43/6Avx/BC
+         yeXS4y3YxqICL0+2De7Q6iE0qKAS9V95Nnl4f83M=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20231026135727epcas5p2a70dd974423bbd0c8bb4cf1510c17281~RrOgmxWZ72108821088epcas5p2u;
+        Thu, 26 Oct 2023 13:57:27 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.174]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4SGS6F6HGTz4x9Pt; Thu, 26 Oct
+        2023 13:57:25 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E4.7F.09672.5407A356; Thu, 26 Oct 2023 22:57:25 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20231026133144epcas5p2d6d3f2ab7b6a127966a600667db20661~Rq4DZUd5E2488324883epcas5p2j;
+        Thu, 26 Oct 2023 13:31:44 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20231026133144epsmtrp1e1494dd6e89ff77410bb882a8b738afd~Rq4DXzM520340903409epsmtrp17;
+        Thu, 26 Oct 2023 13:31:44 +0000 (GMT)
+X-AuditID: b6c32a4b-60bfd700000025c8-80-653a704517d7
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        29.C6.07368.04A6A356; Thu, 26 Oct 2023 22:31:44 +0900 (KST)
+Received: from FDSFTE308 (unknown [107.122.81.79]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20231026133141epsmtip2433727e4bcf6c2c1ebd2d8999758ecc4~Rq4AV4oFA0888008880epsmtip2b;
+        Thu, 26 Oct 2023 13:31:40 +0000 (GMT)
+From:   "Aakarsh Jain" <aakarsh.jain@samsung.com>
+To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Cc:     <m.szyprowski@samsung.com>, <andrzej.hajda@intel.com>,
+        <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <krzysztof.kozlowski+dt@linaro.org>, <dillon.minfei@gmail.com>,
+        <david.plowman@raspberrypi.com>, <mark.rutland@arm.com>,
+        <robh+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>, <andi@etezian.org>,
+        <gost.dev@samsung.com>, <alim.akhtar@samsung.com>,
+        <aswani.reddy@samsung.com>, <pankaj.dubey@samsung.com>,
+        <ajaykumar.rs@samsung.com>, <linux-fsd@tesla.com>
+In-Reply-To: <948af111-e7a1-4757-a784-b4256657abd6@linaro.org>
+Subject: RE: [Patch v4 01/11] dt-bindings: media: s5p-mfc: Add mfcv12
+ variant
+Date:   Thu, 26 Oct 2023 19:01:31 +0530
+Message-ID: <000001da0810$c2b17680$48146380$@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: Use device_get_match_data()
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Joel Stanley <joel@jms.id.au>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Andrew Jeffery <andrew@codeconstruct.com.au>,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>
-References: <20231020125214.2930329-1-robh@kernel.org>
-From:   Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20231020125214.2930329-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQLm4twfZx4yvmLB3iF6RxvUJv+HzQK0rOY9AbqXOzoB/yYnBa4Oc9rw
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf0xTVxTH895r+wqh7PEr3AFu3Vvm+BEKnW13QXHOOfYy3IpbFN2MXYU3
+        YJT2rQV0ZBOjwYgijDg2rICjIDgov2kFBCwFRkaiSHAwDL9lU2SEAboUkGUtLRv/fc6533O/
+        59ybw8XcL+E+3ERlCq1WyhUkx5ll7Ap4PfhdJpwOzesKgqaFThacLDZyYKnlEQonSpdZ0Nxo
+        wKG+/S4KK3pNbHit+y4b3uycZsERUwsKB66MsWDO4ykMts9ZdQ0Ph9hw6kkMHGwt5MDsOgMb
+        FvR3oLC6ewyH14cHUFje8ByFOsNTHGa2d+N7vCl9sR6hhsuWMKpFO4ZTpW2zKNVQmcWhRofa
+        OFRjWQaV2bPKonKaKhHqnzNFOLXc8BLV92wZj3b5JGlXAi2Po9V8WhmriktUxkeQUR/L3pGJ
+        JaHCYGEYfJPkK+XJdAS5b390cGSiwjo3yU+TK1KtqWi5RkOG7N6lVqWm0PwElSYlgqSZOAUj
+        YgQaebImVRkvUNIp4cLQ0DfEVuFnSQlVd0bYzG3+yZ9aavHTiAlcQJy4gBCBqsY1/ALizHUn
+        biGgytzPtgdLCBgvyUHtwd8IKMwfxDZLHjRZOPaDdgTM3Zx1qB4h4OnVEcSm4hAhYKIve+Mu
+        T6IHAZNNU5gtwAgLBpbrhzdUTsRu0L5isNpzuR6EFPxR6m9DFvEa0K/H2BQ8IgzU1few7ewG
+        frkyw7IxRgSB8pI5R0d8sPJ7+YbGk4gEhi4jx67xBj0r2Ru2gLjlBMymP1F7wT4wXbHItrMH
+        eNLbhNvZB8zmnnNwLHiom3UYKEBt23csO78FTPcLWbY+MSIA1LaG2NPbQH5fDWr3dQWX1mYc
+        VjzQXLzJ20HhqMVh6we6qq4j3yKkdsto2i2jabeMoP3f7UeEVYm8SDOa5HhaI2Z2KOkT//14
+        rCq5AdnYi8CoZmR68i+BGUG5iBkBXIz05B3ZD2l3Xpz8q3RarZKpUxW0xoyIrc+dh/l4xaqs
+        i6VMkQlFYaEiiUQiCtshEZLevLnMojh3Il6eQifRNEOrN+tQrpPPafTVq8ya+Fffj8heRjoj
+        HVMIjvqh87+1Bh00es1Xj+ffOee/cnj2a5nvUgs67+12aDF3feTae6eqpaKFFxpl2+6dutDv
+        hEYeG/resDPrvLn+i6PluZEnbleIWgcP63Uek59Hvdw8sV6yuhP4fsmra37uovvmmGyxyTWd
+        WT3bv3cRWMLPLCWmKS7KpHvomF5/8aFAAn1lIvt4kTGtruqHIcF62cm9wwfAlLQjseZAxg3f
+        Ii9mUtttPNKPB+LPBv2dx1bvObcUmPQf8Mrel/QlZNVEfjr/4cGzD45DJGwgaXz7sovuxtsF
+        JkHzY13e4nlLx8LlBUtdxs+dl+/7uaaPuge4tZIsTYJcGIipNfJ/AZAMzdqgBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf1CLcRzHfZ/n2fM8i+6eWnf7NiV25zhURsfXr3Tu5LkTwrnJnR9TjzSt
+        H5shDnEWknDXHxn6IYasZLUkTbNW6BKhIiZJRiFMURTacP33/nxe7/f7Pn98aNyzlxDRMXFb
+        OWWcLFZMuhGlVWI//xD5bG5qT8ZIZO6+RaCXWaUkyvtux1BrnoNAlmIjhfSmegxduG3moWxr
+        PQ9du/WKQE/N1zHUcNJGoPS3bTgydf3xGdqbeKitU4oelZ8mUVqRkYcy79/EUIHVRqHzzQ0Y
+        0hl+Yuis8SuFNCYrFSJk9Vl6wDaf+4Kz17U2is2reIexhvzDJPu8qYJki8/tZTXV/QSbXpIP
+        2MH9ZyjWYRjD1vY4qPBRa9zmRnGxMds4ZWDwBrfNR7JPkAmf/HbY68xYMugSpgI+DZkg2FLy
+        nUwFbrQncwPAZ4/TSRfwgb9SaiiXFsBLg3bKZeoAsOGF1QlIJhC21qbxhoAXcxfAY3UHnAPO
+        pBKwuLD2b68DwMZLz/ChCJ8JhqY+ozMuYJbAH49z/iRommDGQ/2AdGjtzsyCRVereS7tAe+e
+        fE0MaZyZDDuedvzXutwu3HXeWNjXoXP6vZhQaKwqJV0eIazuS8OPA4F2WJV2WJV2WJV2WCQH
+        EPnAm0tQKaIVkZIESRy3PUAlU6jUcdEBkfEKA3C+xqSJZeBF9mCABWA0sABI42Iv94gwxHm6
+        R8mSdnLK+PVKdSynsoDRNCEWuksyT0V5MtGyrdwWjkvglP8oRvNFyZhV36imRrSpN2UclcnP
+        6BYzD0KmZeyct2Jtz+opy27YfaZDH2miR4U4ieetx2cbPu7feOhDoofiWMtuXFqTuXzc2D2L
+        xM+b/SX5hYI624X5ofzIkfzy1MAUTRfZUjkhYs40UdC9yO7FMVdWNHmRlZ8fWfx2FXz9peu9
+        KHeML+l/T8pjgquSW0V3ZMAfX7LUtCr052pfaXtv3TfzZd/OfeJPiWFlveEHdxSH5eo0R2a+
+        YrYXZdX3r5x7/0lT0uebiQs6i1LCF4p8y3Tv9u7yL1BeqwzN8Z5hT+seUJ/4wH9YHqTyzrXa
+        Q3J/tL3ZKNBo1+ltLQOFNcJV1XLw9n1788w5EWJCtVkmmYQrVbLf9t35kYkDAAA=
+X-CMS-MailID: 20231026133144epcas5p2d6d3f2ab7b6a127966a600667db20661
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231025102233epcas5p16b716d5b650bbc5af0d759ea4f58f44d
+References: <20231025102216.50480-1-aakarsh.jain@samsung.com>
+        <CGME20231025102233epcas5p16b716d5b650bbc5af0d759ea4f58f44d@epcas5p1.samsung.com>
+        <20231025102216.50480-2-aakarsh.jain@samsung.com>
+        <948af111-e7a1-4757-a784-b4256657abd6@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 20/10/2023 15:52, Rob Herring wrote:
-> Use preferred device_get_match_data() instead of of_match_device() to
-> get the driver match data in a single step. With this, adjust the
-> includes to explicitly include the correct headers. That also serves as
-> preparation to remove implicit includes within the DT headers
-> (of_device.h in particular).
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->   drivers/gpu/drm/armada/armada_crtc.c    | 24 +++++++-----------------
->   drivers/gpu/drm/aspeed/aspeed_gfx_drv.c | 10 ++++------
->   drivers/gpu/drm/exynos/exynos_drm_gsc.c |  9 +++++----
->   drivers/gpu/drm/imx/ipuv3/imx-ldb.c     |  9 ++++-----
->   drivers/gpu/drm/mxsfb/mxsfb_drv.c       | 10 +++-------
->   drivers/gpu/drm/omapdrm/dss/dispc.c     |  4 ++--
->   drivers/gpu/drm/omapdrm/dss/dss.c       |  5 +++--
->   7 files changed, 28 insertions(+), 43 deletions(-)
+Hello Krzysztof
 
-For omapdrm:
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
+> Sent: 25 October 2023 18:30
+> To: Aakarsh Jain <aakarsh.jain=40samsung.com>; linux-arm-
+> kernel=40lists.infradead.org; linux-media=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; devicetree=40vger.kernel.org
+> Cc: m.szyprowski=40samsung.com; andrzej.hajda=40intel.com;
+> mchehab=40kernel.org; hverkuil-cisco=40xs4all.nl;
+> krzysztof.kozlowski+dt=40linaro.org; dillon.minfei=40gmail.com;
+> david.plowman=40raspberrypi.com; mark.rutland=40arm.com;
+> robh+dt=40kernel.org; conor+dt=40kernel.org; linux-samsung-
+> soc=40vger.kernel.org; andi=40etezian.org; gost.dev=40samsung.com;
+> alim.akhtar=40samsung.com; aswani.reddy=40samsung.com;
+> pankaj.dubey=40samsung.com; ajaykumar.rs=40samsung.com; linux-
+> fsd=40tesla.com
+> Subject: Re: =5BPatch v4 01/11=5D dt-bindings: media: s5p-mfc: Add mfcv12
+> variant
+>=20
+> On 25/10/2023 12:22, Aakarsh Jain wrote:
+> > Add Tesla FSD MFC(MFC v12) compatible.
+> >
+> > Cc: linux-fsd=40tesla.com
+> > Signed-off-by: Aakarsh Jain <aakarsh.jain=40samsung.com>
+> > ---
+>=20
+> No changelog and your cover letter does not explain what happened here.
+> Specifically, why did you decide to ignore received tag.
+>=20
+Last patch series we had two different patches for schema which was one for=
+ adding MFCv12 compatible string and other for adding its HW properties.
+In one of the patches you gave reviewed-by tag. Since mfc dt_schema got mer=
+ged already, and this is relatively  new patch so thought of getting review=
+ed again.
 
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Link to those patches:
+https://patchwork.kernel.org/project/linux-media/patch/20221011122516.32135=
+-2-aakarsh.jain=40samsung.com/
+https://patchwork.kernel.org/project/linux-media/patch/20221011122516.32135=
+-3-aakarsh.jain=40samsung.com/   =20
 
-  Tomi
+if you are ok, I will add your reviewed-by in next patch series.
+
+> >  .../bindings/media/samsung,s5p-mfc.yaml          =7C 16 ++++++++++++++=
+++
+> >  1 file changed, 16 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/media/samsung,s5p-
+> mfc.yaml b/Documentation/devicetree/bindings/media/samsung,s5p-
+> mfc.yaml
+> > index 084b44582a43..c30eb309f670 100644
+> > --- a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
+> > +++ b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
+> > =40=40 -24,6 +24,7 =40=40 properties:
+> >            - samsung,mfc-v7                =23 Exynos5420
+> >            - samsung,mfc-v8                =23 Exynos5800
+> >            - samsung,mfc-v10               =23 Exynos7880
+> > +          - tesla,fsd-mfc                 =23 Tesla FSD
+> >        - items:
+> >            - enum:
+> >                - samsung,exynos3250-mfc    =23 Exynos3250
+> > =40=40 -165,6 +166,21 =40=40 allOf:
+> >            minItems: 1
+> >            maxItems: 2
+> >
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - tesla,fsd-mfc
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          maxItems: 1
+> > +        clock-names:
+> > +          items:
+> > +            - const: mfc
+> > +        iommus: false
+>=20
+> That's odd. How so? MFC v12 does not support IOMMU?
+>=20
+MFC v12 do support IOMMU. But currently it is not enabled in SW (has depend=
+encies on some of the floating dma-mapping patches) and not tested on upstr=
+eam kernel. Current patch sets intend to add support for MFCv12 using reser=
+ve memory and later patches related to enable iommu will be posted (after r=
+esolving the dependencies). So I marked iommu property as false.=20
+Now what is your suggestion here? Should I keep iommu as false or add memor=
+y-region as below?
+Ex-
+  - if:
+      properties:
+        compatible:
+          contains:
+            enum:
+              - tesla,fsd-mfc
+    then:
+      properties:
+        clocks:
+          maxItems: 1
+        clock-names:
+          items:
+            - const: mfc
+        memory-region:
+          maxItems: 1
+
+
+> Best regards,
+> Krzysztof
+
+Thanks for review.
 
