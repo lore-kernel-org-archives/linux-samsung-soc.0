@@ -2,131 +2,164 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE7A7C25B47
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Oct 2023 08:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BEAC25B70
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Oct 2023 10:54:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235053AbjJ0IG5 (ORCPT
+        id S1345689AbjJ0Kyd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 27 Oct 2023 04:06:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37324 "EHLO
+        Fri, 27 Oct 2023 06:54:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235044AbjJ0IGz (ORCPT
+        with ESMTP id S1345658AbjJ0Kyc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Oct 2023 04:06:55 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D9971B6
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Oct 2023 01:06:52 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-507c91582fdso2619467e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Oct 2023 01:06:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698394011; x=1698998811; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L1Crc/3KLznU3hcItc5onmdG+ywsdJtNXgnylnU7cp8=;
-        b=WKSB5n6tegDOoZmm3L3xlsr2g9mV/cbnK6x5/zKoQUPNrqcHYVczbOQRNJld05Takg
-         X51cXjik3Hw7mwdGpkDqV2HMxWG3YnE+fhn8e3qczuBxHBdr8o8qd5Z/ZXNa3dfcazTO
-         pBjSv18Cw4sIT2hMH2XCdnGofwKDa2at6T6ITbfazhpGIJLa5GLYWZhthDg1uiOsC5j0
-         wRLZCbQ0fNMNTwSZDX2dH4hI+sH3ru5yHtwM9rtmNuMjQRxPe0aIqoRIo6XJiuYFooBL
-         lQ6kuNY8ckzSEWculzWii2OJB9/Rac7d6L9TANTZr+i+AL+z7mbdWLx6H7OlIG2JPgl5
-         Ckhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698394011; x=1698998811;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L1Crc/3KLznU3hcItc5onmdG+ywsdJtNXgnylnU7cp8=;
-        b=s/LyyDabj2OD2WvdrCbo7ieyfRjcdhyPV+jy+nPLARzhwmU7+RRWsUJS8kZf0wFulr
-         ssgoNIE/gw1gXmoLMMsnecRzeuWUhJ7cTR1FVIq86LTI6FNwbqTyP8cUDYPFLiUjtunT
-         dXdbLmGS/SIyIm+uZNxKBVV3a7QmLQlRXZWH1OsaxcWEE4f6yGmD6que87sdtuPwE8/9
-         H+K12/mRb1B2D9wbchWtO0XAtrFjtiG8uvyDWYvWXIsCMnMNe+8gTqjFE8Bj6h6ZUCPz
-         CtA4BjKlzxNJt9oV0z9yq+N6QSDsGzql63DTXuIWnbT/7XB9Q89hLwV0s8rRqLIP9cfh
-         iYuA==
-X-Gm-Message-State: AOJu0YwrLaQuRNnXReDoWoMiTmnT/A6P01w4QyeLAgmKPDnW19WUWadY
-        iuIo0CcFoETVjX8B8XQVYBhrzA==
-X-Google-Smtp-Source: AGHT+IFC/nDSxDDDw+03nTNwVuVuvn11AW8GifWLprDkY86khS+3P+ixnyN9Jf/pLtTQDjZDE8a/eQ==
-X-Received: by 2002:a05:6512:3d8f:b0:507:b099:749d with SMTP id k15-20020a0565123d8f00b00507b099749dmr1388959lfv.15.1698394010819;
-        Fri, 27 Oct 2023 01:06:50 -0700 (PDT)
-Received: from [192.168.0.22] ([78.10.206.168])
-        by smtp.gmail.com with ESMTPSA id be11-20020a056512250b00b005081a25b095sm180122lfb.246.2023.10.27.01.06.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Oct 2023 01:06:50 -0700 (PDT)
-Message-ID: <d7a11fb3-8de2-4889-b5d5-f4584a7f77cb@linaro.org>
-Date:   Fri, 27 Oct 2023 10:06:49 +0200
+        Fri, 27 Oct 2023 06:54:32 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73E52129
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Oct 2023 03:54:29 -0700 (PDT)
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20231027105427epoutp042e82115000fec9eb2cdcfebdd0062739~R8YAjqQDb3164731647epoutp04k
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Oct 2023 10:54:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20231027105427epoutp042e82115000fec9eb2cdcfebdd0062739~R8YAjqQDb3164731647epoutp04k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1698404067;
+        bh=w7rq+fyFlK3zlCe39Vf5b6K6NUN8LCITYFREKTHUzDo=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=fz5ccAck0Ha4ZjKZdt2/W5r+vkIRO0zVermShfHaQFx+rQmP8xWOr3JY3SfU+iFui
+         Hww9CUYCvatQNVoI+SgmERo4NUk/opycRRpv924Vrh3i3QbkUqSoJ5AecVv+1BbaGu
+         Nj+yn4G9JVaPaPIERk1gQUnMnv9vva3V1HnSrXe0=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20231027105426epcas2p4dbfc0add3f3830f8766d7d996c1bc950~R8YAMDyCM2317623176epcas2p4M;
+        Fri, 27 Oct 2023 10:54:26 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.102]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4SH00f35H7z4x9Pr; Fri, 27 Oct
+        2023 10:54:26 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        CE.65.10022.2E69B356; Fri, 27 Oct 2023 19:54:26 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+        20231027105426epcas2p2605738c6ca3196b0fcb09e025074ea3a~R8X-m79sK1002610026epcas2p2N;
+        Fri, 27 Oct 2023 10:54:26 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20231027105426epsmtrp2e57056d3ed68b581635e4f3ee86d0554~R8X-mRa2T0533305333epsmtrp2Y;
+        Fri, 27 Oct 2023 10:54:26 +0000 (GMT)
+X-AuditID: b6c32a47-9a3ff70000002726-80-653b96e20462
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        9D.5E.07368.1E69B356; Fri, 27 Oct 2023 19:54:26 +0900 (KST)
+Received: from KORCO082417 (unknown [75.12.40.192]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20231027105425epsmtip2cc83a1e89d735fee3014f81c5a3a6a35~R8X-Z_wV22658326583epsmtip2P;
+        Fri, 27 Oct 2023 10:54:25 +0000 (GMT)
+From:   "Chanho Park" <chanho61.park@samsung.com>
+To:     "'Marek Szyprowski'" <m.szyprowski@samsung.com>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-i2c@vger.kernel.org>
+Cc:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+        "'Alim Akhtar'" <alim.akhtar@samsung.com>,
+        "'Andi Shyti'" <andi.shyti@kernel.org>,
+        "'Wolfram Sang'" <wsa@kernel.org>
+In-Reply-To: <20231025121725.46028-2-m.szyprowski@samsung.com>
+Subject: RE: [PATCH v2 1/3] i2c: s3c24xx: fix read transfers in polling mode
+Date:   Fri, 27 Oct 2023 19:54:25 +0900
+Message-ID: <000601da08c3$f3a4f510$daeedf30$@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: exynos: Change macro names to exynos specific
-Content-Language: en-US
-To:     Shradha Todi <shradha.t@samsung.com>, jingoohan1@gmail.com,
-        lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-        bhelgaas@google.com, alim.akhtar@samsung.com
-Cc:     linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pankaj.dubey@samsung.com
-References: <CGME20231009062058epcas5p4dc1fb50210c920137ac906b0bdf99e1b@epcas5p4.samsung.com>
- <20231009062052.5407-1-shradha.t@samsung.com>
- <0b4701da089f$d930d790$8b9286b0$@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <0b4701da089f$d930d790$8b9286b0$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQFAtDqCAoG6rpZP+2s4rZk6TTwtCAISXrr3Aj0QF52xbaO+8A==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnk+LIzCtJLcpLzFFi42LZdljTQvfRNOtUg3vvRS0ezNvGZnH/awej
+        xd7XW9ktOv5+YbSYcX4fk8XaI3fZLe7un8vowO6xaVUnm8eda3vYPPq2rGL0+LxJLoAlKtsm
+        IzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJxSdA1y0zB+gCJYWyxJxS
+        oFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BeYFecWJucWleul5eaomVoYGBkSlQYUJ2xotd
+        yQVPeCvmXjzA1sC4gruLkYNDQsBE4vzD8i5GLg4hgR2MEj+m9rJDOJ8YJW7NXcgC4XxjlGhd
+        eYKti5ETrOPUuoesEIm9jBKdnb3MEM4LRokbE5oZQarYBPQlXnZsYwWxRQTKJR4e28MGUsQs
+        sI1R4u35BywgCU4BO4mTH5azgRwiLOAj8fqqB0iYRUBV4svGPWC9vAKWEs+fL2GEsAUlTs58
+        AtbKLCAvsf3tHGaIixQkfj5dxgoRF5d4efQIO8ReJ4mOazuYQPZKCCzkkOh69IgF4mkXiQkX
+        6iF6hSVeHd/CDmFLSXx+t5cNoqRcYseyJIjWFkaJ5rY9ULvsJX7cnMIKUsMsoCmxfpc+RLmy
+        xJFbUJfxSXQc/ssOEeaV6GgTgmhUlziwfToLhC0r0T3nM+sERqVZSP6aheSvWUh+mYWwawEj
+        yypGsdSC4tz01GKjAmN4TCfn525iBKdMLfcdjDPeftA7xMjEwXiIUYKDWUmEN9LHIlWINyWx
+        siq1KD++qDQntfgQoykwpCcyS4km5wOTdl5JvKGJpYGJmZmhuZGpgbmSOO+91rkpQgLpiSWp
+        2ampBalFMH1MHJxSDUy8ZZPKCvNv3/498+miuadV/3/vVb+1e32EyNQznwMzHn3yaWETDyrc
+        JrVl4coXgcapio+ZDN4/O3VHZuKyomcSE2dWxSy8p3K+UOygT9se4Wm+s9mWdx7ZKVnhOb0l
+        4FlCuPLZtbUpd/xztzkbnllwKuTcK9ZM3YLQ82zr1G5N3mu+NPDt8vtWjdGfqzI+bfeTen/8
+        7A6F2f7/WQKsVxeaCe75PPfq7rsTNr6forSg9O+8W3pTVpUGCPR8faXwMKP5ekH4TqNn/sIF
+        S40nWZ9WE93vd8tlp9hWg1TrazHOb5POBYn4sjy5pK/055pY8CKjVJe072s/zLtadXiWZ/p+
+        FZc+17XHK58euFIX068SocRSnJFoqMVcVJwIAMFlF+MiBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKIsWRmVeSWpSXmKPExsWy7bCSvO6jadapBq+PMlk8mLeNzeL+1w5G
+        i72vt7JbdPz9wmgx4/w+Jou1R+6yW9zdP5fRgd1j06pONo871/awefRtWcXo8XmTXABLFJdN
+        SmpOZllqkb5dAlfGi13JBU94K+ZePMDWwLiCu4uRk0NCwETi1LqHrF2MXBxCArsZJZp3tbNB
+        JGQlnr3bwQ5hC0vcbzkCVfSMUeJI51cmkASbgL7Ey45tQAkODhGBSonuTRIgNcwCOxglXv6a
+        wQjRcJBRYubjc8wgDZwCdhInPyxnA2kQFvCReH3VAyTMIqAq8WXjHlYQm1fAUuL58yWMELag
+        xMmZT1hAbGYBbYneh62MELa8xPa3c5ghjlOQ+Pl0GSvM0X+OzmWDqBGXeHn0CNgDIgJOEh3X
+        djDBPHP3wUv2CYyis5CsmIVkxSwkK2YhGbWAkWUVo2RqQXFuem6yYYFhXmq5XnFibnFpXrpe
+        cn7uJkZwzGlp7GC8N/+f3iFGJg7GQ4wSHMxKIryRPhapQrwpiZVVqUX58UWlOanFhxilOViU
+        xHkNZ8xOERJITyxJzU5NLUgtgskycXBKNTAd61Fat6PRQjrszLqi9JfzS4WLHx5vjG7OufO/
+        RPcLO8Ol6mLZFi7Dw/5drisnvwpTtmCeWLFDZJ2c5Vzhy1dC40uWtyUqf1A/7zvDX3pXx2zb
+        3C7fdkZ32xPzOG53bn1lv12mV+B287x/nvarrrFtzpBxfJbyu1oxpEvv+tlNIRwic5LctBdL
+        9U0KZQvKqFq4zcXI6tLKhfqubnZiy99sn/zs38/fGvw3LHX/XuHg+9byd0HPpKiTnrZ78rSU
+        Zx1bkSU0xafo/v7Jtf0KUp1M7cwPds7fUep6IeVuUA+b44HWSYF/mJ3Sy71XtYRfqq6M2c9l
+        fm9F1xejDM1PMxjqJHmZJ50suOu1Zd22TiWW4oxEQy3mouJEAMSt6YwoAwAA
+X-CMS-MailID: 20231027105426epcas2p2605738c6ca3196b0fcb09e025074ea3a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231025121737eucas1p1b5f0db709d99f8004f6177591cce0c8f
+References: <20231025121725.46028-1-m.szyprowski@samsung.com>
+        <CGME20231025121737eucas1p1b5f0db709d99f8004f6177591cce0c8f@eucas1p1.samsung.com>
+        <20231025121725.46028-2-m.szyprowski@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 27/10/2023 08:35, Shradha Todi wrote:
-> Gentle reminder to review this patch. Thanks in advance!
+> -----Original Message-----
+> From: Marek Szyprowski <m.szyprowski@samsung.com>
+> Sent: Wednesday, October 25, 2023 9:17 PM
+> To: linux-samsung-soc@vger.kernel.org; linux-i2c@vger.kernel.org
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>; Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org>; Alim Akhtar <alim.akhtar@samsung.com>;
+> Andi Shyti <andi.shyti@kernel.org>; Wolfram Sang <wsa@kernel.org>
+> Subject: [PATCH v2 1/3] i2c: s3c24xx: fix read transfers in polling mode
 > 
+> To properly handle read transfers in polling mode, no waiting for the ACK
+> state is needed as it will never come. Just wait a bit to ensure start
+> state is on the bus and continue processing next bytes.
+> 
+> Fixes: 117053f77a5a ("i2c: s3c2410: Add polling mode support")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Please relax, and help out by reviewing other patches on the mailing
-lists in order to relieve the burden of maintainers and move your
-patches higher up the list.
+Reviewed-by: Chanho Park <chanho61.park@samsung.com>
 
+> ---
+>  drivers/i2c/busses/i2c-s3c2410.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-
+> s3c2410.c
+> index 127eb3805fac..f9dcb1112a61 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -216,8 +216,13 @@ static bool is_ack(struct s3c24xx_i2c *i2c)
+>  	int tries;
+> 
+>  	for (tries = 50; tries; --tries) {
+> -		if (readl(i2c->regs + S3C2410_IICCON)
+> -			& S3C2410_IICCON_IRQPEND) {
+> +		unsigned long tmp = readl(i2c->regs + S3C2410_IICCON);
+> +
+> +		if (!(tmp & S3C2410_IICCON_ACKEN)) {
+> +			usleep_range(100, 200);
+> +			return true;
+> +		}
+> +		if (tmp & S3C2410_IICCON_IRQPEND) {
+>  			if (!(readl(i2c->regs + S3C2410_IICSTAT)
+>  				& S3C2410_IICSTAT_LASTBIT))
+>  				return true;
+> --
+> 2.34.1
 
-Best regards,
-Krzysztof
 
