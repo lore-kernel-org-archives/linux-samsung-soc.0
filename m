@@ -2,221 +2,160 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F47BC001B2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Oct 2023 14:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFB7C4167B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Oct 2023 18:15:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344312AbjJaOnK (ORCPT
+        id S235959AbjJaSPz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 31 Oct 2023 10:43:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34982 "EHLO
+        Tue, 31 Oct 2023 14:15:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344319AbjJaOnI (ORCPT
+        with ESMTP id S1376445AbjJaQ7a (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 31 Oct 2023 10:43:08 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F52DA
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 Oct 2023 07:43:06 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231031144301euoutp02d43396ac9501c1672cde822deeb31067~TOEuZn4k82615926159euoutp02N
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 Oct 2023 14:43:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231031144301euoutp02d43396ac9501c1672cde822deeb31067~TOEuZn4k82615926159euoutp02N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1698763381;
-        bh=8ON5wqrvWN+W4pHTqNvTNUJDhMTrzS3lgDsmX//DvXQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EgELcqH/z4w1DiFJXtrHJqvNNtoOwSQJfm4qWlbRdBvTm4JCp6jlaQphiRwg9JERq
-         8e8AI/ZOQLFyyibIr+cyKfA4s1PxDezR0IEWdWstXaFTPCE1BLPJTHDO1BjkPFAgZE
-         H11OKGHVMAcYxr0JkXUb/ehA23lfwYHPeta2JbMo=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20231031144301eucas1p27a251b0cd8f345944185efa19d0a471f~TOEt8j1Op1404914049eucas1p2j;
-        Tue, 31 Oct 2023 14:43:01 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 40.97.52736.57211456; Tue, 31
-        Oct 2023 14:43:01 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20231031144300eucas1p2edfb098f7dba134cdfa637abbf632987~TOEtoHii41407714077eucas1p2G;
-        Tue, 31 Oct 2023 14:43:00 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20231031144300eusmtrp139d98cb873b7cc00247ed2378d82851c~TOEtneF4P0253802538eusmtrp1N;
-        Tue, 31 Oct 2023 14:43:00 +0000 (GMT)
-X-AuditID: cbfec7f5-bb7ff7000000ce00-cb-65411275de4e
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 54.1A.25043.47211456; Tue, 31
-        Oct 2023 14:43:00 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20231031144300eusmtip29456c88c794236613b3e8193051051cd~TOEtIhvbt1643916439eusmtip2s;
-        Tue, 31 Oct 2023 14:43:00 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Wolfram Sang <wsa@kernel.org>,
-        Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH v3 3/3] i2c: s3c24xx: add support for atomic transfers
-Date:   Tue, 31 Oct 2023 15:42:52 +0100
-Message-Id: <20231031144252.2112593-4-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231031144252.2112593-1-m.szyprowski@samsung.com>
+        Tue, 31 Oct 2023 12:59:30 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F12223586;
+        Tue, 31 Oct 2023 09:58:54 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FF60C433CB;
+        Tue, 31 Oct 2023 16:58:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1698771534;
+        bh=eHaWx3XBjxR9WQzWxiMP+9mylnGCpepEBx6eV8SqLTg=;
+        h=Date:Subject:To:References:From:In-Reply-To:From;
+        b=tbFH75zD0wSBts/IWcd7KAkpwmPD/hEQnoc5NXDyB/MjbJOXo5zrD3rmL4Ahncdif
+         eIcVReQjnW56tvzKCj85nLvxrNiT9ITtCdsvtCj1YudM8P44AfW+wvbLx8E31lmZHI
+         K/ww8YDAqnM3vJiXT/vgsJzNFj79dFkzqAoYMfpE+ltqvSCZw1qaolePHpVpT95iG2
+         NbrJ2KNE6yns9TZ7LnwRpmxMej2DZpXykM7mPrVmrFqIGUz96j4Yz5YZWKftWTDlzN
+         UERaMt14CsLUi6zGA3QCHip/+scFSK+oAlNODnBrIxuF35OLgDNT3n009Zh6v3iT5c
+         UU8ageBtEuPjQ==
+Message-ID: <ea5bf4b6-af77-46cd-89db-d7a79a117dc1@kernel.org>
+Date:   Tue, 31 Oct 2023 17:58:49 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAKsWRmVeSWpSXmKPExsWy7djP87qlQo6pBo8WC1g8mLeNzeL+1w5G
-        i8v7tS32vt7KbtHx9wujxYzz+5gs1h65y25xd/9cRgcOj02rOtk87lzbw+bRt2UVo8fnTXIB
-        LFFcNimpOZllqUX6dglcGb9PvGcrWKhU0b3yIksD42rZLkZODgkBE4mG9j1sXYxcHEICKxgl
-        +ju3MkI4XxglNi8+AJX5zCjR/O4nE0zL0hsdTBCJ5YwS/1YdYIJreblrDztIFZuAoUTX2y42
-        EFtEwEFi3trvYHFmgX+MEt+/6HUxcnAIC7hJzHxtAxJmEVCV+Nb2gxnE5hWwl9h0bQk7xDJ5
-        if0HzzKDlHMCjVl5pgqiRFDi5MwnLBAT5SWat85mBjlBQuAAh8Snj7sZIXpdJM5+nw51tLDE
-        q+NboGbKSJye3MMC0dDOKLHg930mCGcCo0TD81tQ3dYSd879YgPZzCygKbF+lz5E2FFi7ax/
-        LCBhCQE+iRtvBSGO4JOYtG06M0SYV6KjTQiiWk1i1vF1cGsPXrjEDGF7SDyeM4dxAqPiLCTv
-        zELyziyEvQsYmVcxiqeWFuempxYb56WW6xUn5haX5qXrJefnbmIEJprT/45/3cG44tVHvUOM
-        TByMhxglOJiVRHgPmzqkCvGmJFZWpRblxxeV5qQWH2KU5mBREudVTZFPFRJITyxJzU5NLUgt
-        gskycXBKNTD1S6t3VP5a5Hv2bgpXWr112Ak/VSWhKXsjD0kFycX6abw+u0Om9O9b5XV6JvwH
-        OXfNZlXcctX4s8HRVs7lbt1XJ+z1UX5R71bk8GPn/APnezJe9QnLm5o+nxadMsde82GlZ5gX
-        x6Wmmjv5G3/X7VvA3NU2+fDMu21/bj65/DDy7DztS3L5r/q6OzK6Jit8dpxxS+7Usw31qbOP
-        12UnnzxVJ3XrD9e0qxbVc/iV/2+W/RWtuHqOgPBaT4PqP6dlKz8Vdx7fuso9cwVXVJnGpYdG
-        V8wvbjV6Ibx6Q46Rld3rRL4chpZuy7x973T8hFbpaWkGTNGvWWLXVKv44FzxjPuvxb+VKn/V
-        jm8Ty3dmj1ZiKc5INNRiLipOBADd/epcowMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHLMWRmVeSWpSXmKPExsVy+t/xe7olQo6pBve2mFs8mLeNzeL+1w5G
-        i8v7tS32vt7KbtHx9wujxYzz+5gs1h65y25xd/9cRgcOj02rOtk87lzbw+bRt2UVo8fnTXIB
-        LFF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2NimpOZllqUX6dgl6Gb9P
-        vGcrWKhU0b3yIksD42rZLkZODgkBE4mlNzqYuhi5OIQEljJKrLmxnBEiISNxcloDK4QtLPHn
-        WhcbRNEnRol/+08wgSTYBAwlut6CJDg5RAScJG4vmsUKUsQs0MQk0XFiEXsXIweHsICbxMzX
-        NiA1LAKqEt/afjCD2LwC9hKbri1hh1ggL7H/4FlmkHJOAQeJlWeqQMJCQCW3TrQzQZQLSpyc
-        +YQFxGYGKm/eOpt5AqPALCSpWUhSCxiZVjGKpJYW56bnFhvpFSfmFpfmpesl5+duYgRGxLZj
-        P7fsYFz56qPeIUYmDsZDjBIczEoivIdNHVKFeFMSK6tSi/Lji0pzUosPMZoCnT2RWUo0OR8Y
-        k3kl8YZmBqaGJmaWBqaWZsZK4ryeBR2JQgLpiSWp2ampBalFMH1MHJxSDUyGgfMn+QnnLI2M
-        WfgldJZho/iBC0mph/eGVmWlr/FN/Bh0OKtLWmD56ZKjB+WzFkae+hmyvlRszz5zxnNMvQox
-        X2yufHBcfsxS/M2RiSnat8Qf3jc5XGM4+aVkOYvZli+M3fMU6hn3aMbHqYVviPhzhXnX01Va
-        bsFVLAXuvv/eLPbbu2zWGtOcwP2HeLovnH3msK7n3IeMsm3vv+oUaD/JZPpdrLov66lxYOgf
-        7uf8qi9jI0SneyxK0pm1Y9EssU1ir+8Gbcz5u+qh7Zutgsd2cD1YfHl594p5XRLveFsMpVNS
-        62b/2da5KjnWy2eStc2Pn33B5scEXra6tByzVvrqE3vB7yKXx0qFAEaXZzZKLMUZiYZazEXF
-        iQDf7GfDEQMAAA==
-X-CMS-MailID: 20231031144300eucas1p2edfb098f7dba134cdfa637abbf632987
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20231031144300eucas1p2edfb098f7dba134cdfa637abbf632987
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20231031144300eucas1p2edfb098f7dba134cdfa637abbf632987
-References: <20231031144252.2112593-1-m.szyprowski@samsung.com>
-        <CGME20231031144300eucas1p2edfb098f7dba134cdfa637abbf632987@eucas1p2.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: exynos-mixer 14450000.mixer: [drm:exynos_drm_register_dma]
+ *ERROR* Device 14450000.mixer lacks support for IOMMU
+Content-Language: en-US
+To:     Mario Marietto <marietto2008@gmail.com>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org
+References: <CA+1FSiiPqYuycAa8rLFzKVDzvJC3BQBwRW7E0Ki4CXEFwhRASA@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CA+1FSiiPqYuycAa8rLFzKVDzvJC3BQBwRW7E0Ki4CXEFwhRASA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add support for atomic transfers using polling mode with interrupts
-intentionally disabled to get rid of the following warning introduced by
-commit 63b96983a5dd ("i2c: core: introduce callbacks for atomic
-transfers") during system reboot and power-off:
+On 31/10/2023 01:04, Mario Marietto wrote:
+> Hello,
+> 
+> We are a team of linux enthusiasts who are trying to boot Xen on a
+> Samsung XE303C12 Chromebook aka "snow"
+> following the suggestions in the slide show presentation here:
+> 
+> https://www.slideshare.net/xen_com_mgr/xpds16-porting-xen-on-arm-to-a-new-soc-julien-grall-arm
+> 
+> This device uses an exynos5250 SOC dual core 1.7 GHz with 2 MB RAM, it is
+> a Samsung armv7 chip with virtualization extensions.
+> 
+> In particular, we have it working fairly well both on the bare metal with
+> a recent 6.1.59 Linux LTS kernel and also with a recent 5.4.257 LTS
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1518 at drivers/i2c/i2c-core.h:40 i2c_transfer+0xe8/0xf4
-No atomic I2C transfer handler for 'i2c-0'
-Modules linked in:
-CPU: 0 PID: 1518 Comm: reboot Not tainted 6.6.0-next-20231031 #7453
-Hardware name: Samsung Exynos (Flattened Device Tree)
- unwind_backtrace from show_stack+0x10/0x14
- show_stack from dump_stack_lvl+0x40/0x4c
- dump_stack_lvl from __warn+0x7c/0x124
- __warn from warn_slowpath_fmt+0x110/0x178
- warn_slowpath_fmt from i2c_transfer+0xe8/0xf4
- i2c_transfer from regmap_i2c_read+0x58/0x88
- regmap_i2c_read from _regmap_raw_read+0xfc/0x260
- _regmap_raw_read from _regmap_bus_read+0x44/0x70
- _regmap_bus_read from _regmap_read+0x60/0x14c
- _regmap_read from regmap_read+0x3c/0x60
- regmap_read from regulator_get_voltage_sel_regmap+0x2c/0x74
- regulator_get_voltage_sel_regmap from regulator_get_voltage_rdev+0x64/0x15c
- regulator_get_voltage_rdev from _regulator_do_set_voltage+0x2c/0x5a8
- _regulator_do_set_voltage from regulator_set_voltage_rdev+0x90/0x248
- regulator_set_voltage_rdev from regulator_do_balance_voltage+0x350/0x4d0
- regulator_do_balance_voltage from regulator_set_voltage_unlocked+0xd4/0x118
- regulator_set_voltage_unlocked from regulator_set_voltage+0x40/0x74
- regulator_set_voltage from _opp_config_regulator_single+0x44/0x110
- _opp_config_regulator_single from _set_opp+0x118/0x500
- _set_opp from dev_pm_opp_set_rate+0x108/0x20c
- dev_pm_opp_set_rate from __cpufreq_driver_target+0x568/0x6cc
- __cpufreq_driver_target from cpufreq_generic_suspend+0x28/0x50
- cpufreq_generic_suspend from cpufreq_suspend+0xbc/0x124
- cpufreq_suspend from device_shutdown+0x18/0x230
- device_shutdown from kernel_restart+0x38/0x90
- kernel_restart from __do_sys_reboot+0x12c/0x1f8
- __do_sys_reboot from ret_fast_syscall+0x0/0x54
-Exception stack(0xf0fedfa8 to 0xf0fedff0)
+Oh, these are old... Although there should be no noticeable changes
+against v6.1.
+
+v5.4 is not recent. It is four years old!
+
+> kernel with KVM, the older LTS kernel version is used to test KVM because
+> support for KVM on arm v7 was removed from Linux around kernel version
+> 5.7. So we know we have the hypervisor mode enabled because we were able
+> to use it with KVM.
+> 
+> For Xen, we are using the latest Debian build of Xen 4.17 for the Debian
+> armhf architecture:
+
 ...
----[ end trace 0000000000000000 ]---
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Chanho Park <chanho61.park@samsung.com>
----
- drivers/i2c/busses/i2c-s3c2410.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+> 
+> In this case,the kernel is able to use the exynos-drm kernel to start
+> the fb0 device. But with Xen we get this error with exynos-drm:
+> 
+> devuan-bunsen kernel: [drm] Exynos DRM: using 14400000.fimd device for
+> DMA mapping operations
+> devuan-bunsen kernel: exynos-drm exynos-drm: bound 14400000.fimd (ops
+> 0xc0d96354)
+> devuan-bunsen kernel: exynos-mixer 14450000.mixer:
+> [drm:exynos_drm_register_dma] *ERROR* Device 14450000.mixer lacks
+> support for IOMMU
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 28114b6aadfa..cf55238fca71 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -76,6 +76,7 @@
- #define QUIRK_HDMIPHY		(1 << 1)
- #define QUIRK_NO_GPIO		(1 << 2)
- #define QUIRK_POLL		(1 << 3)
-+#define QUIRK_ATOMIC		(1 << 4)
- 
- /* Max time to wait for bus to become idle after a xfer (in us) */
- #define S3C2410_IDLE_TIMEOUT	5000
-@@ -174,7 +175,7 @@ static inline void s3c24xx_i2c_master_complete(struct s3c24xx_i2c *i2c, int ret)
- 	if (ret)
- 		i2c->msg_idx = ret;
- 
--	if (!(i2c->quirks & QUIRK_POLL))
-+	if (!(i2c->quirks & (QUIRK_POLL | QUIRK_ATOMIC)))
- 		wake_up(&i2c->wait);
- }
- 
-@@ -699,7 +700,7 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
- 	s3c24xx_i2c_enable_irq(i2c);
- 	s3c24xx_i2c_message_start(i2c, msgs);
- 
--	if (i2c->quirks & QUIRK_POLL) {
-+	if (i2c->quirks & (QUIRK_POLL | QUIRK_ATOMIC)) {
- 		while ((i2c->msg_num != 0) && is_ack(i2c)) {
- 			unsigned long stat = readl(i2c->regs + S3C2410_IICSTAT);
- 
-@@ -771,6 +772,21 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
- 	return -EREMOTEIO;
- }
- 
-+static int s3c24xx_i2c_xfer_atomic(struct i2c_adapter *adap,
-+				   struct i2c_msg *msgs, int num)
-+{
-+	struct s3c24xx_i2c *i2c = (struct s3c24xx_i2c *)adap->algo_data;
-+	int ret;
-+
-+	disable_irq(i2c->irq);
-+	i2c->quirks |= QUIRK_ATOMIC;
-+	ret = s3c24xx_i2c_xfer(adap, msgs, num);
-+	i2c->quirks &= ~QUIRK_ATOMIC;
-+	enable_irq(i2c->irq);
-+
-+	return ret;
-+}
-+
- /* declare our i2c functionality */
- static u32 s3c24xx_i2c_func(struct i2c_adapter *adap)
- {
-@@ -781,6 +797,7 @@ static u32 s3c24xx_i2c_func(struct i2c_adapter *adap)
- /* i2c bus registration info */
- static const struct i2c_algorithm s3c24xx_i2c_algorithm = {
- 	.master_xfer		= s3c24xx_i2c_xfer,
-+	.master_xfer_atomic     = s3c24xx_i2c_xfer_atomic,
- 	.functionality		= s3c24xx_i2c_func,
- };
- 
--- 
-2.34.1
+Hi Mario,
+
+I don't test DRM on my Exynos boards, so my knowledge is limited, but
+isn't this the answer?
+
+> devuan-bunsen kernel: exynos-drm exynos-drm: failed to bind
+> 14450000.mixer (ops 0xc0d97554): -22
+> devuan-bunsen kernel: exynos-drm exynos-drm: adev bind failed: -22
+> devuan-bunsen kernel: exynos-dp: probe of 145b0000.dp-controller
+> failed with error -22
+
+And that's the final confirmation that display did not probe successfully.
+
+> 
+> 
+> Any ideas why booting the same Linux kernel that results in a working
+> X.org display on the bare metal instead as dom0 on Xen would cause the
+> display to remain dark, but most other basic functions would work, such
+> as network, disk, and USB ? thanks.
+
+BTW, it's usually good to Cc the maintainer as well, not only the
+mailing list :). scripts/get_maintainer.pl will tell you the maintainers
+of Exynos and Exynos DRM.
+
+Best regards,
+Krzysztof
 
