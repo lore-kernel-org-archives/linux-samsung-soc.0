@@ -2,165 +2,254 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B462C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Oct 2023 00:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9789C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Oct 2023 09:25:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234982AbjJaAE5 (ORCPT
+        id S1343852AbjJaJZm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 30 Oct 2023 20:04:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43450 "EHLO
+        Tue, 31 Oct 2023 05:25:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234972AbjJaAEz (ORCPT
+        with ESMTP id S1343853AbjJaJZl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Oct 2023 20:04:55 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 006BBA6;
-        Mon, 30 Oct 2023 17:04:52 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-9d242846194so324404866b.1;
-        Mon, 30 Oct 2023 17:04:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698710691; x=1699315491; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VhbBMCmRj1nNpNlm143E93iRGLt6PISYmrSgpHo8H30=;
-        b=JrmZ/PQ0wXvVPtEe0KRr8pieZRAlXpQrd+OgJ/W4fCt9GtKKdJ/rJj5U4MZCKraD+A
-         r/YwO7GBUYSlBLOO00P1eSPHhgB2XJ+i0Fd5D2nkPakGVhRdlsSN60P2BZrM00vETzZs
-         /PhI0ZsL/qmM1uChYuSuLrgscSlSAZHVcFrIv+AxdxnOMiTknH+rTh/4tpvB+3WA5+wp
-         HIoOSTu4OI+wptpWwN9jV7i2aADhxRofVGQD5X0ROgLyNU9oJZ9CS2jeLciMpsejRBf0
-         0vFxXAfb3lIFz0d7qFanbJW71dCVpIBpr8VhG7RGYzH5o/jAWgZKV5dMmXOJPTj3Rlqe
-         K8gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698710691; x=1699315491;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VhbBMCmRj1nNpNlm143E93iRGLt6PISYmrSgpHo8H30=;
-        b=cEB5YJpgQpounuKO90ltUkLSEcaFh2QBf0dxkNzmlXEMpyFhr2DSVg5cWtyy4r4Q8R
-         r5Kd0+Wj6mQKXxVss/5eyeDjn5EyspRtep+CNbRyi2mFSpwE0SY0xh1kS/EY7CTj2/i1
-         Lcs8rBqwNRxyTqqBqff4okdgXZDjS08qHEyyw405Il0i50v/H5uzVeP+yaOvIQ5X3FiC
-         RSrX0VM8h1xU+fhFfbdpcWRxnkGVXVYkyP62KC6v5TDjGlWLS1Of6HU60bvJTSiyeccu
-         k612rBLK7yLVp1PVdBFeT8/zSiRpte+M8mHXJ1ejaifKLpPOTHRW9PAzs3c9Ohgb1x2G
-         6Tvw==
-X-Gm-Message-State: AOJu0YwhfMSBFe02fSgpJ1nQar1q6pcwWhP+36nstdBQ7G0ViZB1HdIS
-        4ONJM4q4tQPf9GhPxmXPU3V39/PFRTzvWD/H8LKTatzYE4I=
-X-Google-Smtp-Source: AGHT+IGk1JkYjOS1c7IgqiA50RSU8Y7VxChpt1g2S3lD1oP9suI41ONMr65njR0XQon+YvBrhLScInRqypREs7IMxnA=
-X-Received: by 2002:a17:907:3f8b:b0:9bd:fa48:83c5 with SMTP id
- hr11-20020a1709073f8b00b009bdfa4883c5mr7735638ejc.70.1698710690771; Mon, 30
- Oct 2023 17:04:50 -0700 (PDT)
+        Tue, 31 Oct 2023 05:25:41 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0E81EB7;
+        Tue, 31 Oct 2023 02:25:30 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DBDF3C15;
+        Tue, 31 Oct 2023 02:26:11 -0700 (PDT)
+Received: from [10.57.4.28] (unknown [10.57.4.28])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C053E3F67D;
+        Tue, 31 Oct 2023 02:25:27 -0700 (PDT)
+Message-ID: <2c4b6c1b-b9e7-42b2-8f7b-446ebe9d15ac@arm.com>
+Date:   Tue, 31 Oct 2023 09:26:19 +0000
 MIME-Version: 1.0
-From:   Mario Marietto <marietto2008@gmail.com>
-Date:   Tue, 31 Oct 2023 01:04:14 +0100
-Message-ID: <CA+1FSiiPqYuycAa8rLFzKVDzvJC3BQBwRW7E0Ki4CXEFwhRASA@mail.gmail.com>
-Subject: exynos-mixer 14450000.mixer: [drm:exynos_drm_register_dma] *ERROR*
- Device 14450000.mixer lacks support for IOMMU
-To:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 8/8] thermal: exynos: use set_trips
+Content-Language: en-US
+To:     Mateusz Majewski <m.majewski2@samsung.com>
+Cc:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-kernel@vger.kernel.org, Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-pm@vger.kernel.org
+References: <20231025133027.524152-1-m.majewski2@samsung.com>
+ <CGME20231025133100eucas1p14e6de58e52560d165bdb8b809e406278@eucas1p1.samsung.com>
+ <20231025133027.524152-9-m.majewski2@samsung.com>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <20231025133027.524152-9-m.majewski2@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello,
-
-We are a team of linux enthusiasts who are trying to boot Xen on a
-Samsung XE303C12 Chromebook aka "snow"
-following the suggestions in the slide show presentation here:
-
-https://www.slideshare.net/xen_com_mgr/xpds16-porting-xen-on-arm-to-a-new-soc-julien-grall-arm
-
-This device uses an exynos5250 SOC dual core 1.7 GHz with 2 MB RAM, it is
-a Samsung armv7 chip with virtualization extensions.
-
-In particular, we have it working fairly well both on the bare metal with
-a recent 6.1.59 Linux LTS kernel and also with a recent 5.4.257 LTS
-kernel with KVM, the older LTS kernel version is used to test KVM because
-support for KVM on arm v7 was removed from Linux around kernel version
-5.7. So we know we have the hypervisor mode enabled because we were able
-to use it with KVM.
-
-For Xen, we are using the latest Debian build of Xen 4.17 for the Debian
-armhf architecture:
-
-(XEN) Xen version 4.17.2-pre (Debian 4.17.1+2-gb773c48e36-1)
-(pkg-xen-devel@xxxxxxxxxxxxxxxxxxxxxxx) (arm-linux-gnueabihf-gcc (Debian
-12.2.0-14) 12.2.0) debug=n Thu May 18 19:26:30 UTC 2023
-
-The Linux kernel is a custom build that adds the Xen config kernel
-options (CONFIG_XEN_DOM0, etc) on top of a kernel that works well on the
-same Chromebook model on the bare metal. I can provide the config options
-of the kernel that was used if that is helpful.
-
-Our method of booting is to have u-boot boot the Xen hypervisor and load
-the device tree after adding the dom0 to the otherwise unaltered device
-tree from the Linux kernel using u-boot fdt commands to add a /chosen
-node, as described on the Xen wiki and in the pages linked from there. We
-have also tried adding and loading an initrd.img using the device tree
-/chosen node but that made no difference in our tests.
-
-We actually have the Linux LTS kernel version 6.1.59 working as dom0 with
-Xen using the same version of u-boot that we used for KVM, but with a big
-problem.
-
-The problem we see is that when booting the 6.1.59 kernel version as dom0
-with Xen, the screen is totally dark and the only way to access the
-system is remotely through ssh. Logs indicate most everything else is
-working, such as the wifi card so we can access it remotely via ssh and a
-USB optical mouse lights up when connected so USB is also working.
-Obviously, the disk is also working. The Chromebook is configured to boot
-from the device's SD card slot by turning on Chrome OS developer mode
-options to enable booting from the SD card slot.
-
-The mystery is that when booting the exact same 6.1.59 kernel on the bare
-metal instead of booting it as dom0 on Xen, it boots up with full access
-to the screen and we can interact with the system using the X.org windows
-system. But booting as dom0 with Xen, the screen is totally dark and the
-only access we have to the system is through the network via ssh. Also,
-when booting the 5.4.257 kernel with KVM in hypervisor mode, the screen
-works and we can interact with the system through the X.org windows
-system.
-
-Exploring the log file,we have seen the errors below :
 
 
-With Xen (or in bare metal):
+On 10/25/23 14:30, Mateusz Majewski wrote:
+> Currently, each trip point defined in the device tree corresponds to a
+> single hardware interrupt. This commit instead switches to using two
+> hardware interrupts, whose values are set dynamically using the
+> set_trips callback. Additionally, the critical temperature threshold is
+> handled specifically.
+> 
 
-devuan-bunsen kernel: [drm] Exynos DRM: using 14400000.fimd device for
-DMA mapping operations
-devuan-bunsen kernel: exynos-drm exynos-drm: bound 14400000.fimd (ops
-0xc0d96354)
-devuan-bunsen kernel: exynos-drm exynos-drm: bound 14450000.mixer (ops
-0xc0d97554)
-devuan-bunsen kernel: exynos-drm exynos-drm: bound
-145b0000.dp-controller (ops 0xc0d97278)
-devuan-bunsen kernel: exynos-drm exynos-drm: bound 14530000.hdmi (ops
-0xc0d97bd0)
-...
-devuan-bunsen kernel: Console: switching to colour frame buffer device 170x48
-devuan-bunsen kernel: exynos-drm exynos-drm: [drm] fb0: exynosdrmfb
-frame buffer device
-devuan-bunsen kernel: [drm] Initialized exynos 1.1.0 20180330 for
-exynos-drm on minor 0
+[snip]
 
-In this case,the kernel is able to use the exynos-drm kernel to start
-the fb0 device. But with Xen we get this error with exynos-drm:
+>   
+> -static void exynos4210_tmu_set_trip_temp(struct exynos_tmu_data *data,
+> -					 int trip_id, u8 temp)
+> +static void exynos_tmu_update_bit(struct exynos_tmu_data *data, int reg_off,
+> +				  int bit_off, bool enable)
+>   {
+> -	temp = temp_to_code(data, temp);
+> -	writeb(temp, data->base + EXYNOS4210_TMU_REG_TRIG_LEVEL0 + trip_id * 4);
+> +	u32 interrupt_en;
+> +
+> +	interrupt_en = readl(data->base + reg_off);
+> +	if (enable)
+> +		interrupt_en |= 1 << bit_off;
+> +	else
+> +		interrupt_en &= ~(1 << bit_off);
 
-devuan-bunsen kernel: [drm] Exynos DRM: using 14400000.fimd device for
-DMA mapping operations
-devuan-bunsen kernel: exynos-drm exynos-drm: bound 14400000.fimd (ops
-0xc0d96354)
-devuan-bunsen kernel: exynos-mixer 14450000.mixer:
-[drm:exynos_drm_register_dma] *ERROR* Device 14450000.mixer lacks
-support for IOMMU
-devuan-bunsen kernel: exynos-drm exynos-drm: failed to bind
-14450000.mixer (ops 0xc0d97554): -22
-devuan-bunsen kernel: exynos-drm exynos-drm: adev bind failed: -22
-devuan-bunsen kernel: exynos-dp: probe of 145b0000.dp-controller
-failed with error -22
+Why not to use dedicated stuff for this?
+val |= BIT(x)
+val &= ~BIT(x)
+You can find plenty of example in the kernel
 
+> +	writel(interrupt_en, data->base + reg_off);
+>   }
+>   
 
-Any ideas why booting the same Linux kernel that results in a working
-X.org display on the bare metal instead as dom0 on Xen would cause the
-display to remain dark, but most other basic functions would work, such
-as network, disk, and USB ? thanks.
+[snip]
 
--- 
-Mario.
+> -static void exynos4412_tmu_set_trip_temp(struct exynos_tmu_data *data,
+> -					 int trip, u8 temp)
+> -{
+> -	u32 th, con;
+> -
+> -	th = readl(data->base + EXYNOS_THD_TEMP_RISE);
+> -	th &= ~(0xff << 8 * trip);
+> -	th |= temp_to_code(data, temp) << 8 * trip;
+> -	writel(th, data->base + EXYNOS_THD_TEMP_RISE);
+> -
+> -	if (trip == 3) {
+> -		con = readl(data->base + EXYNOS_TMU_REG_CONTROL);
+> -		con |= (1 << EXYNOS_TMU_THERM_TRIP_EN_SHIFT);
+> -		writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
+> -	}
+> -}
+> -
+> -static void exynos4412_tmu_set_trip_hyst(struct exynos_tmu_data *data,
+> -					 int trip, u8 temp, u8 hyst)
+> +static void exynos4412_tmu_set_low_temp(struct exynos_tmu_data *data, u8 temp)
+>   {
+>   	u32 th;
+>   
+>   	th = readl(data->base + EXYNOS_THD_TEMP_FALL);
+> -	th &= ~(0xff << 8 * trip);
+> -	if (hyst)
+> -		th |= temp_to_code(data, temp - hyst) << 8 * trip;
+> +	th &= ~(0xff << 0);
+> +	th |= temp_to_code(data, temp) << 0;
+
+This 2-line pattern repeats a few times. It looks like a nice cadidate
+for an inline function which can abstract that. Something like:
+
+val = update_temp_value(data, temp, threshold, LOW_TEMP_SHIFT)
+
+Assisted with the macros {LOW|HIGH|CRIT}_TEMP_SHIFT, the code
+would look less convoluted IMO.
+(The old code with the multiplication for the shift value wasn't
+cleaner nor faster).
+
+>   	writel(th, data->base + EXYNOS_THD_TEMP_FALL);
+> +
+> +	exynos_tmu_update_bit(data, EXYNOS_TMU_REG_INTEN,
+> +			      EXYNOS_TMU_INTEN_FALL0_SHIFT, true);
+> +}
+
+[snip]
+
+> -static void exynos7_tmu_set_trip_temp(struct exynos_tmu_data *data,
+> -				      int trip, u8 temp)
+> +static void exynos7_tmu_update_temp(struct exynos_tmu_data *data, u8 temp,
+> +				    int idx, bool rise)
+>   {
+>   	unsigned int reg_off, bit_off;
+>   	u32 th;
+> +	void __iomem *reg;
+>   
+> -	reg_off = ((7 - trip) / 2) * 4;
+> -	bit_off = ((8 - trip) % 2);
+> +	reg_off = ((7 - idx) / 2) * 4;
+
+Why can't we just have a set of defined register macros and pick one
+in some small function?
+A lot of operations here, also some assumption.
+
+> +	bit_off = ((8 - idx) % 2);
+
+So this can only be 0 or 1 and than it's used for the shift
+multiplication. Also I don't know the history of older code and
+if it was missed after some cleaning, but 'idx % 2' gives
+equal values but w/o subtraction.
+
+BTW, the code assumes the 'idx' values are under control somewhere else.
+Is that because the DT make sure in the schema that the range cannot be
+too big?
+What are the possible values for 'idx'?
+
+>   
+> -	th = readl(data->base + EXYNOS7_THD_TEMP_RISE7_6 + reg_off);
+> +	reg = data->base +
+> +	      (rise ? EXYNOS7_THD_TEMP_RISE7_6 : EXYNOS7_THD_TEMP_FALL7_6) +
+> +	      reg_off;
+> +	th = readl(reg);
+>   	th &= ~(EXYNOS7_TMU_TEMP_MASK << (16 * bit_off));
+>   	th |= temp_to_code(data, temp) << (16 * bit_off);
+
+Can you simplify and abstract those bit_off usage and use some
+macros and less math operations?
+
+> -	writel(th, data->base + EXYNOS7_THD_TEMP_RISE7_6 + reg_off);
+> +	writel(th, reg);
+> +
+> +	exynos_tmu_update_bit(data, EXYNOS5433_TMU_REG_INTEN,
+> +			      (rise ? EXYNOS7_TMU_INTEN_RISE0_SHIFT :
+> +				      EXYNOS_TMU_INTEN_FALL0_SHIFT) +
+> +				      idx,
+> +			      true);
+>   }
+
+[snip]
+
+>   
+> -	if (on) {
+> -		for (i = 0; i < data->ntrip; i++) {
+> -			if (thermal_zone_get_trip(tz, i, &trip))
+> -				continue;
+> -
+> -			interrupt_en |=
+> -				(1 << (EXYNOS_TMU_INTEN_RISE0_SHIFT + i * 4));
+> -		}
+> -
+> -		if (data->soc != SOC_ARCH_EXYNOS4210)
+> -			interrupt_en |=
+> -				interrupt_en << EXYNOS_TMU_INTEN_FALL0_SHIFT;
+> -
+> +	if (on)
+>   		con |= (1 << EXYNOS_TMU_CORE_EN_SHIFT);
+> -	} else {
+> +	else
+>   		con &= ~(1 << EXYNOS_TMU_CORE_EN_SHIFT);
+
+Please also consider the BIT() helper here and above...
+
+> -	}
+>   
+> -	writel(interrupt_en, data->base + EXYNOS_TMU_REG_INTEN);
+>   	writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
+>   }
+>   
+>   static void exynos5433_tmu_control(struct platform_device *pdev, bool on)
+>   {
+>   	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+> -	struct thermal_zone_device *tz = data->tzd;
+> -	struct thermal_trip trip;
+> -	unsigned int con, interrupt_en = 0, pd_det_en, i;
+> +	unsigned int con, pd_det_en;
+>   
+>   	con = get_con_reg(data, readl(data->base + EXYNOS_TMU_REG_CONTROL));
+>   
+> -	if (on) {
+> -		for (i = 0; i < data->ntrip; i++) {
+> -			if (thermal_zone_get_trip(tz, i, &trip))
+> -				continue;
+> -
+> -			interrupt_en |=
+> -				(1 << (EXYNOS7_TMU_INTEN_RISE0_SHIFT + i));
+> -		}
+> -
+> -		interrupt_en |=
+> -			interrupt_en << EXYNOS_TMU_INTEN_FALL0_SHIFT;
+> -
+> +	if (on)
+>   		con |= (1 << EXYNOS_TMU_CORE_EN_SHIFT);
+> -	} else
+> +	else
+>   		con &= ~(1 << EXYNOS_TMU_CORE_EN_SHIFT);
+
+... and here. Basically in all places where it's possible.
+
+Regards,
+Lukasz
