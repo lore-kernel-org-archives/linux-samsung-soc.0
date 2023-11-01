@@ -2,251 +2,142 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84CC5C4167D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Nov 2023 07:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD297C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Nov 2023 08:15:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231502AbjKAHtD (ORCPT
+        id S231597AbjKAIPE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Nov 2023 03:49:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42724 "EHLO
+        Wed, 1 Nov 2023 04:15:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231825AbjKAHsx (ORCPT
+        with ESMTP id S231502AbjKAIPD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Nov 2023 03:48:53 -0400
-Received: from sonic317-22.consmr.mail.gq1.yahoo.com (sonic317-22.consmr.mail.gq1.yahoo.com [98.137.66.148])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 234B810F
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Nov 2023 00:48:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netscape.net; s=a2048; t=1698824925; bh=xKBheuOBg56iTeLPHfHXNouyg3Ht2h5EDwz+FbIlwr8=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=kpmSQmjx7q5HVw9nkbo1sAYvkQeIpGxdHDALGeR9f10JJvT0MKfVedFY/AU1fkyDF79iF6HiH7Txv688F2gV9sv90sXM/odt3IAm+6T6z68119k/Zcv39D2VCNaWcNKzg1QslyMEts2bNTQCTOX90e2JAhejwhhCMkX3MiGJFaZP6Q51Ep8wocXZQpo5Sgtt/6DeVzt3ZwynXwUag1ZN/V/IDo0LcMlL3gRd8ZwUXrZ4rXI0FWjxIE/hMIP2Mo8LF2Nr7tWU4ZqgfXQwIM6bdgyjbPJr5xVBz8MlyET7fJALHSBe5pULTe6Fdq6aSSi2oIx30jZdJaOpqzaLUz7VMQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1698824925; bh=KBcQlUsbSW0o/+Q5qV7NaP2xyReocxv2++FVpzAvgGb=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=AH85USvYZhllu0oWj664rHINRnPCfJhos+SBKtVT/QtY7//Vf64lf7bKLijUudExc9dOTNPqqwBVYx7FG2t7v2l5eSa6QgQIlrMHgr6xJO+E1bb6cBe/zRXpEqAdYCzL7LOO8ElBqbgHjea6G7u1ZhkMZh0BKEyj8oKIsstD4Kbr8wv8vamxDLKbl95qgSqwWb95Ic1AO/P9Ob5/G707IhRZ58EqnVwQd49ySxMWqZk3OzpgMm+nCOaJNiCLq/J8wHWzD+q/x/TU19Sm7Ttt3WTYq7ygMX8lTM3+T7NOTyUf1mUz7dbp27s+hYf7KBWJVUWtOpQBqC9T5a9skZ32dw==
-X-YMail-OSG: 4uQd9MEVM1k9N8JQbYzyGKDJHgGxfGoOTf0XevNXG95olCRKmwHGtQzJNxXn_m5
- 3OKTeQ1f5GXspHVEvDdod8_Vr.d8kyzDb8.hnwyJ8bUZmU5UoAlyODYVOlPxCoMA0qrEZGqfeVUO
- X_zAiLp_bJkSB4aKS0D0w8KZrLevEB_HBmXxjVRkEDz.oDcNgIbGAX8fjsig7e7oK5YYHzWXTBbk
- FTlZB2R._yyo5MjGpEGNcfiaO.m_agNj8LNpk00g0HeGYV9iB3rLorWzvEDyahtpygaajXvX9F7n
- eSW4_ApTgHje.vUD4Tkdw6K0yExuxr51S7Fv3vB7l7hVc3aYvPfKLZLRln.JrK..O2k5xWVZaSgg
- az48AU36j05G.z7rri45f8.rUlEwY.979iQ10ajYfT8XLesPpmWkQggW94uKNAb1z3enDo8mz9Nb
- Kyi.23wDgQ8K1n8FOK6XbLj5uVzQ0e6Aj9U_9_lXErjcOs7uh8nwykYynnIbeWAB7pxnyLy.F58H
- PLrLE4G1jDM9VpnPU4nhJEjQNNbPhlMEQFdOxa3b0rJwkeQW3fkmiii05Eo565MPYo7UkOauv3su
- jaI3RCnrHxhK_vEIyS0m2tUBh0Fw3BLW.0yo0D05VZDUDqAS2Rrj4PgNIlyy4GxFZ88Qv6.BRbQo
- lZPW3kM7sZn50QrIpnPfs.acoLZTAXMgnFuNh09dTpeXwNov1j_viKVl0cltJGdPDcqvoV85f.Ov
- f_k3AqESlXCzEjpPDuQpdzL11eIwyiWwkzxcLpwjQr6wgN3aG6L_nsmjiic2cMv0aclfBhpByQtV
- nmH9V8BHMcxgYG5GzVEDZHXdEWDzhcVW58CqeJDTkcVSxEP_FSrwW0iKdw5rnzhTxzK_odbijWu2
- pZVlV0Nd4LnfCtjSZX2aZovSgIGpWViJ5FoGWZFP_0y7WLplNoGgYwhSWhpjH4s.rEjUBXT568ns
- yKLmparfjgeVJRvuO2nV7FsD9aQMqq8M6HmglWnl06jGttEwDsUqBP8v3wdvOGg4n6dwCKCXKrAQ
- ti.3yL_kpSnKLG7vv0b55oUgHj3iNwVwdHxEToCenBidBVwM_bSD5UjHDwfHb7KMxI80qp.GEmMK
- AY3lBkf7FvUTscFGV3mnhhPMBHLH.975kTrKSAj_p.mvrrCSfcdJrC8ttsNIgGO0s4R6DqCwBeRf
- nsvIsSsa.9ER6siJSxrufS39oHmG.uxVXPBenPRaE3rbaGTCEBYY2EhTOTX62xeZXK_9dPRCySS_
- AesIEcYC2RJf5pSbMxi3EgYL2_G4M5_e7f7p1ZxEQy4Nx0zf2gKMvuw.l6BnfRyEuRUQyODoFdTs
- N.Vy8ytAqA5VPYJu8CUE4qfs.WxFrsvTj4w1EntRfkbYziITCuEK63LQ_MfBp4xiZL2WUuvseprv
- r8rA5wJJlNYFkd_3QqxGVKPNxvGIaAtr3B4mYTypfm08JbdSuQxhHuNsVKdjL8.LJGScXF4SoPj0
- h6rt_0xFxxIptiiDE_Bfu4odYiwcSrWglWfJjSRWRL2FWZS0KU71mF3kefiWbw0pzdRXZl_0P3Ad
- MRhCvjMezY4aoVRhU_kg_fuxILJEWgjEVIEHUxrwdiYn_cklqQbYUhoVr.MaNCCIHe9OAlrZzTgD
- 1hJxSUi8CHaF.CgJDzYqb1dAvhd0yUGF05u7YXpFEv9vJ7MDOps680p_7vY8qqYuqBTlrmr7CfKB
- 84G3pggJDlLfRmQU9I6I8NQoC6DglYrvEwda.Uf4lM6rr99vYy7lS_HBS1cx9jBD7YVdNFQOEOvG
- AlxVyxJ5hGkIUVhjWoaD1HMVY.AWwWD.VlSgbsubAoFl7aS_977XUIyECWCv9vfO3Rll08NcdtmC
- fgRS7A92fLuVNUCTZR2OUuUuI.XdiRCWN2RL7GrRkeyqzphsJahdi.qQDTVdTsHdI0ed.tjFa_XE
- ZGMEciqgMOBxeCBv2Nr59pYbqKQCCVRcE1FR2NKnldm799KU8BMR2e5Q3GyvNFTDPInlnqZCR1Fk
- B5zsGSxQuJq4Gc.aF91MVAW8YMU9khdT3ITn8i9MonudDBdyZ.3XYp5nsVtwBPHg8TQWBv0S25VY
- 47Ep.gSWDYpdYVU.SgPq.1P.vQeuPmtYYHRS1sb263o8zk05yYNhJkQmFYIqyR9umxTmW_2WlYu9
- 8srzIFoyix6f_O4Z84l2PzGE1Om2RBjTjevyZc.CLOSLkxmpCU6e8jMkS7f7chLNTUzbWTn_pD72
- sOVb9_fbAcgVny6j8icmi1FfE9jXMywsX
-X-Sonic-MF: <brchuckz@aim.com>
-X-Sonic-ID: 63301ed7-b9b1-4b84-8e42-16fdf7f93e04
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.gq1.yahoo.com with HTTP; Wed, 1 Nov 2023 07:48:45 +0000
-Received: by hermes--production-ne1-56df75844-8k4lp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 22a0194c371a9e8852fd76321ea5d484;
-          Wed, 01 Nov 2023 07:48:40 +0000 (UTC)
-Message-ID: <f441508b-736d-4bb4-a7d5-ce2fc2c58fc7@netscape.net>
-Date:   Wed, 1 Nov 2023 03:48:38 -0400
+        Wed, 1 Nov 2023 04:15:03 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2113101
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Nov 2023 01:14:57 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-53e08e439c7so11108170a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Nov 2023 01:14:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1698826496; x=1699431296; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=GbaW3G6/UQZ8xqJW3bOdy45l2C83yzYanXLOPDxs0sw=;
+        b=mHAWAbJ2xGTSeFQx/MvXnju8DfLfj3y7NhpZ9ynbHRwWUW4poS3PsGORt7LZUIT7e7
+         1ILf+8DlGOx/QPAAw5kDehzttmquY7xffX4+bnXYcqj8OvRTTp2Kdy7buQxa76CPEhGY
+         hyX4TFBMqUjQUj8H6aMiX1oi2uOe53qMEzzuMMe4fIhPEiEAJVyPxtjd4do4dyIpbcxz
+         4mMmQomEMIhoCACmCsU+g7xGClviMRibq02pcRFoTozOgHVRnsLTotR8kn1O3TKHjKVM
+         ABz+/1SA95sBO58+HemA1C+k8mjex0T6KvXT/lEiF/0hlSqgKZkOC8tlEbQOniT/emTn
+         VsuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698826496; x=1699431296;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GbaW3G6/UQZ8xqJW3bOdy45l2C83yzYanXLOPDxs0sw=;
+        b=OkUS8RknGy58rsRKgtIkh0rbLzF1CFglbQPJa0j/LqMCJqc6A0Dh4lb/qUl4ZSTYut
+         0+AH/1tf7grN0HnS806wuyV8250ntECh1PM2xf4fLm0P7dlNmDBHrNfysjBf+t6B26R2
+         0/qEOst0wZCnjKKstgMJaVhX2v2ly4Rl/4hJoKw+X3bEdY/JDFL2MVgj4Sp5NvvNGINe
+         yj9xHWSQSq20hJQlOsaLudytNSgm7MFyvqyZm9mxJIHSCWhv9AIArDy0ATfz8sZ4ttLZ
+         ReY1TPkbGHR+sv/8mDWTDCua100a7AcXh8QtnOnpdETYPdE1T3irMUTlrRNvUO3wbaij
+         ZZfQ==
+X-Gm-Message-State: AOJu0YwDbqGm1LefJZ8XN3Oz6nIlxQ0cH7nfiAa4xc9/gzGEE4b7tKqe
+        3e15Pc6EdfIfUSn4uIFDoxrESA==
+X-Google-Smtp-Source: AGHT+IF218mVabA2aSOHRnWcwPB3z8JHzKse34q0niROlK8048LKxuY1vNcHIklmsV5vU0XiUq7huw==
+X-Received: by 2002:a17:907:1b02:b0:9b2:6d09:847c with SMTP id mp2-20020a1709071b0200b009b26d09847cmr1333144ejc.10.1698826496307;
+        Wed, 01 Nov 2023 01:14:56 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.218.126])
+        by smtp.gmail.com with ESMTPSA id dv16-20020a170906b81000b00982a92a849asm2117174ejb.91.2023.11.01.01.14.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Nov 2023 01:14:55 -0700 (PDT)
+Message-ID: <d6cd3675-5bed-458c-81c0-5ce3204727d9@linaro.org>
+Date:   Wed, 1 Nov 2023 09:14:52 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: exynos-mixer 14450000.mixer: [drm:exynos_drm_register_dma]
- *ERROR* Device 14450000.mixer lacks support for IOMMU
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mario Marietto <marietto2008@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+Subject: Re: [PATCH 9/9] interconnect: exynos: Convert to platform remove
+ callback returning void
+To:     =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        Georgi Djakov <djakov@kernel.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Julien Grall <julien@xen.org>,
-        xen-devel <xen-devel@lists.xenproject.org>
-References: <CGME20231030230413eucas1p1c061adf636a7e8a58270a00725e1d0a2@eucas1p1.samsung.com>
- <CA+1FSign611=47=xLRucFhDjvs7A_TeFE9b8qO63WXDU8Pnkjg@mail.gmail.com>
- <7a71e348-f892-4fd4-8857-b72f35ab5134@samsung.com>
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+References: <20231031222851.3126434-11-u.kleine-koenig@pengutronix.de>
+ <20231031222851.3126434-20-u.kleine-koenig@pengutronix.de>
 Content-Language: en-US
-From:   Chuck Zmudzinski <brchuckz@netscape.net>
-In-Reply-To: <7a71e348-f892-4fd4-8857-b72f35ab5134@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20231031222851.3126434-20-u.kleine-koenig@pengutronix.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21890 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 10/31/2023 8:08 AM, Marek Szyprowski wrote:
-> Hi,
+On 31/10/2023 23:29, Uwe Kleine-König wrote:
+> The .remove() callback for a platform driver returns an int which makes
+> many driver authors wrongly assume it's possible to do error handling by
+> returning an error code. However the value returned is ignored (apart
+> from emitting a warning) and this typically results in resource leaks.
 > 
-> On 31.10.2023 00:03, Mario Marietto wrote:
->> We are a team of linux enthusiasts who are trying to boot Xen on a 
->> Samsung XE303C12 Chromebook aka "snow" following the suggestions in 
->> the slide show presentation here: 
->> https://www.slideshare.net/xen_com_mgr/xpds16-porting-xen-on-arm-to-a-new-soc-julien-grall-arm 
->> This device uses an exynos5250 SOC dual core 1.7 GHz with 2 MB RAM, it 
->> is a Samsung armv7 chip with virtualization extensions. In particular, 
->> we have it working fairly well both on the bare metal with a recent 
->> 6.1.59 Linux LTS kernel and also with a recent 5.4.257 LTS kernel with 
->> KVM, the older LTS kernel version is used to test KVM because support 
->> for KVM on arm v7 was removed from Linux around kernel version 5.7. So 
->> we know we have the hypervisor mode enabled because we were able to 
->> use it with KVM. For Xen, we are using the latest Debian build of Xen 
->> 4.17 for the Debian armhf architecture: (XEN) Xen version 4.17.2-pre 
->> (Debian 4.17.1+2-gb773c48e36-1) 
->> (pkg-xen-devel@xxxxxxxxxxxxxxxxxxxxxxx) (arm-linux-gnueabihf-gcc 
->> (Debian 12.2.0-14) 12.2.0) debug=n Thu May 18 19:26:30 UTC 2023 The 
->> Linux kernel is a custom build that adds the Xen config kernel options 
->> (CONFIG_XEN_DOM0, etc) on top of a kernel that works well on the same 
->> Chromebook model on the bare metal. I can provide the config options 
->> of the kernel that was used if that is helpful. Our method of booting 
->> is to have u-boot boot the Xen hypervisor and load the device tree 
->> after adding the dom0 to the otherwise unaltered device tree from the 
->> Linux kernel using u-boot fdt commands to add a /chosen node, as 
->> described on the Xen wiki and in the pages linked from there. We have 
->> also tried adding and loading an initrd.img using the device tree 
->> /chosen node but that made no difference in our tests. We actually 
->> have the Linux LTS kernel version 6.1.59 working as dom0 with Xen 
->> using the same version of u-boot that we used for KVM, but with a big 
->> problem. The problem we see is that when booting the 6.1.59 kernel 
->> version as dom0 with Xen, the screen is totally dark and the only way 
->> to access the system is remotely through ssh. Logs indicate most 
->> everything else is working, such as the wifi card so we can access it 
->> remotely via ssh and a USB optical mouse lights up when connected so 
->> USB is also working. Obviously, the disk is also working. The 
->> Chromebook is configured to boot from the device's SD card slot by 
->> turning on Chrome OS developer mode options to enable booting from the 
->> SD card slot. The mystery is that when booting the exact same 6.1.59 
->> kernel on the bare metal instead of booting it as dom0 on Xen, it 
->> boots up with full access to the screen and we can interact with the 
->> system using the X.org windows system. But booting as dom0 with Xen, 
->> the screen is totally dark and the only access we have to the system 
->> is through the network via ssh. Also, when booting the 5.4.257 kernel 
->> with KVM in hypervisor mode, the screen works and we can interact with 
->> the system through the X.org windows system. Exploring the log file,we 
->> have seen the errors below :
->>
->> Without Xen (or in bare metal):
->>
->> devuan-bunsen kernel: [drm] Exynos DRM: using 14400000.fimd device for 
->> DMA mapping operations
->> devuan-bunsen kernel: exynos-drm exynos-drm: bound 14400000.fimd (ops 
->> 0xc0d96354)
->> devuan-bunsen kernel: exynos-drm exynos-drm: bound 14450000.mixer (ops 
->> 0xc0d97554)
->> devuan-bunsen kernel: exynos-drm exynos-drm: bound 
->> 145b0000.dp-controller (ops 0xc0d97278)
->> devuan-bunsen kernel: exynos-drm exynos-drm: bound 14530000.hdmi (ops 
->> 0xc0d97bd0)
->> ...
->> devuan-bunsen kernel: Console: switching to colour frame buffer device 
->> 170x48
->> devuan-bunsen kernel: exynos-drm exynos-drm: [drm] fb0: exynosdrmfb 
->> frame buffer device
->> devuan-bunsen kernel: [drm] Initialized exynos 1.1.0 20180330 for 
->> exynos-drm on minor 0
->>
->> In this case,the kernel is able to use the exynos-drm kernel to start 
->> the fb0 device. But with Xen we get this error with exynos-drm:
->>
->> devuan-bunsen kernel: [drm] Exynos DRM: using 14400000.fimd device for 
->> DMA mapping operations
->> devuan-bunsen kernel: exynos-drm exynos-drm: bound 14400000.fimd (ops 
->> 0xc0d96354)
->> devuan-bunsen kernel: exynos-mixer 14450000.mixer: 
->> [drm:exynos_drm_register_dma] *ERROR* Device 14450000.mixer lacks 
->> support for IOMMU
->> devuan-bunsen kernel: exynos-drm exynos-drm: failed to bind 
->> 14450000.mixer (ops 0xc0d97554): -22
->> devuan-bunsen kernel: exynos-drm exynos-drm: adev bind failed: -22
->> devuan-bunsen kernel: exynos-dp: probe of 145b0000.dp-controller 
->> failed with error -22
->>
->> I'm trying to find for a solution and I've googled a little bit and I 
->> found this web site : 
->> https://lore.kernel.org/linux-arm-kernel/20220208171823.226211-8-krzysztof.kozlowski@canonical.com/ 
->> with your email address and I tried to ask for some help for fixing 
->> the bug. Any ideas why booting the same Linux kernel that results in a 
->> working X.org display on the bare metal instead as dom0 on Xen would 
->> cause the display to remain dark, but most other basic functions would 
->> work, such as network, disk, and USB ? thanks.
+> To improve here there is a quest to make the remove callback return
+> void. In the first step of this quest all drivers are converted to
+> .remove_new(), which already returns void. Eventually after all drivers
+> are converted, .remove_new() will be renamed to .remove().
 > 
+> Trivially convert this driver from always returning zero in the remove
+> callback to the void returning variant.
 > 
-> Thanks for the detailed description! Good to hear that those boards are 
-> still being used for various projects. I also have Snow Chromebook and 
-> use it for daily tests of linux-next branch.
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Adding Julien Grall and Stefano Stabellini
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Hi Marek,
-
-Thanks for responding to Mario's question. I also have been doing these
-experiments with a Chromebook Snow, and I am the one who reported this
-problem on the xen-users ML here:
-
-https://lists.xenproject.org/archives/html/xen-users/2023-10/msg00021.html
-
-You might find that thread interesting, especially here with some additional
-log messages from the exynos_drm driver (exynos_drm_dma.c, I believe):
-
-https://lists.xenproject.org/archives/html/xen-users/2023-10/msg00032.html
-
-This issue is also discussed some on the xen-devel ML here:
-
-https://lists.xenproject.org/archives/html/xen-devel/2023-11/msg00003.html
-
-> 
-> Frankly speaking I have no idea what might happen wrong. There have been 
-> some changes recently in the Exynos IOMMU driver related to 
-> initialization, maybe your changes related to Xen enabling changed 
-> somehow the order of device initialization during boot. I assume that 
-> the device-tree you use for the bare metal run and Xen enabled run 
-> doesn't differ in the areas describing the hardware blocks.
-> 
-> Please check if cherry-picking the commit 
-> https://github.com/torvalds/linux/commit/bbc4d205d93f52ee18dfa7858d51489c0506547f 
-> to your v6.1.59 based kernel helps anyhow.
-
-I tried adding that fix of the exynos IOMMU initialization from
-Linux > 6.2 on top of the 6.1.59 kernel I used for the original report,
-but that made no difference on Xen - it still failed with the mixer lacks
-support for IOMMU message and the screen is totally dark.
-
-> 
-> If not, then as a temporary workaround please disable 
-> CONFIG_DRM_EXYNOS_MIXER and CONFIG_DRM_EXYNOS_HDMI in your kernel config 
-> and check what will happen (You will lose the HDMI output, but maybe 
-> this won't a big issue).
-
-This change causes the GPU to work fairly well AFAICS. Removing the mixer
-and HDMI allowed the GPU to initialize, and the display manager started
-normally and enabled logging into an ordinary X11 session. Based on the log
-messages I was seeing, this was an obvious thing to try. Thanks for
-suggesting it.
-
-But I have a question:
-
-How are the mixer and HDMI devices related to the main drm device? The problem
-in the exynos_drm_dma driver was that on Xen, the main drm device wanted to
-use IOMMU version of dma_ops, but the mixer (and probably also the HDMI if
-it wouldn't have exited first) wanted to use the Xen swiotlb version of dma_ops,
-but on bare metal all three devices want to use the IOMMU version of dma_ops.
-
-The problem obviously has something to do with the fact that Xen does not
-expose the same IOMMU capability to Linux as is available when running on
-the bare metal.
-
-Cheers,
-
-> 
-> 
-> Best regards
+Best regards,
+Krzysztof
 
