@@ -2,72 +2,78 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD297C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Nov 2023 08:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB1CC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Nov 2023 08:24:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231597AbjKAIPE (ORCPT
+        id S230523AbjKAIY2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Nov 2023 04:15:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54678 "EHLO
+        Wed, 1 Nov 2023 04:24:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231502AbjKAIPD (ORCPT
+        with ESMTP id S229590AbjKAIY1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Nov 2023 04:15:03 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2113101
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Nov 2023 01:14:57 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-53e08e439c7so11108170a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Nov 2023 01:14:57 -0700 (PDT)
+        Wed, 1 Nov 2023 04:24:27 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB77DED
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Nov 2023 01:24:21 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-9d10f94f70bso651207566b.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Nov 2023 01:24:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698826496; x=1699431296; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=GbaW3G6/UQZ8xqJW3bOdy45l2C83yzYanXLOPDxs0sw=;
-        b=mHAWAbJ2xGTSeFQx/MvXnju8DfLfj3y7NhpZ9ynbHRwWUW4poS3PsGORt7LZUIT7e7
-         1ILf+8DlGOx/QPAAw5kDehzttmquY7xffX4+bnXYcqj8OvRTTp2Kdy7buQxa76CPEhGY
-         hyX4TFBMqUjQUj8H6aMiX1oi2uOe53qMEzzuMMe4fIhPEiEAJVyPxtjd4do4dyIpbcxz
-         4mMmQomEMIhoCACmCsU+g7xGClviMRibq02pcRFoTozOgHVRnsLTotR8kn1O3TKHjKVM
-         ABz+/1SA95sBO58+HemA1C+k8mjex0T6KvXT/lEiF/0hlSqgKZkOC8tlEbQOniT/emTn
-         VsuA==
+        d=linaro.org; s=google; t=1698827060; x=1699431860; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TBWvET6IBXszoErEcoe2EKRkpfFSeipc62qQ0bXnK5Y=;
+        b=NM/XQxbL7sIGYhoYQHP7lJdqmdxv3mT+6at5gv7jUPTZFLtidwDAYymEiHEFMB2tQR
+         bLzY624PVAmRL8tX70oaStuJNaIFyOZRb0wDArTEPvkkm96b0HWVn0EwNEFHmhxoi+Vz
+         oa1eWoAaqPm6Q8Zu3ifbgerLYk2xFfElyREszvw9L2ifmpM4fU9pQbdA2wur0xzkQj5C
+         mBf6X57gLtUVy0eu+MUlWB1PehWEjipKrIR/ybJymzdIOCz7keHrGw9vZaBrXP7GHTJz
+         I3z8+SWCYCI5yxKjz2yUdPryY8Dw2KGXSFGyl2xBhV2oLZXkchmZpMQ0T9p7UxQcIIjH
+         T2ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698826496; x=1699431296;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GbaW3G6/UQZ8xqJW3bOdy45l2C83yzYanXLOPDxs0sw=;
-        b=OkUS8RknGy58rsRKgtIkh0rbLzF1CFglbQPJa0j/LqMCJqc6A0Dh4lb/qUl4ZSTYut
-         0+AH/1tf7grN0HnS806wuyV8250ntECh1PM2xf4fLm0P7dlNmDBHrNfysjBf+t6B26R2
-         0/qEOst0wZCnjKKstgMJaVhX2v2ly4Rl/4hJoKw+X3bEdY/JDFL2MVgj4Sp5NvvNGINe
-         yj9xHWSQSq20hJQlOsaLudytNSgm7MFyvqyZm9mxJIHSCWhv9AIArDy0ATfz8sZ4ttLZ
-         ReY1TPkbGHR+sv/8mDWTDCua100a7AcXh8QtnOnpdETYPdE1T3irMUTlrRNvUO3wbaij
-         ZZfQ==
-X-Gm-Message-State: AOJu0YwDbqGm1LefJZ8XN3Oz6nIlxQ0cH7nfiAa4xc9/gzGEE4b7tKqe
-        3e15Pc6EdfIfUSn4uIFDoxrESA==
-X-Google-Smtp-Source: AGHT+IF218mVabA2aSOHRnWcwPB3z8JHzKse34q0niROlK8048LKxuY1vNcHIklmsV5vU0XiUq7huw==
-X-Received: by 2002:a17:907:1b02:b0:9b2:6d09:847c with SMTP id mp2-20020a1709071b0200b009b26d09847cmr1333144ejc.10.1698826496307;
-        Wed, 01 Nov 2023 01:14:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698827060; x=1699431860;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TBWvET6IBXszoErEcoe2EKRkpfFSeipc62qQ0bXnK5Y=;
+        b=VFkJufVzpfYuul52KrZdkmNAs7YhODjK52CDekt+vYNnThNdXXI5nxZL9Igyq5xFBQ
+         3waIPb7Ps5Yg0kAwGifWFb8TCdnyGczPGcpHl4EFdI0HWObYfeCkLL4lPa3I1LURcMAV
+         mJn8DPBA7kwvqiBaGF8aVDrVTS74Eok7IMKzawE6CCh9+kbaUrNaHGCdi63kKFV0lACY
+         FnIU1UFBOoQJ2CQGxpRpOqFBbTy3ErRTa+WjuwN4gkuYJvUtD80ycUhDUXWPXiAADhkE
+         aTv+2hQV42Y4SvZ4H8U1dfjl0JfpR8nhEFT0QQPqfYdouAl7BzMRzWsA15zzaDU0M78d
+         o8yA==
+X-Gm-Message-State: AOJu0Yyyw3on83G7bXFu32Ub//f/+xz1TMt/LH4m9qsX+N4JfqrvTZMs
+        RgZw6i9FNBX2ZBv5PQv14F7K4g==
+X-Google-Smtp-Source: AGHT+IFXuz6IzcS31cThS1mjXs5Daa68aY9heBRyvv2tCKxzSOtjEesbeLeoQ0qrc1RQGrPWnodCYQ==
+X-Received: by 2002:a17:906:6a27:b0:9ae:6ff4:9f15 with SMTP id qw39-20020a1709066a2700b009ae6ff49f15mr1187552ejc.11.1698827060146;
+        Wed, 01 Nov 2023 01:24:20 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id dv16-20020a170906b81000b00982a92a849asm2117174ejb.91.2023.11.01.01.14.54
+        by smtp.gmail.com with ESMTPSA id la5-20020a170906ad8500b00992e265495csm2131182ejb.212.2023.11.01.01.24.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Nov 2023 01:14:55 -0700 (PDT)
-Message-ID: <d6cd3675-5bed-458c-81c0-5ce3204727d9@linaro.org>
-Date:   Wed, 1 Nov 2023 09:14:52 +0100
+        Wed, 01 Nov 2023 01:24:19 -0700 (PDT)
+Message-ID: <630d58e0-589e-4411-905a-2514048e6ec4@linaro.org>
+Date:   Wed, 1 Nov 2023 09:24:15 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] interconnect: exynos: Convert to platform remove
- callback returning void
-To:     =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        Georgi Djakov <djakov@kernel.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
-References: <20231031222851.3126434-11-u.kleine-koenig@pengutronix.de>
- <20231031222851.3126434-20-u.kleine-koenig@pengutronix.de>
+Subject: Re: [Patch v4 01/11] dt-bindings: media: s5p-mfc: Add mfcv12 variant
 Content-Language: en-US
+To:     Aakarsh Jain <aakarsh.jain@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     m.szyprowski@samsung.com, andrzej.hajda@intel.com,
+        mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+        krzysztof.kozlowski+dt@linaro.org, dillon.minfei@gmail.com,
+        david.plowman@raspberrypi.com, mark.rutland@arm.com,
+        robh+dt@kernel.org, conor+dt@kernel.org,
+        linux-samsung-soc@vger.kernel.org, andi@etezian.org,
+        gost.dev@samsung.com, alim.akhtar@samsung.com,
+        aswani.reddy@samsung.com, pankaj.dubey@samsung.com,
+        ajaykumar.rs@samsung.com, linux-fsd@tesla.com
+References: <20231025102216.50480-1-aakarsh.jain@samsung.com>
+ <CGME20231025102233epcas5p16b716d5b650bbc5af0d759ea4f58f44d@epcas5p1.samsung.com>
+ <20231025102216.50480-2-aakarsh.jain@samsung.com>
+ <948af111-e7a1-4757-a784-b4256657abd6@linaro.org>
+ <000001da0810$c2b17680$48146380$@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -113,30 +119,106 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231031222851.3126434-20-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <000001da0810$c2b17680$48146380$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 31/10/2023 23:29, Uwe Kleine-König wrote:
-> The .remove() callback for a platform driver returns an int which makes
-> many driver authors wrongly assume it's possible to do error handling by
-> returning an error code. However the value returned is ignored (apart
-> from emitting a warning) and this typically results in resource leaks.
+On 26/10/2023 15:31, Aakarsh Jain wrote:
+> Hello Krzysztof
 > 
-> To improve here there is a quest to make the remove callback return
-> void. In the first step of this quest all drivers are converted to
-> .remove_new(), which already returns void. Eventually after all drivers
-> are converted, .remove_new() will be renamed to .remove().
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Sent: 25 October 2023 18:30
+>> To: Aakarsh Jain <aakarsh.jain@samsung.com>; linux-arm-
+>> kernel@lists.infradead.org; linux-media@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; devicetree@vger.kernel.org
+>> Cc: m.szyprowski@samsung.com; andrzej.hajda@intel.com;
+>> mchehab@kernel.org; hverkuil-cisco@xs4all.nl;
+>> krzysztof.kozlowski+dt@linaro.org; dillon.minfei@gmail.com;
+>> david.plowman@raspberrypi.com; mark.rutland@arm.com;
+>> robh+dt@kernel.org; conor+dt@kernel.org; linux-samsung-
+>> soc@vger.kernel.org; andi@etezian.org; gost.dev@samsung.com;
+>> alim.akhtar@samsung.com; aswani.reddy@samsung.com;
+>> pankaj.dubey@samsung.com; ajaykumar.rs@samsung.com; linux-
+>> fsd@tesla.com
+>> Subject: Re: [Patch v4 01/11] dt-bindings: media: s5p-mfc: Add mfcv12
+>> variant
+>>
+>> On 25/10/2023 12:22, Aakarsh Jain wrote:
+>>> Add Tesla FSD MFC(MFC v12) compatible.
+>>>
+>>> Cc: linux-fsd@tesla.com
+>>> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+>>> ---
+>>
+>> No changelog and your cover letter does not explain what happened here.
+>> Specifically, why did you decide to ignore received tag.
+>>
+> Last patch series we had two different patches for schema which was one for adding MFCv12 compatible string and other for adding its HW properties.
+> In one of the patches you gave reviewed-by tag. Since mfc dt_schema got merged already, and this is relatively  new patch so thought of getting reviewed again.
 > 
-> Trivially convert this driver from always returning zero in the remove
-> callback to the void returning variant.
+> Link to those patches:
+> https://patchwork.kernel.org/project/linux-media/patch/20221011122516.32135-2-aakarsh.jain@samsung.com/
+> https://patchwork.kernel.org/project/linux-media/patch/20221011122516.32135-3-aakarsh.jain@samsung.com/    
 > 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> if you are ok, I will add your reviewed-by in next patch series.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+It is okay to drop Reviewed-by tag, but this should be explicitly
+mentioned in the changelog with a reason.
+
+> 
+>>>  .../bindings/media/samsung,s5p-mfc.yaml          | 16 ++++++++++++++++
+>>>  1 file changed, 16 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/media/samsung,s5p-
+>> mfc.yaml b/Documentation/devicetree/bindings/media/samsung,s5p-
+>> mfc.yaml
+>>> index 084b44582a43..c30eb309f670 100644
+>>> --- a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
+>>> +++ b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
+>>> @@ -24,6 +24,7 @@ properties:
+>>>            - samsung,mfc-v7                # Exynos5420
+>>>            - samsung,mfc-v8                # Exynos5800
+>>>            - samsung,mfc-v10               # Exynos7880
+>>> +          - tesla,fsd-mfc                 # Tesla FSD
+>>>        - items:
+>>>            - enum:
+>>>                - samsung,exynos3250-mfc    # Exynos3250
+>>> @@ -165,6 +166,21 @@ allOf:
+>>>            minItems: 1
+>>>            maxItems: 2
+>>>
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            enum:
+>>> +              - tesla,fsd-mfc
+>>> +    then:
+>>> +      properties:
+>>> +        clocks:
+>>> +          maxItems: 1
+>>> +        clock-names:
+>>> +          items:
+>>> +            - const: mfc
+>>> +        iommus: false
+>>
+>> That's odd. How so? MFC v12 does not support IOMMU?
+>>
+> MFC v12 do support IOMMU. But currently it is not enabled in SW (has dependencies on some of the floating dma-mapping patches) and not tested on upstream kernel. 
+
+Bindings describe hardware, not software.
+
+> Current patch sets intend to add support for MFCv12 using reserve memory and later patches related to enable iommu will be posted (after resolving the dependencies). So I marked iommu property as false. 
+> Now what is your suggestion here? Should I keep iommu as false or add memory-region as below?
+
+I expect complete picture of the hardware, not something limited to
+current driver, so for sure iommus must be there.
+
+Please wrap your emails according to mailing lists rules.
 
 Best regards,
 Krzysztof
