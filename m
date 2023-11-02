@@ -2,174 +2,220 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE36C4167D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Nov 2023 01:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BFAC4167D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Nov 2023 10:35:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233315AbjKBBcM (ORCPT
+        id S1346647AbjKBKfS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Nov 2023 21:32:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48478 "EHLO
+        Thu, 2 Nov 2023 06:35:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232907AbjKBBcL (ORCPT
+        with ESMTP id S1346365AbjKBKfR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Nov 2023 21:32:11 -0400
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F35610C
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Nov 2023 18:32:05 -0700 (PDT)
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20231102013200epoutp04140d21a4ee3284658441d82916b52713~TqkpLQQFB1181411814epoutp04n
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Nov 2023 01:32:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20231102013200epoutp04140d21a4ee3284658441d82916b52713~TqkpLQQFB1181411814epoutp04n
+        Thu, 2 Nov 2023 06:35:17 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B5F1133
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Nov 2023 03:35:11 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231102103508euoutp012759a9025017478afa96d4ad882e5db4~Tx_3LRTV81095910959euoutp01o
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Nov 2023 10:35:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231102103508euoutp012759a9025017478afa96d4ad882e5db4~Tx_3LRTV81095910959euoutp01o
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1698888720;
-        bh=6/sD0L4jgW+UPBuIjt2154BP4kWaTeBnEItmo7DE9rE=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=Ya0nYbGVAoOgybiSCdrY1s+YBO1u/kJcWTveDykX9VDPFlF1UyaZpMBVbJeK7VZF+
-         xtVrilBwxRdtam4BAzmdLcTAHUfK4CeBCRKtWXkyWfoUkBIEKPW2cfxtwfO4O1Fcwg
-         5PAAjOH8eat2744zg278IJZmYr8mQS9KUBe+ycAE=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20231102013200epcas1p393e1e32b173f99d1765776e87344a8ec~TqkowYORP1244812448epcas1p3O;
-        Thu,  2 Nov 2023 01:32:00 +0000 (GMT)
-Received: from epsmgec1p1-new.samsung.com (unknown [182.195.38.232]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4SLRDv16svz4x9Q5; Thu,  2 Nov
-        2023 01:31:59 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DD.BF.19104.F0CF2456; Thu,  2 Nov 2023 10:31:59 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20231102013158epcas1p407546aa9264f6376ccfa95f2abc02b19~Tqknmy4dW0064600646epcas1p4y;
-        Thu,  2 Nov 2023 01:31:58 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20231102013158epsmtrp202deb95caff5bfea839e0a03570de501~TqknmK1se2187321873epsmtrp23;
-        Thu,  2 Nov 2023 01:31:58 +0000 (GMT)
-X-AuditID: b6c32a4c-559ff70000004aa0-27-6542fc0f4908
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7E.7C.08755.E0CF2456; Thu,  2 Nov 2023 10:31:58 +0900 (KST)
-Received: from inkidae001 (unknown [10.113.221.213]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20231102013158epsmtip11db5f933fcd9ca6d09ef15e6b9262ae2~TqknY4iUn1037210372epsmtip1F;
-        Thu,  2 Nov 2023 01:31:58 +0000 (GMT)
-From:   =?utf-8?B?64yA7J246riwL1RpemVuIFBsYXRmb3JtIExhYihTUikv7IK87ISx7KCE7J6Q?= 
-        <inki.dae@samsung.com>
-To:     "'Marek Szyprowski'" <m.szyprowski@samsung.com>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-i2c@vger.kernel.org>
-Cc:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Alim Akhtar'" <alim.akhtar@samsung.com>,
-        "'Andi Shyti'" <andi.shyti@kernel.org>,
-        "'Wolfram Sang'" <wsa@kernel.org>
-In-Reply-To: <20231025121725.46028-2-m.szyprowski@samsung.com>
-Subject: RE: [PATCH v2 1/3] i2c: s3c24xx: fix read transfers in polling mode
-Date:   Thu, 2 Nov 2023 10:31:47 +0900
-Message-ID: <07e001da0d2c$5f0360f0$1d0a22d0$@samsung.com>
-MIME-Version: 1.0
+        s=mail20170921; t=1698921308;
+        bh=Jq2CkGwzkZthS/INfqDfza5GmIinX06fg7ozai2WyPg=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=uCtUEatTc7cb1m5tRmMz81U6kR31b4LAz/jJ5jrSuIJZ8VU8jFBo22cPiomAI4otF
+         N0Z3o40NkikNftfudJqFVOClzC6k1A+UEVK2Iz1eGYdocFMhfvmAg9MTnON4IK+xwG
+         /fy+P64f2gzgdyCJsdfgcmwrHwenYpKPsDulw7Yo=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20231102103508eucas1p1d660b46f2f487811bb5162191beb3b4f~Tx_20XxLE2095820958eucas1p12;
+        Thu,  2 Nov 2023 10:35:08 +0000 (GMT)
+X-AuditID: cbfec7f4-97dff70000022c38-4d-65437b5c055d
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id DC.8F.11320.C5B73456; Thu,  2
+        Nov 2023 10:35:08 +0000 (GMT)
+Mime-Version: 1.0
+Subject: RE: Re: [PATCH v4 8/8] thermal: exynos: use set_trips
+Reply-To: m.majewski2@samsung.com
+Sender: Mateusz Majewski <m.majewski2@samsung.com>
+From:   Mateusz Majewski <m.majewski2@samsung.com>
+To:     Lukasz Luba <lukasz.luba@arm.com>
+CC:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        ALIM AKHTAR <alim.akhtar@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <2c4b6c1b-b9e7-42b2-8f7b-446ebe9d15ac@arm.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20231102103507eucms1p4aea91982ebcc4a9a6314d9c4e03050fc@eucms1p4>
+Date:   Thu, 02 Nov 2023 11:35:07 +0100
+X-CMS-MailID: 20231102103507eucms1p4aea91982ebcc4a9a6314d9c4e03050fc
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: ko
-Thread-Index: AQFAtDqCAoG6rpZP+2s4rZk6TTwtCAISXrr3Aj0QF52xdnKzcA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKJsWRmVeSWpSXmKPExsWy7bCmri7/H6dUg4MdbBYP5m1js7j/tYPR
-        Yu/rrewWHX+/MFrMOL+PyWLtkbvsFnf3z2V0YPfYtKqTzePOtT1sHn1bVjF6fN4kF8ASlW2T
-        kZqYklqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SBkkJZYk4p
-        UCggsbhYSd/Opii/tCRVISO/uMRWKbUgJafAtECvODG3uDQvXS8vtcTK0MDAyBSoMCE7o79h
-        FUvBF/6K/Q9VGxg7ebsYOTkkBEwkXk7fzN7FyMUhJLCHUeJ370FmCOcTo8S136fZQKqEBL4x
-        Spy9VQ3TsbOrAapoL6PEzzN7GCGKXjJKrHgoBWKzCaRLvOy6zAJiiwiUSzw8tocNpIFZYBuj
-        xNvzD8ASnAJ2Eic/LAdKcHAIC/hIvL7qARJmEVCRONA5G6yEV8BS4uCvm0wQtqDEyZlPwOLM
-        AtoSyxa+ZoY4SEHi59NlrBBxEYnZnW3MICNFBJwktneVgKyVEGjlkDg34z8jRL2LxLGty5gg
-        bGGJV8e3sEPYUhKf3+1lg2iYzChx5/oKFghnBqPE4Z/XobqNJfYvncwEsoFZQFNi/S59iLCi
-        xM7fcxkhjuCTePe1hxWkREKAV6KjTQiiREni2MUbUFMkJC4smcg2gVFpFpLXZiF5bRaSd2Yh
-        LFvAyLKKUSq1oDg3PTXZsMBQNy+1HB7fyfm5mxjB6VPLZwfj9/V/9Q4xMnEwHmKU4GBWEuE9
-        bOqQKsSbklhZlVqUH19UmpNafIjRFBjgE5mlRJPzgQk8ryTe0MTSwMTMyNjEwtDMUEmcN+ZT
-        e4qQQHpiSWp2ampBahFMHxMHp1QDUwTzkR3B+zf76E05tmWCHYfcAm3xgIR/vIcW/zo3sT18
-        Wg+r9hvrzO5Sddu9Jk+qM6ecuuhgm2el+DvpkMWbT46XuI7NDfExP+3WqHjl1DqPjiO8J39u
-        cH6/bePkzL83fvo9U1Vocb2Qv3PhsdcnziWcDSvzCDbkX6AtW77iiJDo2whpnwiPTn4ZExOe
-        TXmc3/JPdTdbtBafutIQ9Y6B09a59Nm9/bMZIoRD8lutgvhC/96MOfBqzsle7vdJJ5aZyoi0
-        uHvYh0z/sOR3wN4/39Mqe7pOsblGrHZOsK90m/9s79tfc7RLXbnFs5nPqPgcqH3Usuc+t53w
-        6eu7uyZalq966tO1vn/+lW7u+2+alViKMxINtZiLihMBTSBfyCgEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSnC7fH6dUg2WfdCwezNvGZnH/awej
-        xd7XW9ktOv5+YbSYcX4fk8XaI3fZLe7un8vowO6xaVUnm8eda3vYPPq2rGL0+LxJLoAlissm
-        JTUnsyy1SN8ugSuj88dUtoLT/BVdF3ayNTDe4uli5OSQEDCR2NnVwAxiCwnsZpT4tT6hi5ED
-        KC4hsWUrB4QpLHH4cDFExXNGiaenZEDCbAKpEq9X14GYIgKVEt2bJLoYuTiYBXYwSrz8NYMR
-        xBESOMgoMfPxObDpnAJ2Eic/LGcDaRAW8JF4fdUDJMwioCJxoHM2C4jNK2ApcfDXTSYIW1Di
-        5MwnYHFmAW2JpzefwtnLFr5mhjheQeLn02WsEHERidmdbcwQ9zhJbO8qmcAoPAvJpFlIJs1C
-        MmkWku4FjCyrGCVTC4pz03OLDQsM81LL9YoTc4tL89L1kvNzNzGCI0dLcwfj9lUf9A4xMnEw
-        HmKU4GBWEuE9bOqQKsSbklhZlVqUH19UmpNafIhRmoNFSZxX/EVvipBAemJJanZqakFqEUyW
-        iYNTqoEpPUUrR2uV25K+B0kzN3s8NVgk+NfXy6DW6aYdZ8rm1YqFHP3+rxU9Nieea1UreODG
-        ev3E5iJuv9/bzuo5/Do9o2pdQYQLe4Cm8Ye4a0GvOIXL3XP54j32H2R2qXj4PSuxbeG5LQyr
-        6l3+TZfVa9xd2q7KuY75HmuTbF5PQUiBWpC84fkr2kvaFc/MfCr8d6JyE99Et1fKXlaZwZ59
-        U9xdPJew6qk6Xt54ULyc5Y5JnQCHglO137vwM0/nFWxb+KJ+l4oRT2VTZbfs4YeGF9vmmy05
-        9+HNr9O7TopdMU93mSfocj6i75LF3ZovxvvWb2Sb9r9l9+fbiwPkrh6yrK0/9Tebx8hJ3mtx
-        y87Pt5RYijMSDbWYi4oTAVZBa7oLAwAA
-X-CMS-MailID: 20231102013158epcas1p407546aa9264f6376ccfa95f2abc02b19
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231025121737eucas1p1b5f0db709d99f8004f6177591cce0c8f
-References: <20231025121725.46028-1-m.szyprowski@samsung.com>
-        <CGME20231025121737eucas1p1b5f0db709d99f8004f6177591cce0c8f@eucas1p1.samsung.com>
-        <20231025121725.46028-2-m.szyprowski@samsung.com>
+X-RootMTR: 20231025133100eucas1p14e6de58e52560d165bdb8b809e406278
+X-EPHeader: Mail
+X-ConfirmMail: N,general
+CMS-TYPE: 201P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAKsWRmVeSWpSXmKPExsWy7djPc7ox1c6pBov/Mls8mLeNzeLw/AqL
+        qQ+fsFl833KdyWLeZ1mLva+3slt8u9LBZLHp8TVWi8u75rBZfO49wmgx4/w+JouFTS3sFmuP
+        3GW3mPtlKrPFk4d9bA78HmvmrWH02DnrLrvH4j0vmTw2repk87hzbQ+bx+Yl9R59W1Yxenze
+        JBfAEcVlk5Kak1mWWqRvl8CVcfzEfPaCN24Vd7f9YGpg/OXSxcjJISFgIvH0cztTFyMXh5DA
+        CkaJBb2/GbsYOTh4BQQl/u4QBjGFBewkLnxLASkXElCU6Nz+hg3EFhYwkjj0YheYzSZgIPHg
+        zTJ2EFtEQFXi2oW7LCAjmQX2sEqcu7KOCWIXr8SM9qcsELa0xPblWxlBbE4Ba4lLf26yQ8RF
+        JW6ufgtnvz82nxHCFpFovXeWGcIWlHjwczdUXEbi5IJlUHaxxMu1l6BqKiSOL5kONcdcYtPc
+        NawgNq+Ar8Sc41PBbBagQxf0XoWqcZF40vIKrJdZQFti2cLXzCC/MwtoSqzfpQ9R4iixYVI/
+        K4QtILHmxByoVRISW1uesEK08klM2jadGebdHfOeQL2uKnF8zyRmmNeftNxmmsCoNAsR0LOQ
+        LJ6FsHgBI/MqRvHU0uLc9NRio7zUcr3ixNzi0rx0veT83E2MwER2+t/xLzsYl7/6qHeIkYmD
+        8RCjBAezkgjvYVOHVCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8qinyqUIC6YklqdmpqQWpRTBZ
+        Jg5OqQamfjmpXbIP3tx/c/pf6vX1/4XXP09qEwr80ffPS7486SLzd/ucHtumSQUNk63TIx0k
+        mNI+Lv7gsFRvT9AXsayzT27rXxY52jLPMP5f1Gq2EK7cpfUpjfsen5zzfgqvTuH5hyu2XQr0
+        3HWn8NdZ5fiNzVkvDbn3nWpsMoy85zfNa0OOaMfRbyuWCra2rt1avuHHmw5RJh7v21fCn8qs
+        c7t4uvLHTpu6Kw/eNEXqTw+R87qz6tOGijU6ci2TJklfOzZz/vaWp8eqFl/+6l+++YjGgS/2
+        X3d4367TWNV3f13siWdOl9aFOUu6hF/ce5z5OEuC42y9yWnVBbfKrJ3LRFKEeNbfLsszLHrN
+        rB2dvemirhJLcUaioRZzUXEiANz728/TAwAA
+X-CMS-RootMailID: 20231025133100eucas1p14e6de58e52560d165bdb8b809e406278
+References: <2c4b6c1b-b9e7-42b2-8f7b-446ebe9d15ac@arm.com>
+        <20231025133027.524152-1-m.majewski2@samsung.com>
+        <20231025133027.524152-9-m.majewski2@samsung.com>
+        <CGME20231025133100eucas1p14e6de58e52560d165bdb8b809e406278@eucms1p4>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-> -----Original Message-----
-> From: Marek Szyprowski <m.szyprowski=40samsung.com>
-> Sent: Wednesday, October 25, 2023 9:17 PM
-> To: linux-samsung-soc=40vger.kernel.org; linux-i2c=40vger.kernel.org
-> Cc: Marek Szyprowski <m.szyprowski=40samsung.com>; Krzysztof Kozlowski
-> <krzysztof.kozlowski=40linaro.org>; Alim Akhtar <alim.akhtar=40samsung.co=
-m>;
-> Andi Shyti <andi.shyti=40kernel.org>; Wolfram Sang <wsa=40kernel.org>
-> Subject: =5BPATCH v2 1/3=5D i2c: s3c24xx: fix read transfers in polling m=
-ode
->=20
-> To properly handle read transfers in polling mode, no waiting for the ACK
-> state is needed as it will never come. Just wait a bit to ensure start
-> state is on the bus and continue processing next bytes.
->=20
-> Fixes: 117053f77a5a (=22i2c: s3c2410: Add polling mode support=22)
-> Signed-off-by: Marek Szyprowski <m.szyprowski=40samsung.com>
-> ---
->  drivers/i2c/busses/i2c-s3c2410.c =7C 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-
-> s3c2410.c
-> index 127eb3805fac..f9dcb1112a61 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> =40=40 -216,8 +216,13 =40=40 static bool is_ack(struct s3c24xx_i2c *i2c)
->  	int tries;
->=20
->  	for (tries =3D 50; tries; --tries) =7B
-> -		if (readl(i2c->regs + S3C2410_IICCON)
-> -			& S3C2410_IICCON_IRQPEND) =7B
-> +		unsigned long tmp =3D readl(i2c->regs + S3C2410_IICCON);
-> +
-> +		if (=21(tmp & S3C2410_IICCON_ACKEN)) =7B
-> +			usleep_range(100, 200);
-
-Trivial question, but is there any hardware specification related to sleepi=
-ng for 100-200 microseconds? If any then it would be nice to use const vari=
-able instead and add some description about why sleeping here is needed.
-
-Thanks,
-Inki Dae
-
-> +			return true;
-> +		=7D
-> +		if (tmp & S3C2410_IICCON_IRQPEND) =7B
->  			if (=21(readl(i2c->regs + S3C2410_IICSTAT)
->  				& S3C2410_IICSTAT_LASTBIT))
->  				return true;
-> --
-> 2.34.1
-
-
+> > +=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20th=20&=3D=20=7E(0xff=20<<=200);=0D=
+=0A>=20>=20+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20th=20=7C=3D=20temp_to_code(=
+data,=20temp)=20<<=200;=0D=0A>=C2=A0=0D=0A>=20This=202-line=20pattern=20rep=
+eats=20a=20few=20times.=20It=20looks=20like=20a=20nice=20cadidate=0D=0A>=20=
+for=20an=20inline=20function=20which=20can=20abstract=20that.=20Something=
+=20like:=0D=0A>=C2=A0=0D=0A>=20val=20=3D=20update_temp_value(data,=20temp,=
+=20threshold,=20LOW_TEMP_SHIFT)=0D=0A>=C2=A0=0D=0A>=20Assisted=20with=20the=
+=20macros=20=7BLOW=7CHIGH=7CCRIT=7D_TEMP_SHIFT,=20the=20code=0D=0A>=20would=
+=20look=20less=20convoluted=20IMO.=0D=0A>=20(The=20old=20code=20with=20the=
+=20multiplication=20for=20the=20shift=20value=20wasn't=0D=0A>=20cleaner=20n=
+or=20faster).=0D=0A=0D=0AWhat=20would=20you=20think=20about=20something=20l=
+ike=20this?=0D=0A=0D=0Astatic=20void=20exynos_tmu_update_temp(struct=20exyn=
+os_tmu_data=20*data,=20int=20reg_off,=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0int=20bit_off,=20u8=
+=20temp)=0D=0A=7B=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20u32=20th;=0D=0A=
+=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20th=20=3D=20readl(data->base=20+=
+=20reg_off);=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20th=20&=3D=20=7E(0xff=
+=20<<=20bit_off);=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20th=20=7C=3D=20te=
+mp_to_code(data,=20temp)=20<<=20bit_off;=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0=20writel(th,=20data->base=20+=20reg_off);=0D=0A=7D=0D=0A=0D=0AAnd=20=
+then,=20it=20would=20be=20used=20like=20this:=0D=0A=0D=0Astatic=20void=20ex=
+ynos4412_tmu_set_crit_temp(struct=20exynos_tmu_data=20*data,=20u8=20temp)=
+=0D=0A=7B=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20exynos_tmu_update_temp(d=
+ata,=20EXYNOS_THD_TEMP_RISE,=2024,=20temp);=0D=0A=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20exynos_tmu_update_bit(data,=20EXYNOS_TMU_REG_CONTROL,=0D=0A=C2=
+=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20EXYNOS_TMU_THERM_T=
+RIP_EN_SHIFT,=20true);=0D=0A=7D=0D=0A=0D=0AGranted=20it's=20not=20as=20clea=
+r=20as=20if=20we=20had=20some=20macro=20like=20CRIT_TEMP_SHIFT,=20but=0D=0A=
+we=20would=20need=20more=20than=20one=20variant=20anyway,=20as=20Exynos=205=
+433=20uses=20different=0D=0Avalues=20of=20reg_off,=20and=20the=20new=20func=
+tion=20looks=20short=20and=20inviting=20IMHO.=0D=0A=0D=0A>=20>=20-static=20=
+void=20exynos7_tmu_set_trip_temp(struct=20exynos_tmu_data=20*data,=0D=0A>=
+=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0=20=C2=A0=20int=20trip,=20u8=20temp)=0D=0A>=20>=20+static=
+=20void=20exynos7_tmu_update_temp(struct=20exynos_tmu_data=20*data,=20u8=20=
+temp,=0D=0A>=20>=20+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0=20=C2=A0=20=C2=A0=20int=20idx,=20bool=20rise)=0D=0A>=20>=C2=A0=
+=20=C2=A0=7B=0D=0A>=20>=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0u=
+nsigned=20int=20reg_off,=20bit_off;=0D=0A>=20>=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0u32=20th;=0D=0A>=20>=20+=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0=20void=20__iomem=20*reg;=0D=0A>=20>=C2=A0=20=C2=A0=0D=0A>=20>=20-=C2=
+=A0=20=C2=A0=20=C2=A0=20=C2=A0=20reg_off=20=3D=20((7=20-=20trip)=20/=202)=
+=20*=204;=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20bit_off=20=3D=
+=20((8=20-=20trip)=20%=202);=0D=0A>=20>=20+=C2=A0=20=C2=A0=20=C2=A0=20=C2=
+=A0=20reg_off=20=3D=20((7=20-=20idx)=20/=202)=20*=204;=0D=0A>=C2=A0=0D=0A>=
+=20Why=20can't=20we=20just=20have=20a=20set=20of=20defined=20register=20mac=
+ros=20and=20pick=20one=0D=0A>=20in=20some=20small=20function?=0D=0A>=20A=20=
+lot=20of=20operations=20here,=20also=20some=20assumption.=0D=0A>=C2=A0=0D=
+=0A>=20>=20+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20bit_off=20=3D=20((8=20-=20i=
+dx)=20%=202);=0D=0A>=C2=A0=0D=0A>=20So=20this=20can=20only=20be=200=20or=20=
+1=20and=20than=20it's=20used=20for=20the=20shift=0D=0A>=20multiplication.=
+=20Also=20I=20don't=20know=20the=20history=20of=20older=20code=20and=0D=0A>=
+=20if=20it=20was=20missed=20after=20some=20cleaning,=20but=20'idx=20%=202'=
+=20gives=0D=0A>=20equal=20values=20but=20w/o=20subtraction.=0D=0A>=C2=A0=0D=
+=0A>=20BTW,=20the=20code=20assumes=20the=20'idx'=20values=20are=20under=20c=
+ontrol=20somewhere=20else.=0D=0A>=20Is=20that=20because=20the=20DT=20make=
+=20sure=20in=20the=20schema=20that=20the=20range=20cannot=20be=0D=0A>=20too=
+=20big?=0D=0A>=20What=20are=20the=20possible=20values=20for=20'idx'?=0D=0A=
+=0D=0AIn=20the=20old=20code,=20the=20values=20of=20trip=20(which=20is=20the=
+=20same=20thing,=20I=20will=0D=0Achange=20the=20name=20back=20from=20idx)=
+=20were=20limited=20by=20the=20value=20of=20data->ntrip,=0D=0Awhich=20was=
+=20always=208=20(value=20is=20per=20SoC).=20In=20the=20new=20code,=20there=
+=20are=20only=20three=0D=0Avariants:=0D=0A=0D=0Astatic=20void=20exynos7_tmu=
+_set_low_temp(struct=20exynos_tmu_data=20*data,=20u8=20temp)=0D=0A=7B=0D=0A=
+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20exynos7_tmu_update_temp(data,=20temp,=
+=200,=20false);=0D=0A=7D=0D=0A=0D=0Astatic=20void=20exynos7_tmu_set_high_te=
+mp(struct=20exynos_tmu_data=20*data,=20u8=20temp)=0D=0A=7B=0D=0A=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0=20exynos7_tmu_update_temp(data,=20temp,=201,=20tru=
+e);=0D=0A=7D=0D=0A=0D=0Astatic=20void=20exynos7_tmu_set_crit_temp(struct=20=
+exynos_tmu_data=20*data,=20u8=20temp)=0D=0A=7B=0D=0A=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0=20/*=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0*=20Like=
+=20Exynos=204210,=20Exynos=207=20does=20not=20seem=20to=20support=20critica=
+l=20temperature=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0*=20handling=
+=20in=20hardware.=20Again,=20we=20still=20set=20a=20separate=20interrupt=20=
+for=20it.=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0*/=0D=0A=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0=20exynos7_tmu_update_temp(data,=20temp,=207,=20tru=
+e);=0D=0A=7D=0D=0A=0D=0ATo=20be=20fair,=20considering=20the=20values=20are=
+=20constant=20like=20this,=20I=20should=20probably=0D=0Ajust=20do=20the=20c=
+alculations=20myself=20and=20then=20in=20code=20just=20call=20exynos_tmu_up=
+date_temp=0D=0A(from=20above)=20and=20exynos_tmu_update_bit,=20like=20on=20=
+all=20other=20SoCs.=20I=20guess=20I=20were=0D=0Aa=20bit=20too=20scared=20to=
+=20touch=20Exynos=207=20code...=0D=0A=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0=20if=20(on)=20=7B=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20for=20(i=20=3D=200;=20i=20<=20dat=
+a->ntrip;=20i++)=20=7B=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20if=
+=20(thermal_zone_get_trip(tz,=20i,=20&trip))=0D=0A>=20>=20-=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20continue;=0D=0A>=20>=
+=20-=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20interrupt_en=20=7C=3D=
+=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0=20(1=20<<=20(EXYNOS_TMU_INTEN_RISE0_SHIFT=20+=20i=20*=204));=0D=0A>=
+=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=
+=A0=20=7D=0D=0A>=20>=20-=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20if=20(data->soc=20=21=3D=20SOC_ARCH_EXY=
+NOS4210)=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20interrupt_en=20=7C=
+=3D=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20interrupt_en=20<<=20EXYNOS_TMU_INTEN_FALL0_SHIFT;=0D=0A>=20>=20=
+-=0D=0A>=20>=20+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20if=20(on)=0D=0A>=20>=C2=
+=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0con=20=7C=3D=20(1=20<<=20EXYNOS_TMU_CORE_EN_SHIFT);=0D=0A>=20>=20-=
+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=7D=20else=20=7B=0D=0A>=20>=20+=C2=A0=
+=20=C2=A0=20=C2=A0=20=C2=A0=20else=0D=0A>=20>=C2=A0=20=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0con=20&=3D=20=7E(1=
+=20<<=20EXYNOS_TMU_CORE_EN_SHIFT);=0D=0A>=C2=A0=0D=0A>=20Please=20also=20co=
+nsider=20the=20BIT()=20helper=20here=20and=20above...=0D=0A=0D=0AWill=20do,=
+=20but=20should=20I=20do=20this=20in=20a=20separate=20patch=20in=20these=20=
+cases?=20I=20don't=20touch=0D=0Athe=20con=20lines=20otherwise,=20and=20this=
+=20patch=20is=20already=20humongous.=0D=0A=0D=0AThank=20you=20:)=0D=0AMateu=
+sz
