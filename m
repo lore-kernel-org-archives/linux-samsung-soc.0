@@ -2,199 +2,236 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D84C4167D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Nov 2023 16:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06317C4708E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Nov 2023 22:32:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347626AbjKBQ6S (ORCPT
+        id S1377493AbjKBWc2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Nov 2023 12:58:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43618 "EHLO
+        Thu, 2 Nov 2023 18:32:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347664AbjKBQ6R (ORCPT
+        with ESMTP id S234457AbjKBWc1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Nov 2023 12:58:17 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A73312F
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Nov 2023 09:58:14 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qyb0K-000357-QY; Thu, 02 Nov 2023 17:57:12 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qyb0F-0067Eo-8v; Thu, 02 Nov 2023 17:57:07 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qyb0E-00Bjbm-TZ; Thu, 02 Nov 2023 17:57:06 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Aradhya Bhatia <a-bhatia1@ti.com>,
-        Nikhil Devshatwar <nikhil.nd@ti.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Zhu Wang <wangzhu9@huawei.com>, Rob Herring <robh@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Steven Price <steven.price@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Marian Cichy <m.cichy@pengutronix.de>,
-        Dan Carpenter <error27@gmail.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Edmund Dea <edmund.j.dea@intel.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Karol Herbst <kherbst@redhat.com>,
-        Lyude Paul <lyude@redhat.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Deepak R Varma <drv@mailo.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc:     Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        dri-devel@lists.freedesktop.org, kernel@pengutronix.de,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        etnaviv@lists.freedesktop.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-mediatek@lists.infradead.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, nouveau@lists.freedesktop.org
-Subject: [PATCH v3 00/16] drm: Convert to platform remove callback returning void
-Date:   Thu,  2 Nov 2023 17:56:41 +0100
-Message-ID: <20231102165640.3307820-18-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.42.0
+        Thu, 2 Nov 2023 18:32:27 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F37EDC
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Nov 2023 15:32:23 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-54366784377so2345357a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Nov 2023 15:32:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lpnu-ua.20230601.gappssmtp.com; s=20230601; t=1698964342; x=1699569142; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e9nBSRGeG0oGTzQFHQdu8lyilaZO5899sWrirHLiN9k=;
+        b=B1891VoePKS4oYv8Drekbn5Q83HvK0+q7HvssMGkCDcNeQCThFdtr96gv7J7yDZE++
+         pVzZ8bxEycQgaXJbPMu20kNpNeaVdLsft4ExoUHzzc1MVQfyG/DalUCFAo2ideXwW//F
+         O+fatX3TsMFRlnQTbVC8l3RlL4UKslOGtJeamGVQk6q+pDYZ6aX1WM5JjmQK8hmqI0Pw
+         w2S2JAFQWb4wFb4ixmI+2B6gKfIBvZsOf7ze0gVrOW9xCedg1c4CaQ3LvCB09tJFW3Eh
+         tWULKyi+SdZviXmJVj7GoisX7Nt5286GOOPXJtdU9W1rkujXXNtyrIR+KcIEX4Rn7Spw
+         k3HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698964342; x=1699569142;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e9nBSRGeG0oGTzQFHQdu8lyilaZO5899sWrirHLiN9k=;
+        b=MVfB+RjpXi1corFYijq1dktOXWa5EUTEvvQJRX4yIH4vdG4Yg9IdCvyIBHCKu5w8r+
+         4dybfmOsMg6YPGhU93B5ws9o8yDldqy9byWrNVTkgEDLO4QCVDVbtIqUUdFoZwj+DNkS
+         E4C28No4sqI/N9YhjAjdDCQ90DzIls/Bedgj+GXB6zwerfLUqurog8J3BFGvwynzUgie
+         R+EErsA2ptRtompVExnd+uwDieN0HqL2hZU5yuKvNXY53DGZJFOOEJL1efMIXPM9Cjic
+         NXoEIRF4pmBEhVz5F25GexlJ3HIicRUrH7owNIP7uFt5mHg8NKMVjq7srt8u0bQy18Q7
+         LarA==
+X-Gm-Message-State: AOJu0Yyks6HkTmgwfQGa+9T1ZaBlcyvY+LWmtcfcbRrqqn4Sc9XRZMMG
+        P1E3H8PA4Ite064Tn2fRx7w6MQ==
+X-Google-Smtp-Source: AGHT+IGGugFSjo/xuux56sQ3cRW8VoLU9P/hoAn4qsI0tDYESiYS+N/GiIJRqt7VUfRp5VZAyIgUDg==
+X-Received: by 2002:a50:9fe9:0:b0:543:714b:535d with SMTP id c96-20020a509fe9000000b00543714b535dmr8093289edf.3.1698964341806;
+        Thu, 02 Nov 2023 15:32:21 -0700 (PDT)
+Received: from [192.168.1.3] ([37.54.67.136])
+        by smtp.gmail.com with ESMTPSA id u14-20020a50c04e000000b005412c0ba2f9sm233202edd.13.2023.11.02.15.32.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Nov 2023 15:32:21 -0700 (PDT)
+Message-ID: <3d489d6c-2098-4f0c-9ec4-f6040665753e@lpnu.ua>
+Date:   Fri, 3 Nov 2023 00:32:17 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4120; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=6QYM0SU3kXEp/3Rx24czlnqsJN0YtugMXofEMzocIhI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlQ9TJCnXlJTkkfRNtfDCRgNgoYImgoMcqTIUGU YPFEI8hNtuJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZUPUyQAKCRCPgPtYfRL+ TlE1B/9NxDv3OWR8FrrOhkWCsLmrwRFKWVyDmyJSx60Ka0DnSfGX5PCxeEQX54ei+hOZqfLgOrV dyJPHuu/UbIkK39U0o0NSnUyxMAdg0IUMyOtDMNTgWD+4xmfMqH6d2PacWn5ecdXfhgoLTEGO0J Efnk/t1kkH8kW4oj8RUKjDSUb9qdDuuKfvqki0nTiWtiYujDISWZRNVCHeSiRItvUBj5pyei3sh TmKFd9Rcv/2AjgpC3Yq2P6GtbftnRl90/79DwE6NBT7fpR+h5KWk5xDyijTkL2zKpArX16e/QLc eXdbf6zdC11Tt5f6LOJ9xMQA1iPo4CxvwDoCJ4yHiVLd3jFk
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
+ Oriole/Pixel6 board
+Content-Language: en-US
+To:     Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
+        s.nawrocki@samsung.com, linus.walleij@linaro.org,
+        wim@linux-watchdog.org, linux@roeck-us.net,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        olof@lixom.net, cw00.choi@samsung.com
+Cc:     tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+        semen.protsenko@linaro.org, saravanak@google.com,
+        willmcvicker@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org
+References: <20231010224928.2296997-1-peter.griffin@linaro.org>
+From:   Maksym Holovach <maksym.holovach.an.2022@lpnu.ua>
+In-Reply-To: <20231010224928.2296997-1-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello,
+Hi, all
 
-this series converts all platform drivers below drivers/gpu/drm to use
-.remove_new(). It starts with a fix for a problem that potentially might
-crash the kernel that I stumbled over while implementing the conversion.
+I wanted to inquire about how do you all feel about calling this SoC by 
+the Google "gs101" name.
 
-Some of the conversion patches following this fix were already send in
-earlier series:
+I believe the proper name for it should be the actual Samsung name, 
+written in the silicon and reported in the Chip ID hardware: Exynos9845. 
+This also touches the Tensor G2 (Exynos9855), Tensor G3 (Exynos9865), 
+and possibly the "Tesla" SoCs.
 
-	https://lore.kernel.org/dri-devel/20230801110239.831099-1-u.kleine-koenig@pengutronix.de
-	https://lore.kernel.org/dri-devel/20230318190804.234610-1-u.kleine-koenig@pengutronix.de
+I do not think the Linux kernel should be a marketing material: it 
+should reflect reality. The chip is almost 100% composed of Samsung 
+Exynos IP blocks and should be called that way.
 
-and three patches (bridge/tpd12s015, exynos + tilcdc) are new. Parts of
-the above series were picked up, the patches resend here are not.
+Yours,
 
-See commit 5c5a7680e67b ("platform: Provide a remove callback that
-returns no value") for an extended explanation and the eventual goal.
+- Markuss
 
-Compared to the earlier submissions this patch series is rebased to
-today's drm-misc-next. Otherwise there is no relevant change.
-
-Best regards
-Uwe
-
-Uwe Kleine-König (16):
-  drm/bridge: tpd12s015: Drop buggy __exit annotation for remove
-    function
-  drm/arcpgu: Convert to platform remove callback returning void
-  drm/armada: Convert to platform remove callback returning void
-  drm/bridge: cdns-mhdp8546: Improve error reporting in remove callback
-  drm/bridge: cdns-mhdp8546: Convert to platform remove callback
-    returning void
-  drm/bridge: tpd12s015: Convert to platform remove callback returning
-    void
-  drm/etnaviv: Convert to platform remove callback returning void
-  drm/exynos: Convert to platform remove callback returning void
-  drm/imx/dcss: Convert to platform remove callback returning void
-  drm/imx: lcdc: Convert to platform remove callback returning void
-  drm/kmb: Convert to platform remove callback returning void
-  drm/mediatek: Convert to platform remove callback returning void
-  drm/meson: Convert to platform remove callback returning void
-  drm/nouveau: Convert to platform remove callback returning void
-  drm/sprd: Convert to platform remove callback returning void
-  drm/tilcdc: Convert to platform remove callback returning void
-
- drivers/gpu/drm/armada/armada_crtc.c          |  5 ++---
- drivers/gpu/drm/armada/armada_drv.c           |  5 ++---
- .../drm/bridge/cadence/cdns-mhdp8546-core.c   | 22 +++++++++----------
- drivers/gpu/drm/bridge/ti-tpd12s015.c         |  6 ++---
- drivers/gpu/drm/etnaviv/etnaviv_drv.c         |  6 ++---
- drivers/gpu/drm/etnaviv/etnaviv_gpu.c         |  5 ++---
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  6 ++---
- drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  6 ++---
- drivers/gpu/drm/exynos/exynos_dp.c            |  6 ++---
- drivers/gpu/drm/exynos/exynos_drm_drv.c       |  5 ++---
- drivers/gpu/drm/exynos/exynos_drm_fimc.c      |  6 ++---
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  6 ++---
- drivers/gpu/drm/exynos/exynos_drm_g2d.c       |  6 ++---
- drivers/gpu/drm/exynos/exynos_drm_gsc.c       |  6 ++---
- drivers/gpu/drm/exynos/exynos_drm_mic.c       |  6 ++---
- drivers/gpu/drm/exynos/exynos_drm_rotator.c   |  6 ++---
- drivers/gpu/drm/exynos/exynos_drm_scaler.c    |  6 ++---
- drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  6 ++---
- drivers/gpu/drm/exynos/exynos_hdmi.c          |  6 ++---
- drivers/gpu/drm/exynos/exynos_mixer.c         |  6 ++---
- drivers/gpu/drm/imx/dcss/dcss-drv.c           |  6 ++---
- drivers/gpu/drm/imx/lcdc/imx-lcdc.c           |  6 ++---
- drivers/gpu/drm/kmb/kmb_drv.c                 |  5 ++---
- .../gpu/drm/mediatek/mtk_disp_ovl_adaptor.c   |  5 ++---
- drivers/gpu/drm/mediatek/mtk_ethdr.c          |  5 ++---
- drivers/gpu/drm/meson/meson_dw_mipi_dsi.c     |  6 ++---
- drivers/gpu/drm/nouveau/nouveau_platform.c    |  5 ++---
- drivers/gpu/drm/sprd/sprd_dpu.c               |  6 ++---
- drivers/gpu/drm/sprd/sprd_drm.c               |  5 ++---
- drivers/gpu/drm/sprd/sprd_dsi.c               |  6 ++---
- drivers/gpu/drm/tilcdc/tilcdc_drv.c           |  9 ++++----
- drivers/gpu/drm/tiny/arcpgu.c                 |  6 ++---
- 32 files changed, 74 insertions(+), 128 deletions(-)
-
-
-base-commit: 6fd9487147c4f18ad77eea00bd8c9189eec74a3e
--- 
-2.42.0
-
+On 10/11/23 01:49, Peter Griffin wrote:
+> Hi folks,
+>
+> Firstly, thanks to everyone who reviewed the v1 series! V2 incorporates all
+> the review feedback received so far.
+>
+> This series adds initial SoC support for the GS101 SoC and also initial board
+> support for Pixel 6 phone (Oriole).
+>
+> The gs101 / Tensor SoC is also used in Pixel6a (bluejay) and Pixel 6 Pro
+> (raven) phones. Currently DT is added for the gs101 SoC and Oriole.
+> As you can see from the patches the SoC is based on a Samsung Exynos SoC,
+> and therefore lots of the low level Exynos drivers can be re-used.
+>
+> The support added in this series consists of:
+> * cpus
+> * pinctrl
+> * some CCF implementation
+> * watchdog
+> * uart
+> * gpio
+>
+> This is enough to boot through to a busybox initramfs and shell using an
+> upstream kernel though :) More platform support will be added over the
+> following weeks and months.
+>
+> Note 1: I've removed the dtbo overlay from v2 submission and will re-submit once
+> I have appropriate documentation for it.
+>
+> Note 2: I've left the bootargs in dts with earlycon for now, for two reasons.
+> 1) The bootloader hangs if bootargs isn't present in the dtb as it tries to
+> re-write this with additional bootargs.
+> 2) there is a issue whereby the full serial console doesn't come up properly
+> if earlycon isn't also specified. This issue needs further investigation.
+>
+> Note 3: In `dt-bindings: pinctrl: samsung: add google,gs101-pinctrl compatible`
+> I tried to narrow the interrupts check to google,gs101-pinctrl but I still see
+> a warning:
+> gs101-oriole.dtb: pinctrl@174d0000: interrupts: [[0, 0, 4],[..] is too long
+>
+> If anyone can educate me on what I've done wrong here it would be most
+> appreciated!
+>
+> kind regards,
+>
+> Peter.
+>
+> Changes since v1:
+>   - Remove irq/gs101.h and replace macros with irq numbers globally
+>   - exynos-pmu - keep alphabetical order
+>   - add cmu_apm to clock bindings documentation
+>   - sysreg bindings - remove superfluous `google,gs101-sysreg`
+>   - watchdog bindings - Alphanumerical order, update gs201 comment
+>   - samsung,pinctrl.yaml - add new "if:then:else:" to narrow for google SoC
+>   - samsung,pinctrl-wakeup-interrupt.yaml - Alphanumerical order
+>   - samsung,pinctrl- add google,gs101-wakeup-eint compatible
+>   - clk-pll: fixup typos
+>   - clk-gs101: fix kernel test robot warnings (add 2 new clocks,dividers,gate)
+>   - clk-gs101: fix alphabetical order
+>   - clk-gs101: cmu_apm: fixup typo and missing empty entry
+>   - clk-gs101: cmu_misc: remove clocks that were being registerred twice
+>   - pinctrl: filter sel: rename/reorder variables, add comment for FLTCON bitfield
+>   - pinctrl: filter sel: avoid setting reserved bits by loop over FLTCON1 pins as well
+>   - pinctrl: gs101: rename bank_type_6/7 structs to be more specific, split from filter
+>   - watchdog: s3c2410_wdt: remove dev_info prints
+>   - gs101.dtsi/oriole.dts: order by unit node, remove underscores from node name, blank lines
+>     add SoC node, split dts and dtsi into separate patches, remove 'DVT' suffix
+>   - gs101-oriole.dtso: Remove overlay until board_id is documented properly
+>   - Add GS101_PIN_* macros to gs101-pinctrl.h instead of using Exynos ones
+>   - gpio-keys: update linux,code to use input-event-code macros
+>   - add dedicated gs101-uart compatible
+>
+> Peter Griffin (20):
+>    dt-bindings: soc: samsung: exynos-pmu: Add gs101 compatible
+>    dt-bindings: clock: Add Google gs101 clock management unit bindings
+>    dt-bindings: soc: google: exynos-sysreg: add dedicated SYSREG
+>      compatibles to GS101
+>    dt-bindings: watchdog: Document Google gs101 & gs201 watchdog bindings
+>    dt-bindings: arm: google: Add bindings for Google ARM platforms
+>    dt-bindings: pinctrl: samsung: add google,gs101-pinctrl compatible
+>    dt-bindings: pinctrl: samsung: add gs101-wakeup-eint compatible
+>    dt-bindings: serial: samsung: Add google-gs101-uart compatible
+>    clk: samsung: clk-pll: Add support for pll_{0516,0517,518}
+>    clk: samsung: clk-gs101: Add cmu_top registers, plls, mux and gates
+>    clk: samsung: clk-gs101: add CMU_APM support
+>    clk: samsung: clk-gs101: Add support for CMU_MISC clock unit
+>    pinctrl: samsung: Add filter selection support for alive banks
+>    pinctrl: samsung: Add gs101 SoC pinctrl configuration
+>    watchdog: s3c2410_wdt: Add support for Google tensor SoCs
+>    tty: serial: samsung: Add gs101 compatible and SoC data
+>    arm64: dts: google: Add initial Google gs101 SoC support
+>    arm64: dts: google: Add initial Oriole/pixel 6 board support
+>    arm64: defconfig: Enable Google Tensor SoC
+>    MAINTAINERS: add entry for Google Tensor SoC
+>
+>   .../devicetree/bindings/arm/google.yaml       |   46 +
+>   .../bindings/clock/google,gs101-clock.yaml    |  125 +
+>   .../samsung,pinctrl-wakeup-interrupt.yaml     |    2 +
+>   .../bindings/pinctrl/samsung,pinctrl.yaml     |   19 +
+>   .../bindings/serial/samsung_uart.yaml         |    2 +
+>   .../bindings/soc/samsung/exynos-pmu.yaml      |    2 +
+>   .../soc/samsung/samsung,exynos-sysreg.yaml    |    6 +
+>   .../bindings/watchdog/samsung-wdt.yaml        |   10 +-
+>   MAINTAINERS                                   |   10 +
+>   arch/arm64/Kconfig.platforms                  |    6 +
+>   arch/arm64/boot/dts/Makefile                  |    1 +
+>   arch/arm64/boot/dts/google/Makefile           |    4 +
+>   arch/arm64/boot/dts/google/gs101-oriole.dts   |   79 +
+>   arch/arm64/boot/dts/google/gs101-pinctrl.dtsi | 1275 ++++++++++
+>   arch/arm64/boot/dts/google/gs101-pinctrl.h    |   32 +
+>   arch/arm64/boot/dts/google/gs101.dtsi         |  503 ++++
+>   arch/arm64/configs/defconfig                  |    1 +
+>   drivers/clk/samsung/Kconfig                   |    9 +
+>   drivers/clk/samsung/Makefile                  |    2 +
+>   drivers/clk/samsung/clk-gs101.c               | 2164 +++++++++++++++++
+>   drivers/clk/samsung/clk-pll.c                 |    9 +-
+>   drivers/clk/samsung/clk-pll.h                 |    3 +
+>   .../pinctrl/samsung/pinctrl-exynos-arm64.c    |  163 ++
+>   drivers/pinctrl/samsung/pinctrl-exynos.c      |   84 +-
+>   drivers/pinctrl/samsung/pinctrl-exynos.h      |   41 +
+>   drivers/pinctrl/samsung/pinctrl-samsung.c     |    4 +
+>   drivers/pinctrl/samsung/pinctrl-samsung.h     |   24 +
+>   drivers/tty/serial/samsung_tty.c              |   12 +
+>   drivers/watchdog/s3c2410_wdt.c                |  104 +-
+>   include/dt-bindings/clock/google,gs101.h      |  232 ++
+>   30 files changed, 4961 insertions(+), 13 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/arm/google.yaml
+>   create mode 100644 Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+>   create mode 100644 arch/arm64/boot/dts/google/Makefile
+>   create mode 100644 arch/arm64/boot/dts/google/gs101-oriole.dts
+>   create mode 100644 arch/arm64/boot/dts/google/gs101-pinctrl.dtsi
+>   create mode 100644 arch/arm64/boot/dts/google/gs101-pinctrl.h
+>   create mode 100644 arch/arm64/boot/dts/google/gs101.dtsi
+>   create mode 100644 drivers/clk/samsung/clk-gs101.c
+>   create mode 100644 include/dt-bindings/clock/google,gs101.h
+>
