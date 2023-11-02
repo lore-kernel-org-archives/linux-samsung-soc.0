@@ -2,220 +2,200 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BFAC4167D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Nov 2023 10:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B12C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Nov 2023 11:08:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346647AbjKBKfS (ORCPT
+        id S1346709AbjKBLIB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Nov 2023 06:35:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33652 "EHLO
+        Thu, 2 Nov 2023 07:08:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346365AbjKBKfR (ORCPT
+        with ESMTP id S1347222AbjKBLIA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Nov 2023 06:35:17 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B5F1133
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Nov 2023 03:35:11 -0700 (PDT)
+        Thu, 2 Nov 2023 07:08:00 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F82131
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Nov 2023 04:07:54 -0700 (PDT)
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231102103508euoutp012759a9025017478afa96d4ad882e5db4~Tx_3LRTV81095910959euoutp01o
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Nov 2023 10:35:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231102103508euoutp012759a9025017478afa96d4ad882e5db4~Tx_3LRTV81095910959euoutp01o
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231102110753euoutp027bf0ea38219196f8fb4f21f36e5164e7~Tybc5FsaE3193731937euoutp02E
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Nov 2023 11:07:53 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231102110753euoutp027bf0ea38219196f8fb4f21f36e5164e7~Tybc5FsaE3193731937euoutp02E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1698921308;
-        bh=Jq2CkGwzkZthS/INfqDfza5GmIinX06fg7ozai2WyPg=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=uCtUEatTc7cb1m5tRmMz81U6kR31b4LAz/jJ5jrSuIJZ8VU8jFBo22cPiomAI4otF
-         N0Z3o40NkikNftfudJqFVOClzC6k1A+UEVK2Iz1eGYdocFMhfvmAg9MTnON4IK+xwG
-         /fy+P64f2gzgdyCJsdfgcmwrHwenYpKPsDulw7Yo=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20231102103508eucas1p1d660b46f2f487811bb5162191beb3b4f~Tx_20XxLE2095820958eucas1p12;
-        Thu,  2 Nov 2023 10:35:08 +0000 (GMT)
-X-AuditID: cbfec7f4-97dff70000022c38-4d-65437b5c055d
+        s=mail20170921; t=1698923273;
+        bh=6MDxN5SgU4N6F07EcKF5xP7PSsT4T6UGX8g4k89pqn8=;
+        h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
+        b=OrYsf+vV09FXLh4SWKzHlvqUkCgrniwY6Uawvv9eT8pQdX1dXrKlrKva0EYOCV9WX
+         tSA6hIO34ETwktyHY5GPx7Cwu1ywo/wwnJ2yFJ9WDyu6dlu4vrtl5yoitVbM31d8qt
+         fGVy1xl0BrXgdXN45mrFEb90Re3tRi8T3anABQ5M=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20231102110752eucas1p260fcd707db221deb3b4cde601ecccf31~Tybb5UFr01315513155eucas1p2X;
+        Thu,  2 Nov 2023 11:07:52 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id DC.8F.11320.C5B73456; Thu,  2
-        Nov 2023 10:35:08 +0000 (GMT)
-Mime-Version: 1.0
-Subject: RE: Re: [PATCH v4 8/8] thermal: exynos: use set_trips
-Reply-To: m.majewski2@samsung.com
-Sender: Mateusz Majewski <m.majewski2@samsung.com>
-From:   Mateusz Majewski <m.majewski2@samsung.com>
-To:     Lukasz Luba <lukasz.luba@arm.com>
-CC:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 59.67.52736.80383456; Thu,  2
+        Nov 2023 11:07:52 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20231102110751eucas1p2d6360bd156c1f7bf0f8e7455c30ca396~TybbaTkNO1726917269eucas1p2X;
+        Thu,  2 Nov 2023 11:07:51 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20231102110751eusmtrp1e6e9025e4cf3bc37dd2b23f563a7c9f4~TybbZw9R21395113951eusmtrp1-;
+        Thu,  2 Nov 2023 11:07:51 +0000 (GMT)
+X-AuditID: cbfec7f5-ba1ff7000000ce00-05-65438308d9a0
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 4A.E9.10549.70383456; Thu,  2
+        Nov 2023 11:07:51 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20231102110751eusmtip24a4924d9647b535718dc72e9749def7f~Tyba7d6Uz0356403564eusmtip2I;
+        Thu,  2 Nov 2023 11:07:51 +0000 (GMT)
+Message-ID: <a5b05328-4721-4cd2-834d-3cc52796ff1f@samsung.com>
+Date:   Thu, 2 Nov 2023 12:07:50 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 1/3] i2c: s3c24xx: fix read transfers in polling mode
+To:     Andi Shyti <andi.shyti@kernel.org>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        ALIM AKHTAR <alim.akhtar@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <2c4b6c1b-b9e7-42b2-8f7b-446ebe9d15ac@arm.com>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20231102103507eucms1p4aea91982ebcc4a9a6314d9c4e03050fc@eucms1p4>
-Date:   Thu, 02 Nov 2023 11:35:07 +0100
-X-CMS-MailID: 20231102103507eucms1p4aea91982ebcc4a9a6314d9c4e03050fc
-Content-Transfer-Encoding: quoted-printable
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Wolfram Sang <wsa@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20231102004955.cjp7vfdaqjlwhnyo@zenone.zhora.eu>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCKsWRmVeSWpSXmKPExsWy7djPc7oczc6pBs37WSwezNvGZnH/awej
+        xd7XW9ktOv5+YbSYcX4fk8Xd/XMZHdg8Nq3qZPO4c20Pm0ffllWMHp83yQWwRHHZpKTmZJal
+        FunbJXBlNH38yVawV77ix9OrLA2MqyS7GDk5JARMJE693M3YxcjFISSwglFiysYV7BDOF0aJ
+        G33zWEGqhAQ+M0ps/mAD0/Fo6zOoouWMEjO6pzBBOB8ZJZ6vmcwCUsUrYCexd/8XJhCbRUBF
+        4sunz6wQcUGJkzOfgNWICshL3L81gx3EZhMwlOh628UGYgsL+Eic63sBFhcRUJN4vfgT2Bxm
+        gQOMEnv7KiBscYlbT+aDxTmBdv3fdxeqRl5i+9s5zCAHSQhc4JDom7aLDeJsF4nJ67ayQtjC
+        Eq+Ob2GHsGUkTk/uYYFoaGeUWPD7PhOEM4FRouH5LUaIKmuJO+d+AU3iAFqhKbF+lz5E2FFi
+        3fQtYGEJAT6JG28FIY7gk5i0bTozRJhXoqNNCKJaTWLW8XVwaw9euMQ8gVFpFlKwzELy2iwk
+        78xC2LuAkWUVo3hqaXFuemqxcV5quV5xYm5xaV66XnJ+7iZGYMI5/e/41x2MK1591DvEyMTB
+        eIhRgoNZSYT3sKlDqhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe1RT5VCGB9MSS1OzU1ILUIpgs
+        EwenVAMTa9bGHMfSsFd7HB5UWtTFbFdjPWSlW/K7at2J404RYvbVXvbifBXGf9epTjKr/cJf
+        XnNkcv/Eqq67M7gqvgb53LyY3TV7c3aPgJU0C8vmsPbW8xstXV/17mM8tztKPeFg0kSD2r0N
+        Uqs1JJfYW659otTRt6Xs8rMZUhx3D+Y+5hPZL9/zI+hDQcyetL6VnNpx/Xc3+rQ536ktDPnW
+        tuNPt+XZw0tnlt9zk7EQW6Z5NvbO/o21fQnyiSunt/f+vcuXKW+cKr7wduSJAxznLdMWqLWp
+        rzUP+WvqEfbJok9P9cAatkbmpVxFAvo5ckd1v++t7o2om7hngXy/0tT5RvpzTyzpuzjrPu/m
+        +ofTM5VYijMSDbWYi4oTAViwHiCnAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsVy+t/xe7rszc6pBpMfKlo8mLeNzeL+1w5G
+        i72vt7JbdPz9wmgx4/w+Jou7++cyOrB5bFrVyeZx59oeNo++LasYPT5vkgtgidKzKcovLUlV
+        yMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3S9DLaPr4k61gr3zFj6dX
+        WRoYV0l2MXJySAiYSDza+oy9i5GLQ0hgKaPEiXOzWSESMhInpzVA2cISf651sUEUvWeUmLD7
+        AxtIglfATmLv/i9MIDaLgIrEl0+fWSHighInZz5hAbFFBeQl7t+awQ5iswkYSnS97QLrFRbw
+        kTjX9wIsLiKgJvF68ScmkAXMAgcYJfruTWCF2PaISWLixLNgHcwC4hK3nswH28YJtPn/vrtM
+        EHEzia6tXYwQtrzE9rdzmCcwCs1CcsgsJO2zkLTMQtKygJFlFaNIamlxbnpusaFecWJucWle
+        ul5yfu4mRmCUbTv2c/MOxnmvPuodYmTiYDzEKMHBrCTCe9jUIVWINyWxsiq1KD++qDQntfgQ
+        oykwNCYyS4km5wPjPK8k3tDMwNTQxMzSwNTSzFhJnNezoCNRSCA9sSQ1OzW1ILUIpo+Jg1Oq
+        ganV1DZj02uh/kLu6eeXPTDgPNf4ZopjwvoNCR/nvNezNfkvF70jM2ZeUnDZiX06rNGPNh79
+        0dRqmBr8r7pqHueTl3WP21b+6vSrEe54Xc+teMPpsWuF4tVQUf6HJd9rfwZ86Op59HSJzcX9
+        sXxeQXGMOdGnZ8565XRsc+YGb40tvUtbOJQuWnjFOL0Kspnfe3d+dUNpbaueksodV8V3E86X
+        vbD+uJZVvvSM0+u1nZcPO2TGFXo5nKq1P7lyy7evpS46789K/uO6cP9z4skZE0QN7kc+u7it
+        eV6xxb5LXIpXl8qE8K7QviqzpNWnndtZl5fR4VvuFwHOyfLPo2Ne7jaQdk9/8v/+tQVPBSJm
+        7VRiKc5INNRiLipOBACiGEliOwMAAA==
+X-CMS-MailID: 20231102110751eucas1p2d6360bd156c1f7bf0f8e7455c30ca396
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20231025133100eucas1p14e6de58e52560d165bdb8b809e406278
-X-EPHeader: Mail
-X-ConfirmMail: N,general
+X-RootMTR: 20231025121737eucas1p1b5f0db709d99f8004f6177591cce0c8f
+X-EPHeader: CA
 CMS-TYPE: 201P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAKsWRmVeSWpSXmKPExsWy7djPc7ox1c6pBov/Mls8mLeNzeLw/AqL
-        qQ+fsFl833KdyWLeZ1mLva+3slt8u9LBZLHp8TVWi8u75rBZfO49wmgx4/w+JouFTS3sFmuP
-        3GW3mPtlKrPFk4d9bA78HmvmrWH02DnrLrvH4j0vmTw2repk87hzbQ+bx+Yl9R59W1Yxenze
-        JBfAEcVlk5Kak1mWWqRvl8CVcfzEfPaCN24Vd7f9YGpg/OXSxcjJISFgIvH0cztTFyMXh5DA
-        CkaJBb2/GbsYOTh4BQQl/u4QBjGFBewkLnxLASkXElCU6Nz+hg3EFhYwkjj0YheYzSZgIPHg
-        zTJ2EFtEQFXi2oW7LCAjmQX2sEqcu7KOCWIXr8SM9qcsELa0xPblWxlBbE4Ba4lLf26yQ8RF
-        JW6ufgtnvz82nxHCFpFovXeWGcIWlHjwczdUXEbi5IJlUHaxxMu1l6BqKiSOL5kONcdcYtPc
-        NawgNq+Ar8Sc41PBbBagQxf0XoWqcZF40vIKrJdZQFti2cLXzCC/MwtoSqzfpQ9R4iixYVI/
-        K4QtILHmxByoVRISW1uesEK08klM2jadGebdHfOeQL2uKnF8zyRmmNeftNxmmsCoNAsR0LOQ
-        LJ6FsHgBI/MqRvHU0uLc9NRio7zUcr3ixNzi0rx0veT83E2MwER2+t/xLzsYl7/6qHeIkYmD
-        8RCjBAezkgjvYVOHVCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8qinyqUIC6YklqdmpqQWpRTBZ
-        Jg5OqQamfjmpXbIP3tx/c/pf6vX1/4XXP09qEwr80ffPS7486SLzd/ucHtumSQUNk63TIx0k
-        mNI+Lv7gsFRvT9AXsayzT27rXxY52jLPMP5f1Gq2EK7cpfUpjfsen5zzfgqvTuH5hyu2XQr0
-        3HWn8NdZ5fiNzVkvDbn3nWpsMoy85zfNa0OOaMfRbyuWCra2rt1avuHHmw5RJh7v21fCn8qs
-        c7t4uvLHTpu6Kw/eNEXqTw+R87qz6tOGijU6ci2TJklfOzZz/vaWp8eqFl/+6l+++YjGgS/2
-        X3d4367TWNV3f13siWdOl9aFOUu6hF/ce5z5OEuC42y9yWnVBbfKrJ3LRFKEeNbfLsszLHrN
-        rB2dvemirhJLcUaioRZzUXEiANz728/TAwAA
-X-CMS-RootMailID: 20231025133100eucas1p14e6de58e52560d165bdb8b809e406278
-References: <2c4b6c1b-b9e7-42b2-8f7b-446ebe9d15ac@arm.com>
-        <20231025133027.524152-1-m.majewski2@samsung.com>
-        <20231025133027.524152-9-m.majewski2@samsung.com>
-        <CGME20231025133100eucas1p14e6de58e52560d165bdb8b809e406278@eucms1p4>
+X-CMS-RootMailID: 20231025121737eucas1p1b5f0db709d99f8004f6177591cce0c8f
+References: <20231025121725.46028-1-m.szyprowski@samsung.com>
+        <CGME20231025121737eucas1p1b5f0db709d99f8004f6177591cce0c8f@eucas1p1.samsung.com>
+        <20231025121725.46028-2-m.szyprowski@samsung.com>
+        <20231027133950.kntkq6ddgifaor76@zenone.zhora.eu>
+        <3484d2c1-942b-4145-801f-8b8bda7dd9ec@samsung.com>
+        <20231102004955.cjp7vfdaqjlwhnyo@zenone.zhora.eu>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On 02.11.2023 01:49, Andi Shyti wrote:
+> On Tue, Oct 31, 2023 at 02:49:04PM +0100, Marek Szyprowski wrote:
+>> On 27.10.2023 15:39, Andi Shyti wrote:
+>>> On Wed, Oct 25, 2023 at 02:17:23PM +0200, Marek Szyprowski wrote:
+>>>> To properly handle read transfers in polling mode, no waiting for the ACK
+>>>> state is needed as it will never come. Just wait a bit to ensure start
+>>>> state is on the bus and continue processing next bytes.
+>>>>
+>>>> Fixes: 117053f77a5a ("i2c: s3c2410: Add polling mode support")
+>>>> Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
+>>>> ---
+>>>>    drivers/i2c/busses/i2c-s3c2410.c | 9 +++++++--
+>>>>    1 file changed, 7 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+>>>> index 127eb3805fac..f9dcb1112a61 100644
+>>>> --- a/drivers/i2c/busses/i2c-s3c2410.c
+>>>> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+>>>> @@ -216,8 +216,13 @@ static bool is_ack(struct s3c24xx_i2c *i2c)
+>>>>    	int tries;
+>>>>    
+>>>>    	for (tries = 50; tries; --tries) {
+>>>> -		if (readl(i2c->regs + S3C2410_IICCON)
+>>>> -			& S3C2410_IICCON_IRQPEND) {
+>>>> +		unsigned long tmp = readl(i2c->regs + S3C2410_IICCON);
+>>>> +
+>>>> +		if (!(tmp & S3C2410_IICCON_ACKEN)) {
+>>>> +			usleep_range(100, 200);
+>>>> +			return true;
+>>> What is the real issue here? Is the value of S3C2410_IICCON_ACKEN
+>>> enabling/disabling irq's?
+>> It is not about the enabling/disabling interrupts, but controlling the
+>> bus state. This bit is named as 'Acknowledge generation / I2C-bus
+>> acknowledge enable bit' in Exynos reference manual:
+>>
+>> In Tx mode, the I2CSDA is idle in the ACK time.
+>>
+>> In Rx mode, the I2CSDA is low in the ACK time.
+>>
+>> So it is a part of proper controlling the bus state, not the reported
+>> interrupts, although the S3C2410_IICCON_ACKEN name is a bit misleading
+>> in this case.
+> Yes, correct, but I still don't understand this sequence in the
+> message_start:
+>
+>   - enable ACKEN in IICCON (enable_ack())
+>   - read IICCON (iiccon = readl(...))
+>   - write what you read in IICCON (writel(iiccon, ...))
+>   - if ACKEN is disabled in IICCON (from your patch)
+>
+> Where is supposed ACKEN to be disabled?
 
-> > +=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20th=20&=3D=20=7E(0xff=20<<=200);=0D=
-=0A>=20>=20+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20th=20=7C=3D=20temp_to_code(=
-data,=20temp)=20<<=200;=0D=0A>=C2=A0=0D=0A>=20This=202-line=20pattern=20rep=
-eats=20a=20few=20times.=20It=20looks=20like=20a=20nice=20cadidate=0D=0A>=20=
-for=20an=20inline=20function=20which=20can=20abstract=20that.=20Something=
-=20like:=0D=0A>=C2=A0=0D=0A>=20val=20=3D=20update_temp_value(data,=20temp,=
-=20threshold,=20LOW_TEMP_SHIFT)=0D=0A>=C2=A0=0D=0A>=20Assisted=20with=20the=
-=20macros=20=7BLOW=7CHIGH=7CCRIT=7D_TEMP_SHIFT,=20the=20code=0D=0A>=20would=
-=20look=20less=20convoluted=20IMO.=0D=0A>=20(The=20old=20code=20with=20the=
-=20multiplication=20for=20the=20shift=20value=20wasn't=0D=0A>=20cleaner=20n=
-or=20faster).=0D=0A=0D=0AWhat=20would=20you=20think=20about=20something=20l=
-ike=20this?=0D=0A=0D=0Astatic=20void=20exynos_tmu_update_temp(struct=20exyn=
-os_tmu_data=20*data,=20int=20reg_off,=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=
-=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
-=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0int=20bit_off,=20u8=
-=20temp)=0D=0A=7B=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20u32=20th;=0D=0A=
-=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20th=20=3D=20readl(data->base=20+=
-=20reg_off);=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20th=20&=3D=20=7E(0xff=
-=20<<=20bit_off);=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20th=20=7C=3D=20te=
-mp_to_code(data,=20temp)=20<<=20bit_off;=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=
-=C2=A0=20writel(th,=20data->base=20+=20reg_off);=0D=0A=7D=0D=0A=0D=0AAnd=20=
-then,=20it=20would=20be=20used=20like=20this:=0D=0A=0D=0Astatic=20void=20ex=
-ynos4412_tmu_set_crit_temp(struct=20exynos_tmu_data=20*data,=20u8=20temp)=
-=0D=0A=7B=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20exynos_tmu_update_temp(d=
-ata,=20EXYNOS_THD_TEMP_RISE,=2024,=20temp);=0D=0A=C2=A0=20=C2=A0=20=C2=A0=
-=20=C2=A0=20exynos_tmu_update_bit(data,=20EXYNOS_TMU_REG_CONTROL,=0D=0A=C2=
-=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
-=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20EXYNOS_TMU_THERM_T=
-RIP_EN_SHIFT,=20true);=0D=0A=7D=0D=0A=0D=0AGranted=20it's=20not=20as=20clea=
-r=20as=20if=20we=20had=20some=20macro=20like=20CRIT_TEMP_SHIFT,=20but=0D=0A=
-we=20would=20need=20more=20than=20one=20variant=20anyway,=20as=20Exynos=205=
-433=20uses=20different=0D=0Avalues=20of=20reg_off,=20and=20the=20new=20func=
-tion=20looks=20short=20and=20inviting=20IMHO.=0D=0A=0D=0A>=20>=20-static=20=
-void=20exynos7_tmu_set_trip_temp(struct=20exynos_tmu_data=20*data,=0D=0A>=
-=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=
-=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
-=20=C2=A0=20=C2=A0=20=C2=A0=20int=20trip,=20u8=20temp)=0D=0A>=20>=20+static=
-=20void=20exynos7_tmu_update_temp(struct=20exynos_tmu_data=20*data,=20u8=20=
-temp,=0D=0A>=20>=20+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=
-=A0=20=C2=A0=20=C2=A0=20=C2=A0=20int=20idx,=20bool=20rise)=0D=0A>=20>=C2=A0=
-=20=C2=A0=7B=0D=0A>=20>=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0u=
-nsigned=20int=20reg_off,=20bit_off;=0D=0A>=20>=C2=A0=20=C2=A0=20=C2=A0=20=
-=C2=A0=20=C2=A0=20=C2=A0u32=20th;=0D=0A>=20>=20+=C2=A0=20=C2=A0=20=C2=A0=20=
-=C2=A0=20void=20__iomem=20*reg;=0D=0A>=20>=C2=A0=20=C2=A0=0D=0A>=20>=20-=C2=
-=A0=20=C2=A0=20=C2=A0=20=C2=A0=20reg_off=20=3D=20((7=20-=20trip)=20/=202)=
-=20*=204;=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20bit_off=20=3D=
-=20((8=20-=20trip)=20%=202);=0D=0A>=20>=20+=C2=A0=20=C2=A0=20=C2=A0=20=C2=
-=A0=20reg_off=20=3D=20((7=20-=20idx)=20/=202)=20*=204;=0D=0A>=C2=A0=0D=0A>=
-=20Why=20can't=20we=20just=20have=20a=20set=20of=20defined=20register=20mac=
-ros=20and=20pick=20one=0D=0A>=20in=20some=20small=20function?=0D=0A>=20A=20=
-lot=20of=20operations=20here,=20also=20some=20assumption.=0D=0A>=C2=A0=0D=
-=0A>=20>=20+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20bit_off=20=3D=20((8=20-=20i=
-dx)=20%=202);=0D=0A>=C2=A0=0D=0A>=20So=20this=20can=20only=20be=200=20or=20=
-1=20and=20than=20it's=20used=20for=20the=20shift=0D=0A>=20multiplication.=
-=20Also=20I=20don't=20know=20the=20history=20of=20older=20code=20and=0D=0A>=
-=20if=20it=20was=20missed=20after=20some=20cleaning,=20but=20'idx=20%=202'=
-=20gives=0D=0A>=20equal=20values=20but=20w/o=20subtraction.=0D=0A>=C2=A0=0D=
-=0A>=20BTW,=20the=20code=20assumes=20the=20'idx'=20values=20are=20under=20c=
-ontrol=20somewhere=20else.=0D=0A>=20Is=20that=20because=20the=20DT=20make=
-=20sure=20in=20the=20schema=20that=20the=20range=20cannot=20be=0D=0A>=20too=
-=20big?=0D=0A>=20What=20are=20the=20possible=20values=20for=20'idx'?=0D=0A=
-=0D=0AIn=20the=20old=20code,=20the=20values=20of=20trip=20(which=20is=20the=
-=20same=20thing,=20I=20will=0D=0Achange=20the=20name=20back=20from=20idx)=
-=20were=20limited=20by=20the=20value=20of=20data->ntrip,=0D=0Awhich=20was=
-=20always=208=20(value=20is=20per=20SoC).=20In=20the=20new=20code,=20there=
-=20are=20only=20three=0D=0Avariants:=0D=0A=0D=0Astatic=20void=20exynos7_tmu=
-_set_low_temp(struct=20exynos_tmu_data=20*data,=20u8=20temp)=0D=0A=7B=0D=0A=
-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20exynos7_tmu_update_temp(data,=20temp,=
-=200,=20false);=0D=0A=7D=0D=0A=0D=0Astatic=20void=20exynos7_tmu_set_high_te=
-mp(struct=20exynos_tmu_data=20*data,=20u8=20temp)=0D=0A=7B=0D=0A=C2=A0=20=
-=C2=A0=20=C2=A0=20=C2=A0=20exynos7_tmu_update_temp(data,=20temp,=201,=20tru=
-e);=0D=0A=7D=0D=0A=0D=0Astatic=20void=20exynos7_tmu_set_crit_temp(struct=20=
-exynos_tmu_data=20*data,=20u8=20temp)=0D=0A=7B=0D=0A=C2=A0=20=C2=A0=20=C2=
-=A0=20=C2=A0=20/*=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0*=20Like=
-=20Exynos=204210,=20Exynos=207=20does=20not=20seem=20to=20support=20critica=
-l=20temperature=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0*=20handling=
-=20in=20hardware.=20Again,=20we=20still=20set=20a=20separate=20interrupt=20=
-for=20it.=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0*/=0D=0A=C2=A0=20=
-=C2=A0=20=C2=A0=20=C2=A0=20exynos7_tmu_update_temp(data,=20temp,=207,=20tru=
-e);=0D=0A=7D=0D=0A=0D=0ATo=20be=20fair,=20considering=20the=20values=20are=
-=20constant=20like=20this,=20I=20should=20probably=0D=0Ajust=20do=20the=20c=
-alculations=20myself=20and=20then=20in=20code=20just=20call=20exynos_tmu_up=
-date_temp=0D=0A(from=20above)=20and=20exynos_tmu_update_bit,=20like=20on=20=
-all=20other=20SoCs.=20I=20guess=20I=20were=0D=0Aa=20bit=20too=20scared=20to=
-=20touch=20Exynos=207=20code...=0D=0A=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=
-=A0=20=C2=A0=20if=20(on)=20=7B=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=
-=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20for=20(i=20=3D=200;=20i=20<=20dat=
-a->ntrip;=20i++)=20=7B=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20if=
-=20(thermal_zone_get_trip(tz,=20i,=20&trip))=0D=0A>=20>=20-=C2=A0=20=C2=A0=
-=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20continue;=0D=0A>=20>=
-=20-=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20interrupt_en=20=7C=3D=
-=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
-=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
-=C2=A0=20(1=20<<=20(EXYNOS_TMU_INTEN_RISE0_SHIFT=20+=20i=20*=204));=0D=0A>=
-=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=
-=A0=20=7D=0D=0A>=20>=20-=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20if=20(data->soc=20=21=3D=20SOC_ARCH_EXY=
-NOS4210)=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
-=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20interrupt_en=20=7C=
-=3D=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=
-=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
-=20=C2=A0=20interrupt_en=20<<=20EXYNOS_TMU_INTEN_FALL0_SHIFT;=0D=0A>=20>=20=
--=0D=0A>=20>=20+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20if=20(on)=0D=0A>=20>=C2=
-=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
-=20=C2=A0con=20=7C=3D=20(1=20<<=20EXYNOS_TMU_CORE_EN_SHIFT);=0D=0A>=20>=20-=
-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=7D=20else=20=7B=0D=0A>=20>=20+=C2=A0=
-=20=C2=A0=20=C2=A0=20=C2=A0=20else=0D=0A>=20>=C2=A0=20=C2=A0=20=C2=A0=20=C2=
-=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0con=20&=3D=20=7E(1=
-=20<<=20EXYNOS_TMU_CORE_EN_SHIFT);=0D=0A>=C2=A0=0D=0A>=20Please=20also=20co=
-nsider=20the=20BIT()=20helper=20here=20and=20above...=0D=0A=0D=0AWill=20do,=
-=20but=20should=20I=20do=20this=20in=20a=20separate=20patch=20in=20these=20=
-cases?=20I=20don't=20touch=0D=0Athe=20con=20lines=20otherwise,=20and=20this=
-=20patch=20is=20already=20humongous.=0D=0A=0D=0AThank=20you=20:)=0D=0AMateu=
-sz
+It must be cleared by the hardware when read mode is set. Frankly 
+speaking I didn't dig much into the driver internals and respective i2c 
+bus states. I just logged all the call paths and driver states from the 
+driver operating with interrupts enabled and fixed the polling mode to 
+match what I have captured with interrupts enabled. After that changes, 
+all my test boards finally booted properly with polling mode enabled 
+unconditionally. This ACK related logic is a bit strange, but I don't 
+really want to change driver logic and risk other regressions, so my 
+changes were limited only to the code reachable during polling mode.
+
+>>> Besides, if we use polling mode, shouldn't we disable the acks
+>>> already in probe (even though they are disabled by default),
+>>> never enable them before starting the message and avoid checking
+>>> here everytime?
+>> I assume that this polling mode is a special case, so there is no point
+>> in optimizing it much. It is used only by the i2c core for some special
+>> transfers to the PMIC during system reboot/shutdown or by the s3c24xx
+>> i2c controller embedded in SoC for controlling some PHYs. Till now only
+>> the second case was actually used. There were only a few single writes
+>> done this way, so noone even noticed that the other types of transfers
+>> (multi message or read) were broken... I found all those issues by
+>> enabling polling mode unconditionally and fixing it to make all my test
+>> systems working again.
+> Yeah, I understand your point here.
+>
+> It would be nice to have a pure polling mode supported though.
+
+Well, it is now with this patchset. It is just a matter of core to 
+select it.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
