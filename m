@@ -2,187 +2,201 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D18EC4167B
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Nov 2023 13:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C86CBC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Nov 2023 09:18:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229970AbjKENOf (ORCPT
+        id S231246AbjKFJSf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 5 Nov 2023 08:14:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55548 "EHLO
+        Mon, 6 Nov 2023 04:18:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjKENOe (ORCPT
+        with ESMTP id S230475AbjKFJSe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 5 Nov 2023 08:14:34 -0500
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EDEABB
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  5 Nov 2023 05:14:31 -0800 (PST)
-Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2c503dbe50dso50121461fa.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Nov 2023 05:14:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699190069; x=1699794869; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yqSv2UnZ+U1pe5KGwf29GbAFTynYSNuIgS0ilx1Gh6k=;
-        b=uiNdfudBiCcsNQNDXsk+cinHgAvz74PPBwjQ8AgBK8+Ok4/cSY/xJCETjpaKBMtFMx
-         RdjKw8d5QfudrCtWNB82U0RjNJmFoufxnrt0AJfGNAfJDCviawRk1ldDRIkR9oFpDYnz
-         jkgm2WGcQD/2t6WUMCwSmypXf2olRfcq3g8xZPqanu6WN8qsqLDx6FiuYr8FJM5G7lur
-         6T9OBtNQHlg7m33W1U0yhecAcCs8OCPUVyAwPV6c9pMv0o0wLiZBUQw3YjxwDz0aI9kO
-         s0mAceMcdlFMKbAUwKcua7JcK9snqjsnyHQG6VjzBkYmoBf1i5b+ZHlVpQbz7LZyG3WV
-         dv+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699190069; x=1699794869;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yqSv2UnZ+U1pe5KGwf29GbAFTynYSNuIgS0ilx1Gh6k=;
-        b=rMjO/b2St9xg3xJeF6l6v6FP1P6okxf9mCVo7MEltLlZ4xTa6dveqSZjdYkBnmma4d
-         8SpS6DXm2OVAoxj0DGEyHiu/j7Sfhh3awQyLb8NnO5M65Kaz7aHEFAl421cuNQqcb7bf
-         glc+g5ZG2K2kBY/klSWIYscOxMCd+Z4jbbl463w7QSgMwpr4NbylGzVeHNggFR8P0v0e
-         vl71fgTiBm6E+Cxz74p1GqecRpBn0hJQZec40lCm2zp4eymCtqPbCqbfnV3NiP/3du2j
-         AaSmXMAHUNYsW2MvNqCNuAersLboNZ46tlaB/NzsedT3Z9Lk0RL80kRurj59VPzRpjAI
-         Kf4A==
-X-Gm-Message-State: AOJu0YwI74uuE9KQx/z+ReWblyBecXQjLGaAyGLFI/0fFbVTeUb1iwJG
-        gEDolbTyipfhWA396Nyk4wi5hw==
-X-Google-Smtp-Source: AGHT+IGnKSMKqoVLMGiYGZbCupSjzNBC45bZJAUhZDif0PqgX/r7v34/Obqmw9T2Y6euojIAW4UL7A==
-X-Received: by 2002:a2e:9246:0:b0:2c5:724:fd64 with SMTP id v6-20020a2e9246000000b002c50724fd64mr20383790ljg.46.1699190069521;
-        Sun, 05 Nov 2023 05:14:29 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id ay8-20020a05600c1e0800b0040772138bb7sm9025518wmb.2.2023.11.05.05.14.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Nov 2023 05:14:29 -0800 (PST)
-Message-ID: <17aed57a-5e40-494b-a1d6-293533498804@linaro.org>
-Date:   Sun, 5 Nov 2023 14:14:25 +0100
+        Mon, 6 Nov 2023 04:18:34 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 52C2BDB;
+        Mon,  6 Nov 2023 01:18:31 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EAB531FB;
+        Mon,  6 Nov 2023 01:19:14 -0800 (PST)
+Received: from [10.57.1.27] (unknown [10.57.1.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1AB433F6C4;
+        Mon,  6 Nov 2023 01:18:27 -0800 (PST)
+Message-ID: <bae19559-0aea-422f-931f-b51aa8f3f5a3@arm.com>
+Date:   Mon, 6 Nov 2023 09:19:21 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
- Oriole/Pixel6 board
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Subject: Re: [PATCH v4 8/8] thermal: exynos: use set_trips
+To:     m.majewski2@samsung.com
+Cc:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        ALIM AKHTAR <alim.akhtar@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+References: <2c4b6c1b-b9e7-42b2-8f7b-446ebe9d15ac@arm.com>
+ <20231025133027.524152-1-m.majewski2@samsung.com>
+ <20231025133027.524152-9-m.majewski2@samsung.com>
+ <CGME20231025133100eucas1p14e6de58e52560d165bdb8b809e406278@eucms1p4>
+ <20231102103507eucms1p4aea91982ebcc4a9a6314d9c4e03050fc@eucms1p4>
 Content-Language: en-US
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     William McVicker <willmcvicker@google.com>,
-        Maksym Holovach <maksym.holovach.an.2022@lpnu.ua>,
-        Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
-        andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        saravanak@google.com, soc@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>
-References: <20231010224928.2296997-1-peter.griffin@linaro.org>
- <3d489d6c-2098-4f0c-9ec4-f6040665753e@lpnu.ua>
- <CADrjBPp+fyNoPdix6=Wp4cDCRFq2Mui8NS6WENejcHn+H1M-jA@mail.gmail.com>
- <48e1c0bd-9518-4927-b490-f3206256bbd4@lpnu.ua>
- <c0b8f356-0f26-459d-850d-ec0fa1fd3987@linaro.org>
- <ZUUvp3kqM7NPlyZ_@google.com>
- <cee1b28d-5bd9-46eb-b9f4-facbad10b5d7@linaro.org>
- <2023110535-rare-underdone-b508@gregkh>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <2023110535-rare-underdone-b508@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20231102103507eucms1p4aea91982ebcc4a9a6314d9c4e03050fc@eucms1p4>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 05/11/2023 14:08, Greg KH wrote:
-> On Sun, Nov 05, 2023 at 01:52:22PM +0100, Krzysztof Kozlowski wrote:
->> On 03/11/2023 18:36, William McVicker wrote:
->>
->>>>
->>>> That's indeed a problem. Future Tesla SoC might have just few pieces
->>>> similar to FSD. There would be no common SoC part, except the actual
->>>> Tesla IP.
->>>>
->>>> Same for Google. Future GSXXX, if done by Qualcomm, will be absolutely
->>>> different than GS101 and the only common part would be the TPU (Tensor).
->>>>
->>>> So now let's decide what is the common denominator:
->>>> 1. Core SoC architecture, like buses, pinctrl, clocks, timers, serial,
->>>> and many IP blocks, which constitute 95% of Devicetree bindings and drivers,
->>>> 2. The one, big piece made by Samsung's customer: TPU, NPU or whatever.
->>>
->>> As mentioned above, I think this should be based on how the DTBs and DTBOs are
->>> used and distributed.
->>
->> None of existing platforms do it. Nowhere. All chromebooks are split per
->> SoC, not "how DTBs should be used and distributed". There is no google,
->> no Chromebook directory. None of Samsung phones have it. No
->> Samsung-phone directory. None of Google phones have Pixel directory.
+
+
+On 11/2/23 10:35, Mateusz Majewski wrote:
+> Hi,
 > 
-> but for code we have:
-> 	drivers/patform/chrome/
-> 	drivers/firmware/google/
-> 	drivers/net/ethernet/google/
+>>> +        th &= ~(0xff << 0);
+>>> +        th |= temp_to_code(data, temp) << 0;
+>>   
+>> This 2-line pattern repeats a few times. It looks like a nice cadidate
+>> for an inline function which can abstract that. Something like:
+>>   
+>> val = update_temp_value(data, temp, threshold, LOW_TEMP_SHIFT)
+>>   
+>> Assisted with the macros {LOW|HIGH|CRIT}_TEMP_SHIFT, the code
+>> would look less convoluted IMO.
+>> (The old code with the multiplication for the shift value wasn't
+>> cleaner nor faster).
 > 
-> don't know if that matters or not, but thought I would mention it...
+> What would you think about something like this?
+> 
+> static void exynos_tmu_update_temp(struct exynos_tmu_data *data, int reg_off,
+>                                     int bit_off, u8 temp)
+> {
+>          u32 th;
+> 
+>          th = readl(data->base + reg_off);
+>          th &= ~(0xff << bit_off);
+>          th |= temp_to_code(data, temp) << bit_off;
+>          writel(th, data->base + reg_off);
+> }
+> 
+> And then, it would be used like this:
+> 
+> static void exynos4412_tmu_set_crit_temp(struct exynos_tmu_data *data, u8 temp)
+> {
+>          exynos_tmu_update_temp(data, EXYNOS_THD_TEMP_RISE, 24, temp);
+>          exynos_tmu_update_bit(data, EXYNOS_TMU_REG_CONTROL,
+>                                EXYNOS_TMU_THERM_TRIP_EN_SHIFT, true);
+> }
 
-Yes, for the drivers for the similar hardware we have it. We have
-drivers for Chromebook's Embedded Controller - let's put it in one
-place, so that maintenance and review will be easier.
+Yes, this looks good.
 
-Now for DTS, the common hardware is not "Samsung phones", but "Samsung
-SoC". We organize it like:
-1. Samsung phones with Samsung SoC -> arm64/dts/samsung
-2. Samsung phones with Qualcomm SoC -> arm64/dts/qcom
+> 
+> Granted it's not as clear as if we had some macro like CRIT_TEMP_SHIFT, but
+> we would need more than one variant anyway, as Exynos 5433 uses different
+> values of reg_off, and the new function looks short and inviting IMHO.
 
-because the main common part is the SoC, not the rest of the phone.
-There is no reviewer or maintainer for Samsung phones. There is no need
-for such. No benefits, almost not many common parts except some touchscreen.
+Fair enough.
 
-Why Google Pixel suddenly should be exception from the way we handle DTS
-of all ARM64 platforms?
+> 
+>>> -static void exynos7_tmu_set_trip_temp(struct exynos_tmu_data *data,
+>>> -                                      int trip, u8 temp)
+>>> +static void exynos7_tmu_update_temp(struct exynos_tmu_data *data, u8 temp,
+>>> +                                    int idx, bool rise)
+>>>     {
+>>>             unsigned int reg_off, bit_off;
+>>>             u32 th;
+>>> +        void __iomem *reg;
+>>>     
+>>> -        reg_off = ((7 - trip) / 2) * 4;
+>>> -        bit_off = ((8 - trip) % 2);
+>>> +        reg_off = ((7 - idx) / 2) * 4;
+>>   
+>> Why can't we just have a set of defined register macros and pick one
+>> in some small function?
+>> A lot of operations here, also some assumption.
+>>   
+>>> +        bit_off = ((8 - idx) % 2);
+>>   
+>> So this can only be 0 or 1 and than it's used for the shift
+>> multiplication. Also I don't know the history of older code and
+>> if it was missed after some cleaning, but 'idx % 2' gives
+>> equal values but w/o subtraction.
+>>   
+>> BTW, the code assumes the 'idx' values are under control somewhere else.
+>> Is that because the DT make sure in the schema that the range cannot be
+>> too big?
+>> What are the possible values for 'idx'?
+> 
+> In the old code, the values of trip (which is the same thing, I will
+> change the name back from idx) were limited by the value of data->ntrip,
+> which was always 8 (value is per SoC). In the new code, there are only three
+> variants:
+> 
+> static void exynos7_tmu_set_low_temp(struct exynos_tmu_data *data, u8 temp)
+> {
+>          exynos7_tmu_update_temp(data, temp, 0, false);
+> }
+> 
+> static void exynos7_tmu_set_high_temp(struct exynos_tmu_data *data, u8 temp)
+> {
+>          exynos7_tmu_update_temp(data, temp, 1, true);
+> }
+> 
+> static void exynos7_tmu_set_crit_temp(struct exynos_tmu_data *data, u8 temp)
+> {
+>          /*
+>           * Like Exynos 4210, Exynos 7 does not seem to support critical temperature
+>           * handling in hardware. Again, we still set a separate interrupt for it.
+>           */
+>          exynos7_tmu_update_temp(data, temp, 7, true);
+> }
+> 
+> To be fair, considering the values are constant like this, I should probably
+> just do the calculations myself and then in code just call exynos_tmu_update_temp
+> (from above) and exynos_tmu_update_bit, like on all other SoCs. I guess I were
+> a bit too scared to touch Exynos 7 code...
 
-Best regards,
-Krzysztof
+Yes, anything that can be pre-calculated with nice comment, would be
+more desired. I would suggest to not be afraid about touching that
+Exynos 7 code.
 
+> 
+>>> -        if (on) {
+>>> -                for (i = 0; i < data->ntrip; i++) {
+>>> -                        if (thermal_zone_get_trip(tz, i, &trip))
+>>> -                                continue;
+>>> -
+>>> -                        interrupt_en |=
+>>> -                                (1 << (EXYNOS_TMU_INTEN_RISE0_SHIFT + i * 4));
+>>> -                }
+>>> -
+>>> -                if (data->soc != SOC_ARCH_EXYNOS4210)
+>>> -                        interrupt_en |=
+>>> -                                interrupt_en << EXYNOS_TMU_INTEN_FALL0_SHIFT;
+>>> -
+>>> +        if (on)
+>>>                     con |= (1 << EXYNOS_TMU_CORE_EN_SHIFT);
+>>> -        } else {
+>>> +        else
+>>>                     con &= ~(1 << EXYNOS_TMU_CORE_EN_SHIFT);
+>>   
+>> Please also consider the BIT() helper here and above...
+> 
+> Will do, but should I do this in a separate patch in these cases? I don't touch
+> the con lines otherwise, and this patch is already humongous.
+
+That would definitely deserve an extra patch to address it. Please add
+to the patch set.
+
+Regards,
+Lukasz
