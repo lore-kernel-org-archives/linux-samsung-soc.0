@@ -2,201 +2,107 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C86CBC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Nov 2023 09:18:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B211FC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Nov 2023 10:43:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231246AbjKFJSf (ORCPT
+        id S229478AbjKFKnO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Nov 2023 04:18:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55672 "EHLO
+        Mon, 6 Nov 2023 05:43:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230475AbjKFJSe (ORCPT
+        with ESMTP id S229874AbjKFKnN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Nov 2023 04:18:34 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 52C2BDB;
-        Mon,  6 Nov 2023 01:18:31 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EAB531FB;
-        Mon,  6 Nov 2023 01:19:14 -0800 (PST)
-Received: from [10.57.1.27] (unknown [10.57.1.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1AB433F6C4;
-        Mon,  6 Nov 2023 01:18:27 -0800 (PST)
-Message-ID: <bae19559-0aea-422f-931f-b51aa8f3f5a3@arm.com>
-Date:   Mon, 6 Nov 2023 09:19:21 +0000
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Subject: Re: [PATCH v4 8/8] thermal: exynos: use set_trips
-To:     m.majewski2@samsung.com
-Cc:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
+        Mon, 6 Nov 2023 05:43:13 -0500
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F56BA1
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Nov 2023 02:43:11 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qzx4T-0006mM-Gc; Mon, 06 Nov 2023 11:43:05 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qzx4S-0070Mg-UN; Mon, 06 Nov 2023 11:43:04 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qzx4S-00DYxW-L9; Mon, 06 Nov 2023 11:43:04 +0100
+Date:   Mon, 6 Nov 2023 11:43:04 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        ALIM AKHTAR <alim.akhtar@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-References: <2c4b6c1b-b9e7-42b2-8f7b-446ebe9d15ac@arm.com>
- <20231025133027.524152-1-m.majewski2@samsung.com>
- <20231025133027.524152-9-m.majewski2@samsung.com>
- <CGME20231025133100eucas1p14e6de58e52560d165bdb8b809e406278@eucms1p4>
- <20231102103507eucms1p4aea91982ebcc4a9a6314d9c4e03050fc@eucms1p4>
-Content-Language: en-US
-In-Reply-To: <20231102103507eucms1p4aea91982ebcc4a9a6314d9c4e03050fc@eucms1p4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] pwm: samsung: Fix a bit test in
+ pwm_samsung_resume()
+Message-ID: <20231106104304.cq6353tj5pfdffyc@pengutronix.de>
+References: <e031db45-add0-4da7-97fa-dee95ee936ad@moroto.mountain>
+ <20231025121103.ptck4z62wvndgdlr@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="sf7jdeeib2wrdg7j"
+Content-Disposition: inline
+In-Reply-To: <20231025121103.ptck4z62wvndgdlr@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
+--sf7jdeeib2wrdg7j
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 11/2/23 10:35, Mateusz Majewski wrote:
-> Hi,
-> 
->>> +        th &= ~(0xff << 0);
->>> +        th |= temp_to_code(data, temp) << 0;
->>   
->> This 2-line pattern repeats a few times. It looks like a nice cadidate
->> for an inline function which can abstract that. Something like:
->>   
->> val = update_temp_value(data, temp, threshold, LOW_TEMP_SHIFT)
->>   
->> Assisted with the macros {LOW|HIGH|CRIT}_TEMP_SHIFT, the code
->> would look less convoluted IMO.
->> (The old code with the multiplication for the shift value wasn't
->> cleaner nor faster).
-> 
-> What would you think about something like this?
-> 
-> static void exynos_tmu_update_temp(struct exynos_tmu_data *data, int reg_off,
->                                     int bit_off, u8 temp)
-> {
->          u32 th;
-> 
->          th = readl(data->base + reg_off);
->          th &= ~(0xff << bit_off);
->          th |= temp_to_code(data, temp) << bit_off;
->          writel(th, data->base + reg_off);
-> }
-> 
-> And then, it would be used like this:
-> 
-> static void exynos4412_tmu_set_crit_temp(struct exynos_tmu_data *data, u8 temp)
-> {
->          exynos_tmu_update_temp(data, EXYNOS_THD_TEMP_RISE, 24, temp);
->          exynos_tmu_update_bit(data, EXYNOS_TMU_REG_CONTROL,
->                                EXYNOS_TMU_THERM_TRIP_EN_SHIFT, true);
-> }
+Hello Thierry,
 
-Yes, this looks good.
+On Wed, Oct 25, 2023 at 02:11:03PM +0200, Uwe Kleine-K=F6nig wrote:
+> On Wed, Oct 25, 2023 at 02:57:34PM +0300, Dan Carpenter wrote:
+> > The PWMF_REQUESTED enum is supposed to be used with test_bit() and not
+> > used as in a bitwise AND.  In this specific code the flag will never be
+> > set so the function is effectively a no-op.
+> >=20
+> > Fixes: e3fe982b2e4e ("pwm: samsung: Put per-channel data into driver da=
+ta")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>=20
+> Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+>=20
+> @Thierry: e3fe982b2e4e is currently in your for-next branch. So it would
+> be good to get Dan's patch into your PR for 6.7-rc1.
 
-> 
-> Granted it's not as clear as if we had some macro like CRIT_TEMP_SHIFT, but
-> we would need more than one variant anyway, as Exynos 5433 uses different
-> values of reg_off, and the new function looks short and inviting IMHO.
+I saw you updated your for-next branch but didn't add this patch yet.
+Would be great to get this one in to not get a known-broken state into
+6.7-rc1.
 
-Fair enough.
+Best regards
+Uwe
 
-> 
->>> -static void exynos7_tmu_set_trip_temp(struct exynos_tmu_data *data,
->>> -                                      int trip, u8 temp)
->>> +static void exynos7_tmu_update_temp(struct exynos_tmu_data *data, u8 temp,
->>> +                                    int idx, bool rise)
->>>     {
->>>             unsigned int reg_off, bit_off;
->>>             u32 th;
->>> +        void __iomem *reg;
->>>     
->>> -        reg_off = ((7 - trip) / 2) * 4;
->>> -        bit_off = ((8 - trip) % 2);
->>> +        reg_off = ((7 - idx) / 2) * 4;
->>   
->> Why can't we just have a set of defined register macros and pick one
->> in some small function?
->> A lot of operations here, also some assumption.
->>   
->>> +        bit_off = ((8 - idx) % 2);
->>   
->> So this can only be 0 or 1 and than it's used for the shift
->> multiplication. Also I don't know the history of older code and
->> if it was missed after some cleaning, but 'idx % 2' gives
->> equal values but w/o subtraction.
->>   
->> BTW, the code assumes the 'idx' values are under control somewhere else.
->> Is that because the DT make sure in the schema that the range cannot be
->> too big?
->> What are the possible values for 'idx'?
-> 
-> In the old code, the values of trip (which is the same thing, I will
-> change the name back from idx) were limited by the value of data->ntrip,
-> which was always 8 (value is per SoC). In the new code, there are only three
-> variants:
-> 
-> static void exynos7_tmu_set_low_temp(struct exynos_tmu_data *data, u8 temp)
-> {
->          exynos7_tmu_update_temp(data, temp, 0, false);
-> }
-> 
-> static void exynos7_tmu_set_high_temp(struct exynos_tmu_data *data, u8 temp)
-> {
->          exynos7_tmu_update_temp(data, temp, 1, true);
-> }
-> 
-> static void exynos7_tmu_set_crit_temp(struct exynos_tmu_data *data, u8 temp)
-> {
->          /*
->           * Like Exynos 4210, Exynos 7 does not seem to support critical temperature
->           * handling in hardware. Again, we still set a separate interrupt for it.
->           */
->          exynos7_tmu_update_temp(data, temp, 7, true);
-> }
-> 
-> To be fair, considering the values are constant like this, I should probably
-> just do the calculations myself and then in code just call exynos_tmu_update_temp
-> (from above) and exynos_tmu_update_bit, like on all other SoCs. I guess I were
-> a bit too scared to touch Exynos 7 code...
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
 
-Yes, anything that can be pre-calculated with nice comment, would be
-more desired. I would suggest to not be afraid about touching that
-Exynos 7 code.
+--sf7jdeeib2wrdg7j
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
->>> -        if (on) {
->>> -                for (i = 0; i < data->ntrip; i++) {
->>> -                        if (thermal_zone_get_trip(tz, i, &trip))
->>> -                                continue;
->>> -
->>> -                        interrupt_en |=
->>> -                                (1 << (EXYNOS_TMU_INTEN_RISE0_SHIFT + i * 4));
->>> -                }
->>> -
->>> -                if (data->soc != SOC_ARCH_EXYNOS4210)
->>> -                        interrupt_en |=
->>> -                                interrupt_en << EXYNOS_TMU_INTEN_FALL0_SHIFT;
->>> -
->>> +        if (on)
->>>                     con |= (1 << EXYNOS_TMU_CORE_EN_SHIFT);
->>> -        } else {
->>> +        else
->>>                     con &= ~(1 << EXYNOS_TMU_CORE_EN_SHIFT);
->>   
->> Please also consider the BIT() helper here and above...
-> 
-> Will do, but should I do this in a separate patch in these cases? I don't touch
-> the con lines otherwise, and this patch is already humongous.
+-----BEGIN PGP SIGNATURE-----
 
-That would definitely deserve an extra patch to address it. Please add
-to the patch set.
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVIwzcACgkQj4D7WH0S
+/k6HfggAuLzuNztYJ90zdJk4FBdCGz7VtSi2zRm4cN+QJ3PRBuR1akw07gRXBBLD
+D08odKKsrPo33GScRHaBPUtFEbBcKyoE5xl0pHps7pgpS+WhCHsryDrrZ4uCEqBK
+7aUWFwzLUKgv/MMuFTrbhHSkK6LwMRi1vbiGO4/QlMjty8vZadE1Tx+S5Qww4Oc2
+f4jDt9f74a8OWDWdygHdai3W1Xn8c/N5CZ4kV4p5BjdcaG277WwTRreEVsQAleIV
++HSEmxxib6VvUxpf7Ha8r0rnIFgrzLHfB41XajJYWw7snmr4ZVteUDnUEsJswP0T
+BaJ+o4P1knAaw0z66JqRb6t+eQ9TaQ==
+=Xh6W
+-----END PGP SIGNATURE-----
 
-Regards,
-Lukasz
+--sf7jdeeib2wrdg7j--
