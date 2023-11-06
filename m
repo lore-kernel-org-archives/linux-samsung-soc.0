@@ -2,138 +2,266 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72EFEC4167D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Nov 2023 17:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E85F2C4167B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Nov 2023 19:42:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231526AbjKFRSM (ORCPT
+        id S232380AbjKFTmU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Nov 2023 12:18:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60368 "EHLO
+        Mon, 6 Nov 2023 14:42:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229755AbjKFRSL (ORCPT
+        with ESMTP id S232508AbjKFTmT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Nov 2023 12:18:11 -0500
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEC8083
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Nov 2023 09:18:08 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r03EV-0005QQ-75; Mon, 06 Nov 2023 18:17:51 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r03ER-0075yD-9N; Mon, 06 Nov 2023 18:17:47 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r03EQ-00DrIi-VZ; Mon, 06 Nov 2023 18:17:46 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Lee Jones <lee@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        chrome-platform@lists.linux.dev,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH 00/18] mfd: Convert to platform remove callback returning void
-Date:   Mon,  6 Nov 2023 18:17:09 +0100
-Message-ID: <20231106171708.3892347-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.42.0.586.gbc5204569f7d.dirty
+        Mon, 6 Nov 2023 14:42:19 -0500
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D607CF3
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Nov 2023 11:42:14 -0800 (PST)
+Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1cc209561c3so32685ad.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Nov 2023 11:42:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1699299734; x=1699904534; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MVYpx2vstvPHrNqm/sbG4Wpn52mx0IbOtVopQJBTAZU=;
+        b=ibRQRSPXjyuHtPSEWsE8Q4hOjCn3WuD6/Ij4ZvIuzr4QRPwDgrH1V4fY0yK2ZkfxCk
+         8buU9UT7fgIVLfdHzGufVK9ryMUvjvTDKz0o1tPIPxjLargTvWYJuqLZZNs3b4Awoftu
+         ouwUNEopTkQBpVDU5NQFOnWUKRXzebcVKBUJt6A9P561S3AGqXVlG+MgfjEsaHvfOVn2
+         Tb5x5dcmX6EzcdM7KH+V8oO42bvnWR4JNeKX5t+qAa845scO3SSXZGam3gAlgX06UJJU
+         YTTXG773i984uYND2RP9eH+ngUxtuGs10Ts/SKQZaznw+P4KLI5s1E+MjyXwKm2I0PC/
+         /z7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699299734; x=1699904534;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MVYpx2vstvPHrNqm/sbG4Wpn52mx0IbOtVopQJBTAZU=;
+        b=K9dGEwH2hcVnEce1cJBva6swVxcg4YVzrpLrjlQgmtq1lcbXDhRxEWrMyoq5y+JESI
+         wnc+DL3tBwPH0IvEGusO1zFQlbFoFZQlIom2dw/8uhUUE20/FogS9wpsMBlOkYxN964u
+         S9agkpbM+QuvJeVPlxY22dE1r1x3NwK9WxoYFeOM2fPrQDhyzmUJKhP9T5gaE9DdxlaC
+         CyEohAL6ACLjMChgGDJ1Lm+WoKxCAl38p99MUOJPdhCDmH5jV0TKtUZWzjllmVLwN67s
+         gIX9d4Yn8dVowJV951fvhlwcB4Jbswu+LBHzeOKRejUZOPvKQVklrJdNkt4pTHEj4k0M
+         cQYw==
+X-Gm-Message-State: AOJu0YwH0xvQui3Uf7gHEZgJWTWbMpfzpXGNCXDs0WPpXdpXfxbphEyz
+        rWvvzTrNJSGtdjtTN4+YexGvUw==
+X-Google-Smtp-Source: AGHT+IHAD/mZ6f2P4F8AKM3u6joriL/MkXqr6Q2XZrmRdqwlBPOdXpx3rtrHv7iceXwrPJ16n5u4/g==
+X-Received: by 2002:a17:902:8e82:b0:1cc:569b:1ddf with SMTP id bg2-20020a1709028e8200b001cc569b1ddfmr42062plb.18.1699299733933;
+        Mon, 06 Nov 2023 11:42:13 -0800 (PST)
+Received: from google.com (137.22.168.34.bc.googleusercontent.com. [34.168.22.137])
+        by smtp.gmail.com with ESMTPSA id a24-20020aa78658000000b006b287c0ed63sm5917035pfo.137.2023.11.06.11.42.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Nov 2023 11:42:13 -0800 (PST)
+Date:   Mon, 6 Nov 2023 11:42:09 -0800
+From:   William McVicker <willmcvicker@google.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Peter Griffin <peter.griffin@linaro.org>,
+        Maksym Holovach <maksym.holovach.an.2022@lpnu.ua>,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, olof@lixom.net, cw00.choi@samsung.com,
+        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+        semen.protsenko@linaro.org, saravanak@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
+ Oriole/Pixel6 board
+Message-ID: <ZUlBkeQ5ZaSmcTt0@google.com>
+References: <20231010224928.2296997-1-peter.griffin@linaro.org>
+ <3d489d6c-2098-4f0c-9ec4-f6040665753e@lpnu.ua>
+ <CADrjBPp+fyNoPdix6=Wp4cDCRFq2Mui8NS6WENejcHn+H1M-jA@mail.gmail.com>
+ <48e1c0bd-9518-4927-b490-f3206256bbd4@lpnu.ua>
+ <CADrjBPqB5MOQeMV6uSJHLVyMJYWm7Nm_1XGSq331gPRfO1jkzg@mail.gmail.com>
+ <308e2d07-1993-42d2-95eb-8132efaed1df@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3116; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=0FF0Hir69E2HKsvJfQNY/ddJ62LkMYTY7VB8GGwosMM=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlSR+UEVz6EdKPvoEWe/b9VJEfQp/9GrduLgHED EGfX/1hsAWJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZUkflAAKCRCPgPtYfRL+ TrkgCACt6jktG815FM78opuMSJzVh8L8EMrXJg2QcTB4PFmiFdLTrdybne7rIjMRxTpAjmsba0v VL8Ob6Kz8AmNLdjbx3qjHYArjUhG2hGyldjimtJxv5vEEpdcpJbJnl2Tj3vdtAWxfk4DE0K3xcl TTIh0MSMGJsPKQiE/fuKjG8fzS3mk8bORQEu+5KMYAVZLQdUsoZcmUULLWFdnOvaqFxrGackoTM 51EtiqsmxEKubEHJa0r+WpKi3bNHl/nRXTPU4MNCLO2JCXXY3cRSJ24qriAGi/+BvbLWiNrdVRN adO9ADuSwQuYtHKSkBXthB6PplIwkbPbXVaxwNvTbbhwprJY
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <308e2d07-1993-42d2-95eb-8132efaed1df@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello,
+Hi Krzysztof,
 
-this series converts all platform drivers below drivers/mfd to use
-.remove_new(). Compared to the traditional .remove() callback
-.remove_new() returns no value. This is a good thing because the driver
-core doesn't (and cannot) cope for errors during remove. The only effect
-of a non-zero return value in .remove() is that the driver core emits a
-warning. The device is removed anyhow and an early return from .remove()
-usually yields resource leaks and/or use-after-free bugs.
+On 11/06/2023, Krzysztof Kozlowski wrote:
+> On 06/11/2023 13:46, Peter Griffin wrote:
+> >>
+> >> Also, what kind of Google IP are you talking about? I believe only the
+> >> neural accelerator should be custom-ish.
+> > 
+> > This should not be considered an exhaustive list, but whilst looking in the
+> > downstream public drivers at least the following Google IPs in the SoC
+> > 
+> > TPU/ML accelerator
+> > Bigocean av1 video accelerator
+> > Emerald hill compression engine
+> > Camera ISP blocks
+> > (AoC) Always on Compute
+> > 
+> > Plus of course Arm IPs (CPU+GPU), Synopsis IPs (USB, PCI. phys) etc.
+> 
+> These are all common to Exynos and usually they use Exynos-specific
+> glue, so we consider them all Exynos-specific.
+> 
+> > 
+> > The Exynos based IPs tend to be for things like pinmux, clocks, i2c, spi,
+> > uart, mfc, display controller, timer etc.
+> > 
+> >>
+> >> Additionally, I believe it having or not having Google IP is irrelevant:
+> >> for example, the new Raspberry Pi 5 Broadcom SoC has a lot of
+> >> Raspberry's own IP, but it's still called Broadcom as it's the real
+> >> manufacturer and designer of the chip.
+> > 
+> > I think RPi / Broadcom is a very different situation to this. The original SoC
+> > in RPi 1 was wholly designed by Broadcom, and marketed as a Broadcom
+> > SoC [1].
+> > 
+> > Further iterations of the SoC until now have also not had RPi IP integrated.
+> > RPi themselves refer to them as "Broadcom SoCs" on their webpage [2],
+> > so it is completely expected that they live in a broadcom directory.
+> > 
+> > BCM2717 has integrated the RPi ISP, but to all intents and purposes this is a
+> > Broadcom owned and designed SoC, albeit only now sold to one customer.
+> 
+> Not that different.
+> Broadcom designed previous chip.
+> Samsung designed previous chip.
+> Broadcom designed BCM2717 with RPi ISP.
+> Samsung designed GS101 with Tensor NPU and other blocks.
+> 
+> >>>
+> >>> I guess the same is also true for `axis,artpec8` and `tesla,fsd` SoCs.
+> >>> IMO the SoC compatible string should be uniquely identifying the actual
+> >>> SoC, not a close relative.
+> >>>
+> >>> Regarding product_id you are correct this reads 0x09845000 but even
+> >>> within Samsung Exynos family there are examples where the register
+> >>> value does not match the SoC compatible. For example Exynos850 SoC
+> >>> has a product ID value of "E3830". Where the Linux compatible is
+> >>> matching the Samsung marketing name, not the internal/outdated name.
+> >>
+> >> I did not know Exynos 850 is also not going under it's real name.
+> > 
+> > It is going by its real name :) just not by its internal name that nobody has
+> > heard of.
+> > 
+> >> Ultimately, I believe all of those SoCs should go under their technical
+> >> name in the exynos/ directory.
+> >>
+> >> Another concern is that Google could in the future license other SoC: be
+> >> it Qualcomm, Nvidia or anything. If we put completely different hw under
+> >> google/ directory, does it really make sense? In that case, who'll
+> >> maintain the google/ directory? Exynos people? Qualcomm people if they
+> >> license it? Some other people?
+> > 
+> > I expect Google, or Google sponsored devs (as is the case for Linaro) to be
+> > helping maintain the Google SoCs upstream. See the MAINTAINERS entry
+> > for this series of who I expect to maintain this google directory.
+> 
+> That's fine. What I don't agree is with putting it into Google, because
+> Google wants to have all its phones in one place. That's not the
+> argument we used for any other SoCs or products.
+> 
+> We do not make decisions based on marketing or packaging wishes of some
+> company. Otherwise Samsung phones will be together. Toradex boards (also
+> spanning over NXP and TI) as well. Chromebooks DTS as well (oh, Doug
+> would be happy, I guess :) ). And so on.
+> 
+> > 
+> >>
+> >> Then, I don't think Tensor G3 has a proper "GS" name, it goes by "Zuma"
+> >> in decompiled kernel modules as far as I see.
+> > 
+> > That is correct, it is named Zuma downstream and they did away with the
+> > gs101, gs201 type naming scheme.
+> > 
+> >>
+> >> Finally, Tesla people already tried to submit drivers called by Tesla
+> >> name, but which basically copied the functionality of the Exynos
+> >> drivers. We would want to avoid that, ideally.
+> > 
+> > As you can see from this series we are not proposing that. Any IPs that
+> > use Exynos IP we are using the existing upstream driver and enhance
+> > it where we have features that aren't present upstream.
+> > 
+> >>
+> >> My opinion is that all the Tesla and Google SoCs should be in the
+> >> exynos/ directory, not only because they are basically Samsung Exynos,
+> >> but also because they don't really need a separate directory: neither
+> >> Google nor Tesla didn't neither manufacture or design those SoCs from
+> >> scratch.
+> > 
+> > Who manufactures it seems irrelevant. Qcom and Broadcom don't
+> > manufacture their SoCs either, but they still live in qcom and broadcom
+> > directories upstream. Whether they designed the SoC from scratch or not
+> > is also IMO largely irrelevant. In many cases the upstream community
+> > has no way to determine whether things were outsourced or not anyway.
+> > Did Apple outsource things in their silicon design? Who knows, and why
+> > do we care? It's an apple branded chip in an apple branded product
+> > let's call the directory apple.
+> > 
+> > Interestingly apple uses the same uart driver as Tensor, when I check back
+> > through the commits in the driver.
+> > 
+> > fcbba344907afe26da487f1ed0b0e285c06a547b
+> > 
+> > tty: serial: samsung_tty: Add support for Apple UARTs
+> > 
+> > Apple SoCs are a distant descendant of Samsung designs and use yet
+> >  another variant of their UART style, with different interrupt handling.
+> > 
+> > 
+> >> The only reason I can think of for them to have it in a
+> >> separate directory is maybe because Google and Tesla actually paid
+> >> Samsung money for the right to call Exynos "Google designed" SoCs, but I
+> >> believe the kernel should be left out of that.
+> > 
+> > Also the fact that they contain IPs not found in Samsung designed devices,
+> > aren't known to most people as Exynos, and the maintenance issues of
+> > having all the Google, Tesla, Axis, Exynos based SoCs in the same directory
+> > (and who knows how many other ASIC customers in the future).
+> > 
+> > Ultimately it is Krzysztof's decision I think. I followed what he had previously
+> > accepted for other SoCs for consistency and also because it seemed like the
+> > correct approach to help scale up and ease the maintenance burden. If I look
+> > at the number of tensor based SoCs, phones per SoC and board variants per
+> > phone model, then you end up having a lot of files in the exynos directory over
+> > time.
+> 
+> I agreed on Tesla FSD in its own place mainly because of arguments
+> provided that time: it's entirely different architecture. These
+> arguments were not backed by actual facts or proofs, though. The
+> upstreamed parts of FSD turned out to be... only Exynos specific. There
+> is literally nothing non-Exynos in upstream. Therefore knowing the
+> outcome I would say: put FSD into samsung directory.
+> 
+> About GS101 I have the same questions - how similar it is? I am pretty
+> sure that 95% of upstreamed code (DTS and drivers) will be Exynos-like
+> (except for missing upstream support for generations of Exynos SoC!).
+> But I cannot really judge and I am not going to investigate downstream
+> code to figure this out. Thus if you insist that SoC architecture and
+> core features are quite different from Exynos family, then sure, I can
+> live with it.
 
-See commit 5c5a7680e67b ("platform: Provide a remove callback that
-returns no value") for an extended explanation and the eventual goal.
+I honestly don't care too much about where the DT files are stored --
+arch/arm64/boot/dts/exynos vs .../dts/google. I didn't think this would be such
+a hot topic! If this makes it easier for you to maintain, then so be it.
 
-All drivers converted here already returned zero unconditionally in
-.remove(), so they are converted here trivially.
+Just to note, I do understand what I proposed is something new -- group DT
+files based on product owner vs original SoC designer -- and think it warrants
+consideration since it does make it easier to distinguish which DT files are
+associated with each product as well as package and distribute them easily, but
+that can be a discussion for another time when we get more upstreamed.
 
-Best regards
-Uwe
+Thanks,
+Will
 
-Uwe Kleine-König (18):
-  mfd: ab8500-sysctrl: Convert to platform remove callback returning
-    void
-  mfd: cros_ec_dev: Convert to platform remove callback returning void
-  mfd: exynos-lpass: Convert to platform remove callback returning void
-  mfd: fsl-imx25-tsadc: Convert to platform remove callback returning
-    void
-  mfd: hi655x-pmic: Convert to platform remove callback returning void
-  mfd: intel-lpss-acpi: Convert to platform remove callback returning
-    void
-  mfd: kempld-core: Convert to platform remove callback returning void
-  mfd: mcp-sa11x0: Convert to platform remove callback returning void
-  mfd: mxs-lradc: Convert to platform remove callback returning void
-  mfd: omap-usb-host: Convert to platform remove callback returning void
-  mfd: omap-usb-tll: Convert to platform remove callback returning void
-  mfd: pcf50633-adc: Convert to platform remove callback returning void
-  mfd: qcom-pm8xxx: Convert to platform remove callback returning void
-  mfd: sm501: Convert to platform remove callback returning void
-  mfd: stm32-timers: Convert to platform remove callback returning void
-  mfd: ti_am335x_tscadc: Convert to platform remove callback returning
-    void
-  mfd: tps65911-comparator: Convert to platform remove callback
-    returning void
-  mfd: twl4030-audio: Convert to platform remove callback returning void
-
- drivers/mfd/ab8500-sysctrl.c      | 6 ++----
- drivers/mfd/cros_ec_dev.c         | 5 ++---
- drivers/mfd/exynos-lpass.c        | 6 ++----
- drivers/mfd/fsl-imx25-tsadc.c     | 6 ++----
- drivers/mfd/hi655x-pmic.c         | 5 ++---
- drivers/mfd/intel-lpss-acpi.c     | 6 ++----
- drivers/mfd/kempld-core.c         | 6 ++----
- drivers/mfd/mcp-sa11x0.c          | 6 ++----
- drivers/mfd/mxs-lradc.c           | 6 ++----
- drivers/mfd/omap-usb-host.c       | 5 ++---
- drivers/mfd/omap-usb-tll.c        | 5 ++---
- drivers/mfd/pcf50633-adc.c        | 6 ++----
- drivers/mfd/qcom-pm8xxx.c         | 6 ++----
- drivers/mfd/sm501.c               | 6 ++----
- drivers/mfd/stm32-timers.c        | 6 ++----
- drivers/mfd/ti_am335x_tscadc.c    | 6 ++----
- drivers/mfd/tps65911-comparator.c | 6 ++----
- drivers/mfd/twl4030-audio.c       | 6 ++----
- 18 files changed, 36 insertions(+), 68 deletions(-)
-
-base-commit: 3ff7a5781ceee3befb9224d29cef6e6a4766c5fe
--- 
-2.42.0
-
+> 
+> Best regards,
+> Krzysztof
+> 
