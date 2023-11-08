@@ -2,273 +2,302 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D54C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Nov 2023 17:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68331C41535
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Nov 2023 17:34:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231567AbjKHRZI (ORCPT
+        id S229689AbjKHReC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Nov 2023 12:25:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36248 "EHLO
+        Wed, 8 Nov 2023 12:34:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231926AbjKHRZH (ORCPT
+        with ESMTP id S230194AbjKHReB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Nov 2023 12:25:07 -0500
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27DB51FF9
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Nov 2023 09:25:05 -0800 (PST)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231108172503epoutp03ded8f3df0bad7da80060254604f3dbaa~Vtcekb4Da2484024840epoutp03W
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Nov 2023 17:25:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231108172503epoutp03ded8f3df0bad7da80060254604f3dbaa~Vtcekb4Da2484024840epoutp03W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1699464303;
-        bh=KazPsK4ueHTWHKpdtvqL1KTLHLtjIKrzUv4nkVxxV5I=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=Fjgwbg/smn4CyAfJkM36DTopkGXcEhDDOo1NQPvxVuu3qGrW44cPc0iDRjTETyaRr
-         t/XKSPUhTgf869FJkx11/AZOTROuuBKTG1nnBoC8pyytNZi8cNmB4vdp6U7SS9WrLc
-         DVC1ZwT+ZUJ+7kMKd6IL9EAJ0UIX5ZD+GMJGWfPo=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20231108172501epcas5p3bf95080b44478555384070bd3514cc3b~Vtcc9rSrx0784407844epcas5p3R;
-        Wed,  8 Nov 2023 17:25:01 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4SQX5m1GB6z4x9Pt; Wed,  8 Nov
-        2023 17:25:00 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        45.11.09634.B64CB456; Thu,  9 Nov 2023 02:25:00 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20231108172459epcas5p2254e6f36e6a4826d486246c9c236ea19~Vtca5cScu0241402414epcas5p2s;
-        Wed,  8 Nov 2023 17:24:59 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20231108172459epsmtrp129a231134b107b286a53b4ea7550d7c2~Vtca4dndR1062710627epsmtrp1G;
-        Wed,  8 Nov 2023 17:24:59 +0000 (GMT)
-X-AuditID: b6c32a49-eebff700000025a2-b4-654bc46b2256
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        50.6B.08817.B64CB456; Thu,  9 Nov 2023 02:24:59 +0900 (KST)
-Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20231108172456epsmtip2ede42aa2a600b1bb560cec077d771672~VtcX3e2V92569525695epsmtip2N;
-        Wed,  8 Nov 2023 17:24:56 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Aakarsh Jain'" <aakarsh.jain@samsung.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Cc:     <m.szyprowski@samsung.com>, <andrzej.hajda@intel.com>,
-        <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <krzysztof.kozlowski+dt@linaro.org>, <dillon.minfei@gmail.com>,
-        <david.plowman@raspberrypi.com>, <mark.rutland@arm.com>,
-        <robh+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>, <andi@etezian.org>,
-        <gost.dev@samsung.com>, <aswani.reddy@samsung.com>,
-        <pankaj.dubey@samsung.com>, <ajaykumar.rs@samsung.com>,
-        <linux-fsd@tesla.com>
-In-Reply-To: <630d58e0-589e-4411-905a-2514048e6ec4@linaro.org>
-Subject: RE: [Patch v4 01/11] dt-bindings: media: s5p-mfc: Add mfcv12
- variant
-Date:   Wed, 8 Nov 2023 22:54:55 +0530
-Message-ID: <000101da1268$7fdb2ce0$7f9186a0$@samsung.com>
+        Wed, 8 Nov 2023 12:34:01 -0500
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E3241FF9
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Nov 2023 09:33:59 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id 98e67ed59e1d1-2809fb0027cso5504897a91.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Nov 2023 09:33:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1699464838; x=1700069638; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sAWSOoeAjfBbJekhTKUv9QwV6bzlMliXHO1btit3MQo=;
+        b=PAs55n9UN0Tt4azZuzlN/v4fOpAQkVUhX1VuQsYZhU0jHvGaVLULti+ZZd2hhS1CPg
+         lcJPvfGofMpQ8x8KjEyqQ37WRb0aeqwbmSt7r8bLqRFOxeKkAxsZiPgH2AVJn6Pfnfnf
+         ROZxj/y8NDoH0G/VUip3RR9Jqnc2sOyGKuQhcfj7mF/DVB9ybWbBzx9rQG/Nj9GxVExg
+         N8U4TR5MAvenuZMFnJOsSS3CBJX7ob6xMg7AV4QDqMEtUZbKLOfMf2Onc/Zpmv2dOcr9
+         iYOEJGKcz897YYDG3ynCmFFDcmU3euYGFCU5QOi6XwttWgO46PIBpu4HalMhZ5RdSYgw
+         jJeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699464838; x=1700069638;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sAWSOoeAjfBbJekhTKUv9QwV6bzlMliXHO1btit3MQo=;
+        b=u+2zxbRyNNpjnYzTmqf3hjqwrt3jbLOwgtBxG1gtDZQVIzr2Jl5gSSwya5ZSGKduFp
+         jkBnfcv4gkJ21Go95AsyAOOuA6wIGoVEKL1yIoHEKWwzRyk2ROkAncSXRddnXuQDkFBb
+         fGih96+NKtGMnPcyWMDJAKOBczvieJ+slPFNI9YL2sHUvvFCqD9lHEkctpcsi93zO1mA
+         k4W42mjAnuNmr2g4wdZuO5vwpngZE6Rk0RIU1o9lwH7h/srTd/8yza/Nyukq3DnPquzq
+         Vt4P9v+YWuUzlPjqTJhqfIWZsLuRU8qLca4cyook5LKSfTRLi1RynlWzS2XF2cm0IFDl
+         V/wg==
+X-Gm-Message-State: AOJu0YwbM5NGtmdjIK2Cqmvd0j0gKDmwMOLW7xTUEZ8TGxPIxtrVhuoO
+        aWxWTSKPsCBwiWiBtC5MdUZPFvYbsZg8r10iNDLGyA==
+X-Google-Smtp-Source: AGHT+IGY4VBAJ38xlUtcmXFmIEhynykPBn3dfo+SVZRmQxxurhZcoKtbYoXN1XDKnlHvImSQIH0q75kjXSAbWt8IHAw=
+X-Received: by 2002:a17:90a:6888:b0:281:da1:4b96 with SMTP id
+ a8-20020a17090a688800b002810da14b96mr2347498pjd.22.1699464838284; Wed, 08 Nov
+ 2023 09:33:58 -0800 (PST)
 MIME-Version: 1.0
+References: <20231011184823.443959-1-peter.griffin@linaro.org>
+ <20231011184823.443959-11-peter.griffin@linaro.org> <aae4e6cd-dcfc-442d-9ed7-d5a73c419ba8@kernel.org>
+ <CADrjBPrUsSigThoLU9thmZiaG4690B9-BcZYrBn44K9Fc8z3vg@mail.gmail.com>
+In-Reply-To: <CADrjBPrUsSigThoLU9thmZiaG4690B9-BcZYrBn44K9Fc8z3vg@mail.gmail.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Wed, 8 Nov 2023 11:33:46 -0600
+Message-ID: <CAPLW+4m+n-U4cAkJZTeCsoE_e6r1j8srYmVjSLawPWwHi6SEAw@mail.gmail.com>
+Subject: Re: [PATCH v3 10/20] clk: samsung: clk-gs101: Add cmu_top registers,
+ plls, mux and gates
+To:     Peter Griffin <peter.griffin@linaro.org>
+Cc:     Chanwoo Choi <chanwoo@kernel.org>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
+        s.nawrocki@samsung.com, linus.walleij@linaro.org,
+        wim@linux-watchdog.org, linux@roeck-us.net,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        olof@lixom.net, gregkh@linuxfoundation.org, cw00.choi@samsung.com,
+        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+        saravanak@google.com, willmcvicker@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQLm4twfZx4yvmLB3iF6RxvUJv+HzQK0rOY9AbqXOzoB/yYnBQI39X9KAMF2lI+uC8rFYA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xTVxz23HvbW4w1dwXCocsYdGwMGY+yUg+LgMnccolmkrE5R+K6Su+A
-        UdqmD4ZzEwajbiAiTtRWmOPZhKAuVd52KdjKRhSCD0oTCSLoeIg6QDOY4loubvz3/X6/7zvf
-        7zsnh4cLSkkhL0ulZ7QquVLEXU+0XgoPi1Q6tjMxvW4C3W03cZD9YTeB6v7+E0OjdfME6jnf
-        QqJmWz+GLL12Djrt6Oegtu47BHLbOzA0aBoh0OHJMRzZZjw86/gQB41Nf4Kud1Zx0aFfWzjo
-        5MBvGDrjGCFRg2sQQ43WpxiqbVkgUbHNQW4NoJt/bga0q34OpzvMIyRdd3EKo61NP3LpW0MX
-        ufT5+ny62LlE0IcvNAF6ubCapOetQXTf43kyZUNa9pZMRq5gtMGMKl2tyFJlJIi2p8relcVJ
-        Y8SR4ni0WRSskucwCaJtO1Ii389SenKLgnPlSoOnlSLX6UTRiVu0aoOeCc5U6/QJIkajUGok
-        miidPEdnUGVEqRj9O+KYmNg4D/Hz7MxbrTe4mmcRedUdBwrAwddKgA8PUhK4eHWcLAHreQKq
-        C8CWLhtgizkAC/scHLZ4AuDwbD3+QjLaW7o6sAF43d6KscUkgDXTzVwvi0tFwvY6I9c78KMW
-        AOy0O1dccGoEhzNlZ4CX5UMlwoHBGg+Lx/OldsJ7dW962wQVCge6bSsH8al4aBmqBCx+Cf5h
-        miC8GKciYGPNzOpKwXDxbiPHi/2oXbB8dJHLcgLglNOx4gupNh84abxNsoJt8Mjv9zEW+8Lp
-        3gurfSGcKjeS3n0gRcPap0K2nQlnLecAi5Og/UYV4aXgVDg81xnNWm2EZf9MYKySD38wClj2
-        67DowU2CxS/DitJSDotpOGkrBkdAiHlNMPOaYOY1Acz/m/0CiCYQyGh0ORmMLk4jVjFf/ffe
-        6eocK1j5FZuS28HI7UdRPQDjgR4AebjIj/8siWYEfIV839eMVi3TGpSMrgfEeW67Ahf6p6s9
-        30qll4kl8TESqVQqiX9bKhYF8GeKqxUCKkOuZ7IZRsNoX+gwno+wACP5YevCpI7kA6PtoW7D
-        xMdvzUvIU1+YuhdMHz3aY7oiuCNNana6SrD8gOHUGs535rhZtb3kmj32lYwTxjIgO348f4rY
-        vDdsIWgH77lQ0XvW1bdv54ZL8cfcAw1Z/ql+p0P6WgoLQq8eAiFDS64Q4/73zub135c1tI9+
-        uzUi7/L448G47vLwmzn66ImpJtNuyzUrf9jyk3+Q+wNLUVrxKe3YJFPRde+KIflJ3qu7ltr2
-        fpZr2Ji4vI6a2083Hs0vcjzw/XBpzL3sbzw4hJx6V+WxxDcCqcqjtV9OO3MDNWlVD9MKx7Xp
-        z0WfVsDLY7uth/7y47e59+SdpBeEJ/Tfx36Diwhdply8Cdfq5P8C0BYFLZ4EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfVDLcRzHfX8P+23T+LXm+npmHo5ihDvfcNHp3O+OPJw7jpxM/a5crbqt
-        PF3okYnKiTtbYulhTBybCK2rmacdS1e3LkyKNZmHaHVGdbTh+u9176f7/PHh4sJ+YgJ3T1Iq
-        K0+SJoo5fOL2A/HU+QnmtezCR3XjkKNGRaL6rw0EKvvhxFB7WS+BTIZqClUZrRjSPq4n0UWz
-        lUR3GjoJ1FZ/F0NNKjuBCj504Mjo+pPTv7ORqOPjVtR87zwHnbxRTaJzjXUYuma2U6iitQlD
-        lfoBDF2qdlMo12imVgUyVReqANNa/h1n7qrtFFNW240xet1xDvPaVsthDOVHmNyHPwmm4JYO
-        MENZJRTTq5/CWPp6qY1+2/krYtnEPXtZ+YKwXfx4+wsnmZIRvP+1/SbIABniPMDjQnoJbH98
-        gswDfK6Qvg9gnqcZ+IyJsPXmKcrHAfDKkJPyhboAfJL9nRw2OPR8WFN2lDPMIvoHgPmdi4dD
-        OP0Zhz32939nmzHY9qHE2+DRYbCxqdTbCKAj4a8WjVcn6JmwscHo1QV0KNTazgIf+8OnqvfE
-        MON0MHS0Of5zZakL9503DXoclaTvii2wsN3D8WUCYfdDM3UKBKhHTKlHTKlHTKlHVDSA0IHx
-        bIpCFidThKQsSmL3SRRSmSItKU4SkyzTA+9rBAXVgFpdj8QEMC4wAcjFxSLB4EqGFQpipQcO
-        svLkaHlaIqswgYlcQhwo6HflxwrpOGkqm8CyKaz8n4txeRMysPWnW7oE2nGeV3NDivOV7tXL
-        oy/9zAxPj4o3+PGvxHQfelAfOVrz3CTSkmeCihWygU3TBmc1X3v2xhW3dMyo/Ol+6TkBMevW
-        jL182qN2Rt6xzl1vyVQlzwjf/pLaUD7+k+GpRXNV+ajlTc+xUHu6bDLPHZHWZMwLDN7SIQp1
-        R4Zcj4rd5Fw8doFtwH9h9smc8wlFSuxbQcQgmxU10+IKHZUqefbq3IovZ7ZN8ptNLbWXzMnR
-        ZserooWbd77b/8LaVZd5j5eg9DitUZ1Km6Mu0eAQHH5rWcZfzoqHxJKswuID1f2iMSrdVP8S
-        w9mIz8SFit1FmhNwXl+pu8LU51myw7laTCjipSFBuFwh/Q0aE08SiQMAAA==
-X-CMS-MailID: 20231108172459epcas5p2254e6f36e6a4826d486246c9c236ea19
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231025102233epcas5p16b716d5b650bbc5af0d759ea4f58f44d
-References: <20231025102216.50480-1-aakarsh.jain@samsung.com>
-        <CGME20231025102233epcas5p16b716d5b650bbc5af0d759ea4f58f44d@epcas5p1.samsung.com>
-        <20231025102216.50480-2-aakarsh.jain@samsung.com>
-        <948af111-e7a1-4757-a784-b4256657abd6@linaro.org>
-        <000001da0810$c2b17680$48146380$@samsung.com>
-        <630d58e0-589e-4411-905a-2514048e6ec4@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Aakarsh
-
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
-> Sent: Wednesday, November 1, 2023 1:54 PM
-> To: Aakarsh Jain <aakarsh.jain=40samsung.com>; linux-arm-
-> kernel=40lists.infradead.org; linux-media=40vger.kernel.org; linux-
-> kernel=40vger.kernel.org; devicetree=40vger.kernel.org
-> Cc: m.szyprowski=40samsung.com; andrzej.hajda=40intel.com;
-> mchehab=40kernel.org; hverkuil-cisco=40xs4all.nl;
-> krzysztof.kozlowski+dt=40linaro.org; dillon.minfei=40gmail.com;
-> david.plowman=40raspberrypi.com; mark.rutland=40arm.com;
-> robh+dt=40kernel.org; conor+dt=40kernel.org; linux-samsung-
-> soc=40vger.kernel.org; andi=40etezian.org; gost.dev=40samsung.com;
-> alim.akhtar=40samsung.com; aswani.reddy=40samsung.com;
-> pankaj.dubey=40samsung.com; ajaykumar.rs=40samsung.com; linux-
-> fsd=40tesla.com
-> Subject: Re: =5BPatch v4 01/11=5D dt-bindings: media: s5p-mfc: Add mfcv12
-> variant
->=20
-> On 26/10/2023 15:31, Aakarsh Jain wrote:
-> > Hello Krzysztof
+On Tue, Nov 7, 2023 at 7:57=E2=80=AFAM Peter Griffin <peter.griffin@linaro.=
+org> wrote:
+>
+> Hi Chanwoo,
+>
+> Thanks for your review!
+>
+> On Wed, 18 Oct 2023 at 17:51, Chanwoo Choi <chanwoo@kernel.org> wrote:
 > >
-> >> -----Original Message-----
-> >> From: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
-> >> Sent: 25 October 2023 18:30
-> >> To: Aakarsh Jain <aakarsh.jain=40samsung.com>; linux-arm-
-> >> kernel=40lists.infradead.org; linux-media=40vger.kernel.org; linux-
-> >> kernel=40vger.kernel.org; devicetree=40vger.kernel.org
-> >> Cc: m.szyprowski=40samsung.com; andrzej.hajda=40intel.com;
-> >> mchehab=40kernel.org; hverkuil-cisco=40xs4all.nl;
-> >> krzysztof.kozlowski+dt=40linaro.org; dillon.minfei=40gmail.com;
-> >> david.plowman=40raspberrypi.com; mark.rutland=40arm.com;
-> >> robh+dt=40kernel.org; conor+dt=40kernel.org; linux-samsung-
-> >> soc=40vger.kernel.org; andi=40etezian.org; gost.dev=40samsung.com;
-> >> alim.akhtar=40samsung.com; aswani.reddy=40samsung.com;
-> >> pankaj.dubey=40samsung.com; ajaykumar.rs=40samsung.com; linux-
-> >> fsd=40tesla.com
-> >> Subject: Re: =5BPatch v4 01/11=5D dt-bindings: media: s5p-mfc: Add mfc=
-v12
-> >> variant
-> >>
-> >> On 25/10/2023 12:22, Aakarsh Jain wrote:
-> >>> Add Tesla FSD MFC(MFC v12) compatible.
-> >>>
-> >>> Cc: linux-fsd=40tesla.com
-> >>> Signed-off-by: Aakarsh Jain <aakarsh.jain=40samsung.com>
-> >>> ---
-> >>
-> >> No changelog and your cover letter does not explain what happened
-> here.
-> >> Specifically, why did you decide to ignore received tag.
-> >>
-> > Last patch series we had two different patches for schema which was one
-> for adding MFCv12 compatible string and other for adding its HW propertie=
-s.
-> > In one of the patches you gave reviewed-by tag. Since mfc dt_schema got
-> merged already, and this is relatively  new patch so thought of getting
-> reviewed again.
+> > Hi Peter,
 > >
-> > Link to those patches:
-> > https://patchwork.kernel.org/project/linux-
-> media/patch/20221011122516.32135-2-aakarsh.jain=40samsung.com/
-> > https://patchwork.kernel.org/project/linux-
-> media/patch/20221011122516.32135-3-aakarsh.jain=40samsung.com/
+> > On 23. 10. 12. 03:48, Peter Griffin wrote:
+> > > CMU_TOP is the top level clock management unit which contains PLLs, m=
+uxes
+> > > and gates that feed the other clock management units.
+> > >
+> > > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > > ---
+> > >  drivers/clk/samsung/Kconfig     |    9 +
+> > >  drivers/clk/samsung/Makefile    |    2 +
+> > >  drivers/clk/samsung/clk-gs101.c | 1551 +++++++++++++++++++++++++++++=
+++
+> > >  3 files changed, 1562 insertions(+)
+> > >  create mode 100644 drivers/clk/samsung/clk-gs101.c
+> > >
+> > > diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfi=
+g
+> > > index 76a494e95027..14362ec9c543 100644
+> > > --- a/drivers/clk/samsung/Kconfig
+> > > +++ b/drivers/clk/samsung/Kconfig
+> > > @@ -12,6 +12,7 @@ config COMMON_CLK_SAMSUNG
+> > >       select EXYNOS_5410_COMMON_CLK if ARM && SOC_EXYNOS5410
+> > >       select EXYNOS_5420_COMMON_CLK if ARM && SOC_EXYNOS5420
+> > >       select EXYNOS_ARM64_COMMON_CLK if ARM64 && ARCH_EXYNOS
+> > > +     select GOOGLE_GS101_COMMON_CLK if ARM64 && ARCH_GOOGLE_TENSOR
+> > >       select TESLA_FSD_COMMON_CLK if ARM64 && ARCH_TESLA_FSD
+> > >
+> > >  config S3C64XX_COMMON_CLK
+> > > @@ -95,6 +96,14 @@ config EXYNOS_CLKOUT
+> > >         status of the certains clocks from SoC, but it could also be =
+tied to
+> > >         other devices as an input clock.
+> > >
+> > > +config GOOGLE_GS101_COMMON_CLK
+> > > +     bool "Google gs101 clock controller support" if COMPILE_TEST
+> > > +     depends on COMMON_CLK_SAMSUNG
+> > > +     depends on EXYNOS_ARM64_COMMON_CLK
+> > > +     help
+> > > +       Support for the clock controller present on the Google gs101 =
+SoC.
+> > > +       Choose Y here only if you build for this SoC.
+> > > +
 > >
-> > if you are ok, I will add your reviewed-by in next patch series.
->=20
-> It is okay to drop Reviewed-by tag, but this should be explicitly mention=
-ed in
-> the changelog with a reason.
->=20
+> > (snip)
 > >
-> >>>  .../bindings/media/samsung,s5p-mfc.yaml          =7C 16
-> ++++++++++++++++
-> >>>  1 file changed, 16 insertions(+)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/media/samsung,s5p-
-> >> mfc.yaml b/Documentation/devicetree/bindings/media/samsung,s5p-
-> >> mfc.yaml
-> >>> index 084b44582a43..c30eb309f670 100644
-> >>> --- a/Documentation/devicetree/bindings/media/samsung,s5p-
-> mfc.yaml
-> >>> +++ b/Documentation/devicetree/bindings/media/samsung,s5p-
-> mfc.yaml
-> >>> =40=40 -24,6 +24,7 =40=40 properties:
-> >>>            - samsung,mfc-v7                =23 Exynos5420
-> >>>            - samsung,mfc-v8                =23 Exynos5800
-> >>>            - samsung,mfc-v10               =23 Exynos7880
-> >>> +          - tesla,fsd-mfc                 =23 Tesla FSD
-> >>>        - items:
-> >>>            - enum:
-> >>>                - samsung,exynos3250-mfc    =23 Exynos3250
-> >>> =40=40 -165,6 +166,21 =40=40 allOf:
-> >>>            minItems: 1
-> >>>            maxItems: 2
-> >>>
-> >>> +  - if:
-> >>> +      properties:
-> >>> +        compatible:
-> >>> +          contains:
-> >>> +            enum:
-> >>> +              - tesla,fsd-mfc
-> >>> +    then:
-> >>> +      properties:
-> >>> +        clocks:
-> >>> +          maxItems: 1
-> >>> +        clock-names:
-> >>> +          items:
-> >>> +            - const: mfc
-> >>> +        iommus: false
-> >>
-> >> That's odd. How so? MFC v12 does not support IOMMU?
-> >>
-> > MFC v12 do support IOMMU. But currently it is not enabled in SW (has
-> dependencies on some of the floating dma-mapping patches) and not tested
-> on upstream kernel.
->=20
-> Bindings describe hardware, not software.
->=20
-> > Current patch sets intend to add support for MFCv12 using reserve
-> memory and later patches related to enable iommu will be posted (after
-> resolving the dependencies). So I marked iommu property as false.
-> > Now what is your suggestion here? Should I keep iommu as false or add
-> memory-region as below?
->=20
-> I expect complete picture of the hardware, not something limited to curre=
-nt
-> driver, so for sure iommus must be there.
->=20
-As Krzysztof mentioned, DT binding should explain all the hardware features=
- supported by SoC / IPs.=20
-Incase a feature is not enabled for some reason, that need to be handled in=
- the dts file.
+> > > +
+> > > +/* gs101 */
+> > > +static const struct samsung_mux_clock cmu_top_mux_clks[] __initconst=
+ =3D {
+> > > +     /* CMU_TOP_PURECLKCOMP */
+> > > +     MUX(CLK_MOUT_SHARED0_PLL, "mout_shared0_pll", mout_shared0_pll_=
+p,
+> > > +         PLL_CON0_PLL_SHARED0, 4, 1),
+> > > +     MUX(CLK_MOUT_SHARED1_PLL, "mout_shared1_pll", mout_shared1_pll_=
+p,
+> > > +         PLL_CON0_PLL_SHARED1, 4, 1),
+> > > +     MUX(CLK_MOUT_SHARED2_PLL, "mout_shared2_pll", mout_shared2_pll_=
+p,
+> > > +         PLL_CON0_PLL_SHARED2, 4, 1),
+> > > +     MUX(CLK_MOUT_SHARED3_PLL, "mout_shared3_pll", mout_shared3_pll_=
+p,
+> > > +         PLL_CON0_PLL_SHARED3, 4, 1),
+> > > +     MUX(CLK_MOUT_SPARE_PLL, "mout_spare_pll", mout_spare_pll_p,
+> > > +         PLL_CON0_PLL_SPARE, 4, 1),
+> > > +
+> > > +     /* BUS0 */
+> > > +     MUX(CLK_MOUT_BUS0_BUS, "mout_cmu_bus0_bus", mout_cmu_bus0_bus_p=
+,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_BUS0_BUS, 0, 2),
+> > > +     MUX(CLK_MOUT_CMU_BOOST, "mout_cmu_boost", mout_cmu_cmu_boost_p,
+> >
+> > In order to keep the consistent naming style,
+> > I think that need to change from 'mout_cmu_boost' to 'mout_cmu_cmu_boos=
+t'.
+>
+> Yes, that's a good point, and a good spot! Will fix it in v4.
+>
 
-> Please wrap your emails according to mailing lists rules.
->=20
-> Best regards,
-> Krzysztof
+Why do we need cmu_cmu part at all? From the look of it, renaming all
+*_cmu_cmu_* clocks to just cmu wouldn't cause any naming conflicts. So
+I don't see any benefit of double cmu prefix really.
 
+> >
+> > > +         CLK_CON_MUX_MUX_CLKCMU_CMU_BOOST, 0, 2),
+> > > +
+> > > +     /* BUS1 */
+> > > +     MUX(CLK_MOUT_BUS1_BUS, "mout_cmu_bus1_bus", mout_cmu_bus1_bus_p=
+,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_BUS1_BUS, 0, 2),
+> > > +
+> > > +     /* BUS2 */
+> > > +     MUX(CLK_MOUT_BUS2_BUS, "mout_cmu_bus2_bus", mout_cmu_bus2_bus_p=
+,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_BUS2_BUS, 0, 2),
+> > > +
+> > > +     /* CORE */
+> > > +     MUX(CLK_MOUT_CORE_BUS, "mout_cmu_core_bus", mout_cmu_core_bus_p=
+,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_CORE_BUS, 0, 2),
+> > > +
+> > > +     /* EH */
+> > > +     MUX(CLK_MOUT_EH_BUS, "mout_cmu_eh_bus", mout_cmu_eh_bus_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_CORE_BUS, 0, 2),
+> >
+> > 'mout_cmu_core_bus' and 'mout_cmu_eh_bus' uses the same register/shift/=
+width information.
+> > I think it should be modified by changing the regiter or changing the s=
+hift/width information.
+>
+> It should be using the CLK_CON_MUX_MUX_CLKCMU_EH_BUS register.
+> Will fix it in v4.
+>
+> >
+> > > +
+> > > +     /* CPUCL{0,1,2,} */
+> > > +     MUX(CLK_MOUT_CPUCL2_SWITCH, "mout_cmu_cpucl2_switch", mout_cmu_=
+cpucl2_switch_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_CPUCL2_SWITCH, 0, 2),
+> > > +
+> > > +     MUX(CLK_MOUT_CPUCL1_SWITCH, "mout_cmu_cpucl1_switch", mout_cmu_=
+cpucl1_switch_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_CPUCL1_SWITCH, 0, 2),
+> > > +
+> > > +     MUX(CLK_MOUT_CPUCL0_SWITCH, "mout_cmu_cpucl0_switch", mout_cmu_=
+cpucl0_switch_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_CPUCL0_SWITCH, 0, 2),
+> > > +
+> > > +     MUX(CLK_MOUT_CPUCL0_DBG, "mout_cmu_cpucl0_dbg", mout_cmu_cpucl0=
+_dbg_p,
+> > > +         CLK_CON_DIV_CLKCMU_CPUCL0_DBG, 0, 2),
+> > > +
+> > > +     MUX(CLK_MOUT_CMU_HPM, "mout_cmu_hpm", mout_cmu_hpm_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_HPM, 0, 2),
+> > >
+> >
+> > (snip)
+> >
+> > > +     /* PDP */
+> > > +     MUX(CLK_MOUT_PDP_BUS, "mout_cmu_pdp_bus", mout_cmu_pdp_bus_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_PDP_BUS, 0, 2),
+> > > +
+> > > +     /* PDP */
+> > > +     MUX(CLK_MOUT_PDP_VRA, "mout_cmu_pdp_vra", mout_cmu_pdp_vra_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_PDP_VRA, 0, 2),
+> > > +
+> > > +     /* IPP */
+> > > +     MUX(CLK_MOUT_IPP_BUS, "mout_cmu_ipp_bus", mout_cmu_ipp_bus_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_IPP_BUS, 0, 2),
+> > > +
+> > > +     /* G3AA */
+> > > +     MUX(CLK_MOUT_G3AA, "mout_cmu_g3aa", mout_cmu_g3aa_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_G3AA_G3AA, 0, 2),
+> >
+> > I think that need to change the mux name and mux parent name
+> > because other mux name use the twice word according to the register nam=
+e
+> > even if use the same work such as 'mout_cmu_g2d_g2d', 'mout_cmu_mcsc_mc=
+sc' and 'mout_cmu_mfc_mfc'.
+> > - mout_cmu_g3aa -> mout_cmu_g3aa_g3aa
+> > - mout_cmu_g3aa_p -> mount_cmu_g3aa_g3aa_p
+>
+> Will fix in v4
+>
 
+That consistent name duplication, while not causing any conflicts when
+being removed, looks suspicious to me. That's probably some internal
+scheme which doesn't make much sense for us and doesn't bring any
+value, in terms of clock drivers. Maybe it'll be better to instead get
+rid of such duplication throughout the driver, at least for clock name
+strings? I mention this, because that's what I did in clk-exynos850.
+With the only exception being the main domain clocks, which basically
+enables/disables the whole unit internally, e.g.
+
+    GATE(CLK_GOUT_G3D_CMU_G3D_PCLK, "gout_g3d_cmu_g3d_pclk", ...
+
+which "G3D domain gate clock that enables/disables G3D", or something
+like that. But clk-exynos850 doesn't have any duplicating bits like
+"cmu_cmu" or "g3d_g3d". And the reason why I did that is I wanted
+those clock names appear short and nice in device tree, as there were
+no benefits in those duplicating bits.
+
+> >
+> > (snip)
+> >
+> > > +     /* CSIS */
+> > > +     GATE(CLK_GOUT_CSIS, "gout_cmu_csis_bus", "mout_cmu_csis_bus",
+> > > +          CLK_CON_GAT_GATE_CLKCMU_CSIS_BUS, 21, 0, 0),
+> > > +     /* PDP */
+> > > +     GATE(CLK_GOUT_PDP_BUS, "gout_cmu_pdp_bus", "mout_cmu_pdp_bus",
+> > > +          CLK_CON_GAT_GATE_CLKCMU_PDP_BUS, 21, 0, 0),
+> > > +
+> > > +     GATE(CLK_GOUT_PDP_VRA, "gout_cmu_pdp_vra", "mout_cmu_pdp_vra",
+> > > +          CLK_CON_GAT_GATE_CLKCMU_PDP_BUS, 21, 0, 0),
+> > > +
+> > > +     /* IPP */
+> > > +     GATE(CLK_GOUT_IPP_BUS, "gout_cmu_ipp_bus", "mout_cmu_ipp_bus",
+> > > +          CLK_CON_GAT_GATE_CLKCMU_IPP_BUS, 21, 0, 0),
+> > > +     /* G3AA */
+> > > +     GATE(CLK_GOUT_G3AA, "gout_cmu_g3aa", "mout_cmu_g3aa",
+> > > +          CLK_CON_MUX_MUX_CLKCMU_G3AA_G3AA, 21, 0, 0),
+> >
+> > ditto.
+> > gout_cmu_g3aa -> gout_cmu_g3aa_g3aa
+> > mout_cmu_g3aa -> mout_cmu_g3aa_g3aa
+>
+
+Ditto.
+
+> Will fix in V4
+>
+> regards,
+>
+> Peter.
