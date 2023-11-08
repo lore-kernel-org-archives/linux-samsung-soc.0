@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84CAEC0018C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Nov 2023 10:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD9BC4167D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Nov 2023 10:46:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344193AbjKHKqU (ORCPT
+        id S1344719AbjKHKqd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Nov 2023 05:46:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37680 "EHLO
+        Wed, 8 Nov 2023 05:46:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344416AbjKHKph (ORCPT
+        with ESMTP id S1344568AbjKHKpr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Nov 2023 05:45:37 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C787E26A2
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Nov 2023 02:44:37 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-32faea0fa1fso375361f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Nov 2023 02:44:37 -0800 (PST)
+        Wed, 8 Nov 2023 05:45:47 -0500
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 979F62711
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Nov 2023 02:44:41 -0800 (PST)
+Received: by mail-lj1-x22d.google.com with SMTP id 38308e7fff4ca-2c5028e5b88so92447801fa.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Nov 2023 02:44:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699440276; x=1700045076; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1699440279; x=1700045079; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fGiEI+OsEJo1M0u1Cd6qitBsDMBm2mmYId37rcw3fhE=;
-        b=Psapt02ZaVLYsotjjTD3flBAqRFY0KEBdrfcegaOovtOOXrzFO+KY8ERw1j9pOotqA
-         FiqBSylaG1c3YrVAhmtRcDO/jNV3aDi8brvU053zkAUutA6JjFmXbNKOLhmJZdNHF0hp
-         a0uzHxZjXSywAjad6U0RSLJIvuI4FXbiN5OYGVrfnkXGyqTvfOhEhUKZPcUhDxCor82q
-         Vq9L+XnHYKeZwAZeTBnM9oI3wqfLhn/ER/0Cias06jSUMDSJcsdvDWOwJeuRMgr80wDh
-         WH3QP2IkbtlJhcjB8sxFZVSfJbIt2vIcPkPWjtelwWizbj7igEJgYCAxAYKEMgS5ZuKy
-         cXvg==
+        bh=eLncO1ADQq/KYbPV1LBS+813XGTk7ajEpj3gEwbCXmE=;
+        b=EiBfrUd21IZaF6eVcNL0xmIRkJV/sq/4Lk/RDXWk8gxc6LaEnnRaILWx4D6Mh7cDYX
+         +rPBtBlRUyO55Wvf0FMD6MoSbRbOrt0pt2s45bbP/FUB76Rkr8TIr8LvI7MyIyh4sAaq
+         0NE+K7lYYKEkfkRhO4XlzfVysjV/ycJFX+kFHpfmLfGHzcsPn3jOxPE/G+EOA1m0HuAD
+         smsYSIiVd1pytAVCL4HIjHbDRPSt+lSewvLNear494xDmhYR+RoMXzOgD0oZdVtQ+5Ig
+         W1o22vZWGd0+LsgBtJOjGCo12Ho0UhGNHxGWoPMe90E2PJ4GbErAPlpC4m0veTMsJNXt
+         btMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699440276; x=1700045076;
+        d=1e100.net; s=20230601; t=1699440279; x=1700045079;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fGiEI+OsEJo1M0u1Cd6qitBsDMBm2mmYId37rcw3fhE=;
-        b=stt1aJ/IINTcTVqHMlrhIadkoxdIp9HVJXdlmDCsCf6PkMyocATVkhd7d5fdwAQ3Hq
-         PaTm3u+c41oeRrn69tzQmyu0301bAXyDMaVzEeclnGB+e1+n+qfq/n7Du0t+AModEjd1
-         l/rsUVBAJ/rzm7iL87BblIHE84hBijPS6wGbLAHP/19DuEMoKm/LJ/wGUiHsYdZsG3Kt
-         7atWnnZf9+DBdq988tcyjh3CVog9yAOMylrc2KD9auJ5EKlix8SgDwfPqI3Q5GdR6gtS
-         Co+uHfegqzoKT1mQcJHt6UJPxCZNUyyEQ7ARQJu1iRsG087p5+JjW6Xbyt2M0eg83zMe
-         zRHg==
-X-Gm-Message-State: AOJu0YxSetLlD1h3r96sH4Tx+Fq7xcDEwgUBO2PBprSQmC49hom9cQ5f
-        238eYMQf5xvOojFFqXXR1r5XuA==
-X-Google-Smtp-Source: AGHT+IH7MQXw4E1mPFEKg813JtQdA84Wn0PvEKQEX8huqjOTZRExGYnzsA13byMaAL83CD1YOh5HLg==
-X-Received: by 2002:adf:fd09:0:b0:32f:7beb:d009 with SMTP id e9-20020adffd09000000b0032f7bebd009mr1610826wrr.17.1699440276267;
-        Wed, 08 Nov 2023 02:44:36 -0800 (PST)
+        bh=eLncO1ADQq/KYbPV1LBS+813XGTk7ajEpj3gEwbCXmE=;
+        b=GEnwRn+JBAnCU2WXRewYmYcTTzfY47LqOtHr+PvAkZZymgUEYMYZsKAQGCOYj6pdG1
+         ek6U27vKYZVrPJqnaG+RI9zRMGeCIg2QA7wMD+AOO2TS12Y6dZa8dCvtGlJPAfyqB/N8
+         e/WmMJdasOQSeklxQAx2OW3k3HU5lyteZ6en/GY+M4+obnLGM75cdo7rczqzN/ZcmprA
+         dQTZVpQZ0twATa8n/XHzc6RiK1DuCeVA/ubiKDmxLbHDY8Yt5NcT881ElEKoQeQzvEzt
+         Pe2ynUST7pzdzNeoKPuxafnOCkGQsgpuVg3tFz6ExjcQB9UzJ46zO/8ryizVkF6HAfkf
+         m3Qg==
+X-Gm-Message-State: AOJu0YxzWsB9S3IS5q5PyDU5c25xBtgNMFcq7J36/zI5ZDRjzsAoaoUN
+        2dZbfWRRBJIQ/hpEDm9W6Tsetw==
+X-Google-Smtp-Source: AGHT+IE9e7WdZJcWzB5Gf22P43YL/3qsWhZ9UWDtVmtmQ2zCC7QEZqOnQRFgEbbvc33FYHTz/Q1w1g==
+X-Received: by 2002:a2e:81a:0:b0:2c5:7afd:75a1 with SMTP id 26-20020a2e081a000000b002c57afd75a1mr1229802lji.44.1699440279685;
+        Wed, 08 Nov 2023 02:44:39 -0800 (PST)
 Received: from krzk-bin.. ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id fj12-20020a05600c0c8c00b004094c5d92bdsm19377377wmb.31.2023.11.08.02.44.32
+        by smtp.gmail.com with ESMTPSA id fj12-20020a05600c0c8c00b004094c5d92bdsm19377377wmb.31.2023.11.08.02.44.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Nov 2023 02:44:35 -0800 (PST)
+        Wed, 08 Nov 2023 02:44:39 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -87,9 +87,9 @@ To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
         linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
         alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 11/17] ASoC: dt-bindings: samsung-i2s: add specific compatibles for existing SoC
-Date:   Wed,  8 Nov 2023 11:43:37 +0100
-Message-Id: <20231108104343.24192-12-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 12/17] dt-bindings: pwm: samsung: add specific compatibles for existing SoC
+Date:   Wed,  8 Nov 2023 11:43:38 +0100
+Message-Id: <20231108104343.24192-13-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231108104343.24192-1-krzysztof.kozlowski@linaro.org>
 References: <20231108104343.24192-1-krzysztof.kozlowski@linaro.org>
@@ -116,53 +116,22 @@ Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 I propose to take the patch through Samsung SoC (me). See cover letter
 for explanation.
 ---
- .../mfd/samsung,exynos5433-lpass.yaml         |  2 +-
- .../bindings/sound/samsung-i2s.yaml           | 19 ++++++++++++-------
- 2 files changed, 13 insertions(+), 8 deletions(-)
+ Documentation/devicetree/bindings/pwm/pwm-samsung.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml
-index b97b06848729..f154103f32cc 100644
---- a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml
-+++ b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml
-@@ -85,7 +85,7 @@ examples:
-         };
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
+index 2162f661ed5a..89a3875cb50a 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
++++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
+@@ -29,6 +29,8 @@ properties:
+           - samsung,exynos4210-pwm          # 32-bit, Exynos
+       - items:
+           - enum:
++              - samsung,exynos5433-pwm
++              - samsung,exynos7-pwm
+               - samsung,exynosautov9-pwm
+           - const: samsung,exynos4210-pwm
  
-         i2s@11440000 {
--            compatible = "samsung,exynos7-i2s";
-+            compatible = "samsung,exynos5433-i2s", "samsung,exynos7-i2s";
-             reg = <0x11440000 0x100>;
-             dmas = <&adma 0>, <&adma 2>;
-             dma-names = "tx", "rx";
-diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.yaml b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
-index 30b3b6e9824b..f45f73b5056d 100644
---- a/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
-+++ b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
-@@ -44,13 +44,18 @@ properties:
-       frequencies supported by Exynos7 I2S and 7.1 channel TDM support
-       for playback and capture TDM (Time division multiplexing) to allow
-       transfer of multiple channel audio data on single data line.
--    enum:
--      - samsung,s3c6410-i2s
--      - samsung,s5pv210-i2s
--      - samsung,exynos5420-i2s
--      - samsung,exynos7-i2s
--      - samsung,exynos7-i2s1
--      - tesla,fsd-i2s
-+    oneOf:
-+      - enum:
-+          - samsung,s3c6410-i2s
-+          - samsung,s5pv210-i2s
-+          - samsung,exynos5420-i2s
-+          - samsung,exynos7-i2s
-+          - samsung,exynos7-i2s1
-+          - tesla,fsd-i2s
-+      - items:
-+          - enum:
-+              - samsung,exynos5433-i2s
-+          - const: samsung,exynos7-i2s
- 
-   '#address-cells':
-     const: 1
 -- 
 2.34.1
 
