@@ -2,121 +2,117 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F5AFC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Nov 2023 19:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C079C04E83
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Nov 2023 20:07:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229613AbjKIT0y (ORCPT
+        id S234659AbjKIUHF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Nov 2023 14:26:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53264 "EHLO
+        Thu, 9 Nov 2023 15:07:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231484AbjKIT0x (ORCPT
+        with ESMTP id S234554AbjKIUHE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Nov 2023 14:26:53 -0500
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25B5F3ABA
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Nov 2023 11:26:50 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r1Afx-0003aB-CM; Thu, 09 Nov 2023 20:26:49 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r1Aft-007qw5-Bc; Thu, 09 Nov 2023 20:26:45 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r1Aft-00GEJb-2I; Thu, 09 Nov 2023 20:26:45 +0100
-Date:   Thu, 9 Nov 2023 20:26:39 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH 1/2] pwm: samsung: Fix broken resume after putting
- per-channel data into driver data
-Message-ID: <20231109192639.77yjq7o2bioyvf5j@pengutronix.de>
-References: <CGME20231109104758eucas1p2e98e8cf22a42aae212a98228e46b4438@eucas1p2.samsung.com>
- <20231109104748.2746839-1-m.szyprowski@samsung.com>
+        Thu, 9 Nov 2023 15:07:04 -0500
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FFA644B5
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Nov 2023 12:07:02 -0800 (PST)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-5a8ee23f043so15164197b3.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Nov 2023 12:07:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1699560421; x=1700165221; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JxfBT9XrSRT5nrDSafWJh9sd+I3zu8gAVwzWVP+isuk=;
+        b=wRlxhK72w6O5c5iPkyqSco0awCEHjG8RKS1w691vXr5E5gHa1GxtFSK2UMBm0f7at7
+         lbRNSpBebmSMpS/Deg5XJ8VvdZNuhIjegYWGU5ikllSTvlUEP8LSXQsd4dBfNaR+yNXK
+         tPgTHRb1gaJ0cOAX643Ohba3mpPxbo8RCwnt1HpkiYrF5uJ1pGSnOHfiTueFWgE3Dqn/
+         u88ZBAn2tAuicHiOPEuD/SPxw3WsKqTO2GpW/38AnZRFTS2lp1XLiPLHp4J5/tMyK7fw
+         sHAwZ4aL2oq1uB08XwGLuEI+fXXa+7oK8w6n1R8PZVbltQoo1ZBbfMWh7vSR1ePzxy9a
+         uEjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699560421; x=1700165221;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JxfBT9XrSRT5nrDSafWJh9sd+I3zu8gAVwzWVP+isuk=;
+        b=JsbfFYxKR7H2646YTW7sXaLpsUe6+tPlirbtu9/aZiyRn7aGM2b2tBlxCKS6R+pPa2
+         EPqdcTrr+c1bVvgWdEKVPrJ71gIHi+CKURcSjQ3RdAaInY3lFqNmuUE3ET+rMMyqwvEh
+         hvZissuNwdirPOvziRLwWdp1+I8mvy6kIGIR9TPbcj9w5hzPtfM7xsZ6dM9heIMyYpvc
+         vALup9/+2QqSyPtrBbLs92DgRWA6F9A+adf6w2Iy2fmv1T4+Rzex1fZb+ORtXp3k4l2O
+         rLryGCZHPrJEm0Jx8neB/7mB+mnqR4/bJ3HsiUDJCVBjstSV9yiXyUVrDo2H37mo5pYc
+         p/Hg==
+X-Gm-Message-State: AOJu0Yzc/ZiWvRVtOCa1gb3iSTpf2f+fjUJhst53qChik8ohps/gEhmI
+        odxd+Gk6bm+RhFZH7zWUE0Qj/a6Zj4TMnW9/3wQCJw==
+X-Google-Smtp-Source: AGHT+IEXBKt+FURrtNfddWlqR3gL5F6B4MyNTpLeCgYWcpg+lWu9UphB2hG1mn1lgkc9/kt9ZZeKnj4In3j2CaEDK+8=
+X-Received: by 2002:a81:df01:0:b0:5ae:c35a:807a with SMTP id
+ c1-20020a81df01000000b005aec35a807amr5649968ywn.48.1699560421299; Thu, 09 Nov
+ 2023 12:07:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xwwbagn4i2s3ypug"
-Content-Disposition: inline
-In-Reply-To: <20231109104748.2746839-1-m.szyprowski@samsung.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+References: <20231108104343.24192-1-krzysztof.kozlowski@linaro.org> <20231108104343.24192-4-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20231108104343.24192-4-krzysztof.kozlowski@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 9 Nov 2023 21:06:50 +0100
+Message-ID: <CACRpkdbAwOfjbD_CjC4Aqi_A2+pghTBeWyV7mPMZv25BXMPStw@mail.gmail.com>
+Subject: Re: [PATCH 03/17] dt-bindings: i2c: samsung,s3c2410-i2c: add specific
+ compatibles for existing SoC
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lee Jones <lee@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Wed, Nov 8, 2023 at 11:44=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 
---xwwbagn4i2s3ypug
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Samsung Exynos SoC reuses several devices from older designs, thus
+> historically we kept the old (block's) compatible only.  This works fine
+> and there is no bug here, however guidelines expressed in
+> Documentation/devicetree/bindings/writing-bindings.rst state that:
+> 1. Compatibles should be specific.
+> 2. We should add new compatibles in case of bugs or features.
+>
+> Add compatibles specific to each SoC in front of all old-SoC-like
+> compatibles.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Hello,
+Makes perfect sense to me:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-On Thu, Nov 09, 2023 at 11:47:47AM +0100, Marek Szyprowski wrote:
-> PWMF_EXPORTED is misleadingly used as a bit numer in the pwm->flags, not
-> as a flag value, so the proper test for it must use test_bit() helper.
-> This fixes broken resume after putting per-channel data into driver data.
->=20
-> Fixes: e3fe982b2e4e ("pwm: samsung: Put per-channel data into driver data=
-")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/pwm/pwm-samsung.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-> index 568491ed6829..69d9f4577b34 100644
-> --- a/drivers/pwm/pwm-samsung.c
-> +++ b/drivers/pwm/pwm-samsung.c
-> @@ -631,7 +631,7 @@ static int pwm_samsung_resume(struct device *dev)
->  		struct pwm_device *pwm =3D &chip->pwms[i];
->  		struct samsung_pwm_channel *chan =3D &our_chip->channel[i];
-> =20
-> -		if (!(pwm->flags & PWMF_REQUESTED))
-> +		if (!test_bit(PWMF_REQUESTED, &pwm->flags))
->  			continue;
-
-This is prior art:
-https://lore.kernel.org/linux-pwm/e031db45-add0-4da7-97fa-dee95ee936ad@moro=
-to.mountain/
-
-unfortunately this was missed to be included in Thierry's PR for
-v6.7-rc1 :-\
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---xwwbagn4i2s3ypug
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVNMmkACgkQj4D7WH0S
-/k6lkggAgvWxcScWiJ4yvqD1A3/K64jwsuFsZk3qh2NAAny5CcCzS+afqgkPSlwm
-oVV4DiGUlWfmOtYRrGiLamUeHBlQXHlvIf56VZry6o8pq3QoM3zUZ9hzZ1iEQfKj
-PnU3Gr9KOuyanoMxZF/krWdyoaNQq2J72DGyP0XPDphvOOQeMKuD315Hb8pjr/NZ
-ESoyk45ykSAvnuSj1Xn565ZhSeP2Y7Mkxo/NOrBiNj+nwG/sC7/5KnExDQEIYads
-lM3N7jfVVV+vcGpaSIaGcKsMg0wbryJ32oBxtil+KAIScr4ojgeuSAjWjV0mteMY
-SzeHTeNn6UKXzTdX6DX0nGx8BSd3Ow==
-=XkgZ
------END PGP SIGNATURE-----
-
---xwwbagn4i2s3ypug--
+Yours,
+Linus Walleij
