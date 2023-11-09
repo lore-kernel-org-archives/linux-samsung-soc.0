@@ -2,41 +2,42 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C957AC4167B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Nov 2023 16:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFADEC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Nov 2023 16:42:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234881AbjKIQkS (ORCPT
+        id S1344896AbjKIQmf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Nov 2023 11:40:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37620 "EHLO
+        Thu, 9 Nov 2023 11:42:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343942AbjKIQjl (ORCPT
+        with ESMTP id S1344956AbjKIQmO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Nov 2023 11:39:41 -0500
+        Thu, 9 Nov 2023 11:42:14 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 442AD46B3
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Nov 2023 08:38:31 -0800 (PST)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBF6FC433C9;
-        Thu,  9 Nov 2023 16:38:29 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 257C2524B
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Nov 2023 08:39:36 -0800 (PST)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FC2EC433C8;
+        Thu,  9 Nov 2023 16:39:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1699547910;
-        bh=auBdmRVoo1UmhBzOHUON65cpZw4zsipdP4bNBgN+X/0=;
-        h=Date:Subject:To:References:From:In-Reply-To:From;
-        b=e+H8v6MC9NiEYpU42Ej0G4KfQrXz6swxhOVi3gEvhRiTe9ShTnKswDk/62DnLQvXJ
-         QNOOi/4wrdrwfE7RmNhf8lDiEzP3lFT3mxQySyfvu5mbA5CaGJsnQxsOq+pNyewYDr
-         v0luvmK6hoMl8v4q0YR0UN36qXtaT1a5UAbbz354Uv53Sd3kipS8YRAAHo9eGMF3MP
-         h2bg13NGwiIm7yz1Ohvf0GrTO7mU5NGVtlVXUpR9T28IwhUI9jpRE97UfqFC7XnVbN
-         NUPxyQy5d0iCuw014YSenzUXvPJ1KsRKLV1OQrJNDWwUrxZ3Xs50YMudVzRjA1eQdQ
-         /vbvkLGKcARhQ==
-Message-ID: <4d95c252-b992-4214-8cc8-5c98bf07259f@kernel.org>
-Date:   Thu, 9 Nov 2023 17:38:29 +0100
+        s=k20201202; t=1699547976;
+        bh=Gen2yHHmO7stgQ7rWmZyaop2UeECb4XBsaQwHilagtQ=;
+        h=Date:Subject:From:To:References:In-Reply-To:From;
+        b=h9TwmXbiEc2siarrsc2meUiF9bGFcHpe9aPg/ELTQErOox+O/toLfjUPc8y+Ag218
+         L2N5qOpWEZED3xlAzchotYObmZrlF8A43s8vUCanLIAYbxMyx/41I8Yk2BjnUt7BZa
+         CWHfmhaOBAatUA8s/qwF0E9I9LQqT7kHStjnYLLEz6kfIjUM/8lA5FzFfU2RLoJw+O
+         vR3HVVC/Gzcq1FbCDfYn/bwLYf1yStNC3+2PnNjKZtqSnfyw3i7KVoSoz05NfsfM3m
+         mN9d2JUtsXhrkCaGtavV9UsN1yJa5ZmEsT1PVB24BFGcsGUE1tQ0L0aKdqJShiawEL
+         dVDeltQkX8hsA==
+Message-ID: <f7dd78c9-2020-4874-a49e-02a782dcb2a4@kernel.org>
+Date:   Thu, 9 Nov 2023 17:39:35 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 1/1] samsung: Sort Makefile
 Content-Language: en-US
+From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Petr Vorel <pvorel@suse.cz>, linux-samsung-soc@vger.kernel.org
 References: <20231108090106.8933-1-pvorel@suse.cz>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
+ <4d95c252-b992-4214-8cc8-5c98bf07259f@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -80,24 +81,23 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20231108090106.8933-1-pvorel@suse.cz>
+In-Reply-To: <4d95c252-b992-4214-8cc8-5c98bf07259f@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 08/11/2023 10:01, Petr Vorel wrote:
-> Signed-off-by: Petr Vorel <pvorel@suse.cz>
-> ---
->  drivers/clk/samsung/Makefile | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+On 09/11/2023 17:38, Krzysztof Kozlowski wrote:
+> On 08/11/2023 10:01, Petr Vorel wrote:
+>> Signed-off-by: Petr Vorel <pvorel@suse.cz>
+>> ---
 
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC (and consider --no-git-fallback argument). It might
-happen, that command when run on an older kernel, gives you outdated
-entries. Therefore please be sure you base your patches on recent Linux
-kernel.
+You also lack commit msg explaining why doing this.
+
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching.
 
 Best regards,
 Krzysztof
