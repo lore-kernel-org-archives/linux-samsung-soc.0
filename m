@@ -2,137 +2,103 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E50C4167B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Nov 2023 10:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C957AC4167B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Nov 2023 16:40:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232749AbjKIKsG (ORCPT
+        id S234881AbjKIQkS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Nov 2023 05:48:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33746 "EHLO
+        Thu, 9 Nov 2023 11:40:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232312AbjKIKsF (ORCPT
+        with ESMTP id S1343942AbjKIQjl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Nov 2023 05:48:05 -0500
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B88E2699
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Nov 2023 02:48:02 -0800 (PST)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231109104759euoutp01f2eff67c9904126c56ebd18ac88babbf~V7rFH9u4P1650416504euoutp01D
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Nov 2023 10:47:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231109104759euoutp01f2eff67c9904126c56ebd18ac88babbf~V7rFH9u4P1650416504euoutp01D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1699526879;
-        bh=ghDtuNm/rprsB94SZ+nrIouWWrb2Q3jHekqjdqhln5s=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=VI/ADahax0HsXra5ywaFvb9JA1dO3RVHZF+LDTECuHlFTVzKEIeWzi6rKQMFLuDA3
-         zuDQWvtjY6d3WujN3ZSz7ynbrOhqAv3GRSBV5mJMrcvX2WoJons4TaG1GSyVZrycIF
-         +kgtZ1InJy2szVpR2V07DKnJuB8BVp7UcJSGBKxw=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20231109104759eucas1p263e75fab40bb2b3ad5cc4646e0cd2634~V7rEyTyIH2943429434eucas1p2B;
-        Thu,  9 Nov 2023 10:47:59 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 69.5D.11320.FD8BC456; Thu,  9
-        Nov 2023 10:47:59 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20231109104758eucas1p2e98e8cf22a42aae212a98228e46b4438~V7rEeWd6a2942529425eucas1p2A;
-        Thu,  9 Nov 2023 10:47:58 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20231109104758eusmtrp252bf200468d54124faf3feab1d57f613~V7rEdi5xx2298322983eusmtrp2t;
-        Thu,  9 Nov 2023 10:47:58 +0000 (GMT)
-X-AuditID: cbfec7f4-993ff70000022c38-89-654cb8dfa774
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id A0.21.25043.ED8BC456; Thu,  9
-        Nov 2023 10:47:58 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20231109104758eusmtip2b084c095a97cd533501393d6e8d08ea9~V7rD2N_nf0866008660eusmtip2E;
-        Thu,  9 Nov 2023 10:47:58 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Subject: [PATCH 1/2] pwm: samsung: Fix broken resume after putting
- per-channel data into driver data
-Date:   Thu,  9 Nov 2023 11:47:47 +0100
-Message-Id: <20231109104748.2746839-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 9 Nov 2023 11:39:41 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 442AD46B3
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Nov 2023 08:38:31 -0800 (PST)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBF6FC433C9;
+        Thu,  9 Nov 2023 16:38:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1699547910;
+        bh=auBdmRVoo1UmhBzOHUON65cpZw4zsipdP4bNBgN+X/0=;
+        h=Date:Subject:To:References:From:In-Reply-To:From;
+        b=e+H8v6MC9NiEYpU42Ej0G4KfQrXz6swxhOVi3gEvhRiTe9ShTnKswDk/62DnLQvXJ
+         QNOOi/4wrdrwfE7RmNhf8lDiEzP3lFT3mxQySyfvu5mbA5CaGJsnQxsOq+pNyewYDr
+         v0luvmK6hoMl8v4q0YR0UN36qXtaT1a5UAbbz354Uv53Sd3kipS8YRAAHo9eGMF3MP
+         h2bg13NGwiIm7yz1Ohvf0GrTO7mU5NGVtlVXUpR9T28IwhUI9jpRE97UfqFC7XnVbN
+         NUPxyQy5d0iCuw014YSenzUXvPJ1KsRKLV1OQrJNDWwUrxZ3Xs50YMudVzRjA1eQdQ
+         /vbvkLGKcARhQ==
+Message-ID: <4d95c252-b992-4214-8cc8-5c98bf07259f@kernel.org>
+Date:   Thu, 9 Nov 2023 17:38:29 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIKsWRmVeSWpSXmKPExsWy7djPc7r3d/ikGky8zGHxYN42Nou9r7ey
-        W2x6fI3V4vKuOWwWd++uYrSYcX4fk8XaI3fZLX7umsdicXviZEYHTo+ds+6ye9y5tofNY/OS
-        eo/+vwYefVtWMXp83iQXwBbFZZOSmpNZllqkb5fAlXH8aAdjwXn2ikcv1jI2MK5n62Lk5JAQ
-        MJE4cqmHqYuRi0NIYAWjxLdPzSwQzhdGicknzzJDOJ8ZJTpnPmSCaWlpucAKkVjOKNGy8Twb
-        XMufs4dZQKrYBAwlut52gSVEBNoYJZoufwBzmAWamSSafncD9XNwCAukSdzfbg7SwCKgKnH+
-        6FGwZl4Be4k/c3tYINbJS+w/CHIHSFxQ4uTMJ2BxZqB489bZYPdJCGzhkJh7YQVUg4vEjwl3
-        mCFsYYlXx7ewQ9gyEv93zmeCaGhnlFjw+z6UM4FRouH5LUaIKmuJO+d+sYFcxyygKbF+lz5E
-        2FFi6aeVLCBhCQE+iRtvBSGO4JOYtG06M0SYV6KjTQiiWk1i1vF1cGsPXrgEdY6HxIXpO8Bs
-        IYFYiUcXXrNOYFSYheS1WUhem4VwwwJG5lWM4qmlxbnpqcVGeanlesWJucWleel6yfm5mxiB
-        qej0v+NfdjAuf/VR7xAjEwfjIUYJDmYlEd4LJj6pQrwpiZVVqUX58UWlOanFhxilOViUxHlV
-        U+RThQTSE0tSs1NTC1KLYLJMHJxSDUxGsSbKczMeGnY1RtbrpsYn7NE78fF/2Qq1+8JzI8vb
-        FJ853WyNCjKMUhLmDX500HHb6fS9PB6rpOZJa3ofVrwRct5Et2XPr4/3DlRxZxieEnl27ULe
-        NLsQibIivYt+MXYTtnMWcSdyxxuWTdqly7tssWR67IXbOxZ1vP91aFPB07qYy5u0PL/OSVJe
-        VcNvnbQt+URS+lNBKcH2t0bnZr6NjLO1jqzgqCx29z1icjMgckHJ6tPri83dZHSEpDVF+FmE
-        4spe3XRSu1bjLCy6NXPngRxbA5Wy348dxT68V/MMCt+f8u/oAWk7rjdnJ5YLuvG/OO03/aP2
-        oetJnwPdxJ94BV/gYWUpygwIFfmpxFKckWioxVxUnAgAxJg2JLQDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOLMWRmVeSWpSXmKPExsVy+t/xe7r3dvikGvTcNLB4MG8bm8Xe11vZ
-        LTY9vsZqcXnXHDaLu3dXMVrMOL+PyWLtkbvsFj93zWOxuD1xMqMDp8fOWXfZPe5c28PmsXlJ
-        vUf/XwOPvi2rGD0+b5ILYIvSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3
-        s0lJzcksSy3St0vQyzh+tIOx4Dx7xaMXaxkbGNezdTFyckgImEi0tFxg7WLk4hASWMooMWv2
-        P0aIhIzEyWkNrBC2sMSfa11sEEWfGCV+rGgBS7AJGEp0vYVIiAh0MUr8PraWEcRhFmhlkmg4
-        sYoFpEpYIEXiYecWZhCbRUBV4vzRo2BxXgF7iT9ze1ggVshL7D94lhkiLihxcuYTsDgzULx5
-        62zmCYx8s5CkZiFJLWBkWsUoklpanJueW2ykV5yYW1yal66XnJ+7iREYA9uO/dyyg3Hlq496
-        hxiZOBgPMUpwMCuJ8F4w8UkV4k1JrKxKLcqPLyrNSS0+xGgKdN9EZinR5HxgFOaVxBuaGZga
-        mphZGphamhkrifN6FnQkCgmkJ5akZqemFqQWwfQxcXBKNTBxZWjMmLb0y8Wirz0Lvh+w7Glc
-        eLzSW+eUgcCETXceVLv+d5Wv+R2ZHsTm6v9BlCUgySTLcsXqkvd7p6efv7ZRaNraa+kP/ueJ
-        btj9n3FpZNgq8bCtq2IqHTt4n36dz7ji+8rAb+oSjtaXpK/t+MA5gTNyt33tl8/Ju1d2+zYd
-        tDlvfvDacvu7Ple2r3WON3ynUmz1t/i31j2d71ZZbj9ON6xksJGv/Ljk1cPSX5dZmwxzire/
-        eX9r+rlP5XcCjvj3HhZcn1I4/2Utf8gCfY0J39ft7MoU5jin6nd873XONT90NpbnHT/zJ/iK
-        aMXVmLB5+p5KFXJLdIQ0n7LJfrnYLq3g58fowMETmcF/r/maEktxRqKhFnNRcSIAc04Y9goD
-        AAA=
-X-CMS-MailID: 20231109104758eucas1p2e98e8cf22a42aae212a98228e46b4438
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20231109104758eucas1p2e98e8cf22a42aae212a98228e46b4438
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20231109104758eucas1p2e98e8cf22a42aae212a98228e46b4438
-References: <CGME20231109104758eucas1p2e98e8cf22a42aae212a98228e46b4438@eucas1p2.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] samsung: Sort Makefile
+Content-Language: en-US
+To:     Petr Vorel <pvorel@suse.cz>, linux-samsung-soc@vger.kernel.org
+References: <20231108090106.8933-1-pvorel@suse.cz>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20231108090106.8933-1-pvorel@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-PWMF_EXPORTED is misleadingly used as a bit numer in the pwm->flags, not
-as a flag value, so the proper test for it must use test_bit() helper.
-This fixes broken resume after putting per-channel data into driver data.
+On 08/11/2023 10:01, Petr Vorel wrote:
+> Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> ---
+>  drivers/clk/samsung/Makefile | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 
-Fixes: e3fe982b2e4e ("pwm: samsung: Put per-channel data into driver data")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/pwm/pwm-samsung.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC (and consider --no-git-fallback argument). It might
+happen, that command when run on an older kernel, gives you outdated
+entries. Therefore please be sure you base your patches on recent Linux
+kernel.
 
-diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-index 568491ed6829..69d9f4577b34 100644
---- a/drivers/pwm/pwm-samsung.c
-+++ b/drivers/pwm/pwm-samsung.c
-@@ -631,7 +631,7 @@ static int pwm_samsung_resume(struct device *dev)
- 		struct pwm_device *pwm = &chip->pwms[i];
- 		struct samsung_pwm_channel *chan = &our_chip->channel[i];
- 
--		if (!(pwm->flags & PWMF_REQUESTED))
-+		if (!test_bit(PWMF_REQUESTED, &pwm->flags))
- 			continue;
- 
- 		if (our_chip->variant.output_mask & BIT(i))
--- 
-2.34.1
+Best regards,
+Krzysztof
 
