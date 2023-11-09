@@ -2,117 +2,99 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C079C04E83
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Nov 2023 20:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F29C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Nov 2023 22:42:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234659AbjKIUHF (ORCPT
+        id S231191AbjKIWmb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Nov 2023 15:07:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36922 "EHLO
+        Thu, 9 Nov 2023 17:42:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234554AbjKIUHE (ORCPT
+        with ESMTP id S230339AbjKIWma (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Nov 2023 15:07:04 -0500
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FFA644B5
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Nov 2023 12:07:02 -0800 (PST)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-5a8ee23f043so15164197b3.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Nov 2023 12:07:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699560421; x=1700165221; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JxfBT9XrSRT5nrDSafWJh9sd+I3zu8gAVwzWVP+isuk=;
-        b=wRlxhK72w6O5c5iPkyqSco0awCEHjG8RKS1w691vXr5E5gHa1GxtFSK2UMBm0f7at7
-         lbRNSpBebmSMpS/Deg5XJ8VvdZNuhIjegYWGU5ikllSTvlUEP8LSXQsd4dBfNaR+yNXK
-         tPgTHRb1gaJ0cOAX643Ohba3mpPxbo8RCwnt1HpkiYrF5uJ1pGSnOHfiTueFWgE3Dqn/
-         u88ZBAn2tAuicHiOPEuD/SPxw3WsKqTO2GpW/38AnZRFTS2lp1XLiPLHp4J5/tMyK7fw
-         sHAwZ4aL2oq1uB08XwGLuEI+fXXa+7oK8w6n1R8PZVbltQoo1ZBbfMWh7vSR1ePzxy9a
-         uEjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699560421; x=1700165221;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JxfBT9XrSRT5nrDSafWJh9sd+I3zu8gAVwzWVP+isuk=;
-        b=JsbfFYxKR7H2646YTW7sXaLpsUe6+tPlirbtu9/aZiyRn7aGM2b2tBlxCKS6R+pPa2
-         EPqdcTrr+c1bVvgWdEKVPrJ71gIHi+CKURcSjQ3RdAaInY3lFqNmuUE3ET+rMMyqwvEh
-         hvZissuNwdirPOvziRLwWdp1+I8mvy6kIGIR9TPbcj9w5hzPtfM7xsZ6dM9heIMyYpvc
-         vALup9/+2QqSyPtrBbLs92DgRWA6F9A+adf6w2Iy2fmv1T4+Rzex1fZb+ORtXp3k4l2O
-         rLryGCZHPrJEm0Jx8neB/7mB+mnqR4/bJ3HsiUDJCVBjstSV9yiXyUVrDo2H37mo5pYc
-         p/Hg==
-X-Gm-Message-State: AOJu0Yzc/ZiWvRVtOCa1gb3iSTpf2f+fjUJhst53qChik8ohps/gEhmI
-        odxd+Gk6bm+RhFZH7zWUE0Qj/a6Zj4TMnW9/3wQCJw==
-X-Google-Smtp-Source: AGHT+IEXBKt+FURrtNfddWlqR3gL5F6B4MyNTpLeCgYWcpg+lWu9UphB2hG1mn1lgkc9/kt9ZZeKnj4In3j2CaEDK+8=
-X-Received: by 2002:a81:df01:0:b0:5ae:c35a:807a with SMTP id
- c1-20020a81df01000000b005aec35a807amr5649968ywn.48.1699560421299; Thu, 09 Nov
- 2023 12:07:01 -0800 (PST)
+        Thu, 9 Nov 2023 17:42:30 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EBDB4206;
+        Thu,  9 Nov 2023 14:42:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=CltTL1Rex0kaIFRKfLiha4ilf787I7h9sGObtQ4O5Ok=; b=C5EGz8Ixx0AakG1ZcQPhEWLqKv
+        8QORt9/zAZ9U2rgOi0dc7hmZrgfzAl1/V2FdVugFiykdYGNPV7BaxaMmKZ6yeXFZyoGRxaWm5grYe
+        X96PWoVPXW1h1tSsyxx2y/qRu9kFk0ZPhA6OSDYqiNH8xEOjdF/FUewszYk50PAdBF9yysZ5Zk+xc
+        1lSHT8snQ6rFCFAcS9iHVoOhaFFgiA6rEpf632EWlu2fWXQnFF3Mv4VPF7OFYhF8yOkTZpYGlsabN
+        3RM0hnb+Q+dGd0qP5dgPVIvv/I/Tbgz3FhRhFkufSM3BIT2sHO1HGth00wDoOavArT2w4tlhDZ6Tm
+        fCHbQ8FA==;
+Received: from [50.53.46.231] (helo=[192.168.254.15])
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1r1DjG-007Md1-0u;
+        Thu, 09 Nov 2023 22:42:26 +0000
+Message-ID: <3024abdf-e7e1-4063-a0ba-ed415317c200@infradead.org>
+Date:   Thu, 9 Nov 2023 14:42:25 -0800
 MIME-Version: 1.0
-References: <20231108104343.24192-1-krzysztof.kozlowski@linaro.org> <20231108104343.24192-4-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20231108104343.24192-4-krzysztof.kozlowski@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 9 Nov 2023 21:06:50 +0100
-Message-ID: <CACRpkdbAwOfjbD_CjC4Aqi_A2+pghTBeWyV7mPMZv25BXMPStw@mail.gmail.com>
-Subject: Re: [PATCH 03/17] dt-bindings: i2c: samsung,s3c2410-i2c: add specific
- compatibles for existing SoC
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lee Jones <lee@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] clk: samsung: Fix kernel-doc comments
+Content-Language: en-US
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20231109190925.2066-1-semen.protsenko@linaro.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20231109190925.2066-1-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 8, 2023 at 11:44=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
 
-> Samsung Exynos SoC reuses several devices from older designs, thus
-> historically we kept the old (block's) compatible only.  This works fine
-> and there is no bug here, however guidelines expressed in
-> Documentation/devicetree/bindings/writing-bindings.rst state that:
-> 1. Compatibles should be specific.
-> 2. We should add new compatibles in case of bugs or features.
->
-> Add compatibles specific to each SoC in front of all old-SoC-like
-> compatibles.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Makes perfect sense to me:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+On 11/9/23 11:09, Sam Protsenko wrote:
+> Fix some issues found in kernel-doc comments in Samsung CCF framework.
+> It makes scripts/kernel-doc happy, which can be checked with:
+> 
+>     $ find drivers/clk/samsung/ -name '*.[ch]' -exec \
+>       scripts/kernel-doc -v -none {} \;
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Fixes: ddeac8d968d4 ("clk: samsung: add infrastructure to register cpu clocks")
+> Fixes: 721c42a351b1 ("clk: samsung: add common clock framework helper functions for Samsung platforms")
+> Fixes: 3ff6e0d8d64d ("clk: samsung: Add support to register rate_table for samsung plls")
+> ---
+>  drivers/clk/samsung/clk-cpu.h | 2 +-
+>  drivers/clk/samsung/clk.h     | 9 ++++++---
+>  2 files changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-cpu.h b/drivers/clk/samsung/clk-cpu.h
+> index fc9f67a3b22e..103f64193e42 100644
+> --- a/drivers/clk/samsung/clk-cpu.h
+> +++ b/drivers/clk/samsung/clk-cpu.h
+> @@ -11,7 +11,7 @@
+>  #include "clk.h"
+>  
+>  /**
+> - * struct exynos_cpuclk_data: config data to setup cpu clocks.
+> + * struct exynos_cpuclk_cfg_data: config data to setup cpu clocks.
 
-Yours,
-Linus Walleij
+Hm, OK, the ':' separator works. '-' is the documented separator here,
+but it's not worth updating the patch for that.
+
+>   * @prate: frequency of the primary parent clock (in KHz).
+>   * @div0: value to be programmed in the div_cpu0 register.
+>   * @div1: value to be programmed in the div_cpu1 register.
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+
+thanks.
+
+-- 
+~Randy
