@@ -2,245 +2,150 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F3CC04E85
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Nov 2023 18:06:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3C6C4167B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Nov 2023 19:09:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344943AbjKISGL (ORCPT
+        id S1345095AbjKITJe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Nov 2023 13:06:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40672 "EHLO
+        Thu, 9 Nov 2023 14:09:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344920AbjKISGI (ORCPT
+        with ESMTP id S231478AbjKITJ3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Nov 2023 13:06:08 -0500
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 362A93AA5;
-        Thu,  9 Nov 2023 10:06:06 -0800 (PST)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20231109180604epoutp0203d5183f1c25af849c509750f8f2a288~WBpkvgpMu0327303273epoutp02F;
-        Thu,  9 Nov 2023 18:06:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20231109180604epoutp0203d5183f1c25af849c509750f8f2a288~WBpkvgpMu0327303273epoutp02F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1699553164;
-        bh=+s1GQ6cxkAoMLjQHQuQK7i4/jrzq4jIiFYnAJpIQAEg=;
-        h=From:To:In-Reply-To:Subject:Date:References:From;
-        b=fZJV8SvM9AfYAMlrJAfY9poiOHXvmFKyFZdqqynP0HbcsJUE0WsGeEHJmrPBoEOyv
-         uOxFNNfpAPIaMnLjFlEZEzqtGgOwfkouJWYMZ6t/3eX/dS9Q3bYz/lFUO2FueC3+D9
-         Pr5T+j3Roa4XMe6ST/Zt60H6RGOgnO3fH8pZCDpw=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20231109180603epcas5p3e7b62e16ea0b7ef816115bef9ceda331~WBpkQ5v2s2548325483epcas5p33;
-        Thu,  9 Nov 2023 18:06:03 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.180]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4SR8yf2CFmz4x9Pp; Thu,  9 Nov
-        2023 18:06:02 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        76.D0.09634.A8F1D456; Fri, 10 Nov 2023 03:06:02 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20231109180601epcas5p35d2a5cf24cd906dede19c27213ad49df~WBpiOm5-92217322173epcas5p3w;
-        Thu,  9 Nov 2023 18:06:01 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20231109180601epsmtrp1783e1075e75b37e27b73c9f8317adad1~WBpiKb3q02657326573epsmtrp1R;
-        Thu,  9 Nov 2023 18:06:01 +0000 (GMT)
-X-AuditID: b6c32a49-eebff700000025a2-47-654d1f8aa957
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8F.16.18939.98F1D456; Fri, 10 Nov 2023 03:06:01 +0900 (KST)
-Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20231109180556epsmtip22b32d0e0ae0460b24729fae93c0cf165~WBpdFE6PW2620526205epsmtip2P;
-        Thu,  9 Nov 2023 18:05:56 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'David Airlie'" <airlied@gmail.com>,
-        "'Daniel Vetter'" <daniel@ffwll.ch>,
-        "'Maarten Lankhorst'" <maarten.lankhorst@linux.intel.com>,
-        "'Maxime Ripard'" <mripard@kernel.org>,
-        "'Thomas Zimmermann'" <tzimmermann@suse.de>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>,
-        "'Conor Dooley'" <conor+dt@kernel.org>,
-        "'Andi Shyti'" <andi.shyti@kernel.org>,
-        "'Jonathan Cameron'" <jic23@kernel.org>,
-        "'Lars-Peter Clausen'" <lars@metafoo.de>,
-        "'Lee Jones'" <lee@kernel.org>,
-        "'Ulf Hansson'" <ulf.hansson@linaro.org>,
-        "'Tomasz Figa'" <tomasz.figa@gmail.com>,
-        "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-        "'Linus Walleij'" <linus.walleij@linaro.org>,
-        "'Thierry Reding'" <thierry.reding@gmail.com>,
-        =?utf-8?Q?'Uwe_Kleine-K=C3=B6nig'?= 
-        <u.kleine-koenig@pengutronix.de>,
-        "'Alessandro Zummo'" <a.zummo@towertech.it>,
-        "'Alexandre Belloni'" <alexandre.belloni@bootlin.com>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
-        "'Jiri Slaby'" <jirislaby@kernel.org>,
-        "'Liam Girdwood'" <lgirdwood@gmail.com>,
-        "'Mark Brown'" <broonie@kernel.org>,
-        "'Jaehoon Chung'" <jh80.chung@samsung.com>,
-        "'Sam Protsenko'" <semen.protsenko@linaro.org>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <linux-rtc@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>
-In-Reply-To: <20231108104343.24192-3-krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH 02/17] dt-bindings: i2c: exynos5: add specific
- compatibles for existing SoC
-Date:   Thu, 9 Nov 2023 23:35:54 +0530
-Message-ID: <02bb01da1337$65caf5e0$3160e1a0$@samsung.com>
+        Thu, 9 Nov 2023 14:09:29 -0500
+Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A2893C15
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Nov 2023 11:09:27 -0800 (PST)
+Received: by mail-ot1-x32c.google.com with SMTP id 46e09a7af769-6cd33d51852so643659a34.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Nov 2023 11:09:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1699556966; x=1700161766; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mrQce2fi5joicXGyijMSuzLaWJ9Gi53CJdUsyNCS/ek=;
+        b=OTo5oK/6UirVtA1B4jjv9ymP/qPoprM8OKpC4sESNylk8Tmy0h0Qn/gFjKkHJsufed
+         cFjKqKBPKV7EMQeP+GF/+ZuDTIwI+I1ozS81KcaAHNjUOFpAFzx+NJc5sw7SZPKucmlj
+         7hahqHpyj4YaL5mKsVqk0UPkHN8ESP0n38lvbcUCYzJdYstJIQrh5thyL7Rwm1/SpQ3t
+         mGnLbG1CmSeii1UFXhQPjGfP3p3xShewDg+4yoYjhxYTTEDqu4R6W5Kq14I19X1/JktO
+         5VdGtMN7BPusmTQKbjBU2UsTVqY9b07iHKteQ7pUzV2cNgrwNqmVd0iNOx6VHsI6lL60
+         +MIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699556966; x=1700161766;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mrQce2fi5joicXGyijMSuzLaWJ9Gi53CJdUsyNCS/ek=;
+        b=HiwBFs08wbOLaGZtVKCjG6YjYA3tQBrkkddr/eXHh5QxkUWR3VvCbCZdE9kj7uXX/7
+         VGP80SoZCf4LMHSzBRCHAQg8SrOGaIAFbKKQzCOjcxVsrxtNoXDJ8BSqVEl7lDsKgP9A
+         mqqIwzho6ZrgyHuyDf7MgsfH+LGjWlTyk9tfRmja/Lv/RodXdeNUd5gL+EKIFBtUhRl3
+         28rqqE/87Mm0tDC26u5q1ISlMHp2XfkaKe8OBeIsrly2Z1h9GPdbgt3b1FASY17XlUd2
+         /ZTEuSa9GThElc0uUoZWKd5qjOJd4ukfe+oQWJkXTSouYSShu8mUet6GczIhMgyeVzbq
+         wf5Q==
+X-Gm-Message-State: AOJu0YwUfbYQY7aXGvXJ95LjvvPSkxhmYsin5YVsBOutv7YqgdAimr/8
+        HmU7WmqPMtf2mNJFyzIznuYoWQ==
+X-Google-Smtp-Source: AGHT+IEqhChy+9PfaLLygYaRjg10mzOliTG5x8L2DEzLyUa75MzGgjDixLGrR6Dvtd6wNHIA3mif1Q==
+X-Received: by 2002:a05:6830:e08:b0:6b8:7880:de9 with SMTP id do8-20020a0568300e0800b006b878800de9mr6195268otb.19.1699556966399;
+        Thu, 09 Nov 2023 11:09:26 -0800 (PST)
+Received: from localhost ([136.62.192.75])
+        by smtp.gmail.com with ESMTPSA id a23-20020a056830009700b006b9443ce478sm2300447oto.27.2023.11.09.11.09.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Nov 2023 11:09:26 -0800 (PST)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] clk: samsung: Fix kernel-doc comments
+Date:   Thu,  9 Nov 2023 13:09:24 -0600
+Message-Id: <20231109190925.2066-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGWJB6kbFUwx2+cGuz2YrV1SxstmQJIJYa1AlRjzhGw1UCPMA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te1BUZRSf7+59LBR0A8IvKqRNxyB5rAF920CIMnZDZXAifNC0rHBdGGDZ
-        2QU0bUaDXBDkFaK08lAhkBXCeA2gZK085DEo8YqEeBYQCAkKrsDQLtfM/37nd37n+51zvjl8
-        ntk8ZcUPlUWxCpkkXEAa49W3bbfYJ27cyzpdbCdRQWcPhe70XcFQ/Gwhhbo7tRgaepwAUObI
-        OIlK6jswtFadzkN5DR0E6n48R6K4/DIS/fZURaDhWA2GZnPeRCmTIzxUP11FoYKMPALVqC7j
-        aLE7AUPnVoowVD7WS6CKvBWAElYfAZTbMIujrrpsEjWspQI0OKgBqOlaN4my7v6Eofb8ZArl
-        /HWOhy4/rMKR6kwhgU7XN1Do9kw8gSZS9BJdXS6ONHX69ypn0gl0Pz0DoObS/dttmesLsSST
-        W3KCqV+8hDO16kGKKdecIZmB3pt6vmUfcyunhGKGkpoxpqLgJFMwoyWY1FUnJqVSA5iKthPM
-        hVwdxiyUW/vSh8LcQlhJMKuwYWVBkcGhMqm7YPen4p1iF1cnob1QhD4Q2MgkEay7wGuPr/2u
-        0HD9ggU2MZLwaD3lK1EqBY4fuSkio6NYm5BIZZS7gJUHh8ud5Q5KSYQyWiZ1kLFRHwqdnLa5
-        6IWBYSE/XsXl7cJjJcN14BTocUwERnxIO8PspV95BmxG3wAwfvVgIjDW43kA+79vJJ4Ha2PZ
-        ehV/vSKxVczxtQA+Sh3BuWASwLa8JsLwFEnbw5p8FWlIWNA3TGDXrVHckDCiveC9+AuYAZvT
-        EvhgMXOdx+lN8On12HXehBbB2sVvAIdfhS3fja9rePR7sPDyNI/r2wbq/iwkDB1Z0Dtg59dy
-        TrIBTjU2UAZfSNcbwybN1Wd6L5g6EYdz2Bz+3VxJcdgKTqWqKG4yBl5ZseLoEPigqAxw2AP+
-        3J2NGyQ82haW1TlyVqYweXkc4ypNYILKjFNvhnGzPc+M3oDpSUkEhxmo7j1PcavqBHBgQUOk
-        ARv1C0OqXxhS/cI06v+dLwFcA15n5coIKat0kQtl7NHnvx0UGVEO1o/P7pMaMDj8j4MWYHyg
-        BZDPE1iY3HPew5qZBEu+PM4qIsWK6HBWqQUu+s2n86xeC4rUX68sSix0Fjk5u7q6OovedxUK
-        NphMn84JNqOlkig2jGXlrOK/OoxvZHUKK7dLCqtZ9txYkexV6dns/0oiyusv3Oph6p9Gfrsj
-        AHylzJpW89/W7VNNWor8wo5o/QuWRyytbx/yptzzmzZjbwVu6yhlPvPuO5zsQHi8e2zLWOp2
-        44NVk3eWPKMHU45X96uWNvsHaItNi3U7ha0WRTHmoR6i0iwscyumC6fF2JPdUr8vGjzNE3xq
-        BlZ0qPDzAd6B0rujAZbv3G9esmybOB84d81vqqk1xLo79KFiO1q07/Gu/qNm7rB0mbLOOCqW
-        xv8wvNHYZ28feTjIT7Kp9eLH9mcaW6pvunf5FTcKe+fP9jxxG2UtQn8PSkt46cguxYGY5iG7
-        PJHPyV/297wc3JHrK8CVIRKhHU+hlPwL3AsNxgUFAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTVwCGd+43TbrdVRx3VAoWYgARZHPZcS5qJj/uD5lTpia6BSrcFLYC
-        zW1hU2MGVcvHHB9DhpZRZDTFlapQKF+hG5ZqVRwDrTAURJyABoLbgGYorKM0W/j35H2f8+ac
-        5FCo6DYeSKVlqDk+Q6aQEgKspVsavKkgOJ7bbLgqgYb+eyS8MfgDAvNmjCR09dsRODqfD2D5
-        2BMCmm29CPS0lKKw2tGLQ9f8cwKerL1CwN9eaHH4SGNC4EzVOlj0dAyFtikrCQ1l1Ths09Zg
-        0O3KR+DZxToEWn4fwGFT9SKA+UtzAOodMxi82/E9AR2eYgBHRkwAXq93EfDcrz8h8HbtNySs
-        mjiLwpo/rRjUFhhxeNrmIGH3dB4OJ4uWlYUOPQZNHct7zdOlOHxQWgag89LBnRFsw6yGYPXm
-        46zNfQFj23UjJGsxFRDs8EDncn5zL/tzlZlkR792ImyT4SvWMG3H2eKlzWxRswmwTT3H2Qr9
-        AsLOWiQf0YcE76dwirRsjo/ZniRIdTnNpPJM2JePut0gB4wGFQKKYugtTOGtxEIgoER0K2C+
-        7bCDQuC3nIuZwcYS0sdrmB//mSR90gRgRlobcW9B0JuYtlot4WV/ekjI9Azv8Um/AMbqOIV6
-        Cz86junLq0C8vIZOZKw2D+ZljA5jXjRoVnIhvZVpd58CPn6duXn+yYqD0huZ8aHx/9lYM4X6
-        bhTCLIwbce8L/OkPmP5cpU8JYJ5dc5AlQKRbtaRbtaRbtaRbdeQCwExgLadUpcvTk5Wx0SpZ
-        uiorQx6dnJluASsfLnJfGzBeWYq2A4QCdsBQqNRf2LdlNycSpsiOHuP4zEQ+S8Gp7EBMYdIA
-        YaiiIEVEy2Vq7nOOU3L8fy1C+QXmIAcElYt/bAiJUKvj+LmiXj7s5Xv40fMhor/eUu+4u35o
-        f9/a/R++M9DUbHotTS5+80bOrbmu+ofXxCec8Gpv+7bWoIqYNn1NzB6jIbSk585T/4/nB69H
-        fvd8QnLATSTNPJ4wiDURe8vkLYFpc+aL998+UnIp1PxGud/LhNKEIa2e8hw5/HdU9cWN8Zcr
-        1y/yFsnWispRYb0rPnXXofHs4vCp3V3OT3Z8au16BW0tD351XWdAruLhu8nYg8oWIrdxw0Ld
-        44xnJwcC9JrMscSwfbHbEsLR7jue05LAnSd25ZwLj2qIrovabuatks77kwfPJGU5Lld9kW3O
-        x2c/Cxo+fC8u65jNI8VUqbLYSJRXyf4FqdWDf98DAAA=
-X-CMS-MailID: 20231109180601epcas5p35d2a5cf24cd906dede19c27213ad49df
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231108104407epcas5p4c52f140b035727b6110ff7d3c0f81bc0
-References: <20231108104343.24192-1-krzysztof.kozlowski@linaro.org>
-        <CGME20231108104407epcas5p4c52f140b035727b6110ff7d3c0f81bc0@epcas5p4.samsung.com>
-        <20231108104343.24192-3-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Fix some issues found in kernel-doc comments in Samsung CCF framework.
+It makes scripts/kernel-doc happy, which can be checked with:
 
+    $ find drivers/clk/samsung/ -name '*.[ch]' -exec \
+      scripts/kernel-doc -v -none {} \;
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
-> Sent: Wednesday, November 8, 2023 4:13 PM
-> To: David Airlie <airlied=40gmail.com>; Daniel Vetter <daniel=40ffwll.ch>=
-;
-> Maarten Lankhorst <maarten.lankhorst=40linux.intel.com>; Maxime Ripard
-> <mripard=40kernel.org>; Thomas Zimmermann <tzimmermann=40suse.de>;
-> Rob Herring <robh+dt=40kernel.org>; Krzysztof Kozlowski
-> <krzysztof.kozlowski+dt=40linaro.org>; Conor Dooley
-> <conor+dt=40kernel.org>; Alim Akhtar <alim.akhtar=40samsung.com>; Andi
-> Shyti <andi.shyti=40kernel.org>; Jonathan Cameron <jic23=40kernel.org>; L=
-ars-
-> Peter Clausen <lars=40metafoo.de>; Lee Jones <lee=40kernel.org>; Ulf
-> Hansson <ulf.hansson=40linaro.org>; Tomasz Figa <tomasz.figa=40gmail.com>=
-;
-> Sylwester Nawrocki <s.nawrocki=40samsung.com>; Linus Walleij
-> <linus.walleij=40linaro.org>; Thierry Reding <thierry.reding=40gmail.com>=
-; Uwe
-> Kleine-K=C3=B6nig=20<u.kleine-koenig=40pengutronix.de>;=20Alessandro=20Zu=
-mmo=0D=0A>=20<a.zummo=40towertech.it>;=20Alexandre=20Belloni=0D=0A>=20<alex=
-andre.belloni=40bootlin.com>;=20Greg=20Kroah-Hartman=0D=0A>=20<gregkh=40lin=
-uxfoundation.org>;=20Jiri=20Slaby=20<jirislaby=40kernel.org>;=20Liam=0D=0A>=
-=20Girdwood=20<lgirdwood=40gmail.com>;=20Mark=20Brown=20<broonie=40kernel.o=
-rg>;=0D=0A>=20Jaehoon=20Chung=20<jh80.chung=40samsung.com>;=20Sam=20Protsen=
-ko=0D=0A>=20<semen.protsenko=40linaro.org>;=20dri-devel=40lists.freedesktop=
-.org;=0D=0A>=20devicetree=40vger.kernel.org;=20linux-kernel=40vger.kernel.o=
-rg;=20linux-arm-=0D=0A>=20kernel=40lists.infradead.org;=20linux-samsung-soc=
-=40vger.kernel.org;=20linux-=0D=0A>=20i2c=40vger.kernel.org;=20linux-iio=40=
-vger.kernel.org;=20linux-mmc=40vger.kernel.org;=0D=0A>=20linux-gpio=40vger.=
-kernel.org;=20linux-pwm=40vger.kernel.org;=20linux-=0D=0A>=20rtc=40vger.ker=
-nel.org;=20linux-serial=40vger.kernel.org;=20alsa-devel=40alsa-=0D=0A>=20pr=
-oject.org;=20linux-sound=40vger.kernel.org=0D=0A>=20Cc:=20Krzysztof=20Kozlo=
-wski=20<krzysztof.kozlowski=40linaro.org>=0D=0A>=20Subject:=20=5BPATCH=2002=
-/17=5D=20dt-bindings:=20i2c:=20exynos5:=20add=20specific=20compatibles=20fo=
-r=0D=0A>=20existing=20SoC=0D=0A>=20=0D=0A>=20Samsung=20Exynos=20SoC=20reuse=
-s=20several=20devices=20from=20older=20designs,=20thus=0D=0A>=20historicall=
-y=20we=20kept=20the=20old=20(block's)=20compatible=20only.=20=20This=20work=
-s=20fine=20and=0D=0A>=20there=20is=20no=20bug=20here,=20however=20guideline=
-s=20expressed=20in=0D=0A>=20Documentation/devicetree/bindings/writing-bindi=
-ngs.rst=20state=20that:=0D=0A>=201.=20Compatibles=20should=20be=20specific.=
-=0D=0A>=202.=20We=20should=20add=20new=20compatibles=20in=20case=20of=20bug=
-s=20or=20features.=0D=0A>=20=0D=0A>=20Add=20compatibles=20specific=20to=20e=
-ach=20SoC=20in=20front=20of=20all=20old-SoC-like=20compatibles.=0D=0A>=20=
-=0D=0A>=20Signed-off-by:=20Krzysztof=20Kozlowski=20<krzysztof.kozlowski=40l=
-inaro.org>=0D=0A>=20=0D=0A>=20---=0D=0A>=20=0D=0A>=20I=20propose=20to=20tak=
-e=20the=20patch=20through=20Samsung=20SoC=20(me).=20See=20cover=20letter=20=
-for=0D=0A>=20explanation.=0D=0A>=20---=0D=0A>=20=20Documentation/devicetree=
-/bindings/i2c/i2c-exynos5.yaml=20=7C=2010=20+++++++++-=0D=0A>=20=20.../devi=
-cetree/bindings/soc/samsung/exynos-usi.yaml=20=20=20=20=7C=20=202=20+-=0D=
-=0A>=20=202=20files=20changed,=2010=20insertions(+),=202=20deletions(-)=0D=
-=0A>=20=0D=0A>=20diff=20--git=20a/Documentation/devicetree/bindings/i2c/i2c=
--exynos5.yaml=0D=0A>=20b/Documentation/devicetree/bindings/i2c/i2c-exynos5.=
-yaml=0D=0A>=20index=203e52a0db6c41..c1f5d2cb7709=20100644=0D=0A>=20---=20a/=
-Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml=0D=0A>=20+++=20b/Doc=
-umentation/devicetree/bindings/i2c/i2c-exynos5.yaml=0D=0A>=20=40=40=20-25,7=
-=20+25,15=20=40=40=20properties:=0D=0A>=20=20=20=20=20=20=20=20=20=20=20=20=
--=20samsung,exynos5250-hsi2c=20=20=20=20=23=20Exynos5250=20and=20Exynos5420=
-=0D=0A>=20=20=20=20=20=20=20=20=20=20=20=20-=20samsung,exynos5260-hsi2c=20=
-=20=20=20=23=20Exynos5260=0D=0A>=20=20=20=20=20=20=20=20=20=20=20=20-=20sam=
-sung,exynos7-hsi2c=20=20=20=20=20=20=20=23=20Exynos7=0D=0A>=20-=20=20=20=20=
-=20=20=20=20=20=20-=20samsung,exynosautov9-hsi2c=20=20=23=20ExynosAutoV9=20=
-and=20Exynos850=0D=0A>=20+=20=20=20=20=20=20=20=20=20=20-=20samsung,exynosa=
-utov9-hsi2c=0D=0A>=20+=20=20=20=20=20=20-=20items:=0D=0A>=20+=20=20=20=20=
-=20=20=20=20=20=20-=20enum:=0D=0A>=20+=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20-=20samsung,exynos5433-hsi2c=0D=0A>=20+=20=20=20=20=20=20=20=20=20=20=
--=20const:=20samsung,exynos7-hsi2c=0D=0A>=20+=20=20=20=20=20=20-=20items:=
-=0D=0A>=20+=20=20=20=20=20=20=20=20=20=20-=20enum:=0D=0A>=20+=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20-=20samsung,exynos850-hsi2c=0D=0ADoes=20this=
-=20need=20an=20entry=20in=20allOf:?=20to=20indicate=20exynos850=20also=20ha=
-s=202=20clocks?=0D=0A=0D=0A>=20+=20=20=20=20=20=20=20=20=20=20-=20const:=20=
-samsung,exynosautov9-hsi2c=0D=0A>=20=20=20=20=20=20=20=20-=20const:=20samsu=
-ng,exynos5-hsi2c=20=20=20=20=23=20Exynos5250=20and=20Exynos5420=0D=0A>=20=
-=20=20=20=20=20=20=20=20=20deprecated:=20true=0D=0A>=20=0D=0A>=20diff=20--g=
-it=20a/Documentation/devicetree/bindings/soc/samsung/exynos-=0D=0A>=20usi.y=
-aml=20b/Documentation/devicetree/bindings/soc/samsung/exynos-=0D=0A>=20usi.=
-yaml=0D=0A>=20index=20a6836904a4f8..5b7ab69546c4=20100644=0D=0A>=20---=20a/=
-Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml=0D=0A>=20+++=
-=20b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml=0D=0A>=
-=20=40=40=20-155,7=20+155,7=20=40=40=20examples:=0D=0A>=20=20=20=20=20=20=
-=20=20=20=20=7D;=0D=0A>=20=0D=0A>=20=20=20=20=20=20=20=20=20=20hsi2c_0:=20i=
-2c=4013820000=20=7B=0D=0A>=20-=20=20=20=20=20=20=20=20=20=20=20=20compatibl=
-e=20=3D=20=22samsung,exynosautov9-hsi2c=22;=0D=0A>=20+=20=20=20=20=20=20=20=
-=20=20=20=20=20compatible=20=3D=20=22samsung,exynos850-hsi2c=22,=0D=0A>=20+=
-=20=22samsung,exynosautov9-hsi2c=22;=0D=0A>=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20reg=20=3D=20<0x13820000=200xc0>;=0D=0A>=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20interrupts=20=3D=20<GIC_SPI=20227=20IRQ_TYPE_LEVEL_HIGH>;=
-=0D=0A>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=23address-cells=20=3D=20<=
-1>;=0D=0A>=20--=0D=0A>=202.34.1=0D=0A=0D=0A=0D=0A
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+Fixes: ddeac8d968d4 ("clk: samsung: add infrastructure to register cpu clocks")
+Fixes: 721c42a351b1 ("clk: samsung: add common clock framework helper functions for Samsung platforms")
+Fixes: 3ff6e0d8d64d ("clk: samsung: Add support to register rate_table for samsung plls")
+---
+ drivers/clk/samsung/clk-cpu.h | 2 +-
+ drivers/clk/samsung/clk.h     | 9 ++++++---
+ 2 files changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-cpu.h b/drivers/clk/samsung/clk-cpu.h
+index fc9f67a3b22e..103f64193e42 100644
+--- a/drivers/clk/samsung/clk-cpu.h
++++ b/drivers/clk/samsung/clk-cpu.h
+@@ -11,7 +11,7 @@
+ #include "clk.h"
+ 
+ /**
+- * struct exynos_cpuclk_data: config data to setup cpu clocks.
++ * struct exynos_cpuclk_cfg_data: config data to setup cpu clocks.
+  * @prate: frequency of the primary parent clock (in KHz).
+  * @div0: value to be programmed in the div_cpu0 register.
+  * @div1: value to be programmed in the div_cpu1 register.
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index ab9c3d7a25b3..4f17d5890a81 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -55,7 +55,7 @@ struct samsung_clock_alias {
+  * @name: name of this fixed-rate clock.
+  * @parent_name: optional parent clock name.
+  * @flags: optional fixed-rate clock flags.
+- * @fixed-rate: fixed clock rate of this clock.
++ * @fixed_rate: fixed clock rate of this clock.
+  */
+ struct samsung_fixed_rate_clock {
+ 	unsigned int		id;
+@@ -74,7 +74,7 @@ struct samsung_fixed_rate_clock {
+ 		.fixed_rate	= frate,		\
+ 	}
+ 
+-/*
++/**
+  * struct samsung_fixed_factor_clock: information about fixed-factor clock
+  * @id: platform specific id of the clock.
+  * @name: name of this fixed-factor clock.
+@@ -146,14 +146,16 @@ struct samsung_mux_clock {
+ 	__MUX(_id, cname, pnames, o, s, w, f, mf)
+ 
+ /**
+- * @id: platform specific id of the clock.
+  * struct samsung_div_clock: information about div clock
++ * @id: platform specific id of the clock.
+  * @name: name of this div clock.
+  * @parent_name: name of the parent clock.
+  * @flags: optional flags for basic clock.
+  * @offset: offset of the register for configuring the div.
+  * @shift: starting bit location of the div control bit-field in @reg.
++ * @width: width of the bitfield.
+  * @div_flags: flags for div-type clock.
++ * @table: array of divider/value pairs ending with a div set to 0.
+  */
+ struct samsung_div_clock {
+ 	unsigned int		id;
+@@ -244,6 +246,7 @@ struct samsung_clk_reg_dump {
+  * @con_offset: offset of the register for configuring the PLL.
+  * @lock_offset: offset of the register for locking the PLL.
+  * @type: Type of PLL to be registered.
++ * @rate_table: array of PLL settings for possible PLL rates.
+  */
+ struct samsung_pll_clock {
+ 	unsigned int		id;
+-- 
+2.39.2
+
