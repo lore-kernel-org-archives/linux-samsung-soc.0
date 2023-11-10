@@ -2,110 +2,106 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0977CC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Nov 2023 18:09:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C14C04A95
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Nov 2023 18:17:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235303AbjKJSJ1 (ORCPT
+        id S235570AbjKJSRR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 10 Nov 2023 13:09:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33084 "EHLO
+        Fri, 10 Nov 2023 13:17:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235167AbjKJSHY (ORCPT
+        with ESMTP id S1344241AbjKJSPF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Nov 2023 13:07:24 -0500
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FAA33AE10
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Nov 2023 07:30:58 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r1TT6-0006Ow-FS; Fri, 10 Nov 2023 16:30:48 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r1TT4-0083Ko-Pw; Fri, 10 Nov 2023 16:30:46 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r1TT4-00Gnx4-Gy; Fri, 10 Nov 2023 16:30:46 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de,
-        linux-serial@vger.kernel.org
-Subject: [PATCH 34/52] serial: samsung: Convert to platform remove callback returning void
-Date:   Fri, 10 Nov 2023 16:30:02 +0100
-Message-ID: <20231110152927.70601-35-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.42.0.586.gbc5204569f7d.dirty
-In-Reply-To: <20231110152927.70601-1-u.kleine-koenig@pengutronix.de>
-References: <20231110152927.70601-1-u.kleine-koenig@pengutronix.de>
+        Fri, 10 Nov 2023 13:15:05 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 810372508D
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Nov 2023 01:46:19 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id AA5AF1F8BF;
+        Fri, 10 Nov 2023 09:46:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1699609577;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=PHskcJcFPTAMyBmHI9A+Yv0ZfYGzZceRpCpqtUErK9Q=;
+        b=x0yxmpAwAlZMpQ+dOADDcTV1Rf5F0WxPgnEp1eH3bdYyrKjtR4+v6UXyBD3mnH3O7ulLlv
+        2w9n6501aVUKDUQvu1vwegWDA1RQNzpLa6ii95JpY1cP58c5Qge9ISt8O3scsIV+LVUB/H
+        iK7sN8o7Dsxe2uAUkK/vgEHCd1s5/Es=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1699609577;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=PHskcJcFPTAMyBmHI9A+Yv0ZfYGzZceRpCpqtUErK9Q=;
+        b=MKo4TZFvfOsoJTcmbZTuZ+Vfs1gT+1E5Q8BmpLh6eXz4sgUGKCZwEm3JOjfB1uR1etQdt4
+        AG0AJAK4/02fL3Dw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 73B91138FC;
+        Fri, 10 Nov 2023 09:46:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id XpcXGen7TWXhTgAAMHmgww
+        (envelope-from <pvorel@suse.cz>); Fri, 10 Nov 2023 09:46:17 +0000
+Date:   Fri, 10 Nov 2023 10:46:15 +0100
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 1/1] samsung: Sort Makefile
+Message-ID: <20231110094615.GD1536739@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20231108090106.8933-1-pvorel@suse.cz>
+ <4d95c252-b992-4214-8cc8-5c98bf07259f@kernel.org>
+ <f7dd78c9-2020-4874-a49e-02a782dcb2a4@kernel.org>
+ <20231110063456.GB1536739@pevik>
+ <058278b4-d959-4c28-9f9e-cffde46dac70@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1893; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=kaeCw/XWGh/rhDctG7bOvweVgq32oP1oEknoetRz908=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlTkyE0v2ifLXtpzyGQdhUDaOdpTbnDbApuz6j2 DwCA6OZbfaJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZU5MhAAKCRCPgPtYfRL+ TsviB/92l+BrGxD7LXpisKNsmU30AFLHo+S43n4iodbe7lthheC7MZSZLHD0dEDOdCp56RgtQsp CEQiRtNt5t22s3lx4u2rq/o8TgjmdbJ4GhoGB1Ye+szDBoXfpbrvwTwy6Pe41xnLvR+bxiuioCR 9gK1zkLFt1xieOdMNjib/u+FAFyn3sP+/ip9WtWCeJnRb7Gssqf4WQEg9c85RV6ZQxubLWKp0j5 fqaUO6NE6u5k+K8gnD15eOJMMOO/gV9qDl5gZxgwb1p/rFexxL8MCWiDhxYlJJBjNQNsGcaAzDB pjbgKNRerSRBjSyFZrxMn8KeMBetjW0NgvofQ2wh9vWRMc95
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <058278b4-d959-4c28-9f9e-cffde46dac70@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is ignored (apart
-from emitting a warning) and this typically results in resource leaks.
+> On 10/11/2023 07:34, Petr Vorel wrote:
+> > Hi Krzysztof,
 
-To improve here there is a quest to make the remove callback return
-void. In the first step of this quest all drivers are converted to
-.remove_new(), which already returns void. Eventually after all drivers
-are converted, .remove_new() will be renamed to .remove().
+> >> On 09/11/2023 17:38, Krzysztof Kozlowski wrote:
+> >>> On 08/11/2023 10:01, Petr Vorel wrote:
+> >>>> Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> >>>> ---
 
-Trivially convert this driver from always returning zero in the remove
-callback to the void returning variant.
+> >> You also lack commit msg explaining why doing this.
+> > I'm sorry, I thought the reason is obvious - readability.
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/tty/serial/samsung_tty.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> > Some Makefiles are tried to be sorted (e.g. drivers/clk/qcom/Makefile),
+> > but lots of them are not (drivers/net/Makefile). Anyway, it's up to you (and
+> > other maintainers) to judge if it's useful or not. If considered useful, I'll
+> > send v2.
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 3bd552841cd2..1b0c2b467a30 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -2054,7 +2054,7 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int s3c24xx_serial_remove(struct platform_device *dev)
-+static void s3c24xx_serial_remove(struct platform_device *dev)
- {
- 	struct uart_port *port = s3c24xx_dev_to_port(&dev->dev);
- 
-@@ -2063,8 +2063,6 @@ static int s3c24xx_serial_remove(struct platform_device *dev)
- 	}
- 
- 	uart_unregister_driver(&s3c24xx_uart_drv);
--
--	return 0;
- }
- 
- /* UART power management code */
-@@ -2611,7 +2609,7 @@ MODULE_DEVICE_TABLE(of, s3c24xx_uart_dt_match);
- 
- static struct platform_driver samsung_serial_driver = {
- 	.probe		= s3c24xx_serial_probe,
--	.remove		= s3c24xx_serial_remove,
-+	.remove_new	= s3c24xx_serial_remove,
- 	.id_table	= s3c24xx_serial_driver_ids,
- 	.driver		= {
- 		.name	= "samsung-uart",
--- 
-2.42.0
+
+> The commit should come with message justifying it. It's also not clear
+Sure.
+
+> what do you sort - entries are sorted by Kconfig, but you move
+> CONFIG_EXYNOS_5250_COMMON_CLK.
+
+All entries are sorted, i.e. by obj-$() and then by it's entries (items behind +=).
+
+At least CONFIG_EXYNOS_ARM64_COMMON_CLK is not sorted.
+
+But anyway, feel free to reject this idea immediately, it's not worth of such in
+depth discussion.
+
+Kind regards,
+Petr
+
+> Best regards,
+> Krzysztof
 
