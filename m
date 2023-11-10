@@ -2,106 +2,92 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C14C04A95
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Nov 2023 18:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6770C41535
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Nov 2023 18:18:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235570AbjKJSRR (ORCPT
+        id S1345458AbjKJSSI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 10 Nov 2023 13:17:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49526 "EHLO
+        Fri, 10 Nov 2023 13:18:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344241AbjKJSPF (ORCPT
+        with ESMTP id S235095AbjKJSRN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Nov 2023 13:15:05 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 810372508D
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Nov 2023 01:46:19 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id AA5AF1F8BF;
-        Fri, 10 Nov 2023 09:46:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1699609577;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=PHskcJcFPTAMyBmHI9A+Yv0ZfYGzZceRpCpqtUErK9Q=;
-        b=x0yxmpAwAlZMpQ+dOADDcTV1Rf5F0WxPgnEp1eH3bdYyrKjtR4+v6UXyBD3mnH3O7ulLlv
-        2w9n6501aVUKDUQvu1vwegWDA1RQNzpLa6ii95JpY1cP58c5Qge9ISt8O3scsIV+LVUB/H
-        iK7sN8o7Dsxe2uAUkK/vgEHCd1s5/Es=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1699609577;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=PHskcJcFPTAMyBmHI9A+Yv0ZfYGzZceRpCpqtUErK9Q=;
-        b=MKo4TZFvfOsoJTcmbZTuZ+Vfs1gT+1E5Q8BmpLh6eXz4sgUGKCZwEm3JOjfB1uR1etQdt4
-        AG0AJAK4/02fL3Dw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 73B91138FC;
-        Fri, 10 Nov 2023 09:46:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id XpcXGen7TWXhTgAAMHmgww
-        (envelope-from <pvorel@suse.cz>); Fri, 10 Nov 2023 09:46:17 +0000
-Date:   Fri, 10 Nov 2023 10:46:15 +0100
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 1/1] samsung: Sort Makefile
-Message-ID: <20231110094615.GD1536739@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20231108090106.8933-1-pvorel@suse.cz>
- <4d95c252-b992-4214-8cc8-5c98bf07259f@kernel.org>
- <f7dd78c9-2020-4874-a49e-02a782dcb2a4@kernel.org>
- <20231110063456.GB1536739@pevik>
- <058278b4-d959-4c28-9f9e-cffde46dac70@kernel.org>
+        Fri, 10 Nov 2023 13:17:13 -0500
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2C8693D9;
+        Fri, 10 Nov 2023 00:19:18 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9d10f94f70bso291067766b.3;
+        Fri, 10 Nov 2023 00:19:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1699604357; x=1700209157; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qx1Z0ES+LIHr7AN7W9XAr27O+pEgi0rCLwQKZbW2VIQ=;
+        b=a0lL4BMsBhIKNoAGMLLej8uIHbOHEnN8o+014vYLCVzJkvgew+gzm8FH2urIcq2f5R
+         yWQRGHqrhS01UJQ7n3kzhKEhMuTIgKu2iM+sIZequRIbTH7ulTFxQgJqlLeqStUZMttu
+         ISkPfvus4pGolDa8XhyIZydmNrVJmFdMNaAMgFhB6C3yw0HU/NxA90dSUsLizwzh7L3C
+         TYBER44JGxIlb2Lnen/Po3WS9VtPj6xX3230/lPWsByLhsKEjRRVXbHY7zRCvmW8SeW6
+         LspqcxKnd7UYIA6wQwwUfoUMDKH59XZaeHs6gxmmKKVOVQiNhZL6Vj4t4erKteM3ZX+n
+         8MCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699604357; x=1700209157;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qx1Z0ES+LIHr7AN7W9XAr27O+pEgi0rCLwQKZbW2VIQ=;
+        b=Xn0MS25C8leqO8bV/PyRg60wd3Lnq3YOwxQsActZJKYFa8apY0lMdCbGHAsj/1C/Ju
+         Xo1oDbhye7y+yLXJWeYonyLZIugOElO633p5356yD+lakwrO1Sqn8ZvyugSGCzHyvnv+
+         nsjF1EkuYBo33qJXa7K2lkId8bxA3L80Nem8c476WiWoRnjRTDOC1LeekoqawJPYKBLu
+         MNmcgQ7lPRwdGWfj7EpacHyOHw44YSmJV7QkdVAbo8rgtbXCnIEy8D1cOCAwbkzVb5fn
+         AEp9003myK28xwNRvP6b7oM0nW2eNlpKVdsO89tK2FzQKKU56ArtHO/9SGdmvewplTjf
+         wi8w==
+X-Gm-Message-State: AOJu0Yw8CnH9mo3wCKQ9VbEKkPhZlYu4Udb+m/VPJYbbalquvCHLjIx7
+        avrlGtCoqSNnS7GTiT2zPHA=
+X-Google-Smtp-Source: AGHT+IGAAojuFpdOwjAGUkWo1zK324czv9t6UG3MKsHY77tFbWHfp7zadrvwIayeBw7sAOGQZ38Enw==
+X-Received: by 2002:a17:907:7f1e:b0:9d5:ecf9:e6a0 with SMTP id qf30-20020a1709077f1e00b009d5ecf9e6a0mr5013918ejc.0.1699604356581;
+        Fri, 10 Nov 2023 00:19:16 -0800 (PST)
+Received: from localhost (p200300e41f0fa600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:a600:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id f4-20020a170906048400b00988e953a586sm3579473eja.61.2023.11.10.00.19.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Nov 2023 00:19:16 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] pwm: samsung: Fix a bit test in pwm_samsung_resume()
+Date:   Fri, 10 Nov 2023 09:19:11 +0100
+Message-ID: <169960433795.472342.2881020171032605853.b4-ty@gmail.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <e031db45-add0-4da7-97fa-dee95ee936ad@moroto.mountain>
+References: <e031db45-add0-4da7-97fa-dee95ee936ad@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <058278b4-d959-4c28-9f9e-cffde46dac70@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> On 10/11/2023 07:34, Petr Vorel wrote:
-> > Hi Krzysztof,
 
-> >> On 09/11/2023 17:38, Krzysztof Kozlowski wrote:
-> >>> On 08/11/2023 10:01, Petr Vorel wrote:
-> >>>> Signed-off-by: Petr Vorel <pvorel@suse.cz>
-> >>>> ---
+On Wed, 25 Oct 2023 14:57:34 +0300, Dan Carpenter wrote:
+> The PWMF_REQUESTED enum is supposed to be used with test_bit() and not
+> used as in a bitwise AND.  In this specific code the flag will never be
+> set so the function is effectively a no-op.
+> 
+> 
 
-> >> You also lack commit msg explaining why doing this.
-> > I'm sorry, I thought the reason is obvious - readability.
+Applied, thanks!
 
-> > Some Makefiles are tried to be sorted (e.g. drivers/clk/qcom/Makefile),
-> > but lots of them are not (drivers/net/Makefile). Anyway, it's up to you (and
-> > other maintainers) to judge if it's useful or not. If considered useful, I'll
-> > send v2.
+[1/2] pwm: samsung: Fix a bit test in pwm_samsung_resume()
+      commit: 7d3c568084f8be53f7f59802d625fa69bc7f8d07
+[2/2] pwm: Fix double shift bug
+      commit: 830743dcf301141b4723ae38cf7d7fca566b9c75
 
-
-> The commit should come with message justifying it. It's also not clear
-Sure.
-
-> what do you sort - entries are sorted by Kconfig, but you move
-> CONFIG_EXYNOS_5250_COMMON_CLK.
-
-All entries are sorted, i.e. by obj-$() and then by it's entries (items behind +=).
-
-At least CONFIG_EXYNOS_ARM64_COMMON_CLK is not sorted.
-
-But anyway, feel free to reject this idea immediately, it's not worth of such in
-depth discussion.
-
-Kind regards,
-Petr
-
-> Best regards,
-> Krzysztof
-
+Best regards,
+-- 
+Thierry Reding <thierry.reding@gmail.com>
