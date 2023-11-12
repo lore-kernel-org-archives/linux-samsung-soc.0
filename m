@@ -2,183 +2,147 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8B6C4167B
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Nov 2023 01:46:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C38DC4167D
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 12 Nov 2023 07:48:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230101AbjKKBqC (ORCPT
+        id S230219AbjKLHs4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 10 Nov 2023 20:46:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48050 "EHLO
+        Sun, 12 Nov 2023 02:48:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230070AbjKKBp7 (ORCPT
+        with ESMTP id S230195AbjKLHsz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Nov 2023 20:45:59 -0500
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45DC0449A;
-        Fri, 10 Nov 2023 17:45:56 -0800 (PST)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20231111014554epoutp01fb86d2c6357c226f27098220f02060d0~WbkWh2cK-2782027820epoutp01j;
-        Sat, 11 Nov 2023 01:45:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20231111014554epoutp01fb86d2c6357c226f27098220f02060d0~WbkWh2cK-2782027820epoutp01j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1699667154;
-        bh=pmPCvpEQALsN2I+z2mdUOLAfesbaw0dmr1s6esTrmwM=;
-        h=From:To:In-Reply-To:Subject:Date:References:From;
-        b=rk/VnfhwOir17zh6etek14ytr7EuArzKJdnZPSXpap8K2N1CaYJ0yinihj9aqTD28
-         p7iZJYobSFiBBoi4h7qZa4Oiz16cVCe7fGYAOwULdgIhE/pc2lq9QdBbBGIA0KKlRm
-         DKJwy0WggijLlen+KSmEHzxq75+EKGe4FVgX4eIU=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20231111014554epcas5p493bb28599928ed4789b47172fe7d1467~WbkWR5WD12395723957epcas5p4l;
-        Sat, 11 Nov 2023 01:45:54 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.175]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4SRz6n28PJz4x9Pr; Sat, 11 Nov
-        2023 01:45:53 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B6.BE.08567.1DCDE456; Sat, 11 Nov 2023 10:45:53 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20231111014552epcas5p17256164fc9ca6ea2b575207f03919877~WbkUnwO9c2897028970epcas5p1I;
-        Sat, 11 Nov 2023 01:45:52 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20231111014552epsmtrp1036115db57eb4aaba270dfbeb1040557~WbkUmN2lP3109231092epsmtrp1_;
-        Sat, 11 Nov 2023 01:45:52 +0000 (GMT)
-X-AuditID: b6c32a44-617fd70000002177-14-654edcd17e98
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        79.73.18939.0DCDE456; Sat, 11 Nov 2023 10:45:52 +0900 (KST)
-Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20231111014547epsmtip1027d013442d29eabc5f9d04f6fa045be~WbkPd9a2L2014520145epsmtip1F;
-        Sat, 11 Nov 2023 01:45:47 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'David Airlie'" <airlied@gmail.com>,
-        "'Daniel Vetter'" <daniel@ffwll.ch>,
-        "'Maarten Lankhorst'" <maarten.lankhorst@linux.intel.com>,
-        "'Maxime Ripard'" <mripard@kernel.org>,
-        "'Thomas Zimmermann'" <tzimmermann@suse.de>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>,
-        "'Conor Dooley'" <conor+dt@kernel.org>,
-        "'Andi Shyti'" <andi.shyti@kernel.org>,
-        "'Jonathan Cameron'" <jic23@kernel.org>,
-        "'Lars-Peter Clausen'" <lars@metafoo.de>,
-        "'Lee Jones'" <lee@kernel.org>,
-        "'Ulf Hansson'" <ulf.hansson@linaro.org>,
-        "'Tomasz Figa'" <tomasz.figa@gmail.com>,
-        "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-        "'Linus Walleij'" <linus.walleij@linaro.org>,
-        "'Thierry Reding'" <thierry.reding@gmail.com>,
-        =?utf-8?Q?'Uwe_Kleine-K=C3=B6nig'?= 
-        <u.kleine-koenig@pengutronix.de>,
-        "'Alessandro Zummo'" <a.zummo@towertech.it>,
-        "'Alexandre Belloni'" <alexandre.belloni@bootlin.com>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
-        "'Jiri Slaby'" <jirislaby@kernel.org>,
-        "'Liam Girdwood'" <lgirdwood@gmail.com>,
-        "'Mark Brown'" <broonie@kernel.org>,
-        "'Jaehoon Chung'" <jh80.chung@samsung.com>,
-        "'Sam Protsenko'" <semen.protsenko@linaro.org>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <linux-rtc@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>
-In-Reply-To: <20231108104343.24192-18-krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH 17/17] arm64: dts: exynosautov9: add specific
- compatibles to several blocks
-Date:   Sat, 11 Nov 2023 07:15:46 +0530
-Message-ID: <05ad01da1440$cdb40340$691c09c0$@samsung.com>
+        Sun, 12 Nov 2023 02:48:55 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75E922D5B
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Nov 2023 23:48:52 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-543c3756521so5116199a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Nov 2023 23:48:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1699775331; x=1700380131; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VwPUlnXjQRqSc6tv3ZvzR08xuidf/wMZsPjAJrzfI3s=;
+        b=NNdJVpndDDpWBUUQMlFgReQT7DxB8RHCIQRjEduaiLXelzBZSg+IcouedxiLhoDY0V
+         vOhXtYX/OYYUHOTAkNlcBUdrrjibIknAfrBqRZNPTdngl+RWOJHOLRFnML6LC2i8xuUg
+         os373Cdgiu7yIX4UrsfPtHQAtbnR4wFv5yyVUa+ImjrHyIKjwv4DIIaZ6XQJ6ASW8gMA
+         s9uypDAZjAYqLvpKTA7OhrlgFG3LZ0HmAhGBbSxFBVHmW3fejkzhnGksj+bzWiB0Pt7o
+         3zNYqQ/yJI6gttDAIofptsQ8JRBKraB4Y6rCRm6EifBfWMmw14R4YB3nMX3vfuGJih5B
+         Wv6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699775331; x=1700380131;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VwPUlnXjQRqSc6tv3ZvzR08xuidf/wMZsPjAJrzfI3s=;
+        b=E3R3eeFhQWYLi/KZZPKbvB3bSbj/72CdHVmp7FqpwVEfe/1L3ubKE2HvRHlVxULz7F
+         LQ1CcvNhHImKe4dFOFug1CeucFqT1V3AhqqOZNEKrYZ+wY1NavLpwHWw9gLQ7xLr/mhS
+         Dr6MUxU8W6JthkP43xYvkzO5dP7UJizOqGurBAl6VdED9E+yJcxCBZryk15wqUTrddoo
+         N/VuWIhBo9i8bBLLJKmFA0BqMsost1bWrcfHAkoLnHvoh6l52VKGPwh4va1apXeqSqRG
+         OADphmH1nnICNEL41IBGCtwjlbTHTG4JSR3ZQiKJBjYLjcG7qtRYMzubHvtzn61K2YLx
+         ZbVw==
+X-Gm-Message-State: AOJu0Ywpc3oQFCiHFbizGN4w7w3ft6pGPBMOq6hCVXpyXKupiUU5a9gE
+        hP7dZgd2BBOXIUr9hF6TxbXiPw==
+X-Google-Smtp-Source: AGHT+IFBW9t2rvVX3af9ylFjxBZEryS5eEReeDctVAjFyZO9zG+YEq83Maz4rLnkxF4fLN4N6oWVaA==
+X-Received: by 2002:aa7:c6cc:0:b0:544:92f1:83d0 with SMTP id b12-20020aa7c6cc000000b0054492f183d0mr2713307eds.0.1699775330964;
+        Sat, 11 Nov 2023 23:48:50 -0800 (PST)
+Received: from [10.230.170.72] (46-253-189-43.dynamic.monzoon.net. [46.253.189.43])
+        by smtp.gmail.com with ESMTPSA id v2-20020a50d582000000b0053e3839fc79sm1756789edi.96.2023.11.11.23.48.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 11 Nov 2023 23:48:50 -0800 (PST)
+Message-ID: <c09a6894-8408-47a7-a8d1-a46a08fc9d2e@linaro.org>
+Date:   Sun, 12 Nov 2023 08:48:49 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGWJB6kbFUwx2+cGuz2YrV1SxstmQGBpPEAAjHDf/Cw3p3ngA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0zTVxTHc3+P/qqu5mfFeYfGsDqzgQHaQbuLAUbk4U/nHM4EzLIFG/oL
-        EKB0LUzRJTIN5SUwBIM0tIAQwCrpVh7BMkSwWt1MeYqoMMZgysMxJ68JOFb4oeO/z/me77nn
-        nnNz+bhwmnLmxygTWbVSHifirScabrq6uXf2H2LFQzUUqui8T6E7Dy5hKG2ykkI9nW0YGpxJ
-        B+jC0AgPXW22Y2ipIQ9HJVY7iXpm/uKhs+UmHuqb15LotzNGDE3qt6Oc0SEcNU/UO47LLyFR
-        o7aMQLM96RgqWKzCkHm4l0S1JYsApb+aBshgnSRQt6WYh6xLuQANDBgBun2lh4cutl/H0L3y
-        bArpnxTgqOzvegJpMypJlNpspdDNZ2kkeprjsLy0GAhktDjOq3uWR6LHefkA2WrCA1yZH6bO
-        8BjD1VNM82wpwVzTDVCM2ZjBY/p7f3Lodw8zLfqrFDOYZcOY2orTTMWzNpLJfSVmcuqMgKn9
-        5RRTaHiJMVPmHaH0F7G+0axcwapdWGVkgiJGGeUn+uRIRGCEVCaWuEt80EciF6U8nvUTBR0M
-        dQ+JiXMsWOTyjTwuySGFyjUakae/rzohKZF1iU7QJPqJWJUiTuWt8tDI4zVJyigPJZu4RyIW
-        fyh1GI/FRleZRkjVz9SJB/qHvBRQzcsE6/iQ9oY3ZkpBJljPF9JNANptVowLXgBoy7SDN4HF
-        Mke+LjGabPgyC+lrAM4X7+RMowCaa8uw5QSPdoeN5VrecsKJbhLA7pbfieXEOjoYtkxdXGm+
-        mZbD9uE7YJkJehdsaC5a0QW0D3xeZyY53gTvFo2s1OL0blhZNoFzt3CBL/+oXPE40Xthy6/V
-        FOfZCsduWSnOU78eZlZ8znEQTKlOX9U3w3Fb3So7w7FcrYP5DmbgpUVnTo6Gf1aZAMcfwxs9
-        xcSyBaddocniyXXaCLMXRjCuUgDTtULOvQuenbxPcLwN5mVlra6Ngfey21aX2wVgdmsf/j1w
-        0a0ZUrdmSN2aYXT/dy4FhBG8w6o08VFspFQlUbLH37x3ZEK8Gax8P7egRtBX8q9HG8D4oA1A
-        Pi5yEnR4H2SFAoU8+SSrTohQJ8WxmjYgdWw+D3feEpng+L/KxAiJt4/YWyaTeft4ySSirYKJ
-        VL1CSEfJE9lYllWx6td1GH+dcwqWlFPW5Iqb97z942iHOrD6M6el925tmd5QSCpDzHcN1oD0
-        jufhngH/EPteiIZb9wkWQhvOdeiSR5vH9uffblQgVJNZKI3psi6UH02ztx8QvPXVC0PvuCaM
-        nN0uau3PzJdVzXVqv00tORmuHoncn/zoVIYBhg6K6wIPP9zUxL67d/5w5XeLlz3C7OrT3bnS
-        gglJCuX5WNpInbDprwhQ/MyY//gHipCva8b1T48xBxe2Dwrv9Xp4Wc77nrus22Caef9Lwhic
-        HdO64eTOUv+ijK4W+lP7bkXtdfORC4uPwrwsW9yG8p7MKe39O7Y5uctkHof6jup1llrT+bLW
-        4JSczfD4RhGhiZZL3HC1Rv4fd75WOwcFAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfVDTdRzH/f6eh437NUi/B+XlujrDBDw8+9KlZw+cvz+6JLrq8o90wU8g
-        Gew2SHno8CDHwAJBPXC5DQSWzNVkPEjIWIxNwsnEQBYHSCMeJImwhd08HoLt6vjvdZ/3+/P6
-        fP/4MrjIRYYxqemZvDxdkiamgojWbvG2Xf2j7/LRFtNzqO7uPRr95L6MoaJ5PY0G79owNL6o
-        AuiCZ5JCRosLQ6ut5TjS2V0kGlz8k0KFtSYK/fJESaJfCwwYmtc8i0ofeHBkedhCo7pzOhK1
-        KWsI9HhQhaHzS99iyPzbEImadEsAqZb/BkhrnyfQQPslCtlXywAaGzMAdPPqIIWq7nRi6Hbt
-        1zTSTJ/HUc2jFgIpi/UkOm2x06h7rohEM6VrFV+7lkCG9jVf81w5iUbKzwHU891HB17mrnkL
-        KE5rzOUsj6sJ7gf1GM2ZDcUUNzrUsTbvfY+zaow0N36mB+Oa6vK5ujkbyZUtR3OlzQbANTlz
-        uUqtD+O85m3x7OGg15P4tNTPeXnU/qNBKQXFnUBmo09OfFmDnwLVVAkQMJDdAw2mHrwEBDEi
-        9jqA7TcekYEgHLobz9IBDoENKzN0oDQNoONmE1gPKHYXbKtV+k2h7LAQOkcPBUouAGe7m/2B
-        gI2DVm+Vn0PYI/DWjXFsnQn2RdhqueifC9lYuNBsJgP8NOy9OEmsM87uhFPDU/+zvuYhHnjR
-        89A3pScDh9+E1vtX6EBnK5x12OmzQKTeoFJvUKk3qNQbVqoBYQDP8DKFNFmaKNsdqZBIFVnp
-        yZGJGVIz8H+5iIQ2oDctR9oAxgAbgAwuDhX273mHFwmTJNk5vDzjiDwrjVfYQDhDiLcKX0gr
-        ThKxyZJM/jjPy3j5fynGCMJOYbkf7uvQdmmmszWfbg79xtm/4wt31HjfkGlTQ0XlVSA2h33S
-        EV72z2n7AZeuRHVicsJ2+3p0T19q9Bn3k6hjwbErR1/Ncg6Dsr2a/vQtVxKUbM5KYuHee6Uf
-        Gx0Vnre9M/eXJC2CRLVk561FacbCyI98+UFVzsktMfGz33flyQ3H4AlV6/xo8MQDq+791e3G
-        eIfzD3fvJoc179IbWfWH/2oM66yvGnFcrkyIrIqITSEm1R+4SuIG7qQUen4ufIXxRLxECroE
-        MXGVTwV/FRrjO76wL8874EvdfmHztfpDjXE7dH2CBl2XS0YU5U/nW2SN2ba3QjIXXjtI/P6Z
-        umKqY3F/p5hQpEh2R+ByheRf5sU5kOEDAAA=
-X-CMS-MailID: 20231111014552epcas5p17256164fc9ca6ea2b575207f03919877
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231108104502epcas5p335e39d7cc94ca84aa4423ceee1a0a315
-References: <20231108104343.24192-1-krzysztof.kozlowski@linaro.org>
-        <CGME20231108104502epcas5p335e39d7cc94ca84aa4423ceee1a0a315@epcas5p3.samsung.com>
-        <20231108104343.24192-18-krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 34/52] serial: samsung: Convert to platform remove
+ callback returning void
+Content-Language: en-US
+To:     =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de,
+        linux-serial@vger.kernel.org
+References: <20231110152927.70601-1-u.kleine-koenig@pengutronix.de>
+ <20231110152927.70601-35-u.kleine-koenig@pengutronix.de>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20231110152927.70601-35-u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On 10/11/2023 16:30, Uwe Kleine-König wrote:
+> The .remove() callback for a platform driver returns an int which makes
+> many driver authors wrongly assume it's possible to do error handling by
+> returning an error code. However the value returned is ignored (apart
+> from emitting a warning) and this typically results in resource leaks.
+> 
+> To improve here there is a quest to make the remove callback return
+> void. In the first step of this quest all drivers are converted to
+> .remove_new(), which already returns void. Eventually after all drivers
+> are converted, .remove_new() will be renamed to .remove().
+> 
+> Trivially convert this driver from always returning zero in the remove
+> callback to the void returning variant.
 
+Maybe let's trim the commit msg? Or convert all drivers at once if you
+want to drop long explanation...
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
-> ExynosAutov9 reuses several devices from older designs, thus historically=
- we
-> kept the old (block's) compatible only.  This works fine and there is no =
-bug
-> here, however guidelines expressed in
-> Documentation/devicetree/bindings/writing-bindings.rst state that:
-> 1. Compatibles should be specific.
-> 2. We should add new compatibles in case of bugs or features.
->=20
-> Add compatibles specific to ExynosAutov9 in front of all old-SoC-like
-> compatibles.  This will also help reviews of new code using existing DTS =
-as
-> template.  No functional impact on Linux drivers behavior.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 > ---
 
-Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
 
->  arch/arm64/boot/dts/exynos/exynosautov9.dtsi =7C 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->=20
-(...)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
