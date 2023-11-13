@@ -2,116 +2,110 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D21CCC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 12 Nov 2023 09:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3333EC4167B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Nov 2023 03:23:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229748AbjKLJJl (ORCPT
+        id S232988AbjKMDX7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 12 Nov 2023 04:09:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44750 "EHLO
+        Sun, 12 Nov 2023 22:23:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229548AbjKLJJk (ORCPT
+        with ESMTP id S232954AbjKMDX6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 12 Nov 2023 04:09:40 -0500
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CA8E2D77
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Nov 2023 01:09:34 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r26T3-0001Or-2H; Sun, 12 Nov 2023 10:09:21 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r26Sx-008S8H-Tl; Sun, 12 Nov 2023 10:09:15 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r26Sx-000BbE-KI; Sun, 12 Nov 2023 10:09:15 +0100
-Date:   Sun, 12 Nov 2023 10:09:15 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>, kernel@pengutronix.de,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH 34/52] serial: samsung: Convert to platform remove
- callback returning void
-Message-ID: <20231112090915.3hnetkpfknaktfvk@pengutronix.de>
-References: <20231110152927.70601-1-u.kleine-koenig@pengutronix.de>
- <20231110152927.70601-35-u.kleine-koenig@pengutronix.de>
- <c09a6894-8408-47a7-a8d1-a46a08fc9d2e@linaro.org>
+        Sun, 12 Nov 2023 22:23:58 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98B481729
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Nov 2023 19:23:55 -0800 (PST)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 23FFBC4339A;
+        Mon, 13 Nov 2023 03:23:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1699845835;
+        bh=M3Qhhjk/BU+r9ygb4BrBodry+Iy+/+c1KAZvoMB6Rjg=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=tXXHDD4vc13CqUYQaDnEhtGLHW1POo2WeYIwiz7RivcXeGCX56ZEHdMgH4lWjscCu
+         TRYnwpJvawaBHgmt3cJfhHfVuEEyj9Z4oVfuW4J44Vk+fwBuqUmSiItgpGhvBEvQWa
+         uUY+5xo82BA1kb1ChCxUiL+iwRg+RpcI0uc8TxmBIlmhU8AqiNRK+dsRlb77FjXT/g
+         wQmKVPKgIAbBig2lnZ0zl7BxNArqSB9iMwH9Hasgm6eV8Xb3HRP1Y0E25pUR2iuJfO
+         qIWWcsuFRmJ/kI0wDOLJTjshHmYrPMDwNu0Rpk8xwHufp8wdnYSlDWWi5G6haP8284
+         LAsQGZ+w47fZg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E412EE32714;
+        Mon, 13 Nov 2023 03:23:54 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="sa6rcnsxkbnfkmq7"
-Content-Disposition: inline
-In-Reply-To: <c09a6894-8408-47a7-a8d1-a46a08fc9d2e@linaro.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 00/49] iio: Convert to platform remove callback returning void
+From:   patchwork-bot+chrome-platform@kernel.org
+Message-Id: <169984583492.27851.676337627622488866.git-patchwork-notify@kernel.org>
+Date:   Mon, 13 Nov 2023 03:23:54 +0000
+References: <20230919174931.1417681-1-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20230919174931.1417681-1-u.kleine-koenig@pengutronix.de>
+To:     =?utf-8?q?Uwe_Kleine-K=C3=B6nig_=3Cu=2Ekleine-koenig=40pengutronix=2Ede=3E?=@ci.codeaurora.org
+Cc:     jic23@kernel.org, jikos@kernel.org,
+        srinivas.pandruvada@linux.intel.com, lars@metafoo.de,
+        linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
+        kernel@pengutronix.de, linus.walleij@linaro.org,
+        linux-arm-kernel@lists.infradead.org, eugen.hristev@collabora.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        claudiu.beznea@tuxon.dev, ruanjinjie@huawei.com, robh@kernel.org,
+        heiko@sntech.de, yangyingliang@huawei.com, wens@csie.org,
+        aidanmacdonald.0x0@gmail.com, andy.shevchenko@gmail.com,
+        rjui@broadcom.com, sbranden@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com,
+        hsweeten@visionengravers.com, alexander.sverdlin@gmail.com,
+        krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+        linux-samsung-soc@vger.kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        ak@it-klinger.de, cai.huoqing@linux.dev, haibo.chen@nxp.com,
+        neil.armstrong@linaro.org, khilman@baylibre.com,
+        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
+        gnstark@sberdevices.ru, andriy.shevchenko@linux.intel.com,
+        nuno.sa@analog.com, linux-amlogic@lists.infradead.org,
+        sravanhome@gmail.com, jkluo@hust.edu.cn, dzm91@hust.edu.cn,
+        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+        venture@google.com, yuenn@google.com, benjaminfair@google.com,
+        openbmc@lists.ozlabs.org, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, linux-arm-msm@vger.kernel.org,
+        marek.vasut@gmail.com, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@foss.st.com, olivier.moysan@foss.st.com,
+        fabrice.gasnier@foss.st.com, zhang_shurong@foxmail.com,
+        frank.li@vivo.com, linux-stm32@st-md-mailman.stormreply.com,
+        sean@geanix.com, trix@redhat.com, jernej.skrabec@gmail.com,
+        samuel@sholland.org, rafael.j.wysocki@intel.com,
+        damien.lemoal@opensource.wdc.com, broonie@kernel.org,
+        idosch@nvidia.com, daniel.lezcano@linaro.org,
+        linux-sunxi@lists.linux.dev, dmitry.torokhov@gmail.com,
+        andreas@kemnade.info, peda@axentia.se, vz@mleia.com,
+        ktsai@capellamicro.com, bleung@chromium.org, groeck@chromium.org,
+        chrome-platform@lists.linux.dev
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hello:
 
---sa6rcnsxkbnfkmq7
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch was applied to chrome-platform/linux.git (for-kernelci)
+by Jonathan Cameron <Jonathan.Cameron@huawei.com>:
 
-On Sun, Nov 12, 2023 at 08:48:49AM +0100, Krzysztof Kozlowski wrote:
-> On 10/11/2023 16:30, Uwe Kleine-K=F6nig wrote:
-> > The .remove() callback for a platform driver returns an int which makes
-> > many driver authors wrongly assume it's possible to do error handling by
-> > returning an error code. However the value returned is ignored (apart
-> > from emitting a warning) and this typically results in resource leaks.
-> >=20
-> > To improve here there is a quest to make the remove callback return
-> > void. In the first step of this quest all drivers are converted to
-> > .remove_new(), which already returns void. Eventually after all drivers
-> > are converted, .remove_new() will be renamed to .remove().
-> >=20
-> > Trivially convert this driver from always returning zero in the remove
-> > callback to the void returning variant.
->=20
-> Maybe let's trim the commit msg? Or convert all drivers at once if you
-> want to drop long explanation...
+On Tue, 19 Sep 2023 19:48:42 +0200 you wrote:
+> this series converts all platform drivers below drivers/iio to use
+> .remove_new(). The motivation is to get rid of an integer return code
+> that is (mostly) ignored by the platform driver core and error prone on
+> the driver side. As all platform drivers return zero unconditionally in their
+> remove callback up to now, the conversions are "trivial".
+> 
+> See commit 5c5a7680e67b ("platform: Provide a remove callback that
+> returns no value") for an extended explanation and the eventual goal.
+> 
+> [...]
 
-I like the verbosity of the commit log. This way you have a chance to
-understand its motivation by only looking at that single commit.
+Here is the summary with links:
+  - [45/49] iio: proximity: cros_ec_mkbp: Convert to platform remove callback returning void
+    https://git.kernel.org/chrome-platform/c/2df694f710d2
 
-IMHO doing one commit per driver is also right: It simplifies review,
-allows me to send patches to only the respective maintainers and so
-annoy less, the people reviewing the changes can send a tag for the
-driver change they look at only.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-But I'm not religious about that and if Greg wants to squash the patches
-together that's ok for me.
 
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---sa6rcnsxkbnfkmq7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVQljoACgkQj4D7WH0S
-/k6TywgAiTEx/nbuhVrTZz6yhSc6Ncgy9jaiRl4HnLSeI5WpStxZtmmB+CujR0xI
-kNq5KEGoOYqKhVnysuNbXyiyBwkmhwnXR+lZSGPDdkVP7U3LOv9Yvz5+sGpA3KQv
-AZ1t0EHQZtIR4+t5mX5b0cdJhBQPA2f61/R9Dt1AZ5QkiuBk02/HN0s7lnlSaFFU
-d1SZfLltuGBYBZ4sVSYaKw6LhsKvrrqUSrRsiZmc43n2e4JKbp4sC3JtZET2nAho
-ofgFrEqcg7FFIR4klCydUrz1zlm4e+IpsDr+o+u89DXOlHljSIut4KJEnjH3Chq1
-AIKtsA5iJ2/v29Wp3AucBNrPtn/jcA==
-=GXBn
------END PGP SIGNATURE-----
-
---sa6rcnsxkbnfkmq7--
