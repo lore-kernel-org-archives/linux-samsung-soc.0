@@ -2,82 +2,57 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 924C4C4167D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Nov 2023 03:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C365C41535
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Nov 2023 03:42:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233035AbjKMDmu (ORCPT
+        id S233041AbjKMDmv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 12 Nov 2023 22:42:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48822 "EHLO
+        Sun, 12 Nov 2023 22:42:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233014AbjKMDmt (ORCPT
+        with ESMTP id S233030AbjKMDmt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Sun, 12 Nov 2023 22:42:49 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E441732
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Nov 2023 19:42:37 -0800 (PST)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 30071C43391;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6765AC2;
+        Sun, 12 Nov 2023 19:42:38 -0800 (PST)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5D424C433A9;
         Mon, 13 Nov 2023 03:42:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1699846957;
-        bh=jdxeDVtgM5/V3SaVfri5ZhvhnazvM3zMI/UV31SAZgM=;
+        bh=cJ8SO9nHStzpr3oXPb7av3bgl8Tcpca5hNprBHV/N28=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=Ea8hxNwisz1LC/1DzBtjKwF55VCjbDAlXbgbnY45zFxU2WoW0zsWunTZmPaVRAsLA
-         QJVKUKpitKTbZgtNrsWEeapO9yD0BLH5nWZdygQvmoxqWjiYDi7mXbWyFQGnPY9uFm
-         ysOFDGLvKa8Ut01D53wuNH/MjQMgT0U9BJUKXrFQZZkE5os7Kqj5v8hQIXF6x8Y7Ik
-         DPFvCHxRDQK4+Mc2QMy7IBUSf5HjkTjEQPSMjV/VpAcEmMtnjuPqXNCloVYyAK6fqU
-         qErzOeo2HHErGox/8maRe/4DiNSlfXMO/woseQri91k++DciByjTKNswmtOUiirZWt
-         EpeJnWQEJISpw==
+        b=C8SpIn2tY/7fXB31TZP/dWpZaDTw/62k6g4tlpCvWJe8qHTZfpYQjd3y+YLI5nBE4
+         fyMvoUDNzIKMT8JJ5Htho8s5Uu1M8SGAWp0XQkPn7PcoaByfme0zMmW72J514kWAHG
+         F9wQN1jdfwOmPTG140W0KtlGwo0cojQpZv/2bwzMExIlYnRHulwVjpET5nR08M2bdc
+         TqtirqbOAnA4XVobjw23mWE5BVPFVlg7xxZ+Bqr78n52VXqisW5Spz+H272fvkcS2h
+         KX9KoAsq+DQks/aCCs9wbtN03+2gZROK5W/4Om0F8XmTERr2gL2HcZe54Bu6JDxuzZ
+         r9MQS+Ox++w/g==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0AB63E32712;
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 42EF0E32713;
         Mon, 13 Nov 2023 03:42:37 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 00/49] iio: Convert to platform remove callback returning void
+Subject: Re: [PATCH 00/11] pwm: Some random cleanups
 From:   patchwork-bot+chrome-platform@kernel.org
-Message-Id: <169984695702.27851.17182787496510678882.git-patchwork-notify@kernel.org>
+Message-Id: <169984695726.27851.13669359459890665308.git-patchwork-notify@kernel.org>
 Date:   Mon, 13 Nov 2023 03:42:37 +0000
-References: <20230919174931.1417681-1-u.kleine-koenig@pengutronix.de>
-In-Reply-To: <20230919174931.1417681-1-u.kleine-koenig@pengutronix.de>
+References: <20230929161918.2410424-1-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20230929161918.2410424-1-u.kleine-koenig@pengutronix.de>
 To:     =?utf-8?q?Uwe_Kleine-K=C3=B6nig_=3Cu=2Ekleine-koenig=40pengutronix=2Ede=3E?=@ci.codeaurora.org
-Cc:     jic23@kernel.org, jikos@kernel.org,
-        srinivas.pandruvada@linux.intel.com, lars@metafoo.de,
-        linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
-        kernel@pengutronix.de, linus.walleij@linaro.org,
-        linux-arm-kernel@lists.infradead.org, eugen.hristev@collabora.com,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        claudiu.beznea@tuxon.dev, ruanjinjie@huawei.com, robh@kernel.org,
-        heiko@sntech.de, yangyingliang@huawei.com, wens@csie.org,
-        aidanmacdonald.0x0@gmail.com, andy.shevchenko@gmail.com,
-        rjui@broadcom.com, sbranden@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com,
-        hsweeten@visionengravers.com, alexander.sverdlin@gmail.com,
-        krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
-        linux-samsung-soc@vger.kernel.org, shawnguo@kernel.org,
+Cc:     thierry.reding@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
+        florian.fainelli@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org, shawnguo@kernel.org,
         s.hauer@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        ak@it-klinger.de, cai.huoqing@linux.dev, haibo.chen@nxp.com,
-        neil.armstrong@linaro.org, khilman@baylibre.com,
-        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
-        gnstark@sberdevices.ru, andriy.shevchenko@linux.intel.com,
-        nuno.sa@analog.com, linux-amlogic@lists.infradead.org,
-        sravanhome@gmail.com, jkluo@hust.edu.cn, dzm91@hust.edu.cn,
-        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-        venture@google.com, yuenn@google.com, benjaminfair@google.com,
-        openbmc@lists.ozlabs.org, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, linux-arm-msm@vger.kernel.org,
-        marek.vasut@gmail.com, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@foss.st.com, olivier.moysan@foss.st.com,
-        fabrice.gasnier@foss.st.com, zhang_shurong@foxmail.com,
-        frank.li@vivo.com, linux-stm32@st-md-mailman.stormreply.com,
-        sean@geanix.com, trix@redhat.com, jernej.skrabec@gmail.com,
-        samuel@sholland.org, rafael.j.wysocki@intel.com,
-        damien.lemoal@opensource.wdc.com, broonie@kernel.org,
-        idosch@nvidia.com, daniel.lezcano@linaro.org,
-        linux-sunxi@lists.linux.dev, dmitry.torokhov@gmail.com,
-        andreas@kemnade.info, peda@axentia.se, vz@mleia.com,
-        ktsai@capellamicro.com, bleung@chromium.org, groeck@chromium.org,
-        chrome-platform@lists.linux.dev
+        matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+        linux-mediatek@lists.infradead.org, orsonzhai@gmail.com,
+        baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com,
+        krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+        linux-samsung-soc@vger.kernel.org, bleung@chromium.org,
+        groeck@chromium.org, chrome-platform@lists.linux.dev
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -85,23 +60,23 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 Hello:
 
 This patch was applied to chrome-platform/linux.git (for-next)
-by Jonathan Cameron <Jonathan.Cameron@huawei.com>:
+by Thierry Reding <thierry.reding@gmail.com>:
 
-On Tue, 19 Sep 2023 19:48:42 +0200 you wrote:
-> this series converts all platform drivers below drivers/iio to use
-> .remove_new(). The motivation is to get rid of an integer return code
-> that is (mostly) ignored by the platform driver core and error prone on
-> the driver side. As all platform drivers return zero unconditionally in their
-> remove callback up to now, the conversions are "trivial".
+On Fri, 29 Sep 2023 18:19:07 +0200 you wrote:
+> Hello,
 > 
-> See commit 5c5a7680e67b ("platform: Provide a remove callback that
-> returns no value") for an extended explanation and the eventual goal.
+> this is a set of patches I based my efforts for closing a race condition
+> in the pwm core on. I thought I already sent them out, but it seems I
+> didn't. So here they come!
+> 
+> Best regards
+> Uwe
 > 
 > [...]
 
 Here is the summary with links:
-  - [45/49] iio: proximity: cros_ec_mkbp: Convert to platform remove callback returning void
-    https://git.kernel.org/chrome-platform/c/2df694f710d2
+  - [11/11] pwm: cros-ec: Simplify using devm_pwmchip_add() and dev_err_probe()
+    https://git.kernel.org/chrome-platform/c/896c450960f5
 
 You are awesome, thank you!
 -- 
