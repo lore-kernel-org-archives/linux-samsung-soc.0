@@ -2,109 +2,117 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D9BC4167B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Nov 2023 12:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC411C074FD
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Nov 2023 13:05:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233088AbjKNMxE (ORCPT
+        id S232926AbjKNNFQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Nov 2023 07:53:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53280 "EHLO
+        Tue, 14 Nov 2023 08:05:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232992AbjKNMwx (ORCPT
+        with ESMTP id S232577AbjKNNFP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Nov 2023 07:52:53 -0500
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8C27D55
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Nov 2023 04:52:49 -0800 (PST)
-Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-dae0ab8ac3eso5553551276.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Nov 2023 04:52:49 -0800 (PST)
+        Tue, 14 Nov 2023 08:05:15 -0500
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 549021A2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Nov 2023 05:05:11 -0800 (PST)
+Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-daef74513e1so5175272276.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Nov 2023 05:05:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699966369; x=1700571169; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1699967110; x=1700571910; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dm5tIBxlFob9g4Fl4wFAfi9oUFoS3/1CELy15DVM1mI=;
-        b=IUva1w1nEizlrvNSoUb3UCdQBfVmQ5Q4YZp7nEJb92vakCXDD3tvM56YuNFWj73t56
-         TOoZ95mU9fpkZD2KzIW51MFjmpbE6+hIE3T+so0B1GAhA59XFPmZTZSjSDtLr8mydiBn
-         Ef9QF2o6CrkfgsAZcZmj+S4j8KOM99mRlpubKhiM/m53A3QLZcc5PUzMkjqGMDY8tRdu
-         PS8vjaJPg0kpvBHmKGd8zxZQbZXG+Bwl+WJuQcx5XkAv1XEgI7/vnmvOcFgAVwjfcR2L
-         th8L1YtixZdLUKGq3erttfLhik3qL8eBf1l3jQIVwmRRUC1q/x+O6K6Hk1CZ3y4DfDHl
-         jIhQ==
+        bh=Y3kLet+ZFc4FiXhXyJTUcUEX1JsMDtWsRFc0PYkqxJM=;
+        b=nMk4bjzWl2OH2sgI2kginq+JqGE7cwEcr+JGDejTGiX2niImmLs4RpluHd3H9DmyOX
+         39NxMktLxD0KR/1jO0DVPvee/GYRKvdT0NGDyOOY9mugEYri1z7tPGOuN1UaDnDslMPM
+         07KVGoolts85BnWYiBEeoDTKbfNmDvu5SMcH8fkerB/VCr7HRL3nOmT0dMFAw6psXo7L
+         PQ/yETAMDp42UEMSaZHW8fDmMccfGZ99jpCF2zkYMbjDRmxmbKkkPuIGDPaJjXwpkPJN
+         6YRQJ9NnpBeWQwKLA6iHGmEX2qiNv1VB3X4ejZsla3zyizgE0zAnjBWzAhmBMv96hrt4
+         Sceg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699966369; x=1700571169;
+        d=1e100.net; s=20230601; t=1699967110; x=1700571910;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dm5tIBxlFob9g4Fl4wFAfi9oUFoS3/1CELy15DVM1mI=;
-        b=sckGE1ZXAn0HlDoc5iZfNcTsluZfAXZwdo8bVhyblW+9F5zvhQk9Su7zwb+d8fzvU3
-         5e/aKbHbQLG4mjrPwue36a02rHezoJp/LzFo9xU/snF+ngUmjxlGsN423BDxi9zL5cvx
-         fT8bvvti6uUaWl8tHeailW2vWYaMEtPozkcBVn1Wwe7S0g173gr9OQFJxFAw4c2us47f
-         poICZYHrKAjaHWuObzDQl494qayoII2WHW6j5T3XBDj/dNcrJslKHPxFWlbLzkMlsr/x
-         RwKSi+NoINHBOosaDU4U5MBpddq59goH2ELsVK+ravIvIwDwCGLR3IT6L+feBrsu8Ut7
-         IlOw==
-X-Gm-Message-State: AOJu0YxQhtMW8ooNYjP05mXRtUJJS0uvFeuoNR4B9Shbs/c/IFN7fkCl
-        SL02AdmlqpwhPMmnraF1CvHxHPdvuGSokAUgcN6c2A==
-X-Google-Smtp-Source: AGHT+IHb5y2/nAMzpAAbpcAqsc2332J3Hl+TEbnJYw6VgROQL9pFrDJMQLjA7DxF+w42E0bHCOIHzfYDBAjoO7yaXoA=
-X-Received: by 2002:a25:6951:0:b0:da3:ab41:2fc8 with SMTP id
- e78-20020a256951000000b00da3ab412fc8mr8347458ybc.16.1699966368706; Tue, 14
- Nov 2023 04:52:48 -0800 (PST)
+        bh=Y3kLet+ZFc4FiXhXyJTUcUEX1JsMDtWsRFc0PYkqxJM=;
+        b=IIAHQwu9GPBB6j5YrHfv3ahLHhWo/G058tSrbGpa3mAyvnV1KI4yWM6Fcp+XTmeaO8
+         C7qSesYA/EM349nOzh85t+Uw9bYNDNysR68QMOA1ovcmWkx48Wb0AM7/zRMWH5WpBoVy
+         +kQebmAtyXQApt3kZGYceG8ixlj4hdmE3rZAOuQ90xKespqkv0ajOgBK876u7xU0T8+P
+         yfLz4/UmZVewpGmpni3QIrtAqhHcgi/Ar7Yv6BCmDs/aC9BizTr6INFLXrFbJltheohl
+         1VUQEXo0gchkMnbJVVfv7oLcnDldfZ/PYBqg06zhKCTJvKip4el6ynqGMeAYh/btrnh3
+         brBQ==
+X-Gm-Message-State: AOJu0Yx6RNrJwL5eMhCAv3XDPRti6vxJ1VJF1B+7xv6Iq76ldolMk+ah
+        SOKX4FRHOYtmG3hXUMazv67kV4wI7LKGg1EZrOCpQA==
+X-Google-Smtp-Source: AGHT+IHU/EMXoR/AsvwDR5tVM/hTfhag7Py4pB8zx2h4lfdu8R1hVWGA8wCYGXEvgGG4RCO6d/pEhnbc29+P4adFbGc=
+X-Received: by 2002:a25:35d6:0:b0:daf:66f9:cfab with SMTP id
+ c205-20020a2535d6000000b00daf66f9cfabmr8292993yba.9.1699967110411; Tue, 14
+ Nov 2023 05:05:10 -0800 (PST)
 MIME-Version: 1.0
-References: <CGME20231031095014epcas2p2814fa2bb5f940ccb0d0951667df34f98@epcas2p2.samsung.com>
- <20231031094852.118677-1-jaewon02.kim@samsung.com> <CACRpkdZRMJgWkLwKstpN_9=VGutbE1wBv+X_a15RJ=7ddNtbHw@mail.gmail.com>
- <15d9340a-dd4f-43fc-96c6-f6a8daf76e11@linaro.org>
-In-Reply-To: <15d9340a-dd4f-43fc-96c6-f6a8daf76e11@linaro.org>
+References: <20231108104343.24192-1-krzysztof.kozlowski@linaro.org> <20231108104343.24192-6-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20231108104343.24192-6-krzysztof.kozlowski@linaro.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 14 Nov 2023 13:52:36 +0100
-Message-ID: <CACRpkdYrJMnJLHa1+Vtga3WdYySx9ioGzqmnf1uZKGdBxEWa_Q@mail.gmail.com>
-Subject: Re: [PATCH 00/10] Introduce ExynosAutov920 SoC and SADK board
+Date:   Tue, 14 Nov 2023 14:04:59 +0100
+Message-ID: <CACRpkdaSPTjjPA=TS-WbOb3E=TabtP6MFEx6Q+Dar-Mh=EtknQ@mail.gmail.com>
+Subject: Re: [PATCH 05/17] dt-bindings: pinctrl: samsung: add specific
+ compatibles for existing SoC
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
         Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lee Jones <lee@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jirislaby@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Nov 13, 2023 at 8:59=E2=80=AFPM Krzysztof Kozlowski
+On Wed, Nov 8, 2023 at 11:44=E2=80=AFAM Krzysztof Kozlowski
 <krzysztof.kozlowski@linaro.org> wrote:
-> On 13/11/2023 15:11, Linus Walleij wrote:
-> > Hi Jaewon,
-> >
-> > thanks for your patches!
-> >
-> > On Tue, Oct 31, 2023 at 10:50=E2=80=AFAM Jaewon Kim <jaewon02.kim@samsu=
-ng.com> wrote:
-> >
-> >>   dt-bindings: pinctrl: samsung: add exynosautov920 pinctrl binding
-> >>   pinctrl: samsung: add exynosautv920 pinctrl
-> >
-> > It is best if I can apply these two separately once Krzysztof is happy
-> > with them. I hope that would work? I don't see any specific dependencie=
-s.
+
+> Samsung Exynos SoC reuses several devices from older designs, thus
+> historically we kept the old (block's) compatible only.  This works fine
+> and there is no bug here, however guidelines expressed in
+> Documentation/devicetree/bindings/writing-bindings.rst state that:
+> 1. Compatibles should be specific.
+> 2. We should add new compatibles in case of bugs or features.
 >
-> That's fine. I might have conflicting pieces in-flight, but then I'll
-> funnel these through you as well. I can apply these to my
-> samsung-pinctrl tree and send them to you as usual, unless you prefer to
-> apply yourself.
+> Add compatibles specific to each SoC in front of all old-SoC-like
+> compatibles.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Oh that's best of course, you take them when you think they are ready.
-
-I was more referring to that we should be able to merge the two pin control
-patches apart from the rest of the series.
+This is more formally correct indeed.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
