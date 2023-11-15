@@ -2,61 +2,63 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C7A5C5AD4C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Nov 2023 21:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 863FEC2BB3F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Nov 2023 21:17:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229781AbjKOVMK (ORCPT
+        id S235036AbjKOVR5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Nov 2023 16:12:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47138 "EHLO
+        Wed, 15 Nov 2023 16:17:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235612AbjKOVMI (ORCPT
+        with ESMTP id S229912AbjKOVRz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Nov 2023 16:12:08 -0500
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EF97BD
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Nov 2023 13:12:01 -0800 (PST)
-Received: by mail-qk1-x733.google.com with SMTP id af79cd13be357-7781bc3783fso3054385a.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Nov 2023 13:12:01 -0800 (PST)
+        Wed, 15 Nov 2023 16:17:55 -0500
+Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A860C1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Nov 2023 13:17:52 -0800 (PST)
+Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-1f066fc2a28so44290fac.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Nov 2023 13:17:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700082720; x=1700687520; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MASmZ4UiTRBp0W24YfjYQ9fmIM/notDqEqAKx8goApM=;
-        b=duA4s4U1u2qcj0F/E7WEfE9D9JLZeiRkDkwJDDvIjzeShgBbIRr6TlJEHXU+8PEu9W
-         rwc5HUGxUsNlP9xHJODDbEcmVY+7sl9wu5l6SSGDk53D23khUeei5RKAoX/Qss3erjlh
-         QsJLhCFokupcuKoEDvFPT+re9q0Y1WKFQkqSkWFyo/xPNnH4miaZHPUs79wlqPsqnsqV
-         US4h6ZxIYz+D6JgMP8DGyDvV978RPixT9J84iEs+48oC7HFLVi8bIDQ0O87W/ibZcNN2
-         7dEJpQe6IgWUAaM82eIg9CtyxMkIZGDr0cp7v9b2eFZg7USyBsvhydMiKmUoBpMctLPh
-         ENQg==
+        d=linaro.org; s=google; t=1700083072; x=1700687872; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:references:cc:to
+         :from:content-language:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=+vB+sPSUIX8FFgKfIuZ+6jEPxm+wNmlBcnnegbTLkfE=;
+        b=wXPGdL/dxmPaT+CyXofO1rtnVJF6uZhKs8IjBVZIhJ2+QcRaTfBioKE56eSkxq0anb
+         sww6faXIWFxfnjdiwbxBLq/IVb4pUF856ZpWB2WAGrtOApHQQLqJJh/DoEQhV4Y+6dkH
+         sjeWO3ESgOQuBEjheAj+gxPgdRmSXj7dJzxRIQL8LsF5YhcJzoNXTVYs6XxrsKiNTCoi
+         HDbAPeQ2ZmEXq6VRm+YYgHqBl2E70iif336yAdZ2eGKuYe967DsgSlxaxCY2DTX5Ln5B
+         IC0ht+5fjQWeDWcBahngAYfFx0XmFVTlWp/4LRf8SR+7btanci9yd99WpupRsWr5BIxb
+         tVZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700082720; x=1700687520;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MASmZ4UiTRBp0W24YfjYQ9fmIM/notDqEqAKx8goApM=;
-        b=MH1CFnBicp/P2c5yOW395uXJLJoRtqweAHCulVC+ObeuxteUluedwuIL8Fy1LZj/wx
-         RC2WQjWUL6kaOXzeOel7cx8FCizqARC3F89F2k9wx+WTpOP4pg2ccyFjlEt/87WAlzmp
-         aED20Q6Wdm47sgOI0GJ6s560EVg2cLQ7ySqu1g+m1TgdNQQiGrs+61e8V0ThWjOMSpHl
-         64DABRhCmcBwiXSgL24rwb9lP/6AzakMLSJT2V5aqEVpz2WhL5boaIGTuMqw6TIRopRB
-         23aHmlJQiKs51RzlOBSXUuWacibQSv5Jdzoo91WH/Fg78io5APcZWM3NvyzRUOmYSTqE
-         wxDg==
-X-Gm-Message-State: AOJu0YwU0Fb1yNjRj0z0boE+DmFlhIIKBj9YXmeK2FIRRUzUdtGtBGBu
-        iXzMSeeVB9tF9oMfkj0kQHP+8g==
-X-Google-Smtp-Source: AGHT+IG9Rwp+MNhA/RB+vHxpX/ElOzlFa078iTR5Urr7i1PqhIT1x9xxmtVSvQIBY4tjk051tlBscA==
-X-Received: by 2002:a05:620a:290b:b0:76e:601d:a724 with SMTP id m11-20020a05620a290b00b0076e601da724mr7544302qkp.34.1700082720362;
-        Wed, 15 Nov 2023 13:12:00 -0800 (PST)
+        d=1e100.net; s=20230601; t=1700083072; x=1700687872;
+        h=content-transfer-encoding:in-reply-to:autocrypt:references:cc:to
+         :from:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+vB+sPSUIX8FFgKfIuZ+6jEPxm+wNmlBcnnegbTLkfE=;
+        b=KW0bxBd2okmCnDOPNC5pKEI1N08UlmtmBPAtfp/2xmqvWx//k1pgQ2Ihv1mlv5Uh+T
+         oaxwkBoFZeJkbk7shCN1uRZRRgN//vrRAZt3FLvHvwFGWupeIBbsrYHzBly0JabzDFPc
+         gFvGyh6i6MrWToUCwsRKxNbdDOh0HTr7Co0wtXFPjqJvjtt4XyMvyHdmzDMIuXlmrlVs
+         U5dMiEQ9KltcqT0twx//PxEVomr70/8bAVaNxs7Lvdh2nLWmMGWT0qayw4naB4YKvfNl
+         +U8XorsaWfgcRg+A7QeY69veyJRHopuDIdCQjaD8IlS/P2yINAYiopj7kBRIZguSLKYk
+         0Aqg==
+X-Gm-Message-State: AOJu0Yx0V3sDf3J6tPIfDtm+s2kIClXxd2R6KTDIry6OsF+AG89OnMky
+        +XZnaJwVBDzu/Qf8n+Z+LlmieQ==
+X-Google-Smtp-Source: AGHT+IGKpvxUebvj0xbbjRR0wCmrjiPQPubg56NOx/9t6WkvMUq31LSBK3JjAANUi0acq8QmP4CIcw==
+X-Received: by 2002:a05:6870:239b:b0:1f4:8d16:ea08 with SMTP id e27-20020a056870239b00b001f48d16ea08mr17180111oap.14.1700083071875;
+        Wed, 15 Nov 2023 13:17:51 -0800 (PST)
 Received: from [172.25.83.73] ([12.186.190.2])
-        by smtp.gmail.com with ESMTPSA id tn12-20020a05620a3c0c00b0076cb3690ae7sm3750513qkn.68.2023.11.15.13.11.59
+        by smtp.gmail.com with ESMTPSA id o5-20020a05620a0d4500b007671678e325sm3762777qkl.88.2023.11.15.13.17.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Nov 2023 13:11:59 -0800 (PST)
-Message-ID: <6e69df6c-10fa-404a-ac02-4880723b8c50@linaro.org>
-Date:   Wed, 15 Nov 2023 22:11:58 +0100
+        Wed, 15 Nov 2023 13:17:51 -0800 (PST)
+Message-ID: <55a0f27c-ea46-40ae-b1e5-e650802b89a8@linaro.org>
+Date:   Wed, 15 Nov 2023 22:17:50 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 00/12] Introduce ExynosAutov920 SoC and SADK board
 Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Alim Akhtar <alim.akhtar@samsung.com>,
         Rob Herring <robh+dt@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
@@ -75,7 +77,7 @@ Cc:     linux-arm-kernel@lists.infradead.org,
 References: <CGME20231115095852epcas2p21e067efe75275c6abd2aebf04c5c6166@epcas2p2.samsung.com>
  <20231115095609.39883-1-jaewon02.kim@samsung.com>
  <170005362858.21132.4200897251821879805.b4-ty@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ <6e69df6c-10fa-404a-ac02-4880723b8c50@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -120,35 +122,44 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <170005362858.21132.4200897251821879805.b4-ty@linaro.org>
+In-Reply-To: <6e69df6c-10fa-404a-ac02-4880723b8c50@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 15/11/2023 14:08, Krzysztof Kozlowski wrote:
-> 
-> On Wed, 15 Nov 2023 18:55:56 +0900, Jaewon Kim wrote:
->> ExynosAutov920[1] is ARMv8-based automotive-oriented SoC.
->> This SoC is the next generation of exynosautov9 and AE(Automotive Enhanced)
->> IPs are used for safety.
+On 15/11/2023 22:11, Krzysztof Kozlowski wrote:
+> On 15/11/2023 14:08, Krzysztof Kozlowski wrote:
 >>
->> This patchset is the minimal set for ExynosAutov920 SoC and SADK board.
->> Currently, ramdisk console is available and Clock, UFS, and USI will be
->> added after this patchset.
+>> On Wed, 15 Nov 2023 18:55:56 +0900, Jaewon Kim wrote:
+>>> ExynosAutov920[1] is ARMv8-based automotive-oriented SoC.
+>>> This SoC is the next generation of exynosautov9 and AE(Automotive Enhanced)
+>>> IPs are used for safety.
+>>>
+>>> This patchset is the minimal set for ExynosAutov920 SoC and SADK board.
+>>> Currently, ramdisk console is available and Clock, UFS, and USI will be
+>>> added after this patchset.
+>>>
+>>> [...]
 >>
->> [...]
+>> Applied, thanks!
+>>
 > 
-> Applied, thanks!
+> And dropped. You did not test it. Please read Samsung SoC maintainer
+> profile:
+> https://www.kernel.org/doc/html/latest/process/maintainers.html#arm-samsung-s3c-s5p-and-exynos-arm-architectures
+> 
+> I also made announcements on the lists and on social.kernel.org. I don't
+> know where to announce it more...
 > 
 
-And dropped. You did not test it. Please read Samsung SoC maintainer
-profile:
-https://www.kernel.org/doc/html/latest/process/maintainers.html#arm-samsung-s3c-s5p-and-exynos-arm-architectures
+To clarify, I dropped only DTS and kept bindings. Let me know if
+bindings are problematic here...
 
-I also made announcements on the lists and on social.kernel.org. I don't
-know where to announce it more...
+I also repeated the announcement:
+https://social.kernel.org/notice/AbqJkj9gOZJ3sG8eCu
+Please share internally within Samsung, so there will be no surprises.
 
 Best regards,
 Krzysztof
