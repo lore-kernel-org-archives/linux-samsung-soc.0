@@ -2,69 +2,83 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C6EC072A2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Nov 2023 10:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A612FC072A2
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Nov 2023 10:49:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345970AbjKQKTr (ORCPT
+        id S1345879AbjKQKtF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 17 Nov 2023 05:19:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42686 "EHLO
+        Fri, 17 Nov 2023 05:49:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345917AbjKQKTi (ORCPT
+        with ESMTP id S1345816AbjKQKtE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 17 Nov 2023 05:19:38 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69A3FD71
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Nov 2023 02:19:32 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9e62f903e88so235191966b.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Nov 2023 02:19:32 -0800 (PST)
+        Fri, 17 Nov 2023 05:49:04 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68577131
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Nov 2023 02:49:00 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-4081ccf69dcso17889465e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Nov 2023 02:49:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700216371; x=1700821171; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=kgKIl/09fDX42jlxnw2ZLH0zYM8NcURkoiDxmFpK8N4=;
-        b=lYHN1mscDo87ffZrHcxblNJqOjs7N/mVd43iDJKDv2jla2Fzf6gMjIIgPtZke05xIU
-         38BWvGJRLZDqJpmGyp/SLvRRr9NvfN5VXZVX0bJtkUx41uPZW06M87obWHMcfJ78xDfo
-         MXGOVF7gOlQMmIBdXp3driT5KlBtiMhO/08BG56QW2m91X4N0ptCyFomTbooQv9nAkBT
-         lNSxSVJepHwdUAbnSGu08Et8isx0FMCwdcn1veuLlzS5yKCxS7mE6vBOfVZq7KEVFakZ
-         26qYk185xlNKGF4qfjsur5SoZ5ki+615maV3SRzPlyvTIUTTj06Ffx5hum1+GPOkNowr
-         h1hw==
+        d=linaro.org; s=google; t=1700218139; x=1700822939; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bhenn9IKT7TwskDCocVudlhYlBdJEbpo2U+d7IObKBA=;
+        b=J0/qLKyLEt3pedjWWrQaqBZu6emQHVMlafxnBLItVT/xxp3YNb8iLMzV9VMEWTkEes
+         2M8ay+rKxSfBsHBkSK2CFzMhMOQ7Ka1GeQGHSUejq2hy8XzxbVV4xAV7EQJjpWFUu6np
+         6iF7NYPH6fKEBy+1gPvMfwNpo/4oDd2WIuk/A2CjgrbM7+G2iWS3+tJB54Ndyqaic9aR
+         U3DU3XbQMfVKPqV4zpA2uF2F/8dpkZAVDWPSCX0cFUoWCoqzwzO9oaqqWi3akkTiCu2x
+         EqHaWQ5uTxSTdMbrn4Ij9954jhJK0fIyXvEO+9Y4GonizHq1GTayV/SGBwhCnhY1YrHC
+         FT0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700216371; x=1700821171;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kgKIl/09fDX42jlxnw2ZLH0zYM8NcURkoiDxmFpK8N4=;
-        b=Wa4fkLdwlpK+7sRIg+8H465o+6Va/l0/wT+kWRifPNtzgqUwRbABbHIoiVYSsmOp1R
-         ZF0SGJwKYA7NT9qU82mLz1CQsNJxopGiBkyocruiZuF6AgmJ06z8YSOancuKh0pyfS+t
-         9BzAJx2mAjf/5mAZv4ELGcTkZXCpOcqxfbRmZDbuMqAtNH6vZ8vRAlNDkvOhLncxu0/h
-         I1V6bGEoNxhGAe3GfJU6DUW/YOPAZ+IicTjEW5lkXoe87Ri9kEYFx+tolQ1W9m8YrNUR
-         BnjwBL/7RyqcJJMy8X0BWwoBFmmTPvwqToJjGCeSRsrPgx7XwYV9Qr0jm9bIGeonGyk9
-         Fbbg==
-X-Gm-Message-State: AOJu0YwvX1NbshFC8/nMixjqhQRojNt74Yo7y2FP8/ellPlID3umi8eF
-        zq260C7o02WikaPh9CMBG14KBN12tp7vYYbvCPAXqg==
-X-Google-Smtp-Source: AGHT+IH3vMQLqIoV9HGbcoXYg1xhTId9AEbuTn/I7/YiYDai3ISz4BAZGWQHloANnCEj2hYZBbNzKw==
-X-Received: by 2002:a17:906:fc04:b0:9e0:5dab:a0f6 with SMTP id ov4-20020a170906fc0400b009e05daba0f6mr14708235ejb.22.1700216370682;
-        Fri, 17 Nov 2023 02:19:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1700218139; x=1700822939;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bhenn9IKT7TwskDCocVudlhYlBdJEbpo2U+d7IObKBA=;
+        b=mKDbp3ctzD06nk5qG14UDjnkuMSgSo/BrTTtxZlojp1+OndpkR+WRXsgnFa09RwfCX
+         B/zxUKyVCFdI1jx8s9nIV8VcQsFiRHsXVlNXKajGNzX8Qh4y800ZZsz3YLowKArvmWb5
+         hEpJfNmMnI2Cdl/o3QAjcNNwf2US1I5JF9DnwwYZxaQUS5fbRIkfnpVv/lubIm+CihX4
+         iTAVFakxRaMXyO46Wtq1JiwwJQIY/l5LSqcm7/CASW0JqcLYNNSWMM6/aZnSW1K23jA/
+         olXc3j1Oey4DlBDDsn5+XLCyBg8vGT8DnSe1EmCUAtF0yqgz+JvTrrHgLnne/oFjSVWZ
+         m+vA==
+X-Gm-Message-State: AOJu0YzKqdy3Rtz9MWg12V9MLJiBoZw0LGRXF6zAYkr70IHQdpR4GOyR
+        H++NOeAc3cNkCS4UHhUea+INeg==
+X-Google-Smtp-Source: AGHT+IGo+PukfuCNVNAkc0l6jmzjCMg98c/NOMRgnlBVW55svPUXhViVPo8sN9rJ6wU1IZzTUa/0lg==
+X-Received: by 2002:a5d:64cd:0:b0:32d:cb21:4e99 with SMTP id f13-20020a5d64cd000000b0032dcb214e99mr4647184wri.13.1700218138833;
+        Fri, 17 Nov 2023 02:48:58 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id g17-20020a170906595100b00989828a42e8sm621887ejr.154.2023.11.17.02.19.29
+        by smtp.gmail.com with ESMTPSA id v8-20020adff688000000b0032daf848f68sm1936165wrp.59.2023.11.17.02.48.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Nov 2023 02:19:30 -0800 (PST)
-Message-ID: <ee10e67b-6a2f-4ab5-91ef-e42d2f03a424@linaro.org>
-Date:   Fri, 17 Nov 2023 11:19:28 +0100
+        Fri, 17 Nov 2023 02:48:58 -0800 (PST)
+Message-ID: <0fdb7bec-9ea4-454f-a0fb-d450f27ebc6b@linaro.org>
+Date:   Fri, 17 Nov 2023 11:48:56 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm/arm64: samsung: Enable W=1 on dtbs by default
-To:     Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v2 10/12] pinctrl: samsung: add exynosautov920 pinctrl
+Content-Language: en-US
+To:     Jaewon Kim <jaewon02.kim@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Conor Dooley <conor+dt@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe Kleine-K?nig <u.kleine-koenig@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>
 Cc:     linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20231116211739.3228239-1-robh@kernel.org>
-Content-Language: en-US
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20231115095609.39883-1-jaewon02.kim@samsung.com>
+ <CGME20231115095856epcas2p1c3ee85750828bec2ee4ab0adeaeaff28@epcas2p1.samsung.com>
+ <20231115095609.39883-11-jaewon02.kim@samsung.com>
+ <62b7176d-f99c-49f6-a287-17a6b3604c1c@linaro.org>
+ <f0f6a7af-2170-89a2-1eea-dfb9d8440321@samsung.com>
+ <6a5610e0-e60d-4ab7-8708-6f77a38527b7@linaro.org>
+ <926ea5c5-20ac-5e63-16ea-6f0c20e2db0a@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -110,36 +124,38 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231116211739.3228239-1-robh@kernel.org>
+In-Reply-To: <926ea5c5-20ac-5e63-16ea-6f0c20e2db0a@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 16/11/2023 22:17, Rob Herring wrote:
-> Samsung platforms are clean of W=1 dtc warnings, so enable the warnings
-> by default. This way submitters don't have to remember to run a W=1
-> build of the .dts files and the grumpiness of the maintainers can be
-> reduced.
+On 17/11/2023 08:36, Jaewon Kim wrote:
+>>> The reason why I chose variable name 'combine' is that EINT registers was
+>>> separated from gpio control address. However, in exynosautov920 EINT
+>>> registers combined with GPx group. So I chose "combine" word.
+>> What does it mean "the GPx group"? Combined means the same place, the
+>> same register. I could imagine offset is 0x4, what I wrote last time.
+>>
+>> Is the offset 0x4?
+>>
+>>
+>>> Is another reasonable word, I will change it.
+>>
+>> Why you cannot store the offset?
+>>
+>>> EINT registers related to the entire group(e.g SVC) were at the end of
+>>> the GPIO block and are now moved to 0xf000.
+>> So not in the same register, not combined?
+>>
+> Okay,
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> Well, there's a couple of warnings on 32-bit, but they look fixable to
-> me.
-> 
-> There's a few other platforms we could do this to. Sadly, they are still
-> the minority. Otherwise, we could change the default and add a flag to
-> disable (I_STILL_HAVENT_FIXED_MY_PLATFORMS=1).
+> Instead of the word combine, I will think of a better word in next version.
 
-64-bit has still few warnings:
-https://krzk.eu/#/builders/29/builds/3710/steps/26/logs/warnings__6_
+I want to know answer to:
 
-I guess these could be fixed by changing ports to port in the DTS and
-bindings. I assume drivers are ready for it.
-
-32-bit I fixed in this cycle - last three commits - so all Samsung
-32-bit platforms are free from W=1 dtc warnings (yay!).
+"Why you cannot store the offset?"
 
 Best regards,
 Krzysztof
