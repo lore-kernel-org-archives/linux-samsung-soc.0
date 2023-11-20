@@ -2,196 +2,153 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A97C197A0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Nov 2023 22:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FECC2BB3F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Nov 2023 22:55:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229781AbjKTWqQ (ORCPT
+        id S229608AbjKTWzu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Nov 2023 17:46:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47014 "EHLO
+        Mon, 20 Nov 2023 17:55:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbjKTWqQ (ORCPT
+        with ESMTP id S229490AbjKTWzt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Nov 2023 17:46:16 -0500
-Received: from mail-qv1-xf31.google.com (mail-qv1-xf31.google.com [IPv6:2607:f8b0:4864:20::f31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C36B2CB
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 14:46:09 -0800 (PST)
-Received: by mail-qv1-xf31.google.com with SMTP id 6a1803df08f44-677f974b72bso14738546d6.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 14:46:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700520369; x=1701125169; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=njoGUAO/aKU6y+B0kYXrWx9rr0gLschtaZIB6sJvVdU=;
-        b=Cf0r6khSUB9nvaHf3+ily/2Rp8cWMG0TRIv6aMoSEBXFCdaSl8WzpWnoUsvv0Lv8h8
-         NpVUd1YnZ0HDpnXRKVLLeh/IPV2/IJLJNoucia/xr9s0nb/Dg6BW6wrK1i0T3zKJ2Bmq
-         t1ooAhxtjKC5kwQyUayLVY1CoIL3Lt06p2NaX16HCfd+cGX32BFqEUcH8PNab/pRGaaM
-         jbVi/RBIhpMhN3gTKWbOX+YhHmVVs7EjGEI0zUpaKhtnk+PuOFH+Vq+Bo9hQtal5rHme
-         GaG5Qh2NcDlp1P9RtKSYA9pIPIs2tubVY6O01ZytGMSGYYLWKY86NtFaodeWfi2El788
-         ToXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700520369; x=1701125169;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=njoGUAO/aKU6y+B0kYXrWx9rr0gLschtaZIB6sJvVdU=;
-        b=w3E+2anVmhl+GXfkN0yud+/l4CXU/P5Nw3j7QM+DoGjG18bnd38CK/Uxmx0tlpIN5P
-         wzYpcgU4pWDZO7R2MUf/PODW40Xpp1cNNjV07ES+a8S9i82Sxv3mgdnnXHAwPE3q/Ub8
-         ye6Aa0PlWRDggysTiy+AJIjd124P2vtxPF68LahDNxoWVsIDSlCAbASQ9s2nfZ96dIo6
-         QcX8PiBm8boP/seqDR1qKU+gmcGBi9vIbRjJTDfbO9GXRTgPMMJSyB4FE/8zB4VOG2z6
-         X1XbstLFpmA3lxrSKd+pyz+8cPhHUVbVYgmJ9urOyT4ZRHUGnQQcok550FpF5mvk5eTq
-         dmSA==
-X-Gm-Message-State: AOJu0YyohICRpuoYN1ZaHk1jworvD+K1R449UffjcafKN+mwOMv1tqJz
-        ht44AySaVqTVZ4cEMI4ovxjf7an0jYBxGd2xPGOPrg==
-X-Google-Smtp-Source: AGHT+IG/+m3xt7ccY8eDIleAiRsOAh79Ehhifx5D3WhBv4fQmrHh9AAauod19bUGyqw4eilwyZq13diIFEILCwXsTac=
-X-Received: by 2002:ad4:4ea9:0:b0:679:e195:b071 with SMTP id
- ed9-20020ad44ea9000000b00679e195b071mr3321524qvb.9.1700520368792; Mon, 20 Nov
- 2023 14:46:08 -0800 (PST)
+        Mon, 20 Nov 2023 17:55:49 -0500
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9CD1A2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 14:55:43 -0800 (PST)
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231120225539epoutp039e36c4f57dff24d09169159e27823b53~Zdsj3lBdT1747517475epoutp03X
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 22:55:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231120225539epoutp039e36c4f57dff24d09169159e27823b53~Zdsj3lBdT1747517475epoutp03X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1700520939;
+        bh=d5LVF16kgt+/0fV4sNYDC7CG9585GCuFuphQsqrUP0M=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=vUPLxW6bb2voSFnDWDHaN47tIdo4w5/ioNH96ec1j13zDyRulRqK4pDFPPGwUv1cR
+         XyrSBlE1Bzyde8Dspzhlgr3mdXWNVtXIYtEP3JDUGcQL0QWTJFv2W2n2cor2SXs99r
+         KqP38np9i5vZZR/Vt+6zhoU0a0B6DQ6eXMVb2XnE=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20231120225539epcas1p131121a43edfe4f45a985a3a92ed9733d~ZdsjjpeJG1274512745epcas1p1Z;
+        Mon, 20 Nov 2023 22:55:39 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.36.133]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4SZ2sk4Cxgz4x9Pp; Mon, 20 Nov
+        2023 22:55:38 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        8A.05.09744.AE3EB556; Tue, 21 Nov 2023 07:55:38 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20231120225538epcas1p205a656dfe9771fc992ee1a6756ca67d3~ZdsiaCjzW2181121811epcas1p2h;
+        Mon, 20 Nov 2023 22:55:38 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20231120225538epsmtrp153713febb39c8f0546ea606d3870bf90~ZdsiZeS0u2590125901epsmtrp1j;
+        Mon, 20 Nov 2023 22:55:38 +0000 (GMT)
+X-AuditID: b6c32a35-107fa70000002610-97-655be3ea718a
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        30.15.08755.AE3EB556; Tue, 21 Nov 2023 07:55:38 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.211]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20231120225538epsmtip1ef0e2cac93b796a319c04d5a16bef937~ZdsiPGymr1170711707epsmtip1G;
+        Mon, 20 Nov 2023 22:55:38 +0000 (GMT)
+From:   Inki Dae <inki.dae@samsung.com>
+To:     airlied@linux.ie, daniel@ffwll.ch
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL] exynos-drm-fixes
+Date:   Tue, 21 Nov 2023 07:55:37 +0900
+Message-Id: <20231120225537.1270358-1-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20231120212037.911774-1-peter.griffin@linaro.org>
- <20231120212037.911774-16-peter.griffin@linaro.org> <5ee955e4-4c22-4696-8001-1e4f24952eeb@roeck-us.net>
-In-Reply-To: <5ee955e4-4c22-4696-8001-1e4f24952eeb@roeck-us.net>
-From:   Peter Griffin <peter.griffin@linaro.org>
-Date:   Mon, 20 Nov 2023 22:45:57 +0000
-Message-ID: <CADrjBPoHYTZiMCFKBtdaT6hFp9QO=GMzn5yE2k3Dg_mcBhrvkA@mail.gmail.com>
-Subject: Re: [PATCH v4 15/19] watchdog: s3c2410_wdt: Add support for WTCON
- register DBGACK_MASK bit
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
-        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
-        linus.walleij@linaro.org, wim@linux-watchdog.org,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        cw00.choi@samsung.com, alim.akhtar@samsung.com,
-        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-        semen.protsenko@linaro.org, saravanak@google.com,
-        willmcvicker@google.com, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDKsWRmVeSWpSXmKPExsWy7bCmvu6rx9GpBtduSFv0njvJZPF/20Rm
+        iytf37NZzDi/j8mBxWPvtwUsHtu/PWD1uN99nMnj8ya5AJaobJuM1MSU1CKF1Lzk/JTMvHRb
+        Je/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoJVKCmWJOaVAoYDE4mIlfTubovzSklSF
+        jPziElul1IKUnALTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyMi09bmQrW8VR8Xt/M2MA4n6uL
+        kZNDQsBE4tXfV4xdjFwcQgI7GCUOzz3HCuF8YpR4c/M1E4TzjVFiz8O5zDAth29tZQOxhQT2
+        MkpsbpWEKPrCKHFn4iUmkASbgKrExBX3wYpEgOy3kx6DNTMLuEn8WXqWpYuRg0NYQEXiwEQ+
+        kDALUMmyr5sZQWxeAWuJXTtes0HskpeYeek7O0RcUOLkzCcsEGPkJZq3zmYG2SshsIldYt6X
+        WVDHuUisaWuEahaWeHV8CzuELSXxsr+NHaJhMtCh11ewQDgzgJ7+eZ0RospYYv/SyUwg1zEL
+        aEqs36UPEVaU2Pl7LiPEZj6Jd197WEFKJAR4JTrahCBKlCSOXbwBNUVC4sKSiVA3eEhs+NrJ
+        AgmsWIkVp3pYJzDKz0Lyzywk/8xCWLyAkXkVo1hqQXFuemqxYYEhPFaT83M3MYKTnZbpDsaJ
+        bz/oHWJk4mA8xCjBwawkwvtNKCJViDclsbIqtSg/vqg0J7X4EKMpMIQnMkuJJucD021eSbyh
+        iaWBiZmRsYmFoZmhkjgv86PeFCGB9MSS1OzU1ILUIpg+Jg5OqQamU7vuPrCx2PtUm33FzaX1
+        8w3b5vwJKj6exeSzemnLt6dX3u2cNiNtd/HPf7ZKy59vX3r3zmKRBReSr/x2P3b0iHjZzx3X
+        FM1frucpqFQSPdnpoPM5densU2YK164L8Dqycv9gXmI3y8mvW2qbbaNt7/3YytDdX4OdZ9xL
+        O6HU/bCfR/WolvzZJfEqTAYBc/lTT/lvb2f09UhRaY9yNgwMdTle25PH1Dyze/fh9eUvu/fu
+        uW5vWXnIumXuT0Ydxor+6bo3WRg5DzVkxH0TNf7MWGZZk/d4cgv7gZfhoYWfrvYKr794y+K6
+        qHvg7Lfmrhlt5UZ3ZXsu1y5ZMrck3Mt3ir2FYHaDsLlHE9si5hwlluKMREMt5qLiRAB2pwAV
+        /wMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOLMWRmVeSWpSXmKPExsWy7bCSnO6rx9GpBlOauC16z51ksvi/bSKz
+        xZWv79ksZpzfx+TA4rH32wIWj+3fHrB63O8+zuTxeZNcAEsUl01Kak5mWWqRvl0CV8bFp61M
+        Bet4Kj6vb2ZsYJzP1cXIySEhYCJx+NZWti5GLg4hgd2MEjuu72XsYuQASkhIbNnKAWEKSxw+
+        XAxSLiTwiVHixf4iEJtNQFVi4or7bCC2iIC6xIPLCxlBbGYBD4n3e1azg7QKC6hIHJjIBxJm
+        ASpf9nUzWAmvgLXErh2v2SAukJeYeek7O0RcUOLkzCcsEGPkJZq3zmaewMg3C0lqFpLUAkam
+        VYySqQXFuem5xYYFhnmp5XrFibnFpXnpesn5uZsYwWGnpbmDcfuqD3qHGJk4GA8xSnAwK4nw
+        fhOKSBXiTUmsrEotyo8vKs1JLT7EKM3BoiTOK/6iN0VIID2xJDU7NbUgtQgmy8TBKdXAZLNr
+        +dWg28ynPP9Fn2zceMlm5kxWM6FZk29dlc0zYZBOFvpl/KYl6dEuoZ9J/6qKWDd+cvYx+uRy
+        JLe+ssMwZmZcurLCl8TV1oZVbk3ME2ae/5V5Kr7Q9bTqL45DJkp622an5DiWSvDaCr//k/vY
+        S2jfNdu0Bc73a75c+T9hl5riP8+5/yQW/3vy8/71Vda1DDztE812LBMPbN/YsEhAqTJexfCa
+        XHkwd/McyVmdF0QX3/5UN/tCvK9Jx0v/OX8kNnxarL4voTXkM9ecVV95nLNitwZcmHUu6GWc
+        McfkvK6fR4Leawio5XJseVj8RtxF81DiXmbH4PvLp4ff1j8u4+H2Xb5PY8Pca3rejRXTlViK
+        MxINtZiLihMBMlSWzqoCAAA=
+X-CMS-MailID: 20231120225538epcas1p205a656dfe9771fc992ee1a6756ca67d3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231120225538epcas1p205a656dfe9771fc992ee1a6756ca67d3
+References: <CGME20231120225538epcas1p205a656dfe9771fc992ee1a6756ca67d3@epcas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Guenter,
+Hi Dave and Daniel,
 
-Thanks for the review.
+   Two fixups - fixing a potential error pointer dereference and wrong
+   error checking.
 
-On Mon, 20 Nov 2023 at 22:00, Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On 11/20/23 13:20, Peter Griffin wrote:
-> > The WDT uses the CPU core signal DBGACK to determine whether the SoC
-> > is running in debug mode or not. If the DBGACK signal is asserted and
-> > DBGACK_MASK is enabled, then WDT output and interrupt is masked.
-> >
-> > Presence of the DBGACK_MASK bit is determined by adding a new
-> > QUIRK_HAS_DBGACK_BIT quirk. Currently only gs101 SoC is known to have
-> > the DBGACK_MASK bit so add the quirk to drv_data_gs101_cl1 and
-> > drv_data_gs101_cl1 quirks.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >   drivers/watchdog/s3c2410_wdt.c | 32 +++++++++++++++++++++++++++-----
-> >   1 file changed, 27 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> > index 08b8c57dd812..ed561deeeed9 100644
-> > --- a/drivers/watchdog/s3c2410_wdt.c
-> > +++ b/drivers/watchdog/s3c2410_wdt.c
-> > @@ -34,9 +34,10 @@
-> >
-> >   #define S3C2410_WTCNT_MAXCNT        0xffff
-> >
-> > -#define S3C2410_WTCON_RSTEN  (1 << 0)
-> > -#define S3C2410_WTCON_INTEN  (1 << 2)
-> > -#define S3C2410_WTCON_ENABLE (1 << 5)
-> > +#define S3C2410_WTCON_RSTEN          (1 << 0)
-> > +#define S3C2410_WTCON_INTEN          (1 << 2)
-> > +#define S3C2410_WTCON_ENABLE         (1 << 5)
-> > +#define S3C2410_WTCON_DBGACK_MASK    (1 << 16)
-> >
-> >   #define S3C2410_WTCON_DIV16 (0 << 3)
-> >   #define S3C2410_WTCON_DIV32 (1 << 3)
-> > @@ -107,12 +108,16 @@
-> >    * %QUIRK_HAS_PMU_CNT_EN: PMU block has some register (e.g. CLUSTERx_NONCPU_OUT)
-> >    * with "watchdog counter enable" bit. That bit should be set to make watchdog
-> >    * counter running.
-> > + *
-> > + * %QUIRK_HAS_DBGACK_BIT: WTCON register has DBGACK_MASK bit. Enables masking
-> > + * WDT interrupt and reset request according to CPU core DBGACK signal.
->
-> This is a bit difficult to understand. I _think_ it means that the DBGACK_MASK bit
-> has to be set to be able to trigger interrupt and reset requests.
+   Ps. regarding the first patch, I had sent a GIT-PULL[1] but it seems
+       you missed.
+   [1] https://lore.kernel.org/dri-devel/20231006040950.4397-1-inki.dae@samsung.com/T/#u
 
-Not quite, it is a bit that controls masking the watchdog outputs when the SoC
-is in debug mode.
+   Please kindly let me know if there is any problem.
 
-> "masking" normally refers to disabling something (at least in interrupt context).
-> "Enables masking WDT interrupt" sounds like the bit has to be set in order to
-> be able to disable interupts, and the code below suggests that the bit has to be
-> set for the driver to work. Is that the case ? It might make sense to explain this
-> a bit further.
+Thanks,
+Inki Dae
 
-Maybe I explained it more clearly in the commit message than the comment
+The following changes since commit 98b1cc82c4affc16f5598d4fa14b1858671b2263:
 
-"The WDT uses the CPU core signal DBGACK to determine whether the SoC
-is running in debug mode or not. If the DBGACK signal is asserted and
-DBGACK_MASK is enabled, then WDT output and interrupt is masked."
+  Linux 6.7-rc2 (2023-11-19 15:02:14 -0800)
 
-Is that any clearer? Or maybe simpler again
+are available in the Git repository at:
 
-"Enabling DBGACK_MASK bit masks the watchdog outputs when the SoC is
-in debug mode. Debug mode is determined by the DBGACK CPU signal."
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-fixes-for-v6.7-rc3
 
-Let me know what you think is the clearest and most succinct and I can
-update the comment.
+for you to fetch changes up to a30ba4bd7cdb5726d86a557c5df8df71c7bc7fad:
 
->
-> >    */
-> >   #define QUIRK_HAS_WTCLRINT_REG                      (1 << 0)
-> >   #define QUIRK_HAS_PMU_MASK_RESET            (1 << 1)
-> >   #define QUIRK_HAS_PMU_RST_STAT                      (1 << 2)
-> >   #define QUIRK_HAS_PMU_AUTO_DISABLE          (1 << 3)
-> >   #define QUIRK_HAS_PMU_CNT_EN                        (1 << 4)
-> > +#define QUIRK_HAS_DBGACK_BIT                 (1 << 5)
-> >
-> >   /* These quirks require that we have a PMU register map */
-> >   #define QUIRKS_HAVE_PMUREG \
-> > @@ -279,7 +284,7 @@ static const struct s3c2410_wdt_variant drv_data_gs101_cl0 = {
-> >       .cnt_en_reg = GS_CLUSTER0_NONCPU_OUT,
-> >       .cnt_en_bit = 8,
-> >       .quirks = QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_MASK_RESET | QUIRK_HAS_PMU_CNT_EN |
-> > -               QUIRK_HAS_WTCLRINT_REG,
-> > +               QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_DBGACK_BIT,
-> >   };
-> >
-> >   static const struct s3c2410_wdt_variant drv_data_gs101_cl1 = {
-> > @@ -291,7 +296,7 @@ static const struct s3c2410_wdt_variant drv_data_gs101_cl1 = {
-> >       .cnt_en_reg = GS_CLUSTER1_NONCPU_OUT,
-> >       .cnt_en_bit = 7,
-> >       .quirks = QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_MASK_RESET | QUIRK_HAS_PMU_CNT_EN |
-> > -               QUIRK_HAS_WTCLRINT_REG,
-> > +               QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_DBGACK_BIT,
-> >   };
-> >
-> >   static const struct of_device_id s3c2410_wdt_match[] = {
-> > @@ -408,6 +413,21 @@ static int s3c2410wdt_enable(struct s3c2410_wdt *wdt, bool en)
-> >       return 0;
-> >   }
-> >
-> > +static void s3c2410wdt_mask_dbgack(struct s3c2410_wdt *wdt, bool mask)
->
-> I think I must be missing something. This is only ever called with mask==true,
-> meaning the bit, if present, is always set.
->
-> Why not call the function s3c2410wdt_set_dbgack() and drop the unnecessary
-> parameter ?
+  drm/exynos: fix a wrong error checking (2023-11-21 07:41:11 +0900)
 
-I can update like you suggest, it would simplify the logic a little bit.
+----------------------------------------------------------------
+Two fixups
+- Fix a potential error pointer dereference by checking the return value
+  of exynos_drm_crtc_get_by_type() function before accessing to crtc
+  object.
+- Fix a wrong error checking in exynos_drm_dma.c modules, which was reported
+  by Dan[1]
 
-regards,
+[1] https://lore.kernel.org/all/33e52277-1349-472b-a55b-ab5c3462bfcf@moroto.mountain/
 
-Peter.
+----------------------------------------------------------------
+Inki Dae (1):
+      drm/exynos: fix a wrong error checking
+
+Xiang Yang (1):
+      drm/exynos: fix a potential error pointer dereference
+
+ drivers/gpu/drm/exynos/exynos_drm_dma.c | 8 +++-----
+ drivers/gpu/drm/exynos/exynos_hdmi.c    | 2 ++
+ 2 files changed, 5 insertions(+), 5 deletions(-)
