@@ -1,154 +1,273 @@
-Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
+Return-Path: <linux-samsung-soc+bounces-1-linux-samsung-soc=archiver.kernel.org@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FECC2BB3F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Nov 2023 22:55:48 +0000 (UTC)
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229608AbjKTWzu (ORCPT
-        <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Nov 2023 17:55:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56030 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbjKTWzt (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Nov 2023 17:55:49 -0500
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9CD1A2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 14:55:43 -0800 (PST)
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231120225539epoutp039e36c4f57dff24d09169159e27823b53~Zdsj3lBdT1747517475epoutp03X
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 22:55:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231120225539epoutp039e36c4f57dff24d09169159e27823b53~Zdsj3lBdT1747517475epoutp03X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1700520939;
-        bh=d5LVF16kgt+/0fV4sNYDC7CG9585GCuFuphQsqrUP0M=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=vUPLxW6bb2voSFnDWDHaN47tIdo4w5/ioNH96ec1j13zDyRulRqK4pDFPPGwUv1cR
-         XyrSBlE1Bzyde8Dspzhlgr3mdXWNVtXIYtEP3JDUGcQL0QWTJFv2W2n2cor2SXs99r
-         KqP38np9i5vZZR/Vt+6zhoU0a0B6DQ6eXMVb2XnE=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20231120225539epcas1p131121a43edfe4f45a985a3a92ed9733d~ZdsjjpeJG1274512745epcas1p1Z;
-        Mon, 20 Nov 2023 22:55:39 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.36.133]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4SZ2sk4Cxgz4x9Pp; Mon, 20 Nov
-        2023 22:55:38 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8A.05.09744.AE3EB556; Tue, 21 Nov 2023 07:55:38 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20231120225538epcas1p205a656dfe9771fc992ee1a6756ca67d3~ZdsiaCjzW2181121811epcas1p2h;
-        Mon, 20 Nov 2023 22:55:38 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20231120225538epsmtrp153713febb39c8f0546ea606d3870bf90~ZdsiZeS0u2590125901epsmtrp1j;
-        Mon, 20 Nov 2023 22:55:38 +0000 (GMT)
-X-AuditID: b6c32a35-107fa70000002610-97-655be3ea718a
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        30.15.08755.AE3EB556; Tue, 21 Nov 2023 07:55:38 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.211]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20231120225538epsmtip1ef0e2cac93b796a319c04d5a16bef937~ZdsiPGymr1170711707epsmtip1G;
-        Mon, 20 Nov 2023 22:55:38 +0000 (GMT)
-From:   Inki Dae <inki.dae@samsung.com>
-To:     airlied@linux.ie, daniel@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-fixes
-Date:   Tue, 21 Nov 2023 07:55:37 +0900
-Message-Id: <20231120225537.1270358-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDKsWRmVeSWpSXmKPExsWy7bCmvu6rx9GpBtduSFv0njvJZPF/20Rm
-        iytf37NZzDi/j8mBxWPvtwUsHtu/PWD1uN99nMnj8ya5AJaobJuM1MSU1CKF1Lzk/JTMvHRb
-        Je/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoJVKCmWJOaVAoYDE4mIlfTubovzSklSF
-        jPziElul1IKUnALTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyMi09bmQrW8VR8Xt/M2MA4n6uL
-        kZNDQsBE4tXfV4xdjFwcQgI7GCUOzz3HCuF8YpR4c/M1E4TzjVFiz8O5zDAth29tZQOxhQT2
-        MkpsbpWEKPrCKHFn4iUmkASbgKrExBX3wYpEgOy3kx6DNTMLuEn8WXqWpYuRg0NYQEXiwEQ+
-        kDALUMmyr5sZQWxeAWuJXTtes0HskpeYeek7O0RcUOLkzCcsEGPkJZq3zmYG2SshsIldYt6X
-        WVDHuUisaWuEahaWeHV8CzuELSXxsr+NHaJhMtCh11ewQDgzgJ7+eZ0RospYYv/SyUwg1zEL
-        aEqs36UPEVaU2Pl7LiPEZj6Jd197WEFKJAR4JTrahCBKlCSOXbwBNUVC4sKSiVA3eEhs+NrJ
-        AgmsWIkVp3pYJzDKz0Lyzywk/8xCWLyAkXkVo1hqQXFuemqxYYEhPFaT83M3MYKTnZbpDsaJ
-        bz/oHWJk4mA8xCjBwawkwvtNKCJViDclsbIqtSg/vqg0J7X4EKMpMIQnMkuJJucD021eSbyh
-        iaWBiZmRsYmFoZmhkjgv86PeFCGB9MSS1OzU1ILUIpg+Jg5OqQamU7vuPrCx2PtUm33FzaX1
-        8w3b5vwJKj6exeSzemnLt6dX3u2cNiNtd/HPf7ZKy59vX3r3zmKRBReSr/x2P3b0iHjZzx3X
-        FM1frucpqFQSPdnpoPM5densU2YK164L8Dqycv9gXmI3y8mvW2qbbaNt7/3YytDdX4OdZ9xL
-        O6HU/bCfR/WolvzZJfEqTAYBc/lTT/lvb2f09UhRaY9yNgwMdTle25PH1Dyze/fh9eUvu/fu
-        uW5vWXnIumXuT0Ydxor+6bo3WRg5DzVkxH0TNf7MWGZZk/d4cgv7gZfhoYWfrvYKr794y+K6
-        qHvg7Lfmrhlt5UZ3ZXsu1y5ZMrck3Mt3ir2FYHaDsLlHE9si5hwlluKMREMt5qLiRAB2pwAV
-        /wMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOLMWRmVeSWpSXmKPExsWy7bCSnO6rx9GpBlOauC16z51ksvi/bSKz
-        xZWv79ksZpzfx+TA4rH32wIWj+3fHrB63O8+zuTxeZNcAEsUl01Kak5mWWqRvl0CV8bFp61M
-        Bet4Kj6vb2ZsYJzP1cXIySEhYCJx+NZWti5GLg4hgd2MEjuu72XsYuQASkhIbNnKAWEKSxw+
-        XAxSLiTwiVHixf4iEJtNQFVi4or7bCC2iIC6xIPLCxlBbGYBD4n3e1azg7QKC6hIHJjIBxJm
-        ASpf9nUzWAmvgLXErh2v2SAukJeYeek7O0RcUOLkzCcsEGPkJZq3zmaewMg3C0lqFpLUAkam
-        VYySqQXFuem5xYYFhnmp5XrFibnFpXnpesn5uZsYwWGnpbmDcfuqD3qHGJk4GA8xSnAwK4nw
-        fhOKSBXiTUmsrEotyo8vKs1JLT7EKM3BoiTOK/6iN0VIID2xJDU7NbUgtQgmy8TBKdXAZLNr
-        +dWg28ynPP9Fn2zceMlm5kxWM6FZk29dlc0zYZBOFvpl/KYl6dEuoZ9J/6qKWDd+cvYx+uRy
-        JLe+ssMwZmZcurLCl8TV1oZVbk3ME2ae/5V5Kr7Q9bTqL45DJkp622an5DiWSvDaCr//k/vY
-        S2jfNdu0Bc73a75c+T9hl5riP8+5/yQW/3vy8/71Vda1DDztE812LBMPbN/YsEhAqTJexfCa
-        XHkwd/McyVmdF0QX3/5UN/tCvK9Jx0v/OX8kNnxarL4voTXkM9ecVV95nLNitwZcmHUu6GWc
-        McfkvK6fR4Leawio5XJseVj8RtxF81DiXmbH4PvLp4ff1j8u4+H2Xb5PY8Pca3rejRXTlViK
-        MxINtZiLihMBMlSWzqoCAAA=
-X-CMS-MailID: 20231120225538epcas1p205a656dfe9771fc992ee1a6756ca67d3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231120225538epcas1p205a656dfe9771fc992ee1a6756ca67d3
-References: <CGME20231120225538epcas1p205a656dfe9771fc992ee1a6756ca67d3@epcas1p2.samsung.com>
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 26919C197A0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Nov 2023 23:04:02 +0000 (UTC)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56147B219FF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Nov 2023 23:04:00 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7609C3AC33;
+	Mon, 20 Nov 2023 23:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KNDsN0PX"
+Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93D4EC8;
+	Mon, 20 Nov 2023 15:03:50 -0800 (PST)
+Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-5cb68b8fa27so3285337b3.0;
+        Mon, 20 Nov 2023 15:03:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1700521430; x=1701126230; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=wy00UAbbeK5FI852LAsyQcSkAXKUMJhM0If0BzmnvZs=;
+        b=KNDsN0PXUEPtfLYsCxU+grLRCiwVrxWz4k7BCWMwej43SVZKJ2y1iCjtzbok5Fkq8R
+         hFh/ec8lUGvh1587Kbh3dXbH+JFSBDZ9U7KgYugTjB9D9jBM4heRTfFRNKwa+nBJf6rJ
+         N/kpVIN2eUnk4sXc0/qs8/vK82nAMTCflPp2GFG4X3pBcQUjrXu/U44wwrhoxDl7wy4H
+         NLxzl2MOzTVH5E08xfp7RxaGQIC5nbMOMDA7dmNBnNJ2fXryDxNdC0I+eK+iu/57xqQX
+         nWzGkfitgs/5fQ40gsXA/LNDVWgXaf6xOOA2JVFp1mTDffOOAkL35ZednwPTLk6P+8bT
+         rcpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700521430; x=1701126230;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wy00UAbbeK5FI852LAsyQcSkAXKUMJhM0If0BzmnvZs=;
+        b=p/CYNQQg4+nTvMuN9FjuOUWw7gp7Td1Ils6FxHMaEnKeiDW8g47xYvBnUH4CoW8Ro/
+         QUQ5hb+83icEOAAYgyQgH/xrQpDls97IRv+coATAlkf5MWMizM/802iHKt5BNajdi1WF
+         tLsCJlFW9yZlqtyRrtkq9qg2XPymR9nGARHA6/RuYpkW3y5MA/NQBaenPEiHtN3swShx
+         XyJrEhdonLyoIfSge9hOY5KNh5MVxajEa8YaE10V7umhx8jJXnLJRTBXsO0ZKajAV/RQ
+         FmNccfXWx77/+ff2tVmU2Z+jDN9BBkbyId/31raFsK/TeHHC5VLZRBeT6stEZ0baoIPy
+         6Ing==
+X-Gm-Message-State: AOJu0YwGa5C7LjREpsxE5IyyPbuV2heG3jPrsQ3c28EgRwrIvKZzg5Mx
+	jP2828tSiDnkF0aNLhk18WE=
+X-Google-Smtp-Source: AGHT+IGYlAEfoxYA7AJY5M2yRakrukiNgREDVZO8WTldGJwPJ61r6TUrD/h4WFMpZuk8ZsjQb/N6Pw==
+X-Received: by 2002:a05:690c:b0c:b0:5c9:7590:1535 with SMTP id cj12-20020a05690c0b0c00b005c975901535mr8174025ywb.16.1700521429677;
+        Mon, 20 Nov 2023 15:03:49 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id i205-20020a8154d6000000b0059bcadded9dsm2655365ywb.116.2023.11.20.15.03.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Nov 2023 15:03:48 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <0c37e32f-079c-4b91-a9db-1c1c2df299b1@roeck-us.net>
+Date: Mon, 20 Nov 2023 15:03:44 -0800
 Precedence: bulk
-List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
+List-Id: <linux-samsung-soc.vger.kernel.org>
+List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 15/19] watchdog: s3c2410_wdt: Add support for WTCON
+ register DBGACK_MASK bit
+Content-Language: en-US
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+ tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org,
+ wim@linux-watchdog.org, catalin.marinas@arm.com, will@kernel.org,
+ arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com,
+ tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+ semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com,
+ soc@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, kernel-team@android.com,
+ linux-serial@vger.kernel.org
+References: <20231120212037.911774-1-peter.griffin@linaro.org>
+ <20231120212037.911774-16-peter.griffin@linaro.org>
+ <5ee955e4-4c22-4696-8001-1e4f24952eeb@roeck-us.net>
+ <CADrjBPoHYTZiMCFKBtdaT6hFp9QO=GMzn5yE2k3Dg_mcBhrvkA@mail.gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
+ RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
+ nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
+ 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
+ gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
+ IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
+ kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
+ VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
+ jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
+ BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
+ ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
+ nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
+ hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
+ c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
+ 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
+ GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
+ sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
+ Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
+ HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
+ BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
+ l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
+ 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
+ pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
+ J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
+ pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
+ 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
+ ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
+ I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
+ nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
+ HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
+ JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
+ J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
+ cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
+ wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
+ hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
+ nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
+ QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
+ trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
+ WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
+ HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <CADrjBPoHYTZiMCFKBtdaT6hFp9QO=GMzn5yE2k3Dg_mcBhrvkA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Dave and Daniel,
+On 11/20/23 14:45, Peter Griffin wrote:
+> Hi Guenter,
+> 
+> Thanks for the review.
+> 
+> On Mon, 20 Nov 2023 at 22:00, Guenter Roeck <linux@roeck-us.net> wrote:
+>>
+>> On 11/20/23 13:20, Peter Griffin wrote:
+>>> The WDT uses the CPU core signal DBGACK to determine whether the SoC
+>>> is running in debug mode or not. If the DBGACK signal is asserted and
+>>> DBGACK_MASK is enabled, then WDT output and interrupt is masked.
+>>>
+>>> Presence of the DBGACK_MASK bit is determined by adding a new
+>>> QUIRK_HAS_DBGACK_BIT quirk. Currently only gs101 SoC is known to have
+>>> the DBGACK_MASK bit so add the quirk to drv_data_gs101_cl1 and
+>>> drv_data_gs101_cl1 quirks.
+>>>
+>>> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+>>> ---
+>>>    drivers/watchdog/s3c2410_wdt.c | 32 +++++++++++++++++++++++++++-----
+>>>    1 file changed, 27 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+>>> index 08b8c57dd812..ed561deeeed9 100644
+>>> --- a/drivers/watchdog/s3c2410_wdt.c
+>>> +++ b/drivers/watchdog/s3c2410_wdt.c
+>>> @@ -34,9 +34,10 @@
+>>>
+>>>    #define S3C2410_WTCNT_MAXCNT        0xffff
+>>>
+>>> -#define S3C2410_WTCON_RSTEN  (1 << 0)
+>>> -#define S3C2410_WTCON_INTEN  (1 << 2)
+>>> -#define S3C2410_WTCON_ENABLE (1 << 5)
+>>> +#define S3C2410_WTCON_RSTEN          (1 << 0)
+>>> +#define S3C2410_WTCON_INTEN          (1 << 2)
+>>> +#define S3C2410_WTCON_ENABLE         (1 << 5)
+>>> +#define S3C2410_WTCON_DBGACK_MASK    (1 << 16)
+>>>
+>>>    #define S3C2410_WTCON_DIV16 (0 << 3)
+>>>    #define S3C2410_WTCON_DIV32 (1 << 3)
+>>> @@ -107,12 +108,16 @@
+>>>     * %QUIRK_HAS_PMU_CNT_EN: PMU block has some register (e.g. CLUSTERx_NONCPU_OUT)
+>>>     * with "watchdog counter enable" bit. That bit should be set to make watchdog
+>>>     * counter running.
+>>> + *
+>>> + * %QUIRK_HAS_DBGACK_BIT: WTCON register has DBGACK_MASK bit. Enables masking
+>>> + * WDT interrupt and reset request according to CPU core DBGACK signal.
+>>
+>> This is a bit difficult to understand. I _think_ it means that the DBGACK_MASK bit
+>> has to be set to be able to trigger interrupt and reset requests.
+> 
+> Not quite, it is a bit that controls masking the watchdog outputs when the SoC
+> is in debug mode.
+> 
+>> "masking" normally refers to disabling something (at least in interrupt context).
+>> "Enables masking WDT interrupt" sounds like the bit has to be set in order to
+>> be able to disable interupts, and the code below suggests that the bit has to be
+>> set for the driver to work. Is that the case ? It might make sense to explain this
+>> a bit further.
+> 
+> Maybe I explained it more clearly in the commit message than the comment
+> 
+> "The WDT uses the CPU core signal DBGACK to determine whether the SoC
+> is running in debug mode or not. If the DBGACK signal is asserted and
+> DBGACK_MASK is enabled, then WDT output and interrupt is masked."
+> 
+> Is that any clearer? Or maybe simpler again
+> 
+> "Enabling DBGACK_MASK bit masks the watchdog outputs when the SoC is
+> in debug mode. Debug mode is determined by the DBGACK CPU signal."
+> 
+> Let me know what you think is the clearest and most succinct and I can
+> update the comment.
+> 
 
-   Two fixups - fixing a potential error pointer dereference and wrong
-   error checking.
+You are still using the term "masked" which I think just hides what
+the code is really doing. Why not just say "disable" ?
 
-   Ps. regarding the first patch, I had sent a GIT-PULL[1] but it seems
-       you missed.
-   [1] https://lore.kernel.org/dri-devel/20231006040950.4397-1-inki.dae@samsung.com/T/#u
+"Setting the DBGACK_MASK bit disables the watchdog outputs when the SoC is
+  in debug mode. Debug mode is determined by the DBGACK CPU signal."
 
-   Please kindly let me know if there is any problem.
+That seems to be much clearer to me, though I think there should still
+be a comment along the line of "disable watchdog output if CPU is in
+debug mode" in the code.
+
+That doesn't really explain _why_ the watchdog is disabled in this mode,
+but at least it makes it obvious what is happening.
+
+>>
+>>>     */
+>>>    #define QUIRK_HAS_WTCLRINT_REG                      (1 << 0)
+>>>    #define QUIRK_HAS_PMU_MASK_RESET            (1 << 1)
+>>>    #define QUIRK_HAS_PMU_RST_STAT                      (1 << 2)
+>>>    #define QUIRK_HAS_PMU_AUTO_DISABLE          (1 << 3)
+>>>    #define QUIRK_HAS_PMU_CNT_EN                        (1 << 4)
+>>> +#define QUIRK_HAS_DBGACK_BIT                 (1 << 5)
+>>>
+>>>    /* These quirks require that we have a PMU register map */
+>>>    #define QUIRKS_HAVE_PMUREG \
+>>> @@ -279,7 +284,7 @@ static const struct s3c2410_wdt_variant drv_data_gs101_cl0 = {
+>>>        .cnt_en_reg = GS_CLUSTER0_NONCPU_OUT,
+>>>        .cnt_en_bit = 8,
+>>>        .quirks = QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_MASK_RESET | QUIRK_HAS_PMU_CNT_EN |
+>>> -               QUIRK_HAS_WTCLRINT_REG,
+>>> +               QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_DBGACK_BIT,
+>>>    };
+>>>
+>>>    static const struct s3c2410_wdt_variant drv_data_gs101_cl1 = {
+>>> @@ -291,7 +296,7 @@ static const struct s3c2410_wdt_variant drv_data_gs101_cl1 = {
+>>>        .cnt_en_reg = GS_CLUSTER1_NONCPU_OUT,
+>>>        .cnt_en_bit = 7,
+>>>        .quirks = QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_MASK_RESET | QUIRK_HAS_PMU_CNT_EN |
+>>> -               QUIRK_HAS_WTCLRINT_REG,
+>>> +               QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_DBGACK_BIT,
+>>>    };
+>>>
+>>>    static const struct of_device_id s3c2410_wdt_match[] = {
+>>> @@ -408,6 +413,21 @@ static int s3c2410wdt_enable(struct s3c2410_wdt *wdt, bool en)
+>>>        return 0;
+>>>    }
+>>>
+>>> +static void s3c2410wdt_mask_dbgack(struct s3c2410_wdt *wdt, bool mask)
+>>
+>> I think I must be missing something. This is only ever called with mask==true,
+>> meaning the bit, if present, is always set.
+>>
+>> Why not call the function s3c2410wdt_set_dbgack() and drop the unnecessary
+>> parameter ?
+> 
+> I can update like you suggest, it would simplify the logic a little bit.
+> 
+
+Please do.
 
 Thanks,
-Inki Dae
+Guenter
 
-The following changes since commit 98b1cc82c4affc16f5598d4fa14b1858671b2263:
-
-  Linux 6.7-rc2 (2023-11-19 15:02:14 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-fixes-for-v6.7-rc3
-
-for you to fetch changes up to a30ba4bd7cdb5726d86a557c5df8df71c7bc7fad:
-
-  drm/exynos: fix a wrong error checking (2023-11-21 07:41:11 +0900)
-
-----------------------------------------------------------------
-Two fixups
-- Fix a potential error pointer dereference by checking the return value
-  of exynos_drm_crtc_get_by_type() function before accessing to crtc
-  object.
-- Fix a wrong error checking in exynos_drm_dma.c modules, which was reported
-  by Dan[1]
-
-[1] https://lore.kernel.org/all/33e52277-1349-472b-a55b-ab5c3462bfcf@moroto.mountain/
-
-----------------------------------------------------------------
-Inki Dae (1):
-      drm/exynos: fix a wrong error checking
-
-Xiang Yang (1):
-      drm/exynos: fix a potential error pointer dereference
-
- drivers/gpu/drm/exynos/exynos_drm_dma.c | 8 +++-----
- drivers/gpu/drm/exynos/exynos_hdmi.c    | 2 ++
- 2 files changed, 5 insertions(+), 5 deletions(-)
