@@ -2,68 +2,67 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1239C2BB3F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Nov 2023 14:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D776C2BB3F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Nov 2023 14:57:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234078AbjKTOya (ORCPT
+        id S233297AbjKTO5Z (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Nov 2023 09:54:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57818 "EHLO
+        Mon, 20 Nov 2023 09:57:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233834AbjKTOyK (ORCPT
+        with ESMTP id S233050AbjKTO5Y (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Nov 2023 09:54:10 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C9573258
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 06:53:33 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-5441ba3e53cso6098235a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 06:53:33 -0800 (PST)
+        Mon, 20 Nov 2023 09:57:24 -0500
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BAB4131
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 06:57:20 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-a00ac0101d9so43290966b.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 06:57:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700492011; x=1701096811; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1700492238; x=1701097038; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ET7XZBuYSIsGm9CmNHfDH0i0uNlWweXSO9s0Phl8jmQ=;
-        b=G8KOGDNC2GPE4Oe5Ed8Rz72LIR+1xnWFJDYRi3KffyMW5Uej193i1DILprSIsLRvtF
-         33bKUVpd11am5xY2IIuYjTJDKLQk5al9/4vUWT+XEwbQE7NQZY6IakIIoSz51pwsZJ1D
-         60IJYAkNADXmII+Qw22z+bjiyX0/vzorJegrlqF7AyitpEB+7PRufL4cySZcxzf/JRej
-         QEHGfpkcJ8NLiQxrVgMG6uS1KtjhTBo6oO7BrdE+cKHJj6ps7QCL9FSoVWNjtNl1AY1s
-         Yf83fDi2kiiLHg0W6lfxNVBcp26Az8Q+LjHZGtTJKvC9oNesLQKMWQJfFrzswXNaAAMU
-         dCrg==
+        bh=mQdmwJggkH5N5H7bleDZIaCxHcp1ZmwZnDUsdCqchNc=;
+        b=kyCoYEkufDTe+kFpqhgMv00qbQIJt8Tr/6F/sO2XFZEE8q15L9waF3Bd2p8AODBYDA
+         /PYm6oljdMls8LTPeWAu2T05W20ICKgxvr1qpqoUCNWVIJR9aKJHDNkR4c559VoMiisd
+         Zt416RVgJLUDqC13cGGbBvRE6L8pGuIwUxRJXJzC95I5CfGjXSA2mWTbRymRIcIBaIJo
+         //XiiZjVCsW9Qsx93vNED42H1cvIlTIuMG9dQgReqmAx364U7tksBpbSf6x+itEowKhi
+         zeShj9Wr4MtqjJ2SY8gTYduiOBoSnfBtTeDU2OwZ+J4Zvc2uKhE6sWd+LGckgWKSPDVR
+         OTCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700492011; x=1701096811;
+        d=1e100.net; s=20230601; t=1700492238; x=1701097038;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ET7XZBuYSIsGm9CmNHfDH0i0uNlWweXSO9s0Phl8jmQ=;
-        b=RFs3V6XgMWhzY/T0vCXH23SeJmJRzuPlR+hEb21ZV++0t8MebCbwRIQBx7Xz3WxvNH
-         TWEyMyqy7sJnW6Cdn+DcCSdgbhKkCDIiyI8IsCgNzXCG6isjpKs2Q90NeKYHHWn7UQA8
-         qcvhPi14nnDcai+Sugg4L693KaBk04n1Zj0qpATHY7brQF1VMlYQA79+JndW1U78jRUB
-         lSZvGlABHU4AVb1Q0bKBtfGwGJ1wH8ARX620k+aCxBoR8hoffhHFuUGSW1bDDLm58i2A
-         sqsWJgfe7CvVU0QpjBG+9HFMiQwZpBUbEx7PGu/LVSUSCV9zDyyKcImrkKmHJfGSrGbj
-         DMTQ==
-X-Gm-Message-State: AOJu0YzpHtZOIkvVHAudfaBvEEIBNMUxae6Sx2nxxwboK6PGK3pBV7qe
-        8OYhyZkqgO2DoIo29fgqn49hI878PxPekN9n8YA=
-X-Google-Smtp-Source: AGHT+IEiFXQNRTpLbffWwIB/ESoK8FBLpW5+d9rBzMckIo8AyjTDOyxsOL6c6QHe60c5kV4WSWbqHA==
-X-Received: by 2002:aa7:c588:0:b0:548:e8aa:dfc8 with SMTP id g8-20020aa7c588000000b00548e8aadfc8mr291110edq.32.1700492011605;
-        Mon, 20 Nov 2023 06:53:31 -0800 (PST)
+        bh=mQdmwJggkH5N5H7bleDZIaCxHcp1ZmwZnDUsdCqchNc=;
+        b=b/ZyR77SbcgNZVm9l+CFBALQ8BOTM6Ntnm0UAH/VrDVtsKIOLCcvnqM62jspII1wPi
+         4Vz/Fgd7Mb8YriRDrqNo1rKU1/YCNO4CVcXXAXu8vrR7T3Z9xmieaeqiQ/9mVoG/zUhU
+         kBN31aV6KpfAjqTZdVKIBQsy67J+XxNL/4JHX9ULxfbYH1TXIntQV7dP1BYl4Oaxrkbt
+         L1Lmu1Q0T4C6R3fxtGTpSDvrX2TH5V1w4yTEIhjTmU3/v7KzmatcbL0IYk4TbjLuNqmd
+         j19infIu4JFjzSW/apXQk+n2ns61mv9Pgdu36iKE8aSFYrS05HHwfGb4aJOfUtLs8Wf6
+         TvwA==
+X-Gm-Message-State: AOJu0Yx/NCO8lP1zup5b+lLfa6jaNbEOxFOy7V8utl4s51xJ63+3Swn9
+        3notnSlaRSDpPaAq3I7hLIYO9A==
+X-Google-Smtp-Source: AGHT+IGKTCAQ89cSgrdtj41saGZa0eHlqo9fZTfHzsMIgXBpffdgBrR+YTLmJkRQLTrSUGi72DsZPA==
+X-Received: by 2002:a17:907:6d0a:b0:9a5:b878:7336 with SMTP id sa10-20020a1709076d0a00b009a5b8787336mr6347418ejc.7.1700492238455;
+        Mon, 20 Nov 2023 06:57:18 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.222.11])
-        by smtp.gmail.com with ESMTPSA id q3-20020aa7cc03000000b0054847e78203sm3387002edt.29.2023.11.20.06.53.29
+        by smtp.gmail.com with ESMTPSA id me23-20020a170906aed700b009e5c644e34dsm3899105ejb.82.2023.11.20.06.57.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Nov 2023 06:53:31 -0800 (PST)
-Message-ID: <76fa8f61-fe31-4040-a38d-cc05be3f4f17@linaro.org>
-Date:   Mon, 20 Nov 2023 15:53:28 +0100
+        Mon, 20 Nov 2023 06:57:17 -0800 (PST)
+Message-ID: <e8483375-cace-473c-aba7-1cd60feae242@linaro.org>
+Date:   Mon, 20 Nov 2023 15:57:15 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2] docs: dt-bindings: add DTS Coding Style document
 Content-Language: en-US
-To:     Michal Simek <michal.simek@amd.com>,
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
@@ -72,13 +71,14 @@ Cc:     Andrew Davis <afd@ti.com>, Arnd Bergmann <arnd@arndb.de>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Heiko Stuebner <heiko@sntech.de>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michal Simek <michal.simek@amd.com>,
         Neil Armstrong <neil.armstrong@linaro.org>,
         Nishanth Menon <nm@ti.com>, Olof Johansson <olof@lixom.net>,
         linux-rockchip@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org
 References: <20231120084044.23838-1-krzysztof.kozlowski@linaro.org>
- <19358871-009d-4498-9c13-90d5338b1e9f@amd.com>
+ <92cf3bcc-18e7-40ba-a082-1b8b6bea0dee@collabora.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -124,17 +124,15 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <19358871-009d-4498-9c13-90d5338b1e9f@amd.com>
+In-Reply-To: <92cf3bcc-18e7-40ba-a082-1b8b6bea0dee@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 20/11/2023 15:01, Michal Simek wrote:
-> 
-> 
-> On 11/20/23 09:40, Krzysztof Kozlowski wrote:
+On 20/11/2023 12:43, AngeloGioacchino Del Regno wrote:
+> Il 20/11/23 09:40, Krzysztof Kozlowski ha scritto:
 >> Document preferred coding style for Devicetree sources (DTS and DTSI),
 >> to bring consistency among all (sub)architectures and ease in reviews.
 >>
@@ -210,47 +208,32 @@ On 20/11/2023 15:01, Michal Simek wrote:
 >> +   * lowercase characters: [a-z]
 >> +   * digits: [0-9]
 >> +   * dash: -
-> 
-> device-tree specification v0.4. Chapter 2.2.1/Table 2.1 is describing much more
-> valid characters for node names.
-> It means above description is not accurate or DT spec should be updated.
-
-Spec allows way to much. dtc doesn't. One thing is the spec, second
-thing is coding style.
-
-> 
-> 
 >> +
 >> +2. Labels are allowed to use only:
 >> +
 >> +   * lowercase characters: [a-z]
 >> +   * digits: [0-9]
 >> +   * underscore: _
-> 
-> based on dt spec uppercase is also valid char in label.
-
-Which we do not want in the DTS.
-
-> 
-> 
 >> +
 >> +3. Unit addresses should use lowercase hex, without leading zeros (padding).
+> 
+> This is imperative, so: s/should/shall/g
+
+Sure, fine.
+
+> 
 >> +
 >> +4. Hex values in properties, e.g. "reg", should use lowercase hex.  The address
 >> +   part can be padded with leading zeros.
 >> +
+> 
+> Same here, I'd say.... :-)
+> 
 >> +Example::
 >> +
 >> +	gpi_dma2: dma-controller@800000 {
 >> +		compatible = "qcom,sm8550-gpi-dma", "qcom,sm6350-gpi-dma";
 >> +		reg = <0x0 0x00800000 0x0 0x60000>;
-> 
-> Is 0x0 recommended or 0 is enough?
-
-I don't want to impose any rule on that, because someone would like to
-argue that hex should be also in SPI chip-select reg.
-
-> 
 >> +	}
 >> +
 >> +Order of Nodes
@@ -271,9 +254,18 @@ argue that hex should be also in SPI chip-select reg.
 >> +
 >> +Example::
 >> +
+> 
+> Hmm, comments!
+> 
 >> +	// SoC DTSI
 > 
-> Same comment about /* */ as was mentioned in another thread.
+> ....speaking of commenting, should we at least suggest to use C-style comments?
+> 
+> 	/* SoC DTSI */
+
+I can switch it to C-style in the example, but we are going with Linux
+Coding Style which soon will allow // judging by Linus' statements.
+
 > 
 >> +
 >> +	/ {
@@ -320,49 +312,12 @@ argue that hex should be also in SPI chip-select reg.
 >> +5. Vendor-specific properties
 >> +6. status (if applicable)
 >> +7. Child nodes, where each node is preceded with a blank line
-> 
-> Isn't the order already defined in DT spec in 2.3 in chapters?
-
-Where is it defined as this is preferred order?
-
-> compatible
-> model
-> status
-> #address/size cells
-> reg
-> virtual-reg
-> ranges
-> dma-ranges
-> dma-coherent
-> dma-non-coherent
-> 
-> Again I am fine with whatever order but I think we should reflect it in the spec 
-
-Spec is not a coding style.
-
-> too. Especially status property is for my taste too low simply because you start 
-> to read and then you will find that IP is disabled.
-
-Which is exactly what you want. status is irrelevant for hardware
-description, so should be the last item.
-
-> 
-> And are you describing all properties starting with # as standard properties?
-
-Yes.
-
-> 
-> 
 >> +
 >> +The "status" property is by default "okay", thus it can be omitted.
 >> +
 >> +Example::
 >> +
 >> +	// SoC DTSI
-> 
-> 
-> /* */
-> 
 >> +
 >> +	usb_1_hsphy: phy@88e3000 {
 >> +		compatible = "qcom,sm8550-snps-eusb2-phy";
@@ -371,6 +326,67 @@ Yes.
 >> +		resets = <&gcc GCC_QUSB2PHY_PRIM_BCR>;
 >> +		status = "disabled";
 >> +	};
+> 
+> Since this describes vendor-specific properties and vendor prefixes as well
+> as standard properties, I think it would be clearer if we use something more
+> complex that actually contains those as an example.
+> 
+> There's a few. One is MediaTek:
+> 
+> 	vdo1_rdma0: dma-controller@1c104000 {
+> 		compatible = "mediatek,mt8195-vdo1-rdma";
+> 		reg = <0 0x1c104000 0 0x1000>;
+> 		#dma-cells = <1>;
+> 		clocks = <&vdosys1 CLK_VDO1_MDP_RDMA0>;
+> 		interrupts = <GIC_SPI 495 IRQ_TYPE_LEVEL_HIGH 0>;
+> 		iommus = <&iommu_vdo M4U_PORT_L2_MDP_RDMA0>;
+> 		power-domains = <&spm MT8195_POWER_DOMAIN_VDOSYS1>;
+> 		mediatek,gce-client-reg = <&gce0 SUBSYS_1c10XXXX 0x4000 0x1000>;
+> 	};
+> 
+> ...or other one can be nVidia:
+> 
+> 	mipi: mipi@700e3000 {
+> 		compatible = "nvidia,tegra210-mipi";
+> 		reg = <0x0 0x700e3000 0x0 0x100>;
+> 		clocks = <&tegra_car TEGRA210_CLK_MIPI_CAL>;
+> 		clock-names = "mipi-cal";
+> 		power-domains = <&pd_sor>;
+> 		#nvidia,mipi-calibrate-cells = <1>;
+> 	};
+> 
+> ...or we could make an example out of fantasy, which could work even better
+> as far as describing goes.
+> 
+> 	/* SoC DTSI */
+> 
+> 	device_node: device-class@6789abc {
+> 		compatible = "vendor,device";
+
+Yep. I'll use this, unless checkpatch complains about undocumented
+compatible. :) This allows to show the child node.
+
+> 		reg = <0 0x06789abc 0 0xa123>;
+> 		ranges = <0 0 0x6789abc 0x1000>;
+> 		#dma-cells = <1>;
+> 		clocks = <&clock_controller SOC_CLOCK>;
+> 		clock-names = "dev-clk";
+> 		#vendor,custom-cells = <2>;
+> 		status = "disabled";
+> 
+> 		child_node: child-class@100 {
+> 			reg = <0x100 0x200>;
+> 			/* ... */
+> 		};
+> 	};
+> 
+> 	/* Board DTS */
+> 
+> 	&device_node {
+> 		device-supply = <&board_vreg1>;
+> 		status = "okay";
+> 	}
+> 
 >> +
 >> +	// Board DTS
 >> +
@@ -403,19 +419,13 @@ Yes.
 >> +
 >> +The DTSI and DTS files should be organized in a way representing the common
 >> +(and re-usable) parts of the hardware.  Typically this means organizing DTSI
->> +and DTS files into several files:
->> +
->> +1. DTSI with contents of the entire SoC (without nodes for hardware not present
->> +   on the SoC).
->> +2. If applicable: DTSI with common or re-usable parts of the hardware (e.g.
->> +   entire System-on-Module).
 > 
-> DTS/DTSI - SOMs can actually run as they are that's why it is fair to say that
-> there doesn't need to be DTS representing the board.
+>                                          ^^^^
+> There's a double space here, it was probably unintentional.
 
-I have never seen a SoM which can run without elaborate hardware-hacking
-(e.g. connecting multiple wires to the SoM pins). The definition of the
-SoM is that it is a module. Module can be re-used, just like SoC.
+I think I used everywhere double-spaces. At least this was my intention,
+so I will fix single-spaces :)
+
 
 Best regards,
 Krzysztof
