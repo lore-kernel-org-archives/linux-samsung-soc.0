@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0ECC5AE5E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Nov 2023 21:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAAC8C54E76
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Nov 2023 21:21:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232116AbjKTVVY (ORCPT
+        id S232314AbjKTVVa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Nov 2023 16:21:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59250 "EHLO
+        Mon, 20 Nov 2023 16:21:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232300AbjKTVVP (ORCPT
+        with ESMTP id S232307AbjKTVVU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Nov 2023 16:21:15 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97E4610E
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 13:21:11 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-4083f613275so21328395e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 13:21:11 -0800 (PST)
+        Mon, 20 Nov 2023 16:21:20 -0500
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12790E8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 13:21:15 -0800 (PST)
+Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2c72e275d96so60799091fa.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 13:21:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700515270; x=1701120070; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1700515273; x=1701120073; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FWrC3Ayxx8cA3cHGksIcRtfk+Sj+TKwgMP3l+aAP0Uw=;
-        b=DWC0kgtEj1B0sU2zmF37ICAi8PFRdyLJN3Zy2Z62y6rFr5swCLj0USe4tAXdnaBpCV
-         u6DcddHyqa02SUNjjyVxHgRE95OwugNFZem1eNX4vfNzmYzgF0/bGB6S2rN7uoKkrvoM
-         zPBZJ028DwAZPHhO9lpFedJE4hw/KCG2I23GTvl/mVEw9Lb6fLJb6EqTT77WoccC+SEa
-         df5irjBm5kfY4ROUikT7j3dwt8dUeczfzFppkOGrZ3yIUViSzHy4al/YAhP/jgv2nbuF
-         G3yBYG/kFRUva+5qpY5jpF5EyZEMZpqgI5LLfIBWiE7ta/Xm2kq/SujqmFOePoorm2/S
-         X8HA==
+        bh=NPrhMgiNguGxrbIvdeLHcyqlQe/MyMdJk9mAGos3v4M=;
+        b=BBT4hRcWaWp7id2y9wcT4oUFb86mPb/R4ViiYjxTlaeOwhbc+lto7Z8oyi7NQjNz/N
+         eaA3h0dDzebMxLFmqde2gXVq9a06OmuMyCTjh6koO2gYiWyqKdiOzmL+f/AWmtiyGbLw
+         lpNeqC3Crtmu0vDGAc0FXUCElaMvIyQfsQhfaJIduHt89OeFx9bLHNPq1sH/xFXju7x+
+         N9oMxfnfke61FCHT8g2j03GSqV9HUKb6FWFWSRHGBzDdOavrtAMTwr4Z5F/zcYwRVY4S
+         2BGPLh9sB3nkz9BPBAdNhMhiEX1iPtVqNucrupjcMMxPWFhpPxwRx2SJ+DjJxEEB+CX5
+         EMQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700515270; x=1701120070;
+        d=1e100.net; s=20230601; t=1700515273; x=1701120073;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FWrC3Ayxx8cA3cHGksIcRtfk+Sj+TKwgMP3l+aAP0Uw=;
-        b=TDGp2x7tm7B7xAxLkOmCKfFR4T14+K1F4w3xW1iMTDxstEu/M4CEW8kho0ShuyPhiz
-         iiX+6oVf3xU5luHYRj+GTv+bZfbhkJoaYAazkP2DF8T2QydJiQQP2ZHyK02J0A0qcrsu
-         OdCMic/xsz9dBFGHqa/ipAd0/4OD5iyuruCvlICqJtMXOXLPzfHCQ/4MDK9MliHobmz2
-         d/GPKUuDmYDHGaUfTjGtQ8gGbtZivK+Aahcsj1Qg0JJ3Kdwy1VblTRpVI7Sf1O4twpSi
-         d8Mb/5nHw+slexn95EPNWZcQ/KMwrupZrCeg4BL4W1ni2Z+aZKeTMx24+eR7xskEitoa
-         LI0g==
-X-Gm-Message-State: AOJu0YwgYxgtjf53ko1ae1eszbjgHUjRthI5UI6Iwd9AJK2WMVKhQbWn
-        TuPMRk6I7Nt+Jo5TEKKG94FY7w==
-X-Google-Smtp-Source: AGHT+IHvnqFqvnhoaj/lvHGCgZoD7uJel+Q84X3YFSUkXyOEOaLu5vJ/ZWuBo/wwxVo2wIMuvSsRCg==
-X-Received: by 2002:a05:600c:4797:b0:3fe:1232:93fa with SMTP id k23-20020a05600c479700b003fe123293famr6449271wmo.22.1700515269893;
-        Mon, 20 Nov 2023 13:21:09 -0800 (PST)
+        bh=NPrhMgiNguGxrbIvdeLHcyqlQe/MyMdJk9mAGos3v4M=;
+        b=eE0+vtM88prXgxk69UQfh3cMgn8Kxv6WbuGN1tMQojaY/56sr5YAWMuxOx10jhC0i7
+         2z9lM6wqYbgAFiSp/lVeLgpHUXr/aO1ByjgeS8l9Zb2Qis78OVUXJ8TnAvn4kdxIEJVA
+         SuIVjH/rtRDO0VOEyPHuYAwXpF/4Y7l/5lhQPRfOZ/K22foElms04zSqRVln5vzQkv2q
+         CBHMDFo1nfiGELywOjoxw9jRB1ubP810ibbzRGAqIKOrKGHnKSQqBdqxpUuPfGuESlCc
+         xzmqeegtcT2nS7oj+GDPZu3bdi+7I39OZpjQZPj/ko6z42Xt7dPGgXMvow1eV431QVZF
+         nH9g==
+X-Gm-Message-State: AOJu0YwU8tnqJv8eTfT09Wdc8S86v5Unw3noriNcOrZLpT42nC1W1M3f
+        Y4cv30r2SXl02Pb+rdli07+rUQ==
+X-Google-Smtp-Source: AGHT+IE/JKzpTwMnQTxuReZhJ11l4AHB9TdiKw1LttbX0YcLxLFVDCxuFEkk2KCs0cS0JmaV5wy8gQ==
+X-Received: by 2002:a2e:81cf:0:b0:2b6:a804:4cc with SMTP id s15-20020a2e81cf000000b002b6a80404ccmr4975927ljg.53.1700515273249;
+        Mon, 20 Nov 2023 13:21:13 -0800 (PST)
 Received: from gpeter-l.lan (host-92-29-24-243.as13285.net. [92.29.24.243])
-        by smtp.gmail.com with ESMTPSA id je14-20020a05600c1f8e00b0040596352951sm19518451wmb.5.2023.11.20.13.21.08
+        by smtp.gmail.com with ESMTPSA id je14-20020a05600c1f8e00b0040596352951sm19518451wmb.5.2023.11.20.13.21.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 13:21:09 -0800 (PST)
+        Mon, 20 Nov 2023 13:21:12 -0800 (PST)
 From:   Peter Griffin <peter.griffin@linaro.org>
 To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
@@ -66,10 +66,11 @@ Cc:     peter.griffin@linaro.org, tudor.ambarus@linaro.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org
-Subject: [PATCH v4 03/19] dt-bindings: soc: google: exynos-sysreg: add dedicated SYSREG compatibles to GS101
-Date:   Mon, 20 Nov 2023 21:20:21 +0000
-Message-ID: <20231120212037.911774-4-peter.griffin@linaro.org>
+        kernel-team@android.com, linux-serial@vger.kernel.org,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v4 05/19] dt-bindings: arm: google: Add bindings for Google ARM platforms
+Date:   Mon, 20 Nov 2023 21:20:23 +0000
+Message-ID: <20231120212037.911774-6-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.43.0.rc1.413.gea7ed67945-goog
 In-Reply-To: <20231120212037.911774-1-peter.griffin@linaro.org>
 References: <20231120212037.911774-1-peter.griffin@linaro.org>
@@ -79,32 +80,67 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-GS101 has three different SYSREG controllers, add dedicated
-compatibles for them to the documentation.
+This introduces bindings and dt-schema for the Google tensor SoCs.
+Currently just gs101 and pixel 6 are supported.
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/soc/samsung/samsung,exynos-sysreg.yaml         | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../devicetree/bindings/arm/google.yaml       | 45 +++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/google.yaml
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-index 2de4301a467d..127f4ffde76a 100644
---- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-@@ -22,6 +22,12 @@ properties:
-               - tesla,fsd-fsys1-sysreg
-               - tesla,fsd-peric-sysreg
-           - const: syscon
-+      - items:
+diff --git a/Documentation/devicetree/bindings/arm/google.yaml b/Documentation/devicetree/bindings/arm/google.yaml
+new file mode 100644
+index 000000000000..0e987fecb2cf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/google.yaml
+@@ -0,0 +1,45 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/google.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Google Tensor platforms
++
++maintainers:
++  - Peter Griffin <peter.griffin@linaro.org>
++
++description: |
++  ARM platforms using SoCs designed by Google branded "Tensor" used in Pixel
++  devices.
++
++  Currently upstream this is devices using "gs101" SoC which is found in Pixel
++  6, Pixel 6 Pro and Pixel 6a.
++
++  Google have a few different names for the SoC.
++  - Marketing name ("Tensor")
++  - Codename ("Whitechapel")
++  - SoC ID ("gs101")
++  - Die ID ("S5P9845");
++
++  Likewise there are a couple of names for the actual device
++  - Marketing name ("Pixel 6")
++  - Codename ("Oriole")
++
++  Devicetrees should use the lowercased SoC ID and lowercased board codename.
++  e.g. gs101 and gs101-oriole
++
++properties:
++  $nodename:
++    const: '/'
++  compatible:
++    oneOf:
++      - description: Google Pixel 6 / Oriole
++        items:
 +          - enum:
-+              - google,gs101-apm-sysreg
-+              - google,gs101-peric0-sysreg
-+              - google,gs101-peric1-sysreg
-+          - const: syscon
-       - items:
-           - enum:
-               - samsung,exynos5433-cam0-sysreg
++              - google,gs101-oriole
++          - const: google,gs101
++
++additionalProperties: true
++
++...
 -- 
 2.43.0.rc1.413.gea7ed67945-goog
 
