@@ -1,233 +1,240 @@
-Return-Path: <linux-samsung-soc+bounces-4-linux-samsung-soc=archiver.kernel.org@vger.kernel.org>
+Return-Path: <linux-samsung-soc+bounces-5-linux-samsung-soc=archiver.kernel.org@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B7574C54E76
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Nov 2023 23:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 11C52C197A0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Nov 2023 00:13:08 +0000 (UTC)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05A17B21982
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Nov 2023 23:31:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8C0E2828E3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Nov 2023 00:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8253B2A8;
-	Mon, 20 Nov 2023 23:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8CC636;
+	Tue, 21 Nov 2023 00:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJEMpXeq"
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E99385;
-	Mon, 20 Nov 2023 15:31:17 -0800 (PST)
-Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-db3a09e96daso1378787276.3;
-        Mon, 20 Nov 2023 15:31:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700523076; x=1701127876; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=V+K6hgLHS0z0nvHsglPl4zOP5uaW3Nv0I1YV5l8r1Wc=;
-        b=AJEMpXeqAqTpefqy3UoL+4+tGp95xaJZnqHurFFWe3qkHia31mjVJwbGQKAmcm8IGW
-         MkXu9ccaBefnwTeETT5ESYWkjukDM+IrFF8XUlnIhuPisZURBs6RqtKWOrhDXC3XcrYW
-         NHUrae8Of7f0dtdVIbirhnSlhIyjkg+dAtBA+gVnw7Tn7kHXGFXJQIoxg3jSs347rFbq
-         xjE9QsTjeDCb0n+xdjLN/6qswnnpcHIhpuVq3afcfiCMhplJth64IvOcLE603AMh6isG
-         EfospxK1EQ0tnJTeYfjCwRtQiJ+sfgfV4z0a/RvRb2DbgW7AiC6sQHARsaNjerB9uXJB
-         jw1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700523076; x=1701127876;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=V+K6hgLHS0z0nvHsglPl4zOP5uaW3Nv0I1YV5l8r1Wc=;
-        b=Q5j3YFWgsgZEFCGqiJqoObd8TY7E3nLN+q4U66a1e4GRt+kZtuHVntL7LZZ7vUEEhk
-         N3KApHV0k8B6WKmqW/gaw2Kqta/7mUStNTW2F2EFHW8V/xsrlAvFWWvRuhyi02IwQH+8
-         cPrTZ4mLhPfSvpnq4dPejnY/QD3o1j8m3F8iVsD2A7dBQwQ3HKT2Tbx7zcYwa5JyDTZ/
-         9tnrQBMe9uJ+X07JX9HyN9A/5a5ceFFiOTvEiGhaOyX/svcCKDcunyjny5i2SZJsuZHD
-         FH6aAq4GAskYV1/T2aCnya3MZE4lvLftwTde+BfUwZ+3iqkiLVgYOcCBND04zVRCljkj
-         HZ9Q==
-X-Gm-Message-State: AOJu0YwdotmFib3ZAFlF9RaaZPSwqyLhVbjQFBE0zbe60e/uDdXKTHwy
-	B+C5b8CQFBbSGTXrNg0o+gmm1LGtEbs=
-X-Google-Smtp-Source: AGHT+IGQVq2Z9Sf+Ple48rifo6jtgOzSagAOCz+8BH5RtxatHkA7MXdYj78PLv8emqT3e4ktaU/HYg==
-X-Received: by 2002:a25:9c06:0:b0:da0:3636:b506 with SMTP id c6-20020a259c06000000b00da03636b506mr8180893ybo.64.1700523076618;
-        Mon, 20 Nov 2023 15:31:16 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 123-20020a251381000000b00da0abddeb02sm296560ybt.34.2023.11.20.15.31.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Nov 2023 15:31:15 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <a39ba78a-41f2-4098-8395-faf5122bacb6@roeck-us.net>
-Date: Mon, 20 Nov 2023 15:31:12 -0800
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VZ9RcCwU"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CE2397
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 16:12:51 -0800 (PST)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231121001249epoutp033f7b0d70435ac1392f47046b4c881bca~Zev7LNHhD2115021150epoutp03E
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 00:12:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231121001249epoutp033f7b0d70435ac1392f47046b4c881bca~Zev7LNHhD2115021150epoutp03E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1700525569;
+	bh=hwUN0LBGQgjYoxdZvX6WbWTi3VzgrIyo9gsyz23f3ks=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=VZ9RcCwUFJlPbdNQI1Ko+NwksJ6gNqWqDSYvNlvhSGT5Yt1LKQwPC+t5+TRFyQk1F
+	 +6nrLxvWcJh1Mh+nNE05RIQ4bebu7idVVAdvvjdKfCxxbHHf0j+6utnbu1u4r7tCMk
+	 aCqvmtekmpxysDiWd9hSS4wFwYl8YmZPmnpFc3vs=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20231121001248epcas5p21cf892e62fc91f46ac8d19c7f032a811~Zev6YDvi-0911109111epcas5p2o;
+	Tue, 21 Nov 2023 00:12:48 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4SZ4Zk2sMyz4x9Q6; Tue, 21 Nov
+	2023 00:12:46 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	98.A3.08567.EF5FB556; Tue, 21 Nov 2023 09:12:46 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20231120124855epcas5p3021f603b22f90087efab7d38d66a6bbd~ZVaza0hYA2182521825epcas5p3r;
+	Mon, 20 Nov 2023 12:48:55 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20231120124855epsmtrp2d6be864406cc6c0c53d7bda315f71e79~ZVazZk4550658906589epsmtrp2j;
+	Mon, 20 Nov 2023 12:48:55 +0000 (GMT)
+X-AuditID: b6c32a44-617fd70000002177-c2-655bf5fe3ed5
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	98.1B.08755.6B55B556; Mon, 20 Nov 2023 21:48:55 +0900 (KST)
+Received: from FDSFTE308 (unknown [107.122.81.79]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20231120124851epsmtip22de3b57739fb9ac52f5f5b48d186fb17~ZVawU94QG0195801958epsmtip2a;
+	Mon, 20 Nov 2023 12:48:51 +0000 (GMT)
+From: "Aakarsh Jain" <aakarsh.jain@samsung.com>
+To: <linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Cc: <m.szyprowski@samsung.com>, <andrzej.hajda@intel.com>,
+	<mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+	<krzysztof.kozlowski+dt@linaro.org>, <dillon.minfei@gmail.com>,
+	<david.plowman@raspberrypi.com>, <mark.rutland@arm.com>,
+	<robh+dt@kernel.org>, <conor+dt@kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>, <andi@etezian.org>,
+	<gost.dev@samsung.com>, <alim.akhtar@samsung.com>,
+	<aswani.reddy@samsung.com>, <pankaj.dubey@samsung.com>,
+	<ajaykumar.rs@samsung.com>
+In-Reply-To: <20231025102216.50480-1-aakarsh.jain@samsung.com>
+Subject: RE: [Patch v4 00/11] Add MFC V12 support
+Date: Mon, 20 Nov 2023 18:18:50 +0530
+Message-ID: <0a6801da1baf$ebb47570$c31d6050$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 15/19] watchdog: s3c2410_wdt: Add support for WTCON
- register DBGACK_MASK bit
-Content-Language: en-US
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
- tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org,
- wim@linux-watchdog.org, catalin.marinas@arm.com, will@kernel.org,
- arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com,
- tudor.ambarus@linaro.org, andre.draszik@linaro.org,
- semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com,
- soc@kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-watchdog@vger.kernel.org, kernel-team@android.com,
- linux-serial@vger.kernel.org
-References: <20231120212037.911774-1-peter.griffin@linaro.org>
- <20231120212037.911774-16-peter.griffin@linaro.org>
- <5ee955e4-4c22-4696-8001-1e4f24952eeb@roeck-us.net>
- <CADrjBPoHYTZiMCFKBtdaT6hFp9QO=GMzn5yE2k3Dg_mcBhrvkA@mail.gmail.com>
- <0c37e32f-079c-4b91-a9db-1c1c2df299b1@roeck-us.net>
- <CADrjBPog+7p3Njx4E_gU1uZRrOULNXVV2fbcL5pxce2tM3=Q=g@mail.gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <CADrjBPog+7p3Njx4E_gU1uZRrOULNXVV2fbcL5pxce2tM3=Q=g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHi/4TObS/wQJ2DhVZhuaoGqj3O6QLm4twfsFon1FA=
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf1CTdRzHe54927OBk4cJ+ZWUWztHKAEbsPXAgXiB+qSdcnVh2Q96bnuO
+	cYxtbYOEf8JgKQaeQnA6YciPQUcoOH4j83BgBAphGAiOyMCMPIFzuiAMGtso/nt9ft37+/58
+	78OkcbJRP2aKQkupFaScx/BAWnt2BQavPP+QEpzr3Yx3z99A8F8NrQy8avERjE9V2RDc0tSC
+	4vXmIRiv7eum4+W9Q3S87cZvCD7e3QHjdy5MIviZPx7QcNP0KB0f6Sxl4PmNLXT8/I/XYfxy
+	7ySKG8fuwHiN6QWMV7Y8Q3GduRfd60vUG+ohYqz6KY3o0E+iRFXXLEyY6vIYhHW0i0E0VX9B
+	6G7+jRBnmusgwmbyJwae29AEz2Op0TKKlFJqLqWQKKUpiuQY3qF3k+KSRGKBMFgYib/B4yrI
+	NCqGF/92QvD+FLnDKY+bQcrTHakEUqPhhe6JVivTtRRXptRoY3iUSipXRahCNGSaJl2RHKKg
+	tFFCgSBM5Gj8NFV2vuoFpBrcebzz1hA9Gxr2Pw2xmACLAMXf56BrzMGuQeB6TsZpyMPBTyEw
+	p7sCuQI7BJanB5D1iSet7e6CGQIjI5cRV/AIAvMzuc4uBhYKpgby6WsFHywPAnm1bc4uGvaA
+	BhaKZp2KLGwPuGT/0slbMCGwtFUw1hjB+KDplyUns7FI0P9Vn5u9Qf+FGacCDQsCNRWPaa43
+	ccHSwxr6GvtgUaBgcZDm6tkKbi7l09aEAVbFArfLbahrIB4szK3SXbwF/NnX7M77AducmeFi
+	CZiunHULyEFD1zfuBcSC7rulDmY6BHaBhs5QV3oHKB64Art0N4OC5RnYlWeDdsM6B4BS66Jb
+	djvo+c4InYV4+g3W9Bus6TdY0P+vdglC6qBtlEqTlkxJRCqhgvr8vy+XKNNMkPMUdse3Q/fK
+	V0IsEMyELBBg0ng+bDvnfYrDlpKZWZRamaROl1MaCyRy7Psczc9XonTckkKbJIyIFESIxeKI
+	yHCxkLeV/VhXJuVgyaSWSqUoFaVen4OZLL9sWK8ICuOHosvTB4xoYGLipsOe0JsrHx3O6T3C
+	fC2gYbPdyteyibeas/GERMkh37Gy0Czj1P3XM7vC+h8SyMvR9sKh5vlT+ykLP8PrxKw3/8S3
+	oxOC++Fg2P5K0YExloc699nHjaOFTUb+veGCudmd/3xtqBbH3mKj48tJOt+9KQcbZYWZT37f
+	ton7jrVYvmzwXrLG/dXVxvKMLysyXM0dl3VaUZFXMPUSYjLmBPx0t8RgBtsP9szFXbwqGuv/
+	wCs/a8dgyQ/7Kj47VllxMt323lHdUU386knpUsFEB/vn2GtBC/p91sBizu1w39rjq6cuWvyb
+	VVLzBBn5yatkVGl3yREeopGRwt00tYb8F7Oa+NqTBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+c4525mKcZozv8xuS40stUWXr5sUBZ3ALARJGpSjnbxNG1vZ
+	hSIzlBravXAr73kbSrY1l+liHmdm1jRXhnnrZmWWmaa5Eg23Cv/7wfM8P94/Xh7O7yO8ebGJ
+	hxhFokQm5LoSlXXC+YHGCDGz/Gc9hszfagn0OruSiwrGPmKop2CYQKzeQKIykxVDxQ1mDsqx
+	WDnIWPuWQO3mKgw9U3cR6PynNzjSvWvjINv9m1yUXmHgoMzmBxgqt3SRqPDlMwwV6cYxlG/4
+	QaJUk4Xc5EmXZZcB+uWtIZyu0nSRdEFNH0brtOe4dGdbDZfW3zpFp9b/Iujzd7WAHtbNox+P
+	DJO73Pa4bpAystgkRhEcEuUa06Gt4spTfY8WtoyBZJA8TwVceJBaCb9W3gMq4MrjU9UAPh00
+	487AB06mPSSd7AFLJz6SzlIvgHXsCHcq4FLBsOdxOmcqEFAZAPYMZTlUOPUdhx9KRgjn5AKA
+	Kku+w+VChcDc0RQHe1AiyBrzHCqC8oP6bruD3am1sDGt4S/PhI3q98QU49RS2Nve+5+L8vr/
+	3roA2nuLOFMsoNbBjLGnuLPjBevt6fhF4KGZptJMU2mmqTTTJrmA0ILZjFyZEJ2gFMlFicyR
+	IKUkQXk4MTpo/8EEHXB8Q8CSe8CoHQxiAcYDLIA8XChwH+VHMnx3qeTYcUZxcJ/isIxRsmAO
+	jxB6uXt9ypDyqWjJISaeYeSM4l+K8Vy8kzGrX+5w+E75paX5ItHgO2/saFh9pn73jWtRy3bV
+	nIh4dfdza2jYmjf2izkv4ovtkQtl4gm1xsSWxLaftm1/khtS3qr5ou6Xepo26wTl2+JHQ2Oy
+	BmYN7JdXXL8yfjZstWaCkOGPVM9nmPIiAtrutGS//70eaxyftLUmxfq22dJ2Tnb7xPmLR/vc
+	toqMbD+hfpiypio8oGnbKtnn8WBB19wDUf4thSvJMzt8G/iZblb9GcYgK5ojxtnAJtsK2pZF
+	+qu6r8qrfbQzci7NNNxOah64/I1o3hLqOTuyNE6W4rd3MSOxVB/pEHvNLTt3crt1km0fMocG
+	vpBu1ocv2ujt3ykklDESUQCuUEr+AMNx3kR8AwAA
+X-CMS-MailID: 20231120124855epcas5p3021f603b22f90087efab7d38d66a6bbd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231025102230epcas5p1558641a18fbf4f841c82b0ef4cf5a91f
+References: <CGME20231025102230epcas5p1558641a18fbf4f841c82b0ef4cf5a91f@epcas5p1.samsung.com>
+	<20231025102216.50480-1-aakarsh.jain@samsung.com>
 
-On 11/20/23 15:20, Peter Griffin wrote:
-> Hi Guenter,
-> 
-> On Mon, 20 Nov 2023 at 23:03, Guenter Roeck <linux@roeck-us.net> wrote:
->>
->> On 11/20/23 14:45, Peter Griffin wrote:
->>> Hi Guenter,
->>>
->>> Thanks for the review.
->>>
->>> On Mon, 20 Nov 2023 at 22:00, Guenter Roeck <linux@roeck-us.net> wrote:
->>>>
->>>> On 11/20/23 13:20, Peter Griffin wrote:
->>>>> The WDT uses the CPU core signal DBGACK to determine whether the SoC
->>>>> is running in debug mode or not. If the DBGACK signal is asserted and
->>>>> DBGACK_MASK is enabled, then WDT output and interrupt is masked.
->>>>>
->>>>> Presence of the DBGACK_MASK bit is determined by adding a new
->>>>> QUIRK_HAS_DBGACK_BIT quirk. Currently only gs101 SoC is known to have
->>>>> the DBGACK_MASK bit so add the quirk to drv_data_gs101_cl1 and
->>>>> drv_data_gs101_cl1 quirks.
->>>>>
->>>>> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
->>>>> ---
->>>>>     drivers/watchdog/s3c2410_wdt.c | 32 +++++++++++++++++++++++++++-----
->>>>>     1 file changed, 27 insertions(+), 5 deletions(-)
->>>>>
->>>>> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
->>>>> index 08b8c57dd812..ed561deeeed9 100644
->>>>> --- a/drivers/watchdog/s3c2410_wdt.c
->>>>> +++ b/drivers/watchdog/s3c2410_wdt.c
->>>>> @@ -34,9 +34,10 @@
->>>>>
->>>>>     #define S3C2410_WTCNT_MAXCNT        0xffff
->>>>>
->>>>> -#define S3C2410_WTCON_RSTEN  (1 << 0)
->>>>> -#define S3C2410_WTCON_INTEN  (1 << 2)
->>>>> -#define S3C2410_WTCON_ENABLE (1 << 5)
->>>>> +#define S3C2410_WTCON_RSTEN          (1 << 0)
->>>>> +#define S3C2410_WTCON_INTEN          (1 << 2)
->>>>> +#define S3C2410_WTCON_ENABLE         (1 << 5)
->>>>> +#define S3C2410_WTCON_DBGACK_MASK    (1 << 16)
->>>>>
->>>>>     #define S3C2410_WTCON_DIV16 (0 << 3)
->>>>>     #define S3C2410_WTCON_DIV32 (1 << 3)
->>>>> @@ -107,12 +108,16 @@
->>>>>      * %QUIRK_HAS_PMU_CNT_EN: PMU block has some register (e.g. CLUSTERx_NONCPU_OUT)
->>>>>      * with "watchdog counter enable" bit. That bit should be set to make watchdog
->>>>>      * counter running.
->>>>> + *
->>>>> + * %QUIRK_HAS_DBGACK_BIT: WTCON register has DBGACK_MASK bit. Enables masking
->>>>> + * WDT interrupt and reset request according to CPU core DBGACK signal.
->>>>
->>>> This is a bit difficult to understand. I _think_ it means that the DBGACK_MASK bit
->>>> has to be set to be able to trigger interrupt and reset requests.
->>>
->>> Not quite, it is a bit that controls masking the watchdog outputs when the SoC
->>> is in debug mode.
->>>
->>>> "masking" normally refers to disabling something (at least in interrupt context).
->>>> "Enables masking WDT interrupt" sounds like the bit has to be set in order to
->>>> be able to disable interupts, and the code below suggests that the bit has to be
->>>> set for the driver to work. Is that the case ? It might make sense to explain this
->>>> a bit further.
->>>
->>> Maybe I explained it more clearly in the commit message than the comment
->>>
->>> "The WDT uses the CPU core signal DBGACK to determine whether the SoC
->>> is running in debug mode or not. If the DBGACK signal is asserted and
->>> DBGACK_MASK is enabled, then WDT output and interrupt is masked."
->>>
->>> Is that any clearer? Or maybe simpler again
->>>
->>> "Enabling DBGACK_MASK bit masks the watchdog outputs when the SoC is
->>> in debug mode. Debug mode is determined by the DBGACK CPU signal."
->>>
->>> Let me know what you think is the clearest and most succinct and I can
->>> update the comment.
->>>
->>
->> You are still using the term "masked" which I think just hides what
->> the code is really doing. Why not just say "disable" ?
-> 
-> The reason for using the "masked" terminology was that is what the
-> Watchdog IP TRM uses throughout to describe the feature. But I agree
-> just saying disable is clearer.
-> 
+Hello,
 
-At least please say something like "masked (disabled)" if you want to use
-the term.
+> -----Original Message-----
+> From: Aakarsh Jain <aakarsh.jain=40samsung.com>
+> Sent: 25 October 2023 15:52
+> To: linux-arm-kernel=40lists.infradead.org; linux-media=40vger.kernel.org=
+;
+> linux-kernel=40vger.kernel.org; devicetree=40vger.kernel.org
+> Cc: m.szyprowski=40samsung.com; andrzej.hajda=40intel.com;
+> mchehab=40kernel.org; hverkuil-cisco=40xs4all.nl;
+> krzysztof.kozlowski+dt=40linaro.org; dillon.minfei=40gmail.com;
+> david.plowman=40raspberrypi.com; mark.rutland=40arm.com;
+> robh+dt=40kernel.org; conor+dt=40kernel.org; linux-samsung-
+> soc=40vger.kernel.org; andi=40etezian.org; gost.dev=40samsung.com;
+> alim.akhtar=40samsung.com; aswani.reddy=40samsung.com;
+> pankaj.dubey=40samsung.com; ajaykumar.rs=40samsung.com;
+> aakarsh.jain=40samsung.com
+> Subject: =5BPatch v4 00/11=5D Add MFC V12 support
+>=20
+> This patch series adds MFC v12 support. MFC v12 is used in Tesla FSD SoC.
+>=20
+> This adds support for following:
+>=20
+> -Add support for YV12 and I420 format (3-plane) -Add support for Rate
+> Control, UHD and DMABUF for encoder -Add support for DPB buffers
+> allocation based on MFC requirement
+>=20
+> Changes since v3:
+> -Removed vp9 codec support for now and just keeping MFC v12 base
+> patches with necessary hardware controls, decoder, encoder and structural
+> changes. Also covers luma dbp, chroma dpb and mv sizes for each codec as
+> per the UM for MFCv12, along with appropriate alignment.
+> v3 link: https://patchwork.kernel.org/project/linux-
+> media/cover/20221011122516.32135-1-aakarsh.jain=40samsung.com/
+>=20
+> Changes since v2:
+> -Addressed review comments by Rob Herring.
+> This was regarding the errors found by Rob bot in yaml file. File
+> 'samsung,s5p-mfc.yaml' is already converted into json schema and is
+> merged.
+>=20
+> -Addressed review comments by Krzysztof Kozlowski.
+> This was regarding depricated properties mentioned in s5p-mfc.txt file.
+> Review comment was addressed and 'samsung,s5p-mfc.yaml' is already
+> merged now.
+>=20
+> -Addressed review comments by Andi Shyti.
+> This was regarding addition of 'MFC_V10PLUS_BITS' macro in
+> 's5p_mfc_common.h file.
+> v2 link: https://patchwork.kernel.org/project/linux-
+> media/cover/20220907064715.55778-1-smitha.t=40samsung.com/
+>=20
+> Changes since v1:
+> -Addressed review comments by Krzysztof Kozlowski.
+> Separated bug fixes patches, resent again with fix tag and those are merg=
+ed
+> now.
+> -Added SoC based compatible string.
+>=20
+> -Addressed review comments by Andrzej Hajda Assigned width64 and
+> height32 variable with ALIGN(ctx->img_..) used in the code in
+> 's5p_mfc_opr_v6.c' file.
+> v1 link: https://patchwork.kernel.org/project/linux-
+> media/patch/20220517125548.14746-2-smitha.t=40samsung.com/
+>=20
+> Aakarsh Jain (11):
+>   dt-bindings: media: s5p-mfc: Add mfcv12 variant
+>   media: s5p-mfc: Rename IS_MFCV10 macro
+>   media: s5p-mfc: Add initial support for MFCv12
+>   media: s5p-mfc: Add YV12 and I420 multiplanar format support
+>   media: s5p-mfc: Add support for rate controls in MFCv12
+>   media: s5p-mfc: Add support for UHD encoding.
+>   media: s5p-mfc: Add support for DMABUF for encoder
+>   media: s5p-mfc: Set context for valid case before calling try_run
+>   media: s5p-mfc: Load firmware for each run in MFCv12.
+>   media: s5p-mfc: DPB Count Independent of VIDIOC_REQBUF
+>   arm64: dts: fsd: Add MFC related DT enteries
+>=20
+>  .../bindings/media/samsung,s5p-mfc.yaml       =7C  16 +
+>  arch/arm64/boot/dts/tesla/fsd.dtsi            =7C  21 ++
+>  .../platform/samsung/s5p-mfc/regs-mfc-v12.h   =7C  52 +++
+>  .../platform/samsung/s5p-mfc/regs-mfc-v7.h    =7C   1 +
+>  .../platform/samsung/s5p-mfc/regs-mfc-v8.h    =7C   3 +
+>  .../media/platform/samsung/s5p-mfc/s5p_mfc.c  =7C  36 +-
+> .../platform/samsung/s5p-mfc/s5p_mfc_common.h =7C  29 +-
+>  .../platform/samsung/s5p-mfc/s5p_mfc_ctrl.c   =7C   9 +-
+>  .../platform/samsung/s5p-mfc/s5p_mfc_dec.c    =7C  51 ++-
+>  .../platform/samsung/s5p-mfc/s5p_mfc_enc.c    =7C 138 +++++---
+>  .../platform/samsung/s5p-mfc/s5p_mfc_opr.h    =7C  14 +-
+>  .../platform/samsung/s5p-mfc/s5p_mfc_opr_v5.c =7C  12 +-
+> .../platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c =7C 312 +++++++++++++++-
+> --
+>  .../platform/samsung/s5p-mfc/s5p_mfc_opr_v6.h =7C   7 +-
+>  14 files changed, 574 insertions(+), 127 deletions(-)  create mode 10064=
+4
+> drivers/media/platform/samsung/s5p-mfc/regs-mfc-v12.h
+>=20
+> --
+> 2.17.1
 
-Thanks,
-Guenter
+
+Gentle reminder to review MFC v12 patches.
+I see Krzysztof have some comments on dt-schema patch. Waiting for reviewer=
+s to review driver changes as well. Post which I can send v5 changes.
+
+Thanks
+
 
 
