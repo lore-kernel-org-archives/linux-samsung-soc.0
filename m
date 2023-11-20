@@ -2,179 +2,314 @@ Return-Path: <linux-samsung-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3F8C072A2
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 19 Nov 2023 09:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D07EC54E76
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Nov 2023 08:40:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229454AbjKSIyz (ORCPT
+        id S232268AbjKTIlA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 19 Nov 2023 03:54:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35826 "EHLO
+        Mon, 20 Nov 2023 03:41:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230303AbjKSIyy (ORCPT
+        with ESMTP id S232258AbjKTIk6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 19 Nov 2023 03:54:54 -0500
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CCECE6
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 19 Nov 2023 00:54:48 -0800 (PST)
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231119085443epoutp0319403eb4cd986ffcec7f6835b281b919~Y_lCpVxs71970819708epoutp03Y
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 19 Nov 2023 08:54:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231119085443epoutp0319403eb4cd986ffcec7f6835b281b919~Y_lCpVxs71970819708epoutp03Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1700384083;
-        bh=aUl24Gac6V4qeYPQFo9QasuwMm4N5iU9VP5YIzb5kFs=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=sCuuYSSydd5RKckJ43Qr6SeMmEBAD4LV1ReXNhDZMAPdyE5GABAxJLsDA8mBvbPiU
-         nXJ9sj8M71m2MM5FLozUfza57FtBjiGW2xAN9wLwh2pqnNj+Tkx8DsOTdTt007AzGU
-         YASC24rqoBy+4IJTV3jF8LwadXitnnaMfvOqcwjI=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20231119085442epcas2p370350440fbfcf488feb10a8e309a2ac4~Y_lBUYAx71040310403epcas2p3y;
-        Sun, 19 Nov 2023 08:54:42 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.89]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4SY4Fs6ncwz4x9Pp; Sun, 19 Nov
-        2023 08:54:41 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        1A.9C.10022.15DC9556; Sun, 19 Nov 2023 17:54:41 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-        20231119085440epcas2p375fa3b2999e1a3ceeff9949136db7e28~Y_k-zOBqs1033410334epcas2p35;
-        Sun, 19 Nov 2023 08:54:40 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20231119085440epsmtrp1dbac461351964514c6477a126c1ee07d~Y_k-yeKgU2939629396epsmtrp1h;
-        Sun, 19 Nov 2023 08:54:40 +0000 (GMT)
-X-AuditID: b6c32a47-9a3ff70000002726-ba-6559cd5151cd
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        63.0A.18939.05DC9556; Sun, 19 Nov 2023 17:54:40 +0900 (KST)
-Received: from perf.dsn.sec.samsung.com (unknown [10.229.95.91]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20231119085440epsmtip2c458c7eef622a9fabea8b8d2e7842d12~Y_k-kPdsJ3102631026epsmtip2t;
-        Sun, 19 Nov 2023 08:54:40 +0000 (GMT)
-From:   Youngmin Nam <youngmin.nam@samsung.com>
-To:     tomasz.figa@gmail.com, krzysztof.kozlowski@linaro.org,
-        s.nawrocki@samsung.com, alim.akhtar@samsung.com,
-        linus.walleij@linaro.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, semen.protsenko@linaro.org,
-        Youngmin Nam <youngmin.nam@samsung.com>
-Subject: [PATCH] pinctrl: samsung: add irq_set_affinity() for non wake up
- external gpio interrupt
-Date:   Sun, 19 Nov 2023 18:29:09 +0900
-Message-Id: <20231119092909.3018578-1-youngmin.nam@samsung.com>
-X-Mailer: git-send-email 2.39.2
+        Mon, 20 Nov 2023 03:40:58 -0500
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 079119E
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 00:40:54 -0800 (PST)
+Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2c876e44157so18042121fa.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Nov 2023 00:40:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700469652; x=1701074452; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uja6WpBlyTBG5jgby6fiOGTUsSLknCmEeqWb3eouYXA=;
+        b=c2m91qd37sKAC7md1tLXGmis4c0PJQszj8lhdgWHUtHGsgDEc3sFYCmIlFTIIHKz1s
+         nfmG4JAJnqJy1p1WefOcvlbbYOyb37UkTX/NCevuc6I6oq8t6NCSQ3M6UGVBx/OLErcQ
+         AHvVmByTss7pWvIqaqzcBXfdDkUOPbtrpUdM27p12o+8kPcuywFjsbPAmojVRxHW2uNr
+         UGsU3B6sQXUPWuIvFm2xFFoTiUFccJI2gKSc+AOQc1Wp8e9b9UkyKm+3yMI6P+lCSDaD
+         O8SKgcSK42PTCin9jQPNCUgGQQjaODTJxGJLHNEbKoibEPuzbZT4hxwB3AuZraBtC80D
+         Tmcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700469652; x=1701074452;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Uja6WpBlyTBG5jgby6fiOGTUsSLknCmEeqWb3eouYXA=;
+        b=YHr+QVjLgTK6PJATqNcFB6Dn3qOpbIS+Psv5rOnOjhl+8v3/4fo3oILLjtZqux3RFS
+         q8Hy5vXb+Iz4a616kqWeQqwLlrC3/6wJ8YwP9pdffh5AySYr8knIfk8KE0AfpuIY82aj
+         UZbEZcFVaCrGp5qyzpqPW08HcbhOjV5lxpSy0oUTC28+RWmgvVLHBfDKCpA2a2rTckbq
+         sRFWD6wHlTtSBwWiAbpcv2wmrzImDDsU2uDqdY/aWS5aROafTqJ2baPeQN+8k0Rk5Vau
+         eEkazWdwcpM16xU3PF2UjxmFrpfYbL5My/e0mbtylKQ+APw/pIRKqNAc2absJIw5p2Aw
+         +5Kg==
+X-Gm-Message-State: AOJu0YwWtKYKfyrLdZB0s46qTpja82MVkyHmJztdH8BrYhTwn8uPHgsf
+        tvqjGGVDZkN2e9FgeOCeUd9X8g==
+X-Google-Smtp-Source: AGHT+IF2z2UJKmxACAGYnsgCuyDmhU5DSNYyJ8jl3UYFsf5HLqN43Rt4pV8YyXHZTojYeH5cxbBtXA==
+X-Received: by 2002:a2e:bc0f:0:b0:2c6:eccb:344d with SMTP id b15-20020a2ebc0f000000b002c6eccb344dmr6049660ljf.40.1700469652204;
+        Mon, 20 Nov 2023 00:40:52 -0800 (PST)
+Received: from krzk-bin.. ([178.197.222.11])
+        by smtp.gmail.com with ESMTPSA id m7-20020a05600c4f4700b0040772138bb7sm17248340wmq.2.2023.11.20.00.40.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Nov 2023 00:40:51 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andrew Davis <afd@ti.com>, Arnd Bergmann <arnd@arndb.de>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michal Simek <michal.simek@amd.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Nishanth Menon <nm@ti.com>, Olof Johansson <olof@lixom.net>,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH v2] docs: dt-bindings: add DTS Coding Style document
+Date:   Mon, 20 Nov 2023 09:40:44 +0100
+Message-Id: <20231120084044.23838-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjk+LIzCtJLcpLzFFi42LZdljTXDfwbGSqwbvXBhYP5m1js9j7eiu7
-        xZQ/y5ksNj2+xmqxef4fRovLu+awWcw4v4/J4vCbdlaL531A1qpdQInFBz6xO3B77Jx1l93j
-        zrU9bB6bl9R79G1ZxejxeZNcAGtUtk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5
-        kkJeYm6qrZKLT4CuW2YO0GVKCmWJOaVAoYDE4mIlfTubovzSklSFjPziElul1IKUnALzAr3i
-        xNzi0rx0vbzUEitDAwMjU6DChOyM978yC2aJVnTsOc3awHidv4uRk0NCwETiSssixi5GLg4h
-        gR2MEgumHmCDcD4xSizafZEFzln75TlQhgOs5fNmc5BuIYGdjBKvvwpB1HxllFg84yATSIJN
-        QFdi24l/jCC2iEAbo0Tn3gCQImaBc4wS93smMIMkhAWSJT7cf8ECMpRFQFXiwZdskDCvgL3E
-        9pdPWSF2yUssfiABERaUODnzCQuIzQwUbt46mxlkpITAI3aJjp+LWCDecZE4PPcQE4QtLPHq
-        +BZ2CFtK4mV/G5SdLbH61yUou0Ki/V4PM4RtLDHrWTsjyF5mAU2J9bv0IU5QljhyC2otn0TH
-        4b/sEGFeiY42IYhGNYlfUzYwQtgyErsXr4Aa6CHx6PAGdkhIxUpsWnWQdQKj/Cwkz8xC8sws
-        hL0LGJlXMYqlFhTnpqcWGxUYwyM0OT93EyM4YWq572Cc8faD3iFGJg7GQ4wSHMxKIrzfhCJS
-        hXhTEiurUovy44tKc1KLDzGaAgN3IrOUaHI+MGXnlcQbmlgamJiZGZobmRqYK4nz3mudmyIk
-        kJ5YkpqdmlqQWgTTx8TBKdXAVOs5d5VEaYXAEf3z69umi015cPTiv5Q7zpnc1/sEtq1oFDTa
-        7XlQeKJY0o1bJUdj/sQt1y6t/BCS9InB83R7GQv7Ebf1urUOdiuUJBdFfu7sMJS5LaZSkHj+
-        N+P5n3trzIMPOxnmZEe8s2PS9I6offKmUe3Ok7faGyyvfqiq3Oea4XxsdxDn++mlUa0r6m78
-        7Fmxg+0ro0NFrlBJTaFpOWfkJk0BSRP22/pv/U8cWTZXx2LxhUMNq1VuH4iRSe96/u9cd7jr
-        F82b4TKPTXrC1r8Q4U3xU26/oLnFZlWjw+qlXp5WjXttZntevT79bLDkGm9GiV+Tbx89WisX
-        FqM44+fF6Sy749UUP5aq2QcosRRnJBpqMRcVJwIA+8ribyEEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDLMWRmVeSWpSXmKPExsWy7bCSvG7A2chUg/57MhYP5m1js9j7eiu7
-        xZQ/y5ksNj2+xmqxef4fRovLu+awWcw4v4/J4vCbdlaL531A1qpdQInFBz6xO3B77Jx1l93j
-        zrU9bB6bl9R79G1ZxejxeZNcAGsUl01Kak5mWWqRvl0CV8b7X5kFs0QrOvacZm1gvM7fxcjB
-        ISFgIvF5s3kXIxeHkMB2RonDvy6xdjFyAsVlJG6vvAxlC0vcbznCClH0mVHi0uNNTCAJNgFd
-        iW0n/jGCJEQEehglNr+awALiMAtcYZTYsngpI0iVsECixOst+9lA1rEIqEo8+JINEuYVsJfY
-        /vIpK8QV8hKLH0hAhAUlTs58wgJiMwOFm7fOZp7AyDcLSWoWktQCRqZVjKKpBcW56bnJBYZ6
-        xYm5xaV56XrJ+bmbGMEBrBW0g3HZ+r96hxiZOBgPMUpwMCuJ8H4TikgV4k1JrKxKLcqPLyrN
-        SS0+xCjNwaIkzquc05kiJJCeWJKanZpakFoEk2Xi4JRqYHK/zZ0QoCr89msDU7bvO41PZY9N
-        yxRZ+1LObLNYsKJ9+7XDGk+YjLbGfy4prNGa8/hU+/Gmv0GNue+j/py9bVW8KI1dbOH3lp/3
-        Mg9eCNaX5durMvHLzRrniEingiuKjHVJD7UDV1TxqnQUvDIp+s9U4F59mOePfknwTMZ1DOKZ
-        V5YLvrDNkDrcdUNe2ZSZ53erXvMjyd/PfTLr7qX/b5j8WqRwy83cyV1bxRVPRvDN3XRjY8kr
-        b9a9E6xaFNImXuW8o9S9vj3hf+gzsRt9F5Zb/4t9z+iRnHQh8ZzVn7SlxoeV5HRCPlrwzP3d
-        6MQT4e16ZKVJQOwThp0ajOfYrzjO/fwlsJ7BhOndBv8wJZbijERDLeai4kQAcY1Q7M8CAAA=
-X-CMS-MailID: 20231119085440epcas2p375fa3b2999e1a3ceeff9949136db7e28
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231119085440epcas2p375fa3b2999e1a3ceeff9949136db7e28
-References: <CGME20231119085440epcas2p375fa3b2999e1a3ceeff9949136db7e28@epcas2p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-To support affinity setting for non wake up external gpio interrupt,
-we add a new irq_set_affinity callback using irq number which is in pinctrl
-driver data.
+Document preferred coding style for Devicetree sources (DTS and DTSI),
+to bring consistency among all (sub)architectures and ease in reviews.
 
-Before applying this patch, we couldn't change irq affinity of gpio interrupt.
-* before
-erd9945:/proc/irq/418 # cat smp_affinity
-3ff
-erd9945:/proc/irq/418 # echo 00f > smp_affinity
-erd9945:/proc/irq/418 # cat smp_affinity
-3ff
-erd9945:/proc/irq/418 # cat /proc/interrupts
-           CPU0       CPU1       CPU2       CPU3       CPU4       CPU5       CPU6       CPU7       CPU8       CPU9
-418:       3631          0          0          0          0          0          0          0          0          0      gpg2   0 Edge      19100000.drmdecon
+Cc: Andrew Davis <afd@ti.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Bjorn Andersson <andersson@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Michal Simek <michal.simek@amd.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Nishanth Menon <nm@ti.com>
+Cc: Olof Johansson <olof@lixom.net>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-After applying this patch, we can change irq affinity of gpio interrupt as below.
-* after
-erd9945:/proc/irq/418 # cat smp_affinity
-3ff
-erd9945:/proc/irq/418 # echo 00f > smp_affinity
-erd9945:/proc/irq/418 # cat smp_affinity
-00f
-erd9945:/proc/irq/418 # cat /proc/interrupts
-           CPU0       CPU1       CPU2       CPU3       CPU4       CPU5       CPU6       CPU7       CPU8       CPU9
-418:       3893        201        181        188          0          0          0          0          0          0      gpg2   0 Edge      19100000.drmdecon
-
-Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
 ---
- drivers/pinctrl/samsung/pinctrl-exynos.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 6b58ec84e34b..5d7b788282e9 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -147,6 +147,19 @@ static int exynos_irq_set_type(struct irq_data *irqd, unsigned int type)
- 	return 0;
- }
+Merging idea: Rob/DT bindings
+
+Changes in v2
+=============
+1. Hopefully incorporate entire feedback from comments:
+a. Fix \ { => / { (Rob)
+b. Name: dts-coding-style (Rob)
+c. Exceptions for ordering nodes by name for Renesas and pinctrl (Geert,
+   Konrad)
+d. Ordering properties by common/vendor (Rob)
+e. Array entries in <> (Rob)
+
+2. New chapter: Organizing DTSI and DTS
+
+3. Several grammar fixes (missing articles)
+
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-mediatek@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-amlogic@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-arm-msm@vger.kernel.org
+---
+ .../devicetree/bindings/dts-coding-style.rst  | 163 ++++++++++++++++++
+ Documentation/devicetree/bindings/index.rst   |   1 +
+ 2 files changed, 164 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dts-coding-style.rst
+
+diff --git a/Documentation/devicetree/bindings/dts-coding-style.rst b/Documentation/devicetree/bindings/dts-coding-style.rst
+new file mode 100644
+index 000000000000..cc7e3b4d1b92
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dts-coding-style.rst
+@@ -0,0 +1,163 @@
++.. SPDX-License-Identifier: GPL-2.0
++.. _dtscodingstyle:
++
++=====================================
++Devicetree Sources (DTS) Coding Style
++=====================================
++
++When writing Devicetree Sources (DTS) please observe below guidelines.  They
++should be considered complementary to any rules expressed already in Devicetree
++Specification and dtc compiler (including W=1 and W=2 builds).
++
++Individual architectures and sub-architectures can add additional rules, making
++the style stricter.
++
++Naming and Valid Characters
++---------------------------
++
++1. Node and property names are allowed to use only:
++
++   * lowercase characters: [a-z]
++   * digits: [0-9]
++   * dash: -
++
++2. Labels are allowed to use only:
++
++   * lowercase characters: [a-z]
++   * digits: [0-9]
++   * underscore: _
++
++3. Unit addresses should use lowercase hex, without leading zeros (padding).
++
++4. Hex values in properties, e.g. "reg", should use lowercase hex.  The address
++   part can be padded with leading zeros.
++
++Example::
++
++	gpi_dma2: dma-controller@800000 {
++		compatible = "qcom,sm8550-gpi-dma", "qcom,sm6350-gpi-dma";
++		reg = <0x0 0x00800000 0x0 0x60000>;
++	}
++
++Order of Nodes
++--------------
++
++1. Nodes within any bus, thus using unit addresses for children, shall be
++   ordered incrementally by unit address.
++   Alternatively for some sub-architectures, nodes of the same type can be
++   grouped together (e.g. all I2C controllers one after another even if this
++   breaks unit address ordering).
++
++2. Nodes without unit addresses should be ordered alpha-numerically by the node
++   name.  For a few types of nodes, they can be ordered by the main property
++   (e.g. pin configuration states ordered by value of "pins" property).
++
++3. When extending nodes in the board DTS via &label, the entries should be
++   ordered alpha-numerically.
++
++Example::
++
++	// SoC DTSI
++
++	/ {
++		cpus {
++			// ...
++		};
++
++		psci {
++			// ...
++		};
++
++		soc@ {
++			dma: dma-controller@10000 {
++				// ...
++			};
++
++			clk: clock-controller@80000 {
++				// ...
++			};
++		};
++	};
++
++	// Board DTS
++
++	&clk {
++		// ...
++	};
++
++	&dma {
++		// ...
++	};
++
++
++Order of Properties in Device Node
++----------------------------------
++
++Following order of properties in device nodes is preferred:
++
++1. compatible
++2. reg
++3. ranges
++4. Standard/common properties (defined by common bindings, e.g. without
++   vendor-prefixes)
++5. Vendor-specific properties
++6. status (if applicable)
++7. Child nodes, where each node is preceded with a blank line
++
++The "status" property is by default "okay", thus it can be omitted.
++
++Example::
++
++	// SoC DTSI
++
++	usb_1_hsphy: phy@88e3000 {
++		compatible = "qcom,sm8550-snps-eusb2-phy";
++		reg = <0x0 0x088e3000 0x0 0x154>;
++		#phy-cells = <0>;
++		resets = <&gcc GCC_QUSB2PHY_PRIM_BCR>;
++		status = "disabled";
++	};
++
++	// Board DTS
++
++	&usb_1_hsphy {
++		clocks = <&tcsr TCSR_USB2_CLKREF_EN>;
++		clock-names = "ref";
++		status = "okay";
++	};
++
++
++Indentation
++-----------
++
++1. Use indentation according to :ref:`codingstyle`.
++2. For arrays spanning across lines, it is preferred to align the continued
++   entries with opening < from the first line.
++3. Each entry in arrays with multiple cells (e.g. "reg" with two IO addresses)
++   should be enclosed in <>.
++
++Example::
++
++	thermal-sensor@c271000 {
++		compatible = "qcom,sm8550-tsens", "qcom,tsens-v2";
++		reg = <0x0 0x0c271000 0x0 0x1000>,
++		      <0x0 0x0c222000 0x0 0x1000>;
++	};
++
++Organizing DTSI and DTS
++-----------------------
++
++The DTSI and DTS files should be organized in a way representing the common
++(and re-usable) parts of the hardware.  Typically this means organizing DTSI
++and DTS files into several files:
++
++1. DTSI with contents of the entire SoC (without nodes for hardware not present
++   on the SoC).
++2. If applicable: DTSI with common or re-usable parts of the hardware (e.g.
++   entire System-on-Module).
++3. DTS representing the board.
++
++Hardware components which are present on the board should be placed in the
++board DTS, not in the SoC or SoM DTSI.  A partial exception is a common
++external reference SoC-input clock, which could be coded as a fixed-clock in
++the SoC DTSI with its frequency provided by each board DTS.
+diff --git a/Documentation/devicetree/bindings/index.rst b/Documentation/devicetree/bindings/index.rst
+index d9002a3a0abb..cc1fbdc05657 100644
+--- a/Documentation/devicetree/bindings/index.rst
++++ b/Documentation/devicetree/bindings/index.rst
+@@ -4,6 +4,7 @@
+    :maxdepth: 1
  
-+static int exynos_irq_set_affinity(struct irq_data *irqd,
-+				   const struct cpumask *dest, bool force)
-+{
-+	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
-+	struct irq_data *parent = irq_get_irq_data(d->irq);
-+
-+	if (parent)
-+		return parent->chip->irq_set_affinity(parent, dest, force);
-+
-+	return -EINVAL;
-+}
-+
- static int exynos_irq_request_resources(struct irq_data *irqd)
- {
- 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
-@@ -212,6 +225,7 @@ static const struct exynos_irq_chip exynos_gpio_irq_chip __initconst = {
- 		.irq_mask = exynos_irq_mask,
- 		.irq_ack = exynos_irq_ack,
- 		.irq_set_type = exynos_irq_set_type,
-+		.irq_set_affinity = exynos_irq_set_affinity,
- 		.irq_request_resources = exynos_irq_request_resources,
- 		.irq_release_resources = exynos_irq_release_resources,
- 	},
+    ABI
++   dts-coding-style
+    writing-bindings
+    writing-schema
+    submitting-patches
 -- 
-2.39.2
+2.34.1
 
