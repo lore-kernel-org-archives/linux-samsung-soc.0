@@ -1,191 +1,138 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hk4lcqx0"
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78C7BD67
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 05:51:25 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-99bdeae1d0aso766283866b.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 05:51:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700574684; x=1701179484; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wDIPScNOhQgHt38LsO0B0cG2vktuRay/6L9Ve7qh5S4=;
-        b=hk4lcqx01jkdK5ayzhye5MwWL0zxuH8tCRqNgjm/gPysRvJg/g48OEdzu2rQzMlMzD
-         7bsVfeCQVm08RbgJYUJwyFlqMTB0qowY1XcoLkxpMf3BLMvx0dNPkkgP9yET+/pCnhGL
-         vEosO+tgubI6oYEX6lxYcpDy9s1teCH0D2L5fQekgpW+AhWfpVLTCud9ahfS3H8UMHI0
-         fgxo4dvJlyX/LPXpR7XqKCtQFGzTgc1IdMurRv4dCTbX9rBC1X/RjCPa89UG/1953fGy
-         nzxoC09+lxaYbN5zYrapRN2Km0E0adAhD45Sexunfv0N4qv2zvPi9XkLB8CT/Wmb/Avk
-         YM5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700574684; x=1701179484;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wDIPScNOhQgHt38LsO0B0cG2vktuRay/6L9Ve7qh5S4=;
-        b=U3Sf7IgyBPegYyRnYc0d3JXRVrNSBBb5zoko/M0Pjty4BSw3FyagCXn/TqYTyXBuUq
-         Y4QYJFol72/ltzxKtN0h9iwEYRHKORj3ttRBsKHUvp8dgiA9VceAd2lB+d7q47if6Xe4
-         3nrRANNXi9aWLoIBrCGkHSiQSLXGqM0Zs8TNRHqJmHjK79dxaihkPr5FmbYoDl3ny0xv
-         yr4rLW4dI8g7a78U5xIGRxvkKtnN3wUdmnuaNsvbF5/v4LU8Y3rcRpsRpG8+BU+Ziwgs
-         dWJd1rrxC6jM+VgcDdp2mQhbXCXBigH4vaafyvgvcU1tzV1NXt3ok/4LR0ZgMnf2T1BT
-         GmaQ==
-X-Gm-Message-State: AOJu0YyE0QzqwbyDnejuZozy7Awfn5vi6BiWF94IA7DPmxHlJHz9Pw/C
-	NPPu58J7atk8sAnVztal9+wItg==
-X-Google-Smtp-Source: AGHT+IEiOEQRCCIIsEJWqvDWAnsZhFnAjvHgM81TfVQZ0BAQVqwSHAo5qQS47cbQLnp3B2WkNiRo6g==
-X-Received: by 2002:a17:906:2254:b0:9bd:f155:eb54 with SMTP id 20-20020a170906225400b009bdf155eb54mr7451774ejr.6.1700574683829;
-        Tue, 21 Nov 2023 05:51:23 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.222.11])
-        by smtp.gmail.com with ESMTPSA id y4-20020a170906470400b009fc54390966sm3314766ejq.145.2023.11.21.05.51.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Nov 2023 05:51:23 -0800 (PST)
-Message-ID: <8d4e3fcb-2e4a-4580-9aa2-5acbed961c3f@linaro.org>
-Date: Tue, 21 Nov 2023 14:51:21 +0100
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8609910C8
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 05:51:56 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1r5RAM-0005KJ-UI; Tue, 21 Nov 2023 14:51:50 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1r5RAL-00Aaxx-UK; Tue, 21 Nov 2023 14:51:49 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1r5RAL-004xcJ-LC; Tue, 21 Nov 2023 14:51:49 +0100
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: [PATCH v3 025/108] pwm: samsung: Make use of pwmchip_parent() macro
+Date: Tue, 21 Nov 2023 14:49:27 +0100
+Message-ID: <20231121134901.208535-26-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.42.0.586.gbc5204569f7d.dirty
+In-Reply-To: <20231121134901.208535-1-u.kleine-koenig@pengutronix.de>
+References: <20231121134901.208535-1-u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/12] pinctrl: samsung: add exynosautov920 pinctrl
-Content-Language: en-US
-To: Jaewon Kim <jaewon02.kim@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Uwe Kleine-K?nig <u.kleine-koenig@pengutronix.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-serial@vger.kernel.org
-References: <20231115095609.39883-1-jaewon02.kim@samsung.com>
- <CGME20231115095856epcas2p1c3ee85750828bec2ee4ab0adeaeaff28@epcas2p1.samsung.com>
- <20231115095609.39883-11-jaewon02.kim@samsung.com>
- <62b7176d-f99c-49f6-a287-17a6b3604c1c@linaro.org>
- <f0f6a7af-2170-89a2-1eea-dfb9d8440321@samsung.com>
- <6a5610e0-e60d-4ab7-8708-6f77a38527b7@linaro.org>
- <926ea5c5-20ac-5e63-16ea-6f0c20e2db0a@samsung.com>
- <0fdb7bec-9ea4-454f-a0fb-d450f27ebc6b@linaro.org>
- <ab17d61e-f645-9b76-962c-4ba2849c5f42@samsung.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <ab17d61e-f645-9b76-962c-4ba2849c5f42@samsung.com>
 Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3577; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=YI45MGg8M9zwqLaT36AYGl6F6OyAEfc/1qu6ZaMBZmA=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlXLVomsDFiLOfsA/45bt6C/1nyDIDffMKmbuE5 xlXK8YcoVyJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZVy1aAAKCRCPgPtYfRL+ TrvtB/0RP2pK7jtaMH0UksDqZu8M4wGQ0wkvxv21cRMBuVp99Lz9RyjuUeI60Pm2L5T6aMjP5Nb H6ronZlGBXOoDysMVyB/7JQnAmd/1G+InYKQbWIBgfAgOxlQEUjPkLi4A7MvnFv/HJaDiFTBw3c XDmXchUx4FrwibbF6Xy7gR3ExrgVhgfDpSX91hl7BShW6yFvta5NThrBK+xk6EqDkjy0d2VRE8q IYA8r2RrRT7vpQqndPwxvAf9f7k5BAmyYgD1XUap8aN4htyx/CXuSCEQ6JsZVOYK70BFK0bK14m z3z5amwZvWFmiSfzBKx/ljKxCih/hqNItm3crdhKDB2G2svz
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 
-On 18/11/2023 08:43, Jaewon Kim wrote:
-> 
-> On 23. 11. 17. 19:48, Krzysztof Kozlowski wrote:
->> On 17/11/2023 08:36, Jaewon Kim wrote:
->>>>> The reason why I chose variable name 'combine' is that EINT registers was
->>>>> separated from gpio control address. However, in exynosautov920 EINT
->>>>> registers combined with GPx group. So I chose "combine" word.
->>>> What does it mean "the GPx group"? Combined means the same place, the
->>>> same register. I could imagine offset is 0x4, what I wrote last time.
->>>>
->>>> Is the offset 0x4?
-> 
-> If you are asking about the offset of GPIO control register and EINT 
-> control register, 0x4 is correct.
-> 
-> There is no empty space between the two register.
-> 
-> 
-> 0x0 CON
-> 
-> 0x4 DAT
-> 
-> 0x8 PUD
-> 
-> 0xc DRV
-> 
-> 0x10 CONPDN
-> 
-> 0x14 PUDPDN
-> 
-> 0x18 EINT_CON
-> 
-> 0x1c EINT_FLTCON
-> 
-> 0x20 or 0x24 EINT_MASK (The size of FLTCON register depending on the 
-> number of gpio)
-> 
-> 0x24 or 0x28 EINT_PEND
-> 
-> 
->>>>
->>>>
->>>>> Is another reasonable word, I will change it.
->>>> Why you cannot store the offset?
->>>>
->>>>> EINT registers related to the entire group(e.g SVC) were at the end of
->>>>> the GPIO block and are now moved to 0xf000.
->>>> So not in the same register, not combined?
->>>>
->>> Okay,
->>>
->>> Instead of the word combine, I will think of a better word in next version.
->> I want to know answer to:
->>
->> "Why you cannot store the offset?"
->>
-> I did not understand exactly what you said, but if i guess,,
-> 
-> you want to get rid of the offs because the value of the offs is always 
-> the same?
-> 
-> #define EXYNOSV920_PIN_BANK_EINTG(pins, reg, id, offs, mask_offs, pend_offs)
+struct pwm_chip::dev is about to change. To not have to touch this
+driver in the same commit as struct pwm_chip::dev, use the macro
+provided for exactly this purpose.
 
-I meant that it looks possible to store the offset and use it directly,
-instead of storing bool telling that offset is different.
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/pwm/pwm-samsung.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index 6e77302f7368..a97cae49406e 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -197,12 +197,12 @@ static unsigned long pwm_samsung_calc_tin(struct samsung_pwm_chip *our_chip,
+ 				return rate;
+ 		}
+ 
+-		dev_warn(our_chip->chip.dev,
++		dev_warn(pwmchip_parent(&our_chip->chip),
+ 			"tclk of PWM %d is inoperational, using tdiv\n", chan);
+ 	}
+ 
+ 	rate = pwm_samsung_get_tin_rate(our_chip, chan);
+-	dev_dbg(our_chip->chip.dev, "tin parent at %lu\n", rate);
++	dev_dbg(pwmchip_parent(&our_chip->chip), "tin parent at %lu\n", rate);
+ 
+ 	/*
+ 	 * Compare minimum PWM frequency that can be achieved with possible
+@@ -232,7 +232,7 @@ static int pwm_samsung_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	struct samsung_pwm_chip *our_chip = to_samsung_pwm_chip(chip);
+ 
+ 	if (!(our_chip->variant.output_mask & BIT(pwm->hwpwm))) {
+-		dev_warn(chip->dev,
++		dev_warn(pwmchip_parent(chip),
+ 			"tried to request PWM channel %d without output\n",
+ 			pwm->hwpwm);
+ 		return -EINVAL;
+@@ -326,12 +326,12 @@ static int __pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 
+ 		period = NSEC_PER_SEC / period_ns;
+ 
+-		dev_dbg(our_chip->chip.dev, "duty_ns=%d, period_ns=%d (%u)\n",
++		dev_dbg(pwmchip_parent(chip), "duty_ns=%d, period_ns=%d (%u)\n",
+ 						duty_ns, period_ns, period);
+ 
+ 		tin_rate = pwm_samsung_calc_tin(our_chip, pwm->hwpwm, period);
+ 
+-		dev_dbg(our_chip->chip.dev, "tin_rate=%lu\n", tin_rate);
++		dev_dbg(pwmchip_parent(chip), "tin_rate=%lu\n", tin_rate);
+ 
+ 		tin_ns = NSEC_PER_SEC / tin_rate;
+ 		tcnt = period_ns / tin_ns;
+@@ -355,8 +355,7 @@ static int __pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	/* -1UL will give 100% duty. */
+ 	--tcmp;
+ 
+-	dev_dbg(our_chip->chip.dev,
+-				"tin_ns=%u, tcmp=%u/%u\n", tin_ns, tcmp, tcnt);
++	dev_dbg(pwmchip_parent(chip), "tin_ns=%u, tcmp=%u/%u\n", tin_ns, tcmp, tcnt);
+ 
+ 	/* Update PWM registers. */
+ 	writel(tcnt, our_chip->base + REG_TCNTB(pwm->hwpwm));
+@@ -368,7 +367,7 @@ static int __pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	 * shortly afer this update (before it autoreloaded the new values).
+ 	 */
+ 	if (oldtcmp == (u32) -1) {
+-		dev_dbg(our_chip->chip.dev, "Forcing manual update");
++		dev_dbg(pwmchip_parent(chip), "Forcing manual update");
+ 		pwm_samsung_manual_update(our_chip, pwm);
+ 	}
+ 
+@@ -509,7 +508,7 @@ MODULE_DEVICE_TABLE(of, samsung_pwm_matches);
+ 
+ static int pwm_samsung_parse_dt(struct samsung_pwm_chip *our_chip)
+ {
+-	struct device_node *np = our_chip->chip.dev->of_node;
++	struct device_node *np = pwmchip_parent(&our_chip->chip)->of_node;
+ 	const struct of_device_id *match;
+ 	struct property *prop;
+ 	const __be32 *cur;
+@@ -523,7 +522,7 @@ static int pwm_samsung_parse_dt(struct samsung_pwm_chip *our_chip)
+ 
+ 	of_property_for_each_u32(np, "samsung,pwm-outputs", prop, cur, val) {
+ 		if (val >= SAMSUNG_PWM_NUM) {
+-			dev_err(our_chip->chip.dev,
++			dev_err(pwmchip_parent(&our_chip->chip),
+ 				"%s: invalid channel index in samsung,pwm-outputs property\n",
+ 								__func__);
+ 			continue;
+-- 
+2.42.0
 
