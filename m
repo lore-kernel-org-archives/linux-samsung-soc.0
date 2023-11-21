@@ -1,145 +1,274 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4759FBB;
-	Tue, 21 Nov 2023 00:08:52 -0800 (PST)
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-507a55302e0so7610638e87.0;
-        Tue, 21 Nov 2023 00:08:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700554126; x=1701158926;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oeOErr72GGCTbFniaP00vmRzQcGaVer6knTx1tHa9Zo=;
-        b=gkkKTx/qmI/gQOtXrl3G7QAtgBsE7O+gmrBQpnp4ilsbufpkEl8b+3cjV+0MQKx4e2
-         enWwxcxCi3Jd36w6KUrOZhll2NL3hro62Xa/SUVvCmiFq31k7RQ1HHXObMIKmEYHqMJv
-         +6cQgIO+bwH6u2TL2TqZwO4c3z6aQ8aXvqJzNZsygRyrRYLsFyLO8Z6eoBNmkNuBrtDz
-         f0fG8GV0waZkx9UQpWNt3bbnkcXPAEbgDtFLBXVB1bvefdF06KPPTSNs31uuDXZSVGsJ
-         /fNZhyM2fOagdzh1ge+BpPMOxQ/3M96w6Cf8hkerZd+X+G48VpDnD8NX33sCejtNTe1X
-         hJ+A==
-X-Gm-Message-State: AOJu0YxW8D71LyI3Im6RlLeWNNaUEwqAch0s2gjNycKMP2M2aDm7UMuE
-	CxmucjQwnFt2E6dPwKu/Sf3DkYIHhifQZQKq
-X-Google-Smtp-Source: AGHT+IEVN6jgghK023lj1dADIueLibsq3V1q6B9ZoAcDCxCKfmhvd6C2PN+SCh/MFFH0Knt6dgBOIg==
-X-Received: by 2002:a19:8c57:0:b0:507:9777:7a7 with SMTP id i23-20020a198c57000000b00507977707a7mr6634310lfj.17.1700554125562;
-        Tue, 21 Nov 2023 00:08:45 -0800 (PST)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id u23-20020a197917000000b00507a68e637bsm1430968lfc.205.2023.11.21.00.08.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Nov 2023 00:08:45 -0800 (PST)
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-50970c2115eso7578843e87.1;
-        Tue, 21 Nov 2023 00:08:45 -0800 (PST)
-X-Received: by 2002:ac2:599b:0:b0:507:a5e7:724 with SMTP id
- w27-20020ac2599b000000b00507a5e70724mr6535084lfn.38.1700554124979; Tue, 21
- Nov 2023 00:08:44 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SwQzrjcL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="E7CNSkww"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A20D100
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 00:21:06 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D13E81F8A8;
+	Tue, 21 Nov 2023 08:21:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1700554864; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DHvhU3HrqobKGoHLioFRjGKT24arfOIced4wAVOChgA=;
+	b=SwQzrjcLmZMWH48dY6XiOmK21OEz/fW4qhRygDWl+M1lp+4hY0clANmK59TflHx0Ac83Pl
+	NSYpUYnL8g7EDOUNRu3Mw7WF3hqqBd/++y2d9+osxHd2GaUXJrtuxM098PWu5EbnEeLaFz
+	TEuH4TNdVPDMrIsQ0APVRARoRCJE/jE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1700554864;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DHvhU3HrqobKGoHLioFRjGKT24arfOIced4wAVOChgA=;
+	b=E7CNSkwwZydCSsuMEAwi2OltJgC8E/vl9e1oATOyomas37GPScTiIqOjpHSH0F1TfSjF0M
+	tPfFi1p0M+CaYNCg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BF10E139FD;
+	Tue, 21 Nov 2023 08:21:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id WbulLW9oXGVzBgAAMHmgww
+	(envelope-from <tzimmermann@suse.de>); Tue, 21 Nov 2023 08:21:03 +0000
+Message-ID: <250b5d51-93f8-4d8c-8507-0c47adbf7237@suse.de>
+Date: Tue, 21 Nov 2023 09:21:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231120084044.23838-1-krzysztof.kozlowski@linaro.org>
- <19358871-009d-4498-9c13-90d5338b1e9f@amd.com> <76fa8f61-fe31-4040-a38d-cc05be3f4f17@linaro.org>
- <CAMuHMdW4WPJT0Km7w8RWrGJaztk6QDGoFAn0bdGbrEsw81R1FA@mail.gmail.com>
- <acfdce81-f117-4a1a-a9fe-e2b4b8922adb@linaro.org> <bd49f17c-7ebf-4e19-b77b-b5ec95375f7d@amd.com>
- <b48293f3-16e3-4980-b900-add0cb7d69f6@linaro.org>
-In-Reply-To: <b48293f3-16e3-4980-b900-add0cb7d69f6@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Nov 2023 09:08:26 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV_gqmf2=cXmZmYgE3aLxvPBr1DVp0cz0C+YrfBVG-8mg@mail.gmail.com>
-Message-ID: <CAMuHMdV_gqmf2=cXmZmYgE3aLxvPBr1DVp0cz0C+YrfBVG-8mg@mail.gmail.com>
-Subject: Re: [PATCH v2] docs: dt-bindings: add DTS Coding Style document
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Michal Simek <michal.simek@amd.com>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, Andrew Davis <afd@ti.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Nishanth Menon <nm@ti.com>, Olof Johansson <olof@lixom.net>, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/16] drm: Convert to platform remove callback
+ returning void
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Sam Ravnborg <sam@ravnborg.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Alexey Brodkin <abrodkin@synopsys.com>, Russell King
+ <linux@armlinux.org.uk>, Aradhya Bhatia <a-bhatia1@ti.com>,
+ Javier Martinez Canillas <javierm@redhat.com>, Zhu Wang
+ <wangzhu9@huawei.com>, Rob Herring <robh@kernel.org>,
+ Lucas Stach <l.stach@pengutronix.de>, Inki Dae <inki.dae@samsung.com>,
+ Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Jingoo Han <jingoohan1@gmail.com>,
+ Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Steven Price <steven.price@arm.com>,
+ Liviu Dudau <liviu.dudau@arm.com>, Thierry Reding <treding@nvidia.com>,
+ Dan Carpenter <error27@gmail.com>,
+ Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Kevin Hilman <khilman@baylibre.com>, Karol Herbst <kherbst@redhat.com>,
+ Lyude Paul <lyude@redhat.com>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Deepak R Varma <drv@mailo.com>, Jani Nikula <jani.nikula@intel.com>,
+ Jyri Sarha <jyri.sarha@iki.fi>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jonas Karlman <jonas@kwiboo.se>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ nouveau@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, NXP Linux Team
+ <linux-imx@nxp.com>, Christian Gmeiner <christian.gmeiner@gmail.com>,
+ linux-mediatek@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Russell King <linux+etnaviv@armlinux.org.uk>,
+ linux-amlogic@lists.infradead.org, Jerome Brunet <jbrunet@baylibre.com>,
+ linux-arm-kernel@lists.infradead.org,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+References: <20231102165640.3307820-18-u.kleine-koenig@pengutronix.de>
+ <20231120120537.c22pbb2zovxvpdkf@pengutronix.de>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20231120120537.c22pbb2zovxvpdkf@pengutronix.de>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------nqnrv9dXMHR4lITUuwdTooYm"
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -8.79
+X-Spamd-Result: default: False [-8.79 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 XM_UA_NO_VERSION(0.01)[];
+	 TO_DN_SOME(0.00)[];
+	 HAS_ATTACHMENT(0.00)[];
+	 REPLY(-4.00)[];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 MIME_BASE64_TEXT(0.10)[];
+	 RCPT_COUNT_GT_50(0.00)[62];
+	 SIGNED_PGP(-2.00)[];
+	 FREEMAIL_TO(0.00)[pengutronix.de,intel.com,linaro.org,kernel.org,linux.intel.com,gmail.com,ffwll.ch,ravnborg.org,collabora.com,synopsys.com,armlinux.org.uk,ti.com,redhat.com,huawei.com,samsung.com,oss.nxp.com,arm.com,nvidia.com,baylibre.com,linux.alibaba.com,ideasonboard.com,mailo.com,iki.fi];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+,1:+,2:+,3:~];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%];
+	 ARC_NA(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 TAGGED_RCPT(0.00)[renesas,etnaviv];
+	 MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
+	 TO_MATCH_ENVRCPT_SOME(0.00)[];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 RCVD_COUNT_TWO(0.00)[2];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[];
+	 FREEMAIL_CC(0.00)[vger.kernel.org,pengutronix.de,collabora.com,kwiboo.se,googlemail.com,lists.freedesktop.org,gmail.com,nxp.com,lists.infradead.org,samsung.com,armlinux.org.uk,baylibre.com,ideasonboard.com]
 
-Hi Krzysztof,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------nqnrv9dXMHR4lITUuwdTooYm
+Content-Type: multipart/mixed; boundary="------------oJColUxlBAXTr0a7Klbx8daP";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Sam Ravnborg <sam@ravnborg.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Alexey Brodkin <abrodkin@synopsys.com>, Russell King
+ <linux@armlinux.org.uk>, Aradhya Bhatia <a-bhatia1@ti.com>,
+ Javier Martinez Canillas <javierm@redhat.com>, Zhu Wang
+ <wangzhu9@huawei.com>, Rob Herring <robh@kernel.org>,
+ Lucas Stach <l.stach@pengutronix.de>, Inki Dae <inki.dae@samsung.com>,
+ Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Jingoo Han <jingoohan1@gmail.com>,
+ Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Steven Price <steven.price@arm.com>,
+ Liviu Dudau <liviu.dudau@arm.com>, Thierry Reding <treding@nvidia.com>,
+ Dan Carpenter <error27@gmail.com>,
+ Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Kevin Hilman <khilman@baylibre.com>, Karol Herbst <kherbst@redhat.com>,
+ Lyude Paul <lyude@redhat.com>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Deepak R Varma <drv@mailo.com>, Jani Nikula <jani.nikula@intel.com>,
+ Jyri Sarha <jyri.sarha@iki.fi>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jonas Karlman <jonas@kwiboo.se>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ nouveau@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, NXP Linux Team
+ <linux-imx@nxp.com>, Christian Gmeiner <christian.gmeiner@gmail.com>,
+ linux-mediatek@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Russell King <linux+etnaviv@armlinux.org.uk>,
+ linux-amlogic@lists.infradead.org, Jerome Brunet <jbrunet@baylibre.com>,
+ linux-arm-kernel@lists.infradead.org,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Message-ID: <250b5d51-93f8-4d8c-8507-0c47adbf7237@suse.de>
+Subject: Re: [PATCH v3 00/16] drm: Convert to platform remove callback
+ returning void
+References: <20231102165640.3307820-18-u.kleine-koenig@pengutronix.de>
+ <20231120120537.c22pbb2zovxvpdkf@pengutronix.de>
+In-Reply-To: <20231120120537.c22pbb2zovxvpdkf@pengutronix.de>
 
-On Tue, Nov 21, 2023 at 8:47=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> On 21/11/2023 08:33, Michal Simek wrote:
-> > On 11/20/23 20:31, Krzysztof Kozlowski wrote:
-> >> On 20/11/2023 20:18, Geert Uytterhoeven wrote:
-> >>> On Mon, Nov 20, 2023 at 3:53=E2=80=AFPM Krzysztof Kozlowski
-> >>> <krzysztof.kozlowski@linaro.org> wrote:
-> >>>> On 20/11/2023 15:01, Michal Simek wrote:> >
-> >>>>> On 11/20/23 09:40, Krzysztof Kozlowski wrote:
-> >>>>>> Document preferred coding style for Devicetree sources (DTS and DT=
-SI),
-> >>>>>> to bring consistency among all (sub)architectures and ease in revi=
-ews.
-> >>>
-> >>>>>> +Organizing DTSI and DTS
-> >>>>>> +-----------------------
-> >>>>>> +
-> >>>>>> +The DTSI and DTS files should be organized in a way representing =
-the common
-> >>>>>> +(and re-usable) parts of the hardware.  Typically this means orga=
-nizing DTSI
-> >>>>>> +and DTS files into several files:
-> >>>>>> +
-> >>>>>> +1. DTSI with contents of the entire SoC (without nodes for hardwa=
-re not present
-> >>>>>> +   on the SoC).
-> >>>>>> +2. If applicable: DTSI with common or re-usable parts of the hard=
-ware (e.g.
-> >>>>>> +   entire System-on-Module).
-> >>>>>
-> >>>>> DTS/DTSI - SOMs can actually run as they are that's why it is fair =
-to say that
-> >>>>> there doesn't need to be DTS representing the board.
-> >>>>
-> >>>> I have never seen a SoM which can run without elaborate hardware-hac=
-king
-> >>>> (e.g. connecting multiple wires to the SoM pins). The definition of =
-the
-> >>>> SoM is that it is a module. Module can be re-used, just like SoC.
-> >>>
-> >>> /me looks at his board farm...
+--------------oJColUxlBAXTr0a7Klbx8daP
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-> >>> I guess there are (many) other examples...
-> >>
-> >> OK, I never had such in my hands. Anyway, the SoM which can run
-> >> standalone  has a meaning of a board, so how exactly you want to
-> >> rephrase the paragraph?
-> >
-> > What about?
-> >
-> > 2. If applicable: DTSI with common or re-usable parts of the hardware (=
-e.g.
-> > entire System-on-Module). DTS if runs standalone.
->
-> OK, but then it's duplicating the option 3. It also suggests that SoM
-> should be a DTS, which is not what we want for such case. Such SoMs must
-> have DTSI+DTS.
+SGkNCg0KQW0gMjAuMTEuMjMgdW0gMTM6MDUgc2NocmllYiBVd2UgS2xlaW5lLUvDtm5pZzoN
+Cj4gW0Ryb3BwZWQgYSBmZXcgcGVvcGxlIGZyb20gVG8gdGhhdCByZXN1bHRlZCBpbiBib3Vu
+Y2VzIGJlZm9yZS5dDQo+IA0KPiBPbiBUaHUsIE5vdiAwMiwgMjAyMyBhdCAwNTo1Njo0MVBN
+ICswMTAwLCBVd2UgS2xlaW5lLUvDtm5pZyB3cm90ZToNCj4+IEhlbGxvLA0KPj4NCj4+IHRo
+aXMgc2VyaWVzIGNvbnZlcnRzIGFsbCBwbGF0Zm9ybSBkcml2ZXJzIGJlbG93IGRyaXZlcnMv
+Z3B1L2RybSB0byB1c2UNCj4+IC5yZW1vdmVfbmV3KCkuIEl0IHN0YXJ0cyB3aXRoIGEgZml4
+IGZvciBhIHByb2JsZW0gdGhhdCBwb3RlbnRpYWxseSBtaWdodA0KPj4gY3Jhc2ggdGhlIGtl
+cm5lbCB0aGF0IEkgc3R1bWJsZWQgb3ZlciB3aGlsZSBpbXBsZW1lbnRpbmcgdGhlIGNvbnZl
+cnNpb24uDQo+Pg0KPj4gU29tZSBvZiB0aGUgY29udmVyc2lvbiBwYXRjaGVzIGZvbGxvd2lu
+ZyB0aGlzIGZpeCB3ZXJlIGFscmVhZHkgc2VuZCBpbg0KPj4gZWFybGllciBzZXJpZXM6DQo+
+Pg0KPj4gCWh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2RyaS1kZXZlbC8yMDIzMDgwMTExMDIz
+OS44MzEwOTktMS11LmtsZWluZS1rb2VuaWdAcGVuZ3V0cm9uaXguZGUNCj4+IAlodHRwczov
+L2xvcmUua2VybmVsLm9yZy9kcmktZGV2ZWwvMjAyMzAzMTgxOTA4MDQuMjM0NjEwLTEtdS5r
+bGVpbmUta29lbmlnQHBlbmd1dHJvbml4LmRlDQo+Pg0KPj4gYW5kIHRocmVlIHBhdGNoZXMg
+KGJyaWRnZS90cGQxMnMwMTUsIGV4eW5vcyArIHRpbGNkYykgYXJlIG5ldy4gUGFydHMgb2YN
+Cj4+IHRoZSBhYm92ZSBzZXJpZXMgd2VyZSBwaWNrZWQgdXAsIHRoZSBwYXRjaGVzIHJlc2Vu
+ZCBoZXJlIGFyZSBub3QuDQo+IA0KPiBBcGFydCBmcm9tIGEgUmV2aWV3ZWQtYnk6IGJ5IFRv
+bmkgVmFsa2VpbmVuIGZvciBwYXRjaCAjMTYgYW5kIElua2kgRGFlDQo+IHdobyB3cm90ZSB0
+byBoYXZlIHRha2VuIHBhdGNoICM4IChidXQgdGhhdCBkaWRuJ3QgYXBwZWFyIGluIG5laXRo
+ZXIgbmV4dA0KPiBub3IgZHJtLW1pc2MtbmV4dCB5ZXQpLg0KPiANCj4gQWxzbyBpbiB2MiB0
+aGV5IGRpZG4ndCByZXN1bHQgaW4gZXVwaG9yaWMgcmVwbGllcy4NCj4gDQo+IENhbiBzb21l
+b25lIHdobyBjYXJlcyBhYm91dCBkcm0gYXMgYSB3aG9sZSBwbGVhc2UgY2FyZSBmb3IgdGhp
+cyBzZXJpZXMNCj4gYXBwbHkgaXQ/DQoNCkV4Y2VwdCBmb3IgcGF0Y2hlcyA4IGFuZCAxNiwg
+SSd2ZSBwdXNoZWQgdGhpcyBwYXRjaHNldCBpbnRvIGRybS1taXNjLW5leHQuDQoNCkJlc3Qg
+cmVnYXJkcw0KVGhvbWFzDQoNCj4gDQo+IEJlc3QgcmVnYXJkcw0KPiBVd2UNCj4gICANCg0K
+LS0gDQpUaG9tYXMgWmltbWVybWFubg0KR3JhcGhpY3MgRHJpdmVyIERldmVsb3Blcg0KU1VT
+RSBTb2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFueSBHbWJIDQpGcmFua2Vuc3RyYXNzZSAxNDYs
+IDkwNDYxIE51ZXJuYmVyZywgR2VybWFueQ0KR0Y6IEl2byBUb3RldiwgQW5kcmV3IE15ZXJz
+LCBBbmRyZXcgTWNEb25hbGQsIEJvdWRpZW4gTW9lcm1hbg0KSFJCIDM2ODA5IChBRyBOdWVy
+bmJlcmcpDQo=
 
-So you want us to have a one-line <SoM>.dts, which just includes <SoM>.dtsi=
-?
-IMHO that adds more files for no much gain.
-Users of a SoM can easily include <SoM>.dts.
-'git grep "#include .*dts\>"' tells you we have plenty of users of that sch=
-eme.
+--------------oJColUxlBAXTr0a7Klbx8daP--
 
-Gr{oetje,eeting}s,
+--------------nqnrv9dXMHR4lITUuwdTooYm
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
-                        Geert
+-----BEGIN PGP SIGNATURE-----
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmVcaG4FAwAAAAAACgkQlh/E3EQov+AN
+KA//a9kAa/bdNI0Ai8/4/SH2OhY7AVHPXJdcQec7SKrNSi64hCplCI6zwvSrTKHdb6ViCONzvUPj
+Z/lLHxxOq2GXTjhiSLgqVEQKBIrJ7v5l8WAZfJ/2SLf5hWTncBM/TvrFLu0brzcYa93ZOnT6jMm0
+1Ybx4kfSN9INpiydrOCS5B2r7T/QIdhaBoDGgptMVE98gdjrHqoODVgcyiOEPNnkK/aCO/vnIEmr
+BmyCVSCD+AiSC/w6x8pu5/2FXrYuM6Ssz3duqJp6eL7LgJNOI7HBHXpY1wnmOwpUYw6OZVDSUZjX
+Rh2P73O8E4XeSem8ZnYZHwvqptO1pmtlnosL+sQQSjtQ1HdHnQfV0t2AmJg0e8qWycyDQNSVNRX4
+y6RnHdCk/fd0X2IGACvPw0Y8LuUhEbHwPeeGS3fQJr8RvRD7maMH5FduraKOgKjvxEJnIifX067n
+T28SJLqdlbTuB05QUz8004eCqrzjBzqF/s6FwfMVSHytCeGuMsrpb3GcSoBv8eXnbn1jCmoZh6TL
+PDXgAJEFmPHYe+oRoDrZnmOI/bXt7I3033iZZkvERz544Ts2QR1VUBOr0elo9GlxcLkFhvy53Bev
+8NTNzLjGJl++/klVQqBC2VS6MxE6NdTaNSMpOAygDVxoj4mBHFhPC1WfDYvm/T9s7YKdQQDSdQQC
+Q5s=
+=GPlo
+-----END PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+--------------nqnrv9dXMHR4lITUuwdTooYm--
