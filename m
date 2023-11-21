@@ -1,198 +1,112 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BAYEP5uW"
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E767C10C
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 07:34:37 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-a02d91ab195so72714366b.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 07:34:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700580876; x=1701185676; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=A8XPrjXgy2s3frM3oHSfy423ocmpIuFfhUuMZaQwqQ0=;
-        b=BAYEP5uWdAvcoxEz5eUYdr6A+Rxqyt4+7a/jm3PJOaU/S+Xq3vPzETk5NhTvdhvQbl
-         531sYfv6qYszVeQzVkKoHXCIhK0tuogDHx9B5hTE9aJA4DE1JPDAEcbvUVK5NatdGXj/
-         qsj+k6ZThG3GJlZ+Llpblb18AIHO+ky5gFbW6eeMm68rXp834SK0rM/QtBEHxVOcN1VN
-         nvBHGjc9DDXrCXqAr4gmIpR9Fcs2eYonLkaWM18OC/Fw3Ba2LaLpd6bG5Hu70qeKGclL
-         Mb/Hb8/qDw46ih65lMIR7tTXmYwyKdv0d4lQdBq3xr9wreqJVTTpZ6nlXtL1dzR+tDxg
-         P2yQ==
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E1EBCB;
+	Tue, 21 Nov 2023 08:04:32 -0800 (PST)
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6cd0a8bc6dcso3542776a34.2;
+        Tue, 21 Nov 2023 08:04:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700580876; x=1701185676;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A8XPrjXgy2s3frM3oHSfy423ocmpIuFfhUuMZaQwqQ0=;
-        b=rQg+P+vI9wD+jsqeCZVS2Ba4Ee4TsAbvPTdwBBWKMdANE5yo4BV1yFpHKPy9rz4/n4
-         AN0ZTv0mS0euOaMrtKqx/KGEht9UcU+LKGbxFn7oSqChRwIaTTad5giDNiK6wNKEk1Zb
-         Ib5BAzEUYw3QVZh9eNj3/yLkVBCTlyB/OH60B7cHRBRJuLfPi2pZ87mrdaEf+jVDZ3D5
-         vAZy3FWX+ZO7U4uFFf8/IMY42lImgLbgZMFV4d+G8lO9+06wZX0zlp0TscbjhU3MpG4r
-         mE29KMR99FzoIXG7qkK6GA56GDGiFN1tHGlug1riYQrm1wP5pVsXBjchnnN8Z7EQaATi
-         C1cQ==
-X-Gm-Message-State: AOJu0YwTV8L2GmS3q9hAq5y/2JT7+EA8+ujbSkMENt2vFVi1G2MrH3Y6
-	40GlCPb3tD1tP4OwiISyw4PBiw==
-X-Google-Smtp-Source: AGHT+IG6TIZmgc+Nf+53KQpDieUnnoY6037qQLBnc1gOe3fBNjHVf+6d3RoLClRodq9omx4MB5F5vg==
-X-Received: by 2002:a17:906:8a4a:b0:a00:4d7e:4825 with SMTP id gx10-20020a1709068a4a00b00a004d7e4825mr3024902ejc.35.1700580876272;
-        Tue, 21 Nov 2023 07:34:36 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.222.11])
-        by smtp.gmail.com with ESMTPSA id lz10-20020a170906fb0a00b009737b8d47b6sm5358811ejb.203.2023.11.21.07.34.34
+        d=1e100.net; s=20230601; t=1700582672; x=1701187472;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gHWSZ/KZJKkzc0j50L+hOmQiyYp8HOj7xmv0toivCHY=;
+        b=w0GaKyvMI/GasUtE5vfprH4ymGanHeBlqwDCjJPHbehOo/AIcGgK2/BrbDnfpnP/U+
+         TXE0Ve6HZXX2QocCN76RW3lK2kUXTNobWyWe8fm+CqAorTEz+H0H2dxG0DH+R+HO48yr
+         Y9Bn7pXpzeoDvqkQBjEp2L4djk++o47iDLsGMmzoW1rdIrfCsJJpX8IasPHwYZPelKmM
+         ixb6cQZGhQUlCPN1KZfosqLvxFNakOlqXGLAyLyjEYNC/XC0CQFzAF0aJiKhDhgMWZmj
+         QW+1jWFeJehmB86p8HOjTr97dGGGPyJW2OiZ+LOf+WuSZfJJknyNSf/evYf92mgt9iEc
+         hnog==
+X-Gm-Message-State: AOJu0YwmULucvZ9mhizFrSpfABRmYUl4GWpvca9MpJzeaWqYuhO+D7u+
+	h+DesSFBYxt/QB5LuXQqpGt7Y3bOhm04bAx4
+X-Google-Smtp-Source: AGHT+IEN1y9206WjviocR5GpChO7c4vNkBXQSv8mkPUBcR/v78OVG8iqpf4IOvPvw/oHqV7GHhOGoQ==
+X-Received: by 2002:a05:6830:188:b0:6ba:865b:ca72 with SMTP id q8-20020a056830018800b006ba865bca72mr10945857ota.31.1700582671838;
+        Tue, 21 Nov 2023 08:04:31 -0800 (PST)
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com. [209.85.167.169])
+        by smtp.gmail.com with ESMTPSA id g6-20020a4a5b06000000b0058a12a87a57sm1891449oob.17.2023.11.21.08.04.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Nov 2023 07:34:35 -0800 (PST)
-Message-ID: <1c9838fb-7f2d-4752-b86a-95bcf504ac2f@linaro.org>
-Date: Tue, 21 Nov 2023 16:34:34 +0100
+        Tue, 21 Nov 2023 08:04:27 -0800 (PST)
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3b83398d4a7so519018b6e.1;
+        Tue, 21 Nov 2023 08:04:26 -0800 (PST)
+X-Received: by 2002:a05:6808:1201:b0:3b2:ee79:c0fd with SMTP id
+ a1-20020a056808120100b003b2ee79c0fdmr14276293oil.1.1700582665655; Tue, 21 Nov
+ 2023 08:04:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panfrost: Really power off GPU cores in
- panfrost_gpu_power_off()
-Content-Language: en-US
-To: Steven Price <steven.price@arm.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- boris.brezillon@collabora.com
-Cc: tzimmermann@suse.de, linux-kernel@vger.kernel.org, mripard@kernel.org,
- dri-devel@lists.freedesktop.org, wenst@chromium.org, kernel@collabora.com,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20231102141507.73481-1-angelogioacchino.delregno@collabora.com>
- <7928524a-b581-483b-b1a1-6ffd719ce650@arm.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <7928524a-b581-483b-b1a1-6ffd719ce650@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20231120084044.23838-1-krzysztof.kozlowski@linaro.org>
+ <19358871-009d-4498-9c13-90d5338b1e9f@amd.com> <76fa8f61-fe31-4040-a38d-cc05be3f4f17@linaro.org>
+ <6c80a285-27fc-4d61-9eef-af4744a9decc@amd.com> <cc57dcf1-3c32-426e-920c-6f0741027797@linaro.org>
+In-Reply-To: <cc57dcf1-3c32-426e-920c-6f0741027797@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 21 Nov 2023 17:04:10 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVGyXizPw9Rggj8fQeNdbx3udRcsHFhz_sqYZzjN1CnZQ@mail.gmail.com>
+Message-ID: <CAMuHMdVGyXizPw9Rggj8fQeNdbx3udRcsHFhz_sqYZzjN1CnZQ@mail.gmail.com>
+Subject: Re: [PATCH v2] docs: dt-bindings: add DTS Coding Style document
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Michal Simek <michal.simek@amd.com>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, Andrew Davis <afd@ti.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Nishanth Menon <nm@ti.com>, Olof Johansson <olof@lixom.net>, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/11/2023 14:20, Steven Price wrote:
-> On 02/11/2023 14:15, AngeloGioacchino Del Regno wrote:
->> The layout of the registers {TILER,SHADER,L2}_PWROFF_LO, used to request
->> powering off cores, is the same as the {TILER,SHADER,L2}_PWRON_LO ones:
->> this means that in order to request poweroff of cores, we are supposed
->> to write a bitmask of cores that should be powered off!
->> This means that the panfrost_gpu_power_off() function has always been
->> doing nothing.
->>
->> Fix powering off the GPU by writing a bitmask of the cores to poweroff
->> to the relevant PWROFF_LO registers and then check that the transition
->> (from ON to OFF) has finished by polling the relevant PWRTRANS_LO
->> registers.
->>
->> While at it, in order to avoid code duplication, move the core mask
->> logic from panfrost_gpu_power_on() to a new panfrost_get_core_mask()
->> function, used in both poweron and poweroff.
->>
->> Fixes: f3ba91228e8e ("drm/panfrost: Add initial panfrost driver")
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Hi Krzysztof,
+
+On Tue, Nov 21, 2023 at 1:36=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> On 21/11/2023 12:55, Michal Simek wrote:
+> >>> device-tree specification v0.4. Chapter 2.2.1/Table 2.1 is describing=
+ much more
+> >>> valid characters for node names.
+> >>> It means above description is not accurate or DT spec should be updat=
+ed.
+> >>
+> >> Spec allows way to much. dtc doesn't.
+> >> One thing is the spec, second
+> >> thing is coding style.
+> >
+> >  From my point of view spec is primary source of truth. If spec is sayi=
+ng name
+> > can use upper case then I can use it. If upper case is not
+> > recommended/deprecated because of whatever reason spec should be update=
+d to
+> > reflect it.
+> > I know that DTC is reporting other issues but isn't it the right way to=
+ reflect
+> > it back to the spec?
+>
+> Then why aren't you putting Linux Coding Style into C spec? I do not see
+> any relation between specification of the language and the coding style
+> chosen for given project.
+>
+> Zephyr can go with upper-case. Why it should be disallowed by the spec?
+
+I thought there was only One DT to bind them all?
+IMHO it would be better to align DT usage of Zephyr and Linux (and
+anything else).
 
 
-Hi,
+Gr{oetje,eeting}s,
 
-This commit was added to next recently but it causes "external abort on
-non-linefetch" during boot of my Odroid HC1 board.
+                        Geert
 
-At least bisect points to it.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-If fixed, please add:
-
-Reported-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-[    4.861683] 8<--- cut here ---
-[    4.863429] Unhandled fault: external abort on non-linefetch (0x1008) at 0xf0c8802c
-[    4.871018] [f0c8802c] *pgd=433ed811, *pte=11800653, *ppte=11800453
-...
-[    5.164010]  panfrost_gpu_irq_handler from __handle_irq_event_percpu+0xcc/0x31c
-[    5.171276]  __handle_irq_event_percpu from handle_irq_event+0x38/0x80
-[    5.177765]  handle_irq_event from handle_fasteoi_irq+0x9c/0x250
-[    5.183743]  handle_fasteoi_irq from generic_handle_domain_irq+0x28/0x38
-[    5.190417]  generic_handle_domain_irq from gic_handle_irq+0x88/0xa8
-[    5.196741]  gic_handle_irq from generic_handle_arch_irq+0x34/0x44
-[    5.202893]  generic_handle_arch_irq from __irq_svc+0x8c/0xd0
-
-Full log:
-https://krzk.eu/#/builders/21/builds/4392/steps/11/logs/serial0
-
-1. exynos_defconfig
-2. HW: Odroid HC1
-   ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC
-   arm,mali-t628
-   
-Bisect log:
-
-git bisect start
-# bad: [07b677953b9dca02928be323e2db853511305fa9] Add linux-next specific files for 20231121
-git bisect bad 07b677953b9dca02928be323e2db853511305fa9
-# good: [98b1cc82c4affc16f5598d4fa14b1858671b2263] Linux 6.7-rc2
-git bisect good 98b1cc82c4affc16f5598d4fa14b1858671b2263
-# good: [13e2401d5bdc7f5a30f2651c99f0e3374cdda815] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
-git bisect good 13e2401d5bdc7f5a30f2651c99f0e3374cdda815
-# bad: [3b586cd6d8e51c428675312e7c3f634eb96337e9] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git
-git bisect bad 3b586cd6d8e51c428675312e7c3f634eb96337e9
-# bad: [9d63fd5f05248c78d9a66ce5dbc9cf5649054848] Merge branch 'drm-next' of https://gitlab.freedesktop.org/agd5f/linux
-git bisect bad 9d63fd5f05248c78d9a66ce5dbc9cf5649054848
-# bad: [5dea0c3fedee65413271a5700e653eff633e9a7f] drm/panel-elida-kd35t133: Drop shutdown logic
-git bisect bad 5dea0c3fedee65413271a5700e653eff633e9a7f
-# good: [48d45fac3940347becd290b96b2fc6d5ad8171f7] accel/ivpu: Remove support for uncached buffers
-git bisect good 48d45fac3940347becd290b96b2fc6d5ad8171f7
-# bad: [809ef191ee600e8bcbe2f8a769e00d2d54c16094] drm/gpuvm: add drm_gpuvm_flags to drm_gpuvm
-git bisect bad 809ef191ee600e8bcbe2f8a769e00d2d54c16094
-# good: [a78422e9dff366b3a46ae44caf6ec8ded9c9fc2f] drm/sched: implement dynamic job-flow control
-git bisect good a78422e9dff366b3a46ae44caf6ec8ded9c9fc2f
-# bad: [e4178256094a76cc36d9b9aabe7482615959b26f] drm/virtio: use uint64_t more in virtio_gpu_context_init_ioctl
-git bisect bad e4178256094a76cc36d9b9aabe7482615959b26f
-# bad: [56e76c0179185568049913257c18069293f8bde9] drm/panfrost: Implement ability to turn on/off GPU clocks in suspend
-git bisect bad 56e76c0179185568049913257c18069293f8bde9
-# bad: [57d4e26717b030fd794df3534e6b2e806eb761e4] drm/panfrost: Perform hard reset to recover GPU if soft reset fails
-git bisect bad 57d4e26717b030fd794df3534e6b2e806eb761e4
-# bad: [22aa1a209018dc2eca78745f7666db63637cd5dc] drm/panfrost: Really power off GPU cores in panfrost_gpu_power_off()
-git bisect bad 22aa1a209018dc2eca78745f7666db63637cd5dc
-# first bad commit: [22aa1a209018dc2eca78745f7666db63637cd5dc] drm/panfrost: Really power off GPU cores in panfrost_gpu_power_off()
-  
-
-Best regards,
-Krzysztof
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
