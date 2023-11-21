@@ -1,231 +1,238 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mi4InY3p"
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 469B590;
-	Mon, 20 Nov 2023 22:42:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700548935; x=1732084935;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JmpHPcDR2GOkMATNC2UbhmrpWmY/FEs9q0VQCEmc49s=;
-  b=mi4InY3pJqGjm3KHJOuIk/v4DQO9jbsTy2qmtxfCzrQRdMro20j7BwaZ
-   61o3H9IqAYLVwQhMiCZ/mFDeAEXhcFpPhwFR6xdz43h4M71drYM8S0IUF
-   UGGz6qJbDBjHtPY77J7xO8Gv/RPWRYsz6TY59+bgVqmLicHtRnx7iuURP
-   51IN66mlLZCyDR6lLFGx3ifo3R7qSO0yTNwHflUlUcfXPevzF8mQOmcyA
-   ivUn7u/Sqtk17zI3NdSjz1szRjjyBiJQ4bDQqPUtDp/D7MSrBFOQ72maE
-   2abp7gLixPTD6OR67E6KvIPHblPzaFxYdvYL0/UIajhQlr3J4EDSvAZIa
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10900"; a="371948743"
-X-IronPort-AV: E=Sophos;i="6.04,215,1695711600"; 
-   d="scan'208";a="371948743"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2023 22:42:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10900"; a="760012743"
-X-IronPort-AV: E=Sophos;i="6.04,215,1695711600"; 
-   d="scan'208";a="760012743"
-Received: from lkp-server02.sh.intel.com (HELO b8de5498638e) ([10.239.97.151])
-  by orsmga007.jf.intel.com with ESMTP; 20 Nov 2023 22:42:04 -0800
-Received: from kbuild by b8de5498638e with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1r5KSP-0007RI-2y;
-	Tue, 21 Nov 2023 06:42:01 +0000
-Date: Tue, 21 Nov 2023 14:23:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-	conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-	s.nawrocki@samsung.com, linus.walleij@linaro.org,
-	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com,
-	will@kernel.org, arnd@arndb.de, olof@lixom.net,
-	gregkh@linuxfoundation.org, jirislaby@kernel.org,
-	cw00.choi@samsung.com, alim.akhtar@samsung.com
-Cc: oe-kbuild-all@lists.linux.dev, peter.griffin@linaro.org,
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-	semen.protsenko@linaro.org, saravanak@google.com,
-	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 09/19] dt-bindings: serial: samsung: Make
- samsung,uart-fifosize required property
-Message-ID: <202311211435.CJVOACBE-lkp@intel.com>
-References: <20231120212037.911774-10-peter.griffin@linaro.org>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YR0UOdeg"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2075.outbound.protection.outlook.com [40.107.244.75])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A7E0E7;
+	Mon, 20 Nov 2023 23:33:36 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kZDtXcrEQ7VmNbZklY8E24magCvyUCV4I18DaPz0CoV+DDejjDN8Cr3RgsF6O9/aPkNwDdBlpA5Ccx+r3sDhCVxXw9qkcNnjxr8IEYslCFATZrwTKUlLTTJS+bpMH4mFj+TkcmomYe4SOtof/Hrc6FjtbZTCsI7ol7V2xVAPcNRlq5yhz2WLJfu4JF/CxDFVDNq/50QPMw4u9dXSBZwbEOS+nPrsOvmpbem8R1CHMvPeCgQpCQpZH/lw9KaSnQzCzHV52cNbAM/tWpAvi0Dnj0oa+EKmHrOHerEJpdMWC0tmnXPUWZ+UALX1g8vW4ikP1AV8pmFYzgnZNakqcMfBMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5ezZipQm0TiYn50WZP0b9WGZ1zBEzj5ziV2/ciaWcAI=;
+ b=bQ8cjX61OwjIsRko9qwEg3OqhAvqg9fMsYE37j/fo3KiCcYu+gy+pCf6Z5Aw0px32UGfa084WUzu+Fj7bntH3WnjbfT2eVVVVkzJeU16ZedEtuyIbwTSReAMfqC/iEKc/x7a4Y2XfkSPP2Pus1hgN7WgO1EfB9bFIBfuNxehCgtSVKQRZPruHo/Th6EascFrSODb59Tcl6Jb8XV6/xbT4rzk4xlbhD9T8Ass7efEszPTh0ah0LyGQxxQQ0o47TtK1a2ayerVKZAoZqF7tklFIZN2fGFXGgCvWz23KtsiWhDJwKTUrnxASB3aN8T9qHBqANrswFydEyWppi4TsWWbww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5ezZipQm0TiYn50WZP0b9WGZ1zBEzj5ziV2/ciaWcAI=;
+ b=YR0UOdeg8YJIRfwlEI2wh/620/25qbpcuQzmhMYilnzBEV0yVzqqrx6UrwCG8f+uzf35nwy205HGVXpWqEBwTuVBqodnnMu10eDZ2ZpbBjTAulrTVgzxOjKflnb9crFSTepODMoX7qhoPwGPOss+lNB6KdXQUx+B14TYOJoOydg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BYAPR12MB4758.namprd12.prod.outlook.com (2603:10b6:a03:a5::28)
+ by DS0PR12MB9059.namprd12.prod.outlook.com (2603:10b6:8:c5::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7002.27; Tue, 21 Nov
+ 2023 07:33:34 +0000
+Received: from BYAPR12MB4758.namprd12.prod.outlook.com
+ ([fe80::39a2:42da:ea20:3349]) by BYAPR12MB4758.namprd12.prod.outlook.com
+ ([fe80::39a2:42da:ea20:3349%5]) with mapi id 15.20.7002.028; Tue, 21 Nov 2023
+ 07:33:34 +0000
+Message-ID: <bd49f17c-7ebf-4e19-b77b-b5ec95375f7d@amd.com>
+Date: Tue, 21 Nov 2023 08:33:15 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] docs: dt-bindings: add DTS Coding Style document
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Andrew Davis <afd@ti.com>, Arnd Bergmann <arnd@arndb.de>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Heiko Stuebner <heiko@sntech.de>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Nishanth Menon <nm@ti.com>,
+ Olof Johansson <olof@lixom.net>, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org
+References: <20231120084044.23838-1-krzysztof.kozlowski@linaro.org>
+ <19358871-009d-4498-9c13-90d5338b1e9f@amd.com>
+ <76fa8f61-fe31-4040-a38d-cc05be3f4f17@linaro.org>
+ <CAMuHMdW4WPJT0Km7w8RWrGJaztk6QDGoFAn0bdGbrEsw81R1FA@mail.gmail.com>
+ <acfdce81-f117-4a1a-a9fe-e2b4b8922adb@linaro.org>
+From: Michal Simek <michal.simek@amd.com>
+Autocrypt: addr=michal.simek@amd.com; keydata=
+ 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
+ 3i3l5DA=
+In-Reply-To: <acfdce81-f117-4a1a-a9fe-e2b4b8922adb@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: VI1PR0102CA0071.eurprd01.prod.exchangelabs.com
+ (2603:10a6:803::48) To BYAPR12MB4758.namprd12.prod.outlook.com
+ (2603:10b6:a03:a5::28)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231120212037.911774-10-peter.griffin@linaro.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR12MB4758:EE_|DS0PR12MB9059:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6fc86bc5-4175-420c-307b-08dbea642af5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	sTTS9Zoh6/4tc4DcdUXN8C96BKDvLe4+zT9nzzIyX/LByDQEkk2geg4i3+hosAhoU+Iiohw+PhvmDj1OSQhSPHtxBpelunzOGpe1vOCjXeqalheb56EZSuvc3lFtH+oboDC9YXdVjc8H2JV3LAjhxQg9evcf/uM9G1rHW/O1fnbCcCglYFzK6ozuD20gW8F1LYeebCt6gUKka10/eA9TuCXZQBN3KbihouR6jtIRI5bZ43ZYmRmxF7NJZ7q+YDoazza0F3pENyNMpGp2WlmkWbDEFTIhZ+i0N3ysTdR66Ol9sdHwobeUhsE6ETvuXp+bFtMZxJAQfQU09DBGM7AD6OWgHlZjODpo5V5EomsKTPZPwGSMqg51aM6VerDQw3AWow/sbls5RxhOmBYmMfUEJ6PiObjMOoW2Sw3NUHK+AN5egOYjTyPoHhTgeD8gE32ojs88TgRr28E8zNI4eGdWF+qHvuBFunJMG4kToZiFr+rAKKpfVJKVFIxOdQ3XlUedsEmayyx8EpC3vGfl7UXRnLzarlAJsYdyJcMcSKHquQtCWFEgOS47HaVuCYPvTyO4QpiJ+FCjGS5tGwaCU6KobeCTghOznIbfitFnzvU5HKf3Ij4ocrJUbzopCJnp4gB0qKflTPwNVT/AserHeIIXtQ==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB4758.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(376002)(136003)(366004)(396003)(39860400002)(230922051799003)(186009)(64100799003)(451199024)(1800799012)(66556008)(66476007)(66946007)(110136005)(316002)(54906003)(53546011)(6512007)(36756003)(6666004)(6506007)(2616005)(26005)(478600001)(6486002)(38100700002)(31696002)(86362001)(44832011)(5660300002)(7416002)(31686004)(2906002)(8676002)(4326008)(8936002)(41300700001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VFdJMlA0Uk00NkJscFp4dktmY1hZckdLbU5xMFdFaHFURmNBN0YreHVFYWMx?=
+ =?utf-8?B?SVY4VSt5QWtFSjdNV210MU9qeGN4MTdtMGsrSndGRTIra2k2UzR3RWo4N1ZX?=
+ =?utf-8?B?Y3laS3E5L2N0Y0hGZWtzQUpqWFA0d011ak52WnNieWZoT0crSDFNL3hyTTFC?=
+ =?utf-8?B?bzFRVGkwazJXc2tIZXNTdndXNnRUb2hTNnlxK2lYNnRPc1JLY1B4a1VtNklG?=
+ =?utf-8?B?MkhhZnNPaUM0RFdzQm9SVk9pNGl2QTAyVTExcm9vT29QSUVpUlpEbnltZHZ6?=
+ =?utf-8?B?d3ErblJlQlhsblluR3p5cUJRL1NlajBkQ2VEQjlSRFB0T1RLUkE5cG1Qdk1X?=
+ =?utf-8?B?TTVxVFdzZnhVVmFjU2MwblFObmNwZGVoWkdDQk90a2tvWDBEZUtFb0luY05G?=
+ =?utf-8?B?a3hEanpwUHR6K28vS2t2MUVtWkpieGc5WFNrbjFWcmVSVHRPZ0liZE5vU2RN?=
+ =?utf-8?B?aE4reGFCVkhLcExWdXcxU1oxZWtWZUhLNTluQVM0WE5NUmU1TlpKK01SdE5Z?=
+ =?utf-8?B?NEpjTUw3TGt1Nk4xVUNxbmtTcGJRTFY5c2pHbW84M29YVmN4d3hQTnFuRFI0?=
+ =?utf-8?B?eG54TDJNWndWT2xNOTk1bU5pY1VuUlpxRXVEeEU0clVUcHY2MnNyVHpNbW40?=
+ =?utf-8?B?YTVHU1ZDVmFZbjR2L1REZ0NPWms3TnNrUFVScmZhMjhId3lXVm9RMGducWxJ?=
+ =?utf-8?B?bnlnWnI5dlg3ME5DYzVuZjI4eXhISDRwL1JLazlPV3ozRGcyR3hYTHA0dmdQ?=
+ =?utf-8?B?djVIUlVmcVZVdysyTExnREw5Nko3OExEUTlYU2JvSG5rUk1hQUx0Rk81eFRs?=
+ =?utf-8?B?MGZlM0p5RVAwMi8vbDZyWmlid2NUa3dCSy96UU9CMnhDT3Q2MTFJWEY0TmVl?=
+ =?utf-8?B?a0dQSlpwT1NoNlpsTzFCZXRFZUp5enZ0eVpoR2FVem4wbFF4aVNRWUN2U1lD?=
+ =?utf-8?B?RmNTQ2VQTk53T2gxdHY3KzlOZy9KUUJvNDVDd2lXSnQrWkdIczBPSVhGNFVw?=
+ =?utf-8?B?N0dqYXRNM2pSVWVGb0lzTDJMK2c4aG1jQXNVYnVlNThRNFQvdlhDUWhqbVBy?=
+ =?utf-8?B?aEswMXBKR0pJNnR0bVdDWGdvanIzNGp2c3JidEVYTXZnTm5leGYzU0t3dTlB?=
+ =?utf-8?B?dnMwcmRYd1VuVXdvUjlPZEl3alVlZHdMY3FDUEt0NTI3ZVBBb1BxSnpSU2VH?=
+ =?utf-8?B?RFFTcEhoTEowVFI1ZG9wMjd6MFlOS3dlOUQyRm5xazVEY1ZLQmpBZXVGWGZk?=
+ =?utf-8?B?dEdwczB1UkFmQm1QVkVMZURyVWxld0pycEcyS05BVkxpSkFLRUFFd2V3ODRP?=
+ =?utf-8?B?RnhNMkV1NzFpMXkwci92NlpNSVpBbkFjQ0JDSEdhSGg2dHI1USs5eHM1d0N2?=
+ =?utf-8?B?bkJaZDBHSExrWnprVUlkRmxEWjdQNUNYbnhrTGtmNzdXQ2g2SGNZeUNxRVJv?=
+ =?utf-8?B?Rnd4T1YzOWRUYXhEQlJSQ0IzcUpEcTBuWk40ZGlvYmY4Nmg0YUtLdTdVcEMw?=
+ =?utf-8?B?clZnV0piSUNQYjR3R0FiM1d1WmxRcHByK1RWaG9SREhQSTl0VW93dUdzRzdS?=
+ =?utf-8?B?SFhiLzY1R21oVThWaWZsNGVXR3UrcGdlNDZkVzIxZ2d4TjFIcW9rS2tzL0Mv?=
+ =?utf-8?B?c0diZ0xmVk9KUCtwQVF3NThNcWVialJYaG9jc0swaHBTcUxkckZUQnNaaW9H?=
+ =?utf-8?B?Zmd2S01QQmZPTWc0emk4aWRZY0NnSUhqejViMVRLdEs3bzhZR0NYM2ZXWDJH?=
+ =?utf-8?B?bkFaNjZ5a1FUZ01OZ2NHQ3hCYTc5TThvQmZDMkVUUnpubk5yZzljOEdCUGQ2?=
+ =?utf-8?B?WnhUeVpGdGtBdjh2MmRkU0UzdU5IRllVemJQcXNuTFR4N2JaUVlacXU4cDY1?=
+ =?utf-8?B?ckNmZFc2Z3hDbnZKbEZCaElCY2lqSTdXWUxEK2tUTHF4R2tGQXFkdm5qNHlU?=
+ =?utf-8?B?anVVWDlMNlYvcC9wYmh4a2FZVWhLZ3lDVjRiQ3puRjAwVWVuR1ZrVzJYc0JR?=
+ =?utf-8?B?TUNKMHdGdk0zUkR5S1pESWRlZ0FoL0dROXpVUEJLelhZZXZxQkR2U0FxbnRl?=
+ =?utf-8?B?U3JsbHNyRmVIbUtqWDFGZXpNSGMrd1h5RndxY3BKQS91S0xWTUxVMTZXQkdp?=
+ =?utf-8?Q?fFrRom4kn8c6upatQXKUqm0eq?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6fc86bc5-4175-420c-307b-08dbea642af5
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB4758.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2023 07:33:34.4001
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kUuRIiaOVgPGNsLTgCqxlQf/WmbdjaJCutmUN5Smqoj+iI8Hpti9rgn++fd6pAjA
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9059
 
-Hi Peter,
 
-kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on pinctrl-samsung/for-next]
-[also build test WARNING on next-20231120]
-[cannot apply to krzk/for-next robh/for-next linus/master v6.7-rc2]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On 11/20/23 20:31, Krzysztof Kozlowski wrote:
+> On 20/11/2023 20:18, Geert Uytterhoeven wrote:
+>> Hi Krzysztof,
+>>
+>> On Mon, Nov 20, 2023 at 3:53 PM Krzysztof Kozlowski
+>> <krzysztof.kozlowski@linaro.org> wrote:
+>>> On 20/11/2023 15:01, Michal Simek wrote:> >
+>>>> On 11/20/23 09:40, Krzysztof Kozlowski wrote:
+>>>>> Document preferred coding style for Devicetree sources (DTS and DTSI),
+>>>>> to bring consistency among all (sub)architectures and ease in reviews.
+>>
+>>>>> +Organizing DTSI and DTS
+>>>>> +-----------------------
+>>>>> +
+>>>>> +The DTSI and DTS files should be organized in a way representing the common
+>>>>> +(and re-usable) parts of the hardware.  Typically this means organizing DTSI
+>>>>> +and DTS files into several files:
+>>>>> +
+>>>>> +1. DTSI with contents of the entire SoC (without nodes for hardware not present
+>>>>> +   on the SoC).
+>>>>> +2. If applicable: DTSI with common or re-usable parts of the hardware (e.g.
+>>>>> +   entire System-on-Module).
+>>>>
+>>>> DTS/DTSI - SOMs can actually run as they are that's why it is fair to say that
+>>>> there doesn't need to be DTS representing the board.
+>>>
+>>> I have never seen a SoM which can run without elaborate hardware-hacking
+>>> (e.g. connecting multiple wires to the SoM pins). The definition of the
+>>> SoM is that it is a module. Module can be re-used, just like SoC.
+>>
+>> /me looks at his board farm...
+>>
+>> The Renesas White-Hawk CPU board can be used standalone, and has a
+>> separate power input connector for this operation mode.  As it has RAM,
+>> Ethernet, serial console, eMMC, and even mini-DP, it can serve useful
+>> purposes on its own.
+>> I agree it's not a super-good example, as the board is not really a
+>> "SoM", and we currently don't have r8a779g0-white-hawk-cpu.dts, only
+>> r8a779g0-white-hawk-cpu.dtsi.
+>>
+>> The RZ/A2M CPU Board is a real SoM, which can be powered over USB.
+>> It has less standard connectors (microSD, USB, MIPI CSI-2), but still
+>> sufficient features to be usable on its own.
+>> Again, we're doing a bad job, as we only have a DTS for the full eval
+>> board (r7s9210-rza2mevb.dts).
+>>
+>> I guess there are (many) other examples...
+> 
+> OK, I never had such in my hands. Anyway, the SoM which can run
+> standalone  has a meaning of a board, so how exactly you want to
+> rephrase the paragraph?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Griffin/dt-bindings-soc-samsung-exynos-pmu-Add-gs101-compatible/20231121-052449
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git for-next
-patch link:    https://lore.kernel.org/r/20231120212037.911774-10-peter.griffin%40linaro.org
-patch subject: [PATCH v4 09/19] dt-bindings: serial: samsung: Make samsung,uart-fifosize required property
-compiler: loongarch64-linux-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20231121/202311211435.CJVOACBE-lkp@intel.com/reproduce)
+What about?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202311211435.CJVOACBE-lkp@intel.com/
+2. If applicable: DTSI with common or re-usable parts of the hardware (e.g.
+entire System-on-Module). DTS if runs standalone.
 
-dtcheck warnings: (new ones prefixed by >>)
->> Documentation/devicetree/bindings/serial/samsung_uart.yaml:141:8: [warning] wrong indentation: expected 8 but found 7 (indentation)
+Thanks,
+Michal
 
-vim +141 Documentation/devicetree/bindings/serial/samsung_uart.yaml
 
-     8	
-     9	maintainers:
-    10	  - Krzysztof Kozlowski <krzk@kernel.org>
-    11	  - Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    12	
-    13	description: |+
-    14	  Each Samsung UART should have an alias correctly numbered in the "aliases"
-    15	  node, according to serialN format, where N is the port number (non-negative
-    16	  decimal integer) as specified by User's Manual of respective SoC.
-    17	
-    18	properties:
-    19	  compatible:
-    20	    oneOf:
-    21	      - items:
-    22	          - const: samsung,exynosautov9-uart
-    23	          - const: samsung,exynos850-uart
-    24	      - enum:
-    25	          - apple,s5l-uart
-    26	          - axis,artpec8-uart
-    27	          - google,gs101-uart
-    28	          - samsung,s3c6400-uart
-    29	          - samsung,s5pv210-uart
-    30	          - samsung,exynos4210-uart
-    31	          - samsung,exynos5433-uart
-    32	          - samsung,exynos850-uart
-    33	
-    34	  reg:
-    35	    maxItems: 1
-    36	
-    37	  reg-io-width:
-    38	    description: |
-    39	      The size (in bytes) of the IO accesses that should be performed
-    40	      on the device.
-    41	    enum: [ 1, 4 ]
-    42	
-    43	  clocks:
-    44	    minItems: 2
-    45	    maxItems: 5
-    46	
-    47	  clock-names:
-    48	    description: N = 0 is allowed for SoCs without internal baud clock mux.
-    49	    minItems: 2
-    50	    items:
-    51	      - const: uart
-    52	      - pattern: '^clk_uart_baud[0-3]$'
-    53	      - pattern: '^clk_uart_baud[0-3]$'
-    54	      - pattern: '^clk_uart_baud[0-3]$'
-    55	      - pattern: '^clk_uart_baud[0-3]$'
-    56	
-    57	  dmas:
-    58	    items:
-    59	      - description: DMA controller phandle and request line for RX
-    60	      - description: DMA controller phandle and request line for TX
-    61	
-    62	  dma-names:
-    63	    items:
-    64	      - const: rx
-    65	      - const: tx
-    66	
-    67	  interrupts:
-    68	    description: RX interrupt and optionally TX interrupt.
-    69	    minItems: 1
-    70	    maxItems: 2
-    71	
-    72	  power-domains:
-    73	    maxItems: 1
-    74	
-    75	  samsung,uart-fifosize:
-    76	    description: The fifo size supported by the UART channel.
-    77	    $ref: /schemas/types.yaml#/definitions/uint32
-    78	    enum: [16, 64, 256]
-    79	
-    80	required:
-    81	  - compatible
-    82	  - clocks
-    83	  - clock-names
-    84	  - interrupts
-    85	  - reg
-    86	
-    87	allOf:
-    88	  - $ref: serial.yaml#
-    89	
-    90	  - if:
-    91	      properties:
-    92	        compatible:
-    93	          contains:
-    94	            enum:
-    95	              - samsung,s5pv210-uart
-    96	    then:
-    97	      properties:
-    98	        clocks:
-    99	          minItems: 2
-   100	          maxItems: 3
-   101	        clock-names:
-   102	          minItems: 2
-   103	          items:
-   104	            - const: uart
-   105	            - pattern: '^clk_uart_baud[0-1]$'
-   106	            - pattern: '^clk_uart_baud[0-1]$'
-   107	
-   108	  - if:
-   109	      properties:
-   110	        compatible:
-   111	          contains:
-   112	            enum:
-   113	              - apple,s5l-uart
-   114	              - axis,artpec8-uart
-   115	              - samsung,exynos4210-uart
-   116	              - samsung,exynos5433-uart
-   117	    then:
-   118	      properties:
-   119	        clocks:
-   120	          maxItems: 2
-   121	        clock-names:
-   122	          items:
-   123	            - const: uart
-   124	            - const: clk_uart_baud0
-   125	
-   126	  - if:
-   127	      properties:
-   128	        compatible:
-   129	          contains:
-   130	            enum:
-   131	              - google,gs101-uart
-   132	              - samsung,exynosautov9-uart
-   133	    then:
-   134	      properties:
-   135	        samsung,uart-fifosize:
-   136	          description: The fifo size supported by the UART channel.
-   137	          $ref: /schemas/types.yaml#/definitions/uint32
-   138	          enum: [16, 64, 256]
-   139	
-   140	      required:
- > 141	       - samsung,uart-fifosize
-   142	
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
