@@ -1,144 +1,120 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L6YtbuCs"
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CC05192
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 04:36:37 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-507a29c7eefso7797455e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 04:36:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700570195; x=1701174995; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7gjKWk3n1FpvxNgSpO9rgazXKuk6DGx2KKXRqnT7ZfM=;
-        b=L6YtbuCsemZRy86ESq04rHEduprVfBVVJ2iFOjajjVxZeX97NpVVlWwvtiB392cMTA
-         B5DDL5jqOONRmin6PCxEIpRhEM7/0WhwMdPUuwv7Srt3hS5BbqRKSWxjFpng24Ek6M6s
-         ywANkeGzaNRce+Qbn+j2lFfYwVAdOpzUz2YP4dtjX08izzsoR9bwstMqaaC1Ijb3YLJ0
-         gY3MOE4jAHBc5O7QOxX6ZIk4nCg6uJ9MHNz2qBU9KkswcBiCJcrg1imoTlPSsVk1pFXn
-         F80tuTem5T405Qgofl5QDLXUDkfKfhY9SDgHfenRZTY1y9aG0OOiwVAL6w3YMvOS5bkH
-         VveQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700570195; x=1701174995;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7gjKWk3n1FpvxNgSpO9rgazXKuk6DGx2KKXRqnT7ZfM=;
-        b=OtnHwTG1ZsqB34WASFSLTlqLzHE01mjYgyUxWgsXlNdNcFJUmPbq52xvJpBnajOWWJ
-         2Sq/PLXvlWBacR15I8Hfs78y2FModc4XnmVjjLAiRxzlqSvMm6fA1DC+Zxedz5BdD0nu
-         sykz1xeil1v7rC/c7QuM3fmXHUwR3+bjzDrXxd0fEtJ79BpiUi38Wl8D8fRGfKEjV0Vn
-         ZOFdcr1ElillrySDzHeCOC0Cktn26KfB8K6Hz2FXQoFQj/Z7Ly4zTPkD2pNIhEK91o4e
-         MKXCIJJVypz3JV1Bdm49KpLPAmqAYVD2l2yTpesvUzWGPsRCgtXt8eZXxYX6IgrbHVsx
-         j6mw==
-X-Gm-Message-State: AOJu0YzyPiRaz11Bnc8Vn66fOFPkbkZtz1W1SK9syWslNeijxxjB6WUc
-	gOXNRk9TjOpw99sbEHxsUjHUEQ==
-X-Google-Smtp-Source: AGHT+IGb/+weyJtCu3eDGPfKkimWWR8aTDl5OUEnp8Glr/lfqkIwWzORD1YLy9ljdJnpCF4EsSo/vg==
-X-Received: by 2002:ac2:4e15:0:b0:507:c507:c9b6 with SMTP id e21-20020ac24e15000000b00507c507c9b6mr8426403lfr.41.1700570195650;
-        Tue, 21 Nov 2023 04:36:35 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.222.11])
-        by smtp.gmail.com with ESMTPSA id cf29-20020a056512281d00b0050aa8c07341sm1006206lfb.58.2023.11.21.04.36.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Nov 2023 04:36:35 -0800 (PST)
-Message-ID: <cc57dcf1-3c32-426e-920c-6f0741027797@linaro.org>
-Date: Tue, 21 Nov 2023 13:36:31 +0100
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SjKujYea"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F312AD5E
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 04:54:03 -0800 (PST)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231121125401euoutp026a72cbdf8897619860a4296db7989cea~ZpIifgEpx2528825288euoutp02X
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 12:54:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231121125401euoutp026a72cbdf8897619860a4296db7989cea~ZpIifgEpx2528825288euoutp02X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1700571241;
+	bh=/RR37xrrSNj8iFkQHAHyLk3LkJuohJb8fMlvgFB2uZo=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=SjKujYeaNAz4/scTi1Jge5JP8XT21rc7BdI1CNCKox4+kXHvnmVumfJcAWzT+w7MD
+	 UxsGu/HIS3ubV6pby7Uw8i0lykeDtWGGxQYMFYwbNv2BdFqmZEkPFkQx+NIhBcc7X8
+	 D+aiZtA3EfytzWts6X/G5hzdflkvUsYSeTuKL8Hk=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20231121125400eucas1p1dd5586b9b196195765e9e3ba8997e390~ZpIiEjmvR3153731537eucas1p1J;
+	Tue, 21 Nov 2023 12:54:00 +0000 (GMT)
+X-AuditID: cbfec7f5-853ff70000002550-be-655ca8684175
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 3C.4E.09552.868AC556; Tue, 21
+	Nov 2023 12:54:00 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] docs: dt-bindings: add DTS Coding Style document
-Content-Language: en-US
-To: Michal Simek <michal.simek@amd.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Cc: Andrew Davis <afd@ti.com>, Arnd Bergmann <arnd@arndb.de>,
- Bjorn Andersson <andersson@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Heiko Stuebner <heiko@sntech.de>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Nishanth Menon <nm@ti.com>,
- Olof Johansson <olof@lixom.net>, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-arm-msm@vger.kernel.org
-References: <20231120084044.23838-1-krzysztof.kozlowski@linaro.org>
- <19358871-009d-4498-9c13-90d5338b1e9f@amd.com>
- <76fa8f61-fe31-4040-a38d-cc05be3f4f17@linaro.org>
- <6c80a285-27fc-4d61-9eef-af4744a9decc@amd.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <6c80a285-27fc-4d61-9eef-af4744a9decc@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Subject: Re: [PATCH v5 8/9] thermal: exynos: use BIT wherever possible
+Reply-To: m.majewski2@samsung.com
+Sender: Mateusz Majewski <m.majewski2@samsung.com>
+From: Mateusz Majewski <m.majewski2@samsung.com>
+To: Lukasz Luba <lukasz.luba@arm.com>
+CC: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Amit Kucheria <amitk@kernel.org>, Zhang Rui
+	<rui.zhang@intel.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Marek Szyprowski
+	<m.szyprowski@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <96565d08-8d6b-4a37-8a83-90bdd53ba89a@arm.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20231121125400eucms1p40c19eedff56881e1a1a9f1560ac9a2d9@eucms1p4>
+Date: Tue, 21 Nov 2023 13:54:00 +0100
+X-CMS-MailID: 20231121125400eucms1p40c19eedff56881e1a1a9f1560ac9a2d9
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20231120145107eucas1p13ed9ea8772346c404d2d7f47d4c80f5a
+X-EPHeader: Mail
+X-ConfirmMail: N,general
+CMS-TYPE: 201P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPKsWRmVeSWpSXmKPExsWy7djP87oZK2JSDbZPkbN4MG8bm8Xh+RUW
+	Ux8+YbP4vuU6k8W8z7IWe19vZbf4dqWDyWLT42usFpd3zWGz+Nx7hNFixvl9TBYLm1rYLdYe
+	uctuMffLVGaLJw/72Bz4PdbMW8PosXPWXXaPxXteMnlsWtXJ5nHn2h42j81L6j36tqxi9Pi8
+	SS6AI4rLJiU1J7MstUjfLoErY+ecuawFp4Qrzs1fz9jA+F2oi5GTQ0LAROLwtblMXYxcHEIC
+	Kxglun9NYu1i5ODgFRCU+LtDGKRGWMBNYmHLMnYQW0hAUaJz+xs2iLiRxKEXu8BsNgEDiQdv
+	IGpEBFQlrl24ywIyk1lgD6vEhW//mCGW8UrMaH/KAmFLS2xfvpURxOYUsJZ4tHI/O0RcVOLm
+	6rdw9vtj8xkhbBGJ1ntnoeYISjz4uRsqLiNxcsEyKLtY4uXaS1A1FRLHl0yHmmMusWnuGlYQ
+	m1fAV+L8/nnMID+yAB06f0EpiCkh4CJx8m0SSAWzgLbEsoWvwSqYBTQl1u/ShxjiKDHp+Akm
+	CFtAYs2JOVCLJCS2tjxhhWjlk5i0bTrcszvmPYGqV5U4vmcSM8zjT1puM01gVJqFCOdZSBbP
+	Qli8gJF5FaN4amlxbnpqsXFearlecWJucWleul5yfu4mRmAaO/3v+NcdjCtefdQ7xMjEwXiI
+	UYKDWUmEdwt7TKoQb0piZVVqUX58UWlOavEhRmkOFiVxXtUU+VQhgfTEktTs1NSC1CKYLBMH
+	p1QDU/7b3Cgf8YipzI67RP6V+UkoPbxiGPGxXlqyKyyxrpbluuKjsE3fL6et4necr+fQyGLg
+	oTuFtXH30Vut2//v/z7H73AE9+4fV9PqfBdmzFy3Y/pCtt6jsusrs+STvj698s7k3LT4nkm7
+	Pfti/rjYXJ3bslOqr+i1r//K7G/GvCuvpuzSUGPdsmEeexnz6ao6br6J2wRf7b1rmzNvSuXc
+	r5sOmfSUWD4UOx5zWnBKSGW//6elHxO9/35YmR1ywtjFJy9076W5TlekBYsm9e6slNhvLv/l
+	fvEf2W/2lwuWWZnflKjbdPz3YWvu4r+BD9ZpSq1fESf7yMT1y7S6r6vOnnv1NodBo+StfbyO
+	/5zL6kosxRmJhlrMRcWJAO2MdeLSAwAA
+X-CMS-RootMailID: 20231120145107eucas1p13ed9ea8772346c404d2d7f47d4c80f5a
+References: <96565d08-8d6b-4a37-8a83-90bdd53ba89a@arm.com>
+	<20231120145049.310509-1-m.majewski2@samsung.com>
+	<20231120145049.310509-9-m.majewski2@samsung.com>
+	<CGME20231120145107eucas1p13ed9ea8772346c404d2d7f47d4c80f5a@eucms1p4>
 
-On 21/11/2023 12:55, Michal Simek wrote:
->>> device-tree specification v0.4. Chapter 2.2.1/Table 2.1 is describing much more
->>> valid characters for node names.
->>> It means above description is not accurate or DT spec should be updated.
->>
->> Spec allows way to much. dtc doesn't. 
->> One thing is the spec, second
->> thing is coding style.
-> 
->  From my point of view spec is primary source of truth. If spec is saying name 
-> can use upper case then I can use it. If upper case is not 
-> recommended/deprecated because of whatever reason spec should be updated to 
-> reflect it.
-> I know that DTC is reporting other issues but isn't it the right way to reflect 
-> it back to the spec?
+Hi,
 
-Then why aren't you putting Linux Coding Style into C spec? I do not see
-any relation between specification of the language and the coding style
-chosen for given project.
-
-Zephyr can go with upper-case. Why it should be disallowed by the spec?
-
-Best regards,
-Krzysztof
-
+> > =40=40 -590,15 +590,15 =40=40 static void exynos5433_tmu_control(struct=
+ platform_device *pdev, bool on)
+> >=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0continue;=0D=0A>=20>=C2=A0=20=C2=A0=0D=0A>=20>=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0interrupt_en=20=7C=3D=0D=0A>=20>=20-=C2=A0=
+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20(1=20<<=20(E=
+XYNOS7_TMU_INTEN_RISE0_SHIFT=20+=20i));=0D=0A>=20>=20+=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20BIT(EXYNOS7_TMU_INTEN_RISE0=
+_SHIFT=20+=20i);=0D=0A>=20>=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=7D=0D=0A>=20>=C2=A0=20=C2=A0=0D=0A>=
+=20>=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0interrupt_en=20=7C=3D=0D=0A>=20>=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0interrupt_en=20<<=20EXYNOS_TMU_INTEN_FALL0_SHIFT;=
+=0D=0A>=20>=C2=A0=20=C2=A0=0D=0A>=20>=20-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20con=20=7C=3D=20(1=20<<=20EXYNOS_TMU_=
+CORE_EN_SHIFT);=0D=0A>=20>=20+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0=20con=20=7C=3D=20BIT(EXYNOS_TMU_CORE_EN_SHIFT);=0D=
+=0A>=20>=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=7D=20else=0D=0A=
+>=0D=0A>=20Minor=20issue:=20the=20if-else=20segment=20here.=20When=20the=20=
+'if'=20has=20the=0D=0A>=20brackets,=20then=20the=20'else'=20should=20have=
+=20them=20as=20well,=0D=0A>=20even=20if=20there=20is=20only=20a=20single=20=
+line=20under=20'else'.=0D=0A>=20It's=20not=20strictly=20to=20this=20patch,=
+=20but=20you=20can=20address=20that=0D=0A>=20later=20somewhere=20(just=20sa=
+w=20it=20here).=0D=0A=0D=0AFor=20what=20it's=20worth,=20this=20issue=20disa=
+ppears=20after=20the=20final=20patch=20of=20this=20series,=0D=0Abecause=20t=
+he=20other=20branch=20reduces=20to=20a=20single=20line=20too=20(all=20the=
+=20interrupt_en=0D=0Aoperations=20are=20done=20in=20the=20tmu_set_*_temp=20=
+functions).=0D=0A=0D=0AThank=20you=20:)=0D=0AMateusz=0D=0A
