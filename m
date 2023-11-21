@@ -1,408 +1,432 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 386DED6E
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 05:54:02 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r5RAU-0004uF-PN; Tue, 21 Nov 2023 14:51:58 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r5RAG-00AawM-Tx; Tue, 21 Nov 2023 14:51:44 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r5RAG-004xaX-GV; Tue, 21 Nov 2023 14:51:44 +0100
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Benson Leung <bleung@chromium.org>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Johan Hovold <johan@kernel.org>,
-	Alex Elder <elder@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	James Clark <james.clark@arm.com>,
-	Yang Yingliang <yangyingliang@huawei.com>,
-	Hector Martin <marcan@marcan.st>,
-	Sven Peter <sven@svenpeter.dev>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Mark Gross <markgross@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	=?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Walle <michael@walle.cc>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Hammer Hsieh <hammerh0314@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Sean Anderson <sean.anderson@seco.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Robert Foss <rfoss@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	Anjelique Melendez <quic_amelende@quicinc.com>,
-	Rob Herring <robh@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Luca Weiss <luca@z3ntu.xyz>,
-	Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc: Guenter Roeck <groeck@chromium.org>,
-	linux-pwm@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	kernel@pengutronix.de,
-	linux-arm-kernel@lists.infradead.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	linux-mips@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-amlogic@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev,
-	greybus-dev@lists.linaro.org,
-	linux-staging@lists.linux.dev,
-	linux-doc@vger.kernel.org,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	asahi@lists.linux.dev,
-	platform-driver-x86@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	Andy Shevchenko <andy@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	dri-devel@lists.freedesktop.org,
-	linux-leds@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v3 000/108] pwm: Fix lifetime issues for pwm_chips
-Date: Tue, 21 Nov 2023 14:49:02 +0100
-Message-ID: <20231121134901.208535-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.42.0.586.gbc5204569f7d.dirty
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FvxWctBA"
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14BC2D51
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 06:30:50 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-32dff08bbdbso4328633f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 06:30:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700577048; x=1701181848; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gNBdVexOS2rFhdNBsyEIv1F9WYnWDTUlYqa+qcf8hzQ=;
+        b=FvxWctBAGdskj75atQTVAwJyZe6H0XhK1m9ArUMrSkwSkLwfIMovMLVimWxtW8Keyw
+         1IswedJeA2b7GSyAnSnjN5s6ARScN6hVjPoG8czgeFDfy/A8WDdifg7G7zRfB87GaqIG
+         lTy4fv2F3VXPLbZSEuClS/WpoNYsDYt/R+dU+TevuvNksBmBrtnvjkdYQ8XzsGv70z9E
+         U/dcjRjKcY/pUgVIa0TQp4LTmEqVja0yrmdqXfB8eoJ+seS8qipl70jtV/Qc0NSSQ4Jk
+         0ELXKSvtZba67EnLV9Mmjd0pqvndA28N7LvuwZtbUYMjD/RXp50Z9mFsqpu3RDHAKder
+         cwfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700577048; x=1701181848;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gNBdVexOS2rFhdNBsyEIv1F9WYnWDTUlYqa+qcf8hzQ=;
+        b=bn4o7HbLhqJHFbh0YuuaL0BdLVC6liJnsRh06oGr8tnVnAJiTX5FXEGAHyx6pqvuFn
+         59Tc1vOpdxYjXjEi74Il6eES55VpQugYABqQ3CTWuzCvwLm0sgd6juoKxQ78EJlD6Lip
+         bR85x9/PXL6AcF8lKlPw8YqrFsL06IbP3tEpzoxRwnr4GeT2g0cGK1kfbcGYECEQPMEH
+         zhsOB8GHVyJ6Hs4PKWG2xOD4gFqj1v6kbUEXzb+Lp98JDEYPBBCUb4YOgtpjhXr8SZJz
+         xM+yOtwcL2WkcGWE6MiR+f5fiRA9n4QjtS0ZXR8KGW3wrHU+GwBj6oFULYGOcTc1Urzc
+         4Plw==
+X-Gm-Message-State: AOJu0YyGNEpng0arEaujKrvlOnm1PYJdT1/0fj8IcV3g2JvITzWJ6gxr
+	g9acvrXG97WhbZBfyuJ+PRuNJg==
+X-Google-Smtp-Source: AGHT+IFdDq8s8xEIRQ3+9S23u28ZojRTHZvq7IBqpudi3JlSagvWpPldboHVju4qMSeGvdUu2NcUQQ==
+X-Received: by 2002:a5d:6c6b:0:b0:332:c3fc:47ab with SMTP id r11-20020a5d6c6b000000b00332c3fc47abmr7206670wrz.9.1700577048318;
+        Tue, 21 Nov 2023 06:30:48 -0800 (PST)
+Received: from [10.1.1.118] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id d8-20020adffbc8000000b003316aeb280esm13778774wrs.104.2023.11.21.06.30.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Nov 2023 06:30:47 -0800 (PST)
+Message-ID: <8f7430b4056092552acaa323250709ba1c2bf605.camel@linaro.org>
+Subject: Re: [PATCH v4 11/19] clk: samsung: clk-gs101: Add cmu_top, cmu_misc
+ and cmu_apm support
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org, 
+ krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+ conor+dt@kernel.org,  sboyd@kernel.org, tomasz.figa@gmail.com,
+ s.nawrocki@samsung.com,  linus.walleij@linaro.org, wim@linux-watchdog.org,
+ linux@roeck-us.net,  catalin.marinas@arm.com, will@kernel.org,
+ arnd@arndb.de, olof@lixom.net,  gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, cw00.choi@samsung.com,  alim.akhtar@samsung.com
+Cc: tudor.ambarus@linaro.org, semen.protsenko@linaro.org,
+ saravanak@google.com,  willmcvicker@google.com, soc@kernel.org,
+ devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,  linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org,  linux-watchdog@vger.kernel.org,
+ kernel-team@android.com,  linux-serial@vger.kernel.org
+Date: Tue, 21 Nov 2023 14:30:45 +0000
+In-Reply-To: <20231120212037.911774-12-peter.griffin@linaro.org>
+References: <20231120212037.911774-1-peter.griffin@linaro.org>
+	 <20231120212037.911774-12-peter.griffin@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.49.2-3 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13692; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=AIujFYbryhkUb49yce8rTc1TVq+JXWaKz1hYnMJpS2Q=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlXLVNx9CeAdbyattprQ2g7vu4gcu2r04V0SP/U 2mpBpB8zZKJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZVy1TQAKCRCPgPtYfRL+ TrlxB/43N0wckzLJJSX+e3ENMERxHIAW2gwyDpqNf2TyBlvH/cbOZ3L4H1wLgtzFn9LX1OEXK2K L6G9v7/uhHZBHiDnWhuZDh1TigSTpxKj8vSkl6ijyGdMj06TsvS8YwnSFmGlGgJABBBKIlzC8Zr H9HmhsUcXka5iM+pJfrdi1U42gmnMLEhF1UyyHBPkvVg9UM4esblTsVXivpIilLWO4tLknAAq3O GjQ1PC6pq/2rq9UQe+0IkUBlF7MObIR2JEzS5mBf6aWHnSqaupMNvoTP9T5I/0L8HXc7j0jtccz 3VSJ4xVUNsj+BFW021bQau27D5yMhDAF1KfN/vmrMfpQmWLt
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 
-Hello,
+On Mon, 2023-11-20 at 21:20 +0000, Peter Griffin wrote:
+> [...]
+> +	/* HSI2 */
+> +	MUX(CLK_MOUT_HSI2_BUS, "mout_cmu_hsi2_bus", mout_cmu_hsi2_bus_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_HSI2_BUS, 0, 2),
+> +	MUX(CLK_MOUT_HSI2_PCIE, "mout_cmu_hsi2_pcie", mout_cmu_hsi2_pcie0_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_HSI2_PCIE, 0, 2),
+> +	MUX(CLK_MOUT_HSI2_UFS_EMBD, "mout_cmu_hsi2_ufs_embd",
+> +	=C2=A0=C2=A0=C2=A0 mout_cmu_hsi2_ufs_embd_p, CLK_CON_MUX_MUX_CLKCMU_HSI=
+2_UFS_EMBD,
+> +	=C2=A0=C2=A0=C2=A0 0, 2),
+> +	MUX(CLK_MOUT_HSI2_MMC_CARD, "mout_cmu_hsi2_mmc_card",
+> +	=C2=A0=C2=A0=C2=A0 mout_cmu_hsi2_mmc_card_p, CLK_CON_MUX_MUX_CLKCMU_HSI=
+2_MMC_CARD,
+> +	=C2=A0=C2=A0=C2=A0 0, 2),
+> +	/* CSIS */
+> +	MUX(CLK_MOUT_CSIS, "mout_cmu_csis_bus", mout_cmu_csis_bus_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_CSIS_BUS, 0, 2),
+> +	/* PDP */
+> +	MUX(CLK_MOUT_PDP_BUS, "mout_cmu_pdp_bus", mout_cmu_pdp_bus_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_PDP_BUS, 0, 2),
+> +	/* PDP */
 
-this is v3 of the series improving life-time tracking for PWM chips. The
-urgency is gone as device links now work as expected and so all
-in-kernel users are fine since commit 2e84dc379200 ("driver core:
-Release all resources during unbind before updating device links").
+you have the /* PDP */ commend twice here.
 
-However proper lifetime tracking is a precondition to have robust
-character device support, as we cannot kill a userspace process if the
-used pwm driver goes away.
+> +	MUX(CLK_MOUT_PDP_VRA, "mout_cmu_pdp_vra", mout_cmu_pdp_vra_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_PDP_VRA, 0, 2),
+> +	/* IPP */
+> +	MUX(CLK_MOUT_IPP_BUS, "mout_cmu_ipp_bus", mout_cmu_ipp_bus_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_IPP_BUS, 0, 2),
+> +	/* G3AA */
+> +	MUX(CLK_MOUT_G3AA, "mout_cmu_g3aa_g3aa", mout_cmu_g3aa_g3aa_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_G3AA_G3AA, 0, 2),
+> +	/* ITP */
+> +	MUX(CLK_MOUT_ITP, "mout_cmu_itp_bus", mout_cmu_itp_bus_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_ITP_BUS, 0, 2),
+> +	/* DNS */
+> +	MUX(CLK_MOUT_DNS_BUS, "mout_cmu_dns_bus", mout_cmu_dns_bus_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_DNS_BUS, 0, 2),
+> +	/* TNR */
+> +	MUX(CLK_MOUT_TNR_BUS, "mout_cmu_tnr_bus", mout_cmu_tnr_bus_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_TNR_BUS, 0, 2),
+> +	/* MCSC*/
+> +	MUX(CLK_MOUT_MCSC_ITSC, "mout_cmu_mcsc_itsc", mout_cmu_mcsc_itsc_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_MCSC_ITSC, 0, 2),
+> +	MUX(CLK_MOUT_MCSC_MCSC, "mout_cmu_mcsc_mcsc", mout_cmu_mcsc_mcsc_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_MCSC_MCSC, 0, 2),
+> +	/* GDC */
+> +	MUX(CLK_MOUT_GDC_SCSC, "mout_cmu_gdc_scsc", mout_cmu_gdc_scsc_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_GDC_SCSC, 0, 2),
+> +	MUX(CLK_MOUT_GDC_GDC0, "mout_cmu_gdc_gdc0", mout_cmu_gdc_gdc0_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_GDC_GDC0, 0, 2),
+> +	MUX(CLK_MOUT_GDC_GDC1, "mout_cmu_gdc_gdc1", mout_cmu_gdc_gdc1_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_GDC_GDC1, 0, 2),
+> +	/* MFC */
+> +	MUX(CLK_MOUT_MFC_MFC, "mout_cmu_mfc_mfc", mout_cmu_mfc_mfc_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_MFC_MFC, 0, 2),
+> +	/* DDRPHY0/1/2/3 */
+> +	MUX(CLK_MOUT_MIF_SWITCH, "mout_cmu_mif_switch", mout_cmu_mif_switch_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_MIF_SWITCH, 0, 2),
+> +	/* MIF0/1/2/3 */
+> +	MUX(CLK_MOUT_MIF_BUS, "mout_cmu_mif_busp", mout_cmu_mif_busp_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_MIF_BUSP, 0, 2),
+> +	/* MISC */
+> +	MUX(CLK_MOUT_MISC_BUS, "mout_cmu_misc_bus", mout_cmu_misc_bus_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_MISC_BUS, 0, 2),
+> +	MUX(CLK_MOUT_MISC_SSS, "mout_cmu_misc_sss", mout_cmu_misc_sss_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_MISC_SSS, 0, 2),
+> +	/* PERI0 */
+> +	MUX(CLK_MOUT_PERIC0_IP, "mout_cmu_peric0_ip", mout_cmu_peric0_ip_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_PERIC0_IP, 0, 2),
+> +	MUX(CLK_MOUT_PERIC0_BUS, "mout_cmu_peric0_bus", mout_cmu_peric0_bus_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_PERIC0_BUS, 0, 2),
+> +	/* PERI1 */
+> +	MUX(CLK_MOUT_PERIC1_IP, "mout_cmu_peric1_ip", mout_cmu_peric1_ip_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_PERIC0_IP, 0, 2),
+> +	MUX(CLK_MOUT_PERIC1_BUS, "mout_cmu_peric1_bus", mout_cmu_peric1_bus_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_PERIC0_BUS, 0, 2),
+> +	/* TPU */
+> +	MUX(CLK_MOUT_TPU_TPU, "mout_cmu_tpu_tpu", mout_cmu_tpu_tpu_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_TPU_TPU, 0, 2),
+> +	MUX(CLK_MOUT_TPU_TPUCTL, "mout_cmu_tpu_tpuctl", mout_cmu_tpu_tpuctl_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_TPU_TPUCTL, 0, 2),
+> +	MUX(CLK_MOUT_TPU_BUS, "mout_cmu_tpu_bus", mout_cmu_tpu_bus_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_TPU_BUS, 0, 2),
+> +	MUX(CLK_MOUT_TPU_UART, "mout_cmu_tpu_uart", mout_cmu_tpu_uart_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_TPU_UART, 0, 2),
+> +	/* BO */
+> +	MUX(CLK_MOUT_BO_BUS, "mout_cmu_bo_bus", mout_cmu_bo_bus_p,
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_BO_BUS, 0, 2),
+> +};
+> +
+> +static const struct samsung_div_clock cmu_top_div_clks[] __initconst =3D=
+ {
+> +	/* CMU_TOP_PURECLKCOMP */
+> +	DIV(CLK_DOUT_SHARED0_DIV3, "dout_shared0_div3", "mout_shared0_pll",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_PLL_SHARED0_DIV3, 0, 2),
+> +	DIV(CLK_DOUT_SHARED0_DIV2, "dout_shared0_div2", "mout_shared0_pll",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_PLL_SHARED0_DIV2, 0, 1),
+> +	DIV(CLK_DOUT_SHARED0_DIV5, "dout_shared0_div5", "mout_shared0_pll",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_PLL_SHARED0_DIV5, 0, 2),
+> +	DIV(CLK_DOUT_SHARED0_DIV4, "dout_shared0_div4", "dout_shared0_div2",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_PLL_SHARED0_DIV4, 0, 1),
+> +	DIV(CLK_DOUT_SHARED1_DIV2, "dout_shared1_div2", "mout_shared1_pll",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_PLL_SHARED1_DIV2, 0, 1),
+> +	DIV(CLK_DOUT_SHARED1_DIV3, "dout_shared1_div3", "mout_shared1_pll",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_PLL_SHARED1_DIV3, 0, 2),
+> +	DIV(CLK_DOUT_SHARED1_DIV4, "dout_shared1_div4", "mout_shared1_pll",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_PLL_SHARED1_DIV4, 0, 1),
+> +	DIV(CLK_DOUT_SHARED2_DIV2, "dout_shared2_div2", "mout_shared2_pll",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_PLL_SHARED2_DIV2, 0, 1),
+> +	DIV(CLK_DOUT_SHARED3_DIV2, "dout_shared3_div2", "mout_shared3_pll",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_PLL_SHARED3_DIV2, 0, 1),
+> +	/* BUS0 */
+> +	DIV(CLK_DOUT_BUS0_BUS, "dout_cmu_bus0_bus_div", "gout_cmu_bus0_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_BUS0_BUS, 0, 4),
+> +	DIV(CLK_DOUT_CMU_BOOST, "dout_cmu_boost", "gout_cmu_cmu_boost",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_DIV_CLKCMU_CMU_BOOST, 0, 2),
+> +	/* BUS1 */
+> +	DIV(CLK_DOUT_BUS1_BUS, "dout_cmu_bus1_bus", "gout_cmu_bus1_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_BUS1_BUS, 0, 4),
+> +	/* BUS2 */
+> +	DIV(CLK_DOUT_BUS2_BUS, "dout_cmu_bus2_bus", "gout_cmu_bus2_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_BUS2_BUS, 0, 4),
+> +	/* CORE */
+> +	DIV(CLK_DOUT_CORE_BUS, "dout_cmu_core_bus", "gout_cmu_core_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_CORE_BUS, 0, 4),
+> +	/* EH */
+> +	DIV(CLK_DOUT_EH_BUS, "dout_cmu_eh_bus", "gout_cmu_eh_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_EH_BUS, 0, 4),
+> +	/* CPUCL{0,1,2,} */
+> +	DIV(CLK_DOUT_CPUCL2_SWITCH, "dout_cmu_cpucl2_switch",
+> +	=C2=A0=C2=A0=C2=A0 "gout_cmu_cpucl2_switch", CLK_CON_DIV_CLKCMU_CPUCL2_=
+SWITCH, 0, 3),
+> +	DIV(CLK_DOUT_CPUCL1_SWITCH, "dout_cmu_cpucl1_switch",
+> +	=C2=A0=C2=A0=C2=A0 "gout_cmu_cpucl1_switch", CLK_CON_DIV_CLKCMU_CPUCL1_=
+SWITCH, 0, 3),
+> +	DIV(CLK_DOUT_CPUCL0_SWITCH, "dout_cmu_cpucl0_switch",
+> +	=C2=A0=C2=A0=C2=A0 "gout_cmu_cpucl0_switch", CLK_CON_DIV_CLKCMU_CPUCL0_=
+SWITCH, 0, 3),
+> +	DIV(CLK_DOUT_CPUCL0_DBG, "dout_cmu_cpucl0_dbg", "gout_cmu_cpucl0_dbg",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_CPUCL0_DBG, 0, 4),
+> +	DIV(CLK_DOUT_CMU_HPM, "dout_cmu_hpm", "gout_cmu_hpm",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_HPM, 0, 2),
+> +	/* G3D */
+> +	DIV(CLK_DOUT_G3D_SWITCH, "dout_cmu_g3d_switch", "gout_cmu_g3d_switch",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_G3D_SWITCH, 0, 3),
+> +	DIV(CLK_DOUT_G3D_SWITCH, "dout_cmu_g3d_busd", "gout_cmu_g3d_busd",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_G3D_BUSD, 0, 4),
+> +
 
-Changes since v2:
+accidental extra empty line
 
- - Cc: the relevant maintainers for wider testing/review audience
- - Rebase to v6.7-rc1 + https://lore.kernel.org/linux-pwm/20231121112029.gyv3gqirlycysyr4@pengutronix.de
- - Improvements for things pointed out during review and my own
-   findings here and there.
- - Implementation for a few more ioctls in the WIP commit that adds
-   character support
+> +	DIV(CLK_DOUT_G3D_GLB, "dout_cmu_g3d_glb", "gout_cmu_g3d_glb",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_G3D_GLB, 0, 4),
+> +	/* DPU */
+> +	DIV(CLK_DOUT_DPU_BUS, "dout_cmu_dpu_bus", "gout_cmu_dpu_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_DPU_BUS, 0, 4),
+> +	/* DISP */
+> +	DIV(CLK_DOUT_DISP_BUS, "dout_cmu_disp_bus", "gout_cmu_disp_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_DISP_BUS, 0, 4),
+> +	/* G2D */
+> +	DIV(CLK_DOUT_G2D_G2D, "dout_cmu_g2d_g2d", "gout_cmu_g2d_g2d",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_G2D_G2D, 0, 4),
+> +	DIV(CLK_DOUT_G2D_MSCL, "dout_cmu_g2d_mscl", "gout_cmu_g2d_mscl",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_G2D_MSCL, 0, 4),
+> +	/* HSI0 */
+> +	DIV(CLK_DOUT_HSI0_USB31DRD, "dout_cmu_hsi0_usb31drd",
+> +	=C2=A0=C2=A0=C2=A0 "gout_cmu_hsi0_usb31drd", CLK_CON_DIV_CLKCMU_HSI0_US=
+B31DRD, 0, 5),
+> +	DIV(CLK_DOUT_HSI0_BUS, "dout_cmu_hsi0_bus", "gout_cmu_hsi0_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_HSI0_BUS, 0, 4),
+> +	DIV(CLK_DOUT_HSI0_DPGTC, "dout_cmu_hsi0_dpgtc", "gout_cmu_hsi0_dpgtc",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_HSI0_DPGTC, 0, 4),
+> +	/* TODO register exists but all lower bits are reserved */
+> +	DIV(CLK_DOUT_HSI0_USBDPDGB, "dout_cmu_hsi0_usbdpdbg",
+> +	=C2=A0=C2=A0=C2=A0 "gout_cmu_hsi0_usbdpdbg", CLK_CON_DIV_CLKCMU_HSI0_US=
+BDPDBG, 0, 0),
+> +	/* HSI1 */
+> +	DIV(CLK_DOUT_HSI1_BUS, "dout_cmu_hsi1_bus", "gout_cmu_hsi1_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_HSI1_BUS, 0, 4),
+> +	DIV(CLK_DOUT_HSI1_PCIE, "dout_cmu_hsi1_pcie", "gout_cmu_hsi1_pcie",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_HSI1_PCIE, 0, 3),
+> +	/* HSI2 */
+> +	DIV(CLK_DOUT_HSI2_BUS, "dout_cmu_hsi2_bus", "gout_cmu_hsi2_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_HSI2_BUS, 0, 4),
+> +	DIV(CLK_DOUT_HSI2_PCIE, "dout_cmu_hsi2_pcie", "gout_cmu_hsi2_pcie",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_HSI2_PCIE, 0, 3),
+> +	DIV(CLK_DOUT_HSI2_UFS_EMBD, "dout_cmu_hsi2_ufs_embd",
+> +	=C2=A0=C2=A0=C2=A0 "gout_cmu_hsi2_ufs_embd", CLK_CON_DIV_CLKCMU_HSI2_UF=
+S_EMBD, 0, 4),
+> +	DIV(CLK_DOUT_HSI2_MMC_CARD, "dout_cmu_hsi2_mmc_card",
+> +	=C2=A0=C2=A0=C2=A0 "gout_cmu_hsi2_mmc_card", CLK_CON_DIV_CLKCMU_HSI2_MM=
+C_CARD, 0, 9),
+> +	/* CSIS */
+> +	DIV(CLK_DOUT_CSIS, "dout_cmu_csis_bus", "gout_cmu_csis_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_CSIS_BUS, 0, 4),
+> +	/* PDP */
+> +	DIV(CLK_DOUT_PDP_BUS, "dout_cmu_pdp_bus", "gout_cmu_pdp_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_PDP_BUS, 0, 4),
+> +	DIV(CLK_DOUT_PDP_VRA, "dout_cmu_pdp_vra", "gout_cmu_pdp_vra",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_PDP_VRA, 0, 4),
+> +	/* IPP */
+> +	DIV(CLK_DOUT_IPP_BUS, "dout_cmu_ipp_bus", "gout_cmu_ipp_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_IPP_BUS, 0, 4),
+> +	/* G3AA */
+> +	DIV(CLK_DOUT_G3AA, "dout_cmu_g3aa_g3aa", "gout_cmu_g3aa_g3aa",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_G3AA_G3AA, 0, 4),
+> +	/* ITP */
+> +	DIV(CLK_DOUT_ITP, "dout_cmu_itp_bus", "gout_cmu_itp_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_ITP_BUS, 0, 4),
+> +	/* DNS */
+> +	DIV(CLK_DOUT_DNS_BUS, "dout_cmu_dns_bus", "gout_cmu_dns_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_DNS_BUS, 0, 4),
+> +	/* TNR */
+> +	DIV(CLK_DOUT_TNR_BUS, "dout_cmu_tnr_bus", "gout_cmu_tnr_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_TNR_BUS, 0, 4),
+> +	/* MCSC*/
+> +	DIV(CLK_DOUT_MCSC_ITSC, "dout_cmu_mcsc_itsc", "gout_cmu_mcsc_itsc",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_MCSC_ITSC, 0, 4),
+> +	DIV(CLK_DOUT_MCSC_MCSC, "dout_cmu_mcsc_mcsc", "gout_cmu_mcsc_mcsc",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_MCSC_MCSC, 0, 4),
+> +	/* GDC */
+> +	DIV(CLK_DOUT_GDC_SCSC, "dout_cmu_gdc_scsc", "gout_cmu_gdc_scsc",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_GDC_SCSC, 0, 4),
+> +	DIV(CLK_DOUT_GDC_GDC0, "dout_cmu_gdc_gdc0", "gout_cmu_gdc_gdc0",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_GDC_GDC0, 0, 4),
+> +	DIV(CLK_DOUT_GDC_GDC1, "dout_cmu_gdc_gdc1", "gout_cmu_gdc_gdc1",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_GDC_GDC1, 0, 4),
+> +	/* MFC */
+> +	DIV(CLK_DOUT_MFC_MFC, "dout_cmu_mfc_mfc", "gout_cmu_mfc_mfc",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_MFC_MFC, 0, 4),
+> +	/* MIF0/1/2/3 */
+> +	DIV(CLK_DOUT_MIF_BUS, "dout_cmu_mif_busp", "gout_cmu_mif_busp",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_MIF_BUSP, 0, 4),
+> +	/* MISC */
+> +	DIV(CLK_DOUT_MISC_BUS, "dout_cmu_misc_bus", "gout_cmu_misc_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_MISC_BUS, 0, 4),
+> +	DIV(CLK_DOUT_MISC_SSS, "dout_cmu_misc_sss", "gout_cmu_misc_sss",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_MISC_SSS, 0, 4),
+> +	/* PERI0 */
+> +	DIV(CLK_DOUT_PERIC0_BUS, "dout_cmu_peric0_bus", "gout_cmu_peric0_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_PERIC0_BUS, 0, 4),
+> +	DIV(CLK_DOUT_PERIC0_IP, "dout_cmu_peric0_ip", "gout_cmu_peric0_ip",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_PERIC0_IP, 0, 4),
+> +	/* PERI1 */
+> +	DIV(CLK_DOUT_PERIC1_BUS, "dout_cmu_peric1_bus", "gout_cmu_peric1_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_PERIC1_BUS, 0, 4),
+> +	DIV(CLK_DOUT_PERIC1_IP, "dout_cmu_peric1_ip", "gout_cmu_peric1_ip",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_PERIC1_IP, 0, 4),
+> +	/* TPU */
+> +	DIV(CLK_DOUT_TPU_TPU, "dout_cmu_tpu_tpu", "gout_cmu_tpu_tpu",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_TPU_TPU, 0, 4),
+> +	DIV(CLK_DOUT_TPU_TPUCTL, "dout_cmu_tpu_tpuctl", "gout_cmu_tpu_tpuctl",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_TPU_TPUCTL, 0, 4),
+> +	DIV(CLK_DOUT_TPU_BUS, "dout_cmu_tpu_bus", "gout_cmu_tpu_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_TPU_BUS, 0, 4),
+> +	DIV(CLK_DOUT_TPU_UART, "dout_cmu_tpu_uart", "gout_cmu_tpu_uart",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_TPU_UART, 0, 4),
+> +	/* BO */
+> +	DIV(CLK_DOUT_BO_BUS, "dout_cmu_bo_bus", "gout_cmu_bo_bus",
+> +	=C2=A0=C2=A0=C2=A0 CLK_CON_DIV_CLKCMU_BO_BUS, 0, 4),
+> +};
+> +
+> +static const struct samsung_gate_clock cmu_top_gate_clks[] __initconst =
+=3D {
+> +	/* BUS0 */
+> +	GATE(CLK_GOUT_BUS0_BUS, "gout_cmu_bus0_bus", "mout_cmu_bus0_bus",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_BUS0_BUS, 21, 0, 0),
+> +	/* BUS1 */
+> +	GATE(CLK_GOUT_BUS1_BUS, "gout_cmu_bus1_bus", "mout_cmu_bus1_bus",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_BUS1_BUS, 21, 0, 0),
+> +	/* BUS2 */
+> +	GATE(CLK_GOUT_BUS2_BUS, "gout_cmu_bus2_bus", "mout_cmu_bus2_bus",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_BUS2_BUS, 21, 0, 0),
+> +	/* CORE */
+> +	GATE(CLK_GOUT_CORE_BUS, "gout_cmu_core_bus", "mout_cmu_core_bus",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_CORE_BUS, 21, 0, 0),
+> +	/* EH */
+> +	GATE(CLK_GOUT_EH_BUS, "gout_cmu_eh_bus", "mout_cmu_eh_bus",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_EH_BUS, 21, 0, 0),
+> +	/* CPUCL{0,1,2,} */
+> +	GATE(CLK_GOUT_CPUCL2_SWITCH, "gout_cmu_cpucl2_switch",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 "mout_cmu_cpucl2_switch", CLK_CON_GAT_GATE_CLK=
+CMU_CPUCL2_SWITCH,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 21, 0, 0),
+> +	GATE(CLK_GOUT_CPUCL1_SWITCH, "gout_cmu_cpucl1_switch",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 "mout_cmu_cpucl1_switch", CLK_CON_GAT_GATE_CLK=
+CMU_CPUCL1_SWITCH,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 21, 0, 0),
+> +	GATE(CLK_GOUT_CPUCL0_SWITCH, "gout_cmu_cpucl0_switch",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 "mout_cmu_cpucl0_switch", CLK_CON_GAT_GATE_CLK=
+CMU_CPUCL0_SWITCH,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 21, 0, 0),
+> +	GATE(CLK_GOUT_CPUCL0_DBG, "gout_cmu_cpucl0_dbg", "mout_cmu_cpucl0_dbg",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_CPUCL0_DBG_BUS, 21, 0,=
+ 0),
+> +	GATE(CLK_GOUT_CMU_HPM, "gout_cmu_hpm", "mout_cmu_hpm",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_HPM, 21, 0, 0),
+> +	/* G3D */
+> +	GATE(CLK_GOUT_G3D_SWITCH, "gout_cmu_g3d_switch", "mout_cmu_g3d_switch",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_G3D_SWITCH, 21, 0, 0),
+> +	GATE(CLK_GOUT_G3D_SWITCH, "gout_cmu_g3d_busd", "mout_cmu_g3d_busd",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_G3D_BUSD, 21, 0, 0),
+> +	GATE(CLK_GOUT_G3D_GLB, "gout_cmu_g3d_glb", "mout_cmu_g3d_glb",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_G3D_GLB, 21, 0, 0),
+> +	/* DPU */
+> +	GATE(CLK_GOUT_DPU_BUS, "gout_cmu_dpu_bus", "mout_cmu_dpu_bus",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_DPU_BUS, 21, 0, 0),
+> +	/* DISP */
+> +	GATE(CLK_GOUT_DISP_BUS, "gout_cmu_disp_bus", "mout_cmu_disp_bus",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_DISP_BUS, 21, 0, 0),
+> +	/* G2D */
+> +	GATE(CLK_GOUT_G2D_G2D, "gout_cmu_g2d_g2d", "mout_cmu_g2d_g2d",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_G2D_G2D, 21, 0, 0),
+> +	GATE(CLK_GOUT_G2D_MSCL, "gout_cmu_g2d_mscl", "mout_cmu_g2d_mscl",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_G2D_MSCL, 21, 0, 0),
+> +	/* HSI0 */
+> +	GATE(CLK_GOUT_HSI0_USB31DRD, "gout_cmu_hsi0_usb31drd",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 "mout_cmu_hsi0_usb31drd", CLK_CON_GAT_GATE_CLK=
+CMU_HSI0_USB31DRD,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 21, 0, 0),
+> +	GATE(CLK_GOUT_HSI0_BUS, "gout_cmu_hsi0_bus", "mout_cmu_hsi0_bus",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_HSI0_BUS, 21, 0, 0),
+> +	GATE(CLK_GOUT_HSI0_DPGTC, "gout_cmu_hsi0_dpgtc", "mout_cmu_hsi0_dpgtc",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_HSI0_DPGTC, 21, 0, 0),
+> +	GATE(CLK_GOUT_HSI0_USBDPDGB, "gout_cmu_hsi0_usbdpdbg",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 "mout_cmu_hsi0_usbdpdbg", CLK_CON_GAT_GATE_CLK=
+CMU_HSI0_USBDPDBG,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 21, 0, 0),
+> +	/* HSI1 */
+> +	GATE(CLK_GOUT_HSI1_BUS, "gout_cmu_hsi1_bus", "mout_cmu_hsi1_bus",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_HSI1_BUS, 21, 0, 0),
+> +	GATE(CLK_GOUT_HSI1_PCIE, "gout_cmu_hsi1_pcie", "mout_cmu_hsi1_pcie",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_HSI1_PCIE, 21, 0, 0),
+> +	/* HSI2 */
+> +	GATE(CLK_GOUT_HSI2_BUS, "gout_cmu_hsi2_bus", "mout_cmu_hsi2_bus",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_HSI2_BUS, 21, 0, 0),
+> +	GATE(CLK_GOUT_HSI2_PCIE, "gout_cmu_hsi2_pcie", "mout_cmu_hsi2_pcie",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_HSI2_PCIE, 21, 0, 0),
+> +	GATE(CLK_GOUT_HSI2_UFS_EMBD, "gout_cmu_hsi2_ufs_embd",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 "mout_cmu_hsi2_ufs_embd", CLK_CON_GAT_GATE_CLK=
+CMU_HSI2_UFS_EMBD,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 21, 0, 0),
+> +	GATE(CLK_GOUT_HSI2_MMC_CARD, "gout_cmu_hsi2_mmc_card",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 "mout_cmu_hsi2_mmc_card", CLK_CON_GAT_GATE_CLK=
+CMU_HSI2_MMCCARD,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 21, 0, 0),
+> +	/* CSIS */
+> +	GATE(CLK_GOUT_CSIS, "gout_cmu_csis_bus", "mout_cmu_csis_bus",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_CSIS_BUS, 21, 0, 0),
+> +	/* PDP */
+> +	GATE(CLK_GOUT_PDP_BUS, "gout_cmu_pdp_bus", "mout_cmu_pdp_bus",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GATE_CLKCMU_PDP_BUS, 21, 0, 0),
+> +
 
-To go forward I'd like to get in patches up to #103 (i.e. adding
-pwmchip_parent() (#2), devm_pwmchip_alloc() (#37) and the conversions of
-the drivers to make use of these additions).
+and here
 
-The few commits that touch drivers not living in drivers/pwm (i.e. #36,
-#100-#103) can go in either via the pwm tree with the rest, or later
----when the used functions are in---via their trees.
-
-After all in-tree drivers are prepared with the patches up to #103, we
-can think about when and how we go on with the remaining bits.
-
-Note that patch #104 breaks all drivers that don't use
-devm_pwmchip_alloc(), so this is the commit that needs coordination with the
-maintainers of
-
- drivers/gpio/gpio-mvebu.c
- drivers/gpu/drm/bridge/ti-sn65dsi86.c
- drivers/leds/rgb/leds-qcom-lpg.c
- drivers/staging/greybus/pwm.c
-
-The motivation for this series is the last patch. It allows to control a
-pwm device via ioctl. Compared to the sysfs API this already now has
-some advantages:
-
-- It changes all parameters in a single call.
-  This simplifies things similar to the introduction of
-  pwm_apply_state(). With sysfs it can happen that you want to
-  switch polarity but that's refused because 
-
-	pwm_get_state(mypwm, &state);
-	state.polarity = new_value;
-
-  sometimes yield an invalid state, e.g. because state.period is
-  in some cases 0 after bootup. Theoretically it can even happen that you have
-  to change two parameters before reaching an applicable state, then you're
-  stuck with sysfs.
-
-- It's faster than sysfs. In my measurements with stm32 about a factor
-  4.
-
-A userspace lib to make use of this can be found at
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/libpwm.git/ .
-It makes use of the character devices if available and falls back to
-sysfs. So it's somewhat useful already now.
-
-Best regards
-Uwe
-
-Uwe Kleine-König (108):
-  pwm: cros-ec: Change prototype of helper to prepare further changes
-  pwm: Provide a macro to get the parent device of a given chip
-  pwm: ab8500: Make use of pwmchip_parent() macro
-  pwm: atmel: Make use of pwmchip_parent() macro
-  pwm: atmel-tcb: Make use of pwmchip_parent() macro
-  pwm: bcm-kona: Make use of pwmchip_parent() macro
-  pwm: crc: Make use of pwmchip_parent() macro
-  pwm: cros-ec: Make use of pwmchip_parent() macro
-  pwm: dwc: Make use of pwmchip_parent() macro
-  pwm: ep93xx: Make use of pwmchip_parent() macro
-  pwm: fsl-ftm: Make use of pwmchip_parent() macro
-  pwm: img: Make use of parent device pointer in driver data
-  pwm: imx27: Make use of pwmchip_parent() macro
-  pwm: jz4740: Make use of pwmchip_parent() macro
-  pwm: lpc18xx-sct: Make use of parent device pointer in driver data
-  pwm: lpss: Make use of pwmchip_parent() macro
-  pwm: mediatek: Make use of pwmchip_parent() macro
-  pwm: meson: Make use of pwmchip_parent() macro
-  pwm: mtk-disp: Make use of pwmchip_parent() macro
-  pwm: omap: Make use of pwmchip_parent() macro
-  pwm: pca9685: Store parent device in driver data
-  pwm: raspberrypi-poe: Make use of pwmchip_parent() macro
-  pwm: rcar: Make use of pwmchip_parent() macro
-  pwm: rz-mtu3: Make use of pwmchip_parent() macro
-  pwm: samsung: Make use of pwmchip_parent() macro
-  pwm: sifive: Make use of pwmchip_parent() macro
-  pwm: stm32-lp: Make use of pwmchip_parent() macro
-  pwm: stm32: Make use of pwmchip_parent() macro
-  pwm: stmpe: Make use of pwmchip_parent() macro
-  pwm: sun4i: Make use of pwmchip_parent() macro
-  pwm: tiecap: Make use of pwmchip_parent() macro
-  pwm: tiehrpwm: Make use of pwmchip_parent() macro
-  pwm: twl-led: Make use of pwmchip_parent() macro
-  pwm: twl: Make use of pwmchip_parent() macro
-  pwm: vt8500: Make use of pwmchip_parent() macro
-  staging: greybus: pwm: Make use of pwmchip_parent() macro
-  pwm: Provide devm_pwmchip_alloc() function
-  pwm: ab8500: Make use of devm_pwmchip_alloc() function
-  pwm: apple: Make use of devm_pwmchip_alloc() function
-  pwm: atmel-hlcdc: Make use of devm_pwmchip_alloc() function
-  pwm: atmel: Make use of devm_pwmchip_alloc() function
-  pwm: atmel-tcb: Make use of devm_pwmchip_alloc() function
-  pwm: bcm2835: Make use of devm_pwmchip_alloc() function
-  pwm: bcm-iproc: Make use of devm_pwmchip_alloc() function
-  pwm: bcm-kona: Make use of devm_pwmchip_alloc() function
-  pwm: berlin: Make use of devm_pwmchip_alloc() function
-  pwm: brcmstb: Make use of devm_pwmchip_alloc() function
-  pwm: clk: Make use of devm_pwmchip_alloc() function
-  pwm: clps711x: Make use of devm_pwmchip_alloc() function
-  pwm: crc: Make use of devm_pwmchip_alloc() function
-  pwm: cros-ec: Make use of devm_pwmchip_alloc() function
-  pwm: dwc: Make use of devm_pwmchip_alloc() function
-  pwm: ep93xx: Make use of devm_pwmchip_alloc() function
-  pwm: fsl-ftm: Make use of devm_pwmchip_alloc() function
-  pwm: hibvt: Make use of devm_pwmchip_alloc() function
-  pwm: img: Make use of devm_pwmchip_alloc() function
-  pwm: imx1: Make use of devm_pwmchip_alloc() function
-  pwm: imx27: Make use of devm_pwmchip_alloc() function
-  pwm: imx-tpm: Make use of devm_pwmchip_alloc() function
-  pwm: intel-lgm: Make use of devm_pwmchip_alloc() function
-  pwm: iqs620a: Make use of devm_pwmchip_alloc() function
-  pwm: jz4740: Make use of devm_pwmchip_alloc() function
-  pwm: keembay: Make use of devm_pwmchip_alloc() function
-  pwm: lp3943: Make use of devm_pwmchip_alloc() function
-  pwm: lpc18xx-sct: Make use of devm_pwmchip_alloc() function
-  pwm: lpc32xx: Make use of devm_pwmchip_alloc() function
-  pwm: lpss-*: Make use of devm_pwmchip_alloc() function
-  pwm: mediatek: Make use of devm_pwmchip_alloc() function
-  pwm: meson: Make use of devm_pwmchip_alloc() function
-  pwm: microchip-core: Make use of devm_pwmchip_alloc() function
-  pwm: mtk-disp: Make use of devm_pwmchip_alloc() function
-  pwm: mxs: Make use of devm_pwmchip_alloc() function
-  pwm: ntxec: Make use of devm_pwmchip_alloc() function
-  pwm: omap-dmtimer: Make use of devm_pwmchip_alloc() function
-  pwm: pca9685: Make use of devm_pwmchip_alloc() function
-  pwm: pxa: Make use of devm_pwmchip_alloc() function
-  pwm: raspberrypi-poe: Make use of devm_pwmchip_alloc() function
-  pwm: rcar: Make use of devm_pwmchip_alloc() function
-  pwm: renesas-tpu: Make use of devm_pwmchip_alloc() function
-  pwm: rockchip: Make use of devm_pwmchip_alloc() function
-  pwm: rz-mtu3: Make use of devm_pwmchip_alloc() function
-  pwm: samsung: Make use of devm_pwmchip_alloc() function
-  pwm: sifive: Make use of devm_pwmchip_alloc() function
-  pwm: sl28cpld: Make use of devm_pwmchip_alloc() function
-  pwm: spear: Make use of devm_pwmchip_alloc() function
-  pwm: sprd: Make use of devm_pwmchip_alloc() function
-  pwm: sti: Make use of devm_pwmchip_alloc() function
-  pwm: stm32-lp: Make use of devm_pwmchip_alloc() function
-  pwm: stm32: Make use of devm_pwmchip_alloc() function
-  pwm: stmpe: Make use of devm_pwmchip_alloc() function
-  pwm: sun4i: Make use of devm_pwmchip_alloc() function
-  pwm: sunplus: Make use of devm_pwmchip_alloc() function
-  pwm: tegra: Make use of devm_pwmchip_alloc() function
-  pwm: tiecap: Make use of devm_pwmchip_alloc() function
-  pwm: twl-led: Make use of devm_pwmchip_alloc() function
-  pwm: twl: Make use of devm_pwmchip_alloc() function
-  pwm: visconti: Make use of devm_pwmchip_alloc() function
-  pwm: vt8500: Make use of devm_pwmchip_alloc() function
-  pwm: xilinx: Make use of devm_pwmchip_alloc() function
-  gpio: mvebu: Make use of devm_pwmchip_alloc() function
-  drm/bridge: ti-sn65dsi86: Make use of devm_pwmchip_alloc() function
-  leds: qcom-lpg: Make use of devm_pwmchip_alloc() function
-  staging: greybus: pwm: Make use of devm_pwmchip_alloc() function
-  pwm: Ensure that pwm_chips are allocated using pwmchip_alloc()
-  pwm: Ensure a struct pwm has the same lifetime as its pwm_chip
-  pwm: Ensure the memory backing a PWM chip isn't freed while used
-  pwm: Add more locking
-  WIP: pwm: Add support for pwmchip devices for faster and easier
-    userspace access
-
- .../driver-api/driver-model/devres.rst        |   1 +
- Documentation/driver-api/pwm.rst              |  10 +-
- drivers/gpio/gpio-mvebu.c                     |  18 +-
- drivers/gpu/drm/bridge/ti-sn65dsi86.c         |  25 +-
- drivers/leds/rgb/leds-qcom-lpg.c              |  30 +-
- drivers/pwm/Kconfig                           |   4 -
- drivers/pwm/Makefile                          |   3 +-
- drivers/pwm/core.c                            | 480 +++++++++++++++---
- drivers/pwm/pwm-ab8500.c                      |  36 +-
- drivers/pwm/pwm-apple.c                       |  18 +-
- drivers/pwm/pwm-atmel-hlcdc.c                 |  35 +-
- drivers/pwm/pwm-atmel-tcb.c                   |  26 +-
- drivers/pwm/pwm-atmel.c                       |  37 +-
- drivers/pwm/pwm-bcm-iproc.c                   |  19 +-
- drivers/pwm/pwm-bcm-kona.c                    |  21 +-
- drivers/pwm/pwm-bcm2835.c                     |  17 +-
- drivers/pwm/pwm-berlin.c                      |  29 +-
- drivers/pwm/pwm-brcmstb.c                     |  17 +-
- drivers/pwm/pwm-clk.c                         |  27 +-
- drivers/pwm/pwm-clps711x.c                    |  21 +-
- drivers/pwm/pwm-crc.c                         |  26 +-
- drivers/pwm/pwm-cros-ec.c                     |  51 +-
- drivers/pwm/pwm-dwc-core.c                    |  25 +-
- drivers/pwm/pwm-dwc.c                         |  18 +-
- drivers/pwm/pwm-dwc.h                         |   9 +-
- drivers/pwm/pwm-ep93xx.c                      |  21 +-
- drivers/pwm/pwm-fsl-ftm.c                     |  48 +-
- drivers/pwm/pwm-hibvt.c                       |  25 +-
- drivers/pwm/pwm-img.c                         |  51 +-
- drivers/pwm/pwm-imx-tpm.c                     |  34 +-
- drivers/pwm/pwm-imx1.c                        |  17 +-
- drivers/pwm/pwm-imx27.c                       |  26 +-
- drivers/pwm/pwm-intel-lgm.c                   |  17 +-
- drivers/pwm/pwm-iqs620a.c                     |  37 +-
- drivers/pwm/pwm-jz4740.c                      |  35 +-
- drivers/pwm/pwm-keembay.c                     |  17 +-
- drivers/pwm/pwm-lp3943.c                      |  17 +-
- drivers/pwm/pwm-lpc18xx-sct.c                 |  35 +-
- drivers/pwm/pwm-lpc32xx.c                     |  19 +-
- drivers/pwm/pwm-lpss-pci.c                    |  10 +-
- drivers/pwm/pwm-lpss-platform.c               |  10 +-
- drivers/pwm/pwm-lpss.c                        |  34 +-
- drivers/pwm/pwm-lpss.h                        |   1 -
- drivers/pwm/pwm-mediatek.c                    |  28 +-
- drivers/pwm/pwm-meson.c                       |  57 ++-
- drivers/pwm/pwm-microchip-core.c              |  17 +-
- drivers/pwm/pwm-mtk-disp.c                    |  25 +-
- drivers/pwm/pwm-mxs.c                         |  32 +-
- drivers/pwm/pwm-ntxec.c                       |  30 +-
- drivers/pwm/pwm-omap-dmtimer.c                |  46 +-
- drivers/pwm/pwm-pca9685.c                     |  98 ++--
- drivers/pwm/pwm-pxa.c                         |  21 +-
- drivers/pwm/pwm-raspberrypi-poe.c             |  20 +-
- drivers/pwm/pwm-rcar.c                        |  25 +-
- drivers/pwm/pwm-renesas-tpu.c                 |  18 +-
- drivers/pwm/pwm-rockchip.c                    |  24 +-
- drivers/pwm/pwm-rz-mtu3.c                     |  38 +-
- drivers/pwm/pwm-samsung.c                     |  56 +-
- drivers/pwm/pwm-sifive.c                      |  30 +-
- drivers/pwm/pwm-sl28cpld.c                    |  13 +-
- drivers/pwm/pwm-spear.c                       |  17 +-
- drivers/pwm/pwm-sprd.c                        |  50 +-
- drivers/pwm/pwm-sti.c                         |  34 +-
- drivers/pwm/pwm-stm32-lp.c                    |  29 +-
- drivers/pwm/pwm-stm32.c                       |  53 +-
- drivers/pwm/pwm-stmpe.c                       |  58 ++-
- drivers/pwm/pwm-sun4i.c                       |  38 +-
- drivers/pwm/pwm-sunplus.c                     |  17 +-
- drivers/pwm/pwm-tegra.c                       |  27 +-
- drivers/pwm/pwm-tiecap.c                      |  55 +-
- drivers/pwm/pwm-tiehrpwm.c                    |  72 +--
- drivers/pwm/pwm-twl-led.c                     |  58 ++-
- drivers/pwm/pwm-twl.c                         |  50 +-
- drivers/pwm/pwm-visconti.c                    |  17 +-
- drivers/pwm/pwm-vt8500.c                      |  41 +-
- drivers/pwm/pwm-xilinx.c                      |  34 +-
- drivers/pwm/sysfs.c                           |  64 +--
- drivers/staging/greybus/pwm.c                 | 130 ++---
- include/linux/platform_data/x86/pwm-lpss.h    |   4 +-
- include/linux/pwm.h                           |  36 +-
- include/uapi/linux/pwm.h                      |  23 +
- 81 files changed, 1651 insertions(+), 1291 deletions(-)
- create mode 100644 include/uapi/linux/pwm.h
-
-base-commit: 869de350ff3834145273a6d39faedea878c6715a
--- 
-2.42.0
+Cheers,
+Andre'
 
