@@ -1,201 +1,198 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YOWWC9qh"
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC23618C
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 10:34:02 -0800 (PST)
-Received: by mail-pj1-x1030.google.com with SMTP id 98e67ed59e1d1-27ff7fe7fbcso4579109a91.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 10:34:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vhjcE2L7"
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF0C1193
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 10:39:51 -0800 (PST)
+Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-6cbb71c3020so35220b3a.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 10:39:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700591642; x=1701196442; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1700591991; x=1701196791; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qzdDJ4Dd6FTosNsKCwS18b6CXO06k4VJSeDsNXAqDjI=;
-        b=YOWWC9qhZwdFcKNHWw1PrAwIR8Ee9lBU0QZHiZ6BA78yjgqHgTVokVyKUZQ6SncYw6
-         nLjUnfw+qJYBJRtwMz1aEkRcyTp/gl3IvGeN9wQNCppeX4+/t9YVEj6jn3F6tvh7HOca
-         CeRjaHnSC/XVnDfzYwBGbx1smGje86HPnImWuf+g1XrOfv8XCvVZaYIoV83IPswHnIlY
-         dpKS86ly7F8RkbTrW93viiTGOf2DdUrgugHtP8NzyzzWXFPPkUScapqX/5AlZqh4+Ebq
-         1tU7qPTkW5sHVTxaUDlSYxQQllIAx8lYEje7N4OY+0KEGiYQ23DVsI3pw+dUJqmuL1b+
-         2xwg==
+        bh=88OBIvtQUDQ1J1FmUcJfKPLmP+A7EipGuNLwHhkdaGU=;
+        b=vhjcE2L70b7fEIeQj3RFPAos3AZThXpuUpuMqlL0V3d824VIM7LzaLggbN+qNPIYLA
+         vaYV1ySV9Ia80oicki4TtcN8cAU7BBDHI9DNVvqcaLSjCxmCQUOrF0fAkfrENfLLZeDE
+         CuzwuqRUTmXUXG/9FgA1d3NFYIoMSq5H6+IZR8vlKK3W1c7a/XbwX5C2L2Wiq/bH7zM2
+         bwxhyOBY1DSN8nxlF79EmK23fMn7tGkI6g2UMENeHszNem6fSGrq9VQkfcRVwPdhgu0Z
+         445BfSMe/l4ogf2NJLWWfq682NL/Q76V+1BV85xpvS1sj/NxUmZcmFEHsu3xGac3l6bk
+         STeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700591642; x=1701196442;
+        d=1e100.net; s=20230601; t=1700591991; x=1701196791;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qzdDJ4Dd6FTosNsKCwS18b6CXO06k4VJSeDsNXAqDjI=;
-        b=YGT9DAiUjAK3WgySZAmkQwhlPP3yPwn5s/k7nmZTYFfKVXvF6X4b0zAsTU4hl5JJQl
-         CrukDlDlUXa+pWnv451AfQhM/SjOJJWlBINce2HNNAtRcSBFqPJGnNLqKpCHL57uMgw+
-         nTs53iLlpIx4nilzKzvBYWeenMpJuWSzETIP1iSybYY/x3KBX4BzqvJN9GZVdDUmGVqk
-         B2dK84/2eiasJJU2es8Dg3zTuGVKkVJShfU0BSwqLu1u4qiX7LQ9ZSrCfvM/TFtYrTSd
-         WfNIXuY2inP3MPOACelVbgY1rYcCeirlUyDEvYGy8V8Tg2Ps/YRBCIzYgviL3lHx8r32
-         6dVg==
-X-Gm-Message-State: AOJu0Yy8PJkJyX/qPjqkfMElxHekJoS4/mVehGtAMqOqel/nDtNJNJ+a
-	2YpuF6HNQSlX5DJ092gjLSC69bwLuj3/k5oZzV/z+Q==
-X-Google-Smtp-Source: AGHT+IHF7ocVdSZ8CZczrx8XKQgJ6e1yyNkflGjDn4AHaNW3RHHhMTAB4RhwOkC+6ysduWogFSJKUsp3Gw7AuhRwP4g=
-X-Received: by 2002:a17:90b:1804:b0:285:25a1:ba9 with SMTP id
- lw4-20020a17090b180400b0028525a10ba9mr23029pjb.45.1700591642387; Tue, 21 Nov
- 2023 10:34:02 -0800 (PST)
+        bh=88OBIvtQUDQ1J1FmUcJfKPLmP+A7EipGuNLwHhkdaGU=;
+        b=j0WE+njtNGAq96SGc8wvYwa0VgFWtIRNGI2Vhqbiv2rv5qs8Q+wa7B8dQ7W3Afcos3
+         VC5C+DvRgit+dRLLZV+SZJkQZY/sQ6w4C1/xSS/GInwHHl2gq8JUgvA38JSRbZiPktWO
+         mdVUjstVMuBrNt5BiVGv64eSDkr6z9cjFbgIttzBhnU86PjIb4PsPtN51bv2o8hXUTbZ
+         diY1MW6Kg2Bx42/6WKu4w3bVqOGOhHoyY03x8MTd1JkO/dQAGWzDzeFT+v46JGdaUxNo
+         V329VuGDMZ+BE9RUWdiY1wreu90Z8kKkUTHEmdakldbkLI7WzeBS38QDR87JLe5YBQ8E
+         aSaQ==
+X-Gm-Message-State: AOJu0YzmUdRHdW8IZEJrfoP+fcWMKw9jJf88Rk2rawGoGuf9aE/yQjtD
+	XkKteBLBJnVVWLIDYGsQeiKpjglAPZM4db+G2wNLaw==
+X-Google-Smtp-Source: AGHT+IEhYaU4m2OTY3a0PI+MToJaIVcF/4UdYe32j14vCIjXKkqf40PVc53uZa36ibIBrkb58eNTKgucMjF0E4QOZMA=
+X-Received: by 2002:a17:90b:4a87:b0:280:204e:9121 with SMTP id
+ lp7-20020a17090b4a8700b00280204e9121mr277345pjb.23.1700591991220; Tue, 21 Nov
+ 2023 10:39:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20231119085440epcas2p375fa3b2999e1a3ceeff9949136db7e28@epcas2p3.samsung.com>
- <20231119092909.3018578-1-youngmin.nam@samsung.com>
-In-Reply-To: <20231119092909.3018578-1-youngmin.nam@samsung.com>
+References: <20231120212037.911774-1-peter.griffin@linaro.org> <20231120212037.911774-19-peter.griffin@linaro.org>
+In-Reply-To: <20231120212037.911774-19-peter.griffin@linaro.org>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 21 Nov 2023 12:33:51 -0600
-Message-ID: <CAPLW+4kO4wYP=5Sx7dPXU17b_CHBJKN_93GhWtZ60vKgNRTKwQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: add irq_set_affinity() for non wake up
- external gpio interrupt
-To: Youngmin Nam <youngmin.nam@samsung.com>
-Cc: tomasz.figa@gmail.com, krzysztof.kozlowski@linaro.org, 
-	s.nawrocki@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org, 
+Date: Tue, 21 Nov 2023 12:39:40 -0600
+Message-ID: <CAPLW+4k=M1q1thr2RXG4fGkvD51H7NxS1A3Ck+Up7W1nTcUPcw@mail.gmail.com>
+Subject: Re: [PATCH v4 18/19] arm64: dts: exynos: google: Add initial
+ Oriole/pixel 6 board support
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
+	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
+	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
+	jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com, 
+	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
+	linux-serial@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 19, 2023 at 2:54=E2=80=AFAM Youngmin Nam <youngmin.nam@samsung.=
-com> wrote:
+On Mon, Nov 20, 2023 at 3:21=E2=80=AFPM Peter Griffin <peter.griffin@linaro=
+.org> wrote:
 >
-> To support affinity setting for non wake up external gpio interrupt,
-> we add a new irq_set_affinity callback using irq number which is in pinct=
-rl
-> driver data.
+> Add initial board support for the Pixel 6 phone code named Oriole. This
+> has been tested with a minimal busybox initramfs and boots to a shell.
 >
-> Before applying this patch, we couldn't change irq affinity of gpio inter=
-rupt.
-> * before
-> erd9945:/proc/irq/418 # cat smp_affinity
-> 3ff
-> erd9945:/proc/irq/418 # echo 00f > smp_affinity
-> erd9945:/proc/irq/418 # cat smp_affinity
-> 3ff
-> erd9945:/proc/irq/418 # cat /proc/interrupts
->            CPU0       CPU1       CPU2       CPU3       CPU4       CPU5   =
-    CPU6       CPU7       CPU8       CPU9
-> 418:       3631          0          0          0          0          0   =
-       0          0          0          0      gpg2   0 Edge      19100000.=
-drmdecon
->
-> After applying this patch, we can change irq affinity of gpio interrupt a=
-s below.
-> * after
-> erd9945:/proc/irq/418 # cat smp_affinity
-> 3ff
-> erd9945:/proc/irq/418 # echo 00f > smp_affinity
-> erd9945:/proc/irq/418 # cat smp_affinity
-> 00f
-> erd9945:/proc/irq/418 # cat /proc/interrupts
->            CPU0       CPU1       CPU2       CPU3       CPU4       CPU5   =
-    CPU6       CPU7       CPU8       CPU9
-> 418:       3893        201        181        188          0          0   =
-       0          0          0          0      gpg2   0 Edge      19100000.=
-drmdecon
->
-
-Suggest formatting the commit message as follows, to make it more readable:
-
-8<-------------------------------------------------------------------------=
-->8
-To support affinity setting for non wake up external gpio interrupt,
-add irq_set_affinity callback using irq number from pinctrl driver
-data.
-
-Before this patch, changing the irq affinity of gpio interrupt is not
-possible:
-
-    # cat /proc/irq/418/smp_affinity
-    3ff
-    # echo 00f > /proc/irq/418/smp_affinity
-    # cat /proc/irq/418/smp_affinity
-    3ff
-    # cat /proc/interrupts
-               CPU0       CPU1       CPU2       CPU3    ...
-    418:       3631          0          0          0    ...
-
-With this patch applied, it's possible to change irq affinity of gpio
-interrupt:
-
-    # cat /proc/irq/418/smp_affinity
-    3ff
-    # echo 00f > /proc/irq/418/smp_affinity
-    # cat /proc/irq/418/smp_affinity
-    00f
-    # cat /proc/interrupts
-               CPU0       CPU1       CPU2       CPU3      ...
-    418:       3893        201        181        188      ...
-8<-------------------------------------------------------------------------=
-->8
-
-> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
->  drivers/pinctrl/samsung/pinctrl-exynos.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  arch/arm64/boot/dts/exynos/Makefile           |  2 +
+>  arch/arm64/boot/dts/exynos/google/Makefile    |  4 +
+>  .../boot/dts/exynos/google/gs101-oriole.dts   | 79 +++++++++++++++++++
+>  3 files changed, 85 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/google/Makefile
+>  create mode 100644 arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
 >
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/s=
-amsung/pinctrl-exynos.c
-> index 6b58ec84e34b..5d7b788282e9 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> @@ -147,6 +147,19 @@ static int exynos_irq_set_type(struct irq_data *irqd=
-, unsigned int type)
->         return 0;
->  }
->
-> +static int exynos_irq_set_affinity(struct irq_data *irqd,
-> +                                  const struct cpumask *dest, bool force=
-)
-> +{
-> +       struct samsung_pin_bank *bank =3D irq_data_get_irq_chip_data(irqd=
-);
-> +       struct samsung_pinctrl_drv_data *d =3D bank->drvdata;
-> +       struct irq_data *parent =3D irq_get_irq_data(d->irq);
+> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/ex=
+ynos/Makefile
+> index 6e4ba69268e5..44c24a8ad9e1 100644
+> --- a/arch/arm64/boot/dts/exynos/Makefile
+> +++ b/arch/arm64/boot/dts/exynos/Makefile
+> @@ -1,4 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> +subdir-y +=3D google
+> +
+>  dtb-$(CONFIG_ARCH_EXYNOS) +=3D \
+>         exynos5433-tm2.dtb              \
+>         exynos5433-tm2e.dtb             \
+> diff --git a/arch/arm64/boot/dts/exynos/google/Makefile b/arch/arm64/boot=
+/dts/exynos/google/Makefile
+> new file mode 100644
+> index 000000000000..0a6d5e1fe4ee
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/google/Makefile
+> @@ -0,0 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +dtb-$(CONFIG_ARCH_EXYNOS) +=3D \
+> +       gs101-oriole.dtb \
+> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/ar=
+m64/boot/dts/exynos/google/gs101-oriole.dts
+> new file mode 100644
+> index 000000000000..111665490840
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> @@ -0,0 +1,79 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Oriole Device Tree
+> + *
+> + * Copyright 2021-2023 Google,LLC
+> + */
+> +
+> +/dts-v1/;
+> +/plugin/;
 
-I'm probably missing something, but: why not just use "irqd" parameter
-and avoid declaring "bank" and "d"? Is "d->irq" somehow different from
-"irqd"?
+Now that the dts is being built as a dtb (not dtbo), I don' think this
+/plugin/ bit is needed here?
 
 > +
-> +       if (parent)
-> +               return parent->chip->irq_set_affinity(parent, dest, force=
-);
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +#include "gs101-pinctrl.h"
+> +#include "gs101.dtsi"
 > +
-
-Why not use irq_chip_set_affinity_parent() API?
-
-> +       return -EINVAL;
-
-Maybe use something like this instead:
-
-    if (!irqd->parent_data)
-            return -EINVAL;
-
-    return irq_chip_set_affinity_parent(irqd, dest, force);
-
-Can you please test if this code works?
-
-> +}
+> +/ {
+> +       model =3D "Oriole";
+> +       compatible =3D "google,gs101-oriole", "google,gs101";
 > +
->  static int exynos_irq_request_resources(struct irq_data *irqd)
->  {
->         struct samsung_pin_bank *bank =3D irq_data_get_irq_chip_data(irqd=
-);
-> @@ -212,6 +225,7 @@ static const struct exynos_irq_chip exynos_gpio_irq_c=
-hip __initconst =3D {
->                 .irq_mask =3D exynos_irq_mask,
->                 .irq_ack =3D exynos_irq_ack,
->                 .irq_set_type =3D exynos_irq_set_type,
-> +               .irq_set_affinity =3D exynos_irq_set_affinity,
-
-What happens if we just assign irq_chip_set_affinity_parent() here?
-Would it work, or Exynos case is more complicated than this?
-
->                 .irq_request_resources =3D exynos_irq_request_resources,
->                 .irq_release_resources =3D exynos_irq_release_resources,
->         },
+> +       chosen {
+> +               bootargs =3D "earlycon=3Dexynos4210,mmio32,0x10A00000 con=
+sole=3DttySAC0";
+> +       };
+> +
+> +       gpio-keys {
+> +               compatible =3D "gpio-keys";
+> +               pinctrl-names =3D "default";
+> +               pinctrl-0 =3D <&key_voldown>, <&key_volup>, <&key_power>;
+> +
+> +               button-vol-down {
+> +                       label =3D "KEY_VOLUMEDOWN";
+> +                       linux,code =3D <KEY_VOLUMEDOWN>;
+> +                       gpios =3D <&gpa7 3 GPIO_ACTIVE_LOW>;
+> +                       wakeup-source;
+> +               };
+> +
+> +               button-vol-up {
+> +                       label =3D "KEY_VOLUMEUP";
+> +                       linux,code =3D <KEY_VOLUMEUP>;
+> +                       gpios =3D <&gpa8 1 GPIO_ACTIVE_LOW>;
+> +                       wakeup-source;
+> +               };
+> +
+> +               button-power {
+> +                       label =3D "KEY_POWER";
+> +                       linux,code =3D <KEY_POWER>;
+> +                       gpios =3D <&gpa10 1 GPIO_ACTIVE_LOW>;
+> +                       wakeup-source;
+> +               };
+> +       };
+> +};
+> +
+> +&pinctrl_1 {
+> +       key_voldown: key-voldown-pins {
+> +               samsung,pins =3D "gpa7-3";
+> +               samsung,pin-function =3D <0xf>;
+> +               samsung,pin-pud =3D <0>;
+> +               samsung,pin-drv =3D <GS101_PIN_DRV_2_5_MA>;
+> +       };
+> +
+> +       key_volup: key-volup-pins {
+> +               samsung,pins =3D "gpa8-1";
+> +               samsung,pin-function =3D <0xf>;
+> +               samsung,pin-pud =3D <0>;
+> +               samsung,pin-drv =3D <GS101_PIN_DRV_2_5_MA>;
+> +       };
+> +};
+> +
+> +&pinctrl_0 {
+> +       key_power: key-power-pins {
+> +               samsung,pins =3D "gpa10-1";
+> +               samsung,pin-function =3D <0xf>;
+> +               samsung,pin-pud =3D <0>;
+> +               samsung,pin-drv =3D <GS101_PIN_DRV_2_5_MA>;
+> +       };
+> +};
+> +
+> +&watchdog_cl0 {
+> +       timeout-sec =3D <30>;
+> +};
 > --
-> 2.39.2
+> 2.43.0.rc1.413.gea7ed67945-goog
 >
