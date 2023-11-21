@@ -1,78 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881E22772A;
-	Tue, 21 Nov 2023 14:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="krU/8KO4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F244DC433CC;
-	Tue, 21 Nov 2023 14:58:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700578706;
-	bh=+gJV5Kq/zk7daeG5FUsmI0jNOy/xuAwkVf/f+7MLU5I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=krU/8KO4ATWr4zxxJrfvksylFL5Le76um3CUG0EvTiIm3ljSQHX9LDTM68Loi9rXe
-	 Lc15EnK4Facj2erJIGoZHXmQOo/scEBf1NhxP2fBu3qAEk2sG2+zM39WUPIuZ03zsh
-	 zduzA0o5RhvuAy/Vsc2DuolS70GnfTGdhoAYPnp3+xqeW8hIqdS3LXCEDtxt5IUHoE
-	 NGAotlvjGIwRIBNZcleOeWep/c7BL6XVPgUVb1To3eBO2RI0iT/m5uP8xgtQia//Kn
-	 YUthVWnYrPL85KPpksW6K62+I2u9g1PZrxJzAbVvN9awyjyzSTEL3+SaOGWp4T3e9G
-	 x1sLIt2r9On5w==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-507962561adso8243693e87.0;
-        Tue, 21 Nov 2023 06:58:25 -0800 (PST)
-X-Gm-Message-State: AOJu0Yz2AEoTPa91cTrntai2w7JVisMm3MrjRS8ort9V156hayecbqG4
-	cHGvtlyIKCiven82m1ULoiermthZ3CIrfBO/uA==
-X-Google-Smtp-Source: AGHT+IHBiGSizQyBkO4Q43LdN/hKHZvdOgdP/et2Xjgl2vIRMj51OZsWwcNiAsGaNW7Y23qV5f4kXncXYdheozxBgQo=
-X-Received: by 2002:a19:f010:0:b0:505:8075:7c10 with SMTP id
- p16-20020a19f010000000b0050580757c10mr7788659lfc.25.1700578704209; Tue, 21
- Nov 2023 06:58:24 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 642ABDD;
+	Tue, 21 Nov 2023 07:16:35 -0800 (PST)
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-359343e399fso15592825ab.0;
+        Tue, 21 Nov 2023 07:16:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700579794; x=1701184594;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MHBJbcTYAJFzd8BQozdA+OUJ8WFFDeZmUm9glBYXWMY=;
+        b=XMFfMNWGezswcSMFIRgJPHxeTNGDRVREXwioKmCOZ8Uv8cmK+eeL5p11X/TGPwzHLV
+         LsWq8njDA0khhQUO7BGMjPQBR+iBfwh5ZXdrep8yd+y5yIke9/Sf9PyY8ox4pBogimC6
+         rPUem/RO2jAlwICWzfg4MTqoJDEtpSgnoXVeVVxq4ICyD1p6HnpbuMYfvS2Ve0c4A0UD
+         0jv1PCU0pM3TfnTugL6PXbH9gCjhFcEjz/W/Jmh1keJfItofz3JmdeGF1NNI2/YhmXfB
+         M2m6hkUjYbqc2c2Jd8IgP9NrR3VrXOSuu4Gvyhrl+Q0sUTKD/E9/pYH9rKkn4Ahz/GpZ
+         ZBDw==
+X-Gm-Message-State: AOJu0Yx4K+G+7pVmdGGpkSl+2kTELWIw3aH9SJy19zk3gsOggsAzxRQ9
+	c7joqsBzdASgkUPPDyI7Jw==
+X-Google-Smtp-Source: AGHT+IGs+KFHExCqkcg3K0j2WE48eh5fwSy6aeVyBcCWydv816/PY/81hpz3b4X9rc/LANFLxc7uYA==
+X-Received: by 2002:a92:c90e:0:b0:35b:4b9:7883 with SMTP id t14-20020a92c90e000000b0035b04b97883mr6859544ilp.25.1700579794614;
+        Tue, 21 Nov 2023 07:16:34 -0800 (PST)
+Received: from herring.priv ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id s16-20020a02cf30000000b0046676167055sm170383jar.129.2023.11.21.07.16.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Nov 2023 07:16:33 -0800 (PST)
+Received: (nullmailer pid 1791730 invoked by uid 1000);
+	Tue, 21 Nov 2023 15:16:30 -0000
+Date: Tue, 21 Nov 2023 08:16:30 -0700
+From: Rob Herring <robh@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org, semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org, kernel-team@android.com, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v4 09/19] dt-bindings: serial: samsung: Make
+ samsung,uart-fifosize required property
+Message-ID: <20231121151630.GA1692178-robh@kernel.org>
+References: <20231120212037.911774-1-peter.griffin@linaro.org>
+ <20231120212037.911774-10-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231116211739.3228239-1-robh@kernel.org> <ee10e67b-6a2f-4ab5-91ef-e42d2f03a424@linaro.org>
-In-Reply-To: <ee10e67b-6a2f-4ab5-91ef-e42d2f03a424@linaro.org>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 21 Nov 2023 07:58:12 -0700
-X-Gmail-Original-Message-ID: <CAL_JsqJ67tZOmhTHQ7KqEbFuDjK8sKHR1FFtAFAaGjZ4uYi9Uw@mail.gmail.com>
-Message-ID: <CAL_JsqJ67tZOmhTHQ7KqEbFuDjK8sKHR1FFtAFAaGjZ4uYi9Uw@mail.gmail.com>
-Subject: Re: [PATCH] arm/arm64: samsung: Enable W=1 on dtbs by default
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231120212037.911774-10-peter.griffin@linaro.org>
 
-On Fri, Nov 17, 2023 at 3:19=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 16/11/2023 22:17, Rob Herring wrote:
-> > Samsung platforms are clean of W=3D1 dtc warnings, so enable the warnin=
-gs
-> > by default. This way submitters don't have to remember to run a W=3D1
-> > build of the .dts files and the grumpiness of the maintainers can be
-> > reduced.
-> >
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> > Well, there's a couple of warnings on 32-bit, but they look fixable to
-> > me.
-> >
-> > There's a few other platforms we could do this to. Sadly, they are stil=
-l
-> > the minority. Otherwise, we could change the default and add a flag to
-> > disable (I_STILL_HAVENT_FIXED_MY_PLATFORMS=3D1).
->
-> 64-bit has still few warnings:
-> https://krzk.eu/#/builders/29/builds/3710/steps/26/logs/warnings__6_
+On Mon, Nov 20, 2023 at 09:20:27PM +0000, Peter Griffin wrote:
+> Specifying samsung,uart-fifosize in both DT and driver static data is error
+> prone and relies on driver probe order and dt aliases to be correct.
+> 
+> Additionally on many Exynos platforms these are (USI) universal serial
+> interfaces which can be uart, spi or i2c, so it can change per board.
+> 
+> For google,gs101-uart and exynosautov9-uart make samsung,uart-fifosize a
+> required property. For these platforms fifosize now *only* comes from DT.
+> 
+> It is hoped other Exynos platforms will also switch over time.
 
-I may move that graph check to W=3D2. There's some cases where port@1 is
-optional and it doesn't really make sense to fix these.
+Then allow the property on them.
 
-Also, Conor wants to do this for all of riscv, but this solution is
-per directory. So I need to rework it to use a different variable that
-can be per directory or global.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  .../bindings/serial/samsung_uart.yaml           | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> index ccc3626779d9..22a1edadc4fe 100644
+> --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> @@ -133,6 +133,23 @@ allOf:
+>              - const: uart
+>              - const: clk_uart_baud0
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - google,gs101-uart
+> +              - samsung,exynosautov9-uart
+> +    then:
+> +      properties:
+> +        samsung,uart-fifosize:
+> +          description: The fifo size supported by the UART channel.
+> +          $ref: /schemas/types.yaml#/definitions/uint32
+> +          enum: [16, 64, 256]
+
+We already have 'fifo-size' in several drivers. Use that. Please move 
+its type/description definitions to serial.yaml and make drivers just do 
+'fifo-size: true' if they use it.
+
+> +
+> +      required:
+> +       - samsung,uart-fifosize
+
+A new required property is an ABI break. Please explain why that is okay 
+in the commit message.
 
 Rob
