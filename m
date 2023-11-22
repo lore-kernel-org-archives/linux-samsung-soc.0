@@ -1,27 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CVBu/rkb"
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B4B23C33;
-	Wed, 22 Nov 2023 01:06:24 -0800 (PST)
-Received: from [100.107.97.3] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madras.collabora.co.uk (Postfix) with ESMTPSA id B168D6602F2B;
-	Wed, 22 Nov 2023 09:06:22 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1700643983;
-	bh=+6frr+ifTyvpSRQqcbHjfT1DwxvyGpG2yDaXM+9UwGg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CVBu/rkb3GBYVQMzGejdK1ETSEu/H9Xw339jFIbwK+HXuMgcdtWfkeRVOqQkHmKjF
-	 jyfzv/8zPf4RIN/hlElLrLpHO7hY+SFE4kyBZxMNE/SKPmkQunKdWAvSxKs2h2OX1E
-	 7gkpz5rTR3I0a4tzGLI4mmITtPFcA/ZuPxdnU1i9BbsoM4h8O8MILXaHxEU9pI912D
-	 8uxhSyj7JBrhU3Z1pn/m8s4dwQ9OM4ojmxb22HrDJrZQwV/Am8SkxLiqu3j5fSH91E
-	 eMTPeMCnejusp5K9/raSjQCOMnk8JYRUwA31WEity1rxwDDvl5LT++Wmk9vNyHxo/E
-	 1u8FlghJEQ06w==
-Message-ID: <4c73f67e-174c-497e-85a5-cb053ce657cb@collabora.com>
-Date: Wed, 22 Nov 2023 10:06:19 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tRkcgQZv"
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3940835B1
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 01:09:19 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-a0029289b1bso368242566b.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 01:09:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700644157; x=1701248957; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MDFjP3+fhsNw2akKUYyFDvgsffeDkDBRgEKMO0HpZCE=;
+        b=tRkcgQZvk4r3sZ43QvVIfizcm3DuRF7HkDVKfBUKzXwl/B3Qw+DdOBtJin+zCO0sTs
+         HvPNDyReX4Acrl35ufgk4ofX/C1lYp0AkRTtg+SWSTrD/kUqrNRPAT9HXBhiUCB4USHF
+         WAlhEcQme492Zmj0FxIfY6frjHrAOgCKW14MCl89wxlP4l7k+kZkN5TYOs0BMEBpAdjb
+         +jMNdU8yFf2ZCiaqBAW0VHSte/ohceNQyPSuP2RAC8qqmMBZ7XlxbL719SHxfrrjE26/
+         3pD9n0ZfGvs73ZrIqXLyEGKBCSqsC35SFVDBQLJEvxlxKWp7Sjb0+yu7k8NULi5rqYO9
+         9+FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700644157; x=1701248957;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MDFjP3+fhsNw2akKUYyFDvgsffeDkDBRgEKMO0HpZCE=;
+        b=XhCVOXeFWsbrfesZZndQjJ9PFxxzEsdAMF31lyDb6MtQEOnKfmSqSpw6m9TviSemd0
+         +36zH7iwtjLO1bZMMfH7SHnbccd74WdBnjcb+cmU5ddp6KJOa2BejVMeHzK/kvBidbP9
+         zxd5KCNmI2Efxyh1qmdU0zF8oCtFzjDZNBiH7K7EJQspqmyfLPuXyOG3ooybWgFywjPw
+         fz7jLUwAoFc9GGbahqTIgAIWqy7PUmKirEKYMiSr0Wlf/bRVB0u1Ff8NuSUu3zXwz+R4
+         glEhqUFa8pY7Ixiu/k4//nILTpXKuHRx+QSXzJYyIpTs7cbKGKcjkkA/5HWaWvfT4zGP
+         MXTA==
+X-Gm-Message-State: AOJu0YwWhqpj/LNuVO+SBgjmTCUe47pu9gVOG7sgrrL0w5j/kNYvd0ec
+	a20+UMaG2liK5qz9lqimYStOdg==
+X-Google-Smtp-Source: AGHT+IFZl7wEgdnoEFdZt9B2cqKnVzkpgrZ9sNjK/LyuMgkAxnpNZnVfrON3J8adQtDbtSUeNatAmw==
+X-Received: by 2002:a17:906:f0c2:b0:9fc:1236:beff with SMTP id dk2-20020a170906f0c200b009fc1236beffmr1098949ejb.65.1700644157026;
+        Wed, 22 Nov 2023 01:09:17 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.218.100])
+        by smtp.gmail.com with ESMTPSA id o15-20020a17090637cf00b009fee12d0dcdsm3392502ejc.15.2023.11.22.01.09.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Nov 2023 01:09:16 -0800 (PST)
+Message-ID: <2ced2e38-e81d-4f9b-a6c0-6ac2d1a0fff9@linaro.org>
+Date: Wed, 22 Nov 2023 10:09:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -29,199 +47,168 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panfrost: Really power off GPU cores in
- panfrost_gpu_power_off()
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, tzimmermann@suse.de,
- linux-kernel@vger.kernel.org, mripard@kernel.org,
- dri-devel@lists.freedesktop.org, wenst@chromium.org, kernel@collabora.com,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20231102141507.73481-1-angelogioacchino.delregno@collabora.com>
- <7928524a-b581-483b-b1a1-6ffd719ce650@arm.com>
- <1c9838fb-7f2d-4752-b86a-95bcf504ac2f@linaro.org>
- <6b7a4669-7aef-41a7-8201-c2cfe401bc43@collabora.com>
- <20231121175531.085809f5@collabora.com>
- <d95259b8-10cf-4ded-866c-47cbd2a44f84@linaro.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v2] docs: dt-bindings: add DTS Coding Style document
 Content-Language: en-US
-In-Reply-To: <d95259b8-10cf-4ded-866c-47cbd2a44f84@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Michal Simek <michal.simek@amd.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Dragan Simic <dsimic@manjaro.org>, wens@kernel.org,
+ =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Andrew Davis <afd@ti.com>, Arnd Bergmann <arnd@arndb.de>,
+ Bjorn Andersson <andersson@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Nishanth Menon <nm@ti.com>,
+ Olof Johansson <olof@lixom.net>, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org
+References: <20231120084044.23838-1-krzysztof.kozlowski@linaro.org>
+ <6b288a2e-d147-4bd3-b1d4-daf56295d939@gmail.com>
+ <01f9ce3b-e6e5-4b05-bf7f-0b3a5f74910a@linaro.org>
+ <CAGb2v64Vf5dDwq=KTrxwc=+w+0KUD2KVPMjmHg68Y_yukES5dQ@mail.gmail.com>
+ <7232a48b-b9ad-44b5-ae6a-d12dad70b3c4@linaro.org>
+ <58a9caacc1226c7c3a2bdfe73ef1791f@manjaro.org>
+ <cc4c789c-b595-41eb-b543-9e03549c6e61@amd.com>
+ <CAMuHMdWm-gRPHeHyuX3_eR+9chJEw3iiZwCNBnoiRPHzoMAs6w@mail.gmail.com>
+ <808270d3-2274-4fb7-a397-38538503b67c@amd.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <808270d3-2274-4fb7-a397-38538503b67c@amd.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Il 21/11/23 18:08, Krzysztof Kozlowski ha scritto:
-> On 21/11/2023 17:55, Boris Brezillon wrote:
->> On Tue, 21 Nov 2023 17:11:42 +0100
->> AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> wrote:
+On 22/11/2023 09:57, Michal Simek wrote:
+> Hi Geert,
+> 
+> On 11/22/23 09:53, Geert Uytterhoeven wrote:
+>> Hi Michal,
 >>
->>> Il 21/11/23 16:34, Krzysztof Kozlowski ha scritto:
->>>> On 08/11/2023 14:20, Steven Price wrote:
->>>>> On 02/11/2023 14:15, AngeloGioacchino Del Regno wrote:
->>>>>> The layout of the registers {TILER,SHADER,L2}_PWROFF_LO, used to request
->>>>>> powering off cores, is the same as the {TILER,SHADER,L2}_PWRON_LO ones:
->>>>>> this means that in order to request poweroff of cores, we are supposed
->>>>>> to write a bitmask of cores that should be powered off!
->>>>>> This means that the panfrost_gpu_power_off() function has always been
->>>>>> doing nothing.
+>> On Wed, Nov 22, 2023 at 9:50 AM Michal Simek <michal.simek@amd.com> wrote:
+>>> On 11/22/23 09:29, Dragan Simic wrote:
+>>>> On 2023-11-22 09:21, Krzysztof Kozlowski wrote:
+>>>>> On 22/11/2023 09:09, Chen-Yu Tsai wrote:
+>>>>>> On Wed, Nov 22, 2023 at 4:05 PM Krzysztof Kozlowski
+>>>>>> <krzysztof.kozlowski@linaro.org> wrote:
+>>>>>>>
+>>>>>>> On 21/11/2023 14:50, Rafał Miłecki wrote:
+>>>>>>>>> +Order of Properties in Device Node
+>>>>>>>>> +----------------------------------
+>>>>>>>>> +
+>>>>>>>>> +Following order of properties in device nodes is preferred:
+>>>>>>>>> +
+>>>>>>>>> +1. compatible
+>>>>>>>>> +2. reg
+>>>>>>>>> +3. ranges
+>>>>>>>>> +4. Standard/common properties (defined by common bindings, e.g. without
+>>>>>>>>> +   vendor-prefixes)
+>>>>>>>>> +5. Vendor-specific properties
+>>>>>>>>> +6. status (if applicable)
+>>>>>>>>> +7. Child nodes, where each node is preceded with a blank line
+>>>>>>>>> +
+>>>>>>>>> +The "status" property is by default "okay", thus it can be omitted.
+>>>>>>>>
+>>>>>>>> I think it would really help to include position of #address-cells and
+>>>>>>>> #size-cells here. In some files I saw them above "compatible" that seems
+>>>>>>>> unintuitive. Some prefer putting them at end which I think makes sense
+>>>>>>>> as they affect children nodes.
+>>>>>>>>
+>>>>>>>> Whatever you choose it'd be just nice to have things consistent.
+>>>>>>>
+>>>>>>> This is a standard/common property, thus it goes to (4) above.
 >>>>>>
->>>>>> Fix powering off the GPU by writing a bitmask of the cores to poweroff
->>>>>> to the relevant PWROFF_LO registers and then check that the transition
->>>>>> (from ON to OFF) has finished by polling the relevant PWRTRANS_LO
->>>>>> registers.
+>>>>>> It's probably a mix, but AFAIK a lot of the device trees in tree have
+>>>>>> #*-cells after "status". In some cases they are added in the board
+>>>>>> .dts files, not the chip/module .dtsi files.
+>>>>>
+>>>>> Existing DTS is not a good example :)
+>>>>>
 >>>>>>
->>>>>> While at it, in order to avoid code duplication, move the core mask
->>>>>> logic from panfrost_gpu_power_on() to a new panfrost_get_core_mask()
->>>>>> function, used in both poweron and poweroff.
->>>>>>
->>>>>> Fixes: f3ba91228e8e ("drm/panfrost: Add initial panfrost driver")
->>>>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>>>>> +1 that it makes sense at the end as they affect child nodes.
+>>>>>
+>>>>> I still insist that status must be the last, because:
+>>>>> 1. Many SoC nodes have address/size cells but do not have any children
+>>>>> (I2C, SPI), so we put useless information at the end.
+>>>>> 2. Status should be the final information to say whether the node is
+>>>>> ready or is not. I read the node, check properties and then look at the end:
+>>>>> a. Lack of status means it is ready.
+>>>>> b. status=disabled means device still needs board resources/customization
 >>>>
->>>>
->>>> Hi,
->>>>
->>>> This commit was added to next recently but it causes "external abort on
->>>> non-linefetch" during boot of my Odroid HC1 board.
->>>>
->>>> At least bisect points to it.
->>>>
->>>> If fixed, please add:
->>>>
->>>> Reported-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>
->>>> [    4.861683] 8<--- cut here ---
->>>> [    4.863429] Unhandled fault: external abort on non-linefetch (0x1008) at 0xf0c8802c
->>>> [    4.871018] [f0c8802c] *pgd=433ed811, *pte=11800653, *ppte=11800453
->>>> ...
->>>> [    5.164010]  panfrost_gpu_irq_handler from __handle_irq_event_percpu+0xcc/0x31c
->>>> [    5.171276]  __handle_irq_event_percpu from handle_irq_event+0x38/0x80
->>>> [    5.177765]  handle_irq_event from handle_fasteoi_irq+0x9c/0x250
->>>> [    5.183743]  handle_fasteoi_irq from generic_handle_domain_irq+0x28/0x38
->>>> [    5.190417]  generic_handle_domain_irq from gic_handle_irq+0x88/0xa8
->>>> [    5.196741]  gic_handle_irq from generic_handle_arch_irq+0x34/0x44
->>>> [    5.202893]  generic_handle_arch_irq from __irq_svc+0x8c/0xd0
->>>>
->>>> Full log:
->>>> https://krzk.eu/#/builders/21/builds/4392/steps/11/logs/serial0
->>>>    
+>>>> I agree with the "status" belonging to the very end, because it's both logical
+>>>> and much more readable.  Also, "status" is expected to be modified in the
+>>>> dependent DT files, which makes it kind of volatile and even more deserving to
+>>>> be placed last.
 >>>
->>> Hey Krzysztof,
->>>
->>> This is interesting. It might be about the cores that are missing from the partial
->>> core_mask raising interrupts, but an external abort on non-linefetch is strange to
->>> see here.
+>>> I am just curious if having status property at the end won't affect
+>>> execution/boot up time. Not sure how it is done in Linux but in U-Boot at least
+>>> (we want to have DTs in sync between Linux and U-Boot) of_find_property is
+>>> pretty much big loop over all properties. And status property defined at the end
+>>> means going over all of them to find it out to if device is present.
+>>> Not sure if Linux works in the same way but at least of_get_property is done in
+>>> the same way.
 >>
->> I've seen such external aborts in the past, and the fault type has
->> often been misleading. It's unlikely to have anything to do with a
+>> As the default is "okay", you have to loop over all properties anyway.
 > 
-> Yeah, often accessing device with power or clocks gated.
-> 
+> No doubt if you don't define status property that you need to loop over all of 
+> them. We normally describe the whole SOC with pretty much all IPs status = 
+> disabled and then in board file we are changing it to okay based on what it is 
+> actually wired out.
+> It means on our systems all nodes have status properties. If you have it at 
+> first you don't need to go over all.
 
-Except my commit does *not* gate SoC power, nor SoC clocks 🙂
+We never sacrificed code readability in favor of code execution speed,
+so neither should we do it here.
 
-What the "Really power off ..." commit does is to ask the GPU to internally power
-off the shaders, tilers and L2, that's why I say that it is strange to see that
-kind of abort.
+If the speed is a problem, project can still add a flag to dtc to
+re-shuffle properties in FDT depending on its needs.
 
-The GPU_INT_CLEAR GPU_INT_STAT, GPU_FAULT_STATUS and GPU_FAULT_ADDRESS_{HI/LO}
-registers should still be accessible even with shaders, tilers and cache OFF.
-
-Anyway, yes, synchronizing IRQs before calling the poweroff sequence would also
-work, but that'd add up quite a bit of latency on the runtime_suspend() call, so
-in this case I'd be more for avoiding to execute any register r/w in the handler
-by either checking if the GPU is supposed to be OFF, or clearing interrupts, which
-may not work if those are generated after the execution of the poweroff function.
-Or we could simply disable the irq after power_off, but that'd be hacky (as well).
-
-
-Let's see if asking to poweroff *everything* works:
-
-
----
-  drivers/gpu/drm/panfrost/panfrost_gpu.c | 14 +++++++++++---
-  1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/panfrost/panfrost_gpu.c 
-b/drivers/gpu/drm/panfrost/panfrost_gpu.c
-index 09f5e1563ebd..1c7276aaa182 100644
---- a/drivers/gpu/drm/panfrost/panfrost_gpu.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_gpu.c
-@@ -429,21 +429,29 @@ void panfrost_gpu_power_off(struct panfrost_device *pfdev)
-      int ret;
-      u32 val;
-
--    gpu_write(pfdev, SHADER_PWROFF_LO, pfdev->features.shader_present & core_mask);
-+    gpu_write(pfdev, SHADER_PWROFF_LO, pfdev->features.shader_present);
-+    gpu_write(pfdev, SHADER_PWROFF_HI, U32_MAX);
-      ret = readl_relaxed_poll_timeout(pfdev->iomem + SHADER_PWRTRANS_LO,
-                       val, !val, 1, 1000);
-      if (ret)
-          dev_err(pfdev->dev, "shader power transition timeout");
-
-      gpu_write(pfdev, TILER_PWROFF_LO, pfdev->features.tiler_present);
-+    gpu_write(pfdev, TILER_PWROFF_HI, U32_MAX);
-      ret = readl_relaxed_poll_timeout(pfdev->iomem + TILER_PWRTRANS_LO,
-                       val, !val, 1, 1000);
-      if (ret)
-          dev_err(pfdev->dev, "tiler power transition timeout");
-
--    gpu_write(pfdev, L2_PWROFF_LO, pfdev->features.l2_present & core_mask);
-+    gpu_write(pfdev, L2_PWROFF_LO, pfdev->features.l2_present);
-      ret = readl_poll_timeout(pfdev->iomem + L2_PWRTRANS_LO,
--                 val, !val, 0, 1000);
-+                     val, !val, 0, 1000);
-+    if (ret)
-+        dev_err(pfdev->dev, "l2_low power transition timeout");
-+
-+    gpu_write(pfdev, L2_PWROFF_HI, U32_MAX);
-+    ret = readl_poll_timeout(pfdev->iomem + L2_PWRTRANS_HI,
-+                     val, !val, 0, 1000);
-      if (ret)
-          dev_err(pfdev->dev, "l2 power transition timeout");
-  }
--- 
-2.42.0
-
-Cheers,
-Angelo
-
->> non-linefetch access, but it might be caused by a register access after
->> the clock or power domain driving the register bank has been disabled.
->> The following diff might help validate this theory. If that works, we
->> probably want to make sure we synchronize IRQs before disabling in the
->> suspend path.
->>
->> --->8---
->> diff --git a/drivers/gpu/drm/panfrost/panfrost_regs.h b/drivers/gpu/drm/panfrost/panfrost_regs.h
->> index 55ec807550b3..98df66e5cc9b 100644
->> --- a/drivers/gpu/drm/panfrost/panfrost_regs.h
->> +++ b/drivers/gpu/drm/panfrost/panfrost_regs.h
->> @@ -34,8 +34,6 @@
->>            (GPU_IRQ_FAULT                        |\
->>             GPU_IRQ_MULTIPLE_FAULT               |\
->>             GPU_IRQ_RESET_COMPLETED              |\
->> -          GPU_IRQ_POWER_CHANGED                |\
->> -          GPU_IRQ_POWER_CHANGED_ALL            |\
-> 
-> This helped, at least for this issue (next-20231121). Much later in
-> user-space boot I have lockups:
-> watchdog: BUG: soft lockup - CPU#4 stuck for 26s! [kworker/4:1:61]
-> 
-> [   56.329224]  smp_call_function_single from
-> __sync_rcu_exp_select_node_cpus+0x29c/0x78c
-> [   56.337111]  __sync_rcu_exp_select_node_cpus from
-> sync_rcu_exp_select_cpus+0x334/0x878
-> [   56.344995]  sync_rcu_exp_select_cpus from wait_rcu_exp_gp+0xc/0x18
-> [   56.351231]  wait_rcu_exp_gp from process_one_work+0x20c/0x620
-> [   56.357038]  process_one_work from worker_thread+0x1d0/0x488
-> [   56.362668]  worker_thread from kthread+0x104/0x138
-> [   56.367521]  kthread from ret_from_fork+0x14/0x28
-> 
-> But anyway the external abort does not appear.
-> 
-> Best regards,
-> Krzysztof
-> 
-
+Best regards,
+Krzysztof
 
