@@ -1,36 +1,35 @@
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DDDCB9;
-	Wed, 22 Nov 2023 14:12:40 -0800 (PST)
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-35937f2fadeso858685ab.2;
-        Wed, 22 Nov 2023 14:12:40 -0800 (PST)
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FDB01B9;
+	Wed, 22 Nov 2023 14:12:43 -0800 (PST)
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7a93df91813so6579539f.2;
+        Wed, 22 Nov 2023 14:12:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700691159; x=1701295959;
+        d=1e100.net; s=20230601; t=1700691162; x=1701295962;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oQrmqAZcdIuXmqszFM5kR+KdU7shYUbjsm44jbecVtk=;
-        b=HmmXPwzc50joKTkOWtAw3+vfvwRiCJwUxb66bn0t0RkrnwXrWSRk3c6b5Shvdoh2sU
-         1Ws/58s/BN2eTAn9XZvjg6u01uhbmcGAOH7EnsT+kTbG2DIzyuyoxcgEUpJSXFmnJePk
-         QQFX+2Kc5fgSuinpVmNBN0WU84ER/oosxaKkNnMFeDluUotIq3Bd6gjBQR3ybPRhwEjb
-         3YjUYSLEYZ36hbpwG01KySCr8IpTslGHW3dGY/IF9WMA4uRhuAgeCglzQNyCJgSACRSa
-         P63Vid7B+ctDcka/yhDiQzEvFAXyWjeYu/OLlYTrWUwkdQoXBUUVmXBRHUsORX3WYomF
-         TyAA==
-X-Gm-Message-State: AOJu0YwUMbJYNNiUHMB89pLYoBA7II/J2cjO01l4lvOT9QyA4sONZp2z
-	KAWDU3LqmPgemTxsBpStKA==
-X-Google-Smtp-Source: AGHT+IGj21a13xz1WqdS/H6Nqa3rnnJqU98fDkeH4YoBfe8sZRN0UwRgSamoEKVV6rR3nWw7fbCw5w==
-X-Received: by 2002:a92:c5cb:0:b0:35b:110f:8127 with SMTP id s11-20020a92c5cb000000b0035b110f8127mr3639999ilt.26.1700691159445;
-        Wed, 22 Nov 2023 14:12:39 -0800 (PST)
+        bh=hU6Wnghj5KH1Ld3lLkNyhwgfAXJhDGyB0CCvRi7u8mk=;
+        b=UthVPCrkPmuaSKUpj8hiQFvad2Bn3BhipezxF0q9MXsmZXF2YcmG67xt4d0EwJcAlt
+         1EGHrqmIS+C3trWjV+xrjV4+9QUxOzTmZ05uo0hlD/B7JSjAiLa026Tm62EmkbEda06t
+         WEJk2EH85L7uFCpVtYQq/HFNuCoPQBCRgYecP5JKIbfu+v//01SyhKoA1f+f2HvjO/oL
+         CSLwdjWd1S+RCnfJOMXHnHgVlmx7ayvUGGcqdkocLFPtW+u39r7HQMN8Rab2+0i8hnKz
+         sza2ZakkiflBqx+x1KHtUkJmItDpQxZs0YSlT3q5a/8f6fs+pUblaILtz8AY2++7+5/Q
+         INiA==
+X-Gm-Message-State: AOJu0YzL8w2dcOTnHFBHPGQZTRKtumb2Ljq4zhuVhxU5Kme2gs/ZYh27
+	jKitkDsZ8Z6nUMFEQugiY5x37Nh92w==
+X-Google-Smtp-Source: AGHT+IF8osr8TMYr2K7RbdJl1f0Qs0a8Vvy9ayPPg6W5HhHI5G6ri/6sDydnhfguLO7f2AvVQEKSig==
+X-Received: by 2002:a92:908:0:b0:359:d397:c806 with SMTP id y8-20020a920908000000b00359d397c806mr4100582ilg.18.1700691162319;
+        Wed, 22 Nov 2023 14:12:42 -0800 (PST)
 Received: from herring.priv ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id y17-20020a056e02119100b0035b19b773b8sm159259ili.59.2023.11.22.14.12.37
+        by smtp.gmail.com with ESMTPSA id r3-20020a92cd83000000b00357ce043118sm159221ilb.79.2023.11.22.14.12.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Nov 2023 14:12:38 -0800 (PST)
-Received: (nullmailer pid 2753842 invoked by uid 1000);
+        Wed, 22 Nov 2023 14:12:41 -0800 (PST)
+Received: (nullmailer pid 2753836 invoked by uid 1000);
 	Wed, 22 Nov 2023 22:12:33 -0000
 From: Rob Herring <robh@kernel.org>
-Date: Wed, 22 Nov 2023 15:12:35 -0700
-Subject: [PATCH v2 4/4] arm/arm64: dts: samsung: Always enable extra W=1
- warnings
+Date: Wed, 22 Nov 2023 15:12:32 -0700
+Subject: [PATCH v2 1/4] kbuild: Move dtc graph_child_address warning to W=2
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -39,51 +38,55 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231122-dtc-warnings-v2-4-bd4087325392@kernel.org>
+Message-Id: <20231122-dtc-warnings-v2-1-bd4087325392@kernel.org>
 References: <20231122-dtc-warnings-v2-0-bd4087325392@kernel.org>
 In-Reply-To: <20231122-dtc-warnings-v2-0-bd4087325392@kernel.org>
 To: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor@kernel.org>
 Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 X-Mailer: b4 0.13-dev
 
-Samsung platforms are clean of W=1 dtc warnings, so enable the warnings
-by default. This way submitters don't have to remember to run a W=1
-build of the .dts files and the grumpiness of the maintainers can be
-reduced.
+There are cases where having a single child node with a unit-address is
+valid. For example, other child nodes may be optional or added via a
+DT overlay. This hasn't mattered until now, but as platforms become
+free of W=1 warnings, we want to enable W=1 by default on a per
+platform basis. So move the warning to W=2.
+
+In the process, the logic can be reworked a bit to avoid specifying a
+given warning in multiple places.
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
-v2:
- - Use new variable name
----
- arch/arm/boot/dts/samsung/Makefile  | 3 +++
- arch/arm64/boot/dts/exynos/Makefile | 3 +++
- 2 files changed, 6 insertions(+)
+ scripts/Makefile.lib | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/samsung/Makefile b/arch/arm/boot/dts/samsung/Makefile
-index 7becf36656b1..fffc5c45d441 100644
---- a/arch/arm/boot/dts/samsung/Makefile
-+++ b/arch/arm/boot/dts/samsung/Makefile
-@@ -1,4 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
-+
-+KBUILD_EXTRA_WARN_DTC=1
-+
- dtb-$(CONFIG_ARCH_EXYNOS3) += \
- 	exynos3250-artik5-eval.dtb \
- 	exynos3250-monk.dtb \
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index 6e4ba69268e5..9cb188ef470d 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -1,4 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
-+
-+KBUILD_EXTRA_WARN_DTC=1
-+
- dtb-$(CONFIG_ARCH_EXYNOS) += \
- 	exynos5433-tm2.dtb		\
- 	exynos5433-tm2e.dtb		\
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 68d0134bdbf9..a67f781ae8ee 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -340,8 +340,6 @@ quiet_cmd_gzip = GZIP    $@
+ # DTC
+ # ---------------------------------------------------------------------------
+ DTC ?= $(objtree)/scripts/dtc/dtc
+-DTC_FLAGS += -Wno-interrupt_provider \
+-	-Wno-unique_unit_address
+ 
+ # Disable noisy checks by default
+ ifeq ($(findstring 1,$(KBUILD_EXTRA_WARN)),)
+@@ -357,9 +355,11 @@ endif
+ 
+ ifneq ($(findstring 2,$(KBUILD_EXTRA_WARN)),)
+ DTC_FLAGS += -Wnode_name_chars_strict \
+-	-Wproperty_name_chars_strict \
+-	-Winterrupt_provider \
+-	-Wunique_unit_address
++	-Wproperty_name_chars_strict
++else
++DTC_FLAGS += -Wno-interrupt_provider \
++	-Wno-unique_unit_address \
++	-Wno-graph_child_address
+ endif
+ 
+ DTC_FLAGS += $(DTC_FLAGS_$(basetarget))
 
 -- 
 2.42.0
