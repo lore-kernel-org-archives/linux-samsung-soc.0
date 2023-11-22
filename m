@@ -1,243 +1,113 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JSqqO722"
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C18DED6A
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 00:21:32 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-a00b01955acso332785266b.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 00:21:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700641291; x=1701246091; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dWZXWR10yN3RjItd4uVERoZZUJiKuZqt9/puLFdDo8c=;
-        b=JSqqO722RoBe67gbrpVw40PsQvkcZTEtACghpfz5m2+NvgwryhCpmFhy8edWH8hTiG
-         sGtJf7GmLvqtC1qEGlFQLgFz0qnBuxSYAoqRehzZgnW8ckP2lNFYCwQTImZY8Aem3LuY
-         57Tls+ytMT+VMI6vaWP7YGDUoW8g08sX21rbhFRLiB3J5XTIktOL6bSlXFAPMWavMadc
-         8c7iCR5NaEiCO0YB3XTwMPkmcrQ0EE1UVuDL/JAKf8AFWsdTLLrd90AarlhHfqmdIR49
-         uJkvF/1oMdh4HX0b76Y5N/MwFAhz2/7r0WOAS7cLUf1shyMdi6DsIzTqGZOqMzt7wCyI
-         szFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700641291; x=1701246091;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dWZXWR10yN3RjItd4uVERoZZUJiKuZqt9/puLFdDo8c=;
-        b=Kqiz7R3oPlUOHziiu+0y+TPmGNQTFLeQcAUPR+syJXWrPwpkbkL+JPT5R4sojlgaKm
-         +NsJu51tN93vus4uMwrl+qaYtpwFkwntM01gBenDF/bpSTVXT5UZdHa8Ude/BuB8UGiT
-         a3tlu1S5cJ8GMTskph0Rj2w+vOL6N/rmUq/w8Ku4qqfs5RxbOZtQFDbVirxMdboHWqqV
-         V6+Kr8KOXvlh3xCNOewrsrTBtuMvK/z9jX1dYeNiUHIc6ZOiO68fwZqRvD9Pw3m3xVoa
-         cVoXjrEGsvsiSFGqoL9xfeyXu74uhGw3xeII5KPNGYC7f7lMhqX4vVPEroq8nLIjTASK
-         qseg==
-X-Gm-Message-State: AOJu0YwJK/GZ4oZs/u9+NGS25JV/JJCYNNuSJVskg9/lzKgiDGA3D/vs
-	7soptAbuLqpwQla+Ddo0EtaCcg==
-X-Google-Smtp-Source: AGHT+IGimlEAf2nqN7DdSTRsvU00zMY71afscJi/CVlHORRd9wbC6UZk2rO3GUlFA+T+gwzhBkLv6A==
-X-Received: by 2002:a17:907:cbc9:b0:a00:1c9a:a472 with SMTP id vk9-20020a170907cbc900b00a001c9aa472mr1438483ejc.7.1700641291154;
-        Wed, 22 Nov 2023 00:21:31 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.100])
-        by smtp.gmail.com with ESMTPSA id g1-20020a170906538100b009fef7d22c98sm3269289ejo.35.2023.11.22.00.21.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Nov 2023 00:21:30 -0800 (PST)
-Message-ID: <7232a48b-b9ad-44b5-ae6a-d12dad70b3c4@linaro.org>
-Date: Wed, 22 Nov 2023 09:21:27 +0100
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="y00lX2yo"
+X-Greylist: delayed 578 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 22 Nov 2023 00:24:53 PST
+Received: from mail.manjaro.org (mail.manjaro.org [IPv6:2a01:4f8:c0c:51f3::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC6ED9A;
+	Wed, 22 Nov 2023 00:24:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] docs: dt-bindings: add DTS Coding Style document
-Content-Language: en-US
-To: wens@kernel.org
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1700640909;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=344eE/zF04wdsbwUUyPMJHUHm7b7bgjWnD7hX0tAWOs=;
+	b=y00lX2yoRuI5GcAvxxLqMeutqSIajRKfUc1DiFHsAu/omK2D9ON8PZh/mrwmVkn0jV1O9v
+	8ku/Cr+kckgScDhXDY3WIJ1QbFDku3no72CtSv6go/hhUlnWJjQ+VcqEX3vLBdlanMvLGZ
+	otWOZmmQraYaw+F3aqp0AA4yW8eOoWxjHLpZJpemedJ5Yc/Fp77ed4lCr+PYRBtczCKOS+
+	rNj7Vw5OLhUbtwb1x4V051jPcs6xFo+IQkX/ddwUFvV/E+6lpihXxvmFwqv36Brgqhk8ga
+	Ujq6mLpzvHwYNEpk/6MvJaQkf284cPLivRDsjI1xcRG10WsnjlMZNWhuk3OKbg==
+Date: Wed, 22 Nov 2023 09:15:08 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek
+ <michal.simek@amd.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Andrew Davis <afd@ti.com>, Arnd Bergmann <arnd@arndb.de>,
- Bjorn Andersson <andersson@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Heiko Stuebner <heiko@sntech.de>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- Michal Simek <michal.simek@amd.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Nishanth Menon <nm@ti.com>,
- Olof Johansson <olof@lixom.net>, linux-rockchip@lists.infradead.org,
+ Andrew Davis <afd@ti.com>, Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson
+ <andersson@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Heiko
+ Stuebner <heiko@sntech.de>, Konrad Dybcio <konrad.dybcio@linaro.org>, Neil
+ Armstrong <neil.armstrong@linaro.org>, Nishanth Menon <nm@ti.com>, Olof
+ Johansson <olof@lixom.net>, linux-rockchip@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
  linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2] docs: dt-bindings: add DTS Coding Style document
+In-Reply-To: <26b5fd29-fcd0-4c68-8bfe-a73a660fb2c9@linaro.org>
 References: <20231120084044.23838-1-krzysztof.kozlowski@linaro.org>
- <6b288a2e-d147-4bd3-b1d4-daf56295d939@gmail.com>
- <01f9ce3b-e6e5-4b05-bf7f-0b3a5f74910a@linaro.org>
- <CAGb2v64Vf5dDwq=KTrxwc=+w+0KUD2KVPMjmHg68Y_yukES5dQ@mail.gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAGb2v64Vf5dDwq=KTrxwc=+w+0KUD2KVPMjmHg68Y_yukES5dQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+ <19358871-009d-4498-9c13-90d5338b1e9f@amd.com>
+ <76fa8f61-fe31-4040-a38d-cc05be3f4f17@linaro.org>
+ <6c80a285-27fc-4d61-9eef-af4744a9decc@amd.com>
+ <cc57dcf1-3c32-426e-920c-6f0741027797@linaro.org>
+ <CAMuHMdVGyXizPw9Rggj8fQeNdbx3udRcsHFhz_sqYZzjN1CnZQ@mail.gmail.com>
+ <26b5fd29-fcd0-4c68-8bfe-a73a660fb2c9@linaro.org>
+Message-ID: <be7b6656e2c8064ebf1f1e6a301aa83b@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 22/11/2023 09:09, Chen-Yu Tsai wrote:
-> On Wed, Nov 22, 2023 at 4:05 PM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->>
->> On 21/11/2023 14:50, Rafał Miłecki wrote:
->>>> +Order of Nodes
->>>> +--------------
->>>> +
->>>> +1. Nodes within any bus, thus using unit addresses for children, shall be
->>>> +   ordered incrementally by unit address.
->>>> +   Alternatively for some sub-architectures, nodes of the same type can be
->>>> +   grouped together (e.g. all I2C controllers one after another even if this
->>>> +   breaks unit address ordering).
->>>> +
->>>> +2. Nodes without unit addresses should be ordered alpha-numerically by the node
->>>> +   name.  For a few types of nodes, they can be ordered by the main property
->>>> +   (e.g. pin configuration states ordered by value of "pins" property).
->>>> +
->>>> +3. When extending nodes in the board DTS via &label, the entries should be
->>>> +   ordered alpha-numerically.
->>>
->>> Just an idea. Would that make (more) sense to make &label-like entries
->>> match order of nodes in included .dts(i)?
->>>
->>> Adventages:
->>> 1. We keep unit address incremental order that is unlikely to change
->>>
->>> Disadventages:
->>> 1. More difficult to verify
->>
->> Rob also proposed this and I believe above disadvantage here is crucial.
->> If you add new SoC with board DTS you are fine. But if you add only new
->> board, the order of entries look random in the diff hunk. Reviewer must
->> open SoC DTSI to be able to review the patch with board DTS.
->>
->> If review is tricky and we do not have tool to perform it automatically,
->> I am sure submissions will have disordered board DTS.
->>
->>>
->>>
->>>> +Example::
->>>> +
->>>> +    // SoC DTSI
->>>> +
->>>> +    / {
->>>> +            cpus {
->>>> +                    // ...
->>>> +            };
->>>> +
->>>> +            psci {
->>>> +                    // ...
->>>> +            };
->>>> +
->>>> +            soc@ {
->>>> +                    dma: dma-controller@10000 {
->>>> +                            // ...
->>>> +                    };
->>>> +
->>>> +                    clk: clock-controller@80000 {
->>>> +                            // ...
->>>> +                    };
->>>> +            };
->>>> +    };
->>>> +
->>>> +    // Board DTS
->>>> +
->>>> +    &clk {
->>>> +            // ...
->>>> +    };
->>>> +
->>>> +    &dma {
->>>> +            // ...
->>>> +    };
->>>> +
->>>> +
->>>> +Order of Properties in Device Node
->>>> +----------------------------------
->>>> +
->>>> +Following order of properties in device nodes is preferred:
->>>> +
->>>> +1. compatible
->>>> +2. reg
->>>> +3. ranges
->>>> +4. Standard/common properties (defined by common bindings, e.g. without
->>>> +   vendor-prefixes)
->>>> +5. Vendor-specific properties
->>>> +6. status (if applicable)
->>>> +7. Child nodes, where each node is preceded with a blank line
->>>> +
->>>> +The "status" property is by default "okay", thus it can be omitted.
->>>
->>> I think it would really help to include position of #address-cells and
->>> #size-cells here. In some files I saw them above "compatible" that seems
->>> unintuitive. Some prefer putting them at end which I think makes sense
->>> as they affect children nodes.
->>>
->>> Whatever you choose it'd be just nice to have things consistent.
->>
->> This is a standard/common property, thus it goes to (4) above.
+On 2023-11-22 09:01, Krzysztof Kozlowski wrote:
+> On 21/11/2023 17:04, Geert Uytterhoeven wrote:
+>> Hi Krzysztof,
+>> 
+>> On Tue, Nov 21, 2023 at 1:36 PM Krzysztof Kozlowski
+>> <krzysztof.kozlowski@linaro.org> wrote:
+>>> On 21/11/2023 12:55, Michal Simek wrote:
+>>>>>> device-tree specification v0.4. Chapter 2.2.1/Table 2.1 is 
+>>>>>> describing much more
+>>>>>> valid characters for node names.
+>>>>>> It means above description is not accurate or DT spec should be 
+>>>>>> updated.
+>>>>> 
+>>>>> Spec allows way to much. dtc doesn't.
+>>>>> One thing is the spec, second
+>>>>> thing is coding style.
+>>>> 
+>>>>  From my point of view spec is primary source of truth. If spec is 
+>>>> saying name
+>>>> can use upper case then I can use it. If upper case is not
+>>>> recommended/deprecated because of whatever reason spec should be 
+>>>> updated to
+>>>> reflect it.
+>>>> I know that DTC is reporting other issues but isn't it the right way 
+>>>> to reflect
+>>>> it back to the spec?
+>>> 
+>>> Then why aren't you putting Linux Coding Style into C spec? I do not 
+>>> see
+>>> any relation between specification of the language and the coding 
+>>> style
+>>> chosen for given project.
+>>> 
+>>> Zephyr can go with upper-case. Why it should be disallowed by the 
+>>> spec?
+>> 
+>> I thought there was only One DT to bind them all?
+>> IMHO it would be better to align DT usage of Zephyr and Linux (and
+>> anything else).
 > 
-> It's probably a mix, but AFAIK a lot of the device trees in tree have
-> #*-cells after "status". In some cases they are added in the board
-> .dts files, not the chip/module .dtsi files.
+> I actually don't know what Zephyr decides, but used it as example that
+> it might want different coding style. Just like C standard allows to
+> have all variables (including local ones) upper-case, we do not have
+> such coding style. And no one proposes to update C spec to match Linux
+> coding style. :)
 
-Existing DTS is not a good example :)
+I also agree about the need to differentiate the coding styles from the 
+underlying specifications.  Also, as we know, the C language is the 
+unifying factor between various projects, but with wildly differing 
+coding styles.  Expecting all those projects to have their C coding 
+styles aligned wouldn't be reasonable, if you agree.
 
-> 
-> +1 that it makes sense at the end as they affect child nodes.
-
-I still insist that status must be the last, because:
-1. Many SoC nodes have address/size cells but do not have any children
-(I2C, SPI), so we put useless information at the end.
-2. Status should be the final information to say whether the node is
-ready or is not. I read the node, check properties and then look at the end:
-a. Lack of status means it is ready.
-b. status=disabled means device still needs board resources/customization
-
-
-Best regards,
-Krzysztof
-
+BTW, having this document as part of the kernel documentation will be 
+great, and it's in fact quite overdue, if you agree.  Huge thanks to 
+everyone working on it!
