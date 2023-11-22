@@ -1,166 +1,108 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wMBge+lP"
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C7091AA
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 00:18:56 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-a011e9bf336so281063466b.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 00:18:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="odLvzRyw"
+Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14EB7109
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 00:20:58 -0800 (PST)
+Received: by mail-vs1-xe2e.google.com with SMTP id ada2fe7eead31-462a978c470so828677137.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 00:20:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700641135; x=1701245935; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:references:cc:to
-         :from:content-language:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=X0YXXH3SkEMAoBKq1QzN50xmafxvkaGcJmjft1eI9Nc=;
-        b=wMBge+lPV37fcDAunMv+XCS2xKJcNdhXBh9mrbM3uFwGlXvqjtbT4hHKoj6Of4ux9c
-         rIm/+z0QcXqwgikExGzIVOHRJoNYtInguqxzCeXJnCv79DQ2OVqj02zsiLQ7Eu4T6tQ3
-         N6s2PIypmpEHrMog71WCXkVdiWuokZbM2irzFekfn/+X0UjAoPuivs/iqU+s2SmjdoqI
-         vu/HLOWw1IhQaJp7NZKhOodvLwTVLVZg6ccJ+SviyrElRu5VNownYUaclB+BEoRKuNbJ
-         xlYmXtcQ8SWcTlhaKS3yBmAMGsalfmUm6aghkmW0uMNz/gjtehCv9sC3dlYEAHJ5MoeL
-         E0dg==
+        d=linaro.org; s=google; t=1700641257; x=1701246057; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4I8dRODFUwv8GNo/5lVqWf42DaYrEmmY1wMx98kbsuI=;
+        b=odLvzRywKLvkWkcm6Z/Zy1hDwAhXTPapvw0AO3ePOU9vFYzD5xRmy1pmPaHdBZxCmL
+         Bw23TKP8axRvPHBytCL0Qytuo22fqU+3ybY/W28GC24sKp7lFYYIA+5XGjQXEnYZlId3
+         bgrCckS/u5FjCmuZtm+Z7e6a6PvvnBvvWAIB4YYnXAmfMT7V1R2zhw9uVae08eouX9og
+         dEkpFzxfuMRJyb5Dmidd5Pv/0OlqGR6fvAEtisT2EW2USLA2SoGXNC/EPmo686C76JZ9
+         4SL6z6yurV5/5EOxWf36sKEiec7eputDfissmYYn3EcvUno+xGGyIfY3V7GdxBwofTuJ
+         Ljlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700641135; x=1701245935;
-        h=content-transfer-encoding:in-reply-to:autocrypt:references:cc:to
-         :from:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1700641257; x=1701246057;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=X0YXXH3SkEMAoBKq1QzN50xmafxvkaGcJmjft1eI9Nc=;
-        b=eZJHNNj9aEmR3ve2feOjTwpp0wUD3CrGLAu5a95N/iWDkJ0M6ex69IfwjV8tmWl1Hj
-         ukhbAOq+awTIrsV7NwrC8pyx9///kJbsyAKUW604GLeh+ZT2VmXfaYnbFZTBbrZU3ZsP
-         gVQd2NBhq1qvnDu0oX+h2FEVSxhZxLfFSUaVqgFBYq9PJvm/HuQHJzRlnu0XRKhq7urb
-         OQG59bi5Jc41cilED9WekzJ1rxiEBTjTRK0k7jGcyzddzvk8DdlIX1kO2C2H3hEH5naf
-         zkzvh7djh1hnQ1F77VM+LPhrHdHTEFUnHraYAOhboRt3zxzxdmrFh8wAUKQ0AVHD9k0d
-         g5PA==
-X-Gm-Message-State: AOJu0YyX/8gK97JhqZooRuBvqhbGkinZDOT56XB4mI2wqcSMKt3J01Vz
-	MNl2HMwsHhx7GAl4iOfnmZlYuQ==
-X-Google-Smtp-Source: AGHT+IGprZgS8NtTKUo/owLb6OK4qTVEU1HPgaBvwgvagLHDMATog418AT18MZwsN4WKI72uEc3ZYA==
-X-Received: by 2002:a17:907:2915:b0:9c3:1d7e:f5b5 with SMTP id eq21-20020a170907291500b009c31d7ef5b5mr725283ejc.20.1700641135033;
-        Wed, 22 Nov 2023 00:18:55 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.100])
-        by smtp.gmail.com with ESMTPSA id r15-20020a1709067fcf00b00985ed2f1584sm6300704ejs.187.2023.11.22.00.18.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Nov 2023 00:18:54 -0800 (PST)
-Message-ID: <630cc672-b400-4302-9fde-a5bf9a8bab17@linaro.org>
-Date: Wed, 22 Nov 2023 09:18:52 +0100
+        bh=4I8dRODFUwv8GNo/5lVqWf42DaYrEmmY1wMx98kbsuI=;
+        b=oUuVtoOLZqrkB7SuDtVFUM86jo2rtzdcyjOlLJP06lx6Qb8TuCOTqXd3lda1k3cL6+
+         SCp94wP/MEXuryJyYN3ucm6jSXoVsoSnd5ILi+hSEVBrhPhkIvbDtWZheNy1a73JOLgH
+         hWGbjjR3ZC8CJmjR2HYeuF28D4NbadjKjjYksyUDakWVVFrD6GDX4uvEe4BdcABNtbkr
+         Lw3Xi89nbJbnSxKg/afIHWI6eKKzfHDkM5DDhXXtcWgOtSR/eTreaoS/VPtxTDoc1w4J
+         QSGyoDx9mg+nAdKqMvhuS/JdE07oC/MO2qnZO+jo5RfuPTwPROQolvuCSHsqQ3A019WH
+         NRRQ==
+X-Gm-Message-State: AOJu0YwuZ3P/JlQFe7BTyOmdhF+y8Ti75GBfnlqcA77ofH2Hng7UNiJ8
+	JxItMUYSgD6tv9K/mlqRRofB+BXYqLkk0dntCdL/Aw==
+X-Google-Smtp-Source: AGHT+IH6MXRD7recCukd9ZPlXrdn9+l+K/d0U/kF9HaOQ28/JOjYehYeGW3YeHAn90fSzCuc3t+BUm1b6U6nd0pNRfU=
+X-Received: by 2002:a05:6102:108a:b0:462:7f9d:d263 with SMTP id
+ s10-20020a056102108a00b004627f9dd263mr1596382vsr.8.1700641256954; Wed, 22 Nov
+ 2023 00:20:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] docs: dt-bindings: add DTS Coding Style document
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Andrew Davis <afd@ti.com>, Arnd Bergmann <arnd@arndb.de>,
- Bjorn Andersson <andersson@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Heiko Stuebner <heiko@sntech.de>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- Michal Simek <michal.simek@amd.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Nishanth Menon <nm@ti.com>,
- Olof Johansson <olof@lixom.net>, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-arm-msm@vger.kernel.org
-References: <20231120084044.23838-1-krzysztof.kozlowski@linaro.org>
- <14c3900f-8f2e-4614-8317-f85763d1d953@lunn.ch>
- <16cba31d-534a-4658-868a-c1ff3165cf11@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <16cba31d-534a-4658-868a-c1ff3165cf11@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20231120212037.911774-1-peter.griffin@linaro.org>
+ <20231120212037.911774-16-peter.griffin@linaro.org> <CAPLW+4m+vG62V++izkycRYEhcTpoT+G=g+3Y4j8vqEpeX2uEPw@mail.gmail.com>
+ <8d838a0b-6a13-4538-8dd6-e044ebfabca7@roeck-us.net> <82df32ea-9ca9-44ac-b1ca-719f68d4f58b@linaro.org>
+In-Reply-To: <82df32ea-9ca9-44ac-b1ca-719f68d4f58b@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 22 Nov 2023 08:20:43 +0000
+Message-ID: <CADrjBPpjMtF36rA3_5NmKk8iw1vEoBZVCTw1auowWte8KGie8g@mail.gmail.com>
+Subject: Re: [PATCH v4 15/19] watchdog: s3c2410_wdt: Add support for WTCON
+ register DBGACK_MASK bit
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Sam Protsenko <semen.protsenko@linaro.org>, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, 
+	conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com, 
+	s.nawrocki@samsung.com, linus.walleij@linaro.org, wim@linux-watchdog.org, 
+	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, olof@lixom.net, 
+	gregkh@linuxfoundation.org, jirislaby@kernel.org, cw00.choi@samsung.com, 
+	alim.akhtar@samsung.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
+	saravanak@google.com, willmcvicker@google.com, soc@kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+	kernel-team@android.com, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 21/11/2023 08:47, Krzysztof Kozlowski wrote:
-> On 20/11/2023 21:15, Andrew Lunn wrote:
->>> +Naming and Valid Characters
->>> +---------------------------
->>> +
->>> +1. Node and property names are allowed to use only:
->>> +
->>> +   * lowercase characters: [a-z]
->>> +   * digits: [0-9]
->>> +   * dash: -
->>> +
->>> +2. Labels are allowed to use only:
->>> +
->>> +   * lowercase characters: [a-z]
->>> +   * digits: [0-9]
->>> +   * underscore: _
->>> +
->>> +3. Unit addresses should use lowercase hex, without leading zeros (padding).
->>> +
->>> +4. Hex values in properties, e.g. "reg", should use lowercase hex.  The address
->>> +   part can be padded with leading zeros.
->>> +
->>> +Example::
->>> +
->>> +	gpi_dma2: dma-controller@800000 {
->>> +		compatible = "qcom,sm8550-gpi-dma", "qcom,sm6350-gpi-dma";
->>> +		reg = <0x0 0x00800000 0x0 0x60000>;
->>> +	}
->>
->> Hi Krzysztof
->>
->> What i like about the Linux Coding Style is that most sections have a
->> Rationale. I like the way it explains the 'Why?'. It makes it feel
->> less arbitrary. When it does not seem arbitrary, but reasoned, i find
->> it easier to follow.
->>
->> Could you add rationale like the Coding Style?
-> 
-> I did not do it on purpose because it would grow too much.
+Hi Krzysztof / Guenter / Sam,
 
-I added short rationale in coming v3.
+On Wed, 22 Nov 2023 at 07:53, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 21/11/2023 19:10, Guenter Roeck wrote:
+>
+> >>>   static const struct s3c2410_wdt_variant drv_data_gs101_cl1 = {
+> >>> @@ -291,7 +296,7 @@ static const struct s3c2410_wdt_variant drv_data_gs101_cl1 = {
+> >>>          .cnt_en_reg = GS_CLUSTER1_NONCPU_OUT,
+> >>>          .cnt_en_bit = 7,
+> >>>          .quirks = QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_MASK_RESET | QUIRK_HAS_PMU_CNT_EN |
+> >>> -                 QUIRK_HAS_WTCLRINT_REG,
+> >>> +                 QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_DBGACK_BIT,
+> >>>   };
+> >>>
+> >>
+> >> This patch states it's adding the feature, but in fact it's also
+> >> enabling this feature for gs101. Suggest moving this patch before the
+> >> one enabling gs101 wdt. This way, one patch will only add the feature,
+> >> and another patch will enable gs101 entirely (with this feature used).
+> >> At least it seems like more atomic approach to me.
+> >>
+> >
+> > Both approaches have their merits and their downsides. I for my part am not
+> > even sure if DBGACK_MASK should be enabled unconditionally if supported.
+> > With your approach, it would be impossible (or at least more difficult) to
+> > revert if it turns out to be broken and/or have unexpected side effects.
+> > That seems less desirable to me than the current approach.
+>
+> Reversing the patches does not change this. It is enabled
+> unconditionally in current order as well.
+>
+> Sam's idea is correct here - first you add support for new quirk, then
+> you add new SoC which will use this quirk. Doing the other way - first
+> SoC and then new quirk - looks like SoC was added incomplete.
 
-Best regards,
-Krzysztof
+Sure I can swap the order around if that's what you prefer.
 
+I ordered it this way so it was clear who the user of the new debug feature was.
+
+Peter
