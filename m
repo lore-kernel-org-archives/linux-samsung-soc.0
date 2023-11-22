@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tRkcgQZv"
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3940835B1
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 01:09:19 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-a0029289b1bso368242566b.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 01:09:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VHBw1zlx"
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8F83199
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 01:29:48 -0800 (PST)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-548f6f3cdc9so2767803a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 01:29:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700644157; x=1701248957; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1700645387; x=1701250187; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=MDFjP3+fhsNw2akKUYyFDvgsffeDkDBRgEKMO0HpZCE=;
-        b=tRkcgQZvk4r3sZ43QvVIfizcm3DuRF7HkDVKfBUKzXwl/B3Qw+DdOBtJin+zCO0sTs
-         HvPNDyReX4Acrl35ufgk4ofX/C1lYp0AkRTtg+SWSTrD/kUqrNRPAT9HXBhiUCB4USHF
-         WAlhEcQme492Zmj0FxIfY6frjHrAOgCKW14MCl89wxlP4l7k+kZkN5TYOs0BMEBpAdjb
-         +jMNdU8yFf2ZCiaqBAW0VHSte/ohceNQyPSuP2RAC8qqmMBZ7XlxbL719SHxfrrjE26/
-         3pD9n0ZfGvs73ZrIqXLyEGKBCSqsC35SFVDBQLJEvxlxKWp7Sjb0+yu7k8NULi5rqYO9
-         9+FA==
+        bh=s1w8ab5r90+EJ51l39hOBpCVC+IvzWdxIq4B5cXP4xQ=;
+        b=VHBw1zlxF1aESjz83LrfpuLbz3J2smOnf1kcqO6I5175vOFefUao3zvEvIyWvYpOZp
+         idYMBLiWhCyUCTDKzeRNa65Pi2nemK3EyHqwhpnwXQrRfG4msX7mH5wsSTUrp8XciZ0v
+         xtTcuYLR4Vt3UpHwDh9deUKUoHMvHyuL3P639V+f1NwY2EKvKG9FToyoECYVOAxJi0eD
+         b6qPH4IUKbaGmOJ+SGgWDd3Sx7x8+pJpRSgw6oB51DEQSAXpw2mcVfc24uLbc2uwmr7j
+         80NjFxQ1VpE/HoL8ePaOzE9mRpPbL078rXAZd+qXC0Gz96hV60A26YSxPG08YDKYrf2v
+         kQuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700644157; x=1701248957;
+        d=1e100.net; s=20230601; t=1700645387; x=1701250187;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MDFjP3+fhsNw2akKUYyFDvgsffeDkDBRgEKMO0HpZCE=;
-        b=XhCVOXeFWsbrfesZZndQjJ9PFxxzEsdAMF31lyDb6MtQEOnKfmSqSpw6m9TviSemd0
-         +36zH7iwtjLO1bZMMfH7SHnbccd74WdBnjcb+cmU5ddp6KJOa2BejVMeHzK/kvBidbP9
-         zxd5KCNmI2Efxyh1qmdU0zF8oCtFzjDZNBiH7K7EJQspqmyfLPuXyOG3ooybWgFywjPw
-         fz7jLUwAoFc9GGbahqTIgAIWqy7PUmKirEKYMiSr0Wlf/bRVB0u1Ff8NuSUu3zXwz+R4
-         glEhqUFa8pY7Ixiu/k4//nILTpXKuHRx+QSXzJYyIpTs7cbKGKcjkkA/5HWaWvfT4zGP
-         MXTA==
-X-Gm-Message-State: AOJu0YwWhqpj/LNuVO+SBgjmTCUe47pu9gVOG7sgrrL0w5j/kNYvd0ec
-	a20+UMaG2liK5qz9lqimYStOdg==
-X-Google-Smtp-Source: AGHT+IFZl7wEgdnoEFdZt9B2cqKnVzkpgrZ9sNjK/LyuMgkAxnpNZnVfrON3J8adQtDbtSUeNatAmw==
-X-Received: by 2002:a17:906:f0c2:b0:9fc:1236:beff with SMTP id dk2-20020a170906f0c200b009fc1236beffmr1098949ejb.65.1700644157026;
-        Wed, 22 Nov 2023 01:09:17 -0800 (PST)
+        bh=s1w8ab5r90+EJ51l39hOBpCVC+IvzWdxIq4B5cXP4xQ=;
+        b=pi8Q2y/cdyejzi0QAUkerKOE1kJKKUbgDx1ZaMK9Au+v4dBT5z1bDa9pYgQoWuFbLz
+         ys2tv+fQiykCzXYcZNAz8DSuI/fREKP/Ago4EoazlyF11NKOTgoFAgAgD32adqkHW/eC
+         FPlFqYQP2Wv/MB/freyygbZQEqo2AycUPvMUGsV9Q4LonnXZMg2UPwg/Lp2TIXxxdCG9
+         M/K7VHJxER7aLIdnv7G8EI3Qh+Z9/NV/Re0St/PVBk1I9mbrw+GSsYgCD1K7Yz6fwav+
+         dxcdmCYHFH1AkV4dr59m+3dxhskfuShJSXeZi3cPbwtQFvYKi0xJaX8utJnJn5oA7Hpu
+         grKw==
+X-Gm-Message-State: AOJu0YyCpwB9rDZ5Z167xAklSpTokXR7pnSPr4XbJNTFN4BtLhyK7hFK
+	OyakYQSnEUEf+PvDbS+pN/qL7Q==
+X-Google-Smtp-Source: AGHT+IHOW5kPh3I+vG6Z/5ArKWuEUgHJowuM8ulr+F53M00g+aYVcA+mRl6j54COsKtksWI5aKjGWg==
+X-Received: by 2002:a05:6402:1202:b0:540:bf39:bf72 with SMTP id c2-20020a056402120200b00540bf39bf72mr1289129edw.25.1700645387062;
+        Wed, 22 Nov 2023 01:29:47 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.100])
-        by smtp.gmail.com with ESMTPSA id o15-20020a17090637cf00b009fee12d0dcdsm3392502ejc.15.2023.11.22.01.09.15
+        by smtp.gmail.com with ESMTPSA id a16-20020a50e710000000b00532eba07773sm5823343edn.25.2023.11.22.01.29.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Nov 2023 01:09:16 -0800 (PST)
-Message-ID: <2ced2e38-e81d-4f9b-a6c0-6ac2d1a0fff9@linaro.org>
-Date: Wed, 22 Nov 2023 10:09:14 +0100
+        Wed, 22 Nov 2023 01:29:46 -0800 (PST)
+Message-ID: <39e9514b-087c-42eb-8d0e-f75dc620e954@linaro.org>
+Date: Wed, 22 Nov 2023 10:29:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -47,35 +47,23 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] docs: dt-bindings: add DTS Coding Style document
+Subject: Re: [PATCH] drm/panfrost: Really power off GPU cores in
+ panfrost_gpu_power_off()
 Content-Language: en-US
-To: Michal Simek <michal.simek@amd.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Dragan Simic <dsimic@manjaro.org>, wens@kernel.org,
- =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Andrew Davis <afd@ti.com>, Arnd Bergmann <arnd@arndb.de>,
- Bjorn Andersson <andersson@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Nishanth Menon <nm@ti.com>,
- Olof Johansson <olof@lixom.net>, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-arm-msm@vger.kernel.org
-References: <20231120084044.23838-1-krzysztof.kozlowski@linaro.org>
- <6b288a2e-d147-4bd3-b1d4-daf56295d939@gmail.com>
- <01f9ce3b-e6e5-4b05-bf7f-0b3a5f74910a@linaro.org>
- <CAGb2v64Vf5dDwq=KTrxwc=+w+0KUD2KVPMjmHg68Y_yukES5dQ@mail.gmail.com>
- <7232a48b-b9ad-44b5-ae6a-d12dad70b3c4@linaro.org>
- <58a9caacc1226c7c3a2bdfe73ef1791f@manjaro.org>
- <cc4c789c-b595-41eb-b543-9e03549c6e61@amd.com>
- <CAMuHMdWm-gRPHeHyuX3_eR+9chJEw3iiZwCNBnoiRPHzoMAs6w@mail.gmail.com>
- <808270d3-2274-4fb7-a397-38538503b67c@amd.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Steven Price <steven.price@arm.com>, tzimmermann@suse.de,
+ linux-kernel@vger.kernel.org, mripard@kernel.org,
+ dri-devel@lists.freedesktop.org, wenst@chromium.org, kernel@collabora.com,
+ "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>
+References: <20231102141507.73481-1-angelogioacchino.delregno@collabora.com>
+ <7928524a-b581-483b-b1a1-6ffd719ce650@arm.com>
+ <1c9838fb-7f2d-4752-b86a-95bcf504ac2f@linaro.org>
+ <6b7a4669-7aef-41a7-8201-c2cfe401bc43@collabora.com>
+ <20231121175531.085809f5@collabora.com>
+ <d95259b8-10cf-4ded-866c-47cbd2a44f84@linaro.org>
+ <4c73f67e-174c-497e-85a5-cb053ce657cb@collabora.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -121,93 +109,50 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <808270d3-2274-4fb7-a397-38538503b67c@amd.com>
+In-Reply-To: <4c73f67e-174c-497e-85a5-cb053ce657cb@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 22/11/2023 09:57, Michal Simek wrote:
-> Hi Geert,
-> 
-> On 11/22/23 09:53, Geert Uytterhoeven wrote:
->> Hi Michal,
->>
->> On Wed, Nov 22, 2023 at 9:50 AM Michal Simek <michal.simek@amd.com> wrote:
->>> On 11/22/23 09:29, Dragan Simic wrote:
->>>> On 2023-11-22 09:21, Krzysztof Kozlowski wrote:
->>>>> On 22/11/2023 09:09, Chen-Yu Tsai wrote:
->>>>>> On Wed, Nov 22, 2023 at 4:05 PM Krzysztof Kozlowski
->>>>>> <krzysztof.kozlowski@linaro.org> wrote:
->>>>>>>
->>>>>>> On 21/11/2023 14:50, Rafał Miłecki wrote:
->>>>>>>>> +Order of Properties in Device Node
->>>>>>>>> +----------------------------------
->>>>>>>>> +
->>>>>>>>> +Following order of properties in device nodes is preferred:
->>>>>>>>> +
->>>>>>>>> +1. compatible
->>>>>>>>> +2. reg
->>>>>>>>> +3. ranges
->>>>>>>>> +4. Standard/common properties (defined by common bindings, e.g. without
->>>>>>>>> +   vendor-prefixes)
->>>>>>>>> +5. Vendor-specific properties
->>>>>>>>> +6. status (if applicable)
->>>>>>>>> +7. Child nodes, where each node is preceded with a blank line
->>>>>>>>> +
->>>>>>>>> +The "status" property is by default "okay", thus it can be omitted.
->>>>>>>>
->>>>>>>> I think it would really help to include position of #address-cells and
->>>>>>>> #size-cells here. In some files I saw them above "compatible" that seems
->>>>>>>> unintuitive. Some prefer putting them at end which I think makes sense
->>>>>>>> as they affect children nodes.
->>>>>>>>
->>>>>>>> Whatever you choose it'd be just nice to have things consistent.
->>>>>>>
->>>>>>> This is a standard/common property, thus it goes to (4) above.
->>>>>>
->>>>>> It's probably a mix, but AFAIK a lot of the device trees in tree have
->>>>>> #*-cells after "status". In some cases they are added in the board
->>>>>> .dts files, not the chip/module .dtsi files.
->>>>>
->>>>> Existing DTS is not a good example :)
->>>>>
->>>>>>
->>>>>> +1 that it makes sense at the end as they affect child nodes.
->>>>>
->>>>> I still insist that status must be the last, because:
->>>>> 1. Many SoC nodes have address/size cells but do not have any children
->>>>> (I2C, SPI), so we put useless information at the end.
->>>>> 2. Status should be the final information to say whether the node is
->>>>> ready or is not. I read the node, check properties and then look at the end:
->>>>> a. Lack of status means it is ready.
->>>>> b. status=disabled means device still needs board resources/customization
+On 22/11/2023 10:06, AngeloGioacchino Del Regno wrote:
+
+>>>>>    
 >>>>
->>>> I agree with the "status" belonging to the very end, because it's both logical
->>>> and much more readable.  Also, "status" is expected to be modified in the
->>>> dependent DT files, which makes it kind of volatile and even more deserving to
->>>> be placed last.
+>>>> Hey Krzysztof,
+>>>>
+>>>> This is interesting. It might be about the cores that are missing from the partial
+>>>> core_mask raising interrupts, but an external abort on non-linefetch is strange to
+>>>> see here.
 >>>
->>> I am just curious if having status property at the end won't affect
->>> execution/boot up time. Not sure how it is done in Linux but in U-Boot at least
->>> (we want to have DTs in sync between Linux and U-Boot) of_find_property is
->>> pretty much big loop over all properties. And status property defined at the end
->>> means going over all of them to find it out to if device is present.
->>> Not sure if Linux works in the same way but at least of_get_property is done in
->>> the same way.
+>>> I've seen such external aborts in the past, and the fault type has
+>>> often been misleading. It's unlikely to have anything to do with a
 >>
->> As the default is "okay", you have to loop over all properties anyway.
+>> Yeah, often accessing device with power or clocks gated.
+>>
 > 
-> No doubt if you don't define status property that you need to loop over all of 
-> them. We normally describe the whole SOC with pretty much all IPs status = 
-> disabled and then in board file we are changing it to okay based on what it is 
-> actually wired out.
-> It means on our systems all nodes have status properties. If you have it at 
-> first you don't need to go over all.
+> Except my commit does *not* gate SoC power, nor SoC clocks 🙂
 
-We never sacrificed code readability in favor of code execution speed,
-so neither should we do it here.
+It could be that something (like clocks or power supplies) was missing
+on this board/SoC, which was not critical till your patch came.
 
-If the speed is a problem, project can still add a flag to dtc to
-re-shuffle properties in FDT depending on its needs.
+> 
+> What the "Really power off ..." commit does is to ask the GPU to internally power
+> off the shaders, tilers and L2, that's why I say that it is strange to see that
+> kind of abort.
+> 
+> The GPU_INT_CLEAR GPU_INT_STAT, GPU_FAULT_STATUS and GPU_FAULT_ADDRESS_{HI/LO}
+> registers should still be accessible even with shaders, tilers and cache OFF.
+> 
+> Anyway, yes, synchronizing IRQs before calling the poweroff sequence would also
+> work, but that'd add up quite a bit of latency on the runtime_suspend() call, so
+> in this case I'd be more for avoiding to execute any register r/w in the handler
+> by either checking if the GPU is supposed to be OFF, or clearing interrupts, which
+> may not work if those are generated after the execution of the poweroff function.
+> Or we could simply disable the irq after power_off, but that'd be hacky (as well).
+> 
+> 
+> Let's see if asking to poweroff *everything* works:
+
+Worked.
 
 Best regards,
 Krzysztof
