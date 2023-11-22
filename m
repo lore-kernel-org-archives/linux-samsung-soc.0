@@ -1,108 +1,243 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="odLvzRyw"
-Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14EB7109
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 00:20:58 -0800 (PST)
-Received: by mail-vs1-xe2e.google.com with SMTP id ada2fe7eead31-462a978c470so828677137.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 00:20:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JSqqO722"
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C18DED6A
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 00:21:32 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-a00b01955acso332785266b.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 00:21:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700641257; x=1701246057; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4I8dRODFUwv8GNo/5lVqWf42DaYrEmmY1wMx98kbsuI=;
-        b=odLvzRywKLvkWkcm6Z/Zy1hDwAhXTPapvw0AO3ePOU9vFYzD5xRmy1pmPaHdBZxCmL
-         Bw23TKP8axRvPHBytCL0Qytuo22fqU+3ybY/W28GC24sKp7lFYYIA+5XGjQXEnYZlId3
-         bgrCckS/u5FjCmuZtm+Z7e6a6PvvnBvvWAIB4YYnXAmfMT7V1R2zhw9uVae08eouX9og
-         dEkpFzxfuMRJyb5Dmidd5Pv/0OlqGR6fvAEtisT2EW2USLA2SoGXNC/EPmo686C76JZ9
-         4SL6z6yurV5/5EOxWf36sKEiec7eputDfissmYYn3EcvUno+xGGyIfY3V7GdxBwofTuJ
-         Ljlg==
+        d=linaro.org; s=google; t=1700641291; x=1701246091; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dWZXWR10yN3RjItd4uVERoZZUJiKuZqt9/puLFdDo8c=;
+        b=JSqqO722RoBe67gbrpVw40PsQvkcZTEtACghpfz5m2+NvgwryhCpmFhy8edWH8hTiG
+         sGtJf7GmLvqtC1qEGlFQLgFz0qnBuxSYAoqRehzZgnW8ckP2lNFYCwQTImZY8Aem3LuY
+         57Tls+ytMT+VMI6vaWP7YGDUoW8g08sX21rbhFRLiB3J5XTIktOL6bSlXFAPMWavMadc
+         8c7iCR5NaEiCO0YB3XTwMPkmcrQ0EE1UVuDL/JAKf8AFWsdTLLrd90AarlhHfqmdIR49
+         uJkvF/1oMdh4HX0b76Y5N/MwFAhz2/7r0WOAS7cLUf1shyMdi6DsIzTqGZOqMzt7wCyI
+         szFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700641257; x=1701246057;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4I8dRODFUwv8GNo/5lVqWf42DaYrEmmY1wMx98kbsuI=;
-        b=oUuVtoOLZqrkB7SuDtVFUM86jo2rtzdcyjOlLJP06lx6Qb8TuCOTqXd3lda1k3cL6+
-         SCp94wP/MEXuryJyYN3ucm6jSXoVsoSnd5ILi+hSEVBrhPhkIvbDtWZheNy1a73JOLgH
-         hWGbjjR3ZC8CJmjR2HYeuF28D4NbadjKjjYksyUDakWVVFrD6GDX4uvEe4BdcABNtbkr
-         Lw3Xi89nbJbnSxKg/afIHWI6eKKzfHDkM5DDhXXtcWgOtSR/eTreaoS/VPtxTDoc1w4J
-         QSGyoDx9mg+nAdKqMvhuS/JdE07oC/MO2qnZO+jo5RfuPTwPROQolvuCSHsqQ3A019WH
-         NRRQ==
-X-Gm-Message-State: AOJu0YwuZ3P/JlQFe7BTyOmdhF+y8Ti75GBfnlqcA77ofH2Hng7UNiJ8
-	JxItMUYSgD6tv9K/mlqRRofB+BXYqLkk0dntCdL/Aw==
-X-Google-Smtp-Source: AGHT+IH6MXRD7recCukd9ZPlXrdn9+l+K/d0U/kF9HaOQ28/JOjYehYeGW3YeHAn90fSzCuc3t+BUm1b6U6nd0pNRfU=
-X-Received: by 2002:a05:6102:108a:b0:462:7f9d:d263 with SMTP id
- s10-20020a056102108a00b004627f9dd263mr1596382vsr.8.1700641256954; Wed, 22 Nov
- 2023 00:20:56 -0800 (PST)
+        d=1e100.net; s=20230601; t=1700641291; x=1701246091;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dWZXWR10yN3RjItd4uVERoZZUJiKuZqt9/puLFdDo8c=;
+        b=Kqiz7R3oPlUOHziiu+0y+TPmGNQTFLeQcAUPR+syJXWrPwpkbkL+JPT5R4sojlgaKm
+         +NsJu51tN93vus4uMwrl+qaYtpwFkwntM01gBenDF/bpSTVXT5UZdHa8Ude/BuB8UGiT
+         a3tlu1S5cJ8GMTskph0Rj2w+vOL6N/rmUq/w8Ku4qqfs5RxbOZtQFDbVirxMdboHWqqV
+         V6+Kr8KOXvlh3xCNOewrsrTBtuMvK/z9jX1dYeNiUHIc6ZOiO68fwZqRvD9Pw3m3xVoa
+         cVoXjrEGsvsiSFGqoL9xfeyXu74uhGw3xeII5KPNGYC7f7lMhqX4vVPEroq8nLIjTASK
+         qseg==
+X-Gm-Message-State: AOJu0YwJK/GZ4oZs/u9+NGS25JV/JJCYNNuSJVskg9/lzKgiDGA3D/vs
+	7soptAbuLqpwQla+Ddo0EtaCcg==
+X-Google-Smtp-Source: AGHT+IGimlEAf2nqN7DdSTRsvU00zMY71afscJi/CVlHORRd9wbC6UZk2rO3GUlFA+T+gwzhBkLv6A==
+X-Received: by 2002:a17:907:cbc9:b0:a00:1c9a:a472 with SMTP id vk9-20020a170907cbc900b00a001c9aa472mr1438483ejc.7.1700641291154;
+        Wed, 22 Nov 2023 00:21:31 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.218.100])
+        by smtp.gmail.com with ESMTPSA id g1-20020a170906538100b009fef7d22c98sm3269289ejo.35.2023.11.22.00.21.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Nov 2023 00:21:30 -0800 (PST)
+Message-ID: <7232a48b-b9ad-44b5-ae6a-d12dad70b3c4@linaro.org>
+Date: Wed, 22 Nov 2023 09:21:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231120212037.911774-1-peter.griffin@linaro.org>
- <20231120212037.911774-16-peter.griffin@linaro.org> <CAPLW+4m+vG62V++izkycRYEhcTpoT+G=g+3Y4j8vqEpeX2uEPw@mail.gmail.com>
- <8d838a0b-6a13-4538-8dd6-e044ebfabca7@roeck-us.net> <82df32ea-9ca9-44ac-b1ca-719f68d4f58b@linaro.org>
-In-Reply-To: <82df32ea-9ca9-44ac-b1ca-719f68d4f58b@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 22 Nov 2023 08:20:43 +0000
-Message-ID: <CADrjBPpjMtF36rA3_5NmKk8iw1vEoBZVCTw1auowWte8KGie8g@mail.gmail.com>
-Subject: Re: [PATCH v4 15/19] watchdog: s3c2410_wdt: Add support for WTCON
- register DBGACK_MASK bit
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Sam Protsenko <semen.protsenko@linaro.org>, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, 
-	conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com, 
-	s.nawrocki@samsung.com, linus.walleij@linaro.org, wim@linux-watchdog.org, 
-	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, olof@lixom.net, 
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, cw00.choi@samsung.com, 
-	alim.akhtar@samsung.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
-	saravanak@google.com, willmcvicker@google.com, soc@kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	kernel-team@android.com, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] docs: dt-bindings: add DTS Coding Style document
+Content-Language: en-US
+To: wens@kernel.org
+Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Andrew Davis <afd@ti.com>, Arnd Bergmann <arnd@arndb.de>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Heiko Stuebner <heiko@sntech.de>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Michal Simek <michal.simek@amd.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Nishanth Menon <nm@ti.com>,
+ Olof Johansson <olof@lixom.net>, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org
+References: <20231120084044.23838-1-krzysztof.kozlowski@linaro.org>
+ <6b288a2e-d147-4bd3-b1d4-daf56295d939@gmail.com>
+ <01f9ce3b-e6e5-4b05-bf7f-0b3a5f74910a@linaro.org>
+ <CAGb2v64Vf5dDwq=KTrxwc=+w+0KUD2KVPMjmHg68Y_yukES5dQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <CAGb2v64Vf5dDwq=KTrxwc=+w+0KUD2KVPMjmHg68Y_yukES5dQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof / Guenter / Sam,
+On 22/11/2023 09:09, Chen-Yu Tsai wrote:
+> On Wed, Nov 22, 2023 at 4:05 PM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>>
+>> On 21/11/2023 14:50, Rafał Miłecki wrote:
+>>>> +Order of Nodes
+>>>> +--------------
+>>>> +
+>>>> +1. Nodes within any bus, thus using unit addresses for children, shall be
+>>>> +   ordered incrementally by unit address.
+>>>> +   Alternatively for some sub-architectures, nodes of the same type can be
+>>>> +   grouped together (e.g. all I2C controllers one after another even if this
+>>>> +   breaks unit address ordering).
+>>>> +
+>>>> +2. Nodes without unit addresses should be ordered alpha-numerically by the node
+>>>> +   name.  For a few types of nodes, they can be ordered by the main property
+>>>> +   (e.g. pin configuration states ordered by value of "pins" property).
+>>>> +
+>>>> +3. When extending nodes in the board DTS via &label, the entries should be
+>>>> +   ordered alpha-numerically.
+>>>
+>>> Just an idea. Would that make (more) sense to make &label-like entries
+>>> match order of nodes in included .dts(i)?
+>>>
+>>> Adventages:
+>>> 1. We keep unit address incremental order that is unlikely to change
+>>>
+>>> Disadventages:
+>>> 1. More difficult to verify
+>>
+>> Rob also proposed this and I believe above disadvantage here is crucial.
+>> If you add new SoC with board DTS you are fine. But if you add only new
+>> board, the order of entries look random in the diff hunk. Reviewer must
+>> open SoC DTSI to be able to review the patch with board DTS.
+>>
+>> If review is tricky and we do not have tool to perform it automatically,
+>> I am sure submissions will have disordered board DTS.
+>>
+>>>
+>>>
+>>>> +Example::
+>>>> +
+>>>> +    // SoC DTSI
+>>>> +
+>>>> +    / {
+>>>> +            cpus {
+>>>> +                    // ...
+>>>> +            };
+>>>> +
+>>>> +            psci {
+>>>> +                    // ...
+>>>> +            };
+>>>> +
+>>>> +            soc@ {
+>>>> +                    dma: dma-controller@10000 {
+>>>> +                            // ...
+>>>> +                    };
+>>>> +
+>>>> +                    clk: clock-controller@80000 {
+>>>> +                            // ...
+>>>> +                    };
+>>>> +            };
+>>>> +    };
+>>>> +
+>>>> +    // Board DTS
+>>>> +
+>>>> +    &clk {
+>>>> +            // ...
+>>>> +    };
+>>>> +
+>>>> +    &dma {
+>>>> +            // ...
+>>>> +    };
+>>>> +
+>>>> +
+>>>> +Order of Properties in Device Node
+>>>> +----------------------------------
+>>>> +
+>>>> +Following order of properties in device nodes is preferred:
+>>>> +
+>>>> +1. compatible
+>>>> +2. reg
+>>>> +3. ranges
+>>>> +4. Standard/common properties (defined by common bindings, e.g. without
+>>>> +   vendor-prefixes)
+>>>> +5. Vendor-specific properties
+>>>> +6. status (if applicable)
+>>>> +7. Child nodes, where each node is preceded with a blank line
+>>>> +
+>>>> +The "status" property is by default "okay", thus it can be omitted.
+>>>
+>>> I think it would really help to include position of #address-cells and
+>>> #size-cells here. In some files I saw them above "compatible" that seems
+>>> unintuitive. Some prefer putting them at end which I think makes sense
+>>> as they affect children nodes.
+>>>
+>>> Whatever you choose it'd be just nice to have things consistent.
+>>
+>> This is a standard/common property, thus it goes to (4) above.
+> 
+> It's probably a mix, but AFAIK a lot of the device trees in tree have
+> #*-cells after "status". In some cases they are added in the board
+> .dts files, not the chip/module .dtsi files.
 
-On Wed, 22 Nov 2023 at 07:53, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 21/11/2023 19:10, Guenter Roeck wrote:
->
-> >>>   static const struct s3c2410_wdt_variant drv_data_gs101_cl1 = {
-> >>> @@ -291,7 +296,7 @@ static const struct s3c2410_wdt_variant drv_data_gs101_cl1 = {
-> >>>          .cnt_en_reg = GS_CLUSTER1_NONCPU_OUT,
-> >>>          .cnt_en_bit = 7,
-> >>>          .quirks = QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_MASK_RESET | QUIRK_HAS_PMU_CNT_EN |
-> >>> -                 QUIRK_HAS_WTCLRINT_REG,
-> >>> +                 QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_DBGACK_BIT,
-> >>>   };
-> >>>
-> >>
-> >> This patch states it's adding the feature, but in fact it's also
-> >> enabling this feature for gs101. Suggest moving this patch before the
-> >> one enabling gs101 wdt. This way, one patch will only add the feature,
-> >> and another patch will enable gs101 entirely (with this feature used).
-> >> At least it seems like more atomic approach to me.
-> >>
-> >
-> > Both approaches have their merits and their downsides. I for my part am not
-> > even sure if DBGACK_MASK should be enabled unconditionally if supported.
-> > With your approach, it would be impossible (or at least more difficult) to
-> > revert if it turns out to be broken and/or have unexpected side effects.
-> > That seems less desirable to me than the current approach.
->
-> Reversing the patches does not change this. It is enabled
-> unconditionally in current order as well.
->
-> Sam's idea is correct here - first you add support for new quirk, then
-> you add new SoC which will use this quirk. Doing the other way - first
-> SoC and then new quirk - looks like SoC was added incomplete.
+Existing DTS is not a good example :)
 
-Sure I can swap the order around if that's what you prefer.
+> 
+> +1 that it makes sense at the end as they affect child nodes.
 
-I ordered it this way so it was clear who the user of the new debug feature was.
+I still insist that status must be the last, because:
+1. Many SoC nodes have address/size cells but do not have any children
+(I2C, SPI), so we put useless information at the end.
+2. Status should be the final information to say whether the node is
+ready or is not. I read the node, check properties and then look at the end:
+a. Lack of status means it is ready.
+b. status=disabled means device still needs board resources/customization
 
-Peter
+
+Best regards,
+Krzysztof
+
