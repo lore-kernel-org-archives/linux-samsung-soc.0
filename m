@@ -1,136 +1,113 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="X+/dx7tW"
-Received: from mail.manjaro.org (mail.manjaro.org [IPv6:2a01:4f8:c0c:51f3::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8026A10C;
-	Wed, 22 Nov 2023 00:59:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aB52ZCl4"
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22D7E213C;
+	Wed, 22 Nov 2023 01:02:06 -0800 (PST)
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by madras.collabora.co.uk (Postfix) with ESMTPSA id 70A1B6602F2B;
+	Wed, 22 Nov 2023 09:02:04 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1700643725;
+	bh=G4M7wDZHayCxesxTfRg++DWT7lHVVmRMXfKWDXC3LAI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aB52ZCl42Hv76P2sb3thYE2yjQO6Oyyh2aV3uNzvBv9fwR7jnFRTSv9LukLH017hT
+	 xXMQAvN35fIqPUtUyErl4nm2C4LUnIzxfRXCQquoxfkuPTaT4lLdKEE4TmjZ8qCMCy
+	 E354LdefcIAgS+jwr7SP5XDk2378Lp2obv+UibFjHUkxa116RZQ6ifJGhXZffsxkJq
+	 44v6vKyX5EDVKTM1GXVYCgziUjwCpzP9No2TIs8xtJcpMdx1v55pQZGoyvtbVSeMJi
+	 815ZI5w5eKjaCENJMkIlE6Id3C6iIO1fymbL1f8VSRAnQVh0c/97pmC2J4Poh2FmVd
+	 Mp4hB7RRfm8IA==
+Date: Wed, 22 Nov 2023 10:02:01 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Steven Price <steven.price@arm.com>, tzimmermann@suse.de,
+ linux-kernel@vger.kernel.org, mripard@kernel.org,
+ dri-devel@lists.freedesktop.org, wenst@chromium.org, kernel@collabora.com,
+ "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] drm/panfrost: Really power off GPU cores in
+ panfrost_gpu_power_off()
+Message-ID: <20231122100201.4e9952be@collabora.com>
+In-Reply-To: <d95259b8-10cf-4ded-866c-47cbd2a44f84@linaro.org>
+References: <20231102141507.73481-1-angelogioacchino.delregno@collabora.com>
+	<7928524a-b581-483b-b1a1-6ffd719ce650@arm.com>
+	<1c9838fb-7f2d-4752-b86a-95bcf504ac2f@linaro.org>
+	<6b7a4669-7aef-41a7-8201-c2cfe401bc43@collabora.com>
+	<20231121175531.085809f5@collabora.com>
+	<d95259b8-10cf-4ded-866c-47cbd2a44f84@linaro.org>
+Organization: Collabora
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1700643571;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wnDXFhBLQlKfT9VPeq9LXcsvxwXZ+3LJM0WRVA0R01o=;
-	b=X+/dx7tWETvpV6gVT/ojMQT0+o9PIAThm56C4ZtSXKgZB1dvcAJu9Asl9lzeqFNrolWWA/
-	fIfQQeRvQXZQ3PnQbr6r47EdYWVRln1eF6jmC8DPhFCHYnuInvNDEC/EtbQJGqE8LlAI85
-	eLWoEaodlQy7XaKwt1NAO47EQVGOeIUf9C7+eahxyoDG5T0AOzxca0MAbLgAonmNfoGGU6
-	2zQfmtOdDaA/vx49kVM+Gg+TeMx8MFMkBkWsQzEME2otNiDk9cimPFw6RDCWWxWUd6xxdI
-	HWBwUcwJM+c4aSa6N7ASwlI6vVR+x1l9bK2JozzLINjyAXkQOl3FuagPRBXO5A==
-Date: Wed, 22 Nov 2023 09:59:29 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Michal Simek <michal.simek@amd.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, wens@kernel.org,
- =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, Andrew Davis <afd@ti.com>, Arnd Bergmann
- <arnd@arndb.de>, Bjorn Andersson <andersson@kernel.org>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, Konrad Dybcio
- <konrad.dybcio@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Nishanth Menon <nm@ti.com>, Olof Johansson <olof@lixom.net>,
- linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2] docs: dt-bindings: add DTS Coding Style document
-In-Reply-To: <cc4c789c-b595-41eb-b543-9e03549c6e61@amd.com>
-References: <20231120084044.23838-1-krzysztof.kozlowski@linaro.org>
- <6b288a2e-d147-4bd3-b1d4-daf56295d939@gmail.com>
- <01f9ce3b-e6e5-4b05-bf7f-0b3a5f74910a@linaro.org>
- <CAGb2v64Vf5dDwq=KTrxwc=+w+0KUD2KVPMjmHg68Y_yukES5dQ@mail.gmail.com>
- <7232a48b-b9ad-44b5-ae6a-d12dad70b3c4@linaro.org>
- <58a9caacc1226c7c3a2bdfe73ef1791f@manjaro.org>
- <cc4c789c-b595-41eb-b543-9e03549c6e61@amd.com>
-Message-ID: <c377c23a3c1c58ce16035cb995ef0209@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2023-11-22 09:49, Michal Simek wrote:
-> On 11/22/23 09:29, Dragan Simic wrote:
->> On 2023-11-22 09:21, Krzysztof Kozlowski wrote:
->>> On 22/11/2023 09:09, Chen-Yu Tsai wrote:
->>>> On Wed, Nov 22, 2023 at 4:05 PM Krzysztof Kozlowski
->>>> <krzysztof.kozlowski@linaro.org> wrote:
->>>>> 
->>>>> On 21/11/2023 14:50, Rafał Miłecki wrote:
->>>>>>> +Order of Properties in Device Node
->>>>>>> +----------------------------------
->>>>>>> +
->>>>>>> +Following order of properties in device nodes is preferred:
->>>>>>> +
->>>>>>> +1. compatible
->>>>>>> +2. reg
->>>>>>> +3. ranges
->>>>>>> +4. Standard/common properties (defined by common bindings, e.g. 
->>>>>>> without
->>>>>>> +   vendor-prefixes)
->>>>>>> +5. Vendor-specific properties
->>>>>>> +6. status (if applicable)
->>>>>>> +7. Child nodes, where each node is preceded with a blank line
->>>>>>> +
->>>>>>> +The "status" property is by default "okay", thus it can be 
->>>>>>> omitted.
->>>>>> 
->>>>>> I think it would really help to include position of #address-cells 
->>>>>> and
->>>>>> #size-cells here. In some files I saw them above "compatible" that 
->>>>>> seems
->>>>>> unintuitive. Some prefer putting them at end which I think makes 
->>>>>> sense
->>>>>> as they affect children nodes.
->>>>>> 
->>>>>> Whatever you choose it'd be just nice to have things consistent.
->>>>> 
->>>>> This is a standard/common property, thus it goes to (4) above.
->>>> 
->>>> It's probably a mix, but AFAIK a lot of the device trees in tree 
->>>> have
->>>> #*-cells after "status". In some cases they are added in the board
->>>> .dts files, not the chip/module .dtsi files.
->>> 
->>> Existing DTS is not a good example :)
->>> 
->>>> 
->>>> +1 that it makes sense at the end as they affect child nodes.
->>> 
->>> I still insist that status must be the last, because:
->>> 1. Many SoC nodes have address/size cells but do not have any 
->>> children
->>> (I2C, SPI), so we put useless information at the end.
->>> 2. Status should be the final information to say whether the node is
->>> ready or is not. I read the node, check properties and then look at 
->>> the end:
->>> a. Lack of status means it is ready.
->>> b. status=disabled means device still needs board 
->>> resources/customization
->> 
->> I agree with the "status" belonging to the very end, because it's both 
->> logical and much more readable.  Also, "status" is expected to be 
->> modified in the dependent DT files, which makes it kind of volatile 
->> and even more deserving to be placed last.
-> 
-> I am just curious if having status property at the end won't affect
-> execution/boot up time. Not sure how it is done in Linux but in U-Boot
-> at least (we want to have DTs in sync between Linux and U-Boot)
-> of_find_property is pretty much big loop over all properties. And
-> status property defined at the end means going over all of them to
-> find it out to if device is present.
-> Not sure if Linux works in the same way but at least of_get_property
-> is done in the same way.
-> 
-> It is not big deal on high speed cpus but wanted to point it out.
+On Tue, 21 Nov 2023 18:08:44 +0100
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-That's a good point, saving every possible CPU cycle counts, so if we 
-can exit early, why not.  However, that's perhaps something to be 
-handled within the dtc utility, by having it rearrange the properties.  
-I'll investigate that in detail.
+> > non-linefetch access, but it might be caused by a register access after
+> > the clock or power domain driving the register bank has been disabled.
+> > The following diff might help validate this theory. If that works, we
+> > probably want to make sure we synchronize IRQs before disabling in the
+> > suspend path.
+> >   
+> > --->8---  
+> > diff --git a/drivers/gpu/drm/panfrost/panfrost_regs.h b/drivers/gpu/drm/panfrost/panfrost_regs.h
+> > index 55ec807550b3..98df66e5cc9b 100644
+> > --- a/drivers/gpu/drm/panfrost/panfrost_regs.h
+> > +++ b/drivers/gpu/drm/panfrost/panfrost_regs.h
+> > @@ -34,8 +34,6 @@
+> >           (GPU_IRQ_FAULT                        |\
+> >            GPU_IRQ_MULTIPLE_FAULT               |\
+> >            GPU_IRQ_RESET_COMPLETED              |\
+> > -          GPU_IRQ_POWER_CHANGED                |\
+> > -          GPU_IRQ_POWER_CHANGED_ALL            |\  
+> 
+> This helped, at least for this issue (next-20231121). Much later in
+> user-space boot I have lockups:
+> watchdog: BUG: soft lockup - CPU#4 stuck for 26s! [kworker/4:1:61]
+
+Hm, if this doesn't happen with "drm/panfrost: Really power off GPU
+cores in panfrost_gpu_power_off()" reverted, it might be related to the
+issue Angelo was describing, though I'd expect it to lead to job
+timeouts, not the sort of soft lockup reported here.
+
+> 
+> [   56.329224]  smp_call_function_single from
+> __sync_rcu_exp_select_node_cpus+0x29c/0x78c
+> [   56.337111]  __sync_rcu_exp_select_node_cpus from
+> sync_rcu_exp_select_cpus+0x334/0x878
+> [   56.344995]  sync_rcu_exp_select_cpus from wait_rcu_exp_gp+0xc/0x18
+> [   56.351231]  wait_rcu_exp_gp from process_one_work+0x20c/0x620
+> [   56.357038]  process_one_work from worker_thread+0x1d0/0x488
+> [   56.362668]  worker_thread from kthread+0x104/0x138
+> [   56.367521]  kthread from ret_from_fork+0x14/0x28
+> 
+> But anyway the external abort does not appear.
+
+Thanks for testing! As I said in my previous reply, I think the proper
+fix for this particular issue would be to mask all panfrost IRQs
+(writing 0 to xxx_INT_MASK) + call synchronize_irq() from
+panfrost_device_suspend(), to make sure pending interrupts are flushed
+and the handlers can't be called again (or at least not with real
+interrupts to process, if the IRQ line is shared) until the device is
+resumed.
+
+FWIW, after fighting with annoying bugs in the interrupt handling logic
+and its interactions with runtime PM, I've decided to automate some of
+this in panthor [1]. Also made the power on/off logic generic [2], with
+macros to allow powering on/off specific blocks. Not saying we should
+do that in panfrost, just posting it as a reference, in case someone is
+interested.
+
+[1]https://gitlab.freedesktop.org/bbrezillon/linux/-/blob/panthor-v3+rk3588/drivers/gpu/drm/panthor/panthor_device.h?ref_type=heads#L279
+[2]https://gitlab.freedesktop.org/bbrezillon/linux/-/blob/panthor-v3+rk3588/drivers/gpu/drm/panthor/panthor_gpu.c?ref_type=heads#L279
+[3]https://gitlab.freedesktop.org/bbrezillon/linux/-/blob/panthor-v3+rk3588/drivers/gpu/drm/panthor/panthor_gpu.h?ref_type=heads#L24
