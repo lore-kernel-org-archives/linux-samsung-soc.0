@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dTz1VLpD"
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07B1010C9
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 23:53:19 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-548c548c40aso1096413a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Nov 2023 23:53:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dCVCKPOK"
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C4C018D
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 00:01:38 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-32f7c44f6a7so4287150f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 00:01:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700639597; x=1701244397; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1700640097; x=1701244897; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=uThef1WxPEDqlE2dlu3T9tfZvC+NyeYpQGMsq2gPViQ=;
-        b=dTz1VLpDXWHXxRy459Xg/L9eooggvJx6cy9acL22CVRR+0lw3CCjTchnUDlfxjrsyo
-         /olk/YvA3vRMM9o9BgJ0B4q9o6vsJRHaLMO9qHnc7Zy1hI8V52/HcqoVppCAF6DmdpOp
-         3brsb0LCZQZUleJU5hhQ02H6HK2a2fBaAL8CNp8BBJVXenj/M4qJ2qj6oA7hinLSBtzG
-         qgzz1PMOHDqYzVDcX4/LmG6pXsXqHhrtnVctsfICjtklBZ9l2z47MxCuHTLZkSPV91iz
-         zKpricKAsZS6+3vmG0SoKwNitKrHWsLKuJiBf9ZSMjh/OgeLaPYn3ngtM7nsWYvKBOgu
-         d43g==
+        bh=vpRyQaYW4/vL4ShXm+d0nPFyBue7kCdABCWcnGkyFTo=;
+        b=dCVCKPOKqclHWJKPDpDBrQ/Run4cKTpWgwtGeaxlVk+988cbS4aQuMKunSfeG1Ick4
+         gE7kJVvcFQ0mf0knsmwDCHtSGK/1MvRxlyuxAi50Nafo4bqCwsQmGhKddMTsuNaJbYwf
+         A5xTBRXQVva1BUVt7N4yHKNZazABMAdpEr+/CqaTtozuCcv1zP/PBYy4JRFgUe8G8teI
+         +iWaj+xaFFaz+G2sAICws1YfxfstrBVtgfDyKmp6T5BablpI8AhJ950guAZrUwr9V3bO
+         r8Lx9ZPETXJvEOICDNVwMD0ZkdUU5MGhi4C1vMJPxv1VV5X8OnyKDpbnTB8E2LjFyk5Y
+         AnQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700639597; x=1701244397;
+        d=1e100.net; s=20230601; t=1700640097; x=1701244897;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uThef1WxPEDqlE2dlu3T9tfZvC+NyeYpQGMsq2gPViQ=;
-        b=ifhkLwCZC3rMAy9LNUQXqil504kigR/TAoXpiKmrPVKx3MQTNEkYyH08GQ/U4ztV3f
-         XRx2Q/UAby2ZSo9Zldp7880DM4J0YNp91xUWFfQaT0sQr/lGdM5MFVgQ1uZrvSHB/gYc
-         46gVDC9xf7OMRuKfVgxYBOYcdcgHNKQKfHkvdhnXdKIy6RsPhgwCqJCwK7O0lTRIzeQQ
-         Pv/y17ffG5QYa7ZuE6RLYf4kVpCfoykfFjHTbMy/RBSnJPE76cinDttgXU1789ClVxe5
-         J+wGyV/cp4jOWZ8xMQ1tev7iGHWUGIrAVQcPhS9wAdnZSEXot+QEQIZN265n11IsqdMw
-         MeSg==
-X-Gm-Message-State: AOJu0Yw2j1HuGZQY7Sv+KhYC6H6zRnXsrVDgY/4EbZ8NwZ1ucjU5XOAj
-	UPnj9j26+/BjRuHS1zb8fIUrGQ==
-X-Google-Smtp-Source: AGHT+IHL0D0zzRlJcu1xm9LueMwGsSo3hmIlM64fIj5TvpsRuRtSV884uQI4WkFO4vsO/q8QKz9RCQ==
-X-Received: by 2002:a17:906:5346:b0:9ee:e5f1:fef2 with SMTP id j6-20020a170906534600b009eee5f1fef2mr1135997ejo.11.1700639597355;
-        Tue, 21 Nov 2023 23:53:17 -0800 (PST)
+        bh=vpRyQaYW4/vL4ShXm+d0nPFyBue7kCdABCWcnGkyFTo=;
+        b=mQMJCxSUYxwVEZ+2S1OLg/lc4JOsIeYgEf9pmQlkcbnHh9EHnAr5CN+XUuEtA0wGZx
+         n3hzebL/VPKqbAH0z/kvravRlYW9EuM3aV82pdc9PAiIAdNzrTzsp/V2w/8WA1XDniDl
+         wWItlwG9A5a1nQlgwALJdxi+xXyZ88SG49lFmZibpuYV7H5ZEdmbKj77q0jVSdEVxIn1
+         pFpAPQQys5/dK5FlbBbZCa7VIwMOAXGGHPiMJu+xGsx1ncxYMILpjl9B0KvZZ8rmd/mZ
+         qmyBM/htTd2qxY5ydChqoHsW4gNCqtT5E+nttEvefaC/CsJxGMNNTBVI+sP3pAYm9+l7
+         mi2w==
+X-Gm-Message-State: AOJu0YyOHehIQI0GAueZS8TvEW9VAI9CsQdjsBN1+/4F52cbAdFKP88J
+	dr+h/lswLvQEclJOpcshXxeE9w==
+X-Google-Smtp-Source: AGHT+IHBBXBgRDaK4VuhpKuYj7C0ExJ0pHqrpwD5pPYmWDdTv56w/nwhnJbUDu1/dAKqdyvyZV4g1Q==
+X-Received: by 2002:a05:6000:b87:b0:32d:89b5:7fd9 with SMTP id dl7-20020a0560000b8700b0032d89b57fd9mr977755wrb.56.1700640096302;
+        Wed, 22 Nov 2023 00:01:36 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.100])
-        by smtp.gmail.com with ESMTPSA id d5-20020a170906344500b009ffb4af0505sm2916417ejb.104.2023.11.21.23.53.14
+        by smtp.gmail.com with ESMTPSA id n4-20020a5d4004000000b003316b3d69b3sm15605462wrp.46.2023.11.22.00.01.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Nov 2023 23:53:16 -0800 (PST)
-Message-ID: <82df32ea-9ca9-44ac-b1ca-719f68d4f58b@linaro.org>
-Date: Wed, 22 Nov 2023 08:53:13 +0100
+        Wed, 22 Nov 2023 00:01:35 -0800 (PST)
+Message-ID: <26b5fd29-fcd0-4c68-8bfe-a73a660fb2c9@linaro.org>
+Date: Wed, 22 Nov 2023 09:01:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -47,28 +47,30 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 15/19] watchdog: s3c2410_wdt: Add support for WTCON
- register DBGACK_MASK bit
+Subject: Re: [PATCH v2] docs: dt-bindings: add DTS Coding Style document
 Content-Language: en-US
-To: Guenter Roeck <linux@roeck-us.net>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
- tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org,
- wim@linux-watchdog.org, catalin.marinas@arm.com, will@kernel.org,
- arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com,
- tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com,
- willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-watchdog@vger.kernel.org, kernel-team@android.com,
- linux-serial@vger.kernel.org
-References: <20231120212037.911774-1-peter.griffin@linaro.org>
- <20231120212037.911774-16-peter.griffin@linaro.org>
- <CAPLW+4m+vG62V++izkycRYEhcTpoT+G=g+3Y4j8vqEpeX2uEPw@mail.gmail.com>
- <8d838a0b-6a13-4538-8dd6-e044ebfabca7@roeck-us.net>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michal Simek <michal.simek@amd.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Andrew Davis <afd@ti.com>, Arnd Bergmann <arnd@arndb.de>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Heiko Stuebner <heiko@sntech.de>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Nishanth Menon <nm@ti.com>,
+ Olof Johansson <olof@lixom.net>, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org
+References: <20231120084044.23838-1-krzysztof.kozlowski@linaro.org>
+ <19358871-009d-4498-9c13-90d5338b1e9f@amd.com>
+ <76fa8f61-fe31-4040-a38d-cc05be3f4f17@linaro.org>
+ <6c80a285-27fc-4d61-9eef-af4744a9decc@amd.com>
+ <cc57dcf1-3c32-426e-920c-6f0741027797@linaro.org>
+ <CAMuHMdVGyXizPw9Rggj8fQeNdbx3udRcsHFhz_sqYZzjN1CnZQ@mail.gmail.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -114,41 +116,46 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <8d838a0b-6a13-4538-8dd6-e044ebfabca7@roeck-us.net>
+In-Reply-To: <CAMuHMdVGyXizPw9Rggj8fQeNdbx3udRcsHFhz_sqYZzjN1CnZQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 21/11/2023 19:10, Guenter Roeck wrote:
-
->>>   static const struct s3c2410_wdt_variant drv_data_gs101_cl1 = {
->>> @@ -291,7 +296,7 @@ static const struct s3c2410_wdt_variant drv_data_gs101_cl1 = {
->>>          .cnt_en_reg = GS_CLUSTER1_NONCPU_OUT,
->>>          .cnt_en_bit = 7,
->>>          .quirks = QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_MASK_RESET | QUIRK_HAS_PMU_CNT_EN |
->>> -                 QUIRK_HAS_WTCLRINT_REG,
->>> +                 QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_DBGACK_BIT,
->>>   };
->>>
->>
->> This patch states it's adding the feature, but in fact it's also
->> enabling this feature for gs101. Suggest moving this patch before the
->> one enabling gs101 wdt. This way, one patch will only add the feature,
->> and another patch will enable gs101 entirely (with this feature used).
->> At least it seems like more atomic approach to me.
->>
+On 21/11/2023 17:04, Geert Uytterhoeven wrote:
+> Hi Krzysztof,
 > 
-> Both approaches have their merits and their downsides. I for my part am not
-> even sure if DBGACK_MASK should be enabled unconditionally if supported.
-> With your approach, it would be impossible (or at least more difficult) to
-> revert if it turns out to be broken and/or have unexpected side effects.
-> That seems less desirable to me than the current approach.
+> On Tue, Nov 21, 2023 at 1:36 PM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>> On 21/11/2023 12:55, Michal Simek wrote:
+>>>>> device-tree specification v0.4. Chapter 2.2.1/Table 2.1 is describing much more
+>>>>> valid characters for node names.
+>>>>> It means above description is not accurate or DT spec should be updated.
+>>>>
+>>>> Spec allows way to much. dtc doesn't.
+>>>> One thing is the spec, second
+>>>> thing is coding style.
+>>>
+>>>  From my point of view spec is primary source of truth. If spec is saying name
+>>> can use upper case then I can use it. If upper case is not
+>>> recommended/deprecated because of whatever reason spec should be updated to
+>>> reflect it.
+>>> I know that DTC is reporting other issues but isn't it the right way to reflect
+>>> it back to the spec?
+>>
+>> Then why aren't you putting Linux Coding Style into C spec? I do not see
+>> any relation between specification of the language and the coding style
+>> chosen for given project.
+>>
+>> Zephyr can go with upper-case. Why it should be disallowed by the spec?
+> 
+> I thought there was only One DT to bind them all?
+> IMHO it would be better to align DT usage of Zephyr and Linux (and
+> anything else).
 
-Reversing the patches does not change this. It is enabled
-unconditionally in current order as well.
-
-Sam's idea is correct here - first you add support for new quirk, then
-you add new SoC which will use this quirk. Doing the other way - first
-SoC and then new quirk - looks like SoC was added incomplete.
+I actually don't know what Zephyr decides, but used it as example that
+it might want different coding style. Just like C standard allows to
+have all variables (including local ones) upper-case, we do not have
+such coding style. And no one proposes to update C spec to match Linux
+coding style. :)
 
 Best regards,
 Krzysztof
