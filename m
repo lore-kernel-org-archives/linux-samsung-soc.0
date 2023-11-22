@@ -1,36 +1,36 @@
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 618C410C;
-	Wed, 22 Nov 2023 14:12:37 -0800 (PST)
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-35aa6107e9fso996535ab.0;
-        Wed, 22 Nov 2023 14:12:37 -0800 (PST)
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DDDCB9;
+	Wed, 22 Nov 2023 14:12:40 -0800 (PST)
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-35937f2fadeso858685ab.2;
+        Wed, 22 Nov 2023 14:12:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700691156; x=1701295956;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sK7kv4eKhyN2VRY462hcU4dvihYdA9xvtn9OEHW15Ho=;
-        b=LROf73TQKDRVlZt9L8bOefE2MsSRWep4zvW0aP6cKWM4lFParlzs/yTfeyu8kfMhlt
-         le7cZ2dv3ixopMniF5JpfRvJvQXzJkLU7fhbS2ktld1JydqVpMXnvIEqjBJHM7Qem59y
-         M4mIemUyHV4fzBAdMMjQtvQTbEN9kx3laZjYUDmXvCpWLZEaKp+F+kveNLv7YbSqTCGS
-         dO+Lr5TKMr41q9sWnD/LRbX3Hmoz8EiuoDDoINpEpoJWITib+csl5/jfYzyOt/FnajxU
-         8evXegFhWnvzMamqX4v7fMEW627Y3yBJKFk9gZGloz93KCZNbwAx29kl9ECtBgfQMC9q
-         6rkQ==
-X-Gm-Message-State: AOJu0Yx6McJT3Hrtdxf/HFYEnV+bewo3YQkcuKqLvyRDGFYU8jKk2yj2
-	DOEcVOxue0b9MZwdWBAM2g==
-X-Google-Smtp-Source: AGHT+IFYn0a0pfyS8tB9352GHm+FwUQVdn+U2e30V+Foljp37QPIyDstNnI1NzA0G1xwCDRADRCyWg==
-X-Received: by 2002:a92:c685:0:b0:358:104:679d with SMTP id o5-20020a92c685000000b003580104679dmr4053847ilg.28.1700691156570;
-        Wed, 22 Nov 2023 14:12:36 -0800 (PST)
+        d=1e100.net; s=20230601; t=1700691159; x=1701295959;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oQrmqAZcdIuXmqszFM5kR+KdU7shYUbjsm44jbecVtk=;
+        b=HmmXPwzc50joKTkOWtAw3+vfvwRiCJwUxb66bn0t0RkrnwXrWSRk3c6b5Shvdoh2sU
+         1Ws/58s/BN2eTAn9XZvjg6u01uhbmcGAOH7EnsT+kTbG2DIzyuyoxcgEUpJSXFmnJePk
+         QQFX+2Kc5fgSuinpVmNBN0WU84ER/oosxaKkNnMFeDluUotIq3Bd6gjBQR3ybPRhwEjb
+         3YjUYSLEYZ36hbpwG01KySCr8IpTslGHW3dGY/IF9WMA4uRhuAgeCglzQNyCJgSACRSa
+         P63Vid7B+ctDcka/yhDiQzEvFAXyWjeYu/OLlYTrWUwkdQoXBUUVmXBRHUsORX3WYomF
+         TyAA==
+X-Gm-Message-State: AOJu0YwUMbJYNNiUHMB89pLYoBA7II/J2cjO01l4lvOT9QyA4sONZp2z
+	KAWDU3LqmPgemTxsBpStKA==
+X-Google-Smtp-Source: AGHT+IGj21a13xz1WqdS/H6Nqa3rnnJqU98fDkeH4YoBfe8sZRN0UwRgSamoEKVV6rR3nWw7fbCw5w==
+X-Received: by 2002:a92:c5cb:0:b0:35b:110f:8127 with SMTP id s11-20020a92c5cb000000b0035b110f8127mr3639999ilt.26.1700691159445;
+        Wed, 22 Nov 2023 14:12:39 -0800 (PST)
 Received: from herring.priv ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id y36-20020a029527000000b004665e39708esm88692jah.147.2023.11.22.14.12.34
+        by smtp.gmail.com with ESMTPSA id y17-20020a056e02119100b0035b19b773b8sm159259ili.59.2023.11.22.14.12.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Nov 2023 14:12:35 -0800 (PST)
-Received: (nullmailer pid 2753833 invoked by uid 1000);
+        Wed, 22 Nov 2023 14:12:38 -0800 (PST)
+Received: (nullmailer pid 2753842 invoked by uid 1000);
 	Wed, 22 Nov 2023 22:12:33 -0000
 From: Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 0/4] kbuild: Per arch/platform dtc warning levels
-Date: Wed, 22 Nov 2023 15:12:31 -0700
-Message-Id: <20231122-dtc-warnings-v2-0-bd4087325392@kernel.org>
+Date: Wed, 22 Nov 2023 15:12:35 -0700
+Subject: [PATCH v2 4/4] arm/arm64: dts: samsung: Always enable extra W=1
+ warnings
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -39,45 +39,52 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAM98XmUC/x3MQQqAIBBA0avIrBNyBLGuEi1ER5uNhUYF4d2Tl
- m/x/wuVClOFWbxQ6OLKe+7AQYDfXE4kOXQDjqiVQpTh9PJ2JXNOVU7Gxmi1s4YC9OQoFPn5d8v
- a2gcKn3iHXgAAAA==
+Message-Id: <20231122-dtc-warnings-v2-4-bd4087325392@kernel.org>
+References: <20231122-dtc-warnings-v2-0-bd4087325392@kernel.org>
+In-Reply-To: <20231122-dtc-warnings-v2-0-bd4087325392@kernel.org>
 To: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor@kernel.org>
 Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 X-Mailer: b4 0.13-dev
 
-This series adds support to set the dtc extra warning level on a per 
-arch or per platform (directory really) basis.
-
-The first version of this was just a simple per directory override for 
-Samsung platforms, but Conor asked to be able to do this for all of 
-riscv.
-
-For merging, either I can take the whole thing or the riscv and samsung 
-patches can go via their normal trees. The added variable will have no 
-effect until merged with patch 2.
-
-v1:
- - https://lore.kernel.org/all/20231116211739.3228239-1-robh@kernel.org/
+Samsung platforms are clean of W=1 dtc warnings, so enable the warnings
+by default. This way submitters don't have to remember to run a W=1
+build of the .dts files and the grumpiness of the maintainers can be
+reduced.
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
-Rob Herring (4):
-      kbuild: Move dtc graph_child_address warning to W=2
-      kbuild: Allow arch/platform override of dtc warning level
-      riscv: dts: Always enable extra W=1 warnings
-      arm/arm64: dts: samsung: Always enable extra W=1 warnings
-
- arch/arm/boot/dts/samsung/Makefile  |  3 +++
- arch/arm64/boot/dts/exynos/Makefile |  3 +++
- arch/riscv/boot/dts/Makefile        |  3 +++
- scripts/Makefile.lib                | 16 +++++++++-------
- 4 files changed, 18 insertions(+), 7 deletions(-)
+v2:
+ - Use new variable name
 ---
-base-commit: b85ea95d086471afb4ad062012a4d73cd328fa86
-change-id: 20231122-dtc-warnings-968ff83a86ed
+ arch/arm/boot/dts/samsung/Makefile  | 3 +++
+ arch/arm64/boot/dts/exynos/Makefile | 3 +++
+ 2 files changed, 6 insertions(+)
 
-Best regards,
+diff --git a/arch/arm/boot/dts/samsung/Makefile b/arch/arm/boot/dts/samsung/Makefile
+index 7becf36656b1..fffc5c45d441 100644
+--- a/arch/arm/boot/dts/samsung/Makefile
++++ b/arch/arm/boot/dts/samsung/Makefile
+@@ -1,4 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
++
++KBUILD_EXTRA_WARN_DTC=1
++
+ dtb-$(CONFIG_ARCH_EXYNOS3) += \
+ 	exynos3250-artik5-eval.dtb \
+ 	exynos3250-monk.dtb \
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index 6e4ba69268e5..9cb188ef470d 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -1,4 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
++
++KBUILD_EXTRA_WARN_DTC=1
++
+ dtb-$(CONFIG_ARCH_EXYNOS) += \
+ 	exynos5433-tm2.dtb		\
+ 	exynos5433-tm2e.dtb		\
+
 -- 
-Rob Herring <robh@kernel.org>
+2.42.0
 
