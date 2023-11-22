@@ -1,114 +1,184 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="luqkiFNb"
-Received: from mail.manjaro.org (mail.manjaro.org [IPv6:2a01:4f8:c0c:51f3::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 223A09A;
-	Wed, 22 Nov 2023 00:29:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pOb7ge+y"
+Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1FFF110
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 00:42:50 -0800 (PST)
+Received: by mail-qv1-xf2d.google.com with SMTP id 6a1803df08f44-677fe97ddf8so25069236d6.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 00:42:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700642570; x=1701247370; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xJJJ00lRDiFcS8bTCcGfNaw9iOLVdZbPikVW1utuBzM=;
+        b=pOb7ge+ywADMyIl8ockp0/0pynZQ1sVBaimjIE8076IWRN7QyE5g2BjrCqLYJ50CAr
+         kZ76L46uKbP7DOtn6EEdJsmyXGNJgSAqghyZTycAZsLMThvPfacnMdtrJ3opq4B7DPC0
+         q82xh3EyZXkwNHV9JSMDR25dBz78dCfp/3QsT1aomxNPd/5ka6PKxunW8g94vYuxouxT
+         NAMjIlLVt0dI+NiK1/mjxxX2XBjI+pDGLP3qnbI7SOgOupJWWPpaWN/hhIjerZViGRXS
+         EhsYqx4TkoyZx5Zhd08/PNeJsPzxJLp9Vt6i4yA6LnWYaq+BhadXjbvbEvCouPosNuTz
+         7lHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700642570; x=1701247370;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xJJJ00lRDiFcS8bTCcGfNaw9iOLVdZbPikVW1utuBzM=;
+        b=sOIO+ZUiEKWDduKeCqh6b6+EjaJ4SBU5JYSjD1xSvCTZ7DsyxbRSSCHzHWcKTBsYrU
+         nie0zETdpLzSxJJuuch+S586/z5gPVv/BpowtOLsEqBNNvVqJjGqeWAIyCy65eQfuEIe
+         vDSQXaLdDtTnTY1RXBlwnEuTc11XgMMUNDb8bqEtwgjoGn+vhE03ogLTZ9CleR7d7M2a
+         tOtCCcoe3Jqa3Z1mKYTo/VG5FKcjEPgVA/QpYJ7OJOGn3Hm8jDKLVtX5xUWhwmwxSPrI
+         jsK+hNaDTvw/nhUBbTgpXazFI9L2iQ0je0nmU5LEyEL+cbWouWJp9ZsFd/4JfK2TDmvp
+         mpJQ==
+X-Gm-Message-State: AOJu0YzfDm+51Ji/D2Jn3hp1+x/W0luJRoE69fB75e6XrK+GcEUHQ89n
+	rVPGTODCZzwT0WL86K1inobTFfH+MOMc1IvpFy7gww==
+X-Google-Smtp-Source: AGHT+IGuE4s7BTtl86J4aY1Nuyr+QChlQ+/ghmDxMJ+Qpji0VOMTRWww7BDliDBXUH4jhsBEXFzcxCwrF5hxCi4U9KY=
+X-Received: by 2002:a05:6214:f6c:b0:64f:92af:9080 with SMTP id
+ iy12-20020a0562140f6c00b0064f92af9080mr1950970qvb.21.1700642569839; Wed, 22
+ Nov 2023 00:42:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1700641789;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=niGgf0XKP2t2Zirpm3py6uN4TsslbCqBZV8swChcUGg=;
-	b=luqkiFNbDd6RWusGME8U43GdpWQmVFH6uGh/SeA8mjPpqqWUZjiYyAvcSlh9sV5lce7/vO
-	IG7+5LekhVo61e4jR+mBvUp3MnXnsfUTKhsCcRxKG5DNecDwP4vMPtna+pTlfDgoXh6GqZ
-	KK4twF/6W9Y41udae9CkgIastHp8o5IeFZxhSkVqr8StItMw0G6CXgxd5HcXuGCCaxFhw+
-	K677kgapgPbS0Xm9zEfvJE0UxGKnth8RbWPlO1rCaMoqPP+/0+58Dyf2rVg9Ds6bTl3eQX
-	wR8zSKh//XY965zoutJqNqDYel2x3Zt5H0gDg3exzshfTMc1ZsMCJq6l7MBjIg==
-Date: Wed, 22 Nov 2023 09:29:49 +0100
-From: Dragan Simic <dsimic@manjaro.org>
+References: <20231120212037.911774-1-peter.griffin@linaro.org>
+ <20231120212037.911774-10-peter.griffin@linaro.org> <20231121151630.GA1692178-robh@kernel.org>
+ <CADrjBPo4qw4eJLuGsv7aK4V7QjGR_n_MQ+W-Rrq92iATSLFHZQ@mail.gmail.com> <35990cd2-a4d3-473e-893e-aa16c1c63289@linaro.org>
+In-Reply-To: <35990cd2-a4d3-473e-893e-aa16c1c63289@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 22 Nov 2023 08:42:37 +0000
+Message-ID: <CADrjBPr6t16Ypdg-M-r73PNiGe0XAdeCPs6Tk=iHsU3pPA9=4w@mail.gmail.com>
+Subject: Re: [PATCH v4 09/19] dt-bindings: serial: samsung: Make
+ samsung,uart-fifosize required property
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: wens@kernel.org, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>,
- Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, Andrew Davis <afd@ti.com>, Arnd Bergmann
- <arnd@arndb.de>, Bjorn Andersson <andersson@kernel.org>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, Konrad Dybcio
- <konrad.dybcio@linaro.org>, Michal Simek <michal.simek@amd.com>, Neil
- Armstrong <neil.armstrong@linaro.org>, Nishanth Menon <nm@ti.com>, Olof
- Johansson <olof@lixom.net>, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2] docs: dt-bindings: add DTS Coding Style document
-In-Reply-To: <7232a48b-b9ad-44b5-ae6a-d12dad70b3c4@linaro.org>
-References: <20231120084044.23838-1-krzysztof.kozlowski@linaro.org>
- <6b288a2e-d147-4bd3-b1d4-daf56295d939@gmail.com>
- <01f9ce3b-e6e5-4b05-bf7f-0b3a5f74910a@linaro.org>
- <CAGb2v64Vf5dDwq=KTrxwc=+w+0KUD2KVPMjmHg68Y_yukES5dQ@mail.gmail.com>
- <7232a48b-b9ad-44b5-ae6a-d12dad70b3c4@linaro.org>
-Message-ID: <58a9caacc1226c7c3a2bdfe73ef1791f@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Cc: Rob Herring <robh@kernel.org>, krzysztof.kozlowski+dt@linaro.org, 
+	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
+	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
+	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
+	jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
+	semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com, 
+	soc@kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
+	linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2023-11-22 09:21, Krzysztof Kozlowski wrote:
-> On 22/11/2023 09:09, Chen-Yu Tsai wrote:
->> On Wed, Nov 22, 2023 at 4:05 PM Krzysztof Kozlowski
->> <krzysztof.kozlowski@linaro.org> wrote:
->>> 
->>> On 21/11/2023 14:50, Rafał Miłecki wrote:
->>>>> +Order of Properties in Device Node
->>>>> +----------------------------------
->>>>> +
->>>>> +Following order of properties in device nodes is preferred:
->>>>> +
->>>>> +1. compatible
->>>>> +2. reg
->>>>> +3. ranges
->>>>> +4. Standard/common properties (defined by common bindings, e.g. 
->>>>> without
->>>>> +   vendor-prefixes)
->>>>> +5. Vendor-specific properties
->>>>> +6. status (if applicable)
->>>>> +7. Child nodes, where each node is preceded with a blank line
->>>>> +
->>>>> +The "status" property is by default "okay", thus it can be 
->>>>> omitted.
->>>> 
->>>> I think it would really help to include position of #address-cells 
->>>> and
->>>> #size-cells here. In some files I saw them above "compatible" that 
->>>> seems
->>>> unintuitive. Some prefer putting them at end which I think makes 
->>>> sense
->>>> as they affect children nodes.
->>>> 
->>>> Whatever you choose it'd be just nice to have things consistent.
->>> 
->>> This is a standard/common property, thus it goes to (4) above.
->> 
->> It's probably a mix, but AFAIK a lot of the device trees in tree have
->> #*-cells after "status". In some cases they are added in the board
->> .dts files, not the chip/module .dtsi files.
-> 
-> Existing DTS is not a good example :)
-> 
->> 
->> +1 that it makes sense at the end as they affect child nodes.
-> 
-> I still insist that status must be the last, because:
-> 1. Many SoC nodes have address/size cells but do not have any children
-> (I2C, SPI), so we put useless information at the end.
-> 2. Status should be the final information to say whether the node is
-> ready or is not. I read the node, check properties and then look at the 
-> end:
-> a. Lack of status means it is ready.
-> b. status=disabled means device still needs board 
-> resources/customization
+Hi Krzysztof,
 
-I agree with the "status" belonging to the very end, because it's both 
-logical and much more readable.  Also, "status" is expected to be 
-modified in the dependent DT files, which makes it kind of volatile and 
-even more deserving to be placed last.
+On Wed, 22 Nov 2023 at 07:49, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 21/11/2023 18:15, Peter Griffin wrote:
+> > Hi Rob,
+> >
+> > Thanks for your review.
+> >
+> > On Tue, 21 Nov 2023 at 15:16, Rob Herring <robh@kernel.org> wrote:
+> >>
+> >> On Mon, Nov 20, 2023 at 09:20:27PM +0000, Peter Griffin wrote:
+> >>> Specifying samsung,uart-fifosize in both DT and driver static data is error
+> >>> prone and relies on driver probe order and dt aliases to be correct.
+> >>>
+> >>> Additionally on many Exynos platforms these are (USI) universal serial
+> >>> interfaces which can be uart, spi or i2c, so it can change per board.
+> >>>
+> >>> For google,gs101-uart and exynosautov9-uart make samsung,uart-fifosize a
+> >>> required property. For these platforms fifosize now *only* comes from DT.
+> >>>
+> >>> It is hoped other Exynos platforms will also switch over time.
+> >>
+> >> Then allow the property on them.
+> >
+> > Not sure I fully understand your comment. Can you elaborate? Do you
+> > mean leave the 'samsung,uart-fifosize' as an optional property like it
+> > is currently even for the platforms that now require it to be present
+> > to function correctly?
+> >
+> > I deliberately restricted the yaml change to only require this
+> > property for the SoCs that already set the 'samsung,uart-fifosize'  dt
+> > property. As setting the property and having the driver use what is
+> > specified in DT also requires a corresponding driver update (otherwise
+> > fifosize gets overwritten by the driver static data, and then becomes
+> > dependent on probe order, dt aliases etc). The rationale was drivers
+> > 'opt in' and add themselves to the compatibles in this patch as they
+> > migrate away from obtaining fifo size from driver static data to
+> > obtaining it from DT.
+>
+> Your code diff looks like you are adding the property only to these models.
+
+OK, I intended to only make it a required DT property for these
+models. Presumably there is a better way to achieve that.
+
+>
+> >
+> >>
+> >>>
+> >>> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> >>> ---
+> >>>  .../bindings/serial/samsung_uart.yaml           | 17 +++++++++++++++++
+> >>>  1 file changed, 17 insertions(+)
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> >>> index ccc3626779d9..22a1edadc4fe 100644
+> >>> --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> >>> +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> >>> @@ -133,6 +133,23 @@ allOf:
+> >>>              - const: uart
+> >>>              - const: clk_uart_baud0
+> >>>
+> >>> +  - if:
+> >>> +      properties:
+> >>> +        compatible:
+> >>> +          contains:
+> >>> +            enum:
+> >>> +              - google,gs101-uart
+> >>> +              - samsung,exynosautov9-uart
+> >>> +    then:
+> >>> +      properties:
+> >>> +        samsung,uart-fifosize:
+> >>> +          description: The fifo size supported by the UART channel.
+> >>> +          $ref: /schemas/types.yaml#/definitions/uint32
+> >>> +          enum: [16, 64, 256]
+> >>
+> >> We already have 'fifo-size' in several drivers. Use that. Please move
+> >> its type/description definitions to serial.yaml and make drivers just do
+> >> 'fifo-size: true' if they use it.
+> >
+> > What do you suggest we do for the samsung,uart-fifosize property that
+> > is being used upstream?
+>
+> Nothing, your diff is just wrong. Or at least nothing needed. Just drop
+> all this properties: here and only make it required for Google GS101.
+
+OK, so your happy with the approach just not the implementation/patch
+and you don't want it updated to use fifo-size instead of
+samsung,uart-fifosize
+
+>
+>
+> >
+> >>
+> >>> +
+> >>> +      required:
+> >>> +       - samsung,uart-fifosize
+> >>
+> >> A new required property is an ABI break. Please explain why that is okay
+> >> in the commit message.
+> >>
+> >
+> > I can update the commit message to make clear there is an ABI break.
+> > As mentioned above the platforms where this is now required are either
+> > already setting the property or are new in this series. Is that
+> > sufficient justification?
+> Yes, but only first case. You need to order your patches correctly -
+> first is ABI break expecting ExynopsAutov9 to provide FIFO size in DTS
+> with its explanation. Second commit is adding GS101 where there is no
+> ABI break.
+
+OK, I'll drop the ExynopsAutov9 part then. I don't want to complicate
+this series by introducing an ABI breakage on some other unrelated
+Exynos platform.
+
+Peter
