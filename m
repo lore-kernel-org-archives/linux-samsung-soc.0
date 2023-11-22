@@ -1,103 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H5sORdv/"
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0629D47
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 12:06:10 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-40b30308c67so971195e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Nov 2023 12:06:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700683569; x=1701288369; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3EOznFpP5Wm2+kn1uG/Do2cPlHmY6zYZfJbOPAYwR3c=;
-        b=H5sORdv/9BystWaiQuivjt+vLaUn7y6XsfLSe3qrr/nPUTEptZYy2bOoyXJWkzqaMH
-         gBlXUt3Zwa0DDDP1cfbUiaDvY0a4Af2F8DSWdQvn6u2G6jOEr4jiOt910q35cvd9TgF6
-         tnb3RIUMR/tUxV4NtOc/SnW9oVMrxJ+ocMf0rD9osS+lr6MpS2iC+nvh1xyuPTLLybI9
-         9s3B/nKvV59Vu1LN5MNxZ0yNFuFxJ2g0mwxL0SZBOuCYBfm6Qpkfv3ZbiCyErHlBx94g
-         RbJrLwOkE1mjiTVzR6hI13YawQncBv6iKbkv92mFN+RlezKVTvPULpTk4MpUfqgwBA1Z
-         gmlg==
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 618C410C;
+	Wed, 22 Nov 2023 14:12:37 -0800 (PST)
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-35aa6107e9fso996535ab.0;
+        Wed, 22 Nov 2023 14:12:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700683569; x=1701288369;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3EOznFpP5Wm2+kn1uG/Do2cPlHmY6zYZfJbOPAYwR3c=;
-        b=taJng69Y5YED9jXpHpsif8dhchR2SapD0NJZ5DByjZQ6DMGknL/ivkxiS0dbwtUe9o
-         VxyAyBiGyRzK2U20+flhWxFoAGdwPBku+5mQRNIsbDm/SRuts7sYGZzzXXJWNehJK50p
-         24XJ1eVx6m13eFw8GiRLKVMQW4tdDaaFJxcXonxxvtNONb4IumZ1YYJtC5s7/o7VafN7
-         hvOPrmUhKIeCHdn0kDluyC5jGdJ5Lb/w9h8VFTxISmCWR6f8/+4qSM7MnoNFd+b6K+QD
-         L2S77xI1iouWNbhFmwrefKPTPhMdb/pKNPNyyJtXPh7GyyhzkHvPKMrb4x7gaW0rrlC8
-         1Rpw==
-X-Gm-Message-State: AOJu0Yxeu24MmEsTxkbfmexVAneXk9H115+hm7UscdDufBF0vXGWXTnp
-	sbOnjEdthQ2X9cpahCV8R8fFxQ==
-X-Google-Smtp-Source: AGHT+IGCVfLzK8Oe+0XBpSNMCveU4O6Qvzpw6gxialiMohgi0yDnSXJlz9A+pgM+VMFdYfI+HDlEDg==
-X-Received: by 2002:a05:600c:138c:b0:408:4cf7:4f91 with SMTP id u12-20020a05600c138c00b004084cf74f91mr2636634wmf.16.1700683569119;
-        Wed, 22 Nov 2023 12:06:09 -0800 (PST)
-Received: from krzk-bin.. ([178.197.218.100])
-        by smtp.gmail.com with ESMTPSA id l17-20020a05600c4f1100b004063c9f68f2sm394665wmq.26.2023.11.22.12.06.07
+        d=1e100.net; s=20230601; t=1700691156; x=1701295956;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sK7kv4eKhyN2VRY462hcU4dvihYdA9xvtn9OEHW15Ho=;
+        b=LROf73TQKDRVlZt9L8bOefE2MsSRWep4zvW0aP6cKWM4lFParlzs/yTfeyu8kfMhlt
+         le7cZ2dv3ixopMniF5JpfRvJvQXzJkLU7fhbS2ktld1JydqVpMXnvIEqjBJHM7Qem59y
+         M4mIemUyHV4fzBAdMMjQtvQTbEN9kx3laZjYUDmXvCpWLZEaKp+F+kveNLv7YbSqTCGS
+         dO+Lr5TKMr41q9sWnD/LRbX3Hmoz8EiuoDDoINpEpoJWITib+csl5/jfYzyOt/FnajxU
+         8evXegFhWnvzMamqX4v7fMEW627Y3yBJKFk9gZGloz93KCZNbwAx29kl9ECtBgfQMC9q
+         6rkQ==
+X-Gm-Message-State: AOJu0Yx6McJT3Hrtdxf/HFYEnV+bewo3YQkcuKqLvyRDGFYU8jKk2yj2
+	DOEcVOxue0b9MZwdWBAM2g==
+X-Google-Smtp-Source: AGHT+IFYn0a0pfyS8tB9352GHm+FwUQVdn+U2e30V+Foljp37QPIyDstNnI1NzA0G1xwCDRADRCyWg==
+X-Received: by 2002:a92:c685:0:b0:358:104:679d with SMTP id o5-20020a92c685000000b003580104679dmr4053847ilg.28.1700691156570;
+        Wed, 22 Nov 2023 14:12:36 -0800 (PST)
+Received: from herring.priv ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id y36-20020a029527000000b004665e39708esm88692jah.147.2023.11.22.14.12.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Nov 2023 12:06:08 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Tomasz Figa <tomasz.figa@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Peter Griffin <peter.griffin@linaro.org>,
-	semen.protsenko@linaro.org,
-	Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH 3/3] arm64: dts: exynosautov9: use Exynos7 fallbacks for pin wake-up controllers
-Date: Wed, 22 Nov 2023 21:04:07 +0100
-Message-Id: <20231122200407.423264-3-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231122200407.423264-1-krzysztof.kozlowski@linaro.org>
-References: <20231122200407.423264-1-krzysztof.kozlowski@linaro.org>
+        Wed, 22 Nov 2023 14:12:35 -0800 (PST)
+Received: (nullmailer pid 2753833 invoked by uid 1000);
+	Wed, 22 Nov 2023 22:12:33 -0000
+From: Rob Herring <robh@kernel.org>
+Subject: [PATCH v2 0/4] kbuild: Per arch/platform dtc warning levels
+Date: Wed, 22 Nov 2023 15:12:31 -0700
+Message-Id: <20231122-dtc-warnings-v2-0-bd4087325392@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM98XmUC/x3MQQqAIBBA0avIrBNyBLGuEi1ER5uNhUYF4d2Tl
+ m/x/wuVClOFWbxQ6OLKe+7AQYDfXE4kOXQDjqiVQpTh9PJ2JXNOVU7Gxmi1s4YC9OQoFPn5d8v
+ a2gcKn3iHXgAAAA==
+To: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+X-Mailer: b4 0.13-dev
 
-ExynosAutov9 pin controller capable of wake-ups is still compatible with
-Exynos7, however it does not mux interrupts. Add Exynos7 compatible
-fallback to annotate that compatibility and match the bindings.
+This series adds support to set the dtc extra warning level on a per 
+arch or per platform (directory really) basis.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The first version of this was just a simple per directory override for 
+Samsung platforms, but Conor asked to be able to do this for all of 
+riscv.
 
+For merging, either I can take the whole thing or the riscv and samsung 
+patches can go via their normal trees. The added variable will have no 
+effect until merged with patch 2.
+
+v1:
+ - https://lore.kernel.org/all/20231116211739.3228239-1-robh@kernel.org/
+
+Signed-off-by: Rob Herring <robh@kernel.org>
 ---
+Rob Herring (4):
+      kbuild: Move dtc graph_child_address warning to W=2
+      kbuild: Allow arch/platform override of dtc warning level
+      riscv: dts: Always enable extra W=1 warnings
+      arm/arm64: dts: samsung: Always enable extra W=1 warnings
 
-Cc: Peter Griffin <peter.griffin@linaro.org>
-Cc: semen.protsenko@linaro.org
-Cc: Jaewon Kim <jaewon02.kim@samsung.com>
+ arch/arm/boot/dts/samsung/Makefile  |  3 +++
+ arch/arm64/boot/dts/exynos/Makefile |  3 +++
+ arch/riscv/boot/dts/Makefile        |  3 +++
+ scripts/Makefile.lib                | 16 +++++++++-------
+ 4 files changed, 18 insertions(+), 7 deletions(-)
 ---
- arch/arm64/boot/dts/exynos/exynosautov9.dtsi | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+base-commit: b85ea95d086471afb4ad062012a4d73cd328fa86
+change-id: 20231122-dtc-warnings-968ff83a86ed
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-index 417aa56a81f6..c871a2f49fda 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-@@ -310,7 +310,9 @@ pinctrl_alive: pinctrl@10450000 {
- 			reg = <0x10450000 0x1000>;
- 
- 			wakeup-interrupt-controller {
--				compatible = "samsung,exynosautov9-wakeup-eint";
-+				compatible = "samsung,exynosautov9-wakeup-eint",
-+					     "samsung,exynos850-wakeup-eint",
-+					     "samsung,exynos7-wakeup-eint";
- 			};
- 		};
- 
+Best regards,
 -- 
-2.34.1
+Rob Herring <robh@kernel.org>
 
