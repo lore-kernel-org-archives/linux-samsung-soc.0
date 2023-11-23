@@ -1,119 +1,89 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D8B25555;
+	Thu, 23 Nov 2023 14:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lUWuEyD0"
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18D21D49
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Nov 2023 05:27:55 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-4083f613272so5768035e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Nov 2023 05:27:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700746073; x=1701350873; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EXvmaEo9djiQoWu0VY3+nTDbX4i2eSIVDoQ7R6Z2gjo=;
-        b=lUWuEyD0if9x4rryxJfvCDjmAyqPGfe9sVOl9r6AMYQON/viGgzcuH1ZZPC0CuchV0
-         N2Cw/KhtkZxGfaNdTTuB6+T61SoPQkTlFitMK2yKvZT4I8VC6xCm9I/bN7UGgIPqEflm
-         mrOojTArGSIgqyUtEwlChXwqLOrmhlUsZ4d5eg6W2Y52TZEjh0/JGrw6vIJSVaeZJg85
-         /BamVty7RkRa0iNdJ1+sHide0fYVVJbGLMkz740fHHbGb4DKiqhzoScfOdO286Hf/8sW
-         haus1JuCdaEA+i0FQKT1dFyRgKYpzUUZV0uwKyg4ZlmEEbEqvvuFrMUDUUeX/wPFB/Ka
-         Ad2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700746073; x=1701350873;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EXvmaEo9djiQoWu0VY3+nTDbX4i2eSIVDoQ7R6Z2gjo=;
-        b=LGYQicLushUpK5yvJvX2sNF39tXyUgmTAXX2QaUrqeS/s4qnE6vkETIQbThsKTEaI6
-         oPLw0oXyvj/fvbhKk/nqsiu77wtrmjhKetot1F+NBMwQLCtJcBvXvOcGWAdrBNYAVEtg
-         5WLUptE6gWp3iuDAhsDqBeEumB4kFv2Mv2pVfkEWbrJgKEh6SGR9bVnu75MTVlMWKf0p
-         Zhwe9+al0WIxPKtqWe+vm73+mMkictuUeiVRYe6KdIVPu30hWpH4WSmyZMVKuwZra13s
-         27l81HFF0U3T9aXgBASC57FCJQKo7H7BmLWD5vHse+5MURHBXALas3bhK3QW01JUJhNt
-         i0Jg==
-X-Gm-Message-State: AOJu0Yzbu8wIVN7OmZVzJoAxCPPSUe/AooMNH07HVJnUpE6KEYxYw78u
-	JQS+w8HV6metcIia873LNrtP7g==
-X-Google-Smtp-Source: AGHT+IFRncMZMkWKQOTBdPyoxEXl6GS2B9sTnKBvNDqJ6WMnhKHs+zxPIJPoaIzwue8nphltI8lN8w==
-X-Received: by 2002:a05:600c:138d:b0:40b:2a85:d7ae with SMTP id u13-20020a05600c138d00b0040b2a85d7aemr4119954wmf.16.1700746073580;
-        Thu, 23 Nov 2023 05:27:53 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.100])
-        by smtp.gmail.com with ESMTPSA id c4-20020a05600c0a4400b003fefaf299b6sm2024158wmq.38.2023.11.23.05.27.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Nov 2023 05:27:53 -0800 (PST)
-Message-ID: <dc0d9638-f35a-4d85-be3b-d912ba0e464f@linaro.org>
-Date: Thu, 23 Nov 2023 14:27:51 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZyD0Tn94"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97D3AC433CA;
+	Thu, 23 Nov 2023 14:13:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700748828;
+	bh=AGcHXRfH/rMMp6hJ33VbDXNVCM278y+An/5lGPmz0s0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ZyD0Tn94bo2vGeCq3N2ptlQvcAkslri04FYrRMwqbePwZ+mrHfj44rJe0x8L7Fwce
+	 nM70shIvtFAyssZZAbSm2yjkuolfpX77ONc+iFzORXqg6uf2+diIauo4Dp2dpWdFxM
+	 ZsFDThS7tkHIQHJaEDHKac4rgQkJbk8zm2KknhNQIMt0dk7iTD4FpPyFr4fcGnvYoq
+	 X10nmPcEwialBwZ3BDmP2Rt3cXsLBgf17igT9eEH9QEmw2wx4BRe5epvm4wuSoUyQu
+	 MxupRq4LoE4MP56WgzXG1SgKmztvRgpQgIi2+nTIqHFDsXcGurZph1gmaFL2siUG7X
+	 0R8Dzf1MUawjA==
+From: Lee Jones <lee@kernel.org>
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+ linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, 
+ Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+ chrome-platform@lists.linux.dev, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, 
+ Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, 
+ Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, 
+ Fabrice Gasnier <fabrice.gasnier@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ linux-stm32@st-md-mailman.stormreply.com
+In-Reply-To: <20231106171708.3892347-1-u.kleine-koenig@pengutronix.de>
+References: <20231106171708.3892347-1-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 00/18] mfd: Convert to platform remove callback
+ returning void
+Message-Id: <170074882434.1350828.3000645128153974049.b4-ty@kernel.org>
+Date: Thu, 23 Nov 2023 14:13:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] exynos-gsc: remove unused improper CONFIG definition
-Content-Language: en-US
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-media@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231123103808.17848-1-lukas.bulwahn@gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231123103808.17848-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.12.3
 
-On 23/11/2023 11:38, Lukas Bulwahn wrote:
-> Defines prefixed with "CONFIG" should be limited to proper Kconfig options,
-> that are introduced in a Kconfig file.
+On Mon, 06 Nov 2023 18:17:09 +0100, Uwe Kleine-König wrote:
+> this series converts all platform drivers below drivers/mfd to use
+> .remove_new(). Compared to the traditional .remove() callback
+> .remove_new() returns no value. This is a good thing because the driver
+> core doesn't (and cannot) cope for errors during remove. The only effect
+> of a non-zero return value in .remove() is that the driver core emits a
+> warning. The device is removed anyhow and an early return from .remove()
+> usually yields resource leaks and/or use-after-free bugs.
 > 
-> In the driver code, there is a define for CONFIG_VB2_GSC_DMA_CONTIG, but
-> this is not used anywhere in the code.
-> 
+> [...]
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Applied, thanks!
 
-Best regards,
-Krzysztof
+[01/18] mfd: ab8500-sysctrl: Convert to platform remove callback returning void
+        commit: 35cf346f9fa92ceb19c5d2edc4409a7d384da8ee
+[02/18] mfd: cros_ec_dev: Convert to platform remove callback returning void
+        commit: 981c92a1d65a7ccce2d814c66ff2deecca304672
+[03/18] mfd: exynos-lpass: Convert to platform remove callback returning void
+        commit: 2d859aa8e081884c0c02d738925cba23a8cfb1b8
+[04/18] mfd: fsl-imx25-tsadc: Convert to platform remove callback returning void
+        commit: f215b75acc85254a29404b32c871b7ff2ea8da2a
+[09/18] mfd: mxs-lradc: Convert to platform remove callback returning void
+        commit: beb1f9e6382f59339e118594c94ee6b5ac96f3ec
+[10/18] mfd: omap-usb-host: Convert to platform remove callback returning void
+        commit: 231927898ae91049aa35d237c556cc216d80e8f7
+[11/18] mfd: omap-usb-tll: Convert to platform remove callback returning void
+        commit: 83d4e355240147db7597ea1ce64624fcdaaee6ae
+[13/18] mfd: qcom-pm8xxx: Convert to platform remove callback returning void
+        commit: ae3bcd5b09e35f363aa1744d38f90fda2b40e9ca
+[15/18] mfd: stm32-timers: Convert to platform remove callback returning void
+        commit: aeebc47f8d479c363e24fba0201ef8dca417fe6e
+[18/18] mfd: twl4030-audio: Convert to platform remove callback returning void
+        commit: 3716978b584a8baaba16d64c93eb0fed0edcbc3b
+
+--
+Lee Jones [李琼斯]
 
