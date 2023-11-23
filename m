@@ -1,92 +1,64 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B95405F3;
-	Thu, 23 Nov 2023 17:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82044CE0C;
+	Thu, 23 Nov 2023 19:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdLGsha9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C9AFC433C8;
-	Thu, 23 Nov 2023 17:42:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700761343;
-	bh=mnNDN6CYqckEVI/ixOmZ/CDaSGqUiwp2ZxM10WlAlTc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SdLGsha9Z3ZYeiXs3nNe1pXNrngi9T51dttbfioVnWqXhZ0wCnD7lMr2Kr5+JdKPq
-	 v8Pm+dpyadazac8WxzdDQLqjEjwEBduOTyD5G/+OVFiJau8Yde78785cojbRtP4Ubi
-	 TG3ulvTP6VP6CzgHki9hFAZNPSVELzO08XEFFGv2YuL6gOtCeAJnXYjUrSSsnDqakM
-	 z1GurtZnkWZSx3leWQOZSxudwEivBQxW3R9QvGuRv/JSIdEtksyQ3KJap37AR6XYdP
-	 TTUPhwHvziKRz5/4DwUq/XUkOhf31WTZPDCDCK/qiDQ1jQauQEQGhfHGSsLNjzeB5y
-	 cvoiNiFvdCRKw==
-Date: Thu, 23 Nov 2023 17:42:18 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dFmyOE20"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF38C433C8;
+	Thu, 23 Nov 2023 19:47:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1700768879;
+	bh=2TtoXB0PIrwOLtz3SYKRVHyvGICWs9Ipxsyoj3bA2AM=;
+	h=Date:From:To:List-Id:Cc:Subject:References:In-Reply-To:From;
+	b=dFmyOE20xa1FcdBElYVSdD3dTZ78t6CF+MeAK67lUUdyi3caegKqKt5JQCjhwOcVv
+	 rlVq7CG4NxWGNvm+o6J8nASeStwm2HLOqgHYBbVidSqi73Em/A/hcD5C9emnwuJd/a
+	 kLcZaTtl26cmX4b3IPAv5noVU8sHHbhifQXgk2Kc=
+Date: Thu, 23 Nov 2023 19:47:56 +0000
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+	tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+	linus.walleij@linaro.org, wim@linux-watchdog.org,
+	linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+	arnd@arndb.de, olof@lixom.net, jirislaby@kernel.org,
+	cw00.choi@samsung.com, alim.akhtar@samsung.com,
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+	semen.protsenko@linaro.org, saravanak@google.com,
+	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Griffin <peter.griffin@linaro.org>,
-	semen.protsenko@linaro.org, Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: samsung: use Exynos7 fallbacks
- for newer wake-up controllers
-Message-ID: <20231123-matador-purifier-282af21fa605@spud>
-References: <20231122200407.423264-1-krzysztof.kozlowski@linaro.org>
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	kernel-team@android.com, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v4 16/19] tty: serial: samsung: Add gs101 compatible and
+ common fifoszdt_serial_drv_data
+Message-ID: <2023112347-hazelnut-plethora-9823@gregkh>
+References: <20231120212037.911774-1-peter.griffin@linaro.org>
+ <20231120212037.911774-17-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="82fCaaroElEuq5wK"
-Content-Disposition: inline
-In-Reply-To: <20231122200407.423264-1-krzysztof.kozlowski@linaro.org>
-
-
---82fCaaroElEuq5wK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20231120212037.911774-17-peter.griffin@linaro.org>
 
-On Wed, Nov 22, 2023 at 09:04:05PM +0100, Krzysztof Kozlowski wrote:
-> Older ARM8 SoCs like Exynos5433, Exynos7 and Exynos7885 have the pin
-> controller with wake-up interrupts muxed, thus the wake-up interrupt
-> controller device node has interrupts property, while its pin banks
-> might not (because they are muxed by the wake-up controller).
->=20
-> Newer SoCs like Exynos850 and ExynosAutov9 do not used muxed wake-up
-> interrupts:
-> 1. Wake-up interrupt controller device node has no interrupts,
-> 2. Its pin banks have interrupts (since there is no muxing).
->=20
-> Their programming interface is however still compatible with Exynos7,
-> thus change the bindings to express this: retain compatibility with
-> Exynos7 and add new compatibility fallback of Exynos850 in newer
-> designs.
->=20
-> No driver changes are needed.  This is necessary only to properly
-> describe DTS.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Mon, Nov 20, 2023 at 09:20:34PM +0000, Peter Griffin wrote:
+> Add serial driver data for Google Tensor gs101 SoC and a common
+> fifoszdt_serial_drv_data that can be used by platforms that specify the
+> samsung,uart-fifosize DT property.
+> 
+> A corresponding dt-bindings patch updates the yaml to ensure
+> samsung,uart-fifosize is a required property.
+> 
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  drivers/tty/serial/samsung_tty.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-Cheers,
-Conor.
-
---82fCaaroElEuq5wK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZV+O+gAKCRB4tDGHoIJi
-0sYPAP9S2c9HnHdR7ZzPqfIZ5CHHzWUQV1qnq1mzNcTcecSR0AD/QMDe/sPPOH49
-h8Cm2Kf0XSlSjwBeb59N0W7HWXxi+AM=
-=QhNP
------END PGP SIGNATURE-----
-
---82fCaaroElEuq5wK--
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
