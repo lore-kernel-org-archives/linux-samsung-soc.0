@@ -1,100 +1,88 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="JR3wNOy4"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 935F4D41;
-	Thu, 23 Nov 2023 01:47:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1700732869; x=1732268869;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1PBhagH7/vOdhd9ZeQlcwBuZIBpOl+fh5UyFzBiP084=;
-  b=JR3wNOy4r+Xp6kQzKuVPFIA9GgHJpgNgMOUaoiyjJwLvkBgkMB+KGAqa
-   //+6/bGD2/738d/BPpBCJ4mnRAHfb1UfPfjWR4hY5z+qCBnV9RDv5OXFZ
-   /IISL9GTzTKuMZE3mziawSINy99kSlFPyVJwO+sxOnCTb3P+EPSCaOMhQ
-   3a5TdhxX369BTIbQIHF3jqWEFHNTIXFFf03tq08Eisfm4Yr07pcXrxNBn
-   FZ72alEoprS56LOpn83ChhzAWT16HnHsUE0y5BXsr+UMOf6vf4y0HvRzx
-   nae/ROlnZnSzoQDNEGsb7Au/IgjswS3AX1rhlv6tetyoRj3Mx9f73a6Zs
-   A==;
-X-CSE-ConnectionGUID: bmtvjieoQui/t8rcBiXjvg==
-X-CSE-MsgGUID: VvY/zu3aQaWWYzr2ptuE+A==
-X-ThreatScanner-Verdict: Negative
-X-IronPort-AV: E=Sophos;i="6.04,221,1695711600"; 
-   d="asc'?scan'208";a="12184225"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Nov 2023 02:47:49 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Thu, 23 Nov 2023 02:47:34 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Thu, 23 Nov 2023 02:47:31 -0700
-Date: Thu, 23 Nov 2023 09:47:03 +0000
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Rob Herring <robh@kernel.org>
-CC: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
-	<nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Nicolas
- Schier <nicolas@fjasle.eu>, Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
-	Conor Dooley <conor@kernel.org>, <linux-kbuild@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH v2 0/4] kbuild: Per arch/platform dtc warning levels
-Message-ID: <20231123-sugar-aviator-337b290f899b@wendy>
-References: <20231122-dtc-warnings-v2-0-bd4087325392@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BN/4y5wM"
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E0B6D4E;
+	Thu, 23 Nov 2023 02:38:13 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-5482df11e73so999424a12.0;
+        Thu, 23 Nov 2023 02:38:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1700735892; x=1701340692; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/10f0Z5slGSAKwMhtMcE4JVOhjTmJuQd6yxBSQebl1Q=;
+        b=BN/4y5wMFp8+XUVwUz0orNEfc7B4Y9xcjHRLVhX9M2kFzhghbf+ClVdoNsqrGFtg7r
+         kIn7xC1JF38EXzJ0m5YyQ1/7M2IS+6J/PzRHxjILVxnVgMTc00jh+tOcbaQz6HZ4uegD
+         iNo7pz4eNR6MXgW4k2oaBiRfPXWgiJ1X/pLJ5/ZIRmWmWK14hBfz4F/1aGAimo+TavWX
+         m/OcmON1gCEjdfKOR84F3jLt5GqQ9L/G7P92LqILqJ0U+PPqe2OrNGRE4xyuiqFowsMS
+         c/e+5REXwGQgOF7F4pHfnFaa71AbLaNUm27EKqt9hXRGikU5NB59hxyBlpPqrsPbcjTQ
+         ARGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700735892; x=1701340692;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/10f0Z5slGSAKwMhtMcE4JVOhjTmJuQd6yxBSQebl1Q=;
+        b=hX+6eVvHcSsDriYP7IqnvUM1EV3zeSXEgP+UY2d8dpil2FkMQJXYFcEPFezQvJdb+X
+         u9WtrVfE6NTf6XpiP5f+hwAbe9hFsIIYHjMIdx4y99fE41BDAVU6xHlg4qZofCdHOA+2
+         WuvHlQeVKwAbpmQjVKZ7vGZQH3hPNr/0vuZ2/kpv++7BIvw7ltCDnc05rxyYk4/O44/c
+         XcVV9VRjSdQxtw9ETd/1CIt/EWS9FnMT+059g/Uk0VFoyKz6+bs+SnWAMyoSthfkSnk2
+         kUp5QNAuR3hxAe9uFz85JYfawT5aP/XbDYOjJccQH1dy+Z7/hI5ShlVc18UTwIEQBeLW
+         qi9A==
+X-Gm-Message-State: AOJu0YxaW/PTLxV3jW5wjRtIQo6Rt/p7I3HKgbzPsAGEamm4iBySUQqI
+	YSE2mBbgyKk0wkmR1nBQs16HD54Mwug=
+X-Google-Smtp-Source: AGHT+IHlzD3nvSyI/45B5PJ+YhvgKPsItsZOGvtSg8j3cEuomylmjSj4riDSySJf9GaOj2wfNWEA0g==
+X-Received: by 2002:a17:906:104c:b0:9fe:380e:9055 with SMTP id j12-20020a170906104c00b009fe380e9055mr3146320ejj.8.1700735891528;
+        Thu, 23 Nov 2023 02:38:11 -0800 (PST)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:d183:a5d9:39a9:cd13])
+        by smtp.gmail.com with ESMTPSA id w8-20020a170906184800b009fca9484a62sm594511eje.200.2023.11.23.02.38.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Nov 2023 02:38:10 -0800 (PST)
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] exynos-gsc: remove unused improper CONFIG definition
+Date: Thu, 23 Nov 2023 11:38:08 +0100
+Message-Id: <20231123103808.17848-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TlOjZ7bCqwxiOxdz"
-Content-Disposition: inline
-In-Reply-To: <20231122-dtc-warnings-v2-0-bd4087325392@kernel.org>
 
---TlOjZ7bCqwxiOxdz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Defines prefixed with "CONFIG" should be limited to proper Kconfig options,
+that are introduced in a Kconfig file.
 
-On Wed, Nov 22, 2023 at 03:12:31PM -0700, Rob Herring wrote:
-> This series adds support to set the dtc extra warning level on a per=20
-> arch or per platform (directory really) basis.
->=20
-> The first version of this was just a simple per directory override for=20
-> Samsung platforms, but Conor asked to be able to do this for all of=20
-> riscv.
->=20
-> For merging, either I can take the whole thing or the riscv and samsung=
-=20
-> patches can go via their normal trees. The added variable will have no=20
-> effect until merged with patch 2.
+In the driver code, there is a define for CONFIG_VB2_GSC_DMA_CONTIG, but
+this is not used anywhere in the code.
 
-IMO, you should take the lot.
+Just remove this unused definition.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+No functional change.
 
-Cheers,
-Conor.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/media/platform/samsung/exynos-gsc/gsc-core.h | 1 -
+ 1 file changed, 1 deletion(-)
 
---TlOjZ7bCqwxiOxdz
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/media/platform/samsung/exynos-gsc/gsc-core.h b/drivers/media/platform/samsung/exynos-gsc/gsc-core.h
+index 1ea5fa1bf3c8..b9777e07fb6d 100644
+--- a/drivers/media/platform/samsung/exynos-gsc/gsc-core.h
++++ b/drivers/media/platform/samsung/exynos-gsc/gsc-core.h
+@@ -26,7 +26,6 @@
+ 
+ #include "gsc-regs.h"
+ 
+-#define CONFIG_VB2_GSC_DMA_CONTIG	1
+ #define GSC_MODULE_NAME			"exynos-gsc"
+ 
+ #define GSC_SHUTDOWN_TIMEOUT		((100*HZ)/1000)
+-- 
+2.17.1
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZV8flwAKCRB4tDGHoIJi
-0gy+AP42cyrUTh4NL4eY8kIwsVmx5LejeoA0QZDYa85yy0PBgQD9EGKZIEXssWsj
-vX2Y6dIUhPn8qia5tz+YByAjUriTEAE=
-=2rQT
------END PGP SIGNATURE-----
-
---TlOjZ7bCqwxiOxdz--
