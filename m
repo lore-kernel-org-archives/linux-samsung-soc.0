@@ -1,42 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DDJS0UyT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6A9619AA;
-	Thu, 23 Nov 2023 00:37:06 -0800 (PST)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AN5kAZ2010883;
-	Thu, 23 Nov 2023 08:36:31 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XUpF4pbS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F36EB10DE;
+	Thu, 23 Nov 2023 00:47:29 -0800 (PST)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AN8knhk011614;
+	Thu, 23 Nov 2023 08:47:01 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=qcppdkim1;
  bh=eGdUvC/zd6Q/5MxjneStcUeitt7DJD3M5D51wFgBbyI=;
- b=DDJS0UyTtEos6CN0J44Lkoq8Hbty9b5+EB0s+HfxQrQpiIbd8ghHBa6R68y7O+ItXodZ
- tVU3XgGXQuBvcfwWfU14A+S4shXIjuEaCcaAkCpw80eDBQl8BxMtr+axpFODKRPCczUX
- 0JeUtYlDSVIy85SEelc9+uWLE91LgEtDsTW1rkR5LO7tb8oQ8ahIIRo8DwdNW6p8FqZ/
- LzE2BoekyCPQJsx4hmQkSzB284VxYuEs2V3CGi2grTKE/woMFlhc1Roy1PtWa9YPddZC
- zwNATj/uFCNu+RyJe0fuG2/rBSKn+IArsrXWuNuQQn4GoR4bXDAtTYm004RAlFAiqyP8 Zg== 
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uhf66au4j-1
+ b=XUpF4pbSS+fMLEAJHz/mhDeyMyYJ/uwqypC9bkF/WIs10fYSHRGjyk0zYTVfu8+bx5MK
+ zYL7tkAh6+NltFbHxXyR3cwOF07jOWOzPN4ShQCXLeYpluwxkcJJP7aqGL6sM0Dzsafn
+ lCH56xk8SRB9dboX6WvlnyMT6MM8C+oor86yeSbIYBf5NeV7tSu+/WqFMWllkvlrA1YB
+ udQ9PPYt801tSwywLPlIFH+pb0rfSgAUY/m0I1o8lBK810xJ7aNXCNKax9gXaZUUtt4d
+ 3p5KdXeZ7t3yJuTjaQiZRU/9o71JEgSqfNPhGlqkEUpYXzzAVb8I+FyAdji+fXzVfnkx dQ== 
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uj25t06ds-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Nov 2023 08:36:31 +0000
-Received: from pps.filterd (NASANPPMTA04.qualcomm.com [127.0.0.1])
-	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 3AN8MnuU007761;
-	Thu, 23 Nov 2023 08:36:30 GMT
+	Thu, 23 Nov 2023 08:47:01 +0000
+Received: from pps.filterd (NASANPPMTA02.qualcomm.com [127.0.0.1])
+	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 3AN8l09n007838;
+	Thu, 23 Nov 2023 08:47:00 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by NASANPPMTA04.qualcomm.com (PPS) with ESMTP id 3uhpmqphdk-1;
-	Thu, 23 Nov 2023 08:36:30 +0000
-Received: from NASANPPMTA04.qualcomm.com (NASANPPMTA04.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3AN8aUEk025472;
-	Thu, 23 Nov 2023 08:36:30 GMT
+	by NASANPPMTA02.qualcomm.com (PPS) with ESMTP id 3uj1yvrxst-1;
+	Thu, 23 Nov 2023 08:47:00 +0000
+Received: from NASANPPMTA02.qualcomm.com (NASANPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3AN8j10c005122;
+	Thu, 23 Nov 2023 08:47:00 GMT
 Received: from stor-dylan.qualcomm.com (stor-dylan.qualcomm.com [192.168.140.207])
-	by NASANPPMTA04.qualcomm.com (PPS) with ESMTP id 3AN8aToF025465;
-	Thu, 23 Nov 2023 08:36:30 +0000
+	by NASANPPMTA02.qualcomm.com (PPS) with ESMTP id 3AN8l0pB007830;
+	Thu, 23 Nov 2023 08:47:00 +0000
 Received: by stor-dylan.qualcomm.com (Postfix, from userid 359480)
-	id B5B0F20A68; Thu, 23 Nov 2023 00:36:29 -0800 (PST)
+	id 2082A20A68; Thu, 23 Nov 2023 00:47:00 -0800 (PST)
 From: Can Guo <quic_cang@quicinc.com>
 To: quic_cang@quicinc.com, bvanassche@acm.org, mani@kernel.org,
         adrian.hunter@intel.com, beanhuo@micron.com, avri.altman@wdc.com,
         junwoo80.lee@samsung.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+Cc: linux-scsi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Stanley Chu <stanley.chu@mediatek.com>, Andy Gross <agross@kernel.org>,
@@ -44,33 +45,33 @@ Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Andrew Halaney <ahalaney@redhat.com>,
         =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
         Brian Masney <bmasney@redhat.com>,
         linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
         linux-samsung-soc@vger.kernel.org (open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
         linux-kernel@vger.kernel.org (open list),
-        linux-mediatek@lists.infradead.org (moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER...),
-        linux-arm-msm@vger.kernel.org (open list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER...)
-Subject: [PATCH v4 01/10] scsi: ufs: host: Rename structure ufs_dev_params to ufs_host_params
-Date: Thu, 23 Nov 2023 00:36:07 -0800
-Message-Id: <1700728577-14729-2-git-send-email-quic_cang@quicinc.com>
+        linux-mediatek@lists.infradead.org (moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER...)
+Subject: [PATCH v5 01/10] scsi: ufs: host: Rename structure ufs_dev_params to ufs_host_params
+Date: Thu, 23 Nov 2023 00:46:21 -0800
+Message-Id: <1700729190-17268-2-git-send-email-quic_cang@quicinc.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1700728577-14729-1-git-send-email-quic_cang@quicinc.com>
-References: <1700728577-14729-1-git-send-email-quic_cang@quicinc.com>
+In-Reply-To: <1700729190-17268-1-git-send-email-quic_cang@quicinc.com>
+References: <1700729190-17268-1-git-send-email-quic_cang@quicinc.com>
 X-QCInternal: smtphost
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: bIUIvCR7xDdp71-vNV0kJBC0QM-KWOdZ
-X-Proofpoint-GUID: bIUIvCR7xDdp71-vNV0kJBC0QM-KWOdZ
+X-Proofpoint-GUID: Qfbv5RBpvCLWJmWTh38H8dtA-xTONztf
+X-Proofpoint-ORIG-GUID: Qfbv5RBpvCLWJmWTh38H8dtA-xTONztf
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2023-11-23_06,2023-11-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- clxscore=1015 bulkscore=0 mlxlogscore=999 lowpriorityscore=0
- priorityscore=1501 malwarescore=0 spamscore=0 suspectscore=0
- impostorscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2311060000 definitions=main-2311230060
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ mlxscore=0 spamscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ clxscore=1015 priorityscore=1501 malwarescore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2311230062
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
