@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hQO7ltMg"
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27FA5D5E
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Nov 2023 23:43:15 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9ffb5a4f622so222748966b.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Nov 2023 23:43:15 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AzPHkjBE"
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CE9AEA
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Nov 2023 23:43:13 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-a00ac0101d9so215987266b.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Nov 2023 23:43:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700811793; x=1701416593; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1700811792; x=1701416592; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T8USyps01Bs0RMOktp2jS8yeOD+5EniV5d5DZJZTRAE=;
-        b=hQO7ltMg7t38iTi6raWGtXc6FmTaJLHeJb/H7hJLJNaHXmK38fFIuMFm2+erBeT+pa
-         TaL4ttZZDqu7bdPvMabzd6+O6DyOQal15q2Ymr6EKoJW2FBKfglIYJoZY2AAXHIuDveT
-         lR2pWzv2r5Dm9Qhr0GAh+SALUeMGKUPsWankVa2XEX0Gq7sYxkrwpld4RHoFCyIOpIgr
-         yDVR1CwBPd9kc9juoam13lo3J+CI5H5D2n/xZKqkEqeLUNx0wC0nNLWH4EBgKniHs4Q/
-         NdvysTLVEIzc0AAab1DfJQRvxQRLz8QpoFuxOY8mRWfi6QlxSEUT1z8paLRi/XnK2QCt
-         5nbg==
+        bh=cyUAYuQRX6aMv+61STKF6DNySvEa6Ul2fK+eQe9Bzg4=;
+        b=AzPHkjBEeShulv8K4LG1wkczHy/A8/2BBb+G3x73Ct7DXxdxZCq+z9J8DeOAhTP5ga
+         oyLKKhMVOUjara2VTKqxnfDjZHYeu01Q+i1dhvcsArhjRwqL2ZSp+PuFg057GkC2roTC
+         a5dXiUHxPtjCANxRJ46DlQDppshETp42Xqj00xaPr6OfyEMEZiU7bk7lT5H8kft6agv6
+         27MGK2wkKUHWam4sc8dMD8HvaQt1voOGWXAo5aSzctEHH3oPvXrVefxhgA6v4yWv6eIp
+         AmuIcsGXsCUWi9s02VvqYRSmXpWyQHBQyvFIEvOvPZUkrTEcg4kHDQbIGPoQ1A8YuYwt
+         LL4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700811793; x=1701416593;
+        d=1e100.net; s=20230601; t=1700811792; x=1701416592;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=T8USyps01Bs0RMOktp2jS8yeOD+5EniV5d5DZJZTRAE=;
-        b=Sd6EWYYzYeKOb0r+4Nzgmo65vRgU/1rcr7bTD0xYjFUFlnFxkn8rKgJCWkt53rLlVT
-         xr0JRwtvgkfUX+QVvy1dNh1au8unCRwnmG/O8yO+4rsgcp7Ky3kD8+3Nxxu0LZa8Hf4W
-         3ok1LgOEKemexW1aHRXEy+GMCbJdUh/R51Y0G3mW0m/sYkYzB/4sjI4nQZ5vP+DBrORN
-         TWEiMPWTi56jUTxIcgsLuO7yMKl2FMXvQWAjs9scBFkvoMCyFBqCL5tjylD+mekJcfCk
-         kVvieZEV+/ACFzL7AXyhO3llTcFtfAJs3qwWy1UJUUywGVjJpMMaFWAO2nHX6t1aCH5B
-         gaGw==
-X-Gm-Message-State: AOJu0YwTeDWNjtb2j9Mq1cWa1QomsN0ZJdwqL61wxRZvugBZ5p9vohV9
-	zhULD4yeGBgA0LyFxS0sL7USkw==
-X-Google-Smtp-Source: AGHT+IGEVS0y2/Nwpy7G5jBsUFDMqGo4VL8WuWu9tGcBMl3m91yZOqXpotRuP3hZx7jgQFTjLL/w9g==
-X-Received: by 2002:a17:906:693:b0:9fc:9b28:7ff7 with SMTP id u19-20020a170906069300b009fc9b287ff7mr1424964ejb.60.1700811793654;
-        Thu, 23 Nov 2023 23:43:13 -0800 (PST)
+        bh=cyUAYuQRX6aMv+61STKF6DNySvEa6Ul2fK+eQe9Bzg4=;
+        b=pg12k8VdyXV0nsTfLWL6nCaU0iQNLAbIByqx7os2VSjKbHg7CDeuPIM+Lp0tRSwTzS
+         70Y4Nov2TQRqSqny73TccAQLQ7wXrNzAvkbE4mxf7OFZJHLKSBzTnINO1y/gNQEgD0w5
+         OGqNakQJ7wOh1d0x7bGT8nhUyDt8RHdo3wVElwTyuU+rdRQJPIsn45UBVR7l7njlloYk
+         hcWzcH8310ag1GDD6NRnaSs9yUh8iXHDU8mOTULr9efYmOsM78JoIvoY8TttPkWOZSCG
+         H0CG53Vsxhz/DZOdRnJT+HOqXIIGvOBC7kamt6B8Z/DZD9Lr9WpcWoEzglJiztmMg/aW
+         VB5w==
+X-Gm-Message-State: AOJu0YyrZnvhcc30mmdlx/+6Q8C22e71NtZ6n0tvaQL2DpiV2Bq1n69m
+	jCof/GKU6yyiLhcd76t6OvWhmQ==
+X-Google-Smtp-Source: AGHT+IGnXq0BeOtlIbT4kEQh7doVHdDRII4iYS9KqxdWl5+fcxpPtU+60o/O2lPRB2xTa/94ly1y0A==
+X-Received: by 2002:a17:906:2707:b0:a04:c9c4:8fc with SMTP id z7-20020a170906270700b00a04c9c408fcmr1296326ejc.18.1700811792060;
+        Thu, 23 Nov 2023 23:43:12 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.218.100])
-        by smtp.gmail.com with ESMTPSA id q13-20020a1709060e4d00b009fe16be6a65sm1739448eji.63.2023.11.23.23.43.12
+        by smtp.gmail.com with ESMTPSA id q13-20020a1709060e4d00b009fe16be6a65sm1739448eji.63.2023.11.23.23.43.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Nov 2023 23:43:13 -0800 (PST)
+        Thu, 23 Nov 2023 23:43:11 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Tomasz Figa <tomasz.figa@gmail.com>, 
  Sylwester Nawrocki <s.nawrocki@samsung.com>, 
@@ -49,13 +49,13 @@ To: Tomasz Figa <tomasz.figa@gmail.com>,
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc: Peter Griffin <peter.griffin@linaro.org>, semen.protsenko@linaro.org, 
  Jaewon Kim <jaewon02.kim@samsung.com>
-In-Reply-To: <20231122200407.423264-3-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20231122200407.423264-2-krzysztof.kozlowski@linaro.org>
 References: <20231122200407.423264-1-krzysztof.kozlowski@linaro.org>
- <20231122200407.423264-3-krzysztof.kozlowski@linaro.org>
-Subject: Re: (subset) [PATCH 3/3] arm64: dts: exynosautov9: use Exynos7
+ <20231122200407.423264-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: (subset) [PATCH 2/3] arm64: dts: exynos850: use Exynos7
  fallbacks for pin wake-up controllers
-Message-Id: <170081179217.5541.15219253404799513117.b4-ty@linaro.org>
-Date: Fri, 24 Nov 2023 08:43:12 +0100
+Message-Id: <170081179070.5541.8769953964405999458.b4-ty@linaro.org>
+Date: Fri, 24 Nov 2023 08:43:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -67,8 +67,8 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.12.3
 
 
-On Wed, 22 Nov 2023 21:04:07 +0100, Krzysztof Kozlowski wrote:
-> ExynosAutov9 pin controller capable of wake-ups is still compatible with
+On Wed, 22 Nov 2023 21:04:06 +0100, Krzysztof Kozlowski wrote:
+> Exynos850 pin controller capable of wake-ups is still compatible with
 > Exynos7, however it does not mux interrupts. Add Exynos7 compatible
 > fallback to annotate that compatibility and match the bindings.
 > 
@@ -76,8 +76,8 @@ On Wed, 22 Nov 2023 21:04:07 +0100, Krzysztof Kozlowski wrote:
 
 Applied, thanks!
 
-[3/3] arm64: dts: exynosautov9: use Exynos7 fallbacks for pin wake-up controllers
-      https://git.kernel.org/krzk/linux/c/7c1156d8a719d5fca39e0e40e4465e4cbd765e89
+[2/3] arm64: dts: exynos850: use Exynos7 fallbacks for pin wake-up controllers
+      https://git.kernel.org/krzk/linux/c/2d8f82dd322fbaafc9c1a70d70efb6efe42c973b
 
 Best regards,
 -- 
