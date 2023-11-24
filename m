@@ -1,158 +1,283 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SviCt4/s"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 264C210DB
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Nov 2023 04:45:35 -0800 (PST)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231124124533euoutp01bf56b47511c2c429d648fe84fd13574d~aj9A6abnk2805028050euoutp01h
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Nov 2023 12:45:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231124124533euoutp01bf56b47511c2c429d648fe84fd13574d~aj9A6abnk2805028050euoutp01h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1700829933;
-	bh=ntaqMyz7YzHuFOSbbT6sp4kgEM5ji5rcmDOY93Qfeos=;
-	h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
-	b=SviCt4/sslhtL7z/LzSwU4myb39ss+In2QltuR8qnlNkN6bRH0gEn/61xsMISuo4I
-	 j7pXOB+ud+8t4COv72FV/FS9OxKTJHs88X9QYvJAL6/7fOcoVLVqBi40VU6GCToWC9
-	 BvHN42xAf68vYpwAr+MeZB7+hcmTcTkEfUyDxoxc=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20231124124533eucas1p2ab9c27a3f635846aaff6b2d150997020~aj9AqDK3M1397813978eucas1p2l;
-	Fri, 24 Nov 2023 12:45:33 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 6F.1E.09539.DEA90656; Fri, 24
-	Nov 2023 12:45:33 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20231124124533eucas1p28d61463e5dc716cc0a1ba083069203f0~aj9AMSEBs1397813978eucas1p2k;
-	Fri, 24 Nov 2023 12:45:33 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20231124124532eusmtrp1b9b88945f5b2ec6e3aed67f9e94129e9~aj9ALjtBX1224812248eusmtrp1b;
-	Fri, 24 Nov 2023 12:45:32 +0000 (GMT)
-X-AuditID: cbfec7f2-52bff70000002543-1b-65609aedb451
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 97.17.09274.CEA90656; Fri, 24
-	Nov 2023 12:45:32 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20231124124532eusmtip1faa5cb023a66160b439cdedf9eaeb6c6~aj8-mU1sq2692926929eusmtip1X;
-	Fri, 24 Nov 2023 12:45:32 +0000 (GMT)
-Message-ID: <37d373e1-8850-4ab2-8fdb-6b069e2d6976@samsung.com>
-Date: Fri, 24 Nov 2023 13:45:32 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="blACIZ3Q"
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B055910E3
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Nov 2023 04:56:53 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1cfaaa79766so1968625ad.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Nov 2023 04:56:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700830613; x=1701435413; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xujb6kFqtC8wI/nMx0LNn7gwzfv+MW7wEFOovE+DY6o=;
+        b=blACIZ3QRLV4orCzTsKNlr5kMj0PofjTxGfkbkt4led0mTZz5+jcnU1DOeDNhoraYt
+         nJcHLML0OFRHQWuRAXgfVWKfBawkhXTbkuvS7uofIxxDkXZvzLeOefYswLpAFP1UKC8E
+         CWe/3Oz1Brzn/FtvL88xF84fuziiC5nQka97w6OZuck4mWM/hTyqx9XC7XW0MmDTWSTq
+         NiYPEfgH2J2bQ3h6P10MsQVhJTq/xYimdzIx+KpS7c0eKoZBpfbfN9//Mkp8lszZgT9x
+         Po/SRhfyj4hhyadsu/HhSfaOlL0/Kj5M9RD9UGRwn1VLl2Qtps75xnrbL/03v2KfXz6n
+         znxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700830613; x=1701435413;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xujb6kFqtC8wI/nMx0LNn7gwzfv+MW7wEFOovE+DY6o=;
+        b=AEmrmpkg3CtXDboFs6rOplsUkja5NIywKr6GOJykDnC8P6cVhNsRlJWdAx5j48VkL3
+         p9RlmQ1A2etK9cDiypRPfgs/G82wT6Bczpf9+jzCYGCcwiIjtwgSrB3CYJP+tYZa4PSy
+         vDPcY7z4OWvxbjvqckv4HVN/c/kDxSuI6sBPD8Vy9gmHwT3a/zLirZRT9vikqVQVGfUk
+         wBHA810hMySpJ/hoO3DhF35iRkOixBUwf4qmvu2WsjTZFH/wCgnn4szPjONsNoAuTBzU
+         +z8KZMLrFGD/kyzQ+e9noWQZUgHZPpMGmzvAjI7oVGYgF2prZ9vCXg0qC5Q2CzzZ2wwE
+         og9g==
+X-Gm-Message-State: AOJu0Yz+m0kja7r7LKS5kHSN0ND97Xpi1QCZSZ82jGhMq3Mk62cs76J6
+	4IdLMOWiF5IAnVupPiSgbDL8tLtK+0ga5z92TDXHpbX7F2mkycU1
+X-Google-Smtp-Source: AGHT+IF9MkghMnGcmPZ6oKymMT/UpH3kadFQgleGNgpxXbEPR8je/OfgN9q1rqitSot59grj0w/EKrcRA8d+7uuBhfg=
+X-Received: by 2002:a17:90b:1c0c:b0:280:c0:9d3f with SMTP id
+ oc12-20020a17090b1c0c00b0028000c09d3fmr3019628pjb.34.1700830613137; Fri, 24
+ Nov 2023 04:56:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] drm/panfrost: Really power off GPU cores in
- panfrost_gpu_power_off()
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, AngeloGioacchino
-	Del Regno <angelogioacchino.delregno@collabora.com>, Boris Brezillon
-	<boris.brezillon@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, tzimmermann@suse.de,
-	linux-kernel@vger.kernel.org, mripard@kernel.org,
-	dri-devel@lists.freedesktop.org, wenst@chromium.org, kernel@collabora.com,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Content-Language: en-US
-In-Reply-To: <39e9514b-087c-42eb-8d0e-f75dc620e954@linaro.org>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUyMcRz3e57n7p5qd5670JeauC0vbaJhHmmRhYt5GXkZNm71c5Xu3O6K
-	hK2wowsVtqsjL8NVRFxqLYS0Tu5UQuO6xGTIpSUvvRju7gn993n5/n6fz/e3H01K7vPG0Qmq
-	ZKxRyZOkfG+qoq6/YVqXcSueYarwZ5uLgbXaHhHss2/dfLas4QiPvfOpXMA+rTrNZ/MaqwlW
-	l2nisRm1LvemM5fH5ume8hb4yErOlCDZqfQnlKyy7SKSmS9n8mWOltt8WXuWhZCVWffIes3j
-	V9EbvcPjcFLCTqyZHrHVO976rRWpX4lTc4/aqXRUKNIjLxqYWdDxq0mgR960hClC4LiaSXHk
-	K4LqT4Yh0osg3WAm/x5xZpoIzihEYLh7FnGkB8FFW7VnSshEwOtGPeHGFBMEb/s6h3Qx1Od3
-	UG48mgmEdnuewI35TCjou/R8N/ZlNoElr8WTMIopQ5BvN3t6kMxhAswDJs9NJOMH9o6zngQv
-	V5ot4xLi9EA4UH5qqGuWF/w+H8vhKKgylgs47AudlptDOACsJ454AoA5hODcYDvBkRzX1u/t
-	iJuaB46GAVc/2pUwFUqrpnNyJGRl6AVuGRgRvOgScx1EcLzCQHKyEA7rJNz0JDBarv2Lvd/U
-	TOYgqXHYuxiHbWYcto3xf+45RF1GfjhFq1RgbagK7wrRypXaFJUiJHaH0oxcv8z6y/KlEhV0
-	9oTUIIJGNQhoUjpKqPy5BUuEcfLdaVizY4smJQlra5A/TUn9hEFxgVjCKOTJeDvGaqz56xK0
-	17h0QpgToyzKrruSHRM9sxbPqb99aP5IZfzExAA1to7x/4K+bz5fsjts1cnE/NQRzqbZryta
-	+xeOWZhSa1CLJotzg4s17x9m6/3qniffIR73ivZO2VVeULh/c9QEn6Vr5ysO7nkz7cHilcFP
-	FjnEEdGlFx6svFU7tmt10XJHpM0+IrvVYV70rvrZc99BMuTFMhXqXhf2eXuZxqZoS5hX9GED
-	YW0pPVbF9oSfLjZl7LsXs173uwZNtIzv6/s+p8RnW/3qRJEz8l7Q3uaBtLbRKz52v3TOiL3V
-	HymxCQ5e581UpkmO6e1hlU1RBUEBAaU+ZuGNNUpjuHruks+NkwtTE/YP6h6afvRLKW28PDSY
-	1GjlfwCtN/3x1AMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsVy+t/xu7pvZiWkGuyfYW5xaaWExekzp5gs
-	rnx9z2ax+VwPq8Xe11vZLS7vmsNmMeP8PiaLts5lrBaNR4CyW95MZLWY0XaZ1YHbY828NYwe
-	sxsusnjsuLuE0WPTqk42jzvX9rB53O8+zuSx+XS1x+dNcgEcUXo2RfmlJakKGfnFJbZK0YYW
-	RnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZp7/eZiy4J1gxsfcWSwPjcr4uRk4O
-	CQETiTedy5hAbCGBpYwS8x4YQMRlJE5Oa2CFsIUl/lzrYuti5AKqec8o0XVwPRtIglfATuLB
-	+S6wZhYBVYnHP14xQ8QFJU7OfMICYosKyEvcvzWDHcRmEzCU6HrbBdYrLBAtcXzGNSaQoSIC
-	mxklzj38BOYwC3QwSZz9PJkZYl0ri0TTtg1gLcwC4hK3nswHW8cJtPpM41JGiLiZRNfWLihb
-	XqJ562zmCYxCs5BcMgtJ+ywkLbOQtCxgZFnFKJJaWpybnltspFecmFtcmpeul5yfu4kRGLvb
-	jv3csoNx5auPeocYmTgYDzFKcDArifDm/olPFeJNSaysSi3Kjy8qzUktPsRoCgyOicxSosn5
-	wOSRVxJvaGZgamhiZmlgamlmrCTO61nQkSgkkJ5YkpqdmlqQWgTTx8TBKdXAlDHRqlrnWsST
-	PNPnU15e+dhyfvOpNItDhf+SPBKPr5kiuNF6nd/VFxluc7U1H5fqPmzSTWfw+XBBeaGr2nQb
-	1RVJTr33ajnW3Rb8umr+hjnNUSVZRbu2PeHJ/eHeeI/hzbZDdcyN2u63Lq0KMvyXsjhuTcPr
-	S+ZM63Nnb+8smC8nnHbE22N1yumGBS9+ZfBHMBR1XRNP+pC3KODJl0krFr99VMg+RSRKZEfZ
-	utOrPd5pVgRb9lp7P9NJi7U33JCZqXNlBpf0hhiFbds3r6vZpbnmDs9kJp3twS8F7h53/1BY
-	wbi0rnKlyl+Wt5bK7RxXBFwn8uXG7hN+aHdChHtekdOdy7/s+xRroyPawzX9lViKMxINtZiL
-	ihMBRECyRWYDAAA=
-X-CMS-MailID: 20231124124533eucas1p28d61463e5dc716cc0a1ba083069203f0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20231122092952eucas1p291af9a5570a05c67014f5c871c85e98c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20231122092952eucas1p291af9a5570a05c67014f5c871c85e98c
-References: <20231102141507.73481-1-angelogioacchino.delregno@collabora.com>
-	<7928524a-b581-483b-b1a1-6ffd719ce650@arm.com>
-	<1c9838fb-7f2d-4752-b86a-95bcf504ac2f@linaro.org>
-	<6b7a4669-7aef-41a7-8201-c2cfe401bc43@collabora.com>
-	<20231121175531.085809f5@collabora.com>
-	<d95259b8-10cf-4ded-866c-47cbd2a44f84@linaro.org>
-	<4c73f67e-174c-497e-85a5-cb053ce657cb@collabora.com>
-	<CGME20231122092952eucas1p291af9a5570a05c67014f5c871c85e98c@eucas1p2.samsung.com>
-	<39e9514b-087c-42eb-8d0e-f75dc620e954@linaro.org>
+References: <CGME20231119085440epcas2p375fa3b2999e1a3ceeff9949136db7e28@epcas2p3.samsung.com>
+ <20231119092909.3018578-1-youngmin.nam@samsung.com> <CAPLW+4kO4wYP=5Sx7dPXU17b_CHBJKN_93GhWtZ60vKgNRTKwQ@mail.gmail.com>
+ <ZWAn+XzseBTB+KE1@perf>
+In-Reply-To: <ZWAn+XzseBTB+KE1@perf>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 24 Nov 2023 06:56:41 -0600
+Message-ID: <CAPLW+4=4SDaw512hzUKscyu0RphKL7fKqVMcuQNEhz0UJ9smGw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: samsung: add irq_set_affinity() for non wake up
+ external gpio interrupt
+To: Youngmin Nam <youngmin.nam@samsung.com>
+Cc: tomasz.figa@gmail.com, krzysztof.kozlowski@linaro.org, 
+	s.nawrocki@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22.11.2023 10:29, Krzysztof Kozlowski wrote:
-> On 22/11/2023 10:06, AngeloGioacchino Del Regno wrote:
->>>>> Hey Krzysztof,
->>>>>
->>>>> This is interesting. It might be about the cores that are missing from the partial
->>>>> core_mask raising interrupts, but an external abort on non-linefetch is strange to
->>>>> see here.
->>>> I've seen such external aborts in the past, and the fault type has
->>>> often been misleading. It's unlikely to have anything to do with a
->>> Yeah, often accessing device with power or clocks gated.
->>>
->> Except my commit does *not* gate SoC power, nor SoC clocks 🙂
-> It could be that something (like clocks or power supplies) was missing
-> on this board/SoC, which was not critical till your patch came.
+On Thu, Nov 23, 2023 at 10:00=E2=80=AFPM Youngmin Nam <youngmin.nam@samsung=
+.com> wrote:
 >
->> What the "Really power off ..." commit does is to ask the GPU to internally power
->> off the shaders, tilers and L2, that's why I say that it is strange to see that
->> kind of abort.
->>
->> The GPU_INT_CLEAR GPU_INT_STAT, GPU_FAULT_STATUS and GPU_FAULT_ADDRESS_{HI/LO}
->> registers should still be accessible even with shaders, tilers and cache OFF.
->>
->> Anyway, yes, synchronizing IRQs before calling the poweroff sequence would also
->> work, but that'd add up quite a bit of latency on the runtime_suspend() call, so
->> in this case I'd be more for avoiding to execute any register r/w in the handler
->> by either checking if the GPU is supposed to be OFF, or clearing interrupts, which
->> may not work if those are generated after the execution of the poweroff function.
->> Or we could simply disable the irq after power_off, but that'd be hacky (as well).
->>
->>
->> Let's see if asking to poweroff *everything* works:
-> Worked.
+> On Tue, Nov 21, 2023 at 12:33:51PM -0600, Sam Protsenko wrote:
+> > On Sun, Nov 19, 2023 at 2:54=E2=80=AFAM Youngmin Nam <youngmin.nam@sams=
+ung.com> wrote:
+> > >
+> > > To support affinity setting for non wake up external gpio interrupt,
+> > > we add a new irq_set_affinity callback using irq number which is in p=
+inctrl
+> > > driver data.
+> > >
+> > > Before applying this patch, we couldn't change irq affinity of gpio i=
+nterrupt.
+> > > * before
+> > > erd9945:/proc/irq/418 # cat smp_affinity
+> > > 3ff
+> > > erd9945:/proc/irq/418 # echo 00f > smp_affinity
+> > > erd9945:/proc/irq/418 # cat smp_affinity
+> > > 3ff
+> > > erd9945:/proc/irq/418 # cat /proc/interrupts
+> > >            CPU0       CPU1       CPU2       CPU3       CPU4       CPU=
+5       CPU6       CPU7       CPU8       CPU9
+> > > 418:       3631          0          0          0          0          =
+0          0          0          0          0      gpg2   0 Edge      19100=
+000.drmdecon
+> > >
+> > > After applying this patch, we can change irq affinity of gpio interru=
+pt as below.
+> > > * after
+> > > erd9945:/proc/irq/418 # cat smp_affinity
+> > > 3ff
+> > > erd9945:/proc/irq/418 # echo 00f > smp_affinity
+> > > erd9945:/proc/irq/418 # cat smp_affinity
+> > > 00f
+> > > erd9945:/proc/irq/418 # cat /proc/interrupts
+> > >            CPU0       CPU1       CPU2       CPU3       CPU4       CPU=
+5       CPU6       CPU7       CPU8       CPU9
+> > > 418:       3893        201        181        188          0          =
+0          0          0          0          0      gpg2   0 Edge      19100=
+000.drmdecon
+> > >
+> >
+> > Suggest formatting the commit message as follows, to make it more reada=
+ble:
+> >
+> > 8<---------------------------------------------------------------------=
+----->8
+> > To support affinity setting for non wake up external gpio interrupt,
+> > add irq_set_affinity callback using irq number from pinctrl driver
+> > data.
+> >
+> > Before this patch, changing the irq affinity of gpio interrupt is not
+> > possible:
+> >
+> >     # cat /proc/irq/418/smp_affinity
+> >     3ff
+> >     # echo 00f > /proc/irq/418/smp_affinity
+> >     # cat /proc/irq/418/smp_affinity
+> >     3ff
+> >     # cat /proc/interrupts
+> >                CPU0       CPU1       CPU2       CPU3    ...
+> >     418:       3631          0          0          0    ...
+> >
+> > With this patch applied, it's possible to change irq affinity of gpio
+> > interrupt:
+> >
+> >     # cat /proc/irq/418/smp_affinity
+> >     3ff
+> >     # echo 00f > /proc/irq/418/smp_affinity
+> >     # cat /proc/irq/418/smp_affinity
+> >     00f
+> >     # cat /proc/interrupts
+> >                CPU0       CPU1       CPU2       CPU3      ...
+> >     418:       3893        201        181        188      ...
+> > 8<---------------------------------------------------------------------=
+----->8
+> >
+>
+> Thanks for your suggestion. I'll modify it.
+>
+> > > Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+> > > ---
+> > >  drivers/pinctrl/samsung/pinctrl-exynos.c | 14 ++++++++++++++
+> > >  1 file changed, 14 insertions(+)
+> > >
+> > > diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinct=
+rl/samsung/pinctrl-exynos.c
+> > > index 6b58ec84e34b..5d7b788282e9 100644
+> > > --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> > > +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> > > @@ -147,6 +147,19 @@ static int exynos_irq_set_type(struct irq_data *=
+irqd, unsigned int type)
+> > >         return 0;
+> > >  }
+> > >
+> > > +static int exynos_irq_set_affinity(struct irq_data *irqd,
+> > > +                                  const struct cpumask *dest, bool f=
+orce)
+> > > +{
+> > > +       struct samsung_pin_bank *bank =3D irq_data_get_irq_chip_data(=
+irqd);
+> > > +       struct samsung_pinctrl_drv_data *d =3D bank->drvdata;
+> > > +       struct irq_data *parent =3D irq_get_irq_data(d->irq);
+> >
+> > I'm probably missing something, but: why not just use "irqd" parameter
+> > and avoid declaring "bank" and "d"? Is "d->irq" somehow different from
+> > "irqd"?
+> >
+>
+> Yes, irqd->irq is different from d->irq as below.
+>
+> [  188.230707] irqd->irq is 417
+> [  188.230837] d->irq is 133
+>
+> We have to use d->irq(133) instead of irqd->irq(417) because d->irq has G=
+ICv3 as a IRQ chip.
+> To use set_affinity() call back of GICv3, d->irq is needed.
+>
+> IRQ  HWIRQ  Type   Affinity    IRQ_DESC             CPU0    CPU1    CPU2 =
+   CPU3 ... Chip   Name
+> 133    603  Level  0x3ff       0xffffff883b25d800  52260       0       0 =
+      0 ... GICv3  11030000.pinctrl
+> 417      0  Edge   0xffffffff  0xffffff883b68a800  52259       0       0 =
+      0 ... gpg2   19100000.drmdecon
+>
+> erd9945: # cat /proc/interrupts | grep gpg2
+> 417:       9250         48         45         45 ...  gpg2   0 Edge      =
+19100000.drmdecon
+>
+> erd9945: # cat /proc/interrupts | grep 11030000
+> 133:       9250         48         45         45 ...  GICv3 603 Level    =
+ 11030000.pinctrl
+>
 
-Yes, I also got into this issue some time ago, but I didn't report it 
-because I also had some power supply related problems on my test farm 
-and everything was a bit unstable. I wasn't 100% sure that the $subject 
-patch is responsible for the observed issues. Now, after fixing power 
-supply, I confirm that the issue was revealed by the $subject patch and 
-above mentioned change fixes the problem. Feel free to add:
+Thanks for the explanation! Apart from my suggestion for the commit message=
+:
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+> > > +
+> > > +       if (parent)
+> > > +               return parent->chip->irq_set_affinity(parent, dest, f=
+orce);
+> > > +
+> >
+> > Why not use irq_chip_set_affinity_parent() API?
+> >
+> > > +       return -EINVAL;
+> >
+> > Maybe use something like this instead:
+> >
+> >     if (!irqd->parent_data)
+> >             return -EINVAL;
+> >
+> >     return irq_chip_set_affinity_parent(irqd, dest, force);
+> >
+> > Can you please test if this code works?
+> >
+>
+> I tested as you suggested as below.
+>
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/s=
+amsung/pinctrl-exynos.c
+> index bf8dd5e3c3d2..593320b408ce 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> @@ -153,14 +153,12 @@ static int exynos_irq_set_type(struct irq_data *irq=
+d, unsigned int type)
+>  static int exynos_irq_set_affinity(struct irq_data *irqd,
+>                                    const struct cpumask *dest, bool force=
+)
+>  {
+> -       struct samsung_pin_bank *bank =3D irq_data_get_irq_chip_data(irqd=
+);
+> -       struct samsung_pinctrl_drv_data *d =3D bank->drvdata;
+> -       struct irq_data *parent =3D irq_get_irq_data(d->irq);
+> -
+> -       if (parent)
+> -               return parent->chip->irq_set_affinity(parent, dest, force=
+);
+> +       if (!irqd->parent_data) {
+> +               pr_err("irqd->parent_data is null!!\n");
+> +               return -EINVAL;
+> +       }
+>
+> -       return -EINVAL;
+> +       return irq_chip_set_affinity_parent(irqd, dest, force);
+>  }
+>
+> [  149.658395] irqd->parent_data is null!!
+>
+> Currently, irqd->paranet_data is null.
+>
+> > > +}
+> > > +
+> > >  static int exynos_irq_request_resources(struct irq_data *irqd)
+> > >  {
+> > >         struct samsung_pin_bank *bank =3D irq_data_get_irq_chip_data(=
+irqd);
+> > > @@ -212,6 +225,7 @@ static const struct exynos_irq_chip exynos_gpio_i=
+rq_chip __initconst =3D {
+> > >                 .irq_mask =3D exynos_irq_mask,
+> > >                 .irq_ack =3D exynos_irq_ack,
+> > >                 .irq_set_type =3D exynos_irq_set_type,
+> > > +               .irq_set_affinity =3D exynos_irq_set_affinity,
+> >
+> > What happens if we just assign irq_chip_set_affinity_parent() here?
+> > Would it work, or Exynos case is more complicated than this?
+> >
+>
+> Yes, I couldn't find how to use irq_chip_set_affinity_parent() directly y=
+et.
+>
+> > >                 .irq_request_resources =3D exynos_irq_request_resourc=
+es,
+> > >                 .irq_release_resources =3D exynos_irq_release_resourc=
+es,
+> > >         },
+> > > --
+> > > 2.39.2
+> > >
+> >
