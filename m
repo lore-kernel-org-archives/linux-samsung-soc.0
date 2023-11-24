@@ -1,155 +1,295 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OfYpdWqd"
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E97D7D56
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Nov 2023 17:14:39 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-9ff26d7c0a6so196431766b.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Nov 2023 17:14:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700788478; x=1701393278; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=63sQ1AH1I32ffRCwtEtkqR0j31IoAtIR8HssDvXhDlI=;
-        b=OfYpdWqdhKiLGydU0JGuj5mBlvhiF5wQdo9F6qORlE5+siMdahtPKUiduC/JdABMl7
-         2pb8QWVaTJXwej06raj48IZsK77N9LWWq9OM6R8nAW3EYDVxNwMBry0lt/7DShZBq9zJ
-         x/UIzr07yM+Q9XlSqpC9+pRRSzlcgspQERQ2VYCAwkr0At8cszBkHMTkmZCs1TQ7dbOL
-         H+ZYjajD4sa443Jl9diemzV8j69CcTVd5mrKWE+jFy2GWa5YTNB03FEj8KoXAUDGIUSY
-         ZbSBcrrZdQOFXiul08rR8b/2Ipt3byb+RM08e6CUTG066htf3QbH0VATQ2WQ1NQu2C3s
-         Up8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700788478; x=1701393278;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=63sQ1AH1I32ffRCwtEtkqR0j31IoAtIR8HssDvXhDlI=;
-        b=HoMCctdRzOz62Ce387Ol0922nFt0cXyK7aUGNvm5Gd311ftzYu1RYKfcB3CxtHoigJ
-         8qxYn8BCsaUI+Z7pssuJ+GSGvxjlvZpMb3Ui6IJ7x3FSZdhw8urEf/9PS/IQc8bylOj5
-         PppdodIvVmBewhrWzhybXlnEeMr3TAza9UhYLO/NXffuDt/q8ojQvw1XbpokccSbl2rf
-         LUlYnPfhHkFgnrZPlz0L8Yz9ew5DLO9CnDhP7/dro+/9wrPBrSAyIWiZZ2FwflY0ztx3
-         lSCDMoV8muTB8sIY9cT5j9xpnKYZZpaHQCB8AIrCCzLa0ttjuax5gL+i1j9a100TONfS
-         YvlA==
-X-Gm-Message-State: AOJu0YxxsH2GTSU34HnECC62wio/ksAAqoK+9+/sJXCkxHUlmx+ObuZv
-	1qP/ZTqKAMloKW/uknKkAaomyD+9fSr7ZeJNY40=
-X-Google-Smtp-Source: AGHT+IHLIX9nFgHWswrxl4QhZA1sMO6aysJc8mE548EEq2zaQNtD+vtju8Lr3kfPZInT9eHY959lN4T9+2J71dDRGtk=
-X-Received: by 2002:a17:907:1310:b0:a04:8ee8:5e58 with SMTP id
- vj16-20020a170907131000b00a048ee85e58mr574460ejb.45.1700788477971; Thu, 23
- Nov 2023 17:14:37 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uT+5HS/A"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79368D43
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Nov 2023 20:00:10 -0800 (PST)
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20231124040006epoutp02454cc9365f685e86a5731e0d3b1858bf~acyPFf1ds2929329293epoutp02X
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Nov 2023 04:00:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20231124040006epoutp02454cc9365f685e86a5731e0d3b1858bf~acyPFf1ds2929329293epoutp02X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1700798406;
+	bh=pf3jmVTBpWrheHXUATyPoeR56j71D8rsx0Abe4C3N7g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uT+5HS/AlgBib7WQdtcq1MlLoLNnWsk2UJOoJIDwskbn+6zgXk5ZvKiwLajFlqKxm
+	 aEotZTCHYlQo2ZbRosCl9ZcoDtJPxbZ40RQ54ycLOqWgk8uoBckX8RYlQPuXzD9omA
+	 r5yYk0h28VdbvMIhHqK4MFUKP4mPLc+Q96HrumlQ=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+	20231124040006epcas2p2ca8e46faf34401360c9e91c1be4e3254~acyOrOk9T0544105441epcas2p2z;
+	Fri, 24 Nov 2023 04:00:06 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.36.91]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Sc1Td6Xntz4x9QM; Fri, 24 Nov
+	2023 04:00:05 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+	epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	EE.70.09607.5CF10656; Fri, 24 Nov 2023 13:00:05 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20231124040005epcas2p48ec804ea2b2a46a8ef7446ed2b9b1338~acyN2Ztpb0943709437epcas2p4O;
+	Fri, 24 Nov 2023 04:00:05 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20231124040005epsmtrp101af3d9615800e25a186ecc4f8a81657~acyN1q-Kg3016830168epsmtrp1N;
+	Fri, 24 Nov 2023 04:00:05 +0000 (GMT)
+X-AuditID: b6c32a48-bcdfd70000002587-f9-65601fc58d64
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	48.F8.08755.5CF10656; Fri, 24 Nov 2023 13:00:05 +0900 (KST)
+Received: from perf (unknown [10.229.95.91]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20231124040005epsmtip2041ad14a4aa82cfdd35cba998cb51d9f~acyNmteDu0750007500epsmtip2V;
+	Fri, 24 Nov 2023 04:00:05 +0000 (GMT)
+Date: Fri, 24 Nov 2023 13:35:05 +0900
+From: Youngmin Nam <youngmin.nam@samsung.com>
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: tomasz.figa@gmail.com, krzysztof.kozlowski@linaro.org,
+	s.nawrocki@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: samsung: add irq_set_affinity() for non wake
+ up external gpio interrupt
+Message-ID: <ZWAn+XzseBTB+KE1@perf>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20231120225538epcas1p205a656dfe9771fc992ee1a6756ca67d3@epcas1p2.samsung.com>
- <20231120225537.1270358-1-inki.dae@samsung.com>
-In-Reply-To: <20231120225537.1270358-1-inki.dae@samsung.com>
-From: Dave Airlie <airlied@gmail.com>
-Date: Fri, 24 Nov 2023 11:14:26 +1000
-Message-ID: <CAPM=9txk2nqYykd5shh3Ux7Jff8hweQnhpNUtYmT9nbcKrHdsA@mail.gmail.com>
-Subject: Re: [GIT PULL] exynos-drm-fixes
-To: Inki Dae <inki.dae@samsung.com>
-Cc: airlied@linux.ie, daniel@ffwll.ch, linux-samsung-soc@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAPLW+4kO4wYP=5Sx7dPXU17b_CHBJKN_93GhWtZ60vKgNRTKwQ@mail.gmail.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCJsWRmVeSWpSXmKPExsWy7bCmme5R+YRUg/nnDC0ezNvGZrH39VZ2
+	iyl/ljNZbHp8jdVi8/w/jBaXd81hs5hxfh+TxeE37awWz/uArFW7/jA6cHnsnHWX3ePOtT1s
+	HpuX1Hv0bVnF6PF5k1wAa1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5i
+	bqqtkotPgK5bZg7QUUoKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpScAvMCveLE3OLS
+	vHS9vNQSK0MDAyNToMKE7IxZ3eIFK6wrfs/cxdbAuECri5GTQ0LARKJ7wSfGLkYuDiGBHYwS
+	v5dfZIFwPjFK/D8xBSrzjVFiwq8+FpiWS1uOM0Mk9jJKLLveA1X1kFGi5951oCoODhYBVYlj
+	HaYgDWwCuhLbTvxjBLFFBPQk1s18xQ5SzyzQyySxfmYLE0hCWCBd4uGhH2AbeAWUJeZ0vGGG
+	sAUlTs58AhbnFAiUWNR2lA2kWUJgKofE90ePWSFOcpG4u7SNHcIWlnh1fAuULSXxsh8mni2x
+	+tclKLtCov1eDzOEbSwx61k72HXMQEe8Wv+OFeQBCaAjjtxigQjzSXQc/ssOEeaV6GgTguhU
+	k/g1ZQMjhC0jsXvxCqiJHhKPDm9gh4TJLUaJg/OeskxglJuF5J1ZSLbNAhrLLKApsX6XPkRY
+	XqJ562xmiLC0xPJ/HEgqFjCyrWIUSy0ozk1PLTYqMIHHdXJ+7iZGcHLV8tjBOPvtB71DjEwc
+	jIcYJTiYlUR4c//EpwrxpiRWVqUW5ccXleakFh9iNAVG00RmKdHkfGB6zyuJNzSxNDAxMzM0
+	NzI1MFcS573XOjdFSCA9sSQ1OzW1ILUIpo+Jg1OqgUlWyXIvo6HrHMNv9q9Ptr+z6FnbEM+g
+	X83aEdsjbGZe2L+1dSL7Cqm3kWX3Nt327I/cKP5SdOXapm8vy16kqE1fUR6SUv5W+/6S3C1r
+	LrVeUPd9P5dZJ8lnceOirt/PDz4vbRA+mLYsO8X1nVxfIOc+beGJok/ev7n3c+3vP1OylFYp
+	Xk/Kemcv5L9WdrecwOso503tvXmhrnnXjh203DZ37nuv9IsCOpGZfyfkcKalvvC88P3XqaPa
+	5y5eyFg0e8o2e5sXRkxFNtdrOC/dDdD56xf+1s9dvFitfUth6N3ijucsn/7Pu3RgkcyUT/1Z
+	cQvtFslzd8Y1LL4x/2HkyxMv7mqwhJW9KlvIztrE4aLEUpyRaKjFXFScCAB6taIqNwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOLMWRmVeSWpSXmKPExsWy7bCSvO5R+YRUg1vPRSwezNvGZrH39VZ2
+	iyl/ljNZbHp8jdVi8/w/jBaXd81hs5hxfh+TxeE37awWz/uArFW7/jA6cHnsnHWX3ePOtT1s
+	HpuX1Hv0bVnF6PF5k1wAaxSXTUpqTmZZapG+XQJXRtvWyIKzFhUnNrxkb2B8qN7FyMkhIWAi
+	cWnLceYuRi4OIYHdjBLdZ5czQiRkJG6vvMwKYQtL3G85wgpRdJ9RYkrTVCCHg4NFQFXiWIcp
+	SA2bgK7EthP/wHpFBPQk1s18xQ5SzyzQzyTxftcHdpCEsEC6xMz3s8BsXgFliTkdb6A232KU
+	ONfTygSREJQ4OfMJC4jNLKAu8WfeJWaQZcwC0hLL/3FAhOUlmrfOZgaxOQUCJRa1HWWbwCg4
+	C0n3LCTdsxC6ZyHpXsDIsopRMrWgODc9t9iwwDAvtVyvODG3uDQvXS85P3cTIzhutDR3MG5f
+	9UHvECMTB+MhRgkOZiUR3tw/8alCvCmJlVWpRfnxRaU5qcWHGKU5WJTEecVf9KYICaQnlqRm
+	p6YWpBbBZJk4OKUamNqrslTe8m3QrHdivf//40lVBu1vJiuc7b8fPcOeXtF9+MUcH6nCqZ+F
+	PrtwHU8NELH8/H/9Wmbht2ePbXEunrzpU8bErjPHX7nmlk6csD9m5pHfF86yLDXTmC/vJ7Mo
+	U0D6bgLvbb6csx0SFUG1DhF3khUtTYR5H/xl+JYtONH0tW/iDc3wj+z+/oJW01zmPr176nzG
+	m19ZW+Lvrn/XdidfZPXMG50LfK/mf8z7GNy2+Hp6pNxaB+lnBpf2XAi5Mokrq/buYim+N8fc
+	xb9eXfMoQfWCY+NXQd91wbU/3Q5au/xb7BYUkhTIpLvg8u/LmxleGKdEbA3mPztB6/3fV8Xm
+	+vE5yVvXL9965LjjJWklluKMREMt5qLiRAA5AuxECgMAAA==
+X-CMS-MailID: 20231124040005epcas2p48ec804ea2b2a46a8ef7446ed2b9b1338
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----SiQCcQFW9qxZh2i62NcUcvIKWR48NBmCWce5.T0aiy9ACrIF=_65ba_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231119085440epcas2p375fa3b2999e1a3ceeff9949136db7e28
+References: <CGME20231119085440epcas2p375fa3b2999e1a3ceeff9949136db7e28@epcas2p3.samsung.com>
+	<20231119092909.3018578-1-youngmin.nam@samsung.com>
+	<CAPLW+4kO4wYP=5Sx7dPXU17b_CHBJKN_93GhWtZ60vKgNRTKwQ@mail.gmail.com>
 
-On Tue, 21 Nov 2023 at 09:00, Inki Dae <inki.dae@samsung.com> wrote:
->
-> Hi Dave and Daniel,
->
->    Two fixups - fixing a potential error pointer dereference and wrong
->    error checking.
-Hi Inki,
+------SiQCcQFW9qxZh2i62NcUcvIKWR48NBmCWce5.T0aiy9ACrIF=_65ba_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 
-This fails to build on arm32, and it seems one of the fixes is wrong
+On Tue, Nov 21, 2023 at 12:33:51PM -0600, Sam Protsenko wrote:
+> On Sun, Nov 19, 2023 at 2:54 AM Youngmin Nam <youngmin.nam@samsung.com> wrote:
+> >
+> > To support affinity setting for non wake up external gpio interrupt,
+> > we add a new irq_set_affinity callback using irq number which is in pinctrl
+> > driver data.
+> >
+> > Before applying this patch, we couldn't change irq affinity of gpio interrupt.
+> > * before
+> > erd9945:/proc/irq/418 # cat smp_affinity
+> > 3ff
+> > erd9945:/proc/irq/418 # echo 00f > smp_affinity
+> > erd9945:/proc/irq/418 # cat smp_affinity
+> > 3ff
+> > erd9945:/proc/irq/418 # cat /proc/interrupts
+> >            CPU0       CPU1       CPU2       CPU3       CPU4       CPU5       CPU6       CPU7       CPU8       CPU9
+> > 418:       3631          0          0          0          0          0          0          0          0          0      gpg2   0 Edge      19100000.drmdecon
+> >
+> > After applying this patch, we can change irq affinity of gpio interrupt as below.
+> > * after
+> > erd9945:/proc/irq/418 # cat smp_affinity
+> > 3ff
+> > erd9945:/proc/irq/418 # echo 00f > smp_affinity
+> > erd9945:/proc/irq/418 # cat smp_affinity
+> > 00f
+> > erd9945:/proc/irq/418 # cat /proc/interrupts
+> >            CPU0       CPU1       CPU2       CPU3       CPU4       CPU5       CPU6       CPU7       CPU8       CPU9
+> > 418:       3893        201        181        188          0          0          0          0          0          0      gpg2   0 Edge      19100000.drmdecon
+> >
+> 
+> Suggest formatting the commit message as follows, to make it more readable:
+> 
+> 8<-------------------------------------------------------------------------->8
+> To support affinity setting for non wake up external gpio interrupt,
+> add irq_set_affinity callback using irq number from pinctrl driver
+> data.
+> 
+> Before this patch, changing the irq affinity of gpio interrupt is not
+> possible:
+> 
+>     # cat /proc/irq/418/smp_affinity
+>     3ff
+>     # echo 00f > /proc/irq/418/smp_affinity
+>     # cat /proc/irq/418/smp_affinity
+>     3ff
+>     # cat /proc/interrupts
+>                CPU0       CPU1       CPU2       CPU3    ...
+>     418:       3631          0          0          0    ...
+> 
+> With this patch applied, it's possible to change irq affinity of gpio
+> interrupt:
+> 
+>     # cat /proc/irq/418/smp_affinity
+>     3ff
+>     # echo 00f > /proc/irq/418/smp_affinity
+>     # cat /proc/irq/418/smp_affinity
+>     00f
+>     # cat /proc/interrupts
+>                CPU0       CPU1       CPU2       CPU3      ...
+>     418:       3893        201        181        188      ...
+> 8<-------------------------------------------------------------------------->8
+> 
 
-[airlied@dreadlord drm-fixes]$ make ARCH=3Darm
-CROSS_COMPILE=3Darm-linux-gnu- O=3D../../arm-build-fixes/  -j16
-make[1]: Entering directory '/home/airlied/devel/kernel/arm-build-fixes'
-  GEN     Makefile
-      CALL    /home/airlied/devel/kernel/dim/drm-fixes/scripts/checksyscall=
-s.sh
-  CC [M]  drivers/gpu/drm/exynos/exynos_drm_dma.o
-/home/airlied/devel/kernel/dim/drm-fixes/drivers/gpu/drm/exynos/exynos_drm_=
-dma.c:
-In function =E2=80=98exynos_drm_register_dma=E2=80=99:
-/home/airlied/devel/kernel/dim/drm-fixes/drivers/gpu/drm/exynos/exynos_drm_=
-dma.c:119:40:
-error: passing argument 1 of =E2=80=98PTR_ERR=E2=80=99 makes pointer from i=
-nteger
-without a cast [-Werror=3Dint-conversion]
-  119 |                         return PTR_ERR(-ENODEV);
-In file included from
-/home/airlied/devel/kernel/dim/drm-fixes/include/linux/string.h:9,
-                 from
-/home/airlied/devel/kernel/dim/drm-fixes/include/linux/dma-mapping.h:7,
-                 from
-/home/airlied/devel/kernel/dim/drm-fixes/include/linux/dma-map-ops.h:9,
-                 from
-/home/airlied/devel/kernel/dim/drm-fixes/drivers/gpu/drm/exynos/exynos_drm_=
-dma.c:7:
-/home/airlied/devel/kernel/dim/drm-fixes/include/linux/err.h:49:61:
-note: expected =E2=80=98const void *=E2=80=99 but argument is of type =E2=
-=80=98int=E2=80=99
-   49 | static inline long __must_check PTR_ERR(__force const void *ptr)
-      |                                                 ~~~~~~~~~~~~^~~
-cc1: all warnings being treated as errors
+Thanks for your suggestion. I'll modify it.
 
-I think it should just be return -ENODEV, since the function returns an int=
-.
+> > Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+> > ---
+> >  drivers/pinctrl/samsung/pinctrl-exynos.c | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> >
+> > diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> > index 6b58ec84e34b..5d7b788282e9 100644
+> > --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> > +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> > @@ -147,6 +147,19 @@ static int exynos_irq_set_type(struct irq_data *irqd, unsigned int type)
+> >         return 0;
+> >  }
+> >
+> > +static int exynos_irq_set_affinity(struct irq_data *irqd,
+> > +                                  const struct cpumask *dest, bool force)
+> > +{
+> > +       struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
+> > +       struct samsung_pinctrl_drv_data *d = bank->drvdata;
+> > +       struct irq_data *parent = irq_get_irq_data(d->irq);
+> 
+> I'm probably missing something, but: why not just use "irqd" parameter
+> and avoid declaring "bank" and "d"? Is "d->irq" somehow different from
+> "irqd"?
+> 
 
-Please fix it up and resend.
+Yes, irqd->irq is different from d->irq as below.
 
-Thanks,
-Dave.
+[  188.230707] irqd->irq is 417
+[  188.230837] d->irq is 133
+
+We have to use d->irq(133) instead of irqd->irq(417) because d->irq has GICv3 as a IRQ chip.
+To use set_affinity() call back of GICv3, d->irq is needed.
+
+IRQ  HWIRQ  Type   Affinity    IRQ_DESC             CPU0    CPU1    CPU2    CPU3 ... Chip   Name
+133    603  Level  0x3ff       0xffffff883b25d800  52260       0       0       0 ... GICv3  11030000.pinctrl
+417      0  Edge   0xffffffff  0xffffff883b68a800  52259       0       0       0 ... gpg2   19100000.drmdecon
+
+erd9945: # cat /proc/interrupts | grep gpg2
+417:       9250         48         45         45 ...  gpg2   0 Edge      19100000.drmdecon
+
+erd9945: # cat /proc/interrupts | grep 11030000
+133:       9250         48         45         45 ...  GICv3 603 Level     11030000.pinctrl
+
+> > +
+> > +       if (parent)
+> > +               return parent->chip->irq_set_affinity(parent, dest, force);
+> > +
+> 
+> Why not use irq_chip_set_affinity_parent() API?
+> 
+> > +       return -EINVAL;
+> 
+> Maybe use something like this instead:
+> 
+>     if (!irqd->parent_data)
+>             return -EINVAL;
+> 
+>     return irq_chip_set_affinity_parent(irqd, dest, force);
+> 
+> Can you please test if this code works?
+> 
+
+I tested as you suggested as below.
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index bf8dd5e3c3d2..593320b408ce 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -153,14 +153,12 @@ static int exynos_irq_set_type(struct irq_data *irqd, unsigned int type)
+ static int exynos_irq_set_affinity(struct irq_data *irqd,
+                                   const struct cpumask *dest, bool force)
+ {
+-       struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
+-       struct samsung_pinctrl_drv_data *d = bank->drvdata;
+-       struct irq_data *parent = irq_get_irq_data(d->irq);
+-
+-       if (parent)
+-               return parent->chip->irq_set_affinity(parent, dest, force);
++       if (!irqd->parent_data) {
++               pr_err("irqd->parent_data is null!!\n");
++               return -EINVAL;
++       }
+
+-       return -EINVAL;
++       return irq_chip_set_affinity_parent(irqd, dest, force);
+ }
+
+[  149.658395] irqd->parent_data is null!!
+
+Currently, irqd->paranet_data is null.
+
+> > +}
+> > +
+> >  static int exynos_irq_request_resources(struct irq_data *irqd)
+> >  {
+> >         struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
+> > @@ -212,6 +225,7 @@ static const struct exynos_irq_chip exynos_gpio_irq_chip __initconst = {
+> >                 .irq_mask = exynos_irq_mask,
+> >                 .irq_ack = exynos_irq_ack,
+> >                 .irq_set_type = exynos_irq_set_type,
+> > +               .irq_set_affinity = exynos_irq_set_affinity,
+> 
+> What happens if we just assign irq_chip_set_affinity_parent() here?
+> Would it work, or Exynos case is more complicated than this?
+> 
+
+Yes, I couldn't find how to use irq_chip_set_affinity_parent() directly yet.
+
+> >                 .irq_request_resources = exynos_irq_request_resources,
+> >                 .irq_release_resources = exynos_irq_release_resources,
+> >         },
+> > --
+> > 2.39.2
+> >
+> 
+
+------SiQCcQFW9qxZh2i62NcUcvIKWR48NBmCWce5.T0aiy9ACrIF=_65ba_
+Content-Type: text/plain; charset="utf-8"
 
 
-
->
->    Ps. regarding the first patch, I had sent a GIT-PULL[1] but it seems
->        you missed.
->    [1] https://lore.kernel.org/dri-devel/20231006040950.4397-1-inki.dae@s=
-amsung.com/T/#u
->
->    Please kindly let me know if there is any problem.
->
-> Thanks,
-> Inki Dae
->
-> The following changes since commit 98b1cc82c4affc16f5598d4fa14b1858671b22=
-63:
->
->   Linux 6.7-rc2 (2023-11-19 15:02:14 -0800)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/e=
-xynos-drm-fixes-for-v6.7-rc3
->
-> for you to fetch changes up to a30ba4bd7cdb5726d86a557c5df8df71c7bc7fad:
->
->   drm/exynos: fix a wrong error checking (2023-11-21 07:41:11 +0900)
->
-> ----------------------------------------------------------------
-> Two fixups
-> - Fix a potential error pointer dereference by checking the return value
->   of exynos_drm_crtc_get_by_type() function before accessing to crtc
->   object.
-> - Fix a wrong error checking in exynos_drm_dma.c modules, which was repor=
-ted
->   by Dan[1]
->
-> [1] https://lore.kernel.org/all/33e52277-1349-472b-a55b-ab5c3462bfcf@moro=
-to.mountain/
->
-> ----------------------------------------------------------------
-> Inki Dae (1):
->       drm/exynos: fix a wrong error checking
->
-> Xiang Yang (1):
->       drm/exynos: fix a potential error pointer dereference
->
->  drivers/gpu/drm/exynos/exynos_drm_dma.c | 8 +++-----
->  drivers/gpu/drm/exynos/exynos_hdmi.c    | 2 ++
->  2 files changed, 5 insertions(+), 5 deletions(-)
+------SiQCcQFW9qxZh2i62NcUcvIKWR48NBmCWce5.T0aiy9ACrIF=_65ba_--
