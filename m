@@ -1,230 +1,126 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660972D029;
+	Sat, 25 Nov 2023 20:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bUmqga52"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2391B3;
-	Sat, 25 Nov 2023 11:48:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=4nRmKJdjQImKVKvkDXekyzERU99Y30X50Uk5jPOijCY=; b=bUmqga52u5ZN8KifEwNMhDyiPA
-	/TFQjbAbx8fGQdVoi5rxm3COj3rEclulLj+6FXL2nSiYCSRdIJATu8HKoN1nlR6IkXp7sCExgIBLI
-	hFkayCNKWWXkftJV69lR8n3hiDzcRi5PHnunbIvWKayKCR9g0p4/sDxM6C9tR4lEehPc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1r6yd5-001Czk-9T; Sat, 25 Nov 2023 20:47:51 +0100
-Date: Sat, 25 Nov 2023 20:47:51 +0100
-From: Andrew Lunn <andrew@lunn.ch>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3H6UDq7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 487CBC433C8;
+	Sat, 25 Nov 2023 20:48:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700945313;
+	bh=MP615DG3faCXFei6ez6/qbJ2Qn+AxlK3zXjwrEKNgcs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=V3H6UDq7A3kCMLfHpZpSX7FXfzHuWMOtsplTH0sNtXsZgArz+P0U4eBCtxi3NSFFd
+	 /Qh78hVGqFA0WqXtaEMTLiv8fodY0nCNwQemnzy2nkPIc8A948DHrbP8ShAHXs9JEh
+	 DZSd65o2b/ffSmFfCaSmhQJlMgtpbBWoxv52RCHkCAWexYJeYwHrGLN9suMTTHOnuk
+	 DdSGqivh1nxdaSurglxzzB29rEdm+mzoC6D5xHsCr4gfSyRMDlvOZaKdKmw5u63wzf
+	 fjwHu1uh7qGvuEyyEExZqT+BueoGfafWluF3pHxDvInU7XHZpnYl45oF6XMQNbYQcP
+	 bHLD2kxsjKD7g==
+Date: Sat, 25 Nov 2023 20:48:14 +0000
+From: Jonathan Cameron <jic23@kernel.org>
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, Andrew Davis <afd@ti.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Heiko Stuebner <heiko@sntech.de>, Jonathan Corbet <corbet@lwn.net>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Nishanth Menon <nm@ti.com>, Olof Johansson <olof@lixom.net>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3] docs: dt-bindings: add DTS Coding Style document
-Message-ID: <a3b65c90-afc9-4caf-8744-112369a838d2@lunn.ch>
-References: <20231125184422.12315-1-krzysztof.kozlowski@linaro.org>
+Cc: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Andi Shyti <andi.shyti@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>, Ulf
+ Hansson <ulf.hansson@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>,
+ Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaehoon
+ Chung <jh80.chung@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 10/17] dt-bindings: iio: samsung,exynos-adc: add
+ specific compatibles for existing SoC
+Message-ID: <20231125204814.10fe16fa@jic23-huawei>
+In-Reply-To: <20231108104343.24192-11-krzysztof.kozlowski@linaro.org>
+References: <20231108104343.24192-1-krzysztof.kozlowski@linaro.org>
+	<20231108104343.24192-11-krzysztof.kozlowski@linaro.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231125184422.12315-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> +=====================================
-> +Devicetree Sources (DTS) Coding Style
-> +=====================================
-> +
-> +When writing Devicetree Sources (DTS) please observe below guidelines.  They
-> +should be considered complementary to any rules expressed already in Devicetree
-> +Specification and dtc compiler (including W=1 and W=2 builds).
-> +
-> +Individual architectures and sub-architectures can add additional rules, making
-> +the style stricter.
+On Wed,  8 Nov 2023 11:43:36 +0100
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-It would be nice to add a pointer where such rules are documented.
+> Samsung Exynos SoC reuses several devices from older designs, thus
+> historically we kept the old (block's) compatible only.  This works fine
+> and there is no bug here, however guidelines expressed in
+> Documentation/devicetree/bindings/writing-bindings.rst state that:
+> 1. Compatibles should be specific.
+> 2. We should add new compatibles in case of bugs or features.
+> 
+> Add compatibles specific to each SoC in front of all old-SoC-like
+> compatibles.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> 
+> ---
+> 
+> I propose to take the patch through Samsung SoC (me). See cover letter
+> for explanation.
+> ---
+>  .../bindings/iio/adc/samsung,exynos-adc.yaml  | 29 +++++++++++--------
+>  1 file changed, 17 insertions(+), 12 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> index 582d0a03b814..4e40f6bed5db 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> @@ -11,18 +11,23 @@ maintainers:
+>  
+>  properties:
+>    compatible:
+> -    enum:
+> -      - samsung,exynos-adc-v1                 # Exynos5250
+> -      - samsung,exynos-adc-v2
+> -      - samsung,exynos3250-adc
+> -      - samsung,exynos4212-adc                # Exynos4212 and Exynos4412
+> -      - samsung,exynos7-adc
+> -      - samsung,s3c2410-adc
+> -      - samsung,s3c2416-adc
+> -      - samsung,s3c2440-adc
+> -      - samsung,s3c2443-adc
+> -      - samsung,s3c6410-adc
+> -      - samsung,s5pv210-adc
+> +    oneOf:
+> +      - enum:
+> +          - samsung,exynos-adc-v1                 # Exynos5250
+> +          - samsung,exynos-adc-v2
+> +          - samsung,exynos3250-adc
+> +          - samsung,exynos4212-adc                # Exynos4212 and Exynos4412
+> +          - samsung,exynos7-adc
+> +          - samsung,s3c2410-adc
+> +          - samsung,s3c2416-adc
+> +          - samsung,s3c2440-adc
+> +          - samsung,s3c2443-adc
+> +          - samsung,s3c6410-adc
+> +          - samsung,s5pv210-adc
+> +      - items:
+> +          - enum:
+> +              - samsung,exynos5433-adc
+> +          - const: samsung,exynos7-adc
+>  
+>    reg:
+>      maxItems: 1
 
-> +Naming and Valid Characters
-> +---------------------------
-> +
-> +Devicetree specification allows broader range of characters in node and
-> +property names, but for code readability the choice shall be narrowed.
-> +
-> +1. Node and property names are allowed to use only:
-> +
-> +   * lowercase characters: [a-z]
-> +   * digits: [0-9]
-> +   * dash: -
-> +
-> +2. Labels are allowed to use only:
-> +
-> +   * lowercase characters: [a-z]
-> +   * digits: [0-9]
-> +   * underscore: _
-> +
-> +3. Unit addresses shall use lowercase hex, without leading zeros (padding).
-> +
-> +4. Hex values in properties, e.g. "reg", shall use lowercase hex.  The address
-> +   part can be padded with leading zeros.
-> +
-> +Example::
-> +
-> +	gpi_dma2: dma-controller@800000 {
-
-Not the best of example. Upper case 8 does not exist, as far as i
-known. 
-
-> +		compatible = "qcom,sm8550-gpi-dma", "qcom,sm6350-gpi-dma";
-> +		reg = <0x0 0x00800000 0x0 0x60000>;
-
-Maybe introduce some [a-f] in the example reg?
-
-> +Order of Nodes
-> +--------------
-> +
-> +1. Nodes within any bus, thus using unit addresses for children, shall be
-> +   ordered incrementally by unit address.
-> +   Alternatively for some sub-architectures, nodes of the same type can be
-> +   grouped together (e.g. all I2C controllers one after another even if this
-> +   breaks unit address ordering).
-> +
-> +2. Nodes without unit addresses shall be ordered alpha-numerically by the node
-> +   name.  For a few types of nodes, they can be ordered by the main property
-> +   (e.g. pin configuration states ordered by value of "pins" property).
-> +
-> +3. When extending nodes in the board DTS via &label, the entries shall be
-> +   ordered either alpha-numerically or by keeping the order from DTSI (choice
-> +   depending on sub-architecture).
-
-Are these sub-architecture choices documented somewhere? Can you
-include a hint which they are?
-
-> +Example::
-> +
-> +	/* SoC DTSI */
-> +
-> +	/ {
-
-Dumb question. Does this open { indicate the start of a bus?
-
-> +		cpus {
-> +			/* ... */
-> +		};
-> +
-> +		psci {
-> +			/* ... */
-> +		};
-
-If that does indicate a bus, the nodes above are ordered
-alpha-numerically, according to 2).
-
-> +
-> +		soc@ {
-
-This has a unit address, even if its missing, so should be sorted by
-1).
-
-Should there be something in the coding style that 2) comes before 1)
-on the bus? And if that is true, don't you think it would make sense
-to swap 1) and 2) in the description above?
-
-> +			dma: dma-controller@10000 {
-> +				/* ... */
-> +			};
-> +
-> +			clk: clock-controller@80000 {
-> +				/* ... */
-> +			};
-> +		};
-> +	};
-> +
-> +	/* Board DTS - alphabetical order */
-> +
-> +	&clk {
-> +		/* ... */
-> +	};
-> +
-> +	&dma {
-> +		/* ... */
-> +	};
-> +
-> +	/* Board DTS - alternative order, keep as DTSI */
-> +
-> +	&dma {
-> +		/* ... */
-> +	};
-> +
-> +	&clk {
-> +		/* ... */
-> +	};
-
-Do you imaging there will ever be a checkpatch for DT files? The
-second alternative seems pretty difficult to check for with tools. You
-need to include all the .dtsi files to determine the ordered tree,
-then flatten it to get the properties order. Should we discourage this
-alternative?
-
-> +Indentation
-> +-----------
-> +
-> +1. Use indentation according to :ref:`codingstyle`.
-> +2. For arrays spanning across lines, it is preferred to align the continued
-> +   entries with opening < from the first line.
-> +3. Each entry in arrays with multiple cells (e.g. "reg" with two IO addresses)
-> +   shall be enclosed in <>.
-> +
-> +Example::
-> +
-> +	thermal-sensor@c271000 {
-> +		compatible = "qcom,sm8550-tsens", "qcom,tsens-v2";
-> +		reg = <0x0 0x0c271000 0x0 0x1000>,
-> +		      <0x0 0x0c222000 0x0 0x1000>;
-> +	};
-
-I'm not sure i understand this. Is this example correct?
-
-                gpio-fan,speed-map = <0    0
-                                      3000 1
-                                      6000 2>;
-
-It exists a lot in todays files.
-
-
-> +The DTSI and DTS files shall be organized in a way representing the common
-> +(and re-usable) parts of the hardware.  Typically this means organizing DTSI
-> +and DTS files into several files:
-> +
-> +1. DTSI with contents of the entire SoC (without nodes for hardware not present
-> +   on the SoC).
-
-Maybe point out that SoC DTSI files can by hierarchical when there is
-a family of SoCs. You often have one .DTSI file for all the common
-parts of a family. And then each member of the family has a .dtsi file
-which includes the core, and then adds properties for that member of
-the family.
-
-The word 'entire' probably gives the wrong idea about this.
-
-    Andrew
