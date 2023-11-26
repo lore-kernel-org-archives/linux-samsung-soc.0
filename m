@@ -1,168 +1,147 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MSQhllYe"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC9C8CE
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Nov 2023 01:11:26 -0800 (PST)
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231126091122epoutp03dcde7dc35b716c0386dead4eaf922c0a~bIUk3Zqm_1946719467epoutp03O
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Nov 2023 09:11:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231126091122epoutp03dcde7dc35b716c0386dead4eaf922c0a~bIUk3Zqm_1946719467epoutp03O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1700989882;
-	bh=GuiA2IISUqc9VQUQYIOqTFT2qSk66J6Ur4YwPXb8HcM=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=MSQhllYeRJo7jd27M/gySwJhzWbynt/2Uh5rohoIs2ZoUZPwRNmBdo2MB3tvUUNWM
-	 F2mCLCB2FcFt0ne+v6IYqMeIS3sIk0aWNprZSXYtShfwoCWA9kLT5XCa9fq+oG5ELO
-	 /r16Mdfe0Zpq5yvSpzZpSVVOtYwcp3cTiMLySipg=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20231126091121epcas2p182a52384ebd985e4fcbf017bd32fc0e2~bIUjuzWMo3013430134epcas2p1X;
-	Sun, 26 Nov 2023 09:11:21 +0000 (GMT)
-Received: from epsmgec2p1.samsung.com (unknown [182.195.36.102]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4SdNHs0PcHz4x9Pv; Sun, 26 Nov
-	2023 09:11:21 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	B7.B8.08648.8BB03656; Sun, 26 Nov 2023 18:11:20 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38~bIUjAro321687416874epcas2p4C;
-	Sun, 26 Nov 2023 09:11:20 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20231126091120epsmtrp18ea6c518276c3eff3ec6aca67af2397d~bIUi9YZCq0797007970epsmtrp1T;
-	Sun, 26 Nov 2023 09:11:20 +0000 (GMT)
-X-AuditID: b6c32a43-721fd700000021c8-aa-65630bb896fa
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	08.B7.08755.8BB03656; Sun, 26 Nov 2023 18:11:20 +0900 (KST)
-Received: from perf.dsn.sec.samsung.com (unknown [10.229.95.91]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20231126091120epsmtip2230b13d97d9a43a23c54f80b96768f89~bIUiuNZfI1550915509epsmtip2q;
-	Sun, 26 Nov 2023 09:11:20 +0000 (GMT)
-From: Youngmin Nam <youngmin.nam@samsung.com>
-To: tomasz.figa@gmail.com, krzysztof.kozlowski@linaro.org,
-	s.nawrocki@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	semen.protsenko@linaro.org, Youngmin Nam <youngmin.nam@samsung.com>
-Subject: [PATCH v2] pinctrl: samsung: add irq_set_affinity() for non wake up
- external gpio interrupt
-Date: Sun, 26 Nov 2023 18:46:18 +0900
-Message-Id: <20231126094618.2545116-1-youngmin.nam@samsung.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ophDthmH"
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D370DF0
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Nov 2023 02:28:24 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-5441ba3e53cso4455853a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Nov 2023 02:28:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700994503; x=1701599303; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=49k7+kJobmrIfqIAdNepyVBVcWl/U7alKaqBrd/hZk4=;
+        b=ophDthmH5a4KcFd1g0wnZSkragMt4rLf3btQ+3K693kGp4wc8gL/PL5KWqbZsMC+iM
+         eN8SV0I48aErMoRyJjHQCSbOyCVr0upNsNyAIcr2p1clb9o4LVVReGA14fWerVStZM6V
+         SjTinnoj39y44Vx7g7Ylxj4wipgraWW+NwQrrKqgOKzyinaAZ0PdFVopNGk5nbOiGJ98
+         4ZIEwM4ZQVGsbK6nBqHthaJ7usXMbKvLt/Gv4nmTCb5Hoa3wrVoD8RcXlM5XSQORdCPA
+         jlx2QncNnAfyhQu9dcS3OkgtUEW2lPPYqc8RWZelLuoJzGraRKayTk0ApfdFQP/bpTiD
+         FLAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700994503; x=1701599303;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=49k7+kJobmrIfqIAdNepyVBVcWl/U7alKaqBrd/hZk4=;
+        b=A5uKldoZ4Kr3zu7JfG1fCblb5HDlK44KhIxfg2hRQSLerbgBEHYX6i7TQB4zooLkCi
+         j5BL6lf9pzar/6YpKdUzeA4/cPH4Na5ll8Mg52SrhwKI6fATv5wG3XAn70S5EON2QoE4
+         R47MlPy8R+rvKQIUToJu9rIkpecD32sBylUndoQlZgAb9DqR1Uy1S1m4zlDwOg6w8vnI
+         EzNt058kMBxaIPPSRBA+84GrWfqqagNhIWBvli6rHytHlRRmfzW+KlCRjQzDcSFTDPc7
+         Ertv/45Ko4nhXJJCUc/GnYaZHASknX6Oi1Qk/03sbKriRQ8FcYhuimK15/frVRbZJDzN
+         31kA==
+X-Gm-Message-State: AOJu0YziduGAugkZVXJL00N8NjlPkv1XlCALQiK7j5ucfG7NN4uZ39R5
+	KGG/WjcWn6TXXPpJyBqTq200Eg==
+X-Google-Smtp-Source: AGHT+IEtQHKaVDEOTEWG0ZZSwfUFEL6Cj+Fz1Rdjfx5mEGuPJe49CLE7099H72vuMsr336iC+7QCFg==
+X-Received: by 2002:a17:906:2409:b0:9fd:4bed:72af with SMTP id z9-20020a170906240900b009fd4bed72afmr5875918eja.72.1700994502983;
+        Sun, 26 Nov 2023 02:28:22 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.223.109])
+        by smtp.gmail.com with ESMTPSA id hz19-20020a1709072cf300b009a168ab6ee2sm4381068ejc.164.2023.11.26.02.28.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 26 Nov 2023 02:28:22 -0800 (PST)
+Message-ID: <a442af6f-09b1-42b6-994e-3ac763853456@linaro.org>
+Date: Sun, 26 Nov 2023 11:28:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIJsWRmVeSWpSXmKPExsWy7bCmqe4O7uRUg8ZtFhYP5m1js9j7eiu7
-	xZQ/y5ksNj2+xmqxef4fRovLu+awWcw4v4/J4vCbdlaL531A1qpdQInFBz6xO3B77Jx1l93j
-	zrU9bB6bl9R79G1ZxejxeZNcAGtUtk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5
-	kkJeYm6qrZKLT4CuW2YO0GVKCmWJOaVAoYDE4mIlfTubovzSklSFjPziElul1IKUnALzAr3i
-	xNzi0rx0vbzUEitDAwMjU6DChOyMDeu+MBbcFqpYOusZawPjbr4uRk4OCQETifk/L7F0MXJx
-	CAnsYJQ4cu8eO4TziVHi6sVWKOcbo8TWZfcYYVrWNz9khUjsZZRo+bEbLCEk8JVR4uC5cBCb
-	TUBXYtuJf2BxEYE2RonOvQEgDcwC5xgl7vdMYAZJCAukSUz41sgGYrMIqErcvLGfFcTmFbCX
-	+LX9IlCcA2ibvMTiBxIQYUGJkzOfsIDYzEDh5q2zmUFmSgi8ZZc4dauHBeI6F4mftw+xQ9jC
-	Eq+Ob4GypSRe9rdB2dkSq39dgrIrJNrv9TBD2MYSs561M4LsZRbQlFi/Sx/iBGWJI7eg1vJJ
-	dBz+yw4R5pXoaBOCaFST+DVlAzR4ZCR2L14BNdBD4tnkTeyQ0ImV+Px2NcsERvlZSJ6ZheSZ
-	WQh7FzAyr2IUSy0ozk1PTTYqMITHaXJ+7iZGcNrUct7BeGX+P71DjEwcjIcYJTiYlUR4c//E
-	pwrxpiRWVqUW5ccXleakFh9iNAWG7kRmKdHkfGDiziuJNzSxNDAxMzM0NzI1MFcS573XOjdF
-	SCA9sSQ1OzW1ILUIpo+Jg1Oqgal7y//nt1zrj7h8XN+XbfJp/Z8WCcX/ne36OrNY91YnSlxK
-	rYlxylU7nLf6YrPQDgvXRR/ib6ot2t3JP5NHO33pNfOwZSn+0+b1LL/Cb71WZwq/ryFzSkXF
-	gidO7rlCzpov3apKM+e+DMvZvk2Zw6+hJyl49SyJtItX5I9MKI7+GbWhb5lkrIjFJQXzvzL3
-	1Eo3sare/7H50a82i81eiz81bVe3mqpe4/ZrwdSvF2dyPa3akbPg+FrxkP0PbN5s0WBUXsxQ
-	oJ2nn113jM/7y4Fg54LvRhv9DJ7XNahxu0XvurIl/fqOxtfhSxt1uB/ffrjJ8PbhqsjqlFen
-	/kuZ9/CqG8R7JCyWdmU8uqxGWomlOCPRUIu5qDgRAFiBgq4kBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMLMWRmVeSWpSXmKPExsWy7bCSvO4O7uRUg85rkhYP5m1js9j7eiu7
-	xZQ/y5ksNj2+xmqxef4fRovLu+awWcw4v4/J4vCbdlaL531A1qpdQInFBz6xO3B77Jx1l93j
-	zrU9bB6bl9R79G1ZxejxeZNcAGsUl01Kak5mWWqRvl0CV8aGdV8YC24LVSyd9Yy1gXE3Xxcj
-	J4eEgInE+uaHrF2MXBxCArsZJSbtfc8CkZCRuL3yMiuELSxxv+UIVNFnRon/a46BJdgEdCW2
-	nfjHCJIQEehhlNj8agILiMMscIVRYsvipYwgVcICKRLnf5wEG8sioCpx88Z+sG5eAXuJX9sv
-	snUxcgCtkJdY/EACIiwocXLmE7ByZqBw89bZzBMY+WYhSc1CklrAyLSKUTK1oDg3PbfYsMAw
-	L7Vcrzgxt7g0L10vOT93EyM4nLU0dzBuX/VB7xAjEwfjIUYJDmYlEd7cP/GpQrwpiZVVqUX5
-	8UWlOanFhxilOViUxHnFX/SmCAmkJ5akZqemFqQWwWSZODilGpiWtmSu5J6/K+nH9e8/pae+
-	flj58NDRbbc+F6eEzzKasqtye6Ti08i1W37PUepaYr9S/cjHL0HqEis5/lV7HL1xbKavY7FH
-	U9T0KxcO/5mvddKy29vrQ8DPvPNvVZZNdXL7LHBLcu+knpp3qUz9qz3MJa2SfnTd3aHJuU7C
-	ycnzf3MGg71K3uPTxh3Pv9rq2r8xuVghUCCivu7Kzonf5UTO7eff2F+q+6Jxl0Th1l2M5U+X
-	T5IRrLH5uvNGG2/N3wfVq+8Wmh601g9aWe/2hf3z5Nr7Gnt7DHNevTl2x6wmPclNfsMZx20T
-	frZO2v16Y+EUvqdWKzNfrfgR72C8RWN7eijXsg3yoqofK3rictMOKbEUZyQaajEXFScCAEKe
-	zXzWAgAA
-X-CMS-MailID: 20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38
-References: <CGME20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38@epcas2p4.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] docs: dt-bindings: add DTS Coding Style document
+Content-Language: en-US
+To: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: Andrew Davis <afd@ti.com>, Andrew Lunn <andrew@lunn.ch>,
+ Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson <andersson@kernel.org>,
+ Chen-Yu Tsai <wens@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Heiko Stuebner <heiko@sntech.de>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Michal Simek <michal.simek@amd.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Nishanth Menon <nm@ti.com>,
+ Olof Johansson <olof@lixom.net>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <zajec5@gmail.com>, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20231125184422.12315-1-krzysztof.kozlowski@linaro.org>
+ <87v89p1vc4.fsf@meer.lwn.net>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <87v89p1vc4.fsf@meer.lwn.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-To support affinity setting for non wake up external gpio interrupt,
-add irq_set_affinity callback using irq number from pinctrl driver data.
+On 25/11/2023 20:33, Jonathan Corbet wrote:
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> writes:
+> 
+>> Document preferred coding style for Devicetree sources (DTS and DTSI),
+>> to bring consistency among all (sub)architectures and ease in reviews.
+> 
+> One little nit:
+> 
+>> diff --git a/Documentation/devicetree/bindings/dts-coding-style.rst b/Documentation/devicetree/bindings/dts-coding-style.rst
+>> new file mode 100644
+>> index 000000000000..e374bec0f555
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/dts-coding-style.rst
+>> @@ -0,0 +1,194 @@
+>> +.. SPDX-License-Identifier: GPL-2.0
+>> +.. _dtscodingstyle:
+> 
+> There is no need to put a label at the top of a document like that, I'd
+> just take it out.
 
-Before this patch, changing the irq affinity of gpio interrupt is not possible:
+OK
 
-    # cat /proc/irq/418/smp_affinity
-    3ff
-    # echo 00f > /proc/irq/418/smp_affinity
-    # cat /proc/irq/418/smp_affinity
-    3ff
-    # cat /proc/interrupts
-               CPU0       CPU1       CPU2       CPU3    ...
-    418:       3631          0          0          0    ...
-
-With this patch applied, it's possible to change irq affinity of gpio interrupt:
-
-    # cat /proc/irq/418/smp_affinity
-    3ff
-    # echo 00f > /proc/irq/418/smp_affinity
-    # cat /proc/irq/418/smp_affinity
-    00f
-    # cat /proc/interrupts
-               CPU0       CPU1       CPU2       CPU3      ...
-    418:       3893        201        181        188      ...
-
-Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 6b58ec84e34b..5d7b788282e9 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -147,6 +147,19 @@ static int exynos_irq_set_type(struct irq_data *irqd, unsigned int type)
- 	return 0;
- }
- 
-+static int exynos_irq_set_affinity(struct irq_data *irqd,
-+				   const struct cpumask *dest, bool force)
-+{
-+	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
-+	struct irq_data *parent = irq_get_irq_data(d->irq);
-+
-+	if (parent)
-+		return parent->chip->irq_set_affinity(parent, dest, force);
-+
-+	return -EINVAL;
-+}
-+
- static int exynos_irq_request_resources(struct irq_data *irqd)
- {
- 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
-@@ -212,6 +225,7 @@ static const struct exynos_irq_chip exynos_gpio_irq_chip __initconst = {
- 		.irq_mask = exynos_irq_mask,
- 		.irq_ack = exynos_irq_ack,
- 		.irq_set_type = exynos_irq_set_type,
-+		.irq_set_affinity = exynos_irq_set_affinity,
- 		.irq_request_resources = exynos_irq_request_resources,
- 		.irq_release_resources = exynos_irq_release_resources,
- 	},
--- 
-2.39.2
+Best regards,
+Krzysztof
 
