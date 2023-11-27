@@ -1,179 +1,250 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EDa3tqBM"
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 528A0B8;
-	Mon, 27 Nov 2023 03:26:58 -0800 (PST)
-Received: from [100.107.97.3] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madras.collabora.co.uk (Postfix) with ESMTPSA id 041DD66057B6;
-	Mon, 27 Nov 2023 11:26:55 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1701084416;
-	bh=O3FAS936I5aIcUPU/jsyH/UCCj/iVZb8uQ5S19CyrdI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EDa3tqBMe4sdymOvzWlTPSZdVAEqyibUtjnBIWZdNz/xy3Kg8n1C3C3Iz69PII+v6
-	 KGWSyZd3C5wm4jQgP5qLw68990swAn27qF3aEPF+eiWZDdoTHB2KbsIii4zZu+bm12
-	 aAL2O4mLoP8HQuZ62U2rJ3nq56u6TxIbRALr6/R60F27eGTwr94dcfTpk3ClZAQcFw
-	 qn8GcrkTfr2jzCKRlXvVLH8KylTfF1pS/mk/s2lx44XKUb5927+Miy3xFUzJ32TFpu
-	 7+Qmb7ziPo5bi26qrCIpYtILPmA0zbBEMPVnwv9D5azOxHBP+TCF+tYKRRco2ul2z1
-	 U3Eb2oZ/eWXAw==
-Message-ID: <ac36d1e2-36a4-473c-9acf-e0a1fc7d3bfb@collabora.com>
-Date: Mon, 27 Nov 2023 12:26:52 +0100
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pzOCb5Wh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5951133;
+	Mon, 27 Nov 2023 03:35:40 -0800 (PST)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3ARAv6rW024162;
+	Mon, 27 Nov 2023 11:35:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
+ cc : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=qcppdkim1; bh=thltlNEte7wqIEWzvgJuzPrT0P4hiM4udr7oHuK7vgY=;
+ b=pzOCb5WhOzIYaaP5AGgRNCQeuYwj3DkeOfkB4UUWEPqiEy/gFifVHP03+miYQ3a40kaP
+ Ln8MbJx2X5/Sug37juSuUKVfu+JX3o8Qu+bKrK/ZLOfbmUrkiOAFzH10wuX6/1Hg69hp
+ lrQuU7+1QxG7Q0NMwwRIvoU5Up5XIXdx1py4gQePscDLh8vj+ti8r+u04ui28v/WoxAX
+ afl80q0dVRrcF6tCEJchm1tpwqdd1Ip83IykXBbBLV5j3bg7uFO34KoZ5PB2Fe1LVFtv
+ rizOqtfSVyOTJ5M2pbSc0R9yg87LBsGigPCjjS8tddwnXebYro9jjO/7+2xRo4/2QZK0 SA== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uk95cc1nx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Nov 2023 11:35:13 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3ARBZCvS005980
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Nov 2023 11:35:12 GMT
+Received: from hu-pkondeti-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Mon, 27 Nov 2023 03:35:02 -0800
+Date: Mon, 27 Nov 2023 17:04:59 +0530
+From: Pavan Kondeti <quic_pkondeti@quicinc.com>
+To: Mukesh Ojha <quic_mojha@quicinc.com>
+CC: <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>, <gpiccoli@igalia.com>,
+        <mathieu.poirier@linaro.org>, <vigneshr@ti.com>, <nm@ti.com>,
+        <matthias.bgg@gmail.com>, <kgene@kernel.org>,
+        <alim.akhtar@samsung.com>, <bmasney@redhat.com>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
+Subject: Re: [Patch v6 10/12] pstore/ram: Add dynamic ramoops region support
+ through commandline
+Message-ID: <ad38fb23-e2a2-448e-bdea-fa0985f82b50@quicinc.com>
+References: <1700864395-1479-1-git-send-email-quic_mojha@quicinc.com>
+ <1700864395-1479-11-git-send-email-quic_mojha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panfrost: Really power off GPU cores in
- panfrost_gpu_power_off()
-Content-Language: en-US
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, tzimmermann@suse.de,
- linux-kernel@vger.kernel.org, mripard@kernel.org,
- dri-devel@lists.freedesktop.org, wenst@chromium.org, kernel@collabora.com,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-References: <20231102141507.73481-1-angelogioacchino.delregno@collabora.com>
- <7928524a-b581-483b-b1a1-6ffd719ce650@arm.com>
- <1c9838fb-7f2d-4752-b86a-95bcf504ac2f@linaro.org>
- <6b7a4669-7aef-41a7-8201-c2cfe401bc43@collabora.com>
- <20231121175531.085809f5@collabora.com>
- <d95259b8-10cf-4ded-866c-47cbd2a44f84@linaro.org>
- <4c73f67e-174c-497e-85a5-cb053ce657cb@collabora.com>
- <CGME20231122092952eucas1p291af9a5570a05c67014f5c871c85e98c@eucas1p2.samsung.com>
- <39e9514b-087c-42eb-8d0e-f75dc620e954@linaro.org>
- <37d373e1-8850-4ab2-8fdb-6b069e2d6976@samsung.com>
- <054f6a93-8911-40bb-b677-ccdfd27d132b@samsung.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <054f6a93-8911-40bb-b677-ccdfd27d132b@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1700864395-1479-11-git-send-email-quic_mojha@quicinc.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gSQpbWT7UNoVWbbqsLNJRqn82Dqqebju
+X-Proofpoint-ORIG-GUID: gSQpbWT7UNoVWbbqsLNJRqn82Dqqebju
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-27_09,2023-11-27_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ adultscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 spamscore=0
+ lowpriorityscore=0 phishscore=0 mlxscore=0 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2311270079
 
-Il 27/11/23 12:24, Marek Szyprowski ha scritto:
-> On 24.11.2023 13:45, Marek Szyprowski wrote:
->> On 22.11.2023 10:29, Krzysztof Kozlowski wrote:
->>> On 22/11/2023 10:06, AngeloGioacchino Del Regno wrote:
->>>>>>> Hey Krzysztof,
->>>>>>>
->>>>>>> This is interesting. It might be about the cores that are missing
->>>>>>> from the partial
->>>>>>> core_mask raising interrupts, but an external abort on
->>>>>>> non-linefetch is strange to
->>>>>>> see here.
->>>>>> I've seen such external aborts in the past, and the fault type has
->>>>>> often been misleading. It's unlikely to have anything to do with a
->>>>> Yeah, often accessing device with power or clocks gated.
->>>>>
->>>> Except my commit does *not* gate SoC power, nor SoC clocks 🙂
->>> It could be that something (like clocks or power supplies) was missing
->>> on this board/SoC, which was not critical till your patch came.
->>>
->>>> What the "Really power off ..." commit does is to ask the GPU to
->>>> internally power
->>>> off the shaders, tilers and L2, that's why I say that it is strange
->>>> to see that
->>>> kind of abort.
->>>>
->>>> The GPU_INT_CLEAR GPU_INT_STAT, GPU_FAULT_STATUS and
->>>> GPU_FAULT_ADDRESS_{HI/LO}
->>>> registers should still be accessible even with shaders, tilers and
->>>> cache OFF.
->>>>
->>>> Anyway, yes, synchronizing IRQs before calling the poweroff sequence
->>>> would also
->>>> work, but that'd add up quite a bit of latency on the
->>>> runtime_suspend() call, so
->>>> in this case I'd be more for avoiding to execute any register r/w in
->>>> the handler
->>>> by either checking if the GPU is supposed to be OFF, or clearing
->>>> interrupts, which
->>>> may not work if those are generated after the execution of the
->>>> poweroff function.
->>>> Or we could simply disable the irq after power_off, but that'd be
->>>> hacky (as well).
->>>>
->>>>
->>>> Let's see if asking to poweroff *everything* works:
->>> Worked.
->>
->> Yes, I also got into this issue some time ago, but I didn't report it
->> because I also had some power supply related problems on my test farm
->> and everything was a bit unstable. I wasn't 100% sure that the
->> $subject patch is responsible for the observed issues. Now, after
->> fixing power supply, I confirm that the issue was revealed by the
->> $subject patch and above mentioned change fixes the problem. Feel free
->> to add:
->>
->> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+On Sat, Nov 25, 2023 at 03:49:53AM +0530, Mukesh Ojha wrote:
+> The reserved memory region for ramoops is assumed to be at a fixed
+> and known location when read from the devicetree. This may not be
+> required for something like Qualcomm's minidump which is interested
+> in knowing addresses of ramoops region but it does not put hard
+> requirement of address being fixed as most of it's SoC does not
+> support warm reset and does not use pstorefs at all instead it has
+> firmware way of collecting ramoops region if it gets to know the
+> address and register it with apss minidump table which is sitting
+> in shared memory region in DDR and firmware will have access to
+> these table during reset and collects it on crash of SoC.
 > 
+> So, add the support of reserving ramoops region to be dynamically
+> allocated early during boot if it is request through command line
+> via 'dyn_ramoops_size=<size>' and fill up reserved resource structure
+> and export the structure, so that it can be read by ramoops driver.
 > 
-> I must revoke my tested-by tag for the above fix alone. Although it
-> fixed the boot issue and system stability issue, it looks that there is
-> still something missing and opening the panfrost dri device causes a
-> system crash:
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> ---
+>  Documentation/admin-guide/ramoops.rst |  7 ++++
+>  fs/pstore/Kconfig                     | 15 +++++++++
+>  fs/pstore/ram.c                       | 62 ++++++++++++++++++++++++++++++++---
+>  include/linux/pstore_ram.h            |  5 +++
+>  init/main.c                           |  2 ++
+>  5 files changed, 87 insertions(+), 4 deletions(-)
 > 
-> root@target:~# ./modetest -C
-> trying to open device 'i915'...failed
-> trying to open device 'amdgpu'...failed
-> trying to open device 'radeon'...failed
-> trying to open device 'nouveau'...failed
-> trying to open device 'vmwgfx'...failed
-> trying to open device 'omapdrm'...failed
-> trying to open device 'exynos'...done
-> root@target:~#
-> 
-> 8<--- cut here ---
-> Unhandled fault: external abort on non-linefetch (0x1008) at 0xf0c6803c
-> [f0c6803c] *pgd=42d87811, *pte=11800653, *ppte=11800453
-> Internal error: : 1008 [#1] PREEMPT SMP ARM
-> Modules linked in: exynos_gsc s5p_mfc s5p_jpeg v4l2_mem2mem
-> videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videobuf2_common
-> videodev mc s5p_cec
-> CPU: 0 PID: 0 Comm: swapper/0 Not tainted
-> 6.7.0-rc2-next-20231127-00055-ge14abcb527d6 #7649
-> Hardware name: Samsung Exynos (Flattened Device Tree)
-> PC is at panfrost_gpu_irq_handler+0x18/0xfc
-> LR is at __handle_irq_event_percpu+0xcc/0x31c
-> ...
-> Process swapper/0 (pid: 0, stack limit = 0x0e2875ff)
-> Stack: (0xc1301e48 to 0xc1302000)
-> ...
->    panfrost_gpu_irq_handler from __handle_irq_event_percpu+0xcc/0x31c
->    __handle_irq_event_percpu from handle_irq_event+0x38/0x80
->    handle_irq_event from handle_fasteoi_irq+0x9c/0x250
->    handle_fasteoi_irq from generic_handle_domain_irq+0x24/0x34
->    generic_handle_domain_irq from gic_handle_irq+0x88/0xa8
->    gic_handle_irq from generic_handle_arch_irq+0x34/0x44
->    generic_handle_arch_irq from __irq_svc+0x8c/0xd0
-> Exception stack(0xc1301f10 to 0xc1301f58)
-> ...
->    __irq_svc from default_idle_call+0x20/0x2c4
->    default_idle_call from do_idle+0x244/0x2b4
->    do_idle from cpu_startup_entry+0x28/0x2c
->    cpu_startup_entry from rest_init+0xec/0x190
->    rest_init from arch_post_acpi_subsys_init+0x0/0x8
-> Code: e591300c e593402c f57ff04f e591300c (e593903c)
-> ---[ end trace 0000000000000000 ]---
-> Kernel panic - not syncing: Fatal exception in interrupt
-> CPU2: stopping
-> 
-> 
-> It looks that the panfrost interrupts must be somehow synchronized with
-> turning power off, what has been already discussed. Let me know if you
-> want me to test any patch.
-> 
+> diff --git a/Documentation/admin-guide/ramoops.rst b/Documentation/admin-guide/ramoops.rst
+> index e9f85142182d..af737adbf079 100644
+> --- a/Documentation/admin-guide/ramoops.rst
+> +++ b/Documentation/admin-guide/ramoops.rst
+> @@ -33,6 +33,13 @@ memory are implementation defined, and won't work on many ARMs such as omaps.
+>  Setting ``mem_type=2`` attempts to treat the memory region as normal memory,
+>  which enables full cache on it. This can improve the performance.
+>  
+> +Ramoops memory region can also be allocated dynamically for a special case where
+> +there is no requirement to access the logs from pstorefs on next boot instead there
+> +is separate backend mechanism like minidump present which has awareness about the
+> +dynamic ramoops region and can recover the logs. This is enabled via command line
+> +parameter ``dyn_ramoops_size=<size>`` and should not be used in absence of
+> +separate backend which knows how to recover this dynamic region.
+> +
+>  The memory area is divided into ``record_size`` chunks (also rounded down to
+>  power of two) and each kmesg dump writes a ``record_size`` chunk of
+>  information.
+> diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
+> index 3acc38600cd1..e13e53d7a225 100644
+> --- a/fs/pstore/Kconfig
+> +++ b/fs/pstore/Kconfig
+> @@ -81,6 +81,21 @@ config PSTORE_RAM
+>  
+>  	  For more information, see Documentation/admin-guide/ramoops.rst.
+>  
+> +config PSTORE_DYNAMIC_RAMOOPS_REGION_RESERVATION
+> +	bool "Reserve ramoops region dynamically"
+> +	select PSTORE_RAM
+> +	help
+> +	  This enables the dynamic reservation of ramoops region for a special case
+> +	  where there is no requirement to access the logs from pstorefs on next boot
+> +	  instead there is separate backend mechanism like minidump present which has
+> +	  awareness about the dynamic ramoops region and can recover the logs. This is
+> +	  enabled via command line parameter dyn_ramoops_size=<size> and should not be
+> +	  used in absence of separate backend which knows how to recover this dynamic
+> +	  region.
+> +
+> +	  Note whenever this config is selected ramoops driver will be build statically
+> +	  into kernel.
+> +
 
-The new series containing the whole interrupts sync code is almost ready,
-currently testing it on my machines here.
+Is there any advantage if we decouple this memory reservation from
+pstore ram so that pstore ram can still be compiled as module? Asking
+because you explicitly mentioned this limitation.
 
-I should be able to send it between today and tomorrow.
+>  config PSTORE_ZONE
+>  	tristate
+>  	depends on PSTORE
+> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+> index 88b34fdbf759..a6c0da8cfdd4 100644
+> --- a/fs/pstore/ram.c
+> +++ b/fs/pstore/ram.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/compiler.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> +#include <linux/memblock.h>
+>  #include <linux/mm.h>
+>  
+>  #include "internal.h"
+> @@ -103,6 +104,55 @@ struct ramoops_context {
+>  };
+>  
+>  static struct platform_device *dummy;
+> +static int dyn_ramoops_size;
+> +/* Location of the reserved area for the dynamic ramoops */
+> +static struct resource dyn_ramoops_res = {
+> +	.name  = "ramoops",
+> +	.start = 0,
+> +	.end   = 0,
+> +	.flags = IORESOURCE_BUSY | IORESOURCE_SYSTEM_RAM,
+> +	.desc  = IORES_DESC_NONE,
+> +};
+> +
+> +static int __init parse_dyn_ramoops_size(char *p)
+> +{
+> +	char *tmp;
+> +
+> +	dyn_ramoops_size = memparse(p, &tmp);
+> +	if (p == tmp) {
+> +		pr_err("ramoops: memory size expected\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +early_param("dyn_ramoops_size", parse_dyn_ramoops_size);
 
-Cheers,
-Angelo
+should not this code be under
+CONFIG_PSTORE_DYNAMIC_RAMOOPS_REGION_RESERVATION?
 
+> +
+> +#ifdef CONFIG_PSTORE_DYNAMIC_RAMOOPS_REGION_RESERVATION
+> +/*
+> + * setup_dynamic_ramoops() - reserves memory for dynamic ramoops
+> + *
+> + * This enable dynamic reserve memory support for ramoops through
+> + * command line.
+> + */
+> +void __init setup_dynamic_ramoops(void)
+> +{
+> +	unsigned long long ramoops_base;
+> +	unsigned long long ramoops_size;
+> +
+> +	ramoops_base = memblock_phys_alloc_range(dyn_ramoops_size, SMP_CACHE_BYTES,
+> +						 0, MEMBLOCK_ALLOC_NOLEAKTRACE);
+> +	if (!ramoops_base) {
+> +		pr_err("cannot allocate ramoops dynamic memory (size:0x%llx).\n",
+> +			ramoops_size);
+> +		return;
+> +	}
+
+This error needs to be propagated to ramoops_register_dummy() since it
+rely on !dyn_ramoops_size . one way is to set dyn_ramoops_size to 0.
+
+> +
+> +	dyn_ramoops_res.start = ramoops_base;
+> +	dyn_ramoops_res.end = ramoops_base + dyn_ramoops_size - 1;
+> +	insert_resource(&iomem_resource, &dyn_ramoops_res);
+> +}
+> +#endif
+>  
+>  static int ramoops_pstore_open(struct pstore_info *psi)
+>  {
+> @@ -915,14 +965,18 @@ static void __init ramoops_register_dummy(void)
+>  
+>  	/*
+>  	 * Prepare a dummy platform data structure to carry the module
+> -	 * parameters. If mem_size isn't set, then there are no module
+> -	 * parameters, and we can skip this.
+> +	 * parameters. If mem_size isn't set, check for dynamic ramoops
+> +	 * size and use if it is set.
+>  	 */
+> -	if (!mem_size)
+> +	if (!mem_size && !dyn_ramoops_size)
+>  		return;
+>  
+
+If mem_size and dyn_ramoops_size are set, you are taking
+dyn_ramoops_size precedence here. The comment is a bit confusing, pls
+review it once.
+
+> -	pr_info("using module parameters\n");
+> +	if (dyn_ramoops_size) {
+> +		mem_size = dyn_ramoops_size;
+> +		mem_address = dyn_ramoops_res.start;
+> +	}
+>  
+
+Overall it Looks good to me. Thanks.
