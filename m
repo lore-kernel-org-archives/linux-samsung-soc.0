@@ -1,99 +1,187 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD8A2FE0F;
-	Mon, 27 Nov 2023 14:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2aOf09I"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A12D1C4AF73;
-	Mon, 27 Nov 2023 14:03:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701093816;
-	bh=KCZKisXR1n78+RfI83KrbOl2Cm27WXfa6iz/K1QPJPo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=a2aOf09I75DdKUvvNJhSkD9GQ6WGBE1jrWs9pDpOCpwNhS0TbxHWoRRSn9ck5Mhc+
-	 gZca7EfxNyQp1inBZAfRqD47gcVR/2j2P6kSPCkih7i49cwEZ7pOo/irs5zW0XlMiF
-	 9t3wBImUkMRmLnPX2jf+oEXtdtP3HdA2v5iDopicDPaZiELC/QCHIid2KwS9yeW8Yk
-	 sDtIdNfLMQ2+8k4BxzPSCP/qhcQirHg9eszKNpXUSGX6VzAN3kehB6MI8Qj+xuPUcx
-	 pQuQyJsiwfL3/G2Nx7qvojox0+j3lTPPcUWpxZDJzU/NZmi7fMpyxZ2ILAb/+cKK1F
-	 d3or7UmfDwFkA==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-50943ccbbaeso5863772e87.2;
-        Mon, 27 Nov 2023 06:03:36 -0800 (PST)
-X-Gm-Message-State: AOJu0YzKhEgsCPjAFuBPAKg2p3Slb4kxARX4ofB65cuZ1KNRZXMMxL6X
-	cxHKF5Lr8XxvaH6WIGu5pOTim5HmUO/Pp39UpA==
-X-Google-Smtp-Source: AGHT+IHHn/0tbob/Zvt/F/xavRxwGiGH47uaym2qWQ3/Wvw2D2ahyijP+Gg34c/5ffttsPErtLGmPrZcuMVpkTAoeU0=
-X-Received: by 2002:a19:7514:0:b0:4fb:9168:1fce with SMTP id
- y20-20020a197514000000b004fb91681fcemr7182211lfe.59.1701093814870; Mon, 27
- Nov 2023 06:03:34 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7B5D6FA2;
+	Mon, 27 Nov 2023 06:20:06 -0800 (PST)
+Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-5cbcfdeaff3so42805607b3.0;
+        Mon, 27 Nov 2023 06:20:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701094805; x=1701699605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p8asMA5McnjUqiDsQhrdKj0am/206nD+kU8Fb3R8j7Q=;
+        b=nwYLifb5c03uBSoGy08J+jk4kdSTzWG2HUdNOUK9Toymsx7FNnlAEISUAEKCULXlqi
+         tA/+IdWgjUmuf/Rcij4uv0uwOOBWKluBdcZunKKqrcsnyjygTjxIyFi1i3/mwYIKw2ec
+         69gRtE+3z5VZKi5HxeuuMmqBnLNddnzNOKMAef6ZQEWXTkGgp+356vO7DyHZYDRGeGzx
+         Fcnfy10u5U+afWNGkfOZljZWS5rP0KxPMZcLpKK+Xh2qX91ukBA//5X6WC9R6QOVmWGk
+         kgk/uU/Kh4dGzL7I8WpMh0HQl7OoicB9QVarh4C8n5SVo1tdf6dd5V3Lzr1/Tj4c1oAW
+         8apQ==
+X-Gm-Message-State: AOJu0YwaJcDUgbz1R/iFhh5FhfWvOspgkqE3s8D1wfhBiv73/U7sU0Hj
+	rKnsRD3tFThRLPKxtwZUE7KevIwRevWq0qoG
+X-Google-Smtp-Source: AGHT+IH5EZJ3JXP1ys8qvMygvedokqxnAV2ajL+xIX1xN5Tq5j5zb7onIkAN9QKV3wbGyR2XId9FTA==
+X-Received: by 2002:a0d:d68c:0:b0:5a7:bfbf:691d with SMTP id y134-20020a0dd68c000000b005a7bfbf691dmr11601951ywd.42.1701094804463;
+        Mon, 27 Nov 2023 06:20:04 -0800 (PST)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id v126-20020a818584000000b005c08cfb7cadsm3310487ywf.57.2023.11.27.06.20.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Nov 2023 06:20:04 -0800 (PST)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-5cc66213a34so42655617b3.1;
+        Mon, 27 Nov 2023 06:20:03 -0800 (PST)
+X-Received: by 2002:a0d:e207:0:b0:5a8:207b:48d with SMTP id
+ l7-20020a0de207000000b005a8207b048dmr10958508ywe.11.1701094803713; Mon, 27
+ Nov 2023 06:20:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231122-dtc-warnings-v2-0-bd4087325392@kernel.org> <CAK7LNASVMjVg4dr=KdSDHwGww_47H78H7rMXA=wf+ncugesDSA@mail.gmail.com>
-In-Reply-To: <CAK7LNASVMjVg4dr=KdSDHwGww_47H78H7rMXA=wf+ncugesDSA@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 27 Nov 2023 08:03:22 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+N0GxwZ2YmspEzfiuGOw7M+DmYkyhLgaYtk+Ov2ycY_A@mail.gmail.com>
-Message-ID: <CAL_Jsq+N0GxwZ2YmspEzfiuGOw7M+DmYkyhLgaYtk+Ov2ycY_A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] kbuild: Per arch/platform dtc warning levels
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Conor Dooley <conor@kernel.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
+References: <20231125184422.12315-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20231125184422.12315-1-krzysztof.kozlowski@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 27 Nov 2023 15:19:52 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUYEwMuxJ2Xx=KRVKneRT-e+uHz8LE1JVY5zLDkWksqKw@mail.gmail.com>
+Message-ID: <CAMuHMdUYEwMuxJ2Xx=KRVKneRT-e+uHz8LE1JVY5zLDkWksqKw@mail.gmail.com>
+Subject: Re: [PATCH v3] docs: dt-bindings: add DTS Coding Style document
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, Andrew Davis <afd@ti.com>, 
+	Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Chen-Yu Tsai <wens@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, 
+	Jonathan Corbet <corbet@lwn.net>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Michal Simek <michal.simek@amd.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Nishanth Menon <nm@ti.com>, Olof Johansson <olof@lixom.net>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, 
+	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	workflows@vger.kernel.org, linux-doc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 23, 2023 at 1:39=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> On Thu, Nov 23, 2023 at 7:12=E2=80=AFAM Rob Herring <robh@kernel.org> wro=
-te:
-> >
-> > This series adds support to set the dtc extra warning level on a per
-> > arch or per platform (directory really) basis.
-> >
-> > The first version of this was just a simple per directory override for
-> > Samsung platforms, but Conor asked to be able to do this for all of
-> > riscv.
-> >
-> > For merging, either I can take the whole thing or the riscv and samsung
-> > patches can go via their normal trees. The added variable will have no
-> > effect until merged with patch 2.
-> >
-> > v1:
-> >  - https://lore.kernel.org/all/20231116211739.3228239-1-robh@kernel.org=
-/
-> >
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
->
->
-> There were some attempts in the past to enable W=3D1 in particular subsys=
-tems,
-> so here is a similar comment.
->
-> Adding a new warning flag to W=3D1 is always safe without doing any compi=
-le test.
->
-> With this series, it would not be true any more because a new warning in =
-W=3D1
-> would potentially break riscv/samsung platforms.
+Hi Krzysztof,
 
-The difference here is the people potentially adding warnings are also
-the ones ensuring no warnings.
+On Sat, Nov 25, 2023 at 7:44=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> Document preferred coding style for Devicetree sources (DTS and DTSI),
+> to bring consistency among all (sub)architectures and ease in reviews.
+>
+> Cc: Andrew Davis <afd@ti.com>
+> cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Bjorn Andersson <andersson@kernel.org>
+> Cc: Chen-Yu Tsai <wens@kernel.org>
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: Michal Simek <michal.simek@amd.com>
+> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+> Cc: Nishanth Menon <nm@ti.com>
+> Cc: Olof Johansson <olof@lixom.net>
+> Cc: Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com>
+> Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Acked-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> ---
+>
+> Merging idea: Rob/DT bindings
+>
+> Changes in v3
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> 1. should->shall (Angelo)
+> 2. Comments // -> /* (Angelo, Michal)
+> 3. Use imaginary example in "Order of Properties in Device Node"
+>    (Angelo)
+> 4. Added paragraphs for three sections with justifications of chosen
+>    style.
+> 5. Allow two style of ordering overrides in board DTS: alphabetically or
+>    by order of DTSI (Rob).
+> 6. I did not incorporate feedback about, due to lack of consensus and my
+>    disagreement:
+>    a. SoM being DTS without DTSI in "Organizing DTSI and DTS"
 
-> Linus requires a clean build (i.e. zero warning) when W=3D option is not =
-given.
+Thanks for the update!
 
-Linus doesn't build any of this AFAICT. We are not always warning free
-for W=3D0 with dtbs.
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/dts-coding-style.rst
 
-Rob
+> +       /* SoC DTSI */
+> +
+> +       / {
+> +               cpus {
+> +                       /* ... */
+> +               };
+> +
+> +               psci {
+> +                       /* ... */
+> +               };
+> +
+> +               soc@ {
+
+"soc@" is invalid, that should be "soc".
+
+As the "soc" node is special, you may want to elaborate:
+
+                compatible =3D "simple-bus";
+                #address-cells =3D <1>;
+                #size-cells =3D <1>;
+                ranges;
+
+> +                       dma: dma-controller@10000 {
+> +                               /* ... */
+> +                       };
+> +
+> +                       clk: clock-controller@80000 {
+> +                               /* ... */
+> +                       };
+> +               };
+> +       };
+> +
+> +       /* Board DTS - alphabetical order */
+> +
+> +       &clk {
+> +               /* ... */
+> +       };
+> +
+> +       &dma {
+> +               /* ... */
+> +       };
+> +
+> +       /* Board DTS - alternative order, keep as DTSI */
+> +
+> +       &dma {
+> +               /* ... */
+> +       };
+> +
+> +       &clk {
+> +               /* ... */
+> +       };
+
+IMO that alternative order is hard to review: you need to have multiple
+files open.  It will also make validation hard, as you can only validate
+the end result, not individual files.
+
+Anyway, this is already quite usable so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
