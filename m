@@ -1,34 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iObV9evC"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E8251BB;
-	Mon, 27 Nov 2023 23:50:19 -0800 (PST)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AS4stMr007950;
-	Tue, 28 Nov 2023 07:49:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=OZoJos7LnjFHs8azFtepxxDLx6KAhcY7VaAcZeBfbGA=;
- b=iObV9evCcG9Nuz1CFltTkvrTMOWE3JTMl63yRBY7yZnEjt/6mtz5s35xF1fBOdxDV0ZE
- FKMsvWH+WZlRZTVmut4ltVdFJdqO+Pn7wJY+hf/hySL6KMszqLPJeL5RPjEIGxzk7QMy
- 5kwoY6LkiMu9MYwh7K4ybQn+NzoUm7rbNFk6asX2tDdrQNo7gq6x47dTtyNBSdSq00m2
- 7UUkXLVl3mzroX6agwdFhOOm3rTdZPzXfwcbF6soFNeYHWdZqKI2Nsy0qRi2Bj+InQaq
- khlgWMaeKlc8k2HFnqfgXSOF2M3RziATqWX2radFX+Cx09yAw6ZMVbxmpctwhqyfRtFI 2g== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3umt632pgv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Nov 2023 07:49:42 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AS7nfIJ031048
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Nov 2023 07:49:41 GMT
-Received: from [10.253.11.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 27 Nov
- 2023 23:49:36 -0800
-Message-ID: <86c27d90-9280-489e-b00e-187977657ee4@quicinc.com>
-Date: Tue, 28 Nov 2023 15:49:36 +0800
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V8CA9agm"
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F01DD138
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 00:58:56 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-5441305cbd1so6741047a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 00:58:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701161935; x=1701766735; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UGpYHJ/5KU9x0FpSQk/2EgeAQ9Rghpf69obPvi4FEEU=;
+        b=V8CA9agmL0Hyu8jgbSQ0UJaPzKtQp7xDvWMt9/4l7csZuy/ullzTPVvFjZHIpOji0E
+         yeIha9MrjdLcQIxDr9vYRtyanQEXErGYCD03tQiet/WNonNaqe7c7E8ejaHjZ0omSw2k
+         Zp7QkKcRzKU+dZaRv5q2tBGVoxmyhejdwP/Az374HNGmwZRAKoBsirYak0d9af1NatVR
+         Y7PmM3YFvrXcTQTC8si37nUj6mSVEeBdt6QRREJB2ITJE3nCWjUxHVaSgFKHBjxAG20P
+         oRNHFV6QjV76bkLTEFgcCW1xGj3Ev7tq/xgKrR2r+HEv/QWBtZd4g5jefd0nbJNhpFYp
+         Hvag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701161935; x=1701766735;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UGpYHJ/5KU9x0FpSQk/2EgeAQ9Rghpf69obPvi4FEEU=;
+        b=m3vxajKpDcycx4zVZZQK8fRHlhHZfikxzFhdE3o2HXBZ2p8ZWDxx9EuKPh0WiJ7TX8
+         o4cfpOo45XZEWD9UigsdqTgl2srgx+ujRM9nkioeeEYmuHscF57dW6K9FElABPaLH01I
+         JffNgAPqumTLvrGqgKPhf4a5MBuj9whUJYRS4oRzz+wYul75f8E7PWmZMZt+X+GLyiM5
+         PGhiilvIy3TF5zBSRYXqiHWmyTh/KVn3X9z500DNn3xHqUfLZ+xzDvcuZaN7FTSzo7Z3
+         50Q7dmEXOD9zwlkBYAxJpvoXH2InVJI5M/Ryyf6OYOsvwNwcfvcSWPIex9K3qD48Bsyv
+         rR7w==
+X-Gm-Message-State: AOJu0Yy2VktoujvuCf4DtwEAaTWnCmzSRaHm8Y0zGcpPt4UvqXjUbRIH
+	8VK0m9LNhSrdv1t16UNwuPPlCQ==
+X-Google-Smtp-Source: AGHT+IEgIsNU+8Ga6PP5Ysj5x1L7yrm45es5mMmhnSW4AxcFkCQuqBZ1rC+ew3qIYRmtnJ4t+2BItw==
+X-Received: by 2002:a50:9312:0:b0:53e:3b8f:8a58 with SMTP id m18-20020a509312000000b0053e3b8f8a58mr11821123eda.11.1701161935368;
+        Tue, 28 Nov 2023 00:58:55 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.223.109])
+        by smtp.gmail.com with ESMTPSA id bt16-20020a0564020a5000b00548e4c5220csm6113884edb.26.2023.11.28.00.58.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Nov 2023 00:58:54 -0800 (PST)
+Message-ID: <f23ff6a1-0130-45a4-809c-efa82c1e3c6c@linaro.org>
+Date: Tue, 28 Nov 2023 09:58:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -36,135 +47,94 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 01/10] scsi: ufs: host: Rename structure ufs_dev_params
- to ufs_host_params
+Subject: Re: [PATCH v3 17/20] arm64: dts: google: Add initial Google gs101 SoC
+ support
 Content-Language: en-US
-To: Manivannan Sadhasivam <mani@kernel.org>
-CC: <bvanassche@acm.org>, <adrian.hunter@intel.com>, <beanhuo@micron.com>,
-        <avri.altman@wdc.com>, <junwoo80.lee@samsung.com>,
-        <martin.petersen@oracle.com>, <linux-scsi@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        Stanley Chu <stanley.chu@mediatek.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Matthias Brugger
-	<matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-        Andrew Halaney
-	<ahalaney@redhat.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>,
-        Brian Masney <bmasney@redhat.com>,
-        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
-	<linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/SAMSUNG S3C, S5P AND
- EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>,
-        open list
-	<linux-kernel@vger.kernel.org>,
-        "moderated list:UNIVERSAL FLASH STORAGE HOST
- CONTROLLER DRIVER..." <linux-mediatek@lists.infradead.org>
-References: <1700729190-17268-1-git-send-email-quic_cang@quicinc.com>
- <1700729190-17268-2-git-send-email-quic_cang@quicinc.com>
- <20231128051917.GB3088@thinkpad> <20231128053136.GE3088@thinkpad>
-From: Can Guo <quic_cang@quicinc.com>
-In-Reply-To: <20231128053136.GE3088@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+ tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org,
+ wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com,
+ will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
+ cw00.choi@samsung.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+ semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com,
+ soc@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, kernel-team@android.com,
+ linux-serial@vger.kernel.org
+References: <20231011184823.443959-1-peter.griffin@linaro.org>
+ <20231011184823.443959-18-peter.griffin@linaro.org>
+ <33fe3e2e-9d09-42ee-9472-25d3be09baf4@linaro.org>
+ <CADrjBPrh19YzB45hM4xaELn67uf3iBQo++T-8+2Uenq6-fDzKg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <CADrjBPrh19YzB45hM4xaELn67uf3iBQo++T-8+2Uenq6-fDzKg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: cQtYOPYbCBB3cCs87Zz2fyuHqhFm4fzF
-X-Proofpoint-ORIG-GUID: cQtYOPYbCBB3cCs87Zz2fyuHqhFm4fzF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-28_06,2023-11-27_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- mlxlogscore=999 bulkscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0
- malwarescore=0 phishscore=0 clxscore=1015 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311060000
- definitions=main-2311280059
 
-
-
-On 11/28/2023 1:31 PM, Manivannan Sadhasivam wrote:
-> On Tue, Nov 28, 2023 at 10:49:36AM +0530, Manivannan Sadhasivam wrote:
->> On Thu, Nov 23, 2023 at 12:46:21AM -0800, Can Guo wrote:
->>> Structure ufs_dev_params is actually used in UFS host vendor drivers to
->>> declare host specific power mode parameters, like ufs_<vendor>_params or
->>> host_cap, which makes the code not very straightforward to read. Rename the
->>> structure ufs_dev_params to ufs_host_params and unify the declarations in
->>> all vendor drivers to host_params.
->>>
->>> In addition, rename the two functions ufshcd_init_pwr_dev_param() and
->>> ufshcd_get_pwr_dev_param() which work based on the ufs_host_params to
->>> ufshcd_init_host_param() and ufshcd_negotiate_pwr_param() respectively to
->>> avoid confusions.
->>>
->>> This change does not change any functionalities or logic.
->>>
->>> Acked-by: Andrew Halaney <ahalaney@redhat.com>
->>> Signed-off-by: Can Guo <quic_cang@quicinc.com>
+On 25/11/2023 00:22, Peter Griffin wrote:
+>>> +
+>>> +     /* bootloader requires ect node */
+>>> +     ect {
 >>
->> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->>
->> - Mani
->>
->>> ---
->>>   drivers/ufs/host/ufs-exynos.c    |  7 ++--
->>>   drivers/ufs/host/ufs-hisi.c      | 11 +++----
->>>   drivers/ufs/host/ufs-mediatek.c  | 12 +++----
->>>   drivers/ufs/host/ufs-qcom.c      | 12 +++----
->>>   drivers/ufs/host/ufshcd-pltfrm.c | 69 ++++++++++++++++++++--------------------
->>>   drivers/ufs/host/ufshcd-pltfrm.h | 10 +++---
->>>   6 files changed, 57 insertions(+), 64 deletions(-)
->>>
+>> This needs bindings.
 > 
-> [...]
+> I experimented a bit more and the minimum I need is an empty dt node
+> called ect, otherwise the bootloader will boot loop and we can't boot
+> the kernel
+> [   2.977870] [E] [BOOT] fdt /ect path not found -1
 > 
->>> diff --git a/drivers/ufs/host/ufshcd-pltfrm.h b/drivers/ufs/host/ufshcd-pltfrm.h
->>> index a86a3ad..2d4d047 100644
->>> --- a/drivers/ufs/host/ufshcd-pltfrm.h
->>> +++ b/drivers/ufs/host/ufshcd-pltfrm.h
->>> @@ -10,7 +10,7 @@
->>>   #define UFS_PWM_MODE 1
->>>   #define UFS_HS_MODE  2
->>>   
->>> -struct ufs_dev_params {
->>> +struct ufs_host_params {
->>>   	u32 pwm_rx_gear;        /* pwm rx gear to work in */
->>>   	u32 pwm_tx_gear;        /* pwm tx gear to work in */
->>>   	u32 hs_rx_gear;         /* hs rx gear to work in */
->>> @@ -25,10 +25,10 @@ struct ufs_dev_params {
->>>   	u32 desired_working_mode;
->>>   };
->>>   
->>> -int ufshcd_get_pwr_dev_param(const struct ufs_dev_params *dev_param,
->>> -			     const struct ufs_pa_layer_attr *dev_max,
->>> -			     struct ufs_pa_layer_attr *agreed_pwr);
->>> -void ufshcd_init_pwr_dev_param(struct ufs_dev_params *dev_param);
->>> +int ufshcd_negotiate_pwr_param(const struct ufs_host_params *host_param,
->>> +			       const struct ufs_pa_layer_attr *dev_max,
->>> +			       struct ufs_pa_layer_attr *agreed_pwr);
->>> +void ufshcd_init_host_param(struct ufs_host_params *host_param);
-> 
-> Noticed this after giving my R-b tag. Could you please rename the functions to:
-> 
-> int ufshcd_negotiate_pwr_params(const struct ufs_host_params *host_params,...
-> void ufshcd_init_host_params(struct ufs_host_params *host_params);
-> 
-> Not a big deal, but since the argument passed to both functions are 'params',
-> it'd be good if the function definition also use the same plural form.
-> 
+> Apart from a comment indicating that the bootloader requires this
+> empty ect dt node, what other bindings documentation would you like to
+> see? Something in google.yaml?
 
-No worries, will do in next version.
+Yes, it would be enough.
 
-Thanks,
-Can Guo.
 
-> - Mani
-> 
+Best regards,
+Krzysztof
+
