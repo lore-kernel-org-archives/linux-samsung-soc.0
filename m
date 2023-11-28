@@ -1,140 +1,282 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V8CA9agm"
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F01DD138
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 00:58:56 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-5441305cbd1so6741047a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 00:58:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701161935; x=1701766735; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UGpYHJ/5KU9x0FpSQk/2EgeAQ9Rghpf69obPvi4FEEU=;
-        b=V8CA9agmL0Hyu8jgbSQ0UJaPzKtQp7xDvWMt9/4l7csZuy/ullzTPVvFjZHIpOji0E
-         yeIha9MrjdLcQIxDr9vYRtyanQEXErGYCD03tQiet/WNonNaqe7c7E8ejaHjZ0omSw2k
-         Zp7QkKcRzKU+dZaRv5q2tBGVoxmyhejdwP/Az374HNGmwZRAKoBsirYak0d9af1NatVR
-         Y7PmM3YFvrXcTQTC8si37nUj6mSVEeBdt6QRREJB2ITJE3nCWjUxHVaSgFKHBjxAG20P
-         oRNHFV6QjV76bkLTEFgcCW1xGj3Ev7tq/xgKrR2r+HEv/QWBtZd4g5jefd0nbJNhpFYp
-         Hvag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701161935; x=1701766735;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UGpYHJ/5KU9x0FpSQk/2EgeAQ9Rghpf69obPvi4FEEU=;
-        b=m3vxajKpDcycx4zVZZQK8fRHlhHZfikxzFhdE3o2HXBZ2p8ZWDxx9EuKPh0WiJ7TX8
-         o4cfpOo45XZEWD9UigsdqTgl2srgx+ujRM9nkioeeEYmuHscF57dW6K9FElABPaLH01I
-         JffNgAPqumTLvrGqgKPhf4a5MBuj9whUJYRS4oRzz+wYul75f8E7PWmZMZt+X+GLyiM5
-         PGhiilvIy3TF5zBSRYXqiHWmyTh/KVn3X9z500DNn3xHqUfLZ+xzDvcuZaN7FTSzo7Z3
-         50Q7dmEXOD9zwlkBYAxJpvoXH2InVJI5M/Ryyf6OYOsvwNwcfvcSWPIex9K3qD48Bsyv
-         rR7w==
-X-Gm-Message-State: AOJu0Yy2VktoujvuCf4DtwEAaTWnCmzSRaHm8Y0zGcpPt4UvqXjUbRIH
-	8VK0m9LNhSrdv1t16UNwuPPlCQ==
-X-Google-Smtp-Source: AGHT+IEgIsNU+8Ga6PP5Ysj5x1L7yrm45es5mMmhnSW4AxcFkCQuqBZ1rC+ew3qIYRmtnJ4t+2BItw==
-X-Received: by 2002:a50:9312:0:b0:53e:3b8f:8a58 with SMTP id m18-20020a509312000000b0053e3b8f8a58mr11821123eda.11.1701161935368;
-        Tue, 28 Nov 2023 00:58:55 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.223.109])
-        by smtp.gmail.com with ESMTPSA id bt16-20020a0564020a5000b00548e4c5220csm6113884edb.26.2023.11.28.00.58.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Nov 2023 00:58:54 -0800 (PST)
-Message-ID: <f23ff6a1-0130-45a4-809c-efa82c1e3c6c@linaro.org>
-Date: Tue, 28 Nov 2023 09:58:51 +0100
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oyKSQb4y"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C764ED6D;
+	Tue, 28 Nov 2023 02:33:18 -0800 (PST)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AS9IOKA030987;
+	Tue, 28 Nov 2023 10:32:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=6WJrDs6aXBvRV/cHzyTFtHB3cjvoU5uFPQPLuXGwXh4=;
+ b=oyKSQb4yUVsiTvtgVlnCchbcwTqCsKms8gp+pNTQQ+dka3v/ZaReHN4opnVCpE7nP3CF
+ 6SBKSdBj+Z/xQLOAXFoOc2mGRme+GYGCYO85PVD0YqaATHIg0s/FQgOnHTOCS1HB5wrZ
+ rixDvAMBLXBapiEx++tWW218UIBUqSqhhD93s/wysZmrj/eEYS7hYzIYYc5tzKtpePz8
+ QV6hPgrZdkJLYqTlAmO/RunKvHwgEzREDOe8rMLxFltU3wbQYO6biEANVX4PyzpYwdTl
+ gdCg4Q3EX3OlrCha7+9PSsLlHa5TNLcxkvpTbKGl06czSfrt7bUl8pfuIkG/OhuUYlTR Hw== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3un02h1xbj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 Nov 2023 10:32:53 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3ASAWp99022084
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 Nov 2023 10:32:51 GMT
+Received: from [10.214.66.81] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 28 Nov
+ 2023 02:32:40 -0800
+Message-ID: <d5fa95e7-ad2a-0dc7-5c79-6a9a789dad5f@quicinc.com>
+Date: Tue, 28 Nov 2023 16:02:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 17/20] arm64: dts: google: Add initial Google gs101 SoC
- support
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [Patch v6 10/12] pstore/ram: Add dynamic ramoops region support
+ through commandline
+To: Pavan Kondeti <quic_pkondeti@quicinc.com>
+CC: <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>, <gpiccoli@igalia.com>,
+        <mathieu.poirier@linaro.org>, <vigneshr@ti.com>, <nm@ti.com>,
+        <matthias.bgg@gmail.com>, <kgene@kernel.org>,
+        <alim.akhtar@samsung.com>, <bmasney@redhat.com>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
+References: <1700864395-1479-1-git-send-email-quic_mojha@quicinc.com>
+ <1700864395-1479-11-git-send-email-quic_mojha@quicinc.com>
+ <ad38fb23-e2a2-448e-bdea-fa0985f82b50@quicinc.com>
 Content-Language: en-US
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
- tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org,
- wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com,
- will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
- cw00.choi@samsung.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org,
- semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com,
- soc@kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-watchdog@vger.kernel.org, kernel-team@android.com,
- linux-serial@vger.kernel.org
-References: <20231011184823.443959-1-peter.griffin@linaro.org>
- <20231011184823.443959-18-peter.griffin@linaro.org>
- <33fe3e2e-9d09-42ee-9472-25d3be09baf4@linaro.org>
- <CADrjBPrh19YzB45hM4xaELn67uf3iBQo++T-8+2Uenq6-fDzKg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CADrjBPrh19YzB45hM4xaELn67uf3iBQo++T-8+2Uenq6-fDzKg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <ad38fb23-e2a2-448e-bdea-fa0985f82b50@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 51E3dRmfj17vx50XeFUlt--L527HdirG
+X-Proofpoint-ORIG-GUID: 51E3dRmfj17vx50XeFUlt--L527HdirG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-28_08,2023-11-27_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 malwarescore=0 adultscore=0 lowpriorityscore=0
+ impostorscore=0 spamscore=0 mlxscore=0 phishscore=0 bulkscore=0
+ mlxlogscore=999 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2311060000 definitions=main-2311280083
 
-On 25/11/2023 00:22, Peter Griffin wrote:
->>> +
->>> +     /* bootloader requires ect node */
->>> +     ect {
+
+
+On 11/27/2023 5:04 PM, Pavan Kondeti wrote:
+> On Sat, Nov 25, 2023 at 03:49:53AM +0530, Mukesh Ojha wrote:
+>> The reserved memory region for ramoops is assumed to be at a fixed
+>> and known location when read from the devicetree. This may not be
+>> required for something like Qualcomm's minidump which is interested
+>> in knowing addresses of ramoops region but it does not put hard
+>> requirement of address being fixed as most of it's SoC does not
+>> support warm reset and does not use pstorefs at all instead it has
+>> firmware way of collecting ramoops region if it gets to know the
+>> address and register it with apss minidump table which is sitting
+>> in shared memory region in DDR and firmware will have access to
+>> these table during reset and collects it on crash of SoC.
 >>
->> This needs bindings.
+>> So, add the support of reserving ramoops region to be dynamically
+>> allocated early during boot if it is request through command line
+>> via 'dyn_ramoops_size=<size>' and fill up reserved resource structure
+>> and export the structure, so that it can be read by ramoops driver.
+>>
+>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+>> ---
+>>   Documentation/admin-guide/ramoops.rst |  7 ++++
+>>   fs/pstore/Kconfig                     | 15 +++++++++
+>>   fs/pstore/ram.c                       | 62 ++++++++++++++++++++++++++++++++---
+>>   include/linux/pstore_ram.h            |  5 +++
+>>   init/main.c                           |  2 ++
+>>   5 files changed, 87 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/Documentation/admin-guide/ramoops.rst b/Documentation/admin-guide/ramoops.rst
+>> index e9f85142182d..af737adbf079 100644
+>> --- a/Documentation/admin-guide/ramoops.rst
+>> +++ b/Documentation/admin-guide/ramoops.rst
+>> @@ -33,6 +33,13 @@ memory are implementation defined, and won't work on many ARMs such as omaps.
+>>   Setting ``mem_type=2`` attempts to treat the memory region as normal memory,
+>>   which enables full cache on it. This can improve the performance.
+>>   
+>> +Ramoops memory region can also be allocated dynamically for a special case where
+>> +there is no requirement to access the logs from pstorefs on next boot instead there
+>> +is separate backend mechanism like minidump present which has awareness about the
+>> +dynamic ramoops region and can recover the logs. This is enabled via command line
+>> +parameter ``dyn_ramoops_size=<size>`` and should not be used in absence of
+>> +separate backend which knows how to recover this dynamic region.
+>> +
+>>   The memory area is divided into ``record_size`` chunks (also rounded down to
+>>   power of two) and each kmesg dump writes a ``record_size`` chunk of
+>>   information.
+>> diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
+>> index 3acc38600cd1..e13e53d7a225 100644
+>> --- a/fs/pstore/Kconfig
+>> +++ b/fs/pstore/Kconfig
+>> @@ -81,6 +81,21 @@ config PSTORE_RAM
+>>   
+>>   	  For more information, see Documentation/admin-guide/ramoops.rst.
+>>   
+>> +config PSTORE_DYNAMIC_RAMOOPS_REGION_RESERVATION
+>> +	bool "Reserve ramoops region dynamically"
+>> +	select PSTORE_RAM
+>> +	help
+>> +	  This enables the dynamic reservation of ramoops region for a special case
+>> +	  where there is no requirement to access the logs from pstorefs on next boot
+>> +	  instead there is separate backend mechanism like minidump present which has
+>> +	  awareness about the dynamic ramoops region and can recover the logs. This is
+>> +	  enabled via command line parameter dyn_ramoops_size=<size> and should not be
+>> +	  used in absence of separate backend which knows how to recover this dynamic
+>> +	  region.
+>> +
+>> +	  Note whenever this config is selected ramoops driver will be build statically
+>> +	  into kernel.
+>> +
 > 
-> I experimented a bit more and the minimum I need is an empty dt node
-> called ect, otherwise the bootloader will boot loop and we can't boot
-> the kernel
-> [   2.977870] [E] [BOOT] fdt /ect path not found -1
+> Is there any advantage if we decouple this memory reservation from
+> pstore ram so that pstore ram can still be compiled as module? Asking
+> because you explicitly mentioned this limitation.
+
+This is doable and it will be needing export(may be _NS) of
+ramoops resource if ramoops needs to be build as modules.
+
+Thanks for suggestion.
+But Let's hear it from other people as well if they have something
+to add otherwise, will do it next series.
+
 > 
-> Apart from a comment indicating that the bootloader requires this
-> empty ect dt node, what other bindings documentation would you like to
-> see? Something in google.yaml?
+>>   config PSTORE_ZONE
+>>   	tristate
+>>   	depends on PSTORE
+>> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+>> index 88b34fdbf759..a6c0da8cfdd4 100644
+>> --- a/fs/pstore/ram.c
+>> +++ b/fs/pstore/ram.c
+>> @@ -20,6 +20,7 @@
+>>   #include <linux/compiler.h>
+>>   #include <linux/of.h>
+>>   #include <linux/of_address.h>
+>> +#include <linux/memblock.h>
+>>   #include <linux/mm.h>
+>>   
+>>   #include "internal.h"
+>> @@ -103,6 +104,55 @@ struct ramoops_context {
+>>   };
+>>   
+>>   static struct platform_device *dummy;
+>> +static int dyn_ramoops_size;
+>> +/* Location of the reserved area for the dynamic ramoops */
+>> +static struct resource dyn_ramoops_res = {
+>> +	.name  = "ramoops",
+>> +	.start = 0,
+>> +	.end   = 0,
+>> +	.flags = IORESOURCE_BUSY | IORESOURCE_SYSTEM_RAM,
+>> +	.desc  = IORES_DESC_NONE,
+>> +};
+>> +
+>> +static int __init parse_dyn_ramoops_size(char *p)
+>> +{
+>> +	char *tmp;
+>> +
+>> +	dyn_ramoops_size = memparse(p, &tmp);
+>> +	if (p == tmp) {
+>> +		pr_err("ramoops: memory size expected\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +early_param("dyn_ramoops_size", parse_dyn_ramoops_size);
+> 
+> should not this code be under
+> CONFIG_PSTORE_DYNAMIC_RAMOOPS_REGION_RESERVATION?
 
-Yes, it would be enough.
+Yeah, looks to be miss., thanks again..
 
+> 
+>> +
+>> +#ifdef CONFIG_PSTORE_DYNAMIC_RAMOOPS_REGION_RESERVATION
+>> +/*
+>> + * setup_dynamic_ramoops() - reserves memory for dynamic ramoops
+>> + *
+>> + * This enable dynamic reserve memory support for ramoops through
+>> + * command line.
+>> + */
+>> +void __init setup_dynamic_ramoops(void)
+>> +{
+>> +	unsigned long long ramoops_base;
+>> +	unsigned long long ramoops_size;
+>> +
+>> +	ramoops_base = memblock_phys_alloc_range(dyn_ramoops_size, SMP_CACHE_BYTES,
+>> +						 0, MEMBLOCK_ALLOC_NOLEAKTRACE);
+>> +	if (!ramoops_base) {
+>> +		pr_err("cannot allocate ramoops dynamic memory (size:0x%llx).\n",
+>> +			ramoops_size);
+>> +		return;
+>> +	}
+> 
+> This error needs to be propagated to ramoops_register_dummy() since it
+> rely on !dyn_ramoops_size . one way is to set dyn_ramoops_size to 0.
 
-Best regards,
-Krzysztof
+Good point, will do that..
 
+> 
+>> +
+>> +	dyn_ramoops_res.start = ramoops_base;
+>> +	dyn_ramoops_res.end = ramoops_base + dyn_ramoops_size - 1;
+>> +	insert_resource(&iomem_resource, &dyn_ramoops_res);
+>> +}
+>> +#endif
+>>   
+>>   static int ramoops_pstore_open(struct pstore_info *psi)
+>>   {
+>> @@ -915,14 +965,18 @@ static void __init ramoops_register_dummy(void)
+>>   
+>>   	/*
+>>   	 * Prepare a dummy platform data structure to carry the module
+>> -	 * parameters. If mem_size isn't set, then there are no module
+>> -	 * parameters, and we can skip this.
+>> +	 * parameters. If mem_size isn't set, check for dynamic ramoops
+>> +	 * size and use if it is set.
+>>   	 */
+>> -	if (!mem_size)
+>> +	if (!mem_size && !dyn_ramoops_size)
+>>   		return;
+>>   
+> 
+> If mem_size and dyn_ramoops_size are set, you are taking
+> dyn_ramoops_size precedence here. The comment is a bit confusing, pls
+> review it once.
+
+Ideally, both should not be set and there will always be
+confusion.
+
+Do you think, if we use mem_size a single variable both for earlier
+and dynamic ramoops where based on dyn_ramoops_size=true/on a boolean
+it will take dynamic ramoops path and if not mentioned it will take 
+older path.
+
+-Mukesh
+> 
+>> -	pr_info("using module parameters\n");
+>> +	if (dyn_ramoops_size) {
+>> +		mem_size = dyn_ramoops_size;
+>> +		mem_address = dyn_ramoops_res.start;
+>> +	}
+>>   
+> 
+> Overall it Looks good to me. Thanks.
