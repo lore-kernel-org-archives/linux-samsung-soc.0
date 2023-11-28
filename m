@@ -1,184 +1,148 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bYewLQmi"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DDD51A2
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Nov 2023 16:26:27 -0800 (PST)
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20231128002623epoutp0290b760cdc95bf507caf98403553a8c09~bocxjyZnL1997019970epoutp02U
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 00:26:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20231128002623epoutp0290b760cdc95bf507caf98403553a8c09~bocxjyZnL1997019970epoutp02U
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tZfn8sKT"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFEBE1BD
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Nov 2023 20:01:09 -0800 (PST)
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20231128040105epoutp016a57e0ad352851a8ca1c2a9e3bb303f5~brYPIVp-W0314803148epoutp01n
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 04:01:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20231128040105epoutp016a57e0ad352851a8ca1c2a9e3bb303f5~brYPIVp-W0314803148epoutp01n
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1701131183;
-	bh=EVAydPHb+iuI0oFgKT1lEvM3GpdgPhV7iSj5fS7WTjc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bYewLQmiQNvtpEScwNoYGjvs2UJGAMClVYNuGnx3ytjqKSbHgJlN13tWdQaSguUB0
-	 s7IPU1twvcI+rlTie+jydV1j62HMla1DcCDWCmgOh5EP527BY5U3MDG7PxjmwFmKk8
-	 UFc5vHRRMbE0WUDLZCqz7rhsxJyPGrFphNzDKIeE=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20231128002622epcas2p43775dc1c952c850b7974c430e21b3b43~bocw8NHzj1420714207epcas2p4h;
-	Tue, 28 Nov 2023 00:26:22 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.68]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4SfNYB1z9Gz4x9QB; Tue, 28 Nov
-	2023 00:26:22 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	5A.C2.10006.EA335656; Tue, 28 Nov 2023 09:26:22 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20231128002621epcas2p4379a53cc57d9d26bce92fe0de4722982~bocv8kgXI1420814208epcas2p4r;
-	Tue, 28 Nov 2023 00:26:21 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231128002621epsmtrp2d2067952c91203253bb2b1f13175bffe~bocv75cfD0710707107epsmtrp2A;
-	Tue, 28 Nov 2023 00:26:21 +0000 (GMT)
-X-AuditID: b6c32a45-179ff70000002716-02-656533ae0957
+	s=mail20170921; t=1701144065;
+	bh=2CQYwk/nE4R4mCEWJnb86tuvgXui34+hbqn83BIQbPM=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=tZfn8sKTTNdJsSSQzo2kmX577Yq4ObNABQbEON1wmssJfqHxx9Kf5tI+D1flVMQU/
+	 DBmnc/nfX2ppro6705U7G6U4xza5lJ7RUrOBZMXu0s3UW5O4jTHMOrlHJagAJoJhRl
+	 RFaYxTNKApRgtyAGGE1NrdDLHtaZ6n+hRnt2WFr8=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20231128040105epcas1p1f556c2b934dd3d0a87fab4c3b615f7c0~brYOy5DOr3269032690epcas1p1v;
+	Tue, 28 Nov 2023 04:01:05 +0000 (GMT)
+Received: from epsmgec1p1.samsung.com (unknown [182.195.36.134]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4SfTJw3CzDz4x9Q2; Tue, 28 Nov
+	2023 04:01:04 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	C4.9A.09731.DF565656; Tue, 28 Nov 2023 13:01:01 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20231128040101epcas1p2d3be87354205dd7b1156cdff58ab9a96~brYLC6yCc1194511945epcas1p20;
+	Tue, 28 Nov 2023 04:01:01 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20231128040101epsmtrp1185867be1011386faa25e6e9428d6cf1~brYLCTHb_0296102961epsmtrp11;
+	Tue, 28 Nov 2023 04:01:01 +0000 (GMT)
+X-AuditID: b6c32a36-cebfd70000002603-e6-656565fd19bd
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	A0.3A.07368.DA335656; Tue, 28 Nov 2023 09:26:21 +0900 (KST)
-Received: from perf (unknown [10.229.95.91]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20231128002621epsmtip14a29ac44b55d090894695741d02bfa17~bocvtqbao0187501875epsmtip1M;
-	Tue, 28 Nov 2023 00:26:21 +0000 (GMT)
-Date: Tue, 28 Nov 2023 10:01:25 +0900
-From: Youngmin Nam <youngmin.nam@samsung.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: tomasz.figa@gmail.com, krzysztof.kozlowski@linaro.org,
-	s.nawrocki@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	semen.protsenko@linaro.org
-Subject: Re: [PATCH v2] pinctrl: samsung: add irq_set_affinity() for non
- wake up external gpio interrupt
-Message-ID: <ZWU75VtJ/mXpMyQr@perf>
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A2.B7.08817.DF565656; Tue, 28 Nov 2023 13:01:01 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.211]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20231128040100epsmtip17de68f9fd579a11f5936edb94885c925~brYJ6fYHA3234432344epsmtip1z;
+	Tue, 28 Nov 2023 04:00:59 +0000 (GMT)
+From: Inki Dae <inki.dae@samsung.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH v2] drm/exynos: fix a wrong error checking
+Date: Tue, 28 Nov 2023 13:00:58 +0900
+Message-Id: <20231128040058.1825205-1-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <bb738a6b-815d-4fad-b73f-559f1ba8cd68@linaro.org>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFJsWRmVeSWpSXmKPExsWy7bCmhe4649RUg66fvBYP5m1js9j7eiu7
-	xZQ/y5ksNj2+xmqxef4fRovLu+awWcw4v4/J4vCbdlaL531A1qpdfxgduDx2zrrL7nHn2h42
-	j81L6j36tqxi9Pi8SS6ANSrbJiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8x
-	N9VWycUnQNctMwfoKCWFssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgXmBXnFibnFp
-	XrpeXmqJlaGBgZEpUGFCdsaKJYsYC/aKVHza9JetgXE7fxcjB4eEgInEhtueXYxcHEICOxgl
-	Lq14wQThfGKUWPnsMBuE841R4uLaB0AOJ1jH8w8fWSASexklNr5pZIRwHjJK9K2fyghSxSKg
-	KnH08CRmEJtNQFdi24l/YHERAQuJxRsWsoI0MAusZpK4/fE7WEJYIEvizsZuFhCbV0BZor9j
-	BpQtKHFy5hMwm1PATuL1PYhtEgKtHBKfjhxnhrjJRWLqnqVMELawxKvjW9ghbCmJz+/2Qt2d
-	LbH61yWoeIVE+70eqF5jiVnP2sGOYBbIkHiyAuRSUMgoSxy5xQIR5pPoOPyXHSLMK9HRJgTR
-	qSbxa8oGRghbRmL34hVQEz0knk3exA4JlOOMEr/P3GaZwCg3C8k7s5Bsg7B1JBbs/sQ2C2gF
-	s4C0xPJ/HBCmpsT6XfoLGFlXMYqlFhTnpqcWGxUYwmM4OT93EyM4kWq57mCc/PaD3iFGJg7G
-	Q4wSHMxKIrx6H5NThXhTEiurUovy44tKc1KLDzGaAiNnIrOUaHI+MJXnlcQbmlgamJiZGZob
-	mRqYK4nz3mudmyIkkJ5YkpqdmlqQWgTTx8TBKdXAlPq/8skqi/UxScV5WSJFexPSDz5MCH7P
-	23bax2k2p6nJ48QqW2El3qzz2U+3a6jOub3fgW/6FJ5FbCFfL7GIX/we2rpCNVJt2vo0yT8X
-	C56fq1DvVTr4cfUJubu7L6c7hD1JvOy/MOrO5s07TZplU9JWf8+95Gewc0bOM2v2D98DK7at
-	Sbixff63R6q8+6/L37Fnrurc2flTMGSvTFKmTyffH96qxp8vJ6RN/myyTkfpp8u5fQ49c2Un
-	HHU051mRFtG895TC6/XnVisWrnc2brgmlbhO/vaV4uvPlHcoxfzpmKu45DLTqdN/DlxJCeNX
-	yvD+e/L74ZtTV7WvX+qY5DF5v0xBauUewbytHgdbK5RYijMSDbWYi4oTAQNz9qEtBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsWy7bCSnO5a49RUg8azqhYP5m1js9j7eiu7
-	xZQ/y5ksNj2+xmqxef4fRovLu+awWcw4v4/J4vCbdlaL531A1qpdfxgduDx2zrrL7nHn2h42
-	j81L6j36tqxi9Pi8SS6ANYrLJiU1J7MstUjfLoErY9e5eWwFfwUrftxQamCcwNvFyMkhIWAi
-	8fzDR5YuRi4OIYHdjBKX3u1mhUjISNxeeRnKFpa433KEFaLoPqPE771TmEASLAKqEkcPT2IG
-	sdkEdCW2nfjHCGKLCFhILN6wEKyBWWA1k8Tmx+/BioQFsiQePjzPBmLzCihL9HfMYAGxhQSO
-	M0oceKoOEReUODnzCVicWUBL4sa/l0DLOIBsaYnl/zhAwpwCdhKv7zUyTmAUmIWkYxaSjlkI
-	HQsYmVcxSqYWFOem5yYbFhjmpZbrFSfmFpfmpesl5+duYgTHgZbGDsZ78//pHWJk4mA8xCjB
-	wawkwqv3MTlViDclsbIqtSg/vqg0J7X4EKM0B4uSOK/hjNkpQgLpiSWp2ampBalFMFkmDk6p
-	Bqbnoe/U/jXE/3p/SrM2duMis8jvV/zYwtrlZySsiwyv2nKy86n2AalFaWLnZ8T3m26RTzj5
-	2O9oO9Pxr28PZIl7ySikXah48/HRh7NpTFztuacyZl5rDbsz7RrvLdX3f/2jPROZ3J8WBlyR
-	nOYzz2RJoav9j2ls7//4Pnes2qLJ8XLmQfXJHRFT3art3t2rznEPka/8euHhRbbL0759sb4X
-	fXlu5K6gullVh47tmPHTto318FIRMWU9Ta8dZrXT1/ZuWcGjfZvfZe2lWf0CCqu7j/C+/Flj
-	vfQ2O/OP5PY6feM5/CX3t0d52L7mij21ptH2Y7X/uUX35Ixbqq5dk5/VOVk1SWnlbWm+zZvT
-	GncrsRRnJBpqMRcVJwIAkEdKm/ICAAA=
-X-CMS-MailID: 20231128002621epcas2p4379a53cc57d9d26bce92fe0de4722982
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEKsWRmVeSWpSXmKPExsWy7bCmge7f1NRUg9+X9S2ufH3PZjHp/gQW
+	ixnn9zE5MHvc7z7O5NG3ZRWjx+dNcgHMUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6
+	hpYW5koKeYm5qbZKLj4Bum6ZOUCLlBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkF
+	pgV6xYm5xaV56Xp5qSVWhgYGRqZAhQnZGe8+nWMs+MVTcf/ZOeYGxldcXYwcHBICJhL/lnt1
+	MXJyCAnsYJRYeNaui5ELyP7EKLF7QRMLhPONUaLt7z9WkCqQhnWHPjNDJPYySkzrmwTlfGGU
+	OPFtBjtIFZuAqsTEFffZQGwRAWWJvxNXMYLYzAJuEotPL2cBsYUFrCT2bt8OZrMA1W+7OQes
+	nlfAWmLL6mfsENvkJWZe+s4OEReUODnzCQvEHHmJ5q2zwRZLCCxil1iwtoUZosFFYsvbzWwQ
+	trDEq+NboAZJSbzsb2OHaJjMKHHn+goWCGcGo8Thn9cZIaqMJfYvncwEChlmAU2J9bv0IcKK
+	Ejt/z4X6gE/i3dceVkjg8Up0tAlBlChJHLt4A2qKhMSFJROhbvCQeHbtKhskgGMlzp7rZ5vA
+	KD8LyT+zkPwzC2HxAkbmVYxiqQXFuempxYYFRvBYTc7P3cQITmxaZjsYJ739oHeIkYmD8RCj
+	BAezkgiv3sfkVCHelMTKqtSi/Pii0pzU4kOMpsAQnsgsJZqcD0yteSXxhiaWBiZmRsYmFoZm
+	hkrivHMe96YICaQnlqRmp6YWpBbB9DFxcEo1MPGcmbCu9Y8bn9uOH7xN7uzG1yYd3Tf56E31
+	a59VTA/lTjTS5mT/+TlHu2KbeYtx7J7H5YrnEi5oCncmOj+MerDpHwvT24vKTpMSX026UsWl
+	fPm3/9yGmWkXDHQ/3Cv8V5HQ067v62Azb29ml5i5p63kNGFmjs5LbG/3XH/xNEpvL5994P3g
+	DTd/Vdz1dn723/L3e5+U4pTDlqr1DBoLJvBNK9N5tOBt74OpP2v/VzS7cu6MmHx23z7xPU9t
+	Q7bXlr3pfav507J6FWO48wmrtFNz4+Lkt9Wue9e43f1Nwv4JTQ91HVJvnvqed+BYo9p/i/UB
+	0zZk/X4JjJJXG25vZf2sOHX3Bw2hfImj7IwsYkosxRmJhlrMRcWJAAnlAaf1AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnluLIzCtJLcpLzFFi42LZdlhJTvdvamqqwcsFIhZXvr5ns5h0fwKL
+	xYzz+5gcmD3udx9n8ujbsorR4/MmuQDmKC6blNSczLLUIn27BK6Md5/OMRb84qm4/+wccwPj
+	K64uRk4OCQETiXWHPjN3MXJxCAnsZpS4tfowUxcjB1BCQmLLVg4IU1ji8OFiiJJPjBI7N1xl
+	BullE1CVmLjiPhuILSKgLPF34ipGEJtZwEPi1KufYDXCAlYSe7dvZwGxWYDqt92cA1bPK2At
+	sWX1M3aIG+QlZl76zg4RF5Q4OfMJC8QceYnmrbOZJzDyzUKSmoUktYCRaRWjZGpBcW56brFh
+	gVFearlecWJucWleul5yfu4mRnCYaWntYNyz6oPeIUYmDsZDjBIczEoivHofk1OFeFMSK6tS
+	i/Lji0pzUosPMUpzsCiJ83573ZsiJJCeWJKanZpakFoEk2Xi4JRqYDovannU+azQvR2Pjkpx
+	6tlYOXR/XR+0uuxLurjaXqnWF37iy+apzT2u9+2OrUN5mPqH2T94ZnqyNaj8i+/r2vOirVJw
+	VnYnz8HXB/0LIn6YfQzLOiDl6350a+tbnqCVDpzzXhT0zqqICXr/f27/S7cdMenrPMt2vvb9
+	VHpZ+LroPuHbKlHlrx2TV5+52bK4uy9v+/afeRMmJQnd39v+PKMg+MrDM18d3Y9mPVbXUnL0
+	8fs5tTVIkp2xK8o+d3PjuYnPd3/Puhpzam75uq2Ndzglj9a7bxT48/xhS4doaUhjoahd5LfV
+	WQzsAhv+y/Qsb6t/3KB9uMdFQ93/EePNDdc7uTIOrfuwI3euuIXXOSWW4oxEQy3mouJEAGu8
+	fv6iAgAA
+X-CMS-MailID: 20231128040101epcas1p2d3be87354205dd7b1156cdff58ab9a96
 X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----SiQCcQFW9qxZh2i62NcUcvIKWR48NBmCWce5.T0aiy9ACrIF=_24d13_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38
-References: <CGME20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38@epcas2p4.samsung.com>
-	<20231126094618.2545116-1-youngmin.nam@samsung.com>
-	<bb738a6b-815d-4fad-b73f-559f1ba8cd68@linaro.org>
+X-CMS-RootMailID: 20231128040101epcas1p2d3be87354205dd7b1156cdff58ab9a96
+References: <CGME20231128040101epcas1p2d3be87354205dd7b1156cdff58ab9a96@epcas1p2.samsung.com>
 
-------SiQCcQFW9qxZh2i62NcUcvIKWR48NBmCWce5.T0aiy9ACrIF=_24d13_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
+Fix a wrong error checking in exynos_drm_dma.c module.
 
-On Mon, Nov 27, 2023 at 10:54:56AM +0100, Krzysztof Kozlowski wrote:
-> On 26/11/2023 10:46, Youngmin Nam wrote:
-> > To support affinity setting for non wake up external gpio interrupt,
-> > add irq_set_affinity callback using irq number from pinctrl driver data.
-> > 
-> > Before this patch, changing the irq affinity of gpio interrupt is not possible:
-> > 
-> >     # cat /proc/irq/418/smp_affinity
-> >     3ff
-> >     # echo 00f > /proc/irq/418/smp_affinity
-> 
-> Does this command succeed on your board?
-> 
-Yes.
+In the exynos_drm_register_dma function, both arm_iommu_create_mapping()
+and iommu_get_domain_for_dev() functions are expected to return NULL as
+an error.
 
-> >     # cat /proc/irq/418/smp_affinity
-> >     3ff
-> >     # cat /proc/interrupts
-> >                CPU0       CPU1       CPU2       CPU3    ...
-> >     418:       3631          0          0          0    ...
-> > 
-> > With this patch applied, it's possible to change irq affinity of gpio interrupt:
-> 
-> ...
-> 
-> On which board did you test it?
-> 
-> 
-I tested on S5E9945 ERD(Exynos Reference Development) board.
+However, the error checking is performed using the statement
+if(IS_ERR(mapping)), which doesn't provide a suitable error value.
+So check if 'mapping' is NULL, and if it is, return -ENODEV.
 
-> > +	if (parent)
-> > +		return parent->chip->irq_set_affinity(parent, dest, force);
-> > +
-> 
-> I think there is a  helper for it: irq_chip_set_affinity_parent().
-> 
-> 
+This issue[1] was reported by Dan.
 
-The irq_chip_set_affinity_parent() requires parent_data of irq_data.
-But when I tested as below, exynos's irqd->parent_data was null.
-So we should use irqchip's affinity function instead of the helper function.
+Changelog v1:
+- fix build warning.
 
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -153,14 +153,12 @@ static int exynos_irq_set_type(struct irq_data *irqd, unsigned int type)
- static int exynos_irq_set_affinity(struct irq_data *irqd,
-                                   const struct cpumask *dest, bool force)
- {
--       struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
--       struct samsung_pinctrl_drv_data *d = bank->drvdata;
--       struct irq_data *parent = irq_get_irq_data(d->irq);
--
--       if (parent)
--               return parent->chip->irq_set_affinity(parent, dest, force);
-+       if (!irqd->parent_data) {
-+               pr_err("irqd->parent_data is null!!\n");
-+               return -EINVAL;
-+       }
+[1] https://lore.kernel.org/all/33e52277-1349-472b-a55b-ab5c3462bfcf@moroto.mountain/
 
--       return -EINVAL;
-+       return irq_chip_set_affinity_parent(irqd, dest, force);
- }
+Reported-by : Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dma.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-[  149.658395] irqd->parent_data is null!!
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+index a971590b8132..e2c7373f20c6 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+@@ -107,18 +107,16 @@ int exynos_drm_register_dma(struct drm_device *drm, struct device *dev,
+ 		return 0;
+ 
+ 	if (!priv->mapping) {
+-		void *mapping;
++		void *mapping = NULL;
+ 
+ 		if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU))
+ 			mapping = arm_iommu_create_mapping(&platform_bus_type,
+ 				EXYNOS_DEV_ADDR_START, EXYNOS_DEV_ADDR_SIZE);
+ 		else if (IS_ENABLED(CONFIG_IOMMU_DMA))
+ 			mapping = iommu_get_domain_for_dev(priv->dma_dev);
+-		else
+-			mapping = ERR_PTR(-ENODEV);
+ 
+-		if (IS_ERR(mapping))
+-			return PTR_ERR(mapping);
++		if (!mapping)
++			return -ENODEV;
+ 		priv->mapping = mapping;
+ 	}
+ 
+-- 
+2.25.1
 
-> Best regards,
-> Krzysztof
-> 
-> 
-
-------SiQCcQFW9qxZh2i62NcUcvIKWR48NBmCWce5.T0aiy9ACrIF=_24d13_
-Content-Type: text/plain; charset="utf-8"
-
-
-------SiQCcQFW9qxZh2i62NcUcvIKWR48NBmCWce5.T0aiy9ACrIF=_24d13_--
