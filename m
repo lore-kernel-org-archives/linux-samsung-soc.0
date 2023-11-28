@@ -1,151 +1,136 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="mu35PtE5"
-Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC9F72110
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 12:49:57 -0800 (PST)
-Received: by mail-qv1-xf34.google.com with SMTP id 6a1803df08f44-67a3e0fb11aso16259246d6.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 12:49:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1701204596; x=1701809396; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YSGX0jW3To7/xuABL7QXXsr1KCFhu7Z9tThr0mLMrMc=;
-        b=mu35PtE5c/9BIjstdYyMmHY7Fsp4p47cAFfxKfLsRGnfxku0i2aSW554C1uqlvpsQG
-         7n+YTN7UVvy9Da+sXvjnrRbhflbjotnxSYc46MNpmRLi4IO0BtuqyB4DTLVKFRZBCQT6
-         Gem7H6rBonm0+z37Y3eiO2PmFX83B5wvl1i16H3zAMIqCd+ebFYbcpQsJs88KGdQ3aQo
-         dilQXr6/WXD8tF4AcdIY0AMHMjtiN5cKy4+xcwwc8ETsP9hjskymCjjVw3r727nJcZ4l
-         P7VdPRIIVUXbGZOMRd7My622YMXRlrcltPLBtBUm4FJxlJ4gez9R4x93FrfNE6OSIGVC
-         3cTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701204596; x=1701809396;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YSGX0jW3To7/xuABL7QXXsr1KCFhu7Z9tThr0mLMrMc=;
-        b=RpfqOIQj2nBwJduuC5AioLFHPdkqQHVfZeg3HdZwNztSa6deAa+dbyKfgnev4YOQlW
-         IxWafDm85Je/mFGD5yvvtPIpmaVKiO9kxD7kzeg5WpboXLAuQ9PCjUDtHwedSx7DYkPU
-         M1+pEs0Q2091cGhVixJPRnfZql28IjtoBclMPukSQGCXyVHKyfFOuoeMhyPHp0S+MJwH
-         v109UCvNucLkUqenuKBwFHrTvDVQABB6SNODOITNhmfMy2lyfYOiZ4IyFScIppmxO9O+
-         pc8Hm9DAcHQikaDqrdu5GbzXQGsa+KUCIXWzbK9A3FSKD7fMz96Q4swTIuwd7BbKdk5r
-         42lQ==
-X-Gm-Message-State: AOJu0YxdKSc0jhijAgbTTeFPWRRP2fxNjqoS2AYSpHhYHYdv7hEXQRe1
-	RJMwGeHkP8h8QcmQ6I/lDkbKWw==
-X-Google-Smtp-Source: AGHT+IH3XyzLx3HqaxxWdryJd33MqMJHkx6z6Xt3swBEGkMdx9JQSLka9GW0WH1FkTVqo27TzFUimQ==
-X-Received: by 2002:a05:6214:246f:b0:67a:4ba1:84d5 with SMTP id im15-20020a056214246f00b0067a4ba184d5mr7928400qvb.16.1701204596396;
-        Tue, 28 Nov 2023 12:49:56 -0800 (PST)
-Received: from soleen.c.googlers.com.com (55.87.194.35.bc.googleusercontent.com. [35.194.87.55])
-        by smtp.gmail.com with ESMTPSA id d11-20020a0cfe8b000000b0067a56b6adfesm1056863qvs.71.2023.11.28.12.49.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Nov 2023 12:49:56 -0800 (PST)
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-To: akpm@linux-foundation.org,
-	alex.williamson@redhat.com,
-	alim.akhtar@samsung.com,
-	alyssa@rosenzweig.io,
-	asahi@lists.linux.dev,
-	baolu.lu@linux.intel.com,
-	bhelgaas@google.com,
-	cgroups@vger.kernel.org,
-	corbet@lwn.net,
-	david@redhat.com,
-	dwmw2@infradead.org,
-	hannes@cmpxchg.org,
-	heiko@sntech.de,
-	iommu@lists.linux.dev,
-	jasowang@redhat.com,
-	jernej.skrabec@gmail.com,
-	jgg@ziepe.ca,
-	jonathanh@nvidia.com,
-	joro@8bytes.org,
-	kevin.tian@intel.com,
-	krzysztof.kozlowski@linaro.org,
-	kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	lizefan.x@bytedance.com,
-	marcan@marcan.st,
-	mhiramat@kernel.org,
-	mst@redhat.com,
-	m.szyprowski@samsung.com,
-	netdev@vger.kernel.org,
-	pasha.tatashin@soleen.com,
-	paulmck@kernel.org,
-	rdunlap@infradead.org,
-	robin.murphy@arm.com,
-	samuel@sholland.org,
-	suravee.suthikulpanit@amd.com,
-	sven@svenpeter.dev,
-	thierry.reding@gmail.com,
-	tj@kernel.org,
-	tomas.mudrunka@gmail.com,
-	vdumpa@nvidia.com,
-	virtualization@lists.linux.dev,
-	wens@csie.org,
-	will@kernel.org,
-	yu-cheng.yu@intel.com
-Subject: [PATCH 16/16] vfio: account iommu allocations
-Date: Tue, 28 Nov 2023 20:49:38 +0000
-Message-ID: <20231128204938.1453583-17-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.43.0.rc2.451.g8631bc7472-goog
-In-Reply-To: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
-References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D07CE1998
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 12:59:25 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1r85AN-0006nV-7B; Tue, 28 Nov 2023 21:58:47 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1r85AI-00CFt4-DE; Tue, 28 Nov 2023 21:58:42 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1r85AI-00AOAR-2T; Tue, 28 Nov 2023 21:58:42 +0100
+Date: Tue, 28 Nov 2023 21:58:41 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: (subset) [PATCH 00/17] dt-bindings: samsung: add specific
+ compatibles for existing SoC
+Message-ID: <20231128205841.al23ra5s34rn3muj@pengutronix.de>
+References: <20231108104343.24192-1-krzysztof.kozlowski@linaro.org>
+ <170119374454.445690.515311393756577368.b4-ty@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bibczb2zawwhoawf"
+Content-Disposition: inline
+In-Reply-To: <170119374454.445690.515311393756577368.b4-ty@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 
-iommu allocations should be accounted in order to allow admins to
-monitor and limit the amount of iommu memory.
 
-Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
----
- drivers/vfio/vfio_iommu_type1.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+--bibczb2zawwhoawf
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index eacd6ec04de5..b2854d7939ce 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -1436,7 +1436,7 @@ static int vfio_iommu_map(struct vfio_iommu *iommu, dma_addr_t iova,
- 	list_for_each_entry(d, &iommu->domain_list, next) {
- 		ret = iommu_map(d->domain, iova, (phys_addr_t)pfn << PAGE_SHIFT,
- 				npage << PAGE_SHIFT, prot | IOMMU_CACHE,
--				GFP_KERNEL);
-+				GFP_KERNEL_ACCOUNT);
- 		if (ret)
- 			goto unwind;
- 
-@@ -1750,7 +1750,8 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
- 			}
- 
- 			ret = iommu_map(domain->domain, iova, phys, size,
--					dma->prot | IOMMU_CACHE, GFP_KERNEL);
-+					dma->prot | IOMMU_CACHE,
-+					GFP_KERNEL_ACCOUNT);
- 			if (ret) {
- 				if (!dma->iommu_mapped) {
- 					vfio_unpin_pages_remote(dma, iova,
-@@ -1845,7 +1846,8 @@ static void vfio_test_domain_fgsp(struct vfio_domain *domain, struct list_head *
- 			continue;
- 
- 		ret = iommu_map(domain->domain, start, page_to_phys(pages), PAGE_SIZE * 2,
--				IOMMU_READ | IOMMU_WRITE | IOMMU_CACHE, GFP_KERNEL);
-+				IOMMU_READ | IOMMU_WRITE | IOMMU_CACHE,
-+				GFP_KERNEL_ACCOUNT);
- 		if (!ret) {
- 			size_t unmapped = iommu_unmap(domain->domain, start, PAGE_SIZE);
- 
--- 
-2.43.0.rc2.451.g8631bc7472-goog
+On Tue, Nov 28, 2023 at 06:49:23PM +0100, Thierry Reding wrote:
+>=20
+> On Wed, 08 Nov 2023 11:43:26 +0100, Krzysztof Kozlowski wrote:
+> > Merging
+> > =3D=3D=3D=3D=3D=3D=3D
+> > I propose to take entire patchset through my tree (Samsung SoC), becaus=
+e:
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+> > 1. Next cycle two new SoCs will be coming (Google GS101 and ExynosAutov=
+920), so
+> >    they will touch the same lines in some of the DT bindings (not all, =
+though).
+> >    It is reasonable for me to take the bindings for the new SoCs, to ha=
+ve clean
+> >    `make dtbs_check` on the new DTS.
+> > 2. Having it together helps me to have clean `make dtbs_check` within m=
+y tree
+> >    on the existing DTS.
+> > 3. No drivers are affected by this change.
+> > 4. I plan to do the same for Tesla FSD and Exynos ARM32 SoCs, thus expe=
+ct
+> >    follow up patchsets.
+> >=20
+> > [...]
+>=20
+> Applied, thanks!
+>=20
+> [12/17] dt-bindings: pwm: samsung: add specific compatibles for existing =
+SoC
+>         commit: 5d67b8f81b9d598599366214e3b2eb5f84003c9f
+
+You didn't honor (or even comment) Krzysztof's proposal to take the
+whole patchset via his tree (marked above). Was there some off-list
+agreement?
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--bibczb2zawwhoawf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVmVIAACgkQj4D7WH0S
+/k4mPQgAuzfJsEw0Nil25KsPJwyY53qFjfCGd8WTObzTDFpeIlzV2EL87bWT2Gtd
+vEFgfX2Uj+RoOLX5CNnyuEfwH5e+O5oVYF9gfpsdqtRTJ3zyPV3dUiFCaIh2KNqZ
+aaY1tsb4vECeh7dmEL/y2VUWoO2bAa08sZe6EpJXOkeUWN54VdTCMBwncH1utjgh
+Tb/pHhjkfvdcbXuvxsFY4gL86pT8BER5EjIRZZaPN0kHDrGTBR+ZqjFvMVWTrFbq
+IUK1gAMX+BOooJDwVFE4SeRta6p/lfClW73PbWk1++SyLPA2KbTp8jTul4qgXWKT
+IbIJY8Qwg5trzJ0LHDMX3a02COS9hg==
+=P7ML
+-----END PGP SIGNATURE-----
+
+--bibczb2zawwhoawf--
