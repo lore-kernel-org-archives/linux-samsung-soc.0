@@ -1,148 +1,209 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3904244366;
-	Tue, 28 Nov 2023 22:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jm81GYhQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0965C433AD;
-	Tue, 28 Nov 2023 22:25:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701210344;
-	bh=xw0jvipvintPrN+TgSa50fPhSr/OQ4+PLz58lH+HcbQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jm81GYhQKdtghqZzcibJps70VcRXNVXYv83wu50oGnscBqTrRc/YtqxTp7E7cuE/6
-	 NRtc0GGIDU1bI0MyNKDuFDCKQ3kZsEU6iskMiWTMYb47Sas28ml6p2C7WuDCa7ELxO
-	 hvOBXHoJDFIrncf8lWiN0ssSqT3s1B6AdpdM02wtvE8DiCCElHXjSIBepJ+06NwGMf
-	 H+Cy8uxOmMfNP5eSAoB87/JM0Refr5wwxVmXtgsVTtanzxTxI/alFcRPXGLRtNomUG
-	 UVg2asGdOH/+adDowrri+E8+XK4W0HhI5LNyHdJAwEuWNo8vXHLOxRRRqxHGIJlBmn
-	 0cz0ceMXh2McA==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-50bc21821a1so872212e87.0;
-        Tue, 28 Nov 2023 14:25:44 -0800 (PST)
-X-Gm-Message-State: AOJu0YzNf2XAPPoZin4D+iCchkZVXyHSYb3SCl+RpjcbSc7+AFTAhrZu
-	dWkLVu3Aw+p3qjeS9ULRnX1mE/CkliPLawJg9A==
-X-Google-Smtp-Source: AGHT+IGnIgBpTrIKTkP3WlvgS+ZB8HvzDAmJkPSscfGKFyVApWHtyV/uoYFyVwHsgH3F68YSqBbNeCx6OMJVUk8qodo=
-X-Received: by 2002:a05:6512:4d1:b0:50b:a806:966b with SMTP id
- w17-20020a05651204d100b0050ba806966bmr7526326lfq.23.1701210342779; Tue, 28
- Nov 2023 14:25:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="hNWTXija"
+Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B07A1BF
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 14:32:32 -0800 (PST)
+Received: by mail-qt1-x831.google.com with SMTP id d75a77b69052e-41cd8bd5727so31400851cf.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 14:32:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1701210752; x=1701815552; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zXmxZJr3Rk1RKmtjvCLdJSQvKQY1rkK5dlcrmMuZJj4=;
+        b=hNWTXijaF5/80f98cfTTnZ6ba6x+wEh/fdlFcwentxd4sua8os6P5dQ+5lDh2JuOVi
+         fo99gFkEM7suv6QillI1aIsoJ9RZOdg85ps38EfUX9GFJhacXnbcJn1SbeG8HVVZGGgi
+         38G5Rx8UvoBp0E0sMqEtmYlcJL8f/12m3CVRkWg1pz7Axi+u0wVdTH9Tn8BEIcoj9DlI
+         RrSu/LjDWxpieVNLwyqWcRXA64/2tv0Nq6QaON0bDyn0Eu9LiN6qFO6a5YuGTvNqvqyp
+         d02JpkE+A2fY8H6Uo0+kbZm132ILbWyfEidOp3OEGoqFW1B8P6zgWLCLJ4EMeRT9JW3O
+         x3PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701210752; x=1701815552;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zXmxZJr3Rk1RKmtjvCLdJSQvKQY1rkK5dlcrmMuZJj4=;
+        b=UA3ShbWCKVGntvFXRIzYRQreSis3XMXYGDwCZi0jbEYQCCA3Vv7S0X/uzDkSExwa4K
+         +cljqmznNon0raVk/zp0mgTyr8N1NBh5Y9fxcDzHuckcl908N/snvrHrYR/ORasf5xtq
+         nTEEmqrCaVGA3xYiNsgLr96rMjhgniUGSiJGhI9eF5lkkS8v09JGIhzwn1BWfKkeC6JV
+         sgVpusTjUFtqxPKZs7JLq7+Rq1yIp+eYSPZD09tow6B1xZoYfRwLEgocEqsoSh13uXhX
+         5SJWCTclpWIBDLTgTIoO+Y1ogWUIlPkSOp63M5DtDfWfFXtc7l6YIi7iZxk87zfy7apZ
+         FRow==
+X-Gm-Message-State: AOJu0YzmXsHqGWb/T+zkfQ4E6jib7+xJm1pQlk6DedONw2Mxmwr6uj5L
+	f3obpGKWqSB63ayNCTI3s4yB71FbGefxfczP+O7Z8A==
+X-Google-Smtp-Source: AGHT+IGpMWKNhES/9/sulDYyAvK/WWWt51B5qkJu4RoDrGLcGdrRp1qT0nJmPQj10gvcniDpUMl30iZYOH63zrZzia0=
+X-Received: by 2002:a05:622a:5da6:b0:423:a0e1:c58f with SMTP id
+ fu38-20020a05622a5da600b00423a0e1c58fmr10804025qtb.59.1701210751688; Tue, 28
+ Nov 2023 14:32:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231122-dtc-warnings-v2-0-bd4087325392@kernel.org>
- <CAK7LNASVMjVg4dr=KdSDHwGww_47H78H7rMXA=wf+ncugesDSA@mail.gmail.com>
- <CAL_Jsq+N0GxwZ2YmspEzfiuGOw7M+DmYkyhLgaYtk+Ov2ycY_A@mail.gmail.com> <CAK7LNAT6-pBjUbB+Fcik27QWniK7BizvoUG+EiFvFtJ+MTdmJA@mail.gmail.com>
-In-Reply-To: <CAK7LNAT6-pBjUbB+Fcik27QWniK7BizvoUG+EiFvFtJ+MTdmJA@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 28 Nov 2023 16:25:30 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJSFnVG6+CfcbgVFGo3EyiSTt-et0NSW2qWjei+zXURcg@mail.gmail.com>
-Message-ID: <CAL_JsqJSFnVG6+CfcbgVFGo3EyiSTt-et0NSW2qWjei+zXURcg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] kbuild: Per arch/platform dtc warning levels
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Conor Dooley <conor@kernel.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
+References: <20231128204938.1453583-1-pasha.tatashin@soleen.com> <CAJD7tkb1FqTqwONrp2nphBDkEamQtPCOFm0208H3tp0Gq2OLMQ@mail.gmail.com>
+In-Reply-To: <CAJD7tkb1FqTqwONrp2nphBDkEamQtPCOFm0208H3tp0Gq2OLMQ@mail.gmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 28 Nov 2023 17:31:54 -0500
+Message-ID: <CA+CK2bB3nHfu1Z6_6fqN3YTAzKXMiJ12MOWpbs8JY7rQo4Fq0g@mail.gmail.com>
+Subject: Re: [PATCH 00/16] IOMMU memory observability
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: akpm@linux-foundation.org, alex.williamson@redhat.com, 
+	alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev, 
+	baolu.lu@linux.intel.com, bhelgaas@google.com, cgroups@vger.kernel.org, 
+	corbet@lwn.net, david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org, 
+	heiko@sntech.de, iommu@lists.linux.dev, jasowang@redhat.com, 
+	jernej.skrabec@gmail.com, jgg@ziepe.ca, jonathanh@nvidia.com, joro@8bytes.org, 
+	kevin.tian@intel.com, krzysztof.kozlowski@linaro.org, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, mst@redhat.com, m.szyprowski@samsung.com, 
+	netdev@vger.kernel.org, paulmck@kernel.org, rdunlap@infradead.org, 
+	robin.murphy@arm.com, samuel@sholland.org, suravee.suthikulpanit@amd.com, 
+	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org, 
+	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, virtualization@lists.linux.dev, 
+	wens@csie.org, will@kernel.org, yu-cheng.yu@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 28, 2023 at 6:03=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> On Mon, Nov 27, 2023 at 11:03=E2=80=AFPM Rob Herring <robh@kernel.org> wr=
-ote:
-> >
-> > On Thu, Nov 23, 2023 at 1:39=E2=80=AFAM Masahiro Yamada <masahiroy@kern=
-el.org> wrote:
-> > >
-> > > On Thu, Nov 23, 2023 at 7:12=E2=80=AFAM Rob Herring <robh@kernel.org>=
+On Tue, Nov 28, 2023 at 4:34=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com>=
  wrote:
-> > > >
-> > > > This series adds support to set the dtc extra warning level on a pe=
-r
-> > > > arch or per platform (directory really) basis.
-> > > >
-> > > > The first version of this was just a simple per directory override =
-for
-> > > > Samsung platforms, but Conor asked to be able to do this for all of
-> > > > riscv.
-> > > >
-> > > > For merging, either I can take the whole thing or the riscv and sam=
-sung
-> > > > patches can go via their normal trees. The added variable will have=
- no
-> > > > effect until merged with patch 2.
-> > > >
-> > > > v1:
-> > > >  - https://lore.kernel.org/all/20231116211739.3228239-1-robh@kernel=
-.org/
-> > > >
-> > > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > > > ---
-> > >
-> > >
-> > > There were some attempts in the past to enable W=3D1 in particular su=
-bsystems,
-> > > so here is a similar comment.
-> > >
-> > > Adding a new warning flag to W=3D1 is always safe without doing any c=
-ompile test.
-> > >
-> > > With this series, it would not be true any more because a new warning=
- in W=3D1
-> > > would potentially break riscv/samsung platforms.
-> >
-> > The difference here is the people potentially adding warnings are also
-> > the ones ensuring no warnings.
-> >
-> > > Linus requires a clean build (i.e. zero warning) when W=3D option is =
-not given.
-> >
-> > Linus doesn't build any of this AFAICT. We are not always warning free
-> > for W=3D0 with dtbs.
 >
+> On Tue, Nov 28, 2023 at 12:49=E2=80=AFPM Pasha Tatashin
+> <pasha.tatashin@soleen.com> wrote:
+> >
+> > From: Pasha Tatashin <tatashin@google.com>
+> >
+> > IOMMU subsystem may contain state that is in gigabytes. Majority of tha=
+t
+> > state is iommu page tables. Yet, there is currently, no way to observe
+> > how much memory is actually used by the iommu subsystem.
+> >
+> > This patch series solves this problem by adding both observability to
+> > all pages that are allocated by IOMMU, and also accountability, so
+> > admins can limit the amount if via cgroups.
+> >
+> > The system-wide observability is using /proc/meminfo:
+> > SecPageTables:    438176 kB
+> >
+> > Contains IOMMU and KVM memory.
+> >
+> > Per-node observability:
+> > /sys/devices/system/node/nodeN/meminfo
+> > Node N SecPageTables:    422204 kB
+> >
+> > Contains IOMMU and KVM memory memory in the given NUMA node.
+> >
+> > Per-node IOMMU only observability:
+> > /sys/devices/system/node/nodeN/vmstat
+> > nr_iommu_pages 105555
+> >
+> > Contains number of pages IOMMU allocated in the given node.
 >
+> Does it make sense to have a KVM-only entry there as well?
 >
-> Does it mean, you can enable all warnings by default?
+> In that case, if SecPageTables in /proc/meminfo is found to be
+> suspiciously high, it should be easy to tell which component is
+> contributing most usage through vmstat. I understand that users can do
+> the subtraction, but we wouldn't want userspace depending on that, in
+> case a third class of "secondary" page tables emerges that we want to
+> add to SecPageTables. The in-kernel implementation can do the
+> subtraction for now if it makes sense though.
 
-No, Linus might not care, but others (me) do. The whole point of not
-allowing warnings is the same. Get to zero warnings so any new
-warnings stand out. We now have some subset of platforms which are
-warning free and want warnings enabled by default to keep them that
-way. How do you suggest we do that?
+Hi Yosry,
 
-I understand your point on W=3D1 in general, but I think it just doesn't
-apply in this case. In general,
-someone may be testing a new compiler and there's some new warning to
-enable, so they add it to W=3D1. They are working independently of any
-subsystem (and Linus) and introducing new warnings would be a burden
-to fix and a problem to leave. For DT, it is a bit different as adding
-new warnings, updating dtc version, and selecting warnings to enable
-are pretty much all done together. Plus, schema warnings have pretty
-much superseded dtc warnings. If we do add new warnings which can't be
-fixed up front, then we could still only enable the warning for W=3D1
-from the command line. Something like this on top of this series:
+Yes, another counter for KVM could be added. On the other hand KVM
+only can be computed by subtracting one from another as there are only
+two types of secondary page tables, KVM and IOMMU:
 
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index 53a74e53e0ca..41307c6e1fee 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -341,6 +341,10 @@ quiet_cmd_gzip =3D GZIP    $@
- # ------------------------------------------------------------------------=
----
- DTC ?=3D $(objtree)/scripts/dtc/dtc
+/sys/devices/system/node/node0/meminfo
+Node 0 SecPageTables:    422204 kB
 
-+ifeq ($(findstring 1,$(KBUILD_EXTRA_WARN)),)
-+DTC_FLAGS +=3D -Wno-some_new_warning_we_need_off_globally
-+endif
-+
- KBUILD_EXTRA_WARN_DTC +=3D $(KBUILD_EXTRA_WARN)
+ /sys/devices/system/node/nodeN/vmstat
+nr_iommu_pages 105555
 
- # Disable noisy checks by default
+KVM only =3D SecPageTables - nr_iommu_pages * PAGE_SIZE / 1024
+
+Pasha
+
+>
+> >
+> > Accountability: using sec_pagetables cgroup-v2 memory.stat entry.
+> >
+> > With the change, iova_stress[1] stops as limit is reached:
+> >
+> > # ./iova_stress
+> > iova space:     0T      free memory:   497G
+> > iova space:     1T      free memory:   495G
+> > iova space:     2T      free memory:   493G
+> > iova space:     3T      free memory:   491G
+> >
+> > stops as limit is reached.
+> >
+> > This series encorporates suggestions that came from the discussion
+> > at LPC [2].
+> >
+> > [1] https://github.com/soleen/iova_stress
+> > [2] https://lpc.events/event/17/contributions/1466
+> >
+> > Pasha Tatashin (16):
+> >   iommu/vt-d: add wrapper functions for page allocations
+> >   iommu/amd: use page allocation function provided by iommu-pages.h
+> >   iommu/io-pgtable-arm: use page allocation function provided by
+> >     iommu-pages.h
+> >   iommu/io-pgtable-dart: use page allocation function provided by
+> >     iommu-pages.h
+> >   iommu/io-pgtable-arm-v7s: use page allocation function provided by
+> >     iommu-pages.h
+> >   iommu/dma: use page allocation function provided by iommu-pages.h
+> >   iommu/exynos: use page allocation function provided by iommu-pages.h
+> >   iommu/fsl: use page allocation function provided by iommu-pages.h
+> >   iommu/iommufd: use page allocation function provided by iommu-pages.h
+> >   iommu/rockchip: use page allocation function provided by iommu-pages.=
+h
+> >   iommu/sun50i: use page allocation function provided by iommu-pages.h
+> >   iommu/tegra-smmu: use page allocation function provided by
+> >     iommu-pages.h
+> >   iommu: observability of the IOMMU allocations
+> >   iommu: account IOMMU allocated memory
+> >   vhost-vdpa: account iommu allocations
+> >   vfio: account iommu allocations
+> >
+> >  Documentation/admin-guide/cgroup-v2.rst |   2 +-
+> >  Documentation/filesystems/proc.rst      |   4 +-
+> >  drivers/iommu/amd/amd_iommu.h           |   8 -
+> >  drivers/iommu/amd/init.c                |  91 +++++-----
+> >  drivers/iommu/amd/io_pgtable.c          |  13 +-
+> >  drivers/iommu/amd/io_pgtable_v2.c       |  20 +-
+> >  drivers/iommu/amd/iommu.c               |  13 +-
+> >  drivers/iommu/dma-iommu.c               |   8 +-
+> >  drivers/iommu/exynos-iommu.c            |  14 +-
+> >  drivers/iommu/fsl_pamu.c                |   5 +-
+> >  drivers/iommu/intel/dmar.c              |  10 +-
+> >  drivers/iommu/intel/iommu.c             |  47 ++---
+> >  drivers/iommu/intel/iommu.h             |   2 -
+> >  drivers/iommu/intel/irq_remapping.c     |  10 +-
+> >  drivers/iommu/intel/pasid.c             |  12 +-
+> >  drivers/iommu/intel/svm.c               |   7 +-
+> >  drivers/iommu/io-pgtable-arm-v7s.c      |   9 +-
+> >  drivers/iommu/io-pgtable-arm.c          |   7 +-
+> >  drivers/iommu/io-pgtable-dart.c         |  37 ++--
+> >  drivers/iommu/iommu-pages.h             | 231 ++++++++++++++++++++++++
+> >  drivers/iommu/iommufd/iova_bitmap.c     |   6 +-
+> >  drivers/iommu/rockchip-iommu.c          |  14 +-
+> >  drivers/iommu/sun50i-iommu.c            |   7 +-
+> >  drivers/iommu/tegra-smmu.c              |  18 +-
+> >  drivers/vfio/vfio_iommu_type1.c         |   8 +-
+> >  drivers/vhost/vdpa.c                    |   3 +-
+> >  include/linux/mmzone.h                  |   5 +-
+> >  mm/vmstat.c                             |   3 +
+> >  28 files changed, 415 insertions(+), 199 deletions(-)
+> >  create mode 100644 drivers/iommu/iommu-pages.h
+> >
+> > --
+> > 2.43.0.rc2.451.g8631bc7472-goog
+> >
+> >
