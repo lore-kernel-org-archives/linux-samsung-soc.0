@@ -1,211 +1,192 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IqcFh7lP"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1779A19A6
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 22:32:39 -0800 (PST)
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20231129063237epoutp02943d31b4b9c50f517e11c0841a73199b~cBF0rxu9o3094430944epoutp02Q
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Nov 2023 06:32:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20231129063237epoutp02943d31b4b9c50f517e11c0841a73199b~cBF0rxu9o3094430944epoutp02Q
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="A5ZrghXp"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A82A319A6
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 22:40:45 -0800 (PST)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231129064043epoutp032249c75c5c71a66e20a1dd84e754bd39~cBM5tUerY2054120541epoutp03W
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Nov 2023 06:40:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231129064043epoutp032249c75c5c71a66e20a1dd84e754bd39~cBM5tUerY2054120541epoutp03W
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1701239557;
-	bh=jbXIcm4Zl3g3KDRXg/oE73AVX6okTU2GFFeps8n2Aqo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IqcFh7lPDZZmlADH9LDBeIrQRCAtaB1vcFY8qlfS66i+sSCSJ9F+0bZgz8oDQtSkT
-	 imOuGSmo3+O8KhQ95pDMTu0nK/VDr6R6u4lNuzjGfdPmziQND3xBvRqike7Ur8YyUz
-	 o53DfWSzr5YPjWjojIWbbE0Wgfx1gDQrP2gV4osQ=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-	20231129063236epcas2p380a6b2e72371b96509168282bf744f2d~cBF0PMlIY1714217142epcas2p35;
-	Wed, 29 Nov 2023 06:32:36 +0000 (GMT)
-Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.98]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4Sg8dJ3K86z4x9Pv; Wed, 29 Nov
-	2023 06:32:36 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9E.67.18994.40BD6656; Wed, 29 Nov 2023 15:32:36 +0900 (KST)
+	s=mail20170921; t=1701240043;
+	bh=QT80ABfKOaLje3F85OKrmKtMSJbzSbx1fuPt9p4WfE4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=A5ZrghXpyPvTQ6SVXuYynacjuH8+uDg3jxtrHzoWbhr9vrBvT6eiT6xkOCbliQyw2
+	 U8UeT1X5Rd68lryd+hKFAgLefu8yLbS5RQlbxN1c5/f4M/UzNWjEA+NvhmcBtDGlXE
+	 7uo+Xdct7IQfQHPCcmXiVYCHZJiWoaQ5KIZoAoPo=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20231129064043epcas5p28000276dad4ee238a8f98aef82e1cb58~cBM5Rq5_-3188331883epcas5p2f;
+	Wed, 29 Nov 2023 06:40:43 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.177]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Sg8pd4xJDz4x9Pt; Wed, 29 Nov
+	2023 06:40:41 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	59.D0.10009.9ECD6656; Wed, 29 Nov 2023 15:40:41 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20231129063235epcas2p32dfa05b1c137c8bb40cef1090c8fb855~cBFzIkjO71714217142epcas2p30;
-	Wed, 29 Nov 2023 06:32:35 +0000 (GMT)
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20231128103157epcas5p46a8113988067721e720ecdf955b21d50~bwtf9ZPIP1279812798epcas5p4u;
+	Tue, 28 Nov 2023 10:31:57 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
 	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231129063235epsmtrp28cdb35ff8ec7cbf9a67dfda5e6c3ef3c~cBFzHvaL42573425734epsmtrp2l;
-	Wed, 29 Nov 2023 06:32:35 +0000 (GMT)
-X-AuditID: b6c32a4d-9f7ff70000004a32-64-6566db04fe97
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	20231128103157epsmtrp26fb71d9d8e134b06e5c1abc6c2dece99~bwtf8Q_Jf2706527065epsmtrp2C;
+	Tue, 28 Nov 2023 10:31:57 +0000 (GMT)
+X-AuditID: b6c32a4a-ff1ff70000002719-88-6566dce90e69
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
 	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F0.47.08755.30BD6656; Wed, 29 Nov 2023 15:32:35 +0900 (KST)
-Received: from perf (unknown [10.229.95.91]) by epsmtip1.samsung.com
+	F1.59.08755.C91C5656; Tue, 28 Nov 2023 19:31:56 +0900 (KST)
+Received: from FDSFTE308 (unknown [107.122.81.79]) by epsmtip2.samsung.com
 	(KnoxPortal) with ESMTPA id
-	20231129063235epsmtip11c7f7982909a860d1365499c9c6f6ba3~cBFy8o8RE2155121551epsmtip1t;
-	Wed, 29 Nov 2023 06:32:35 +0000 (GMT)
-Date: Wed, 29 Nov 2023 16:07:40 +0900
-From: Youngmin Nam <youngmin.nam@samsung.com>
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: tomasz.figa@gmail.com, krzysztof.kozlowski@linaro.org,
-	s.nawrocki@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] pinctrl: samsung: add irq_set_affinity() for non
- wake up external gpio interrupt
-Message-ID: <ZWbjPIydJRrPnuDy@perf>
+	20231128103153epsmtip29adf4fc5cef15cfe1d4d50ff05a7e44a~bwtcrmXJ01570715707epsmtip2O;
+	Tue, 28 Nov 2023 10:31:53 +0000 (GMT)
+From: "Aakarsh Jain" <aakarsh.jain@samsung.com>
+To: "'Hans Verkuil'" <hverkuil-cisco@xs4all.nl>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Cc: <m.szyprowski@samsung.com>, <andrzej.hajda@intel.com>,
+	<mchehab@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+	<dillon.minfei@gmail.com>, <david.plowman@raspberrypi.com>,
+	<mark.rutland@arm.com>, <robh+dt@kernel.org>, <conor+dt@kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>, <andi@etezian.org>,
+	<gost.dev@samsung.com>, <alim.akhtar@samsung.com>,
+	<aswani.reddy@samsung.com>, <pankaj.dubey@samsung.com>,
+	<ajaykumar.rs@samsung.com>, <linux-fsd@tesla.com>, "'Smitha T Murthy'"
+	<smithatmurthy@gmail.com>
+In-Reply-To: <2ecdfff5-501a-452f-af90-0806f463a51c@xs4all.nl>
+Subject: RE: [Patch v4 09/11] media: s5p-mfc: Load firmware for each run in
+ MFCv12.
+Date: Tue, 28 Nov 2023 16:01:52 +0530
+Message-ID: <0fe601da21e6$1cb6aee0$56240ca0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAPLW+4n0SAOTb6wocY-WjkxgSFMbx+nVuqdaPcNYVDsbfg+EfA@mail.gmail.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBJsWRmVeSWpSXmKPExsWy7bCmuS7L7bRUg5e/xCwezNvGZrH39VZ2
-	iyl/ljNZbHp8jdVi8/w/jBaXd81hs5hxfh+TxeE37awWz/uArFW7/jA6cHnsnHWX3ePOtT1s
-	HpuX1Hv0bVnF6PF5k1wAa1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5i
-	bqqtkotPgK5bZg7QUUoKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpScAvMCveLE3OLS
-	vHS9vNQSK0MDAyNToMKE7Ixjs9pYC45LVxxd2cncwPhbpIuRk0NCwERi//W5LCC2kMAeRokj
-	WzQh7E+MEq9nO3cxcgHZ3xglNjzqZ4NpeDS5lwkisZdRovfXThYI5yGjxN3+ycwgVSwCqhLb
-	ft1lB7HZBHQltp34xwhiiwjoSayb+YodpIFZoJdJYv3MFiaQhLBAlsSdjd1gd/AKKEss+fiX
-	GcIWlDg58wlYnFMgUOJ5yxWwbRICUzkk9h9fwARxk4vErImnoGxhiVfHt7BD2FISn9/thbo7
-	W2L1r0tQ8QqJ9ns9zBC2scSsZ+1g1zELZEi8eXAQyOYAiitLHLnFAhHmk+g4/JcdIswr0dEm
-	BNGpJvFrygZGCFtGYvfiFVATPSSeTd7EDgmUW0wSFxb8Z57AKDcLyTuzkGybBTSWWUBTYv0u
-	fYiwvETz1tnMEGFpieX/OJBULGBkW8UolVpQnJuemmxUYKibl1oOj+/k/NxNjOAkq+W7g/H1
-	+r96hxiZOBgPMUpwMCuJ8Op9TE4V4k1JrKxKLcqPLyrNSS0+xGgKjKuJzFKiyfnANJ9XEm9o
-	YmlgYmZmaG5kamCuJM57r3VuipBAemJJanZqakFqEUwfEwenVANTlfnXEhm2yylP1l/I0lco
-	2zdtk55snbtvmKy1QsPMM5ZXr60tU+iTsZuYuMf2Y6O7dfDRg28iXXP6Ot6U39H5eSOPtSFu
-	zWUG150JAt/5DKdf2JWVGL7L2Wy3+CyuUIU/bBYVvpVP4036Pdes//iCO79yb/ynSIUq89oD
-	eWwaQpuu/WYwCPnOdv5xy9r7jImLnr5J+zDTQcFo3ZoLFUvCY65mZ++r1NPYynUi7cKlsPeZ
-	PPparqaBSgJHSnMEIxoD3j/59NZ9R6TtozXG95qS/8VFrZz/bJ3+jB0BDz5aK5XNjblvLRHs
-	I2xwVFBGbPP+PR/urbrGtnrJDpWNnT+qQlYf5PCvfr/575qnf7OVWIozEg21mIuKEwEB5ua6
-	OwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSnC7z7bRUg8OrtCwezNvGZrH39VZ2
-	iyl/ljNZbHp8jdVi8/w/jBaXd81hs5hxfh+TxeE37awWz/uArFW7/jA6cHnsnHWX3ePOtT1s
-	HpuX1Hv0bVnF6PF5k1wAaxSXTUpqTmZZapG+XQJXxpG2U6wFLyUq5izewd7AuFOoi5GTQ0LA
-	ROLR5F6mLkYuDiGB3YwSk4++YYFIyEjcXnmZFcIWlrjfcoQVoug+o8THtX/ZQBIsAqoS237d
-	ZQex2QR0Jbad+McIYosI6Emsm/mKHaSBWaCfSeL9rg9gRcICWRIPH54Ha+YVUJZY8vEvM4gt
-	JHCHSWLdgRqIuKDEyZlPwK5gFlCX+DPvElANB5AtLbH8HwdEWF6ieetssFZOgUCJ5y1XWCYw
-	Cs5C0j0LSfcshO5ZSLoXMLKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIjhwtzR2M
-	21d90DvEyMTBeIhRgoNZSYRX72NyqhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe8Re9KUIC6Ykl
-	qdmpqQWpRTBZJg5OqQamddxbglINN11U/GC0yfnWunqvnH21X2+xHL8X91dhkjZzfZYer/DS
-	52vqX7Hq/1p0f6Pu+W1sC1fsOOipstg9ubTAeF/Mwd+sy844KcomO/DzMW3Yfb2z+aPhKf2o
-	pskWYrJOq4u8uDLExcytvM82qXt6MtZuLZkWpOt803pJxxSjjamuSz7sev9n7bTH5xZ8OuLr
-	t+6uiTGboNj5q8/yr9YrJXEsfv4p6TBXi9gN9sn67J+O7Ze0uRmwMXbxM/eyVa8KHCuSgk0Z
-	fqR1Zs0r2bVEMc90yqra5f9V5ylMWbVNcbmAmrgmk0k1732LLyeWsM77c6NvReAG1V72nA0/
-	Jhqd/H8qLkj31J2cih1JSizFGYmGWsxFxYkAjP15HAsDAAA=
-X-CMS-MailID: 20231129063235epcas2p32dfa05b1c137c8bb40cef1090c8fb855
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQLm4twfZx4yvmLB3iF6RxvUJv+HzQGgpOOWAUC8sUkCb5CW0a5La1+A
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TezBcVxzHe+69+5BGe4PUqb5kQzvSwa5lHSlJQ2JuVESZTkeaGbbrFrV2
+	d/buatLpTKShHYLQ0TYxSMQjop7rHdR6NY16RFKkhsp6VDETggqJie66tP77/B7f3znfc+bH
+	xy1SeDb8KIWGViukcgF3F1Hb7vCO48zIZ7Tw1yI7pJ9vJdDDnFouyludxtBY3hKB2qpqeKik
+	uRdDN27rOehqRy8H1bWOE+gPfQOG+q+MEij1bwOOdBODHGSY/Rjdv5XFRckVNRx0ue9nDJV2
+	jPJQwVA/hgp16xi6XrPMQwnNHTwUfz6f8741VZJTAqih/EWcasgc5VF5TTMYpStO5FIjg01c
+	qir/HJXQ+ZSgUquLAfX862wetaR7k+r6Z4kXuPtUtGckLQ2n1ba0QqYMj1JEeAk+CA71CXWT
+	CEWOIg/kLrBVSGNoL8FR/0BH3yi50bfANlYq1xpTgVKGETgf8lQrtRraNlLJaLwEtCpcrnJV
+	OTHSGEariHBS0JqDIqHQxc3YGBYdOTtVC1QFr5zRTw1gceCeRRIw40PSFS4UJBJJYBffgmwE
+	sKPhJsYGiwB2Vnbz2GAFwNnkx9i25NLiJM4WmgHMzn+wJZkGcHiyhDB1cUlnONaVzDEVrMh6
+	AHMNPZtynLxIwKxvXExsRnrBgcY8YGJL8iO4fn8FNzFB2sNncelcE5uTHnDjwiMOy3vgnSuT
+	BDvnXViYO4ezV7KFa1OFmz1WpC9M3egFbI817FxL3rwqJBvNoOFuktEQ3xgchSnt0azWEs7e
+	ruaxbAOXHjVzWZbBieszW/PlsLwpg2D5MNT/nkWYxuCkAyy/5cym34Dfd5VtWXwJpjyb3Hot
+	c1ifs81vw6yRVQ7Lr8P2nwpAGhBk7nCWucNZ5g4Hmf+fdg0QxeBVWsXERNCMm8pFQX/x34/L
+	lDE6sLkXB/zqgeHhglMbwPigDUA+LrAyd3osoy3Mw6Vnv6TVylC1Vk4zbcDN+NzpuM1emdK4
+	WApNqMjVQ+gqkUhcPcQSkcDafC4hO9yCjJBq6GiaVtHqbR3GN7OJw2LP7jGMRaWJu+FJ9/0d
+	dht+g9cC9gX92DL1iQeWkGjjQ0B/yamhpyO2Nz7/9nQ90WJvd2hg7kSZR1jeRO1KUFzZ8XNr
+	La8lwQr9h5UL673hJ737rQefuPvbiXYLeb3paTq532BYWnyQvc+0+OWEOgfw1mWs9CbOfR7p
+	TecvdzgEhrgGmBsuXgiOZQ7PV2vHmlvbzvTVzIas5iacCHkyfkT86b6h38SWd1Splf3i8taM
+	ihZvHRg+X/Ug4PifRYL+RXLvvf0Zx9xB0cHuXyRe48xffd9pNT3zvqVE3lfDd6lg8em6UOqH
+	0pLltBdzXhBb9oRdPfbe2JF4GS4xFKx4NrUECQgmUio6gKsZ6b8ZCgXkoAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOIsWRmVeSWpSXmKPExsWy7bCSvO6cg6mpBvM+WFsceH+QxeLBvG1s
+	Fot/PGeyuL/4M4vFoc1b2S3W7D3HZLH8+AFWi/lHzrFabD/4iMXi5oGdTBYXZ95lseh78ZDZ
+	YtPja6wWD1+FW1zeNYfNomfDVlaLGef3MVmsPXKX3WLp9YtMFss2/WGyWLT1C7tF694j7BYt
+	jUtYHcQ91sxbw+hxfcknZo+ds+6yeyze85LJY9OqTjaPO9f2sHlsXlLv0Xr0F4tH35ZVjB7/
+	muaye3zeJOdx6utn9gCeKC6blNSczLLUIn27BK6M/u9PGQuui1ZsaTvO1MDYItTFyMkhIWAi
+	0f/pCXMXIxeHkMBuRolbxw8xQiRkJP63HWOHsIUlVv57zg5R9JRR4tHX12BFbAL6EvdP9bCC
+	JEQE9jBKHN29BqyKWWAui8S/I7NZIFo+A81tecIK0sIpYCtxdfdisHZhgWCJxbv3MIPYLAKq
+	Er8bJrKB2LwClhL/m9+xQtiCEidnPmEBsZkFtCWe3nwKZy9b+JoZ4j4FiZ9Pl4HViwi4SfT9
+	P8cIUSMucfRnD/MERuFZSEbNQjJqFpJRs5C0LGBkWcUomVpQnJueW2xYYJiXWq5XnJhbXJqX
+	rpecn7uJEZw2tDR3MG5f9UHvECMTB+MhRgkOZiURXr2PyalCvCmJlVWpRfnxRaU5qcWHGKU5
+	WJTEecVf9KYICaQnlqRmp6YWpBbBZJk4OKUamBzVuM78miCgytrS4v239Z18eozsnW0vzqZa
+	W3+xYjI2cPzR/eFo9ulJntNF7MounRa+eoljiz6zToheuQBbXWb3LukdXlwb+ewYC/b+6fC9
+	+2mzuWtdW3WV8LLrD+ceeWHwctJkgx387RYausblBsrvZbjk8oKWiJ4VV/W0/St9e92305zC
+	4e3KP4pepoW12/0VzQmay3rMfl/502q+ZUWvVZbU1QQ23F8vbpt7N2Peir9OOd8yQhfGvFxW
+	uT+ldXHssp+v8hsmH/zL97a78Mfpt++0tZn+zxdXcdRZeKl15/l7b5qb5F3P7fPfnJYXLxN4
+	85FO3bQz7c9eJhXGX5791y/uwbHwFgvWfTcXKLEUZyQaajEXFScCAO8jLtyKAwAA
+X-CMS-MailID: 20231128103157epcas5p46a8113988067721e720ecdf955b21d50
 X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----OVq5TT9zsDSQAN86dWjJc6zPY8CEKIwxCZDtRM.ioT5ZEg4T=_35b7f_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38
-References: <CGME20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38@epcas2p4.samsung.com>
-	<20231126094618.2545116-1-youngmin.nam@samsung.com>
-	<bb738a6b-815d-4fad-b73f-559f1ba8cd68@linaro.org> <ZWU75VtJ/mXpMyQr@perf>
-	<1fd55b36-0837-4bf7-9fde-e573d6cb214a@linaro.org>
-	<CAPLW+4n0SAOTb6wocY-WjkxgSFMbx+nVuqdaPcNYVDsbfg+EfA@mail.gmail.com>
+X-CMS-RootMailID: 20231025102300epcas5p2c266a078b70614dc948b0e47cd5cf788
+References: <20231025102216.50480-1-aakarsh.jain@samsung.com>
+	<CGME20231025102300epcas5p2c266a078b70614dc948b0e47cd5cf788@epcas5p2.samsung.com>
+	<20231025102216.50480-10-aakarsh.jain@samsung.com>
+	<2ecdfff5-501a-452f-af90-0806f463a51c@xs4all.nl>
 
-------OVq5TT9zsDSQAN86dWjJc6zPY8CEKIwxCZDtRM.ioT5ZEg4T=_35b7f_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
+Hi Hans,
 
-On Tue, Nov 28, 2023 at 03:35:53PM -0600, Sam Protsenko wrote:
-> On Tue, Nov 28, 2023 at 1:29 AM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
-> >
-> > On 28/11/2023 02:01, Youngmin Nam wrote:
-> > > On Mon, Nov 27, 2023 at 10:54:56AM +0100, Krzysztof Kozlowski wrote:
-> > >> On 26/11/2023 10:46, Youngmin Nam wrote:
-> > >>> To support affinity setting for non wake up external gpio interrupt,
-> > >>> add irq_set_affinity callback using irq number from pinctrl driver data.
-> > >>>
-> > >>> Before this patch, changing the irq affinity of gpio interrupt is not possible:
-> > >>>
-> > >>>     # cat /proc/irq/418/smp_affinity
-> > >>>     3ff
-> > >>>     # echo 00f > /proc/irq/418/smp_affinity
-> > >>
-> > >> Does this command succeed on your board?
-> > >>
-> > > Yes.
-> >
-> > Hm, fails all the time one mine.
-> >
-> 
-> I tried to test this patch on E850-96, and an attempt to write into
-> smp_affinity (for some GPIO irq) also fails for me:
-> 
->     # echo f0 > smp_affinity
->     -bash: echo: write error: Input/output error
-> 
-> When I add some pr_err() to exynos_irq_set_affinity(), I can't see
-> those printed in dmesg. So I guess exynos_irq_set_affinity() doesn't
-> get called at all. So the error probably happens before
-> .irq_set_affinity callback gets called.
-> 
-> Youngmin, can you please try and test this patch on E850-96? This
-> board is already supported in upstream kernel. For example you can use
-> "Volume Up" interrupt for the test, which is GPIO irq.
-> 
+> -----Original Message-----
+> From: Hans Verkuil <hverkuil-cisco=40xs4all.nl>
+> Sent: 22 November 2023 21:14
+> To: Aakarsh Jain <aakarsh.jain=40samsung.com>; linux-arm-
+> kernel=40lists.infradead.org; linux-media=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; devicetree=40vger.kernel.org
+> Cc: m.szyprowski=40samsung.com; andrzej.hajda=40intel.com;
+> mchehab=40kernel.org; krzysztof.kozlowski+dt=40linaro.org;
+> dillon.minfei=40gmail.com; david.plowman=40raspberrypi.com;
+> mark.rutland=40arm.com; robh+dt=40kernel.org; conor+dt=40kernel.org; linu=
+x-
+> samsung-soc=40vger.kernel.org; andi=40etezian.org; gost.dev=40samsung.com=
+;
+> alim.akhtar=40samsung.com; aswani.reddy=40samsung.com;
+> pankaj.dubey=40samsung.com; ajaykumar.rs=40samsung.com; linux-
+> fsd=40tesla.com; Smitha T Murthy <smithatmurthy=40gmail.com>
+> Subject: Re: =5BPatch v4 09/11=5D media: s5p-mfc: Load firmware for each =
+run in
+> MFCv12.
+>=20
+> On 25/10/2023 12:22, Aakarsh Jain wrote:
+> > In MFCv12, some section of firmware gets updated at each MFC run.
+> > Hence we need to reload original firmware for each run at the start.
+>=20
+> Huh? This is very weird. This definitely deserves a comment in the actual
+> code rather than just the commit log.
+>=20
+> Do you know what is going on? What part is updated? Are you sure it isn't=
+ a
+> driver bug somehow?
+>=20
+> Regards,
+>=20
+> 	Hans
+>=20
+During SYS_INIT command sent to MFC sequentially, firmware is not able to i=
+nitialize the hardware due to incorrect firmware transfer and in current sc=
+enario the firmware is not loaded again in the Reserved memory area.
+In this case RET_SYS_INIT response from hardware is failing. So we need to =
+load firmware every time we open the device node.
+I will add comment in the code why this change is needed.
 
-I intened this affinity setting would work only on *Non* Wakeup External Interrupt.
-The "Volume Up" on E850-96 board is connected with "gpa0-7" and
-that is Wakeup External interrupt so that we can't test the callback.
-
-I couldn't find out a pin for the test on E850-96 board yet.
-We can test if there is a usage of *Non" Wake up External Interrupt of GPIO
-on E850-96 board.
-
-Do you have any idea ?
-
-Thanks
-
-> > >
-> > >>>     # cat /proc/irq/418/smp_affinity
-> > >>>     3ff
-> > >>>     # cat /proc/interrupts
-> > >>>                CPU0       CPU1       CPU2       CPU3    ...
-> > >>>     418:       3631          0          0          0    ...
-> > >>>
-> > >>> With this patch applied, it's possible to change irq affinity of gpio interrupt:
-> > >>
-> > >> ...
-> > >>
-> > >> On which board did you test it?
-> > >>
-> > >>
-> > > I tested on S5E9945 ERD(Exynos Reference Development) board.
+Thanks for the review.
 > >
-> > There is no such board upstream. How can we reproduce this issue? I am
-> > afraid we cannot test neither the bug nor the fix.
+> > Cc: linux-fsd=40tesla.com
+> > Signed-off-by: Smitha T Murthy <smithatmurthy=40gmail.com>
+> > Signed-off-by: Aakarsh Jain <aakarsh.jain=40samsung.com>
+> > ---
+> >  drivers/media/platform/samsung/s5p-mfc/s5p_mfc_ctrl.c =7C 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
 > >
-> > >
-> > >>> +   if (parent)
-> > >>> +           return parent->chip->irq_set_affinity(parent, dest, force);
-> > >>> +
-> > >>
-> > >> I think there is a  helper for it: irq_chip_set_affinity_parent().
-> > >>
-> > >>
-> > >
-> > > The irq_chip_set_affinity_parent() requires parent_data of irq_data.
+> > diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_ctrl.c
+> > b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_ctrl.c
+> > index b49159142c53..057088b9d327 100644
+> > --- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_ctrl.c
+> > +++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_ctrl.c
+> > =40=40 -51,8 +51,9 =40=40 int s5p_mfc_load_firmware(struct s5p_mfc_dev
+> *dev)
+> >  	 * into kernel. */
+> >  	mfc_debug_enter();
 > >
-> > Hm, so now I wonder why do we not have parent_data...
+> > -	if (dev->fw_get_done)
+> > -		return 0;
+> > +	if (=21IS_MFCV12(dev))
+> > +		if (dev->fw_get_done)
+> > +			return 0;
 > >
-> > > But when I tested as below, exynos's irqd->parent_data was null.
-> > > So we should use irqchip's affinity function instead of the helper function.
-> > >
-> >
-> >
-> >
-> > Best regards,
-> > Krzysztof
-> >
-> 
-
-------OVq5TT9zsDSQAN86dWjJc6zPY8CEKIwxCZDtRM.ioT5ZEg4T=_35b7f_
-Content-Type: text/plain; charset="utf-8"
+> >  	for (i =3D MFC_FW_MAX_VERSIONS - 1; i >=3D 0; i--) =7B
+> >  		if (=21dev->variant->fw_name=5Bi=5D)
 
 
-------OVq5TT9zsDSQAN86dWjJc6zPY8CEKIwxCZDtRM.ioT5ZEg4T=_35b7f_--
