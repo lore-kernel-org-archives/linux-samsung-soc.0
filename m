@@ -1,100 +1,117 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52DEED5D
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 08:55:09 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r81MZ-0005dd-Cf; Tue, 28 Nov 2023 17:55:07 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r81MX-00CDfs-Jc; Tue, 28 Nov 2023 17:55:05 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r81MX-00AHeQ-9x; Tue, 28 Nov 2023 17:55:05 +0100
-Date: Tue, 28 Nov 2023 17:55:05 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Inki Dae <daeinki@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	DRI mailing list <dri-devel@lists.freedesktop.org>,
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V4XoPCIL"
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19A64D4B;
+	Tue, 28 Nov 2023 09:01:59 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2c9b8aa4fc7so7149451fa.1;
+        Tue, 28 Nov 2023 09:01:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701190917; x=1701795717; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RGsTE+h92DnXeyvQhi72RUIHAES9rx7gcu8lPhY952A=;
+        b=V4XoPCILo16DifF0q/6hGt1IlsKIH+4sMW+XVz6g5P6VzyASpCA1ZXqxDDRclp3zsT
+         yP8EAjEoqejPh3dVTdJWwPsmev99kGtBTQjdAjzlUGS/qDKe8fJmqX0ZQoLZCMVkAUlN
+         Bn+pPt3Kf07RAROPZjY1cbP+7cEve5NTp6lv4UVeFA0DalF8rqWZoReInjFi/lE7FDal
+         HB4G8sop2HCfJVIGAg7Ssj4rwpNK2aAeVWZv1Bz6VENsdcAvV6zabV2PrDJXChVZ6qAI
+         WNx3Mi1sItgh08NLufd08wA1Dkz3LPdbpkiuIfaaYy8bZZiLG0hy/s8/Okwr9swLHFJ+
+         Il0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701190917; x=1701795717;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RGsTE+h92DnXeyvQhi72RUIHAES9rx7gcu8lPhY952A=;
+        b=XepOclek2Yw/iufF9ohDYB86m9l5I2OoaipJDLNYfr48Ts0RRIsNtGoCXPhZf4GnGd
+         RdJsvcWgDfFIQRCah3gSI04A2m6wGwRmZHAeo1n1+wKGkfTWrO2qCrrubt5jyGDwHQrx
+         MH1axJ5sAQf50OOhPFwVbWOQxS23OyR7G3QLCRzCZrIJ5Da/lWQfsRzT087GpT2egtOw
+         b0ismAxvS3HB4NGuq+Dy+ww5P2kd4+4KpExZDc1ReK0OmN1q0INv3F4gnRrcH5DYyQgQ
+         xFwcuY26VCR9ZGsZ7T+vpZqp5sfUI4WI0zj8Bl8dImP2uYR2jMcORZJuRJAbMI+ZY547
+         v2xQ==
+X-Gm-Message-State: AOJu0YwcJua1OtteWbfilgCxE187Lq5xkzRKlrIzj/AW+FgW808Xnm6W
+	xK84hfDSpmPekc4I4Ewzztw=
+X-Google-Smtp-Source: AGHT+IFAuEe6MZgvA+lTavbcl8TE8o7Pzs/YhJ/lRM8NRtuzYKZoNxgz0oR4YOKKydd71HKVsz64Jg==
+X-Received: by 2002:a2e:a58d:0:b0:2c9:99ca:1317 with SMTP id m13-20020a2ea58d000000b002c999ca1317mr6615762ljp.24.1701190917070;
+        Tue, 28 Nov 2023 09:01:57 -0800 (PST)
+Received: from localhost (p200300e41f0fa600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:a600:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id fa8-20020a05600c518800b0040b478da760sm6785928wmb.48.2023.11.28.09.01.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Nov 2023 09:01:56 -0800 (PST)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	linux-pwm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
 	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	kernel@pengutronix.de, Alim Akhtar <alim.akhtar@samsung.com>,
-	David Airlie <airlied@gmail.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 08/16] drm/exynos: Convert to platform remove callback
- returning void
-Message-ID: <20231128165505.wm4xs4ktycswthkt@pengutronix.de>
-References: <20231102165640.3307820-18-u.kleine-koenig@pengutronix.de>
- <20231102165640.3307820-26-u.kleine-koenig@pengutronix.de>
- <CAAQKjZOnVSaO6QHpSo_i=WgTaawTq0UFtzwTw8kQ5iHN4qiAtQ@mail.gmail.com>
- <20231108075454.3aivzrbvtr4en22e@pengutronix.de>
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v3 00/11] pwm: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+Date: Tue, 28 Nov 2023 18:00:00 +0100
+Message-ID: <170119076367.215216.2570140207863942749.b4-ty@gmail.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231023174616.2282067-13-u.kleine-koenig@pengutronix.de>
+References: <20231023174616.2282067-13-u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="i7fs5cwk3flthf5w"
-Content-Disposition: inline
-In-Reply-To: <20231108075454.3aivzrbvtr4en22e@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
---i7fs5cwk3flthf5w
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 23 Oct 2023 19:46:17 +0200, Uwe Kleine-König wrote:
+> this v3 was necessary because some lines in the commit log of a subset
+> of these patches were eaten. I think that happend during rebase -i where
+> git drops lines starting with # during git-commit. git-am isn't affected by
+> this "feature", so application should work fine. Still checking these
+> lines make it into the git commit is a good idea I think.
+> 
+> Other than the few additional lines in the commit logs, one Reviewed-by:
+> is added and the series is otherwise unchanged.
+> 
+> [...]
 
-Hello Inki,
+Applied, thanks!
 
-On Wed, Nov 08, 2023 at 08:54:54AM +0100, Uwe Kleine-K=F6nig wrote:
-> Hello Inki,
->=20
-> On Wed, Nov 08, 2023 at 01:16:18PM +0900, Inki Dae wrote:
-> > Sorry for late. There was a merge conflict so I fixed it manually and
-> > merged. And seems your patch description is duplicated so dropped
-> > duplicated one.
->=20
-> Ah. I have a template that generates one patch per driver. I guess this
-> is the result of using squash instead of fixup while putting all exynos
-> changes into a single patch.
+[01/11] pwm: atmel-hlcdc: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+        commit: 68bb27818889b085d3d700be69c483c0ea98f433
+[02/11] pwm: atmel-tcb: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+        commit: 440e46389dda0aafdfade7fabfa5038f9544ada2
+[03/11] pwm: berlin: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+        commit: c462d3f8fd2fc80aa7430fa7a498cbc92f65c3b5
+[04/11] pwm: brcmstb: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+        commit: 96f68f6f4932d6ade6878f13c1f644f6b469cf6c
+[05/11] pwm: dwc: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+        commit: 9109a4a23509b1664e6479aaa7fd5e983f8387e1
+[06/11] pwm: imx-tpm: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+        commit: a5b73204fd2e6a78a29cc4baea071ef715731ddc
+[07/11] pwm: samsung: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+        commit: 1b12fa3894ea89fefe057f128a5fddc71e3e693c
+[08/11] pwm: stm32-lp: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+        commit: a692911fca53e41fdf5c8bc5d66f00e96511762b
+[09/11] pwm: stm32: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+        commit: 7c885017ea5b0e8008b18ee175f2c4d0664a4ca1
+[10/11] pwm: tiecap: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+        commit: 3ecab1549fe44b25f58fb32eeaea152062513894
+[11/11] pwm: tiehrpwm: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+        commit: b372157f23ea8aa99a240c47a7ba1268656554d5
 
-This patch didn't make it into next yet even though it's included in
-your exynos-drm-next branch at
-https://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git.
-
-Is this on purpose?
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---i7fs5cwk3flthf5w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVmG2gACgkQj4D7WH0S
-/k7MnAf6AnARez3r/1IAvscO7iMOqvBKQZuLiFE8JSnzPAmMWKrnhFjxR31rGKZX
-m0OhJ/I5X0zf/mFOmRJa9aZM24HzEqhp9YGpqdNBOSe7lpYvUO6IN9apdQcTYxDX
-kfjWLlSrKmibDaaotp1f2CCe94GvMK7H2ItI2kogAmmrNJ+jxFPJjTNCJyMxlseE
-svuKSn9gu8QvCXKKVvBFP6KUwb8OoBH1rtMktmQpycA46MMGPMK6KSd0/GOpRnD4
-9DjjIrYpMgETIbZlIgeOv4/qU7aNnaAwoXqTZzTcAiJn9sJ8PuvDA8BblFZPdFyU
-gmKefy0lpwaBGgEx8hz3tPKfQDn8Sw==
-=hQwW
------END PGP SIGNATURE-----
-
---i7fs5cwk3flthf5w--
+Best regards,
+-- 
+Thierry Reding <thierry.reding@gmail.com>
