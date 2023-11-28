@@ -1,136 +1,187 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D07CE1998
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 12:59:25 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r85AN-0006nV-7B; Tue, 28 Nov 2023 21:58:47 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r85AI-00CFt4-DE; Tue, 28 Nov 2023 21:58:42 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r85AI-00AOAR-2T; Tue, 28 Nov 2023 21:58:42 +0100
-Date: Tue, 28 Nov 2023 21:58:41 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaehoon Chung <jh80.chung@samsung.com>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
-	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: (subset) [PATCH 00/17] dt-bindings: samsung: add specific
- compatibles for existing SoC
-Message-ID: <20231128205841.al23ra5s34rn3muj@pengutronix.de>
-References: <20231108104343.24192-1-krzysztof.kozlowski@linaro.org>
- <170119374454.445690.515311393756577368.b4-ty@gmail.com>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xMdoy6v8"
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35F8BCC
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 13:34:36 -0800 (PST)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-a00cbb83c80so825028066b.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 13:34:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1701207274; x=1701812074; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8NXFzGfhAzOfJO06Gf5RsXFoYKrXmtsSvTLzk7MbcCk=;
+        b=xMdoy6v8aONvzbxVZVbvsNHKhhEcVO5ng7K2kXcJRvCiRiwgTT+F/dPw1hDwAA6ZJD
+         n4Wo+FXvn5yepI6+S3O8JR0X5quxazx074nCIA6eRtLJS9w4Od9Wyrq9uvdUwFtCB97X
+         yD56oIcoZQ7UXlZfq6VfJcsTujL/PFoI/xfjXpoKz+7CI1bgMiKCj+KRFvUp9Ut6OFCI
+         kBeE/mjpvW/hhnpm21zuGWcy5uG5Adq2eW2yFUV5qTPjMQbkW9xCYYL7J+laRBUbbFL/
+         n+EbzsH7rpns82J1RJAJ0QS1mU/DOAeesKiZ114pRYCHXkI/dxIKuZdmp7Oob4X8oqhM
+         Pz+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701207274; x=1701812074;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8NXFzGfhAzOfJO06Gf5RsXFoYKrXmtsSvTLzk7MbcCk=;
+        b=fmAA5UHk/3PxsdyYXh3K0WiC0pwQOawIX4pbNSsoUoA1aSMJKP30aFoYJDkIGdFg14
+         oTTQi6qH3r4bVypUYQcBiex+o/jVip1LW20Od85K5SB3KXIgdBSnaVl/LMn0QXprndIo
+         Jq+inxkELUbMFVjyFPGYtevHE5fra/+Mu1ArPJT6kx8lBC10C2TnrEd9el5h2P3WPBJx
+         lLkNkYFCUoU3l14V/zbJRWkSXTX1nmFswHhEkxlU+Dvx7M5LznAwLKbBkR6eApNj7Fep
+         AXrYntVTUr33X5s0aSWF9EB3LQWiPCh/Awk7xDvqx/TGxVLCB55NiCk7Xc6C9+MaV/Xy
+         GfRA==
+X-Gm-Message-State: AOJu0Yyzy1Wxzf1teDVwc6qidIQk2IA7NThvcswA2Cs35U4PHi0cbTDM
+	MYz25ZlfKfCSDmdfRaPUWIbB3ESTmmFl5I2X0QiVYA==
+X-Google-Smtp-Source: AGHT+IFrrdaJl+8CDzGqIseL+lJ7M7KDt9GszVwJUOFBD/DHsSLfgFwP8+NKKfkfsTtyJyGUtnD8OJJylXlFpNkSb5g=
+X-Received: by 2002:a17:906:b248:b0:a04:cc0e:ff3b with SMTP id
+ ce8-20020a170906b24800b00a04cc0eff3bmr12465188ejb.27.1701207274446; Tue, 28
+ Nov 2023 13:34:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bibczb2zawwhoawf"
-Content-Disposition: inline
-In-Reply-To: <170119374454.445690.515311393756577368.b4-ty@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
-
-
---bibczb2zawwhoawf
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
+In-Reply-To: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Tue, 28 Nov 2023 13:33:55 -0800
+Message-ID: <CAJD7tkb1FqTqwONrp2nphBDkEamQtPCOFm0208H3tp0Gq2OLMQ@mail.gmail.com>
+Subject: Re: [PATCH 00/16] IOMMU memory observability
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, alex.williamson@redhat.com, 
+	alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev, 
+	baolu.lu@linux.intel.com, bhelgaas@google.com, cgroups@vger.kernel.org, 
+	corbet@lwn.net, david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org, 
+	heiko@sntech.de, iommu@lists.linux.dev, jasowang@redhat.com, 
+	jernej.skrabec@gmail.com, jgg@ziepe.ca, jonathanh@nvidia.com, joro@8bytes.org, 
+	kevin.tian@intel.com, krzysztof.kozlowski@linaro.org, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, mst@redhat.com, m.szyprowski@samsung.com, 
+	netdev@vger.kernel.org, paulmck@kernel.org, rdunlap@infradead.org, 
+	robin.murphy@arm.com, samuel@sholland.org, suravee.suthikulpanit@amd.com, 
+	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org, 
+	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, virtualization@lists.linux.dev, 
+	wens@csie.org, will@kernel.org, yu-cheng.yu@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 28, 2023 at 06:49:23PM +0100, Thierry Reding wrote:
->=20
-> On Wed, 08 Nov 2023 11:43:26 +0100, Krzysztof Kozlowski wrote:
-> > Merging
-> > =3D=3D=3D=3D=3D=3D=3D
-> > I propose to take entire patchset through my tree (Samsung SoC), becaus=
-e:
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+On Tue, Nov 28, 2023 at 12:49=E2=80=AFPM Pasha Tatashin
+<pasha.tatashin@soleen.com> wrote:
+>
+> From: Pasha Tatashin <tatashin@google.com>
+>
+> IOMMU subsystem may contain state that is in gigabytes. Majority of that
+> state is iommu page tables. Yet, there is currently, no way to observe
+> how much memory is actually used by the iommu subsystem.
+>
+> This patch series solves this problem by adding both observability to
+> all pages that are allocated by IOMMU, and also accountability, so
+> admins can limit the amount if via cgroups.
+>
+> The system-wide observability is using /proc/meminfo:
+> SecPageTables:    438176 kB
+>
+> Contains IOMMU and KVM memory.
+>
+> Per-node observability:
+> /sys/devices/system/node/nodeN/meminfo
+> Node N SecPageTables:    422204 kB
+>
+> Contains IOMMU and KVM memory memory in the given NUMA node.
+>
+> Per-node IOMMU only observability:
+> /sys/devices/system/node/nodeN/vmstat
+> nr_iommu_pages 105555
+>
+> Contains number of pages IOMMU allocated in the given node.
 
-> > 1. Next cycle two new SoCs will be coming (Google GS101 and ExynosAutov=
-920), so
-> >    they will touch the same lines in some of the DT bindings (not all, =
-though).
-> >    It is reasonable for me to take the bindings for the new SoCs, to ha=
-ve clean
-> >    `make dtbs_check` on the new DTS.
-> > 2. Having it together helps me to have clean `make dtbs_check` within m=
-y tree
-> >    on the existing DTS.
-> > 3. No drivers are affected by this change.
-> > 4. I plan to do the same for Tesla FSD and Exynos ARM32 SoCs, thus expe=
-ct
-> >    follow up patchsets.
-> >=20
-> > [...]
->=20
-> Applied, thanks!
->=20
-> [12/17] dt-bindings: pwm: samsung: add specific compatibles for existing =
-SoC
->         commit: 5d67b8f81b9d598599366214e3b2eb5f84003c9f
+Does it make sense to have a KVM-only entry there as well?
 
-You didn't honor (or even comment) Krzysztof's proposal to take the
-whole patchset via his tree (marked above). Was there some off-list
-agreement?
+In that case, if SecPageTables in /proc/meminfo is found to be
+suspiciously high, it should be easy to tell which component is
+contributing most usage through vmstat. I understand that users can do
+the subtraction, but we wouldn't want userspace depending on that, in
+case a third class of "secondary" page tables emerges that we want to
+add to SecPageTables. The in-kernel implementation can do the
+subtraction for now if it makes sense though.
 
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---bibczb2zawwhoawf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVmVIAACgkQj4D7WH0S
-/k4mPQgAuzfJsEw0Nil25KsPJwyY53qFjfCGd8WTObzTDFpeIlzV2EL87bWT2Gtd
-vEFgfX2Uj+RoOLX5CNnyuEfwH5e+O5oVYF9gfpsdqtRTJ3zyPV3dUiFCaIh2KNqZ
-aaY1tsb4vECeh7dmEL/y2VUWoO2bAa08sZe6EpJXOkeUWN54VdTCMBwncH1utjgh
-Tb/pHhjkfvdcbXuvxsFY4gL86pT8BER5EjIRZZaPN0kHDrGTBR+ZqjFvMVWTrFbq
-IUK1gAMX+BOooJDwVFE4SeRta6p/lfClW73PbWk1++SyLPA2KbTp8jTul4qgXWKT
-IbIJY8Qwg5trzJ0LHDMX3a02COS9hg==
-=P7ML
------END PGP SIGNATURE-----
-
---bibczb2zawwhoawf--
+>
+> Accountability: using sec_pagetables cgroup-v2 memory.stat entry.
+>
+> With the change, iova_stress[1] stops as limit is reached:
+>
+> # ./iova_stress
+> iova space:     0T      free memory:   497G
+> iova space:     1T      free memory:   495G
+> iova space:     2T      free memory:   493G
+> iova space:     3T      free memory:   491G
+>
+> stops as limit is reached.
+>
+> This series encorporates suggestions that came from the discussion
+> at LPC [2].
+>
+> [1] https://github.com/soleen/iova_stress
+> [2] https://lpc.events/event/17/contributions/1466
+>
+> Pasha Tatashin (16):
+>   iommu/vt-d: add wrapper functions for page allocations
+>   iommu/amd: use page allocation function provided by iommu-pages.h
+>   iommu/io-pgtable-arm: use page allocation function provided by
+>     iommu-pages.h
+>   iommu/io-pgtable-dart: use page allocation function provided by
+>     iommu-pages.h
+>   iommu/io-pgtable-arm-v7s: use page allocation function provided by
+>     iommu-pages.h
+>   iommu/dma: use page allocation function provided by iommu-pages.h
+>   iommu/exynos: use page allocation function provided by iommu-pages.h
+>   iommu/fsl: use page allocation function provided by iommu-pages.h
+>   iommu/iommufd: use page allocation function provided by iommu-pages.h
+>   iommu/rockchip: use page allocation function provided by iommu-pages.h
+>   iommu/sun50i: use page allocation function provided by iommu-pages.h
+>   iommu/tegra-smmu: use page allocation function provided by
+>     iommu-pages.h
+>   iommu: observability of the IOMMU allocations
+>   iommu: account IOMMU allocated memory
+>   vhost-vdpa: account iommu allocations
+>   vfio: account iommu allocations
+>
+>  Documentation/admin-guide/cgroup-v2.rst |   2 +-
+>  Documentation/filesystems/proc.rst      |   4 +-
+>  drivers/iommu/amd/amd_iommu.h           |   8 -
+>  drivers/iommu/amd/init.c                |  91 +++++-----
+>  drivers/iommu/amd/io_pgtable.c          |  13 +-
+>  drivers/iommu/amd/io_pgtable_v2.c       |  20 +-
+>  drivers/iommu/amd/iommu.c               |  13 +-
+>  drivers/iommu/dma-iommu.c               |   8 +-
+>  drivers/iommu/exynos-iommu.c            |  14 +-
+>  drivers/iommu/fsl_pamu.c                |   5 +-
+>  drivers/iommu/intel/dmar.c              |  10 +-
+>  drivers/iommu/intel/iommu.c             |  47 ++---
+>  drivers/iommu/intel/iommu.h             |   2 -
+>  drivers/iommu/intel/irq_remapping.c     |  10 +-
+>  drivers/iommu/intel/pasid.c             |  12 +-
+>  drivers/iommu/intel/svm.c               |   7 +-
+>  drivers/iommu/io-pgtable-arm-v7s.c      |   9 +-
+>  drivers/iommu/io-pgtable-arm.c          |   7 +-
+>  drivers/iommu/io-pgtable-dart.c         |  37 ++--
+>  drivers/iommu/iommu-pages.h             | 231 ++++++++++++++++++++++++
+>  drivers/iommu/iommufd/iova_bitmap.c     |   6 +-
+>  drivers/iommu/rockchip-iommu.c          |  14 +-
+>  drivers/iommu/sun50i-iommu.c            |   7 +-
+>  drivers/iommu/tegra-smmu.c              |  18 +-
+>  drivers/vfio/vfio_iommu_type1.c         |   8 +-
+>  drivers/vhost/vdpa.c                    |   3 +-
+>  include/linux/mmzone.h                  |   5 +-
+>  mm/vmstat.c                             |   3 +
+>  28 files changed, 415 insertions(+), 199 deletions(-)
+>  create mode 100644 drivers/iommu/iommu-pages.h
+>
+> --
+> 2.43.0.rc2.451.g8631bc7472-goog
+>
+>
