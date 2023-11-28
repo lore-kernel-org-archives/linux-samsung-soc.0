@@ -1,128 +1,184 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25C4CC1;
-	Mon, 27 Nov 2023 13:55:35 -0800 (PST)
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-1fa1bcf1d01so1662305fac.0;
-        Mon, 27 Nov 2023 13:55:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701122134; x=1701726934;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q+Cbf4Z4xMq9dOhY2lkOSlIg0Yv9C+GaGVRwFcKdaa4=;
-        b=mrXfHhXWE/HlW2oFiNizk/4cY7MlU1odoM361EH5rtfmSMORp9a7f5V4lxp8RhJKOG
-         RtiNb4XcSSukoq7dWX47nS31m3RPr/AOlH/cLj1xYR3xvLsiC8hZlcPkr66cchGj8a1P
-         G9YBcRlvEWNcvVTVkzK37yyjIbOkS9RkAGy7nOMY5JdE0fAN+x1y1fXwzoUFgNShccKr
-         vAzgQAdN9Pen4VpF7x8keE/HTjvUSftSllOlBfqEidZynaEDnllI9SeEVVuVUk6pBOj1
-         nHIVZA6CJWX2zS/lpo5elch+xJsO65OpC3RN+AAxZugOK09QyAt7dgIDRWaSpdk3WOmN
-         6CKw==
-X-Gm-Message-State: AOJu0YxdpstD7o/e9IpkjZVtXCniis3oekydzZjW6JjpIdFjUF6EsK3i
-	Vseh7+bJV2+xp2XRvIsEnatSwb+Fpg==
-X-Google-Smtp-Source: AGHT+IHE/25NEUwlRx2TOFVPP+SptbOdKM4BzwgEQJDXuam12+MKf64pu6FFsol8jZ2RdnKGcptx6g==
-X-Received: by 2002:a05:6870:5d93:b0:1f0:656b:5b99 with SMTP id fu19-20020a0568705d9300b001f0656b5b99mr19942781oab.11.1701122134393;
-        Mon, 27 Nov 2023 13:55:34 -0800 (PST)
-Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id lu4-20020a056871314400b001fa54ae35e0sm681401oac.12.2023.11.27.13.55.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Nov 2023 13:55:33 -0800 (PST)
-Received: (nullmailer pid 3942464 invoked by uid 1000);
-	Mon, 27 Nov 2023 21:55:32 -0000
-Date: Mon, 27 Nov 2023 15:55:32 -0600
-From: Rob Herring <robh@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, Andrew Davis <afd@ti.com>, 
-	Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Chen-Yu Tsai <wens@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, 
-	Jonathan Corbet <corbet@lwn.net>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Michal Simek <michal.simek@amd.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Nishanth Menon <nm@ti.com>, Olof Johansson <olof@lixom.net>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, 
-	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3] docs: dt-bindings: add DTS Coding Style document
-Message-ID: <20231127215532.GA3822595-robh@kernel.org>
-References: <20231125184422.12315-1-krzysztof.kozlowski@linaro.org>
- <20231125193737.GD7486@pendragon.ideasonboard.com>
- <26f095ab-c47d-4bcb-9830-4493b1c0cc75@linaro.org>
- <20231126145340.GA19999@pendragon.ideasonboard.com>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bYewLQmi"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DDD51A2
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Nov 2023 16:26:27 -0800 (PST)
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20231128002623epoutp0290b760cdc95bf507caf98403553a8c09~bocxjyZnL1997019970epoutp02U
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 00:26:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20231128002623epoutp0290b760cdc95bf507caf98403553a8c09~bocxjyZnL1997019970epoutp02U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1701131183;
+	bh=EVAydPHb+iuI0oFgKT1lEvM3GpdgPhV7iSj5fS7WTjc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bYewLQmiQNvtpEScwNoYGjvs2UJGAMClVYNuGnx3ytjqKSbHgJlN13tWdQaSguUB0
+	 s7IPU1twvcI+rlTie+jydV1j62HMla1DcCDWCmgOh5EP527BY5U3MDG7PxjmwFmKk8
+	 UFc5vHRRMbE0WUDLZCqz7rhsxJyPGrFphNzDKIeE=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+	20231128002622epcas2p43775dc1c952c850b7974c430e21b3b43~bocw8NHzj1420714207epcas2p4h;
+	Tue, 28 Nov 2023 00:26:22 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.68]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4SfNYB1z9Gz4x9QB; Tue, 28 Nov
+	2023 00:26:22 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	5A.C2.10006.EA335656; Tue, 28 Nov 2023 09:26:22 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20231128002621epcas2p4379a53cc57d9d26bce92fe0de4722982~bocv8kgXI1420814208epcas2p4r;
+	Tue, 28 Nov 2023 00:26:21 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20231128002621epsmtrp2d2067952c91203253bb2b1f13175bffe~bocv75cfD0710707107epsmtrp2A;
+	Tue, 28 Nov 2023 00:26:21 +0000 (GMT)
+X-AuditID: b6c32a45-179ff70000002716-02-656533ae0957
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A0.3A.07368.DA335656; Tue, 28 Nov 2023 09:26:21 +0900 (KST)
+Received: from perf (unknown [10.229.95.91]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20231128002621epsmtip14a29ac44b55d090894695741d02bfa17~bocvtqbao0187501875epsmtip1M;
+	Tue, 28 Nov 2023 00:26:21 +0000 (GMT)
+Date: Tue, 28 Nov 2023 10:01:25 +0900
+From: Youngmin Nam <youngmin.nam@samsung.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: tomasz.figa@gmail.com, krzysztof.kozlowski@linaro.org,
+	s.nawrocki@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	semen.protsenko@linaro.org
+Subject: Re: [PATCH v2] pinctrl: samsung: add irq_set_affinity() for non
+ wake up external gpio interrupt
+Message-ID: <ZWU75VtJ/mXpMyQr@perf>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <bb738a6b-815d-4fad-b73f-559f1ba8cd68@linaro.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFJsWRmVeSWpSXmKPExsWy7bCmhe4649RUg66fvBYP5m1js9j7eiu7
+	xZQ/y5ksNj2+xmqxef4fRovLu+awWcw4v4/J4vCbdlaL531A1qpdfxgduDx2zrrL7nHn2h42
+	j81L6j36tqxi9Pi8SS6ANSrbJiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8x
+	N9VWycUnQNctMwfoKCWFssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgXmBXnFibnFp
+	XrpeXmqJlaGBgZEpUGFCdsaKJYsYC/aKVHza9JetgXE7fxcjB4eEgInEhtueXYxcHEICOxgl
+	Lq14wQThfGKUWPnsMBuE841R4uLaB0AOJ1jH8w8fWSASexklNr5pZIRwHjJK9K2fyghSxSKg
+	KnH08CRmEJtNQFdi24l/YHERAQuJxRsWsoI0MAusZpK4/fE7WEJYIEvizsZuFhCbV0BZor9j
+	BpQtKHFy5hMwm1PATuL1PYhtEgKtHBKfjhxnhrjJRWLqnqVMELawxKvjW9ghbCmJz+/2Qt2d
+	LbH61yWoeIVE+70eqF5jiVnP2sGOYBbIkHiyAuRSUMgoSxy5xQIR5pPoOPyXHSLMK9HRJgTR
+	qSbxa8oGRghbRmL34hVQEz0knk3exA4JlOOMEr/P3GaZwCg3C8k7s5Bsg7B1JBbs/sQ2C2gF
+	s4C0xPJ/HBCmpsT6XfoLGFlXMYqlFhTnpqcWGxUYwmM4OT93EyM4kWq57mCc/PaD3iFGJg7G
+	Q4wSHMxKIrx6H5NThXhTEiurUovy44tKc1KLDzGaAiNnIrOUaHI+MJXnlcQbmlgamJiZGZob
+	mRqYK4nz3mudmyIkkJ5YkpqdmlqQWgTTx8TBKdXAlPq/8skqi/UxScV5WSJFexPSDz5MCH7P
+	23bax2k2p6nJ48QqW2El3qzz2U+3a6jOub3fgW/6FJ5FbCFfL7GIX/we2rpCNVJt2vo0yT8X
+	C56fq1DvVTr4cfUJubu7L6c7hD1JvOy/MOrO5s07TZplU9JWf8+95Gewc0bOM2v2D98DK7at
+	Sbixff63R6q8+6/L37Fnrurc2flTMGSvTFKmTyffH96qxp8vJ6RN/myyTkfpp8u5fQ49c2Un
+	HHU051mRFtG895TC6/XnVisWrnc2brgmlbhO/vaV4uvPlHcoxfzpmKu45DLTqdN/DlxJCeNX
+	yvD+e/L74ZtTV7WvX+qY5DF5v0xBauUewbytHgdbK5RYijMSDbWYi4oTAQNz9qEtBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsWy7bCSnO5a49RUg8azqhYP5m1js9j7eiu7
+	xZQ/y5ksNj2+xmqxef4fRovLu+awWcw4v4/J4vCbdlaL531A1qpdfxgduDx2zrrL7nHn2h42
+	j81L6j36tqxi9Pi8SS6ANYrLJiU1J7MstUjfLoErY9e5eWwFfwUrftxQamCcwNvFyMkhIWAi
+	8fzDR5YuRi4OIYHdjBKX3u1mhUjISNxeeRnKFpa433KEFaLoPqPE771TmEASLAKqEkcPT2IG
+	sdkEdCW2nfjHCGKLCFhILN6wEKyBWWA1k8Tmx+/BioQFsiQePjzPBmLzCihL9HfMYAGxhQSO
+	M0oceKoOEReUODnzCVicWUBL4sa/l0DLOIBsaYnl/zhAwpwCdhKv7zUyTmAUmIWkYxaSjlkI
+	HQsYmVcxSqYWFOem5yYbFhjmpZbrFSfmFpfmpesl5+duYgTHgZbGDsZ78//pHWJk4mA8xCjB
+	wawkwqv3MTlViDclsbIqtSg/vqg0J7X4EKM0B4uSOK/hjNkpQgLpiSWp2ampBalFMFkmDk6p
+	Bqbnoe/U/jXE/3p/SrM2duMis8jvV/zYwtrlZySsiwyv2nKy86n2AalFaWLnZ8T3m26RTzj5
+	2O9oO9Pxr28PZIl7ySikXah48/HRh7NpTFztuacyZl5rDbsz7RrvLdX3f/2jPROZ3J8WBlyR
+	nOYzz2RJoav9j2ls7//4Pnes2qLJ8XLmQfXJHRFT3art3t2rznEPka/8euHhRbbL0759sb4X
+	fXlu5K6gullVh47tmPHTto318FIRMWU9Ta8dZrXT1/ZuWcGjfZvfZe2lWf0CCqu7j/C+/Flj
+	vfQ2O/OP5PY6feM5/CX3t0d52L7mij21ptH2Y7X/uUX35Ixbqq5dk5/VOVk1SWnlbWm+zZvT
+	GncrsRRnJBpqMRcVJwIAkEdKm/ICAAA=
+X-CMS-MailID: 20231128002621epcas2p4379a53cc57d9d26bce92fe0de4722982
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----SiQCcQFW9qxZh2i62NcUcvIKWR48NBmCWce5.T0aiy9ACrIF=_24d13_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38
+References: <CGME20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38@epcas2p4.samsung.com>
+	<20231126094618.2545116-1-youngmin.nam@samsung.com>
+	<bb738a6b-815d-4fad-b73f-559f1ba8cd68@linaro.org>
+
+------SiQCcQFW9qxZh2i62NcUcvIKWR48NBmCWce5.T0aiy9ACrIF=_24d13_
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20231126145340.GA19999@pendragon.ideasonboard.com>
 
-On Sun, Nov 26, 2023 at 04:53:40PM +0200, Laurent Pinchart wrote:
-> Hi Krzysztof,
-> 
-> On Sun, Nov 26, 2023 at 11:32:17AM +0100, Krzysztof Kozlowski wrote:
-> > On 25/11/2023 20:37, Laurent Pinchart wrote:
-> > > On Sat, Nov 25, 2023 at 07:44:22PM +0100, Krzysztof Kozlowski wrote:
-> > >> Document preferred coding style for Devicetree sources (DTS and DTSI),
-> > >> to bring consistency among all (sub)architectures and ease in reviews.
-
-
-> > >> +
-> > >> +Naming and Valid Characters
-> > >> +---------------------------
-> > >> +
-> > >> +Devicetree specification allows broader range of characters in node and
-> > > 
-> > > s/Devicetree specification/The Devicetree specification/
-> > > s/broader range/a broad range/
+On Mon, Nov 27, 2023 at 10:54:56AM +0100, Krzysztof Kozlowski wrote:
+> On 26/11/2023 10:46, Youngmin Nam wrote:
+> > To support affinity setting for non wake up external gpio interrupt,
+> > add irq_set_affinity callback using irq number from pinctrl driver data.
 > > 
-> > Ack, but I really expect people finish with grammar and style fixes at
-> > v3. Please point the language things now or just let it go.
-> 
-> v3 is the first version that ended up in my inbox. I haven't noticed any
-> other spelling or grammar error in this patch, but I can't guarantee I
-> won't see any in new text that gets introduced in a future version :-)
-> 
-> > >> +property names, but for code readability the choice shall be narrowed.
-> > >> +
-> > >> +1. Node and property names are allowed to use only:
-> > >> +
-> > >> +   * lowercase characters: [a-z]
-> > >> +   * digits: [0-9]
-> > >> +   * dash: -
-> > >> +
-> > >> +2. Labels are allowed to use only:
-> > >> +
-> > >> +   * lowercase characters: [a-z]
-> > >> +   * digits: [0-9]
-> > >> +   * underscore: _
-> > >> +
-> > >> +3. Unit addresses shall use lowercase hex, without leading zeros (padding).
-
-Unless a bus defines differently, unit addresses shall ...
-
-> > > 
-> > > I'm curious, what's the reason for this ? I think it makes the sources
-> > > less readable. If the rule is "just" because that's how DT sources are
-> > > written today and it would be too complicated to change that, that's
-> > > fine with me.
+> > Before this patch, changing the irq affinity of gpio interrupt is not possible:
 > > 
-> > Warning (unit_address_format): /cpus/cpu@0100: unit name should not have
-> > leading 0s
-> > 
-> > And we fixed all or most of DTS some time ago.
+> >     # cat /proc/irq/418/smp_affinity
+> >     3ff
+> >     # echo 00f > /proc/irq/418/smp_affinity
 > 
-> It's the current practice in DT sources and I understand it won't get
-> changed, but I was more curious about the rationale behind that.
+> Does this command succeed on your board?
+> 
+Yes.
 
-I put the dtc check in, but the rational predates me. The OF PCI bus 
-supplement from the 1990s defines that. My only rationale to check it 
-was to be consistent. We don't check "the unit-address is lowercase hex"
-because technically the bus defines the format. Leading 0s was as much 
-as I could get David G to agree to check without regard to bus type.
+> >     # cat /proc/irq/418/smp_affinity
+> >     3ff
+> >     # cat /proc/interrupts
+> >                CPU0       CPU1       CPU2       CPU3    ...
+> >     418:       3631          0          0          0    ...
+> > 
+> > With this patch applied, it's possible to change irq affinity of gpio interrupt:
+> 
+> ...
+> 
+> On which board did you test it?
+> 
+> 
+I tested on S5E9945 ERD(Exynos Reference Development) board.
 
-Rob
+> > +	if (parent)
+> > +		return parent->chip->irq_set_affinity(parent, dest, force);
+> > +
+> 
+> I think there is a  helper for it: irq_chip_set_affinity_parent().
+> 
+> 
+
+The irq_chip_set_affinity_parent() requires parent_data of irq_data.
+But when I tested as below, exynos's irqd->parent_data was null.
+So we should use irqchip's affinity function instead of the helper function.
+
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -153,14 +153,12 @@ static int exynos_irq_set_type(struct irq_data *irqd, unsigned int type)
+ static int exynos_irq_set_affinity(struct irq_data *irqd,
+                                   const struct cpumask *dest, bool force)
+ {
+-       struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
+-       struct samsung_pinctrl_drv_data *d = bank->drvdata;
+-       struct irq_data *parent = irq_get_irq_data(d->irq);
+-
+-       if (parent)
+-               return parent->chip->irq_set_affinity(parent, dest, force);
++       if (!irqd->parent_data) {
++               pr_err("irqd->parent_data is null!!\n");
++               return -EINVAL;
++       }
+
+-       return -EINVAL;
++       return irq_chip_set_affinity_parent(irqd, dest, force);
+ }
+
+[  149.658395] irqd->parent_data is null!!
+
+> Best regards,
+> Krzysztof
+> 
+> 
+
+------SiQCcQFW9qxZh2i62NcUcvIKWR48NBmCWce5.T0aiy9ACrIF=_24d13_
+Content-Type: text/plain; charset="utf-8"
+
+
+------SiQCcQFW9qxZh2i62NcUcvIKWR48NBmCWce5.T0aiy9ACrIF=_24d13_--
