@@ -1,187 +1,144 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xMdoy6v8"
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35F8BCC
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 13:34:36 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-a00cbb83c80so825028066b.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 13:34:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kuDwZIAS"
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E63B2D61
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 13:36:05 -0800 (PST)
+Received: by mail-pg1-x52c.google.com with SMTP id 41be03b00d2f7-5c21e185df5so4335632a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Nov 2023 13:36:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1701207274; x=1701812074; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701207365; x=1701812165; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8NXFzGfhAzOfJO06Gf5RsXFoYKrXmtsSvTLzk7MbcCk=;
-        b=xMdoy6v8aONvzbxVZVbvsNHKhhEcVO5ng7K2kXcJRvCiRiwgTT+F/dPw1hDwAA6ZJD
-         n4Wo+FXvn5yepI6+S3O8JR0X5quxazx074nCIA6eRtLJS9w4Od9Wyrq9uvdUwFtCB97X
-         yD56oIcoZQ7UXlZfq6VfJcsTujL/PFoI/xfjXpoKz+7CI1bgMiKCj+KRFvUp9Ut6OFCI
-         kBeE/mjpvW/hhnpm21zuGWcy5uG5Adq2eW2yFUV5qTPjMQbkW9xCYYL7J+laRBUbbFL/
-         n+EbzsH7rpns82J1RJAJ0QS1mU/DOAeesKiZ114pRYCHXkI/dxIKuZdmp7Oob4X8oqhM
-         Pz+A==
+        bh=oTVlLTZZmikOeFqoqYLREHBTF55+gG2wuAmC6HPrHN4=;
+        b=kuDwZIASyagCsGZh2bDS2mH2gp0JyH33VXzAd9Rm35vw2Ra5iIGviyl+nJZvg7oHVg
+         kN2ccJKravFu28T/akIlvY2W9+Ag1AETWWBSP6gg3B7HC8JRt4/THHUXANXZJYedS53R
+         cx4MBxmEpR821F4t1/DmZzOyVAYbxxBQvKGwbwPI6B+YJQiShzoffkyHskkRlSSmp5PK
+         alIirvakrTNByJ0sLqMwC5WOq2TmE27QQYpizSznyZ8+CKLvHRzWWoX3msnQWZR02JOZ
+         0NlA+jrfoCTW6Y3ULy0bxebdmJYzOlxP+cCYWvPiGSUer2QtB9N2vCRqNSp2HvfHg+Gu
+         bkZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701207274; x=1701812074;
+        d=1e100.net; s=20230601; t=1701207365; x=1701812165;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8NXFzGfhAzOfJO06Gf5RsXFoYKrXmtsSvTLzk7MbcCk=;
-        b=fmAA5UHk/3PxsdyYXh3K0WiC0pwQOawIX4pbNSsoUoA1aSMJKP30aFoYJDkIGdFg14
-         oTTQi6qH3r4bVypUYQcBiex+o/jVip1LW20Od85K5SB3KXIgdBSnaVl/LMn0QXprndIo
-         Jq+inxkELUbMFVjyFPGYtevHE5fra/+Mu1ArPJT6kx8lBC10C2TnrEd9el5h2P3WPBJx
-         lLkNkYFCUoU3l14V/zbJRWkSXTX1nmFswHhEkxlU+Dvx7M5LznAwLKbBkR6eApNj7Fep
-         AXrYntVTUr33X5s0aSWF9EB3LQWiPCh/Awk7xDvqx/TGxVLCB55NiCk7Xc6C9+MaV/Xy
-         GfRA==
-X-Gm-Message-State: AOJu0Yyzy1Wxzf1teDVwc6qidIQk2IA7NThvcswA2Cs35U4PHi0cbTDM
-	MYz25ZlfKfCSDmdfRaPUWIbB3ESTmmFl5I2X0QiVYA==
-X-Google-Smtp-Source: AGHT+IFrrdaJl+8CDzGqIseL+lJ7M7KDt9GszVwJUOFBD/DHsSLfgFwP8+NKKfkfsTtyJyGUtnD8OJJylXlFpNkSb5g=
-X-Received: by 2002:a17:906:b248:b0:a04:cc0e:ff3b with SMTP id
- ce8-20020a170906b24800b00a04cc0eff3bmr12465188ejb.27.1701207274446; Tue, 28
- Nov 2023 13:34:34 -0800 (PST)
+        bh=oTVlLTZZmikOeFqoqYLREHBTF55+gG2wuAmC6HPrHN4=;
+        b=vKwZOdQWm/9GAz+xup56G0VdmaV3bx/nuvBqX74zjxo3CULyKWGI2sIHYML1hGRpzz
+         o0DW+XVY7g2tE9uLYoaulZMzmCQ8p8R5WcFsA/kr1/CKtSH+fDLAaunKHc48d2Dn9pSK
+         VoNKzgvMa3+eIvl4q1sGUDQOlsQtSv0zlCZVFzs4JWPDosOu03G0wL2rMunJXulPnK4t
+         YcM0RLNcLVsm1pbNg1MK7z2tTOpNWD8v97zXpimhrKTcujGMkHq+cvDzBsynLzTtmivd
+         kNKem5JgfJLwjvbMLBOvRQk2Ky5ouZUqoTMNbpDCn8BNW1cl5sNnWlOdaGVXHTgp43np
+         YH5w==
+X-Gm-Message-State: AOJu0YzcvRVY2tyZpg7BXVbuDjjdTvUw/G+eaoesHWuLvP2qK7J/o3XH
+	OOP4aU//0RmbIGmDZQVx709zvJzjVlcgtVibpjXIHQ==
+X-Google-Smtp-Source: AGHT+IHnu+R39CMW8bY/8u262kP5zKg3VQ/mjN6LJEe4dATUMhYEKF46M96JeCHr013bip0jw7vCgK8zjEoEnqa15VE=
+X-Received: by 2002:a17:90b:390d:b0:285:da91:69a2 with SMTP id
+ ob13-20020a17090b390d00b00285da9169a2mr7861663pjb.31.1701207364753; Tue, 28
+ Nov 2023 13:36:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
-In-Reply-To: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 28 Nov 2023 13:33:55 -0800
-Message-ID: <CAJD7tkb1FqTqwONrp2nphBDkEamQtPCOFm0208H3tp0Gq2OLMQ@mail.gmail.com>
-Subject: Re: [PATCH 00/16] IOMMU memory observability
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, alex.williamson@redhat.com, 
-	alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev, 
-	baolu.lu@linux.intel.com, bhelgaas@google.com, cgroups@vger.kernel.org, 
-	corbet@lwn.net, david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org, 
-	heiko@sntech.de, iommu@lists.linux.dev, jasowang@redhat.com, 
-	jernej.skrabec@gmail.com, jgg@ziepe.ca, jonathanh@nvidia.com, joro@8bytes.org, 
-	kevin.tian@intel.com, krzysztof.kozlowski@linaro.org, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
-	mhiramat@kernel.org, mst@redhat.com, m.szyprowski@samsung.com, 
-	netdev@vger.kernel.org, paulmck@kernel.org, rdunlap@infradead.org, 
-	robin.murphy@arm.com, samuel@sholland.org, suravee.suthikulpanit@amd.com, 
-	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org, 
-	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, virtualization@lists.linux.dev, 
-	wens@csie.org, will@kernel.org, yu-cheng.yu@intel.com
+References: <CGME20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38@epcas2p4.samsung.com>
+ <20231126094618.2545116-1-youngmin.nam@samsung.com> <bb738a6b-815d-4fad-b73f-559f1ba8cd68@linaro.org>
+ <ZWU75VtJ/mXpMyQr@perf> <1fd55b36-0837-4bf7-9fde-e573d6cb214a@linaro.org>
+In-Reply-To: <1fd55b36-0837-4bf7-9fde-e573d6cb214a@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Tue, 28 Nov 2023 15:35:53 -0600
+Message-ID: <CAPLW+4n0SAOTb6wocY-WjkxgSFMbx+nVuqdaPcNYVDsbfg+EfA@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: samsung: add irq_set_affinity() for non wake
+ up external gpio interrupt
+To: Youngmin Nam <youngmin.nam@samsung.com>
+Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, alim.akhtar@samsung.com, 
+	linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 28, 2023 at 12:49=E2=80=AFPM Pasha Tatashin
-<pasha.tatashin@soleen.com> wrote:
+On Tue, Nov 28, 2023 at 1:29=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> From: Pasha Tatashin <tatashin@google.com>
+> On 28/11/2023 02:01, Youngmin Nam wrote:
+> > On Mon, Nov 27, 2023 at 10:54:56AM +0100, Krzysztof Kozlowski wrote:
+> >> On 26/11/2023 10:46, Youngmin Nam wrote:
+> >>> To support affinity setting for non wake up external gpio interrupt,
+> >>> add irq_set_affinity callback using irq number from pinctrl driver da=
+ta.
+> >>>
+> >>> Before this patch, changing the irq affinity of gpio interrupt is not=
+ possible:
+> >>>
+> >>>     # cat /proc/irq/418/smp_affinity
+> >>>     3ff
+> >>>     # echo 00f > /proc/irq/418/smp_affinity
+> >>
+> >> Does this command succeed on your board?
+> >>
+> > Yes.
 >
-> IOMMU subsystem may contain state that is in gigabytes. Majority of that
-> state is iommu page tables. Yet, there is currently, no way to observe
-> how much memory is actually used by the iommu subsystem.
+> Hm, fails all the time one mine.
 >
-> This patch series solves this problem by adding both observability to
-> all pages that are allocated by IOMMU, and also accountability, so
-> admins can limit the amount if via cgroups.
->
-> The system-wide observability is using /proc/meminfo:
-> SecPageTables:    438176 kB
->
-> Contains IOMMU and KVM memory.
->
-> Per-node observability:
-> /sys/devices/system/node/nodeN/meminfo
-> Node N SecPageTables:    422204 kB
->
-> Contains IOMMU and KVM memory memory in the given NUMA node.
->
-> Per-node IOMMU only observability:
-> /sys/devices/system/node/nodeN/vmstat
-> nr_iommu_pages 105555
->
-> Contains number of pages IOMMU allocated in the given node.
 
-Does it make sense to have a KVM-only entry there as well?
+I tried to test this patch on E850-96, and an attempt to write into
+smp_affinity (for some GPIO irq) also fails for me:
 
-In that case, if SecPageTables in /proc/meminfo is found to be
-suspiciously high, it should be easy to tell which component is
-contributing most usage through vmstat. I understand that users can do
-the subtraction, but we wouldn't want userspace depending on that, in
-case a third class of "secondary" page tables emerges that we want to
-add to SecPageTables. The in-kernel implementation can do the
-subtraction for now if it makes sense though.
+    # echo f0 > smp_affinity
+    -bash: echo: write error: Input/output error
 
+When I add some pr_err() to exynos_irq_set_affinity(), I can't see
+those printed in dmesg. So I guess exynos_irq_set_affinity() doesn't
+get called at all. So the error probably happens before
+.irq_set_affinity callback gets called.
+
+Youngmin, can you please try and test this patch on E850-96? This
+board is already supported in upstream kernel. For example you can use
+"Volume Up" interrupt for the test, which is GPIO irq.
+
+> >
+> >>>     # cat /proc/irq/418/smp_affinity
+> >>>     3ff
+> >>>     # cat /proc/interrupts
+> >>>                CPU0       CPU1       CPU2       CPU3    ...
+> >>>     418:       3631          0          0          0    ...
+> >>>
+> >>> With this patch applied, it's possible to change irq affinity of gpio=
+ interrupt:
+> >>
+> >> ...
+> >>
+> >> On which board did you test it?
+> >>
+> >>
+> > I tested on S5E9945 ERD(Exynos Reference Development) board.
 >
-> Accountability: using sec_pagetables cgroup-v2 memory.stat entry.
+> There is no such board upstream. How can we reproduce this issue? I am
+> afraid we cannot test neither the bug nor the fix.
 >
-> With the change, iova_stress[1] stops as limit is reached:
+> >
+> >>> +   if (parent)
+> >>> +           return parent->chip->irq_set_affinity(parent, dest, force=
+);
+> >>> +
+> >>
+> >> I think there is a  helper for it: irq_chip_set_affinity_parent().
+> >>
+> >>
+> >
+> > The irq_chip_set_affinity_parent() requires parent_data of irq_data.
 >
-> # ./iova_stress
-> iova space:     0T      free memory:   497G
-> iova space:     1T      free memory:   495G
-> iova space:     2T      free memory:   493G
-> iova space:     3T      free memory:   491G
+> Hm, so now I wonder why do we not have parent_data...
 >
-> stops as limit is reached.
+> > But when I tested as below, exynos's irqd->parent_data was null.
+> > So we should use irqchip's affinity function instead of the helper func=
+tion.
+> >
 >
-> This series encorporates suggestions that came from the discussion
-> at LPC [2].
 >
-> [1] https://github.com/soleen/iova_stress
-> [2] https://lpc.events/event/17/contributions/1466
 >
-> Pasha Tatashin (16):
->   iommu/vt-d: add wrapper functions for page allocations
->   iommu/amd: use page allocation function provided by iommu-pages.h
->   iommu/io-pgtable-arm: use page allocation function provided by
->     iommu-pages.h
->   iommu/io-pgtable-dart: use page allocation function provided by
->     iommu-pages.h
->   iommu/io-pgtable-arm-v7s: use page allocation function provided by
->     iommu-pages.h
->   iommu/dma: use page allocation function provided by iommu-pages.h
->   iommu/exynos: use page allocation function provided by iommu-pages.h
->   iommu/fsl: use page allocation function provided by iommu-pages.h
->   iommu/iommufd: use page allocation function provided by iommu-pages.h
->   iommu/rockchip: use page allocation function provided by iommu-pages.h
->   iommu/sun50i: use page allocation function provided by iommu-pages.h
->   iommu/tegra-smmu: use page allocation function provided by
->     iommu-pages.h
->   iommu: observability of the IOMMU allocations
->   iommu: account IOMMU allocated memory
->   vhost-vdpa: account iommu allocations
->   vfio: account iommu allocations
->
->  Documentation/admin-guide/cgroup-v2.rst |   2 +-
->  Documentation/filesystems/proc.rst      |   4 +-
->  drivers/iommu/amd/amd_iommu.h           |   8 -
->  drivers/iommu/amd/init.c                |  91 +++++-----
->  drivers/iommu/amd/io_pgtable.c          |  13 +-
->  drivers/iommu/amd/io_pgtable_v2.c       |  20 +-
->  drivers/iommu/amd/iommu.c               |  13 +-
->  drivers/iommu/dma-iommu.c               |   8 +-
->  drivers/iommu/exynos-iommu.c            |  14 +-
->  drivers/iommu/fsl_pamu.c                |   5 +-
->  drivers/iommu/intel/dmar.c              |  10 +-
->  drivers/iommu/intel/iommu.c             |  47 ++---
->  drivers/iommu/intel/iommu.h             |   2 -
->  drivers/iommu/intel/irq_remapping.c     |  10 +-
->  drivers/iommu/intel/pasid.c             |  12 +-
->  drivers/iommu/intel/svm.c               |   7 +-
->  drivers/iommu/io-pgtable-arm-v7s.c      |   9 +-
->  drivers/iommu/io-pgtable-arm.c          |   7 +-
->  drivers/iommu/io-pgtable-dart.c         |  37 ++--
->  drivers/iommu/iommu-pages.h             | 231 ++++++++++++++++++++++++
->  drivers/iommu/iommufd/iova_bitmap.c     |   6 +-
->  drivers/iommu/rockchip-iommu.c          |  14 +-
->  drivers/iommu/sun50i-iommu.c            |   7 +-
->  drivers/iommu/tegra-smmu.c              |  18 +-
->  drivers/vfio/vfio_iommu_type1.c         |   8 +-
->  drivers/vhost/vdpa.c                    |   3 +-
->  include/linux/mmzone.h                  |   5 +-
->  mm/vmstat.c                             |   3 +
->  28 files changed, 415 insertions(+), 199 deletions(-)
->  create mode 100644 drivers/iommu/iommu-pages.h
->
-> --
-> 2.43.0.rc2.451.g8631bc7472-goog
->
+> Best regards,
+> Krzysztof
 >
