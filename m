@@ -1,196 +1,121 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="YUTwYCyg"
-Received: from mail.manjaro.org (mail.manjaro.org [IPv6:2a01:4f8:c0c:51f3::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B081EAF;
-	Wed, 29 Nov 2023 03:37:33 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id E02CAB0;
+	Wed, 29 Nov 2023 08:48:53 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96AD0C15;
+	Wed, 29 Nov 2023 08:49:40 -0800 (PST)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 69D1A3F73F;
+	Wed, 29 Nov 2023 08:48:47 -0800 (PST)
+Message-ID: <52de3aca-41b1-471e-8f87-1a77de547510@arm.com>
+Date: Wed, 29 Nov 2023 16:48:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1701257848;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zFMkyI45VT7UXczSOfK7lHaQtQAsm/dZT4KJu3kbR6M=;
-	b=YUTwYCygZsU6Xp6EA/BNba80tC0tNo4Lj5ACDCNmLzJogjTYp7Lee8wOoW6F3wmz8j1e4B
-	gT9p9h9p6IL5YpXbFPyDy7tW1GV4ySnd9idxr+Yl07Az/bD3Bww+PyC5u01Rglv6Z4h86b
-	Jx7it0g9Ar9kd/DHDNiyE8BTFXzRFwL65dzkfiW1wzMnxIzoPAvsIHmeyrl86t2UxsKmZq
-	wBTDB+AMPpuHw3zcwlPDg+I+5bFDJc01y0Bpn+L2WpdxEKUcz7dMrNIWvzMbVPnOAHJ2/h
-	vq7XGBYrnKNgVWA315hLJ8qlYrXmCUQzi+0uMWP9aeQwh15V7XVeiUxo0j5fTw==
-Date: Wed, 29 Nov 2023 12:37:26 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, Andrew Davis <afd@ti.com>, Andrew Lunn
- <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson
- <andersson@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Heiko Stuebner <heiko@sntech.de>, Jonathan Corbet <corbet@lwn.net>, Konrad
- Dybcio <konrad.dybcio@linaro.org>, Michal Simek <michal.simek@amd.com>, Neil
- Armstrong <neil.armstrong@linaro.org>, Nishanth Menon <nm@ti.com>, Olof
- Johansson <olof@lixom.net>, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?=
- <zajec5@gmail.com>, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3] docs: dt-bindings: add DTS Coding Style document
-In-Reply-To: <0bcc0679-b883-4435-8843-cc830122c0e1@linaro.org>
-References: <20231125184422.12315-1-krzysztof.kozlowski@linaro.org>
- <63ec18b2758a9e385f446fb00b60ee69@manjaro.org>
- <0bcc0679-b883-4435-8843-cc830122c0e1@linaro.org>
-Message-ID: <83b413441a953e8f2bc56adf09511a80@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/16] iommu/fsl: use page allocation function provided by
+ iommu-pages.h
+Content-Language: en-GB
+To: Jason Gunthorpe <jgg@ziepe.ca>, Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, alex.williamson@redhat.com,
+ alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev,
+ baolu.lu@linux.intel.com, bhelgaas@google.com, cgroups@vger.kernel.org,
+ corbet@lwn.net, david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org,
+ heiko@sntech.de, iommu@lists.linux.dev, jasowang@redhat.com,
+ jernej.skrabec@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
+ kevin.tian@intel.com, krzysztof.kozlowski@linaro.org, kvm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st,
+ mhiramat@kernel.org, mst@redhat.com, m.szyprowski@samsung.com,
+ netdev@vger.kernel.org, paulmck@kernel.org, rdunlap@infradead.org,
+ samuel@sholland.org, suravee.suthikulpanit@amd.com, sven@svenpeter.dev,
+ thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com,
+ vdumpa@nvidia.com, virtualization@lists.linux.dev, wens@csie.org,
+ will@kernel.org, yu-cheng.yu@intel.com
+References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
+ <20231128204938.1453583-9-pasha.tatashin@soleen.com>
+ <1c6156de-c6c7-43a7-8c34-8239abee3978@arm.com>
+ <CA+CK2bCOtwZxTUS60PHOQ3szXdCzau7OpopgFEbbC6a9Frxafg@mail.gmail.com>
+ <20231128235037.GC1312390@ziepe.ca>
+From: Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <20231128235037.GC1312390@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2023-11-29 11:43, Krzysztof Kozlowski wrote:
-> On 28/11/2023 21:00, Dragan Simic wrote:
->> 
->> I went through the language of the entire patch, after the notice that
->> the v4 would no longer accept language improvements.  My wording- and
->> grammar-related suggestions are available inline below.
+On 28/11/2023 11:50 pm, Jason Gunthorpe wrote:
+> On Tue, Nov 28, 2023 at 06:00:13PM -0500, Pasha Tatashin wrote:
+>> On Tue, Nov 28, 2023 at 5:53 PM Robin Murphy <robin.murphy@arm.com> wrote:
+>>>
+>>> On 2023-11-28 8:49 pm, Pasha Tatashin wrote:
+>>>> Convert iommu/fsl_pamu.c to use the new page allocation functions
+>>>> provided in iommu-pages.h.
+>>>
+>>> Again, this is not a pagetable. This thing doesn't even *have* pagetables.
+>>>
+>>> Similar to patches #1 and #2 where you're lumping in configuration
+>>> tables which belong to the IOMMU driver itself, as opposed to pagetables
+>>> which effectively belong to an IOMMU domain's user. But then there are
+>>> still drivers where you're *not* accounting similar configuration
+>>> structures, so I really struggle to see how this metric is useful when
+>>> it's so completely inconsistent in what it's counting :/
+>>
+>> The whole IOMMU subsystem allocates a significant amount of kernel
+>> locked memory that we want to at least observe. The new field in
+>> vmstat does just that: it reports ALL buddy allocator memory that
+>> IOMMU allocates. However, for accounting purposes, I agree, we need to
+>> do better, and separate at least iommu pagetables from the rest.
+>>
+>> We can separate the metric into two:
+>> iommu pagetable only
+>> iommu everything
+>>
+>> or into three:
+>> iommu pagetable only
+>> iommu dma
+>> iommu everything
+>>
+>> What do you think?
 > 
-> Thanks. I want to finish this at some point and it might not happen if
-> grammar fixes will be coming every patch revision. Then after we finish
-> review, new feedback will appear about using British or American
-> spelling (which reminds me old quote/email about which variant of
-> English is most popular in Linux kernel: the incorrect one).
-
-Ah, that's a good one. :)  Basically, both English variants should be 
-fine, but a single document should obviously use only one variant.
-
->>> +=====================================
->>> +Devicetree Sources (DTS) Coding Style
->>> +=====================================
->>> +
->>> +When writing Devicetree Sources (DTS) please observe below 
->>> guidelines.
->>>  They
->> 
->> The sentence above should be replaced with: "The following guidelines
->> are to be followed when writing Devicetree Source (DTS) files."
+> I think I said this at LPC - if you want to have fine grained
+> accounting of memory by owner you need to go talk to the cgroup people
+> and come up with something generic. Adding ever open coded finer
+> category breakdowns just for iommu doesn't make alot of sense.
 > 
-> Are you sure? It's passive and I was taught it is discouraged for
-> writing. See for example:
-> https://www.hamilton.edu/academics/centers/writing/seven-sins-of-writing/1
+> You can make some argument that the pagetable memory should be counted
+> because kvm counts it's shadow memory, but I wouldn't go into further
+> detail than that with hand coded counters..
 
-Hmm, you're right, passive voice is usually not the best choice.  Here's 
-my take two for the suggested replacement sentence, which is actually a 
-simplified version:
+Right, pagetable memory is interesting since it's something that any 
+random kernel user can indirectly allocate via iommu_domain_alloc() and 
+iommu_map(), and some of those users may even be doing so on behalf of 
+userspace. I have no objection to accounting and potentially applying 
+limits to *that*.
 
-"This document contains the guidelines for writing Devicetree Source 
-(DTS) files."
+Beyond that, though, there is nothing special about "the IOMMU 
+subsystem". The amount of memory an IOMMU driver needs to allocate for 
+itself in order to function is not of interest beyond curiosity, it just 
+is what it is; limiting it would only break the IOMMU, and if a user 
+thinks it's "too much", the only actionable thing that might help is to 
+physically remove devices from the system. Similar for DMA buffers; it 
+might be intriguing to account those, but it's not really an actionable 
+metric - in the overwhelming majority of cases you can't simply tell a 
+driver to allocate less than what it needs. And that is of course 
+assuming if we were to account *all* DMA buffers, since whether they 
+happen to have an IOMMU translation or not is irrelevant (we'd have 
+already accounted the pagetables as pagetables if so).
 
->>> +should be considered complementary to any rules expressed already in
->>> Devicetree
->>> +Specification and dtc compiler (including W=1 and W=2 builds).
->> 
->> A definite article ("the") should be added before "Devicetree
-> 
-> ack
-> 
->> Specification" and "dtc".  Also, "Specification" in "Devicetree
->> Specification" should be capitalized.
-> 
-> It was.
+I bet "the networking subsystem" also consumes significant memory on the 
+same kind of big systems where IOMMU pagetables would be of any concern. 
+I believe some of the some of the "serious" NICs can easily run up 
+hundreds of megabytes if not gigabytes worth of queues, SKB pools, etc. 
+- would you propose accounting those too?
 
-Oh, sorry, I see now.  IIRC, it wasn't capitalized in some places, so I 
-made a mistake here.
-
->>> +
->>> +Individual architectures and sub-architectures can add additional
->>> rules, making
->>> +the style stricter.
->> 
->> "Sub-architectures" should be replaced with "subarchitectures".  "Can
-> 
-> A hint, you can write such review feedback as:
-> s/sub-architectures/subarchitectures/
-
-Sure, but I specifically wanted to be less terse, as a way to be 
-respectful.
-
-> BTW, my language spelling points "subarchitectures" as mistake, but
-> sure, ack.
-
-Using hyphens or not is almost always debatable, but modern English in 
-general leans toward not using them.
-
->>> +3. Unit addresses shall use lowercase hex, without leading zeros
->>> (padding).
->> 
->> "Lowercase hex" should be replaced with "lowercase hexadecimal 
->> digits".
->> 
->>> +
->>> +4. Hex values in properties, e.g. "reg", shall use lowercase hex.  
->>> The
->>> address
->>> +   part can be padded with leading zeros.
->> 
->> "Hex values" should be replaced with "Hexadecimal values".  "Lowercase
->> hex" should be replaced with "lowercase hexadecimal digits".
-> 
-> ack, but that's quite picky. We are (software) engineers so we are
-> supposed to know the slang.
-
-Sure, but this document is of a bit formal nature, so using slightly 
-more formal language can only be helpful.
-
->>> +2. Nodes without unit addresses shall be ordered alpha-numerically 
->>> by
->>> the node
->>> +   name.  For a few types of nodes, they can be ordered by the main
->>> property
->>> +   (e.g. pin configuration states ordered by value of "pins"
->>> property).
->> 
->> "Alpha-numerically" should be replaced with "alphabetically".
-> 
-> Are you sure? Does alphabetical order include numbers?
-
-That's a good question, which also crossed my mind while writing the 
-suggestions down.  A more correct word would be "lexicographically", 
-with something like ", with the already defined valid characters making 
-the symbol set and the ACSII character set defining the ordering, " 
-serving as an additional explanation.
-
-This would be a rather formal, but also very precise definition of the 
-applied ordering.
-
->>> +3. When extending nodes in the board DTS via &label, the entries 
->>> shall
->>> be
->>> +   ordered either alpha-numerically or by keeping the order from 
->>> DTSI
->>> (choice
->>> +   depending on sub-architecture).
->> 
->> "Alpha-numerically" should be replaced with "alphabetically".
-> 
-> Similar concern
-
-I agree.  We could use "lexicographically" instead, with the precise 
-definition already established earlier in the document.
-
->>> +board DTS, not in the SoC or SoM DTSI.  A partial exception is a
->>> common
->>> +external reference SoC-input clock, which could be coded as a
->>> fixed-clock in
->> 
->> "SoC-input" should be replaced with "SoC input".
-> 
-> ack, thanks!
-
-Thank you once again for working on this document!
+Thanks,
+Robin.
