@@ -1,174 +1,137 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wSv3oYCK"
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28CAF12A
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Nov 2023 10:49:08 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1cfafe3d46bso1004545ad.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Nov 2023 10:49:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="LXdK4D//"
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA1B510C8
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Nov 2023 11:45:44 -0800 (PST)
+Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2c9c39b7923so2585721fa.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Nov 2023 11:45:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701283747; x=1701888547; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gmmJDjXSHVVtM0uWk3D52kGsoBdId2LUYqixFeAViCk=;
-        b=wSv3oYCKGhvi4kf8tvjLYp4FwzOdWFcWKV6trHgVgYjQ01geGO/7bQMbtnPZTMUF3E
-         9+sEmGiBGLD5FamHR0B1IEiP1cPG34FDKRXuh0q4q2U1L+VaBDym3o5K0fbM6djSkEPA
-         bX45eFK7YXCmrIaDPI0OPvgkC4b6JhpRdC8Xm0jMML8A7XELkAC7NFrw1rPrY1NYSaOK
-         ApiW2eQ0kXomzZPZ6f2IHCgXmNz6LhEDMEJi3Afdsd2noVZYVp45E5DW5E03ggy9E0My
-         YAXrwTnKELSHMzfRjyLLl1XSLxOz6199if3cxq8YWehobYzoRyxXxK46PTFz5eOOsUHS
-         dYbg==
+        d=soleen.com; s=google; t=1701287143; x=1701891943; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fNNsoM3smwE3RnQXjosvlH5YCUc/qVQE7cVYHj28TpE=;
+        b=LXdK4D//aEMP9BGxDDgf86iGwwP755ud2a5fDDm/H2p6QdLjemMKdW6OURufzQsPsY
+         0eLaXgTBlg6Ro0WFppwNRmOJLM1GDxyvkcB5TIzwaa1UbSsi7lsRSu+qu1QqrpGx2WuC
+         PMdM6kTA5x1LLeGlJbl22YhycJKkzgKrJu76H5g6PWBs4oxqQRSTNqluBFW5+ez9Jziz
+         4aIESjCEFR56CJFlo89lMbSGxS5kd6/vIt4XU6zdtPKVphOyJms1zwcJv0kWIeUQ3+tq
+         DwWxhQoRd48Vb+sQo8NASWDsRlac17f1RpzDbTnO7V3cede7ZgbiDEwo9K3QOihi0Ay/
+         uOvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701283747; x=1701888547;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gmmJDjXSHVVtM0uWk3D52kGsoBdId2LUYqixFeAViCk=;
-        b=G209qevQd7ouLI6Y+BHkhBke/3+cjSjEN/hnONFKKSMi8u2kl0cOHOufu0YbFS3L8z
-         caIYJHT/U6j3IGogIclSb2opnWOkauPo6+pgq+Abq35AnP5Y3a896zCWRvUdBANABxZG
-         n9JVgLzKKFyLjwRpTp+ZXueeeNG6wFdBizb40fCmZ1dZ+fh2sGBrKYXUqsJ4WKrwjZvV
-         IBwD7fmfLBedJJElsg1PJ33BOT3k0BmRnCU62HxBInZDDdQeaL1Qs1FDEn1zrkVKE7M0
-         NvoGyw12+i00PQFuSAJsgPX2HmBvCMux1/EP19SZgHSO6RBl4hab80ndnGiFBI6Fb+bt
-         23/A==
-X-Gm-Message-State: AOJu0YwKJBx7YMHp27WwM4o/fmuSgFtk+eKbROoIiPowZ4p77pS1lD3K
-	qGc7Ius9se8xlRAB0Yw+y2v02PTZHuSKwc9Uvg8TJQ==
-X-Google-Smtp-Source: AGHT+IH42YLg3I/LNrrXhhzS7bJ0UN+7Cm1cww+4mOEg05pxaNPpggy5c3QxpYyxNjwWapMrvZH8ZkHS1F+kItdM/OU=
-X-Received: by 2002:a17:903:183:b0:1cc:449b:689e with SMTP id
- z3-20020a170903018300b001cc449b689emr26526735plg.20.1701283747581; Wed, 29
- Nov 2023 10:49:07 -0800 (PST)
+        d=1e100.net; s=20230601; t=1701287143; x=1701891943;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fNNsoM3smwE3RnQXjosvlH5YCUc/qVQE7cVYHj28TpE=;
+        b=MlEOYMZs8HVvXkigD2P+uwW63/e55k+vfBodnCLCYy3mxdHjRIhxEKCbM/XmxwIO78
+         g/yTHOJcBgi2iagcdlF4IKZLqlzqw2hd1ePa/YWtQagnBGwQThBOkGDv14ScZzSrFoq0
+         tbJwnm71LNDXNv+vP7D4T6wNYf1MMk3vMXfWW7NNQIQj6PckHmKSyB/tlPZC2LCY/Iw4
+         tjyfdP9jrnTY73yqv6zhoiGJdSIs5kGbYPR5ooNSU7nGdQ0gB64StGrJ8e6KVzyUJpWg
+         2OFlw3/3L3eEV0RadlljjXTvRuw+iUz3xm+WcRfnOO2TcY+dYcg7Uo5WnRF9PZoGFQJN
+         GoWQ==
+X-Gm-Message-State: AOJu0YySwphk1ooUxJElnGOI16A/Gq/dA7i5LqsjEfMDL9dL8G6z2+bm
+	n+VZn4dspsHbE+vK36Vxi3XjobJ/eS5zAML069/vkw==
+X-Google-Smtp-Source: AGHT+IHo1CBmTuUhAhmoXR/KJsiUOGXe0H72uTjo3bJ8/f4ydzGN+L/1B0mI7eNNH55dLwJ3p7aHezZlyWQqax7aj9w=
+X-Received: by 2002:a2e:9b59:0:b0:2c6:ece6:5b65 with SMTP id
+ o25-20020a2e9b59000000b002c6ece65b65mr12569535ljj.10.1701287142874; Wed, 29
+ Nov 2023 11:45:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38@epcas2p4.samsung.com>
- <20231126094618.2545116-1-youngmin.nam@samsung.com> <bb738a6b-815d-4fad-b73f-559f1ba8cd68@linaro.org>
- <ZWU75VtJ/mXpMyQr@perf> <1fd55b36-0837-4bf7-9fde-e573d6cb214a@linaro.org>
- <CAPLW+4n0SAOTb6wocY-WjkxgSFMbx+nVuqdaPcNYVDsbfg+EfA@mail.gmail.com> <ZWbjPIydJRrPnuDy@perf>
-In-Reply-To: <ZWbjPIydJRrPnuDy@perf>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 29 Nov 2023 12:48:56 -0600
-Message-ID: <CAPLW+4=QQR_u0Fi2L0orQFTd-_UpYZAQ94Je772Vs-2WKZGuiA@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: samsung: add irq_set_affinity() for non wake
- up external gpio interrupt
-To: Youngmin Nam <youngmin.nam@samsung.com>, krzysztof.kozlowski@linaro.org
-Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, alim.akhtar@samsung.com, 
-	linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
+ <20231128204938.1453583-9-pasha.tatashin@soleen.com> <1c6156de-c6c7-43a7-8c34-8239abee3978@arm.com>
+ <CA+CK2bCOtwZxTUS60PHOQ3szXdCzau7OpopgFEbbC6a9Frxafg@mail.gmail.com>
+ <20231128235037.GC1312390@ziepe.ca> <52de3aca-41b1-471e-8f87-1a77de547510@arm.com>
+In-Reply-To: <52de3aca-41b1-471e-8f87-1a77de547510@arm.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 29 Nov 2023 14:45:03 -0500
+Message-ID: <CA+CK2bCcfS1Fo8RvTeGXj_ejPRX9--sh5Jz8nzhkZnut4juDmg@mail.gmail.com>
+Subject: Re: [PATCH 08/16] iommu/fsl: use page allocation function provided by iommu-pages.h
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, akpm@linux-foundation.org, alex.williamson@redhat.com, 
+	alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev, 
+	baolu.lu@linux.intel.com, bhelgaas@google.com, cgroups@vger.kernel.org, 
+	corbet@lwn.net, david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org, 
+	heiko@sntech.de, iommu@lists.linux.dev, jasowang@redhat.com, 
+	jernej.skrabec@gmail.com, jonathanh@nvidia.com, joro@8bytes.org, 
+	kevin.tian@intel.com, krzysztof.kozlowski@linaro.org, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, mst@redhat.com, m.szyprowski@samsung.com, 
+	netdev@vger.kernel.org, paulmck@kernel.org, rdunlap@infradead.org, 
+	samuel@sholland.org, suravee.suthikulpanit@amd.com, sven@svenpeter.dev, 
+	thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com, 
+	vdumpa@nvidia.com, virtualization@lists.linux.dev, wens@csie.org, 
+	will@kernel.org, yu-cheng.yu@intel.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 29, 2023 at 12:32=E2=80=AFAM Youngmin Nam <youngmin.nam@samsung=
-.com> wrote:
-> > I tried to test this patch on E850-96, and an attempt to write into
-> > smp_affinity (for some GPIO irq) also fails for me:
+> >> We can separate the metric into two:
+> >> iommu pagetable only
+> >> iommu everything
+> >>
+> >> or into three:
+> >> iommu pagetable only
+> >> iommu dma
+> >> iommu everything
+> >>
+> >> What do you think?
 > >
-> >     # echo f0 > smp_affinity
-> >     -bash: echo: write error: Input/output error
+> > I think I said this at LPC - if you want to have fine grained
+> > accounting of memory by owner you need to go talk to the cgroup people
+> > and come up with something generic. Adding ever open coded finer
+> > category breakdowns just for iommu doesn't make alot of sense.
 > >
-> > When I add some pr_err() to exynos_irq_set_affinity(), I can't see
-> > those printed in dmesg. So I guess exynos_irq_set_affinity() doesn't
-> > get called at all. So the error probably happens before
-> > .irq_set_affinity callback gets called.
-> >
-> > Youngmin, can you please try and test this patch on E850-96? This
-> > board is already supported in upstream kernel. For example you can use
-> > "Volume Up" interrupt for the test, which is GPIO irq.
-> >
+> > You can make some argument that the pagetable memory should be counted
+> > because kvm counts it's shadow memory, but I wouldn't go into further
+> > detail than that with hand coded counters..
 >
-> I intened this affinity setting would work only on *Non* Wakeup External =
-Interrupt.
-> The "Volume Up" on E850-96 board is connected with "gpa0-7" and
-> that is Wakeup External interrupt so that we can't test the callback.
->
+> Right, pagetable memory is interesting since it's something that any
+> random kernel user can indirectly allocate via iommu_domain_alloc() and
+> iommu_map(), and some of those users may even be doing so on behalf of
+> userspace. I have no objection to accounting and potentially applying
+> limits to *that*.
 
-Oh no. It was really silly mistake on my part :) But please check my
-answer below for good news.
+Yes, in the next version, I will separate pagetable only from the
+rest, for the limits.
 
-> I couldn't find out a pin for the test on E850-96 board yet.
-> We can test if there is a usage of *Non" Wake up External Interrupt of GP=
-IO
-> on E850-96 board.
->
-> Do you have any idea ?
->
+> Beyond that, though, there is nothing special about "the IOMMU
+> subsystem". The amount of memory an IOMMU driver needs to allocate for
+> itself in order to function is not of interest beyond curiosity, it just
+> is what it is; limiting it would only break the IOMMU, and if a user
 
-Yep, just managed to successfully test your patch on E850-96. My
-testing procedure below might appear messy, but I didn't want to do
-any extra soldering :)
+Agree about the amount of memory IOMMU allocates for itself, but that
+should be small, if it is not, we have to at least show where the
+memory is used.
 
-Used GPG1[0] pin for testing. As you can see from schematics [1],
-GPG1[0] is connected to R196 resistor (which is not installed on the
-board).
+> thinks it's "too much", the only actionable thing that might help is to
+> physically remove devices from the system. Similar for DMA buffers; it
+> might be intriguing to account those, but it's not really an actionable
+> metric - in the overwhelming majority of cases you can't simply tell a
+> driver to allocate less than what it needs. And that is of course
+> assuming if we were to account *all* DMA buffers, since whether they
+> happen to have an IOMMU translation or not is irrelevant (we'd have
+> already accounted the pagetables as pagetables if so).
 
-I've modified E850-96 dts file like this:
+DMA mappings should be observable (do not have to be limited). At the
+very least, it can help with explaining the kernel memory overhead
+anomalies on production systems.
 
-8<-------------------------------------------------------------------------=
---->8
-        gpio-keys {
-                compatible =3D "gpio-keys";
-                pinctrl-names =3D "default";
--               pinctrl-0 =3D <&key_voldown_pins &key_volup_pins>;
-+               pinctrl-0 =3D <&key_voldown_pins &key_volup_pins &key_test_=
-pins>;
+> I bet "the networking subsystem" also consumes significant memory on the
 
-                ...
+It does, and GPU drivers also may consume a significant amount of memory.
 
-+               test-key {
-+                       label =3D "Test Key";
-+                       linux,code =3D <KEY_RIGHTCTRL>;
-+                       gpios =3D <&gpg1 0 GPIO_ACTIVE_LOW>;
-+               };
-        };
+> same kind of big systems where IOMMU pagetables would be of any concern.
+> I believe some of the some of the "serious" NICs can easily run up
+> hundreds of megabytes if not gigabytes worth of queues, SKB pools, etc.
+> - would you propose accounting those too?
 
-...
+Yes. Any kind of kernel memory that is proportional to the workload
+should be accountable. Someone is using those resources compared to
+the idling system, and that someone should be charged.
 
-+&pinctrl_peri {
-+       key_test_pins: key-test-pins {
-+               samsung,pins =3D "gpg1-0";
-+               samsung,pin-function =3D <EXYNOS_PIN_FUNC_EINT>;
-+               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
-+               samsung,pin-drv =3D <EXYNOS5420_PIN_DRV_LV1>;
-+       };
-+};
-8<-------------------------------------------------------------------------=
---->8
-
-It appeared in /proc/interrupts as follows:
-
-    87:          2          0          0          0          0
- 0          0          0      gpg1   0 Edge      Test Key
-
-Then I touched R196 resistor pads with my finger (emulating key press)
-and looked again at /proc/interrupts:
-
-    87:        444          0          0          0          0
- 0          0          0      gpg1   0 Edge      Test Key
-
-Then I reconfigured smp_affinity like so:
-
-    # cat /proc/irq/87/smp_affinity
-    ff
-    # echo f0 > /proc/irq/87/smp_affinity
-    # cat /proc/irq/87/smp_affinity
-    f0
-
-Then I messed with R196 resistor pads with my finger again, and
-re-checked /proc/interrupts:
-
-               CPU0       CPU1       CPU2       CPU3       CPU4
-CPU5       CPU6       CPU7
-     87:        444          0          0          0        234
-  0          0          0      gpg1   0 Edge      Test Key
-
-And without this patch that procedure above of course doesn't work.
-
-So as far as I'm concerned, feel free to add:
-
-Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
-
-[1] https://www.96boards.org/documentation/consumer/e850-96b/hardware-docs/=
-files/e850-96b-schematics.pdf
-
-Thanks!
+Pasha
