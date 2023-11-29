@@ -1,121 +1,226 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id E02CAB0;
-	Wed, 29 Nov 2023 08:48:53 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96AD0C15;
-	Wed, 29 Nov 2023 08:49:40 -0800 (PST)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 69D1A3F73F;
-	Wed, 29 Nov 2023 08:48:47 -0800 (PST)
-Message-ID: <52de3aca-41b1-471e-8f87-1a77de547510@arm.com>
-Date: Wed, 29 Nov 2023 16:48:43 +0000
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33CC4C3AC;
+	Wed, 29 Nov 2023 17:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSZ0Bk+X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7F0C433C7;
+	Wed, 29 Nov 2023 17:49:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701280198;
+	bh=hOv0atHingnUJuqYGWuaNZX1Z0M6TjcYBZp5aRGip38=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HSZ0Bk+XmVmFmLv332NYdThxfq4coZgxOk/QGCVmtzUcqbP97NlHYXwFbriiyC9FH
+	 d7/i+52mNChc0yjo6/jXpoAsN+V5rk2WU0NQRFX8RY+48z8kY4qWBHx2BeG1poDNHK
+	 K/xwWP38VggGm4bT8c6GbPVqQEGov8dERZjxti4jevPG5l3dDhxzlO5QuV9tWcKJYo
+	 ZC9huQ3TP9gplgB3P0TMLjTogFgeQKOxgo4E/PjbsPtu38ro5u6PfYzJvA7+vXzZ+0
+	 xhz1vMusrIAxnD4UEQaLNFGsIVKMi1vSUOYnFXILQicFq7V0ZJnyhiBs1v52yDZt7V
+	 mdUXs2OqlgUpQ==
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-1fa0885e1c2so3186478fac.0;
+        Wed, 29 Nov 2023 09:49:58 -0800 (PST)
+X-Gm-Message-State: AOJu0Yx7QVeVut9Q7yfnjijicfKXvqiypvOMzedrrYJznFq8/TgZ5YU2
+	mbkk4UEEicsIUvs4EzeABjNS0A2eh5zxkvpVA1M=
+X-Google-Smtp-Source: AGHT+IGPL/pndXjMwP7hy3JldohpjQSp00uVIIbyXY3nxHbNA9I2y0xKAZxcbbFRrog0l235VVgYmZxUmeL8Cb87sfc=
+X-Received: by 2002:a05:6870:82a5:b0:1fa:2888:701d with SMTP id
+ q37-20020a05687082a500b001fa2888701dmr17426756oae.8.1701280197666; Wed, 29
+ Nov 2023 09:49:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/16] iommu/fsl: use page allocation function provided by
- iommu-pages.h
-Content-Language: en-GB
-To: Jason Gunthorpe <jgg@ziepe.ca>, Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, alex.williamson@redhat.com,
- alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev,
- baolu.lu@linux.intel.com, bhelgaas@google.com, cgroups@vger.kernel.org,
- corbet@lwn.net, david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org,
- heiko@sntech.de, iommu@lists.linux.dev, jasowang@redhat.com,
- jernej.skrabec@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
- kevin.tian@intel.com, krzysztof.kozlowski@linaro.org, kvm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st,
- mhiramat@kernel.org, mst@redhat.com, m.szyprowski@samsung.com,
- netdev@vger.kernel.org, paulmck@kernel.org, rdunlap@infradead.org,
- samuel@sholland.org, suravee.suthikulpanit@amd.com, sven@svenpeter.dev,
- thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com,
- vdumpa@nvidia.com, virtualization@lists.linux.dev, wens@csie.org,
- will@kernel.org, yu-cheng.yu@intel.com
-References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
- <20231128204938.1453583-9-pasha.tatashin@soleen.com>
- <1c6156de-c6c7-43a7-8c34-8239abee3978@arm.com>
- <CA+CK2bCOtwZxTUS60PHOQ3szXdCzau7OpopgFEbbC6a9Frxafg@mail.gmail.com>
- <20231128235037.GC1312390@ziepe.ca>
-From: Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <20231128235037.GC1312390@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20231122-dtc-warnings-v2-0-bd4087325392@kernel.org>
+ <CAK7LNASVMjVg4dr=KdSDHwGww_47H78H7rMXA=wf+ncugesDSA@mail.gmail.com>
+ <CAL_Jsq+N0GxwZ2YmspEzfiuGOw7M+DmYkyhLgaYtk+Ov2ycY_A@mail.gmail.com>
+ <CAK7LNAT6-pBjUbB+Fcik27QWniK7BizvoUG+EiFvFtJ+MTdmJA@mail.gmail.com> <CAL_JsqJSFnVG6+CfcbgVFGo3EyiSTt-et0NSW2qWjei+zXURcg@mail.gmail.com>
+In-Reply-To: <CAL_JsqJSFnVG6+CfcbgVFGo3EyiSTt-et0NSW2qWjei+zXURcg@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 30 Nov 2023 02:49:21 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARrRwzrU0m0SVOfnJj87hw4kL2YpDK0xRCwuW6fYT9OGg@mail.gmail.com>
+Message-ID: <CAK7LNARrRwzrU0m0SVOfnJj87hw4kL2YpDK0xRCwuW6fYT9OGg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] kbuild: Per arch/platform dtc warning levels
+To: Rob Herring <robh@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Conor Dooley <conor@kernel.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28/11/2023 11:50 pm, Jason Gunthorpe wrote:
-> On Tue, Nov 28, 2023 at 06:00:13PM -0500, Pasha Tatashin wrote:
->> On Tue, Nov 28, 2023 at 5:53 PM Robin Murphy <robin.murphy@arm.com> wrote:
->>>
->>> On 2023-11-28 8:49 pm, Pasha Tatashin wrote:
->>>> Convert iommu/fsl_pamu.c to use the new page allocation functions
->>>> provided in iommu-pages.h.
->>>
->>> Again, this is not a pagetable. This thing doesn't even *have* pagetables.
->>>
->>> Similar to patches #1 and #2 where you're lumping in configuration
->>> tables which belong to the IOMMU driver itself, as opposed to pagetables
->>> which effectively belong to an IOMMU domain's user. But then there are
->>> still drivers where you're *not* accounting similar configuration
->>> structures, so I really struggle to see how this metric is useful when
->>> it's so completely inconsistent in what it's counting :/
->>
->> The whole IOMMU subsystem allocates a significant amount of kernel
->> locked memory that we want to at least observe. The new field in
->> vmstat does just that: it reports ALL buddy allocator memory that
->> IOMMU allocates. However, for accounting purposes, I agree, we need to
->> do better, and separate at least iommu pagetables from the rest.
->>
->> We can separate the metric into two:
->> iommu pagetable only
->> iommu everything
->>
->> or into three:
->> iommu pagetable only
->> iommu dma
->> iommu everything
->>
->> What do you think?
-> 
-> I think I said this at LPC - if you want to have fine grained
-> accounting of memory by owner you need to go talk to the cgroup people
-> and come up with something generic. Adding ever open coded finer
-> category breakdowns just for iommu doesn't make alot of sense.
-> 
-> You can make some argument that the pagetable memory should be counted
-> because kvm counts it's shadow memory, but I wouldn't go into further
-> detail than that with hand coded counters..
+On Wed, Nov 29, 2023 at 7:25=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
+:
+>
+> On Tue, Nov 28, 2023 at 6:03=E2=80=AFAM Masahiro Yamada <masahiroy@kernel=
+.org> wrote:
+> >
+> > On Mon, Nov 27, 2023 at 11:03=E2=80=AFPM Rob Herring <robh@kernel.org> =
+wrote:
+> > >
+> > > On Thu, Nov 23, 2023 at 1:39=E2=80=AFAM Masahiro Yamada <masahiroy@ke=
+rnel.org> wrote:
+> > > >
+> > > > On Thu, Nov 23, 2023 at 7:12=E2=80=AFAM Rob Herring <robh@kernel.or=
+g> wrote:
+> > > > >
+> > > > > This series adds support to set the dtc extra warning level on a =
+per
+> > > > > arch or per platform (directory really) basis.
+> > > > >
+> > > > > The first version of this was just a simple per directory overrid=
+e for
+> > > > > Samsung platforms, but Conor asked to be able to do this for all =
+of
+> > > > > riscv.
+> > > > >
+> > > > > For merging, either I can take the whole thing or the riscv and s=
+amsung
+> > > > > patches can go via their normal trees. The added variable will ha=
+ve no
+> > > > > effect until merged with patch 2.
+> > > > >
+> > > > > v1:
+> > > > >  - https://lore.kernel.org/all/20231116211739.3228239-1-robh@kern=
+el.org/
+> > > > >
+> > > > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > > > > ---
+> > > >
+> > > >
+> > > > There were some attempts in the past to enable W=3D1 in particular =
+subsystems,
+> > > > so here is a similar comment.
+> > > >
+> > > > Adding a new warning flag to W=3D1 is always safe without doing any=
+ compile test.
+> > > >
+> > > > With this series, it would not be true any more because a new warni=
+ng in W=3D1
+> > > > would potentially break riscv/samsung platforms.
+> > >
+> > > The difference here is the people potentially adding warnings are als=
+o
+> > > the ones ensuring no warnings.
+> > >
+> > > > Linus requires a clean build (i.e. zero warning) when W=3D option i=
+s not given.
+> > >
+> > > Linus doesn't build any of this AFAICT. We are not always warning fre=
+e
+> > > for W=3D0 with dtbs.
+> >
+> >
+> >
+> > Does it mean, you can enable all warnings by default?
+>
+> No, Linus might not care, but others (me) do. The whole point of not
+> allowing warnings is the same. Get to zero warnings so any new
+> warnings stand out. We now have some subset of platforms which are
+> warning free and want warnings enabled by default to keep them that
+> way. How do you suggest we do that?
 
-Right, pagetable memory is interesting since it's something that any 
-random kernel user can indirectly allocate via iommu_domain_alloc() and 
-iommu_map(), and some of those users may even be doing so on behalf of 
-userspace. I have no objection to accounting and potentially applying 
-limits to *that*.
 
-Beyond that, though, there is nothing special about "the IOMMU 
-subsystem". The amount of memory an IOMMU driver needs to allocate for 
-itself in order to function is not of interest beyond curiosity, it just 
-is what it is; limiting it would only break the IOMMU, and if a user 
-thinks it's "too much", the only actionable thing that might help is to 
-physically remove devices from the system. Similar for DMA buffers; it 
-might be intriguing to account those, but it's not really an actionable 
-metric - in the overwhelming majority of cases you can't simply tell a 
-driver to allocate less than what it needs. And that is of course 
-assuming if we were to account *all* DMA buffers, since whether they 
-happen to have an IOMMU translation or not is irrelevant (we'd have 
-already accounted the pagetables as pagetables if so).
 
-I bet "the networking subsystem" also consumes significant memory on the 
-same kind of big systems where IOMMU pagetables would be of any concern. 
-I believe some of the some of the "serious" NICs can easily run up 
-hundreds of megabytes if not gigabytes worth of queues, SKB pools, etc. 
-- would you propose accounting those too?
 
-Thanks,
-Robin.
+
+You may not like it, but an alternative solution could be,
+hard-code extra warning flags.
+
+
+In my compile-tests, Samsung platform is not W=3D1 clean yet.
+I see -Wunit_address_vs_reg, -Wsimple_bus_reg,
+-Wunique_unit_address_if_enabled warnings.
+
+I do not see anything else, so you can add the following three
+flags to keep it warning-free.
+
+
+
+
+
+
+diff --git a/arch/arm/boot/dts/samsung/Makefile
+b/arch/arm/boot/dts/samsung/Makefile
+index 7becf36656b1..1e15784ec51f 100644
+--- a/arch/arm/boot/dts/samsung/Makefile
++++ b/arch/arm/boot/dts/samsung/Makefile
+@@ -1,4 +1,10 @@
+ # SPDX-License-Identifier: GPL-2.0
++
++dtcflags :=3D \
++       -Wavoid_unnecessary_addr_size \
++       -Walias_paths \
++       -Wgraph_child_address
++
+ dtb-$(CONFIG_ARCH_EXYNOS3) +=3D \
+        exynos3250-artik5-eval.dtb \
+        exynos3250-monk.dtb \
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 1a965fe68e01..aa5a5fc39cec 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -362,6 +362,9 @@ DTC_FLAGS +=3D -Wnode_name_chars_strict \
+        -Wunique_unit_address
+ endif
+
++# per-directory flags
++DTC_FLAGS +=3D $(dtcflags)
++# per-file flags
+ DTC_FLAGS +=3D $(DTC_FLAGS_$(basetarget))
+
+ # Set -@ if the target is a base DTB that overlay is applied onto
+
+
+
+
+
+
+
+>
+> I understand your point on W=3D1 in general, but I think it just doesn't
+> apply in this case. In general,
+> someone may be testing a new compiler and there's some new warning to
+> enable, so they add it to W=3D1. They are working independently of any
+> subsystem (and Linus) and introducing new warnings would be a burden
+> to fix and a problem to leave. For DT, it is a bit different as adding
+> new warnings, updating dtc version, and selecting warnings to enable
+> are pretty much all done together.
+> Plus, schema warnings have pretty
+> much superseded dtc warnings. If we do add new warnings which can't be
+> fixed up front, then we could still only enable the warning for W=3D1
+> from the command line. Something like this on top of this series:
+>
+> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> index 53a74e53e0ca..41307c6e1fee 100644
+> --- a/scripts/Makefile.lib
+> +++ b/scripts/Makefile.lib
+> @@ -341,6 +341,10 @@ quiet_cmd_gzip =3D GZIP    $@
+>  # ----------------------------------------------------------------------=
+-----
+>  DTC ?=3D $(objtree)/scripts/dtc/dtc
+>
+> +ifeq ($(findstring 1,$(KBUILD_EXTRA_WARN)),)
+> +DTC_FLAGS +=3D -Wno-some_new_warning_we_need_off_globally
+> +endif
+> +
+
+Hmm. Tricky, but works.
+
+KBUILD_EXTRA_WARN_DTC=3D1 is weaker than KBUILD_EXTRA_WARN=3D1
+
+
+
+
+>  KBUILD_EXTRA_WARN_DTC +=3D $(KBUILD_EXTRA_WARN)
+>
+>  # Disable noisy checks by default
+>
+--
+Best Regards
+Masahiro Yamada
