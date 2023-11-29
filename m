@@ -1,174 +1,184 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SsZR4+oD"
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA1DC19BA
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Nov 2023 00:00:08 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-548ce39b101so8429173a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Nov 2023 00:00:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701244807; x=1701849607; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=wUfUD/oQz54nGG7jbhVhWy8+i62QavId9Qpb09Q0Qyw=;
-        b=SsZR4+oDpas/jZScqZ7oUKNCMebX09qBx6NIIFkhqwVmAlhKNv4wV2i0c6fbZDowl+
-         PnHiJhKq+VpR5ieOt1v/3pkvx6RjudaQUQFlsAIAB0V47xyxP/DPUcfZwC3WmNtKx7nk
-         irAT/bgKvM11eXCY11a8TKHmJRtWRPyq56WT0n67Lc65B8R4F7yP9+NoV9A33b+XI3f8
-         WWXH0LLue8QzVMVJ6jMRq3fJDVMz0NHkk+lTC4CGS8ehoxEffalqpgaeK/RisgNZTPFw
-         ick8lm6Z12ObX0+dwpYVfp1bd7XDHL0wY1OrUJQ+YoCoxRNC/vfti7ksWQVgoCutHFMn
-         zruQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701244807; x=1701849607;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wUfUD/oQz54nGG7jbhVhWy8+i62QavId9Qpb09Q0Qyw=;
-        b=BpewEy4AZX85DfofZGj/IS39keeczOSAHlf5eJqDUhANyWQW1ti1Eb+VwwA6Im18UK
-         +Kxmxw3aiMUTB40lOJ5B9hGM0VDudMvz15Wp3kPIGuaKeUOq1EA75JC/OSwkqGcROPjB
-         v7iZzlmRZzjlNFQHQE9g/OFOTwc0bfflxYxg4ucZ1B4LvpGvcQFUzkKf798bX/sB01Cc
-         GyWXGRaNYx19QlJElpDnoIeScN+KXsVaJ8INOrhIOtZDUTfyifBneHIm05TBQr6yHeHS
-         sLq6DtlQQAmCcINMcHPPu7OycFf2wBfbS5XYwf1dROxes+6QPP+oHSbeAmTBBtCFqwQ3
-         qOsA==
-X-Gm-Message-State: AOJu0YysiU1Mb7RwLMPZ1ztg/FpRHW2UFgLT2uGcSW5HfyB6YXTZRnJx
-	2rZGXtI1k/VncEbOUsGCnVusNw==
-X-Google-Smtp-Source: AGHT+IEc14tdp6TvnxmKroZTOZjJqE7gPgswZziSscWMYri53yt+h5aqh/mjyofHXov+LCugo6Wcsg==
-X-Received: by 2002:a05:6402:320e:b0:54b:4e14:ee14 with SMTP id g14-20020a056402320e00b0054b4e14ee14mr8576603eda.23.1701244807219;
-        Wed, 29 Nov 2023 00:00:07 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.223.109])
-        by smtp.gmail.com with ESMTPSA id s3-20020a056402014300b00543b2d6f88asm7061697edu.15.2023.11.29.00.00.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Nov 2023 00:00:06 -0800 (PST)
-Message-ID: <a0ac295b-ea96-475c-acde-5a61de8ca170@linaro.org>
-Date: Wed, 29 Nov 2023 09:00:04 +0100
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fTsFwG7t"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E73119B9
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Nov 2023 00:11:43 -0800 (PST)
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231129081139epoutp03a009710725426230ecdee875eaef9d51~cCcS8Xy-D1436614366epoutp03b
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Nov 2023 08:11:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231129081139epoutp03a009710725426230ecdee875eaef9d51~cCcS8Xy-D1436614366epoutp03b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1701245499;
+	bh=ZsnlkJe58yX5RXB5ZD8t4M6Ua2BJjjBj9mFjfRMfBec=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fTsFwG7turQZhfkTmyJF/IieTNe8TppqPQXHD+9EZXLO1P4Cvt+fa7g094KlPU568
+	 x2ldpoSMdVh6E0NlXMyiAv8fafto9vkbsTHP7ZO9t3RssfFZ8WR/y+KNI/jE3We6Xw
+	 3sQhN/Ticm9eEM5F2cUpemRZDrienAP+UOn5gcao=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20231129081139epcas2p192dfa2419ca81108b0d0c7e0d9ad053c~cCcSp8lXf1568515685epcas2p1O;
+	Wed, 29 Nov 2023 08:11:39 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.69]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4SgBqZ6Dvjz4x9Q3; Wed, 29 Nov
+	2023 08:11:38 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	77.DD.10022.A32F6656; Wed, 29 Nov 2023 17:11:38 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20231129081138epcas2p2ba1f0c83f896f36d03110535a1623109~cCcRX2iNg0345603456epcas2p2N;
+	Wed, 29 Nov 2023 08:11:38 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20231129081138epsmtrp210c155f374c3126daad7227894adea89~cCcRXHyTQ1662616626epsmtrp2T;
+	Wed, 29 Nov 2023 08:11:38 +0000 (GMT)
+X-AuditID: b6c32a47-bfdfa70000002726-77-6566f23a96b0
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	72.0E.08755.932F6656; Wed, 29 Nov 2023 17:11:38 +0900 (KST)
+Received: from perf (unknown [10.229.95.91]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20231129081137epsmtip2331aa65c12c8e99d2a46b92b8aef9791~cCcRJ8Wsx3218932189epsmtip2l;
+	Wed, 29 Nov 2023 08:11:37 +0000 (GMT)
+Date: Wed, 29 Nov 2023 17:46:43 +0900
+From: Youngmin Nam <youngmin.nam@samsung.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, alim.akhtar@samsung.com,
+	linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, semen.protsenko@linaro.org
+Subject: Re: [PATCH v2] pinctrl: samsung: add irq_set_affinity() for non
+ wake up external gpio interrupt
+Message-ID: <ZWb6cyTgyEcee7DZ@perf>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] pinctrl: samsung: add irq_set_affinity() for non wake
- up external gpio interrupt
-To: Youngmin Nam <youngmin.nam@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>
-Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, alim.akhtar@samsung.com,
- linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
+In-Reply-To: <a0ac295b-ea96-475c-acde-5a61de8ca170@linaro.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKJsWRmVeSWpSXmKPExsWy7bCmqa7Vp7RUgyNrDC0ezNvGZrH39VZ2
+	iyl/ljNZbHp8jdVi8/w/jBaXd81hs5hxfh+TxeE37awWz/uArFW7/jA6cHnsnHWX3ePOtT1s
+	HpuX1Hv0bVnF6PF5k1wAa1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5i
+	bqqtkotPgK5bZg7QUUoKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpScAvMCveLE3OLS
+	vHS9vNQSK0MDAyNToMKE7IzXt5axFfwUr7j++wxrA+MU4S5GTg4JAROJDVeWs3cxcnEICexg
+	lJj4dAkjhPOJUWJBz0kWCOcbo0TjvVUsMC1nFz9mhkjsZZRo2b8dynnIKPHv1QW2LkYODhYB
+	VYnJk6JBGtgEdCW2nfjHCGKLCFhILN6wkBWknlmgk0li+vaZrCAJYYEsiTsbu8E28AooS0x6
+	1A9lC0qcnPkEzOYUsJNo/zODCaRZQmAih8TLl1/YIE5ykbj+uIkJwhaWeHV8CzuELSXx+d1e
+	qJpsidW/LkHFKyTa7/UwQ9jGErOetYNdxyyQIdH2aC7YAxJARxy5xQIR5pPoOPyXHSLMK9HR
+	JgTRqSbxa8oGRghbRmL34hVQEz0knk3eBA3TZcwSt+4/Z53AKDcLyTuzkGybBTSWWUBTYv0u
+	fYiwvETz1tnMEGFpieX/OJBULGBkW8UollpQnJueWmxUYAyP7OT83E2M4PSq5b6DccbbD3qH
+	GJk4GA8xSnAwK4nw6n1MThXiTUmsrEotyo8vKs1JLT7EaAqMponMUqLJ+cAEn1cSb2hiaWBi
+	ZmZobmRqYK4kznuvdW6KkEB6YklqdmpqQWoRTB8TB6dUA9NK+4dW2xOusOtFb37z/rHk7n+n
+	Ds+amRu7TH2V9TS+26uSHuVGLlrG+Xjzg7PtdSqb/FRKFrq/uRzFc5Lr8kEN/19B1e5/ew64
+	sV4V3aiqm+zLNsOYJ1rQ6Esf5+4zc8w1b7oHPdOuv7D4qc2c28pszzOq9YQKK94X/taxVmqV
+	23otsOrjgeaVs5msf+wN+795PeeyJVv6edmVVJ4bCDtNv2Mg8T7edGOUg41Qm2HY+/U7vQ70
+	aRVcvGr7tmArw4S7iwW4PENlF+0J/X3kQK/wzmVLbYuOcV6btdjk0oP3nN2fX93Tmv6J6fps
+	bR/NL8v00mwU67hU3ONWlbW9DlQN/en38rMsj7mTfaBE8ColluKMREMt5qLiRADUkReOOAQA
+	AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKLMWRmVeSWpSXmKPExsWy7bCSvK7Vp7RUg1cJFg/mbWOz2Pt6K7vF
+	lD/LmSw2Pb7GarF5/h9Gi8u75rBZzDi/j8ni8Jt2VovnfUDWql1/GB24PHbOusvucefaHjaP
+	zUvqPfq2rGL0+LxJLoA1issmJTUnsyy1SN8ugSvj5+JzbAWzRSsav5xjbGC8JNDFyMkhIWAi
+	cXbxY2YQW0hgN6NEW58QRFxG4vbKy6wQtrDE/ZYjQDYXUM19Rond5y6wdTFycLAIqEpMnhQN
+	UsMmoCux7cQ/RhBbRMBCYvGGhWD1zAKdTBLTt88EGyQskCXx8OF5NhCbV0BZYtKjfhaIxauY
+	JXZNUICIC0qcnPkELM4soC7xZ94lZpBdzALSEsv/cUCE5SWat84Gu5lTwE6i/c8MpgmMgrOQ
+	dM9C0j0LoXsWku4FjCyrGCVTC4pz03OLDQsM81LL9YoTc4tL89L1kvNzNzGCY0ZLcwfj9lUf
+	9A4xMnEwHmKU4GBWEuHV+5icKsSbklhZlVqUH19UmpNafIhRmoNFSZxX/EVvipBAemJJanZq
+	akFqEUyWiYNTqoFpb+LDI9eO3o+dxvjGeYXixys7vzztSHCbyLplV/hPo8hpqqVc/0ulnNPZ
+	qqvtre91um2yvMYWk9iWedHmeP/upgv/y6Ma3++3/LkmvGIJC5OMZhErt8OBI78tLgm8lVg4
+	6zi/WZSHhJXAlKr9ynyNH7kqJzf8vPOr6+RN/Y8y30U36hzOFbt18MrOP0zCmSrOF8KOSxwS
+	a+78K73yKpfwNl+1U7e2z23cun/O/LsFy3Y8OzM7UmrbySnVz+/NZSmKurri2QeflJ4Tv71j
+	Yq5r/lQ37ld08rQ5nHN5jx2rltnDtAUKuaEsOTca3t0XCWT9cOujYO9nux73A9UX+l5aPGxb
+	zM5hVr3xwNki359xSizFGYmGWsxFxYkA8nIVvAgDAAA=
+X-CMS-MailID: 20231129081138epcas2p2ba1f0c83f896f36d03110535a1623109
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----xhiRNYr7C6p2kRFttE2KPojvpONXRQ6l4raSmD__Jn20cHwF=_36ec1_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38
 References: <CGME20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38@epcas2p4.samsung.com>
- <20231126094618.2545116-1-youngmin.nam@samsung.com>
- <bb738a6b-815d-4fad-b73f-559f1ba8cd68@linaro.org> <ZWU75VtJ/mXpMyQr@perf>
- <1fd55b36-0837-4bf7-9fde-e573d6cb214a@linaro.org>
- <CAPLW+4n0SAOTb6wocY-WjkxgSFMbx+nVuqdaPcNYVDsbfg+EfA@mail.gmail.com>
- <ZWbjPIydJRrPnuDy@perf>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <ZWbjPIydJRrPnuDy@perf>
-Content-Type: text/plain; charset=UTF-8
+	<20231126094618.2545116-1-youngmin.nam@samsung.com>
+	<bb738a6b-815d-4fad-b73f-559f1ba8cd68@linaro.org> <ZWU75VtJ/mXpMyQr@perf>
+	<1fd55b36-0837-4bf7-9fde-e573d6cb214a@linaro.org>
+	<CAPLW+4n0SAOTb6wocY-WjkxgSFMbx+nVuqdaPcNYVDsbfg+EfA@mail.gmail.com>
+	<ZWbjPIydJRrPnuDy@perf> <a0ac295b-ea96-475c-acde-5a61de8ca170@linaro.org>
+
+------xhiRNYr7C6p2kRFttE2KPojvpONXRQ6l4raSmD__Jn20cHwF=_36ec1_
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 
-On 29/11/2023 08:07, Youngmin Nam wrote:
-> On Tue, Nov 28, 2023 at 03:35:53PM -0600, Sam Protsenko wrote:
->> On Tue, Nov 28, 2023 at 1:29 AM Krzysztof Kozlowski
->> <krzysztof.kozlowski@linaro.org> wrote:
->>>
->>> On 28/11/2023 02:01, Youngmin Nam wrote:
->>>> On Mon, Nov 27, 2023 at 10:54:56AM +0100, Krzysztof Kozlowski wrote:
->>>>> On 26/11/2023 10:46, Youngmin Nam wrote:
->>>>>> To support affinity setting for non wake up external gpio interrupt,
->>>>>> add irq_set_affinity callback using irq number from pinctrl driver data.
->>>>>>
->>>>>> Before this patch, changing the irq affinity of gpio interrupt is not possible:
->>>>>>
->>>>>>     # cat /proc/irq/418/smp_affinity
->>>>>>     3ff
->>>>>>     # echo 00f > /proc/irq/418/smp_affinity
->>>>>
->>>>> Does this command succeed on your board?
->>>>>
->>>> Yes.
->>>
->>> Hm, fails all the time one mine.
->>>
->>
->> I tried to test this patch on E850-96, and an attempt to write into
->> smp_affinity (for some GPIO irq) also fails for me:
->>
->>     # echo f0 > smp_affinity
->>     -bash: echo: write error: Input/output error
->>
->> When I add some pr_err() to exynos_irq_set_affinity(), I can't see
->> those printed in dmesg. So I guess exynos_irq_set_affinity() doesn't
->> get called at all. So the error probably happens before
->> .irq_set_affinity callback gets called.
->>
->> Youngmin, can you please try and test this patch on E850-96? This
->> board is already supported in upstream kernel. For example you can use
->> "Volume Up" interrupt for the test, which is GPIO irq.
->>
+On Wed, Nov 29, 2023 at 09:00:04AM +0100, Krzysztof Kozlowski wrote:
+> On 29/11/2023 08:07, Youngmin Nam wrote:
+> > On Tue, Nov 28, 2023 at 03:35:53PM -0600, Sam Protsenko wrote:
+> >> On Tue, Nov 28, 2023 at 1:29 AM Krzysztof Kozlowski
+> >> <krzysztof.kozlowski@linaro.org> wrote:
+> >>>
+> >>> On 28/11/2023 02:01, Youngmin Nam wrote:
+> >>>> On Mon, Nov 27, 2023 at 10:54:56AM +0100, Krzysztof Kozlowski wrote:
+> >>>>> On 26/11/2023 10:46, Youngmin Nam wrote:
+> >>>>>> To support affinity setting for non wake up external gpio interrupt,
+> >>>>>> add irq_set_affinity callback using irq number from pinctrl driver data.
+> >>>>>>
+> >>>>>> Before this patch, changing the irq affinity of gpio interrupt is not possible:
+> >>>>>>
+> >>>>>>     # cat /proc/irq/418/smp_affinity
+> >>>>>>     3ff
+> >>>>>>     # echo 00f > /proc/irq/418/smp_affinity
+> >>>>>
+> >>>>> Does this command succeed on your board?
+> >>>>>
+> >>>> Yes.
+> >>>
+> >>> Hm, fails all the time one mine.
+> >>>
+> >>
+> >> I tried to test this patch on E850-96, and an attempt to write into
+> >> smp_affinity (for some GPIO irq) also fails for me:
+> >>
+> >>     # echo f0 > smp_affinity
+> >>     -bash: echo: write error: Input/output error
+> >>
+> >> When I add some pr_err() to exynos_irq_set_affinity(), I can't see
+> >> those printed in dmesg. So I guess exynos_irq_set_affinity() doesn't
+> >> get called at all. So the error probably happens before
+> >> .irq_set_affinity callback gets called.
+> >>
+> >> Youngmin, can you please try and test this patch on E850-96? This
+> >> board is already supported in upstream kernel. For example you can use
+> >> "Volume Up" interrupt for the test, which is GPIO irq.
+> >>
+> > 
+> > I intened this affinity setting would work only on *Non* Wakeup External Interrupt.
+> > The "Volume Up" on E850-96 board is connected with "gpa0-7" and
+> > that is Wakeup External interrupt so that we can't test the callback.
+> > 
+> > I couldn't find out a pin for the test on E850-96 board yet.
+> > We can test if there is a usage of *Non" Wake up External Interrupt of GPIO
+> > on E850-96 board.
+> > 
+> > Do you have any idea ?
 > 
-> I intened this affinity setting would work only on *Non* Wakeup External Interrupt.
-> The "Volume Up" on E850-96 board is connected with "gpa0-7" and
-> that is Wakeup External interrupt so that we can't test the callback.
+> Please test on any upstream platform or upstream your existing platform.
+> I hesitate to take this change because I don't trust Samsung that this
+> was tested on mainline kernel. OK, for sure 100% it was not tested on
+> mainline, but I am afraid that differences were far beyond just missing
+> platforms. Therefore the issue might or might not exist at all. Maybe
+> issue is caused by other Samsung non-upstreamed code.
 > 
-> I couldn't find out a pin for the test on E850-96 board yet.
-> We can test if there is a usage of *Non" Wake up External Interrupt of GPIO
-> on E850-96 board.
+> Best regards,
+> Krzysztof
+
+Sure. Let me find how to test on upstreamed device like E850-96 board.
 > 
-> Do you have any idea ?
+> 
+> 
 
-Please test on any upstream platform or upstream your existing platform.
-I hesitate to take this change because I don't trust Samsung that this
-was tested on mainline kernel. OK, for sure 100% it was not tested on
-mainline, but I am afraid that differences were far beyond just missing
-platforms. Therefore the issue might or might not exist at all. Maybe
-issue is caused by other Samsung non-upstreamed code.
+------xhiRNYr7C6p2kRFttE2KPojvpONXRQ6l4raSmD__Jn20cHwF=_36ec1_
+Content-Type: text/plain; charset="utf-8"
 
-Best regards,
-Krzysztof
 
+------xhiRNYr7C6p2kRFttE2KPojvpONXRQ6l4raSmD__Jn20cHwF=_36ec1_--
