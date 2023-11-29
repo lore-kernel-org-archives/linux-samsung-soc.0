@@ -1,83 +1,174 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C1B5120;
-	Wed, 29 Nov 2023 10:11:42 -0800 (PST)
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6cb74a527ceso17672b3a.2;
-        Wed, 29 Nov 2023 10:11:42 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wSv3oYCK"
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28CAF12A
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Nov 2023 10:49:08 -0800 (PST)
+Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1cfafe3d46bso1004545ad.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Nov 2023 10:49:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701283747; x=1701888547; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gmmJDjXSHVVtM0uWk3D52kGsoBdId2LUYqixFeAViCk=;
+        b=wSv3oYCKGhvi4kf8tvjLYp4FwzOdWFcWKV6trHgVgYjQ01geGO/7bQMbtnPZTMUF3E
+         9+sEmGiBGLD5FamHR0B1IEiP1cPG34FDKRXuh0q4q2U1L+VaBDym3o5K0fbM6djSkEPA
+         bX45eFK7YXCmrIaDPI0OPvgkC4b6JhpRdC8Xm0jMML8A7XELkAC7NFrw1rPrY1NYSaOK
+         ApiW2eQ0kXomzZPZ6f2IHCgXmNz6LhEDMEJi3Afdsd2noVZYVp45E5DW5E03ggy9E0My
+         YAXrwTnKELSHMzfRjyLLl1XSLxOz6199if3cxq8YWehobYzoRyxXxK46PTFz5eOOsUHS
+         dYbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701281501; x=1701886301;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4gLDX8cWt3JEEqgRokj5ykqsN5muXxo/Ge+Xctz4FUg=;
-        b=aEV/etGefOoxFxJpyfpe/BJ9/3bIUh7vcvKsG4AM0pMsRd96l4Tr+o6o9z3Pie6GlR
-         Kg2z+I9A6WHY3aLpKOMDwfxd5M7bHrn8bQVtJIYnLYU/ItcZCUMxmgUgM2XX6m27Kayi
-         gGFtjwBzedabiMRok7kUV/KE+RQfZhlB884Lvce7Kh9+Kms4wsHiolnlZBp6rtOnchQd
-         UFIT0brXj7npTB4+lCwpLx6X/F9JY7cginbktC8RzmxfrUwP2EeDLPBHPO7ffZyxlxRa
-         7i+nZJ9bv4HOjymbGLywVwzeL4GC+jfG2FfB0MsCfMiitlHBcvFDzPAmi/JF+apUN1Hj
-         HwQQ==
-X-Gm-Message-State: AOJu0YwPSDX6XGxiUiOxhDIfuMvw+nkS2R5+CNGn9qrTcVTK/QXX1XIB
-	CznU0AA9slbbVwMb3CqVPRw=
-X-Google-Smtp-Source: AGHT+IGy+4WYJhTiQIOswP/E41L9YL8AuNEuZh5o79tqLq/ynbibB9mZf/1DyU/qOz7NtDQNLElZ2g==
-X-Received: by 2002:a05:6a20:e68c:b0:18b:d344:6acd with SMTP id mz12-20020a056a20e68c00b0018bd3446acdmr19899607pzb.10.1701281501391;
-        Wed, 29 Nov 2023 10:11:41 -0800 (PST)
-Received: from ?IPV6:2620:0:1000:8411:af8d:714d:9855:3f9d? ([2620:0:1000:8411:af8d:714d:9855:3f9d])
-        by smtp.gmail.com with ESMTPSA id a9-20020a170902ee8900b001b7f40a8959sm12648546pld.76.2023.11.29.10.11.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Nov 2023 10:11:40 -0800 (PST)
-Message-ID: <0cc74796-2369-4c02-a78f-4f1d5e8337dc@acm.org>
-Date: Wed, 29 Nov 2023 10:11:38 -0800
+        d=1e100.net; s=20230601; t=1701283747; x=1701888547;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gmmJDjXSHVVtM0uWk3D52kGsoBdId2LUYqixFeAViCk=;
+        b=G209qevQd7ouLI6Y+BHkhBke/3+cjSjEN/hnONFKKSMi8u2kl0cOHOufu0YbFS3L8z
+         caIYJHT/U6j3IGogIclSb2opnWOkauPo6+pgq+Abq35AnP5Y3a896zCWRvUdBANABxZG
+         n9JVgLzKKFyLjwRpTp+ZXueeeNG6wFdBizb40fCmZ1dZ+fh2sGBrKYXUqsJ4WKrwjZvV
+         IBwD7fmfLBedJJElsg1PJ33BOT3k0BmRnCU62HxBInZDDdQeaL1Qs1FDEn1zrkVKE7M0
+         NvoGyw12+i00PQFuSAJsgPX2HmBvCMux1/EP19SZgHSO6RBl4hab80ndnGiFBI6Fb+bt
+         23/A==
+X-Gm-Message-State: AOJu0YwKJBx7YMHp27WwM4o/fmuSgFtk+eKbROoIiPowZ4p77pS1lD3K
+	qGc7Ius9se8xlRAB0Yw+y2v02PTZHuSKwc9Uvg8TJQ==
+X-Google-Smtp-Source: AGHT+IH42YLg3I/LNrrXhhzS7bJ0UN+7Cm1cww+4mOEg05pxaNPpggy5c3QxpYyxNjwWapMrvZH8ZkHS1F+kItdM/OU=
+X-Received: by 2002:a17:903:183:b0:1cc:449b:689e with SMTP id
+ z3-20020a170903018300b001cc449b689emr26526735plg.20.1701283747581; Wed, 29
+ Nov 2023 10:49:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 01/10] scsi: ufs: host: Rename structure ufs_dev_params
- to ufs_host_params
-Content-Language: en-US
-To: Can Guo <quic_cang@quicinc.com>, mani@kernel.org,
- adrian.hunter@intel.com, cmd4@qualcomm.com, beanhuo@micron.com,
- avri.altman@wdc.com, junwoo80.lee@samsung.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- Alim Akhtar <alim.akhtar@samsung.com>,
- "James E.J. Bottomley" <jejb@linux.ibm.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Stanley Chu <stanley.chu@mediatek.com>, Andy Gross <agross@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Nitin Rawat <quic_nitirawa@quicinc.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Brian Masney <bmasney@redhat.com>,
- "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-samsung-soc@vger.kernel.org>, open list
- <linux-kernel@vger.kernel.org>,
- "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
- <linux-mediatek@lists.infradead.org>
-References: <1701246516-11626-1-git-send-email-quic_cang@quicinc.com>
- <1701246516-11626-2-git-send-email-quic_cang@quicinc.com>
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <1701246516-11626-2-git-send-email-quic_cang@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CGME20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38@epcas2p4.samsung.com>
+ <20231126094618.2545116-1-youngmin.nam@samsung.com> <bb738a6b-815d-4fad-b73f-559f1ba8cd68@linaro.org>
+ <ZWU75VtJ/mXpMyQr@perf> <1fd55b36-0837-4bf7-9fde-e573d6cb214a@linaro.org>
+ <CAPLW+4n0SAOTb6wocY-WjkxgSFMbx+nVuqdaPcNYVDsbfg+EfA@mail.gmail.com> <ZWbjPIydJRrPnuDy@perf>
+In-Reply-To: <ZWbjPIydJRrPnuDy@perf>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Wed, 29 Nov 2023 12:48:56 -0600
+Message-ID: <CAPLW+4=QQR_u0Fi2L0orQFTd-_UpYZAQ94Je772Vs-2WKZGuiA@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: samsung: add irq_set_affinity() for non wake
+ up external gpio interrupt
+To: Youngmin Nam <youngmin.nam@samsung.com>, krzysztof.kozlowski@linaro.org
+Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, alim.akhtar@samsung.com, 
+	linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/29/23 00:28, Can Guo wrote:
-> Structure ufs_dev_params is actually used in UFS host vendor drivers to
-> declare host specific power mode parameters, like ufs_<vendor>_params or
-> host_cap, which makes the code not very straightforward to read. Rename the
-> structure ufs_dev_params to ufs_host_params and unify the declarations in
-> all vendor drivers to host_params.
-> 
-> In addition, rename the two functions ufshcd_init_pwr_dev_param() and
-> ufshcd_get_pwr_dev_param() which work based on the ufs_host_params to
-> ufshcd_init_host_params() and ufshcd_negotiate_pwr_params() respectively to
-> avoid confusions.
-> 
-> This change does not change any functionalities or logic.
+On Wed, Nov 29, 2023 at 12:32=E2=80=AFAM Youngmin Nam <youngmin.nam@samsung=
+.com> wrote:
+> > I tried to test this patch on E850-96, and an attempt to write into
+> > smp_affinity (for some GPIO irq) also fails for me:
+> >
+> >     # echo f0 > smp_affinity
+> >     -bash: echo: write error: Input/output error
+> >
+> > When I add some pr_err() to exynos_irq_set_affinity(), I can't see
+> > those printed in dmesg. So I guess exynos_irq_set_affinity() doesn't
+> > get called at all. So the error probably happens before
+> > .irq_set_affinity callback gets called.
+> >
+> > Youngmin, can you please try and test this patch on E850-96? This
+> > board is already supported in upstream kernel. For example you can use
+> > "Volume Up" interrupt for the test, which is GPIO irq.
+> >
+>
+> I intened this affinity setting would work only on *Non* Wakeup External =
+Interrupt.
+> The "Volume Up" on E850-96 board is connected with "gpa0-7" and
+> that is Wakeup External interrupt so that we can't test the callback.
+>
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Oh no. It was really silly mistake on my part :) But please check my
+answer below for good news.
+
+> I couldn't find out a pin for the test on E850-96 board yet.
+> We can test if there is a usage of *Non" Wake up External Interrupt of GP=
+IO
+> on E850-96 board.
+>
+> Do you have any idea ?
+>
+
+Yep, just managed to successfully test your patch on E850-96. My
+testing procedure below might appear messy, but I didn't want to do
+any extra soldering :)
+
+Used GPG1[0] pin for testing. As you can see from schematics [1],
+GPG1[0] is connected to R196 resistor (which is not installed on the
+board).
+
+I've modified E850-96 dts file like this:
+
+8<-------------------------------------------------------------------------=
+--->8
+        gpio-keys {
+                compatible =3D "gpio-keys";
+                pinctrl-names =3D "default";
+-               pinctrl-0 =3D <&key_voldown_pins &key_volup_pins>;
++               pinctrl-0 =3D <&key_voldown_pins &key_volup_pins &key_test_=
+pins>;
+
+                ...
+
++               test-key {
++                       label =3D "Test Key";
++                       linux,code =3D <KEY_RIGHTCTRL>;
++                       gpios =3D <&gpg1 0 GPIO_ACTIVE_LOW>;
++               };
+        };
+
+...
+
++&pinctrl_peri {
++       key_test_pins: key-test-pins {
++               samsung,pins =3D "gpg1-0";
++               samsung,pin-function =3D <EXYNOS_PIN_FUNC_EINT>;
++               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
++               samsung,pin-drv =3D <EXYNOS5420_PIN_DRV_LV1>;
++       };
++};
+8<-------------------------------------------------------------------------=
+--->8
+
+It appeared in /proc/interrupts as follows:
+
+    87:          2          0          0          0          0
+ 0          0          0      gpg1   0 Edge      Test Key
+
+Then I touched R196 resistor pads with my finger (emulating key press)
+and looked again at /proc/interrupts:
+
+    87:        444          0          0          0          0
+ 0          0          0      gpg1   0 Edge      Test Key
+
+Then I reconfigured smp_affinity like so:
+
+    # cat /proc/irq/87/smp_affinity
+    ff
+    # echo f0 > /proc/irq/87/smp_affinity
+    # cat /proc/irq/87/smp_affinity
+    f0
+
+Then I messed with R196 resistor pads with my finger again, and
+re-checked /proc/interrupts:
+
+               CPU0       CPU1       CPU2       CPU3       CPU4
+CPU5       CPU6       CPU7
+     87:        444          0          0          0        234
+  0          0          0      gpg1   0 Edge      Test Key
+
+And without this patch that procedure above of course doesn't work.
+
+So as far as I'm concerned, feel free to add:
+
+Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+[1] https://www.96boards.org/documentation/consumer/e850-96b/hardware-docs/=
+files/e850-96b-schematics.pdf
+
+Thanks!
