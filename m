@@ -1,149 +1,167 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6E53B0;
-	Wed, 29 Nov 2023 00:47:55 -0800 (PST)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-5cbcfdeaff3so66495557b3.0;
-        Wed, 29 Nov 2023 00:47:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701247675; x=1701852475;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mLerLul424y9KF+UL/6zr3ivEhD1RgHSR/3xjytvLS8=;
-        b=ZkemoQjO/bBTd8d+LsdUMD4ToLFvR20uTycUuPxASEp1Wv2jracDpJVgxuRhBKgrEe
-         Dv8UdOCyYtn4jolKAK4sP6RSsPGdC2iMkUPZ0S5x5T3GOJUs4mGd0o+GP3c0bN61YS+v
-         reWI8SIzVw3ops8uEEJRZuKt+F021WhZYGbnzgWtzawtgIzARNp5p2IpIdcWRxPw1inS
-         KX4TqE7nxu4NOKRYqZzv7i4LINXvhKAjvbWkAOH0idqiR1rbe5WeryFNRl3ruKGmXupS
-         XotY6M5C+57zYE9/5WtXUVdimrFItNhI8//XtzhFOi2crDcWuQgN+HmH5Zy2mNAS+S/g
-         RlDA==
-X-Gm-Message-State: AOJu0YwhAMu2qlqPqdc4Z90/V5/ZBk4IYYMRuHFYGGJUPwSY2LlQlfYj
-	1fLzznAmzfiVy805JgkGlhzy5QFijUR+NA==
-X-Google-Smtp-Source: AGHT+IHIJ2CnpACRf14tRnG90JPNWlW5HmFEZrLCws+3jYIXscmZFWQC37s6lXP2Vkxf3COSceFtOw==
-X-Received: by 2002:a0d:cbd0:0:b0:5ce:9d68:2b81 with SMTP id n199-20020a0dcbd0000000b005ce9d682b81mr14200254ywd.28.1701247674706;
-        Wed, 29 Nov 2023 00:47:54 -0800 (PST)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id t184-20020a8183c1000000b005cb7fccffe2sm4409502ywf.126.2023.11.29.00.47.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Nov 2023 00:47:54 -0800 (PST)
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-db49ab94768so3541001276.2;
-        Wed, 29 Nov 2023 00:47:54 -0800 (PST)
-X-Received: by 2002:a25:3d1:0:b0:db4:47e1:407d with SMTP id
- 200-20020a2503d1000000b00db447e1407dmr16074846ybd.60.1701247673674; Wed, 29
- Nov 2023 00:47:53 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Uv56qPD+"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93E5E2D77
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Nov 2023 01:29:46 -0800 (PST)
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231129092944epoutp031ccde209ed83670be0f4b63d83a97da2~cDgd_lhTq2133521335epoutp03D
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Nov 2023 09:29:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231129092944epoutp031ccde209ed83670be0f4b63d83a97da2~cDgd_lhTq2133521335epoutp03D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1701250184;
+	bh=FHvSR/hYOGJJkx3HUz9cuc3ozsOZ6u4idcxy8RtY3ek=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Uv56qPD+l3e2Z5W0lKtubPM87dE3u4JY363KS2Q0qL/6WR4tvLEHlumasMHg9UxDL
+	 +LLwe2PVcxGusEiZwfOReufcbTKXV7EpO1uvDwQ7xvG+sA/XCmiBTYZCZGW8XrA0eU
+	 B2zEhnmsbXZB4NgKLXm3swnSBXn1BbA9rVf826MY=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+	20231129092944epcas2p48dd26563bb461298f3467b73415a494e~cDgdlzJnu1311413114epcas2p4Z;
+	Wed, 29 Nov 2023 09:29:44 +0000 (GMT)
+Received: from epsmgec2p1.samsung.com (unknown [182.195.36.69]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4SgDYg3rW4z4x9Pt; Wed, 29 Nov
+	2023 09:29:43 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	35.78.08648.78407656; Wed, 29 Nov 2023 18:29:43 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20231129092942epcas2p1c4305207c4c3d3701e7ff6757f7a2b4f~cDgcJFYlJ0737107371epcas2p1g;
+	Wed, 29 Nov 2023 09:29:42 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20231129092942epsmtrp13fa7b91dd84632b400609f49cb4e84bd~cDgcII0pu3031930319epsmtrp1k;
+	Wed, 29 Nov 2023 09:29:42 +0000 (GMT)
+X-AuditID: b6c32a43-4b3ff700000021c8-23-6567048740ae
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	1A.EE.07368.68407656; Wed, 29 Nov 2023 18:29:42 +0900 (KST)
+Received: from perf (unknown [10.229.95.91]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20231129092942epsmtip233070651858a9e02b1227e78ed12d3f1~cDgb3wbsf0969709697epsmtip2i;
+	Wed, 29 Nov 2023 09:29:42 +0000 (GMT)
+Date: Wed, 29 Nov 2023 19:04:47 +0900
+From: Youngmin Nam <youngmin.nam@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, alim.akhtar@samsung.com,
+	linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, semen.protsenko@linaro.org
+Subject: Re: [PATCH v2] pinctrl: samsung: add irq_set_affinity() for non
+ wake up external gpio interrupt
+Message-ID: <ZWcMv8Bg12vqBCUm@perf>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231125184422.12315-1-krzysztof.kozlowski@linaro.org> <ZWboWqELHbIrblnz@francesco-nb.int.toradex.com>
-In-Reply-To: <ZWboWqELHbIrblnz@francesco-nb.int.toradex.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 Nov 2023 09:47:42 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVSAgihFAuPecyrR+Wvzqr58z_fkWkShOSu+HnHzZnW2g@mail.gmail.com>
-Message-ID: <CAMuHMdVSAgihFAuPecyrR+Wvzqr58z_fkWkShOSu+HnHzZnW2g@mail.gmail.com>
-Subject: Re: [PATCH v3] docs: dt-bindings: add DTS Coding Style document
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, Andrew Davis <afd@ti.com>, 
-	Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Chen-Yu Tsai <wens@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Jonathan Corbet <corbet@lwn.net>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Michal Simek <michal.simek@amd.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Nishanth Menon <nm@ti.com>, Olof Johansson <olof@lixom.net>, 
-	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, 
-	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <f814a1f4-2e3d-4946-949a-8ddac5e30d5f@kernel.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHJsWRmVeSWpSXmKPExsWy7bCmhW47S3qqwba5MhYP5m1jszh/fgO7
+	xZQ/y5ksNj2+xmqxef4fRovLu+awWcw4v4/J4vCbdlaL531A1qpdfxgduDx2zrrL7rFpVSeb
+	x51re9g8Ni+p9+jbsorR4/MmuQC2qGybjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sL
+	cyWFvMTcVFslF58AXbfMHKDLlBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkF5gV6
+	xYm5xaV56Xp5qSVWhgYGRqZAhQnZGSc+nWQpOCpUceywUwPjN74uRk4OCQETiRMvz7N0MXJx
+	CAnsYJS4d/okG4TziVHiyoWPTBDON0aJO08OscC0tN+7CdWyl1Hi5qz9zBDOQ0aJ/vkX2EGq
+	WARUJWZfvgHWwSagK7HtxD9GEFtEQFPi+t/vrCANzAKdTBLTt89kBUkIC2RJ3NnYDdbAK6As
+	8XfnOXYIW1Di5MwnQHEODk4BO4nJ8+pBeiUEOjkkFu6ZzwhxkovEue8roc4Tlnh1fAs7hC0l
+	8bK/DcrOllj96xKUXQH0Qg8zhG0sMetZO9gcZoEMiQ1HJrGC7JIAuuHILRaIMJ9Ex+G/7BBh
+	XomONiGITjWJX1M2QF0gI7F78QqoiR4SzyZvYocGI7PEnFt32Ccwys1C8s0sJNsgbB2JBbs/
+	sc0CWsEsIC2x/B8HhKkpsX6X/gJG1lWMYqkFxbnpqclGBYbwCE7Oz93ECE6oWs47GK/M/6d3
+	iJGJg/EQowQHs5IIr97H5FQh3pTEyqrUovz4otKc1OJDjKbAuJnILCWanA9M6Xkl8YYmlgYm
+	ZmaG5kamBuZK4rz3WuemCAmkJ5akZqemFqQWwfQxcXBKNTCFN/IuC6i9+c30MsflY2q8266L
+	Zf/656b50Clj243XpybN+yjgcXeJ2C7lmSt33LCJ+F2/9PIcG23rCwv8LnL0FeRaBNxQn/U9
+	ONheOvjGpNDjPpKqhrX8Zfb+Sg2zzL/3Hr/guj7MnXmPeYCE/3ppje0mp497VGqxHVu0fdrR
+	WUmKJexXVRXNmPY1HnyZn8KbtvDTs8554XHT1845W1Xd6uijHvbo6oQnX9b8jEwU4rRZ8mZe
+	byazyeaTR/k1DkZKTI6XFVp73e/sZC8LJtdE+Y0HhH4m1c3cea9n+wOvz1w6x001+nqSv0k0
+	Ta7ptO96o3p+anTUs1QlOVn+SfcKVtS2+ZS26fBqKKfGhSuxFGckGmoxFxUnAgBvbNQXMQQA
+	AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsWy7bCSvG4bS3qqwfp3UhYP5m1jszh/fgO7
+	xZQ/y5ksNj2+xmqxef4fRovLu+awWcw4v4/J4vCbdlaL531A1qpdfxgduDx2zrrL7rFpVSeb
+	x51re9g8Ni+p9+jbsorR4/MmuQC2KC6blNSczLLUIn27BK6Mc39YC1oFKpb8esHWwHiep4uR
+	k0NCwESi/d5Nli5GLg4hgd2MEgunPmODSMhI3F55mRXCFpa433KEFaLoPqPEibVv2UESLAKq
+	ErMv32ABsdkEdCW2nfjHCGKLCGhKXP/7HayBWaCTSWL69plgk4QFsiQePjwPtoFXQFni785z
+	7BBTfzBLLFy9jAkiIShxcuYTsKnMAloSN/69BIpzANnSEsv/cYCYnAJ2EpPn1U9gFJiFpGEW
+	koZZCA0LGJlXMUqmFhTnpucmGxYY5qWW6xUn5haX5qXrJefnbmIER4SWxg7Ge/P/6R1iZOJg
+	PMQowcGsJMKr9zE5VYg3JbGyKrUoP76oNCe1+BCjNAeLkjiv4YzZKUIC6YklqdmpqQWpRTBZ
+	Jg5OqQam5OcuL9IX+13LSta7HLnn9leL2IgNSX1PC+qs3v9nWHL0pOS/qzln5XYJR2x/PitH
+	ZYL74xrz5iWHlrtI/vqasbT9iS/3p/wjOgXMs06se5OcME2olTdsb3XJuerQ/Qzq97T95txT
+	e3/4ZqXYulah1P2VwkmHWzqypi6z4z315H15TBDDtjVr2281rhXxZTrEVhgvL7Vc6ttMqwvT
+	r7nn5P+JY9hrvOxz56rbm4JMf81acND+eUJ5xS8rEZ2Atom3XqyrqxUqtE5eojzfe/Fu3QCt
+	l9W5XvevnzXanSbwaXFMPPfMa5daVijrHT/Sl3VrvZqzoKT9qw81fF0M3p7iN+3DFmVzLk2c
+	Uv+004xXiaU4I9FQi7moOBEA0CLvT/cCAAA=
+X-CMS-MailID: 20231129092942epcas2p1c4305207c4c3d3701e7ff6757f7a2b4f
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----beKDcrNeaD4oBIFRuchmvdVAwfnDGI5TYPt7fforSuRq9wgD=_37ba7_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38
+References: <CGME20231126091120epcas2p4a1320e3b0f9be8f8a0f575a322981d38@epcas2p4.samsung.com>
+	<20231126094618.2545116-1-youngmin.nam@samsung.com>
+	<bb738a6b-815d-4fad-b73f-559f1ba8cd68@linaro.org> <ZWU75VtJ/mXpMyQr@perf>
+	<1fd55b36-0837-4bf7-9fde-e573d6cb214a@linaro.org>
+	<CAPLW+4n0SAOTb6wocY-WjkxgSFMbx+nVuqdaPcNYVDsbfg+EfA@mail.gmail.com>
+	<ZWbjPIydJRrPnuDy@perf> <a0ac295b-ea96-475c-acde-5a61de8ca170@linaro.org>
+	<ZWb6cyTgyEcee7DZ@perf> <f814a1f4-2e3d-4946-949a-8ddac5e30d5f@kernel.org>
 
-Hi Francesco,
+------beKDcrNeaD4oBIFRuchmvdVAwfnDGI5TYPt7fforSuRq9wgD=_37ba7_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
 
-On Wed, Nov 29, 2023 at 8:29=E2=80=AFAM Francesco Dolcini <francesco@dolcin=
-i.it> wrote:
-> On Sat, Nov 25, 2023 at 07:44:22PM +0100, Krzysztof Kozlowski wrote:
-> > Document preferred coding style for Devicetree sources (DTS and DTSI),
-> > to bring consistency among all (sub)architectures and ease in reviews.
->
-> Thank Krzysztof, we had most of this collected as BKM in some internal
-> documents and it's great to see the effort to consolidate this and add
-> it to the kernel documentation.
->
-> > ---
-> > +Following order of properties in device nodes is preferred:
-> > +
-> > +1. compatible
-> > +2. reg
-> > +3. ranges
-> > +4. Standard/common properties (defined by common bindings, e.g. withou=
-t
-> > +   vendor-prefixes)
-> > +5. Vendor-specific properties
-> > +6. status (if applicable)
-> > +7. Child nodes, where each node is preceded with a blank line
->
-> On point 4, do you have a more explicit way to define what is an actual
-> standard/common property? You mention the vendor-prefixes as an example,
-> is this just an example or this is the whole definition?
+On Wed, Nov 29, 2023 at 09:39:45AM +0100, Krzysztof Kozlowski wrote:
+> On 29/11/2023 09:46, Youngmin Nam wrote:
+> >>> I couldn't find out a pin for the test on E850-96 board yet.
+> >>> We can test if there is a usage of *Non" Wake up External Interrupt of GPIO
+> >>> on E850-96 board.
+> >>>
+> >>> Do you have any idea ?
+> >>
+> >> Please test on any upstream platform or upstream your existing platform.
+> >> I hesitate to take this change because I don't trust Samsung that this
+> >> was tested on mainline kernel. OK, for sure 100% it was not tested on
+> >> mainline, but I am afraid that differences were far beyond just missing
+> >> platforms. Therefore the issue might or might not exist at all. Maybe
+> >> issue is caused by other Samsung non-upstreamed code.
+> >>
+> >> Best regards,
+> >> Krzysztof
+> > 
+> > Sure. Let me find how to test on upstreamed device like E850-96 board.
+> 
+> There are many reasons why companies using Linux for their products
+> should be involved in upstreaming their devices.
+> 
+> The one visible from this conversation: Whatever technical debt you
+> have, it will be only growing because upstream might not even take
+> simple patches from you, until you start contributing with the rest.
+> Samsung's out-of-tree kernels are so far away from the upstream, that
+> basically we might feel that contributions from Samsung are not
+> addressing real problems. This will affect your Android trees due to GKI.
+> 
+> That's one more argument to talk to with your managers why staying away
+> from the upstream is not the best idea.
+> 
+> Second argument is look at your competitor: Qualcomm, one of the most
+> active upstreamers of SoC code doing awesome job.
+> 
+> Best regards,
+> Krzysztof
 
-I think there are three classes of standard properties:
-  1. Device Tree Specification (from devicetree.org)
-  2. dt-schema
-  3. Common subsystem bindings (Documentation/devicetree/bindings/)
-     (may be moved to 2).
+Thank you for your opinion.
+By the way, this patch is not related with GKI and I just thought this work
+would be helpful to all exynos platform.
 
-> What would be the order for this for example (from an existing DTS file)?
->
->         reg_sdhc1_vmmc: regulator-sdhci1 {
->                 compatible =3D "regulator-fixed";
->                 pinctrl-names =3D "default";
->                 pinctrl-0 =3D <&pinctrl_sd1_pwr_en>;
->                 enable-active-high;
->                 gpio =3D <&main_gpio0 29 GPIO_ACTIVE_HIGH>;
->                 off-on-delay-us =3D <100000>;
->                 regulator-max-microvolt =3D <3300000>;
->                 regulator-min-microvolt =3D <3300000>;
->                 regulator-name =3D "+V3.3_SD";
->                 startup-delay-us =3D <2000>;
->         };
->
-> I guess the point that is not obvious to me here is where do we want
-> pinctrl. I like it at position between 3 and 4, the rationale is that is
-> a very frequent property and this way it will be in a similar place for
-> every node.
+But it seems that changing affinity of any irqs including gpio is not allowed
+on exynos platform. So we need to debug by adding some logs.
 
-The pinctrl properties are only present in board DTS files, not in
-SoC DTSi files.  There are two classes of them:
-  1. Extension of on-SoC devices, where they are added to already
-     existing nodes, defined in the SoC DTSi files, e.g. (from the same
-     existing DTS file):
+> 
+> 
 
-         &cpsw3g {
-                 pinctrl-names =3D "default";
-                 pinctrl-0 =3D <&pinctrl_rgmii1>;
-                 status =3D "disabled";
-         };
+------beKDcrNeaD4oBIFRuchmvdVAwfnDGI5TYPt7fforSuRq9wgD=_37ba7_
+Content-Type: text/plain; charset="utf-8"
 
-  2. Pure board devices, in new nodes (e.g. your regulator example).
-     These are less common, so I don't even know from the top of my
-     mind when I last added one, and where ;-)
-     I'd guess after all standard properties?
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+------beKDcrNeaD4oBIFRuchmvdVAwfnDGI5TYPt7fforSuRq9wgD=_37ba7_--
