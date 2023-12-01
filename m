@@ -1,408 +1,155 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aPMaxlEQ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE4FD1BCA;
-	Thu, 30 Nov 2023 21:04:55 -0800 (PST)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B12c829023318;
-	Fri, 1 Dec 2023 05:04:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=qcppdkim1;
- bh=CvdWa6K9CXgXFHOytyGULvAoyyhKGAcpMZLQsXKRMdo=;
- b=aPMaxlEQqs3m0TPEI0wzkr0cE36m22vATKLNcLnrFkgwuJnPajIOauQQSNveFpWiEsjg
- w04BhfvElVHnancZ43epmg3bpOlGYM4prmp31OLS1FpYPY6Uxg7ua9dXip4h0NHL7fuT
- +IpLNKXLIET2E8/QoFSyvy2RkFFOYoZpYWuYefbEFLdTPWOEIry9pNEl+3U6QqizVbBI
- V9G2K1gWmGc9jVyjTqBs1R6VwmK9eVy0qYeYU3j7kAkTbeuRvfb3Q92eRDQSujmmZYov
- wIFVln17TButXIFe4UIWLnQEKVFAqMpHSXtI6JmN2LijrzMUTxD0ePegzq7nfL3OrB0m fA== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3upw12sryq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Dec 2023 05:04:00 +0000
-Received: from pps.filterd (NASANPPMTA03.qualcomm.com [127.0.0.1])
-	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 3B153xmG019602;
-	Fri, 1 Dec 2023 05:03:59 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by NASANPPMTA03.qualcomm.com (PPS) with ESMTP id 3unmevu328-1;
-	Fri, 01 Dec 2023 05:03:59 +0000
-Received: from NASANPPMTA03.qualcomm.com (NASANPPMTA03.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3B14uwUB008275;
-	Fri, 1 Dec 2023 05:03:58 GMT
-Received: from stor-dylan.qualcomm.com (stor-dylan.qualcomm.com [192.168.140.207])
-	by NASANPPMTA03.qualcomm.com (PPS) with ESMTP id 3B153wJm019591;
-	Fri, 01 Dec 2023 05:03:58 +0000
-Received: by stor-dylan.qualcomm.com (Postfix, from userid 359480)
-	id 4DD0620A69; Thu, 30 Nov 2023 21:03:58 -0800 (PST)
-From: Can Guo <quic_cang@quicinc.com>
-To: quic_cang@quicinc.com, bvanassche@acm.org, mani@kernel.org,
-        adrian.hunter@intel.com, vkoul@kernel.org, beanhuo@micron.com,
-        avri.altman@wdc.com, junwoo80.lee@samsung.com,
-        martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Peter Wang <peter.wang@mediatek.com>,
-        Stanley Jhu <chu.stanley@gmail.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Nitin Rawat <quic_nitirawa@quicinc.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        Brian Masney <bmasney@redhat.com>,
-        Andrew Halaney <ahalaney@redhat.com>,
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
-        linux-samsung-soc@vger.kernel.org (open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
-        linux-kernel@vger.kernel.org (open list),
-        linux-mediatek@lists.infradead.org (moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER...)
-Subject: [PATCH v7 01/10] scsi: ufs: host: Rename structure ufs_dev_params to ufs_host_params
-Date: Thu, 30 Nov 2023 21:03:11 -0800
-Message-Id: <1701407001-471-2-git-send-email-quic_cang@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1701407001-471-1-git-send-email-quic_cang@quicinc.com>
-References: <1701407001-471-1-git-send-email-quic_cang@quicinc.com>
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: uj9rYIL6lamWVDOe7shh304rugDA5qxm
-X-Proofpoint-ORIG-GUID: uj9rYIL6lamWVDOe7shh304rugDA5qxm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-01_02,2023-11-30_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- malwarescore=0 suspectscore=0 mlxlogscore=999 phishscore=0
- priorityscore=1501 spamscore=0 impostorscore=0 adultscore=0
- lowpriorityscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2311060000 definitions=main-2312010028
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="D54GpXlU"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE4D410FD
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Dec 2023 01:56:41 -0800 (PST)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231201095638euoutp0269a9694404832b6c29cdc58f264761d6~crKhZVXXu0691406914euoutp02p
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Dec 2023 09:56:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231201095638euoutp0269a9694404832b6c29cdc58f264761d6~crKhZVXXu0691406914euoutp02p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1701424598;
+	bh=106CZkth6hhVA2GeHffBolAXmeoKzLlk2xMt1fH43Hw=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=D54GpXlU/BkUXdJ0xQ4tObKtgsTPEaGwTwoW4tCeN6e2pVCC2Y3Czk9dgUbwIvIEC
+	 9zCSNE3YE2He8F+C+rvfnVwxKQ43Mi9PjVrLM4O1BsR/HJLPkh7eScNiDnMSuQ0LOA
+	 1YxCxJB2wZbMLhCAFWbjwcydVFFE8Q6125oAM0UM=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20231201095637eucas1p24daf3a73854e038c995442c08df054c3~crKg22ki72503225032eucas1p2G;
+	Fri,  1 Dec 2023 09:56:37 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 4F.32.09814.5DDA9656; Fri,  1
+	Dec 2023 09:56:37 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20231201095637eucas1p25e14bd24e05ae61eb12dee18af2a1dc5~crKgXSBn11612516125eucas1p2W;
+	Fri,  1 Dec 2023 09:56:37 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20231201095637eusmtrp175840ba9962ac971a809e70c1b4a0c95~crKgWfadY0736407364eusmtrp1y;
+	Fri,  1 Dec 2023 09:56:37 +0000 (GMT)
+X-AuditID: cbfec7f4-727ff70000002656-da-6569add5abbd
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 92.20.09146.5DDA9656; Fri,  1
+	Dec 2023 09:56:37 +0000 (GMT)
+Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
+	[106.120.51.28]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20231201095636eusmtip22e4e7027907d2125b29c0a2bde3512b9~crKfcYENZ1357813578eusmtip2I;
+	Fri,  1 Dec 2023 09:56:36 +0000 (GMT)
+From: Mateusz Majewski <m.majewski2@samsung.com>
+To: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Mateusz Majewski <m.majewski2@samsung.com>, Bartlomiej Zolnierkiewicz
+	<bzolnier@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Amit Kucheria <amitk@kernel.org>, Zhang Rui
+	<rui.zhang@intel.com>, Alim Akhtar <alim.akhtar@samsung.com>, Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Marek Szyprowski
+	<m.szyprowski@samsung.com>, Lukasz Luba <lukasz.luba@arm.com>, Dan Carpenter
+	<dan.carpenter@linaro.org>
+Subject: [PATCH v6 0/9] Improve Exynos thermal driver
+Date: Fri,  1 Dec 2023 10:56:16 +0100
+Message-ID: <20231201095625.301884-1-m.majewski2@samsung.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJKsWRmVeSWpSXmKPExsWy7djPc7pX12amGsw6r27xYN42NovD8yss
+	pj58wmbxfct1JosP81rZLeZ9lrXY+3oru8W3Kx1MFpseX2O1uLxrDpvF594jjBYzzu9jsljY
+	1MJuMfHYZGaLtUfuslvM/TKV2eLJwz42B0GPNfPWMHrsnHWX3WPxnpdMHptWdbJ53Lm2h81j
+	85J6j74tqxg9Pm+SC+CI4rJJSc3JLEst0rdL4Mq4dfo7S8Fl/oqe3RfYGhj38XQxcnJICJhI
+	vPp9nq2LkYtDSGAFo8S6OU+YQRJCAl8YJVatioWwPzNK3H8UAtPQc3gfM0TDckaJYz+62SGc
+	ViaJu2cPsYBUsQkYSDx4s4wdxBYRaGWUmNmkDmIzCyxkkWj5lwtiCwuYSvzdMw9sG4uAqsTJ
+	/slA9ewcvAK2EtdFIHbJS+xZ9J0JxOYVEJQ4OfMJC8QUeYnmrbPBbpAQaOaU+H1yOhNEg4vE
+	+vsX2SFsYYlXx7dA2TISpyf3sEDY+RIzNr8HsjmA7AqJuwe9IExriY9nmEFMZgFNifW79CGK
+	HSWmtbVBFfNJ3HgrCHEAn8SkbdOZIcK8Eh1tQhDVqhLH90xihrClJZ603IY6y0Pi3Mxv7JCw
+	jJVYPvcT+wRGhVlI3pqF5K1ZCDcsYGRexSieWlqcm55abJSXWq5XnJhbXJqXrpecn7uJEZja
+	Tv87/mUH4/JXH/UOMTJxMB5ilOBgVhLhvf40PVWINyWxsiq1KD++qDQntfgQozQHi5I4r2qK
+	fKqQQHpiSWp2ampBahFMlomDU6qByWF6sPC6eM3jVcmPGNeVsVXv/GTfOas1T/boJafPCZM2
+	P16UoP459ylTWWjwIfWM1h86hiLuvKp/pOunOWdUp9cKyqzlSDhxJ01f1Gq/sqju0iVva53l
+	DhYENl3vOPSrlq1Tjj38y+1LupEZh87f0v3CFug+nf/4vq+/XylcqMy4O2VOiOK1w9Hnz2/f
+	Yzjrz9u5VmketXtv9O1wcfO6df+NRvvSd0d3rNsh2vTeXnmS/eHdPD15T+TMJTWmcSz+3Cb9
+	pYYzZPe8/If7tn/q+eHzNF310dMj3j9F4hz2Pog6eOPV25wVJt2Bwt9XaS+c3/pGasuRno/y
+	O+d0/9ryZl/ghMfVcQp7rld1SU2NDFViKc5INNRiLipOBACUjeoN3AMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKIsWRmVeSWpSXmKPExsVy+t/xe7pX12amGvx4ymzxYN42NovD8yss
+	pj58wmbxfct1JosP81rZLeZ9lrXY+3oru8W3Kx1MFpseX2O1uLxrDpvF594jjBYzzu9jsljY
+	1MJuMfHYZGaLtUfuslvM/TKV2eLJwz42B0GPNfPWMHrsnHWX3WPxnpdMHptWdbJ53Lm2h81j
+	85J6j74tqxg9Pm+SC+CI0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJ
+	Sc3JLEst0rdL0Mu4dfo7S8Fl/oqe3RfYGhj38XQxcnJICJhI9BzexwxiCwksZZTYc9IYIi4t
+	cfjLFHYIW1jiz7Uuti5GLqCaZiaJmxtOMoIk2AQMJB68WcYOkhAR6GSU6Np8jgnEYRZYzSJx
+	bN93JpAqYQFTib975oGtYBFQlTjZPxmog52DV8BW4roIxAJ5iT2LIKp5BQQlTs58wgJiMwPF
+	m7fOZp7AyDcLSWoWktQCRqZVjCKppcW56bnFhnrFibnFpXnpesn5uZsYgfG17djPzTsY5736
+	qHeIkYmD8RCjBAezkgjv9afpqUK8KYmVValF+fFFpTmpxYcYTYGum8gsJZqcD4zwvJJ4QzMD
+	U0MTM0sDU0szYyVxXs+CjkQhgfTEktTs1NSC1CKYPiYOTqkGph5vsYzCaZbWBrVdq9y3TtHd
+	lW8cuO/Lgvd32XdKb0uOO+z8Zd9NSR2Rp61elvHPn10vzXTc6Riwmiew8tO76JSqV1z13VGP
+	D9Q738mZL+dn6lXK9ni7+fVNkpNXvnmy2vXWAtXnZl7Z2zj3ssYdqNqx+Fn8wjVFP18unDrp
+	dazdx4qvL1KfmXn+8T57ZVfk4z2notX5ze/+nxHfUpX97e5zlpee/26evB8s/NB3wfzPxffZ
+	pJSUut9Fb7A7+JF/gdMG3lP/ezu9gzd8nLuia8rrdwXrvNM/6NfdCXkXMCNvvpSe/3cz/R1+
+	29rzRfvKuCy/67iuKD6gcCFRPYOTK8ryOv82UzfGJQlBL/WSriuxFGckGmoxFxUnAgA0wCdI
+	OAMAAA==
+X-CMS-MailID: 20231201095637eucas1p25e14bd24e05ae61eb12dee18af2a1dc5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20231201095637eucas1p25e14bd24e05ae61eb12dee18af2a1dc5
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20231201095637eucas1p25e14bd24e05ae61eb12dee18af2a1dc5
+References: <CGME20231201095637eucas1p25e14bd24e05ae61eb12dee18af2a1dc5@eucas1p2.samsung.com>
 
-Structure ufs_dev_params is actually used in UFS host vendor drivers to
-declare host specific power mode parameters, like ufs_<vendor>_params or
-host_cap, which makes the code not very straightforward to read. Rename the
-structure ufs_dev_params to ufs_host_params and unify the declarations in
-all vendor drivers to host_params.
+This work improves Exynos thermal driver in various ways. This is
+related to the discussion in
+https://lore.kernel.org/all/97201878-3bb8-eac5-7fac-a690322ac43a@linaro.org/
 
-In addition, rename the two functions ufshcd_init_pwr_dev_param() and
-ufshcd_get_pwr_dev_param() which work based on the ufs_host_params to
-ufshcd_init_host_params() and ufshcd_negotiate_pwr_params() respectively to
-avoid confusions.
+The primary issue being fixed is a lockdep warning, which is fixed by
+the thermal: exynos: use set_trips patch. We also simplify the code in
+general.
 
-This change does not change any functionalities or logic.
+Changelog:
+ v6:
+   - Fixed cleanup after split initialization failure
+ v5:
+   - Used BIT wherever possible
+   - Simplified Exynos 7 code and used the correct register offsets for
+     Exynos 7
+   - Refactored some common register-setting code
+ v4:
+   - Resolved merge conflict when applying thermal: exynos: split
+     initialization of TMU and the thermal zone
+   - Reordered calls done when leaving exynos_tmu_initialize for
+     symmetry
+ v3:
+   - Fixed regulator initialization
+   - Fixed formatting of some comments
+ v2:
+   - Added missing field descriptions
+   - Removed an unnecessary field description
+   - Removed the commits that made clock management more fine-grained
+     (need more discussion), and adapted the new code to manage clocks
+   - Removed the devicetree changes (will be uploaded separately),
+     changing the recipient list accordingly
+   - Improved formatting of the devm_request_threaded_irq call
 
-Acked-by: Andrew Halaney <ahalaney@redhat.com>
-Reviewed-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Can Guo <quic_cang@quicinc.com>
----
- drivers/ufs/host/ufs-exynos.c    |  7 ++--
- drivers/ufs/host/ufs-hisi.c      | 11 +++----
- drivers/ufs/host/ufs-mediatek.c  | 12 +++----
- drivers/ufs/host/ufs-qcom.c      | 12 +++----
- drivers/ufs/host/ufshcd-pltfrm.c | 69 ++++++++++++++++++++--------------------
- drivers/ufs/host/ufshcd-pltfrm.h | 10 +++---
- 6 files changed, 57 insertions(+), 64 deletions(-)
+Mateusz Majewski (9):
+  thermal: exynos: remove an unnecessary field description
+  thermal: exynos: drop id field
+  thermal: exynos: switch from workqueue-driven interrupt handling to
+    threaded interrupts
+  thermal: exynos: handle devm_regulator_get_optional return value
+    correctly
+  thermal: exynos: simplify regulator (de)initialization
+  thermal: exynos: stop using the threshold mechanism on Exynos 4210
+  thermal: exynos: split initialization of TMU and the thermal zone
+  thermal: exynos: use BIT wherever possible
+  thermal: exynos: use set_trips
 
-diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index 71bd6db..734d40f 100644
---- a/drivers/ufs/host/ufs-exynos.c
-+++ b/drivers/ufs/host/ufs-exynos.c
-@@ -765,7 +765,7 @@ static int exynos_ufs_pre_pwr_mode(struct ufs_hba *hba,
- {
- 	struct exynos_ufs *ufs = ufshcd_get_variant(hba);
- 	struct phy *generic_phy = ufs->phy;
--	struct ufs_dev_params ufs_exynos_cap;
-+	struct ufs_host_params host_params;
- 	int ret;
- 
- 	if (!dev_req_params) {
-@@ -774,10 +774,9 @@ static int exynos_ufs_pre_pwr_mode(struct ufs_hba *hba,
- 		goto out;
- 	}
- 
--	ufshcd_init_pwr_dev_param(&ufs_exynos_cap);
-+	ufshcd_init_host_params(&host_params);
- 
--	ret = ufshcd_get_pwr_dev_param(&ufs_exynos_cap,
--				       dev_max_params, dev_req_params);
-+	ret = ufshcd_negotiate_pwr_params(&host_params, dev_max_params, dev_req_params);
- 	if (ret) {
- 		pr_err("%s: failed to determine capabilities\n", __func__);
- 		goto out;
-diff --git a/drivers/ufs/host/ufs-hisi.c b/drivers/ufs/host/ufs-hisi.c
-index 0229ac0..5ee73ff 100644
---- a/drivers/ufs/host/ufs-hisi.c
-+++ b/drivers/ufs/host/ufs-hisi.c
-@@ -293,9 +293,9 @@ static int ufs_hisi_link_startup_notify(struct ufs_hba *hba,
- 	return err;
- }
- 
--static void ufs_hisi_set_dev_cap(struct ufs_dev_params *hisi_param)
-+static void ufs_hisi_set_dev_cap(struct ufs_host_params *host_params)
- {
--	ufshcd_init_pwr_dev_param(hisi_param);
-+	ufshcd_init_host_params(host_params);
- }
- 
- static void ufs_hisi_pwr_change_pre_change(struct ufs_hba *hba)
-@@ -365,7 +365,7 @@ static int ufs_hisi_pwr_change_notify(struct ufs_hba *hba,
- 				       struct ufs_pa_layer_attr *dev_max_params,
- 				       struct ufs_pa_layer_attr *dev_req_params)
- {
--	struct ufs_dev_params ufs_hisi_cap;
-+	struct ufs_host_params host_params;
- 	int ret = 0;
- 
- 	if (!dev_req_params) {
-@@ -377,9 +377,8 @@ static int ufs_hisi_pwr_change_notify(struct ufs_hba *hba,
- 
- 	switch (status) {
- 	case PRE_CHANGE:
--		ufs_hisi_set_dev_cap(&ufs_hisi_cap);
--		ret = ufshcd_get_pwr_dev_param(&ufs_hisi_cap,
--					       dev_max_params, dev_req_params);
-+		ufs_hisi_set_dev_cap(&host_params);
-+		ret = ufshcd_negotiate_pwr_params(&host_params, dev_max_params, dev_req_params);
- 		if (ret) {
- 			dev_err(hba->dev,
- 			    "%s: failed to determine capabilities\n", __func__);
-diff --git a/drivers/ufs/host/ufs-mediatek.c b/drivers/ufs/host/ufs-mediatek.c
-index fc61790..776bca4 100644
---- a/drivers/ufs/host/ufs-mediatek.c
-+++ b/drivers/ufs/host/ufs-mediatek.c
-@@ -996,16 +996,14 @@ static int ufs_mtk_pre_pwr_change(struct ufs_hba *hba,
- 				  struct ufs_pa_layer_attr *dev_req_params)
- {
- 	struct ufs_mtk_host *host = ufshcd_get_variant(hba);
--	struct ufs_dev_params host_cap;
-+	struct ufs_host_params host_params;
- 	int ret;
- 
--	ufshcd_init_pwr_dev_param(&host_cap);
--	host_cap.hs_rx_gear = UFS_HS_G5;
--	host_cap.hs_tx_gear = UFS_HS_G5;
-+	ufshcd_init_host_params(&host_params);
-+	host_params.hs_rx_gear = UFS_HS_G5;
-+	host_params.hs_tx_gear = UFS_HS_G5;
- 
--	ret = ufshcd_get_pwr_dev_param(&host_cap,
--				       dev_max_params,
--				       dev_req_params);
-+	ret = ufshcd_negotiate_pwr_params(&host_params, dev_max_params, dev_req_params);
- 	if (ret) {
- 		pr_info("%s: failed to determine capabilities\n",
- 			__func__);
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 96cb8b5..197c5a5 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -898,7 +898,7 @@ static int ufs_qcom_pwr_change_notify(struct ufs_hba *hba,
- 				struct ufs_pa_layer_attr *dev_req_params)
- {
- 	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
--	struct ufs_dev_params ufs_qcom_cap;
-+	struct ufs_host_params host_params;
- 	int ret = 0;
- 
- 	if (!dev_req_params) {
-@@ -908,15 +908,13 @@ static int ufs_qcom_pwr_change_notify(struct ufs_hba *hba,
- 
- 	switch (status) {
- 	case PRE_CHANGE:
--		ufshcd_init_pwr_dev_param(&ufs_qcom_cap);
--		ufs_qcom_cap.hs_rate = UFS_QCOM_LIMIT_HS_RATE;
-+		ufshcd_init_host_params(&host_params);
-+		host_params.hs_rate = UFS_QCOM_LIMIT_HS_RATE;
- 
- 		/* This driver only supports symmetic gear setting i.e., hs_tx_gear == hs_rx_gear */
--		ufs_qcom_cap.hs_tx_gear = ufs_qcom_cap.hs_rx_gear = ufs_qcom_get_hs_gear(hba);
-+		host_params.hs_tx_gear = host_params.hs_rx_gear = ufs_qcom_get_hs_gear(hba);
- 
--		ret = ufshcd_get_pwr_dev_param(&ufs_qcom_cap,
--					       dev_max_params,
--					       dev_req_params);
-+		ret = ufshcd_negotiate_pwr_params(&host_params, dev_max_params, dev_req_params);
- 		if (ret) {
- 			dev_err(hba->dev, "%s: failed to determine capabilities\n",
- 					__func__);
-diff --git a/drivers/ufs/host/ufshcd-pltfrm.c b/drivers/ufs/host/ufshcd-pltfrm.c
-index da2558e..1633edc 100644
---- a/drivers/ufs/host/ufshcd-pltfrm.c
-+++ b/drivers/ufs/host/ufshcd-pltfrm.c
-@@ -285,61 +285,60 @@ static int ufshcd_parse_operating_points(struct ufs_hba *hba)
- }
- 
- /**
-- * ufshcd_get_pwr_dev_param - get finally agreed attributes for
-- *                            power mode change
-- * @pltfrm_param: pointer to platform parameters
-+ * ufshcd_negotiate_pwr_params - find power mode settings that are supported by
-+				both the controller and the device
-+ * @host_params: pointer to host parameters
-  * @dev_max: pointer to device attributes
-  * @agreed_pwr: returned agreed attributes
-  *
-  * Return: 0 on success, non-zero value on failure.
-  */
--int ufshcd_get_pwr_dev_param(const struct ufs_dev_params *pltfrm_param,
--			     const struct ufs_pa_layer_attr *dev_max,
--			     struct ufs_pa_layer_attr *agreed_pwr)
-+int ufshcd_negotiate_pwr_params(const struct ufs_host_params *host_params,
-+				const struct ufs_pa_layer_attr *dev_max,
-+				struct ufs_pa_layer_attr *agreed_pwr)
- {
--	int min_pltfrm_gear;
-+	int min_host_gear;
- 	int min_dev_gear;
- 	bool is_dev_sup_hs = false;
--	bool is_pltfrm_max_hs = false;
-+	bool is_host_max_hs = false;
- 
- 	if (dev_max->pwr_rx == FAST_MODE)
- 		is_dev_sup_hs = true;
- 
--	if (pltfrm_param->desired_working_mode == UFS_HS_MODE) {
--		is_pltfrm_max_hs = true;
--		min_pltfrm_gear = min_t(u32, pltfrm_param->hs_rx_gear,
--					pltfrm_param->hs_tx_gear);
-+	if (host_params->desired_working_mode == UFS_HS_MODE) {
-+		is_host_max_hs = true;
-+		min_host_gear = min_t(u32, host_params->hs_rx_gear,
-+					host_params->hs_tx_gear);
- 	} else {
--		min_pltfrm_gear = min_t(u32, pltfrm_param->pwm_rx_gear,
--					pltfrm_param->pwm_tx_gear);
-+		min_host_gear = min_t(u32, host_params->pwm_rx_gear,
-+					host_params->pwm_tx_gear);
- 	}
- 
- 	/*
--	 * device doesn't support HS but
--	 * pltfrm_param->desired_working_mode is HS,
--	 * thus device and pltfrm_param don't agree
-+	 * device doesn't support HS but host_params->desired_working_mode is HS,
-+	 * thus device and host_params don't agree
- 	 */
--	if (!is_dev_sup_hs && is_pltfrm_max_hs) {
-+	if (!is_dev_sup_hs && is_host_max_hs) {
- 		pr_info("%s: device doesn't support HS\n",
- 			__func__);
- 		return -ENOTSUPP;
--	} else if (is_dev_sup_hs && is_pltfrm_max_hs) {
-+	} else if (is_dev_sup_hs && is_host_max_hs) {
- 		/*
- 		 * since device supports HS, it supports FAST_MODE.
--		 * since pltfrm_param->desired_working_mode is also HS
-+		 * since host_params->desired_working_mode is also HS
- 		 * then final decision (FAST/FASTAUTO) is done according
- 		 * to pltfrm_params as it is the restricting factor
- 		 */
--		agreed_pwr->pwr_rx = pltfrm_param->rx_pwr_hs;
-+		agreed_pwr->pwr_rx = host_params->rx_pwr_hs;
- 		agreed_pwr->pwr_tx = agreed_pwr->pwr_rx;
- 	} else {
- 		/*
--		 * here pltfrm_param->desired_working_mode is PWM.
-+		 * here host_params->desired_working_mode is PWM.
- 		 * it doesn't matter whether device supports HS or PWM,
--		 * in both cases pltfrm_param->desired_working_mode will
-+		 * in both cases host_params->desired_working_mode will
- 		 * determine the mode
- 		 */
--		agreed_pwr->pwr_rx = pltfrm_param->rx_pwr_pwm;
-+		agreed_pwr->pwr_rx = host_params->rx_pwr_pwm;
- 		agreed_pwr->pwr_tx = agreed_pwr->pwr_rx;
- 	}
- 
-@@ -349,9 +348,9 @@ int ufshcd_get_pwr_dev_param(const struct ufs_dev_params *pltfrm_param,
- 	 * the same decision will be made for rx
- 	 */
- 	agreed_pwr->lane_tx = min_t(u32, dev_max->lane_tx,
--				    pltfrm_param->tx_lanes);
-+				    host_params->tx_lanes);
- 	agreed_pwr->lane_rx = min_t(u32, dev_max->lane_rx,
--				    pltfrm_param->rx_lanes);
-+				    host_params->rx_lanes);
- 
- 	/* device maximum gear is the minimum between device rx and tx gears */
- 	min_dev_gear = min_t(u32, dev_max->gear_rx, dev_max->gear_tx);
-@@ -364,26 +363,26 @@ int ufshcd_get_pwr_dev_param(const struct ufs_dev_params *pltfrm_param,
- 	 * what is the gear, as it is the one that also decided previously what
- 	 * pwr the device will be configured to.
- 	 */
--	if ((is_dev_sup_hs && is_pltfrm_max_hs) ||
--	    (!is_dev_sup_hs && !is_pltfrm_max_hs)) {
-+	if ((is_dev_sup_hs && is_host_max_hs) ||
-+	    (!is_dev_sup_hs && !is_host_max_hs)) {
- 		agreed_pwr->gear_rx =
--			min_t(u32, min_dev_gear, min_pltfrm_gear);
-+			min_t(u32, min_dev_gear, min_host_gear);
- 	} else if (!is_dev_sup_hs) {
- 		agreed_pwr->gear_rx = min_dev_gear;
- 	} else {
--		agreed_pwr->gear_rx = min_pltfrm_gear;
-+		agreed_pwr->gear_rx = min_host_gear;
- 	}
- 	agreed_pwr->gear_tx = agreed_pwr->gear_rx;
- 
--	agreed_pwr->hs_rate = pltfrm_param->hs_rate;
-+	agreed_pwr->hs_rate = host_params->hs_rate;
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(ufshcd_get_pwr_dev_param);
-+EXPORT_SYMBOL_GPL(ufshcd_negotiate_pwr_params);
- 
--void ufshcd_init_pwr_dev_param(struct ufs_dev_params *dev_param)
-+void ufshcd_init_host_params(struct ufs_host_params *host_params)
- {
--	*dev_param = (struct ufs_dev_params){
-+	*host_params = (struct ufs_host_params){
- 		.tx_lanes = UFS_LANE_2,
- 		.rx_lanes = UFS_LANE_2,
- 		.hs_rx_gear = UFS_HS_G3,
-@@ -398,7 +397,7 @@ void ufshcd_init_pwr_dev_param(struct ufs_dev_params *dev_param)
- 		.desired_working_mode = UFS_HS_MODE,
- 	};
- }
--EXPORT_SYMBOL_GPL(ufshcd_init_pwr_dev_param);
-+EXPORT_SYMBOL_GPL(ufshcd_init_host_params);
- 
- /**
-  * ufshcd_pltfrm_init - probe routine of the driver
-diff --git a/drivers/ufs/host/ufshcd-pltfrm.h b/drivers/ufs/host/ufshcd-pltfrm.h
-index a86a3ad..df387be 100644
---- a/drivers/ufs/host/ufshcd-pltfrm.h
-+++ b/drivers/ufs/host/ufshcd-pltfrm.h
-@@ -10,7 +10,7 @@
- #define UFS_PWM_MODE 1
- #define UFS_HS_MODE  2
- 
--struct ufs_dev_params {
-+struct ufs_host_params {
- 	u32 pwm_rx_gear;        /* pwm rx gear to work in */
- 	u32 pwm_tx_gear;        /* pwm tx gear to work in */
- 	u32 hs_rx_gear;         /* hs rx gear to work in */
-@@ -25,10 +25,10 @@ struct ufs_dev_params {
- 	u32 desired_working_mode;
- };
- 
--int ufshcd_get_pwr_dev_param(const struct ufs_dev_params *dev_param,
--			     const struct ufs_pa_layer_attr *dev_max,
--			     struct ufs_pa_layer_attr *agreed_pwr);
--void ufshcd_init_pwr_dev_param(struct ufs_dev_params *dev_param);
-+int ufshcd_negotiate_pwr_params(const struct ufs_host_params *host_params,
-+				const struct ufs_pa_layer_attr *dev_max,
-+				struct ufs_pa_layer_attr *agreed_pwr);
-+void ufshcd_init_host_params(struct ufs_host_params *host_params);
- int ufshcd_pltfrm_init(struct platform_device *pdev,
- 		       const struct ufs_hba_variant_ops *vops);
- int ufshcd_populate_vreg(struct device *dev, const char *name,
+ drivers/thermal/samsung/exynos_tmu.c | 547 ++++++++++++++-------------
+ 1 file changed, 274 insertions(+), 273 deletions(-)
+
 -- 
-2.7.4
+2.42.0
 
