@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aqzI+8Va"
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F4B31728
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Dec 2023 08:10:57 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-3332ad5b3e3so1088704f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Dec 2023 08:10:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K5SPFL9A"
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85A221721
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Dec 2023 08:10:54 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-33334480eb4so361046f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Dec 2023 08:10:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701447056; x=1702051856; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701447053; x=1702051853; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RqUq8HgRrGxmt9Sh9WkyxYYOgIWePrhLH04C32o9WIM=;
-        b=aqzI+8Vaa+EIQqQ9IDQ5mLO+OuGQ74HOjDTaGFLIG62yh7lkQRCNCCX9/hZ+XrN6QC
-         n0yXnlskULgxoF+bDqiFUtw4GHRsDDhxg9X430rqoEV3oRr0jFxsKYEChPPiJZsU13fj
-         GwPoSCT8VoHyRwARhTxY5/2L6w4zJdVHEo7JruSxXG0J11/wuudPYxukoTJk/e9lBlOi
-         Z3kckVrCCVEI92F2AIiFyuGmS/m6xlizKQoS6kWZsa7/oXrFIkGVFoY4JrVlRJOsOvlu
-         YnlNtka/KkJkq9mv9A8tTwkQ2LcA2tgK4fTq+JLnFOcY/xsD9UA1qG9zgUGnA59niuBa
-         Ju1g==
+        bh=t0fS/45n5pWMNmZnKLrwCqfH7Ybi7kQbfySMZpLJ3Fo=;
+        b=K5SPFL9Aqd2wGciBvRT11glBhU6F50SNyUzeu7q+ZeF9/hxU/G/JCnZlVJEUEDuaEv
+         rNYlHpkJjoiTr+X1yQIWCo5mTRpaQGvc39zBJYgmz6uMjOaCXX6Squ7UJmhBXdhNgrAX
+         7AmEv6AI//AbRRxA4hVMWBopRhAzyMn2YusLCeqQQIfiV+3LLChRWoUTfEM9ygoqnIxn
+         A/0k8wc4TODKMaOFWUsexVZKdypKrr9y6k1DD/hEoFteVGM4Ek+eK2aISNfY6I3v19ZQ
+         s/BMD8YlgXfajroICm4XQWsfSxsK9wVjjcu4dCjKFZSIa8Pc3ZkEHv9nI7/YYkMnMQsT
+         iqfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701447056; x=1702051856;
+        d=1e100.net; s=20230601; t=1701447053; x=1702051853;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RqUq8HgRrGxmt9Sh9WkyxYYOgIWePrhLH04C32o9WIM=;
-        b=wvAnyxxTjgFoFfCvzkPAPWzT3aMN6GeGk1fFO0mGA24JtgySF4c5U23HXmhaZzQ1w4
-         diH8JDX7EyCvcVX46eHB7XRsXsyyXC68/5fU9UKKSMXBAs3EG92lCzjduNnH+UC2E9/S
-         rNXo6XsEngwM78pcSPw9LPyogjUkaIFpVA+AMoEiQT6Ujbi4Qywwccejwe0MqiZtFkqN
-         8VrYlFgyT61mi3qkjH2rqKyfBgwO/UyrfGb9qjpqnoAZJLqdaPy3Ol7JPmnOjm/t8El6
-         Sex7NzW1j8dZAeIKCP3TT3mNjSm+FIRec5l8WZxIB897MKg9ujzl8g8eTiT6+ZA0UXAa
-         GgMw==
-X-Gm-Message-State: AOJu0YyEXLoiMy0b3fNPsvkXfqlRSzKafNOE0xjY3BaXdfNHvSiYX2m6
-	L1maT5FTb6WOjfpV6rc+lU7rQQ==
-X-Google-Smtp-Source: AGHT+IGxH3HZRD9B1F0nvSoZso66FA8TLrJx4cs/LpqBZQYZyLd3azB4kfjBGCl5Q90eurcfEWOWWg==
-X-Received: by 2002:adf:ef83:0:b0:333:2fd2:51fa with SMTP id d3-20020adfef83000000b003332fd251famr1015597wro.115.1701447055983;
-        Fri, 01 Dec 2023 08:10:55 -0800 (PST)
+        bh=t0fS/45n5pWMNmZnKLrwCqfH7Ybi7kQbfySMZpLJ3Fo=;
+        b=QbF731JXqagTYgpoCOOfEl7P+juOgKuKppg1nPEpqoIRTpFV4pWUhEox2sjrvy4veX
+         wcBYgsa/a9EpgrL3bDLrNpe9wTY+Eovdgpv+/We98bgW1Q/0ZBqdgDFoJ7x7/Wu9QVVR
+         p4i90RdOxmxD/GLy8m84Fkucipf4jeM86VTuw8XA2d8QzfXjy9+Vf9d+3Ka5VbSpGAgO
+         rf6TYpwhxWEibT9j+zGSThKjCei8auhY9SAa7jfL/dWPrPVilRe/qRUztvjy9iLLsMam
+         f1sfx1MDdBO3G45XC5pIpRcCIwSYWsRpTPQp+wWEf4Wr/DzXPXqNuLxG283VsJa17Q0l
+         jWcw==
+X-Gm-Message-State: AOJu0Ywu5o8YIGZ+vYnwcdv/HsUdzPkTxmIr/oNwETVpGJSxucbutxfb
+	Gl7RG4QY8V6uhZBVuhOje8QQlA==
+X-Google-Smtp-Source: AGHT+IFczkz+6/3BJv/r5dYlZtPDW6xQIZVaMMCqJyhd9I3BOMrjdPH3n1XHeXMkm6F11GNNyE2Hfg==
+X-Received: by 2002:adf:ec11:0:b0:333:2fd2:2edd with SMTP id x17-20020adfec11000000b003332fd22eddmr1064938wrn.86.1701447053063;
+        Fri, 01 Dec 2023 08:10:53 -0800 (PST)
 Received: from gpeter-l.lan (host-92-29-24-243.as13285.net. [92.29.24.243])
-        by smtp.gmail.com with ESMTPSA id cg16-20020a5d5cd0000000b003332656cd73sm3907386wrb.105.2023.12.01.08.10.54
+        by smtp.gmail.com with ESMTPSA id cg16-20020a5d5cd0000000b003332656cd73sm3907386wrb.105.2023.12.01.08.10.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Dec 2023 08:10:55 -0800 (PST)
+        Fri, 01 Dec 2023 08:10:52 -0800 (PST)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: robh+dt@kernel.org,
 	krzysztof.kozlowski+dt@linaro.org,
@@ -71,11 +71,10 @@ Cc: peter.griffin@linaro.org,
 	linux-gpio@vger.kernel.org,
 	linux-watchdog@vger.kernel.org,
 	kernel-team@android.com,
-	linux-serial@vger.kernel.org,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH v5 05/20] dt-bindings: arm: google: Add bindings for Google ARM platforms
-Date: Fri,  1 Dec 2023 16:09:10 +0000
-Message-ID: <20231201160925.3136868-6-peter.griffin@linaro.org>
+	linux-serial@vger.kernel.org
+Subject: [PATCH v5 03/20] dt-bindings: soc: google: exynos-sysreg: add dedicated SYSREG compatibles to GS101
+Date: Fri,  1 Dec 2023 16:09:08 +0000
+Message-ID: <20231201160925.3136868-4-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.43.0.rc2.451.g8631bc7472-goog
 In-Reply-To: <20231201160925.3136868-1-peter.griffin@linaro.org>
 References: <20231201160925.3136868-1-peter.griffin@linaro.org>
@@ -87,75 +86,32 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This introduces bindings and dt-schema for the Google tensor SoCs.
-Currently just gs101 and pixel 6 are supported.
+GS101 has three different SYSREG controllers, add dedicated
+compatibles for them to the documentation.
 
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/arm/google.yaml       | 53 +++++++++++++++++++
- 1 file changed, 53 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/google.yaml
+ .../bindings/soc/samsung/samsung,exynos-sysreg.yaml         | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/google.yaml b/Documentation/devicetree/bindings/arm/google.yaml
-new file mode 100644
-index 000000000000..be191e70192d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/google.yaml
-@@ -0,0 +1,53 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/google.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Google Tensor platforms
-+
-+maintainers:
-+  - Peter Griffin <peter.griffin@linaro.org>
-+
-+description: |
-+  ARM platforms using SoCs designed by Google branded "Tensor" used in Pixel
-+  devices.
-+
-+  Currently upstream this is devices using "gs101" SoC which is found in Pixel
-+  6, Pixel 6 Pro and Pixel 6a.
-+
-+  Google have a few different names for the SoC.
-+  - Marketing name ("Tensor")
-+  - Codename ("Whitechapel")
-+  - SoC ID ("gs101")
-+  - Die ID ("S5P9845");
-+
-+  Likewise there are a couple of names for the actual device
-+  - Marketing name ("Pixel 6")
-+  - Codename ("Oriole")
-+
-+  Devicetrees should use the lowercased SoC ID and lowercased board codename.
-+  e.g. gs101 and gs101-oriole
-+
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
-+      - description: Google Pixel 6 / Oriole
-+        items:
+diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+index 2de4301a467d..127f4ffde76a 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+@@ -22,6 +22,12 @@ properties:
+               - tesla,fsd-fsys1-sysreg
+               - tesla,fsd-peric-sysreg
+           - const: syscon
++      - items:
 +          - enum:
-+              - google,gs101-oriole
-+          - const: google,gs101
-+
-+  # Bootloader requires empty ect node to be present
-+  ect:
-+    type: object
-+    additionalProperties: false
-+
-+required:
-+  - ect
-+
-+additionalProperties: true
-+
-+...
++              - google,gs101-apm-sysreg
++              - google,gs101-peric0-sysreg
++              - google,gs101-peric1-sysreg
++          - const: syscon
+       - items:
+           - enum:
+               - samsung,exynos5433-cam0-sysreg
 -- 
 2.43.0.rc2.451.g8631bc7472-goog
 
