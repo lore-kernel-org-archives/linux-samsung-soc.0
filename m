@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tNeMHw/D"
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32486173C
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Dec 2023 08:11:17 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-332c46d5988so1431542f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Dec 2023 08:11:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GHZ9pJyz"
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFC15171C
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Dec 2023 08:11:20 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-3332ad5b3e3so1089041f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Dec 2023 08:11:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701447075; x=1702051875; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701447079; x=1702051879; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=N6X5vVAlls/XtdCFtdQoEfrejT5TccvyQro4u4ajLPE=;
-        b=tNeMHw/D05NQXQJhExp4MAeWGYPE1eaArr7GuiiVIK5QnkQTzQtXbbxuO6FCoNn6Hr
-         xnHL4D4ybyV+gtadDtuBlhMD3rHiuTq7aWMxaMD6/H17PwmnBYwkPZQBJq4XqHn5Qt+J
-         C+p3Z++P74qo5NSohGD10X6SaY/ihUK4PUawxXoRgflq9ox+3bao3tg7aeVMbdkp1G6B
-         IMUenK2uCSxGsg+n2f4PAYYt20xQRLZ7Gn3QhH8skyG3F2FhO8vG+PUgoNqI3WM2D4ER
-         eyCDbRmfcXOdpDj5dh43S0U1WxHp6l1dkqV/mZxCpF5EPrgEWS+xgJ688aDj/GxtniB9
-         QdIQ==
+        bh=qGa7Ijft1EBu8UVzayeo7MTZkMcFeh7xh+YN0z5QS2k=;
+        b=GHZ9pJyzAsvFdjPHxFcbs+EIWdVSKFvNt9jJxGLQZ3eRdPUaM+IIUtP9BDaKrUxzY+
+         sixWv3VJ8nBGOu9LdWrD5+tMXvKM88GNZPYyXL6D6yLtQUEvTQUChXnPxlagaa31p6PV
+         gNlzPPhrbxuCjwn8VGG6XVWYr3In8udUgUwgYjOdCJh09KKA0vvRNiZk6nwoTJpvzuT0
+         99jM2XruWvMbMFYSwTCn4K75hELzBh3Ol1C1mgy1nZsSSVcfNluCkjUfUEmEvLpL3fPa
+         bxM0zJzxRlSZ4KewcUqSUKAiDtJyKgJ+DO/CtTis8+BjAQVPbryIwxbbIDXZDx5Tb4pr
+         tvyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701447075; x=1702051875;
+        d=1e100.net; s=20230601; t=1701447079; x=1702051879;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=N6X5vVAlls/XtdCFtdQoEfrejT5TccvyQro4u4ajLPE=;
-        b=J9+tjRja1iamuUK3GmbK7gMumzXvEkBBhpQu/uAMzfr6R4aDiWh9Mo9rFulb63sU1F
-         OtNGFZ79+uootXcuzWhhqxF5sy/u4Fywx8UK75On2cwaGaMWLKFaQIe0kJeGTGSFRJ8A
-         2Tvjmw0pHTj7fvpKhnnVnBmLdqhzTDW48zd09FzF/ZuMv4Xfv/j4q8s9yPzYJrEG27yS
-         h4fG3RGvBaVSYrWl/YmIWrsW6Rn64q56oMFyhIJh1B+PmFq9mxG74BoH/ckU3t4iqHX/
-         ELALGZAtQx9n4vC5VXyA4S67UzjieqcNmamED8wIDs+dqxWwQwxfOoUfzbjOQellH4LH
-         ISsg==
-X-Gm-Message-State: AOJu0YxC0rQP22LqFexF5La39+M2ABKx7UWj1ybqYcUpLt+wft8b23Kx
-	bnPkqCd5yGJZjqFL1yXKBXkNPg==
-X-Google-Smtp-Source: AGHT+IGDALCDuLFU1YQ+h+wr7UohRR0OcUFUK/djXShHghoJYpXFb8S89wEYypH79BAexl0QUCJeDw==
-X-Received: by 2002:adf:cf06:0:b0:333:2fd2:5d16 with SMTP id o6-20020adfcf06000000b003332fd25d16mr892081wrj.72.1701447075706;
-        Fri, 01 Dec 2023 08:11:15 -0800 (PST)
+        bh=qGa7Ijft1EBu8UVzayeo7MTZkMcFeh7xh+YN0z5QS2k=;
+        b=oYA+9dYhc7KDxxRwGmTLKdzl+ZT821Mkq8nJiElZynmez1cqxkb1bttJvxcDKMscta
+         +dzxXtwjsK0mRBEGRBnK4/gVGULlngtVWk30QECUPLrMbizkRVeH2GlILsExIoQI+eQ2
+         B694bp0/6gAaEbgdkPsy4iaK6gBYeA5xKhru1DsHG3YAhBoQeHkB2vrBMV5aMHXf91GI
+         PnGS3AjiNoa5MIAyi/njbkFlA0sF55Wa6N4tGuLX6UVXmPY+omYCRuXhBN+EHMxmY2WK
+         5kc3TRtGZ4fHOCFcmLg76qbn1AhKlj7T6wS6UkkUyyC53dTt6GgYa6i6mcdRmaM8hpu8
+         1eyw==
+X-Gm-Message-State: AOJu0YxEZAWy0/hON1aLDp+SpxUfy9cTB7gHaxfu6vwvCMsL5hiX0GcY
+	ZfsmVoABL+rpQCdL7hGwyxhq2A==
+X-Google-Smtp-Source: AGHT+IGxG4p6gUCgnf4haiIEGOEJXC+oyIvA22Wsild87j4sKHlHkElsxyJGVDo3VWPWNapGJzJPQQ==
+X-Received: by 2002:adf:fc84:0:b0:333:3518:c6a4 with SMTP id g4-20020adffc84000000b003333518c6a4mr336557wrr.102.1701447079286;
+        Fri, 01 Dec 2023 08:11:19 -0800 (PST)
 Received: from gpeter-l.lan (host-92-29-24-243.as13285.net. [92.29.24.243])
-        by smtp.gmail.com with ESMTPSA id cg16-20020a5d5cd0000000b003332656cd73sm3907386wrb.105.2023.12.01.08.11.14
+        by smtp.gmail.com with ESMTPSA id cg16-20020a5d5cd0000000b003332656cd73sm3907386wrb.105.2023.12.01.08.11.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Dec 2023 08:11:15 -0800 (PST)
+        Fri, 01 Dec 2023 08:11:18 -0800 (PST)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: robh+dt@kernel.org,
 	krzysztof.kozlowski+dt@linaro.org,
@@ -72,9 +72,9 @@ Cc: peter.griffin@linaro.org,
 	linux-watchdog@vger.kernel.org,
 	kernel-team@android.com,
 	linux-serial@vger.kernel.org
-Subject: [PATCH v5 17/20] tty: serial: samsung: Add gs101 compatible and common fifoszdt_serial_drv_data
-Date: Fri,  1 Dec 2023 16:09:22 +0000
-Message-ID: <20231201160925.3136868-18-peter.griffin@linaro.org>
+Subject: [PATCH v5 19/20] arm64: dts: exynos: google: Add initial Oriole/pixel 6 board support
+Date: Fri,  1 Dec 2023 16:09:24 +0000
+Message-ID: <20231201160925.3136868-20-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.43.0.rc2.451.g8631bc7472-goog
 In-Reply-To: <20231201160925.3136868-1-peter.griffin@linaro.org>
 References: <20231201160925.3136868-1-peter.griffin@linaro.org>
@@ -86,70 +86,150 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add serial driver data for Google Tensor gs101 SoC and a common
-fifoszdt_serial_drv_data that can be used by platforms that specify the
-samsung,uart-fifosize DT property.
+Add initial board support for the Pixel 6 phone code named Oriole. This
+has been tested with a minimal busybox initramfs and boots to a shell.
 
-A corresponding dt-bindings patch updates the yaml to ensure
-samsung,uart-fifosize is a required property.
-
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/tty/serial/samsung_tty.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm64/boot/dts/exynos/Makefile           |   2 +
+ arch/arm64/boot/dts/exynos/google/Makefile    |   4 +
+ .../boot/dts/exynos/google/gs101-oriole.dts   | 105 ++++++++++++++++++
+ 3 files changed, 111 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/google/Makefile
+ create mode 100644 arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 1b0c2b467a30..f8d98f1006de 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -2490,14 +2490,25 @@ static const struct s3c24xx_serial_drv_data exynos850_serial_drv_data = {
- 	.fifosize = { 256, 64, 64, 64 },
- };
- 
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index 6e4ba69268e5..44c24a8ad9e1 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -1,4 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
++subdir-y += google
++
+ dtb-$(CONFIG_ARCH_EXYNOS) += \
+ 	exynos5433-tm2.dtb		\
+ 	exynos5433-tm2e.dtb		\
+diff --git a/arch/arm64/boot/dts/exynos/google/Makefile b/arch/arm64/boot/dts/exynos/google/Makefile
+new file mode 100644
+index 000000000000..0a6d5e1fe4ee
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/google/Makefile
+@@ -0,0 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
++
++dtb-$(CONFIG_ARCH_EXYNOS) += \
++	gs101-oriole.dtb \
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+new file mode 100644
+index 000000000000..6abd00fa337e
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+@@ -0,0 +1,105 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Common drv_data struct for platforms that specify uart,fifosize in
-+ * device tree.
++ * Oriole Device Tree
++ *
++ * Copyright 2021-2023 Google,LLC
++ * Copyright 2023 Linaro Ltd - <peter.griffin@linaro.org>
 + */
-+static const struct s3c24xx_serial_drv_data exynos_fifoszdt_serial_drv_data = {
-+	EXYNOS_COMMON_SERIAL_DRV_DATA(),
-+	.fifosize = { 0 },
++
++/dts-v1/;
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include "gs101-pinctrl.h"
++#include "gs101.dtsi"
++
++/ {
++	model = "Oriole";
++	compatible = "google,gs101-oriole", "google,gs101";
++
++	aliases {
++		serial0 = &serial_0;
++	};
++
++	chosen {
++		/* Bootloader expects bootargs specified otherwise it crashes */
++		bootargs = "";
++		stdout-path = &serial_0;
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++		pinctrl-names = "default";
++		pinctrl-0 = <&key_voldown>, <&key_volup>, <&key_power>;
++
++		button-vol-down {
++			label = "KEY_VOLUMEDOWN";
++			linux,code = <KEY_VOLUMEDOWN>;
++			gpios = <&gpa7 3 GPIO_ACTIVE_LOW>;
++			wakeup-source;
++		};
++
++		button-vol-up {
++			label = "KEY_VOLUMEUP";
++			linux,code = <KEY_VOLUMEUP>;
++			gpios = <&gpa8 1 GPIO_ACTIVE_LOW>;
++			wakeup-source;
++		};
++
++		button-power {
++			label = "KEY_POWER";
++			linux,code = <KEY_POWER>;
++			gpios = <&gpa10 1 GPIO_ACTIVE_LOW>;
++			wakeup-source;
++		};
++	};
 +};
 +
- #define EXYNOS4210_SERIAL_DRV_DATA (&exynos4210_serial_drv_data)
- #define EXYNOS5433_SERIAL_DRV_DATA (&exynos5433_serial_drv_data)
- #define EXYNOS850_SERIAL_DRV_DATA (&exynos850_serial_drv_data)
-+#define EXYNOS_FIFOSZDT_DRV_DATA (&exynos_fifoszdt_serial_drv_data)
- 
- #else
- #define EXYNOS4210_SERIAL_DRV_DATA NULL
- #define EXYNOS5433_SERIAL_DRV_DATA NULL
- #define EXYNOS850_SERIAL_DRV_DATA NULL
-+#define EXYNOS_FIFOSZDT_DRV_DATA NULL
- #endif
- 
- #ifdef CONFIG_ARCH_APPLE
-@@ -2581,6 +2592,9 @@ static const struct platform_device_id s3c24xx_serial_driver_ids[] = {
- 	}, {
- 		.name		= "artpec8-uart",
- 		.driver_data	= (kernel_ulong_t)ARTPEC8_SERIAL_DRV_DATA,
-+	}, {
-+		.name		= "gs101-uart",
-+		.driver_data	= (kernel_ulong_t)EXYNOS_FIFOSZDT_DRV_DATA,
- 	},
- 	{ },
- };
-@@ -2602,6 +2616,8 @@ static const struct of_device_id s3c24xx_uart_dt_match[] = {
- 		.data = EXYNOS850_SERIAL_DRV_DATA },
- 	{ .compatible = "axis,artpec8-uart",
- 		.data = ARTPEC8_SERIAL_DRV_DATA },
-+	{ .compatible = "google,gs101-uart",
-+		.data = EXYNOS_FIFOSZDT_DRV_DATA },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, s3c24xx_uart_dt_match);
++&ext_24_5m {
++	clock-frequency = <24576000>;
++};
++
++&ext_200m {
++	clock-frequency = <200000000>;
++};
++
++&pinctrl_far_alive {
++	key_voldown: key-voldown-pins {
++		samsung,pins = "gpa7-3";
++		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
++		samsung,pin-pud = <GS101_PIN_PULL_NONE>;
++		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
++	};
++
++	key_volup: key-volup-pins {
++		samsung,pins = "gpa8-1";
++		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
++		samsung,pin-pud = <GS101_PIN_PULL_NONE>;
++		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
++	};
++};
++
++&pinctrl_gpio_alive {
++	key_power: key-power-pins {
++		samsung,pins = "gpa10-1";
++		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
++		samsung,pin-pud = <GS101_PIN_PULL_NONE>;
++		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
++	};
++};
++
++&serial_0 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_bus>;
++};
++
++&usi_uart {
++	status = "okay";
++	samsung,clkreq-on; /* needed for UART mode */
++};
++
++&watchdog_cl0 {
++	timeout-sec = <30>;
++	status = "okay";
++};
 -- 
 2.43.0.rc2.451.g8631bc7472-goog
 
