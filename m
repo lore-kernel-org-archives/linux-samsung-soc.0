@@ -1,722 +1,209 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Lnb1MpXA"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 760271724
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Dec 2023 01:56:50 -0800 (PST)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231201095649euoutp01ce3e697c0cc24671de55d8b2121e92f2~crKrrt1J23266132661euoutp01y
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Dec 2023 09:56:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231201095649euoutp01ce3e697c0cc24671de55d8b2121e92f2~crKrrt1J23266132661euoutp01y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1701424609;
-	bh=cSAYLuBffpDa4AEHSE3pAa+hvuXwxT2jqNHC5mmW+GU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Lnb1MpXAkgJMUAHq9seJz9QOxaMy9BLojNC+q1w5eRIpNwFmqxtTdU8hOZ/TbH+3J
-	 dvtG/KPp9jVS895vZa9Nx82kO33Ni3t+/LMR/QcHob95pa6glOI3Zaun6zXNSkZO7/
-	 8XKGDxcugM2KvgEG7HPiiUgiZox7k1B8cepmZRkc=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20231201095648eucas1p2da7b41b0dcb58051ab2c9f349b502f26~crKrS1yJn1610416104eucas1p2N;
-	Fri,  1 Dec 2023 09:56:48 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 9C.42.09814.0EDA9656; Fri,  1
-	Dec 2023 09:56:48 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20231201095648eucas1p163db6b9b4d0e6fa7b1de40f3649e72a3~crKq0w5h01393613936eucas1p1P;
-	Fri,  1 Dec 2023 09:56:48 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231201095648eusmtrp2d4c9d8b23c4175d2493848e590249ada~crKqz0G_C2087420874eusmtrp2x;
-	Fri,  1 Dec 2023 09:56:48 +0000 (GMT)
-X-AuditID: cbfec7f4-711ff70000002656-01-6569ade02a5f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 43.22.09274.0EDA9656; Fri,  1
-	Dec 2023 09:56:48 +0000 (GMT)
-Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
-	[106.120.51.28]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20231201095647eusmtip2d973b57abdb74555d17afdae71007da8~crKp6Y2av1190911909eusmtip28;
-	Fri,  1 Dec 2023 09:56:47 +0000 (GMT)
-From: Mateusz Majewski <m.majewski2@samsung.com>
-To: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Mateusz Majewski <m.majewski2@samsung.com>, Bartlomiej Zolnierkiewicz
-	<bzolnier@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Amit Kucheria <amitk@kernel.org>, Zhang Rui
-	<rui.zhang@intel.com>, Alim Akhtar <alim.akhtar@samsung.com>, Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Lukasz Luba <lukasz.luba@arm.com>, Dan Carpenter
-	<dan.carpenter@linaro.org>
-Subject: [PATCH v6 9/9] thermal: exynos: use set_trips
-Date: Fri,  1 Dec 2023 10:56:25 +0100
-Message-ID: <20231201095625.301884-10-m.majewski2@samsung.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231201095625.301884-1-m.majewski2@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UibRQBdQ"
+Received: from mail-oo1-xc34.google.com (mail-oo1-xc34.google.com [IPv6:2607:f8b0:4864:20::c34])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 813821B4
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Dec 2023 04:01:30 -0800 (PST)
+Received: by mail-oo1-xc34.google.com with SMTP id 006d021491bc7-58dd6d9ae96so984782eaf.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Dec 2023 04:01:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701432090; x=1702036890; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nqr2nx7EOHUR5Y4hfhQw728v568+AKwyIx25pZkKlds=;
+        b=UibRQBdQNvd1oR1O5Us5sSBXMi7kXxb15mRL57gzg9qMcTn1h9hm2jHpZpkgM0szr9
+         TaKE9ee0XcnKjyMd2eCyx+s1TOP2WWZB4E61wNIih1AZ+/lz8eNxz7/hAgIYTzs0vYvZ
+         PhI48ibAmXVLqbV5r7nw3ttYL4G7FkFJBAUT843kc9xaxOg/8CzKm7TgMqE7AihTVtDX
+         C5VxCA5pzGGRwheTpkyTr2KlWy2YoyohVe0b6p8TofjEyAmzh925/Lknyj7JFsR77Vuk
+         UvC/wJKPb38+AjhMolwPUdLG53V1fs7z+oxSLZdk2MJzRdBUSG27ur5LTcCuspePatbn
+         Vrpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701432090; x=1702036890;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nqr2nx7EOHUR5Y4hfhQw728v568+AKwyIx25pZkKlds=;
+        b=b2CYuQAatbMPlER8ou3dWyo5FpAyHLWUyCDWawDs5M/Fj3OxPf0ostbtu/xyDpA4Ty
+         1U6EN6IHgJqC7N/IOc2v8PPEM07kyAZ+/DisM6ryc4ykAUzIEt1dnCHmX2loH9qIFueV
+         kcCZWiuClV551zAxLOhrZUMQ1MSlrZkWOaY4UJ3YSxJYU0c+0JFFkCFInXZckEag+Mi3
+         +iKouBRoWLDYoWXceREGOVth7EWyWH4iPAZ94ySAIcIqx3jD0+Av3rb7mLvwgvtqZDYM
+         iBI23Nap57HQHrAl/zsB71/NlbnjEHdrH0dw4Kjn5Yj5tmphdjl4FCjNM3uXuMVIf05W
+         05eg==
+X-Gm-Message-State: AOJu0YwP/q3yVOvhnYeVzn9L0K/xak6tW7YdtdJrEvP+b+5ZK7U9GotC
+	FcBpfXOaRpGDKxWC67Z4OIJMJkJO3yhnTDJU9UPi3w==
+X-Google-Smtp-Source: AGHT+IEaVymyT4zngunznKYVd+LC7Ualf/L3X9ECNL23Q0+vmG0MBNBYVzrxhh9Wp1sn8PZeKLWznfrlwVe1KoQ8knI=
+X-Received: by 2002:a05:6358:e90:b0:16e:4162:2ae5 with SMTP id
+ 16-20020a0563580e9000b0016e41622ae5mr11320311rwg.8.1701432089401; Fri, 01 Dec
+ 2023 04:01:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDKsWRmVeSWpSXmKPExsWy7djPc7oP1mamGuzZZWjxYN42NovD8yss
-	pj58wmbxfct1JosP81rZLeZ9lrXY+3oru8W3Kx1MFpseX2O1uLxrDpvF594jjBYzzu9jsljY
-	1MJuMfHYZGaLtUfuslvM/TKV2eLJwz42B0GPNfPWMHrsnHWX3WPxnpdMHptWdbJ53Lm2h81j
-	85J6j74tqxg9Pm+SC+CI4rJJSc3JLEst0rdL4Mro/CVecGEtY8XTP4dZGxjP9jN2MXJySAiY
-	SOzqfsjWxcjFISSwglHi5/cD7BDOF0aJ6Zcng1UJCXxmlJizgQmmo2/DZ6ii5YwSm6+cYoVw
-	Wpkkfv/fwA5SxSZgIPHgzTIwW0SglVFiZpM6iM0ssJBFouVfLogtLGAm8fLpWlYQm0VAVWLC
-	lqcsIDavgJ3EpplfobbJS+xZ9B3M5gSKzz/UClUjKHFy5hMWiJnyEs1bZzND1E/nlJgzTxnC
-	dpE4OO8LK4QtLPHq+BZ2CFtG4v/O+VDz8yVmbH4PNIcDyK6QuHvQC8K0lvh4hhnEZBbQlFi/
-	Sx+i2FGioeExVDGfxI23ghD7+SQmbZvODBHmlehoE4KoVpU4vmcS1FnSEk9abkOt9JBYt/QC
-	4wRGxVlIPpmF5JNZCHsXMDKvYhRPLS3OTU8tNspLLdcrTswtLs1L10vOz93ECExwp/8d/7KD
-	cfmrj3qHGJk4GA8xSnAwK4nwXn+anirEm5JYWZValB9fVJqTWnyIUZqDRUmcVzVFPlVIID2x
-	JDU7NbUgtQgmy8TBKdXAZMpvWnLh1DJpRmtxr0V3pVifCvk/v79mvyGnS+cV3gIvs8PhehEu
-	qxVXxvzujnmiGsGwOtlhulbLSgX1+/szRZKFeSUZ/ia6JGQduFh8bHm/1OldzcpJnyIbGVcE
-	yzxpfsomZ6N7qThPjyVu9zV1k2O5/775MMQ/+7Np/xFTFvVXbj6bkst/fbmkxM1qfqUoyeyu
-	oaq6bShDnurnNcJzZp55tPZOVHVzoezU24mrWL/bZr3aNa9d7ufG6YwTjLZ/fB7S7/OkwiBR
-	TzZ/ye0e+0tcl44JR+S/OH/Op/ueSuhdttDWWHeH9AizGeEzW45ey3vCdSMzVaFr66LK1j+l
-	qp/Och/zn3/3yJanBzYrsRRnJBpqMRcVJwIAq8x1/98DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsVy+t/xe7oP1mamGuz4JWTxYN42NovD8yss
-	pj58wmbxfct1JosP81rZLeZ9lrXY+3oru8W3Kx1MFpseX2O1uLxrDpvF594jjBYzzu9jsljY
-	1MJuMfHYZGaLtUfuslvM/TKV2eLJwz42B0GPNfPWMHrsnHWX3WPxnpdMHptWdbJ53Lm2h81j
-	85J6j74tqxg9Pm+SC+CI0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJ
-	Sc3JLEst0rdL0Mvo/CVecGEtY8XTP4dZGxjP9jN2MXJySAiYSPRt+MzexcjFISSwlFHi/Yc5
-	UAlpicNfprBD2MISf651sUEUNTNJLHy3mgkkwSZgIPHgzTKwbhGBTkaJrs3nmEAcZoHVLBLH
-	9n0HqxIWMJN4+XQtK4jNIqAqMWHLUxYQm1fATmLTzK9MECvkJfYsgqjnBIrPP9QKViMkYCvR
-	teU/I0S9oMTJmU/A4sxA9c1bZzNPYBSYhSQ1C0lqASPTKkaR1NLi3PTcYiO94sTc4tK8dL3k
-	/NxNjMC43Hbs55YdjCtffdQ7xMjEwXiIUYKDWUmE9/rT9FQh3pTEyqrUovz4otKc1OJDjKZA
-	d09klhJNzgcmhrySeEMzA1NDEzNLA1NLM2MlcV7Pgo5EIYH0xJLU7NTUgtQimD4mDk6pBqaZ
-	Av+W7U41lBe/pfVI4mVansiT3hi7ieHiL3Obzv2ds8OQ9/TGKYfbGP8ev71i9/Q5scGsntnp
-	Kt8KHjpMvuOz+7bG9b3rP977/7R2p4XNAmamnJifP7Qe5O6c/r1zsqr04UX7Zqp61DeWy+2r
-	fO7u3m/Be2F2FTvf5H1PFctlT2iVSXOdn/RsIoMYz1QX5Qn2mtOdZ4VHB7e+TG+LTNLjF5Up
-	+qsX8ehK2qe0L8piMpzTmo/Kq/+2WP9C8/lyj+NHWe4/TtD8vrpgodHNw9Inbl/3Fd3IW7/7
-	81HL/TXxqaVZ+aGvuCIaZtp/WZt+d+nCWSJ/tTKl+7ouHlo9f2eVVS1fvEHkv+UNnGcmtR9R
-	YinOSDTUYi4qTgQA9FbjM1QDAAA=
-X-CMS-MailID: 20231201095648eucas1p163db6b9b4d0e6fa7b1de40f3649e72a3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20231201095648eucas1p163db6b9b4d0e6fa7b1de40f3649e72a3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20231201095648eucas1p163db6b9b4d0e6fa7b1de40f3649e72a3
-References: <20231201095625.301884-1-m.majewski2@samsung.com>
-	<CGME20231201095648eucas1p163db6b9b4d0e6fa7b1de40f3649e72a3@eucas1p1.samsung.com>
+References: <20231120212037.911774-1-peter.griffin@linaro.org>
+ <20231120212037.911774-19-peter.griffin@linaro.org> <CAPLW+4k=M1q1thr2RXG4fGkvD51H7NxS1A3Ck+Up7W1nTcUPcw@mail.gmail.com>
+In-Reply-To: <CAPLW+4k=M1q1thr2RXG4fGkvD51H7NxS1A3Ck+Up7W1nTcUPcw@mail.gmail.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 1 Dec 2023 12:01:16 +0000
+Message-ID: <CADrjBPoimnYhB3t5wSCKMTr8MbkDCVXvRmtsGzXrjZCW_7fF5A@mail.gmail.com>
+Subject: Re: [PATCH v4 18/19] arm64: dts: exynos: google: Add initial
+ Oriole/pixel 6 board support
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
+	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
+	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
+	jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com, 
+	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
+	linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently, each trip point defined in the device tree corresponds to a
-single hardware interrupt. This commit instead switches to using two
-hardware interrupts, whose values are set dynamically using the
-set_trips callback. Additionally, the critical temperature threshold is
-handled specifically.
+Hi Sam,
 
-Setting interrupts in this way also fixes a long-standing lockdep
-warning, which was caused by calling thermal_zone_get_trips with our
-lock being held. Do note that this requires TMU initialization to be
-split into two parts, as done by the parent commit: parts of the
-initialization call into the thermal_zone_device structure and so must
-be done after its registration, but the initialization is also
-responsible for setting up calibration, which must be done before
-thermal_zone_device registration, which will call set_trips for the
-first time; if the calibration is not done in time, the interrupt values
-will be silently wrong!
+On Tue, 21 Nov 2023 at 18:39, Sam Protsenko <semen.protsenko@linaro.org> wr=
+ote:
+>
+> On Mon, Nov 20, 2023 at 3:21=E2=80=AFPM Peter Griffin <peter.griffin@lina=
+ro.org> wrote:
+> >
+> > Add initial board support for the Pixel 6 phone code named Oriole. This
+> > has been tested with a minimal busybox initramfs and boots to a shell.
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
-Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
----
-v4 -> v5: Simplified Exynos 7 code, used the correct register offsets
-  for Exynos 7 and refactored some common register-setting code.
-v2 -> v3: Fixed formatting of some comments.
-v1 -> v2: We take clocks into account; anything that sets temperature
-  thresholds needs clk.
+Will fix it in v5.
 
- drivers/thermal/samsung/exynos_tmu.c | 393 ++++++++++++++-------------
- 1 file changed, 209 insertions(+), 184 deletions(-)
-
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index ca1b1cec0300..6482513bfe66 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -158,10 +158,12 @@ enum soc_type {
-  *	in the positive-TC generator block
-  *	0 < reference_voltage <= 31
-  * @tzd: pointer to thermal_zone_device structure
-- * @ntrip: number of supported trip points.
-  * @enabled: current status of TMU device
-- * @tmu_set_trip_temp: SoC specific method to set trip (rising threshold)
-- * @tmu_set_trip_hyst: SoC specific to set hysteresis (falling threshold)
-+ * @tmu_set_low_temp: SoC specific method to set trip (falling threshold)
-+ * @tmu_set_high_temp: SoC specific method to set trip (rising threshold)
-+ * @tmu_set_crit_temp: SoC specific method to set critical temperature
-+ * @tmu_disable_low: SoC specific method to disable an interrupt (falling threshold)
-+ * @tmu_disable_high: SoC specific method to disable an interrupt (rising threshold)
-  * @tmu_initialize: SoC specific TMU initialization method
-  * @tmu_control: SoC specific TMU control method
-  * @tmu_read: SoC specific TMU temperature read method
-@@ -183,13 +185,13 @@ struct exynos_tmu_data {
- 	u8 gain;
- 	u8 reference_voltage;
- 	struct thermal_zone_device *tzd;
--	unsigned int ntrip;
- 	bool enabled;
- 
--	void (*tmu_set_trip_temp)(struct exynos_tmu_data *data, int trip,
--				 u8 temp);
--	void (*tmu_set_trip_hyst)(struct exynos_tmu_data *data, int trip,
--				 u8 temp, u8 hyst);
-+	void (*tmu_set_low_temp)(struct exynos_tmu_data *data, u8 temp);
-+	void (*tmu_set_high_temp)(struct exynos_tmu_data *data, u8 temp);
-+	void (*tmu_set_crit_temp)(struct exynos_tmu_data *data, u8 temp);
-+	void (*tmu_disable_low)(struct exynos_tmu_data *data);
-+	void (*tmu_disable_high)(struct exynos_tmu_data *data);
- 	void (*tmu_initialize)(struct platform_device *pdev);
- 	void (*tmu_control)(struct platform_device *pdev, bool on);
- 	int (*tmu_read)(struct exynos_tmu_data *data);
-@@ -279,49 +281,28 @@ static int exynos_thermal_zone_configure(struct platform_device *pdev)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
- 	struct thermal_zone_device *tzd = data->tzd;
--	int i, num_trips = thermal_zone_get_num_trips(tzd);
--	int ret = 0, temp;
-+	int ret, temp;
- 
- 	ret = thermal_zone_get_crit_temp(tzd, &temp);
-+	if (ret) {
-+		/* FIXME: Remove this special case */
-+		if (data->soc == SOC_ARCH_EXYNOS5433)
-+			return 0;
- 
--	if (ret && data->soc != SOC_ARCH_EXYNOS5433) { /* FIXME */
- 		dev_err(&pdev->dev,
- 			"No CRITICAL trip point defined in device tree!\n");
--		goto out;
-+		return ret;
- 	}
- 
- 	mutex_lock(&data->lock);
--
--	if (num_trips > data->ntrip) {
--		dev_info(&pdev->dev,
--			 "More trip points than supported by this TMU.\n");
--		dev_info(&pdev->dev,
--			 "%d trip points should be configured in polling mode.\n",
--			 num_trips - data->ntrip);
--	}
--
- 	clk_enable(data->clk);
- 
--	num_trips = min_t(int, num_trips, data->ntrip);
-+	data->tmu_set_crit_temp(data, temp / MCELSIUS);
- 
--	/* Write temperature code for rising and falling threshold */
--	for (i = 0; i < num_trips; i++) {
--		struct thermal_trip trip;
--
--		ret = thermal_zone_get_trip(tzd, i, &trip);
--		if (ret)
--			goto err;
--
--		data->tmu_set_trip_temp(data, i, trip.temperature / MCELSIUS);
--		data->tmu_set_trip_hyst(data, i, trip.temperature / MCELSIUS,
--					trip.hysteresis / MCELSIUS);
--	}
--
--err:
- 	clk_disable(data->clk);
- 	mutex_unlock(&data->lock);
--out:
--	return ret;
-+
-+	return 0;
- }
- 
- static u32 get_con_reg(struct exynos_tmu_data *data, u32 con)
-@@ -354,17 +335,74 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
- 	mutex_unlock(&data->lock);
- }
- 
--static void exynos4210_tmu_set_trip_temp(struct exynos_tmu_data *data,
--					 int trip_id, u8 temp)
-+static void exynos_tmu_update_bit(struct exynos_tmu_data *data, int reg_off,
-+				  int bit_off, bool enable)
- {
--	temp = temp_to_code(data, temp);
--	writeb(temp, data->base + EXYNOS4210_TMU_REG_TRIG_LEVEL0 + trip_id * 4);
-+	u32 interrupt_en;
-+
-+	interrupt_en = readl(data->base + reg_off);
-+	if (enable)
-+		interrupt_en |= BIT(bit_off);
-+	else
-+		interrupt_en &= ~BIT(bit_off);
-+	writel(interrupt_en, data->base + reg_off);
- }
- 
--/* failing thresholds are not supported on Exynos4210 */
--static void exynos4210_tmu_set_trip_hyst(struct exynos_tmu_data *data,
--					 int trip, u8 temp, u8 hyst)
-+static void exynos_tmu_update_temp(struct exynos_tmu_data *data, int reg_off,
-+				   int bit_off, u8 temp)
- {
-+	u16 tmu_temp_mask;
-+	u32 th;
-+
-+	tmu_temp_mask =
-+		(data->soc == SOC_ARCH_EXYNOS7) ? EXYNOS7_TMU_TEMP_MASK
-+						: EXYNOS_TMU_TEMP_MASK;
-+
-+	th = readl(data->base + reg_off);
-+	th &= ~(tmu_temp_mask << bit_off);
-+	th |= temp_to_code(data, temp) << bit_off;
-+	writel(th, data->base + reg_off);
-+}
-+
-+static void exynos4210_tmu_set_low_temp(struct exynos_tmu_data *data, u8 temp)
-+{
-+	/*
-+	 * Failing thresholds are not supported on Exynos 4210.
-+	 * We use polling instead.
-+	 */
-+}
-+
-+static void exynos4210_tmu_set_high_temp(struct exynos_tmu_data *data, u8 temp)
-+{
-+	temp = temp_to_code(data, temp);
-+	writeb(temp, data->base + EXYNOS4210_TMU_REG_TRIG_LEVEL0 + 4);
-+	exynos_tmu_update_bit(data, EXYNOS_TMU_REG_INTEN,
-+			      EXYNOS_TMU_INTEN_RISE0_SHIFT + 4, true);
-+}
-+
-+static void exynos4210_tmu_disable_low(struct exynos_tmu_data *data)
-+{
-+	/* Again, this is handled by polling. */
-+}
-+
-+static void exynos4210_tmu_disable_high(struct exynos_tmu_data *data)
-+{
-+	exynos_tmu_update_bit(data, EXYNOS_TMU_REG_INTEN,
-+			      EXYNOS_TMU_INTEN_RISE0_SHIFT + 4, false);
-+}
-+
-+static void exynos4210_tmu_set_crit_temp(struct exynos_tmu_data *data, u8 temp)
-+{
-+	/*
-+	 * Hardware critical temperature handling is not supported on Exynos 4210.
-+	 * We still set the critical temperature threshold, but this is only to
-+	 * make sure it is handled as soon as possible. It is just a normal interrupt.
-+	 */
-+
-+	temp = temp_to_code(data, temp);
-+	writeb(temp, data->base + EXYNOS4210_TMU_REG_TRIG_LEVEL0 + 12);
-+	exynos_tmu_update_bit(data, EXYNOS_TMU_REG_INTEN,
-+			      EXYNOS_TMU_INTEN_RISE0_SHIFT + 12, true);
- }
- 
- static void exynos4210_tmu_initialize(struct platform_device *pdev)
-@@ -376,33 +414,31 @@ static void exynos4210_tmu_initialize(struct platform_device *pdev)
- 	writeb(0, data->base + EXYNOS4210_TMU_REG_THRESHOLD_TEMP);
- }
- 
--static void exynos4412_tmu_set_trip_temp(struct exynos_tmu_data *data,
--					 int trip, u8 temp)
-+static void exynos4412_tmu_set_low_temp(struct exynos_tmu_data *data, u8 temp)
- {
--	u32 th, con;
--
--	th = readl(data->base + EXYNOS_THD_TEMP_RISE);
--	th &= ~(0xff << 8 * trip);
--	th |= temp_to_code(data, temp) << 8 * trip;
--	writel(th, data->base + EXYNOS_THD_TEMP_RISE);
--
--	if (trip == 3) {
--		con = readl(data->base + EXYNOS_TMU_REG_CONTROL);
--		con |= BIT(EXYNOS_TMU_THERM_TRIP_EN_SHIFT);
--		writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
--	}
-+	exynos_tmu_update_temp(data, EXYNOS_THD_TEMP_FALL, 0, temp);
-+	exynos_tmu_update_bit(data, EXYNOS_TMU_REG_INTEN,
-+			      EXYNOS_TMU_INTEN_FALL0_SHIFT, true);
- }
- 
--static void exynos4412_tmu_set_trip_hyst(struct exynos_tmu_data *data,
--					 int trip, u8 temp, u8 hyst)
-+static void exynos4412_tmu_set_high_temp(struct exynos_tmu_data *data, u8 temp)
- {
--	u32 th;
-+	exynos_tmu_update_temp(data, EXYNOS_THD_TEMP_RISE, 8, temp);
-+	exynos_tmu_update_bit(data, EXYNOS_TMU_REG_INTEN,
-+			      EXYNOS_TMU_INTEN_RISE0_SHIFT + 4, true);
-+}
- 
--	th = readl(data->base + EXYNOS_THD_TEMP_FALL);
--	th &= ~(0xff << 8 * trip);
--	if (hyst)
--		th |= temp_to_code(data, temp - hyst) << 8 * trip;
--	writel(th, data->base + EXYNOS_THD_TEMP_FALL);
-+static void exynos4412_tmu_disable_low(struct exynos_tmu_data *data)
-+{
-+	exynos_tmu_update_bit(data, EXYNOS_TMU_REG_INTEN,
-+			      EXYNOS_TMU_INTEN_FALL0_SHIFT, false);
-+}
-+
-+static void exynos4412_tmu_set_crit_temp(struct exynos_tmu_data *data, u8 temp)
-+{
-+	exynos_tmu_update_temp(data, EXYNOS_THD_TEMP_RISE, 24, temp);
-+	exynos_tmu_update_bit(data, EXYNOS_TMU_REG_CONTROL,
-+			      EXYNOS_TMU_THERM_TRIP_EN_SHIFT, true);
- }
- 
- static void exynos4412_tmu_initialize(struct platform_device *pdev)
-@@ -432,44 +468,39 @@ static void exynos4412_tmu_initialize(struct platform_device *pdev)
- 	sanitize_temp_error(data, trim_info);
- }
- 
--static void exynos5433_tmu_set_trip_temp(struct exynos_tmu_data *data,
--					 int trip, u8 temp)
-+static void exynos5433_tmu_set_low_temp(struct exynos_tmu_data *data, u8 temp)
- {
--	unsigned int reg_off, j;
--	u32 th;
--
--	if (trip > 3) {
--		reg_off = EXYNOS5433_THD_TEMP_RISE7_4;
--		j = trip - 4;
--	} else {
--		reg_off = EXYNOS5433_THD_TEMP_RISE3_0;
--		j = trip;
--	}
--
--	th = readl(data->base + reg_off);
--	th &= ~(0xff << j * 8);
--	th |= (temp_to_code(data, temp) << j * 8);
--	writel(th, data->base + reg_off);
-+	exynos_tmu_update_temp(data, EXYNOS5433_THD_TEMP_FALL3_0, 0, temp);
-+	exynos_tmu_update_bit(data, EXYNOS5433_TMU_REG_INTEN,
-+			      EXYNOS_TMU_INTEN_FALL0_SHIFT, true);
- }
- 
--static void exynos5433_tmu_set_trip_hyst(struct exynos_tmu_data *data,
--					 int trip, u8 temp, u8 hyst)
-+static void exynos5433_tmu_set_high_temp(struct exynos_tmu_data *data, u8 temp)
- {
--	unsigned int reg_off, j;
--	u32 th;
-+	exynos_tmu_update_temp(data, EXYNOS5433_THD_TEMP_RISE3_0, 8, temp);
-+	exynos_tmu_update_bit(data, EXYNOS5433_TMU_REG_INTEN,
-+			      EXYNOS7_TMU_INTEN_RISE0_SHIFT + 1, true);
-+}
- 
--	if (trip > 3) {
--		reg_off = EXYNOS5433_THD_TEMP_FALL7_4;
--		j = trip - 4;
--	} else {
--		reg_off = EXYNOS5433_THD_TEMP_FALL3_0;
--		j = trip;
--	}
-+static void exynos5433_tmu_disable_low(struct exynos_tmu_data *data)
-+{
-+	exynos_tmu_update_bit(data, EXYNOS5433_TMU_REG_INTEN,
-+			      EXYNOS_TMU_INTEN_FALL0_SHIFT, false);
-+}
- 
--	th = readl(data->base + reg_off);
--	th &= ~(0xff << j * 8);
--	th |= (temp_to_code(data, temp - hyst) << j * 8);
--	writel(th, data->base + reg_off);
-+static void exynos5433_tmu_disable_high(struct exynos_tmu_data *data)
-+{
-+	exynos_tmu_update_bit(data, EXYNOS5433_TMU_REG_INTEN,
-+			      EXYNOS7_TMU_INTEN_RISE0_SHIFT + 1, false);
-+}
-+
-+static void exynos5433_tmu_set_crit_temp(struct exynos_tmu_data *data, u8 temp)
-+{
-+	exynos_tmu_update_temp(data, EXYNOS5433_THD_TEMP_RISE7_4, 24, temp);
-+	exynos_tmu_update_bit(data, EXYNOS_TMU_REG_CONTROL,
-+			      EXYNOS_TMU_THERM_TRIP_EN_SHIFT, true);
-+	exynos_tmu_update_bit(data, EXYNOS5433_TMU_REG_INTEN,
-+			      EXYNOS7_TMU_INTEN_RISE0_SHIFT + 7, true);
- }
- 
- static void exynos5433_tmu_initialize(struct platform_device *pdev)
-@@ -505,34 +536,41 @@ static void exynos5433_tmu_initialize(struct platform_device *pdev)
- 			cal_type ?  2 : 1);
- }
- 
--static void exynos7_tmu_set_trip_temp(struct exynos_tmu_data *data,
--				      int trip, u8 temp)
-+static void exynos7_tmu_set_low_temp(struct exynos_tmu_data *data, u8 temp)
- {
--	unsigned int reg_off, bit_off;
--	u32 th;
--
--	reg_off = ((7 - trip) / 2) * 4;
--	bit_off = ((8 - trip) % 2);
--
--	th = readl(data->base + EXYNOS7_THD_TEMP_RISE7_6 + reg_off);
--	th &= ~(EXYNOS7_TMU_TEMP_MASK << (16 * bit_off));
--	th |= temp_to_code(data, temp) << (16 * bit_off);
--	writel(th, data->base + EXYNOS7_THD_TEMP_RISE7_6 + reg_off);
-+	exynos_tmu_update_temp(data, EXYNOS7_THD_TEMP_FALL7_6 + 12, 0, temp);
-+	exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
-+			      EXYNOS_TMU_INTEN_FALL0_SHIFT + 0, true);
- }
- 
--static void exynos7_tmu_set_trip_hyst(struct exynos_tmu_data *data,
--				      int trip, u8 temp, u8 hyst)
-+static void exynos7_tmu_set_high_temp(struct exynos_tmu_data *data, u8 temp)
- {
--	unsigned int reg_off, bit_off;
--	u32 th;
-+	exynos_tmu_update_temp(data, EXYNOS7_THD_TEMP_RISE7_6 + 12, 16, temp);
-+	exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
-+			      EXYNOS7_TMU_INTEN_RISE0_SHIFT + 1, true);
-+}
- 
--	reg_off = ((7 - trip) / 2) * 4;
--	bit_off = ((8 - trip) % 2);
-+static void exynos7_tmu_disable_low(struct exynos_tmu_data *data)
-+{
-+	exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
-+			      EXYNOS_TMU_INTEN_FALL0_SHIFT + 0, false);
-+}
- 
--	th = readl(data->base + EXYNOS7_THD_TEMP_FALL7_6 + reg_off);
--	th &= ~(EXYNOS7_TMU_TEMP_MASK << (16 * bit_off));
--	th |= temp_to_code(data, temp - hyst) << (16 * bit_off);
--	writel(th, data->base + EXYNOS7_THD_TEMP_FALL7_6 + reg_off);
-+static void exynos7_tmu_disable_high(struct exynos_tmu_data *data)
-+{
-+	exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
-+			      EXYNOS7_TMU_INTEN_RISE0_SHIFT + 1, false);
-+}
-+
-+static void exynos7_tmu_set_crit_temp(struct exynos_tmu_data *data, u8 temp)
-+{
-+	/*
-+	 * Like Exynos 4210, Exynos 7 does not seem to support critical temperature
-+	 * handling in hardware. Again, we still set a separate interrupt for it.
-+	 */
-+	exynos_tmu_update_temp(data, EXYNOS7_THD_TEMP_RISE7_6 + 0, 16, temp);
-+	exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
-+			      EXYNOS7_TMU_INTEN_RISE0_SHIFT + 7, true);
- }
- 
- static void exynos7_tmu_initialize(struct platform_device *pdev)
-@@ -547,87 +585,44 @@ static void exynos7_tmu_initialize(struct platform_device *pdev)
- static void exynos4210_tmu_control(struct platform_device *pdev, bool on)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
--	struct thermal_zone_device *tz = data->tzd;
--	struct thermal_trip trip;
--	unsigned int con, interrupt_en = 0, i;
-+	unsigned int con;
- 
- 	con = get_con_reg(data, readl(data->base + EXYNOS_TMU_REG_CONTROL));
- 
--	if (on) {
--		for (i = 0; i < data->ntrip; i++) {
--			if (thermal_zone_get_trip(tz, i, &trip))
--				continue;
--
--			interrupt_en |=
--				BIT(EXYNOS_TMU_INTEN_RISE0_SHIFT + i * 4);
--		}
--
--		if (data->soc != SOC_ARCH_EXYNOS4210)
--			interrupt_en |=
--				interrupt_en << EXYNOS_TMU_INTEN_FALL0_SHIFT;
--
-+	if (on)
- 		con |= BIT(EXYNOS_TMU_CORE_EN_SHIFT);
--	} else {
-+	else
- 		con &= ~BIT(EXYNOS_TMU_CORE_EN_SHIFT);
--	}
- 
--	writel(interrupt_en, data->base + EXYNOS_TMU_REG_INTEN);
- 	writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
- }
- 
- static void exynos5433_tmu_control(struct platform_device *pdev, bool on)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
--	struct thermal_zone_device *tz = data->tzd;
--	struct thermal_trip trip;
--	unsigned int con, interrupt_en = 0, pd_det_en, i;
-+	unsigned int con, pd_det_en;
- 
- 	con = get_con_reg(data, readl(data->base + EXYNOS_TMU_REG_CONTROL));
- 
--	if (on) {
--		for (i = 0; i < data->ntrip; i++) {
--			if (thermal_zone_get_trip(tz, i, &trip))
--				continue;
--
--			interrupt_en |=
--				BIT(EXYNOS7_TMU_INTEN_RISE0_SHIFT + i);
--		}
--
--		interrupt_en |=
--			interrupt_en << EXYNOS_TMU_INTEN_FALL0_SHIFT;
--
-+	if (on)
- 		con |= BIT(EXYNOS_TMU_CORE_EN_SHIFT);
--	} else
-+	else
- 		con &= ~BIT(EXYNOS_TMU_CORE_EN_SHIFT);
- 
- 	pd_det_en = on ? EXYNOS5433_PD_DET_EN : 0;
- 
- 	writel(pd_det_en, data->base + EXYNOS5433_TMU_PD_DET_EN);
--	writel(interrupt_en, data->base + EXYNOS5433_TMU_REG_INTEN);
- 	writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
- }
- 
- static void exynos7_tmu_control(struct platform_device *pdev, bool on)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
--	struct thermal_zone_device *tz = data->tzd;
--	struct thermal_trip trip;
--	unsigned int con, interrupt_en = 0, i;
-+	unsigned int con;
- 
- 	con = get_con_reg(data, readl(data->base + EXYNOS_TMU_REG_CONTROL));
- 
- 	if (on) {
--		for (i = 0; i < data->ntrip; i++) {
--			if (thermal_zone_get_trip(tz, i, &trip))
--				continue;
--
--			interrupt_en |=
--				BIT(EXYNOS7_TMU_INTEN_RISE0_SHIFT + i);
--		}
--
--		interrupt_en |=
--			interrupt_en << EXYNOS_TMU_INTEN_FALL0_SHIFT;
--
- 		con |= BIT(EXYNOS_TMU_CORE_EN_SHIFT);
- 		con |= BIT(EXYNOS7_PD_DET_EN_SHIFT);
- 	} else {
-@@ -635,7 +630,6 @@ static void exynos7_tmu_control(struct platform_device *pdev, bool on)
- 		con &= ~BIT(EXYNOS7_PD_DET_EN_SHIFT);
- 	}
- 
--	writel(interrupt_en, data->base + EXYNOS7_TMU_REG_INTEN);
- 	writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
- }
- 
-@@ -873,13 +867,15 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 
- 	switch (data->soc) {
- 	case SOC_ARCH_EXYNOS4210:
--		data->tmu_set_trip_temp = exynos4210_tmu_set_trip_temp;
--		data->tmu_set_trip_hyst = exynos4210_tmu_set_trip_hyst;
-+		data->tmu_set_low_temp = exynos4210_tmu_set_low_temp;
-+		data->tmu_set_high_temp = exynos4210_tmu_set_high_temp;
-+		data->tmu_disable_low = exynos4210_tmu_disable_low;
-+		data->tmu_disable_high = exynos4210_tmu_disable_high;
-+		data->tmu_set_crit_temp = exynos4210_tmu_set_crit_temp;
- 		data->tmu_initialize = exynos4210_tmu_initialize;
- 		data->tmu_control = exynos4210_tmu_control;
- 		data->tmu_read = exynos4210_tmu_read;
- 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
--		data->ntrip = 4;
- 		data->gain = 15;
- 		data->reference_voltage = 7;
- 		data->efuse_value = 55;
-@@ -892,14 +888,16 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 	case SOC_ARCH_EXYNOS5260:
- 	case SOC_ARCH_EXYNOS5420:
- 	case SOC_ARCH_EXYNOS5420_TRIMINFO:
--		data->tmu_set_trip_temp = exynos4412_tmu_set_trip_temp;
--		data->tmu_set_trip_hyst = exynos4412_tmu_set_trip_hyst;
-+		data->tmu_set_low_temp = exynos4412_tmu_set_low_temp;
-+		data->tmu_set_high_temp = exynos4412_tmu_set_high_temp;
-+		data->tmu_disable_low = exynos4412_tmu_disable_low;
-+		data->tmu_disable_high = exynos4210_tmu_disable_high;
-+		data->tmu_set_crit_temp = exynos4412_tmu_set_crit_temp;
- 		data->tmu_initialize = exynos4412_tmu_initialize;
- 		data->tmu_control = exynos4210_tmu_control;
- 		data->tmu_read = exynos4412_tmu_read;
- 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
- 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
--		data->ntrip = 4;
- 		data->gain = 8;
- 		data->reference_voltage = 16;
- 		data->efuse_value = 55;
-@@ -911,14 +909,16 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->max_efuse_value = 100;
- 		break;
- 	case SOC_ARCH_EXYNOS5433:
--		data->tmu_set_trip_temp = exynos5433_tmu_set_trip_temp;
--		data->tmu_set_trip_hyst = exynos5433_tmu_set_trip_hyst;
-+		data->tmu_set_low_temp = exynos5433_tmu_set_low_temp;
-+		data->tmu_set_high_temp = exynos5433_tmu_set_high_temp;
-+		data->tmu_disable_low = exynos5433_tmu_disable_low;
-+		data->tmu_disable_high = exynos5433_tmu_disable_high;
-+		data->tmu_set_crit_temp = exynos5433_tmu_set_crit_temp;
- 		data->tmu_initialize = exynos5433_tmu_initialize;
- 		data->tmu_control = exynos5433_tmu_control;
- 		data->tmu_read = exynos4412_tmu_read;
- 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
- 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
--		data->ntrip = 8;
- 		data->gain = 8;
- 		if (res.start == EXYNOS5433_G3D_BASE)
- 			data->reference_voltage = 23;
-@@ -929,14 +929,16 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->max_efuse_value = 150;
- 		break;
- 	case SOC_ARCH_EXYNOS7:
--		data->tmu_set_trip_temp = exynos7_tmu_set_trip_temp;
--		data->tmu_set_trip_hyst = exynos7_tmu_set_trip_hyst;
-+		data->tmu_set_low_temp = exynos7_tmu_set_low_temp;
-+		data->tmu_set_high_temp = exynos7_tmu_set_high_temp;
-+		data->tmu_disable_low = exynos7_tmu_disable_low;
-+		data->tmu_disable_high = exynos7_tmu_disable_high;
-+		data->tmu_set_crit_temp = exynos7_tmu_set_crit_temp;
- 		data->tmu_initialize = exynos7_tmu_initialize;
- 		data->tmu_control = exynos7_tmu_control;
- 		data->tmu_read = exynos7_tmu_read;
- 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
- 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
--		data->ntrip = 8;
- 		data->gain = 9;
- 		data->reference_voltage = 17;
- 		data->efuse_value = 75;
-@@ -972,9 +974,32 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
-+{
-+	struct exynos_tmu_data *data = thermal_zone_device_priv(tz);
-+
-+	mutex_lock(&data->lock);
-+	clk_enable(data->clk);
-+
-+	if (low > INT_MIN)
-+		data->tmu_set_low_temp(data, low / MCELSIUS);
-+	else
-+		data->tmu_disable_low(data);
-+	if (high < INT_MAX)
-+		data->tmu_set_high_temp(data, high / MCELSIUS);
-+	else
-+		data->tmu_disable_high(data);
-+
-+	clk_disable(data->clk);
-+	mutex_unlock(&data->lock);
-+
-+	return 0;
-+}
-+
- static const struct thermal_zone_device_ops exynos_sensor_ops = {
- 	.get_temp = exynos_get_temp,
- 	.set_emul_temp = exynos_tmu_set_emulation,
-+	.set_trips = exynos_set_trips,
- };
- 
- static int exynos_tmu_probe(struct platform_device *pdev)
--- 
-2.42.0
-
+Peter
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/exynos/Makefile           |  2 +
+> >  arch/arm64/boot/dts/exynos/google/Makefile    |  4 +
+> >  .../boot/dts/exynos/google/gs101-oriole.dts   | 79 +++++++++++++++++++
+> >  3 files changed, 85 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/exynos/google/Makefile
+> >  create mode 100644 arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> >
+> > diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/=
+exynos/Makefile
+> > index 6e4ba69268e5..44c24a8ad9e1 100644
+> > --- a/arch/arm64/boot/dts/exynos/Makefile
+> > +++ b/arch/arm64/boot/dts/exynos/Makefile
+> > @@ -1,4 +1,6 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> > +subdir-y +=3D google
+> > +
+> >  dtb-$(CONFIG_ARCH_EXYNOS) +=3D \
+> >         exynos5433-tm2.dtb              \
+> >         exynos5433-tm2e.dtb             \
+> > diff --git a/arch/arm64/boot/dts/exynos/google/Makefile b/arch/arm64/bo=
+ot/dts/exynos/google/Makefile
+> > new file mode 100644
+> > index 000000000000..0a6d5e1fe4ee
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/exynos/google/Makefile
+> > @@ -0,0 +1,4 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +dtb-$(CONFIG_ARCH_EXYNOS) +=3D \
+> > +       gs101-oriole.dtb \
+> > diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/=
+arm64/boot/dts/exynos/google/gs101-oriole.dts
+> > new file mode 100644
+> > index 000000000000..111665490840
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> > @@ -0,0 +1,79 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Oriole Device Tree
+> > + *
+> > + * Copyright 2021-2023 Google,LLC
+> > + */
+> > +
+> > +/dts-v1/;
+> > +/plugin/;
+>
+> Now that the dts is being built as a dtb (not dtbo), I don' think this
+> /plugin/ bit is needed here?
+>
+> > +
+> > +#include <dt-bindings/gpio/gpio.h>
+> > +#include <dt-bindings/input/input.h>
+> > +#include "gs101-pinctrl.h"
+> > +#include "gs101.dtsi"
+> > +
+> > +/ {
+> > +       model =3D "Oriole";
+> > +       compatible =3D "google,gs101-oriole", "google,gs101";
+> > +
+> > +       chosen {
+> > +               bootargs =3D "earlycon=3Dexynos4210,mmio32,0x10A00000 c=
+onsole=3DttySAC0";
+> > +       };
+> > +
+> > +       gpio-keys {
+> > +               compatible =3D "gpio-keys";
+> > +               pinctrl-names =3D "default";
+> > +               pinctrl-0 =3D <&key_voldown>, <&key_volup>, <&key_power=
+>;
+> > +
+> > +               button-vol-down {
+> > +                       label =3D "KEY_VOLUMEDOWN";
+> > +                       linux,code =3D <KEY_VOLUMEDOWN>;
+> > +                       gpios =3D <&gpa7 3 GPIO_ACTIVE_LOW>;
+> > +                       wakeup-source;
+> > +               };
+> > +
+> > +               button-vol-up {
+> > +                       label =3D "KEY_VOLUMEUP";
+> > +                       linux,code =3D <KEY_VOLUMEUP>;
+> > +                       gpios =3D <&gpa8 1 GPIO_ACTIVE_LOW>;
+> > +                       wakeup-source;
+> > +               };
+> > +
+> > +               button-power {
+> > +                       label =3D "KEY_POWER";
+> > +                       linux,code =3D <KEY_POWER>;
+> > +                       gpios =3D <&gpa10 1 GPIO_ACTIVE_LOW>;
+> > +                       wakeup-source;
+> > +               };
+> > +       };
+> > +};
+> > +
+> > +&pinctrl_1 {
+> > +       key_voldown: key-voldown-pins {
+> > +               samsung,pins =3D "gpa7-3";
+> > +               samsung,pin-function =3D <0xf>;
+> > +               samsung,pin-pud =3D <0>;
+> > +               samsung,pin-drv =3D <GS101_PIN_DRV_2_5_MA>;
+> > +       };
+> > +
+> > +       key_volup: key-volup-pins {
+> > +               samsung,pins =3D "gpa8-1";
+> > +               samsung,pin-function =3D <0xf>;
+> > +               samsung,pin-pud =3D <0>;
+> > +               samsung,pin-drv =3D <GS101_PIN_DRV_2_5_MA>;
+> > +       };
+> > +};
+> > +
+> > +&pinctrl_0 {
+> > +       key_power: key-power-pins {
+> > +               samsung,pins =3D "gpa10-1";
+> > +               samsung,pin-function =3D <0xf>;
+> > +               samsung,pin-pud =3D <0>;
+> > +               samsung,pin-drv =3D <GS101_PIN_DRV_2_5_MA>;
+> > +       };
+> > +};
+> > +
+> > +&watchdog_cl0 {
+> > +       timeout-sec =3D <30>;
+> > +};
+> > --
+> > 2.43.0.rc1.413.gea7ed67945-goog
+> >
