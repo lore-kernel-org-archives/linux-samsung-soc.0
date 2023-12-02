@@ -1,238 +1,408 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yKWht4e5"
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3946810F9
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Dec 2023 18:28:13 -0800 (PST)
-Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1d053c45897so10751365ad.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Dec 2023 18:28:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701484092; x=1702088892; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=76O+RH8qZeRuRBc1mT4uLTZ6BfSO4LNymM/dQ6nxNw0=;
-        b=yKWht4e5yaJE+X0VoshDNHA2ZFevnp7O1QNMpBtDzUZyVIHC7MifoYl5qzKcgU8i97
-         PfUnfOU87kh9E6lJ96SZYO35wgOpSl3mwxq60MHEMROkI9mbNsDEQiwVZaVay4Vi8Ml+
-         69KvmqssN9uacMwIpY9GNKtWJPZ0Kxw4GyXQGk8Tr3QamVymarg5C7NYa5eR6g4ZvBIu
-         bL7anQUkkGuVQlKDRefyvD+Vzr9mRUvXHYxlzC7SWpoubsu/twlM9sYoi5HV+DkAvTQ8
-         CcKE6owz/F7gh+9bj5xIRTS6Ypm8U7SSf83B1C7jaCn4nxCdrj7v97hb5wmWLWeC7qee
-         j3bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701484092; x=1702088892;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=76O+RH8qZeRuRBc1mT4uLTZ6BfSO4LNymM/dQ6nxNw0=;
-        b=gC28b8ey07rCWmpGgI7TpHsvloiIFDwqJ36qtx2SE8l1CIFevfiuLcg+tKPPdWeGSa
-         JQmgypqF7JszHVGbdi/XCxmbu8TklQKspyK2cx5A4LpJmmLzZt745N2E3osOn29BCwGT
-         R7aDH+3mTOmAY9G2PJfzbjp7pDApIkUoefIW52FmMK+YMz19LNgjUw21xK74FDkCJ23D
-         QY3lt/+Ebz4HsXC+4OF/EKiMW95JjJeXheui5oabB7/cHx1XV4ww05md6vUPX/zKx35R
-         Sf0ULHuWenek2MXjY2PSv6ZHpfdNcLzOixfEaqoaboiCk3/d0Vw12FY4SPJ4B704H4la
-         CH+g==
-X-Gm-Message-State: AOJu0Yz81ipUDE2nFzQ3GCCSYy5920is95bZ8yL4/Nf6GOgXtjGG1mna
-	fRUeEm2T1Ah9ykBI+9KWM/TfZCZm8JHQM2pHhfOoq8ZiofTX4Q+dLL1xlDGy
-X-Google-Smtp-Source: AGHT+IG1dE3nOssFf65P5OHRfkzUuH2N8dYYyAJ+WlkyZbyjQVISgvPG3LWKb2DVruVskMVXo7/YNmnqp8LpAD6HLwQ=
-X-Received: by 2002:a17:903:41c1:b0:1ca:7f91:aa5d with SMTP id
- u1-20020a17090341c100b001ca7f91aa5dmr660536ple.16.1701484092499; Fri, 01 Dec
- 2023 18:28:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pQKS4XaQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D024A10C2;
+	Sat,  2 Dec 2023 04:37:29 -0800 (PST)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B2CaeYh009522;
+	Sat, 2 Dec 2023 12:36:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=qcppdkim1;
+ bh=CvdWa6K9CXgXFHOytyGULvAoyyhKGAcpMZLQsXKRMdo=;
+ b=pQKS4XaQYg4PsAacoglyhB2xfHDpVgGKwTv+e0sZSJnpuG33EKe3/3Du8mcp99h755VJ
+ RH2Hv+KQ9PpAbQoe3ftk9ipL8x1zguk3/B2UytZt0WKF4ppJaQkkTrtYIM/4iYLwgSew
+ kNFELEhHVveBj3p2BuCZDxSsISkn85bmV1ldayI/c4Uo7+LLpWMlmq7yoo0kZ3Y1GSYE
+ +vFBCDYqQagrBXN7gh0P7bT/jCD6+T8qMq4X6QCp62NiA6Z5cCmeJluwGseGBh7T9Own
+ xFMsuT/WehMtr2r/DxOYqv/39ijN3raQFerbWymTvC+ndHtyueSi+d/Ooi52Cu5xtmVO JQ== 
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uqvp10jhs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 02 Dec 2023 12:36:39 +0000
+Received: from pps.filterd (NASANPPMTA02.qualcomm.com [127.0.0.1])
+	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 3B2CaciW018649;
+	Sat, 2 Dec 2023 12:36:38 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NASANPPMTA02.qualcomm.com (PPS) with ESMTP id 3uqwnkka7x-1;
+	Sat, 02 Dec 2023 12:36:38 +0000
+Received: from NASANPPMTA02.qualcomm.com (NASANPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3B2CacKt018644;
+	Sat, 2 Dec 2023 12:36:38 GMT
+Received: from stor-dylan.qualcomm.com (stor-dylan.qualcomm.com [192.168.140.207])
+	by NASANPPMTA02.qualcomm.com (PPS) with ESMTP id 3B2Cac6d018643;
+	Sat, 02 Dec 2023 12:36:38 +0000
+Received: by stor-dylan.qualcomm.com (Postfix, from userid 359480)
+	id 61D3920A90; Sat,  2 Dec 2023 04:36:37 -0800 (PST)
+From: Can Guo <quic_cang@quicinc.com>
+To: quic_cang@quicinc.com, bvanassche@acm.org, mani@kernel.org,
+        adrian.hunter@intel.com, vkoul@kernel.org, beanhuo@micron.com,
+        avri.altman@wdc.com, junwoo80.lee@samsung.com,
+        martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Peter Wang <peter.wang@mediatek.com>,
+        Stanley Jhu <chu.stanley@gmail.com>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        Nitin Rawat <quic_nitirawa@quicinc.com>,
+        Brian Masney <bmasney@redhat.com>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
+        linux-samsung-soc@vger.kernel.org (open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
+        linux-kernel@vger.kernel.org (open list),
+        linux-mediatek@lists.infradead.org (moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER...)
+Subject: [PATCH v8 01/10] scsi: ufs: host: Rename structure ufs_dev_params to ufs_host_params
+Date: Sat,  2 Dec 2023 04:36:07 -0800
+Message-Id: <1701520577-31163-2-git-send-email-quic_cang@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1701520577-31163-1-git-send-email-quic_cang@quicinc.com>
+References: <1701520577-31163-1-git-send-email-quic_cang@quicinc.com>
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bP0Rh2JFwXNhrqRFvp6QD-b9n_jhu5KE
+X-Proofpoint-ORIG-GUID: bP0Rh2JFwXNhrqRFvp6QD-b9n_jhu5KE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-02_10,2023-11-30_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ suspectscore=0 malwarescore=0 phishscore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 adultscore=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2312020094
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20231201160925.3136868-1-peter.griffin@linaro.org> <20231201160925.3136868-20-peter.griffin@linaro.org>
-In-Reply-To: <20231201160925.3136868-20-peter.griffin@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 1 Dec 2023 20:28:01 -0600
-Message-ID: <CAPLW+4mOmQM+Hy-kUKn9onU25-ycgj4CWfAK+-vZVH+yw=FhtQ@mail.gmail.com>
-Subject: Re: [PATCH v5 19/20] arm64: dts: exynos: google: Add initial
- Oriole/pixel 6 board support
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
-	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
-	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
-	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
-	jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com, 
-	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 1, 2023 at 10:11=E2=80=AFAM Peter Griffin <peter.griffin@linaro=
-.org> wrote:
->
-> Add initial board support for the Pixel 6 phone code named Oriole. This
-> has been tested with a minimal busybox initramfs and boots to a shell.
->
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  arch/arm64/boot/dts/exynos/Makefile           |   2 +
->  arch/arm64/boot/dts/exynos/google/Makefile    |   4 +
->  .../boot/dts/exynos/google/gs101-oriole.dts   | 105 ++++++++++++++++++
->  3 files changed, 111 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/google/Makefile
->  create mode 100644 arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
->
-> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/ex=
-ynos/Makefile
-> index 6e4ba69268e5..44c24a8ad9e1 100644
-> --- a/arch/arm64/boot/dts/exynos/Makefile
-> +++ b/arch/arm64/boot/dts/exynos/Makefile
-> @@ -1,4 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
-> +subdir-y +=3D google
-> +
->  dtb-$(CONFIG_ARCH_EXYNOS) +=3D \
->         exynos5433-tm2.dtb              \
->         exynos5433-tm2e.dtb             \
-> diff --git a/arch/arm64/boot/dts/exynos/google/Makefile b/arch/arm64/boot=
-/dts/exynos/google/Makefile
-> new file mode 100644
-> index 000000000000..0a6d5e1fe4ee
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/google/Makefile
-> @@ -0,0 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +dtb-$(CONFIG_ARCH_EXYNOS) +=3D \
-> +       gs101-oriole.dtb \
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/ar=
-m64/boot/dts/exynos/google/gs101-oriole.dts
-> new file mode 100644
-> index 000000000000..6abd00fa337e
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-> @@ -0,0 +1,105 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Oriole Device Tree
-> + *
-> + * Copyright 2021-2023 Google,LLC
+Structure ufs_dev_params is actually used in UFS host vendor drivers to
+declare host specific power mode parameters, like ufs_<vendor>_params or
+host_cap, which makes the code not very straightforward to read. Rename the
+structure ufs_dev_params to ufs_host_params and unify the declarations in
+all vendor drivers to host_params.
 
-Space after comma. Maybe also make this line consistent for all added
-files. Checking existing files, it's usually spelled "Copyright (C)
-<years>, Google LLC."
+In addition, rename the two functions ufshcd_init_pwr_dev_param() and
+ufshcd_get_pwr_dev_param() which work based on the ufs_host_params to
+ufshcd_init_host_params() and ufshcd_negotiate_pwr_params() respectively to
+avoid confusions.
 
-Btw, I forgot to mention in my review for PATCH #18: please double
-check the commit message, there are some issues with punctuation
-there.
+This change does not change any functionalities or logic.
 
-> + * Copyright 2023 Linaro Ltd - <peter.griffin@linaro.org>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include "gs101-pinctrl.h"
-> +#include "gs101.dtsi"
-> +
-> +/ {
-> +       model =3D "Oriole";
-> +       compatible =3D "google,gs101-oriole", "google,gs101";
-> +
-> +       aliases {
-> +               serial0 =3D &serial_0;
-> +       };
-> +
-> +       chosen {
-> +               /* Bootloader expects bootargs specified otherwise it cra=
-shes */
+Acked-by: Andrew Halaney <ahalaney@redhat.com>
+Reviewed-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Can Guo <quic_cang@quicinc.com>
+---
+ drivers/ufs/host/ufs-exynos.c    |  7 ++--
+ drivers/ufs/host/ufs-hisi.c      | 11 +++----
+ drivers/ufs/host/ufs-mediatek.c  | 12 +++----
+ drivers/ufs/host/ufs-qcom.c      | 12 +++----
+ drivers/ufs/host/ufshcd-pltfrm.c | 69 ++++++++++++++++++++--------------------
+ drivers/ufs/host/ufshcd-pltfrm.h | 10 +++---
+ 6 files changed, 57 insertions(+), 64 deletions(-)
 
-Just wanted to say: I think you are doing a great job with this
-platform, and I can only imagine how hard it can be when you can't
-actually tinker with the bootloader source code. But I do appreciate
-that you was able to minimize stuff like earlycon, ect, etc :) And
-this one actually LGTM.
+diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+index 71bd6db..734d40f 100644
+--- a/drivers/ufs/host/ufs-exynos.c
++++ b/drivers/ufs/host/ufs-exynos.c
+@@ -765,7 +765,7 @@ static int exynos_ufs_pre_pwr_mode(struct ufs_hba *hba,
+ {
+ 	struct exynos_ufs *ufs = ufshcd_get_variant(hba);
+ 	struct phy *generic_phy = ufs->phy;
+-	struct ufs_dev_params ufs_exynos_cap;
++	struct ufs_host_params host_params;
+ 	int ret;
+ 
+ 	if (!dev_req_params) {
+@@ -774,10 +774,9 @@ static int exynos_ufs_pre_pwr_mode(struct ufs_hba *hba,
+ 		goto out;
+ 	}
+ 
+-	ufshcd_init_pwr_dev_param(&ufs_exynos_cap);
++	ufshcd_init_host_params(&host_params);
+ 
+-	ret = ufshcd_get_pwr_dev_param(&ufs_exynos_cap,
+-				       dev_max_params, dev_req_params);
++	ret = ufshcd_negotiate_pwr_params(&host_params, dev_max_params, dev_req_params);
+ 	if (ret) {
+ 		pr_err("%s: failed to determine capabilities\n", __func__);
+ 		goto out;
+diff --git a/drivers/ufs/host/ufs-hisi.c b/drivers/ufs/host/ufs-hisi.c
+index 0229ac0..5ee73ff 100644
+--- a/drivers/ufs/host/ufs-hisi.c
++++ b/drivers/ufs/host/ufs-hisi.c
+@@ -293,9 +293,9 @@ static int ufs_hisi_link_startup_notify(struct ufs_hba *hba,
+ 	return err;
+ }
+ 
+-static void ufs_hisi_set_dev_cap(struct ufs_dev_params *hisi_param)
++static void ufs_hisi_set_dev_cap(struct ufs_host_params *host_params)
+ {
+-	ufshcd_init_pwr_dev_param(hisi_param);
++	ufshcd_init_host_params(host_params);
+ }
+ 
+ static void ufs_hisi_pwr_change_pre_change(struct ufs_hba *hba)
+@@ -365,7 +365,7 @@ static int ufs_hisi_pwr_change_notify(struct ufs_hba *hba,
+ 				       struct ufs_pa_layer_attr *dev_max_params,
+ 				       struct ufs_pa_layer_attr *dev_req_params)
+ {
+-	struct ufs_dev_params ufs_hisi_cap;
++	struct ufs_host_params host_params;
+ 	int ret = 0;
+ 
+ 	if (!dev_req_params) {
+@@ -377,9 +377,8 @@ static int ufs_hisi_pwr_change_notify(struct ufs_hba *hba,
+ 
+ 	switch (status) {
+ 	case PRE_CHANGE:
+-		ufs_hisi_set_dev_cap(&ufs_hisi_cap);
+-		ret = ufshcd_get_pwr_dev_param(&ufs_hisi_cap,
+-					       dev_max_params, dev_req_params);
++		ufs_hisi_set_dev_cap(&host_params);
++		ret = ufshcd_negotiate_pwr_params(&host_params, dev_max_params, dev_req_params);
+ 		if (ret) {
+ 			dev_err(hba->dev,
+ 			    "%s: failed to determine capabilities\n", __func__);
+diff --git a/drivers/ufs/host/ufs-mediatek.c b/drivers/ufs/host/ufs-mediatek.c
+index fc61790..776bca4 100644
+--- a/drivers/ufs/host/ufs-mediatek.c
++++ b/drivers/ufs/host/ufs-mediatek.c
+@@ -996,16 +996,14 @@ static int ufs_mtk_pre_pwr_change(struct ufs_hba *hba,
+ 				  struct ufs_pa_layer_attr *dev_req_params)
+ {
+ 	struct ufs_mtk_host *host = ufshcd_get_variant(hba);
+-	struct ufs_dev_params host_cap;
++	struct ufs_host_params host_params;
+ 	int ret;
+ 
+-	ufshcd_init_pwr_dev_param(&host_cap);
+-	host_cap.hs_rx_gear = UFS_HS_G5;
+-	host_cap.hs_tx_gear = UFS_HS_G5;
++	ufshcd_init_host_params(&host_params);
++	host_params.hs_rx_gear = UFS_HS_G5;
++	host_params.hs_tx_gear = UFS_HS_G5;
+ 
+-	ret = ufshcd_get_pwr_dev_param(&host_cap,
+-				       dev_max_params,
+-				       dev_req_params);
++	ret = ufshcd_negotiate_pwr_params(&host_params, dev_max_params, dev_req_params);
+ 	if (ret) {
+ 		pr_info("%s: failed to determine capabilities\n",
+ 			__func__);
+diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+index 96cb8b5..197c5a5 100644
+--- a/drivers/ufs/host/ufs-qcom.c
++++ b/drivers/ufs/host/ufs-qcom.c
+@@ -898,7 +898,7 @@ static int ufs_qcom_pwr_change_notify(struct ufs_hba *hba,
+ 				struct ufs_pa_layer_attr *dev_req_params)
+ {
+ 	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+-	struct ufs_dev_params ufs_qcom_cap;
++	struct ufs_host_params host_params;
+ 	int ret = 0;
+ 
+ 	if (!dev_req_params) {
+@@ -908,15 +908,13 @@ static int ufs_qcom_pwr_change_notify(struct ufs_hba *hba,
+ 
+ 	switch (status) {
+ 	case PRE_CHANGE:
+-		ufshcd_init_pwr_dev_param(&ufs_qcom_cap);
+-		ufs_qcom_cap.hs_rate = UFS_QCOM_LIMIT_HS_RATE;
++		ufshcd_init_host_params(&host_params);
++		host_params.hs_rate = UFS_QCOM_LIMIT_HS_RATE;
+ 
+ 		/* This driver only supports symmetic gear setting i.e., hs_tx_gear == hs_rx_gear */
+-		ufs_qcom_cap.hs_tx_gear = ufs_qcom_cap.hs_rx_gear = ufs_qcom_get_hs_gear(hba);
++		host_params.hs_tx_gear = host_params.hs_rx_gear = ufs_qcom_get_hs_gear(hba);
+ 
+-		ret = ufshcd_get_pwr_dev_param(&ufs_qcom_cap,
+-					       dev_max_params,
+-					       dev_req_params);
++		ret = ufshcd_negotiate_pwr_params(&host_params, dev_max_params, dev_req_params);
+ 		if (ret) {
+ 			dev_err(hba->dev, "%s: failed to determine capabilities\n",
+ 					__func__);
+diff --git a/drivers/ufs/host/ufshcd-pltfrm.c b/drivers/ufs/host/ufshcd-pltfrm.c
+index da2558e..1633edc 100644
+--- a/drivers/ufs/host/ufshcd-pltfrm.c
++++ b/drivers/ufs/host/ufshcd-pltfrm.c
+@@ -285,61 +285,60 @@ static int ufshcd_parse_operating_points(struct ufs_hba *hba)
+ }
+ 
+ /**
+- * ufshcd_get_pwr_dev_param - get finally agreed attributes for
+- *                            power mode change
+- * @pltfrm_param: pointer to platform parameters
++ * ufshcd_negotiate_pwr_params - find power mode settings that are supported by
++				both the controller and the device
++ * @host_params: pointer to host parameters
+  * @dev_max: pointer to device attributes
+  * @agreed_pwr: returned agreed attributes
+  *
+  * Return: 0 on success, non-zero value on failure.
+  */
+-int ufshcd_get_pwr_dev_param(const struct ufs_dev_params *pltfrm_param,
+-			     const struct ufs_pa_layer_attr *dev_max,
+-			     struct ufs_pa_layer_attr *agreed_pwr)
++int ufshcd_negotiate_pwr_params(const struct ufs_host_params *host_params,
++				const struct ufs_pa_layer_attr *dev_max,
++				struct ufs_pa_layer_attr *agreed_pwr)
+ {
+-	int min_pltfrm_gear;
++	int min_host_gear;
+ 	int min_dev_gear;
+ 	bool is_dev_sup_hs = false;
+-	bool is_pltfrm_max_hs = false;
++	bool is_host_max_hs = false;
+ 
+ 	if (dev_max->pwr_rx == FAST_MODE)
+ 		is_dev_sup_hs = true;
+ 
+-	if (pltfrm_param->desired_working_mode == UFS_HS_MODE) {
+-		is_pltfrm_max_hs = true;
+-		min_pltfrm_gear = min_t(u32, pltfrm_param->hs_rx_gear,
+-					pltfrm_param->hs_tx_gear);
++	if (host_params->desired_working_mode == UFS_HS_MODE) {
++		is_host_max_hs = true;
++		min_host_gear = min_t(u32, host_params->hs_rx_gear,
++					host_params->hs_tx_gear);
+ 	} else {
+-		min_pltfrm_gear = min_t(u32, pltfrm_param->pwm_rx_gear,
+-					pltfrm_param->pwm_tx_gear);
++		min_host_gear = min_t(u32, host_params->pwm_rx_gear,
++					host_params->pwm_tx_gear);
+ 	}
+ 
+ 	/*
+-	 * device doesn't support HS but
+-	 * pltfrm_param->desired_working_mode is HS,
+-	 * thus device and pltfrm_param don't agree
++	 * device doesn't support HS but host_params->desired_working_mode is HS,
++	 * thus device and host_params don't agree
+ 	 */
+-	if (!is_dev_sup_hs && is_pltfrm_max_hs) {
++	if (!is_dev_sup_hs && is_host_max_hs) {
+ 		pr_info("%s: device doesn't support HS\n",
+ 			__func__);
+ 		return -ENOTSUPP;
+-	} else if (is_dev_sup_hs && is_pltfrm_max_hs) {
++	} else if (is_dev_sup_hs && is_host_max_hs) {
+ 		/*
+ 		 * since device supports HS, it supports FAST_MODE.
+-		 * since pltfrm_param->desired_working_mode is also HS
++		 * since host_params->desired_working_mode is also HS
+ 		 * then final decision (FAST/FASTAUTO) is done according
+ 		 * to pltfrm_params as it is the restricting factor
+ 		 */
+-		agreed_pwr->pwr_rx = pltfrm_param->rx_pwr_hs;
++		agreed_pwr->pwr_rx = host_params->rx_pwr_hs;
+ 		agreed_pwr->pwr_tx = agreed_pwr->pwr_rx;
+ 	} else {
+ 		/*
+-		 * here pltfrm_param->desired_working_mode is PWM.
++		 * here host_params->desired_working_mode is PWM.
+ 		 * it doesn't matter whether device supports HS or PWM,
+-		 * in both cases pltfrm_param->desired_working_mode will
++		 * in both cases host_params->desired_working_mode will
+ 		 * determine the mode
+ 		 */
+-		agreed_pwr->pwr_rx = pltfrm_param->rx_pwr_pwm;
++		agreed_pwr->pwr_rx = host_params->rx_pwr_pwm;
+ 		agreed_pwr->pwr_tx = agreed_pwr->pwr_rx;
+ 	}
+ 
+@@ -349,9 +348,9 @@ int ufshcd_get_pwr_dev_param(const struct ufs_dev_params *pltfrm_param,
+ 	 * the same decision will be made for rx
+ 	 */
+ 	agreed_pwr->lane_tx = min_t(u32, dev_max->lane_tx,
+-				    pltfrm_param->tx_lanes);
++				    host_params->tx_lanes);
+ 	agreed_pwr->lane_rx = min_t(u32, dev_max->lane_rx,
+-				    pltfrm_param->rx_lanes);
++				    host_params->rx_lanes);
+ 
+ 	/* device maximum gear is the minimum between device rx and tx gears */
+ 	min_dev_gear = min_t(u32, dev_max->gear_rx, dev_max->gear_tx);
+@@ -364,26 +363,26 @@ int ufshcd_get_pwr_dev_param(const struct ufs_dev_params *pltfrm_param,
+ 	 * what is the gear, as it is the one that also decided previously what
+ 	 * pwr the device will be configured to.
+ 	 */
+-	if ((is_dev_sup_hs && is_pltfrm_max_hs) ||
+-	    (!is_dev_sup_hs && !is_pltfrm_max_hs)) {
++	if ((is_dev_sup_hs && is_host_max_hs) ||
++	    (!is_dev_sup_hs && !is_host_max_hs)) {
+ 		agreed_pwr->gear_rx =
+-			min_t(u32, min_dev_gear, min_pltfrm_gear);
++			min_t(u32, min_dev_gear, min_host_gear);
+ 	} else if (!is_dev_sup_hs) {
+ 		agreed_pwr->gear_rx = min_dev_gear;
+ 	} else {
+-		agreed_pwr->gear_rx = min_pltfrm_gear;
++		agreed_pwr->gear_rx = min_host_gear;
+ 	}
+ 	agreed_pwr->gear_tx = agreed_pwr->gear_rx;
+ 
+-	agreed_pwr->hs_rate = pltfrm_param->hs_rate;
++	agreed_pwr->hs_rate = host_params->hs_rate;
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(ufshcd_get_pwr_dev_param);
++EXPORT_SYMBOL_GPL(ufshcd_negotiate_pwr_params);
+ 
+-void ufshcd_init_pwr_dev_param(struct ufs_dev_params *dev_param)
++void ufshcd_init_host_params(struct ufs_host_params *host_params)
+ {
+-	*dev_param = (struct ufs_dev_params){
++	*host_params = (struct ufs_host_params){
+ 		.tx_lanes = UFS_LANE_2,
+ 		.rx_lanes = UFS_LANE_2,
+ 		.hs_rx_gear = UFS_HS_G3,
+@@ -398,7 +397,7 @@ void ufshcd_init_pwr_dev_param(struct ufs_dev_params *dev_param)
+ 		.desired_working_mode = UFS_HS_MODE,
+ 	};
+ }
+-EXPORT_SYMBOL_GPL(ufshcd_init_pwr_dev_param);
++EXPORT_SYMBOL_GPL(ufshcd_init_host_params);
+ 
+ /**
+  * ufshcd_pltfrm_init - probe routine of the driver
+diff --git a/drivers/ufs/host/ufshcd-pltfrm.h b/drivers/ufs/host/ufshcd-pltfrm.h
+index a86a3ad..df387be 100644
+--- a/drivers/ufs/host/ufshcd-pltfrm.h
++++ b/drivers/ufs/host/ufshcd-pltfrm.h
+@@ -10,7 +10,7 @@
+ #define UFS_PWM_MODE 1
+ #define UFS_HS_MODE  2
+ 
+-struct ufs_dev_params {
++struct ufs_host_params {
+ 	u32 pwm_rx_gear;        /* pwm rx gear to work in */
+ 	u32 pwm_tx_gear;        /* pwm tx gear to work in */
+ 	u32 hs_rx_gear;         /* hs rx gear to work in */
+@@ -25,10 +25,10 @@ struct ufs_dev_params {
+ 	u32 desired_working_mode;
+ };
+ 
+-int ufshcd_get_pwr_dev_param(const struct ufs_dev_params *dev_param,
+-			     const struct ufs_pa_layer_attr *dev_max,
+-			     struct ufs_pa_layer_attr *agreed_pwr);
+-void ufshcd_init_pwr_dev_param(struct ufs_dev_params *dev_param);
++int ufshcd_negotiate_pwr_params(const struct ufs_host_params *host_params,
++				const struct ufs_pa_layer_attr *dev_max,
++				struct ufs_pa_layer_attr *agreed_pwr);
++void ufshcd_init_host_params(struct ufs_host_params *host_params);
+ int ufshcd_pltfrm_init(struct platform_device *pdev,
+ 		       const struct ufs_hba_variant_ops *vops);
+ int ufshcd_populate_vreg(struct device *dev, const char *name,
+-- 
+2.7.4
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-
-> +               bootargs =3D "";
-> +               stdout-path =3D &serial_0;
-> +       };
-> +
-> +       gpio-keys {
-> +               compatible =3D "gpio-keys";
-> +               pinctrl-names =3D "default";
-> +               pinctrl-0 =3D <&key_voldown>, <&key_volup>, <&key_power>;
-> +
-> +               button-vol-down {
-> +                       label =3D "KEY_VOLUMEDOWN";
-> +                       linux,code =3D <KEY_VOLUMEDOWN>;
-> +                       gpios =3D <&gpa7 3 GPIO_ACTIVE_LOW>;
-> +                       wakeup-source;
-> +               };
-> +
-> +               button-vol-up {
-> +                       label =3D "KEY_VOLUMEUP";
-> +                       linux,code =3D <KEY_VOLUMEUP>;
-> +                       gpios =3D <&gpa8 1 GPIO_ACTIVE_LOW>;
-> +                       wakeup-source;
-> +               };
-> +
-> +               button-power {
-> +                       label =3D "KEY_POWER";
-> +                       linux,code =3D <KEY_POWER>;
-> +                       gpios =3D <&gpa10 1 GPIO_ACTIVE_LOW>;
-> +                       wakeup-source;
-> +               };
-> +       };
-> +};
-> +
-> +&ext_24_5m {
-> +       clock-frequency =3D <24576000>;
-> +};
-> +
-> +&ext_200m {
-> +       clock-frequency =3D <200000000>;
-> +};
-> +
-> +&pinctrl_far_alive {
-> +       key_voldown: key-voldown-pins {
-> +               samsung,pins =3D "gpa7-3";
-> +               samsung,pin-function =3D <GS101_PIN_FUNC_EINT>;
-> +               samsung,pin-pud =3D <GS101_PIN_PULL_NONE>;
-> +               samsung,pin-drv =3D <GS101_PIN_DRV_2_5_MA>;
-> +       };
-> +
-> +       key_volup: key-volup-pins {
-> +               samsung,pins =3D "gpa8-1";
-> +               samsung,pin-function =3D <GS101_PIN_FUNC_EINT>;
-> +               samsung,pin-pud =3D <GS101_PIN_PULL_NONE>;
-> +               samsung,pin-drv =3D <GS101_PIN_DRV_2_5_MA>;
-> +       };
-> +};
-> +
-> +&pinctrl_gpio_alive {
-> +       key_power: key-power-pins {
-> +               samsung,pins =3D "gpa10-1";
-> +               samsung,pin-function =3D <GS101_PIN_FUNC_EINT>;
-> +               samsung,pin-pud =3D <GS101_PIN_PULL_NONE>;
-> +               samsung,pin-drv =3D <GS101_PIN_DRV_2_5_MA>;
-> +       };
-> +};
-> +
-> +&serial_0 {
-> +       status =3D "okay";
-> +       pinctrl-names =3D "default";
-> +       pinctrl-0 =3D <&uart0_bus>;
-> +};
-> +
-> +&usi_uart {
-> +       status =3D "okay";
-> +       samsung,clkreq-on; /* needed for UART mode */
-> +};
-> +
-> +&watchdog_cl0 {
-> +       timeout-sec =3D <30>;
-> +       status =3D "okay";
-> +};
-> --
-> 2.43.0.rc2.451.g8631bc7472-goog
->
