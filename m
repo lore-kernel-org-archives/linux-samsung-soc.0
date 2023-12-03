@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OOjuEPO2"
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 420AAF0
-	for <linux-samsung-soc@vger.kernel.org>; Sat,  2 Dec 2023 05:04:38 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-40b552deba0so32710305e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 02 Dec 2023 05:04:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="idXsJTWF"
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22988EA
+	for <linux-samsung-soc@vger.kernel.org>; Sun,  3 Dec 2023 07:10:04 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-5482df11e73so4726533a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Dec 2023 07:10:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701522277; x=1702127077; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701616202; x=1702221002; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5MwJfzzcYu8whL7SkYku9YrYz+BKMaZCOtwmhhq14kI=;
-        b=OOjuEPO2tnbgU1wm5KmeWWN94rd9U1C51m7Hxl54T35iIl+h4rHKv8Ew/F3Ick9zEh
-         tB7nj+Gz9kWm3fPuJJnde4LZPVX2I1a+22sZGxJ+FwMACgy7MQ7+XhI99yQfzoONyMtI
-         Szgm1iUcw6e6TO5yra+8Wsg69ZwEEuhDiexLJml/v0EDYJeYGGP6UI9+o4rUw1W8C2yu
-         WUGq5wHj/SI0jf+fbqbQ7PNfQMjOtGduSFXKEH1lXfQhpkgl413P2Bv5HmWBFB0mjtU+
-         juYjG3XuZVhw/jaxkWPnLRTFcUHMZHHr9pkiUJWhak1b8cqk3uTpeFwg2xUXi9G6vrOO
-         0Rfw==
+        bh=jGB7/4Pq9xLu62LbNXXLS+atvDTK++BhtQFi4zPFcRU=;
+        b=idXsJTWFHxPPkqTnnKs/5zPDJCRLdWagXbHTPM+cfeDtKBZhtx4PVwnmG+rmS+g7UU
+         /8sxJ5/GWol57B+/hKMAxn/pg3WkcQEJ41JxXzIkBDBbaWgKTvPL8TUF+mrCOMg0btLZ
+         aOjXdu0hTDHzsUXrrSmhN3WLpQY4SHp12Dn/6qXHQeYfW1bB8NGNmlVnFQKtprc2U9MP
+         IyMOVsVLXWkUCSBzdyT+yPHUwQmM+mylorDJ5t3jvx/Ng5ryHTQDUL9KjYoyuOSthCDG
+         t8vCDaKyY5LMj9V9i+6yuH6K/p6PgKlEonAZN4q78i9fnZzufz2irdDwiqmev+kt5doL
+         +SFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701522277; x=1702127077;
+        d=1e100.net; s=20230601; t=1701616202; x=1702221002;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5MwJfzzcYu8whL7SkYku9YrYz+BKMaZCOtwmhhq14kI=;
-        b=a6HHumB8vS9cA6treIvHVpjRSh/NI0hdedC+fvCJ09vJf5esL17Ewfx6+G9jyabbwG
-         ndhxydmuN/WeaQ0oddR+dE8J8PM919PTu4BQzgO8vXIGm9fK3YZTtJ4WTwOCmLhMglXn
-         ngEWNXDLOp3nUAXIBHUtwdPyHU5G/4DOBSgW2t60pAQU74i6HpjZG8wLMeh743Cku7xs
-         wDhrHuNq7FFjqmFZeDyeYqSBirLn5gE8bWZyln3vjYdxj+L0VAy4Nyx57oJqJ0xLrGYP
-         35yNPA6yyxG+GPUa9InYGMMrdwxJ3R1etgKnepKXCi7JLDelNiFESjHOi4mG2wt4Qz3y
-         bqDg==
-X-Gm-Message-State: AOJu0Yy9VWZYciytdtkL8Nj8+WTsUJXVSh9bYB/MrVFh4GNiO8/rOj72
-	STciR97/b+PEzL3NNDWVtL/n8Q==
-X-Google-Smtp-Source: AGHT+IHlFnK8sTgxK+l5q18QnQD3ZgV35E8ImVT03PumeBHQl7xWXIsd70+914v19fF4PgYqzpbtbg==
-X-Received: by 2002:a05:600c:84cf:b0:40b:5e21:dd22 with SMTP id er15-20020a05600c84cf00b0040b5e21dd22mr1032022wmb.80.1701522276749;
-        Sat, 02 Dec 2023 05:04:36 -0800 (PST)
+        bh=jGB7/4Pq9xLu62LbNXXLS+atvDTK++BhtQFi4zPFcRU=;
+        b=WNe2U8UsJqgN29Mg5k9+ej9dTezXAl8/1Ma6g4V04CRrjzQ8jHfPxK3/YjTDDWI3dO
+         tmHFcibwzSVZ8c2CFplYyinRg0UkMxJ9AZnRhboO6qL1rLikQsJPo/esf5aKQO7a7JVI
+         Ee8jU/TEYvUolobkHCM5rNRFlyJ54lwp9CNwnh2IEc6gL1JtySktR1HFp+CQXBW5aoy+
+         7N2CJ+uohURz2yOaHX9Y1PAHERltim39jtbkPnR3Yz0TXMKnT6UYK4/MM10zDjgB1JY4
+         NMg9qliwtOzJ72R1tWnYEVLvZOREA5h5vxR8CUrpRS47sxLg4i7OpRYCU5pw1rqsPcU9
+         uNaw==
+X-Gm-Message-State: AOJu0Yz/h71LVaBLolwN91Ek8R5B94PGNyv521k4YJRq+wvixZ/XtLyk
+	dkAJWb90PXqVPQkFUAqgj4fjlw==
+X-Google-Smtp-Source: AGHT+IHW7znHwy3UiTaFioppqZ7lRoPvFI2q3fuEaMrHtiiZ7ZARoiioG27gvjXmuFmlcOOp4RoODQ==
+X-Received: by 2002:a17:906:d8:b0:a19:53d9:b365 with SMTP id 24-20020a17090600d800b00a1953d9b365mr2097931eji.57.1701616202198;
+        Sun, 03 Dec 2023 07:10:02 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.223.109])
-        by smtp.gmail.com with ESMTPSA id 9-20020a170906100900b009ddaf5ebb6fsm3056569ejm.177.2023.12.02.05.04.33
+        by smtp.gmail.com with ESMTPSA id di16-20020a170906731000b00a1b6d503e7esm492044ejc.157.2023.12.03.07.09.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Dec 2023 05:04:36 -0800 (PST)
-Message-ID: <695b4402-5e0f-4b4b-9848-16d8f8956cf4@linaro.org>
-Date: Sat, 2 Dec 2023 14:04:32 +0100
+        Sun, 03 Dec 2023 07:09:40 -0800 (PST)
+Message-ID: <2854a9b5-d6c8-454c-bc3b-79744e613686@linaro.org>
+Date: Sun, 3 Dec 2023 16:09:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -47,31 +47,25 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] docs: dt-bindings: add DTS Coding Style document
+Subject: Re: [PATCH v5 10/20] dt-bindings: soc: samsung: usi: add
+ google,gs101-usi compatible
 Content-Language: en-US
-To: Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Andrew Davis <afd@ti.com>, Andrew Lunn <andrew@lunn.ch>,
- Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson <andersson@kernel.org>,
- Chen-Yu Tsai <wens@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Heiko Stuebner <heiko@sntech.de>, Jonathan Corbet <corbet@lwn.net>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Michal Simek
- <michal.simek@amd.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Nishanth Menon <nm@ti.com>, Olof Johansson <olof@lixom.net>,
- =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
- linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- workflows@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20231125184422.12315-1-krzysztof.kozlowski@linaro.org>
- <20231201-thrive-gully-5260ab07b352@spud>
+To: Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+ conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
+ s.nawrocki@samsung.com, linus.walleij@linaro.org, wim@linux-watchdog.org,
+ linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+ olof@lixom.net, gregkh@linuxfoundation.org, jirislaby@kernel.org,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com
+Cc: tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+ semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com,
+ soc@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, kernel-team@android.com,
+ linux-serial@vger.kernel.org
+References: <20231201160925.3136868-1-peter.griffin@linaro.org>
+ <20231201160925.3136868-11-peter.griffin@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -117,28 +111,34 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231201-thrive-gully-5260ab07b352@spud>
+In-Reply-To: <20231201160925.3136868-11-peter.griffin@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01/12/2023 17:46, Conor Dooley wrote:
-> On Sat, Nov 25, 2023 at 07:44:22PM +0100, Krzysztof Kozlowski wrote:
->> +Indentation
->> +-----------
->> +
->> +1. Use indentation according to :ref:`codingstyle`.
+On 01/12/2023 17:09, Peter Griffin wrote:
+> From: Tudor Ambarus <tudor.ambarus@linaro.org>
 > 
-> One thing Jonathan mentioned before to me was to drop this :ref: stuff.
-> | > +:ref:`devicetree-abi` more information on the ABI.
-> | 
-> | ...can just be written as "Please see
-> | Documentation/devicetree/bindings/ABI.rst".  The cross-reference link
-> | will be generated as expected, and readers of the plain-text docs don't
-> | have to go grepping to find the reference.
-> https://lore.kernel.org/all/87bki23rbx.fsf@meer.lwn.net/
+> Add google,gs101-usi dedicated compatible for representing USI of Google
+> GS101 SoC.
 > 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> index 61be1f2ddbe7..a10a438d89f0 100644
+> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> @@ -28,6 +28,9 @@ properties:
+>                - samsung,exynosautov9-usi
+>                - samsung,exynosautov920-usi
+>            - const: samsung,exynos850-usi
+> +      - items:
+> +          - const: google,gs101-usi
 
-Sure, indeed it's better for plain-text readers.
+This should be part of previous enum.
 
 Best regards,
 Krzysztof
