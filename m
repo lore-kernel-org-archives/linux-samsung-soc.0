@@ -1,14 +1,27 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 05E2D107;
-	Mon,  4 Dec 2023 03:57:00 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B898152B;
-	Mon,  4 Dec 2023 03:57:47 -0800 (PST)
-Received: from [10.57.5.136] (unknown [10.57.5.136])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3B8EA3F5A1;
-	Mon,  4 Dec 2023 03:56:58 -0800 (PST)
-Message-ID: <5ad40adf-aa79-4281-9cc3-2a1e7c10a356@arm.com>
-Date: Mon, 4 Dec 2023 11:57:59 +0000
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="An6Nqerw"
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C0BBE5;
+	Mon,  4 Dec 2023 04:13:10 -0800 (PST)
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madras.collabora.co.uk (Postfix) with ESMTPSA id C0E1766022D1;
+	Mon,  4 Dec 2023 12:13:06 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1701691988;
+	bh=tYd+006RlkhE3PTruMujBJkOUxyMROXE4vAkt2e6WD4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=An6NqerwwhgGfO8PGeiYcMYDkkuGon45hnJi/L5mKU/QUdg8fXvHweDyu5ouS377l
+	 MKZ6u1N7V2WC5ff3OfmXddClu7wle9xb4uwQ0yBIGJ/TuJs2rZBRt5Vs3yvhbwLVll
+	 K6x+zpiw3JjZkGiFIt82WgE3fbPpLsR2oN+Wzna4S+YOr805gK0P8Ky6C8jdfl3x9n
+	 r+oyS8WKSetKFh7uLlkoA2V/I8OEmpjA1T7RDXZiNd+khnQDR43UO15PtIPpI4f9hy
+	 7d2YQy5e/pSWd35k0m8RC2l2iw2xccJQkAGzfcDK9oNhacXJFDNCfkDdvvd3ZiSj8D
+	 RDMhW/jizj9EA==
+Message-ID: <d03bf5b8-d4d7-4080-9af4-17b31ef6c72b@collabora.com>
+Date: Mon, 4 Dec 2023 13:13:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -16,45 +29,61 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Various Exynos targets never return to no cooling
-From: Lukasz Luba <lukasz.luba@arm.com>
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20231113130451eucas1p293985c1bee8dc71b9c78a013663ce8e6@eucas1p2.samsung.com>
- <20231113130435.500353-1-m.majewski2@samsung.com>
- <93c5b287-a643-4e95-a38b-ed301d5cbcb2@arm.com>
+Subject: Re: [PATCH v4] docs: dt-bindings: add DTS Coding Style document
 Content-Language: en-US
-In-Reply-To: <93c5b287-a643-4e95-a38b-ed301d5cbcb2@arm.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+Cc: Andrew Davis <afd@ti.com>, Andrew Lunn <andrew@lunn.ch>,
+ Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson <andersson@kernel.org>,
+ Chen-Yu Tsai <wens@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Jonathan Corbet <corbet@lwn.net>, Michal Simek <michal.simek@amd.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Nishanth Menon <nm@ti.com>,
+ Olof Johansson <olof@lixom.net>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <zajec5@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ workflows@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20231203174622.18402-1-krzysztof.kozlowski@linaro.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20231203174622.18402-1-krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-
-
-On 11/14/23 10:32, Lukasz Luba wrote:
-> Hi Mateusz,
+Il 03/12/23 18:46, Krzysztof Kozlowski ha scritto:
+> Document preferred coding style for Devicetree sources (DTS and DTSI),
+> to bring consistency among all (sub)architectures and ease in reviews.
 > 
-> On 11/13/23 13:04, Mateusz Majewski wrote:
->> Hi,
->>
->> While working on some fixes on the Exynos thermal driver, I have found 
->> that some
->> of the Exynos-based boards will never return to no cooling. That is, 
->> after
->> heating the board a bit and letting it cool, we see in the sysfs 
->> output similar
->> to this:
->>
+> Cc: Andrew Davis <afd@ti.com>
+> cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Bjorn Andersson <andersson@kernel.org>
+> Cc: Chen-Yu Tsai <wens@kernel.org>
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: Michal Simek <michal.simek@amd.com>
+> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+> Cc: Nishanth Menon <nm@ti.com>
+> Cc: Olof Johansson <olof@lixom.net>
+> Cc: Rafał Miłecki <zajec5@gmail.com>
+> Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Acked-by: Heiko Stuebner <heiko@sntech.de>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Acked-by: Konrad Dybcio <konradybcio@kernel.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
 
-Regarding this topic, I just wanted to tell you that I had conversation
-with Rafael & Daniel last Fri. Rafael gave me a hint to his latest work
-in his repo regarding potentially similar race with temperature value.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-I'll have a look there and experiment next week, than come back to you.
-
-Regards,
-Lukasz
+Thumbs up!
