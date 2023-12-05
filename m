@@ -1,43 +1,42 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eZpt49+l"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LbYbJvKC"
 Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B974182
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Dec 2023 01:22:40 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40c08af319cso26747365e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Dec 2023 01:22:40 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CB7DCE
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Dec 2023 01:22:38 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40c039e9719so34045155e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Dec 2023 01:22:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701768158; x=1702372958; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ObxMeQH5boMcLQ/g7RCJYr6nmE+CvqsmjJ2hJZYAzS4=;
-        b=eZpt49+lJK7WIr/ZxSoLC+67hGDAvqT88ih2KPCBSsOtKU14vy+1LlW/d2j/YHStkw
-         HYjXjb/X/iEMIH2IZP9JJl8xgkDFJBa8Rm+g0gLSo4C4PWxh5nXyFEJpI8N7fi1j3Dl+
-         /jJ9d9dg6GY8sTVAEuzIhGI2/tHPhl6PDqX6q/pxab0m/jI5WwCxypt3gBabn79ZMdY9
-         5aMuzEBvbzgQKwniMFdHxAcfR5hVoJ/OCFMV+LJM6GpFXwMPuy5bfe5m6XVEMrGTOb9+
-         YeKb8p1ArqX5pMl7ClvMDFolsR+7rxz9aE4VctzomLgX0WLMuPXcC2zhP6v2Qn61xnX2
-         IGFQ==
+        d=linaro.org; s=google; t=1701768156; x=1702372956; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3C3srF3D8XYNvvxDZciqMxRHu1Pp1JgH8p2QBUBIXkw=;
+        b=LbYbJvKCyoR0fX5rvZXjbtu4Ybw/+a5FWhP1PP6BbHfKYbo5BNkewJ+hgygNuMbbfb
+         /qMnER1RBlOQZrXr+KCsjIxu5BJOdE6ohdZDTv84hM1FRbKSPCf0sB/cDoB4gae9pBow
+         P05/prW4TiUa6aQci9KMzvPu+MxruHziMYlf7TLGh/oFUGnRgaEDSHpQfwDvBSlee2/X
+         SG7jSv7QkvV14QuPqcEC+sufy2rkeeb52uBzur/jTGQVDJiEPB4OT6fEJJqtApV2QPMd
+         cupxxeuzX2AnkuogDC6qeh8KNyvRHVfpKLagAxtExy//vrFEowHSEaWJ6zzG2qt82ege
+         pvvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701768158; x=1702372958;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ObxMeQH5boMcLQ/g7RCJYr6nmE+CvqsmjJ2hJZYAzS4=;
-        b=RujjF/1S/B8PCI3EekGmXDdcIpprhXIsxLAMaPaKp29fY87WyE8ml0ZB774kbubStl
-         uc08iA4j+UBsXQ4LGs2+NhPviNaqXMXihj4iVfJlZ2gzeczRjs8JURgfv2DiOHCWWzqd
-         AKBsULbD1hDUqXgt+7opMsxdLQZcMdvN3hldmqY6pl8QVDlUMYsRVGurayqsn4IXo8TZ
-         aNjTLXBcrnHy3bi/5qO7FPAEOEyKC9Jl1ytV1zhu2rEsNiu93QP+RXZdoi0CSgDufVY0
-         UHhg/1MPc/ydn3bK/YR+3V2FNVEkJadmrjVQvnQSv6XRhwvCsn38WmdMcyuqZPO05c9T
-         /uig==
-X-Gm-Message-State: AOJu0Yz45UIkIvXGEw1WsQb+CUwJ3FP818YpgOMr7/f7Zlj1Fx47cGWm
-	jBmeI80eL8CLc2cPLZbyLEDTTA==
-X-Google-Smtp-Source: AGHT+IGx3W7fpSGh/VpzrYet5YuHsyAZROhAv05v+RTHYlVan5pyIZgU5eQBamgdMnQZcOBhzibgkA==
-X-Received: by 2002:a05:600c:3093:b0:40b:5e59:ea06 with SMTP id g19-20020a05600c309300b0040b5e59ea06mr230527wmn.165.1701768158557;
-        Tue, 05 Dec 2023 01:22:38 -0800 (PST)
+        d=1e100.net; s=20230601; t=1701768156; x=1702372956;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3C3srF3D8XYNvvxDZciqMxRHu1Pp1JgH8p2QBUBIXkw=;
+        b=dFSXCJZitN3mxqGaciS/gCXA/NRW1dxjCvrObb7gmotq6zgELIK2DlU+W4pDuKxpb1
+         ZniQesJtuF61qCKd2DEX04wMsLJ8nezJv9HhEMmEh8D89ce8wzkQ6iMwFwic18jaXvzv
+         ynWe4j9s58KY/cJManewNs/k0ZClH6n2EM6Ov/v48sB3gTln8g6fKhZ6doA77zsXKKYI
+         g1uMuR97FykkIxOiaxrRcyWMKGhIk8kcq2YS9WOoAWPqm+4iN4PgME7c8Br4690rYGS6
+         FMsaNd1ruuhKdVQ1RaJKzeGx3fnyFEeMkx9AL1dCAOzF4ZHjg7sHDAA+XwTOpa01bElS
+         nELA==
+X-Gm-Message-State: AOJu0Yy8pJMvlUSnq5nqLA7UMDc9XRAnI4Zlc9LWQaspzI/T/hJQ9VcJ
+	DbmrM5Vv0ZP5vkppUmsU4uigqA==
+X-Google-Smtp-Source: AGHT+IHl1sh2a9wDuPh2SdUnHcBKEzFK7tAktSyin1IN1vDeUa5puQnLRQ3RBX1u+xjKvk6Sg4pviQ==
+X-Received: by 2002:a05:600c:1d83:b0:40b:5e21:ec3e with SMTP id p3-20020a05600c1d8300b0040b5e21ec3emr277886wms.112.1701768156506;
+        Tue, 05 Dec 2023 01:22:36 -0800 (PST)
 Received: from krzk-bin.. ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id g10-20020a05600c4eca00b0040596352951sm21692287wmq.5.2023.12.05.01.22.36
+        by smtp.gmail.com with ESMTPSA id g10-20020a05600c4eca00b0040596352951sm21692287wmq.5.2023.12.05.01.22.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Dec 2023 01:22:38 -0800 (PST)
+        Tue, 05 Dec 2023 01:22:36 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Andi Shyti <andi.shyti@kernel.org>,
 	Rob Herring <robh+dt@kernel.org>,
@@ -60,12 +59,10 @@ To: Andi Shyti <andi.shyti@kernel.org>,
 	linux-serial@vger.kernel.org,
 	linux-watchdog@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 1/6] dt-bindings: i2c: exynos5: add specific compatible for Tesla FSD
-Date: Tue,  5 Dec 2023 10:22:24 +0100
-Message-Id: <20231205092229.19135-2-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/6] dt-bindings: samsung: continued - add specific compatibles for Tesla FSD Hi,
+Date: Tue,  5 Dec 2023 10:22:23 +0100
+Message-Id: <20231205092229.19135-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231205092229.19135-1-krzysztof.kozlowski@linaro.org>
-References: <20231205092229.19135-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -74,38 +71,45 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Tesla FSD is a derivative of Samsung Exynos SoC, thus just like the
-others it reuses several devices from older designs.  Historically we
-kept the old (block's) compatible only.  This works fine and there is no
-bug here, however guidelines expressed in
-Documentation/devicetree/bindings/writing-bindings.rst state that:
-1. Compatibles should be specific.
-2. We should add new compatibles in case of bugs or features.
+Merging
+=======
+I propose to take entire patchset through my tree (Samsung SoC), because:
+1. I already took similar work this cycle:
+   https://lore.kernel.org/all/169997520487.6747.17671551558724027958.b4-ty@linaro.org/
+2. Two new SoCs are coming (Google GS101 and ExynosAutov920) and they might
+   touch the same lines.  It is reasonable for me to take the bindings for the new
+   SoCs, to have clean `make dtbs_check` on the new DTS.
+3. Having it together helps me to have clean `make dtbs_check` within my tree
+   on the existing DTS.
+4. No drivers are affected by this change.
 
-Add Tesla FSD compatible specific to be used with an existing fallback.
+If folks agree, please kindly Ack the patches.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Description
+===========
+See:
+https://lore.kernel.org/all/20231108104343.24192-1-krzysztof.kozlowski@linaro.org/
 
----
+Best regards,
+Krzysztof
 
-I propose to take the patch through Samsung SoC (me). See cover letter
-for explanation.
----
- Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Krzysztof Kozlowski (6):
+  dt-bindings: i2c: exynos5: add specific compatible for Tesla FSD
+  dt-bindings: pwm: samsung: add specific compatible for Tesla FSD
+  dt-bindings: serial: samsung: add specific compatible for Tesla FSD
+  dt-bindings: samsung: exynos-pmu: add specific compatible for Tesla
+    FSD
+  dt-bindings: watchdog: samsung: add specific compatible for Tesla FSD
+  arm64: dts: fsd: add specific compatibles for Tesla FSD
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-index c1f5d2cb7709..df9c57bca2a8 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-+++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-@@ -29,6 +29,7 @@ properties:
-       - items:
-           - enum:
-               - samsung,exynos5433-hsi2c
-+              - tesla,fsd-hsi2c
-           - const: samsung,exynos7-hsi2c
-       - items:
-           - enum:
+ .../devicetree/bindings/i2c/i2c-exynos5.yaml  |  1 +
+ .../devicetree/bindings/pwm/pwm-samsung.yaml  |  1 +
+ .../bindings/serial/samsung_uart.yaml         |  1 +
+ .../bindings/soc/samsung/exynos-pmu.yaml      |  1 +
+ .../bindings/watchdog/samsung-wdt.yaml        | 21 +++++++-----
+ arch/arm64/boot/dts/tesla/fsd.dtsi            | 32 +++++++++----------
+ 6 files changed, 33 insertions(+), 24 deletions(-)
+
 -- 
 2.34.1
 
