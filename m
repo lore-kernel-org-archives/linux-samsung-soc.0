@@ -1,139 +1,132 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3E936B16;
-	Wed,  6 Dec 2023 12:59:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55CF5C433C7;
-	Wed,  6 Dec 2023 12:59:21 +0000 (UTC)
-Message-ID: <d00fa740-bcf8-47af-b70a-cabbb7237d99@xs4all.nl>
-Date: Wed, 6 Dec 2023 13:59:21 +0100
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DGR64mNn"
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92ECED42;
+	Wed,  6 Dec 2023 08:16:30 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-a1e116f2072so86140566b.0;
+        Wed, 06 Dec 2023 08:16:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701879389; x=1702484189; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ANhsNm1z1q5r0k4ig7l9fgQ6wnefNabJyB6yrVtO5Dw=;
+        b=DGR64mNn1Gfftkep0d5kBQGP4oXlH/YI5ONU+WqsKuferqdbJz992wS9YeUrDp+gou
+         aOz5wHFvztvfWjXcZnvMY6p502hOpdIwQLNjsdUwCjMCcMOVL4q4jEPDVRTqPUUXdZT2
+         sCjTIg2RcmmYhbquZ2i/eug1wePlvBJP/A6at4aa115m0gYnqlvyYyKozRzof/hlXBZm
+         d4opkEOq4DNmVMjVnAY9F2qdZ43yhO0XQZt8OCjaJQN/p5OV6BV89Bz/Z75rsVIfSJKS
+         8ihodEnvWzSKPkUcfpXkjMHCv/KkA7SMv0L7HsD28yJBtzD+5clEyzLeGW0HLzdZ8M0j
+         9VXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701879389; x=1702484189;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ANhsNm1z1q5r0k4ig7l9fgQ6wnefNabJyB6yrVtO5Dw=;
+        b=YK0jXVM5bcrw4pOGoyCbkzSdvXYMrIaQWENrfGgpKrfr3Aqk7m27vOegISrbfIV1u/
+         Nu9vFjJE6eZotmz7BCjbBz8dIyQHYk6plJGXfNrYmdcbYonCDrkYDAjebV4DLOTPu6Oh
+         dVSvML3B4m/f8PiqalSFb9UbFRQ1z/n6tfDauv90s2LhZcMDNM2Q6viuOl4Y/Ln4q4vN
+         FDVxEX8AZLeEl7fxuM3KDQ1gE4wQvrr+C7wuljYCuRM3s3N8E2SlfL1eFTXjpnM92Gre
+         KpkQrshM2e061egEs1G2a6N9BV52+//yGeGrKHYoID6ddludpOmMJzbCsTv0qlimpe9v
+         Tr6A==
+X-Gm-Message-State: AOJu0YwTECWtZAKEcD5B0D26mMxk8YNdw+sdAKopzc2wjKuFIGFPwDRt
+	MSJ/9AyK0HNmWDemOpU6aqw=
+X-Google-Smtp-Source: AGHT+IFy8x5NdSw4gMUVcSn6gTYvfx+5ZcFZaDpA+FIzL/xuDBuyQYdp284Mn4A9tfEwJ5Vrnr8htQ==
+X-Received: by 2002:a17:906:185:b0:a1d:d900:271b with SMTP id 5-20020a170906018500b00a1dd900271bmr958745ejb.2.1701879388726;
+        Wed, 06 Dec 2023 08:16:28 -0800 (PST)
+Received: from orome.fritz.box (p200300e41f0fa600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:a600:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id s14-20020a170906454e00b00a1ce98016besm108989ejq.224.2023.12.06.08.16.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Dec 2023 08:16:28 -0800 (PST)
+Date: Wed, 6 Dec 2023 17:16:26 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, linux-fsd@tesla.com,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH 2/6] dt-bindings: pwm: samsung: add specific compatible
+ for Tesla FSD
+Message-ID: <ZXCeWmEO3PJiK0m5@orome.fritz.box>
+References: <20231205092229.19135-1-krzysztof.kozlowski@linaro.org>
+ <20231205092229.19135-3-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v5 00/11] Add MFC V12 support
-Content-Language: en-US, nl
-To: Aakarsh Jain <aakarsh.jain@samsung.com>,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org, conor+dt@kernel.org,
- linux-samsung-soc@vger.kernel.org, andi@etezian.org, gost.dev@samsung.com,
- alim.akhtar@samsung.com, aswani.reddy@samsung.com, pankaj.dubey@samsung.com,
- ajaykumar.rs@samsung.com
-References: <CGME20231206063105epcas5p3034f89af2be6922ab04771de099a124a@epcas5p3.samsung.com>
- <20231206063045.97234-1-aakarsh.jain@samsung.com>
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20231206063045.97234-1-aakarsh.jain@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="CFJ6EccMqQxL/2Mm"
+Content-Disposition: inline
+In-Reply-To: <20231205092229.19135-3-krzysztof.kozlowski@linaro.org>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On 06/12/2023 07:30, Aakarsh Jain wrote:
-> This patch series adds MFC v12 support. MFC v12 is used in Tesla FSD SoC.
-> 
-> This adds support for following:
-> 
-> -Add support for YV12 and I420 format (3-plane)
-> -Add support for Rate Control, UHD and DMABUF for encoder
-> -Add support for DPB buffers allocation based on MFC requirement
 
-I'm getting one smatch warning:
+--CFJ6EccMqQxL/2Mm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-drivers/media/platform/samsung/s5p-mfc/s5p_mfc_enc.c:2453 s5p_mfc_queue_setup() error: we previously assumed 'ctx->src_fmt' could be null (see line 2441)
+On Tue, Dec 05, 2023 at 10:22:25AM +0100, Krzysztof Kozlowski wrote:
+> Tesla FSD is a derivative of Samsung Exynos SoC, thus just like the
+> others it reuses several devices from older designs.  Historically we
+> kept the old (block's) compatible only.  This works fine and there is no
+> bug here, however guidelines expressed in
+> Documentation/devicetree/bindings/writing-bindings.rst state that:
+> 1. Compatibles should be specific.
+> 2. We should add new compatibles in case of bugs or features.
+>=20
+> Add Tesla FSD compatible specific to be used with an existing fallback.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>=20
+> ---
+>=20
+> I propose to take the patch through Samsung SoC (me). See cover letter
+> for explanation.
+> ---
+>  Documentation/devicetree/bindings/pwm/pwm-samsung.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-And a few kerneldoc warnings:
+You point to the guidelines that say we should have specific compatible
+strings, but then the string that you add seems very generic. Now, I'm
+obviously not an expert on Tesla hardware, but just FSD seems to be
+quite generic according to the internet. It seems like the chip derived
+=66rom Samsung used to be known as AP3/HW3, but there's now also AP4/HW4,
+so I wonder if those differ in some way and if these shouldn't include
+some sort of version/generation number.
 
-drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h:729: warning: Function parameter or member 'chroma_size_1' not described in 's5p_mfc_ctx'
-drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h:729: warning: Function parameter or member 'is_10bit' not described in 's5p_mfc_ctx'
-drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h:729: warning: Function parameter or member 'is_422' not described in 's5p_mfc_ctx'
-drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h:729: warning: Function parameter or member 'stride' not described in 's5p_mfc_ctx'
+Thierry
 
-Something for v6.
+--CFJ6EccMqQxL/2Mm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
+-----BEGIN PGP SIGNATURE-----
 
-	Hans
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmVwnlkACgkQ3SOs138+
+s6HNNxAAr18wT2Xx7P6HZfEgxKUQPSCBFlyEXUDvbkHuvzp6EQKPzf/qxwtlsnFk
+nrFGQTrZn7i6PREWY3t2J9yOd4OjSUvwbkuSJnivXzZla7r0+H1u4iFD8cOWT1JH
+RdzvcGTRIO6NVCyYH1uq8zszeWkMftGYP65u15WlMFoNhbvDshpTRHpTtBH+GKzw
+uOvHeU+XGckCiuWLTlw5G3X1B/ApmiGb7faNwlIEOWcHtDSfq+z0ypjAA509NKkJ
+UqcrFJbn28pcuPPzudHQBDhw8h6azTRS7cYdaAI9XrU5+kg0dSthoWXWUHnxCluq
+888aZXm1xsCwMAy09y1GLOraEBTuy+qtDKr4hqydKJ5fs2jJEVseX9X2vQpL4Tvm
+4rS68YgmsbAtt9rvGeKgh9qoP+uk9jlzv5TqF4/p8ou4WPjLCm/tY8tnGYDhU23p
+4kSXpyHYJ2FJQjaCpHMVpRJhQ86lO0HuBecJU5l+/meu/iWk6wRvJMOQ00/+5PpR
+tjRwy3Wey7HTT7o9FUwrP7zvWbyIzyhANX6tKCEBHfTQvH0o3Iawa959Ip9lzkrV
+sB3j6nS8OiPWn4TjogGQHIjvm86H1r8hMPNQQGV26iLXxmbarWylBsJviqkGHPyP
+UpsvXImtnoR0/WG2qYO/VbbzK1k3PU6PWhJ0CJuPhrYnaISX5Uc=
+=yEhC
+-----END PGP SIGNATURE-----
 
-> 
-> Changes since v4:
-> -Addressed review comments by Krzysztof Kozlowski.
-> As per discussion included iommus property in dt-schema.
-> -Addressed review comments by Hans Verkuil.
-> Fixed checkpatch warnings with --strict flag enabled.
-> Upstreamed s5p-mfc-v12.fw to linux-firmware.
-> Added comment in the patch 9 regarding loading mfc firmware v12 
-> sequentially.
-> -Addressed review comments by Nicolas Dufresne
-> Made use of v4l2-common library to get number of planes needed for
-> particular format in patch 4.
-> v4 link:https://patchwork.kernel.org/project/linux-media/patch/20231025102216.50480-2-aakarsh.jain@samsung.com/
-> 
-> Changes since v3:
-> -Removed vp9 codec support for now and just keeping MFC v12 base
-> patches with necessary hardware controls, decoder, encoder and
-> structural changes. Also covers luma dbp, chroma dpb and mv sizes
-> for each codec as per the UM for MFCv12, along with appropriate
-> alignment.
-> v3 link: https://patchwork.kernel.org/project/linux-media/cover/20221011122516.32135-1-aakarsh.jain@samsung.com/
-> 
-> Changes since v2:
-> -Addressed review comments by Rob Herring.
-> This was regarding the errors found by Rob bot in yaml file. File
-> 'samsung,s5p-mfc.yaml' is already converted into json schema and is
-> merged.
-> 
-> -Addressed review comments by Krzysztof Kozlowski.
-> This was regarding depricated properties mentioned in s5p-mfc.txt file.
-> Review comment was addressed and 'samsung,s5p-mfc.yaml' is already
-> merged now.
-> 
-> -Addressed review comments by Andi Shyti.
-> This was regarding addition of 'MFC_V10PLUS_BITS' macro in
-> 's5p_mfc_common.h file.
-> v2 link: https://patchwork.kernel.org/project/linux-media/cover/20220907064715.55778-1-smitha.t@samsung.com/
-> 
-> Changes since v1:
-> -Addressed review comments by Krzysztof Kozlowski.
-> Separated bug fixes patches, resent again with fix tag
-> and those are merged now.
-> -Added SoC based compatible string.
-> 
-> -Addressed review comments by Andrzej Hajda
-> Assigned width64 and height32 variable with ALIGN(ctx->img_..)
-> used in the code in 's5p_mfc_opr_v6.c' file.
-> v1 link: https://patchwork.kernel.org/project/linux-media/patch/20220517125548.14746-2-smitha.t@samsung.com/
-> 
-> Aakarsh Jain (11):
->   dt-bindings: media: s5p-mfc: Add mfcv12 variant
->   media: s5p-mfc: Rename IS_MFCV10 macro
->   media: s5p-mfc: Add initial support for MFCv12
->   media: s5p-mfc: Add YV12 and I420 multiplanar format support
->   media: s5p-mfc: Add support for rate controls in MFCv12
->   media: s5p-mfc: Add support for UHD encoding.
->   media: s5p-mfc: Add support for DMABUF for encoder
->   media: s5p-mfc: Set context for valid case before calling try_run
->   media: s5p-mfc: Load firmware for each run in MFCv12.
->   media: s5p-mfc: DPB Count Independent of VIDIOC_REQBUF
->   arm64: dts: fsd: Add MFC related DT enteries
-> 
->  .../bindings/media/samsung,s5p-mfc.yaml       |  18 ++
->  arch/arm64/boot/dts/tesla/fsd.dtsi            |  21 ++
->  .../platform/samsung/s5p-mfc/regs-mfc-v12.h   |  52 +++
->  .../platform/samsung/s5p-mfc/regs-mfc-v7.h    |   1 +
->  .../platform/samsung/s5p-mfc/regs-mfc-v8.h    |   3 +
->  .../media/platform/samsung/s5p-mfc/s5p_mfc.c  |  36 ++-
->  .../platform/samsung/s5p-mfc/s5p_mfc_common.h |  29 +-
->  .../platform/samsung/s5p-mfc/s5p_mfc_ctrl.c   |  10 +-
->  .../platform/samsung/s5p-mfc/s5p_mfc_dec.c    |  60 +++-
->  .../platform/samsung/s5p-mfc/s5p_mfc_enc.c    | 149 ++++++---
->  .../platform/samsung/s5p-mfc/s5p_mfc_opr.h    |  14 +-
->  .../platform/samsung/s5p-mfc/s5p_mfc_opr_v5.c |  12 +-
->  .../platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c | 300 ++++++++++++++----
->  .../platform/samsung/s5p-mfc/s5p_mfc_opr_v6.h |   7 +-
->  14 files changed, 563 insertions(+), 149 deletions(-)
->  create mode 100644 drivers/media/platform/samsung/s5p-mfc/regs-mfc-v12.h
-> 
-
+--CFJ6EccMqQxL/2Mm--
