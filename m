@@ -1,174 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WDDojk5n"
-Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6E011A5
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Dec 2023 04:47:26 -0800 (PST)
-Received: by mail-qv1-xf33.google.com with SMTP id 6a1803df08f44-67ab5e015aaso24913746d6.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Dec 2023 04:47:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701866846; x=1702471646; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n4HaoseseFRfpAOsa7GPwOZAfsJ+SNvW7lTiyiT6xZA=;
-        b=WDDojk5nnfqvjKfIagrNhoMnc0xRQ3ADDpucyZmznWEFnKzT6E4mtkS6ZoUNOPv5YK
-         z5W4QtybCsVXG/FEwgWHHgNaoP7SxP6sD7uG2oeEVLnqBn3ilIV7NT/MHSCjBvCzqb6k
-         wHDc6/iRGPujeEpNTH0EHxdeyAOMHU51Dfe2MG6HiWLUpBSR7huvfYoRTsMvyj/HNdV4
-         CvK3qvVmotCQ8Pn3BG9BD0OwwDd7QLPjr63Lb4GLCtvRDttEnVL6zFBAtsuZr3ZhjqBt
-         XylJugLZyzNerRrtq/RoXex2tRYsU6oC9gMclM9uBqQIXs2vg39OTokhIkUn3amUARED
-         awhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701866846; x=1702471646;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n4HaoseseFRfpAOsa7GPwOZAfsJ+SNvW7lTiyiT6xZA=;
-        b=aMwv2GzuxKSEsuVx9zWBh21UDXhVmQ0J80s1X0evok1UwL9AfCOdyq5rg9hT814ij1
-         IW77plcuB1tK6Cw7QwaOjgRkEqK4n+aTi5mjvLnlGnlF0ppvjynz0vAUYLwqTL7h7Xwb
-         jIfFlA0bcOAIcEsEsen92OvDio2GUksxly20zajYTegRm1THXHuF9QeFFAamOgDHSpLP
-         ajkDcb2OJ45MlVYwPAY/ajmZPK9tSaIjvrGoKWmi2R/1G+Zx0SvV5JGrAqHMCvz6Fpvu
-         Oct8qZZVTYO6hAD+LA6pZr0S5gJUGTHlLrA2DYi07aZxCQRpxIKcttN99V3mG2viG3oB
-         /X5g==
-X-Gm-Message-State: AOJu0YxwqprU9/VOU91LC76+AliGx+18pMpIMXfY5UeEzrz0SoUu4Co7
-	4+bJQixjD40r+4HH/+woGVHmzJjFs0hiVi2kHIT2vg==
-X-Google-Smtp-Source: AGHT+IHOfpL6BkZMMtxBr2eS7p+xlelrNL7BgzbEdDInmIpBIHdd4PBiyT6fKU1Lhyo6KKA5y6PSRh/1nAPz2rJNaUc=
-X-Received: by 2002:ad4:551d:0:b0:67a:3967:4b09 with SMTP id
- pz29-20020ad4551d000000b0067a39674b09mr650650qvb.8.1701866845831; Wed, 06 Dec
- 2023 04:47:25 -0800 (PST)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162CB36B08;
+	Wed,  6 Dec 2023 12:57:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAC61C433CB;
+	Wed,  6 Dec 2023 12:57:47 +0000 (UTC)
+Message-ID: <2c9b85dc-ebd7-43a7-bb66-d96ba9a28082@xs4all.nl>
+Date: Wed, 6 Dec 2023 13:57:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231201160925.3136868-1-peter.griffin@linaro.org>
- <20231201160925.3136868-15-peter.griffin@linaro.org> <CGME20231202004026epcas5p4d3947d7bb99e54f70ca37272cfdc5e55@epcas5p4.samsung.com>
- <CAPLW+4kBOWFPx3Hr-=UoLWvRxCorzBY9RCOiBhfkKcU0LAa21Q@mail.gmail.com>
- <000001da24c0$0b83aab0$228b0010$@samsung.com> <71972f4f-b5ac-484a-8a09-0b74bd7c623b@linaro.org>
-In-Reply-To: <71972f4f-b5ac-484a-8a09-0b74bd7c623b@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 6 Dec 2023 12:47:14 +0000
-Message-ID: <CADrjBPqTdmEqD_4fcPqz0wBYqgPG8nPr2reXp5=s=bRRtLKXsg@mail.gmail.com>
-Subject: Re: [PATCH v5 14/20] pinctrl: samsung: Add gs101 SoC pinctrl configuration
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
-	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
-	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
-	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
-	jirislaby@kernel.org, cw00.choi@samsung.com, tudor.ambarus@linaro.org, 
-	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
-	soc@kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v5 09/11] media: s5p-mfc: Load firmware for each run in
+ MFCv12.
+Content-Language: en-US, nl
+To: Aakarsh Jain <aakarsh.jain@samsung.com>,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org, conor+dt@kernel.org,
+ linux-samsung-soc@vger.kernel.org, andi@etezian.org, gost.dev@samsung.com,
+ alim.akhtar@samsung.com, aswani.reddy@samsung.com, pankaj.dubey@samsung.com,
+ ajaykumar.rs@samsung.com, linux-fsd@tesla.com,
+ Smitha T Murthy <smithatmurthy@gmail.com>
+References: <20231206063045.97234-1-aakarsh.jain@samsung.com>
+ <CGME20231206063134epcas5p2b3b9ca0351cd9c1cb169d7a4a3a30b80@epcas5p2.samsung.com>
+ <20231206063045.97234-10-aakarsh.jain@samsung.com>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20231206063045.97234-10-aakarsh.jain@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof / Sam,
+On 06/12/2023 07:30, Aakarsh Jain wrote:
+> In MFCv12, some section of firmware gets updated at each MFC run.
+> Hence we need to reload original firmware for each run at the start.
+> 
+> Cc: linux-fsd@tesla.com
+> Signed-off-by: Smitha T Murthy <smithatmurthy@gmail.com>
+> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+> ---
+>  drivers/media/platform/samsung/s5p-mfc/s5p_mfc_ctrl.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_ctrl.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_ctrl.c
+> index b49159142c53..24dd40ae71ec 100644
+> --- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_ctrl.c
+> +++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_ctrl.c
+> @@ -51,8 +51,10 @@ int s5p_mfc_load_firmware(struct s5p_mfc_dev *dev)
+>  	 * into kernel. */
+>  	mfc_debug_enter();
+>  
+> -	if (dev->fw_get_done)
+> -		return 0;
+> +	/* Load MFC v12 firmware for each run when MFC runs sequentially */
 
-On Wed, 6 Dec 2023 at 11:38, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 02/12/2023 02:36, Alim Akhtar wrote:
-> >
-> >>
-> >> On Fri, Dec 1, 2023 at 10:11=E2=80=AFAM Peter Griffin <peter.griffin@l=
-inaro.org>
-> >> wrote:
-> >>>
-> >>> Add support for the pin-controller found on the gs101 SoC used in
-> >>> Pixel 6 phones.
-> >>>
-> >>> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> >>> ---
-> >>>  .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 159 ++++++++++++++++=
-++
-> >>>  drivers/pinctrl/samsung/pinctrl-exynos.c      |   2 +
-> >>>  drivers/pinctrl/samsung/pinctrl-exynos.h      |  34 ++++
-> >>>  drivers/pinctrl/samsung/pinctrl-samsung.c     |   2 +
-> >>>  drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
-> >>>  5 files changed, 198 insertions(+)
-> >>>
-> >>> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> >>> b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> >>> index cb965cf93705..e1a0668ecb16 100644
-> >>> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> >>> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> >>> @@ -796,3 +796,162 @@ const struct samsung_pinctrl_of_match_data
-> >> fsd_of_data __initconst =3D {
-> >>>         .ctrl           =3D fsd_pin_ctrl,
-> >>>         .num_ctrl       =3D ARRAY_SIZE(fsd_pin_ctrl),
-> >>>  };
-> >>> +
-> >>> +/*
-> >>> + * bank type for non-alive type
-> >>> + * (CON bit field: 4, DAT bit field: 1, PUD bit field: 4, DRV bit
-> >>> +field: 4)
-> >>> + * (CONPDN bit field: 2, PUDPDN bit field: 4)  */ static struct
-> >>> +samsung_pin_bank_type gs101_bank_type_off  =3D {
-> >>> +       .fld_width =3D { 4, 1, 4, 4, 2, 4, },
-> >>> +       .reg_offset =3D { 0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, }, };
-> >>
-> >> This is just the same as exynos850_bank_type_off (100% duplication).
-> >> Here is what I suggest. Now that it's obvious there is some common pla=
-tform
-> >> for moder Exynos SoCs, and it's probably Exynos9, I'd suggest next cou=
-rse of
-> >> action (if maintainers agree):
-> >>   1. Remove this one
-> >>   2. Rename exynos850_bank_type_off to exynos9_bank_type_off
-> >>   3. Use it for both gs101 and exynos850
-> >>
-> >> Does it make sense?
-> >>
-> > My opinion is to reuse exynos850 for gs101 (wherever applicable), same =
-philosophy was historically followed in this file.
-> > That way (using exynos850 for gs101) things will be simple.
-> > Adding exynos9_* is not adding any benefit, rather it create confusion.
->
-> I don't see much value in renaming exynos850 bank type to exynos9
-> considering:
-> 1. We don't really know the bank types for all of Exynos9xxx SoCs,
-> 2. Exynos7885 also uses Exynos850 bank types. Exynos7885 was much
-> earlier than Exynos9xxx family.
+You had a much longer explanation in your reply to my original question.
 
-Thanks Alim and Krzysztof for your input.
+I think it is better if that longer explanation is added here.
 
-Exynos7885 (Exynos 8 family) using Exynos850 bank types looks like a
-mistake to me. I found some downstream code for 7885, and it doesn't
-look like selecting a filter was supported downstream [1] [2]. As Sam
-confirmed this hardware is present on e850 downstream, so 7885 and
-e850 have different hardware at least for these banks.
+Things that are weird and unexpected need good comments, explaining why
+it is done, and also what you know and do not know about this.
 
-As the EXYNOS850_PIN_BANK_EINTW macro is being used by Exynos850,
-exynosautov9 and exynos7885 using a generic macro with gs101 doesn't
-look possible (I have no way to find out these filter register
-offsets, or if those platforms actually have these registers).
+E.g. you know through trial and error that it is needed (or perhaps you
+got information on this some the fw team), but there might be open questions
+that are not yet answered.
 
-Therefore I propose:
-1. For bank types that match exactly use exynos850 versions
-2. For bank types which have fltcon_offset we add a new macro
-EXYNOS9_PIN_BANK_EINTW like it exists in this series or
-GS101_PIN_BANK_EINTW if people prefer that
+This is all information that you can't get from the source code since it has
+to do with the black box firmware. So putting all you know in a comment is
+the best way of communicating this to future readers of the source code.
 
-That still leaves us in the rather unfortunate position that if
-Exynos850 wants selectable filter support then it wouldn't be using
-the EXYNOS850_PIN_BANK_EINTW macro. But I suggest we cross that bridge
-if/when Sam decides to support selectable filters on e850. We could do
-some sort of macro renaming, but what we rename it to though I have no
-idea EXYNOS7885_blah or EXYNOSAUTOV9_blah.
+Regards,
 
-@Chanho do you know if ExynosAutov9 supports selectable filters on alive ba=
-nks?
+	Hans
 
-regards,
+> +	if (!IS_MFCV12(dev))
+> +		if (dev->fw_get_done)
+> +			return 0;
+>  
+>  	for (i = MFC_FW_MAX_VERSIONS - 1; i >= 0; i--) {
+>  		if (!dev->variant->fw_name[i])
 
-Peter
-
-[1] https://github.com/samsungexynos7885/android_kernel_samsung_universal78=
-85/blob/android-9.0/drivers/pinctrl/samsung/pinctrl-exynos.c#L1696
-[2] https://github.com/samsungexynos7885/android_kernel_samsung_universal78=
-85/blob/android-9.0/drivers/pinctrl/samsung/pinctrl-exynos.h#L108
