@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="h/uWl6sf"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="satHb7R+"
 Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58C071999
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Dec 2023 22:37:09 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72E371737
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Dec 2023 22:37:49 -0800 (PST)
 Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20231206063706epoutp01b9d6e90d5a352cd414377453fe3f5de5~eKqvnEu5A2598525985epoutp013
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Dec 2023 06:37:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20231206063706epoutp01b9d6e90d5a352cd414377453fe3f5de5~eKqvnEu5A2598525985epoutp013
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20231206063747epoutp01bd7d29313d61a46f918c356b57df7329~eKrVbXkNO2742827428epoutp01X
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Dec 2023 06:37:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20231206063747epoutp01bd7d29313d61a46f918c356b57df7329~eKrVbXkNO2742827428epoutp01X
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1701844627;
-	bh=kUuKQ/GugZxCJUnbvhRG+iSpQR3fWRlMwpAYp/298R8=;
+	s=mail20170921; t=1701844667;
+	bh=3PdiVk1hZZAha44ZtvOl7j4nSUlSo/pICcOYGKhfamU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h/uWl6sfSHpa+NeYZZ38mS/jRb7C4VFoxJ0fz9KTSVNfVg6hVmtQlqwCx6FJndV05
-	 l1JOP0XP3M2zNacWjsadQYCfv96GjbAiIRHAJHDA1nzSMvofJVK1nMOBRyP2RRWAA4
-	 9MEQ/o7eExIULi97pfnLq+3w6sroJiJuMmx5EO60=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20231206063706epcas5p3251c420bc19b06ea13f333fbcdfed9fb~eKqvICDx40641606416epcas5p3w;
-	Wed,  6 Dec 2023 06:37:06 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4SlSPC6TgTz4x9QB; Wed,  6 Dec
-	2023 06:37:03 +0000 (GMT)
+	b=satHb7R+STC61f79Mku7v7aXYBJqC1Ol9LvW4GbBCPdnrdIp5cMAnb9Ef54pXBS9z
+	 n14lQZlzae3DuIB7LpdAi7ydmZ1BPGN/NIgzpbfx09eCewwfszqSwzZMeEz1uD9kQF
+	 yiMCzDKFT5ednT55XO6x25UHde4G1rKjGwWN4m2I=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20231206063747epcas5p26b0e1f66bc2a673324ef4bc4684f4145~eKrU699ip1851818518epcas5p27;
+	Wed,  6 Dec 2023 06:37:47 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4SlSQ130Rdz4x9Q1; Wed,  6 Dec
+	2023 06:37:45 +0000 (GMT)
 Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	84.16.09672.F8610756; Wed,  6 Dec 2023 15:37:03 +0900 (KST)
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	15.C6.09634.9B610756; Wed,  6 Dec 2023 15:37:45 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20231206063131epcas5p2e0fc772f8f8ac35897920d24a0193d71~eKl3JRzOb0993309933epcas5p2e;
-	Wed,  6 Dec 2023 06:31:31 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20231206063137epcas5p3450b1c70bdf7461afeeb6a3db341818c~eKl8yG-Yc2502325023epcas5p3o;
+	Wed,  6 Dec 2023 06:31:37 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
 	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231206063131epsmtrp2af512438d4317a9afd67811ba018b885~eKl3ITUw51483514835epsmtrp2Z;
-	Wed,  6 Dec 2023 06:31:31 +0000 (GMT)
-X-AuditID: b6c32a4b-39fff700000025c8-98-6570168f959d
+	20231206063137epsmtrp245439704aa598b42d0491759c3fb9280~eKl8uIbkf1483414834epsmtrp2j;
+	Wed,  6 Dec 2023 06:31:37 +0000 (GMT)
+X-AuditID: b6c32a49-eebff700000025a2-5e-657016b94bf9
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	1E.96.07368.34510756; Wed,  6 Dec 2023 15:31:31 +0900 (KST)
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9D.5C.08755.94510756; Wed,  6 Dec 2023 15:31:37 +0900 (KST)
 Received: from cheetah.sa.corp.samsungelectronics.net (unknown
 	[107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20231206063128epsmtip26681e47b6423c2d6319c1d46f9f5e9a1~eKl0UQNOE0503705037epsmtip2g;
-	Wed,  6 Dec 2023 06:31:28 +0000 (GMT)
+	20231206063134epsmtip25fc8e1a2411b7a54cbc35277e3b17e96~eKl6ACk1b3211232112epsmtip2h;
+	Wed,  6 Dec 2023 06:31:34 +0000 (GMT)
 From: Aakarsh Jain <aakarsh.jain@samsung.com>
 To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
 	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
@@ -50,90 +50,150 @@ Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
 	aswani.reddy@samsung.com, pankaj.dubey@samsung.com,
 	ajaykumar.rs@samsung.com, aakarsh.jain@samsung.com, linux-fsd@tesla.com,
 	Smitha T Murthy <smithatmurthy@gmail.com>
-Subject: [Patch v5 08/11] media: s5p-mfc: Set context for valid case before
- calling try_run
-Date: Wed,  6 Dec 2023 12:00:42 +0530
-Message-Id: <20231206063045.97234-9-aakarsh.jain@samsung.com>
+Subject: [Patch v5 10/11] media: s5p-mfc: DPB Count Independent of
+ VIDIOC_REQBUF
+Date: Wed,  6 Dec 2023 12:00:44 +0530
+Message-Id: <20231206063045.97234-11-aakarsh.jain@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20231206063045.97234-1-aakarsh.jain@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0VTe0xbVRzeuff23hYtXIHNY9VJrkOBCbQC5bDAAEfINRAldhF1mazAFZDS
-	dr3FzUWzFxhkyGuT8BoyQI0UBAplvMsKG5NENhHZiIMV0QAlgwlsI+rUljL97/t9v+/3PkeI
-	u/eSEmGGWs/p1EoVQ7oQnUO+fv5FO7ScdHzOB/3WVSFAgyuXCGSt6SRR/cY8hm7XrxHI0m6i
-	UFP/GIa+GB4ToKnBbgz9UDFNoMKFWRwZ5yYFaNaWiH7sqSZRQatJgMqvDWCoeXiaQl8Z/8JQ
-	nWmdQrn9wxTKOdkgiNrO3mhYxdnuymmKre9bxFhj46cke2uyj2TbG46zhR2NgP371HmKXTPu
-	ZEfvrVEJLu9khqdzylRO58WpUzSpGeq0CCZOkbQvKUQulfnLwlAo46VWZnERTEx8gn9shso+
-	I+P1gVKVbacSlDzPBO4N12my9ZxXuobXRzCcNlWlDdYG8MosPludFqDm9HtkUunLIXbhocz0
-	ptI6XHtVdPTqyh3BCXBWmA+EQkgHw39yPsoHLkJ3uhfA09YNwmmsAlhTfpF0GvcBvHw73+4R
-	bUbcLCnbcvQDWDJnoxwOdzoXg9/ZdjnSkrQ//P6iykF70icBnMvTO/Q4PYLD2uIKwqHxoA/C
-	jZubOQnaGy79VIQ5sJiOgB3mWYGz1nPQ0DqIO7CI3gvPNdUKHHkgPSGEEzmjpFMUA2vK8ikn
-	9oC2kY4tLIFry/1bmhQ4V7eIO7EKtvSd2xomEg5OVG/2g9O+sKUn0Ek/Cz8f/XazH5x2hZ/9
-	+Svm5MWwq+YRfgFW39rY6vMZOGT4EjgxC2faZijnfkoAXDdfJ4rBzsr/S9QC0Aie4rR8VhrH
-	h2iD1NyR/26Woskygs1X7BfXBX6x3g2wAEwILAAKccZTrLqm4dzFqcoPj3E6TZIuW8XxFhBi
-	X2AJLtmeorF/A7U+SRYcJg2Wy+XBYUFyGfOkeCn3fKo7nabUc5kcp+V0j+IwoUhyAhvh80rZ
-	uwcNWd2hvUc69lSterzr1jrzMD+wtrPgQtiyeVkcu27etl/T7I27aVuqqqyKHQsvDnmOHi1K
-	LGbe6ntcr3YtnfWowpYrXVuiRl/bH7p4XSN6o9fc9eYr0Z/cm4wqPPONm/fb8wUwLlaS6Hsn
-	Gf/Zlm28kXzpjws1V/JOD08bHwQt3de2j8eAwwM+kTGXHxLWx9RLT4crWqZgGHJtqyy3Sa2n
-	VKXRiz7LUwmvh1u+PvQg/qzRZJIkj79veO9ji6+NVLQd58j1tcjnsQP7BsYqTa/mmKfcFjwk
-	PYrusgB5PLZS/oQoJ3rXgQjFpPWl3ceat+2+4hVy2PD7PEUkMQSfrpT54Tpe+S92YXl9TgQA
-	AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCLMWRmVeSWpSXmKPExsWy7bCSvK6zaEGqQctbEYunO2ayWhx4f5DF
-	4sG8bWwWi388Z7K4v/gzi8WhzVvZLdbsPcdkMf/IOVaLmwd2MllcnHmXxaLvxUNmi02Pr7Fa
-	PHwVbnF51xw2i54NW1ktZpzfx2Sx9shddotlm/4wWSza+oXdonXvEXaLlsYlrA6iHteXfGL2
-	2DnrLrvH4j0vmTw2repk87hzbQ+bx+Yl9R59W1Yxevxrmsvu8XmTnMepr5/ZA7iiuGxSUnMy
-	y1KL9O0SuDLWTFrEXHCCs+LE+7esDYyTOboYOTkkBEwkbkycxtbFyMUhJLCbUeLb+9ksEAkZ
-	if9tx9ghbGGJlf+es0MUNTNJPDlwFqiIg4NNQFfi7PYckLiIQCujxPWVnUwgDrPAbWaJTRMe
-	gnULC0RLXFj5kxnEZhFQlXh9tZ8JxOYVsJXYsv8hK8QGeYnVGw6A1XAK2ElMWbOAFWSBEFDN
-	ypOOExj5FjAyrGKUTC0ozk3PTTYsMMxLLdcrTswtLs1L10vOz93ECI4YLY0djPfm/9M7xMjE
-	wXiIUYKDWUmEN+d8fqoQb0piZVVqUX58UWlOavEhRmkOFiVxXsMZs1OEBNITS1KzU1MLUotg
-	skwcnFINTEdrhb8Zla9/vG+LivvcbCfbpZnuZxyD1jLrxKx4yKAnuPjHIcZ5PpaOtfdyrjka
-	CbNffJl3VCBPcuO3W9sKg+9KzuDi85ket85g55R8W85bZ0XStiQ7R73fwbO37YTjBJ+iTxq9
-	r1ebK+t8fin672zY+qgbm7JnJEk/ufvt4N0Q7Qknufn3Pf51ct2td7Lxh6Is9Pddz+BbFrIz
-	g/fKhV8PhaNfV8zv6mXQWHZhxhRL8aLk7rWd7KZnt+/YvjDiRdWu2PcMK88qsPMkSvD5Z5l6
-	SJhZ7t+6fLZ/yqaXV2vyeKYb3Ajw33aQ1etXbuFdD8UG1uUF14Mm8Bvlaqxs0ay2c11dZyMn
-	PEu4689RZiWW4oxEQy3mouJEANL5cmYHAwAA
-X-CMS-MailID: 20231206063131epcas5p2e0fc772f8f8ac35897920d24a0193d71
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WTfUxbVRjGPff2C5aSmw7wyGBAs6GQFVpWyoEMRJ16FxbXMBWdRmzotRDK
+	bddbhk5UZmQi4qDKhyxsIu2Yg24QoB8wcAwwxBlhbIhuA8dSUT4GTCoMpgNbWvS/533ye895
+	znvO4eGCi5wgXjatp3S0Qi3k+LKsfZFRoo5ALSV+uOqPJu01bNSzcJmFJk5bOci48geGbhud
+	LNTbZuEic/cghr7qH2SjGz0dGBquGWehE1N3cNTqGGWjOzPp6HpnLQeVtljY6MuhbzF0vn+c
+	ixpa/8FQveUvLirq7ueij46Z2CkB5M+mRZzsODnOJY1d0xjZ2vgJhxwb7eKQbaYPyBPtjYBc
+	+/AUl3S2bievLDm5ct9DOXuyKIWS0oVRdKZGmU2rkoSpBzOeyYiTiSUiSQKKF4bRilwqSbh3
+	v1z0XLbadUZh2BGFOs9lyRUMI4xJ3qPT5OmpsCwNo08SUlqlWivVRjOKXCaPVkXTlD5RIhbH
+	xrnAN3Oyfhld4GgHtr19/vcXCsHDwBLgw4OEFF4dGMZLgC9PQFwE0HZznuspFgGcW6gFbkpA
+	LANov8fa7Lh77jrLA3UDaDj+g7ejCIO/PrjvKng8DiGCP9rU7gZ/4hiAjmK9m8GJARzWldew
+	3MxWIg2WFRe4GRaxE14rGsfcmk8kw/XvqoFns1DY1NKDu7WPy68w17Hd60BihAc/nbiEe6C9
+	cHXO5k23Fc4MtHM9Ogg657s5Hp0JHfXTXl4Nm7sqvPyTsGekdiMPTkTC5s4Yjx0CK69c2MiD
+	E37ws79/wzw+H9pPb+oIWDu2wvboYNjXdMabmYST9w3emRgAvGVdw8vB9pP/b1EHQCN4jNIy
+	uSqKidNKaCr/vzvL1OS2go1XHLXPDsYn7kX3AowHegHk4UJ/vnpIQwn4SsU7RymdJkOXp6aY
+	XhDnGqABDwrI1Li+Aa3PkEgTxFKZTCZN2C2TCB/lzxadUgoIlUJP5VCUltJt9mE8n6BCTNTp
+	2FUsinacLTjCLBU2CAatU4+E7QiJl/T5zB631+5UXW64avYLbWhON34xaFHp82W3DE+tLTR/
+	bTtwI1j97OupcwmX+DlVsaF+saqAieEXS00xL5s/tt5tX3z1pabADksECnn37HSf87Xyt1Ki
+	lhvTg9nifOW2LU0pY09EGOS91QdM7xlVr+BVkc4y+qi8st4uOVg1HJ6YXZxmWvp8MvVaPxaf
+	v6XQvL5+k6mun0yueFyTWNnyvNPRWVBakdYmWTEdXtZ32UamZmC4LW+32VrW3P5g/+FD4Z1D
+	yW8kkqM/hZ9z3m4Tz+5yxAb/OfR+eug3T5/pKln9XjrqGJn3uWChhSwmSyGJwnWM4l+Qr0+v
+	TgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMLMWRmVeSWpSXmKPExsWy7bCSvK6naEGqwd4X4hZPd8xktTjw/iCL
+	xYN529gsFv94zmRxf/FnFotDm7eyW6zZe47JYv6Rc6wWNw/sZLK4OPMui0Xfi4fMFpseX2O1
+	ePgq3OLyrjlsFj0btrJazDi/j8li7ZG77BbLNv1hsli09Qu7ReveI+wWLY1LWB1EPa4v+cTs
+	sXPWXXaPxXteMnlsWtXJ5nHn2h42j81L6j36tqxi9PjXNJfd4/MmOY9TXz+zB3BFcdmkpOZk
+	lqUW6dslcGXcuPaereC4dMXaZ34NjH/Fuhg5OSQETCTerLzM0sXIxSEksJtRYvXJZ0wQCRmJ
+	/23H2CFsYYmV/56zQxQ1M0n0H53L2sXIwcEmoCtxdnsOSFxEoJVR4vrKTiYQh1ngNrPEpgkP
+	wbqFBQIk2vfNYwGxWQRUJS613gXbwCtgJ/H/6HRGiA3yEqs3HGAGsTmB4lPWLABbICRgK7Hy
+	pOMERr4FjAyrGCVTC4pz03OLDQsM81LL9YoTc4tL89L1kvNzNzGC40VLcwfj9lUf9A4xMnEw
+	HmKU4GBWEuHNOZ+fKsSbklhZlVqUH19UmpNafIhRmoNFSZxX/EVvipBAemJJanZqakFqEUyW
+	iYNTqoFpk+pMC0vpnVJfzyR21znvP8/6ojuZ83psWrHHKeZChrc/dT+lvXq63yL1jXCerueS
+	1RFzMzQ+Cv6pMli9zWPGfdG+1KdKHAtUrW8GT6//bL3hllV2ypycmISD1loqTOrik9nfNDc/
+	nCblv2hxZ2V33RVVsQcplzvzUp9ue3v8yROLZr5lZ9hOJs9kWfho4vO881/3CWafVp5ypvY0
+	e/9ek7dR87gWVnYvMgjvn5QgtDgqcgK3up7Fk5Q/mRkzD5teXtr/65j/u6iJ3dMkrHo+FLYY
+	lpjNvjXF/vGX08+ub/BYF8d38C+/VFbA0aUyPxkPV4R0BNUuT5x87PyRWVfmHD358MUzR825
+	+c7uRr0nlFiKMxINtZiLihMBnhKHNwYDAAA=
+X-CMS-MailID: 20231206063137epcas5p3450b1c70bdf7461afeeb6a3db341818c
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231206063131epcas5p2e0fc772f8f8ac35897920d24a0193d71
+X-CMS-RootMailID: 20231206063137epcas5p3450b1c70bdf7461afeeb6a3db341818c
 References: <20231206063045.97234-1-aakarsh.jain@samsung.com>
-	<CGME20231206063131epcas5p2e0fc772f8f8ac35897920d24a0193d71@epcas5p2.samsung.com>
+	<CGME20231206063137epcas5p3450b1c70bdf7461afeeb6a3db341818c@epcas5p3.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 
-Context bit is set for hardware execution if there is a buffer in
-source and destination queue before calling try_run in the
-init_buffers function. Now there will be a new context created and
-hardware will be invoked for the buffer queued instead of waiting for
-another buffer to be queued from userspace to set this context bit for
-hw execution.
+Add allocation of DPB buffers based on MFC requirement so,
+codec buffers allocations has been moved after state
+MFCINST_HEAD_PRODUCED. It is taken care that codec buffer allocation
+is performed in process context from userspace IOCTL call.
 
 Cc: linux-fsd@tesla.com
 Signed-off-by: Smitha T Murthy <smithatmurthy@gmail.com>
 Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
 ---
- drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ .../platform/samsung/s5p-mfc/s5p_mfc_enc.c     | 18 ++----------------
+ .../platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c  |  7 +++++++
+ 2 files changed, 9 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
-index bd055dea827e..fbb047eadf5a 100644
---- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
-@@ -604,6 +604,8 @@ static void s5p_mfc_handle_init_buffers(struct s5p_mfc_ctx *ctx,
- 		s5p_mfc_clock_off();
+diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_enc.c
+index a5df0759ccf0..a50df888c7c5 100644
+--- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_enc.c
++++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_enc.c
+@@ -1164,7 +1164,6 @@ static int enc_post_seq_start(struct s5p_mfc_ctx *ctx)
+ 	struct s5p_mfc_dev *dev = ctx->dev;
+ 	struct s5p_mfc_enc_params *p = &ctx->enc_params;
+ 	struct s5p_mfc_buf *dst_mb;
+-	unsigned int enc_pb_count;
  
- 		wake_up(&ctx->queue);
-+		if (ctx->src_queue_cnt >= 1 && ctx->dst_queue_cnt >= 1)
-+			set_work_bit_irqsave(ctx);
+ 	if (p->seq_hdr_mode == V4L2_MPEG_VIDEO_HEADER_MODE_SEPARATE) {
+ 		if (!list_empty(&ctx->dst_queue)) {
+@@ -1186,10 +1185,7 @@ static int enc_post_seq_start(struct s5p_mfc_ctx *ctx)
+ 			set_work_bit_irqsave(ctx);
  		s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
  	} else {
- 		WARN_ON(test_and_clear_bit(0, &dev->hw_lock) == 0);
+-		enc_pb_count = s5p_mfc_hw_call(dev->mfc_ops,
+-				get_enc_dpb_count, dev);
+-		if (ctx->pb_count < enc_pb_count)
+-			ctx->pb_count = enc_pb_count;
++		ctx->pb_count = s5p_mfc_hw_call(dev->mfc_ops, get_enc_dpb_count, dev);
+ 		if (FW_HAS_E_MIN_SCRATCH_BUF(dev)) {
+ 			ctx->scratch_buf_size = s5p_mfc_hw_call(dev->mfc_ops,
+ 					get_e_min_scratch_buf_size, dev);
+@@ -1564,14 +1560,6 @@ static int vidioc_reqbufs(struct file *file, void *priv,
+ 		}
+ 		ctx->capture_state = QUEUE_BUFS_REQUESTED;
+ 
+-		ret = s5p_mfc_hw_call(ctx->dev->mfc_ops,
+-				alloc_codec_buffers, ctx);
+-		if (ret) {
+-			mfc_err("Failed to allocate encoding buffers\n");
+-			reqbufs->count = 0;
+-			ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
+-			return -ENOMEM;
+-		}
+ 	} else if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+ 		if (reqbufs->count == 0) {
+ 			mfc_debug(2, "Freeing buffers\n");
+@@ -1587,15 +1575,13 @@ static int vidioc_reqbufs(struct file *file, void *priv,
+ 			return -EINVAL;
+ 		}
+ 
+-		if (IS_MFCV6_PLUS(dev)) {
++		if (IS_MFCV6_PLUS(dev) && (!IS_MFCV12(dev))) {
+ 			/* Check for min encoder buffers */
+ 			if (ctx->pb_count &&
+ 				(reqbufs->count < ctx->pb_count)) {
+ 				reqbufs->count = ctx->pb_count;
+ 				mfc_debug(2, "Minimum %d output buffers needed\n",
+ 						ctx->pb_count);
+-			} else {
+-				ctx->pb_count = reqbufs->count;
+ 			}
+ 		}
+ 
+diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+index 572293f3b190..fd945211d28e 100644
+--- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
++++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+@@ -2110,6 +2110,13 @@ static inline int s5p_mfc_run_init_enc_buffers(struct s5p_mfc_ctx *ctx)
+ 	struct s5p_mfc_dev *dev = ctx->dev;
+ 	int ret;
+ 
++	ret = s5p_mfc_hw_call(ctx->dev->mfc_ops, alloc_codec_buffers, ctx);
++	if (ret) {
++		mfc_err("Failed to allocate encoding buffers\n");
++		return -ENOMEM;
++	}
++	mfc_debug(2, "Allocated Internal Encoding Buffers\n");
++
+ 	dev->curr_ctx = ctx->num;
+ 	ret = s5p_mfc_set_enc_ref_buffer_v6(ctx);
+ 	if (ret) {
 -- 
 2.17.1
 
