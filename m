@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lY1Xg/Ev"
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D52B137
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Dec 2023 02:33:57 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-3333224c7b9so566217f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Dec 2023 02:33:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YuKaTjKF"
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45AB21BF
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Dec 2023 03:38:19 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-332c0c32d19so743227f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Dec 2023 03:38:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701858836; x=1702463636; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701862697; x=1702467497; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=vNWpu2Kl2fcT2EkQne/K9Yh75bFrD876NBGFXjjHEOg=;
-        b=lY1Xg/Ev7Cep1nYHjYiK9Gi6e4ExyoOnOq+R/RG9SWn/xLRp0vZ7ukzDs0SUHWYNhI
-         orm348jvSLqaY7x2345X+0L03k6zMDD8mViBxWN9NYZJgSWjIBYpggvHckmVAGU8cKEy
-         1XakOpMDcjYJ6KpmffM93eqpKCeujm4e+DTrRKUVvF+4iBoZPhJLD+V/sMI+yLh/cdJN
-         O3HCPGNkWDPXW/C0hBfIJt/ThX1OuQaQnaG9kMsjsKG8YudcEDagzaUHmrESf/SK+sou
-         YTMlR3FE1MFRaI/5nV/Szy0l2J5BFxpt8q95wrBFAXHLIFr3lDH05eTcVzmWVDkWwxip
-         cucA==
+        bh=Qm7pCcZmaWCMHPggwY7CXlYkirEJ9BDVaMQ6Qupg/xA=;
+        b=YuKaTjKFzlYvUVmPIlI/jO6J4yUO7idRnUbGMFM133GtOcjFF7QUVxfjDMoJjyTdsR
+         s6c+q+rOATGuPSrM7pgP8qu7m/P8T+BVMjEscgBRzdZJkmCxflHa1AybKVZtmXcTen+u
+         6xmBmi+8aLdA5qtGc2rdoeGzYQXWivBSN5fRV5nXv41tCKDBOZ4ydUznGpF3mpbWgNGy
+         yw8cr8eoc3qI9ReEzh6MMpxmHlbJXu44BS/+n7osFfuLVZX5SfEEYicfZqzu9sJ3Yf38
+         ZGAkvM8ZW41HVwePSHR7ZdaFkrBfAWIqGhS7T6kh6lxI6rP8qxkAAFBfIDHh6rV7Qdkj
+         PxkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701858836; x=1702463636;
+        d=1e100.net; s=20230601; t=1701862697; x=1702467497;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vNWpu2Kl2fcT2EkQne/K9Yh75bFrD876NBGFXjjHEOg=;
-        b=R5TowqFV7P4a/xi38CqJJYgGo9Xf+Wuauyvzx/uh4seMloJRZnK0twgbOguVw3l+qE
-         7wGHF4jmQrmgPt5AQsxOy55xt3BUOA7+nQkz5WUUdnmuf5ilVOKKS4Pf9W+wB70S2648
-         tKGVBizo/WS4g0s65wf5gm/7uh23yLonYdAtDJH2c/ficN61WmHd/qF58MWkEehh7RaA
-         rrawI777RmhplWJKM6fpoSIhW1yYKgKx0AcrrxYRtPk8vOD9s+k6PglfH3Pwke65/Mmu
-         mr0Y4G+Lqv5CNG5TEostaqykoAdkNmGlVbw3yYFjuvIEC14i1fJ6/0Lt4pXeilLCeocI
-         M8Ng==
-X-Gm-Message-State: AOJu0Ywmh/E8aBm20vEoyBWGvT34+DtTq8IypG6Ut7lffJlMYRQnCft3
-	y0DBy33uKr/aVQqOjz1Y04Y+Cg==
-X-Google-Smtp-Source: AGHT+IFHTfiHp66DAws9nAd4BCQOEM5XE2vOuXTqoXBYrnMXfJG6nRGYhpFVphsYKk2ITaLUqrIXhQ==
-X-Received: by 2002:adf:e70e:0:b0:333:2fd2:68d9 with SMTP id c14-20020adfe70e000000b003332fd268d9mr394424wrm.108.1701858835916;
-        Wed, 06 Dec 2023 02:33:55 -0800 (PST)
+        bh=Qm7pCcZmaWCMHPggwY7CXlYkirEJ9BDVaMQ6Qupg/xA=;
+        b=XG/KXSEAZ+EKPGH84JlF8P8C1zvGJzOKBmL+ZAtsNGae3QV8u6Zz91007W9gPk72AL
+         MSf6J/YcelKGptDRa/OB9lklGM6JtErHH+yNkz1cS1ocR/Ax12UVxtlZnDACiNAK2EME
+         Ccpn1yaQY9UyA2BzRg7xdYLnL9QLGqz+PPLIBCBMFcghwKaupjNYQNfWSobIRKz1sW3F
+         SGV+GMMudH+7qJQO3NXHozImk7d2fAVu1w1Pst5ALOzRWRX3kvEdgwlnCDgOnhKlXXr9
+         ITyrg4SS113iLfRm8W9DbISezJwDDCqXexW8GzFH3/kldq+pxMI7EJ3iCBo2zLW2BIIS
+         h19Q==
+X-Gm-Message-State: AOJu0YyhjUXIn/MG6BgmihMiHREtuwmqLwfQydjyyv3RL+Yhf2MqoT7j
+	9Vq75UQwHkJ45bom9feqqujzdw==
+X-Google-Smtp-Source: AGHT+IHDl6UGXjkhX+Sh5mNIn+o9ppG/aW6SJEMyI6QLyUYRYrTFnfXaaCrq1qDg++lrAfzAdnteqw==
+X-Received: by 2002:a5d:4fca:0:b0:333:387b:687b with SMTP id h10-20020a5d4fca000000b00333387b687bmr387774wrw.34.1701862697689;
+        Wed, 06 Dec 2023 03:38:17 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id b14-20020adff90e000000b0033346fe9b9bsm8429100wrr.83.2023.12.06.02.33.54
+        by smtp.gmail.com with ESMTPSA id f13-20020a5d64cd000000b003334898aafasm8392073wri.11.2023.12.06.03.38.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Dec 2023 02:33:55 -0800 (PST)
-Message-ID: <91188ba1-fd37-454f-beb1-0119bd24d3c8@linaro.org>
-Date: Wed, 6 Dec 2023 11:33:53 +0100
+        Wed, 06 Dec 2023 03:38:16 -0800 (PST)
+Message-ID: <71972f4f-b5ac-484a-8a09-0b74bd7c623b@linaro.org>
+Date: Wed, 6 Dec 2023 12:38:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -47,21 +47,29 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v5 11/11] arm64: dts: fsd: Add MFC related DT enteries
+Subject: Re: [PATCH v5 14/20] pinctrl: samsung: Add gs101 SoC pinctrl
+ configuration
 Content-Language: en-US
-To: Aakarsh Jain <aakarsh.jain@samsung.com>,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
- hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org,
- robh+dt@kernel.org, conor+dt@kernel.org, linux-samsung-soc@vger.kernel.org,
- andi@etezian.org, gost.dev@samsung.com, alim.akhtar@samsung.com,
- aswani.reddy@samsung.com, pankaj.dubey@samsung.com,
- ajaykumar.rs@samsung.com, linux-fsd@tesla.com,
- Smitha T Murthy <smithatmurthy@gmail.com>
-References: <20231206063045.97234-1-aakarsh.jain@samsung.com>
- <CGME20231206063140epcas5p1ba86525117f4d9ec9172ae7cb18b7420@epcas5p1.samsung.com>
- <20231206063045.97234-12-aakarsh.jain@samsung.com>
+To: Alim Akhtar <alim.akhtar@samsung.com>,
+ 'Sam Protsenko' <semen.protsenko@linaro.org>,
+ 'Peter Griffin' <peter.griffin@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+ tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org,
+ wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com,
+ will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
+ andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com,
+ soc@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, kernel-team@android.com,
+ linux-serial@vger.kernel.org
+References: <20231201160925.3136868-1-peter.griffin@linaro.org>
+ <20231201160925.3136868-15-peter.griffin@linaro.org>
+ <CGME20231202004026epcas5p4d3947d7bb99e54f70ca37272cfdc5e55@epcas5p4.samsung.com>
+ <CAPLW+4kBOWFPx3Hr-=UoLWvRxCorzBY9RCOiBhfkKcU0LAa21Q@mail.gmail.com>
+ <000001da24c0$0b83aab0$228b0010$@samsung.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -107,26 +115,87 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231206063045.97234-12-aakarsh.jain@samsung.com>
+In-Reply-To: <000001da24c0$0b83aab0$228b0010$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 06/12/2023 07:30, Aakarsh Jain wrote:
-> Add MFC DT node and reserve memory node for MFC usage.
+On 02/12/2023 02:36, Alim Akhtar wrote:
 > 
-> Cc: linux-fsd@tesla.com
-> Signed-off-by: Smitha T Murthy <smithatmurthy@gmail.com>
-> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
-> ---
->  arch/arm64/boot/dts/tesla/fsd.dtsi | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
+> 
+>> -----Original Message-----
+>> From: Sam Protsenko <semen.protsenko@linaro.org>
+>> Sent: Saturday, December 2, 2023 6:10 AM
+>> To: Peter Griffin <peter.griffin@linaro.org>
+>> Cc: robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
+>> mturquette@baylibre.com; conor+dt@kernel.org; sboyd@kernel.org;
+>> tomasz.figa@gmail.com; s.nawrocki@samsung.com; linus.walleij@linaro.org;
+>> wim@linux-watchdog.org; linux@roeck-us.net; catalin.marinas@arm.com;
+>> will@kernel.org; arnd@arndb.de; olof@lixom.net;
+>> gregkh@linuxfoundation.org; jirislaby@kernel.org;
+>> cw00.choi@samsung.com; alim.akhtar@samsung.com;
+>> tudor.ambarus@linaro.org; andre.draszik@linaro.org;
+>> saravanak@google.com; willmcvicker@google.com; soc@kernel.org;
+>> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+>> samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; linux-
+>> gpio@vger.kernel.org; linux-watchdog@vger.kernel.org; kernel-
+>> team@android.com; linux-serial@vger.kernel.org
+>> Subject: Re: [PATCH v5 14/20] pinctrl: samsung: Add gs101 SoC pinctrl
+>> configuration
+>>
+>> On Fri, Dec 1, 2023 at 10:11 AM Peter Griffin <peter.griffin@linaro.org>
+>> wrote:
+>>>
+>>> Add support for the pin-controller found on the gs101 SoC used in
+>>> Pixel 6 phones.
+>>>
+>>> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+>>> ---
+>>>  .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 159 ++++++++++++++++++
+>>>  drivers/pinctrl/samsung/pinctrl-exynos.c      |   2 +
+>>>  drivers/pinctrl/samsung/pinctrl-exynos.h      |  34 ++++
+>>>  drivers/pinctrl/samsung/pinctrl-samsung.c     |   2 +
+>>>  drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
+>>>  5 files changed, 198 insertions(+)
+>>>
+>>> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+>>> b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+>>> index cb965cf93705..e1a0668ecb16 100644
+>>> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+>>> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+>>> @@ -796,3 +796,162 @@ const struct samsung_pinctrl_of_match_data
+>> fsd_of_data __initconst = {
+>>>         .ctrl           = fsd_pin_ctrl,
+>>>         .num_ctrl       = ARRAY_SIZE(fsd_pin_ctrl),
+>>>  };
+>>> +
+>>> +/*
+>>> + * bank type for non-alive type
+>>> + * (CON bit field: 4, DAT bit field: 1, PUD bit field: 4, DRV bit
+>>> +field: 4)
+>>> + * (CONPDN bit field: 2, PUDPDN bit field: 4)  */ static struct
+>>> +samsung_pin_bank_type gs101_bank_type_off  = {
+>>> +       .fld_width = { 4, 1, 4, 4, 2, 4, },
+>>> +       .reg_offset = { 0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, }, };
+>>
+>> This is just the same as exynos850_bank_type_off (100% duplication).
+>> Here is what I suggest. Now that it's obvious there is some common platform
+>> for moder Exynos SoCs, and it's probably Exynos9, I'd suggest next course of
+>> action (if maintainers agree):
+>>   1. Remove this one
+>>   2. Rename exynos850_bank_type_off to exynos9_bank_type_off
+>>   3. Use it for both gs101 and exynos850
+>>
+>> Does it make sense?
+>>
+> My opinion is to reuse exynos850 for gs101 (wherever applicable), same philosophy was historically followed in this file.
+> That way (using exynos850 for gs101) things will be simple. 
+> Adding exynos9_* is not adding any benefit, rather it create confusion.
 
-This should be merged via Samsung SoC, so I will take it once bindings
-get accepted.
-
-If there is going to be resend of entire patchset, please don't include
-this patch in new resend. If this patch needs resending, send it
-separately and provide lore link to the bindings.
+I don't see much value in renaming exynos850 bank type to exynos9
+considering:
+1. We don't really know the bank types for all of Exynos9xxx SoCs,
+2. Exynos7885 also uses Exynos850 bank types. Exynos7885 was much
+earlier than Exynos9xxx family.
 
 Best regards,
 Krzysztof
